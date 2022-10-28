@@ -8,13 +8,17 @@ import Foundation
 import Onboarding
 import Resolver
 import SwiftUI
+import AnalyticsManager
 
 class BindingPhoneNumberDelegatedCoordinator: DelegatedCoordinator<BindingPhoneNumberState> {
     @Injected private var helpLauncher: HelpCenterLauncher
+    @Injected private var analyticsManager: AnalyticsManager
 
     override func buildViewController(for state: BindingPhoneNumberState) -> UIViewController? {
         switch state {
         case let .enterPhoneNumber(initialPhoneNumber, _, _, _):
+            analyticsManager.log(event: AmplitudeEvent.creationPhoneScreen)
+
             let mv = EnterPhoneNumberViewModel(phone: initialPhoneNumber, isBackAvailable: false)
             let vc = EnterPhoneNumberViewController(viewModel: mv)
             vc.title = L10n.stepOf("2", "3")
@@ -126,7 +130,8 @@ class BindingPhoneNumberDelegatedCoordinator: DelegatedCoordinator<BindingPhoneN
                 untilTimestamp: until,
                 onHome: { [stateMachine] in Task { try await stateMachine <- .home } },
                 onCompletion: { [stateMachine] in Task { try await stateMachine <- .blockFinish } },
-                onTermAndCondition: { [weak self] in self?.showTermAndCondition() },
+                onTermsOfService: { [weak self] in self?.openTermsOfService() },
+                onPrivacyPolicy: { [weak self] in self?.openPrivacyPolicy() },
                 onInfo: { [weak self] in self?.openHelp() }
             )
 
@@ -136,12 +141,20 @@ class BindingPhoneNumberDelegatedCoordinator: DelegatedCoordinator<BindingPhoneN
         }
     }
 
-    public func showTermAndCondition() {
+    public func openTermsOfService() {
         let vc = WLMarkdownVC(
-            title: L10n.termsOfUse.uppercaseFirst,
+            title: L10n.termsOfService,
             bundledMarkdownTxtFileName: "Terms_of_service"
         )
         rootViewController?.present(vc, animated: true)
+    }
+
+    private func openPrivacyPolicy() {
+        let viewController = WLMarkdownVC(
+            title: L10n.privacyPolicy,
+            bundledMarkdownTxtFileName: "Privacy_policy"
+        )
+        rootViewController?.present(viewController, animated: true)
     }
 
     public func selectCountry(selectedDialCode: String?, selectedCountryCode: String?) async throws -> Country? {

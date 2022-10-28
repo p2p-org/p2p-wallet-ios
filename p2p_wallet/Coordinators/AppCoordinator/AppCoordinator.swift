@@ -24,6 +24,7 @@ class AppCoordinator: Coordinator<Void> {
 
     @Injected var notificationService: NotificationService
     @Injected var userWalletManager: UserWalletManager
+    @Injected var createNameService: CreateNameService
 
     // MARK: - Properties
 
@@ -32,11 +33,14 @@ class AppCoordinator: Coordinator<Void> {
 
     var reloadEvent: PassthroughSubject<Void, Never> = .init()
 
+    private var walletCreated: Bool = false
+
     // MARK: - Initializers
 
     override init() {
         super.init()
         defer { Task { await appEventHandler.delegate = self } }
+        Task { await bind() }
     }
 
     // MARK: - Methods
@@ -57,14 +61,31 @@ class AppCoordinator: Coordinator<Void> {
                         .prepend(())
                 )
                 .receive(on: RunLoop.main)
-                .sink { [weak self] wallet, _ in
-                    wallet != nil ? self?.navigateToMain() : self?.newOnboardingFlow()
+                .sink { [unowned self] wallet, _ in
+                    if wallet != nil {
+                        if self.walletCreated, available(.onboardingUsernameEnabled) {
+                            self.walletCreated = false
+                            self.openCreateUsername()
+                        } else {
+                            self.navigateToMain()
+                        }
+                    } else {
+                        self.newOnboardingFlow()
+                    }
                 }
                 .store(in: &subscriptions)
         }
     }
 
     // MARK: - Navigation
+
+    private func openCreateUsername() {
+        guard let window = window else { return }
+        coordinate(to: CreateUsernameCoordinator(navigationOption: .onboarding(window: window)))
+            .sink { [unowned self] in
+                self.navigateToMain()
+            }.store(in: &subscriptions)
+    }
 
     func navigateToMain() {
         // TODO: - Change to Main.Coordinator.start()
@@ -115,13 +136,17 @@ class AppCoordinator: Coordinator<Void> {
 
         coordinate(to: startCoordinator)
             .sinkAsync(receiveValue: { [unowned self] result in
+                GlobalAppState.shared.shouldPlayAnimationOnHome = true
                 showAuthenticationOnMainOnAppear = false
                 let userWalletManager: UserWalletManager = Resolver.resolve()
                 switch result {
                 case let .created(data):
+                    walletCreated = true
+
                     analyticsManager.log(event: AmplitudeEvent.setupOpen(fromPage: "create_wallet"))
                     analyticsManager.log(event: AmplitudeEvent.createConfirmPin(result: true))
 
+                    saveSecurity(data: data.security)
                     // Setup user wallet
                     try await userWalletManager.add(
                         seedPhrase: data.wallet.seedPhrase.components(separatedBy: " "),
@@ -135,11 +160,13 @@ class AppCoordinator: Coordinator<Void> {
                     Task.detached {
                         try await Resolver.resolve(WalletMetadataService.self).update(initialMetadata: data.metadata)
                     }
-
-                    saveSecurity(data: data.security)
                 case let .restored(data):
                     analyticsManager.log(event: AmplitudeEvent.restoreConfirmPin(result: true))
 
+                    let restoreMethod: String = data.metadata == nil ? "seed" : "web3auth"
+                    analyticsManager.setIdentifier(AmplitudeIdentifier.userRestoreMethod(restoreMethod: restoreMethod))
+
+                    saveSecurity(data: data.security)
                     // Setup user wallet
                     try await userWalletManager.add(
                         seedPhrase: data.wallet.seedPhrase.components(separatedBy: " "),
@@ -156,8 +183,6 @@ class AppCoordinator: Coordinator<Void> {
                                 .update(initialMetadata: metadata)
                         }
                     }
-
-                    saveSecurity(data: data.security)
                 case .breakProcess:
                     newOnboardingFlow()
                 }
@@ -175,5 +200,18 @@ class AppCoordinator: Coordinator<Void> {
     private func hideLoadingAndTransitionTo(_ vc: UIViewController) {
         window?.rootViewController?.view.hideLoadingIndicatorView()
         window?.animate(newRootViewController: vc)
+    }
+
+    private func bind() {
+        createNameService.createNameResult
+            .receive(on: DispatchQueue.main)
+            .sink { [weak self] isSuccess in
+                if isSuccess {
+                    guard let view = self?.window?.rootViewController?.view else { return }
+                    SnackBar(title: "🎉", icon: nil, text: L10n.nameWasBooked).show(in: view)
+                } else {
+                    self?.notificationService.showDefaultErrorNotification()
+                }
+            }.store(in: &subscriptions)
     }
 }

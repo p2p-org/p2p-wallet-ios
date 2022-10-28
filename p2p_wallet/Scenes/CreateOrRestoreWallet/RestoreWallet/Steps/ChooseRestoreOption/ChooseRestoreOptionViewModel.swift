@@ -70,7 +70,9 @@ final class ChooseRestoreOptionViewModel: BaseICloudRestoreViewModel {
                 } else if error != nil {
                     self.notificationService.showDefaultErrorNotification()
                 }
-                self.isLoading = nil
+                DispatchQueue.main.async {
+                    self.isLoading = nil
+                }
             }
 
             self.optionChosen.send(process)
@@ -120,7 +122,9 @@ final class ChooseRestoreOptionViewModel: BaseICloudRestoreViewModel {
     private func restore(icloudAccount: RawAccount) {
         isLoading = .keychain
         let process = ReactiveProcess<RawAccount>(data: icloudAccount) { [weak self] _ in
-            self?.isLoading = nil
+            DispatchQueue.main.async {
+                self?.isLoading = nil
+            }
         }
         authenticate(completion: { [weak self] success in
             if success {

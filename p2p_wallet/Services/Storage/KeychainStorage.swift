@@ -7,6 +7,7 @@ import KeychainSwift
 import RxCocoa
 import RxSwift
 import SolanaSwift
+import Resolver
 
 class KeychainStorage {
     // MARK: - Constants
@@ -153,6 +154,7 @@ class KeychainStorage {
         localKeychain.delete(pincodeAttemptsKey)
 
         removeAccountCache()
+        Resolver.resolve(UserSessionCache.self).clear()
     }
 
     private func removeAccountCache() {

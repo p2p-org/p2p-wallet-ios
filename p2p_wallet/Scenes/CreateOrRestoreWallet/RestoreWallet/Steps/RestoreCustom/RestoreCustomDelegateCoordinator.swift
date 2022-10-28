@@ -53,10 +53,18 @@ final class RestoreCustomDelegatedCoordinator: DelegatedCoordinator<RestoreCusto
         helpLauncher.launch()
     }
 
-    private func openTermAndCondition() {
+    private func openTermsOfService() {
         let viewController = WLMarkdownVC(
-            title: L10n.termsOfUse.uppercaseFirst,
+            title: L10n.termsOfService,
             bundledMarkdownTxtFileName: "Terms_of_service"
+        )
+        rootViewController?.present(viewController, animated: true)
+    }
+
+    private func openPrivacyPolicy() {
+        let viewController = WLMarkdownVC(
+            title: L10n.privacyPolicy,
+            bundledMarkdownTxtFileName: "Privacy_policy"
         )
         rootViewController?.present(viewController, animated: true)
     }
@@ -316,7 +324,8 @@ private extension RestoreCustomDelegatedCoordinator {
             onCompletion: { [stateMachine] in
                 Task { _ = try await stateMachine <- .enterPhone }
             },
-            onTermAndCondition: { [weak self] in self?.openTermAndCondition() },
+            onTermsOfService: { [weak self] in self?.openTermsOfService() },
+            onPrivacyPolicy: { [weak self] in self?.openPrivacyPolicy() },
             onInfo: { [weak self] in self?.openHelp() }
         )
         return UIHostingController(rootView: view)

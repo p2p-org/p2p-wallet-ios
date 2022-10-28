@@ -27,6 +27,10 @@ class RenBTCStatusService: RenBTCStatusServiceType {
     private var lamportsPerSignature: Lamports?
     private var rentExemptMinimum: Lamports?
 
+    private var renBTCMint: PublicKey {
+        Defaults.apiEndPoint.network == .mainnetBeta ? .renBTCMint : .renBTCMintDevnet
+    }
+
     func load() async throws {
         try await orcaSwap.load()
 
@@ -67,49 +71,80 @@ class RenBTCStatusService: RenBTCStatusServiceType {
         }
     }
 
-    func createAccount(payingFeeAddress address: String, payingFeeMintAddress mint: String) async throws {
-        guard let address = try? PublicKey(string: address),
-              let mint = try? PublicKey(string: mint) else { throw SolanaError.unknown }
+    func createAccount(payingFeeAddress address: String?, payingFeeMintAddress mint: String?) async throws {
         guard let account = accountStorage.account else { throw SolanaError.unauthorized }
 
-        // prepare transaction
+        let feeCalculator: FeeCalculator?
+        let payingFeeToken: FeeRelayerSwift.TokenAccount?
+        let signers: [Account]
+
+        // CASE 1: User is paying for renBTC creation
+        if let address = address,
+           let mint = mint
+        {
+            feeCalculator = nil // use default solana's feeCalculator
+            payingFeeToken = .init(
+                address: try PublicKey(string: address),
+                mint: try PublicKey(string: mint)
+            )
+            signers = [account]
+        }
+
+        // CASE 2: Free renBTC creation
+        else {
+            class RenBTCFreeFeeCalculator: FeeCalculator {
+                func calculateNetworkFee(transaction _: SolanaSwift.Transaction) throws -> SolanaSwift.FeeAmount {
+                    .zero
+                }
+            }
+            feeCalculator = RenBTCFreeFeeCalculator()
+            payingFeeToken = nil
+            signers = []
+        }
+
+        // preparing process
         let feePayer = try await feeRelayerContextManager.getCurrentContext().feePayerAddress
         async let preparing = blockchainClient.prepareTransaction(
             instructions: [
                 AssociatedTokenProgram.createAssociatedTokenAccountInstruction(
-                    mint: .renBTCMint,
+                    mint: renBTCMint,
                     owner: account.publicKey,
                     payer: feePayer
                 ),
             ],
-            signers: [account],
+            signers: signers,
             feePayer: feePayer,
-            feeCalculator: nil
+            feeCalculator: feeCalculator
         )
 
+        // updating process
         async let updating: () = feeRelayerContextManager.update()
 
+        // run concurrently
         let (preparedTransaction, _) = try await(preparing, updating)
 
+        // get context
         let context = try await feeRelayerContextManager.getCurrentContext()
+
+        // relay transaction
         let tx = try await feeRelayer.topUpAndRelayTransaction(
             context,
             preparedTransaction,
-            fee: .init(address: address, mint: mint),
+            fee: payingFeeToken,
             config: .init(
                 operationType: .transfer,
-                currency: mint.base58EncodedString
+                currency: mint ?? renBTCMint.base58EncodedString
             )
         )
 
-        try await solanaAPIClient.waitForConfirmation(signature: tx, ignoreStatus: true)
+//        try await solanaAPIClient.waitForConfirmation(signature: tx, ignoreStatus: true)
 
         walletsRepository.batchUpdate { wallets in
             guard let string = wallets.first(where: { $0.isNativeSOL })?.pubkey,
                   let nativeWalletAddress = try? PublicKey(string: string),
                   let renBTCAddress = try? PublicKey.associatedTokenAddress(
                       walletAddress: nativeWalletAddress,
-                      tokenMintAddress: .renBTCMint
+                      tokenMintAddress: renBTCMint
                   )
             else { return wallets }
 

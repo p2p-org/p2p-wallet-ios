@@ -21,7 +21,6 @@ class SocialSignInViewModel: BaseViewModel {
     enum Loading {
         case appleButton
         case googleButton
-        case other
     }
 
     @Injected var notificationService: NotificationService
@@ -86,7 +85,9 @@ class SocialSignInViewModel: BaseViewModel {
                     self?.notificationService.showDefaultErrorNotification()
                 }
             }
-            self?.loading = nil
+            DispatchQueue.main.async {
+                self?.loading = nil
+            }
         }
     }
 }

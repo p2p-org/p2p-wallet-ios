@@ -6,10 +6,12 @@
 //
 
 import Resolver
+import SolanaSwift
 import SwiftUI
 
 struct DebugMenuView: View {
     @ObservedObject private var viewModel: DebugMenuViewModel
+    @ObservedObject private var feeRelayerConfig = FeeRelayConfig.shared
     @ObservedObject private var onboardingConfig = OnboardingConfig.shared
 
     init(viewModel: DebugMenuViewModel) {
@@ -32,12 +34,33 @@ struct DebugMenuView: View {
                         }
                     }
                 }
+                Section(header: Text("Fee relayer")) {
+                    Toggle("Disable free transaction", isOn: $feeRelayerConfig.disableFeeTransaction)
+                        .valueChanged(value: feeRelayerConfig.disableFeeTransaction) { newValue in
+                            #if DEBUG
+                            showDebugger(false)
+                            #endif
+                            
+                            let app: AppEventHandlerType = Resolver.resolve()
+                            app.delegate?.refresh()
+                        }
+                }
 
                 Section(header: Text("Onboarding configurations")) {
                     TextFieldRow(title: "Torus:", content: $onboardingConfig.torusEndpoint)
                     TextFieldRow(title: "Google:", content: $onboardingConfig.torusGoogleVerifier)
                     TextFieldRow(title: "Apple", content: $onboardingConfig.torusAppleVerifier)
                     TextFieldRow(title: "OTP Resend", content: $onboardingConfig.enterOTPResend)
+                }
+
+                Section(header: Text("Solana endpoint")) {
+                    Text("Selected: \(viewModel.selectedEndpoint?.address ?? "Unknown")")
+                    Picker("URL", selection: $viewModel.selectedEndpoint) {
+                        Text("Unknown").tag(nil as APIEndPoint?)
+                        ForEach(viewModel.solanaEndpoints, id: \.self) { endpoint in
+                            Text(endpoint.address).tag(endpoint as APIEndPoint?)
+                        }
+                    }
                 }
 
                 Section(header: Text("Mocked device share")) {
