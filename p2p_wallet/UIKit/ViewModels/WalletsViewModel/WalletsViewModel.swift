@@ -174,10 +174,13 @@ class WalletsViewModel: BEListViewModel<Wallet> {
                 var newWallets = newData
                     .filter { wl in !data.contains(where: { $0.pubkey == wl.pubkey }) }
                     .filter { $0.lamports != 0 }
-                newWallets = self.mapPrices(wallets: newWallets)
-                newWallets = self.mapVisibility(wallets: newWallets)
-                data.append(contentsOf: newWallets)
-                data.sort(by: Wallet.defaultSorter)
+                
+                if !newWallets.isEmpty {
+                    newWallets = self.mapPrices(wallets: newWallets)
+                    newWallets = self.mapVisibility(wallets: newWallets)
+                    data.append(contentsOf: newWallets)
+                    data.sort(by: Wallet.defaultSorter)
+                }
                 
                 // save timestamp
                 await MainActor.run {
