@@ -46,9 +46,17 @@ extension History {
                 .mapToVoid()
 
             let copyAddress = fromView.addressClicked
-                .compactMap {
-                    let addresses = transaction.getRawAddresses()
-                    return addresses.from ?? addresses.to
+                .compactMap { keyPath in
+                    switch keyPath {
+                    case \.address:
+                        return transaction.getAddress()
+                    case \.addresses.from:
+                        return transaction.getRawAddresses().from
+                    case \.addresses.to:
+                        return transaction.getRawAddresses().to
+                    default:
+                        return nil
+                    }
                 }
                 .do(onNext: { clipboardManager.copyToClipboard($0) })
                 .mapToVoid()
@@ -82,6 +90,7 @@ private extension ParsedTransaction {
             transactionId: signature?
                 .truncatingMiddle(numOfSymbolsRevealed: 9, numOfSymbolsRevealedInSuffix: 9) ?? "",
             address: getAddress()?.truncatingMiddle(numOfSymbolsRevealed: 9, numOfSymbolsRevealedInSuffix: 9),
+            addresses: getAddresses(),
             username: username,
             fee: mapFee(),
             status: .init(text: status.label, color: status.indicatorColor)
@@ -161,11 +170,18 @@ private extension ParsedTransaction {
 
     func getAddresses() -> (from: String?, to: String?) {
         let (from, to) = getRawAddresses()
-
-        return (
-            from: from?.truncatingMiddle(numOfSymbolsRevealed: 9, numOfSymbolsRevealedInSuffix: 9),
-            to: to?.truncatingMiddle(numOfSymbolsRevealed: 9, numOfSymbolsRevealedInSuffix: 9)
-        )
+        switch info {
+        case let transaction as TransferInfo:
+            switch transaction.transferType {
+            default:
+                return (from: nil, to: nil)
+            }
+        default:
+            return (
+                from: from?.truncatingMiddle(numOfSymbolsRevealed: 9, numOfSymbolsRevealedInSuffix: 9),
+                to: to?.truncatingMiddle(numOfSymbolsRevealed: 9, numOfSymbolsRevealedInSuffix: 9)
+            )
+        }
     }
 
     func getAddress() -> String? {
@@ -183,7 +199,7 @@ private extension ParsedTransaction {
         default:
             break
         }
-        return to
+        return nil
     }
 
     func getRawAddresses() -> (from: String?, to: String?) {
@@ -210,6 +226,7 @@ private extension ParsedTransaction {
         }
         return (from: from, to: to)
     }
+
     func getUsername() -> Observable<String?> {
         Single<String?>.async {
             let nameService: NameService = Resolver.resolve()
@@ -245,7 +262,7 @@ private extension ParsedTransaction {
         let swapFee = ((feeAmount?.transaction ?? 0) + (feeAmount?.accountBalances ?? 0))
             .convertToBalance(decimals: payingWallet.token.decimals)
 
-        if amount == 0, transferAmount == 0, swapFee == 0 {
+        if feeAmount?.transaction == 0 {
             return NSMutableAttributedString().text(L10n.freeByKeyApp, size: 16, color: ._4d77ff)
         } else {
             return NSMutableAttributedString().text(
@@ -262,6 +279,7 @@ private extension ParsedTransaction {
 
 extension History.TransactionViewModel: ViewModel {
     struct Input: ViewModelIO {
+        typealias Model = History.TransactionView.Model
         let view = View()
         let coord = Coord()
 
@@ -269,7 +287,7 @@ extension History.TransactionViewModel: ViewModel {
             let viewDidLoad = PublishRelay<Void>()
             let transactionIdClicked = PublishRelay<Void>()
             let usernameClicked = PublishRelay<Void>()
-            let addressClicked = PublishRelay<Void>()
+            let addressClicked = PublishRelay<KeyPath<Model, String?>>()
             let doneClicked = PublishRelay<Void>()
             let transactionDetailClicked = PublishRelay<Void>()
         }

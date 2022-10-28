@@ -45,7 +45,11 @@ extension History {
         private lazy var usernameLabel = descriptionLabel()
         private lazy var usernameView = usernameView(title: L10n.username, label: usernameLabel)
         private lazy var addressLabel = descriptionLabel()
-        private lazy var addressView = addressView(title: L10n.to, label: addressLabel)
+        private lazy var addressView = addressView(title: L10n.address, label: addressLabel, keyPath: \.address)
+        private lazy var addressFromLabel = descriptionLabel()
+        private lazy var addressFromView = addressView(title: L10n.from, label: addressFromLabel, keyPath: \.addresses.from)
+        private lazy var addressToLabel = descriptionLabel()
+        private lazy var addressToView = addressView(title: L10n.to, label: addressToLabel, keyPath: \.addresses.to)
 
         private let modelRelay = PublishRelay<Model>()
         private var model: Driver<Model> { modelRelay.asDriver() }
@@ -54,7 +58,7 @@ extension History {
 
         fileprivate var transactionIdClicked = PublishRelay<Void>()
         fileprivate var usernameClicked = PublishRelay<Void>()
-        fileprivate var addressClicked = PublishRelay<Void>()
+        fileprivate var addressClicked = PublishRelay<KeyPath<Model, String?>>()
         fileprivate var doneClicked = PublishRelay<Void>()
         fileprivate var transactionDetailClicked = PublishRelay<Void>()
 
@@ -80,6 +84,8 @@ extension History {
                                 BEVStack(spacing: 23) {
                                     usernameView
                                     addressView
+                                    addressFromView.setup { $0.isHidden = true }
+                                    addressToView.setup { $0.isHidden = true }
                                     feeView
                                     statusView
                                     transactionIdView
@@ -149,12 +155,12 @@ extension History {
             }
         }
 
-        private func addressView(title: String, label: UILabel) -> UIView {
+        private func addressView(title: String, label: UILabel, keyPath: KeyPath<Model, String?>) -> UIView {
             BEHStack(spacing: descriptionSpacing, alignment: .top) {
-                descriptionTitleLabel(text: L10n.address)
+                descriptionTitleLabel(text: title)
                 BEHStack(spacing: 6, alignment: .center) {
                     label.setup {
-                        model.map { $0.address }
+                        model.map { $0[keyPath: keyPath] }
                             .drive($0.rx.text)
                             .disposed(by: disposeBag)
                     }
@@ -168,7 +174,7 @@ extension History {
                 .setup { view in
                     view.rx.tapGesture()
                         .when(.recognized)
-                        .mapToVoid()
+                        .map { _ in keyPath }
                         .bind(to: addressClicked)
                         .disposed(by: disposeBag)
                 }
@@ -260,6 +266,12 @@ extension History {
             usernameLabel.text = model.username
             addressView.isHidden = model.address == nil
             addressLabel.text = model.address
+
+            addressFromView.isHidden = model.addresses.from == nil
+            addressFromLabel.text = model.addresses.from
+            addressToView.isHidden = model.addresses.to == nil
+            addressToLabel.text = model.addresses.to
+
             modelRelay.accept(model)
             hideSkeleton()
         }
@@ -341,6 +353,7 @@ extension History.TransactionView {
         let blockTime: String
         let transactionId: String
         let address: String?
+        let addresses: (from: String?, to: String?)
         let username: String?
         let fee: NSAttributedString?
         let status: Status
@@ -361,5 +374,5 @@ extension Reactive where Base == History.TransactionView {
     var doneClicked: Observable<Void> { base.doneClicked.asObservable() }
     var transactionDetailClicked: Observable<Void> { base.transactionDetailClicked.asObservable() }
     var usernameClicked: Observable<Void> { base.usernameClicked.asObservable() }
-    var addressClicked: Observable<Void> { base.addressClicked.asObservable() }
+    var addressClicked: Observable<KeyPath<Base.Model, String?>> { base.addressClicked.asObservable() }
 }
