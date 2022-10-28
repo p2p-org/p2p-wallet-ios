@@ -10,6 +10,8 @@ import Foundation
 import SolanaSwift
 import TransactionParser
 import UIKit
+import NameService
+import Resolver
 
 extension History {
     @MainActor
@@ -26,15 +28,34 @@ extension History {
 
             let showWebView = fromView.transactionDetailClicked
                 .map { _ in "https://explorer.solana.com/tx/\(transaction.signature ?? "")" }
-            let model = fromView.viewDidLoad.map { _ in transaction.mapTransaction(pricesService: pricesService) }
+            let model = Publishers.combineLatest(fromView.viewDidLoad, transaction.getUsername())
+                .map { _, username in
+                    transaction.mapTransaction(
+                        pricesService: pricesService,
+                        username: username
+                    )
+                }
             let copyTransactionId = fromView.transactionIdClicked
                 .map { _ in transaction.signature ?? "" }
                 .handleEvents(receiveOutput: { clipboardManager.copyToClipboard($0) })
                 .map { _ in () }
 
+            let copyUsername = Observable.combineLatest(fromView.usernameClicked, model)
+                .compactMap { $0.1.username }
+                .do(onNext: { clipboardManager.copyToClipboard($0) })
+                .mapToVoid()
+
+            let copyAddress = fromView.addressClicked
+                .compactMap {
+                    let addresses = transaction.getRawAddresses()
+                    return addresses.from ?? addresses.to
+                }
+                .do(onNext: { clipboardManager.copyToClipboard($0) })
+                .mapToVoid()
+
             let view = Output.View(
                 model: model.eraseToAnyPublisher(),
-                copied: copyTransactionId.eraseToAnyPublisher()
+                copied: Publishers.merge(copyTransactionId, copyUsername, copyAddress).receive(on: RunLoop.main).eraseToAnyPublisher()
             )
             let coord = Output.Coord(
                 done: fromView.doneClicked.eraseToAnyPublisher(),
@@ -49,7 +70,8 @@ extension History {
 
 private extension ParsedTransaction {
     func mapTransaction(
-        pricesService: PricesServiceType
+        pricesService: PricesServiceType,
+        username: String?
     ) -> History.TransactionView.Model {
         let amounts = mapAmounts(pricesService: pricesService)
         return .init(
@@ -59,10 +81,10 @@ private extension ParsedTransaction {
             blockTime: blockTime?.string(withFormat: "MMMM dd, yyyy @ HH:mm a") ?? "",
             transactionId: signature?
                 .truncatingMiddle(numOfSymbolsRevealed: 9, numOfSymbolsRevealedInSuffix: 9) ?? "",
-            addresses: getAddresses(),
+            address: getAddress()?.truncatingMiddle(numOfSymbolsRevealed: 9, numOfSymbolsRevealedInSuffix: 9),
+            username: username,
             fee: mapFee(),
-            status: .init(text: status.label, color: status.indicatorColor),
-            blockNumber: "#\(slot ?? 0)"
+            status: .init(text: status.label, color: status.indicatorColor)
         )
     }
 
@@ -138,6 +160,33 @@ private extension ParsedTransaction {
     }
 
     func getAddresses() -> (from: String?, to: String?) {
+        let (from, to) = getRawAddresses()
+
+        return (
+            from: from?.truncatingMiddle(numOfSymbolsRevealed: 9, numOfSymbolsRevealedInSuffix: 9),
+            to: to?.truncatingMiddle(numOfSymbolsRevealed: 9, numOfSymbolsRevealedInSuffix: 9)
+        )
+    }
+
+    func getAddress() -> String? {
+        let (from, to) = getRawAddresses()
+        switch info {
+        case let transaction as TransferInfo:
+            switch transaction.transferType {
+            case .send:
+                return to
+            case .receive:
+                return from
+            default:
+                return to
+            }
+        default:
+            break
+        }
+        return to
+    }
+
+    func getRawAddresses() -> (from: String?, to: String?) {
         let transaction = info
 
         let from: String?
@@ -159,11 +208,32 @@ private extension ParsedTransaction {
         default:
             to = nil
         }
-
-        return (
-            from: from?.truncatingMiddle(numOfSymbolsRevealed: 9, numOfSymbolsRevealedInSuffix: 9),
-            to: to?.truncatingMiddle(numOfSymbolsRevealed: 9, numOfSymbolsRevealedInSuffix: 9)
-        )
+        return (from: from, to: to)
+    }
+    func getUsername() -> Observable<String?> {
+        Single<String?>.async {
+            let nameService: NameService = Resolver.resolve()
+            let address: String?
+            switch info {
+            case let transaction as TransferInfo:
+                switch transaction.transferType {
+                case .send:
+                    address = transaction.destinationAuthority ?? transaction.destination?.pubkey
+                case .receive:
+                    address = transaction.authority ?? transaction.source?.pubkey
+                default:
+                    address = transaction.destinationAuthority ?? transaction.destination?.pubkey
+                }
+            default:
+                address = nil
+            }
+            guard let address = address else { return nil }
+            do {
+                return try await nameService.getName(address)
+            } catch {
+                return nil
+            }
+        }.asObservable()
     }
 
     func mapFee() -> NSAttributedString? {
@@ -200,6 +270,8 @@ extension History.TransactionViewModel: ViewModel {
             let transactionIdClicked = PassthroughSubject<Void, Never>()
             let doneClicked = PassthroughSubject<Void, Never>()
             let transactionDetailClicked = PassthroughSubject<Void, Never>()
+            let usernameClicked = PassthroughSubject<Void, Never>()
+            let addressClicked = PassthroughSubject<Void, Never>()
         }
 
         class Coord {}

@@ -70,7 +70,7 @@ class AccountsObservableServiceImpl: AccountObservableService, SolanaSocketEvent
         if !isConnected { solanaSocket.connect() }
         if await subscribesManager.contains(account: account) { return }
 
-        let id = try await solanaSocket.accountSubscribe(publickey: account)
+        let id = try await solanaSocket.accountSubscribe(publickey: account, commitment: "finalized")
         await subscribesManager.accept(account: account, id: id)
     }
 
@@ -93,7 +93,7 @@ class AccountsObservableServiceImpl: AccountObservableService, SolanaSocketEvent
         Task {
             guard
                 let pubkey = await subscribesManager[notification.params?.subscription],
-                let lamport = notification.result?.lamports
+                let lamport: Lamports = Lamports(notification.params?.result?.value.data?.parsed.info.tokenAmount.amount ?? "")
             else { return }
 
             publisher.send(.init(pubkey: pubkey, lamports: lamport))
@@ -101,7 +101,9 @@ class AccountsObservableServiceImpl: AccountObservableService, SolanaSocketEvent
     }
 
     func subscribed(socketId: UInt64, id: String) {
-        Task { await subscribesManager.accept(socketId: socketId, id: id) }
+        Task {
+            await subscribesManager.accept(socketId: socketId, id: id)
+        }
     }
 
     func error(error _: Error?) {

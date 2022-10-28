@@ -41,17 +41,23 @@ extension History {
             textColor: .gray,
             numberOfLines: 1
         )
-        private lazy var fromAddressLabel = descriptionLabel()
-        private lazy var fromAddressView = addressView(title: L10n.from, label: fromAddressLabel)
-        private lazy var toAddressLabel = descriptionLabel()
-        private lazy var toAddressView = addressView(title: L10n.to, label: toAddressLabel)
+        private lazy var usernameLabel = descriptionLabel()
+        private lazy var usernameView = usernameView(title: L10n.username, label: usernameLabel)
+        private lazy var addressLabel = descriptionLabel()
+        private lazy var addressView = addressView(title: L10n.to, label: addressLabel)
 
         private let modelRelay = PassthroughSubject<Model, Never>()
-        private var modelPublisher: AnyPublisher<Model, Never> { modelRelay.eraseToAnyPublisher() }
+        private var modelPublisher: AnyPublisher<Model, Never> { modelRelay.receive(on: RunLoop.main).eraseToAnyPublisher() }
+        
+        private let usernameRelay = PassthroughSubject<String?, Never>()
+        private var username: AnyPublisher<String?, Never> { usernameRelay.receive(on: RunLoop.main).asDriver() }
 
         var transactionIdClicked = PassthroughSubject<Void, Never>()
         var doneClicked = PassthroughSubject<Void, Never>()
         var transactionDetailClicked = PassthroughSubject<Void, Never>()
+
+        fileprivate var usernameClicked = PassthroughSubject<Void, Never>()
+        fileprivate var addressClicked = PassthroughSubject<Void, Never>()
 
         private var subscriptions = [AnyCancellable]()
 
@@ -68,56 +74,65 @@ extension History {
 //        var transactionDetailClicked: Observable<Void> { base.transactionDetailClicked.asObservable() }
 
         override func build() -> UIView {
-            BESafeArea {
-                BEVStack(spacing: 28) {
-                    BEVStack(spacing: 30) {
-                        BEVStack(spacing: 30, alignment: .center) {
-                            imageView.padding(.init(only: .top, inset: 24))
-                            BEVStack(spacing: 12, alignment: .center) {
-                                amountLabel
-                                usdAmountLabel
-                                blockTimeLabel
+            BEZStack {
+                BEZStackPosition(mode: .fill) {
+                    BESafeArea {
+                        BEVStack(spacing: 28) {
+                            BEVStack(spacing: 30) {
+                                BEVStack(spacing: 30, alignment: .center) {
+                                    imageView.padding(.init(only: .top, inset: 24))
+                                    BEVStack(spacing: 12, alignment: .center) {
+                                        amountLabel
+                                            .frame(height: 16)
+                                        usdAmountLabel
+                                            .frame(height: 16)
+                                        blockTimeLabel
+                                            .frame(height: 16)
+                                    }
+                                }
+                                BEVStack(spacing: 23) {
+                                    usernameView
+                                    addressView
+                                    feeView
+                                    statusView
+                                    transactionIdView
+                                    UIView().setup {
+                                        $0.setContentCompressionResistancePriority(.defaultLow, for: .vertical)
+                                        $0.setContentHuggingPriority(.defaultHigh, for: .vertical)
+                                    }
+                                }
+                            }
+                            BEVStack(spacing: 8) {
+                                UIButton(
+                                    height: 64,
+                                    backgroundColor: ._5887ff,
+                                    label: L10n.done,
+                                    labelFont: .systemFont(ofSize: 17, weight: .medium)
+                                ).setup {
+                                    $0.layer.cornerRadius = 12
+                                    $0.rx.controlEvent(.touchUpInside)
+                                        .bind(to: doneClicked)
+                                        .disposed(by: disposeBag)
+                                }
+                                UIButton(
+                                    height: 64,
+                                    label: L10n.transactionDetail,
+                                    labelFont: .systemFont(ofSize: 17, weight: .medium),
+                                    textColor: ._5887ff
+                                ).setup {
+                                    $0.rx.controlEvent(.touchUpInside)
+                                        .bind(to: transactionDetailClicked)
+                                        .disposed(by: disposeBag)
+                                }
+                                .padding(.init(only: .bottom, inset: 8))
                             }
                         }
-                        BEVStack(spacing: 23) {
-                            transactionIdView
-                            fromAddressView
-                            toAddressView
-                            feeView
-                            statusView
-                            blockNumberView
-                        }
-                    }
-                    BEVStack(spacing: 8) {
-                        UIButton(
-                            height: 64,
-                            backgroundColor: ._5887ff,
-                            label: L10n.done,
-                            labelFont: .systemFont(ofSize: 17, weight: .medium)
-                        ).setup {
-                            $0.layer.cornerRadius = 12
-                            $0.tapPublisher
-                                .sink { [weak self] _ in
-                                    self?.doneClicked.send()
-                                }
-                                .store(in: &subscriptions)
-                        }
-                        UIButton(
-                            height: 64,
-                            label: L10n.transactionDetail,
-                            labelFont: .systemFont(ofSize: 17, weight: .medium),
-                            textColor: ._5887ff
-                        ).setup {
-                            $0.tapPublisher
-                                .sink { [weak self] _ in
-                                    self?.transactionDetailClicked.send()
-                                }
-                                .store(in: &subscriptions)
-                        }
-                        .padding(.init(only: .bottom, inset: 8))
+                        .padding(.init(x: 16, y: 0))
                     }
                 }
-                .padding(.init(x: 16, y: 0))
+                
+                placeholder
+                    .setup { $0.isUserInteractionEnabled = false }
             }
         }
 
@@ -146,9 +161,53 @@ extension History {
 
         private func addressView(title: String, label: UILabel) -> UIView {
             BEHStack(spacing: descriptionSpacing, alignment: .top) {
-                descriptionTitleLabel(text: title)
-                    .withContentHuggingPriority(.required, for: .horizontal)
-                label
+                descriptionTitleLabel(text: L10n.address)
+                BEHStack(spacing: 6, alignment: .center) {
+                    label.setup {
+                        model.map { $0.address }
+                            .drive($0.rx.text)
+                            .disposed(by: disposeBag)
+                    }
+                    UIImageView(
+                        width: 20,
+                        height: 20,
+                        image: .transactionsCopy,
+                        tintColor: .textSecondary
+                    )
+                }
+                .setup { view in
+                    view.rx.tapGesture()
+                        .when(.recognized)
+                        .mapToVoid()
+                        .bind(to: addressClicked)
+                        .disposed(by: disposeBag)
+                }
+            }
+        }
+
+        private func usernameView(title: String, label: UILabel) -> UIView {
+            BEHStack(spacing: descriptionSpacing, alignment: .top) {
+                descriptionTitleLabel(text: L10n.username)
+                BEHStack(spacing: 6, alignment: .center) {
+                    label.setup {
+                        username
+                            .drive($0.rx.text)
+                            .disposed(by: disposeBag)
+                    }
+                    UIImageView(
+                        width: 20,
+                        height: 20,
+                        image: .transactionsCopy,
+                        tintColor: .textSecondary
+                    )
+                }
+                .setup { view in
+                    view.rx.tapGesture()
+                        .when(.recognized)
+                        .mapToVoid()
+                        .bind(to: usernameClicked)
+                        .disposed(by: disposeBag)
+                }
             }
         }
 
@@ -180,19 +239,6 @@ extension History {
             }
         }
 
-        private var blockNumberView: UIView {
-            BEHStack(spacing: descriptionSpacing, alignment: .top) {
-                descriptionTitleLabel(text: L10n.blockNumber)
-                    .withContentHuggingPriority(.required, for: .horizontal)
-                descriptionLabel().setup {
-                    modelPublisher.map(\.blockNumber)
-                        .map(Optional.init)
-                        .assign(to: \.text, on: $0)
-                        .store(in: &subscriptions)
-                }
-            }
-        }
-
         private func descriptionTitleLabel(text: String) -> UILabel {
             UILabel(
                 text: text,
@@ -218,12 +264,82 @@ extension History {
             usdAmountLabel.text = model.usdAmount
             usdAmountLabel.isHidden = model.usdAmount == nil
             blockTimeLabel.text = model.blockTime
-            toAddressView.isHidden = model.addresses.to == nil
-            toAddressLabel.text = model.addresses.to
-            fromAddressView.isHidden = model.addresses.from == nil
-            fromAddressLabel.text = model.addresses.from
-
+            usernameView.isHidden = model.username == nil
+            if usernameView.isHidden {
+                usernameView.removeFromSuperview()
+            }
+            usernameLabel.text = model.username
+            addressView.isHidden = model.address == nil
+            addressLabel.text = model.address
             modelRelay.send(model)
+            hideSkeleton()
+        }
+
+        // MARK: - Skeleton
+
+        func skeletonPlaceholder() -> UIView {
+            BEZStackPosition(mode: .fill) {
+                BESafeArea {
+                    BEVStack(spacing: 28) {
+                        BEVStack(spacing: 30, alignment: .center) {
+                            TransactionImageView(
+                                size: 64,
+                                backgroundColor: .grayPanel,
+                                cornerRadius: 16,
+                                basicIconSize: 32,
+                                miniIconsSize: 39,
+                                statusIconSize: .init(width: 24, height: 24)
+                            )
+                            .setup { $0.layer.cornerRadius = 16 }
+                            BEVStack(spacing: 12, alignment: .center) {
+                                UILabel(text: "             ")
+                                    .frame(height: 16)
+                                UILabel(text: "             ")
+                                UILabel(text: "                  ")
+                            }
+                        }
+                        .padding(.init(only: .top, inset: 24))
+                        .setup { stack in
+                            stack.showLoader()
+                        }
+                        BEVStack(spacing: 23) {
+                            usernameView(title: L10n.username, label: UILabel(
+                                text: "              ")
+                            )
+                            .setup { $0.showLoader() }
+                            usernameView(title: L10n.username, label: UILabel(
+                                text: "              ")
+                            )
+                            .setup { $0.showLoader() }
+                            usernameView(title: L10n.username, label: UILabel(
+                                text: "              ")
+                            )
+                            .setup { $0.showLoader() }
+                            usernameView(title: L10n.username, label: UILabel(
+                                text: "              ")
+                            )
+                            .setup { $0.showLoader() }
+                            usernameView(title: L10n.username, label: UILabel(
+                                text: "              ")
+                            )
+                            .setup { $0.showLoader() }
+                            UIView()
+                        }
+                    }
+                }
+                    .padding(.init(x: 16, y: 0))
+                    .setup { $0.isUserInteractionEnabled = false }
+            }
+        }
+
+        lazy var placeholder = skeletonPlaceholder()
+
+        func hideSkeleton() {
+            UIView.animate(withDuration: 0.5) {
+                self.placeholder.isHidden = true
+                self.placeholder.alpha = 0
+            }
+            placeholder.hideLoader()
         }
     }
 }
@@ -235,14 +351,26 @@ extension History.TransactionView {
         let usdAmount: String?
         let blockTime: String
         let transactionId: String
-        let addresses: (from: String?, to: String?)
+        let address: String?
+        let username: String?
         let fee: NSAttributedString?
         let status: Status
-        let blockNumber: String
     }
 
     struct Status {
         let text: String
         let color: UIColor
     }
+}
+
+extension Reactive where Base == History.TransactionView {
+    var model: Binder<Base.Model> {
+        Binder(base) { $0.setModel($1) }
+    }
+
+    var transactionIdClicked: Observable<Void> { base.transactionIdClicked.asObservable() }
+    var doneClicked: Observable<Void> { base.doneClicked.asObservable() }
+    var transactionDetailClicked: Observable<Void> { base.transactionDetailClicked.asObservable() }
+    var usernameClicked: Observable<Void> { base.usernameClicked.asObservable() }
+    var addressClicked: Observable<Void> { base.addressClicked.asObservable() }
 }

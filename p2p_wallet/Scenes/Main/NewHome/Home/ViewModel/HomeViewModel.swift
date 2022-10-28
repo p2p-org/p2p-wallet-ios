@@ -85,7 +85,9 @@ class HomeViewModel: BaseViewModel {
 
     func copyToClipboard() {
         if let name = nameStorage.getName(), !name.isEmpty {
-            clipboardManager.copyToClipboard("\(name) \(walletsRepository.nativeWallet?.pubkey ?? "")")
+            clipboardManager.copyToClipboard(
+                "\(name.withNameServiceDomain()) \(walletsRepository.nativeWallet?.pubkey ?? "")"
+            )
         } else {
             clipboardManager.copyToClipboard(walletsRepository.nativeWallet?.pubkey ?? "")
         }

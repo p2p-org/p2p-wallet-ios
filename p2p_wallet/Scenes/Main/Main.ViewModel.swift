@@ -55,7 +55,7 @@ extension Main {
             }
 
             Task {
-                guard nameStorage.getName() == nil else { return }
+                // guard nameStorage.getName() == nil else { return }
                 guard let account = accountStorage.account else { return }
                 guard let name = try await nameService.getName(account.publicKey.base58EncodedString) else { return }
                 nameStorage.save(name: name)

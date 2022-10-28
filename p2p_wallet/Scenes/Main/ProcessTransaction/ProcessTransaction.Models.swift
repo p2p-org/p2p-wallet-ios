@@ -85,7 +85,7 @@ extension ProcessTransaction {
                 poolsPair: poolsPair,
                 amount: amount.toLamport(decimals: sourceWallet.token.decimals),
                 slippage: slippage
-            ).first ?? ""
+            ).last ?? ""
         }
 
         var networkFees: (total: Lamports, token: Token)? {

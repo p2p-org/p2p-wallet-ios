@@ -6,6 +6,7 @@
 //
 
 import Combine
+import AnalyticsManager
 import Foundation
 import Resolver
 import SolanaSwift
@@ -51,6 +52,7 @@ extension ConfirmReceivingBitcoin {
         @Injected private var pricesService: PricesServiceType
         @Injected private var walletsRepository: WalletsRepository
         @Injected private var userWalletManager: UserWalletManager
+        @Injected private var analyticsManager: AnalyticsManager
 
         // MARK: - Properties
 
@@ -207,6 +209,7 @@ extension ConfirmReceivingBitcoin.ViewModel: ConfirmReceivingBitcoinViewModelTyp
                     payingFeeMintAddress: payingWallet?.mintAddress
                 )
                 error = nil
+                analyticsManager.log(event: AmplitudeEvent.renbtcCreation(result: "success"))
 
                 await MainActor.run { [weak self] in
                     self?.completion?()
@@ -215,6 +218,7 @@ extension ConfirmReceivingBitcoin.ViewModel: ConfirmReceivingBitcoinViewModelTyp
                 await MainActor.run { [weak self] in
                     self?.error = error.readableDescription
                 }
+                analyticsManager.log(event: AmplitudeEvent.renbtcCreation(result: "fail"))
             }
             await MainActor.run { [weak self] in
                 self?.isLoading = false

@@ -40,11 +40,24 @@ extension History {
 
             let (input, output) = viewModel.viewIO
 
+            rx.viewWillAppear
+                .take(1)
+                .mapTo(())
+                .bind(to: input.viewDidLoad)
+                .disposed(by: disposeBag)
             customView.transactionIdClicked
                 .sink {
                     input.transactionIdClicked.send()
                 }
                 .store(in: &subscriptions)
+            customView.rx
+                .addressClicked
+                .bind(to: input.addressClicked)
+                .disposed(by: disposeBag)
+            customView.rx
+                .usernameClicked
+                .bind(to: input.usernameClicked)
+                .disposed(by: disposeBag)
             customView.doneClicked
                 .sink {
                     input.doneClicked.send()
