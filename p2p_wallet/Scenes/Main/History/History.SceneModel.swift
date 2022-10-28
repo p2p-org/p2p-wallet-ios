@@ -21,7 +21,7 @@ extension History {
         @Injected private var walletsRepository: WalletsRepository
         @Injected private var notificationService: NotificationService
         let transactionRepository = SolanaTransactionRepository()
-        let transactionParser = DefaultTransactionParser(p2pFeePayers: Defaults.p2pFeePayerPubkeys)
+        let transactionParser = DefaultTransactionParser(p2pFeePayers: ["FG4Y3yX4AAchp1HvNZ7LfzFTewF2f6nDoMDCohTFrdpT"])
 
         // MARK: - Properties
 
@@ -193,8 +193,13 @@ extension History {
                     .getTransactions(signatures: signatures.map(\.signatureInfo.signature))
                 var parsedTransactions: [ParsedTransaction] = []
 
-                for (i, trxInfo) in transactions.enumerated() {
-                    let (signature, account, symbol) = signatures[i]
+                for trxInfo in transactions {
+                    guard let trxInfo = trxInfo else { continue }
+                    guard let (signature, account, symbol) = signatures
+                        .first(where: { (signatureInfo: SignatureInfo, _, _) in
+                            signatureInfo.signature == trxInfo.transaction.signatures.first
+                        }) else { continue }
+
                     parsedTransactions.append(
                         await self.transactionParser.parse(
                             signatureInfo: signature,

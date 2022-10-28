@@ -40,19 +40,25 @@ struct SettingsView: View {
 
     private var profileSection: some View {
         Section(header: headerText(L10n.profile)) {
-            Button(
-                action: { viewModel.showView(.username) },
-                label: {
-                    cellView(image: .profileIcon, title: L10n.username) {
-                        HStack(spacing: 14) {
-                            Text(viewModel.name)
-                                .foregroundColor(Color(Asset.Colors.mountain.color))
-                                .font(uiFont: .font(of: .label1))
-                            Image(uiImage: .cellArrow)
-                                .foregroundColor(Color(Asset.Colors.mountain.color))
+            if viewModel.isNameEnabled {
+                Button(
+                    action: { viewModel.showView(.username) },
+                    label: {
+                        cellView(image: .profileIcon, title: L10n.username) {
+                            HStack(spacing: 14) {
+                                Text(viewModel.name)
+                                    .foregroundColor(Color(Asset.Colors.mountain.color))
+                                    .font(uiFont: .font(of: .label1))
+                                Image(uiImage: .cellArrow)
+                                    .foregroundColor(Color(Asset.Colors.mountain.color))
+                            }
                         }
                     }
-                }
+                )
+            }
+            Button(
+                action: { viewModel.showView(.support) },
+                label: { cellView(image: .settingsSupport, title: L10n.support.uppercaseFirst) }
             )
             Button(
                 action: {

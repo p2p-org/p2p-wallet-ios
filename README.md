@@ -1,6 +1,6 @@
-# P2P Wallet
+# Key App
 
-P2P Wallet on Solana blockchain
+Key App wallet on Solana blockchain
 
 ## Features
 
@@ -160,7 +160,7 @@ cp -R Templates/BEScene2.xctemplate ~/Library/Developer/Xcode/Templates
 
 ## Contribute
 
-We would love you for the contribution to **P2P Wallet**, check the ``LICENSE`` file for more info.
+We would love you for the contribution to **Key App**, check the ``LICENSE`` file for more info.
 
 
 ## Feature Flags

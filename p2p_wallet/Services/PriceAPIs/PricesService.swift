@@ -61,7 +61,9 @@ class PricesService {
 
     // MARK: - Properties
 
-    private var watchList = [Token(.renBTC), Token(.nativeSolana), Token(.usdc)]
+    private var watchList = [
+        Token(.renBTC), Token(.nativeSolana), Token(.usdc), Token(.eth), Token(.usdt),
+    ]
     private var timer: Timer?
     private lazy var currentPricesSubject = PricesLoadableRelay(request: .just([:]))
 

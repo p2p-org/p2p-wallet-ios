@@ -54,6 +54,10 @@ extension SendToken.ChooseRecipientAndNetwork.SelectAddress {
                     descriptionLabel.textColor = .ff9500
                 }
             } else {
+                // specific name
+                if recipient.name?.hasSuffix(.nameServiceDomain) == true {
+                    recipientIcon.image = .appIconSmall
+                }
                 descriptionLabel.isHidden = false
                 descriptionLabel.text = recipient.address
             }

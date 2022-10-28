@@ -48,7 +48,13 @@ final class StartCoordinator: Coordinator<OnboardingResult> {
 
         viewModel.termsDidTap
             .sink { [weak self] _ in
-                self?.openTerms()
+                self?.open(docType: .termsOfService)
+            }
+            .store(in: &subscriptions)
+
+        viewModel.privacyPolicyDidTap
+            .sink { [weak self] _ in
+                self?.open(docType: .privacyPolicy)
             }
             .store(in: &subscriptions)
 
@@ -141,11 +147,10 @@ final class StartCoordinator: Coordinator<OnboardingResult> {
             }.store(in: &subscriptions)
     }
 
-    private func openTerms() {
-        let vc = WLMarkdownVC(
-            title: L10n.termsOfUse,
-            bundledMarkdownTxtFileName: "Terms_of_service"
-        )
-        viewController?.present(vc, animated: true)
+    private func open(docType: TermsAndPolicyType) {
+        guard let viewController = viewController else { return }
+        coordinate(to: TermsAndPolicyCoordinator(parentController: viewController, docType: docType))
+            .sink(receiveValue: { })
+            .store(in: &subscriptions)
     }
 }
