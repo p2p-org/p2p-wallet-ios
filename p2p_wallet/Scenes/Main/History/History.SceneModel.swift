@@ -162,9 +162,7 @@ extension History {
                             timeEndFilter = timeEndFilter.addingTimeInterval(-1 * 60 * 60 * 24 * 1)
 
                             if Task.isCancelled { return }
-                            while
-                                let result = try await source.next(configuration: .init(timestampEnd: timeEndFilter)),
-                                Task.isNotCancelled
+                            while let result = try await source.next(configuration: .init(timestampEnd: timeEndFilter))
                             {
                                 let (signatureInfo, _, _) = result
 
