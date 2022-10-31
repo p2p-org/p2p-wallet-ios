@@ -15,6 +15,10 @@ extension Settings {
             self.viewModel = viewModel
             super.init()
             navigationItem.title = L10n.yourUsername
+
+            viewModel.navigationDriver
+                .drive(onNext: { [weak self] in self?.navigate(to: $0) })
+                .disposed(by: disposeBag)
         }
 
         override func build() -> UIView {
@@ -45,6 +49,17 @@ extension Settings {
                     }
 
                 }.padding(.init(x: 18, y: 0))
+            }
+        }
+
+        private func navigate(to scene: NavigatableScene?) {
+            guard let scene = scene else { return }
+            switch scene {
+            case let .share(item):
+                let vc = UIActivityViewController(activityItems: [item], applicationActivities: nil)
+                present(vc, animated: true, completion: nil)
+            default:
+                break
             }
         }
     }

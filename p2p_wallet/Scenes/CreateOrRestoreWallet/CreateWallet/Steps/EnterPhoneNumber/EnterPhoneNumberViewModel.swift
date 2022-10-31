@@ -5,6 +5,9 @@ import Onboarding
 import PhoneNumberKit
 import Reachability
 import Resolver
+#if os(iOS)
+import CoreTelephony
+#endif
 
 final class EnterPhoneNumberViewModel: BaseOTPViewModel {
     private static let defaultCountry = Country(
@@ -81,16 +84,17 @@ final class EnterPhoneNumberViewModel: BaseOTPViewModel {
 
         Task {
             let countries = try await countriesAPI.fetchCountries()
+            let defaultRegionCode = self.defaultRegionCode()
             if let phone = phone {
                 // In case we have an initial phone number
                 let parsedRegion = try? self.phoneNumberKit.parse(phone).regionID?.lowercased()
                 self.selectedCountry = countries.first(where: { country in
-                    country.code == parsedRegion ?? PhoneNumberKit.defaultRegionCode().lowercased()
+                    country.code == parsedRegion ?? defaultRegionCode
                 }) ?? countries.first ?? EnterPhoneNumberViewModel.defaultCountry
                 self.phone = phone
             } else {
                 self.selectedCountry = countries.first(where: { country in
-                    country.code == PhoneNumberKit.defaultRegionCode().lowercased()
+                    country.code == defaultRegionCode
                 }) ?? countries.first ?? EnterPhoneNumberViewModel.defaultCountry
             }
         }
@@ -223,5 +227,18 @@ final class EnterPhoneNumberViewModel: BaseOTPViewModel {
             }
         }
         return result
+    }
+}
+
+private extension EnterPhoneNumberViewModel {
+    func defaultRegionCode() -> String {
+#if os(iOS) && !targetEnvironment(simulator) && !targetEnvironment(macCatalyst)
+        let networkInfo = CTTelephonyNetworkInfo()
+        let carrier: CTCarrier? = networkInfo.serviceSubscriberCellularProviders?.values.first(where: { $0.mobileNetworkCode != nil })
+        if let isoCountryCode = carrier?.isoCountryCode {
+            return isoCountryCode.lowercased()
+        }
+#endif
+        return Locale.current.regionCode?.lowercased() ?? PhoneNumberKit.defaultRegionCode().lowercased()
     }
 }

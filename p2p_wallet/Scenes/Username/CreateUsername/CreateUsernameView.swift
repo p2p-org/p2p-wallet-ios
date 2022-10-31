@@ -37,8 +37,6 @@ struct CreateUsernameView: View {
         .onTapGesture {
             viewModel.isTextFieldFocused = false
         }
-        .navigationBarTitleDisplayMode(.inline)
-        .navigationBarItems(trailing: viewModel.isSkipEnabled ? skipButton : nil)
     }
 }
 
@@ -57,7 +55,7 @@ private extension CreateUsernameView {
                 .textStyle()
                 .padding(.top, 16)
 
-            Text(L10n.receiveAndSendCryptocurrenciesInKeyApp)
+            Text(L10n.thisIsAnEasyWayToSendAndReceiveCryptocurrenciesInKeyApp)
                 .font(.system(size: UIFont.fontSize(of: .text3), weight: .regular))
                 .textStyle()
                 .padding(.top, 12)
@@ -141,7 +139,7 @@ private extension CreateUsernameView {
     }
 
     var skipButton: some View {
-        Button(L10n.skip.uppercaseFirst, action: viewModel.close.send)
+        Button(L10n.skip.uppercaseFirst, action: viewModel.skip.send)
             .foregroundColor(mainColor)
     }
 }
@@ -156,15 +154,12 @@ private extension Text {
 
 struct CreateUsernameView_Previews: PreviewProvider {
     static var previews: some View {
-        NavigationView {
-            CreateUsernameView(
-                viewModel: CreateUsernameViewModel(
-                    parameters: CreateUsernameParameters(
-                        isSkipEnabled: true,
-                        backgroundColor: Asset.Colors.rain.color
-                    )
+        CreateUsernameView(
+            viewModel: CreateUsernameViewModel(
+                parameters: CreateUsernameParameters(
+                    backgroundColor: Asset.Colors.rain.color
                 )
             )
-        }
+        )
     }
 }

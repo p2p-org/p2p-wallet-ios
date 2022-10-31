@@ -115,10 +115,20 @@ final class CreateWalletCoordinator: Coordinator<CreateWalletResult> {
         let vc = buildViewController(state: to) ?? UIViewController()
 
         if to.step >= (from?.step ?? -1) {
-            navigationController.setViewControllers([vc], animated: true)
+            if case .socialSignIn(.socialSignInProgress) = to {
+                fadeTo(vc)
+            }
+            else {
+                navigationController.setViewControllers([vc], animated: true)
+            }
         } else {
-            navigationController.setViewControllers([vc] + navigationController.viewControllers, animated: false)
-            navigationController.popToViewController(vc, animated: true)
+            if let from = from, case .socialSignIn(.socialSignInProgress) = from {
+                fadeOut(vc)
+            }
+            else {
+                navigationController.setViewControllers([vc] + navigationController.viewControllers, animated: false)
+                navigationController.popToViewController(vc, animated: true)
+            }
         }
     }
 
@@ -135,5 +145,24 @@ final class CreateWalletCoordinator: Coordinator<CreateWalletResult> {
         default:
             return nil
         }
+    }
+}
+
+private extension CreateWalletCoordinator {
+    func fadeTo(_ viewController: UIViewController) {
+        let transition: CATransition = CATransition()
+        transition.duration = 0.3
+        transition.type = CATransitionType.fade
+        navigationController.view.layer.add(transition, forKey: nil)
+        navigationController.setViewControllers([viewController], animated: false)
+    }
+
+    func fadeOut(_ viewController: UIViewController) {
+        let transition: CATransition = CATransition()
+        transition.duration = 0.3
+        transition.type = CATransitionType.fade
+        navigationController.view.layer.add(transition, forKey: nil)
+        navigationController.setViewControllers([viewController] + navigationController.viewControllers, animated: false)
+        navigationController.popToViewController(viewController, animated: false)
     }
 }
