@@ -231,9 +231,9 @@ private struct TextfieldView: UIViewRepresentable {
 
         @objc func textDidChanged(_ textField: UITextField) {
             if activeSide == .right {
-                text = (textField.text ?? "").fiatFormat
+                text = (textField.text ?? "").fiatFormat44
             } else if activeSide == .left {
-                text = (textField.text ?? "").cryptoCurrencyFormat
+                text = (textField.text ?? "").moonpayCryptocurrencyFormat
             } else {
                 text = textField.text ?? ""
             }
@@ -297,5 +297,11 @@ struct BuyInputOutputView_Previews: PreviewProvider {
                 activeSide: .constant(.none)
             ) { _ in }
         }
+    }
+}
+
+private extension String {
+    var moonpayCryptocurrencyFormat: String {
+        formatToMoneyFormat(decimalSeparator: ".", maxDecimals: 2)
     }
 }
