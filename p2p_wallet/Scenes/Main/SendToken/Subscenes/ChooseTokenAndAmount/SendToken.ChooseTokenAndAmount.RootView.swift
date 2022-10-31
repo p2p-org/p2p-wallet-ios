@@ -10,6 +10,7 @@ import Resolver
 import RxCocoa
 import RxSwift
 import UIKit
+import KeyAppUI
 
 extension SendToken.ChooseTokenAndAmount {
     class RootView: BEView {
@@ -49,11 +50,12 @@ extension SendToken.ChooseTokenAndAmount {
         }()
 
         private lazy var equityValueLabel = UILabel(text: "\(Defaults.fiat.symbol) 0", textSize: 13)
-        private lazy var actionButton = WLStepButton.main(
-            image: viewModel.showAfterConfirmation ? .buttonCheckSmall : nil,
-            text: viewModel.showAfterConfirmation ? L10n.reviewAndConfirm : L10n.chooseDestinationWallet
-        )
-            .onTap(self, action: #selector(actionButtonDidTouch))
+        private lazy var actionButton = TextButton(
+            title: viewModel.showAfterConfirmation ? L10n.reviewAndConfirm : L10n.chooseDestinationWallet,
+            style: .primary,
+            size: .large,
+            leading: viewModel.showAfterConfirmation ? .buttonCheckSmall : nil
+        ).onTap(self, action: #selector(actionButtonDidTouch))
 
         #if DEBUG
             private lazy var errorLabel = UILabel(textColor: .alert, numberOfLines: 0, textAlignment: .center)
@@ -100,7 +102,7 @@ extension SendToken.ChooseTokenAndAmount {
                             .onTap(self, action: #selector(useAllBalance))
                         balanceLabel
                             .onTap(self, action: #selector(useAllBalance))
-                        UILabel(text: L10n.max.uppercased(), textSize: 15, weight: .medium, textColor: .h5887ff)
+                        UILabel(text: L10n.max.uppercased(), textSize: 15, weight: .medium, textColor: Asset.Colors.night.color)
                             .onTap(self, action: #selector(useAllBalance))
                     }
                     UIStackView(axis: .horizontal, spacing: 8, alignment: .center, distribution: .fill) {
@@ -119,10 +121,10 @@ extension SendToken.ChooseTokenAndAmount {
                         UIView.spacer
                         UIStackView(axis: .horizontal, spacing: 4, alignment: .center, distribution: .fill) {
                             equityValueLabel
-                            UIImageView(width: 20, height: 20, image: .arrowUpDown)
+                            UIImageView(width: 20, height: 20, image: .arrowUpDown.withTintColor(Asset.Colors.night.color))
                         }
                         .padding(.init(x: 18, y: 8), cornerRadius: 12)
-                        .border(width: 1, color: .defaultBorder)
+                        .border(width: 1, color: Asset.Colors.night.color)
                         .onTap(self, action: #selector(toggleCurrencyMode))
                     }
                 }
@@ -254,7 +256,7 @@ extension SendToken.ChooseTokenAndAmount {
                                 L10n.chooseTheRecipient
                         )
                 }
-                .drive(actionButton.rx.text)
+                .drive(actionButton.rx.title)
                 .disposed(by: disposeBag)
 
             viewModel.errorDriver
@@ -265,7 +267,7 @@ extension SendToken.ChooseTokenAndAmount {
                             .buttonChooseTheRecipient
                     )
                 }
-                .drive(actionButton.rx.image)
+                .drive(actionButton.rx.leadingImage)
                 .disposed(by: disposeBag)
 
             viewModel.errorDriver
