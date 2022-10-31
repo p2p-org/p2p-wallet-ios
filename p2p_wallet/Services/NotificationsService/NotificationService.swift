@@ -87,7 +87,6 @@ final class NotificationServiceImpl: NSObject, NotificationService {
     func requestRemoteNotificationPermission() {
         UNUserNotificationCenter.current()
             .getNotificationSettings { settings in
-                guard settings.authorizationStatus != .authorized else { return }
                 if settings.authorizationStatus == .authorized {
                     DispatchQueue.main.async { [weak self] in
                         self?.registerForRemoteNotifications()
