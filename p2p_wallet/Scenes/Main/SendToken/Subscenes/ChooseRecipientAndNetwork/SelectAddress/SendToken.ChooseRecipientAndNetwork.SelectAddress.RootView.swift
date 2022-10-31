@@ -11,6 +11,7 @@ import RxCocoa
 import RxSwift
 import SolanaSwift
 import UIKit
+import KeyAppUI
 
 extension SendToken.ChooseRecipientAndNetwork.SelectAddress {
     class RootView: ScrollableVStackRootView {
@@ -85,8 +86,7 @@ extension SendToken.ChooseRecipientAndNetwork.SelectAddress {
                 self?.viewModel.navigate(to: .selectPayingWallet)
             }
 
-        private lazy var actionButton = WLStepButton.main(text: L10n.chooseTheRecipientToProceed)
-            .onTap(self, action: #selector(actionButtonDidTouch))
+        private lazy var actionButton = TextButton(title: L10n.chooseTheRecipientToProceed, style: .primary, size: .large).onTap(self, action: #selector(actionButtonDidTouch)) //WLStepButton.main(text: L10n.chooseTheRecipientToProceed)
 
         // MARK: - Initializer
 
@@ -274,7 +274,7 @@ extension SendToken.ChooseRecipientAndNetwork.SelectAddress {
 
             viewModel.isValidDriver
                 .map { $0 ? UIImage.buttonCheckSmall : nil }
-                .drive(actionButton.rx.image)
+                .drive(actionButton.rx.leadingImage)
                 .disposed(by: disposeBag)
 
             Driver.combineLatest(
@@ -338,7 +338,7 @@ extension SendToken.ChooseRecipientAndNetwork.SelectAddress {
 
                     return L10n.reviewAndConfirm
                 }
-                .drive(actionButton.rx.text)
+                .drive(actionButton.rx.title)
                 .disposed(by: disposeBag)
 
             viewModel.warningDriver

@@ -10,6 +10,7 @@ import RxCocoa
 import RxRelay
 import RxSwift
 import UIKit
+import KeyAppUI
 
 extension History {
     class ErrorView: BEView {
@@ -35,12 +36,10 @@ extension History {
             numberOfLines: 2,
             textAlignment: .center
         )
-        private let actionButton = UIButton(
-            height: 64,
-            backgroundColor: ._5887ff,
-            cornerRadius: 12,
-            label: L10n.tryAgain,
-            labelFont: .systemFont(ofSize: 17, weight: .bold)
+        private let actionButton = TextButton(
+            title: L10n.tryAgain,
+            style: .primary,
+            size: .large
         )
 
         override func commonInit() {

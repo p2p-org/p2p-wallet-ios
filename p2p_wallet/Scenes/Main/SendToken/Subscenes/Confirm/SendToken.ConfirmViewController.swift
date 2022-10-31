@@ -12,6 +12,7 @@ import Resolver
 import RxCocoa
 import RxSwift
 import UIKit
+import KeyAppUI
 
 extension SendToken {
     final class ConfirmViewController: BaseVC {
@@ -249,19 +250,24 @@ extension SendToken {
             scrollView.autoPinEdge(toSuperviewEdge: .leading)
             scrollView.autoPinEdge(toSuperviewEdge: .trailing)
 
-            let actionButton = WLStepButton.main(image: .buttonSendSmall, text: L10n.sendNow)
+            let actionButton = TextButton(
+                title: L10n.sendNow,
+                style: .primary,
+                size: .large,
+                leading: .buttonSendSmall
+            )
                 .setup { view in
                     Driver.combineLatest(
                         viewModel.walletDriver,
                         viewModel.amountDriver
                     )
-                        .map { wallet, amount in
-                            let amount = amount ?? 0
-                            let symbol = wallet?.token.symbol ?? ""
-                            return L10n.send(amount.toString(maximumFractionDigits: 9), symbol)
-                        }
-                        .drive(view.rx.text)
-                        .disposed(by: disposeBag)
+                    .map { wallet, amount in
+                        let amount = amount ?? 0
+                        let symbol = wallet?.token.symbol ?? ""
+                        return L10n.send(amount.toString(maximumFractionDigits: 9), symbol)
+                    }
+                    .drive(view.rx.title)
+                    .disposed(by: disposeBag)
 
                     Driver.combineLatest([
                         viewModel.walletDriver.map { $0 != nil },

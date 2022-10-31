@@ -11,6 +11,7 @@ import RxGesture
 import RxSwift
 import SolanaSwift
 import UIKit
+import KeyAppUI
 
 extension History {
     final class TransactionView: BECompositionView {
@@ -96,22 +97,20 @@ extension History {
                                 }
                             }
                             BEVStack(spacing: 8) {
-                                UIButton(
-                                    height: 64,
-                                    backgroundColor: ._5887ff,
-                                    label: L10n.done,
-                                    labelFont: .systemFont(ofSize: 17, weight: .medium)
+                                TextButton(
+                                    title: L10n.done,
+                                    style: .primary,
+                                    size: .large
                                 ).setup {
                                     $0.layer.cornerRadius = 12
                                     $0.rx.controlEvent(.touchUpInside)
                                         .bind(to: doneClicked)
                                         .disposed(by: disposeBag)
                                 }
-                                UIButton(
-                                    height: 64,
-                                    label: L10n.transactionDetail,
-                                    labelFont: .systemFont(ofSize: 17, weight: .medium),
-                                    textColor: ._5887ff
+                                TextButton(
+                                    title: L10n.transactionDetail,
+                                    style: .ghost,
+                                    size: .large
                                 ).setup {
                                     $0.rx.controlEvent(.touchUpInside)
                                         .bind(to: transactionDetailClicked)
