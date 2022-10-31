@@ -5,6 +5,7 @@ inhibit_all_warnings!
 
 # ENV Variables
 $keyAppKitPath = ENV['KEY_APP_KIT']
+$solanaSwiftPath = ENV['SOLANA_SWIFT']
 $keyAppUI = ENV['KEY_APP_UI']
 
 puts $keyAppKitPath
@@ -46,14 +47,19 @@ target 'p2p_wallet' do
   # development pods
   key_app_kit
   pod 'CocoaDebug', :configurations => ['Debug', 'Test']
-  pod 'SolanaSwift', :git => 'https://github.com/p2p-org/solana-swift.git', :branch => 'main'
   pod 'BEPureLayout', :git => 'https://github.com/p2p-org/BEPureLayout.git', :branch => 'master'
   pod 'BECollectionView_Core', :git => 'https://github.com/bigearsenal/BECollectionView.git', :branch => 'master'
   pod 'BECollectionView', :git => 'https://github.com/bigearsenal/BECollectionView.git', :branch => 'master'
   pod 'BECollectionView_Combine', :git => 'https://github.com/bigearsenal/BECollectionView.git', :branch => 'master'
   pod 'FeeRelayerSwift', :git => 'https://github.com/p2p-org/FeeRelayerSwift.git', :branch => 'master'
   pod 'OrcaSwapSwift', :git => 'https://github.com/p2p-org/OrcaSwapSwift.git', :branch => 'main'
-  pod 'RenVMSwift', :git => 'https://github.com/p2p-org/RenVMSwift.git', :branch => 'master'
+  pod 'RenVMSwift', :git => 'https://github.com/p2p-org/RenVMSwift.git', :branch => 'fix/legacy-bitcoin-address'
+  
+  if $solanaSwiftPath
+    pod "SolanaSwift", :path => $solanaSwiftPath
+  else
+    pod 'SolanaSwift', :git => 'https://github.com/p2p-org/solana-swift.git', :branch => 'feature/fix-error-property-in-model'
+  end
 
   # tools
   pod 'SwiftGen', '~> 6.0'
@@ -97,6 +103,7 @@ target 'p2p_wallet' do
   pod 'SkeletonUI', :git => 'https://github.com/p2p-org/SkeletonUI.git', :branch => 'master'
   pod 'SwiftSVG', '2.3.2'
   pod 'Introspect', '0.1.4'
+  pod 'lottie-ios', '~> 3.5.0'
 
   # Firebase
   pod 'Firebase/Analytics'

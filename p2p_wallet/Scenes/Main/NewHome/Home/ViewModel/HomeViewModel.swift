@@ -87,7 +87,9 @@ class HomeViewModel: ObservableObject {
 
     func copyToClipboard() {
         if let name = nameStorage.getName(), !name.isEmpty {
-            clipboardManager.copyToClipboard(name)
+            clipboardManager.copyToClipboard(
+                "\(name.withNameServiceDomain()) \(walletsRepository.nativeWallet?.pubkey ?? "")"
+            )
         } else {
             clipboardManager.copyToClipboard(walletsRepository.nativeWallet?.pubkey ?? "")
         }
@@ -97,7 +99,7 @@ class HomeViewModel: ObservableObject {
 
     func updateAddressIfNeeded() {
         if let name = nameStorage.getName(), !name.isEmpty {
-            address = name
+            address = "\(name).key"
         } else if let address = accountStorage.account?.publicKey.base58EncodedString.shortAddress {
             self.address = address
         }

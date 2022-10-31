@@ -246,6 +246,7 @@ enum AmplitudeEvent: AnalyticsEvent {
     )
     case buyStatusTransaction(success: Bool)
     case buyScreenOpened(lastScreen: String)
+    case moonpayWindowOpened
     case moonpayWindowClosed
 
     // General
@@ -258,4 +259,16 @@ enum AmplitudeEvent: AnalyticsEvent {
     case restoreWalletButton
     case selectRestoreOption(restoreOption: String, keychaineOption: Bool)
     case restoreConfirmPin(result: Bool)
+
+    // RenBTC
+    case renbtcCreation(result: String)
+    
+    // PhoneScreen
+    case creationPhoneScreen
+    case creationLoginScreen
+
+    // Username
+    case usernameCreationButton(result: Bool)
+    case usernameSkipButton(result: Bool)
+    case usernameCreationScreen
 }

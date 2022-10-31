@@ -5,6 +5,7 @@
 //  Created by Chung Tran on 22/04/2022.
 //
 
+import AnalyticsManager
 import Foundation
 import Resolver
 import RxCocoa
@@ -51,6 +52,7 @@ extension ConfirmReceivingBitcoin {
         @Injected private var pricesService: PricesServiceType
         @Injected private var walletsRepository: WalletsRepository
         @Injected private var userWalletManager: UserWalletManager
+        @Injected private var analyticsManager: AnalyticsManager
 
         // MARK: - Properties
 
@@ -200,12 +202,14 @@ extension ConfirmReceivingBitcoin.ViewModel: ConfirmReceivingBitcoinViewModelTyp
                     payingFeeMintAddress: payingWalletSubject.value?.mintAddress
                 )
                 errorSubject.accept(nil)
+                analyticsManager.log(event: AmplitudeEvent.renbtcCreation(result: "success"))
 
                 await MainActor.run { [weak self] in
                     self?.completion?()
                 }
             } catch {
                 errorSubject.accept(error.readableDescription)
+                analyticsManager.log(event: AmplitudeEvent.renbtcCreation(result: "fail"))
             }
 
             isLoadingSubject.accept(false)

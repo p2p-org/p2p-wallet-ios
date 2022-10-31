@@ -1079,3 +1079,7 @@ Reset the PIN or wait for %@." = "Bạn còn %@ lần thử để nhập mã PIN
 "Key App will automatically match your withdrawal target address to the correct network for most withdrawals. However, before sending your funds, make sure to double-check the selected network." = "Key App sẽ tự động khớp địa chỉ mục tiêu rút tiền của bạn với mạng chính xác cho hầu hết các lần rút tiền. Tuy nhiên, trước khi gửi tiền, hãy đảm bảo kiểm tra kỹ mạng đã chọn.";
 "and" = "và";
 "Terms of Service" = "Điều khoản dịch vụ";
+"Securing key" = "Khóa bảo mật";
+"Creating wallet" = "Tạo ví";
+"Please wait, it won't take long" = "Vui lòng đợi, sẽ không lâu đâu";
+"This is an easy way to send and receive cryptocurrencies in Key App" = "Đây là một cách dễ dàng để gửi và nhận tiền điện tử trong Ứng dụng chính";

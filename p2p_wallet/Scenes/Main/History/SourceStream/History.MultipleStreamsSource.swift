@@ -22,19 +22,23 @@ extension History {
         }
 
         func currentItem() async throws -> HistoryStreamSource.Result? {
-            try await Observable
-                .from(sources)
-                .flatMap { source -> Observable<HistoryStreamSource.Result?> in
-                    Observable.async { () -> HistoryStreamSource.Result? in try await source.currentItem() }
-                }
-                .reduce(nil) { (mostFirst: HistoryStreamSource.Result?, trx: HistoryStreamSource.Result?) -> HistoryStreamSource.Result? in
-                    guard let t1 = trx?.0.blockTime else { return mostFirst }
-                    guard let t2 = mostFirst?.0.blockTime else { return trx }
-                    if t1 > t2 { return trx }
-                    return mostFirst
-                }
-                .asSingle()
-                .value
+            if buffer.isEmpty {
+                return try await Observable
+                    .from(sources)
+                    .flatMap { source -> Observable<HistoryStreamSource.Result?> in
+                        Observable.async { () -> HistoryStreamSource.Result? in try await source.currentItem() }
+                    }
+                    .reduce(nil) { (mostFirst: HistoryStreamSource.Result?, trx: HistoryStreamSource.Result?) -> HistoryStreamSource.Result? in
+                        guard let t1 = trx?.0.blockTime else { return mostFirst }
+                        guard let t2 = mostFirst?.0.blockTime else { return trx }
+                        if t1 > t2 { return trx }
+                        return mostFirst
+                    }
+                    .asSingle()
+                    .value
+            } else {
+                return buffer.first
+            }
         }
 
         func next(configuration: FetchingConfiguration) async throws -> HistoryStreamSource.Result? {
@@ -61,7 +65,6 @@ extension History {
                 return try await group.reduce([], +)
             }
 
-            try Task.checkCancellation()
             buffer.append(contentsOf: newResults)
             buffer.sort { left, right in
                 guard

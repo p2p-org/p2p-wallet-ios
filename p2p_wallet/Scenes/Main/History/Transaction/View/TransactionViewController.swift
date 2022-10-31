@@ -40,6 +40,14 @@ extension History {
                 .bind(to: input.transactionIdClicked)
                 .disposed(by: disposeBag)
             customView.rx
+                .addressClicked
+                .bind(to: input.addressClicked)
+                .disposed(by: disposeBag)
+            customView.rx
+                .usernameClicked
+                .bind(to: input.usernameClicked)
+                .disposed(by: disposeBag)
+            customView.rx
                 .doneClicked
                 .bind(to: input.doneClicked)
                 .disposed(by: disposeBag)

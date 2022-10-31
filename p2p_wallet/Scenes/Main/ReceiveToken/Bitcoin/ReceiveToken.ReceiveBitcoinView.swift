@@ -44,7 +44,21 @@ extension ReceiveToken {
                     ReceiveToken
                         .textBuilder(text: L10n.ThisAddressAcceptsOnly
                             .youMayLoseAssetsBySendingAnotherCoin(L10n.bitcoin).asMarkdown())
-                    ReceiveToken.textBuilder(text: L10n.minimumTransactionAmountOf("0.000112 BTC").asMarkdown())
+                    ReceiveToken.textBuilder(text: L10n.minimumTransactionAmountOf("0.000112 BTC").asMarkdown()
+                    )
+                        .setup { view in
+                            guard let label = view.viewWithTag(1) as? UILabel else {return}
+                            viewModel.minimumTransactionAmountSignal
+                                .map {$0 ?? 0.000304}
+                                .map {
+                                    L10n.minimumTransactionAmountOf(
+                                        $0.toString(maximumFractionDigits: 6)
+                                    )
+                                    .asMarkdown()
+                                }
+                                .emit(to: label.rx.attributedText)
+                                .disposed(by: disposeBag)
+                        }
                     ReceiveToken
                         .textBuilder(text: L10n.isTheRemainingTimeToSafelySendTheAssets("35:59:59").asMarkdown())
                         .setup { view in

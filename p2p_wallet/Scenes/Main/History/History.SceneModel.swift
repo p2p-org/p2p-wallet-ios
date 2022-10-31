@@ -21,7 +21,7 @@ extension History {
         @Injected private var walletsRepository: WalletsRepository
         @Injected private var notificationService: NotificationService
         let transactionRepository = SolanaTransactionRepository()
-        let transactionParser = DefaultTransactionParser(p2pFeePayers: Defaults.p2pFeePayerPubkeys)
+        let transactionParser = DefaultTransactionParser(p2pFeePayers: ["FG4Y3yX4AAchp1HvNZ7LfzFTewF2f6nDoMDCohTFrdpT"])
 
         // MARK: - Properties
 
@@ -162,9 +162,7 @@ extension History {
                             timeEndFilter = timeEndFilter.addingTimeInterval(-1 * 60 * 60 * 24 * 1)
 
                             if Task.isCancelled { return }
-                            while
-                                let result = try await source.next(configuration: .init(timestampEnd: timeEndFilter)),
-                                Task.isNotCancelled
+                            while let result = try await source.next(configuration: .init(timestampEnd: timeEndFilter))
                             {
                                 let (signatureInfo, _, _) = result
 
