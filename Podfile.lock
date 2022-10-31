@@ -283,7 +283,7 @@ DEPENDENCIES:
   - Sentry (from `https://github.com/getsentry/sentry-cocoa.git`, tag `7.18.1`)
   - SkeletonUI (from `https://github.com/p2p-org/SkeletonUI.git`, branch `master`)
   - SolanaPricesAPIs (from `https://github.com/p2p-org/key-app-kit-swift.git`, branch `master`)
-  - SolanaSwift (from `https://github.com/p2p-org/solana-swift.git`, branch `main`)
+  - SolanaSwift (from `https://github.com/p2p-org/solana-swift.git`, branch `feature/fix-error-property-in-model`)
   - Solend (from `https://github.com/p2p-org/key-app-kit-swift.git`, branch `master`)
   - SubviewAttachingTextView (= 1.5.0)
   - SwiftFormat/CLI (= 0.49.6)
@@ -426,7 +426,7 @@ EXTERNAL SOURCES:
     :branch: master
     :git: https://github.com/p2p-org/key-app-kit-swift.git
   SolanaSwift:
-    :branch: main
+    :branch: feature/fix-error-property-in-model
     :git: https://github.com/p2p-org/solana-swift.git
   Solend:
     :branch: master
@@ -509,7 +509,7 @@ CHECKOUT OPTIONS:
     :commit: 7d9647ccfe76e9d40df27b82a0517e044e2c5875
     :git: https://github.com/p2p-org/key-app-kit-swift.git
   SolanaSwift:
-    :commit: 15004803ed37de9c580d19599acf347fb49093b7
+    :commit: bea0c539b3c5e15a94ef4ddaa9218251cde4c24c
     :git: https://github.com/p2p-org/solana-swift.git
   Solend:
     :commit: 30bc1c7172020d8309993ebee9ceb80c2e75b352
@@ -601,6 +601,6 @@ SPEC CHECKSUMS:
   TweetNacl: 3abf4d1d2082b0114e7a67410e300892448951e6
   "UITextView+Placeholder": d7b0c400921f66523f3a85d74f774512e14f6502
 
-PODFILE CHECKSUM: cf98b5ffa22ff3b33e4c2dff2e48b4fc41163cec
+PODFILE CHECKSUM: 033c88ece9662a122157828035a07b74771b53d1
 
 COCOAPODS: 1.11.3
