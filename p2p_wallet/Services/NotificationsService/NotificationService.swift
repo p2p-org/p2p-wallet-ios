@@ -88,18 +88,14 @@ final class NotificationServiceImpl: NSObject, NotificationService {
         UNUserNotificationCenter.current()
             .getNotificationSettings { settings in
                 if settings.authorizationStatus == .authorized {
-                    DispatchQueue.main.async { [weak self] in
-                        self?.registerForRemoteNotifications()
-                        Defaults.didSetEnableNotifications = true
-                    }
+                    self?.registerForRemoteNotifications()
+                    Defaults.didSetEnableNotifications = true
                 } else {
                     UNUserNotificationCenter.current()
                         .requestAuthorization(options: [.alert, .sound, .badge]) { [weak self] granted, _ in
                             guard granted else { return }
-                            DispatchQueue.main.async { [weak self] in
-                                self?.registerForRemoteNotifications()
-                                Defaults.didSetEnableNotifications = true
-                            }
+                            self?.registerForRemoteNotifications()
+                            Defaults.didSetEnableNotifications = true
                         }
                 }
             }
