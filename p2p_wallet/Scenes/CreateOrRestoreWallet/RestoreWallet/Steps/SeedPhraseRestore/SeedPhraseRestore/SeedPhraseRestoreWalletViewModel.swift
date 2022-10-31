@@ -43,7 +43,7 @@ class SeedPhraseRestoreWalletViewModel: BaseViewModel {
     }
 
     func continueButtonTapped() {
-        let seed = seed.lowercased()
+        let seed = seed.lowercased().trimmingCharacters(in: .whitespacesAndNewlines)
         if let phrase = try? Mnemonic(phrase: seed.components(separatedBy: " ")) {
             finishedWithSeed.send(phrase.phrase)
         } else {
