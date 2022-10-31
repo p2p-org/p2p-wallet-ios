@@ -11,6 +11,8 @@ class GlobalAppState: ObservableObject {
     static let shared = GlobalAppState()
     
     @Published var shouldPlayAnimationOnHome: Bool = false
+    
+    @Published var forcedWalletAddress: String = ""
 
     private init() {}
 }
