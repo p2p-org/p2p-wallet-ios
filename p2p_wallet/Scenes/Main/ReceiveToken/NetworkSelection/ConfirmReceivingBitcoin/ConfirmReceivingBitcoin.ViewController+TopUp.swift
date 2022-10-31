@@ -8,6 +8,7 @@
 import Foundation
 import RxCocoa
 import RxSwift
+import KeyAppUI
 
 extension ConfirmReceivingBitcoin.ViewController {
     func topUpRequiredView() -> BEVStack {
@@ -30,16 +31,20 @@ extension ConfirmReceivingBitcoin.ViewController {
     }
 
     func topUpButtonsView() -> UIView {
-        WLStepButton.main(image: .buttonBuy.withTintColor(.white), text: L10n.topUpYourAccount)
-            .onTap { [unowned self] in
-                self.dismiss(animated: true) {
-                    self.viewModel.dismissAndTopUp()
-                }
+        TextButton(
+            title: L10n.topUpYourAccount,
+            style: .primary,
+            size: .large,
+            leading: .buttonBuy.withTintColor(.white)
+        ).onTap { [unowned self] in
+            self.dismiss(animated: true) {
+                self.viewModel.dismissAndTopUp()
             }
+        }
     }
 
     func shareSolanaAddressButton() -> UIView {
-        WLStepButton.sub(text: L10n.shareYourSolanaNetworkAddress)
+        TextButton(title: L10n.shareYourSolanaNetworkAddress, style: .ghost, size: .large)
             .onTap { [unowned self] in
                 guard let item = viewModel.solanaPubkey else { return }
                 let vc = UIActivityViewController(activityItems: [item], applicationActivities: nil)

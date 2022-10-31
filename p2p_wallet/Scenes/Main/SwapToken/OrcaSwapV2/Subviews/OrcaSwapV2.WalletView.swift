@@ -8,12 +8,12 @@
 import Action
 import AnalyticsManager
 import BEPureLayout
-import Foundation
 import Resolver
 import RxCocoa
 import RxSwift
 import SolanaSwift
 import UIKit
+import KeyAppUI
 
 extension OrcaSwapV2 {
     final class WalletView: BEView {
@@ -289,7 +289,7 @@ private extension OrcaSwapV2.WalletView {
             height: subviewsHeight,
             label: L10n.max.uppercased(),
             labelFont: .systemFont(ofSize: 15, weight: .medium),
-            textColor: .h5887ff
+            textColor: Asset.Colors.night.color
         )
 
         override var tintColor: UIColor! {

@@ -5,7 +5,7 @@
 //  Created by Chung Tran on 30/11/2021.
 //
 
-import Foundation
+import KeyAppUI
 import RxSwift
 import UIKit
 
@@ -77,8 +77,8 @@ extension SendToken.ChooseRecipientAndNetwork.SelectAddress {
 
         private func createButton(image: UIImage, text: String) -> UIView {
             UIStackView(axis: .horizontal, spacing: 4, alignment: .center, distribution: .fill) {
-                UIImageView(width: 20, height: 20, image: image, tintColor: .h5887ff)
-                UILabel(text: text, textSize: 15, weight: .medium, textColor: .h5887ff)
+                UIImageView(width: 20, height: 20, image: image, tintColor: Asset.Colors.night.color)
+                UILabel(text: text, textSize: 15, weight: .medium, textColor: Asset.Colors.night.color)
             }
         }
     }
