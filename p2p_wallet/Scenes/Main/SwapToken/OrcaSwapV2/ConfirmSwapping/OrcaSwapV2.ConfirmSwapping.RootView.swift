@@ -48,7 +48,7 @@ extension OrcaSwapV2.ConfirmSwapping {
             style: .primary,
             size: .large,
             leading: .buttonSwapSmall
-        ).onTap(self, action: #selector(actionButtonDidTouch))
+        )
 
         // MARK: - Initializers
 
@@ -143,6 +143,10 @@ extension OrcaSwapV2.ConfirmSwapping {
             feesView.clickHandler = { [weak self] fee in
                 guard let info = fee.info else { return }
                 self?.viewModel.showFeesInfo(info)
+            }
+
+            actionButton.onPressed { [weak self] _ in
+                self?.actionButtonDidTouch()
             }
         }
 

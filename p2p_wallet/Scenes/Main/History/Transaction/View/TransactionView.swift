@@ -103,18 +103,16 @@ extension History {
                                     size: .large
                                 ).setup {
                                     $0.layer.cornerRadius = 12
-                                    $0.rx.controlEvent(.touchUpInside)
-                                        .bind(to: doneClicked)
-                                        .disposed(by: disposeBag)
+                                }.onPressed { [weak self] _ in
+                                    self?.doneClicked.accept(())
                                 }
                                 TextButton(
                                     title: L10n.transactionDetail,
                                     style: .ghost,
                                     size: .large
-                                ).setup {
-                                    $0.rx.controlEvent(.touchUpInside)
-                                        .bind(to: transactionDetailClicked)
-                                        .disposed(by: disposeBag)
+                                )
+                                .onPressed { [weak self] _ in
+                                    self?.transactionDetailClicked.accept(())
                                 }
                                 .padding(.init(only: .bottom, inset: 8))
                             }

@@ -55,7 +55,7 @@ extension SendToken.ChooseTokenAndAmount {
             style: .primary,
             size: .large,
             leading: viewModel.showAfterConfirmation ? .buttonCheckSmall : nil
-        ).onTap(self, action: #selector(actionButtonDidTouch))
+        )
 
         #if DEBUG
             private lazy var errorLabel = UILabel(textColor: .alert, numberOfLines: 0, textAlignment: .center)
@@ -281,6 +281,10 @@ extension SendToken.ChooseTokenAndAmount {
                     .drive(errorLabel.rx.text)
                     .disposed(by: disposeBag)
             #endif
+
+            actionButton.onPressed { [weak self] _ in
+                self?.actionButtonDidTouch()
+            }
         }
 
         // MARK: - Actions
