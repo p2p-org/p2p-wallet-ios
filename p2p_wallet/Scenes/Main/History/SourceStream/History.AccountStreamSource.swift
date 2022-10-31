@@ -89,7 +89,7 @@ extension History {
             try Task.checkCancellation()
 
             isEmpty = newSignatures.isEmpty
-            latestFetchedSignature = newSignatures.last?.signature
+            latestFetchedSignature = newSignatures.last?.signature ?? latestFetchedSignature
             buffer.append(contentsOf: newSignatures)
         }
 
