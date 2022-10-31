@@ -86,7 +86,7 @@ final class NotificationServiceImpl: NSObject, NotificationService {
 
     func requestRemoteNotificationPermission() {
         UNUserNotificationCenter.current()
-            .getNotificationSettings { settings in
+            .getNotificationSettings { [weak self] settings in
                 if settings.authorizationStatus == .authorized {
                     self?.registerForRemoteNotifications()
                     Defaults.didSetEnableNotifications = true
@@ -121,6 +121,7 @@ final class NotificationServiceImpl: NSObject, NotificationService {
             ))
             UserDefaults.standard.removeObject(forKey: deviceTokenKey)
         } catch {
+            print(error)
             UserDefaults.standard.set(deviceToken, forKey: deviceTokenKey)
         }
     }
