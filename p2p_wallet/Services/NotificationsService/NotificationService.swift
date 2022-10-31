@@ -85,18 +85,19 @@ final class NotificationServiceImpl: NSObject, NotificationService {
     }
 
     func requestRemoteNotificationPermission() {
-        let center = UNUserNotificationCenter.current()
-        center.getNotificationSettings { settings in
-            guard settings.authorizationStatus != .authorized else { return }
+        UNUserNotificationCenter.current()
+            .getNotificationSettings { settings in
+                guard settings.authorizationStatus != .authorized else { return }
 
-            center.requestAuthorization(options: [.alert, .sound, .badge]) { [weak self] granted, _ in
-                DispatchQueue.main.async { [weak self] in
-                    guard granted else { return }
-                    self?.registerForRemoteNotifications()
-                    Defaults.didSetEnableNotifications = true
-                }
+                UNUserNotificationCenter.current()
+                    .requestAuthorization(options: [.alert, .sound, .badge]) { [weak self] granted, _ in
+                        guard granted else { return }
+                        DispatchQueue.main.async { [weak self] in
+                            self?.registerForRemoteNotifications()
+                            Defaults.didSetEnableNotifications = true
+                        }
+                    }
             }
-        }
     }
 
     func sendRegisteredDeviceToken(_ deviceToken: Data) async {
