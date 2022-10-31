@@ -50,16 +50,22 @@ extension Main {
             socket.connect()
             pricesService.startObserving()
             burnAndRelease.resume()
+            
+            // RenBTC service
             Task {
                 try await lockAndMint.resume()
             }
 
+            // Name service
             Task {
                 // guard nameStorage.getName() == nil else { return }
                 guard let account = accountStorage.account else { return }
                 let name: String = try await nameService.getName(account.publicKey.base58EncodedString) ?? ""
                 nameStorage.save(name: name)
             }
+            
+            // Notification
+            notificationService.requestRemoteNotificationPermission()
         }
 
         deinit {

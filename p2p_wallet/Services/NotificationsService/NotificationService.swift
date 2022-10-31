@@ -30,6 +30,7 @@ protocol NotificationService {
     func notificationWasOpened()
     func unregisterForRemoteNotifications()
     func registerForRemoteNotifications()
+    func requestRemoteNotificationPermission()
 
     var showNotification: Observable<NotificationType> { get }
     var showFromLaunch: Bool { get }
@@ -74,8 +75,27 @@ final class NotificationServiceImpl: NSObject, NotificationService {
     }
 
     func registerForRemoteNotifications() {
-        DispatchQueue.main.async {
-            UIApplication.shared.registerForRemoteNotifications()
+        UNUserNotificationCenter.current()
+            .getNotificationSettings { settings in
+                guard settings.authorizationStatus == .authorized else { return }
+                DispatchQueue.main.async {
+                    UIApplication.shared.registerForRemoteNotifications()
+                }
+            }
+    }
+
+    func requestRemoteNotificationPermission() {
+        let center = UNUserNotificationCenter.current()
+        center.getNotificationSettings { settings in
+            guard settings.authorizationStatus != .authorized else { return }
+
+            center.requestAuthorization(options: [.alert, .sound, .badge]) { [weak self] granted, _ in
+                DispatchQueue.main.async { [weak self] in
+                    guard granted else { return }
+                    self?.registerForRemoteNotifications()
+                    Defaults.didSetEnableNotifications = true
+                }
+            }
         }
     }
 
