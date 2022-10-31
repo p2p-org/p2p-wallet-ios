@@ -231,7 +231,7 @@ private struct TextfieldView: UIViewRepresentable {
 
         @objc func textDidChanged(_ textField: UITextField) {
             if activeSide == .right {
-                text = (textField.text ?? "").fiatFormat44
+                text = (textField.text ?? "").fiatFormat
             } else if activeSide == .left {
                 text = (textField.text ?? "").moonpayCryptocurrencyFormat
             } else {
