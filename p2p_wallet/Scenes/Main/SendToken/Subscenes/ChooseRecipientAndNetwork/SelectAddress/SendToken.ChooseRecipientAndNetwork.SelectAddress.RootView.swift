@@ -9,7 +9,6 @@ import BECollectionView
 import BEPureLayout
 import RxCocoa
 import RxSwift
-import RxGesture
 import SolanaSwift
 import UIKit
 import KeyAppUI
