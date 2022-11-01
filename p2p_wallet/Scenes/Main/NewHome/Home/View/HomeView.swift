@@ -10,20 +10,35 @@ import SwiftUI
 
 struct HomeView: View {
     @StateObject var viewModel: HomeViewModel
+    @StateObject var globalAppState: GlobalAppState = .shared
+
     let viewModelWithTokens: HomeWithTokensViewModel
     let emptyViewModel: HomeEmptyViewModel
 
     var body: some View {
-        switch viewModel.state {
-        case .pending:
-            HomeSkeletonView()
-        case .withTokens:
-            navigation {
-                HomeWithTokensView(viewModel: viewModelWithTokens)
+        ZStack {
+            switch viewModel.state {
+            case .pending:
+                HomeSkeletonView()
+            case .withTokens:
+                navigation {
+                    HomeWithTokensView(viewModel: viewModelWithTokens)
+                }
+            case .empty:
+                navigation {
+                    HomeEmptyView(viewModel: emptyViewModel)
+                }
             }
-        case .empty:
-            navigation {
-                HomeEmptyView(viewModel: emptyViewModel)
+
+            if globalAppState.shouldPlayAnimationOnHome == true {
+                LottieView(
+                    lottieFile: "ApplauseAnimation",
+                    loopMode: .playOnce,
+                    contentMode: .scaleAspectFill
+                ) { [globalAppState] in
+                    globalAppState.shouldPlayAnimationOnHome = false
+                }
+                .ignoresSafeArea(.all)
             }
         }
     }

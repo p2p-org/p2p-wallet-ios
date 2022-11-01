@@ -8,13 +8,17 @@ import Foundation
 import Onboarding
 import Resolver
 import SwiftUI
+import AnalyticsManager
 
 class BindingPhoneNumberDelegatedCoordinator: DelegatedCoordinator<BindingPhoneNumberState> {
     @Injected private var helpLauncher: HelpCenterLauncher
+    @Injected private var analyticsManager: AnalyticsManager
 
     override func buildViewController(for state: BindingPhoneNumberState) -> UIViewController? {
         switch state {
         case let .enterPhoneNumber(initialPhoneNumber, _, _, _):
+            analyticsManager.log(event: AmplitudeEvent.creationPhoneScreen)
+
             let mv = EnterPhoneNumberViewModel(phone: initialPhoneNumber, isBackAvailable: false)
             let vc = EnterPhoneNumberViewController(viewModel: mv)
             vc.title = L10n.stepOf("2", "3")

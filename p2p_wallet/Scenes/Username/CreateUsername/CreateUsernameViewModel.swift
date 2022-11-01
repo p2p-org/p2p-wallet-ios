@@ -5,6 +5,7 @@ import Combine
 import NameService
 import Resolver
 import UIKit
+import AnalyticsManager
 
 final class CreateUsernameViewModel: BaseViewModel {
     // MARK: - Dependencies
@@ -12,9 +13,11 @@ final class CreateUsernameViewModel: BaseViewModel {
     @Injected private var nameService: NameService
     @Injected private var notificationService: NotificationService
     @Injected private var createNameService: CreateNameService
+    @Injected private var analyticsManager: AnalyticsManager
 
     // MARK: - Properties
 
+    let skip = PassthroughSubject<Void, Never>()
     let close = PassthroughSubject<Void, Never>()
     let createUsername = PassthroughSubject<Void, Never>()
     let clearUsername = PassthroughSubject<Void, Never>()
@@ -26,18 +29,17 @@ final class CreateUsernameViewModel: BaseViewModel {
     @Published var actionText = L10n.createName
     @Published var status = CreateUsernameStatus.initial
     @Published var isLoading: Bool = false
-    @Published var isSkipEnabled: Bool = false
     @Published var backgroundColor: UIColor
 
     let usernameValidation = NSPredicate(format: "SELF MATCHES %@", Constants.availableSymbols)
 
     init(parameters: CreateUsernameParameters) {
-        isSkipEnabled = parameters.isSkipEnabled
         backgroundColor = parameters.backgroundColor
 
         super.init()
 
         bind()
+        log(analyticEvent: .usernameCreationScreen)
     }
 }
 
@@ -75,6 +77,7 @@ private extension CreateUsernameViewModel {
             guard let self = self else { return }
             self.isLoading = true
             self.createNameService.create(username: self.username)
+            self.log(analyticEvent: .usernameCreationButton(result: true))
             self.close.send(())
         }.store(in: &subscriptions)
 
@@ -97,11 +100,21 @@ private extension CreateUsernameViewModel {
                     }
                 }
             }.store(in: &subscriptions)
+
+        skip
+            .sink { [weak self] _ in
+                self?.log(analyticEvent: .usernameSkipButton(result: true))
+            }
+            .store(in: &subscriptions)
     }
 
     func showUndefinedError() {
         status = .initial
         notificationService.showDefaultErrorNotification()
+    }
+
+    func log(analyticEvent: AmplitudeEvent) {
+        self.analyticsManager.log(event: analyticEvent)
     }
 }
 

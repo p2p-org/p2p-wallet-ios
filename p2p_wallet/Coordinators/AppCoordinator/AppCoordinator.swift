@@ -64,6 +64,7 @@ class AppCoordinator: Coordinator<Void> {
                 .sink { [unowned self] wallet, _ in
                     if wallet != nil {
                         if self.walletCreated, available(.onboardingUsernameEnabled) {
+                            self.walletCreated = false
                             self.openCreateUsername()
                         } else {
                             self.navigateToMain()
@@ -135,6 +136,7 @@ class AppCoordinator: Coordinator<Void> {
 
         coordinate(to: startCoordinator)
             .sinkAsync(receiveValue: { [unowned self] result in
+                GlobalAppState.shared.shouldPlayAnimationOnHome = true
                 showAuthenticationOnMainOnAppear = false
                 let userWalletManager: UserWalletManager = Resolver.resolve()
                 switch result {
@@ -144,6 +146,7 @@ class AppCoordinator: Coordinator<Void> {
                     analyticsManager.log(event: AmplitudeEvent.setupOpen(fromPage: "create_wallet"))
                     analyticsManager.log(event: AmplitudeEvent.createConfirmPin(result: true))
 
+                    saveSecurity(data: data.security)
                     // Setup user wallet
                     try await userWalletManager.add(
                         seedPhrase: data.wallet.seedPhrase.components(separatedBy: " "),
@@ -157,11 +160,13 @@ class AppCoordinator: Coordinator<Void> {
                     Task.detached {
                         try await Resolver.resolve(WalletMetadataService.self).update(initialMetadata: data.metadata)
                     }
-
-                    saveSecurity(data: data.security)
                 case let .restored(data):
                     analyticsManager.log(event: AmplitudeEvent.restoreConfirmPin(result: true))
 
+                    let restoreMethod: String = data.metadata == nil ? "seed" : "web3auth"
+                    analyticsManager.setIdentifier(AmplitudeIdentifier.userRestoreMethod(restoreMethod: restoreMethod))
+
+                    saveSecurity(data: data.security)
                     // Setup user wallet
                     try await userWalletManager.add(
                         seedPhrase: data.wallet.seedPhrase.components(separatedBy: " "),
@@ -178,8 +183,6 @@ class AppCoordinator: Coordinator<Void> {
                                 .update(initialMetadata: metadata)
                         }
                     }
-
-                    saveSecurity(data: data.security)
                 case .breakProcess:
                     newOnboardingFlow()
                 }

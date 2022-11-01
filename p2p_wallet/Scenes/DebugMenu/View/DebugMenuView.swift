@@ -11,6 +11,8 @@ import SwiftUI
 
 struct DebugMenuView: View {
     @ObservedObject private var viewModel: DebugMenuViewModel
+    
+    @ObservedObject private var globalAppState = GlobalAppState.shared
     @ObservedObject private var feeRelayerConfig = FeeRelayConfig.shared
     @ObservedObject private var onboardingConfig = OnboardingConfig.shared
 
@@ -34,10 +36,28 @@ struct DebugMenuView: View {
                         }
                     }
                 }
+                Section(header: Text("Application")) {
+                    TextFieldRow(title: "Wallet:", content: $globalAppState.forcedWalletAddress)
+                    Button {
+                        Task {
+                            #if DEBUG
+                                showDebugger(false)
+                            #endif
+                            
+                            try await Resolver.resolve(UserWalletManager.self).refresh()
+                            
+//                            let app: AppEventHandlerType = Resolver.resolve()
+//                            app.delegate?.refresh()
+                        }
+                    } label: { Text("Apply") }
+                }
+                
                 Section(header: Text("Fee relayer")) {
                     Toggle("Disable free transaction", isOn: $feeRelayerConfig.disableFeeTransaction)
                         .valueChanged(value: feeRelayerConfig.disableFeeTransaction) { newValue in
+                            #if DEBUG
                             showDebugger(false)
+                            #endif
                             
                             let app: AppEventHandlerType = Resolver.resolve()
                             app.delegate?.refresh()

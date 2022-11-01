@@ -37,6 +37,7 @@ final class SettingsViewModel: BaseViewModel {
             toggleBiometryEnabling()
         }
     }
+    private var isBiometryCheckGoing: Bool = false
 
     @Published var biometryType: BiometryType = .none
     var error: Error? {
@@ -87,9 +88,11 @@ final class SettingsViewModel: BaseViewModel {
     }
 
     private func toggleBiometryEnabling() {
+        guard !isBiometryCheckGoing else { return }
         authenticationHandler.pauseAuthentication(true)
         let context = LAContext()
-
+        context.localizedFallbackTitle = ""
+        isBiometryCheckGoing = true
         Task {
             do {
                 try await context.evaluatePolicy(
@@ -98,13 +101,13 @@ final class SettingsViewModel: BaseViewModel {
                 )
                 Defaults.isBiometryEnabled.toggle()
                 analyticsManager.log(event: AmplitudeEvent.settingsSecuritySelected(faceId: Defaults.isBiometryEnabled))
+                isBiometryCheckGoing = false
             } catch {
-                if let authError = error as? LAError, authError.errorCode == kLAErrorUserCancel {
-                    return
-                } else {
+                if let authError = error as? LAError, authError.errorCode != kLAErrorUserCancel {
                     self.error = error
                 }
                 biometryIsEnabled = Defaults.isBiometryEnabled
+                isBiometryCheckGoing = false
             }
         }
         DispatchQueue.main.asyncAfter(deadline: .now() + 1) { [weak self] in

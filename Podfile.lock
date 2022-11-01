@@ -136,7 +136,7 @@ PODS:
     - GoogleUtilities/Logger
   - GoogleUtilities/UserDefaults (7.8.0):
     - GoogleUtilities/Logger
-  - GT3Captcha-iOS (0.15.4)
+  - GT3Captcha-iOS (0.15.5)
   - GTMAppAuth (1.3.1):
     - AppAuth/Core (~> 1.6)
     - GTMSessionFetcher/Core (< 3.0, >= 1.5)
@@ -207,7 +207,7 @@ PODS:
     - Sentry/Core (= 7.18.1)
   - Sentry/Core (7.18.1)
   - SkeletonUI (1.0.9)
-  - SkeletonView (1.30.3)
+  - SkeletonView (1.30.4)
   - SolanaPricesAPIs (1.0.0):
     - Cache
     - SolanaSwift (~> 2)
@@ -272,7 +272,7 @@ DEPENDENCIES:
   - Periphery
   - PhoneNumberKit (= 3.3.4)
   - ReachabilitySwift (~> 5.0.0)
-  - RenVMSwift (from `https://github.com/p2p-org/RenVMSwift.git`, branch `master`)
+  - RenVMSwift (from `https://github.com/p2p-org/RenVMSwift.git`, branch `fix/legacy-bitcoin-address`)
   - Resolver (= 1.5.0)
   - RxAppState (= 1.7.1)
   - RxCocoa (= 6.5.0)
@@ -283,7 +283,7 @@ DEPENDENCIES:
   - Sentry (from `https://github.com/getsentry/sentry-cocoa.git`, tag `7.18.1`)
   - SkeletonUI (from `https://github.com/p2p-org/SkeletonUI.git`, branch `master`)
   - SolanaPricesAPIs (from `https://github.com/p2p-org/key-app-kit-swift.git`, branch `master`)
-  - SolanaSwift (from `https://github.com/p2p-org/solana-swift.git`, branch `main`)
+  - SolanaSwift (from `https://github.com/p2p-org/solana-swift.git`, branch `feature/fix-error-property-in-model`)
   - Solend (from `https://github.com/p2p-org/key-app-kit-swift.git`, branch `master`)
   - SubviewAttachingTextView (= 1.5.0)
   - SwiftFormat/CLI (= 0.49.6)
@@ -411,7 +411,7 @@ EXTERNAL SOURCES:
     :branch: master
     :git: https://github.com/p2p-org/key-app-kit-swift.git
   RenVMSwift:
-    :branch: master
+    :branch: fix/legacy-bitcoin-address
     :git: https://github.com/p2p-org/RenVMSwift.git
   RxConcurrency:
     :branch: main
@@ -426,7 +426,7 @@ EXTERNAL SOURCES:
     :branch: master
     :git: https://github.com/p2p-org/key-app-kit-swift.git
   SolanaSwift:
-    :branch: main
+    :branch: feature/fix-error-property-in-model
     :git: https://github.com/p2p-org/solana-swift.git
   Solend:
     :branch: master
@@ -437,7 +437,7 @@ EXTERNAL SOURCES:
 
 CHECKOUT OPTIONS:
   AnalyticsManager:
-    :commit: 4735f6a257b4f77db1e294f23ae5ab1e1a145a26
+    :commit: 7d9647ccfe76e9d40df27b82a0517e044e2c5875
     :git: https://github.com/p2p-org/key-app-kit-swift.git
   BECollectionView:
     :commit: fa27fd346aa54e8cac58b34f861b08a39e38db6f
@@ -452,28 +452,28 @@ CHECKOUT OPTIONS:
     :commit: 9b4ab977660c8554d23a2d9b83b6ac6c6058b3b7
     :git: https://github.com/p2p-org/BEPureLayout.git
   Cache:
-    :commit: 4735f6a257b4f77db1e294f23ae5ab1e1a145a26
+    :commit: 7d9647ccfe76e9d40df27b82a0517e044e2c5875
     :git: https://github.com/p2p-org/key-app-kit-swift.git
   CountriesAPI:
-    :commit: 4735f6a257b4f77db1e294f23ae5ab1e1a145a26
+    :commit: 30bc1c7172020d8309993ebee9ceb80c2e75b352
     :git: https://github.com/p2p-org/key-app-kit-swift.git
   Down:
     :commit: eee1d66d7ef71b892e72c8bc8d84fcdfeaab1918
     :git: https://github.com/p2p-org/Down.git
   FeeRelayerSwift:
-    :commit: 99c7800f66e17f60500a5c11eb2b5cdc0f5b1984
+    :commit: 5bb0c9b5353e1dc786c04dba80f0dac414ee8ab5
     :git: https://github.com/p2p-org/FeeRelayerSwift.git
   JazziconSwift:
     :commit: f9c9f898402db4e62d482f4c90670652c221fa12
     :git: https://github.com/p2p-org/JazziconSwift.git
   JSBridge:
-    :commit: 4735f6a257b4f77db1e294f23ae5ab1e1a145a26
+    :commit: 30bc1c7172020d8309993ebee9ceb80c2e75b352
     :git: https://github.com/p2p-org/key-app-kit-swift.git
   KeyAppKitCore:
-    :commit: 4735f6a257b4f77db1e294f23ae5ab1e1a145a26
+    :commit: 30bc1c7172020d8309993ebee9ceb80c2e75b352
     :git: https://github.com/p2p-org/key-app-kit-swift.git
   KeyAppKitLogger:
-    :commit: 4735f6a257b4f77db1e294f23ae5ab1e1a145a26
+    :commit: 7d9647ccfe76e9d40df27b82a0517e044e2c5875
     :git: https://github.com/p2p-org/key-app-kit-swift.git
   KeyAppUI:
     :commit: b566adfe2a0e82014a7003671b9594d40db9a8ae
@@ -482,19 +482,19 @@ CHECKOUT OPTIONS:
     :commit: 78dd312eb762d66a54c87cd6dd8045140da28c4b
     :git: https://github.com/p2p-org/ListPlaceholder.git
   NameService:
-    :commit: 4735f6a257b4f77db1e294f23ae5ab1e1a145a26
+    :commit: 7d9647ccfe76e9d40df27b82a0517e044e2c5875
     :git: https://github.com/p2p-org/key-app-kit-swift.git
   Onboarding:
-    :commit: 90355742f306c86648cd92868f92d84bd9b72335
+    :commit: 30bc1c7172020d8309993ebee9ceb80c2e75b352
     :git: https://github.com/p2p-org/key-app-kit-swift.git
   OrcaSwapSwift:
     :commit: 7877642f7d6fd3765eee0143c21f3f8a7b93fe13
     :git: https://github.com/p2p-org/OrcaSwapSwift.git
   P2PSwift:
-    :commit: 4735f6a257b4f77db1e294f23ae5ab1e1a145a26
+    :commit: 30bc1c7172020d8309993ebee9ceb80c2e75b352
     :git: https://github.com/p2p-org/key-app-kit-swift.git
   RenVMSwift:
-    :commit: c7668f4ec4055780cf7854dc220a9c57ce3de410
+    :commit: 22c393558d0dc818d5facd2e124afd20d0e32b3e
     :git: https://github.com/p2p-org/RenVMSwift.git
   RxConcurrency:
     :commit: dadb16c54bd42ca83c08f3d80f61fbfca93a585c
@@ -506,16 +506,16 @@ CHECKOUT OPTIONS:
     :commit: 98225dbb0459477dfeac063e1c7d0750102325d1
     :git: https://github.com/p2p-org/SkeletonUI.git
   SolanaPricesAPIs:
-    :commit: 4735f6a257b4f77db1e294f23ae5ab1e1a145a26
+    :commit: 7d9647ccfe76e9d40df27b82a0517e044e2c5875
     :git: https://github.com/p2p-org/key-app-kit-swift.git
   SolanaSwift:
-    :commit: e3a6716d01a6c84f02d6052c3541f0313739ace4
+    :commit: bea0c539b3c5e15a94ef4ddaa9218251cde4c24c
     :git: https://github.com/p2p-org/solana-swift.git
   Solend:
-    :commit: 4735f6a257b4f77db1e294f23ae5ab1e1a145a26
+    :commit: 30bc1c7172020d8309993ebee9ceb80c2e75b352
     :git: https://github.com/p2p-org/key-app-kit-swift.git
   TransactionParser:
-    :commit: 4735f6a257b4f77db1e294f23ae5ab1e1a145a26
+    :commit: 7d9647ccfe76e9d40df27b82a0517e044e2c5875
     :git: https://github.com/p2p-org/key-app-kit-swift.git
 
 SPEC CHECKSUMS:
@@ -547,7 +547,7 @@ SPEC CHECKSUMS:
   GoogleDataTransport: 1c8145da7117bd68bbbed00cf304edb6a24de00f
   GoogleSignIn: 5651ce3a61e56ca864160e79b484cd9ed3f49b7a
   GoogleUtilities: 1d20a6ad97ef46f67bbdec158ce00563a671ebb7
-  GT3Captcha-iOS: c57d863e89065712f3a515b0814edb22e0ca6eca
+  GT3Captcha-iOS: 2be456783a54bc7ef40856d491dab4e4fe5d386e
   GTMAppAuth: 0ff230db599948a9ad7470ca667337803b3fc4dd
   GTMSessionFetcher: ffbb25ec00ebcb5201adab0a56d808f6f1902d9f
   Intercom: 43bfacc55b1c93cce9ec569833696d3f15678430
@@ -584,7 +584,7 @@ SPEC CHECKSUMS:
   secp256k1.swift: a7e7a214f6db6ce5db32cc6b2b45e5c4dd633634
   Sentry: 2d70348d6247a29702a8317e710c5ba890672df5
   SkeletonUI: b5c868e6917123e3d442d6cef9c71fe048175f3b
-  SkeletonView: f5b099c708e42a278079a12bcaaf71c303be65a3
+  SkeletonView: 5a050f6411e697abd4cda0a8d767013399dccd69
   SolanaPricesAPIs: 994fc864deab0dad370bc1509102f91d81324019
   SolanaSwift: 5b5f638b0d9568cea01c382465f84ba85ebb3efa
   Solend: c1ea93f70694b61758a182e5b26a8799ad7376cd
@@ -601,6 +601,6 @@ SPEC CHECKSUMS:
   TweetNacl: 3abf4d1d2082b0114e7a67410e300892448951e6
   "UITextView+Placeholder": d7b0c400921f66523f3a85d74f774512e14f6502
 
-PODFILE CHECKSUM: b7eaf4613786a0f740536ef97526318ba3607258
+PODFILE CHECKSUM: 033c88ece9662a122157828035a07b74771b53d1
 
 COCOAPODS: 1.11.3
