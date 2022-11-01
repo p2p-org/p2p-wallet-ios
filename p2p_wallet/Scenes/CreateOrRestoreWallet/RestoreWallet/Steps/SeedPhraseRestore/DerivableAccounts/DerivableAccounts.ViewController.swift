@@ -1,13 +1,8 @@
-//
-//  DerivableAccountsVC.swift
-//  p2p_wallet
-//
-//  Created by Chung Tran on 18/05/2021.
-//
-
 import AnalyticsManager
-import BECollectionView
+import BECollectionView_Combine
+import Combine
 import Foundation
+import KeyAppUI
 import Resolver
 import SolanaSwift
 
@@ -15,20 +10,30 @@ extension DerivableAccounts {
     class ViewController: BaseVC {
         // MARK: - Properties
 
-        private let viewModel: DrivableAccountsViewModelType
+        private let viewModel: NewDrivableAccountsViewModelType
         @Injected private var analyticsManager: AnalyticsManager
+        private var subscriptions = [AnyCancellable]()
+        var continueButton: TextButton?
 
         // MARK: - Subviews
 
-        private lazy var headerView = UIStackView(axis: .vertical, spacing: 20, alignment: .fill, distribution: .fill) {
-            WLCard {
+        private lazy var headerView = UIStackView(axis: .vertical, spacing: 18, alignment: .fill, distribution: .fill) {
+            WLCard(cornerRadius: 16) {
                 UIStackView(axis: .horizontal, spacing: 10, alignment: .center, distribution: .fill) {
-                    UIStackView(axis: .vertical, spacing: 8, alignment: .leading) {
-                        UILabel(text: L10n.derivationPath, textSize: 17, weight: .semibold)
+                    UIStackView(axis: .vertical, spacing: 4, alignment: .leading) {
+                        UILabel(text: L10n.derivationPath, textSize: 16, weight: .regular)
                         derivationPathLabel
                     }
-                    UIView.defaultNextArrow()
-                }.padding(.init(x: 18, y: 14))
+                    UIImageView(
+                        width: 20,
+                        height: 25,
+                        image: Asset.MaterialIcon.chevronRight.image,
+                        tintColor: Asset.Colors.mountain.color
+                    ).setup { image in
+                        image.contentMode = .scaleAspectFill
+                    }
+                    .padding(.init(only: .right, inset: 3))
+                }.padding(.init(x: 29, y: 14))
             }.onTap(self, action: #selector(chooseDerivationPath))
 
             UIView.greyBannerView {
@@ -59,7 +64,7 @@ extension DerivableAccounts {
             return collectionView
         }()
 
-        init(viewModel: DrivableAccountsViewModelType) {
+        init(viewModel: NewDrivableAccountsViewModelType) {
             self.viewModel = viewModel
             super.init()
         }
@@ -73,47 +78,58 @@ extension DerivableAccounts {
             super.setUp()
 
             // navigation bar
-            navigationItem.title = L10n.derivableAccounts
+            configureNavBar()
 
             view.addSubview(headerView)
-            headerView.autoPinEdge(toSuperviewSafeArea: .top, withInset: 4)
-            headerView.autoPinEdge(toSuperviewEdge: .left, withInset: 20)
-            headerView.autoPinEdge(toSuperviewEdge: .right, withInset: 20)
+            headerView.autoPinEdge(toSuperviewSafeArea: .top, withInset: 12)
+            headerView.autoPinEdge(toSuperviewEdge: .left, withInset: 16)
+            headerView.autoPinEdge(toSuperviewEdge: .right, withInset: 16)
 
             view.addSubview(accountsCollectionView)
-            accountsCollectionView.autoPinEdge(.top, to: .bottom, of: headerView)
+            accountsCollectionView.autoPinEdge(.top, to: .bottom, of: headerView, withOffset: 16)
             accountsCollectionView.autoPinEdge(toSuperviewSafeArea: .leading)
             accountsCollectionView.autoPinEdge(toSuperviewSafeArea: .trailing)
 
-            let button = WLButton.stepButton(type: .blue, label: L10n.continue)
-                .onTap(self, action: #selector(restore))
+            let button = TextButton(
+                title: L10n.continue,
+                style: .primary,
+                size: .large,
+                trailing: Asset.MaterialIcon.arrowForward.image
+            ).onPressed { _ in self.restore() }
             view.addSubview(button)
+            continueButton = button
+
             button.autoPinEdge(.top, to: .bottom, of: accountsCollectionView, withOffset: 16)
             button.autoPinEdge(toSuperviewEdge: .leading, withInset: 20)
             button.autoPinEdge(toSuperviewEdge: .trailing, withInset: 20)
-            button.autoPinEdge(toSuperviewEdge: .bottom, withInset: 30)
+            button.autoPinEdge(toSuperviewEdge: .bottom, withInset: 44)
         }
 
         override func bind() {
             super.bind()
 
-            viewModel.navigatableSceneDriver
-                .drive(onNext: { [weak self] in self?.navigate(to: $0) })
-                .disposed(by: disposeBag)
+            viewModel.navigatableScenePublisher
+                .sink { [weak self] in self?.navigate(to: $0) }
+                .store(in: &subscriptions)
 
-            viewModel.selectedDerivablePathDriver
+            viewModel.selectedDerivablePathPublisher
                 .map(\.title)
-                .drive(derivationPathLabel.rx.text)
-                .disposed(by: disposeBag)
+                .map { Optional($0) }
+                .assign(to: \.text, on: derivationPathLabel)
+                .store(in: &subscriptions)
 
-            viewModel.selectedDerivablePathDriver
-                .distinctUntilChanged()
-                .drive(onNext: { [weak self] path in
+            viewModel.selectedDerivablePathPublisher
+                .removeDuplicates()
+                .sink { [weak self] path in
                     self?.viewModel.accountsListViewModel.cancelRequest()
                     self?.viewModel.accountsListViewModel.setDerivablePath(path)
                     self?.viewModel.accountsListViewModel.reload()
-                })
-                .disposed(by: disposeBag)
+                }
+                .store(in: &subscriptions)
+
+            viewModel.loadingPublisher.removeDuplicates().sink { loading in
+                self.continueButton?.isLoading = loading
+            }.store(in: &subscriptions)
         }
 
         private func navigate(to scene: NavigatableScene?) {
@@ -140,6 +156,27 @@ extension DerivableAccounts {
 
         @objc func restore() {
             viewModel.restoreAccount()
+        }
+
+        @objc func onBack() {
+            viewModel.onBack()
+        }
+
+        func configureNavBar() {
+            navigationItem.title = L10n.derivableAccounts
+            // Left button
+            let backButton = UIBarButtonItem(
+                image: Asset.MaterialIcon.arrowBackIos.image,
+                style: .plain,
+                target: self,
+                action: #selector(onBack)
+            )
+            backButton.tintColor = Asset.Colors.night.color
+
+            let spacing = UIBarButtonItem(barButtonSystemItem: .fixedSpace, target: nil, action: nil)
+            spacing.width = 8
+
+            navigationItem.setLeftBarButtonItems([spacing, backButton], animated: false)
         }
     }
 }

@@ -1,88 +1,161 @@
-//
-//  DerivableAccounts.ViewModel.swift
-//  p2p_wallet
-//
-//  Created by Chung Tran on 18/05/2021.
-//
-
+import AnalyticsManager
+import Combine
 import Foundation
-import RxCocoa
-import RxSwift
+import Resolver
 import SolanaSwift
 
-protocol AccountRestorationHandler {
-    func derivablePathDidSelect(_ derivablePath: DerivablePath, phrases: [String])
+protocol NewAccountRestorationHandler {
+    func derivablePathDidSelect(path: DerivablePath, phrases: [String]) async throws
 }
 
-protocol DrivableAccountsViewModelType {
+protocol NewDrivableAccountsViewModelType {
+    var loadingPublisher: AnyPublisher<Bool, Never> { get }
     var accountsListViewModel: DerivableAccountsListViewModelType { get }
-    var navigatableSceneDriver: Driver<DerivableAccounts.NavigatableScene?> { get }
-    var selectedDerivablePathDriver: Driver<DerivablePath> { get }
+    var navigatableScenePublisher: AnyPublisher<DerivableAccounts.NavigatableScene?, Never> { get }
+    var selectedDerivablePathPublisher: AnyPublisher<DerivablePath, Never> { get }
 
     func getCurrentSelectedDerivablePath() -> DerivablePath
     func chooseDerivationPath()
     func selectDerivationPath(_ path: DerivablePath)
     func restoreAccount()
+    func onBack()
 }
 
 extension DerivableAccounts {
-    class ViewModel {
+    class ViewModel: BaseViewModel, NewAccountRestorationHandler {
         // MARK: - Dependencies
 
-        private let handler: AccountRestorationHandler
+        @Injected var analyticsManager: AnalyticsManager
+        @Injected var notificationsService: NotificationService
+        @Injected var appEventHandler: AppEventHandlerType
+        @Injected private var iCloudStorage: ICloudStorageType
 
         // MARK: - Properties
 
         private let phrases: [String]
+        private var derivablePath: DerivablePath?
         let accountsListViewModel: DerivableAccountsListViewModelType
 
         // MARK: - Subjects
 
-        private let navigationSubject = BehaviorRelay<NavigatableScene?>(value: nil)
-        private let selectedDerivablePathSubject = BehaviorRelay<DerivablePath>(value: .default)
+        @Published private var navigatableScene: NavigatableScene?
+        @Published private var selectedDerivablePath = DerivablePath.default
+        @Published var loading = false
+        @Published var error: String?
 
         // MARK: - Initializer
 
-        init(phrases: [String], handler: AccountRestorationHandler) {
+        init(phrases: [String]) {
             self.phrases = phrases
-            self.handler = handler
             accountsListViewModel = ListViewModel(phrases: phrases)
         }
 
-        deinit {
-            print("\(String(describing: self)) deinited")
+        struct CoordinatorIO {
+            var didSucceed = PassthroughSubject<([String], DerivablePath), Never>()
+            var back = PassthroughSubject<Void, Never>()
         }
+
+        let coordinatorIO = CoordinatorIO()
     }
 }
 
-extension DerivableAccounts.ViewModel: DrivableAccountsViewModelType {
-    var navigatableSceneDriver: Driver<DerivableAccounts.NavigatableScene?> {
-        navigationSubject.asDriver()
+extension DerivableAccounts.ViewModel: NewDrivableAccountsViewModelType {
+    var loadingPublisher: AnyPublisher<Bool, Never> {
+        $loading.eraseToAnyPublisher()
     }
 
-    var selectedDerivablePathDriver: Driver<DerivablePath> {
-        selectedDerivablePathSubject.asDriver()
+    var navigatableScenePublisher: AnyPublisher<DerivableAccounts.NavigatableScene?, Never> {
+        $navigatableScene.eraseToAnyPublisher()
+    }
+
+    var selectedDerivablePathPublisher: AnyPublisher<DerivablePath, Never> {
+        $selectedDerivablePath.eraseToAnyPublisher()
     }
 
     // MARK: - Actions
 
     func getCurrentSelectedDerivablePath() -> DerivablePath {
-        selectedDerivablePathSubject.value
+        selectedDerivablePath
     }
 
     func chooseDerivationPath() {
-        navigationSubject.accept(.selectDerivationPath)
+        navigatableScene = .selectDerivationPath
     }
 
     func selectDerivationPath(_ path: DerivablePath) {
-        selectedDerivablePathSubject.accept(path)
+        selectedDerivablePath = path
+    }
+
+    func onBack() {
+        coordinatorIO.back.send()
     }
 
     func restoreAccount() {
         // cancel any requests
         accountsListViewModel.cancelRequest()
 
+        loading = true
         // send to handler
-        handler.derivablePathDidSelect(selectedDerivablePathSubject.value, phrases: phrases)
+        Task {
+            do {
+                try await self.derivablePathDidSelect(path: selectedDerivablePath, phrases: phrases)
+            } catch {
+                self.notificationsService.showToast(title: nil, text: error.readableDescription)
+            }
+            self.loading = false
+        }
     }
+
+    func derivablePathDidSelect(path: DerivablePath, phrases: [String]) async throws {
+        analyticsManager.log(event: AmplitudeEvent.recoveryRestoreClick)
+        // save to icloud
+
+        coordinatorIO.didSucceed.send((phrases, path))
+    }
+
+    // MARK: -
+
+    // Commented it for now, but can use this method insted of delegation stuff
+    /*
+        func derivablePathDidSelect(_ derivablePath: DerivablePath, phrases: [String]) async throws {
+            analyticsManager.log(event: .recoveryRestoreClick)
+            // save to icloud
+            saveToICloud(name: nil, phrase: phrases, derivablePath: derivablePath)
+
+            try await saveAccountToStorage(phrases: phrases, derivablePath: derivablePath, name: nil, deviceShare: nil)
+        }
+
+        @MainActor
+        private func saveToICloud(name: String?, phrase: [String], derivablePath: DerivablePath) {
+            _ = iCloudStorage.saveToICloud(
+                account: .init(
+                    name: name,
+                    phrase: phrase.joined(separator: " "),
+                    derivablePath: derivablePath
+                )
+            )
+            notificationsService.showInAppNotification(.done(L10n.savedToICloud))
+        }
+
+        private func saveAccountToStorage(
+            phrases: [String],
+            derivablePath: DerivablePath,
+            name: String?,
+            deviceShare: String?
+        ) async throws {
+            try storage.save(phrases: phrases)
+            try storage.save(derivableType: derivablePath.type)
+            try storage.save(walletIndex: derivablePath.walletIndex)
+
+            try await storage.reloadSolanaAccount()
+
+            if let name = name {
+                storage.save(name: name)
+            }
+
+            if let deviceShare = deviceShare {
+                try storage.save(deviceShare: deviceShare)
+            }
+        }
+     */
 }

@@ -1,11 +1,5 @@
-//
-//  DerivationPaths.ViewController.swift
-//  p2p_wallet
-//
-//  Created by Chung Tran on 18/05/2021.
-//
-
 import Foundation
+import KeyAppUI
 import SolanaSwift
 
 extension DerivablePaths {
@@ -46,8 +40,7 @@ extension DerivablePaths {
                         weight: .semibold,
                         textColor: .textSecondary,
                         textAlignment: .center
-                    )
-                        .padding(.init(x: 0, y: 15))
+                    ).padding(.init(x: 0, y: 15))
                     UIView.defaultSeparator()
 
                     // Derivable paths
@@ -72,8 +65,11 @@ extension DerivablePaths {
                 }.padding(.zero, backgroundColor: .background, cornerRadius: 14)
 
                 // Cancel
-                WLButton.stepButton(type: .white, label: L10n.cancel)
-                    .onTap(self, action: #selector(back))
+                WLButton.stepButton(
+                    type: .white,
+                    label: L10n.cancel,
+                    labelColor: Asset.Colors.night.color
+                ).onTap(self, action: #selector(back))
             }
         }
 
