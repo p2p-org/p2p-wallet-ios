@@ -11,6 +11,7 @@ import Foundation
 import Resolver
 import RxSwift
 import SolanaSwift
+import KeyAppUI
 import UIKit
 
 extension WalletDetail {
@@ -26,7 +27,7 @@ extension WalletDetail {
         // MARK: - Subviews
 
         private lazy var balanceView = BalanceView(viewModel: viewModel)
-        private let actionsView = ColorfulHorizontalView()
+        private let actionsView = TokenActionsView()
 
         // MARK: - Subscene
 
@@ -60,19 +61,20 @@ extension WalletDetail {
 
             let containerView = UIView(forAutoLayout: ())
 
-            actionsView.autoSetDimension(.height, toSize: 80)
+            actionsView.autoSetDimension(.height, toSize: 68)
 
             let stackView = UIStackView(
                 axis: .vertical,
-                spacing: 18,
+                spacing: 0,
                 alignment: .fill
             ) {
-                balanceView.padding(.init(x: 18, y: 16))
-                actionsView.padding(.init(x: 18, y: 0))
-                containerView.padding(.init(top: 16, left: 8, bottom: 0, right: 8))
+                balanceView.padding(.init(top: 24, left: 0, bottom: 0, right: 0))
+                actionsView.padding(.init(top: 32, left: 18, bottom: 16, right: 18))
+                containerView.padding(.init(top: 16, left: 0, bottom: 0, right: 0))
             }
 
             view.addSubview(stackView)
+            stackView.backgroundColor = Asset.Colors.smoke.color
             stackView.autoPinEdgesToSuperviewEdges(with: .zero, excludingEdge: .top)
             stackView.autoPinEdge(toSuperviewSafeArea: .top)
 
@@ -96,7 +98,6 @@ extension WalletDetail {
                 .drive(
                     onNext: { [weak self] in
                         guard let self = self else { return }
-
                         self.actionsView.setArrangedSubviews($0.map(self.createWalletActionView))
                     }
                 )
