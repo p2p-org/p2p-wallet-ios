@@ -29,7 +29,6 @@ extension Wallet {
     }
 
     var isHidden: Bool {
-        if token.isNativeSOL { return false }
         guard let pubkey = pubkey else { return false }
         if Defaults.hiddenWalletPubkey.contains(pubkey) {
             return true
