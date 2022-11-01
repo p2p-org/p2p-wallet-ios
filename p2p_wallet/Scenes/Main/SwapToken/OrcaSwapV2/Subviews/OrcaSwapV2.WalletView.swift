@@ -46,7 +46,7 @@ extension OrcaSwapV2 {
             autocorrectionType: .no /* , rightView: useAllBalanceButton, rightViewMode: .always */
         )
 
-        private lazy var questionMarkView = UIImageView(width: 20, height: 20, image: .questionMarkCircleOutlined)
+        private lazy var questionMarkView = UIImageView(width: 20, height: 20, image: .questionMarkCircleOutlined, tintColor: Asset.Colors.night.color)
             .onTap(self, action: #selector(questionMarkDidTouch))
 
         init(type: WalletType, viewModel: OrcaSwapV2ViewModelType) {
