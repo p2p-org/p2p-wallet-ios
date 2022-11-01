@@ -20,25 +20,29 @@ extension History {
         }
 
         func currentItem() async throws -> HistoryStreamSource.Result? {
-            try await withThrowingTaskGroup(of: HistoryStreamSource.Result?.self) { group in
-                var mostFirst: HistoryStreamSource.Result?
-
-                for source in sources {
-                    group.addTask(priority: .userInitiated) {
-                        try await source.currentItem()
+            if buffer.isEmpty {
+                return try await withThrowingTaskGroup(of: HistoryStreamSource.Result?.self) { group in
+                    var mostFirst: HistoryStreamSource.Result?
+                    
+                    for source in sources {
+                        group.addTask(priority: .userInitiated) {
+                            try await source.currentItem()
+                        }
                     }
-                }
-
-                for try await trx in group {
-                    if let t1 = trx?.0.blockTime,
-                       let t2 = mostFirst?.0.blockTime,
-                       t1 > t2
-                    {
-                        mostFirst = trx
+                    
+                    for try await trx in group {
+                        if let t1 = trx?.0.blockTime,
+                           let t2 = mostFirst?.0.blockTime,
+                           t1 > t2
+                        {
+                            mostFirst = trx
+                        }
                     }
+                    
+                    return mostFirst
                 }
-
-                return mostFirst
+            } else {
+                return buffer.first
             }
         }
 
@@ -66,7 +70,6 @@ extension History {
                 return try await group.reduce([], +)
             }
 
-            try Task.checkCancellation()
             buffer.append(contentsOf: newResults)
             buffer.sort { left, right in
                 guard

@@ -49,8 +49,8 @@ final class BuyViewModel: ObservableObject {
     @Injected private var pricesAPI: SolanaPricesAPI
 
     // Defaults
-    @SwiftyUserDefault(keyPath: \.buyLastPaymentMethod, options: .cached)
-    var lastMethod: PaymentType
+//    @SwiftyUserDefault(keyPath: \.buyLastPaymentMethod, options: .cached)
+    var lastMethod: PaymentType = .bank
     @SwiftyUserDefault(keyPath: \.buyMinPrices, options: .cached)
     var buyMinPrices: [String: [String: Double]]
 

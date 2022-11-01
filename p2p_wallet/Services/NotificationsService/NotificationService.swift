@@ -29,6 +29,7 @@ protocol NotificationService {
     func notificationWasOpened()
     func unregisterForRemoteNotifications()
     func registerForRemoteNotifications()
+    func requestRemoteNotificationPermission()
 
     var showNotification: AnyPublisher<NotificationType, Never> { get }
     var showFromLaunch: Bool { get }
@@ -73,9 +74,30 @@ final class NotificationServiceImpl: NSObject, NotificationService {
     }
 
     func registerForRemoteNotifications() {
-        DispatchQueue.main.async {
-            UIApplication.shared.registerForRemoteNotifications()
-        }
+        UNUserNotificationCenter.current()
+            .getNotificationSettings { settings in
+                guard settings.authorizationStatus == .authorized else { return }
+                DispatchQueue.main.async {
+                    UIApplication.shared.registerForRemoteNotifications()
+                }
+            }
+    }
+
+    func requestRemoteNotificationPermission() {
+        UNUserNotificationCenter.current()
+            .getNotificationSettings { [weak self] settings in
+                if settings.authorizationStatus == .authorized {
+                    self?.registerForRemoteNotifications()
+                    Defaults.didSetEnableNotifications = true
+                } else {
+                    UNUserNotificationCenter.current()
+                        .requestAuthorization(options: [.alert, .sound, .badge]) { [weak self] granted, _ in
+                            guard granted else { return }
+                            self?.registerForRemoteNotifications()
+                            Defaults.didSetEnableNotifications = true
+                        }
+                }
+            }
     }
 
     func sendRegisteredDeviceToken(_ deviceToken: Data) async {
@@ -98,6 +120,7 @@ final class NotificationServiceImpl: NSObject, NotificationService {
             ))
             UserDefaults.standard.removeObject(forKey: deviceTokenKey)
         } catch {
+            print(error)
             UserDefaults.standard.set(deviceToken, forKey: deviceTokenKey)
         }
     }

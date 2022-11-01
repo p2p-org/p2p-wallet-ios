@@ -26,11 +26,20 @@ extension KeychainStorage: AccountStorageType {
 
     func reloadSolanaAccount() async throws {
         guard let phrases = localKeychain.get(phrasesKey)?.components(separatedBy: " ") else { return }
-        _account = try await SolanaSwift.Account(
-            phrase: phrases,
-            network: Defaults.apiEndPoint.network,
-            derivablePath: derivablePath
-        )
+        
+        if GlobalAppState.shared.forcedWalletAddress.isEmpty {
+            _account = try await SolanaSwift.Account(
+                phrase: phrases,
+                network: Defaults.apiEndPoint.network,
+                derivablePath: derivablePath
+            )
+        } else {
+            _account = SolanaSwift.Account(
+                phrase: [],
+                publicKey: try .init(string: GlobalAppState.shared.forcedWalletAddress),
+                secretKey: Data()
+            )
+        }
     }
 
     func save(phrases: [String]) throws {

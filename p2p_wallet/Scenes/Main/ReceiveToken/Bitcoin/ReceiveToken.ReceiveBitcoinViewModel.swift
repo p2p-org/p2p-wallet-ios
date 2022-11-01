@@ -8,12 +8,14 @@
 import AnalyticsManager
 import Combine
 import RenVMSwift
+import SolanaSwift
 import Resolver
 
 protocol ReceiveTokenBitcoinViewModelType: AnyObject {
     var addressPublisher: AnyPublisher<String?, Never> { get }
     var timerPublisher: AnyPublisher<Void, Never> { get }
     var processingTxsPublisher: AnyPublisher<[LockAndMint.ProcessingTx], Never> { get }
+    var minimumTransactionAmountPublisher: AnyPublisher<Double?, Never> { get }
     var hasExplorerButton: Bool { get }
     var sessionEndDate: Date? { get }
 
@@ -35,6 +37,7 @@ extension ReceiveToken {
 
         @Injected private var persistentStore: LockAndMintServicePersistentStore
         @Injected private var lockAndMintService: LockAndMintService
+        @Injected private var renVMRpcClient: RenVMRpcClientType
         @Injected private var analyticsManager: AnalyticsManager
         @Injected private var clipboardManager: ClipboardManagerType
         @Injected private var imageSaver: ImageSaverType
@@ -48,6 +51,7 @@ extension ReceiveToken {
         private let navigationSubject: PassthroughSubject<NavigatableScene?, Never>
         @Published private var address: String?
         @Published private var processingTransactions = [LockAndMint.ProcessingTx]()
+        private let minimumTransactionAmountSubject = PassthroughSubject<Double?, Never>()
 
         // MARK: - Properties
 
@@ -69,7 +73,7 @@ extension ReceiveToken {
             Task {
                 let session = await persistentStore.session
                 if session == nil || session?.isValid == false {
-                    try await lockAndMintService.createSession()
+                    try await lockAndMintService.createSession(endAt: Calendar.current.date(byAdding: .hour, value: 40, to: Date()))
                 } else {
                     await updateSessionEndDate()
                 }
@@ -96,14 +100,26 @@ extension ReceiveToken {
                 .store(in: &subscriptions)
 
             // listen to lockAndMintService
-            lockAndMintService.delegate = self
+            await MainActor.run { [weak self] in
+                self?.lockAndMintService.delegate = self
+            }
 
             if lockAndMintService.isLoading {
-                isLoading = true
+                await MainActor.run { [weak self] in
+                    self?.isLoading = true
+                }
             }
 
             guard let address = await persistentStore.gatewayAddress else { return }
-            self.address = address
+            await MainActor.run { [weak self] in
+                self?.address = address
+            }
+            
+            let fee = try? await renVMRpcClient.estimateTransactionFee()?
+                .convertToBalance(decimals: Token.renBTC.decimals)
+            await MainActor.run { [weak self] in
+                self?.minimumTransactionAmountSubject.send(fee * 2)
+            }
         }
         
         private func updateSessionEndDate() async {
@@ -150,6 +166,10 @@ extension ReceiveToken.ReceiveBitcoinViewModel: ReceiveTokenBitcoinViewModelType
 
     var timerPublisher: AnyPublisher<Void, Never> {
         timerSubject.map { _ in () }.eraseToAnyPublisher()
+    }
+    
+    var minimumTransactionAmountPublisher: AnyPublisher<Double?, Never> {
+        minimumTransactionAmountSubject.eraseToAnyPublisher()
     }
 
     var processingTxsPublisher: AnyPublisher<[LockAndMint.ProcessingTx], Never> {
