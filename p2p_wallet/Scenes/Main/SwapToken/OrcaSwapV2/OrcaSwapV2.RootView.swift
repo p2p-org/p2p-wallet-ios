@@ -26,7 +26,9 @@ extension OrcaSwapV2 {
             title: L10n.reviewAndConfirm,
             style: .primary,
             size: .large
-        )
+        ).onTap { [weak self] in
+            self?.buttonNextDidTouch()
+        }
 
         private lazy var mainView = OrcaSwapV2.MainSwapView(viewModel: viewModel)
         private let showDetailsButton = ShowHideButton(closedText: L10n.showDetails, openedText: L10n.hideDetails)
@@ -118,8 +120,6 @@ extension OrcaSwapV2 {
                     self?.setError(error: $0, feePayingTokenSymbol: $1)
                 }
                 .disposed(by: disposeBag)
-
-            nextButton.onPressed { [weak self] _ in self?.buttonNextDidTouch() }
         }
 
         private func setError(error: OrcaSwapV2.VerificationError?, feePayingTokenSymbol: String?) {

@@ -87,6 +87,9 @@ extension SendToken.ChooseRecipientAndNetwork.SelectAddress {
             }
 
         private lazy var actionButton = TextButton(title: L10n.chooseTheRecipientToProceed, style: .primary, size: .large)
+            .onTap { [weak self] in
+                self?.actionButtonDidTouch()
+            }
 
         // MARK: - Initializer
 
@@ -348,10 +351,6 @@ extension SendToken.ChooseRecipientAndNetwork.SelectAddress {
                 .map { ($0 ?? "").isEmpty }
                 .drive(warningView.rx.isHidden)
                 .disposed(by: disposeBag)
-
-            actionButton.onPressed { [weak self] _ in
-                self?.actionButtonDidTouch()
-            }
         }
 
         // MARK: - Actions
