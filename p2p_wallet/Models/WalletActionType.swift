@@ -38,4 +38,17 @@ enum WalletActionType {
             return .buttonSwap
         }
     }
+
+    var newIcon: UIImage {
+        switch self {
+        case .receive:
+            return .homeReceive
+        case .buy:
+            return .homeBuy
+        case .send:
+            return .homeSend
+        case .swap:
+            return .homeSwap
+        }
+    }
 }
