@@ -86,7 +86,7 @@ extension SendToken.ChooseRecipientAndNetwork.SelectAddress {
                 self?.viewModel.navigate(to: .selectPayingWallet)
             }
 
-        private lazy var actionButton = TextButton(title: L10n.chooseTheRecipientToProceed, style: .primary, size: .large).onTap(self, action: #selector(actionButtonDidTouch)) //WLStepButton.main(text: L10n.chooseTheRecipientToProceed)
+        private lazy var actionButton = TextButton(title: L10n.chooseTheRecipientToProceed, style: .primary, size: .large)
 
         // MARK: - Initializer
 
@@ -348,6 +348,10 @@ extension SendToken.ChooseRecipientAndNetwork.SelectAddress {
                 .map { ($0 ?? "").isEmpty }
                 .drive(warningView.rx.isHidden)
                 .disposed(by: disposeBag)
+
+            actionButton.onPressed { [weak self] _ in
+                self?.actionButtonDidTouch()
+            }
         }
 
         // MARK: - Actions
