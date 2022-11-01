@@ -27,7 +27,7 @@ extension ConfirmReceivingBitcoin.ViewController {
 
     func createRenBTCFreeButton() -> UIView {
         TextButton(title: L10n.createAddress, style: .primary, size: .large)
-            .onTap { [unowned self] in
+            .onPressed { [unowned self] _ in
                 self.viewModel.createRenBTC()
             }
     }

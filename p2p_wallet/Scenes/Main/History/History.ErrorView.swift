@@ -64,10 +64,9 @@ extension History {
                 stackView.centerYAnchor.constraint(equalTo: centerYAnchor),
             ])
 
-            actionButton.rx
-                .controlEvent(.touchUpInside)
-                .bind(to: tryAgainClicked)
-                .disposed(by: disposeBag)
+            actionButton.onPressed { [weak self] _ in
+                self?.tryAgainClicked.accept(())
+            }
         }
     }
 }

@@ -174,7 +174,7 @@ extension ProcessTransaction.Status {
                             style: .primary,
                             size: .large,
                             leading: .buttonCheckSmall
-                        ).onTap { [weak self] in
+                        ).onPressed { [weak self] _ in
                             self?.dismiss(animated: true) { [weak self] in
                                 self?.doneHandler?()
                             }

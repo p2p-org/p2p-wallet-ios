@@ -278,7 +278,7 @@ extension SendToken {
                         .drive(view.rx.isEnabled)
                         .disposed(by: disposeBag)
                 }
-                .onTap { [weak self] in
+                .onPressed { [weak self] _ in
                     self?.viewModel.authenticateAndSend()
                 }
 
