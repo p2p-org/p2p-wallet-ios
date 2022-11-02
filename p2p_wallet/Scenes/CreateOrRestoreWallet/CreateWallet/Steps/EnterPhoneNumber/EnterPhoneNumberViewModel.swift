@@ -136,7 +136,7 @@ final class EnterPhoneNumberViewModel: BaseOTPViewModel {
                         let formattedExample = self.phoneNumberKit.format(exampleNumber, toType: .international)
                             .replacingOccurrences(of: "[0-9]", with: "X", options: .regularExpression)
                             .replacingOccurrences(of: "-", with: " ")
-                            .appending("XXXXXX")
+                            .appending("XXXXX")
                         return Self.format(with: formattedExample, phone: $1 ?? "")
                     } else {
                         return $0
