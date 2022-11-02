@@ -16,7 +16,6 @@
 "Your wallet has been successfully created!" = "Votre portefeuille a été créé avec succès!";
 "Backup" = "Sauvegarde";
 "error" = "Erreur";
-"OK" = "OK";
 "please try again later!" = "Veuillez réessayer plus tard!";
 "creating an account" = "créer un compte";
 "security key" = "clef de sécurité";
@@ -1080,4 +1079,5 @@ Reset the PIN or wait for %@." = "Il vous reste %@ tentatives pour saisir le cod
 "Creating wallet" = "Création de portefeuille";
 "Please wait, it won't take long" = "Veuillez patienter, cela ne prendra pas longtemps";
 "This is an easy way to send and receive cryptocurrencies in Key App" = "C'est un moyen facile d'envoyer et de recevoir des crypto-monnaies dans Key App";
+"Ok" = "D'accord";
 "Enter your Solana wallet seed phrase" = "Entrez la phrase de départ de votre portefeuille Solana";

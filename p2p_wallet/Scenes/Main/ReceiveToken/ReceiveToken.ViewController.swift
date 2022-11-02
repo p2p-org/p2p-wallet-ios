@@ -5,7 +5,7 @@
 import AnalyticsManager
 import BEPureLayout
 import Combine
-import Foundation
+import KeyAppUI
 import Resolver
 import UIKit
 
@@ -89,7 +89,7 @@ extension ReceiveToken {
                                         height: 50,
                                         label: L10n.whatTokensCanIReceive,
                                         labelFont: .systemFont(ofSize: 15, weight: .medium),
-                                        textColor: .h5887ff
+                                        textColor: Asset.Colors.night.color
                                     ).onTap { [weak self] in
                                         self?.navigate(to: .showSupportedTokens)
                                     }
