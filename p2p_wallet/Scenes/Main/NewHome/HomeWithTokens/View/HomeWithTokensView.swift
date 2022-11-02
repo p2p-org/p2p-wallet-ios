@@ -113,11 +113,7 @@ struct HomeWithTokensView: View {
                 .padding(.bottom, 8)
             wrappedList(itemsCount: viewModel.items.count) {
                 ForEach(viewModel.items, id: \.pubkey) {
-                    if $0.isNativeSOL {
-                        tokenCell(wallet: $0)
-                    } else {
-                        swipeTokenCell(isVisible: true, wallet: $0)
-                    }
+                    swipeTokenCell(isVisible: true, wallet: $0)
                 }
             }
             if !viewModel.hiddenItems.isEmpty {
