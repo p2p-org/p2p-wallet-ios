@@ -9,6 +9,7 @@ import BEPureLayout
 import RxCocoa
 import RxSwift
 import UIKit
+import KeyAppUI
 
 extension OrcaSwapV2 {
     final class MainSwapView: WLFloatingPanelView {
@@ -40,7 +41,12 @@ extension OrcaSwapV2 {
         private func configureSubviews() {
             configureReceiveAtLeast()
 
-            switchButton.setImage(.swapSwitch, for: .normal)
+            switchButton.setImage(.arrowUpDown.withTintColor(Asset.Colors.night.color), for: .normal)
+            switchButton.backgroundColor = Asset.Colors.snow.color
+            switchButton.layer.borderColor = Asset.Colors.night.color.cgColor
+            switchButton.layer.borderWidth = 1
+            switchButton.layer.cornerRadius = 12
+            switchButton.layer.masksToBounds = true
             switchButton.addTarget(self, action: #selector(switchTapped), for: .touchUpInside)
         }
 
