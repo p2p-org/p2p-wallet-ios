@@ -5,7 +5,7 @@
 //  Created by Chung Tran on 22/04/2022.
 //
 
-import Foundation
+import KeyAppUI
 import RxCocoa
 
 extension ConfirmReceivingBitcoin.ViewController {
@@ -83,7 +83,7 @@ extension ConfirmReceivingBitcoin.ViewController {
     }
 
     func createRenBTCButton() -> UIView {
-        WLStepButton.main(text: "Pay 0.509 USDC & Continue")
+        TextButton(title: "Pay 0.509 USDC & Continue", style: .primary, size: .large)
             .setup { button in
                 Driver.combineLatest(
                     viewModel.totalFeeDriver,
@@ -95,10 +95,10 @@ extension ConfirmReceivingBitcoin.ViewController {
                         }
                         return L10n.payAndContinue(fee.toString(maximumFractionDigits: 9) + " " + wallet.token.symbol)
                     }
-                    .drive(button.rx.text)
+                    .drive(button.rx.title)
                     .disposed(by: disposeBag)
             }
-            .onTap { [unowned self] in
+            .onPressed { [unowned self] _ in
                 self.viewModel.createRenBTC()
             }
     }

@@ -6,10 +6,6 @@ jobs:
     runs-on: macos-12
 
     steps:
-      - uses: maxim-lobanov/setup-xcode@v1
-        with:
-          xcode-version: '13.4.1'
-
       - name: Check out repository
         uses: actions/checkout@v3
         with:
@@ -26,7 +22,6 @@ jobs:
           curl -o ./p2p_wallet/Config.xcconfig ${{ secrets.XCCONFIG_URL }}
           rm ./p2p_wallet/GoogleService-Info.plist
           curl -o ./p2p_wallet/GoogleService-Info.plist ${{ secrets.GOOGLE_SERVICE_INFO_PLIST_URL }}
-          export APPLE_TEAM_ID=${{ secrets.APPLE_TEAM_ID }}
         shell: bash
 
       - name: Install project

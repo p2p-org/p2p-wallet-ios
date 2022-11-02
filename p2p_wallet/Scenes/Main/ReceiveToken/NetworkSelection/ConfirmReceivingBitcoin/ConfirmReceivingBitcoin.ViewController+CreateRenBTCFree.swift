@@ -5,9 +5,10 @@
 //  Created by Chung Tran on 13/10/2022.
 //
 
-import Foundation
 import RxCocoa
 import RxSwift
+import UIKit
+import KeyAppUI
 
 extension ConfirmReceivingBitcoin.ViewController {
     func createRenBTCFreeView() -> BEVStack {
@@ -25,8 +26,8 @@ extension ConfirmReceivingBitcoin.ViewController {
     }
 
     func createRenBTCFreeButton() -> UIView {
-        WLStepButton.main(text: L10n.createAddress)
-            .onTap { [unowned self] in
+        TextButton(title: L10n.createAddress, style: .primary, size: .large)
+            .onPressed { [unowned self] _ in
                 self.viewModel.createRenBTC()
             }
     }
