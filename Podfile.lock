@@ -437,7 +437,7 @@ EXTERNAL SOURCES:
 
 CHECKOUT OPTIONS:
   AnalyticsManager:
-    :commit: 7d9647ccfe76e9d40df27b82a0517e044e2c5875
+    :commit: 5b0d2f99838d78df0392e196869afbb3f9c63d01
     :git: https://github.com/p2p-org/key-app-kit-swift.git
   BECollectionView:
     :commit: fa27fd346aa54e8cac58b34f861b08a39e38db6f
@@ -452,10 +452,10 @@ CHECKOUT OPTIONS:
     :commit: 9b4ab977660c8554d23a2d9b83b6ac6c6058b3b7
     :git: https://github.com/p2p-org/BEPureLayout.git
   Cache:
-    :commit: 7d9647ccfe76e9d40df27b82a0517e044e2c5875
+    :commit: 5b0d2f99838d78df0392e196869afbb3f9c63d01
     :git: https://github.com/p2p-org/key-app-kit-swift.git
   CountriesAPI:
-    :commit: 30bc1c7172020d8309993ebee9ceb80c2e75b352
+    :commit: 5b0d2f99838d78df0392e196869afbb3f9c63d01
     :git: https://github.com/p2p-org/key-app-kit-swift.git
   Down:
     :commit: eee1d66d7ef71b892e72c8bc8d84fcdfeaab1918
@@ -467,13 +467,13 @@ CHECKOUT OPTIONS:
     :commit: f9c9f898402db4e62d482f4c90670652c221fa12
     :git: https://github.com/p2p-org/JazziconSwift.git
   JSBridge:
-    :commit: 30bc1c7172020d8309993ebee9ceb80c2e75b352
+    :commit: 5b0d2f99838d78df0392e196869afbb3f9c63d01
     :git: https://github.com/p2p-org/key-app-kit-swift.git
   KeyAppKitCore:
-    :commit: 30bc1c7172020d8309993ebee9ceb80c2e75b352
+    :commit: 5b0d2f99838d78df0392e196869afbb3f9c63d01
     :git: https://github.com/p2p-org/key-app-kit-swift.git
   KeyAppKitLogger:
-    :commit: 7d9647ccfe76e9d40df27b82a0517e044e2c5875
+    :commit: 5b0d2f99838d78df0392e196869afbb3f9c63d01
     :git: https://github.com/p2p-org/key-app-kit-swift.git
   KeyAppUI:
     :commit: b566adfe2a0e82014a7003671b9594d40db9a8ae
@@ -482,16 +482,16 @@ CHECKOUT OPTIONS:
     :commit: 78dd312eb762d66a54c87cd6dd8045140da28c4b
     :git: https://github.com/p2p-org/ListPlaceholder.git
   NameService:
-    :commit: 7d9647ccfe76e9d40df27b82a0517e044e2c5875
+    :commit: 5b0d2f99838d78df0392e196869afbb3f9c63d01
     :git: https://github.com/p2p-org/key-app-kit-swift.git
   Onboarding:
-    :commit: 30bc1c7172020d8309993ebee9ceb80c2e75b352
+    :commit: 5b0d2f99838d78df0392e196869afbb3f9c63d01
     :git: https://github.com/p2p-org/key-app-kit-swift.git
   OrcaSwapSwift:
     :commit: 7877642f7d6fd3765eee0143c21f3f8a7b93fe13
     :git: https://github.com/p2p-org/OrcaSwapSwift.git
   P2PSwift:
-    :commit: 30bc1c7172020d8309993ebee9ceb80c2e75b352
+    :commit: 5b0d2f99838d78df0392e196869afbb3f9c63d01
     :git: https://github.com/p2p-org/key-app-kit-swift.git
   RenVMSwift:
     :commit: 22c393558d0dc818d5facd2e124afd20d0e32b3e
@@ -506,16 +506,16 @@ CHECKOUT OPTIONS:
     :commit: 98225dbb0459477dfeac063e1c7d0750102325d1
     :git: https://github.com/p2p-org/SkeletonUI.git
   SolanaPricesAPIs:
-    :commit: 7d9647ccfe76e9d40df27b82a0517e044e2c5875
+    :commit: 5b0d2f99838d78df0392e196869afbb3f9c63d01
     :git: https://github.com/p2p-org/key-app-kit-swift.git
   SolanaSwift:
     :commit: bea0c539b3c5e15a94ef4ddaa9218251cde4c24c
     :git: https://github.com/p2p-org/solana-swift.git
   Solend:
-    :commit: 30bc1c7172020d8309993ebee9ceb80c2e75b352
+    :commit: 5b0d2f99838d78df0392e196869afbb3f9c63d01
     :git: https://github.com/p2p-org/key-app-kit-swift.git
   TransactionParser:
-    :commit: 7d9647ccfe76e9d40df27b82a0517e044e2c5875
+    :commit: 5b0d2f99838d78df0392e196869afbb3f9c63d01
     :git: https://github.com/p2p-org/key-app-kit-swift.git
 
 SPEC CHECKSUMS:

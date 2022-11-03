@@ -11,6 +11,7 @@ import SolanaSwift
 /// Centralized class for managing user accounts
 class UserWalletManager: ObservableObject {
     @Injected private var storage: KeychainStorage
+    @Injected private var walletSettings: WalletSettings
     @Injected private var notificationsService: NotificationService
     @Injected private var solanaTracker: SolanaTracker
 
@@ -84,6 +85,8 @@ class UserWalletManager: ObservableObject {
         Defaults.forceCloseNameServiceBanner = false
         Defaults.shouldShowConfirmAlertOnSend = true
         Defaults.shouldShowConfirmAlertOnSwap = true
+        
+        walletSettings.reset()
 
         // Reset wallet
         wallet = nil

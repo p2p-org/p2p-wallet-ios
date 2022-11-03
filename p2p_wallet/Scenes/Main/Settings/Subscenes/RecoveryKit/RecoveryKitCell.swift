@@ -6,14 +6,16 @@ import KeyAppUI
 import SwiftUI
 
 struct RecoveryKitCell: View {
+    let icon: UIImage
     let title: String
     let onTap: (() -> Void)?
 
     var body: some View {
         Button { onTap?() } label: {
             HStack {
-                Image(uiImage: .keyIcon)
+                Image(uiImage: icon)
                 Text(title)
+                    .fontWeight(.semibold)
                     .apply(style: .text2)
                 Spacer()
                 Image(uiImage: Asset.MaterialIcon.chevronRight.image)
@@ -34,7 +36,7 @@ struct RecoveryKitCell_Previews: PreviewProvider {
     static var previews: some View {
         ZStack {
             Color(.gray)
-            RecoveryKitCell(title: "Seed phrase") {}
+            RecoveryKitCell(icon: .keyIcon, title: "Seed phrase") {}
         }
     }
 }
