@@ -12,7 +12,7 @@ import SwiftUI
 struct SheetHeaderModifier: ViewModifier {
     let title: String
     var withSeparator: Bool = true
-    let close: () -> Void
+    let close: (() -> Void)?
 
     func body(content: Content) -> some View {
         VStack(spacing: 0) {
@@ -24,7 +24,7 @@ struct SheetHeaderModifier: ViewModifier {
 }
 
 extension View {
-    func sheetHeader(title: String, withSeparator: Bool = true, close: @escaping () -> Void) -> some View {
+    func sheetHeader(title: String, withSeparator: Bool = true, close: (() -> Void)? = nil) -> some View {
         modifier(SheetHeaderModifier(title: title, withSeparator: withSeparator, close: close))
     }
 }
@@ -32,7 +32,7 @@ extension View {
 private struct SheetHeaderView: View {
     let title: String
     let withSeparator: Bool
-    let close: () -> Void
+    let close: (() -> Void)?
 
     var body: some View {
         VStack(spacing: 0) {
@@ -47,14 +47,16 @@ private struct SheetHeaderView: View {
                     .font(uiFont: .font(of: .title3, weight: .semibold))
                     .padding(.top, 18)
                 Spacer()
-                Button(
-                    action: {
-                        close()
-                    },
-                    label: {
-                        Image(uiImage: .closeAction)
-                    }
-                )
+                if let close = close {
+                    Button(
+                        action: {
+                            close()
+                        },
+                        label: {
+                            Image(uiImage: .closeAction)
+                        }
+                    )
+                }
             }
             .padding(.trailing, 16)
             .padding(.leading, 32)
