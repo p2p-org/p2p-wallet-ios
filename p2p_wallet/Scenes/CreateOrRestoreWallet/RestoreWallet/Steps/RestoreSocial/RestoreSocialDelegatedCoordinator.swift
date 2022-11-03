@@ -31,8 +31,6 @@ final class RestoreSocialDelegatedCoordinator: DelegatedCoordinator<RestoreSocia
                 .init(text: L10n.tryAnotherOption),
             ]
             return handleNotFoundDeviceSocial(title: L10n.noWalletFound, subtitles: subtitles)
-        case .expiredSocialTryAgain:
-            return nil
         case .finish:
             return nil
         case let .signInProgress(tokenID, email, deviceShare, customResult, _):

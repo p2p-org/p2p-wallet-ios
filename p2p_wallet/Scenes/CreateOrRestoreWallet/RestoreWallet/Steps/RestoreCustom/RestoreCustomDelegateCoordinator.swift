@@ -40,9 +40,6 @@ final class RestoreCustomDelegatedCoordinator: DelegatedCoordinator<RestoreCusto
         case let .block(until, _, reason):
             return handleBlock(until: until, reason: reason)
 
-        case .expiredSocialTryAgain:
-            return handleExpiredSocialTryAgain()
-
         case .notFoundDevice:
             return handleNotFound()
 
@@ -340,27 +337,6 @@ private extension RestoreCustomDelegatedCoordinator {
             onPrivacyPolicy: { [weak self] in self?.openPrivacyPolicy() },
             onInfo: { [weak self] in self?.openHelp() }
         )
-        return UIHostingController(rootView: view)
-    }
-
-    func handleExpiredSocialTryAgain() -> UIViewController {
-        let content = OnboardingContentData(
-            image: .catFail,
-            title: L10n.noWalletFound,
-            subtitle: L10n.repeatSocialAuth
-        )
-        let actionViewModel = RestoreSocialOptionViewModel()
-        actionViewModel.optionChosen.sinkAsync { [stateMachine] process in
-            process.start {
-                _ = try await stateMachine <- .requireSocial(provider: process.data)
-            }
-        }.store(in: &subscriptions)
-        let actionView = RestoreSocialOptionView(viewModel: actionViewModel)
-        let view = OnboardingBrokenScreen(title: "", contentData: content, back: { [stateMachine] in
-            Task { _ = try await stateMachine <- .start }
-        }, info: { [weak self] in
-            self?.openHelp()
-        }, customActions: { actionView })
         return UIHostingController(rootView: view)
     }
 

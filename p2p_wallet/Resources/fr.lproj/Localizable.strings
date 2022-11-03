@@ -830,7 +830,6 @@ Reset the PIN or wait for %@." = "Il vous reste %@ tentatives pour saisir le cod
 "You request OTP too often. Try later." = "Vous demandez OTP trop souvent.  Essayer plus tard.";
 "Sorry, we don't know such a country" = "Désolé, nous ne connaissons pas un tel pays";
 "Well, well" = "Bien bien";
-"Repeat social auth" = "Répéter l'authentification sociale";
 "We can’t SMS you" = "Nous ne pouvons pas vous envoyer de SMS";
 "Use an another phone" = "Utiliser un autre téléphone";
 "Try with another account or use an another phone number" = "Essayez avec un autre compte ou utilisez un autre numéro de téléphone";
