@@ -16,7 +16,6 @@
 "Your wallet has been successfully created!" = "Votre portefeuille a été créé avec succès!";
 "Backup" = "Sauvegarde";
 "error" = "Erreur";
-"OK" = "OK";
 "please try again later!" = "Veuillez réessayer plus tard!";
 "creating an account" = "créer un compte";
 "security key" = "clef de sécurité";
@@ -1091,3 +1090,5 @@ Reset the PIN or wait for %@." = "Il vous reste %@ tentatives pour saisir le cod
 "You will lose access to the free username that you received during registration. Your friends will not be able to send you funds using your username." = "Vous perdrez l'accès au nom d'utilisateur gratuit que vous avez reçu lors de votre inscription.  Vos amis ne pourront pas vous envoyer de fonds en utilisant votre nom d'utilisateur.";
 "You will not be able to use free transactions within the Solana network with Key App." = "Vous ne pourrez pas utiliser les transactions gratuites au sein du réseau Solana avec Key App.";
 "Make sure you understand" = "Assurez-vous de comprendre";
+"Ok" = "D'accord";
+"Enter your Solana wallet seed phrase" = "Entrez la phrase de départ de votre portefeuille Solana";

@@ -16,7 +16,6 @@
 "Your wallet has been successfully created!" = "Ваш кошелек успешно создан!";
 "Backup" = "Резервная копия";
 "error" = "ошибка";
-"OK" = "ОК";
 "please try again later!" = "Пожалуйста, попробуйте позже!";
 "creating an account" = "создание учетной записи";
 "security key" = "ключ безопасности";
@@ -1091,3 +1090,5 @@ Reset the PIN or wait for %@." = "У вас осталось %@ попыток �
 "You will lose access to the free username that you received during registration. Your friends will not be able to send you funds using your username." = "Вы потеряете доступ к бесплатному логину, полученному при регистрации.  Ваши друзья не смогут отправлять вам средства, используя ваше имя пользователя.";
 "You will not be able to use free transactions within the Solana network with Key App." = "Вы не сможете использовать бесплатные транзакции в сети Solana с приложением Key.";
 "Make sure you understand" = "Убедитесь, что вы понимаете";
+"Ok" = "Ok";
+"Enter your Solana wallet seed phrase" = "Введите исходную фразу вашего кошелька Solana";
