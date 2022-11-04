@@ -13,6 +13,7 @@ class GlobalAppState: ObservableObject {
     @Published var shouldPlayAnimationOnHome: Bool = false
     
     @Published var forcedWalletAddress: String = ""
+    @Published var forcedFeeRelayerEndpoint: String = ""
 
     private init() {}
 }
