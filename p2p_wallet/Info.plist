@@ -6,12 +6,12 @@
 	<string>$(AMPLITUDE_API_KEY)</string>
 	<key>API_GATEWAY_DEV</key>
 	<string>$(API_GATEWAY_DEV)</string>
-	<key>APPSFLYER_DEV_KEY</key>
-	<string>$(APPSFLYER_DEV_KEY)</string>
 	<key>API_GATEWAY_PROD</key>
 	<string>$(API_GATEWAY_PROD)</string>
 	<key>APPSFLYER_APP_ID</key>
 	<string>$(APPSFLYER_APP_ID)</string>
+	<key>APPSFLYER_DEV_KEY</key>
+	<string>$(APPSFLYER_DEV_KEY)</string>
 	<key>CFBundleDevelopmentRegion</key>
 	<string>$(DEVELOPMENT_LANGUAGE)</string>
 	<key>CFBundleExecutable</key>
@@ -93,10 +93,6 @@
 	<string>$(NAME_SERVICE_ENDPOINT_NEW)</string>
 	<key>NAME_SERVICE_STAGING_ENDPOINT</key>
 	<string>$(NAME_SERVICE_STAGING_ENDPOINT)</string>
-	<key>TORUS_APPLE_VERIFIER_PROD</key>
-	<string>$(TORUS_APPLE_VERIFIER_PROD)</string>
-	<key>TORUS_GOOGLE_SUB_VERIFIER_PROD</key>
-	<string>$(TORUS_GOOGLE_SUB_VERIFIER_PROD)</string>
 	<key>NSAppTransportSecurity</key>
 	<dict>
 		<key>NSExceptionDomains</key>
