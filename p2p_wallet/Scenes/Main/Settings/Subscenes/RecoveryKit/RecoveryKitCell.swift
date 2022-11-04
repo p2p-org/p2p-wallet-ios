@@ -14,6 +14,7 @@ struct RecoveryKitCell: View {
         Button { onTap?() } label: {
             HStack {
                 Image(uiImage: icon)
+                    .padding(.trailing, 12)
                 Text(title)
                     .fontWeight(.semibold)
                     .apply(style: .text2)

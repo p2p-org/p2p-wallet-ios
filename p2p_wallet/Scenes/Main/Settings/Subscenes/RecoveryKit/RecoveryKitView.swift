@@ -33,10 +33,10 @@ struct RecoveryKitView: View {
                 .padding(.bottom, 24)
                 .background(Color(Asset.Colors.lime.color))
                 .cornerRadius(28)
-                .overlay(
-                    helpButton,
-                    alignment: .topTrailing
-                )
+                //.overlay(
+                //    helpButton,
+                //    alignment: .topTrailing
+                //)
                 .padding(.top, safeAreaInsets.top + 50)
 
                 // TKey info
@@ -99,7 +99,7 @@ struct RecoveryKitView: View {
                         RecoveryKitRow(
                             icon: .alertIcon,
                             title: L10n.deleteMyAccount,
-                            subtitle: L10n.pending
+                            subtitle: L10n.pending.uppercaseFirst + "..."
                         )
                         .foregroundColor(Color(Asset.Colors.night.color))
                         .background(Color(Asset.Colors.snow.color))
