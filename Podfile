@@ -4,12 +4,10 @@ platform :ios, '14.0'
 inhibit_all_warnings!
 
 # ENV Variables
-$teamID = ENV["APPLE_TEAM_ID"]
 $keyAppKitPath = ENV['KEY_APP_KIT']
 $solanaSwiftPath = ENV['SOLANA_SWIFT']
 $keyAppUI = ENV['KEY_APP_UI']
 
-puts $teamID
 puts $keyAppKitPath
 puts $keyAppUI
 
@@ -138,10 +136,7 @@ post_install do |installer|
       config.build_settings['IPHONEOS_DEPLOYMENT_TARGET'] = '14.0'
       config.build_settings['CLANG_WARN_QUOTED_INCLUDE_IN_FRAMEWORK_HEADER'] = 'NO'
       config.build_settings["EXCLUDED_ARCHS[sdk=iphonesimulator*]"] = "arm64"
-
-      if $teamID
-        config.build_settings["DEVELOPMENT_TEAM"] = $teamID
-      end
+      config.build_settings['CODE_SIGNING_ALLOWED'] = 'NO'
     end
 
     if target.name == 'BECollectionView_Combine' || target.name == 'BECollectionView' || target.name == 'BECollectionView_Core'

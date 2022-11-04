@@ -43,7 +43,7 @@ struct RefreshableModifier: ViewModifier {
 
 public extension View {
     @ViewBuilder func customRefreshable(action: @escaping @Sendable () async -> Void) -> some View {
-        if #available(iOS 15, *) {
+        if #available(iOS 16, *) {
             refreshable(action: action)
         } else {
             modifier(RefreshableModifier(action: action))
