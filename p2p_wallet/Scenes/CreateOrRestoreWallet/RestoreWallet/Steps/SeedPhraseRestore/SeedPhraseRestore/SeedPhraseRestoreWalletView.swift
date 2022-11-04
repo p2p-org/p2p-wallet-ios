@@ -12,7 +12,7 @@ struct SeedPhraseRestoreWalletView: View {
     var body: some View {
         VStack {
             VStack {
-                Text(L10n.enterYourSeedPhrase)
+                Text(L10n.enterYourSolanaWalletSeedPhrase)
                     .apply(style: .text3)
                     .foregroundColor(Color(Asset.Colors.mountain.color))
                     .padding(.top, 4)

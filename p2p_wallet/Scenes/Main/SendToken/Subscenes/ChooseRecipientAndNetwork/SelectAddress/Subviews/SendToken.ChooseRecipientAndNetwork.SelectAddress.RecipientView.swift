@@ -64,7 +64,11 @@ extension SendToken.ChooseRecipientAndNetwork.SelectAddress {
         }
 
         func setHighlighted() {
-            recipientIcon.image = .emptyUserAvatarHighlighted
+            if titleLabel.text?.hasSuffix(.nameServiceDomain) == true {
+                recipientIcon.image = .appIconSmall
+            } else {
+                recipientIcon.image = .emptyUserAvatar
+            }
         }
 
         private func configureSelf() {
