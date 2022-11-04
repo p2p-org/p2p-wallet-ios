@@ -22,11 +22,6 @@ jobs:
           curl -o ./p2p_wallet/Config.xcconfig ${{ secrets.XCCONFIG_URL }}
         shell: bash
 
-      - name: Assign team id for CocoaPods
-        run: |
-          export DEVELOPER_PORTAL_TEAM_ID=${{ secrets.DEVELOPER_PORTAL_TEAM_ID }}
-        shell: bash
-
       - name: Install project
         run: |
           chmod u+x Scripts/remove_cocoa_debug.rb && Scripts/remove_cocoa_debug.rb
