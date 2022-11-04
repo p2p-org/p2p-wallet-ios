@@ -42,6 +42,10 @@ extension Resolver: ResolverRegistering {
                 RemoteConfigWarmupProcess(),
             ])
         }.scope(.application)
+        
+        register {
+            WalletSettings(provider: WalletSettingsUserDefaultsProvider())
+        }.scope(.application)
 
         // AppEventHandler
         register { AppEventHandler() }

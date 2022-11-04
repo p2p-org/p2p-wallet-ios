@@ -19,6 +19,7 @@ struct RecoveryKitRow: View {
                 Image(uiImage: icon)
                 VStack(alignment: .leading, spacing: 4) {
                     Text(title)
+                        .fontWeight(.semibold)
                         .apply(style: .text2)
                         .foregroundColor(Color(Asset.Colors.night.color))
                     Text(subtitle)

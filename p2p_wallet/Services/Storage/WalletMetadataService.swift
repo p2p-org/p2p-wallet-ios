@@ -69,6 +69,16 @@ class RemoteWalletMetadataProvider: WalletMetadataProvider {
     }
 }
 
+class MockedWalletMeradataProvider: WalletMetadataProvider {
+    private let value: WalletMetaData?
+    
+    init(_ value: WalletMetaData?) { self.value = value }
+    
+    func save(metadata _: WalletMetaData?) async throws {}
+
+    func load() async throws -> WalletMetaData? { value }
+}
+
 class WalletMetadataService: ObservableObject {
     @Published var loading: Bool = false
     @Published var metadata: WalletMetaData?
