@@ -17,13 +17,6 @@ jobs:
         with:
           ssh-private-key: ${{ secrets.KEY_APP_UI_GIT_SSH }}
 
-      - name: Copy secret files
-        run: |
-          curl -o ./p2p_wallet/Config.xcconfig ${{ secrets.XCCONFIG_URL }}
-          rm ./p2p_wallet/GoogleService-Info.plist
-          curl -o ./p2p_wallet/GoogleService-Info.plist ${{ secrets.GOOGLE_SERVICE_INFO_PLIST_URL }}
-        shell: bash
-
       - name: Install project
         run: |
           chmod u+x Scripts/remove_cocoa_debug.rb && Scripts/remove_cocoa_debug.rb
@@ -66,3 +59,5 @@ jobs:
           IS_CI: '${{ secrets.IS_CI }}'
           SLACK_API_TOKEN: '${{ secrets.SLACK_API_TOKEN }}'
           JIRA_BASE_URL: '${{ secrets.JIRA_BASE_URL }}'
+          GOOGLE_SERVICE_INFO_PLIST_URL: '${{ secrets.GOOGLE_SERVICE_INFO_PLIST_URL }}'
+          XCCONFIG_URL: '${{ secrets.XCCONFIG_URL }}'
