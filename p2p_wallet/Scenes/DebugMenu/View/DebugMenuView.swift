@@ -38,6 +38,7 @@ struct DebugMenuView: View {
                 }
                 Section(header: Text("Application")) {
                     TextFieldRow(title: "Wallet:", content: $globalAppState.forcedWalletAddress)
+                    TextFieldRow(title: "Relayer:", content: $globalAppState.forcedFeeRelayerEndpoint)
                     Button {
                         Task {
                             #if DEBUG
