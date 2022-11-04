@@ -151,8 +151,16 @@ def commit_changes
   push_git_tags(tag: tag_name)
 end 
 
+def update_xcconfig
+  config_url = "../p2p_wallet/Config.xcconfig"
+  sh("curl", "-o", config_url, ENV['XCCONFIG_URL'])
+end
+
 platform :ios do
   lane :feature_test do
+    # update xcconfig
+    update_xcconfig
+
     # get current branch name
     branch = git_branch.downcase
     puts "Current branch is #{branch}"
@@ -226,6 +234,14 @@ platform :ios do
   end
 
   lane :release do
+    # update xcconfig
+    update_xcconfig
+
+    # replace Test GoogleService-Info.plist by the Production one
+    gs_info_plist_dir = "../p2p_wallet/GoogleService-Info.plist"
+    sh("rm", gs_info_plist_dir)
+    sh("curl", "-o", gs_info_plist_dir, ENV['GOOGLE_SERVICE_INFO_PLIST_URL'])
+
     # get current branch name
     branch = git_branch.downcase
     puts "Current branch is #{branch}"
@@ -282,7 +298,6 @@ platform :ios do
     create_release_build('app-store', 'Release')
 
     # upload to testflight
-    ENV['ITMSTRANSPORTER_FORCE_ITMS_PACKAGE_UPLOAD'] = 'true'
     pilot(
       apple_id: "#{DEVELOPER_APP_ID}",
       app_identifier: "#{DEVELOPER_APP_IDENTIFIER}",
