@@ -100,7 +100,6 @@ target 'p2p_wallet' do
   pod 'GT3Captcha-iOS'
   pod 'PhoneNumberKit', '3.3.4'
   pod 'SkeletonUI', :git => 'https://github.com/p2p-org/SkeletonUI.git', :branch => 'master'
-  pod 'SwiftSVG', '2.3.2'
   pod 'Introspect', '0.1.4'
   pod 'lottie-ios', '~> 3.5.0'
 
