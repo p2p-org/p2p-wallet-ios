@@ -56,13 +56,12 @@ extension History {
             addSubview(stackView)
             addSubview(actionButton)
 
-            NSLayoutConstraint.activate([
-                actionButton.bottomAnchor.constraint(equalTo: bottomAnchor, constant: -16),
-                actionButton.leadingAnchor.constraint(equalTo: leadingAnchor, constant: 16),
-                actionButton.trailingAnchor.constraint(equalTo: trailingAnchor, constant: -16),
-                stackView.centerXAnchor.constraint(equalTo: centerXAnchor),
-                stackView.centerYAnchor.constraint(equalTo: centerYAnchor),
-            ])
+            stackView.autoPinEdge(toSuperviewEdge: .top, withInset: 0, relation: .greaterThanOrEqual)
+            stackView.autoPinEdge(toSuperviewEdge: .bottom, withInset: 0, relation: .greaterThanOrEqual)
+            stackView.autoPinEdge(toSuperviewEdge: .leading, withInset: 0, relation: .greaterThanOrEqual)
+            stackView.autoPinEdge(toSuperviewEdge: .trailing, withInset: 0, relation: .greaterThanOrEqual)
+            stackView.autoCenterInSuperview()
+            actionButton.autoPinEdgesToSuperviewSafeArea(with: .init(x: 16, y: 16), excludingEdge: .top)
 
             actionButton.onPressed { [weak self] _ in
                 self?.tryAgainClicked.accept(())

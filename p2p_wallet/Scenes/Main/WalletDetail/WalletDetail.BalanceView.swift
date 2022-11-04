@@ -7,16 +7,18 @@
 
 import RxSwift
 import UIKit
+import KeyAppUI
 
 extension WalletDetail {
     final class BalanceView: UIStackView {
         private let tokenBalanceTitle = UILabel(textSize: 28, weight: .bold, textAlignment: .center)
+            .setup { $0.font = .font(of: .largeTitle, weight: .bold) }
         private let fiatBalanceTitle = UILabel(
             textSize: 13,
             weight: .medium,
-            textColor: .h8e8e93,
+            textColor: Asset.Colors.night.color,
             textAlignment: .center
-        )
+        ).setup { $0.font = .font(of: .text3) }
 
         private let viewModel: WalletDetailViewModelType
         private let disposeBag = DisposeBag()
@@ -28,7 +30,7 @@ extension WalletDetail {
 
             bind()
             axis = .vertical
-            spacing = 4
+            spacing = 12
             addArrangedSubviews([tokenBalanceTitle, fiatBalanceTitle])
         }
 

@@ -184,13 +184,7 @@ extension SendToken {
 
                     // Fees
                     FeesView(viewModel: viewModel) { [weak self] title, message in
-                        self?.showAlert(
-                            title: title,
-                            message: message,
-                            buttonTitles: [L10n.ok],
-                            highlightedButtonIndex: 0,
-                            completion: nil
-                        )
+                        self?.showAlert(title: title, message: message)
                     }
                 }
 
