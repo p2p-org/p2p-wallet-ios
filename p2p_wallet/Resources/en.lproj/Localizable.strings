@@ -15,7 +15,6 @@
 "Your wallet has been successfully created!" = "Your wallet has been successfully created!";
 "Backup" = "Backup";
 "error" = "error";
-"OK" = "OK";
 "please try again later!" = "please try again later!";
 "creating an account" = "creating an account";
 "security key" = "security key";
@@ -1064,3 +1063,5 @@ Reset the PIN or wait for %@.";
 "You will lose access to the free username that you received during registration. Your friends will not be able to send you funds using your username." = "You will lose access to the free username that you received during registration. Your friends will not be able to send you funds using your username.";
 "You will not be able to use free transactions within the Solana network with Key App." = "You will not be able to use free transactions within the Solana network with Key App.";
 "Make sure you understand" = "Make sure you understand";
+"Ok" = "Ok";
+"Enter your Solana wallet seed phrase" = "Enter your Solana wallet seed phrase";
