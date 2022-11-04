@@ -298,7 +298,6 @@ platform :ios do
     create_release_build('app-store', 'Release')
 
     # upload to testflight
-    ENV['ITMSTRANSPORTER_FORCE_ITMS_PACKAGE_UPLOAD'] = 'true'
     pilot(
       apple_id: "#{DEVELOPER_APP_ID}",
       app_identifier: "#{DEVELOPER_APP_IDENTIFIER}",
