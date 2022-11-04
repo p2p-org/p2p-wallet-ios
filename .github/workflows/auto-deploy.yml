@@ -22,6 +22,11 @@ jobs:
         with:
           ssh-private-key: ${{ secrets.KEY_APP_UI_GIT_SSH }}
 
+      - name: Copy xcconfig file
+        run: |
+          curl -o ./p2p_wallet/Config.xcconfig ${{ secrets.XCCONFIG_URL }}
+        shell: bash
+
       - name: Install project
         run: |
           chmod u+x Scripts/install.sh && Scripts/install.sh
