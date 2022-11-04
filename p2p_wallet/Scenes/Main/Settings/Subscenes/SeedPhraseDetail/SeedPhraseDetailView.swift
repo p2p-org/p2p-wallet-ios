@@ -6,8 +6,6 @@ import KeyAppUI
 import SwiftUI
 
 struct SeedPhraseDetailView: View {
-    @SwiftUI.Environment(\.safeAreaInsets) private var safeAreaInsets: EdgeInsets
-
     @ObservedObject var viewModel: SeedPhraseDetailViewModel
 
     var body: some View {
