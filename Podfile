@@ -136,8 +136,7 @@ post_install do |installer|
       config.build_settings['IPHONEOS_DEPLOYMENT_TARGET'] = '14.0'
       config.build_settings['CLANG_WARN_QUOTED_INCLUDE_IN_FRAMEWORK_HEADER'] = 'NO'
       config.build_settings["EXCLUDED_ARCHS[sdk=iphonesimulator*]"] = "arm64"
-
-      config.build_settings['DEVELOPMENT_TEAM'] = "A72KN37UN2"
+      config.build_settings['CODE_SIGNING_ALLOWED'] = 'NO'
     end
 
     if target.name == 'BECollectionView_Combine' || target.name == 'BECollectionView' || target.name == 'BECollectionView_Core'
