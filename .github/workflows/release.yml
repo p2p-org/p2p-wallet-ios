@@ -29,6 +29,12 @@ jobs:
           chmod u+x Scripts/install.sh && Scripts/install.sh
         shell: bash
 
+      - name: Fix missing Transporter.app
+        run: |
+          export FASTLANE_ITUNES_TRANSPORTER_USE_SHELL_SCRIPT=1
+          export FASTLANE_ITUNES_TRANSPORTER_PATH=/Applications/Transporter.app/Contents/itms
+          export FASTLANE_APPLE_APPLICATION_SPECIFIC_PASSWORD=${{ secrets.FASTLANE_APPLE_APPLICATION_SPECIFIC_PASSWORD }}
+
       - name: Upload to test
         uses: maierj/fastlane-action@v2.2.0
         with:
