@@ -30,8 +30,8 @@ final class TokenAmountTextField: BEDecimalTextField {
 
     private func bind() {
         rx.text
+            .filter { !($0?.isEmpty ?? false) && $0 != "0" }
             .map { $0?.cryptoCurrencyFormat }
-            .map { $0 == "0" ? "" : $0 }
             .subscribe(onNext: { [weak self] text in
                 self?.text = text
             })

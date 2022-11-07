@@ -241,10 +241,11 @@ private struct TextfieldView: UIViewRepresentable {
         }
 
         func textFieldShouldBeginEditing(_ textField: UITextField) -> Bool {
-            DispatchQueue.main.async {
-                let endPosition = textField.endOfDocument
-                textField.selectedTextRange = textField.textRange(from: endPosition, to: endPosition)
-            }
+            // uncomment if you'd like to put currsor on the end of field
+//            DispatchQueue.main.async {
+//                let endPosition = textField.endOfDocument
+//                textField.selectedTextRange = textField.textRange(from: endPosition, to: endPosition)
+//            }
             return true
         }
 
