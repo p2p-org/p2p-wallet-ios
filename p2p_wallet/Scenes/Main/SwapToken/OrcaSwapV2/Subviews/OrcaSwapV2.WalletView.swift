@@ -112,6 +112,8 @@ extension OrcaSwapV2 {
             chooseWalletView.autoPinEdge(.trailing, to: .trailing, of: downArrow)
             chooseWalletView.autoPinEdge(.top, to: .top, of: iconImageView, withOffset: -10)
             chooseWalletView.autoPinEdge(.bottom, to: .bottom, of: iconImageView, withOffset: 10)
+
+            becomeFirstResponder()
         }
 
         @discardableResult
