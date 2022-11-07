@@ -42,7 +42,7 @@ extension SendToken.ChooseTokenAndAmount {
                 textColor: .textBlack,
                 textAlignment: .right,
                 keyboardType: .decimalPad,
-                placeholder: "0\(Locale.current.decimalSeparator ?? ".")0",
+                placeholder: "0",
                 autocorrectionType: .no
             )
             tf.delegate = self
