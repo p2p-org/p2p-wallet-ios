@@ -16,7 +16,9 @@ class SwapServiceWithRelayImpl: SwapServiceType {
     @Injected private var swapRelayService: SwapFeeRelayer
     @Injected private var feeRelayerContextManager: FeeRelayerContextManager
     
-    let prefersDirectSwap = true
+    var prefersDirectSwap: Bool {
+        GlobalAppState.shared.preferDirectSwap
+    }
 
     func load() async throws {
         try await orcaSwap.load()
