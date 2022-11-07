@@ -208,13 +208,14 @@ class SwapServiceWithRelayImpl: SwapServiceType {
         let neededTopUpAmount: FeeAmount
         if payingWallet.mintAddress == PublicKey.wrappedSOLMint.base58EncodedString {
             neededTopUpAmount = networkFee
-        } else {
-            // TODO: Zero?
+        } else if networkFee.total > 0 {
             neededTopUpAmount = try await relayService.feeCalculator.calculateFeeInPayingToken(
                 orcaSwap: orcaSwap,
                 feeInSOL: networkFee,
                 payingFeeTokenMint: try PublicKey(string: payingWallet.mintAddress)
             ) ?? .zero
+        } else {
+            neededTopUpAmount = .zero
         }
 
         let freeTransactionFeeLimit = context.usageStatus
