@@ -20,6 +20,7 @@ final class PincodeViewController: BaseViewController {
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
         pincodeView.view?.reset()
+        hideKeyboard()
     }
 
     override func setUp() {
