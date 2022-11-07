@@ -180,7 +180,6 @@ extension TabBarController: UITabBarControllerDelegate {
         }
 
         if TabItem(rawValue: selectedIndex) == .history, !available(.investSolendFeature) {
-            routeToFeedback()
             return false
         }
         customTabBar.updateSelectedViewPositionIfNeeded()
