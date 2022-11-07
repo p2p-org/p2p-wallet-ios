@@ -12,7 +12,7 @@ import SwiftUI
 struct SeedPhraseView: View {
     let seedPhrase: [String]
 
-    @State var hidden: Bool = false
+    @State var hidden: Bool = true
 
     var body: some View {
         VStack(alignment: .leading, spacing: 0) {
