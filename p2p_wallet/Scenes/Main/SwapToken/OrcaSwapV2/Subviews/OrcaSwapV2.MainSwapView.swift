@@ -38,7 +38,7 @@ extension OrcaSwapV2 {
         }
 
         func makeFromFirstResponder() {
-            fromWalletView.becomeFirstResponder()
+            fromWalletView.makeFirstResponder()
         }
 
         private func configureSubviews() {
