@@ -12,7 +12,6 @@
 "Cancel" = "Cancel";
 "Accept" = "Accept";
 "Congratulations!" = "Congratulations!";
-"Your wallet has been successfully created!" = "Your wallet has been successfully created!";
 "Backup" = "Backup";
 "error" = "error";
 "please try again later!" = "please try again later!";
@@ -1065,3 +1064,4 @@ Reset the PIN or wait for %@.";
 "Make sure you understand" = "Make sure you understand";
 "Ok" = "Ok";
 "Enter your Solana wallet seed phrase" = "Enter your Solana wallet seed phrase";
+"Your wallet has been created! Just a few moments to start a crypto adventure" = "Your wallet has been created! Just a few moments to start a crypto adventure";

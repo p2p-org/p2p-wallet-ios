@@ -10,9 +10,13 @@ import Foundation
 class GlobalAppState: ObservableObject {
     static let shared = GlobalAppState()
     
+    // App logic
     @Published var shouldPlayAnimationOnHome: Bool = false
+    @Published var preferDirectSwap: Bool = true
     
+    // Debug features
     @Published var forcedWalletAddress: String = ""
+    @Published var forcedFeeRelayerEndpoint: String = ""
 
     private init() {}
 }
