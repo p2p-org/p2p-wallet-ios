@@ -10,7 +10,7 @@ import KeyAppUI
 
 struct DeleteRequestSuccessView: View {
     var onDone: (() -> Void)? = nil
-    
+
     var body: some View {
         VStack(spacing: 0) {
             Image(uiImage: .catFail)
