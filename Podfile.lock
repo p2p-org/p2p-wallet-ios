@@ -378,7 +378,7 @@ EXTERNAL SOURCES:
   Down:
     :git: https://github.com/p2p-org/Down.git
   FeeRelayerSwift:
-    :branch: feature/pwn-5878
+    :branch: master
     :git: https://github.com/p2p-org/FeeRelayerSwift.git
   JazziconSwift:
     :branch: master
@@ -461,7 +461,7 @@ CHECKOUT OPTIONS:
     :commit: eee1d66d7ef71b892e72c8bc8d84fcdfeaab1918
     :git: https://github.com/p2p-org/Down.git
   FeeRelayerSwift:
-    :commit: 060b8f56a6fb96eb56225fc02b4daa1c2d7842d1
+    :commit: d4456bf1559514f9562f7f28d85d2a1dfccee62d
     :git: https://github.com/p2p-org/FeeRelayerSwift.git
   JazziconSwift:
     :commit: f9c9f898402db4e62d482f4c90670652c221fa12
@@ -601,6 +601,6 @@ SPEC CHECKSUMS:
   TweetNacl: 3abf4d1d2082b0114e7a67410e300892448951e6
   "UITextView+Placeholder": d7b0c400921f66523f3a85d74f774512e14f6502
 
-PODFILE CHECKSUM: d3b63670cff3adc3a905d17a0e9b0a36c7d6c817
+PODFILE CHECKSUM: cc3d32912dba03e6747467d8357ca6358dd2f601
 
 COCOAPODS: 1.11.3
