@@ -42,7 +42,7 @@ extension SendToken.ChooseTokenAndAmount {
                 textColor: .textBlack,
                 textAlignment: .right,
                 keyboardType: .decimalPad,
-                placeholder: "0\(Locale.current.decimalSeparator ?? ".")0",
+                placeholder: "0",
                 autocorrectionType: .no
             )
             tf.delegate = self
@@ -204,6 +204,7 @@ extension SendToken.ChooseTokenAndAmount {
 
             viewModel.amountDriver
                 .distinctUntilChanged()
+                .skip(1) //skipping initial value
                 .withLatestFrom(viewModel.walletDriver, resultSelector: { ($0, $1) })
                 .map { $0.0?.toString(maximumFractionDigits: Int($0.1?.token.decimals ?? 0), groupingSeparator: "") }
                 .drive(amountTextField.rx.text)
