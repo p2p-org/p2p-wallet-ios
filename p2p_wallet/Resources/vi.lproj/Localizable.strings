@@ -13,7 +13,6 @@
 "Cancel" = "Huỷ bỏ";
 "Accept" = "Chấp nhận";
 "Congratulations!" = "Xin chúc mừng!";
-"Your wallet has been successfully created!" = "Ví của bạn đã được tạo thành công!";
 "Backup" = "Sao lưu";
 "error" = "lỗi";
 "please try again later!" = "vui lòng thử lại sau!";
@@ -1095,3 +1094,4 @@ Reset the PIN or wait for %@." = "Bạn còn %@ lần thử để nhập mã PIN
 "Make sure you understand" = "Hãy chắc chắn rằng bạn hiểu";
 "Ok" = "Ok";
 "Enter your Solana wallet seed phrase" = "Nhập seed phrase ví Solana của bạn";
+"Your wallet has been created! Just a few moments to start a crypto adventure" = "Ví của bạn đã được tạo!  Chỉ cần một chút thời gian để bắt đầu cuộc phiêu lưu tiền điện tử";
