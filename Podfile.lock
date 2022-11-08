@@ -230,7 +230,6 @@ PODS:
     - Cache
     - SolanaSwift (~> 2)
   - TweetNacl (1.0.2)
-  - "UITextView+Placeholder (1.4.0)"
 
 DEPENDENCIES:
   - Action (= 5.0.0)
@@ -288,7 +287,6 @@ DEPENDENCIES:
   - SwiftNotificationCenter
   - SwiftyUserDefaults (= 5.3.0)
   - TransactionParser (from `https://github.com/p2p-org/key-app-kit-swift.git`, branch `master`)
-  - "UITextView+Placeholder (= 1.4.0)"
 
 SPEC REPOS:
   trunk:
@@ -342,7 +340,6 @@ SPEC REPOS:
     - SwiftyUserDefaults
     - Task_retrying
     - TweetNacl
-    - "UITextView+Placeholder"
 
 EXTERNAL SOURCES:
   AnalyticsManager:
@@ -587,8 +584,7 @@ SPEC CHECKSUMS:
   Task_retrying: 9e19177e42b162d1d54317f9cfcbabc01d057c38
   TransactionParser: 3004420d52e7b1277dbcfd20b995a5de707705f3
   TweetNacl: 3abf4d1d2082b0114e7a67410e300892448951e6
-  "UITextView+Placeholder": d7b0c400921f66523f3a85d74f774512e14f6502
 
-PODFILE CHECKSUM: bab524ed0e332457a756b393587c678519944d72
+PODFILE CHECKSUM: a5918e51fd8ae6f8efd7226f121d020e90afe190
 
 COCOAPODS: 1.11.3
