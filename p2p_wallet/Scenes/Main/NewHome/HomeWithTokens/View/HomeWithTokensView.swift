@@ -112,7 +112,7 @@ struct HomeWithTokensView: View {
                 .padding(.horizontal, 16)
                 .padding(.bottom, 8)
             wrappedList(itemsCount: viewModel.items.count) {
-                ForEach(viewModel.items, id: \.pubkey) {
+                ForEach(viewModel.items) {
                     swipeTokenCell(isVisible: true, wallet: $0)
                 }
             }
@@ -140,7 +140,7 @@ struct HomeWithTokensView: View {
                 )
                 if !viewModel.tokensIsHidden {
                     wrappedList(itemsCount: viewModel.hiddenItems.count) {
-                        ForEach(viewModel.hiddenItems, id: \.token.symbol) {
+                        ForEach(viewModel.hiddenItems) {
                             swipeTokenCell(isVisible: false, wallet: $0)
                         }
                         .transition(AnyTransition.opacity.animation(.linear(duration: 0.3)))

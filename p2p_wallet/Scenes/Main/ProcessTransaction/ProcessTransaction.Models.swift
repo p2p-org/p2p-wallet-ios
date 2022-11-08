@@ -9,6 +9,7 @@ import Foundation
 import RxConcurrency
 import RxSwift
 import SolanaSwift
+import OrcaSwapSwift
 
 // MARK: - Transaction type
 
@@ -45,7 +46,7 @@ extension ProcessTransaction {
         let destinationWallet: Wallet
         let payingWallet: Wallet?
         let authority: String?
-        let poolsPair: Swap.PoolsPair
+        let poolsPair: PoolsPair
         let amount: Double
         let estimatedAmount: Double
         let slippage: Double
