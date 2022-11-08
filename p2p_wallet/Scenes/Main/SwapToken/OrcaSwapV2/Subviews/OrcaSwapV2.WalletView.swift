@@ -42,7 +42,7 @@ extension OrcaSwapV2 {
             textColor: .textBlack,
             textAlignment: .right,
             keyboardType: .decimalPad,
-            placeholder: "0\(Locale.current.decimalSeparator ?? ".")0",
+            placeholder: "0",
             autocorrectionType: .no /* , rightView: useAllBalanceButton, rightViewMode: .always */
         )
 
@@ -112,6 +112,8 @@ extension OrcaSwapV2 {
             chooseWalletView.autoPinEdge(.trailing, to: .trailing, of: downArrow)
             chooseWalletView.autoPinEdge(.top, to: .top, of: iconImageView, withOffset: -10)
             chooseWalletView.autoPinEdge(.bottom, to: .bottom, of: iconImageView, withOffset: 10)
+
+            becomeFirstResponder()
         }
 
         @discardableResult
