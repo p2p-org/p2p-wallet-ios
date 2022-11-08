@@ -66,6 +66,7 @@ class HomeWithTokensViewModel: ObservableObject {
             }
             .asPublisher()
             .assertNoFailure()
+            .debounce(for: 0.1, scheduler: RunLoop.main)
             .sink(receiveValue: { [weak self] in
                 self?.balance = $0
             })
@@ -73,6 +74,7 @@ class HomeWithTokensViewModel: ObservableObject {
         walletsRepository.dataObservable
             .asPublisher()
             .assertNoFailure()
+            .debounce(for: 0.1, scheduler: RunLoop.main)
             .sink(receiveValue: { [weak self] wallets in
                 guard let self = self, var wallets = wallets else { return }
                 // Hide NFT TODO: $0.token.supply == 1 is also a condition for NFT but skipped atm
@@ -149,5 +151,11 @@ class HomeWithTokensViewModel: ObservableObject {
     func toggleHiddenTokensVisibility() {
         walletsRepository.toggleIsHiddenWalletShown()
         tokensIsHidden.toggle()
+    }
+}
+
+extension Wallet: Identifiable {
+    public var id: String {
+        return name + pubkey
     }
 }
