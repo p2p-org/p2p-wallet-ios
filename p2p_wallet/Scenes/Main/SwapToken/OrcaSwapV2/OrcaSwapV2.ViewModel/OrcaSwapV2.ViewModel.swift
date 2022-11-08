@@ -11,6 +11,7 @@ import Resolver
 import RxCocoa
 import RxSwift
 import SolanaSwift
+import OrcaSwapSwift
 
 extension OrcaSwapV2 {
     class ViewModel {
@@ -18,7 +19,7 @@ extension OrcaSwapV2 {
 
         @Injected var authenticationHandler: AuthenticationHandlerType
         @Injected var analyticsManager: AnalyticsManager
-        @Injected var swapService: Swap.Service
+        @Injected var swapService: SwapServiceType
         @Injected var walletsRepository: WalletsRepository
         @Injected var notificationsService: NotificationService
         @Injected var pricesService: PricesServiceType
@@ -35,8 +36,8 @@ extension OrcaSwapV2 {
         let loadingStateSubject = BehaviorRelay<LoadableState>(value: .notRequested)
         let sourceWalletSubject = BehaviorRelay<Wallet?>(value: nil)
         let destinationWalletSubject = BehaviorRelay<Wallet?>(value: nil)
-        let tradablePoolsPairsSubject = LoadableRelay<[Swap.PoolsPair]>(request: .just([]))
-        let bestPoolsPairSubject = BehaviorRelay<Swap.PoolsPair?>(value: nil)
+        let tradablePoolsPairsSubject = LoadableRelay<[PoolsPair]>(request: .just([]))
+        let bestPoolsPairSubject = BehaviorRelay<PoolsPair?>(value: nil)
         let availableAmountSubject = BehaviorRelay<Double?>(value: nil)
         let inputAmountSubject = BehaviorRelay<Double?>(value: nil)
         let estimatedAmountSubject = BehaviorRelay<Double?>(value: nil)
@@ -140,7 +141,7 @@ extension OrcaSwapV2 {
                     }
 
                     self.tradablePoolsPairsSubject.request = Single.async(with: self) { `self` in
-                        try await self.swapService.getPoolPair(
+                        try await self.swapService.getTradablePoolsPairs(
                             from: sourceWallet.token.address,
                             to: destinationWallet.token.address
                         )
