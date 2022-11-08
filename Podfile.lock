@@ -267,7 +267,7 @@ DEPENDENCIES:
   - lottie-ios (~> 3.5.0)
   - NameService (from `https://github.com/p2p-org/key-app-kit-swift.git`, branch `master`)
   - Onboarding (from `https://github.com/p2p-org/key-app-kit-swift.git`, branch `master`)
-  - OrcaSwapSwift (from `https://github.com/p2p-org/OrcaSwapSwift.git`, branch `feature/pwn-5880-transitive-swap-with-inter-token-btc-or-eth`)
+  - OrcaSwapSwift (from `https://github.com/p2p-org/OrcaSwapSwift.git`, branch `main`)
   - P2PSwift (from `https://github.com/p2p-org/key-app-kit-swift.git`, branch `master`)
   - Periphery
   - PhoneNumberKit (= 3.3.4)
@@ -405,7 +405,7 @@ EXTERNAL SOURCES:
     :branch: master
     :git: https://github.com/p2p-org/key-app-kit-swift.git
   OrcaSwapSwift:
-    :branch: feature/pwn-5880-transitive-swap-with-inter-token-btc-or-eth
+    :branch: main
     :git: https://github.com/p2p-org/OrcaSwapSwift.git
   P2PSwift:
     :branch: master
@@ -488,7 +488,7 @@ CHECKOUT OPTIONS:
     :commit: 5b0d2f99838d78df0392e196869afbb3f9c63d01
     :git: https://github.com/p2p-org/key-app-kit-swift.git
   OrcaSwapSwift:
-    :commit: 31458785849293378bdbf39b1f840cd195eacf13
+    :commit: e76b0650046ed3e380016775614d3e99fad8f1b1
     :git: https://github.com/p2p-org/OrcaSwapSwift.git
   P2PSwift:
     :commit: 5b0d2f99838d78df0392e196869afbb3f9c63d01
@@ -601,6 +601,6 @@ SPEC CHECKSUMS:
   TweetNacl: 3abf4d1d2082b0114e7a67410e300892448951e6
   "UITextView+Placeholder": d7b0c400921f66523f3a85d74f774512e14f6502
 
-PODFILE CHECKSUM: beee5e603f7ff067b6e59eb0f6f0b4bad9cbbb15
+PODFILE CHECKSUM: cc3d32912dba03e6747467d8357ca6358dd2f601
 
 COCOAPODS: 1.11.3
