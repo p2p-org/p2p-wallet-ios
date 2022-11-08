@@ -94,7 +94,11 @@ final class RestoreCustomDelegatedCoordinator: DelegatedCoordinator<RestoreCusto
 
 private extension RestoreCustomDelegatedCoordinator {
     func handleEnterPhone(phone: String?) -> UIViewController {
-        let viewModel = EnterPhoneNumberViewModel(phone: phone, isBackAvailable: true)
+        let viewModel = EnterPhoneNumberViewModel(
+            phone: phone,
+            isBackAvailable: true,
+            strategy: .restore
+        )
         viewModel.subtitle = L10n.addAPhoneNumberToRestoreYourAccount
         let viewController = EnterPhoneNumberViewController(viewModel: viewModel)
 
@@ -132,7 +136,11 @@ private extension RestoreCustomDelegatedCoordinator {
     }
 
     func handleEnterOtp(phone: String, resendCounter: Wrapper<ResendCounter>) -> UIViewController {
-        let viewModel = EnterSMSCodeViewModel(phone: phone, attemptCounter: resendCounter)
+        let viewModel = EnterSMSCodeViewModel(
+            phone: phone,
+            attemptCounter: resendCounter,
+            strategy: .restore
+        )
         let viewController = EnterSMSCodeViewController(viewModel: viewModel)
 
         viewModel.coordinatorIO.onConfirm.sinkAsync { [weak viewModel, stateMachine] otp in

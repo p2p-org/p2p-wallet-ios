@@ -19,7 +19,11 @@ class BindingPhoneNumberDelegatedCoordinator: DelegatedCoordinator<BindingPhoneN
         case let .enterPhoneNumber(initialPhoneNumber, _, _, _):
             analyticsManager.log(event: AmplitudeEvent.creationPhoneScreen)
 
-            let mv = EnterPhoneNumberViewModel(phone: initialPhoneNumber, isBackAvailable: false)
+            let mv = EnterPhoneNumberViewModel(
+                phone: initialPhoneNumber,
+                isBackAvailable: false,
+                strategy: .create
+            )
             let vc = EnterPhoneNumberViewController(viewModel: mv)
             vc.title = L10n.stepOf("2", "3")
 
@@ -52,7 +56,11 @@ class BindingPhoneNumberDelegatedCoordinator: DelegatedCoordinator<BindingPhoneN
             }.store(in: &subscriptions)
             return vc
         case let .enterOTP(resendCounter, _, phoneNumber, _):
-            let vm = EnterSMSCodeViewModel(phone: phoneNumber, attemptCounter: resendCounter)
+            let vm = EnterSMSCodeViewModel(
+                phone: phoneNumber,
+                attemptCounter: resendCounter,
+                strategy: .create
+            )
             let vc = EnterSMSCodeViewController(viewModel: vm)
             vc.title = L10n.stepOf("2", "3")
 

@@ -34,6 +34,13 @@ enum AmplitudeEvent: AnalyticsEvent {
     case backingUpIcloud
     case backingUpManually
     case backingUpError
+    case createPhoneClickButton
+    case createSmsScreen
+    case createSmsValidation(result: Bool)
+    case restorePhoneScreen
+    case restorePhoneClickButton
+    case restoreSmsScreen
+    case restoreSmsValidation(result: Bool)
 
     /// Event 49: The wallet was successfully created
     case walletCreated(lastScreen: String)
@@ -259,6 +266,13 @@ enum AmplitudeEvent: AnalyticsEvent {
     case restoreWalletButton
     case selectRestoreOption(restoreOption: String, keychaineOption: Bool)
     case restoreConfirmPin(result: Bool)
+    case onboardingTorusRequest(
+        methodName: String,
+        minutes: Int,
+        seconds: Int,
+        milliseconds: Int,
+        result: String
+    )
 
     // RenBTC
     case renbtcCreation(result: String)
