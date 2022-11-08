@@ -27,7 +27,7 @@ struct WalletSettingsUserDefaultsProvider: WalletSettingsProvider {
 class WalletSettings: ObservableObject {
     let provider: WalletSettingsProvider
 
-    @Published var deleteWeb3AuthRequest: Date? = nil {
+    @Published var deleteWeb3AuthRequest: Date? {
         didSet { provider.write(key: "deleteWeb3AuthRequest", value: deleteWeb3AuthRequest) }
     }
 
