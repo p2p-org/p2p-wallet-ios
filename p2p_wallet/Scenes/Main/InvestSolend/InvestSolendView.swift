@@ -66,7 +66,7 @@ struct InvestSolendView: View {
                         if viewModel.bannerError == .missingRate {
                             ratesError
                         }
-                        ForEach(market, id: \.asset.symbol) { asset, market, userDeposit, wallet in
+                        ForEach(market, id: \.asset.symbol) { asset, market, userDeposit, _ in
                             Button {
                                 viewModel.assetClicked(asset, market: market)
                             } label: {
