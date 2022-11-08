@@ -16,6 +16,7 @@ class GlobalAppState: ObservableObject {
     
     // Debug features
     @Published var forcedWalletAddress: String = ""
+    @Published var forcedFeeRelayerEndpoint: String = ""
 
     private init() {}
 }
