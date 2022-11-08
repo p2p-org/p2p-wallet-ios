@@ -30,6 +30,7 @@ final class TokenAmountTextField: BEDecimalTextField {
 
     private func bind() {
         rx.text
+            .filter { !($0?.isEmpty ?? false) && $0 != "0" }
             .map { $0?.cryptoCurrencyFormat }
             .subscribe(onNext: { [weak self] text in
                 self?.text = text
@@ -41,6 +42,15 @@ final class TokenAmountTextField: BEDecimalTextField {
                 self?.text = self?.text?.withoutLastZeros
             })
             .disposed(by: disposeBag)
+      rx.controlEvent(.editingDidBegin)
+          .asObservable()
+          .subscribe(onNext: { [unowned self] in
+              DispatchQueue.main.async {
+                  let endPosition = self.endOfDocument
+                  self.selectedTextRange = self.textRange(from: endPosition, to: endPosition)
+              }
+          })
+          .disposed(by: disposeBag)
     }
 
     func setUp(decimals: Decimals?) {

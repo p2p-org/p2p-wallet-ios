@@ -241,8 +241,11 @@ private struct TextfieldView: UIViewRepresentable {
         }
 
         func textFieldShouldBeginEditing(_ textField: UITextField) -> Bool {
-            let endPosition = textField.endOfDocument
-            textField.selectedTextRange = textField.textRange(from: endPosition, to: endPosition)
+            // uncomment if you'd like to put cursor to the end of the field
+//            DispatchQueue.main.async {
+//                let endPosition = textField.endOfDocument
+//                textField.selectedTextRange = textField.textRange(from: endPosition, to: endPosition)
+//            }
             return true
         }
 

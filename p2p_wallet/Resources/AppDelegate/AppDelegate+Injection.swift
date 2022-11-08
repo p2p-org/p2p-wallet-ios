@@ -306,7 +306,7 @@ extension Resolver: ResolverRegistering {
 
         // SwapService
         register { SwapServiceWithRelayImpl() }
-            .implements(Swap.Service.self)
+            .implements(SwapServiceType.self)
             .scope(.session)
 
         // OrcaSwapSwift
