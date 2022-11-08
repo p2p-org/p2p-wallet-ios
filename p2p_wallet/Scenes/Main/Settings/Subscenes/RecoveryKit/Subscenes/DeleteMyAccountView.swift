@@ -45,12 +45,12 @@ struct DeleteMyAccountView: View {
                         isOn: $slider
                     )
                         .frame(height: 56)
-                        .onChange(of: slider) { newValue in
+                        .onChange(of: slider) { _ in
                             guard slider == true else { return }
-                            
+
                             walletSettings.deleteWeb3AuthRequest = Date()
                             didRequestDelete?()
-                            
+
                             slider = false
                         }
 
