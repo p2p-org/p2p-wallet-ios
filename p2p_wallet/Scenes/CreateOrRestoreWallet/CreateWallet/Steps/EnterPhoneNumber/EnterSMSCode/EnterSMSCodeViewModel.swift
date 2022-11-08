@@ -1,3 +1,4 @@
+import AnalyticsManager
 import Combine
 import CountriesAPI
 import Foundation
@@ -16,15 +17,24 @@ final class EnterSMSCodeViewModel: BaseOTPViewModel {
     private let attemptCounter: Wrapper<ResendCounter>
     private var countdown: Int
     private static let codeLength = 6
+    private let strategy: Strategy
 
     // MARK: -
 
     @Injected private var reachability: Reachability
     @Injected private var notificationService: NotificationService
+    @Injected private var analyticsManager: AnalyticsManager
 
     private var rawCode: String = "" {
         didSet {
-            isButtonEnabled = rawCode.count == Self.codeLength
+            let validated = rawCode.count == Self.codeLength
+            isButtonEnabled = validated
+            switch strategy {
+            case .create:
+                analyticsManager.log(event: AmplitudeEvent.createSmsValidation(result: validated))
+            case .restore:
+                analyticsManager.log(event: AmplitudeEvent.restoreSmsValidation(result: validated))
+            }
         }
     }
 
@@ -89,8 +99,9 @@ final class EnterSMSCodeViewModel: BaseOTPViewModel {
 
     private var timer: Timer?
 
-    init(phone: String, attemptCounter: Wrapper<ResendCounter>) {
+    init(phone: String, attemptCounter: Wrapper<ResendCounter>, strategy: Strategy) {
         self.phone = phone
+        self.strategy = strategy
         self.attemptCounter = attemptCounter
         countdown = Int(Date().ceiled().distance(to: attemptCounter.value.until))
         super.init()
@@ -98,6 +109,15 @@ final class EnterSMSCodeViewModel: BaseOTPViewModel {
         bind()
         startTimer()
         RunLoop.current.add(timer!, forMode: .common)
+    }
+
+    func viewDidLoad() {
+        switch strategy {
+        case .create:
+            analyticsManager.log(event: AmplitudeEvent.createSmsScreen)
+        case .restore:
+            analyticsManager.log(event: AmplitudeEvent.restoreSmsScreen)
+        }
     }
 
     func bind() {
@@ -220,5 +240,14 @@ private extension Date {
     func ceiled() -> Date {
         let date = ceil(Date().timeIntervalSince1970)
         return Date(timeIntervalSince1970: date)
+    }
+}
+
+// MARK: - Strategy
+
+extension EnterSMSCodeViewModel {
+    enum Strategy {
+        case create
+        case restore
     }
 }
