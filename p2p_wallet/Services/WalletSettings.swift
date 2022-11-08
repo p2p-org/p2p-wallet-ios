@@ -18,7 +18,7 @@ struct WalletSettingsUserDefaultsProvider: WalletSettingsProvider {
             UserDefaults.standard.removeObject(forKey: key)
         }
     }
-    
+
     func read<T: Codable>(key: String) -> T? {
         UserDefaults.standard.object(forKey: key) as? T
     }
@@ -26,17 +26,17 @@ struct WalletSettingsUserDefaultsProvider: WalletSettingsProvider {
 
 class WalletSettings: ObservableObject {
     let provider: WalletSettingsProvider
-    
+
     @Published var deleteWeb3AuthRequest: Date? = nil {
         didSet { provider.write(key: "deleteWeb3AuthRequest", value: deleteWeb3AuthRequest) }
     }
-    
+
     init(provider: WalletSettingsProvider) {
         self.provider = provider
-        
+
         self.deleteWeb3AuthRequest = provider.read(key: "deleteWeb3AuthRequest")
     }
-    
+
     func reset() {
         deleteWeb3AuthRequest = nil
     }
