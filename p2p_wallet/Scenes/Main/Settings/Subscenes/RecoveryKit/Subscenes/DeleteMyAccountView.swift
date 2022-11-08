@@ -12,9 +12,9 @@ import Resolver
 struct DeleteMyAccountView: View {
     @State var slider: Bool = false
     @ObservedObject var walletSettings: WalletSettings = Resolver.resolve()
-    
+
     var didRequestDelete: (() -> Void)?
-    
+
     var body: some View {
         ExplainLayoutView {
             VStack {
@@ -34,9 +34,9 @@ struct DeleteMyAccountView: View {
                 }
                 .padding(.vertical, 24)
                 .padding(.horizontal, 16)
-                
+
                 Spacer()
-                
+
                 BottomActionContainer {
                     SliderButtonView(
                         title: L10n.yesDeleteIt,
@@ -45,12 +45,12 @@ struct DeleteMyAccountView: View {
                         isOn: $slider
                     )
                         .frame(height: 56)
-                        .onChange(of: slider) { newValue in
+                        .onChange(of: slider) { _ in
                             guard slider == true else { return }
-                            
+
                             walletSettings.deleteWeb3AuthRequest = Date()
                             didRequestDelete?()
-                            
+
                             slider = false
                         }
 

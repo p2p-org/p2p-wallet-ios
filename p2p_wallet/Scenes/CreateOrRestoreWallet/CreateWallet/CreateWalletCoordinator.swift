@@ -117,15 +117,13 @@ final class CreateWalletCoordinator: Coordinator<CreateWalletResult> {
         if to.step >= (from?.step ?? -1) {
             if case .socialSignIn(.socialSignInProgress) = to {
                 fadeTo(vc)
-            }
-            else {
+            } else {
                 navigationController.setViewControllers([vc], animated: true)
             }
         } else {
             if let from = from, case .socialSignIn(.socialSignInProgress) = from {
                 fadeOut(vc)
-            }
-            else {
+            } else {
                 navigationController.setViewControllers([vc] + navigationController.viewControllers, animated: false)
                 navigationController.popToViewController(vc, animated: true)
             }
