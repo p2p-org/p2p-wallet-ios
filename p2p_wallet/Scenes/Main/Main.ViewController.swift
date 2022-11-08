@@ -91,6 +91,7 @@ extension Main {
         // MARK: - Locking
 
         private func showLockView() {
+            UIApplication.shared.kWindow?.endEditing(true)
             let lockView = LockView()
             UIApplication.shared.windows.last?.addSubview(lockView)
             lockView.autoPinEdgesToSuperviewEdges()
