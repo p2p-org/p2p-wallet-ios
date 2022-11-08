@@ -3,7 +3,7 @@
 // found in the LICENSE file.
 
 import Combine
-import Foundation
+import KeyAppUI
 import Onboarding
 import UIKit
 
@@ -130,6 +130,7 @@ final class CreateWalletCoordinator: Coordinator<CreateWalletResult> {
                 navigationController.popToViewController(vc, animated: true)
             }
         }
+        displayIntermediateToastIfNeeded(from: from, to: to)
     }
 
     private func buildViewController(state: CreateWalletFlowState) -> UIViewController? {
@@ -145,6 +146,14 @@ final class CreateWalletCoordinator: Coordinator<CreateWalletResult> {
         default:
             return nil
         }
+    }
+
+    private func displayIntermediateToastIfNeeded(from: CreateWalletFlowState?, to: CreateWalletFlowState) {
+        guard case .bindingPhoneNumber = from, case .securitySetup = to else { return }
+        SnackBar(
+            title: "🎉",
+            text: L10n.yourWalletHasBeenCreatedJustAFewMomentsToStartACryptoAdventure
+        ).show(in: navigationController.view)
     }
 }
 
