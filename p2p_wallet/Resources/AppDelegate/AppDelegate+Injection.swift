@@ -42,6 +42,10 @@ extension Resolver: ResolverRegistering {
                 RemoteConfigWarmupProcess(),
             ])
         }.scope(.application)
+        
+        register {
+            WalletSettings(provider: WalletSettingsUserDefaultsProvider())
+        }.scope(.application)
 
         // AppEventHandler
         register { AppEventHandler() }
@@ -302,7 +306,7 @@ extension Resolver: ResolverRegistering {
 
         // SwapService
         register { SwapServiceWithRelayImpl() }
-            .implements(Swap.Service.self)
+            .implements(SwapServiceType.self)
             .scope(.session)
 
         // OrcaSwapSwift

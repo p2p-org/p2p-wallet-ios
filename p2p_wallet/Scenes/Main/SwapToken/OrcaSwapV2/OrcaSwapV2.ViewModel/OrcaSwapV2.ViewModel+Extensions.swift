@@ -119,6 +119,26 @@ extension OrcaSwapV2.ViewModel: OrcaSwapV2ViewModelType {
                 $0 != nil && $1 != nil
             }
     }
+    
+    #if !RELEASE
+    var routeDriver: Driver<String?> {
+        bestPoolsPairSubject
+            .map { bestPoolsPair -> String? in
+                guard let bestPoolsPair = bestPoolsPair,
+                      !bestPoolsPair.isEmpty,
+                      bestPoolsPair.count <= 2
+                else {
+                    return nil
+                }
+                var route = bestPoolsPair[0].tokenAName + " -> " + bestPoolsPair[0].tokenBName
+                if bestPoolsPair.count == 2 {
+                    route += " -> " + bestPoolsPair[1].tokenBName
+                }
+                return route
+            }
+            .asDriver()
+    }
+    #endif
 
     func getPrice(symbol: String) -> Double? {
         pricesService.currentPrice(for: symbol)?.value
@@ -193,7 +213,7 @@ extension OrcaSwapV2.ViewModel: OrcaSwapV2ViewModelType {
            let destinationDecimals = destinationWalletSubject.value?.token.decimals,
            let inputAmount = amount?.toLamport(decimals: sourceDecimals),
            let poolsPairs = tradablePoolsPairsSubject.value,
-           let bestPoolsPair = poolsPairs.findBestPoolsPairForInputAmount(inputAmount),
+           let bestPoolsPair = try? swapService.findBestPoolsPairForInputAmount(inputAmount, from: poolsPairs),
            let bestEstimatedAmount = bestPoolsPair.getOutputAmount(fromInputAmount: inputAmount)?
                .convertToBalance(decimals: destinationDecimals)
                .rounded(decimals: destinationDecimals)
@@ -215,7 +235,7 @@ extension OrcaSwapV2.ViewModel: OrcaSwapV2ViewModelType {
            let destinationDecimals = destinationWalletSubject.value?.token.decimals,
            let estimatedAmount = amount?.toLamport(decimals: destinationDecimals),
            let poolsPairs = tradablePoolsPairsSubject.value,
-           let bestPoolsPair = poolsPairs.findBestPoolsPairForEstimatedAmount(estimatedAmount),
+           let bestPoolsPair = try? swapService.findBestPoolsPairForEstimatedAmount(estimatedAmount, from: poolsPairs),
            let bestInputAmount = bestPoolsPair.getInputAmount(fromEstimatedAmount: estimatedAmount)?
                .convertToBalance(decimals: sourceDecimals)
                .rounded(decimals: sourceDecimals)

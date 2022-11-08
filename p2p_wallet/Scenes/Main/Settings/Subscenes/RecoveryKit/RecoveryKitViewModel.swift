@@ -16,8 +16,7 @@ struct RecoveryKitTKeyData {
 }
 
 class RecoveryKitViewModel: ObservableObject {
-    @Injected private var userWalletManager: UserWalletManager
-    @Injected private var walletMetadataService: WalletMetadataService
+    private let walletMetadataService: WalletMetadataService
 
     @Published var walletMetadata: WalletMetaData?
 
@@ -25,12 +24,14 @@ class RecoveryKitViewModel: ObservableObject {
 
     struct Coordinator {
         var seedPhrase: (() -> Void)?
+        var deleteAccount: (() -> Void)?
         var help: (() -> Void)?
     }
 
     var coordinator: Coordinator = .init()
 
-    init() {
+    init(walletMetadataService: WalletMetadataService = Resolver.resolve()) {
+        self.walletMetadataService = walletMetadataService
         walletMetadataService.$metadata
             .sink { [weak self] metadata in
                 self?.walletMetadata = metadata
@@ -39,6 +40,10 @@ class RecoveryKitViewModel: ObservableObject {
 
     func openSeedPhrase() {
         coordinator.seedPhrase?()
+    }
+    
+    func deleteAccount() {
+        coordinator.deleteAccount?()
     }
 
     func openHelp() {

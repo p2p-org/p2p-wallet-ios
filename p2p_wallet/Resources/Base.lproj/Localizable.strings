@@ -13,7 +13,6 @@
 "Cancel" = "Cancel";
 "Accept" = "Accept";
 "Congratulations!" = "Congratulations!";
-"Your wallet has been successfully created!" = "Your wallet has been successfully created!";
 "Backup" = "Backup";
 "error" = "error";
 "please try again later!" = "please try again later!";
@@ -1053,5 +1052,17 @@ Reset the PIN or wait for %@.";
 "Creating wallet" = "Creating wallet";
 "Please wait, it won't take long" = "Please wait, it won't take long";
 "This is an easy way to send and receive cryptocurrencies in Key App" = "This is an easy way to send and receive cryptocurrencies in Key App";
+"Delete my account" = "Delete my account";
+"Yes, delete my account" = "Yes, delete my account";
+"Are you sure you want to delete your account?" = "Are you sure you want to delete your account?";
+"The data will be cleared without the possibility of recovery" = "The data will be cleared without the possibility of recovery";
+"Yes, delete it" = "Yes, delete it";
+"Your removal request has been accepted" = "Your removal request has been accepted";
+"Deleting your account  will take up to 30 days" = "Deleting your account  will take up to 30 days";
+"When you delete your account, you will lose access to your funds." = "When you delete your account, you will lose access to your funds.";
+"You will lose access to the free username that you received during registration. Your friends will not be able to send you funds using your username." = "You will lose access to the free username that you received during registration. Your friends will not be able to send you funds using your username.";
+"You will not be able to use free transactions within the Solana network with Key App." = "You will not be able to use free transactions within the Solana network with Key App.";
+"Make sure you understand" = "Make sure you understand";
 "Ok" = "Ok";
 "Enter your Solana wallet seed phrase" = "Enter your Solana wallet seed phrase";
+"Your wallet has been created! Just a few moments to start a crypto adventure" = "Your wallet has been created! Just a few moments to start a crypto adventure";

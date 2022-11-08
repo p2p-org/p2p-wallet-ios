@@ -13,7 +13,6 @@
 "Cancel" = "Annuler";
 "Accept" = "J'accepte";
 "Congratulations!" = "Toutes nos félicitations!";
-"Your wallet has been successfully created!" = "Votre portefeuille a été créé avec succès!";
 "Backup" = "Sauvegarde";
 "error" = "Erreur";
 "please try again later!" = "Veuillez réessayer plus tard!";
@@ -1079,5 +1078,17 @@ Reset the PIN or wait for %@." = "Il vous reste %@ tentatives pour saisir le cod
 "Creating wallet" = "Création de portefeuille";
 "Please wait, it won't take long" = "Veuillez patienter, cela ne prendra pas longtemps";
 "This is an easy way to send and receive cryptocurrencies in Key App" = "C'est un moyen facile d'envoyer et de recevoir des crypto-monnaies dans Key App";
+"Delete my account" = "Supprimer mon compte";
+"Yes, delete my account" = "Oui, supprimer mon compte";
+"Are you sure you want to delete your account?" = "Êtes-vous sûr de vouloir supprimer votre compte ?";
+"The data will be cleared without the possibility of recovery" = "Les données seront effacées sans possibilité de récupération";
+"Yes, delete it" = "Oui, supprimez-le";
+"Your removal request has been accepted" = "Votre demande de suppression a été acceptée";
+"Deleting your account  will take up to 30 days" = "La suppression de votre compte prendra jusqu'à 30 jours";
+"When you delete your account, you will lose access to your funds." = "Lorsque vous supprimez votre compte, vous perdez l'accès à vos fonds.";
+"You will lose access to the free username that you received during registration. Your friends will not be able to send you funds using your username." = "Vous perdrez l'accès au nom d'utilisateur gratuit que vous avez reçu lors de votre inscription.  Vos amis ne pourront pas vous envoyer de fonds en utilisant votre nom d'utilisateur.";
+"You will not be able to use free transactions within the Solana network with Key App." = "Vous ne pourrez pas utiliser les transactions gratuites au sein du réseau Solana avec Key App.";
+"Make sure you understand" = "Assurez-vous de comprendre";
 "Ok" = "D'accord";
 "Enter your Solana wallet seed phrase" = "Entrez la phrase de départ de votre portefeuille Solana";
+"Your wallet has been created! Just a few moments to start a crypto adventure" = "Votre portefeuille est créé !  Quelques instants pour commencer une aventure crypto";
