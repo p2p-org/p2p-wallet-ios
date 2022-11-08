@@ -107,7 +107,6 @@ final class NotificationServiceImpl: NSObject, NotificationService {
             ))
             UserDefaults.standard.removeObject(forKey: deviceTokenKey)
         } catch {
-            print(error)
             UserDefaults.standard.set(deviceToken, forKey: deviceTokenKey)
         }
     }
@@ -122,6 +121,8 @@ final class NotificationServiceImpl: NSObject, NotificationService {
             deviceToken: token,
             clientId: publicKey
         ))
+        
+        UserDefaults.standard.removeObject(forKey: deviceTokenKey)
     }
 
     func showInAppNotification(_ notification: InAppNotification) {
