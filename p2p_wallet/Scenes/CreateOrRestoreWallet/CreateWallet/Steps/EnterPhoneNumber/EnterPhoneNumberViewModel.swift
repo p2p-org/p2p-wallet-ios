@@ -1,3 +1,4 @@
+import AnalyticsManager
 import Combine
 import CountriesAPI
 import Foundation
@@ -29,6 +30,7 @@ final class EnterPhoneNumberViewModel: BaseOTPViewModel {
     @Injected private var reachability: Reachability
     @Injected private var notificationService: NotificationService
     @Injected private var countriesAPI: CountriesAPI
+    @Injected private var analyticsManager: AnalyticsManager
 
     // MARK: -
 
@@ -42,8 +44,15 @@ final class EnterPhoneNumberViewModel: BaseOTPViewModel {
     @Published var subtitle: String = L10n.addAPhoneNumberToProtectYourAccount
 
     let isBackAvailable: Bool
+    private let strategy: Strategy
 
     func buttonTaped() {
+        switch strategy {
+        case .create:
+            analyticsManager.log(event: AmplitudeEvent.createPhoneClickButton)
+        case .restore:
+            analyticsManager.log(event: AmplitudeEvent.restorePhoneClickButton)
+        }
         guard
             let phone = phone,
             !isLoading,
@@ -78,8 +87,9 @@ final class EnterPhoneNumberViewModel: BaseOTPViewModel {
 
     let coordinatorIO = CoordinatorIO()
 
-    init(phone: String? = nil, isBackAvailable: Bool) {
+    init(phone: String? = nil, isBackAvailable: Bool, strategy: Strategy) {
         self.isBackAvailable = isBackAvailable
+        self.strategy = strategy
         super.init()
 
         Task {
@@ -100,6 +110,15 @@ final class EnterPhoneNumberViewModel: BaseOTPViewModel {
         }
 
         bind()
+    }
+
+    func viewDidLoad() {
+        switch strategy {
+        case .create:
+            break
+        case .restore:
+            analyticsManager.log(event: AmplitudeEvent.restorePhoneScreen)
+        }
     }
 
     func bind() {
@@ -228,6 +247,15 @@ final class EnterPhoneNumberViewModel: BaseOTPViewModel {
             }
         }
         return result
+    }
+}
+
+// MARK: - Strategy
+
+extension EnterPhoneNumberViewModel {
+    enum Strategy {
+        case create
+        case restore
     }
 }
 
