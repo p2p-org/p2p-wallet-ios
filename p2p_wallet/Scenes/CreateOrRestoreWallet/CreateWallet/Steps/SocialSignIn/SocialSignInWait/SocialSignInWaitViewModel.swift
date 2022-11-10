@@ -4,9 +4,14 @@ import Resolver
 
 final class SocialSignInWaitViewModel: BaseViewModel {
 
+    enum Strategy {
+        case create
+        case restore
+    }
+
     enum State {
         case initial
-        case creatingWallet
+        case wallet
         case securingKey
         case almostDone
     }
@@ -24,8 +29,10 @@ final class SocialSignInWaitViewModel: BaseViewModel {
 
     private let timer = Timer.publish(every: 2, on: .main, in: .common).autoconnect()
     private var isProcessSent: Bool = false
+    private let strategy: Strategy
 
-    override init() {
+    init(strategy: Strategy) {
+        self.strategy = strategy
         super.init()
 
         $state
@@ -33,10 +40,10 @@ final class SocialSignInWaitViewModel: BaseViewModel {
                 guard let self = self else { return }
                 switch currentState {
                 case .initial:
-                    self.title = "\(L10n.creatingWallet)..."
+                    self.title = strategy == .create ? "\(L10n.creatingWallet)..." : L10n.walletRecovery
                     self.isProgressVisible = false
-                case .creatingWallet:
-                    self.title = L10n.creatingWallet
+                case .wallet:
+                    self.title = strategy == .create ? L10n.creatingWallet : L10n.walletRecovery
                     self.isProgressVisible = true
                 case .securingKey:
                     self.title = L10n.securingKey
@@ -51,8 +58,8 @@ final class SocialSignInWaitViewModel: BaseViewModel {
                 guard let self = self else { return }
                 switch self.state {
                 case .initial:
-                    self.state = .creatingWallet
-                case .creatingWallet:
+                    self.state = .wallet
+                case .wallet:
                     self.state = .securingKey
                 case .securingKey:
                     self.state = .almostDone
