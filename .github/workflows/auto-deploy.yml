@@ -7,7 +7,7 @@ jobs:
     name: Upload build for testing
     if: ${{ contains(github.event.pull_request.labels.*.name, 'auto:qa-deploy') }}
 
-    runs-on: macos-12
+    runs-on: [self-hosted, macos-12]
 
     steps:
       - name: Check out current branch
@@ -26,6 +26,13 @@ jobs:
         run: |
           curl -o ./p2p_wallet/Config.xcconfig ${{ secrets.XCCONFIG_URL }}
         shell: bash
+
+      - uses: actions/cache@v3
+        with:
+          path: Pods
+          key: ${{ runner.os }}-pods-${{ hashFiles('**/Podfile.lock') }}
+          restore-keys: |
+            ${{ runner.os }}-pods-
 
       - name: Install project
         run: |
