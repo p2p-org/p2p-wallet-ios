@@ -33,10 +33,10 @@ struct RecoveryKitView: View {
                 .padding(.bottom, 24)
                 .background(Color(Asset.Colors.lime.color))
                 .cornerRadius(28)
-                //.overlay(
+                // .overlay(
                 //    helpButton,
                 //    alignment: .topTrailing
-                //)
+                // )
                 .padding(.top, safeAreaInsets.top + 50)
 
                 // TKey info
