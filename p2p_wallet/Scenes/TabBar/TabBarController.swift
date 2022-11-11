@@ -20,9 +20,9 @@ final class TabBarController: UITabBarController {
 
     private var solendCoordinator: SolendCoordinator!
     private var homeCoordinator: HomeCoordinator!
-  private var actionsCoordinator: ActionsCoordinator {
-    return  ActionsCoordinator(viewController: self)
-  }
+    private var actionsCoordinator: ActionsCoordinator {
+        return  ActionsCoordinator(viewController: self)
+    }
     private var settingsCoordinator: SettingsCoordinator!
 
     private var customTabBar: CustomTabBar { tabBar as! CustomTabBar }
