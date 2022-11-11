@@ -59,6 +59,24 @@ private class RenVMFeeRelayerSolanaBlockchainClient: SolanaBlockchainClient {
             }
         }
         
+        var instructions = instructions
+        
+        // mint
+        if instructions.count == 2,
+           instructions[0].programId == "BTC5yiRuonJKcQvD9j9QwYKPx4MCGbvkWfvHFyBJG6RY",
+           instructions[1].programId == "KeccakSecp256k11111111111111111111111111111"
+        {
+            // fix first transaction
+            var keys = instructions[0].keys
+            keys[0] = .writable(publicKey: try PublicKey(string: feePayer), isSigner: true)
+            instructions[0] = .init(
+                keys: keys,
+                programId: instructions[0].programId,
+                data: instructions[0].data
+            )
+        }
+        
+        // TODO: - Burn
         return try await blockchainClient.prepareTransaction(
             instructions: instructions,
             signers: [],
