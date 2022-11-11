@@ -20,7 +20,9 @@ final class TabBarController: UITabBarController {
 
     private var solendCoordinator: SolendCoordinator!
     private var homeCoordinator: HomeCoordinator!
-    private var actionsCoordinator: ActionsCoordinator?
+  private var actionsCoordinator: ActionsCoordinator {
+    return  ActionsCoordinator(viewController: self)
+  }
     private var settingsCoordinator: SettingsCoordinator!
 
     private var customTabBar: CustomTabBar { tabBar as! CustomTabBar }
@@ -50,18 +52,15 @@ final class TabBarController: UITabBarController {
 
     private func bind() {
         customTabBar.middleButtonClicked
-            .sink(receiveValue: { [unowned self] in
-                analyticsManager.log(event: AmplitudeEvent.actionButtonClick)
-
+            .handleEvents(receiveOutput: { [weak self] _ in
+                self?.analyticsManager.log(event: AmplitudeEvent.actionButtonClick)
                 let generator = UIImpactFeedbackGenerator(style: .light)
                 generator.impactOccurred()
-                actionsCoordinator = ActionsCoordinator(viewController: self)
-                actionsCoordinator?.start()
-                    .sink(receiveValue: { [unowned self] in
-                        actionsCoordinator = nil
-                    })
-                    .store(in: &cancellables)
             })
+            .flatMap { [unowned self] in
+                ActionsCoordinator(viewController: self).start()
+            }
+            .sink(receiveValue: { _ in })
             .store(in: &cancellables)
     }
 
