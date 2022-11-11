@@ -14,10 +14,6 @@ import UIKit
 
 extension RenBTCReceivingStatuses {
     class ViewController: BaseViewController {
-        override var preferredNavigationBarStype: BEViewController.NavigationBarStyle {
-            .hidden
-        }
-
         // MARK: - Dependencies
 
         @Injected private var analyticsManager: AnalyticsManager
@@ -31,19 +27,13 @@ extension RenBTCReceivingStatuses {
             viewModel.navigationDriver
                 .drive(onNext: { [weak self] in self?.navigate(to: $0) })
                 .disposed(by: disposeBag)
+            
+            title = L10n.statusesReceived(0)
         }
 
         override func build() -> UIView {
             BESafeArea {
                 UIStackView(axis: .vertical, alignment: .fill) {
-                    NewWLNavigationBar(initialTitle: L10n.receivingStatuses, separatorEnable: false)
-                        .onBack { [unowned self] in self.back() }
-                        .setup { view in
-                            viewModel.processingTxsDriver
-                                .map { txs in L10n.statusesReceived(txs.count) }
-                                .drive(view.titleLabel.rx.text)
-                                .disposed(by: disposeBag)
-                        }
                     NBENewDynamicSectionsCollectionView(
                         viewModel: viewModel,
                         mapDataToSections: { viewModel in
@@ -85,6 +75,14 @@ extension RenBTCReceivingStatuses {
                     ).withDelegate(self)
                 }
             }
+        }
+        
+        override func bind() {
+            super.bind()
+            viewModel.processingTxsDriver
+                .map { txs in L10n.statusesReceived(txs.count) }
+                .drive(rx.title)
+                .disposed(by: disposeBag)
         }
     }
 }
