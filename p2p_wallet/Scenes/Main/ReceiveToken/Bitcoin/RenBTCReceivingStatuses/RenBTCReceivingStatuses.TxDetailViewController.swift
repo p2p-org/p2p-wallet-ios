@@ -13,31 +13,17 @@ import RxSwift
 
 extension RenBTCReceivingStatuses {
     class TxDetailViewController: BaseViewController {
-        override var preferredNavigationBarStype: BEViewController.NavigationBarStyle {
-            .hidden
-        }
-
         private var viewModel: TxDetailViewModel
 
         init(viewModel: TxDetailViewModel) {
             self.viewModel = viewModel
             super.init()
+            title = L10n.receivingRenBTC(0)
         }
 
         override func build() -> UIView {
             BESafeArea {
                 UIStackView(axis: .vertical, alignment: .fill) {
-                    NewWLNavigationBar(initialTitle: L10n.receivingStatus, separatorEnable: false)
-                        .onBack { [unowned self] in self.back() }
-                        .setup { view in
-                            viewModel.currentTx
-                                .map { tx in
-                                    guard let value = tx?.value else { return L10n.receivingStatus }
-                                    return L10n.receivingRenBTC(value.toString(maximumFractionDigits: 10))
-                                }
-                                .drive(view.titleLabel.rx.text)
-                                .disposed(by: disposeBag)
-                        }
                     NBENewDynamicSectionsCollectionView(
                         viewModel: viewModel,
                         mapDataToSections: { viewModel in
@@ -79,6 +65,17 @@ extension RenBTCReceivingStatuses {
                     )
                 }
             }
+        }
+        
+        override func bind() {
+            super.bind()
+            viewModel.currentTx
+                .map { tx in
+                    guard let value = tx?.value else { return L10n.receivingStatus }
+                    return L10n.receivingRenBTC(value.toString(maximumFractionDigits: 10))
+                }
+                .drive(rx.title)
+                .disposed(by: disposeBag)
         }
     }
 
