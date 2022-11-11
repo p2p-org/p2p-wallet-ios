@@ -21,6 +21,7 @@ final class ActionsCoordinator: Coordinator<Void> {
     private let transition = PanelTransition()
 
     private var sendCoordinator: SendToken.Coordinator?
+    private let subject = PassthroughSubject<Void, Never>()
 
     init(viewController: UIViewController) {
         self.viewController = viewController
@@ -35,8 +36,7 @@ final class ActionsCoordinator: Coordinator<Void> {
         navigationController.transitioningDelegate = transition
         navigationController.modalPresentationStyle = .custom
         self.viewController.present(navigationController, animated: true)
-
-        let subject = PassthroughSubject<Void, Never>()
+        
         transition.dimmClicked
             .sink(receiveValue: {
                 viewController.dismiss(animated: true)
@@ -44,7 +44,7 @@ final class ActionsCoordinator: Coordinator<Void> {
             .store(in: &subscriptions)
 
         navigationController.onClose = {
-            subject.send()
+            self.subject.send()
         }
         view.cancel
             .sink(receiveValue: {
@@ -121,6 +121,6 @@ final class ActionsCoordinator: Coordinator<Void> {
             })
             .store(in: &subscriptions)
 
-        return subject.eraseToAnyPublisher()
+        return subject.prefix(1).eraseToAnyPublisher()
     }
 }
