@@ -128,6 +128,13 @@ extension ReceiveToken {
                     self?.minimumTransactionAmountSubject.accept(fee * 2)
                 }
             }
+            
+            Task {
+                let processingTx = await persistentStore.processingTransactions
+                await MainActor.run { [weak self] in
+                    self?.processingTransactionsSubject.accept(processingTx)
+                }
+            }
         }
         
         private func updateSessionEndDate() async {
