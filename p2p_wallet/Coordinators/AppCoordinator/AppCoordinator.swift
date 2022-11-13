@@ -88,15 +88,16 @@ class AppCoordinator: Coordinator<Void> {
     }
 
     func navigateToMain() {
-        // TODO: - Change to Main.Coordinator.start()
         Task.detached {
             try await Resolver.resolve(WalletMetadataService.self).update()
         }
 
-        let vm = Main.ViewModel()
-        let vc = Main.ViewController(viewModel: vm)
-        vc.authenticateWhenAppears = showAuthenticationOnMainOnAppear
-        hideLoadingAndTransitionTo(vc)
+        let coordinator = MainCoordinator(window: window, authenticateWhenAppears: showAuthenticationOnMainOnAppear)
+        coordinate(to: coordinator)
+            .sink(receiveValue: {
+                debugPrint("loool")
+            })
+            .store(in: &subscriptions)
     }
 
     private func openSplash(_ completionHandler: @escaping () -> Void) {

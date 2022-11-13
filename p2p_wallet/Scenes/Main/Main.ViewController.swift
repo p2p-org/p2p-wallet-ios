@@ -36,6 +36,10 @@ extension Main {
             self.viewModel = viewModel
             super.init()
         }
+        
+        deinit {
+            onClose?()
+        }
 
         override func viewDidLoad() {
             super.viewDidLoad()
