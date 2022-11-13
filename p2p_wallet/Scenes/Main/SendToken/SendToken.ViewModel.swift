@@ -78,7 +78,6 @@ extension SendToken {
 
         init(
             walletPubkey: String?,
-            destinationAddress _: String?,
             relayMethod: SendTokenRelayMethod,
             canGoBack: Bool = true
         ) {

@@ -142,7 +142,6 @@ extension WalletDetail {
             case let .send(wallet):
                 let vm = SendToken.ViewModel(
                     walletPubkey: wallet.pubkey,
-                    destinationAddress: nil,
                     relayMethod: .default
                 )
                 if coordinator == nil, let navigationController = navigationController {

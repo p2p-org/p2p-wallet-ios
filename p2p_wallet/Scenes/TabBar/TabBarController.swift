@@ -23,7 +23,8 @@ final class TabBarController: UITabBarController {
     private var actionsCoordinator: ActionsCoordinator?
     private var settingsCoordinator: SettingsCoordinator!
     private var buyCoordinator: BuyCoordinator?
-    private var sendCoordinator: SendToken.Coordinator?
+    private var swapCoordinator: SwapCoordinator?
+    private var sendCoordinator: SendCoordinator?
 
     private var customTabBar: CustomTabBar { tabBar as! CustomTabBar }
 
@@ -78,43 +79,31 @@ final class TabBarController: UITabBarController {
 
         switch action {
         case .buy:
-            let buyCoordinator = BuyCoordinator(
+            buyCoordinator = BuyCoordinator(
                 navigationController: navigationController,
                 context: .fromHome
             )
-            self.buyCoordinator = buyCoordinator
-            buyCoordinator.start()
-                .sink(receiveValue: {})
+            buyCoordinator?.start()
+                .sink(receiveValue: { [weak self] in
+                    self?.buyCoordinator = nil
+                })
                 .store(in: &cancellables)
         case .receive:
             break
         case .swap:
-            let vm = OrcaSwapV2.ViewModel(initialWallet: nil)
-            let vc = OrcaSwapV2.ViewController(viewModel: vm)
-            vc.doneHandler = {
-                navigationController.popToRootViewController(animated: true)
-            }
-            navigationController.show(vc, sender: nil)
+            swapCoordinator = SwapCoordinator(navigationController: navigationController, initialWallet: nil)
+            swapCoordinator?.start()
+                .sink(receiveValue: { [weak self] _ in
+                    self?.swapCoordinator = nil
+                })
+                .store(in: &cancellables)
         case .send:
-            let vm = SendToken.ViewModel(
-                walletPubkey: nil,
-                destinationAddress: nil,
-                relayMethod: .default
-            )
-            sendCoordinator = SendToken.Coordinator(
-                viewModel: vm,
-                navigationController: navigationController
-            )
-            analyticsManager.log(event: AmplitudeEvent.mainScreenSendOpen)
-            analyticsManager.log(event: AmplitudeEvent.sendViewed(lastScreen: "main_screen"))
-            
-            sendCoordinator?.doneHandler = {
-                navigationController.popToRootViewController(animated: true)
-            }
-            let vc = sendCoordinator?.start(hidesBottomBarWhenPushed: true)
-            vc?.onClose = { [weak self] in
-                self?.sendCoordinator = nil
-            }
+            sendCoordinator = SendCoordinator(navigationController: navigationController, pubKey: nil)
+            sendCoordinator?.start()
+                .sink(receiveValue: { [weak self] _ in
+                    self?.sendCoordinator = nil
+                })
+                .store(in: &cancellables)
         }
     }
 
