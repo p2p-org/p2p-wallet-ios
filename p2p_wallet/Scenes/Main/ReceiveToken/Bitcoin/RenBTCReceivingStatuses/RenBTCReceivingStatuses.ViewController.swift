@@ -15,10 +15,6 @@ import UIKit
 
 extension RenBTCReceivingStatuses {
     class ViewController: BaseViewController {
-        override var preferredNavigationBarStype: BEViewController.NavigationBarStyle {
-            .hidden
-        }
-
         // MARK: - Dependencies
 
         @Injected private var analyticsManager: AnalyticsManager
@@ -33,6 +29,7 @@ extension RenBTCReceivingStatuses {
             viewModel.navigationPublisher
                 .sink { [weak self] in self?.navigate(to: $0) }
                 .store(in: &subscriptions)
+            title = L10n.statusesReceived(0)
         }
 
         override func build() -> UIView {
@@ -90,6 +87,14 @@ extension RenBTCReceivingStatuses {
                     ).withDelegate(self)
                 }
             }
+        }
+        
+        override func bind() {
+            super.bind()
+            viewModel.receiveBitcoinViewModel.processingTransactionsPublisher
+                .map { txs in L10n.statusesReceived(txs.count) }
+                .assign(to: \.title, on: self)
+                .store(in: &subscriptions)
         }
     }
 }
