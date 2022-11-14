@@ -6,10 +6,11 @@
 //
 
 import AnalyticsManager
-import BECollectionView
+import BECollectionView_Combine
 import Foundation
 import RenVMSwift
 import Resolver
+import Combine
 import UIKit
 
 extension RenBTCReceivingStatuses {
@@ -22,35 +23,28 @@ extension RenBTCReceivingStatuses {
 
         @Injected private var analyticsManager: AnalyticsManager
 
-        private var viewModel: RenBTCReceivingStatusesViewModelType
+        private var viewModel: ViewModel
+        private var subscriptions = Set<AnyCancellable>()
 
-        init(viewModel: RenBTCReceivingStatusesViewModelType) {
+        init(viewModel: ViewModel) {
             self.viewModel = viewModel
             super.init()
 
-            viewModel.navigationDriver
-                .drive(onNext: { [weak self] in self?.navigate(to: $0) })
-                .disposed(by: disposeBag)
+            viewModel.navigationPublisher
+                .sink { [weak self] in self?.navigate(to: $0) }
+                .store(in: &subscriptions)
         }
 
         override func build() -> UIView {
             BESafeArea {
                 UIStackView(axis: .vertical, alignment: .fill) {
-                    NewWLNavigationBar(initialTitle: L10n.receivingStatuses, separatorEnable: false)
-                        .onBack { [unowned self] in self.back() }
-                        .setup { view in
-                            viewModel.processingTxsDriver
-                                .map { txs in L10n.statusesReceived(txs.count) }
-                                .drive(view.titleLabel.rx.text)
-                                .disposed(by: disposeBag)
-                        }
                     NBENewDynamicSectionsCollectionView(
                         viewModel: viewModel,
                         mapDataToSections: { viewModel in
                             CollectionViewMappingStrategy.byData(
                                 viewModel: viewModel,
-                                forType: LockAndMint.ProcessingTx.self,
-                                where: \LockAndMint.ProcessingTx.submitedAt
+                                forType: LockAndMint.ProcessingTx.Timestamp.self,
+                                where: \.firstReceivedAt
                             )
                         },
                         layout: .init(
@@ -99,7 +93,7 @@ extension RenBTCReceivingStatuses.ViewController: BECollectionViewDelegate {
         switch scene {
         case let .detail(txid):
             let vc = RenBTCReceivingStatuses
-                .TxDetailViewController(viewModel: .init(processingTxsDriver: viewModel.processingTxsDriver,
+                .TxDetailViewController(viewModel: .init(processingTxsPublisher: viewModel.receiveBitcoinViewModel.processingTransactionsPublisher,
                                                          txid: txid))
             show(vc, sender: nil)
         case .none:

@@ -41,7 +41,7 @@ extension RenBTCReceivingStatuses {
             descriptionLabel.text = tx.statusString
 
             descriptionLabel.textColor = .textSecondary
-            if tx.mintedAt != nil {
+            if tx.state.isMinted {
                 descriptionLabel.textColor = .attentionGreen
             }
         }
