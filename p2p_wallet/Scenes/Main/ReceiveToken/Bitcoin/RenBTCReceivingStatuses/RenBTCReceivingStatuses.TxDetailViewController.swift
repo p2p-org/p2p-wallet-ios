@@ -12,15 +12,13 @@ import Combine
 
 extension RenBTCReceivingStatuses {
     class TxDetailViewController: BaseViewController {
-        override var preferredNavigationBarStype: BEViewController.NavigationBarStyle {
-            .hidden
-        }
-
         private var viewModel: TxDetailViewModel
+        private var subscriptions = Set<AnyCancellable>()
 
         init(viewModel: TxDetailViewModel) {
             self.viewModel = viewModel
             super.init()
+            title = L10n.receivingRenBTC(0)
         }
 
         override func build() -> UIView {
@@ -69,6 +67,17 @@ extension RenBTCReceivingStatuses {
                     )
                 }
             }
+        }
+        
+        override func bind() {
+            super.bind()
+            viewModel.currentTxPublisher
+                .map { tx in
+                    guard let value = tx?.value else { return L10n.receivingStatus }
+                    return L10n.receivingRenBTC(value.toString(maximumFractionDigits: 10))
+                }
+                .assign(to: \.title, on: self)
+                .store(in: &subscriptions)
         }
     }
 
