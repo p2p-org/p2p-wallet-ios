@@ -73,6 +73,25 @@ extension ReceiveToken {
                         .onTap { [weak self] in self?.viewModel.showBTCAddressInExplorer() }
                 }
             }
+            .setup { view in
+                viewModel.statePublisher
+                    .sink { [weak self] state in
+                        self?.hideLoadingIndicatorView()
+                        self?.removeErrorView()
+                        switch state {
+                        case .initializing, .loading:
+                            self?.hideConnectionErrorView()
+                            self?.showLoadingIndicatorView(isBlocking: true)
+                        case .error:
+                            self?.showErrorView { [weak self] in
+                                self?.viewModel.acceptConditionAndLoadAddress()
+                            }
+                        default:
+                            break
+                        }
+                    }
+                    .store(in: &subscriptions)
+            }
         }
 
         func statusButton() -> UIView {

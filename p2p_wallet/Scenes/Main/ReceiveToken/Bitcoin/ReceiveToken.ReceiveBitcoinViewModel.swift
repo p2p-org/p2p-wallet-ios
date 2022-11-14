@@ -32,6 +32,11 @@ extension ReceiveToken {
         // MARK: - Subjects
 
         @Published private var state = LockAndMintServiceState.initializing
+        var statePublisher: AnyPublisher<LockAndMintServiceState, Never> {
+            $state
+                .receive(on: RunLoop.main)
+                .eraseToAnyPublisher()
+        }
         var gatewayAddressPublisher: AnyPublisher<String?, Never> {
             $state
                 .map {[weak self] _ in try? self?.lockAndMintService.getCurrentGatewayAddress()}
@@ -45,7 +50,8 @@ extension ReceiveToken {
         }
         @Published private var processingTransactions = [LockAndMint.ProcessingTx]()
         var processingTransactionsPublisher: AnyPublisher<[LockAndMint.ProcessingTx], Never> {
-            $processingTransactions.receive(on: RunLoop.main)
+            $processingTransactions
+                .receive(on: RunLoop.main)
                 .eraseToAnyPublisher()
         }
         
@@ -68,6 +74,9 @@ extension ReceiveToken {
         init(hasExplorerButton: Bool) {
             self.hasExplorerButton = hasExplorerButton
             bind()
+            Task {
+                await updateSessionEndDate()
+            }
         }
 
         deinit {
@@ -112,9 +121,8 @@ extension ReceiveToken {
                 let session = await persistentStore.session
                 if session == nil || session?.isValid == false {
                     try await lockAndMintService.createSession(endAt: Calendar.current.date(byAdding: .hour, value: 40, to: Date()))
-                } else {
-                    await updateSessionEndDate()
                 }
+                await updateSessionEndDate()
             }
         }
         
