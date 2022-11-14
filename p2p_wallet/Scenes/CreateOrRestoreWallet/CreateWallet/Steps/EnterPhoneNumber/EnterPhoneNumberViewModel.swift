@@ -291,7 +291,3 @@ private extension String {
         self.filter("0123456789+".contains)
     }
 }
-
-enum EnterPhoneNumberViewModelError: Error {
-    case unknown
-}
