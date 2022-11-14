@@ -50,8 +50,8 @@ extension LockAndMint.ProcessingTx {
 extension LockAndMint.ProcessingError: LocalizedError {
     public var errorDescription: String? {
         switch self {
-        case let .insufficientFund(expected, got):
-            return L10n.error(L10n.amountIsTooSmallExpectedGot(expected.convertToBalance(decimals: Token.renBTC.decimals), got.convertToBalance(decimals: Token.renBTC.decimals)))
+        case .insufficientFund:
+            return L10n.error(L10n.amountIsTooSmall)
         case let .other(message):
             return L10n.error(message.localized())
         }
