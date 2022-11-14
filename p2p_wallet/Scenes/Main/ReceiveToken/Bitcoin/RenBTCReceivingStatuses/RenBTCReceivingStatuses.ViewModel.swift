@@ -52,7 +52,12 @@ extension RenBTCReceivingStatuses {
 
 extension RenBTCReceivingStatuses.ViewModel: BECollectionViewModelType {
     var dataDidChange: AnyPublisher<Void, Never> {
-        receiveBitcoinViewModel.processingTransactionsPublisher.map {_ in ()}.receive(on: RunLoop.main).eraseToAnyPublisher()
+        receiveBitcoinViewModel.processingTransactionsPublisher
+            .map {_ in ()
+                
+            }
+            .receive(on: RunLoop.main)
+            .eraseToAnyPublisher()
     }
     
     var state: BECollectionView_Core.BEFetcherState {

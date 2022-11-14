@@ -57,6 +57,7 @@ extension ReceiveToken {
         
         // Timer
         let timerPublisher = Timer.publish(every: 1, on: RunLoop.main, in: .default)
+            .autoconnect()
             .eraseToAnyPublisher()
         
         // Navigation
@@ -88,12 +89,8 @@ extension ReceiveToken {
         private func bind() {
             // timer
             timerPublisher
-                .asyncMap { [weak self] _ -> Date? in
-                    guard let self = self else {return nil}
-                    return await self.persistentStore.session?.endAt
-                }
-                .sinkAsync { [weak self] endAt in
-                    guard let endAt = endAt else { return }
+                .sink { [weak self] _ in
+                    guard let endAt = self?.sessionEndDate else { return }
                     if Date() >= endAt {
                         Task { [weak self] in
                             try await self?.lockAndMintService.expireCurrentSession()

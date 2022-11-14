@@ -41,11 +41,22 @@ extension RenBTCReceivingStatuses {
                     NBENewDynamicSectionsCollectionView(
                         viewModel: viewModel,
                         mapDataToSections: { viewModel in
-                            CollectionViewMappingStrategy.byData(
-                                viewModel: viewModel,
-                                forType: LockAndMint.ProcessingTx.Timestamp.self,
-                                where: \.firstReceivedAt
-                            )
+                            let data = viewModel.getData(type: LockAndMint.ProcessingTx.self)
+                                
+                            let dictionary = Dictionary(grouping: data, by: { Calendar.current.startOfDay(for: $0.timestamp.firstReceivedAt ?? Date()) })
+                            var sectionInfo = [BEDynamicSectionsCollectionView.SectionInfo]()
+                            for key in dictionary.keys.sorted(by: >) {
+                                sectionInfo.append(.init(
+                                    userInfo: key,
+                                    items: dictionary[key]!.sorted { tx1, tx2 in
+                                        guard let fra1 = tx1.timestamp.firstReceivedAt,
+                                              let fra2 = tx2.timestamp.firstReceivedAt
+                                        else {return true}
+                                        return fra1 > fra2
+                                    } as [AnyHashable]
+                                ))
+                            }
+                            return sectionInfo
                         },
                         layout: .init(
                             header: .init(
