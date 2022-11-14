@@ -38,7 +38,7 @@ enum RenBTCReceivingStatuses {
                         .toString(maximumFractionDigits: 9)
                 )
             case .error(let error):
-                return L10n.error(error.errorDescription)
+                return error.errorDescription ?? L10n.unknownError
             }
         }
     }
