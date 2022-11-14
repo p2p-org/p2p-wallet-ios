@@ -29,11 +29,13 @@ extension RenBTCReceivingStatuses {
                     NBENewDynamicSectionsCollectionView(
                         viewModel: viewModel,
                         mapDataToSections: { viewModel in
-                            CollectionViewMappingStrategy.byData(
-                                viewModel: viewModel,
-                                forType: Record.self,
-                                where: \.time
-                            )
+                            let data = viewModel.getData(type: Record.self)
+                            let dictionary = Dictionary(grouping: data, by: { Calendar.current.startOfDay(for: $0.time) })
+                            var sectionInfo = [BEDynamicSectionsCollectionView.SectionInfo]()
+                            for key in dictionary.keys.sorted(by: >) {
+                                sectionInfo.append(.init(userInfo: key, items: dictionary[key]!.sorted { $0.time > $1.time } as [AnyHashable]))
+                            }
+                            return sectionInfo
                         },
                         layout: .init(
                             header: .init(
@@ -118,19 +120,19 @@ extension RenBTCReceivingStatuses {
             case .confirming:
                 voteAt = tx.timestamp.voteAt
             case .confirmed:
-                voteAt = fillEmptyVoteAt(tx.timestamp.voteAt)
+                voteAt = fillEmptyVoteAt(tx.timestamp)
                 confirmedAt = tx.timestamp.confirmedAt ?? Date()
             case .submited:
-                voteAt = fillEmptyVoteAt(tx.timestamp.voteAt)
+                voteAt = fillEmptyVoteAt(tx.timestamp)
                 confirmedAt = tx.timestamp.confirmedAt ?? Date()
                 submitedAt = tx.timestamp.submitedAt ?? Date()
             case .minted:
-                voteAt = fillEmptyVoteAt(tx.timestamp.voteAt)
+                voteAt = fillEmptyVoteAt(tx.timestamp)
                 confirmedAt = tx.timestamp.confirmedAt ?? Date()
                 submitedAt = tx.timestamp.submitedAt ?? Date()
                 mintedAt = tx.timestamp.mintedAt ?? Date()
             case let .ignored(err):
-                voteAt = fillEmptyVoteAt(tx.timestamp.voteAt)
+                voteAt = fillEmptyVoteAt(tx.timestamp)
                 confirmedAt = tx.timestamp.confirmedAt ?? Date()
                 submitedAt = tx.timestamp.submitedAt ?? Date()
                 errorAt = tx.timestamp.ignoredAt ?? Date()
@@ -157,13 +159,13 @@ extension RenBTCReceivingStatuses {
             return records.reversed()
         }
         
-        private func fillEmptyVoteAt(_ voteAt: [UInt: Date]) -> [UInt: Date] {
-            var voteAt = voteAt
+        private func fillEmptyVoteAt(_ timestamp: LockAndMint.ProcessingTx.Timestamp) -> [UInt: Date] {
+            var voteAt = timestamp.voteAt
             if voteAt.keys.count < LockAndMint.ProcessingTx.maxVote {
                 // fill votes
                 let count = UInt(voteAt.keys.count)
-                for i in count..<LockAndMint.ProcessingTx.maxVote {
-                    voteAt[i] = Date()
+                for i in count...LockAndMint.ProcessingTx.maxVote {
+                    voteAt[i] = timestamp.lastVoteAt
                 }
             }
             return voteAt
