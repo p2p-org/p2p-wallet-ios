@@ -7,7 +7,7 @@ jobs:
     name: Upload build for testing
     if: ${{ contains(github.event.pull_request.labels.*.name, 'auto:qa-deploy') }}
 
-    runs-on: [self-hosted, macOS]
+    runs-on: macos-12
 
     steps:
       - name: Check out current branch
