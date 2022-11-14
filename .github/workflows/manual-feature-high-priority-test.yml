@@ -1,9 +1,9 @@
-name: Manually build feature test with home lab
+name: Manually build feature test with high priority
 on: workflow_dispatch
 jobs:
   upload_build_for_testing:
     name: Manually upload build for testing
-    runs-on: [self-hosted, macos-12]
+    runs-on: [self-hosted, macOS]
 
     steps:
       - name: Check out current branch
