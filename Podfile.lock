@@ -495,7 +495,7 @@ CHECKOUT OPTIONS:
     :commit: 9449d2b73bf2cc8c612c9cf4dcdc1449d1804015
     :git: https://github.com/p2p-org/key-app-kit-swift.git
   RenVMSwift:
-    :commit: 398a94706e1c398041ce2432ddb5ddec29ec8c64
+    :commit: dc165a0ff5e86c766b07aff69886790251641f90
     :git: https://github.com/p2p-org/RenVMSwift.git
   RxConcurrency:
     :commit: dadb16c54bd42ca83c08f3d80f61fbfca93a585c
