@@ -37,6 +37,6 @@ final class MainCoordinator: Coordinator<Void> {
             subject.send()
         }
 
-        return subject.eraseToAnyPublisher()
+        return subject.prefix(1).eraseToAnyPublisher()
     }
 }
