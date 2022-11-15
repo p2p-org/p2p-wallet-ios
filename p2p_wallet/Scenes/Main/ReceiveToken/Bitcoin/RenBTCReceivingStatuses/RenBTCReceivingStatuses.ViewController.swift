@@ -6,10 +6,11 @@
 //
 
 import AnalyticsManager
-import BECollectionView
+import BECollectionView_Combine
 import Foundation
 import RenVMSwift
 import Resolver
+import Combine
 import UIKit
 
 extension RenBTCReceivingStatuses {
@@ -18,16 +19,16 @@ extension RenBTCReceivingStatuses {
 
         @Injected private var analyticsManager: AnalyticsManager
 
-        private var viewModel: RenBTCReceivingStatusesViewModelType
+        private var viewModel: ViewModel
+        private var subscriptions = Set<AnyCancellable>()
 
-        init(viewModel: RenBTCReceivingStatusesViewModelType) {
+        init(viewModel: ViewModel) {
             self.viewModel = viewModel
             super.init()
 
-            viewModel.navigationDriver
-                .drive(onNext: { [weak self] in self?.navigate(to: $0) })
-                .disposed(by: disposeBag)
-            
+            viewModel.navigationPublisher
+                .sink { [weak self] in self?.navigate(to: $0) }
+                .store(in: &subscriptions)
             title = L10n.statusesReceived(0)
         }
 
@@ -37,11 +38,22 @@ extension RenBTCReceivingStatuses {
                     NBENewDynamicSectionsCollectionView(
                         viewModel: viewModel,
                         mapDataToSections: { viewModel in
-                            CollectionViewMappingStrategy.byData(
-                                viewModel: viewModel,
-                                forType: LockAndMint.ProcessingTx.self,
-                                where: \LockAndMint.ProcessingTx.submitedAt
-                            )
+                            let data = viewModel.getData(type: LockAndMint.ProcessingTx.self)
+                                
+                            let dictionary = Dictionary(grouping: data, by: { Calendar.current.startOfDay(for: $0.timestamp.firstReceivedAt ?? Date()) })
+                            var sectionInfo = [BEDynamicSectionsCollectionView.SectionInfo]()
+                            for key in dictionary.keys.sorted(by: >) {
+                                sectionInfo.append(.init(
+                                    userInfo: key,
+                                    items: dictionary[key]!.sorted { tx1, tx2 in
+                                        guard let fra1 = tx1.timestamp.firstReceivedAt,
+                                              let fra2 = tx2.timestamp.firstReceivedAt
+                                        else {return true}
+                                        return fra1 > fra2
+                                    } as [AnyHashable]
+                                ))
+                            }
+                            return sectionInfo
                         },
                         layout: .init(
                             header: .init(
@@ -79,10 +91,10 @@ extension RenBTCReceivingStatuses {
         
         override func bind() {
             super.bind()
-            viewModel.processingTxsDriver
+            viewModel.receiveBitcoinViewModel.processingTransactionsPublisher
                 .map { txs in L10n.statusesReceived(txs.count) }
-                .drive(rx.title)
-                .disposed(by: disposeBag)
+                .assign(to: \.title, on: self)
+                .store(in: &subscriptions)
         }
     }
 }
@@ -97,7 +109,7 @@ extension RenBTCReceivingStatuses.ViewController: BECollectionViewDelegate {
         switch scene {
         case let .detail(txid):
             let vc = RenBTCReceivingStatuses
-                .TxDetailViewController(viewModel: .init(processingTxsDriver: viewModel.processingTxsDriver,
+                .TxDetailViewController(viewModel: .init(processingTxsPublisher: viewModel.receiveBitcoinViewModel.processingTransactionsPublisher,
                                                          txid: txid))
             show(vc, sender: nil)
         case .none:
