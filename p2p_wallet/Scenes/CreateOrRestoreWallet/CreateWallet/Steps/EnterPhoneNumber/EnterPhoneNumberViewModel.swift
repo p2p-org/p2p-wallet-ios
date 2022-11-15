@@ -73,7 +73,10 @@ final class EnterPhoneNumberViewModel: BaseOTPViewModel {
                 let parsedPhone = try? self.phoneNumberKit.parse(newPhone),
                 let country = countries?
                     .first(where: { $0.dialCode == "+" + String(parsedPhone.countryCode) }) {
-                self.selectedCountry = country
+                // Change country only if dial code has changed
+                if self.selectedCountry.dialCode != country.dialCode {
+                    self.selectedCountry = country
+                }
                 self.phone = parsedPhone.numberString
             }
         }
