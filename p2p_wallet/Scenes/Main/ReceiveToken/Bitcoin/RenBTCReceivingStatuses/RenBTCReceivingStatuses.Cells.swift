@@ -60,22 +60,25 @@ extension RenBTCReceivingStatuses {
 
         override func build() -> UIView {
             UIStackView(axis: .vertical, alignment: .fill) {
-                UIStackView(axis: .horizontal, alignment: .top, distribution: .fill) {
-                    UIStackView(axis: .vertical, spacing: 4, alignment: .fill, distribution: .fill) {
-                        UILabel(text: "<0.002 renBTC>", textSize: 15, weight: .medium, numberOfLines: 8)
+                UIStackView(axis: .vertical, spacing: 8, alignment: .fill, distribution: .fill) {
+                    UIStackView(axis: .horizontal, spacing: 8, alignment: .fill, distribution: .fill) {
+                        UILabel(text: "<0.002 renBTC>", textSize: 15, weight: .medium, numberOfLines: 0)
+                            .withContentHuggingPriority(.required, for: .horizontal)
                             .setup { view in titleLabel = view }
-                        UILabel(
-                            text: "<Minting>",
-                            textSize: 13,
-                            weight: .medium,
-                            textColor: .textSecondary,
-                            numberOfLines: 2
-                        )
-                            .setup { view in descriptionLabel = view }
+                        UILabel(textSize: 15, weight: .semibold)
+                            .setup { view in
+                                view.textAlignment = .right
+                                resultLabel = view
+                            }
                     }
-                    UIView.spacer
-                    UILabel(textSize: 15, weight: .semibold)
-                        .setup { view in resultLabel = view }
+                    UILabel(
+                        text: "<Minting>",
+                        textSize: 13,
+                        weight: .medium,
+                        textColor: .textSecondary,
+                        numberOfLines: 2
+                    )
+                        .setup { view in descriptionLabel = view }
                 }
                 UIView.defaultSeparator().padding(.init(only: .top, inset: 14))
             }.padding(.init(x: 20, y: 12))
