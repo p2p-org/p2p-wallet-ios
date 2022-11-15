@@ -43,6 +43,8 @@ extension RenBTCReceivingStatuses {
             descriptionLabel.textColor = .textSecondary
             if tx.state.isMinted {
                 descriptionLabel.textColor = .attentionGreen
+            } else if tx.state.isIgnored {
+                descriptionLabel.textColor = .alert
             }
         }
 
@@ -67,7 +69,7 @@ extension RenBTCReceivingStatuses {
                             textSize: 13,
                             weight: .medium,
                             textColor: .textSecondary,
-                            numberOfLines: 0
+                            numberOfLines: 2
                         )
                             .setup { view in descriptionLabel = view }
                     }
@@ -84,6 +86,7 @@ extension RenBTCReceivingStatuses {
             titleLabel.text = tx.stringValue
             resultLabel.isHidden = true
             descriptionLabel.text = tx.time.string(withFormat: "HH:mm a")
+            titleLabel.textColor = .textBlack
             switch tx.status {
             case .waitingForConfirmation:
                 resultLabel.isHidden = false
@@ -103,6 +106,8 @@ extension RenBTCReceivingStatuses {
                     .text =
                     "+ \((tx.amount ?? 0).convertToBalance(decimals: 8).toString(maximumFractionDigits: 9)) renBTC"
                 resultLabel.textColor = .textGreen
+            case .error:
+                titleLabel.textColor = .alert
             default:
                 break
             }
