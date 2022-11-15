@@ -89,20 +89,35 @@ private class RenVMFeeRelayerSolanaBlockchainClient: SolanaBlockchainClient {
         preparedTransaction: PreparedTransaction
     ) async throws -> String {
         let context = try await feeRelayerContextManager.getCurrentContext()
-        return try await feeRelayer.topUpAndRelayTransaction(
-            context,
-            preparedTransaction,
-            fee: nil,
-            config: .init(
-                operationType: .transfer,
-                currency: PublicKey.renBTCMint.base58EncodedString
+        do {
+            return try await feeRelayer.topUpAndRelayTransaction(
+                context,
+                preparedTransaction,
+                fee: nil,
+                config: .init(
+                    operationType: .transfer,
+                    currency: PublicKey.renBTCMint.base58EncodedString
+                )
             )
-        )
+        } catch SolanaError.invalidResponse(let response) {
+            // FIXME: - temporarily fix by converting HTTPClientError to SolanaError
+            if response.data?.logs?.contains(where: \.isAlreadyInUseLog) == true {
+                throw RenVMError("Already in use")
+            }
+            throw SolanaError.invalidResponse(response)
+        }
     }
     
     func simulateTransaction(
         preparedTransaction: PreparedTransaction
     ) async throws -> SimulationResult {
         fatalError()
+    }
+}
+
+private extension String {
+    var isAlreadyInUseLog: Bool {
+        contains("Allocate: account Address { address: ") &&
+            contains("} already in use")
     }
 }
