@@ -27,6 +27,11 @@ final class HomeCoordinator: Coordinator<Void> {
         self.navigationController = navigationController
         self.tabBarController = tabBarController
     }
+    private let resultSubject = PassthroughSubject<Void, Never>()
+
+    deinit {
+        debugPrint("LOOL DEINIT!")
+    }
 
     override func start() -> AnyPublisher<Void, Never> {
         let viewModel = HomeViewModel()
@@ -45,6 +50,9 @@ final class HomeCoordinator: Coordinator<Void> {
         ).asViewController() as! UIHostingControllerWithoutNavigation<HomeView>
 
         navigationController.setViewControllers([homeView], animated: false)
+        navigationController.onClose = { [weak self] in
+            self?.resultSubject.send(())
+        }
 
         scrollSubject
             .sink(receiveValue: {
@@ -199,9 +207,7 @@ final class HomeCoordinator: Coordinator<Void> {
                     .store(in: &subscriptions)
             })
             .store(in: &subscriptions)
-
-        return Empty(completeImmediately: false)
-            .eraseToAnyPublisher()
+        return resultSubject.prefix(1).eraseToAnyPublisher()
     }
 
     private func presentBuyView() {
