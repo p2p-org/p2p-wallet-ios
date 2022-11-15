@@ -191,6 +191,7 @@ class PhoneTextField: BaseTextFieldView {
         leftView?.onTap(onLeftTap ?? {})
         leftViewMode = .always
         textField?.keyboardType = .phonePad
+        textField?.textContentType = .telephoneNumber
         textField?.text = "+"
         textField?.font = UIFont.font(of: .title1, weight: .bold)
         (textField as? TextField)?.onPaste = onPaste
