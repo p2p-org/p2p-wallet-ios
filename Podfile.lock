@@ -273,7 +273,7 @@ DEPENDENCIES:
   - Periphery
   - PhoneNumberKit (= 3.3.4)
   - ReachabilitySwift (~> 5.0.0)
-  - RenVMSwift (from `https://github.com/p2p-org/RenVMSwift.git`, branch `master`)
+  - RenVMSwift (from `https://github.com/p2p-org/RenVMSwift.git`, branch `feature/pwn-5964-renbtc-status`)
   - Resolver (= 1.5.0)
   - RxAppState (= 1.7.1)
   - RxCocoa (= 6.5.0)
@@ -412,7 +412,7 @@ EXTERNAL SOURCES:
     :branch: master
     :git: https://github.com/p2p-org/key-app-kit-swift.git
   RenVMSwift:
-    :branch: master
+    :branch: feature/pwn-5964-renbtc-status
     :git: https://github.com/p2p-org/RenVMSwift.git
   RxConcurrency:
     :branch: main
@@ -462,7 +462,7 @@ CHECKOUT OPTIONS:
     :commit: eee1d66d7ef71b892e72c8bc8d84fcdfeaab1918
     :git: https://github.com/p2p-org/Down.git
   FeeRelayerSwift:
-    :commit: d4456bf1559514f9562f7f28d85d2a1dfccee62d
+    :commit: a7d427bff810c703addedfefc646853df3a09400
     :git: https://github.com/p2p-org/FeeRelayerSwift.git
   JazziconSwift:
     :commit: f9c9f898402db4e62d482f4c90670652c221fa12
@@ -495,7 +495,7 @@ CHECKOUT OPTIONS:
     :commit: 9449d2b73bf2cc8c612c9cf4dcdc1449d1804015
     :git: https://github.com/p2p-org/key-app-kit-swift.git
   RenVMSwift:
-    :commit: 650954e95af982c477a89cd8b0b5e99132d4ba1e
+    :commit: fa667b94eb3e583547f315c014bfa9e9d0aba355
     :git: https://github.com/p2p-org/RenVMSwift.git
   RxConcurrency:
     :commit: dadb16c54bd42ca83c08f3d80f61fbfca93a585c
@@ -602,6 +602,6 @@ SPEC CHECKSUMS:
   TweetNacl: 3abf4d1d2082b0114e7a67410e300892448951e6
   "UITextView+Placeholder": d7b0c400921f66523f3a85d74f774512e14f6502
 
-PODFILE CHECKSUM: 305543927b6cbf8d984bb52dea4d9b18a0def59c
+PODFILE CHECKSUM: 09696420831387f2420be6987fd79f9e387b5485
 
 COCOAPODS: 1.11.3
