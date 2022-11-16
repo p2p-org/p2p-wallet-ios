@@ -6,7 +6,7 @@ import Combine
 import Onboarding
 import Resolver
 
-final class ICloudRestoreViewModel: BaseICloudRestoreViewModel {
+final class ICloudRestoreViewModel: BaseICloudRestoreViewModel, ObservableObject {
     // MARK: - Declarations
 
     typealias SeedPhrase = String
