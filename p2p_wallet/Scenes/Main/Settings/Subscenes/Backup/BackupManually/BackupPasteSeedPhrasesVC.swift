@@ -19,7 +19,6 @@ class BackupPasteSeedPhrasesVC: WLEnterPhrasesVC {
     override func setUp() {
         super.setUp()
 
-        rightBarButton.setTitleTextAttributes([.foregroundColor: UIColor.h5887ff], for: .normal)
         navigationItem.rightBarButtonItem = rightBarButton
         navigationItem.title = L10n.backingUp
 

@@ -6,10 +6,12 @@
 //
 
 import BEPureLayout
+import Combine
 import Foundation
 import Resolver
 import RxSwift
 import SolanaSwift
+import KeyAppUI
 import UIKit
 
 extension WalletDetail {
@@ -25,18 +27,20 @@ extension WalletDetail {
         // MARK: - Subviews
 
         private lazy var balanceView = BalanceView(viewModel: viewModel)
-        private let actionsView = ColorfulHorizontalView()
+        private let actionsView = TokenActionsView()
 
         // MARK: - Subscene
 
         private lazy var historyVC = History.Scene(account: viewModel.pubkey, symbol: viewModel.symbol)
         private var coordinator: SendToken.Coordinator?
+        private var subscriptions = Set<AnyCancellable>()
 
         // MARK: - Initializer
 
         init(viewModel: WalletDetailViewModelType) {
             self.viewModel = viewModel
             super.init()
+            hidesBottomBarWhenPushed = true
         }
 
         // MARK: - Methods
@@ -46,7 +50,7 @@ extension WalletDetail {
 
             #if DEBUG
                 let rightButton = UIBarButtonItem(
-                    title: "Settings",
+                    title: L10n.settings,
                     style: .plain,
                     target: self,
                     action: #selector(showWalletSettings)
@@ -57,19 +61,20 @@ extension WalletDetail {
 
             let containerView = UIView(forAutoLayout: ())
 
-            actionsView.autoSetDimension(.height, toSize: 80)
+            actionsView.autoSetDimension(.height, toSize: 68)
 
             let stackView = UIStackView(
                 axis: .vertical,
-                spacing: 18,
+                spacing: 0,
                 alignment: .fill
             ) {
-                balanceView.padding(.init(x: 18, y: 16))
-                actionsView.padding(.init(x: 18, y: 0))
-                containerView.padding(.init(top: 16, left: 8, bottom: 0, right: 8))
+                balanceView.padding(.init(top: 24, left: 0, bottom: 0, right: 0))
+                actionsView.padding(.init(top: 32, left: 18, bottom: 16, right: 18))
+                containerView.padding(.init(top: 16, left: 0, bottom: 0, right: 0))
             }
 
             view.addSubview(stackView)
+            stackView.backgroundColor = Asset.Colors.smoke.color
             stackView.autoPinEdgesToSuperviewEdges(with: .zero, excludingEdge: .top)
             stackView.autoPinEdge(toSuperviewSafeArea: .top)
 
@@ -93,7 +98,6 @@ extension WalletDetail {
                 .drive(
                     onNext: { [weak self] in
                         guard let self = self else { return }
-
                         self.actionsView.setArrangedSubviews($0.map(self.createWalletActionView))
                     }
                 )
@@ -102,22 +106,35 @@ extension WalletDetail {
 
         // MARK: - Navigation
 
+        private var buyCoordinator: BuyCoordinator?
         private func navigate(to scene: NavigatableScene?) {
             switch scene {
             case let .buy(crypto):
-                let vc = BuyPreparing.Scene(
-                    viewModel: BuyPreparing.SceneModel(
-                        crypto: crypto,
-                        exchangeService: Resolver.resolve()
+                let vc: UIViewController
+                if available(.buyScenarioEnabled) {
+                    // TODO: remove after moving to coordinator
+                    buyCoordinator = BuyCoordinator(
+                        context: .fromToken,
+                        defaultToken: crypto == .sol ? .nativeSolana : crypto == .usdc ? .usdc : .eth,
+                        presentingViewController: self,
+                        shouldPush: false
                     )
-                )
-                let navigation = UINavigationController(rootViewController: vc)
-                present(navigation, animated: true)
+                    buyCoordinator?.start().sink { _ in }.store(in: &subscriptions)
+                } else {
+                    vc = BuyPreparing.Scene(
+                        viewModel: BuyPreparing.SceneModel(
+                            crypto: crypto,
+                            exchangeService: Resolver.resolve()
+                        )
+                    )
+                    let navigation = UINavigationController(rootViewController: vc)
+                    present(navigation, animated: true)
+                }
             case let .settings(pubkey):
                 let vm = TokenSettingsViewModel(pubkey: pubkey)
                 let vc = TokenSettingsViewController(viewModel: vm)
                 vc.delegate = self
-                present(vc, animated: true, completion: nil)
+                present(vc, animated: true)
             case let .send(wallet):
                 let vm = SendToken.ViewModel(
                     walletPubkey: wallet.pubkey,
@@ -131,7 +148,7 @@ extension WalletDetail {
                     )
                     coordinator?.doneHandler = processingTransactionDoneHandler
                 }
-                coordinator?.start()
+                coordinator?.start(hidesBottomBarWhenPushed: true)
             case let .receive(pubkey):
                 if let solanaPubkey = try? PublicKey(string: viewModel.walletsRepository.nativeWallet?.pubkey) {
                     let tokenWallet = viewModel.walletsRepository.getWallets().first(where: { $0.pubkey == pubkey })

@@ -21,7 +21,7 @@ extension History {
         @Injected private var walletsRepository: WalletsRepository
         @Injected private var notificationService: NotificationService
         let transactionRepository = SolanaTransactionRepository()
-        let transactionParser = DefaultTransactionParser(p2pFeePayers: Defaults.p2pFeePayerPubkeys)
+        let transactionParser = DefaultTransactionParser(p2pFeePayers: ["FG4Y3yX4AAchp1HvNZ7LfzFTewF2f6nDoMDCohTFrdpT"])
 
         // MARK: - Properties
 
@@ -51,15 +51,13 @@ extension History {
 
         var stateDriver: Driver<State> {
             Observable.combineLatest(
-                stateObservable.startWith(.loading),
                 dataObservable.startWith([])
                     .filter { $0 != nil }
                     .withPrevious(),
+                stateObservable.startWith(.loading),
                 errorRelay.startWith(false)
-            ).map { state, change, error in
-                if error {
-                    return .error
-                }
+            ).map { change, state, error in
+                if error { return .error }
 
                 if state == .loading || state == .initializing {
                     return .items
@@ -72,6 +70,7 @@ extension History {
         }
 
         let tryAgain = PublishRelay<Void>()
+        let refreshPage = PublishRelay<Void>()
         private let errorRelay = PublishRelay<Bool>()
 
         init(accountSymbol: AccountSymbol? = nil) {
@@ -97,6 +96,11 @@ extension History {
                 .subscribe(onNext: { [weak self] in
                     self?.reload()
                     self?.errorRelay.accept(false)
+                })
+                .disposed(by: disposeBag)
+            refreshPage
+                .subscribe(onNext: { [weak self] in
+                    self?.reload()
                 })
                 .disposed(by: disposeBag)
         }
@@ -158,9 +162,7 @@ extension History {
                             timeEndFilter = timeEndFilter.addingTimeInterval(-1 * 60 * 60 * 24 * 1)
 
                             if Task.isCancelled { return }
-                            while
-                                let result = try await source.next(configuration: .init(timestampEnd: timeEndFilter)),
-                                Task.isNotCancelled
+                            while let result = try await source.next(configuration: .init(timestampEnd: timeEndFilter))
                             {
                                 let (signatureInfo, _, _) = result
 
@@ -184,38 +186,29 @@ extension History {
                 }
             }
             .asObservable()
-            .flatMap { results in Observable.from(results) }
-            .flatMap { result in
-                Single.async {
-                    do {
-                        let transactionInfo = try await self.transactionRepository
-                            .getTransaction(signature: result.0.signature)
-                        let transaction = try await self.transactionParser.parse(
-                            signatureInfo: result.0,
-                            transactionInfo: transactionInfo,
-                            account: result.1,
-                            symbol: result.2
-                        )
-                        return [transaction]
-                    } catch {
-                        var blockTime: Date?
-                        if let time = result.0.blockTime {
-                            blockTime = Date(timeIntervalSince1970: TimeInterval(time))
-                        }
+            .flatMap { (signatures: [HistoryStreamSource.Result]) in
+                let transactions = try await self.transactionRepository
+                    .getTransactions(signatures: signatures.map(\.signatureInfo.signature))
+                var parsedTransactions: [ParsedTransaction] = []
 
-                        let trx = ParsedTransaction(
-                            status: .confirmed,
-                            signature: result.0.signature,
-                            info: nil,
-                            slot: result.0.slot,
-                            blockTime: blockTime,
-                            fee: nil,
-                            blockhash: nil
-                        )
+                for trxInfo in transactions {
+                    guard let trxInfo = trxInfo else { continue }
+                    guard let (signature, account, symbol) = signatures
+                        .first(where: { (signatureInfo: SignatureInfo, _, _) in
+                            signatureInfo.signature == trxInfo.transaction.signatures.first
+                        }) else { continue }
 
-                        return [trx]
-                    }
+                    parsedTransactions.append(
+                        await self.transactionParser.parse(
+                            signatureInfo: signature,
+                            transactionInfo: trxInfo,
+                            account: account,
+                            symbol: symbol
+                        )
+                    )
                 }
+
+                return parsedTransactions
             }
             .do(onError: { [weak self] error in
                 DispatchQueue.main.async { [weak self] in

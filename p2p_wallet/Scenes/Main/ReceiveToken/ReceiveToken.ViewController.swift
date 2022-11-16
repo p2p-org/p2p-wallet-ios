@@ -2,8 +2,10 @@
 // Created by Giang Long Tran on 13.12.21.
 //
 
+import AnalyticsManager
 import BEPureLayout
-import Foundation
+import Combine
+import KeyAppUI
 import Resolver
 import UIKit
 
@@ -11,6 +13,10 @@ extension ReceiveToken {
     final class ViewController: BaseViewController {
         private var viewModel: ReceiveSceneModel
         private let isOpeningFromToken: Bool
+        private var subscriptions = Set<AnyCancellable>()
+        private var buyCoordinator: BuyCoordinator?
+
+        @Injected private var analyticsManager: AnalyticsManager
 
         init(viewModel: ReceiveSceneModel, isOpeningFromToken: Bool) {
             self.isOpeningFromToken = isOpeningFromToken
@@ -28,10 +34,12 @@ extension ReceiveToken {
                     action: #selector(goBack)
                 )
                 navigationItem.rightBarButtonItem = closeButton
-                closeButton.setTitleTextAttributes([.foregroundColor: UIColor.h5887ff], for: .normal)
             } else {
                 navigationItem.title = L10n.receive
             }
+            hidesBottomBarWhenPushed = true
+
+            analyticsManager.log(event: AmplitudeEvent.receiveStartScreen)
         }
 
         @objc func goBack() {
@@ -81,7 +89,7 @@ extension ReceiveToken {
                                         height: 50,
                                         label: L10n.whatTokensCanIReceive,
                                         labelFont: .systemFont(ofSize: 15, weight: .medium),
-                                        textColor: .h5887ff
+                                        textColor: Asset.Colors.night.color
                                     ).onTap { [weak self] in
                                         self?.navigate(to: .showSupportedTokens)
                                     }
@@ -154,16 +162,6 @@ extension ReceiveToken {
             }
         }
 
-        override func viewWillAppear(_ animated: Bool) {
-            super.viewWillAppear(animated)
-            tabBarController?.tabBar.isHidden = false
-        }
-
-        override func viewWillDisappear(_: Bool) { // As soon as vc disappears
-            super.viewWillDisappear(true)
-            tabBarController?.tabBar.isHidden = true
-        }
-
         private func createQRHint() -> UILabel {
             let symbol = viewModel.tokenWallet?.token.symbol ?? ""
             let qrCodeHint = UILabel(numberOfLines: 0)
@@ -233,14 +231,25 @@ extension ReceiveToken.ViewController {
         case .showPhotoLibraryUnavailable:
             PhotoLibraryAlertPresenter().present(on: self)
         case .buy:
-            present(
-                BuyTokenSelection.Scene(onTap: { [unowned self] crypto in
-                    let vm = BuyRoot.ViewModel()
-                    let vc = BuyRoot.ViewController(crypto: crypto, viewModel: vm)
-                    show(vc, sender: nil)
-                }),
-                animated: true
-            )
+            if available(.buyScenarioEnabled) {
+                buyCoordinator = BuyCoordinator(
+                    context: .fromRenBTC,
+                    presentingViewController: self,
+                    shouldPush: false
+                )
+                buyCoordinator?.start()
+                    .sink { _ in }
+                    .store(in: &subscriptions)
+            } else {
+                show(
+                    BuyTokenSelection.Scene(onTap: { [unowned self] crypto in
+                        let vm = BuyRoot.ViewModel()
+                        let vc = BuyRoot.ViewController(crypto: crypto, viewModel: vm)
+                        show(vc, sender: nil)
+                    }),
+                    sender: nil
+                )
+            }
         case .none:
             return
         }

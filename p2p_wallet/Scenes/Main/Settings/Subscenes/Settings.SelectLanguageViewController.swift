@@ -24,9 +24,9 @@ extension Settings {
             return cell
         }
 
-        override func itemDidSelect(_ item: LocalizedLanguage) {
+        override func itemDidSelect(at index: Int) {
             let originalSelectedItem = selectedItem
-            super.itemDidSelect(item)
+            super.itemDidSelect(at: index)
             showAlert(
                 title: L10n.switchLanguage,
                 message: L10n.doYouReallyWantToSwitchTo + " " + selectedItem?.localizedName?.uppercaseFirst + "?",
@@ -43,8 +43,11 @@ extension Settings {
         }
 
         private func reverseSelectedItem(originalSelectedItem: LocalizedLanguage?) {
-            guard let item = originalSelectedItem else { return }
-            super.itemDidSelect(item)
+            guard
+                let item = originalSelectedItem,
+                let index = (data.firstIndex { $0.item == item })
+            else { return }
+            super.itemDidSelect(at: index)
         }
 
         private func setSelectableLanguages() {

@@ -37,6 +37,14 @@ extension History {
         func getTransaction(signature: String) async throws -> TransactionInfo {
             try await solanaAPIClient.getTransaction(signature: signature, commitment: nil)!
         }
+
+        func getTransactions(signatures: [String]) async throws -> [TransactionInfo?] {
+            let results: [TransactionInfo?] = try await solanaAPIClient.batchRequest(
+                method: "getTransaction",
+                params: signatures.map { [$0, RequestConfiguration(encoding: "jsonParsed")] }
+            )
+            return results
+        }
     }
 
     class CachingTransactionRepository: HistoryTransactionRepository {

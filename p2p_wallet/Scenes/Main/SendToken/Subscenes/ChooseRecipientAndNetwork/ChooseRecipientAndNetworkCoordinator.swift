@@ -25,6 +25,8 @@ extension SendToken.ChooseRecipientAndNetwork {
             viewModel: SendTokenChooseRecipientAndNetworkViewModelType,
             navigationController: UINavigationController
         ) {
+            // clearing recipient on init
+            viewModel.recipientSubject.accept(nil)
             self.viewModel = viewModel
             self.navigationController = navigationController
             bind()

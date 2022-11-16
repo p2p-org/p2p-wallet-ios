@@ -9,43 +9,53 @@ import Resolver
 import RxSwift
 import SolanaSwift
 
+/// Wrapper around OrcaSwapSwift and FeeRelayerSwift
 class SwapServiceWithRelayImpl: SwapServiceType {
     @Injected private var orcaSwap: OrcaSwapType
     @Injected private var relayService: FeeRelayer
     @Injected private var swapRelayService: SwapFeeRelayer
     @Injected private var feeRelayerContextManager: FeeRelayerContextManager
+    
+    var prefersDirectSwap: Bool {
+        GlobalAppState.shared.preferDirectSwap
+    }
 
     func load() async throws {
         try await orcaSwap.load()
         try await feeRelayerContextManager.update()
     }
 
-    func getPoolPair(
+    func getTradablePoolsPairs(
         from sourceMint: String,
         to destinationMint: String
-    ) async throws -> [Swap.PoolsPair] {
-        let poolPairs = try await orcaSwap.getTradablePoolsPairs(fromMint: sourceMint, toMint: destinationMint)
-        return poolPairs.map { $0.toPoolsPair() }
+    ) async throws -> [PoolsPair] {
+        try await orcaSwap.getTradablePoolsPairs(fromMint: sourceMint, toMint: destinationMint)
+    }
+    
+    func findBestPoolsPairForInputAmount(_ inputAmount: UInt64, from poolsPairs: [OrcaSwapSwift.PoolsPair]) throws -> PoolsPair? {
+        try orcaSwap.findBestPoolsPairForInputAmount(inputAmount, from: poolsPairs, prefersDirectSwap: prefersDirectSwap)
+    }
+    
+    func findBestPoolsPairForEstimatedAmount(_ estimatedAmount: UInt64, from poolsPairs: [OrcaSwapSwift.PoolsPair]) throws -> PoolsPair? {
+        try orcaSwap.findBestPoolsPairForEstimatedAmount(estimatedAmount, from: poolsPairs, prefersDirectSwap: prefersDirectSwap)
     }
 
     func getFees(
-        sourceAddress _: String,
         sourceMint: String,
-        availableSourceMintAddresses _: [String],
         destinationAddress: String?,
         destinationToken: Token,
-        bestPoolsPair: Swap.PoolsPair?,
+        bestPoolsPair: PoolsPair?,
         payingWallet: Wallet?,
         inputAmount: Double?,
         slippage: Double
-    ) async throws -> Swap.FeeInfo {
-        let bestPoolsPair = bestPoolsPair as? PoolsPair
+    ) async throws -> SwapFeeInfo {
+        let bestPoolsPair = bestPoolsPair
         // Network fees
         let networkFees: [PayingFee]
         if let payingWallet = payingWallet {
             // Network fee for swapping via relay program
             networkFees = try await getNetworkFeesForSwappingViaRelayProgram(
-                swapPools: bestPoolsPair?.orcaPoolPair,
+                swapPools: bestPoolsPair,
                 sourceMint: sourceMint,
                 destinationAddress: destinationAddress,
                 destinationToken: destinationToken,
@@ -57,14 +67,14 @@ class SwapServiceWithRelayImpl: SwapServiceType {
 
         // Liquidity provider fee
         let liquidityProviderFees = try getLiquidityProviderFees(
-            poolsPair: bestPoolsPair?.orcaPoolPair,
+            poolsPair: bestPoolsPair,
             destinationAddress: destinationAddress,
             destinationToken: destinationToken,
             inputAmount: inputAmount,
             slippage: slippage
         )
 
-        return Swap.FeeInfo(fees: networkFees + liquidityProviderFees)
+        return SwapFeeInfo(fees: networkFees + liquidityProviderFees)
     }
 
     func findPosibleDestinationMints(fromMint: String) throws -> [String] {
@@ -90,13 +100,12 @@ class SwapServiceWithRelayImpl: SwapServiceType {
         destinationTokenMint: String,
         payingTokenAddress: String?,
         payingTokenMint: String?,
-        poolsPair: Swap.PoolsPair,
+        poolsPair: PoolsPair,
         amount: UInt64,
         slippage: Double
     ) async throws -> [String] {
-        guard let poolsPair = (poolsPair as? PoolsPair)?.orcaPoolPair,
-              let decimals = poolsPair.first?.getTokenADecimals()
-        else { throw Swap.Error.incompatiblePoolsPair }
+        guard let decimals = poolsPair.first?.getTokenADecimals()
+        else { throw SwapError.incompatiblePoolsPair }
 
         return try await swapViaRelayProgram(
             sourceAddress: sourceAddress,
@@ -112,26 +121,10 @@ class SwapServiceWithRelayImpl: SwapServiceType {
         )
     }
 
-    struct PoolsPair: Swap.PoolsPair {
-        let orcaPoolPair: OrcaSwapSwift.PoolsPair
-
-        func getMinimumAmountOut(inputAmount: UInt64, slippage: Double) -> UInt64? {
-            orcaPoolPair.getMinimumAmountOut(inputAmount: inputAmount, slippage: slippage)
-        }
-
-        func getInputAmount(fromEstimatedAmount estimatedAmount: UInt64) -> UInt64? {
-            orcaPoolPair.getInputAmount(fromEstimatedAmount: estimatedAmount)
-        }
-
-        func getOutputAmount(fromInputAmount inputAmount: UInt64) -> UInt64? {
-            orcaPoolPair.getOutputAmount(fromInputAmount: inputAmount)
-        }
-    }
-
     // MARK: - Helpers
 
     private func getLiquidityProviderFees(
-        poolsPair: OrcaSwapSwift.PoolsPair?,
+        poolsPair: PoolsPair?,
         destinationAddress: String?,
         destinationToken: Token?,
         inputAmount: Double?,
@@ -180,7 +173,7 @@ class SwapServiceWithRelayImpl: SwapServiceType {
     }
 
     private func getNetworkFeesForSwappingViaRelayProgram(
-        swapPools: OrcaSwapSwift.PoolsPair?,
+        swapPools: PoolsPair?,
         sourceMint: String,
         destinationAddress: String?,
         destinationToken: Token,
@@ -215,13 +208,14 @@ class SwapServiceWithRelayImpl: SwapServiceType {
         let neededTopUpAmount: FeeAmount
         if payingWallet.mintAddress == PublicKey.wrappedSOLMint.base58EncodedString {
             neededTopUpAmount = networkFee
-        } else {
-            // TODO: Zero?
+        } else if networkFee.total > 0 {
             neededTopUpAmount = try await relayService.feeCalculator.calculateFeeInPayingToken(
                 orcaSwap: orcaSwap,
                 feeInSOL: networkFee,
                 payingFeeTokenMint: try PublicKey(string: payingWallet.mintAddress)
             ) ?? .zero
+        } else {
+            neededTopUpAmount = .zero
         }
 
         let freeTransactionFeeLimit = context.usageStatus
@@ -239,9 +233,8 @@ class SwapServiceWithRelayImpl: SwapServiceType {
 
             info = .init(
                 alertTitle: L10n.thereAreFreeTransactionsLeftForToday(numberOfFreeTransactionsLeft),
-                alertDescription: L10n.OnTheSolanaNetworkTheFirstTransactionsInADayArePaidByP2P.Org
-                    .subsequentTransactionsWillBeChargedBasedOnTheSolanaBlockchainGasFee(maxUsage),
-                payBy: L10n.PaidByP2p.org
+                alertDescription: L10n.OnTheSolanaNetworkTheFirstTransactionsInADayArePaidByKeyApp.subsequentTransactionsWillBeChargedBasedOnTheSolanaBlockchainGasFee(maxUsage),
+                payBy: L10n.paidByKeyApp
             )
         }
 
@@ -288,7 +281,7 @@ class SwapServiceWithRelayImpl: SwapServiceType {
         destinationTokenMint: String,
         payingTokenAddress: String?,
         payingTokenMint: String?,
-        poolsPair: OrcaSwapSwift.PoolsPair,
+        poolsPair: PoolsPair,
         amount: UInt64,
         decimals: UInt8,
         slippage: Double
@@ -351,8 +344,4 @@ class SwapServiceWithRelayImpl: SwapServiceType {
         return payingTokenMint == PublicKey.wrappedSOLMint.base58EncodedString &&
             context.usageStatus.isFreeTransactionFeeAvailable(transactionFee: expectedTransactionFee) == false
     }
-}
-
-private extension PoolsPair {
-    func toPoolsPair() -> SwapServiceWithRelayImpl.PoolsPair { .init(orcaPoolPair: self) }
 }

@@ -55,14 +55,17 @@ extension History {
                 case .items:
                     return self.content
                 case .empty:
-                    return EmptyTransactionsView()
+                    return EmptyTransactionsView().setup {
+                        $0.rx.refreshClicked
+                            .bind(to: self.viewModel.refreshPage)
+                            .disposed(by: self.disposeBag)
+                    }
                 case .error:
-                    return ErrorView()
-                        .setup {
-                            $0.rx.tryAgainClicked
-                                .bind(to: self.viewModel.tryAgain)
-                                .disposed(by: self.disposeBag)
-                        }
+                    return ErrorView().setup {
+                        $0.rx.tryAgainClicked
+                            .bind(to: self.viewModel.tryAgain)
+                            .disposed(by: self.disposeBag)
+                    }
                 }
             }
         }

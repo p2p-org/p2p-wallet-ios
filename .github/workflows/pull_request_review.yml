@@ -35,7 +35,7 @@ jobs:
   # Upload build for testing when pull request is approved
   upload_build_for_testing:
     name: Upload build for testing when pull request is approved
-    if: github.event.review.state == 'approved'
+    if: github.event.review.state == 'approved' || github.event.label.name == 'auto-deploy-to-qa'
     runs-on: macos-12
 
     steps:
@@ -46,10 +46,22 @@ jobs:
           submodules: recursive
           token: ${{ secrets.SUBMODULES_ACCESS_TOKEN }}
 
+      - name: Grant access to KeyAppUI
+        uses: webfactory/ssh-agent@v0.5.4
+        with:
+          ssh-private-key: ${{ secrets.KEY_APP_UI_GIT_SSH }}
+
       - name: Copy xcconfig file
         run: |
           curl -o ./p2p_wallet/Config.xcconfig ${{ secrets.XCCONFIG_URL }}
         shell: bash
+
+      - uses: actions/cache@v3
+        with:
+          path: Pods
+          key: ${{ runner.os }}-pods-${{ hashFiles('**/Podfile.lock') }}
+          restore-keys: |
+            ${{ runner.os }}-pods-
 
       - name: Install project
         run: |
@@ -65,11 +77,13 @@ jobs:
           APP_STORE_CONNECT_TEAM_ID: '${{ secrets.APP_STORE_CONNECT_TEAM_ID }}'
           DEVELOPER_PORTAL_TEAM_ID: '${{ secrets.DEVELOPER_PORTAL_TEAM_ID }}'
           DEVELOPER_APP_ID: '${{ secrets.DEVELOPER_APP_ID }}'
+          DEVELOPER_APP_ID_TEST: '${{ secrets.DEVELOPER_APP_ID_TEST }}'
           PROVISIONING_PROFILE_SPECIFIER_ADHOC: '${{ secrets.PROVISIONING_PROFILE_SPECIFIER_ADHOC }}'
           PROVISIONING_PROFILE_SPECIFIER_APPSTORE: '${{ secrets.PROVISIONING_PROFILE_SPECIFIER_APPSTORE }}'
           APPLE_ISSUER_ID: '${{ secrets.APPLE_ISSUER_ID }}'
           PROVISIONING_REPO: '${{ secrets.PROVISIONING_REPO }}'
           FIREBASE_APP_ID: '${{ secrets.FIREBASE_APP_ID }}'
+          FIREBASE_APP_ID_TEST: '${{ secrets.FIREBASE_APP_ID_TEST }}'
           FIREBASE_CLI_TOKEN: '${{ secrets.FIREBASE_CLI_TOKEN }}'
           BROWSERSTACK_USERNAME: '${{ secrets.BROWSERSTACK_USERNAME }}'
           BROWSERSTACK_ACCESS_KEY: '${{ secrets.BROWSERSTACK_ACCESS_KEY }}'
@@ -83,6 +97,7 @@ jobs:
           IS_CI: '${{ secrets.IS_CI }}'
           SLACK_API_TOKEN: '${{ secrets.SLACK_API_TOKEN }}'
           JIRA_BASE_URL: '${{ secrets.JIRA_BASE_URL }}'
+          XCCONFIG_URL: '${{ secrets.XCCONFIG_URL }}'
 
       - name: Login to JIRA
         uses: atlassian/gajira-login@master

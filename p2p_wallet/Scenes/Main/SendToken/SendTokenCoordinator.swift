@@ -42,16 +42,20 @@ extension SendToken {
         // MARK: - Navigation
 
         @discardableResult
-        func start() -> UIViewController {
-            pushChooseToken(showAfterConfirmation: false)
-        }
-
-        func popToRootViewController(animated: Bool) {
-            navigationController?.popToRootViewController(animated: animated)
+        func start(hidesBottomBarWhenPushed: Bool, push: Bool = true) -> UIViewController {
+            pushChooseToken(
+                showAfterConfirmation: false,
+                hidesBottomBarWhenPushed: hidesBottomBarWhenPushed,
+                push: push
+            )
         }
 
         @discardableResult
-        private func pushChooseToken(showAfterConfirmation: Bool) -> UIViewController {
+        private func pushChooseToken(
+            showAfterConfirmation: Bool,
+            hidesBottomBarWhenPushed: Bool,
+            push: Bool = true
+        ) -> UIViewController {
             let amount = viewModel.getSelectedAmount()
             let vm = ChooseTokenAndAmount.ViewModel(
                 initialAmount: amount,
@@ -59,10 +63,20 @@ extension SendToken {
                 selectedNetwork: viewModel.getSelectedNetwork(),
                 sendTokenViewModel: viewModel
             )
-            let vc = ChooseTokenAndAmount.ViewController(viewModel: vm)
+            let vc = ChooseTokenAndAmount.ViewController(
+                viewModel: vm,
+                hidesBottomBarWhenPushed: hidesBottomBarWhenPushed
+            )
             if let navigationController = navigationController {
-                navigationController.pushViewController(vc, animated: true)
-                return vc
+                if push {
+                    navigationController.pushViewController(vc, animated: true)
+                    return vc
+                } else {
+                    let navigation = UINavigationController(rootViewController: vc)
+                    navigationController.present(navigation, animated: true)
+                    self.navigationController = navigation
+                    return navigation
+                }
             } else {
                 let navigationController = UINavigationController(rootViewController: vc)
                 self.navigationController = navigationController
@@ -76,8 +90,8 @@ extension SendToken {
             case .back:
                 navigationController?.popViewController(animated: true)
             case let .chooseTokenAndAmount(showAfterConfirmation):
-                pushChooseToken(showAfterConfirmation: showAfterConfirmation)
-            case let .chooseRecipientAndNetwork(showAfterConfirmation, preSelectedNetwork):
+                pushChooseToken(showAfterConfirmation: showAfterConfirmation, hidesBottomBarWhenPushed: true)
+            case let .chooseRecipientAndNetwork(showAfterConfirmation, preSelectedNetwork, maxWasClicked):
                 guard let navigationController = navigationController else { return }
 
                 let vm = ChooseRecipientAndNetwork.ViewModel(
@@ -86,6 +100,7 @@ extension SendToken {
                     sendTokenViewModel: viewModel,
                     relayMethod: viewModel.relayMethod
                 )
+                viewModel.maxWasClicked = maxWasClicked
                 coordinator = ChooseRecipientAndNetwork.Coordinator(
                     viewModel: vm,
                     navigationController: navigationController
@@ -95,6 +110,11 @@ extension SendToken {
                 let vc = ConfirmViewController(viewModel: viewModel)
                 navigationController?.pushViewController(vc, animated: true)
             case let .processTransaction(transaction):
+                navigationController?.popToViewController(
+                    ofClass: ChooseTokenAndAmount.ViewController.self,
+                    animated: false
+                )
+
                 let vm = ProcessTransaction.ViewModel(processingTransaction: transaction)
                 let vc = ProcessTransaction.ViewController(viewModel: vm)
                 vc.doneHandler = { [weak self] in

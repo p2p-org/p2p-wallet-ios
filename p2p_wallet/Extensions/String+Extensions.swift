@@ -6,6 +6,7 @@
 //
 
 import Down
+import FirebaseRemoteConfig
 import Foundation
 
 extension Optional where Wrapped == String {
@@ -51,7 +52,7 @@ extension String {
     }
 
     static var nameServiceDomain: String {
-        ".p2p.sol"
+        RemoteConfig.remoteConfig().usernameDomain ?? ""
     }
 
     static func secretConfig(_ key: String) -> String? {
@@ -150,7 +151,7 @@ extension String {
         return formatted
     }
 
-    private func formatToMoneyFormat(decimalSeparator: String, maxDecimals: UInt) -> String {
+    func formatToMoneyFormat(decimalSeparator: String, maxDecimals: UInt) -> String {
         var formatted = replacingOccurrences(of: ",", with: decimalSeparator)
             .replacingOccurrences(of: ".", with: decimalSeparator)
             .nonLetters(decimalSeparator: decimalSeparator)
@@ -167,4 +168,37 @@ extension String {
     }
 
     private func nonLetters(decimalSeparator: String) -> String { filter("0123456789\(decimalSeparator)".contains) }
+
+    var formatApy: String {
+        guard let apyDouble = Double(self) else { return "" }
+        return "\(apyDouble.fixedDecimal(2))%".replacingOccurrences(of: ",", with: ".")
+    }
+}
+
+extension String {
+    var isPhoneNumber: Bool {
+        do {
+            let detector = try NSDataDetector(types: NSTextCheckingResult.CheckingType.phoneNumber.rawValue)
+            let matches = detector.matches(in: self, options: [], range: NSRange(location: 0, length: count))
+            if let res = matches.first {
+                return res.resultType == .phoneNumber && res.range.location == 0 && res.range.length == count
+            } else {
+                return false
+            }
+        } catch {
+            return false
+        }
+    }
+}
+
+extension String {
+    func separate(every: Int, with separator: String) -> String {
+        String(stride(from: 0, to: Array(self).count, by: every).map {
+            Array(Array(self)[$0 ..< min($0 + every, Array(self).count)])
+        }.joined(separator: separator))
+    }
+
+    func firstUppercased() -> String {
+        prefix(1).uppercased() + dropFirst()
+    }
 }

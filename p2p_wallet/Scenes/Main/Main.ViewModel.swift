@@ -6,6 +6,7 @@
 //
 
 import Foundation
+import NameService
 import RenVMSwift
 import Resolver
 import RxCocoa
@@ -33,6 +34,10 @@ extension Main {
         @Injected private var authenticationHandler: AuthenticationHandlerType
         @Injected private var notificationService: NotificationService
 
+        @Injected private var accountStorage: AccountStorageType
+        @Injected private var nameService: NameService
+        @Injected private var nameStorage: NameStorageType
+
         private let transactionAnalytics = [
             Resolver.resolve(SwapTransactionAnalytics.self),
         ]
@@ -45,9 +50,22 @@ extension Main {
             socket.connect()
             pricesService.startObserving()
             burnAndRelease.resume()
+            
+            // RenBTC service
             Task {
                 try await lockAndMint.resume()
             }
+
+            // Name service
+            Task {
+                // guard nameStorage.getName() == nil else { return }
+                guard let account = accountStorage.account else { return }
+                let name: String = try await nameService.getName(account.publicKey.base58EncodedString) ?? ""
+                nameStorage.save(name: name)
+            }
+            
+            // Notification
+            notificationService.requestRemoteNotificationPermission()
         }
 
         deinit {

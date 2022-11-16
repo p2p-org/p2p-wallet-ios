@@ -7,7 +7,7 @@
 
 import BEPureLayout
 import FeeRelayerSwift
-import Foundation
+import KeyAppUI
 import UIKit
 
 extension ProcessTransaction.Status {
@@ -169,10 +169,12 @@ extension ProcessTransaction.Status {
 
                     // Buttons
                     BEVStack(spacing: 10) {
-                        WLStepButton.main(
-                            image: .buttonCheckSmall,
-                            text: L10n.done
-                        ).onTap { [weak self] in
+                        TextButton(
+                            title: L10n.done,
+                            style: .primary,
+                            size: .large,
+                            leading: .buttonCheckSmall
+                        ).onPressed { [weak self] _ in
                             self?.dismiss(animated: true) { [weak self] in
                                 self?.doneHandler?()
                             }

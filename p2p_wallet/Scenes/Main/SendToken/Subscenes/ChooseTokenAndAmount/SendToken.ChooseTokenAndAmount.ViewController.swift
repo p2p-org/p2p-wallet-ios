@@ -5,7 +5,9 @@
 //  Created by Chung Tran on 23/11/2021.
 //
 
+import AnalyticsManager
 import Foundation
+import Resolver
 import UIKit
 
 extension SendToken.ChooseTokenAndAmount {
@@ -13,6 +15,7 @@ extension SendToken.ChooseTokenAndAmount {
         // MARK: - Dependencies
 
         private let viewModel: SendTokenChooseTokenAndAmountViewModelType
+        @Injected private var analyticsManager: AnalyticsManager
 
         // MARK: - Properties
 
@@ -30,20 +33,28 @@ extension SendToken.ChooseTokenAndAmount {
                 target: self,
                 action: #selector(buttonNextDidTouch)
             )
-            nextButton.setTitleTextAttributes([.foregroundColor: UIColor.h5887ff], for: .normal)
             return nextButton
         }()
 
         // MARK: - Initializer
 
-        init(viewModel: SendTokenChooseTokenAndAmountViewModelType) {
+        init(
+            viewModel: SendTokenChooseTokenAndAmountViewModelType,
+            hidesBottomBarWhenPushed: Bool
+        ) {
             self.viewModel = viewModel
             super.init()
+            self.hidesBottomBarWhenPushed = hidesBottomBarWhenPushed
+            analyticsManager.log(event: AmplitudeEvent.sendStartScreen)
         }
 
         override func viewWillDisappear(_ animated: Bool) {
             super.viewWillDisappear(animated)
             view.endEditing(true)
+        }
+
+        func clearForm() {
+            viewModel.clearForm.onNext(())
         }
 
         // MARK: - Methods
@@ -80,9 +91,7 @@ extension SendToken.ChooseTokenAndAmount {
                 .take(1)
                 .mapToVoid()
                 .subscribe(onNext: { [weak self] in
-                    DispatchQueue.main.async { [weak self] in
-                        self?.customView.amountTextField.becomeFirstResponder()
-                    }
+                    self?.customView.amountTextField.becomeFirstResponder()
                 })
                 .disposed(by: disposeBag)
         }
@@ -115,7 +124,7 @@ extension SendToken.ChooseTokenAndAmount {
                 ) { [weak self] selectedIndex in
                     guard selectedIndex == 1 else { return }
                     self?.viewModel.save()
-                    self?.viewModel.navigateNext()
+                    self?.viewModel.navigateNext(maxWasClicked: false)
                 }
             }
         }
@@ -123,7 +132,7 @@ extension SendToken.ChooseTokenAndAmount {
         @objc private func buttonNextDidTouch() {
             if viewModel.isTokenValidForSelectedNetwork() {
                 viewModel.save()
-                viewModel.navigateNext()
+                viewModel.navigateNext(maxWasClicked: false)
             }
         }
     }

@@ -12,11 +12,16 @@ extension Settings {
         override init(viewModel: SettingsViewModelType) {
             super.init(viewModel: viewModel)
 
-            // init data
-            Fiat.allCases
-                .forEach {
-                    data[$0] = ($0 == Defaults.fiat)
+            data = Fiat.allCases
+                .sorted {
+                    if $0 == Defaults.fiat {
+                        return true
+                    } else if $1 != Defaults.fiat {
+                        return false
+                    }
+                    return false
                 }
+                .map { ($0, $0 == Defaults.fiat) }
         }
 
         override func setUp() {
@@ -30,9 +35,9 @@ extension Settings {
             return cell
         }
 
-        override func itemDidSelect(_ item: Fiat) {
-            super.itemDidSelect(item)
-            viewModel.setFiat(item)
+        override func itemDidSelect(at index: Int) {
+            super.itemDidSelect(at: index)
+            viewModel.setFiat(data[index].item)
         }
     }
 }

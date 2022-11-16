@@ -10,9 +10,11 @@ import RenVMSwift
 import Resolver
 import RxCocoa
 import RxSwift
+import SolanaSwift
 
 protocol ReceiveTokenBitcoinViewModelType: AnyObject {
     var addressDriver: Driver<String?> { get }
+    var minimumTransactionAmountSignal: Signal<Double?> { get }
     var timerSignal: Signal<Void> { get }
     var processingTxsDriver: Driver<[LockAndMint.ProcessingTx]> { get }
     var hasExplorerButton: Bool { get }
@@ -37,6 +39,7 @@ extension ReceiveToken {
 
         @Injected private var persistentStore: LockAndMintServicePersistentStore
         @Injected private var lockAndMintService: LockAndMintService
+        @Injected private var renVMRpcClient: RenVMRpcClientType
         @Injected private var analyticsManager: AnalyticsManager
         @Injected private var clipboardManager: ClipboardManagerType
         @Injected private var imageSaver: ImageSaverType
@@ -46,6 +49,7 @@ extension ReceiveToken {
 
         private let isLoadingSubject = BehaviorRelay<Bool>(value: false)
         private let timerSubject = PublishRelay<Void>()
+        private let minimumTransactionAmountSubject = PublishRelay<Double?>()
         private let navigationSubject: PublishRelay<NavigatableScene?>
         private let addressSubject = BehaviorRelay<String?>(value: nil)
         private let processingTransactionsSubject = BehaviorRelay<[LockAndMint.ProcessingTx]>(value: [])
@@ -74,7 +78,9 @@ extension ReceiveToken {
             Task {
                 let session = await persistentStore.session
                 if session == nil || session?.isValid == false {
-                    try await lockAndMintService.createSession()
+                    try await lockAndMintService.createSession(endAt: Calendar.current.date(byAdding: .hour, value: 40, to: Date()))
+                } else {
+                    await updateSessionEndDate()
                 }
             }
         }
@@ -114,9 +120,26 @@ extension ReceiveToken {
                     self?.addressSubject.accept(address)
                 }
             }
+            
+            Task {
+                let fee = try await renVMRpcClient.estimateTransactionFee()?
+                    .convertToBalance(decimals: Token.renBTC.decimals)
+                await MainActor.run { [weak self] in
+                    self?.minimumTransactionAmountSubject.accept(fee * 2)
+                }
+            }
+        }
+        
+        private func updateSessionEndDate() async {
+            let endAt = await persistentStore.session?.endAt
+            await MainActor.run {
+                sessionEndDate = endAt
+            }
         }
     }
 }
+
+// MARK: - LockAndMintServiceDelegate
 
 extension ReceiveToken.ReceiveBitcoinViewModel: LockAndMintServiceDelegate {
     func lockAndMintServiceWillStartLoading(_: LockAndMintService) {
@@ -126,10 +149,7 @@ extension ReceiveToken.ReceiveBitcoinViewModel: LockAndMintServiceDelegate {
     func lockAndMintService(_: LockAndMintService, didLoadWithGatewayAddress gatewayAddress: String) {
         addressSubject.accept(gatewayAddress)
         Task {
-            let endAt = await persistentStore.session?.endAt
-            await MainActor.run {
-                sessionEndDate = endAt
-            }
+            await updateSessionEndDate()
         }
     }
 
@@ -145,6 +165,8 @@ extension ReceiveToken.ReceiveBitcoinViewModel: LockAndMintServiceDelegate {
     }
 }
 
+// MARK: - ReceiveTokenBitcoinViewModelType
+
 extension ReceiveToken.ReceiveBitcoinViewModel: ReceiveTokenBitcoinViewModelType {
     var addressDriver: Driver<String?> {
         addressSubject.asDriver()
@@ -152,6 +174,10 @@ extension ReceiveToken.ReceiveBitcoinViewModel: ReceiveTokenBitcoinViewModelType
 
     var timerSignal: Signal<Void> {
         timerSubject.asSignal()
+    }
+    
+    var minimumTransactionAmountSignal: Signal<Double?> {
+        minimumTransactionAmountSubject.asSignal()
     }
 
     var processingTxsDriver: Driver<[LockAndMint.ProcessingTx]> {
@@ -164,7 +190,7 @@ extension ReceiveToken.ReceiveBitcoinViewModel: ReceiveTokenBitcoinViewModelType
             await MainActor.run {
                 clipboardManager.copyToClipboard(address)
                 notificationsService.showInAppNotification(.done(L10n.addressCopiedToClipboard))
-                analyticsManager.log(event: .receiveAddressCopied)
+                analyticsManager.log(event: AmplitudeEvent.receiveAddressCopied)
             }
         }
     }
@@ -173,7 +199,7 @@ extension ReceiveToken.ReceiveBitcoinViewModel: ReceiveTokenBitcoinViewModelType
         Task {
             guard let address = await persistentStore.gatewayAddress else { return }
             await MainActor.run {
-                analyticsManager.log(event: .receiveAddressShare)
+                analyticsManager.log(event: AmplitudeEvent.receiveAddressShare)
                 navigationSubject.accept(
                     .share(address: address, qrCode: image)
                 )
@@ -182,7 +208,7 @@ extension ReceiveToken.ReceiveBitcoinViewModel: ReceiveTokenBitcoinViewModelType
     }
 
     func saveAction(image: UIImage) {
-        analyticsManager.log(event: .receiveQRSaved)
+        analyticsManager.log(event: AmplitudeEvent.receiveQRSaved)
         imageSaver.save(image: image) { [weak self] result in
             switch result {
             case .success:
@@ -204,7 +230,7 @@ extension ReceiveToken.ReceiveBitcoinViewModel: ReceiveTokenBitcoinViewModelType
         Task {
             guard let address = await persistentStore.gatewayAddress else { return }
             await MainActor.run {
-                analyticsManager.log(event: .receiveViewingExplorer)
+                analyticsManager.log(event: AmplitudeEvent.receiveViewingExplorer)
                 navigationSubject.accept(.showBTCExplorer(address: address))
             }
         }
