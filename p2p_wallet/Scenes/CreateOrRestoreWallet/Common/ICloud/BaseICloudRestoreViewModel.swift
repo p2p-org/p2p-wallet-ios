@@ -1,7 +1,7 @@
 import LocalAuthentication
 import Resolver
 
-class BaseICloudRestoreViewModel: BaseViewModel, ObservableObject {
+class BaseICloudRestoreViewModel: BaseViewModel {
     @Injected var notificationService: NotificationService
     @Injected private var biometricsProvider: BiometricsAuthProvider
 
