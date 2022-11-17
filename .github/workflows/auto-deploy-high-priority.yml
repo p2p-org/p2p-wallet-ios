@@ -9,7 +9,7 @@ concurrency:
 jobs:
   upload_build_for_testing:
     name: Upload build for testing
-    if: ${{ contains(github.event.pull_request.labels.*.name, 'auto:qa-deploy') && contains(github.event.pull_request.labels.*.name, 'auto:high') }}
+    if: ${{ contains(github.event.pull_request.labels.*.name, 'auto:qa-deploy') && contains(github.event.pull_request.labels.*.name, 'high') }}
 
     runs-on: [self-hosted, macOS]
 
