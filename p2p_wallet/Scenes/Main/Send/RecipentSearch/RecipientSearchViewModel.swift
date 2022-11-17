@@ -20,7 +20,7 @@ class RecipientSearchViewModel: ObservableObject {
 
         $input.sinkAsync { [weak self] value in
             guard let self = self else { return }
-            self.result = try await self.recipientSearchService.search(
+            self.result = await self.recipientSearchService.search(
                 input: value,
                 state: .init(wallets: [], exchangeRate: [:])
             )
