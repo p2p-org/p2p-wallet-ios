@@ -151,7 +151,7 @@ extension RenBTCReceivingStatuses {
             var records = [Record]()
             for key in voteAt.keys.sorted(by: <) {
                 records
-                    .append(.init(txid: tx.tx.id, status: .waitingForConfirmation, time: voteAt[key]!, vout: key))
+                    .append(.init(txid: tx.tx.id, status: .waitingForConfirmation, time: voteAt[key]!, confirmations: key))
             }
             if let confirmedAt = confirmedAt {
                 records.append(.init(txid: tx.tx.id, status: .confirmed, time: confirmedAt))
