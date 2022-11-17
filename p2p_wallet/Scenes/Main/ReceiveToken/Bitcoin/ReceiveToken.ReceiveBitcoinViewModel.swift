@@ -93,7 +93,7 @@ extension ReceiveToken {
                     guard let endAt = self?.sessionEndDate else { return }
                     if Date() >= endAt {
                         Task { [weak self] in
-                            try await self?.lockAndMintService.expireCurrentSession()
+                            await self?.lockAndMintService.expireCurrentSession()
                         }
                     }
                 }

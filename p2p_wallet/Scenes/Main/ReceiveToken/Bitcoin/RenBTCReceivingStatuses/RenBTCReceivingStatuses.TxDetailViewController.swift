@@ -101,7 +101,7 @@ extension RenBTCReceivingStatuses {
         }
 
         var currentTxPublisher: AnyPublisher<LockAndMint.ProcessingTx?, Never> {
-            processingTxsPublisher.map { [weak self] in $0.first { tx in tx.tx.txid == self?.txid } }
+            processingTxsPublisher.map { [weak self] in $0.first { tx in tx.tx.id == self?.txid } }
                 .receive(on: RunLoop.main)
                 .eraseToAnyPublisher()
         }
@@ -110,7 +110,7 @@ extension RenBTCReceivingStatuses {
             processingTxsPublisher
                 .receive(on: RunLoop.main)
                 .sink { [weak self] in
-                    guard let tx = $0.first(where: { $0.tx.txid == self?.txid }) else { return }
+                    guard let tx = $0.first(where: { $0.tx.id == self?.txid }) else { return }
                     let records = self?.mapTxToRecords(tx)
                     self?.data = records ?? []
                 }
@@ -151,19 +151,19 @@ extension RenBTCReceivingStatuses {
             var records = [Record]()
             for key in voteAt.keys.sorted(by: <) {
                 records
-                    .append(.init(txid: tx.tx.txid, status: .waitingForConfirmation, time: voteAt[key]!, vout: key))
+                    .append(.init(txid: tx.tx.id, status: .waitingForConfirmation, time: voteAt[key]!, vout: key))
             }
             if let confirmedAt = confirmedAt {
-                records.append(.init(txid: tx.tx.txid, status: .confirmed, time: confirmedAt))
+                records.append(.init(txid: tx.tx.id, status: .confirmed, time: confirmedAt))
             }
             if let submittedAt = submitedAt {
-                records.append(.init(txid: tx.tx.txid, status: .submitted, time: submittedAt))
+                records.append(.init(txid: tx.tx.id, status: .submitted, time: submittedAt))
             }
             if let mintedAt = mintedAt {
-                records.append(.init(txid: tx.tx.txid, status: .minted, time: mintedAt, amount: tx.tx.value))
+                records.append(.init(txid: tx.tx.id, status: .minted, time: mintedAt, amount: tx.tx.value))
             }
             if let errorAt = errorAt {
-                records.append(.init(txid: tx.tx.txid, status: .error(error ?? .other("Unknown error")), time: errorAt, amount: tx.tx.value))
+                records.append(.init(txid: tx.tx.id, status: .error(error ?? .other("Unknown error")), time: errorAt, amount: tx.tx.value))
             }
             return records.reversed()
         }

@@ -366,7 +366,8 @@ extension Resolver: ResolverRegistering {
         register {
             LockAndMintServiceImpl(
                 persistentStore: resolve(),
-                chainProvider: resolve(),
+                destinationChainProvider: resolve(),
+                sourceChainExplorerAPIClient: BTCExplorerAPIClient(network: Defaults.apiEndPoint.network.isTestnet ? .testnet: .mainnet),
                 rpcClient: resolve(),
                 mintToken: .bitcoin,
                 showLog: true

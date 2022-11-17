@@ -102,7 +102,7 @@ extension RenBTCReceivingStatuses {
 extension RenBTCReceivingStatuses.ViewController: BECollectionViewDelegate {
     func beCollectionView(collectionView _: BECollectionViewBase, didSelect item: AnyHashable) {
         guard let tx = item as? LockAndMint.ProcessingTx else { return }
-        viewModel.showDetail(txid: tx.tx.txid)
+        viewModel.showDetail(txid: tx.tx.id)
     }
 
     private func navigate(to scene: RenBTCReceivingStatuses.NavigatableScene?) {
