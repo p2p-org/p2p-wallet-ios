@@ -18,19 +18,16 @@ final class HomeCoordinator: Coordinator<Void> {
     @Injected private var analyticsManager: AnalyticsManager
 
     private let navigationController: UINavigationController
-    private weak var tabBarController: TabBarController?
 
-    private var sendCoordinator: SendToken.Coordinator?
     private let scrollSubject = PassthroughSubject<Void, Never>()
 
-    init(navigationController: UINavigationController, tabBarController: TabBarController?) {
-        self.navigationController = navigationController
-        self.tabBarController = tabBarController
-    }
+    private let earnSubject = PassthroughSubject<Void, Never>()
+    var showEarn: AnyPublisher<Void, Never> { earnSubject.eraseToAnyPublisher() }
+
     private let resultSubject = PassthroughSubject<Void, Never>()
 
-    deinit {
-        debugPrint("LOOL DEINIT!")
+    init(navigationController: UINavigationController) {
+        self.navigationController = navigationController
     }
 
     override func start() -> AnyPublisher<Void, Never> {
@@ -38,7 +35,7 @@ final class HomeCoordinator: Coordinator<Void> {
         let tokensViewModel = HomeWithTokensViewModel()
         tokensViewModel.earnShow
             .sink(receiveValue: { [unowned self] in
-                self.tabBarController?.changeItem(to: .invest)
+                earnSubject.send()
             })
             .store(in: &subscriptions)
         let emptyViewModel = HomeEmptyViewModel()
