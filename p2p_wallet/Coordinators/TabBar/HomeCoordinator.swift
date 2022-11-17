@@ -216,29 +216,37 @@ final class HomeCoordinator: Coordinator<Void> {
         analyticsManager.log(event: AmplitudeEvent.receiveViewed(fromPage: "main_screen"))
     }
 
-    private func sendToken(pubKey: String? = nil) async -> Bool {
-        let vm = SendToken.ViewModel(
-            walletPubkey: pubKey,
-            destinationAddress: nil,
-            relayMethod: .default
-        )
-        sendCoordinator = SendToken.Coordinator(
-            viewModel: vm,
-            navigationController: navigationController
-        )
-        analyticsManager.log(event: AmplitudeEvent.mainScreenSendOpen)
-        analyticsManager.log(event: AmplitudeEvent.sendViewed(lastScreen: "main_screen"))
+    private func sendToken(pubKey _: String? = nil) async -> Bool {
+        // Old send
+        // let vm = SendToken.ViewModel(
+        //     walletPubkey: pubKey,
+        //     destinationAddress: nil,
+        //     relayMethod: .default
+        // )
+        // sendCoordinator = SendToken.Coordinator(
+        //     viewModel: vm,
+        //     navigationController: navigationController
+        // )
+        // analyticsManager.log(event: AmplitudeEvent.mainScreenSendOpen)
+        // analyticsManager.log(event: AmplitudeEvent.sendViewed(lastScreen: "main_screen"))
+        //
+        // return await withCheckedContinuation { continuation in
+        //     sendCoordinator?.doneHandler = { [unowned self] in
+        //         navigationController.popToRootViewController(animated: true)
+        //         return continuation.resume(with: .success(true))
+        //     }
+        //     let vc = sendCoordinator?.start(hidesBottomBarWhenPushed: true)
+        //     vc?.onClose = {
+        //         continuation.resume(with: .success(false))
+        //     }
+        // }
 
-        return await withCheckedContinuation { continuation in
-            sendCoordinator?.doneHandler = { [unowned self] in
-                navigationController.popToRootViewController(animated: true)
-                return continuation.resume(with: .success(true))
-            }
-            let vc = sendCoordinator?.start(hidesBottomBarWhenPushed: true)
-            vc?.onClose = {
-                continuation.resume(with: .success(false))
-            }
-        }
+        // Send send
+        coordinate(to: SendCoordinator(rootViewController: navigationController))
+            .sink {}
+            .store(in: &subscriptions)
+        
+        return false
     }
 
     private func showSwap() async -> Bool {
