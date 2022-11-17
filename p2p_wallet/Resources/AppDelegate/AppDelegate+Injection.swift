@@ -20,6 +20,7 @@ import SolanaSwift
 import Solend
 import SwiftyUserDefaults
 import FirebaseRemoteConfig
+import Send
 
 extension Resolver: ResolverRegistering {
     public static func registerAllServices() {
@@ -407,6 +408,11 @@ extension Resolver: ResolverRegistering {
 
         register { MoonpayExchange(provider: resolve()) }
             .implements(BuyExchangeService.self)
+            .scope(.session)
+        
+        // Buy
+        register { RecipientSearchServiceImpl(nameService: resolve()) }
+            .implements(RecipientSearchService.self)
             .scope(.session)
 
         // Banner
