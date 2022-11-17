@@ -31,7 +31,7 @@ class AppCoordinator: Coordinator<Void> {
     var window: UIWindow?
     var showAuthenticationOnMainOnAppear = true
 
-    var reloadEvent: PassthroughSubject<Void, Never> = .init()
+    var reloadEvent = PassthroughSubject<Void, Never>()
 
     private var walletCreated: Bool = false
 
@@ -88,16 +88,25 @@ class AppCoordinator: Coordinator<Void> {
     }
 
     func navigateToMain() {
+        guard let window = window else { return }
+
         Task.detached {
             try await Resolver.resolve(WalletMetadataService.self).update()
         }
 
-        let coordinator = MainCoordinator(window: window, authenticateWhenAppears: showAuthenticationOnMainOnAppear)
+        let coordinator = TabBarCoordinator(window: window, authenticateWhenAppears: showAuthenticationOnMainOnAppear)
         coordinate(to: coordinator)
             .sink(receiveValue: {
                 debugPrint("loool")
             })
             .store(in: &subscriptions)
+
+//        let coordinator = MainCoordinator(window: window, authenticateWhenAppears: showAuthenticationOnMainOnAppear)
+//        coordinate(to: coordinator)
+//            .sink(receiveValue: {
+//                debugPrint("loool")
+//            })
+//            .store(in: &subscriptions)
     }
 
     private func openSplash(_ completionHandler: @escaping () -> Void) {
