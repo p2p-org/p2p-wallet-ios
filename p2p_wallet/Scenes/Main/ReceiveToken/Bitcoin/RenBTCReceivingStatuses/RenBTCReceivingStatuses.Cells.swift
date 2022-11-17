@@ -93,12 +93,12 @@ extension RenBTCReceivingStatuses {
             switch tx.status {
             case .waitingForConfirmation:
                 resultLabel.isHidden = false
-                let vout = tx.vout ?? 0
-                let max = 3
-                resultLabel.text = "\(vout)/\(max)"
-                if vout == 0 {
+                let confirmations = tx.confirmations ?? 0
+                let max = BTCExplorerAPIClient.maxConfirmations
+                resultLabel.text = "\(confirmations)/\(max)"
+                if confirmations == 0 {
                     resultLabel.textColor = .alert
-                } else if vout == max {
+                } else if confirmations == max {
                     resultLabel.textColor = .textGreen
                 } else {
                     resultLabel.textColor = .textBlack

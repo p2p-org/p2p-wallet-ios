@@ -21,7 +21,7 @@ enum RenBTCReceivingStatuses {
         let txid: String
         let status: Status
         let time: Date
-        var vout: UInt?
+        var confirmations: UInt?
         var amount: UInt64?
 
         var stringValue: String {
