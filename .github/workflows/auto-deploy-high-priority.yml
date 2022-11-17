@@ -25,7 +25,7 @@ jobs:
         id: get-changelog
         shell: bash
         run: |
-          echo "GIT_CHANGES=$(git log --graph --pretty=format:'%Cred%h%Creset -%C(yellow)%d%Creset %s %Cgreen(%cr) %C(bold blue)<%an>%Creset' --abbrev-commit -n 12)" >> $GITHUB_ENV
+          echo "GIT_CHANGES=$(git log --oneline -n 15)" >> $GITHUB_ENV
 
       - name: Grant access to KeyAppUI
         uses: webfactory/ssh-agent@v0.5.4
