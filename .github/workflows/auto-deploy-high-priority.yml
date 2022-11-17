@@ -1,4 +1,4 @@
-name: Auto deploy
+name: Auto deploy with high priority
 on:
   pull_request:
 
@@ -9,9 +9,9 @@ concurrency:
 jobs:
   upload_build_for_testing:
     name: Upload build for testing
-    if: ${{ contains(github.event.pull_request.labels.*.name, 'auto:qa-deploy') && !contains(github.event.pull_request.labels.*.name, 'auto:high') }}
+    if: ${{ contains(github.event.pull_request.labels.*.name, 'auto:qa-deploy') && contains(github.event.pull_request.labels.*.name, 'auto:high') }}
 
-    runs-on: macos-12
+    runs-on: [self-hosted, macOS]
 
     steps:
       - name: Check out current branch
@@ -20,6 +20,18 @@ jobs:
           ref: ${{ github.event.pull_request.head.ref }}
           submodules: recursive
           token: ${{ secrets.SUBMODULES_ACCESS_TOKEN }}
+
+      - name: Get last changes
+        uses: actions/github-script@v6
+        id: get-changelog
+        with:
+          script: |
+            const commits = ${{ toJSON(github.event.commits) }}
+            var output = ""
+            for (const commit of commits) {
+              output = output + commit.message + "\n"
+            }
+            return output
 
       - name: Grant access to KeyAppUI
         uses: webfactory/ssh-agent@v0.5.4
@@ -73,3 +85,4 @@ jobs:
           SLACK_API_TOKEN: '${{ secrets.SLACK_API_TOKEN }}'
           JIRA_BASE_URL: '${{ secrets.JIRA_BASE_URL }}'
           XCCONFIG_URL: '${{ secrets.XCCONFIG_URL }}'
+          GIT_CHANGELOG: '${{ steps.get-changelog.outputs.result }}'
