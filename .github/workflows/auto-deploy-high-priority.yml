@@ -3,7 +3,7 @@ on:
   pull_request:
 
 concurrency:
-  group: auto-deploy-${{ github.event.pull_request.number || github.ref }}
+  group: auto-deploy-high-priority-${{ github.event.pull_request.number || github.ref }}
   cancel-in-progress: true
 
 jobs:
@@ -22,16 +22,10 @@ jobs:
           token: ${{ secrets.SUBMODULES_ACCESS_TOKEN }}
 
       - name: Get last changes
-        uses: actions/github-script@v6
         id: get-changelog
-        with:
-          script: |
-            const commits = ${{ toJSON(github.event.commits) }}
-            var output = ""
-            for (const commit of commits) {
-              output = output + commit.message + "\n"
-            }
-            return output
+        shell: bash
+        run: |
+          echo "GIT_CHANGES=$(git log --graph --pretty=format:'%Cred%h%Creset -%C(yellow)%d%Creset %s %Cgreen(%cr) %C(bold blue)<%an>%Creset' --abbrev-commit -n 12)" >> $GITHUB_ENV
 
       - name: Grant access to KeyAppUI
         uses: webfactory/ssh-agent@v0.5.4
@@ -85,4 +79,4 @@ jobs:
           SLACK_API_TOKEN: '${{ secrets.SLACK_API_TOKEN }}'
           JIRA_BASE_URL: '${{ secrets.JIRA_BASE_URL }}'
           XCCONFIG_URL: '${{ secrets.XCCONFIG_URL }}'
-          GIT_CHANGELOG: '${{ steps.get-changelog.outputs.result }}'
+          GIT_CHANGELOG: '${{ env.GIT_CHANGES }}'
