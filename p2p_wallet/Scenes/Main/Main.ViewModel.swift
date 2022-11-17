@@ -53,7 +53,7 @@ extension Main {
             
             // RenBTC service
             Task {
-                try await lockAndMint.resume()
+                await lockAndMint.resume()
             }
 
             // Name service
