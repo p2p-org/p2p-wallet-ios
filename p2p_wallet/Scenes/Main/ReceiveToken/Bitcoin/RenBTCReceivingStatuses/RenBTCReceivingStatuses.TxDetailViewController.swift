@@ -170,10 +170,10 @@ extension RenBTCReceivingStatuses {
         
         private func fillEmptyVoteAt(_ timestamp: LockAndMint.ProcessingTx.Timestamp) -> [UInt: Date] {
             var voteAt = timestamp.voteAt
-            if voteAt.keys.count < LockAndMint.ProcessingTx.maxVote {
+            if voteAt.keys.count < BTCExplorerAPIClient.maxConfirmations {
                 // fill votes
                 let count = UInt(voteAt.keys.count)
-                for i in count...LockAndMint.ProcessingTx.maxVote {
+                for i in count...BTCExplorerAPIClient.maxConfirmations {
                     voteAt[i] = timestamp.lastVoteAt
                 }
             }
