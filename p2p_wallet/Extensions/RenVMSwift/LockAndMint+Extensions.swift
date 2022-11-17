@@ -38,7 +38,7 @@ extension LockAndMint.ProcessingTx {
         case .confirmed:
             return L10n.submittingToRenVM
         case .confirming:
-            return L10n.waitingForDepositConfirmation + " \(tx.vout)/\(Self.maxVote)"
+            return L10n.waitingForDepositConfirmation + " \(tx.confirmations ?? 0)/\(BTCExplorerAPIClient.maxConfirmations)"
         }
     }
 
