@@ -11,7 +11,7 @@ enum PincodeState {
     case check
 }
 
-final class PincodeViewModel: BaseViewModel {
+final class PincodeViewModel: BaseViewModel, ObservableObject {
     // MARK: - Dependencies
 
     @Injected private var biometricsAuthProvider: BiometricsAuthProvider
