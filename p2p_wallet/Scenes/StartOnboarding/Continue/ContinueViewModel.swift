@@ -2,7 +2,7 @@ import Combine
 import SwiftUI
 import UIKit
 
-final class ContinueViewModel: BaseViewModel {
+final class ContinueViewModel: BaseViewModel, ObservableObject {
     @Published var data: OnboardingContentData
 
     let continueDidTap = PassthroughSubject<Void, Never>()

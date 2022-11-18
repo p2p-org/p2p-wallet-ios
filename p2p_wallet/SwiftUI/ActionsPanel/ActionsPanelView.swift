@@ -9,26 +9,42 @@ import Combine
 import SwiftUI
 import KeyAppUI
 
-// TODO: - Ivan Babich. PWN-5791
 struct ActionsPanelView: View {
+    private var actionsPublisher: AnyPublisher<[WalletActionType], Never>
     private var balancePublisher: AnyPublisher<String, Never>
     private var usdAmountPublisher: AnyPublisher<String, Never>
+    private var action: (WalletActionType) -> Void
+
+    @State private var actions = [WalletActionType]()
     @State private var balance = ""
     @State private var usdAmount = ""
 
     init(
+        actionsPublisher: AnyPublisher<[WalletActionType], Never>,
         balancePublisher: AnyPublisher<String, Never>,
-        usdAmountPublisher: AnyPublisher<String, Never>? = nil
+        usdAmountPublisher: AnyPublisher<String, Never>? = nil,
+        action: @escaping (WalletActionType) -> Void
     ) {
+        self.actionsPublisher = actionsPublisher
         self.balancePublisher = balancePublisher
         self.usdAmountPublisher = usdAmountPublisher ?? Empty().eraseToAnyPublisher()
+        self.action = action
     }
 
     var body: some View {
-        actions
+        actionsView
+            .onReceive(balancePublisher) { balance in
+                self.balance = balance
+            }
+            .onReceive(usdAmountPublisher) { usdAmount in
+                self.usdAmount = usdAmount
+            }
+            .onReceive(actionsPublisher) { actions in
+                self.actions = actions
+            }
     }
 
-    private var actions: some View {
+    private var actionsView: some View {
         VStack(alignment: .center, spacing: 0) {
             Text(balance)
                 .font(uiFont: .font(of: .largeTitle, weight: .bold))
@@ -42,29 +58,16 @@ struct ActionsPanelView: View {
                     .padding(.bottom, 32)
             }
             HStack(spacing: 32) {
-                tokenOperation(title: L10n.buy, image: .homeBuy) {
-//                    viewModel.buy()
-                }
-                tokenOperation(title: L10n.receive, image: .homeReceive) {
-//                    viewModel.receive()
-                }
-                tokenOperation(title: L10n.send, image: .homeSend) {
-//                    viewModel.send()
-                }
-                tokenOperation(title: L10n.swap, image: .homeSwap) {
-//                    viewModel.swap()
+                ForEach(actions, id: \.text) { actionType in
+                    tokenOperation(title: actionType.text, image: actionType.icon) {
+                        action(actionType)
+                    }
                 }
             }
             .frame(maxWidth: .infinity)
             .padding(.bottom, 32)
         }
         .background(Color(Asset.Colors.smoke.color))
-        .onReceive(balancePublisher) { balance in
-            self.balance = balance
-        }
-        .onReceive(usdAmountPublisher) { usdAmount in
-            self.usdAmount = usdAmount
-        }
     }
 
     private func tokenOperation(title: String, image: UIImage, action: @escaping () -> Void) -> some View {
