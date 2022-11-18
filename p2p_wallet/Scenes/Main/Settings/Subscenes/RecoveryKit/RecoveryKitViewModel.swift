@@ -15,7 +15,7 @@ struct RecoveryKitTKeyData {
     let socialProvider: String
 }
 
-class RecoveryKitViewModel: ObservableObject {
+final class RecoveryKitViewModel: ObservableObject {
     private let walletMetadataService: WalletMetadataService
 
     @Published var walletMetadata: WalletMetaData?
@@ -28,7 +28,7 @@ class RecoveryKitViewModel: ObservableObject {
         var help: (() -> Void)?
     }
 
-    var coordinator: Coordinator = .init()
+    var coordinator = Coordinator()
 
     init(walletMetadataService: WalletMetadataService = Resolver.resolve()) {
         self.walletMetadataService = walletMetadataService
