@@ -22,24 +22,23 @@ final class HttpClientImpl: HttpClient {
             request.httpBody = body.data(using: .utf8)
         }
 
-        do {
-            let (data, response) = try await URLSession.shared.data(from: request)
-            guard let response = response as? HTTPURLResponse else { throw ErrorModel.noResponse }
-            switch response.statusCode {
-            case 200 ... 299:
-                let decoder = JSONDecoder()
-                decoder.keyDecodingStrategy = .convertFromSnakeCase
-                guard let decodedResponse = try? decoder.decode(responseModel, from: data) else {
-                    throw ErrorModel.decode
+        let (data, response) = try await URLSession.shared.data(from: request)
+        guard let response = response as? HTTPURLResponse else { throw ErrorModel.noResponse }
+        switch response.statusCode {
+        case 200 ... 299:
+            let decoder = JSONDecoder()
+            decoder.keyDecodingStrategy = .convertFromSnakeCase
+            guard let decodedResponse = try? decoder.decode(responseModel, from: data) else {
+                if let decodedErrorResponse = try? decoder.decode(JsonRpcResponseErrorDto.self, from: data) {
+                    throw decodedErrorResponse.error
                 }
-                return decodedResponse
-            case 401:
-                throw ErrorModel.unauthorized
-            default:
-                throw ErrorModel.unexpectedStatusCode
+                throw ErrorModel.decode
             }
-        } catch {
-            throw ErrorModel.unknown
+            return decodedResponse
+        case 401:
+            throw ErrorModel.unauthorized
+        default:
+            throw ErrorModel.unexpectedStatusCode
         }
     }
 }

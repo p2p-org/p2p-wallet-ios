@@ -1093,3 +1093,5 @@ Reset the PIN or wait for %@." = "Il vous reste %@ tentatives pour saisir le cod
 "Enter your Solana wallet seed phrase" = "Entrez la phrase de départ de votre portefeuille Solana";
 "Your wallet has been created! Just a few moments to start a crypto adventure" = "Votre portefeuille est créé !  Quelques instants pour commencer une aventure crypto";
 "Wallet recovery" = "Récupération de portefeuille";
+"Error: %@" = "Erreur : %@";
+"Amount is too small, expected %@, got %@" = "Le montant est trop petit, attendu %@, obtenu %@";

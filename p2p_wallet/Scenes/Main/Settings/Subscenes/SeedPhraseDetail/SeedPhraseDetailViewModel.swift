@@ -7,7 +7,7 @@ import Foundation
 import KeyAppUI
 import Resolver
 
-class SeedPhraseDetailViewModel: BaseViewModel {
+class SeedPhraseDetailViewModel: BaseViewModel, ObservableObject {
     enum State {
         case lock
         case unlock

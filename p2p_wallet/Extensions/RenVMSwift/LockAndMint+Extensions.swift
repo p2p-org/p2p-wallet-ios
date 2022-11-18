@@ -7,6 +7,7 @@
 
 import Foundation
 import RenVMSwift
+import SolanaSwift
 
 extension LockAndMint {
     static var keyForSession: String {
@@ -22,31 +23,37 @@ extension LockAndMint {
     }
 }
 
-public extension LockAndMint.ProcessingTx {
+extension LockAndMint.ProcessingTx {
     var statusString: String? {
-        if mintedAt != nil {
+        switch state {
+        case let .ignored(error):
+            return error.errorDescription
+        case .minted:
             return L10n.successfullyMintedRenBTC(
                 tx.value.convertToBalance(decimals: 8)
                     .toString(maximumFractionDigits: 9)
             )
-        }
-
-        if submitedAt != nil {
+        case .submited:
             return L10n.minting
-        }
-
-        if confirmedAt != nil {
+        case .confirmed:
             return L10n.submittingToRenVM
-        }
-
-        if receivedAt != nil {
+        case .confirming:
             return L10n.waitingForDepositConfirmation + " \(tx.vout)/\(Self.maxVote)"
         }
-
-        return nil
     }
 
     var value: Double {
         tx.value.convertToBalance(decimals: 8)
+    }
+}
+
+extension LockAndMint.ProcessingError: LocalizedError {
+    public var errorDescription: String? {
+        switch self {
+        case .insufficientFund:
+            return L10n.error(L10n.amountIsTooSmall)
+        case let .other(message):
+            return L10n.error(message.localized())
+        }
     }
 }
