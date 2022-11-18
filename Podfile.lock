@@ -462,7 +462,7 @@ CHECKOUT OPTIONS:
     :commit: eee1d66d7ef71b892e72c8bc8d84fcdfeaab1918
     :git: https://github.com/p2p-org/Down.git
   FeeRelayerSwift:
-    :commit: d4456bf1559514f9562f7f28d85d2a1dfccee62d
+    :commit: a7d427bff810c703addedfefc646853df3a09400
     :git: https://github.com/p2p-org/FeeRelayerSwift.git
   JazziconSwift:
     :commit: f9c9f898402db4e62d482f4c90670652c221fa12
@@ -495,7 +495,7 @@ CHECKOUT OPTIONS:
     :commit: e8f38de8633c436092ee479e671cf1d07caec777
     :git: https://github.com/p2p-org/key-app-kit-swift.git
   RenVMSwift:
-    :commit: 650954e95af982c477a89cd8b0b5e99132d4ba1e
+    :commit: cc672f180a787cfb7b7d2c4fe315e7f20ab4383a
     :git: https://github.com/p2p-org/RenVMSwift.git
   RxConcurrency:
     :commit: dadb16c54bd42ca83c08f3d80f61fbfca93a585c
