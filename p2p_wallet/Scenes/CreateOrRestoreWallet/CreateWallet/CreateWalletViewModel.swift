@@ -8,7 +8,7 @@ import Foundation
 import Onboarding
 import Resolver
 
-final class CreateWalletViewModel: BaseViewModel {
+final class CreateWalletViewModel: BaseViewModel, ObservableObject {
     let onboardingStateMachine: CreateWalletStateMachine
 
     @Injected var onboardingService: OnboardingService

@@ -31,7 +31,7 @@ struct SeedPhraseRestoreWalletView: View {
             ) { [weak viewModel] in viewModel?.continueButtonTapped() }
                 .frame(height: 56)
                 .disabled(!viewModel.canContinue)
-                .padding(.horizontal, 20)
+                .padding(EdgeInsets(top: 0, leading: 16, bottom: 12, trailing: 16))
         }
         .onboardingNavigationBar(title: L10n.restoreYourWallet) { [weak viewModel] in
             viewModel?.back.send()

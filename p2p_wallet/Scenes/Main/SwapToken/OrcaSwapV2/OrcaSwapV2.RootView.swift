@@ -48,6 +48,9 @@ extension OrcaSwapV2 {
             scrollView.showsVerticalScrollIndicator = false
             layout()
             bind()
+            DispatchQueue.main.asyncAfter(wallDeadline: .now() + 0.5) {
+                self.makeFromFirstResponder()
+            }
         }
 
         func makeFromFirstResponder() {

@@ -136,10 +136,20 @@ final class RestoreWalletCoordinator: Coordinator<OnboardingResult> {
         let vc = buildViewController(state: to) ?? UIViewController()
 
         if to.step >= (from?.step ?? -1) {
-            navigationController.setViewControllers([vc], animated: true)
+            if case .restoreSocial(.signInProgress, _) = to {
+                navigationController.fadeTo(vc)
+            }
+            else {
+                navigationController.setViewControllers([vc], animated: true)
+            }
         } else {
-            navigationController.setViewControllers([vc] + navigationController.viewControllers, animated: false)
-            navigationController.popToViewController(vc, animated: true)
+            if let from = from, case .restoreSocial(.signInProgress, _) = from {
+                navigationController.fadeOut(vc)
+            }
+            else {
+                navigationController.setViewControllers([vc] + navigationController.viewControllers, animated: false)
+                navigationController.popToViewController(vc, animated: true)
+            }
         }
     }
 

@@ -4,7 +4,7 @@ import Foundation
 import Resolver
 import SolanaSwift
 
-class SeedPhraseRestoreWalletViewModel: BaseViewModel {
+final class SeedPhraseRestoreWalletViewModel: BaseViewModel, ObservableObject {
     // MARK: - Dependencies
 
     @Injected private var notificationService: NotificationService

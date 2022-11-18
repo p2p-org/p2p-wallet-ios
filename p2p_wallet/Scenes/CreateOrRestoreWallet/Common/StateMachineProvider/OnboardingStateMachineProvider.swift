@@ -1,4 +1,5 @@
 import Onboarding
+import Resolver
 
 protocol OnboardingStateMachineProvider {
     func createTKeyFacade() -> TKeyFacade
@@ -28,7 +29,8 @@ final class OnboardingStateMachineProviderImpl: OnboardingStateMachineProvider {
                             fatalError("Invalid")
                         }
                     }
-                )
+                ),
+                analyticsManager: Resolver.resolve()
             )
         return tKeyFacade
     }
