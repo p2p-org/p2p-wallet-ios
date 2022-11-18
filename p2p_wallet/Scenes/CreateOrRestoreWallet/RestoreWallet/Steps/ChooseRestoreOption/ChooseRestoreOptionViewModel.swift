@@ -7,7 +7,7 @@ import SwiftUI
 import UIKit
 
 @MainActor
-final class ChooseRestoreOptionViewModel: BaseICloudRestoreViewModel {
+final class ChooseRestoreOptionViewModel: BaseICloudRestoreViewModel, ObservableObject {
     // MARK: - Dependencies
 
     @Injected private var biometricsProvider: BiometricsAuthProvider

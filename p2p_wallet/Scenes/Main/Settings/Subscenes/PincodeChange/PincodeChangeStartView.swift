@@ -13,7 +13,10 @@ struct PincodeChangeStartView: View {
         ExplainLayoutView {
             VStack {
                 Image(uiImage: .pincodeIllustration)
-                Text("PIN code")
+                    .resizable()
+                    .scaledToFit()
+                    .frame(maxWidth: 192)
+                Text(L10n.pinCode)
                     .fontWeight(.bold)
                     .apply(style: .title1)
                     .padding(.bottom, 48)

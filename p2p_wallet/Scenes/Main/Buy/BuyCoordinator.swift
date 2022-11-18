@@ -37,7 +37,7 @@ final class BuyCoordinator: Coordinator<Void> {
         let result = PassthroughSubject<Void, Never>()
         let viewModel = BuyViewModel(defaultToken: defaultToken, targetSymbol: targetTokenSymbol)
         let viewController = UIHostingController(rootView: BuyView(viewModel: viewModel))
-        viewController.title = "Buy"
+        viewController.title = L10n.buy
         viewController.hidesBottomBarWhenPushed = true
         if navigationController == nil {
             navigationController = UINavigationController(rootViewController: viewController)

@@ -33,7 +33,7 @@ class SocialSignInDelegatedCoordinator: DelegatedCoordinator<SocialSignInState> 
 
             return UIHostingController(rootView: vc)
         case let .socialSignInProgress(tokenID, email, socialProvider):
-            let viewModel = SocialSignInWaitViewModel()
+            let viewModel = SocialSignInWaitViewModel(strategy: .create)
             let view = SocialSignInWaitView(viewModel: viewModel)
             viewModel.initiated
                 .sinkAsync { [stateMachine] process in
