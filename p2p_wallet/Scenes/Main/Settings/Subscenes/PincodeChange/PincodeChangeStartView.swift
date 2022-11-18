@@ -24,8 +24,8 @@ struct PincodeChangeStartView: View {
         } content: {
             VStack {
                 VStack(spacing: 12) {
-                    ExplainText(text: L10n.FistlyWeLlUseItForEnteranceInKeyApp.sometimesInsteadOfBiometric)
-                    ExplainText(text: L10n.sometimesItWillBeUsefulForShowingSeedPhraseOrPriviteKey)
+                    ExplainText(text: L10n.KeepYourPinSafe.hideYourPinFromOtherPeople)
+                    ExplainText(text: L10n.donTUseTheSamePinForMultipleAccounts)
                 }
                 .padding(.leading, 12)
                 .padding(.trailing, 16)
