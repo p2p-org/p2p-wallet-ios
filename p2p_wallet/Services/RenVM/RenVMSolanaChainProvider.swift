@@ -152,13 +152,16 @@ private class RenVMFeeRelayerSolanaBlockchainClient: SolanaBlockchainClient {
                 // previous transaction has not been confirmed
                 if let burnCheckIndex = logs.firstIndex(of: "Program log: Instruction: BurnChecked"),
                    let burnCheckErrorIndex = logs.firstIndex(of: "Program log: Error: insufficient funds"),
-                   burnCheckErrorIndex == burnCheckIndex
+                   burnCheckErrorIndex == burnCheckIndex + 1
                 {
                     try await Task.sleep(nanoseconds: 3_000_000) // skip for 3s
                     return try await sendTransaction(preparedTransaction: preparedTransaction) // retry
                 }
                 // re throw other error
                 throw SolanaError.invalidResponse(response)
+            } catch APIClientError.responseError(let response) where response.message == "Transaction simulation failed: Attempt to debit an account but found no record of a prior credit." {
+                try await Task.sleep(nanoseconds: 3_000_000) // skip for 3s
+                return try await sendTransaction(preparedTransaction: preparedTransaction)
             } catch {
                 print(error)
                 throw error
