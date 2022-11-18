@@ -2,7 +2,7 @@ import Combine
 import Onboarding
 import Resolver
 
-final class SocialSignInWaitViewModel: BaseViewModel {
+final class SocialSignInWaitViewModel: BaseViewModel, ObservableObject {
 
     enum State {
         case initial
