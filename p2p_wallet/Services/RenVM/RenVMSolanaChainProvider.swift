@@ -51,18 +51,20 @@ private class RenVMFeeRelayerSolanaBlockchainClient: SolanaBlockchainClient {
         feePayer: SolanaSwift.PublicKey,
         feeCalculator: SolanaSwift.FeeCalculator?
     ) async throws -> SolanaSwift.PreparedTransaction {
-        var instructions = instructions
-        var feePayer = feePayer
-        var signers = signers
-        var feeCalculator = feeCalculator
+        guard instructions.count == 2 else {
+            throw RenVMError("Invalid instructions")
+        }
+        // Constants
+        let feePayer = try PublicKey(string: try await feeRelayerAPIClient.getFeePayerPubkey())
         
-        // LockAndMint
-        if instructions.count == 2,
-           instructions[0].programId == "BTC5yiRuonJKcQvD9j9QwYKPx4MCGbvkWfvHFyBJG6RY",
+        // variables
+        var instructions = instructions
+        var signers = signers
+        
+        // Mint
+        if instructions[0].programId == "BTC5yiRuonJKcQvD9j9QwYKPx4MCGbvkWfvHFyBJG6RY",
            instructions[1].programId == "KeccakSecp256k11111111111111111111111111111"
         {
-            // forward fee payer
-            feePayer = try PublicKey(string: try await feeRelayerAPIClient.getFeePayerPubkey())
             
             // fix instruction
             var keys = instructions[0].keys
@@ -75,13 +77,49 @@ private class RenVMFeeRelayerSolanaBlockchainClient: SolanaBlockchainClient {
             
             // no signer required
             signers = []
-            // no fee required
-            feeCalculator = FreeFeeCalculator()
         }
         
-        // TODO: - Burn
-        else {
-            // doesn't work with fee relayer at the moment, so forward to default blockchainClient
+        // Burn
+        else if instructions[0].programId == TokenProgram.id,
+                instructions[1].programId == "BTC5yiRuonJKcQvD9j9QwYKPx4MCGbvkWfvHFyBJG6RY"
+        {
+            let owner = signers[0].publicKey
+            // get fee rent
+            let rentExemption = try await apiClient.getMinimumBalanceForRentExemption(span: 97)
+            
+            // prepend first transfer instruction
+            instructions.insert(
+                SystemProgram.transferInstruction(
+                    from: feePayer,
+                    to: owner,
+                    lamports: rentExemption
+                ),
+                at: 0
+            )
+            
+            // modify third instructions
+            var keys = instructions[2].keys
+            keys[0] = .writable(publicKey: keys[0].publicKey, isSigner: true)
+            
+            instructions[2] = .init(
+                keys: keys,
+                programId: instructions[2].programId,
+                data: instructions[2].data
+            )
+            
+            // compensation instruction
+            let exchangeRate = try await feeRelayerAPIClient.feeTokenData(mint: Token.renBTC.address).exchangeRate
+            let compensationAmountDouble = (Double(rentExemption) * exchangeRate / pow(Double(10), Double(Token.nativeSolana.decimals-Token.renBTC.decimals)))
+            let compensationAmount = UInt64(compensationAmountDouble.rounded(.up))
+            let renBTCMint = try PublicKey(string: Token.renBTC.address)
+            instructions.append(
+                TokenProgram.transferInstruction(
+                    source: try PublicKey.associatedTokenAddress(walletAddress: owner, tokenMintAddress: renBTCMint),
+                    destination: try PublicKey.associatedTokenAddress(walletAddress: feePayer, tokenMintAddress: renBTCMint),
+                    owner: owner,
+                    amount: compensationAmount
+                )
+            )
         }
         
         // TODO: - Burn
@@ -89,41 +127,30 @@ private class RenVMFeeRelayerSolanaBlockchainClient: SolanaBlockchainClient {
             instructions: instructions,
             signers: signers,
             feePayer: feePayer,
-            feeCalculator: feeCalculator
+            feeCalculator: FreeFeeCalculator() // no fee required
         )
     }
     
     func sendTransaction(
         preparedTransaction: PreparedTransaction
     ) async throws -> String {
-        // LockAndMint
-        if preparedTransaction.transaction.instructions.count == 2,
-           preparedTransaction.transaction.instructions[0].programId == "BTC5yiRuonJKcQvD9j9QwYKPx4MCGbvkWfvHFyBJG6RY",
-           preparedTransaction.transaction.instructions[1].programId == "KeccakSecp256k11111111111111111111111111111"
-        {
-            let context = try await feeRelayerContextManager.getCurrentContext()
-            do {
-                return try await feeRelayer.topUpAndRelayTransaction(
-                    context,
-                    preparedTransaction,
-                    fee: nil,
-                    config: .init(
-                        operationType: .transfer,
-                        currency: PublicKey.renBTCMint.base58EncodedString
-                    )
+        let context = try await feeRelayerContextManager.getCurrentContext()
+        do {
+            return try await feeRelayer.topUpAndRelayTransaction(
+                context,
+                preparedTransaction,
+                fee: nil,
+                config: .init(
+                    operationType: .transfer,
+                    currency: PublicKey.renBTCMint.base58EncodedString
                 )
-            } catch SolanaError.invalidResponse(let response) {
-                // FIXME: - temporarily fix by converting HTTPClientError to SolanaError
-                if response.data?.logs?.contains(where: \.isAlreadyInUseLog) == true {
-                    throw RenVMError("Already in use")
-                }
-                throw SolanaError.invalidResponse(response)
+            )
+        } catch SolanaError.invalidResponse(let response) {
+            // FIXME: - temporarily fix by converting HTTPClientError to SolanaError
+            if response.data?.logs?.contains(where: \.isAlreadyInUseLog) == true {
+                throw RenVMError("Already in use")
             }
-        }
-        
-        // TODO: - Burn
-        else {
-            return try await sendTransaction(preparedTransaction: preparedTransaction)
+            throw SolanaError.invalidResponse(response)
         }
     }
     
