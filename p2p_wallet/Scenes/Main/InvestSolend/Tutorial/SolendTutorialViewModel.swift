@@ -2,7 +2,7 @@ import Combine
 import SwiftUI
 import UIKit
 
-final class SolendTutorialViewModel: BaseViewModel {
+final class SolendTutorialViewModel: BaseViewModel, ObservableObject {
     @Published var currentDataIndex: Int = .zero
     let data: [SolendTutorialContentData]
 
