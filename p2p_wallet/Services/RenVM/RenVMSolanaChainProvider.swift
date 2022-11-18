@@ -54,17 +54,13 @@ private class RenVMFeeRelayerSolanaBlockchainClient: SolanaBlockchainClient {
         guard instructions.count == 2 else {
             throw RenVMError("Invalid instructions")
         }
-        // Constants
-        let feePayer = try PublicKey(string: try await feeRelayerAPIClient.getFeePayerPubkey())
-        
-        // variables
-        var instructions = instructions
-        var signers = signers
         
         // Mint
         if instructions[0].programId == "BTC5yiRuonJKcQvD9j9QwYKPx4MCGbvkWfvHFyBJG6RY",
            instructions[1].programId == "KeccakSecp256k11111111111111111111111111111"
         {
+            let feePayer = try PublicKey(string: try await feeRelayerAPIClient.getFeePayerPubkey())
+            var instructions = instructions
             
             // fix instruction
             var keys = instructions[0].keys
@@ -75,89 +71,133 @@ private class RenVMFeeRelayerSolanaBlockchainClient: SolanaBlockchainClient {
                 data: instructions[0].data
             )
             
-            // no signer required
-            signers = []
+            return try await blockchainClient.prepareTransaction(
+                instructions: instructions,
+                signers: [],
+                feePayer: feePayer,
+                feeCalculator: FreeFeeCalculator() // no fee required
+            )
         }
         
         // Burn
         else if instructions[0].programId == TokenProgram.id,
                 instructions[1].programId == "BTC5yiRuonJKcQvD9j9QwYKPx4MCGbvkWfvHFyBJG6RY"
         {
-            let owner = signers[0].publicKey
-            // get fee rent
-            let rentExemption = try await apiClient.getMinimumBalanceForRentExemption(span: 97)
-            
-            // prepend first transfer instruction
-            instructions.insert(
-                SystemProgram.transferInstruction(
-                    from: feePayer,
-                    to: owner,
-                    lamports: rentExemption
-                ),
-                at: 0
+            // create first transaction to swap renBTC to native solana to pay fee
+            let swapFeePayer = try PublicKey(string: try await feeRelayerAPIClient.getFeePayerPubkey())
+            let swapTxId = try await swapRenBTCToSolanaToPayFee(
+                feePayer: swapFeePayer, owner: signers[0]
             )
             
-            // modify third instructions
-            var keys = instructions[2].keys
-            keys[0] = .writable(publicKey: keys[0].publicKey, isSigner: true)
+            // wait for confirmation
+            try await apiClient.waitForConfirmation(signature: swapTxId, ignoreStatus: true)
             
-            instructions[2] = .init(
-                keys: keys,
-                programId: instructions[2].programId,
-                data: instructions[2].data
-            )
-            
-            // compensation instruction
-            let exchangeRate = try await feeRelayerAPIClient.feeTokenData(mint: Token.renBTC.address).exchangeRate
-            let compensationAmountDouble = (Double(rentExemption) * exchangeRate / pow(Double(10), Double(Token.nativeSolana.decimals-Token.renBTC.decimals)))
-            let compensationAmount = UInt64(compensationAmountDouble.rounded(.up))
-            let renBTCMint = try PublicKey(string: Token.renBTC.address)
-            instructions.append(
-                TokenProgram.transferInstruction(
-                    source: try PublicKey.associatedTokenAddress(walletAddress: owner, tokenMintAddress: renBTCMint),
-                    destination: try PublicKey.associatedTokenAddress(walletAddress: feePayer, tokenMintAddress: renBTCMint),
-                    owner: owner,
-                    amount: compensationAmount
-                )
+            // prepare transaction
+            return try await blockchainClient.prepareTransaction(
+                instructions: instructions,
+                signers: signers,
+                feePayer: feePayer, // owner pay for himself after swaping
+                feeCalculator: feeCalculator
             )
         }
         
-        // TODO: - Burn
-        return try await blockchainClient.prepareTransaction(
-            instructions: instructions,
-            signers: signers,
-            feePayer: feePayer,
-            feeCalculator: FreeFeeCalculator() // no fee required
-        )
+        throw RenVMError("Unsupported transaction")
     }
     
     func sendTransaction(
         preparedTransaction: PreparedTransaction
     ) async throws -> String {
-        let context = try await feeRelayerContextManager.getCurrentContext()
-        do {
-            return try await feeRelayer.topUpAndRelayTransaction(
-                context,
-                preparedTransaction,
-                fee: nil,
-                config: .init(
-                    operationType: .transfer,
-                    currency: PublicKey.renBTCMint.base58EncodedString
-                )
-            )
-        } catch SolanaError.invalidResponse(let response) {
-            // FIXME: - temporarily fix by converting HTTPClientError to SolanaError
-            if response.data?.logs?.contains(where: \.isAlreadyInUseLog) == true {
-                throw RenVMError("Already in use")
-            }
-            throw SolanaError.invalidResponse(response)
+        guard preparedTransaction.transaction.instructions.count == 2 else {
+            throw RenVMError("Invalid instructions")
         }
+        
+        // Mint
+        if preparedTransaction.transaction.instructions[0].programId == "BTC5yiRuonJKcQvD9j9QwYKPx4MCGbvkWfvHFyBJG6RY",
+           preparedTransaction.transaction.instructions[1].programId == "KeccakSecp256k11111111111111111111111111111"
+        {
+            let context = try await feeRelayerContextManager.getCurrentContext()
+            do {
+                return try await feeRelayer.topUpAndRelayTransaction(
+                    context,
+                    preparedTransaction,
+                    fee: nil,
+                    config: .init(
+                        operationType: .transfer,
+                        currency: PublicKey.renBTCMint.base58EncodedString
+                    )
+                )
+            } catch SolanaError.invalidResponse(let response) {
+                // FIXME: - temporarily fix by converting HTTPClientError to SolanaError
+                if response.data?.logs?.contains(where: \.isAlreadyInUseLog) == true {
+                    throw RenVMError("Already in use")
+                }
+                throw SolanaError.invalidResponse(response)
+            }
+        }
+        
+        // Burn
+        else if preparedTransaction.transaction.instructions[0].programId == TokenProgram.id,
+                preparedTransaction.transaction.instructions[1].programId == "BTC5yiRuonJKcQvD9j9QwYKPx4MCGbvkWfvHFyBJG6RY"
+        {
+            do {
+                return try await blockchainClient.sendTransaction(preparedTransaction: preparedTransaction)
+            } catch {
+                print(error)
+                throw error
+            }
+        }
+        
+        throw RenVMError("Unsupported transaction")
     }
     
     func simulateTransaction(
         preparedTransaction: PreparedTransaction
     ) async throws -> SimulationResult {
         fatalError()
+    }
+    
+    private func swapRenBTCToSolanaToPayFee(
+        feePayer: PublicKey,
+        owner: Account
+    ) async throws -> String {
+        
+        // get fee rent
+        let rentExemption = try await apiClient.getMinimumBalanceForRentExemption(span: 97)
+        
+        let exchangeRate = try await feeRelayerAPIClient.feeTokenData(mint: Token.renBTC.address).exchangeRate
+        let compensationAmountDouble = (Double(rentExemption) * exchangeRate / pow(Double(10), Double(Token.nativeSolana.decimals-Token.renBTC.decimals)))
+        let compensationAmount = UInt64(compensationAmountDouble.rounded(.up))
+        let renBTCMint = try PublicKey(string: Token.renBTC.address)
+        let swapPreparedTransaction = try await blockchainClient.prepareTransaction(
+            instructions: [
+                SystemProgram.transferInstruction(
+                    from: feePayer,
+                    to: owner.publicKey,
+                    lamports: rentExemption
+                ),
+                TokenProgram.transferInstruction(
+                    source: try PublicKey.associatedTokenAddress(walletAddress: owner.publicKey, tokenMintAddress: renBTCMint),
+                    destination: try PublicKey.associatedTokenAddress(walletAddress: feePayer, tokenMintAddress: renBTCMint),
+                    owner: owner.publicKey,
+                    amount: compensationAmount
+                )
+            ],
+            signers: [owner],
+            feePayer: feePayer,
+            feeCalculator: FreeFeeCalculator()
+        )
+        
+        // send swap transaction
+        let context = try await feeRelayerContextManager.getCurrentContext()
+        return try await feeRelayer.topUpAndRelayTransaction(
+            context,
+            swapPreparedTransaction,
+            fee: nil,
+            config: .init(
+                operationType: .transfer,
+                currency: PublicKey.renBTCMint.base58EncodedString
+            )
+        )
     }
 }
 
