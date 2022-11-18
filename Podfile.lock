@@ -273,7 +273,7 @@ DEPENDENCIES:
   - Periphery
   - PhoneNumberKit (= 3.3.4)
   - ReachabilitySwift (~> 5.0.0)
-  - RenVMSwift (from `https://github.com/p2p-org/RenVMSwift.git`, branch `master`)
+  - RenVMSwift (from `https://github.com/p2p-org/RenVMSwift.git`, branch `feature/pwn-5952`)
   - Resolver (= 1.5.0)
   - RxAppState (= 1.7.1)
   - RxCocoa (= 6.5.0)
@@ -412,7 +412,7 @@ EXTERNAL SOURCES:
     :branch: master
     :git: https://github.com/p2p-org/key-app-kit-swift.git
   RenVMSwift:
-    :branch: master
+    :branch: feature/pwn-5952
     :git: https://github.com/p2p-org/RenVMSwift.git
   RxConcurrency:
     :branch: main
@@ -495,7 +495,7 @@ CHECKOUT OPTIONS:
     :commit: 9449d2b73bf2cc8c612c9cf4dcdc1449d1804015
     :git: https://github.com/p2p-org/key-app-kit-swift.git
   RenVMSwift:
-    :commit: cc672f180a787cfb7b7d2c4fe315e7f20ab4383a
+    :commit: ec17f776b66453ee917d51f3bde5cf7ff6d2ac4a
     :git: https://github.com/p2p-org/RenVMSwift.git
   RxConcurrency:
     :commit: dadb16c54bd42ca83c08f3d80f61fbfca93a585c
@@ -602,6 +602,6 @@ SPEC CHECKSUMS:
   TweetNacl: 3abf4d1d2082b0114e7a67410e300892448951e6
   "UITextView+Placeholder": d7b0c400921f66523f3a85d74f774512e14f6502
 
-PODFILE CHECKSUM: 305543927b6cbf8d984bb52dea4d9b18a0def59c
+PODFILE CHECKSUM: f73c6bca5e2917833c2a7f4ce8604b8230cde833
 
 COCOAPODS: 1.11.3

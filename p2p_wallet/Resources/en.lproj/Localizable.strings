@@ -1067,3 +1067,4 @@ Reset the PIN or wait for %@.";
 "Your wallet has been created! Just a few moments to start a crypto adventure" = "Your wallet has been created! Just a few moments to start a crypto adventure";
 "Error: %@" = "Error: %@";
 "Amount is too small, expected %@, got %@" = "Amount is too small, expected %@, got %@";
+"The transaction has been confirmed in Solana network, but you have to track it also on Bitcoin network" = "The transaction has been confirmed in Solana network, but you have to track it also on Bitcoin network";
