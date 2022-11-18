@@ -84,9 +84,13 @@ private class RenVMFeeRelayerSolanaBlockchainClient: SolanaBlockchainClient {
                 instructions[1].programId == "BTC5yiRuonJKcQvD9j9QwYKPx4MCGbvkWfvHFyBJG6RY"
         {
             // create first transaction to swap renBTC to native solana to pay fee
+            let lamportsPerSignature = try await apiClient.getLamportsPerSignature() ?? 5000
+            
             let swapFeePayer = try PublicKey(string: try await feeRelayerAPIClient.getFeePayerPubkey())
             let swapTxId = try await swapRenBTCToSolanaToPayFee(
-                feePayer: swapFeePayer, owner: signers[0]
+                feePayer: swapFeePayer,
+                owner: signers[0],
+                transactionFee: UInt64(signers.count) * lamportsPerSignature
             )
             
             // wait for confirmation
@@ -141,6 +145,20 @@ private class RenVMFeeRelayerSolanaBlockchainClient: SolanaBlockchainClient {
         {
             do {
                 return try await blockchainClient.sendTransaction(preparedTransaction: preparedTransaction)
+            } catch SolanaError.invalidResponse(let response) where response.data?.logs != nil {
+                print(response)
+                let logs = response.data!.logs!
+                
+                // previous transaction has not been confirmed
+                if let burnCheckIndex = logs.firstIndex(of: "Program log: Instruction: BurnChecked"),
+                   let burnCheckErrorIndex = logs.firstIndex(of: "Program log: Error: insufficient funds"),
+                   burnCheckErrorIndex == burnCheckIndex
+                {
+                    try await Task.sleep(nanoseconds: 3_000_000) // skip for 3s
+                    return try await sendTransaction(preparedTransaction: preparedTransaction) // retry
+                }
+                // re throw other error
+                throw SolanaError.invalidResponse(response)
             } catch {
                 print(error)
                 throw error
@@ -158,14 +176,15 @@ private class RenVMFeeRelayerSolanaBlockchainClient: SolanaBlockchainClient {
     
     private func swapRenBTCToSolanaToPayFee(
         feePayer: PublicKey,
-        owner: Account
+        owner: Account,
+        transactionFee: UInt64
     ) async throws -> String {
         
         // get fee rent
-        let rentExemption = try await apiClient.getMinimumBalanceForRentExemption(span: 97)
+        let burnFee = try await apiClient.getMinimumBalanceForRentExemption(span: 97) + transactionFee
         
         let exchangeRate = try await feeRelayerAPIClient.feeTokenData(mint: Token.renBTC.address).exchangeRate
-        let compensationAmountDouble = (Double(rentExemption) * exchangeRate / pow(Double(10), Double(Token.nativeSolana.decimals-Token.renBTC.decimals)))
+        let compensationAmountDouble = (Double(burnFee) * exchangeRate / pow(Double(10), Double(Token.nativeSolana.decimals-Token.renBTC.decimals)))
         let compensationAmount = UInt64(compensationAmountDouble.rounded(.up))
         let renBTCMint = try PublicKey(string: Token.renBTC.address)
         let swapPreparedTransaction = try await blockchainClient.prepareTransaction(
@@ -173,7 +192,7 @@ private class RenVMFeeRelayerSolanaBlockchainClient: SolanaBlockchainClient {
                 SystemProgram.transferInstruction(
                     from: feePayer,
                     to: owner.publicKey,
-                    lamports: rentExemption
+                    lamports: burnFee
                 ),
                 TokenProgram.transferInstruction(
                     source: try PublicKey.associatedTokenAddress(walletAddress: owner.publicKey, tokenMintAddress: renBTCMint),
