@@ -67,7 +67,9 @@ class AccountsObservableServiceImpl: AccountObservableService, SolanaSocketEvent
     var isConnected: Bool { solanaSocket.isConnected }
 
     func subscribeAccountNotification(account: String) async throws {
-        if !isConnected { solanaSocket.connect() }
+        if #available(iOS 15.0, *), !isConnected {
+            solanaSocket.connect()
+        }
         if await subscribesManager.contains(account: account) { return }
 
         let id = try await solanaSocket.accountSubscribe(publickey: account, commitment: "finalized")
@@ -107,6 +109,7 @@ class AccountsObservableServiceImpl: AccountObservableService, SolanaSocketEvent
     }
 
     func error(error _: Error?) {
+        guard #available(iOS 15.0, *) else { return }
         solanaSocket.disconnect()
         solanaSocket.connect()
     }
