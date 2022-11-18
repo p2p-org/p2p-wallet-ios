@@ -80,7 +80,7 @@ final class ChoosePhoneCodeViewController: BaseViewController {
                     })
                     .store(in: &cancellables)
             }
-            TextButton(title: L10n.ok, style: .primary, size: .large)
+            TextButton(title: L10n.ok.uppercased(), style: .primary, size: .large)
                 .onPressed { [weak self] _ in
                     self?.doneButtonDidTouch()
                 }

@@ -2,6 +2,7 @@
 // Use of this source code is governed by a MIT-style license that can be
 // found in the LICENSE file.
 
+import AnalyticsManager
 import Combine
 import CountriesAPI
 import KeyAppUI
@@ -10,6 +11,7 @@ import Resolver
 import SwiftUI
 
 final class RestoreCustomDelegatedCoordinator: DelegatedCoordinator<RestoreCustomState> {
+    @Injected private var analyticsManager: AnalyticsManager
     @Injected private var helpLauncher: HelpCenterLauncher
 
     override func buildViewController(for state: RestoreCustomState) -> UIViewController? {
@@ -94,7 +96,11 @@ final class RestoreCustomDelegatedCoordinator: DelegatedCoordinator<RestoreCusto
 
 private extension RestoreCustomDelegatedCoordinator {
     func handleEnterPhone(phone: String?) -> UIViewController {
-        let viewModel = EnterPhoneNumberViewModel(phone: phone, isBackAvailable: true)
+        let viewModel = EnterPhoneNumberViewModel(
+            phone: phone,
+            isBackAvailable: true,
+            strategy: .restore
+        )
         viewModel.subtitle = L10n.addAPhoneNumberToRestoreYourAccount
         let viewController = EnterPhoneNumberViewController(viewModel: viewModel)
 
@@ -132,15 +138,21 @@ private extension RestoreCustomDelegatedCoordinator {
     }
 
     func handleEnterOtp(phone: String, resendCounter: Wrapper<ResendCounter>) -> UIViewController {
-        let viewModel = EnterSMSCodeViewModel(phone: phone, attemptCounter: resendCounter)
+        let viewModel = EnterSMSCodeViewModel(
+            phone: phone,
+            attemptCounter: resendCounter,
+            strategy: .restore
+        )
         let viewController = EnterSMSCodeViewController(viewModel: viewModel)
 
-        viewModel.coordinatorIO.onConfirm.sinkAsync { [weak viewModel, stateMachine] otp in
+        viewModel.coordinatorIO.onConfirm.sinkAsync { [weak viewModel, stateMachine, weak self] otp in
             viewModel?.isLoading = true
             do {
                 try await stateMachine <- .enterOTP(otp: otp)
+                self?.analyticsManager.log(event: AmplitudeEvent.restoreSmsValidation(result: true))
             } catch {
                 viewModel?.coordinatorIO.error.send(error)
+                self?.analyticsManager.log(event: AmplitudeEvent.restoreSmsValidation(result: false))
             }
             viewModel?.isLoading = false
         }.store(in: &subscriptions)

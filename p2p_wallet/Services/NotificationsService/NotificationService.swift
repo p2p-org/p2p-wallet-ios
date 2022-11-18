@@ -75,29 +75,15 @@ final class NotificationServiceImpl: NSObject, NotificationService {
     }
 
     func registerForRemoteNotifications() {
-        UNUserNotificationCenter.current()
-            .getNotificationSettings { settings in
-                guard settings.authorizationStatus == .authorized else { return }
-                DispatchQueue.main.async {
-                    UIApplication.shared.registerForRemoteNotifications()
-                }
-            }
+        DispatchQueue.main.async {
+            UIApplication.shared.registerForRemoteNotifications()
+        }
     }
 
     func requestRemoteNotificationPermission() {
         UNUserNotificationCenter.current()
-            .getNotificationSettings { [weak self] settings in
-                if settings.authorizationStatus == .authorized {
-                    self?.registerForRemoteNotifications()
-                    Defaults.didSetEnableNotifications = true
-                } else {
-                    UNUserNotificationCenter.current()
-                        .requestAuthorization(options: [.alert, .sound, .badge]) { [weak self] granted, _ in
-                            guard granted else { return }
-                            self?.registerForRemoteNotifications()
-                            Defaults.didSetEnableNotifications = true
-                        }
-                }
+            .requestAuthorization(options: [.alert, .sound, .badge]) { [weak self] granted, _ in
+                Defaults.didSetEnableNotifications = granted
             }
     }
 
@@ -121,7 +107,6 @@ final class NotificationServiceImpl: NSObject, NotificationService {
             ))
             UserDefaults.standard.removeObject(forKey: deviceTokenKey)
         } catch {
-            print(error)
             UserDefaults.standard.set(deviceToken, forKey: deviceTokenKey)
         }
     }
@@ -136,6 +121,8 @@ final class NotificationServiceImpl: NSObject, NotificationService {
             deviceToken: token,
             clientId: publicKey
         ))
+        
+        UserDefaults.standard.removeObject(forKey: deviceTokenKey)
     }
 
     func showInAppNotification(_ notification: InAppNotification) {

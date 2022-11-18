@@ -11,6 +11,7 @@ import RxCocoa
 import RxSwift
 import SolanaSwift
 
+@MainActor
 protocol ReceiveSceneModel: BESceneModel {
     var tokenTypeDriver: Driver<ReceiveToken.TokenType> { get }
     var hasAddressesInfoDriver: Driver<Bool> { get }
@@ -21,7 +22,7 @@ protocol ReceiveSceneModel: BESceneModel {
     var hideAddressesHintSubject: PublishRelay<Void> { get }
     var tokenListAvailabilityDriver: Driver<Bool> { get }
     var receiveSolanaViewModel: ReceiveTokenSolanaViewModelType { get }
-    var receiveBitcoinViewModel: ReceiveTokenBitcoinViewModelType { get }
+    var receiveBitcoinViewModel: ReceiveToken.ReceiveBitcoinViewModel { get }
     var shouldShowChainsSwitcher: Bool { get }
     var tokenWallet: Wallet? { get }
     var navigation: Driver<ReceiveToken.NavigatableScene?> { get }
@@ -35,6 +36,7 @@ protocol ReceiveSceneModel: BESceneModel {
 }
 
 extension ReceiveToken {
+    @MainActor
     class SceneModel: NSObject, ReceiveSceneModel {
         @Injected private var clipboardManager: ClipboardManagerType
         @Injected private var notificationsService: NotificationService
@@ -44,7 +46,7 @@ extension ReceiveToken {
 
         private let disposeBag = DisposeBag()
         let receiveSolanaViewModel: ReceiveTokenSolanaViewModelType
-        let receiveBitcoinViewModel: ReceiveTokenBitcoinViewModelType
+        let receiveBitcoinViewModel: ReceiveToken.ReceiveBitcoinViewModel
 
         // MARK: - Subjects
 
@@ -80,7 +82,6 @@ extension ReceiveToken {
             )
 
             receiveBitcoinViewModel = ReceiveToken.ReceiveBitcoinViewModel(
-                navigationSubject: navigationSubject,
                 hasExplorerButton: hasExplorerButton
             )
 
@@ -187,6 +188,12 @@ extension ReceiveToken {
                     guard let addressesHintIsHiddenSubject = addressesHintIsHiddenSubject else { return }
                     addressesHintIsHiddenSubject.accept(true)
                 })
+                .disposed(by: disposeBag)
+            
+            receiveBitcoinViewModel
+                .navigationPublisher
+                .asObservable()
+                .bind(to: navigationSubject)
                 .disposed(by: disposeBag)
         }
 

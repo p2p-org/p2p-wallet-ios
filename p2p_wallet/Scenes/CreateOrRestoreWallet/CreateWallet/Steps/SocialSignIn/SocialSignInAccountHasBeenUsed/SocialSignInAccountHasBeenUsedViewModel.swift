@@ -8,7 +8,7 @@ import Onboarding
 import Reachability
 import Resolver
 
-class SocialSignInAccountHasBeenUsedViewModel: BaseViewModel {
+class SocialSignInAccountHasBeenUsedViewModel: BaseViewModel, ObservableObject {
     struct Coordinator {
         let useAnotherAccount: PassthroughSubject<ReactiveProcess<Void>, Never> = .init()
         let switchToRestoreFlow: PassthroughSubject<ReactiveProcess<Void>, Never> = .init()
