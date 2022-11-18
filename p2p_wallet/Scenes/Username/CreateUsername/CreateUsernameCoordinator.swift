@@ -57,9 +57,9 @@ private extension CreateUsernameCoordinator {
     func parameters() -> CreateUsernameParameters {
         switch navigationOption {
         case .onboarding:
-            return CreateUsernameParameters(backgroundColor: Asset.Colors.lime.color)
+            return .init(backgroundColor: Asset.Colors.lime.color, buttonStyle: .primary)
         case .settings:
-            return CreateUsernameParameters(backgroundColor: Asset.Colors.rain.color)
+            return .init(backgroundColor: Asset.Colors.rain.color, buttonStyle: .primaryWhite)
         }
     }
 
