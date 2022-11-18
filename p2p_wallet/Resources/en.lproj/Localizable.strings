@@ -1065,3 +1065,6 @@ Reset the PIN or wait for %@.";
 "Your wallet has been created! Just a few moments to start a crypto adventure" = "Your wallet has been created! Just a few moments to start a crypto adventure";
 "Keep your pin safe. Hide your pin from other people." = "Keep your pin safe. Hide your pin from other people.";
 "Don't use the same pin for multiple accounts." = "Don't use the same pin for multiple accounts.";
+"Wallet recovery" = "Wallet recovery";
+"Error: %@" = "Error: %@";
+"Amount is too small, expected %@, got %@" = "Amount is too small, expected %@, got %@";

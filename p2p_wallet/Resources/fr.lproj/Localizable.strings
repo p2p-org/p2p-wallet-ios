@@ -1092,3 +1092,6 @@ Reset the PIN or wait for %@." = "Il vous reste %@ tentatives pour saisir le cod
 "Your wallet has been created! Just a few moments to start a crypto adventure" = "Votre portefeuille est créé !  Quelques instants pour commencer une aventure crypto";
 "Keep your pin safe. Hide your pin from other people." = "Gardez votre épingle en sécurité.  Cachez votre code PIN aux autres personnes.";
 "Don't use the same pin for multiple accounts." = "N'utilisez pas le même code PIN pour plusieurs comptes.";
+"Wallet recovery" = "Récupération de portefeuille";
+"Error: %@" = "Erreur : %@";
+"Amount is too small, expected %@, got %@" = "Le montant est trop petit, attendu %@, obtenu %@";

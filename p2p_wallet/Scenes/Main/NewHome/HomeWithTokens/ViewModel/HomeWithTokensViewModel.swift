@@ -32,7 +32,9 @@ class HomeWithTokensViewModel: ObservableObject {
     let earnShow: AnyPublisher<Void, Never>
     let walletShow: AnyPublisher<(pubKey: String, tokenSymbol: String), Never>
 
-    @Published var balance = ""
+    var actions: AnyPublisher<[WalletActionType], Never>
+    var balance: AnyPublisher<String, Never>
+
     @Published var scrollOnTheTop = true
 
     private var wallets = [Wallet]()
@@ -56,8 +58,9 @@ class HomeWithTokensViewModel: ObservableObject {
         swapShow = swapClicked.eraseToAnyPublisher()
         walletShow = walletClicked.eraseToAnyPublisher()
         earnShow = earnClicked.eraseToAnyPublisher()
+        actions = Just([WalletActionType.buy, .receive, .send, .swap]).eraseToAnyPublisher()
 
-        Observable.zip(walletsRepository.dataObservable, walletsRepository.stateObservable)
+        balance = Observable.zip(walletsRepository.dataObservable, walletsRepository.stateObservable)
             .filter { $0.1 == .loaded }
             .map { data, _ in
                 let data = data ?? []
@@ -67,10 +70,7 @@ class HomeWithTokensViewModel: ObservableObject {
             .asPublisher()
             .assertNoFailure()
             .debounce(for: 0.1, scheduler: RunLoop.main)
-            .sink(receiveValue: { [weak self] in
-                self?.balance = $0
-            })
-            .store(in: &cancellables)
+            .eraseToAnyPublisher()
         walletsRepository.dataObservable
             .asPublisher()
             .assertNoFailure()
@@ -115,20 +115,17 @@ class HomeWithTokensViewModel: ObservableObject {
             .async()
     }
 
-    func buy() {
-        buyClicked.send()
-    }
-
-    func receive() {
-        receiveClicked.send()
-    }
-
-    func send() {
-        sendClicked.send()
-    }
-
-    func swap() {
-        swapClicked.send()
+    func actionClicked(_ action: WalletActionType) {
+        switch action {
+        case .receive:
+            receiveClicked.send()
+        case .buy:
+            buyClicked.send()
+        case .send:
+            sendClicked.send()
+        case .swap:
+            swapClicked.send()
+        }
     }
 
     func earn() {

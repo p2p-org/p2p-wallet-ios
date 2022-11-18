@@ -59,11 +59,8 @@ struct BuyView: View {
                 UIApplication.shared.keyWindow?.endEditing(true)
             }
             Spacer()
-            bottomActionsView
-                .frame(height: 110)
-//                .offset(y: bottomOffset)
+            actionButtonView
         }
-        .edgesIgnoringSafeArea(.bottom)
         .toolbar {
             ToolbarItem(placement: .principal) { Text(L10n.buy).fontWeight(.semibold) }
         }
@@ -294,21 +291,17 @@ struct BuyView: View {
             .cornerRadius(16)
     }
 
-    private var bottomActionsView: some View {
+    private var actionButtonView: some View {
         TextButtonView(
             title: viewModel.buttonItem.title,
-            style: .inverted,
+            style: .primaryWhite,
             size: .large,
-            trailing: viewModel.buttonItem.icon
+            trailing: viewModel.buttonItem.icon?.withTintColor(Asset.Colors.rain.color)
         ) { [weak viewModel] in
             viewModel?.buyButtonTapped()
         }
         .frame(height: 56)
-        .padding(.horizontal, 20)
-        .padding(.top, 20)
-        .padding(.bottom, max(60, SafeAreaInsetsKey.defaultValue.bottom))
-        .background(Color(Asset.Colors.night.color))
+        .padding(EdgeInsets(top: 0, leading: 16, bottom: 12, trailing: 16))
         .disabled(!viewModel.buttonItem.enabled)
-        .cornerRadius(24, antialiased: false)
     }
 }
