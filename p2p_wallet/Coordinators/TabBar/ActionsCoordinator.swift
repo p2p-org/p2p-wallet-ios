@@ -12,7 +12,7 @@ import Resolver
 import SolanaSwift
 import UIKit
 
-final class ActionsCoordinator: Coordinator<Void> {
+final class ActionsCoordinator: Coordinator<ActionsCoordinator.Result> {
     @Injected private var walletsRepository: WalletsRepository
     @Injected private var analyticsManager: AnalyticsManager
 
@@ -26,7 +26,7 @@ final class ActionsCoordinator: Coordinator<Void> {
         self.viewController = viewController
     }
 
-    override func start() -> AnyPublisher<Void, Never> {
+    override func start() -> AnyPublisher<ActionsCoordinator.Result, Never> {
         let view = ActionsView()
         transition.containerHeight = view.viewHeight
         let viewController = view.asViewController()
@@ -36,7 +36,7 @@ final class ActionsCoordinator: Coordinator<Void> {
         navigationController.modalPresentationStyle = .custom
         self.viewController.present(navigationController, animated: true)
 
-        let subject = PassthroughSubject<Void, Never>()
+        let subject = PassthroughSubject<ActionsCoordinator.Result, Never>()
         transition.dimmClicked
             .sink(receiveValue: {
                 viewController.dismiss(animated: true)
@@ -44,7 +44,7 @@ final class ActionsCoordinator: Coordinator<Void> {
             .store(in: &subscriptions)
 
         navigationController.onClose = {
-            subject.send()
+            subject.send(.cancel)
         }
         view.cancel
             .sink(receiveValue: {
@@ -55,31 +55,8 @@ final class ActionsCoordinator: Coordinator<Void> {
             .sink(receiveValue: { [unowned self] actionType in
                 switch actionType {
                 case .buy:
-                    // Disabling on
-                    if available(.buyScenarioEnabled) {
-                        let coordinator = BuyCoordinator(
-                            context: .fromHome,
-                            presentingViewController: viewController,
-                            shouldPush: false
-                        )
-                        coordinate(to: coordinator)
-                            .sink { _ in }
-                            .store(in: &subscriptions)
-                    } else {
-                        navigationController.present(
-                            BuyTokenSelection.Scene(onTap: { [unowned self] in
-                                let coordinator = BuyPreparingCoordinator(
-                                    navigationController: navigationController,
-                                    strategy: .present,
-                                    crypto: $0
-                                )
-                                coordinate(to: coordinator)
-                                    .sink { _ in }
-                                    .store(in: &subscriptions)
-
-                            }),
-                            animated: true
-                        )
+                    viewController.dismiss(animated: true) {
+                        subject.send(.action(type: .buy))
                     }
                 case .receive:
                     guard let pubkey = try? PublicKey(string: walletsRepository.nativeWallet?.pubkey) else { return }
@@ -89,38 +66,32 @@ final class ActionsCoordinator: Coordinator<Void> {
                     analyticsManager.log(event: AmplitudeEvent.mainScreenReceiveOpen)
                     analyticsManager.log(event: AmplitudeEvent.receiveViewed(fromPage: "Main_Screen"))
                 case .swap:
-                    let vm = OrcaSwapV2.ViewModel(initialWallet: nil)
-                    let vc = OrcaSwapV2.ViewController(viewModel: vm)
-                    let navigation = UINavigationController(rootViewController: vc)
                     analyticsManager.log(event: AmplitudeEvent.actionButtonSwap)
                     analyticsManager.log(event: AmplitudeEvent.mainScreenSwapOpen)
                     analyticsManager.log(event: AmplitudeEvent.swapViewed(lastScreen: "Main_Screen"))
-                    vc.doneHandler = { [weak self] in
-                        self?.viewController.dismiss(animated: true)
+                    viewController.dismiss(animated: true) {
+                        subject.send(.action(type: .swap))
                     }
-                    navigationController.present(navigation, animated: true)
                 case .send:
-                    let vm = SendToken.ViewModel(
-                        walletPubkey: walletsRepository.nativeWallet?.pubkey,
-                        destinationAddress: nil,
-                        relayMethod: .default
-                    )
-                    sendCoordinator = SendToken.Coordinator(
-                        viewModel: vm,
-                        navigationController: navigationController
-                    )
                     analyticsManager.log(event: AmplitudeEvent.actionButtonSend)
                     analyticsManager.log(event: AmplitudeEvent.mainScreenSendOpen)
                     analyticsManager.log(event: AmplitudeEvent.sendViewed(lastScreen: "Main_Screen"))
-
-                    sendCoordinator?.doneHandler = { [weak self] in
-                        self?.viewController.dismiss(animated: true)
+                    viewController.dismiss(animated: true) {
+                        subject.send(.action(type: .send))
                     }
-                    sendCoordinator?.start(hidesBottomBarWhenPushed: true, push: false)
                 }
             })
             .store(in: &subscriptions)
 
         return subject.eraseToAnyPublisher()
+    }
+}
+
+// MARK: - Result
+
+extension ActionsCoordinator {
+    enum Result {
+        case cancel
+        case action(type: ActionsView.Action)
     }
 }

@@ -10,7 +10,7 @@ import FirebaseRemoteConfig
 import SolanaSwift
 import SwiftyUserDefaults
 
-final class DebugMenuViewModel: BaseViewModel {
+final class DebugMenuViewModel: BaseViewModel, ObservableObject {
     @Published var networkLoggerVisible = isShown {
         didSet {
             updateNetworkLoggerState()

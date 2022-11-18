@@ -34,7 +34,7 @@ final class SettingsCoordinator: Coordinator<Void> {
                     navigationController.pushViewController(vc, animated: true)
                 case .support:
                     helpLauncher.launch()
-                case let .reserveUsername(userAddress):
+                case .reserveUsername:
                     coordinate(to: CreateUsernameCoordinator(navigationOption: .settings(parent: navigationController)))
                         .sink { [unowned self] in
                             self.navigationController.popToViewController(settingsVC, animated: true)
