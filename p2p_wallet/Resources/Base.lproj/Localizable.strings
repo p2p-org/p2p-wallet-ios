@@ -1069,3 +1069,4 @@ Reset the PIN or wait for %@.";
 "Wallet recovery" = "Wallet recovery";
 "Error: %@" = "Error: %@";
 "Amount is too small, expected %@, got %@" = "Amount is too small, expected %@, got %@";
+"The transaction has been confirmed in Solana network, but you have to track it also on Bitcoin network" = "The transaction has been confirmed in Solana network, but you have to track it also on Bitcoin network";
