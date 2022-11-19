@@ -92,29 +92,59 @@ extension ProcessTransaction.Status {
                         UILabel(text: nil, textSize: 13, numberOfLines: 0)
                             .setup { label in
                                 viewModel.pendingTransactionDriver
-                                    .map(\.rawTransaction.networkFees)
-                                    .filter { $0 != nil }
-                                    .map {
-                                        $0!.total.convertToBalance(
-                                            decimals: $0!.token.decimals
-                                        ).toString()
-                                            + " "
-                                            + $0!.token.symbol
-                                    }
-                                    .map {
-                                        L10n
+                                    .map { pendingTransaction -> String? in
+                                        // top up finished but transaction throws
+                                        if pendingTransaction.status.error as? FeeRelayerError == .topUpSuccessButTransactionThrows,
+                                           let networkFees = pendingTransaction.rawTransaction.networkFees
+                                        {
+                                            let fee = networkFees.total
+                                                .convertToBalance(
+                                                    decimals: networkFees.token.decimals
+                                                ).toString()
+                                                + " "
+                                            + networkFees.token.symbol
+                                            
+                                            return L10n
+                                                .theFeeWasReservedSoYouWouldnTPayItAgainTheNextTimeYouCreatedATransactionOfTheSameType(
+                                                    fee
+                                                )
+                                        }
+                                        
+                                        // transaction has been confirmed in solana chain but hasn't been confirmed in bitcoin chain
+                                        switch pendingTransaction.rawTransaction {
+                                        case let tx as ProcessTransaction.SendTransaction where tx.network == .bitcoin && pendingTransaction.status.isFinalized:
+                                            return L10n.theTransactionHasBeenConfirmedInSolanaNetworkButYouHaveToTrackItAlsoOnBitcoinNetwork
+                                        default:
+                                            break
+                                        }
+                                        return L10n
                                             .theFeeWasReservedSoYouWouldnTPayItAgainTheNextTimeYouCreatedATransactionOfTheSameType(
-                                                $0
-                                            )
+                                                ""
+                                            ) // placeholder
                                     }
                                     .drive(label.rx.text)
                                     .disposed(by: disposeBag)
+//
                             }
                     }
                     .padding(.init(top: 0, left: 18, bottom: 14, right: 18))
                     .setup { view in
                         viewModel.pendingTransactionDriver
-                            .map { $0.status.error as? FeeRelayerError != .topUpSuccessButTransactionThrows }
+                            .map { pendingTransaction -> Bool in
+                                // top up finished but transaction throws
+                                if pendingTransaction.status.error as? FeeRelayerError == .topUpSuccessButTransactionThrows {
+                                    return false
+                                }
+                                
+                                // transaction has been confirmed in solana chain but hasn't been confirmed in bitcoin chain
+                                switch pendingTransaction.rawTransaction {
+                                case let tx as ProcessTransaction.SendTransaction where tx.network == .bitcoin && pendingTransaction.status.isFinalized:
+                                    return false
+                                default:
+                                    break
+                                }
+                                return true
+                            }
                             .drive(view.rx.isHidden)
                             .disposed(by: disposeBag)
                     }
