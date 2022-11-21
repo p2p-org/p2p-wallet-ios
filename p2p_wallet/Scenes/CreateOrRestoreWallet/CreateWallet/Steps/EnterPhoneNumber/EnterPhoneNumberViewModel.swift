@@ -65,6 +65,25 @@ final class EnterPhoneNumberViewModel: BaseOTPViewModel {
         coordinatorIO.selectCode.send((selectedCountry.dialCode, selectedCountry.code))
     }
 
+    func onPaste() {
+        Task {
+            guard let newPhone = UIPasteboard.general.string?.clearedPhoneString else { return }
+            let countries = try? await self.countriesAPI.fetchCountries()
+            if
+                let parsedPhone = try? self.phoneNumberKit.parse(newPhone),
+                let country = countries?
+                    .first(where: { $0.dialCode.clearedPhoneString == "+" + String(parsedPhone.countryCode) }) {
+                // Change country only if dial code has changed
+                DispatchQueue.main.asyncAfter(deadline: .now() + 0.01) {
+                    if self.selectedCountry.dialCode != country.dialCode {
+                        self.selectedCountry = country
+                    }
+                    self.phone = parsedPhone.numberString
+                }
+            }
+        }
+    }
+
     @MainActor
     private func showInputError(error: String?) {
         inputError = error
@@ -149,7 +168,7 @@ final class EnterPhoneNumberViewModel: BaseOTPViewModel {
                     if self.clearedPhoneString(phone: $1 ?? "")
                         .starts(with: self.clearedPhoneString(phone: self.selectedCountry.dialCode)) == true
                     {
-                        guard let exampleNumber = self.exampleNumberWith(phone: $0 ?? "") else {
+                        guard let exampleNumber = self.exampleNumberWith(phone: $0) else {
                             return $1 ?? ""
                         }
                         let formattedExample = self.phoneNumberKit.format(exampleNumber, toType: .international)
@@ -269,5 +288,11 @@ private extension EnterPhoneNumberViewModel {
         }
 #endif
         return Locale.current.regionCode?.lowercased() ?? PhoneNumberKit.defaultRegionCode().lowercased()
+    }
+}
+
+private extension String {
+    var clearedPhoneString: String {
+        self.filter("0123456789+".contains)
     }
 }

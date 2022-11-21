@@ -59,9 +59,9 @@ class UserWalletManager: ObservableObject {
             try storage.save(deviceShare: deviceShare)
         }
         
-        notificationsService.registerForRemoteNotifications()
-
         try await refresh()
+        
+        notificationsService.registerForRemoteNotifications()
     }
 
     /// Remove a current selected wallet
