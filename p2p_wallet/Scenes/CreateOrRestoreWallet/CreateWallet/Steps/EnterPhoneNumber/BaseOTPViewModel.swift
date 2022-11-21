@@ -2,7 +2,7 @@ import Combine
 import Foundation
 import Onboarding
 
-class BaseOTPViewModel: BaseViewModel {
+class BaseOTPViewModel: BaseViewModel, ObservableObject {
     /// Toaster error
     @Published public var error: String?
 

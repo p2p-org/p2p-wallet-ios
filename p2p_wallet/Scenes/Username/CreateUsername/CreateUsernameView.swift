@@ -12,7 +12,7 @@ struct CreateUsernameView: View {
 
     var body: some View {
         ZStack {
-            Color(viewModel.backgroundColor)
+            Color(viewModel.parameters.backgroundColor)
                 .edgesIgnoringSafeArea(.all)
 
             VStack(spacing: 0) {
@@ -26,13 +26,12 @@ struct CreateUsernameView: View {
                         .padding(.vertical, 4)
                         .padding(.leading, 8)
                 }
-                .padding(.horizontal, 20)
-
                 Spacer()
 
-                bottomContainer
+                actionButton
+                    .padding(.bottom, 12)
             }
-            .edgesIgnoringSafeArea(.bottom)
+            .padding(.horizontal, 20)
         }
         .onTapGesture {
             viewModel.isTextFieldFocused = false
@@ -82,21 +81,23 @@ private extension CreateUsernameView {
         }
     }
 
-    var bottomContainer: some View {
-        BottomActionContainer {
-            TextButtonView(
-                title: viewModel.actionText,
-                style: .inverted,
-                size: .large,
-                isLoading: viewModel.isLoading,
-                onPressed: {}
-            )
-                .onTapGesture {
-                    viewModel.createUsername.send()
-                }
-                .frame(height: 56)
-                .disabled(viewModel.status != .available)
+    var actionButton: some View {
+        TextButtonView(
+            title: viewModel.actionText,
+            style: viewModel.parameters.buttonStyle,
+            size: .large,
+            isLoading: viewModel.isLoading,
+            onPressed: {}
+        )
+        .onTapGesture {
+            viewModel.createUsername.send()
         }
+        .frame(height: 56)
+        .disabled(viewModel.status != .available)
+        .addBorder(
+            viewModel.status != .available ? Color(Asset.Colors.snow.color).opacity(0.6) : .clear,
+            cornerRadius: 12
+        )
     }
 
     var usernameField: some View {
@@ -157,7 +158,8 @@ struct CreateUsernameView_Previews: PreviewProvider {
         CreateUsernameView(
             viewModel: CreateUsernameViewModel(
                 parameters: CreateUsernameParameters(
-                    backgroundColor: Asset.Colors.rain.color
+                    backgroundColor: Asset.Colors.rain.color,
+                    buttonStyle: .primary
                 )
             )
         )

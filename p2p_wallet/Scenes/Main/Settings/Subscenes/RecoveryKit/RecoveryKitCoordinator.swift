@@ -2,12 +2,14 @@
 // Use of this source code is governed by a MIT-style license that can be
 // found in the LICENSE file.
 
+import AnalyticsManager
 import Combine
 import SwiftUI
 import UIKit
 import Resolver
 
 final class RecoveryKitCoordinator: Coordinator<Void> {
+    @Injected private var analyticsManager: AnalyticsManager
     @Injected private var authenticationHandler: AuthenticationHandlerType
     @Injected private var walletSettings: WalletSettings
     
@@ -52,6 +54,7 @@ final class RecoveryKitCoordinator: Coordinator<Void> {
     func confirmDeleteAccountDialog() {
         let alert = UIAlertController(title: L10n.areYouSureYouWantToDeleteYourAccount, message: L10n.theDataWillBeClearedWithoutThePossibilityOfRecovery, preferredStyle: .alert)
         alert.addAction(.init(title: L10n.yesDeleteMyAccount, style: .destructive) { _ in
+            self.analyticsManager.log(event: AmplitudeEvent.confirmDeleteAccount)
             self.authenticationHandler.authenticate(
                 presentationStyle: .init(
                     options: [.fullscreen],

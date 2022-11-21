@@ -285,4 +285,7 @@ enum AmplitudeEvent: AnalyticsEvent {
     case usernameCreationButton(result: Bool)
     case usernameSkipButton(result: Bool)
     case usernameCreationScreen
+
+    case startDeleteAccount
+    case confirmDeleteAccount
 }
