@@ -15,18 +15,15 @@ class SendInputViewModel: ObservableObject {
     @Published var state: SendInputState
 
     init(recipient: Recipient) {
-        let state = SendInputState(
-            status: .ready,
+        let state = SendInputState.zero(
             recipient: recipient,
-            userTokenAccount: .nativeSolana(pubkey: "", lamport: 100),
-            userWalletState: .init(wallets: [], exchangeRate: [:]),
-            amountInFiat: 0,
-            amountInToken: 0,
-            fee: .zero
+            token: .nativeSolana,
+            feeToken: .nativeSolana,
+            userWalletState: .init(wallets: [], exchangeRate: [:])
         )
 
         self.state = state
-        stateMachine = .init(initialState: state)
+        stateMachine = .init(initialState: state, services: .init(swapService: MockedSwapService(result: nil)))
 
         stateMachine.statePublisher
             .sink { [weak self] in self?.state = $0 }
