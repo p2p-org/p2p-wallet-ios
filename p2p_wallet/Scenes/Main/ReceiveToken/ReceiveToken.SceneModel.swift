@@ -25,6 +25,8 @@ protocol ReceiveSceneModel: BESceneModel {
     var receiveBitcoinViewModel: ReceiveToken.ReceiveBitcoinViewModel { get }
     var shouldShowChainsSwitcher: Bool { get }
     var tokenWallet: Wallet? { get }
+    var qrHint: NSAttributedString { get }
+    var isDisabledRenBtc: Bool { get }
     var navigation: Driver<ReceiveToken.NavigatableScene?> { get }
 
     func isRenBtcCreated() -> Bool
@@ -57,6 +59,8 @@ extension ReceiveToken {
         private let tokenTypeSubject = BehaviorRelay<TokenType>(value: .solana)
         private let addressesInfoIsOpenedSubject = BehaviorRelay<Bool>(value: false)
         let tokenWallet: Wallet?
+        let qrHint: NSAttributedString
+        let isDisabledRenBtc: Bool
         private let canOpenTokensList: Bool
         let shouldShowChainsSwitcher: Bool
         private let screenCanHaveAddressesInfo: Bool
@@ -69,9 +73,43 @@ extension ReceiveToken {
         ) {
             let isRenBTC = solanaTokenWallet?.token.isRenBTC ?? false
             let hasExplorerButton = !isOpeningFromToken
+            let symbol = solanaTokenWallet?.token.symbol ?? ""
+
+            isDisabledRenBtc = !available(.receiveRenBtcEnabled) && isRenBTC
+
+            let highlightedText = L10n.receive(symbol)
+            let fullText = L10n.youCanReceiveByProvidingThisAddressQRCodeOrUsername(symbol)
+            let normalFont = UIFont.systemFont(ofSize: 15, weight: .regular)
+            let highlightedFont = UIFont.systemFont(ofSize: 15, weight: .bold)
+            let paragraphStyle = NSMutableParagraphStyle()
+            paragraphStyle.lineHeightMultiple = 1.17
+            paragraphStyle.alignment = .center
+            let attributedText = NSMutableAttributedString(
+                string: fullText,
+                attributes: [
+                    .font: normalFont,
+                    .kern: -0.24,
+                    .paragraphStyle: paragraphStyle,
+                    .foregroundColor: UIColor.textBlack,
+                ]
+            )
+            let highlightedRange = (attributedText.string as NSString)
+                .range(of: highlightedText, options: .caseInsensitive)
+            attributedText.addAttribute(.font, value: highlightedFont, range: highlightedRange)
+            qrHint = attributedText
+
+            var solanaTokenWallet = solanaTokenWallet
+            if isDisabledRenBtc {
+                solanaTokenWallet?.token = .nativeSolana
+            }
             tokenWallet = solanaTokenWallet
+
             canOpenTokensList = !isOpeningFromToken
-            screenCanHaveAddressesInfo = isOpeningFromToken && solanaTokenWallet != nil
+            if isDisabledRenBtc {
+                screenCanHaveAddressesInfo = false
+            } else {
+                screenCanHaveAddressesInfo = isOpeningFromToken && solanaTokenWallet != nil
+            }
             screenCanHaveHint = isOpeningFromToken
             shouldShowChainsSwitcher = isOpeningFromToken ? isRenBTC : solanaTokenWallet?.isNativeSOL ?? true
             receiveSolanaViewModel = ReceiveToken.SolanaViewModel(
