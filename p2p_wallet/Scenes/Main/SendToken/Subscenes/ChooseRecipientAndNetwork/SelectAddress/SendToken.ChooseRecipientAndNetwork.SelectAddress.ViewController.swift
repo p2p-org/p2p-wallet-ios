@@ -71,7 +71,6 @@ extension SendToken.ChooseRecipientAndNetwork.SelectAddress {
                 }
                 vc.modalPresentationStyle = .custom
                 present(vc, animated: true)
-                analyticsManager.log(event: AmplitudeEvent.sendQR_Scanning)
             case .selectPayingWallet:
                 let vm = ChooseWallet.ViewModel(selectedWallet: nil, handler: viewModel, showOtherWallets: false)
                 vm.customFilter = { $0.amount > 0 }
