@@ -6,47 +6,34 @@
 //
 
 import BECollectionView_Combine
-import Combine
 import Foundation
 import RenVMSwift
+import Combine
 
 extension RenBTCReceivingStatuses {
     class TxDetailViewController: BaseViewController {
-        override var preferredNavigationBarStype: BEViewController.NavigationBarStyle {
-            .hidden
-        }
-
         private var viewModel: TxDetailViewModel
-        private var subscriptions = [AnyCancellable]()
+        private var subscriptions = Set<AnyCancellable>()
 
         init(viewModel: TxDetailViewModel) {
             self.viewModel = viewModel
             super.init()
+            title = L10n.receivingRenBTC(0)
         }
 
         override func build() -> UIView {
             BESafeArea {
                 UIStackView(axis: .vertical, alignment: .fill) {
-                    NewWLNavigationBar(initialTitle: L10n.receivingStatus, separatorEnable: false)
-                        .onBack { [unowned self] in self.back() }
-                        .setup { view in
-                            viewModel.currentTx
-                                .receive(on: RunLoop.main)
-                                .map { tx in
-                                    guard let value = tx?.value else { return L10n.receivingStatus }
-                                    return L10n.receivingRenBTC(value.toString(maximumFractionDigits: 10))
-                                }
-                                .assign(to: \.text, on: view.titleLabel)
-                                .store(in: &subscriptions)
-                        }
                     NBENewDynamicSectionsCollectionView(
                         viewModel: viewModel,
                         mapDataToSections: { viewModel in
-                            CollectionViewMappingStrategy.byData(
-                                viewModel: viewModel,
-                                forType: Record.self,
-                                where: \Record.time
-                            )
+                            let data = viewModel.getData(type: Record.self)
+                            let dictionary = Dictionary(grouping: data, by: { Calendar.current.startOfDay(for: $0.time) })
+                            var sectionInfo = [BEDynamicSectionsCollectionView.SectionInfo]()
+                            for key in dictionary.keys.sorted(by: >) {
+                                sectionInfo.append(.init(userInfo: key, items: dictionary[key]!.sorted { $0.time > $1.time } as [AnyHashable]))
+                            }
+                            return sectionInfo
                         },
                         layout: .init(
                             header: .init(
@@ -81,6 +68,17 @@ extension RenBTCReceivingStatuses {
                 }
             }
         }
+        
+        override func bind() {
+            super.bind()
+            viewModel.currentTxPublisher
+                .map { tx in
+                    guard let value = tx?.value else { return L10n.receivingStatus }
+                    return L10n.receivingRenBTC(value.toString(maximumFractionDigits: 10))
+                }
+                .assign(to: \.title, on: self)
+                .store(in: &subscriptions)
+        }
     }
 
     class TxDetailViewModel: BECollectionViewModelType {
@@ -102,100 +100,108 @@ extension RenBTCReceivingStatuses {
             bind()
         }
 
-        var currentTx: AnyPublisher<LockAndMint.ProcessingTx?, Never> {
+        var currentTxPublisher: AnyPublisher<LockAndMint.ProcessingTx?, Never> {
             processingTxsPublisher.map { [weak self] in $0.first { tx in tx.tx.txid == self?.txid } }
+                .receive(on: RunLoop.main)
                 .eraseToAnyPublisher()
         }
 
         func bind() {
             processingTxsPublisher
-                .sink(receiveValue: { [weak self] in
-                    let new = Array($0.reversed())
-                    // transform processingTxs to records
-                    let processingTxs = new
-                    var records = [Record]()
-
-                    guard let tx = processingTxs.first(where: { $0.tx.txid == self?.txid }) else { return }
-                    if let mintedAt = tx.mintedAt {
-                        records.append(.init(txid: tx.tx.txid, status: .minted, time: mintedAt, amount: tx.tx.value))
-                    }
-
-                    if let submittedAt = tx.submitedAt {
-                        records.append(.init(txid: tx.tx.txid, status: .submitted, time: submittedAt))
-                    }
-
-                    if let confirmedAt = tx.confirmedAt {
-                        records.append(.init(txid: tx.tx.txid, status: .confirmed, time: confirmedAt))
-                    }
-
-                    if let threeVoteAt = tx.threeVoteAt {
-                        records
-                            .append(.init(txid: tx.tx.txid, status: .waitingForConfirmation, time: threeVoteAt,
-                                          vout: 3))
-                    }
-
-                    if let twoVoteAt = tx.twoVoteAt {
-                        records
-                            .append(.init(txid: tx.tx.txid, status: .waitingForConfirmation, time: twoVoteAt, vout: 2))
-                    }
-
-                    if let oneVoteAt = tx.oneVoteAt {
-                        records
-                            .append(.init(txid: tx.tx.txid, status: .waitingForConfirmation, time: oneVoteAt, vout: 1))
-                    }
-
-                    if let receiveAt = tx.receivedAt {
-                        records
-                            .append(.init(txid: tx.tx.txid, status: .waitingForConfirmation, time: receiveAt, vout: 0))
-                    }
-
-                    records.sort { rc1, rc2 in
-                        if rc1.time == rc2.time {
-                            return (rc1.vout ?? 0) > (rc2.vout ?? 0)
-                        } else {
-                            return rc1.time > rc2.time
-                        }
-                    }
-
-                    self?.data = records
-                })
+                .receive(on: RunLoop.main)
+                .sink { [weak self] in
+                    guard let tx = $0.first(where: { $0.tx.txid == self?.txid }) else { return }
+                    let records = self?.mapTxToRecords(tx)
+                    self?.data = records ?? []
+                }
                 .store(in: &subscriptions)
         }
-
-        var dataDidChange: AnyPublisher<Void, Never> {
-            processingTxsPublisher.map { _ in () }.eraseToAnyPublisher()
+        
+        private func mapTxToRecords(_ tx: LockAndMint.ProcessingTx) -> [Record] {
+            var voteAt = [UInt: Date]()
+            var confirmedAt: Date?
+            var submitedAt: Date?
+            var mintedAt: Date?
+            var errorAt: Date?
+            var error: LockAndMint.ProcessingError?
+            
+            switch tx.state {
+            case .confirming:
+                voteAt = tx.timestamp.voteAt
+            case .confirmed:
+                voteAt = fillEmptyVoteAt(tx.timestamp)
+                confirmedAt = tx.timestamp.confirmedAt ?? Date()
+            case .submited:
+                voteAt = fillEmptyVoteAt(tx.timestamp)
+                confirmedAt = tx.timestamp.confirmedAt ?? Date()
+                submitedAt = tx.timestamp.submitedAt ?? Date()
+            case .minted:
+                voteAt = fillEmptyVoteAt(tx.timestamp)
+                confirmedAt = tx.timestamp.confirmedAt ?? Date()
+                submitedAt = tx.timestamp.submitedAt ?? Date()
+                mintedAt = tx.timestamp.mintedAt ?? Date()
+            case let .ignored(err):
+                voteAt = fillEmptyVoteAt(tx.timestamp)
+                confirmedAt = tx.timestamp.confirmedAt ?? Date()
+                submitedAt = tx.timestamp.submitedAt ?? Date()
+                errorAt = tx.timestamp.ignoredAt ?? Date()
+                error = err
+            }
+            
+            var records = [Record]()
+            for key in voteAt.keys.sorted(by: <) {
+                records
+                    .append(.init(txid: tx.tx.txid, status: .waitingForConfirmation, time: voteAt[key]!, vout: key))
+            }
+            if let confirmedAt = confirmedAt {
+                records.append(.init(txid: tx.tx.txid, status: .confirmed, time: confirmedAt))
+            }
+            if let submittedAt = submitedAt {
+                records.append(.init(txid: tx.tx.txid, status: .submitted, time: submittedAt))
+            }
+            if let mintedAt = mintedAt {
+                records.append(.init(txid: tx.tx.txid, status: .minted, time: mintedAt, amount: tx.tx.value))
+            }
+            if let errorAt = errorAt {
+                records.append(.init(txid: tx.tx.txid, status: .error(error ?? .other("Unknown error")), time: errorAt, amount: tx.tx.value))
+            }
+            return records.reversed()
         }
-
-        var state: BEFetcherState {
+        
+        private func fillEmptyVoteAt(_ timestamp: LockAndMint.ProcessingTx.Timestamp) -> [UInt: Date] {
+            var voteAt = timestamp.voteAt
+            if voteAt.keys.count < LockAndMint.ProcessingTx.maxVote {
+                // fill votes
+                let count = UInt(voteAt.keys.count)
+                for i in count...LockAndMint.ProcessingTx.maxVote {
+                    voteAt[i] = timestamp.lastVoteAt
+                }
+            }
+            return voteAt
+        }
+        
+        var dataDidChange: AnyPublisher<Void, Never> {
+            processingTxsPublisher.map { _ in () }
+                .receive(on: RunLoop.main)
+                .eraseToAnyPublisher()
+        }
+        
+        var state: BECollectionView_Core.BEFetcherState {
             .loaded
         }
-
-        var isPaginationEnabled: Bool {
-            false
-        }
-
+        
+        let isPaginationEnabled: Bool = false
+        
         func reload() {
             // do nothing
         }
-
+        
         func convertDataToAnyHashable() -> [AnyHashable] {
             data as [AnyHashable]
         }
-
+        
         func fetchNext() {
             // do nothing
-        }
-
-        func setState(_: BEFetcherState, withData _: [AnyHashable]?) {
-            // do nothing
-        }
-
-        func refreshUI() {
-            // do nothing
-        }
-
-        func getCurrentPage() -> Int? {
-            0
         }
     }
 }

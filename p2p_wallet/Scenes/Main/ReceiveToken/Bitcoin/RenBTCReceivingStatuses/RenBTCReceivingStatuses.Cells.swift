@@ -5,7 +5,7 @@
 //  Created by Chung Tran on 05/10/2021.
 //
 
-import BECollectionView_Combine
+import BECollectionView
 import Foundation
 import RenVMSwift
 
@@ -41,8 +41,10 @@ extension RenBTCReceivingStatuses {
             descriptionLabel.text = tx.statusString
 
             descriptionLabel.textColor = .textSecondary
-            if tx.mintedAt != nil {
+            if tx.state.isMinted {
                 descriptionLabel.textColor = .attentionGreen
+            } else if tx.state.isIgnored {
+                descriptionLabel.textColor = .alert
             }
         }
 
@@ -58,22 +60,25 @@ extension RenBTCReceivingStatuses {
 
         override func build() -> UIView {
             UIStackView(axis: .vertical, alignment: .fill) {
-                UIStackView(axis: .horizontal, alignment: .top, distribution: .fill) {
-                    UIStackView(axis: .vertical, spacing: 4, alignment: .fill, distribution: .fill) {
-                        UILabel(text: "<0.002 renBTC>", textSize: 15, weight: .medium, numberOfLines: 8)
+                UIStackView(axis: .vertical, spacing: 8, alignment: .fill, distribution: .fill) {
+                    UIStackView(axis: .horizontal, spacing: 8, alignment: .fill, distribution: .fill) {
+                        UILabel(text: "<0.002 renBTC>", textSize: 15, weight: .medium, numberOfLines: 0)
+                            .withContentHuggingPriority(.required, for: .horizontal)
                             .setup { view in titleLabel = view }
-                        UILabel(
-                            text: "<Minting>",
-                            textSize: 13,
-                            weight: .medium,
-                            textColor: .textSecondary,
-                            numberOfLines: 0
-                        )
-                            .setup { view in descriptionLabel = view }
+                        UILabel(textSize: 15, weight: .semibold)
+                            .setup { view in
+                                view.textAlignment = .right
+                                resultLabel = view
+                            }
                     }
-                    UIView.spacer
-                    UILabel(textSize: 15, weight: .semibold)
-                        .setup { view in resultLabel = view }
+                    UILabel(
+                        text: "<Minting>",
+                        textSize: 13,
+                        weight: .medium,
+                        textColor: .textSecondary,
+                        numberOfLines: 2
+                    )
+                        .setup { view in descriptionLabel = view }
                 }
                 UIView.defaultSeparator().padding(.init(only: .top, inset: 14))
             }.padding(.init(x: 20, y: 12))
@@ -84,6 +89,7 @@ extension RenBTCReceivingStatuses {
             titleLabel.text = tx.stringValue
             resultLabel.isHidden = true
             descriptionLabel.text = tx.time.string(withFormat: "HH:mm a")
+            titleLabel.textColor = .textBlack
             switch tx.status {
             case .waitingForConfirmation:
                 resultLabel.isHidden = false
@@ -103,6 +109,8 @@ extension RenBTCReceivingStatuses {
                     .text =
                     "+ \((tx.amount ?? 0).convertToBalance(decimals: 8).toString(maximumFractionDigits: 9)) renBTC"
                 resultLabel.textColor = .textGreen
+            case .error:
+                titleLabel.textColor = .alert
             default:
                 break
             }

@@ -6,6 +6,7 @@
 //
 
 import Foundation
+import RenVMSwift
 
 enum RenBTCReceivingStatuses {
     enum NavigatableScene {
@@ -13,14 +14,14 @@ enum RenBTCReceivingStatuses {
     }
 
     struct Record: Hashable {
-        enum Status: String, Equatable {
-            case waitingForConfirmation, confirmed, submitted, minted
+        enum Status: Hashable, Equatable {
+            case waitingForConfirmation, confirmed, submitted, minted, error(LockAndMint.ProcessingError)
         }
 
         let txid: String
         let status: Status
         let time: Date
-        var vout: UInt64?
+        var vout: UInt?
         var amount: UInt64?
 
         var stringValue: String {
@@ -36,6 +37,8 @@ enum RenBTCReceivingStatuses {
                     (amount ?? 0).convertToBalance(decimals: 8)
                         .toString(maximumFractionDigits: 9)
                 )
+            case .error(let error):
+                return error.errorDescription ?? L10n.unknownError
             }
         }
     }
