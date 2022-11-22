@@ -8,6 +8,7 @@
 import Combine
 import CombineCocoa
 import UIKit
+import KeyAppUI
 
 extension OrcaSwapV2 {
     final class RootView: ScrollableVStackRootView {
@@ -21,8 +22,13 @@ extension OrcaSwapV2 {
 
         // MARK: - Subviews
 
-        private lazy var nextButton = WLStepButton.main(image: .buttonCheckSmall, text: L10n.reviewAndConfirm)
-            .onTap(self, action: #selector(buttonNextDidTouch))
+        private lazy var nextButton = TextButton(
+            title: L10n.reviewAndConfirm,
+            style: .primary,
+            size: .large
+        ).onTap { [weak self] in
+            self?.buttonNextDidTouch()
+        }
 
         private lazy var mainView = OrcaSwapV2.MainSwapView(viewModel: viewModel)
         private let showDetailsButton = ShowHideButton(closedText: L10n.showDetails, openedText: L10n.hideDetails)
@@ -42,6 +48,9 @@ extension OrcaSwapV2 {
             scrollView.showsVerticalScrollIndicator = false
             layout()
             bind()
+            DispatchQueue.main.asyncAfter(wallDeadline: .now() + 0.5) {
+                self.makeFromFirstResponder()
+            }
         }
 
         func makeFromFirstResponder() {
@@ -169,8 +178,8 @@ extension OrcaSwapV2 {
                 text = "payingFeeWalletNotFound"
             }
 
-            nextButton.setTitle(text: text)
-            nextButton.setImage(image: image)
+            nextButton.title = text
+            nextButton.leadingImage = image
         }
 
         @objc

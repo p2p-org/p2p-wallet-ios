@@ -5,12 +5,13 @@
 import KeyAppUI
 import Onboarding
 import SwiftUI
+import Resolver
 
 struct RecoveryKitView: View {
-    @SwiftUI.Environment(\.presentationMode) var presentationMode: Binding<PresentationMode>
     @SwiftUI.Environment(\.safeAreaInsets) private var safeAreaInsets: EdgeInsets
 
-    let viewModel: RecoveryKitViewModel
+    @ObservedObject var viewModel: RecoveryKitViewModel
+    @ObservedObject var walletSettings: WalletSettings = Resolver.resolve()
 
     var body: some View {
         ScrollView {
@@ -32,10 +33,10 @@ struct RecoveryKitView: View {
                 .padding(.bottom, 24)
                 .background(Color(Asset.Colors.lime.color))
                 .cornerRadius(28)
-                .overlay(
-                    helpButton,
-                    alignment: .topTrailing
-                )
+                // .overlay(
+                //    helpButton,
+                //    alignment: .topTrailing
+                // )
                 .padding(.top, safeAreaInsets.top + 50)
 
                 // TKey info
@@ -81,10 +82,35 @@ struct RecoveryKitView: View {
                 }
 
                 // Seed phrase button
-                RecoveryKitCell(title: L10n.seedPhrase) { [weak viewModel] in
-                    viewModel?.openSeedPhrase()
+                RecoveryKitCell(
+                    icon: .keyIcon,
+                    title: L10n.seedPhrase
+                ) { [weak viewModel] in viewModel?.openSeedPhrase() }
+                
+                if walletSettings.deleteWeb3AuthRequest == nil {
+                    RecoveryKitCell(
+                        icon: .alertIcon,
+                        title: L10n.deleteMyAccount
+                    ) { [weak viewModel] in viewModel?.deleteAccount() }
+                } else {
+                    Button { [weak viewModel] in
+                        viewModel?.deleteAccount()                        
+                    } label: {
+                        RecoveryKitRow(
+                            icon: .alertIcon,
+                            title: L10n.deleteMyAccount,
+                            subtitle: L10n.pending.uppercaseFirst + "..."
+                        )
+                        .foregroundColor(Color(Asset.Colors.night.color))
+                        .background(Color(Asset.Colors.snow.color))
+                        .cornerRadius(20)
+                        .overlay(
+                            RoundedRectangle(cornerRadius: 20)
+                                .stroke(Color(Asset.Colors.rain.color), lineWidth: 1)
+                        )
+                    }
                 }
-                Spacer()
+                
             }.padding(.horizontal, 16)
         }
         .background(Color(Asset.Colors.cloud.color))
@@ -121,8 +147,27 @@ struct RecoveryKitView: View {
 
 struct RecoveryKitView_Previews: PreviewProvider {
     static var previews: some View {
-        NavigationView {
-            RecoveryKitView(viewModel: .init())
+        
+        let provider = MockedWalletMeradataProvider(
+            .init(
+                deviceName: "iPhone 11",
+                email: "abc@gmail.com",
+                authProvider: "google",
+                phoneNumber: "+79183331231"
+            )
+        )
+        
+        let service = WalletMetadataService(
+            localProvider: provider,
+            remoteProvider: provider
+        )
+        
+        Task { try await service.update() }
+        
+        return NavigationView {
+            RecoveryKitView(
+                viewModel: .init(walletMetadataService: service)
+            )
         }
     }
 }

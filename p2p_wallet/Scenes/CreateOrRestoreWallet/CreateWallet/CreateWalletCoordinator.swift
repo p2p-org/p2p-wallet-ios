@@ -3,7 +3,7 @@
 // found in the LICENSE file.
 
 import Combine
-import Foundation
+import KeyAppUI
 import Onboarding
 import UIKit
 
@@ -17,7 +17,7 @@ final class CreateWalletCoordinator: Coordinator<CreateWalletResult> {
     // MARK: - NavigationController
 
     private let parent: UIViewController
-    private let navigationController: UINavigationController
+    private let navigationController: OnboardingNavigationController
 
     private let viewModel: CreateWalletViewModel
     private var result = PassthroughSubject<CreateWalletResult, Never>()
@@ -30,7 +30,7 @@ final class CreateWalletCoordinator: Coordinator<CreateWalletResult> {
 
     init(
         parent: UIViewController,
-        navigationController: UINavigationController,
+        navigationController: OnboardingNavigationController,
         initialState: CreateWalletFlowState? = nil,
         animated: Bool = true
     ) {
@@ -116,20 +116,19 @@ final class CreateWalletCoordinator: Coordinator<CreateWalletResult> {
 
         if to.step >= (from?.step ?? -1) {
             if case .socialSignIn(.socialSignInProgress) = to {
-                fadeTo(vc)
-            }
-            else {
+                navigationController.fadeTo(vc)
+            } else {
                 navigationController.setViewControllers([vc], animated: true)
             }
         } else {
             if let from = from, case .socialSignIn(.socialSignInProgress) = from {
-                fadeOut(vc)
-            }
-            else {
+                navigationController.fadeOut(vc)
+            } else {
                 navigationController.setViewControllers([vc] + navigationController.viewControllers, animated: false)
                 navigationController.popToViewController(vc, animated: true)
             }
         }
+        displayIntermediateToastIfNeeded(from: from, to: to)
     }
 
     private func buildViewController(state: CreateWalletFlowState) -> UIViewController? {
@@ -146,23 +145,12 @@ final class CreateWalletCoordinator: Coordinator<CreateWalletResult> {
             return nil
         }
     }
-}
 
-private extension CreateWalletCoordinator {
-    func fadeTo(_ viewController: UIViewController) {
-        let transition: CATransition = CATransition()
-        transition.duration = 0.3
-        transition.type = CATransitionType.fade
-        navigationController.view.layer.add(transition, forKey: nil)
-        navigationController.setViewControllers([viewController], animated: false)
-    }
-
-    func fadeOut(_ viewController: UIViewController) {
-        let transition: CATransition = CATransition()
-        transition.duration = 0.3
-        transition.type = CATransitionType.fade
-        navigationController.view.layer.add(transition, forKey: nil)
-        navigationController.setViewControllers([viewController] + navigationController.viewControllers, animated: false)
-        navigationController.popToViewController(viewController, animated: false)
+    private func displayIntermediateToastIfNeeded(from: CreateWalletFlowState?, to: CreateWalletFlowState) {
+        guard case .bindingPhoneNumber = from, case .securitySetup = to else { return }
+        SnackBar(
+            title: "🎉",
+            text: L10n.yourWalletHasBeenCreatedJustAFewMomentsToStartACryptoAdventure
+        ).show(in: navigationController.view)
     }
 }

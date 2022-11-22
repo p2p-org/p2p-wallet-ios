@@ -233,7 +233,7 @@ private struct TextfieldView: UIViewRepresentable {
             if activeSide == .right {
                 text = (textField.text ?? "").fiatFormat
             } else if activeSide == .left {
-                text = (textField.text ?? "").cryptoCurrencyFormat
+                text = (textField.text ?? "").moonpayCryptocurrencyFormat
             } else {
                 text = textField.text ?? ""
             }
@@ -241,8 +241,11 @@ private struct TextfieldView: UIViewRepresentable {
         }
 
         func textFieldShouldBeginEditing(_ textField: UITextField) -> Bool {
-            let endPosition = textField.endOfDocument
-            textField.selectedTextRange = textField.textRange(from: endPosition, to: endPosition)
+            // uncomment if you'd like to put cursor to the end of the field
+//            DispatchQueue.main.async {
+//                let endPosition = textField.endOfDocument
+//                textField.selectedTextRange = textField.textRange(from: endPosition, to: endPosition)
+//            }
             return true
         }
 
@@ -297,5 +300,11 @@ struct BuyInputOutputView_Previews: PreviewProvider {
                 activeSide: .constant(.none)
             ) { _ in }
         }
+    }
+}
+
+private extension String {
+    var moonpayCryptocurrencyFormat: String {
+        formatToMoneyFormat(decimalSeparator: ".", maxDecimals: 2)
     }
 }

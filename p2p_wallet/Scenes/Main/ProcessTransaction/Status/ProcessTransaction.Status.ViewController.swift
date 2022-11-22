@@ -8,7 +8,7 @@
 import BEPureLayout
 import Combine
 import FeeRelayerSwift
-import Foundation
+import KeyAppUI
 import UIKit
 
 extension ProcessTransaction.Status {
@@ -95,20 +95,35 @@ extension ProcessTransaction.Status {
                         UILabel(text: nil, textSize: 13, numberOfLines: 0)
                             .setup { label in
                                 viewModel.pendingTransactionPublisher
-                                    .map(\.rawTransaction.networkFees)
-                                    .filter { $0 != nil }
-                                    .map {
-                                        $0!.total.convertToBalance(
-                                            decimals: $0!.token.decimals
-                                        ).toString()
-                                            + " "
-                                            + $0!.token.symbol
-                                    }
-                                    .map {
-                                        L10n
+                                    .map { pendingTransaction -> String? in
+                                        // top up finished but transaction throws
+                                        if pendingTransaction.status.error as? FeeRelayerError == .topUpSuccessButTransactionThrows,
+                                           let networkFees = pendingTransaction.rawTransaction.networkFees
+                                        {
+                                            let fee = networkFees.total
+                                                .convertToBalance(
+                                                    decimals: networkFees.token.decimals
+                                                ).toString()
+                                                + " "
+                                            + networkFees.token.symbol
+                                            
+                                            return L10n
+                                                .theFeeWasReservedSoYouWouldnTPayItAgainTheNextTimeYouCreatedATransactionOfTheSameType(
+                                                    fee
+                                                )
+                                        }
+                                        
+                                        // transaction has been confirmed in solana chain but hasn't been confirmed in bitcoin chain
+                                        switch pendingTransaction.rawTransaction {
+                                        case let tx as ProcessTransaction.SendTransaction where tx.network == .bitcoin && pendingTransaction.status.isFinalized:
+                                            return L10n.theTransactionHasBeenConfirmedInSolanaNetworkButYouHaveToTrackItAlsoOnBitcoinNetwork
+                                        default:
+                                            break
+                                        }
+                                        return L10n
                                             .theFeeWasReservedSoYouWouldnTPayItAgainTheNextTimeYouCreatedATransactionOfTheSameType(
-                                                $0
-                                            )
+                                                ""
+                                            ) // placeholder
                                     }
                                     .assign(to: \.text, on: label)
                                     .store(in: &subscriptions)
@@ -117,7 +132,21 @@ extension ProcessTransaction.Status {
                     .padding(.init(top: 0, left: 18, bottom: 14, right: 18))
                     .setup { view in
                         viewModel.pendingTransactionPublisher
-                            .map { $0.status.error != FeeRelayerError.topUpSuccessButTransactionThrows.message }
+                            .map { pendingTransaction -> Bool in
+                                // top up finished but transaction throws
+                                if pendingTransaction.status.error as? FeeRelayerError == .topUpSuccessButTransactionThrows {
+                                    return false
+                                }
+                                
+                                // transaction has been confirmed in solana chain but hasn't been confirmed in bitcoin chain
+                                switch pendingTransaction.rawTransaction {
+                                case let tx as ProcessTransaction.SendTransaction where tx.network == .bitcoin && pendingTransaction.status.isFinalized:
+                                    return false
+                                default:
+                                    break
+                                }
+                                return true
+                            }
                             .assign(to: \.isHidden, on: view)
                             .store(in: &subscriptions)
                     }
@@ -172,10 +201,12 @@ extension ProcessTransaction.Status {
 
                     // Buttons
                     BEVStack(spacing: 10) {
-                        WLStepButton.main(
-                            image: .buttonCheckSmall,
-                            text: L10n.done
-                        ).onTap { [weak self] in
+                        TextButton(
+                            title: L10n.done,
+                            style: .primary,
+                            size: .large,
+                            leading: .buttonCheckSmall
+                        ).onPressed { [weak self] _ in
                             self?.dismiss(animated: true) { [weak self] in
                                 self?.doneHandler?()
                             }

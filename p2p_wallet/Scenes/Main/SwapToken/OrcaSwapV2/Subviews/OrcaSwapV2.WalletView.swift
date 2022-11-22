@@ -12,6 +12,7 @@ import Foundation
 import Resolver
 import SolanaSwift
 import UIKit
+import KeyAppUI
 
 extension OrcaSwapV2 {
     final class WalletView: BEView {
@@ -40,11 +41,11 @@ extension OrcaSwapV2 {
             textColor: .textBlack,
             textAlignment: .right,
             keyboardType: .decimalPad,
-            placeholder: "0\(Locale.current.decimalSeparator ?? ".")0",
+            placeholder: "0",
             autocorrectionType: .no /* , rightView: useAllBalanceButton, rightViewMode: .always */
         )
 
-        private lazy var questionMarkView = UIImageView(width: 20, height: 20, image: .questionMarkCircleOutlined)
+        private lazy var questionMarkView = UIImageView(width: 20, height: 20, image: .questionMarkCircleOutlined, tintColor: Asset.Colors.night.color)
             .onTap(self, action: #selector(questionMarkDidTouch))
 
         init(type: WalletType, viewModel: OrcaSwapV2ViewModelType) {
@@ -112,8 +113,7 @@ extension OrcaSwapV2 {
             chooseWalletView.autoPinEdge(.bottom, to: .bottom, of: iconImageView, withOffset: 10)
         }
 
-        @discardableResult
-        override func becomeFirstResponder() -> Bool {
+        func makeFirstResponder() -> Bool {
             amountTextField.becomeFirstResponder()
         }
 
@@ -291,7 +291,7 @@ private extension OrcaSwapV2.WalletView {
             height: subviewsHeight,
             label: L10n.max.uppercased(),
             labelFont: .systemFont(ofSize: 15, weight: .medium),
-            textColor: .h5887ff
+            textColor: Asset.Colors.night.color
         )
 
         override var tintColor: UIColor! {

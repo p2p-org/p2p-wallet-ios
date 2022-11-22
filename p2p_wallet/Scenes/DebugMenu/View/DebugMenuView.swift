@@ -38,6 +38,8 @@ struct DebugMenuView: View {
                 }
                 Section(header: Text("Application")) {
                     TextFieldRow(title: "Wallet:", content: $globalAppState.forcedWalletAddress)
+                    TextFieldRow(title: "Relayer:", content: $globalAppState.forcedFeeRelayerEndpoint)
+                    Toggle("Prefer direct swap", isOn: $globalAppState.preferDirectSwap)
                     Button {
                         Task {
                             #if DEBUG
@@ -54,7 +56,7 @@ struct DebugMenuView: View {
                 
                 Section(header: Text("Fee relayer")) {
                     Toggle("Disable free transaction", isOn: $feeRelayerConfig.disableFeeTransaction)
-                        .valueChanged(value: feeRelayerConfig.disableFeeTransaction) { newValue in
+                        .valueChanged(value: feeRelayerConfig.disableFeeTransaction) { _ in
                             #if DEBUG
                             showDebugger(false)
                             #endif

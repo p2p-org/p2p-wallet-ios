@@ -30,7 +30,9 @@ class HomeWithTokensViewModel: ObservableObject {
     let earnShow: AnyPublisher<Void, Never>
     let walletShow: AnyPublisher<(pubKey: String, tokenSymbol: String), Never>
 
-    @Published var balance = ""
+    var actions: AnyPublisher<[WalletActionType], Never>
+    var balance: AnyPublisher<String, Never>
+
     @Published var scrollOnTheTop = true
 
     private var wallets = [Wallet]()
@@ -54,25 +56,23 @@ class HomeWithTokensViewModel: ObservableObject {
         swapShow = swapClicked.eraseToAnyPublisher()
         walletShow = walletClicked.eraseToAnyPublisher()
         earnShow = earnClicked.eraseToAnyPublisher()
+        actions = Just([WalletActionType.buy, .receive, .send, .swap]).eraseToAnyPublisher()
 
-        walletsRepository.statePublisher
+        balance = walletsRepository.statePublisher
             .filter { $0 == .loaded }
             .withLatestFrom(walletsRepository.dataPublisher)
             .map { data in
-                let data = data
+                let data = data ?? []
                 let equityValue = data.reduce(0) { $0 + $1.amountInCurrentFiat }
                 return "\(Defaults.fiat.symbol) \(equityValue.toString(maximumFractionDigits: 2))"
             }
             .assertNoFailure()
-            .receive(on: RunLoop.main)
-            .sink(receiveValue: { [weak self] in
-                self?.balance = $0
-            })
-            .store(in: &cancellables)
+            .debounce(for: 0.1, scheduler: RunLoop.main)
+            .eraseToAnyPublisher()
 
         walletsRepository.dataPublisher
             .assertNoFailure()
-            .receive(on: RunLoop.main)
+            .debounce(for: 0.1, scheduler: RunLoop.main)
             .sink(receiveValue: { [weak self] wallets in
                 guard let self = self else { return }
                 var wallets = wallets
@@ -113,20 +113,17 @@ class HomeWithTokensViewModel: ObservableObject {
             .async()
     }
 
-    func buy() {
-        buyClicked.send()
-    }
-
-    func receive() {
-        receiveClicked.send()
-    }
-
-    func send() {
-        sendClicked.send()
-    }
-
-    func swap() {
-        swapClicked.send()
+    func actionClicked(_ action: WalletActionType) {
+        switch action {
+        case .receive:
+            receiveClicked.send()
+        case .buy:
+            buyClicked.send()
+        case .send:
+            sendClicked.send()
+        case .swap:
+            swapClicked.send()
+        }
     }
 
     func earn() {
@@ -149,5 +146,11 @@ class HomeWithTokensViewModel: ObservableObject {
     func toggleHiddenTokensVisibility() {
         walletsRepository.toggleIsHiddenWalletShown()
         tokensIsHidden.toggle()
+    }
+}
+
+extension Wallet: Identifiable {
+    public var id: String {
+        return name + pubkey
     }
 }

@@ -12,7 +12,7 @@ import LocalAuthentication
 import Resolver
 import SolanaSwift
 
-final class SettingsViewModel: BaseViewModel {
+final class SettingsViewModel: BaseViewModel, ObservableObject {
     @Injected private var nameStorage: NameStorageType
     @Injected private var solanaStorage: SolanaAccountStorage
     @Injected private var analyticsManager: AnalyticsManager

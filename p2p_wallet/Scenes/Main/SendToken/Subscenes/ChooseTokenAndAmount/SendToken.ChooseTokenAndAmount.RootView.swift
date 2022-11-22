@@ -10,6 +10,7 @@ import Combine
 import CombineCocoa
 import Resolver
 import UIKit
+import KeyAppUI
 
 extension SendToken.ChooseTokenAndAmount {
     class RootView: BEView {
@@ -41,7 +42,7 @@ extension SendToken.ChooseTokenAndAmount {
                 textColor: .textBlack,
                 textAlignment: .right,
                 keyboardType: .decimalPad,
-                placeholder: "0\(Locale.current.decimalSeparator ?? ".")0",
+                placeholder: "0",
                 autocorrectionType: .no
             )
             tf.delegate = self
@@ -49,11 +50,14 @@ extension SendToken.ChooseTokenAndAmount {
         }()
 
         private lazy var equityValueLabel = UILabel(text: "\(Defaults.fiat.symbol) 0", textSize: 13)
-        private lazy var actionButton = WLStepButton.main(
-            image: viewModel.showAfterConfirmation ? .buttonCheckSmall : nil,
-            text: viewModel.showAfterConfirmation ? L10n.reviewAndConfirm : L10n.chooseDestinationWallet
-        )
-            .onTap(self, action: #selector(actionButtonDidTouch))
+        private lazy var actionButton = TextButton(
+            title: viewModel.showAfterConfirmation ? L10n.reviewAndConfirm : L10n.chooseDestinationWallet,
+            style: .primary,
+            size: .large,
+            leading: viewModel.showAfterConfirmation ? .buttonCheckSmall : nil
+        ).onTap { [weak self] in
+            self?.actionButtonDidTouch()
+        }
 
         #if DEBUG
             private lazy var errorLabel = UILabel(textColor: .alert, numberOfLines: 0, textAlignment: .center)
@@ -100,7 +104,7 @@ extension SendToken.ChooseTokenAndAmount {
                             .onTap(self, action: #selector(useAllBalance))
                         balanceLabel
                             .onTap(self, action: #selector(useAllBalance))
-                        UILabel(text: L10n.max.uppercased(), textSize: 15, weight: .medium, textColor: .h5887ff)
+                        UILabel(text: L10n.max.uppercased(), textSize: 15, weight: .medium, textColor: Asset.Colors.night.color)
                             .onTap(self, action: #selector(useAllBalance))
                     }
                     UIStackView(axis: .horizontal, spacing: 8, alignment: .center, distribution: .fill) {
@@ -119,10 +123,10 @@ extension SendToken.ChooseTokenAndAmount {
                         UIView.spacer
                         UIStackView(axis: .horizontal, spacing: 4, alignment: .center, distribution: .fill) {
                             equityValueLabel
-                            UIImageView(width: 20, height: 20, image: .arrowUpDown)
+                            UIImageView(width: 20, height: 20, image: .arrowUpDown.withTintColor(Asset.Colors.night.color))
                         }
                         .padding(.init(x: 18, y: 8), cornerRadius: 12)
-                        .border(width: 1, color: .defaultBorder)
+                        .border(width: 1, color: Asset.Colors.night.color)
                         .onTap(self, action: #selector(toggleCurrencyMode))
                     }
                 }
@@ -201,6 +205,7 @@ extension SendToken.ChooseTokenAndAmount {
 
             viewModel.amountPublisher
                 .removeDuplicates()
+                .skip(1) // skipping initial value
                 .withLatestFrom(viewModel.walletPublisher, resultSelector: { ($0, $1) })
                 .map { $0.0?.toString(maximumFractionDigits: Int($0.1?.token.decimals ?? 0), groupingSeparator: "") }
                 .assign(to: \.text, on: amountTextField)
@@ -256,7 +261,7 @@ extension SendToken.ChooseTokenAndAmount {
                         )
                 }
                 .receive(on: RunLoop.main)
-                .sink { [weak actionButton] in actionButton?.text = $0 }
+                .assign(to: \.title, on: actionButton)
                 .store(in: &subscriptions)
 
             viewModel.errorPublisher
@@ -267,7 +272,7 @@ extension SendToken.ChooseTokenAndAmount {
                             .buttonChooseTheRecipient
                     )
                 }
-                .sink { [weak actionButton] in actionButton?.image = $0 }
+                .assign(to: \.leadingImage, on: actionButton)
                 .store(in: &subscriptions)
 
             viewModel.errorPublisher

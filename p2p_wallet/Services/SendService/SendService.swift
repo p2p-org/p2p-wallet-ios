@@ -180,7 +180,8 @@ class SendService: SendServiceType {
         case .bitcoin:
             return try await renVMBurnAndReleaseService.burnAndRelease(
                 recipient: receiver,
-                amount: amount
+                amount: amount,
+                waitForReleasing: false
             )
         }
     }

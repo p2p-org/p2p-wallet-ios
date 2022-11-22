@@ -10,6 +10,7 @@ import Combine
 import Foundation
 import Resolver
 import SolanaSwift
+import OrcaSwapSwift
 
 extension OrcaSwapV2 {
     class ViewModel: BaseViewModel {
@@ -17,7 +18,7 @@ extension OrcaSwapV2 {
 
         @Injected var authenticationHandler: AuthenticationHandlerType
         @Injected var analyticsManager: AnalyticsManager
-        @Injected var swapService: Swap.Service
+        @Injected var swapService: SwapServiceType
         @Injected var walletsRepository: WalletsRepository
         @Injected var notificationsService: NotificationService
         @Injected var pricesService: PricesServiceType
@@ -137,7 +138,7 @@ extension OrcaSwapV2 {
                     }
 
                     self.tradablePoolsPairsSubject.request = { [weak self] in
-                        try await self?.swapService.getPoolPair(
+                        try await self?.swapService.getTradablePoolsPairs(
                             from: sourceWallet.token.address,
                             to: destinationWallet.token.address
                         ) ?? []

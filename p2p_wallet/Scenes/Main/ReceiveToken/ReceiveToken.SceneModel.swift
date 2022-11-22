@@ -21,7 +21,7 @@ protocol ReceiveSceneModel: BESceneModel {
     var hideAddressesHintSubject: PassthroughSubject<Void, Never> { get }
     var tokenListAvailabilityPublisher: AnyPublisher<Bool, Never> { get }
     var receiveSolanaViewModel: ReceiveTokenSolanaViewModelType { get }
-    var receiveBitcoinViewModel: ReceiveTokenBitcoinViewModelType { get }
+    var receiveBitcoinViewModel: ReceiveToken.ReceiveBitcoinViewModel { get }
     var shouldShowChainsSwitcher: Bool { get }
     var tokenWallet: Wallet? { get }
     var navigation: AnyPublisher<ReceiveToken.NavigatableScene?, Never> { get }
@@ -36,7 +36,7 @@ protocol ReceiveSceneModel: BESceneModel {
 
 extension ReceiveToken {
     @MainActor
-    class SceneModel: NSObject, ObservableObject, ReceiveSceneModel {
+    class SceneModel: NSObject, ReceiveSceneModel {
         @Injected private var clipboardManager: ClipboardManagerType
         @Injected private var notificationsService: NotificationService
         @Injected private var walletsRepository: WalletsRepository
@@ -45,7 +45,7 @@ extension ReceiveToken {
 
         private var subscriptions = [AnyCancellable]()
         let receiveSolanaViewModel: ReceiveTokenSolanaViewModelType
-        let receiveBitcoinViewModel: ReceiveTokenBitcoinViewModelType
+        let receiveBitcoinViewModel: ReceiveToken.ReceiveBitcoinViewModel
 
         // MARK: - Subjects
 
@@ -81,7 +81,6 @@ extension ReceiveToken {
             )
 
             receiveBitcoinViewModel = ReceiveToken.ReceiveBitcoinViewModel(
-                navigationSubject: navigationSubject,
                 hasExplorerButton: hasExplorerButton
             )
 
@@ -188,9 +187,15 @@ extension ReceiveToken {
                 .store(in: &subscriptions)
 
             hideAddressesHintSubject
-                .sink { [weak self] in
-                    self?.isAddressesHintHidden = true
+                .sink { [weak addressesHintIsHiddenSubject] in
+                    guard let addressesHintIsHiddenSubject = addressesHintIsHiddenSubject else { return }
+                    addressesHintIsHiddenSubject.accept(true)
                 }
+                .store(in: &subscriptions)
+
+            receiveBitcoinViewModel
+                .navigationPublisher
+                .assign(to: navigationSubject, on: self)
                 .store(in: &subscriptions)
         }
 

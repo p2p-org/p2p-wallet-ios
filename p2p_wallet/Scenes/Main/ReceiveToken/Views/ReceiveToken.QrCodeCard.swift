@@ -4,6 +4,7 @@
 
 import Combine
 import Foundation
+import KeyAppUI
 import Resolver
 import SolanaSwift
 
@@ -86,9 +87,9 @@ extension ReceiveToken {
 
                 // Action buttons
                 UIStackView(axis: .horizontal, alignment: .fill, distribution: .fillEqually) {
-                    UIButton.text(text: L10n.copy, image: .copyIcon, tintColor: .h5887ff)
+                    UIButton.text(text: L10n.copy, image: tinted(image: .copyIcon), tintColor: Asset.Colors.night.color)
                         .onTap { [unowned self] in self.onCopy?(pubKey) }
-                    UIButton.text(text: L10n.share, image: .share2, tintColor: .h5887ff)
+                    UIButton.text(text: L10n.share, image: tinted(image: .share2), tintColor: Asset.Colors.night.color)
                         .onTap { [unowned self] in
                             let image = try await qrImageRender.render(
                                 username: username,
@@ -100,7 +101,7 @@ extension ReceiveToken {
                                 self?.onShare?(image)
                             }
                         }
-                    UIButton.text(text: L10n.save, image: .imageIcon, tintColor: .h5887ff)
+                    UIButton.text(text: L10n.save, image: tinted(image: .imageIcon), tintColor: Asset.Colors.night.color)
                         .onTap { [unowned self] in
                             let image = try await qrImageRender.render(
                                 username: username,
@@ -144,6 +145,10 @@ extension ReceiveToken {
                 range: NSRange(location: address.length - 4, length: 4)
             )
             pubKeyView?.attributedText = address
+        }
+
+        private func tinted(image: UIImage) -> UIImage {
+            image.withTintColor(Asset.Colors.night.color)
         }
 
         func onCopy(callback: @escaping BECallback<String?>) -> Self {

@@ -36,6 +36,11 @@ final class EnterSMSCodeViewController: BaseOTPViewController {
         configureNavBar()
     }
 
+    override func viewDidLoad() {
+        super.viewDidLoad()
+        viewModel.viewDidLoad()
+    }
+
     override func viewDidAppear(_ animated: Bool) {
         super.viewDidAppear(animated)
         openKeyboard()

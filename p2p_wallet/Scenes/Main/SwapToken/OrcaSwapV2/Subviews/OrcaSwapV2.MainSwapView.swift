@@ -8,12 +8,16 @@
 import BEPureLayout
 import Combine
 import UIKit
+import KeyAppUI
 
 extension OrcaSwapV2 {
     final class MainSwapView: WLFloatingPanelView {
         private lazy var fromWalletView = WalletView(type: .source, viewModel: viewModel)
         private let switchButton = UIButton(width: 32, height: 32)
         private lazy var toWalletView = WalletView(type: .destination, viewModel: viewModel)
+        #if !RELEASE
+        private lazy var routeLabel = UILabel(text: nil, textColor: .alert, numberOfLines: 0)
+        #endif
         private let receiveAtLeastView = HorizontalLabelsWithSpacer()
 
         private let viewModel: OrcaSwapV2ViewModelType
@@ -33,13 +37,18 @@ extension OrcaSwapV2 {
         }
 
         func makeFromFirstResponder() {
-            fromWalletView.becomeFirstResponder()
+            fromWalletView.makeFirstResponder()
         }
 
         private func configureSubviews() {
             configureReceiveAtLeast()
 
-            switchButton.setImage(.swapSwitch, for: .normal)
+            switchButton.setImage(.arrowUpDown.withTintColor(Asset.Colors.night.color), for: .normal)
+            switchButton.backgroundColor = Asset.Colors.snow.color
+            switchButton.layer.borderColor = Asset.Colors.night.color.cgColor
+            switchButton.layer.borderWidth = 1
+            switchButton.layer.cornerRadius = 12
+            switchButton.layer.masksToBounds = true
             switchButton.addTarget(self, action: #selector(switchTapped), for: .touchUpInside)
         }
 
@@ -78,6 +87,9 @@ extension OrcaSwapV2 {
                     UIView.spacer
                 }
                 toWalletView
+                #if !RELEASE
+                routeLabel
+                #endif
                 receiveAtLeastView
             }
         }
@@ -102,7 +114,11 @@ extension OrcaSwapV2 {
                 .sink { [weak self] in
                     self?.setAtLeastText(string: $0)
                 }
-                .store(in: &subscriptions)
+            
+            #if !RELEASE
+            viewModel.routePublisher.assign(to: \.text, on: routeLabel).store(in: &subscriptions)
+            viewModel.routePublisher.map {$0 == nil}.assign(to: \.isHidden, on: routeLabel).store(in: &subscriptions)
+            #endif
         }
 
         @objc

@@ -30,6 +30,7 @@ final class TokenAmountTextField: BEDecimalTextField {
 
     private func bind() {
         textPublisher
+            .filter { !($0?.isEmpty ?? false) && $0 != "0" }
             .map { $0?.cryptoCurrencyFormat }
             .sink { [weak self] text in
                 self?.text = text
@@ -40,6 +41,16 @@ final class TokenAmountTextField: BEDecimalTextField {
             .publisher(for: UITextField.textDidEndEditingNotification, object: self)
             .sink { [weak self] _ in
                 self?.text = self?.text?.withoutLastZeros
+            }
+            .store(in: &subscriptions)
+        
+        NotificationCenter.default
+            .publisher(for: UITextField.editingDidBegin, object: self)
+            .receive(on: RunLoop.main)
+            .sink { [weak self] _ in
+                guard let self = self else {return}
+                let endPosition = self.endOfDocument
+                self.selectedTextRange = self.textRange(from: endPosition, to: endPosition)
             }
             .store(in: &subscriptions)
     }

@@ -10,6 +10,7 @@ import BEPureLayout
 import Combine
 import SolanaSwift
 import UIKit
+import KeyAppUI
 
 extension SendToken.ChooseRecipientAndNetwork.SelectAddress {
     class RootView: ScrollableVStackRootView {
@@ -84,8 +85,10 @@ extension SendToken.ChooseRecipientAndNetwork.SelectAddress {
                 self?.viewModel.navigate(to: .selectPayingWallet)
             }
 
-        private lazy var actionButton = WLStepButton.main(text: L10n.chooseTheRecipientToProceed)
-            .onTap(self, action: #selector(actionButtonDidTouch))
+        private lazy var actionButton = TextButton(title: L10n.chooseTheRecipientToProceed, style: .primary, size: .large)
+            .onTap { [weak self] in
+                self?.actionButtonDidTouch()
+            }
 
         // MARK: - Initializer
 
@@ -276,7 +279,7 @@ extension SendToken.ChooseRecipientAndNetwork.SelectAddress {
 
             viewModel.isValidPublisher
                 .map { $0 ? UIImage.buttonCheckSmall : nil }
-                .sink { [weak actionButton] in actionButton?.image = $0 }
+                .assign(to: \.leadingImage, on: actionButton)
                 .store(in: &subscriptions)
 
             Publishers.CombineLatest4(
@@ -344,7 +347,7 @@ extension SendToken.ChooseRecipientAndNetwork.SelectAddress {
                     return L10n.reviewAndConfirm
                 }
                 .receive(on: RunLoop.main)
-                .sink { [weak actionButton] in actionButton?.text = $0 }
+                .assign(to: \.title, on: actionButton)
                 .store(in: &subscriptions)
 
             viewModel.warningPublisher

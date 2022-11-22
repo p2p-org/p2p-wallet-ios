@@ -9,7 +9,7 @@ import Combine
 import Foundation
 import SolanaSwift
 
-protocol OrcaSwapV2ViewModelType: WalletDidSelectHandler, DetailFeesViewModelType {
+protocol OrcaSwapV2ViewModelType: WalletDidSelectHandler, AnyObject, DetailFeesViewModelType {
     var navigatableScenePublisher: AnyPublisher<OrcaSwapV2.NavigatableScene?, Never> { get }
     var loadingStatePublisher: AnyPublisher<LoadableState, Never> { get }
 
@@ -27,6 +27,9 @@ protocol OrcaSwapV2ViewModelType: WalletDidSelectHandler, DetailFeesViewModelTyp
     var isShowingDetailsPublisher: AnyPublisher<Bool, Never> { get }
     var isShowingShowDetailsButtonPublisher: AnyPublisher<Bool, Never> { get }
     var showHideDetailsButtonTapSubject: PassthroughSubject<Void, Never> { get }
+    #if !RELEASE
+    var routePublisher: AnyPublisher<String?, Never> { get }
+    #endif
     var activeInputField: OrcaSwapV2.ActiveInputField { get set }
     var slippage: Double { get }
 

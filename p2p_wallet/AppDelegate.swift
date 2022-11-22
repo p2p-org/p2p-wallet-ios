@@ -47,6 +47,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
 
         setupLoggers()
         setupAppsFlyer()
+        setupDefaultCurrency()
 
         // Sentry
         SentrySDK.start { options in
@@ -208,6 +209,12 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
 
         navBarAppearence.shadowImage = UIImage()
         navBarAppearence.isTranslucent = true
+    }
+
+    func setupDefaultCurrency() {
+        guard Defaults.fiat != .usd else { return }
+        // Migrate all users to default currency
+        Defaults.fiat = .usd
     }
 }
 

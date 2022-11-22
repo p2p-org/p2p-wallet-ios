@@ -8,6 +8,7 @@
 import BEPureLayout
 import Combine
 import UIKit
+import KeyAppUI
 
 extension History {
     class ErrorView: BEView {
@@ -33,12 +34,10 @@ extension History {
             numberOfLines: 2,
             textAlignment: .center
         )
-        private let actionButton = UIButton(
-            height: 64,
-            backgroundColor: ._5887ff,
-            cornerRadius: 12,
-            label: L10n.tryAgain,
-            labelFont: .systemFont(ofSize: 17, weight: .bold)
+        private let actionButton = TextButton(
+            title: L10n.tryAgain,
+            style: .primary,
+            size: .large
         )
 
         override func commonInit() {
@@ -55,18 +54,16 @@ extension History {
             addSubview(stackView)
             addSubview(actionButton)
 
-            NSLayoutConstraint.activate([
-                actionButton.bottomAnchor.constraint(equalTo: bottomAnchor, constant: -16),
-                actionButton.leadingAnchor.constraint(equalTo: leadingAnchor, constant: 16),
-                actionButton.trailingAnchor.constraint(equalTo: trailingAnchor, constant: -16),
-                stackView.centerXAnchor.constraint(equalTo: centerXAnchor),
-                stackView.centerYAnchor.constraint(equalTo: centerYAnchor),
-            ])
+            stackView.autoPinEdge(toSuperviewEdge: .top, withInset: 0, relation: .greaterThanOrEqual)
+            stackView.autoPinEdge(toSuperviewEdge: .bottom, withInset: 0, relation: .greaterThanOrEqual)
+            stackView.autoPinEdge(toSuperviewEdge: .leading, withInset: 0, relation: .greaterThanOrEqual)
+            stackView.autoPinEdge(toSuperviewEdge: .trailing, withInset: 0, relation: .greaterThanOrEqual)
+            stackView.autoCenterInSuperview()
+            actionButton.autoPinEdgesToSuperviewSafeArea(with: .init(x: 16, y: 16), excludingEdge: .top)
 
-            actionButton
-                .onTap { [weak self] in
-                    self?.tryAgainClicked.send()
-                }
+            actionButton.onPressed { [weak self] _ in
+                self?.tryAgainClicked.accept(())
+            }
         }
     }
 }

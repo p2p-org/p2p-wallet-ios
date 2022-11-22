@@ -7,6 +7,7 @@ import BEPureLayout
 import Combine
 import CombineCocoa
 import Foundation
+import KeyAppUI
 import Resolver
 import UIKit
 
@@ -90,7 +91,7 @@ extension ReceiveToken {
                                         height: 50,
                                         label: L10n.whatTokensCanIReceive,
                                         labelFont: .systemFont(ofSize: 15, weight: .medium),
-                                        textColor: .h5887ff
+                                        textColor: Asset.Colors.night.color
                                     ).onTap { [weak self] in
                                         self?.navigate(to: .showSupportedTokens)
                                     }
@@ -217,7 +218,7 @@ extension ReceiveToken.ViewController {
         case .showRenBTCReceivingStatus:
             let vm = RenBTCReceivingStatuses.ViewModel(receiveBitcoinViewModel: viewModel.receiveBitcoinViewModel)
             let vc = RenBTCReceivingStatuses.ViewController(viewModel: vm)
-            show(vc, sender: nil)
+            show(UINavigationController(rootViewController: vc), sender: nil)
         case let .share(address, qrCode):
             guard let qrCode = qrCode, let address = address else {
                 return

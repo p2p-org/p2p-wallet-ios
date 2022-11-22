@@ -11,6 +11,7 @@ import Combine
 import Foundation
 import Resolver
 import UIKit
+import KeyAppUI
 
 extension SendToken {
     final class ConfirmViewController: BaseVC {
@@ -184,13 +185,7 @@ extension SendToken {
 
                     // Fees
                     FeesView(viewModel: viewModel) { [weak self] title, message in
-                        self?.showAlert(
-                            title: title,
-                            message: message,
-                            buttonTitles: [L10n.ok],
-                            highlightedButtonIndex: 0,
-                            completion: nil
-                        )
+                        self?.showAlert(title: title, message: message)
                     }
                 }
 
@@ -250,7 +245,12 @@ extension SendToken {
             scrollView.autoPinEdge(toSuperviewEdge: .leading)
             scrollView.autoPinEdge(toSuperviewEdge: .trailing)
 
-            let actionButton = WLStepButton.main(image: .buttonSendSmall, text: L10n.sendNow)
+            let actionButton = TextButton(
+                title: L10n.sendNow,
+                style: .primary,
+                size: .large,
+                leading: .buttonSendSmall
+            )
                 .setup { view in
                     Publishers.CombineLatest(
                         viewModel.walletPublisher,
@@ -262,7 +262,7 @@ extension SendToken {
                             return L10n.send(amount.toString(maximumFractionDigits: 9), symbol)
                         }
                         .receive(on: RunLoop.main)
-                        .sink { [weak view] in view?.text = $0 }
+                        .assign(to: \.title, on: view)
                         .store(in: &subscriptions)
 
                     Publishers.CombineLatest3(
@@ -270,11 +270,11 @@ extension SendToken {
                         viewModel.amountPublisher.map { $0 != nil },
                         viewModel.recipientPublisher.map { $0 != nil }
                     )
-                        .map { $0 && $1 && $2 }
+                        .map { $0.allSatisfy { $0 }}
                         .assign(to: \.isEnabled, on: view)
                         .store(in: &subscriptions)
                 }
-                .onTap { [weak self] in
+                .onPressed { [weak self] _ in
                     self?.viewModel.authenticateAndSend()
                 }
 

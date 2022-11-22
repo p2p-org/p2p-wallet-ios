@@ -47,7 +47,10 @@ extension Main {
 
         override init() {
             super.init()
-            socket.connect()
+            if #available(iOS 15.0, *) {
+                socket.connect()
+            }
+            pricesService.startObserving()
             burnAndRelease.resume()
             
             // RenBTC service

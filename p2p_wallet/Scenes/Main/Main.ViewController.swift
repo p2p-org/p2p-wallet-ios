@@ -72,8 +72,13 @@ extension Main {
             }
 
             viewModel.moveToHistory
-                .sink { [weak self] in
-                    self?.tabBar.changeItem(to: .history)
+                .sink { [unowned self] in
+                    if available(.investSolendFeature) {
+                        tabBar.changeItem(to: .history)
+                    } else {
+                        // old position of history tab controller
+                        tabBar.changeItem(to: .invest)
+                    }
                 }
                 .store(in: &subscriptions)
             // locking status
@@ -93,6 +98,7 @@ extension Main {
         // MARK: - Locking
 
         private func showLockView() {
+            UIApplication.shared.kWindow?.endEditing(true)
             let lockView = LockView()
             UIApplication.shared.windows.last?.addSubview(lockView)
             lockView.autoPinEdgesToSuperviewEdges()

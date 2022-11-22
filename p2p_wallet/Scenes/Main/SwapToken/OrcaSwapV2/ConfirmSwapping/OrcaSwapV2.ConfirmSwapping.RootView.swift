@@ -9,6 +9,7 @@ import BEPureLayout
 import Combine
 import Foundation
 import UIKit
+import KeyAppUI
 
 extension OrcaSwapV2.ConfirmSwapping {
     final class RootView: ScrollableVStackRootView {
@@ -41,8 +42,12 @@ extension OrcaSwapV2.ConfirmSwapping {
             destinationWalletPublisher: viewModel.destinationWalletPublisher
         )
         private lazy var feesView = OrcaSwapV2.DetailFeesView(viewModel: viewModel)
-        private lazy var actionButton = WLStepButton.main(image: .buttonSwapSmall, text: nil)
-            .onTap(self, action: #selector(actionButtonDidTouch))
+        private lazy var actionButton = TextButton(
+            title: "",
+            style: .primary,
+            size: .large,
+            leading: .buttonSwapSmall
+        )
 
         // MARK: - Initializers
 
@@ -134,12 +139,16 @@ extension OrcaSwapV2.ConfirmSwapping {
             )
                 .map { L10n.swap($0.0 ?? "", $0.1 ?? "") }
                 .receive(on: RunLoop.main)
-                .sink { [weak actionButton] in actionButton?.text = $0 }
+                .assign(to: \.title, on: actionButton)
                 .store(in: &subscriptions)
 
             feesView.clickHandler = { [weak self] fee in
                 guard let info = fee.info else { return }
                 self?.viewModel.showFeesInfo(info)
+            }
+
+            actionButton.onPressed { [weak self] _ in
+                self?.actionButtonDidTouch()
             }
         }
 

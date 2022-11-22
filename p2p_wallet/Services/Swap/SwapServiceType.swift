@@ -7,45 +7,7 @@
 
 import Foundation
 import SolanaSwift
-
-struct Swap {
-    typealias Service = SwapServiceType
-    typealias PoolsPair = SwapServicePoolsPair
-    typealias Error = SwapError
-
-    enum InputMode {
-        case source
-        case target
-    }
-
-    enum PayingTokenMode {
-        /// Allow to use any token to pay a fee
-        case any
-        /// Only allow to use native sol to pay a fee
-        case onlySol
-    }
-
-    struct SwapInfo {
-        /// This property defines a mode for paying fee.
-        let payingTokenMode: PayingTokenMode
-    }
-
-    struct FeeInfo {
-        /**
-         Get all fees categories. For example: account creation fee, network fee, etc.
-         */
-        let fees: [PayingFee]
-    }
-}
-
-/// Swap configuration
-protocol SwapServicePoolsPair {
-    func getMinimumAmountOut(inputAmount: UInt64, slippage: Double) -> UInt64?
-
-    func getInputAmount(fromEstimatedAmount estimatedAmount: UInt64) -> UInt64?
-
-    func getOutputAmount(fromInputAmount inputAmount: UInt64) -> UInt64?
-}
+import OrcaSwapSwift
 
 ///  This protocol describes an interface for swapping service.
 ///  In general you have to call `load` method first to prepare a service.
@@ -54,10 +16,22 @@ protocol SwapServiceType {
     func load() async throws
 
     /// Determine the all exchange route.
-    func getPoolPair(
+    func getTradablePoolsPairs(
         from sourceMint: String,
         to destinationMint: String
-    ) async throws -> [Swap.PoolsPair]
+    ) async throws -> [PoolsPair]
+    
+    /// Find best route (poolsPair for swapping) for user's input amount
+    func findBestPoolsPairForInputAmount(
+        _ inputAmount: UInt64,
+        from poolsPairs: [PoolsPair]
+    ) throws -> PoolsPair?
+    
+    /// Find best route (poolsPair for swapping) for user's estimated amount
+    func findBestPoolsPairForEstimatedAmount(
+        _ estimatedAmount: UInt64,
+        from poolsPairs: [PoolsPair]
+    ) throws -> PoolsPair?
 
     /// Process swap
     func swap(
@@ -67,7 +41,7 @@ protocol SwapServiceType {
         destinationTokenMint: String,
         payingTokenAddress: String?,
         payingTokenMint: String?,
-        poolsPair: Swap.PoolsPair,
+        poolsPair: PoolsPair,
         amount: UInt64,
         slippage: Double
     ) async throws -> [String]
@@ -77,11 +51,11 @@ protocol SwapServiceType {
         sourceMint: String,
         destinationAddress: String?,
         destinationToken: Token,
-        bestPoolsPair: Swap.PoolsPair?,
+        bestPoolsPair: PoolsPair?,
         payingWallet: Wallet?,
         inputAmount: Double?,
         slippage: Double
-    ) async throws -> Swap.FeeInfo
+    ) async throws -> SwapFeeInfo
 
     /// Calculate fee for swapping
     func findPosibleDestinationMints(
@@ -98,4 +72,11 @@ protocol SwapServiceType {
 enum SwapError: Error {
     case incompatiblePoolsPair
     case feeRelayIsNotReady
+}
+
+struct SwapFeeInfo {
+    /**
+     Get all fees categories. For example: account creation fee, network fee, etc.
+     */
+    let fees: [PayingFee]
 }

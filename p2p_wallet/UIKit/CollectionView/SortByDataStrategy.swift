@@ -1,5 +1,8 @@
 //
-// Created by Giang Long Tran on 06.01.22.
+//  SortByDataStrategy.swift
+//  p2p_wallet
+//
+//  Created by Chung Tran on 14/11/2022.
 //
 
 import BECollectionView_Combine

@@ -7,6 +7,7 @@
 
 import Combine
 import Foundation
+import KeyAppUI
 
 extension ConfirmReceivingBitcoin.ViewController {
     func createRenBTCView() -> BEVStack {
@@ -84,7 +85,7 @@ extension ConfirmReceivingBitcoin.ViewController {
     }
 
     func createRenBTCButton() -> UIView {
-        WLStepButton.main(text: "Pay 0.509 USDC & Continue")
+        TextButton(title: "Pay 0.509 USDC & Continue", style: .primary, size: .large)
             .setup { button in
                 Publishers.CombineLatest(
                     viewModel.totalFeePublisher,
@@ -97,10 +98,10 @@ extension ConfirmReceivingBitcoin.ViewController {
                         return L10n.payAndContinue(fee.toString(maximumFractionDigits: 9) + " " + wallet.token.symbol)
                     }
                     .receive(on: RunLoop.main)
-                    .sink { [weak button] in button?.text = $0 }
+                    .assign(to: \.title, on: button)
                     .store(in: &subscriptions)
             }
-            .onTap { [unowned self] in
+            .onPressed { [unowned self] _ in
                 self.viewModel.createRenBTC()
             }
     }

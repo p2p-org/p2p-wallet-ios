@@ -59,49 +59,15 @@ struct HomeWithTokensView: View {
             viewModel.viewAppeared()
         }
     }
-    
+
     private var header: some View {
-        VStack(alignment: .center) {
-            // Balance
-            VStack(alignment: .center, spacing: 6) {
-                Text(viewModel.balance)
-                    .font(uiFont: .font(of: .largeTitle, weight: .bold))
-                    .foregroundColor(Color(Asset.Colors.night.color))
-                    .padding(.top, 24)
-                    .padding(.bottom, 32)
-                HStack(spacing: 32) {
-                    tokenOperation(title: L10n.buy, image: .homeBuy) {
-                        viewModel.buy()
-                    }
-                    tokenOperation(title: L10n.receive, image: .homeReceive) {
-                        viewModel.receive()
-                    }
-                    tokenOperation(title: L10n.send, image: .homeSend) {
-                        viewModel.send()
-                    }
-                    tokenOperation(title: L10n.swap, image: .homeSwap) {
-                        viewModel.swap()
-                    }
-                }
-                .frame(maxWidth: .infinity)
-                .padding(.bottom, 32)
-//                if !isEarnBannerClosed && available(.investSolendFeature) && available(.solendDisablePlaceholder) {
-//                    EarnBannerView {
-//                        viewModel.earn()
-//                    } closeAction: {
-//                        Defaults.isEarnBannerClosed = true
-//                        withAnimation {
-//                            isEarnBannerClosed = true
-//                        }
-//                    }
-//                    .onTapGesture {
-//                        viewModel.earn()
-//                    }
-//                    .padding(.horizontal, 16)
-//                }
+        ActionsPanelView(
+            actionsPublisher: viewModel.actions,
+            balancePublisher: viewModel.balance,
+            action: {
+                viewModel.actionClicked($0)
             }
-            .background(Color(Asset.Colors.smoke.color))
-        }
+        )
     }
     
     private var content: some View {
@@ -112,12 +78,8 @@ struct HomeWithTokensView: View {
                 .padding(.horizontal, 16)
                 .padding(.bottom, 8)
             wrappedList(itemsCount: viewModel.items.count) {
-                ForEach(viewModel.items, id: \.pubkey) {
-                    if $0.isNativeSOL {
-                        tokenCell(wallet: $0)
-                    } else {
-                        swipeTokenCell(isVisible: true, wallet: $0)
-                    }
+                ForEach(viewModel.items) {
+                    swipeTokenCell(isVisible: true, wallet: $0)
                 }
             }
             if !viewModel.hiddenItems.isEmpty {
@@ -144,7 +106,7 @@ struct HomeWithTokensView: View {
                 )
                 if !viewModel.tokensIsHidden {
                     wrappedList(itemsCount: viewModel.hiddenItems.count) {
-                        ForEach(viewModel.hiddenItems, id: \.token.symbol) {
+                        ForEach(viewModel.hiddenItems) {
                             swipeTokenCell(isVisible: false, wallet: $0)
                         }
                         .transition(AnyTransition.opacity.animation(.linear(duration: 0.3)))

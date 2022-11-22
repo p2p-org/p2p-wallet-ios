@@ -36,6 +36,15 @@ extension TransactionStatus {
             return 1
         }
     }
+    
+    var isFinalized: Bool {
+        switch self {
+        case .finalized:
+            return true
+        default:
+            return false
+        }
+    }
 
     var error: String? {
         switch self {

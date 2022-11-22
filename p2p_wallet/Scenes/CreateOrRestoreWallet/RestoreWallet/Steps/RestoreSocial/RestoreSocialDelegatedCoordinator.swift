@@ -35,6 +35,13 @@ final class RestoreSocialDelegatedCoordinator: DelegatedCoordinator<RestoreSocia
             return nil
         case .finish:
             return nil
+        case let .signInProgress(tokenID, email, deviceShare, customResult, _):
+             return handleInProgress(
+                tokenID: tokenID,
+                email: email,
+                deviceShare: deviceShare,
+                customResult: customResult
+             )
         }
     }
 
@@ -130,6 +137,24 @@ private extension RestoreSocialDelegatedCoordinator {
         }, info: { [weak self] in
             self?.openInfo()
         }, customActions: { actionView })
+        return UIHostingController(rootView: view)
+    }
+
+    func handleInProgress(tokenID: TokenID, email: String, deviceShare: String?, customResult: APIGatewayRestoreWalletResult?) -> UIViewController {
+        let viewModel = SocialSignInWaitViewModel(strategy: .restore)
+        let view = SocialSignInWaitView(viewModel: viewModel)
+        viewModel.initiated
+            .sinkAsync { [stateMachine] process in
+                process.start {
+                    try await stateMachine <- .signInTorus(tokenID: tokenID, email: email, deviceShare: deviceShare, customResult: customResult)
+                }
+            }
+            .store(in: &subscriptions)
+        viewModel.back
+            .sinkAsync { [stateMachine] in
+                try await stateMachine <- .back
+            }
+            .store(in: &subscriptions)
         return UIHostingController(rootView: view)
     }
 }
