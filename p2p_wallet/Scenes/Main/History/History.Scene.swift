@@ -78,7 +78,7 @@ extension History {
             NBENewDynamicSectionsCollectionView(
                 viewModel: viewModel,
                 mapDataToSections: { viewModel in
-                    CollectionViewMappingStrategy_RxSwift.byData(
+                    CollectionViewMappingStrategy.byData(
                         viewModel: viewModel,
                         forType: ParsedTransaction.self,
                         where: \ParsedTransaction.blockTime

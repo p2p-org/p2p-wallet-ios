@@ -5,7 +5,7 @@
 //  Created by Chung Tran on 05/10/2021.
 //
 
-import BECollectionView
+import BECollectionView_Combine
 import Foundation
 import RenVMSwift
 

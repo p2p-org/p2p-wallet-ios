@@ -55,7 +55,7 @@ extension History {
         private var modelPublisher: AnyPublisher<Model, Never> { modelRelay.receive(on: RunLoop.main).eraseToAnyPublisher() }
         
         private let usernameRelay = PassthroughSubject<String?, Never>()
-        private var username: AnyPublisher<String?, Never> { usernameRelay.receive(on: RunLoop.main).asDriver() }
+        private var username: AnyPublisher<String?, Never> { usernameRelay.receive(on: RunLoop.main).eraseToAnyPublisher() }
 
         fileprivate var transactionIdClicked = PassthroughSubject<Void, Never>()
         fileprivate var doneClicked = PassthroughSubject<Void, Never>()
@@ -117,7 +117,7 @@ extension History {
                                 ).setup {
                                     $0.layer.cornerRadius = 12
                                 }.onPressed { [weak self] _ in
-                                    self?.doneClicked.accept(())
+                                    self?.doneClicked.send(())
                                 }
                                 TextButton(
                                     title: L10n.transactionDetail,
@@ -125,7 +125,7 @@ extension History {
                                     size: .large
                                 )
                                 .onPressed { [weak self] _ in
-                                    self?.transactionDetailClicked.accept(())
+                                    self?.transactionDetailClicked.send(())
                                 }
                                 .padding(.init(only: .bottom, inset: 8))
                             }

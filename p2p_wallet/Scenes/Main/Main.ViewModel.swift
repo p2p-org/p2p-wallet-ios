@@ -50,12 +50,14 @@ extension Main {
             if #available(iOS 15.0, *) {
                 socket.connect()
             }
-            pricesService.startObserving()
             burnAndRelease.resume()
+            
+            Task {
+                await pricesService.startObserving()
+            }
             
             // RenBTC service
             Task {
-                await pricesService.startObserving()
                 try await lockAndMint.resume()
             }
 

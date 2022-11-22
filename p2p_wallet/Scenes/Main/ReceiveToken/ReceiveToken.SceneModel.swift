@@ -187,9 +187,8 @@ extension ReceiveToken {
                 .store(in: &subscriptions)
 
             hideAddressesHintSubject
-                .sink { [weak addressesHintIsHiddenSubject] in
-                    guard let addressesHintIsHiddenSubject = addressesHintIsHiddenSubject else { return }
-                    addressesHintIsHiddenSubject.accept(true)
+                .sink { [weak isAddressesHintHidden] in
+                    isAddressesHintHidden = true
                 }
                 .store(in: &subscriptions)
 

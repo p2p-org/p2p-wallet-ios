@@ -62,7 +62,7 @@ extension History {
             actionButton.autoPinEdgesToSuperviewSafeArea(with: .init(x: 16, y: 16), excludingEdge: .top)
 
             actionButton.onPressed { [weak self] _ in
-                self?.tryAgainClicked.accept(())
+                self?.tryAgainClicked.send(())
             }
         }
     }

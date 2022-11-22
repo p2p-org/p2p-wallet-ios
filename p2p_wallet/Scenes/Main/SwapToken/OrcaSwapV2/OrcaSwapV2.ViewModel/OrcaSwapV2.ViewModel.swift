@@ -34,8 +34,8 @@ extension OrcaSwapV2 {
         @Published var loadingState: LoadableState = .notRequested
         @Published var sourceWallet: Wallet?
         @Published var destinationWallet: Wallet?
-        let tradablePoolsPairsSubject = LoadableRelay<[Swap.PoolsPair]>(request: { [] })
-        @Published var bestPoolsPair: Swap.PoolsPair?
+        let tradablePoolsPairsSubject = LoadableRelay<[PoolsPair]>(request: { [] })
+        @Published var bestPoolsPair: PoolsPair?
         @Published var availableAmount: Double?
         @Published var inputAmount: Double?
         @Published var estimatedAmount: Double?

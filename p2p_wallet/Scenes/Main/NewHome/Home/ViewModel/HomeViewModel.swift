@@ -11,7 +11,7 @@ import Foundation
 import Resolver
 import SolanaSwift
 
-class HomeViewModel: BaseViewModel {
+class HomeViewModel: BaseViewModel, ObservableObject {
     @Injected private var analyticsManager: AnalyticsManager
     @Injected private var clipboardManager: ClipboardManagerType
     @Injected private var notificationsService: NotificationService
