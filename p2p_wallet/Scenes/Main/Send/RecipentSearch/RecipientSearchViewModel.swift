@@ -22,7 +22,7 @@ class RecipientSearchViewModel: ObservableObject {
             guard let self = self else { return }
             self.result = await self.recipientSearchService.search(
                 input: value,
-                state: .init(wallets: [], exchangeRate: [:])
+                env: .init(wallets: [], exchangeRate: [:])
             )
         }.store(in: &subscriptions)
     }
