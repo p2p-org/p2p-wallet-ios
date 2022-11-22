@@ -119,13 +119,12 @@ extension ReceiveToken {
                             viewModel.tokenTypeDriver.map { token in token != .solana }.drive(view.rx.isHidden)
                                 .disposed(by: disposeBag)
                         }
-                    ReceiveBitcoinView(
-                        viewModel: viewModel.receiveBitcoinViewModel
-                    )
-                        .setup { view in
-                            viewModel.tokenTypeDriver.map { token in token != .btc }.drive(view.rx.isHidden)
-                                .disposed(by: disposeBag)
-                        }
+                    ReceiveBitcoinView(viewModel: viewModel.receiveBitcoinViewModel).setup { view in
+                        viewModel.tokenTypeDriver
+                            .map { token in token != .btc }
+                            .drive(view.rx.isHidden)
+                            .disposed(by: disposeBag)
+                    }
 
                     UIStackView(axis: .vertical, spacing: 16, alignment: .fill) {
                         ShowHideButton(
@@ -222,8 +221,10 @@ extension ReceiveToken.ViewController {
             let vc = ReceiveToken.HelpViewController()
             present(vc, animated: true)
         case .networkSelection:
-            let vc = ReceiveToken.NetworkSelectionScene(viewModel: viewModel)
-            show(vc, sender: nil)
+            if available(.receiveRenBtcEnabled) {
+                let vc = ReceiveToken.NetworkSelectionScene(viewModel: viewModel)
+                show(vc, sender: nil)
+            }
         case .showSupportedTokens:
             let vm = SupportedTokens.ViewModel()
             let vc = SupportedTokens.ViewController(viewModel: vm)

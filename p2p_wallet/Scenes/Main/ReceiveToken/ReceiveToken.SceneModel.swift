@@ -69,9 +69,19 @@ extension ReceiveToken {
         ) {
             let isRenBTC = solanaTokenWallet?.token.isRenBTC ?? false
             let hasExplorerButton = !isOpeningFromToken
+
+            var solanaTokenWallet = solanaTokenWallet
+            if !available(.receiveRenBtcEnabled), isRenBTC {
+                solanaTokenWallet?.token = .nativeSolana
+            }
             tokenWallet = solanaTokenWallet
+
             canOpenTokensList = !isOpeningFromToken
-            screenCanHaveAddressesInfo = isOpeningFromToken && solanaTokenWallet != nil
+            if !available(.receiveRenBtcEnabled), isRenBTC {
+                screenCanHaveAddressesInfo = false
+            } else {
+                screenCanHaveAddressesInfo = isOpeningFromToken && solanaTokenWallet != nil
+            }
             screenCanHaveHint = isOpeningFromToken
             shouldShowChainsSwitcher = isOpeningFromToken ? isRenBTC : solanaTokenWallet?.isNativeSOL ?? true
             receiveSolanaViewModel = ReceiveToken.SolanaViewModel(
