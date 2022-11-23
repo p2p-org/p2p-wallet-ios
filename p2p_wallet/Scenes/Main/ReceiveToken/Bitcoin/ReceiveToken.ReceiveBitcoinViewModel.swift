@@ -138,7 +138,6 @@ extension ReceiveToken {
             Task {
                 guard let address = await persistentStore.gatewayAddress else { return }
                 await MainActor.run {
-                    analyticsManager.log(event: AmplitudeEvent.receiveAddressShare)
                     navigationSubject.send(
                         .share(address: address, qrCode: image)
                     )
