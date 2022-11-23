@@ -119,20 +119,13 @@ extension OrcaSwapV2 {
         }
 
         private func bind() {
-            // subjects
             let walletDriver: Driver<Wallet?>
-            let textFieldKeydownEvent: (Double) -> AnalyticsEvent
-//            let equityValueLabelDriver: Driver<String?>
             let balanceTextDriver: Driver<String?>
             let outputDriver: Driver<Double?>
 
             switch type {
             case .source:
                 walletDriver = viewModel.sourceWalletDriver
-
-                textFieldKeydownEvent = { amount in
-                    AmplitudeEvent.swapTokenAAmountKeydown(sum: amount)
-                }
 
                 outputDriver = viewModel.inputAmountDriver
 
@@ -169,10 +162,6 @@ extension OrcaSwapV2 {
             case .destination:
                 walletDriver = viewModel.destinationWalletDriver
 
-                textFieldKeydownEvent = { amount in
-                    AmplitudeEvent.swapTokenBAmountKeydown(sum: amount)
-                }
-
                 outputDriver = viewModel.estimatedAmountDriver
 
                 balanceTextDriver = viewModel.destinationWalletDriver
@@ -197,18 +186,6 @@ extension OrcaSwapV2 {
 
             balanceTextDriver.map { $0 == nil }
                 .drive(balanceView.walletView.rx.isHidden)
-                .disposed(by: disposeBag)
-
-            // analytics
-            amountTextField.rx.controlEvent([.editingDidEnd])
-                .asObservable()
-                .compactMap { [weak self] in
-                    self?.amountTextField.text?.double
-                }
-                .map(textFieldKeydownEvent)
-                .subscribe(onNext: { [weak self] event in
-                    self?.analyticsManager.log(event: event)
-                })
                 .disposed(by: disposeBag)
 
             amountTextField.rx.controlEvent(.editingChanged)
