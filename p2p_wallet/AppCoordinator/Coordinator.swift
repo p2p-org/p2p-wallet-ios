@@ -30,7 +30,6 @@ open class Coordinator<ResultType>: NSObject {
         childCoordinators[coordinator.identifier] = nil
     }
 
-    @discardableResult
     open func coordinate<T>(to coordinator: Coordinator<T>) -> AnyPublisher<T, Never> {
         store(coordinator: coordinator)
         return coordinator.start()
