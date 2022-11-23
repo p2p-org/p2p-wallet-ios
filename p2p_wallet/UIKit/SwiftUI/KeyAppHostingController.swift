@@ -12,7 +12,6 @@ final class KeyAppHostingController<Content: View>: UIHostingController<Content>
     override func viewDidLoad() {
         super.viewDidLoad()
         navigationController?.navigationBar.topItem?.backButtonDisplayMode = .minimal
-        navigationController
     }
 
     override func viewWillLayoutSubviews() {

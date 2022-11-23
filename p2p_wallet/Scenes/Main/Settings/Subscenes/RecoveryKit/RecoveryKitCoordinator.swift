@@ -8,17 +8,16 @@ import SwiftUI
 import UIKit
 import Resolver
 
-class RecoveryKitCoordinator: Coordinator<Void> {
+final class RecoveryKitCoordinator: Coordinator<Void> {
     @Injected private var analyticsManager: AnalyticsManager
     @Injected private var authenticationHandler: AuthenticationHandlerType
     @Injected private var walletSettings: WalletSettings
     
-    let navigationController: UINavigationController
+    private let navigationController: UINavigationController
     private let transition = PanelTransition()
 
     init(navigationController: UINavigationController) {
         self.navigationController = navigationController
-        super.init()
     }
 
     override func start() -> AnyPublisher<Void, Never> {
@@ -43,11 +42,13 @@ class RecoveryKitCoordinator: Coordinator<Void> {
         let vc = KeyAppHostingController(rootView: RecoveryKitView(viewModel: vm))
         vc.title = L10n.walletProtection
         vc.hidesBottomBarWhenPushed = true
-        vc.onClose = { result.send() }
+        vc.onClose = {
+            result.send()
+        }
 
         navigationController.pushViewController(vc, animated: true)
 
-        return result.eraseToAnyPublisher()
+        return result.prefix(1).eraseToAnyPublisher()
     }
     
     func confirmDeleteAccountDialog() {
