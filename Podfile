@@ -4,7 +4,7 @@ platform :ios, '14.0'
 inhibit_all_warnings!
 
 # ENV Variables
-$keyAppKitPath = ENV['KEY_APP_KIT']
+$keyAppKitPath = '../key-app-kit-swift'
 $solanaSwiftPath = ENV['SOLANA_SWIFT']
 $keyAppUI = ENV['KEY_APP_UI']
 
@@ -89,7 +89,7 @@ target 'p2p_wallet' do
   if $keyAppUI
     pod "KeyAppUI", :path => $keyAppUI
   else
-    pod 'KeyAppUI', :git => 'git@github.com:p2p-org/KeyAppUI.git', :branch => 'main'
+    pod 'KeyAppUI', :git => 'git@github.com:p2p-org/KeyAppUI.git', :branch => 'feature/PWN-6023'
   end
 
   pod 'Resolver', '1.5.0'

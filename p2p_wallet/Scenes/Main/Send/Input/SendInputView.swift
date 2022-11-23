@@ -6,24 +6,46 @@
 //
 
 import SwiftUI
+import KeyAppUI
 
 struct SendInputView: View {
     @ObservedObject var viewModel: SendInputViewModel
 
-    @State var detailModal: Bool = false
-    @State var freeTransactionModal: Bool = false
-
     var body: some View {
-        VStack {
-            Text("Input screen")
-            Button { detailModal = true } label: { Text("Open detail") }
-            Button { freeTransactionModal = true } label: { Text("Open free transaction") }
-        }
-        .sheet(isPresented: $detailModal) {
-            Text("Detail View")
-        }
-        .sheet(isPresented: $freeTransactionModal) {
-            Text("Free transaction modal")
+        ZStack(alignment: .top) {
+            Color(Asset.Colors.smoke.color)
+                .edgesIgnoringSafeArea(.all)
+
+            VStack(spacing: 8) {
+                HStack(spacing: 4) {
+                    Text(L10n.youWillSend)
+                        .apply(style: .text4)
+                        .foregroundColor(Color(Asset.Colors.mountain.color))
+
+                    Spacer()
+                    Text(viewModel.feeTitle)
+                        .apply(style: .text4)
+                        .foregroundColor(Color(Asset.Colors.sky.color))
+
+                    Button(action: viewModel.feeInfoPressed.send, label: {
+                        Image(uiImage: UIImage.infoSend)
+                            .resizable()
+                            .frame(width: 16, height: 16)
+                    })
+                }
+                .padding(.horizontal, 4)
+
+                SendInputTokenView(viewModel: viewModel.tokenViewModel)
+
+                SendInputAmountView(viewModel: viewModel.inputAmountViewModel)
+
+                Spacer()
+
+                SendInputActionButtonView(viewModel: viewModel.actionButtonViewModel)
+            }
+            .padding(.horizontal, 16)
+            .padding(.top, 60)
+            .padding(.bottom, 16)
         }
     }
 }
