@@ -31,7 +31,6 @@ class SendInputViewModel: ObservableObject {
     let tokenViewModel: SendInputTokenViewModel
 
     @Published var currentToken: Wallet
-    @Published var openPickToken = false
 
     init(recipient: Recipient) {
         let repository = Resolver.resolve(WalletsRepository.self)
@@ -83,22 +82,14 @@ private extension SendInputViewModel {
             }
             .store(in: &subscriptions)
 
-        inputAmountViewModel.switchPressed
-            .sink { [weak self] in
-                debugPrint("switchPressed")
-            }
-            .store(in: &subscriptions)
-
-        tokenViewModel.changeTokenPressed
-            .sink { [weak self] in
-                self?.openPickToken = true
-            }
-            .store(in: &subscriptions)
-
-        inputAmountViewModel.$amount
+        inputAmountViewModel.changeAmount
             .sinkAsync(receiveValue: { [weak self] value in
                 guard let self = self else { return }
-                let returnState = await self.stateMachine.accept(action: .changeAmountInToken(value))
+                let returnState: SendInputState
+                switch value.1 {
+                case .token: returnState = await self.stateMachine.accept(action: .changeAmountInToken(value.0))
+                case .fiat: returnState = await self.stateMachine.accept(action: .changeAmountInFiat(value.0))
+                }
                 await MainActor.run {
                     switch returnState.status {
                     case .error(.inputTooHigh):
@@ -116,10 +107,15 @@ private extension SendInputViewModel {
             .store(in: &subscriptions)
 
         $currentToken
-            .sink { [weak self] value in
-                self?.inputAmountViewModel.token = value
-                self?.tokenViewModel.token = value
-            }
+            .sinkAsync(receiveValue: { [weak self] value in
+                guard let self = self else { return }
+
+                let returnState = await self.stateMachine.accept(action: .changeUserToken(value))
+                if returnState.status == .ready {
+                    self.inputAmountViewModel.token = value
+                    self.tokenViewModel.token = value
+                }
+            })
             .store(in: &subscriptions)
     }
 }
