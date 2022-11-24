@@ -47,6 +47,11 @@ struct SendInputView: View {
             .padding(.top, 60)
             .padding(.bottom, 16)
         }
+        .sheet(isPresented: $viewModel.openPickToken) {
+            ChooseWalletTokenView(
+                viewModel: ChooseWalletTokenViewModel(chosenToken: viewModel.currentToken), showModal: $viewModel.openPickToken
+            )
+        }
     }
 }
 

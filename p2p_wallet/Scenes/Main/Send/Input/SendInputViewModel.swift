@@ -31,6 +31,7 @@ class SendInputViewModel: ObservableObject {
     let tokenViewModel: SendInputTokenViewModel
 
     @Published var currentToken: Wallet
+    @Published var openPickToken = false
 
     init(recipient: Recipient) {
         let repository = Resolver.resolve(WalletsRepository.self)
@@ -90,7 +91,7 @@ private extension SendInputViewModel {
 
         tokenViewModel.changeTokenPressed
             .sink { [weak self] in
-                debugPrint("changeTokenPressed")
+                self?.openPickToken = true
             }
             .store(in: &subscriptions)
 
