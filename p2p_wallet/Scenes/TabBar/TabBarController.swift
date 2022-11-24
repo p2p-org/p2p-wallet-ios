@@ -105,7 +105,6 @@ final class TabBarController: UITabBarController {
                 viewModel: vm,
                 navigationController: navigationController
             )
-            analyticsManager.log(event: AmplitudeEvent.mainScreenSendOpen)
             analyticsManager.log(event: AmplitudeEvent.sendViewed(lastScreen: "main_screen"))
             
             sendCoordinator?.doneHandler = {

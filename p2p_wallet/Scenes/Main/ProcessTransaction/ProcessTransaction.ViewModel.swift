@@ -103,24 +103,13 @@ extension ProcessTransaction.ViewModel: ProcessTransactionViewModelType {
 
     func handleErrorRetryOrMakeAnotherTransaction() {
         if pendingTransaction.status.error == nil {
-            // log
-            let status = pendingTransaction.status.rawValue
-            switch rawTransaction {
-            case is ProcessTransaction.SendTransaction:
-                analyticsManager.log(event: AmplitudeEvent.sendMakeAnotherTransactionClick(txStatus: status))
-            case is ProcessTransaction.SwapTransaction:
-                analyticsManager.log(event: AmplitudeEvent.swapMakeAnotherTransactionClick(txStatus: status))
-            default:
-                break
-            }
-
             navigate(to: .makeAnotherTransaction)
         } else {
             // log
             if let error = pendingTransaction.status.error {
                 switch rawTransaction {
                 case is ProcessTransaction.SendTransaction:
-                    analyticsManager.log(event: AmplitudeEvent.sendTryAgainClick(error: error))
+                    break
                 case is ProcessTransaction.SwapTransaction:
                     analyticsManager.log(event: AmplitudeEvent.swapTryAgainClick(error: error))
                 default:
@@ -146,7 +135,7 @@ extension ProcessTransaction.ViewModel: ProcessTransactionViewModelType {
             case is ProcessTransaction.SendTransaction:
                 analyticsManager.log(event: AmplitudeEvent.sendExplorerClick(txStatus: status))
             case is ProcessTransaction.SwapTransaction:
-                analyticsManager.log(event: AmplitudeEvent.swapExplorerClick(txStatus: status))
+                break
             default:
                 break
             }

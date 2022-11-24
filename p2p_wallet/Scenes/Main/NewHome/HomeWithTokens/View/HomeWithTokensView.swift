@@ -23,7 +23,6 @@ struct HomeWithTokensView: View {
     
     init(viewModel: HomeWithTokensViewModel) {
         self.viewModel = viewModel
-        analyticsManager.log(event: AmplitudeEvent.mainScreenWalletsOpen)
     }
     
     var body: some View {

@@ -85,7 +85,6 @@ final class HomeCoordinator: Coordinator<Void> {
             .sink(receiveValue: { [unowned self] in
                 let coordinator = ReceiveCoordinator(navigationController: navigationController, pubKey: $0)
                 coordinate(to: coordinator)
-                analyticsManager.log(event: AmplitudeEvent.mainScreenReceiveOpen)
                 analyticsManager.log(event: AmplitudeEvent.receiveViewed(fromPage: "main_screen"))
             })
             .store(in: &subscriptions)
@@ -210,7 +209,6 @@ final class HomeCoordinator: Coordinator<Void> {
     private func openReceiveScreen(pubKey: PublicKey) {
         let coordinator = ReceiveCoordinator(navigationController: navigationController, pubKey: pubKey)
         coordinate(to: coordinator)
-        analyticsManager.log(event: AmplitudeEvent.mainScreenReceiveOpen)
         analyticsManager.log(event: AmplitudeEvent.receiveViewed(fromPage: "main_screen"))
     }
 
@@ -224,7 +222,6 @@ final class HomeCoordinator: Coordinator<Void> {
             viewModel: vm,
             navigationController: navigationController
         )
-        analyticsManager.log(event: AmplitudeEvent.mainScreenSendOpen)
         analyticsManager.log(event: AmplitudeEvent.sendViewed(lastScreen: "main_screen"))
 
         return await withCheckedContinuation { continuation in
@@ -242,7 +239,6 @@ final class HomeCoordinator: Coordinator<Void> {
     private func showSwap() async -> Bool {
         let vm = OrcaSwapV2.ViewModel(initialWallet: nil)
         let vc = OrcaSwapV2.ViewController(viewModel: vm)
-        analyticsManager.log(event: AmplitudeEvent.mainScreenSwapOpen)
         analyticsManager.log(event: AmplitudeEvent.swapViewed(lastScreen: "main_screen"))
 
         return await withCheckedContinuation { continuation in
@@ -258,7 +254,6 @@ final class HomeCoordinator: Coordinator<Void> {
     }
 
     private func walletDetail(pubKey: String, tokenSymbol: String) async -> Bool {
-        analyticsManager.log(event: AmplitudeEvent.mainScreenTokenDetailsOpen(tokenTicker: tokenSymbol))
         let vm = WalletDetail.ViewModel(pubkey: pubKey, symbol: tokenSymbol)
         let vc = WalletDetail.ViewController(viewModel: vm)
 

@@ -22,7 +22,6 @@ enum AmplitudeEvent: AnalyticsEvent {
 
     // MARK: - Create wallet
 
-    case createWalletOpen
     case createSeedInvoked
     case backingUpCopying
     case backingUpSaving
@@ -30,7 +29,6 @@ enum AmplitudeEvent: AnalyticsEvent {
     case usernameSkipped(usernameField: String)
     case usernameSaved(lastScreen: String)
     case usernameReserved
-    case createWalletTermsAndConditionsClick
     case backingUpIcloud
     case backingUpManually
     case backingUpError
@@ -50,8 +48,6 @@ enum AmplitudeEvent: AnalyticsEvent {
 
     // setup
     case setupOpen(fromPage: String)
-    case setupPinKeydown1
-    case setupPinKeydown2
     case setupFaceidOpen
     case bioApproved(lastScreen: String)
     case bioRejected
@@ -62,27 +58,13 @@ enum AmplitudeEvent: AnalyticsEvent {
     case setupFinishClick
     case setupWelcomeBackOpen
     // recovery
-    case recoveryOpen(fromPage: String)
     case restoreManualInvoked
     case restoreAppleInvoked
-    case recoveryEnterSeedOpen
-    case recoveryEnterSeedKeydown
-    case recoveryEnterSeedPaste
-    case recoveryDoneClick
-    case recoveryDerivableAccountsOpen
     case recoveryDerivableAccountsPathSelected(path: String)
     case recoveryRestoreClick
 
     // MARK: - Main
 
-    case mainScreenWalletsOpen
-    case mainScreenBuyOpen
-    case mainScreenReceiveOpen
-    case mainScreenSendOpen
-    case mainScreenSwapOpen
-    case mainScreenQrOpen
-    case mainScreenSettingsOpen
-    case mainScreenTokenDetailsOpen(tokenTicker: String)
     case mainCopyAddress
 
     // token_details
@@ -92,17 +74,12 @@ enum AmplitudeEvent: AnalyticsEvent {
     case tokenReceiveViewed
     case tokenDetailsSendClick
     case tokenDetailsSwapClick
-    case tokenDetailsAddressCopy
-    case tokenDetailsActivityScroll(pageNum: Int)
     case tokenDetailsDetailsOpen
 
     // MARK: - Receive
 
     case receiveViewed(fromPage: String)
-    case receiveNameCopy
     case receiveAddressCopied
-    case receiveNameShare
-    case receiveAddressShare
     case receiveWalletAddressCopy
     case receiveUsercardShared
     case receiveQRSaved
@@ -115,16 +92,9 @@ enum AmplitudeEvent: AnalyticsEvent {
     case sendStartScreen
     case sendViewed(lastScreen: String)
     case sendSelectTokenClick(tokenTicker: String)
-    case sendChangeInputMode(selectedValue: String) // Fiat (USD, EUR)
     case sendAmountKeydown(sum: Double)
-    case sendAvailableClick(sum: Double)
-    case sendAddressKeydown
-    case sendQR_Scanning
     case sendSendClick(tokenTicker: String, sum: Double)
-    case sendMakeAnotherTransactionClick(txStatus: String)
     case sendExplorerClick(txStatus: String)
-    case sendTryAgainClick(error: String)
-    case sendCancelClick(error: String)
     case sendRecipientScreen
     case sendReviewScreen
     case sendPaste
@@ -147,20 +117,9 @@ enum AmplitudeEvent: AnalyticsEvent {
     case swapViewed(lastScreen: String)
     case swapChangingTokenA(tokenA_Name: String)
     case swapChangingTokenB(tokenB_Name: String)
-    case swapTokenAAmountKeydown(sum: Double)
-    case swapTokenBAmountKeydown(sum: Double)
-    case swapAvailableClick(sum: Double)
     case swapReversing
     case swapShowingSettings
-    case swapSlippageClick
-    case swapPayNetworkFeeWithClick
-    case swapSwapFeesClick
-    case swapSlippageKeydown(slippage: Double)
-    case swapSwapClick(tokenA: String, tokenB: String, sumA: Double, sumB: Double)
-    case swapMakeAnotherTransactionClick(txStatus: String)
-    case swapExplorerClick(txStatus: String)
     case swapTryAgainClick(error: String)
-    case swapCancelClick(error: String)
     case swapStartScreen
     case swapClickReviewButton
     case swapClickApproveButton
@@ -210,18 +169,9 @@ enum AmplitudeEvent: AnalyticsEvent {
         feesSource: String
     )
 
-    // scan_qr
-    case scanQrOpen(fromPage: String)
-    case scanQrSuccess
-    case scanQrClose
     // settings
-    case settingsOpen(lastScreen: String)
     case networkChanging(networkName: String)
     case settingsHideBalancesClick(hide: Bool)
-    case settingsBackupOpen
-    case settingsSecuritySelected(faceId: Bool)
-    case settingsLanguageSelected(language: String)
-    case settingsAppearanceSelected(appearance: String)
     case settingsСurrencySelected(сurrency: String)
     case signedOut
     case signOut

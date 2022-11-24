@@ -120,19 +120,12 @@ extension OrcaSwapV2 {
         private func bind() {
             // subjects
             let walletPublisher: AnyPublisher<Wallet?, Never>
-            let textFieldKeydownEvent: (Double) -> AnalyticsEvent
-//            let equityValueLabelPublisher: AnyPublisher<String?, Never>
             let balanceTextPublisher: AnyPublisher<String?, Never>
             let outputPublisher: AnyPublisher<Double?, Never>
 
             switch type {
             case .source:
                 walletPublisher = viewModel.sourceWalletPublisher
-
-                textFieldKeydownEvent = { amount in
-                    AmplitudeEvent.swapTokenAAmountKeydown(sum: amount)
-                }
-
                 outputPublisher = viewModel.inputAmountPublisher
 
                 // available amount
@@ -169,10 +162,6 @@ extension OrcaSwapV2 {
             case .destination:
                 walletPublisher = viewModel.destinationWalletPublisher
 
-                textFieldKeydownEvent = { amount in
-                    AmplitudeEvent.swapTokenBAmountKeydown(sum: amount)
-                }
-
                 outputPublisher = viewModel.estimatedAmountPublisher
 
                 balanceTextPublisher = viewModel.destinationWalletPublisher
@@ -198,20 +187,6 @@ extension OrcaSwapV2 {
 
             balanceTextPublisher.map { $0 == nil }
                 .assign(to: \.isHidden, on: balanceView.walletView)
-                .store(in: &subscriptions)
-
-            // analytics
-            NotificationCenter.default.publisher(
-                for: UITextField.textDidEndEditingNotification,
-                object: amountTextField
-            )
-                .compactMap { [weak self] _ in
-                    self?.amountTextField.text?.double
-                }
-                .map(textFieldKeydownEvent)
-                .sink { [weak self] event in
-                    self?.analyticsManager.log(event: event)
-                }
                 .store(in: &subscriptions)
 
             NotificationCenter.default.publisher(for: UITextField.textDidChangeNotification, object: amountTextField)

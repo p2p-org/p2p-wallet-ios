@@ -65,11 +65,13 @@ extension ReceiveToken {
                                         }
                                     // Text
                                     UIStackView(axis: .vertical, spacing: 4, alignment: .leading) {
-                                        UILabel(
-                                            text: L10n.showingMyAddressFor,
-                                            textSize: 13,
-                                            textColor: .secondaryLabel
-                                        )
+                                        if available(.receiveRenBtcEnabled) {
+                                            UILabel(
+                                                text: L10n.showingMyAddressFor,
+                                                textSize: 13,
+                                                textColor: .secondaryLabel
+                                            )
+                                        }
                                         UILabel(text: L10n.network("Solana"), textSize: 17, weight: .semibold)
                                             .setup { view in
                                                 viewModel.tokenTypePublisher
@@ -79,11 +81,15 @@ extension ReceiveToken {
                                             }
                                     }.padding(.init(x: 12, y: 0))
                                     // Next icon
-                                    UIView.defaultNextArrow()
+                                    if available(.receiveRenBtcEnabled) {
+                                        UIView.defaultNextArrow()
+                                    }
                                 }
                                 .padding(.init(x: 15, y: 15))
                                 .onTap { [unowned self] in
-                                    self.viewModel.showSelectionNetwork()
+                                    if available(.receiveRenBtcEnabled) {
+                                        viewModel.showSelectionNetwork()
+                                    }
                                 }
                                 UIStackView(axis: .vertical, alignment: .fill) {
                                     UIView(height: 1, backgroundColor: .f2f2f7)
@@ -123,10 +129,8 @@ extension ReceiveToken {
                                 .assign(to: \.isHidden, on: view)
                                 .store(in: &subscriptions)
                         }
-                    ReceiveBitcoinView(
-                        viewModel: viewModel.receiveBitcoinViewModel
-                    )
-                        .setup { view in
+                    
+                    ReceiveBitcoinView(viewModel: viewModel.receiveBitcoinViewModel).setup { view in
                             viewModel.tokenTypePublisher
                                 .map { token in token != .btc }
                                 .assign(to: \.isHidden, on: view)
@@ -171,34 +175,8 @@ extension ReceiveToken {
         }
 
         private func createQRHint() -> UILabel {
-            let symbol = viewModel.tokenWallet?.token.symbol ?? ""
             let qrCodeHint = UILabel(numberOfLines: 0)
-            let highlightedText = L10n.receive(symbol)
-            let fullText = L10n.youCanReceiveByProvidingThisAddressQRCodeOrUsername(symbol)
-
-            let normalFont = UIFont.systemFont(ofSize: 15, weight: .regular)
-            let highlightedFont = UIFont.systemFont(ofSize: 15, weight: .bold)
-
-            let paragraphStyle = NSMutableParagraphStyle()
-            paragraphStyle.lineHeightMultiple = 1.17
-            paragraphStyle.alignment = .center
-
-            let attributedText = NSMutableAttributedString(
-                string: fullText,
-                attributes: [
-                    .font: normalFont,
-                    .kern: -0.24,
-                    .paragraphStyle: paragraphStyle,
-                    .foregroundColor: UIColor.textBlack,
-                ]
-            )
-
-            let highlightedRange = (attributedText.string as NSString)
-                .range(of: highlightedText, options: .caseInsensitive)
-            attributedText.addAttribute(.font, value: highlightedFont, range: highlightedRange)
-
-            qrCodeHint.attributedText = attributedText
-
+            qrCodeHint.attributedText = viewModel.qrHint
             return qrCodeHint
         }
     }

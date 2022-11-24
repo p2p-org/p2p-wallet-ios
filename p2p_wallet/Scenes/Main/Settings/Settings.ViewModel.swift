@@ -259,8 +259,6 @@ extension Settings.ViewModel: SettingsViewModelType {
                     if success {
                         Defaults.isBiometryEnabled.toggle()
                         self?.isBiometryEnabled = Defaults.isBiometryEnabled
-                        self?.analyticsManager
-                            .log(event: AmplitudeEvent.settingsSecuritySelected(faceId: Defaults.isBiometryEnabled))
                     } else {
                         if let authError = authenticationError as? LAError, authError.errorCode == kLAErrorUserCancel {
                             onError(nil)
@@ -288,13 +286,11 @@ extension Settings.ViewModel: SettingsViewModelType {
 
     func setLanguage(_ language: LocalizedLanguage) {
         localizationManager.changeCurrentLanguage(language)
-        analyticsManager.log(event: AmplitudeEvent.settingsLanguageSelected(language: language.code))
         changeLanguageResponder.languageDidChange(to: language)
     }
 
     func setTheme(_ theme: UIUserInterfaceStyle) {
         self.theme = theme
-        analyticsManager.log(event: AmplitudeEvent.settingsAppearanceSelected(appearance: theme.name))
         changeThemeResponder.changeThemeTo(theme)
     }
 
