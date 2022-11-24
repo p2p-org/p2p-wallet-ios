@@ -145,7 +145,7 @@ extension ProcessTransaction.ViewModel: ProcessTransactionViewModelType {
             case is ProcessTransaction.SendTransaction:
                 analyticsManager.log(event: AmplitudeEvent.sendExplorerClick(txStatus: status))
             case is ProcessTransaction.SwapTransaction:
-                break
+                analyticsManager.log(event: AmplitudeEvent.swapExplorerClick(txStatus: status))
             default:
                 break
             }

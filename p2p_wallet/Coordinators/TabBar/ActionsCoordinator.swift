@@ -63,15 +63,18 @@ final class ActionsCoordinator: Coordinator<ActionsCoordinator.Result> {
                     let coordinator = ReceiveCoordinator(navigationController: navigationController, pubKey: pubkey)
                     coordinate(to: coordinator).sink { _ in }.store(in: &subscriptions)
                     analyticsManager.log(event: AmplitudeEvent.actionButtonReceive)
+                    analyticsManager.log(event: AmplitudeEvent.mainScreenReceiveOpen)
                     analyticsManager.log(event: AmplitudeEvent.receiveViewed(fromPage: "Main_Screen"))
                 case .swap:
                     analyticsManager.log(event: AmplitudeEvent.actionButtonSwap)
+                    analyticsManager.log(event: AmplitudeEvent.mainScreenSwapOpen)
                     analyticsManager.log(event: AmplitudeEvent.swapViewed(lastScreen: "Main_Screen"))
                     viewController.dismiss(animated: true) {
                         subject.send(.action(type: .swap))
                     }
                 case .send:
                     analyticsManager.log(event: AmplitudeEvent.actionButtonSend)
+                    analyticsManager.log(event: AmplitudeEvent.mainScreenSendOpen)
                     analyticsManager.log(event: AmplitudeEvent.sendViewed(lastScreen: "Main_Screen"))
                     viewController.dismiss(animated: true) {
                         subject.send(.action(type: .send))
