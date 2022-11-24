@@ -6,6 +6,7 @@
 //
 
 import AnalyticsManager
+import Combine
 import Foundation
 import LocalAuthentication
 import RenVMSwift
@@ -26,10 +27,6 @@ protocol ChangeThemeResponder {
     func changeThemeTo(_ style: UIUserInterfaceStyle)
 }
 
-protocol LogoutResponder {
-    func logout()
-}
-
 protocol SettingsViewModelType: ReserveNameHandler {
     var selectableLanguages: [(LocalizedLanguage, Bool)] { get }
     var navigationDriver: Driver<Settings.NavigatableScene?> { get }
@@ -42,6 +39,7 @@ protocol SettingsViewModelType: ReserveNameHandler {
     var isBiometryEnabledDriver: Driver<Bool> { get }
     var isBiometryAvailableDriver: Driver<Bool> { get }
     var appVersion: String { get }
+    var isCreateNameEnabled: Bool { get }
 
     func getUserAddress() -> String?
     func getUsername() -> String?
@@ -71,7 +69,7 @@ extension Settings {
 
         @Injected private var storage: ICloudStorageType & AccountStorageType & NameStorageType & PincodeStorageType
         @Injected private var analyticsManager: AnalyticsManager
-        @Injected private var logoutResponder: LogoutResponder
+        @Injected private var userWalletManager: UserWalletManager
         @Injected private var changeThemeResponder: ChangeThemeResponder
         @Injected private var authenticationHandler: AuthenticationHandlerType
         @Injected private var changeNetworkResponder: ChangeNetworkResponder
@@ -82,6 +80,7 @@ extension Settings {
         @Injected private var pricesService: PricesServiceType
         @Injected private var renVMService: LockAndMintService
         @Injected private var imageSaver: ImageSaverType
+        @Injected private var metadataService: WalletMetadataService
 
         // MARK: - Properties
 
@@ -95,8 +94,6 @@ extension Settings {
         private lazy var didBackupSubject = BehaviorRelay<Bool>(value: storage.didBackupUsingIcloud || Defaults
             .didBackupOffline)
         private let fiatSubject = BehaviorRelay<Fiat>(value: Defaults.fiat)
-        private let endpointSubject = BehaviorRelay<APIEndPoint>(value: Defaults.apiEndPoint)
-        private lazy var securityMethodsSubject = BehaviorRelay<[String]>(value: getSecurityMethods())
         private let themeSubject = BehaviorRelay<UIUserInterfaceStyle?>(value: AppDelegate.shared.window?
             .overrideUserInterfaceStyle)
         private let hideZeroBalancesSubject = BehaviorRelay<Bool>(value: Defaults.hideZeroBalances)
@@ -148,17 +145,6 @@ extension Settings {
                 })
                 .disposed(by: disposeBag)
         }
-
-        // MARK: - Methods
-
-        private func getSecurityMethods() -> [String] {
-            var methods: [String] = []
-            if Defaults.isBiometryEnabled {
-                methods.append(LABiometryType.current.stringValue)
-            }
-            methods.append(L10n.pinCode)
-            return methods
-        }
     }
 }
 
@@ -191,6 +177,10 @@ extension Settings.ViewModel: SettingsViewModelType {
         logoutAlertSubject.asSignal()
     }
 
+    var isCreateNameEnabled: Bool {
+        metadataService.metadata != nil && available(.onboardingUsernameEnabled) || getUsername() != nil
+    }
+
     func getUserAddress() -> String? {
         storage.account?.publicKey.base58EncodedString
     }
@@ -218,7 +208,7 @@ extension Settings.ViewModel: SettingsViewModelType {
     }
 
     func setFiat(_ fiat: Fiat) {
-        analyticsManager.log(event: .settingsСurrencySelected(сurrency: fiat.code))
+        analyticsManager.log(event: AmplitudeEvent.settingsСurrencySelected(сurrency: fiat.code))
         // set default fiat
         Defaults.fiat = fiat
         pricesService.clearCurrentPrices()
@@ -231,8 +221,7 @@ extension Settings.ViewModel: SettingsViewModelType {
 
     func setApiEndpoint(_ endpoint: APIEndPoint) {
         guard Defaults.apiEndPoint != endpoint else { return }
-        endpointSubject.accept(endpoint)
-        analyticsManager.log(event: .networkChanging(networkName: endpoint.address))
+        analyticsManager.log(event: AmplitudeEvent.networkChanging(networkName: endpoint.address))
         Task {
             try await renVMService.expireCurrentSession()
             await MainActor.run {
@@ -261,7 +250,7 @@ extension Settings.ViewModel: SettingsViewModelType {
         // get context
         let context = LAContext()
         let reason = L10n.identifyYourself
-
+        context.localizedFallbackTitle = ""
         // evaluate Policy
         context
             .evaluatePolicy(.deviceOwnerAuthenticationWithBiometrics,
@@ -271,8 +260,6 @@ extension Settings.ViewModel: SettingsViewModelType {
                     if success {
                         Defaults.isBiometryEnabled.toggle()
                         self?.isBiometryEnabledSubject.accept(Defaults.isBiometryEnabled)
-                        self?.analyticsManager.log(event: .settingsSecuritySelected(faceId: Defaults.isBiometryEnabled))
-                        self?.securityMethodsSubject.accept(self?.getSecurityMethods() ?? [])
                     } else {
                         if let authError = authenticationError as? LAError, authError.errorCode == kLAErrorUserCancel {
                             onError(nil)
@@ -291,20 +278,7 @@ extension Settings.ViewModel: SettingsViewModelType {
     }
 
     func changePincode() {
-        authenticationHandler.authenticate(
-            presentationStyle: .init(
-                title: L10n.enterCurrentPIN,
-                options: [.fullscreen, .disableBiometric, .withResetPassword],
-                completion: { [weak self] passwordReset in
-                    guard !passwordReset else {
-                        self?.notificationsService.showInAppNotification(.done(L10n.youHaveSuccessfullySetYourPIN))
-                        return
-                    }
-                    // pin code vc
-                    self?.navigate(to: .changePincode)
-                }
-            )
-        )
+        navigate(to: .changePincode)
     }
 
     func savePincode(_ pincode: String) {
@@ -313,24 +287,22 @@ extension Settings.ViewModel: SettingsViewModelType {
 
     func setLanguage(_ language: LocalizedLanguage) {
         localizationManager.changeCurrentLanguage(language)
-        analyticsManager.log(event: .settingsLanguageSelected(language: language.code))
         changeLanguageResponder.languageDidChange(to: language)
     }
 
     func setTheme(_ theme: UIUserInterfaceStyle) {
         themeSubject.accept(theme)
-        analyticsManager.log(event: .settingsAppearanceSelected(appearance: theme.name))
         changeThemeResponder.changeThemeTo(theme)
     }
 
     func setHideZeroBalances(_ hideZeroBalances: Bool) {
         Defaults.hideZeroBalances.toggle()
-        analyticsManager.log(event: .settingsHideBalancesClick(hide: Defaults.hideZeroBalances))
+        analyticsManager.log(event: AmplitudeEvent.settingsHideBalancesClick(hide: Defaults.hideZeroBalances))
         hideZeroBalancesSubject.accept(hideZeroBalances)
     }
 
     func showLogoutAlert() {
-        analyticsManager.log(event: .signOut(lastScreen: "Settings"))
+        analyticsManager.log(event: AmplitudeEvent.signOut)
         logoutAlertSubject.accept(())
     }
 
@@ -363,7 +335,7 @@ extension Settings.ViewModel: SettingsViewModelType {
     }
 
     func logout() {
-        analyticsManager.log(event: .signedOut)
-        logoutResponder.logout()
+        analyticsManager.log(event: AmplitudeEvent.signedOut)
+        Task { try await userWalletManager.remove() }
     }
 }

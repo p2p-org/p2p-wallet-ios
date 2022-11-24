@@ -119,6 +119,26 @@ extension OrcaSwapV2.ViewModel: OrcaSwapV2ViewModelType {
                 $0 != nil && $1 != nil
             }
     }
+    
+    #if !RELEASE
+    var routeDriver: Driver<String?> {
+        bestPoolsPairSubject
+            .map { bestPoolsPair -> String? in
+                guard let bestPoolsPair = bestPoolsPair,
+                      !bestPoolsPair.isEmpty,
+                      bestPoolsPair.count <= 2
+                else {
+                    return nil
+                }
+                var route = bestPoolsPair[0].tokenAName + " -> " + bestPoolsPair[0].tokenBName
+                if bestPoolsPair.count == 2 {
+                    route += " -> " + bestPoolsPair[1].tokenBName
+                }
+                return route
+            }
+            .asDriver()
+    }
+    #endif
 
     func getPrice(symbol: String) -> Double? {
         pricesService.currentPrice(for: symbol)?.value
@@ -147,7 +167,7 @@ extension OrcaSwapV2.ViewModel: OrcaSwapV2ViewModelType {
 
     func chooseSourceWallet() {
         isSelectingSourceWallet = true
-        analyticsManager.log(event: .tokenListViewed(lastScreen: "Swap", tokenListLocation: "Token_A"))
+        analyticsManager.log(event: AmplitudeEvent.tokenListViewed(lastScreen: "Swap", tokenListLocation: "Token_A"))
         navigationSubject.accept(.chooseSourceWallet(currentlySelectedWallet: sourceWalletSubject.value))
     }
 
@@ -159,7 +179,7 @@ extension OrcaSwapV2.ViewModel: OrcaSwapV2ViewModelType {
             destinationMints = validMints
         }
         isSelectingSourceWallet = false
-        analyticsManager.log(event: .tokenListViewed(lastScreen: "Swap", tokenListLocation: "Token_B"))
+        analyticsManager.log(event: AmplitudeEvent.tokenListViewed(lastScreen: "Swap", tokenListLocation: "Token_B"))
         navigationSubject.accept(.chooseDestinationWallet(
             currentlySelectedWallet: destinationWalletSubject.value,
             validMints: Set(destinationMints),
@@ -193,7 +213,7 @@ extension OrcaSwapV2.ViewModel: OrcaSwapV2ViewModelType {
            let destinationDecimals = destinationWalletSubject.value?.token.decimals,
            let inputAmount = amount?.toLamport(decimals: sourceDecimals),
            let poolsPairs = tradablePoolsPairsSubject.value,
-           let bestPoolsPair = poolsPairs.findBestPoolsPairForInputAmount(inputAmount),
+           let bestPoolsPair = try? swapService.findBestPoolsPairForInputAmount(inputAmount, from: poolsPairs),
            let bestEstimatedAmount = bestPoolsPair.getOutputAmount(fromInputAmount: inputAmount)?
                .convertToBalance(decimals: destinationDecimals)
                .rounded(decimals: destinationDecimals)
@@ -215,7 +235,7 @@ extension OrcaSwapV2.ViewModel: OrcaSwapV2ViewModelType {
            let destinationDecimals = destinationWalletSubject.value?.token.decimals,
            let estimatedAmount = amount?.toLamport(decimals: destinationDecimals),
            let poolsPairs = tradablePoolsPairsSubject.value,
-           let bestPoolsPair = poolsPairs.findBestPoolsPairForEstimatedAmount(estimatedAmount),
+           let bestPoolsPair = try? swapService.findBestPoolsPairForEstimatedAmount(estimatedAmount, from: poolsPairs),
            let bestInputAmount = bestPoolsPair.getInputAmount(fromEstimatedAmount: estimatedAmount)?
                .convertToBalance(decimals: sourceDecimals)
                .rounded(decimals: sourceDecimals)
@@ -238,10 +258,10 @@ extension OrcaSwapV2.ViewModel: OrcaSwapV2ViewModelType {
 
     func walletDidSelect(_ wallet: Wallet) {
         if isSelectingSourceWallet {
-            analyticsManager.log(event: .swapChangingTokenA(tokenAName: wallet.token.symbol))
+            analyticsManager.log(event: AmplitudeEvent.swapChangingTokenA(tokenA_Name: wallet.token.symbol))
             sourceWalletSubject.accept(wallet)
         } else {
-            analyticsManager.log(event: .swapChangingTokenB(tokenBName: wallet.token.symbol))
+            analyticsManager.log(event: AmplitudeEvent.swapChangingTokenB(tokenB_Name: wallet.token.symbol))
             destinationWalletSubject.accept(wallet)
         }
     }

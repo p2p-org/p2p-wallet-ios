@@ -26,6 +26,9 @@ protocol OrcaSwapV2ViewModelType: WalletDidSelectHandler, AnyObject, DetailFeesV
     var isSendingMaxAmountDriver: Driver<Bool> { get }
     var isShowingDetailsDriver: Driver<Bool> { get }
     var isShowingShowDetailsButtonDriver: Driver<Bool> { get }
+    #if !RELEASE
+    var routeDriver: Driver<String?> { get }
+    #endif
     var showHideDetailsButtonTapSubject: PublishRelay<Void> { get }
     var slippageSubject: BehaviorRelay<Double> { get }
     var activeInputField: OrcaSwapV2.ActiveInputField { get set }

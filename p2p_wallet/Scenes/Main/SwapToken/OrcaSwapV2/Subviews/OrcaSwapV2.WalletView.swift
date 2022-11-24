@@ -8,12 +8,12 @@
 import Action
 import AnalyticsManager
 import BEPureLayout
-import Foundation
 import Resolver
 import RxCocoa
 import RxSwift
 import SolanaSwift
 import UIKit
+import KeyAppUI
 
 extension OrcaSwapV2 {
     final class WalletView: BEView {
@@ -42,11 +42,11 @@ extension OrcaSwapV2 {
             textColor: .textBlack,
             textAlignment: .right,
             keyboardType: .decimalPad,
-            placeholder: "0\(Locale.current.decimalSeparator ?? ".")0",
+            placeholder: "0",
             autocorrectionType: .no /* , rightView: useAllBalanceButton, rightViewMode: .always */
         )
 
-        private lazy var questionMarkView = UIImageView(width: 20, height: 20, image: .questionMarkCircleOutlined)
+        private lazy var questionMarkView = UIImageView(width: 20, height: 20, image: .questionMarkCircleOutlined, tintColor: Asset.Colors.night.color)
             .onTap(self, action: #selector(questionMarkDidTouch))
 
         init(type: WalletType, viewModel: OrcaSwapV2ViewModelType) {
@@ -114,26 +114,18 @@ extension OrcaSwapV2 {
             chooseWalletView.autoPinEdge(.bottom, to: .bottom, of: iconImageView, withOffset: 10)
         }
 
-        @discardableResult
-        override func becomeFirstResponder() -> Bool {
+        func makeFirstResponder() -> Bool {
             amountTextField.becomeFirstResponder()
         }
 
         private func bind() {
-            // subjects
             let walletDriver: Driver<Wallet?>
-            let textFieldKeydownEvent: (Double) -> AnalyticsEvent
-//            let equityValueLabelDriver: Driver<String?>
             let balanceTextDriver: Driver<String?>
             let outputDriver: Driver<Double?>
 
             switch type {
             case .source:
                 walletDriver = viewModel.sourceWalletDriver
-
-                textFieldKeydownEvent = { amount in
-                    .swapTokenAAmountKeydown(sum: amount)
-                }
 
                 outputDriver = viewModel.inputAmountDriver
 
@@ -170,10 +162,6 @@ extension OrcaSwapV2 {
             case .destination:
                 walletDriver = viewModel.destinationWalletDriver
 
-                textFieldKeydownEvent = { amount in
-                    .swapTokenBAmountKeydown(sum: amount)
-                }
-
                 outputDriver = viewModel.estimatedAmountDriver
 
                 balanceTextDriver = viewModel.destinationWalletDriver
@@ -198,18 +186,6 @@ extension OrcaSwapV2 {
 
             balanceTextDriver.map { $0 == nil }
                 .drive(balanceView.walletView.rx.isHidden)
-                .disposed(by: disposeBag)
-
-            // analytics
-            amountTextField.rx.controlEvent([.editingDidEnd])
-                .asObservable()
-                .compactMap { [weak self] in
-                    self?.amountTextField.text?.double
-                }
-                .map(textFieldKeydownEvent)
-                .subscribe(onNext: { [weak self] event in
-                    self?.analyticsManager.log(event: event)
-                })
                 .disposed(by: disposeBag)
 
             amountTextField.rx.controlEvent(.editingChanged)
@@ -289,7 +265,7 @@ private extension OrcaSwapV2.WalletView {
             height: subviewsHeight,
             label: L10n.max.uppercased(),
             labelFont: .systemFont(ofSize: 15, weight: .medium),
-            textColor: .h5887ff
+            textColor: Asset.Colors.night.color
         )
 
         override var tintColor: UIColor! {

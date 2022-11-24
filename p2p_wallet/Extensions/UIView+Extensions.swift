@@ -49,6 +49,27 @@ extension UIView {
         addSubview(errorView)
         errorView.autoPinEdgesToSuperviewEdges()
     }
+    
+    func showErrorView(title: String? = nil, description: String? = nil, onRetry: (() -> Void)?) {
+        removeErrorView()
+        let errorView = ErrorView(backgroundColor: .textWhite)
+        if let title = title {
+            errorView.titleLabel.text = title
+        }
+        if let description = description {
+            errorView.descriptionLabel.text = description
+        }
+        if let action = onRetry {
+            errorView.onTap(action)
+        }
+        let spacer1 = UIView.spacer
+        let spacer2 = UIView.spacer
+        errorView.stackView.insertArrangedSubview(spacer1, at: 0)
+        errorView.stackView.addArrangedSubview(spacer2)
+        spacer1.heightAnchor.constraint(equalTo: spacer2.heightAnchor).isActive = true
+        addSubview(errorView)
+        errorView.autoPinEdgesToSuperviewEdges()
+    }
 }
 
 extension UIView {
@@ -77,5 +98,15 @@ extension UIView {
 
     func mediumShadow() -> Self {
         shadow(color: .black, alpha: 0.07, x: 0, y: 2, blur: 8, spread: 0)
+    }
+}
+
+extension UIView {
+    func shake() {
+        let animation = CAKeyframeAnimation(keyPath: "transform.translation.x")
+        animation.timingFunction = CAMediaTimingFunction(name: CAMediaTimingFunctionName.linear)
+        animation.duration = 0.6
+        animation.values = [-20.0, 20.0, -20.0, 20.0, -10.0, 10.0, -5.0, 5.0, 0.0]
+        layer.add(animation, forKey: "shake")
     }
 }

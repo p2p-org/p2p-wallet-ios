@@ -23,6 +23,7 @@ extension SendToken.ChooseRecipientAndNetwork.SelectAddress {
 
         var searchString: String?
 
+        private let addressSize = 44
         var isSearchingByAddress: Bool {
             searchString?
                 .matches(oneOfRegexes: .bitcoinAddress(isTestnet: solanaAPIClient.isTestNet()), .publicKey) == true
@@ -42,7 +43,7 @@ extension SendToken.ChooseRecipientAndNetwork.SelectAddress {
 
         private func findRecipientsBy(name: String) -> Single<[SendToken.Recipient]> {
             Single.async { [weak self] in
-                guard let self = self else { throw NameServiceError.unknown }
+                guard let self = self else { throw UndefinedNameServiceError.unknown }
                 let owners = try await self.nameService.getOwners(name)
                 return owners.map {
                     .init(
@@ -78,37 +79,17 @@ extension SendToken.ChooseRecipientAndNetwork.SelectAddress {
         }
 
         private func findAddressInSolanaNetwork(address: String) -> Single<[SendToken.Recipient]> {
-            Single<String?>.async { [weak self] in
-                guard let self = self else { throw NameServiceError.unknown }
-                return try await self.nameService
-                    .getName(address)
-            }
-            .flatMap { [weak self] name -> Single<(String?, Bool)> in
-                guard let self = self, name == nil else { return .just((name, false)) }
-                // check funds
-                return Single.async {
-                    try await self.solanaAPIClient.checkAccountValidation(account: address)
-                }
-                .catchAndReturn(false)
-                .map { (name, !$0) }
-            }
-            .map {
+            Single<Bool>.async { [weak self] in
+                (try? await self?.solanaAPIClient.checkAccountValidation(account: address)) ?? false
+            }.map {
                 [
                     .init(
                         address: address,
-                        name: $0.0?.withNameServiceDomain(),
-                        hasNoFunds: $0.1
+                        name: nil,
+                        hasNoFunds: !$0
                     ),
                 ]
             }
-            .catchAndReturn([
-                .init(
-                    address: address,
-                    name: nil,
-                    hasNoFunds: false,
-                    hasNoInfo: true
-                ),
-            ])
         }
     }
 }

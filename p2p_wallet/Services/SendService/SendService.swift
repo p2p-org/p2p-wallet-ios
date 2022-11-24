@@ -56,11 +56,17 @@ class SendService: SendServiceType {
     ) async throws -> FeeAmount? {
         switch network {
         case .bitcoin:
+            let burnFee = try await solanaAPIClient.getMinimumBalanceForRentExemption(span: 97) + 5000
+            
+            let exchangeRate = try await feeRelayerAPIClient.feeTokenData(mint: Token.renBTC.address).exchangeRate
+            let compensationAmountDouble = (Double(burnFee) * exchangeRate / pow(Double(10), Double(Token.nativeSolana.decimals-Token.renBTC.decimals)))
+            let feeInRenBTC = UInt64(compensationAmountDouble.rounded(.up)).convertToBalance(decimals: Token.renBTC.decimals)
+            
             return FeeAmount(
-                transaction: 20000,
+                transaction: 0,
                 accountBalances: 0,
                 others: [
-                    .init(amount: 0.0002, unit: "renBTC"),
+                    .init(amount: feeInRenBTC, unit: "renBTC"),
                 ]
             )
         case .solana:
@@ -178,10 +184,95 @@ class SendService: SendServiceType {
                 )
             }
         case .bitcoin:
+            // FIXME: temporary solution
+            
+            let renBTCAddress = try PublicKey.associatedTokenAddress(
+                walletAddress: accountStorage.account!.publicKey,
+                tokenMintAddress: try PublicKey(string: Token.renBTC.address)
+            )
+            
+            let preRenBTCBalance = try await solanaAPIClient.getTokenAccountBalance(pubkey: renBTCAddress.base58EncodedString, commitment: nil)
+                .amountInUInt64
+            
+            // Swap renBTC to Solana to pay fee
+            let transactionFee: UInt64 = 5000
+            let burnFee = try await solanaAPIClient.getMinimumBalanceForRentExemption(span: 97) + transactionFee
+            
+            let exchangeRate = try await feeRelayerAPIClient.feeTokenData(mint: Token.renBTC.address).exchangeRate
+            let compensationAmountDouble = (Double(burnFee) * exchangeRate / pow(Double(10), Double(Token.nativeSolana.decimals-Token.renBTC.decimals)))
+            let compensationAmount = UInt64(compensationAmountDouble.rounded(.up))
+            
+            let swapTxId = try await swapRenBTCToSolanaToPayFee(
+                burnFee: burnFee,
+                burnFeeInRenBTC: compensationAmount
+            )
+            
+            // wait for confirmation
+            try await solanaAPIClient.waitForConfirmation(signature: swapTxId, ignoreStatus: true)
+            
+            // fix amount
+            
+            var amount = amount
+            if let preRenBTCBalance = preRenBTCBalance,
+               amount + compensationAmount > preRenBTCBalance
+            {
+                guard preRenBTCBalance > compensationAmount else {
+                    throw RenVMError("Amount is too small")
+                }
+                amount = preRenBTCBalance - compensationAmount
+            }
+            
             return try await renVMBurnAndReleaseService.burnAndRelease(
                 recipient: receiver,
-                amount: amount
+                amount: amount,
+                waitForReleasing: false
             )
         }
+    }
+    
+    private func swapRenBTCToSolanaToPayFee(
+        burnFee: UInt64,
+        burnFeeInRenBTC: UInt64
+    ) async throws -> String {
+        let context = try await contextManager.getCurrentContext()
+        
+        let renBTCMint = try PublicKey(string: Token.renBTC.address)
+        
+        class FreeFeeCalculator: FeeCalculator {
+            func calculateNetworkFee(transaction: Transaction) throws -> FeeAmount {
+                .zero
+            }
+        }
+        
+        let swapPreparedTransaction = try await blockchainClient.prepareTransaction(
+            instructions: [
+                SystemProgram.transferInstruction(
+                    from: context.feePayerAddress,
+                    to: accountStorage.account!.publicKey,
+                    lamports: burnFee
+                ),
+                TokenProgram.transferInstruction(
+                    source: try PublicKey.associatedTokenAddress(walletAddress: accountStorage.account!.publicKey, tokenMintAddress: renBTCMint),
+                    destination: try PublicKey.associatedTokenAddress(walletAddress: context.feePayerAddress, tokenMintAddress: renBTCMint),
+                    owner: accountStorage.account!.publicKey,
+                    amount: burnFeeInRenBTC
+                )
+            ],
+            signers: [accountStorage.account!],
+            feePayer: context.feePayerAddress,
+            feeCalculator: FreeFeeCalculator()
+        )
+        
+        // send swap transaction
+        
+        return try await feeRelayer.topUpAndRelayTransaction(
+            context,
+            swapPreparedTransaction,
+            fee: nil,
+            config: .init(
+                operationType: .transfer,
+                currency: PublicKey.renBTCMint.base58EncodedString
+            )
+        )
     }
 }

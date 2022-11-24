@@ -10,6 +10,7 @@ import Resolver
 import RxCocoa
 import RxSwift
 import UIKit
+import KeyAppUI
 
 extension SendToken.ChooseTokenAndAmount {
     class RootView: BEView {
@@ -22,12 +23,14 @@ extension SendToken.ChooseTokenAndAmount {
         @Injected private var analyticsManager: AnalyticsManager
         private let viewModel: SendTokenChooseTokenAndAmountViewModelType
 
+        private var maxWasClicked = false
+
         // MARK: - Subviews
 
         private let walletImageView = UIImageView(
             width: 20,
             height: 20,
-            image: .tabBarWallet,
+            image: .tabBarSelectedWallet,
             tintColor: .textSecondary
         )
         private let balanceLabel = UILabel(text: "0.0", textSize: 15, weight: .medium, textColor: .textSecondary)
@@ -39,7 +42,7 @@ extension SendToken.ChooseTokenAndAmount {
                 textColor: .textBlack,
                 textAlignment: .right,
                 keyboardType: .decimalPad,
-                placeholder: "0\(Locale.current.decimalSeparator ?? ".")0",
+                placeholder: "0",
                 autocorrectionType: .no
             )
             tf.delegate = self
@@ -47,11 +50,14 @@ extension SendToken.ChooseTokenAndAmount {
         }()
 
         private lazy var equityValueLabel = UILabel(text: "\(Defaults.fiat.symbol) 0", textSize: 13)
-        private lazy var actionButton = WLStepButton.main(
-            image: viewModel.showAfterConfirmation ? .buttonCheckSmall : nil,
-            text: viewModel.showAfterConfirmation ? L10n.reviewAndConfirm : L10n.chooseDestinationWallet
-        )
-            .onTap(self, action: #selector(actionButtonDidTouch))
+        private lazy var actionButton = TextButton(
+            title: viewModel.showAfterConfirmation ? L10n.reviewAndConfirm : L10n.chooseDestinationWallet,
+            style: .primary,
+            size: .large,
+            leading: viewModel.showAfterConfirmation ? .buttonCheckSmall : nil
+        ).onTap { [weak self] in
+            self?.actionButtonDidTouch()
+        }
 
         #if DEBUG
             private lazy var errorLabel = UILabel(textColor: .alert, numberOfLines: 0, textAlignment: .center)
@@ -98,7 +104,7 @@ extension SendToken.ChooseTokenAndAmount {
                             .onTap(self, action: #selector(useAllBalance))
                         balanceLabel
                             .onTap(self, action: #selector(useAllBalance))
-                        UILabel(text: L10n.max.uppercased(), textSize: 15, weight: .medium, textColor: .h5887ff)
+                        UILabel(text: L10n.max.uppercased(), textSize: 15, weight: .medium, textColor: Asset.Colors.night.color)
                             .onTap(self, action: #selector(useAllBalance))
                     }
                     UIStackView(axis: .horizontal, spacing: 8, alignment: .center, distribution: .fill) {
@@ -117,10 +123,10 @@ extension SendToken.ChooseTokenAndAmount {
                         UIView.spacer
                         UIStackView(axis: .horizontal, spacing: 4, alignment: .center, distribution: .fill) {
                             equityValueLabel
-                            UIImageView(width: 20, height: 20, image: .arrowUpDown)
+                            UIImageView(width: 20, height: 20, image: .arrowUpDown.withTintColor(Asset.Colors.night.color))
                         }
                         .padding(.init(x: 18, y: 8), cornerRadius: 12)
-                        .border(width: 1, color: .defaultBorder)
+                        .border(width: 1, color: Asset.Colors.night.color)
                         .onTap(self, action: #selector(toggleCurrencyMode))
                     }
                 }
@@ -192,12 +198,13 @@ extension SendToken.ChooseTokenAndAmount {
                 .withLatestFrom(amountTextField.rx.text)
                 .subscribe(onNext: { [weak self] amount in
                     guard let amount = amount?.double else { return }
-                    self?.analyticsManager.log(event: .sendAmountKeydown(sum: amount))
+                    self?.analyticsManager.log(event: AmplitudeEvent.sendAmountKeydown(sum: amount))
                 })
                 .disposed(by: disposeBag)
 
             viewModel.amountDriver
                 .distinctUntilChanged()
+                .skip(1) // skipping initial value
                 .withLatestFrom(viewModel.walletDriver, resultSelector: { ($0, $1) })
                 .map { $0.0?.toString(maximumFractionDigits: Int($0.1?.token.decimals ?? 0), groupingSeparator: "") }
                 .drive(amountTextField.rx.text)
@@ -252,7 +259,7 @@ extension SendToken.ChooseTokenAndAmount {
                                 L10n.chooseTheRecipient
                         )
                 }
-                .drive(actionButton.rx.text)
+                .drive(actionButton.rx.title)
                 .disposed(by: disposeBag)
 
             viewModel.errorDriver
@@ -263,7 +270,7 @@ extension SendToken.ChooseTokenAndAmount {
                             .buttonChooseTheRecipient
                     )
                 }
-                .drive(actionButton.rx.image)
+                .drive(actionButton.rx.leadingImage)
                 .disposed(by: disposeBag)
 
             viewModel.errorDriver
@@ -286,6 +293,7 @@ extension SendToken.ChooseTokenAndAmount {
             let string = availableAmount.toString(maximumFractionDigits: 9, groupingSeparator: "")
             amountTextField.text = string
             amountTextField.sendActions(for: .editingChanged)
+            maxWasClicked = true
         }
 
         @objc private func chooseWallet() {
@@ -302,7 +310,7 @@ extension SendToken.ChooseTokenAndAmount {
             if viewModel.showAfterConfirmation {
                 viewModel.navigate(to: .backToConfirmation)
             } else {
-                viewModel.navigateNext()
+                viewModel.navigateNext(maxWasClicked: maxWasClicked)
             }
         }
     }

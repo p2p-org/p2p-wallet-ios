@@ -29,7 +29,6 @@ protocol SendTokenChooseRecipientAndNetworkSelectAddressViewModelType: WalletDid
     var isValidDriver: Driver<Bool> { get }
 
     func getCurrentInputState() -> SendToken.ChooseRecipientAndNetwork.SelectAddress.InputState
-    func getCurrentSearchKey() -> String?
     func getPrice(for symbol: String) -> Double
     func getPrices(for symbols: [String]) -> [String: Double]
     func getFeeInCurrentFiat() -> String
@@ -204,10 +203,6 @@ extension SendToken.ChooseRecipientAndNetwork.SelectAddress
         inputStateSubject.value
     }
 
-    func getCurrentSearchKey() -> String? {
-        searchTextSubject.value
-    }
-
     func getPrice(for symbol: String) -> Double {
         chooseRecipientAndNetworkViewModel.getPrice(for: symbol)
     }
@@ -229,7 +224,7 @@ extension SendToken.ChooseRecipientAndNetwork.SelectAddress
 
     func navigate(to scene: SendToken.ChooseRecipientAndNetwork.SelectAddress.NavigatableScene) {
         if scene == .selectPayingWallet {
-            analyticsManager.log(event: .tokenListViewed(lastScreen: "Send", tokenListLocation: "Fee"))
+            analyticsManager.log(event: AmplitudeEvent.tokenListViewed(lastScreen: "Send", tokenListLocation: "Fee"))
         }
         navigationSubject.accept(scene)
     }
@@ -240,6 +235,7 @@ extension SendToken.ChooseRecipientAndNetwork.SelectAddress
     }
 
     func userDidTapPaste() {
+        analyticsManager.log(event: AmplitudeEvent.sendPaste)
         search(clipboardManager.stringFromClipboard())
     }
 
@@ -258,6 +254,8 @@ extension SendToken.ChooseRecipientAndNetwork.SelectAddress
     func selectRecipient(_ recipient: SendToken.Recipient) {
         chooseRecipientAndNetworkViewModel.selectRecipient(recipient)
         inputStateSubject.accept(.recipientSelected)
+        analyticsManager.log(event: AmplitudeEvent.sendFillingAddress)
+        analyticsManager.log(event: AmplitudeEvent.sendReviewScreen)
     }
 
     func clearRecipient() {
