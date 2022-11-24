@@ -35,7 +35,7 @@ jobs:
   # Upload build for testing when pull request is approved
   upload_build_for_testing:
     name: Upload build for testing when pull request is approved
-    if: github.event.review.state == 'approved'
+    if: github.event.review.state == 'approved' || github.event.label.name == 'auto-deploy-to-qa'
     runs-on: macos-12
 
     steps:
@@ -46,10 +46,22 @@ jobs:
           submodules: recursive
           token: ${{ secrets.SUBMODULES_ACCESS_TOKEN }}
 
+      - name: Grant access to KeyAppUI
+        uses: webfactory/ssh-agent@v0.5.4
+        with:
+          ssh-private-key: ${{ secrets.KEY_APP_UI_GIT_SSH }}
+
       - name: Copy xcconfig file
         run: |
           curl -o ./p2p_wallet/Config.xcconfig ${{ secrets.XCCONFIG_URL }}
         shell: bash
+
+      - uses: actions/cache@v3
+        with:
+          path: Pods
+          key: ${{ runner.os }}-pods-${{ hashFiles('**/Podfile.lock') }}
+          restore-keys: |
+            ${{ runner.os }}-pods-
 
       - name: Install project
         run: |
@@ -85,6 +97,7 @@ jobs:
           IS_CI: '${{ secrets.IS_CI }}'
           SLACK_API_TOKEN: '${{ secrets.SLACK_API_TOKEN }}'
           JIRA_BASE_URL: '${{ secrets.JIRA_BASE_URL }}'
+          XCCONFIG_URL: '${{ secrets.XCCONFIG_URL }}'
 
       - name: Login to JIRA
         uses: atlassian/gajira-login@master

@@ -54,9 +54,9 @@ class SwapTransactionAnalytics {
             switch trx.status {
             case .sending:
                 self.analyticsManager.log(
-                    event: .swapUserConfirmed(
-                        tokenAName: rawTrx.sourceWallet.token.symbol,
-                        tokenBName: rawTrx.destinationWallet.token.symbol,
+                    event: AmplitudeEvent.swapUserConfirmed(
+                        tokenA_Name: rawTrx.sourceWallet.token.symbol,
+                        tokenB_Name: rawTrx.destinationWallet.token.symbol,
                         swapSum: rawTrx.amount,
                         swapMAX: rawTrx.metaInfo.swapMAX,
                         swapUSD: rawTrx.metaInfo.swapUSD,
@@ -67,9 +67,9 @@ class SwapTransactionAnalytics {
             case let .confirmed(confirmation):
                 if confirmation == 0 {
                     self.analyticsManager.log(
-                        event: .swapStarted(
-                            tokenAName: rawTrx.sourceWallet.token.symbol,
-                            tokenBName: rawTrx.destinationWallet.token.symbol,
+                        event: AmplitudeEvent.swapStarted(
+                            tokenA_Name: rawTrx.sourceWallet.token.symbol,
+                            tokenB_Name: rawTrx.destinationWallet.token.symbol,
                             swapSum: rawTrx.amount,
                             swapMAX: rawTrx.metaInfo.swapMAX,
                             swapUSD: rawTrx.metaInfo.swapUSD,
@@ -79,9 +79,9 @@ class SwapTransactionAnalytics {
                     )
                 } else if prevTrx?.status.numberOfConfirmations == 0 {
                     self.analyticsManager.log(
-                        event: .swapApprovedByNetwork(
-                            tokenAName: rawTrx.sourceWallet.token.symbol,
-                            tokenBName: rawTrx.destinationWallet.token.symbol,
+                        event: AmplitudeEvent.swapApprovedByNetwork(
+                            tokenA_Name: rawTrx.sourceWallet.token.symbol,
+                            tokenB_Name: rawTrx.destinationWallet.token.symbol,
                             swapSum: rawTrx.amount,
                             swapMAX: rawTrx.metaInfo.swapMAX,
                             swapUSD: rawTrx.metaInfo.swapUSD,
@@ -92,9 +92,9 @@ class SwapTransactionAnalytics {
                 }
             case .finalized:
                 self.analyticsManager.log(
-                    event: .swapCompleted(
-                        tokenAName: rawTrx.sourceWallet.token.symbol,
-                        tokenBName: rawTrx.destinationWallet.token.symbol,
+                    event: AmplitudeEvent.swapCompleted(
+                        tokenA_Name: rawTrx.sourceWallet.token.symbol,
+                        tokenB_Name: rawTrx.destinationWallet.token.symbol,
                         swapSum: rawTrx.amount,
                         swapMAX: rawTrx.metaInfo.swapMAX,
                         swapUSD: rawTrx.metaInfo.swapUSD,

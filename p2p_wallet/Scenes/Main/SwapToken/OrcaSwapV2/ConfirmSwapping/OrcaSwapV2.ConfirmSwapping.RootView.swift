@@ -10,6 +10,7 @@ import Foundation
 import RxCocoa
 import RxSwift
 import UIKit
+import KeyAppUI
 
 extension OrcaSwapV2.ConfirmSwapping {
     final class RootView: ScrollableVStackRootView {
@@ -42,8 +43,12 @@ extension OrcaSwapV2.ConfirmSwapping {
             destinationWalletDriver: viewModel.destinationWalletDriver
         )
         private lazy var feesView = OrcaSwapV2.DetailFeesView(viewModel: viewModel)
-        private lazy var actionButton = WLStepButton.main(image: .buttonSwapSmall, text: nil)
-            .onTap(self, action: #selector(actionButtonDidTouch))
+        private lazy var actionButton = TextButton(
+            title: "",
+            style: .primary,
+            size: .large,
+            leading: .buttonSwapSmall
+        )
 
         // MARK: - Initializers
 
@@ -132,12 +137,16 @@ extension OrcaSwapV2.ConfirmSwapping {
                 viewModel.destinationWalletDriver.map { $0?.token.symbol }
             )
                 .map { L10n.swap($0.0 ?? "", $0.1 ?? "") }
-                .drive(actionButton.rx.text)
+                .drive(actionButton.rx.title)
                 .disposed(by: disposeBag)
 
             feesView.clickHandler = { [weak self] fee in
                 guard let info = fee.info else { return }
                 self?.viewModel.showFeesInfo(info)
+            }
+
+            actionButton.onPressed { [weak self] _ in
+                self?.actionButtonDidTouch()
             }
         }
 

@@ -2,8 +2,10 @@
 // Created by Giang Long Tran on 13.12.21.
 //
 
+import AnalyticsManager
 import BEPureLayout
-import Foundation
+import Combine
+import KeyAppUI
 import Resolver
 import UIKit
 
@@ -11,6 +13,10 @@ extension ReceiveToken {
     final class ViewController: BaseViewController {
         private var viewModel: ReceiveSceneModel
         private let isOpeningFromToken: Bool
+        private var subscriptions = Set<AnyCancellable>()
+        private var buyCoordinator: BuyCoordinator?
+
+        @Injected private var analyticsManager: AnalyticsManager
 
         init(viewModel: ReceiveSceneModel, isOpeningFromToken: Bool) {
             self.isOpeningFromToken = isOpeningFromToken
@@ -32,6 +38,8 @@ extension ReceiveToken {
                 navigationItem.title = L10n.receive
             }
             hidesBottomBarWhenPushed = true
+
+            analyticsManager.log(event: AmplitudeEvent.receiveStartScreen)
         }
 
         @objc func goBack() {
@@ -55,11 +63,13 @@ extension ReceiveToken {
                                         )
                                     // Text
                                     UIStackView(axis: .vertical, spacing: 4, alignment: .leading) {
-                                        UILabel(
-                                            text: L10n.showingMyAddressFor,
-                                            textSize: 13,
-                                            textColor: .secondaryLabel
-                                        )
+                                        if available(.receiveRenBtcEnabled) {
+                                            UILabel(
+                                                text: L10n.showingMyAddressFor,
+                                                textSize: 13,
+                                                textColor: .secondaryLabel
+                                            )
+                                        }
                                         UILabel(text: L10n.network("Solana"), textSize: 17, weight: .semibold)
                                             .setup { view in
                                                 viewModel.tokenTypeDriver
@@ -69,11 +79,15 @@ extension ReceiveToken {
                                             }
                                     }.padding(.init(x: 12, y: 0))
                                     // Next icon
-                                    UIView.defaultNextArrow()
+                                    if available(.receiveRenBtcEnabled) {
+                                        UIView.defaultNextArrow()
+                                    }
                                 }
                                 .padding(.init(x: 15, y: 15))
                                 .onTap { [unowned self] in
-                                    self.viewModel.showSelectionNetwork()
+                                    if available(.receiveRenBtcEnabled) {
+                                        viewModel.showSelectionNetwork()
+                                    }
                                 }
                                 UIStackView(axis: .vertical, alignment: .fill) {
                                     UIView(height: 1, backgroundColor: .f2f2f7)
@@ -81,7 +95,7 @@ extension ReceiveToken {
                                         height: 50,
                                         label: L10n.whatTokensCanIReceive,
                                         labelFont: .systemFont(ofSize: 15, weight: .medium),
-                                        textColor: .h5887ff
+                                        textColor: Asset.Colors.night.color
                                     ).onTap { [weak self] in
                                         self?.navigate(to: .showSupportedTokens)
                                     }
@@ -111,13 +125,12 @@ extension ReceiveToken {
                             viewModel.tokenTypeDriver.map { token in token != .solana }.drive(view.rx.isHidden)
                                 .disposed(by: disposeBag)
                         }
-                    ReceiveBitcoinView(
-                        viewModel: viewModel.receiveBitcoinViewModel
-                    )
-                        .setup { view in
-                            viewModel.tokenTypeDriver.map { token in token != .btc }.drive(view.rx.isHidden)
-                                .disposed(by: disposeBag)
-                        }
+                    ReceiveBitcoinView(viewModel: viewModel.receiveBitcoinViewModel).setup { view in
+                        viewModel.tokenTypeDriver
+                            .map { token in token != .btc }
+                            .drive(view.rx.isHidden)
+                            .disposed(by: disposeBag)
+                    }
 
                     UIStackView(axis: .vertical, spacing: 16, alignment: .fill) {
                         ShowHideButton(
@@ -155,34 +168,8 @@ extension ReceiveToken {
         }
 
         private func createQRHint() -> UILabel {
-            let symbol = viewModel.tokenWallet?.token.symbol ?? ""
             let qrCodeHint = UILabel(numberOfLines: 0)
-            let highlightedText = L10n.receive(symbol)
-            let fullText = L10n.youCanReceiveByProvidingThisAddressQRCodeOrUsername(symbol)
-
-            let normalFont = UIFont.systemFont(ofSize: 15, weight: .regular)
-            let highlightedFont = UIFont.systemFont(ofSize: 15, weight: .bold)
-
-            let paragraphStyle = NSMutableParagraphStyle()
-            paragraphStyle.lineHeightMultiple = 1.17
-            paragraphStyle.alignment = .center
-
-            let attributedText = NSMutableAttributedString(
-                string: fullText,
-                attributes: [
-                    .font: normalFont,
-                    .kern: -0.24,
-                    .paragraphStyle: paragraphStyle,
-                    .foregroundColor: UIColor.textBlack,
-                ]
-            )
-
-            let highlightedRange = (attributedText.string as NSString)
-                .range(of: highlightedText, options: .caseInsensitive)
-            attributedText.addAttribute(.font, value: highlightedFont, range: highlightedRange)
-
-            qrCodeHint.attributedText = attributedText
-
+            qrCodeHint.attributedText = viewModel.qrHint
             return qrCodeHint
         }
     }
@@ -202,7 +189,7 @@ extension ReceiveToken.ViewController {
         case .showRenBTCReceivingStatus:
             let vm = RenBTCReceivingStatuses.ViewModel(receiveBitcoinViewModel: viewModel.receiveBitcoinViewModel)
             let vc = RenBTCReceivingStatuses.ViewController(viewModel: vm)
-            show(vc, sender: nil)
+            show(UINavigationController(rootViewController: vc), sender: nil)
         case let .share(address, qrCode):
             guard let qrCode = qrCode, let address = address else {
                 return
@@ -223,14 +210,25 @@ extension ReceiveToken.ViewController {
         case .showPhotoLibraryUnavailable:
             PhotoLibraryAlertPresenter().present(on: self)
         case .buy:
-            present(
-                BuyTokenSelection.Scene(onTap: { [unowned self] crypto in
-                    let vm = BuyRoot.ViewModel()
-                    let vc = BuyRoot.ViewController(crypto: crypto, viewModel: vm)
-                    show(vc, sender: nil)
-                }),
-                animated: true
-            )
+            if available(.buyScenarioEnabled) {
+                buyCoordinator = BuyCoordinator(
+                    context: .fromRenBTC,
+                    presentingViewController: self,
+                    shouldPush: false
+                )
+                buyCoordinator?.start()
+                    .sink { _ in }
+                    .store(in: &subscriptions)
+            } else {
+                show(
+                    BuyTokenSelection.Scene(onTap: { [unowned self] crypto in
+                        let vm = BuyRoot.ViewModel()
+                        let vc = BuyRoot.ViewController(crypto: crypto, viewModel: vm)
+                        show(vc, sender: nil)
+                    }),
+                    sender: nil
+                )
+            }
         case .none:
             return
         }

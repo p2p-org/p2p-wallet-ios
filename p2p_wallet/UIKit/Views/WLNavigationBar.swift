@@ -5,7 +5,7 @@
 //  Created by Chung Tran on 25/02/2021.
 //
 
-import Foundation
+import KeyAppUI
 import UIKit
 
 class WLNavigationBar: BEView {
@@ -53,7 +53,7 @@ class WLNavigationBar: BEView {
 
     lazy var backButton = UIImageView(
         image: .navigationBack,
-        tintColor: .h5887ff
+        tintColor: .black
     ).padding(.init(x: 6, y: 4))
 
     lazy var titleLabel = UILabel(textSize: 17, weight: .semibold, numberOfLines: 1, textAlignment: .center)
@@ -125,7 +125,7 @@ class NewWLNavigationBar: BECompositionView {
                     UIStackView(axis: .horizontal) {
                         UIImageView(
                             image: .navigationBack,
-                            tintColor: .h5887ff
+                            tintColor: .black
                         ).padding(.init(x: 6, y: 4)).setup { view in
                             self.backButton = view
                             self.backButton.isUserInteractionEnabled = true
@@ -195,8 +195,9 @@ final class ModalNavigationBar: UIStackView {
         let closeButton = UIButton(
             label: rightButtonTitle,
             labelFont: .systemFont(ofSize: 17, weight: .bold),
-            textColor: .h5887ff
+            textColor: Asset.Colors.night.color
         )
+        closeButton.tintColor = Asset.Colors.night.color
         closeButton.addTarget(self, action: #selector(close), for: .touchUpInside)
         navigationBar.rightItems.addArrangedSubview(closeButton)
     }

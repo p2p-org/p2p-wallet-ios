@@ -29,13 +29,13 @@ enum WalletActionType {
     var icon: UIImage {
         switch self {
         case .receive:
-            return .buttonReceive
+            return .homeReceive
         case .buy:
-            return .buttonBuy.withTintColor(.h5887ff)
+            return .homeBuy
         case .send:
-            return .buttonSend
+            return .homeSend
         case .swap:
-            return .buttonSwap
+            return .homeSwap
         }
     }
 }

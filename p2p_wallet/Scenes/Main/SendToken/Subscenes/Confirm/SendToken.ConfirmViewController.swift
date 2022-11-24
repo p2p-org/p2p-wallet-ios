@@ -5,15 +5,20 @@
 //  Created by Chung Tran on 02/12/2021.
 //
 
+import AnalyticsManager
 import BEPureLayout
 import Foundation
+import Resolver
 import RxCocoa
 import RxSwift
 import UIKit
+import KeyAppUI
 
 extension SendToken {
     final class ConfirmViewController: BaseVC {
         // MARK: - Dependencies
+
+        @Injected private var analyticsManager: AnalyticsManager
 
         private let viewModel: SendTokenViewModelType
 
@@ -34,6 +39,7 @@ extension SendToken {
         init(viewModel: SendTokenViewModelType) {
             self.viewModel = viewModel
             super.init()
+            analyticsManager.log(event: AmplitudeEvent.sendApprovedScreen)
         }
 
         override func setUp() {
@@ -79,8 +85,11 @@ extension SendToken {
                 }
                 .onTap { [weak self] in
                     self?.viewModel
-                        .navigate(to: .chooseRecipientAndNetwork(showAfterConfirmation: true,
-                                                                 preSelectedNetwork: nil))
+                        .navigate(to: .chooseRecipientAndNetwork(
+                            showAfterConfirmation: true,
+                            preSelectedNetwork: nil,
+                            maxWasClicked: false
+                        ))
                 }
 
                 // Network
@@ -134,8 +143,11 @@ extension SendToken {
                         }
                         .onTap { [weak self] in
                             self?.viewModel
-                                .navigate(to: .chooseRecipientAndNetwork(showAfterConfirmation: true,
-                                                                         preSelectedNetwork: nil))
+                                .navigate(to: .chooseRecipientAndNetwork(
+                                    showAfterConfirmation: true,
+                                    preSelectedNetwork: nil,
+                                    maxWasClicked: false
+                                ))
                         }
                 }
 
@@ -172,13 +184,7 @@ extension SendToken {
 
                     // Fees
                     FeesView(viewModel: viewModel) { [weak self] title, message in
-                        self?.showAlert(
-                            title: title,
-                            message: message,
-                            buttonTitles: [L10n.ok],
-                            highlightedButtonIndex: 0,
-                            completion: nil
-                        )
+                        self?.showAlert(title: title, message: message)
                     }
                 }
 
@@ -238,19 +244,24 @@ extension SendToken {
             scrollView.autoPinEdge(toSuperviewEdge: .leading)
             scrollView.autoPinEdge(toSuperviewEdge: .trailing)
 
-            let actionButton = WLStepButton.main(image: .buttonSendSmall, text: L10n.sendNow)
+            let actionButton = TextButton(
+                title: L10n.sendNow,
+                style: .primary,
+                size: .large,
+                leading: .buttonSendSmall
+            )
                 .setup { view in
                     Driver.combineLatest(
                         viewModel.walletDriver,
                         viewModel.amountDriver
                     )
-                        .map { wallet, amount in
-                            let amount = amount ?? 0
-                            let symbol = wallet?.token.symbol ?? ""
-                            return L10n.send(amount.toString(maximumFractionDigits: 9), symbol)
-                        }
-                        .drive(view.rx.text)
-                        .disposed(by: disposeBag)
+                    .map { wallet, amount in
+                        let amount = amount ?? 0
+                        let symbol = wallet?.token.symbol ?? ""
+                        return L10n.send(amount.toString(maximumFractionDigits: 9), symbol)
+                    }
+                    .drive(view.rx.title)
+                    .disposed(by: disposeBag)
 
                     Driver.combineLatest([
                         viewModel.walletDriver.map { $0 != nil },
@@ -261,7 +272,7 @@ extension SendToken {
                         .drive(view.rx.isEnabled)
                         .disposed(by: disposeBag)
                 }
-                .onTap { [weak self] in
+                .onPressed { [weak self] _ in
                     self?.viewModel.authenticateAndSend()
                 }
 

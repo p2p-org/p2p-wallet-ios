@@ -6,57 +6,92 @@ import Foundation
 import SolanaSwift
 
 extension KeychainStorage: AccountStorageType {
-    func reloadSolanaAccount() async throws {
-        guard let phrases = keychain.get(phrasesKey)?.components(separatedBy: " ") else { return }
-        let derivableTypeRaw = keychain.get(derivableTypeKey) ?? ""
-        let walletIndexRaw = keychain.get(walletIndexKey) ?? ""
+    public var account: SolanaSwift.Account? {
+        _account
+    }
 
+    var deviceShare: String? {
+        localKeychain.get(deviceShareKey)
+    }
+
+    var derivablePath: DerivablePath {
+        let derivableTypeRaw = localKeychain.get(derivableTypeKey) ?? ""
+        let walletIndexRaw = localKeychain.get(walletIndexKey) ?? ""
         let defaultDerivablePath = DerivablePath.default
-
         let derivableType = DerivablePath.DerivableType(rawValue: derivableTypeRaw) ?? defaultDerivablePath.type
         let walletIndex = Int(walletIndexRaw) ?? defaultDerivablePath.walletIndex
 
-        _account = try await SolanaSwift.Account(
-            phrase: phrases,
-            network: Defaults.apiEndPoint.network,
-            derivablePath: .init(type: derivableType, walletIndex: walletIndex)
-        )
+        return .init(type: derivableType, walletIndex: walletIndex)
+    }
+
+    func reloadSolanaAccount() async throws {
+        guard let phrases = localKeychain.get(phrasesKey)?.components(separatedBy: " ") else { return }
+        
+        if GlobalAppState.shared.forcedWalletAddress.isEmpty {
+            _account = try await SolanaSwift.Account(
+                phrase: phrases,
+                network: Defaults.apiEndPoint.network,
+                derivablePath: derivablePath
+            )
+        } else {
+            _account = SolanaSwift.Account(
+                phrase: [],
+                publicKey: try .init(string: GlobalAppState.shared.forcedWalletAddress),
+                secretKey: Data()
+            )
+        }
     }
 
     func save(phrases: [String]) throws {
-        keychain.set(phrases.joined(separator: " "), forKey: phrasesKey)
+        localKeychain.set(phrases.joined(separator: " "), forKey: phrasesKey)
         _account = nil
     }
 
     func save(walletIndex: Int) throws {
-        keychain.set("\(walletIndex)", forKey: walletIndexKey)
+        localKeychain.set("\(walletIndex)", forKey: walletIndexKey)
         _account = nil
     }
 
     func getDerivablePath() -> DerivablePath? {
         guard
-            let derivableTypeRaw = keychain.get(derivableTypeKey),
+            let derivableTypeRaw = localKeychain.get(derivableTypeKey),
             let derivableType = DerivablePath.DerivableType(rawValue: derivableTypeRaw)
         else { return nil }
 
-        let walletIndexRaw = keychain.get(walletIndexKey)
+        let walletIndexRaw = localKeychain.get(walletIndexKey)
         let walletIndex = Int(walletIndexRaw ?? "0")
 
         return .init(type: derivableType, walletIndex: walletIndex ?? 0)
     }
 
     func save(derivableType: DerivablePath.DerivableType) throws {
-        keychain.set(derivableType.rawValue, forKey: derivableTypeKey)
+        localKeychain.set(derivableType.rawValue, forKey: derivableTypeKey)
         _account = nil
-    }
-
-    public var account: SolanaSwift.Account? {
-        _account
     }
 
     public func save(_: SolanaSwift.Account) throws { fatalError("Method has not been implemented") }
 
     func clearAccount() {
         removeCurrentAccount()
+    }
+
+    func save(deviceShare: String) throws {
+        if deviceShare.isEmpty {
+            localKeychain.delete(deviceShareKey)
+        } else {
+            localKeychain.set(deviceShare, forKey: deviceShareKey)
+        }
+    }
+
+    var ethAddress: String? {
+        localKeychain.get(ethAddressKey)
+    }
+
+    func save(ethAddress: String) throws {
+        if ethAddress.isEmpty {
+            localKeychain.delete(ethAddressKey)
+        } else {
+            localKeychain.set(ethAddress, forKey: ethAddressKey)
+        }
     }
 }

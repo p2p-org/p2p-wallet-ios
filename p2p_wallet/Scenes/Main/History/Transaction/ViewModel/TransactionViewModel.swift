@@ -11,6 +11,8 @@ import RxSwift
 import SolanaSwift
 import TransactionParser
 import UIKit
+import NameService
+import Resolver
 
 extension History {
     final class TransactionViewModel {
@@ -26,15 +28,42 @@ extension History {
 
             let showWebView = fromView.transactionDetailClicked
                 .mapTo("https://explorer.solana.com/tx/\(transaction.signature ?? "")")
-            let model = fromView.viewDidLoad.mapTo(transaction.mapTransaction(pricesService: pricesService))
+            let model = Observable.combineLatest(fromView.viewDidLoad, transaction.getUsername())
+                .map { _, username in
+                    transaction.mapTransaction(
+                        pricesService: pricesService,
+                        username: username
+                    )
+                }
             let copyTransactionId = fromView.transactionIdClicked
                 .mapTo(transaction.signature ?? "")
                 .do(onNext: { clipboardManager.copyToClipboard($0) })
                 .mapToVoid()
 
+            let copyUsername = Observable.combineLatest(fromView.usernameClicked, model)
+                .compactMap { $0.1.username }
+                .do(onNext: { clipboardManager.copyToClipboard($0) })
+                .mapToVoid()
+
+            let copyAddress = fromView.addressClicked
+                .compactMap { keyPath in
+                    switch keyPath {
+                    case \.address:
+                        return transaction.getAddress()
+                    case \.addresses.from:
+                        return transaction.getRawAddresses().from
+                    case \.addresses.to:
+                        return transaction.getRawAddresses().to
+                    default:
+                        return nil
+                    }
+                }
+                .do(onNext: { clipboardManager.copyToClipboard($0) })
+                .mapToVoid()
+
             let view = Output.View(
                 model: model.asDriver(),
-                copied: copyTransactionId.asDriver()
+                copied: Observable.merge(copyTransactionId, copyUsername, copyAddress).asDriver()
             )
             let coord = Output.Coord(
                 done: fromView.doneClicked.asDriver(),
@@ -49,7 +78,8 @@ extension History {
 
 private extension ParsedTransaction {
     func mapTransaction(
-        pricesService: PricesServiceType
+        pricesService: PricesServiceType,
+        username: String?
     ) -> History.TransactionView.Model {
         let amounts = mapAmounts(pricesService: pricesService)
         return .init(
@@ -59,10 +89,11 @@ private extension ParsedTransaction {
             blockTime: blockTime?.string(withFormat: "MMMM dd, yyyy @ HH:mm a") ?? "",
             transactionId: signature?
                 .truncatingMiddle(numOfSymbolsRevealed: 9, numOfSymbolsRevealedInSuffix: 9) ?? "",
+            address: getAddress()?.truncatingMiddle(numOfSymbolsRevealed: 9, numOfSymbolsRevealedInSuffix: 9),
             addresses: getAddresses(),
+            username: username,
             fee: mapFee(),
-            status: .init(text: status.label, color: status.indicatorColor),
-            blockNumber: "#\(slot ?? 0)"
+            status: .init(text: status.label, color: status.indicatorColor)
         )
     }
 
@@ -138,6 +169,40 @@ private extension ParsedTransaction {
     }
 
     func getAddresses() -> (from: String?, to: String?) {
+        let (from, to) = getRawAddresses()
+        switch info {
+        case let transaction as TransferInfo:
+            switch transaction.transferType {
+            default:
+                return (from: nil, to: nil)
+            }
+        default:
+            return (
+                from: from?.truncatingMiddle(numOfSymbolsRevealed: 9, numOfSymbolsRevealedInSuffix: 9),
+                to: to?.truncatingMiddle(numOfSymbolsRevealed: 9, numOfSymbolsRevealedInSuffix: 9)
+            )
+        }
+    }
+
+    func getAddress() -> String? {
+        let (from, to) = getRawAddresses()
+        switch info {
+        case let transaction as TransferInfo:
+            switch transaction.transferType {
+            case .send:
+                return to
+            case .receive:
+                return from
+            default:
+                return to
+            }
+        default:
+            break
+        }
+        return nil
+    }
+
+    func getRawAddresses() -> (from: String?, to: String?) {
         let transaction = info
 
         let from: String?
@@ -159,11 +224,33 @@ private extension ParsedTransaction {
         default:
             to = nil
         }
+        return (from: from, to: to)
+    }
 
-        return (
-            from: from?.truncatingMiddle(numOfSymbolsRevealed: 9, numOfSymbolsRevealedInSuffix: 9),
-            to: to?.truncatingMiddle(numOfSymbolsRevealed: 9, numOfSymbolsRevealedInSuffix: 9)
-        )
+    func getUsername() -> Observable<String?> {
+        Single<String?>.async {
+            let nameService: NameService = Resolver.resolve()
+            let address: String?
+            switch info {
+            case let transaction as TransferInfo:
+                switch transaction.transferType {
+                case .send:
+                    address = transaction.destinationAuthority ?? transaction.destination?.pubkey
+                case .receive:
+                    address = transaction.authority ?? transaction.source?.pubkey
+                default:
+                    address = transaction.destinationAuthority ?? transaction.destination?.pubkey
+                }
+            default:
+                address = nil
+            }
+            guard let address = address else { return nil }
+            do {
+                return try await nameService.getName(address)?.withNameServiceDomain()
+            } catch {
+                return nil
+            }
+        }.asObservable()
     }
 
     func mapFee() -> NSAttributedString? {
@@ -175,8 +262,8 @@ private extension ParsedTransaction {
         let swapFee = ((feeAmount?.transaction ?? 0) + (feeAmount?.accountBalances ?? 0))
             .convertToBalance(decimals: payingWallet.token.decimals)
 
-        if amount == 0, transferAmount == 0, swapFee == 0 {
-            return NSMutableAttributedString().text(L10n.FreeByP2p.org, size: 16, color: ._4d77ff)
+        if feeAmount?.transaction == 0 {
+            return NSMutableAttributedString().text(L10n.freeByKeyApp, size: 16, color: ._4d77ff)
         } else {
             return NSMutableAttributedString().text(
                 max(amount, transferAmount, swapFee)
@@ -192,12 +279,15 @@ private extension ParsedTransaction {
 
 extension History.TransactionViewModel: ViewModel {
     struct Input: ViewModelIO {
+        typealias Model = History.TransactionView.Model
         let view = View()
         let coord = Coord()
 
         struct View {
             let viewDidLoad = PublishRelay<Void>()
             let transactionIdClicked = PublishRelay<Void>()
+            let usernameClicked = PublishRelay<Void>()
+            let addressClicked = PublishRelay<KeyPath<Model, String?>>()
             let doneClicked = PublishRelay<Void>()
             let transactionDetailClicked = PublishRelay<Void>()
         }

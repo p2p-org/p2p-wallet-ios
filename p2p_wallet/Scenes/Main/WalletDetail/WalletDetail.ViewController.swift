@@ -6,10 +6,13 @@
 //
 
 import BEPureLayout
+import Combine
 import Foundation
 import Resolver
+import RxCombine
 import RxSwift
 import SolanaSwift
+import KeyAppUI
 import UIKit
 
 extension WalletDetail {
@@ -22,15 +25,11 @@ extension WalletDetail {
 
         var processingTransactionDoneHandler: (() -> Void)?
 
-        // MARK: - Subviews
-
-        private lazy var balanceView = BalanceView(viewModel: viewModel)
-        private let actionsView = ColorfulHorizontalView()
-
         // MARK: - Subscene
 
         private lazy var historyVC = History.Scene(account: viewModel.pubkey, symbol: viewModel.symbol)
         private var coordinator: SendToken.Coordinator?
+        private var subscriptions = Set<AnyCancellable>()
 
         // MARK: - Initializer
 
@@ -58,62 +57,83 @@ extension WalletDetail {
 
             let containerView = UIView(forAutoLayout: ())
 
-            actionsView.autoSetDimension(.height, toSize: 80)
+            let actionsPublisher = viewModel.walletActionsDriver
+                .asPublisher()
+                .assertNoFailure()
+            let balancePublisher = viewModel.walletDriver
+                .asPublisher()
+                .assertNoFailure()
+                .compactMap { $0?.amount?.tokenAmount(symbol: $0?.token.symbol ?? "") }
+            let usdAmountPublisher = viewModel.walletDriver
+                .asPublisher()
+                .assertNoFailure()
+                .compactMap { $0?.amountInCurrentFiat.fiatAmount() }
+            let actionsView = ActionsPanelView(
+                actionsPublisher: actionsPublisher.eraseToAnyPublisher(),
+                balancePublisher: balancePublisher.eraseToAnyPublisher(),
+                usdAmountPublisher: usdAmountPublisher.eraseToAnyPublisher()
+            ) { [unowned self] actionType in
+                viewModel.start(action: actionType)
+            }.uiView()
 
-            let stackView = UIStackView(
-                axis: .vertical,
-                spacing: 18,
-                alignment: .fill
-            ) {
-                balanceView.padding(.init(x: 18, y: 16))
-                actionsView.padding(.init(x: 18, y: 0))
-                containerView.padding(.init(top: 16, left: 8, bottom: 0, right: 8))
-            }
+            view.addSubview(actionsView)
+            actionsView.autoPinEdge(toSuperviewSafeArea: .top)
+            actionsView.autoPinEdge(toSuperviewEdge: .leading)
+            actionsView.autoPinEdge(toSuperviewEdge: .trailing)
+            actionsView.heightAnchor.constraint(equalToConstant: 228).isActive = true
 
-            view.addSubview(stackView)
-            stackView.autoPinEdgesToSuperviewEdges(with: .zero, excludingEdge: .top)
-            stackView.autoPinEdge(toSuperviewSafeArea: .top)
+            view.addSubview(containerView)
+            containerView.autoPinEdgesToSuperviewEdges(with: .zero, excludingEdge: .top)
+            containerView.autoPinEdge(.top, to: .bottom, of: actionsView)
 
             add(child: historyVC, to: containerView)
         }
 
+        override func viewDidAppear(_ animated: Bool) {
+            super.viewDidAppear(animated)
+            view.layoutIfNeeded()
+        }
+
         override func bind() {
             super.bind()
+
             viewModel.walletDriver
                 .map { $0?.token.name }
                 .drive(onNext: { [weak self] in
                     self?.navigationItem.title = $0
                 })
                 .disposed(by: disposeBag)
-
             viewModel.navigatableSceneDriver
                 .drive(onNext: { [weak self] in self?.navigate(to: $0) })
-                .disposed(by: disposeBag)
-
-            viewModel.walletActionsDriver
-                .drive(
-                    onNext: { [weak self] in
-                        guard let self = self else { return }
-
-                        self.actionsView.setArrangedSubviews($0.map(self.createWalletActionView))
-                    }
-                )
                 .disposed(by: disposeBag)
         }
 
         // MARK: - Navigation
 
+        private var buyCoordinator: BuyCoordinator?
         private func navigate(to scene: NavigatableScene?) {
             switch scene {
             case let .buy(crypto):
-                let vc = BuyPreparing.Scene(
-                    viewModel: BuyPreparing.SceneModel(
-                        crypto: crypto,
-                        exchangeService: Resolver.resolve()
+                let vc: UIViewController
+                if available(.buyScenarioEnabled) {
+                    // TODO: remove after moving to coordinator
+                    buyCoordinator = BuyCoordinator(
+                        context: .fromToken,
+                        defaultToken: crypto == .sol ? .nativeSolana : crypto == .usdc ? .usdc : .eth,
+                        presentingViewController: self,
+                        shouldPush: false
                     )
-                )
-                let navigation = UINavigationController(rootViewController: vc)
-                present(navigation, animated: true)
+                    buyCoordinator?.start().sink { _ in }.store(in: &subscriptions)
+                } else {
+                    vc = BuyPreparing.Scene(
+                        viewModel: BuyPreparing.SceneModel(
+                            crypto: crypto,
+                            exchangeService: Resolver.resolve()
+                        )
+                    )
+                    let navigation = UINavigationController(rootViewController: vc)
+                    present(navigation, animated: true)
+                }
             case let .settings(pubkey):
                 let vm = TokenSettingsViewModel(pubkey: pubkey)
                 let vc = TokenSettingsViewController(viewModel: vm)
@@ -157,12 +177,6 @@ extension WalletDetail {
                 show(vc, sender: nil)
             default:
                 break
-            }
-        }
-
-        private func createWalletActionView(actionType: WalletActionType) -> UIView {
-            WalletActionButton(actionType: actionType) { [weak self] in
-                self?.viewModel.start(action: actionType)
             }
         }
 

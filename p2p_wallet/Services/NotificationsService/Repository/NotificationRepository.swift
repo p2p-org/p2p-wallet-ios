@@ -19,13 +19,29 @@ final class NotificationRepositoryImpl: NotificationRepository {
     @Injected private var httpClient: HttpClient
 
     func sendDeviceToken(model: DeviceTokenDto) async throws -> DeviceTokenResponse {
-        try await httpClient.sendRequest(
-            endpoint: NotifierEndpoint.addDevice(dto: .init(
-                method: "add_device",
-                params: [model]
-            )),
-            responseModel: DeviceTokenResponse.self
-        )
+        do {
+            return try await httpClient.sendRequest(
+                endpoint: NotifierEndpoint.addDevice(dto: .init(
+                    method: "add_device",
+                    params: [model]
+                )),
+                responseModel: DeviceTokenResponse.self
+            )
+        } catch let error as JsonRpcError {
+            if error.code == -32001 {
+                return .init(
+                    id: "",
+                    result: .init(
+                        deviceToken: model.deviceToken,
+                        timestamp: String(Date().timeIntervalSince1970),
+                        clientId: model.clientId
+                    )
+                )
+            }
+            throw error
+        } catch {
+            throw error
+        }
     }
 
     func removeDeviceToken(model: DeleteDeviceTokenDto) async throws -> DeviceTokenResponse {

@@ -6,7 +6,7 @@
 //
 
 import BEPureLayout
-import Foundation
+import KeyAppUI
 import SwiftUI
 import UIKit
 
@@ -139,6 +139,6 @@ extension UIView {
     }
 
     static func closeBannerButton() -> UIImageView {
-        UIImageView(width: 24, height: 24, image: .closeBanner)
+        UIImageView(width: 24, height: 24, image: .closeBanner, tintColor: Asset.Colors.night.color)
     }
 }

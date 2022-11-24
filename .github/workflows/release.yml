@@ -12,11 +12,14 @@ jobs:
           submodules: recursive
           token: ${{ secrets.SUBMODULES_ACCESS_TOKEN }}
 
+      - name: Grant access to KeyAppUI
+        uses: webfactory/ssh-agent@v0.5.4
+        with:
+          ssh-private-key: ${{ secrets.KEY_APP_UI_GIT_SSH }}
+
       - name: Copy secret files
         run: |
           curl -o ./p2p_wallet/Config.xcconfig ${{ secrets.XCCONFIG_URL }}
-          rm ./p2p_wallet/GoogleService-Info.plist
-          curl -o ./p2p_wallet/GoogleService-Info.plist ${{ secrets.GOOGLE_SERVICE_INFO_PLIST_URL }}
         shell: bash
 
       - name: Install project
@@ -25,6 +28,12 @@ jobs:
           rm -rf p2p_wallet/Scenes/DebugMenu
           chmod u+x Scripts/install.sh && Scripts/install.sh
         shell: bash
+
+      - name: Fix missing Transporter.app
+        run: |
+          export FASTLANE_ITUNES_TRANSPORTER_USE_SHELL_SCRIPT=1
+          export FASTLANE_ITUNES_TRANSPORTER_PATH=/Applications/Transporter.app/Contents/itms
+          export FASTLANE_APPLE_APPLICATION_SPECIFIC_PASSWORD=${{ secrets.FASTLANE_APPLE_APPLICATION_SPECIFIC_PASSWORD }}
 
       - name: Upload to test
         uses: maierj/fastlane-action@v2.2.0
@@ -55,3 +64,5 @@ jobs:
           IS_CI: '${{ secrets.IS_CI }}'
           SLACK_API_TOKEN: '${{ secrets.SLACK_API_TOKEN }}'
           JIRA_BASE_URL: '${{ secrets.JIRA_BASE_URL }}'
+          GOOGLE_SERVICE_INFO_PLIST_URL: '${{ secrets.GOOGLE_SERVICE_INFO_PLIST_URL }}'
+          XCCONFIG_URL: '${{ secrets.XCCONFIG_URL }}'

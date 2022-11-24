@@ -12,13 +12,8 @@ protocol AppEventHandlerDelegate: AnyObject {
     func didStartLoading()
     func didStopLoading()
 
-    func createWalletDidComplete()
-    func restoreWalletDidComplete()
-
-    func onboardingDidFinish(resolvedName: String?)
-
     func userDidChangeAPIEndpoint(to endpoint: APIEndPoint)
     func userDidChangeLanguage(to language: LocalizedLanguage)
     func userDidChangeTheme(to theme: UIUserInterfaceStyle)
-    func userDidLogout()
+    func refresh()
 }
