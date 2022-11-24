@@ -93,6 +93,7 @@ final class SettingsViewModel: BaseViewModel, ObservableObject {
                     localizedReason: L10n.identifyYourself
                 )
                 Defaults.isBiometryEnabled.toggle()
+                analyticsManager.log(event: AmplitudeEvent.settingsSecuritySelected(faceId: Defaults.isBiometryEnabled))
                 isBiometryCheckGoing = false
             } catch {
                 if let authError = error as? LAError, authError.errorCode != kLAErrorUserCancel {
