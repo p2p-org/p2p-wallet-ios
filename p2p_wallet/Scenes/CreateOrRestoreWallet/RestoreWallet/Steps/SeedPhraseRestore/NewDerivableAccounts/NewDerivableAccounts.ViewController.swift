@@ -69,6 +69,11 @@ extension NewDerivableAccounts {
             super.init()
         }
 
+        override func viewDidLoad() {
+            super.viewDidLoad()
+            analyticsManager.log(event: AmplitudeEvent.recoveryDerivableAccountsOpen)
+        }
+
         override func setUp() {
             super.setUp()
 
