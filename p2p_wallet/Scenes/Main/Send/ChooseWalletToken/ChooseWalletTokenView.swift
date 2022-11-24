@@ -4,11 +4,9 @@ import SolanaSwift
 
 struct ChooseWalletTokenView: View {
     @ObservedObject private var viewModel: ChooseWalletTokenViewModel
-    @Binding var showModal: Bool // TODO: Should be removed when coordinator is done
 
-    init(viewModel: ChooseWalletTokenViewModel, showModal: Binding<Bool>) {
+    init(viewModel: ChooseWalletTokenViewModel) {
         self.viewModel = viewModel
-        _showModal = showModal
     }
 
     var body: some View {
@@ -97,18 +95,18 @@ private extension ChooseWalletTokenView {
                 .foregroundColor(Color(Asset.Colors.night.color))
             HStack {
                 Spacer()
-                Button(action: {
-                    viewModel.close.send()
-                    showModal.toggle()
-                }) {
-                    Image(uiImage: Asset.MaterialIcon.close.image)
-                        .renderingMode(.template)
-                        .resizable()
-                        .aspectRatio(contentMode: .fit)
-                        .foregroundColor(Color(Asset.Colors.night.color))
-                        .frame(width: 24, height: 24)
-                        .padding(.trailing, 18)
-                }
+                Button(
+                    action: viewModel.close.send,
+                    label: {
+                        Image(uiImage: Asset.MaterialIcon.close.image)
+                            .renderingMode(.template)
+                            .resizable()
+                            .aspectRatio(contentMode: .fit)
+                            .foregroundColor(Color(Asset.Colors.night.color))
+                            .frame(width: 24, height: 24)
+                            .padding(.trailing, 18)
+                    }
+                )
             }
         }
         .frame(height: 48)

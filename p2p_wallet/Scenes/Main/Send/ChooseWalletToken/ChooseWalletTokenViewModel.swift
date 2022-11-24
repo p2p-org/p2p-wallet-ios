@@ -6,8 +6,8 @@ final class ChooseWalletTokenViewModel: ObservableObject {
 
     @Injected private var walletsRepository: WalletsRepository
 
-    let chooseTokenSubject = PassthroughSubject<Wallet, Never>() // TODO: Bind to coordinator
-    let close = PassthroughSubject<Void, Never>() // TODO: Bind to coordinator
+    let chooseTokenSubject = PassthroughSubject<Wallet, Never>()
+    let close = PassthroughSubject<Void, Never>()
     let clearSearch = PassthroughSubject<Void, Never>()
 
     @Published var wallets: [Wallet] = []

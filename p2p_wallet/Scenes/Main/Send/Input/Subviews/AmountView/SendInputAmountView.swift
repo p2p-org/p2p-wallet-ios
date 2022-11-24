@@ -41,16 +41,16 @@ struct SendInputAmountView: View {
 
                         Spacer()
 
-                        Text(viewModel.tokenText)
+                        Text(viewModel.mainTokenText)
                             .foregroundColor(Color(mainColor))
                             .font(uiFont: .systemFont(ofSize: UIFont.fontSize(of: .title2), weight: .bold))
                     }
                     HStack(spacing: 0) {
-                        Text(viewModel.anotherToken)
+                        Text(viewModel.secondaryAmountText)
                             .foregroundColor(Color(Asset.Colors.mountain.color))
                             .apply(style: .text4)
                         Spacer()
-                        Text(L10n.tapToSwitchTo(viewModel.switchToken))
+                        Text(L10n.tapToSwitchTo(viewModel.secondaryCurrencyText))
                             .foregroundColor(Color(Asset.Colors.mountain.color))
                             .apply(style: .text4)
                     }
