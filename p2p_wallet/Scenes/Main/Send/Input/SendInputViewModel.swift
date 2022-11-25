@@ -31,6 +31,7 @@ class SendInputViewModel: ObservableObject {
     let tokenViewModel: SendInputTokenViewModel
 
     @Published var currentToken: Wallet
+    @Published var feeToken: Wallet
 
     init(recipient: Recipient) {
         let repository = Resolver.resolve(WalletsRepository.self)
@@ -42,6 +43,8 @@ class SendInputViewModel: ObservableObject {
         let wallets = repository.getWallets()
         let tokenInWallet = wallets.first(where: { $0.token.address == Token.nativeSolana.address })
         self.currentToken = tokenInWallet!
+        let feeTokenInWallet = wallets.first(where: { $0.token.address == Token.usdc.address })
+        self.feeToken = feeTokenInWallet!
 
         var exchangeRate = [String: CurrentPrice]()
         wallets.forEach { exchangeRate[$0.id] = pricesService.currentPrice(for: $0.id) }
@@ -49,8 +52,8 @@ class SendInputViewModel: ObservableObject {
         let state = SendInputState(
             status: .ready,
             recipient: recipient,
-            token: .nativeSolana,
-            tokenFee: .nativeSolana,
+            token: tokenInWallet!.token,
+            tokenFee: feeTokenInWallet!.token,
             userWalletEnvironments: .init(wallets: wallets, exchangeRate: exchangeRate),
             amountInFiat: .zero,
             amountInToken: .zero,

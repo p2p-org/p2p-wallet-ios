@@ -29,7 +29,8 @@ final class SendInputCoordinator: Coordinator<Void> {
 
         viewModel.feeInfoPressed
             .sink { [weak self] in
-                self?.openFreeTransactionsDetailView(from: controller)
+//                self?.openFreeTransactionsDetail(from: controller)
+                self?.openFeePropmt(from: controller, viewModel: viewModel)
             }
             .store(in: &subscriptions)
 
@@ -49,7 +50,7 @@ final class SendInputCoordinator: Coordinator<Void> {
     }
 
     private func openChooseWalletToken(from vc: UIViewController, viewModel: SendInputViewModel) {
-        coordinate(to: ChooseWalletTokenCoordinator(chosenWallet: viewModel.currentToken, parentController: vc))
+        coordinate(to: ChooseWalletTokenCoordinator(strategy: .sendToken, chosenWallet: viewModel.currentToken, parentController: vc))
             .sink { walletToken in
                 if let walletToken = walletToken {
                     viewModel.currentToken = walletToken
@@ -58,10 +59,19 @@ final class SendInputCoordinator: Coordinator<Void> {
             .store(in: &subscriptions)
     }
 
-    private func openFreeTransactionsDetailView(from vc: UIViewController) {
+    private func openFreeTransactionsDetail(from vc: UIViewController) {
         coordinate(to: SendInputFreeTransactionsDetailCoordinator(parentController: vc))
             .sink(receiveValue: { })
             .store(in: &subscriptions)
     }
 
+    private func openFeePropmt(from vc: UIViewController, viewModel: SendInputViewModel) {
+        coordinate(to: SendInputFeePromptCoordinator(parentController: vc, feeToken: viewModel.feeToken))
+            .sink(receiveValue: { feeToken in
+                if let feeToken = feeToken {
+                    viewModel.feeToken = feeToken
+                }
+            })
+            .store(in: &subscriptions)
+    }
 }

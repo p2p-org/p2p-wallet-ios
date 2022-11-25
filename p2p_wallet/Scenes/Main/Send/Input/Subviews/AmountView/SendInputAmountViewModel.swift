@@ -36,7 +36,7 @@ final class SendInputAmountViewModel: ObservableObject {
 
         maxAmountPressed
             .sink { [unowned self] in
-                self.amountText = "\(self.maxAmount)"
+                self.amountText = self.maxAmount.toString()
             }
             .store(in: &subscriptions)
 
@@ -45,7 +45,7 @@ final class SendInputAmountViewModel: ObservableObject {
                 guard let self = self else { return }
 
                 self.amount = Double(text) ?? 0.0
-                self.secondaryAmountText = String(self.amount * self.token.priceInCurrentFiat) // TODO: fix
+                self.secondaryAmountText = (self.amount * self.token.priceInCurrentFiat).toString() // TODO: fix
             }
             .store(in: &subscriptions)
 

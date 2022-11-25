@@ -2,18 +2,25 @@ import Combine
 import SolanaSwift
 import SwiftUI
 
+enum ChooseWalletTokenStrategy {
+    case feeToken
+    case sendToken
+}
+
 final class ChooseWalletTokenCoordinator: Coordinator<Wallet?> {
     private let parentController: UIViewController
     private var subject = PassthroughSubject<Wallet?, Never>()
+    private let strategy: ChooseWalletTokenStrategy
     private let chosenWallet: Wallet
 
-    init(chosenWallet: Wallet, parentController: UIViewController) {
+    init(strategy: ChooseWalletTokenStrategy, chosenWallet: Wallet, parentController: UIViewController) {
+        self.strategy = strategy
         self.chosenWallet = chosenWallet
         self.parentController = parentController
     }
 
     override func start() -> AnyPublisher<Wallet?, Never> {
-        let viewModel = ChooseWalletTokenViewModel(chosenToken: chosenWallet)
+        let viewModel = ChooseWalletTokenViewModel(title: title(), chosenToken: chosenWallet)
         let view = ChooseWalletTokenView(viewModel: viewModel)
         let controller = UIHostingController(rootView: view)
 
@@ -34,5 +41,14 @@ final class ChooseWalletTokenCoordinator: Coordinator<Wallet?> {
         vc.dismiss(animated: true)
         subject.send(wallet)
         subject.send(completion: .finished)
+    }
+
+    private func title() -> String {
+        switch strategy {
+        case .feeToken:
+            return L10n.PayThe0._03FeeWith
+        case .sendToken:
+            return L10n.pickAToken
+        }
     }
 }

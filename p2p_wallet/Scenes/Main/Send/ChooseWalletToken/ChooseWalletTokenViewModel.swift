@@ -16,6 +16,7 @@ final class ChooseWalletTokenViewModel: ObservableObject {
     @Published var isSearchGoing: Bool = false
 
     let chosenToken: Wallet
+    let title: String
 
     private var subscriptions = Set<AnyCancellable>()
 
@@ -23,7 +24,8 @@ final class ChooseWalletTokenViewModel: ObservableObject {
         walletsRepository.getWallets()
     }
 
-    init(chosenToken: Wallet) {
+    init(title: String, chosenToken: Wallet) {
+        self.title = title
         self.chosenToken = chosenToken
 
         wallets = allWallets.filter({ $0.token.address != chosenToken.token.address })
