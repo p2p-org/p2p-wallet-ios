@@ -252,11 +252,7 @@ extension Resolver: ResolverRegistering {
             .scope(.session)
 
         // FeeRelayer
-        register { FeeRelayerSwift.APIClient(
-            baseUrlString: FeeRelayerEndpoint.baseUrl,
-            version: 1,
-            environment: Environment.current == .release ? .prod : .dev)
-        }
+        register { FeeRelayerSwift.APIClient(baseUrlString: FeeRelayerEndpoint.baseUrl, version: 1) }
             .implements(FeeRelayerAPIClient.self)
             .scope(.session)
 
@@ -267,7 +263,8 @@ extension Resolver: ResolverRegistering {
             feeCalculator: DefaultFreeRelayerCalculator(),
             feeRelayerAPIClient: resolve(),
             deviceType: .iOS,
-            buildNumber: Bundle.main.fullVersionNumber
+            buildNumber: Bundle.main.fullVersionNumber,
+            environment: Environment.current == .release ? .release : .dev
         ) }
         .implements(FeeRelayer.self)
         .scope(.session)
