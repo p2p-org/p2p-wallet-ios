@@ -1,15 +1,18 @@
 import SwiftUI
 import UIKit
+import KeyAppUI
 
 struct FocusedTextField: UIViewRepresentable {
     @Binding private var isFirstResponder: Bool
     @Binding private var text: String
+    @Binding private var textColor: UIColor
     private let validation: NSPredicate?
     private var configuration = { (_: UITextField) in }
 
     init(
         text: Binding<String>,
         isFirstResponder: Binding<Bool>,
+        textColor: Binding<UIColor> = Binding.constant(Asset.Colors.night.color),
         validation: NSPredicate? = nil,
         configuration: @escaping (UITextField) -> Void = { _ in }
     ) {
@@ -17,6 +20,7 @@ struct FocusedTextField: UIViewRepresentable {
         self.validation = validation
         _text = text
         _isFirstResponder = isFirstResponder
+        _textColor = textColor
     }
 
     func makeUIView(context: Context) -> UITextField {
@@ -28,6 +32,7 @@ struct FocusedTextField: UIViewRepresentable {
             action: #selector(context.coordinator.textViewDidChange),
             for: .editingChanged
         )
+        view.textColor = textColor
         return view
     }
 
@@ -41,6 +46,7 @@ struct FocusedTextField: UIViewRepresentable {
             DispatchQueue.main.async { uiView.becomeFirstResponder() }
         }
         configuration(uiView)
+        uiView.textColor = textColor
     }
 
     func makeCoordinator() -> Coordinator {
