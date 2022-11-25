@@ -55,8 +55,7 @@ enum AmplitudeEvent: AnalyticsEvent {
     case bioApproved(lastScreen: String)
     case bioRejected
     case setupAllowPushOpen
-    case pushRejected
-    case pushApproved(lastScreen: String)
+    case pushApprove
     case setupFinishOpen
     case setupFinishClick
     case setupWelcomeBackOpen
@@ -81,6 +80,7 @@ enum AmplitudeEvent: AnalyticsEvent {
     case mainScreenSwapOpen
     case mainScreenReceiveOpen
     case mainScreenTokenDetailsOpen(tokenTicker: String)
+    case mainScreenBuyToken(tokenName: String)
 
     // token_details
     case tokenDetailsOpen(tokenTicker: String)
@@ -279,4 +279,17 @@ enum AmplitudeEvent: AnalyticsEvent {
 
     case startDeleteAccount
     case confirmDeleteAccount
+
+    // MARK: - Action
+
+    case actionPanelSendToken(tokenName: String)
+    case actionPanelSwapToken(tokenName: String)
+
+    // MARK: - QR
+    
+    case QR_Share
+
+    // MARK: - Seed
+
+    case seedPhraseCopy
 }
