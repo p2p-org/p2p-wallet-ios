@@ -12,7 +12,7 @@ import SolanaSwift
 
 extension SendService {
     func sendToSolanaBCViaRewardMethod(
-        _ context: FeeRelayerContext,
+        _ context: RelayContext,
         from wallet: Wallet,
         receiver: String,
         amount: Lamports
@@ -78,7 +78,7 @@ extension SendService {
     }
 
     private func prepareForSendingToSolanaNetworkViaRewardMethod(
-        _ context: FeeRelayerContext,
+        _ context: RelayContext,
         from wallet: Wallet,
         receiver: String,
         amount: Double,

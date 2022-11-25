@@ -12,7 +12,7 @@ import SolanaSwift
 
 extension SendService {
     func getFeeViaRelayMethod(
-        _ context: FeeRelayerContext,
+        _ context: RelayContext,
         from wallet: Wallet,
         receiver: String,
         payingTokenMint: String?
@@ -52,7 +52,7 @@ extension SendService {
             return expectedFee
         }
 
-        return try await feeRelayer.feeCalculator.calculateNeededTopUpAmount(
+        return try await relayService.feeCalculator.calculateNeededTopUpAmount(
             context,
             expectedFee: expectedFee,
             payingTokenMint: try? PublicKey(string: payingTokenMint)
@@ -60,7 +60,7 @@ extension SendService {
     }
 
     func sendToSolanaBCViaRelayMethod(
-        _ context: FeeRelayerContext,
+        _ context: RelayContext,
         from wallet: Wallet,
         receiver: String,
         amount: Lamports,
@@ -81,7 +81,7 @@ extension SendService {
         preparedTransaction.transaction.recentBlockhash = try await solanaAPIClient.getRecentBlockhash(commitment: nil)
 
         if useFeeRelayer {
-            return try await feeRelayer.topUpAndRelayTransaction(
+            return try await relayService.topUpAndRelayTransaction(
                 context,
                 preparedTransaction,
                 fee: payingFeeToken,
@@ -96,7 +96,7 @@ extension SendService {
     }
 
     private func prepareForSendingToSolanaNetworkViaRelayMethod(
-        _ context: FeeRelayerContext,
+        _ context: RelayContext,
         from wallet: Wallet,
         receiver: String,
         amount: Double,
@@ -171,7 +171,7 @@ extension SendService {
     }
 
     private func isFreeTransactionNotAvailableAndUserIsPayingWithSOL(
-        _ context: FeeRelayerContext,
+        _ context: RelayContext,
         payingTokenMint: String?
     ) -> Bool {
         let expectedTransactionFee = context.lamportsPerSignature * 2

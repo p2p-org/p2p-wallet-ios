@@ -19,9 +19,9 @@ class SendService: SendServiceType {
     @Injected var solanaAPIClient: SolanaAPIClient
     @Injected var blockchainClient: BlockchainClient
     @Injected var orcaSwap: OrcaSwapType
-    @Injected var feeRelayer: FeeRelayer
+    @Injected var relayService: RelayService
     @Injected var feeRelayerAPIClient: FeeRelayerAPIClient
-    @Injected var contextManager: FeeRelayerContextManager
+    @Injected var contextManager: RelayContextManager
 
     @Injected private var renVMBurnAndReleaseService: BurnAndReleaseService
     @Injected private var walletsRepository: WalletsRepository
@@ -99,7 +99,7 @@ class SendService: SendServiceType {
                     }
 
                     return Single.async {
-                        try await self.feeRelayer.feeCalculator.calculateFeeInPayingToken(
+                        try await self.relayService.feeCalculator.calculateFeeInPayingToken(
                             orcaSwap: self.orcaSwap,
                             feeInSOL: feeInSOL,
                             payingFeeTokenMint: try PublicKey(string: wallet.mintAddress)
@@ -124,7 +124,7 @@ class SendService: SendServiceType {
             return feeInSOL
         }
 
-        return try await feeRelayer.feeCalculator.calculateFeeInPayingToken(
+        return try await relayService.feeCalculator.calculateFeeInPayingToken(
             orcaSwap: orcaSwap,
             feeInSOL: feeInSOL,
             payingFeeTokenMint: try PublicKey(string: payingFeeWallet.mintAddress)
@@ -255,7 +255,7 @@ class SendService: SendServiceType {
         
         // send swap transaction
         
-        return try await feeRelayer.topUpAndRelayTransaction(
+        return try await relayService.topUpAndRelayTransaction(
             context,
             swapPreparedTransaction,
             fee: nil,
