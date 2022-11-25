@@ -98,20 +98,16 @@ extension ReceiveToken {
             attributedText.addAttribute(.font, value: highlightedFont, range: highlightedRange)
             qrHint = attributedText
 
-            var solanaTokenWallet = solanaTokenWallet
-            if isDisabledRenBtc {
-                solanaTokenWallet?.token = .nativeSolana
-            }
             tokenWallet = solanaTokenWallet
 
             canOpenTokensList = !isOpeningFromToken
-            if isDisabledRenBtc {
-                screenCanHaveAddressesInfo = false
-            } else {
-                screenCanHaveAddressesInfo = isOpeningFromToken && solanaTokenWallet != nil
-            }
+            screenCanHaveAddressesInfo = isOpeningFromToken && solanaTokenWallet != nil
             screenCanHaveHint = isOpeningFromToken
-            shouldShowChainsSwitcher = isOpeningFromToken ? isRenBTC : solanaTokenWallet?.isNativeSOL ?? true
+            if available(.receiveRenBtcEnabled) {
+                shouldShowChainsSwitcher = isOpeningFromToken ? isRenBTC : solanaTokenWallet?.isNativeSOL ?? true
+            } else {
+                shouldShowChainsSwitcher = false
+            }
             receiveSolanaViewModel = ReceiveToken.SolanaViewModel(
                 solanaPubkey: solanaPubkey.base58EncodedString,
                 solanaTokenWallet: solanaTokenWallet,
