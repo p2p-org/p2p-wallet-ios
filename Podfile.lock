@@ -265,7 +265,7 @@ DEPENDENCIES:
   - JSBridge (from `https://github.com/p2p-org/key-app-kit-swift.git`, branch `feature/pwn-6024`)
   - KeyAppKitCore (from `https://github.com/p2p-org/key-app-kit-swift.git`, branch `feature/pwn-6024`)
   - KeyAppKitLogger (from `https://github.com/p2p-org/key-app-kit-swift.git`, branch `feature/pwn-6024`)
-  - "KeyAppUI (from `git@github.com:p2p-org/KeyAppUI.git`, branch `feature/PWN-6023`)"
+  - "KeyAppUI (from `git@github.com:p2p-org/KeyAppUI.git`, branch `develop`)"
   - KeychainSwift (= 19.0.0)
   - Kingfisher (~> 7.3.2)
   - ListPlaceholder (from `https://github.com/p2p-org/ListPlaceholder.git`, branch `custom_gradient_color`)
@@ -399,7 +399,7 @@ EXTERNAL SOURCES:
     :branch: feature/pwn-6024
     :git: https://github.com/p2p-org/key-app-kit-swift.git
   KeyAppUI:
-    :branch: feature/PWN-6023
+    :branch: develop
     :git: "git@github.com:p2p-org/KeyAppUI.git"
   ListPlaceholder:
     :branch: custom_gradient_color
@@ -485,7 +485,7 @@ CHECKOUT OPTIONS:
     :commit: be49a397e762c70699b56fa5b02e0e79db0c568f
     :git: https://github.com/p2p-org/key-app-kit-swift.git
   KeyAppUI:
-    :commit: ba6fbba7f375ef14ea7c4b9b23691bc71734e00e
+    :commit: 71757b23e56f90339561c002d00c522d8485495c
     :git: "git@github.com:p2p-org/KeyAppUI.git"
   ListPlaceholder:
     :commit: 78dd312eb762d66a54c87cd6dd8045140da28c4b
@@ -614,6 +614,6 @@ SPEC CHECKSUMS:
   TweetNacl: 3abf4d1d2082b0114e7a67410e300892448951e6
   "UITextView+Placeholder": d7b0c400921f66523f3a85d74f774512e14f6502
 
-PODFILE CHECKSUM: c7421d9915e63acb841d2cb6cf5597c030b9bd13
+PODFILE CHECKSUM: 2bc9e2c5bdf9b363f3f62fa917435a5873eb067d
 
 COCOAPODS: 1.11.3
