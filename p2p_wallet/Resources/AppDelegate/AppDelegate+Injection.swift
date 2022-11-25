@@ -256,29 +256,19 @@ extension Resolver: ResolverRegistering {
             .implements(FeeRelayerAPIClient.self)
             .scope(.session)
 
-        register { FeeRelayerService(
+        register { RelayServiceImpl(
             orcaSwap: resolve(),
             accountStorage: resolve(),
             solanaApiClient: resolve(),
-            feeCalculator: DefaultFreeRelayerCalculator(),
+            feeCalculator: DefaultRelayFeeCalculator(),
             feeRelayerAPIClient: resolve(),
             deviceType: .iOS,
             buildNumber: Bundle.main.fullVersionNumber
         ) }
-        .implements(FeeRelayer.self)
+        .implements(RelayService.self)
         .scope(.session)
 
-        register {
-            SwapFeeRelayerImpl(
-                accountStorage: resolve(),
-                feeRelayerAPIClient: resolve(),
-                solanaApiClient: resolve(),
-                orcaSwap: resolve()
-            )
-        }
-        .implements(SwapFeeRelayer.self)
-
-        register { () -> FeeRelayerContextManager in
+        register { () -> RelayContextManager in
             if FeeRelayConfig.shared.disableFeeTransaction {
                 return FeeRelayerContextManagerDisabledFreeTrxImpl(
                     accountStorage: resolve(),
@@ -286,13 +276,22 @@ extension Resolver: ResolverRegistering {
                     feeRelayerAPIClient: resolve()
                 )
             } else {
-                return FeeRelayerContextManagerImpl(
+                return RelayContextManagerImpl(
                     accountStorage: resolve(),
                     solanaAPIClient: resolve(),
                     feeRelayerAPIClient: resolve()
                 )
             }
         }
+        
+        register {
+            DefaultSwapFeeRelayerCalculator(
+                destinationFinder: DestinationFinderImpl(solanaAPIClient: Resolver.resolve()),
+                accountStorage: Resolver.resolve()
+            )
+        }
+        .implements(SwapFeeRelayerCalculator.self)
+        .scope(.session)
 
         // PricesService
         register { PricesService() }
