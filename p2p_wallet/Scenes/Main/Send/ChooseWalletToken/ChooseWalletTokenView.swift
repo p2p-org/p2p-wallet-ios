@@ -90,7 +90,7 @@ struct ChooseWalletTokenView: View {
 private extension ChooseWalletTokenView {
     private var manualNavBar: some View {
         ZStack(alignment: .center) {
-            Text(L10n.pickAToken)
+            Text(viewModel.title)
                 .font(uiFont: .font(of: .text1, weight: .semibold))
                 .foregroundColor(Color(Asset.Colors.night.color))
             HStack {
