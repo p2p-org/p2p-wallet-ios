@@ -8,6 +8,7 @@
 import AnalyticsManager
 import CountriesAPI
 import FeeRelayerSwift
+import FirebaseRemoteConfig
 import NameService
 import Onboarding
 import OrcaSwapSwift
@@ -15,12 +16,11 @@ import P2PSwift
 import Reachability
 import RenVMSwift
 import Resolver
+import Send
 import SolanaPricesAPIs
 import SolanaSwift
 import Solend
 import SwiftyUserDefaults
-import FirebaseRemoteConfig
-import Send
 
 extension Resolver: ResolverRegistering {
     public static func registerAllServices() {
@@ -43,7 +43,7 @@ extension Resolver: ResolverRegistering {
                 RemoteConfigWarmupProcess(),
             ])
         }.scope(.application)
-        
+
         register {
             WalletSettings(provider: WalletSettingsUserDefaultsProvider())
         }.scope(.application)
@@ -185,10 +185,12 @@ extension Resolver: ResolverRegistering {
 
         register { TokensRepository(
             endpoint: Defaults.apiEndPoint,
-            tokenListParser: .init(url: RemoteConfig.remoteConfig().tokenListURL ?? "https://raw.githubusercontent.com/p2p-org/solana-token-list/main/src/tokens/solana.tokenlist.json"),
+            tokenListParser: .init(url: RemoteConfig.remoteConfig()
+                .tokenListURL ??
+                "https://raw.githubusercontent.com/p2p-org/solana-token-list/main/src/tokens/solana.tokenlist.json"),
             cache: resolve()
-        )}
-            .implements(SolanaTokensRepository.self)
+        ) }
+        .implements(SolanaTokensRepository.self)
 
         // DAppChannnel
         register { DAppChannel() }
@@ -409,9 +411,9 @@ extension Resolver: ResolverRegistering {
         register { MoonpayExchange(provider: resolve()) }
             .implements(BuyExchangeService.self)
             .scope(.session)
-        
+
         // Buy
-        register { RecipientSearchServiceImpl(nameService: resolve()) }
+        register { RecipientSearchServiceImpl(nameService: resolve(), solanaClient: resolve()) }
             .implements(RecipientSearchService.self)
             .scope(.session)
 

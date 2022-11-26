@@ -54,7 +54,7 @@ class SendInputViewModel: ObservableObject {
             recipient: recipient,
             token: tokenInWallet!.token,
             tokenFee: feeTokenInWallet!.token,
-            userWalletEnvironments: .init(wallets: wallets, exchangeRate: exchangeRate),
+            userWalletEnvironments: .init(wallets: wallets, exchangeRate: exchangeRate, tokens: [.nativeSolana, .usdt, .usdc]),
             amountInFiat: .zero,
             amountInToken: .zero,
             fee: .zero,

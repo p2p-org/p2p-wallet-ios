@@ -55,7 +55,7 @@ struct SendInputView_Previews: PreviewProvider {
         SendInputView(viewModel: .init(recipient: .init(
             address: "8JmwhgewSppZ2sDNqGZoKu3bWh8wUKZP8mdbP4M1XQx1",
             category: .solanaAddress,
-            hasFunds: false
+            attributes: [.funds]
         )))
     }
 }
