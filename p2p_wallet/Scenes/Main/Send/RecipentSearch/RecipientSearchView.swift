@@ -14,41 +14,55 @@ struct RecipientSearchView: View {
             Color(Asset.Colors.smoke.color)
                 .ignoresSafeArea()
 
-            VStack {
-                TextField("Username or address", text: $viewModel.input)
-                    .padding(.all, 8)
+            VStack(spacing: 20) {
+                // Search field
+                RecipientSearchField(text: $viewModel.input) {
+                    viewModel.past()
+                } scan: {
+                    viewModel.qr()
+                }
 
+                // Result
                 if let result = viewModel.result {
                     switch result {
                     case let .ok(recipients):
                         VStack(alignment: .leading) {
-                            Text("Here's what found")
-                            Group {
-                                ForEach(recipients, id: \.address) { recipient in
-                                    VStack {
-                                        Text(recipient.address)
-                                            .lineLimit(1)
+                            HStack {
+                                Text(L10n.hereSWhatWeFound)
+                                    .apply(style: .text4)
+                                    .foregroundColor(Color(Asset.Colors.mountain.color))
+                                Spacer()
+                            }
+                            
+                            VStack(spacing: 24) {
+                                ForEach(recipients) { recipient in
+                                    Button {
+                                        
+                                    } label: {
+                                        HStack {
+                                            RecipientCell(recipient: recipient)
+                                            Spacer()
+                                        }
                                     }
                                 }
                             }
-                            .padding(.all, 8)
+                            .padding(.horizontal, 16)
+                            .padding(.vertical, 20)
                             .background(
                                 Color(.white)
                                     .cornerRadius(radius: 16, corners: .allCorners)
                             )
                         }
-                        
-
                     default:
-                        Text("Undefined")
+                        SwiftUI.EmptyView()
                     }
                 } else {
                     // History
                     Text("History")
                 }
-
                 Spacer()
             }
+            .padding(.all, 16)
             .toolbar {
                 // Navigation title
                 ToolbarItem(placement: .principal) {
@@ -74,7 +88,12 @@ struct RecipientSearchView_Previews: PreviewProvider {
                                 Recipient(
                                     address: "6uc8ajD1mwNPeLrgP17FKNpBgHifqaTkyYySgdfs9F26",
                                     category: .username(name: "kirill", domain: "key"),
-                                    hasFunds: true
+                                    attributes: [.funds]
+                                ),
+                                Recipient(
+                                    address: "6uc8ajD1mwNPeLrgP17FKNpBgHifqaTkyYySgdfs9F26",
+                                    category: .username(name: "kirill2", domain: "sol"),
+                                    attributes: [.funds]
                                 ),
                             ]
                         )

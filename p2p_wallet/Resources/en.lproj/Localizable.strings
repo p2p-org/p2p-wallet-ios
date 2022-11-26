@@ -621,7 +621,7 @@
 "%@-compatible address" = "%@-compatible address";
 "Discard" = "Discard";
 "Change" = "Change";
-"username or address" = "username / address";
+"username or address" = "username or address";
 "Change the network?" = "Change the network?";
 "If the network is changed to %@, the address field must be filled in with a %@." = "If the network is changed to %@, the address field must be filled in with a %@.";
 "There are %@ free transactions left for today" = "There are %@ free transactions left for today";
@@ -1085,3 +1085,4 @@ Reset the PIN or wait for %@.";
 "Continue with USDC" = "Continue with USDC";
 "Switch to another token" = "Switch to another token";
 "Pay the ~$0.03 fee with" = "Pay the ~$0.03 fee with";
+"token account" = "token account";

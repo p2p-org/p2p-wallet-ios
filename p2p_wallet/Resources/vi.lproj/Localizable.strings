@@ -1115,3 +1115,4 @@ Reset the PIN or wait for %@." = "Bạn còn %@ lần thử để nhập mã PIN
 "Continue with USDC" = "Tiếp tục với USDC";
 "Switch to another token" = "Chuyển sang mã thông báo khác";
 "Pay the ~$0.03 fee with" = "Thanh toán khoản phí ~$0,03 với";
+"token account" = "tài khoản mã thông báo";

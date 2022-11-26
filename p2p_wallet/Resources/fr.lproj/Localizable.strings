@@ -1112,3 +1112,4 @@ Reset the PIN or wait for %@." = "Il vous reste %@ tentatives pour saisir le cod
 "Continue with USDC" = "Continuer avec l'USDC";
 "Switch to another token" = "Passer à un autre jeton";
 "Pay the ~$0.03 fee with" = "Payez les frais d'environ 0,03 $ avec";
+"token account" = "compte symbolique";
