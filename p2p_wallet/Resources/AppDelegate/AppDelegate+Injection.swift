@@ -413,7 +413,7 @@ extension Resolver: ResolverRegistering {
             .scope(.session)
 
         // Buy
-        register { RecipientSearchServiceImpl(nameService: resolve(), solanaClient: resolve()) }
+        register { RecipientSearchServiceImpl(nameService: resolve(), solanaClient: resolve(), swapService: SwapServiceWrapper() ) }
             .implements(RecipientSearchService.self)
             .scope(.session)
 

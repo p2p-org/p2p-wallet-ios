@@ -1086,3 +1086,8 @@ Reset the PIN or wait for %@.";
 "Switch to another token" = "Switch to another token";
 "Pay the ~$0.03 fee with" = "Pay the ~$0.03 fee with";
 "token account" = "token account";
+"Address not found. Try another one" = "Address not found. Try another one";
+"You cannot send funds to this address because it belongs to another token" = "You cannot send funds to this address because it belongs to another token";
+"Solana Name Service doesn't respond." = "Solana Name Service doesn't respond.";
+"We suggest you try again later because we will not be able to verify the address if you continue." = "We suggest you try again later because we will not be able to verify the address if you continue.";
+"Account creation for this address is not possible due to insufficient funds." = "Account creation for this address is not possible due to insufficient funds.";
