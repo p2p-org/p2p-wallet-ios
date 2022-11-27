@@ -6,32 +6,67 @@ import Combine
 import Foundation
 import Resolver
 import Send
+import SolanaSwift
 
 @MainActor
 class RecipientSearchViewModel: ObservableObject {
     private var subscriptions = Set<AnyCancellable>()
     
     @Injected private var clipboardManager: ClipboardManagerType
+    @Injected private var walletsRepository: WalletsRepository
+    @Injected private var tokensRepository: TokensRepository
+    
+    private let recipientSearchService: RecipientSearchService
 
     @Published var input: String = ""
     @Published var result: RecipientSearchResult? = nil
-
-    private let recipientSearchService: RecipientSearchService
+    @Published var userWalletEnvironments: UserWalletEnvironments = .empty
+    
+    @Published var isSearching = false
 
     init(recipientSearchService: RecipientSearchService = Resolver.resolve()) {
         self.recipientSearchService = recipientSearchService
+        
+        self.userWalletEnvironments = .init(
+            wallets: self.walletsRepository.getWallets(),
+            exchangeRate: [:],
+            tokens: []
+        )
+        
+        Task {
+            self.userWalletEnvironments = userWalletEnvironments.copy(
+                tokens: try await tokensRepository.getTokensList()
+            )
+        }
 
-        $input.sinkAsync { [weak self] value in
-            guard let self = self else { return }
-            self.updateResult(result: await self.recipientSearchService.search(
-                input: value,
-                env: .init(wallets: [], exchangeRate: [:], tokens: [.nativeSolana, .usdc, .usdt])
-            ))
+        $input
+            .combineLatest($userWalletEnvironments)
+            .debounce(for: 0.5, scheduler: DispatchQueue.main)
+            .sinkAsync { [weak self] (query: String, env: UserWalletEnvironments) in
+                try await self?.search(query: query, env: env)
         }.store(in: &subscriptions)
     }
     
     func updateResult(result: RecipientSearchResult) {
         self.result = result
+    }
+    
+    
+    private var searchTask: Task<Void, Never>?
+    
+    func search(query: String, env: UserWalletEnvironments) async throws {
+        searchTask?.cancel()
+        let currentSearchTerm = query.trimmingCharacters(in: .whitespaces)
+        if currentSearchTerm.isEmpty {
+            result = nil
+            isSearching = false
+        } else {
+            searchTask = Task {
+                isSearching = true
+                result = await recipientSearchService.search(input: currentSearchTerm, env: userWalletEnvironments)
+                if !Task.isCancelled { isSearching = false }
+          }
+        }
     }
     
     func past() {

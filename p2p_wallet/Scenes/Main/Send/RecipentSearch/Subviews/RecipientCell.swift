@@ -10,6 +10,8 @@ import KeyAppUI
 import Send
 
 struct RecipientCell: View {
+    @SwiftUI.Environment(\.isEnabled) var isEnabled: Bool
+    
     let recipient: Recipient
     
     var body: some View {
@@ -38,7 +40,7 @@ struct RecipientCell: View {
                 Text(title)
                     .fontWeight(.semibold)
                     .apply(style: .text2)
-                    .foregroundColor(Color(Asset.Colors.night.color))
+                    .foregroundColor(isEnabled ? Color(Asset.Colors.night.color) : Color(Asset.Colors.night.color.withAlphaComponent(0.3)))
                     .lineLimit(1)
                 if let subtitle {
                     Text(subtitle)
@@ -77,6 +79,14 @@ struct RecipientCell_Previews: PreviewProvider {
                 ),
                 attributes: [.funds]
             ))
+            RecipientCell(recipient: Recipient(
+                address: "CCtYXZHmeJXxR9U1QLMGYxRuPx5HRP5g3QaXNA4UWqFU",
+                category: .solanaTokenAddress(
+                    walletAddress: try! .init(string: "9sdwzJWooFrjNGVX6GkkWUG9GyeBnhgJYqh27AsPqwbM"),
+                    token: .usdc
+                ),
+                attributes: [.funds]
+            )).disabled(true)
         }
     }
 }
