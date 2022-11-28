@@ -9,6 +9,7 @@ import AnalyticsManager
 import CountriesAPI
 import FeeRelayerSwift
 import FirebaseRemoteConfig
+import History
 import NameService
 import Onboarding
 import OrcaSwapSwift
@@ -21,6 +22,7 @@ import SolanaPricesAPIs
 import SolanaSwift
 import Solend
 import SwiftyUserDefaults
+import TransactionParser
 
 extension Resolver: ResolverRegistering {
     public static func registerAllServices() {
@@ -111,6 +113,16 @@ extension Resolver: ResolverRegistering {
         }
         .scope(.application)
 
+        // History
+        register {
+            DefaultTransactionParserRepository(
+                p2pFeePayers: ["FG4Y3yX4AAchp1HvNZ7LfzFTewF2f6nDoMDCohTFrdpT"],
+                parser: TransactionParserServiceImpl.default(apiClient: Resolver.resolve())
+            )
+        }
+        .implements(TransactionParsedRepository.self)
+        .scope(.application)
+
         register { NotificationServiceImpl() }
             .implements(NotificationService.self)
             .scope(.application)
@@ -195,7 +207,7 @@ extension Resolver: ResolverRegistering {
         // DAppChannnel
         register { DAppChannel() }
             .implements(DAppChannelType.self)
-        
+
         // QrCodeImageRender
         register { ReceiveToken.QrCodeImageRenderImpl() }
             .implements(QrCodeImageRender.self)
@@ -233,6 +245,19 @@ extension Resolver: ResolverRegistering {
             SendService(relayMethod: args())
         }
         .implements(SendServiceType.self)
+        .scope(.session)
+
+        register {
+            SendHistoryService(
+                localProvider: SendHistoryLocalProvider(),
+                remoteProvider: SendHistoryRemoteProvider(
+                    sourceStream: EmptyStreamSource(),
+                    historyTransactionParser: resolve(),
+                    solanaAPIClient: resolve(),
+                    nameService: resolve()
+                )
+            )
+        }
         .scope(.session)
 
         // SolanaSocket
@@ -413,9 +438,12 @@ extension Resolver: ResolverRegistering {
             .scope(.session)
 
         // Buy
-        register { RecipientSearchServiceImpl(nameService: resolve(), solanaClient: resolve(), swapService: SwapServiceWrapper() ) }
-            .implements(RecipientSearchService.self)
-            .scope(.session)
+        register {
+            RecipientSearchServiceImpl(nameService: resolve(), solanaClient: resolve(),
+                                       swapService: SwapServiceWrapper())
+        }
+        .implements(RecipientSearchService.self)
+        .scope(.session)
 
         // Banner
         register {

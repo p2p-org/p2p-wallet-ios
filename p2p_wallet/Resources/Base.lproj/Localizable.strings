@@ -1092,3 +1092,7 @@ Reset the PIN or wait for %@.";
 "Solana Name Service doesn't respond." = "Solana Name Service doesn't respond.";
 "We suggest you try again later because we will not be able to verify the address if you continue." = "We suggest you try again later because we will not be able to verify the address if you continue.";
 "Account creation for this address is not possible due to insufficient funds." = "Account creation for this address is not possible due to insufficient funds.";
+"Recently used" = "Recently used";
+"Make your first transaction" = "Make your first transaction";
+"To continue, paste or scan the address (Solana or Bitcoin) or type a username" = "To continue, paste or scan the address (Solana or Bitcoin) or type a username";
+"To continue, paste or scan the address or type a username" = "To continue, paste or scan the address or type a username";
