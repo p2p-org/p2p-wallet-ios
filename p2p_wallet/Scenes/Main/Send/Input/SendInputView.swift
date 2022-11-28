@@ -26,12 +26,19 @@ struct SendInputView: View {
                     Text(viewModel.feeTitle)
                         .apply(style: .text4)
                         .foregroundColor(Color(Asset.Colors.sky.color))
-
-                    Button(action: viewModel.feeInfoPressed.send, label: {
-                        Image(uiImage: UIImage.infoSend)
-                            .resizable()
-                            .frame(width: 16, height: 16)
-                    })
+                    if viewModel.isFeeLoading {
+                        CircularProgressIndicatorView(
+                            backgroundColor: Asset.Colors.sky.color.withAlphaComponent(0.6),
+                            foregroundColor: Asset.Colors.sky.color
+                        )
+                        .frame(width: 16, height: 16)
+                    } else {
+                        Button(action: viewModel.feeInfoPressed.send, label: {
+                            Image(uiImage: UIImage.infoSend)
+                                .resizable()
+                                .frame(width: 16, height: 16)
+                        })
+                    }
                 }
                 .padding(.horizontal, 4)
 
