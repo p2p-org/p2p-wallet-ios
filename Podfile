@@ -25,7 +25,8 @@ def key_app_kit
     "KeyAppKitCore",
     "P2PSwift",
     "Solend",
-    "Send"
+    "Send",
+    "History"
   ]
 
   if $keyAppKitPath

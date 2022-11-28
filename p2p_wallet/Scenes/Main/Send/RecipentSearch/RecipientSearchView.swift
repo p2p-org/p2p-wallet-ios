@@ -16,7 +16,7 @@ struct RecipientSearchView: View {
 
             VStack(spacing: 20) {
                 // Search field
-                RecipientSearchField(text: $viewModel.input) {
+                RecipientSearchField(text: $viewModel.input, isLoading: $viewModel.isSearching) {
                     viewModel.past()
                 } scan: {
                     viewModel.qr()

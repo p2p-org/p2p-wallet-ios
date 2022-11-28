@@ -17,6 +17,7 @@ class RecipientSearchViewModel: ObservableObject {
     @Injected private var tokensRepository: TokensRepository
     
     private let recipientSearchService: RecipientSearchService
+    private var searchTask: Task<Void, Never>?
 
     @Published var input: String = ""
     @Published var result: RecipientSearchResult? = nil
@@ -41,7 +42,7 @@ class RecipientSearchViewModel: ObservableObject {
 
         $input
             .combineLatest($userWalletEnvironments)
-            .debounce(for: 0.5, scheduler: DispatchQueue.main)
+            .debounce(for: 0.2, scheduler: DispatchQueue.main)
             .sinkAsync { [weak self] (query: String, env: UserWalletEnvironments) in
                 try await self?.search(query: query, env: env)
         }.store(in: &subscriptions)
@@ -50,9 +51,6 @@ class RecipientSearchViewModel: ObservableObject {
     func updateResult(result: RecipientSearchResult) {
         self.result = result
     }
-    
-    
-    private var searchTask: Task<Void, Never>?
     
     func search(query: String, env: UserWalletEnvironments) async throws {
         searchTask?.cancel()
@@ -63,8 +61,16 @@ class RecipientSearchViewModel: ObservableObject {
         } else {
             searchTask = Task {
                 isSearching = true
-                result = await recipientSearchService.search(input: currentSearchTerm, env: userWalletEnvironments)
-                if !Task.isCancelled { isSearching = false }
+                
+                let result = await recipientSearchService.search(input: currentSearchTerm, env: userWalletEnvironments)
+                
+                if !Task.isCancelled {
+                    isSearching = false
+                } else {
+                    return
+                }
+                
+                self.result = result
           }
         }
     }

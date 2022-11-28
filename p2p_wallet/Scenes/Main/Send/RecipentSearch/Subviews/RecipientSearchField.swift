@@ -10,6 +10,8 @@ import KeyAppUI
 
 struct RecipientSearchField: View {
     @Binding var text: String
+    @Binding var isLoading: Bool
+    
     let past: () -> Void
     let scan: () -> Void
     
@@ -20,7 +22,10 @@ struct RecipientSearchField: View {
                     .padding(.vertical, 12)
                     .autocapitalization(.none)
                 
-                if text.isEmpty {
+                if isLoading {
+                    Spinner()
+                        .frame(width: 12, height: 12)
+                } else if text.isEmpty {
                     Button { past() }
                     label: {
                         Image(uiImage: Asset.Icons.past.image)
@@ -56,7 +61,7 @@ struct RecipientSearchField: View {
 
 struct RecipientSearchField_Previews: PreviewProvider {
     static var previews: some View {
-        RecipientSearchField(text: .constant("Hello")) {
+        RecipientSearchField(text: .constant("Hello"), isLoading: .constant(false)) {
             
         } scan: {
             
