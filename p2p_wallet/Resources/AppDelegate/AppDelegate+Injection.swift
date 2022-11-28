@@ -171,7 +171,7 @@ extension Resolver: ResolverRegistering {
 
         // NameService
         register { NameServiceImpl(
-            endpoint: NameServiceImpl.endpoint,
+            endpoint: GlobalAppState.shared.nameServiceEndpoint,
             cache: NameServiceUserDefaultCache()
         ) }
         .implements(NameService.self)
@@ -439,8 +439,11 @@ extension Resolver: ResolverRegistering {
 
         // Buy
         register {
-            RecipientSearchServiceImpl(nameService: resolve(), solanaClient: resolve(),
-                                       swapService: SwapServiceWrapper())
+            RecipientSearchServiceImpl(
+                nameService: resolve(),
+                solanaClient: resolve(),
+                swapService: SwapServiceWrapper()
+            )
         }
         .implements(RecipientSearchService.self)
         .scope(.session)

@@ -6,6 +6,7 @@
 //
 
 import Foundation
+import NameService
 
 class GlobalAppState: ObservableObject {
     static let shared = GlobalAppState()
@@ -17,6 +18,9 @@ class GlobalAppState: ObservableObject {
     // Debug features
     @Published var forcedWalletAddress: String = ""
     @Published var forcedFeeRelayerEndpoint: String = ""
+    
+    // Endpoints
+    @Published var nameServiceEndpoint: String = NameServiceImpl.endpoint
 
     private init() {}
 }
