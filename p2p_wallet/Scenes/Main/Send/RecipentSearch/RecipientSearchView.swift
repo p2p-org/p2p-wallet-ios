@@ -23,7 +23,7 @@ struct RecipientSearchView: View {
                 }
 
                 // Result
-                if let result = viewModel.result {
+                if let result = viewModel.searchResult {
                     switch result {
                     case let .ok(recipients):
                         // Ok case
@@ -52,7 +52,7 @@ struct RecipientSearchView: View {
                     }
                 } else {
                     // History
-                    Text("History")
+                    history(viewModel.recipientsHistory)
                 }
                 Spacer()
             }
@@ -101,8 +101,55 @@ struct RecipientSearchView: View {
         }
     }
     
+    func history(_ recipients: [Recipient]) -> some View {
+        Group {
+            if recipients.isEmpty {
+                VStack(spacing: 16) {
+                    Text(L10n.makeYourFirstTransaction)
+                        .fontWeight(.bold)
+                        .apply(style: .title2)
+                    Text(L10n.toContinuePasteOrScanTheAddressOrTypeAUsername)
+                        .apply(style: .text1)
+                        .multilineTextAlignment(.center)
+                }.padding(.top, 48)
+            } else {
+                ScrollView {
+                    VStack(alignment: .leading) {
+                        HStack {
+                            Text(L10n.recentlyUsed)
+                                .apply(style: .text4)
+                                .foregroundColor(Color(Asset.Colors.mountain.color))
+                            Spacer()
+                        }
+                        
+                        VStack(spacing: 24) {
+                            ForEach(recipients) { recipient in
+                                VStack(spacing: 12) {
+                                    Button {
+                                        
+                                    } label: {
+                                        HStack {
+                                            RecipientCell(recipient: recipient)
+                                            Spacer()
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                        .padding(.horizontal, 16)
+                        .padding(.vertical, 20)
+                        .background(
+                            Color(.white)
+                                .cornerRadius(radius: 16, corners: .allCorners)
+                        )
+                    }
+                }
+            }
+        }
+    }
+    
     func okView(_ recipients: [Recipient]) -> some View {
-        VStack(alignment: .leading) {
+       VStack(alignment: .leading) {
             HStack {
                 Text(L10n.hereSWhatWeFound)
                     .apply(style: .text4)
@@ -190,6 +237,16 @@ struct RecipientSearchView_Previews: PreviewProvider {
                 viewModel: .init(
                     recipientSearchService: RecipientSearchServiceMock(
                         result: okNoFundCase
+                    ),
+                    sendHistoryService: SendHistoryService(
+                        localProvider: SendHistoryLocalProvider(),
+                        remoteProvider: SendHistoryRemoteMockProvider(recipients: [
+                            .init(
+                                address: "8upjSpvjcdpuzhfR1zriwg5NXkwDruejqNE9WNbPRtyA",
+                                category: .solanaAddress,
+                                attributes: []
+                            )
+                        ])
                     )
                 )
             )

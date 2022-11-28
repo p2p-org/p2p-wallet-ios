@@ -1121,3 +1121,7 @@ Reset the PIN or wait for %@." = "Bạn còn %@ lần thử để nhập mã PIN
 "Solana Name Service doesn't respond." = "Dịch vụ tên Solana không phản hồi.";
 "We suggest you try again later because we will not be able to verify the address if you continue." = "Chúng tôi khuyên bạn nên thử lại sau vì chúng tôi sẽ không thể xác minh địa chỉ nếu bạn tiếp tục.";
 "Account creation for this address is not possible due to insufficient funds." = "Không thể tạo tài khoản cho địa chỉ này do không đủ tiền.";
+"Recently used" = "Được sử dụng gần đây";
+"Make your first transaction" = "Thực hiện giao dịch đầu tiên của bạn";
+"To continue, paste or scan the address (Solana or Bitcoin) or type a username" = "Để tiếp tục, hãy dán hoặc quét địa chỉ (Solana hoặc Bitcoin) hoặc nhập tên người dùng";
+"To continue, paste or scan the address or type a username" = "Để tiếp tục, hãy dán hoặc quét địa chỉ hoặc nhập tên người dùng";

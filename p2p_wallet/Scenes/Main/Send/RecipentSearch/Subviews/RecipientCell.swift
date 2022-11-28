@@ -49,7 +49,22 @@ struct RecipientCell: View {
                         .lineLimit(1)
                 }
             }
+            
+            Spacer()
+            if let date = recipient.createdData {
+                Text(date.timeAgoDisplay())
+                    .apply(style: .label1)
+                    .foregroundColor(Color(Asset.Colors.mountain.color))
+            }
         }
+    }
+}
+
+extension Date {
+    func timeAgoDisplay() -> String {
+        let formatter = RelativeDateTimeFormatter()
+        formatter.unitsStyle = .full
+        return formatter.localizedString(for: self, relativeTo: Date())
     }
 }
 

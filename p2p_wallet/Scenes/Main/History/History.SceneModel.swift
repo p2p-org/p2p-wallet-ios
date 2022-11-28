@@ -22,11 +22,7 @@ extension History {
         @Injected private var walletsRepository: WalletsRepository
         @Injected private var notificationService: NotificationService
         let transactionRepository = SolanaTransactionRepository(solanaAPIClient: Resolver.resolve())
-        let transactionParserRepository =
-            DefaultTransactionParserRepository(
-                p2pFeePayers: ["FG4Y3yX4AAchp1HvNZ7LfzFTewF2f6nDoMDCohTFrdpT"],
-                parser: TransactionParserServiceImpl.default(apiClient: Resolver.resolve())
-            )
+        @Injected private var transactionParserRepository: TransactionParsedRepository
 
         // MARK: - Properties
 
