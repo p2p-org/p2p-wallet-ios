@@ -14,6 +14,13 @@ jobs:
     runs-on: [self-hosted, macOS]
 
     steps:
+      - name: 'Cleanup build folder'
+        run: |
+          ls -la ./
+          rm -rf ./* || true
+          rm -rf ./.??* || true
+          ls -la ./
+          
       - name: Check out current branch
         uses: actions/checkout@v3
         with:

@@ -8,6 +8,7 @@ import SwiftUI
 
 struct RecipientSearchView: View {
     @ObservedObject var viewModel: RecipientSearchViewModel
+    @SwiftUI.Environment(\.scenePhase) var scenePhase
 
     var body: some View {
         ZStack {
@@ -37,15 +38,21 @@ struct RecipientSearchView: View {
                         }
                     case let .missingUserToken(recipient):
                         // Missing user token
-                        disabledAndReason(recipient, reason: L10n.youCannotSendFundsToThisAddressBecauseItBelongsToAnotherToken)
+                        disabledAndReason(
+                            recipient,
+                            reason: L10n.youCannotSendFundsToThisAddressBecauseItBelongsToAnotherToken
+                        )
                     case let .insufficientUserFunds(recipient):
                         // Insufficient funds
-                        disabledAndReason(recipient, reason: L10n.accountCreationForThisAddressIsNotPossibleDueToInsufficientFunds) 
-                    case .nameServiceError(_):
+                        disabledAndReason(
+                            recipient,
+                            reason: L10n.accountCreationForThisAddressIsNotPossibleDueToInsufficientFunds
+                        )
+                    case .nameServiceError:
                         tryLater(title: L10n.solanaNameServiceDoesnTRespond)
                             .padding(.top, 38)
                             .padding(.horizontal, 12)
-                    case .solanaServiceError(_):
+                    case .solanaServiceError:
                         tryLater(title: "Solana Service doesn't respond")
                             .padding(.top, 38)
                             .padding(.horizontal, 12)
@@ -56,7 +63,8 @@ struct RecipientSearchView: View {
                 }
                 Spacer()
             }
-            .padding(.all, 16)
+            .padding(.top, 16)
+            .padding(.horizontal, 16)
             .toolbar {
                 // Navigation title
                 ToolbarItem(placement: .principal) {
@@ -69,7 +77,7 @@ struct RecipientSearchView: View {
             }
         }
     }
-    
+
     func tryLater(title: String) -> some View {
         VStack(alignment: .center, spacing: 28) {
             Image(uiImage: Asset.Icons.warning.image)
@@ -82,7 +90,7 @@ struct RecipientSearchView: View {
         }
         .foregroundColor(Color(Asset.Colors.night.color))
     }
-    
+
     func disabledAndReason(_ recipient: Recipient, reason: String) -> some View {
         VStack(alignment: .leading, spacing: 32) {
             HStack {
@@ -91,16 +99,16 @@ struct RecipientSearchView: View {
                     .foregroundColor(Color(Asset.Colors.mountain.color))
                 Spacer()
             }
-            
+
             RecipientCell(recipient: recipient)
                 .disabled(true)
-            
+
             Text(reason)
                 .apply(style: .text4)
                 .foregroundColor(Color(Asset.Colors.rose.color))
         }
     }
-    
+
     func history(_ recipients: [Recipient]) -> some View {
         Group {
             if recipients.isEmpty {
@@ -113,7 +121,7 @@ struct RecipientSearchView: View {
                         .multilineTextAlignment(.center)
                 }.padding(.top, 48)
             } else {
-                ScrollView {
+                ScrollView(showsIndicators: false) {
                     VStack(alignment: .leading) {
                         HStack {
                             Text(L10n.recentlyUsed)
@@ -121,13 +129,11 @@ struct RecipientSearchView: View {
                                 .foregroundColor(Color(Asset.Colors.mountain.color))
                             Spacer()
                         }
-                        
+
                         VStack(spacing: 24) {
                             ForEach(recipients) { recipient in
                                 VStack(spacing: 12) {
-                                    Button {
-                                        
-                                    } label: {
+                                    Button {} label: {
                                         HStack {
                                             RecipientCell(recipient: recipient)
                                             Spacer()
@@ -147,28 +153,26 @@ struct RecipientSearchView: View {
             }
         }
     }
-    
+
     func okView(_ recipients: [Recipient]) -> some View {
-       VStack(alignment: .leading) {
+        VStack(alignment: .leading) {
             HStack {
                 Text(L10n.hereSWhatWeFound)
                     .apply(style: .text4)
                     .foregroundColor(Color(Asset.Colors.mountain.color))
                 Spacer()
             }
-            
+
             VStack(spacing: 24) {
                 ForEach(recipients) { recipient in
                     VStack(spacing: 12) {
-                        Button {
-                            
-                        } label: {
+                        Button {} label: {
                             HStack {
                                 RecipientCell(recipient: recipient)
                                 Spacer()
                             }
                         }
-                        
+
                         if recipient.category == .solanaAddress && !recipient.attributes.contains(.funds) {
                             HStack {
                                 Image(uiImage: Asset.Icons.warning.image)
@@ -211,17 +215,17 @@ struct RecipientSearchView_Previews: PreviewProvider {
             ),
         ]
     )
-    
+
     static let okNoFundCase: RecipientSearchResult = .ok(
         [
             Recipient(
                 address: "6uc8ajD1mwNPeLrgP17FKNpBgHifqaTkyYySgdfs9F26",
                 category: .solanaAddress,
                 attributes: []
-            )
+            ),
         ]
     )
-    
+
     static let missingUserTokenResult: RecipientSearchResult = .missingUserToken(recipient: Recipient(
         address: "CCtYXZHmeJXxR9U1QLMGYxRuPx5HRP5g3QaXNA4UWqFU",
         category: .solanaTokenAddress(
@@ -230,7 +234,7 @@ struct RecipientSearchView_Previews: PreviewProvider {
         ),
         attributes: [.funds]
     ))
-    
+
     static var previews: some View {
         NavigationView {
             RecipientSearchView(
@@ -245,7 +249,7 @@ struct RecipientSearchView_Previews: PreviewProvider {
                                 address: "8upjSpvjcdpuzhfR1zriwg5NXkwDruejqNE9WNbPRtyA",
                                 category: .solanaAddress,
                                 attributes: []
-                            )
+                            ),
                         ])
                     )
                 )
