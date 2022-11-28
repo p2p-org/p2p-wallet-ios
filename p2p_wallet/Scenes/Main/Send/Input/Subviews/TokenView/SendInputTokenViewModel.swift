@@ -4,7 +4,7 @@ import SolanaSwift
 final class SendInputTokenViewModel: ObservableObject {
     let changeTokenPressed = PassthroughSubject<Void, Never>()
 
-    @Published var token: Wallet = .nativeSolana(pubkey: nil, lamport: nil)
+    @Published var token: Wallet
 
     @Published var amount: Double? = nil
     @Published var amountInCurrentFiat: Double? = nil
@@ -13,6 +13,8 @@ final class SendInputTokenViewModel: ObservableObject {
     private var subscriptions = Set<AnyCancellable>()
 
     init() {
+        token = Wallet(token: .nativeSolana)
+
         $token
             .sink { [weak self] value in
                 guard let self = self else { return }

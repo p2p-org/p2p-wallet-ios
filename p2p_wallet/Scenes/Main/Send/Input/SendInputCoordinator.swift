@@ -27,10 +27,19 @@ final class SendInputCoordinator: Coordinator<Void> {
             }
             .store(in: &subscriptions)
 
-        viewModel.feeInfoPressed
-            .sink { [weak self] in
-//                self?.openFreeTransactionsDetail(from: controller)
-                self?.openFeePropmt(from: controller, viewModel: viewModel)
+        viewModel.openFeeInfo
+            .sink { [weak self] isFree in
+                if isFree {
+                    self?.openFreeTransactionsDetail(from: controller)
+                } else {
+                    self?.openFeePropmt(from: controller, viewModel: viewModel)
+                }
+            }
+            .store(in: &subscriptions)
+
+        viewModel.snackbar
+            .sink { snackbar in
+                snackbar.show(in: controller.navigationController?.view ?? controller.view)
             }
             .store(in: &subscriptions)
 

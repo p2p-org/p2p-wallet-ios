@@ -1096,3 +1096,8 @@ Reset the PIN or wait for %@.";
 "Make your first transaction" = "Make your first transaction";
 "To continue, paste or scan the address (Solana or Bitcoin) or type a username" = "To continue, paste or scan the address (Solana or Bitcoin) or type a username";
 "To continue, paste or scan the address or type a username" = "To continue, paste or scan the address or type a username";
+"Fees: %@" = "Fees: %@";
+"Calculating the fees" = "Calculating the fees";
+"Using the maximum %@ amount" = "Using the maximum %@ amount";
+"Calculated by subtracting the account creation fee from your balance" = "Calculated by subtracting the account creation fee from your balance";
+"You have no internet connection" = "You have no internet connection";
