@@ -13,6 +13,7 @@ import Resolver
 import SolanaSwift
 import SwiftUI
 import UIKit
+import Send
 
 final class HomeCoordinator: Coordinator<Void> {
     @Injected private var analyticsManager: AnalyticsManager
@@ -242,7 +243,11 @@ final class HomeCoordinator: Coordinator<Void> {
         // }
 
         // Send send
-        coordinate(to: SendCoordinator(rootViewController: navigationController))
+//        coordinate(to: SendCoordinator(rootViewController: navigationController))
+//            .sink {}
+//            .store(in: &subscriptions)
+        let recipient = Recipient(address: "8JmwhgewSppZ2sDNqGZoKu3bWh8wUKZP8mdbP4M1XQx1", category: .solanaAddress, attributes: Recipient.Attribute.funds)
+        coordinate(to: SendInputCoordinator(recipient: recipient, navigationController: navigationController))
             .sink {}
             .store(in: &subscriptions)
         
