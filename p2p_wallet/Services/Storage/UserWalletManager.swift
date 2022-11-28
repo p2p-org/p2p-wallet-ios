@@ -71,6 +71,7 @@ class UserWalletManager: ObservableObject {
         // Notification service
         notificationsService.unregisterForRemoteNotifications()
         Task.detached { [notificationsService] in await notificationsService.deleteDeviceToken() }
+        Task.detached { try await Resolver.resolve(SendHistoryLocalProvider.self).save([]) }
 
         // Storage
         storage.clearAccount()

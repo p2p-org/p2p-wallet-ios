@@ -69,7 +69,7 @@ class RecipientSearchViewModel: ObservableObject {
         }
 
         sendHistoryService.recipientsPublisher
-            .sink { [weak self] recipients in self?.recipientsHistory = Array(recipients.prefix(5)) }
+            .sink { [weak self] recipients in self?.recipientsHistory = Array(recipients.prefix(10)) }
             .store(in: &subscriptions)
 
         $input

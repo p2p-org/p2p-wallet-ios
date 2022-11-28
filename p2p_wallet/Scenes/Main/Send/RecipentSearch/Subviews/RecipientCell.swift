@@ -5,15 +5,17 @@
 //  Created by Giang Long Tran on 25.11.2022.
 //
 
-import SwiftUI
 import KeyAppUI
 import Send
+import SwiftUI
 
 struct RecipientCell: View {
     @SwiftUI.Environment(\.isEnabled) var isEnabled: Bool
-    
+
     let recipient: Recipient
-    
+
+    private let maxAddressLength = 6
+
     var body: some View {
         switch recipient.category {
         case let .username(name, domain):
@@ -21,17 +23,36 @@ struct RecipientCell: View {
             case "key":
                 cell(image: Image(uiImage: .appIconSmall), title: "@\(name).key")
             default:
-                cell(image: Image(uiImage: .newWalletCircle), title: "\(name).\(domain)", subtitle: "\(recipient.address.prefix(7))...\(recipient.address.suffix(7))")
+                if domain.isEmpty {
+                    cell(
+                        image: Image(uiImage: .newWalletCircle),
+                        title: "\(name)",
+                        subtitle: "\(recipient.address.prefix(maxAddressLength))...\(recipient.address.suffix(maxAddressLength))"
+                    )
+                } else {
+                    cell(
+                        image: Image(uiImage: .newWalletCircle),
+                        title: "\(name).\(domain)",
+                        subtitle: "\(recipient.address.prefix(maxAddressLength))...\(recipient.address.suffix(maxAddressLength))"
+                    )
+                }
             }
         case .solanaAddress:
-            cell(image: Image(uiImage: .newWalletCircle), title: "\(recipient.address.prefix(7))...\(recipient.address.suffix(7))")
+            cell(
+                image: Image(uiImage: .newWalletCircle),
+                title: "\(recipient.address.prefix(maxAddressLength))...\(recipient.address.suffix(maxAddressLength))"
+            )
         case let .solanaTokenAddress(_, token):
-            cell(image: CoinLogoImageViewRepresentable(size: 48, token: token), title: "\(recipient.address.prefix(7))...\(recipient.address.suffix(7))", subtitle: "\(token.name) \(L10n.tokenAccount)")
+            cell(
+                image: CoinLogoImageViewRepresentable(size: 48, token: token),
+                title: "\(recipient.address.prefix(maxAddressLength))...\(recipient.address.suffix(maxAddressLength))",
+                subtitle: "\(token.name) \(L10n.tokenAccount)"
+            )
         default:
             cell(image: Image(uiImage: .newWalletCircle), title: recipient.address)
         }
     }
-    
+
     private func cell(image: some View, title: String, subtitle: String? = nil) -> some View {
         HStack {
             image
@@ -40,7 +61,8 @@ struct RecipientCell: View {
                 Text(title)
                     .fontWeight(.semibold)
                     .apply(style: .text2)
-                    .foregroundColor(isEnabled ? Color(Asset.Colors.night.color) : Color(Asset.Colors.night.color.withAlphaComponent(0.3)))
+                    .foregroundColor(isEnabled ? Color(Asset.Colors.night.color) :
+                        Color(Asset.Colors.night.color.withAlphaComponent(0.3)))
                     .lineLimit(1)
                 if let subtitle {
                     Text(subtitle)
@@ -49,7 +71,7 @@ struct RecipientCell: View {
                         .lineLimit(1)
                 }
             }
-            
+
             Spacer()
             if let date = recipient.createdData {
                 Text(date.timeAgoDisplay())
@@ -64,7 +86,9 @@ extension Date {
     func timeAgoDisplay() -> String {
         let formatter = RelativeDateTimeFormatter()
         formatter.unitsStyle = .full
-        return formatter.localizedString(for: self, relativeTo: Date())
+        
+        var result = formatter.localizedString(for: self, relativeTo: Date())
+        return result.replacingOccurrences(of: "ago", with: "")
     }
 }
 

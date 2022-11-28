@@ -247,9 +247,12 @@ extension Resolver: ResolverRegistering {
         .implements(SendServiceType.self)
         .scope(.session)
 
+        register { SendHistoryLocalProvider() }
+        .scope(.session)
+
         register {
             SendHistoryService(
-                localProvider: SendHistoryLocalProvider(),
+                localProvider: resolve(SendHistoryLocalProvider.self),
                 remoteProvider: SendHistoryRemoteProvider(
                     sourceStream: EmptyStreamSource(),
                     historyTransactionParser: resolve(),
