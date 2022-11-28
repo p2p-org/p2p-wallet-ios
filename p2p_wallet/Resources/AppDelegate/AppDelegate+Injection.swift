@@ -195,7 +195,7 @@ extension Resolver: ResolverRegistering {
         // DAppChannnel
         register { DAppChannel() }
             .implements(DAppChannelType.self)
-
+        
         // QrCodeImageRender
         register { ReceiveToken.QrCodeImageRenderImpl() }
             .implements(QrCodeImageRender.self)
