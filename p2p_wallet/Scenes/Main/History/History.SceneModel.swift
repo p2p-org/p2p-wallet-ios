@@ -25,7 +25,7 @@ extension History {
         let transactionParserRepository =
             DefaultTransactionParserRepository(
                 p2pFeePayers: ["FG4Y3yX4AAchp1HvNZ7LfzFTewF2f6nDoMDCohTFrdpT"],
-                parser: Resolver.resolve()
+                parser: TransactionParserServiceImpl.default(apiClient: Resolver.resolve())
             )
 
         // MARK: - Properties
