@@ -5,6 +5,7 @@
 import Combine
 import Foundation
 import SwiftUI
+import Send
 
 class SendCoordinator: Coordinator<Void> {
     let rootViewController: UINavigationController
@@ -19,6 +20,10 @@ class SendCoordinator: Coordinator<Void> {
 
         // Setup view
         let vm = RecipientSearchViewModel()
+        vm.coordinator.selectRecipientPublisher
+            .sink { [weak self] (recipient: Recipient) in self?.openSendInput(recipient: recipient) }
+            .store(in: &subscriptions)
+        
         let view = RecipientSearchView(viewModel: vm)
         let vc = UIHostingController(rootView: view)
 
@@ -29,5 +34,11 @@ class SendCoordinator: Coordinator<Void> {
 
         // Back
         return result.eraseToAnyPublisher()
+    }
+    
+    private func openSendInput(recipient: Recipient) {
+        coordinate(to: SendInputCoordinator(recipient: recipient, navigationController: rootViewController))
+            .sink {}
+            .store(in: &subscriptions)
     }
 }
