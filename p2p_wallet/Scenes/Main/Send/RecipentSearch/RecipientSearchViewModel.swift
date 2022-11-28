@@ -28,6 +28,13 @@ class RecipientSearchViewModel: ObservableObject {
     @Published var isSearching = false
 
     @Published var recipientsHistory: [Recipient] = []
+    
+    struct Coordinator {
+        fileprivate let selectRecipientSubject: PassthroughSubject<Recipient, Never> = .init()
+        var selectRecipientPublisher: AnyPublisher<Recipient, Never> { selectRecipientSubject.eraseToAnyPublisher() }
+    }
+    
+    let coordinator: Coordinator = .init()
 
     init(
         recipientSearchService: RecipientSearchService = Resolver.resolve(),
@@ -113,4 +120,8 @@ class RecipientSearchViewModel: ObservableObject {
     }
 
     func qr() {}
+    
+    func selectRecipient(_ recipient: Recipient) {
+        coordinator.selectRecipientSubject.send(recipient)
+    }
 }

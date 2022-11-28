@@ -133,7 +133,9 @@ struct RecipientSearchView: View {
                         VStack(spacing: 24) {
                             ForEach(recipients) { recipient in
                                 VStack(spacing: 12) {
-                                    Button {} label: {
+                                    Button {
+                                        viewModel.selectRecipient(recipient)
+                                    } label: {
                                         HStack {
                                             RecipientCell(recipient: recipient)
                                             Spacer()
@@ -166,7 +168,9 @@ struct RecipientSearchView: View {
             VStack(spacing: 24) {
                 ForEach(recipients) { recipient in
                     VStack(spacing: 12) {
-                        Button {} label: {
+                        Button {
+                            viewModel.selectRecipient(recipient)
+                        } label: {
                             HStack {
                                 RecipientCell(recipient: recipient)
                                 Spacer()
