@@ -30,6 +30,11 @@ final class TabBarController: UITabBarController {
     override func viewDidLoad() {
         super.viewDidLoad()
 
+        DispatchQueue.main.asyncAfter(deadline: .now() + 5) {
+            let vc = UIHostingController(rootView: TransactionStatusView())
+            self.present(vc, animated: true)
+        }
+
         setUpTabBarAppearance()
         setValue(CustomTabBar(frame: tabBar.frame), forKey: "tabBar")
         delegate = self
