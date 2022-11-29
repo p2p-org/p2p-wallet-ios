@@ -1134,3 +1134,4 @@ Reset the PIN or wait for %@." = "Bạn còn %@ lần thử để nhập mã PIN
 "Using the maximum %@ amount" = "Sử dụng lượng %@ tối đa";
 "Calculated by subtracting the account creation fee from your balance" = "Được tính bằng cách trừ phí tạo tài khoản khỏi số dư của bạn";
 "You have no internet connection" = "Bạn không có kết nối internet";
+"Sent to" = "Gửi đến";
