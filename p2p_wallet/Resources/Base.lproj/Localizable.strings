@@ -1105,3 +1105,4 @@ Reset the PIN or wait for %@.";
 "Using the maximum %@ amount" = "Using the maximum %@ amount";
 "Calculated by subtracting the account creation fee from your balance" = "Calculated by subtracting the account creation fee from your balance";
 "You have no internet connection" = "You have no internet connection";
+"Sent to" = "Sent to";
