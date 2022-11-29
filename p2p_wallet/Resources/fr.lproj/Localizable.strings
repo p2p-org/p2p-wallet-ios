@@ -1132,3 +1132,4 @@ Reset the PIN or wait for %@." = "Il vous reste %@ tentatives pour saisir le cod
 "Calculated by subtracting the account creation fee from your balance" = "Calculé en soustrayant les frais de création de compte de votre solde";
 "You have no internet connection" = "Vous n'avez pas de connexion Internet";
 "Sent to" = "Envoyé à";
+"Pasted from clipboard" = "Collé depuis le presse-papiers";
