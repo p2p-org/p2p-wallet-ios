@@ -16,6 +16,7 @@ class RecipientSearchViewModel: ObservableObject {
     @Injected private var clipboardManager: ClipboardManagerType
     @Injected private var walletsRepository: WalletsRepository
     @Injected private var tokensRepository: TokensRepository
+    @Injected private var notificationService: NotificationService
     
     private let sendHistoryService: SendHistoryService
     private let recipientSearchService: RecipientSearchService
@@ -117,6 +118,7 @@ class RecipientSearchViewModel: ObservableObject {
     func past() {
         guard let text = clipboardManager.stringFromClipboard() else { return }
         input = text.trimmingCharacters(in: .whitespacesAndNewlines)
+        notificationService.showToast(title: "✅", text: L10n.pastedFromClipboard)
     }
 
     func qr() {}
