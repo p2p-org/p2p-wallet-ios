@@ -1082,8 +1082,7 @@ Reset the PIN or wait for %@." = "У вас осталось %@ попыток �
 "The data will be cleared without the possibility of recovery" = "Данные будут очищены без возможности восстановления";
 "Yes, delete it" = "Да, удалить";
 "Your removal request has been accepted" = "Ваш запрос на удаление принят";
-"Deleting your account 
-will take up to 30 days" = "Удаление вашей учетной записи займет до 30 дней.";
+"Deleting your account will take up to 30 days" = "Удаление вашей учетной записи займет до 30 дней.";
 "When you delete your account, you will lose access to your funds." = "Когда вы удалите свою учетную запись, вы потеряете доступ к своим средствам.";
 "You will lose access to the free username that you received during registration. Your friends will not be able to send you funds using your username." = "Вы потеряете доступ к бесплатному логину, полученному при регистрации.  Ваши друзья не смогут отправлять вам средства, используя ваше имя пользователя.";
 "You will not be able to use free transactions within the Solana network with Key App." = "Вы не сможете использовать бесплатные транзакции в сети Solana с приложением Key.";
