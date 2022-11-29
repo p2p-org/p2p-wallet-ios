@@ -31,7 +31,7 @@ final class TabBarController: UITabBarController {
         super.viewDidLoad()
 
         DispatchQueue.main.asyncAfter(deadline: .now() + 5) {
-            let vc = UIHostingController(rootView: TransactionStatusView())
+            let vc = UIHostingController(rootView: SendTransactionStatusView())
             self.present(vc, animated: true)
         }
 
