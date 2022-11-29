@@ -44,6 +44,7 @@ final class SendInputAmountViewModel: ObservableObject {
             .store(in: &subscriptions)
 
         $amountText
+            .receive(on: DispatchQueue.main)
             .sink { [weak self] text in
                 guard let self = self else { return }
 
@@ -59,6 +60,7 @@ final class SendInputAmountViewModel: ObservableObject {
             .store(in: &subscriptions)
 
         $token
+            .receive(on: DispatchQueue.main)
             .sink { [weak self] value in
                 guard let self = self else { return }
                 switch self.mainAmountType {
@@ -71,6 +73,7 @@ final class SendInputAmountViewModel: ObservableObject {
             .store(in: &subscriptions)
 
         $maxAmountToken
+            .receive(on: DispatchQueue.main)
             .sink { [weak self] value in
                 guard let self = self else { return }
                 switch self.mainAmountType {
@@ -83,6 +86,7 @@ final class SendInputAmountViewModel: ObservableObject {
             .store(in: &subscriptions)
 
         $isError
+            .receive(on: DispatchQueue.main)
             .sink { [weak self] value in
                 self?.amountTextColor = value ? Asset.Colors.rose.color : Asset.Colors.night.color
             }
@@ -99,6 +103,7 @@ final class SendInputAmountViewModel: ObservableObject {
             .store(in: &subscriptions)
 
         $mainAmountType
+            .receive(on: DispatchQueue.main)
             .sink { [weak self] value in
                 guard let self = self else { return }
                 switch value {

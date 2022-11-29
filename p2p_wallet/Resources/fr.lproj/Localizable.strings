@@ -1134,3 +1134,7 @@ Reset the PIN or wait for %@." = "Il vous reste %@ tentatives pour saisir le cod
 "Sent to" = "Envoyé à";
 "Pasted from clipboard" = "Collé depuis le presse-papiers";
 "Choose a recipient" = "Choisissez un destinataire";
+"Transaction submitted" = "Transaction soumise";
+"Free (Paid by Key App)" = "Gratuit (payé par Key App)";
+"Transaction succeeded" = "Transaction réussie";
+"Transaction failed" = "La transaction a échoué";

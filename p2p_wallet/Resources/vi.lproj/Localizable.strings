@@ -1137,3 +1137,7 @@ Reset the PIN or wait for %@." = "Bạn còn %@ lần thử để nhập mã PIN
 "Sent to" = "Gửi đến";
 "Pasted from clipboard" = "Đã dán từ khay nhớ tạm";
 "Choose a recipient" = "Chọn một người nhận";
+"Transaction submitted" = "Giao dịch đã gửi";
+"Free (Paid by Key App)" = "Miễn phí (Trả tiền bằng ứng dụng chính)";
+"Transaction succeeded" = "Giao dịch thành công";
+"Transaction failed" = "giao dịch không thành công";

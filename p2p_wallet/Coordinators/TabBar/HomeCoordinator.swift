@@ -243,10 +243,24 @@ final class HomeCoordinator: Coordinator<Void> {
 
         // Send send
         coordinate(to: SendCoordinator(rootViewController: navigationController))
-            .sink {}
+            .sink { [weak self] result in
+                switch result {
+                case let .sent(model):
+                    self?.navigationController.popToRootViewController(animated: true)
+                    self?.showSendTransactionStatus(model: model)
+                case .cancelled:
+                    break
+                }
+            }
             .store(in: &subscriptions)
         
         return false
+    }
+
+    private func showSendTransactionStatus(model: SendTransaction) {
+        coordinate(to: SendTransactionStatusCoordinator(parentController: navigationController, transaction: model))
+            .sink(receiveValue: { })
+            .store(in: &subscriptions)
     }
 
     private func showSwap() async -> Bool {
