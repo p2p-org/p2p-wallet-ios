@@ -43,10 +43,10 @@ class SendInputViewModel: ObservableObject {
         self.pricesService = pricesService
 
         let wallets = repository.getWallets()
-        let tokenInWallet = wallets.first(where: { $0.token.address == Token.nativeSolana.address })
-        self.currentToken = tokenInWallet ?? Wallet(token: Token.nativeSolana)
-        let feeTokenInWallet = wallets.first(where: { $0.token.address == Token.usdc.address })
-        self.feeToken = feeTokenInWallet ?? Wallet(token: Token.usdc)
+        let tokenInWallet = wallets.first(where: { $0.token.address == Token.nativeSolana.address }) ?? Wallet(token: Token.nativeSolana)
+        self.currentToken = tokenInWallet
+        let feeTokenInWallet = wallets.first(where: { $0.token.address == Token.usdc.address }) ?? Wallet(token: Token.usdc)
+        self.feeToken = feeTokenInWallet
 
         var exchangeRate = [String: CurrentPrice]()
         var tokens = Set<Token>()
@@ -60,8 +60,8 @@ class SendInputViewModel: ObservableObject {
         let state = SendInputState(
             status: .ready,
             recipient: recipient,
-            token: tokenInWallet!.token,
-            tokenFee: feeTokenInWallet!.token,
+            token: tokenInWallet.token,
+            tokenFee: feeTokenInWallet.token,
             userWalletEnvironments: env,
             amountInFiat: .zero,
             amountInToken: .zero,
@@ -69,6 +69,7 @@ class SendInputViewModel: ObservableObject {
             feeInToken: .zero
         )
 
+        let accountStorage = Resolver.resolve(AccountStorageType.self)
         stateMachine = .init(
             initialState: state,
             services: .init(
@@ -80,6 +81,13 @@ class SendInputViewModel: ObservableObject {
                     feeRelayer: Resolver.resolve(),
                     feeRelayerAPIClient: Resolver.resolve(),
                     solanaAPIClient: Resolver.resolve()
+                ),
+                sendService: SendServiceImpl(
+                    contextManager: Resolver.resolve(),
+                    solanaAPIClient: Resolver.resolve(),
+                    blockchainClient: Resolver.resolve(),
+                    feeRelayer: Resolver.resolve(),
+                    account: accountStorage.account
                 )
             )
         )
@@ -181,6 +189,16 @@ private extension SendInputViewModel {
                 let _ = await self.stateMachine.accept(action: .changeFeeToken(newFeeToken))
                 self.isFeeLoading = false
             }
+            .store(in: &subscriptions)
+        
+        actionButtonViewModel.$isSliderOn
+            .sinkAsync(receiveValue: { [weak self] isSliderOn in
+                guard let self = self else { return }
+                if isSliderOn {
+                    let returnState = await self.stateMachine.accept(action: .send)
+                    debugPrint(returnState)
+                }
+            })
             .store(in: &subscriptions)
     }
 }
