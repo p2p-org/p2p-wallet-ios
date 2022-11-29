@@ -1108,3 +1108,7 @@ Reset the PIN or wait for %@.";
 "Sent to" = "Sent to";
 "Pasted from clipboard" = "Pasted from clipboard";
 "Choose a recipient" = "Choose a recipient";
+"Transaction submitted" = "Transaction submitted";
+"Free (Paid by Key App)" = "Free (Paid by Key App)";
+"Transaction succeeded" = "Transaction succeeded";
+"Transaction failed" = "Transaction failed";

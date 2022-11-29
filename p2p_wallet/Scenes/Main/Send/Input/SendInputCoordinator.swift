@@ -3,23 +3,27 @@ import Send
 import SolanaSwift
 import SwiftUI
 
-final class SendInputCoordinator: Coordinator<Void> {
+final class SendInputCoordinator: Coordinator<SendResult> {
     private let navigationController: UINavigationController
     private let recipient: Recipient
-    private var subject = PassthroughSubject<Void, Never>()
+    private var subject = PassthroughSubject<SendResult, Never>()
 
     init(recipient: Recipient, navigationController: UINavigationController) {
         self.recipient = recipient
         self.navigationController = navigationController
     }
 
-    override func start() -> AnyPublisher<Void, Never> {
+    override func start() -> AnyPublisher<SendResult, Never> {
         let viewModel = SendInputViewModel(recipient: recipient)
         let view = SendInputView(viewModel: viewModel)
         let controller = KeyboardAvoidingViewController(rootView: view)
 
         navigationController.pushViewController(controller, animated: true)
         setTitle(to: controller)
+
+        controller.onClose = { [weak self] in
+            self?.subject.send(.cancelled)
+        }
 
         viewModel.tokenViewModel.changeTokenPressed
             .sink { [weak self] in
@@ -43,7 +47,13 @@ final class SendInputCoordinator: Coordinator<Void> {
             }
             .store(in: &subscriptions)
 
-        return subject.eraseToAnyPublisher()
+        viewModel.transaction
+            .sink { [weak self] model in
+                self?.subject.send(.sent(model))
+            }
+            .store(in: &subscriptions)
+
+        return subject.prefix(1).eraseToAnyPublisher()
     }
 
     private func setTitle(to vc: UIViewController) {
