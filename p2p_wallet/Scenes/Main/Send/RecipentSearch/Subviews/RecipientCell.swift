@@ -82,16 +82,33 @@ struct RecipientCell: View {
     }
 }
 
-extension Date {
+private extension Date {
     func timeAgoDisplay() -> String {
-        let formatter = RelativeDateTimeFormatter()
-        formatter.unitsStyle = .full
-        
-        var result = formatter.localizedString(for: self, relativeTo: Date())
-        return result.replacingOccurrences(of: "ago", with: "")
+        let formatter = DateFormatter()
+        formatter.timeStyle = .none
+        formatter.dateStyle = .full
+        formatter.doesRelativeDateFormatting = true
+        let rel = formatter.string(from: self)
+        formatter.doesRelativeDateFormatting = false
+        let abs = formatter.string(from: self)
+        if rel != abs {
+            return rel
+        }
+        if isThisYear() {
+            formatter.dateFormat = "MMM d"
+        } else {
+            formatter.dateFormat = "MMM d yyyy"
+        }
+        return formatter.string(from: self)
+    }
+
+    func isThisYear() -> Bool {
+        let thisYear = Calendar.current.component(.year, from: Date())
+        let dateYear = Calendar.current.component(.year, from: self)
+        return dateYear == thisYear
     }
 }
-
+    
 struct RecipientCell_Previews: PreviewProvider {
     static var previews: some View {
         VStack(alignment: .leading) {
