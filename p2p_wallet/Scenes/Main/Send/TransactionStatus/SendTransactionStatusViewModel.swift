@@ -17,12 +17,12 @@ class SendTransactionStatusViewModel: ObservableObject {
 
     init() {
         info = [
-            (title: "Sent to", detail: "@kirill.key"),
-            (title: "Transaction Fee", detail: "Fee (Paid by Key App)"),
+            (title: L10n.sentTo, detail: "@kirill.key"),
+            (title: L10n.transactionFee, detail: "Fee (Paid by Key App)"),
         ]
 
         /// Uncomment for Error state
-        /*
+        
         let text = L10n.theTransactionWasRejectedByTheSolanaBlockchain🥺
         let buttonText = L10n.tapForDetails
         let attributedError = NSMutableAttributedString(string: text, attributes: [
@@ -36,7 +36,7 @@ class SendTransactionStatusViewModel: ObservableObject {
             ])
         )
         self.state = .error(message: attributedError)
-         */
+         
 
         // Uncomment for Success state
         /*

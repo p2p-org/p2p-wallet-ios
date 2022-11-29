@@ -86,7 +86,7 @@ struct SendTransactionStatusView: View {
     var button: some View {
         TextButtonView(
             title: L10n.done,
-            style: .primary,
+            style: .primaryWhite,
             size: .large,
             onPressed: viewModel.done
         )
@@ -117,18 +117,18 @@ struct SendTransactionStatusStatusView: View {
                             .foregroundColor(Color(Asset.Colors.mountain.color))
                             .frame(width: 24, height: 24)
                     } else if case .error(_) = state {
-                        VStack {}
+                        Circle()
+                            .fill(color)
                             .frame(width: 48, height: 48)
-                            .background(color)
                             .cornerRadius(24)
                         Image(uiImage: image)
                             .resizable()
                             .foregroundColor(Color(Asset.Colors.rose.color))
-                            .frame(width: 24, height: 24)
+                            .frame(width: 20, height: 18)
                     } else {
-                        VStack {}
+                        Circle()
+                            .fill(color)
                             .frame(width: 48, height: 48)
-                            .background(color)
                             .cornerRadius(24)
                         Image(uiImage: image)
                             .renderingMode(.template)
