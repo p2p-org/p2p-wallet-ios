@@ -69,8 +69,8 @@ struct RecipientSearchView: View {
                 // Navigation title
                 ToolbarItem(placement: .principal) {
                     VStack {
-                        Text("Choose recipient")
-                        Text("Solana & Bitcoin network")
+                        Text(L10n.chooseARecipient)
+                        Text("Solana network")
                             .apply(style: .label1)
                     }
                 }
