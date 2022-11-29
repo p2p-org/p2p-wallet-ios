@@ -9,7 +9,6 @@ import FeeRelayerSwift
 import OrcaSwapSwift
 import RenVMSwift
 import Resolver
-import RxSwift
 import SolanaSwift
 
 class SendService: SendServiceType {
@@ -90,28 +89,39 @@ class SendService: SendServiceType {
     }
 
     func getAvailableWalletsToPayFee(feeInSOL: FeeAmount) async throws -> [Wallet] {
-        try await Single.zip(
-            walletsRepository.getWallets()
-                .filter { ($0.lamports ?? 0) > 0 }
-                .map { wallet -> Single<Wallet?> in
-                    if wallet.mintAddress == PublicKey.wrappedSOLMint.base58EncodedString {
-                        return (wallet.lamports ?? 0) >= feeInSOL.total ? .just(wallet) : .just(nil)
-                    }
+        let wallets = walletsRepository.getWallets()
+            .filter { ($0.lamports ?? 0) > 0 }
 
-                    return Single.async {
-                        try await self.feeRelayer.feeCalculator.calculateFeeInPayingToken(
-                            orcaSwap: self.orcaSwap,
-                            feeInSOL: feeInSOL,
-                            payingFeeTokenMint: try PublicKey(string: wallet.mintAddress)
-                        )
-                    }
-                    .map { ($0?.total ?? 0) <= (wallet.lamports ?? 0) }
-                    .map { $0 ? wallet : nil }
-                    .catchAndReturn(nil)
+        return try await withThrowingTaskGroup(of: Wallet?.self) { group in
+            var result = [Wallet]()
+
+            for wallet in wallets {
+                // Solana wallet
+                if wallet.mintAddress == PublicKey.wrappedSOLMint.base58EncodedString,
+                   (wallet.lamports ?? 0) >= feeInSOL.total
+                {
+                    result.append(wallet)
                 }
-        )
-            .map { $0.compactMap { $0 }}
-            .value
+
+                // Other
+                group.addTask(priority: .userInitiated) { [weak self] in
+                    guard let self = self else { return nil }
+                    let fee = try? await self.feeRelayer.feeCalculator.calculateFeeInPayingToken(
+                        orcaSwap: self.orcaSwap,
+                        feeInSOL: feeInSOL,
+                        payingFeeTokenMint: try PublicKey(string: wallet.mintAddress)
+                    )
+
+                    return (fee?.total ?? 0) <= (wallet.lamports ?? 0) ? wallet : nil
+                }
+            }
+
+            for try await wallet in group where wallet != nil {
+                result.append(wallet!)
+            }
+
+            return result
+        }
     }
 
     func getFeesInPayingToken(
