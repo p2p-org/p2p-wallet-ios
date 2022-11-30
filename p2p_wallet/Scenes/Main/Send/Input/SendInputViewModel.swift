@@ -4,15 +4,15 @@
 
 import Combine
 import Foundation
+import KeyAppUI
 import Resolver
 import Send
 import SolanaPricesAPIs
 import SolanaSwift
-import KeyAppUI
 
 class SendInputViewModel: ObservableObject {
-
     // MARK: - Sub view models
+
     let actionButtonViewModel: SendInputActionButtonViewModel
     let inputAmountViewModel: SendInputAmountViewModel
     let tokenViewModel: SendInputTokenViewModel
@@ -29,6 +29,7 @@ class SendInputViewModel: ObservableObject {
     let transaction = PassthroughSubject<SendTransaction, Never>()
 
     // MARK: - Private
+
     private let walletsRepository: WalletsRepository
     private let pricesService: PricesServiceType
     private let stateMachine: SendInputStateMachine
@@ -39,16 +40,18 @@ class SendInputViewModel: ObservableObject {
 
     init(recipient: Recipient) {
         let repository = Resolver.resolve(WalletsRepository.self)
-        self.walletsRepository = repository
+        walletsRepository = repository
 
         let pricesService = Resolver.resolve(PricesService.self)
         self.pricesService = pricesService
 
         let wallets = repository.getWallets()
-        let tokenInWallet = wallets.first(where: { $0.token.address == Token.nativeSolana.address }) ?? Wallet(token: Token.nativeSolana)
-        self.currentToken = tokenInWallet
-        let feeTokenInWallet = wallets.first(where: { $0.token.address == Token.usdc.address }) ?? Wallet(token: Token.usdc)
-        self.feeToken = feeTokenInWallet
+        let tokenInWallet = wallets
+            .first(where: { $0.token.address == Token.nativeSolana.address }) ?? Wallet(token: Token.nativeSolana)
+        currentToken = tokenInWallet
+        let feeTokenInWallet = wallets
+            .first(where: { $0.token.address == Token.usdc.address }) ?? Wallet(token: Token.usdc)
+        feeToken = feeTokenInWallet
 
         var exchangeRate = [String: CurrentPrice]()
         var tokens = Set<Token>()
@@ -86,7 +89,7 @@ class SendInputViewModel: ObservableObject {
                 )
             )
         )
-        self.sendAction = SendActionServiceImpl(
+        sendAction = SendActionServiceImpl(
             contextManager: Resolver.resolve(),
             solanaAPIClient: Resolver.resolve(),
             blockchainClient: Resolver.resolve(),
@@ -94,9 +97,9 @@ class SendInputViewModel: ObservableObject {
             account: accountStorage.account
         )
 
-        self.inputAmountViewModel = SendInputAmountViewModel()
-        self.actionButtonViewModel = SendInputActionButtonViewModel()
-        self.tokenViewModel = SendInputTokenViewModel()
+        inputAmountViewModel = SendInputAmountViewModel()
+        actionButtonViewModel = SendInputActionButtonViewModel()
+        tokenViewModel = SendInputTokenViewModel()
 
         tokenViewModel.isTokenChoiceEnabled = wallets.count > 1
 
@@ -137,7 +140,7 @@ private extension SendInputViewModel {
             .sinkAsync(receiveValue: { [weak self] value in
                 guard let self = self else { return }
                 await MainActor.run { self.isFeeLoading = true }
-                let _ = await self.stateMachine.accept(action: .changeUserToken(value))
+                _ = await self.stateMachine.accept(action: .changeUserToken(value))
                 await MainActor.run {
                     self.inputAmountViewModel.token = value
                     self.tokenViewModel.token = value
@@ -184,11 +187,11 @@ private extension SendInputViewModel {
             .sinkAsync { [weak self] newFeeToken in
                 guard let self = self else { return }
                 await MainActor.run { self.isFeeLoading = true }
-                let _ = await self.stateMachine.accept(action: .changeFeeToken(newFeeToken))
+                _ = await self.stateMachine.accept(action: .changeFeeToken(newFeeToken))
                 await MainActor.run { self.isFeeLoading = false }
             }
             .store(in: &subscriptions)
-        
+
         actionButtonViewModel.$isSliderOn
             .sinkAsync(receiveValue: { [weak self] isSliderOn in
                 guard let self = self else { return }
@@ -203,13 +206,19 @@ private extension SendInputViewModel {
 private extension SendInputViewModel {
     @MainActor
     func updateInputAmountView() {
-        switch self.currentState.status {
+        switch currentState.status {
         case .error(.inputTooHigh):
             inputAmountViewModel.isError = true
-            actionButtonViewModel.actionButton = .init(isEnabled: false, title: L10n.max(self.currentState.maxAmountInputInToken.tokenAmount(symbol: currentToken.token.symbol)))
-        case .error(.inputTooLow(let minAmount)):
+            actionButtonViewModel.actionButton = .init(
+                isEnabled: false,
+                title: L10n.max(currentState.maxAmountInputInToken.tokenAmount(symbol: currentToken.token.symbol))
+            )
+        case let .error(.inputTooLow(minAmount)):
             inputAmountViewModel.isError = true
-            actionButtonViewModel.actionButton = .init(isEnabled: false, title: L10n.min(minAmount.tokenAmount(symbol: currentToken.token.symbol)))
+            actionButtonViewModel.actionButton = .init(
+                isEnabled: false,
+                title: L10n.min(minAmount.tokenAmount(symbol: currentToken.token.symbol))
+            )
         case .error(reason: .inputZero):
             inputAmountViewModel.isError = false
             actionButtonViewModel.actionButton = .init(isEnabled: false, title: L10n.enterTheAmount)
@@ -227,16 +236,27 @@ private extension SendInputViewModel {
         if currentState.fee == .zero {
             feeTitle = L10n.enjoyFreeTransactions
         } else {
-            feeTitle = L10n.fees("\(currentState.fee.total.convertToBalance(decimals: 9).tokenAmount(symbol: feeToken.token.symbol))")
+            feeTitle = L10n
+                .fees(
+                    "\(currentState.fee.total.convertToBalance(decimals: 9).tokenAmount(symbol: feeToken.token.symbol))"
+                )
         }
     }
 
+    
     func handleConnectionError() {
-        snackbar.send(SnackBar(title: "🥺", text: L10n.youHaveNoInternetConnection, buttonTitle: L10n.hide, buttonAction: { SnackBar.hide() }))
+        snackbar.send(SnackBar(
+            title: "🥺",
+            text: L10n.youHaveNoInternetConnection,
+            buttonTitle: L10n.hide,
+            buttonAction: { SnackBar.hide() }
+        ))
     }
 
     func handleUnknownError() {
-        snackbar.send(SnackBar(title: "🥺", text: L10n.somethingWentWrong, buttonTitle: L10n.hide, buttonAction: { SnackBar.hide() }))
+        snackbar
+            .send(SnackBar(title: "🥺", text: L10n.somethingWentWrong, buttonTitle: L10n.hide,
+                           buttonAction: { SnackBar.hide() }))
     }
 
     func send() async {
@@ -249,15 +269,18 @@ private extension SendInputViewModel {
             )
             await MainActor.run {
                 self.actionButtonViewModel.showFinished = true
-                DispatchQueue.main.asyncAfter(deadline: .now() + 0.5, execute: {
+                DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) {
                     self.transaction.send(SendTransaction(transactionId: transactionId, state: self.currentState))
-                })
+                }
             }
-        } catch let error {
-            if let error = error as? NSError, error.code == NSURLErrorNetworkConnectionLost || error.code == NSURLErrorNotConnectedToInternet {
-                handleConnectionError()
+        } catch {
+            print(error)
+            if let error = error as? NSError,
+               error.code == NSURLErrorNetworkConnectionLost || error.code == NSURLErrorNotConnectedToInternet
+            {
+                await MainActor.run { handleConnectionError() }
             } else {
-                handleUnknownError()
+                await MainActor.run { handleUnknownError() }
             }
         }
     }
