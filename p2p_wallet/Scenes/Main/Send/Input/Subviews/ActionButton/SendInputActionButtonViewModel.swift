@@ -7,6 +7,6 @@ final class SendInputActionButtonViewModel: ObservableObject {
     }
 
     @Published var isSliderOn = false
-    @Published var actionButton = ActionButton(isEnabled: true, title: L10n.enterTheAmount)
+    @Published var actionButton = ActionButton(isEnabled: false, title: L10n.enterTheAmount)
     @Published var showFinished = false
 }
