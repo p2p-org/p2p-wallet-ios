@@ -59,7 +59,7 @@ struct SendInputFeePromptView: View {
         BottomActionContainer {
             VStack(spacing: 12) {
                 TextButtonView(
-                    title: L10n.continueWithUSDC,
+                    title: viewModel.continueTitle,
                     style: .inverted,
                     size: .large,
                     onPressed: viewModel.close.send
@@ -90,6 +90,6 @@ struct SendInputFeePromptView: View {
 
 struct SendInputFeePromptView_Previews: PreviewProvider {
     static var previews: some View {
-        SendInputFeePromptView(viewModel: SendInputFeePromptViewModel())
+        SendInputFeePromptView(viewModel: SendInputFeePromptViewModel(currentToken: .nativeSolana, feeToken: .usdc))
     }
 }
