@@ -26,7 +26,10 @@ final class SendInputFreeTransactionsDetailCoordinator: Coordinator<Void> {
         feeController.modalPresentationStyle = .custom
 
         transition?.dimmClicked
-            .sink { [weak self] in self?.feeController?.dismiss(animated: true) }
+            .sink { [weak self] in
+                self?.feeController?.dismiss(animated: true)
+                self?.subject.send(completion: .finished)
+            }
             .store(in: &subscriptions)
         parentController.present(feeController, animated: true)
         self.feeController = feeController

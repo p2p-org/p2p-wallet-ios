@@ -7,38 +7,51 @@ import Foundation
 import SwiftUI
 import Send
 
-class SendCoordinator: Coordinator<Void> {
+enum SendResult {
+    case sent(SendTransaction)
+    case cancelled
+}
+
+class SendCoordinator: Coordinator<SendResult> {
     let rootViewController: UINavigationController
-    
+    let result = PassthroughSubject<SendResult, Never>()
+
     init(rootViewController: UINavigationController) {
         self.rootViewController = rootViewController
         super.init()
     }
     
-    override func start() -> AnyPublisher<Void, Never> {
-        let result = PassthroughSubject<Void, Never>()
-
+    override func start() -> AnyPublisher<SendResult, Never> {
         // Setup view
         let vm = RecipientSearchViewModel()
         vm.coordinator.selectRecipientPublisher
             .sink { [weak self] (recipient: Recipient) in self?.openSendInput(recipient: recipient) }
             .store(in: &subscriptions)
-        
+
         let view = RecipientSearchView(viewModel: vm)
         let vc = UIHostingController(rootView: view)
 
         // Push strategy
         rootViewController.pushViewController(vc, animated: true)
 
-        vc.onClose = { result.send() }
+        vc.onClose = { [weak self] in
+            self?.result.send(.cancelled)
+        }
 
         // Back
-        return result.eraseToAnyPublisher()
+        return result.prefix(1).eraseToAnyPublisher()
     }
-    
+
     private func openSendInput(recipient: Recipient) {
         coordinate(to: SendInputCoordinator(recipient: recipient, navigationController: rootViewController))
-            .sink {}
+            .sink { [weak self] result in
+                switch result {
+                case .sent(let transaction):
+                    self?.result.send(.sent(transaction))
+                case .cancelled:
+                    break
+                }
+            }
             .store(in: &subscriptions)
     }
 }

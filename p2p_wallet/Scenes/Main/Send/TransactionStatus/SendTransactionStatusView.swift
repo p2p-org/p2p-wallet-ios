@@ -2,12 +2,20 @@ import SwiftUI
 import KeyAppUI
 
 struct SendTransactionStatusView: View {
-    @ObservedObject var viewModel = SendTransactionStatusViewModel()
+    @ObservedObject var viewModel: SendTransactionStatusViewModel
+
+    init(viewModel: SendTransactionStatusViewModel) {
+        self.viewModel = viewModel
+    }
 
     var body: some View {
         VStack {
+            Color(Asset.Colors.rain.color)
+                .frame(width: 31, height: 4)
+                .cornerRadius(2)
+                .padding(.top, 6)
             title
-                .padding(.top, 56)
+                .padding(.top, 18)
                 .padding(.bottom, 15)
             headerView
             info
@@ -88,7 +96,7 @@ struct SendTransactionStatusView: View {
             title: L10n.done,
             style: .primaryWhite,
             size: .large,
-            onPressed: viewModel.done
+            onPressed: viewModel.close.send
         )
         .frame(height: 56)
     }
@@ -186,6 +194,17 @@ struct SendTransactionStatusStatusView: View {
 
 struct SendTransactionStatusView_Previews: PreviewProvider {
     static var previews: some View {
-        SendTransactionStatusView()
+        SendTransactionStatusView(
+            viewModel: SendTransactionStatusViewModel(
+                transaction: .init(
+                    transactionId: "",
+                    state: .zero(
+                        recipient: .init(address: "", category: .solanaAddress, attributes: .funds),
+                        token: .nativeSolana(pubkey: nil, lamport: nil),
+                        feeToken: .nativeSolana(pubkey: nil, lamport: nil),
+                        userWalletState: .empty)
+                )
+            )
+        )
     }
 }

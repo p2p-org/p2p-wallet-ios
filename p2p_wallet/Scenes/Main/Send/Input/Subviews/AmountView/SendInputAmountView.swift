@@ -15,12 +15,11 @@ struct SendInputAmountView: View {
             HStack(spacing: 8) {
                 VStack(spacing: 4) {
                     HStack(spacing: 0) {
-                        FocusedTextField(
+                        SendInputAmountField(
                             text: $viewModel.amountText,
                             isFirstResponder: $viewModel.isFirstResponder,
                             textColor: $viewModel.amountTextColor
                         ) { textField in
-                            textField.keyboardType = .numberPad
                             textField.font = .systemFont(ofSize: UIFont.fontSize(of: .title2), weight: .bold)
                             textField.placeholder = "0"
                             textField.setContentHuggingPriority(.defaultHigh, for: .horizontal)

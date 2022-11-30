@@ -3,6 +3,7 @@ import KeyAppUI
 
 struct SendInputActionButtonView: View {
     @ObservedObject private var viewModel: SendInputActionButtonViewModel
+    @State private var animatedFinish: Bool = false
 
     init(viewModel: SendInputActionButtonViewModel) {
         self.viewModel = viewModel
@@ -10,7 +11,7 @@ struct SendInputActionButtonView: View {
 
     var body: some View {
         Group {
-            if viewModel.showFinished {
+            if animatedFinish {
                 Circle()
                     .stroke(Color(Asset.Colors.night.color), lineWidth: 4)
                     .background(Circle().fill(Color(Asset.Colors.lime.color)))
@@ -29,12 +30,7 @@ struct SendInputActionButtonView: View {
                         isOn: .init(get: { [weak viewModel] in
                             viewModel?.isSliderOn ?? false
                         }, set: { [weak viewModel] val in
-                            withAnimation {
-                                viewModel?.showFinished = true
-                                DispatchQueue.main.asyncAfter(deadline: .now() + 2) {
-                                    viewModel?.isSliderOn = val
-                                }
-                            }
+                            withAnimation { viewModel?.isSliderOn = val }
                         })
                     )
                 }
@@ -49,8 +45,13 @@ struct SendInputActionButtonView: View {
         .disabled(!viewModel.actionButton.isEnabled)
         .allowsHitTesting(viewModel.actionButton.isEnabled)
         .transition(.asymmetric(insertion: .scale, removal: .scale).combined(with: .opacity))
-        .animation(.default, value: viewModel.showFinished)
+        .animation(.default, value: animatedFinish)
         .padding(.top, 8)
+        .onReceive(viewModel.$showFinished) { value in
+            withAnimation {
+                self.animatedFinish = value
+            }
+        }
     }
 }
 
