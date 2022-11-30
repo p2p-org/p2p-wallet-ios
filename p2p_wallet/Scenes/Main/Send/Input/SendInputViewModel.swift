@@ -28,6 +28,8 @@ class SendInputViewModel: ObservableObject {
     let snackbar = PassthroughSubject<SnackBar, Never>()
     let transaction = PassthroughSubject<SendTransaction, Never>()
 
+    var currentState: SendInputState { stateMachine.currentState }
+
     // MARK: - Private
 
     private let walletsRepository: WalletsRepository
@@ -36,7 +38,6 @@ class SendInputViewModel: ObservableObject {
     private let sendAction: SendActionService
 
     private var subscriptions = Set<AnyCancellable>()
-    private var currentState: SendInputState { stateMachine.currentState }
 
     init(recipient: Recipient) {
         let repository = Resolver.resolve(WalletsRepository.self)

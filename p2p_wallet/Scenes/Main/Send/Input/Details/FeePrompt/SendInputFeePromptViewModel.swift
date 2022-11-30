@@ -1,5 +1,7 @@
 import Combine
 import Resolver
+import SolanaSwift
+
 final class SendInputFeePromptViewModel: ObservableObject {
 
     @Injected private var walletsRepository: WalletsRepository
@@ -7,14 +9,18 @@ final class SendInputFeePromptViewModel: ObservableObject {
     let close = PassthroughSubject<Void, Never>()
     let chooseToken = PassthroughSubject<Void, Never>()
 
-    @Published var title: String = L10n.thisAddressDoesNotHaveAUSDCAccount
-    @Published var description: String = L10n.YouWillHaveToPayAOneTimeFee0._03ToCreateAUSDCAccountForThisAddress
+    @Published var title = ""
+    @Published var description = ""
+    @Published var isChooseTokenAvailable = false
+    @Published var continueTitle = ""
 
-    @Published var isChooseTokenAvailable: Bool = false
+    init(currentToken: Token, feeToken: Token) {
+        title = L10n.thisAddressDoesNotHaveAAccount(currentToken.symbol)
+        description = L10n.YouWillHaveToPayAOneTimeFee0._03ToCreateAAccountForThisAddress(currentToken.symbol)
+        continueTitle = L10n.continueWith(feeToken.symbol)
 
-    init() {
         if walletsRepository.getWallets().count > 1 {
-            description = [L10n.YouWillHaveToPayAOneTimeFee0._03ToCreateAUSDCAccountForThisAddress, L10n.youCanChooseInWhichCurrencyToPayWithBelow].joined(separator: ". ")
+            description = [L10n.YouWillHaveToPayAOneTimeFee0._03ToCreateAAccountForThisAddress(currentToken.symbol), L10n.youCanChooseInWhichCurrencyToPayWithBelow].joined(separator: ". ")
             isChooseTokenAvailable = true
         }
     }
