@@ -29,46 +29,44 @@ struct RecipientSearchView: View {
 
                 // Result
                 if let result = viewModel.searchResult {
-                    switch result {
-                    case let .ok(recipients):
-                        // Ok case
-                        if recipients.isEmpty {
-                            // Not found
-                            RecipientNotFoundView()
-                                .padding(.top, 32)
-                        } else {
-                            // With result
-                            okView(recipients)
+                    VStack {
+                        switch result {
+                        case let .ok(recipients):
+                            // Ok case
+                            if recipients.isEmpty {
+                                // Not found
+                                RecipientNotFoundView()
+                                    .padding(.top, 32)
+                            } else {
+                                // With result
+                                okView(recipients)
+                            }
+                        case let .missingUserToken(recipient):
+                            // Missing user token
+                            disabledAndReason(
+                                recipient,
+                                reason: L10n.youCannotSendFundsToThisAddressBecauseItBelongsToAnotherToken
+                            )
+                        case let .insufficientUserFunds(recipient):
+                            // Insufficient funds
+                            disabledAndReason(
+                                recipient,
+                                reason: L10n.accountCreationForThisAddressIsNotPossibleDueToInsufficientFunds
+                            )
+                        case .nameServiceError:
+                            tryLater(title: L10n.solanaNameServiceDoesnTRespond)
+                                .padding(.top, 38)
+                                .padding(.horizontal, 12)
+                        case .solanaServiceError:
+                            tryLater(title: "Solana Service doesn't respond")
+                                .padding(.top, 38)
+                                .padding(.horizontal, 12)
                         }
-                    case let .missingUserToken(recipient):
-                        // Missing user token
-                        disabledAndReason(
-                            recipient,
-                            reason: L10n.youCannotSendFundsToThisAddressBecauseItBelongsToAnotherToken
-                        )
-                    case let .insufficientUserFunds(recipient):
-                        // Insufficient funds
-                        disabledAndReason(
-                            recipient,
-                            reason: L10n.accountCreationForThisAddressIsNotPossibleDueToInsufficientFunds
-                        )
-                    case .nameServiceError:
-                        tryLater(title: L10n.solanaNameServiceDoesnTRespond)
-                            .padding(.top, 38)
-                            .padding(.horizontal, 12)
-                    case .solanaServiceError:
-                        tryLater(title: "Solana Service doesn't respond")
-                            .padding(.top, 38)
-                            .padding(.horizontal, 12)
+                        Spacer()
                     }
                 } else {
                     // History
                     history(viewModel.recipientsHistory)
-                }
-                Spacer()
-                if viewModel.recipientsHistory.isEmpty {
-                    actionButtons
-                        .padding(.bottom, 16)
                 }
             }
             .padding(.top, 8)
@@ -83,34 +81,6 @@ struct RecipientSearchView: View {
                     }
                 }
             }
-        }
-    }
-
-    var actionButtons: some View {
-        HStack(spacing: 8) {
-            TextButtonView(
-                title: L10n.scanQR,
-                style: .primary,
-                size: .large,
-                leading: .qrCode,
-                onPressed: {
-                    viewModel.qr()
-                }
-            )
-            .frame(height: 56)
-            .cornerRadius(28)
-
-            TextButtonView(
-                title: L10n.paste,
-                style: .primary,
-                size: .large,
-                leading: .buttonPaste.withTintColor(Asset.Colors.lime.color, renderingMode: .alwaysTemplate),
-                onPressed: {
-                    viewModel.past()
-                }
-            )
-            .frame(height: 56)
-            .cornerRadius(28)
         }
     }
 
@@ -148,14 +118,49 @@ struct RecipientSearchView: View {
     func history(_ recipients: [Recipient]) -> some View {
         Group {
             if recipients.isEmpty {
-                VStack(spacing: 16) {
-                    Text(L10n.makeYourFirstTransaction)
-                        .fontWeight(.bold)
-                        .apply(style: .title2)
-                    Text(L10n.toContinuePasteOrScanTheAddressOrTypeAUsername)
-                        .apply(style: .text1)
-                        .multilineTextAlignment(.center)
-                }.padding(.top, 48)
+                switch viewModel.recipientsHistoryStatus {
+                case .initializing:
+                    VStack(spacing: 16) {
+                        Spinner()
+                            .frame(width: 28, height: 28)
+                        Text("Initializing transfer history")
+                            .apply(style: .text3)
+                        Spacer()
+                    }.padding(.top, 48)
+                default:
+                    VStack(spacing: 16) {
+                        Text(L10n.makeYourFirstTransaction)
+                            .fontWeight(.bold)
+                            .apply(style: .title2)
+                        Text(L10n.toContinuePasteOrScanTheAddressOrTypeAUsername)
+                            .apply(style: .text1)
+                            .multilineTextAlignment(.center)
+                        Spacer()
+                        HStack(spacing: 8) {
+                            TextButtonView(
+                                title: L10n.scanQR,
+                                style: .primary,
+                                size: .large,
+                                leading: Asset.Icons.qr.image
+                            ) {
+                                viewModel.qr()
+                            }
+                            .frame(height: TextButton.Size.large.height)
+                            .cornerRadius(28)
+                            
+                            TextButtonView(
+                                title: L10n.paste,
+                                style: .primary,
+                                size: .large,
+                                leading: Asset.Icons.past.image
+                            ) {
+                                viewModel.past()
+                            }
+                            .frame(height: TextButton.Size.large.height)
+                            .cornerRadius(28)
+                        }.padding(.bottom, 8)
+                    }.padding(.top, 48)
+                }
             } else {
                 ScrollView(showsIndicators: false) {
                     VStack(alignment: .leading) {
@@ -186,7 +191,7 @@ struct RecipientSearchView: View {
                             Color(.white)
                                 .cornerRadius(radius: 16, corners: .allCorners)
                         )
-                    }
+                    }.padding(.bottom, 8)
                 }
             }
         }
