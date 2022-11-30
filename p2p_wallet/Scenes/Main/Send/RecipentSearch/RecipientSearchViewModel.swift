@@ -35,6 +35,8 @@ class RecipientSearchViewModel: ObservableObject {
     struct Coordinator {
         fileprivate let selectRecipientSubject: PassthroughSubject<Recipient, Never> = .init()
         var selectRecipientPublisher: AnyPublisher<Recipient, Never> { selectRecipientSubject.eraseToAnyPublisher() }
+        fileprivate let scanQRSubject: PassthroughSubject<Void, Never> = .init()
+        var scanQRPublisher: AnyPublisher<Void, Never> { scanQRSubject.eraseToAnyPublisher() }
     }
 
     let coordinator: Coordinator = .init()
@@ -117,13 +119,17 @@ class RecipientSearchViewModel: ObservableObject {
         }
     }
 
+    @MainActor
     func past() {
         guard let text = clipboardManager.stringFromClipboard() else { return }
         input = text.trimmingCharacters(in: .whitespacesAndNewlines)
         notificationService.showToast(title: "✅", text: L10n.pastedFromClipboard)
     }
 
-    func qr() {}
+    @MainActor
+    func qr() {
+        coordinator.scanQRSubject.send(())
+    }
 
     func selectRecipient(_ recipient: Recipient) {
         coordinator.selectRecipientSubject.send(recipient)
