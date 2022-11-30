@@ -94,7 +94,6 @@ struct RecipientSearchView: View {
                 size: .large,
                 leading: .qrCode,
                 onPressed: {
-                    UIApplication.shared.keyWindow?.endEditing(true)
                     viewModel.qr()
                 }
             )
@@ -107,7 +106,6 @@ struct RecipientSearchView: View {
                 size: .large,
                 leading: .buttonPaste.withTintColor(Asset.Colors.lime.color, renderingMode: .alwaysTemplate),
                 onPressed: {
-                    UIApplication.shared.keyWindow?.endEditing(true)
                     viewModel.past()
                 }
             )
