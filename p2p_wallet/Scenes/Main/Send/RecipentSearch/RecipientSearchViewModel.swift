@@ -30,11 +30,13 @@ class RecipientSearchViewModel: ObservableObject {
 
     @Published var isSearching = false
 
+    @Published var recipientsHistoryStatus: SendHistoryService.Status = .ready
     @Published var recipientsHistory: [Recipient] = []
 
     struct Coordinator {
         fileprivate let selectRecipientSubject: PassthroughSubject<Recipient, Never> = .init()
         var selectRecipientPublisher: AnyPublisher<Recipient, Never> { selectRecipientSubject.eraseToAnyPublisher() }
+
         fileprivate let scanQRSubject: PassthroughSubject<Void, Never> = .init()
         var scanQRPublisher: AnyPublisher<Void, Never> { scanQRSubject.eraseToAnyPublisher() }
     }
@@ -80,6 +82,10 @@ class RecipientSearchViewModel: ObservableObject {
             ))
         }
 
+        sendHistoryService.statusPublisher
+            .sink { [weak self] status in self?.recipientsHistoryStatus = status }
+            .store(in: &subscriptions)
+        
         sendHistoryService.recipientsPublisher
             .sink { [weak self] recipients in self?.recipientsHistory = Array(recipients.prefix(10)) }
             .store(in: &subscriptions)
