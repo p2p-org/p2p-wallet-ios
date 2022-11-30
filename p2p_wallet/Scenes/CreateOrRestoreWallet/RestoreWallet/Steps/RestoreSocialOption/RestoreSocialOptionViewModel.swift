@@ -3,7 +3,7 @@ import Onboarding
 import Resolver
 import SwiftUI
 
-final class RestoreSocialOptionViewModel: BaseViewModel {
+final class RestoreSocialOptionViewModel: BaseViewModel, ObservableObject {
     @Injected var notificationService: NotificationService
 
     @Published var isLoading: SocialProvider?

@@ -33,10 +33,10 @@ struct RecoveryKitView: View {
                 .padding(.bottom, 24)
                 .background(Color(Asset.Colors.lime.color))
                 .cornerRadius(28)
-                //.overlay(
+                // .overlay(
                 //    helpButton,
                 //    alignment: .topTrailing
-                //)
+                // )
                 .padding(.top, safeAreaInsets.top + 50)
 
                 // TKey info
@@ -85,16 +85,20 @@ struct RecoveryKitView: View {
                 RecoveryKitCell(
                     icon: .keyIcon,
                     title: L10n.seedPhrase
-                ) { [weak viewModel] in viewModel?.openSeedPhrase() }
+                ) {
+                    viewModel.openSeedPhrase()
+                }
                 
                 if walletSettings.deleteWeb3AuthRequest == nil {
                     RecoveryKitCell(
                         icon: .alertIcon,
                         title: L10n.deleteMyAccount
-                    ) { [weak viewModel] in viewModel?.deleteAccount() }
+                    ) {
+                        viewModel.deleteAccount()
+                    }
                 } else {
-                    Button { [weak viewModel] in
-                        viewModel?.deleteAccount()                        
+                    Button {
+                        viewModel.deleteAccount()
                     } label: {
                         RecoveryKitRow(
                             icon: .alertIcon,

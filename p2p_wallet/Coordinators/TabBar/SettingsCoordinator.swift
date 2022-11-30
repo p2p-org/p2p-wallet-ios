@@ -34,7 +34,7 @@ final class SettingsCoordinator: Coordinator<Void> {
                     navigationController.pushViewController(vc, animated: true)
                 case .support:
                     helpLauncher.launch()
-                case let .reserveUsername(userAddress):
+                case .reserveUsername:
                     coordinate(to: CreateUsernameCoordinator(navigationOption: .settings(parent: navigationController)))
                         .sink { [unowned self] in
                             self.navigationController.popToViewController(settingsVC, animated: true)
@@ -43,6 +43,8 @@ final class SettingsCoordinator: Coordinator<Void> {
                 case .recoveryKit:
                     let coordinator = RecoveryKitCoordinator(navigationController: navigationController)
                     coordinate(to: coordinator)
+                        .sink(receiveValue: {})
+                        .store(in: &subscriptions)
                 case .yourPin:
                     let coordinator = PincodeChangeCoordinator(navVC: navigationController)
                     coordinate(to: coordinator)
@@ -53,6 +55,8 @@ final class SettingsCoordinator: Coordinator<Void> {
                 case .network:
                     let coordinator = NetworkCoordinator(navigationController: navigationController)
                     coordinate(to: coordinator)
+                        .sink(receiveValue: {})
+                        .store(in: &subscriptions)
                 }
             })
             .store(in: &subscriptions)
@@ -61,6 +65,6 @@ final class SettingsCoordinator: Coordinator<Void> {
         settingsVC.onClose = {
             closeSubject.send()
         }
-        return closeSubject.eraseToAnyPublisher()
+        return closeSubject.prefix(1).eraseToAnyPublisher()
     }
 }

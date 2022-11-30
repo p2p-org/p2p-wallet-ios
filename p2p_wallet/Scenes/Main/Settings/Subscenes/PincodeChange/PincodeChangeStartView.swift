@@ -13,7 +13,10 @@ struct PincodeChangeStartView: View {
         ExplainLayoutView {
             VStack {
                 Image(uiImage: .pincodeIllustration)
-                Text("PIN code")
+                    .resizable()
+                    .scaledToFit()
+                    .frame(maxWidth: 192)
+                Text(L10n.pinCode)
                     .fontWeight(.bold)
                     .apply(style: .title1)
                     .padding(.bottom, 48)
@@ -21,8 +24,8 @@ struct PincodeChangeStartView: View {
         } content: {
             VStack {
                 VStack(spacing: 12) {
-                    ExplainText(text: L10n.FistlyWeLlUseItForEnteranceInKeyApp.sometimesInsteadOfBiometric)
-                    ExplainText(text: L10n.sometimesItWillBeUsefulForShowingSeedPhraseOrPriviteKey)
+                    ExplainText(text: L10n.KeepYourPinSafe.hideYourPinFromOtherPeople)
+                    ExplainText(text: L10n.donTUseTheSamePinForMultipleAccounts)
                 }
                 .padding(.leading, 12)
                 .padding(.trailing, 16)

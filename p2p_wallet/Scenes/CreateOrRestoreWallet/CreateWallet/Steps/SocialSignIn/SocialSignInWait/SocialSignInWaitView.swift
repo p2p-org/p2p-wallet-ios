@@ -12,7 +12,7 @@ struct SocialSignInWaitView: View {
             Color(Asset.Colors.lime.color)
                 .edgesIgnoringSafeArea(.all)
             VStack(spacing: 0) {
-                LottieView(lottieFile: "createWalletAnimation", loopMode: .loop)
+                LottieView(lottieFile: "walletAnimation", loopMode: .loop)
                     .scaledToFill()
                     .frame(width: animationSize.width, height: animationSize.height)
 
@@ -46,7 +46,7 @@ struct SocialSignInWaitView: View {
 
 struct SocialSignInWaitView_Previews: PreviewProvider {
     static var previews: some View {
-        SocialSignInWaitView(viewModel: SocialSignInWaitViewModel())
+        SocialSignInWaitView(viewModel: SocialSignInWaitViewModel(strategy: .create))
     }
 }
 

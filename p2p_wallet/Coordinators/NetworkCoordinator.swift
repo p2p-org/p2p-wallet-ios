@@ -42,6 +42,6 @@ final class NetworkCoordinator: Coordinator<Void> {
         viewController.onClose = {
             cancelSubject.send()
         }
-        return cancelSubject.eraseToAnyPublisher()
+        return cancelSubject.prefix(1).eraseToAnyPublisher()
     }
 }

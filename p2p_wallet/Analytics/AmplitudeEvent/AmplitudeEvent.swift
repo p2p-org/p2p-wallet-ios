@@ -22,7 +22,6 @@ enum AmplitudeEvent: AnalyticsEvent {
 
     // MARK: - Create wallet
 
-    case createWalletOpen
     case createSeedInvoked
     case backingUpCopying
     case backingUpSaving
@@ -34,6 +33,13 @@ enum AmplitudeEvent: AnalyticsEvent {
     case backingUpIcloud
     case backingUpManually
     case backingUpError
+    case createPhoneClickButton
+    case createSmsScreen
+    case createSmsValidation(result: Bool)
+    case restorePhoneScreen
+    case restorePhoneClickButton
+    case restoreSmsScreen
+    case restoreSmsValidation(result: Bool)
 
     /// Event 49: The wallet was successfully created
     case walletCreated(lastScreen: String)
@@ -42,9 +48,9 @@ enum AmplitudeEvent: AnalyticsEvent {
     case walletRestored(lastScreen: String)
 
     // setup
-    case setupOpen(fromPage: String)
     case setupPinKeydown1
     case setupPinKeydown2
+    case setupOpen(fromPage: String)
     case setupFaceidOpen
     case bioApproved(lastScreen: String)
     case bioRejected
@@ -59,24 +65,22 @@ enum AmplitudeEvent: AnalyticsEvent {
     case restoreManualInvoked
     case restoreAppleInvoked
     case recoveryEnterSeedOpen
-    case recoveryEnterSeedKeydown
     case recoveryEnterSeedPaste
-    case recoveryDoneClick
-    case recoveryDerivableAccountsOpen
+    case recoveryEnterSeedKeydown
     case recoveryDerivableAccountsPathSelected(path: String)
     case recoveryRestoreClick
+    case recoveryDoneClick
+    case recoveryDerivableAccountsOpen
 
     // MARK: - Main
 
     case mainScreenWalletsOpen
     case mainScreenBuyOpen
-    case mainScreenReceiveOpen
+    case mainCopyAddress
     case mainScreenSendOpen
     case mainScreenSwapOpen
-    case mainScreenQrOpen
-    case mainScreenSettingsOpen
+    case mainScreenReceiveOpen
     case mainScreenTokenDetailsOpen(tokenTicker: String)
-    case mainCopyAddress
 
     // token_details
     case tokenDetailsOpen(tokenTicker: String)
@@ -85,9 +89,9 @@ enum AmplitudeEvent: AnalyticsEvent {
     case tokenReceiveViewed
     case tokenDetailsSendClick
     case tokenDetailsSwapClick
+    case tokenDetailsDetailsOpen
     case tokenDetailsAddressCopy
     case tokenDetailsActivityScroll(pageNum: Int)
-    case tokenDetailsDetailsOpen
 
     // MARK: - Receive
 
@@ -95,7 +99,6 @@ enum AmplitudeEvent: AnalyticsEvent {
     case receiveNameCopy
     case receiveAddressCopied
     case receiveNameShare
-    case receiveAddressShare
     case receiveWalletAddressCopy
     case receiveUsercardShared
     case receiveQRSaved
@@ -114,10 +117,7 @@ enum AmplitudeEvent: AnalyticsEvent {
     case sendAddressKeydown
     case sendQR_Scanning
     case sendSendClick(tokenTicker: String, sum: Double)
-    case sendMakeAnotherTransactionClick(txStatus: String)
     case sendExplorerClick(txStatus: String)
-    case sendTryAgainClick(error: String)
-    case sendCancelClick(error: String)
     case sendRecipientScreen
     case sendReviewScreen
     case sendPaste
@@ -149,15 +149,12 @@ enum AmplitudeEvent: AnalyticsEvent {
     case swapPayNetworkFeeWithClick
     case swapSwapFeesClick
     case swapSlippageKeydown(slippage: Double)
-    case swapSwapClick(tokenA: String, tokenB: String, sumA: Double, sumB: Double)
-    case swapMakeAnotherTransactionClick(txStatus: String)
-    case swapExplorerClick(txStatus: String)
     case swapTryAgainClick(error: String)
-    case swapCancelClick(error: String)
     case swapStartScreen
     case swapClickReviewButton
     case swapClickApproveButton
     case actionButtonSwap
+    case swapExplorerClick(txStatus: String)
 
     // #131
     case swapUserConfirmed(
@@ -203,19 +200,20 @@ enum AmplitudeEvent: AnalyticsEvent {
         feesSource: String
     )
 
-    // scan_qr
-    case scanQrOpen(fromPage: String)
+    // MARK: - Scan QR
+
     case scanQrSuccess
     case scanQrClose
-    // settings
-    case settingsOpen(lastScreen: String)
-    case networkChanging(networkName: String)
+
+    // MARK: - Settings
+
     case settingsHideBalancesClick(hide: Bool)
-    case settingsBackupOpen
-    case settingsSecuritySelected(faceId: Bool)
-    case settingsLanguageSelected(language: String)
-    case settingsAppearanceSelected(appearance: String)
     case settingsСurrencySelected(сurrency: String)
+    case settingsBackupOpen
+    case settingsLanguageSelected(language: String)
+    case settingsSecuritySelected(faceId: Bool)
+
+    case networkChanging(networkName: String)
     case signedOut
     case signOut
 
@@ -259,6 +257,13 @@ enum AmplitudeEvent: AnalyticsEvent {
     case restoreWalletButton
     case selectRestoreOption(restoreOption: String, keychaineOption: Bool)
     case restoreConfirmPin(result: Bool)
+    case onboardingTorusRequest(
+        methodName: String,
+        minutes: Int,
+        seconds: Int,
+        milliseconds: Int,
+        result: String
+    )
 
     // RenBTC
     case renbtcCreation(result: String)
@@ -271,4 +276,7 @@ enum AmplitudeEvent: AnalyticsEvent {
     case usernameCreationButton(result: Bool)
     case usernameSkipButton(result: Bool)
     case usernameCreationScreen
+
+    case startDeleteAccount
+    case confirmDeleteAccount
 }
