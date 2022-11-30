@@ -4,7 +4,7 @@ import Resolver
 import SwiftUI
 import UIKit
 
-final class StartViewModel: BaseViewModel {
+final class StartViewModel: BaseViewModel, ObservableObject {
     @Injected private var analyticsManager: AnalyticsManager
 
     @Published var data: [OnboardingContentData] = []

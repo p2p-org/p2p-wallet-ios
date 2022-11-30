@@ -1,3 +1,4 @@
+import AnalyticsManager
 import Combine
 import CountriesAPI
 import Foundation
@@ -29,6 +30,7 @@ final class EnterPhoneNumberViewModel: BaseOTPViewModel {
     @Injected private var reachability: Reachability
     @Injected private var notificationService: NotificationService
     @Injected private var countriesAPI: CountriesAPI
+    @Injected private var analyticsManager: AnalyticsManager
 
     // MARK: -
 
@@ -42,8 +44,15 @@ final class EnterPhoneNumberViewModel: BaseOTPViewModel {
     @Published var subtitle: String = L10n.addAPhoneNumberToProtectYourAccount
 
     let isBackAvailable: Bool
+    private let strategy: Strategy
 
     func buttonTaped() {
+        switch strategy {
+        case .create:
+            analyticsManager.log(event: AmplitudeEvent.createPhoneClickButton)
+        case .restore:
+            analyticsManager.log(event: AmplitudeEvent.restorePhoneClickButton)
+        }
         guard
             let phone = phone,
             !isLoading,
@@ -54,6 +63,25 @@ final class EnterPhoneNumberViewModel: BaseOTPViewModel {
 
     func selectCountryTap() {
         coordinatorIO.selectCode.send((selectedCountry.dialCode, selectedCountry.code))
+    }
+
+    func onPaste() {
+        Task {
+            guard let newPhone = UIPasteboard.general.string?.clearedPhoneString else { return }
+            let countries = try? await self.countriesAPI.fetchCountries()
+            if
+                let parsedPhone = try? self.phoneNumberKit.parse(newPhone),
+                let country = countries?
+                    .first(where: { $0.dialCode.clearedPhoneString == "+" + String(parsedPhone.countryCode) }) {
+                // Change country only if dial code has changed
+                DispatchQueue.main.asyncAfter(deadline: .now() + 0.01) {
+                    if self.selectedCountry.dialCode != country.dialCode {
+                        self.selectedCountry = country
+                    }
+                    self.phone = parsedPhone.numberString
+                }
+            }
+        }
     }
 
     @MainActor
@@ -78,8 +106,9 @@ final class EnterPhoneNumberViewModel: BaseOTPViewModel {
 
     let coordinatorIO = CoordinatorIO()
 
-    init(phone: String? = nil, isBackAvailable: Bool) {
+    init(phone: String? = nil, isBackAvailable: Bool, strategy: Strategy) {
         self.isBackAvailable = isBackAvailable
+        self.strategy = strategy
         super.init()
 
         Task {
@@ -100,6 +129,15 @@ final class EnterPhoneNumberViewModel: BaseOTPViewModel {
         }
 
         bind()
+    }
+
+    func viewDidLoad() {
+        switch strategy {
+        case .create:
+            break
+        case .restore:
+            analyticsManager.log(event: AmplitudeEvent.restorePhoneScreen)
+        }
     }
 
     func bind() {
@@ -130,7 +168,7 @@ final class EnterPhoneNumberViewModel: BaseOTPViewModel {
                     if self.clearedPhoneString(phone: $1 ?? "")
                         .starts(with: self.clearedPhoneString(phone: self.selectedCountry.dialCode)) == true
                     {
-                        guard let exampleNumber = self.exampleNumberWith(phone: $0 ?? "") else {
+                        guard let exampleNumber = self.exampleNumberWith(phone: $0) else {
                             return $1 ?? ""
                         }
                         let formattedExample = self.phoneNumberKit.format(exampleNumber, toType: .international)
@@ -231,6 +269,15 @@ final class EnterPhoneNumberViewModel: BaseOTPViewModel {
     }
 }
 
+// MARK: - Strategy
+
+extension EnterPhoneNumberViewModel {
+    enum Strategy {
+        case create
+        case restore
+    }
+}
+
 private extension EnterPhoneNumberViewModel {
     func defaultRegionCode() -> String {
 #if os(iOS) && !targetEnvironment(simulator) && !targetEnvironment(macCatalyst)
@@ -241,5 +288,11 @@ private extension EnterPhoneNumberViewModel {
         }
 #endif
         return Locale.current.regionCode?.lowercased() ?? PhoneNumberKit.defaultRegionCode().lowercased()
+    }
+}
+
+private extension String {
+    var clearedPhoneString: String {
+        self.filter("0123456789+".contains)
     }
 }

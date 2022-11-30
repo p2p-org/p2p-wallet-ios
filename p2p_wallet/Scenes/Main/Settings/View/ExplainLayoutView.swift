@@ -12,7 +12,7 @@ struct ExplainText: View {
         HStack(alignment: .top) {
             Text("•")
             Text(LocalizedStringKey(text))
-                .apply(style: .text3)
+                .apply(style: UIScreen.main.bounds.size.width <= 375 ? .text3 : .text1)
             Spacer()
         }
     }

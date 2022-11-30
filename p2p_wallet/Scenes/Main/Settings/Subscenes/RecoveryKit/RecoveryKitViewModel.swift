@@ -2,6 +2,7 @@
 // Use of this source code is governed by a MIT-style license that can be
 // found in the LICENSE file.
 
+import AnalyticsManager
 import Combine
 import Foundation
 import Onboarding
@@ -15,7 +16,8 @@ struct RecoveryKitTKeyData {
     let socialProvider: String
 }
 
-class RecoveryKitViewModel: ObservableObject {
+final class RecoveryKitViewModel: ObservableObject {
+    private let analyticsManager: AnalyticsManager
     private let walletMetadataService: WalletMetadataService
 
     @Published var walletMetadata: WalletMetaData?
@@ -28,10 +30,14 @@ class RecoveryKitViewModel: ObservableObject {
         var help: (() -> Void)?
     }
 
-    var coordinator: Coordinator = .init()
+    var coordinator = Coordinator()
 
-    init(walletMetadataService: WalletMetadataService = Resolver.resolve()) {
+    init(
+        walletMetadataService: WalletMetadataService = Resolver.resolve(),
+        analyticsManager: AnalyticsManager = Resolver.resolve()
+    ) {
         self.walletMetadataService = walletMetadataService
+        self.analyticsManager = analyticsManager
         walletMetadataService.$metadata
             .sink { [weak self] metadata in
                 self?.walletMetadata = metadata
@@ -43,6 +49,7 @@ class RecoveryKitViewModel: ObservableObject {
     }
     
     func deleteAccount() {
+        analyticsManager.log(event: AmplitudeEvent.startDeleteAccount)
         coordinator.deleteAccount?()
     }
 

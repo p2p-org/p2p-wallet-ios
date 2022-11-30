@@ -25,7 +25,7 @@ extension Endpoint {
     }
 
     var baseURL: String {
-        #if !RELEASE
+        #if DEBUG
             return "http://35.234.120.240:9090/"
         #else
             return "https://push-service.wallet.p2p.org/"

@@ -22,7 +22,7 @@ struct RestoreOption: OptionSet {
     static let socialGoogle = RestoreOption(rawValue: 1 << 4)
 }
 
-final class RestoreWalletViewModel: BaseViewModel {
+final class RestoreWalletViewModel: BaseViewModel, ObservableObject {
     let deviceShare: String?
     let availableRestoreOptions: RestoreOption
     let stateMachine: RestoreWalletStateMachine

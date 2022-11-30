@@ -27,6 +27,15 @@ struct PendingTransaction {
                 return nil
             }
         }
+        
+        var isFinalized: Bool {
+            switch self {
+            case .finalized:
+                return true
+            default:
+                return false
+            }
+        }
 
         var isProcessing: Bool {
             switch self {
