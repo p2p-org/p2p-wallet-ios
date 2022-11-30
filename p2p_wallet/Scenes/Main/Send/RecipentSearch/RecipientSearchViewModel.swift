@@ -121,6 +121,7 @@ class RecipientSearchViewModel: ObservableObject {
 
     @MainActor
     func past() {
+        isFirstResponder = false
         guard let text = clipboardManager.stringFromClipboard() else { return }
         input = text.trimmingCharacters(in: .whitespacesAndNewlines)
         notificationService.showToast(title: "✅", text: L10n.pastedFromClipboard)
@@ -128,6 +129,7 @@ class RecipientSearchViewModel: ObservableObject {
 
     @MainActor
     func qr() {
+        isFirstResponder = false
         coordinator.scanQRSubject.send(())
     }
 
