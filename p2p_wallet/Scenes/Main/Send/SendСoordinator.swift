@@ -28,7 +28,20 @@ class SendCoordinator: Coordinator<SendResult> {
         // Setup view
         let vm = RecipientSearchViewModel()
         vm.coordinator.selectRecipientPublisher
-            .sink { [weak self] (recipient: Recipient) in self?.openSendInput(recipient: recipient) }
+            .flatMap { [unowned self] in
+                self.coordinate(to: SendInputCoordinator(
+                    recipient: $0,
+                    navigationController: rootViewController
+                ))
+            }
+            .sink { [weak self] result in
+                switch result {
+                case let .sent(transaction):
+                    self?.result.send(.sent(transaction))
+                case .cancelled:
+                    break
+                }
+            }
             .store(in: &subscriptions)
 
         let view = RecipientSearchView(viewModel: vm)
@@ -46,19 +59,6 @@ class SendCoordinator: Coordinator<SendResult> {
 
         // Back
         return result.prefix(1).eraseToAnyPublisher()
-    }
-
-    private func openSendInput(recipient: Recipient) {
-        coordinate(to: SendInputCoordinator(recipient: recipient, navigationController: rootViewController))
-            .sink { [weak self] result in
-                switch result {
-                case let .sent(transaction):
-                    self?.result.send(.sent(transaction))
-                case .cancelled:
-                    break
-                }
-            }
-            .store(in: &subscriptions)
     }
 }
 
