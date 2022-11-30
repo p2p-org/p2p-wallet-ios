@@ -66,6 +66,10 @@ struct RecipientSearchView: View {
                     history(viewModel.recipientsHistory)
                 }
                 Spacer()
+                if viewModel.recipientsHistory.isEmpty {
+                    actionButtons
+                        .padding(.bottom, 16)
+                }
             }
             .padding(.top, 8)
             .padding(.horizontal, 16)
@@ -79,6 +83,36 @@ struct RecipientSearchView: View {
                     }
                 }
             }
+        }
+    }
+
+    var actionButtons: some View {
+        HStack(spacing: 8) {
+            TextButtonView(
+                title: L10n.scanQR,
+                style: .primary,
+                size: .large,
+                leading: .qrCode,
+                onPressed: {
+                    UIApplication.shared.keyWindow?.endEditing(true)
+                    viewModel.qr()
+                }
+            )
+            .frame(height: 56)
+            .cornerRadius(28)
+
+            TextButtonView(
+                title: L10n.paste,
+                style: .primary,
+                size: .large,
+                leading: .buttonPaste.withTintColor(Asset.Colors.lime.color, renderingMode: .alwaysTemplate),
+                onPressed: {
+                    UIApplication.shared.keyWindow?.endEditing(true)
+                    viewModel.past()
+                }
+            )
+            .frame(height: 56)
+            .cornerRadius(28)
         }
     }
 
