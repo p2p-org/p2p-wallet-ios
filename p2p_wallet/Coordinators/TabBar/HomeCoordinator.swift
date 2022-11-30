@@ -242,7 +242,7 @@ final class HomeCoordinator: Coordinator<Void> {
         // }
 
         // Send send
-        coordinate(to: SendCoordinator(rootViewController: navigationController))
+        coordinate(to: SendCoordinator(rootViewController: navigationController, hideTabBar: true))
             .sink { [weak self] result in
                 switch result {
                 case let .sent(model):

@@ -11,6 +11,7 @@ import SwiftUI
 struct RecipientSearchField: View {
     @Binding var text: String
     @Binding var isLoading: Bool
+    @Binding var isFirstResponder: Bool
 
     let past: () -> Void
     let scan: () -> Void
@@ -18,9 +19,9 @@ struct RecipientSearchField: View {
     var body: some View {
         HStack(spacing: 16) {
             HStack {
-                TextField(L10n.usernameOrAddress, text: $text)
+                FocusedTextField(text: $text, isFirstResponder: $isFirstResponder)
+                    .frame(height: 24)
                     .padding(.vertical, 12)
-                    .autocapitalization(.none)
 
                 if isLoading {
                     Spinner()
@@ -59,8 +60,69 @@ struct RecipientSearchField: View {
     }
 }
 
+private struct RecipientTextField: UIViewRepresentable {
+    @Binding private var isFirstResponder: Bool
+    @Binding private var text: String
+
+    init(text: Binding<String>, isFirstResponder: Binding<Bool>) {
+        _text = text
+        _isFirstResponder = isFirstResponder
+    }
+
+    func makeUIView(context: Context) -> UITextField {
+        let view = UITextField()
+        view.addTarget(
+            context.coordinator,
+            action: #selector(context.coordinator.textViewDidChange),
+            for: .editingChanged
+        )
+        return view
+    }
+
+    func updateUIView(_ uiView: UITextField, context _: Context) {
+        if uiView.text != text {
+            uiView.text = text
+        }
+        if uiView.isFirstResponder, !isFirstResponder {
+            DispatchQueue.main.async { uiView.resignFirstResponder() }
+        } else if !uiView.isFirstResponder, isFirstResponder {
+            DispatchQueue.main.async { uiView.becomeFirstResponder() }
+        }
+    }
+
+    func makeCoordinator() -> Coordinator {
+        Coordinator($text, isFirstResponder: $isFirstResponder)
+    }
+
+    class Coordinator: NSObject, UITextFieldDelegate {
+        var text: Binding<String>
+        var isFirstResponder: Binding<Bool>
+
+        init(_ text: Binding<String>, isFirstResponder: Binding<Bool>) {
+            self.text = text
+            self.isFirstResponder = isFirstResponder
+        }
+
+        @objc func textViewDidChange(_ textField: UITextField) {
+            text.wrappedValue = textField.text ?? ""
+        }
+
+        func textFieldDidBeginEditing(_: UITextField) {
+            isFirstResponder.wrappedValue = true
+        }
+
+        func textFieldDidEndEditing(_: UITextField) {
+            isFirstResponder.wrappedValue = false
+        }
+    }
+}
+
 struct RecipientSearchField_Previews: PreviewProvider {
     static var previews: some View {
-        RecipientSearchField(text: .constant("Hello"), isLoading: .constant(false)) {} scan: {}
+        RecipientSearchField(
+            text: .constant("Hello"),
+            isLoading: .constant(false),
+            isFirstResponder: .constant(false)
+        ) {} scan: {}
     }
 }
