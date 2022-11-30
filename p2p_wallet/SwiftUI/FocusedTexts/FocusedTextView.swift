@@ -1,31 +1,29 @@
 import SwiftUI
 import UIKit
+import KeyAppUI
 
 struct FocusedTextView: UIViewRepresentable {
     @Binding private var isFirstResponder: Bool
     @Binding private var text: String
-    private var configuration = { (_: UITextView) in }
 
     init(
         text: Binding<String>,
-        isFirstResponder: Binding<Bool>,
-        configuration: @escaping (UITextView) -> Void = { _ in }
+        isFirstResponder: Binding<Bool>
     ) {
-        self.configuration = configuration
         _text = text
         _isFirstResponder = isFirstResponder
     }
 
-    func makeUIView(context: Context) -> UITextView {
-        let view = UITextView()
+    func makeUIView(context: Context) -> SeedPhrasesTextView {
+        let view = SeedPhrasesTextView()
         view.setContentCompressionResistancePriority(.defaultLow, for: .horizontal)
-        view.delegate = context.coordinator
+        view.forwardedDelegate = context.coordinator
         return view
     }
 
-    func updateUIView(_ uiView: UITextView, context _: Context) {
-        uiView.text = text
-        configuration(uiView)
+    func updateUIView(_ uiView: SeedPhrasesTextView, context _: Context) {
+//        uiView.text = text
+        uiView.paste(text)
         switch isFirstResponder {
         case true: uiView.becomeFirstResponder()
         case false: uiView.resignFirstResponder()
@@ -36,7 +34,7 @@ struct FocusedTextView: UIViewRepresentable {
         Coordinator($text, isFirstResponder: $isFirstResponder)
     }
 
-    class Coordinator: NSObject, UITextViewDelegate {
+    class Coordinator: NSObject, SeedPhraseTextViewDelegate {
         var text: Binding<String>
         var isFirstResponder: Binding<Bool>
 
@@ -44,25 +42,17 @@ struct FocusedTextView: UIViewRepresentable {
             self.text = text
             self.isFirstResponder = isFirstResponder
         }
-
-        @objc func textViewDidChange(_ textField: UITextView) {
-            text.wrappedValue = textField.text ?? ""
+        
+        func seedPhrasesTextView(_ textView: KeyAppUI.SeedPhrasesTextView, didEnterPhrases phrases: String) {
+            text.wrappedValue = phrases
         }
-
-        func textViewDidBeginEditing(_: UITextView) {
+        
+        func seedPhrasesTextViewDidBeginEditing(_ textView: SeedPhrasesTextView) {
             isFirstResponder.wrappedValue = true
         }
-
-        func textViewDidEndEditing(_: UITextView) {
+        
+        func seedPhrasesTextViewDidEndEditing(_ textView: SeedPhrasesTextView) {
             isFirstResponder.wrappedValue = false
-        }
-
-        func textView(_ textView: UITextView, shouldChangeTextIn _: NSRange, replacementText text: String) -> Bool {
-            if text == "\n", textView.returnKeyType == .done {
-                isFirstResponder.wrappedValue = false
-                return false
-            }
-            return true
         }
     }
 }

@@ -259,7 +259,7 @@ DEPENDENCIES:
   - JSBridge (from `https://github.com/p2p-org/key-app-kit-swift.git`, branch `master`)
   - KeyAppKitCore (from `https://github.com/p2p-org/key-app-kit-swift.git`, branch `master`)
   - KeyAppKitLogger (from `https://github.com/p2p-org/key-app-kit-swift.git`, branch `master`)
-  - "KeyAppUI (from `git@github.com:p2p-org/KeyAppUI.git`, branch `main`)"
+  - "KeyAppUI (from `git@github.com:p2p-org/KeyAppUI.git`, branch `feature/pwn-5837-remove-attachments`)"
   - KeychainSwift (= 19.0.0)
   - Kingfisher (~> 7.3.2)
   - ListPlaceholder (from `https://github.com/p2p-org/ListPlaceholder.git`, branch `custom_gradient_color`)
@@ -388,7 +388,7 @@ EXTERNAL SOURCES:
     :branch: master
     :git: https://github.com/p2p-org/key-app-kit-swift.git
   KeyAppUI:
-    :branch: main
+    :branch: feature/pwn-5837-remove-attachments
     :git: "git@github.com:p2p-org/KeyAppUI.git"
   ListPlaceholder:
     :branch: custom_gradient_color
@@ -471,7 +471,7 @@ CHECKOUT OPTIONS:
     :commit: 44a3b337ff3d91cd68b3743f7e97998f9b07e63d
     :git: https://github.com/p2p-org/key-app-kit-swift.git
   KeyAppUI:
-    :commit: a3ea637a4cbcf4e5993fe3b30ac279784dbe5e10
+    :commit: 0cb886dca5b0ae181404e9575ed12b7d0b6faf34
     :git: "git@github.com:p2p-org/KeyAppUI.git"
   ListPlaceholder:
     :commit: 78dd312eb762d66a54c87cd6dd8045140da28c4b
@@ -594,6 +594,6 @@ SPEC CHECKSUMS:
   TransactionParser: 3004420d52e7b1277dbcfd20b995a5de707705f3
   TweetNacl: 3abf4d1d2082b0114e7a67410e300892448951e6
 
-PODFILE CHECKSUM: 465f35ecdabd196fa8432295fe5fa9c75c9a4db0
+PODFILE CHECKSUM: 884559f4eb87a4e9a43a155a212febdf3c124fac
 
 COCOAPODS: 1.11.3
