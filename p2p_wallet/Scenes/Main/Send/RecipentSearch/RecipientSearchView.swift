@@ -17,7 +17,11 @@ struct RecipientSearchView: View {
 
             VStack(spacing: 20) {
                 // Search field
-                RecipientSearchField(text: $viewModel.input, isLoading: $viewModel.isSearching) {
+                RecipientSearchField(
+                    text: $viewModel.input,
+                    isLoading: $viewModel.isSearching,
+                    isFirstResponder: $viewModel.isFirstResponder
+                ) {
                     viewModel.past()
                 } scan: {
                     viewModel.qr()
@@ -63,7 +67,7 @@ struct RecipientSearchView: View {
                 }
                 Spacer()
             }
-            .padding(.top, 16)
+            .padding(.top, 8)
             .padding(.horizontal, 16)
             .toolbar {
                 // Navigation title

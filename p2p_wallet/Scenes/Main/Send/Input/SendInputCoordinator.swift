@@ -59,17 +59,21 @@ final class SendInputCoordinator: Coordinator<SendResult> {
     private func setTitle(to vc: UIViewController) {
         switch recipient.category {
         case let .username(name, domain):
-            vc.title = [name, domain].joined(separator: ".")
+            if domain.isEmpty {
+                vc.title = "@\(name)"
+            } else {
+                vc.title = "@\([name, domain].joined(separator: "."))"
+            }
         default:
-            vc.title = recipient.address
+            vc.title = "\(recipient.address.prefix(7))...\(recipient.address.suffix(7))"
         }
-        vc.title = recipient.address
         vc.navigationItem.largeTitleDisplayMode = .always
         vc.navigationController?.navigationBar.prefersLargeTitles = true
     }
 
     private func openChooseWalletToken(from vc: UIViewController, viewModel: SendInputViewModel) {
-        coordinate(to: ChooseWalletTokenCoordinator(strategy: .sendToken, chosenWallet: viewModel.currentToken, parentController: vc))
+        coordinate(to: ChooseWalletTokenCoordinator(strategy: .sendToken, chosenWallet: viewModel.currentToken,
+                                                    parentController: vc))
             .sink { walletToken in
                 if let walletToken = walletToken {
                     viewModel.currentToken = walletToken
@@ -80,7 +84,7 @@ final class SendInputCoordinator: Coordinator<SendResult> {
 
     private func openFreeTransactionsDetail(from vc: UIViewController) {
         coordinate(to: SendInputFreeTransactionsDetailCoordinator(parentController: vc))
-            .sink(receiveValue: { })
+            .sink(receiveValue: {})
             .store(in: &subscriptions)
     }
 

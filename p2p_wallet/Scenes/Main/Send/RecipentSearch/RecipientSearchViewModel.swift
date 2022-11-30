@@ -17,10 +17,12 @@ class RecipientSearchViewModel: ObservableObject {
     @Injected private var walletsRepository: WalletsRepository
     @Injected private var tokensRepository: TokensRepository
     @Injected private var notificationService: NotificationService
-    
+
     private let sendHistoryService: SendHistoryService
     private let recipientSearchService: RecipientSearchService
     private var searchTask: Task<Void, Never>?
+
+    @Published var isFirstResponder: Bool = false
 
     @Published var input: String = ""
     @Published var searchResult: RecipientSearchResult? = nil
@@ -29,12 +31,12 @@ class RecipientSearchViewModel: ObservableObject {
     @Published var isSearching = false
 
     @Published var recipientsHistory: [Recipient] = []
-    
+
     struct Coordinator {
         fileprivate let selectRecipientSubject: PassthroughSubject<Recipient, Never> = .init()
         var selectRecipientPublisher: AnyPublisher<Recipient, Never> { selectRecipientSubject.eraseToAnyPublisher() }
     }
-    
+
     let coordinator: Coordinator = .init()
 
     init(
@@ -122,7 +124,7 @@ class RecipientSearchViewModel: ObservableObject {
     }
 
     func qr() {}
-    
+
     func selectRecipient(_ recipient: Recipient) {
         coordinator.selectRecipientSubject.send(recipient)
     }
