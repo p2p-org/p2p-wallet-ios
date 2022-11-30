@@ -2,9 +2,10 @@ import Combine
 import Resolver
 import SolanaSwift
 
-final class ChooseWalletTokenViewModel: ObservableObject {
+final class ChooseWalletTokenViewModel: BaseViewModel, ObservableObject {
 
     @Injected private var walletsRepository: WalletsRepository
+    @Injected private var notifications: NotificationService
 
     let chooseTokenSubject = PassthroughSubject<Wallet, Never>()
     let close = PassthroughSubject<Void, Never>()
@@ -14,21 +15,33 @@ final class ChooseWalletTokenViewModel: ObservableObject {
     @Published var searchText: String = ""
     @Published var isSearchFieldFocused: Bool = true
     @Published var isSearchGoing: Bool = false
+    @Published var title: String = ""
+    @Published var isLoading: Bool = true
 
     let chosenToken: Wallet
-    let title: String
 
-    private var subscriptions = Set<AnyCancellable>()
+    private let service: ChooseWalletTokenService
 
-    private var allWallets: [Wallet] {
-        walletsRepository.getWallets()
-    }
+    private var allWallets: [Wallet] = []
 
-    init(title: String, chosenToken: Wallet) {
-        self.title = title
+    init(strategy: ChooseWalletTokenStrategy, chosenToken: Wallet) {
         self.chosenToken = chosenToken
+        self.service = ChooseWalletTokenServiceImpl(strategy: strategy)
+        super.init()
+        self.title = configureTitle(strategy: strategy)
 
-        wallets = allWallets.filter({ $0.token.address != chosenToken.token.address })
+        Task {
+            self.isLoading = true
+            do {
+                self.allWallets = try await service.getWallets()
+                self.wallets = allWallets.filter({ $0.token.address != chosenToken.token.address })
+                self.isLoading = false
+            }
+            catch let error {
+                self.isLoading = false
+                self.notifications.showDefaultErrorNotification()
+            }
+        }
 
         $searchText
             .debounce(for: .seconds(0.5), scheduler: DispatchQueue.main)
@@ -48,6 +61,17 @@ final class ChooseWalletTokenViewModel: ObservableObject {
                 self?.searchText = ""
             }
             .store(in: &subscriptions)
+    }
+}
+
+private extension ChooseWalletTokenViewModel {
+    func configureTitle(strategy: ChooseWalletTokenStrategy) -> String {
+        switch strategy {
+        case .feeToken:
+            return L10n.PayThe0._03FeeWith
+        case .sendToken:
+            return L10n.pickAToken
+        }
     }
 }
 

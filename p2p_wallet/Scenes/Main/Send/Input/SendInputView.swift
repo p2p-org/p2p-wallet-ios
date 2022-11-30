@@ -26,6 +26,7 @@ struct SendInputView: View {
                     Text(viewModel.feeTitle)
                         .apply(style: .text4)
                         .foregroundColor(Color(Asset.Colors.sky.color))
+                        .onTapGesture(perform: viewModel.feeInfoPressed.send)
                     if viewModel.isFeeLoading {
                         CircularProgressIndicatorView(
                             backgroundColor: Asset.Colors.sky.color.withAlphaComponent(0.6),
