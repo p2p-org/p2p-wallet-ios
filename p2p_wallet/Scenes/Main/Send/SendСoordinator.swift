@@ -44,6 +44,15 @@ class SendCoordinator: Coordinator<SendResult> {
             }
             .store(in: &subscriptions)
 
+        vm.coordinator.scanQRPublisher
+            .flatMap { [unowned self] in
+                self.coordinate(to: ScanQrCoordinator(navigationController: rootViewController))
+            }
+            .compactMap { $0 }
+            .sink(receiveValue: { result in
+                vm.input = result
+            }).store(in: &subscriptions)
+
         let view = RecipientSearchView(viewModel: vm)
         let vc = KeyboardAvoidingViewController(rootView: view)
         vc.navigationItem.largeTitleDisplayMode = .never
