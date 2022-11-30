@@ -32,6 +32,7 @@ class SendInputViewModel: ObservableObject {
     private let walletsRepository: WalletsRepository
     private let pricesService: PricesServiceType
     private let stateMachine: SendInputStateMachine
+    private let sendAction: SendActionService
 
     private var subscriptions = Set<AnyCancellable>()
     private var currentState: SendInputState { stateMachine.currentState }
@@ -82,15 +83,15 @@ class SendInputViewModel: ObservableObject {
                     feeRelayer: Resolver.resolve(),
                     feeRelayerAPIClient: Resolver.resolve(),
                     solanaAPIClient: Resolver.resolve()
-                ),
-                sendService: SendServiceImpl(
-                    contextManager: Resolver.resolve(),
-                    solanaAPIClient: Resolver.resolve(),
-                    blockchainClient: Resolver.resolve(),
-                    feeRelayer: Resolver.resolve(),
-                    account: accountStorage.account
                 )
             )
+        )
+        self.sendAction = SendActionServiceImpl(
+            contextManager: Resolver.resolve(),
+            solanaAPIClient: Resolver.resolve(),
+            blockchainClient: Resolver.resolve(),
+            feeRelayer: Resolver.resolve(),
+            account: accountStorage.account
         )
 
         self.inputAmountViewModel = SendInputAmountViewModel()
@@ -112,11 +113,6 @@ private extension SendInputViewModel {
                 switch value.status {
                 case .error(reason: .networkConnectionError(_)):
                     self.handleConnectionError()
-                case let .finished(transactionId):
-                    self.actionButtonViewModel.showFinished = true
-                    DispatchQueue.main.asyncAfter(deadline: .now() + 0.5, execute: {
-                        self.transaction.send(SendTransaction(transactionId: transactionId, state: value))
-                    })
                 default:
                     self.inputAmountViewModel.maxAmountToken = value.maxAmountInputInToken
                     self.updateFeeTitle()
@@ -197,7 +193,7 @@ private extension SendInputViewModel {
             .sinkAsync(receiveValue: { [weak self] isSliderOn in
                 guard let self = self else { return }
                 if isSliderOn {
-                    let _ = await self.stateMachine.accept(action: .send)
+                    await self.send()
                 }
             })
             .store(in: &subscriptions)
@@ -236,10 +232,33 @@ private extension SendInputViewModel {
     }
 
     func handleConnectionError() {
-        snackbar.send(
-            SnackBar(title: "🥺", text: L10n.youHaveNoInternetConnection, buttonTitle: L10n.hide, buttonAction: {
-                SnackBar.hide()
-            })
-        )
+        snackbar.send(SnackBar(title: "🥺", text: L10n.youHaveNoInternetConnection, buttonTitle: L10n.hide, buttonAction: { SnackBar.hide() }))
+    }
+
+    func handleUnknownError() {
+        snackbar.send(SnackBar(title: "🥺", text: L10n.somethingWentWrong, buttonTitle: L10n.hide, buttonAction: { SnackBar.hide() }))
+    }
+
+    func send() async {
+        do {
+            let transactionId = try await sendAction.send(
+                from: currentState.token,
+                receiver: currentState.recipient.address,
+                amount: currentState.amountInToken,
+                feeWallet: currentState.tokenFee
+            )
+            await MainActor.run {
+                self.actionButtonViewModel.showFinished = true
+                DispatchQueue.main.asyncAfter(deadline: .now() + 0.5, execute: {
+                    self.transaction.send(SendTransaction(transactionId: transactionId, state: self.currentState))
+                })
+            }
+        } catch let error {
+            if let error = error as? NSError, error.code == NSURLErrorNetworkConnectionLost || error.code == NSURLErrorNotConnectedToInternet {
+                handleConnectionError()
+            } else {
+                handleUnknownError()
+            }
+        }
     }
 }
