@@ -89,12 +89,16 @@ final class SendInputCoordinator: Coordinator<SendResult> {
     }
 
     private func openFeePropmt(from vc: UIViewController, viewModel: SendInputViewModel) {
-        coordinate(to: SendInputFeePromptCoordinator(parentController: vc, feeToken: viewModel.feeToken))
-            .sink(receiveValue: { feeToken in
-                if let feeToken = feeToken {
-                    viewModel.feeToken = feeToken
-                }
-            })
-            .store(in: &subscriptions)
+        coordinate(to: SendInputFeePromptCoordinator(
+            parentController: vc,
+            currentToken: viewModel.currentToken,
+            feeToken: viewModel.feeToken,
+            feeInSOL: viewModel.currentState.fee
+        ))
+        .sink(receiveValue: { feeToken in
+            guard let feeToken = feeToken else { return }
+            viewModel.feeToken = feeToken
+        })
+        .store(in: &subscriptions)
     }
 }

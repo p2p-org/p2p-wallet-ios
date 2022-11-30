@@ -19,33 +19,39 @@ struct ChooseWalletTokenView: View {
                 searchField
                     .padding(.horizontal, 16)
 
-                if viewModel.wallets.isEmpty {
-                    emptyView
-                        .padding(.top, 48)
+                if viewModel.isLoading {
+                    loadingView
+                        .padding(.top, 64)
                 } else {
-                    wrappedList {
-                        if !viewModel.isSearchGoing {
-                            chosenTokenSection
-                        }
-
-                        Text(viewModel.isSearchGoing ? L10n.hereSWhatWeFound : L10n.otherTokens)
-                            .sectionStyle()
-
-                        ForEach(viewModel.wallets) { wallet in
-                            ChooseWalletTokenItemView(
-                                token: wallet.token,
-                                amount: wallet.amount,
-                                amountInCurrentFiat: wallet.amountInCurrentFiat,
-                                state: state(for: wallet)
-                            )
-                            .listRowBackground(Color(Asset.Colors.smoke.color))
-                            .onTapGesture {
-                                viewModel.chooseTokenSubject.send(wallet)
+                    if viewModel.wallets.isEmpty {
+                        emptyView
+                            .padding(.top, 48)
+                    } else {
+                        wrappedList {
+                            if !viewModel.isSearchGoing {
+                                chosenTokenSection
+                            }
+                            
+                            Text(viewModel.isSearchGoing ? L10n.hereSWhatWeFound : L10n.otherTokens)
+                                .sectionStyle()
+                            
+                            ForEach(viewModel.wallets) { wallet in
+                                ChooseWalletTokenItemView(
+                                    token: wallet.token,
+                                    amount: wallet.amount,
+                                    amountInCurrentFiat: wallet.amountInCurrentFiat,
+                                    state: state(for: wallet)
+                                )
+                                .listRowBackground(Color(Asset.Colors.smoke.color))
+                                .onTapGesture {
+                                    viewModel.chooseTokenSubject.send(wallet)
+                                }
                             }
                         }
+                        .padding(.bottom, 28)
+                        .edgesIgnoringSafeArea(.bottom)
+                        .endEditingKeyboardOnDragGesture()
                     }
-                    .padding(.bottom, 28)
-                    .edgesIgnoringSafeArea(.bottom)
                 }
             }
         }.onDisappear {
@@ -66,6 +72,7 @@ struct ChooseWalletTokenView: View {
                     .listRowInsets(EdgeInsets())
             }
             .listStyle(.plain)
+            .background(Color(Asset.Colors.rain.color))
         } else {
             LazyVStack(spacing: 0) {
                 content()
@@ -119,6 +126,15 @@ private extension ChooseWalletTokenView {
                 .aspectRatio(contentMode: .fit)
                 .frame(maxWidth: 220)
             Text(L10n.TokenNotFound.tryAnotherOne)
+            Spacer()
+        }
+    }
+
+    private var loadingView: some View {
+        VStack {
+            ChooseWalletTokenSkeletonView()
+                .frame(height: 88)
+                .padding(.horizontal, 16)
             Spacer()
         }
     }
