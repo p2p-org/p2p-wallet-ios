@@ -1096,3 +1096,5 @@ Reset the PIN or wait for %@." = "У вас осталось %@ попыток �
 "Error: %@" = "Ошибка: %@";
 "Amount is too small, expected %@, got %@" = "Сумма слишком мала, ожидал %@, получил %@";
 "The transaction has been confirmed in Solana network, but you have to track it also on Bitcoin network" = "Транзакция была подтверждена в сети Solana, но вы должны отслеживать ее и в сети Bitcoin.";
+"Recipient gets" = "Получатель получает";
+"Recipient’s address" = "Адрес получателя";

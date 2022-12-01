@@ -1099,3 +1099,5 @@ Reset the PIN or wait for %@." = "Bạn còn %@ lần thử để nhập mã PIN
 "Error: %@" = "Lỗi: %@";
 "Amount is too small, expected %@, got %@" = "Số tiền quá nhỏ, dự kiến ​​%@, đã nhận %@";
 "The transaction has been confirmed in Solana network, but you have to track it also on Bitcoin network" = "Giao dịch đã được xác nhận trong mạng Solana, nhưng bạn cũng phải theo dõi nó trên mạng Bitcoin";
+"Recipient gets" = "Người nhận được";
+"Recipient’s address" = "Địa chỉ người nhận";
