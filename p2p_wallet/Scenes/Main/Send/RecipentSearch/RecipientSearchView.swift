@@ -5,6 +5,7 @@
 import KeyAppUI
 import Send
 import SwiftUI
+import SkeletonUI
 
 struct RecipientSearchView: View {
     @ObservedObject var viewModel: RecipientSearchViewModel
@@ -75,9 +76,15 @@ struct RecipientSearchView: View {
                     }
                     .onTapGesture { self.viewModel.isFirstResponder = false }
                 } else {
-                    // History
-                    history(viewModel.recipientsHistory)
-                        .onTapGesture { self.viewModel.isFirstResponder = false }
+                    if viewModel.isSearching {
+                        skeleton
+                            .padding(.top, 32)
+                        Spacer()
+                    } else {
+                        // History
+                        history(viewModel.recipientsHistory)
+                            .onTapGesture { self.viewModel.isFirstResponder = false }
+                    }
                 }
             }
             .padding(.top, 8)
@@ -93,6 +100,42 @@ struct RecipientSearchView: View {
                 }
             }
         }
+    }
+
+    var skeleton: some View {
+        HStack(spacing: 12) {
+            Circle()
+                .frame(width: 48, height: 48)
+                .cornerRadius(24)
+                .skeleton(
+                    with: viewModel.isSearching,
+                    size: CGSize(width: 48, height: 48),
+                    animated: .default
+                )
+                .padding(.leading, 16)
+            VStack(alignment: .leading, spacing: 6) {
+                Text("")
+                    .fontWeight(.semibold)
+                    .apply(style: .text2)
+                    .skeleton(
+                        with: viewModel.isSearching,
+                        size: CGSize(width: 120, height: 12),
+                        animated: .default
+                    )
+                    Text("")
+                        .apply(style: .label1)
+                        .skeleton(
+                            with: viewModel.isSearching,
+                            size: CGSize(width: 120, height: 12),
+                            animated: .default
+                        )
+            }
+            Spacer()
+        }
+            .frame(height: 88)
+            .frame(maxWidth: .infinity)
+            .background(Color(Asset.Colors.snow.color))
+            .cornerRadius(16)
     }
 
     func tryLater(title: String) -> some View {
