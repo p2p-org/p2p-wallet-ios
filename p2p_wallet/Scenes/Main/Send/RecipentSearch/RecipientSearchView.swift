@@ -63,6 +63,13 @@ struct RecipientSearchView: View {
                                 .padding(.horizontal, 12)
                         }
                         Spacer()
+
+                        if viewModel.isSingleRecipientWithNoFunds {
+                            TextButtonView(title: L10n.continueAnyway, style: .primary, size: .large, onPressed: { viewModel.continueWithNoFundsRecipient() })
+                                .frame(height: TextButton.Size.large.height)
+                                .cornerRadius(28)
+                                .padding(.bottom, 16)
+                        }
                     }
                 } else {
                     // History

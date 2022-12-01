@@ -1138,3 +1138,4 @@ Reset the PIN or wait for %@." = "Il vous reste %@ tentatives pour saisir le cod
 "This address does not have a %@ account" = "Cette adresse n'a pas de compte %@";
 "You will have to pay a one-time fee (~$0.03) to create a %@ account for this address" = "Vous devrez payer des frais uniques (~$0.03) pour créer un compte %@ pour cette adresse";
 "Continue with %@" = "Continuer avec %@";
+"Continue anyway" = "Continuer quand même";
