@@ -28,7 +28,7 @@ extension WalletDetail {
         // MARK: - Subscene
 
         private lazy var historyVC = History.Scene(account: viewModel.pubkey, symbol: viewModel.symbol)
-        private var coordinator: SendToken.Coordinator?
+        private var coordinator: SendCoordinator?
         private var subscriptions = Set<AnyCancellable>()
 
         // MARK: - Initializer
@@ -140,19 +140,19 @@ extension WalletDetail {
                 vc.delegate = self
                 present(vc, animated: true)
             case let .send(wallet):
-                let vm = SendToken.ViewModel(
-                    walletPubkey: wallet.pubkey,
-                    destinationAddress: nil,
-                    relayMethod: .default
-                )
                 if coordinator == nil, let navigationController = navigationController {
-                    coordinator = SendToken.Coordinator(
-                        viewModel: vm,
-                        navigationController: navigationController
-                    )
-                    coordinator?.doneHandler = processingTransactionDoneHandler
+                    coordinator = SendCoordinator(rootViewController: navigationController, preChosenWallet: wallet, hideTabBar: true)
+                    coordinator?.start()
+                        .sink { [weak self] result in
+                            switch result {
+                            case let .sent:
+                                self?.processingTransactionDoneHandler?()
+                            case .cancelled:
+                                break
+                            }
+                        }
+                        .store(in: &subscriptions)
                 }
-                coordinator?.start(hidesBottomBarWhenPushed: true)
             case let .receive(pubkey):
                 if let solanaPubkey = try? PublicKey(string: viewModel.walletsRepository.nativeWallet?.pubkey) {
                     let tokenWallet = viewModel.walletsRepository.getWallets().first(where: { $0.pubkey == pubkey })

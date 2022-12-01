@@ -20,7 +20,7 @@ final class HomeCoordinator: Coordinator<Void> {
     private let navigationController: UINavigationController
     private weak var tabBarController: TabBarController?
 
-    private var sendCoordinator: SendToken.Coordinator?
+    private var sendCoordinator: SendCoordinator?
     private let scrollSubject = PassthroughSubject<Void, Never>()
 
     init(navigationController: UINavigationController, tabBarController: TabBarController?) {
@@ -242,7 +242,8 @@ final class HomeCoordinator: Coordinator<Void> {
         // }
 
         // Send send
-        coordinate(to: SendCoordinator(rootViewController: navigationController, hideTabBar: true))
+        sendCoordinator = SendCoordinator(rootViewController: navigationController, preChosenWallet: nil, hideTabBar: true)
+        coordinate(to: sendCoordinator!)
             .sink { [weak self] result in
                 switch result {
                 case let .sent(model):
