@@ -608,7 +608,6 @@
 "Review and confirm" = "Review & confirm";
 "Confirm sending %@" = "Confirm sending %@";
 "Be sure all details are correct before confirming the transaction. Once confirmed, it cannot be reversed." = "Be sure all details are correct before confirming the transaction. Once confirmed, it cannot be reversed.";
-"Recipient’s\naddress" = "Recipient’s\naddress";
 "Total" = "Total";
 "1 %@ Price" = "1 %@ Price";
 "Pay swap fees with" = "Pay swap fees with";
@@ -1069,6 +1068,8 @@ Reset the PIN or wait for %@.";
 "Error: %@" = "Error: %@";
 "Amount is too small, expected %@, got %@" = "Amount is too small, expected %@, got %@";
 "The transaction has been confirmed in Solana network, but you have to track it also on Bitcoin network" = "The transaction has been confirmed in Solana network, but you have to track it also on Bitcoin network";
+"Recipient gets" = "Recipient gets";
+"Recipient’s address" = "Recipient’s address";
 "Tap to switch to %@" = "Tap to switch to %@";
 "You will send" = "You will send";
 "Min: %@" = "Min: %@";
