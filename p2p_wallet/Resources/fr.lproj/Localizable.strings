@@ -1096,3 +1096,5 @@ Reset the PIN or wait for %@." = "Il vous reste %@ tentatives pour saisir le cod
 "Error: %@" = "Erreur : %@";
 "Amount is too small, expected %@, got %@" = "Le montant est trop petit, attendu %@, obtenu %@";
 "The transaction has been confirmed in Solana network, but you have to track it also on Bitcoin network" = "La transaction a été confirmée sur le réseau Solana, mais vous devez également la suivre sur le réseau Bitcoin";
+"Recipient gets" = "Le destinataire obtient";
+"Recipient’s address" = "Adresse du destinataire";
