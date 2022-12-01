@@ -19,7 +19,9 @@ struct RecipientSearchField: View {
     var body: some View {
         HStack(spacing: 16) {
             HStack {
-                FocusedTextField(text: $text, isFirstResponder: $isFirstResponder)
+                FocusedTextField(text: $text, isFirstResponder: $isFirstResponder) { textField in
+                    textField.placeholder = L10n.usernameOrAddress
+                }
                     .frame(height: 24)
                     .padding(.vertical, 12)
 

@@ -59,6 +59,8 @@ struct RecipientSearchView: View {
                                 recipient,
                                 reason: L10n.accountCreationForThisAddressIsNotPossibleDueToInsufficientFunds
                             )
+                        case let .selfSendingError(recipient):
+                            disabledAndReason(recipient, reason: L10n.youCannotSendTokensToYourself)
                         case .nameServiceError:
                             tryLater(title: L10n.solanaNameServiceDoesnTRespond)
                                 .padding(.top, 38)
@@ -153,7 +155,7 @@ struct RecipientSearchView: View {
                             }
                             .frame(height: TextButton.Size.large.height)
                             .cornerRadius(28)
-                            
+
                             TextButtonView(
                                 title: L10n.paste,
                                 style: .primary,
@@ -247,6 +249,22 @@ struct RecipientSearchView: View {
                 Color(.white)
                     .cornerRadius(radius: 16, corners: .allCorners)
             )
+
+            // Continue anyway
+            if
+                recipients.count == 1,
+                let recipient: Recipient = recipients.first,
+                !recipient.attributes.contains(.funds)
+            {
+                VStack {
+                    Spacer()
+                    TextButtonView(title: L10n.continueAnyway, style: .primary, size: .large) {
+                        viewModel.selectRecipient(recipient)
+                    }
+                    .frame(height: TextButton.Size.large.height)
+                    .cornerRadius(28)
+                }
+            }
         }
     }
 }

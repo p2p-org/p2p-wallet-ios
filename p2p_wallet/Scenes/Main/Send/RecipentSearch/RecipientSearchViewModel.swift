@@ -9,7 +9,6 @@ import Resolver
 import Send
 import SolanaSwift
 
-@MainActor
 class RecipientSearchViewModel: ObservableObject {
     private let preChosenWallet: Wallet?
     private var subscriptions = Set<AnyCancellable>()
@@ -30,6 +29,7 @@ class RecipientSearchViewModel: ObservableObject {
     @Published var userWalletEnvironments: UserWalletEnvironments = .empty
 
     @Published var isSearching = false
+    private var autoSelectAfterSearch = false
 
     @Published var recipientsHistoryStatus: SendHistoryService.Status = .ready
     @Published var recipientsHistory: [Recipient] = []
@@ -88,7 +88,7 @@ class RecipientSearchViewModel: ObservableObject {
         sendHistoryService.statusPublisher
             .sink { [weak self] status in self?.recipientsHistoryStatus = status }
             .store(in: &subscriptions)
-        
+
         sendHistoryService.recipientsPublisher
             .sink { [weak self] recipients in self?.recipientsHistory = Array(recipients.prefix(10)) }
             .store(in: &subscriptions)
@@ -101,11 +101,26 @@ class RecipientSearchViewModel: ObservableObject {
             }.store(in: &subscriptions)
     }
 
+    @MainActor
     func updateResult(result: RecipientSearchResult) {
         searchResult = result
+
+        // Wait result and select first result
+        if autoSelectAfterSearch {
+            switch searchResult {
+            case let .ok(recipients):
+                if let recipient = recipients.first {
+                    selectRecipient(recipient)
+                }
+            default:
+                break
+            }
+
+            autoSelectAfterSearch = false
+        }
     }
 
-    func search(query: String, env _: UserWalletEnvironments) {
+    func search(query: String, env: UserWalletEnvironments) {
         searchTask?.cancel()
         let currentSearchTerm = query.trimmingCharacters(in: .whitespaces)
         if currentSearchTerm.isEmpty {
@@ -123,7 +138,7 @@ class RecipientSearchViewModel: ObservableObject {
                     return
                 }
 
-                self.searchResult = result
+                await updateResult(result: result)
             }
         }
     }
@@ -142,6 +157,12 @@ class RecipientSearchViewModel: ObservableObject {
         coordinator.scanQRSubject.send(())
     }
 
+    func search(query: String, autoSelect: Bool = true) async {
+        autoSelectAfterSearch = autoSelect
+        search(query: query, env: userWalletEnvironments)
+    }
+
+    @MainActor
     func selectRecipient(_ recipient: Recipient) {
         coordinator.selectRecipientSubject.send(recipient)
     }
