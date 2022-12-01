@@ -45,6 +45,7 @@ final class HomeCoordinator: Coordinator<Void> {
         ).asViewController() as! UIHostingControllerWithoutNavigation<HomeView>
 
         navigationController.setViewControllers([homeView], animated: false)
+        navigationController.navigationItem.largeTitleDisplayMode = .never
 
         scrollSubject
             .sink(receiveValue: {
