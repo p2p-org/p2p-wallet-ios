@@ -38,6 +38,7 @@ extension WalletDetail {
             self.viewModel = viewModel
             super.init()
             hidesBottomBarWhenPushed = true
+            navigationItem.largeTitleDisplayMode = .never
         }
 
         // MARK: - Methods
@@ -141,20 +142,18 @@ extension WalletDetail {
                 vc.delegate = self
                 present(vc, animated: true)
             case let .send(wallet):
-                if coordinator == nil, let navigationController = navigationController {
-                    coordinator = SendCoordinator(rootViewController: navigationController, preChosenWallet: wallet, hideTabBar: true)
-                    coordinator?.start()
-                        .sink { [weak self] result in
-                            switch result {
-                            case let .sent(model):
-                                self?.navigationController?.popToViewController(ofClass: Self.self, animated: true)
-                                self?.showSendTransactionStatus(model: model)
-                            case .cancelled:
-                                break
-                            }
+                coordinator = SendCoordinator(rootViewController: navigationController!, preChosenWallet: wallet, hideTabBar: true)
+                coordinator?.start()
+                    .sink { [weak self] result in
+                        switch result {
+                        case let .sent(model):
+                            self?.navigationController?.popToViewController(ofClass: Self.self, animated: true)
+                            self?.showSendTransactionStatus(model: model)
+                        case .cancelled:
+                            break
                         }
-                        .store(in: &subscriptions)
-                }
+                    }
+                    .store(in: &subscriptions)
             case let .receive(pubkey):
                 if let solanaPubkey = try? PublicKey(string: viewModel.walletsRepository.nativeWallet?.pubkey) {
                     let tokenWallet = viewModel.walletsRepository.getWallets().first(where: { $0.pubkey == pubkey })
