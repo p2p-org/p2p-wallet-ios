@@ -13,6 +13,7 @@ import Onboarding
 import Resolver
 import SolanaSwift
 import UIKit
+import OrcaSwapSwift
 
 class AppCoordinator: Coordinator<Void> {
     // MARK: - Dependencies
@@ -91,6 +92,7 @@ class AppCoordinator: Coordinator<Void> {
         // TODO: - Change to Main.Coordinator.start()
         Task.detached {
             try await Resolver.resolve(WalletMetadataService.self).update()
+            try await Resolver.resolve(OrcaSwapType.self).load()
         }
 
         let vm = Main.ViewModel()
