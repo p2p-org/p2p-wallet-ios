@@ -48,7 +48,7 @@ final class SendCoordinator: Coordinator<SendCoordinator.Result> {
             self?.subject.send(.cancel)
         }
 
-        return subject.eraseToAnyPublisher()
+        return subject.prefix(1).eraseToAnyPublisher()
     }
 }
 

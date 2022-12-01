@@ -42,7 +42,7 @@ final class SwapCoordinator: Coordinator<SwapCoordinator.Result> {
         }
         navigationController.show(view, sender: nil)
 
-        return subject.eraseToAnyPublisher()
+        return subject.prefix(1).eraseToAnyPublisher()
     }
 }
 
