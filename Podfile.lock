@@ -227,7 +227,6 @@ PODS:
   - SwiftNotificationCenter (1.0.4)
   - SwiftSVG (2.3.2)
   - SwiftyUserDefaults (5.3.0)
-  - TagListView (1.4.1)
   - Task_retrying (1.0.3)
   - TransactionParser (1.0.0):
     - Cache
@@ -290,7 +289,6 @@ DEPENDENCIES:
   - SwiftNotificationCenter
   - SwiftSVG (= 2.3.2)
   - SwiftyUserDefaults (= 5.3.0)
-  - TagListView (= 1.4.1)
   - TransactionParser (from `https://github.com/p2p-org/key-app-kit-swift.git`, branch `master`)
 
 SPEC REPOS:
@@ -344,7 +342,6 @@ SPEC REPOS:
     - SwiftNotificationCenter
     - SwiftSVG
     - SwiftyUserDefaults
-    - TagListView
     - Task_retrying
     - TweetNacl
 
@@ -589,11 +586,10 @@ SPEC CHECKSUMS:
   SwiftNotificationCenter: 760386da2ce03d3594cb5e96d1e22ec80b44b46f
   SwiftSVG: ca7f64e403b8ea7ea8eba8c823b83ba4a059834c
   SwiftyUserDefaults: 63f80248cf5bfb3458825d9a78f2eb7e1293a040
-  TagListView: a1c236d17960a0cf64156725a76ce6d73ebce2be
   Task_retrying: 9e19177e42b162d1d54317f9cfcbabc01d057c38
   TransactionParser: 3004420d52e7b1277dbcfd20b995a5de707705f3
   TweetNacl: 3abf4d1d2082b0114e7a67410e300892448951e6
 
-PODFILE CHECKSUM: 884559f4eb87a4e9a43a155a212febdf3c124fac
+PODFILE CHECKSUM: c480b8ad9dab685fe70f0c80a4e718f66d01284a
 
 COCOAPODS: 1.11.3
