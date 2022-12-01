@@ -14,6 +14,7 @@ struct RecipientSearchView: View {
         ZStack {
             Color(Asset.Colors.smoke.color)
                 .ignoresSafeArea()
+                .onTapGesture { self.viewModel.isFirstResponder = false }
 
             VStack(spacing: 20) {
                 // Search field
@@ -64,9 +65,11 @@ struct RecipientSearchView: View {
                         }
                         Spacer()
                     }
+                    .onTapGesture { self.viewModel.isFirstResponder = false }
                 } else {
                     // History
                     history(viewModel.recipientsHistory)
+                        .onTapGesture { self.viewModel.isFirstResponder = false }
                 }
             }
             .padding(.top, 8)
