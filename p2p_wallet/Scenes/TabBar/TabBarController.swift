@@ -24,6 +24,7 @@ final class TabBarController: UITabBarController {
     private var settingsCoordinator: SettingsCoordinator!
     private var buyCoordinator: BuyCoordinator?
     private var sendCoordinator: SendCoordinator?
+    private var sendTransactionStatusCoordinator: SendTransactionStatusCoordinator?
 
     private var customTabBar: CustomTabBar { tabBar as! CustomTabBar }
 
@@ -103,6 +104,7 @@ final class TabBarController: UITabBarController {
                     switch result {
                     case let .sent(model):
                         self?.navigationController?.popToRootViewController(animated: true)
+                        self?.routeToSendTransactionStatus(model: model)
                     case .cancelled:
                         break
                     }
@@ -202,6 +204,15 @@ final class TabBarController: UITabBarController {
         let vc = UIHostingControllerWithoutNavigation(rootView: view)
         vc.modalPresentationStyle = .fullScreen
         present(vc, animated: true)
+    }
+    
+    private func routeToSendTransactionStatus(model: SendTransaction) {
+        sendTransactionStatusCoordinator = SendTransactionStatusCoordinator(parentController: navigationController!, transaction: model)
+        
+        sendTransactionStatusCoordinator?
+            .start()
+            .sink(receiveValue: { })
+            .store(in: &subscriptions)
     }
 
     func changeItem(to item: TabItem) {

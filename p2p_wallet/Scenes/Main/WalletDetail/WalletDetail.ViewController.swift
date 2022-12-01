@@ -29,6 +29,7 @@ extension WalletDetail {
 
         private lazy var historyVC = History.Scene(account: viewModel.pubkey, symbol: viewModel.symbol)
         private var coordinator: SendCoordinator?
+        private var sendTransactionStatusCoordinator: SendTransactionStatusCoordinator?
         private var subscriptions = Set<AnyCancellable>()
 
         // MARK: - Initializer
@@ -145,8 +146,9 @@ extension WalletDetail {
                     coordinator?.start()
                         .sink { [weak self] result in
                             switch result {
-                            case let .sent:
+                            case let .sent(model):
                                 self?.processingTransactionDoneHandler?()
+                                self?.showSendTransactionStatus(model: model)
                             case .cancelled:
                                 break
                             }
@@ -184,6 +186,15 @@ extension WalletDetail {
 
         @objc func showWalletSettings() {
             viewModel.showWalletSettings()
+        }
+        
+        private func showSendTransactionStatus(model: SendTransaction) {
+            sendTransactionStatusCoordinator = SendTransactionStatusCoordinator(parentController: navigationController!, transaction: model)
+            
+            sendTransactionStatusCoordinator?
+                .start()
+                .sink(receiveValue: { })
+                .store(in: &subscriptions)
         }
     }
 }
