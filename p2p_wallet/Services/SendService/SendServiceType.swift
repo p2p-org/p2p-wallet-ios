@@ -18,7 +18,7 @@ protocol SendServiceType: AnyObject {
     func getFees(
         from wallet: Wallet,
         receiver: String?,
-        network: SendToken.Network,
+        network: SendNetwork,
         payingTokenMint: String?
     ) async throws -> FeeAmount?
 
@@ -36,7 +36,7 @@ protocol SendServiceType: AnyObject {
         from wallet: Wallet,
         receiver: String,
         amount: Double,
-        network: SendToken.Network,
+        network: SendNetwork,
         payingFeeWallet: Wallet?
     ) async throws -> String
 }
