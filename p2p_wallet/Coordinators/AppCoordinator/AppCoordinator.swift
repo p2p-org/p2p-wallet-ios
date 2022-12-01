@@ -97,16 +97,8 @@ class AppCoordinator: Coordinator<Void> {
         let coordinator = TabBarCoordinator(window: window, authenticateWhenAppears: showAuthenticationOnMainOnAppear)
         coordinate(to: coordinator)
             .sink(receiveValue: {
-                debugPrint("loool")
             })
             .store(in: &subscriptions)
-
-//        let coordinator = MainCoordinator(window: window, authenticateWhenAppears: showAuthenticationOnMainOnAppear)
-//        coordinate(to: coordinator)
-//            .sink(receiveValue: {
-//                debugPrint("loool")
-//            })
-//            .store(in: &subscriptions)
     }
 
     private func openSplash(_ completionHandler: @escaping () -> Void) {
