@@ -200,8 +200,8 @@ struct SendTransactionStatusView_Previews: PreviewProvider {
                     transactionId: "",
                     state: .zero(
                         recipient: .init(address: "", category: .solanaAddress, attributes: .funds),
-                        token: .nativeSolana(pubkey: nil, lamport: nil),
-                        feeToken: .nativeSolana(pubkey: nil, lamport: nil),
+                        token: .nativeSolana,
+                        feeToken: .nativeSolana,
                         userWalletState: .empty)
                 )
             )

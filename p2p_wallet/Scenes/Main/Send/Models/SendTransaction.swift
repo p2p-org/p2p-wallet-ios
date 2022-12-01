@@ -25,10 +25,10 @@ struct SendTransaction: RawTransactionType {
 
     init(transactionId: TransactionID, state: SendInputState) {
         self.transactionId = transactionId
-        self.walletToken = state.token
+        self.walletToken = state.sourceWallet!
         self.recipient = state.recipient
         self.amount = state.amountInToken
-        self.payingFeeWallet = state.tokenFee
+        self.payingFeeWallet = state.feeWallet!
         self.feeInToken = state.feeInToken
         self.amountInFiat = state.amountInFiat
     }

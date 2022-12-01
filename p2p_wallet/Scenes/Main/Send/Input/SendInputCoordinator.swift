@@ -74,11 +74,11 @@ final class SendInputCoordinator: Coordinator<SendResult> {
     }
 
     private func openChooseWalletToken(from vc: UIViewController, viewModel: SendInputViewModel) {
-        coordinate(to: ChooseWalletTokenCoordinator(strategy: .sendToken, chosenWallet: viewModel.currentToken,
+        coordinate(to: ChooseWalletTokenCoordinator(strategy: .sendToken, chosenWallet: viewModel.sourceWallet,
                                                     parentController: vc))
             .sink { walletToken in
                 if let walletToken = walletToken {
-                    viewModel.currentToken = walletToken
+                    viewModel.sourceWallet = walletToken
                 }
             }
             .store(in: &subscriptions)
@@ -93,13 +93,13 @@ final class SendInputCoordinator: Coordinator<SendResult> {
     private func openFeePropmt(from vc: UIViewController, viewModel: SendInputViewModel) {
         coordinate(to: SendInputFeePromptCoordinator(
             parentController: vc,
-            currentToken: viewModel.currentToken,
-            feeToken: viewModel.feeToken,
+            currentToken: viewModel.sourceWallet,
+            feeToken: viewModel.feeWallet,
             feeInSOL: viewModel.currentState.fee
         ))
         .sink(receiveValue: { feeToken in
             guard let feeToken = feeToken else { return }
-            viewModel.feeToken = feeToken
+            viewModel.feeWallet = feeToken
         })
         .store(in: &subscriptions)
     }
