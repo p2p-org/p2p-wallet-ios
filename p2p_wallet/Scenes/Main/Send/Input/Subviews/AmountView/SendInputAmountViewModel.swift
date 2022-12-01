@@ -1,6 +1,6 @@
 import Combine
-import SolanaSwift
 import KeyAppUI
+import SolanaSwift
 
 final class SendInputAmountViewModel: ObservableObject {
     enum EnteredAmountType {
@@ -51,9 +51,13 @@ final class SendInputAmountViewModel: ObservableObject {
                 self.amount = Double(text)
                 switch self.mainAmountType {
                 case .token:
-                    self.secondaryAmountText = (self.amount * self.token.priceInCurrentFiat).toString(maximumFractionDigits: 9)
+                    self
+                        .secondaryAmountText =
+                        "\((self.amount * self.token.priceInCurrentFiat).toString(maximumFractionDigits: 9)) \(self.token.token.symbol)"
                 case .fiat:
-                    self.secondaryAmountText = (self.amount / self.token.priceInCurrentFiat).toString(maximumFractionDigits: 9)
+                    self
+                        .secondaryAmountText =
+                        "\((self.amount / self.token.priceInCurrentFiat).toString(maximumFractionDigits: 9)) \(self.fiat.code)"
                 }
                 self.changeAmount.send((self.amount ?? 0, self.mainAmountType))
             }
@@ -80,7 +84,8 @@ final class SendInputAmountViewModel: ObservableObject {
                 case .token:
                     self.maxAmountTextInCurrentType = value.toString(maximumFractionDigits: 9)
                 case .fiat:
-                    self.maxAmountTextInCurrentType = (value * self.token.priceInCurrentFiat).toString(maximumFractionDigits: 9)
+                    self.maxAmountTextInCurrentType = (value * self.token.priceInCurrentFiat)
+                        .toString(maximumFractionDigits: 9)
                 }
             }
             .store(in: &subscriptions)
@@ -110,12 +115,13 @@ final class SendInputAmountViewModel: ObservableObject {
                 case .fiat:
                     self.mainTokenText = self.fiat.code
                     self.secondaryCurrencyText = self.token.token.symbol
-                    self.secondaryAmountText = "\(self.amount / self.token.priceInCurrentFiat)"
-                    self.maxAmountTextInCurrentType = (self.maxAmountToken * self.token.priceInCurrentFiat).toString(maximumFractionDigits: 9)
+                    self.secondaryAmountText = "\(self.amount / self.token.priceInCurrentFiat) \(self.fiat.code)"
+                    self.maxAmountTextInCurrentType = (self.maxAmountToken * self.token.priceInCurrentFiat)
+                        .toString(maximumFractionDigits: 9)
                 case .token:
                     self.mainTokenText = self.token.token.symbol
                     self.secondaryCurrencyText = self.fiat.code
-                    self.secondaryAmountText = "\(self.amount * self.token.priceInCurrentFiat)"
+                    self.secondaryAmountText = "\(self.amount * self.token.priceInCurrentFiat) \(self.token.token.symbol)"
                     self.maxAmountTextInCurrentType = self.maxAmountToken.toString(maximumFractionDigits: 9)
                 }
                 self.changeAmount.send((self.amount ?? 0, self.mainAmountType))

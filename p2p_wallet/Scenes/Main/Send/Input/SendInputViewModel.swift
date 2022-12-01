@@ -3,6 +3,7 @@
 // found in the LICENSE file.
 
 import Combine
+import FeeRelayerSwift
 import Foundation
 import KeyAppUI
 import Resolver
@@ -17,8 +18,8 @@ class SendInputViewModel: ObservableObject {
     let inputAmountViewModel: SendInputAmountViewModel
     let tokenViewModel: SendInputTokenViewModel
 
-    @Published var currentToken: Wallet
-    @Published var feeToken: Wallet
+    @Published var sourceWallet: Wallet
+    @Published var feeWallet: Wallet
 
     @Published var feeTitle = L10n.fees("")
     @MainActor @Published var isFeeLoading: Bool = true
@@ -47,13 +48,21 @@ class SendInputViewModel: ObservableObject {
         let pricesService = Resolver.resolve(PricesService.self)
         self.pricesService = pricesService
 
-        let tokenInWallet = preChosenWallet ?? wallets
-            .first(where: { $0.token.address == Token.nativeSolana.address }) ?? Wallet(token: Token.nativeSolana)
-        currentToken = tokenInWallet
-        
+        // Setup source token
+        let tokenInWallet: Wallet
+        switch recipient.category {
+        case let .solanaTokenAddress(_, token):
+            tokenInWallet = wallets
+                .first(where: { $0.token.address == token.address }) ?? Wallet(token: Token.nativeSolana)
+        default:
+            tokenInWallet = preChosenWallet ?? wallets
+                .first(where: { $0.token.address == Token.nativeSolana.address }) ?? Wallet(token: Token.nativeSolana)
+        }
+        sourceWallet = tokenInWallet
+
         let feeTokenInWallet = wallets
             .first(where: { $0.token.address == Token.usdc.address }) ?? Wallet(token: Token.usdc)
-        feeToken = feeTokenInWallet
+        feeWallet = feeTokenInWallet
 
         var exchangeRate = [String: CurrentPrice]()
         var tokens = Set<Token>()
@@ -64,33 +73,25 @@ class SendInputViewModel: ObservableObject {
 
         let env = UserWalletEnvironments(wallets: wallets, exchangeRate: exchangeRate, tokens: tokens)
 
-        let state = SendInputState(
-            status: .ready,
+        let state = SendInputState.zero(
             recipient: recipient,
-            token: tokenInWallet,
-            tokenFee: feeTokenInWallet,
-            userWalletEnvironments: env,
-            amountInFiat: .zero,
-            amountInToken: .zero,
-            fee: .zero,
-            feeInToken: .zero
+            token: tokenInWallet.token,
+            feeToken: feeTokenInWallet.token,
+            userWalletState: env
         )
 
-        let accountStorage = Resolver.resolve(AccountStorageType.self)
         stateMachine = .init(
             initialState: state,
             services: .init(
                 swapService: MockedSwapService(result: nil),
                 feeService: SendFeeCalculatorImpl(
-                    contextManager: Resolver.resolve(),
-                    env: env,
-                    orcaSwap: Resolver.resolve(),
-                    feeRelayer: Resolver.resolve(),
-                    feeRelayerAPIClient: Resolver.resolve(),
-                    solanaAPIClient: Resolver.resolve()
-                )
+                    feeRelayerCalculator: Resolver.resolve(FeeRelayer.self).feeCalculator
+                ),
+                solanaAPIClient: Resolver.resolve()
             )
         )
+
+        let accountStorage = Resolver.resolve(AccountStorageType.self)
         sendAction = SendActionServiceImpl(
             contextManager: Resolver.resolve(),
             solanaAPIClient: Resolver.resolve(),
@@ -101,9 +102,18 @@ class SendInputViewModel: ObservableObject {
 
         inputAmountViewModel = SendInputAmountViewModel()
         actionButtonViewModel = SendInputActionButtonViewModel()
-        tokenViewModel = SendInputTokenViewModel()
 
+        tokenViewModel = SendInputTokenViewModel()
         tokenViewModel.isTokenChoiceEnabled = wallets.count > 1
+
+        Task {
+            try await stateMachine
+                .accept(action: .initialize(.init {
+                    let feeRelayerContextManager = Resolver.resolve(FeeRelayerContextManager.self)
+                    try await feeRelayerContextManager.update()
+                    return try await feeRelayerContextManager.getCurrentContext()
+                }))
+        }
 
         bind()
     }
@@ -118,6 +128,8 @@ private extension SendInputViewModel {
                 switch value.status {
                 case .error(reason: .networkConnectionError(_)):
                     self.handleConnectionError()
+                case .error(reason: .initializeFailed(_)):
+                    self.handleInitializingError()
                 default:
                     self.inputAmountViewModel.maxAmountToken = value.maxAmountInputInToken
                     self.updateFeeTitle()
@@ -138,11 +150,11 @@ private extension SendInputViewModel {
             })
             .store(in: &subscriptions)
 
-        $currentToken
+        $sourceWallet
             .sinkAsync(receiveValue: { [weak self] value in
                 guard let self = self else { return }
                 await MainActor.run { self.isFeeLoading = true }
-                _ = await self.stateMachine.accept(action: .changeUserToken(value))
+                _ = await self.stateMachine.accept(action: .changeUserToken(value.token))
                 await MainActor.run {
                     self.inputAmountViewModel.token = value
                     self.tokenViewModel.token = value
@@ -175,21 +187,21 @@ private extension SendInputViewModel {
             .sink { [weak self] _ in
                 guard let self = self else { return }
                 let text: String
-                if self.feeToken.mintAddress == self.currentToken.mintAddress {
+                if self.feeWallet.mintAddress == self.sourceWallet.mintAddress {
                     text = L10n.calculatedBySubtractingTheAccountCreationFeeFromYourBalance
                 } else {
-                    text = L10n.usingTheMaximumAmount(self.currentToken.token.symbol)
+                    text = L10n.usingTheMaximumAmount(self.sourceWallet.token.symbol)
                 }
                 self.snackbar.send(SnackBar(title: "✅", text: text))
                 self.vibrate()
             }
             .store(in: &subscriptions)
 
-        $feeToken
+        $feeWallet
             .sinkAsync { [weak self] newFeeToken in
                 guard let self = self else { return }
                 await MainActor.run { self.isFeeLoading = true }
-                _ = await self.stateMachine.accept(action: .changeFeeToken(newFeeToken))
+                _ = await self.stateMachine.accept(action: .changeFeeToken(newFeeToken.token))
                 await MainActor.run { self.isFeeLoading = false }
             }
             .store(in: &subscriptions)
@@ -213,13 +225,13 @@ private extension SendInputViewModel {
             inputAmountViewModel.isError = true
             actionButtonViewModel.actionButton = .init(
                 isEnabled: false,
-                title: L10n.max(currentState.maxAmountInputInToken.tokenAmount(symbol: currentToken.token.symbol))
+                title: L10n.max(currentState.maxAmountInputInToken.tokenAmount(symbol: sourceWallet.token.symbol))
             )
         case let .error(.inputTooLow(minAmount)):
             inputAmountViewModel.isError = true
             actionButtonViewModel.actionButton = .init(
                 isEnabled: false,
-                title: L10n.min(minAmount.tokenAmount(symbol: currentToken.token.symbol))
+                title: L10n.min(minAmount.tokenAmount(symbol: sourceWallet.token.symbol))
             )
         case .error(reason: .inputZero):
             inputAmountViewModel.isError = false
@@ -240,16 +252,24 @@ private extension SendInputViewModel {
         } else {
             feeTitle = L10n
                 .fees(
-                    "\(currentState.fee.total.convertToBalance(decimals: 9).tokenAmount(symbol: feeToken.token.symbol))"
+                    "\(currentState.fee.total.convertToBalance(decimals: 9).tokenAmount(symbol: feeWallet.token.symbol))"
                 )
         }
     }
 
-    
     func handleConnectionError() {
         snackbar.send(SnackBar(
             title: "🥺",
             text: L10n.youHaveNoInternetConnection,
+            buttonTitle: L10n.hide,
+            buttonAction: { SnackBar.hide() }
+        ))
+    }
+
+    func handleInitializingError() {
+        snackbar.send(SnackBar(
+            title: "🥺",
+            text: "Initializing error",
             buttonTitle: L10n.hide,
             buttonAction: { SnackBar.hide() }
         ))
@@ -262,12 +282,25 @@ private extension SendInputViewModel {
     }
 
     func send() async {
+        guard
+            let sourceWallet = currentState.sourceWallet,
+            let feeWallet = currentState.feeWallet
+        else { return }
+
+        let address: String
+        switch currentState.recipient.category {
+        case let .solanaTokenAddress(walletAddress, _):
+            address = walletAddress.base58EncodedString
+        default:
+            address = currentState.recipient.address
+        }
+
         do {
             let transactionId = try await sendAction.send(
-                from: currentState.token,
-                receiver: currentState.recipient.address,
+                from: sourceWallet,
+                receiver: address,
                 amount: currentState.amountInToken,
-                feeWallet: currentState.tokenFee
+                feeWallet: feeWallet
             )
             await MainActor.run {
                 self.actionButtonViewModel.showFinished = true
