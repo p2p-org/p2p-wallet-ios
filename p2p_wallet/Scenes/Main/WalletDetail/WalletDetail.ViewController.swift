@@ -147,7 +147,7 @@ extension WalletDetail {
                         .sink { [weak self] result in
                             switch result {
                             case let .sent(model):
-                                self?.processingTransactionDoneHandler?()
+                                self?.navigationController?.popToViewController(ofClass: Self.self, animated: true)
                                 self?.showSendTransactionStatus(model: model)
                             case .cancelled:
                                 break
