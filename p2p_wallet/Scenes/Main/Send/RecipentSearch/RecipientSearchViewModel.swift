@@ -11,6 +11,7 @@ import SolanaSwift
 
 @MainActor
 class RecipientSearchViewModel: ObservableObject {
+    private let preChosenWallet: Wallet?
     private var subscriptions = Set<AnyCancellable>()
 
     @Injected private var clipboardManager: ClipboardManagerType
@@ -45,9 +46,11 @@ class RecipientSearchViewModel: ObservableObject {
 
     init(
         recipientSearchService: RecipientSearchService = Resolver.resolve(),
-        sendHistoryService: SendHistoryService = Resolver.resolve()
+        sendHistoryService: SendHistoryService = Resolver.resolve(),
+        preChosenWallet: Wallet?
     ) {
         self.recipientSearchService = recipientSearchService
+        self.preChosenWallet = preChosenWallet
         self.sendHistoryService = sendHistoryService
 
         userWalletEnvironments = .init(
@@ -93,8 +96,8 @@ class RecipientSearchViewModel: ObservableObject {
         $input
             .combineLatest($userWalletEnvironments)
             .debounce(for: 0.2, scheduler: DispatchQueue.main)
-            .sinkAsync { [weak self] (query: String, env: UserWalletEnvironments) in
-                try await self?.search(query: query, env: env)
+            .sink { [weak self] (query: String, env: UserWalletEnvironments) in
+                self?.search(query: query, env: env)
             }.store(in: &subscriptions)
     }
 
@@ -102,7 +105,7 @@ class RecipientSearchViewModel: ObservableObject {
         searchResult = result
     }
 
-    func search(query: String, env _: UserWalletEnvironments) async throws {
+    func search(query: String, env _: UserWalletEnvironments) {
         searchTask?.cancel()
         let currentSearchTerm = query.trimmingCharacters(in: .whitespaces)
         if currentSearchTerm.isEmpty {

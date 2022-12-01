@@ -296,7 +296,8 @@ struct RecipientSearchView_Previews: PreviewProvider {
                                 attributes: []
                             ),
                         ])
-                    )
+                    ),
+                    preChosenWallet: nil
                 )
             )
         }
