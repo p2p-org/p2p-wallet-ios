@@ -508,13 +508,13 @@ CHECKOUT OPTIONS:
     :commit: 9ec9ba0da542e70ead14c9cdbf1bc78addede7e8
     :git: https://github.com/p2p-org/key-app-kit-swift.git
   Onboarding:
-    :commit: 9ec9ba0da542e70ead14c9cdbf1bc78addede7e8
+    :commit: a1d1c26ee68e5502c5f7274e9ac2f41d7f3fff54
     :git: https://github.com/p2p-org/key-app-kit-swift.git
   OrcaSwapSwift:
     :commit: e76b0650046ed3e380016775614d3e99fad8f1b1
     :git: https://github.com/p2p-org/OrcaSwapSwift.git
   P2PSwift:
-    :commit: 9ec9ba0da542e70ead14c9cdbf1bc78addede7e8
+    :commit: a1d1c26ee68e5502c5f7274e9ac2f41d7f3fff54
     :git: https://github.com/p2p-org/key-app-kit-swift.git
   RenVMSwift:
     :commit: 0025e61da91718978d6904ccb644666bd2f0990a
@@ -523,7 +523,7 @@ CHECKOUT OPTIONS:
     :commit: dadb16c54bd42ca83c08f3d80f61fbfca93a585c
     :git: https://github.com/TrGiLong/RxConcurrency.git
   Send:
-    :commit: 9ec9ba0da542e70ead14c9cdbf1bc78addede7e8
+    :commit: a1d1c26ee68e5502c5f7274e9ac2f41d7f3fff54
     :git: https://github.com/p2p-org/key-app-kit-swift.git
   Sentry:
     :git: https://github.com/getsentry/sentry-cocoa.git
@@ -532,16 +532,16 @@ CHECKOUT OPTIONS:
     :commit: 98225dbb0459477dfeac063e1c7d0750102325d1
     :git: https://github.com/p2p-org/SkeletonUI.git
   SolanaPricesAPIs:
-    :commit: 9ec9ba0da542e70ead14c9cdbf1bc78addede7e8
+    :commit: a1d1c26ee68e5502c5f7274e9ac2f41d7f3fff54
     :git: https://github.com/p2p-org/key-app-kit-swift.git
   SolanaSwift:
     :commit: 3934225189e6d442347a9353619eae77f645b193
     :git: https://github.com/p2p-org/solana-swift.git
   Solend:
-    :commit: 9ec9ba0da542e70ead14c9cdbf1bc78addede7e8
+    :commit: a1d1c26ee68e5502c5f7274e9ac2f41d7f3fff54
     :git: https://github.com/p2p-org/key-app-kit-swift.git
   TransactionParser:
-    :commit: 9ec9ba0da542e70ead14c9cdbf1bc78addede7e8
+    :commit: a1d1c26ee68e5502c5f7274e9ac2f41d7f3fff54
     :git: https://github.com/p2p-org/key-app-kit-swift.git
 
 SPEC CHECKSUMS:

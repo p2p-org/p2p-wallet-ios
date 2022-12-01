@@ -126,9 +126,9 @@ extension ProcessTransaction {
 
     struct SendTransaction: RawTransactionType {
         let sendService: SendServiceType
-        let network: SendToken.Network
+        let network: SendNetwork
         let sender: Wallet
-        let receiver: SendToken.Recipient
+        let receiver: SendRecipient
         let authority: String?
         let amount: SolanaSwift.Lamports
         let payingFeeWallet: Wallet?

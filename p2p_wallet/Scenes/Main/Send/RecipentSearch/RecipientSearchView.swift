@@ -47,6 +47,12 @@ struct RecipientSearchView: View {
                                 recipient,
                                 reason: L10n.youCannotSendFundsToThisAddressBecauseItBelongsToAnotherToken
                             )
+                        case let .selfSendingError(recipient):
+                            // Missing user token
+                            disabledAndReason(
+                                recipient,
+                                reason: L10n.youCannotSendFundsToThisAddressBecauseItBelongsToAnotherToken
+                            )
                         case let .insufficientUserFunds(recipient):
                             // Insufficient funds
                             disabledAndReason(
@@ -296,7 +302,8 @@ struct RecipientSearchView_Previews: PreviewProvider {
                                 attributes: []
                             ),
                         ])
-                    )
+                    ),
+                    preChosenWallet: nil
                 )
             )
         }

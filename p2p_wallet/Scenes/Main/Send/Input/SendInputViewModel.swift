@@ -39,17 +39,18 @@ class SendInputViewModel: ObservableObject {
 
     private var subscriptions = Set<AnyCancellable>()
 
-    init(recipient: Recipient) {
+    init(recipient: Recipient, preChosenWallet: Wallet?) {
         let repository = Resolver.resolve(WalletsRepository.self)
         walletsRepository = repository
+        let wallets = repository.getWallets()
 
         let pricesService = Resolver.resolve(PricesService.self)
         self.pricesService = pricesService
 
-        let wallets = repository.getWallets()
-        let tokenInWallet = wallets
+        let tokenInWallet = preChosenWallet ?? wallets
             .first(where: { $0.token.address == Token.nativeSolana.address }) ?? Wallet(token: Token.nativeSolana)
         currentToken = tokenInWallet
+        
         let feeTokenInWallet = wallets
             .first(where: { $0.token.address == Token.usdc.address }) ?? Wallet(token: Token.usdc)
         feeToken = feeTokenInWallet
