@@ -115,7 +115,7 @@ class RecipientSearchViewModel: ObservableObject {
             searchTask = Task {
                 isSearching = true
 
-                let result = await recipientSearchService.search(input: currentSearchTerm, env: userWalletEnvironments)
+                let result = await recipientSearchService.search(input: currentSearchTerm, env: userWalletEnvironments, preChosenToken: nil)
 
                 if !Task.isCancelled {
                     isSearching = false
