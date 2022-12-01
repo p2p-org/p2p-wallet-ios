@@ -282,11 +282,13 @@ final class HomeCoordinator: Coordinator<Void> {
         }
     }
 
+    @MainActor
     private func walletDetail(pubKey: String, tokenSymbol: String) async -> Bool {
         let vm = WalletDetail.ViewModel(pubkey: pubKey, symbol: tokenSymbol)
         let vc = WalletDetail.ViewController(viewModel: vm)
         analyticsManager.log(event: AmplitudeEvent.mainScreenTokenDetailsOpen(tokenTicker: tokenSymbol))
-
+        navigationController.show(vc, sender: nil)
+        
         return await withCheckedContinuation { continuation in
             vc.processingTransactionDoneHandler = {
                 continuation.resume(with: .success(true))
@@ -294,7 +296,6 @@ final class HomeCoordinator: Coordinator<Void> {
             vc.onClose = {
                 continuation.resume(with: .success(false))
             }
-            navigationController.show(vc, sender: nil)
         }
     }
 
