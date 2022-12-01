@@ -6,6 +6,7 @@ import Combine
 import Foundation
 import Send
 import SwiftUI
+import SolanaSwift
 
 enum SendResult {
     case sent(SendTransaction)
@@ -14,23 +15,25 @@ enum SendResult {
 
 class SendCoordinator: Coordinator<SendResult> {
     let rootViewController: UINavigationController
+    let preChosenWallet: Wallet?
     let hideTabBar: Bool
-
     let result = PassthroughSubject<SendResult, Never>()
 
-    init(rootViewController: UINavigationController, hideTabBar: Bool = false) {
+    init(rootViewController: UINavigationController, preChosenWallet: Wallet?, hideTabBar: Bool = false) {
         self.rootViewController = rootViewController
+        self.preChosenWallet = preChosenWallet
         self.hideTabBar = hideTabBar
         super.init()
     }
 
     override func start() -> AnyPublisher<SendResult, Never> {
         // Setup view
-        let vm = RecipientSearchViewModel()
+        let vm = RecipientSearchViewModel(preChosenWallet: preChosenWallet)
         vm.coordinator.selectRecipientPublisher
             .flatMap { [unowned self] in
                 self.coordinate(to: SendInputCoordinator(
                     recipient: $0,
+                    preChosenWallet: preChosenWallet,
                     navigationController: rootViewController
                 ))
             }

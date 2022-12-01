@@ -51,7 +51,7 @@ class SendService: SendServiceType {
     func getFees(
         from wallet: Wallet,
         receiver: String?,
-        network: SendToken.Network,
+        network: SendNetwork,
         payingTokenMint: String?
     ) async throws -> FeeAmount? {
         switch network {
@@ -151,7 +151,7 @@ class SendService: SendServiceType {
         from wallet: Wallet,
         receiver: String,
         amount: Double,
-        network: SendToken.Network,
+        network: SendNetwork,
         payingFeeWallet: Wallet? // nil for relayMethod == .reward
     ) async throws -> String {
         try await contextManager.update()
