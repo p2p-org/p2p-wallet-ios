@@ -24,7 +24,6 @@ final class TabBarController: UITabBarController {
     private var settingsCoordinator: SettingsCoordinator!
     private var buyCoordinator: BuyCoordinator?
     private var sendCoordinator: SendCoordinator?
-    private var sendTransactionStatusCoordinator: SendTransactionStatusCoordinator?
 
     private var customTabBar: CustomTabBar { tabBar as! CustomTabBar }
 
@@ -100,10 +99,10 @@ final class TabBarController: UITabBarController {
             analyticsManager.log(event: AmplitudeEvent.sendViewed(lastScreen: "main_screen"))
             sendCoordinator = SendCoordinator(rootViewController: navigationController, preChosenWallet: nil, hideTabBar: true)
             sendCoordinator?.start()
-                .sink { [weak self] result in
+                .sink { [weak self, weak navigationController] result in
                     switch result {
                     case let .sent(model):
-                        self?.navigationController?.popToRootViewController(animated: true)
+                        navigationController?.popToRootViewController(animated: true)
                         self?.routeToSendTransactionStatus(model: model)
                     case .cancelled:
                         break
@@ -207,9 +206,7 @@ final class TabBarController: UITabBarController {
     }
     
     private func routeToSendTransactionStatus(model: SendTransaction) {
-        sendTransactionStatusCoordinator = SendTransactionStatusCoordinator(parentController: navigationController!, transaction: model)
-        
-        sendTransactionStatusCoordinator?
+        SendTransactionStatusCoordinator(parentController: self, transaction: model)
             .start()
             .sink(receiveValue: { })
             .store(in: &subscriptions)
