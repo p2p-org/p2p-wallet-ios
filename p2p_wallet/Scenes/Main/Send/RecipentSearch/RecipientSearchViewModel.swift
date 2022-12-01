@@ -29,6 +29,7 @@ class RecipientSearchViewModel: ObservableObject {
     @Published var userWalletEnvironments: UserWalletEnvironments = .empty
 
     @Published var isSearching = false
+    @Published var isSingleRecipientWithNoFunds: Bool = false
 
     @Published var recipientsHistoryStatus: SendHistoryService.Status = .ready
     @Published var recipientsHistory: [Recipient] = []
@@ -96,10 +97,34 @@ class RecipientSearchViewModel: ObservableObject {
             .sinkAsync { [weak self] (query: String, env: UserWalletEnvironments) in
                 try await self?.search(query: query, env: env)
             }.store(in: &subscriptions)
+
+        $searchResult
+            .sink { [weak self] value in
+                guard let self = self else { return }
+                switch value {
+                case let .ok(recipients):
+                    if recipients.count == 1 && recipients.first?.category == .solanaAddress && recipients.first?.attributes.contains(.funds) == false {
+                        self.isSingleRecipientWithNoFunds = true
+                    } else {
+                        self.isSingleRecipientWithNoFunds = false
+                    }
+                default:
+                    self.isSingleRecipientWithNoFunds = false
+                }
+            }
+            .store(in: &subscriptions)
     }
 
     func updateResult(result: RecipientSearchResult) {
         searchResult = result
+    }
+
+    func continueWithNoFundsRecipient() {
+        guard case let .ok(recipients) = searchResult, recipients.count == 1, let recipient = recipients.first
+        else { return }
+        if recipient.category == .solanaAddress && !recipient.attributes.contains(.funds) {
+            self.selectRecipient(recipient)
+        }
     }
 
     func search(query: String, env _: UserWalletEnvironments) async throws {
