@@ -15,6 +15,7 @@ struct SendInputView: View {
         ZStack(alignment: .top) {
             Color(Asset.Colors.smoke.color)
                 .edgesIgnoringSafeArea(.all)
+                .onTapGesture { self.viewModel.inputAmountViewModel.isFirstResponder = false }
 
             VStack(spacing: 8) {
                 HStack(spacing: 4) {
