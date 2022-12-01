@@ -1112,3 +1112,5 @@ Reset the PIN or wait for %@.";
 "This address does not have a %@ account" = "This address does not have a %@ account";
 "You will have to pay a one-time fee (~$0.03) to create a %@ account for this address" = "You will have to pay a one-time fee (~$0.03) to create a %@ account for this address";
 "Continue with %@" = "Continue with %@";
+"Continue anyway" = "Continue anyway";
+"You cannot send tokens to yourself" = "You cannot send tokens to yourself";

@@ -457,7 +457,7 @@ EXTERNAL SOURCES:
 
 CHECKOUT OPTIONS:
   AnalyticsManager:
-    :commit: 9ec9ba0da542e70ead14c9cdbf1bc78addede7e8
+    :commit: a1d1c26ee68e5502c5f7274e9ac2f41d7f3fff54
     :git: https://github.com/p2p-org/key-app-kit-swift.git
   BECollectionView:
     :commit: fa27fd346aa54e8cac58b34f861b08a39e38db6f
@@ -472,10 +472,10 @@ CHECKOUT OPTIONS:
     :commit: 9b4ab977660c8554d23a2d9b83b6ac6c6058b3b7
     :git: https://github.com/p2p-org/BEPureLayout.git
   Cache:
-    :commit: 9ec9ba0da542e70ead14c9cdbf1bc78addede7e8
+    :commit: a1d1c26ee68e5502c5f7274e9ac2f41d7f3fff54
     :git: https://github.com/p2p-org/key-app-kit-swift.git
   CountriesAPI:
-    :commit: 9ec9ba0da542e70ead14c9cdbf1bc78addede7e8
+    :commit: a1d1c26ee68e5502c5f7274e9ac2f41d7f3fff54
     :git: https://github.com/p2p-org/key-app-kit-swift.git
   Down:
     :commit: eee1d66d7ef71b892e72c8bc8d84fcdfeaab1918
@@ -484,19 +484,19 @@ CHECKOUT OPTIONS:
     :commit: b1f1251591389fec1763360cd763123e624d111b
     :git: https://github.com/p2p-org/FeeRelayerSwift.git
   History:
-    :commit: 9ec9ba0da542e70ead14c9cdbf1bc78addede7e8
+    :commit: a1d1c26ee68e5502c5f7274e9ac2f41d7f3fff54
     :git: https://github.com/p2p-org/key-app-kit-swift.git
   JazziconSwift:
     :commit: f9c9f898402db4e62d482f4c90670652c221fa12
     :git: https://github.com/p2p-org/JazziconSwift.git
   JSBridge:
-    :commit: 9ec9ba0da542e70ead14c9cdbf1bc78addede7e8
+    :commit: a1d1c26ee68e5502c5f7274e9ac2f41d7f3fff54
     :git: https://github.com/p2p-org/key-app-kit-swift.git
   KeyAppKitCore:
-    :commit: 9ec9ba0da542e70ead14c9cdbf1bc78addede7e8
+    :commit: a1d1c26ee68e5502c5f7274e9ac2f41d7f3fff54
     :git: https://github.com/p2p-org/key-app-kit-swift.git
   KeyAppKitLogger:
-    :commit: 9ec9ba0da542e70ead14c9cdbf1bc78addede7e8
+    :commit: a1d1c26ee68e5502c5f7274e9ac2f41d7f3fff54
     :git: https://github.com/p2p-org/key-app-kit-swift.git
   KeyAppUI:
     :commit: d4757f6197ecf6cf75da949e0797d709ccdbcf6b
@@ -505,7 +505,7 @@ CHECKOUT OPTIONS:
     :commit: 78dd312eb762d66a54c87cd6dd8045140da28c4b
     :git: https://github.com/p2p-org/ListPlaceholder.git
   NameService:
-    :commit: 9ec9ba0da542e70ead14c9cdbf1bc78addede7e8
+    :commit: a1d1c26ee68e5502c5f7274e9ac2f41d7f3fff54
     :git: https://github.com/p2p-org/key-app-kit-swift.git
   Onboarding:
     :commit: a1d1c26ee68e5502c5f7274e9ac2f41d7f3fff54
