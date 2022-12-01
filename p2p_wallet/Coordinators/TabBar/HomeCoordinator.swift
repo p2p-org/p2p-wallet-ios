@@ -158,50 +158,58 @@ final class HomeCoordinator: Coordinator<Void> {
                 openReceiveScreen(pubKey: $0)
             })
             .store(in: &subscriptions)
+
         tokensViewModel.sendShow
-            .sink(receiveValue: { [unowned self, weak tokensViewModel] in
-                let coordinator = SendCoordinator(navigationController: navigationController, pubKey: nil)
-                coordinate(to: coordinator)
-                    .sink(receiveValue: { result in
-                        switch result {
-                        case .cancel:
-                            break
-                        case .done:
-                            tokensViewModel?.scrollToTop()
-                        }
-                    })
-                    .store(in: &subscriptions)
+            .flatMap { [unowned self] in
+                coordinate(
+                    to: SendCoordinator(
+                        navigationController: navigationController,
+                        pubKey: nil
+                    )
+                )
+            }
+            .sink(receiveValue: { [weak tokensViewModel] result in
+                switch result {
+                case .cancel:
+                    break
+                case .done:
+                    tokensViewModel?.scrollToTop()
+                }
             })
             .store(in: &subscriptions)
+
         tokensViewModel.swapShow
-            .sink(receiveValue: { [unowned self, weak tokensViewModel] in
-                let coordinator = SwapCoordinator(navigationController: navigationController, initialWallet: nil)
-                coordinate(to: coordinator)
-                    .sink(receiveValue: { result in
-                        switch result {
-                        case .cancel:
-                            break
-                        case .done:
-                            tokensViewModel?.scrollToTop()
-                        }
-                    })
-                    .store(in: &subscriptions)
+            .flatMap { [unowned self] in
+                coordinate(
+                    to: SwapCoordinator(
+                        navigationController: navigationController,
+                        initialWallet: nil
+                    )
+                )
+            }
+            .sink(receiveValue: { [weak tokensViewModel] result in
+                switch result {
+                case .cancel:
+                    break
+                case .done:
+                    tokensViewModel?.scrollToTop()
+                }
             })
             .store(in: &subscriptions)
+    
         tokensViewModel.walletShow
-            .sink(receiveValue: { [unowned self, weak tokensViewModel] pubKey, tokenSymbol in
+            .flatMap { [unowned self] pubKey, tokenSymbol in
                 let model = WalletDetailCoordinator.Model(pubKey: pubKey, symbol: tokenSymbol)
                 let coordinator = WalletDetailCoordinator(navigationController: navigationController, model: model)
-                coordinate(to: coordinator)
-                    .sink(receiveValue: { result in
-                        switch result {
-                        case .cancel:
-                            break
-                        case .done:
-                            tokensViewModel?.scrollToTop()
-                        }
-                    })
-                    .store(in: &subscriptions)
+                return coordinate(to: coordinator)
+            }
+            .sink(receiveValue: { [weak tokensViewModel] result in
+                switch result {
+                case .cancel:
+                    break
+                case .done:
+                    tokensViewModel?.scrollToTop()
+                }
             })
             .store(in: &subscriptions)
         return resultSubject.prefix(1).eraseToAnyPublisher()
@@ -230,6 +238,64 @@ final class HomeCoordinator: Coordinator<Void> {
             .store(in: &subscriptions)
         analyticsManager.log(event: AmplitudeEvent.mainScreenReceiveOpen)
         analyticsManager.log(event: AmplitudeEvent.receiveViewed(fromPage: "main_screen"))
+    }
+
+    private func sendToken(pubKey: String? = nil) async -> Bool {
+        let vm = SendToken.ViewModel(
+            walletPubkey: pubKey,
+            relayMethod: .default
+        )
+        sendCoordinator = SendToken.Coordinator(
+            viewModel: vm,
+            navigationController: navigationController
+        )
+        analyticsManager.log(event: AmplitudeEvent.mainScreenSendOpen)
+        analyticsManager.log(event: AmplitudeEvent.sendViewed(lastScreen: "main_screen"))
+
+        return await withCheckedContinuation { [weak sendCoordinator] continuation in
+            sendCoordinator?.doneHandler = { [unowned self] in
+                navigationController.popToRootViewController(animated: true)
+                return continuation.resume(with: .success(true))
+            }
+            let vc = sendCoordinator?.start(hidesBottomBarWhenPushed: true)
+            vc?.onClose = {
+                continuation.resume(with: .success(false))
+            }
+        }
+    }
+
+    private func showSwap() async -> Bool {
+        let vm = OrcaSwapV2.ViewModel(initialWallet: nil)
+        let vc = OrcaSwapV2.ViewController(viewModel: vm)
+        analyticsManager.log(event: AmplitudeEvent.mainScreenSwapOpen)
+        analyticsManager.log(event: AmplitudeEvent.swapViewed(lastScreen: "main_screen"))
+
+        return await withCheckedContinuation { continuation in
+            vc.doneHandler = { [unowned self] in
+                navigationController.popToRootViewController(animated: true)
+                return continuation.resume(with: .success(true))
+            }
+            vc.onClose = {
+                continuation.resume(with: .success(false))
+            }
+            navigationController.show(vc, sender: nil)
+        }
+    }
+
+    private func walletDetail(pubKey: String, tokenSymbol: String) async -> Bool {
+        let vm = WalletDetail.ViewModel(pubkey: pubKey, symbol: tokenSymbol)
+        let vc = WalletDetail.ViewController(viewModel: vm)
+        analyticsManager.log(event: AmplitudeEvent.mainScreenTokenDetailsOpen(tokenTicker: tokenSymbol))
+
+        return await withCheckedContinuation { continuation in
+            vc.processingTransactionDoneHandler = {
+                continuation.resume(with: .success(true))
+            }
+            vc.onClose = {
+                continuation.resume(with: .success(false))
+            }
+            navigationController.show(vc, sender: nil)
+        }
     }
 
     func scrollToTop() {
