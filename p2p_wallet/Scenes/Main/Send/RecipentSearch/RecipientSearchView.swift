@@ -4,8 +4,8 @@
 
 import KeyAppUI
 import Send
-import SwiftUI
 import SkeletonUI
+import SwiftUI
 
 struct RecipientSearchView: View {
     @ObservedObject var viewModel: RecipientSearchViewModel
@@ -71,7 +71,6 @@ struct RecipientSearchView: View {
                         }
                         Spacer()
                     }
-                    .onTapGesture { self.viewModel.isFirstResponder = false }
                 } else {
                     if viewModel.isSearching {
                         skeleton
@@ -119,20 +118,20 @@ struct RecipientSearchView: View {
                         size: CGSize(width: 120, height: 12),
                         animated: .default
                     )
-                    Text("")
-                        .apply(style: .label1)
-                        .skeleton(
-                            with: viewModel.isSearching,
-                            size: CGSize(width: 120, height: 12),
-                            animated: .default
-                        )
+                Text("")
+                    .apply(style: .label1)
+                    .skeleton(
+                        with: viewModel.isSearching,
+                        size: CGSize(width: 120, height: 12),
+                        animated: .default
+                    )
             }
             Spacer()
         }
-            .frame(height: 88)
-            .frame(maxWidth: .infinity)
-            .background(Color(Asset.Colors.snow.color))
-            .cornerRadius(16)
+        .frame(height: 88)
+        .frame(maxWidth: .infinity)
+        .background(Color(Asset.Colors.snow.color))
+        .cornerRadius(16)
     }
 
     func tryLater(title: String) -> some View {
