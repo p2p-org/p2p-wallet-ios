@@ -3,11 +3,15 @@ import KeyAppUI
 import Combine
 import Resolver
 import RxSwift
+import TransactionParser
 
-final class SendTransactionStatusViewModel: ObservableObject {
+final class SendTransactionStatusViewModel: BaseViewModel, ObservableObject {
     @Injected private var transactionHandler: TransactionHandler
+    @Injected private var priceService: PricesServiceType
 
     let close = PassthroughSubject<Void, Never>()
+    let errorMessageTap = PassthroughSubject<Void, Never>()
+    let openDetails = PassthroughSubject<SendTransactionStatusDetailsParameters, Never>()
 
     @Published var token: Token
     @Published var title: String = L10n.transactionSubmitted
@@ -17,6 +21,7 @@ final class SendTransactionStatusViewModel: ObservableObject {
     @Published var info = [(title: String, detail: String)]()
     @Published var state: State = .loading(message: L10n.itUsuallyTakes520SecondsForATransactionToComplete)
 
+    private var currentTransaction: ParsedTransaction?
     private let disposeBag = DisposeBag()
 
     init(transaction: SendTransaction) {
@@ -25,14 +30,14 @@ final class SendTransactionStatusViewModel: ObservableObject {
         self.transactionCryptoAmount = transaction.amount.tokenAmount(symbol: transaction.walletToken.token.symbol)
 
         let feeToken = transaction.payingFeeWallet.token
-        let feeInfo: String = transaction.feeInToken == .zero
-        ? L10n.freePaidByKeyApp
-        : transaction.feeInToken.total.convertToBalance(decimals: feeToken.decimals).tokenAmount(symbol: feeToken.symbol)
+        let feeAmount: String? = transaction.feeInToken == .zero ? nil : transaction.feeInToken.total.convertToBalance(decimals: feeToken.decimals).tokenAmount(symbol: feeToken.symbol)
+        let feeInfo = feeAmount ?? L10n.freePaidByKeyApp
         info = [
             (title: L10n.sentTo, detail: transaction.recipient.address),
             (title: L10n.transactionFee, detail: feeInfo),
         ]
 
+        super.init()
         let transactionIndex = transactionHandler.sendTransaction(transaction)
         transactionHandler.observeTransaction(transactionIndex: transactionIndex)
             .subscribe { [weak self] pendingTransaction in
@@ -46,8 +51,41 @@ final class SendTransactionStatusViewModel: ObservableObject {
                 default:
                     break
                 }
+                self.currentTransaction = pendingTransaction?.parse(pricesService: self.priceService)
             }
             .disposed(by: disposeBag)
+
+        errorMessageTap
+            .sink { [weak self] in
+                guard
+                    let self = self,
+                    let parsedTransaction = self.currentTransaction,
+                    let error = parsedTransaction.status.getError() as? SolanaError else { return }
+                var params: SendTransactionStatusDetailsParameters?
+                switch error {
+                case let .other(message) where message == "Blockhash not found":
+                    params = .init(
+                        title: L10n.blockhashNotFound,
+                        description: L10n.theBankHasNotSeenTheGivenOrTheTransactionIsTooOldAndTheHasBeenDiscarded(parsedTransaction.blockhash ?? "", parsedTransaction.blockhash ?? ""),
+                        fee: feeAmount
+                    )
+                case let .other(message) where message.contains("Instruction"):
+                    params = .init(
+                        title: L10n.errorProcessingInstruction0CustomProgramError0x1,
+                        description: L10n.AnErrorOccuredWhileProcessingAnInstruction.theFirstElementOfTheTupleIndicatesTheInstructionIndexInWhichTheErrorOccured, fee: feeAmount)
+                case let .other(message) where message.contains("Already processed"):
+                    params = .init(
+                        title: L10n.thisTransactionHasAlreadyBeenProcessed,
+                        description: L10n.TheBankHasSeenThisTransactionBefore.thisCanOccurUnderNormalOperationWhenAUDPPacketIsDuplicatedAsAUserErrorFromAClientNotUpdatingItsOrAsADoubleSpendAttack(parsedTransaction.blockhash ?? ""),
+                        fee: feeAmount)
+                default:
+                    break
+                }
+                if let params = params {
+                    self.openDetails.send(params)
+                }
+            }
+            .store(in: &subscriptions)
     }
 
     private func updateCompleted() {
