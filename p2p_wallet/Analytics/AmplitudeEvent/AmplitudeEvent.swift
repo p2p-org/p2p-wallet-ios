@@ -292,4 +292,8 @@ enum AmplitudeEvent: AnalyticsEvent {
     // MARK: - Seed
 
     case seedPhraseCopy
+    // MARK: - User
+
+    case userHasPositiveBalance(positive: Bool)
+    case userAggregateBalance(balance: Double)
 }
