@@ -5,6 +5,7 @@
 //  Created by Ivan on 02.08.2022.
 //
 
+import AnalyticsManager
 import Combine
 import Foundation
 import RenVMSwift
@@ -14,7 +15,8 @@ import SolanaSwift
 final class HomeEmptyViewModel: ObservableObject {
     let input = Input()
     let output: Output
-    
+
+    @Injected private var analyticsManager: AnalyticsManager
     @Injected private var walletsRepository: WalletsRepository
     private let pricesService: PricesServiceType = Resolver.resolve()
     private var cancellable: AnyCancellable?
@@ -70,6 +72,7 @@ final class HomeEmptyViewModel: ObservableObject {
     
     func buyTapped(index: Int) {
         let coin = _popularCoins[index]
+        analyticsManager.log(event: AmplitudeEvent.mainScreenBuyToken(tokenName: coin.symbol))
         topUpCoin.send(coin)
     }
 }

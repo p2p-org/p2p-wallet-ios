@@ -29,6 +29,7 @@ enum AmplitudeEvent: AnalyticsEvent {
     case usernameSkipped(usernameField: String)
     case usernameSaved(lastScreen: String)
     case usernameReserved
+    case createWalletTermsAndConditionsClick
     case backingUpIcloud
     case backingUpManually
     case backingUpError
@@ -47,25 +48,39 @@ enum AmplitudeEvent: AnalyticsEvent {
     case walletRestored(lastScreen: String)
 
     // setup
+    case setupPinKeydown1
+    case setupPinKeydown2
     case setupOpen(fromPage: String)
     case setupFaceidOpen
     case bioApproved(lastScreen: String)
     case bioRejected
     case setupAllowPushOpen
-    case pushRejected
-    case pushApproved(lastScreen: String)
+    case pushApprove
     case setupFinishOpen
     case setupFinishClick
     case setupWelcomeBackOpen
     // recovery
+    case recoveryOpen(fromPage: String)
     case restoreManualInvoked
     case restoreAppleInvoked
+    case recoveryEnterSeedOpen
+    case recoveryEnterSeedPaste
+    case recoveryEnterSeedKeydown
     case recoveryDerivableAccountsPathSelected(path: String)
     case recoveryRestoreClick
+    case recoveryDoneClick
+    case recoveryDerivableAccountsOpen
 
     // MARK: - Main
 
+    case mainScreenWalletsOpen
+    case mainScreenBuyOpen
     case mainCopyAddress
+    case mainScreenSendOpen
+    case mainScreenSwapOpen
+    case mainScreenReceiveOpen
+    case mainScreenTokenDetailsOpen(tokenTicker: String)
+    case mainScreenBuyToken(tokenName: String)
 
     // token_details
     case tokenDetailsOpen(tokenTicker: String)
@@ -75,11 +90,15 @@ enum AmplitudeEvent: AnalyticsEvent {
     case tokenDetailsSendClick
     case tokenDetailsSwapClick
     case tokenDetailsDetailsOpen
+    case tokenDetailsAddressCopy
+    case tokenDetailsActivityScroll(pageNum: Int)
 
     // MARK: - Receive
 
     case receiveViewed(fromPage: String)
+    case receiveNameCopy
     case receiveAddressCopied
+    case receiveNameShare
     case receiveWalletAddressCopy
     case receiveUsercardShared
     case receiveQRSaved
@@ -92,7 +111,11 @@ enum AmplitudeEvent: AnalyticsEvent {
     case sendStartScreen
     case sendViewed(lastScreen: String)
     case sendSelectTokenClick(tokenTicker: String)
+    case sendChangeInputMode(selectedValue: String) // Fiat (USD, EUR)
     case sendAmountKeydown(sum: Double)
+    case sendAvailableClick(sum: Double)
+    case sendAddressKeydown
+    case sendQR_Scanning
     case sendSendClick(tokenTicker: String, sum: Double)
     case sendExplorerClick(txStatus: String)
     case sendRecipientScreen
@@ -117,13 +140,21 @@ enum AmplitudeEvent: AnalyticsEvent {
     case swapViewed(lastScreen: String)
     case swapChangingTokenA(tokenA_Name: String)
     case swapChangingTokenB(tokenB_Name: String)
+    case swapTokenAAmountKeydown(sum: Double)
+    case swapTokenBAmountKeydown(sum: Double)
+    case swapAvailableClick(sum: Double)
     case swapReversing
     case swapShowingSettings
+    case swapSlippageClick
+    case swapPayNetworkFeeWithClick
+    case swapSwapFeesClick
+    case swapSlippageKeydown(slippage: Double)
     case swapTryAgainClick(error: String)
     case swapStartScreen
     case swapClickReviewButton
     case swapClickApproveButton
     case actionButtonSwap
+    case swapExplorerClick(txStatus: String)
 
     // #131
     case swapUserConfirmed(
@@ -169,10 +200,20 @@ enum AmplitudeEvent: AnalyticsEvent {
         feesSource: String
     )
 
-    // settings
-    case networkChanging(networkName: String)
+    // MARK: - Scan QR
+
+    case scanQrSuccess
+    case scanQrClose
+
+    // MARK: - Settings
+
     case settingsHideBalancesClick(hide: Bool)
     case settingsСurrencySelected(сurrency: String)
+    case settingsBackupOpen
+    case settingsLanguageSelected(language: String)
+    case settingsSecuritySelected(faceId: Bool)
+
+    case networkChanging(networkName: String)
     case signedOut
     case signOut
 
@@ -238,4 +279,21 @@ enum AmplitudeEvent: AnalyticsEvent {
 
     case startDeleteAccount
     case confirmDeleteAccount
+
+    // MARK: - Action
+
+    case actionPanelSendToken(tokenName: String)
+    case actionPanelSwapToken(tokenName: String)
+
+    // MARK: - QR
+    
+    case QR_Share
+
+    // MARK: - Seed
+
+    case seedPhraseCopy
+    // MARK: - User
+
+    case userHasPositiveBalance(positive: Bool)
+    case userAggregateBalance(balance: Double)
 }

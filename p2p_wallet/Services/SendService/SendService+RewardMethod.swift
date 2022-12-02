@@ -50,7 +50,8 @@ extension SendService {
                         signature: authoritySignature,
                         blockhash: recentBlockhash,
                         deviceType: .iOS,
-                        buildNumber: Bundle.main.fullVersionNumber
+                        buildNumber: Bundle.main.fullVersionNumber,
+                        environment: Environment.current == .release ? .release : .dev
                     )
                 )
             )
@@ -67,7 +68,8 @@ extension SendService {
                         signature: authoritySignature,
                         blockhash: recentBlockhash,
                         deviceType: .iOS,
-                        buildNumber: Bundle.main.fullVersionNumber
+                        buildNumber: Bundle.main.fullVersionNumber,
+                        environment: Environment.current == .release ? .release : .dev
                     )
                 )
             )

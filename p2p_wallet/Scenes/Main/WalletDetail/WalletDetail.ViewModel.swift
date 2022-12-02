@@ -144,8 +144,10 @@ extension WalletDetail.ViewModel: WalletDetailViewModelType {
         case .buy:
             buyTokens()
         case .send:
+            analyticsManager.log(event: AmplitudeEvent.actionPanelSendToken(tokenName: symbol))
             sendTokens()
         case .swap:
+            analyticsManager.log(event: AmplitudeEvent.actionPanelSwapToken(tokenName: symbol))
             swapTokens()
         }
     }
