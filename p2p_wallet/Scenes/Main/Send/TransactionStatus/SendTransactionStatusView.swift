@@ -10,13 +10,9 @@ struct SendTransactionStatusView: View {
 
     var body: some View {
         VStack {
-            Color(Asset.Colors.rain.color)
-                .frame(width: 31, height: 4)
-                .cornerRadius(2)
-                .padding(.top, 6)
             title
-                .padding(.top, 18)
-                .padding(.bottom, 15)
+                .padding(.top, 16)
+                .padding(.bottom, 20)
             headerView
             info
                 .padding(.top, 9)
@@ -27,10 +23,11 @@ struct SendTransactionStatusView: View {
             button
                 .padding(.horizontal, 16)
         }
+        .navigationBarHidden(true)
     }
 
     var title: some View {
-        VStack(spacing: 6) {
+        VStack(spacing: 4) {
             Text(viewModel.title)
                 .fontWeight(.bold)
                 .apply(style: .title3)
@@ -88,7 +85,10 @@ struct SendTransactionStatusView: View {
     }
 
     var status: some View {
-        SendTransactionStatusStatusView(state: $viewModel.state)
+        SendTransactionStatusStatusView(
+            state: $viewModel.state,
+            errorMessageTapAction: { [weak viewModel] in viewModel?.errorMessageTap.send() }
+        )
     }
 
     var button: some View {
@@ -104,6 +104,8 @@ struct SendTransactionStatusView: View {
 
 struct SendTransactionStatusStatusView: View {
     @Binding var state: SendTransactionStatusViewModel.State
+    let errorMessageTapAction: () -> Void
+
     @State private var isRotating = 0.0
 
     var body: some View {
@@ -156,6 +158,7 @@ struct SendTransactionStatusStatusView: View {
                         Text(message)
                             .apply(style: .text4)
                             .foregroundColor(Color(Asset.Colors.night.color))
+                            .onTapGesture(perform: errorMessageTapAction)
                     }
                 }
                     .padding(.leading, 2)

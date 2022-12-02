@@ -1113,3 +1113,8 @@ Reset the PIN or wait for %@.";
 "Continue with %@" = "Continue with %@";
 "Continue anyway" = "Continue anyway";
 "You cannot send tokens to yourself" = "You cannot send tokens to yourself";
+"The bank has not seen the given %@ or the transaction is too old and the %@ has been discarded." = "The bank has not seen the given %@ or the transaction is too old and the %@ has been discarded.";
+"An error occured while processing an instruction. The first element of the tuple indicates the instruction index in which the error occured." = "An error occured while processing an instruction. The first element of the tuple indicates the instruction index in which the error occured.";
+"This transaction has already been processed" = "This transaction has already been processed";
+"The bank has seen this transaction before. This can occur under normal operation when a UDP packet is duplicated, as a user error from a client not updating its %@, or as a double-spend attack." = "The bank has seen this transaction before. This can occur under normal operation when a UDP packet is duplicated, as a user error from a client not updating its %@, or as a double-spend attack.";
+"Details" = "Details";
