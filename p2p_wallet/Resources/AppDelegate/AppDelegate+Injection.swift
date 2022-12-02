@@ -294,7 +294,8 @@ extension Resolver: ResolverRegistering {
             feeCalculator: DefaultFreeRelayerCalculator(),
             feeRelayerAPIClient: resolve(),
             deviceType: .iOS,
-            buildNumber: Bundle.main.fullVersionNumber
+            buildNumber: Bundle.main.fullVersionNumber,
+            environment: Environment.current == .release ? .release : .dev
         ) }
         .implements(FeeRelayer.self)
         .scope(.session)
