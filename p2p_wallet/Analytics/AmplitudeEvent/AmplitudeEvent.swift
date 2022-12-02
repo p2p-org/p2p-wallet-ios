@@ -279,4 +279,9 @@ enum AmplitudeEvent: AnalyticsEvent {
 
     case startDeleteAccount
     case confirmDeleteAccount
+
+    // MARK: - User
+
+    case userHasPositiveBalance(positive: Bool)
+    case userAggregateBalance(balance: Double)
 }
