@@ -37,7 +37,7 @@ final class ChooseWalletTokenViewModel: BaseViewModel, ObservableObject {
                 self.wallets = allWallets.filter({ $0.token.address != chosenToken.token.address })
                 self.isLoading = false
             }
-            catch let error {
+            catch {
                 self.isLoading = false
                 self.notifications.showDefaultErrorNotification()
             }
