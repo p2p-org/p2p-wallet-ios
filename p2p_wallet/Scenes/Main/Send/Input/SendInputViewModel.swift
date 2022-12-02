@@ -104,10 +104,10 @@ class SendInputViewModel: ObservableObject {
         actionButtonViewModel = SendInputActionButtonViewModel()
 
         tokenViewModel = SendInputTokenViewModel()
-        tokenViewModel.isTokenChoiceEnabled = wallets.count > 1
+        tokenViewModel.isTokenChoiceEnabled = preChosenWallet != nil ? false: wallets.count > 1
 
         Task {
-            try await stateMachine
+            await stateMachine
                 .accept(action: .initialize(.init {
                     let feeRelayerContextManager = Resolver.resolve(FeeRelayerContextManager.self)
                     try await feeRelayerContextManager.update()

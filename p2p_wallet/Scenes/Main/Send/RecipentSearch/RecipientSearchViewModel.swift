@@ -60,9 +60,12 @@ class RecipientSearchViewModel: ObservableObject {
         )
 
         Task {
-            self.userWalletEnvironments = userWalletEnvironments.copy(
-                tokens: try await tokensRepository.getTokensList()
-            )
+            let tokens = try await tokensRepository.getTokensList()
+            await MainActor.run { [weak self] in
+                self?.userWalletEnvironments = userWalletEnvironments.copy(
+                    tokens: tokens
+                )
+            }
         }
 
         Task {
@@ -86,10 +89,12 @@ class RecipientSearchViewModel: ObservableObject {
         }
 
         sendHistoryService.statusPublisher
+            .receive(on: RunLoop.main)
             .sink { [weak self] status in self?.recipientsHistoryStatus = status }
             .store(in: &subscriptions)
 
         sendHistoryService.recipientsPublisher
+            .receive(on: RunLoop.main)
             .sink { [weak self] recipients in self?.recipientsHistory = Array(recipients.prefix(10)) }
             .store(in: &subscriptions)
 
@@ -127,13 +132,14 @@ class RecipientSearchViewModel: ObservableObject {
             searchResult = nil
             isSearching = false
         } else {
+            isSearching = true
             searchTask = Task {
-                isSearching = true
-
                 let result = await recipientSearchService.search(input: currentSearchTerm, env: userWalletEnvironments, preChosenToken: preChosenWallet?.token)
 
                 if !Task.isCancelled {
-                    isSearching = false
+                    await MainActor.run { [weak self] in
+                        self?.isSearching = false
+                    }
                 } else {
                     return
                 }
