@@ -116,6 +116,7 @@ class RecipientSearchViewModel: ObservableObject {
             case let .ok(recipients):
                 if let recipient = recipients.first {
                     selectRecipient(recipient)
+                    notifyAddressRecognized(recipient: recipient)
                 }
             default:
                 break
@@ -171,5 +172,11 @@ class RecipientSearchViewModel: ObservableObject {
     @MainActor
     func selectRecipient(_ recipient: Recipient) {
         coordinator.selectRecipientSubject.send(recipient)
+    }
+
+    @MainActor
+    func notifyAddressRecognized(recipient: Recipient) {
+        let text = L10n.theAddressIsRecognized("\(recipient.address.prefix(7))...\(recipient.address.suffix(7))")
+        notificationService.showToast(title: "✅", text: text)
     }
 }
