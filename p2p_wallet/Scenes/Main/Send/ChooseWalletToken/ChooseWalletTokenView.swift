@@ -72,10 +72,13 @@ struct ChooseWalletTokenView: View {
                     .listRowInsets(EdgeInsets())
             }
             .listStyle(.plain)
-            .background(Color(Asset.Colors.rain.color))
+            .background(Color(Asset.Colors.smoke.color))
         } else {
-            LazyVStack(spacing: 0) {
-                content()
+            ScrollView {
+                LazyVStack(spacing: 0) {
+                    content()
+                }
+                .background(Color(Asset.Colors.smoke.color))
             }
         }
     }
