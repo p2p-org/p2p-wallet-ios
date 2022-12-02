@@ -2,7 +2,7 @@ import Combine
 import KeyAppUI
 import SolanaSwift
 
-final class SendInputAmountViewModel: ObservableObject {
+final class SendInputAmountViewModel: BaseViewModel, ObservableObject {
     enum EnteredAmountType {
         case fiat
         case token
@@ -32,10 +32,10 @@ final class SendInputAmountViewModel: ObservableObject {
 
     private let fiat: Fiat
 
-    private var subscriptions = Set<AnyCancellable>()
-
-    init() {
+    override init() {
         fiat = Defaults.fiat
+
+        super.init()
 
         maxAmountPressed
             .sink { [unowned self] in
@@ -44,7 +44,6 @@ final class SendInputAmountViewModel: ObservableObject {
             .store(in: &subscriptions)
 
         $amountText
-            .receive(on: DispatchQueue.main)
             .sink { [weak self] text in
                 guard let self = self else { return }
 
@@ -64,7 +63,6 @@ final class SendInputAmountViewModel: ObservableObject {
             .store(in: &subscriptions)
 
         $token
-            .receive(on: DispatchQueue.main)
             .sink { [weak self] value in
                 guard let self = self else { return }
                 switch self.mainAmountType {
@@ -77,7 +75,6 @@ final class SendInputAmountViewModel: ObservableObject {
             .store(in: &subscriptions)
 
         $maxAmountToken
-            .receive(on: DispatchQueue.main)
             .sink { [weak self] value in
                 guard let self = self else { return }
                 switch self.mainAmountType {
@@ -91,7 +88,6 @@ final class SendInputAmountViewModel: ObservableObject {
             .store(in: &subscriptions)
 
         $isError
-            .receive(on: DispatchQueue.main)
             .sink { [weak self] value in
                 self?.amountTextColor = value ? Asset.Colors.rose.color : Asset.Colors.night.color
             }
@@ -108,7 +104,6 @@ final class SendInputAmountViewModel: ObservableObject {
             .store(in: &subscriptions)
 
         $mainAmountType
-            .receive(on: DispatchQueue.main)
             .sink { [weak self] value in
                 guard let self = self else { return }
                 switch value {
