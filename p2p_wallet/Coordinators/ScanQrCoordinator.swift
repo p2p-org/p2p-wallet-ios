@@ -28,7 +28,6 @@ final class ScanQrCoordinator: Coordinator<String?> {
         vc.onClose = { [weak self] in
             self?.resultSubject.send(nil)
         }
-        vc.modalPresentationStyle = .fullScreen
         navigationController.present(vc, animated: true)
         return resultSubject.eraseToAnyPublisher()
     }

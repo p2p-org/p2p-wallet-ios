@@ -1120,3 +1120,8 @@ Reset the PIN or wait for %@.";
 "This transaction has already been processed" = "This transaction has already been processed";
 "The bank has seen this transaction before. This can occur under normal operation when a UDP packet is duplicated, as a user error from a client not updating its %@, or as a double-spend attack." = "The bank has seen this transaction before. This can occur under normal operation when a UDP packet is duplicated, as a user error from a client not updating its %@, or as a double-spend attack.";
 "Details" = "Details";
+"Turn on the light" = "Turn on the light";
+"Turn off the light" = "Turn off the light";
+"The address %@ is recognized" = "The address %@ is recognized";
+"Key App cannot scan QR codes without access to your camera. Please enable access under Privacy settings." = "Key App cannot scan QR codes without access to your camera. Please enable access under Privacy settings.";
+"Unable to access camera" = "Unable to access camera";
