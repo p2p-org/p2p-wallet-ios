@@ -33,7 +33,7 @@ def key_app_kit
     end
   else
     $keyAppKitGit = 'https://github.com/p2p-org/key-app-kit-swift.git'
-    $keyAppKitBranch = 'fix/PWN-6122'
+    $keyAppKitBranch = 'master'
     for $dependency in $dependencies do
       pod $dependency, :git => $keyAppKitGit, :branch => $keyAppKitBranch
     end
@@ -51,7 +51,7 @@ target 'p2p_wallet' do
   pod 'BECollectionView_Core', :git => 'https://github.com/bigearsenal/BECollectionView.git', :branch => 'master'
   pod 'BECollectionView', :git => 'https://github.com/bigearsenal/BECollectionView.git', :branch => 'master'
   pod 'BECollectionView_Combine', :git => 'https://github.com/bigearsenal/BECollectionView.git', :branch => 'master'
-  pod 'FeeRelayerSwift', :git => 'https://github.com/p2p-org/FeeRelayerSwift.git', :branch => 'feature/PWN-6108'
+  pod 'FeeRelayerSwift', :git => 'https://github.com/p2p-org/FeeRelayerSwift.git', :branch => 'master'
   pod 'OrcaSwapSwift', :git => 'https://github.com/p2p-org/OrcaSwapSwift.git', :branch => 'main'
   pod 'RenVMSwift', :git => 'https://github.com/p2p-org/RenVMSwift.git', :branch => 'master'
   
