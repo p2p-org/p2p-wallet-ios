@@ -52,6 +52,7 @@ class SendCoordinator: Coordinator<SendResult> {
                 self.coordinate(to: ScanQrCoordinator(navigationController: rootViewController))
             }
             .compactMap { $0 }
+            .receive(on: DispatchQueue.main)
             .sink(receiveValue: { result in
                 Task { await vm.search(query: result, autoSelect: true) }
             }).store(in: &subscriptions)

@@ -1,13 +1,8 @@
-//
-//  QrCodeScannerVC.swift
-//  p2p_wallet
-//
-//  Created by Chung Tran on 11/4/20.
-//
-
 import AnalyticsManager
 import AVFoundation
 import Foundation
+import KeyAppUI
+import PureLayout
 import Resolver
 import UIKit
 
@@ -36,15 +31,31 @@ class QrCodeScannerVC: BaseVC {
         textColor: .white,
         textAlignment: .center
     )
-    private lazy var closeButton = UIButton.closeFill()
-        .onTap(self, action: #selector(closeButtonDidTouch))
+    private lazy var closeButton: UIButton = {
+       let button = UIButton()
+        button.setTitle(L10n.close, for: .normal)
+        button.onTap(self, action: #selector(closeButtonDidTouch))
+        button.titleLabel?.font = .font(of: .text1)
+        return button
+    }()
+    private lazy var torchButton: UIButton = {
+       let button = UIButton()
+        button.setTitle(L10n.turnOnTheLight, for: .normal)
+        button.titleLabel?.font = .font(of: .text2)
+        button.onTap(self, action: #selector(torchButtonDidTouch))
+        button.layer.cornerRadius = 28
+        return button
+    }()
 
     override func setUp() {
         super.setUp()
         view.backgroundColor = .black
 
         view.addSubview(cameraContainerView)
-        cameraContainerView.autoPinEdgesToSuperviewSafeArea(with: .init(x: 0, y: 44))
+        cameraContainerView.autoPinEdge(toSuperviewEdge: .top, withInset: 0)
+        cameraContainerView.autoPinEdge(toSuperviewEdge: .leading, withInset: 0)
+        cameraContainerView.autoPinEdge(toSuperviewEdge: .trailing, withInset: 0)
+        cameraContainerView.autoPinEdge(toSuperviewEdge: .bottom, withInset: -cameraContainerView.bottomSafeInset)
 
         cameraContainerView.addSubview(rangeImageView)
         rangeImageView.autoCenterInSuperview()
@@ -57,6 +68,9 @@ class QrCodeScannerVC: BaseVC {
 
         cameraContainerView.addSubview(closeButton)
         closeButton.autoPinToTopRightCornerOfSuperviewSafeArea(xInset: 16)
+
+        cameraContainerView.addSubview(torchButton)
+        torchButton.setTorchConstraints()
 
         view.layoutIfNeeded()
 
@@ -101,6 +115,41 @@ class QrCodeScannerVC: BaseVC {
     @objc func closeButtonDidTouch() {
         analyticsManager.log(event: AmplitudeEvent.scanQrClose)
         back()
+    }
+
+    private var isTorchOn = false {
+        didSet {
+            if isTorchOn {
+                torchButton.backgroundColor(color: Asset.Colors.snow.color)
+                torchButton.setTitle(L10n.turnOffTheLight, for: .normal)
+                torchButton.setTitleColor(Asset.Colors.night.color, for: .normal)
+            } else {
+                torchButton.backgroundColor(color: .clear)
+                torchButton.setTitle(L10n.turnOnTheLight, for: .normal)
+                torchButton.setTitleColor(Asset.Colors.snow.color, for: .normal)
+            }
+        }
+    }
+
+    @objc func torchButtonDidTouch() {
+        guard let device = AVCaptureDevice.default(for: .video), device.hasTorch else { return }
+        do {
+            try device.lockForConfiguration()
+            if (device.torchMode == .on) {
+                device.torchMode = .off
+                self.isTorchOn = false
+            } else {
+                do {
+                    try device.setTorchModeOn(level: 1.0)
+                    self.isTorchOn = true
+                } catch {
+                    DefaultLogManager.shared.log(event: "Can't toggle torch", logLevel: .debug)
+                }
+            }
+            device.unlockForConfiguration()
+        } catch {
+            DefaultLogManager.shared.log(event: error.localizedDescription, logLevel: .debug)
+        }
     }
 
     override func back() {
@@ -231,12 +280,13 @@ extension QrCodeScannerVC {
         cameraContainerView.bringSubviewToFront(rangeImageView)
         cameraContainerView.bringSubviewToFront(rangeLabel)
         cameraContainerView.bringSubviewToFront(closeButton)
+        cameraContainerView.bringSubviewToFront(torchButton)
     }
 
     private func showPermissionErrorDialog() {
         showAlert(
-            title: L10n.changeYourSettingsToUseCameraForScanningQrCode,
-            message: L10n.ThisAppDoesNotHavePermissionToUseYourCameraForScanningQrCode.pleaseEnableItInSettings,
+            title: L10n.unableToAccessCamera,
+            message: L10n.KeyAppCannotScanQRCodesWithoutAccessToYourCamera.pleaseEnableAccessUnderPrivacySettings,
             buttonTitles: [L10n.ok, L10n.cancel],
             highlightedButtonIndex: 0
         ) { [weak self] index in
@@ -255,4 +305,28 @@ extension QrCodeScannerVC {
             }
         }
     }
+}
+
+private extension UIView {
+    func setTorchConstraints() {
+        self.superview?.addConstraints(
+            NSLayoutConstraint.constraints(
+                withVisualFormat: "H:|-40-[view]-40-|",
+                options: [],
+                metrics: nil,
+                views: ["view": self]
+            )
+        )
+        addConstraints(
+            NSLayoutConstraint.constraints(
+                withVisualFormat: "V:[view(56)]",
+                options: [],
+                metrics: nil,
+                views: ["view": self]
+            )
+        )
+        autoPinEdge(toSuperviewEdge: .bottom, withInset: bottomSafeInset + 40)
+    }
+
+    var bottomSafeInset: CGFloat { UIApplication.shared.kWindow?.safeAreaInsets.bottom ?? 0 }
 }
