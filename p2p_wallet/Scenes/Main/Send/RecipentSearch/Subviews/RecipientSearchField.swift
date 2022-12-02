@@ -53,7 +53,9 @@ struct RecipientSearchField: View {
                     .cornerRadius(radius: 12, corners: .allCorners)
             )
 
-            Button { scan() } label: {
+            Button {
+                scan()
+            } label: {
                 Image(uiImage: Asset.Icons.qr.image)
                     .resizable()
                     .frame(width: 18, height: 18)
