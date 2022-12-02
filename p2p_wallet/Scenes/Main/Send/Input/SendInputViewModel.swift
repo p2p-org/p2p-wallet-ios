@@ -152,13 +152,12 @@ private extension SendInputViewModel {
 
         $sourceWallet
             .sinkAsync(receiveValue: { [weak self] value in
-                guard let self = self else { return }
-                await MainActor.run { self.isFeeLoading = true }
-                _ = await self.stateMachine.accept(action: .changeUserToken(value.token))
-                await MainActor.run {
-                    self.inputAmountViewModel.token = value
-                    self.tokenViewModel.token = value
-                    self.isFeeLoading = false
+                await MainActor.run { [weak self] in self?.isFeeLoading = true }
+                _ = await self?.stateMachine.accept(action: .changeUserToken(value.token))
+                await MainActor.run { [weak self] in
+                    self?.inputAmountViewModel.token = value
+                    self?.tokenViewModel.token = value
+                    self?.isFeeLoading = false
                 }
             })
             .store(in: &subscriptions)
