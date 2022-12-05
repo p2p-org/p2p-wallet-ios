@@ -59,7 +59,7 @@ final class SendInputViewModel: BaseViewModel, ObservableObject {
         sourceWallet = tokenInWallet
 
         let feeTokenInWallet = wallets
-            .first(where: { $0.token.address == Token.nativeSolana.address }) ?? Wallet(token: Token.nativeSolana)
+            .first(where: { $0.token.address == Token.usdc.address }) ?? Wallet(token: Token.usdc)
         feeWallet = feeTokenInWallet
 
         var exchangeRate = [String: CurrentPrice]()
