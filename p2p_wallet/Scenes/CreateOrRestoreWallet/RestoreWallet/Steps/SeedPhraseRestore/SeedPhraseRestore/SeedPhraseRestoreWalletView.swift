@@ -64,7 +64,7 @@ struct SeedPhraseRestoreWalletView: View {
                     .padding(.top, 11)
                 }
 
-                FocusedTextView(text: $viewModel.seed, isFirstResponder: $viewModel.isSeedFocused)
+                SeedPhraseTextView(text: $viewModel.seed, isFirstResponder: $viewModel.isSeedFocused)
                 .frame(maxHeight: 343)
                 .colorMultiply(Color(Asset.Colors.smoke.color))
 
