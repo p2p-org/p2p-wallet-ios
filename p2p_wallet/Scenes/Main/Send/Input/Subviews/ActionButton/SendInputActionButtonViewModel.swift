@@ -1,12 +1,14 @@
 import Combine
 
-final class SendInputActionButtonViewModel: ObservableObject {
+final class SendInputActionButtonViewModel: BaseViewModel, ObservableObject {
     struct ActionButton {
         let isEnabled: Bool
         let title: String
+
+        static let zero = ActionButton(isEnabled: false, title: L10n.enterTheAmount)
     }
 
     @Published var isSliderOn = false
-    @Published var actionButton = ActionButton(isEnabled: false, title: L10n.enterTheAmount)
+    @Published var actionButton = ActionButton.zero
     @Published var showFinished = false
 }

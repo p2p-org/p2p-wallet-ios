@@ -1124,3 +1124,4 @@ Reset the PIN or wait for %@.";
 "The address %@ is recognized" = "The address %@ is recognized";
 "Key App cannot scan QR codes without access to your camera. Please enable access under Privacy settings." = "Key App cannot scan QR codes without access to your camera. Please enable access under Privacy settings.";
 "Unable to access camera" = "Unable to access camera";
+"Initializing error" = "Initializing error";
