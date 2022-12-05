@@ -4,7 +4,6 @@ import KeyAppUI
 
 final class SendTransactionStatusCoordinator: Coordinator<Void> {
     private var transition: PanelTransition?
-    private var viewController: UIViewController?
 
     private let navigationController: UINavigationController
     private let container: UIViewController
@@ -29,12 +28,12 @@ final class SendTransactionStatusCoordinator: Coordinator<Void> {
             .store(in: &subscriptions)
 
         transition = PanelTransition()
-        transition?.containerHeight = 624.adaptiveHeight
+        transition?.containerHeight = 600.adaptiveHeight
         transition?.dimmClicked
             .sink { [weak self] in self?.finish() }
             .store(in: &subscriptions)
 
-        let viewController = UIHostingController(rootView: view)
+        let viewController = UIHostingControllerWithoutNavigation(rootView: view)
         self.navigationController.setViewControllers([viewController], animated: true)
         style(nc: navigationController)
         wrap(for: navigationController)
@@ -44,8 +43,6 @@ final class SendTransactionStatusCoordinator: Coordinator<Void> {
         container.view.layer.cornerRadius = 20
 
         parentController.present(container, animated: true)
-
-        self.viewController = viewController
 
         viewModel.openDetails
             .sink { [weak self] params in

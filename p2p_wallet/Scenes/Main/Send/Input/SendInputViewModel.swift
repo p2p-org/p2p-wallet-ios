@@ -102,7 +102,7 @@ final class SendInputViewModel: BaseViewModel, ObservableObject {
         actionButtonViewModel = SendInputActionButtonViewModel()
 
         tokenViewModel = SendInputTokenViewModel(initialToken: tokenInWallet)
-        tokenViewModel.isTokenChoiceEnabled = preChosenWallet != nil ? false: wallets.count > 1
+        tokenViewModel.isTokenChoiceEnabled = preChosenWallet != nil ? false : wallets.count > 1
 
         super.init()
 
@@ -290,20 +290,21 @@ private extension SendInputViewModel {
         }
 
         do {
-            let transactionId = try await sendAction.send(
-                from: sourceWallet,
-                receiver: address,
-                amount: currentState.amountInToken,
-                feeWallet: feeWallet
-            )
             await MainActor.run {
                 self.actionButtonViewModel.showFinished = true
                 DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) {
-                    self.transaction.send(SendTransaction(transactionId: transactionId, state: self.currentState))
+                    let transaction = SendTransaction(state: self.currentState) {
+                        try await self.sendAction.send(
+                            from: sourceWallet,
+                            receiver: address,
+                            amount: self.currentState.amountInToken,
+                            feeWallet: feeWallet
+                        )
+                    }
+                    self.transaction.send(transaction)
                 }
             }
         } catch {
-            print(error)
             if let error = error as? NSError,
                error.code == NSURLErrorNetworkConnectionLost || error.code == NSURLErrorNotConnectedToInternet
             {
