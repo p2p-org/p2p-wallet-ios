@@ -14,7 +14,7 @@ import Resolver
 import SolanaSwift
 import UIKit
 
-class AppCoordinator: Coordinator<Void> {
+final class AppCoordinator: Coordinator<Void> {
     // MARK: - Dependencies
 
     private var appEventHandler: AppEventHandlerType = Resolver.resolve()
@@ -52,7 +52,7 @@ class AppCoordinator: Coordinator<Void> {
             window?.overrideUserInterfaceStyle = Defaults.appearance
         }
 
-        openSplash { [self] in
+        openSplash { [unowned self] in
             userWalletManager
                 .$wallet
                 .combineLatest(
@@ -96,8 +96,7 @@ class AppCoordinator: Coordinator<Void> {
 
         let coordinator = TabBarCoordinator(window: window, authenticateWhenAppears: showAuthenticationOnMainOnAppear)
         coordinate(to: coordinator)
-            .sink(receiveValue: {
-            })
+            .sink(receiveValue: {})
             .store(in: &subscriptions)
     }
 

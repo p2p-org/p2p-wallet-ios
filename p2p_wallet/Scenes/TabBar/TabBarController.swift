@@ -47,11 +47,6 @@ final class TabBarController: UITabBarController {
         fatalError("init(coder:) has not been implemented")
     }
 
-    deinit {
-        onClose?()
-        print("lololool")
-    }
-
     override func viewDidLoad() {
         super.viewDidLoad()
 
@@ -181,12 +176,12 @@ final class TabBarController: UITabBarController {
     private func handleAuthenticationStatus(_ authStyle: AuthenticationPresentationStyle?) {
         // dismiss
         guard let authStyle = authStyle else {
-            localAuthVC?.dismiss(animated: true) { [weak self] in
-                self?.localAuthVC = nil
+            localAuthVC?.dismiss(animated: true) { [weak localAuthVC] in
+                localAuthVC = nil
             }
             return
         }
-        localAuthVC?.dismiss(animated: false, completion: nil)
+        localAuthVC?.dismiss(animated: false)
         let pincodeViewModel = PincodeViewModel(
             state: .check,
             isBackAvailable: !authStyle.options.contains(.required),
