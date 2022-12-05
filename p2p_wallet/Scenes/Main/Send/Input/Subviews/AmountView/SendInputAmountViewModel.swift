@@ -13,7 +13,7 @@ final class SendInputAmountViewModel: BaseViewModel, ObservableObject {
     let changeAmount = PassthroughSubject<(amount: Double, type: EnteredAmountType), Never>()
 
     // State
-    @Published var token: Wallet = .nativeSolana(pubkey: nil, lamport: nil)
+    @Published var token: Wallet
     @Published var maxAmountToken: Double = 0
 
     // View
@@ -32,8 +32,9 @@ final class SendInputAmountViewModel: BaseViewModel, ObservableObject {
 
     private let fiat: Fiat
 
-    override init() {
+    init(initialToken: Wallet) {
         fiat = Defaults.fiat
+        token = initialToken
 
         super.init()
 
@@ -48,29 +49,14 @@ final class SendInputAmountViewModel: BaseViewModel, ObservableObject {
                 guard let self = self else { return }
 
                 self.amount = Double(text)
-                switch self.mainAmountType {
-                case .token:
-                    self
-                        .secondaryAmountText =
-                        "\((self.amount * self.token.priceInCurrentFiat).toString(maximumFractionDigits: 9)) \(self.token.token.symbol)"
-                case .fiat:
-                    self
-                        .secondaryAmountText =
-                        "\((self.amount / self.token.priceInCurrentFiat).toString(maximumFractionDigits: 9)) \(self.fiat.code)"
-                }
+                self.updateSecondaryAmount()
                 self.changeAmount.send((self.amount ?? 0, self.mainAmountType))
             }
             .store(in: &subscriptions)
 
         $token
             .sink { [weak self] value in
-                guard let self = self else { return }
-                switch self.mainAmountType {
-                case .token:
-                    self.mainTokenText = value.token.symbol
-                case .fiat:
-                    self.secondaryCurrencyText = value.token.symbol
-                }
+                self?.updateCurrencyTitles(for: value)
             }
             .store(in: &subscriptions)
 
@@ -79,10 +65,9 @@ final class SendInputAmountViewModel: BaseViewModel, ObservableObject {
                 guard let self = self else { return }
                 switch self.mainAmountType {
                 case .token:
-                    self.maxAmountTextInCurrentType = value.toString(maximumFractionDigits: 9)
+                    self.maxAmountTextInCurrentType = value.formatted()
                 case .fiat:
-                    self.maxAmountTextInCurrentType = (value * self.token.priceInCurrentFiat)
-                        .toString(maximumFractionDigits: 9)
+                    self.maxAmountTextInCurrentType = (value * self.token.priceInCurrentFiat).formatted()
                 }
             }
             .store(in: &subscriptions)
@@ -100,27 +85,42 @@ final class SendInputAmountViewModel: BaseViewModel, ObservableObject {
                 case .fiat: self.mainAmountType = .token
                 case .token: self.mainAmountType = .fiat
                 }
+                self.updateCurrencyTitles()
             }
             .store(in: &subscriptions)
+    }
+}
 
-        $mainAmountType
-            .sink { [weak self] value in
-                guard let self = self else { return }
-                switch value {
-                case .fiat:
-                    self.mainTokenText = self.fiat.code
-                    self.secondaryCurrencyText = self.token.token.symbol
-                    self.secondaryAmountText = "\(self.amount / self.token.priceInCurrentFiat) \(self.fiat.code)"
-                    self.maxAmountTextInCurrentType = (self.maxAmountToken * self.token.priceInCurrentFiat)
-                        .toString(maximumFractionDigits: 9)
-                case .token:
-                    self.mainTokenText = self.token.token.symbol
-                    self.secondaryCurrencyText = self.fiat.code
-                    self.secondaryAmountText = "\(self.amount * self.token.priceInCurrentFiat) \(self.token.token.symbol)"
-                    self.maxAmountTextInCurrentType = self.maxAmountToken.toString(maximumFractionDigits: 9)
-                }
-                self.changeAmount.send((self.amount ?? 0, self.mainAmountType))
-            }
-            .store(in: &subscriptions)
+private extension SendInputAmountViewModel {
+    func updateCurrencyTitles(for wallet: Wallet? = nil) {
+        let currentWallet = wallet ?? self.token
+        switch mainAmountType {
+        case .fiat:
+            self.mainTokenText = self.fiat.code
+            self.secondaryCurrencyText = currentWallet.token.symbol
+            self.maxAmountTextInCurrentType = (self.maxAmountToken * currentWallet.priceInCurrentFiat).formatted()
+        case .token:
+            self.mainTokenText = currentWallet.token.symbol
+            self.secondaryCurrencyText = self.fiat.code
+            self.maxAmountTextInCurrentType = self.maxAmountToken.formatted()
+        }
+        self.updateSecondaryAmount(for: currentWallet)
+        self.changeAmount.send((self.amount ?? 0, self.mainAmountType))
+    }
+
+    func updateSecondaryAmount(for wallet: Wallet? = nil) {
+        let currentWallet = wallet ?? self.token
+        switch self.mainAmountType {
+        case .token:
+            self.secondaryAmountText = "\((self.amount * currentWallet.priceInCurrentFiat).formatted()) \(self.fiat.code)"
+        case .fiat:
+            self.secondaryAmountText = "\((self.amount / currentWallet.priceInCurrentFiat).formatted()) \(currentWallet.token.symbol)"
+        }
+    }
+}
+
+private extension Double {
+    func formatted() -> String {
+        return self.toString(maximumFractionDigits: 9)
     }
 }
