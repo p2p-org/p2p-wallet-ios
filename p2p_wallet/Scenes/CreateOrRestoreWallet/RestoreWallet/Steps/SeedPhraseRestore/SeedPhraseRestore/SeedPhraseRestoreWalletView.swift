@@ -21,7 +21,7 @@ struct SeedPhraseRestoreWalletView: View {
                 if !viewModel.suggestions.isEmpty { suggestions }
 
                 Spacer()
-            }.onTapGesture { viewModel.isSeedFocused = false }
+            }
 
             TextButtonView(
                 title: viewModel.canContinue ? L10n.continue : L10n.fill12Or24Words,
