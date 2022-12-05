@@ -18,7 +18,7 @@ struct SendInputTokenView: View {
                 .padding(.vertical, 4)
 
             VStack(alignment: .leading, spacing: 6) {
-                Text(viewModel.token.name)
+                Text(viewModel.tokenName)
                     .foregroundColor(mainColor)
                     .font(uiFont: .systemFont(ofSize: UIFont.fontSize(of: .text2), weight: .semibold))
 
@@ -29,7 +29,7 @@ struct SendInputTokenView: View {
                         .scaledToFit()
                         .foregroundColor(Color(Asset.Colors.mountain.color))
                         .frame(width: 16, height: 16)
-                    Text(viewModel.amount?.tokenAmount(symbol: viewModel.token.token.symbol) ?? "")
+                    Text(viewModel.amountText)
                         .foregroundColor(Color(Asset.Colors.mountain.color))
                         .apply(style: .text4)
                 }
