@@ -7,6 +7,8 @@
 
 import Combine
 import Foundation
+import SolanaSwift
+import Resolver
 
 final class TabBarCoordinator: Coordinator<Void> {
 
@@ -14,12 +16,17 @@ final class TabBarCoordinator: Coordinator<Void> {
     private unowned var window: UIWindow!
 
     private let tabBarController: TabBarController
+    @Injected private var userWalletManager: UserWalletManager
 
     private let closeSubject = PassthroughSubject<Void, Never>()
 
     // MARK: - Init
 
-    init(window: UIWindow, authenticateWhenAppears: Bool) {
+    init(
+        window: UIWindow,
+        authenticateWhenAppears: Bool,
+        appEventHandler: AppEventHandlerType = Resolver.resolve()
+    ) {
         self.window = window
         tabBarController = TabBarController(
             viewModel: TabBarViewModel(),
@@ -27,10 +34,7 @@ final class TabBarCoordinator: Coordinator<Void> {
         )
         super.init()
         listenMiddleButton()
-    }
-
-    deinit {
-        debugPrint("--- TabBarCoordinator deinit")
+        listenWallet()
     }
     
     // MARK: - Life cycle
@@ -99,10 +103,6 @@ final class TabBarCoordinator: Coordinator<Void> {
         window.rootViewController?.view.hideLoadingIndicatorView()
         window.animate(newRootViewController: tabBarController)
 
-        tabBarController.onClose = { [weak self] in
-            self?.closeSubject.send()
-        }
-
         return closeSubject.prefix(1).eraseToAnyPublisher()
     }
 
@@ -163,5 +163,15 @@ final class TabBarCoordinator: Coordinator<Void> {
         let vc = view.asViewController()
         vc.modalPresentationStyle = .fullScreen
         tabBarController.present(vc, animated: true)
+    }
+
+    private func listenWallet() {
+        userWalletManager.$wallet
+            .sink { [weak self] wallet in
+                if wallet == nil {
+                    self?.closeSubject.send()
+                }
+            }
+            .store(in: &subscriptions)
     }
 }

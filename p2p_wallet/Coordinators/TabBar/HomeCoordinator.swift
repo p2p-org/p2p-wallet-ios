@@ -240,64 +240,6 @@ final class HomeCoordinator: Coordinator<Void> {
         analyticsManager.log(event: AmplitudeEvent.receiveViewed(fromPage: "main_screen"))
     }
 
-    private func sendToken(pubKey: String? = nil) async -> Bool {
-        let vm = SendToken.ViewModel(
-            walletPubkey: pubKey,
-            relayMethod: .default
-        )
-        sendCoordinator = SendToken.Coordinator(
-            viewModel: vm,
-            navigationController: navigationController
-        )
-        analyticsManager.log(event: AmplitudeEvent.mainScreenSendOpen)
-        analyticsManager.log(event: AmplitudeEvent.sendViewed(lastScreen: "main_screen"))
-
-        return await withCheckedContinuation { [weak sendCoordinator] continuation in
-            sendCoordinator?.doneHandler = { [unowned self] in
-                navigationController.popToRootViewController(animated: true)
-                return continuation.resume(with: .success(true))
-            }
-            let vc = sendCoordinator?.start(hidesBottomBarWhenPushed: true)
-            vc?.onClose = {
-                continuation.resume(with: .success(false))
-            }
-        }
-    }
-
-    private func showSwap() async -> Bool {
-        let vm = OrcaSwapV2.ViewModel(initialWallet: nil)
-        let vc = OrcaSwapV2.ViewController(viewModel: vm)
-        analyticsManager.log(event: AmplitudeEvent.mainScreenSwapOpen)
-        analyticsManager.log(event: AmplitudeEvent.swapViewed(lastScreen: "main_screen"))
-
-        return await withCheckedContinuation { continuation in
-            vc.doneHandler = { [unowned self] in
-                navigationController.popToRootViewController(animated: true)
-                return continuation.resume(with: .success(true))
-            }
-            vc.onClose = {
-                continuation.resume(with: .success(false))
-            }
-            navigationController.show(vc, sender: nil)
-        }
-    }
-
-    private func walletDetail(pubKey: String, tokenSymbol: String) async -> Bool {
-        let vm = WalletDetail.ViewModel(pubkey: pubKey, symbol: tokenSymbol)
-        let vc = WalletDetail.ViewController(viewModel: vm)
-        analyticsManager.log(event: AmplitudeEvent.mainScreenTokenDetailsOpen(tokenTicker: tokenSymbol))
-
-        return await withCheckedContinuation { continuation in
-            vc.processingTransactionDoneHandler = {
-                continuation.resume(with: .success(true))
-            }
-            vc.onClose = {
-                continuation.resume(with: .success(false))
-            }
-            navigationController.show(vc, sender: nil)
-        }
-    }
-
     func scrollToTop() {
         scrollSubject.send()
     }
