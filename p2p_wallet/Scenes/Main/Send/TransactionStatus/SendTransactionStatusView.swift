@@ -23,7 +23,6 @@ struct SendTransactionStatusView: View {
             button
                 .padding(.horizontal, 16)
         }
-        .navigationBarHidden(true)
     }
 
     var title: some View {
@@ -86,7 +85,7 @@ struct SendTransactionStatusView: View {
 
     var status: some View {
         SendTransactionStatusStatusView(
-            state: $viewModel.state,
+            state: viewModel.state,
             errorMessageTapAction: { [weak viewModel] in viewModel?.errorMessageTap.send() }
         )
     }
@@ -103,7 +102,7 @@ struct SendTransactionStatusView: View {
 }
 
 struct SendTransactionStatusStatusView: View {
-    @Binding var state: SendTransactionStatusViewModel.State
+    let state: SendTransactionStatusViewModel.State
     let errorMessageTapAction: () -> Void
 
     @State private var isRotating = 0.0
@@ -200,13 +199,12 @@ struct SendTransactionStatusView_Previews: PreviewProvider {
         SendTransactionStatusView(
             viewModel: SendTransactionStatusViewModel(
                 transaction: .init(
-                    transactionId: "",
                     state: .zero(
                         recipient: .init(address: "", category: .solanaAddress, attributes: .funds),
                         token: .nativeSolana,
                         feeToken: .nativeSolana,
                         userWalletState: .empty)
-                )
+                ) { "0123abc" }
             )
         )
     }
