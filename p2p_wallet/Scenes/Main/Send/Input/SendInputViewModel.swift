@@ -59,7 +59,7 @@ final class SendInputViewModel: BaseViewModel, ObservableObject {
         sourceWallet = tokenInWallet
 
         let feeTokenInWallet = wallets
-            .first(where: { $0.token.address == Token.usdc.address }) ?? Wallet(token: Token.usdc)
+            .first(where: { $0.token.address == Token.nativeSolana.address }) ?? Wallet(token: Token.nativeSolana)
         feeWallet = feeTokenInWallet
 
         var exchangeRate = [String: CurrentPrice]()
@@ -98,7 +98,7 @@ final class SendInputViewModel: BaseViewModel, ObservableObject {
             account: accountStorage.account
         )
 
-        inputAmountViewModel = SendInputAmountViewModel()
+        inputAmountViewModel = SendInputAmountViewModel(initialToken: tokenInWallet)
         actionButtonViewModel = SendInputActionButtonViewModel()
 
         tokenViewModel = SendInputTokenViewModel(initialToken: tokenInWallet)
@@ -217,6 +217,11 @@ private extension SendInputViewModel {
 
 private extension SendInputViewModel {
     func updateInputAmountView() {
+        guard currentState.amountInToken != .zero else {
+            inputAmountViewModel.isError = false
+            actionButtonViewModel.actionButton = .zero
+            return
+        }
         switch currentState.status {
         case .error(.inputTooHigh):
             inputAmountViewModel.isError = true
@@ -230,20 +235,12 @@ private extension SendInputViewModel {
                 isEnabled: false,
                 title: L10n.min(minAmount.tokenAmount(symbol: sourceWallet.token.symbol))
             )
-        case .error(reason: .inputZero):
-            inputAmountViewModel.isError = false
-            actionButtonViewModel.actionButton = .zero
         default:
-            if currentState.amountInToken == .zero {
-                inputAmountViewModel.isError = false
-                actionButtonViewModel.actionButton = .zero
-            } else {
-                inputAmountViewModel.isError = false
-                actionButtonViewModel.actionButton = .init(
-                    isEnabled: true,
-                    title: "\(L10n.send) \(currentState.amountInToken.tokenAmount(symbol: currentState.token.symbol))"
-                )
-            }
+            inputAmountViewModel.isError = false
+            actionButtonViewModel.actionButton = .init(
+                isEnabled: true,
+                title: "\(L10n.send) \(currentState.amountInToken.tokenAmount(symbol: currentState.token.symbol))"
+            )
         }
     }
 
