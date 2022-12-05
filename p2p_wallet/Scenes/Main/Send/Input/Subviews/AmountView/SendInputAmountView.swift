@@ -144,7 +144,7 @@ struct SendInputAmountView_Previews: PreviewProvider {
         ZStack {
             Color(Asset.Colors.smoke.color)
             SendInputAmountView(
-                viewModel: SendInputAmountViewModel()
+                viewModel: SendInputAmountViewModel(initialToken: .init(token: .nativeSolana))
             )
             .padding(.horizontal, 16)
         }

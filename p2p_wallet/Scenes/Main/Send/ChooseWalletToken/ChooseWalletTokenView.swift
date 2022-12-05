@@ -30,6 +30,9 @@ struct ChooseWalletTokenView: View {
                         wrappedList {
                             if !viewModel.isSearchGoing {
                                 chosenTokenSection
+                                    .onTapGesture {
+                                        viewModel.close.send()
+                                    }
                             }
                             
                             Text(viewModel.isSearchGoing ? L10n.hereSWhatWeFound : L10n.otherTokens)
