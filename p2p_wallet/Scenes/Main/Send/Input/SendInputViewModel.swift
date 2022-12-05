@@ -11,7 +11,7 @@ import Send
 import SolanaPricesAPIs
 import SolanaSwift
 
-class SendInputViewModel: ObservableObject {
+final class SendInputViewModel: BaseViewModel, ObservableObject {
     // MARK: - Sub view models
 
     let actionButtonViewModel: SendInputActionButtonViewModel
@@ -22,7 +22,7 @@ class SendInputViewModel: ObservableObject {
     @Published var feeWallet: Wallet
 
     @Published var feeTitle = L10n.fees("")
-    @MainActor @Published var isFeeLoading: Bool = true
+    @Published var isFeeLoading: Bool = true
     let feeInfoPressed = PassthroughSubject<Void, Never>()
     let openFeeInfo = PassthroughSubject<Bool, Never>()
 
@@ -37,8 +37,6 @@ class SendInputViewModel: ObservableObject {
     private let pricesService: PricesServiceType
     private let stateMachine: SendInputStateMachine
     private let sendAction: SendActionService
-
-    private var subscriptions = Set<AnyCancellable>()
 
     init(recipient: Recipient, preChosenWallet: Wallet?) {
         let repository = Resolver.resolve(WalletsRepository.self)
@@ -103,8 +101,10 @@ class SendInputViewModel: ObservableObject {
         inputAmountViewModel = SendInputAmountViewModel()
         actionButtonViewModel = SendInputActionButtonViewModel()
 
-        tokenViewModel = SendInputTokenViewModel()
+        tokenViewModel = SendInputTokenViewModel(initialToken: tokenInWallet)
         tokenViewModel.isTokenChoiceEnabled = preChosenWallet != nil ? false: wallets.count > 1
+
+        super.init()
 
         Task {
             await stateMachine
@@ -146,7 +146,7 @@ private extension SendInputViewModel {
                 case .fiat:
                     _ = await self.stateMachine.accept(action: .changeAmountInFiat(value.amount))
                 }
-                await self.updateInputAmountView()
+                self.updateInputAmountView()
             })
             .store(in: &subscriptions)
 
@@ -163,14 +163,13 @@ private extension SendInputViewModel {
             .store(in: &subscriptions)
 
         $isFeeLoading
-            .receive(on: DispatchQueue.main)
             .sink { [weak self] isLoading in
                 guard let self = self else { return }
                 if isLoading {
                     self.feeTitle = L10n.fees("")
                     self.actionButtonViewModel.actionButton = .init(isEnabled: false, title: L10n.calculatingTheFees)
                 } else {
-                    Task { await self.updateInputAmountView() }
+                    self.updateInputAmountView()
                 }
             }
             .store(in: &subscriptions)
@@ -199,9 +198,9 @@ private extension SendInputViewModel {
         $feeWallet
             .sinkAsync { [weak self] newFeeToken in
                 guard let self = self else { return }
-                await MainActor.run { self.isFeeLoading = true }
+                self.isFeeLoading = true
                 _ = await self.stateMachine.accept(action: .changeFeeToken(newFeeToken.token))
-                await MainActor.run { self.isFeeLoading = false }
+                self.isFeeLoading = false
             }
             .store(in: &subscriptions)
 
@@ -217,7 +216,6 @@ private extension SendInputViewModel {
 }
 
 private extension SendInputViewModel {
-    @MainActor
     func updateInputAmountView() {
         switch currentState.status {
         case .error(.inputTooHigh):
@@ -234,10 +232,18 @@ private extension SendInputViewModel {
             )
         case .error(reason: .inputZero):
             inputAmountViewModel.isError = false
-            actionButtonViewModel.actionButton = .init(isEnabled: false, title: L10n.enterTheAmount)
+            actionButtonViewModel.actionButton = .zero
         default:
-            inputAmountViewModel.isError = false
-            actionButtonViewModel.actionButton = .init(isEnabled: true, title: L10n.enterTheAmount)
+            if currentState.amountInToken == .zero {
+                inputAmountViewModel.isError = false
+                actionButtonViewModel.actionButton = .zero
+            } else {
+                inputAmountViewModel.isError = false
+                actionButtonViewModel.actionButton = .init(
+                    isEnabled: true,
+                    title: "\(L10n.send) \(currentState.amountInToken.tokenAmount(symbol: currentState.token.symbol))"
+                )
+            }
         }
     }
 
@@ -257,27 +263,19 @@ private extension SendInputViewModel {
     }
 
     func handleConnectionError() {
-        snackbar.send(SnackBar(
-            title: "🥺",
-            text: L10n.youHaveNoInternetConnection,
-            buttonTitle: L10n.hide,
-            buttonAction: { SnackBar.hide() }
-        ))
+        handleError(text: L10n.youHaveNoInternetConnection)
     }
 
     func handleInitializingError() {
-        snackbar.send(SnackBar(
-            title: "🥺",
-            text: "Initializing error",
-            buttonTitle: L10n.hide,
-            buttonAction: { SnackBar.hide() }
-        ))
+        handleError(text: L10n.initializingError)
     }
 
     func handleUnknownError() {
-        snackbar
-            .send(SnackBar(title: "🥺", text: L10n.somethingWentWrong, buttonTitle: L10n.hide,
-                           buttonAction: { SnackBar.hide() }))
+        handleError(text: L10n.somethingWentWrong)
+    }
+
+    func handleError(text: String) {
+        snackbar.send(SnackBar(title: "🥺", text: text, buttonTitle: L10n.hide, buttonAction: { SnackBar.hide() }))
     }
 
     func send() async {

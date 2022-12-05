@@ -63,7 +63,7 @@ struct SendInputTokenView_Previews: PreviewProvider {
     static var previews: some View {
         ZStack {
             Color(Asset.Colors.rain.color)
-            SendInputTokenView(viewModel: SendInputTokenViewModel())
+            SendInputTokenView(viewModel: SendInputTokenViewModel(initialToken: .init(token: .nativeSolana)))
                 .padding(.horizontal, 16)
         }
     }
