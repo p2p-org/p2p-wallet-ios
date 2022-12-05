@@ -101,7 +101,7 @@ final class SendInputViewModel: BaseViewModel, ObservableObject {
         inputAmountViewModel = SendInputAmountViewModel()
         actionButtonViewModel = SendInputActionButtonViewModel()
 
-        tokenViewModel = SendInputTokenViewModel()
+        tokenViewModel = SendInputTokenViewModel(initialToken: tokenInWallet)
         tokenViewModel.isTokenChoiceEnabled = preChosenWallet != nil ? false: wallets.count > 1
 
         super.init()
@@ -163,7 +163,6 @@ private extension SendInputViewModel {
             .store(in: &subscriptions)
 
         $isFeeLoading
-            .receive(on: DispatchQueue.main)
             .sink { [weak self] isLoading in
                 guard let self = self else { return }
                 if isLoading {
