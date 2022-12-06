@@ -14,8 +14,8 @@ struct RecipientSearchView: View {
     var body: some View {
         ZStack {
             Color(Asset.Colors.smoke.color)
-                .ignoresSafeArea()
                 .onTapGesture { viewModel.isFirstResponder = false }
+                .ignoresSafeArea()
 
             VStack(spacing: 20) {
                 // Search field

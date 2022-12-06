@@ -27,8 +27,8 @@ struct RecipientSearchField: View {
                     textField.returnKeyType = .done
                     textField.keyboardType = .asciiCapable
                 }
-                    .frame(height: 24)
-                    .padding(.vertical, 12)
+                .frame(height: 24)
+                .padding(.vertical, 12)
 
                 if isLoading {
                     Spinner()
@@ -60,10 +60,15 @@ struct RecipientSearchField: View {
             Button {
                 scan()
             } label: {
-                Image(uiImage: Asset.Icons.qr.image)
-                    .resizable()
-                    .frame(width: 18, height: 18)
-                    .foregroundColor(Color(Asset.Colors.night.color))
+                ZStack {
+                    Image(uiImage: Asset.Icons.qr.image)
+                        .resizable()
+                        .frame(width: 18, height: 18)
+                        .foregroundColor(Color(Asset.Colors.night.color))
+                    Rectangle()
+                        .frame(width: 30, height: 30)
+                        .opacity(0)
+                }
             }
         }
     }
