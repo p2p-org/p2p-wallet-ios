@@ -11,12 +11,17 @@ import Foundation
 import Resolver
 
 final class SendCoordinator: Coordinator<SendCoordinator.Result> {
+    
+    // MARK: - Properties
+
     private let navigationController: UINavigationController
     private let pubKey: String?
     private let analyticsManager: AnalyticsManager
     private var sendCoordinator: SendToken.Coordinator?
 
     private let subject = PassthroughSubject<SendCoordinator.Result, Never>()
+
+    // MARK: - Initializer
 
     init(
         navigationController: UINavigationController,
