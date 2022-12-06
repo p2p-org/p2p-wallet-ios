@@ -19,12 +19,12 @@ final class SendInputViewModel: BaseViewModel, ObservableObject {
     let tokenViewModel: SendInputTokenViewModel
 
     @Published var sourceWallet: Wallet
-    @Published var feeWallet: Wallet
 
     @Published var feeTitle = L10n.fees("")
     @Published var isFeeLoading: Bool = true
     let feeInfoPressed = PassthroughSubject<Void, Never>()
     let openFeeInfo = PassthroughSubject<Bool, Never>()
+    let changeFeeToken = PassthroughSubject<Wallet, Never>()
 
     let snackbar = PassthroughSubject<SnackBar, Never>()
     let transaction = PassthroughSubject<SendTransaction, Never>()
@@ -60,7 +60,6 @@ final class SendInputViewModel: BaseViewModel, ObservableObject {
 
         let feeTokenInWallet = wallets
             .first(where: { $0.token.address == Token.usdc.address }) ?? Wallet(token: Token.usdc)
-        feeWallet = feeTokenInWallet
 
         var exchangeRate = [String: CurrentPrice]()
         var tokens = Set<Token>()
@@ -81,7 +80,9 @@ final class SendInputViewModel: BaseViewModel, ObservableObject {
         stateMachine = .init(
             initialState: state,
             services: .init(
-                swapService: MockedSwapService(result: nil),
+                swapService: SwapServiceImpl(
+                    feeRelayerCalculator: Resolver.resolve(FeeRelayer.self).feeCalculator, orcaSwap: Resolver.resolve()
+                ),
                 feeService: SendFeeCalculatorImpl(
                     feeRelayerCalculator: Resolver.resolve(FeeRelayer.self).feeCalculator
                 ),
@@ -185,7 +186,7 @@ private extension SendInputViewModel {
             .sink { [weak self] _ in
                 guard let self = self else { return }
                 let text: String
-                if self.feeWallet.mintAddress == self.sourceWallet.mintAddress {
+                if self.currentState.feeWallet?.mintAddress == self.sourceWallet.mintAddress {
                     text = L10n.calculatedBySubtractingTheAccountCreationFeeFromYourBalance
                 } else {
                     text = L10n.usingTheMaximumAmount(self.sourceWallet.token.symbol)
@@ -195,7 +196,7 @@ private extension SendInputViewModel {
             }
             .store(in: &subscriptions)
 
-        $feeWallet
+        changeFeeToken
             .sinkAsync { [weak self] newFeeToken in
                 guard let self = self else { return }
                 self.isFeeLoading = true
@@ -254,7 +255,7 @@ private extension SendInputViewModel {
         } else {
             feeTitle = L10n
                 .fees(
-                    "\(currentState.fee.total.convertToBalance(decimals: 9).tokenAmount(symbol: feeWallet.token.symbol))"
+                    "\(currentState.feeInToken.total.convertToBalance(decimals: 9).tokenAmount(symbol: currentState.tokenFee.symbol))"
                 )
         }
     }
