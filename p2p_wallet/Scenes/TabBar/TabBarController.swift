@@ -14,15 +14,22 @@ import RxSwift
 import RxCocoa
 
 final class TabBarController: UITabBarController {
+    // MARK: - Dependencies
+
     @Injected private var helpLauncher: HelpCenterLauncher
     @Injected private var solanaTracker: SolanaTracker
 
+    // MARK: - Publishers
     var middleButtonClicked: AnyPublisher<Void, Never> { customTabBar.middleButtonClicked }
     private let homeTabClickedTwicelySubject = PassthroughSubject<Void, Never>()
     var homeTabClickedTwicely: AnyPublisher<Void, Never> { homeTabClickedTwicelySubject.eraseToAnyPublisher() }
     private let solendTutorialSubject = PassthroughSubject<Void, Never>()
     var solendTutorialClicked: AnyPublisher<Void, Never> { solendTutorialSubject.eraseToAnyPublisher() }
 
+    // MARK: - Properties
+    private let viewModel: TabBarViewModel
+    private let authenticateWhenAppears: Bool
+    
     private let disposeBag = DisposeBag()
     private var subscriptions = Set<AnyCancellable>()
 
@@ -30,9 +37,7 @@ final class TabBarController: UITabBarController {
     private lazy var blurEffectView: UIView = LockView()
     private var localAuthVC: PincodeViewController?
 
-    private let viewModel: TabBarViewModel
-    private let authenticateWhenAppears: Bool
-
+    // MARK: - Initializers
     init(
         viewModel: TabBarViewModel,
         authenticateWhenAppears: Bool
@@ -46,18 +51,53 @@ final class TabBarController: UITabBarController {
     public required init?(coder _: NSCoder) {
         fatalError("init(coder:) has not been implemented")
     }
+    
+    // MARK: - Public actions
+
+    func setupTabs() {
+        TabItem.allCases.enumerated().forEach { index, item in
+            if item == .actions {
+                viewControllers?[index].tabBarItem = UITabBarItem(title: nil, image: nil, selectedImage: nil)
+            } else {
+                viewControllers?[index].tabBarItem = UITabBarItem(
+                    title: item.displayTitle,
+                    image: item.image,
+                    selectedImage: item.image
+                )
+            }
+        }
+    }
+
+    func changeItem(to item: TabItem) {
+        guard let viewControllers = viewControllers,
+              item.rawValue < viewControllers.count
+        else { return }
+        let viewController = viewControllers[item.rawValue]
+        selectedIndex = item.rawValue
+        _ = tabBarController(self, shouldSelect: viewController)
+    }
+
+    // MARK: - Life cycle
 
     override func viewDidLoad() {
         super.viewDidLoad()
 
+        // replace default TabBar by CustomTabBar
         setValue(CustomTabBar(frame: tabBar.frame), forKey: "tabBar")
+        
+        // bind values
         bind()
+        
+        // set up
         setUpTabBarAppearance()
         delegate = self
 
+        // authenticate if needed
         if authenticateWhenAppears {
             viewModel.authenticate(presentationStyle: .login())
         }
+        
+        // add blur EffectView for authentication scene
         view.addSubview(blurEffectView)
         blurEffectView.autoPinEdgesToSuperviewEdges()
     }
@@ -71,6 +111,81 @@ final class TabBarController: UITabBarController {
             }
         }
     }
+    
+    // MARK: - Authentications
+
+    private func showLockView() {
+        UIApplication.shared.kWindow?.endEditing(true)
+        let lockView = LockView()
+        UIApplication.shared.windows.last?.addSubview(lockView)
+        lockView.autoPinEdgesToSuperviewEdges()
+        solanaTracker.stopTracking()
+    }
+
+    private func hideLockView() {
+        for view in UIApplication.shared.windows.last?.subviews ?? [] where view is LockView {
+            view.removeFromSuperview()
+        }
+    }
+
+    private func handleAuthenticationStatus(_ authStyle: AuthenticationPresentationStyle?) {
+        // dismiss
+        guard let authStyle = authStyle else {
+            localAuthVC?.dismiss(animated: true) { [unowned self] in
+                localAuthVC = nil
+            }
+            return
+        }
+        localAuthVC?.dismiss(animated: false)
+        let pincodeViewModel = PincodeViewModel(
+            state: .check,
+            isBackAvailable: !authStyle.options.contains(.required),
+            successNotification: ""
+        )
+        localAuthVC = PincodeViewController(viewModel: pincodeViewModel)
+        if authStyle.options.contains(.fullscreen) {
+            localAuthVC?.modalPresentationStyle = .fullScreen
+        }
+
+        var authSuccess = false
+        pincodeViewModel.openMain.eraseToAnyPublisher()
+            .sink { [weak self] _ in
+                authSuccess = true
+                self?.viewModel.authenticate(presentationStyle: nil)
+                DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) {
+                    authStyle.completion?(false)
+                }
+            }
+            .store(in: &subscriptions)
+        pincodeViewModel.infoDidTap
+            .sink(receiveValue: { [unowned self] in
+                helpLauncher.launch()
+            })
+            .store(in: &subscriptions)
+        localAuthVC?.onClose = { [weak self] in
+            self?.viewModel.authenticate(presentationStyle: nil)
+            if authSuccess == false {
+                authStyle.onCancel?()
+            }
+        }
+        presentLocalAuth()
+    }
+
+    private func presentLocalAuth() {
+        let keyWindow = UIApplication.shared.windows.filter(\.isKeyWindow).first
+        let topController = keyWindow?.rootViewController?.findLastPresentedViewController()
+        if topController is UIAlertController {
+            let presenting = topController?.presentingViewController
+            topController?.dismiss(animated: false) { [weak presenting, weak localAuthVC] in
+                guard let localAuthVC = localAuthVC else { return }
+                presenting?.present(localAuthVC, animated: true)
+            }
+        } else {
+            topController?.present(localAuthVC!, animated: true)
+        }
+    }
+
+    // MARK: - Helpers
 
     private func setUpTabBarAppearance() {
         let standardAppearance = UITabBarAppearance()
@@ -130,104 +245,6 @@ final class TabBarController: UITabBarController {
             .map { $0 == nil }
             .drive(blurEffectView.rx.isHidden)
             .disposed(by: disposeBag)
-    }
-
-    func setupTabs() {
-        TabItem.allCases.enumerated().forEach { index, item in
-            if item == .actions {
-                viewControllers?[index].tabBarItem = UITabBarItem(title: nil, image: nil, selectedImage: nil)
-            } else {
-                viewControllers?[index].tabBarItem = UITabBarItem(
-                    title: item.displayTitle,
-                    image: item.image,
-                    selectedImage: item.image
-                )
-            }
-        }
-    }
-
-    func changeItem(to item: TabItem) {
-        guard let viewControllers = viewControllers,
-              item.rawValue < viewControllers.count
-        else { return }
-        let viewController = viewControllers[item.rawValue]
-        selectedIndex = item.rawValue
-        _ = tabBarController(self, shouldSelect: viewController)
-    }
-
-    // MARK: - Locking
-
-    private func showLockView() {
-        UIApplication.shared.kWindow?.endEditing(true)
-        let lockView = LockView()
-        UIApplication.shared.windows.last?.addSubview(lockView)
-        lockView.autoPinEdgesToSuperviewEdges()
-        solanaTracker.stopTracking()
-    }
-
-    private func hideLockView() {
-        for view in UIApplication.shared.windows.last?.subviews ?? [] where view is LockView {
-            view.removeFromSuperview()
-        }
-    }
-
-    // MARK: - Helpers
-
-    private func handleAuthenticationStatus(_ authStyle: AuthenticationPresentationStyle?) {
-        // dismiss
-        guard let authStyle = authStyle else {
-            localAuthVC?.dismiss(animated: true) { [weak localAuthVC] in
-                localAuthVC = nil
-            }
-            return
-        }
-        localAuthVC?.dismiss(animated: false)
-        let pincodeViewModel = PincodeViewModel(
-            state: .check,
-            isBackAvailable: !authStyle.options.contains(.required),
-            successNotification: ""
-        )
-        localAuthVC = PincodeViewController(viewModel: pincodeViewModel)
-        if authStyle.options.contains(.fullscreen) {
-            localAuthVC?.modalPresentationStyle = .fullScreen
-        }
-
-        var authSuccess = false
-        pincodeViewModel.openMain.eraseToAnyPublisher()
-            .sink { [weak self] _ in
-                authSuccess = true
-                self?.viewModel.authenticate(presentationStyle: nil)
-                DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) {
-                    authStyle.completion?(false)
-                }
-            }
-            .store(in: &subscriptions)
-        pincodeViewModel.infoDidTap
-            .sink(receiveValue: { [unowned self] in
-                helpLauncher.launch()
-            })
-            .store(in: &subscriptions)
-        localAuthVC?.onClose = { [weak self] in
-            self?.viewModel.authenticate(presentationStyle: nil)
-            if authSuccess == false {
-                authStyle.onCancel?()
-            }
-        }
-        presentLocalAuth()
-    }
-
-    private func presentLocalAuth() {
-        let keyWindow = UIApplication.shared.windows.filter(\.isKeyWindow).first
-        let topController = keyWindow?.rootViewController?.findLastPresentedViewController()
-        if topController is UIAlertController {
-            let presenting = topController?.presentingViewController
-            topController?.dismiss(animated: false) { [weak presenting, weak localAuthVC] in
-                guard let localAuthVC = localAuthVC else { return }
-                presenting?.present(localAuthVC, animated: true)
-            }
-        } else {
-            topController?.present(localAuthVC!, animated: true)
-        }
     }
 }
 
