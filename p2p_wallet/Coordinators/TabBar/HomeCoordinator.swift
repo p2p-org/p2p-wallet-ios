@@ -15,48 +15,52 @@ import SwiftUI
 import UIKit
 
 final class HomeCoordinator: Coordinator<Void> {
+    
+    // MARK: - Dependencies
+
     @Injected private var analyticsManager: AnalyticsManager
 
+    // MARK: - Properties
+
     private let navigationController: UINavigationController
-
     private let scrollSubject = PassthroughSubject<Void, Never>()
-
     private let earnSubject = PassthroughSubject<Void, Never>()
+    private let resultSubject = PassthroughSubject<Void, Never>()
+    
+    // MARK: - Publishers
+
     var showEarn: AnyPublisher<Void, Never> { earnSubject.eraseToAnyPublisher() }
 
-    private let resultSubject = PassthroughSubject<Void, Never>()
+    // MARK: - Initializers
 
     init(navigationController: UINavigationController) {
         self.navigationController = navigationController
     }
 
+    // MARK: - Public actions
+
+    func scrollToTop() {
+        scrollSubject.send()
+    }
+
+    // MARK: - Methods
+
     override func start() -> AnyPublisher<Void, Never> {
+        // Home with tokens
+        let tokensViewModel = createHomeWithTokensViewModel()
+        
+        // home with no token
+        let emptyViewModel = createHomeEmptyViewModel()
+        
+        // home view
         let viewModel = HomeViewModel()
-        let tokensViewModel = HomeWithTokensViewModel()
-        tokensViewModel.earnShow
-            .sink(receiveValue: { [unowned self] in
-                earnSubject.send()
-            })
-            .store(in: &subscriptions)
-        let emptyViewModel = HomeEmptyViewModel()
-        let emptyVMOutput = emptyViewModel.output.coord
         let homeView = HomeView(
             viewModel: viewModel,
             viewModelWithTokens: tokensViewModel,
             emptyViewModel: emptyViewModel
         ).asViewController() as! UIHostingControllerWithoutNavigation<HomeView>
-
-        navigationController.setViewControllers([homeView], animated: false)
-        navigationController.onClose = { [weak self] in
-            self?.resultSubject.send(())
-        }
-
-        scrollSubject
-            .sink(receiveValue: {
-                tokensViewModel.scrollToTop()
-            })
-            .store(in: &subscriptions)
-
+        
+        // bind
         homeView.viewWillAppear
             .sink(receiveValue: { [unowned homeView] in
                 homeView.navigationIsHidden = true
@@ -67,7 +71,7 @@ final class HomeCoordinator: Coordinator<Void> {
                 homeView.navigationIsHidden = false
             })
             .store(in: &subscriptions)
-
+        
         viewModel.errorShow
             .sink(receiveValue: { show in
                 let walletsRepository = Resolver.resolve(WalletsRepository.self)
@@ -81,75 +85,42 @@ final class HomeCoordinator: Coordinator<Void> {
             })
             .store(in: &subscriptions)
 
-        Publishers.Merge(emptyVMOutput.topUpShow, tokensViewModel.buyShow)
-            .filter { !available(.buyScenarioEnabled) }
+        // set view controller
+        navigationController.setViewControllers([homeView], animated: false)
+        navigationController.onClose = { [weak self] in
+            self?.resultSubject.send(())
+        }
+    
+        return resultSubject.prefix(1).eraseToAnyPublisher()
+    }
+    
+    // MARK: - Helpers
+
+    private func createHomeWithTokensViewModel() -> HomeWithTokensViewModel {
+        let tokensViewModel = HomeWithTokensViewModel()
+        
+        tokensViewModel.earnShow
             .sink(receiveValue: { [unowned self] in
-                presentBuyView()
+                earnSubject.send()
             })
             .store(in: &subscriptions)
-
-        emptyVMOutput.receive
-            .sink(receiveValue: { [unowned self] in
-                let coordinator = ReceiveCoordinator(navigationController: navigationController, pubKey: $0)
-                coordinate(to: coordinator)
-                    .sink(receiveValue: {})
-                    .store(in: &subscriptions)
-                analyticsManager.log(event: AmplitudeEvent.mainScreenReceiveOpen)
-                analyticsManager.log(event: AmplitudeEvent.receiveViewed(fromPage: "main_screen"))
+        
+        scrollSubject
+            .sink(receiveValue: { [unowned tokensViewModel] in
+                tokensViewModel.scrollToTop()
             })
             .store(in: &subscriptions)
-
-        emptyVMOutput.topUpCoinShow
-            .filter { [Token.nativeSolana, .usdc].contains($0) }
-            .flatMap { [unowned self] cryto -> AnyPublisher<Void, Never> in
-                let coordinator: Coordinator<Void>
-                if available(.buyScenarioEnabled) {
-                    coordinator = BuyCoordinator(
-                        navigationController: navigationController,
-                        context: .fromHome,
-                        defaultToken: cryto
-                    )
-                } else {
-                    coordinator = BuyPreparingCoordinator(
-                        navigationController: navigationController,
-                        strategy: .show,
-                        crypto: cryto == .usdc ? .usdc : cryto == .nativeSolana ? .sol : .eth
-                    )
-                }
-                return self.coordinate(to: coordinator)
-            }.sink {}
-            .store(in: &subscriptions)
-
-        emptyVMOutput.topUpCoinShow
-            .filter { [Token.renBTC, .eth, .usdt].contains($0) }
-            .map { $0 == .renBTC ? Token(.renBTC, customSymbol: "BTC") : $0 }
-            .flatMap { [unowned self] token -> AnyPublisher<Void, Never> in
-                self.coordinate(to: HomeBuyNotificationCoordinator(
-                    tokenFrom: .usdc, tokenTo: token, controller: navigationController
-                ))
-                .flatMap { result -> AnyPublisher<Void, Never> in
-                    switch result {
-                    case .showBuy:
-                        return self.coordinate(to: BuyCoordinator(
-                            navigationController: self.navigationController,
-                            context: .fromHome,
-                            defaultToken: .usdc
-                        ))
-                    default:
-                        return Just(()).eraseToAnyPublisher()
-                    }
-                }
-                .eraseToAnyPublisher()
-            }
-            .sink(receiveValue: { _ in })
-            .store(in: &subscriptions)
-
-        Publishers.Merge(tokensViewModel.buyShow, emptyVMOutput.topUpShow)
-            .filter { available(.buyScenarioEnabled) }
+        
+        tokensViewModel.buyShow
             .sink(receiveValue: { [unowned self] _ in
-                coordinate(to: BuyCoordinator(navigationController: navigationController, context: .fromHome))
-                    .sink(receiveValue: {})
-                    .store(in: &subscriptions)
+                if available(.buyScenarioEnabled) {
+                    coordinate(to: BuyCoordinator(navigationController: navigationController, context: .fromHome))
+                        .sink(receiveValue: {})
+                        .store(in: &subscriptions)
+                } else {
+                    presentBuyView()
+                }
+                
             })
             .store(in: &subscriptions)
 
@@ -212,8 +183,57 @@ final class HomeCoordinator: Coordinator<Void> {
                 }
             })
             .store(in: &subscriptions)
-        return resultSubject.prefix(1).eraseToAnyPublisher()
+        
+        return tokensViewModel
     }
+    
+    private func createHomeEmptyViewModel() -> HomeEmptyViewModel {
+        let emptyViewModel = HomeEmptyViewModel()
+        let emptyVMOutput = emptyViewModel.output.coord
+        
+        emptyVMOutput.topUpShow
+            .filter { !available(.buyScenarioEnabled) }
+            .sink(receiveValue: { [unowned self] in
+                presentBuyView()
+            })
+            .store(in: &subscriptions)
+        
+        emptyVMOutput.receive
+            .sink(receiveValue: { [unowned self] in
+                let coordinator = ReceiveCoordinator(navigationController: navigationController, pubKey: $0)
+                coordinate(to: coordinator)
+                    .sink(receiveValue: {})
+                    .store(in: &subscriptions)
+                analyticsManager.log(event: AmplitudeEvent.mainScreenReceiveOpen)
+                analyticsManager.log(event: AmplitudeEvent.receiveViewed(fromPage: "main_screen"))
+            })
+            .store(in: &subscriptions)
+
+        emptyVMOutput.topUpCoinShow
+            .filter { [Token.nativeSolana, .usdc].contains($0) }
+            .flatMap { [unowned self] cryto -> AnyPublisher<Void, Never> in
+                let coordinator: Coordinator<Void>
+                if available(.buyScenarioEnabled) {
+                    coordinator = BuyCoordinator(
+                        navigationController: navigationController,
+                        context: .fromHome,
+                        defaultToken: cryto
+                    )
+                } else {
+                    coordinator = BuyPreparingCoordinator(
+                        navigationController: navigationController,
+                        strategy: .show,
+                        crypto: cryto == .usdc ? .usdc : cryto == .nativeSolana ? .sol : .eth
+                    )
+                }
+                return self.coordinate(to: coordinator)
+            }.sink {}
+            .store(in: &subscriptions)
+    
+        return emptyViewModel
+    }
+
+    // MARK: - Navigation
 
     private func presentBuyView() {
         navigationController.present(
@@ -238,9 +258,5 @@ final class HomeCoordinator: Coordinator<Void> {
             .store(in: &subscriptions)
         analyticsManager.log(event: AmplitudeEvent.mainScreenReceiveOpen)
         analyticsManager.log(event: AmplitudeEvent.receiveViewed(fromPage: "main_screen"))
-    }
-
-    func scrollToTop() {
-        scrollSubject.send()
     }
 }
