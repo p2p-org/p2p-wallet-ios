@@ -226,7 +226,6 @@ PODS:
   - SwiftGen (6.6.2)
   - SwiftLint (0.50.0)
   - SwiftNotificationCenter (1.0.4)
-  - SwiftSVG (2.3.2)
   - SwiftyUserDefaults (5.3.0)
   - TagListView (1.4.1)
   - Task_retrying (1.0.3)
@@ -291,7 +290,6 @@ DEPENDENCIES:
   - SwiftGen (~> 6.0)
   - SwiftLint
   - SwiftNotificationCenter
-  - SwiftSVG (= 2.3.2)
   - SwiftyUserDefaults (= 5.3.0)
   - TagListView (= 1.4.1)
   - TransactionParser (from `https://github.com/p2p-org/key-app-kit-swift.git`, branch `master`)
@@ -347,7 +345,6 @@ SPEC REPOS:
     - SwiftGen
     - SwiftLint
     - SwiftNotificationCenter
-    - SwiftSVG
     - SwiftyUserDefaults
     - TagListView
     - Task_retrying
@@ -594,7 +591,6 @@ SPEC CHECKSUMS:
   SwiftGen: 1366a7f71aeef49954ca5a63ba4bef6b0f24138c
   SwiftLint: 9cbf846727f3312f3ba722f2d7108a162cd050a5
   SwiftNotificationCenter: 760386da2ce03d3594cb5e96d1e22ec80b44b46f
-  SwiftSVG: ca7f64e403b8ea7ea8eba8c823b83ba4a059834c
   SwiftyUserDefaults: 63f80248cf5bfb3458825d9a78f2eb7e1293a040
   TagListView: a1c236d17960a0cf64156725a76ce6d73ebce2be
   Task_retrying: 9e19177e42b162d1d54317f9cfcbabc01d057c38
@@ -602,6 +598,6 @@ SPEC CHECKSUMS:
   TweetNacl: 3abf4d1d2082b0114e7a67410e300892448951e6
   "UITextView+Placeholder": d7b0c400921f66523f3a85d74f774512e14f6502
 
-PODFILE CHECKSUM: 305543927b6cbf8d984bb52dea4d9b18a0def59c
+PODFILE CHECKSUM: 447a1ddebc8de75b37fea8bc0fb353fa88e79f3f
 
 COCOAPODS: 1.11.3
