@@ -11,16 +11,16 @@ import SolanaSwift
 import Resolver
 
 final class TabBarCoordinator: Coordinator<Void> {
-
-    // Dependencies
-    private unowned var window: UIWindow!
-
-    private let tabBarController: TabBarController
+    
+    // MARK: - Dependencies
     @Injected private var userWalletManager: UserWalletManager
 
+    // MARK: - Properties
+    private unowned var window: UIWindow!
+    private let tabBarController: TabBarController
     private let closeSubject = PassthroughSubject<Void, Never>()
 
-    // MARK: - Init
+    // MARK: - Initializer
 
     init(
         window: UIWindow,
@@ -33,34 +33,79 @@ final class TabBarCoordinator: Coordinator<Void> {
             authenticateWhenAppears: authenticateWhenAppears
         )
         super.init()
-        listenMiddleButton()
-        listenWallet()
+        listenToActionsButton()
+        listenToWallet()
     }
     
     // MARK: - Life cycle
     
+    /// Start coordinator
     override func start() -> AnyPublisher<Void, Never> {
+        // set up tabs
+        let firstTab = setUpHome()
+        let (secondTab, thirdTab) = setUpSolendHistoryOrFeedback()
+        let forthTab = setUpSettings()
+
+        // set viewcontrollers
+        tabBarController.setViewControllers(
+            [
+                firstTab,
+                secondTab,
+                UINavigationController(),
+                thirdTab,
+                forthTab,
+            ],
+            animated: false
+        )
+        
+        // set up tab items
+        tabBarController.setupTabs()
+
+        // configure window
+        window.rootViewController?.view.hideLoadingIndicatorView()
+        window.animate(newRootViewController: tabBarController)
+
+        return closeSubject.prefix(1).eraseToAnyPublisher()
+    }
+
+    // MARK: - Helpers
+
+    /// Set up Home scene
+    private func setUpHome() -> UIViewController {
+        // create first active tab Home
         let homeNavigation = UINavigationController()
         let homeCoordinator = HomeCoordinator(navigationController: homeNavigation)
+        
+        // coordinate to homeCoordinator
         coordinate(to: homeCoordinator)
             .sink(receiveValue: {})
             .store(in: &subscriptions)
+        
+        // navigate to Earn from homeCoordinator
         homeCoordinator.showEarn
             .sink(receiveValue: { [unowned self] in
                 tabBarController.changeItem(to: .invest)
             })
             .store(in: &subscriptions)
+        
+        // scroll to top when home tab clicked twice
         tabBarController.homeTabClickedTwicely
             .sink(receiveValue: { [weak homeCoordinator] in
                 homeCoordinator?.scrollToTop()
             })
             .store(in: &subscriptions)
+        
+        // solen tutorial clicked
         tabBarController.solendTutorialClicked
             .sink(receiveValue: { [weak self] in
-                self?.routeToSolendTutorial()
+                self?.navigateToSolendTutorial()
             })
             .store(in: &subscriptions)
-
+        return homeNavigation
+    }
+    
+    /// Set up Solend, history or feedback scene
+    private func setUpSolendHistoryOrFeedback() -> (UIViewController, UIViewController) {
         let solendOrHistoryNavigation: UINavigationController
         let historyOrFeedbackNavigation: UINavigationController
         if available(.investSolendFeature) {
@@ -75,6 +120,11 @@ final class TabBarCoordinator: Coordinator<Void> {
             historyOrFeedbackNavigation = UINavigationController(rootViewController: History.Scene())
         }
 
+        return (solendOrHistoryNavigation, historyOrFeedbackNavigation)
+    }
+    
+    /// Set up Settings scene
+    private func setUpSettings() -> UIViewController {
         let settingsNavigation: UINavigationController
         if available(.settingsFeature) {
             settingsNavigation = UINavigationController()
@@ -87,45 +137,57 @@ final class TabBarCoordinator: Coordinator<Void> {
                 rootViewController: Settings.ViewController(viewModel: Settings.ViewModel())
             )
         }
-
-        tabBarController.setViewControllers(
-            [
-                homeNavigation,
-                solendOrHistoryNavigation,
-                UINavigationController(),
-                historyOrFeedbackNavigation,
-                settingsNavigation,
-            ],
-            animated: false
-        )
-        tabBarController.setupTabs()
-
-        window.rootViewController?.view.hideLoadingIndicatorView()
-        window.animate(newRootViewController: tabBarController)
-
-        return closeSubject.prefix(1).eraseToAnyPublisher()
+        return settingsNavigation
     }
-
-    private func listenMiddleButton() {
+    
+    /// Listen to Actions Button
+    private func listenToActionsButton() {
         tabBarController.middleButtonClicked
-            .sink { [unowned self] in
+            .receive(on: RunLoop.main)
+            // vibration
+            .handleEvents(receiveOutput: {
                 let generator = UIImpactFeedbackGenerator(style: .light)
                 generator.impactOccurred()
-                let actionsCoordinator = ActionsCoordinator(viewController: tabBarController)
-                coordinate(to: actionsCoordinator)
-                    .sink(receiveValue: { [weak self] result in
-                        switch result {
-                        case .cancel:
-                            break
-                        case let .action(type):
-                            self?.handleAction(type)
-                        }
-                    })
-                    .store(in: &subscriptions)
+            })
+            // coordinate to ActionsCoordinator
+            .flatMap { [unowned self] in
+                coordinate(to: ActionsCoordinator(viewController: tabBarController))
             }
+            .sink(receiveValue: { [weak self] result in
+                switch result {
+                case .cancel:
+                    break
+                case let .action(type):
+                    self?.handleAction(type)
+                }
+            })
             .store(in: &subscriptions)
     }
 
+    private func listenToWallet() {
+        userWalletManager.$wallet
+            .sink { [weak self] wallet in
+                if wallet == nil {
+                    self?.closeSubject.send()
+                }
+            }
+            .store(in: &subscriptions)
+    }
+    
+    // MARK: - Helpers
+    
+    /// Navigate to SolendTutorial scene
+    private func navigateToSolendTutorial() {
+        var view = SolendTutorialView(viewModel: .init())
+        view.doneHandler = { [weak self] in
+            self?.tabBarController.changeItem(to: .invest)
+        }
+        let vc = view.asViewController()
+        vc.modalPresentationStyle = .fullScreen
+        tabBarController.present(vc, animated: true)
+    }
+    
+    /// Handle actions given by Actions button
     private func handleAction(_ action: ActionsView.Action) {
         guard
             let navigationController = tabBarController.selectedViewController as? UINavigationController
@@ -153,25 +215,5 @@ final class TabBarCoordinator: Coordinator<Void> {
                 .sink(receiveValue: { _ in })
                 .store(in: &subscriptions)
         }
-    }
-
-    private func routeToSolendTutorial() {
-        var view = SolendTutorialView(viewModel: .init())
-        view.doneHandler = { [weak self] in
-            self?.tabBarController.changeItem(to: .invest)
-        }
-        let vc = view.asViewController()
-        vc.modalPresentationStyle = .fullScreen
-        tabBarController.present(vc, animated: true)
-    }
-
-    private func listenWallet() {
-        userWalletManager.$wallet
-            .sink { [weak self] wallet in
-                if wallet == nil {
-                    self?.closeSubject.send()
-                }
-            }
-            .store(in: &subscriptions)
     }
 }
