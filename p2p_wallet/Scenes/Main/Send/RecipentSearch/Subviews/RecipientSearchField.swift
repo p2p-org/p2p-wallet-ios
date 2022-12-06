@@ -22,6 +22,10 @@ struct RecipientSearchField: View {
                 FocusedTextField(text: $text, isFirstResponder: $isFirstResponder) { textField in
                     textField.placeholder = L10n.usernameOrAddress
                     textField.autocapitalizationType = .none
+                    textField.autocorrectionType = .no
+                    textField.spellCheckingType = .no
+                    textField.returnKeyType = .done
+                    textField.keyboardType = .asciiCapable
                 }
                     .frame(height: 24)
                     .padding(.vertical, 12)
