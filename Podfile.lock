@@ -523,7 +523,7 @@ CHECKOUT OPTIONS:
     :commit: dadb16c54bd42ca83c08f3d80f61fbfca93a585c
     :git: https://github.com/TrGiLong/RxConcurrency.git
   Send:
-    :commit: b5d5c3a06af081a0b2e1ec57c640f3789083be63
+    :commit: 73db8fb65e53922e78c2c21969e6e16fdce22116
     :git: https://github.com/p2p-org/key-app-kit-swift.git
   Sentry:
     :git: https://github.com/getsentry/sentry-cocoa.git
