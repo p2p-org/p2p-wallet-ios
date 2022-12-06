@@ -1,6 +1,5 @@
 import Combine
 import SkeletonUI
-import SwiftSVG
 import SwiftUI
 
 struct CoinLogoView: UIViewRepresentable {
