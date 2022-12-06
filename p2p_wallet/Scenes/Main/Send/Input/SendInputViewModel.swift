@@ -80,7 +80,9 @@ final class SendInputViewModel: BaseViewModel, ObservableObject {
         stateMachine = .init(
             initialState: state,
             services: .init(
-                swapService: MockedSwapService(result: nil),
+                swapService: SwapServiceImpl(
+                    feeRelayerCalculator: Resolver.resolve(FeeRelayer.self).feeCalculator, orcaSwap: Resolver.resolve()
+                ),
                 feeService: SendFeeCalculatorImpl(
                     feeRelayerCalculator: Resolver.resolve(FeeRelayer.self).feeCalculator
                 ),
@@ -253,7 +255,7 @@ private extension SendInputViewModel {
         } else {
             feeTitle = L10n
                 .fees(
-                    "\(currentState.fee.total.convertToBalance(decimals: 9).tokenAmount(symbol: currentState.tokenFee.symbol))"
+                    "\(currentState.feeInToken.total.convertToBalance(decimals: 9).tokenAmount(symbol: currentState.tokenFee.symbol))"
                 )
         }
     }
