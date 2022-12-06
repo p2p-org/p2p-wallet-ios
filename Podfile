@@ -88,13 +88,10 @@ target 'p2p_wallet' do
   if $keyAppUI
     pod "KeyAppUI", :path => $keyAppUI
   else
-    pod 'KeyAppUI', :git => 'git@github.com:p2p-org/KeyAppUI.git', :branch => 'main'
+    pod 'KeyAppUI', :git => 'git@github.com:p2p-org/KeyAppUI.git', :branch => 'feature/pwn-5837-remove-attachments'
   end
 
   pod 'Resolver', '1.5.0'
-  pod 'UITextView+Placeholder', '1.4.0' # TODO: remove in future
-  pod 'TagListView', '1.4.1' # TODO: remove in futur 'UITextView+Placeholder', '1.4.0' # TODO: remove in future
-  pod 'SubviewAttachingTextView', '1.5.0' # TODO: remove in future
   pod 'JazziconSwift', :git => 'https://github.com/p2p-org/JazziconSwift.git', :branch => 'master'
   pod 'Kingfisher', '~> 7.3.2'
   pod 'ListPlaceholder', :git => 'https://github.com/p2p-org/ListPlaceholder.git', :branch => 'custom_gradient_color'
