@@ -11,11 +11,15 @@ import Foundation
 import Resolver
 
 final class WalletDetailCoordinator: Coordinator<WalletDetailCoordinator.Result> {
+    // MARK: - Properties
+
     private let navigationController: UINavigationController
     private let model: Model
     private let analyticsManager: AnalyticsManager
 
     private let subject = PassthroughSubject<WalletDetailCoordinator.Result, Never>()
+
+    // MARK: - Initializer
 
     init(
         navigationController: UINavigationController,
@@ -42,7 +46,7 @@ final class WalletDetailCoordinator: Coordinator<WalletDetailCoordinator.Result>
 
         navigationController.show(view, sender: nil)
 
-        return subject.eraseToAnyPublisher()
+        return subject.prefix(1).eraseToAnyPublisher()
     }
 }
 
