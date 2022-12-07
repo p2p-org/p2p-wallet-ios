@@ -29,7 +29,6 @@ class RecipientSearchViewModel: ObservableObject {
     @Published var userWalletEnvironments: UserWalletEnvironments = .empty
 
     @Published var isSearching = false
-    private var autoSelectAfterSearch = false
 
     @Published var recipientsHistoryStatus: SendHistoryService.Status = .ready
     @Published var recipientsHistory: [Recipient] = []
@@ -101,32 +100,24 @@ class RecipientSearchViewModel: ObservableObject {
         $input
             .combineLatest($userWalletEnvironments)
             .debounce(for: 0.2, scheduler: DispatchQueue.main)
-            .sink { [weak self] (query: String, env: UserWalletEnvironments) in
-                self?.search(query: query, env: env)
+            .sink { [weak self] (query: String, _) in
+                self?.search(query: query, autoSelectTheOnlyOneResultMode: .enabled(delay: 300_000_000))
             }.store(in: &subscriptions)
     }
-
+    
     @MainActor
-    func updateResult(result: RecipientSearchResult) {
-        searchResult = result
-
+    func autoSelectTheOnlyOneResult(result: RecipientSearchResult) {
         // Wait result and select first result
-        if autoSelectAfterSearch {
-            switch searchResult {
-            case let .ok(recipients):
-                if let recipient = recipients.first {
-                    selectRecipient(recipient)
-                    notifyAddressRecognized(recipient: recipient)
-                }
-            default:
-                break
-            }
-
-            autoSelectAfterSearch = false
+        switch searchResult {
+        case let .ok(recipients) where recipients.count == 1:
+            selectRecipient(recipients[0])
+            notifyAddressRecognized(recipient: recipients[0])
+        default:
+            break
         }
     }
 
-    func search(query: String, env: UserWalletEnvironments) {
+    func search(query: String, autoSelectTheOnlyOneResultMode: AutoSelectTheOnlyOneResultMode) {
         searchTask?.cancel()
         let currentSearchTerm = query.trimmingCharacters(in: .whitespaces)
         if currentSearchTerm.isEmpty {
@@ -140,8 +131,13 @@ class RecipientSearchViewModel: ObservableObject {
                 guard !Task.isCancelled else { return }
                 await MainActor.run { [weak self] in
                     self?.isSearching = false
+                    self?.searchResult = result
                 }
-                await updateResult(result: result)
+                if autoSelectTheOnlyOneResultMode.isEnabled {
+                    try? await Task.sleep(nanoseconds: autoSelectTheOnlyOneResultMode.delay!)
+                    guard !Task.isCancelled else { return }
+                    await autoSelectTheOnlyOneResult(result: result)
+                }
             }
         }
     }
@@ -158,11 +154,6 @@ class RecipientSearchViewModel: ObservableObject {
     func qr() {
         isFirstResponder = false
         coordinator.scanQRSubject.send(())
-    }
-
-    func search(query: String, autoSelect: Bool = true) async {
-        autoSelectAfterSearch = autoSelect
-        search(query: query, env: userWalletEnvironments)
     }
 
     @MainActor
