@@ -1127,3 +1127,4 @@ Reset the PIN or wait for %@.";
 "Unable to access camera" = "Unable to access camera";
 "Initializing error" = "Initializing error";
 "Not available for now" = "Not available for now";
+"Free (%@ left for today)" = "Free (%@ left for today)";

@@ -1154,3 +1154,4 @@ Reset the PIN or wait for %@." = "Il vous reste %@ tentatives pour saisir le cod
 "Unable to access camera" = "Impossible d'accéder à la caméra";
 "Initializing error" = "Erreur d'initialisation";
 "Not available for now" = "Non disponible pour le moment";
+"Free (%@ left for today)" = "Gratuit (%@ restant pour aujourd'hui)";
