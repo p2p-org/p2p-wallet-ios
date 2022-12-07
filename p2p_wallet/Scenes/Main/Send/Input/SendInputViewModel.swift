@@ -103,7 +103,12 @@ final class SendInputViewModel: BaseViewModel, ObservableObject {
         actionButtonViewModel = SendInputActionButtonViewModel()
 
         tokenViewModel = SendInputTokenViewModel(initialToken: tokenInWallet)
-        tokenViewModel.isTokenChoiceEnabled = preChosenWallet != nil ? false : wallets.count > 1
+        
+        let preChoosenWalletAvailable = preChosenWallet != nil
+        let recipientIsDirectSPLTokenAddress = recipient.category.isDirectSPLTokenAddress
+        let thereIsOnlyOneOrNoneWallets = wallets.count <= 1
+        let shouldDisableChosingToken = preChoosenWalletAvailable || recipientIsDirectSPLTokenAddress || thereIsOnlyOneOrNoneWallets
+        tokenViewModel.isTokenChoiceEnabled = !shouldDisableChosingToken
 
         super.init()
 
