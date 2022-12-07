@@ -19,7 +19,7 @@ extension MoonpaySellDataServiceProvider {
     struct Transaction: Codable {
         var id: String
         var createdAt: Date
-        var updatedAt
+        var updatedAt: Date
         var baseCurrencyAmount: Double
         var quoteCurrencyAmount: Double
         var feeAmount: Double
@@ -31,13 +31,13 @@ extension MoonpaySellDataServiceProvider {
         var quoteCurrencyId: String
         var baseCurrencyId: String
     }
+}
 
-    extension Transaction {
-        enum Status: String, Codable {
-            case waitingForDeposit
-            case pending
-            case failed
-            case completed
-        }
+extension MoonpaySellDataServiceProvider.Transaction {
+    enum Status: String, Codable {
+        case waitingForDeposit
+        case pending
+        case failed
+        case completed
     }
 }
