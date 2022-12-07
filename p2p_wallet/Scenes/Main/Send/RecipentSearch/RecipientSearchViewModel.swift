@@ -89,12 +89,13 @@ class RecipientSearchViewModel: ObservableObject {
 
         sendHistoryService.statusPublisher
             .receive(on: RunLoop.main)
-            .sink { [weak self] status in self?.recipientsHistoryStatus = status }
+            .assign(to: \.recipientsHistoryStatus, on: self)
             .store(in: &subscriptions)
 
         sendHistoryService.recipientsPublisher
             .receive(on: RunLoop.main)
-            .sink { [weak self] recipients in self?.recipientsHistory = Array(recipients.prefix(10)) }
+            .map { Array($0.prefix(10)) }
+            .assign(to: \.recipientsHistory, on: self)
             .store(in: &subscriptions)
 
         $input
@@ -172,7 +173,7 @@ class RecipientSearchViewModel: ObservableObject {
 
     @MainActor
     func notifyAddressRecognized(recipient: Recipient) {
-        let text = L10n.theAddressIsRecognized("\(recipient.address.prefix(7))...\(recipient.address.suffix(7))")
+        let text = L10n.theAddressIsRecognized("\(recipient.address.prefix(6))...\(recipient.address.suffix(6))")
         notificationService.showToast(title: "✅", text: text)
     }
 }

@@ -21,7 +21,7 @@ struct RecipientSearchView: View {
                 // Search field
                 RecipientSearchField(
                     text: $viewModel.input,
-                    isLoading: $viewModel.isSearching,
+                    isLoading: .constant(false),
                     isFirstResponder: $viewModel.isFirstResponder
                 ) {
                     viewModel.past()
