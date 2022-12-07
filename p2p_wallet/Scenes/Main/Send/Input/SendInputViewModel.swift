@@ -256,8 +256,10 @@ private extension SendInputViewModel {
     }
 
     func updateFeeTitle() {
-        if currentState.fee == .zero {
+        if currentState.fee == .zero, inputAmountViewModel.amountText.isEmpty {
             feeTitle = L10n.enjoyFreeTransactions
+        } else if currentState.fee == .zero {
+            feeTitle = L10n.fees(0)
         } else {
             feeTitle = L10n
                 .fees(
