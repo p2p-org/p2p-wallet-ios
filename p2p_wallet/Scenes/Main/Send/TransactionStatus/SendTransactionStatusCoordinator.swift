@@ -41,6 +41,7 @@ final class SendTransactionStatusCoordinator: Coordinator<Void> {
         container.transitioningDelegate = transition
         container.modalPresentationStyle = .custom
         container.view.layer.cornerRadius = 20
+        container.view.layer.maskedCorners = [.layerMinXMinYCorner, .layerMaxXMinYCorner]
 
         parentController.present(container, animated: true)
 

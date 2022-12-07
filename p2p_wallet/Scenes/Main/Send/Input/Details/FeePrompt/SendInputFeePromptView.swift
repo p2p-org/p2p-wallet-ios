@@ -21,36 +21,36 @@ struct SendInputFeePromptView: View {
                     .resizable()
                     .aspectRatio(contentMode: .fit)
                     .frame(maxWidth: 300)
+                    .padding(.horizontal, 16)
+
+                Spacer()
 
                 Text(viewModel.title)
                     .font(uiFont: .font(of: .title1, weight: .bold))
                     .multilineTextAlignment(.center)
                     .foregroundColor(Color(mainColor))
-                    .padding(.top, 56)
+                    .padding(.horizontal, 32)
 
                 Text(viewModel.description)
                     .apply(style: .text1)
                     .multilineTextAlignment(.center)
                     .foregroundColor(Color(mainColor))
                     .padding(.top, 16)
+                    .padding(.horizontal, 16)
 
                 Spacer()
+
+                if viewModel.isChooseTokenAvailable {
+                    multipleTokenActions
+                } else {
+                    singleTokenAction
+                        .padding(.bottom, 16)
+                }
             }
             .padding(.top, 60)
-            .padding(.horizontal, 32)
-
-            if viewModel.isChooseTokenAvailable {
-                VStack {
-                    Spacer()
-                    multipleTokenActions
-                }
-                .edgesIgnoringSafeArea(.bottom)
-            } else {
-                VStack {
-                    Spacer()
-                    singleTokenAction
-                        .padding(.all, 16)
-                }
+            .if(viewModel.isChooseTokenAvailable) { view in
+                view
+                    .edgesIgnoringSafeArea(.bottom)
             }
         }
     }

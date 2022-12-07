@@ -256,14 +256,15 @@ private extension SendInputViewModel {
     }
 
     func updateFeeTitle() {
-        if currentState.fee == .zero, inputAmountViewModel.amountText.isEmpty {
+        if currentState.fee == .zero && currentState.amountInToken == 0 && currentState.amountInFiat == 0 {
             feeTitle = L10n.enjoyFreeTransactions
         } else if currentState.fee == .zero {
             feeTitle = L10n.fees(0)
         } else {
+            let symbol = currentState.fee == .zero ? "" : currentState.tokenFee.symbol
             feeTitle = L10n
                 .fees(
-                    "\(currentState.feeInToken.total.convertToBalance(decimals: currentState.tokenFee.decimals).tokenAmount(symbol: currentState.tokenFee.symbol))"
+                    currentState.feeInToken.total.convertToBalance(decimals: Int(currentState.tokenFee.decimals)).tokenAmount(symbol: symbol)
                 )
         }
     }
