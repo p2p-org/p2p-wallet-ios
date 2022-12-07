@@ -22,7 +22,7 @@ class SellDataServiceMock: SellDataService {
     }
 
     func transaction(id: String) async throws -> Provider.Transaction {
-        Provider.Transaction()
+        fatalError()
     }
 
     func isAvailable() async throws -> Bool {
@@ -31,6 +31,9 @@ class SellDataServiceMock: SellDataService {
 }
 
 class SellActionServiceMock: SellActionService {
+    func providerSellURL() -> URL {
+        fatalError()
+    }
     func calculateRates() async throws -> Double { 0 }
     func saveTransaction() async throws {}
     func deleteTransaction() async throws {}
