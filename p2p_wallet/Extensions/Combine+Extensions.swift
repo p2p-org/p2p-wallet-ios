@@ -60,3 +60,48 @@ extension Publisher {
         .eraseToAnyPublisher()
     }
 }
+
+
+// MARK: - deallocatedPublisher
+
+var deinitCallbackKey = "deallocatedPublisher"
+
+extension NSObject {
+    func deallocatedPublisher() -> AnyPublisher<Void, Never> {
+        self.synchronized {
+            NSObject.deinitCallback(forObject: self)
+        }
+    }
+
+    static fileprivate func deinitCallback(forObject object: NSObject) -> AnyPublisher<Void, Never> {
+        if let deinitCallback = objc_getAssociatedObject(object, &deinitCallbackKey) as? AnyPublisher<Void, Never> {
+            return deinitCallback
+        } else {
+            let rem = DeinitCallback()
+            objc_setAssociatedObject(object, &deinitCallbackKey, rem, .OBJC_ASSOCIATION_RETAIN_NONATOMIC)
+            return rem.subject.eraseToAnyPublisher()
+        }
+    }
+}
+
+extension NSObject {
+    func synchronized<T>( _ action: () -> T) -> T {
+        objc_sync_enter(self)
+        let result = action()
+        objc_sync_exit(self)
+        return result
+    }
+}
+
+@objc fileprivate class DeinitCallback: NSObject {
+    let subject = PassthroughSubject<Void, Never>()
+
+    override init() {}
+
+    deinit {
+        self.subject.send()
+        self.subject.send(completion: .finished)
+    }
+}
+
+// MARK: -
