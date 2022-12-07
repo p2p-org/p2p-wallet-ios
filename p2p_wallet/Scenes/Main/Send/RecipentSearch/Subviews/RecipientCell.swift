@@ -14,8 +14,6 @@ struct RecipientCell: View {
 
     let recipient: Recipient
 
-    private let maxAddressLength = 6
-
     var body: some View {
         switch recipient.category {
         case let .username(name, domain):
@@ -23,33 +21,28 @@ struct RecipientCell: View {
             case "key":
                 cell(image: Image(uiImage: .appIconSmall), title: "@\(name).key")
             default:
-                if domain.isEmpty {
-                    cell(
-                        image: Image(uiImage: .newWalletCircle),
-                        title: "\(name)",
-                        subtitle: "\(recipient.address.prefix(maxAddressLength))...\(recipient.address.suffix(maxAddressLength))"
-                    )
-                } else {
-                    cell(
-                        image: Image(uiImage: .newWalletCircle),
-                        title: "\(name).\(domain)",
-                        subtitle: "\(recipient.address.prefix(maxAddressLength))...\(recipient.address.suffix(maxAddressLength))"
-                    )
-                }
+                cell(
+                    image: Image(uiImage: .newWalletCircle),
+                    title: RecipientFormatter.username(name: name, domain: domain),
+                    subtitle: RecipientFormatter.format(destination: recipient.address)
+                )
             }
         case .solanaAddress:
             cell(
                 image: Image(uiImage: .newWalletCircle),
-                title: "\(recipient.address.prefix(maxAddressLength))...\(recipient.address.suffix(maxAddressLength))"
+                title: RecipientFormatter.format(destination: recipient.address)
             )
         case let .solanaTokenAddress(_, token):
             cell(
                 image: CoinLogoImageViewRepresentable(size: 48, token: token),
-                title: "\(recipient.address.prefix(maxAddressLength))...\(recipient.address.suffix(maxAddressLength))",
+                title: RecipientFormatter.format(destination: recipient.address),
                 subtitle: "\(token.name) \(L10n.tokenAccount)"
             )
         default:
-            cell(image: Image(uiImage: .newWalletCircle), title: recipient.address)
+            cell(
+                image: Image(uiImage: .newWalletCircle),
+                title: RecipientFormatter.format(destination: recipient.address)
+            )
         }
     }
 
@@ -108,7 +101,7 @@ private extension Date {
         return dateYear == thisYear
     }
 }
-    
+
 struct RecipientCell_Previews: PreviewProvider {
     static var previews: some View {
         VStack(alignment: .leading) {

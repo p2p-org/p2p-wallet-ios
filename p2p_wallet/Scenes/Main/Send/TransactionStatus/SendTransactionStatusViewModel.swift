@@ -1,8 +1,8 @@
-import SolanaSwift
-import KeyAppUI
 import Combine
+import KeyAppUI
 import Resolver
 import RxSwift
+import SolanaSwift
 import TransactionParser
 
 final class SendTransactionStatusViewModel: BaseViewModel, ObservableObject {
@@ -25,15 +25,21 @@ final class SendTransactionStatusViewModel: BaseViewModel, ObservableObject {
     private let disposeBag = DisposeBag()
 
     init(transaction: SendTransaction) {
-        self.token = transaction.walletToken.token
-        self.transactionFiatAmount = "-\(transaction.amountInFiat.fiatAmount())"
-        self.transactionCryptoAmount = transaction.amount.tokenAmount(symbol: transaction.walletToken.token.symbol)
+        token = transaction.walletToken.token
+        transactionFiatAmount = "-\(transaction.amountInFiat.fiatAmount())"
+        transactionCryptoAmount = transaction.amount.tokenAmount(symbol: transaction.walletToken.token.symbol)
 
         let feeToken = transaction.payingFeeWallet.token
-        let feeAmount: String? = transaction.feeInToken == .zero ? nil : transaction.feeInToken.total.convertToBalance(decimals: feeToken.decimals).tokenAmount(symbol: feeToken.symbol)
+        let feeAmount: String? = transaction.feeInToken == .zero ? nil : transaction.feeInToken.total
+            .convertToBalance(decimals: feeToken.decimals).tokenAmount(symbol: feeToken.symbol)
         let feeInfo = feeAmount ?? L10n.freePaidByKeyApp
+
+        var recipient: String = RecipientFormatter.format(destination: transaction.recipient.address)
+        if case let .username(name, domain) = transaction.recipient.category {
+            recipient = RecipientFormatter.username(name: name, domain: domain)
+        }
         info = [
-            (title: L10n.sentTo, detail: transaction.recipient.address),
+            (title: L10n.sentTo, detail: recipient),
             (title: L10n.transactionFee, detail: feeInfo),
         ]
 
@@ -66,18 +72,26 @@ final class SendTransactionStatusViewModel: BaseViewModel, ObservableObject {
                 case let .other(message) where message == "Blockhash not found":
                     params = .init(
                         title: L10n.blockhashNotFound,
-                        description: L10n.theBankHasNotSeenTheGivenOrTheTransactionIsTooOldAndTheHasBeenDiscarded(parsedTransaction.blockhash ?? "", parsedTransaction.blockhash ?? ""),
+                        description: L10n.theBankHasNotSeenTheGivenOrTheTransactionIsTooOldAndTheHasBeenDiscarded(
+                            parsedTransaction.blockhash ?? "",
+                            parsedTransaction.blockhash ?? ""
+                        ),
                         fee: feeAmount
                     )
                 case let .other(message) where message.contains("Instruction"):
                     params = .init(
                         title: L10n.errorProcessingInstruction0CustomProgramError0x1,
-                        description: L10n.AnErrorOccuredWhileProcessingAnInstruction.theFirstElementOfTheTupleIndicatesTheInstructionIndexInWhichTheErrorOccured, fee: feeAmount)
+                        description: L10n.AnErrorOccuredWhileProcessingAnInstruction
+                            .theFirstElementOfTheTupleIndicatesTheInstructionIndexInWhichTheErrorOccured, fee: feeAmount
+                    )
                 case let .other(message) where message.contains("Already processed"):
                     params = .init(
                         title: L10n.thisTransactionHasAlreadyBeenProcessed,
-                        description: L10n.TheBankHasSeenThisTransactionBefore.thisCanOccurUnderNormalOperationWhenAUDPPacketIsDuplicatedAsAUserErrorFromAClientNotUpdatingItsOrAsADoubleSpendAttack(parsedTransaction.blockhash ?? ""),
-                        fee: feeAmount)
+                        description: L10n.TheBankHasSeenThisTransactionBefore
+                            .thisCanOccurUnderNormalOperationWhenAUDPPacketIsDuplicatedAsAUserErrorFromAClientNotUpdatingItsOrAsADoubleSpendAttack(parsedTransaction
+                                .blockhash ?? ""),
+                        fee: feeAmount
+                    )
                 default:
                     break
                 }
@@ -89,26 +103,26 @@ final class SendTransactionStatusViewModel: BaseViewModel, ObservableObject {
     }
 
     private func updateCompleted() {
-        self.title = L10n.transactionSucceeded
+        title = L10n.transactionSucceeded
         let text = L10n.theTransactionHasBeenSuccessfullyCompleted🤟
-        self.state = .succeed(message: text)
+        state = .succeed(message: text)
     }
 
     private func updateError() {
-        self.title = L10n.transactionFailed
+        title = L10n.transactionFailed
         let text = L10n.theTransactionWasRejectedByTheSolanaBlockchain🥺
         let buttonText = L10n.tapForDetails
         let attributedError = NSMutableAttributedString(string: text, attributes: [
             .font: UIFont.font(of: .text4),
-            .foregroundColor: Asset.Colors.night.color
+            .foregroundColor: Asset.Colors.night.color,
         ])
         attributedError.appending(
             NSMutableAttributedString(string: buttonText, attributes: [
                 .font: UIFont.font(of: .text4, weight: .bold),
-                .foregroundColor: Asset.Colors.rose.color
+                .foregroundColor: Asset.Colors.rose.color,
             ])
         )
-        self.state = .error(message: attributedError)
+        state = .error(message: attributedError)
     }
 }
 

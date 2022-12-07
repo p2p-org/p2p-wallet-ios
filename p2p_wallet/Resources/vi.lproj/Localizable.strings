@@ -1155,4 +1155,6 @@ Reset the PIN or wait for %@." = "Bạn còn %@ lần thử để nhập mã PIN
 "The address %@ is recognized" = "Địa chỉ %@ được công nhận";
 "Key App cannot scan QR codes without access to your camera. Please enable access under Privacy settings." = "Ứng dụng chính không thể quét mã QR nếu không có quyền truy cập vào máy ảnh của bạn.  Vui lòng bật quyền truy cập trong cài đặt Quyền riêng tư.";
 "Unable to access camera" = "Không vào được máy ảnh";
-"Initializing error" = "Đang khởi tạo lỗi";
+"Initializing error" = "Lỗi khi khởi tạo";
+"Not available for now" = "Không có sẵn cho bây giờ";
+"Free (%@ left for today)" = "Miễn phí (còn %@ cho hôm nay)";

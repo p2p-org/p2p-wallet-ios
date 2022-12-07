@@ -1125,3 +1125,5 @@ Reset the PIN or wait for %@.";
 "Key App cannot scan QR codes without access to your camera. Please enable access under Privacy settings." = "Key App cannot scan QR codes without access to your camera. Please enable access under Privacy settings.";
 "Unable to access camera" = "Unable to access camera";
 "Initializing error" = "Initializing error";
+"Not available for now" = "Not available for now";
+"Free (%@ left for today)" = "Free (%@ left for today)";
