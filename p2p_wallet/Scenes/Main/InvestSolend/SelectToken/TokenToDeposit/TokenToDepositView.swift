@@ -7,7 +7,6 @@
 
 import Combine
 import KeyAppUI
-import SwiftSVG
 import SwiftUI
 
 struct TokenToDepositView: View {

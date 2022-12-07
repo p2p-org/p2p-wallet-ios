@@ -232,20 +232,16 @@ PODS:
     - FeeRelayerSwift
     - P2PSwift
     - SolanaSwift
-  - SubviewAttachingTextView (1.5.0)
   - SwiftFormat/CLI (0.49.6)
   - SwiftGen (6.6.2)
   - SwiftLint (0.50.1)
   - SwiftNotificationCenter (1.0.4)
-  - SwiftSVG (2.3.2)
   - SwiftyUserDefaults (5.3.0)
-  - TagListView (1.4.1)
   - Task_retrying (1.0.3)
   - TransactionParser (1.0.0):
     - Cache
     - SolanaSwift (~> 2)
   - TweetNacl (1.0.2)
-  - "UITextView+Placeholder (1.4.0)"
 
 DEPENDENCIES:
   - Action (= 5.0.0)
@@ -299,16 +295,12 @@ DEPENDENCIES:
   - SolanaPricesAPIs (from `https://github.com/p2p-org/key-app-kit-swift.git`, branch `feature/pwn-6024`)
   - SolanaSwift (from `https://github.com/p2p-org/solana-swift.git`, branch `feature/isOnCurveAsPublic`)
   - Solend (from `https://github.com/p2p-org/key-app-kit-swift.git`, branch `feature/pwn-6024`)
-  - SubviewAttachingTextView (= 1.5.0)
   - SwiftFormat/CLI (= 0.49.6)
   - SwiftGen (~> 6.0)
   - SwiftLint
   - SwiftNotificationCenter
-  - SwiftSVG (= 2.3.2)
   - SwiftyUserDefaults (= 5.3.0)
-  - TagListView (= 1.4.1)
   - TransactionParser (from `https://github.com/p2p-org/key-app-kit-swift.git`, branch `feature/pwn-6024`)
-  - "UITextView+Placeholder (= 1.4.0)"
 
 SPEC REPOS:
   trunk:
@@ -355,17 +347,13 @@ SPEC REPOS:
     - RxSwift
     - secp256k1.swift
     - SkeletonView
-    - SubviewAttachingTextView
     - SwiftFormat
     - SwiftGen
     - SwiftLint
     - SwiftNotificationCenter
-    - SwiftSVG
     - SwiftyUserDefaults
-    - TagListView
     - Task_retrying
     - TweetNacl
-    - "UITextView+Placeholder"
 
 EXTERNAL SOURCES:
   AnalyticsManager:
@@ -499,7 +487,7 @@ CHECKOUT OPTIONS:
     :commit: b5d5c3a06af081a0b2e1ec57c640f3789083be63
     :git: https://github.com/p2p-org/key-app-kit-swift.git
   KeyAppUI:
-    :commit: d4757f6197ecf6cf75da949e0797d709ccdbcf6b
+    :commit: dbf29aa6b73583319801a3941fd9a2eb49b65eb2
     :git: "git@github.com:p2p-org/KeyAppUI.git"
   ListPlaceholder:
     :commit: 78dd312eb762d66a54c87cd6dd8045140da28c4b
@@ -616,18 +604,14 @@ SPEC CHECKSUMS:
   SolanaPricesAPIs: 994fc864deab0dad370bc1509102f91d81324019
   SolanaSwift: 5b5f638b0d9568cea01c382465f84ba85ebb3efa
   Solend: c1ea93f70694b61758a182e5b26a8799ad7376cd
-  SubviewAttachingTextView: 4b6e2d07bc4200f1d030887ead5c705200d105d1
   SwiftFormat: e40542bcf76fdaa006d0dc26a9ca8278ca028d76
   SwiftGen: 1366a7f71aeef49954ca5a63ba4bef6b0f24138c
   SwiftLint: 6b0cf1f4d619808dbc16e4fab064ce6fc79f090b
   SwiftNotificationCenter: 760386da2ce03d3594cb5e96d1e22ec80b44b46f
-  SwiftSVG: ca7f64e403b8ea7ea8eba8c823b83ba4a059834c
   SwiftyUserDefaults: 63f80248cf5bfb3458825d9a78f2eb7e1293a040
-  TagListView: a1c236d17960a0cf64156725a76ce6d73ebce2be
   Task_retrying: 9e19177e42b162d1d54317f9cfcbabc01d057c38
   TransactionParser: 3004420d52e7b1277dbcfd20b995a5de707705f3
   TweetNacl: 3abf4d1d2082b0114e7a67410e300892448951e6
-  "UITextView+Placeholder": d7b0c400921f66523f3a85d74f774512e14f6502
 
 PODFILE CHECKSUM: 6375535eb14800cb757c50dce8ac929c8577c7b3
 
