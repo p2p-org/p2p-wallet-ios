@@ -57,7 +57,7 @@ final class SeedPhraseRestoreWalletViewModel: BaseViewModel, ObservableObject {
 
     func paste() {
         guard let pasteboard = clipboardManager.stringFromClipboard() else { return }
-        seed.append(pasteboard)
+        seed = (seed + " " + pasteboard).seedPhraseFormatted
     }
 
     func clear() {

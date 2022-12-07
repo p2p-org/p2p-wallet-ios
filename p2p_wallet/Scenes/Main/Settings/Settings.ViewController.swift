@@ -228,12 +228,7 @@ extension Settings {
                     .store(in: &subscriptions)
                 childCoordinators[coordinator.accessibleIdentifier] = coordinator
             case .backup:
-                let viewModel = Backup.ViewModel()
-                viewModel.didBackupHandler = { [weak self] in
-                    self?.viewModel.setDidBackup(true)
-                }
-                let vc = Backup.ViewController(viewModel: viewModel)
-                show(vc, sender: nil)
+                break
             case .currency:
                 let vc = SelectFiatViewController(viewModel: viewModel)
                 show(vc, sender: nil)

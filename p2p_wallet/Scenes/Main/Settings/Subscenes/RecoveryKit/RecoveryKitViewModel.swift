@@ -18,6 +18,7 @@ struct RecoveryKitTKeyData {
 
 final class RecoveryKitViewModel: ObservableObject {
     private let analyticsManager: AnalyticsManager
+    private let userWalletManager: UserWalletManager
     private let walletMetadataService: WalletMetadataService
 
     @Published var walletMetadata: WalletMetaData?
@@ -33,21 +34,33 @@ final class RecoveryKitViewModel: ObservableObject {
     var coordinator = Coordinator()
 
     init(
+        userWalletManager: UserWalletManager = Resolver.resolve(),
         walletMetadataService: WalletMetadataService = Resolver.resolve(),
         analyticsManager: AnalyticsManager = Resolver.resolve()
     ) {
         self.walletMetadataService = walletMetadataService
         self.analyticsManager = analyticsManager
+        self.userWalletManager = userWalletManager
+        
         walletMetadataService.$metadata
-            .sink { [weak self] metadata in
-                self?.walletMetadata = metadata
+            .sink { [weak self, weak userWalletManager] metadata in
+                if let metadata {
+                    self?.walletMetadata = metadata
+                } else if userWalletManager?.wallet?.ethAddress != nil {
+                    self?.walletMetadata = .init(
+                        deviceName: L10n.notAvailableForNow,
+                        email: L10n.notAvailableForNow,
+                        authProvider: "apple",
+                        phoneNumber: L10n.notAvailableForNow
+                    )
+                }
             }.store(in: &subscriptions)
     }
 
     func openSeedPhrase() {
         coordinator.seedPhrase?()
     }
-    
+
     func deleteAccount() {
         analyticsManager.log(event: AmplitudeEvent.startDeleteAccount)
         coordinator.deleteAccount?()
