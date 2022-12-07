@@ -130,7 +130,7 @@ class RecipientSearchViewModel: ObservableObject {
             isSearching = false
         } else {
             isSearching = true
-            searchTask = Task { [unowned self] in
+            searchTask = Task { [weak self] in
                 let result = await recipientSearchService.search(
                     input: currentSearchTerm,
                     env: userWalletEnvironments,

@@ -1157,3 +1157,4 @@ Reset the PIN or wait for %@." = "Bạn còn %@ lần thử để nhập mã PIN
 "Unable to access camera" = "Không vào được máy ảnh";
 "Initializing error" = "Lỗi khi khởi tạo";
 "Not available for now" = "Không có sẵn cho bây giờ";
+"Free (%@ left for today)" = "Miễn phí (còn %@ cho hôm nay)";
