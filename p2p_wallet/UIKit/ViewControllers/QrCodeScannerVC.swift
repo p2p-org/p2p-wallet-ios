@@ -32,14 +32,15 @@ class QrCodeScannerVC: BaseVC {
         textAlignment: .center
     )
     private lazy var closeButton: UIButton = {
-       let button = UIButton()
+        let button = UIButton()
         button.setTitle(L10n.close, for: .normal)
         button.onTap(self, action: #selector(closeButtonDidTouch))
         button.titleLabel?.font = .font(of: .text1)
         return button
     }()
+
     private lazy var torchButton: UIButton = {
-       let button = UIButton()
+        let button = UIButton()
         button.setTitle(L10n.turnOnTheLight, for: .normal)
         button.titleLabel?.font = .font(of: .text2)
         button.onTap(self, action: #selector(torchButtonDidTouch))
@@ -74,9 +75,24 @@ class QrCodeScannerVC: BaseVC {
 
         view.layoutIfNeeded()
 
+        NotificationCenter.default.addObserver(
+            self,
+            selector: #selector(appMovedToForeground),
+            name: UIApplication.willEnterForegroundNotification,
+            object: nil
+        )
+
         Task {
             await requestPermission()
             setupCamera()
+        }
+    }
+
+    @objc func appMovedToForeground() {
+        if let device = AVCaptureDevice.default(for: .video), device.torchMode == .on {
+            isTorchOn = device.torchMode == .on
+        } else {
+            isTorchOn = false
         }
     }
 
@@ -135,13 +151,13 @@ class QrCodeScannerVC: BaseVC {
         guard let device = AVCaptureDevice.default(for: .video), device.hasTorch else { return }
         do {
             try device.lockForConfiguration()
-            if (device.torchMode == .on) {
+            if device.torchMode == .on {
                 device.torchMode = .off
-                self.isTorchOn = false
+                isTorchOn = false
             } else {
                 do {
                     try device.setTorchModeOn(level: 1.0)
-                    self.isTorchOn = true
+                    isTorchOn = true
                 } catch {
                     DefaultLogManager.shared.log(event: "Can't toggle torch", logLevel: .debug)
                 }
@@ -309,7 +325,7 @@ extension QrCodeScannerVC {
 
 private extension UIView {
     func setTorchConstraints() {
-        self.superview?.addConstraints(
+        superview?.addConstraints(
             NSLayoutConstraint.constraints(
                 withVisualFormat: "H:|-40-[view]-40-|",
                 options: [],

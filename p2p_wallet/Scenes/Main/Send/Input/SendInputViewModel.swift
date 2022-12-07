@@ -33,9 +33,9 @@ final class SendInputViewModel: BaseViewModel, ObservableObject {
 
     // MARK: - Private
 
+    let stateMachine: SendInputStateMachine
     private let walletsRepository: WalletsRepository
     private let pricesService: PricesServiceType
-    private let stateMachine: SendInputStateMachine
     private let sendAction: SendActionService
 
     init(recipient: Recipient, preChosenWallet: Wallet?) {
@@ -103,11 +103,12 @@ final class SendInputViewModel: BaseViewModel, ObservableObject {
         actionButtonViewModel = SendInputActionButtonViewModel()
 
         tokenViewModel = SendInputTokenViewModel(initialToken: tokenInWallet)
-        
+
         let preChoosenWalletAvailable = preChosenWallet != nil
         let recipientIsDirectSPLTokenAddress = recipient.category.isDirectSPLTokenAddress
         let thereIsOnlyOneOrNoneWallets = wallets.count <= 1
-        let shouldDisableChosingToken = preChoosenWalletAvailable || recipientIsDirectSPLTokenAddress || thereIsOnlyOneOrNoneWallets
+        let shouldDisableChosingToken = preChoosenWalletAvailable || recipientIsDirectSPLTokenAddress ||
+            thereIsOnlyOneOrNoneWallets
         tokenViewModel.isTokenChoiceEnabled = !shouldDisableChosingToken
 
         super.init()
@@ -257,6 +258,8 @@ private extension SendInputViewModel {
     func updateFeeTitle() {
         if currentState.fee == .zero && currentState.amountInToken == 0 && currentState.amountInFiat == 0 {
             feeTitle = L10n.enjoyFreeTransactions
+        } else if currentState.fee == .zero {
+            feeTitle = L10n.fees(0)
         } else {
             let symbol = currentState.fee == .zero ? "" : currentState.tokenFee.symbol
             feeTitle = L10n
