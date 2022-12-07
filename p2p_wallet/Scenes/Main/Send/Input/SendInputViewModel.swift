@@ -255,12 +255,13 @@ private extension SendInputViewModel {
     }
 
     func updateFeeTitle() {
-        if currentState.fee == .zero {
+        if currentState.fee == .zero && currentState.amountInToken == 0 && currentState.amountInFiat == 0 {
             feeTitle = L10n.enjoyFreeTransactions
         } else {
+            let symbol = currentState.fee == .zero ? "" : currentState.tokenFee.symbol
             feeTitle = L10n
                 .fees(
-                    "\(currentState.feeInToken.total.convertToBalance(decimals: 9).tokenAmount(symbol: currentState.tokenFee.symbol))"
+                    currentState.feeInToken.total.convertToBalance(decimals: Int(currentState.tokenFee.decimals)).tokenAmount(symbol: symbol)
                 )
         }
     }
