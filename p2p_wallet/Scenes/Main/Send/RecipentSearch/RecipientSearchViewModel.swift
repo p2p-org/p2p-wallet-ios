@@ -104,14 +104,19 @@ class RecipientSearchViewModel: ObservableObject {
                 self?.search(query: query, autoSelectTheOnlyOneResultMode: .enabled(delay: 300_000_000))
             }.store(in: &subscriptions)
     }
-    
+
     @MainActor
     func autoSelectTheOnlyOneResult(result: RecipientSearchResult) {
         // Wait result and select first result
-        switch searchResult {
+        switch result {
         case let .ok(recipients) where recipients.count == 1:
-            selectRecipient(recipients[0])
-            notifyAddressRecognized(recipient: recipients[0])
+            guard
+                let recipient: Recipient = recipients.first,
+                recipient.attributes.contains(.funds)
+            else { return }
+
+            selectRecipient(recipient)
+            notifyAddressRecognized(recipient: recipient)
         default:
             break
         }
@@ -126,7 +131,11 @@ class RecipientSearchViewModel: ObservableObject {
         } else {
             isSearching = true
             searchTask = Task { [unowned self] in
-                let result = await recipientSearchService.search(input: currentSearchTerm, env: userWalletEnvironments, preChosenToken: preChosenWallet?.token)
+                let result = await recipientSearchService.search(
+                    input: currentSearchTerm,
+                    env: userWalletEnvironments,
+                    preChosenToken: preChosenWallet?.token
+                )
 
                 guard !Task.isCancelled else { return }
                 await MainActor.run { [weak self] in
