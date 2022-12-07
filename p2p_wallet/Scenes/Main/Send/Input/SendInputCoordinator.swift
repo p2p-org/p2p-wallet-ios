@@ -36,9 +36,9 @@ final class SendInputCoordinator: Coordinator<SendResult> {
         viewModel.openFeeInfo
             .sink { [weak self] isFree in
                 if isFree {
-                
+                    self?.openFreeTransactionsDetail(from: controller)
                 } else {
-                    self?.openFeePropmt(from: controller, viewModel: viewModel)
+                    self?.openFeeDetail(from: controller, viewModel: viewModel)
                 }
             }
             .store(in: &subscriptions)
@@ -102,6 +102,21 @@ final class SendInputCoordinator: Coordinator<SendResult> {
             guard let feeToken = feeToken else { return }
             viewModel.changeFeeToken.send(feeToken)
         })
+        .store(in: &subscriptions)
+    }
+
+    private func openFeeDetail(from vc: UIViewController, viewModel: SendInputViewModel) {
+        guard let feeToken = viewModel.currentState.feeWallet else { return }
+        coordinate(to: SendTransactionDetailsCoordinator(
+            parentController: vc,
+            sendInputViewModel: viewModel
+        ))
+        .sink { result in
+            switch result {
+            case .redirectToFeePrompt:
+                self.openFeePropmt(from: vc, viewModel: viewModel)
+            }
+        }
         .store(in: &subscriptions)
     }
 }
