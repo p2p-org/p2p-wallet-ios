@@ -104,11 +104,6 @@ class RecipientSearchViewModel: ObservableObject {
                 self?.search(query: query, autoSelectTheOnlyOneResultMode: .enabled(delay: 300_000_000))
             }.store(in: &subscriptions)
     }
-
-    @MainActor
-    func updateResult(result: RecipientSearchResult) {
-        searchResult = result
-    }
     
     @MainActor
     func autoSelectTheOnlyOneResult(result: RecipientSearchResult) {
@@ -136,8 +131,8 @@ class RecipientSearchViewModel: ObservableObject {
                 guard !Task.isCancelled else { return }
                 await MainActor.run { [weak self] in
                     self?.isSearching = false
+                    self?.searchResult = result
                 }
-                await updateResult(result: result)
                 if autoSelectTheOnlyOneResultMode.isEnabled {
                     try? await Task.sleep(nanoseconds: autoSelectTheOnlyOneResultMode.delay!)
                     guard !Task.isCancelled else { return }
