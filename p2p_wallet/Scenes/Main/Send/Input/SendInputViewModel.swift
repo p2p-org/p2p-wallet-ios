@@ -19,12 +19,12 @@ final class SendInputViewModel: BaseViewModel, ObservableObject {
     let tokenViewModel: SendInputTokenViewModel
 
     @Published var sourceWallet: Wallet
-    @Published var feeWallet: Wallet
 
     @Published var feeTitle = L10n.fees("")
     @Published var isFeeLoading: Bool = true
     let feeInfoPressed = PassthroughSubject<Void, Never>()
     let openFeeInfo = PassthroughSubject<Bool, Never>()
+    let changeFeeToken = PassthroughSubject<Wallet, Never>()
 
     let snackbar = PassthroughSubject<SnackBar, Never>()
     let transaction = PassthroughSubject<SendTransaction, Never>()
@@ -33,9 +33,9 @@ final class SendInputViewModel: BaseViewModel, ObservableObject {
 
     // MARK: - Private
 
+    let stateMachine: SendInputStateMachine
     private let walletsRepository: WalletsRepository
     private let pricesService: PricesServiceType
-    private let stateMachine: SendInputStateMachine
     private let sendAction: SendActionService
 
     init(recipient: Recipient, preChosenWallet: Wallet?) {
@@ -60,7 +60,6 @@ final class SendInputViewModel: BaseViewModel, ObservableObject {
 
         let feeTokenInWallet = wallets
             .first(where: { $0.token.address == Token.usdc.address }) ?? Wallet(token: Token.usdc)
-        feeWallet = feeTokenInWallet
 
         var exchangeRate = [String: CurrentPrice]()
         var tokens = Set<Token>()
@@ -81,7 +80,9 @@ final class SendInputViewModel: BaseViewModel, ObservableObject {
         stateMachine = .init(
             initialState: state,
             services: .init(
-                swapService: MockedSwapService(result: nil),
+                swapService: SwapServiceImpl(
+                    feeRelayerCalculator: Resolver.resolve(FeeRelayer.self).feeCalculator, orcaSwap: Resolver.resolve()
+                ),
                 feeService: SendFeeCalculatorImpl(
                     feeRelayerCalculator: Resolver.resolve(FeeRelayer.self).feeCalculator
                 ),
@@ -102,7 +103,13 @@ final class SendInputViewModel: BaseViewModel, ObservableObject {
         actionButtonViewModel = SendInputActionButtonViewModel()
 
         tokenViewModel = SendInputTokenViewModel(initialToken: tokenInWallet)
-        tokenViewModel.isTokenChoiceEnabled = preChosenWallet != nil ? false : wallets.count > 1
+
+        let preChoosenWalletAvailable = preChosenWallet != nil
+        let recipientIsDirectSPLTokenAddress = recipient.category.isDirectSPLTokenAddress
+        let thereIsOnlyOneOrNoneWallets = wallets.count <= 1
+        let shouldDisableChosingToken = preChoosenWalletAvailable || recipientIsDirectSPLTokenAddress ||
+            thereIsOnlyOneOrNoneWallets
+        tokenViewModel.isTokenChoiceEnabled = !shouldDisableChosingToken
 
         super.init()
 
@@ -185,7 +192,7 @@ private extension SendInputViewModel {
             .sink { [weak self] _ in
                 guard let self = self else { return }
                 let text: String
-                if self.feeWallet.mintAddress == self.sourceWallet.mintAddress {
+                if self.currentState.feeWallet?.mintAddress == self.sourceWallet.mintAddress {
                     text = L10n.calculatedBySubtractingTheAccountCreationFeeFromYourBalance
                 } else {
                     text = L10n.usingTheMaximumAmount(self.sourceWallet.token.symbol)
@@ -195,7 +202,7 @@ private extension SendInputViewModel {
             }
             .store(in: &subscriptions)
 
-        $feeWallet
+        changeFeeToken
             .sinkAsync { [weak self] newFeeToken in
                 guard let self = self else { return }
                 self.isFeeLoading = true
@@ -249,12 +256,15 @@ private extension SendInputViewModel {
     }
 
     func updateFeeTitle() {
-        if currentState.fee == .zero {
+        if currentState.fee == .zero && currentState.amountInToken == 0 && currentState.amountInFiat == 0 {
             feeTitle = L10n.enjoyFreeTransactions
+        } else if currentState.fee == .zero {
+            feeTitle = L10n.fees(0)
         } else {
+            let symbol = currentState.fee == .zero ? "" : currentState.tokenFee.symbol
             feeTitle = L10n
                 .fees(
-                    "\(currentState.fee.total.convertToBalance(decimals: 9).tokenAmount(symbol: feeWallet.token.symbol))"
+                    currentState.feeInToken.total.convertToBalance(decimals: Int(currentState.tokenFee.decimals)).tokenAmount(symbol: symbol)
                 )
         }
     }

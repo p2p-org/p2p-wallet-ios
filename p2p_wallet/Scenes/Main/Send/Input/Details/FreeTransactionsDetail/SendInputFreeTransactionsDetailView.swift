@@ -46,7 +46,7 @@ struct SendInputFreeTransactionsDetailView: View {
                     onPressed: actionButtonPressed
                 )
                 .frame(height: TextButton.Size.large.height)
-                
+                .padding(.bottom, 12)
             }
             .padding(.horizontal, 16)
         }

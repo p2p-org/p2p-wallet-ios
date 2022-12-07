@@ -53,8 +53,8 @@ class SendCoordinator: Coordinator<SendResult> {
             }
             .compactMap { $0 }
             .receive(on: DispatchQueue.main)
-            .sink(receiveValue: { result in
-                Task { await vm.search(query: result, autoSelect: true) }
+            .sink(receiveValue: { [weak vm] result in
+                vm?.search(query: result, autoSelectTheOnlyOneResultMode: .enabled(delay: 0))
             }).store(in: &subscriptions)
 
         let view = RecipientSearchView(viewModel: vm)
