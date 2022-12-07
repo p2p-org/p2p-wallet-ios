@@ -92,16 +92,12 @@ target 'p2p_wallet' do
   end
 
   pod 'Resolver', '1.5.0'
-  pod 'UITextView+Placeholder', '1.4.0' # TODO: remove in future
-  pod 'TagListView', '1.4.1' # TODO: remove in futur 'UITextView+Placeholder', '1.4.0' # TODO: remove in future
-  pod 'SubviewAttachingTextView', '1.5.0' # TODO: remove in future
   pod 'JazziconSwift', :git => 'https://github.com/p2p-org/JazziconSwift.git', :branch => 'master'
   pod 'Kingfisher', '~> 7.3.2'
   pod 'ListPlaceholder', :git => 'https://github.com/p2p-org/ListPlaceholder.git', :branch => 'custom_gradient_color'
   pod 'GT3Captcha-iOS'
   pod 'PhoneNumberKit', '3.3.4'
   pod 'SkeletonUI', :git => 'https://github.com/p2p-org/SkeletonUI.git', :branch => 'master'
-  pod 'SwiftSVG', '2.3.2'
   pod 'Introspect', '0.1.4'
   pod 'lottie-ios', '~> 3.5.0'
 
