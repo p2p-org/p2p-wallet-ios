@@ -2,6 +2,13 @@ import Foundation
 
 class SellViewModel: BaseViewModel, ObservableObject {
 
-//    @Published var state: SellStateMachine.State
+    // MARK: - Dependencies
+    // TODO: Put resolver
+    private let actionService = SellActionServiceMock()
+    private let dataService = SellDataServiceMock()
+
+    // MARK: -
+
+    
 
 }
