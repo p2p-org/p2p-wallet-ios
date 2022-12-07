@@ -24,6 +24,7 @@ class HomeWithTokensViewModel: ObservableObject {
     private let sendClicked = PassthroughSubject<Void, Never>()
     private let swapClicked = PassthroughSubject<Void, Never>()
     private let earnClicked = PassthroughSubject<Void, Never>()
+    private let sellClicked = PassthroughSubject<Void, Never>()
     private let walletClicked = PassthroughSubject<(pubKey: String, tokenSymbol: String), Never>()
     let buyShow: AnyPublisher<Void, Never>
     let receiveShow: AnyPublisher<PublicKey, Never>
@@ -31,6 +32,9 @@ class HomeWithTokensViewModel: ObservableObject {
     let swapShow: AnyPublisher<Void, Never>
     let earnShow: AnyPublisher<Void, Never>
     let walletShow: AnyPublisher<(pubKey: String, tokenSymbol: String), Never>
+    lazy var sellShow:AnyPublisher<Void, Never> = {
+        sellClicked.eraseToAnyPublisher()
+    }()
 
     var actions: AnyPublisher<[WalletActionType], Never>
     var balance: AnyPublisher<String, Never>
@@ -148,6 +152,10 @@ class HomeWithTokensViewModel: ObservableObject {
     func toggleHiddenTokensVisibility() {
         walletsRepository.toggleIsHiddenWalletShown()
         tokensIsHidden.toggle()
+    }
+
+    func sellTapped() {
+        sellClicked.send()
     }
 }
 

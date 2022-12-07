@@ -34,6 +34,7 @@ struct HomeWithTokensView: View {
                         .topPadding()
                         .padding(.bottom, 32)
                         .id(0)
+                    sell
                     content
                 }
             }
@@ -59,7 +60,7 @@ struct HomeWithTokensView: View {
             viewModel.viewAppeared()
         }
     }
-
+    
     private var header: some View {
         ActionsPanelView(
             actionsPublisher: viewModel.actions,
@@ -69,7 +70,17 @@ struct HomeWithTokensView: View {
             }
         )
     }
-    
+
+    // TODO: Sell Placeholder PWN-6246
+    private var sell: some View {
+        Button {
+            viewModel.sellTapped()
+        } label: {
+            Text("Ramp Off")
+        }
+
+    }
+
     private var content: some View {
         VStack(alignment: .leading, spacing: 0) {
             Text(L10n.tokens)

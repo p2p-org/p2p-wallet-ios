@@ -52,15 +52,11 @@ final class HomeCoordinator: Coordinator<Void> {
             })
             .store(in: &subscriptions)
 
-        homeView.viewWillAppear
-            .sink(receiveValue: { [unowned homeView] in
-                homeView.navigationIsHidden = true
-            })
-            .store(in: &subscriptions)
-        homeView.viewWillDisappear
-            .sink(receiveValue: { [unowned homeView] in
-                homeView.navigationIsHidden = false
-            })
+        Publishers.Merge(
+            homeView.viewWillAppear.map { true },
+            homeView.viewWillDisappear.map { false }
+        )
+            .assign(to: \.navigationIsHidden, on: homeView)
             .store(in: &subscriptions)
 
         viewModel.errorShow
@@ -84,12 +80,14 @@ final class HomeCoordinator: Coordinator<Void> {
             .store(in: &subscriptions)
 
         emptyVMOutput.receive
-            .sink(receiveValue: { [unowned self] in
-                let coordinator = ReceiveCoordinator(navigationController: navigationController, pubKey: $0)
-                coordinate(to: coordinator)
-                analyticsManager.log(event: AmplitudeEvent.mainScreenReceiveOpen)
-                analyticsManager.log(event: AmplitudeEvent.receiveViewed(fromPage: "main_screen"))
+            .handleEvents(receiveOutput: { [weak self] _ in
+                self?.analyticsManager.log(event: AmplitudeEvent.mainScreenReceiveOpen)
+                self?.analyticsManager.log(event: AmplitudeEvent.receiveViewed(fromPage: "main_screen"))
             })
+            .flatMap { [unowned self] in
+                self.coordinate(to: ReceiveCoordinator(navigationController: navigationController, pubKey: $0))
+            }
+            .sink(receiveValue: { _ in })
             .store(in: &subscriptions)
 
         emptyVMOutput.topUpCoinShow
@@ -143,9 +141,10 @@ final class HomeCoordinator: Coordinator<Void> {
 
         Publishers.Merge(tokensViewModel.buyShow, emptyVMOutput.topUpShow)
             .filter { available(.buyScenarioEnabled) }
-            .sink(receiveValue: { [unowned self] _ in
-                coordinate(to: BuyCoordinator(navigationController: navigationController, context: .fromHome))
-            })
+            .flatMap { [unowned self] in
+                self.coordinate(to: BuyCoordinator(navigationController: navigationController, context: .fromHome))
+            }
+            .sink {}
             .store(in: &subscriptions)
 
         tokensViewModel.receiveShow
@@ -153,6 +152,7 @@ final class HomeCoordinator: Coordinator<Void> {
                 openReceiveScreen(pubKey: $0)
             })
             .store(in: &subscriptions)
+
         tokensViewModel.sendShow
             .sink(receiveValue: { [unowned self, weak tokensViewModel] in
                 Task {
@@ -166,6 +166,7 @@ final class HomeCoordinator: Coordinator<Void> {
                 }
             })
             .store(in: &subscriptions)
+
         tokensViewModel.swapShow
             .sink(receiveValue: { [unowned self, weak tokensViewModel] in
                 Task {
@@ -178,6 +179,7 @@ final class HomeCoordinator: Coordinator<Void> {
                 }
             })
             .store(in: &subscriptions)
+
         tokensViewModel.walletShow
             .sink(receiveValue: { [unowned self, weak tokensViewModel] pubKey, tokenSymbol in
                 Task {
@@ -189,6 +191,15 @@ final class HomeCoordinator: Coordinator<Void> {
                     }
                 }
             })
+            .store(in: &subscriptions)
+
+        tokensViewModel.sellShow
+            .flatMap { [unowned self] in
+                self.coordinate(to: SellCoordinator(navigationController: self.navigationController))
+            }
+            .sink {
+                debugPrint("Deallocated")
+            }
             .store(in: &subscriptions)
 
         return Empty(completeImmediately: false)
