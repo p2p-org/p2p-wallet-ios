@@ -214,16 +214,16 @@ PODS:
   - "UITextView+Placeholder (1.4.0)"
 
 DEPENDENCIES:
-  - AnalyticsManager (from `https://github.com/p2p-org/key-app-kit-swift.git`, branch `fix/PWN-6122`)
+  - AnalyticsManager (from `https://github.com/p2p-org/key-app-kit-swift.git`, branch `master`)
   - AppsFlyerFramework
   - BECollectionView_Combine (from `https://github.com/bigearsenal/BECollectionView.git`, branch `master`)
   - BECollectionView_Core (from `https://github.com/bigearsenal/BECollectionView.git`, branch `master`)
   - BEPureLayout (from `https://github.com/p2p-org/BEPureLayout.git`, branch `master`)
-  - Cache (from `https://github.com/p2p-org/key-app-kit-swift.git`, branch `fix/PWN-6122`)
+  - Cache (from `https://github.com/p2p-org/key-app-kit-swift.git`, branch `master`)
   - CocoaDebug
-  - CountriesAPI (from `https://github.com/p2p-org/key-app-kit-swift.git`, branch `fix/PWN-6122`)
+  - CountriesAPI (from `https://github.com/p2p-org/key-app-kit-swift.git`, branch `master`)
   - Down (from `https://github.com/p2p-org/Down.git`)
-  - FeeRelayerSwift (from `https://github.com/p2p-org/FeeRelayerSwift.git`, branch `feature/PWN-6108`)
+  - FeeRelayerSwift (from `https://github.com/p2p-org/FeeRelayerSwift.git`, branch `master`)
   - Firebase/Analytics
   - Firebase/Crashlytics
   - Firebase/RemoteConfig
@@ -232,18 +232,18 @@ DEPENDENCIES:
   - Intercom (= 12.4.3)
   - Introspect (= 0.1.4)
   - JazziconSwift (from `https://github.com/p2p-org/JazziconSwift.git`, branch `master`)
-  - JSBridge (from `https://github.com/p2p-org/key-app-kit-swift.git`, branch `fix/PWN-6122`)
-  - KeyAppKitCore (from `https://github.com/p2p-org/key-app-kit-swift.git`, branch `fix/PWN-6122`)
-  - KeyAppKitLogger (from `https://github.com/p2p-org/key-app-kit-swift.git`, branch `fix/PWN-6122`)
+  - JSBridge (from `https://github.com/p2p-org/key-app-kit-swift.git`, branch `master`)
+  - KeyAppKitCore (from `https://github.com/p2p-org/key-app-kit-swift.git`, branch `master`)
+  - KeyAppKitLogger (from `https://github.com/p2p-org/key-app-kit-swift.git`, branch `master`)
   - "KeyAppUI (from `git@github.com:p2p-org/KeyAppUI.git`, branch `main`)"
   - KeychainSwift (= 19.0.0)
   - Kingfisher (~> 7.3.2)
   - ListPlaceholder (from `https://github.com/p2p-org/ListPlaceholder.git`, branch `custom_gradient_color`)
   - lottie-ios (~> 3.5.0)
-  - NameService (from `https://github.com/p2p-org/key-app-kit-swift.git`, branch `fix/PWN-6122`)
-  - Onboarding (from `https://github.com/p2p-org/key-app-kit-swift.git`, branch `fix/PWN-6122`)
+  - NameService (from `https://github.com/p2p-org/key-app-kit-swift.git`, branch `master`)
+  - Onboarding (from `https://github.com/p2p-org/key-app-kit-swift.git`, branch `master`)
   - OrcaSwapSwift (from `https://github.com/p2p-org/OrcaSwapSwift.git`, branch `main`)
-  - P2PSwift (from `https://github.com/p2p-org/key-app-kit-swift.git`, branch `fix/PWN-6122`)
+  - P2PSwift (from `https://github.com/p2p-org/key-app-kit-swift.git`, branch `master`)
   - Periphery
   - PhoneNumberKit (= 3.3.4)
   - ReachabilitySwift (~> 5.0.0)
@@ -251,9 +251,9 @@ DEPENDENCIES:
   - Resolver (= 1.5.0)
   - Sentry (from `https://github.com/getsentry/sentry-cocoa.git`, tag `7.18.1`)
   - SkeletonUI (from `https://github.com/p2p-org/SkeletonUI.git`, branch `master`)
-  - SolanaPricesAPIs (from `https://github.com/p2p-org/key-app-kit-swift.git`, branch `fix/PWN-6122`)
+  - SolanaPricesAPIs (from `https://github.com/p2p-org/key-app-kit-swift.git`, branch `master`)
   - SolanaSwift (from `https://github.com/p2p-org/solana-swift.git`, branch `main`)
-  - Solend (from `https://github.com/p2p-org/key-app-kit-swift.git`, branch `fix/PWN-6122`)
+  - Solend (from `https://github.com/p2p-org/key-app-kit-swift.git`, branch `master`)
   - SubviewAttachingTextView (= 1.5.0)
   - SwiftFormat/CLI (= 0.49.6)
   - SwiftGen (~> 6.0)
@@ -262,7 +262,7 @@ DEPENDENCIES:
   - SwiftSVG (= 2.3.2)
   - SwiftyUserDefaults (= 5.3.0)
   - TagListView (= 1.4.1)
-  - TransactionParser (from `https://github.com/p2p-org/key-app-kit-swift.git`, branch `fix/PWN-6122`)
+  - TransactionParser (from `https://github.com/p2p-org/key-app-kit-swift.git`, branch `master`)
   - "UITextView+Placeholder (= 1.4.0)"
 
 SPEC REPOS:
@@ -317,7 +317,7 @@ SPEC REPOS:
 
 EXTERNAL SOURCES:
   AnalyticsManager:
-    :branch: fix/PWN-6122
+    :branch: master
     :git: https://github.com/p2p-org/key-app-kit-swift.git
   BECollectionView_Combine:
     :branch: master
@@ -329,27 +329,27 @@ EXTERNAL SOURCES:
     :branch: master
     :git: https://github.com/p2p-org/BEPureLayout.git
   Cache:
-    :branch: fix/PWN-6122
+    :branch: master
     :git: https://github.com/p2p-org/key-app-kit-swift.git
   CountriesAPI:
-    :branch: fix/PWN-6122
+    :branch: master
     :git: https://github.com/p2p-org/key-app-kit-swift.git
   Down:
     :git: https://github.com/p2p-org/Down.git
   FeeRelayerSwift:
-    :branch: feature/PWN-6108
+    :branch: master
     :git: https://github.com/p2p-org/FeeRelayerSwift.git
   JazziconSwift:
     :branch: master
     :git: https://github.com/p2p-org/JazziconSwift.git
   JSBridge:
-    :branch: fix/PWN-6122
+    :branch: master
     :git: https://github.com/p2p-org/key-app-kit-swift.git
   KeyAppKitCore:
-    :branch: fix/PWN-6122
+    :branch: master
     :git: https://github.com/p2p-org/key-app-kit-swift.git
   KeyAppKitLogger:
-    :branch: fix/PWN-6122
+    :branch: master
     :git: https://github.com/p2p-org/key-app-kit-swift.git
   KeyAppUI:
     :branch: main
@@ -358,16 +358,16 @@ EXTERNAL SOURCES:
     :branch: custom_gradient_color
     :git: https://github.com/p2p-org/ListPlaceholder.git
   NameService:
-    :branch: fix/PWN-6122
+    :branch: master
     :git: https://github.com/p2p-org/key-app-kit-swift.git
   Onboarding:
-    :branch: fix/PWN-6122
+    :branch: master
     :git: https://github.com/p2p-org/key-app-kit-swift.git
   OrcaSwapSwift:
     :branch: main
     :git: https://github.com/p2p-org/OrcaSwapSwift.git
   P2PSwift:
-    :branch: fix/PWN-6122
+    :branch: master
     :git: https://github.com/p2p-org/key-app-kit-swift.git
   RenVMSwift:
     :branch: master
@@ -379,21 +379,21 @@ EXTERNAL SOURCES:
     :branch: master
     :git: https://github.com/p2p-org/SkeletonUI.git
   SolanaPricesAPIs:
-    :branch: fix/PWN-6122
+    :branch: master
     :git: https://github.com/p2p-org/key-app-kit-swift.git
   SolanaSwift:
     :branch: main
     :git: https://github.com/p2p-org/solana-swift.git
   Solend:
-    :branch: fix/PWN-6122
+    :branch: master
     :git: https://github.com/p2p-org/key-app-kit-swift.git
   TransactionParser:
-    :branch: fix/PWN-6122
+    :branch: master
     :git: https://github.com/p2p-org/key-app-kit-swift.git
 
 CHECKOUT OPTIONS:
   AnalyticsManager:
-    :commit: 31279f213fc4a248963abe6d60cba4a66b5573f3
+    :commit: a6812584b386917e7fe9c56e82281171793e6003
     :git: https://github.com/p2p-org/key-app-kit-swift.git
   BECollectionView_Combine:
     :commit: fa27fd346aa54e8cac58b34f861b08a39e38db6f
@@ -405,28 +405,28 @@ CHECKOUT OPTIONS:
     :commit: 9b4ab977660c8554d23a2d9b83b6ac6c6058b3b7
     :git: https://github.com/p2p-org/BEPureLayout.git
   Cache:
-    :commit: 31279f213fc4a248963abe6d60cba4a66b5573f3
+    :commit: a6812584b386917e7fe9c56e82281171793e6003
     :git: https://github.com/p2p-org/key-app-kit-swift.git
   CountriesAPI:
-    :commit: 31279f213fc4a248963abe6d60cba4a66b5573f3
+    :commit: a6812584b386917e7fe9c56e82281171793e6003
     :git: https://github.com/p2p-org/key-app-kit-swift.git
   Down:
     :commit: eee1d66d7ef71b892e72c8bc8d84fcdfeaab1918
     :git: https://github.com/p2p-org/Down.git
   FeeRelayerSwift:
-    :commit: 32ad5e0a916591a3abc5730ff6ea312519720576
+    :commit: e5fc3d6bb151df4e3d0c44f3dbe3e420654d0deb
     :git: https://github.com/p2p-org/FeeRelayerSwift.git
   JazziconSwift:
     :commit: f9c9f898402db4e62d482f4c90670652c221fa12
     :git: https://github.com/p2p-org/JazziconSwift.git
   JSBridge:
-    :commit: 31279f213fc4a248963abe6d60cba4a66b5573f3
+    :commit: a6812584b386917e7fe9c56e82281171793e6003
     :git: https://github.com/p2p-org/key-app-kit-swift.git
   KeyAppKitCore:
-    :commit: 31279f213fc4a248963abe6d60cba4a66b5573f3
+    :commit: a6812584b386917e7fe9c56e82281171793e6003
     :git: https://github.com/p2p-org/key-app-kit-swift.git
   KeyAppKitLogger:
-    :commit: 31279f213fc4a248963abe6d60cba4a66b5573f3
+    :commit: a6812584b386917e7fe9c56e82281171793e6003
     :git: https://github.com/p2p-org/key-app-kit-swift.git
   KeyAppUI:
     :commit: a3ea637a4cbcf4e5993fe3b30ac279784dbe5e10
@@ -435,16 +435,16 @@ CHECKOUT OPTIONS:
     :commit: 78dd312eb762d66a54c87cd6dd8045140da28c4b
     :git: https://github.com/p2p-org/ListPlaceholder.git
   NameService:
-    :commit: 31279f213fc4a248963abe6d60cba4a66b5573f3
+    :commit: a6812584b386917e7fe9c56e82281171793e6003
     :git: https://github.com/p2p-org/key-app-kit-swift.git
   Onboarding:
-    :commit: 31279f213fc4a248963abe6d60cba4a66b5573f3
+    :commit: a6812584b386917e7fe9c56e82281171793e6003
     :git: https://github.com/p2p-org/key-app-kit-swift.git
   OrcaSwapSwift:
     :commit: e76b0650046ed3e380016775614d3e99fad8f1b1
     :git: https://github.com/p2p-org/OrcaSwapSwift.git
   P2PSwift:
-    :commit: 31279f213fc4a248963abe6d60cba4a66b5573f3
+    :commit: a6812584b386917e7fe9c56e82281171793e6003
     :git: https://github.com/p2p-org/key-app-kit-swift.git
   RenVMSwift:
     :commit: 0025e61da91718978d6904ccb644666bd2f0990a
@@ -456,16 +456,16 @@ CHECKOUT OPTIONS:
     :commit: 98225dbb0459477dfeac063e1c7d0750102325d1
     :git: https://github.com/p2p-org/SkeletonUI.git
   SolanaPricesAPIs:
-    :commit: 31279f213fc4a248963abe6d60cba4a66b5573f3
+    :commit: a6812584b386917e7fe9c56e82281171793e6003
     :git: https://github.com/p2p-org/key-app-kit-swift.git
   SolanaSwift:
     :commit: 03e523952027a05ceee448c9f59ab8b153ed9f19
     :git: https://github.com/p2p-org/solana-swift.git
   Solend:
-    :commit: 31279f213fc4a248963abe6d60cba4a66b5573f3
+    :commit: a6812584b386917e7fe9c56e82281171793e6003
     :git: https://github.com/p2p-org/key-app-kit-swift.git
   TransactionParser:
-    :commit: 31279f213fc4a248963abe6d60cba4a66b5573f3
+    :commit: a6812584b386917e7fe9c56e82281171793e6003
     :git: https://github.com/p2p-org/key-app-kit-swift.git
 
 SPEC CHECKSUMS:
@@ -542,6 +542,6 @@ SPEC CHECKSUMS:
   TweetNacl: 3abf4d1d2082b0114e7a67410e300892448951e6
   "UITextView+Placeholder": d7b0c400921f66523f3a85d74f774512e14f6502
 
-PODFILE CHECKSUM: 664ffbc2ca35c73ab7e5cb45ca02c84b6e607b0c
+PODFILE CHECKSUM: 4cf5a74dcd9fb6eb7fddf5d7f35e90d6a0fbdaaf
 
 COCOAPODS: 1.11.3
