@@ -26,7 +26,11 @@ public protocol SellDataService {
 
 public protocol SellActionService {
     func calculateRates() async throws -> Double
-    func providerSellURL() -> URL
+    func createSellURL(
+        quoteCurrencyCode: String,
+        baseCurrencyAmount: Double,
+        externalTransactionId: String
+    ) throws -> URL
     func saveTransaction() async throws
     func deleteTransaction() async throws
 }
