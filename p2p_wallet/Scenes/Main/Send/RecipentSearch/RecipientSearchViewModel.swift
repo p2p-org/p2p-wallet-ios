@@ -2,13 +2,13 @@
 // Use of this source code is governed by a MIT-style license that can be
 // found in the LICENSE file.
 
+import AnalyticsManager
 import Combine
 import Foundation
 import History
 import Resolver
 import Send
 import SolanaSwift
-import AnalyticsManager
 
 class RecipientSearchViewModel: ObservableObject {
     private let preChosenWallet: Wallet?
@@ -36,6 +36,9 @@ class RecipientSearchViewModel: ObservableObject {
     @Published var recipientsHistoryStatus: SendHistoryService.Status = .ready
     @Published var recipientsHistory: [Recipient] = []
 
+    var autoSelectTheOnlyOneResultMode: AutoSelectTheOnlyOneResultMode?
+    var fromQR: Bool = false
+
     struct Coordinator {
         fileprivate let selectRecipientSubject: PassthroughSubject<Recipient, Never> = .init()
         var selectRecipientPublisher: AnyPublisher<Recipient, Never> { selectRecipientSubject.eraseToAnyPublisher() }
@@ -56,7 +59,7 @@ class RecipientSearchViewModel: ObservableObject {
         self.preChosenWallet = preChosenWallet
         self.sendHistoryService = sendHistoryService
         self.source = source
-    
+
         userWalletEnvironments = .init(
             wallets: walletsRepository.getWallets(),
             exchangeRate: [:],
@@ -107,7 +110,14 @@ class RecipientSearchViewModel: ObservableObject {
             .combineLatest($userWalletEnvironments)
             .debounce(for: 0.2, scheduler: DispatchQueue.main)
             .sink { [weak self] (query: String, _) in
-                self?.search(query: query, autoSelectTheOnlyOneResultMode: .enabled(delay: 300_000_000), fromQR: false)
+                guard let self = self else { return }
+                self.search(
+                    query: query,
+                    autoSelectTheOnlyOneResultMode: self.autoSelectTheOnlyOneResultMode,
+                    fromQR: self.fromQR
+                )
+                self.autoSelectTheOnlyOneResultMode = nil
+                self.fromQR = false
             }.store(in: &subscriptions)
 
         logOpen()
@@ -130,7 +140,13 @@ class RecipientSearchViewModel: ObservableObject {
         }
     }
 
-    func search(query: String, autoSelectTheOnlyOneResultMode: AutoSelectTheOnlyOneResultMode, fromQR: Bool) {
+    func searchQR(query: String, autoSelectTheOnlyOneResultMode: AutoSelectTheOnlyOneResultMode) {
+        fromQR = true
+        self.autoSelectTheOnlyOneResultMode = autoSelectTheOnlyOneResultMode
+        input = query
+    }
+
+    private func search(query: String, autoSelectTheOnlyOneResultMode: AutoSelectTheOnlyOneResultMode?, fromQR: Bool) {
         searchTask?.cancel()
         let currentSearchTerm = query.trimmingCharacters(in: .whitespaces)
         if currentSearchTerm.isEmpty {
@@ -150,7 +166,10 @@ class RecipientSearchViewModel: ObservableObject {
                     self?.isSearching = false
                     self?.searchResult = result
                 }
-                if autoSelectTheOnlyOneResultMode.isEnabled {
+                if
+                    let autoSelectTheOnlyOneResultMode = autoSelectTheOnlyOneResultMode,
+                    autoSelectTheOnlyOneResultMode.isEnabled
+                {
                     try? await Task.sleep(nanoseconds: autoSelectTheOnlyOneResultMode.delay!)
                     guard !Task.isCancelled else { return }
                     await autoSelectTheOnlyOneResult(result: result, fromQR: fromQR)
@@ -187,6 +206,7 @@ class RecipientSearchViewModel: ObservableObject {
 }
 
 // MARK: - Analytics
+
 private extension RecipientSearchViewModel {
     enum RecipientInputType: String {
         case username, address, QR
@@ -208,6 +228,7 @@ private extension RecipientSearchViewModel {
                 inputType = .address
             }
         }
-        analyticsManager.log(event: AmplitudeEvent.sendnewRecipientAdd(type: inputType.rawValue, source: source.rawValue))
+        analyticsManager
+            .log(event: AmplitudeEvent.sendnewRecipientAdd(type: inputType.rawValue, source: source.rawValue))
     }
 }
