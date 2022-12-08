@@ -38,16 +38,6 @@ class SellViewModel: BaseViewModel, ObservableObject {
             .sink { _ in self.coordinator.showPending.send() }
             .store(in: &subscriptions)
 
-        // TODO: - Remove later
-        #if DEBUG
-        DispatchQueue.main.asyncAfter(deadline: .now() + .milliseconds(300)) { [unowned self] in
-            try! openProviderWebView(
-                quoteCurrencyCode: "eur",
-                baseCurrencyAmount: 10, // 10 SOL
-                externalTransactionId: UUID().uuidString
-            )
-        }
-        #endif
     }
 
     private func warmUp() {
@@ -57,6 +47,14 @@ class SellViewModel: BaseViewModel, ObservableObject {
     }
 
     // MARK: - Actions
+
+    func sell() {
+        try! openProviderWebView(
+            quoteCurrencyCode: "eur",
+            baseCurrencyAmount: 10, // 10 SOL
+            externalTransactionId: UUID().uuidString
+        )
+    }
 
     func openProviderWebView(
         quoteCurrencyCode: String,
