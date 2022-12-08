@@ -4,14 +4,45 @@ import Resolver
 public protocol SellDataServiceProvider {
     associatedtype Transaction
     associatedtype SellQuote
+    associatedtype SellDataCurrency
+}
+
+enum MoonpaySellDataServiceProviderError: Error {
+    case unsupportedRegion
 }
 
 class MoonpaySellDataServiceProvider: SellDataServiceProvider {
+    typealias SellDataCurrency = MoonpaySellDataServiceProvider.Currency
+
     @Injected private var moonpayAPI: Moonpay.Provider
 
+    private(set) var ipAddressesResponse: Moonpay.Provider.IpAddressResponse?
     func isAvailable() async throws -> Bool {
-        let ipAddressesResponse = try await moonpayAPI.ipAddresses()
+        guard let ipAddressesResponse else {
+            let resp = try await moonpayAPI.ipAddresses()
+            ipAddressesResponse = resp
+            return resp.isSellAllowed
+        }
         return ipAddressesResponse.isSellAllowed
+    }
+
+    func fiat() async throws -> Fiat {
+        func fiatByApha3(alpha3: String) throws -> Fiat {
+            if moonpayAPI.UKAlpha3Code() == alpha3 {
+                return .gbp
+            } else if moonpayAPI.bankTransferAvailableAlpha3Codes().contains(alpha3) {
+                return .eur
+            } else if moonpayAPI.USAlpha3Code() == alpha3 {
+                return .usd
+            }
+            throw MoonpaySellDataServiceProviderError.unsupportedRegion
+        }
+        guard let ipAddressesResponse else {
+            let resp = try await moonpayAPI.ipAddresses()
+            ipAddressesResponse = resp
+            return try fiatByApha3(alpha3: resp.alpha3)
+        }
+        return try fiatByApha3(alpha3: ipAddressesResponse.alpha3)
     }
 
     func sellQuote(

@@ -16,6 +16,10 @@ public protocol SellDataService {
     /// Request for pendings, rates, min amounts
     func update() async throws
 
+    /// Supported crypto currencies
+    var currencies: [Provider.SellDataCurrency] { get }
+    /// Supported Fiat by provider for your region
+    var fiat: Fiat { get }
     /// Return incomplete transactions
     func incompleteTransactions() async throws -> [Provider.Transaction]
     /// Return transaction by  id

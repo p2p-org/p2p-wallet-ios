@@ -4,6 +4,7 @@ import Resolver
 
 class SellDataServiceMock: SellDataService {
     typealias Provider = MoonpaySellDataServiceProvider
+    private var provider = Provider()
 
     init() {
         statusSubject.send(.initialized)
@@ -20,12 +21,14 @@ class SellDataServiceMock: SellDataService {
 
     /// List of supported crypto currencies
     private(set) var currencies = [Provider.Currency]()
+    private(set) var fiat: Fiat = .usd
 
     func update() async throws {
         defer {
             statusSubject.send(.ready)
         }
-        currencies = try await Provider().currencies().filter { $0.code.uppercased() == "SOL" }
+        currencies = try await provider.currencies().filter { $0.code.uppercased() == "SOL" }
+        fiat = try await Provider().fiat()
     }
 
     func incompleteTransactions() async throws -> [Provider.Transaction] {
