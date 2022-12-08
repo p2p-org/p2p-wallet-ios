@@ -7,9 +7,13 @@ struct SendTransactionStatusDetailsParameters {
     let fee: String?
 }
 
-final class SendTransactionStatusDetailsCoordinator: Coordinator<Void> {
+enum SendTransactionStatusDetailsCoordinatorResult {
+    case close
+}
+
+final class SendTransactionStatusDetailsCoordinator: Coordinator<SendTransactionStatusDetailsCoordinatorResult> {
     private let navigationController: UINavigationController
-    private var subject = PassthroughSubject<Void, Never>()
+    private var subject = PassthroughSubject<SendTransactionStatusDetailsCoordinatorResult, Never>()
     private let params: SendTransactionStatusDetailsParameters
 
     init(navigationController: UINavigationController, params: SendTransactionStatusDetailsParameters) {
@@ -17,7 +21,7 @@ final class SendTransactionStatusDetailsCoordinator: Coordinator<Void> {
         self.params = params
     }
 
-    override func start() -> AnyPublisher<Void, Never> {
+    override func start() -> AnyPublisher<SendTransactionStatusDetailsCoordinatorResult, Never> {
         let viewModel = SendTransactionStatusDetailsViewModel(params: params)
         let view = SendTransactionStatusDetailsView(viewModel: viewModel)
 
@@ -35,6 +39,7 @@ final class SendTransactionStatusDetailsCoordinator: Coordinator<Void> {
 
     private func finish() {
         navigationController.dismiss(animated: true)
+        subject.send(.close)
         subject.send(completion: .finished)
     }
 }

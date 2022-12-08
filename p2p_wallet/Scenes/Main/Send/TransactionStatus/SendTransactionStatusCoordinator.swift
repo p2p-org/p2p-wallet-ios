@@ -1,6 +1,6 @@
 import Combine
-import SwiftUI
 import KeyAppUI
+import SwiftUI
 
 final class SendTransactionStatusCoordinator: Coordinator<Void> {
     private var transition: PanelTransition?
@@ -15,8 +15,8 @@ final class SendTransactionStatusCoordinator: Coordinator<Void> {
     init(parentController: UIViewController, transaction: SendTransaction) {
         self.parentController = parentController
         self.transaction = transaction
-        self.navigationController = UINavigationController()
-        self.container = UIViewController()
+        navigationController = UINavigationController()
+        container = UIViewController()
     }
 
     override func start() -> AnyPublisher<Void, Never> {
@@ -28,13 +28,13 @@ final class SendTransactionStatusCoordinator: Coordinator<Void> {
             .store(in: &subscriptions)
 
         transition = PanelTransition()
-        transition?.containerHeight = 600.adaptiveHeight
+        transition?.containerHeight = 600
         transition?.dimmClicked
             .sink { [weak self] in self?.finish() }
             .store(in: &subscriptions)
 
         let viewController = UIHostingControllerWithoutNavigation(rootView: view)
-        self.navigationController.setViewControllers([viewController], animated: true)
+        navigationController.setViewControllers([viewController], animated: true)
         style(nc: navigationController)
         wrap(for: navigationController)
 
@@ -60,9 +60,17 @@ final class SendTransactionStatusCoordinator: Coordinator<Void> {
     }
 
     private func openDetails(params: SendTransactionStatusDetailsParameters) {
-        coordinate(to: SendTransactionStatusDetailsCoordinator(navigationController: navigationController, params: params))
-            .sink(receiveValue: { })
-            .store(in: &subscriptions)
+        coordinate(to: SendTransactionStatusDetailsCoordinator(
+            navigationController: navigationController,
+            params: params
+        ))
+        .sink { [weak self] result in
+            switch result {
+            case .close:
+                self?.finish()
+            }
+        }
+        .store(in: &subscriptions)
     }
 
     private func style(nc: UINavigationController) {
