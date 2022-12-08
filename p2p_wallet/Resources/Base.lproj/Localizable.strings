@@ -1056,7 +1056,9 @@ Reset the PIN or wait for %@.";
 "The data will be cleared without the possibility of recovery" = "The data will be cleared without the possibility of recovery";
 "Yes, delete it" = "Yes, delete it";
 "Your removal request has been accepted" = "Your removal request has been accepted";
-"Deleting your account  will take up to 30 days" = "Deleting your account  will take up to 30 days";
+"Deleting your account 
+will take up to 30 days" = "Deleting your account 
+will take up to 30 days";
 "When you delete your account, you will lose access to your funds." = "When you delete your account, you will lose access to your funds.";
 "You will lose access to the free username that you received during registration. Your friends will not be able to send you funds using your username." = "You will lose access to the free username that you received during registration. Your friends will not be able to send you funds using your username.";
 "You will not be able to use free transactions within the Solana network with Key App." = "You will not be able to use free transactions within the Solana network with Key App.";

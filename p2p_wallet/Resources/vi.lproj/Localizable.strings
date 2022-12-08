@@ -1085,7 +1085,8 @@ Reset the PIN or wait for %@." = "Bạn còn %@ lần thử để nhập mã PIN
 "The data will be cleared without the possibility of recovery" = "Dữ liệu sẽ bị xóa mà không có khả năng khôi phục";
 "Yes, delete it" = "Có, xóa nó";
 "Your removal request has been accepted" = "Yêu cầu xóa của bạn đã được chấp nhận";
-"Deleting your account  will take up to 30 days" = "Việc xóa tài khoản của bạn sẽ mất đến 30 ngày";
+"Deleting your account 
+will take up to 30 days" = "Việc xóa tài khoản của bạn sẽ mất đến 30 ngày";
 "When you delete your account, you will lose access to your funds." = "Khi bạn xóa tài khoản của mình, bạn sẽ mất quyền truy cập vào tiền của mình.";
 "You will lose access to the free username that you received during registration. Your friends will not be able to send you funds using your username." = "Bạn sẽ mất quyền truy cập vào tên người dùng miễn phí mà bạn đã nhận được trong quá trình đăng ký.  Bạn bè của bạn sẽ không thể gửi tiền cho bạn bằng tên người dùng của bạn.";
 "You will not be able to use free transactions within the Solana network with Key App." = "Bạn sẽ không thể sử dụng các giao dịch miễn phí trong mạng Solana với Key App.";

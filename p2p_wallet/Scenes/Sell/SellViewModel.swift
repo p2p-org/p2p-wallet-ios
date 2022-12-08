@@ -97,13 +97,6 @@ class SellViewModel: BaseViewModel, ObservableObject {
             baseCurrencyAmount: baseCurrencyAmount,
             externalTransactionId: externalTransactionId
         )
-        coordinator.showWebPage.send(url)
-    }
-}
-
-extension SellViewModel {
-    struct CoordinatorIO {
-        var showPending = PassthroughSubject<Void, Never>()
-        var showWebPage = PassthroughSubject<URL, Never>()
+        navigation.send(.webPage(url: url))
     }
 }
