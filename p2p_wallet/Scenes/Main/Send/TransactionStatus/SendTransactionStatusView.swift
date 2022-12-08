@@ -142,7 +142,7 @@ struct SendTransactionStatusStatusView: View {
                         Image(uiImage: image)
                             .renderingMode(.template)
                             .resizable()
-                            .foregroundColor(Color(UIColor(fromHexString: "04D004")!))
+                            .foregroundColor(Color(UIColor(red: 0.016, green: 0.816, blue: 0.016, alpha: 1)))
                             .frame(width: 24, height: 24)
                     }
                 }
