@@ -23,7 +23,6 @@ final class TabBarController: UITabBarController {
     private var actionsCoordinator: ActionsCoordinator?
     private var settingsCoordinator: SettingsCoordinator!
     private var buyCoordinator: BuyCoordinator?
-    private var sendCoordinator: SendToken.Coordinator?
     private var emptySendCoordinator: SendEmptyCoordinator?
     private var sendCoordinator: SendCoordinator?
 
@@ -122,7 +121,7 @@ final class TabBarController: UITabBarController {
                     .sink(receiveValue: { [weak self] _ in
                         self?.emptySendCoordinator = nil
                     })
-                    .store(in: &cancellables)
+                    .store(in: &subscriptions)
             }
             analyticsManager.log(event: AmplitudeEvent.sendViewed(lastScreen: "main_screen"))
         }
