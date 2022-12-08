@@ -50,7 +50,7 @@ class SellActionServiceMock: SellActionService {
         var components = URLComponents(string: endpoint)!
         components.queryItems = [
             .init(name: "apiKey", value: apiKey),
-            .init(name: "baseCurrencyCode", value: "SOL"),
+            .init(name: "baseCurrencyCode", value: "sol"),
             .init(name: "refundWalletAddress", value: userWalletManager.wallet?.account.publicKey.base58EncodedString),
             .init(name: "quoteCurrencyCode", value: quoteCurrencyCode),
             .init(name: "baseCurrencyAmount", value: baseCurrencyAmount.toString()),

@@ -7,7 +7,7 @@
 
 import Foundation
 
-enum SellSubScene {
+enum SellNavigation {
     case moonpayWebpage(url: URL)
 }
 
