@@ -18,17 +18,23 @@ final class SellCoordinator: Coordinator<SellCoordinatorResult> {
         let viewModel = SellViewModel()
 
         // scene navigation
-        viewModel.coordinator.showWebPage
-            .sink { [unowned self] url in
-                self.navigateToProviderWebPage(url: url)
+        viewModel.navigationPublisher
+            .sink { [unowned self] scene in
+                switch scene {
+                case .webPage(let url):
+                    navigateToProviderWebPage(url: url)
+                    
+                default:
+                    break
+                }
             }
             .store(in: &subscriptions)
 
         // create viewController
         let vc = UIHostingController(rootView: SellView(viewModel: viewModel))
 
-        viewModel.coordinator
-            .showPending
+        viewModel.navigationPublisher
+            .filter { val in val == .showPending }
             .receive(on: RunLoop.main)
             .flatMap { [unowned self, navigationController] _ in
                 self.coordinate(
@@ -41,13 +47,12 @@ final class SellCoordinator: Coordinator<SellCoordinatorResult> {
         navigationController.pushViewController(vc, animated: true)
         return vc.deallocatedPublisher()
     }
-    
+
     // MARK: - Navigation
     private func navigateToProviderWebPage(url: URL) {
         let vc = SFSafariViewController(url: url)
         vc.modalPresentationStyle = .automatic
         navigationController.present(vc, animated: true)
-
         // TODO - Make coordinator
     }
 }

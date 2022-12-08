@@ -12,23 +12,30 @@ class SellDataServiceMock: SellDataService {
 
     private let statusSubject = PassthroughSubject<SellDataServiceStatus, Never>()
     lazy var status: AnyPublisher<SellDataServiceStatus, Never> = {
-        statusSubject
-            .eraseToAnyPublisher()
+        statusSubject.eraseToAnyPublisher()
     }()
 
     private let lastUpdateDateSubject = PassthroughSubject<Date, Never>()
     lazy var lastUpdateDate: AnyPublisher<Date, Never> = { lastUpdateDateSubject.eraseToAnyPublisher() }()
 
     /// List of supported crypto currencies
-    private(set) var currencies = [Provider.Currency]()
-    private(set) var fiat: Fiat = .usd
+    private(set) var currency: ProviderCurrency!
+    private(set) var fiat: Fiat!
 
     func update() async throws {
-        defer {
-            statusSubject.send(.ready)
+        guard
+            let currency = try await provider.currencies().filter({ $0.code.uppercased() == "SOL" }).first else {
+            statusSubject.send(.error)
+            return
         }
-        currencies = try await provider.currencies().filter { $0.code.uppercased() == "SOL" }
-        fiat = try await Provider().fiat()
+        self.currency = currency
+        do {
+            self.fiat = try await provider.fiat()
+        } catch {
+            self.fiat = .usd
+//            fatalError("Unsupported fiat")
+        }
+        statusSubject.send(.ready)
     }
 
     func incompleteTransactions() async throws -> [Provider.Transaction] {
@@ -60,7 +67,23 @@ class SellDataServiceMock: SellDataService {
 }
 
 class SellActionServiceMock: SellActionService {
+    typealias Provider = MoonpaySellActionServiceProvider
+    private var provider = Provider()
+
     @Injected private var userWalletManager: UserWalletManager
+
+    func sellQuote(
+        baseCurrencyCode: String,
+        quoteCurrencyCode: String,
+        baseCurrencyAmount: Double,
+        extraFeePercentage: Double
+    ) async throws -> Provider.Quote {
+        try await provider.sellQuote(
+            baseCurrencyCode: baseCurrencyCode,
+            quoteCurrencyCode: quoteCurrencyCode,
+            baseCurrencyAmount: baseCurrencyAmount
+        )
+    }
 
     func createSellURL(
         quoteCurrencyCode: String,
@@ -90,7 +113,7 @@ class SellActionServiceMock: SellActionService {
         }
         return url
     }
-    func calculateRates() async throws -> Double { 0 }
+
     func saveTransaction() async throws {}
     func deleteTransaction() async throws {}
 }

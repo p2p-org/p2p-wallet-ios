@@ -1,10 +1,17 @@
 import Foundation
 import Resolver
 
+public protocol ProviderCurrency {
+    var id: String { get }
+    var name: String { get }
+    var code: String { get }
+    var minSellAmount: Double? { get }
+    var maxSellAmount: Double? { get }
+}
+
 public protocol SellDataServiceProvider {
     associatedtype Transaction
-    associatedtype SellQuote
-    associatedtype SellDataCurrency
+    associatedtype Currency: ProviderCurrency
 }
 
 enum MoonpaySellDataServiceProviderError: Error {
@@ -12,7 +19,7 @@ enum MoonpaySellDataServiceProviderError: Error {
 }
 
 class MoonpaySellDataServiceProvider: SellDataServiceProvider {
-    typealias SellDataCurrency = MoonpaySellDataServiceProvider.Currency
+    typealias Currency = MoonpaySellDataServiceProvider.MoonpayCurrency
 
     @Injected private var moonpayAPI: Moonpay.Provider
 
@@ -45,24 +52,10 @@ class MoonpaySellDataServiceProvider: SellDataServiceProvider {
         return try fiatByApha3(alpha3: ipAddressesResponse.alpha3)
     }
 
-    func sellQuote(
-        baseCurrencyCode: String,
-        quoteCurrencyCode: String,
-        baseCurrencyAmount: Double,
-        extraFeePercentage: Double = 0
-    ) async throws -> MoonpaySellDataServiceProvider.SellQuote {
-        let result = try await moonpayAPI.getSellQuote(
-            baseCurrencyCode: baseCurrencyCode,
-            quoteCurrencyCode: quoteCurrencyCode,
-            baseCurrencyAmount: baseCurrencyAmount,
-            extraFeePercentage: extraFeePercentage)
-        return SellQuote(minSellAmount: 0)
-    }
-
-    func currencies() async throws -> [Currency] {
+    func currencies() async throws -> [ProviderCurrency] {
         let currencies = try await moonpayAPI.getAllSupportedCurrencies()
         return currencies.map { cur in
-            Currency(
+            MoonpayCurrency(
                 id: cur.id,
                 name: cur.name,
                 code: cur.code,
@@ -76,7 +69,7 @@ class MoonpaySellDataServiceProvider: SellDataServiceProvider {
 }
 
 extension MoonpaySellDataServiceProvider {
-    struct Currency {
+    struct MoonpayCurrency: ProviderCurrency, Codable {
         var id: String
         var name: String
         var code: String
@@ -84,10 +77,6 @@ extension MoonpaySellDataServiceProvider {
         var minSellAmount: Double?
         var maxSellAmount: Double?
         var isSuspended: Bool
-    }
-
-    struct SellQuote: Codable {
-        var minSellAmount: Double
     }
 
     struct Transaction: Codable {
@@ -113,5 +102,36 @@ extension MoonpaySellDataServiceProvider.Transaction {
         case pending
         case failed
         case completed
+    }
+}
+
+public protocol SellActionServiceProvider {
+    associatedtype Quote: SellActionServiceQuote
+
+    func sellQuote(
+        baseCurrencyCode: String,
+        quoteCurrencyCode: String,
+        baseCurrencyAmount: Double,
+        extraFeePercentage: Double
+    ) async throws -> Quote
+}
+
+public class MoonpaySellActionServiceProvider: SellActionServiceProvider {
+    public typealias Quote = Moonpay.SellQuote
+
+    @Injected private var moonpayAPI: Moonpay.Provider
+
+    public func sellQuote(
+        baseCurrencyCode: String,
+        quoteCurrencyCode: String,
+        baseCurrencyAmount: Double,
+        extraFeePercentage: Double = 0
+    ) async throws -> Quote {
+         try await moonpayAPI.getSellQuote(
+            baseCurrencyCode: baseCurrencyCode,
+            quoteCurrencyCode: quoteCurrencyCode,
+            baseCurrencyAmount: baseCurrencyAmount,
+            extraFeePercentage: extraFeePercentage
+         )
     }
 }

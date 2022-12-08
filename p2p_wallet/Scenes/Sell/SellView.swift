@@ -5,15 +5,37 @@ struct SellView: View {
     @ObservedObject var viewModel: SellViewModel
 
     var body: some View {
-//        switch viewModel.state {
-//        case .loading:
-//            loading
-//        case .pending:
-//            pending
-//        case .sell:
-//            sell
-//        }
-        SellInputView(viewModel: .init())
+        ZStack {
+            Color(Asset.Colors.smoke.color)
+                .edgesIgnoringSafeArea(.all)
+            VStack {
+                if viewModel.isLoading {
+                    loading
+                } else {
+                    SellInputView(viewModel: viewModel)
+                }
+            }
+        }
+        .toolbar {
+            ToolbarItem(placement: .principal) { Text("Sell SOL").fontWeight(.semibold) }
+        }
+    }
+
+    var form: some View {
+        VStack(spacing: 8) {
+//            VStack(spacing: 4) {
+//                Button {
+//                    viewModel.sellAll()
+//                } label: {
+//                    Text(viewModel.sellAllText)
+//                }
+//                TextField("Text", text: $viewModel.cryptoAmount)
+//            }
+//            TextField("Text2", text: $viewModel.cryptoAmount)
+//            VStack {
+//                Text("Result View")
+//            }
+        }
     }
 
     var loading: some View {
