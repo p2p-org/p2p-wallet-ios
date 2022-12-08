@@ -12,7 +12,7 @@ struct SellView: View {
 //        case .sell:
 //            sell
 //        }
-        Text("Sell View")
+        SellInputView(viewModel: .init())
     }
 
     var loading: some View {

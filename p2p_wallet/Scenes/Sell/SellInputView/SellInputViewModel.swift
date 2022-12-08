@@ -6,11 +6,12 @@
 //
 
 import Foundation
+import Combine
 
 final class SellInputViewModel: BaseViewModel, ObservableObject {
     
     // MARK: - Properties
     
-    @Published var baseAmount: String = ""
-    @Published var quoteAmount: String = ""
+    @Published var baseAmount: Double = 0
+    @Published var quoteAmount: Double = 0
 }
