@@ -99,39 +99,30 @@ final class HomeCoordinator: Coordinator<Void> {
     private func createHomeWithTokensViewModel() -> HomeWithTokensViewModel {
         let tokensViewModel = HomeWithTokensViewModel()
         
-        tokensViewModel.earnShow
-            .sink(receiveValue: { [unowned self] in
-                earnSubject.send()
-            })
-            .store(in: &subscriptions)
-        
-        scrollSubject
-            .sink(receiveValue: { [unowned tokensViewModel] in
-                tokensViewModel.scrollToTop()
-            })
-            .store(in: &subscriptions)
-        
-        tokensViewModel.buyShow
-            .sink(receiveValue: { [unowned self] _ in
-                if available(.buyScenarioEnabled) {
-                    coordinate(to: BuyCoordinator(navigationController: navigationController, context: .fromHome))
-                        .sink(receiveValue: {})
-                        .store(in: &subscriptions)
-                } else {
-                    presentBuyView()
+        tokensViewModel.navigationPublisher
+            .sink { [unowned self] scene in
+                switch scene {
+                case .earn:
+                    earnSubject.send()
+                case .buy:
+                    if available(.buyScenarioEnabled) {
+                        coordinate(to: BuyCoordinator(navigationController: navigationController, context: .fromHome))
+                            .sink(receiveValue: {})
+                            .store(in: &subscriptions)
+                    } else {
+                        presentBuyView()
+                    }
+                case .receive(let publicKey):
+                    openReceiveScreen(pubKey: publicKey)
+                default:
+                    break
                 }
-                
-            })
+            }
             .store(in: &subscriptions)
-
-        tokensViewModel.receiveShow
-            .sink(receiveValue: { [unowned self] in
-                openReceiveScreen(pubKey: $0)
-            })
-            .store(in: &subscriptions)
-
-        tokensViewModel.sendShow
-            .flatMap { [unowned self] in
+        
+        tokensViewModel.navigationPublisher
+            .filter {$0 == .send || $0 == .swap}
+            .flatMap { [unowned self] _ in
                 coordinate(
                     to: SendCoordinator(
                         navigationController: navigationController,
@@ -148,29 +139,18 @@ final class HomeCoordinator: Coordinator<Void> {
                 }
             })
             .store(in: &subscriptions)
-
-        tokensViewModel.swapShow
-            .flatMap { [unowned self] in
-                coordinate(
-                    to: SwapCoordinator(
-                        navigationController: navigationController,
-                        initialWallet: nil
-                    )
-                )
-            }
-            .sink(receiveValue: { [weak tokensViewModel] result in
-                switch result {
-                case .cancel:
-                    break
-                case .done:
-                    tokensViewModel?.scrollToTop()
+        
+        tokensViewModel.navigationPublisher
+            .compactMap { scene -> (String, String)? in
+                switch scene {
+                case .wallet(let pubKey, let tokenSymbol):
+                    return (pubKey, tokenSymbol)
+                default:
+                    return nil
                 }
-            })
-            .store(in: &subscriptions)
-    
-        tokensViewModel.walletShow
-            .flatMap { [unowned self] pubKey, tokenSymbol in
-                let model = WalletDetailCoordinator.Model(pubKey: pubKey, symbol: tokenSymbol)
+            }
+            .flatMap { [unowned self] params -> AnyPublisher<WalletDetailCoordinator.Result, Never> in
+                let model = WalletDetailCoordinator.Model(pubKey: params.0, symbol: params.1)
                 let coordinator = WalletDetailCoordinator(navigationController: navigationController, model: model)
                 return coordinate(to: coordinator)
             }
@@ -181,6 +161,12 @@ final class HomeCoordinator: Coordinator<Void> {
                 case .done:
                     tokensViewModel?.scrollToTop()
                 }
+            })
+            .store(in: &subscriptions)
+        
+        scrollSubject
+            .sink(receiveValue: { [unowned tokensViewModel] in
+                tokensViewModel.scrollToTop()
             })
             .store(in: &subscriptions)
         

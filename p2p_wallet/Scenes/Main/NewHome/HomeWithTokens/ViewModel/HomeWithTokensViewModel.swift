@@ -13,26 +13,27 @@ import RxSwift
 import SolanaSwift
 import UIKit
 
+enum HomeNavigation: Equatable {
+    case buy
+    case receive(publicKey: PublicKey)
+    case send
+    case swap
+    case earn
+    case wallet(pubKey: String, tokenSymbol: String)
+    case actions([WalletActionType])
+}
+
 class HomeWithTokensViewModel: ObservableObject {
     private let walletsRepository: WalletsRepository
     private let pricesService = Resolver.resolve(PricesServiceType.self)
     @Injected private var solanaTracker: SolanaTracker
     @Injected private var notificationService: NotificationService
 
-    private let buyClicked = PassthroughSubject<Void, Never>()
-    private let receiveClicked = PassthroughSubject<Void, Never>()
-    private let sendClicked = PassthroughSubject<Void, Never>()
-    private let swapClicked = PassthroughSubject<Void, Never>()
-    private let earnClicked = PassthroughSubject<Void, Never>()
-    private let walletClicked = PassthroughSubject<(pubKey: String, tokenSymbol: String), Never>()
-    let buyShow: AnyPublisher<Void, Never>
-    let receiveShow: AnyPublisher<PublicKey, Never>
-    let sendShow: AnyPublisher<Void, Never>
-    let swapShow: AnyPublisher<Void, Never>
-    let earnShow: AnyPublisher<Void, Never>
-    let walletShow: AnyPublisher<(pubKey: String, tokenSymbol: String), Never>
-
-    var actions: AnyPublisher<[WalletActionType], Never>
+    private let navigation = PassthroughSubject<HomeNavigation, Never>()
+    var navigationPublisher: AnyPublisher<HomeNavigation, Never> {
+        navigation.eraseToAnyPublisher()
+    }
+    
     var balance: AnyPublisher<String, Never>
 
     @Published var scrollOnTheTop = true
@@ -49,16 +50,6 @@ class HomeWithTokensViewModel: ObservableObject {
         self.walletsRepository = walletsRepository
 
         tokensIsHidden = !walletsRepository.isHiddenWalletsShown.value
-
-        buyShow = buyClicked.eraseToAnyPublisher()
-        receiveShow = receiveClicked
-            .compactMap { try? PublicKey(string: walletsRepository.nativeWallet?.pubkey) }
-            .eraseToAnyPublisher()
-        sendShow = sendClicked.eraseToAnyPublisher()
-        swapShow = swapClicked.eraseToAnyPublisher()
-        walletShow = walletClicked.eraseToAnyPublisher()
-        earnShow = earnClicked.eraseToAnyPublisher()
-        actions = Just([WalletActionType.buy, .receive, .send, .swap]).eraseToAnyPublisher()
 
         balance = Observable.zip(walletsRepository.dataObservable, walletsRepository.stateObservable)
             .filter { $0.1 == .loaded }
@@ -118,23 +109,25 @@ class HomeWithTokensViewModel: ObservableObject {
     func actionClicked(_ action: WalletActionType) {
         switch action {
         case .receive:
-            receiveClicked.send()
+            guard let pubkey = try? PublicKey(string: walletsRepository.nativeWallet?.pubkey)
+            else { return }
+            navigation.send(.receive(publicKey: pubkey))
         case .buy:
-            buyClicked.send()
+            navigation.send(.buy)
         case .send:
-            sendClicked.send()
+            navigation.send(.send)
         case .swap:
-            swapClicked.send()
+            navigation.send(.swap)
         }
     }
 
     func earn() {
-        earnClicked.send()
+        navigation.send(.earn)
     }
 
     func tokenClicked(wallet: Wallet) {
         guard let pubKey = wallet.pubkey else { return }
-        walletClicked.send((pubKey: pubKey, tokenSymbol: wallet.token.symbol))
+        navigation.send(.wallet(pubKey: pubKey, tokenSymbol: wallet.token.symbol))
     }
 
     func scrollToTop() {
