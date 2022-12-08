@@ -17,9 +17,9 @@ public protocol SellDataService {
     func update() async throws
 
     /// Supported crypto currencies
-    var currencies: [Provider.SellDataCurrency] { get }
+    var currency: ProviderCurrency! { get }
     /// Supported Fiat by provider for your region
-    var fiat: Fiat { get }
+    var fiat: Fiat! { get }
     /// Return incomplete transactions
     func incompleteTransactions() async throws -> [Provider.Transaction]
     /// Return transaction by  id
@@ -33,12 +33,28 @@ enum SellActionServiceError: Error {
 }
 
 public protocol SellActionService {
-    func calculateRates() async throws -> Double
+    associatedtype Provider: SellActionServiceProvider
+
+    func sellQuote(
+        baseCurrencyCode: String,
+        quoteCurrencyCode: String,
+        baseCurrencyAmount: Double,
+        extraFeePercentage: Double
+    ) async throws -> Provider.Quote
+
     func createSellURL(
         quoteCurrencyCode: String,
         baseCurrencyAmount: Double,
         externalTransactionId: String
     ) throws -> URL
+
     func saveTransaction() async throws
     func deleteTransaction() async throws
+}
+
+public protocol SellActionServiceQuote {
+    var extraFeeAmount: Double { get }
+    var feeAmount: Double { get }
+    var baseCurrencyPrice: Double { get }
+    var quoteCurrencyAmount: Double { get }
 }

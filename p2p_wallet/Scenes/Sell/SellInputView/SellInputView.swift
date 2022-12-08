@@ -10,9 +10,15 @@ import KeyAppUI
 import Combine
 
 struct SellInputView: View {
-    @ObservedObject var viewModel: SellInputViewModel
+    @ObservedObject var viewModel: SellViewModel
     
-    init(viewModel: SellInputViewModel) {
+    let formatter: NumberFormatter = {
+            let formatter = NumberFormatter()
+            formatter.numberStyle = .decimal
+            return formatter
+        }()
+    
+    init(viewModel: SellViewModel) {
         self.viewModel = viewModel
     }
     
@@ -55,17 +61,12 @@ struct SellInputView: View {
         VStack(alignment: .leading, spacing: 4) {
             sellAllButton
                 .padding(.leading, 24)
-            
+
             HStack {
-                DecimalTextField(
-                    value: $viewModel.baseAmount,
-                    isFirstResponder: $viewModel.isEnteringBaseAmount
-                ) { textField in
-                    textField.font = UIFont.font(of: .text3, weight: .regular)
-                    textField.keyboardType = .decimalPad
-                }
-                
-                Text(viewModel.baseCurrencyCode)
+                TextField("0", value: $viewModel.baseAmount, formatter: formatter)
+                    .disableAutocorrection(true)
+
+                Text("SOL")
                     .foregroundColor(Color(Asset.Colors.night.color.withAlphaComponent(0.3)))
                     .font(uiFont: UIFont.font(of: .text3, weight: .regular))
             }
@@ -73,16 +74,16 @@ struct SellInputView: View {
         }
         .padding(.top, 44)
     }
-    
+
     var sellAllButton: some View {
         Button {
-            // TODO: - Action
+            viewModel.sellAll()
         } label: {
             HStack(spacing: 4) {
                 Text(L10n.sellAll)
                     .foregroundColor(Color(Asset.Colors.mountain.color))
                     .font(uiFont: UIFont.font(of: .label1, weight: .regular))
-                Text("\(viewModel.maxBaseAmount ?? 0) \(viewModel.baseCurrencyCode)")
+                Text(viewModel.sellAllText)
                     .foregroundColor(Color(Asset.Colors.sky.color))
                     .font(uiFont: UIFont.font(of: .label1, weight: .regular))
             }
@@ -99,15 +100,16 @@ struct SellInputView: View {
                 textField.keyboardType = .decimalPad
             }
                 
-            Text("≈ \(viewModel.quoteCurrencyCode)")
+            Text("≈ " + viewModel.fiat)
                 .foregroundColor(Color(Asset.Colors.night.color.withAlphaComponent(0.3)))
                 .font(uiFont: UIFont.font(of: .title1, weight: .bold))
         }
+        .font(uiFont: UIFont.font(of: .title1, weight: .bold))
     }
-    
+
     var exchangeRateView: some View {
         HStack {
-            Text("1 \(viewModel.baseCurrencyCode) ≈ \(viewModel.exchangeRate.toString()) \(viewModel.quoteCurrencyCode)")
+            Text("1 SOL ≈ " + viewModel.exchangeRate)
             Spacer()
         }
             .descriptionTextStyle()
@@ -117,7 +119,7 @@ struct SellInputView: View {
     
     var feeView: some View {
         HStack {
-            Text(L10n.includedFee("\(viewModel.fee) \(viewModel.baseCurrencyCode)"))
+            Text("Included fee " + viewModel.fee)
             Spacer()
         }
             .descriptionTextStyle()
@@ -131,7 +133,7 @@ struct SellInputView: View {
             style: .primaryWhite,
             size: .large
         ) { [weak viewModel] in
-//            viewModel?.buyButtonTapped()
+            viewModel?.sell()
         }
         .frame(height: 56)
         .padding(EdgeInsets(top: 0, leading: 16, bottom: 12, trailing: 16))

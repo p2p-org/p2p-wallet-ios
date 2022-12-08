@@ -6,7 +6,7 @@ import Foundation
 
 private typealias _Error = Error
 
-extension Moonpay {
+public extension Moonpay {
     enum Error: _Error {
         case message(message: String)
     }
@@ -23,14 +23,15 @@ extension Moonpay {
         let quoteCurrencyAmount: Double
     }
 
-    struct SellQuote: Codable {
-        var paymentMethod: String
-        var extraFeeAmount: Double
-        var feeAmount: Double
-        var quoteCurrencyAmount: Double
-        var baseCurrencyAmount: Double
-        var baseCurrency: Currency
-        var quoteCurrency: Currency
+    struct SellQuote: Codable, SellActionServiceQuote {
+        public var paymentMethod: String
+        public var extraFeeAmount: Double
+        public var feeAmount: Double
+        public var quoteCurrencyAmount: Double
+        public var baseCurrencyAmount: Double
+        public var baseCurrencyPrice: Double
+        public var baseCurrency: Currency
+        public var quoteCurrency: Currency
     }
 
     typealias Currencies = [Currency]

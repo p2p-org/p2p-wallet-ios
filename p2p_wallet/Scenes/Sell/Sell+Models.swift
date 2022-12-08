@@ -1,14 +1,8 @@
-//
-//  SellSubscene.swift
-//  p2p_wallet
-//
-//  Created by Chung Tran on 08/12/2022.
-//
-
 import Foundation
 
-enum SellNavigation {
+enum SellNavigation: Equatable {
     case webPage(url: URL)
+    case showPending
 }
 
 enum SellError: Error {

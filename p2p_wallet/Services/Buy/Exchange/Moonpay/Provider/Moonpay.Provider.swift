@@ -46,7 +46,7 @@ extension Moonpay {
                 params["paymentMethod"] = paymentMethod.rawValue
             }
 
-            var components = URLComponents(string: api.endpoint + "/v3/currencies/\(quoteCurrencyCode)/buy_quote")!
+            var components = URLComponents(string: api.endpoint + "v3/currencies/\(quoteCurrencyCode)/buy_quote")!
             components.queryItems = params
                 .mapValues { value -> Any in
                     value is Double ? String(value as! Double) : value
@@ -79,19 +79,15 @@ extension Moonpay {
         ) async throws -> SellQuote {
             var params = [
                 "apiKey": api.apiKey,
-                "baseCurrencyCode": baseCurrencyCode,
                 "areFeesIncluded": "true",
-                // Undocumented params which makes results equal to web
-                "fixed": "true",
-                "regionalPricing": "true",
+                "baseCurrencyAmount": baseCurrencyAmount
             ] as [String: Any]
-            params["baseCurrencyAmount"] = baseCurrencyAmount
             params["quoteCurrencyCode"] = quoteCurrencyCode
             if let extraFeePercentage {
                 params["extraFeePercentage"] = extraFeePercentage
             }
 
-            var components = URLComponents(string: api.endpoint + "/v3/currencies/\(quoteCurrencyCode)/sell_quote")!
+            var components = URLComponents(string: api.endpoint + "v3/currencies/\(baseCurrencyCode)/sell_quote")!
             components.queryItems = params
                 .mapValues { value -> Any in
                     value is Double ? String(value as! Double) : value
@@ -117,7 +113,7 @@ extension Moonpay {
         }
 
         func getPrice(for crypto: String, as currency: String) async throws -> Double {
-            var components = URLComponents(string: api.endpoint + "/v3/currencies/\(crypto)/ask_price")!
+            var components = URLComponents(string: api.endpoint + "v3/currencies/\(crypto)/ask_price")!
             let params = ["apiKey": api.apiKey]
             components.queryItems = params.map { key, value in
                 URLQueryItem(name: key, value: value)
@@ -158,7 +154,7 @@ extension Moonpay {
                 var alpha3: String?
             }
 
-            var components = URLComponents(string: api.endpoint + "/v3/ip_address")!
+            var components = URLComponents(string: api.endpoint + "v3/ip_address")!
             let params = ["apiKey": api.apiKey]
             components.queryItems = params.map { key, value in
                 URLQueryItem(name: key, value: value)
@@ -181,7 +177,7 @@ extension Moonpay {
                 var alpha3: String?
             }
 
-            var components = URLComponents(string: api.endpoint + "/v4/ip_address")!
+            var components = URLComponents(string: api.endpoint + "v4/ip_address")!
             let params = ["apiKey": api.apiKey]
             components.queryItems = params.map { key, value in
                 URLQueryItem(name: key, value: value)
