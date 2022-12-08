@@ -12,6 +12,6 @@ final class SellInputViewModel: BaseViewModel, ObservableObject {
     
     // MARK: - Properties
     
-    @Published var baseAmount: Double = 0
-    @Published var quoteAmount: Double = 0
+    @Published var baseAmount: Double?
+    @Published var quoteAmount: Double?
 }

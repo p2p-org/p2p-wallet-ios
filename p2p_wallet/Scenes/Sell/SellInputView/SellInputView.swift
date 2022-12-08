@@ -63,13 +63,17 @@ struct SellInputView: View {
                 .padding(.leading, 24)
             
             HStack {
-                TextField("0", value: $viewModel.baseAmount, formatter: formatter)
-                    .disableAutocorrection(true)
+                DecimalTextField(
+                    value: $viewModel.baseAmount
+                ) { textField in
+                    textField.font = UIFont.font(of: .text3, weight: .regular)
+                    textField.keyboardType = .decimalPad
+                }
                 
                 Text("SOL")
                     .foregroundColor(Color(Asset.Colors.night.color.withAlphaComponent(0.3)))
+                    .font(uiFont: UIFont.font(of: .text3, weight: .regular))
             }
-                .font(uiFont: UIFont.font(of: .text3, weight: .regular))
                 .blockStyle()
         }
         .padding(.top, 44)
@@ -92,14 +96,17 @@ struct SellInputView: View {
     
     var quoteAmountInputView: some View {
         HStack {
-            TextField("0", value: $viewModel.quoteAmount, formatter: formatter)
-                .disableAutocorrection(true)
+            DecimalTextField(
+                value: $viewModel.quoteAmount
+            ) { textField in
+                textField.font = UIFont.font(of: .title1, weight: .bold)
+                textField.keyboardType = .decimalPad
+            }
                 
             Text("≈ EUR")
                 .foregroundColor(Color(Asset.Colors.night.color.withAlphaComponent(0.3)))
+                .font(uiFont: UIFont.font(of: .title1, weight: .bold))
         }
-        .font(uiFont: UIFont.font(of: .title1, weight: .bold))
-        
     }
     
     var exchangeRateView: some View {
@@ -124,7 +131,7 @@ struct SellInputView: View {
     
     var sellButton: some View {
         TextButtonView(
-            title: L10n.sell("\(viewModel.baseAmount) SOL"),
+            title: L10n.sell("\(viewModel.baseAmount ?? 0) SOL"),
             style: .primaryWhite,
             size: .large
         ) { [weak viewModel] in
@@ -133,15 +140,6 @@ struct SellInputView: View {
         .frame(height: 56)
         .padding(EdgeInsets(top: 0, leading: 16, bottom: 12, trailing: 16))
         .disabled(false)
-    }
-}
-
-private struct NumberTextField: View {
-    @Binding private var number: String
-
-    var body: some View {
-        TextField("Total number of people", text: $number)
-            .keyboardType(.numberPad)
     }
 }
 
