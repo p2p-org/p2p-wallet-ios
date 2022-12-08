@@ -2,6 +2,7 @@
 // Use of this source code is governed by a MIT-style license that can be
 // found in the LICENSE file.
 
+import AnalyticsManager
 import Combine
 import FeeRelayerSwift
 import Foundation
@@ -10,7 +11,6 @@ import Resolver
 import Send
 import SolanaPricesAPIs
 import SolanaSwift
-import AnalyticsManager
 
 final class SendInputViewModel: BaseViewModel, ObservableObject {
     // MARK: - Sub view models
@@ -61,8 +61,20 @@ final class SendInputViewModel: BaseViewModel, ObservableObject {
             tokenInWallet = wallets
                 .first(where: { $0.token.address == token.address }) ?? Wallet(token: Token.nativeSolana)
         default:
-            tokenInWallet = preChosenWallet ?? wallets
-                .first(where: { $0.token.address == Token.nativeSolana.address }) ?? Wallet(token: Token.nativeSolana)
+            if let preChosenWallet = preChosenWallet {
+                tokenInWallet = preChosenWallet ?? wallets
+                    .first(where: { $0.token.address == Token.nativeSolana.address }) ??
+                    Wallet(token: Token.nativeSolana)
+            } else {
+                var preferOrder: [String: Int] = ["USDC": 1, "USDT": 2, "SOL": 3]
+                let sortedWallets = wallets.sorted { (lhs: Wallet, rhs: Wallet) -> Bool in
+                    if lhs.lamports == 0 { return false }
+                    if rhs.lamports == 0 { return true }
+
+                    return (preferOrder[lhs.token.symbol] ?? 4) < (preferOrder[rhs.token.symbol] ?? 4)
+                }
+                tokenInWallet = sortedWallets.first ?? Wallet(token: Token.nativeSolana)
+            }
         }
         sourceWallet = tokenInWallet
 
@@ -194,8 +206,9 @@ private extension SendInputViewModel {
             .sink { [weak self] in
                 guard let self = self else { return }
                 self.openFeeInfo.send(self.currentState.fee == .zero)
-                if self.currentState.fee == .zero
-                    && self.feeTitle.elementsEqual(L10n.enjoyFreeTransactions) {
+                if self.currentState.fee == .zero,
+                   self.feeTitle.elementsEqual(L10n.enjoyFreeTransactions)
+                {
                     self.logEnjoyFeeTransaction()
                 }
             }
@@ -266,6 +279,13 @@ private extension SendInputViewModel {
                 isEnabled: false,
                 title: L10n.min(minAmount.tokenAmount(symbol: sourceWallet.token.symbol))
             )
+        case .error(reason: .insufficientAmountToCoverFee):
+            inputAmountViewModel.isError = false
+            actionButtonViewModel.actionButton = .init(
+                isEnabled: false,
+                title: L10n.insufficientFundsToCoverFees
+            )
+
         default:
             inputAmountViewModel.isError = false
             actionButtonViewModel.actionButton = .init(
@@ -280,7 +300,7 @@ private extension SendInputViewModel {
     }
 
     func updateFeeTitle() {
-        if currentState.fee == .zero && currentState.amountInToken == 0 && currentState.amountInFiat == 0 {
+        if currentState.fee == .zero, currentState.amountInToken == 0, currentState.amountInFiat == 0 {
             feeTitle = L10n.enjoyFreeTransactions
         } else if currentState.fee == .zero {
             feeTitle = L10n.fees(0)
@@ -288,7 +308,8 @@ private extension SendInputViewModel {
             let symbol = currentState.fee == .zero ? "" : currentState.tokenFee.symbol
             feeTitle = L10n
                 .fees(
-                    currentState.feeInToken.total.convertToBalance(decimals: Int(currentState.tokenFee.decimals)).tokenAmount(symbol: symbol)
+                    currentState.feeInToken.total.convertToBalance(decimals: Int(currentState.tokenFee.decimals))
+                        .tokenAmount(symbol: symbol)
                 )
         }
     }
@@ -322,7 +343,7 @@ private extension SendInputViewModel {
         default:
             address = currentState.recipient.address
         }
-        self.logConfirmButtonClick()
+        logConfirmButtonClick()
 
         do {
             await MainActor.run {
@@ -352,6 +373,7 @@ private extension SendInputViewModel {
 }
 
 // MARK: - Analytics
+
 private extension SendInputViewModel {
     func logOpen() {
         analyticsManager.log(event: AmplitudeEvent.sendnewInputScreen(source: source.rawValue))
