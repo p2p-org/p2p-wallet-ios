@@ -26,7 +26,7 @@ class SellDataServiceMock: SellDataService {
     }
 
     func isAvailable() async throws -> Bool {
-        true
+        available(.sellScenarioEnabled)
     }
 }
 
