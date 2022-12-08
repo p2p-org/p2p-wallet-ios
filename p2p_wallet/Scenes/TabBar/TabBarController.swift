@@ -24,6 +24,9 @@ final class TabBarController: UITabBarController {
     private var settingsCoordinator: SettingsCoordinator!
     private var buyCoordinator: BuyCoordinator?
     private var sendCoordinator: SendToken.Coordinator?
+    private var emptySendCoordinator: SendEmptyCoordinator?
+
+    @Injected private var walletsRepository: WalletsRepository
 
     private var customTabBar: CustomTabBar { tabBar as! CustomTabBar }
 
@@ -96,24 +99,35 @@ final class TabBarController: UITabBarController {
             }
             navigationController.show(vc, sender: nil)
         case .send:
-            let vm = SendToken.ViewModel(
-                walletPubkey: nil,
-                destinationAddress: nil,
-                relayMethod: .default
-            )
-            sendCoordinator = SendToken.Coordinator(
-                viewModel: vm,
-                navigationController: navigationController
-            )
+            let fiatAmount = walletsRepository.getWallets().reduce(0) { $0 + $1.amountInCurrentFiat }
+            let withTokens = fiatAmount > 0
+            if withTokens {
+                let vm = SendToken.ViewModel(
+                    walletPubkey: nil,
+                    destinationAddress: nil,
+                    relayMethod: .default
+                )
+                sendCoordinator = SendToken.Coordinator(
+                    viewModel: vm,
+                    navigationController: navigationController
+                )
+                
+                sendCoordinator?.doneHandler = {
+                    navigationController.popToRootViewController(animated: true)
+                }
+                let vc = sendCoordinator?.start(hidesBottomBarWhenPushed: true)
+                vc?.onClose = { [weak self] in
+                    self?.sendCoordinator = nil
+                }
+            } else {
+                emptySendCoordinator = SendEmptyCoordinator(navigationController: navigationController)
+                emptySendCoordinator?.start()
+                    .sink(receiveValue: { [weak self] _ in
+                        self?.emptySendCoordinator = nil
+                    })
+                    .store(in: &cancellables)
+            }
             analyticsManager.log(event: AmplitudeEvent.sendViewed(lastScreen: "main_screen"))
-            
-            sendCoordinator?.doneHandler = {
-                navigationController.popToRootViewController(animated: true)
-            }
-            let vc = sendCoordinator?.start(hidesBottomBarWhenPushed: true)
-            vc?.onClose = { [weak self] in
-                self?.sendCoordinator = nil
-            }
         }
     }
 
