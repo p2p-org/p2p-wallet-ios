@@ -5,17 +5,13 @@ import Resolver
 
 @MainActor
 class SellViewModel: BaseViewModel, ObservableObject {
-    
+
     // MARK: - Dependencies
     // TODO: Put resolver
     private let dataService: any SellDataService = SellDataServiceMock()
     private let actionService: SellActionService = SellActionServiceMock()
 
     let coordinator = CoordinatorIO()
-private var navigation = PassthroughSubject<SellNavigation?, Never>()
-var navigationPublisher: AnyPublisher<SellNavigation?, Never> {
-navigation.eraseToAnyPublisher()
-}
 
     // MARK: -
 
@@ -42,16 +38,16 @@ navigation.eraseToAnyPublisher()
             .sink { _ in self.coordinator.showPending.send() }
             .store(in: &subscriptions)
 
-// TODO: - Remove later
-#if DEBUG
-DispatchQueue.main.asyncAfter(deadline: .now() + .milliseconds(300)) { [unowned self] in
-try! openProviderWebView(
-quoteCurrencyCode: "eur",
-baseCurrencyAmount: 10, // 10 SOL
-externalTransactionId: UUID().uuidString
-)
-}
-#endif
+        // TODO: - Remove later
+        #if DEBUG
+        DispatchQueue.main.asyncAfter(deadline: .now() + .milliseconds(300)) { [unowned self] in
+            try! openProviderWebView(
+                quoteCurrencyCode: "eur",
+                baseCurrencyAmount: 10, // 10 SOL
+                externalTransactionId: UUID().uuidString
+            )
+        }
+        #endif
     }
 
     private func warmUp() {
@@ -60,24 +56,25 @@ externalTransactionId: UUID().uuidString
         }
     }
 
-// MARK: - Actions
+    // MARK: - Actions
 
-func openProviderWebView(
-quoteCurrencyCode: String,
-baseCurrencyAmount: Double,
-externalTransactionId: String
-) throws {
-let url = try actionService.createSellURL(
-quoteCurrencyCode: quoteCurrencyCode,
-baseCurrencyAmount: baseCurrencyAmount,
-externalTransactionId: externalTransactionId
-)
-navigation.send(.webPage(url: url))
-}
+    func openProviderWebView(
+        quoteCurrencyCode: String,
+        baseCurrencyAmount: Double,
+        externalTransactionId: String
+    ) throws {
+        let url = try actionService.createSellURL(
+            quoteCurrencyCode: quoteCurrencyCode,
+            baseCurrencyAmount: baseCurrencyAmount,
+            externalTransactionId: externalTransactionId
+        )
+        coordinator.showWebPage.send(url)
+    }
 }
 
 extension SellViewModel {
     struct CoordinatorIO {
         var showPending = PassthroughSubject<Void, Never>()
+        var showWebPage = PassthroughSubject<URL, Never>()
     }
 }

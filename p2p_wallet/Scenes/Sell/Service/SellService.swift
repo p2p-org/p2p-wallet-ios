@@ -24,6 +24,10 @@ public protocol SellDataService {
     func isAvailable() async throws -> Bool
 }
 
+enum SellActionServiceError: Error {
+    case invalidURL
+}
+
 public protocol SellActionService {
     func calculateRates() async throws -> Double
     func createSellURL(
