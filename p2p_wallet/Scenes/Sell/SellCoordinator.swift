@@ -16,19 +16,14 @@ final class SellCoordinator: Coordinator<SellCoordinatorResult> {
     override func start() -> AnyPublisher<SellCoordinatorResult, Never> {
         // create SellViewModel
         let viewModel = SellViewModel()
-        
+
         // scene navigation
-        viewModel.navigationPublisher
-            .sink { [unowned self] scene in
-                switch scene {
-                case .webPage(let url):
-                    navigateToProviderWebPage(url: url)
-                default:
-                    break
-                }
+        viewModel.coordinator.showWebPage
+            .sink { [unowned self] url in
+                self.navigateToProviderWebPage(url: url)
             }
             .store(in: &subscriptions)
-        
+
         // create viewController
         let vc = UIHostingController(rootView: SellView(viewModel: viewModel))
 
@@ -52,7 +47,7 @@ final class SellCoordinator: Coordinator<SellCoordinatorResult> {
         let vc = SFSafariViewController(url: url)
         vc.modalPresentationStyle = .automatic
         navigationController.present(vc, animated: true)
-        
+
         // TODO - Make coordinator
     }
 }
