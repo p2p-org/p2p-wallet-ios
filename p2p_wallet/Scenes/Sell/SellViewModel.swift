@@ -13,8 +13,8 @@ class SellViewModel: BaseViewModel, ObservableObject {
     // MARK: - Properties
 
 //    @Published var state: SellStateMachine.State
-    private var navigation = PassthroughSubject<SellSubScene?, Never>()
-    var navigationPublisher: AnyPublisher<SellSubScene?, Never> {
+    private var navigation = PassthroughSubject<SellNavigation?, Never>()
+    var navigationPublisher: AnyPublisher<SellNavigation?, Never> {
         navigation.eraseToAnyPublisher()
     }
     
@@ -26,7 +26,7 @@ class SellViewModel: BaseViewModel, ObservableObject {
         #if DEBUG
         DispatchQueue.main.asyncAfter(deadline: .now() + .milliseconds(300)) { [unowned self] in
             try! openMoonPayWebView(
-                quoteCurrencyCode: "EUR",
+                quoteCurrencyCode: "eur",
                 baseCurrencyAmount: 10, // 10 SOL
                 externalTransactionId: UUID().uuidString
             )
