@@ -8,7 +8,7 @@
 import Foundation
 
 enum SellNavigation {
-    case moonpayWebpage(url: URL)
+    case webPage(url: URL)
 }
 
 enum SellError: Error {

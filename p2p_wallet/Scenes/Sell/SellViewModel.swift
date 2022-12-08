@@ -25,7 +25,7 @@ class SellViewModel: BaseViewModel, ObservableObject {
         // TODO: - Remove later
         #if DEBUG
         DispatchQueue.main.asyncAfter(deadline: .now() + .milliseconds(300)) { [unowned self] in
-            try! openMoonPayWebView(
+            try! openProviderWebView(
                 quoteCurrencyCode: "eur",
                 baseCurrencyAmount: 10, // 10 SOL
                 externalTransactionId: UUID().uuidString
@@ -36,7 +36,7 @@ class SellViewModel: BaseViewModel, ObservableObject {
 
     // MARK: - Actions
     
-    func openMoonPayWebView(
+    func openProviderWebView(
         quoteCurrencyCode: String,
         baseCurrencyAmount: Double,
         externalTransactionId: String
@@ -46,6 +46,6 @@ class SellViewModel: BaseViewModel, ObservableObject {
             baseCurrencyAmount: baseCurrencyAmount,
             externalTransactionId: externalTransactionId
         )
-        navigation.send(.moonpayWebpage(url: url))
+        navigation.send(.webPage(url: url))
     }
 }

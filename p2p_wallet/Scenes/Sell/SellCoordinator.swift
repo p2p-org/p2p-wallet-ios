@@ -21,8 +21,8 @@ final class SellCoordinator: Coordinator<SellCoordinatorResult> {
         viewModel.navigationPublisher
             .sink { [unowned self] scene in
                 switch scene {
-                case .moonpayWebpage(let url):
-                    navigateToMoonpay(url: url)
+                case .webPage(let url):
+                    navigateToProviderWebPage(url: url)
                 default:
                     break
                 }
@@ -36,7 +36,7 @@ final class SellCoordinator: Coordinator<SellCoordinatorResult> {
     }
     
     // MARK: - Navigation
-    private func navigateToMoonpay(url: URL) {
+    private func navigateToProviderWebPage(url: URL) {
         let vc = SFSafariViewController(url: url)
         vc.modalPresentationStyle = .automatic
         navigationController.present(vc, animated: true)
