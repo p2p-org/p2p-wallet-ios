@@ -15,13 +15,22 @@ extension Moonpay {
         let baseCurrencyCode: String
         let quoteCurrencyCode: String
         let paymentMethod: String?
-
         let feeAmount: Double
         let extraFeeAmount: Double
         let networkFeeAmount: Double
         let totalAmount: Double
         let baseCurrencyAmount: Double
         let quoteCurrencyAmount: Double
+    }
+
+    struct SellQuote: Codable {
+        var paymentMethod: String
+        var extraFeeAmount: Double
+        var feeAmount: Double
+        var quoteCurrencyAmount: Double
+        var baseCurrencyAmount: Double
+        var baseCurrency: Currency
+        var quoteCurrency: Currency
     }
 
     typealias Currencies = [Currency]
@@ -31,6 +40,8 @@ extension Moonpay {
         let precision: Int?
         let addressRegex, testnetAddressRegex: String?
         let minAmount: Double?
+        let minSellAmount: Double?
+        let maxSellAmount: Double?
         let maxAmount: Double?
         let minBuyAmount: Double?
         let supportsAddressTag: Bool?

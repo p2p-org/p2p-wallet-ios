@@ -74,9 +74,9 @@ extension Moonpay {
         func getSellQuote(
             baseCurrencyCode: String,
             quoteCurrencyCode: String,
-            baseCurrencyAmount: Double?,
-            quoteCurrencyAmount: Double?
-        ) async throws -> BuyQuote {
+            baseCurrencyAmount: Double,
+            extraFeePercentage: Double? = 0
+        ) async throws -> SellQuote {
             var params = [
                 "apiKey": api.apiKey,
                 "baseCurrencyCode": baseCurrencyCode,
@@ -85,12 +85,10 @@ extension Moonpay {
                 "fixed": "true",
                 "regionalPricing": "true",
             ] as [String: Any]
-
-            if let baseCurrencyAmount = baseCurrencyAmount {
-                params["baseCurrencyAmount"] = baseCurrencyAmount
-            }
-            if let quoteCurrencyAmount = quoteCurrencyAmount {
-                params["quoteCurrencyAmount"] = quoteCurrencyAmount
+            params["baseCurrencyAmount"] = baseCurrencyAmount
+            params["quoteCurrencyCode"] = quoteCurrencyCode
+            if let extraFeePercentage {
+                params["extraFeePercentage"] = extraFeePercentage
             }
 
             var components = URLComponents(string: api.endpoint + "/v3/currencies/\(quoteCurrencyCode)/sell_quote")!
@@ -111,7 +109,7 @@ extension Moonpay {
             }
             switch response.statusCode {
             case 200 ... 299:
-                return try JSONDecoder().decode(BuyQuote.self, from: data)
+                return try JSONDecoder().decode(SellQuote.self, from: data)
             default:
                 let data = try JSONDecoder().decode(API.ErrorResponse.self, from: data)
                 throw Error.message(message: data.message)
@@ -134,7 +132,7 @@ extension Moonpay {
         }
 
         func getAllSupportedCurrencies() async throws -> Currencies {
-            var components = URLComponents(string: api.endpoint + "/v3/currencies")!
+            var components = URLComponents(string: api.endpoint + "v3/currencies")!
             let params = ["apiKey": api.apiKey]
             components.queryItems = params.map { key, value in
                 URLQueryItem(name: key, value: value)

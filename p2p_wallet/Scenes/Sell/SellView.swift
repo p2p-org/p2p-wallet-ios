@@ -8,9 +8,14 @@ struct SellView: View {
             Text("Sell View")
             if viewModel.isLoading {
                 loading
+            } else {
+                Button {
+                    viewModel.sell()
+                } label: {
+                    Text("Sell")
+                }
             }
         }
-        
     }
 
     var loading: some View {
