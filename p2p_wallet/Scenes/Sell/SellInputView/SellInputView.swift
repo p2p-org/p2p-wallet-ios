@@ -64,7 +64,8 @@ struct SellInputView: View {
             
             HStack {
                 DecimalTextField(
-                    value: $viewModel.baseAmount
+                    value: $viewModel.baseAmount,
+                    isFirstResponder: $viewModel.isEnteringBaseAmount
                 ) { textField in
                     textField.font = UIFont.font(of: .text3, weight: .regular)
                     textField.keyboardType = .decimalPad
@@ -97,7 +98,8 @@ struct SellInputView: View {
     var quoteAmountInputView: some View {
         HStack {
             DecimalTextField(
-                value: $viewModel.quoteAmount
+                value: $viewModel.quoteAmount,
+                isFirstResponder: $viewModel.isEnteringQuoteAmount
             ) { textField in
                 textField.font = UIFont.font(of: .title1, weight: .bold)
                 textField.keyboardType = .decimalPad
@@ -111,7 +113,7 @@ struct SellInputView: View {
     
     var exchangeRateView: some View {
         HStack {
-            Text("1 SOL ≈ 60.05 EUR")
+            Text("1 SOL ≈ \(viewModel.exchangeRate ?? 0) EUR")
             Spacer()
         }
             .descriptionTextStyle()

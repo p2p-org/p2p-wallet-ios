@@ -12,18 +12,21 @@ import BEPureLayout
 import KeyAppUI
 
 struct DecimalTextField: UIViewRepresentable {
+    @Binding private var isFirstResponder: Bool
     @Binding private var value: Double?
     @Binding private var textColor: UIColor
     private var configuration = { (_: BEDecimalTextField) in }
 
     init(
         value: Binding<Double?>,
+        isFirstResponder: Binding<Bool>,
         textColor: Binding<UIColor> = Binding.constant(Asset.Colors.night.color),
         configuration: @escaping (BEDecimalTextField) -> Void = { _ in }
     ) {
         self.configuration = configuration
         _value = value
         _textColor = textColor
+        _isFirstResponder = isFirstResponder
     }
 
     func makeUIView(context: Context) -> BEDecimalTextField {
@@ -53,19 +56,27 @@ struct DecimalTextField: UIViewRepresentable {
             uiView.text = nil
         }
         
+        if uiView.isFirstResponder, !isFirstResponder {
+            DispatchQueue.main.async { uiView.resignFirstResponder() }
+        } else if !uiView.isFirstResponder, isFirstResponder {
+            DispatchQueue.main.async { uiView.becomeFirstResponder() }
+        }
+        
         configuration(uiView)
         uiView.textColor = textColor
     }
 
     func makeCoordinator() -> Coordinator {
-        Coordinator($value)
+        Coordinator($value, isFirstResponder: $isFirstResponder)
     }
 
     class Coordinator: NSObject, UITextFieldDelegate {
         var value: Binding<Double?>
+        var isFirstResponder: Binding<Bool>
 
-        init(_ value: Binding<Double?>) {
+        init(_ value: Binding<Double?>, isFirstResponder: Binding<Bool>) {
             self.value = value
+            self.isFirstResponder = isFirstResponder
         }
 
         @objc func textViewDidChange(_ textField: UITextField) {
@@ -76,6 +87,14 @@ struct DecimalTextField: UIViewRepresentable {
             } else {
                 value.wrappedValue = nil
             }
+        }
+        
+        func textFieldDidBeginEditing(_: UITextField) {
+            isFirstResponder.wrappedValue = true
+        }
+
+        func textFieldDidEndEditing(_: UITextField) {
+            isFirstResponder.wrappedValue = false
         }
 
         func textField(_ textField: UITextField, shouldChangeCharactersIn range: NSRange,
