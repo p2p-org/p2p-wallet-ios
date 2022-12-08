@@ -4,15 +4,13 @@ struct SellView: View {
     @ObservedObject var viewModel: SellViewModel
 
     var body: some View {
-//        switch viewModel.state {
-//        case .loading:
-//            loading
-//        case .pending:
-//            pending
-//        case .sell:
-//            sell
-//        }
-        Text("Sell View")
+        VStack {
+            Text("Sell View")
+            if viewModel.isLoading {
+                loading
+            }
+        }
+        
     }
 
     var loading: some View {

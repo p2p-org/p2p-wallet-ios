@@ -3,23 +3,45 @@ import Foundation
 import Resolver
 
 class SellDataServiceMock: SellDataService {
-
     typealias Provider = MoonpaySellDataServiceProvider
+
+    init() {
+        statusSubject.send(.initialized)
+    }
 
     private let statusSubject = PassthroughSubject<SellDataServiceStatus, Never>()
     lazy var status: AnyPublisher<SellDataServiceStatus, Never> = {
-        statusSubject.eraseToAnyPublisher()
+        statusSubject
+            .eraseToAnyPublisher()
     }()
 
     private let lastUpdateDateSubject = PassthroughSubject<Date, Never>()
     lazy var lastUpdateDate: AnyPublisher<Date, Never> = { lastUpdateDateSubject.eraseToAnyPublisher() }()
 
+    var sellQuote: Provider.SellQuote?
+
     func update() async throws {
-        
+        sleep(5)
+        statusSubject.send(.ready)
     }
 
     func incompleteTransactions() async throws -> [Provider.Transaction] {
-        []
+        let transaction = Provider.Transaction(
+            id: "id1",
+            createdAt: Date(),
+            updatedAt: Date(),
+            baseCurrencyAmount: 3,
+            quoteCurrencyAmount: 12.3,
+            feeAmount: 0.1,
+            extraFeeAmount: 0.1,
+            status: .pending,
+            failureReason: "Something went wrong",
+            refundWalletAddress: "address",
+            depositHash: "depositHash",
+            quoteCurrencyId: "quoteCurrencyId",
+            baseCurrencyId: "baseCurrencyId"
+        )
+        return [transaction]
     }
 
     func transaction(id: String) async throws -> Provider.Transaction {

@@ -3,6 +3,7 @@ import Resolver
 
 public protocol SellDataServiceProvider {
     associatedtype Transaction
+    associatedtype SellQuote
 }
 
 class MoonpaySellDataServiceProvider: SellDataServiceProvider {
@@ -12,10 +13,13 @@ class MoonpaySellDataServiceProvider: SellDataServiceProvider {
         let ipAddressesResponse = try await moonpayAPI.ipAddresses()
         return ipAddressesResponse.isSellAllowed
     }
-
 }
 
 extension MoonpaySellDataServiceProvider {
+    struct SellQuote: Codable {
+        var minSellAmount: Double
+    }
+
     struct Transaction: Codable {
         var id: String
         var createdAt: Date
