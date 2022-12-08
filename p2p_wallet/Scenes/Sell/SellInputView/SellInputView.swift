@@ -12,6 +12,12 @@ import Combine
 struct SellInputView: View {
     @ObservedObject var viewModel: SellInputViewModel
     
+    let formatter: NumberFormatter = {
+            let formatter = NumberFormatter()
+            formatter.numberStyle = .decimal
+            return formatter
+        }()
+    
     init(viewModel: SellInputViewModel) {
         self.viewModel = viewModel
     }
@@ -27,7 +33,7 @@ struct SellInputView: View {
                     
                     VStack(alignment: .leading, spacing: 0) {
                         exchangeRateView
-                        Rectangle().frame(width: .infinity, height: 1)
+                        Rectangle().frame(height: 1)
                             .foregroundColor(Color(Asset.Colors.smoke.color))
                         feeView
                     }
@@ -57,7 +63,7 @@ struct SellInputView: View {
                 .padding(.leading, 24)
             
             HStack {
-                TextField("0", text: $viewModel.baseAmount)
+                TextField("0", value: $viewModel.baseAmount, formatter: formatter)
                     .disableAutocorrection(true)
                 
                 Text("SOL")
@@ -86,7 +92,7 @@ struct SellInputView: View {
     
     var quoteAmountInputView: some View {
         HStack {
-            TextField("0", text: $viewModel.quoteAmount)
+            TextField("0", value: $viewModel.quoteAmount, formatter: formatter)
                 .disableAutocorrection(true)
                 
             Text("≈ EUR")
@@ -118,7 +124,7 @@ struct SellInputView: View {
     
     var sellButton: some View {
         TextButtonView(
-            title: "Sell",
+            title: L10n.sell("\(viewModel.baseAmount) SOL"),
             style: .primaryWhite,
             size: .large
         ) { [weak viewModel] in
@@ -154,8 +160,9 @@ private extension View {
     }
 }
 
-struct SellInputView_Previews: PreviewProvider {
-    static var previews: some View {
-        SellInputView(viewModel: .init())
-    }
-}
+//
+//struct SellInputView_Previews: PreviewProvider {
+//    static var previews: some View {
+//        SellInputView(viewModel: .init())
+//    }
+//}

@@ -1097,3 +1097,4 @@ Reset the PIN or wait for %@." = "Il vous reste %@ tentatives pour saisir le cod
 "Amount is too small, expected %@, got %@" = "Le montant est trop petit, attendu %@, obtenu %@";
 "The transaction has been confirmed in Solana network, but you have to track it also on Bitcoin network" = "La transaction a été confirmée sur le réseau Solana, mais vous devez également la suivre sur le réseau Bitcoin";
 "Not available for now" = "Non disponible pour le moment";
+"Sell %@" = "Vendre %@";

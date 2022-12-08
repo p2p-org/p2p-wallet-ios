@@ -22,16 +22,6 @@ class SellViewModel: BaseViewModel, ObservableObject {
     
     override init() {
         super.init()
-        // TODO: - Remove later
-        #if DEBUG
-        DispatchQueue.main.asyncAfter(deadline: .now() + .milliseconds(300)) { [unowned self] in
-            try! openProviderWebView(
-                quoteCurrencyCode: "eur",
-                baseCurrencyAmount: 10, // 10 SOL
-                externalTransactionId: UUID().uuidString
-            )
-        }
-        #endif
     }
 
     // MARK: - Actions
