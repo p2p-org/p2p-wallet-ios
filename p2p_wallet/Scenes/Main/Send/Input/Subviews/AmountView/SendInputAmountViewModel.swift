@@ -15,6 +15,7 @@ final class SendInputAmountViewModel: BaseViewModel, ObservableObject {
     // State
     @Published var token: Wallet
     @Published var maxAmountToken: Double = 0
+    var wasMaxUsed: Bool = false // Analytic param
 
     // View
     @Published var maxAmountTextInCurrentType = ""
@@ -43,6 +44,7 @@ final class SendInputAmountViewModel: BaseViewModel, ObservableObject {
         maxAmountPressed
             .sink { [unowned self] in
                 self.amountText = self.maxAmountTextInCurrentType
+                self.wasMaxUsed = true
             }
             .store(in: &subscriptions)
 

@@ -364,7 +364,8 @@ struct RecipientSearchView_Previews: PreviewProvider {
                             ),
                         ])
                     ),
-                    preChosenWallet: nil
+                    preChosenWallet: nil,
+                    source: .none
                 )
             )
         }

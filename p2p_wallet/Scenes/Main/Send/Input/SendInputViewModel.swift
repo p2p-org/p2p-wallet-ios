@@ -10,6 +10,7 @@ import Resolver
 import Send
 import SolanaPricesAPIs
 import SolanaSwift
+import AnalyticsManager
 
 final class SendInputViewModel: BaseViewModel, ObservableObject {
     // MARK: - Sub view models
@@ -31,14 +32,21 @@ final class SendInputViewModel: BaseViewModel, ObservableObject {
 
     var currentState: SendInputState { stateMachine.currentState }
 
+    let stateMachine: SendInputStateMachine
+
     // MARK: - Private
 
-    let stateMachine: SendInputStateMachine
+    private let source: SendSource
+
+    // MARK: - Dependencies
+
     private let walletsRepository: WalletsRepository
     private let pricesService: PricesServiceType
     private let sendAction: SendActionService
+    @Injected private var analyticsManager: AnalyticsManager
 
-    init(recipient: Recipient, preChosenWallet: Wallet?) {
+    init(recipient: Recipient, preChosenWallet: Wallet?, source: SendSource) {
+        self.source = source
         let repository = Resolver.resolve(WalletsRepository.self)
         walletsRepository = repository
         let wallets = repository.getWallets()
@@ -122,6 +130,7 @@ final class SendInputViewModel: BaseViewModel, ObservableObject {
                 }))
         }
 
+        logOpen()
         bind()
     }
 }
@@ -185,6 +194,10 @@ private extension SendInputViewModel {
             .sink { [weak self] in
                 guard let self = self else { return }
                 self.openFeeInfo.send(self.currentState.fee == .zero)
+                if self.currentState.fee == .zero
+                    && self.feeTitle.elementsEqual(L10n.enjoyFreeTransactions) {
+                    self.logEnjoyFeeTransaction()
+                }
             }
             .store(in: &subscriptions)
 
@@ -218,6 +231,17 @@ private extension SendInputViewModel {
                     await self.send()
                 }
             })
+            .store(in: &subscriptions)
+
+        tokenViewModel.changeTokenPressed
+            .sink { [weak self] in self?.logChooseTokenClick() }
+            .store(in: &subscriptions)
+
+        inputAmountViewModel.$mainAmountType
+            .dropFirst()
+            .sink { [weak self] value in
+                self?.logFiatInputClick(isCrypto: value == .token)
+            }
             .store(in: &subscriptions)
     }
 }
@@ -298,6 +322,7 @@ private extension SendInputViewModel {
         default:
             address = currentState.recipient.address
         }
+        self.logConfirmButtonClick()
 
         do {
             await MainActor.run {
@@ -323,5 +348,36 @@ private extension SendInputViewModel {
                 await MainActor.run { handleUnknownError() }
             }
         }
+    }
+}
+
+// MARK: - Analytics
+private extension SendInputViewModel {
+    func logOpen() {
+        analyticsManager.log(event: AmplitudeEvent.sendnewInputScreen(source: source.rawValue))
+    }
+
+    func logEnjoyFeeTransaction() {
+        analyticsManager.log(event: AmplitudeEvent.sendnewFreeTransactionClick(source: source.rawValue))
+    }
+
+    func logChooseTokenClick() {
+        analyticsManager.log(event: AmplitudeEvent.sendnewTokenInputClick(source: source.rawValue))
+    }
+
+    func logFiatInputClick(isCrypto: Bool) {
+        analyticsManager.log(event: AmplitudeEvent.sendnewFiatInputClick(crypto: isCrypto, source: source.rawValue))
+    }
+
+    func logConfirmButtonClick() {
+        analyticsManager.log(event: AmplitudeEvent.sendnewConfirmButtonClick(
+            source: source.rawValue,
+            token: currentState.token.symbol,
+            max: inputAmountViewModel.wasMaxUsed,
+            amountToken: currentState.amountInToken,
+            amountUSD: currentState.amountInFiat,
+            fee: currentState.fee.total > 0,
+            fiatInput: inputAmountViewModel.mainAmountType == .fiat
+        ))
     }
 }

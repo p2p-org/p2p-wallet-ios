@@ -13,28 +13,42 @@ enum SendResult {
     case cancelled
 }
 
+enum SendSource: String {
+    case sell, none
+}
+
 class SendCoordinator: Coordinator<SendResult> {
+
     let rootViewController: UINavigationController
     let preChosenWallet: Wallet?
     let hideTabBar: Bool
     let result = PassthroughSubject<SendResult, Never>()
 
-    init(rootViewController: UINavigationController, preChosenWallet: Wallet?, hideTabBar: Bool = false) {
+    private let source: SendSource
+
+    init(
+        rootViewController: UINavigationController,
+        preChosenWallet: Wallet?,
+        hideTabBar: Bool = false,
+        source: SendSource = .none
+    ) {
         self.rootViewController = rootViewController
         self.preChosenWallet = preChosenWallet
         self.hideTabBar = hideTabBar
+        self.source = source
         super.init()
     }
 
     override func start() -> AnyPublisher<SendResult, Never> {
         // Setup view
-        let vm = RecipientSearchViewModel(preChosenWallet: preChosenWallet)
+        let vm = RecipientSearchViewModel(preChosenWallet: preChosenWallet, source: source)
         vm.coordinator.selectRecipientPublisher
             .flatMap { [unowned self] in
                 self.coordinate(to: SendInputCoordinator(
                     recipient: $0,
                     preChosenWallet: preChosenWallet,
-                    navigationController: rootViewController
+                    navigationController: rootViewController,
+                    source: source
                 ))
             }
             .sink { [weak self] result in
@@ -54,7 +68,7 @@ class SendCoordinator: Coordinator<SendResult> {
             .compactMap { $0 }
             .receive(on: DispatchQueue.main)
             .sink(receiveValue: { [weak vm] result in
-                vm?.search(query: result, autoSelectTheOnlyOneResultMode: .enabled(delay: 0))
+                vm?.search(query: result, autoSelectTheOnlyOneResultMode: .enabled(delay: 0), fromQR: true)
             }).store(in: &subscriptions)
 
         let view = RecipientSearchView(viewModel: vm)
