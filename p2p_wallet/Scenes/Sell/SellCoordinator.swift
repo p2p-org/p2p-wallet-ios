@@ -18,7 +18,7 @@ final class SellCoordinator: Coordinator<SellCoordinatorResult> {
         let viewModel = SellViewModel()
         
         // scene navigation
-        viewModel.subscenePublisher
+        viewModel.navigationPublisher
             .sink { [unowned self] scene in
                 switch scene {
                 case .moonpayWebpage(let url):

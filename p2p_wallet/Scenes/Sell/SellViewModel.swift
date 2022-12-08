@@ -13,9 +13,25 @@ class SellViewModel: BaseViewModel, ObservableObject {
     // MARK: - Properties
 
 //    @Published var state: SellStateMachine.State
-    private var subscene = PassthroughSubject<SellSubScene?, Never>()
-    var subscenePublisher: AnyPublisher<SellSubScene?, Never> {
-        subscene.eraseToAnyPublisher()
+    private var navigation = PassthroughSubject<SellSubScene?, Never>()
+    var navigationPublisher: AnyPublisher<SellSubScene?, Never> {
+        navigation.eraseToAnyPublisher()
+    }
+    
+    // MARK: - Initializer
+    
+    override init() {
+        super.init()
+        // TODO: - Remove later
+        #if DEBUG
+        DispatchQueue.main.asyncAfter(deadline: .now() + .milliseconds(300)) { [unowned self] in
+            try! openMoonPayWebView(
+                quoteCurrencyCode: "EUR",
+                baseCurrencyAmount: 10, // 10 SOL
+                externalTransactionId: UUID().uuidString
+            )
+        }
+        #endif
     }
 
     // MARK: - Actions
@@ -30,6 +46,6 @@ class SellViewModel: BaseViewModel, ObservableObject {
             baseCurrencyAmount: baseCurrencyAmount,
             externalTransactionId: externalTransactionId
         )
-        subscene.send(.moonpayWebpage(url: url))
+        navigation.send(.moonpayWebpage(url: url))
     }
 }
