@@ -7,6 +7,9 @@ class SellViewModel: BaseViewModel, ObservableObject {
     // MARK: - Dependencies
     
     @Injected private var userWalletManager: UserWalletManager
+    // TODO: - Use resolver instead
+    private let actionService = SellActionServiceMock()
+    private let dataService = SellDataServiceMock()
 
     // MARK: - Properties
 

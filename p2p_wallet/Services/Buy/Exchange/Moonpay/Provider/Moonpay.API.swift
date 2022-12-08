@@ -15,7 +15,7 @@ extension Moonpay {
         let apiKey: String
 
         static func fromEnvironment() -> API {
-            let endpoint = "https://api.moonpay.com/v3"
+            let endpoint = "https://api.moonpay.com/"
             if Defaults.apiEndPoint.network == .mainnetBeta {
                 return API(endpoint: endpoint, apiKey: .secretConfig("MOONPAY_PRODUCTION_API_KEY")!)
             } else {
