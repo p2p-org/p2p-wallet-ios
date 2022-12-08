@@ -18,11 +18,14 @@ class SellDataServiceMock: SellDataService {
     private let lastUpdateDateSubject = PassthroughSubject<Date, Never>()
     lazy var lastUpdateDate: AnyPublisher<Date, Never> = { lastUpdateDateSubject.eraseToAnyPublisher() }()
 
-    var sellQuote: Provider.SellQuote?
+    /// List of supported crypto currencies
+    private(set) var currencies = [Provider.Currency]()
 
     func update() async throws {
-        sleep(5)
-        statusSubject.send(.ready)
+        defer {
+            statusSubject.send(.ready)
+        }
+        currencies = try await Provider().currencies().filter { $0.code.uppercased() == "SOL" }
     }
 
     func incompleteTransactions() async throws -> [Provider.Transaction] {
@@ -55,7 +58,7 @@ class SellDataServiceMock: SellDataService {
 
 class SellActionServiceMock: SellActionService {
     @Injected private var userWalletManager: UserWalletManager
-    
+
     func createSellURL(
         quoteCurrencyCode: String,
         baseCurrencyAmount: Double,
