@@ -1,0 +1,179 @@
+// Copyright 2022 P2P Validator Authors. All rights reserved.
+// Use of this source code is governed by a MIT-style license that can be
+// found in the LICENSE file.
+
+import Combine
+import Foundation
+import History
+import Resolver
+import Send
+import SolanaSwift
+
+class RecipientSearchViewModel: ObservableObject {
+    private let preChosenWallet: Wallet?
+    private var subscriptions = Set<AnyCancellable>()
+
+    @Injected private var clipboardManager: ClipboardManagerType
+    @Injected private var walletsRepository: WalletsRepository
+    @Injected private var tokensRepository: TokensRepository
+    @Injected private var notificationService: NotificationService
+
+    private let sendHistoryService: SendHistoryService
+    private let recipientSearchService: RecipientSearchService
+    private var searchTask: Task<Void, Never>?
+
+    @Published var isFirstResponder: Bool = false
+
+    @Published var input: String = ""
+    @Published var searchResult: RecipientSearchResult? = nil
+    @Published var userWalletEnvironments: UserWalletEnvironments = .empty
+
+    @Published var isSearching = false
+
+    @Published var recipientsHistoryStatus: SendHistoryService.Status = .ready
+    @Published var recipientsHistory: [Recipient] = []
+
+    struct Coordinator {
+        fileprivate let selectRecipientSubject: PassthroughSubject<Recipient, Never> = .init()
+        var selectRecipientPublisher: AnyPublisher<Recipient, Never> { selectRecipientSubject.eraseToAnyPublisher() }
+
+        fileprivate let scanQRSubject: PassthroughSubject<Void, Never> = .init()
+        var scanQRPublisher: AnyPublisher<Void, Never> { scanQRSubject.eraseToAnyPublisher() }
+    }
+
+    let coordinator: Coordinator = .init()
+
+    init(
+        recipientSearchService: RecipientSearchService = Resolver.resolve(),
+        sendHistoryService: SendHistoryService = Resolver.resolve(),
+        preChosenWallet: Wallet?
+    ) {
+        self.recipientSearchService = recipientSearchService
+        self.preChosenWallet = preChosenWallet
+        self.sendHistoryService = sendHistoryService
+
+        userWalletEnvironments = .init(
+            wallets: walletsRepository.getWallets(),
+            exchangeRate: [:],
+            tokens: []
+        )
+
+        Task {
+            let tokens = try await tokensRepository.getTokensList()
+            await MainActor.run { [weak self] in
+                self?.userWalletEnvironments = userWalletEnvironments.copy(
+                    tokens: tokens
+                )
+            }
+        }
+
+        Task {
+            let accountStreamSources = walletsRepository
+                .getWallets()
+                .reversed()
+                .map { wallet in
+                    AccountStreamSource(
+                        account: wallet.pubkey ?? "",
+                        symbol: wallet.token.symbol,
+                        transactionRepository: SolanaTransactionRepository(solanaAPIClient: Resolver.resolve())
+                    )
+                }
+
+            await self.sendHistoryService.synchronize(updateRemoteProvider: SendHistoryRemoteProvider(
+                sourceStream: MultipleStreamSource(sources: accountStreamSources),
+                historyTransactionParser: Resolver.resolve(),
+                solanaAPIClient: Resolver.resolve(),
+                nameService: Resolver.resolve()
+            ))
+        }
+
+        sendHistoryService.statusPublisher
+            .receive(on: RunLoop.main)
+            .assign(to: \.recipientsHistoryStatus, on: self)
+            .store(in: &subscriptions)
+
+        sendHistoryService.recipientsPublisher
+            .receive(on: RunLoop.main)
+            .map { Array($0.prefix(10)) }
+            .assign(to: \.recipientsHistory, on: self)
+            .store(in: &subscriptions)
+
+        $input
+            .combineLatest($userWalletEnvironments)
+            .debounce(for: 0.2, scheduler: DispatchQueue.main)
+            .sink { [weak self] (query: String, _) in
+                self?.search(query: query, autoSelectTheOnlyOneResultMode: .enabled(delay: 300_000_000))
+            }.store(in: &subscriptions)
+    }
+
+    @MainActor
+    func autoSelectTheOnlyOneResult(result: RecipientSearchResult) {
+        // Wait result and select first result
+        switch result {
+        case let .ok(recipients) where recipients.count == 1:
+            guard
+                let recipient: Recipient = recipients.first,
+                recipient.attributes.contains(.funds)
+            else { return }
+
+            selectRecipient(recipient)
+            notifyAddressRecognized(recipient: recipient)
+        default:
+            break
+        }
+    }
+
+    func search(query: String, autoSelectTheOnlyOneResultMode: AutoSelectTheOnlyOneResultMode) {
+        searchTask?.cancel()
+        let currentSearchTerm = query.trimmingCharacters(in: .whitespaces)
+        if currentSearchTerm.isEmpty {
+            searchResult = nil
+            isSearching = false
+        } else {
+            isSearching = true
+            searchTask = Task { [weak self] in
+                let result = await recipientSearchService.search(
+                    input: currentSearchTerm,
+                    env: userWalletEnvironments,
+                    preChosenToken: preChosenWallet?.token
+                )
+
+                guard !Task.isCancelled else { return }
+                await MainActor.run { [weak self] in
+                    self?.isSearching = false
+                    self?.searchResult = result
+                }
+                if autoSelectTheOnlyOneResultMode.isEnabled {
+                    try? await Task.sleep(nanoseconds: autoSelectTheOnlyOneResultMode.delay!)
+                    guard !Task.isCancelled else { return }
+                    await autoSelectTheOnlyOneResult(result: result)
+                }
+            }
+        }
+    }
+
+    @MainActor
+    func past() {
+        isFirstResponder = false
+        guard let text = clipboardManager.stringFromClipboard() else { return }
+        input = text.trimmingCharacters(in: .whitespacesAndNewlines)
+        notificationService.showToast(title: "✅", text: L10n.pastedFromClipboard)
+    }
+
+    @MainActor
+    func qr() {
+        isFirstResponder = false
+        coordinator.scanQRSubject.send(())
+    }
+
+    @MainActor
+    func selectRecipient(_ recipient: Recipient) {
+        coordinator.selectRecipientSubject.send(recipient)
+    }
+
+    @MainActor
+    func notifyAddressRecognized(recipient: Recipient) {
+        let text = L10n.theAddressIsRecognized("\(recipient.address.prefix(6))...\(recipient.address.suffix(6))")
+        notificationService.showToast(title: "✅", text: text)
+    }
+}

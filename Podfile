@@ -4,7 +4,7 @@ platform :ios, '14.0'
 inhibit_all_warnings!
 
 # ENV Variables
-$keyAppKitPath = ENV['KEY_APP_KIT']
+$keyAppKitPath = ENV['KEY_APP_KIT_SWIFT']
 $solanaSwiftPath = ENV['SOLANA_SWIFT']
 $keyAppUI = ENV['KEY_APP_UI']
 
@@ -24,7 +24,9 @@ def key_app_kit
     "CountriesAPI",
     "KeyAppKitCore",
     "P2PSwift",
-    "Solend"
+    "Solend",
+    "Send",
+    "History"
   ]
 
   if $keyAppKitPath
@@ -33,7 +35,7 @@ def key_app_kit
     end
   else
     $keyAppKitGit = 'https://github.com/p2p-org/key-app-kit-swift.git'
-    $keyAppKitBranch = 'master'
+    $keyAppKitBranch = 'feature/pwn-6024'
     for $dependency in $dependencies do
       pod $dependency, :git => $keyAppKitGit, :branch => $keyAppKitBranch
     end
@@ -51,14 +53,14 @@ target 'p2p_wallet' do
   pod 'BECollectionView_Core', :git => 'https://github.com/bigearsenal/BECollectionView.git', :branch => 'master'
   pod 'BECollectionView', :git => 'https://github.com/bigearsenal/BECollectionView.git', :branch => 'master'
   pod 'BECollectionView_Combine', :git => 'https://github.com/bigearsenal/BECollectionView.git', :branch => 'master'
-  pod 'FeeRelayerSwift', :git => 'https://github.com/p2p-org/FeeRelayerSwift.git', :branch => 'master'
+  pod 'FeeRelayerSwift', :git => 'https://github.com/p2p-org/FeeRelayerSwift.git', :branch => 'develop'
   pod 'OrcaSwapSwift', :git => 'https://github.com/p2p-org/OrcaSwapSwift.git', :branch => 'main'
-  pod 'RenVMSwift', :git => 'https://github.com/p2p-org/RenVMSwift.git', :branch => 'master'
+  pod 'RenVMSwift', :git => 'https://github.com/p2p-org/RenVMSwift.git', :branch => 'feature/pwn-6024'
   
   if $solanaSwiftPath
     pod "SolanaSwift", :path => $solanaSwiftPath
   else
-    pod 'SolanaSwift', :git => 'https://github.com/p2p-org/solana-swift.git', :branch => 'main'
+    pod 'SolanaSwift', :git => 'https://github.com/p2p-org/solana-swift.git', :branch => 'feature/isOnCurveAsPublic'
   end
 
   # tools
@@ -88,7 +90,7 @@ target 'p2p_wallet' do
   if $keyAppUI
     pod "KeyAppUI", :path => $keyAppUI
   else
-    pod 'KeyAppUI', :git => 'git@github.com:p2p-org/KeyAppUI.git', :branch => 'feature/pwn-5837-remove-attachments'
+    pod 'KeyAppUI', :git => 'git@github.com:p2p-org/KeyAppUI.git', :branch => 'main'
   end
 
   pod 'Resolver', '1.5.0'
