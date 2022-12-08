@@ -34,7 +34,9 @@ struct HomeWithTokensView: View {
                         .topPadding()
                         .padding(.bottom, 32)
                         .id(0)
-                    sell
+                    if available(.sellScenarioEnabled) {
+                        sell
+                    }
                     content
                 }
             }
