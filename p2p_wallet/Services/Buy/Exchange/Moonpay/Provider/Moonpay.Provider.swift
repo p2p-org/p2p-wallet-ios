@@ -71,6 +71,53 @@ extension Moonpay {
             }
         }
 
+        func getSellQuote(
+            baseCurrencyCode: String,
+            quoteCurrencyCode: String,
+            baseCurrencyAmount: Double?,
+            quoteCurrencyAmount: Double?
+        ) async throws -> BuyQuote {
+            var params = [
+                "apiKey": api.apiKey,
+                "baseCurrencyCode": baseCurrencyCode,
+                "areFeesIncluded": "true",
+                // Undocumented params which makes results equal to web
+                "fixed": "true",
+                "regionalPricing": "true",
+            ] as [String: Any]
+
+            if let baseCurrencyAmount = baseCurrencyAmount {
+                params["baseCurrencyAmount"] = baseCurrencyAmount
+            }
+            if let quoteCurrencyAmount = quoteCurrencyAmount {
+                params["quoteCurrencyAmount"] = quoteCurrencyAmount
+            }
+
+            var components = URLComponents(string: api.endpoint + "/v3/currencies/\(quoteCurrencyCode)/sell_quote")!
+            components.queryItems = params
+                .mapValues { value -> Any in
+                    value is Double ? String(value as! Double) : value
+                }
+                .compactMap { key, value in
+                    guard let value = value as? String else { return nil }
+                    return URLQueryItem(name: key, value: value)
+                }
+            components.percentEncodedQuery = components.percentEncodedQuery?.replacingOccurrences(of: "+", with: "%2B")
+            let urlRequest = URLRequest(url: components.url!)
+
+            let (data, response) = try await URLSession.shared.data(from: urlRequest)
+            guard let response = response as? HTTPURLResponse else {
+                throw MoonpayProviderError.unknown
+            }
+            switch response.statusCode {
+            case 200 ... 299:
+                return try JSONDecoder().decode(BuyQuote.self, from: data)
+            default:
+                let data = try JSONDecoder().decode(API.ErrorResponse.self, from: data)
+                throw Error.message(message: data.message)
+            }
+        }
+
         func getPrice(for crypto: String, as currency: String) async throws -> Double {
             var components = URLComponents(string: api.endpoint + "/v3/currencies/\(crypto)/ask_price")!
             let params = ["apiKey": api.apiKey]

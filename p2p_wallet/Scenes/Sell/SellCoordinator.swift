@@ -31,6 +31,18 @@ final class SellCoordinator: Coordinator<SellCoordinatorResult> {
         
         // create viewController
         let vc = UIHostingController(rootView: SellView(viewModel: viewModel))
+
+        viewModel.coordinator
+            .showPending
+            .receive(on: RunLoop.main)
+            .flatMap { [unowned self, navigationController] _ in
+                self.coordinate(
+                    to: SellPendingCoordinator(navigationController: navigationController)
+                )
+            }
+            .sink { _ in }
+            .store(in: &subscriptions)
+
         navigationController.pushViewController(vc, animated: true)
         return vc.deallocatedPublisher()
     }
