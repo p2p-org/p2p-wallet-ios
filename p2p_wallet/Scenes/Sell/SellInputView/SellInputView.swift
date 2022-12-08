@@ -83,7 +83,7 @@ struct SellInputView: View {
                 Text(L10n.sellAll)
                     .foregroundColor(Color(Asset.Colors.mountain.color))
                     .font(uiFont: UIFont.font(of: .label1, weight: .regular))
-                Text(viewModel.sellAllText)
+                Text("\(viewModel.maxBaseAmount ?? 0) \(viewModel.baseCurrencyCode)")
                     .foregroundColor(Color(Asset.Colors.sky.color))
                     .font(uiFont: UIFont.font(of: .label1, weight: .regular))
             }
@@ -100,7 +100,7 @@ struct SellInputView: View {
                 textField.keyboardType = .decimalPad
             }
                 
-            Text("≈ " + viewModel.fiat)
+            Text("≈ \(viewModel.quoteCurrencyCode)")
                 .foregroundColor(Color(Asset.Colors.night.color.withAlphaComponent(0.3)))
                 .font(uiFont: UIFont.font(of: .title1, weight: .bold))
         }
@@ -109,24 +109,24 @@ struct SellInputView: View {
 
     var exchangeRateView: some View {
         HStack {
-            Text("1 SOL ≈ " + viewModel.exchangeRate)
+            Text("1 \(viewModel.baseCurrencyCode) ≈ \(viewModel.exchangeRate.toString()) \(viewModel.quoteCurrencyCode)")
             Spacer()
         }
             .descriptionTextStyle()
             .padding(4)
             .padding(.bottom, 12)
     }
-    
+
     var feeView: some View {
         HStack {
-            Text("Included fee " + viewModel.fee)
+            Text(L10n.includedFee("\(viewModel.fee) \(viewModel.baseCurrencyCode)"))
             Spacer()
         }
             .descriptionTextStyle()
             .padding(4)
             .padding(.top, 12)
     }
-    
+
     var sellButton: some View {
         TextButtonView(
             title:  L10n.sell("\(viewModel.baseAmount ?? 0) \(viewModel.baseCurrencyCode)"),
