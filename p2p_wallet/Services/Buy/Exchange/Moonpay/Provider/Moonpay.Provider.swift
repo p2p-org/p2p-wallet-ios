@@ -237,6 +237,14 @@ extension Moonpay.Provider {
             "VAT",
         ]
     }
+
+    func UKAlpha3Code() -> String {
+        return "GBR"
+    }
+
+    func USAlpha3Code() -> String {
+        return "USA"
+    }
 }
 
 extension Moonpay.Provider {
