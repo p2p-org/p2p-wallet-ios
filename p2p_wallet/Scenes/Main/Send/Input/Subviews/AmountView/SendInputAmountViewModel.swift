@@ -29,12 +29,14 @@ final class SendInputAmountViewModel: BaseViewModel, ObservableObject {
     @Published var isFirstResponder: Bool = false
     @Published var amount: Double? = nil
     @Published var isError: Bool = false
+    @Published var countAfterDecimalPoint: Int
 
     private let fiat: Fiat
 
     init(initialToken: Wallet) {
         fiat = Defaults.fiat
         token = initialToken
+        countAfterDecimalPoint = Constants.fiatDecimals
 
         super.init()
 
@@ -48,7 +50,7 @@ final class SendInputAmountViewModel: BaseViewModel, ObservableObject {
             .sink { [weak self] text in
                 guard let self = self else { return }
 
-                self.amount = Double(text)
+                self.amount = Double(text.replacingOccurrences(of: " ", with: ""))
                 self.updateSecondaryAmount()
                 self.changeAmount.send((self.amount ?? 0, self.mainAmountType))
             }
@@ -65,9 +67,9 @@ final class SendInputAmountViewModel: BaseViewModel, ObservableObject {
                 guard let self = self else { return }
                 switch self.mainAmountType {
                 case .token:
-                    self.maxAmountTextInCurrentType = value.formatted()
+                    self.maxAmountTextInCurrentType = value.toString(maximumFractionDigits: self.token.decimals)
                 case .fiat:
-                    self.maxAmountTextInCurrentType = (value * self.token.priceInCurrentFiat).formatted()
+                    self.maxAmountTextInCurrentType = (value * self.token.priceInCurrentFiat).toString(maximumFractionDigits: Constants.fiatDecimals)
                 }
             }
             .store(in: &subscriptions)
@@ -86,6 +88,7 @@ final class SendInputAmountViewModel: BaseViewModel, ObservableObject {
                 case .token: self.mainAmountType = .fiat
                 }
                 self.updateCurrencyTitles()
+                self.countAfterDecimalPoint = self.mainAmountType == .token ? self.token.decimals : Constants.fiatDecimals
             }
             .store(in: &subscriptions)
     }
@@ -98,11 +101,11 @@ private extension SendInputAmountViewModel {
         case .fiat:
             self.mainTokenText = self.fiat.code
             self.secondaryCurrencyText = currentWallet.token.symbol
-            self.maxAmountTextInCurrentType = (self.maxAmountToken * currentWallet.priceInCurrentFiat).formatted()
+            self.maxAmountTextInCurrentType = (self.maxAmountToken * currentWallet.priceInCurrentFiat).toString(maximumFractionDigits: Constants.fiatDecimals)
         case .token:
             self.mainTokenText = currentWallet.token.symbol
             self.secondaryCurrencyText = self.fiat.code
-            self.maxAmountTextInCurrentType = self.maxAmountToken.formatted()
+            self.maxAmountTextInCurrentType = self.maxAmountToken.toString(maximumFractionDigits: currentWallet.decimals)
         }
         self.updateSecondaryAmount(for: currentWallet)
         self.changeAmount.send((self.amount ?? 0, self.mainAmountType))
@@ -112,15 +115,18 @@ private extension SendInputAmountViewModel {
         let currentWallet = wallet ?? self.token
         switch self.mainAmountType {
         case .token:
-            self.secondaryAmountText = "\((self.amount * currentWallet.priceInCurrentFiat).formatted()) \(self.fiat.code)"
+            self.secondaryAmountText = [(self.amount * currentWallet.priceInCurrentFiat).toString(maximumFractionDigits: Constants.fiatDecimals), self.fiat.code].joined(separator: " ")
+
         case .fiat:
-            self.secondaryAmountText = "\((self.amount / currentWallet.priceInCurrentFiat).formatted()) \(currentWallet.token.symbol)"
+            self.secondaryAmountText = (self.amount / currentWallet.priceInCurrentFiat).tokenAmount(symbol: currentWallet.token.symbol, maximumFractionDigits: currentWallet.decimals)
         }
     }
 }
 
-private extension Double {
-    func formatted() -> String {
-        return self.toString(maximumFractionDigits: 9)
-    }
+private extension Wallet {
+    var decimals: Int { Int(self.token.decimals) }
+}
+
+private enum Constants {
+    static let fiatDecimals = 2
 }
