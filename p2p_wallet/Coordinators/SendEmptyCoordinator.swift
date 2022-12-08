@@ -10,19 +10,24 @@ import Foundation
 import UIKit
 import SolanaSwift
 import Resolver
+import AnalyticsManager
 
 final class SendEmptyCoordinator: Coordinator<Void> {
     @Injected private var walletsRepository: WalletsRepository
+    @Injected private var analyticsManager: AnalyticsManager
 
     private let navigationController: UINavigationController
+    private let source: SendSource
 
-    init(navigationController: UINavigationController) {
+    init(navigationController: UINavigationController, source: SendSource = .none) {
         self.navigationController = navigationController
+        self.source = source
     }
 
     override func start() -> AnyPublisher<Void, Never> {
         let view = SendEmptyView(
             buyCrypto: {
+                self.log(event: .sendnewBuyClickButton(source: self.source.rawValue))
                 let coordinator = BuyCoordinator(
                     navigationController: self.navigationController,
                     context: .fromHome
@@ -35,6 +40,7 @@ final class SendEmptyCoordinator: Coordinator<Void> {
                 guard
                     let pubKey = try? PublicKey(string: self.walletsRepository.nativeWallet?.pubkey)
                 else { return }
+                self.log(event: .sendnewReceiveClickButton(source: self.source.rawValue))
                 let coordinator = ReceiveCoordinator(navigationController: self.navigationController, pubKey: pubKey)
                 self.coordinate(to: coordinator)
                     .sink { _ in }
@@ -51,5 +57,9 @@ final class SendEmptyCoordinator: Coordinator<Void> {
             resultSubject.send()
         }
         return resultSubject.prefix(1).eraseToAnyPublisher()
+    }
+
+    private func log(event: AmplitudeEvent) {
+        analyticsManager.log(event: event)
     }
 }
