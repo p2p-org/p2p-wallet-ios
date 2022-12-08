@@ -23,7 +23,11 @@ final class TabBarController: UITabBarController {
     private var actionsCoordinator: ActionsCoordinator?
     private var settingsCoordinator: SettingsCoordinator!
     private var buyCoordinator: BuyCoordinator?
+    private var sendCoordinator: SendToken.Coordinator?
+    private var emptySendCoordinator: SendEmptyCoordinator?
     private var sendCoordinator: SendCoordinator?
+
+    @Injected private var walletsRepository: WalletsRepository
 
     private var customTabBar: CustomTabBar { tabBar as! CustomTabBar }
 
@@ -96,19 +100,31 @@ final class TabBarController: UITabBarController {
             }
             navigationController.show(vc, sender: nil)
         case .send:
-            analyticsManager.log(event: AmplitudeEvent.sendViewed(lastScreen: "main_screen"))
-            sendCoordinator = SendCoordinator(rootViewController: navigationController, preChosenWallet: nil, hideTabBar: true)
-            sendCoordinator?.start()
-                .sink { [weak self, weak navigationController] result in
-                    switch result {
-                    case let .sent(model):
-                        navigationController?.popToRootViewController(animated: true)
-                        self?.routeToSendTransactionStatus(model: model)
-                    case .cancelled:
-                        break
+            let fiatAmount = walletsRepository.getWallets().reduce(0) { $0 + $1.amountInCurrentFiat }
+            let withTokens = fiatAmount > 0
+            if withTokens {
+                analyticsManager.log(event: AmplitudeEvent.sendViewed(lastScreen: "main_screen"))
+                sendCoordinator = SendCoordinator(rootViewController: navigationController, preChosenWallet: nil, hideTabBar: true)
+                sendCoordinator?.start()
+                    .sink { [weak self, weak navigationController] result in
+                        switch result {
+                        case let .sent(model):
+                            navigationController?.popToRootViewController(animated: true)
+                            self?.routeToSendTransactionStatus(model: model)
+                        case .cancelled:
+                            break
+                        }
                     }
-                }
-                .store(in: &subscriptions)
+                    .store(in: &subscriptions)
+            } else {
+                emptySendCoordinator = SendEmptyCoordinator(navigationController: navigationController)
+                emptySendCoordinator?.start()
+                    .sink(receiveValue: { [weak self] _ in
+                        self?.emptySendCoordinator = nil
+                    })
+                    .store(in: &cancellables)
+            }
+            analyticsManager.log(event: AmplitudeEvent.sendViewed(lastScreen: "main_screen"))
         }
     }
 
