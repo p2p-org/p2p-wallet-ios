@@ -80,7 +80,7 @@ class SellActionServiceMock: SellActionService {
         ]
 
         guard let url = components.url else {
-            throw SellError.invalidURL
+            throw SellActionServiceError.invalidURL
         }
         return url
     }
