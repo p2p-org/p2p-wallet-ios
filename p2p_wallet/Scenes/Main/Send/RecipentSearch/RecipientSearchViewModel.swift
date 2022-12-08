@@ -8,15 +8,18 @@ import History
 import Resolver
 import Send
 import SolanaSwift
+import AnalyticsManager
 
 class RecipientSearchViewModel: ObservableObject {
     private let preChosenWallet: Wallet?
     private var subscriptions = Set<AnyCancellable>()
+    private let source: SendSource
 
     @Injected private var clipboardManager: ClipboardManagerType
     @Injected private var walletsRepository: WalletsRepository
     @Injected private var tokensRepository: TokensRepository
     @Injected private var notificationService: NotificationService
+    @Injected private var analyticsManager: AnalyticsManager
 
     private let sendHistoryService: SendHistoryService
     private let recipientSearchService: RecipientSearchService
@@ -46,12 +49,14 @@ class RecipientSearchViewModel: ObservableObject {
     init(
         recipientSearchService: RecipientSearchService = Resolver.resolve(),
         sendHistoryService: SendHistoryService = Resolver.resolve(),
-        preChosenWallet: Wallet?
+        preChosenWallet: Wallet?,
+        source: SendSource
     ) {
         self.recipientSearchService = recipientSearchService
         self.preChosenWallet = preChosenWallet
         self.sendHistoryService = sendHistoryService
-
+        self.source = source
+    
         userWalletEnvironments = .init(
             wallets: walletsRepository.getWallets(),
             exchangeRate: [:],
@@ -102,12 +107,14 @@ class RecipientSearchViewModel: ObservableObject {
             .combineLatest($userWalletEnvironments)
             .debounce(for: 0.2, scheduler: DispatchQueue.main)
             .sink { [weak self] (query: String, _) in
-                self?.search(query: query, autoSelectTheOnlyOneResultMode: .enabled(delay: 300_000_000))
+                self?.search(query: query, autoSelectTheOnlyOneResultMode: .enabled(delay: 300_000_000), fromQR: false)
             }.store(in: &subscriptions)
+
+        logOpen()
     }
 
     @MainActor
-    func autoSelectTheOnlyOneResult(result: RecipientSearchResult) {
+    func autoSelectTheOnlyOneResult(result: RecipientSearchResult, fromQR: Bool) {
         // Wait result and select first result
         switch result {
         case let .ok(recipients) where recipients.count == 1:
@@ -116,14 +123,14 @@ class RecipientSearchViewModel: ObservableObject {
                 recipient.attributes.contains(.funds)
             else { return }
 
-            selectRecipient(recipient)
+            selectRecipient(recipient, fromQR: fromQR)
             notifyAddressRecognized(recipient: recipient)
         default:
             break
         }
     }
 
-    func search(query: String, autoSelectTheOnlyOneResultMode: AutoSelectTheOnlyOneResultMode) {
+    func search(query: String, autoSelectTheOnlyOneResultMode: AutoSelectTheOnlyOneResultMode, fromQR: Bool) {
         searchTask?.cancel()
         let currentSearchTerm = query.trimmingCharacters(in: .whitespaces)
         if currentSearchTerm.isEmpty {
@@ -146,7 +153,7 @@ class RecipientSearchViewModel: ObservableObject {
                 if autoSelectTheOnlyOneResultMode.isEnabled {
                     try? await Task.sleep(nanoseconds: autoSelectTheOnlyOneResultMode.delay!)
                     guard !Task.isCancelled else { return }
-                    await autoSelectTheOnlyOneResult(result: result)
+                    await autoSelectTheOnlyOneResult(result: result, fromQR: fromQR)
                 }
             }
         }
@@ -167,7 +174,8 @@ class RecipientSearchViewModel: ObservableObject {
     }
 
     @MainActor
-    func selectRecipient(_ recipient: Recipient) {
+    func selectRecipient(_ recipient: Recipient, fromQR: Bool = false) {
+        logRecipient(recipient: recipient, fromQR: fromQR)
         coordinator.selectRecipientSubject.send(recipient)
     }
 
@@ -175,5 +183,31 @@ class RecipientSearchViewModel: ObservableObject {
     func notifyAddressRecognized(recipient: Recipient) {
         let text = L10n.theAddressIsRecognized("\(recipient.address.prefix(6))...\(recipient.address.suffix(6))")
         notificationService.showToast(title: "✅", text: text)
+    }
+}
+
+// MARK: - Analytics
+private extension RecipientSearchViewModel {
+    enum RecipientInputType: String {
+        case username, address, QR
+    }
+
+    func logOpen() {
+        analyticsManager.log(event: AmplitudeEvent.sendnewRecipientScreen(source: source.rawValue))
+    }
+
+    func logRecipient(recipient: Recipient, fromQR: Bool) {
+        let inputType: RecipientInputType
+        if fromQR {
+            inputType = .QR
+        } else {
+            switch recipient.category {
+            case .username:
+                inputType = .username
+            default:
+                inputType = .address
+            }
+        }
+        analyticsManager.log(event: AmplitudeEvent.sendnewRecipientAdd(type: inputType.rawValue, source: source.rawValue))
     }
 }

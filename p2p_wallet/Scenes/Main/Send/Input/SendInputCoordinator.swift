@@ -8,15 +8,22 @@ final class SendInputCoordinator: Coordinator<SendResult> {
     private let recipient: Recipient
     private let preChosenWallet: Wallet?
     private var subject = PassthroughSubject<SendResult, Never>()
+    private let source: SendSource
 
-    init(recipient: Recipient, preChosenWallet: Wallet?, navigationController: UINavigationController) {
+    init(
+        recipient: Recipient,
+        preChosenWallet: Wallet?,
+        navigationController: UINavigationController,
+        source: SendSource
+    ) {
         self.recipient = recipient
         self.preChosenWallet = preChosenWallet
         self.navigationController = navigationController
+        self.source = source
     }
 
     override func start() -> AnyPublisher<SendResult, Never> {
-        let viewModel = SendInputViewModel(recipient: recipient, preChosenWallet: preChosenWallet)
+        let viewModel = SendInputViewModel(recipient: recipient, preChosenWallet: preChosenWallet, source: source)
         let view = SendInputView(viewModel: viewModel)
         let controller = KeyboardAvoidingViewController(rootView: view)
 
