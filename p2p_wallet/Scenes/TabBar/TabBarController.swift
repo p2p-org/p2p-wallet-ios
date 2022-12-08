@@ -16,7 +16,7 @@ final class TabBarController: UITabBarController {
     @Injected private var analyticsManager: AnalyticsManager
     @Injected private var helpCenterLauncher: HelpCenterLauncher
 
-    private var cancellables = Set<AnyCancellable>()
+    private var subscriptions = Set<AnyCancellable>()
 
     private var solendCoordinator: SolendCoordinator!
     private var homeCoordinator: HomeCoordinator!
@@ -25,6 +25,7 @@ final class TabBarController: UITabBarController {
     private var buyCoordinator: BuyCoordinator?
     private var sendCoordinator: SendToken.Coordinator?
     private var emptySendCoordinator: SendEmptyCoordinator?
+    private var sendCoordinator: SendCoordinator?
 
     @Injected private var walletsRepository: WalletsRepository
 
@@ -71,9 +72,9 @@ final class TabBarController: UITabBarController {
                             self?.actionsCoordinator = nil
                         }
                     })
-                    .store(in: &cancellables)
+                    .store(in: &subscriptions)
             })
-            .store(in: &cancellables)
+            .store(in: &subscriptions)
     }
 
     private func handleAction(_ action: ActionsView.Action) {
@@ -88,7 +89,7 @@ final class TabBarController: UITabBarController {
             self.buyCoordinator = buyCoordinator
             buyCoordinator.start()
                 .sink(receiveValue: {})
-                .store(in: &cancellables)
+                .store(in: &subscriptions)
         case .receive:
             break
         case .swap:
@@ -102,23 +103,19 @@ final class TabBarController: UITabBarController {
             let fiatAmount = walletsRepository.getWallets().reduce(0) { $0 + $1.amountInCurrentFiat }
             let withTokens = fiatAmount > 0
             if withTokens {
-                let vm = SendToken.ViewModel(
-                    walletPubkey: nil,
-                    destinationAddress: nil,
-                    relayMethod: .default
-                )
-                sendCoordinator = SendToken.Coordinator(
-                    viewModel: vm,
-                    navigationController: navigationController
-                )
-                
-                sendCoordinator?.doneHandler = {
-                    navigationController.popToRootViewController(animated: true)
-                }
-                let vc = sendCoordinator?.start(hidesBottomBarWhenPushed: true)
-                vc?.onClose = { [weak self] in
-                    self?.sendCoordinator = nil
-                }
+                analyticsManager.log(event: AmplitudeEvent.sendViewed(lastScreen: "main_screen"))
+                sendCoordinator = SendCoordinator(rootViewController: navigationController, preChosenWallet: nil, hideTabBar: true)
+                sendCoordinator?.start()
+                    .sink { [weak self, weak navigationController] result in
+                        switch result {
+                        case let .sent(model):
+                            navigationController?.popToRootViewController(animated: true)
+                            self?.routeToSendTransactionStatus(model: model)
+                        case .cancelled:
+                            break
+                        }
+                    }
+                    .store(in: &subscriptions)
             } else {
                 emptySendCoordinator = SendEmptyCoordinator(navigationController: navigationController)
                 emptySendCoordinator?.start()
@@ -158,7 +155,7 @@ final class TabBarController: UITabBarController {
         homeCoordinator = HomeCoordinator(navigationController: homeNavigation, tabBarController: self)
         homeCoordinator.start()
             .sink(receiveValue: { _ in })
-            .store(in: &cancellables)
+            .store(in: &subscriptions)
 
         let solendOrHistoryNavigation: UINavigationController
         let historyOrFeedbackNavigation: UINavigationController
@@ -167,7 +164,7 @@ final class TabBarController: UITabBarController {
             solendCoordinator = SolendCoordinator(navigationController: solendOrHistoryNavigation)
             solendCoordinator.start()
                 .sink(receiveValue: { _ in })
-                .store(in: &cancellables)
+                .store(in: &subscriptions)
             historyOrFeedbackNavigation = UINavigationController(rootViewController: History.Scene())
         } else {
             solendOrHistoryNavigation = UINavigationController(rootViewController: History.Scene())
@@ -180,7 +177,7 @@ final class TabBarController: UITabBarController {
             settingsCoordinator = SettingsCoordinator(navigationController: settingsNavigation)
             settingsCoordinator.start()
                 .sink(receiveValue: { _ in })
-                .store(in: &cancellables)
+                .store(in: &subscriptions)
         } else {
             settingsNavigation = UINavigationController(
                 rootViewController: Settings.ViewController(viewModel: Settings.ViewModel())
@@ -222,6 +219,13 @@ final class TabBarController: UITabBarController {
         let vc = UIHostingControllerWithoutNavigation(rootView: view)
         vc.modalPresentationStyle = .fullScreen
         present(vc, animated: true)
+    }
+    
+    private func routeToSendTransactionStatus(model: SendTransaction) {
+        SendTransactionStatusCoordinator(parentController: self, transaction: model)
+            .start()
+            .sink(receiveValue: { })
+            .store(in: &subscriptions)
     }
 
     func changeItem(to item: TabItem) {

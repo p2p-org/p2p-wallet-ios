@@ -39,6 +39,7 @@ struct DebugMenuView: View {
                 Section(header: Text("Application")) {
                     TextFieldRow(title: "Wallet:", content: $globalAppState.forcedWalletAddress)
                     TextFieldRow(title: "Relayer:", content: $globalAppState.forcedFeeRelayerEndpoint)
+                    TextFieldRow(title: "Name:", content: $globalAppState.nameServiceEndpoint)
                     Toggle("Prefer direct swap", isOn: $globalAppState.preferDirectSwap)
                     Button {
                         Task {
@@ -46,10 +47,11 @@ struct DebugMenuView: View {
                                 showDebugger(false)
                             #endif
                             
+                            ResolverScope.session.reset()
                             try await Resolver.resolve(UserWalletManager.self).refresh()
                             
-//                            let app: AppEventHandlerType = Resolver.resolve()
-//                            app.delegate?.refresh()
+                           // let app: AppEventHandlerType = Resolver.resolve()
+                           // app.delegate?.refresh()
                         }
                     } label: { Text("Apply") }
                 }
