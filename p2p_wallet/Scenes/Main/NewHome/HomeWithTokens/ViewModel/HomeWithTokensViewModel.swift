@@ -13,16 +13,6 @@ import RxSwift
 import SolanaSwift
 import UIKit
 
-enum HomeNavigation: Equatable {
-    case buy
-    case receive(publicKey: PublicKey)
-    case send
-    case swap
-    case earn
-    case wallet(pubKey: String, tokenSymbol: String)
-    case actions([WalletActionType])
-}
-
 class HomeWithTokensViewModel: ObservableObject {
     private let walletsRepository: WalletsRepository
     private let pricesService = Resolver.resolve(PricesServiceType.self)
