@@ -1072,3 +1072,5 @@ Reset the PIN or wait for %@.";
 "The transaction has been confirmed in Solana network, but you have to track it also on Bitcoin network" = "The transaction has been confirmed in Solana network, but you have to track it also on Bitcoin network";
 "Not available for now" = "Not available for now";
 "Sell %@" = "Sell %@";
+"Sell all" = "Sell all";
+"Included fee %@" = "Included fee %@";

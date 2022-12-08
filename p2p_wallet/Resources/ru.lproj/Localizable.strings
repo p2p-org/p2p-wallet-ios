@@ -1098,3 +1098,5 @@ Reset the PIN or wait for %@." = "У вас осталось %@ попыток �
 "The transaction has been confirmed in Solana network, but you have to track it also on Bitcoin network" = "Транзакция была подтверждена в сети Solana, но вы должны отслеживать ее и в сети Bitcoin.";
 "Not available for now" = "Недоступно на данный момент";
 "Sell %@" = "Продать %@";
+"Sell all" = "Продать все";
+"Included fee %@" = "Включенная плата %@";
