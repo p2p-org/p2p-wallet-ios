@@ -12,12 +12,6 @@ import Combine
 struct SellInputView: View {
     @ObservedObject var viewModel: SellInputViewModel
     
-    let formatter: NumberFormatter = {
-            let formatter = NumberFormatter()
-            formatter.numberStyle = .decimal
-            return formatter
-        }()
-    
     init(viewModel: SellInputViewModel) {
         self.viewModel = viewModel
     }
@@ -71,7 +65,7 @@ struct SellInputView: View {
                     textField.keyboardType = .decimalPad
                 }
                 
-                Text("SOL")
+                Text(viewModel.baseCurrencyCode)
                     .foregroundColor(Color(Asset.Colors.night.color.withAlphaComponent(0.3)))
                     .font(uiFont: UIFont.font(of: .text3, weight: .regular))
             }
@@ -85,10 +79,10 @@ struct SellInputView: View {
             // TODO: - Action
         } label: {
             HStack(spacing: 4) {
-                Text("Sell all")
+                Text(L10n.sellAll)
                     .foregroundColor(Color(Asset.Colors.mountain.color))
                     .font(uiFont: UIFont.font(of: .label1, weight: .regular))
-                Text("4.53 SOL")
+                Text("\(viewModel.maxBaseAmount ?? 0) \(viewModel.baseCurrencyCode)")
                     .foregroundColor(Color(Asset.Colors.sky.color))
                     .font(uiFont: UIFont.font(of: .label1, weight: .regular))
             }
@@ -105,7 +99,7 @@ struct SellInputView: View {
                 textField.keyboardType = .decimalPad
             }
                 
-            Text("≈ EUR")
+            Text("≈ \(viewModel.quoteCurrencyCode)")
                 .foregroundColor(Color(Asset.Colors.night.color.withAlphaComponent(0.3)))
                 .font(uiFont: UIFont.font(of: .title1, weight: .bold))
         }
@@ -113,7 +107,7 @@ struct SellInputView: View {
     
     var exchangeRateView: some View {
         HStack {
-            Text("1 SOL ≈ \(viewModel.exchangeRate ?? 0) EUR")
+            Text("1 \(viewModel.baseCurrencyCode) ≈ \(viewModel.exchangeRate.toString()) \(viewModel.quoteCurrencyCode)")
             Spacer()
         }
             .descriptionTextStyle()
@@ -123,7 +117,7 @@ struct SellInputView: View {
     
     var feeView: some View {
         HStack {
-            Text("Included fee 0.03 SOL")
+            Text(L10n.includedFee("\(viewModel.fee) \(viewModel.baseCurrencyCode)"))
             Spacer()
         }
             .descriptionTextStyle()
@@ -133,7 +127,7 @@ struct SellInputView: View {
     
     var sellButton: some View {
         TextButtonView(
-            title: L10n.sell("\(viewModel.baseAmount ?? 0) SOL"),
+            title:  L10n.sell("\(viewModel.baseAmount ?? 0) \(viewModel.baseCurrencyCode)"),
             style: .primaryWhite,
             size: .large
         ) { [weak viewModel] in

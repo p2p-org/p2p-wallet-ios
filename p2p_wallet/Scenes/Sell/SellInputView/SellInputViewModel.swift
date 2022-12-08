@@ -12,13 +12,17 @@ final class SellInputViewModel: BaseViewModel, ObservableObject {
     
     // MARK: - Properties
     
+    @Published var baseCurrencyCode: String = "SOL"
     @Published var baseAmount: Double?
+    @Published var maxBaseAmount: Double?
     @Published var isEnteringBaseAmount: Bool = false
     
+    @Published var quoteCurrencyCode: String = "EUR"
     @Published var quoteAmount: Double?
     @Published var isEnteringQuoteAmount: Bool = false
     
     @Published var exchangeRate: Double = .random(in: 13...13.99)
+    @Published var fee: Double = 0
     
     // MARK: - Initializer
     

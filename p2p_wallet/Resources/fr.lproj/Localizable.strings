@@ -1098,3 +1098,5 @@ Reset the PIN or wait for %@." = "Il vous reste %@ tentatives pour saisir le cod
 "The transaction has been confirmed in Solana network, but you have to track it also on Bitcoin network" = "La transaction a été confirmée sur le réseau Solana, mais vous devez également la suivre sur le réseau Bitcoin";
 "Not available for now" = "Non disponible pour le moment";
 "Sell %@" = "Vendre %@";
+"Sell all" = "Tout vendre";
+"Included fee %@" = "Frais inclus %@";
