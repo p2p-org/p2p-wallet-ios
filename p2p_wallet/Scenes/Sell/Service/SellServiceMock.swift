@@ -1,5 +1,6 @@
 import Combine
 import Foundation
+import Resolver
 
 class SellDataServiceMock: SellDataService {
 
@@ -31,8 +32,35 @@ class SellDataServiceMock: SellDataService {
 }
 
 class SellActionServiceMock: SellActionService {
-    func providerSellURL() -> URL {
-        fatalError()
+    @Injected private var userWalletManager: UserWalletManager
+    
+    func createSellURL(
+        quoteCurrencyCode: String,
+        baseCurrencyAmount: Double,
+        externalTransactionId: String
+    ) throws -> URL {
+        #if !RELEASE
+        let endpoint = String.secretConfig("MOONPAY_STAGING_SELL_ENDPOINT")!
+        let apiKey = String.secretConfig("MOONPAY_STAGING_API_KEY")!
+        #else
+        let endpoint = String.secretConfig("MOONPAY_PRODUCTION_SELL_ENDPOINT")!
+        let apiKey = String.secretConfig("MOONPAY_PRODUCTION_API_KEY")!
+        #endif
+
+        var components = URLComponents(string: endpoint)!
+        components.queryItems = [
+            .init(name: "apiKey", value: apiKey),
+            .init(name: "baseCurrencyCode", value: "SOL"),
+            .init(name: "refundWalletAddress", value: userWalletManager.wallet?.account.publicKey.base58EncodedString),
+            .init(name: "quoteCurrencyCode", value: quoteCurrencyCode),
+            .init(name: "baseCurrencyAmount", value: baseCurrencyAmount.toString()),
+            .init(name: "externalTransactionId", value: externalTransactionId)
+        ]
+
+        guard let url = components.url else {
+            throw SellError.invalidURL
+        }
+        return url
     }
     func calculateRates() async throws -> Double { 0 }
     func saveTransaction() async throws {}
