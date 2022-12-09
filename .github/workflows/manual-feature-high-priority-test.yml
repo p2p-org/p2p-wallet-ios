@@ -3,7 +3,7 @@ on: workflow_dispatch
 jobs:
   upload_build_for_testing:
     name: Manually upload build for testing
-    if: !contains(github.event.pull_request.labels.*.name, 'no-qa')
+    if: ${{ !contains(github.event.pull_request.labels.*.name, 'no-qa') }}
     runs-on: [self-hosted, macOS]
 
     steps:
