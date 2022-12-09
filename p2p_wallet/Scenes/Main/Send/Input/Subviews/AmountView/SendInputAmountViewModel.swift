@@ -117,10 +117,10 @@ private extension SendInputAmountViewModel {
         let currentWallet = wallet ?? self.token
         switch self.mainAmountType {
         case .token:
-            self.secondaryAmountText = [(self.amount * currentWallet.priceInCurrentFiat).toString(maximumFractionDigits: Constants.fiatDecimals), self.fiat.code].joined(separator: " ")
+            self.secondaryAmountText = (self.amount * currentWallet.priceInCurrentFiat).toString(maximumFractionDigits: Constants.fiatDecimals)
 
         case .fiat:
-            self.secondaryAmountText = (self.amount / currentWallet.priceInCurrentFiat).tokenAmount(symbol: currentWallet.token.symbol, maximumFractionDigits: currentWallet.decimals)
+            self.secondaryAmountText = (self.amount / currentWallet.priceInCurrentFiat).toString(maximumFractionDigits: currentWallet.decimals)
         }
     }
 }
