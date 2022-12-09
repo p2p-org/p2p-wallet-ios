@@ -40,6 +40,8 @@ final class SellCoordinator: Coordinator<SellCoordinatorResult> {
                 .eraseToAnyPublisher()
         case .showPending:
             return coordinate(to: SellPendingCoordinator(navigationController: navigationController))
+                // .flatMap {navigateToAnotherScene()} // chain another navigation if needed
+                // .handleEvents(receiveValue:,receiveCompletion:) // or event make side effect
                 .map {_ in ()}
                 .eraseToAnyPublisher()
         }
