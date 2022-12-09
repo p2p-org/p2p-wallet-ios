@@ -30,52 +30,51 @@ struct RecipientSearchView: View {
                 }
 
                 // Result
-                if let result = viewModel.searchResult {
-                    VStack {
-                        switch result {
-                        case let .ok(recipients):
-                            // Ok case
-                            if recipients.isEmpty {
-                                // Not found
-                                RecipientNotFoundView()
-                                    .padding(.top, 32)
-                            } else {
-                                // With result
-                                okView(recipients)
-                            }
-                        case let .missingUserToken(recipient):
-                            // Missing user token
-                            disabledAndReason(
-                                recipient,
-                                reason: L10n.youCannotSendFundsToThisAddressBecauseItBelongsToAnotherToken
-                            )
-                        case let .insufficientUserFunds(recipient):
-                            // Insufficient funds
-                            disabledAndReason(
-                                recipient,
-                                reason: L10n.accountCreationForThisAddressIsNotPossibleDueToInsufficientFunds
-                            )
-                        case let .selfSendingError(recipient):
-                            disabledAndReason(
-                                recipient,
-                                reason: L10n.youCannotSendTokensToYourself
-                            )
-                        case .nameServiceError:
-                            tryLater(title: L10n.solanaNameServiceDoesnTRespond)
-                                .padding(.top, 38)
-                                .padding(.horizontal, 12)
-                        case .solanaServiceError:
-                            tryLater(title: "Solana Service doesn't respond")
-                                .padding(.top, 38)
-                                .padding(.horizontal, 12)
-                        }
-                        Spacer()
-                    }
+                if viewModel.isSearching {
+                    skeleton.padding(.top, 32)
+                    Spacer()
                 } else {
-                    if viewModel.isSearching {
-                        skeleton
-                            .padding(.top, 32)
-                        Spacer()
+                    if let result = viewModel.searchResult {
+                        VStack {
+                            switch result {
+                            case let .ok(recipients):
+                                // Ok case
+                                if recipients.isEmpty {
+                                    // Not found
+                                    RecipientNotFoundView()
+                                        .padding(.top, 32)
+                                } else {
+                                    // With result
+                                    okView(recipients)
+                                }
+                            case let .missingUserToken(recipient):
+                                // Missing user token
+                                disabledAndReason(
+                                    recipient,
+                                    reason: L10n.youCannotSendFundsToThisAddressBecauseItBelongsToAnotherToken
+                                )
+                            case let .insufficientUserFunds(recipient):
+                                // Insufficient funds
+                                disabledAndReason(
+                                    recipient,
+                                    reason: L10n.accountCreationForThisAddressIsNotPossibleDueToInsufficientFunds
+                                )
+                            case let .selfSendingError(recipient):
+                                disabledAndReason(
+                                    recipient,
+                                    reason: L10n.youCannotSendTokensToYourself
+                                )
+                            case .nameServiceError:
+                                tryLater(title: L10n.solanaNameServiceDoesnTRespond)
+                                    .padding(.top, 38)
+                                    .padding(.horizontal, 12)
+                            case .solanaServiceError:
+                                tryLater(title: "Solana Service doesn't respond")
+                                    .padding(.top, 38)
+                                    .padding(.horizontal, 12)
+                            }
+                            Spacer()
+                        }
                     } else {
                         // History
                         history(viewModel.recipientsHistory)
