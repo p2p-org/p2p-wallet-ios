@@ -24,6 +24,7 @@ struct SendTransactionStatusView: View {
                 .padding(.horizontal, 16)
                 .padding(.bottom, 4)
         }
+        .navigationBarHidden(true)
     }
 
     var title: some View {
