@@ -19,6 +19,7 @@ struct SendInputTokenView: View {
 
             VStack(alignment: .leading, spacing: 6) {
                 Text(viewModel.tokenName)
+                    .lineLimit(1)
                     .foregroundColor(mainColor)
                     .font(uiFont: .systemFont(ofSize: UIFont.fontSize(of: .text2), weight: .semibold))
 
@@ -32,6 +33,14 @@ struct SendInputTokenView: View {
                     Text(viewModel.amountText)
                         .foregroundColor(Color(Asset.Colors.mountain.color))
                         .apply(style: .text4)
+                        .lineLimit(1)
+                    Spacer()
+                        .frame(width: 2)
+                    Text(viewModel.amountCurrency)
+                        .foregroundColor(Color(Asset.Colors.mountain.color))
+                        .apply(style: .text4)
+                        .lineLimit(1)
+                        .layoutPriority(1)
                 }
             }
             .padding(.vertical, 7)
