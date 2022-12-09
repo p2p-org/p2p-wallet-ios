@@ -22,6 +22,14 @@ final class SendEmptyCoordinator: Coordinator<Void> {
     init(navigationController: UINavigationController, source: SendSource = .none) {
         self.navigationController = navigationController
         self.source = source
+
+final class SendEmptyCoordinator: Coordinator<Void> {
+    @Injected private var walletsRepository: WalletsRepository
+
+    private let navigationController: UINavigationController
+
+    init(navigationController: UINavigationController) {
+        self.navigationController = navigationController
     }
 
     override func start() -> AnyPublisher<Void, Never> {
