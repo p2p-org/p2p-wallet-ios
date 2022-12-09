@@ -42,7 +42,7 @@ final class SendInputCoordinator: Coordinator<SendResult> {
 
         viewModel.openFeeInfo
             .sink { [weak self] isFree in
-                if isFree {
+                if viewModel.currentState.amountInToken == 0, isFree {
                     self?.openFreeTransactionsDetail(from: controller)
                 } else {
                     self?.openFeeDetail(from: controller, viewModel: viewModel)
@@ -81,14 +81,17 @@ final class SendInputCoordinator: Coordinator<SendResult> {
     }
 
     private func openChooseWalletToken(from vc: UIViewController, viewModel: SendInputViewModel) {
-        coordinate(to: ChooseWalletTokenCoordinator(strategy: .sendToken, chosenWallet: viewModel.sourceWallet,
-                                                    parentController: vc))
-            .sink { walletToken in
-                if let walletToken = walletToken {
-                    viewModel.sourceWallet = walletToken
-                }
+        coordinate(to: ChooseWalletTokenCoordinator(
+            strategy: .sendToken,
+            chosenWallet: viewModel.sourceWallet,
+            parentController: vc
+        ))
+        .sink { walletToken in
+            if let walletToken = walletToken {
+                viewModel.sourceWallet = walletToken
             }
-            .store(in: &subscriptions)
+        }
+        .store(in: &subscriptions)
     }
 
     private func openFreeTransactionsDetail(from vc: UIViewController) {
