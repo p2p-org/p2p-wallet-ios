@@ -74,7 +74,7 @@ final class SendInputCoordinator: Coordinator<SendResult> {
                 vc.title = "@\([name, domain].joined(separator: "."))"
             }
         default:
-            vc.title = "\(recipient.address.prefix(7))...\(recipient.address.suffix(7))"
+            vc.title = "\(recipient.address.prefix(6))...\(recipient.address.suffix(6))"
         }
         vc.navigationItem.largeTitleDisplayMode = .always
         vc.navigationController?.navigationBar.prefersLargeTitles = true
