@@ -17,7 +17,7 @@ enum RecipientFormatter {
     
     static func username(name: String, domain: String) -> String {
         if domain.isEmpty {
-            return name
+            return "@\(name)"
         } else {
             return "@\(name).\(domain)"
         }
