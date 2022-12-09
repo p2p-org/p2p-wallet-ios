@@ -155,18 +155,12 @@ final class SendInputViewModel: BaseViewModel, ObservableObject {
         bind()
     }
 
-    var first = true
     func initialize() {
         Task { [weak self] in
             self?.status = .initializing
-            
+
             let nextState = await stateMachine
                 .accept(action: .initialize(.init {
-                    if self?.first ?? false {
-                        self?.first = false
-                        throw NSError(domain: "", code: 1)
-                    }
-
                     try await Resolver.resolve(SwapServiceType.self).load()
 
                     let feeRelayerContextManager = Resolver.resolve(FeeRelayerContextManager.self)
