@@ -106,7 +106,9 @@ struct SendTransactionStatusStatusView: View {
     let state: SendTransactionStatusViewModel.State
     let errorMessageTapAction: () -> Void
 
+    @State private var isAnimating = false
     @State private var isRotating = 0.0
+    let animation: Animation = .linear(duration: 0.1).speed(0.1).repeatForever(autoreverses: false)
 
     var body: some View {
         VStack {
@@ -114,12 +116,10 @@ struct SendTransactionStatusStatusView: View {
                 ZStack(alignment: .center) {
                     if case .loading = state {
                         Image(uiImage: .transactionStatusLoadingWrapper)
-                            .rotationEffect(.degrees(isRotating))
+                            .rotationEffect(.degrees(isAnimating ? 360 : 0.0))
+                            .animation(isAnimating ? animation : .default, value: isAnimating)
                             .onAppear {
-                                withAnimation(.linear(duration: 0.1)
-                                    .speed(0.1).repeatForever(autoreverses: false)) {
-                                        isRotating = 360.0
-                                    }
+                                DispatchQueue.main.async { isAnimating = true }
                             }
                         Image(uiImage: image)
                             .renderingMode(.template)
