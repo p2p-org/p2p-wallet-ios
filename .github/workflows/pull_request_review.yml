@@ -6,7 +6,7 @@ jobs:
   # Return task back to In Progress if pull request is changes requested
   return_task_to_in_progress:
     name: Return task back to In Progress if pull request is changes requested
-    if: github.event.review.state == 'changes_requested'
+    if: github.event.review.state == 'changes_requested' && !contains(github.event.pull_request.labels.*.name, 'no-qa')
     runs-on: ubuntu-latest
 
     steps:
