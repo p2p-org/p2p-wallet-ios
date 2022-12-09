@@ -102,23 +102,19 @@ final class TabBarController: UITabBarController {
             let fiatAmount = walletsRepository.getWallets().reduce(0) { $0 + $1.amountInCurrentFiat }
             let withTokens = fiatAmount > 0
             if withTokens {
-                let vm = SendToken.ViewModel(
-                    walletPubkey: nil,
-                    destinationAddress: nil,
-                    relayMethod: .default
-                )
-                sendCoordinator = SendToken.Coordinator(
-                    viewModel: vm,
-                    navigationController: navigationController
-                )
-                
-                sendCoordinator?.doneHandler = {
-                    navigationController.popToRootViewController(animated: true)
-                }
-                let vc = sendCoordinator?.start(hidesBottomBarWhenPushed: true)
-                vc?.onClose = { [weak self] in
-                    self?.sendCoordinator = nil
-                }
+                analyticsManager.log(event: AmplitudeEvent.sendViewed(lastScreen: "main_screen"))
+                sendCoordinator = SendCoordinator(rootViewController: navigationController, preChosenWallet: nil, hideTabBar: true)
+                sendCoordinator?.start()
+                    .sink { [weak self, weak navigationController] result in
+                        switch result {
+                        case let .sent(model):
+                            navigationController?.popToRootViewController(animated: true)
+                            self?.routeToSendTransactionStatus(model: model)
+                        case .cancelled:
+                            break
+                        }
+                    }
+                    .store(in: &cancellables)
             } else {
                 emptySendCoordinator = SendEmptyCoordinator(navigationController: navigationController)
                 emptySendCoordinator?.start()
@@ -228,7 +224,7 @@ final class TabBarController: UITabBarController {
         SendTransactionStatusCoordinator(parentController: self, transaction: model)
             .start()
             .sink(receiveValue: { })
-            .store(in: &subscriptions)
+            .store(in: &cancellables)
     }
 
     func changeItem(to item: TabItem) {
