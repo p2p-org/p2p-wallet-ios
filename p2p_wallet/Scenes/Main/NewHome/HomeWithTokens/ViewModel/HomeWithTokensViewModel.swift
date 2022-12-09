@@ -13,17 +13,18 @@ import RxSwift
 import SolanaSwift
 import UIKit
 
-class HomeWithTokensViewModel: ObservableObject {
+final class HomeWithTokensViewModel: BaseViewModel, ObservableObject {
+    // MARK: - Dependencies
+    
     private let walletsRepository: WalletsRepository
-    private let pricesService = Resolver.resolve(PricesServiceType.self)
+    @Injected private var pricesService: PricesServiceType
     @Injected private var solanaTracker: SolanaTracker
     @Injected private var notificationService: NotificationService
 
-    private let navigation = PassthroughSubject<HomeNavigation, Never>()
-    var navigationPublisher: AnyPublisher<HomeNavigation, Never> {
-        navigation.eraseToAnyPublisher()
-    }
-    
+    // MARK: - Properties
+
+    let navigation: PassthroughSubject<HomeNavigation, Never>
+
     var balance: AnyPublisher<String, Never>
 
     @Published var scrollOnTheTop = true
@@ -34,11 +35,12 @@ class HomeWithTokensViewModel: ObservableObject {
 
     @Published var tokensIsHidden: Bool
 
-    private var cancellables = Set<AnyCancellable>()
+    // MARK: - Initializer
 
-    init(walletsRepository: WalletsRepository = Resolver.resolve()) {
-        self.walletsRepository = walletsRepository
+    init(navigation: PassthroughSubject<HomeNavigation, Never>) {
+        self.navigation = navigation
 
+        let walletsRepository = Resolver.resolve(WalletsRepository.self)
         tokensIsHidden = !walletsRepository.isHiddenWalletsShown.value
 
         balance = Observable.zip(walletsRepository.dataObservable, walletsRepository.stateObservable)
@@ -52,6 +54,10 @@ class HomeWithTokensViewModel: ObservableObject {
             .assertNoFailure()
             .debounce(for: 0.1, scheduler: RunLoop.main)
             .eraseToAnyPublisher()
+        self.walletsRepository = walletsRepository
+        
+        super.init()
+        
         walletsRepository.dataObservable
             .asPublisher()
             .assertNoFailure()
@@ -65,7 +71,7 @@ class HomeWithTokensViewModel: ObservableObject {
                 self.items = items.filter { !$0.1 }.map(\.0)
                 self.hiddenItems = items.filter(\.1).map(\.0)
             })
-            .store(in: &cancellables)
+            .store(in: &subscriptions)
 
         if available(.solanaNegativeStatus) {
             solanaTracker.unstableSolana
@@ -76,7 +82,7 @@ class HomeWithTokensViewModel: ObservableObject {
                         withAutoHidden: false
                     )
                 })
-                .store(in: &cancellables)
+                .store(in: &subscriptions)
         }
     }
 

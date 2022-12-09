@@ -62,7 +62,7 @@ struct HomeWithTokensView: View {
 
     private var header: some View {
         ActionsPanelView(
-            actionsPublisher: viewModel.navigationPublisher
+            actionsPublisher: viewModel.navigation
                 .compactMap { scene in
                     switch scene {
                     case .actions(let actions):

@@ -15,6 +15,7 @@ import SwiftUI
 import UIKit
 
 enum HomeNavigation: Equatable {
+    // HomeWithTokens
     case buy
     case receive(publicKey: PublicKey)
     case send
@@ -22,6 +23,11 @@ enum HomeNavigation: Equatable {
     case earn
     case wallet(pubKey: String, tokenSymbol: String)
     case actions([WalletActionType])
+    // HomeEmpty
+    case topUp
+    case topUpCoin(Token)
+    // Error
+    case error(show: Bool)
 }
 
 final class HomeCoordinator: Coordinator<Void> {
@@ -36,6 +42,8 @@ final class HomeCoordinator: Coordinator<Void> {
     private let scrollSubject = PassthroughSubject<Void, Never>()
     private let earnSubject = PassthroughSubject<Void, Never>()
     private let resultSubject = PassthroughSubject<Void, Never>()
+    
+    let navigation = PassthroughSubject<HomeNavigation, Never>()
     
     // MARK: - Publishers
 
@@ -57,10 +65,16 @@ final class HomeCoordinator: Coordinator<Void> {
 
     override func start() -> AnyPublisher<Void, Never> {
         // Home with tokens
-        let tokensViewModel = createHomeWithTokensViewModel()
+        let tokensViewModel = HomeWithTokensViewModel(navigation: navigation)
+        
+        scrollSubject
+            .sink(receiveValue: { [unowned tokensViewModel] in
+                tokensViewModel.scrollToTop()
+            })
+            .store(in: &subscriptions)
         
         // home with no token
-        let emptyViewModel = createHomeEmptyViewModel()
+        let emptyViewModel = HomeEmptyViewModel(navigation: navigation)
         
         // home view
         let viewModel = HomeViewModel()
@@ -81,99 +95,28 @@ final class HomeCoordinator: Coordinator<Void> {
                 homeView.navigationIsHidden = false
             })
             .store(in: &subscriptions)
-        
-        viewModel.errorShow
-            .sink(receiveValue: { show in
-                let walletsRepository = Resolver.resolve(WalletsRepository.self)
-                if show {
-                    homeView.view.showConnectionErrorView(refreshAction: CocoaAction {
-                        homeView.view.hideConnectionErrorView()
-                        walletsRepository.reload()
-                        return .just(())
-                    })
-                }
-            })
-            .store(in: &subscriptions)
 
         // set view controller
         navigationController.setViewControllers([homeView], animated: false)
         navigationController.onClose = { [weak self] in
             self?.resultSubject.send(())
         }
-    
-        return resultSubject.prefix(1).eraseToAnyPublisher()
-    }
-    
-    // MARK: - Helpers
-
-    private func createHomeWithTokensViewModel() -> HomeWithTokensViewModel {
-        let tokensViewModel = HomeWithTokensViewModel()
         
-        tokensViewModel.navigationPublisher
+        // handle navigation
+        navigation
             .flatMap { [unowned self, unowned tokensViewModel] in
-                navigate(to: $0, tokensViewModel: tokensViewModel)
+                navigate(to: $0, tokensViewModel: tokensViewModel, homeView: homeView)
             }
             .sink(receiveValue: {})
             .store(in: &subscriptions)
-        
-        scrollSubject
-            .sink(receiveValue: { [unowned tokensViewModel] in
-                tokensViewModel.scrollToTop()
-            })
-            .store(in: &subscriptions)
-        
-        return tokensViewModel
-    }
     
-    private func createHomeEmptyViewModel() -> HomeEmptyViewModel {
-        let emptyViewModel = HomeEmptyViewModel()
-        let emptyVMOutput = emptyViewModel.output.coord
-        
-        emptyVMOutput.topUpShow
-            .filter { !available(.buyScenarioEnabled) }
-            .sink(receiveValue: { [unowned self] in
-                presentBuyView()
-            })
-            .store(in: &subscriptions)
-        
-        emptyVMOutput.receive
-            .sink(receiveValue: { [unowned self] in
-                let coordinator = ReceiveCoordinator(navigationController: navigationController, pubKey: $0)
-                coordinate(to: coordinator)
-                    .sink(receiveValue: {})
-                    .store(in: &subscriptions)
-                analyticsManager.log(event: AmplitudeEvent.mainScreenReceiveOpen)
-                analyticsManager.log(event: AmplitudeEvent.receiveViewed(fromPage: "main_screen"))
-            })
-            .store(in: &subscriptions)
-
-        emptyVMOutput.topUpCoinShow
-            .filter { [Token.nativeSolana, .usdc].contains($0) }
-            .flatMap { [unowned self] cryto -> AnyPublisher<Void, Never> in
-                let coordinator: Coordinator<Void>
-                if available(.buyScenarioEnabled) {
-                    coordinator = BuyCoordinator(
-                        navigationController: navigationController,
-                        context: .fromHome,
-                        defaultToken: cryto
-                    )
-                } else {
-                    coordinator = BuyPreparingCoordinator(
-                        navigationController: navigationController,
-                        strategy: .show,
-                        crypto: cryto == .usdc ? .usdc : cryto == .nativeSolana ? .sol : .eth
-                    )
-                }
-                return self.coordinate(to: coordinator)
-            }.sink {}
-            .store(in: &subscriptions)
-    
-        return emptyViewModel
+        // return publisher
+        return resultSubject.prefix(1).eraseToAnyPublisher()
     }
 
     // MARK: - Navigation
 
-    private func navigate(to scene: HomeNavigation, tokensViewModel: HomeWithTokensViewModel) -> AnyPublisher<Void, Never> {
+    private func navigate(to scene: HomeNavigation, tokensViewModel: HomeWithTokensViewModel, homeView: UIViewController) -> AnyPublisher<Void, Never> {
         switch scene {
         case .buy:
             if available(.buyScenarioEnabled) {
@@ -185,7 +128,10 @@ final class HomeCoordinator: Coordinator<Void> {
                     .eraseToAnyPublisher()
             }
         case .receive(let publicKey):
-            return Just(openReceiveScreen(pubKey: publicKey))
+            let coordinator = ReceiveCoordinator(navigationController: navigationController, pubKey: publicKey)
+            analyticsManager.log(event: AmplitudeEvent.mainScreenReceiveOpen)
+            analyticsManager.log(event: AmplitudeEvent.receiveViewed(fromPage: "main_screen"))
+            return coordinate(to: coordinator)
                 .eraseToAnyPublisher()
         case .send:
             return coordinate(
@@ -245,6 +191,40 @@ final class HomeCoordinator: Coordinator<Void> {
         case .actions:
             return Just(())
                 .eraseToAnyPublisher()
+        case .topUp:
+            return Just(!available(.buyScenarioEnabled) ? presentBuyView(): ())
+                .eraseToAnyPublisher()
+        case .topUpCoin(let token):
+            guard [Token.nativeSolana, .usdc].contains(token) else {
+                return Just(()).eraseToAnyPublisher()
+            }
+            let coordinator: Coordinator<Void>
+            if available(.buyScenarioEnabled) {
+                coordinator = BuyCoordinator(
+                    navigationController: navigationController,
+                    context: .fromHome,
+                    defaultToken: token
+                )
+            } else {
+                coordinator = BuyPreparingCoordinator(
+                    navigationController: navigationController,
+                    strategy: .show,
+                    crypto: token == .usdc ? .usdc : token == .nativeSolana ? .sol : .eth
+                )
+            }
+            return self.coordinate(to: coordinator)
+                .eraseToAnyPublisher()
+        case .error(let show):
+            let walletsRepository = Resolver.resolve(WalletsRepository.self)
+            if show {
+                homeView.view.showConnectionErrorView(refreshAction: CocoaAction { [unowned homeView] in
+                    homeView.view.hideConnectionErrorView()
+                    walletsRepository.reload()
+                    return .just(())
+                })
+            }
+            return Just(())
+                .eraseToAnyPublisher()
         }
     }
 
@@ -262,14 +242,5 @@ final class HomeCoordinator: Coordinator<Void> {
             }),
             animated: true
         )
-    }
-
-    private func openReceiveScreen(pubKey: PublicKey) {
-        let coordinator = ReceiveCoordinator(navigationController: navigationController, pubKey: pubKey)
-        coordinate(to: coordinator)
-            .sink(receiveValue: {})
-            .store(in: &subscriptions)
-        analyticsManager.log(event: AmplitudeEvent.mainScreenReceiveOpen)
-        analyticsManager.log(event: AmplitudeEvent.receiveViewed(fromPage: "main_screen"))
     }
 }
