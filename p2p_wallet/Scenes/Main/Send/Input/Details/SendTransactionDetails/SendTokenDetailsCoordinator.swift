@@ -4,7 +4,7 @@ import SolanaSwift
 import SwiftUI
 
 enum SendTransactionDetailsCoordinatorResult {
-    case redirectToFeePrompt
+    case redirectToFeePrompt(availableTokens: [Wallet])
 }
 
 final class SendTransactionDetailsCoordinator: Coordinator<SendTransactionDetailsCoordinatorResult> {
@@ -29,10 +29,10 @@ final class SendTransactionDetailsCoordinator: Coordinator<SendTransactionDetail
         })
         .store(in: &subscriptions)
 
-        viewModel.feePrompt.sink { [weak self] in
+        viewModel.feePrompt.sink { [weak self] tokens in
             guard let self = self else { return }
             self.feeController?.dismiss(animated: true)
-            self.subject.send(.redirectToFeePrompt)
+            self.subject.send(.redirectToFeePrompt(availableTokens: tokens))
         }
         .store(in: &subscriptions)
 
@@ -55,20 +55,5 @@ final class SendTransactionDetailsCoordinator: Coordinator<SendTransactionDetail
         self.feeController = feeController
 
         return subject.eraseToAnyPublisher()
-    }
-
-    private func openFeePropmt(from vc: UIViewController, viewModel: SendInputViewModel) {
-        guard let feeToken = viewModel.currentState.feeWallet else { return }
-        coordinate(to: SendInputFeePromptCoordinator(
-            parentController: vc,
-            currentToken: viewModel.sourceWallet,
-            feeToken: feeToken,
-            feeInSOL: viewModel.currentState.fee
-        ))
-        .sink(receiveValue: { feeToken in
-            guard let feeToken = feeToken else { return }
-            viewModel.changeFeeToken.send(feeToken)
-        })
-        .store(in: &subscriptions)
     }
 }
