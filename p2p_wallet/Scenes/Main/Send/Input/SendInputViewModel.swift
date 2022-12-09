@@ -126,7 +126,7 @@ final class SendInputViewModel: BaseViewModel, ObservableObject {
 
         let preChoosenWalletAvailable = preChosenWallet != nil
         let recipientIsDirectSPLTokenAddress = recipient.category.isDirectSPLTokenAddress
-        let thereIsOnlyOneOrNoneWallets = wallets.count <= 1
+        let thereIsOnlyOneOrNoneWallets = wallets.filter {($0.lamports ?? 0) > 0}.count <= 1
         let shouldDisableChosingToken = preChoosenWalletAvailable || recipientIsDirectSPLTokenAddress ||
             thereIsOnlyOneOrNoneWallets
         tokenViewModel.isTokenChoiceEnabled = !shouldDisableChosingToken
