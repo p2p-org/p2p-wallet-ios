@@ -110,68 +110,10 @@ final class HomeCoordinator: Coordinator<Void> {
         let tokensViewModel = HomeWithTokensViewModel()
         
         tokensViewModel.navigationPublisher
-            .sink { [unowned self] scene in
-                switch scene {
-                case .earn:
-                    earnSubject.send()
-                case .buy:
-                    if available(.buyScenarioEnabled) {
-                        coordinate(to: BuyCoordinator(navigationController: navigationController, context: .fromHome))
-                            .sink(receiveValue: {})
-                            .store(in: &subscriptions)
-                    } else {
-                        presentBuyView()
-                    }
-                case .receive(let publicKey):
-                    openReceiveScreen(pubKey: publicKey)
-                default:
-                    break
-                }
+            .flatMap { [unowned self, unowned tokensViewModel] in
+                navigate(to: $0, tokensViewModel: tokensViewModel)
             }
-            .store(in: &subscriptions)
-        
-        tokensViewModel.navigationPublisher
-            .filter {$0 == .send || $0 == .swap}
-            .flatMap { [unowned self] _ in
-                coordinate(
-                    to: SendCoordinator(
-                        navigationController: navigationController,
-                        pubKey: nil
-                    )
-                )
-            }
-            .sink(receiveValue: { [weak tokensViewModel] result in
-                switch result {
-                case .cancel:
-                    break
-                case .done:
-                    tokensViewModel?.scrollToTop()
-                }
-            })
-            .store(in: &subscriptions)
-        
-        tokensViewModel.navigationPublisher
-            .compactMap { scene -> (String, String)? in
-                switch scene {
-                case .wallet(let pubKey, let tokenSymbol):
-                    return (pubKey, tokenSymbol)
-                default:
-                    return nil
-                }
-            }
-            .flatMap { [unowned self] params -> AnyPublisher<WalletDetailCoordinator.Result, Never> in
-                let model = WalletDetailCoordinator.Model(pubKey: params.0, symbol: params.1)
-                let coordinator = WalletDetailCoordinator(navigationController: navigationController, model: model)
-                return coordinate(to: coordinator)
-            }
-            .sink(receiveValue: { [weak tokensViewModel] result in
-                switch result {
-                case .cancel:
-                    break
-                case .done:
-                    tokensViewModel?.scrollToTop()
-                }
-            })
+            .sink(receiveValue: {})
             .store(in: &subscriptions)
         
         scrollSubject
@@ -230,6 +172,81 @@ final class HomeCoordinator: Coordinator<Void> {
     }
 
     // MARK: - Navigation
+
+    private func navigate(to scene: HomeNavigation, tokensViewModel: HomeWithTokensViewModel) -> AnyPublisher<Void, Never> {
+        switch scene {
+        case .buy:
+            if available(.buyScenarioEnabled) {
+                return coordinate(to: BuyCoordinator(navigationController: navigationController, context: .fromHome))
+                    .map {_ in ()}
+                    .eraseToAnyPublisher()
+            } else {
+                return Just(presentBuyView())
+                    .eraseToAnyPublisher()
+            }
+        case .receive(let publicKey):
+            return Just(openReceiveScreen(pubKey: publicKey))
+                .eraseToAnyPublisher()
+        case .send:
+            return coordinate(
+                to: SendCoordinator(
+                    navigationController: navigationController,
+                    pubKey: nil
+                )
+            )
+            .receive(on: RunLoop.main)
+            .handleEvents(receiveOutput: { [weak tokensViewModel] result in
+                switch result {
+                case .cancel:
+                    break
+                case .done:
+                    tokensViewModel?.scrollToTop()
+                }
+            })
+            .map {_ in ()}
+            .eraseToAnyPublisher()
+            
+        case .swap:
+            return coordinate(
+                to: SwapCoordinator(
+                    navigationController: navigationController,
+                    initialWallet: nil
+                )
+            )
+            .receive(on: RunLoop.main)
+            .handleEvents(receiveOutput: { [weak tokensViewModel] result in
+                switch result {
+                case .cancel:
+                    break
+                case .done:
+                    tokensViewModel?.scrollToTop()
+                }
+            })
+            .map {_ in ()}
+            .eraseToAnyPublisher()
+        case .earn:
+            return Just(earnSubject.send())
+                .eraseToAnyPublisher()
+        case .wallet(let pubKey, let tokenSymbol):
+            let model = WalletDetailCoordinator.Model(pubKey: pubKey, symbol: tokenSymbol)
+            let coordinator = WalletDetailCoordinator(navigationController: navigationController, model: model)
+            return coordinate(to: coordinator)
+                .receive(on: RunLoop.main)
+                .handleEvents(receiveOutput: { [weak tokensViewModel] result in
+                    switch result {
+                    case .cancel:
+                        break
+                    case .done:
+                        tokensViewModel?.scrollToTop()
+                    }
+                })
+                .map {_ in ()}
+                .eraseToAnyPublisher()
+        case .actions:
+            return Just(())
+                .eraseToAnyPublisher()
+        }
+    }
 
     private func presentBuyView() {
         navigationController.present(
