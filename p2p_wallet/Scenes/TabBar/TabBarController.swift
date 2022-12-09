@@ -25,6 +25,7 @@ final class TabBarController: UITabBarController {
     private var buyCoordinator: BuyCoordinator?
     private var emptySendCoordinator: SendEmptyCoordinator?
     private var sendCoordinator: SendCoordinator?
+    private var sendStatusCoordinator: SendTransactionStatusCoordinator?
 
     @Injected private var walletsRepository: WalletsRepository
 
@@ -221,7 +222,9 @@ final class TabBarController: UITabBarController {
     }
     
     private func routeToSendTransactionStatus(model: SendTransaction) {
-        SendTransactionStatusCoordinator(parentController: self, transaction: model)
+        sendStatusCoordinator = SendTransactionStatusCoordinator(parentController: self, transaction: model)
+        
+        sendStatusCoordinator?
             .start()
             .sink(receiveValue: { })
             .store(in: &cancellables)
