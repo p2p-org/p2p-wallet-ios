@@ -24,8 +24,8 @@ final class ChooseWalletTokenServiceImpl: ChooseWalletTokenService {
 
     func getWallets() async throws -> [Wallet] {
         switch strategy {
-        case let .feeToken(feeInSOL):
-            return try await feeWalletsService.getAvailableWalletsToPayFee(feeInSOL: feeInSOL)
+        case let .feeToken(tokens):
+            return tokens
         case .sendToken:
             return walletsRepository.getWallets().filter { wallet in
                 (wallet.lamports ?? 0) > 0 && !wallet.isNFTToken

@@ -90,6 +90,12 @@ struct SendInputFeePromptView: View {
 
 struct SendInputFeePromptView_Previews: PreviewProvider {
     static var previews: some View {
-        SendInputFeePromptView(viewModel: SendInputFeePromptViewModel(currentToken: .nativeSolana, feeToken: .usdc))
+        SendInputFeePromptView(
+            viewModel: SendInputFeePromptViewModel(
+                currentToken: .nativeSolana,
+                feeToken: .usdc,
+                availableFeeTokens: []
+            )
+        )
     }
 }
