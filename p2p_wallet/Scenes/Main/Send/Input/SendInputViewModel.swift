@@ -13,16 +13,33 @@ import SolanaPricesAPIs
 import SolanaSwift
 
 final class SendInputViewModel: BaseViewModel, ObservableObject {
+    enum Status {
+        case initializing
+        case initializingFailed
+        case ready
+    }
+
     // MARK: - Sub view models
 
     let actionButtonViewModel: SendInputActionButtonViewModel
     let inputAmountViewModel: SendInputAmountViewModel
     let tokenViewModel: SendInputTokenViewModel
 
+    @Published var status: Status = .initializing
+
+    var lock: Bool {
+        switch status {
+        case .initializing: return true
+        case .initializingFailed: return true
+        case .ready: return false
+        }
+    }
+
     @Published var sourceWallet: Wallet
 
     @Published var feeTitle = L10n.fees("")
     @Published var isFeeLoading: Bool = true
+
     let feeInfoPressed = PassthroughSubject<Void, Never>()
     let openFeeInfo = PassthroughSubject<Bool, Never>()
     let changeFeeToken = PassthroughSubject<Wallet, Never>()
@@ -126,24 +143,44 @@ final class SendInputViewModel: BaseViewModel, ObservableObject {
 
         let preChoosenWalletAvailable = preChosenWallet != nil
         let recipientIsDirectSPLTokenAddress = recipient.category.isDirectSPLTokenAddress
-        let thereIsOnlyOneOrNoneWallets = wallets.filter {($0.lamports ?? 0) > 0}.count <= 1
+        let thereIsOnlyOneOrNoneWallets = wallets.filter { ($0.lamports ?? 0) > 0 }.count <= 1
         let shouldDisableChosingToken = preChoosenWalletAvailable || recipientIsDirectSPLTokenAddress ||
             thereIsOnlyOneOrNoneWallets
         tokenViewModel.isTokenChoiceEnabled = !shouldDisableChosingToken
 
         super.init()
 
-        Task {
-            await stateMachine
+        initialize()
+        logOpen()
+        bind()
+    }
+
+    var first = true
+    func initialize() {
+        Task { [weak self] in
+            self?.status = .initializing
+            
+            let nextState = await stateMachine
                 .accept(action: .initialize(.init {
+                    if self?.first ?? false {
+                        self?.first = false
+                        throw NSError(domain: "", code: 1)
+                    }
+
+                    try await Resolver.resolve(SwapServiceType.self).load()
+
                     let feeRelayerContextManager = Resolver.resolve(FeeRelayerContextManager.self)
                     try await feeRelayerContextManager.update()
                     return try await feeRelayerContextManager.getCurrentContext()
                 }))
-        }
 
-        logOpen()
-        bind()
+            switch nextState.status {
+            case .error(reason: .initializeFailed(_)):
+                self?.status = .initializingFailed
+            default:
+                self?.status = .ready
+            }
+        }
     }
 }
 
@@ -156,8 +193,6 @@ private extension SendInputViewModel {
                 switch value.status {
                 case .error(reason: .networkConnectionError(_)):
                     self.handleConnectionError()
-                case .error(reason: .initializeFailed(_)):
-                    self.handleInitializingError()
                 default:
                     self.inputAmountViewModel.maxAmountToken = value.maxAmountInputInToken
                     self.updateFeeTitle()
@@ -284,6 +319,12 @@ private extension SendInputViewModel {
             actionButtonViewModel.actionButton = .init(
                 isEnabled: false,
                 title: L10n.insufficientFundsToCoverFees
+            )
+        case .error(reason: .initializeFailed(_)):
+            inputAmountViewModel.isError = false
+            actionButtonViewModel.actionButton = .init(
+                isEnabled: true,
+                title: L10n.tryAgain
             )
 
         default:
