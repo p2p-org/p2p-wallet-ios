@@ -11,35 +11,35 @@ struct SendInputTokenView: View {
     }
 
     var body: some View {
-        HStack(spacing: 0) {
-            CoinLogoImageViewRepresentable(size: 48, token: viewModel.token.token)
-                .frame(width: 48, height: 48)
-                .cornerRadius(radius: 48 / 2, corners: .allCorners)
-                .padding(.vertical, 4)
+        Button(action: viewModel.changeTokenPressed.send) {
+            HStack(spacing: 0) {
+                CoinLogoImageViewRepresentable(size: 48, token: viewModel.token.token)
+                    .frame(width: 48, height: 48)
+                    .cornerRadius(radius: 48 / 2, corners: .allCorners)
+                    .padding(.vertical, 4)
 
-            VStack(alignment: .leading, spacing: 6) {
-                Text(viewModel.tokenName)
-                    .foregroundColor(mainColor)
-                    .font(uiFont: .systemFont(ofSize: UIFont.fontSize(of: .text2), weight: .semibold))
+                VStack(alignment: .leading, spacing: 6) {
+                    Text(viewModel.tokenName)
+                        .foregroundColor(mainColor)
+                        .font(uiFont: .systemFont(ofSize: UIFont.fontSize(of: .text2), weight: .semibold))
 
-                HStack(spacing: 0) {
-                    Image(uiImage: UIImage.buyWallet)
-                        .renderingMode(.template)
-                        .resizable()
-                        .scaledToFit()
-                        .foregroundColor(Color(Asset.Colors.mountain.color))
-                        .frame(width: 16, height: 16)
-                    Text(viewModel.amountText)
-                        .foregroundColor(Color(Asset.Colors.mountain.color))
-                        .apply(style: .text4)
+                    HStack(spacing: 0) {
+                        Image(uiImage: UIImage.buyWallet)
+                            .renderingMode(.template)
+                            .resizable()
+                            .scaledToFit()
+                            .foregroundColor(Color(Asset.Colors.mountain.color))
+                            .frame(width: 16, height: 16)
+                        Text(viewModel.amountText)
+                            .foregroundColor(Color(Asset.Colors.mountain.color))
+                            .apply(style: .text4)
+                    }
                 }
-            }
-            .padding(.vertical, 7)
-            .padding(.leading, 12)
+                .padding(.vertical, 7)
+                .padding(.leading, 12)
 
-            Spacer()
+                Spacer()
 
-            Button(action: viewModel.changeTokenPressed.send) {
                 Text(viewModel.amountInCurrentFiat?.fiatAmount() ?? "")
                     .font(uiFont: .systemFont(ofSize: UIFont.fontSize(of: .text2), weight: .semibold))
                     .foregroundColor(mainColor)
@@ -51,11 +51,11 @@ struct SendInputTokenView: View {
                         .foregroundColor(mainColor)
                         .frame(width: 24, height: 24)
                 }
-            }.allowsHitTesting(viewModel.isTokenChoiceEnabled)
-        }
-        .padding(EdgeInsets(top: 8, leading: 16, bottom: 8, trailing: 12))
-        .background(RoundedRectangle(cornerRadius: 12))
-        .foregroundColor(Color(Asset.Colors.snow.color))
+            }
+            .padding(EdgeInsets(top: 8, leading: 16, bottom: 8, trailing: 12))
+            .background(RoundedRectangle(cornerRadius: 12))
+            .foregroundColor(Color(Asset.Colors.snow.color))
+        }.allowsHitTesting(viewModel.isTokenChoiceEnabled)
     }
 }
 
