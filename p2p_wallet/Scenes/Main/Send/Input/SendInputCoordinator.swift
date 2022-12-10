@@ -100,13 +100,13 @@ final class SendInputCoordinator: Coordinator<SendResult> {
             .store(in: &subscriptions)
     }
 
-    private func openFeePropmt(from vc: UIViewController, viewModel: SendInputViewModel) {
+    private func openFeePropmt(from vc: UIViewController, viewModel: SendInputViewModel, feeWallets: [Wallet]) {
         guard let feeToken = viewModel.currentState.feeWallet else { return }
         coordinate(to: SendInputFeePromptCoordinator(
             parentController: vc,
             currentToken: viewModel.sourceWallet,
             feeToken: feeToken,
-            feeInSOL: viewModel.currentState.fee
+            availableFeeTokens: feeWallets
         ))
         .sink(receiveValue: { feeToken in
             guard let feeToken = feeToken else { return }
@@ -116,15 +116,14 @@ final class SendInputCoordinator: Coordinator<SendResult> {
     }
 
     private func openFeeDetail(from vc: UIViewController, viewModel: SendInputViewModel) {
-        guard let feeToken = viewModel.currentState.feeWallet else { return }
         coordinate(to: SendTransactionDetailsCoordinator(
             parentController: vc,
             sendInputViewModel: viewModel
         ))
         .sink { result in
             switch result {
-            case .redirectToFeePrompt:
-                self.openFeePropmt(from: vc, viewModel: viewModel)
+            case let .redirectToFeePrompt(tokens):
+                self.openFeePropmt(from: vc, viewModel: viewModel, feeWallets: tokens)
             }
         }
         .store(in: &subscriptions)
