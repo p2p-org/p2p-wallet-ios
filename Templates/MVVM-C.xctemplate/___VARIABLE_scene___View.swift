@@ -26,6 +26,6 @@ struct ___VARIABLE_scene___View: View {
 
     /// Body of the view
     var body: some View {
-        
+        Text("___VARIABLE_scene___")
     }
 }
