@@ -58,7 +58,7 @@ final class ___VARIABLE_scene___Coordinator: Coordinator<___VARIABLE_scene___Res
             .store(in: &subscriptions)
         
         // return publisher
-        return vc.dellocatedPublisher
+        return vc.deallocatedPublisher()
     }
     
     // MARK: - Navigation
