@@ -18,22 +18,30 @@ struct SendInputTokenView: View {
                     .cornerRadius(radius: 48 / 2, corners: .allCorners)
                     .padding(.vertical, 4)
 
-                VStack(alignment: .leading, spacing: 6) {
-                    Text(viewModel.tokenName)
-                        .foregroundColor(mainColor)
-                        .font(uiFont: .systemFont(ofSize: UIFont.fontSize(of: .text2), weight: .semibold))
+            VStack(alignment: .leading, spacing: 6) {
+                Text(viewModel.tokenName)
+                    .lineLimit(1)
+                    .foregroundColor(mainColor)
+                    .font(uiFont: .systemFont(ofSize: UIFont.fontSize(of: .text2), weight: .semibold))
 
-                    HStack(spacing: 0) {
-                        Image(uiImage: UIImage.buyWallet)
-                            .renderingMode(.template)
-                            .resizable()
-                            .scaledToFit()
-                            .foregroundColor(Color(Asset.Colors.mountain.color))
-                            .frame(width: 16, height: 16)
-                        Text(viewModel.amountText)
-                            .foregroundColor(Color(Asset.Colors.mountain.color))
-                            .apply(style: .text4)
-                    }
+                HStack(spacing: 0) {
+                    Image(uiImage: UIImage.buyWallet)
+                        .renderingMode(.template)
+                        .resizable()
+                        .scaledToFit()
+                        .foregroundColor(Color(Asset.Colors.mountain.color))
+                        .frame(width: 16, height: 16)
+                    Text(viewModel.amountText)
+                        .foregroundColor(Color(Asset.Colors.mountain.color))
+                        .apply(style: .text4)
+                        .lineLimit(1)
+                    Spacer()
+                        .frame(width: 2)
+                    Text(viewModel.amountCurrency)
+                        .foregroundColor(Color(Asset.Colors.mountain.color))
+                        .apply(style: .text4)
+                        .lineLimit(1)
+                        .layoutPriority(1)
                 }
                 .padding(.vertical, 7)
                 .padding(.leading, 12)

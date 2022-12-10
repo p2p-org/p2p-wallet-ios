@@ -4,6 +4,8 @@ import SwiftUI
 struct SendInputAmountView: View {
     @ObservedObject private var viewModel: SendInputAmountViewModel
 
+    @State private var switchAreaOpacity: Double = 1
+
     private let mainColor = Asset.Colors.night.color
 
     init(viewModel: SendInputAmountViewModel) {
@@ -11,71 +13,93 @@ struct SendInputAmountView: View {
     }
 
     var body: some View {
-        HStack {
-            VStack(alignment: .leading, spacing: 4) {
-                ZStack(alignment: .leading) {
-                    SendInputAmountField(
-                        text: $viewModel.amountText,
-                        isFirstResponder: $viewModel.isFirstResponder,
-                        countAfterDecimalPoint: $viewModel.countAfterDecimalPoint,
-                        textColor: $viewModel.amountTextColor
-                    ) { textField in
-                        textField.font = .systemFont(ofSize: UIFont.fontSize(of: .title2), weight: .bold)
-                        textField.placeholder = "0"
-                    }
+        ZStack(alignment: .trailing) {
+            VStack(spacing: 8) {
+                HStack(spacing: 8) {
+                    VStack(spacing: 4) {
+                        HStack(spacing: 16) {
+                            ZStack(alignment: .leading) {
+                                SendInputAmountField(
+                                    text: $viewModel.amountText,
+                                    isFirstResponder: $viewModel.isFirstResponder,
+                                    countAfterDecimalPoint: $viewModel.countAfterDecimalPoint,
+                                    textColor: $viewModel.amountTextColor
+                                ) { textField in
+                                    textField.font = .systemFont(ofSize: UIFont.fontSize(of: .title2), weight: .bold)
+                                    textField.placeholder = "0"
+                                }
 
-                    if viewModel.amountText.isEmpty {
-                        TextButtonView(
-                            title: L10n.max.uppercased(),
-                            style: .second,
-                            size: .small,
-                            onPressed: viewModel.maxAmountPressed.send
-                        )
-                        .transition(.opacity.animation(.easeInOut))
-                        .cornerRadius(radius: 32, corners: .allCorners)
-                        .frame(width: 68)
-                        .offset(x: 16)
-                        .padding(.horizontal, 8)
-                    }
-                }
+                                if viewModel.amountText.isEmpty {
+                                    TextButtonView(
+                                        title: L10n.max.uppercased(),
+                                        style: .second,
+                                        size: .small,
+                                        onPressed: viewModel.maxAmountPressed.send
+                                    )
+                                    .transition(.opacity.animation(.easeInOut))
+                                    .cornerRadius(radius: 32, corners: .allCorners)
+                                    .frame(width: 68)
+                                    .offset(x: 16)
+                                    .padding(.horizontal, 8)
+                                }
+                            }
 
-                Text(viewModel.secondaryAmountText)
-                    .foregroundColor(Color(Asset.Colors.mountain.color))
-                    .apply(style: .text4)
-            }
-
-            Spacer()
-
-            Button(
-                action: viewModel.switchPressed.send,
-                label: {
-                    HStack(spacing: 4) {
-                        VStack(alignment: .trailing, spacing: 4) {
                             Text(viewModel.mainTokenText)
                                 .foregroundColor(Color(mainColor))
                                 .font(uiFont: .systemFont(ofSize: UIFont.fontSize(of: .title2), weight: .bold))
-
-                            Button(
-                                action: viewModel.switchPressed.send,
-                                label: {
-                                    Text(L10n.tapToSwitchTo(viewModel.secondaryCurrencyText))
-                                        .foregroundColor(Color(Asset.Colors.mountain.color))
-                                        .apply(style: .text4)
-                                }
-                            )
+                                .opacity(switchAreaOpacity)
                         }
-                        Image(uiImage: UIImage.arrowUpDown)
-                            .renderingMode(.template)
-                            .foregroundColor(Color(mainColor))
-                            .frame(width: 16, height: 16)
+                        HStack(spacing: 2) {
+                            Text(viewModel.secondaryAmountText)
+                                .foregroundColor(Color(Asset.Colors.mountain.color))
+                                .apply(style: .text4)
+                                .lineLimit(1)
+                            Text(viewModel.secondaryCurrencyText)
+                                .foregroundColor(Color(Asset.Colors.mountain.color))
+                                .apply(style: .text4)
+                                .lineLimit(1)
+                            Spacer()
+                            Text(L10n.tapToSwitchTo(viewModel.secondaryCurrencyText))
+                                .foregroundColor(Color(Asset.Colors.mountain.color))
+                                .apply(style: .text4)
+                                .lineLimit(1)
+                                .opacity(switchAreaOpacity)
+                                .layoutPriority(1)
+                        }
                     }
+                    Button(
+                        action: viewModel.switchPressed.send,
+                        label: {
+                            Image(uiImage: UIImage.arrowUpDown)
+                                .renderingMode(.template)
+                                .foregroundColor(Color(mainColor))
+                                .frame(width: 16, height: 16)
+                                .opacity(switchAreaOpacity)
+                        })
+                    .frame(width: 24, height: 24)
                 }
-            )
+                .padding(EdgeInsets(top: 21, leading: 24, bottom: 21, trailing: 12))
+                .background(RoundedRectangle(cornerRadius: 12))
+                .foregroundColor(Color(Asset.Colors.snow.color))
+            }
+            tapToSwitchHiddenButton
         }
-        .padding(EdgeInsets(top: 21, leading: 24, bottom: 21, trailing: 12))
-        .background(RoundedRectangle(cornerRadius: 12))
-        .foregroundColor(Color(Asset.Colors.snow.color))
         .frame(height: 90)
+    }
+
+    var tapToSwitchHiddenButton: some View {
+        Button(action: {
+            withAnimation(.easeInOut(duration: 0.3), {
+                self.switchAreaOpacity = 0.3
+            })
+            self.viewModel.switchPressed.send()
+            withAnimation(.easeInOut(duration: 0.3), {
+                self.switchAreaOpacity = 1
+            })
+        }, label: {
+            VStack { }
+                .frame(width: 130, height: 90)
+        })
     }
 }
 
