@@ -39,15 +39,10 @@ final class HomeCoordinator: Coordinator<Void> {
     // MARK: - Properties
 
     private let navigationController: UINavigationController
-    private let scrollSubject = PassthroughSubject<Void, Never>()
-    private let earnSubject = PassthroughSubject<Void, Never>()
     private let resultSubject = PassthroughSubject<Void, Never>()
     
+    var tokensViewModel: HomeWithTokensViewModel?
     let navigation = PassthroughSubject<HomeNavigation, Never>()
-    
-    // MARK: - Publishers
-
-    var showEarn: AnyPublisher<Void, Never> { earnSubject.eraseToAnyPublisher() }
 
     // MARK: - Initializers
 
@@ -58,20 +53,14 @@ final class HomeCoordinator: Coordinator<Void> {
     // MARK: - Public actions
 
     func scrollToTop() {
-        scrollSubject.send()
+        tokensViewModel?.scrollToTop()
     }
 
     // MARK: - Methods
 
     override func start() -> AnyPublisher<Void, Never> {
         // Home with tokens
-        let tokensViewModel = HomeWithTokensViewModel(navigation: navigation)
-        
-        scrollSubject
-            .sink(receiveValue: { [unowned tokensViewModel] in
-                tokensViewModel.scrollToTop()
-            })
-            .store(in: &subscriptions)
+        tokensViewModel = HomeWithTokensViewModel(navigation: navigation)
         
         // home with no token
         let emptyViewModel = HomeEmptyViewModel(navigation: navigation)
@@ -80,7 +69,7 @@ final class HomeCoordinator: Coordinator<Void> {
         let viewModel = HomeViewModel()
         let homeView = HomeView(
             viewModel: viewModel,
-            viewModelWithTokens: tokensViewModel,
+            viewModelWithTokens: tokensViewModel!,
             emptyViewModel: emptyViewModel
         ).asViewController() as! UIHostingControllerWithoutNavigation<HomeView>
         
@@ -104,8 +93,8 @@ final class HomeCoordinator: Coordinator<Void> {
         
         // handle navigation
         navigation
-            .flatMap { [unowned self, unowned tokensViewModel] in
-                navigate(to: $0, tokensViewModel: tokensViewModel, homeView: homeView)
+            .flatMap { [unowned self] in
+                navigate(to: $0, homeView: homeView)
             }
             .sink(receiveValue: {})
             .store(in: &subscriptions)
@@ -116,7 +105,7 @@ final class HomeCoordinator: Coordinator<Void> {
 
     // MARK: - Navigation
 
-    private func navigate(to scene: HomeNavigation, tokensViewModel: HomeWithTokensViewModel, homeView: UIViewController) -> AnyPublisher<Void, Never> {
+    private func navigate(to scene: HomeNavigation, homeView: UIViewController) -> AnyPublisher<Void, Never> {
         switch scene {
         case .buy:
             if available(.buyScenarioEnabled) {
@@ -171,7 +160,7 @@ final class HomeCoordinator: Coordinator<Void> {
             .map {_ in ()}
             .eraseToAnyPublisher()
         case .earn:
-            return Just(earnSubject.send())
+            return Just(())
                 .eraseToAnyPublisher()
         case .wallet(let pubKey, let tokenSymbol):
             let model = WalletDetailCoordinator.Model(pubKey: pubKey, symbol: tokenSymbol)
