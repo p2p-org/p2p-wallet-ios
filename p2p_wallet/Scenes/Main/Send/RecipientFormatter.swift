@@ -6,7 +6,7 @@ import SwiftUI
 
 enum RecipientFormatter {
     private static let maxAddressLength = 6
-    
+
     static func format(destination: String) -> String {
         if destination.count < maxAddressLength || destination.contains("@") {
             return destination
@@ -14,12 +14,14 @@ enum RecipientFormatter {
             return "\(destination.prefix(maxAddressLength))...\(destination.suffix(maxAddressLength))"
         }
     }
-    
+
     static func username(name: String, domain: String) -> String {
-        if domain.isEmpty {
-            return name
-        } else {
+        if domain == "key" {
             return "@\(name).\(domain)"
+        } else if domain.isEmpty {
+            return "\(name)"
+        } else {
+            return "\(name).\(domain)"
         }
     }
 }

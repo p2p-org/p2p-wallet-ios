@@ -3,7 +3,7 @@ import SolanaSwift
 import SwiftUI
 
 enum ChooseWalletTokenStrategy {
-    case feeToken(feeInSOL: FeeAmount)
+    case feeToken(tokens: [Wallet])
     case sendToken
 }
 
