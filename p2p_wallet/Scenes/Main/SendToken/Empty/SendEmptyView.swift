@@ -4,13 +4,12 @@
 //
 //  Created by Ivan on 06.12.2022.
 //
-
-import SwiftUI
 import KeyAppUI
+import SwiftUI
 
 struct SendEmptyView: View {
-    let buyCrypto: (() -> Void)
-    let receive: (() -> Void)
+    let buyCrypto: () -> Void
+    let receive: () -> Void
 
     var body: some View {
         ZStack {
@@ -77,6 +76,7 @@ struct SendEmptyView: View {
         HStack(spacing: 16) {
             Image(uiImage: image)
             Text(text)
+                .fixedSize(horizontal: false, vertical: true)
                 .foregroundColor(Color(Asset.Colors.night.color))
                 .font(uiFont: .font(of: .text3))
         }
