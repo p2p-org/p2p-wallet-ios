@@ -83,13 +83,24 @@ struct SendTransactionDetailView: View {
                 ).allowsHitTesting(model.info != nil)
 
                 HStack(spacing: Constants.textHStackSpacing) {
-                    Text(model.subtitle.0)
-                        .foregroundColor(Color(model.isFree ? Asset.Colors.mint.color : Asset.Colors.night.color))
-                        .font(uiFont: .font(of: .label1, weight: model.isFree ? .semibold : .regular))
-                    if let additionalText = model.subtitle.1 {
-                        Text("(\(additionalText))")
-                            .foregroundColor(Color(Asset.Colors.mountain.color))
-                            .font(uiFont: .font(of: .label1))
+                    if model.isLoading {
+                        Text(L10n.loading)
+                            .apply(style: .text4)
+                            .foregroundColor(Color(Asset.Colors.sky.color))
+                        CircularProgressIndicatorView(
+                            backgroundColor: Asset.Colors.sky.color.withAlphaComponent(0.6),
+                            foregroundColor: Asset.Colors.sky.color
+                        )
+                        .frame(width: 16, height: 16)
+                    } else {
+                        Text(model.subtitle.0)
+                            .foregroundColor(Color(model.isFree ? Asset.Colors.mint.color : Asset.Colors.night.color))
+                            .font(uiFont: .font(of: .label1, weight: model.isFree ? .semibold : .regular))
+                        if let additionalText = model.subtitle.1 {
+                            Text("(\(additionalText))")
+                                .foregroundColor(Color(Asset.Colors.mountain.color))
+                                .font(uiFont: .font(of: .label1))
+                        }
                     }
                 }
             }
