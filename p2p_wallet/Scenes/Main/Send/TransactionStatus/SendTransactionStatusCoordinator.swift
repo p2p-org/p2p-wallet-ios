@@ -33,7 +33,7 @@ final class SendTransactionStatusCoordinator: Coordinator<Void> {
             .sink { [weak self] in self?.finish() }
             .store(in: &subscriptions)
 
-        let viewController = UIHostingControllerWithoutNavigation(rootView: view)
+        let viewController = UIHostingController(rootView: view)
         navigationController.setViewControllers([viewController], animated: true)
         style(nc: navigationController)
         wrap(for: navigationController)

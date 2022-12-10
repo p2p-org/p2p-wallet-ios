@@ -42,7 +42,7 @@ final class SendInputCoordinator: Coordinator<SendResult> {
 
         viewModel.openFeeInfo
             .sink { [weak self] isFree in
-                if isFree {
+                if viewModel.currentState.amountInToken == 0, isFree {
                     self?.openFreeTransactionsDetail(from: controller)
                 } else {
                     self?.openFeeDetail(from: controller, viewModel: viewModel)
@@ -74,21 +74,24 @@ final class SendInputCoordinator: Coordinator<SendResult> {
                 vc.title = "@\([name, domain].joined(separator: "."))"
             }
         default:
-            vc.title = "\(recipient.address.prefix(7))...\(recipient.address.suffix(7))"
+            vc.title = "\(recipient.address.prefix(6))...\(recipient.address.suffix(6))"
         }
         vc.navigationItem.largeTitleDisplayMode = .always
         vc.navigationController?.navigationBar.prefersLargeTitles = true
     }
 
     private func openChooseWalletToken(from vc: UIViewController, viewModel: SendInputViewModel) {
-        coordinate(to: ChooseWalletTokenCoordinator(strategy: .sendToken, chosenWallet: viewModel.sourceWallet,
-                                                    parentController: vc))
-            .sink { walletToken in
-                if let walletToken = walletToken {
-                    viewModel.sourceWallet = walletToken
-                }
+        coordinate(to: ChooseWalletTokenCoordinator(
+            strategy: .sendToken,
+            chosenWallet: viewModel.sourceWallet,
+            parentController: vc
+        ))
+        .sink { walletToken in
+            if let walletToken = walletToken {
+                viewModel.sourceWallet = walletToken
             }
-            .store(in: &subscriptions)
+        }
+        .store(in: &subscriptions)
     }
 
     private func openFreeTransactionsDetail(from vc: UIViewController) {
@@ -97,13 +100,13 @@ final class SendInputCoordinator: Coordinator<SendResult> {
             .store(in: &subscriptions)
     }
 
-    private func openFeePropmt(from vc: UIViewController, viewModel: SendInputViewModel) {
+    private func openFeePropmt(from vc: UIViewController, viewModel: SendInputViewModel, feeWallets: [Wallet]) {
         guard let feeToken = viewModel.currentState.feeWallet else { return }
         coordinate(to: SendInputFeePromptCoordinator(
             parentController: vc,
             currentToken: viewModel.sourceWallet,
             feeToken: feeToken,
-            feeInSOL: viewModel.currentState.fee
+            availableFeeTokens: feeWallets
         ))
         .sink(receiveValue: { feeToken in
             guard let feeToken = feeToken else { return }
@@ -113,15 +116,14 @@ final class SendInputCoordinator: Coordinator<SendResult> {
     }
 
     private func openFeeDetail(from vc: UIViewController, viewModel: SendInputViewModel) {
-        guard let feeToken = viewModel.currentState.feeWallet else { return }
         coordinate(to: SendTransactionDetailsCoordinator(
             parentController: vc,
             sendInputViewModel: viewModel
         ))
         .sink { result in
             switch result {
-            case .redirectToFeePrompt:
-                self.openFeePropmt(from: vc, viewModel: viewModel)
+            case let .redirectToFeePrompt(tokens):
+                self.openFeePropmt(from: vc, viewModel: viewModel, feeWallets: tokens)
             }
         }
         .store(in: &subscriptions)
