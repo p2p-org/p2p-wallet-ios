@@ -82,8 +82,9 @@ final class TabBarCoordinator: Coordinator<Void> {
             .store(in: &subscriptions)
         
         // navigate to Earn from homeCoordinator
-        homeCoordinator.showEarn
-            .sink(receiveValue: { [unowned self] in
+        homeCoordinator.navigation
+            .filter {$0 == .earn}
+            .sink(receiveValue: { [unowned self] _ in
                 tabBarController.changeItem(to: .invest)
             })
             .store(in: &subscriptions)
