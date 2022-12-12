@@ -79,17 +79,18 @@ final class SendInputViewModel: BaseViewModel, ObservableObject {
                 .first(where: { $0.token.address == token.address }) ?? Wallet(token: Token.nativeSolana)
         default:
             if let preChosenWallet = preChosenWallet {
-                tokenInWallet = preChosenWallet ?? wallets
-                    .first(where: { $0.token.address == Token.nativeSolana.address }) ??
-                    Wallet(token: Token.nativeSolana)
+                tokenInWallet = preChosenWallet
             } else {
-                var preferOrder: [String: Int] = ["USDC": 1, "USDT": 2, "SOL": 3]
-                let sortedWallets = wallets.sorted { (lhs: Wallet, rhs: Wallet) -> Bool in
-                    if lhs.lamports == 0 { return false }
-                    if rhs.lamports == 0 { return true }
-
-                    return (preferOrder[lhs.token.symbol] ?? 4) < (preferOrder[rhs.token.symbol] ?? 4)
-                }
+                let preferOrder: [String: Int] = ["USDC": 1, "USDT": 2]
+                let sortedWallets = wallets
+                    .filter({ $0.lamports ?? 0 > 0 })
+                    .sorted { (lhs: Wallet, rhs: Wallet) -> Bool in
+                        if preferOrder[lhs.token.symbol] != nil || preferOrder[rhs.token.symbol] != nil {
+                            return (preferOrder[lhs.token.symbol] ?? 3) < (preferOrder[rhs.token.symbol] ?? 3)
+                        } else {
+                            return lhs.lamports ?? 0 < rhs.lamports ?? 0
+                        }
+                    }
                 tokenInWallet = sortedWallets.first ?? Wallet(token: Token.nativeSolana)
             }
         }
