@@ -9,7 +9,7 @@ final class SendInputTokenViewModel: BaseViewModel, ObservableObject {
     @Published var tokenName: String
     @Published var amountText: String = ""
     @Published var amountCurrency: String = ""
-    @Published var amountInCurrentFiat: Double? = nil
+    @Published var amountInCurrentFiat: String = ""
     @Published var isTokenChoiceEnabled: Bool = true
 
     init(initialToken: Wallet) {
@@ -20,9 +20,9 @@ final class SendInputTokenViewModel: BaseViewModel, ObservableObject {
         $token
             .sink { [weak self] value in
                 guard let self = self else { return }
-                self.amountText = value.amount?.toString(maximumFractionDigits: Int(value.token.decimals)) ?? ""
+                self.amountText = value.amount?.toString(maximumFractionDigits: Int(value.token.decimals), roundingMode: .down) ?? ""
                 self.amountCurrency = value.token.symbol
-                self.amountInCurrentFiat = value.amountInCurrentFiat
+                self.amountInCurrentFiat = value.amountInCurrentFiat.fiatAmount(roundingMode: .down)
                 self.tokenName = value.token.name
             }
             .store(in: &subscriptions)

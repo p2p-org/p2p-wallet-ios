@@ -316,7 +316,7 @@ private extension SendInputViewModel {
             inputAmountViewModel.isError = false
             actionButtonViewModel.actionButton = .init(
                 isEnabled: true,
-                title: "\(L10n.send) \(currentState.amountInToken.tokenAmount(symbol: currentState.token.symbol))"
+                title: "\(L10n.send) \(currentState.amountInToken.tokenAmount(symbol: currentState.token.symbol, maximumFractionDigits: Int(currentState.token.decimals)))"
             )
         }
     }
