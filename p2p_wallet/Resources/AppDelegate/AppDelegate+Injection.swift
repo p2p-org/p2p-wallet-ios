@@ -101,9 +101,26 @@ extension Resolver: ResolverRegistering {
         }.scope(.application)
 
         // AnalyticsManager
+        // Old
         register { AnalyticsManagerImpl(apiKey: .secretConfig("AMPLITUDE_API_KEY")!) }
             .implements(AnalyticsManager.self)
             .scope(.application)
+        // New
+        register { AnalyticsServiceImpl(providers: [
+            AmplitudeAnalyticsProvider(
+                apiKey: .secretConfig("AMPLITUDE_API_KEY")!,
+                userId: nil
+            ),
+            AppsFlyerAnalyticsProvider(
+                appsFlyerDevKey: String.secretConfig("APPSFLYER_DEV_KEY")!,
+                appleAppID: String.secretConfig("APPSFLYER_APP_ID")!
+            ),
+            FirebaseAnalyticsProvider()
+        ])
+        }
+        .implements(AnalyticsService.self)
+        .scope(.application)
+        
 
         // NotificationManager
         register(Reachability.self) {
