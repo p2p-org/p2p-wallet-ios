@@ -174,8 +174,6 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
     // MARK: - AppsFlyer
 
     func setupAppsFlyer() {
-        AppsFlyerLib.shared().appsFlyerDevKey = String.secretConfig("APPSFLYER_DEV_KEY") ?? ""
-        AppsFlyerLib.shared().appleAppID = String.secretConfig("APPSFLYER_APP_ID") ?? ""
         AppsFlyerLib.shared().deepLinkDelegate = self
     }
 

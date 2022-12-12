@@ -35,7 +35,6 @@ enum AmplitudeEvent: AnalyticsEvent {
     case backingUpError
     case createPhoneClickButton
     case createSmsScreen
-    case createSmsValidation(result: Bool)
     case restorePhoneScreen
     case restorePhoneClickButton
     case restoreSmsScreen
@@ -123,16 +122,6 @@ enum AmplitudeEvent: AnalyticsEvent {
     case sendPaste
     case sendFillingAddress
     case sendApprovedScreen
-    case sendConfirmButtonPressed(
-        sendNetwork: String,
-        sendCurrency: String,
-        sendSum: String,
-        sendMAX: Bool,
-        sendUSD: String,
-        sendFree: Bool,
-        sendUsername: Bool,
-        sendAccountFeeToken: String?
-    )
     case actionButtonSend
 
     // MARK: - Swap
@@ -152,7 +141,6 @@ enum AmplitudeEvent: AnalyticsEvent {
     case swapTryAgainClick(error: String)
     case swapStartScreen
     case swapClickReviewButton
-    case swapClickApproveButton
     case actionButtonSwap
     case swapExplorerClick(txStatus: String)
 
@@ -233,15 +221,6 @@ enum AmplitudeEvent: AnalyticsEvent {
     )
     case buyTotalShowed
     case buyChosenMethodPayment(type: String)
-    case buyButtonPressed(
-        sumCurrency: String,
-        sumCoin: String,
-        currency: String,
-        coin: String,
-        paymentMethod: String,
-        bankTransfer: Bool,
-        typeBankTransfer: String?
-    )
     case buyStatusTransaction(success: Bool)
     case buyScreenOpened(lastScreen: String)
     case moonpayWindowOpened
@@ -252,8 +231,6 @@ enum AmplitudeEvent: AnalyticsEvent {
     case actionButtonClick
 
     // Onboarding
-    case onboardingStartButton
-    case createConfirmPin(result: Bool)
     case restoreWalletButton
     case selectRestoreOption(restoreOption: String, keychaineOption: Bool)
     case restoreConfirmPin(result: Bool)
@@ -269,13 +246,10 @@ enum AmplitudeEvent: AnalyticsEvent {
     case renbtcCreation(result: String)
     
     // PhoneScreen
-    case creationPhoneScreen
     case creationLoginScreen
 
     // Username
-    case usernameCreationButton(result: Bool)
     case usernameSkipButton(result: Bool)
-    case usernameCreationScreen
 
     case startDeleteAccount
     case confirmDeleteAccount
