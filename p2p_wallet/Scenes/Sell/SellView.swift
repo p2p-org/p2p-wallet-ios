@@ -17,7 +17,7 @@ struct SellView: View {
             }
         }
         .toolbar {
-            ToolbarItem(placement: .principal) { Text("Sell SOL").fontWeight(.semibold) }
+            ToolbarItem(placement: .principal) { Text("Cash out SOL").fontWeight(.semibold) }
         }
     }
 

@@ -1101,3 +1101,6 @@ will take up to 30 days" = "La suppression de votre compte prendra jusqu'à 30 j
 "Sell %@" = "Vendre %@";
 "Sell all" = "Tout vendre";
 "Included fee %@" = "Frais inclus %@";
+"The minimum amount is %@ %@" = "Le montant minimum est de %@ %@";
+"The maximum amount is %@ %@" = "Le montant maximum est de %@ %@";
+"Not enought %@" = "Pas assez %@";
