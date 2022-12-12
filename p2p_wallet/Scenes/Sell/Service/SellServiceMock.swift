@@ -2,7 +2,7 @@ import Combine
 import Foundation
 import Resolver
 
-class SellDataServiceMock: SellDataService {
+class MockSellDataService: SellDataService {
     typealias Provider = MoonpaySellDataServiceProvider
     private var provider = Provider()
 
@@ -61,8 +61,13 @@ class SellDataServiceMock: SellDataService {
         fatalError()
     }
 
-    func isAvailable() async throws -> Bool {
-        available(.sellScenarioEnabled)
+    func isAvailable() async -> Bool {
+        do {
+            _ = try await provider.fiat()
+        } catch {
+            return false
+        }
+        return available(.sellScenarioEnabled)
     }
 }
 

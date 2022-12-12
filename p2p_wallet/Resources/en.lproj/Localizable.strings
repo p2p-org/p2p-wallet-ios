@@ -1075,3 +1075,6 @@ will take up to 30 days";
 "Sell %@" = "Sell %@";
 "Sell all" = "Sell all";
 "Included fee %@" = "Included fee %@";
+"The minimum amount is %@ %@" = "The minimum amount is %@ %@";
+"The maximum amount is %@ %@" = "The maximum amount is %@ %@";
+"Not enought %@" = "Not enought %@";

@@ -13,7 +13,7 @@ class SellViewModel: BaseViewModel, ObservableObject {
 
     @Injected private var walletRepository: WalletsRepository
     // TODO: Put resolver
-    private let dataService: any SellDataService = SellDataServiceMock()
+    private let dataService: any SellDataService = MockSellDataService()
     private let actionService: any SellActionService = SellActionServiceMock()
 
     // MARK: -
@@ -25,68 +25,30 @@ class SellViewModel: BaseViewModel, ObservableObject {
     }
 
     // MARK: -
+
+    private var minBaseAmount: Double?
+    /// Maximum value to sell from sell provider
+    private var maxBaseProviderAmount: Double?
+
     // MARK: - Properties
 
     @Published var baseCurrencyCode: String = "SOL"
     @Published var baseAmount: Double?
+    /// Maximum amount user can sell (balance)
     @Published var maxBaseAmount: Double?
-    @Published var isEnteringBaseAmount: Bool = false
+    @Published var isEnteringBaseAmount: Bool = true
     @Published var quoteCurrencyCode: String = Fiat.usd.code
     @Published var quoteAmount: Double?
     @Published var isEnteringQuoteAmount: Bool = false
     @Published var exchangeRate: Double = 0
     @Published var fee: Double = 0
     @Published var isLoading = true
+    @Published var errorText: String?
 
     override init() {
         super.init()
 
         warmUp()
-
-        let dataStatus = dataService.status
-            .receive(on: RunLoop.main)
-            .share()
-
-        dataStatus
-            .filter { $0 == .ready }
-            .map { _ in false }
-            .handleEvents(receiveOutput: { _ in
-                DispatchQueue.main.asyncAfter(deadline: .now() + 0.2) {
-                    self.baseAmount = self.dataService.currency.minSellAmount ?? 0
-                    self.quoteCurrencyCode = self.dataService.fiat.code
-                }
-            })
-            .assign(to: \.isLoading, on: self)
-            .store(in: &subscriptions)
-
-        // Open pendings in case there are pending txs
-        dataStatus
-            .filter { $0 == .ready }
-            .sink { _ in self.navigation.send(.showPending) }
-            .store(in: &subscriptions)
-
-        walletRepository.dataDidChange
-            .subscribe(onNext: { val in
-                self.maxBaseAmount = self.walletRepository.nativeWallet?.amount
-            })
-            .disposed(by: disposeBag)
-
-        $baseAmount
-            .debounce(for: .seconds(0.5), scheduler: DispatchQueue.main)
-            .removeDuplicates()
-            .filter { _ in self.isLoading == false }
-            .sinkAsync { amount in
-                let val = try await self.actionService.sellQuote(
-                    baseCurrencyCode: self.baseCurrencyCode.lowercased(),
-                    quoteCurrencyCode: self.dataService.fiat.code.uppercased(),
-                    baseCurrencyAmount: amount ?? 0,
-                    extraFeePercentage: 0
-                )
-                self.fee = val.feeAmount + val.extraFeeAmount
-                self.quoteAmount = val.quoteCurrencyAmount
-                self.exchangeRate = val.baseCurrencyPrice
-        }
-        .store(in: &subscriptions)
 
         bind()
     }
@@ -115,12 +77,120 @@ class SellViewModel: BaseViewModel, ObservableObject {
             }
             .assign(to: \.baseAmount, on: self)
             .store(in: &subscriptions)
+
+        let dataStatus = dataService.status
+            .receive(on: RunLoop.main)
+            .share()
+
+        dataStatus
+            .filter { $0 == .ready }
+            .map { _ in false }
+            .handleEvents(receiveOutput: { _ in
+                DispatchQueue.main.asyncAfter(deadline: .now() + 0.2) {
+                    self.baseAmount = self.dataService.currency.minSellAmount ?? 0
+                    self.quoteCurrencyCode = self.dataService.fiat.code
+                    self.maxBaseProviderAmount = self.dataService.currency.maxSellAmount ?? 0
+                    self.baseCurrencyCode = "SOL"
+                }
+            })
+            .assign(to: \.isLoading, on: self)
+            .store(in: &subscriptions)
+
+        // Open pendings in case there are pending txs
+        dataStatus
+            .filter { $0 == .ready }
+            .sinkAsync(receiveValue: { _ in
+//                let txs = try await self.dataService.incompleteTransactions()
+                self.navigation.send(.showPending)
+            })
+            .store(in: &subscriptions)
+
+        maxBaseAmount = walletRepository.nativeWallet?.amount
+        walletRepository.dataDidChange
+            .subscribe(onNext: { val in
+                self.maxBaseAmount = self.walletRepository.nativeWallet?.amount
+            })
+            .disposed(by: disposeBag)
+
+        $baseAmount
+            .debounce(for: .seconds(0.5), scheduler: DispatchQueue.main)
+            .removeDuplicates()
+            .withLatestFrom(Publishers.CombineLatest3(
+                $baseCurrencyCode, $quoteCurrencyCode, $baseAmount.compactMap { $0 }
+            ))
+            .filter { _ in !self.isLoading && self.isEnteringBaseAmount }
+            .handleEvents(receiveOutput: { [unowned self] amount in
+                self.errorText = nil
+                self.checkError(amount: amount.2)
+            })
+            .map { [unowned self] base, quote, amount -> AnyPublisher<SellActionServiceQuote?, Never> in
+                self.calculateFee(
+                    amount: amount,
+                    baseCurrencyCode: base,
+                    quoteCurrencyCode: quote
+                )
+                    .map(Optional.init)
+                    .replaceError(with: nil)
+                    .eraseToAnyPublisher()
+            }
+            .subscribe(on: DispatchQueue.global())
+            .receive(on: DispatchQueue.main)
+            // Getting only last request
+            .switchToLatest()
+            .sink(receiveValue: { [unowned self] val in
+                guard let val else {
+                    if self.isEnteringBaseAmount {
+                        self.quoteAmount = 0
+                    } else {
+                        self.baseAmount = 0
+                    }
+                    return
+                }
+                self.fee = val.feeAmount + val.extraFeeAmount
+                self.quoteAmount = val.quoteCurrencyAmount
+                self.exchangeRate = val.baseCurrencyPrice
+            })
+            .store(in: &subscriptions)
     }
 
     private func warmUp() {
         Task {
             try await dataService.update()
         }
+    }
+
+    private func checkError(amount: Double) {
+        if amount < self.minBaseAmount {
+            self.errorText = L10n.theMinimumAmountIs(self.minBaseAmount.toString(), self.baseCurrencyCode)
+        } else if amount > (self.maxBaseAmount ?? 0) {
+            self.errorText = L10n.notEnought(self.baseCurrencyCode)
+        } else if amount > self.maxBaseProviderAmount {
+            self.errorText = L10n.theMaximumAmountIs(self.maxBaseProviderAmount.toString(), self.baseCurrencyCode)
+        }
+    }
+
+    private func calculateFee(
+        amount: Double,
+        baseCurrencyCode: String,
+        quoteCurrencyCode: String
+    ) -> AnyPublisher<SellActionServiceQuote, Error> {
+        Deferred {
+            Future { promise in
+                Task { [unowned self] in
+                    do {
+                        let result = try await self.actionService.sellQuote(
+                            baseCurrencyCode: baseCurrencyCode.lowercased(),
+                            quoteCurrencyCode: quoteCurrencyCode.lowercased(),
+                            baseCurrencyAmount: amount.rounded(decimals: 2),
+                            extraFeePercentage: 0
+                        )
+                        promise(.success(result))
+                    } catch {
+                        promise(.failure(error))
+                    }
+                }
+            }
+        }.eraseToAnyPublisher()
     }
 
     // MARK: - Actions
@@ -148,5 +218,11 @@ class SellViewModel: BaseViewModel, ObservableObject {
             externalTransactionId: externalTransactionId
         )
         navigation.send(.webPage(url: url))
+    }
+}
+
+extension SellViewModel {
+    enum _Error: Error {
+        case invalidAmount
     }
 }

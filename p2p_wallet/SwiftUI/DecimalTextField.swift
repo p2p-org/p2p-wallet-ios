@@ -15,18 +15,21 @@ struct DecimalTextField: UIViewRepresentable {
     @Binding private var isFirstResponder: Bool
     @Binding private var value: Double?
     @Binding private var textColor: UIColor
+    private let maximumFractionDigits: Int
     private var configuration = { (_: BEDecimalTextField) in }
 
     init(
         value: Binding<Double?>,
         isFirstResponder: Binding<Bool>,
         textColor: Binding<UIColor> = Binding.constant(Asset.Colors.night.color),
+        maximumFractionDigits: Int = 9,
         configuration: @escaping (BEDecimalTextField) -> Void = { _ in }
     ) {
         self.configuration = configuration
         _value = value
         _textColor = textColor
         _isFirstResponder = isFirstResponder
+        self.maximumFractionDigits = maximumFractionDigits
     }
 
     func makeUIView(context: Context) -> BEDecimalTextField {
@@ -50,18 +53,18 @@ struct DecimalTextField: UIViewRepresentable {
             {
                 
             } else {
-                uiView.text = value.toString(maximumFractionDigits: 9)
+                uiView.text = value.toString(maximumFractionDigits: maximumFractionDigits, groupingSeparator: "")
             }
         } else {
             uiView.text = nil
         }
-        
+
         if uiView.isFirstResponder, !isFirstResponder {
             DispatchQueue.main.async { uiView.resignFirstResponder() }
         } else if !uiView.isFirstResponder, isFirstResponder {
             DispatchQueue.main.async { uiView.becomeFirstResponder() }
         }
-        
+
         configuration(uiView)
         uiView.textColor = textColor
     }
@@ -88,7 +91,7 @@ struct DecimalTextField: UIViewRepresentable {
                 value.wrappedValue = nil
             }
         }
-        
+
         func textFieldDidBeginEditing(_: UITextField) {
             isFirstResponder.wrappedValue = true
         }

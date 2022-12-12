@@ -1104,3 +1104,6 @@ will take up to 30 days" = "Việc xóa tài khoản của bạn sẽ mất đ�
 "Sell %@" = "Bán %@";
 "Sell all" = "Bán tất cả";
 "Included fee %@" = "Đã bao gồm phí %@";
+"The minimum amount is %@ %@" = "Số tiền tối thiểu là %@%@";
+"The maximum amount is %@ %@" = "Số tiền tối đa là %@%@";
+"Not enought %@" = "Chưa đủ %@";
