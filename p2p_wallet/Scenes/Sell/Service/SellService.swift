@@ -21,7 +21,7 @@ public protocol SellDataService {
     /// Supported Fiat by provider for your region
     var fiat: Fiat! { get }
     /// Return incomplete transactions
-    func incompleteTransactions() async throws -> [Provider.Transaction]
+    func incompleteTransactions(transactionId: String) async throws -> [Provider.Transaction]
     /// Return transaction by  id
     func transaction(id: String) async throws -> Provider.Transaction
     /// Weather service available

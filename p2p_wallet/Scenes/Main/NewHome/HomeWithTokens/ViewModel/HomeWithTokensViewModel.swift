@@ -47,7 +47,7 @@ class HomeWithTokensViewModel: ObservableObject {
     @Published var items = [Wallet]()
     @Published var hiddenItems = [Wallet]()
     @Published var tokensIsHidden: Bool
-    @Published var isSellAvailable = false
+    @Published var isSellAvailable = true//false
 
     private var cancellables = Set<AnyCancellable>()
 
@@ -104,14 +104,14 @@ class HomeWithTokensViewModel: ObservableObject {
                 .store(in: &cancellables)
         }
         if available(.sellScenarioEnabled) {
-            Task {
-                do {
-                    let isAvailable = await sellDataService.isAvailable()
-                    await MainActor.run { [weak self] in
-                        self?.isSellAvailable = isAvailable
-                    }
-                } catch {}
-            }
+//            Task {
+//                do {
+//                    let isAvailable = await sellDataService.isAvailable()
+//                    await MainActor.run { [weak self] in
+//                        self?.isSellAvailable = isAvailable
+//                    }
+//                } catch {}
+//            }
         }
     }
 
@@ -141,6 +141,9 @@ class HomeWithTokensViewModel: ObservableObject {
             sendClicked.send()
         case .swap:
             swapClicked.send()
+        case .cashOut:
+            // TODO: cashOut tapped
+            break
         }
     }
 

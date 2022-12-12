@@ -9,9 +9,13 @@ public protocol ProviderCurrency {
     var maxSellAmount: Double? { get }
 }
 
+public protocol ProviderTransaction {}
+
 public protocol SellDataServiceProvider {
-    associatedtype Transaction
+    associatedtype Transaction: ProviderTransaction
     associatedtype Currency: ProviderCurrency
+
+    func sellTransactions(externalTransactionId: String) async throws -> [Transaction]
 }
 
 enum MoonpaySellDataServiceProviderError: Error {
@@ -20,6 +24,7 @@ enum MoonpaySellDataServiceProviderError: Error {
 
 class MoonpaySellDataServiceProvider: SellDataServiceProvider {
     typealias Currency = MoonpaySellDataServiceProvider.MoonpayCurrency
+    typealias Transaction = MoonpaySellDataServiceProvider.MoonpayTransaction
 
     @Injected private var moonpayAPI: Moonpay.Provider
 
@@ -66,6 +71,10 @@ class MoonpaySellDataServiceProvider: SellDataServiceProvider {
             )
         }
     }
+
+    func sellTransactions(externalTransactionId: String) async throws -> [Transaction] {
+        try await moonpayAPI.sellTransactions(externalTransactionId: externalTransactionId)
+    }
 }
 
 extension MoonpaySellDataServiceProvider {
@@ -79,7 +88,7 @@ extension MoonpaySellDataServiceProvider {
         var isSuspended: Bool
     }
 
-    struct Transaction: Codable {
+    struct MoonpayTransaction: Codable, ProviderTransaction {
         var id: String
         var createdAt: Date
         var updatedAt: Date
@@ -87,7 +96,7 @@ extension MoonpaySellDataServiceProvider {
         var quoteCurrencyAmount: Double
         var feeAmount: Double
         var extraFeeAmount: Double
-        var status: Transaction.Status
+        var status: MoonpayTransaction.Status
         var failureReason: String?
         var refundWalletAddress: String?
         var depositHash: String?
@@ -96,7 +105,7 @@ extension MoonpaySellDataServiceProvider {
     }
 }
 
-extension MoonpaySellDataServiceProvider.Transaction {
+extension MoonpaySellDataServiceProvider.MoonpayTransaction {
     enum Status: String, Codable {
         case waitingForDeposit
         case pending

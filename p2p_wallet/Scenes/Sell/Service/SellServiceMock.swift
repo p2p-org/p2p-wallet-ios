@@ -42,23 +42,24 @@ class MockSellDataService: SellDataService {
         statusSubject.send(.ready)
     }
 
-    func incompleteTransactions() async throws -> [Provider.Transaction] {
-        let transaction = Provider.Transaction(
-            id: "id1",
-            createdAt: Date(),
-            updatedAt: Date(),
-            baseCurrencyAmount: 3,
-            quoteCurrencyAmount: 12.3,
-            feeAmount: 0.1,
-            extraFeeAmount: 0.1,
-            status: .pending,
-            failureReason: "Something went wrong",
-            refundWalletAddress: "address",
-            depositHash: "depositHash",
-            quoteCurrencyId: "quoteCurrencyId",
-            baseCurrencyId: "baseCurrencyId"
-        )
-        return [transaction]
+    func incompleteTransactions(transactionId: String) async throws -> [Provider.Transaction] {
+        try await provider.sellTransactions(externalTransactionId: transactionId)
+//        let transaction = Provider.Transaction(
+//            id: "id1",
+//            createdAt: Date(),
+//            updatedAt: Date(),
+//            baseCurrencyAmount: 3,
+//            quoteCurrencyAmount: 12.3,
+//            feeAmount: 0.1,
+//            extraFeeAmount: 0.1,
+//            status: .pending,
+//            failureReason: "Something went wrong",
+//            refundWalletAddress: "address",
+//            depositHash: "depositHash",
+//            quoteCurrencyId: "quoteCurrencyId",
+//            baseCurrencyId: "baseCurrencyId"
+//        )
+//        return [transaction]
     }
 
     func transaction(id: String) async -> Provider.Transaction {
@@ -124,7 +125,8 @@ class SellActionServiceMock: SellActionService {
             .init(name: "refundWalletAddress", value: userWalletManager.wallet?.account.publicKey.base58EncodedString),
             .init(name: "quoteCurrencyCode", value: quoteCurrencyCode),
             .init(name: "baseCurrencyAmount", value: baseCurrencyAmount.toString()),
-            .init(name: "externalTransactionId", value: externalTransactionId)
+            .init(name: "externalTransactionId", value: externalTransactionId),
+            .init(name: "externalCustomerId", value: externalTransactionId)
         ]
 
         guard let url = components.url else {

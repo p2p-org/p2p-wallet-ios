@@ -162,6 +162,8 @@ extension WalletDetail.ViewModel: WalletDetailViewModelType {
         case .swap:
             analyticsManager.log(event: AmplitudeEvent.actionPanelSwapToken(tokenName: symbol))
             swapTokens()
+        case .cashOut:
+            break
         }
     }
 

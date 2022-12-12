@@ -395,7 +395,7 @@ extension Resolver: ResolverRegistering {
     /// Shared scope: share between screens
     private static func registerForSharedScope() {
         // BuyServices
-        register { Moonpay.Provider(api: Moonpay.API.fromEnvironment()) }
+        register { Moonpay.Provider(api: Moonpay.API.fromEnvironment(), serverSideAPI: Moonpay.API.fromEnvironment(kind: .server)) }
             .scope(.shared)
 
         register { Buy.MoonpayBuyProcessingFactory() }

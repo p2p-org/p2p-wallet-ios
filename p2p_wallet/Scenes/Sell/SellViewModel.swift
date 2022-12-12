@@ -99,10 +99,13 @@ class SellViewModel: BaseViewModel, ObservableObject {
 
         // Open pendings in case there are pending txs
         dataStatus
-            .filter { $0 == .ready }
+//            .filter { $0 == .ready }
             .sinkAsync(receiveValue: { _ in
-//                let txs = try await self.dataService.incompleteTransactions()
-                self.navigation.send(.showPending)
+                guard let address = self.walletRepository.nativeWallet?.pubkey else { return }
+                let txs = try await self.dataService.incompleteTransactions(transactionId: address)
+                if !txs.isEmpty {
+                    self.navigation.send(.showPending)
+                }
             })
             .store(in: &subscriptions)
 
