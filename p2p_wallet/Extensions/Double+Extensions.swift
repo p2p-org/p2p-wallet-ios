@@ -93,7 +93,8 @@ extension Double {
         showPlus: Bool = false,
         showMinus: Bool = true,
         groupingSeparator: String? = nil,
-        autoSetMaximumFractionDigits: Bool = false
+        autoSetMaximumFractionDigits: Bool = false,
+        roundingMode: NumberFormatter.RoundingMode? = nil
     ) -> String {
         let formatter = NumberFormatter()
         formatter.groupingSize = 3
@@ -123,19 +124,23 @@ extension Double {
             }
         }
 
+        if let roundingMode = roundingMode {
+            formatter.roundingMode = roundingMode
+        }
+
         let number = showMinus ? self : abs(self)
         return formatter.string(from: number as NSNumber) ?? "0"
     }
 
-    func fiatAmount(maximumFractionDigits: Int = 2, currency: Fiat = .usd) -> String {
+    func fiatAmount(maximumFractionDigits: Int = 2, currency: Fiat = .usd, roundingMode: NumberFormatter.RoundingMode? = nil) -> String {
         if currency == .usd {
-            return "\(currency.symbol) \(toString(maximumFractionDigits: maximumFractionDigits))"
+            return "\(currency.symbol) \(toString(maximumFractionDigits: maximumFractionDigits, roundingMode: roundingMode))"
         } else {
-            return "\(toString(maximumFractionDigits: maximumFractionDigits)) \(currency.symbol)"
+            return "\(toString(maximumFractionDigits: maximumFractionDigits, roundingMode: roundingMode)) \(currency.symbol)"
         }
     }
 
-    func tokenAmount(symbol: String, maximumFractionDigits: Int = 9) -> String {
+    func tokenAmount(symbol: String, maximumFractionDigits: Int = 9, roundingMode: NumberFormatter.RoundingMode? = nil) -> String {
         "\(toString(maximumFractionDigits: maximumFractionDigits)) \(symbol)"
     }
 
