@@ -25,6 +25,7 @@ class AppCoordinator: Coordinator<Void> {
     @Injected var notificationService: NotificationService
     @Injected var userWalletManager: UserWalletManager
     @Injected var createNameService: CreateNameService
+    @Injected private var analyticsService: AnalyticsService
 
     // MARK: - Properties
 
@@ -144,7 +145,7 @@ class AppCoordinator: Coordinator<Void> {
                     walletCreated = true
 
                     analyticsManager.log(event: AmplitudeEvent.setupOpen(fromPage: "create_wallet"))
-                    analyticsManager.log(event: AmplitudeEvent.createConfirmPin(result: true))
+                    analyticsService.logEvent(.createConfirmPin(result: true))
 
                     saveSecurity(data: data.security)
                     // Setup user wallet

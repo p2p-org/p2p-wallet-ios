@@ -48,6 +48,7 @@ extension SendToken {
 
         @Injected private var authenticationHandler: AuthenticationHandlerType
         @Injected private var analyticsManager: AnalyticsManager
+        @Injected private var analyticsService: AnalyticsService
         @Injected private var pricesService: PricesServiceType
         @Injected private var walletsRepository: WalletsRepository
         let sendService: SendServiceType
@@ -188,7 +189,7 @@ extension SendToken {
                 }
             }
 
-            analyticsManager.log(event: AmplitudeEvent.sendConfirmButtonPressed(
+            analyticsService.logEvent(.sendConfirmButtonPressed(
                 sendNetwork: network.rawValue.firstUppercased(),
                 sendCurrency: wallet.token.symbol,
                 sendSum: "\(amount)",
