@@ -14,13 +14,24 @@ extension Moonpay {
         let endpoint: String
         let apiKey: String
 
-        static func fromEnvironment() -> API {
-            let endpoint = "https://api.moonpay.com/"
+        static func fromEnvironment(kind: Kind = .client) -> API {
+            let endpoint: String
+            switch kind {
+            case .client:
+                endpoint = "https://api.moonpay.com/"
+            case .server:
+                endpoint = "https://moonpay.key.app/"
+            }
             if Defaults.apiEndPoint.network == .mainnetBeta {
                 return API(endpoint: endpoint, apiKey: .secretConfig("MOONPAY_PRODUCTION_API_KEY")!)
             } else {
                 return API(endpoint: endpoint, apiKey: .secretConfig("MOONPAY_STAGING_API_KEY")!)
             }
         }
+    }
+
+    enum Kind {
+        case client
+        case server
     }
 }
