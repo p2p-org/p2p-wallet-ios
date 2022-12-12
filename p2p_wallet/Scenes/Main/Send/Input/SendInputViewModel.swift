@@ -59,7 +59,6 @@ final class SendInputViewModel: BaseViewModel, ObservableObject {
 
     private let walletsRepository: WalletsRepository
     private let pricesService: PricesServiceType
-    private let sendAction: SendActionService
     @Injected private var analyticsManager: AnalyticsManager
 
     init(recipient: Recipient, preChosenWallet: Wallet?, source: SendSource) {
@@ -126,15 +125,6 @@ final class SendInputViewModel: BaseViewModel, ObservableObject {
                 ),
                 solanaAPIClient: Resolver.resolve()
             )
-        )
-
-        let accountStorage = Resolver.resolve(AccountStorageType.self)
-        sendAction = SendActionServiceImpl(
-            contextManager: Resolver.resolve(),
-            solanaAPIClient: Resolver.resolve(),
-            blockchainClient: Resolver.resolve(),
-            feeRelayer: Resolver.resolve(),
-            account: accountStorage.account
         )
 
         inputAmountViewModel = SendInputAmountViewModel(initialToken: tokenInWallet)
@@ -373,7 +363,10 @@ private extension SendInputViewModel {
         else { return }
 
         let address: String
-        switch currentState.recipient.category {
+        let amountInToken = currentState.amountInToken
+        let recipient = currentState.recipient
+
+        switch recipient.category {
         case let .solanaTokenAddress(walletAddress, _):
             address = walletAddress.base58EncodedString
         default:
@@ -386,12 +379,16 @@ private extension SendInputViewModel {
                 self.actionButtonViewModel.showFinished = true
                 DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) {
                     let transaction = SendTransaction(state: self.currentState) {
-                        try await self.sendAction.send(
+                        try? await Resolver.resolve(SendHistoryService.self).insert(recipient)
+
+                        let trx = try await Resolver.resolve(SendActionService.self).send(
                             from: sourceWallet,
                             receiver: address,
-                            amount: self.currentState.amountInToken,
+                            amount: amountInToken,
                             feeWallet: feeWallet
                         )
+
+                        return trx
                     }
                     self.transaction.send(transaction)
                 }

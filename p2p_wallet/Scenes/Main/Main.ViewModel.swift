@@ -68,34 +68,6 @@ extension Main {
                 nameStorage.save(name: name)
             }
 
-            // Send history
-            Task.detached {
-                let walletsRepo = Resolver.resolve(WalletsRepository.self)
-                let wallets: [Wallet] = try await walletsRepo.dataObservable
-                    .compactMap { $0 }
-                    .filter { $0.isEmpty != true }
-                    .first()
-                    .value ?? []
-
-                let accountStreamSources = wallets
-                    .reversed()
-                    .map { wallet in
-                        AccountStreamSource(
-                            account: wallet.pubkey ?? "",
-                            symbol: wallet.token.symbol,
-                            transactionRepository: SolanaTransactionRepository(solanaAPIClient: Resolver.resolve())
-                        )
-                    }
-
-                let provider = SendHistoryRemoteProvider(
-                    sourceStream: MultipleStreamSource(sources: accountStreamSources),
-                    historyTransactionParser: Resolver.resolve(),
-                    solanaAPIClient: Resolver.resolve(),
-                    nameService: Resolver.resolve()
-                )
-                await Resolver.resolve(SendHistoryService.self).synchronize(updateRemoteProvider: provider)
-            }
-
             // Notification
             notificationService.requestRemoteNotificationPermission()
         }

@@ -353,16 +353,7 @@ struct RecipientSearchView_Previews: PreviewProvider {
                     recipientSearchService: RecipientSearchServiceMock(
                         result: okNoFundCase
                     ),
-                    sendHistoryService: SendHistoryService(
-                        localProvider: SendHistoryLocalProvider(),
-                        remoteProvider: SendHistoryRemoteMockProvider(recipients: [
-                            .init(
-                                address: "8upjSpvjcdpuzhfR1zriwg5NXkwDruejqNE9WNbPRtyA",
-                                category: .solanaAddress,
-                                attributes: []
-                            ),
-                        ])
-                    ),
+                    sendHistoryService: SendHistoryService(provider: SendHistoryLocalProvider()),
                     preChosenWallet: nil,
                     source: .none
                 )
