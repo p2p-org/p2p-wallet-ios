@@ -49,7 +49,7 @@ struct SendInputTokenView: View {
 
                 Spacer()
 
-                Text(viewModel.amountInCurrentFiat?.fiatAmount() ?? "")
+                Text(viewModel.amountInCurrentFiat)
                     .font(uiFont: .systemFont(ofSize: UIFont.fontSize(of: .text2), weight: .semibold))
                     .foregroundColor(mainColor)
                     .padding(EdgeInsets(top: 18, leading: 8, bottom: 18, trailing: 8))
