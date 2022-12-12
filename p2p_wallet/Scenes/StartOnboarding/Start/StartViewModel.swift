@@ -6,6 +6,7 @@ import UIKit
 
 final class StartViewModel: BaseViewModel, ObservableObject {
     @Injected private var analyticsManager: AnalyticsManager
+    @Injected private var analyticsService: AnalyticsService
 
     @Published var data: [OnboardingContentData] = []
 
@@ -21,9 +22,11 @@ final class StartViewModel: BaseViewModel, ObservableObject {
         super.init()
         setData()
 
-        createWalletDidTap.sink { [unowned self] in
-            self.analyticsManager.log(event: AmplitudeEvent.onboardingStartButton)
-        }.store(in: &subscriptions)
+        createWalletDidTap
+            .sink { [unowned self] in
+                analyticsService.logEvent(.onboardingStartButton)
+            }
+            .store(in: &subscriptions)
 
         restoreWalletDidTap.sink { [unowned self] in
             self.analyticsManager.log(event: AmplitudeEvent.restoreWalletButton)
