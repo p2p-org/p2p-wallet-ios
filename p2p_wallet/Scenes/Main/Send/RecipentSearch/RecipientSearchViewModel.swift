@@ -134,7 +134,10 @@ class RecipientSearchViewModel: ObservableObject {
             else { return }
 
             selectRecipient(recipient, fromQR: fromQR)
-            notifyAddressRecognized(recipient: recipient)
+
+            if fromQR {
+                notifyAddressRecognized(recipient: recipient)
+            }
         default:
             break
         }
