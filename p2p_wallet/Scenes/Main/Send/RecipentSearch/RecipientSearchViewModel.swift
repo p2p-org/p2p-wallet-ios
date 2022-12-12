@@ -75,26 +75,6 @@ class RecipientSearchViewModel: ObservableObject {
             }
         }
 
-        Task {
-            let accountStreamSources = walletsRepository
-                .getWallets()
-                .reversed()
-                .map { wallet in
-                    AccountStreamSource(
-                        account: wallet.pubkey ?? "",
-                        symbol: wallet.token.symbol,
-                        transactionRepository: SolanaTransactionRepository(solanaAPIClient: Resolver.resolve())
-                    )
-                }
-
-            await self.sendHistoryService.synchronize(updateRemoteProvider: SendHistoryRemoteProvider(
-                sourceStream: MultipleStreamSource(sources: accountStreamSources),
-                historyTransactionParser: Resolver.resolve(),
-                solanaAPIClient: Resolver.resolve(),
-                nameService: Resolver.resolve()
-            ))
-        }
-
         sendHistoryService.statusPublisher
             .receive(on: RunLoop.main)
             .assign(to: \.recipientsHistoryStatus, on: self)

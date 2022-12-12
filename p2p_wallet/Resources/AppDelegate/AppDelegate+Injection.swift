@@ -248,18 +248,22 @@ extension Resolver: ResolverRegistering {
         .scope(.session)
 
         register { SendHistoryLocalProvider() }
+            .scope(.session)
+
+        register {
+            SendActionServiceImpl(
+                contextManager: Resolver.resolve(),
+                solanaAPIClient: Resolver.resolve(),
+                blockchainClient: Resolver.resolve(),
+                feeRelayer: Resolver.resolve(),
+                account: Resolver.resolve(AccountStorageType.self).account
+            )
+        }
+        .implements(SendActionService.self)
         .scope(.session)
 
         register {
-            SendHistoryService(
-                localProvider: resolve(SendHistoryLocalProvider.self),
-                remoteProvider: SendHistoryRemoteProvider(
-                    sourceStream: EmptyStreamSource(),
-                    historyTransactionParser: resolve(),
-                    solanaAPIClient: resolve(),
-                    nameService: resolve()
-                )
-            )
+            SendHistoryService(provider: resolve(SendHistoryLocalProvider.self))
         }
         .scope(.session)
 

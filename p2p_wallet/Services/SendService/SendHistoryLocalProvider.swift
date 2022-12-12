@@ -16,13 +16,6 @@ class SendHistoryLocalProvider: SendHistoryProvider {
         return cacheDirectoryPath.appendingPathComponent("/send-history.data")
     }
 
-    func getRecipients(_: Int) async throws -> [Recipient]? {
-        let cacheFile = getCacheFile()
-        guard let data = try? Data(contentsOf: cacheFile) else { return nil }
-
-        return (try? JSONDecoder().decode([Recipient].self, from: data)) ?? []
-    }
-
     func save(_ recipients: [Recipient]?) async throws {
         let cacheFile = getCacheFile()
 
@@ -32,5 +25,12 @@ class SendHistoryLocalProvider: SendHistoryProvider {
         } else {
             try? FileManager.default.removeItem(at: cacheFile)
         }
+    }
+
+    func getRecipients() async throws -> [Recipient]? {
+        let cacheFile = getCacheFile()
+        guard let data = try? Data(contentsOf: cacheFile) else { return nil }
+
+        return (try? JSONDecoder().decode([Recipient].self, from: data)) ?? []
     }
 }
