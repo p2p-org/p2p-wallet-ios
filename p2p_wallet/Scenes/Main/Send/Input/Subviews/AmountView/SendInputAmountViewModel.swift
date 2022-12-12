@@ -69,9 +69,9 @@ final class SendInputAmountViewModel: BaseViewModel, ObservableObject {
                 guard let self = self else { return }
                 switch self.mainAmountType {
                 case .token:
-                    self.maxAmountTextInCurrentType = value.toString(maximumFractionDigits: self.token.decimals)
+                    self.maxAmountTextInCurrentType = value.formatTokenWithDown(decimals: self.token.decimals)
                 case .fiat:
-                    self.maxAmountTextInCurrentType = (value * self.token.priceInCurrentFiat).toString(maximumFractionDigits: Constants.fiatDecimals)
+                    self.maxAmountTextInCurrentType = (value * self.token.priceInCurrentFiat).formatFiatWithDown()
                 }
             }
             .store(in: &subscriptions)
@@ -103,11 +103,11 @@ private extension SendInputAmountViewModel {
         case .fiat:
             self.mainTokenText = self.fiat.code
             self.secondaryCurrencyText = currentWallet.token.symbol
-            self.maxAmountTextInCurrentType = (self.maxAmountToken * currentWallet.priceInCurrentFiat).toString(maximumFractionDigits: Constants.fiatDecimals)
+            self.maxAmountTextInCurrentType = (self.maxAmountToken * currentWallet.priceInCurrentFiat).formatFiatWithDown()
         case .token:
             self.mainTokenText = currentWallet.token.symbol
             self.secondaryCurrencyText = self.fiat.code
-            self.maxAmountTextInCurrentType = self.maxAmountToken.toString(maximumFractionDigits: currentWallet.decimals)
+            self.maxAmountTextInCurrentType = self.maxAmountToken.formatTokenWithDown(decimals: currentWallet.decimals)
         }
         self.updateSecondaryAmount(for: currentWallet)
         self.changeAmount.send((self.amount ?? 0, self.mainAmountType))
@@ -117,10 +117,10 @@ private extension SendInputAmountViewModel {
         let currentWallet = wallet ?? self.token
         switch self.mainAmountType {
         case .token:
-            self.secondaryAmountText = (self.amount * currentWallet.priceInCurrentFiat).toString(maximumFractionDigits: Constants.fiatDecimals)
+            self.secondaryAmountText = (self.amount * currentWallet.priceInCurrentFiat).formatFiatWithDown()
 
         case .fiat:
-            self.secondaryAmountText = (self.amount / currentWallet.priceInCurrentFiat).toString(maximumFractionDigits: currentWallet.decimals)
+            self.secondaryAmountText = (self.amount / currentWallet.priceInCurrentFiat).formatTokenWithDown(decimals: currentWallet.decimals)
         }
     }
 }
@@ -131,4 +131,14 @@ private extension Wallet {
 
 private enum Constants {
     static let fiatDecimals = 2
+}
+
+private extension Double {
+    func formatFiatWithDown() -> String {
+        return self.toString(maximumFractionDigits: Constants.fiatDecimals, roundingMode: .down)
+    }
+
+    func formatTokenWithDown(decimals: Int) -> String {
+        return self.toString(maximumFractionDigits: decimals, roundingMode: .down)
+    }
 }
