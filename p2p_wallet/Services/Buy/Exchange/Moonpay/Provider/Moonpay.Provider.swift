@@ -245,7 +245,7 @@ extension Moonpay.Provider {
 
 extension Moonpay.Provider {
     struct IpAddressResponse: Codable {
-        var aplha2: String
+        var alpha2: String
         var alpha3: String
         var state: String
         var ipAddress: String

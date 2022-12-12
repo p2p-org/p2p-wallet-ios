@@ -1,6 +1,7 @@
 import Combine
 import Foundation
 import Resolver
+import SwiftyUserDefaults
 
 class MockSellDataService: SellDataService {
     typealias Provider = MoonpaySellDataServiceProvider
@@ -9,6 +10,9 @@ class MockSellDataService: SellDataService {
     init() {
         statusSubject.send(.initialized)
     }
+
+    @SwiftyUserDefault(keyPath: \.isSellAvailable, options: .cached)
+    private var cachedIsAvailable: Bool?
 
     private let statusSubject = PassthroughSubject<SellDataServiceStatus, Never>()
     lazy var status: AnyPublisher<SellDataServiceStatus, Never> = {
@@ -57,17 +61,27 @@ class MockSellDataService: SellDataService {
         return [transaction]
     }
 
-    func transaction(id: String) async throws -> Provider.Transaction {
+    func transaction(id: String) async -> Provider.Transaction {
         fatalError()
     }
 
     func isAvailable() async -> Bool {
+        guard cachedIsAvailable == nil else {
+            defer {
+                Task {
+                    do {
+                        cachedIsAvailable = try await provider.isAvailable()
+                    } catch {}
+                }
+            }
+            return cachedIsAvailable ?? false
+        }
         do {
-            _ = try await provider.fiat()
+            cachedIsAvailable = try await provider.isAvailable()
         } catch {
             return false
         }
-        return available(.sellScenarioEnabled)
+        return (cachedIsAvailable ?? false)
     }
 }
 

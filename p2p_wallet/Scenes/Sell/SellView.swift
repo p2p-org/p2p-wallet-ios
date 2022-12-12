@@ -12,7 +12,11 @@ struct SellView: View {
                 if viewModel.isLoading {
                     loading
                 } else {
-                    SellInputView(viewModel: viewModel)
+                    if viewModel.hasPending {
+                        
+                    } else {
+                        SellInputView(viewModel: viewModel)
+                    }
                 }
             }
         }
