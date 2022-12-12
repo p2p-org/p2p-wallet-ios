@@ -197,9 +197,7 @@ final class HomeCoordinator: Coordinator<Void> {
             .flatMap { [unowned self] in
                 self.coordinate(to: SellCoordinator(navigationController: self.navigationController))
             }
-            .sink {
-                debugPrint("Deallocated")
-            }
+            .sink {}
             .store(in: &subscriptions)
 
         return Empty(completeImmediately: false)

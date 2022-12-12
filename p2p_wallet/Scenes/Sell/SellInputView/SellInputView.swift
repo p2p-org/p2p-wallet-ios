@@ -1,10 +1,3 @@
-//
-//  SellInputView.swift
-//  p2p_wallet
-//
-//  Created by Chung Tran on 08/12/2022.
-//
-
 import SwiftUI
 import KeyAppUI
 import Combine

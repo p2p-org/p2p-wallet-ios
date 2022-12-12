@@ -18,6 +18,8 @@ class HomeWithTokensViewModel: ObservableObject {
     private let pricesService = Resolver.resolve(PricesServiceType.self)
     @Injected private var solanaTracker: SolanaTracker
     @Injected private var notificationService: NotificationService
+    // TODO: make injected
+    private var sellDataService: any SellDataService = MockSellDataService()
 
     private let buyClicked = PassthroughSubject<Void, Never>()
     private let receiveClicked = PassthroughSubject<Void, Never>()
@@ -44,8 +46,8 @@ class HomeWithTokensViewModel: ObservableObject {
     private var wallets = [Wallet]()
     @Published var items = [Wallet]()
     @Published var hiddenItems = [Wallet]()
-
     @Published var tokensIsHidden: Bool
+    @Published var isSellAvailable = false
 
     private var cancellables = Set<AnyCancellable>()
 
@@ -100,6 +102,16 @@ class HomeWithTokensViewModel: ObservableObject {
                     )
                 })
                 .store(in: &cancellables)
+        }
+        if available(.sellScenarioEnabled) {
+            Task {
+                do {
+                    let isAvailable = await sellDataService.isAvailable()
+                    await MainActor.run { [weak self] in
+                        self?.isSellAvailable = isAvailable
+                    }
+                } catch {}
+            }
         }
     }
 

@@ -43,6 +43,7 @@ class SellViewModel: BaseViewModel, ObservableObject {
     @Published var exchangeRate: Double = 0
     @Published var fee: Double = 0
     @Published var isLoading = true
+    @Published var hasPending = false
     @Published var errorText: String?
 
     override init() {
