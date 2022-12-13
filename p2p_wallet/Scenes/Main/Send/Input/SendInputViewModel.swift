@@ -54,6 +54,7 @@ final class SendInputViewModel: BaseViewModel, ObservableObject {
     // MARK: - Private
 
     private let source: SendSource
+    private var wasMaxWarningToastShown: Bool = false
 
     // MARK: - Dependencies
 
@@ -238,12 +239,12 @@ private extension SendInputViewModel {
             .sink { [weak self] _ in
                 guard let self = self else { return }
                 let text: String
-                if self.currentState.feeWallet?.mintAddress == self.sourceWallet.mintAddress {
+                if self.currentState.feeWallet?.mintAddress == self.sourceWallet.mintAddress && self.currentState.fee != .zero {
                     text = L10n.calculatedBySubtractingTheAccountCreationFeeFromYourBalance
                 } else {
                     text = L10n.usingTheMaximumAmount(self.sourceWallet.token.symbol)
                 }
-                self.snackbar.send(SnackBar(title: "✅", text: text))
+                self.handleSuccess(text: text)
                 self.vibrate()
             }
             .store(in: &subscriptions)
@@ -287,17 +288,24 @@ private extension SendInputViewModel {
             return
         }
         switch currentState.status {
-        case .error(.inputTooHigh):
+        case let .error(.inputTooHigh(maxAmount)):
             inputAmountViewModel.isError = true
             actionButtonViewModel.actionButton = .init(
                 isEnabled: false,
-                title: L10n.max(currentState.maxAmountInputInToken.tokenAmount(symbol: sourceWallet.token.symbol))
+                title: L10n.max(maxAmount.tokenAmount(symbol: sourceWallet.token.symbol, roundingMode: .down))
             )
+            if currentState.token.isNativeSOL && currentState.amountInToken != currentState.maxAmountInputInToken {
+                if !wasMaxWarningToastShown {
+                    handleSuccess(text: L10n.weLeftAMinimumSOLBalanceToSaveTheAccountAddress)
+                    wasMaxWarningToastShown = true
+                }
+                inputAmountViewModel.isMaxButtonVisible = true
+            }
         case let .error(.inputTooLow(minAmount)):
             inputAmountViewModel.isError = true
             actionButtonViewModel.actionButton = .init(
                 isEnabled: false,
-                title: L10n.min(minAmount.tokenAmount(symbol: sourceWallet.token.symbol))
+                title: L10n.min(minAmount.tokenAmount(symbol: sourceWallet.token.symbol, roundingMode: .down))
             )
         case .error(reason: .insufficientAmountToCoverFee):
             inputAmountViewModel.isError = false
@@ -311,12 +319,19 @@ private extension SendInputViewModel {
                 isEnabled: true,
                 title: L10n.tryAgain
             )
+        case .error(reason: .insufficientFunds):
+            inputAmountViewModel.isError = false
+            actionButtonViewModel.actionButton = .init(
+                isEnabled: false,
+                title: L10n.insufficientFunds
+            )
 
         default:
+            wasMaxWarningToastShown = false
             inputAmountViewModel.isError = false
             actionButtonViewModel.actionButton = .init(
                 isEnabled: true,
-                title: "\(L10n.send) \(currentState.amountInToken.tokenAmount(symbol: currentState.token.symbol, maximumFractionDigits: Int(currentState.token.decimals)))"
+                title: "\(L10n.send) \(currentState.amountInToken.tokenAmount(symbol: currentState.token.symbol, maximumFractionDigits: Int(currentState.token.decimals), roundingMode: .down))"
             )
         }
     }
@@ -335,7 +350,7 @@ private extension SendInputViewModel {
             feeTitle = L10n
                 .fees(
                     currentState.feeInToken.total.convertToBalance(decimals: Int(currentState.tokenFee.decimals))
-                        .tokenAmount(symbol: symbol)
+                        .tokenAmount(symbol: symbol, roundingMode: .down)
                 )
         }
     }
@@ -354,6 +369,10 @@ private extension SendInputViewModel {
 
     func handleError(text: String) {
         snackbar.send(SnackBar(title: "🥺", text: text, buttonTitle: L10n.hide, buttonAction: { SnackBar.hide() }))
+    }
+
+    func handleSuccess(text: String) {
+        snackbar.send(SnackBar(title: "✅", text: text))
     }
 
     func send() async {

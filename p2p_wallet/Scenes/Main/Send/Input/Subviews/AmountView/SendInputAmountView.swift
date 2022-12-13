@@ -25,11 +25,11 @@ struct SendInputAmountView: View {
                                     countAfterDecimalPoint: $viewModel.countAfterDecimalPoint,
                                     textColor: $viewModel.amountTextColor
                                 ) { textField in
-                                    textField.font = .systemFont(ofSize: UIFont.fontSize(of: .title2), weight: .bold)
+                                    textField.font = Constants.inputFount
                                     textField.placeholder = "0"
                                 }
 
-                                if viewModel.amountText.isEmpty {
+                                if viewModel.isMaxButtonVisible {
                                     TextButtonView(
                                         title: L10n.max.uppercased(),
                                         style: .second,
@@ -39,7 +39,10 @@ struct SendInputAmountView: View {
                                     .transition(.opacity.animation(.easeInOut))
                                     .cornerRadius(radius: 32, corners: .allCorners)
                                     .frame(width: 68)
-                                    .offset(x: 16)
+                                    .offset(x: viewModel.amountText.isEmpty
+                                            ? 16.0
+                                            : textWidth(font: Constants.inputFount, text: viewModel.amountText)
+                                    )
                                     .padding(.horizontal, 8)
                                 }
                             }
@@ -101,6 +104,11 @@ struct SendInputAmountView: View {
                 .frame(width: 130, height: 90)
         })
     }
+
+    func textWidth(font: UIFont, text: String) -> CGFloat {
+        let fontAttributes = [NSAttributedString.Key.font: font]
+        return (text as NSString).size(withAttributes: fontAttributes).width
+    }
 }
 
 struct SendInputAmountView_Previews: PreviewProvider {
@@ -113,4 +121,8 @@ struct SendInputAmountView_Previews: PreviewProvider {
             .padding(.horizontal, 16)
         }
     }
+}
+
+private enum Constants {
+    static let inputFount = UIFont.font(of: .title2, weight: .bold)
 }
