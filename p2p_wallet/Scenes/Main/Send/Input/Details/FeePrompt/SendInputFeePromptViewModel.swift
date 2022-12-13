@@ -12,13 +12,13 @@ final class SendInputFeePromptViewModel: ObservableObject {
     @Published var isChooseTokenAvailable = false
     @Published var continueTitle = ""
 
-    init(currentToken: Token, feeToken: Token, availableFeeTokens: [Wallet]) {
-        title = L10n.thisAddressDoesNotHaveAAccount(currentToken.symbol)
-        description = L10n.YouWillHaveToPayAOneTimeFee0._03ToCreateAAccountForThisAddress(currentToken.symbol)
+    init(feeToken: Token, availableFeeTokens: [Wallet]) {
+        title = L10n.thisAddressDoesnTHaveAnAccountForThisToken
+        description = L10n.YouWillHaveToPayAOneTimeFee0._03ToCreateAnAccountForThisAddress
         continueTitle = L10n.continueWith(feeToken.symbol)
 
         if availableFeeTokens.count > 1 {
-            description = [L10n.YouWillHaveToPayAOneTimeFee0._03ToCreateAAccountForThisAddress(currentToken.symbol), L10n.youCanChooseInWhichCurrencyToPayWithBelow].joined(separator: ". ")
+            description.append(". \(L10n.youCanChooseInWhichCurrencyToPayWithBelow)")
             isChooseTokenAvailable = true
         }
     }

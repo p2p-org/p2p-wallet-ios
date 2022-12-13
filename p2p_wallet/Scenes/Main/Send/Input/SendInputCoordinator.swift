@@ -104,7 +104,6 @@ final class SendInputCoordinator: Coordinator<SendResult> {
         guard let feeToken = viewModel.currentState.feeWallet else { return }
         coordinate(to: SendInputFeePromptCoordinator(
             parentController: vc,
-            currentToken: viewModel.sourceWallet,
             feeToken: feeToken,
             availableFeeTokens: feeWallets
         ))
