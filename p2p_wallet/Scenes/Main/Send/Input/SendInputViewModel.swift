@@ -83,7 +83,7 @@ final class SendInputViewModel: BaseViewModel, ObservableObject {
             } else {
                 let preferOrder: [String: Int] = ["USDC": 1, "USDT": 2]
                 let sortedWallets = wallets
-                    .filter({ $0.lamports ?? 0 > 0 })
+                    .filter({ $0.lamports ?? 0 > 0 && !$0.isNFTToken })
                     .sorted { (lhs: Wallet, rhs: Wallet) -> Bool in
                         if preferOrder[lhs.token.symbol] != nil || preferOrder[rhs.token.symbol] != nil {
                             return (preferOrder[lhs.token.symbol] ?? 3) < (preferOrder[rhs.token.symbol] ?? 3)
