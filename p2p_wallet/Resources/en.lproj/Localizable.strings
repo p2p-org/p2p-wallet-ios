@@ -1138,3 +1138,4 @@ Reset the PIN or wait for %@.";
 "Free (%@ left for today)" = "Free (%@ left for today)";
 "This address doesn’t have an account for this token" = "This address doesn’t have an account for this token";
 "You will have to pay a one-time fee (~$0.03) to create an account for this address" = "You will have to pay a one-time fee (~$0.03) to create an account for this address";
+"We left a minimum SOL balance to save the account address" = "We left a minimum SOL balance to save the account address";
