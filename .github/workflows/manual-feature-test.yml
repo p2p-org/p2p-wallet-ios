@@ -3,6 +3,7 @@ on: workflow_dispatch
 jobs:
   upload_build_for_testing:
     name: Manually upload build for testing
+    if: ${{ !contains(github.event.pull_request.labels.*.name, 'no-qa') }}
     runs-on: macos-12
 
     steps:
@@ -22,6 +23,13 @@ jobs:
         run: |
           curl -o ./p2p_wallet/Config.xcconfig ${{ secrets.XCCONFIG_URL }}
         shell: bash
+
+      - uses: actions/cache@v3
+        with:
+          path: Pods
+          key: ${{ runner.os }}-pods-${{ hashFiles('**/Podfile.lock') }}
+          restore-keys: |
+            ${{ runner.os }}-pods-
 
       - name: Install project
         run: |

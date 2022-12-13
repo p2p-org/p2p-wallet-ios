@@ -48,19 +48,22 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
 
         setupLoggers()
         setupAppsFlyer()
+        setupDefaultCurrency()
 
         // Sentry
+        #if !DEBUG
         SentrySDK.start { options in
             options
                 .dsn = .secretConfig("SENTRY_DSN")
             options.tracesSampleRate = 1.0
-            #if DEBUG
-                options.debug = true
-                options.tracesSampleRate = 0.0
-            #endif
+//            #if DEBUG
+//                options.debug = true
+//                options.tracesSampleRate = 0.0
+//            #endif
             options.enableNetworkTracking = true
             options.enableOutOfMemoryTracking = true
         }
+        #endif
 
         // set app coordinator
         appCoordinator = AppCoordinator()
@@ -209,6 +212,12 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
 
         navBarAppearence.shadowImage = UIImage()
         navBarAppearence.isTranslucent = true
+    }
+
+    func setupDefaultCurrency() {
+        guard Defaults.fiat != .usd else { return }
+        // Migrate all users to default currency
+        Defaults.fiat = .usd
     }
 }
 

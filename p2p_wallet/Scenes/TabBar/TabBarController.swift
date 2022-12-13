@@ -22,6 +22,8 @@ final class TabBarController: UITabBarController {
     private var homeCoordinator: HomeCoordinator!
     private var actionsCoordinator: ActionsCoordinator?
     private var settingsCoordinator: SettingsCoordinator!
+    private var buyCoordinator: BuyCoordinator?
+    private var sendCoordinator: SendToken.Coordinator?
 
     private var customTabBar: CustomTabBar { tabBar as! CustomTabBar }
 
@@ -57,12 +59,62 @@ final class TabBarController: UITabBarController {
                 generator.impactOccurred()
                 actionsCoordinator = ActionsCoordinator(viewController: self)
                 actionsCoordinator?.start()
-                    .sink(receiveValue: { [unowned self] in
-                        actionsCoordinator = nil
+                    .sink(receiveValue: { [weak self] result in
+                        switch result {
+                        case .cancel:
+                            self?.actionsCoordinator = nil
+                        case let .action(type):
+                            self?.handleAction(type)
+                            self?.actionsCoordinator = nil
+                        }
                     })
                     .store(in: &cancellables)
             })
             .store(in: &cancellables)
+    }
+
+    private func handleAction(_ action: ActionsView.Action) {
+        guard let navigationController = selectedViewController as? UINavigationController else { return }
+
+        switch action {
+        case .buy:
+            let buyCoordinator = BuyCoordinator(
+                navigationController: navigationController,
+                context: .fromHome
+            )
+            self.buyCoordinator = buyCoordinator
+            buyCoordinator.start()
+                .sink(receiveValue: {})
+                .store(in: &cancellables)
+        case .receive:
+            break
+        case .swap:
+            let vm = OrcaSwapV2.ViewModel(initialWallet: nil)
+            let vc = OrcaSwapV2.ViewController(viewModel: vm)
+            vc.doneHandler = {
+                navigationController.popToRootViewController(animated: true)
+            }
+            navigationController.show(vc, sender: nil)
+        case .send:
+            let vm = SendToken.ViewModel(
+                walletPubkey: nil,
+                destinationAddress: nil,
+                relayMethod: .default
+            )
+            sendCoordinator = SendToken.Coordinator(
+                viewModel: vm,
+                navigationController: navigationController
+            )
+            analyticsManager.log(event: AmplitudeEvent.sendViewed(lastScreen: "main_screen"))
+            
+            sendCoordinator?.doneHandler = {
+                navigationController.popToRootViewController(animated: true)
+            }
+            let vc = sendCoordinator?.start(hidesBottomBarWhenPushed: true)
+            vc?.onClose = { [weak self] in
+                self?.sendCoordinator = nil
+            }
+        }
     }
 
     private func setUpTabBarAppearance() {

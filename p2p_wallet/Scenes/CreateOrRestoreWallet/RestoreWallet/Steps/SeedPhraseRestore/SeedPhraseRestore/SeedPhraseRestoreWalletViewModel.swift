@@ -4,7 +4,7 @@ import Foundation
 import Resolver
 import SolanaSwift
 
-class SeedPhraseRestoreWalletViewModel: BaseViewModel {
+final class SeedPhraseRestoreWalletViewModel: BaseViewModel, ObservableObject {
     // MARK: - Dependencies
 
     @Injected private var notificationService: NotificationService
@@ -57,7 +57,7 @@ class SeedPhraseRestoreWalletViewModel: BaseViewModel {
 
     func paste() {
         guard let pasteboard = clipboardManager.stringFromClipboard() else { return }
-        seed.append(pasteboard)
+        seed = (seed + " " + pasteboard).seedPhraseFormatted
     }
 
     func clear() {

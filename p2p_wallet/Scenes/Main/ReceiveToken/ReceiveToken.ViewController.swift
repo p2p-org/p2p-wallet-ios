@@ -76,12 +76,13 @@ extension ReceiveToken {
                                                     .disposed(by: disposeBag)
                                             }
                                     }.padding(.init(x: 12, y: 0))
-                                    // Next icon
-                                    UIView.defaultNextArrow()
+                                    if !viewModel.isDisabledRenBtc {
+                                        UIView.defaultNextArrow()
+                                    }
                                 }
                                 .padding(.init(x: 15, y: 15))
                                 .onTap { [unowned self] in
-                                    self.viewModel.showSelectionNetwork()
+                                    viewModel.showSelectionNetwork()
                                 }
                                 UIStackView(axis: .vertical, alignment: .fill) {
                                     UIView(height: 1, backgroundColor: .f2f2f7)
@@ -119,13 +120,12 @@ extension ReceiveToken {
                             viewModel.tokenTypeDriver.map { token in token != .solana }.drive(view.rx.isHidden)
                                 .disposed(by: disposeBag)
                         }
-                    ReceiveBitcoinView(
-                        viewModel: viewModel.receiveBitcoinViewModel
-                    )
-                        .setup { view in
-                            viewModel.tokenTypeDriver.map { token in token != .btc }.drive(view.rx.isHidden)
-                                .disposed(by: disposeBag)
-                        }
+                    ReceiveBitcoinView(viewModel: viewModel.receiveBitcoinViewModel).setup { view in
+                        viewModel.tokenTypeDriver
+                            .map { token in token != .btc }
+                            .drive(view.rx.isHidden)
+                            .disposed(by: disposeBag)
+                    }
 
                     UIStackView(axis: .vertical, spacing: 16, alignment: .fill) {
                         ShowHideButton(
@@ -163,34 +163,8 @@ extension ReceiveToken {
         }
 
         private func createQRHint() -> UILabel {
-            let symbol = viewModel.tokenWallet?.token.symbol ?? ""
             let qrCodeHint = UILabel(numberOfLines: 0)
-            let highlightedText = L10n.receive(symbol)
-            let fullText = L10n.youCanReceiveByProvidingThisAddressQRCodeOrUsername(symbol)
-
-            let normalFont = UIFont.systemFont(ofSize: 15, weight: .regular)
-            let highlightedFont = UIFont.systemFont(ofSize: 15, weight: .bold)
-
-            let paragraphStyle = NSMutableParagraphStyle()
-            paragraphStyle.lineHeightMultiple = 1.17
-            paragraphStyle.alignment = .center
-
-            let attributedText = NSMutableAttributedString(
-                string: fullText,
-                attributes: [
-                    .font: normalFont,
-                    .kern: -0.24,
-                    .paragraphStyle: paragraphStyle,
-                    .foregroundColor: UIColor.textBlack,
-                ]
-            )
-
-            let highlightedRange = (attributedText.string as NSString)
-                .range(of: highlightedText, options: .caseInsensitive)
-            attributedText.addAttribute(.font, value: highlightedFont, range: highlightedRange)
-
-            qrCodeHint.attributedText = attributedText
-
+            qrCodeHint.attributedText = viewModel.qrHint
             return qrCodeHint
         }
     }
@@ -210,11 +184,10 @@ extension ReceiveToken.ViewController {
         case .showRenBTCReceivingStatus:
             let vm = RenBTCReceivingStatuses.ViewModel(receiveBitcoinViewModel: viewModel.receiveBitcoinViewModel)
             let vc = RenBTCReceivingStatuses.ViewController(viewModel: vm)
-            show(vc, sender: nil)
+            show(UINavigationController(rootViewController: vc), sender: nil)
         case let .share(address, qrCode):
-            guard let qrCode = qrCode, let address = address else {
-                return
-            }
+            analyticsManager.log(event: AmplitudeEvent.QR_Share)
+            guard let qrCode = qrCode, let address = address else { return }
 
             let vc = UIActivityViewController(activityItems: [qrCode, address], applicationActivities: nil)
             present(vc, animated: true)

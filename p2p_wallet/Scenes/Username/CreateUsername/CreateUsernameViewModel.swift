@@ -7,7 +7,7 @@ import Resolver
 import UIKit
 import AnalyticsManager
 
-final class CreateUsernameViewModel: BaseViewModel {
+final class CreateUsernameViewModel: BaseViewModel, ObservableObject {
     // MARK: - Dependencies
 
     @Injected private var nameService: NameService
@@ -29,13 +29,12 @@ final class CreateUsernameViewModel: BaseViewModel {
     @Published var actionText = L10n.createName
     @Published var status = CreateUsernameStatus.initial
     @Published var isLoading: Bool = false
-    @Published var backgroundColor: UIColor
 
     let usernameValidation = NSPredicate(format: "SELF MATCHES %@", Constants.availableSymbols)
+    let parameters: CreateUsernameParameters
 
     init(parameters: CreateUsernameParameters) {
-        backgroundColor = parameters.backgroundColor
-
+        self.parameters = parameters
         super.init()
 
         bind()

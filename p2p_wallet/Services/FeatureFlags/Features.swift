@@ -27,4 +27,7 @@ public extension Feature {
 
     // Solana tracking
     static let solanaNegativeStatus = Feature(rawValue: "solana_negative_status_enabled")
+
+    // Ren BTC
+    static let receiveRenBtcEnabled = Feature(rawValue: "receive_ren_btc_enabled")
 }

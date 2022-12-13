@@ -2,6 +2,7 @@
 // Use of this source code is governed by a MIT-style license that can be
 // found in the LICENSE file.
 
+import AnalyticsManager
 import Combine
 import Foundation
 import Onboarding
@@ -15,7 +16,9 @@ struct RecoveryKitTKeyData {
     let socialProvider: String
 }
 
-class RecoveryKitViewModel: ObservableObject {
+final class RecoveryKitViewModel: ObservableObject {
+    private let analyticsManager: AnalyticsManager
+    private let userWalletManager: UserWalletManager
     private let walletMetadataService: WalletMetadataService
 
     @Published var walletMetadata: WalletMetaData?
@@ -28,21 +31,38 @@ class RecoveryKitViewModel: ObservableObject {
         var help: (() -> Void)?
     }
 
-    var coordinator: Coordinator = .init()
+    var coordinator = Coordinator()
 
-    init(walletMetadataService: WalletMetadataService = Resolver.resolve()) {
+    init(
+        userWalletManager: UserWalletManager = Resolver.resolve(),
+        walletMetadataService: WalletMetadataService = Resolver.resolve(),
+        analyticsManager: AnalyticsManager = Resolver.resolve()
+    ) {
         self.walletMetadataService = walletMetadataService
+        self.analyticsManager = analyticsManager
+        self.userWalletManager = userWalletManager
+        
         walletMetadataService.$metadata
-            .sink { [weak self] metadata in
-                self?.walletMetadata = metadata
+            .sink { [weak self, weak userWalletManager] metadata in
+                if let metadata {
+                    self?.walletMetadata = metadata
+                } else if userWalletManager?.wallet?.ethAddress != nil {
+                    self?.walletMetadata = .init(
+                        deviceName: L10n.notAvailableForNow,
+                        email: L10n.notAvailableForNow,
+                        authProvider: "apple",
+                        phoneNumber: L10n.notAvailableForNow
+                    )
+                }
             }.store(in: &subscriptions)
     }
 
     func openSeedPhrase() {
         coordinator.seedPhrase?()
     }
-    
+
     func deleteAccount() {
+        analyticsManager.log(event: AmplitudeEvent.startDeleteAccount)
         coordinator.deleteAccount?()
     }
 

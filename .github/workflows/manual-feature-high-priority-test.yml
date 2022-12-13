@@ -1,42 +1,10 @@
-name: Pull request review submitted
-on:
-  pull_request_review:
-    types: [submitted]
+name: Manually build feature test with high priority
+on: workflow_dispatch
 jobs:
-  # Return task back to In Progress if pull request is changes requested
-  return_task_to_in_progress:
-    name: Return task back to In Progress if pull request is changes requested
-    if: ${{ github.event.review.state == 'changes_requested' }}
-    runs-on: ubuntu-latest
-
-    steps:
-      - name: Login to JIRA
-        uses: atlassian/gajira-login@master
-        env:
-          JIRA_BASE_URL: ${{ secrets.JIRA_BASE_URL }}
-          JIRA_USER_EMAIL: ${{ secrets.JIRA_USER_EMAIL }}
-          JIRA_API_TOKEN: ${{ secrets.JIRA_API_TOKEN }}
-
-      - name: Find JIRA issue from branchname
-        id: find_issue
-        if: ${{ github.event.pull_request.head.ref }}
-        uses: atlassian/gajira-find-issue-key@master
-        with:
-          string: ${{ github.event.pull_request.head.ref }}
-          from: ""
-
-      - name: Move issue back to IN PROGRESS
-        if: ${{ steps.find_issue.outputs.issue }}
-        uses: atlassian/gajira-transition@master
-        with:
-          issue: ${{ steps.find_issue.outputs.issue }}
-          transition: ${{ secrets.JIRA_IN_PROGRESS_TRANSITION_NAME }}
-
-  # Upload build for testing when pull request is approved
   upload_build_for_testing:
-    name: Upload build for testing when pull request is approved
-    if: ${{ github.event.review.state == 'approved' && !contains(github.event.pull_request.labels.*.name, 'no-qa') }}
-    runs-on: macos-12
+    name: Manually upload build for testing
+    if: ${{ !contains(github.event.pull_request.labels.*.name, 'no-qa') }}
+    runs-on: [self-hosted, macOS]
 
     steps:
       - name: Check out current branch
@@ -98,14 +66,14 @@ jobs:
           SLACK_API_TOKEN: '${{ secrets.SLACK_API_TOKEN }}'
           JIRA_BASE_URL: '${{ secrets.JIRA_BASE_URL }}'
           XCCONFIG_URL: '${{ secrets.XCCONFIG_URL }}'
-
+    
       - name: Login to JIRA
         uses: atlassian/gajira-login@master
         env:
           JIRA_BASE_URL: ${{ secrets.JIRA_BASE_URL }}
           JIRA_USER_EMAIL: ${{ secrets.JIRA_USER_EMAIL }}
           JIRA_API_TOKEN: ${{ secrets.JIRA_API_TOKEN }}
-
+          
       - name: Find JIRA issue from branchname
         id: find_issue
         if: ${{ env.BRANCH_NAME }}

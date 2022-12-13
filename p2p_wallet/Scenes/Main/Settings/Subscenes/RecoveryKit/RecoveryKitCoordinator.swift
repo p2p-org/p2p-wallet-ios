@@ -2,21 +2,22 @@
 // Use of this source code is governed by a MIT-style license that can be
 // found in the LICENSE file.
 
+import AnalyticsManager
 import Combine
 import SwiftUI
 import UIKit
 import Resolver
 
-class RecoveryKitCoordinator: Coordinator<Void> {
+final class RecoveryKitCoordinator: Coordinator<Void> {
+    @Injected private var analyticsManager: AnalyticsManager
     @Injected private var authenticationHandler: AuthenticationHandlerType
     @Injected private var walletSettings: WalletSettings
     
-    let navigationController: UINavigationController
+    private let navigationController: UINavigationController
     private let transition = PanelTransition()
 
     init(navigationController: UINavigationController) {
         self.navigationController = navigationController
-        super.init()
     }
 
     override func start() -> AnyPublisher<Void, Never> {
@@ -41,16 +42,19 @@ class RecoveryKitCoordinator: Coordinator<Void> {
         let vc = KeyAppHostingController(rootView: RecoveryKitView(viewModel: vm))
         vc.title = L10n.walletProtection
         vc.hidesBottomBarWhenPushed = true
-        vc.onClose = { result.send() }
+        vc.onClose = {
+            result.send()
+        }
 
         navigationController.pushViewController(vc, animated: true)
 
-        return result.eraseToAnyPublisher()
+        return result.prefix(1).eraseToAnyPublisher()
     }
     
     func confirmDeleteAccountDialog() {
         let alert = UIAlertController(title: L10n.areYouSureYouWantToDeleteYourAccount, message: L10n.theDataWillBeClearedWithoutThePossibilityOfRecovery, preferredStyle: .alert)
         alert.addAction(.init(title: L10n.yesDeleteMyAccount, style: .destructive) { _ in
+            self.analyticsManager.log(event: AmplitudeEvent.confirmDeleteAccount)
             self.authenticationHandler.authenticate(
                 presentationStyle: .init(
                     options: [.fullscreen],

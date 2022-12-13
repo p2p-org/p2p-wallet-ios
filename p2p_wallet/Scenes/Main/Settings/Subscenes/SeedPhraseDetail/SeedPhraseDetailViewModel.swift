@@ -2,17 +2,19 @@
 // Use of this source code is governed by a MIT-style license that can be
 // found in the LICENSE file.
 
+import AnalyticsManager
 import Combine
 import Foundation
 import KeyAppUI
 import Resolver
 
-class SeedPhraseDetailViewModel: BaseViewModel {
+class SeedPhraseDetailViewModel: BaseViewModel, ObservableObject {
     enum State {
         case lock
         case unlock
     }
 
+    @Injected private var analyticsManager: AnalyticsManager
     @Injected private var authenticationHandler: AuthenticationHandlerType
     @Injected private var accountStorage: AccountStorageType
     @Injected private var clipboardManger: ClipboardManagerType
@@ -68,6 +70,7 @@ class SeedPhraseDetailViewModel: BaseViewModel {
     }
 
     func copy() {
+        analyticsManager.log(event: AmplitudeEvent.seedPhraseCopy)
         clipboardManger.copyToClipboard(phrase.joined(separator: " "))
         notificationsService.showInAppNotification(.custom("👯", L10n.copiedToClipboard))
     }

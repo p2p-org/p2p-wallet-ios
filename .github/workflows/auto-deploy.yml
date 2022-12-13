@@ -5,7 +5,7 @@ on:
 jobs:
   upload_build_for_testing:
     name: Upload build for testing
-    if: ${{ contains(github.event.pull_request.labels.*.name, 'auto:qa-deploy') }}
+    if: ${{ contains(github.event.pull_request.labels.*.name, 'auto:qa-deploy') && !contains(github.event.pull_request.labels.*.name, 'no-qa') }}
 
     runs-on: macos-12
 
@@ -26,6 +26,13 @@ jobs:
         run: |
           curl -o ./p2p_wallet/Config.xcconfig ${{ secrets.XCCONFIG_URL }}
         shell: bash
+
+      - uses: actions/cache@v3
+        with:
+          path: Pods
+          key: ${{ runner.os }}-pods-${{ hashFiles('**/Podfile.lock') }}
+          restore-keys: |
+            ${{ runner.os }}-pods-
 
       - name: Install project
         run: |
