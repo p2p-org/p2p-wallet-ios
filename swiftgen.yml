@@ -35,11 +35,11 @@ xcassets:
         allValues: true
 
 ## Font
-fonts:
-  inputs: Fonts/Montserrat
-  outputs:
-    templateName: swift5
-    output: Fonts+Generated.swift
+# fonts:
+  # inputs: Fonts/Montserrat
+  # outputs:
+    # templateName: swift5
+    # output: Fonts+Generated.swift
 
 
 ## There are other parsers available for you to use depending on your needs, for example:
