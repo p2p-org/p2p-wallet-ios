@@ -23,6 +23,7 @@ final class SendInputAmountViewModel: BaseViewModel, ObservableObject {
     @Published var amountTextColor: UIColor = Asset.Colors.night.color
     @Published var mainTokenText = ""
     @Published var mainAmountType: EnteredAmountType = .fiat
+    @Published var isMaxButtonVisible: Bool = true
 
     @Published var secondaryAmountText = ""
     @Published var secondaryCurrencyText = ""
@@ -55,6 +56,7 @@ final class SendInputAmountViewModel: BaseViewModel, ObservableObject {
                 self.amount = Double(text.replacingOccurrences(of: " ", with: ""))
                 self.updateSecondaryAmount()
                 self.changeAmount.send((self.amount ?? 0, self.mainAmountType))
+                self.isMaxButtonVisible = text.isEmpty
             }
             .store(in: &subscriptions)
 
