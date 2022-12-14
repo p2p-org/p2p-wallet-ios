@@ -46,6 +46,10 @@ final class SendInputAmountViewModel: BaseViewModel, ObservableObject {
             .sink { [unowned self] in
                 self.amountText = self.maxAmountTextInCurrentType
                 self.wasMaxUsed = true
+                // Manual update of amount due to inaccurate fiat round
+                self.amount = maxAmountToken
+                self.updateSecondaryAmount()
+                self.changeAmount.send((self.amount ?? 0, self.mainAmountType))
             }
             .store(in: &subscriptions)
 
