@@ -241,12 +241,6 @@ extension Resolver: ResolverRegistering {
             .scope(.session)
 
         // SendService
-        register { _, args in
-            SendService(relayMethod: args())
-        }
-        .implements(SendServiceType.self)
-        .scope(.session)
-
         register { SendHistoryLocalProvider() }
             .scope(.session)
 
@@ -313,6 +307,7 @@ extension Resolver: ResolverRegistering {
             )
         }
         .implements(SwapFeeRelayer.self)
+        .scope(.session)
 
         register { () -> FeeRelayerContextManager in
             if FeeRelayConfig.shared.disableFeeTransaction {
@@ -329,6 +324,7 @@ extension Resolver: ResolverRegistering {
                 )
             }
         }
+        .scope(.session)
 
         // PricesService
         register { PricesService() }
