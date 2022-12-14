@@ -313,6 +313,7 @@ extension Resolver: ResolverRegistering {
             )
         }
         .implements(SwapFeeRelayer.self)
+        .scope(.session)
 
         register { () -> FeeRelayerContextManager in
             if FeeRelayConfig.shared.disableFeeTransaction {
@@ -329,6 +330,7 @@ extension Resolver: ResolverRegistering {
                 )
             }
         }
+        .scope(.session)
 
         // PricesService
         register { PricesService() }
