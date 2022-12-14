@@ -149,6 +149,17 @@ extension PendingTransaction {
             amountInFiat = transaction.amount * pricesService.currentPrice(for: transaction.sourceWallet.token.symbol)?
                 .value
             fee = transaction.fees.networkFees
+        case let transaction as SendTransaction:
+            value = TransferInfo(
+                source: transaction.walletToken,
+                destination: Wallet(pubkey: transaction.recipient.address, lamports: 0, token: transaction.walletToken.token),
+                authority: authority,
+                destinationAuthority: nil,
+                rawAmount: transaction.amount,
+                account: transaction.walletToken.pubkey
+            )
+            amountInFiat = transaction.amountInFiat
+            fee = transaction.feeInToken
         default:
             return nil
         }
