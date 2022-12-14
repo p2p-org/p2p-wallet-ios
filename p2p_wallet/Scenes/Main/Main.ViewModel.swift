@@ -14,6 +14,7 @@ import RxCocoa
 import RxSwift
 import Send
 import SolanaSwift
+import FeeRelayerSwift
 
 protocol MainViewModelType {
     var authenticationStatusDriver: Driver<AuthenticationPresentationStyle?> { get
@@ -66,6 +67,12 @@ extension Main {
                 guard let account = accountStorage.account else { return }
                 let name: String = try await nameService.getName(account.publicKey.base58EncodedString) ?? ""
                 nameStorage.save(name: name)
+            }
+            
+            // Swap service
+            Task {
+                let swapService = Resolver.resolve(SwapServiceType.self)
+                try await swapService.initialize()
             }
 
             // Notification
