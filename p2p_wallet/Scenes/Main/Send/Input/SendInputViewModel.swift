@@ -393,33 +393,26 @@ private extension SendInputViewModel {
         }
         logConfirmButtonClick()
 
-        do {
-            await MainActor.run {
-                self.actionButtonViewModel.showFinished = true
-                DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) {
-                    let transaction = SendTransaction(state: self.currentState) {
-                        try? await Resolver.resolve(SendHistoryService.self).insert(recipient)
+        await MainActor.run {
+            self.actionButtonViewModel.showFinished = true
+        }
+        
+        try? await Task.sleep(nanoseconds: 500_000_000)
+        
+        await MainActor.run {
+            let transaction = SendTransaction(state: self.currentState) {
+                try? await Resolver.resolve(SendHistoryService.self).insert(recipient)
 
-                        let trx = try await Resolver.resolve(SendActionService.self).send(
-                            from: sourceWallet,
-                            receiver: address,
-                            amount: amountInToken,
-                            feeWallet: feeWallet
-                        )
+                let trx = try await Resolver.resolve(SendActionService.self).send(
+                    from: sourceWallet,
+                    receiver: address,
+                    amount: amountInToken,
+                    feeWallet: feeWallet
+                )
 
-                        return trx
-                    }
-                    self.transaction.send(transaction)
-                }
+                return trx
             }
-        } catch {
-            if let error = error as? NSError,
-               error.code == NSURLErrorNetworkConnectionLost || error.code == NSURLErrorNotConnectedToInternet
-            {
-                await MainActor.run { handleConnectionError() }
-            } else {
-                await MainActor.run { handleUnknownError() }
-            }
+            self.transaction.send(transaction)
         }
     }
 }
