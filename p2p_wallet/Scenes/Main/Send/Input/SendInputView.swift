@@ -62,10 +62,9 @@ struct SendInputView: View {
                 }
                 
                 #if !RELEASE
-                Text(
-                    viewModel.feeRelayerContext?.relayAccountStatus.description ?? ""
-                )
+                Text(viewModel.calculationDebugText ?? "")
                     .foregroundColor(Color(.red))
+                    .multilineTextAlignment(.trailing)
                 #endif
 
                 Spacer()
