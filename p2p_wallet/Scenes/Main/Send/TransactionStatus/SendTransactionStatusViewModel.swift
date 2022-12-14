@@ -67,7 +67,11 @@ final class SendTransactionStatusViewModel: BaseViewModel, ObservableObject {
                     let self = self,
                     let parsedTransaction = self.currentTransaction,
                     let error = parsedTransaction.status.getError() as? SolanaError else { return }
-                var params: SendTransactionStatusDetailsParameters?
+                var params = SendTransactionStatusDetailsParameters(
+                    title: L10n.somethingWentWrong,
+                    description: L10n.unknownError,
+                    fee: feeAmount
+                )
                 switch error {
                 case let .other(message) where message == "Blockhash not found":
                     params = .init(
@@ -92,12 +96,16 @@ final class SendTransactionStatusViewModel: BaseViewModel, ObservableObject {
                                 .blockhash ?? ""),
                         fee: feeAmount
                     )
+                case let .other(message):
+                    params = .init(
+                        title: L10n.somethingWentWrong,
+                        description: message,
+                        fee: feeAmount
+                    )
                 default:
                     break
                 }
-                if let params = params {
-                    self.openDetails.send(params)
-                }
+                self.openDetails.send(params)
             }
             .store(in: &subscriptions)
     }
