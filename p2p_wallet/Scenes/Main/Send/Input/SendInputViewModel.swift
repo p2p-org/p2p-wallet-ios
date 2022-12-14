@@ -171,6 +171,14 @@ final class SendInputViewModel: BaseViewModel, ObservableObject {
             let relayAccountBalance = context.relayAccountStatus.balance ?? 0
             let minRelayAccountBalance = context.minimumRelayAccountBalance
             let feeInSOL = currentState.fee.total
+            let feeInToken = currentState.feeInToken.total
+            let exchangeRate: Double
+            
+            if feeInSOL != 0 {
+                exchangeRate = feeInToken.convertToBalance(decimals: currentState.tokenFee.decimals) / feeInSOL.convertToBalance(decimals: 9)
+            } else {
+                exchangeRate = 0
+            }
             
             var mark = "+"
             let remainder = max(relayAccountBalance, minRelayAccountBalance) - min(relayAccountBalance, minRelayAccountBalance)
@@ -195,8 +203,10 @@ final class SendInputViewModel: BaseViewModel, ObservableObject {
             calculationDebugText = relayAccountStatus.description + " (A)\n"
             calculationDebugText += "minRelayAccountBalance = \(minRelayAccountBalance) (B)\n"
             calculationDebugText += "remainder (A - B) = \(mark)\(remainder) (R)\n"
-            calculationDebugText += "needed topUp amount (real fee) in SOL = \(feeInSOL) (F)\n"
-            calculationDebugText += "expected transaction fee in SOL = \(expectedTransactionFee) (E)"
+            calculationDebugText += "expected transaction fee in SOL = \(expectedTransactionFee) (E)\n"
+            calculationDebugText += "needed topUp amount (real fee) in SOL (E - R) = \(feeInSOL) (S)\n"
+            calculationDebugText += "expected transaction fee in Token = \(feeInToken) (T)\n"
+            calculationDebugText += "exchange rate (T/S) => 1 SOL = \(exchangeRate) (e)\n"
             #endif
             
 

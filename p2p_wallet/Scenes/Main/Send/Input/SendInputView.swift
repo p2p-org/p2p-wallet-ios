@@ -62,7 +62,8 @@ struct SendInputView: View {
                 }
                 
                 #if !RELEASE
-                Text(viewModel.calculationDebugText ?? "")
+                Text(viewModel.calculationDebugText)
+                    .font(uiFont: .font(of: .label2, weight: .regular))
                     .foregroundColor(Color(.red))
                     .multilineTextAlignment(.trailing)
                 #endif
