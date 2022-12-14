@@ -3,7 +3,7 @@ import Foundation
 import Resolver
 import SwiftyUserDefaults
 
-class MoonpaySellDataService: SellDataService {
+class SellDataServiceImpl: SellDataService {
     typealias Provider = MoonpaySellDataServiceProvider
     private var provider = Provider()
 
@@ -25,10 +25,11 @@ class MoonpaySellDataService: SellDataService {
     /// List of supported crypto currencies
     private(set) var currency: ProviderCurrency!
     private(set) var fiat: Fiat!
-    private(set) var transactions: [Provider.Transaction] = []
+    private(set) var incompleteTransactions: [Provider.Transaction] = []
 
     /// id - user identifier
     func update(id: String) async throws {
+        statusSubject.send(.updating)
         guard
             let currency = try await provider.currencies().filter({ $0.code.uppercased() == "SOL" }).first else {
             statusSubject.send(.error)
@@ -41,7 +42,7 @@ class MoonpaySellDataService: SellDataService {
             self.fiat = .usd
 //            fatalError("Unsupported fiat")
         }
-        self.transactions = try await self.incompleteTransactions(transactionId: id)
+        self.incompleteTransactions = try await self.incompleteTransactions(transactionId: id)
         statusSubject.send(.ready)
     }
 
@@ -59,7 +60,7 @@ class MoonpaySellDataService: SellDataService {
 
     func deleteTransaction(id: String) async throws {
         try await provider.deleteSellTransaction(id: id)
-        transactions.removeAll { $0.id == id }
+        incompleteTransactions.removeAll { $0.id == id }
     }
 
     func isAvailable() async -> Bool {

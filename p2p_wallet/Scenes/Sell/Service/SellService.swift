@@ -21,11 +21,10 @@ public protocol SellDataService {
     /// Supported Fiat by provider for your region
     var fiat: Fiat! { get }
     /// Return incomplete transactions
-    func incompleteTransactions(transactionId: String) async throws -> [Provider.Transaction]
-    /// Return transaction by  id
-    func transaction(id: String) async throws -> Provider.Transaction
+    var incompleteTransactions: [Provider.Transaction] { get }
     /// Weather service available
     func isAvailable() async -> Bool
+    func deleteTransaction(id: String) async throws
 }
 
 enum SellActionServiceError: Error {
@@ -47,9 +46,6 @@ public protocol SellActionService {
         baseCurrencyAmount: Double,
         externalTransactionId: String
     ) throws -> URL
-
-    func saveTransaction() async throws
-    func deleteTransaction() async throws
 }
 
 public protocol SellActionServiceQuote {

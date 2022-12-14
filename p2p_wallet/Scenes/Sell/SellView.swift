@@ -46,8 +46,4 @@ struct SellView: View {
             .padding(.top, 90)
             .padding(.horizontal, 16)
     }
-
-    var pending: some View {
-        Text("Pending")
-    }
 }

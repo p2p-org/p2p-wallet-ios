@@ -21,7 +21,6 @@ final class SellPendingCoordinator: Coordinator<SellPendingCoordinatorResult> {
             viewModel.coordinator.dismiss.sink { [weak self] in
                 self?.navigationController.popViewController(animated: true)
             }.store(in: &subscriptions)
-            
             return vc
         }
 
