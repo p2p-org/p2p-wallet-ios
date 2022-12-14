@@ -171,6 +171,7 @@ private extension ChooseWalletTokenView {
             textField.returnKeyType = .done
             textField.backgroundColor = Asset.Colors.rain.color
             textField.placeholder = L10n.search
+            textField.keyboardType = .default
             textField.font = .font(of: .text3)
         }
         .cornerRadius(12)

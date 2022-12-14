@@ -22,7 +22,7 @@ final class ChooseWalletTokenCoordinator: Coordinator<Wallet?> {
     override func start() -> AnyPublisher<Wallet?, Never> {
         let viewModel = ChooseWalletTokenViewModel(strategy: strategy, chosenToken: chosenWallet)
         let view = ChooseWalletTokenView(viewModel: viewModel)
-        let controller = UIHostingController(rootView: view)
+        let controller = KeyboardAvoidingViewController(rootView: view)
 
         parentController.present(controller, animated: true)
 
