@@ -3,7 +3,7 @@ import Foundation
 import Resolver
 import SwiftyUserDefaults
 
-class MockSellDataService: SellDataService {
+class MoonpaySellDataService: SellDataService {
     typealias Provider = MoonpaySellDataServiceProvider
     private var provider = Provider()
 
@@ -25,8 +25,10 @@ class MockSellDataService: SellDataService {
     /// List of supported crypto currencies
     private(set) var currency: ProviderCurrency!
     private(set) var fiat: Fiat!
+    private(set) var transactions: [Provider.Transaction] = []
 
-    func update() async throws {
+    /// id - user identifier
+    func update(id: String) async throws {
         guard
             let currency = try await provider.currencies().filter({ $0.code.uppercased() == "SOL" }).first else {
             statusSubject.send(.error)
@@ -39,34 +41,29 @@ class MockSellDataService: SellDataService {
             self.fiat = .usd
 //            fatalError("Unsupported fiat")
         }
+        self.transactions = try await self.incompleteTransactions(transactionId: id)
         statusSubject.send(.ready)
     }
 
     func incompleteTransactions(transactionId: String) async throws -> [Provider.Transaction] {
-        try await provider.sellTransactions(externalTransactionId: transactionId)
-//        let transaction = Provider.Transaction(
-//            id: "id1",
-//            createdAt: Date(),
-//            updatedAt: Date(),
-//            baseCurrencyAmount: 3,
-//            quoteCurrencyAmount: 12.3,
-//            feeAmount: 0.1,
-//            extraFeeAmount: 0.1,
-//            status: .pending,
-//            failureReason: "Something went wrong",
-//            refundWalletAddress: "address",
-//            depositHash: "depositHash",
-//            quoteCurrencyId: "quoteCurrencyId",
-//            baseCurrencyId: "baseCurrencyId"
-//        )
-//        return [transaction]
+        let txs = try await provider.sellTransactions(externalTransactionId: transactionId)
+            .filter { $0.status == .waitingForDeposit }
+        return try await txs.asyncMap { transaction in
+            try await provider.detailSellTransaction(id: transaction.id)
+        }
     }
 
-    func transaction(id: String) async -> Provider.Transaction {
-        fatalError()
+    func transaction(id: String) async throws -> Provider.Transaction {
+        try await provider.detailSellTransaction(id: id)
+    }
+
+    func deleteTransaction(id: String) async throws {
+        try await provider.deleteSellTransaction(id: id)
+        transactions.removeAll { $0.id == id }
     }
 
     func isAvailable() async -> Bool {
+        return true
         guard cachedIsAvailable == nil else {
             defer {
                 Task {
@@ -118,7 +115,7 @@ class SellActionServiceMock: SellActionService {
         let apiKey = String.secretConfig("MOONPAY_PRODUCTION_API_KEY")!
         #endif
 
-        var components = URLComponents(string: endpoint)!
+        var components = URLComponents(string: endpoint + "sell")!
         components.queryItems = [
             .init(name: "apiKey", value: apiKey),
             .init(name: "baseCurrencyCode", value: "sol"),

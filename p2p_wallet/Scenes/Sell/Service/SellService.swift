@@ -14,7 +14,7 @@ public protocol SellDataService {
     var lastUpdateDate: AnyPublisher<Date, Never> { get }
 
     /// Request for pendings, rates, min amounts
-    func update() async throws
+    func update(id: String) async throws
 
     /// Supported crypto currencies
     var currency: ProviderCurrency! { get }

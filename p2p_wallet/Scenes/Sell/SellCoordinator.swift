@@ -38,15 +38,18 @@ final class SellCoordinator: Coordinator<SellCoordinatorResult> {
         case .webPage(let url):
             return Just(navigateToProviderWebPage(url: url))
                 .eraseToAnyPublisher()
-        case .showPending:
-            return coordinate(to: SellPendingCoordinator(navigationController: navigationController))
+        case .showPending(let transactions):
+            return coordinate(to: SellPendingCoordinator(
+                transactions: transactions,
+                navigationController: navigationController)
+            )
                 // .flatMap {navigateToAnotherScene()} // chain another navigation if needed
                 // .handleEvents(receiveValue:,receiveCompletion:) // or event make side effect
                 .map {_ in ()}
                 .eraseToAnyPublisher()
         }
     }
-    
+
     private func navigateToProviderWebPage(url: URL) {
         let vc = SFSafariViewController(url: url)
         vc.modalPresentationStyle = .automatic

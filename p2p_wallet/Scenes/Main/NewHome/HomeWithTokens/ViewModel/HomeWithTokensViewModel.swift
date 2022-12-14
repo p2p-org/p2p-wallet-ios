@@ -12,6 +12,7 @@ import RxCombine
 import RxSwift
 import SolanaSwift
 import UIKit
+import SwiftyUserDefaults
 
 class HomeWithTokensViewModel: ObservableObject {
     private let walletsRepository: WalletsRepository
@@ -19,7 +20,7 @@ class HomeWithTokensViewModel: ObservableObject {
     @Injected private var solanaTracker: SolanaTracker
     @Injected private var notificationService: NotificationService
     // TODO: make injected
-    private var sellDataService: any SellDataService = MockSellDataService()
+    private var sellDataService: any SellDataService = MoonpaySellDataService()
 
     private let buyClicked = PassthroughSubject<Void, Never>()
     private let receiveClicked = PassthroughSubject<Void, Never>()
@@ -28,11 +29,13 @@ class HomeWithTokensViewModel: ObservableObject {
     private let earnClicked = PassthroughSubject<Void, Never>()
     private let sellClicked = PassthroughSubject<Void, Never>()
     private let walletClicked = PassthroughSubject<(pubKey: String, tokenSymbol: String), Never>()
+    private let cashOutClicked = PassthroughSubject<Void, Never>()
     let buyShow: AnyPublisher<Void, Never>
     let receiveShow: AnyPublisher<PublicKey, Never>
     let sendShow: AnyPublisher<Void, Never>
     let swapShow: AnyPublisher<Void, Never>
     let earnShow: AnyPublisher<Void, Never>
+    let cashOutShow: AnyPublisher<Void, Never>
     let walletShow: AnyPublisher<(pubKey: String, tokenSymbol: String), Never>
     lazy var sellShow:AnyPublisher<Void, Never> = {
         sellClicked.eraseToAnyPublisher()
@@ -47,7 +50,8 @@ class HomeWithTokensViewModel: ObservableObject {
     @Published var items = [Wallet]()
     @Published var hiddenItems = [Wallet]()
     @Published var tokensIsHidden: Bool
-    @Published var isSellAvailable = true//false
+    @SwiftyUserDefault(keyPath: \.isSellAvailable, options: .cached)
+    static var cachedIsSellAvailable
 
     private var cancellables = Set<AnyCancellable>()
 
@@ -64,8 +68,12 @@ class HomeWithTokensViewModel: ObservableObject {
         swapShow = swapClicked.eraseToAnyPublisher()
         walletShow = walletClicked.eraseToAnyPublisher()
         earnShow = earnClicked.eraseToAnyPublisher()
-        actions = Just([WalletActionType.buy, .receive, .send, .swap]).eraseToAnyPublisher()
-
+        cashOutShow = cashOutClicked.eraseToAnyPublisher()
+        var actns = [WalletActionType.buy, .receive, .send, .swap]
+        if Self.cachedIsSellAvailable ?? false {
+            actns = [WalletActionType.buy, .receive, .send, .cashOut]
+        }
+        actions = Just(actns).eraseToAnyPublisher()
         balance = Observable.zip(walletsRepository.dataObservable, walletsRepository.stateObservable)
             .filter { $0.1 == .loaded }
             .map { data, _ in
@@ -104,14 +112,9 @@ class HomeWithTokensViewModel: ObservableObject {
                 .store(in: &cancellables)
         }
         if available(.sellScenarioEnabled) {
-//            Task {
-//                do {
-//                    let isAvailable = await sellDataService.isAvailable()
-//                    await MainActor.run { [weak self] in
-//                        self?.isSellAvailable = isAvailable
-//                    }
-//                } catch {}
-//            }
+            Task {
+                Self.cachedIsSellAvailable = await sellDataService.isAvailable()
+            }
         }
     }
 
@@ -142,8 +145,7 @@ class HomeWithTokensViewModel: ObservableObject {
         case .swap:
             swapClicked.send()
         case .cashOut:
-            // TODO: cashOut tapped
-            break
+            cashOutClicked.send()
         }
     }
 

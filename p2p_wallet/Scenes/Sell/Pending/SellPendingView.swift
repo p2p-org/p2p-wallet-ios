@@ -2,7 +2,7 @@ import SwiftUI
 
 struct SellPendingView: View {
 
-    @ObservedObject var viewModel = SellPendingViewModel()
+    @ObservedObject var viewModel: SellPendingViewModel
 
     var body: some View {
         VStack {
