@@ -27,7 +27,9 @@ final class SendInputViewModel: BaseViewModel, ObservableObject {
 
     @Published var status: Status = .initializing
     
-    @Published var feeRelayerContext: FeeRelayerContext?
+    #if !RELEASE
+    @Published var calculationDebugText: String = ""
+    #endif
 
     var lock: Bool {
         switch status {
@@ -162,8 +164,41 @@ final class SendInputViewModel: BaseViewModel, ObservableObject {
                     return try await feeRelayerContextManager.getCurrentContext()
                 }))
             
-            feeRelayerContext = try await Resolver.resolve(FeeRelayerContextManager.self)
+            #if !RELEASE
+            let context = try await Resolver.resolve(FeeRelayerContextManager.self)
                 .getCurrentContext()
+            let relayAccountStatus = context.relayAccountStatus
+            let relayAccountBalance = context.relayAccountStatus.balance ?? 0
+            let minRelayAccountBalance = context.minimumRelayAccountBalance
+            let feeInSOL = currentState.fee.total
+            
+            var mark = "+"
+            let remainder = max(relayAccountBalance, minRelayAccountBalance) - min(relayAccountBalance, minRelayAccountBalance)
+            if relayAccountBalance < minRelayAccountBalance {
+                mark = "-"
+            }
+            
+            let expectedTransactionFee: UInt64
+            
+            if feeInSOL > 0 {
+                if mark == "+" {
+                    expectedTransactionFee = feeInSOL + remainder
+                } else if feeInSOL > remainder {
+                    expectedTransactionFee = feeInSOL - remainder
+                } else {
+                    expectedTransactionFee = 0
+                }
+            } else {
+                expectedTransactionFee = 0
+            }
+            
+            calculationDebugText = relayAccountStatus.description + " (A)\n"
+            calculationDebugText += "minRelayAccountBalance = \(minRelayAccountBalance) (B)\n"
+            calculationDebugText += "remainder (A - B) = \(mark)\(remainder) (R)\n"
+            calculationDebugText += "needed topUp amount (real fee) in SOL = \(feeInSOL) (F)\n"
+            calculationDebugText += "expected transaction fee in SOL = \(expectedTransactionFee) (E)"
+            #endif
+            
 
             switch nextState.status {
             case .error(reason: .initializeFailed(_)):
