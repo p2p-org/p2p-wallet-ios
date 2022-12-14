@@ -20,6 +20,7 @@ final class DebugMenuViewModel: BaseViewModel, ObservableObject {
     @Published var features: [FeatureItem]
     @Published var solanaEndpoints: [APIEndPoint]
     @Published var selectedEndpoint: APIEndPoint?
+    @Published var feeRelayerEndpoints: [String]
 
     override init() {
         features = Menu.allCases
@@ -39,6 +40,11 @@ final class DebugMenuViewModel: BaseViewModel, ObservableObject {
         ]
         self.solanaEndpoints = solanaEndpoints
         selectedEndpoint = solanaEndpoints.first(where: { $0 == Defaults.apiEndPoint })
+
+        feeRelayerEndpoints = [
+            "https://\(String.secretConfig("FEE_RELAYER_STAGING_ENDPOINT")!)",
+            "https://\(String.secretConfig("FEE_RELAYER_ENDPOINT")!)"
+        ]
 
         super.init()
 
