@@ -26,6 +26,8 @@ final class SendInputViewModel: BaseViewModel, ObservableObject {
     let tokenViewModel: SendInputTokenViewModel
 
     @Published var status: Status = .initializing
+    
+    @Published var feeRelayerContext: FeeRelayerContext?
 
     var lock: Bool {
         switch status {
@@ -159,6 +161,9 @@ final class SendInputViewModel: BaseViewModel, ObservableObject {
                     try await feeRelayerContextManager.update()
                     return try await feeRelayerContextManager.getCurrentContext()
                 }))
+            
+            feeRelayerContext = try await Resolver.resolve(FeeRelayerContextManager.self)
+                .getCurrentContext()
 
             switch nextState.status {
             case .error(reason: .initializeFailed(_)):

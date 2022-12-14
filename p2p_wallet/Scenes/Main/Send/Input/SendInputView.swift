@@ -60,6 +60,13 @@ struct SendInputView: View {
                 case .ready:
                     SendInputAmountView(viewModel: viewModel.inputAmountViewModel)
                 }
+                
+                #if !RELEASE
+                Text(
+                    viewModel.feeRelayerContext?.relayAccountStatus.description ?? ""
+                )
+                    .foregroundColor(Color(.red))
+                #endif
 
                 Spacer()
 
