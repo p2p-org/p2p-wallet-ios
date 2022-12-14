@@ -97,10 +97,9 @@ class TransactionHandler: TransactionHandlerType {
         transactionsSubject.value
             .filter { pt in
                 switch pt.rawTransaction {
-                case let transaction as ProcessTransaction.SendTransaction:
-                    if transaction.sender.pubkey == account ||
-                        transaction.receiver.address == account ||
-                        transaction.authority == account
+                case let transaction as SendTransaction:
+                    if transaction.walletToken.pubkey == account ||
+                        transaction.recipient.address == account
                     {
                         return true
                     }

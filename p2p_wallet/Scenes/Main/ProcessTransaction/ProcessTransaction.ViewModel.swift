@@ -118,8 +118,6 @@ extension ProcessTransaction.ViewModel: ProcessTransactionViewModelType {
             // log
             if let error = pendingTransactionSubject.value.status.error {
                 switch rawTransaction {
-                case is ProcessTransaction.SendTransaction:
-                    break
                 case is ProcessTransaction.SwapTransaction:
                     analyticsManager.log(event: AmplitudeEvent.swapTryAgainClick(error: error.readableDescription))
                 default:
@@ -142,7 +140,7 @@ extension ProcessTransaction.ViewModel: ProcessTransactionViewModelType {
         switch scene {
         case .explorer:
             switch rawTransaction {
-            case is ProcessTransaction.SendTransaction:
+            case is SendTransaction:
                 analyticsManager.log(event: AmplitudeEvent.sendExplorerClick(txStatus: status))
             case is ProcessTransaction.SwapTransaction:
                 analyticsManager.log(event: AmplitudeEvent.swapExplorerClick(txStatus: status))
