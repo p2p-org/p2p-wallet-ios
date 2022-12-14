@@ -135,6 +135,26 @@ enum AmplitudeEvent: AnalyticsEvent {
     )
     case actionButtonSend
 
+    // MARK: - Send new
+
+    case sendnewRecipientScreen(source: String)
+    case sendnewRecipientAdd(type: String, source: String)
+    case sendnewBuyClickButton(source: String)
+    case sendnewReceiveClickButton(source: String)
+    case sendnewInputScreen(source: String)
+    case sendnewTokenInputClick(source: String)
+    case sendnewFreeTransactionClick(source: String)
+    case sendnewFiatInputClick(crypto: Bool, source: String)
+    case sendnewConfirmButtonClick(
+        source: String,
+        token: String,
+        max: Bool,
+        amountToken: Double,
+        amountUSD: Double,
+        fee: Bool,
+        fiatInput: Bool
+    )
+
     // MARK: - Swap
 
     case swapViewed(lastScreen: String)
