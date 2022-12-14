@@ -6,6 +6,8 @@
 //
 
 import Foundation
+import NameService
+import Resolver
 
 class GlobalAppState: ObservableObject {
     static let shared = GlobalAppState()
@@ -16,7 +18,15 @@ class GlobalAppState: ObservableObject {
     
     // Debug features
     @Published var forcedWalletAddress: String = ""
-    @Published var forcedFeeRelayerEndpoint: String = ""
+    @Published var forcedFeeRelayerEndpoint: String? = Defaults.forcedFeeRelayerEndpoint {
+        didSet {
+            Defaults.forcedFeeRelayerEndpoint = forcedFeeRelayerEndpoint
+            ResolverScope.session.reset()
+        }
+    }
+    
+    // Endpoints
+    @Published var nameServiceEndpoint: String = NameServiceImpl.endpoint
 
     private init() {}
 }

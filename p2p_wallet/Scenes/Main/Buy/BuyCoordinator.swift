@@ -42,6 +42,7 @@ final class BuyCoordinator: Coordinator<Void> {
         if navigationController == nil {
             navigationController = UINavigationController(rootViewController: viewController)
         }
+        
         if let presentingViewController = presentingViewController {
             DispatchQueue.main.async {
                 presentingViewController.show(self.navigationController, sender: nil)
@@ -64,6 +65,8 @@ final class BuyCoordinator: Coordinator<Void> {
         viewController.onClose = {
             result.send()
         }
+        
+        viewController.navigationItem.largeTitleDisplayMode = .never
 
         viewModel.coordinatorIO.showDetail
             .receive(on: RunLoop.main)

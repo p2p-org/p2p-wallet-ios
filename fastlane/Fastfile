@@ -28,6 +28,8 @@ DEVELOPER_PORTAL_TEAM_ID = ENV["DEVELOPER_PORTAL_TEAM_ID"]
 SLACK_API_TOKEN = ENV["SLACK_API_TOKEN"]
 JIRA_BASE_URL = ENV["JIRA_BASE_URL"]
 
+GIT_CHANGELOG = ENV["GIT_CHANGELOG"]
+
 def delete_temp_keychain(name)
   delete_keychain(
     name: name
@@ -122,7 +124,8 @@ def upload_build(version, link, configuration)
   firebase_app_distribution(
     app: firebaseAppId,
     groups: "dev_team",
-    firebase_cli_token: FIREBASE_CLI_TOKEN
+    firebase_cli_token: FIREBASE_CLI_TOKEN,
+    release_notes: GIT_CHANGELOG
   )
 
   # upload to browserstack
