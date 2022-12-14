@@ -75,7 +75,7 @@ extension ReceiveToken {
             let hasExplorerButton = !isOpeningFromToken
             let symbol = solanaTokenWallet?.token.symbol ?? ""
 
-            isDisabledRenBtc = !available(.receiveRenBtcEnabled) && isRenBTC
+            isDisabledRenBtc = !available(.receiveRenBtcEnabled)
 
             let highlightedText = L10n.receive(symbol)
             let fullText = L10n.youCanReceiveByProvidingThisAddressQRCodeOrUsername(symbol)
@@ -98,20 +98,16 @@ extension ReceiveToken {
             attributedText.addAttribute(.font, value: highlightedFont, range: highlightedRange)
             qrHint = attributedText
 
-            var solanaTokenWallet = solanaTokenWallet
-            if isDisabledRenBtc {
-                solanaTokenWallet?.token = .nativeSolana
-            }
             tokenWallet = solanaTokenWallet
 
             canOpenTokensList = !isOpeningFromToken
-            if isDisabledRenBtc {
-                screenCanHaveAddressesInfo = false
-            } else {
-                screenCanHaveAddressesInfo = isOpeningFromToken && solanaTokenWallet != nil
-            }
+            screenCanHaveAddressesInfo = isOpeningFromToken && solanaTokenWallet != nil
             screenCanHaveHint = isOpeningFromToken
-            shouldShowChainsSwitcher = isOpeningFromToken ? isRenBTC : solanaTokenWallet?.isNativeSOL ?? true
+            if isDisabledRenBtc && isRenBTC {
+                shouldShowChainsSwitcher = false
+            } else {
+                shouldShowChainsSwitcher = isOpeningFromToken ? isRenBTC : solanaTokenWallet?.isNativeSOL ?? true
+            }
             receiveSolanaViewModel = ReceiveToken.SolanaViewModel(
                 solanaPubkey: solanaPubkey.base58EncodedString,
                 solanaTokenWallet: solanaTokenWallet,
@@ -190,7 +186,9 @@ extension ReceiveToken {
         }
 
         func showSelectionNetwork() {
-            navigationSubject.accept(.networkSelection)
+            if !isDisabledRenBtc {
+                navigationSubject.accept(.networkSelection)
+            }
         }
 
         func copyDirectAddress() {

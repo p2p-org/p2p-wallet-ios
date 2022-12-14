@@ -6,11 +6,13 @@
 //
 
 import Foundation
+import History
 import NameService
 import RenVMSwift
 import Resolver
 import RxCocoa
 import RxSwift
+import Send
 import SolanaSwift
 
 protocol MainViewModelType {
@@ -52,7 +54,7 @@ extension Main {
             }
             pricesService.startObserving()
             burnAndRelease.resume()
-            
+
             // RenBTC service
             Task {
                 try await lockAndMint.resume()
@@ -65,7 +67,7 @@ extension Main {
                 let name: String = try await nameService.getName(account.publicKey.base58EncodedString) ?? ""
                 nameStorage.save(name: name)
             }
-            
+
             // Notification
             notificationService.requestRemoteNotificationPermission()
         }
@@ -96,8 +98,8 @@ extension Main.ViewModel: MainViewModelType {
                     self?.notificationService.notificationWasOpened()
                 })
         )
-            .mapToVoid()
-            .asDriver()
+        .mapToVoid()
+        .asDriver()
     }
 
     var isLockedDriver: Driver<Bool> {

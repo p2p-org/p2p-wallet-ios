@@ -38,7 +38,7 @@ struct DebugMenuView: View {
                 }
                 Section(header: Text("Application")) {
                     TextFieldRow(title: "Wallet:", content: $globalAppState.forcedWalletAddress)
-                    TextFieldRow(title: "Relayer:", content: $globalAppState.forcedFeeRelayerEndpoint)
+                    TextFieldRow(title: "Name:", content: $globalAppState.nameServiceEndpoint)
                     Toggle("Prefer direct swap", isOn: $globalAppState.preferDirectSwap)
                     Button {
                         Task {
@@ -46,14 +46,15 @@ struct DebugMenuView: View {
                                 showDebugger(false)
                             #endif
                             
+                            ResolverScope.session.reset()
                             try await Resolver.resolve(UserWalletManager.self).refresh()
                             
-//                            let app: AppEventHandlerType = Resolver.resolve()
-//                            app.delegate?.refresh()
+                           // let app: AppEventHandlerType = Resolver.resolve()
+                           // app.delegate?.refresh()
                         }
                     } label: { Text("Apply") }
                 }
-                
+
                 Section(header: Text("Fee relayer")) {
                     Toggle("Disable free transaction", isOn: $feeRelayerConfig.disableFeeTransaction)
                         .valueChanged(value: feeRelayerConfig.disableFeeTransaction) { _ in
@@ -64,6 +65,13 @@ struct DebugMenuView: View {
                             let app: AppEventHandlerType = Resolver.resolve()
                             app.delegate?.refresh()
                         }
+
+                    Picker("URL", selection: $globalAppState.forcedFeeRelayerEndpoint) {
+                        Text("Unknown").tag(nil as String?)
+                        ForEach(viewModel.feeRelayerEndpoints, id: \.self) { endpoint in
+                            Text(endpoint).tag(endpoint as String?)
+                        }
+                    }
                 }
 
                 Section(header: Text("Onboarding configurations")) {
