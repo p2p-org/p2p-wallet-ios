@@ -13,10 +13,8 @@ final class SellCoordinator: Coordinator<SellCoordinatorResult> {
         self.navigationController = navigationController
     }
 
+    let viewModel = SellViewModel()
     override func start() -> AnyPublisher<SellCoordinatorResult, Never> {
-        // create SellViewModel
-        let viewModel = SellViewModel()
-
         // scene navigation
         viewModel.navigationPublisher
             .compactMap {$0}
@@ -33,11 +31,17 @@ final class SellCoordinator: Coordinator<SellCoordinatorResult> {
     }
 
     // MARK: - Navigation
+
     private func navigate(to scene: SellNavigation) -> AnyPublisher<Void, Never> {
         switch scene {
         case .webPage(let url):
-            return Just(navigateToProviderWebPage(url: url))
-                .eraseToAnyPublisher()
+            return navigateToProviderWebPage(url: url)
+                .deallocatedPublisher().handleEvents { _ in
+                    
+                } receiveOutput: { _ in
+                    self.viewModel.warmUp()
+                }.eraseToAnyPublisher()
+
         case .showPending(let transactions):
             return coordinate(to: SellPendingCoordinator(
                 transactions: transactions,
@@ -50,10 +54,10 @@ final class SellCoordinator: Coordinator<SellCoordinatorResult> {
         }
     }
 
-    private func navigateToProviderWebPage(url: URL) {
+    private func navigateToProviderWebPage(url: URL) -> UIViewController {
         let vc = SFSafariViewController(url: url)
         vc.modalPresentationStyle = .automatic
         navigationController.present(vc, animated: true)
-        // TODO - Make coordinator
+        return vc
     }
 }

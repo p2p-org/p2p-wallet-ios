@@ -1,9 +1,10 @@
 import Combine
 import Foundation
+import Resolver
 
 @MainActor
 class SellPendingViewModel: BaseViewModel, ObservableObject {
-    let sellDataService = MoonpaySellDataService()
+    @Injected var sellDataService: any SellDataService
     typealias SendRequest = Void
 
     let coordinator = CoordinatorIO()

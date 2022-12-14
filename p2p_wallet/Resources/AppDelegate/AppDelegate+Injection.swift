@@ -410,6 +410,14 @@ extension Resolver: ResolverRegistering {
             .implements(BuyExchangeService.self)
             .scope(.session)
 
+        register { SellDataServiceImpl() }
+            .implements((any SellDataService).self)
+            .scope(.shared)
+
+        register { SellActionServiceMock() }
+            .implements((any SellActionService).self)
+            .scope(.shared)
+
         // Banner
         register {
             BannerServiceImpl(handlers: [

@@ -12,9 +12,11 @@ class SellViewModel: BaseViewModel, ObservableObject {
     // MARK: - Dependencies
 
     @Injected private var walletRepository: WalletsRepository
-    // TODO: Put resolver
-    private let dataService: any SellDataService = MoonpaySellDataService()
-    private let actionService: any SellActionService = SellActionServiceMock()
+    @Injected private var dataService: any SellDataService
+    @Injected private var actionService: any SellActionService
+    private var sellDataServiceId: String {
+        "DRMDSujkGuy2EcY9c8nEwVJzo8LbhohWG9okkaivAomx"
+    }
 
     // MARK: -
 
@@ -74,7 +76,7 @@ class SellViewModel: BaseViewModel, ObservableObject {
                 self?.isEnteringQuoteAmount == true
             }
             .map { quoteAmount, exchangeRate in
-                guard let quoteAmount, exchangeRate != 0 else {return nil}
+                guard let quoteAmount, exchangeRate != 0 else { return nil }
                 return quoteAmount / exchangeRate
             }
             .assign(to: \.baseAmount, on: self)
@@ -100,13 +102,11 @@ class SellViewModel: BaseViewModel, ObservableObject {
 
         // Open pendings in case there are pending txs
         dataStatus
-//            .filter { $0 == .ready }
-            .sinkAsync(receiveValue: { _ in
-                guard let address = self.walletRepository.nativeWallet?.pubkey else { return }
-                let txs = try await self.dataService.incompleteTransactions(transactionId: address)
-                if !txs.isEmpty {
-                    self.navigation.send(.showPending(transactions: txs))
-                }
+            .filter { $0 == .ready }
+            .map { _ in self.dataService.incompleteTransactions }
+            .filter { !$0.isEmpty }
+            .sink(receiveValue: { transactions in
+                self.navigation.send(.showPending(transactions: transactions))
             })
             .store(in: &subscriptions)
 
@@ -160,19 +160,20 @@ class SellViewModel: BaseViewModel, ObservableObject {
             .store(in: &subscriptions)
     }
 
-    private func warmUp() {
+    func warmUp() {
+        self.isLoading = true
         Task {
-            try await dataService.update(id: "DRMDSujkGuy2EcY9c8nEwVJzo8LbhohWG9okkaivAomx")
+            try await dataService.update(id: sellDataServiceId)
         }
     }
 
     private func checkError(amount: Double) {
-        if amount < self.minBaseAmount {
-            self.errorText = L10n.theMinimumAmountIs(self.minBaseAmount.toString(), self.baseCurrencyCode)
-        } else if amount > (self.maxBaseAmount ?? 0) {
-            self.errorText = L10n.notEnought(self.baseCurrencyCode)
-        } else if amount > self.maxBaseProviderAmount {
-            self.errorText = L10n.theMaximumAmountIs(self.maxBaseProviderAmount.toString(), self.baseCurrencyCode)
+        if amount < minBaseAmount {
+            errorText = L10n.theMinimumAmountIs(minBaseAmount.toString(), baseCurrencyCode)
+        } else if amount > (maxBaseAmount ?? 0) {
+            errorText = L10n.notEnought(baseCurrencyCode)
+        } else if amount > maxBaseProviderAmount {
+            errorText = L10n.theMaximumAmountIs(maxBaseProviderAmount.toString(), baseCurrencyCode)
         }
     }
 
@@ -206,7 +207,7 @@ class SellViewModel: BaseViewModel, ObservableObject {
         try! openProviderWebView(
             quoteCurrencyCode: dataService.fiat.code,
             baseCurrencyAmount: baseAmount ?? 0,
-            externalTransactionId: walletRepository.nativeWallet?.pubkey ?? UUID().uuidString
+            externalTransactionId: sellDataServiceId
         )
     }
 

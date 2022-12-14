@@ -19,8 +19,7 @@ class HomeWithTokensViewModel: ObservableObject {
     private let pricesService = Resolver.resolve(PricesServiceType.self)
     @Injected private var solanaTracker: SolanaTracker
     @Injected private var notificationService: NotificationService
-    // TODO: make injected
-    private var sellDataService: any SellDataService = MoonpaySellDataService()
+    @Injected private var sellDataService: any SellDataService
 
     private let buyClicked = PassthroughSubject<Void, Never>()
     private let receiveClicked = PassthroughSubject<Void, Never>()
