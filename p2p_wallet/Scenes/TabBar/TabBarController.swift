@@ -24,6 +24,7 @@ final class TabBarController: UITabBarController {
     private var settingsCoordinator: SettingsCoordinator!
     private var buyCoordinator: BuyCoordinator?
     private var sendCoordinator: SendToken.Coordinator?
+    private var sellCoordinator: SellCoordinator?
 
     private var customTabBar: CustomTabBar { tabBar as! CustomTabBar }
 
@@ -114,6 +115,9 @@ final class TabBarController: UITabBarController {
             vc?.onClose = { [weak self] in
                 self?.sendCoordinator = nil
             }
+        case .cashOut:
+            sellCoordinator = SellCoordinator(navigationController: navigationController)
+            sellCoordinator?.start().sink(receiveValue: { _ in }).store(in: &cancellables)
         }
     }
 

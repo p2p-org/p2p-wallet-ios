@@ -66,6 +66,8 @@ struct SellInputView: View {
                  }
 
                  Text(viewModel.baseCurrencyCode)
+                    .apply(style: .text3)
+                    .foregroundColor(Color(Asset.Colors.night.color).opacity(0.3))
             }
                 .blockStyle(hasError: viewModel.errorText != nil)
         }

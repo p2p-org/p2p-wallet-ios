@@ -126,6 +126,10 @@ extension WalletDetail {
             analyticsManager.log(event: AmplitudeEvent.swapViewed(lastScreen: "token_details"))
             navigatableSceneSubject.accept(.swap(fromWallet: wallet))
         }
+
+        private func cashOut() {
+            navigatableSceneSubject.accept(.cashOut)
+        }
     }
 }
 
@@ -163,7 +167,7 @@ extension WalletDetail.ViewModel: WalletDetailViewModelType {
             analyticsManager.log(event: AmplitudeEvent.actionPanelSwapToken(tokenName: symbol))
             swapTokens()
         case .cashOut:
-            break
+            cashOut()
         }
     }
 

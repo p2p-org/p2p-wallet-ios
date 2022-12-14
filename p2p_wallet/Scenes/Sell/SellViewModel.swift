@@ -13,7 +13,7 @@ class SellViewModel: BaseViewModel, ObservableObject {
 
     @Injected private var walletRepository: WalletsRepository
     // TODO: Put resolver
-    private let dataService: any SellDataService = MockSellDataService()
+    private let dataService: any SellDataService = MoonpaySellDataService()
     private let actionService: any SellActionService = SellActionServiceMock()
 
     // MARK: -
@@ -29,6 +29,7 @@ class SellViewModel: BaseViewModel, ObservableObject {
     private var minBaseAmount: Double?
     /// Maximum value to sell from sell provider
     private var maxBaseProviderAmount: Double?
+    private let baseAmountTimer = Timer.publish(every: 10, on: .main, in: .common).autoconnect()
 
     // MARK: - Properties
 
@@ -104,7 +105,7 @@ class SellViewModel: BaseViewModel, ObservableObject {
                 guard let address = self.walletRepository.nativeWallet?.pubkey else { return }
                 let txs = try await self.dataService.incompleteTransactions(transactionId: address)
                 if !txs.isEmpty {
-                    self.navigation.send(.showPending)
+                    self.navigation.send(.showPending(transactions: txs))
                 }
             })
             .store(in: &subscriptions)
@@ -116,9 +117,11 @@ class SellViewModel: BaseViewModel, ObservableObject {
             })
             .disposed(by: disposeBag)
 
-        $baseAmount
+        Publishers.Merge(
+            $baseAmount,
+            baseAmountTimer.withLatestFrom($baseAmount)
+        )
             .debounce(for: .seconds(0.5), scheduler: DispatchQueue.main)
-            .removeDuplicates()
             .withLatestFrom(Publishers.CombineLatest3(
                 $baseCurrencyCode, $quoteCurrencyCode, $baseAmount.compactMap { $0 }
             ))
@@ -159,7 +162,7 @@ class SellViewModel: BaseViewModel, ObservableObject {
 
     private func warmUp() {
         Task {
-            try await dataService.update()
+            try await dataService.update(id: "DRMDSujkGuy2EcY9c8nEwVJzo8LbhohWG9okkaivAomx")
         }
     }
 

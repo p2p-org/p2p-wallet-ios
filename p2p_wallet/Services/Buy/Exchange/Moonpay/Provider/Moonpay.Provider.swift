@@ -190,10 +190,6 @@ extension Moonpay {
         }
 
         func sellTransactions(externalTransactionId: String) async throws -> [MoonpaySellDataServiceProvider.MoonpayTransaction] {
-            struct SellRequest: Codable {
-                var externalTransactionId: String
-            }
-
             var components = URLComponents(string: serverSideAPI.endpoint + "api/v3/sell_transactions")!
             let params = ["apiKey": api.apiKey, "externalTransactionId": externalTransactionId]
             components.queryItems = params.map { key, value in
@@ -204,6 +200,25 @@ extension Moonpay {
 
             let (data, _) = try await URLSession.shared.data(from: urlRequest)
             return try JSONDecoder().decode([MoonpaySellDataServiceProvider.MoonpayTransaction].self, from: data)
+        }
+
+        func sellTransaction(id: String) async throws -> MoonpaySellDataServiceProvider.MoonpayTransaction {
+            var components = URLComponents(string: api.endpoint + "v3/sell_transactions/\(id)")!
+            let params = ["apiKey": api.apiKey]
+            components.queryItems = params.map { key, value in
+                URLQueryItem(name: key, value: value)
+            }
+            components.percentEncodedQuery = components.percentEncodedQuery?.replacingOccurrences(of: "+", with: "%2B")
+            let urlRequest = URLRequest(url: components.url!)
+            let (data, _) = try await URLSession.shared.data(from: urlRequest)
+            return try JSONDecoder().decode(MoonpaySellDataServiceProvider.MoonpayTransaction.self, from: data)
+        }
+
+        func deleteSellTransaction(id: String) async throws {
+            let components = URLComponents(string: serverSideAPI.endpoint + "api/v3/sell_transactions/\(id)")!
+            var urlRequest = URLRequest(url: components.url!)
+            urlRequest.httpMethod = "DELETE"
+            let (_, _) = try await URLSession.shared.data(from: urlRequest)
         }
     }
 }

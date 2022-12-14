@@ -3,9 +3,15 @@ import Foundation
 
 @MainActor
 class SellPendingViewModel: BaseViewModel, ObservableObject {
+    let sellDataService = MoonpaySellDataService()
     typealias SendRequest = Void
 
     let coordinator = CoordinatorIO()
+
+    let id: String
+    init(id: String) {
+        self.id = id
+    }
 
     // MARK: -
 
@@ -14,6 +20,9 @@ class SellPendingViewModel: BaseViewModel, ObservableObject {
     }
 
     func forget() {
+        Task {
+            try await sellDataService.deleteTransaction(id: id)
+        }
         coordinator.dismiss.send()
     }
 }

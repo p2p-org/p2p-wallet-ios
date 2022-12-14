@@ -1,8 +1,8 @@
 import Foundation
 
-enum SellNavigation: Equatable {
+enum SellNavigation {
     case webPage(url: URL)
-    case showPending
+    case showPending(transactions: [any ProviderTransaction])
 }
 
 enum SellError: Error {

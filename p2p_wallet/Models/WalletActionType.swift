@@ -40,7 +40,7 @@ enum WalletActionType {
         case .swap:
             return .homeSwap
         case .cashOut:
-            return .homeSwap
+            return .cashOut
         }
     }
 }
