@@ -241,12 +241,6 @@ extension Resolver: ResolverRegistering {
             .scope(.session)
 
         // SendService
-        register { _, args in
-            SendService(relayMethod: args())
-        }
-        .implements(SendServiceType.self)
-        .scope(.session)
-
         register { SendHistoryLocalProvider() }
             .scope(.session)
 
