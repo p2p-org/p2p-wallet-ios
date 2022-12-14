@@ -83,7 +83,7 @@ final class SendInputViewModel: BaseViewModel, ObservableObject {
             } else {
                 let preferOrder: [String: Int] = ["USDC": 1, "USDT": 2]
                 let sortedWallets = wallets
-                    .filter({ $0.lamports ?? 0 > 0 && !$0.isNFTToken })
+                    .filter(\.isSendable)
                     .sorted { (lhs: Wallet, rhs: Wallet) -> Bool in
                         if preferOrder[lhs.token.symbol] != nil || preferOrder[rhs.token.symbol] != nil {
                             return (preferOrder[lhs.token.symbol] ?? 3) < (preferOrder[rhs.token.symbol] ?? 3)
@@ -135,7 +135,7 @@ final class SendInputViewModel: BaseViewModel, ObservableObject {
 
         let preChoosenWalletAvailable = preChosenWallet != nil
         let recipientIsDirectSPLTokenAddress = recipient.category.isDirectSPLTokenAddress
-        let thereIsOnlyOneOrNoneWallets = wallets.filter { ($0.lamports ?? 0) > 0 }.count <= 1
+        let thereIsOnlyOneOrNoneWallets = wallets.filter(\.isSendable).count <= 1
         let shouldDisableChosingToken = preChoosenWalletAvailable || recipientIsDirectSPLTokenAddress ||
             thereIsOnlyOneOrNoneWallets
         tokenViewModel.isTokenChoiceEnabled = !shouldDisableChosingToken
@@ -446,5 +446,11 @@ private extension SendInputViewModel {
             fee: currentState.fee.total > 0,
             fiatInput: inputAmountViewModel.mainAmountType == .fiat
         ))
+    }
+}
+
+private extension Wallet {
+    var isSendable: Bool {
+        lamports ?? 0 > 0 && !isNFTToken
     }
 }
