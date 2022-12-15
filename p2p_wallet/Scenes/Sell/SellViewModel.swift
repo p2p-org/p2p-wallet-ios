@@ -14,9 +14,9 @@ class SellViewModel: BaseViewModel, ObservableObject {
     @Injected private var walletRepository: WalletsRepository
     @Injected private var dataService: any SellDataService
     @Injected private var actionService: any SellActionService
-    private var sellDataServiceId: String {
-        "DRMDSujkGuy2EcY9c8nEwVJzo8LbhohWG9okkaivAomx"
-    }
+    @Injected private var storage: KeychainStorage
+    private var sellDataServiceId: String?
+    @Published var hasError: Bool = false
 
     // MARK: -
 
@@ -105,15 +105,18 @@ class SellViewModel: BaseViewModel, ObservableObject {
             .filter { $0 == .ready }
             .map { _ in self.dataService.incompleteTransactions }
             .filter { !$0.isEmpty }
-            .sink(receiveValue: { transactions in
+            .sink(receiveValue: { [unowned self] transactions in
                 self.navigation.send(.showPending(transactions: transactions))
             })
             .store(in: &subscriptions)
 
         maxBaseAmount = walletRepository.nativeWallet?.amount
         walletRepository.dataDidChange
-            .subscribe(onNext: { val in
+            .subscribe(onNext: { [unowned self] val in
                 self.maxBaseAmount = self.walletRepository.nativeWallet?.amount
+                if self.walletRepository.nativeWallet?.amount == 0 {
+                    self.hasError = true
+                }
             })
             .disposed(by: disposeBag)
 
@@ -162,8 +165,16 @@ class SellViewModel: BaseViewModel, ObservableObject {
 
     func warmUp() {
         self.isLoading = true
-        Task {
-            try await dataService.update(id: sellDataServiceId)
+        Task { [unowned self] in
+            guard let phrase = storage.account?.phrase else { return }
+            let acc = try await Account(
+                phrase: phrase,
+                network: .mainnetBeta,
+                derivablePath: DerivablePath(type: .bip44Change, walletIndex: 101, accountIndex: 0)
+            )
+            self.sellDataServiceId = acc.publicKey.base58EncodedString
+            guard self.sellDataServiceId != nil else { return }
+            try await dataService.update(id: self.sellDataServiceId!)
         }
     }
 
@@ -204,11 +215,16 @@ class SellViewModel: BaseViewModel, ObservableObject {
     // MARK: - Actions
 
     func sell() {
-        try! openProviderWebView(
+        guard let sellDataServiceId else { return }
+        try? openProviderWebView(
             quoteCurrencyCode: dataService.fiat.code,
             baseCurrencyAmount: baseAmount ?? 0,
             externalTransactionId: sellDataServiceId
         )
+    }
+
+    func goToSwap() {
+        navigation.send(.swap)
     }
 
     func sellAll() {

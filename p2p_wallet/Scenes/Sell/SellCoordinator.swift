@@ -26,6 +26,7 @@ final class SellCoordinator: Coordinator<SellCoordinatorResult> {
 
         // create viewController
         let vc = UIHostingController(rootView: SellView(viewModel: viewModel))
+        vc.hidesBottomBarWhenPushed = true
         navigationController.pushViewController(vc, animated: true)
         return vc.deallocatedPublisher()
     }
@@ -36,9 +37,7 @@ final class SellCoordinator: Coordinator<SellCoordinatorResult> {
         switch scene {
         case .webPage(let url):
             return navigateToProviderWebPage(url: url)
-                .deallocatedPublisher().handleEvents { _ in
-                    
-                } receiveOutput: { _ in
+                .deallocatedPublisher().handleEvents { _ in } receiveOutput: { [unowned self] _ in
                     self.viewModel.warmUp()
                 }.eraseToAnyPublisher()
 
@@ -51,12 +50,24 @@ final class SellCoordinator: Coordinator<SellCoordinatorResult> {
                 // .handleEvents(receiveValue:,receiveCompletion:) // or event make side effect
                 .map {_ in ()}
                 .eraseToAnyPublisher()
+        case .swap:
+            return navigateToSwap().deallocatedPublisher().handleEvents { _ in } receiveOutput: { [unowned self] _ in
+                self.viewModel.warmUp()
+            }.eraseToAnyPublisher()
         }
     }
 
     private func navigateToProviderWebPage(url: URL) -> UIViewController {
         let vc = SFSafariViewController(url: url)
         vc.modalPresentationStyle = .automatic
+        navigationController.present(vc, animated: true)
+        return vc
+    }
+
+    private func navigateToSwap() -> UIViewController {
+        let vm = OrcaSwapV2.ViewModel(initialWallet: nil)
+        let vc = OrcaSwapV2.ViewController(viewModel: vm)
+        vc.hidesBottomBarWhenPushed = true
         navigationController.present(vc, animated: true)
         return vc
     }

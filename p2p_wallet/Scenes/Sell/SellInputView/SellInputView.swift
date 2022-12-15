@@ -138,7 +138,6 @@ struct SellInputView: View {
         .disabled(viewModel.errorText != nil)
         .frame(height: 56)
         .padding(EdgeInsets(top: 0, leading: 16, bottom: 12, trailing: 16))
-        .disabled(false)
     }
 }
 
