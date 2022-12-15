@@ -23,3 +23,10 @@ public protocol SellDataServiceProvider {
     func detailSellTransaction(id: String) async throws -> Transaction
     func deleteSellTransaction(id: String) async throws
 }
+
+
+extension SellDataServiceTransaction {
+    enum Status: String {
+        case waitingForDeposit
+    }
+}

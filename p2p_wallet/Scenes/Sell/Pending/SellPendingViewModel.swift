@@ -9,9 +9,11 @@ class SellPendingViewModel: BaseViewModel, ObservableObject {
 
     let coordinator = CoordinatorIO()
 
-    let id: String
-    init(id: String) {
-        self.id = id
+    let transaction: SellDataServiceTransaction
+    let fiat: Fiat
+    init(transaction: SellDataServiceTransaction, fiat: Fiat) {
+        self.transaction = transaction
+        self.fiat = fiat
     }
 
     // MARK: -
@@ -22,7 +24,7 @@ class SellPendingViewModel: BaseViewModel, ObservableObject {
 
     func forget() {
         Task {
-            try await sellDataService.deleteTransaction(id: id)
+//            try await sellDataService.deleteTransaction(id: id)
         }
         coordinator.dismiss.send()
     }
@@ -31,6 +33,6 @@ class SellPendingViewModel: BaseViewModel, ObservableObject {
 extension SellPendingViewModel {
     struct CoordinatorIO {
         var send = PassthroughSubject<SendRequest, Never>()
-        var dismiss = PassthroughSubject<SendRequest, Never>()
+        var dismiss = PassthroughSubject<Void, Never>()
     }
 }
