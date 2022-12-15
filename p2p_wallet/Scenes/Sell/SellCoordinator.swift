@@ -21,7 +21,7 @@ final class SellCoordinator: Coordinator<SellCoordinatorResult> {
             .flatMap { [unowned self] in
                 navigate(to: $0)
             }
-            .sink {_ in }
+            .sink { _ in }
             .store(in: &subscriptions)
 
         // create viewController
