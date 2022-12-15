@@ -20,8 +20,6 @@ final class ActionsCoordinator: Coordinator<ActionsCoordinator.Result> {
 
     private let transition = PanelTransition()
 
-    private var sendCoordinator: SendToken.Coordinator?
-
     init(viewController: UIViewController) {
         self.viewController = viewController
     }

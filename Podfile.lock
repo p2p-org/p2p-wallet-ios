@@ -141,6 +141,8 @@ PODS:
     - AppAuth/Core (~> 1.6)
     - GTMSessionFetcher/Core (< 3.0, >= 1.5)
   - GTMSessionFetcher/Core (2.3.0)
+  - History (1.0.0):
+    - SolanaSwift
   - Intercom (12.4.3)
   - Introspect (0.1.4)
   - JazziconSwift (1.1.0)
@@ -204,6 +206,13 @@ PODS:
     - RxSwift (= 6.5.0)
   - RxSwift (6.5.0)
   - secp256k1.swift (0.1.4)
+  - Send (1.0.0):
+    - FeeRelayerSwift
+    - History
+    - NameService
+    - SolanaPricesAPIs
+    - SolanaSwift
+    - TransactionParser
   - Sentry (7.18.1):
     - Sentry/Core (= 7.18.1)
   - Sentry/Core (7.18.1)
@@ -251,6 +260,7 @@ DEPENDENCIES:
   - Firebase/RemoteConfig
   - GoogleSignIn
   - GT3Captcha-iOS
+  - History (from `https://github.com/p2p-org/key-app-kit-swift.git`, branch `master`)
   - Intercom (= 12.4.3)
   - Introspect (= 0.1.4)
   - JazziconSwift (from `https://github.com/p2p-org/JazziconSwift.git`, branch `master`)
@@ -277,6 +287,7 @@ DEPENDENCIES:
   - RxConcurrency (from `https://github.com/TrGiLong/RxConcurrency.git`, branch `main`)
   - RxGesture (= 4.0.4)
   - RxSwift (= 6.5.0)
+  - Send (from `https://github.com/p2p-org/key-app-kit-swift.git`, branch `master`)
   - Sentry (from `https://github.com/getsentry/sentry-cocoa.git`, tag `7.18.1`)
   - SkeletonUI (from `https://github.com/p2p-org/SkeletonUI.git`, branch `master`)
   - SolanaPricesAPIs (from `https://github.com/p2p-org/key-app-kit-swift.git`, branch `master`)
@@ -369,6 +380,9 @@ EXTERNAL SOURCES:
   FeeRelayerSwift:
     :branch: master
     :git: https://github.com/p2p-org/FeeRelayerSwift.git
+  History:
+    :branch: master
+    :git: https://github.com/p2p-org/key-app-kit-swift.git
   JazziconSwift:
     :branch: master
     :git: https://github.com/p2p-org/JazziconSwift.git
@@ -405,6 +419,9 @@ EXTERNAL SOURCES:
   RxConcurrency:
     :branch: main
     :git: https://github.com/TrGiLong/RxConcurrency.git
+  Send:
+    :branch: master
+    :git: https://github.com/p2p-org/key-app-kit-swift.git
   Sentry:
     :git: https://github.com/getsentry/sentry-cocoa.git
     :tag: 7.18.1
@@ -452,6 +469,9 @@ CHECKOUT OPTIONS:
   FeeRelayerSwift:
     :commit: 369d24380466a5f3efd129f050f08e7ca0da2200
     :git: https://github.com/p2p-org/FeeRelayerSwift.git
+  History:
+    :commit: 0d8252552621ae484a87032d98383222c123e314
+    :git: https://github.com/p2p-org/key-app-kit-swift.git
   JazziconSwift:
     :commit: f9c9f898402db4e62d482f4c90670652c221fa12
     :git: https://github.com/p2p-org/JazziconSwift.git
@@ -488,6 +508,9 @@ CHECKOUT OPTIONS:
   RxConcurrency:
     :commit: dadb16c54bd42ca83c08f3d80f61fbfca93a585c
     :git: https://github.com/TrGiLong/RxConcurrency.git
+  Send:
+    :commit: 0d8252552621ae484a87032d98383222c123e314
+    :git: https://github.com/p2p-org/key-app-kit-swift.git
   Sentry:
     :git: https://github.com/getsentry/sentry-cocoa.git
     :tag: 7.18.1
@@ -539,6 +562,7 @@ SPEC CHECKSUMS:
   GT3Captcha-iOS: 2be456783a54bc7ef40856d491dab4e4fe5d386e
   GTMAppAuth: 0ff230db599948a9ad7470ca667337803b3fc4dd
   GTMSessionFetcher: 3a63d75eecd6aa32c2fc79f578064e1214dfdec2
+  History: 0fab6b28299056a13528cae6e174be13fae9b763
   Intercom: 43bfacc55b1c93cce9ec569833696d3f15678430
   Introspect: b62c4dd2063072327c21d618ef2bedc3c87bc366
   JazziconSwift: d1d6f81e5e460b94b2cd0a898dab66178aeab070
@@ -571,6 +595,7 @@ SPEC CHECKSUMS:
   RxRelay: 1de1523e604c72b6c68feadedd1af3b1b4d0ecbd
   RxSwift: 5710a9e6b17f3c3d6e40d6e559b9fa1e813b2ef8
   secp256k1.swift: a7e7a214f6db6ce5db32cc6b2b45e5c4dd633634
+  Send: 74c8ef0bf6c144dbb95e7dbe056e66294d2595cf
   Sentry: 2d70348d6247a29702a8317e710c5ba890672df5
   SkeletonUI: b5c868e6917123e3d442d6cef9c71fe048175f3b
   SkeletonView: 5a050f6411e697abd4cda0a8d767013399dccd69
@@ -586,6 +611,6 @@ SPEC CHECKSUMS:
   TransactionParser: 3004420d52e7b1277dbcfd20b995a5de707705f3
   TweetNacl: 3abf4d1d2082b0114e7a67410e300892448951e6
 
-PODFILE CHECKSUM: 62522fad4b745ffd418c4df461530173db348536
+PODFILE CHECKSUM: 63f6fad80c5c991078442d1ec10c4eb3c5031c65
 
 COCOAPODS: 1.11.3
