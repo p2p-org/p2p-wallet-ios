@@ -53,6 +53,9 @@ class UserWalletManager: ObservableObject {
         try storage.save(walletIndex: derivablePath.walletIndex)
         storage.save(name: name ?? "")
         try storage.save(ethAddress: ethAddress ?? "")
+        
+        // Services
+        try await Resolver.resolve(SendHistoryLocalProvider.self).save(nil)
 
         // Save device share
         if let deviceShare = deviceShare, ethAddress != nil {
@@ -71,6 +74,7 @@ class UserWalletManager: ObservableObject {
         // Notification service
         notificationsService.unregisterForRemoteNotifications()
         Task.detached { [notificationsService] in await notificationsService.deleteDeviceToken() }
+        Task.detached { try await Resolver.resolve(SendHistoryLocalProvider.self).save(nil) }
 
         // Storage
         storage.clearAccount()
