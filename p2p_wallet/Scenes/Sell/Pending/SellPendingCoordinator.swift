@@ -9,6 +9,7 @@ final class SellPendingCoordinator: Coordinator<SellPendingCoordinatorResult> {
     let navigationController: UINavigationController
     let transactions: [SellDataServiceTransaction]
     let fiat: Fiat
+
     init(transactions: [SellDataServiceTransaction], fiat: Fiat, navigationController: UINavigationController) {
         self.navigationController = navigationController
         self.transactions = transactions
@@ -25,7 +26,7 @@ final class SellPendingCoordinator: Coordinator<SellPendingCoordinatorResult> {
                     tokenSymbol: tokenSymbol,
                     tokenAmount: transction.baseCurrencyAmount,
                     fiatAmount: 5,
-                    currency: .eur,
+                    currency: fiat,
                     receiverAddress: "FfRBerfgeritjg43fBeJEr"
                 )
             )

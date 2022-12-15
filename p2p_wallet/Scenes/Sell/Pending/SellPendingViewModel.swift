@@ -9,15 +9,8 @@ final class SellPendingViewModel: BaseViewModel, ObservableObject {
 
     private let sendSubject = PassthroughSubject<Void, Never>()
     private let dismissSubject = PassthroughSubject<Void, Never>()
-
     var send: AnyPublisher<Void, Never> { sendSubject.eraseToAnyPublisher() }
-var dismiss: AnyPublisher<Void, Never> { dismissSubject.eraseToAnyPublisher() }
-    let transaction: SellDataServiceTransaction
-    let fiat: Fiat
-    init(transaction: SellDataServiceTransaction, fiat: Fiat) {
-        self.transaction = transaction
-        self.fiat = fiat
-    }
+    var dismiss: AnyPublisher<Void, Never> { dismissSubject.eraseToAnyPublisher() }
 
     let tokenAmount: String
     let fiatAmount: String
