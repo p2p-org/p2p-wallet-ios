@@ -92,7 +92,7 @@ final class SendInputViewModel: BaseViewModel, ObservableObject {
                         if preferOrder[lhs.token.symbol] != nil || preferOrder[rhs.token.symbol] != nil {
                             return (preferOrder[lhs.token.symbol] ?? 3) < (preferOrder[rhs.token.symbol] ?? 3)
                         } else {
-                            return lhs.lamports ?? 0 < rhs.lamports ?? 0
+                            return lhs.amountInCurrentFiat > rhs.amountInCurrentFiat
                         }
                     }
                 tokenInWallet = sortedWallets.first ?? Wallet(token: Token.nativeSolana)
