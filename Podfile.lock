@@ -498,7 +498,7 @@ CHECKOUT OPTIONS:
     :commit: 0d8252552621ae484a87032d98383222c123e314
     :git: https://github.com/p2p-org/key-app-kit-swift.git
   SolanaSwift:
-    :commit: 5ce83a14b4612f2f3c84f07c2b734fae9272e24f
+    :commit: 20f4546c93d069d10c19207cfba40a7f79e64c47
     :git: https://github.com/p2p-org/solana-swift.git
   Solend:
     :commit: 0d8252552621ae484a87032d98383222c123e314
@@ -586,6 +586,6 @@ SPEC CHECKSUMS:
   TransactionParser: 3004420d52e7b1277dbcfd20b995a5de707705f3
   TweetNacl: 3abf4d1d2082b0114e7a67410e300892448951e6
 
-PODFILE CHECKSUM: 112f9126588d55b48e4e0075e1ead6a54a3b8bef
+PODFILE CHECKSUM: 62522fad4b745ffd418c4df461530173db348536
 
 COCOAPODS: 1.11.3

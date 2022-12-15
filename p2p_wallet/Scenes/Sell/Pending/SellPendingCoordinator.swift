@@ -25,7 +25,7 @@ final class SellPendingCoordinator: Coordinator<SellPendingCoordinatorResult> {
                     tokenImage: .solanaIcon,
                     tokenSymbol: tokenSymbol,
                     tokenAmount: transction.baseCurrencyAmount,
-                    fiatAmount: 5,
+                    fiatAmount: transction.quoteCurrencyAmount,
                     currency: fiat,
                     receiverAddress: "FfRBerfgeritjg43fBeJEr"
                 )
@@ -36,6 +36,7 @@ final class SellPendingCoordinator: Coordinator<SellPendingCoordinatorResult> {
                     self?.navigationController.popViewController(animated: true)
                 }
                 .store(in: &subscriptions)
+
             viewModel.send
                 .sink(receiveValue: {
                     
@@ -59,9 +60,5 @@ final class SellPendingCoordinator: Coordinator<SellPendingCoordinatorResult> {
             })
             .prefix(1)
             .eraseToAnyPublisher()
-    }
-
-    deinit {
-        debugPrint("deinit")
     }
 }

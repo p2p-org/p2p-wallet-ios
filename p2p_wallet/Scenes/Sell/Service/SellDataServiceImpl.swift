@@ -10,6 +10,8 @@ class SellDataServiceImpl: SellDataService {
     init() {
         statusSubject.send(.initialized)
     }
+    
+    @Injected private var priceService: PricesService
 
     @SwiftyUserDefault(keyPath: \.isSellAvailable, options: .cached)
     private var cachedIsAvailable: Bool?
@@ -52,6 +54,7 @@ class SellDataServiceImpl: SellDataService {
 
         return try await txs.asyncMap { transaction in
             let detailed = try await provider.detailSellTransaction(id: transaction.id)
+            let quoteCurrencyAmount = detailed.quoteCurrencyAmount ?? (self.priceService.currentPrice(for: "SOL")?.value ?? 0) * detailed.baseCurrencyAmount
             guard
 //                let quoteCurrencyAmount = detailed.quoteCurrencyAmount,
                 let usdRate = detailed.usdRate,
@@ -64,7 +67,7 @@ class SellDataServiceImpl: SellDataService {
                 id: detailed.id,
                 status: status,
                 baseCurrencyAmount: detailed.baseCurrencyAmount,
-                quoteCurrencyAmount: detailed.quoteCurrencyAmount ?? 0,
+                quoteCurrencyAmount: quoteCurrencyAmount,
                 usdRate: usdRate,
                 eurRate: eurRate,
                 gbpRate: gbpRate,
