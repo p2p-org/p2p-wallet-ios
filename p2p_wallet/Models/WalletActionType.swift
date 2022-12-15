@@ -12,6 +12,7 @@ enum WalletActionType {
     case buy
     case send
     case swap
+    case cashOut
 
     var text: String {
         switch self {
@@ -23,6 +24,8 @@ enum WalletActionType {
             return L10n.send
         case .swap:
             return L10n.swap
+        case .cashOut:
+            return "Cash out"
         }
     }
 
@@ -36,6 +39,8 @@ enum WalletActionType {
             return .homeSend
         case .swap:
             return .homeSwap
+        case .cashOut:
+            return .cashOut
         }
     }
 }

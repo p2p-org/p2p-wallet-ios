@@ -17,8 +17,12 @@ extension Moonpay {
 
     class Provider {
         private let api: API
+        private let serverSideAPI: API
 
-        init(api: API) { self.api = api }
+        init(api: API, serverSideAPI: API) {
+            self.api = api
+            self.serverSideAPI = serverSideAPI
+        }
 
         func getBuyQuote(
             baseCurrencyCode: String,
@@ -46,7 +50,7 @@ extension Moonpay {
                 params["paymentMethod"] = paymentMethod.rawValue
             }
 
-            var components = URLComponents(string: api.endpoint + "/v3/currencies/\(quoteCurrencyCode)/buy_quote")!
+            var components = URLComponents(string: api.endpoint + "v3/currencies/\(quoteCurrencyCode)/buy_quote")!
             components.queryItems = params
                 .mapValues { value -> Any in
                     value is Double ? String(value as! Double) : value
@@ -71,8 +75,49 @@ extension Moonpay {
             }
         }
 
+        func getSellQuote(
+            baseCurrencyCode: String,
+            quoteCurrencyCode: String,
+            baseCurrencyAmount: Double,
+            extraFeePercentage: Double? = 0
+        ) async throws -> SellQuote {
+            var params = [
+                "apiKey": api.apiKey,
+                "areFeesIncluded": "true",
+                "baseCurrencyAmount": baseCurrencyAmount
+            ] as [String: Any]
+            params["quoteCurrencyCode"] = quoteCurrencyCode
+            if let extraFeePercentage {
+                params["extraFeePercentage"] = extraFeePercentage
+            }
+
+            var components = URLComponents(string: api.endpoint + "v3/currencies/\(baseCurrencyCode)/sell_quote")!
+            components.queryItems = params
+                .mapValues { value -> Any in
+                    value is Double ? String(value as! Double) : value
+                }
+                .compactMap { key, value in
+                    guard let value = value as? String else { return nil }
+                    return URLQueryItem(name: key, value: value)
+                }
+            components.percentEncodedQuery = components.percentEncodedQuery?.replacingOccurrences(of: "+", with: "%2B")
+            let urlRequest = URLRequest(url: components.url!)
+
+            let (data, response) = try await URLSession.shared.data(from: urlRequest)
+            guard let response = response as? HTTPURLResponse else {
+                throw MoonpayProviderError.unknown
+            }
+            switch response.statusCode {
+            case 200 ... 299:
+                return try JSONDecoder().decode(SellQuote.self, from: data)
+            default:
+                let data = try JSONDecoder().decode(API.ErrorResponse.self, from: data)
+                throw Error.message(message: data.message)
+            }
+        }
+
         func getPrice(for crypto: String, as currency: String) async throws -> Double {
-            var components = URLComponents(string: api.endpoint + "/v3/currencies/\(crypto)/ask_price")!
+            var components = URLComponents(string: api.endpoint + "v3/currencies/\(crypto)/ask_price")!
             let params = ["apiKey": api.apiKey]
             components.queryItems = params.map { key, value in
                 URLQueryItem(name: key, value: value)
@@ -87,7 +132,7 @@ extension Moonpay {
         }
 
         func getAllSupportedCurrencies() async throws -> Currencies {
-            var components = URLComponents(string: api.endpoint + "/v3/currencies")!
+            var components = URLComponents(string: api.endpoint + "v3/currencies")!
             let params = ["apiKey": api.apiKey]
             components.queryItems = params.map { key, value in
                 URLQueryItem(name: key, value: value)
@@ -113,7 +158,7 @@ extension Moonpay {
                 var alpha3: String?
             }
 
-            var components = URLComponents(string: api.endpoint + "/v3/ip_address")!
+            var components = URLComponents(string: api.endpoint + "v3/ip_address")!
             let params = ["apiKey": api.apiKey]
             components.queryItems = params.map { key, value in
                 URLQueryItem(name: key, value: value)
@@ -132,11 +177,7 @@ extension Moonpay {
         }
 
         func ipAddresses() async throws -> IpAddressResponse {
-            struct IpAddress: Codable {
-                var alpha3: String?
-            }
-
-            var components = URLComponents(string: api.endpoint + "/v4/ip_address")!
+            var components = URLComponents(string: api.endpoint + "v4/ip_address")!
             let params = ["apiKey": api.apiKey]
             components.queryItems = params.map { key, value in
                 URLQueryItem(name: key, value: value)
@@ -146,6 +187,38 @@ extension Moonpay {
 
             let (data, _) = try await URLSession.shared.data(from: urlRequest)
             return try JSONDecoder().decode(IpAddressResponse.self, from: data)
+        }
+
+        func sellTransactions(externalTransactionId: String) async throws -> [MoonpaySellDataServiceProvider.MoonpayTransaction] {
+            var components = URLComponents(string: serverSideAPI.endpoint + "api/v3/sell_transactions")!
+            let params = ["apiKey": api.apiKey, "externalTransactionId": externalTransactionId]
+            components.queryItems = params.map { key, value in
+                URLQueryItem(name: key, value: value)
+            }
+            components.percentEncodedQuery = components.percentEncodedQuery?.replacingOccurrences(of: "+", with: "%2B")
+            let urlRequest = URLRequest(url: components.url!)
+
+            let (data, _) = try await URLSession.shared.data(from: urlRequest)
+            return try JSONDecoder().decode([MoonpaySellDataServiceProvider.MoonpayTransaction].self, from: data)
+        }
+
+        func sellTransaction(id: String) async throws -> MoonpaySellDataServiceProvider.MoonpayTransaction {
+            var components = URLComponents(string: api.endpoint + "v3/sell_transactions/\(id)")!
+            let params = ["apiKey": api.apiKey]
+            components.queryItems = params.map { key, value in
+                URLQueryItem(name: key, value: value)
+            }
+            components.percentEncodedQuery = components.percentEncodedQuery?.replacingOccurrences(of: "+", with: "%2B")
+            let urlRequest = URLRequest(url: components.url!)
+            let (data, _) = try await URLSession.shared.data(from: urlRequest)
+            return try JSONDecoder().decode(MoonpaySellDataServiceProvider.MoonpayTransaction.self, from: data)
+        }
+
+        func deleteSellTransaction(id: String) async throws {
+            let components = URLComponents(string: serverSideAPI.endpoint + "api/v3/sell_transactions/\(id)")!
+            var urlRequest = URLRequest(url: components.url!)
+            urlRequest.httpMethod = "DELETE"
+            let (_, _) = try await URLSession.shared.data(from: urlRequest)
         }
     }
 }
@@ -192,11 +265,19 @@ extension Moonpay.Provider {
             "VAT",
         ]
     }
+
+    func UKAlpha3Code() -> String {
+        return "GBR"
+    }
+
+    func USAlpha3Code() -> String {
+        return "USA"
+    }
 }
 
 extension Moonpay.Provider {
     struct IpAddressResponse: Codable {
-        var aplha2: String
+        var alpha2: String
         var alpha3: String
         var state: String
         var ipAddress: String

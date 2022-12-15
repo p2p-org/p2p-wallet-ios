@@ -14,23 +14,43 @@ public protocol SellDataService {
     var lastUpdateDate: AnyPublisher<Date, Never> { get }
 
     /// Request for pendings, rates, min amounts
-    func update() async throws
+    func update(id: String) async throws
 
+    /// Supported crypto currencies
+    var currency: ProviderCurrency! { get }
+    /// Supported Fiat by provider for your region
+    var fiat: Fiat! { get }
     /// Return incomplete transactions
-    func incompleteTransactions() async throws -> [Provider.Transaction]
-    /// Return transaction by  id
-    func transaction(id: String) async throws -> Provider.Transaction
+    var incompleteTransactions: [Provider.Transaction] { get }
     /// Weather service available
-    func isAvailable() async throws -> Bool
+    func isAvailable() async -> Bool
+    func deleteTransaction(id: String) async throws
+}
+
+enum SellActionServiceError: Error {
+    case invalidURL
 }
 
 public protocol SellActionService {
-    func calculateRates() async throws -> Double
+    associatedtype Provider: SellActionServiceProvider
+
+    func sellQuote(
+        baseCurrencyCode: String,
+        quoteCurrencyCode: String,
+        baseCurrencyAmount: Double,
+        extraFeePercentage: Double
+    ) async throws -> Provider.Quote
+
     func createSellURL(
         quoteCurrencyCode: String,
         baseCurrencyAmount: Double,
         externalTransactionId: String
     ) throws -> URL
-    func saveTransaction() async throws
-    func deleteTransaction() async throws
+}
+
+public protocol SellActionServiceQuote {
+    var extraFeeAmount: Double { get }
+    var feeAmount: Double { get }
+    var baseCurrencyPrice: Double { get }
+    var quoteCurrencyAmount: Double { get }
 }

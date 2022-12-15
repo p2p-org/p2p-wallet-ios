@@ -79,6 +79,10 @@ final class ActionsCoordinator: Coordinator<ActionsCoordinator.Result> {
                     viewController.dismiss(animated: true) {
                         subject.send(.action(type: .send))
                     }
+                case .cashOut:
+                    viewController.dismiss(animated: true) {
+                        subject.send(.action(type: .cashOut))
+                    }
                 }
             })
             .store(in: &subscriptions)
