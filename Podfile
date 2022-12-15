@@ -35,7 +35,7 @@ def key_app_kit
     end
   else
     $keyAppKitGit = 'https://github.com/p2p-org/key-app-kit-swift.git'
-    $keyAppKitBranch = 'feature/pwn-6024'
+    $keyAppKitBranch = 'master'
     for $dependency in $dependencies do
       pod $dependency, :git => $keyAppKitGit, :branch => $keyAppKitBranch
     end
@@ -53,14 +53,14 @@ target 'p2p_wallet' do
   pod 'BECollectionView_Core', :git => 'https://github.com/bigearsenal/BECollectionView.git', :branch => 'master'
   pod 'BECollectionView', :git => 'https://github.com/bigearsenal/BECollectionView.git', :branch => 'master'
   pod 'BECollectionView_Combine', :git => 'https://github.com/bigearsenal/BECollectionView.git', :branch => 'master'
-  pod 'FeeRelayerSwift', :git => 'https://github.com/p2p-org/FeeRelayerSwift.git', :branch => 'develop'
+  pod 'FeeRelayerSwift', :git => 'https://github.com/p2p-org/FeeRelayerSwift.git', :branch => 'master'
   pod 'OrcaSwapSwift', :git => 'https://github.com/p2p-org/OrcaSwapSwift.git', :branch => 'main'
-  pod 'RenVMSwift', :git => 'https://github.com/p2p-org/RenVMSwift.git', :branch => 'feature/pwn-6024'
+  pod 'RenVMSwift', :git => 'https://github.com/p2p-org/RenVMSwift.git', :branch => 'master'
   
   if $solanaSwiftPath
     pod "SolanaSwift", :path => $solanaSwiftPath
   else
-    pod 'SolanaSwift', :git => 'https://github.com/p2p-org/solana-swift.git', :branch => 'feature/isOnCurveAsPublic'
+    pod 'SolanaSwift', :git => 'https://github.com/p2p-org/solana-swift.git', :branch => 'main'
   end
 
   # tools
