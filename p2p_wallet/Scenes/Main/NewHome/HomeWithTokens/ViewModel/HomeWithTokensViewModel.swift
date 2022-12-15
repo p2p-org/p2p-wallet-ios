@@ -13,26 +13,18 @@ import RxSwift
 import SolanaSwift
 import UIKit
 
-class HomeWithTokensViewModel: ObservableObject {
+final class HomeWithTokensViewModel: BaseViewModel, ObservableObject {
+    // MARK: - Dependencies
+    
     private let walletsRepository: WalletsRepository
-    private let pricesService = Resolver.resolve(PricesServiceType.self)
+    @Injected private var pricesService: PricesServiceType
     @Injected private var solanaTracker: SolanaTracker
     @Injected private var notificationService: NotificationService
 
-    private let buyClicked = PassthroughSubject<Void, Never>()
-    private let receiveClicked = PassthroughSubject<Void, Never>()
-    private let sendClicked = PassthroughSubject<Void, Never>()
-    private let swapClicked = PassthroughSubject<Void, Never>()
-    private let earnClicked = PassthroughSubject<Void, Never>()
-    private let walletClicked = PassthroughSubject<(pubKey: String, tokenSymbol: String), Never>()
-    let buyShow: AnyPublisher<Void, Never>
-    let receiveShow: AnyPublisher<PublicKey, Never>
-    let sendShow: AnyPublisher<Void, Never>
-    let swapShow: AnyPublisher<Void, Never>
-    let earnShow: AnyPublisher<Void, Never>
-    let walletShow: AnyPublisher<(pubKey: String, tokenSymbol: String), Never>
+    // MARK: - Properties
 
-    var actions: AnyPublisher<[WalletActionType], Never>
+    let navigation: PassthroughSubject<HomeNavigation, Never>
+
     var balance: AnyPublisher<String, Never>
 
     @Published var scrollOnTheTop = true
@@ -43,22 +35,13 @@ class HomeWithTokensViewModel: ObservableObject {
 
     @Published var tokensIsHidden: Bool
 
-    private var cancellables = Set<AnyCancellable>()
+    // MARK: - Initializer
 
-    init(walletsRepository: WalletsRepository = Resolver.resolve()) {
-        self.walletsRepository = walletsRepository
+    init(navigation: PassthroughSubject<HomeNavigation, Never>) {
+        self.navigation = navigation
 
+        let walletsRepository = Resolver.resolve(WalletsRepository.self)
         tokensIsHidden = !walletsRepository.isHiddenWalletsShown.value
-
-        buyShow = buyClicked.eraseToAnyPublisher()
-        receiveShow = receiveClicked
-            .compactMap { try? PublicKey(string: walletsRepository.nativeWallet?.pubkey) }
-            .eraseToAnyPublisher()
-        sendShow = sendClicked.eraseToAnyPublisher()
-        swapShow = swapClicked.eraseToAnyPublisher()
-        walletShow = walletClicked.eraseToAnyPublisher()
-        earnShow = earnClicked.eraseToAnyPublisher()
-        actions = Just([WalletActionType.buy, .receive, .send, .swap]).eraseToAnyPublisher()
 
         balance = Observable.zip(walletsRepository.dataObservable, walletsRepository.stateObservable)
             .filter { $0.1 == .loaded }
@@ -71,6 +54,10 @@ class HomeWithTokensViewModel: ObservableObject {
             .assertNoFailure()
             .debounce(for: 0.1, scheduler: RunLoop.main)
             .eraseToAnyPublisher()
+        self.walletsRepository = walletsRepository
+        
+        super.init()
+        
         walletsRepository.dataObservable
             .asPublisher()
             .assertNoFailure()
@@ -84,7 +71,7 @@ class HomeWithTokensViewModel: ObservableObject {
                 self.items = items.filter { !$0.1 }.map(\.0)
                 self.hiddenItems = items.filter(\.1).map(\.0)
             })
-            .store(in: &cancellables)
+            .store(in: &subscriptions)
 
         if available(.solanaNegativeStatus) {
             solanaTracker.unstableSolana
@@ -95,7 +82,7 @@ class HomeWithTokensViewModel: ObservableObject {
                         withAutoHidden: false
                     )
                 })
-                .store(in: &cancellables)
+                .store(in: &subscriptions)
         }
     }
 
@@ -118,23 +105,25 @@ class HomeWithTokensViewModel: ObservableObject {
     func actionClicked(_ action: WalletActionType) {
         switch action {
         case .receive:
-            receiveClicked.send()
+            guard let pubkey = try? PublicKey(string: walletsRepository.nativeWallet?.pubkey)
+            else { return }
+            navigation.send(.receive(publicKey: pubkey))
         case .buy:
-            buyClicked.send()
+            navigation.send(.buy)
         case .send:
-            sendClicked.send()
+            navigation.send(.send)
         case .swap:
-            swapClicked.send()
+            navigation.send(.swap)
         }
     }
 
     func earn() {
-        earnClicked.send()
+        navigation.send(.earn)
     }
 
     func tokenClicked(wallet: Wallet) {
         guard let pubKey = wallet.pubkey else { return }
-        walletClicked.send((pubKey: pubKey, tokenSymbol: wallet.token.symbol))
+        navigation.send(.wallet(pubKey: pubKey, tokenSymbol: wallet.token.symbol))
     }
 
     func scrollToTop() {

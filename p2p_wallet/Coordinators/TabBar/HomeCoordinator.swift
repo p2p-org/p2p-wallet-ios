@@ -14,6 +14,22 @@ import SolanaSwift
 import SwiftUI
 import UIKit
 
+enum HomeNavigation: Equatable {
+    // HomeWithTokens
+    case buy
+    case receive(publicKey: PublicKey)
+    case send
+    case swap
+    case earn
+    case wallet(pubKey: String, tokenSymbol: String)
+    case actions([WalletActionType])
+    // HomeEmpty
+    case topUp
+    case topUpCoin(Token)
+    // Error
+    case error(show: Bool)
+}
+
 final class HomeCoordinator: Coordinator<Void> {
     
     // MARK: - Dependencies
@@ -23,13 +39,10 @@ final class HomeCoordinator: Coordinator<Void> {
     // MARK: - Properties
 
     private let navigationController: UINavigationController
-    private let scrollSubject = PassthroughSubject<Void, Never>()
-    private let earnSubject = PassthroughSubject<Void, Never>()
     private let resultSubject = PassthroughSubject<Void, Never>()
     
-    // MARK: - Publishers
-
-    var showEarn: AnyPublisher<Void, Never> { earnSubject.eraseToAnyPublisher() }
+    var tokensViewModel: HomeWithTokensViewModel?
+    let navigation = PassthroughSubject<HomeNavigation, Never>()
 
     // MARK: - Initializers
 
@@ -40,23 +53,23 @@ final class HomeCoordinator: Coordinator<Void> {
     // MARK: - Public actions
 
     func scrollToTop() {
-        scrollSubject.send()
+        tokensViewModel?.scrollToTop()
     }
 
     // MARK: - Methods
 
     override func start() -> AnyPublisher<Void, Never> {
         // Home with tokens
-        let tokensViewModel = createHomeWithTokensViewModel()
+        tokensViewModel = HomeWithTokensViewModel(navigation: navigation)
         
         // home with no token
-        let emptyViewModel = createHomeEmptyViewModel()
+        let emptyViewModel = HomeEmptyViewModel(navigation: navigation)
         
         // home view
         let viewModel = HomeViewModel()
         let homeView = HomeView(
             viewModel: viewModel,
-            viewModelWithTokens: tokensViewModel,
+            viewModelWithTokens: tokensViewModel!,
             emptyViewModel: emptyViewModel
         ).asViewController() as! UIHostingControllerWithoutNavigation<HomeView>
         
@@ -71,169 +84,138 @@ final class HomeCoordinator: Coordinator<Void> {
                 homeView.navigationIsHidden = false
             })
             .store(in: &subscriptions)
-        
-        viewModel.errorShow
-            .sink(receiveValue: { show in
-                let walletsRepository = Resolver.resolve(WalletsRepository.self)
-                if show {
-                    homeView.view.showConnectionErrorView(refreshAction: CocoaAction {
-                        homeView.view.hideConnectionErrorView()
-                        walletsRepository.reload()
-                        return .just(())
-                    })
-                }
-            })
-            .store(in: &subscriptions)
 
         // set view controller
         navigationController.setViewControllers([homeView], animated: false)
         navigationController.onClose = { [weak self] in
             self?.resultSubject.send(())
         }
+        
+        // handle navigation
+        navigation
+            .flatMap { [unowned self] in
+                navigate(to: $0, homeView: homeView)
+            }
+            .sink(receiveValue: {})
+            .store(in: &subscriptions)
     
+        // return publisher
         return resultSubject.prefix(1).eraseToAnyPublisher()
-    }
-    
-    // MARK: - Helpers
-
-    private func createHomeWithTokensViewModel() -> HomeWithTokensViewModel {
-        let tokensViewModel = HomeWithTokensViewModel()
-        
-        tokensViewModel.earnShow
-            .sink(receiveValue: { [unowned self] in
-                earnSubject.send()
-            })
-            .store(in: &subscriptions)
-        
-        scrollSubject
-            .sink(receiveValue: { [unowned tokensViewModel] in
-                tokensViewModel.scrollToTop()
-            })
-            .store(in: &subscriptions)
-        
-        tokensViewModel.buyShow
-            .sink(receiveValue: { [unowned self] _ in
-                if available(.buyScenarioEnabled) {
-                    coordinate(to: BuyCoordinator(navigationController: navigationController, context: .fromHome))
-                        .sink(receiveValue: {})
-                        .store(in: &subscriptions)
-                } else {
-                    presentBuyView()
-                }
-                
-            })
-            .store(in: &subscriptions)
-
-        tokensViewModel.receiveShow
-            .sink(receiveValue: { [unowned self] in
-                openReceiveScreen(pubKey: $0)
-            })
-            .store(in: &subscriptions)
-
-        tokensViewModel.sendShow
-            .flatMap { [unowned self] in
-                coordinate(
-                    to: SendCoordinator(
-                        navigationController: navigationController,
-                        pubKey: nil
-                    )
-                )
-            }
-            .sink(receiveValue: { [weak tokensViewModel] result in
-                switch result {
-                case .cancel:
-                    break
-                case .done:
-                    tokensViewModel?.scrollToTop()
-                }
-            })
-            .store(in: &subscriptions)
-
-        tokensViewModel.swapShow
-            .flatMap { [unowned self] in
-                coordinate(
-                    to: SwapCoordinator(
-                        navigationController: navigationController,
-                        initialWallet: nil
-                    )
-                )
-            }
-            .sink(receiveValue: { [weak tokensViewModel] result in
-                switch result {
-                case .cancel:
-                    break
-                case .done:
-                    tokensViewModel?.scrollToTop()
-                }
-            })
-            .store(in: &subscriptions)
-    
-        tokensViewModel.walletShow
-            .flatMap { [unowned self] pubKey, tokenSymbol in
-                let model = WalletDetailCoordinator.Model(pubKey: pubKey, symbol: tokenSymbol)
-                let coordinator = WalletDetailCoordinator(navigationController: navigationController, model: model)
-                return coordinate(to: coordinator)
-            }
-            .sink(receiveValue: { [weak tokensViewModel] result in
-                switch result {
-                case .cancel:
-                    break
-                case .done:
-                    tokensViewModel?.scrollToTop()
-                }
-            })
-            .store(in: &subscriptions)
-        
-        return tokensViewModel
-    }
-    
-    private func createHomeEmptyViewModel() -> HomeEmptyViewModel {
-        let emptyViewModel = HomeEmptyViewModel()
-        let emptyVMOutput = emptyViewModel.output.coord
-        
-        emptyVMOutput.topUpShow
-            .filter { !available(.buyScenarioEnabled) }
-            .sink(receiveValue: { [unowned self] in
-                presentBuyView()
-            })
-            .store(in: &subscriptions)
-        
-        emptyVMOutput.receive
-            .sink(receiveValue: { [unowned self] in
-                let coordinator = ReceiveCoordinator(navigationController: navigationController, pubKey: $0)
-                coordinate(to: coordinator)
-                    .sink(receiveValue: {})
-                    .store(in: &subscriptions)
-                analyticsManager.log(event: AmplitudeEvent.mainScreenReceiveOpen)
-                analyticsManager.log(event: AmplitudeEvent.receiveViewed(fromPage: "main_screen"))
-            })
-            .store(in: &subscriptions)
-
-        emptyVMOutput.topUpCoinShow
-            .filter { [Token.nativeSolana, .usdc].contains($0) }
-            .flatMap { [unowned self] cryto -> AnyPublisher<Void, Never> in
-                let coordinator: Coordinator<Void>
-                if available(.buyScenarioEnabled) {
-                    coordinator = BuyCoordinator(
-                        navigationController: navigationController,
-                        context: .fromHome,
-                        defaultToken: cryto
-                    )
-                } else {
-                    coordinator = BuyPreparingCoordinator(
-                        navigationController: navigationController,
-                        strategy: .show,
-                        crypto: cryto == .usdc ? .usdc : cryto == .nativeSolana ? .sol : .eth
-                    )
-                }
-                return self.coordinate(to: coordinator)
-            }.sink {}
-            .store(in: &subscriptions)
-    
-        return emptyViewModel
     }
 
     // MARK: - Navigation
+
+    private func navigate(to scene: HomeNavigation, homeView: UIViewController) -> AnyPublisher<Void, Never> {
+        switch scene {
+        case .buy:
+            if available(.buyScenarioEnabled) {
+                return coordinate(to: BuyCoordinator(navigationController: navigationController, context: .fromHome))
+                    .map {_ in ()}
+                    .eraseToAnyPublisher()
+            } else {
+                return Just(presentBuyView())
+                    .eraseToAnyPublisher()
+            }
+        case .receive(let publicKey):
+            let coordinator = ReceiveCoordinator(navigationController: navigationController, pubKey: publicKey)
+            analyticsManager.log(event: AmplitudeEvent.mainScreenReceiveOpen)
+            analyticsManager.log(event: AmplitudeEvent.receiveViewed(fromPage: "main_screen"))
+            return coordinate(to: coordinator)
+                .eraseToAnyPublisher()
+        case .send:
+            return coordinate(
+                to: SendCoordinator(
+                    navigationController: navigationController,
+                    pubKey: nil
+                )
+            )
+            .receive(on: RunLoop.main)
+            .handleEvents(receiveOutput: { [weak tokensViewModel] result in
+                switch result {
+                case .cancel:
+                    break
+                case .done:
+                    tokensViewModel?.scrollToTop()
+                }
+            })
+            .map {_ in ()}
+            .eraseToAnyPublisher()
+            
+        case .swap:
+            return coordinate(
+                to: SwapCoordinator(
+                    navigationController: navigationController,
+                    initialWallet: nil
+                )
+            )
+            .receive(on: RunLoop.main)
+            .handleEvents(receiveOutput: { [weak tokensViewModel] result in
+                switch result {
+                case .cancel:
+                    break
+                case .done:
+                    tokensViewModel?.scrollToTop()
+                }
+            })
+            .map {_ in ()}
+            .eraseToAnyPublisher()
+        case .earn:
+            return Just(())
+                .eraseToAnyPublisher()
+        case .wallet(let pubKey, let tokenSymbol):
+            let model = WalletDetailCoordinator.Model(pubKey: pubKey, symbol: tokenSymbol)
+            let coordinator = WalletDetailCoordinator(navigationController: navigationController, model: model)
+            return coordinate(to: coordinator)
+                .receive(on: RunLoop.main)
+                .handleEvents(receiveOutput: { [weak tokensViewModel] result in
+                    switch result {
+                    case .cancel:
+                        break
+                    case .done:
+                        tokensViewModel?.scrollToTop()
+                    }
+                })
+                .map {_ in ()}
+                .eraseToAnyPublisher()
+        case .actions:
+            return Just(())
+                .eraseToAnyPublisher()
+        case .topUp:
+            return Just(!available(.buyScenarioEnabled) ? presentBuyView(): ())
+                .eraseToAnyPublisher()
+        case .topUpCoin(let token):
+            guard [Token.nativeSolana, .usdc].contains(token) else {
+                return Just(()).eraseToAnyPublisher()
+            }
+            let coordinator: Coordinator<Void>
+            if available(.buyScenarioEnabled) {
+                coordinator = BuyCoordinator(
+                    navigationController: navigationController,
+                    context: .fromHome,
+                    defaultToken: token
+                )
+            } else {
+                coordinator = BuyPreparingCoordinator(
+                    navigationController: navigationController,
+                    strategy: .show,
+                    crypto: token == .usdc ? .usdc : token == .nativeSolana ? .sol : .eth
+                )
+            }
+            return self.coordinate(to: coordinator)
+                .eraseToAnyPublisher()
+        case .error(let show):
+            let walletsRepository = Resolver.resolve(WalletsRepository.self)
+            if show {
+                homeView.view.showConnectionErrorView(refreshAction: CocoaAction { [unowned homeView] in
+                    homeView.view.hideConnectionErrorView()
+                    walletsRepository.reload()
+                    return .just(())
+                })
+            }
+            return Just(())
+                .eraseToAnyPublisher()
+        }
+    }
 
     private func presentBuyView() {
         navigationController.present(
@@ -249,14 +231,5 @@ final class HomeCoordinator: Coordinator<Void> {
             }),
             animated: true
         )
-    }
-
-    private func openReceiveScreen(pubKey: PublicKey) {
-        let coordinator = ReceiveCoordinator(navigationController: navigationController, pubKey: pubKey)
-        coordinate(to: coordinator)
-            .sink(receiveValue: {})
-            .store(in: &subscriptions)
-        analyticsManager.log(event: AmplitudeEvent.mainScreenReceiveOpen)
-        analyticsManager.log(event: AmplitudeEvent.receiveViewed(fromPage: "main_screen"))
     }
 }
