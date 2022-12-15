@@ -111,12 +111,6 @@ extension ProcessTransaction.Status {
                                         }
                                         
                                         // transaction has been confirmed in solana chain but hasn't been confirmed in bitcoin chain
-                                        switch pendingTransaction.rawTransaction {
-                                        case let tx as ProcessTransaction.SendTransaction where tx.network == .bitcoin && pendingTransaction.status.isFinalized:
-                                            return L10n.theTransactionHasBeenConfirmedInSolanaNetworkButYouHaveToTrackItAlsoOnBitcoinNetwork
-                                        default:
-                                            break
-                                        }
                                         return L10n
                                             .theFeeWasReservedSoYouWouldnTPayItAgainTheNextTimeYouCreatedATransactionOfTheSameType(
                                                 ""
@@ -137,12 +131,6 @@ extension ProcessTransaction.Status {
                                 }
                                 
                                 // transaction has been confirmed in solana chain but hasn't been confirmed in bitcoin chain
-                                switch pendingTransaction.rawTransaction {
-                                case let tx as ProcessTransaction.SendTransaction where tx.network == .bitcoin && pendingTransaction.status.isFinalized:
-                                    return false
-                                default:
-                                    break
-                                }
                                 return true
                             }
                             .drive(view.rx.isHidden)

@@ -13,8 +13,11 @@ import OrcaSwapSwift
 ///  This protocol describes an interface for swapping service.
 ///  In general you have to call `load` method first to prepare a service.
 protocol SwapServiceType {
-    /// Prepare swap service.
-    func load() async throws
+    /// Initialize swap service.
+    func initialize() async throws
+    
+    /// Reload swap service.
+    func reload() async throws
 
     /// Determine the all exchange route.
     func getTradablePoolsPairs(

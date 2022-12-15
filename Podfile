@@ -4,7 +4,7 @@ platform :ios, '14.0'
 inhibit_all_warnings!
 
 # ENV Variables
-$keyAppKitPath = ENV['KEY_APP_KIT']
+$keyAppKitPath = ENV['KEY_APP_KIT_SWIFT']
 $solanaSwiftPath = ENV['SOLANA_SWIFT']
 $keyAppUI = ENV['KEY_APP_UI']
 
@@ -24,7 +24,9 @@ def key_app_kit
     "CountriesAPI",
     "KeyAppKitCore",
     "P2PSwift",
-    "Solend"
+    "Solend",
+    "Send",
+    "History"
   ]
 
   if $keyAppKitPath
