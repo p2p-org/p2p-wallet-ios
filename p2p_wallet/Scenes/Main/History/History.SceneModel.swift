@@ -6,6 +6,7 @@ import BECollectionView_Combine
 import Combine
 import FeeRelayerSwift
 import Foundation
+import History
 import Resolver
 import SolanaSwift
 import TransactionParser
@@ -18,8 +19,8 @@ extension History {
 
         @Injected private var walletsRepository: WalletsRepository
         @Injected private var notificationService: NotificationService
-        let transactionRepository = SolanaTransactionRepository()
-        let transactionParser = DefaultTransactionParser(p2pFeePayers: ["FG4Y3yX4AAchp1HvNZ7LfzFTewF2f6nDoMDCohTFrdpT"])
+        let transactionRepository = SolanaTransactionRepository(solanaAPIClient: Resolver.resolve())
+        @Injected private var transactionParserRepository: TransactionParsedRepository
 
         // MARK: - Properties
 
@@ -106,15 +107,13 @@ extension History {
         }
 
         func buildSource() {
-            let cachedTransactionRepository = SolanaTransactionRepository()
-            let cachedTransactionParser = DefaultTransactionParser(p2pFeePayers: Defaults.p2pFeePayerPubkeys)
+            let transactionRepository = SolanaTransactionRepository(solanaAPIClient: Resolver.resolve())
 
             if let accountSymbol = accountSymbol {
                 source = AccountStreamSource(
                     account: accountSymbol.account,
                     symbol: accountSymbol.symbol,
-                    transactionRepository: cachedTransactionRepository,
-                    transactionParser: cachedTransactionParser
+                    transactionRepository: transactionRepository
                 )
             } else {
                 let accountStreamSources = walletsRepository
@@ -124,8 +123,7 @@ extension History {
                         AccountStreamSource(
                             account: wallet.pubkey ?? "",
                             symbol: wallet.token.symbol,
-                            transactionRepository: cachedTransactionRepository,
-                            transactionParser: cachedTransactionParser
+                            transactionRepository: transactionRepository
                         )
                     }
 
@@ -205,7 +203,7 @@ extension History {
                     }) else { continue }
                 
                 parsedTransactions.append(
-                    await transactionParser.parse(
+                    await transactionParserRepository.parse(
                         signatureInfo: signature,
                         transactionInfo: trxInfo,
                         account: account,

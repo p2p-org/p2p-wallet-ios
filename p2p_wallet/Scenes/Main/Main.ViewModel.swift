@@ -7,10 +7,12 @@
 
 import Combine
 import Foundation
+import History
 import NameService
 import RenVMSwift
 import Resolver
 import SolanaSwift
+import FeeRelayerSwift
 
 protocol MainViewModelType {
     var authenticationStatusPublisher: AnyPublisher<AuthenticationPresentationStyle?, Never> { get
@@ -69,6 +71,12 @@ extension Main {
                 nameStorage.save(name: name)
             }
             
+            // Swap service
+            Task {
+                let swapService = Resolver.resolve(SwapServiceType.self)
+                try await swapService.initialize()
+            }
+
             // Notification
             notificationService.requestRemoteNotificationPermission()
         }

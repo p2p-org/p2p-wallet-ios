@@ -41,6 +41,7 @@ extension OrcaSwapV2 {
 
             navigationItem.title = L10n.swap
             navigationItem.rightBarButtonItem = settingButton
+            navigationItem.largeTitleDisplayMode = .never
             hidesBottomBarWhenPushed = true
             analyticsManager.log(event: AmplitudeEvent.swapStartScreen)
         }

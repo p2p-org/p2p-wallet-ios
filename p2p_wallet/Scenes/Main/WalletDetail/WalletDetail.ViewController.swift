@@ -27,7 +27,10 @@ extension WalletDetail {
         // MARK: - Subscene
 
         private lazy var historyVC = History.Scene(account: viewModel.pubkey, symbol: viewModel.symbol)
-        private var coordinator: SendToken.Coordinator?
+
+        private var coordinator: SendCoordinator?
+        private var sendTransactionStatusCoordinator: SendTransactionStatusCoordinator?
+        private var subscriptions = Set<AnyCancellable>()
 
         // MARK: - Initializer
 
@@ -35,6 +38,7 @@ extension WalletDetail {
             self.viewModel = viewModel
             super.init()
             hidesBottomBarWhenPushed = true
+            navigationItem.largeTitleDisplayMode = .never
         }
 
         // MARK: - Methods
@@ -147,19 +151,18 @@ extension WalletDetail {
 //                vc.delegate = self
 //                present(vc, animated: true)
             case let .send(wallet):
-                let vm = SendToken.ViewModel(
-                    walletPubkey: wallet.pubkey,
-                    destinationAddress: nil,
-                    relayMethod: .default
-                )
-                if coordinator == nil, let navigationController = navigationController {
-                    coordinator = SendToken.Coordinator(
-                        viewModel: vm,
-                        navigationController: navigationController
-                    )
-                    coordinator?.doneHandler = processingTransactionDoneHandler
-                }
-                coordinator?.start(hidesBottomBarWhenPushed: true)
+                coordinator = SendCoordinator(rootViewController: navigationController!, preChosenWallet: wallet, hideTabBar: true)
+                coordinator?.start()
+                    .sink { [weak self] result in
+                        switch result {
+                        case let .sent(model):
+                            self?.navigationController?.popToViewController(ofClass: Self.self, animated: true)
+                            self?.showSendTransactionStatus(model: model)
+                        case .cancelled:
+                            break
+                        }
+                    }
+                    .store(in: &subscriptions)
             case let .receive(pubkey):
                 if let solanaPubkey = try? PublicKey(string: viewModel.walletsRepository.nativeWallet?.pubkey) {
                     let tokenWallet = viewModel.walletsRepository.getWallets().first(where: { $0.pubkey == pubkey })
@@ -191,6 +194,15 @@ extension WalletDetail {
 
         @objc func showWalletSettings() {
             viewModel.showWalletSettings()
+        }
+        
+        private func showSendTransactionStatus(model: SendTransaction) {
+            sendTransactionStatusCoordinator = SendTransactionStatusCoordinator(parentController: navigationController!, transaction: model)
+            
+            sendTransactionStatusCoordinator?
+                .start()
+                .sink(receiveValue: { })
+                .store(in: &subscriptions)
         }
     }
 }

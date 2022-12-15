@@ -65,13 +65,11 @@ extension ReceiveToken {
                                         }
                                     // Text
                                     UIStackView(axis: .vertical, spacing: 4, alignment: .leading) {
-                                        if available(.receiveRenBtcEnabled) {
-                                            UILabel(
-                                                text: L10n.showingMyAddressFor,
-                                                textSize: 13,
-                                                textColor: .secondaryLabel
-                                            )
-                                        }
+                                        UILabel(
+                                            text: L10n.showingMyAddressFor,
+                                            textSize: 13,
+                                            textColor: .secondaryLabel
+                                        )
                                         UILabel(text: L10n.network("Solana"), textSize: 17, weight: .semibold)
                                             .setup { view in
                                                 viewModel.tokenTypePublisher
@@ -80,16 +78,13 @@ extension ReceiveToken {
                                                     .store(in: &subscriptions)
                                             }
                                     }.padding(.init(x: 12, y: 0))
-                                    // Next icon
-                                    if available(.receiveRenBtcEnabled) {
+                                    if !viewModel.isDisabledRenBtc {
                                         UIView.defaultNextArrow()
                                     }
                                 }
                                 .padding(.init(x: 15, y: 15))
                                 .onTap { [unowned self] in
-                                    if available(.receiveRenBtcEnabled) {
-                                        viewModel.showSelectionNetwork()
-                                    }
+                                    viewModel.showSelectionNetwork()
                                 }
                                 UIStackView(axis: .vertical, alignment: .fill) {
                                     UIView(height: 1, backgroundColor: .f2f2f7)

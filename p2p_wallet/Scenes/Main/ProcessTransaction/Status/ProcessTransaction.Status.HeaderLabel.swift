@@ -55,8 +55,6 @@ extension ProcessTransaction.Status {
                         }
                     case .finalized:
                         switch info.rawTransaction {
-                        case let transaction as ProcessTransaction.SendTransaction:
-                            return L10n.wasSentSuccessfully(transaction.sender.token.symbol)
                         case let transaction as ProcessTransaction.SwapTransaction:
                             return L10n.swappedSuccessfully(
                                 transaction.sourceWallet.token.symbol,

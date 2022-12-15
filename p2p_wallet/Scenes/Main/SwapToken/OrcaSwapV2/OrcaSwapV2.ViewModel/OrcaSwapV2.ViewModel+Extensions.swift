@@ -145,11 +145,21 @@ extension OrcaSwapV2.ViewModel: OrcaSwapV2ViewModelType {
     }
 
     // MARK: - Actions
+    
+    func initialize() {
+        loadingState = .loading
+        do {
+            try await swapService.initialize()
+            loadingState = .loaded
+        } catch {
+            loadingState = .error(error.readableDescription)
+        }
+    }
 
     func reload() async {
         loadingState = .loading
         do {
-            try await swapService.load()
+            try await swapService.reload()
             loadingState = .loaded
         } catch {
             loadingState = .error(error.readableDescription)

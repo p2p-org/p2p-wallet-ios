@@ -19,7 +19,7 @@ final class HomeCoordinator: Coordinator<Void> {
     private let navigationController: UINavigationController
     private weak var tabBarController: TabBarController?
 
-    private var sendCoordinator: SendToken.Coordinator?
+    private var sendCoordinator: SendCoordinator?
     private let scrollSubject = PassthroughSubject<Void, Never>()
 
     init(navigationController: UINavigationController, tabBarController: TabBarController?) {
@@ -44,6 +44,7 @@ final class HomeCoordinator: Coordinator<Void> {
         ).asViewController() as! UIHostingControllerWithoutNavigation<HomeView>
 
         navigationController.setViewControllers([homeView], animated: false)
+        navigationController.navigationItem.largeTitleDisplayMode = .never
 
         scrollSubject
             .sink(receiveValue: {
@@ -214,29 +215,52 @@ final class HomeCoordinator: Coordinator<Void> {
         analyticsManager.log(event: AmplitudeEvent.receiveViewed(fromPage: "main_screen"))
     }
 
-    private func sendToken(pubKey: String? = nil) async -> Bool {
-        let vm = SendToken.ViewModel(
-            walletPubkey: pubKey,
-            destinationAddress: nil,
-            relayMethod: .default
-        )
-        sendCoordinator = SendToken.Coordinator(
-            viewModel: vm,
-            navigationController: navigationController
-        )
-        analyticsManager.log(event: AmplitudeEvent.mainScreenSendOpen)
-        analyticsManager.log(event: AmplitudeEvent.sendViewed(lastScreen: "main_screen"))
+    private func sendToken(pubKey _: String? = nil) async -> Bool {
+        // Old send
+        // let vm = SendToken.ViewModel(
+        //     walletPubkey: pubKey,
+        //     destinationAddress: nil,
+        //     relayMethod: .default
+        // )
+        // sendCoordinator = SendToken.Coordinator(
+        //     viewModel: vm,
+        //     navigationController: navigationController
+        // )
+        // analyticsManager.log(event: AmplitudeEvent.mainScreenSendOpen)
+        // analyticsManager.log(event: AmplitudeEvent.sendViewed(lastScreen: "main_screen"))
+        //
+        // return await withCheckedContinuation { continuation in
+        //     sendCoordinator?.doneHandler = { [unowned self] in
+        //         navigationController.popToRootViewController(animated: true)
+        //         return continuation.resume(with: .success(true))
+        //     }
+        //     let vc = sendCoordinator?.start(hidesBottomBarWhenPushed: true)
+        //     vc?.onClose = {
+        //         continuation.resume(with: .success(false))
+        //     }
+        // }
 
-        return await withCheckedContinuation { continuation in
-            sendCoordinator?.doneHandler = { [unowned self] in
-                navigationController.popToRootViewController(animated: true)
-                return continuation.resume(with: .success(true))
+        // Send send
+        sendCoordinator = SendCoordinator(rootViewController: navigationController, preChosenWallet: nil, hideTabBar: true)
+        coordinate(to: sendCoordinator!)
+            .sink { [weak self] result in
+                switch result {
+                case let .sent(model):
+                    self?.navigationController.popToRootViewController(animated: true)
+                    self?.showSendTransactionStatus(model: model)
+                case .cancelled:
+                    break
+                }
             }
-            let vc = sendCoordinator?.start(hidesBottomBarWhenPushed: true)
-            vc?.onClose = {
-                continuation.resume(with: .success(false))
-            }
-        }
+            .store(in: &subscriptions)
+        
+        return false
+    }
+
+    private func showSendTransactionStatus(model: SendTransaction) {
+        coordinate(to: SendTransactionStatusCoordinator(parentController: navigationController, transaction: model))
+            .sink(receiveValue: { })
+            .store(in: &subscriptions)
     }
 
     private func showSwap() async -> Bool {
@@ -257,11 +281,13 @@ final class HomeCoordinator: Coordinator<Void> {
         }
     }
 
+    @MainActor
     private func walletDetail(pubKey: String, tokenSymbol: String) async -> Bool {
         let vm = WalletDetail.ViewModel(pubkey: pubKey, symbol: tokenSymbol)
         let vc = WalletDetail.ViewController(viewModel: vm)
         analyticsManager.log(event: AmplitudeEvent.mainScreenTokenDetailsOpen(tokenTicker: tokenSymbol))
-
+        navigationController.show(vc, sender: nil)
+        
         return await withCheckedContinuation { continuation in
             vc.processingTransactionDoneHandler = {
                 continuation.resume(with: .success(true))
@@ -269,7 +295,6 @@ final class HomeCoordinator: Coordinator<Void> {
             vc.onClose = {
                 continuation.resume(with: .success(false))
             }
-            navigationController.show(vc, sender: nil)
         }
     }
 

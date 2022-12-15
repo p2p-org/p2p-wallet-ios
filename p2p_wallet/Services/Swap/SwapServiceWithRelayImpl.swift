@@ -14,12 +14,19 @@ class SwapServiceWithRelayImpl: SwapServiceType {
     @Injected private var relayService: FeeRelayer
     @Injected private var swapRelayService: SwapFeeRelayer
     @Injected private var feeRelayerContextManager: FeeRelayerContextManager
+    private var isInitialized = false
     
     var prefersDirectSwap: Bool {
         GlobalAppState.shared.preferDirectSwap
     }
+    
+    func initialize() async throws {
+        guard !isInitialized else {return}
+        try await reload()
+        isInitialized = true
+    }
 
-    func load() async throws {
+    func reload() async throws {
         try await orcaSwap.load()
         try await feeRelayerContextManager.update()
     }
