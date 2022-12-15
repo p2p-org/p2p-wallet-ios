@@ -26,6 +26,7 @@ final class TabBarController: UITabBarController {
     private var emptySendCoordinator: SendEmptyCoordinator?
     private var sendCoordinator: SendCoordinator?
     private var sendStatusCoordinator: SendTransactionStatusCoordinator?
+    private var sellCoordinator: SellCoordinator?
 
     @Injected private var walletsRepository: WalletsRepository
 
