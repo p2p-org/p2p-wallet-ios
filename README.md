@@ -148,10 +148,10 @@ Result
 
 ## UI Templates
 
-- Copy template `BEScene2.xctemplate` that is located under `Templates` folder to  `~/Library/Developer/Xcode/Templates/`
+- Copy template `MVVM-C.xctemplate` that is located under `Templates` folder to  `~/Library/Developer/Xcode/Templates/`
 ```zsh
-mkdir -p ~/Library/Developer/Xcode/Templates/BEScene2.xctemplate
-cp -R Templates/BEScene2.xctemplate ~/Library/Developer/Xcode/Templates
+mkdir -p ~/Library/Developer/Xcode/Templates/MVVM-C.xctemplate
+cp -R Templates/MVVM-C.xctemplate ~/Library/Developer/Xcode/Templates
 ```
 
 ## Dependency Injection
