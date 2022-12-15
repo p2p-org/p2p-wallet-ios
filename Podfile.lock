@@ -521,7 +521,7 @@ CHECKOUT OPTIONS:
     :commit: 0d8252552621ae484a87032d98383222c123e314
     :git: https://github.com/p2p-org/key-app-kit-swift.git
   SolanaSwift:
-    :commit: 5ce83a14b4612f2f3c84f07c2b734fae9272e24f
+    :commit: 20f4546c93d069d10c19207cfba40a7f79e64c47
     :git: https://github.com/p2p-org/solana-swift.git
   Solend:
     :commit: 0d8252552621ae484a87032d98383222c123e314
