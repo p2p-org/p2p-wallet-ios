@@ -11,7 +11,13 @@ final class SellPendingViewModel: BaseViewModel, ObservableObject {
     private let dismissSubject = PassthroughSubject<Void, Never>()
 
     var send: AnyPublisher<Void, Never> { sendSubject.eraseToAnyPublisher() }
-    var dismiss: AnyPublisher<Void, Never> { dismissSubject.eraseToAnyPublisher() }
+var dismiss: AnyPublisher<Void, Never> { dismissSubject.eraseToAnyPublisher() }
+    let transaction: SellDataServiceTransaction
+    let fiat: Fiat
+    init(transaction: SellDataServiceTransaction, fiat: Fiat) {
+        self.transaction = transaction
+        self.fiat = fiat
+    }
 
     let tokenAmount: String
     let fiatAmount: String
@@ -32,7 +38,7 @@ final class SellPendingViewModel: BaseViewModel, ObservableObject {
 
     func removeClicked() {
         Task {
-            try await sellDataService.deleteTransaction(id: model.id)
+//            try await sellDataService.deleteTransaction(id: id)
         }
         dismissSubject.send()
     }

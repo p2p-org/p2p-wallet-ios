@@ -25,7 +25,7 @@ class SellDataServiceImpl: SellDataService {
     /// List of supported crypto currencies
     private(set) var currency: ProviderCurrency!
     private(set) var fiat: Fiat!
-    private(set) var incompleteTransactions: [Provider.Transaction] = []
+    private(set) var incompleteTransactions: [SellDataServiceTransaction] = []
 
     /// id - user identifier
     func update(id: String) async throws {
@@ -46,12 +46,31 @@ class SellDataServiceImpl: SellDataService {
         statusSubject.send(.ready)
     }
 
-    func incompleteTransactions(transactionId: String) async throws -> [Provider.Transaction] {
+    func incompleteTransactions(transactionId: String) async throws -> [SellDataServiceTransaction] {
         let txs = try await provider.sellTransactions(externalTransactionId: transactionId)
             .filter { $0.status == .waitingForDeposit }
+
         return try await txs.asyncMap { transaction in
-            try await provider.detailSellTransaction(id: transaction.id)
-        }
+            let detailed = try await provider.detailSellTransaction(id: transaction.id)
+            guard
+//                let quoteCurrencyAmount = detailed.quoteCurrencyAmount,
+                let usdRate = detailed.usdRate,
+                let eurRate = detailed.eurRate,
+                let gbpRate = detailed.gbpRate,
+                let depositWallet = detailed.depositWallet?.walletAddress,
+                let status = SellDataServiceTransaction.Status(rawValue: detailed.status.rawValue)
+            else { return nil }
+            return SellDataServiceTransaction(
+                id: detailed.id,
+                status: status,
+                baseCurrencyAmount: detailed.baseCurrencyAmount,
+                quoteCurrencyAmount: detailed.quoteCurrencyAmount ?? 0,
+                usdRate: usdRate,
+                eurRate: eurRate,
+                gbpRate: gbpRate,
+                depositWallet: depositWallet
+            )
+        }.compactMap { $0 }
     }
 
     func transaction(id: String) async throws -> Provider.Transaction {

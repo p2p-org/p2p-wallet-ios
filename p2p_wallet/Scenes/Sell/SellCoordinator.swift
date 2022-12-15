@@ -21,7 +21,9 @@ final class SellCoordinator: Coordinator<SellCoordinatorResult> {
             .flatMap { [unowned self] in
                 navigate(to: $0)
             }
-            .sink { _ in }
+            .sink {_ in
+                debugPrint("Something")
+            }
             .store(in: &subscriptions)
 
         // create viewController
@@ -37,23 +39,26 @@ final class SellCoordinator: Coordinator<SellCoordinatorResult> {
         switch scene {
         case .webPage(let url):
             return navigateToProviderWebPage(url: url)
-                .deallocatedPublisher().handleEvents { _ in } receiveOutput: { [unowned self] _ in
+                .deallocatedPublisher()
+                .handleEvents(receiveOutput: { [unowned self] _ in
                     self.viewModel.warmUp()
-                }.eraseToAnyPublisher()
+                }).eraseToAnyPublisher()
 
-        case .showPending(let transactions):
+        case .showPending(let transactions, let fiat):
             return coordinate(to: SellPendingCoordinator(
                 transactions: transactions,
+                fiat: fiat,
                 navigationController: navigationController)
             )
                 // .flatMap {navigateToAnotherScene()} // chain another navigation if needed
                 // .handleEvents(receiveValue:,receiveCompletion:) // or event make side effect
-                .map {_ in ()}
-                .eraseToAnyPublisher()
+//                .map {_ in ()}
+//                .eraseToAnyPublisher()
         case .swap:
-            return navigateToSwap().deallocatedPublisher().handleEvents { _ in } receiveOutput: { [unowned self] _ in
-                self.viewModel.warmUp()
-            }.eraseToAnyPublisher()
+            return navigateToSwap().deallocatedPublisher()
+                .handleEvents(receiveOutput: { [unowned self] _ in
+                    self.viewModel.warmUp()
+                }).eraseToAnyPublisher()
         }
     }
 
