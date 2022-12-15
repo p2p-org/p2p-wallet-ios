@@ -26,11 +26,14 @@ extension Moonpay {
                 endpoint = String.secretConfig("MOONPAY_STAGING_SELL_ENDPOINT")!
                 #endif
             }
-            if Defaults.apiEndPoint.network == .mainnetBeta {
+//            if Defaults.apiEndPoint.network == .mainnetBeta {
+#if RELEASE
                 return API(endpoint: endpoint, apiKey: .secretConfig("MOONPAY_PRODUCTION_API_KEY")!)
-            } else {
+//            } else {
+#else
                 return API(endpoint: endpoint, apiKey: .secretConfig("MOONPAY_STAGING_API_KEY")!)
-            }
+#endif
+//            }
         }
     }
 
