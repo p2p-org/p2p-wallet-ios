@@ -8,6 +8,17 @@ public enum SellDataServiceStatus {
     case error
 }
 
+public struct SellDataServiceTransaction {
+    var id: String
+    var status: Status
+    var baseCurrencyAmount: Double
+    var quoteCurrencyAmount: Double
+    var usdRate: Double
+    var eurRate: Double
+    var gbpRate: Double
+    var depositWallet: String
+}
+
 public protocol SellDataService {
     associatedtype Provider: SellDataServiceProvider
     var status: AnyPublisher<SellDataServiceStatus, Never> { get }
@@ -21,7 +32,7 @@ public protocol SellDataService {
     /// Supported Fiat by provider for your region
     var fiat: Fiat! { get }
     /// Return incomplete transactions
-    var incompleteTransactions: [Provider.Transaction] { get }
+    var incompleteTransactions: [SellDataServiceTransaction] { get }
     /// Weather service available
     func isAvailable() async -> Bool
     func deleteTransaction(id: String) async throws

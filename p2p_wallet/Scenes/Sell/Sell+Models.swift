@@ -2,7 +2,7 @@ import Foundation
 
 enum SellNavigation {
     case webPage(url: URL)
-    case showPending(transactions: [any ProviderTransaction])
+    case showPending(transactions: [SellDataServiceTransaction], fiat: Fiat)
     case swap
 }
 

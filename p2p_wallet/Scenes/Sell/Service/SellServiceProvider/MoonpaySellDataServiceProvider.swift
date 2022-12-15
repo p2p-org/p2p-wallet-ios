@@ -95,6 +95,9 @@ extension MoonpaySellDataServiceProvider {
         var quoteCurrencyId: String
         var baseCurrencyId: String
         var depositWallet: DepositWallet?
+        var usdRate: Double?
+        var eurRate: Double?
+        var gbpRate: Double?
     }
 }
 

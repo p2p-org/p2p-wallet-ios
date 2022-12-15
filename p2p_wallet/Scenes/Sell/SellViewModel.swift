@@ -106,7 +106,7 @@ class SellViewModel: BaseViewModel, ObservableObject {
             .map { _ in self.dataService.incompleteTransactions }
             .filter { !$0.isEmpty }
             .sink(receiveValue: { [unowned self] transactions in
-                self.navigation.send(.showPending(transactions: transactions))
+                self.navigation.send(.showPending(transactions: transactions, fiat: dataService.fiat))
             })
             .store(in: &subscriptions)
 
