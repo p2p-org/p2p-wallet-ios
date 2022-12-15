@@ -116,17 +116,17 @@ extension PendingTransaction {
         let fee: FeeAmount?
 
         switch rawTransaction {
-        case let transaction as ProcessTransaction.SendTransaction:
-            let amount = transaction.amount.convertToBalance(decimals: transaction.sender.token.decimals)
+        case let transaction as SendTransaction:
+            let amount = transaction.amount
             value = TransferInfo(
-                source: transaction.sender,
-                destination: Wallet(pubkey: transaction.receiver.address, lamports: 0, token: transaction.sender.token),
+                source: transaction.walletToken,
+                destination: Wallet(pubkey: transaction.recipient.address, lamports: 0, token: transaction.walletToken.token),
                 authority: authority,
                 destinationAuthority: nil,
                 rawAmount: amount,
-                account: transaction.sender.pubkey
+                account: transaction.walletToken.pubkey
             )
-            amountInFiat = amount * pricesService.currentPrice(for: transaction.sender.token.symbol)?.value
+            amountInFiat = amount * pricesService.currentPrice(for: transaction.walletToken.token.symbol)?.value
             fee = transaction.feeInToken
         case let transaction as ProcessTransaction.SwapTransaction:
             var destinationWallet = transaction.destinationWallet
