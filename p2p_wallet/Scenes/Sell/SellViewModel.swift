@@ -60,7 +60,7 @@ class SellViewModel: BaseViewModel, ObservableObject {
     private func bind() {
         // enter base amount
         Publishers.CombineLatest($baseAmount, $exchangeRate)
-            .filter {[weak self] _ in
+            .filter { [weak self] _ in
                 self?.isEnteringBaseAmount == true
             }
             .map { baseAmount, exchangeRate in
@@ -72,7 +72,7 @@ class SellViewModel: BaseViewModel, ObservableObject {
 
         // enter quote amount
         Publishers.CombineLatest($quoteAmount, $exchangeRate)
-            .filter {[weak self] _ in
+            .filter { [weak self] _ in
                 self?.isEnteringQuoteAmount == true
             }
             .map { quoteAmount, exchangeRate in
@@ -90,7 +90,7 @@ class SellViewModel: BaseViewModel, ObservableObject {
             .filter { $0 == .ready }
             .map { _ in false }
             .handleEvents(receiveOutput: { _ in
-                DispatchQueue.main.asyncAfter(deadline: .now() + 0.2) {
+                DispatchQueue.main.asyncAfter(deadline: .now() + 0.2) { [unowned self] in
                     self.baseAmount = self.dataService.currency.minSellAmount ?? 0
                     self.quoteCurrencyCode = self.dataService.fiat.code
                     self.maxBaseProviderAmount = self.dataService.currency.maxSellAmount ?? 0

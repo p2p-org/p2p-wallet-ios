@@ -1188,3 +1188,6 @@ Reset the PIN or wait for %@." = "Bạn còn %@ lần thử để nhập mã PIN
 "Remove from history" = "Xóa khỏi lịch sử";
 "Please, send crypto to MoonPay address" = "Vui lòng gửi tiền điện tử đến địa chỉ MoonPay";
 "To finish processing your request you need to send SOL to the address in the description. After 7 days this transaction will be automatically declined." = "Để hoàn tất xử lý yêu cầu của bạn, bạn cần gửi SOL đến địa chỉ trong phần mô tả.  Sau 7 ngày, giao dịch này sẽ tự động bị từ chối.";
+"You need a little more %@" = "Bạn cần thêm một chút %@";
+"The current minimum amount is %@ %@" = "Số tiền tối thiểu hiện tại là %@ %@";
+"Go to Swap" = "Chuyển đến Hoán đổi";
