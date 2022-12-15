@@ -1185,3 +1185,6 @@ Reset the PIN or wait for %@." = "Il vous reste %@ tentatives pour saisir le cod
 "Remove from history" = "Supprimer de l'histoire";
 "Please, send crypto to MoonPay address" = "S'il vous plaît, envoyez la crypto à l'adresse MoonPay";
 "To finish processing your request you need to send SOL to the address in the description. After 7 days this transaction will be automatically declined." = "Pour terminer le traitement de votre demande, vous devez envoyer SOL à l'adresse indiquée dans la description.  Après 7 jours, cette transaction sera automatiquement refusée.";
+"You need a little more %@" = "Vous avez besoin d'un peu plus %@";
+"The current minimum amount is %@ %@" = "Le montant minimum actuel est de %@ %@";
+"Go to Swap" = "Aller à Échanger";

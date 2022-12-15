@@ -22,7 +22,7 @@ struct SellView: View {
             }
         }
         .toolbar {
-            ToolbarItem(placement: .principal) { Text("Cash out SOL").fontWeight(.semibold) }
+            ToolbarItem(placement: .principal) { Text(L10n.cashOut + " SOL").fontWeight(.semibold) }
         }
     }
 
@@ -30,21 +30,21 @@ struct SellView: View {
         VStack(spacing: 8) {
             Image(uiImage: UIImage.coins)
                 .padding(.bottom, 12)
-            Text("You need a little more SOL")
+            Text(L10n.youNeedALittleMore("SOL"))
                 .foregroundColor(Color(Asset.Colors.night.color))
                 .fontWeight(.bold)
                 .apply(style: .title1)
                 .padding(.horizontal, 36)
                 .multilineTextAlignment(.center)
                 .padding(.horizontal, 20)
-            Text("The current minimum amount  is 2 SOL")
+            Text(L10n.theCurrentMinimumAmountIs("2", "SOL"))
                 .foregroundColor(Color(Asset.Colors.night.color))
                 .apply(style: .text1)
                 .multilineTextAlignment(.center)
                 .padding(.horizontal, 20)
             Spacer()
             TextButtonView(
-                title: "Go to Swap",
+                title: L10n.goToSwap,
                 style: .primaryWhite,
                 size: .large
             ) { [weak viewModel] in

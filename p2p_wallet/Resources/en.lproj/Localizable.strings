@@ -1156,3 +1156,6 @@ Reset the PIN or wait for %@.";
 "Remove from history" = "Remove from history";
 "Please, send crypto to MoonPay address" = "Please, send crypto to MoonPay address";
 "To finish processing your request you need to send SOL to the address in the description. After 7 days this transaction will be automatically declined." = "To finish processing your request you need to send SOL to the address in the description. After 7 days this transaction will be automatically declined.";
+"You need a little more %@" = "You need a little more %@";
+"The current minimum amount is %@ %@" = "The current minimum amount is %@ %@";
+"Go to Swap" = "Go to Swap";
