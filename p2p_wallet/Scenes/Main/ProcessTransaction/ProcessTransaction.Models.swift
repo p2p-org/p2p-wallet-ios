@@ -26,7 +26,7 @@ extension RawTransactionType {
         switch self {
         case let transaction as ProcessTransaction.SwapTransaction:
             return transaction.payingWallet
-        case let transaction as ProcessTransaction.SendTransaction:
+        case let transaction as SendTransaction:
             return transaction.payingFeeWallet
         default:
             return nil
@@ -121,46 +121,6 @@ extension ProcessTransaction {
 
         var networkFees: (total: Lamports, token: Token)? {
             (total: 5000, token: .nativeSolana) // TODO: Fix later
-        }
-    }
-
-    struct SendTransaction: RawTransactionType {
-        let sendService: SendServiceType
-        let network: SendToken.Network
-        let sender: Wallet
-        let receiver: SendToken.Recipient
-        let authority: String?
-        let amount: SolanaSwift.Lamports
-        let payingFeeWallet: Wallet?
-        let feeInSOL: UInt64
-        let feeInToken: SolanaSwift.FeeAmount?
-        let isSimulation: Bool
-
-        var mainDescription: String {
-            amount.convertToBalance(decimals: sender.token.decimals)
-                .toString(maximumFractionDigits: 9) +
-                " " +
-                sender.token
-                .symbol + " → " + (receiver.name ?? receiver.address.truncatingMiddle(numOfSymbolsRevealed: 4))
-        }
-
-        func createRequest() -> Single<String> {
-            Single.async { () -> String in
-                try await sendService.send(
-                    from: sender,
-                    receiver: receiver.address,
-                    amount: amount.convertToBalance(decimals: sender.token.decimals),
-                    network: network,
-                    payingFeeWallet: payingFeeWallet
-                )
-            }
-        }
-
-        var networkFees: (total: SolanaSwift.Lamports, token: SolanaSwift.Token)? {
-            guard let feeInToken = feeInToken, let token = payingFeeWallet?.token else {
-                return nil
-            }
-            return (total: feeInToken.total, token: token)
         }
     }
 }

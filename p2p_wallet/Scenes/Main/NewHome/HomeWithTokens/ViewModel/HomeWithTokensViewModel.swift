@@ -90,8 +90,7 @@ class HomeWithTokensViewModel: ObservableObject {
             .debounce(for: 0.1, scheduler: RunLoop.main)
             .sink(receiveValue: { [weak self] wallets in
                 guard let self = self, var wallets = wallets else { return }
-                // Hide NFT TODO: $0.token.supply == 1 is also a condition for NFT but skipped atm
-                wallets = wallets.filter { !($0.token.decimals == 0) }
+                wallets = wallets.filter { !$0.isNFTToken }
                 self.wallets = wallets
                 let items = wallets.map { ($0, $0.isHidden) }
                 self.items = items.filter { !$0.1 }.map(\.0)
@@ -178,5 +177,12 @@ class HomeWithTokensViewModel: ObservableObject {
 extension Wallet: Identifiable {
     public var id: String {
         return name + pubkey
+    }
+}
+
+extension Wallet {
+    var isNFTToken: Bool {
+        // Hide NFT TODO: $0.token.supply == 1 is also a condition for NFT but skipped atm
+        token.decimals == 0
     }
 }

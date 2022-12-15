@@ -6,12 +6,15 @@
 //
 
 import Foundation
+import History
 import NameService
 import RenVMSwift
 import Resolver
 import RxCocoa
 import RxSwift
+import Send
 import SolanaSwift
+import FeeRelayerSwift
 
 protocol MainViewModelType {
     var authenticationStatusDriver: Driver<AuthenticationPresentationStyle?> { get
@@ -52,7 +55,7 @@ extension Main {
             }
             pricesService.startObserving()
             burnAndRelease.resume()
-            
+
             // RenBTC service
             Task {
                 try await lockAndMint.resume()
@@ -66,6 +69,12 @@ extension Main {
                 nameStorage.save(name: name)
             }
             
+            // Swap service
+            Task {
+                let swapService = Resolver.resolve(SwapServiceType.self)
+                try await swapService.initialize()
+            }
+
             // Notification
             notificationService.requestRemoteNotificationPermission()
         }
@@ -96,8 +105,8 @@ extension Main.ViewModel: MainViewModelType {
                     self?.notificationService.notificationWasOpened()
                 })
         )
-            .mapToVoid()
-            .asDriver()
+        .mapToVoid()
+        .asDriver()
     }
 
     var isLockedDriver: Driver<Bool> {
