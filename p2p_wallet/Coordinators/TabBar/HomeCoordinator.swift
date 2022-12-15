@@ -87,6 +87,8 @@ final class HomeCoordinator: Coordinator<Void> {
 
         // set view controller
         navigationController.setViewControllers([homeView], animated: false)
+        navigationController.navigationItem.largeTitleDisplayMode = .never
+
         navigationController.onClose = { [weak self] in
             self?.resultSubject.send(())
         }
@@ -125,23 +127,27 @@ final class HomeCoordinator: Coordinator<Void> {
         case .send:
             return coordinate(
                 to: SendCoordinator(
-                    navigationController: navigationController,
-                    pubKey: nil
+                    rootViewController: navigationController,
+                    preChosenWallet: nil,
+                    hideTabBar: true
                 )
             )
             .receive(on: RunLoop.main)
-            .handleEvents(receiveOutput: { [weak tokensViewModel] result in
+            .handleEvents(receiveOutput: { [weak self] result in
                 switch result {
-                case .cancel:
+                case let .sent(model):
+                    self?.navigationController.popToRootViewController(animated: true)
+                    self?.showSendTransactionStatus(model: model)
+                case .cancelled:
                     break
-                case .done:
-                    tokensViewModel?.scrollToTop()
                 }
+//                tokensViewModel?.scrollToTop()
             })
             .map {_ in ()}
             .eraseToAnyPublisher()
             
         case .swap:
+            analyticsManager.log(event: AmplitudeEvent.swapViewed(lastScreen: "main_screen"))
             return coordinate(
                 to: SwapCoordinator(
                     navigationController: navigationController,
@@ -231,5 +237,11 @@ final class HomeCoordinator: Coordinator<Void> {
             }),
             animated: true
         )
+    }
+    
+    private func showSendTransactionStatus(model: SendTransaction) {
+        coordinate(to: SendTransactionStatusCoordinator(parentController: navigationController, transaction: model))
+            .sink(receiveValue: { })
+            .store(in: &subscriptions)
     }
 }

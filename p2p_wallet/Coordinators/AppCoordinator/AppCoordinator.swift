@@ -13,6 +13,7 @@ import Onboarding
 import Resolver
 import SolanaSwift
 import UIKit
+import OrcaSwapSwift
 
 final class AppCoordinator: Coordinator<Void> {
     // MARK: - Dependencies
@@ -123,6 +124,7 @@ final class AppCoordinator: Coordinator<Void> {
 
         Task.detached {
             try await Resolver.resolve(WalletMetadataService.self).update()
+            try await Resolver.resolve(OrcaSwapType.self).load()
         }
 
         let coordinator = TabBarCoordinator(window: window, authenticateWhenAppears: showAuthenticationOnMainOnAppear)

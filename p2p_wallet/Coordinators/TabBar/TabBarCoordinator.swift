@@ -9,16 +9,23 @@ import Combine
 import Foundation
 import SolanaSwift
 import Resolver
+import AnalyticsManager
 
 final class TabBarCoordinator: Coordinator<Void> {
     
     // MARK: - Dependencies
     @Injected private var userWalletManager: UserWalletManager
+    @Injected private var walletsRepository: WalletsRepository
+    @Injected private var analyticsManager: AnalyticsManager
 
     // MARK: - Properties
     private unowned var window: UIWindow!
     private let tabBarController: TabBarController
     private let closeSubject = PassthroughSubject<Void, Never>()
+    
+    private var emptySendCoordinator: SendEmptyCoordinator?
+    private var sendCoordinator: SendCoordinator?
+    private var sendStatusCoordinator: SendTransactionStatusCoordinator?
 
     // MARK: - Initializer
 
@@ -183,7 +190,7 @@ final class TabBarCoordinator: Coordinator<Void> {
         view.doneHandler = { [weak self] in
             self?.tabBarController.changeItem(to: .invest)
         }
-        let vc = view.asViewController()
+        let vc = UIHostingControllerWithoutNavigation(rootView: view)
         vc.modalPresentationStyle = .fullScreen
         tabBarController.present(vc, animated: true)
     }
@@ -211,10 +218,39 @@ final class TabBarCoordinator: Coordinator<Void> {
                 .sink(receiveValue: { _ in })
                 .store(in: &subscriptions)
         case .send:
-            let sendCoordinator = SendCoordinator(navigationController: navigationController, pubKey: nil)
-            coordinate(to: sendCoordinator)
-                .sink(receiveValue: { _ in })
-                .store(in: &subscriptions)
+            let fiatAmount = walletsRepository.getWallets().reduce(0) { $0 + $1.amountInCurrentFiat }
+            let withTokens = fiatAmount > 0
+            if withTokens {
+                analyticsManager.log(event: AmplitudeEvent.sendViewed(lastScreen: "main_screen"))
+                sendCoordinator = SendCoordinator(rootViewController: navigationController, preChosenWallet: nil, hideTabBar: true)
+                sendCoordinator?.start()
+                    .sink { [weak self, weak navigationController] result in
+                        switch result {
+                        case let .sent(model):
+                            navigationController?.popToRootViewController(animated: true)
+                            self?.routeToSendTransactionStatus(model: model)
+                        case .cancelled:
+                            break
+                        }
+                    }
+                    .store(in: &subscriptions)
+            } else {
+                emptySendCoordinator = SendEmptyCoordinator(navigationController: navigationController)
+                emptySendCoordinator?.start()
+                    .sink(receiveValue: { [weak self] _ in
+                        self?.emptySendCoordinator = nil
+                    })
+                    .store(in: &subscriptions)
+            }
         }
+    }
+
+    private func routeToSendTransactionStatus(model: SendTransaction) {
+        sendStatusCoordinator = SendTransactionStatusCoordinator(parentController: tabBarController, transaction: model)
+        
+        sendStatusCoordinator?
+            .start()
+            .sink(receiveValue: { })
+            .store(in: &subscriptions)
     }
 }
