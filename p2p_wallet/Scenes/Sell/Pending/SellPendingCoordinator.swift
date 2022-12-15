@@ -27,7 +27,7 @@ final class SellPendingCoordinator: Coordinator<SellPendingCoordinatorResult> {
                     tokenAmount: transction.baseCurrencyAmount,
                     fiatAmount: transction.quoteCurrencyAmount,
                     currency: fiat,
-                    receiverAddress: "FfRBerfgeritjg43fBeJEr"
+                    receiverAddress: transction.depositWallet
                 )
             )
 
@@ -38,9 +38,17 @@ final class SellPendingCoordinator: Coordinator<SellPendingCoordinatorResult> {
                 .store(in: &subscriptions)
 
             viewModel.send
-                .sink(receiveValue: {
-                    
-                })
+                .flatMap { [unowned self, navigationController] in
+                    self.coordinate(to:
+                                SendCoordinator(
+                                    rootViewController: navigationController,
+                                    preChosenWallet: nil,
+                                    hideTabBar: true,
+                                    source: .sell
+                                )
+                    )
+                }
+                .sink { _ in }
                 .store(in: &subscriptions)
 
             let viewController = SellPendingView(viewModel: viewModel).asViewController(withoutUIKitNavBar: false)

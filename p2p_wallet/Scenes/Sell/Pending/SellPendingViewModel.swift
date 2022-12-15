@@ -31,7 +31,7 @@ final class SellPendingViewModel: BaseViewModel, ObservableObject {
 
     func removeClicked() {
         Task {
-//            try await sellDataService.deleteTransaction(id: id)
+            try await sellDataService.deleteTransaction(id: model.id)
         }
         dismissSubject.send()
     }
