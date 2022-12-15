@@ -6,12 +6,13 @@ import UIKit
 typealias SellPendingCoordinatorResult = Void
 
 final class SellPendingCoordinator: Coordinator<SellPendingCoordinatorResult> {
-
     let navigationController: UINavigationController
-    let transactions: [any ProviderTransaction]
-    init(transactions: [any ProviderTransaction], navigationController: UINavigationController) {
+    let transactions: [SellDataServiceTransaction]
+    let fiat: Fiat
+    init(transactions: [SellDataServiceTransaction], fiat: Fiat, navigationController: UINavigationController) {
         self.navigationController = navigationController
         self.transactions = transactions
+        self.fiat = fiat
     }
 
     override func start() -> AnyPublisher<SellPendingCoordinatorResult, Never> {
@@ -45,10 +46,21 @@ final class SellPendingCoordinator: Coordinator<SellPendingCoordinatorResult> {
             return viewController
         }
 
-        let beneathVCs = navigationController.viewControllers[0..<navigationController.viewControllers.count-1]
+        let beneathVCs = navigationController.viewControllers//[0..<navigationController.viewControllers.count-1]
         navigationController.viewControllers = beneathVCs + vcs
-        return Publishers.MergeMany(vcs.map { $0.deallocatedPublisher() })
+        return Publishers
+            .MergeMany(vcs.map { $0.deallocatedPublisher() }).collect()
+            .flatMap({ _ in
+                Just(()).eraseToAnyPublisher()
+            })
+            .handleEvents(receiveOutput: { _ in
+                debugPrint("here")
+            })
             .prefix(1)
             .eraseToAnyPublisher()
+    }
+
+    deinit {
+        debugPrint("deinit")
     }
 }
