@@ -248,9 +248,9 @@ private extension SendInputViewModel {
                 guard let self = self else { return }
                 switch value.type {
                 case .token:
-                    _ = await self.stateMachine.accept(action: .changeAmountInToken(value.amount))
+                    _ = await self.stateMachine.accept(action: .changeAmountInToken(value.amount.inToken))
                 case .fiat:
-                    _ = await self.stateMachine.accept(action: .changeAmountInFiat(value.amount))
+                    _ = await self.stateMachine.accept(action: .changeAmountInFiat(value.amount.inFiat))
                 }
                 self.updateInputAmountView()
             })
