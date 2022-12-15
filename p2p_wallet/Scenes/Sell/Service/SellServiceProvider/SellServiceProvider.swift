@@ -1,43 +1,25 @@
 import Foundation
-import Resolver
+
+public protocol ProviderCurrency {
+    var id: String { get }
+    var name: String { get }
+    var code: String { get }
+    var minSellAmount: Double? { get }
+    var maxSellAmount: Double? { get }
+}
+
+public protocol ProviderTransaction: Equatable {
+    var id: String { get }
+//    var status: String { get }
+    var baseCurrencyAmount: Double { get }
+    var depositWalletId: String { get }
+}
 
 public protocol SellDataServiceProvider {
-    associatedtype Transaction
-}
+    associatedtype Transaction: ProviderTransaction
+    associatedtype Currency: ProviderCurrency
 
-class MoonpaySellDataServiceProvider: SellDataServiceProvider {
-    private let moonpayAPI = Moonpay.Provider(api: Resolver.resolve())
-
-    func isAvailable() async throws -> Bool {
-        let ipAddressesResponse = try await moonpayAPI.ipAddresses()
-        return ipAddressesResponse.isSellAllowed
-    }
-
-}
-
-extension MoonpaySellDataServiceProvider {
-    struct Transaction: Codable {
-        var id: String
-        var createdAt: Date
-        var updatedAt: Date
-        var baseCurrencyAmount: Double
-        var quoteCurrencyAmount: Double
-        var feeAmount: Double
-        var extraFeeAmount: Double
-        var status: Transaction.Status
-        var failureReason: String?
-        var refundWalletAddress: String?
-        var depositHash: String?
-        var quoteCurrencyId: String
-        var baseCurrencyId: String
-    }
-}
-
-extension MoonpaySellDataServiceProvider.Transaction {
-    enum Status: String, Codable {
-        case waitingForDeposit
-        case pending
-        case failed
-        case completed
-    }
+    func sellTransactions(externalTransactionId: String) async throws -> [Transaction]
+    func detailSellTransaction(id: String) async throws -> Transaction
+    func deleteSellTransaction(id: String) async throws
 }

@@ -111,6 +111,7 @@ extension WalletDetail {
         // MARK: - Navigation
 
         private var buyCoordinator: BuyCoordinator?
+        private var sellCoordinator: SellCoordinator?
         private func navigate(to scene: NavigatableScene?) {
             switch scene {
             case let .buy(crypto):

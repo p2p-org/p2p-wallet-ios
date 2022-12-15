@@ -395,7 +395,7 @@ extension Resolver: ResolverRegistering {
     /// Shared scope: share between screens
     private static func registerForSharedScope() {
         // BuyServices
-        register { Moonpay.Provider(api: Moonpay.API.fromEnvironment()) }
+        register { Moonpay.Provider(api: Moonpay.API.fromEnvironment(), serverSideAPI: Moonpay.API.fromEnvironment(kind: .server)) }
             .scope(.shared)
 
         register { Buy.MoonpayBuyProcessingFactory() }
@@ -409,6 +409,14 @@ extension Resolver: ResolverRegistering {
         register { MoonpayExchange(provider: resolve()) }
             .implements(BuyExchangeService.self)
             .scope(.session)
+
+        register { SellDataServiceImpl() }
+            .implements((any SellDataService).self)
+            .scope(.shared)
+
+        register { SellActionServiceMock() }
+            .implements((any SellActionService).self)
+            .scope(.shared)
 
         // Banner
         register {

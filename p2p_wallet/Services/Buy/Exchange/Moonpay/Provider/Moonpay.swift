@@ -4,4 +4,4 @@
 
 import Foundation
 
-struct Moonpay {}
+public struct Moonpay {}
