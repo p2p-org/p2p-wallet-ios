@@ -28,5 +28,8 @@ public protocol SellDataServiceProvider {
 extension SellDataServiceTransaction {
     enum Status: String {
         case waitingForDeposit
+        case pending
+        case failed
+        case completed
     }
 }

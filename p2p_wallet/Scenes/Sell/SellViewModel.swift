@@ -105,7 +105,7 @@ class SellViewModel: BaseViewModel, ObservableObject {
         dataStatus
             .filter { $0 == .ready }
             .removeDuplicates()
-            .map { _ in
+            .map { [unowned self] _ in
                 self.dataService.incompleteTransactions
                     .filter { $0.status == .waitingForDeposit }
             }
@@ -133,7 +133,7 @@ class SellViewModel: BaseViewModel, ObservableObject {
             .withLatestFrom(Publishers.CombineLatest3(
                 $baseCurrencyCode, $quoteCurrencyCode, $baseAmount.compactMap { $0 }
             ))
-            .filter { _ in !self.isLoading && self.isEnteringBaseAmount }
+            .filter { [unowned self] _ in !self.isLoading && self.isEnteringBaseAmount }
             .handleEvents(receiveOutput: { [unowned self] amount in
                 self.errorText = nil
                 self.checkError(amount: amount.2)
@@ -169,8 +169,8 @@ class SellViewModel: BaseViewModel, ObservableObject {
     }
 
     func warmUp() {
-        self.isLoading = true
-        self.sellDataServiceId = userWalletManager.wallet?.moonpayExternalClientId
+        isLoading = true
+        sellDataServiceId = userWalletManager.wallet?.moonpayExternalClientId
         Task { [unowned self] in
             guard self.sellDataServiceId != nil else { return }
             try await dataService.update(id: self.sellDataServiceId!)

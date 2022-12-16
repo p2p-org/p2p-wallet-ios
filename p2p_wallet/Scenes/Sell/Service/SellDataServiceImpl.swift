@@ -50,7 +50,20 @@ class SellDataServiceImpl: SellDataService {
     }
 
     func incompleteTransactions(transactionId: String) async throws -> [SellDataServiceTransaction] {
-        let txs = try await provider.sellTransactions(externalTransactionId: transactionId)
+        try await self.transactions(id: transactionId)
+    }
+
+    func transaction(id: String) async throws -> Provider.Transaction {
+        try await provider.detailSellTransaction(id: id)
+    }
+
+    func deleteTransaction(id: String) async throws {
+        try await provider.deleteSellTransaction(id: id)
+        incompleteTransactions.removeAll { $0.id == id }
+    }
+
+    func transactions(id: String) async throws -> [SellDataServiceTransaction] {
+        let txs = try await provider.sellTransactions(externalTransactionId: id)
 
         return try await txs.asyncMap { transaction in
             let detailed = try await provider.detailSellTransaction(id: transaction.id)
@@ -73,15 +86,6 @@ class SellDataServiceImpl: SellDataService {
                 depositWallet: depositWallet
             )
         }.compactMap { $0 }
-    }
-
-    func transaction(id: String) async throws -> Provider.Transaction {
-        try await provider.detailSellTransaction(id: id)
-    }
-
-    func deleteTransaction(id: String) async throws {
-        try await provider.deleteSellTransaction(id: id)
-        incompleteTransactions.removeAll { $0.id == id }
     }
 
     func isAvailable() async -> Bool {
