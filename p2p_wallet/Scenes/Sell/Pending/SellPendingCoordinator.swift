@@ -2,19 +2,32 @@ import Combine
 import Foundation
 import SwiftUI
 import UIKit
+import Send
+import Resolver
 
 typealias SellPendingCoordinatorResult = Void
 
 final class SellPendingCoordinator: Coordinator<SellPendingCoordinatorResult> {
+    
+    // MARK: - Dependencies
+
+    @Injected private var walletsRepository: WalletsRepository
+    
+    // MARK: - Properties
+    
     let navigationController: UINavigationController
     let transactions: [SellDataServiceTransaction]
     let fiat: Fiat
+
+    // MARK: - Initializer
 
     init(transactions: [SellDataServiceTransaction], fiat: Fiat, navigationController: UINavigationController) {
         self.navigationController = navigationController
         self.transactions = transactions
         self.fiat = fiat
     }
+
+    // MARK: - Methods
 
     override func start() -> AnyPublisher<SellPendingCoordinatorResult, Never> {
         let tokenSymbol = "SOL"
@@ -40,12 +53,18 @@ final class SellPendingCoordinator: Coordinator<SellPendingCoordinatorResult> {
             viewModel.send
                 .flatMap { [unowned self, navigationController] in
                     self.coordinate(to:
-                                SendCoordinator(
-                                    rootViewController: navigationController,
-                                    preChosenWallet: nil,
-                                    hideTabBar: true,
-                                    source: .sell
-                                )
+                        SendCoordinator(
+                            rootViewController: navigationController,
+                            preChosenWallet: walletsRepository.nativeWallet,
+                            preChosenRecipient: Recipient(
+                                address: transction.depositWallet,
+                                category: .solanaAddress,
+                                attributes: [.funds]
+                            ),
+                            preChosenAmount: transction.baseCurrencyAmount,
+                            hideTabBar: true,
+                            source: .sell
+                        )
                     )
                 }
                 .sink { _ in }
