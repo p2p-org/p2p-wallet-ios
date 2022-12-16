@@ -5,7 +5,10 @@ import UIKit
 import Send
 import Resolver
 
-typealias SellPendingCoordinatorResult = Void
+enum SellPendingCoordinatorResult {
+    case completed
+    case none
+}
 
 final class SellPendingCoordinator: Coordinator<SellPendingCoordinatorResult> {
     
@@ -29,9 +32,12 @@ final class SellPendingCoordinator: Coordinator<SellPendingCoordinatorResult> {
 
     // MARK: - Methods
 
+    private var resultSubject = PassthroughSubject<SellPendingCoordinatorResult, Never>()
+    private var sellVC: UIViewController?
     override func start() -> AnyPublisher<SellPendingCoordinatorResult, Never> {
         let tokenSymbol = "SOL"
         let vcs = transactions.map { transction in
+            let vcSubject = PassthroughSubject<Bool, Never>()
             let viewModel = SellPendingViewModel(
                 model: SellPendingViewModel.Model(
                     id: transction.id,
@@ -46,6 +52,7 @@ final class SellPendingCoordinator: Coordinator<SellPendingCoordinatorResult> {
 
             viewModel.dismiss
                 .sink { [weak self] in
+                    vcSubject.send(true)
                     self?.navigationController.popViewController(animated: true)
                 }
                 .store(in: &subscriptions)
@@ -67,25 +74,43 @@ final class SellPendingCoordinator: Coordinator<SellPendingCoordinatorResult> {
                         )
                     )
                 }
-                .sink { _ in }
+                .sink { res in
+                    switch res {
+                    case .sent:
+                        vcSubject.send(true)
+                    default:
+                        vcSubject.send(false)
+                    }
+                }
                 .store(in: &subscriptions)
 
             let viewController = SellPendingView(viewModel: viewModel).asViewController(withoutUIKitNavBar: false)
             viewController.navigationItem.title = "\(L10n.cashOut) \(tokenSymbol)"
-            return viewController
+            return (
+                viewController,
+                vcSubject.prefix(1).eraseToAnyPublisher()
+            )
         }
 
-        let beneathVCs = navigationController.viewControllers//[0..<navigationController.viewControllers.count-1]
-        navigationController.viewControllers = beneathVCs + vcs
-        return Publishers
-            .MergeMany(vcs.map { $0.deallocatedPublisher() }).collect()
-            .flatMap({ _ in
-                Just(()).eraseToAnyPublisher()
-            })
-            .handleEvents(receiveOutput: { _ in
-                debugPrint("here")
-            })
-            .prefix(1)
-            .eraseToAnyPublisher()
+        self.sellVC = navigationController.viewControllers.last
+        let beneathVCs = navigationController.viewControllers[0..<navigationController.viewControllers.count-1]
+        navigationController.viewControllers = beneathVCs + vcs.map { $0.0 }
+
+        Publishers.MergeMany(vcs.map { $0.1 }).collect().sink { res in
+            guard let vc = self.sellVC else { return }
+            debugPrint(res)
+            var vcc = self.navigationController.viewControllers
+            vcc.insert(vc, at: self.navigationController.viewControllers.count - 1)
+            self.navigationController.viewControllers = vcc
+        }.store(in: &subscriptions)
+
+        return resultSubject.prefix(1).eraseToAnyPublisher()
+//            Publishers
+//                .MergeMany(
+//                    vcs.map { $0.0.deallocatedPublisher() }
+//                ).collect()
+//                .flatMap { _ in Just(SellPendingCoordinatorResult.none).eraseToAnyPublisher() }
+//                .prefix(1)
+//                .eraseToAnyPublisher()
     }
 }

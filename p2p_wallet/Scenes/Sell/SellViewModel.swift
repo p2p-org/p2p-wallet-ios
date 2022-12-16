@@ -16,7 +16,6 @@ class SellViewModel: BaseViewModel, ObservableObject {
     @Injected private var actionService: any SellActionService
     @Injected private var userWalletManager: UserWalletManager
     private var sellDataServiceId: String?
-    @Published var hasError: Bool = false
 
     // MARK: -
 
@@ -48,6 +47,7 @@ class SellViewModel: BaseViewModel, ObservableObject {
     @Published var isLoading = true
     @Published var hasPending = false
     @Published var errorText: String?
+    @Published var hasError: Bool = false
 
     override init() {
         super.init()
@@ -94,6 +94,7 @@ class SellViewModel: BaseViewModel, ObservableObject {
                     self.baseAmount = self.dataService.currency.minSellAmount ?? 0
                     self.quoteCurrencyCode = self.dataService.fiat.code
                     self.maxBaseProviderAmount = self.dataService.currency.maxSellAmount ?? 0
+                    self.minBaseAmount = self.dataService.currency.minSellAmount ?? 0
                     self.baseCurrencyCode = "SOL"
                 }
             })
@@ -103,7 +104,11 @@ class SellViewModel: BaseViewModel, ObservableObject {
         // Open pendings in case there are pending txs
         dataStatus
             .filter { $0 == .ready }
-            .map { _ in self.dataService.incompleteTransactions }
+            .removeDuplicates()
+            .map { _ in
+                self.dataService.incompleteTransactions
+                    .filter { $0.status == .waitingForDeposit }
+            }
             .filter { !$0.isEmpty }
             .sink(receiveValue: { [unowned self] transactions in
                 self.navigation.send(.showPending(transactions: transactions, fiat: dataService.fiat))
