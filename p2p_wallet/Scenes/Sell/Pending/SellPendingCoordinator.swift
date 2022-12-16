@@ -61,6 +61,7 @@ final class SellPendingCoordinator: Coordinator<SellPendingCoordinatorResult> {
                                 category: .solanaAddress,
                                 attributes: [.funds]
                             ),
+                            preChosenAmount: transction.baseCurrencyAmount,
                             hideTabBar: true,
                             source: .sell
                         )

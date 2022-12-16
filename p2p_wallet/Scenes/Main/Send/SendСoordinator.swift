@@ -29,6 +29,7 @@ class SendCoordinator: Coordinator<SendResult> {
     private let source: SendSource
     let preChosenWallet: Wallet?
     let preChosenRecipient: Recipient?
+    let preChosenAmount: Double?
 
     // MARK: - Initializer
 
@@ -36,12 +37,14 @@ class SendCoordinator: Coordinator<SendResult> {
         rootViewController: UINavigationController,
         preChosenWallet: Wallet?,
         preChosenRecipient: Recipient? = nil,
+        preChosenAmount: Double? = nil,
         hideTabBar: Bool = false,
         source: SendSource = .none
     ) {
         self.rootViewController = rootViewController
         self.preChosenWallet = preChosenWallet
         self.preChosenRecipient = preChosenRecipient
+        self.preChosenAmount = preChosenAmount
         self.hideTabBar = hideTabBar
         self.source = source
         super.init()
@@ -69,6 +72,7 @@ class SendCoordinator: Coordinator<SendResult> {
         coordinate(to: SendInputCoordinator(
             recipient: recipient,
             preChosenWallet: preChosenWallet,
+            preChosenAmount: preChosenAmount,
             navigationController: rootViewController,
             source: source
         ))
@@ -81,6 +85,7 @@ class SendCoordinator: Coordinator<SendResult> {
                 self.coordinate(to: SendInputCoordinator(
                     recipient: $0,
                     preChosenWallet: preChosenWallet,
+                    preChosenAmount: preChosenAmount,
                     navigationController: rootViewController,
                     source: source
                 ))

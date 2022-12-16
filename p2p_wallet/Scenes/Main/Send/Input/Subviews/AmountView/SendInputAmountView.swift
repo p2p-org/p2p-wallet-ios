@@ -27,6 +27,7 @@ struct SendInputAmountView: View {
                                 ) { textField in
                                     textField.font = Constants.inputFount
                                     textField.placeholder = "0"
+                                    textField.isEnabled = !viewModel.isDisabled
                                 }
 
                                 if viewModel.isMaxButtonVisible {
