@@ -17,6 +17,7 @@ struct UserWallet: Identifiable, Hashable, Equatable {
     // TKey part
     let deviceShare: String?
     let ethAddress: String?
+    let moonpayExternalClientId: String?
 
     init(
         seedPhrase: [String]?,
@@ -24,7 +25,8 @@ struct UserWallet: Identifiable, Hashable, Equatable {
         name: String?,
         deviceShare: String?,
         ethAddress: String?,
-        account: Account
+        account: Account,
+        moonpayExternalClientId: String?
     ) {
         self.seedPhrase = seedPhrase
         self.derivablePath = derivablePath
@@ -33,6 +35,7 @@ struct UserWallet: Identifiable, Hashable, Equatable {
         self.ethAddress = ethAddress
 
         self.account = account
+        self.moonpayExternalClientId = moonpayExternalClientId
     }
 
     var id: String {
