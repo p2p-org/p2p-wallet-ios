@@ -44,6 +44,7 @@ struct SendInputFeePromptView: View {
                     multipleTokenActions
                 } else {
                     singleTokenAction
+                        .padding(.horizontal, 16)
                         .padding(.bottom, 16)
                 }
             }
