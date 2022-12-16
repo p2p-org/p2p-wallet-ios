@@ -10,7 +10,7 @@ class SellDataServiceImpl: SellDataService {
     init() {
         statusSubject.send(.initialized)
     }
-    
+
     @Injected private var priceService: PricesService
 
     @SwiftyUserDefault(keyPath: \.isSellAvailable, options: .cached)
@@ -43,6 +43,7 @@ class SellDataServiceImpl: SellDataService {
         } catch {
             self.fiat = .usd
 //            fatalError("Unsupported fiat")
+            statusSubject.send(.error)
         }
         self.incompleteTransactions = try await self.incompleteTransactions(transactionId: id)
         statusSubject.send(.ready)
@@ -50,13 +51,11 @@ class SellDataServiceImpl: SellDataService {
 
     func incompleteTransactions(transactionId: String) async throws -> [SellDataServiceTransaction] {
         let txs = try await provider.sellTransactions(externalTransactionId: transactionId)
-            .filter { $0.status == .waitingForDeposit }
 
         return try await txs.asyncMap { transaction in
             let detailed = try await provider.detailSellTransaction(id: transaction.id)
             let quoteCurrencyAmount = detailed.quoteCurrencyAmount ?? (self.priceService.currentPrice(for: "SOL")?.value ?? 0) * detailed.baseCurrencyAmount
             guard
-//                let quoteCurrencyAmount = detailed.quoteCurrencyAmount,
                 let usdRate = detailed.usdRate,
                 let eurRate = detailed.eurRate,
                 let gbpRate = detailed.gbpRate,
