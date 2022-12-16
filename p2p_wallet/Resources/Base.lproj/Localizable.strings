@@ -1160,3 +1160,7 @@ Reset the PIN or wait for %@.";
 "You need a little more %@" = "You need a little more %@";
 "The current minimum amount is %@ %@" = "The current minimum amount is %@ %@";
 "Go to Swap" = "Go to Swap";
+"Are you sure?" = "Are you sure?";
+"Are you sure you want to interrupt cash out process? Your transaction won't be finished." = "Are you sure you want to interrupt cash out process? Your transaction won't be finished.";
+"Continue transaction" = "Continue transaction";
+"Interrupt" = "Interrupt";

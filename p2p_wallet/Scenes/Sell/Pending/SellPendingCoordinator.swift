@@ -50,11 +50,27 @@ final class SellPendingCoordinator: Coordinator<SellPendingCoordinatorResult> {
                 )
             )
 
+            let viewController = SellPendingView(viewModel: viewModel).asViewController()
+
             viewModel.dismiss
                 .sink { [weak self] in
                     vcSubject.send(true)
                     self?.navigationController.popViewController(animated: true)
                 }
+                .store(in: &subscriptions)
+            viewModel.back
+                .sink(receiveValue: { [unowned self] in
+                    _ = viewController.showAlert(
+                        title: L10n.areYouSure,
+                        message: L10n.areYouSureYouWantToInterruptCashOutProcessYourTransactionWonTBeFinished,
+                        actions: [
+                            UIAlertAction(title: L10n.continueTransaction, style: .default),
+                            UIAlertAction(title: L10n.interrupt, style: .destructive) { [unowned self] _ in
+                                navigationController.popToRootViewController(animated: true)
+                            }
+                        ]
+                    )
+                })
                 .store(in: &subscriptions)
 
             viewModel.send
@@ -84,7 +100,6 @@ final class SellPendingCoordinator: Coordinator<SellPendingCoordinatorResult> {
                 }
                 .store(in: &subscriptions)
 
-            let viewController = SellPendingView(viewModel: viewModel).asViewController(withoutUIKitNavBar: false)
             viewController.navigationItem.title = "\(L10n.cashOut) \(tokenSymbol)"
             return (
                 viewController,

@@ -1191,3 +1191,7 @@ Reset the PIN or wait for %@." = "Bạn còn %@ lần thử để nhập mã PIN
 "You need a little more %@" = "Bạn cần thêm một chút %@";
 "The current minimum amount is %@ %@" = "Số tiền tối thiểu hiện tại là %@ %@";
 "Go to Swap" = "Chuyển đến Hoán đổi";
+"Are you sure?" = "Bạn có chắc không?";
+"Are you sure you want to interrupt cash out process? Your transaction won't be finished." = "Bạn có chắc chắn muốn làm gián đoạn quá trình rút tiền không?  Giao dịch của bạn sẽ không kết thúc.";
+"Continue transaction" = "Tiếp tục giao dịch";
+"Interrupt" = "Ngắt";

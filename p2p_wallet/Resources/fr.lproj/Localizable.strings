@@ -1188,3 +1188,7 @@ Reset the PIN or wait for %@." = "Il vous reste %@ tentatives pour saisir le cod
 "You need a little more %@" = "Vous avez besoin d'un peu plus %@";
 "The current minimum amount is %@ %@" = "Le montant minimum actuel est de %@ %@";
 "Go to Swap" = "Aller à Échanger";
+"Are you sure?" = "Êtes-vous sûr?";
+"Are you sure you want to interrupt cash out process? Your transaction won't be finished." = "Voulez-vous vraiment interrompre le processus de retrait ?  Votre transaction ne sera pas terminée.";
+"Continue transaction" = "Continuer la transaction";
+"Interrupt" = "Couper la parole";
