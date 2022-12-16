@@ -7,6 +7,7 @@ import Foundation
 import Send
 import SwiftUI
 import SolanaSwift
+import Send
 
 enum SendResult {
     case sent(SendTransaction)
@@ -19,34 +20,72 @@ enum SendSource: String {
 
 class SendCoordinator: Coordinator<SendResult> {
 
+    // MARK: - Properties
+
     let rootViewController: UINavigationController
-    let preChosenWallet: Wallet?
     let hideTabBar: Bool
     let result = PassthroughSubject<SendResult, Never>()
 
     private let source: SendSource
+    let preChosenWallet: Wallet?
+    let preChosenRecipient: Recipient?
+    let preChosenAmount: Double?
+
+    // MARK: - Initializer
 
     init(
         rootViewController: UINavigationController,
         preChosenWallet: Wallet?,
+        preChosenRecipient: Recipient? = nil,
+        preChosenAmount: Double? = nil,
         hideTabBar: Bool = false,
         source: SendSource = .none
     ) {
         self.rootViewController = rootViewController
         self.preChosenWallet = preChosenWallet
+        self.preChosenRecipient = preChosenRecipient
+        self.preChosenAmount = preChosenAmount
         self.hideTabBar = hideTabBar
         self.source = source
         super.init()
     }
 
+    // MARK: - Methods
+
     override func start() -> AnyPublisher<SendResult, Never> {
-        // Setup view
+        // normal flow with no preChosenRecipient
+        if let recipient = preChosenRecipient {
+            return startFlowWithPreChosenRecipient(recipient)
+        } else {
+            startFlowWithNoPreChosenRecipient()
+        }
+
+        // Back
+        return result.prefix(1).eraseToAnyPublisher()
+    }
+    
+    // MARK: - Helpers
+    
+    private func startFlowWithPreChosenRecipient(
+        _ recipient: Recipient
+    ) -> AnyPublisher<SendResult, Never> {
+        coordinate(to: SendInputCoordinator(
+            recipient: recipient,
+            preChosenWallet: preChosenWallet,
+            preChosenAmount: preChosenAmount,
+            navigationController: rootViewController,
+            source: source
+        ))
+    }
+
+    private func startFlowWithNoPreChosenRecipient() {
         let vm = RecipientSearchViewModel(preChosenWallet: preChosenWallet, source: source)
         vm.coordinator.selectRecipientPublisher
             .flatMap { [unowned self] in
                 self.coordinate(to: SendInputCoordinator(
                     recipient: $0,
                     preChosenWallet: preChosenWallet,
+                    preChosenAmount: preChosenAmount,
                     navigationController: rootViewController,
                     source: source
                 ))
@@ -83,9 +122,6 @@ class SendCoordinator: Coordinator<SendResult> {
         vc.onClose = { [weak self] in
             self?.result.send(.cancelled)
         }
-
-        // Back
-        return result.prefix(1).eraseToAnyPublisher()
     }
 }
 
