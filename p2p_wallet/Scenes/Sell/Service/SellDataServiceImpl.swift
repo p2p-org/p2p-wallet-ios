@@ -27,12 +27,8 @@ class SellDataServiceImpl: SellDataService {
     /// List of supported crypto currencies
     private(set) var currency: ProviderCurrency!
     private(set) var fiat: Fiat!
-    
-    private(set) var incompleteTransactions = CurrentValueSubject<[SellDataServiceTransaction], Never>.init([])
-    var incompleteTransactionsPublishers: AnyPublisher<[SellDataServiceTransaction], Never> {
-        incompleteTransactions.eraseToAnyPublisher()
-    }
-    
+    private(set) var incompleteTransactions: [SellDataServiceTransaction] = []
+
     /// id - user identifier
     func update(id: String) async throws {
         statusSubject.send(.updating)
@@ -43,21 +39,16 @@ class SellDataServiceImpl: SellDataService {
         }
         self.currency = currency
         do {
-            fiat = try await provider.fiat()
+            self.fiat = try await provider.fiat()
         } catch {
-            fiat = .usd
+            self.fiat = .usd
 //            fatalError("Unsupported fiat")
         }
-        let incompleteTransactions = try await getIncompleteTransactions(transactionId: id)
-        self.incompleteTransactions.send(incompleteTransactions)
+        self.incompleteTransactions = try await self.incompleteTransactions(transactionId: id)
         statusSubject.send(.ready)
     }
-    
-    func getCurrentIncompleteTransactions() -> [SellDataServiceTransaction] {
-        incompleteTransactions.value
-    }
 
-    private func getIncompleteTransactions(transactionId: String) async throws -> [SellDataServiceTransaction] {
+    func incompleteTransactions(transactionId: String) async throws -> [SellDataServiceTransaction] {
         let txs = try await provider.sellTransactions(externalTransactionId: transactionId)
             .filter { $0.status == .waitingForDeposit }
 
@@ -91,9 +82,7 @@ class SellDataServiceImpl: SellDataService {
 
     func deleteTransaction(id: String) async throws {
         try await provider.deleteSellTransaction(id: id)
-        var incompleteTransactions = incompleteTransactions.value
         incompleteTransactions.removeAll { $0.id == id }
-        self.incompleteTransactions.send(incompleteTransactions)
     }
 
     func isAvailable() async -> Bool {
