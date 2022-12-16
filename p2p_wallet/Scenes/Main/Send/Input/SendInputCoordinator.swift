@@ -36,6 +36,7 @@ final class SendInputCoordinator: Coordinator<SendResult> {
 
         viewModel.tokenViewModel.changeTokenPressed
             .sink { [weak self] in
+                controller.hideKeyboard()
                 self?.openChooseWalletToken(from: controller, viewModel: viewModel)
             }
             .store(in: &subscriptions)
@@ -90,6 +91,7 @@ final class SendInputCoordinator: Coordinator<SendResult> {
             if let walletToken = walletToken {
                 viewModel.sourceWallet = walletToken
             }
+            viewModel.openKeyboard()
         }
         .store(in: &subscriptions)
     }

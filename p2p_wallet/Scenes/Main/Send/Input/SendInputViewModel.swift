@@ -92,7 +92,7 @@ final class SendInputViewModel: BaseViewModel, ObservableObject {
                         if preferOrder[lhs.token.symbol] != nil || preferOrder[rhs.token.symbol] != nil {
                             return (preferOrder[lhs.token.symbol] ?? 3) < (preferOrder[rhs.token.symbol] ?? 3)
                         } else {
-                            return lhs.lamports ?? 0 < rhs.lamports ?? 0
+                            return lhs.amountInCurrentFiat > rhs.amountInCurrentFiat
                         }
                     }
                 tokenInWallet = sortedWallets.first ?? Wallet(token: Token.nativeSolana)
@@ -219,6 +219,12 @@ final class SendInputViewModel: BaseViewModel, ObservableObject {
             }
         }
     }
+
+    func openKeyboard() {
+        DispatchQueue.main.async {
+            self.inputAmountViewModel.isFirstResponder = true
+        }
+    }
 }
 
 private extension SendInputViewModel {
@@ -242,9 +248,9 @@ private extension SendInputViewModel {
                 guard let self = self else { return }
                 switch value.type {
                 case .token:
-                    _ = await self.stateMachine.accept(action: .changeAmountInToken(value.amount))
+                    _ = await self.stateMachine.accept(action: .changeAmountInToken(value.amount.inToken))
                 case .fiat:
-                    _ = await self.stateMachine.accept(action: .changeAmountInFiat(value.amount))
+                    _ = await self.stateMachine.accept(action: .changeAmountInFiat(value.amount.inFiat))
                 }
                 self.updateInputAmountView()
             })
@@ -326,6 +332,13 @@ private extension SendInputViewModel {
             .dropFirst()
             .sink { [weak self] value in
                 self?.logFiatInputClick(isCrypto: value == .token)
+            }
+            .store(in: &subscriptions)
+
+        $status
+            .sink { [weak self] value in
+                guard value == .ready else { return }
+                self?.openKeyboard()
             }
             .store(in: &subscriptions)
     }
