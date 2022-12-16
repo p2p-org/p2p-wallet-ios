@@ -14,7 +14,7 @@ class SellViewModel: BaseViewModel, ObservableObject {
     @Injected private var walletRepository: WalletsRepository
     @Injected private var dataService: any SellDataService
     @Injected private var actionService: any SellActionService
-    @Injected private var storage: KeychainStorage
+    @Injected private var userWalletManager: UserWalletManager
     private var sellDataServiceId: String?
     @Published var hasError: Bool = false
 
@@ -165,14 +165,8 @@ class SellViewModel: BaseViewModel, ObservableObject {
 
     func warmUp() {
         self.isLoading = true
+        self.sellDataServiceId = userWalletManager.wallet?.moonpayExternalClientId
         Task { [unowned self] in
-            guard let phrase = storage.account?.phrase else { return }
-            let acc = try await Account(
-                phrase: phrase,
-                network: .mainnetBeta,
-                derivablePath: DerivablePath(type: .bip44Change, walletIndex: 101, accountIndex: 0)
-            )
-            self.sellDataServiceId = acc.publicKey.base58EncodedString
             guard self.sellDataServiceId != nil else { return }
             try await dataService.update(id: self.sellDataServiceId!)
         }
