@@ -103,7 +103,7 @@ class SellViewModel: BaseViewModel, ObservableObject {
         // Open pendings in case there are pending txs
         dataStatus
             .filter { $0 == .ready }
-            .map { _ in self.dataService.getCurrentIncompleteTransactions() }
+            .map { _ in self.dataService.incompleteTransactions }
             .filter { !$0.isEmpty }
             .sink(receiveValue: { [unowned self] transactions in
                 self.navigation.send(.showPending(transactions: transactions, fiat: dataService.fiat))
