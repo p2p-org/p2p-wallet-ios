@@ -34,6 +34,7 @@ final class SendInputAmountViewModel: BaseViewModel, ObservableObject {
     @Published var secondaryCurrencyText = ""
 
     @Published var isFirstResponder: Bool = false
+    @Published var isDisabled = false
     @Published var amount: Amount?
     @Published var isError: Bool = false
     @Published var countAfterDecimalPoint: Int

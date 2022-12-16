@@ -147,6 +147,7 @@ struct SendInputView_Previews: PreviewProvider {
                     attributes: [.funds]
                 ),
                 preChosenWallet: nil,
+                preChosenAmount: nil,
                 source: .none
             )
         )

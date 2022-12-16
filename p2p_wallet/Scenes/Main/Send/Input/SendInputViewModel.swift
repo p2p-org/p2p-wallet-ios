@@ -66,7 +66,7 @@ final class SendInputViewModel: BaseViewModel, ObservableObject {
     private let pricesService: PricesServiceType
     @Injected private var analyticsManager: AnalyticsManager
 
-    init(recipient: Recipient, preChosenWallet: Wallet?, source: SendSource) {
+    init(recipient: Recipient, preChosenWallet: Wallet?, preChosenAmount: Double?, source: SendSource) {
         self.source = source
         let repository = Resolver.resolve(WalletsRepository.self)
         walletsRepository = repository
@@ -149,6 +149,16 @@ final class SendInputViewModel: BaseViewModel, ObservableObject {
         initialize()
         logOpen()
         bind()
+        
+        // disable adding amount if amount is pre-chosen
+        if let amount = preChosenAmount {
+            Task {
+                await stateMachine.accept(action: .changeAmountInToken(amount))
+                await MainActor.run { [unowned self] in
+                    inputAmountViewModel.isDisabled = true
+                }
+            }
+        }
     }
 
     func initialize() {
