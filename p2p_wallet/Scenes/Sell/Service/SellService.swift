@@ -31,8 +31,10 @@ public protocol SellDataService {
     var currency: ProviderCurrency! { get }
     /// Supported Fiat by provider for your region
     var fiat: Fiat! { get }
-    /// Return incomplete transactions
-    var incompleteTransactions: [SellDataServiceTransaction] { get }
+    /// Return incomplete transactions publishers
+    var incompleteTransactionsPublishers: AnyPublisher<[SellDataServiceTransaction], Never> { get }
+    /// get current incomplete transactions
+    func getCurrentIncompleteTransactions() -> [SellDataServiceTransaction]
     /// Weather service available
     func isAvailable() async -> Bool
     func deleteTransaction(id: String) async throws
