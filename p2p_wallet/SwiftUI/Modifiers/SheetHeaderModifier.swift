@@ -18,6 +18,7 @@ struct SheetHeaderModifier: ViewModifier {
     func body(content: Content) -> some View {
         VStack(spacing: 0) {
             SheetHeaderView(title: title, withSeparator: withSeparator, bottomPadding: bottomPadding, close: close)
+            Spacer()
             content
         }.background(Color(Asset.Colors.snow.color))
             .cornerRadius(radius: 18, corners: [.topLeft, .topRight])
@@ -57,6 +58,7 @@ private struct SheetHeaderView: View {
                     Spacer()
                 }
                 Text(title)
+                    .multilineTextAlignment(.center)
                     .foregroundColor(Color(Asset.Colors.night.color))
                     .font(uiFont: .font(of: .title3, weight: .semibold))
                     .padding(.top, 18)

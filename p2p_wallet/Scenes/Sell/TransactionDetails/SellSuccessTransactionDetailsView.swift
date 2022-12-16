@@ -50,7 +50,7 @@ struct SellSuccessTransactionDetailsView: View {
 
     private var infoText: some View {
         VStack(alignment: .leading, spacing: 32) {
-            textView(title: L10n.sentTo, description: model.receiverAddress)
+            textView(title: L10n.sentTo, description: model.formattedAddress)
             textView(title: L10n.transactionFee, description: model.transactionFee)
         }
     }
@@ -89,6 +89,10 @@ extension SellSuccessTransactionDetailsView {
         let topViewModel: SellTransactionDetailsTopView.Model
         let receiverAddress: String
         let transactionFee: String
+        
+        var formattedAddress: String {
+            receiverAddress.truncatingMiddle(numOfSymbolsRevealed: 6)
+        }
     }
 }
 
