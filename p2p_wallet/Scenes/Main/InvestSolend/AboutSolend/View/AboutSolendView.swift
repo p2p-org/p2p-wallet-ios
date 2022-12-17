@@ -13,8 +13,6 @@ struct AboutSolendView: View {
     private let cancelSubject = PassthroughSubject<Void, Never>()
     var cancel: AnyPublisher<Void, Never> { cancelSubject.eraseToAnyPublisher() }
 
-    @State private var index = 0
-
     var body: some View {
         VStack(spacing: 26) {
             PagingView(
