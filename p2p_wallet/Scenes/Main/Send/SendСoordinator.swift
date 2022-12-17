@@ -3,10 +3,12 @@
 // found in the LICENSE file.
 
 import Combine
+import FeeRelayerSwift
 import Foundation
+import Resolver
 import Send
-import SwiftUI
 import SolanaSwift
+import SwiftUI
 
 enum SendResult {
     case sent(SendTransaction)
@@ -18,7 +20,6 @@ enum SendSource: String {
 }
 
 class SendCoordinator: Coordinator<SendResult> {
-
     let rootViewController: UINavigationController
     let preChosenWallet: Wallet?
     let hideTabBar: Bool
@@ -40,6 +41,11 @@ class SendCoordinator: Coordinator<SendResult> {
     }
 
     override func start() -> AnyPublisher<SendResult, Never> {
+        // Pre warm
+        Task.detached {
+            try await Resolver.resolve(FeeRelayerContextManager.self).update()
+        }
+
         // Setup view
         let vm = RecipientSearchViewModel(preChosenWallet: preChosenWallet, source: source)
         vm.coordinator.selectRecipientPublisher
