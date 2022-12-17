@@ -27,6 +27,6 @@ import Foundation
 /// - Parameters:
 ///   - feature: feature to be checked
 ///   - provider: provder that holds available features list
-public func available(_ feature: Feature, provider: FeatureFlagProvider = .shared) -> Bool {
+func available(_ feature: Feature, provider: FeatureFlagProvider = .shared) -> Bool {
     provider.isEnabled(feature)
 }

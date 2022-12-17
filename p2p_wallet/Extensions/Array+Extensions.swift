@@ -27,24 +27,6 @@ extension Array where Element: UIColor {
     }
 }
 
-extension Array {
-    func chunked(into size: Int) -> [[Element]] {
-        stride(from: 0, to: count, by: size).map {
-            Array(self[$0 ..< Swift.min($0 + size, count)])
-        }
-    }
-
-    func unique<T: Equatable>(keyPath: KeyPath<Element, T>) -> [Element] {
-        var result: [Element] = []
-        for item in self {
-            if result.first(where: { e in e[keyPath: keyPath] == item[keyPath: keyPath] }) == nil {
-                result.append(item)
-            }
-        }
-        return result
-    }
-}
-
 extension Array where Element: Hashable {
     var unique: [Element] {
         var buffer = [Element]()
