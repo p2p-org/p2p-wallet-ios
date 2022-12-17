@@ -11,14 +11,6 @@ import Resolver
 import SolanaSwift
 
 extension AppCoordinator: AppEventHandlerDelegate {
-    func didStartLoading() {
-        window?.showLoadingIndicatorView()
-    }
-
-    func didStopLoading() {
-        window?.hideLoadingIndicatorView()
-    }
-
     func userDidChangeAPIEndpoint(to _: APIEndPoint) {
         showAuthenticationOnMainOnAppear = false
         Task {

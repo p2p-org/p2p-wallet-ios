@@ -17,17 +17,9 @@ protocol AppEventHandlerType {
 }
 
 final class AppEventHandler: AppEventHandlerType {
-    // MARK: - Dependencies
-
-    private let storage: AccountStorageType & PincodeStorageType & NameStorageType = Resolver.resolve()
-    private let notificationsService: NotificationService = Resolver.resolve()
-
     // MARK: - Properties
 
     weak var delegate: AppEventHandlerDelegate?
-
-    @available(*, deprecated, message: "Will be removed")
-    private var resolvedName: String?
 
     init() {
         disableDevnetTestnetIfDebug()
@@ -75,47 +67,4 @@ extension AppEventHandler: ChangeThemeResponder {
         Defaults.appearance = style
         delegate?.userDidChangeTheme(to: style)
     }
-}
-
-// MARK: - DeviceOwnerAuthenticationHandler
-
-extension AppEventHandler: DeviceOwnerAuthenticationHandler {
-    func requiredOwner(onSuccess: (() -> Void)?, onFailure: ((String?) -> Void)?) {
-        let myContext = LAContext()
-
-        var error: NSError?
-        guard myContext.canEvaluatePolicy(.deviceOwnerAuthentication, error: &error) else {
-            DispatchQueue.main.async {
-                onFailure?(errorToString(error))
-            }
-            return
-        }
-
-        myContext.evaluatePolicy(.deviceOwnerAuthentication, localizedReason: L10n.confirmItSYou) { success, error in
-            guard success else {
-                DispatchQueue.main.async {
-                    onFailure?(errorToString(error))
-                }
-                return
-            }
-            DispatchQueue.main.sync {
-                onSuccess?()
-            }
-        }
-    }
-}
-
-// MARK: - Helpers
-
-private func errorToString(_ error: Error?) -> String? {
-    var error = error?.localizedDescription ?? L10n.unknownError
-    switch error {
-    case "Passcode not set.":
-        error = L10n.PasscodeNotSet.soWeCanTVerifyYouAsTheDeviceSOwner
-    case "Canceled by user.":
-        return nil
-    default:
-        break
-    }
-    return error
 }

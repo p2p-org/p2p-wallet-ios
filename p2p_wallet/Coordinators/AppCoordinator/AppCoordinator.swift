@@ -19,7 +19,6 @@ class AppCoordinator: Coordinator<Void> {
     // MARK: - Dependencies
 
     private var appEventHandler: AppEventHandlerType = Resolver.resolve()
-    private let storage: AccountStorageType & PincodeStorageType & NameStorageType = Resolver.resolve()
     let analyticsManager: AnalyticsManager = Resolver.resolve()
     let notificationsService: NotificationService = Resolver.resolve()
 

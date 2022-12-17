@@ -27,10 +27,6 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
 
     @Injected private var notificationService: NotificationService
 
-    static var shared: AppDelegate {
-        UIApplication.shared.delegate as! AppDelegate
-    }
-
     private lazy var proxyAppDelegate = AppDelegateProxyService()
 
     func application(
