@@ -30,12 +30,12 @@ extension History {
             
             /// Applies to output list
             var data = newData
-            for transaction in transactions.reversed() {
+            for transaction in transactions {
                 // update if exists
                 if let index = data.firstIndex(where: {
                     switch $0 {
-                    case .sellTransaction(let transaction):
-                        return transaction.id == transaction.id
+                    case .sellTransaction(let tx):
+                        return tx.id == transaction.id
                     default:
                         return false
                     }
