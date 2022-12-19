@@ -16,17 +16,17 @@ class TransactionCell: BaseCollectionViewCell, BECollectionViewCell {
 
     // MARK: - Subviews
 
-    private lazy var imageView = TransactionImageView(
+    lazy var imageView = TransactionImageView(
         size: 48,
         backgroundColor: .grayPanel,
         cornerRadius: 16,
         miniIconsSize: 29
     )
 
-    private lazy var transactionTypeLabel = UILabel(textSize: 16)
+    lazy var transactionTypeLabel = UILabel(textSize: 16)
     lazy var amountInFiatLabel = UILabel(textSize: 16, weight: .medium, textAlignment: .right)
 
-    private lazy var descriptionLabel = UILabel(textSize: 12, textColor: .textSecondary)
+    lazy var descriptionLabel = UILabel(textSize: 12, textColor: .textSecondary)
     private lazy var amountInTokenLabel = UILabel(textSize: 12, textColor: .textSecondary, textAlignment: .right)
 
     lazy var topStackView = UIStackView(
@@ -77,17 +77,28 @@ class TransactionCell: BaseCollectionViewCell, BECollectionViewCell {
             descriptionLabel.heightAnchor.constraint(equalToConstant: 18),
             amountInTokenLabel.heightAnchor.constraint(equalToConstant: 18),
         ])
+        
     }
 
     // MARK: - BECollectionViewCell
-
     func setUp(with item: AnyHashable?) {
-        guard let transaction = item as? ParsedTransaction else { return }
+        guard let item = item as? HistoryItem else { return }
+        switch item {
+        case .parsedTransaction(let transaction):
+            imageView.layer.cornerRadius = 16
+            setUp(with: transaction)
+        case .sellTransaction(let transaction):
+            imageView.layer.cornerRadius = 24
+            setUp(with: transaction)
+        }
+    }
 
+    private func setUp(with transaction: ParsedTransaction) {
         // clear
         descriptionLabel.text = nil
 
         // type
+        transactionTypeLabel.font = transactionTypeLabel.font.withWeight(.regular)
         transactionTypeLabel.text = transaction.label
 
         // description texts
@@ -181,5 +192,63 @@ class TransactionCell: BaseCollectionViewCell, BECollectionViewCell {
         } else if let blockhash = transaction.blockhash {
             amountInTokenLabel.text = "#" + blockhash.prefix(4) + "..." + blockhash.suffix(4)
         }
+        
+        // modify swap value
+        switch transaction.info {
+        case _ as SwapInfo:
+            amountInFiatLabel.text = amountInFiatLabel.text?.replacingOccurrences(of: "+", with: "")
+            amountInFiatLabel.text = amountInFiatLabel.text?.replacingOccurrences(of: "-", with: "")
+            amountInFiatLabel.textColor = .textBlack
+        default:
+            return
+        }
+    }
+    
+    private func setUp(with transaction: SellDataServiceTransaction) {
+        // reset
+        transactionTypeLabel.font = transactionTypeLabel.font.withWeight(.semibold)
+        
+        // get infos
+        let statusImage: UIImage
+        let title: String
+        let subtitle: String
+        
+        switch transaction.status {
+        case .waitingForDeposit:
+            statusImage = .transactionIndicatorSellPending
+            title = L10n.youNeedToSendSOL(transaction.baseCurrencyAmount.toString(maximumFractionDigits: 9, groupingSeparator: ""))
+            subtitle = L10n.to("..." + transaction.depositWallet.suffix(4))
+        case .pending:
+            statusImage = .transactionIndicatorSellPending
+            title = L10n.processing
+            subtitle = L10n.toYourBankAccount
+        case .completed:
+            statusImage = .transactionIndicatorSellPending
+            title = L10n.fundsWereSent
+            subtitle = L10n.toYourBankAccount
+        case .failed:
+            statusImage = .transactionIndicatorSellExpired
+            title = L10n.youVeNotSent
+            subtitle = L10n.to("SOL", "Moonpay")
+        }
+        
+        let amountInFiatText = "$" + transaction.quoteCurrencyAmount.toString(maximumFractionDigits: 2) // FIXME: - Currency???
+        let amountInTokenText = transaction.baseCurrencyAmount.toString(maximumFractionDigits: 9) + " SOL"
+        
+        // set up
+        imageView.setUp(imageType: .oneImage(image: statusImage))
+        imageView.setUp(statusImage: nil)
+        transactionTypeLabel.text = title
+        descriptionLabel.text = subtitle
+        amountInFiatLabel.text = amountInFiatText
+        amountInFiatLabel.text = amountInTokenText
+    }
+}
+
+private extension UIFont {
+    func withWeight(_ weight: UIFont.Weight) -> UIFont {
+        let newDescriptor = fontDescriptor.addingAttributes([.traits: [
+            UIFontDescriptor.TraitKey.weight: weight]])
+        return UIFont(descriptor: newDescriptor, size: pointSize)
     }
 }
