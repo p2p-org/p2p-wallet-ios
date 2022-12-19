@@ -12,6 +12,9 @@ import Combine
 protocol SellTransactionsRepository {
     /// Publisher that emit sell transactions every time when any transaction is updated
     var transactionsPublisher: AnyPublisher<[SellDataServiceTransaction], Never> { get }
+    
+    /// Get current fetched transactions
+    var currentTransactions: [SellDataServiceTransaction] { get }
 }
 
 /// Mock SellTransactionsRepository
@@ -20,8 +23,13 @@ final class SellTransactionsRepositoryImpl: SellTransactionsRepository {
     // MARK: - Properties
 
     let transactions = CurrentValueSubject<[SellDataServiceTransaction], Never>([])
+    
     var transactionsPublisher: AnyPublisher<[SellDataServiceTransaction], Never> {
         transactions.eraseToAnyPublisher()
+    }
+    
+    var currentTransactions: [SellDataServiceTransaction] {
+        transactions.value
     }
     
     // MARK: - Initializer

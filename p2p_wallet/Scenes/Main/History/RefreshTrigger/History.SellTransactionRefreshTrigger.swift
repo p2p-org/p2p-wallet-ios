@@ -13,10 +13,15 @@ import RxSwift
 extension History {
     /// Updating price if exchange rate was change
     class SellTransactionsRefreshTrigger: HistoryRefreshTrigger {
-        @Injected private var pricesService: PricesServiceType
+        // MARK: - Dependencies
+        @Injected private var sellTransactionsRepository: SellTransactionsRepository
 
         func register() -> Signal<Void> {
-            fatalError()
+            sellTransactionsRepository
+                .transactionsPublisher
+                .asObservable()
+                .map { _ in () }
+                .asSignal(onErrorJustReturn: ())
         }
     }
 }
