@@ -1174,3 +1174,6 @@ You can try again, but your new transaction will be subject to the current rates
 You can try again, but your new transaction will be subject to the current rates.";
 "Will be sent to" = "Will be sent to";
 "Delete from history" = "Delete from history";
+"You need to send %@ SOL" = "You need to send %@ SOL";
+"Funds were sent" = "Funds were sent";
+"To your bank account" = "To your bank account";

@@ -75,8 +75,14 @@ class SellDataServiceImpl: SellDataService {
                 let depositWallet = detailed.depositWallet?.walletAddress,
                 let status = SellDataServiceTransaction.Status(rawValue: detailed.status.rawValue)
             else { return nil }
+            
+            let dateFormatter = ISO8601DateFormatter()
+            dateFormatter.formatOptions =  [.withInternetDateTime, .withFractionalSeconds]
+            let createdAt = dateFormatter.date(from: detailed.createdAt)
+            
             return SellDataServiceTransaction(
                 id: detailed.id,
+                createdAt: createdAt,
                 status: status,
                 baseCurrencyAmount: detailed.baseCurrencyAmount,
                 quoteCurrencyAmount: quoteCurrencyAmount,
