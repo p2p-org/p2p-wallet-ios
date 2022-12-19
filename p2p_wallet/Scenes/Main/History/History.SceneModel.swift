@@ -35,6 +35,7 @@ extension History {
         private let refreshTriggers: [HistoryRefreshTrigger] = [
             PriceRefreshTrigger(),
             ProcessingTransactionRefreshTrigger(),
+            SellTransactionsRefreshTrigger()
         ]
 
         /// A list of source, where data can be fetched
@@ -79,6 +80,7 @@ extension History {
             outputs = [
                 ProcessingTransactionsOutput(accountFilter: accountSymbol?.account),
                 PriceUpdatingOutput(),
+                SellTransactionsOutput()
             ]
 
             super.init(isPaginationEnabled: true, limit: 10)
