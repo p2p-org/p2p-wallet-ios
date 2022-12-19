@@ -26,15 +26,19 @@ extension History {
 
         override func setUp(with item: AnyHashable?) {
             super.setUp(with: item)
-            guard let transaction = item as? ParsedTransaction else { return }
-
-            switch transaction.info {
-            case _ as SwapInfo:
-                amountInFiatLabel.text = amountInFiatLabel.text?.replacingOccurrences(of: "+", with: "")
-                amountInFiatLabel.text = amountInFiatLabel.text?.replacingOccurrences(of: "-", with: "")
-                amountInFiatLabel.textColor = .textBlack
-            default:
-                return
+            guard let item = item as? HistoryItem else { return }
+            switch item {
+            case .parsedTransaction(let transaction):
+                switch transaction.info {
+                case _ as SwapInfo:
+                    amountInFiatLabel.text = amountInFiatLabel.text?.replacingOccurrences(of: "+", with: "")
+                    amountInFiatLabel.text = amountInFiatLabel.text?.replacingOccurrences(of: "-", with: "")
+                    amountInFiatLabel.textColor = .textBlack
+                default:
+                    return
+                }
+            case .sellTransaction(let transaction):
+                fatalError()
             }
         }
     }

@@ -19,7 +19,7 @@ extension History {
 
         @Injected private var repository: TransactionHandlerType
 
-        func process(newData: [ParsedTransaction]) -> [ParsedTransaction] {
+        func process(newData: [HistoryItem]) -> [HistoryItem] {
             var transactions: [ParsedTransaction]
 
             // Gets new transactions
@@ -36,17 +36,36 @@ extension History {
             var data = newData
             for transaction in transactions.reversed() {
                 // update if exists and is being processed
-                if let index = data.firstIndex(where: { $0.signature == transaction.signature }) {
-                    if data[index].status != .confirmed {
-                        data[index] = transaction
+                if let index = data.firstIndex(where: {
+                    switch $0 {
+                    case .parsedTransaction(let transaction):
+                        return transaction.signature == transaction.signature
+                    default:
+                        return false
+                    }
+                }) {
+                    switch data[index] {
+                    case .parsedTransaction(let transaction):
+                        if transaction.status != .confirmed {
+                            data[index] = .parsedTransaction(transaction)
+                        }
+                    default:
+                        break
                     }
                 }
                 // append if not
                 else {
                     if transaction.signature != nil {
-                        data.removeAll(where: { $0.signature == nil })
+                        data.removeAll(where: {
+                            switch $0 {
+                            case .parsedTransaction(let transaction):
+                                return transaction.signature == nil
+                            default:
+                                return false
+                            }
+                        })
                     }
-                    data.insert(transaction, at: 0)
+                    data.insert(.parsedTransaction(transaction), at: 0)
                 }
             }
             return data

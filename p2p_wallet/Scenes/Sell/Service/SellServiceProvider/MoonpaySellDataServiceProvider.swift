@@ -98,18 +98,24 @@ extension MoonpaySellDataServiceProvider {
         var usdRate: Double?
         var eurRate: Double?
         var gbpRate: Double?
+        
+        var createdAtDate: Date? {
+            let dateFormatter = ISO8601DateFormatter()
+            dateFormatter.formatOptions =  [.withInternetDateTime, .withFractionalSeconds]
+            return dateFormatter.date(from: createdAt)
+        }
     }
 }
 
 extension MoonpaySellDataServiceProvider.MoonpayTransaction {
-    enum Status: String, Codable {
+    enum Status: String, Codable, Hashable {
         case waitingForDeposit
         case pending
         case failed
         case completed
     }
 
-    struct DepositWallet: Codable, Equatable {
+    struct DepositWallet: Codable, Equatable, Hashable {
         var walletAddress: String
     }
 }
