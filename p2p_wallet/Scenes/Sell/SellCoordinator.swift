@@ -57,12 +57,12 @@ final class SellCoordinator: Coordinator<SellCoordinatorResult> {
                 fiat: fiat,
                 navigationController: navigationController)
             )
-            .handleEvents(receiveOutput: { val in
+            .handleEvents(receiveOutput: { [weak self] val in
                 switch val {
                 case .completed:
-                    self.resultSubject.send(SellCoordinatorResult.completed)
+                    self?.resultSubject.send(.completed)
                 case .none:
-                    self.resultSubject.send(SellCoordinatorResult.none)
+                    self?.resultSubject.send(.none)
                 }
             })
             .map { _ in }
