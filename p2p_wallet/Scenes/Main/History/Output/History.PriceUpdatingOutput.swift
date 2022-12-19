@@ -34,7 +34,7 @@ extension History {
 
                 return .parsedTransaction(transaction)
             case let .sellTransaction(transaction):
-                fatalError()
+                return .sellTransaction(transaction) // doesn't need to update
             }
             
         }
