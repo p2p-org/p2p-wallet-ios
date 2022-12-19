@@ -97,7 +97,7 @@ target 'p2p_wallet' do
   pod 'JazziconSwift', :git => 'https://github.com/p2p-org/JazziconSwift.git', :branch => 'master'
   pod 'Kingfisher', '~> 7.3.2'
   pod 'ListPlaceholder', :git => 'https://github.com/p2p-org/ListPlaceholder.git', :branch => 'custom_gradient_color'
-  pod 'GT3Captcha-iOS'
+  pod 'GT3Captcha-iOS', '0.15.5'
   pod 'PhoneNumberKit', '3.3.4'
   pod 'SkeletonUI', :git => 'https://github.com/p2p-org/SkeletonUI.git', :branch => 'master'
   pod 'Introspect', '0.1.4'

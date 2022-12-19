@@ -136,7 +136,7 @@ PODS:
     - GoogleUtilities/Logger
   - GoogleUtilities/UserDefaults (7.10.0):
     - GoogleUtilities/Logger
-  - GT3Captcha-iOS (0.15.7)
+  - GT3Captcha-iOS (0.15.5)
   - GTMAppAuth (1.3.1):
     - AppAuth/Core (~> 1.6)
     - GTMSessionFetcher/Core (< 3.0, >= 1.5)
@@ -259,7 +259,7 @@ DEPENDENCIES:
   - Firebase/Crashlytics
   - Firebase/RemoteConfig
   - GoogleSignIn (~> 6.2.4)
-  - GT3Captcha-iOS
+  - GT3Captcha-iOS (= 0.15.5)
   - History (from `https://github.com/p2p-org/key-app-kit-swift.git`, branch `master`)
   - Intercom (= 12.4.3)
   - Introspect (= 0.1.4)
@@ -559,7 +559,7 @@ SPEC CHECKSUMS:
   GoogleDataTransport: 1c8145da7117bd68bbbed00cf304edb6a24de00f
   GoogleSignIn: 5651ce3a61e56ca864160e79b484cd9ed3f49b7a
   GoogleUtilities: bad72cb363809015b1f7f19beb1f1cd23c589f95
-  GT3Captcha-iOS: 6cabc23ec8acd1ddb3779dc8debd062bbd0bfd45
+  GT3Captcha-iOS: 2be456783a54bc7ef40856d491dab4e4fe5d386e
   GTMAppAuth: 0ff230db599948a9ad7470ca667337803b3fc4dd
   GTMSessionFetcher: 3a63d75eecd6aa32c2fc79f578064e1214dfdec2
   History: 0fab6b28299056a13528cae6e174be13fae9b763
@@ -611,6 +611,6 @@ SPEC CHECKSUMS:
   TransactionParser: 3004420d52e7b1277dbcfd20b995a5de707705f3
   TweetNacl: 3abf4d1d2082b0114e7a67410e300892448951e6
 
-PODFILE CHECKSUM: 1f3172b94c1f96a308cfdfbe1127b76f08cf1418
+PODFILE CHECKSUM: 284ec2c223f40735418349714ef6eb80a7ba1544
 
 COCOAPODS: 1.11.3
