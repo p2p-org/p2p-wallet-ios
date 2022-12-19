@@ -421,6 +421,11 @@ extension Resolver: ResolverRegistering {
         register { AuthServiceImpl() }
             .implements(AuthService.self)
             .scope(.session)
+        
+        // Sell
+        register { SellTransactionsRepositoryImpl() }
+            .implements(SellTransactionsRepository.self)
+            .scope(.session)
     }
 
     /// Shared scope: share between screens
