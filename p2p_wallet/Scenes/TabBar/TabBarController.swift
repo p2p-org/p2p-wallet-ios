@@ -128,7 +128,9 @@ final class TabBarController: UITabBarController {
             analyticsManager.log(event: AmplitudeEvent.sendViewed(lastScreen: "main_screen"))
         case .cashOut:
             sellCoordinator = SellCoordinator(navigationController: navigationController)
-            sellCoordinator?.start().sink(receiveValue: { _ in }).store(in: &cancellables)
+            sellCoordinator?.start().sink(receiveValue: { res in
+                debugPrint(res)
+            }).store(in: &cancellables)
         }
     }
 
