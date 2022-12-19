@@ -14,7 +14,7 @@ import SolanaSwift
 import TransactionParser
 
 extension History {
-    class SceneModel: BEStreamListViewModel<ParsedTransaction> {
+    class SceneModel: BEStreamListViewModel<HistoryItem> {
         typealias AccountSymbol = (account: String, symbol: String)
 
         // MARK: - Dependencies
@@ -138,7 +138,7 @@ extension History {
             super.clear()
         }
 
-        override func next() -> Observable<[ParsedTransaction]> {
+        override func next() -> Observable<[HistoryItem]> {
             AsyncThrowingStream<[HistoryStreamSource.Result], Error> { stream in
                 Task {
                     defer { stream.finish(throwing: nil) }
@@ -206,7 +206,7 @@ extension History {
                     )
                 }
 
-                return parsedTransactions
+                return parsedTransactions.map {.parsedTransaction($0)}
             }
             .do(onError: { [weak self] error in
                 DispatchQueue.main.async { [weak self] in
@@ -216,8 +216,8 @@ extension History {
             })
         }
 
-        override func join(_ newItems: [ParsedTransaction]) -> [ParsedTransaction] {
-            var filteredNewData: [ParsedTransaction] = []
+        override func join(_ newItems: [HistoryItem]) -> [HistoryItem] {
+            var filteredNewData: [HistoryItem] = []
             for trx in newItems {
                 if data.contains(where: { $0.signature == trx.signature }) { continue }
                 filteredNewData.append(trx)
@@ -225,7 +225,7 @@ extension History {
             return data + filteredNewData
         }
 
-        override func map(newData: [ParsedTransaction]) -> [ParsedTransaction] {
+        override func map(newData: [HistoryItem]) -> [HistoryItem] {
             // Apply output transformation
             var data = newData
             for output in outputs { data = output.process(newData: data) }

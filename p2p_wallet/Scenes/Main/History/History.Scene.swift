@@ -76,8 +76,8 @@ extension History {
                 mapDataToSections: { viewModel in
                     CollectionViewMappingStrategy_RxSwift.byData(
                         viewModel: viewModel,
-                        forType: ParsedTransaction.self,
-                        where: \ParsedTransaction.blockTime
+                        forType: HistoryItem.self,
+                        where: \HistoryItem.blockTime
                     ).reversed()
                 },
                 layout: .init(
@@ -115,17 +115,23 @@ extension History {
 
 extension History.Scene: BECollectionViewDelegate {
     func beCollectionView(collectionView _: BECollectionViewBase, didSelect item: AnyHashable) {
-        guard let item = item as? ParsedTransaction else { return }
-        let viewController = History.TransactionViewController(
-            viewModel: .init(
-                transaction: item,
-                clipboardManager: clipboardManager,
-                pricesService: pricesService
+        guard let item = item as? HistoryItem else { return }
+        switch item {
+        case .parsedTransaction(let transaction):
+            let viewController = History.TransactionViewController(
+                viewModel: .init(
+                    transaction: transaction,
+                    clipboardManager: clipboardManager,
+                    pricesService: pricesService
+                )
             )
-        )
-        viewController.dismissCompletion = { [weak self] in
-            self?.dismiss(animated: true)
+            viewController.dismissCompletion = { [weak self] in
+                self?.dismiss(animated: true)
+            }
+            present(viewController, interactiveDismissalType: .none)
+        case .sellTransaction(let sellTransaction):
+            fatalError("SellTransactionDetail")
         }
-        present(viewController, interactiveDismissalType: .none)
+        
     }
 }
