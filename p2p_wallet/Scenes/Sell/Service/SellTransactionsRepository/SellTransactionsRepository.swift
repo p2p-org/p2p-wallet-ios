@@ -62,7 +62,9 @@ final class SellTransactionsRepositoryImpl: SellTransactionsRepository {
             guard let self = self, let id = self.userWalletManager.wallet?.moonpayExternalClientId else {return}
             guard let transactions = try? await self.sellDataService.transactions(id: id)
             else { return }
-            self.transactions.send(transactions)
+            await MainActor.run { [unowned self] in
+                self.transactions.send(transactions)
+            }
         }
     }
 }
