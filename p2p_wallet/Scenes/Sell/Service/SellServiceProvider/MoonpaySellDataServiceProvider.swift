@@ -98,12 +98,6 @@ extension MoonpaySellDataServiceProvider {
         var usdRate: Double?
         var eurRate: Double?
         var gbpRate: Double?
-        
-        var createdAtDate: Date? {
-            let dateFormatter = ISO8601DateFormatter()
-            dateFormatter.formatOptions =  [.withInternetDateTime, .withFractionalSeconds]
-            return dateFormatter.date(from: createdAt)
-        }
     }
 }
 

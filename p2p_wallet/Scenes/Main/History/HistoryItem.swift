@@ -10,7 +10,7 @@ import TransactionParser
 
 enum HistoryItem: Hashable {
     case parsedTransaction(ParsedTransaction)
-    case sellTransaction(MoonpaySellDataServiceProvider.Transaction)
+    case sellTransaction(SellDataServiceTransaction)
     
     var signature: String? {
         switch self {
@@ -26,7 +26,7 @@ enum HistoryItem: Hashable {
         case .parsedTransaction(let transaction):
             return transaction.blockTime
         case .sellTransaction(let transaction):
-            return transaction.createdAtDate
+            return transaction.createdAt
         }
     }
 }
