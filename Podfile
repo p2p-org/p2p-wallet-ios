@@ -90,14 +90,14 @@ target 'p2p_wallet' do
   if $keyAppUI
     pod "KeyAppUI", :path => $keyAppUI
   else
-    pod 'KeyAppUI', :git => 'git@github.com:p2p-org/KeyAppUI.git', :branch => 'main'
+    pod 'KeyAppUI', :git => 'git@github.com:p2p-org/KeyAppUI.git', :branch => 'develop'
   end
 
   pod 'Resolver', '1.5.0'
   pod 'JazziconSwift', :git => 'https://github.com/p2p-org/JazziconSwift.git', :branch => 'master'
   pod 'Kingfisher', '~> 7.3.2'
   pod 'ListPlaceholder', :git => 'https://github.com/p2p-org/ListPlaceholder.git', :branch => 'custom_gradient_color'
-  pod 'GT3Captcha-iOS'
+  pod 'GT3Captcha-iOS', '0.15.5'
   pod 'PhoneNumberKit', '3.3.4'
   pod 'SkeletonUI', :git => 'https://github.com/p2p-org/SkeletonUI.git', :branch => 'master'
   pod 'Introspect', '0.1.4'
@@ -109,7 +109,7 @@ target 'p2p_wallet' do
   pod 'Firebase/RemoteConfig'
 
   pod 'SwiftNotificationCenter'
-  pod 'GoogleSignIn'
+  pod 'GoogleSignIn', '~> 6.2.4'
 
   # Sentry
   pod 'Sentry', :git => 'https://github.com/getsentry/sentry-cocoa.git', :tag => '7.18.1'

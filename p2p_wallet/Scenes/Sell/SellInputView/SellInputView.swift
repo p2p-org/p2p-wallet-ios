@@ -58,11 +58,11 @@ struct SellInputView: View {
             HStack {
                 DecimalTextField(
                      value: $viewModel.baseAmount,
-                     isFirstResponder: $viewModel.isEnteringBaseAmount,
-                     maximumFractionDigits: 2
+                     isFirstResponder: $viewModel.isEnteringBaseAmount
                  ) { textField in
                      textField.font = UIFont.font(of: .text3, weight: .regular)
                      textField.keyboardType = .decimalPad
+                     textField.maximumFractionDigits = 2
                  }
 
                  Text(viewModel.baseCurrencyCode)
@@ -82,7 +82,8 @@ struct SellInputView: View {
                 Text(L10n.sellAll)
                     .foregroundColor(Color(Asset.Colors.mountain.color))
                     .font(uiFont: UIFont.font(of: .label1, weight: .regular))
-                Text((viewModel.maxBaseAmount ?? 0).toString(maximumFractionDigits: 2) + " \(viewModel.baseCurrencyCode)")
+                Text((viewModel.maxBaseAmount ?? 0)
+                    .toString(minimumFractionDigits: 2, maximumFractionDigits: 2) + " \(viewModel.baseCurrencyCode)")
                     .foregroundColor(Color(Asset.Colors.sky.color))
                     .font(uiFont: UIFont.font(of: .label1, weight: .regular))
             }
@@ -93,13 +94,13 @@ struct SellInputView: View {
         HStack {
             DecimalTextField(
                 value: $viewModel.quoteAmount,
-                isFirstResponder: $viewModel.isEnteringQuoteAmount,
-                maximumFractionDigits: 2
+                isFirstResponder: $viewModel.isEnteringQuoteAmount
             ) { textField in
                 textField.font = UIFont.font(of: .title1, weight: .bold)
                 textField.keyboardType = .decimalPad
+                textField.maximumFractionDigits = 2
             }
-                
+
             Text("≈ \(viewModel.quoteCurrencyCode)")
                 .foregroundColor(Color(Asset.Colors.night.color.withAlphaComponent(0.3)))
                 .font(uiFont: UIFont.font(of: .title1, weight: .bold))
