@@ -9,8 +9,10 @@ final class SellPendingViewModel: BaseViewModel, ObservableObject {
 
     private let sendSubject = PassthroughSubject<Void, Never>()
     private let dismissSubject = PassthroughSubject<Void, Never>()
+    private let backSubject = PassthroughSubject<Void, Never>()
     var send: AnyPublisher<Void, Never> { sendSubject.eraseToAnyPublisher() }
     var dismiss: AnyPublisher<Void, Never> { dismissSubject.eraseToAnyPublisher() }
+    var back: AnyPublisher<Void, Never> { backSubject.eraseToAnyPublisher() }
 
     let tokenAmount: String
     let fiatAmount: String
@@ -39,6 +41,10 @@ final class SellPendingViewModel: BaseViewModel, ObservableObject {
     func addressCopied() {
         clipboardManager.copyToClipboard(model.receiverAddress)
         notificationsService.showToast(title: "🖤", text: L10n.addressWasCopiedToClipboard, haptic: true)
+    }
+
+    func backClicked() {
+        backSubject.send()
     }
 }
 
