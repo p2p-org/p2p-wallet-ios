@@ -21,9 +21,9 @@ extension Moonpay {
                 endpoint = "https://api.moonpay.com/"
             case .server:
                 #if RELEASE
-                endpoint = String.secretConfig("MOONPAY_PRODUCTION_SELL_ENDPOINT")! + "/"
+                endpoint = String.secretConfig("MOONPAY_PRODUCTION_SELL_ENDPOINT")!
                 #else
-                endpoint = String.secretConfig("MOONPAY_STAGING_SELL_ENDPOINT")! + "/"
+                endpoint = String.secretConfig("MOONPAY_STAGING_SELL_ENDPOINT")!
                 #endif
             }
 //            if Defaults.apiEndPoint.network == .mainnetBeta {
