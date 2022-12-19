@@ -32,9 +32,8 @@ final class SellCoordinator: Coordinator<SellCoordinatorResult> {
         vc.hidesBottomBarWhenPushed = true
         navigationController.pushViewController(vc, animated: true)
         return Publishers.Merge(
-            vc.deallocatedPublisher()
-                .flatMap { _ in Just(SellCoordinatorResult.none) },
-            resultSubject.eraseToAnyPublisher()
+            vc.deallocatedPublisher().map { SellCoordinatorResult.none },
+            resultSubject.eraseToAnyPublisher().prefix(1)
         )
             .prefix(1)
             .eraseToAnyPublisher()
@@ -64,10 +63,13 @@ final class SellCoordinator: Coordinator<SellCoordinatorResult> {
                 case .none:
                     self.resultSubject.send(SellCoordinatorResult.none)
                 }
+                debugPrint(val)
+            }, receiveCompletion: { compl in
+                debugPrint(compl)
             })
             .map { _ in }
             .eraseToAnyPublisher()
-            
+
                 // .flatMap {navigateToAnotherScene()} // chain another navigation if needed
                 // .handleEvents(receiveValue:,receiveCompletion:) // or event make side effect
 //                .map {_ in ()}

@@ -32,9 +32,10 @@ final class SellPendingCoordinator: Coordinator<SellPendingCoordinatorResult> {
 
     // MARK: - Methods
 
-    private var resultSubject = PassthroughSubject<SellPendingCoordinatorResult, Never>()
+//    private var resultSubject = PassthroughSubject<SellPendingCoordinatorResult, Never>()
     private var sellVC: UIViewController?
     override func start() -> AnyPublisher<SellPendingCoordinatorResult, Never> {
+        var resultSubject = PassthroughSubject<SellPendingCoordinatorResult, Never>()
         let tokenSymbol = "SOL"
         let vcs = transactions.map { transction in
             let vcSubject = PassthroughSubject<Bool, Never>()
@@ -85,10 +86,11 @@ final class SellPendingCoordinator: Coordinator<SellPendingCoordinatorResult> {
                 .store(in: &subscriptions)
 
             let viewController = SellPendingView(viewModel: viewModel).asViewController(withoutUIKitNavBar: false)
+            viewController.hidesBottomBarWhenPushed = true
             viewController.navigationItem.title = "\(L10n.cashOut) \(tokenSymbol)"
             return (
                 viewController,
-                vcSubject.prefix(1).eraseToAnyPublisher()
+                vcSubject.eraseToAnyPublisher().prefix(1)
             )
         }
 
@@ -96,13 +98,22 @@ final class SellPendingCoordinator: Coordinator<SellPendingCoordinatorResult> {
         let beneathVCs = navigationController.viewControllers[0..<navigationController.viewControllers.count-1]
         navigationController.viewControllers = beneathVCs + vcs.map { $0.0 }
 
-        Publishers.MergeMany(vcs.map { $0.1 }).collect().sink { res in
-            guard let vc = self.sellVC else { return }
-            debugPrint(res)
-            var vcc = self.navigationController.viewControllers
-            vcc.insert(vc, at: self.navigationController.viewControllers.count - 1)
-            self.navigationController.viewControllers = vcc
-        }.store(in: &subscriptions)
+        Publishers.MergeMany(vcs.map { $0.1 })
+            .collect()
+            .handleEvents(receiveOutput: { [unowned self] res in
+                resultSubject.send(.completed)
+            })
+            .sink { [unowned self] res in
+                guard let vc = sellVC else { return }
+                var viewControllers = navigationController.viewControllers
+                viewControllers.insert(vc, at: navigationController.viewControllers.count - 1)
+                navigationController.viewControllers = viewControllers
+            }.store(in: &subscriptions)
+
+        Publishers.MergeMany(vcs.map { $0.0 }.map { $0.deallocatedPublisher().map { () } }).collect()
+            .sink { [weak self] res in
+                resultSubject.send(.none)
+            }.store(in: &subscriptions)
 
         return resultSubject.prefix(1).eraseToAnyPublisher()
 //            Publishers
