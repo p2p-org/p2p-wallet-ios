@@ -40,15 +40,15 @@ final class HomeCoordinator: Coordinator<Void> {
         tokensViewModel.cashOutShow.flatMap { [unowned navigationController] _ in
             self.coordinate(to: SellCoordinator(navigationController: navigationController))
         }
-            .sink { [unowned self] result in
-                switch result {
-                case .completed:
-                    self.tabBarController?.changeItem(to: .history)
-                case .none:
-                    break
-                }
+        .sink { [unowned self] result in
+            switch result {
+            case .completed:
+                self.tabBarController?.changeItem(to: .history)
+            case .none:
+                break
             }
-            .store(in: &subscriptions)
+        }
+        .store(in: &subscriptions)
 
         let emptyViewModel = HomeEmptyViewModel()
         let emptyVMOutput = emptyViewModel.output.coord
@@ -71,8 +71,8 @@ final class HomeCoordinator: Coordinator<Void> {
             homeView.viewWillAppear.map { true },
             homeView.viewWillDisappear.map { false }
         )
-            .assign(to: \.navigationIsHidden, on: homeView)
-            .store(in: &subscriptions)
+        .assign(to: \.navigationIsHidden, on: homeView)
+        .store(in: &subscriptions)
 
         viewModel.errorShow
             .sink(receiveValue: { show in
@@ -266,7 +266,11 @@ final class HomeCoordinator: Coordinator<Void> {
         // }
 
         // Send send
-        sendCoordinator = SendCoordinator(rootViewController: navigationController, preChosenWallet: nil, hideTabBar: true)
+        sendCoordinator = SendCoordinator(
+            rootViewController: navigationController,
+            preChosenWallet: nil,
+            hideTabBar: true
+        )
         coordinate(to: sendCoordinator!)
             .sink { [weak self] result in
                 switch result {
@@ -278,13 +282,13 @@ final class HomeCoordinator: Coordinator<Void> {
                 }
             }
             .store(in: &subscriptions)
-        
+
         return false
     }
 
     private func showSendTransactionStatus(model: SendTransaction) {
         coordinate(to: SendTransactionStatusCoordinator(parentController: navigationController, transaction: model))
-            .sink(receiveValue: { })
+            .sink(receiveValue: {})
             .store(in: &subscriptions)
     }
 
@@ -312,7 +316,7 @@ final class HomeCoordinator: Coordinator<Void> {
         let vc = WalletDetail.ViewController(viewModel: vm)
         analyticsManager.log(event: AmplitudeEvent.mainScreenTokenDetailsOpen(tokenTicker: tokenSymbol))
         navigationController.show(vc, sender: nil)
-        
+
         return await withCheckedContinuation { continuation in
             vc.processingTransactionDoneHandler = {
                 continuation.resume(with: .success(true))
