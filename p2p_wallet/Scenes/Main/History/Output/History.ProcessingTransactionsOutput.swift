@@ -38,8 +38,8 @@ extension History {
                 // update if exists and is being processed
                 if let index = data.firstIndex(where: {
                     switch $0 {
-                    case .parsedTransaction(let transaction):
-                        return transaction.signature == transaction.signature
+                    case .parsedTransaction(let tx):
+                        return tx.signature == transaction.signature
                     default:
                         return false
                     }
