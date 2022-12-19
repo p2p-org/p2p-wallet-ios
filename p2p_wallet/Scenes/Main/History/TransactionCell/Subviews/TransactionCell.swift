@@ -241,7 +241,7 @@ class TransactionCell: BaseCollectionViewCell, BECollectionViewCell {
         transactionTypeLabel.text = title
         descriptionLabel.text = subtitle
         amountInFiatLabel.text = amountInFiatText
-        amountInFiatLabel.text = amountInTokenText
+        amountInTokenLabel.text = amountInTokenText
     }
 }
 
