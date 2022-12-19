@@ -6,12 +6,12 @@
 //
 
 import BEPureLayout
+import KeyAppUI
 import RxCocoa
 import RxGesture
 import RxSwift
 import SolanaSwift
 import UIKit
-import KeyAppUI
 
 extension History {
     final class TransactionView: BECompositionView {
@@ -48,7 +48,11 @@ extension History {
         private lazy var addressLabel = descriptionLabel()
         private lazy var addressView = addressView(title: L10n.address, label: addressLabel, keyPath: \.address)
         private lazy var addressFromLabel = descriptionLabel()
-        private lazy var addressFromView = addressView(title: L10n.from, label: addressFromLabel, keyPath: \.addresses.from)
+        private lazy var addressFromView = addressView(
+            title: L10n.from,
+            label: addressFromLabel,
+            keyPath: \.addresses.from
+        )
         private lazy var addressToLabel = descriptionLabel()
         private lazy var addressToView = addressView(title: L10n.to, label: addressToLabel, keyPath: \.addresses.to)
 
@@ -120,7 +124,7 @@ extension History {
                         .padding(.init(x: 16, y: 0))
                     }
                 }
-                
+
                 placeholder
                     .setup { $0.isUserInteractionEnabled = false }
             }
@@ -178,7 +182,7 @@ extension History {
             }
         }
 
-        private func usernameView(title: String, label: UILabel) -> UIView {
+        private func usernameView(title _: String, label: UILabel) -> UIView {
             BEHStack(spacing: descriptionSpacing, alignment: .top) {
                 descriptionTitleLabel(text: L10n.username)
                 BEHStack(spacing: 6, alignment: .center) {
@@ -302,31 +306,31 @@ extension History {
                         }
                         BEVStack(spacing: 23) {
                             usernameView(title: L10n.username, label: UILabel(
-                                text: "              ")
-                            )
+                                text: "              "
+                            ))
                             .setup { $0.showLoader() }
                             usernameView(title: L10n.username, label: UILabel(
-                                text: "              ")
-                            )
+                                text: "              "
+                            ))
                             .setup { $0.showLoader() }
                             usernameView(title: L10n.username, label: UILabel(
-                                text: "              ")
-                            )
+                                text: "              "
+                            ))
                             .setup { $0.showLoader() }
                             usernameView(title: L10n.username, label: UILabel(
-                                text: "              ")
-                            )
+                                text: "              "
+                            ))
                             .setup { $0.showLoader() }
                             usernameView(title: L10n.username, label: UILabel(
-                                text: "              ")
-                            )
+                                text: "              "
+                            ))
                             .setup { $0.showLoader() }
                             UIView()
                         }
                     }
                 }
-                    .padding(.init(x: 16, y: 0))
-                    .setup { $0.isUserInteractionEnabled = false }
+                .padding(.init(x: 16, y: 0))
+                .setup { $0.isUserInteractionEnabled = false }
             }
         }
 

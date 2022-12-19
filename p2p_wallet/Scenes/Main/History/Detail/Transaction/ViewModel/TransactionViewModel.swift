@@ -6,13 +6,13 @@
 //
 
 import Foundation
+import NameService
+import Resolver
 import RxCocoa
 import RxSwift
 import SolanaSwift
 import TransactionParser
 import UIKit
-import NameService
-import Resolver
 
 extension History {
     final class TransactionViewModel {
@@ -41,7 +41,7 @@ extension History {
                 .mapToVoid()
 
             let copyUsername = Observable.combineLatest(fromView.usernameClicked, model)
-                .compactMap { $0.1.username }
+                .compactMap(\.1.username)
                 .do(onNext: { clipboardManager.copyToClipboard($0) })
                 .mapToVoid()
 
