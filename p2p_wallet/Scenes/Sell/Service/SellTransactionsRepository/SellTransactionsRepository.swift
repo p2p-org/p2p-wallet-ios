@@ -16,6 +16,9 @@ protocol SellTransactionsRepository {
     
     /// Get current fetched transactions
     var currentTransactions: [SellDataServiceTransaction] { get }
+    
+    /// Update current transactions
+    func update()
 }
 
 /// Mock SellTransactionsRepository
@@ -28,7 +31,7 @@ final class SellTransactionsRepositoryImpl: SellTransactionsRepository {
 
     // MARK: - Properties
     
-    private let refreshingRate: TimeInterval = 5.0 // 5 sec
+    private let refreshingRate: TimeInterval = 30.0
 
     let transactions = CurrentValueSubject<[SellDataServiceTransaction], Never>([])
     
@@ -50,7 +53,7 @@ final class SellTransactionsRepositoryImpl: SellTransactionsRepository {
         }
     }
     
-    private func update() {
+    func update() {
         // cancel previous task
         updatingTask?.cancel()
         
