@@ -21,6 +21,8 @@ final class DebugMenuViewModel: BaseViewModel, ObservableObject {
     @Published var solanaEndpoints: [APIEndPoint]
     @Published var selectedEndpoint: APIEndPoint?
     @Published var feeRelayerEndpoints: [String]
+    @Published var moonpayEnvironments: [DefaultsKeys.MoonpayEnvironment] = [.production, .sandbox]
+    @Published var currentMoonpayEnvironment: DefaultsKeys.MoonpayEnvironment
 
     override init() {
         features = Menu.allCases
@@ -46,12 +48,21 @@ final class DebugMenuViewModel: BaseViewModel, ObservableObject {
             "https://\(String.secretConfig("FEE_RELAYER_ENDPOINT")!)"
         ]
 
+        currentMoonpayEnvironment = Defaults.moonpayEnvironment
+
         super.init()
 
-        $selectedEndpoint.sink { endpoint in
-            guard let endpoint = endpoint else { return }
-            Defaults.apiEndPoint = endpoint
-        }.store(in: &subscriptions)
+        $selectedEndpoint
+            .sink { endpoint in
+                guard let endpoint = endpoint else { return }
+                Defaults.apiEndPoint = endpoint
+            }
+            .store(in: &subscriptions)
+        $currentMoonpayEnvironment
+            .sink { environment in
+                Defaults.moonpayEnvironment = environment
+            }
+            .store(in: &subscriptions)
     }
 
     func setFeature(_ feature: Feature, isOn: Bool) {
@@ -105,7 +116,6 @@ extension DebugMenuViewModel {
             case .mockedApiGateway: return "[Onboarding] API Gateway Mock"
             case .mockedTKeyFacade: return "[Onboarding] TKeyFacade Mock"
             case .simulatedSocialError: return "[Onboarding] Simulated Social Error"
-            case .newSettings: return "New Settings"
             case .investSolend: return "Invest Solend"
             case .solendDisablePlaceholder: return "Solend Disable Placeholder"
             }
@@ -120,7 +130,6 @@ extension DebugMenuViewModel {
             case .mockedApiGateway: return .mockedApiGateway
             case .mockedTKeyFacade: return .mockedTKeyFacade
             case .simulatedSocialError: return .simulatedSocialError
-            case .newSettings: return .settingsFeature
             case .investSolend: return .investSolendFeature
             case .solendDisablePlaceholder: return .solendDisablePlaceholder
             }
