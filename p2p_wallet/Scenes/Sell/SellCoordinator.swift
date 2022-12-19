@@ -4,16 +4,19 @@ import SwiftUI
 import UIKit
 import SafariServices
 
-typealias SellCoordinatorResult = Void
+enum SellCoordinatorResult {
+    case completed
+    case none
+}
 
 final class SellCoordinator: Coordinator<SellCoordinatorResult> {
-
-    let navigationController: UINavigationController
+    private let navigationController: UINavigationController
     init(navigationController: UINavigationController) {
         self.navigationController = navigationController
     }
 
-    let viewModel = SellViewModel()
+    private let viewModel = SellViewModel()
+    private let resultSubject = PassthroughSubject<SellCoordinatorResult, Never>()
     override func start() -> AnyPublisher<SellCoordinatorResult, Never> {
         // scene navigation
         viewModel.navigationPublisher
@@ -21,16 +24,20 @@ final class SellCoordinator: Coordinator<SellCoordinatorResult> {
             .flatMap { [unowned self] in
                 navigate(to: $0)
             }
-            .sink {_ in
-                debugPrint("Something")
-            }
+            .sink { _ in }
             .store(in: &subscriptions)
 
         // create viewController
         let vc = UIHostingController(rootView: SellView(viewModel: viewModel))
         vc.hidesBottomBarWhenPushed = true
         navigationController.pushViewController(vc, animated: true)
-        return vc.deallocatedPublisher()
+        return Publishers.Merge(
+            vc.deallocatedPublisher()
+                .flatMap { _ in Just(SellCoordinatorResult.none) },
+            resultSubject.eraseToAnyPublisher()
+        )
+            .prefix(1)
+            .eraseToAnyPublisher()
     }
 
     // MARK: - Navigation
@@ -50,6 +57,17 @@ final class SellCoordinator: Coordinator<SellCoordinatorResult> {
                 fiat: fiat,
                 navigationController: navigationController)
             )
+            .handleEvents(receiveOutput: { [weak self] val in
+                switch val {
+                case .completed:
+                    self?.resultSubject.send(.completed)
+                case .none:
+                    self?.resultSubject.send(.none)
+                }
+            })
+            .map { _ in }
+            .eraseToAnyPublisher()
+            
                 // .flatMap {navigateToAnotherScene()} // chain another navigation if needed
                 // .handleEvents(receiveValue:,receiveCompletion:) // or event make side effect
 //                .map {_ in ()}

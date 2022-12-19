@@ -36,6 +36,7 @@ public protocol SellDataService {
     /// Weather service available
     func isAvailable() async -> Bool
     func deleteTransaction(id: String) async throws
+    func transactions(id: String) async throws -> [SellDataServiceTransaction]
 }
 
 enum SellActionServiceError: Error {

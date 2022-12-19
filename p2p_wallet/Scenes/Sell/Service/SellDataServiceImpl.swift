@@ -10,7 +10,7 @@ class SellDataServiceImpl: SellDataService {
     init() {
         statusSubject.send(.initialized)
     }
-    
+
     @Injected private var priceService: PricesService
 
     @SwiftyUserDefault(keyPath: \.isSellAvailable, options: .cached)
@@ -43,20 +43,32 @@ class SellDataServiceImpl: SellDataService {
         } catch {
             self.fiat = .usd
 //            fatalError("Unsupported fiat")
+            statusSubject.send(.error)
         }
         self.incompleteTransactions = try await self.incompleteTransactions(transactionId: id)
         statusSubject.send(.ready)
     }
 
     func incompleteTransactions(transactionId: String) async throws -> [SellDataServiceTransaction] {
-        let txs = try await provider.sellTransactions(externalTransactionId: transactionId)
-            .filter { $0.status == .waitingForDeposit }
+        try await self.transactions(id: transactionId)
+    }
+
+    func transaction(id: String) async throws -> Provider.Transaction {
+        try await provider.detailSellTransaction(id: id)
+    }
+
+    func deleteTransaction(id: String) async throws {
+        try await provider.deleteSellTransaction(id: id)
+        incompleteTransactions.removeAll { $0.id == id }
+    }
+
+    func transactions(id: String) async throws -> [SellDataServiceTransaction] {
+        let txs = try await provider.sellTransactions(externalTransactionId: id)
 
         return try await txs.asyncMap { transaction in
             let detailed = try await provider.detailSellTransaction(id: transaction.id)
             let quoteCurrencyAmount = detailed.quoteCurrencyAmount ?? (self.priceService.currentPrice(for: "SOL")?.value ?? 0) * detailed.baseCurrencyAmount
             guard
-//                let quoteCurrencyAmount = detailed.quoteCurrencyAmount,
                 let usdRate = detailed.usdRate,
                 let eurRate = detailed.eurRate,
                 let gbpRate = detailed.gbpRate,
@@ -74,15 +86,6 @@ class SellDataServiceImpl: SellDataService {
                 depositWallet: depositWallet
             )
         }.compactMap { $0 }
-    }
-
-    func transaction(id: String) async throws -> Provider.Transaction {
-        try await provider.detailSellTransaction(id: id)
-    }
-
-    func deleteTransaction(id: String) async throws {
-        try await provider.deleteSellTransaction(id: id)
-        incompleteTransactions.removeAll { $0.id == id }
     }
 
     func isAvailable() async -> Bool {

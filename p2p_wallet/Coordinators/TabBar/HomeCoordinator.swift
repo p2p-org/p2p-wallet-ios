@@ -40,7 +40,14 @@ final class HomeCoordinator: Coordinator<Void> {
         tokensViewModel.cashOutShow.flatMap { [unowned navigationController] _ in
             self.coordinate(to: SellCoordinator(navigationController: navigationController))
         }
-            .sink {}
+            .sink { [unowned self] result in
+                switch result {
+                case .completed:
+                    self.tabBarController?.changeItem(to: .history)
+                case .none:
+                    break
+                }
+            }
             .store(in: &subscriptions)
 
         let emptyViewModel = HomeEmptyViewModel()
@@ -205,7 +212,7 @@ final class HomeCoordinator: Coordinator<Void> {
             .flatMap { [unowned self] in
                 self.coordinate(to: SellCoordinator(navigationController: self.navigationController))
             }
-            .sink {}
+            .sink { _ in }
             .store(in: &subscriptions)
 
         return Empty(completeImmediately: false)

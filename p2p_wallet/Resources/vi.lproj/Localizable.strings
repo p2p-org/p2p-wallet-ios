@@ -1191,3 +1191,17 @@ Reset the PIN or wait for %@." = "Bạn còn %@ lần thử để nhập mã PIN
 "You need a little more %@" = "Bạn cần thêm một chút %@";
 "The current minimum amount is %@ %@" = "Số tiền tối thiểu hiện tại là %@ %@";
 "Go to Swap" = "Chuyển đến Hoán đổi";
+"Are you sure?" = "Bạn có chắc không?";
+"Are you sure you want to interrupt cash out process? Your transaction won't be finished." = "Bạn có chắc chắn muốn làm gián đoạn quá trình rút tiền không?  Giao dịch của bạn sẽ không kết thúc.";
+"Continue transaction" = "Tiếp tục giao dịch";
+"Interrupt" = "Ngắt";
+"Your bank account via Moonpay" = "Tài khoản ngân hàng của bạn qua Moonpay";
+"SOL was sent to Moonpay and is being processed. Any questions regarding your transaction can be answered via Moonpay help center" = "SOL đã được gửi đến Moonpay và đang được xử lý.  Mọi câu hỏi liên quan đến giao dịch của bạn có thể được trả lời qua trung tâm trợ giúp Moonpay";
+"It usually takes up to 3 business days. Any questions regarding your transaction can be answered via Moonpay help center" = "Nó thường mất đến 3 ngày làm việc.  Mọi câu hỏi liên quan đến giao dịch của bạn có thể được trả lời qua trung tâm trợ giúp Moonpay";
+"You didn't finish your cash out transaction. After 7 days your transaction has been automatically declined. 
+
+You can try again, but your new transaction will be subject to the current rates." = "Bạn chưa hoàn thành giao dịch rút tiền của mình.  Sau 7 ngày, giao dịch của bạn đã tự động bị từ chối.
+
+ Bạn có thể thử lại, nhưng giao dịch mới của bạn sẽ phải tuân theo tỷ giá hiện tại.";
+"Will be sent to" = "Sẽ được gửi đến";
+"Delete from history" = "Xóa khỏi lịch sử";
