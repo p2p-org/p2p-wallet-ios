@@ -1202,3 +1202,6 @@ You can try again, but your new transaction will be subject to the current rates
  Vous pouvez réessayer, mais votre nouvelle transaction sera soumise aux tarifs en vigueur.";
 "Will be sent to" = "Sera envoyé à";
 "Delete from history" = "Supprimer de l'historique";
+"You need to send %@ SOL" = "Vous devez envoyer %@ SOL";
+"Funds were sent" = "Les fonds ont été envoyés";
+"To your bank account" = "Vers votre compte bancaire";

@@ -1205,3 +1205,6 @@ You can try again, but your new transaction will be subject to the current rates
  Bạn có thể thử lại, nhưng giao dịch mới của bạn sẽ phải tuân theo tỷ giá hiện tại.";
 "Will be sent to" = "Sẽ được gửi đến";
 "Delete from history" = "Xóa khỏi lịch sử";
+"You need to send %@ SOL" = "Bạn cần gửi %@SOL";
+"Funds were sent" = "Tiền đã được gửi";
+"To your bank account" = "Đến tài khoản ngân hàng của bạn";
