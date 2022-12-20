@@ -109,7 +109,7 @@ struct SendTransactionStatusStatusView: View {
 
     @State private var isAnimating = false
     @State private var isRotating = 0.0
-    let animation: Animation = .linear(duration: 0.1).speed(0.1).repeatForever(autoreverses: false)
+    let animation: Animation = .linear(duration: 0.2).speed(0.1).repeatForever(autoreverses: false)
 
     var body: some View {
         VStack {
