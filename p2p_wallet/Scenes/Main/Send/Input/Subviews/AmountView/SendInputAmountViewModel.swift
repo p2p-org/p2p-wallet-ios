@@ -83,6 +83,7 @@ final class SendInputAmountViewModel: BaseViewModel, ObservableObject {
             .sink { [weak self] value in
                 self?.updateCurrencyTitles(for: value)
                 self?.updateDecimalsPoint(for: value)
+                self?.validateDecimalsInAmount(for: value)
             }
             .store(in: &subscriptions)
 
@@ -152,6 +153,17 @@ private extension SendInputAmountViewModel {
 
     func validateAmount() {
         changeAmount.send((self.amount ?? .zero, mainAmountType))
+    }
+
+    func validateDecimalsInAmount(for wallet: Wallet) {
+        // Cut decimals in token input if its count is changed
+        switch mainAmountType {
+        case .token:
+            guard let amountInToken = self.amount?.inToken else { return }
+            self.amountText = amountInToken.formatTokenWithDown(decimals: wallet.decimals)
+        case .fiat:
+            break
+        }
     }
 
     func updateDecimalsPoint(for wallet: Wallet? = nil) {
