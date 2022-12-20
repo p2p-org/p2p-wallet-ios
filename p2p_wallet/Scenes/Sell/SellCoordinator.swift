@@ -10,21 +10,29 @@ enum SellCoordinatorResult {
 }
 
 final class SellCoordinator: Coordinator<SellCoordinatorResult> {
+    // MARK: - Properties
+
+    private var navigation = PassthroughSubject<SellNavigation?, Never>()
     private let navigationController: UINavigationController
+    private var viewModel: SellViewModel!
+    private let resultSubject = PassthroughSubject<SellCoordinatorResult, Never>()
+    
+    // MARK: - Initializer
+
     init(navigationController: UINavigationController) {
         self.navigationController = navigationController
     }
-
-    private let viewModel = SellViewModel()
-    private let resultSubject = PassthroughSubject<SellCoordinatorResult, Never>()
+    
+    // MARK: - Methods
     override func start() -> AnyPublisher<SellCoordinatorResult, Never> {
         // create viewController
+        viewModel = SellViewModel(navigation: navigation)
         let vc = UIHostingController(rootView: SellView(viewModel: viewModel))
         vc.hidesBottomBarWhenPushed = navigationController.canHideBottomForNextPush
         navigationController.pushViewController(vc, animated: true)
         
         // scene navigation
-        viewModel.navigationPublisher
+        navigation
             .compactMap {$0}
             .flatMap { [unowned self, unowned vc] in
                 navigate(to: $0, mainSellVC: vc)
