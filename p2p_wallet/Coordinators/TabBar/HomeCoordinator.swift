@@ -37,8 +37,8 @@ final class HomeCoordinator: Coordinator<Void> {
             })
             .store(in: &subscriptions)
 
-        tokensViewModel.cashOutShow.flatMap { [unowned navigationController] _ in
-            self.coordinate(to: SellCoordinator(navigationController: navigationController))
+        tokensViewModel.cashOutShow.flatMap { [unowned self] _ in
+            coordinate(to: SellCoordinator(navigationController: navigationController))
         }
             .sink { [unowned self] result in
                 switch result {
@@ -210,7 +210,7 @@ final class HomeCoordinator: Coordinator<Void> {
 
         tokensViewModel.sellShow
             .flatMap { [unowned self] in
-                self.coordinate(to: SellCoordinator(navigationController: self.navigationController))
+                coordinate(to: SellCoordinator(navigationController: navigationController))
             }
             .sink { _ in }
             .store(in: &subscriptions)
