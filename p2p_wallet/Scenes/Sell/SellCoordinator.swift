@@ -32,9 +32,8 @@ final class SellCoordinator: Coordinator<SellCoordinatorResult> {
         vc.hidesBottomBarWhenPushed = true
         navigationController.pushViewController(vc, animated: true)
         return Publishers.Merge(
-            vc.deallocatedPublisher()
-                .flatMap { _ in Just(SellCoordinatorResult.none) },
-            resultSubject.eraseToAnyPublisher()
+            vc.deallocatedPublisher().map { SellCoordinatorResult.none },
+            resultSubject.eraseToAnyPublisher().prefix(1)
         )
             .prefix(1)
             .eraseToAnyPublisher()
@@ -48,30 +47,32 @@ final class SellCoordinator: Coordinator<SellCoordinatorResult> {
             return navigateToProviderWebPage(url: url)
                 .deallocatedPublisher()
                 .handleEvents(receiveOutput: { [unowned self] _ in
-                    self.viewModel.warmUp()
+                    viewModel.warmUp()
                 }).eraseToAnyPublisher()
 
         case .showPending(let transactions, let fiat):
-            return coordinate(to: SellPendingCoordinator(
-                transactions: transactions,
-                fiat: fiat,
-                navigationController: navigationController)
-            )
-            .handleEvents(receiveOutput: { [weak self] val in
-                switch val {
-                case .completed:
-                    self?.resultSubject.send(.completed)
-                case .none:
-                    self?.resultSubject.send(.none)
+            return Publishers.MergeMany(
+                transactions.map { transaction in
+                    coordinate(
+                        to: SellPendingCoordinator(
+                            transaction: transactions[0],
+                            fiat: fiat,
+                            navigationController: navigationController
+                        )
+                    )
                 }
-            })
-            .map { _ in }
-            .eraseToAnyPublisher()
-            
-                // .flatMap {navigateToAnotherScene()} // chain another navigation if needed
-                // .handleEvents(receiveValue:,receiveCompletion:) // or event make side effect
-//                .map {_ in ()}
-//                .eraseToAnyPublisher()
+            )
+                .collect()
+                .map { $0.allSatisfy{$0} }
+                .handleEvents(receiveOutput: { [weak self] sent in
+                    self?.resultSubject.send(sent ? .completed: .none)
+                    print("SellNavigation sent: \(sent)")
+                }, receiveCompletion: { compl in
+                    print("SellNavigation compl: \(compl)")
+                })
+                .map { _ in }
+                .eraseToAnyPublisher()
+
         case .swap:
             return navigateToSwap().deallocatedPublisher()
                 .handleEvents(receiveOutput: { [unowned self] _ in
