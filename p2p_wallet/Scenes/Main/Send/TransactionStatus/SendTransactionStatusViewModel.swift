@@ -20,6 +20,7 @@ final class SendTransactionStatusViewModel: BaseViewModel, ObservableObject {
     @Published var transactionCryptoAmount: String
     @Published var info = [(title: String, detail: String)]()
     @Published var state: State = .loading(message: L10n.itUsuallyTakes520SecondsForATransactionToComplete)
+    @Published var closeButtonTitle: String = L10n.done
 
     private var currentTransaction: ParsedTransaction?
     private let disposeBag = DisposeBag()
@@ -114,6 +115,7 @@ final class SendTransactionStatusViewModel: BaseViewModel, ObservableObject {
         title = L10n.transactionSucceeded
         let text = L10n.theTransactionHasBeenSuccessfullyCompleted🤟
         state = .succeed(message: text)
+        closeButtonTitle = L10n.done
     }
 
     private func updateError() {
@@ -131,6 +133,7 @@ final class SendTransactionStatusViewModel: BaseViewModel, ObservableObject {
             ])
         )
         state = .error(message: attributedError)
+        closeButtonTitle = L10n.close
     }
 }
 
