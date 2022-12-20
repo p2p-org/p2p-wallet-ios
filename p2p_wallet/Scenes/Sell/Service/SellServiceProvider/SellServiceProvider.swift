@@ -8,7 +8,7 @@ public protocol ProviderCurrency {
     var maxSellAmount: Double? { get }
 }
 
-public protocol ProviderTransaction: Equatable {
+public protocol ProviderTransaction: Hashable {
     var id: String { get }
 //    var status: String { get }
     var baseCurrencyAmount: Double { get }

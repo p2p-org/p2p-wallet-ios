@@ -1188,3 +1188,20 @@ Reset the PIN or wait for %@." = "Il vous reste %@ tentatives pour saisir le cod
 "You need a little more %@" = "Vous avez besoin d'un peu plus %@";
 "The current minimum amount is %@ %@" = "Le montant minimum actuel est de %@ %@";
 "Go to Swap" = "Aller à Échanger";
+"Are you sure?" = "Êtes-vous sûr?";
+"Are you sure you want to interrupt cash out process? Your transaction won't be finished." = "Voulez-vous vraiment interrompre le processus de retrait ?  Votre transaction ne sera pas terminée.";
+"Continue transaction" = "Continuer la transaction";
+"Interrupt" = "Couper la parole";
+"Your bank account via Moonpay" = "Votre compte bancaire via Moonpay";
+"SOL was sent to Moonpay and is being processed. Any questions regarding your transaction can be answered via Moonpay help center" = "SOL a été envoyé à Moonpay et est en cours de traitement.  Toutes les questions concernant votre transaction peuvent être répondues via le centre d'aide Moonpay";
+"It usually takes up to 3 business days. Any questions regarding your transaction can be answered via Moonpay help center" = "Cela prend généralement jusqu'à 3 jours ouvrables.  Toutes les questions concernant votre transaction peuvent être répondues via le centre d'aide Moonpay";
+"You didn't finish your cash out transaction. After 7 days your transaction has been automatically declined. 
+
+You can try again, but your new transaction will be subject to the current rates." = "Vous n'avez pas terminé votre transaction de retrait.  Après 7 jours, votre transaction a été automatiquement refusée.
+
+ Vous pouvez réessayer, mais votre nouvelle transaction sera soumise aux tarifs en vigueur.";
+"Will be sent to" = "Sera envoyé à";
+"Delete from history" = "Supprimer de l'historique";
+"You need to send %@ SOL" = "Vous devez envoyer %@ SOL";
+"Funds were sent" = "Les fonds ont été envoyés";
+"To your bank account" = "Vers votre compte bancaire";

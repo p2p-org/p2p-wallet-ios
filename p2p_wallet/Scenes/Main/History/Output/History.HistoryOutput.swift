@@ -12,5 +12,5 @@ protocol HistoryOutput {
     ///
     /// - Parameter newData: incoming data
     /// - Returns: transformed data
-    func process(newData: [ParsedTransaction]) -> [ParsedTransaction]
+    func process(newData: [HistoryItem]) -> [HistoryItem]
 }
