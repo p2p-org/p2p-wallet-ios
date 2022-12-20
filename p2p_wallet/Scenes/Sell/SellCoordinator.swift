@@ -47,25 +47,20 @@ final class SellCoordinator: Coordinator<SellCoordinatorResult> {
             return navigateToProviderWebPage(url: url)
                 .deallocatedPublisher()
                 .handleEvents(receiveOutput: { [unowned self] _ in
-                    self.viewModel.warmUp()
+                    viewModel.warmUp()
                 }).eraseToAnyPublisher()
 
         case .showPending(let transactions, let fiat):
             return coordinate(to: SellPendingCoordinator(
-                transactions: transactions,
+                transaction: transactions[0],
                 fiat: fiat,
                 navigationController: navigationController)
             )
-            .handleEvents(receiveOutput: { [weak self] val in
-                switch val {
-                case .completed:
-                    self?.resultSubject.send(.completed)
-                case .none:
-                    self?.resultSubject.send(.none)
-                }
-                debugPrint(val)
+            .handleEvents(receiveOutput: { [weak self] sent in
+                self?.resultSubject.send(sent ? .completed: .none)
+                print("SellNavigation sent: \(sent)")
             }, receiveCompletion: { compl in
-                debugPrint(compl)
+                print("SellNavigation compl: \(compl)")
             })
             .map { _ in }
             .eraseToAnyPublisher()
