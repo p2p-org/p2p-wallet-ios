@@ -44,7 +44,7 @@ final class SellPendingCoordinator: Coordinator<SellPendingCoordinatorResult> {
             )
         )
         
-        let viewController = SellPendingView(viewModel: viewModel).asViewController(withoutUIKitNavBar: false)
+        let viewController = SellPendingView(viewModel: viewModel).asViewController()
 
         viewModel.dismiss
             .sink { [weak self] in
