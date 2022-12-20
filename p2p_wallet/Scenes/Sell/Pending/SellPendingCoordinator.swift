@@ -8,7 +8,7 @@ import Resolver
 enum SellPendingCoordinatorResult {
     case transactionRemoved
     case cashOutInterupted
-    case transactionSent
+    case transactionSent(SendTransaction)
     case cancelled
 }
 
@@ -96,8 +96,8 @@ final class SellPendingCoordinator: Coordinator<SellPendingCoordinatorResult> {
             }
             .sink { [weak self] res in
                 switch res {
-                case .sent:
-                    self?.resultSubject.send(.transactionSent)
+                case .sent(let transaction):
+                    self?.resultSubject.send(.transactionSent(transaction))
                 default:
                     self?.resultSubject.send(.cancelled)
                 }
