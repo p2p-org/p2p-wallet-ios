@@ -86,9 +86,7 @@ class HistoryCoordinator: SmartCoordinator<Void> {
             return
         }
 
-        // TODO: Setup token and amount for users
         let walletsRepository = Resolver.resolve(WalletsRepository.self)
-
         coordinate(to: SendCoordinator(
             rootViewController: viewController,
             preChosenWallet: walletsRepository.nativeWallet,
