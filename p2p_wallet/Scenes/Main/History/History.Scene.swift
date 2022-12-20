@@ -116,6 +116,7 @@ extension History {
 extension History.Scene: BECollectionViewDelegate {
     func beCollectionView(collectionView _: BECollectionViewBase, didSelect item: AnyHashable) {
         guard let item = item as? HistoryItem else { return }
+
         switch item {
         case .parsedTransaction(let transaction):
             let viewController = History.TransactionViewController(
@@ -129,9 +130,9 @@ extension History.Scene: BECollectionViewDelegate {
                 self?.dismiss(animated: true)
             }
             present(viewController, interactiveDismissalType: .none)
-        case .sellTransaction(let sellTransaction):
-            fatalError("SellTransactionDetail")
+        case .sellTransaction(_):
+            // Only history of all tokens support displaying sell transactions. 
+            viewModel.onTap(item: item)
         }
-        
     }
 }

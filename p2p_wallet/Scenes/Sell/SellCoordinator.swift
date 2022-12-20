@@ -11,7 +11,12 @@ enum SellCoordinatorResult {
 
 final class SellCoordinator: Coordinator<SellCoordinatorResult> {
     private let navigationController: UINavigationController
-    init(navigationController: UINavigationController) {
+    
+    // TODO: Pass initial amount in token to view model
+    private let initialAmountInToken: Double?
+    
+    init(initialAmountInToken: Double? = nil, navigationController: UINavigationController) {
+        self.initialAmountInToken = initialAmountInToken
         self.navigationController = navigationController
     }
 
@@ -19,6 +24,7 @@ final class SellCoordinator: Coordinator<SellCoordinatorResult> {
     private let resultSubject = PassthroughSubject<SellCoordinatorResult, Never>()
     override func start() -> AnyPublisher<SellCoordinatorResult, Never> {
         // scene navigation
+        
         viewModel.navigationPublisher
             .compactMap {$0}
             .flatMap { [unowned self] in
