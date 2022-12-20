@@ -115,7 +115,10 @@ final class SellCoordinator: Coordinator<SellCoordinatorResult> {
     
     private func navigateToSendTransactionStatus(model: SendTransaction) {
         coordinate(to: SendTransactionStatusCoordinator(parentController: navigationController, transaction: model))
-            .sink(receiveValue: {})
+            .sink(receiveValue: { [weak self] in
+                self?.resultSubject.send(.completed)
+                self?.navigationController.popToRootViewController(animated: true)
+            })
             .store(in: &subscriptions)
     }
 }
