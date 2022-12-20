@@ -83,7 +83,7 @@ struct SellInputView: View {
                     .foregroundColor(Color(Asset.Colors.mountain.color))
                     .font(uiFont: UIFont.font(of: .label1, weight: .regular))
                 Text((viewModel.maxBaseAmount ?? 0)
-                    .toString(minimumFractionDigits: 2, maximumFractionDigits: 2) + " \(viewModel.baseCurrencyCode)")
+                    .toString(maximumFractionDigits: 2) + " \(viewModel.baseCurrencyCode)")
                     .foregroundColor(Color(Asset.Colors.sky.color))
                     .font(uiFont: UIFont.font(of: .label1, weight: .regular))
             }

@@ -89,8 +89,8 @@ class SellViewModel: BaseViewModel, ObservableObject {
         dataStatus
             .filter { $0 == .ready }
             .map { _ in false }
-            .handleEvents(receiveOutput: { _ in
-                DispatchQueue.main.asyncAfter(deadline: .now() + 0.2) { [unowned self] in
+            .handleEvents(receiveOutput: { [unowned self] _ in
+                DispatchQueue.main.asyncAfter(deadline: .now() + 0.2) {
                     self.baseAmount = self.dataService.currency.minSellAmount ?? 0
                     self.quoteCurrencyCode = self.dataService.fiat.code
                     self.maxBaseProviderAmount = self.dataService.currency.maxSellAmount ?? 0

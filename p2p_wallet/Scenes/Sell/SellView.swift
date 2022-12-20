@@ -44,7 +44,10 @@ struct SellView: View {
                     .multilineTextAlignment(.center)
                     .padding(.horizontal, 20)
             }
-            .padding(.top, 84)
+            .padding(.top, 80)
+
+            Spacer()
+
             TextButtonView(
                 title: L10n.goToSwap,
                 style: .primaryWhite,
