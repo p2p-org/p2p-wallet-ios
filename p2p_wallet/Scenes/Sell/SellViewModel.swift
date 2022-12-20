@@ -20,10 +20,7 @@ class SellViewModel: BaseViewModel, ObservableObject {
     // MARK: -
 
     private let disposeBag = DisposeBag()
-    private var navigation = PassthroughSubject<SellNavigation?, Never>()
-    var navigationPublisher: AnyPublisher<SellNavigation?, Never> {
-        navigation.eraseToAnyPublisher()
-    }
+    private let navigation: PassthroughSubject<SellNavigation?, Never>
 
     // MARK: -
 
@@ -49,7 +46,8 @@ class SellViewModel: BaseViewModel, ObservableObject {
     @Published var errorText: String?
     @Published var hasError: Bool = false
 
-    override init() {
+    init(navigation: PassthroughSubject<SellNavigation?, Never>) {
+        self.navigation = navigation
         super.init()
 
         warmUp()
