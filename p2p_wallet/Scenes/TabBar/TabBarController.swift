@@ -21,7 +21,7 @@ final class TabBarController: UITabBarController {
     private var solendCoordinator: SolendCoordinator!
     private var homeCoordinator: HomeCoordinator!
     private var historyCoordinator: HistoryCoordinator!
-    
+
     private var actionsCoordinator: ActionsCoordinator?
     private var settingsCoordinator: SettingsCoordinator!
     private var buyCoordinator: BuyCoordinator?
@@ -166,7 +166,6 @@ final class TabBarController: UITabBarController {
             .store(in: &cancellables)
 
         let solendOrHistoryNavigation: UINavigationController
-        let historyOrFeedbackNavigation: UINavigationController = .init(rootViewController: History.Scene())
         if available(.investSolendFeature) {
             solendOrHistoryNavigation = UINavigationController()
             solendCoordinator = SolendCoordinator(navigationController: solendOrHistoryNavigation)
@@ -180,6 +179,12 @@ final class TabBarController: UITabBarController {
                 .sink {}
                 .store(in: &cancellables)
         }
+
+        let historyOrFeedbackNavigation = UINavigationController()
+        historyCoordinator = HistoryCoordinator(presentation: SmartCoordinatorPushPresentation(historyOrFeedbackNavigation))
+        historyCoordinator.start()
+            .sink {}
+            .store(in: &cancellables)
 
         let settingsNavigation: UINavigationController
         if available(.settingsFeature) {
@@ -230,13 +235,13 @@ final class TabBarController: UITabBarController {
         vc.modalPresentationStyle = .fullScreen
         present(vc, animated: true)
     }
-    
+
     private func routeToSendTransactionStatus(model: SendTransaction) {
         sendStatusCoordinator = SendTransactionStatusCoordinator(parentController: self, transaction: model)
-        
+
         sendStatusCoordinator?
             .start()
-            .sink(receiveValue: { })
+            .sink(receiveValue: {})
             .store(in: &cancellables)
     }
 
