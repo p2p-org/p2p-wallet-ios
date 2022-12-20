@@ -15,9 +15,10 @@ final class SellPendingCoordinator: Coordinator<SellPendingCoordinatorResult> {
     
     // MARK: - Properties
     
-    let navigationController: UINavigationController
-    let transaction: SellDataServiceTransaction
-    let fiat: Fiat
+    private let navigationController: UINavigationController
+    private let transaction: SellDataServiceTransaction
+    private let fiat: Fiat
+    private var resultSubject = PassthroughSubject<SellPendingCoordinatorResult, Never>()
 
     // MARK: - Initializer
 
@@ -28,12 +29,9 @@ final class SellPendingCoordinator: Coordinator<SellPendingCoordinatorResult> {
     }
 
     // MARK: - Methods
-
-//    private var resultSubject = PassthroughSubject<SellPendingCoordinatorResult, Never>()
-    private var sellVC: UIViewController?
+    
     override func start() -> AnyPublisher<SellPendingCoordinatorResult, Never> {
         let tokenSymbol = "SOL"
-        let resultSubject = PassthroughSubject<Bool, Never>()
         let viewModel = SellPendingViewModel(
             model: SellPendingViewModel.Model(
                 id: transaction.id,
@@ -50,7 +48,7 @@ final class SellPendingCoordinator: Coordinator<SellPendingCoordinatorResult> {
 
         viewModel.dismiss
             .sink { [weak self] in
-                resultSubject.send(true)
+                self?.resultSubject.send(true)
                 self?.navigationController.popViewController(animated: true)
             }
             .store(in: &subscriptions)
@@ -87,18 +85,25 @@ final class SellPendingCoordinator: Coordinator<SellPendingCoordinatorResult> {
                     )
                 )
             }
-            .sink { res in
+            .sink { [weak self] res in
                 switch res {
                 case .sent:
-                    resultSubject.send(true)
+                    self?.resultSubject.send(true)
                 default:
-                    resultSubject.send(false)
+                    self?.resultSubject.send(false)
                 }
             }
             .store(in: &subscriptions)
 
         viewController.hidesBottomBarWhenPushed = true
         viewController.navigationItem.title = "\(L10n.cashOut) \(tokenSymbol)"
+        
+        viewController.deallocatedPublisher()
+            .sink { [weak self] _ in
+                self?.resultSubject.send(false)
+            }
+            .store(in: &subscriptions)
+
         
         return resultSubject.prefix(1).eraseToAnyPublisher()
     }
