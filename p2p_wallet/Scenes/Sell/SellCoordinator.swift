@@ -64,14 +64,24 @@ final class SellCoordinator: Coordinator<SellCoordinatorResult> {
                 }
             )
                 .handleEvents(receiveOutput: { [weak self, unowned mainSellVC] result in
+                    guard let self = self else { return }
                     switch result {
                     case .transactionRemoved, .cancelled:
-                        self?.navigationController.popViewController(animated: true)
+                        self.navigationController.popViewController(animated: true)
                     case .cashOutInterupted:
-                        self?.navigationController.popToRootViewController(animated: true)
-                        self?.resultSubject.send(.none)
-                    case .transactionSent:
-                        self?.navigationController.popToViewController(mainSellVC, animated: true)
+                        self.navigationController.popToRootViewController(animated: true)
+                        self.resultSubject.send(.none)
+                    case .transactionSent(let transaction):
+                        // pop 2 viewcontrollers: send and the last pending one
+                        let viewControllers = self.navigationController.viewControllers
+                        if viewControllers.count < 3 {
+                            self.navigationController.popToViewController(mainSellVC, animated: true)
+                        } else {
+                            self.navigationController.popToViewController(viewControllers[viewControllers.count - 3], animated: true)
+                        }
+                        
+                        // Show status
+                        self.navigateToSendTransactionStatus(model: transaction)
                     }
                     print("SellNavigation result: \(result)")
                 }, receiveCompletion: { compl in
@@ -101,5 +111,11 @@ final class SellCoordinator: Coordinator<SellCoordinatorResult> {
         vc.hidesBottomBarWhenPushed = navigationController.canHideBottomForNextPush
         navigationController.present(vc, animated: true)
         return vc
+    }
+    
+    private func navigateToSendTransactionStatus(model: SendTransaction) {
+        coordinate(to: SendTransactionStatusCoordinator(parentController: navigationController, transaction: model))
+            .sink(receiveValue: {})
+            .store(in: &subscriptions)
     }
 }
