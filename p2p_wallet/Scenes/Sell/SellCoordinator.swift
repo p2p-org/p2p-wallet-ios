@@ -20,7 +20,7 @@ final class SellCoordinator: Coordinator<SellCoordinatorResult> {
     override func start() -> AnyPublisher<SellCoordinatorResult, Never> {
         // create viewController
         let vc = UIHostingController(rootView: SellView(viewModel: viewModel))
-        vc.hidesBottomBarWhenPushed = true
+        vc.hidesBottomBarWhenPushed = navigationController.canHideBottomForNextPush
         navigationController.pushViewController(vc, animated: true)
         
         // scene navigation
@@ -98,7 +98,7 @@ final class SellCoordinator: Coordinator<SellCoordinatorResult> {
     private func navigateToSwap() -> UIViewController {
         let vm = OrcaSwapV2.ViewModel(initialWallet: nil)
         let vc = OrcaSwapV2.ViewController(viewModel: vm)
-        vc.hidesBottomBarWhenPushed = true
+        vc.hidesBottomBarWhenPushed = navigationController.canHideBottomForNextPush
         navigationController.present(vc, animated: true)
         return vc
     }
