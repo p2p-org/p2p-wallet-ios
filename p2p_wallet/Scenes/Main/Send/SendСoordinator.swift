@@ -3,11 +3,13 @@
 // found in the LICENSE file.
 
 import Combine
+import FeeRelayerSwift
 import Foundation
+import Resolver
 import Send
-import SwiftUI
 import SolanaSwift
 import Send
+import SwiftUI
 
 enum SendResult {
     case sent(SendTransaction)
@@ -53,6 +55,11 @@ class SendCoordinator: Coordinator<SendResult> {
     // MARK: - Methods
 
     override func start() -> AnyPublisher<SendResult, Never> {
+        // Pre warm
+        Task.detached {
+            try await Resolver.resolve(FeeRelayerContextManager.self).update()
+        }
+
         // normal flow with no preChosenRecipient
         if let recipient = preChosenRecipient {
             return startFlowWithPreChosenRecipient(recipient)
