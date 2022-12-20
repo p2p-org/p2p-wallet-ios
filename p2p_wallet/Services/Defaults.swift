@@ -108,4 +108,17 @@ extension DefaultsKeys {
     var isSellAvailable: DefaultsKey<Bool?> {
         .init(#function, defaultValue: nil)
     }
+
+    var moonpayEnvironment: DefaultsKey<DefaultsKeys.MoonpayEnvironment> {
+        DefaultsKey(#function, defaultValue: .production)
+    }
+}
+
+// MARK: - Moonpay Environment
+
+extension DefaultsKeys {
+    enum MoonpayEnvironment: String, DefaultsSerializable {
+        case production
+        case sandbox
+    }
 }

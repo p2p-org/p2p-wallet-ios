@@ -139,13 +139,16 @@ class SellActionServiceMock: SellActionService {
         baseCurrencyAmount: Double,
         externalTransactionId: String
     ) throws -> URL {
-        #if !RELEASE
-        let endpoint = String.secretConfig("MOONPAY_STAGING_SELL_ENDPOINT")!
-        let apiKey = String.secretConfig("MOONPAY_STAGING_API_KEY")!
-        #else
-        let endpoint = String.secretConfig("MOONPAY_PRODUCTION_SELL_ENDPOINT")!
-        let apiKey = String.secretConfig("MOONPAY_PRODUCTION_API_KEY")!
-        #endif
+        let endpoint: String
+        let apiKey: String
+        switch Defaults.moonpayEnvironment {
+        case .production:
+            endpoint = .secretConfig("MOONPAY_PRODUCTION_SELL_ENDPOINT")!
+            apiKey = .secretConfig("MOONPAY_PRODUCTION_API_KEY")!
+        case .sandbox:
+            endpoint = .secretConfig("MOONPAY_STAGING_SELL_ENDPOINT")!
+            apiKey = .secretConfig("MOONPAY_STAGING_API_KEY")!
+        }
 
         var components = URLComponents(string: endpoint + "sell")!
         components.queryItems = [
