@@ -15,7 +15,7 @@ final class SendInputFeePromptCoordinator: Coordinator<Wallet?> {
     }
 
     override func start() -> AnyPublisher<Wallet?, Never> {
-        let viewModel = SendInputFeePromptViewModel(feeToken: feeToken.token, availableFeeTokens: availableFeeTokens)
+        let viewModel = SendInputFeePromptViewModel(feeToken: feeToken, availableFeeTokens: availableFeeTokens)
         let view = SendInputFeePromptView(viewModel: viewModel)
         let controller = UIHostingController(rootView: view)
         controller.modalPresentationStyle = .fullScreen
@@ -25,24 +25,27 @@ final class SendInputFeePromptCoordinator: Coordinator<Wallet?> {
         viewModel.close
             .sink(receiveValue: { [weak self] in
                 controller.dismiss(animated: true)
+                if viewModel.feeToken.mintAddress != self?.feeToken.mintAddress {
+                    self?.subject.send(viewModel.feeToken)
+                }
                 self?.subject.send(completion: .finished)
             })
             .store(in: &subscriptions)
 
         viewModel.chooseToken
             .sink(receiveValue: { [weak self] in
-                self?.openChooseToken(from: controller)
+                self?.openChooseToken(from: controller, viewModel: viewModel)
             })
             .store(in: &subscriptions)
 
         return subject.eraseToAnyPublisher()
     }
 
-    private func openChooseToken(from vc: UIViewController) {
+    private func openChooseToken(from vc: UIViewController, viewModel: SendInputFeePromptViewModel) {
         coordinate(to: ChooseWalletTokenCoordinator(strategy: .feeToken(tokens: availableFeeTokens), chosenWallet: feeToken, parentController: vc))
-            .sink { [weak self] value in
-                vc.dismiss(animated: true)
-                self?.subject.send(value)
+            .sink { value in
+                guard let token = value else { return }
+                viewModel.feeToken = token
             }
             .store(in: &subscriptions)
     }
