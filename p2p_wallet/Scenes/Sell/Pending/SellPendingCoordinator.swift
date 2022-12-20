@@ -5,7 +5,12 @@ import UIKit
 import Send
 import Resolver
 
-typealias SellPendingCoordinatorResult = Bool
+enum SellPendingCoordinatorResult {
+    case transactionRemoved
+    case cashOutInterupted
+    case transactionSent
+    case cancelled
+}
 
 final class SellPendingCoordinator: Coordinator<SellPendingCoordinatorResult> {
     
@@ -31,6 +36,7 @@ final class SellPendingCoordinator: Coordinator<SellPendingCoordinatorResult> {
     // MARK: - Methods
     
     override func start() -> AnyPublisher<SellPendingCoordinatorResult, Never> {
+        // create viewModel, viewController and push to navigation stack
         let tokenSymbol = "SOL"
         let viewModel = SellPendingViewModel(
             model: SellPendingViewModel.Model(
@@ -45,23 +51,26 @@ final class SellPendingCoordinator: Coordinator<SellPendingCoordinatorResult> {
         )
         
         let viewController = SellPendingView(viewModel: viewModel).asViewController()
-
-        viewModel.dismiss
+        viewController.hidesBottomBarWhenPushed = true
+        viewController.navigationItem.title = "\(L10n.cashOut) \(tokenSymbol)"
+        navigationController.pushViewController(viewController, animated: true)
+        
+        // observe viewModel's event
+        viewModel.transactionRemoved
             .sink { [weak self] in
-                self?.resultSubject.send(true)
-                self?.navigationController.popViewController(animated: true)
+                self?.resultSubject.send(.transactionRemoved)
             }
             .store(in: &subscriptions)
 
         viewModel.back
-            .sink(receiveValue: { [unowned self] in
+            .sink(receiveValue: { [unowned viewController] in
                 _ = viewController.showAlert(
                     title: L10n.areYouSure,
                     message: L10n.areYouSureYouWantToInterruptCashOutProcessYourTransactionWonTBeFinished,
                     actions: [
                         UIAlertAction(title: L10n.continueTransaction, style: .default),
                         UIAlertAction(title: L10n.interrupt, style: .destructive) { [unowned self] _ in
-                            navigationController.popToRootViewController(animated: true)
+                            self.resultSubject.send(.cashOutInterupted)
                         }
                     ]
                 )
@@ -88,24 +97,18 @@ final class SellPendingCoordinator: Coordinator<SellPendingCoordinatorResult> {
             .sink { [weak self] res in
                 switch res {
                 case .sent:
-                    self?.resultSubject.send(true)
+                    self?.resultSubject.send(.transactionSent)
                 default:
-                    self?.resultSubject.send(false)
+                    self?.resultSubject.send(.cancelled)
                 }
             }
             .store(in: &subscriptions)
-
-        viewController.hidesBottomBarWhenPushed = true
-        viewController.navigationItem.title = "\(L10n.cashOut) \(tokenSymbol)"
         
-        viewController.deallocatedPublisher()
-            .sink { [weak self] _ in
-                self?.resultSubject.send(false)
-            }
-            .store(in: &subscriptions)
-        
-        navigationController.pushViewController(viewController, animated: true)
-        
-        return resultSubject.prefix(1).eraseToAnyPublisher()
+        // return either vc was dellocated or result subject return a value
+        return Publishers.Merge(
+            viewController.deallocatedPublisher().map { SellPendingCoordinatorResult.cancelled },
+            resultSubject.eraseToAnyPublisher()
+        )
+            .prefix(1).eraseToAnyPublisher()
     }
 }
