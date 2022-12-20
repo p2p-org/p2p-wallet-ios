@@ -130,7 +130,7 @@ struct SendInputAmountField: UIViewRepresentable {
 
             // Format any number without
             if let number = number {
-                textField.text = number.toString(maximumFractionDigits: countAfterDecimalPoint)
+                textField.text = number.toString(maximumFractionDigits: countAfterDecimalPoint, roundingMode: .down)
                 text = textField.text ?? ""
                 return false
             }
