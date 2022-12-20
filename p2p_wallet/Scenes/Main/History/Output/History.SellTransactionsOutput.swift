@@ -26,7 +26,7 @@ extension History {
             var transactions = sellTransactionsRepository.currentTransactions
             
             // sort first
-            transactions.sort(by: { $0.createdAt?.timeIntervalSince1970 > $1.createdAt?.timeIntervalSince1970 })
+            transactions.sort(by: { $0.createdAt?.timeIntervalSince1970 < $1.createdAt?.timeIntervalSince1970 })
             
             /// Applies to output list
             var data = newData
