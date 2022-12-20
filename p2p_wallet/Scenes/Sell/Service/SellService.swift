@@ -8,8 +8,9 @@ public enum SellDataServiceStatus {
     case error
 }
 
-public struct SellDataServiceTransaction {
+public struct SellDataServiceTransaction: Hashable {
     var id: String
+    var createdAt: Date?
     var status: Status
     var baseCurrencyAmount: Double
     var quoteCurrencyAmount: Double

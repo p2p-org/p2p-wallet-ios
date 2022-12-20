@@ -37,17 +37,17 @@ final class SellPendingCoordinator: Coordinator<SellPendingCoordinatorResult> {
     override func start() -> AnyPublisher<SellPendingCoordinatorResult, Never> {
         var resultSubject = PassthroughSubject<SellPendingCoordinatorResult, Never>()
         let tokenSymbol = "SOL"
-        let vcs = transactions.map { transction in
+        let vcs = transactions.map { transaction in
             let vcSubject = PassthroughSubject<Bool, Never>()
             let viewModel = SellPendingViewModel(
                 model: SellPendingViewModel.Model(
-                    id: transction.id,
+                    id: transaction.id,
                     tokenImage: .solanaIcon,
                     tokenSymbol: tokenSymbol,
-                    tokenAmount: transction.baseCurrencyAmount,
-                    fiatAmount: transction.quoteCurrencyAmount,
+                    tokenAmount: transaction.baseCurrencyAmount,
+                    fiatAmount: transaction.quoteCurrencyAmount,
                     currency: fiat,
-                    receiverAddress: transction.depositWallet
+                    receiverAddress: transaction.depositWallet
                 )
             )
 
@@ -57,6 +57,20 @@ final class SellPendingCoordinator: Coordinator<SellPendingCoordinatorResult> {
                     self?.navigationController.popViewController(animated: true)
                 }
                 .store(in: &subscriptions)
+            viewModel.back
+                .sink(receiveValue: { [unowned self] in
+                    _ = viewController.showAlert(
+                        title: L10n.areYouSure,
+                        message: L10n.areYouSureYouWantToInterruptCashOutProcessYourTransactionWonTBeFinished,
+                        actions: [
+                            UIAlertAction(title: L10n.continueTransaction, style: .default),
+                            UIAlertAction(title: L10n.interrupt, style: .destructive) { [unowned self] _ in
+                                navigationController.popToRootViewController(animated: true)
+                            }
+                        ]
+                    )
+                })
+                .store(in: &subscriptions)
 
             viewModel.send
                 .flatMap { [unowned self, navigationController] in
@@ -65,11 +79,11 @@ final class SellPendingCoordinator: Coordinator<SellPendingCoordinatorResult> {
                             rootViewController: navigationController,
                             preChosenWallet: walletsRepository.nativeWallet,
                             preChosenRecipient: Recipient(
-                                address: transction.depositWallet,
+                                address: transaction.depositWallet,
                                 category: .solanaAddress,
                                 attributes: [.funds]
                             ),
-                            preChosenAmount: transction.baseCurrencyAmount,
+                            preChosenAmount: transaction.baseCurrencyAmount,
                             hideTabBar: true,
                             source: .sell
                         )

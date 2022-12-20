@@ -1149,7 +1149,7 @@ Reset the PIN or wait for %@.";
 "Sent to" = "Sent to";
 "The transaction has been successfully completed" = "The transaction has been successfully completed";
 "Free (Paid by Key App)" = "Free (Paid by Key App)";
-"The funds were sent to your bank account" = "The funds were sent to your bank account";
+"The funds were sent to your\nbank account" = "The funds were sent to your\nbank account";
 "You need to send" = "You need to send";
 "You’ve not sent" = "You’ve not sent";
 "Cash out" = "Cash out";
@@ -1159,3 +1159,20 @@ Reset the PIN or wait for %@.";
 "You need a little more %@" = "You need a little more %@";
 "The current minimum amount is %@ %@" = "The current minimum amount is %@ %@";
 "Go to Swap" = "Go to Swap";
+"Are you sure?" = "Are you sure?";
+"Are you sure you want to interrupt cash out process? Your transaction won't be finished." = "Are you sure you want to interrupt cash out process? Your transaction won't be finished.";
+"Continue transaction" = "Continue transaction";
+"Interrupt" = "Interrupt";
+"Your bank account via Moonpay" = "Your bank account via Moonpay";
+"SOL was sent to Moonpay and is being processed. Any questions regarding your transaction can be answered via Moonpay help center" = "SOL was sent to Moonpay and is being processed. Any questions regarding your transaction can be answered via Moonpay help center";
+"It usually takes up to 3 business days. Any questions regarding your transaction can be answered via Moonpay help center" = "It usually takes up to 3 business days. Any questions regarding your transaction can be answered via Moonpay help center";
+"You didn't finish your cash out transaction. After 7 days your transaction has been automatically declined. 
+
+You can try again, but your new transaction will be subject to the current rates." = "You didn't finish your cash out transaction. After 7 days your transaction has been automatically declined. 
+
+You can try again, but your new transaction will be subject to the current rates.";
+"Will be sent to" = "Will be sent to";
+"Delete from history" = "Delete from history";
+"You need to send %@ SOL" = "You need to send %@ SOL";
+"Funds were sent" = "Funds were sent";
+"To your bank account" = "To your bank account";

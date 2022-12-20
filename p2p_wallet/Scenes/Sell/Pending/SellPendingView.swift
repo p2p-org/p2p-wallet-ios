@@ -7,15 +7,17 @@ struct SellPendingView: View {
 
     var body: some View {
         ZStack {
-            Color(Asset.Colors.smoke.color)
+            backgroundColor
                 .ignoresSafeArea()
             VStack {
                 VStack(spacing: 28) {
+                    navigationView
                     Text(L10n.pleaseSendCryptoToMoonPayAddress)
                         .multilineTextAlignment(.center)
                         .foregroundColor(Color(Asset.Colors.night.color))
                         .font(uiFont: .font(of: .title2, weight: .bold))
                         .padding(.horizontal, 20)
+                        .padding(.top, 13)
                     tokenView
                     VStack(spacing: 16) {
                         infoBlockView
@@ -53,11 +55,37 @@ struct SellPendingView: View {
                         }
                     )
                 }
-//                .padding(.horizontal, 24)
             }
-            .padding(.top, 41)
             .padding(.bottom, 16)
         }
+    }
+
+    private var backgroundColor: Color {
+        Color(Asset.Colors.smoke.color)
+    }
+
+    private var navigationView: some View {
+        HStack {
+            Button(
+                action: {
+                    viewModel.backClicked()
+                },
+                label: {
+                    Image(uiImage: .backArrow)
+                        .renderingMode(.template)
+                        .foregroundColor(.black)
+                }
+            )
+            Spacer()
+            Text("\(L10n.cashOut) \(viewModel.model.tokenSymbol)")
+                .font(uiFont: .font(of: .text1, weight: .semibold))
+            Spacer()
+            Image(uiImage: .backArrow)
+                .renderingMode(.template)
+                .foregroundColor(backgroundColor)
+        }
+        .padding(.top, 10)
+        .padding(.horizontal, 17)
     }
 
     private var tokenView: some View {
