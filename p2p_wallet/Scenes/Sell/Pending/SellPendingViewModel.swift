@@ -3,15 +3,23 @@ import Foundation
 import Resolver
 
 final class SellPendingViewModel: BaseViewModel, ObservableObject {
+    
+    // MARK: - Dependencies
+    
     @Injected var sellDataService: any SellDataService
     @Injected private var clipboardManager: ClipboardManagerType
     @Injected private var notificationsService: NotificationService
 
+    // MARK: - Subjects
+
     private let sendSubject = PassthroughSubject<Void, Never>()
-    private let dismissSubject = PassthroughSubject<Void, Never>()
+    private let transactionRemovedSubject = PassthroughSubject<Void, Never>()
     private let backSubject = PassthroughSubject<Void, Never>()
+    
+    // MARK: - Publishers
+
     var send: AnyPublisher<Void, Never> { sendSubject.eraseToAnyPublisher() }
-    var dismiss: AnyPublisher<Void, Never> { dismissSubject.eraseToAnyPublisher() }
+    var transactionRemoved: AnyPublisher<Void, Never> { transactionRemovedSubject.eraseToAnyPublisher() }
     var back: AnyPublisher<Void, Never> { backSubject.eraseToAnyPublisher() }
 
     let tokenAmount: String
@@ -35,7 +43,7 @@ final class SellPendingViewModel: BaseViewModel, ObservableObject {
         Task {
             try await sellDataService.deleteTransaction(id: model.id)
         }
-        dismissSubject.send()
+        transactionRemovedSubject.send()
     }
 
     func addressCopied() {

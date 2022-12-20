@@ -18,22 +18,23 @@ final class SellCoordinator: Coordinator<SellCoordinatorResult> {
     private let viewModel = SellViewModel()
     private let resultSubject = PassthroughSubject<SellCoordinatorResult, Never>()
     override func start() -> AnyPublisher<SellCoordinatorResult, Never> {
-        // scene navigation
-        viewModel.navigationPublisher
-            .compactMap {$0}
-            .flatMap { [unowned self] in
-                navigate(to: $0)
-            }
-            .sink { _ in }
-            .store(in: &subscriptions)
-
         // create viewController
         let vc = UIHostingController(rootView: SellView(viewModel: viewModel))
         vc.hidesBottomBarWhenPushed = true
         navigationController.pushViewController(vc, animated: true)
+        
+        // scene navigation
+        viewModel.navigationPublisher
+            .compactMap {$0}
+            .flatMap { [unowned self, unowned vc] in
+                navigate(to: $0, mainSellVC: vc)
+            }
+            .sink { _ in }
+            .store(in: &subscriptions)
+
         return Publishers.Merge(
             vc.deallocatedPublisher().map { SellCoordinatorResult.none },
-            resultSubject.eraseToAnyPublisher().prefix(1)
+            resultSubject.eraseToAnyPublisher()
         )
             .prefix(1)
             .eraseToAnyPublisher()
@@ -41,7 +42,7 @@ final class SellCoordinator: Coordinator<SellCoordinatorResult> {
 
     // MARK: - Navigation
 
-    private func navigate(to scene: SellNavigation) -> AnyPublisher<Void, Never> {
+    private func navigate(to scene: SellNavigation, mainSellVC: UIViewController) -> AnyPublisher<Void, Never> {
         switch scene {
         case .webPage(let url):
             return navigateToProviderWebPage(url: url)
@@ -62,11 +63,17 @@ final class SellCoordinator: Coordinator<SellCoordinatorResult> {
                     )
                 }
             )
-                .collect()
-                .map { $0.allSatisfy{$0} }
-                .handleEvents(receiveOutput: { [weak self] sent in
-                    self?.resultSubject.send(sent ? .completed: .none)
-                    print("SellNavigation sent: \(sent)")
+                .handleEvents(receiveOutput: { [weak self, unowned mainSellVC] result in
+                    switch result {
+                    case .transactionRemoved, .cancelled:
+                        self?.navigationController.popViewController(animated: true)
+                    case .cashOutInterupted:
+                        self?.navigationController.popToRootViewController(animated: true)
+                        self?.resultSubject.send(.none)
+                    case .transactionSent:
+                        self?.navigationController.popToViewController(mainSellVC, animated: true)
+                    }
+                    print("SellNavigation result: \(result)")
                 }, receiveCompletion: { compl in
                     print("SellNavigation compl: \(compl)")
                 })
