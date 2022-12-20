@@ -16,10 +16,13 @@ final class SellCoordinator: Coordinator<SellCoordinatorResult> {
     private let navigationController: UINavigationController
     private var viewModel: SellViewModel!
     private let resultSubject = PassthroughSubject<SellCoordinatorResult, Never>()
+    // TODO: Pass initial amount in token to view model
+    private let initialAmountInToken: Double?
     
     // MARK: - Initializer
 
-    init(navigationController: UINavigationController) {
+    init(initialAmountInToken: Double? = nil, navigationController: UINavigationController) {
+        self.initialAmountInToken = initialAmountInToken
         self.navigationController = navigationController
     }
     

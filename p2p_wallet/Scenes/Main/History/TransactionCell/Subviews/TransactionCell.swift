@@ -77,17 +77,17 @@ class TransactionCell: BaseCollectionViewCell, BECollectionViewCell {
             descriptionLabel.heightAnchor.constraint(equalToConstant: 18),
             amountInTokenLabel.heightAnchor.constraint(equalToConstant: 18),
         ])
-        
     }
 
     // MARK: - BECollectionViewCell
+
     func setUp(with item: AnyHashable?) {
         guard let item = item as? HistoryItem else { return }
         switch item {
-        case .parsedTransaction(let transaction):
+        case let .parsedTransaction(transaction):
             imageView.layer.cornerRadius = 16
             setUp(with: transaction)
-        case .sellTransaction(let transaction):
+        case let .sellTransaction(transaction):
             imageView.layer.cornerRadius = 24
             setUp(with: transaction)
         }
@@ -192,7 +192,7 @@ class TransactionCell: BaseCollectionViewCell, BECollectionViewCell {
         } else if let blockhash = transaction.blockhash {
             amountInTokenLabel.text = "#" + blockhash.prefix(4) + "..." + blockhash.suffix(4)
         }
-        
+
         // modify swap value
         switch transaction.info {
         case _ as SwapInfo:
@@ -203,20 +203,22 @@ class TransactionCell: BaseCollectionViewCell, BECollectionViewCell {
             return
         }
     }
-    
+
     private func setUp(with transaction: SellDataServiceTransaction) {
         // reset
         transactionTypeLabel.font = transactionTypeLabel.font.withWeight(.semibold)
-        
+
         // get infos
         let statusImage: UIImage
         let title: String
         let subtitle: String
-        
+
         switch transaction.status {
         case .waitingForDeposit:
             statusImage = .transactionIndicatorSellPending
-            title = L10n.youNeedToSendSOL(transaction.baseCurrencyAmount.toString(maximumFractionDigits: 9, groupingSeparator: ""))
+            title = L10n
+                .youNeedToSendSOL(transaction.baseCurrencyAmount
+                    .toString(maximumFractionDigits: 9, groupingSeparator: ""))
             subtitle = L10n.to("..." + transaction.depositWallet.suffix(4))
         case .pending:
             statusImage = .transactionIndicatorSellPending
@@ -231,10 +233,11 @@ class TransactionCell: BaseCollectionViewCell, BECollectionViewCell {
             title = L10n.youVeNotSent
             subtitle = L10n.to("SOL", "Moonpay")
         }
-        
-        let amountInFiatText = "$" + transaction.quoteCurrencyAmount.toString(maximumFractionDigits: 2) // FIXME: - Currency???
+
+        let amountInFiatText = "$" + transaction.quoteCurrencyAmount
+            .toString(maximumFractionDigits: 2) // FIXME: - Currency???
         let amountInTokenText = transaction.baseCurrencyAmount.toString(maximumFractionDigits: 9) + " SOL"
-        
+
         // set up
         imageView.setUp(imageType: .oneImage(image: statusImage))
         imageView.setUp(statusImage: nil)
@@ -248,7 +251,8 @@ class TransactionCell: BaseCollectionViewCell, BECollectionViewCell {
 private extension UIFont {
     func withWeight(_ weight: UIFont.Weight) -> UIFont {
         let newDescriptor = fontDescriptor.addingAttributes([.traits: [
-            UIFontDescriptor.TraitKey.weight: weight]])
+            UIFontDescriptor.TraitKey.weight: weight,
+        ]])
         return UIFont(descriptor: newDescriptor, size: pointSize)
     }
 }
