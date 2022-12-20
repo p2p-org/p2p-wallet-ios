@@ -10,6 +10,7 @@ import Foundation
 import SolanaSwift
 import TransactionParser
 import UIKit
+import KeyAppUI
 
 class TransactionCell: BaseCollectionViewCell, BECollectionViewCell {
     override var padding: UIEdgeInsets { .init(x: 16, y: 8) }
@@ -83,12 +84,18 @@ class TransactionCell: BaseCollectionViewCell, BECollectionViewCell {
 
     func setUp(with item: AnyHashable?) {
         guard let item = item as? HistoryItem else { return }
+        
+        imageView.backgroundView.backgroundColor = .grayPanel
+        
+        transactionTypeLabel.textColor = .textBlack
+        amountInFiatLabel.textColor = .textBlack
+        
         switch item {
         case let .parsedTransaction(transaction):
-            imageView.layer.cornerRadius = 16
+            imageView.backgroundView.layer.cornerRadius = 16
             setUp(with: transaction)
         case let .sellTransaction(transaction):
-            imageView.layer.cornerRadius = 24
+            imageView.backgroundView.layer.cornerRadius = 24
             setUp(with: transaction)
         }
     }
@@ -229,9 +236,13 @@ class TransactionCell: BaseCollectionViewCell, BECollectionViewCell {
             title = L10n.fundsWereSent
             subtitle = L10n.toYourBankAccount
         case .failed:
+            imageView.backgroundView.backgroundColor = UIColor(red: 1, green: 0.863, blue: 0.914, alpha: 1)
             statusImage = .transactionIndicatorSellExpired
             title = L10n.youVeNotSent
             subtitle = L10n.to("SOL", "Moonpay")
+            
+            transactionTypeLabel.textColor = Asset.Colors.rose.color
+            amountInFiatLabel.textColor = Asset.Colors.rose.color
         }
 
         let amountInFiatText = "$" + transaction.quoteCurrencyAmount
