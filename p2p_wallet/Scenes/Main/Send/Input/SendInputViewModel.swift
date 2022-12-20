@@ -59,6 +59,7 @@ final class SendInputViewModel: BaseViewModel, ObservableObject {
 
     private let source: SendSource
     private var wasMaxWarningToastShown: Bool = false
+    private let preChosenAmount: Double?
 
     // MARK: - Dependencies
 
@@ -68,6 +69,7 @@ final class SendInputViewModel: BaseViewModel, ObservableObject {
 
     init(recipient: Recipient, preChosenWallet: Wallet?, preChosenAmount: Double?, source: SendSource) {
         self.source = source
+        self.preChosenAmount = preChosenAmount
         let repository = Resolver.resolve(WalletsRepository.self)
         walletsRepository = repository
         let wallets = repository.getWallets()
@@ -149,16 +151,6 @@ final class SendInputViewModel: BaseViewModel, ObservableObject {
         initialize()
         logOpen()
         bind()
-        
-        // disable adding amount if amount is pre-chosen
-        if let amount = preChosenAmount {
-            Task {
-                await stateMachine.accept(action: .changeAmountInToken(amount))
-                await MainActor.run { [unowned self] in
-                    inputAmountViewModel.isDisabled = true
-                }
-            }
-        }
     }
 
     func initialize() {
@@ -174,6 +166,17 @@ final class SendInputViewModel: BaseViewModel, ObservableObject {
                     let feeRelayerContextManager = Resolver.resolve(FeeRelayerContextManager.self)
                     return try await feeRelayerContextManager.getCurrentContext()
                 }))
+            
+            // disable adding amount if amount is pre-chosen
+            if let amount = preChosenAmount {
+                Task {
+                    inputAmountViewModel.mainAmountType = .token
+                    inputAmountViewModel.amountText = "\(amount)"
+                    await MainActor.run { [unowned self] in
+                        inputAmountViewModel.isDisabled = true
+                    }
+                }
+            }
             
             #if !RELEASE
             let context = try await Resolver.resolve(FeeRelayerContextManager.self)
