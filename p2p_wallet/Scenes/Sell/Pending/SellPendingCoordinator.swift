@@ -103,7 +103,8 @@ final class SellPendingCoordinator: Coordinator<SellPendingCoordinatorResult> {
                 self?.resultSubject.send(false)
             }
             .store(in: &subscriptions)
-
+        
+        navigationController.pushViewController(viewController, animated: true)
         
         return resultSubject.prefix(1).eraseToAnyPublisher()
     }

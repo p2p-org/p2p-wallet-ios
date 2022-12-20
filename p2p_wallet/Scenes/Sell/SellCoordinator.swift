@@ -51,24 +51,28 @@ final class SellCoordinator: Coordinator<SellCoordinatorResult> {
                 }).eraseToAnyPublisher()
 
         case .showPending(let transactions, let fiat):
-            return coordinate(to: SellPendingCoordinator(
-                transaction: transactions[0],
-                fiat: fiat,
-                navigationController: navigationController)
+            return Publishers.MergeMany(
+                transactions.map { transaction in
+                    coordinate(
+                        to: SellPendingCoordinator(
+                            transaction: transactions[0],
+                            fiat: fiat,
+                            navigationController: navigationController
+                        )
+                    )
+                }
             )
-            .handleEvents(receiveOutput: { [weak self] sent in
-                self?.resultSubject.send(sent ? .completed: .none)
-                print("SellNavigation sent: \(sent)")
-            }, receiveCompletion: { compl in
-                print("SellNavigation compl: \(compl)")
-            })
-            .map { _ in }
-            .eraseToAnyPublisher()
+                .collect()
+                .map { $0.allSatisfy{$0} }
+                .handleEvents(receiveOutput: { [weak self] sent in
+                    self?.resultSubject.send(sent ? .completed: .none)
+                    print("SellNavigation sent: \(sent)")
+                }, receiveCompletion: { compl in
+                    print("SellNavigation compl: \(compl)")
+                })
+                .map { _ in }
+                .eraseToAnyPublisher()
 
-                // .flatMap {navigateToAnotherScene()} // chain another navigation if needed
-                // .handleEvents(receiveValue:,receiveCompletion:) // or event make side effect
-//                .map {_ in ()}
-//                .eraseToAnyPublisher()
         case .swap:
             return navigateToSwap().deallocatedPublisher()
                 .handleEvents(receiveOutput: { [unowned self] _ in
