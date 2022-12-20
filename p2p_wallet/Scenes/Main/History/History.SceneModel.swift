@@ -3,6 +3,7 @@
 //
 
 import BECollectionView
+import Combine
 import FeeRelayerSwift
 import Foundation
 import History
@@ -27,24 +28,21 @@ extension History {
 
         // MARK: - Properties
 
+        public let onTapPublisher: PassthroughSubject<HistoryItem, Never> = .init()
         private let disposeBag = DisposeBag()
 
         /// Symbol to filter coins
         let accountSymbol: AccountSymbol?
 
         /// Refresh handling
-        private let refreshTriggers: [HistoryRefreshTrigger] = [
-            PriceRefreshTrigger(),
-            ProcessingTransactionRefreshTrigger(),
-            SellTransactionsRefreshTrigger()
-        ]
+        private var refreshTriggers: [HistoryRefreshTrigger]
 
         /// A list of source, where data can be fetched
         private var source: HistoryStreamSource = EmptyStreamSource()
 
         /// A list of output objects, that builds, forms, maps, filters and updates a final list.
         /// This list will be delivered to UI layer.
-        private let outputs: [HistoryOutput]
+        private var outputs: [HistoryOutput]
 
         enum State {
             case items
@@ -78,11 +76,26 @@ extension History {
 
         init(accountSymbol: AccountSymbol? = nil) {
             self.accountSymbol = accountSymbol
-            outputs = [
+
+            // Output
+            var outputs: [HistoryOutput] = [
                 ProcessingTransactionsOutput(accountFilter: accountSymbol?.account),
                 PriceUpdatingOutput(),
-                SellTransactionsOutput()
             ]
+
+            // Refresh trigger
+            var refreshTriggers: [HistoryRefreshTrigger] = [
+                PriceRefreshTrigger(),
+                ProcessingTransactionRefreshTrigger(),
+            ]
+
+            if accountSymbol == nil {
+                outputs.append(SellTransactionsOutput())
+                refreshTriggers.append(SellTransactionsRefreshTrigger())
+            }
+
+            self.outputs = outputs
+            self.refreshTriggers = refreshTriggers
 
             super.init(isPaginationEnabled: true, limit: 10)
 
@@ -140,7 +153,7 @@ extension History {
 
             super.clear()
         }
-        
+
         override func reload() {
             super.reload()
             sellTransactionsRepository.update()
@@ -214,7 +227,7 @@ extension History {
                     )
                 }
 
-                return parsedTransactions.map {.parsedTransaction($0)}
+                return parsedTransactions.map { .parsedTransaction($0) }
             }
             .do(onError: { [weak self] error in
                 DispatchQueue.main.async { [weak self] in
@@ -238,6 +251,10 @@ extension History {
             var data = newData
             for output in outputs { data = output.process(newData: data) }
             return super.map(newData: data)
+        }
+
+        func onTap(item: HistoryItem) {
+            onTapPublisher.send(item)
         }
     }
 }

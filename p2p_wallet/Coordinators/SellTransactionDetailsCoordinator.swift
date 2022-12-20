@@ -127,7 +127,7 @@ final class SellTransactionDetailsCoorditor: Coordinator<SellTransactionDetailsC
                 case .cancel:
                     controller.dismiss(animated: true)
                 case .tryAgain:
-                    resultSubject.send(.send)
+                    resultSubject.send(.tryAgain)
                 }
             })
             .store(in: &subscriptions)
@@ -154,5 +154,6 @@ extension SellTransactionDetailsCoorditor {
     enum Result {
         case cancel
         case send
+        case tryAgain
     }
 }
