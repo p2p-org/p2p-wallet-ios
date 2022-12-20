@@ -70,6 +70,14 @@ settings:
             GCC_PREPROCESSOR_DEFINITIONS:
             - RELEASE=1
 
+aggregateTargets:
+    Detect unused code:
+        buildScripts:
+        - name: SwiftGen
+          script: ${PWD}/Pods/SwiftGen/bin/swiftgen config run --config ${PWD}/swiftgen.yml
+        - name: Periphery
+          script: ${PWD}/Pods/Periphery/periphery scan --workspace p2p_wallet.xcworkspace --format xcode
+
 targets:
     p2p_wallet:
         type: application
@@ -145,19 +153,3 @@ targets:
         dependencies:
             - framework: Frameworks/keyapp.xcframework
               embed: false
-
-    Detect Unused Code:
-        type: app-extension.intents-service
-        platform: iOS
-        preBuildScripts:
-          - script: |
-                  "${PWD}/Pods/SwiftGen/bin/swiftgen config run --config ${PWD}/swiftgen.yml"
-            name: "Swiftgen Run Script"
-          - script: |
-                  "${PWD}/Pods/Periphery/periphery scan --workspace p2p_wallet.xcworkspace"
-            name: "Periphery Run Script"
-        settings:
-            base:
-                PRODUCT_NAME: "$(TARGET_NAME)"
-                TARGETED_DEVICE_FAMILY: 1
-                CODE_SIGN_STYLE: Automatic
