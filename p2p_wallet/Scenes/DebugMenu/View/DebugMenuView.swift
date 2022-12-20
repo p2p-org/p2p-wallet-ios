@@ -118,6 +118,14 @@ struct DebugMenuView: View {
                         } label: { Text("Delete") }
                     }
                 }
+
+                Section(header: Text("Moonpay environment")) {
+                    Picker("Environment", selection: $viewModel.currentMoonpayEnvironment) {
+                        ForEach(viewModel.moonpayEnvironments, id: \.self) { environment in
+                            Text(environment.rawValue)
+                        }
+                    }
+                }
             }
             .navigationBarTitle("Debug Menu", displayMode: .inline)
         }
