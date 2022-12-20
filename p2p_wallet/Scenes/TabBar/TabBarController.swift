@@ -20,6 +20,8 @@ final class TabBarController: UITabBarController {
 
     private var solendCoordinator: SolendCoordinator!
     private var homeCoordinator: HomeCoordinator!
+    private var historyCoordinator: HistoryCoordinator!
+    
     private var actionsCoordinator: ActionsCoordinator?
     private var settingsCoordinator: SettingsCoordinator!
     private var buyCoordinator: BuyCoordinator?
@@ -162,17 +164,19 @@ final class TabBarController: UITabBarController {
             .store(in: &cancellables)
 
         let solendOrHistoryNavigation: UINavigationController
-        let historyOrFeedbackNavigation: UINavigationController
+        let historyOrFeedbackNavigation: UINavigationController = .init(rootViewController: History.Scene())
         if available(.investSolendFeature) {
             solendOrHistoryNavigation = UINavigationController()
             solendCoordinator = SolendCoordinator(navigationController: solendOrHistoryNavigation)
             solendCoordinator.start()
                 .sink(receiveValue: { _ in })
                 .store(in: &cancellables)
-            historyOrFeedbackNavigation = UINavigationController(rootViewController: History.Scene())
         } else {
-            solendOrHistoryNavigation = UINavigationController(rootViewController: History.Scene())
-            historyOrFeedbackNavigation = UINavigationController(rootViewController: History.Scene())
+            solendOrHistoryNavigation = UINavigationController()
+            historyCoordinator = HistoryCoordinator(presentation: SmartCoordinatorPushPresentation(solendOrHistoryNavigation))
+            historyCoordinator.start()
+                .sink {}
+                .store(in: &cancellables)
         }
 
         let settingsNavigation: UINavigationController
