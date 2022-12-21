@@ -48,12 +48,20 @@ struct SellPendingView: View {
                             viewModel.removeClicked()
                         },
                         label: {
-                            Text(L10n.removeFromHistory)
-                                .foregroundColor(Color(Asset.Colors.night.color))
-                                .font(uiFont: .font(of: .text2, weight: .semibold))
-                                .frame(height: 56)
+                            Group {
+                                if viewModel.isRemoving {
+                                    ProgressView()
+                                } else {
+                                    Text(L10n.removeFromHistory)
+                                }
+                            }
+                            .foregroundColor(Color(Asset.Colors.night.color))
+                            .font(uiFont: .font(of: .text2, weight: .semibold))
+                            .frame(height: 56)
+                            
                         }
                     )
+                    .disabled(viewModel.isRemoving)
                 }
             }
             .padding(.bottom, 16)

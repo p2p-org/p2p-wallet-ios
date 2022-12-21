@@ -2,6 +2,7 @@ import Combine
 import Foundation
 import Resolver
 
+@MainActor
 final class SellPendingViewModel: BaseViewModel, ObservableObject {
     
     // MARK: - Dependencies
@@ -15,6 +16,8 @@ final class SellPendingViewModel: BaseViewModel, ObservableObject {
     private let sendSubject = PassthroughSubject<Void, Never>()
     private let transactionRemovedSubject = PassthroughSubject<Void, Never>()
     private let backSubject = PassthroughSubject<Void, Never>()
+    
+    @Published var isRemoving: Bool = false
     
     // MARK: - Publishers
 
@@ -40,17 +43,20 @@ final class SellPendingViewModel: BaseViewModel, ObservableObject {
     }
 
     func removeClicked() {
+        isRemoving = true
         Task {
             do {
                 try await sellDataService.deleteTransaction(id: model.id)
-                await sellDataService.update()
+                try? await sellDataService.updateIncompletedTransactions()
                 await MainActor.run { [unowned self] in
                     notificationsService.showToast(title: "🤗", text: L10n.doneRefreshHistoryPageForActualStatus)
+                    isRemoving = false
                     transactionRemovedSubject.send()
                 }
             } catch {
                 await MainActor.run { [unowned self] in
                     notificationsService.showToast(title: "😢", text: L10n.ErrorWithDeleting.tryAgain)
+                    isRemoving = false
                 }
             }
         }
