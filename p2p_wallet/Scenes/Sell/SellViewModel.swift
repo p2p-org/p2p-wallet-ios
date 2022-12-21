@@ -6,6 +6,35 @@ import RxSwift
 import KeyAppUI
 import SolanaSwift
 
+enum SellViewModelInputError: Error, Equatable {
+    case balanceEmpty(baseCurrencyCode: String)
+    case amountIsTooSmall(minBaseAmount: Double?, baseCurrencyCode: String)
+    case insufficientFunds(baseCurrencyCode: String)
+    case exceedsProviderLimit(maxBaseProviderAmount: Double?, baseCurrencyCode: String)
+    
+    var recomendation: String {
+        switch self {
+        case .balanceEmpty(let baseCurrencyCode):
+            return L10n.thereIsNoInYourWalletToSell(baseCurrencyCode)
+        case .amountIsTooSmall(let minBaseAmount, let baseCurrencyCode):
+            return L10n.theMinimumAmountIs(minBaseAmount.toString(), baseCurrencyCode)
+        case .insufficientFunds(let baseCurrencyCode):
+            return L10n.notEnought(baseCurrencyCode)
+        case .exceedsProviderLimit(let maxBaseProviderAmount, let baseCurrencyCode):
+            return L10n.theMaximumAmountIs(maxBaseProviderAmount.toString(), baseCurrencyCode)
+        }
+    }
+    
+    var isBalanceEmpty: Bool {
+        switch self {
+        case .balanceEmpty:
+            return true
+        default:
+            return false
+        }
+    }
+}
+
 @MainActor
 class SellViewModel: BaseViewModel, ObservableObject {
 
@@ -14,8 +43,6 @@ class SellViewModel: BaseViewModel, ObservableObject {
     @Injected private var walletRepository: WalletsRepository
     @Injected private var dataService: any SellDataService
     @Injected private var actionService: any SellActionService
-    @Injected private var userWalletManager: UserWalletManager
-    private var sellDataServiceId: String?
 
     // MARK: -
 
@@ -41,10 +68,8 @@ class SellViewModel: BaseViewModel, ObservableObject {
     @Published var isEnteringQuoteAmount: Bool = false
     @Published var exchangeRate: Double = 0
     @Published var fee: Double = 0
-    @Published var isLoading = true
-    @Published var hasPending = false
-    @Published var errorText: String?
-    @Published var hasError: Bool = false
+    @Published var status: SellDataServiceStatus = .initialized
+    @Published var inputError: SellViewModelInputError?
 
     init(navigation: PassthroughSubject<SellNavigation?, Never>) {
         self.navigation = navigation
@@ -79,46 +104,57 @@ class SellViewModel: BaseViewModel, ObservableObject {
             }
             .assign(to: \.baseAmount, on: self)
             .store(in: &subscriptions)
+        
+        // bind status publisher to status property
+        dataService.statusPublisher
+            .receive(on: RunLoop.main)
+            .assign(to: \.status, on: self)
+            .store(in: &subscriptions)
 
-        let dataStatus = dataService.status
+        // bind dataService.data to viewModel's data
+        let dataPublisher = dataService.statusPublisher
+            .compactMap({ [weak self] status in
+                switch status {
+                case .ready:
+                    return (self?.dataService.currency, self?.dataService.fiat)
+                default:
+                    return nil
+                }
+            })
             .receive(on: RunLoop.main)
             .share()
-
-        dataStatus
-            .filter { $0 == .ready }
-            .map { _ in false }
-            .handleEvents(receiveOutput: { [unowned self] _ in
+        
+        dataPublisher
+            .sink(receiveValue: { [weak self] currency, fiat in
+                guard let self = self else { return }
                 DispatchQueue.main.asyncAfter(deadline: .now() + 0.2) {
-                    self.baseAmount = self.dataService.currency.minSellAmount ?? 0
-                    self.quoteCurrencyCode = self.dataService.fiat.code
-                    self.maxBaseProviderAmount = self.dataService.currency.maxSellAmount ?? 0
-                    self.minBaseAmount = self.dataService.currency.minSellAmount ?? 0
+                    self.baseAmount = currency?.minSellAmount ?? 0
+                    self.quoteCurrencyCode = fiat?.code ?? "USD"
+                    self.maxBaseProviderAmount = currency?.maxSellAmount ?? 0
+                    self.minBaseAmount = currency?.minSellAmount ?? 0
                     self.baseCurrencyCode = "SOL"
                 }
             })
-            .assign(to: \.isLoading, on: self)
             .store(in: &subscriptions)
 
         // Open pendings in case there are pending txs
-        dataStatus
-            .filter { $0 == .ready }
-            .map { [unowned self] _ in
-                self.dataService.incompleteTransactions
-                    .filter { $0.status == .waitingForDeposit }
-            }
-            .filter { !$0.isEmpty }
+        dataPublisher
+            .withLatestFrom(dataService.transactionsPublisher)
+            .map { $0.filter { $0.status == .waitingForDeposit }}
             .removeDuplicates()
-            .sink(receiveValue: { [unowned self] transactions in
-                self.navigation.send(.showPending(transactions: transactions, fiat: dataService.fiat))
+            .sink(receiveValue: { [weak self] transactions in
+                guard let self = self, let fiat = self.dataService.fiat else { return }
+                self.navigation.send(.showPending(transactions: transactions, fiat: fiat))
             })
             .store(in: &subscriptions)
 
         maxBaseAmount = walletRepository.nativeWallet?.amount
         walletRepository.dataDidChange
-            .subscribe(onNext: { [unowned self] val in
+            .subscribe(onNext: { [weak self] val in
+                guard let self = self else { return }
                 self.maxBaseAmount = self.walletRepository.nativeWallet?.amount
                 if self.walletRepository.nativeWallet?.amount == 0 {
-                    self.hasError = true
+                    self.inputError = .balanceEmpty(baseCurrencyCode: self.baseCurrencyCode)
                 }
             })
             .disposed(by: disposeBag)
@@ -131,9 +167,9 @@ class SellViewModel: BaseViewModel, ObservableObject {
             .withLatestFrom(Publishers.CombineLatest3(
                 $baseCurrencyCode, $quoteCurrencyCode, $baseAmount.compactMap { $0 }
             ))
-            .filter { [unowned self] _ in !self.isLoading && self.isEnteringBaseAmount }
+            .filter { [unowned self] _ in self.status.isReady && self.isEnteringBaseAmount && (self.inputError == nil || self.inputError?.isBalanceEmpty == false) }
             .handleEvents(receiveOutput: { [unowned self] amount in
-                self.errorText = nil
+                self.inputError = nil
                 self.checkError(amount: amount.2)
             })
             .map { [unowned self] base, quote, amount -> AnyPublisher<SellActionServiceQuote?, Never> in
@@ -167,21 +203,18 @@ class SellViewModel: BaseViewModel, ObservableObject {
     }
 
     func warmUp() {
-        isLoading = true
-        sellDataServiceId = userWalletManager.wallet?.moonpayExternalClientId
         Task { [unowned self] in
-            guard self.sellDataServiceId != nil else { return }
-            try await dataService.update(id: self.sellDataServiceId!)
+            await dataService.update()
         }
     }
 
     private func checkError(amount: Double) {
         if amount < minBaseAmount {
-            errorText = L10n.theMinimumAmountIs(minBaseAmount.toString(), baseCurrencyCode)
+            inputError = .amountIsTooSmall(minBaseAmount: minBaseAmount, baseCurrencyCode: baseCurrencyCode)
         } else if amount > (maxBaseAmount ?? 0) {
-            errorText = L10n.notEnought(baseCurrencyCode)
+            inputError = .insufficientFunds(baseCurrencyCode: baseCurrencyCode)
         } else if amount > maxBaseProviderAmount {
-            errorText = L10n.theMaximumAmountIs(maxBaseProviderAmount.toString(), baseCurrencyCode)
+            inputError = .exceedsProviderLimit(maxBaseProviderAmount: maxBaseProviderAmount, baseCurrencyCode: baseCurrencyCode)
         }
     }
 
@@ -212,11 +245,11 @@ class SellViewModel: BaseViewModel, ObservableObject {
     // MARK: - Actions
 
     func sell() {
-        guard let sellDataServiceId else { return }
+        guard let userId = dataService.userId, let fiat = dataService.fiat else { return }
         try? openProviderWebView(
-            quoteCurrencyCode: dataService.fiat.code,
+            quoteCurrencyCode: fiat.code,
             baseCurrencyAmount: baseAmount ?? 0,
-            externalTransactionId: sellDataServiceId
+            externalTransactionId: userId
         )
     }
 

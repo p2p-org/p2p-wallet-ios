@@ -40,7 +40,7 @@ class MoonpaySellDataServiceProvider: SellDataServiceProvider {
         return try fiatByApha3(alpha3: ipAddressesResponse.alpha3)
     }
 
-    func currencies() async throws -> [ProviderCurrency] {
+    func currencies() async throws -> [Currency] {
         let currencies = try await moonpayAPI.getAllSupportedCurrencies()
         return currencies.map { cur in
             MoonpayCurrency(

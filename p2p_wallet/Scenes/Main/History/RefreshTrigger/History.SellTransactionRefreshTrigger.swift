@@ -14,10 +14,10 @@ extension History {
     /// Updating price if exchange rate was change
     class SellTransactionsRefreshTrigger: HistoryRefreshTrigger {
         // MARK: - Dependencies
-        @Injected private var sellTransactionsRepository: SellTransactionsRepository
+        @Injected private var sellDataService: any SellDataService
 
         func register() -> Signal<Void> {
-            sellTransactionsRepository
+            sellDataService
                 .transactionsPublisher
                 .asObservable()
                 .map { _ in () }
