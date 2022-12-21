@@ -62,7 +62,8 @@ struct RecipientSearchView: View {
                             case let .selfSendingError(recipient):
                                 disabledAndReason(
                                     recipient,
-                                    reason: L10n.youCannotSendTokensToYourself
+                                    reason: L10n.youCannotSendTokensToYourself,
+                                    subtitle: L10n.yourAddress
                                 )
                             case .nameServiceError:
                                 tryLater(title: L10n.solanaNameServiceDoesnTRespond)
@@ -145,7 +146,7 @@ struct RecipientSearchView: View {
         .foregroundColor(Color(Asset.Colors.night.color))
     }
 
-    func disabledAndReason(_ recipient: Recipient, reason: String) -> some View {
+    func disabledAndReason(_ recipient: Recipient, reason: String, subtitle: String? = nil) -> some View {
         VStack(alignment: .leading, spacing: 32) {
             HStack {
                 Text(L10n.hereSWhatWeFound)
@@ -154,7 +155,7 @@ struct RecipientSearchView: View {
                 Spacer()
             }
 
-            RecipientCell(recipient: recipient)
+            RecipientCell(recipient: recipient, subtitle: subtitle)
                 .disabled(true)
 
             Text(reason)
