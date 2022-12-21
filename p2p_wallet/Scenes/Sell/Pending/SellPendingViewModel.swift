@@ -7,6 +7,7 @@ final class SellPendingViewModel: BaseViewModel, ObservableObject {
     // MARK: - Dependencies
     
     @Injected var sellDataService: any SellDataService
+    @Injected private var sellTransactionsRepository: SellTransactionsRepository
     @Injected private var clipboardManager: ClipboardManagerType
     @Injected private var notificationsService: NotificationService
 
@@ -43,6 +44,7 @@ final class SellPendingViewModel: BaseViewModel, ObservableObject {
         Task {
             do {
                 try await sellDataService.deleteTransaction(id: model.id)
+                sellTransactionsRepository.update()
                 await MainActor.run { [unowned self] in
                     notificationsService.showToast(title: "🤗", text: L10n.doneRefreshHistoryPageForActualStatus)
                     transactionRemovedSubject.send()
