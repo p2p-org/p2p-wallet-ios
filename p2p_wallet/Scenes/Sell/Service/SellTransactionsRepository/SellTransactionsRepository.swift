@@ -10,6 +10,36 @@ import Combine
 import Resolver
 
 /// Repository that control the flow of sell transactions
+protocol SellTransactionsRepository2: Actor {
+    /// Publisher that emit sell transactions every time when any transaction is updated
+    var transactionsPublisher: AnyPublisher<[SellDataServiceTransaction], Never> { get }
+    
+    /// Get/Set current fetched transactions
+    var transactions: [SellDataServiceTransaction] { get }
+    
+    /// Set transactions
+    func setTransactions(_ transactions: [SellDataServiceTransaction])
+}
+
+actor SellTransactionsRepositoryImpl2: SellTransactionsRepository2 {
+    
+    // MARK: - Properties
+    /// Transactions subject
+    @Published var transactions: [SellDataServiceTransaction] = []
+    
+    /// Transactions publisher
+    var transactionsPublisher: AnyPublisher<[SellDataServiceTransaction], Never> {
+        $transactions.eraseToAnyPublisher()
+    }
+    
+    // MARK: - Methods
+    /// Set transactions
+    func setTransactions(_ transactions: [SellDataServiceTransaction]) {
+        self.transactions = transactions
+    }
+}
+
+/// Repository that control the flow of sell transactions
 protocol SellTransactionsRepository {
     /// Publisher that emit sell transactions every time when any transaction is updated
     var transactionsPublisher: AnyPublisher<[SellDataServiceTransaction], Never> { get }
