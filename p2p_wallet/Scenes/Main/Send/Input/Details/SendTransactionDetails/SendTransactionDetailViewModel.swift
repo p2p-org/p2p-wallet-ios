@@ -15,10 +15,13 @@ import SolanaSwift
 final class SendTransactionDetailViewModel: BaseViewModel, ObservableObject {
     let cancelSubject = PassthroughSubject<Void, Never>()
     let feePrompt = PassthroughSubject<[Wallet], Never>()
+    let longTapped = PassthroughSubject<CellModel, Never>()
 
     private let stateMachine: SendInputStateMachine
     @Injected private var pricesService: PricesServiceType
     @Injected private var walletsRepository: WalletsRepository
+    @Injected private var notificationsService: NotificationService
+    @Injected private var clipboardManager: ClipboardManagerType
 
     private lazy var feeWalletsService: SendChooseFeeService = SendChooseFeeServiceImpl(
         wallets: walletsRepository.getWallets(),
@@ -45,11 +48,24 @@ final class SendTransactionDetailViewModel: BaseViewModel, ObservableObject {
                 }
             }
             .store(in: &subscriptions)
+
+        longTapped
+            .sink { [weak self] cellModel in
+                guard let self = self else { return }
+                switch cellModel.type {
+                case .address:
+                    self.copyToClipboard(address: self.stateMachine.currentState.recipient.address)
+                default:
+                    break
+                }
+            }
+            .store(in: &subscriptions)
     }
 
     private func extractTransactionFeeCellModel(state: SendInputState) -> CellModel {
         guard let feeRelayerContext = state.feeRelayerContext else {
             return .init(
+                type: .transactionFee,
                 title: L10n.transactionFee,
                 subtitle: ("", nil),
                 image: .transactionFee,
@@ -64,6 +80,7 @@ final class SendTransactionDetailViewModel: BaseViewModel, ObservableObject {
             (pricesService.currentPrice(for: state.tokenFee.symbol)?.value ?? 0)
 
         return CellModel(
+            type: .transactionFee,
             title: L10n.transactionFee,
             subtitle: (
                 state.fee.transaction == 0 ? L10n
@@ -86,6 +103,7 @@ final class SendTransactionDetailViewModel: BaseViewModel, ObservableObject {
             (pricesService.currentPrice(for: state.tokenFee.symbol)?.value ?? 0)
 
         return CellModel(
+            type: .accountCreationFee,
             title: L10n.accountCreationFee,
             subtitle: (
                 amountFeeInToken.tokenAmount(symbol: state.tokenFee.symbol),
@@ -107,6 +125,7 @@ final class SendTransactionDetailViewModel: BaseViewModel, ObservableObject {
             (pricesService.currentPrice(for: state.token.symbol)?.value ?? 0)
 
         return CellModel(
+            type: .total,
             title: L10n.total,
             subtitle: (
                 amountFeeInToken.tokenAmount(symbol: state.token.symbol),
@@ -119,11 +138,13 @@ final class SendTransactionDetailViewModel: BaseViewModel, ObservableObject {
     private func updateCells(for state: SendInputState) {
         self.cellModels = [
             CellModel(
+                type: .address,
                 title: L10n.recipientSAddress,
                 subtitle: (state.recipient.address, nil),
                 image: .recipientAddress
             ),
             CellModel(
+                type: .recipientGets,
                 title: L10n.recipientGets,
                 subtitle: (
                     state.amountInToken.tokenAmount(symbol: state.token.symbol),
@@ -138,8 +159,24 @@ final class SendTransactionDetailViewModel: BaseViewModel, ObservableObject {
     }
 }
 
+private extension SendTransactionDetailViewModel {
+    func copyToClipboard(address: String) {
+        clipboardManager.copyToClipboard(address)
+        notificationsService.showToast(title: "🖤", text: L10n.addressWasCopiedToClipboard, haptic: true)
+    }
+}
+
 extension SendTransactionDetailViewModel {
+    enum CellType: String {
+        case address
+        case recipientGets
+        case transactionFee
+        case accountCreationFee
+        case total
+    }
+
     struct CellModel: Identifiable {
+        let type: CellType
         let title: String
         let subtitle: (String, String?)
         let image: UIImage
@@ -147,6 +184,6 @@ extension SendTransactionDetailViewModel {
         var info: (() -> Void)?
         var isLoading: Bool = false
 
-        var id: String { title }
+        var id: String { type.rawValue }
     }
 }
