@@ -93,13 +93,19 @@ struct SendTransactionDetailView: View {
                         )
                         .frame(width: 16, height: 16)
                     } else {
-                        Text(model.subtitle.0)
-                            .foregroundColor(Color(model.isFree ? Asset.Colors.mint.color : Asset.Colors.night.color))
-                            .font(uiFont: .font(of: .label1, weight: model.isFree ? .semibold : .regular))
-                        if let additionalText = model.subtitle.1 {
-                            Text("(\(additionalText))")
-                                .foregroundColor(Color(Asset.Colors.mountain.color))
-                                .font(uiFont: .font(of: .label1))
+                        VStack(alignment: .leading) {
+                            ForEach(model.subtitle, id: \.0) { subtitle in
+                                HStack {
+                                    Text(subtitle.0)
+                                        .foregroundColor(Color(model.isFree ? Asset.Colors.mint.color : Asset.Colors.night.color))
+                                        .font(uiFont: .font(of: .label1, weight: model.isFree ? .semibold : .regular))
+                                    if let additionalText = subtitle.1 {
+                                        Text("(\(additionalText))")
+                                            .foregroundColor(Color(Asset.Colors.mountain.color))
+                                            .font(uiFont: .font(of: .label1))
+                                    }
+                                }
+                            }
                         }
                     }
                 }

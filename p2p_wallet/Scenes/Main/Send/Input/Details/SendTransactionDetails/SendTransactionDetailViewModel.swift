@@ -9,8 +9,8 @@ import Combine
 import KeyAppUI
 import Resolver
 import Send
-import SwiftUI
 import SolanaSwift
+import SwiftUI
 
 final class SendTransactionDetailViewModel: BaseViewModel, ObservableObject {
     let cancelSubject = PassthroughSubject<Void, Never>()
@@ -51,7 +51,7 @@ final class SendTransactionDetailViewModel: BaseViewModel, ObservableObject {
         guard let feeRelayerContext = state.feeRelayerContext else {
             return .init(
                 title: L10n.transactionFee,
-                subtitle: ("", nil),
+                subtitle: [("", nil)],
                 image: .transactionFee,
                 isFree: false
             )
@@ -65,11 +65,11 @@ final class SendTransactionDetailViewModel: BaseViewModel, ObservableObject {
 
         return CellModel(
             title: L10n.transactionFee,
-            subtitle: (
+            subtitle: [(
                 state.fee.transaction == 0 ? L10n
                     .freeLeftForToday(remainUsage) : amountFeeInToken.tokenAmount(symbol: state.tokenFee.symbol),
                 state.fee.transaction == 0 ? nil : "\(Defaults.fiat.symbol)\(amountFeeInFiat.fixedDecimal(2))"
-            ),
+            )],
             image: .transactionFee,
             isFree: state.fee.transaction == 0
         )
@@ -87,10 +87,10 @@ final class SendTransactionDetailViewModel: BaseViewModel, ObservableObject {
 
         return CellModel(
             title: L10n.accountCreationFee,
-            subtitle: (
-                amountFeeInToken.tokenAmount(symbol: state.tokenFee.symbol),
+            subtitle: [(
+                amountFeeInToken.tokenAmount(symbol: state.tokenFee.symbol, maximumFractionDigits: Int(state.tokenFee.decimals)),
                 "\(Defaults.fiat.symbol)\(amountFeeInFiat.fixedDecimal(2))"
-            ),
+            )],
             image: .accountCreationFee,
             info: feeTokens == nil ? nil : { [weak self] in self?.feePrompt.send(feeTokens ?? []) },
             isLoading: isLoading
@@ -98,42 +98,52 @@ final class SendTransactionDetailViewModel: BaseViewModel, ObservableObject {
     }
 
     private func extractTotalCellModel(state: SendInputState) -> CellModel {
-        var amountFeeInToken: Double = state.amountInToken
+        var subtitles: [(String, String?)] = []
+
+        var totalAmount: Lamports = state.amountInToken.toLamport(decimals: state.token.decimals)
         if state.token.address == state.tokenFee.address {
-            amountFeeInToken += Double(state.feeInToken.total) / pow(10, Double(state.tokenFee.decimals))
+            totalAmount += state.feeInToken.total
+        } else {
+            if state.feeInToken.transaction > 0 {
+                subtitles.append(convert(state.feeInToken.transaction, state.tokenFee))
+            }
+
+            if state.feeInToken.accountBalances > 0 {
+                subtitles.append(convert(state.feeInToken.accountBalances, state.tokenFee))
+            }
         }
 
-        let amountFeeInFiat: Double = amountFeeInToken *
-            (pricesService.currentPrice(for: state.token.symbol)?.value ?? 0)
+        subtitles.insert(convert(totalAmount, state.token), at: 0)
 
         return CellModel(
             title: L10n.total,
-            subtitle: (
-                amountFeeInToken.tokenAmount(symbol: state.token.symbol),
-                "\(Defaults.fiat.symbol)\(amountFeeInFiat.fixedDecimal(2))"
-            ),
+            subtitle: subtitles,
             image: .totalSend
         )
     }
 
+    private func convert(_ input: Lamports, _ token: Token) -> (String, String?) {
+        let amountInToken: Double = input.convertToBalance(decimals: token.decimals)
+        let amountInFiat: Double = amountInToken * (pricesService.currentPrice(for: token.symbol)?.value ?? 0)
+
+        return (amountInToken.tokenAmount(symbol: token.symbol, maximumFractionDigits: Int(token.decimals)), "\(Defaults.fiat.symbol)\(amountInFiat.fixedDecimal(2))")
+    }
+
     private func updateCells(for state: SendInputState) {
-        self.cellModels = [
+        cellModels = [
             CellModel(
                 title: L10n.recipientSAddress,
-                subtitle: (state.recipient.address, nil),
+                subtitle: [(state.recipient.address, nil)],
                 image: .recipientAddress
             ),
             CellModel(
                 title: L10n.recipientGets,
-                subtitle: (
-                    state.amountInToken.tokenAmount(symbol: state.token.symbol),
-                    "\(Defaults.fiat.symbol)\(state.amountInFiat.fixedDecimal(2))"
-                ),
+                subtitle: [convert(state.amountInToken.toLamport(decimals: state.token.decimals), state.token)],
                 image: .recipientGet
             ),
-            self.extractTransactionFeeCellModel(state: state),
-            self.accountCreationFeeCellModel,
-            self.extractTotalCellModel(state: state),
+            extractTransactionFeeCellModel(state: state),
+            accountCreationFeeCellModel,
+            extractTotalCellModel(state: state),
         ].compactMap { $0 }
     }
 }
@@ -141,7 +151,7 @@ final class SendTransactionDetailViewModel: BaseViewModel, ObservableObject {
 extension SendTransactionDetailViewModel {
     struct CellModel: Identifiable {
         let title: String
-        let subtitle: (String, String?)
+        let subtitle: [(String, String?)]
         let image: UIImage
         var isFree: Bool = false
         var info: (() -> Void)?
