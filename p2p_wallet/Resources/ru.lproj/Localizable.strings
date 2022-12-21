@@ -1203,3 +1203,5 @@ You can try again, but your new transaction will be subject to the current rates
 "Will be sent to" = "Будет отправлен в";
 "Delete from history" = "Удалить из истории";
 "To your bank account" = "На ваш банковский счет";
+"Error with deleting. Try again" = "Ошибка с удалением. Попробуй снова";
+"Done! Refresh History page for actual status" = "Выполнено! Обновить страницу истории для фактического статуса";

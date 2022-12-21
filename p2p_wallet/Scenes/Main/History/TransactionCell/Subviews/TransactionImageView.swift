@@ -29,6 +29,8 @@ final class TransactionImageView: BEView {
 
     private lazy var fromTokenImageView = CoinLogoImageView(size: miniIconsSize)
     private lazy var toTokenImageView = CoinLogoImageView(size: miniIconsSize)
+    
+    public var backgroundView: UIView = .init()
 
     init(
         size: CGFloat,
@@ -50,7 +52,11 @@ final class TransactionImageView: BEView {
 
     override func commonInit() {
         super.commonInit()
-        let backgroundView = UIView(backgroundColor: _backgroundColor, cornerRadius: _cornerRadius)
+        
+        // Background
+        backgroundView.backgroundColor = _backgroundColor
+        backgroundView.layer.cornerRadius = _cornerRadius ?? 0
+        backgroundView.layer.masksToBounds = true
         addSubview(backgroundView)
         backgroundView.autoPinEdgesToSuperviewEdges()
 
