@@ -307,7 +307,7 @@ private extension TabItem {
         case .wallet:
             return L10n.wallet
         case .invest:
-            return available(.investSolendFeature) ? L10n.earn : L10n.history
+            return available(.investSolendFeature) ? L10n.earn : L10n.swap
         case .actions:
             return ""
         case .history:
