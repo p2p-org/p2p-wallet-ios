@@ -31,6 +31,7 @@ struct SendTransactionDetailView: View {
         VStack(alignment: .leading, spacing: Constants.verticalSpacing) {
             ForEach(viewModel.cellModels) { model in
                 cellView(model: model)
+                    .onLongPressGesture(perform: { viewModel.longTapped.send(model) })
             }
             Button(
                 action: {
