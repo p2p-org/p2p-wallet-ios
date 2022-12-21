@@ -26,6 +26,7 @@ final class HomeWithTokensViewModel: BaseViewModel, ObservableObject {
     let navigation: PassthroughSubject<HomeNavigation, Never>
 
     var balance: AnyPublisher<String, Never>
+    var actions: AnyPublisher<[WalletActionType], Never>
 
     @Published var scrollOnTheTop = true
 
@@ -55,6 +56,8 @@ final class HomeWithTokensViewModel: BaseViewModel, ObservableObject {
             .debounce(for: 0.1, scheduler: RunLoop.main)
             .eraseToAnyPublisher()
         self.walletsRepository = walletsRepository
+        
+        actions = Just([WalletActionType.buy, .receive, .send, .swap]).eraseToAnyPublisher()
         
         super.init()
         

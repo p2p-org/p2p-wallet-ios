@@ -62,21 +62,28 @@ struct HomeWithTokensView: View {
 
     private var header: some View {
         ActionsPanelView(
-            actionsPublisher: viewModel.navigation
-                .compactMap { scene in
-                    switch scene {
-                    case .actions(let actions):
-                        return actions
-                    default:
-                        return nil
-                    }
-                }
-                .eraseToAnyPublisher(),
+            actionsPublisher: viewModel.actions,
             balancePublisher: viewModel.balance,
             action: {
                 viewModel.actionClicked($0)
             }
         )
+//        ActionsPanelView(
+//            actionsPublisher: viewModel.navigation
+//                .compactMap { scene in
+//                    switch scene {
+//                    case .actions(let actions):
+//                        return actions
+//                    default:
+//                        return nil
+//                    }
+//                }
+//                .eraseToAnyPublisher(),
+//            balancePublisher: viewModel.balance,
+//            action: {
+//                viewModel.actionClicked($0)
+//            }
+//        )
     }
     
     private var content: some View {
