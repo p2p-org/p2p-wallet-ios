@@ -49,7 +49,7 @@ final class SendTransactionStatusViewModel: BaseViewModel, ObservableObject {
         transactionHandler.observeTransaction(transactionIndex: transactionIndex)
             .subscribe { [weak self] pendingTransaction in
                 guard let self = self else { return }
-                self.subtitle = pendingTransaction?.sentAt.string(withFormat: "MMMM dd, yyyy @ HH:mm a") ?? ""
+                self.subtitle = pendingTransaction?.sentAt.string(withFormat: "MMMM dd, yyyy @ HH:mm", locale: Locale.base) ?? ""
                 switch pendingTransaction?.status {
                 case .error:
                     self.updateError()
