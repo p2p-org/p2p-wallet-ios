@@ -94,7 +94,7 @@ struct SendTransactionStatusView: View {
 
     var button: some View {
         TextButtonView(
-            title: L10n.done,
+            title: viewModel.closeButtonTitle,
             style: .primaryWhite,
             size: .large,
             onPressed: viewModel.close.send
