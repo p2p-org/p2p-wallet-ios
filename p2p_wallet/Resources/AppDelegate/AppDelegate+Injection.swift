@@ -8,6 +8,8 @@
 import AnalyticsManager
 import CountriesAPI
 import FeeRelayerSwift
+import FirebaseRemoteConfig
+import History
 import NameService
 import Onboarding
 import OrcaSwapSwift
@@ -15,11 +17,12 @@ import P2PSwift
 import Reachability
 import RenVMSwift
 import Resolver
+import Send
 import SolanaPricesAPIs
 import SolanaSwift
 import Solend
 import SwiftyUserDefaults
-import FirebaseRemoteConfig
+import TransactionParser
 
 extension Resolver: ResolverRegistering {
     public static func registerAllServices() {
@@ -42,7 +45,7 @@ extension Resolver: ResolverRegistering {
                 RemoteConfigWarmupProcess(),
             ])
         }.scope(.application)
-        
+
         register {
             WalletSettings(provider: WalletSettingsUserDefaultsProvider())
         }.scope(.application)
@@ -110,6 +113,16 @@ extension Resolver: ResolverRegistering {
         }
         .scope(.application)
 
+        // History
+        register {
+            DefaultTransactionParserRepository(
+                p2pFeePayers: ["FG4Y3yX4AAchp1HvNZ7LfzFTewF2f6nDoMDCohTFrdpT"],
+                parser: TransactionParserServiceImpl.default(apiClient: Resolver.resolve())
+            )
+        }
+        .implements(TransactionParsedRepository.self)
+        .scope(.application)
+
         register { NotificationServiceImpl() }
             .implements(NotificationService.self)
             .scope(.application)
@@ -158,7 +171,7 @@ extension Resolver: ResolverRegistering {
 
         // NameService
         register { NameServiceImpl(
-            endpoint: NameServiceImpl.endpoint,
+            endpoint: GlobalAppState.shared.nameServiceEndpoint,
             cache: NameServiceUserDefaultCache()
         ) }
         .implements(NameService.self)
@@ -184,10 +197,12 @@ extension Resolver: ResolverRegistering {
 
         register { TokensRepository(
             endpoint: Defaults.apiEndPoint,
-            tokenListParser: .init(url: RemoteConfig.remoteConfig().tokenListURL ?? "https://raw.githubusercontent.com/p2p-org/solana-token-list/main/src/tokens/solana.tokenlist.json"),
+            tokenListParser: .init(url: RemoteConfig.remoteConfig()
+                .tokenListURL ??
+                "https://raw.githubusercontent.com/p2p-org/solana-token-list/main/src/tokens/solana.tokenlist.json"),
             cache: resolve()
-        )}
-            .implements(SolanaTokensRepository.self)
+        ) }
+        .implements(SolanaTokensRepository.self)
 
         // DAppChannnel
         register { DAppChannel() }
@@ -226,10 +241,24 @@ extension Resolver: ResolverRegistering {
             .scope(.session)
 
         // SendService
-        register { _, args in
-            SendService(relayMethod: args())
+        register { SendHistoryLocalProvider() }
+            .scope(.session)
+
+        register {
+            SendActionServiceImpl(
+                contextManager: Resolver.resolve(),
+                solanaAPIClient: Resolver.resolve(),
+                blockchainClient: Resolver.resolve(),
+                feeRelayer: Resolver.resolve(),
+                account: Resolver.resolve(AccountStorageType.self).account
+            )
         }
-        .implements(SendServiceType.self)
+        .implements(SendActionService.self)
+        .scope(.session)
+
+        register {
+            SendHistoryService(provider: resolve(SendHistoryLocalProvider.self))
+        }
         .scope(.session)
 
         // SolanaSocket
@@ -263,7 +292,8 @@ extension Resolver: ResolverRegistering {
             feeCalculator: DefaultRelayFeeCalculator(),
             feeRelayerAPIClient: resolve(),
             deviceType: .iOS,
-            buildNumber: Bundle.main.fullVersionNumber
+            buildNumber: Bundle.main.fullVersionNumber,
+            environment: Environment.current == .release ? .release : .dev
         ) }
         .implements(RelayService.self)
         .scope(.session)
@@ -283,6 +313,7 @@ extension Resolver: ResolverRegistering {
                 )
             }
         }
+        .scope(.session)
         
         register {
             DefaultSwapFeeRelayerCalculator(
@@ -407,6 +438,17 @@ extension Resolver: ResolverRegistering {
         register { MoonpayExchange(provider: resolve()) }
             .implements(BuyExchangeService.self)
             .scope(.session)
+
+        // Buy
+        register {
+            RecipientSearchServiceImpl(
+                nameService: resolve(),
+                solanaClient: resolve(),
+                swapService: SwapServiceWrapper()
+            )
+        }
+        .implements(RecipientSearchService.self)
+        .scope(.session)
 
         // Banner
         register {

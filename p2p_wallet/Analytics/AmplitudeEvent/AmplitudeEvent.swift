@@ -55,8 +55,7 @@ enum AmplitudeEvent: AnalyticsEvent {
     case bioApproved(lastScreen: String)
     case bioRejected
     case setupAllowPushOpen
-    case pushRejected
-    case pushApproved(lastScreen: String)
+    case pushApprove
     case setupFinishOpen
     case setupFinishClick
     case setupWelcomeBackOpen
@@ -81,6 +80,7 @@ enum AmplitudeEvent: AnalyticsEvent {
     case mainScreenSwapOpen
     case mainScreenReceiveOpen
     case mainScreenTokenDetailsOpen(tokenTicker: String)
+    case mainScreenBuyToken(tokenName: String)
 
     // token_details
     case tokenDetailsOpen(tokenTicker: String)
@@ -134,6 +134,26 @@ enum AmplitudeEvent: AnalyticsEvent {
         sendAccountFeeToken: String?
     )
     case actionButtonSend
+
+    // MARK: - Send new
+
+    case sendnewRecipientScreen(source: String)
+    case sendnewRecipientAdd(type: String, source: String)
+    case sendnewBuyClickButton(source: String)
+    case sendnewReceiveClickButton(source: String)
+    case sendnewInputScreen(source: String)
+    case sendnewTokenInputClick(source: String)
+    case sendnewFreeTransactionClick(source: String)
+    case sendnewFiatInputClick(crypto: Bool, source: String)
+    case sendnewConfirmButtonClick(
+        source: String,
+        token: String,
+        max: Bool,
+        amountToken: Double,
+        amountUSD: Double,
+        fee: Bool,
+        fiatInput: Bool
+    )
 
     // MARK: - Swap
 
@@ -279,4 +299,21 @@ enum AmplitudeEvent: AnalyticsEvent {
 
     case startDeleteAccount
     case confirmDeleteAccount
+
+    // MARK: - Action
+
+    case actionPanelSendToken(tokenName: String)
+    case actionPanelSwapToken(tokenName: String)
+
+    // MARK: - QR
+    
+    case QR_Share
+
+    // MARK: - Seed
+
+    case seedPhraseCopy
+    // MARK: - User
+
+    case userHasPositiveBalance(positive: Bool)
+    case userAggregateBalance(balance: Double)
 }
