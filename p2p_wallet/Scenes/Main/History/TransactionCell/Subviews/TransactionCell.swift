@@ -10,6 +10,7 @@ import Foundation
 import SolanaSwift
 import TransactionParser
 import UIKit
+import KeyAppUI
 
 class TransactionCell: BaseCollectionViewCell, BECollectionViewCell {
     override var padding: UIEdgeInsets { .init(x: 16, y: 8) }
@@ -29,17 +30,17 @@ class TransactionCell: BaseCollectionViewCell, BECollectionViewCell {
     lazy var descriptionLabel = UILabel(textSize: 12, textColor: .textSecondary)
     private lazy var amountInTokenLabel = UILabel(textSize: 12, textColor: .textSecondary, textAlignment: .right)
 
-    lazy var topStackView = UIStackView(
-        axis: .horizontal,
-        spacing: 8,
-        alignment: .center,
-        arrangedSubviews: [transactionTypeLabel, amountInFiatLabel]
+    lazy var leftStackView = UIStackView(
+        axis: .vertical,
+        spacing: 6,
+        alignment: .leading,
+        arrangedSubviews: [transactionTypeLabel, descriptionLabel]
     )
-    lazy var bottomStackView = UIStackView(
-        axis: .horizontal,
-        spacing: 8,
-        alignment: .center,
-        arrangedSubviews: [descriptionLabel, amountInTokenLabel]
+    lazy var rightStackView = UIStackView(
+        axis: .vertical,
+        spacing: 6,
+        alignment: .trailing,
+        arrangedSubviews: [amountInFiatLabel, amountInTokenLabel]
     )
 
     override func commonInit() {
@@ -52,9 +53,9 @@ class TransactionCell: BaseCollectionViewCell, BECollectionViewCell {
 
         stackView.addArrangedSubviews {
             imageView
-            UIStackView(axis: .vertical, spacing: 6, alignment: .fill, arrangedSubviews: [
-                topStackView,
-                bottomStackView,
+            UIStackView(axis: .horizontal, spacing: 8, alignment: .center, arrangedSubviews: [
+                leftStackView,
+                rightStackView,
             ])
         }
 
@@ -83,12 +84,18 @@ class TransactionCell: BaseCollectionViewCell, BECollectionViewCell {
 
     func setUp(with item: AnyHashable?) {
         guard let item = item as? HistoryItem else { return }
+        
+        imageView.backgroundView.backgroundColor = .grayPanel
+        
+        transactionTypeLabel.textColor = .textBlack
+        amountInFiatLabel.textColor = .textBlack
+        
         switch item {
         case let .parsedTransaction(transaction):
-            imageView.layer.cornerRadius = 16
+            imageView.backgroundView.layer.cornerRadius = 16
             setUp(with: transaction)
         case let .sellTransaction(transaction):
-            imageView.layer.cornerRadius = 24
+            imageView.backgroundView.layer.cornerRadius = 24
             setUp(with: transaction)
         }
     }
@@ -96,6 +103,7 @@ class TransactionCell: BaseCollectionViewCell, BECollectionViewCell {
     private func setUp(with transaction: ParsedTransaction) {
         // clear
         descriptionLabel.text = nil
+        amountInTokenLabel.isHidden = false
 
         // type
         transactionTypeLabel.font = transactionTypeLabel.font.withWeight(.regular)
@@ -207,6 +215,7 @@ class TransactionCell: BaseCollectionViewCell, BECollectionViewCell {
     private func setUp(with transaction: SellDataServiceTransaction) {
         // reset
         transactionTypeLabel.font = transactionTypeLabel.font.withWeight(.semibold)
+        amountInTokenLabel.isHidden = true
 
         // get infos
         let statusImage: UIImage
@@ -229,14 +238,17 @@ class TransactionCell: BaseCollectionViewCell, BECollectionViewCell {
             title = L10n.fundsWereSent
             subtitle = L10n.toYourBankAccount
         case .failed:
+            imageView.backgroundView.backgroundColor = UIColor(red: 1, green: 0.863, blue: 0.914, alpha: 1)
             statusImage = .transactionIndicatorSellExpired
             title = L10n.youVeNotSent
             subtitle = L10n.to("SOL", "Moonpay")
+            
+            transactionTypeLabel.textColor = Asset.Colors.rose.color
+            amountInFiatLabel.textColor = Asset.Colors.rose.color
         }
 
         let amountInFiatText = "$" + transaction.quoteCurrencyAmount
             .toString(maximumFractionDigits: 2) // FIXME: - Currency???
-        let amountInTokenText = transaction.baseCurrencyAmount.toString(maximumFractionDigits: 9) + " SOL"
 
         // set up
         imageView.setUp(imageType: .oneImage(image: statusImage))
@@ -244,7 +256,6 @@ class TransactionCell: BaseCollectionViewCell, BECollectionViewCell {
         transactionTypeLabel.text = title
         descriptionLabel.text = subtitle
         amountInFiatLabel.text = amountInFiatText
-        amountInTokenLabel.text = amountInTokenText
     }
 }
 

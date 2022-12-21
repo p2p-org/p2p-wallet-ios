@@ -1205,3 +1205,5 @@ You can try again, but your new transaction will be subject to the current rates
 "You need to send %@ SOL" = "Vous devez envoyer %@ SOL";
 "Funds were sent" = "Les fonds ont été envoyés";
 "To your bank account" = "Vers votre compte bancaire";
+"Error with deleting. Try again" = "Erreur lors de la suppression. Réessayer";
+"Done! Refresh History page for actual status" = "Fait!  Actualiser la page Historique pour le statut réel";

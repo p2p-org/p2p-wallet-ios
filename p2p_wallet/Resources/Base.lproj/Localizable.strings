@@ -1177,3 +1177,5 @@ You can try again, but your new transaction will be subject to the current rates
 "You need to send %@ SOL" = "You need to send %@ SOL";
 "Funds were sent" = "Funds were sent";
 "To your bank account" = "To your bank account";
+"Error with deleting. Try again" = "Error with deleting. Try again";
+"Done! Refresh History page for actual status" = "Done! Refresh History page for actual status";

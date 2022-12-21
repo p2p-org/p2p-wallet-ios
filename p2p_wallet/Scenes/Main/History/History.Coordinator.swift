@@ -4,6 +4,8 @@
 
 import Combine
 import Foundation
+import Resolver
+import Send
 
 class HistoryCoordinator: SmartCoordinator<Void> {
     override func build() -> UIViewController {
@@ -51,11 +53,11 @@ class HistoryCoordinator: SmartCoordinator<Void> {
             switch result {
             case .send:
                 self.presentation.presentingViewController.presentedViewController?.dismiss(animated: true) {
-                    self.openSend()
+                    self.openSend(transaction)
                 }
             case .tryAgain:
                 self.presentation.presentingViewController.presentedViewController?.dismiss(animated: true) {
-                    self.openSell(trx: transaction)
+                    self.openSell(transaction)
                 }
             default:
                 break
@@ -64,29 +66,38 @@ class HistoryCoordinator: SmartCoordinator<Void> {
         .store(in: &subscriptions)
     }
 
-    private func openSell(trx: SellDataServiceTransaction) {
+    private func openSell(_ transaction: SellDataServiceTransaction) {
         guard let navigationController = presentation.presentingViewController as? UINavigationController else {
             print(SmartCoordinatorError.unsupportedPresentingViewController)
             return
         }
 
         coordinate(to: SellCoordinator(
-            initialAmountInToken: trx.baseCurrencyAmount,
+            initialAmountInToken: transaction.baseCurrencyAmount,
             navigationController: navigationController
         ))
         .sink { _ in }
         .store(in: &subscriptions)
     }
 
-    private func openSend() {
+    private func openSend(_ transaction: SellDataServiceTransaction) {
         guard let viewController = presentation.presentingViewController as? UINavigationController else {
             print(SmartCoordinatorError.unsupportedPresentingViewController)
             return
         }
 
-        // TODO: Setup token and amount for users
-        coordinate(to: SendCoordinator(rootViewController: viewController, preChosenWallet: nil))
-            .sink { _ in }
-            .store(in: &subscriptions)
+        let walletsRepository = Resolver.resolve(WalletsRepository.self)
+        coordinate(to: SendCoordinator(
+            rootViewController: viewController,
+            preChosenWallet: walletsRepository.nativeWallet,
+            preChosenRecipient: Recipient(
+                address: transaction.depositWallet,
+                category: .solanaAddress,
+                attributes: [.funds]
+            ),
+            preChosenAmount: transaction.baseCurrencyAmount
+        ))
+        .sink { _ in }
+        .store(in: &subscriptions)
     }
 }
