@@ -25,7 +25,8 @@ struct ChooseWalletTokenView: View {
                 } else {
                     if viewModel.wallets.isEmpty {
                         emptyView
-                            .padding(.top, 48)
+                            .padding(.top, 30)
+                            .edgesIgnoringSafeArea(.bottom)
                     } else {
                         wrappedList {
                             if !viewModel.isSearchGoing {
@@ -126,12 +127,8 @@ private extension ChooseWalletTokenView {
     }
 
     private var emptyView: some View {
-        VStack(spacing: 24) {
-            Image(uiImage: .womanNotFound)
-                .resizable()
-                .aspectRatio(contentMode: .fit)
-                .frame(maxWidth: 220)
-            Text(L10n.TokenNotFound.tryAnotherOne)
+        VStack {
+            SendNotFoundView(text: L10n.TokenNotFound.tryAnotherOne)
             Spacer()
         }
     }

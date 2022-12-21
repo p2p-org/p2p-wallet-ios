@@ -41,7 +41,7 @@ struct RecipientSearchView: View {
                                 // Ok case
                                 if recipients.isEmpty {
                                     // Not found
-                                    RecipientNotFoundView()
+                                    SendNotFoundView(text: L10n.AddressNotFound.tryAnotherOne)
                                         .padding(.top, 32)
                                 } else {
                                     // With result
