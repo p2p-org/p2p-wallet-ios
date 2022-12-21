@@ -1210,3 +1210,4 @@ You can try again, but your new transaction will be subject to the current rates
 "To your bank account" = "Đến tài khoản ngân hàng của bạn";
 "Error with deleting. Try again" = "Lỗi khi xóa. Vui lòng thử lại";
 "Done! Refresh History page for actual status" = "Xong! Làm mới trang Lịch sử để biết trạng thái thực tế";
+"There is no %@ in your wallet to sell" = "Không có %@ trong ví của bạn để bán";

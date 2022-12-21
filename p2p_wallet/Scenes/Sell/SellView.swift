@@ -10,14 +10,13 @@ struct SellView: View {
             Color(Asset.Colors.smoke.color)
                 .edgesIgnoringSafeArea(.all)
             VStack {
-                if viewModel.isLoading {
+                switch viewModel.status {
+                case .initialized, .updating:
                     loading
-                } else {
-                    if viewModel.hasError {
-                        error
-                    } else {
-                        SellInputView(viewModel: viewModel)
-                    }
+                case .ready:
+                    SellInputView(viewModel: viewModel)
+                case .error:
+                    error
                 }
             }
         }

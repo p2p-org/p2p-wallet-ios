@@ -43,17 +43,27 @@ struct SellPendingView: View {
                                 .padding(.horizontal, 24)
                         }
                     )
+                    .disabled(viewModel.isRemoving)
+
                     Button(
                         action: {
                             viewModel.removeClicked()
                         },
                         label: {
-                            Text(L10n.removeFromHistory)
-                                .foregroundColor(Color(Asset.Colors.night.color))
-                                .font(uiFont: .font(of: .text2, weight: .semibold))
-                                .frame(height: 56)
+                            Group {
+                                if viewModel.isRemoving {
+                                    ProgressView()
+                                } else {
+                                    Text(L10n.removeFromHistory)
+                                }
+                            }
+                            .foregroundColor(Color(Asset.Colors.night.color))
+                            .font(uiFont: .font(of: .text2, weight: .semibold))
+                            .frame(height: 56)
+                            
                         }
                     )
+                    .disabled(viewModel.isRemoving)
                 }
             }
             .padding(.bottom, 16)
@@ -132,6 +142,7 @@ struct SellPendingView: View {
                     .font(uiFont: .font(of: .label1))
                 Image(uiImage: .copyReceiverAddress)
             }
+            .disabled(viewModel.isRemoving)
             .onTapGesture {
                 viewModel.addressCopied()
             }

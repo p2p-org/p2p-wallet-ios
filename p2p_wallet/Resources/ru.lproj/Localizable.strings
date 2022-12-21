@@ -1205,3 +1205,4 @@ You can try again, but your new transaction will be subject to the current rates
 "To your bank account" = "На ваш банковский счет";
 "Error with deleting. Try again" = "Ошибка с удалением. Попробуй снова";
 "Done! Refresh History page for actual status" = "Выполнено! Обновить страницу истории для фактического статуса";
+"There is no %@ in your wallet to sell" = "В вашем кошельке нет %@ для продажи";

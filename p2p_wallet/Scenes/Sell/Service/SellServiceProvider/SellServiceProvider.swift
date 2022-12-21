@@ -1,6 +1,6 @@
 import Foundation
 
-public protocol ProviderCurrency {
+public protocol ProviderCurrency: Equatable {
     var id: String { get }
     var name: String { get }
     var code: String { get }

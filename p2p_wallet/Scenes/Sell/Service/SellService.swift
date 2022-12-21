@@ -1,11 +1,20 @@
 import Combine
 import Foundation
 
-public enum SellDataServiceStatus {
+enum SellDataServiceStatus {
     case initialized
     case updating
     case ready
-    case error
+    case error(Error)
+    
+    var isReady: Bool {
+        switch self {
+        case .ready:
+            return true
+        default:
+            return false
+        }
+    }
 }
 
 public struct SellDataServiceTransaction: Hashable {
@@ -20,24 +29,41 @@ public struct SellDataServiceTransaction: Hashable {
     var depositWallet: String
 }
 
-public protocol SellDataService {
+protocol SellDataService {
     associatedtype Provider: SellDataServiceProvider
-    var status: AnyPublisher<SellDataServiceStatus, Never> { get }
-    var lastUpdateDate: AnyPublisher<Date, Never> { get }
-
-    /// Request for pendings, rates, min amounts
-    func update(id: String) async throws
-
-    /// Supported crypto currencies
-    var currency: ProviderCurrency! { get }
-    /// Supported Fiat by provider for your region
-    var fiat: Fiat! { get }
-    /// Return incomplete transactions
-    var incompleteTransactions: [SellDataServiceTransaction] { get }
-    /// Weather service available
+    
+    /// Status of service
+    var statusPublisher: AnyPublisher<SellDataServiceStatus, Never> { get }
+    
+    /// Publisher that emit sell transactions every time when any transaction is updated
+    var transactionsPublisher: AnyPublisher<[SellDataServiceTransaction], Never> { get }
+    
+    /// Get current loaded transactions
+    var transactions: [SellDataServiceTransaction] { get }
+    
+    /// Get current currency
+    var currency: Provider.Currency? { get }
+    
+    /// Get fiat
+    var fiat: Fiat? { get }
+    
+    /// Get userId
+    var userId: String? { get }
+    
+    /// Check if service available
     func isAvailable() async -> Bool
+    
+    /// Request for pendings, rates, min amounts
+    func update() async
+    
+    /// Retrieve all incompleted transactions
+    func updateIncompletedTransactions() async throws
+    
+    /// Get transaction with id
+    func getTransactionDetail(id: String) async throws -> Provider.Transaction
+    
+    /// Delete transaction from list
     func deleteTransaction(id: String) async throws
-    func transactions(id: String) async throws -> [SellDataServiceTransaction]
 }
 
 enum SellActionServiceError: Error {
