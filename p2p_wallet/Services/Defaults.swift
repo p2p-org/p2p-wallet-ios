@@ -43,6 +43,7 @@ extension DefaultsKeys {
         )
     }
     var forcedFeeRelayerEndpoint: DefaultsKey<String?> { .init(#function, defaultValue: nil) }
+    var forcedNameServiceEndpoint: DefaultsKey<String?> { .init(#function, defaultValue: nil) }
 
     var isCoingeckoProviderDisabled: DefaultsKey<Bool> { .init(#function, defaultValue: false) }
     var didBackupOffline: DefaultsKey<Bool> { .init(#function, defaultValue: false) }
