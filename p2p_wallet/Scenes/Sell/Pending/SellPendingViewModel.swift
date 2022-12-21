@@ -41,9 +41,18 @@ final class SellPendingViewModel: BaseViewModel, ObservableObject {
 
     func removeClicked() {
         Task {
-            try await sellDataService.deleteTransaction(id: model.id)
+            do {
+                try await sellDataService.deleteTransaction(id: model.id)
+                await MainActor.run { [unowned self] in
+                    notificationsService.showToast(title: "🤗", text: L10n.doneRefreshHistoryPageForActualStatus)
+                    transactionRemovedSubject.send()
+                }
+            } catch {
+                await MainActor.run { [unowned self] in
+                    notificationsService.showToast(title: "😢", text: L10n.ErrorWithDeleting.tryAgain)
+                }
+            }
         }
-        transactionRemovedSubject.send()
     }
 
     func addressCopied() {
