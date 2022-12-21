@@ -30,17 +30,17 @@ class TransactionCell: BaseCollectionViewCell, BECollectionViewCell {
     lazy var descriptionLabel = UILabel(textSize: 12, textColor: .textSecondary)
     private lazy var amountInTokenLabel = UILabel(textSize: 12, textColor: .textSecondary, textAlignment: .right)
 
-    lazy var topStackView = UIStackView(
-        axis: .horizontal,
-        spacing: 8,
-        alignment: .center,
-        arrangedSubviews: [transactionTypeLabel, amountInFiatLabel]
+    lazy var leftStackView = UIStackView(
+        axis: .vertical,
+        spacing: 6,
+        alignment: .leading,
+        arrangedSubviews: [transactionTypeLabel, descriptionLabel]
     )
-    lazy var bottomStackView = UIStackView(
-        axis: .horizontal,
-        spacing: 8,
-        alignment: .center,
-        arrangedSubviews: [descriptionLabel, amountInTokenLabel]
+    lazy var rightStackView = UIStackView(
+        axis: .vertical,
+        spacing: 6,
+        alignment: .trailing,
+        arrangedSubviews: [amountInFiatLabel, amountInTokenLabel]
     )
 
     override func commonInit() {
@@ -53,9 +53,9 @@ class TransactionCell: BaseCollectionViewCell, BECollectionViewCell {
 
         stackView.addArrangedSubviews {
             imageView
-            UIStackView(axis: .vertical, spacing: 6, alignment: .fill, arrangedSubviews: [
-                topStackView,
-                bottomStackView,
+            UIStackView(axis: .horizontal, spacing: 8, alignment: .center, arrangedSubviews: [
+                leftStackView,
+                rightStackView,
             ])
         }
 
@@ -103,6 +103,7 @@ class TransactionCell: BaseCollectionViewCell, BECollectionViewCell {
     private func setUp(with transaction: ParsedTransaction) {
         // clear
         descriptionLabel.text = nil
+        amountInTokenLabel.isHidden = false
 
         // type
         transactionTypeLabel.font = transactionTypeLabel.font.withWeight(.regular)
@@ -214,6 +215,7 @@ class TransactionCell: BaseCollectionViewCell, BECollectionViewCell {
     private func setUp(with transaction: SellDataServiceTransaction) {
         // reset
         transactionTypeLabel.font = transactionTypeLabel.font.withWeight(.semibold)
+        amountInTokenLabel.isHidden = true
 
         // get infos
         let statusImage: UIImage
@@ -247,7 +249,6 @@ class TransactionCell: BaseCollectionViewCell, BECollectionViewCell {
 
         let amountInFiatText = "$" + transaction.quoteCurrencyAmount
             .toString(maximumFractionDigits: 2) // FIXME: - Currency???
-        let amountInTokenText = transaction.baseCurrencyAmount.toString(maximumFractionDigits: 9) + " SOL"
 
         // set up
         imageView.setUp(imageType: .oneImage(image: statusImage))
@@ -255,7 +256,6 @@ class TransactionCell: BaseCollectionViewCell, BECollectionViewCell {
         transactionTypeLabel.text = title
         descriptionLabel.text = subtitle
         amountInFiatLabel.text = amountInFiatText
-        amountInTokenLabel.text = amountInTokenText
     }
 }
 
