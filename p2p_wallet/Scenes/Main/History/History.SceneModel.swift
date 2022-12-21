@@ -24,7 +24,7 @@ extension History {
         @Injected private var notificationService: NotificationService
         let transactionRepository = SolanaTransactionRepository(solanaAPIClient: Resolver.resolve())
         @Injected private var transactionParserRepository: TransactionParsedRepository
-        @Injected private var sellTransactionsRepository: SellTransactionsRepository
+        @Injected private var sellDataService: any SellDataService
 
         // MARK: - Properties
 
@@ -156,7 +156,9 @@ extension History {
 
         override func reload() {
             super.reload()
-            sellTransactionsRepository.update()
+            Task {
+                await sellDataService.update()
+            }
         }
 
         override func next() -> Observable<[HistoryItem]> {

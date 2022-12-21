@@ -3,69 +3,103 @@ import Foundation
 import Resolver
 import SwiftyUserDefaults
 
-class SellDataServiceImpl: SellDataService {
-    typealias Provider = MoonpaySellDataServiceProvider
-    private var provider = Provider()
+enum SellDataServiceError: Error {
+    case userIdNotFound
+    case couldNotLoadSellData
+}
 
-    init() {
-        statusSubject.send(.initialized)
-    }
+final class SellDataServiceImpl: SellDataService {
+    
+    // MARK: - Associated type
+
+    typealias Provider = MoonpaySellDataServiceProvider
+    
+    // MARK: - Dependencies
 
     @Injected private var priceService: PricesService
+    @Injected private var userWalletManager: UserWalletManager
+    @Injected private var sellTransactionsRepository: SellTransactionsRepository
+    
+    // MARK: - Properties
 
+    private var provider = Provider()
+    
     @SwiftyUserDefault(keyPath: \.isSellAvailable, options: .cached)
     private var cachedIsAvailable: Bool?
-
-    private let statusSubject = PassthroughSubject<SellDataServiceStatus, Never>()
-    lazy var status: AnyPublisher<SellDataServiceStatus, Never> = {
-        statusSubject.eraseToAnyPublisher()
-    }()
-
-    private let lastUpdateDateSubject = PassthroughSubject<Date, Never>()
-    lazy var lastUpdateDate: AnyPublisher<Date, Never> = { lastUpdateDateSubject.eraseToAnyPublisher() }()
-
-    /// List of supported crypto currencies
-    private(set) var currency: ProviderCurrency!
-    private(set) var fiat: Fiat!
-    private(set) var incompleteTransactions: [SellDataServiceTransaction] = []
-
-    /// id - user identifier
-    func update(id: String) async throws {
-        statusSubject.send(.updating)
-        guard
-            let currency = try await provider.currencies().filter({ $0.code.uppercased() == "SOL" }).first else {
-            statusSubject.send(.error)
+    
+    @Published private var status: SellDataServiceStatus = .initialized
+    var statusPublisher: AnyPublisher<SellDataServiceStatus, Never> {
+        $status.eraseToAnyPublisher()
+    }
+    
+    @Published private(set) var transactions: [SellDataServiceTransaction] = []
+    var transactionsPublisher: AnyPublisher<[SellDataServiceTransaction], Never> {
+        $transactions.eraseToAnyPublisher()
+    }
+    
+    var currency: MoonpaySellDataServiceProvider.MoonpayCurrency?
+    
+    var fiat: Fiat?
+    
+    var userId: String? { userWalletManager.wallet?.moonpayExternalClientId }
+    
+    // MARK: - Methods
+    
+    func isAvailable() async -> Bool {
+        return true
+        guard cachedIsAvailable == nil else {
+            defer {
+                Task {
+                    do {
+                        cachedIsAvailable = try await provider.isAvailable()
+                    } catch {}
+                }
+            }
+            return cachedIsAvailable ?? false
+        }
+        do {
+            cachedIsAvailable = try await provider.isAvailable()
+        } catch {
+            return false
+        }
+        return (cachedIsAvailable ?? false)
+    }
+    
+    func update() async {
+        // mark as updating
+        status = .updating
+        
+        // get currency
+        do {
+            let (currency, fiat, _) = try await(
+                provider.currencies().filter({ $0.code.uppercased() == "SOL" }).first,
+                provider.fiat(),
+                updateIncompletedTransactions()
+            )
+            if currency == nil {
+                throw SellDataServiceError.couldNotLoadSellData
+            }
+            self.currency = currency
+            self.fiat = fiat
+            status = .ready
+        } catch {
+            self.currency = nil
+            self.fiat = nil
+            status = .error(SellDataServiceError.couldNotLoadSellData)
             return
         }
-        self.currency = currency
-        do {
-            self.fiat = try await provider.fiat()
-        } catch {
-            self.fiat = .usd
-//            fatalError("Unsupported fiat")
-            statusSubject.send(.error)
+    }
+    
+    func updateIncompletedTransactions() async throws {
+        // get user id
+        guard let userId else {
+            status = .error(SellDataServiceError.userIdNotFound)
+            return
         }
-        self.incompleteTransactions = try await self.incompleteTransactions(transactionId: id)
-        statusSubject.send(.ready)
-    }
+        
+        let txs = try await provider.sellTransactions(externalTransactionId: userId)
 
-    func incompleteTransactions(transactionId: String) async throws -> [SellDataServiceTransaction] {
-        try await self.transactions(id: transactionId)
-    }
-
-    func transaction(id: String) async throws -> Provider.Transaction {
-        try await provider.detailSellTransaction(id: id)
-    }
-
-    func deleteTransaction(id: String) async throws {
-        try await provider.deleteSellTransaction(id: id)
-        incompleteTransactions.removeAll { $0.id == id }
-    }
-
-    func transactions(id: String) async throws -> [SellDataServiceTransaction] {
-        let txs = try await provider.sellTransactions(externalTransactionId: id)
-
-        return try await txs.asyncMap { transaction in
+        let incompletedTransactions: [SellDataServiceTransaction] = try await txs.asyncMap { transaction in
             let detailed = try await provider.detailSellTransaction(id: transaction.id)
             let quoteCurrencyAmount = detailed.quoteCurrencyAmount ?? (self.priceService.currentPrice(for: "SOL")?.value ?? 0) * detailed.baseCurrencyAmount
             guard
@@ -92,26 +126,19 @@ class SellDataServiceImpl: SellDataService {
                 depositWallet: depositWallet
             )
         }.compactMap { $0 }
+        
+        await sellTransactionsRepository.setTransactions(incompletedTransactions)
+        transactions = await sellTransactionsRepository.transactions
+    }
+    
+    func getTransactionDetail(id: String) async throws -> Provider.Transaction {
+        try await provider.detailSellTransaction(id: id)
     }
 
-    func isAvailable() async -> Bool {
-        return true
-        guard cachedIsAvailable == nil else {
-            defer {
-                Task {
-                    do {
-                        cachedIsAvailable = try await provider.isAvailable()
-                    } catch {}
-                }
-            }
-            return cachedIsAvailable ?? false
-        }
-        do {
-            cachedIsAvailable = try await provider.isAvailable()
-        } catch {
-            return false
-        }
-        return (cachedIsAvailable ?? false)
+    func deleteTransaction(id: String) async throws {
+        try await provider.deleteSellTransaction(id: id)
+        await sellTransactionsRepository.deleteTransaction(id: id)
+        transactions = await sellTransactionsRepository.transactions
     }
 }
 

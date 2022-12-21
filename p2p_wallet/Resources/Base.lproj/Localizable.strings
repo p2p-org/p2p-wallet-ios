@@ -1179,3 +1179,4 @@ You can try again, but your new transaction will be subject to the current rates
 "To your bank account" = "To your bank account";
 "Error with deleting. Try again" = "Error with deleting. Try again";
 "Done! Refresh History page for actual status" = "Done! Refresh History page for actual status";
+"There is no %@ in your wallet to sell" = "There is no %@ in your wallet to sell";
