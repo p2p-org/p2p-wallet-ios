@@ -43,7 +43,7 @@ struct RecipientCell: View {
             cell(
                 image: CoinLogoImageViewRepresentable(size: 48, token: token),
                 title: RecipientFormatter.format(destination: recipient.address),
-                subtitle: "\(token.name) \(L10n.tokenAccount)"
+                subtitle: subtitle ?? "\(token.symbol) \(L10n.tokenAccount)"
             )
         default:
             cell(
