@@ -25,9 +25,6 @@ final class SendInputFeePromptCoordinator: Coordinator<Wallet?> {
         viewModel.close
             .sink(receiveValue: { [weak self] in
                 controller.dismiss(animated: true)
-                if viewModel.feeToken.mintAddress != self?.feeToken.mintAddress {
-                    self?.subject.send(viewModel.feeToken)
-                }
                 self?.subject.send(completion: .finished)
             })
             .store(in: &subscriptions)
@@ -43,9 +40,12 @@ final class SendInputFeePromptCoordinator: Coordinator<Wallet?> {
 
     private func openChooseToken(from vc: UIViewController, viewModel: SendInputFeePromptViewModel) {
         coordinate(to: ChooseWalletTokenCoordinator(strategy: .feeToken(tokens: availableFeeTokens), chosenWallet: feeToken, parentController: vc))
-            .sink { value in
+            .sink { [weak self] value in
                 guard let token = value else { return }
                 viewModel.feeToken = token
+                self?.subject.send(viewModel.feeToken)
+                self?.subject.send(completion: .finished)
+                vc.dismiss(animated: true)
             }
             .store(in: &subscriptions)
     }
