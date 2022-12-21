@@ -138,26 +138,25 @@ extension TransactionHandler {
 
     private func updateRepository(with rawTransaction: RawTransactionType) {
         switch rawTransaction {
-        case let transaction as ProcessTransaction.SendTransaction:
+        case let transaction as SendTransaction:
             guard !socket.isConnected else { return }
 
             walletsRepository.batchUpdate { currentValue in
                 var wallets = currentValue
 
                 // update sender
-                if let index = wallets.firstIndex(where: { $0.pubkey == transaction.sender.pubkey }) {
-                    wallets[index].decreaseBalance(diffInLamports: transaction.amount)
+                if let index = wallets.firstIndex(where: { $0.pubkey == transaction.walletToken.pubkey }) {
+                    wallets[index].decreaseBalance(diffInLamports: transaction.amount.toLamport(decimals: transaction.walletToken.token.decimals))
                 }
 
                 // update receiver if user send to different wallet of THIS account
-                if let index = wallets.firstIndex(where: { $0.pubkey == transaction.receiver.address }) {
-                    wallets[index].increaseBalance(diffInLamports: transaction.amount)
+                if let index = wallets.firstIndex(where: { $0.pubkey == transaction.recipient.address }) {
+                    wallets[index].increaseBalance(diffInLamports: transaction.amount.toLamport(decimals: wallets[index].token.decimals))
                 }
 
                 // update paying wallet
-                if let index = wallets.firstIndex(where: { $0.pubkey == transaction.payingFeeWallet?.pubkey }),
-                   let feeInToken = transaction.feeInToken
-                {
+                if let index = wallets.firstIndex(where: { $0.pubkey == transaction.payingFeeWallet.pubkey }) {
+                    let feeInToken = transaction.feeInToken
                     wallets[index].decreaseBalance(diffInLamports: feeInToken.total)
                 }
 

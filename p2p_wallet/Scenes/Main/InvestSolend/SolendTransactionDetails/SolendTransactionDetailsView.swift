@@ -8,7 +8,6 @@
 import Combine
 import KeyAppUI
 import Solend
-import SwiftSVG
 import SwiftUI
 
 struct SolendTransactionDetailsView: View {

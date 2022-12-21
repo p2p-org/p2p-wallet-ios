@@ -21,7 +21,7 @@ struct SeedPhraseRestoreWalletView: View {
                 if !viewModel.suggestions.isEmpty { suggestions }
 
                 Spacer()
-            }.onTapGesture { viewModel.isSeedFocused = false }
+            }
 
             TextButtonView(
                 title: viewModel.canContinue ? L10n.continue : L10n.fill12Or24Words,
@@ -64,11 +64,7 @@ struct SeedPhraseRestoreWalletView: View {
                     .padding(.top, 11)
                 }
 
-                FocusedTextView(text: $viewModel.seed, isFirstResponder: $viewModel.isSeedFocused) { textView in
-                    textView.font = UIFont.font(of: .text3)
-                    textView.textColor = Asset.Colors.night.color
-                    textView.returnKeyType = .done
-                }
+                SeedPhraseTextView(text: $viewModel.seed, isFirstResponder: $viewModel.isSeedFocused)
                 .frame(maxHeight: 343)
                 .colorMultiply(Color(Asset.Colors.smoke.color))
 
@@ -84,51 +80,43 @@ struct SeedPhraseRestoreWalletView: View {
     }
 
     var pasteButton: some View {
-        Button(
-            action: {
-                viewModel.paste()
-            },
-            label: {
-                HStack {
-                    Image(uiImage: Asset.MaterialIcon.copy.image)
-                        .resizable()
-                        .frame(width: 16, height: 16)
-                        .foregroundColor(.black)
-                    Text(L10n.paste)
-                        .font(uiFont: UIFont.font(of: .text4))
-                        .foregroundColor(.black)
-                }
-            }
-        )
+        HStack {
+            Image(uiImage: Asset.MaterialIcon.copy.image)
+                .resizable()
+                .frame(width: 16, height: 16)
+                .foregroundColor(.black)
+            Text(L10n.paste)
+                .font(uiFont: UIFont.font(of: .text4))
+                .foregroundColor(.black)
+        }
             .frame(height: 32)
             .padding(EdgeInsets(top: 0, leading: 15, bottom: 0, trailing: 14))
             .background(viewModel.seed.isEmpty ? Color(Asset.Colors.lime.color) : Color.clear)
             .cornerRadius(8)
             .fixedSize()
+            .onTapGesture {
+                viewModel.paste()
+            }
     }
 
     var clearButton: some View {
-        Button(
-            action: {
-                viewModel.clear()
-            },
-            label: {
-                HStack {
-                    Text(L10n.clear)
-                        .font(uiFont: UIFont.font(of: .text4))
-                        .foregroundColor(.black)
-                    Image(uiImage: Asset.MaterialIcon.clear.image)
-                        .resizable()
-                        .frame(width: 16, height: 16)
-                        .foregroundColor(.black)
-                }
-            }
-        )
+        HStack {
+            Text(L10n.clear)
+                .font(uiFont: UIFont.font(of: .text4))
+                .foregroundColor(.black)
+            Image(uiImage: Asset.MaterialIcon.clear.image)
+                .resizable()
+                .frame(width: 16, height: 16)
+                .foregroundColor(.black)
+        }
             .frame(height: 32)
             .padding(EdgeInsets(top: 0, leading: 15, bottom: 0, trailing: 14))
             .background(Color(Asset.Colors.rain.color))
             .cornerRadius(8)
             .fixedSize()
+            .onTapGesture {
+                viewModel.clear()
+            }
     }
 
     var suggestions: some View {

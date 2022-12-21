@@ -63,13 +63,11 @@ extension ReceiveToken {
                                         )
                                     // Text
                                     UIStackView(axis: .vertical, spacing: 4, alignment: .leading) {
-                                        if available(.receiveRenBtcEnabled) {
-                                            UILabel(
-                                                text: L10n.showingMyAddressFor,
-                                                textSize: 13,
-                                                textColor: .secondaryLabel
-                                            )
-                                        }
+                                        UILabel(
+                                            text: L10n.showingMyAddressFor,
+                                            textSize: 13,
+                                            textColor: .secondaryLabel
+                                        )
                                         UILabel(text: L10n.network("Solana"), textSize: 17, weight: .semibold)
                                             .setup { view in
                                                 viewModel.tokenTypeDriver
@@ -78,16 +76,13 @@ extension ReceiveToken {
                                                     .disposed(by: disposeBag)
                                             }
                                     }.padding(.init(x: 12, y: 0))
-                                    // Next icon
-                                    if available(.receiveRenBtcEnabled) {
+                                    if !viewModel.isDisabledRenBtc {
                                         UIView.defaultNextArrow()
                                     }
                                 }
                                 .padding(.init(x: 15, y: 15))
                                 .onTap { [unowned self] in
-                                    if available(.receiveRenBtcEnabled) {
-                                        viewModel.showSelectionNetwork()
-                                    }
+                                    viewModel.showSelectionNetwork()
                                 }
                                 UIStackView(axis: .vertical, alignment: .fill) {
                                     UIView(height: 1, backgroundColor: .f2f2f7)
@@ -191,9 +186,8 @@ extension ReceiveToken.ViewController {
             let vc = RenBTCReceivingStatuses.ViewController(viewModel: vm)
             show(UINavigationController(rootViewController: vc), sender: nil)
         case let .share(address, qrCode):
-            guard let qrCode = qrCode, let address = address else {
-                return
-            }
+            analyticsManager.log(event: AmplitudeEvent.QR_Share)
+            guard let qrCode = qrCode, let address = address else { return }
 
             let vc = UIActivityViewController(activityItems: [qrCode, address], applicationActivities: nil)
             present(vc, animated: true)
