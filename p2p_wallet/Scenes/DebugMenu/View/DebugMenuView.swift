@@ -38,7 +38,6 @@ struct DebugMenuView: View {
                 }
                 Section(header: Text("Application")) {
                     TextFieldRow(title: "Wallet:", content: $globalAppState.forcedWalletAddress)
-                    TextFieldRow(title: "Name:", content: $globalAppState.nameServiceEndpoint)
                     Toggle("Prefer direct swap", isOn: $globalAppState.preferDirectSwap)
                     Button {
                         Task {
@@ -87,6 +86,15 @@ struct DebugMenuView: View {
                         Text("Unknown").tag(nil as APIEndPoint?)
                         ForEach(viewModel.solanaEndpoints, id: \.self) { endpoint in
                             Text(endpoint.address).tag(endpoint as APIEndPoint?)
+                        }
+                    }
+                }
+                
+                Section(header: Text("Name service")) {
+                    Picker("URL", selection: $globalAppState.nameServiceEndpoint) {
+                        Text("Unknown").tag(nil as String?)
+                        ForEach(viewModel.nameServiceEndpoints, id: \.self) { endpoint in
+                            Text(endpoint).tag(endpoint as String?)
                         }
                     }
                 }
