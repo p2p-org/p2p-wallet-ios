@@ -20,8 +20,6 @@ final class AuthenticationHandler: AuthenticationHandlerType {
     // MARK: - Properties
 
     private let disposeBag = DisposeBag()
-    private var timeRequiredForAuthentication = 10 // in seconds
-    private var lastAuthenticationTimeStamp = 0
     private var isAuthenticationPaused = false
 
     // MARK: - Subjects
@@ -35,15 +33,6 @@ final class AuthenticationHandler: AuthenticationHandlerType {
 
     /// Bind subjects
     private func bind() {
-        authenticationStatusSubject
-            .skip(while: { $0 == nil })
-            .subscribe(onNext: { [weak self] status in
-                if status == nil {
-                    self?.lastAuthenticationTimeStamp = Int(Date().timeIntervalSince1970)
-                }
-            })
-            .disposed(by: disposeBag)
-
         observeAppNotifications()
 
         authenticationStatusSubject
@@ -59,7 +48,6 @@ final class AuthenticationHandler: AuthenticationHandlerType {
             .applicationWillResignActive
             .subscribe(onNext: { [weak self] _ in
                 if self?.authenticationStatusSubject.value == nil {
-                    self?.lastAuthenticationTimeStamp = Int(Date().timeIntervalSince1970)
                     self?.isLockedSubject.accept(true)
                 }
             })
@@ -68,13 +56,7 @@ final class AuthenticationHandler: AuthenticationHandlerType {
         UIApplication.shared.rx.applicationDidBecomeActive
             .subscribe(onNext: { [weak self] _ in
                 guard let self = self else { return }
-                if Int(Date().timeIntervalSince1970) >= self.lastAuthenticationTimeStamp + self
-                    .timeRequiredForAuthentication
-                {
-                    self.authenticate(presentationStyle: .login())
-                }
-
-                self.isLockedSubject.accept(false)
+                self.authenticate(presentationStyle: .login())
             })
             .disposed(by: disposeBag)
     }
