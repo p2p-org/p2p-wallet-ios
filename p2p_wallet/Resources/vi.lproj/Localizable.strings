@@ -1168,6 +1168,6 @@ Reset the PIN or wait for %@." = "Bạn còn %@ lần thử để nhập mã PIN
 "Buy crypto" = "Mua tiền điện tử";
 "Free (%@ left for today)" = "Miễn phí (còn %@ cho hôm nay)";
 "This address doesn’t have an account for this token" = "Địa chỉ này không có tài khoản cho mã thông báo này";
-"You will have to pay a one-time fee (~$0.03) to create an account for this address" = "Bạn sẽ phải trả phí một lần (~$0,03) để tạo tài khoản cho địa chỉ này";
 "We left a minimum SOL balance to save the account address" = "Chúng tôi đã để lại số dư SOL tối thiểu để lưu địa chỉ tài khoản";
 "Your %@ address" = "Địa chỉ %@ của bạn";
+"You will have to pay a one-time fee (~%@) to create an account for this address" = "Bạn sẽ phải trả phí một lần (~%@) để tạo tài khoản cho địa chỉ này";
