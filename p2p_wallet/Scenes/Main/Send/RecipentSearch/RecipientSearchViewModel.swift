@@ -163,8 +163,8 @@ class RecipientSearchViewModel: ObservableObject {
 
     @MainActor
     func past() {
+        guard let text = clipboardManager.stringFromClipboard(), !text.isEmpty else { return }
         isFirstResponder = false
-        guard let text = clipboardManager.stringFromClipboard() else { return }
         autoSelectTheOnlyOneResultMode = .enabled(delay: 0)
         input = text.trimmingCharacters(in: .whitespacesAndNewlines)
         notificationService.showToast(title: "✅", text: L10n.pastedFromClipboard)
