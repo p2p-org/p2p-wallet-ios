@@ -43,6 +43,8 @@ struct SellPendingView: View {
                                 .padding(.horizontal, 24)
                         }
                     )
+                    .disabled(viewModel.isRemoving)
+
                     Button(
                         action: {
                             viewModel.removeClicked()
@@ -140,6 +142,7 @@ struct SellPendingView: View {
                     .font(uiFont: .font(of: .label1))
                 Image(uiImage: .copyReceiverAddress)
             }
+            .disabled(viewModel.isRemoving)
             .onTapGesture {
                 viewModel.addressCopied()
             }
