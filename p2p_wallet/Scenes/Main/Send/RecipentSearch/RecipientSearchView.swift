@@ -60,11 +60,20 @@ struct RecipientSearchView: View {
                                     reason: L10n.accountCreationForThisAddressIsNotPossibleDueToInsufficientFunds
                                 )
                             case let .selfSendingError(recipient):
-                                disabledAndReason(
-                                    recipient,
-                                    reason: L10n.youCannotSendTokensToYourself,
-                                    subtitle: L10n.yourAddress
-                                )
+                                switch recipient.category {
+                                case let .solanaTokenAddress(_, token):
+                                    disabledAndReason(
+                                        recipient,
+                                        reason: L10n.youCannotSendTokensToYourself,
+                                        subtitle: L10n.yourAddress(token.symbol)
+                                    )
+                                default:
+                                    disabledAndReason(
+                                        recipient,
+                                        reason: L10n.youCannotSendTokensToYourself,
+                                        subtitle: L10n.yourAddress("")
+                                    )
+                                }
                             case .nameServiceError:
                                 tryLater(title: L10n.solanaNameServiceDoesnTRespond)
                                     .padding(.top, 38)
