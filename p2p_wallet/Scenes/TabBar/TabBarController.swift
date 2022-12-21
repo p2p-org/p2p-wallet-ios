@@ -165,23 +165,22 @@ final class TabBarController: UITabBarController {
             .sink(receiveValue: { _ in })
             .store(in: &cancellables)
 
-        let solendOrHistoryNavigation: UINavigationController
+        let solendOrSwapNavigation: UINavigationController
         if available(.investSolendFeature) {
-            solendOrHistoryNavigation = UINavigationController()
-            solendCoordinator = SolendCoordinator(navigationController: solendOrHistoryNavigation)
+            solendOrSwapNavigation = UINavigationController()
+            
+            solendCoordinator = SolendCoordinator(navigationController: solendOrSwapNavigation)
             solendCoordinator.start()
                 .sink(receiveValue: { _ in })
                 .store(in: &cancellables)
         } else {
-            solendOrHistoryNavigation = UINavigationController()
-            historyCoordinator = HistoryCoordinator(presentation: SmartCoordinatorPushPresentation(solendOrHistoryNavigation))
-            historyCoordinator.start()
-                .sink {}
-                .store(in: &cancellables)
+            let viewModel = OrcaSwapV2.ViewModel(initialWallet: nil)
+            let viewController = OrcaSwapV2.ViewController(viewModel: viewModel, hidesBottomBarWhenPushed: false)
+            solendOrSwapNavigation = UINavigationController(rootViewController: viewController)
         }
 
-        let historyOrFeedbackNavigation = UINavigationController()
-        historyCoordinator = HistoryCoordinator(presentation: SmartCoordinatorPushPresentation(historyOrFeedbackNavigation))
+        let history = UINavigationController()
+        historyCoordinator = HistoryCoordinator(presentation: SmartCoordinatorPushPresentation(history))
         historyCoordinator.start()
             .sink {}
             .store(in: &cancellables)
@@ -201,9 +200,9 @@ final class TabBarController: UITabBarController {
 
         viewControllers = [
             homeNavigation,
-            solendOrHistoryNavigation,
+            solendOrSwapNavigation,
             UINavigationController(),
-            historyOrFeedbackNavigation,
+            history,
             settingsNavigation,
         ]
     }
@@ -266,10 +265,6 @@ extension TabBarController: UITabBarControllerDelegate {
             return true
         }
 
-        if TabItem(rawValue: selectedIndex) == .history, !available(.investSolendFeature) {
-            routeToFeedback()
-            return false
-        }
         customTabBar.updateSelectedViewPositionIfNeeded()
         if TabItem(rawValue: selectedIndex) == .invest {
             if available(.investSolendFeature), !Defaults.isSolendTutorialShown, available(.solendDisablePlaceholder) {
@@ -297,11 +292,11 @@ private extension TabItem {
         case .wallet:
             return .tabBarSelectedWallet
         case .invest:
-            return available(.investSolendFeature) ? .tabBarEarn : .tabBarHistory
+            return available(.investSolendFeature) ? .tabBarEarn : .tabBarSwap
         case .actions:
             return UIImage()
         case .history:
-            return available(.investSolendFeature) ? .tabBarHistory : .tabBarFeedback
+            return .tabBarHistory
         case .settings:
             return .tabBarSettings
         }
@@ -316,7 +311,7 @@ private extension TabItem {
         case .actions:
             return ""
         case .history:
-            return available(.investSolendFeature) ? L10n.history : L10n.feedback
+            return L10n.history
         case .settings:
             return L10n.settings
         }
