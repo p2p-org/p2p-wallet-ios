@@ -88,13 +88,7 @@ class HomeViewModel: ObservableObject {
     }
 
     func copyToClipboard() {
-        if let name = nameStorage.getName(), !name.isEmpty {
-            clipboardManager.copyToClipboard(
-                "\(name.withNameServiceDomain()) \(walletsRepository.nativeWallet?.pubkey ?? "")"
-            )
-        } else {
-            clipboardManager.copyToClipboard(walletsRepository.nativeWallet?.pubkey ?? "")
-        }
+        clipboardManager.copyToClipboard(walletsRepository.nativeWallet?.pubkey ?? "")
         notificationsService.showToast(title: "🖤", text: L10n.addressWasCopiedToClipboard, haptic: true)
         analyticsManager.log(event: AmplitudeEvent.mainCopyAddress)
     }
