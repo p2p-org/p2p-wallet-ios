@@ -69,7 +69,7 @@ struct SellInputView: View {
                     .apply(style: .text3)
                     .foregroundColor(Color(Asset.Colors.night.color).opacity(0.3))
             }
-                .blockStyle(hasError: viewModel.errorText != nil)
+                .blockStyle(hasError: viewModel.inputError != nil)
         }
         .padding(.top, 44)
     }
@@ -130,13 +130,13 @@ struct SellInputView: View {
 
     var sellButton: some View {
         TextButtonView(
-            title:  viewModel.errorText != nil ? viewModel.errorText! : L10n.sell((viewModel.baseAmount ?? 0).toString() + " \(viewModel.baseCurrencyCode)"),
+            title:  viewModel.inputError != nil ? viewModel.inputError!.recomendation : L10n.sell((viewModel.baseAmount ?? 0).toString() + " \(viewModel.baseCurrencyCode)"),
             style: .primaryWhite,
             size: .large
         ) { [weak viewModel] in
             viewModel?.sell()
         }
-        .disabled(viewModel.errorText != nil)
+        .disabled(viewModel.inputError != nil)
         .frame(height: 56)
         .padding(EdgeInsets(top: 0, leading: 16, bottom: 12, trailing: 16))
     }

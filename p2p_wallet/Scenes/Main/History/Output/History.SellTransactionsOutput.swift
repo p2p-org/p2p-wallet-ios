@@ -17,13 +17,13 @@ extension History {
     class SellTransactionsOutput: HistoryOutput {
     
         // MARK: - Dependencies
-        @Injected private var sellTransactionsRepository: SellTransactionsRepository
+        @Injected private var sellDataService: any SellDataService
         
         // MARK: - Initializer
     
         func process(newData: [HistoryItem]) -> [HistoryItem] {
             // get transactions
-            var transactions = sellTransactionsRepository.currentTransactions
+            var transactions = sellDataService.transactions
             
             // sort first
             transactions.sort(by: { $0.createdAt?.timeIntervalSince1970 < $1.createdAt?.timeIntervalSince1970 })
