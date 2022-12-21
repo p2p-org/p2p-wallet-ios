@@ -26,6 +26,7 @@ struct RecipientSearchField: View {
                     textField.spellCheckingType = .no
                     textField.returnKeyType = .done
                     textField.keyboardType = .asciiCapable
+                    textField.textContentType = .oneTimeCode
                 }
                 .frame(height: 24)
                 .padding(.vertical, 12)
