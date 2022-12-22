@@ -43,6 +43,8 @@ final class SendInputViewModel: BaseViewModel, ObservableObject {
 
     @Published var feeTitle = L10n.fees("")
     @Published var isFeeLoading: Bool = true
+    
+    @Published var loadingState: LoadableState = .loaded
 
     let feeInfoPressed = PassthroughSubject<Void, Never>()
     let openFeeInfo = PassthroughSubject<Bool, Never>()
@@ -236,6 +238,17 @@ final class SendInputViewModel: BaseViewModel, ObservableObject {
     func openKeyboard() {
         DispatchQueue.main.async {
             self.inputAmountViewModel.isFirstResponder = true
+        }
+    }
+    
+    @MainActor
+    func load() async {
+        loadingState = .loading
+        do {
+            try await Resolver.resolve(SwapServiceType.self).reload()
+            loadingState = .loaded
+        } catch {
+            loadingState = .error(error.readableDescription)
         }
     }
 }

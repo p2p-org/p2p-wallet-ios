@@ -10,19 +10,22 @@ final class SendInputCoordinator: Coordinator<SendResult> {
     private let preChosenAmount: Double?
     private var subject = PassthroughSubject<SendResult, Never>()
     private let source: SendSource
+    private let preloadContext: Bool
 
     init(
         recipient: Recipient,
         preChosenWallet: Wallet?,
         preChosenAmount: Double?,
         navigationController: UINavigationController,
-        source: SendSource
+        source: SendSource,
+        preloadContext: Bool = false
     ) {
         self.recipient = recipient
         self.preChosenWallet = preChosenWallet
         self.preChosenAmount = preChosenAmount
         self.navigationController = navigationController
         self.source = source
+        self.preloadContext = preloadContext
     }
 
     override func start() -> AnyPublisher<SendResult, Never> {
@@ -65,6 +68,10 @@ final class SendInputCoordinator: Coordinator<SendResult> {
                 self?.subject.send(.sent(model))
             }
             .store(in: &subscriptions)
+        
+        if preloadContext {
+            Task { await viewModel.load() }
+        }
 
         return subject.prefix(1).eraseToAnyPublisher()
     }
