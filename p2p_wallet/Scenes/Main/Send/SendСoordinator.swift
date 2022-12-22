@@ -55,11 +55,6 @@ class SendCoordinator: Coordinator<SendResult> {
     // MARK: - Methods
 
     override func start() -> AnyPublisher<SendResult, Never> {
-        // Pre warm
-        Task.detached {
-            try await Resolver.resolve(FeeRelayerContextManager.self).update()
-        }
-
         // normal flow with no preChosenRecipient
         if let recipient = preChosenRecipient {
             return startFlowWithPreChosenRecipient(recipient)
@@ -81,7 +76,8 @@ class SendCoordinator: Coordinator<SendResult> {
             preChosenWallet: preChosenWallet,
             preChosenAmount: preChosenAmount,
             navigationController: rootViewController,
-            source: source
+            source: source,
+            preloadContext: true
         ))
     }
 
@@ -116,6 +112,10 @@ class SendCoordinator: Coordinator<SendResult> {
             .sink(receiveValue: { [weak vm] result in
                 vm?.searchQR(query: result, autoSelectTheOnlyOneResultMode: .enabled(delay: 0))
             }).store(in: &subscriptions)
+        
+        Task {
+            await vm.load()
+        }
 
         let view = RecipientSearchView(viewModel: vm)
         let vc = KeyboardAvoidingViewController(rootView: view)

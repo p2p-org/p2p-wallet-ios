@@ -12,6 +12,30 @@ struct SendInputView: View {
     @ObservedObject var viewModel: SendInputViewModel
 
     var body: some View {
+        switch viewModel.loadingState {
+        case .notRequested:
+            Text("")
+        case .loading:
+            ProgressView()
+        case .loaded:
+            loadedView
+        case .error(let error):
+            VStack {
+                #if !RELEASE
+                Text(error)
+                    .foregroundColor(.red)
+                #endif
+                Text("\(L10n.somethingWentWrong). \(L10n.tapToTryAgain)?")
+                    .onTapGesture {
+                        Task {
+                            await viewModel.load()
+                        }
+                    }
+            }
+        }
+    }
+    
+    var loadedView: some View {
         ZStack(alignment: .top) {
             Color(Asset.Colors.smoke.color)
                 .edgesIgnoringSafeArea(.all)
