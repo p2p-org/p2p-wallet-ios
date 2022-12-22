@@ -53,12 +53,6 @@ final class TabBarViewModel {
             nameStorage.save(name: name)
         }
         
-        // Swap service
-        Task {
-            let swapService = Resolver.resolve(SwapServiceType.self)
-            try await swapService.initialize()
-        }
-        
         // Notification
         notificationService.requestRemoteNotificationPermission()
     }

@@ -17,16 +17,9 @@ class SwapServiceWithRelayImpl: SwapServiceType {
     @Injected private var swapFeeCalculator: SwapFeeRelayerCalculator
     @Injected private var solanaAPIClient: SolanaAPIClient
     @Injected private var accountStorage: SolanaAccountStorage
-    private var isInitialized = false
     
     var prefersDirectSwap: Bool {
         GlobalAppState.shared.preferDirectSwap
-    }
-    
-    func initialize() async throws {
-        guard !isInitialized else {return}
-        try await reload()
-        isInitialized = true
     }
 
     func reload() async throws {
@@ -304,7 +297,8 @@ class SwapServiceWithRelayImpl: SwapServiceType {
             throw SolanaError.unauthorized
         }
         
-        // get current context
+        // update and get current context
+        try await relayContextManager.update()
         let context = try await relayContextManager.getCurrentContext()
 
         // get paying fee token
