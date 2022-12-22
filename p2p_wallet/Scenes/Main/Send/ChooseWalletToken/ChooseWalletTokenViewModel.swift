@@ -34,7 +34,7 @@ final class ChooseWalletTokenViewModel: BaseViewModel, ObservableObject {
             self.isLoading = true
             do {
                 self.allWallets = try await service.getWallets()
-                self.wallets = allWallets.filter({ $0.token.address != chosenToken.token.address })
+                self.wallets = allWallets.filter({ $0.token.address != chosenToken.token.address }).filteredAndSorted()
                 self.isLoading = false
             }
             catch {
