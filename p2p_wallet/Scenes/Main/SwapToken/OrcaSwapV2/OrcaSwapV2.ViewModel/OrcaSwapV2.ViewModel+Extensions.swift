@@ -145,26 +145,11 @@ extension OrcaSwapV2.ViewModel: OrcaSwapV2ViewModelType {
     }
 
     // MARK: - Actions
-    
-    func initialize() {
-        loadingStateSubject.accept(.loading)
-
-        Completable.async { try await self.swapService.initialize() }
-            .subscribe(
-                onCompleted: { [weak self] in
-                    self?.loadingStateSubject.accept(.loaded)
-                },
-                onError: { [weak self] error in
-                    self?.loadingStateSubject.accept(.error(error.readableDescription))
-                }
-            )
-            .disposed(by: disposeBag)
-    }
 
     func reload() {
         loadingStateSubject.accept(.loading)
 
-        Completable.async { try await self.swapService.reload() }
+        Completable.async { [unowned self] in try await self.swapService.reload() }
             .subscribe(
                 onCompleted: { [weak self] in
                     self?.loadingStateSubject.accept(.loaded)
