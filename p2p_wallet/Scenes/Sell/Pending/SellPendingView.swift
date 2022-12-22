@@ -68,6 +68,9 @@ struct SellPendingView: View {
             }
             .padding(.bottom, 16)
         }
+        .onAppear {
+            viewModel.viewDidAppear()
+        }
     }
 
     private var backgroundColor: Color {

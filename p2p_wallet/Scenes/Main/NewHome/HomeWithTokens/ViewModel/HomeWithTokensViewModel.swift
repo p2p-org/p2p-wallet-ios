@@ -5,6 +5,7 @@
 //  Created by Ivan on 05.08.2022.
 //
 
+import AnalyticsManager
 import Combine
 import Foundation
 import Resolver
@@ -20,6 +21,7 @@ class HomeWithTokensViewModel: ObservableObject {
     @Injected private var solanaTracker: SolanaTracker
     @Injected private var notificationService: NotificationService
     @Injected private var sellDataService: any SellDataService
+    @Injected private var analyticsManager: AnalyticsManager
 
     private let buyClicked = PassthroughSubject<Void, Never>()
     private let receiveClicked = PassthroughSubject<Void, Never>()
@@ -36,7 +38,7 @@ class HomeWithTokensViewModel: ObservableObject {
     let earnShow: AnyPublisher<Void, Never>
     let cashOutShow: AnyPublisher<Void, Never>
     let walletShow: AnyPublisher<(pubKey: String, tokenSymbol: String), Never>
-    lazy var sellShow:AnyPublisher<Void, Never> = {
+    lazy var sellShow: AnyPublisher<Void, Never> = {
         sellClicked.eraseToAnyPublisher()
     }()
 
@@ -120,6 +122,10 @@ class HomeWithTokensViewModel: ObservableObject {
         if available(.solanaNegativeStatus) {
             solanaTracker.startTracking()
         }
+
+        analyticsManager.log(
+            event: AmplitudeEvent.mainScreenWalletsOpen(isSellEnabled: Self.cachedIsSellAvailable ?? false)
+        )
     }
 
     func reloadData() async {
@@ -144,6 +150,7 @@ class HomeWithTokensViewModel: ObservableObject {
             swapClicked.send()
         case .cashOut:
             cashOutClicked.send()
+            analyticsManager.log(event: AmplitudeEvent.sellClicked(source: "Main"))
         }
     }
 

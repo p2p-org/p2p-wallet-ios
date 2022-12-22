@@ -5,11 +5,14 @@
 //  Created by Ivan on 16.12.2022.
 //
 
+import AnalyticsManager
 import Combine
 import Foundation
 import Resolver
 
 final class SellTransactionDetailsViewModel: ObservableObject {
+
+    @Injected private var analyticsManager: AnalyticsManager
     @Injected private var sellDataService: any SellDataService
     @Injected private var clipboardManager: ClipboardManagerType
     @Injected private var notificationsService: NotificationService
@@ -60,6 +63,7 @@ final class SellTransactionDetailsViewModel: ObservableObject {
             isProcessing = true
             topButtonTitle = L10n.close
             bottomButtonTitle = nil
+            logAnalytics(status: "processing")
         case .fundsWereSent:
             title = L10n.theFundsWereSentToYourBankAccount
             infoText = L10n
@@ -69,6 +73,7 @@ final class SellTransactionDetailsViewModel: ObservableObject {
             isProcessing = false
             topButtonTitle = L10n.close
             bottomButtonTitle = L10n.removeFromHistory
+            logAnalytics(status: "sent")
         case let .youNeedToSend(receiverAddress):
             self.receiverAddress = receiverAddress
             title = "\(L10n.youNeedToSend) \(amountPart)"
@@ -79,6 +84,7 @@ final class SellTransactionDetailsViewModel: ObservableObject {
             isProcessing = false
             topButtonTitle = "\(L10n.send) \(tokenSymbol)"
             bottomButtonTitle = L10n.removeFromHistory
+            logAnalytics(status: "waiting for deposit")
         case .youVeNotSent:
             title = "\(L10n.youVeNotSent) \(amountPart)"
             infoText = L10n
@@ -89,6 +95,7 @@ final class SellTransactionDetailsViewModel: ObservableObject {
             isProcessing = false
             topButtonTitle = L10n.tryAgain
             bottomButtonTitle = L10n.deleteFromHistory
+            logAnalytics(status: "expired")
         }
     }
 
@@ -119,6 +126,10 @@ final class SellTransactionDetailsViewModel: ObservableObject {
             try await sellDataService.deleteTransaction(id: transactionId)
         }
         resultSubject.send(.cancel)
+    }
+
+    private func logAnalytics(status: String) {
+        analyticsManager.log(event: AmplitudeEvent.historySendClicked(status: status))
     }
 }
 

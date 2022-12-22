@@ -1,8 +1,10 @@
+import AnalyticsManager
 import Combine
 import Foundation
 import SwiftUI
 import UIKit
 import SafariServices
+import Resolver
 
 enum SellCoordinatorResult {
     case completed
@@ -10,6 +12,9 @@ enum SellCoordinatorResult {
 }
 
 final class SellCoordinator: Coordinator<SellCoordinatorResult> {
+
+    @Injected private var analyticsManager: AnalyticsManager
+
     // MARK: - Properties
 
     private var navigation = PassthroughSubject<SellNavigation?, Never>()
@@ -113,6 +118,7 @@ final class SellCoordinator: Coordinator<SellCoordinatorResult> {
         let vc = SFSafariViewController(url: url)
         vc.modalPresentationStyle = .automatic
         navigationController.present(vc, animated: true)
+        analyticsManager.log(event: AmplitudeEvent.sellMoonpay)
         return vc
     }
 
