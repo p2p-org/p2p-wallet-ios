@@ -10,7 +10,7 @@ final class SendInputCoordinator: Coordinator<SendResult> {
     private let preChosenAmount: Double?
     private var subject = PassthroughSubject<SendResult, Never>()
     private let source: SendSource
-    private let preloadContext: Bool
+    private let pushedWithoutRecipientSearchView: Bool
 
     init(
         recipient: Recipient,
@@ -18,20 +18,20 @@ final class SendInputCoordinator: Coordinator<SendResult> {
         preChosenAmount: Double?,
         navigationController: UINavigationController,
         source: SendSource,
-        preloadContext: Bool = false
+        pushedWithoutRecipientSearchView: Bool = false
     ) {
         self.recipient = recipient
         self.preChosenWallet = preChosenWallet
         self.preChosenAmount = preChosenAmount
         self.navigationController = navigationController
         self.source = source
-        self.preloadContext = preloadContext
+        self.pushedWithoutRecipientSearchView = pushedWithoutRecipientSearchView
     }
 
     override func start() -> AnyPublisher<SendResult, Never> {
         let viewModel = SendInputViewModel(recipient: recipient, preChosenWallet: preChosenWallet, preChosenAmount: preChosenAmount, source: source)
         let view = SendInputView(viewModel: viewModel)
-        let controller = KeyboardAvoidingViewController(rootView: view)
+        let controller = KeyboardAvoidingViewController(rootView: view, navigationBarVisibility: .visible)
 
         navigationController.pushViewController(controller, animated: true)
         setTitle(to: controller)
@@ -69,7 +69,7 @@ final class SendInputCoordinator: Coordinator<SendResult> {
             }
             .store(in: &subscriptions)
         
-        if preloadContext {
+        if pushedWithoutRecipientSearchView {
             Task { await viewModel.load() }
         }
 
