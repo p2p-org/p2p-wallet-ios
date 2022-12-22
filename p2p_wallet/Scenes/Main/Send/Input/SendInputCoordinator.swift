@@ -107,6 +107,7 @@ final class SendInputCoordinator: Coordinator<SendResult> {
         coordinate(to: SendInputFeePromptCoordinator(
             parentController: vc,
             feeToken: feeToken,
+            feeInSOL: viewModel.currentState.fee,
             availableFeeTokens: feeWallets
         ))
         .sink(receiveValue: { feeToken in
