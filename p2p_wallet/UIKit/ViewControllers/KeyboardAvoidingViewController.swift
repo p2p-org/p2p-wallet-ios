@@ -5,11 +5,21 @@ import UIKit
 
 /// A view controller that embeds a SwiftUI view and controls Keyboard
 final class KeyboardAvoidingViewController<Content: View>: UIViewController {
+    enum NavigationBarVisibility {
+        case `default`
+        case hidden
+        case visible
+    }
+    
     private let rootView: Content
     private let hostingController: UIHostingController<Content>
+    private let navigationBarVisibility: NavigationBarVisibility
+    
+    private var originalIsNavigationBarHidden: Bool?
 
-    init(rootView: Content) {
+    init(rootView: Content, navigationBarVisibility: NavigationBarVisibility = .default) {
         self.rootView = rootView
+        self.navigationBarVisibility = navigationBarVisibility
         hostingController = UIHostingController(rootView: rootView)
 
         super.init(nibName: nil, bundle: nil)
@@ -28,11 +38,30 @@ final class KeyboardAvoidingViewController<Content: View>: UIViewController {
     override func viewDidAppear(_ animated: Bool) {
         super.viewDidAppear(animated)
         getAllTextFields(fromView: view).first?.becomeFirstResponder()
+        
+        originalIsNavigationBarHidden = navigationController?.isNavigationBarHidden
+        switch navigationBarVisibility {
+        case .default:
+            break
+        case .visible:
+            navigationController?.setNavigationBarHidden(false, animated: false)
+        case .hidden:
+            navigationController?.setNavigationBarHidden(true, animated: false)
+        }
     }
 
     override func viewWillDisappear(_ animated: Bool) {
         super.viewWillDisappear(animated)
         hideKeyboard()
+        
+        switch navigationBarVisibility {
+        case .default:
+            break
+        default:
+            if let originalIsNavigationBarHidden {
+                navigationController?.setNavigationBarHidden(originalIsNavigationBarHidden, animated: false)
+            }
+        }
     }
 
     private func setupLayout() {
