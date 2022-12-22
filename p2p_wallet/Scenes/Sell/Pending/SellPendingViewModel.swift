@@ -1,3 +1,4 @@
+import AnalyticsManager
 import Combine
 import Foundation
 import Resolver
@@ -7,6 +8,7 @@ final class SellPendingViewModel: BaseViewModel, ObservableObject {
     
     // MARK: - Dependencies
     
+    @Injected private var analyticsManager: AnalyticsManager
     @Injected var sellDataService: any SellDataService
     @Injected private var clipboardManager: ClipboardManagerType
     @Injected private var notificationsService: NotificationService
@@ -69,6 +71,10 @@ final class SellPendingViewModel: BaseViewModel, ObservableObject {
 
     func backClicked() {
         backSubject.send()
+    }
+
+    func viewDidAppear() {
+        analyticsManager.log(event: AmplitudeEvent.sellFinishSend)
     }
 }
 

@@ -1,8 +1,12 @@
+import AnalyticsManager
 import SwiftUI
 import KeyAppUI
 import Combine
+import Resolver
 
 struct SellInputView: View {
+    @Injected private var analyticsMAnager: AnalyticsManager
+
     @ObservedObject var viewModel: SellViewModel
 
     let formatter: NumberFormatter = {
@@ -46,6 +50,9 @@ struct SellInputView: View {
         }
         .frame(maxWidth: .infinity)
         .background(Color(Asset.Colors.smoke.color))
+        .onAppear {
+            analyticsMAnager.log(event: AmplitudeEvent.sellAmount)
+        }
     }
 
     // MARK: - Subviews
