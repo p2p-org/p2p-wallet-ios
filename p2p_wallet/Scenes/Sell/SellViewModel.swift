@@ -7,30 +7,18 @@ import KeyAppUI
 import SolanaSwift
 
 enum SellViewModelInputError: Error, Equatable {
-    case balanceEmpty(baseCurrencyCode: String)
     case amountIsTooSmall(minBaseAmount: Double?, baseCurrencyCode: String)
     case insufficientFunds(baseCurrencyCode: String)
     case exceedsProviderLimit(maxBaseProviderAmount: Double?, baseCurrencyCode: String)
     
     var recomendation: String {
         switch self {
-        case .balanceEmpty(let baseCurrencyCode):
-            return L10n.thereIsNoInYourWalletToSell(baseCurrencyCode)
         case .amountIsTooSmall(let minBaseAmount, let baseCurrencyCode):
             return L10n.theMinimumAmountIs(minBaseAmount.toString(), baseCurrencyCode)
         case .insufficientFunds(let baseCurrencyCode):
             return L10n.notEnought(baseCurrencyCode)
         case .exceedsProviderLimit(let maxBaseProviderAmount, let baseCurrencyCode):
             return L10n.theMaximumAmountIs(maxBaseProviderAmount.toString(), baseCurrencyCode)
-        }
-    }
-    
-    var isBalanceEmpty: Bool {
-        switch self {
-        case .balanceEmpty:
-            return true
-        default:
-            return false
         }
     }
 }
@@ -46,26 +34,27 @@ class SellViewModel: BaseViewModel, ObservableObject {
 
     // MARK: -
 
-    private let disposeBag = DisposeBag()
     private let navigation: PassthroughSubject<SellNavigation?, Never>
 
     // MARK: -
 
-    private var minBaseAmount: Double?
+    @Published var minBaseAmount: Double?
     /// Maximum value to sell from sell provider
     private var maxBaseProviderAmount: Double?
     private let baseAmountTimer = Timer.publish(every: 10, on: .main, in: .common).autoconnect()
 
     // MARK: - Properties
+    @Published var isMoreBaseCurrencyNeeded: Bool = false
 
     @Published var baseCurrencyCode: String = "SOL"
     @Published var baseAmount: Double?
-    /// Maximum amount user can sell (balance)
     @Published var maxBaseAmount: Double?
     @Published var isEnteringBaseAmount: Bool = true
+    
     @Published var quoteCurrencyCode: String = Fiat.usd.code
     @Published var quoteAmount: Double?
     @Published var isEnteringQuoteAmount: Bool = false
+    
     @Published var exchangeRate: Double = 0
     @Published var fee: Double = 0
     @Published var status: SellDataServiceStatus = .initialized
@@ -133,6 +122,7 @@ class SellViewModel: BaseViewModel, ObservableObject {
                     self.maxBaseProviderAmount = currency?.maxSellAmount ?? 0
                     self.minBaseAmount = currency?.minSellAmount ?? 0
                     self.baseCurrencyCode = "SOL"
+                    self.checkIfMoreBaseCurrencyNeeded()
                 }
             })
             .store(in: &subscriptions)
@@ -144,20 +134,21 @@ class SellViewModel: BaseViewModel, ObservableObject {
             .removeDuplicates()
             .sink(receiveValue: { [weak self] transactions in
                 guard let self = self, let fiat = self.dataService.fiat else { return }
+                guard !self.isMoreBaseCurrencyNeeded else { return }
                 self.navigation.send(.showPending(transactions: transactions, fiat: fiat))
             })
             .store(in: &subscriptions)
 
-        maxBaseAmount = walletRepository.nativeWallet?.amount
+        // observe native wallet's changes
+        checkIfMoreBaseCurrencyNeeded()
         walletRepository.dataDidChange
-            .subscribe(onNext: { [weak self] val in
-                guard let self = self else { return }
-                self.maxBaseAmount = self.walletRepository.nativeWallet?.amount
-                if self.walletRepository.nativeWallet?.amount == 0 {
-                    self.inputError = .balanceEmpty(baseCurrencyCode: self.baseCurrencyCode)
-                }
+            .publisher
+            .replaceError(with: ())
+            .receive(on: RunLoop.main)
+            .sink(receiveValue: { [weak self] val in
+                self?.checkIfMoreBaseCurrencyNeeded()
             })
-            .disposed(by: disposeBag)
+            .store(in: &subscriptions)
 
         Publishers.Merge(
             $baseAmount,
@@ -167,7 +158,7 @@ class SellViewModel: BaseViewModel, ObservableObject {
             .withLatestFrom(Publishers.CombineLatest3(
                 $baseCurrencyCode, $quoteCurrencyCode, $baseAmount.compactMap { $0 }
             ))
-            .filter { [unowned self] _ in self.status.isReady && self.isEnteringBaseAmount && (self.inputError == nil || self.inputError?.isBalanceEmpty == false) }
+            .filter { [unowned self] _ in self.status.isReady && self.isEnteringBaseAmount }
             .handleEvents(receiveOutput: { [unowned self] amount in
                 self.inputError = nil
                 self.checkError(amount: amount.2)
@@ -205,6 +196,13 @@ class SellViewModel: BaseViewModel, ObservableObject {
     func warmUp() {
         Task { [unowned self] in
             await dataService.update()
+        }
+    }
+    
+    private func checkIfMoreBaseCurrencyNeeded() {
+        maxBaseAmount = walletRepository.nativeWallet?.amount
+        if maxBaseAmount < minBaseAmount {
+            isMoreBaseCurrencyNeeded = true
         }
     }
 

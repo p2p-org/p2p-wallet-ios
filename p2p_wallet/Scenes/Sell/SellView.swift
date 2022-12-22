@@ -14,7 +14,7 @@ struct SellView: View {
                 case .initialized, .updating:
                     loading
                 case .ready:
-                    if viewModel.inputError?.isBalanceEmpty == true {
+                    if viewModel.isMoreBaseCurrencyNeeded {
                         balanceEmptyErrorView
                     } else {
                         SellInputView(viewModel: viewModel)
@@ -48,7 +48,7 @@ struct SellView: View {
                     .padding(.horizontal, 36)
                     .multilineTextAlignment(.center)
                     .padding(.horizontal, 20)
-                Text(L10n.theCurrentMinimumAmountIs("2", "SOL"))
+                Text(L10n.theCurrentMinimumAmountIs(viewModel.minBaseAmount.toString(), "SOL"))
                     .foregroundColor(Color(Asset.Colors.night.color))
                     .apply(style: .text1)
                     .multilineTextAlignment(.center)
