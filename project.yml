@@ -34,7 +34,7 @@ configFiles:
 
 settings:
     base:
-        MARKETING_VERSION: 2.2
+        MARKETING_VERSION: 2.2.1
     configs:
         Debug:
             VALIDATE_PRODUCT: false
