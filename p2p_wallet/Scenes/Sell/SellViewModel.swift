@@ -1,3 +1,4 @@
+import AnalyticsManager
 import Combine
 import Foundation
 import Combine
@@ -31,6 +32,7 @@ class SellViewModel: BaseViewModel, ObservableObject {
     @Injected private var walletRepository: WalletsRepository
     @Injected private var dataService: any SellDataService
     @Injected private var actionService: any SellActionService
+    @Injected private var analyticsManager: AnalyticsManager
 
     // MARK: -
 
@@ -57,7 +59,16 @@ class SellViewModel: BaseViewModel, ObservableObject {
     
     @Published var exchangeRate: Double = 0
     @Published var fee: Double = 0
-    @Published var status: SellDataServiceStatus = .initialized
+    @Published var status: SellDataServiceStatus = .initialized {
+        didSet {
+            switch status {
+            case .error(let error):
+                analyticsManager.log(event: AmplitudeEvent.sellClickedSorryMinAmount)
+            default:
+                break
+            }
+        }
+    }
     @Published var inputError: SellViewModelInputError?
 
     init(navigation: PassthroughSubject<SellNavigation?, Never>) {
@@ -209,10 +220,16 @@ class SellViewModel: BaseViewModel, ObservableObject {
     private func checkError(amount: Double) {
         if amount < minBaseAmount {
             inputError = .amountIsTooSmall(minBaseAmount: minBaseAmount, baseCurrencyCode: baseCurrencyCode)
+            analyticsManager.log(event: AmplitudeEvent.sellClickedServerError)
         } else if amount > (maxBaseAmount ?? 0) {
             inputError = .insufficientFunds(baseCurrencyCode: baseCurrencyCode)
+            analyticsManager.log(event: AmplitudeEvent.sellClickedServerError)
         } else if amount > maxBaseProviderAmount {
-            inputError = .exceedsProviderLimit(maxBaseProviderAmount: maxBaseProviderAmount, baseCurrencyCode: baseCurrencyCode)
+            inputError = .exceedsProviderLimit(
+                maxBaseProviderAmount: maxBaseProviderAmount,
+                baseCurrencyCode: baseCurrencyCode
+            )
+            analyticsManager.log(event: AmplitudeEvent.sellClickedServerError)
         }
     }
 
@@ -243,7 +260,9 @@ class SellViewModel: BaseViewModel, ObservableObject {
     // MARK: - Actions
 
     func sell() {
+        analyticsManager.log(event: AmplitudeEvent.sellAmountNext)
         guard let userId = dataService.userId, let fiat = dataService.fiat else { return }
+
         try? openProviderWebView(
             quoteCurrencyCode: fiat.code,
             baseCurrencyAmount: baseAmount ?? 0,
@@ -253,6 +272,7 @@ class SellViewModel: BaseViewModel, ObservableObject {
 
     func goToSwap() {
         navigation.send(.swap)
+        analyticsManager.log(event: AmplitudeEvent.sellSorryMinAmountSwap)
     }
 
     func sellAll() {

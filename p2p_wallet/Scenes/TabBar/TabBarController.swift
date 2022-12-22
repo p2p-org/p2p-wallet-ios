@@ -15,6 +15,7 @@ import UIKit
 final class TabBarController: UITabBarController {
     @Injected private var analyticsManager: AnalyticsManager
     @Injected private var helpCenterLauncher: HelpCenterLauncher
+    @Injected private var sellDataService: any SellDataService
 
     private var cancellables = Set<AnyCancellable>()
 
@@ -60,8 +61,6 @@ final class TabBarController: UITabBarController {
     private func bind() {
         customTabBar.middleButtonClicked
             .sink(receiveValue: { [unowned self] in
-                analyticsManager.log(event: AmplitudeEvent.actionButtonClick)
-
                 let generator = UIImpactFeedbackGenerator(style: .light)
                 generator.impactOccurred()
                 actionsCoordinator = ActionsCoordinator(viewController: self)
@@ -76,6 +75,13 @@ final class TabBarController: UITabBarController {
                         }
                     })
                     .store(in: &cancellables)
+
+                if available(.sellScenarioEnabled) {
+                    Task {
+                        let isSellEnabled = await sellDataService.isAvailable()
+                        analyticsManager.log(event: AmplitudeEvent.actionButtonClick(isSellEnabled: isSellEnabled))
+                    }
+                }
             })
             .store(in: &cancellables)
     }
@@ -267,6 +273,12 @@ extension TabBarController: UITabBarControllerDelegate {
 
         customTabBar.updateSelectedViewPositionIfNeeded()
         if TabItem(rawValue: selectedIndex) == .invest {
+            if !available(.investSolendFeature) {
+                Task {
+                    let isSellEnabled = await sellDataService.isAvailable()
+                    analyticsManager.log(event: AmplitudeEvent.mainSwap(isSellEnabled: isSellEnabled))
+                }
+            }
             if available(.investSolendFeature), !Defaults.isSolendTutorialShown, available(.solendDisablePlaceholder) {
                 routeToSolendTutorial()
                 return false

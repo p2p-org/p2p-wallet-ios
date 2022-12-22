@@ -5,7 +5,6 @@
 //  Created by Ivan on 05.08.2022.
 //
 
-import AnalyticsManager
 import Combine
 import KeyAppUI
 import Resolver
@@ -13,8 +12,6 @@ import SolanaSwift
 import SwiftUI
 
 struct HomeWithTokensView: View {
-    @Injected private var analyticsManager: AnalyticsManager
-    
     @ObservedObject var viewModel: HomeWithTokensViewModel
     
     @State private var currentUserInteractionCellID: String?
@@ -23,7 +20,6 @@ struct HomeWithTokensView: View {
     
     init(viewModel: HomeWithTokensViewModel) {
         self.viewModel = viewModel
-        analyticsManager.log(event: AmplitudeEvent.mainScreenWalletsOpen)
     }
     
     var body: some View {
