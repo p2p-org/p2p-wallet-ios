@@ -1165,6 +1165,6 @@ Reset the PIN or wait for %@." = "Il vous reste %@ tentatives pour saisir le cod
 "Buy crypto" = "Acheter des cryptos";
 "Send crypto in the Solana network\ninstantly and without fees" = "Envoyez des cryptos sur le réseau Solana\ninstantanément et sans frais";
 "This address doesn’t have an account for this token" = "Cette adresse n'a pas de compte pour ce jeton";
-"You will have to pay a one-time fee (~$0.03) to create an account for this address" = "Vous devrez payer des frais uniques (~ 0,03 $) pour créer un compte pour cette adresse";
 "We left a minimum SOL balance to save the account address" = "Nous avons laissé un solde SOL minimum pour enregistrer l'adresse du compte";
 "Your %@ address" = "Votre adresse %@";
+"You will have to pay a one-time fee (~%@) to create an account for this address" = "Vous devrez payer des frais uniques (~%@) pour créer un compte pour cette adresse";
