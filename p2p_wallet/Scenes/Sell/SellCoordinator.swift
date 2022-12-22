@@ -67,7 +67,7 @@ final class SellCoordinator: Coordinator<SellCoordinatorResult> {
                 transactions.map { transaction in
                     coordinate(
                         to: SellPendingCoordinator(
-                            transaction: transactions[0],
+                            transaction: transaction,
                             fiat: fiat,
                             navigationController: navigationController
                         )
