@@ -14,9 +14,13 @@ struct SellView: View {
                 case .initialized, .updating:
                     loading
                 case .ready:
-                    SellInputView(viewModel: viewModel)
+                    if viewModel.inputError?.isBalanceEmpty == true {
+                        balanceEmptyErrorView
+                    } else {
+                        SellInputView(viewModel: viewModel)
+                    }
                 case .error:
-                    error
+                    errorView
                 }
             }
         }
@@ -24,8 +28,15 @@ struct SellView: View {
             ToolbarItem(placement: .principal) { Text(L10n.cashOut + " SOL").fontWeight(.semibold) }
         }
     }
+    
+    var errorView: some View {
+        Text("\(L10n.somethingWentWrong). \(L10n.tapToTryAgain)")
+            .onTapGesture {
+                viewModel.warmUp()
+            }
+    }
 
-    var error: some View {
+    var balanceEmptyErrorView: some View {
         VStack {
             VStack(spacing: 8) {
                 Image(uiImage: UIImage.coins)
