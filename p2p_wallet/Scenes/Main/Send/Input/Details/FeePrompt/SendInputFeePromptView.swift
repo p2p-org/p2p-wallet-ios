@@ -94,7 +94,7 @@ struct SendInputFeePromptView_Previews: PreviewProvider {
         SendInputFeePromptView(
             viewModel: SendInputFeePromptViewModel(
                 feeToken: .init(token: .usdc),
-                feeInToken: .zero,
+                feeInSOL: .zero,
                 availableFeeTokens: []
             )
         )
