@@ -32,7 +32,7 @@ struct ChooseWalletTokenView: View {
                             if !viewModel.isSearchGoing {
                                 chosenTokenSection
                                     .onTapGesture {
-                                        viewModel.close.send()
+                                        viewModel.chooseTokenSubject.send(viewModel.chosenToken)
                                     }
                             }
                             
