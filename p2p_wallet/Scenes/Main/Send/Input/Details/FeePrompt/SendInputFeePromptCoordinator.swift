@@ -5,19 +5,19 @@ import SolanaSwift
 final class SendInputFeePromptCoordinator: Coordinator<Wallet?> {
     private let parentController: UIViewController
     private let feeToken: Wallet
-    private let feeInToken: FeeAmount
+    private let feeInSOL: FeeAmount
     private let availableFeeTokens: [Wallet]
     private var subject = PassthroughSubject<Wallet?, Never>()
 
-    init(parentController: UIViewController, feeToken: Wallet, feeInToken: FeeAmount, availableFeeTokens: [Wallet]) {
+    init(parentController: UIViewController, feeToken: Wallet, feeInSOL: FeeAmount, availableFeeTokens: [Wallet]) {
         self.parentController = parentController
         self.feeToken = feeToken
-        self.feeInToken = feeInToken
+        self.feeInSOL = feeInSOL
         self.availableFeeTokens = availableFeeTokens
     }
 
     override func start() -> AnyPublisher<Wallet?, Never> {
-        let viewModel = SendInputFeePromptViewModel(feeToken: feeToken, feeInToken: feeInToken, availableFeeTokens: availableFeeTokens)
+        let viewModel = SendInputFeePromptViewModel(feeToken: feeToken, feeInSOL: feeInSOL, availableFeeTokens: availableFeeTokens)
         let view = SendInputFeePromptView(viewModel: viewModel)
         let controller = UIHostingController(rootView: view)
         controller.modalPresentationStyle = .fullScreen
