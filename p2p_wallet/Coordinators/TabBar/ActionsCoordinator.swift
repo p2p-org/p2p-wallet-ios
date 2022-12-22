@@ -81,6 +81,8 @@ final class ActionsCoordinator: Coordinator<ActionsCoordinator.Result> {
                     viewController.dismiss(animated: true) {
                         subject.send(.action(type: .cashOut))
                     }
+
+                    analyticsManager.log(event: AmplitudeEvent.sellClicked(source: "Action_Panel"))
                 }
             })
             .store(in: &subscriptions)
