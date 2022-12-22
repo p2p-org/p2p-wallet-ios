@@ -77,7 +77,7 @@ class SendCoordinator: Coordinator<SendResult> {
             preChosenAmount: preChosenAmount,
             navigationController: rootViewController,
             source: source,
-            preloadContext: true
+            pushedWithoutRecipientSearchView: true
         ))
     }
 
@@ -118,7 +118,7 @@ class SendCoordinator: Coordinator<SendResult> {
         }
 
         let view = RecipientSearchView(viewModel: vm)
-        let vc = KeyboardAvoidingViewController(rootView: view)
+        let vc = KeyboardAvoidingViewController(rootView: view, navigationBarVisibility: .visible)
         vc.navigationItem.largeTitleDisplayMode = .never
         vc.navigationItem.setTitle(L10n.chooseARecipient, subtitle: "Solana network")
         vc.hidesBottomBarWhenPushed = hideTabBar
