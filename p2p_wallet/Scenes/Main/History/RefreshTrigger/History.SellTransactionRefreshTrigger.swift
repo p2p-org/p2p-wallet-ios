@@ -9,6 +9,7 @@ import Foundation
 import Resolver
 import RxCocoa
 import RxSwift
+import Sell
 
 extension History {
     /// Updating price if exchange rate was change

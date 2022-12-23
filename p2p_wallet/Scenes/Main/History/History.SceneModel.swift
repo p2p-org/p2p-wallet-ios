@@ -13,6 +13,7 @@ import RxConcurrency
 import RxSwift
 import SolanaSwift
 import TransactionParser
+import Sell
 
 extension History {
     class SceneModel: BEStreamListViewModel<HistoryItem> {

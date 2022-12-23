@@ -1,6 +1,7 @@
 import Combine
 import SwiftUI
 import KeyAppUI
+import Sell
 
 struct SellPendingView: View {
     @ObservedObject var viewModel: SellPendingViewModel
@@ -166,7 +167,7 @@ struct SellPendingView_Previews: PreviewProvider {
                     tokenSymbol: "SOL",
                     tokenAmount: 5,
                     fiatAmount: 300.05,
-                    currency: .eur,
+                    currency: MoonpaySellDataServiceProvider.MoonpayFiat.eur,
                     receiverAddress: "FfRBerfgeritjg43fBeJEr"
                 )
             )

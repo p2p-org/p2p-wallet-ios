@@ -14,6 +14,7 @@ import RxSwift
 import SolanaSwift
 import UIKit
 import SwiftyUserDefaults
+import Sell
 
 class HomeWithTokensViewModel: ObservableObject {
     private let walletsRepository: WalletsRepository

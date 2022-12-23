@@ -6,6 +6,7 @@ import Combine
 import Foundation
 import Resolver
 import Send
+import Sell
 
 class HistoryCoordinator: SmartCoordinator<Void> {
     override func build() -> UIViewController {
