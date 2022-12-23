@@ -71,7 +71,7 @@ struct RecipientSearchView: View {
                                     disabledAndReason(
                                         recipient,
                                         reason: L10n.youCannotSendTokensToYourself,
-                                        subtitle: L10n.yourAddress("")
+                                        subtitle: L10n.yourAddress("").replacingOccurrences(of: "  ", with: " ") // Empty param creates 2 spaces
                                     )
                                 }
                             case .nameServiceError:
