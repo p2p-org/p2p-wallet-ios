@@ -11,6 +11,7 @@ import SolanaSwift
 import TransactionParser
 import UIKit
 import KeyAppUI
+import Sell
 
 class TransactionCell: BaseCollectionViewCell, BECollectionViewCell {
     override var padding: UIEdgeInsets { .init(x: 16, y: 8) }

@@ -4,6 +4,7 @@
 
 import Foundation
 import RxSwift
+import Moonpay
 
 protocol MoonpayCodeMapping {
     var moonpayCode: String { get }

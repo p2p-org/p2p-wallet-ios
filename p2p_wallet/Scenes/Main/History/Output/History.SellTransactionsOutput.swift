@@ -9,6 +9,7 @@ import Foundation
 import Resolver
 import SolanaSwift
 import TransactionParser
+import Sell
 
 extension History {
     /// Combine final list with processing transactions.

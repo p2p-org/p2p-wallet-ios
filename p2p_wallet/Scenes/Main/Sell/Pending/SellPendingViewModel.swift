@@ -2,6 +2,7 @@ import AnalyticsManager
 import Combine
 import Foundation
 import Resolver
+import Sell
 
 @MainActor
 final class SellPendingViewModel: BaseViewModel, ObservableObject {
@@ -36,7 +37,7 @@ final class SellPendingViewModel: BaseViewModel, ObservableObject {
     init(model: Model) {
         self.model = model
         tokenAmount = model.tokenAmount.tokenAmount(symbol: model.tokenSymbol)
-        fiatAmount = "≈ \(model.fiatAmount.fiatAmount(currency: model.currency))"
+        fiatAmount = "≈ \(model.fiatAmount.fiatAmount(currency: Fiat(rawValue: model.currency.rawValue) ?? .usd))"
         receiverAddress = model.receiverAddress.truncatingMiddle(numOfSymbolsRevealed: 6)
     }
 
@@ -87,7 +88,7 @@ extension SellPendingViewModel {
         let tokenSymbol: String
         let tokenAmount: Double
         let fiatAmount: Double
-        let currency: Fiat
+        let currency: any ProviderFiat
         let receiverAddress: String
     }
 }

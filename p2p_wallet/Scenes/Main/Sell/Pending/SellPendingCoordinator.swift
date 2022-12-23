@@ -4,6 +4,7 @@ import SwiftUI
 import UIKit
 import Send
 import Resolver
+import Sell
 
 enum SellPendingCoordinatorResult {
     case transactionRemoved
@@ -22,12 +23,12 @@ final class SellPendingCoordinator: Coordinator<SellPendingCoordinatorResult> {
     
     private let navigationController: UINavigationController
     private let transaction: SellDataServiceTransaction
-    private let fiat: Fiat
+    private let fiat: any ProviderFiat
     private var resultSubject = PassthroughSubject<SellPendingCoordinatorResult, Never>()
 
     // MARK: - Initializer
 
-    init(transaction: SellDataServiceTransaction, fiat: Fiat, navigationController: UINavigationController) {
+    init(transaction: SellDataServiceTransaction, fiat: any ProviderFiat, navigationController: UINavigationController) {
         self.navigationController = navigationController
         self.transaction = transaction
         self.fiat = fiat
