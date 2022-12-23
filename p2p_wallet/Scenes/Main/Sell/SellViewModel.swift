@@ -6,6 +6,7 @@ import Resolver
 import RxSwift
 import KeyAppUI
 import SolanaSwift
+import Sell
 
 enum SellViewModelInputError: Error, Equatable {
     case amountIsTooSmall(minBaseAmount: Double?, baseCurrencyCode: String)
@@ -261,12 +262,12 @@ class SellViewModel: BaseViewModel, ObservableObject {
 
     func sell() {
         analyticsManager.log(event: AmplitudeEvent.sellAmountNext)
-        guard let userId = dataService.userId, let fiat = dataService.fiat else { return }
+        guard let fiat = dataService.fiat else { return }
 
         try? openProviderWebView(
             quoteCurrencyCode: fiat.code,
             baseCurrencyAmount: baseAmount ?? 0,
-            externalTransactionId: userId
+            externalTransactionId: dataService.userId
         )
     }
 

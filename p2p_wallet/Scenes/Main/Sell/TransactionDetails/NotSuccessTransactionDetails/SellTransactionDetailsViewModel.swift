@@ -9,6 +9,7 @@ import AnalyticsManager
 import Combine
 import Foundation
 import Resolver
+import Sell
 
 final class SellTransactionDetailsViewModel: ObservableObject {
 
