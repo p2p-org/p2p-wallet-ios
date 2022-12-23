@@ -1113,7 +1113,6 @@ Reset the PIN or wait for %@." = "Bạn còn %@ lần thử để nhập mã PIN
 "Here’s what we found" = "Đây là những gì chúng tôi tìm thấy";
 "You can choose in which currency to pay with below." = "Bạn có thể chọn loại tiền tệ để thanh toán bên dưới.";
 "Switch to another token" = "Chuyển sang mã thông báo khác";
-"Pay the ~$0.03 fee with" = "Thanh toán khoản phí ~$0,03 với";
 "token account" = "tài khoản mã thông báo";
 "Address not found. Try another one" = "Không tìm thấy địa chỉ.  Thử một cai khac";
 "You cannot send funds to this address because it belongs to another token" = "Bạn không thể gửi tiền đến địa chỉ này vì nó thuộc về một mã thông báo khác";
