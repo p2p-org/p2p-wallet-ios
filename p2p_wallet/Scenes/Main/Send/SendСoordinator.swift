@@ -41,11 +41,6 @@ class SendCoordinator: Coordinator<SendResult> {
     }
 
     override func start() -> AnyPublisher<SendResult, Never> {
-        // Pre warm
-        Task.detached {
-            try await Resolver.resolve(FeeRelayerContextManager.self).update()
-        }
-
         // Setup view
         let vm = RecipientSearchViewModel(preChosenWallet: preChosenWallet, source: source)
         vm.coordinator.selectRecipientPublisher
@@ -76,6 +71,10 @@ class SendCoordinator: Coordinator<SendResult> {
             .sink(receiveValue: { [weak vm] result in
                 vm?.searchQR(query: result, autoSelectTheOnlyOneResultMode: .enabled(delay: 0))
             }).store(in: &subscriptions)
+        
+        Task {
+            await vm.load()
+        }
 
         let view = RecipientSearchView(viewModel: vm)
         let vc = KeyboardAvoidingViewController(rootView: view)

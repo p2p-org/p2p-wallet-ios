@@ -254,7 +254,7 @@ DEPENDENCIES:
   - CombineCocoa (= 0.4.0)
   - CountriesAPI (from `https://github.com/p2p-org/key-app-kit-swift.git`, branch `feature/pwn-6516`)
   - Down (from `https://github.com/p2p-org/Down.git`)
-  - FeeRelayerSwift (from `https://github.com/p2p-org/FeeRelayerSwift.git`, branch `master`)
+  - FeeRelayerSwift (from `https://github.com/p2p-org/FeeRelayerSwift.git`, branch `refactor/unit-test`)
   - Firebase/Analytics
   - Firebase/Crashlytics
   - Firebase/RemoteConfig
@@ -378,7 +378,7 @@ EXTERNAL SOURCES:
   Down:
     :git: https://github.com/p2p-org/Down.git
   FeeRelayerSwift:
-    :branch: master
+    :branch: refactor/unit-test
     :git: https://github.com/p2p-org/FeeRelayerSwift.git
   History:
     :branch: feature/pwn-6516
@@ -467,7 +467,7 @@ CHECKOUT OPTIONS:
     :commit: eee1d66d7ef71b892e72c8bc8d84fcdfeaab1918
     :git: https://github.com/p2p-org/Down.git
   FeeRelayerSwift:
-    :commit: 369d24380466a5f3efd129f050f08e7ca0da2200
+    :commit: e4c689563a6ba6eade4ada3ebb29d4451cb6ce75
     :git: https://github.com/p2p-org/FeeRelayerSwift.git
   History:
     :commit: 384a32916ed79df377775f18cb904294daa0f8d9

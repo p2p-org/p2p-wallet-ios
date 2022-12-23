@@ -16,12 +16,12 @@ import SolanaSwift
 class RenBTCStatusService: RenBTCStatusServiceType {
     @Injected private var solanaAPIClient: SolanaAPIClient
     @Injected private var blockchainClient: SolanaBlockchainClient
-    @Injected private var feeRelayerContextManager: FeeRelayerContextManager
+    @Injected private var relayContextManager: RelayContextManager
     @Injected private var feeRelayerAPIClient: FeeRelayerAPIClient
     @Injected private var accountStorage: AccountStorageType
     @Injected private var orcaSwap: OrcaSwapType
     @Injected private var walletsRepository: WalletsRepository
-    @Injected private var feeRelayer: FeeRelayer
+    @Injected private var relayService: RelayService
 
     private var minRenExemption: Lamports?
     private var lamportsPerSignature: Lamports?
@@ -103,7 +103,7 @@ class RenBTCStatusService: RenBTCStatusServiceType {
         }
 
         // preparing process
-        let feePayer = try await feeRelayerContextManager.getCurrentContext().feePayerAddress
+        let feePayer = try await relayContextManager.getCurrentContext().feePayerAddress
         async let preparing = blockchainClient.prepareTransaction(
             instructions: [
                 AssociatedTokenProgram.createAssociatedTokenAccountInstruction(
@@ -118,16 +118,16 @@ class RenBTCStatusService: RenBTCStatusServiceType {
         )
 
         // updating process
-        async let updating: () = feeRelayerContextManager.update()
+        async let updating: () = relayContextManager.update()
 
         // run concurrently
         let (preparedTransaction, _) = try await(preparing, updating)
 
         // get context
-        let context = try await feeRelayerContextManager.getCurrentContext()
+        let context = try await relayContextManager.getCurrentContext()
 
         // relay transaction
-        let tx = try await feeRelayer.topUpAndRelayTransaction(
+        let tx = try await relayService.topUpAndRelayTransaction(
             context,
             preparedTransaction,
             fee: payingFeeToken,
@@ -172,13 +172,13 @@ class RenBTCStatusService: RenBTCStatusServiceType {
             accountBalances: minRenExemption ?? 2_039_280
         )
 
-        let feeInSOL = try await feeRelayer.feeCalculator.calculateNeededTopUpAmount(
-            try await feeRelayerContextManager.getCurrentContext(),
+        let feeInSOL = try await relayService.feeCalculator.calculateNeededTopUpAmount(
+            try await relayContextManager.getCurrentContext(),
             expectedFee: feeAmount,
             payingTokenMint: mintAddress
         )
 
-        let feeInToken = try await feeRelayer.feeCalculator.calculateFeeInPayingToken(
+        let feeInToken = try await relayService.feeCalculator.calculateFeeInPayingToken(
             orcaSwap: orcaSwap,
             feeInSOL: feeInSOL,
             payingFeeTokenMint: mintAddress
