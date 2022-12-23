@@ -358,13 +358,7 @@ private extension SendInputViewModel {
                 isEnabled: false,
                 title: L10n.max(maxAmount.tokenAmount(symbol: sourceWallet.token.symbol, roundingMode: .down))
             )
-            if currentState.token.isNativeSOL && currentState.amountInToken != currentState.maxAmountInputInToken {
-                if !wasMaxWarningToastShown {
-                    handleSuccess(text: L10n.weLeftAMinimumSOLBalanceToSaveTheAccountAddress)
-                    wasMaxWarningToastShown = true
-                }
-                inputAmountViewModel.isMaxButtonVisible = true
-            }
+            checkMaxButtonIfNeeded()
         case let .error(.inputTooLow(minAmount)):
             inputAmountViewModel.isError = true
             actionButtonViewModel.actionButton = .init(
@@ -397,6 +391,18 @@ private extension SendInputViewModel {
                 isEnabled: true,
                 title: "\(L10n.send) \(currentState.amountInToken.tokenAmount(symbol: currentState.token.symbol, maximumFractionDigits: Int(currentState.token.decimals), roundingMode: .down))"
             )
+        }
+    }
+
+    func checkMaxButtonIfNeeded() {
+        guard currentState.token.isNativeSOL else { return }
+        let range = currentState.maxAmountInputInSOLWithLeftAmount..<currentState.maxAmountInputInToken
+        if range.contains(currentState.amountInToken) {
+            if !wasMaxWarningToastShown {
+                handleSuccess(text: L10n.weLeftAMinimumSOLBalanceToSaveTheAccountAddress)
+                wasMaxWarningToastShown = true
+            }
+            inputAmountViewModel.isMaxButtonVisible = true
         }
     }
 
