@@ -25,6 +25,7 @@ class RecipientSearchViewModel: ObservableObject {
     private let recipientSearchService: RecipientSearchService
     private var searchTask: Task<Void, Never>?
 
+    @Published var loadingState: LoadableState = .notRequested
     @Published var isFirstResponder: Bool = false
 
     @Published var input: String = ""
@@ -131,7 +132,7 @@ class RecipientSearchViewModel: ObservableObject {
 
     private func search(query: String, autoSelectTheOnlyOneResultMode: AutoSelectTheOnlyOneResultMode?, fromQR: Bool) {
         searchTask?.cancel()
-        let currentSearchTerm = query.trimmingCharacters(in: .whitespaces).lowercased()
+        let currentSearchTerm = query.trimmingCharacters(in: .whitespaces)
         if currentSearchTerm.isEmpty {
             searchResult = nil
             isSearching = false
@@ -186,6 +187,17 @@ class RecipientSearchViewModel: ObservableObject {
     func notifyAddressRecognized(recipient: Recipient) {
         let text = L10n.theAddressIsRecognized("\(recipient.address.prefix(6))...\(recipient.address.suffix(6))")
         notificationService.showToast(title: "✅", text: text)
+    }
+    
+    @MainActor
+    func load() async {
+        loadingState = .loading
+        do {
+            try await Resolver.resolve(SwapServiceType.self).reload()
+            loadingState = .loaded
+        } catch {
+            loadingState = .error(error.readableDescription)
+        }
     }
 }
 

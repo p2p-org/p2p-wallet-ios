@@ -3,7 +3,7 @@
 <plist version="1.0">
 <dict>
 	<key>Description</key>
-	<string>MVVM pattern with &quot;scene-oriented&quot; programming in iOS</string>
+	<string>MVVM-C with UIKit and SwiftUI</string>
 	<key>Kind</key>
 	<string>Xcode.IDEKit.TextSubstitutionFileTemplateKind</string>
 	<key>Options</key>
@@ -24,13 +24,13 @@
 		</dict>
 		<dict>
 			<key>Default</key>
-			<string>___VARIABLE_scene:identifier___.ViewController</string>
+			<string>___VARIABLE_scene:identifier___View</string>
 			<key>Description</key>
-			<string>The ViewController&apos;s name</string>
+			<string>The View name</string>
 			<key>Identifier</key>
-			<string>viewControllerName</string>
+			<string>viewName</string>
 			<key>Name</key>
-			<string>ViewController name:</string>
+			<string>View name:</string>
 			<key>Required</key>
 			<true/>
 			<key>Type</key>
@@ -38,7 +38,7 @@
 		</dict>
 		<dict>
 			<key>Default</key>
-			<string>___VARIABLE_scene:identifier___.ViewModel</string>
+			<string>___VARIABLE_scene:identifier___ViewModel</string>
 			<key>Description</key>
 			<string>The ViewModel&apos;s name</string>
 			<key>Identifier</key>
@@ -52,13 +52,13 @@
 		</dict>
 		<dict>
 			<key>Default</key>
-			<string>___VARIABLE_scene:identifier___.RootView</string>
+			<string>___VARIABLE_scene:identifier___Coordinator</string>
 			<key>Description</key>
-			<string>The RootView&apos;s name</string>
+			<string>The Coordinator&apos;s name</string>
 			<key>Identifier</key>
-			<string>rootViewName</string>
+			<string>coordinatorName</string>
 			<key>Name</key>
-			<string>rootViewName</string>
+			<string>coordinatorName</string>
 			<key>Required</key>
 			<true/>
 			<key>Type</key>
