@@ -9,6 +9,7 @@ import Combine
 import Foundation
 import UIKit
 import Resolver
+import Sell
 
 private typealias Result = SellTransactionDetailsCoorditor.Result
 

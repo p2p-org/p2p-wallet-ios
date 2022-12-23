@@ -7,6 +7,7 @@
 
 import Foundation
 import TransactionParser
+import Sell
 
 enum HistoryItem: Hashable {
     case parsedTransaction(ParsedTransaction)

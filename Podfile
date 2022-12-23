@@ -26,7 +26,9 @@ def key_app_kit
     "P2PSwift",
     "Solend",
     "Send",
-    "History"
+    "History",
+    "Moonpay",
+    "Sell"
   ]
 
   if $keyAppKitPath
@@ -35,7 +37,7 @@ def key_app_kit
     end
   else
     $keyAppKitGit = 'https://github.com/p2p-org/key-app-kit-swift.git'
-    $keyAppKitBranch = 'feature/pwn-6516'
+    $keyAppKitBranch = 'feature/sell-services'
     for $dependency in $dependencies do
       pod $dependency, :git => $keyAppKitGit, :branch => $keyAppKitBranch
     end

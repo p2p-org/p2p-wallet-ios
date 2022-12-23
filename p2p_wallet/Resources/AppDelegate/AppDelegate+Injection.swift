@@ -23,6 +23,8 @@ import SolanaSwift
 import Solend
 import SwiftyUserDefaults
 import TransactionParser
+import Moonpay
+import Sell
 
 extension Resolver: ResolverRegistering {
     public static func registerAllServices() {
@@ -329,6 +331,7 @@ extension Resolver: ResolverRegistering {
         // PricesService
         register { PricesService() }
             .implements(PricesServiceType.self)
+            .implements(SellPriceProvider.self)
             .scope(.session)
 
         // WalletsViewModel
@@ -444,14 +447,6 @@ extension Resolver: ResolverRegistering {
 
         register { MoonpayExchange(provider: resolve()) }
             .implements(BuyExchangeService.self)
-            .scope(.session)
-
-        register { SellDataServiceImpl() }
-            .implements((any SellDataService).self)
-            .scope(.shared)
-
-        register { SellActionServiceMock() }
-            .implements((any SellActionService).self)
             .scope(.shared)
 
         // Buy
@@ -463,7 +458,53 @@ extension Resolver: ResolverRegistering {
             )
         }
         .implements(RecipientSearchService.self)
-        .scope(.session)
+        .scope(.shared)
+        
+        // Sell
+        register {
+            MoonpaySellDataServiceProvider(moonpayAPI: resolve())
+        }
+        .implements((any SellDataServiceProvider).self)
+        .scope(.shared)
+        
+        register {
+            MoonpaySellActionServiceProvider(moonpayAPI: resolve())
+        }
+        .implements((any SellActionServiceProvider).self)
+        .scope(.shared)
+        
+        register {
+            MoonpaySellDataService(
+                userId: Resolver.resolve(UserWalletManager.self).wallet?.moonpayExternalClientId ?? "",
+                provider: resolve(),
+                priceProvider: resolve(),
+                sellTransactionsRepository: resolve()
+            )
+        }
+            .implements((any SellDataService).self)
+            .scope(.shared)
+
+        register {
+            let endpoint: String
+            let apiKey: String
+            switch Defaults.moonpayEnvironment {
+            case .production:
+                endpoint = .secretConfig("MOONPAY_PRODUCTION_SELL_ENDPOINT")!
+                apiKey = .secretConfig("MOONPAY_PRODUCTION_API_KEY")!
+            case .sandbox:
+                endpoint = .secretConfig("MOONPAY_STAGING_SELL_ENDPOINT")!
+                apiKey = .secretConfig("MOONPAY_STAGING_API_KEY")!
+            }
+
+            return MoonpaySellActionService(
+                provider: resolve(),
+                refundWalletAddress: Resolver.resolve(UserWalletManager.self).wallet?.account.publicKey.base58EncodedString ?? "",
+                endpoint: endpoint,
+                apiKey: apiKey
+            )
+        }
+            .implements((any SellActionService).self)
+            .scope(.shared)
 
         // Banner
         register {

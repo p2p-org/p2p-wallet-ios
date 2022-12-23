@@ -11,6 +11,7 @@ import KeyAppUI
 import Resolver
 import SwiftUI
 import UIKit
+import Sell
 
 final class TabBarController: UITabBarController {
     @Injected private var analyticsManager: AnalyticsManager
