@@ -53,7 +53,7 @@ final class TabBarCoordinator: Coordinator<Void> {
     override func start() -> AnyPublisher<Void, Never> {
         // set up tabs
         let firstTab = setUpHome()
-        let (secondTab, thirdTab) = setUpSolendHistoryOrFeedback()
+        let (secondTab, thirdTab) = setUpSolendSwapOrHistory()
         let forthTab = setUpSettings()
 
         // set viewcontrollers
@@ -116,22 +116,24 @@ final class TabBarCoordinator: Coordinator<Void> {
     }
     
     /// Set up Solend, history or feedback scene
-    private func setUpSolendHistoryOrFeedback() -> (UIViewController, UIViewController) {
-        let solendOrHistoryNavigation: UINavigationController
-        let historyOrFeedbackNavigation: UINavigationController
+    private func setUpSolendSwapOrHistory() -> (UIViewController, UIViewController) {
+        let solendOrSwapNavigation = UINavigationController()
+        
         if available(.investSolendFeature) {
-            solendOrHistoryNavigation = UINavigationController()
-            let solendCoordinator = SolendCoordinator(navigationController: solendOrHistoryNavigation)
+            let solendCoordinator = SolendCoordinator(navigationController: solendOrSwapNavigation)
             coordinate(to: solendCoordinator)
                 .sink(receiveValue: { _ in })
                 .store(in: &subscriptions)
-            historyOrFeedbackNavigation = UINavigationController(rootViewController: History.Scene())
         } else {
-            solendOrHistoryNavigation = UINavigationController(rootViewController: History.Scene())
-            historyOrFeedbackNavigation = UINavigationController(rootViewController: History.Scene())
+            let swapCoordinator = SwapCoordinator(navigationController: solendOrSwapNavigation, initialWallet: nil, hidesBottomBarWhenPushed: false)
+            coordinate(to: swapCoordinator)
+                .sink(receiveValue: { _ in })
+                .store(in: &subscriptions)
         }
+        
+        let historyNavigation = UINavigationController(rootViewController: History.Scene())
 
-        return (solendOrHistoryNavigation, historyOrFeedbackNavigation)
+        return (solendOrSwapNavigation, historyNavigation)
     }
     
     /// Set up Settings scene
