@@ -131,7 +131,11 @@ final class TabBarCoordinator: Coordinator<Void> {
                 .store(in: &subscriptions)
         }
         
-        let historyNavigation = UINavigationController(rootViewController: History.Scene())
+        let historyNavigation = UINavigationController()
+        let historyCoordinator = HistoryCoordinator(presentation: SmartCoordinatorPushPresentation(historyNavigation))
+        coordinate(to: historyCoordinator)
+            .sink(receiveValue: { _ in })
+            .store(in: &subscriptions)
 
         return (solendOrSwapNavigation, historyNavigation)
     }
