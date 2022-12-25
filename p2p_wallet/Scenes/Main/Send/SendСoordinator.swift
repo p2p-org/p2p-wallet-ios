@@ -82,6 +82,7 @@ class SendCoordinator: Coordinator<SendResult> {
     }
 
     private func startFlowWithNoPreChosenRecipient() {
+        // Setup view
         let vm = RecipientSearchViewModel(preChosenWallet: preChosenWallet, source: source)
         vm.coordinator.selectRecipientPublisher
             .flatMap { [unowned self] in

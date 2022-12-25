@@ -16,7 +16,7 @@ final class ActionsCoordinator: Coordinator<ActionsCoordinator.Result> {
     @Injected private var walletsRepository: WalletsRepository
     @Injected private var analyticsManager: AnalyticsManager
 
-    private let viewController: UIViewController
+    private unowned var viewController: UIViewController
 
     private let transition = PanelTransition()
 
