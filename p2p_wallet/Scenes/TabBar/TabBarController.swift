@@ -5,43 +5,101 @@
 //  Created by Ivan on 09.07.2022.
 //
 
-import AnalyticsManager
 import Combine
 import KeyAppUI
 import Resolver
 import SwiftUI
 import UIKit
+import RxSwift
+import RxCocoa
 
 final class TabBarController: UITabBarController {
-    @Injected private var analyticsManager: AnalyticsManager
-    @Injected private var helpCenterLauncher: HelpCenterLauncher
+    // MARK: - Dependencies
 
-    private var cancellables = Set<AnyCancellable>()
+    @Injected private var helpLauncher: HelpCenterLauncher
+    @Injected private var solanaTracker: SolanaTracker
 
-    private var solendCoordinator: SolendCoordinator!
-    private var homeCoordinator: HomeCoordinator!
-    private var actionsCoordinator: ActionsCoordinator?
-    private var settingsCoordinator: SettingsCoordinator!
-    private var buyCoordinator: BuyCoordinator?
-    private var emptySendCoordinator: SendEmptyCoordinator?
-    private var sendCoordinator: SendCoordinator?
-    private var sendStatusCoordinator: SendTransactionStatusCoordinator?
+    // MARK: - Publishers
+    var middleButtonClicked: AnyPublisher<Void, Never> { customTabBar.middleButtonClicked }
+    private let homeTabClickedTwicelySubject = PassthroughSubject<Void, Never>()
+    var homeTabClickedTwicely: AnyPublisher<Void, Never> { homeTabClickedTwicelySubject.eraseToAnyPublisher() }
+    private let solendTutorialSubject = PassthroughSubject<Void, Never>()
+    var solendTutorialClicked: AnyPublisher<Void, Never> { solendTutorialSubject.eraseToAnyPublisher() }
 
-    @Injected private var walletsRepository: WalletsRepository
+    // MARK: - Properties
+    private let viewModel: TabBarViewModel
+    private let authenticateWhenAppears: Bool
+    
+    private let disposeBag = DisposeBag()
+    private var subscriptions = Set<AnyCancellable>()
 
     private var customTabBar: CustomTabBar { tabBar as! CustomTabBar }
+    private lazy var blurEffectView: UIView = LockView()
+    private var localAuthVC: PincodeViewController?
+
+    // MARK: - Initializers
+    init(
+        viewModel: TabBarViewModel,
+        authenticateWhenAppears: Bool
+    ) {
+        self.viewModel = viewModel
+        self.authenticateWhenAppears = authenticateWhenAppears
+        super.init(nibName: nil, bundle: nil)
+    }
+
+    @available(*, unavailable)
+    public required init?(coder _: NSCoder) {
+        fatalError("init(coder:) has not been implemented")
+    }
+    
+    // MARK: - Public actions
+
+    func setupTabs() {
+        TabItem.allCases.enumerated().forEach { index, item in
+            if item == .actions {
+                viewControllers?[index].tabBarItem = UITabBarItem(title: nil, image: nil, selectedImage: nil)
+            } else {
+                viewControllers?[index].tabBarItem = UITabBarItem(
+                    title: item.displayTitle,
+                    image: item.image,
+                    selectedImage: item.image
+                )
+            }
+        }
+    }
+
+    func changeItem(to item: TabItem) {
+        guard let viewControllers = viewControllers,
+              item.rawValue < viewControllers.count
+        else { return }
+        let viewController = viewControllers[item.rawValue]
+        selectedIndex = item.rawValue
+        _ = tabBarController(self, shouldSelect: viewController)
+    }
+
+    // MARK: - Life cycle
 
     override func viewDidLoad() {
         super.viewDidLoad()
 
-        setUpTabBarAppearance()
+        // replace default TabBar by CustomTabBar
         setValue(CustomTabBar(frame: tabBar.frame), forKey: "tabBar")
+        
+        // bind values
+        bind()
+        
+        // set up
+        setUpTabBarAppearance()
         delegate = self
 
-        setupViewControllers()
-        setupTabs()
-
-        bind()
+        // authenticate if needed
+        if authenticateWhenAppears {
+            viewModel.authenticate(presentationStyle: .login())
+        }
+        
+        // add blur EffectView for authentication scene
+        view.addSubview(blurEffectView)
+        blurEffectView.autoPinEdgesToSuperviewEdges()
     }
 
     override func viewWillLayoutSubviews() {
@@ -53,80 +111,81 @@ final class TabBarController: UITabBarController {
             }
         }
     }
+    
+    // MARK: - Authentications
 
-    private func bind() {
-        customTabBar.middleButtonClicked
-            .sink(receiveValue: { [unowned self] in
-                analyticsManager.log(event: AmplitudeEvent.actionButtonClick)
-
-                let generator = UIImpactFeedbackGenerator(style: .light)
-                generator.impactOccurred()
-                actionsCoordinator = ActionsCoordinator(viewController: self)
-                actionsCoordinator?.start()
-                    .sink(receiveValue: { [weak self] result in
-                        switch result {
-                        case .cancel:
-                            self?.actionsCoordinator = nil
-                        case let .action(type):
-                            self?.handleAction(type)
-                            self?.actionsCoordinator = nil
-                        }
-                    })
-                    .store(in: &cancellables)
-            })
-            .store(in: &cancellables)
+    private func showLockView() {
+        UIApplication.shared.kWindow?.endEditing(true)
+        let lockView = LockView()
+        UIApplication.shared.windows.last?.addSubview(lockView)
+        lockView.autoPinEdgesToSuperviewEdges()
+        solanaTracker.stopTracking()
     }
 
-    private func handleAction(_ action: ActionsView.Action) {
-        guard let navigationController = selectedViewController as? UINavigationController else { return }
-
-        switch action {
-        case .buy:
-            let buyCoordinator = BuyCoordinator(
-                navigationController: navigationController,
-                context: .fromHome
-            )
-            self.buyCoordinator = buyCoordinator
-            buyCoordinator.start()
-                .sink(receiveValue: {})
-                .store(in: &cancellables)
-        case .receive:
-            break
-        case .swap:
-            let vm = OrcaSwapV2.ViewModel(initialWallet: nil)
-            let vc = OrcaSwapV2.ViewController(viewModel: vm)
-            vc.doneHandler = {
-                navigationController.popToRootViewController(animated: true)
-            }
-            navigationController.show(vc, sender: nil)
-        case .send:
-            let fiatAmount = walletsRepository.getWallets().reduce(0) { $0 + $1.amountInCurrentFiat }
-            let withTokens = fiatAmount > 0
-            if withTokens {
-                analyticsManager.log(event: AmplitudeEvent.sendViewed(lastScreen: "main_screen"))
-                sendCoordinator = SendCoordinator(rootViewController: navigationController, preChosenWallet: nil, hideTabBar: true)
-                sendCoordinator?.start()
-                    .sink { [weak self, weak navigationController] result in
-                        switch result {
-                        case let .sent(model):
-                            navigationController?.popToRootViewController(animated: true)
-                            self?.routeToSendTransactionStatus(model: model)
-                        case .cancelled:
-                            break
-                        }
-                    }
-                    .store(in: &cancellables)
-            } else {
-                emptySendCoordinator = SendEmptyCoordinator(navigationController: navigationController)
-                emptySendCoordinator?.start()
-                    .sink(receiveValue: { [weak self] _ in
-                        self?.emptySendCoordinator = nil
-                    })
-                    .store(in: &cancellables)
-            }
-            analyticsManager.log(event: AmplitudeEvent.sendViewed(lastScreen: "main_screen"))
+    private func hideLockView() {
+        for view in UIApplication.shared.windows.last?.subviews ?? [] where view is LockView {
+            view.removeFromSuperview()
         }
     }
+
+    private func handleAuthenticationStatus(_ authStyle: AuthenticationPresentationStyle?) {
+        // dismiss
+        guard let authStyle = authStyle else {
+            localAuthVC?.dismiss(animated: true) { [unowned self] in
+                localAuthVC = nil
+            }
+            return
+        }
+        localAuthVC?.dismiss(animated: false)
+        let pincodeViewModel = PincodeViewModel(
+            state: .check,
+            isBackAvailable: !authStyle.options.contains(.required),
+            successNotification: ""
+        )
+        localAuthVC = PincodeViewController(viewModel: pincodeViewModel)
+        if authStyle.options.contains(.fullscreen) {
+            localAuthVC?.modalPresentationStyle = .fullScreen
+        }
+
+        var authSuccess = false
+        pincodeViewModel.openMain.eraseToAnyPublisher()
+            .sink { [weak self] _ in
+                authSuccess = true
+                self?.viewModel.authenticate(presentationStyle: nil)
+                DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) {
+                    authStyle.completion?(false)
+                }
+            }
+            .store(in: &subscriptions)
+        pincodeViewModel.infoDidTap
+            .sink(receiveValue: { [unowned self] in
+                helpLauncher.launch()
+            })
+            .store(in: &subscriptions)
+        localAuthVC?.onClose = { [weak self] in
+            self?.viewModel.authenticate(presentationStyle: nil)
+            if authSuccess == false {
+                authStyle.onCancel?()
+            }
+        }
+        presentLocalAuth()
+    }
+
+    private func presentLocalAuth() {
+        let keyWindow = UIApplication.shared.windows.filter(\.isKeyWindow).first
+        let topController = keyWindow?.rootViewController?.findLastPresentedViewController()
+        if topController is UIAlertController {
+            let presenting = topController?.presentingViewController
+            topController?.dismiss(animated: false) { [weak presenting, weak localAuthVC] in
+                guard let localAuthVC = localAuthVC else { return }
+                presenting?.present(localAuthVC, animated: true)
+            }
+        } else {
+            topController?.present(localAuthVC!, animated: true)
+        }
+    }
+
+    // MARK: - Helpers
 
     private func setUpTabBarAppearance() {
         let standardAppearance = UITabBarAppearance()
@@ -150,87 +209,42 @@ final class TabBarController: UITabBarController {
         }
     }
 
-    private func setupViewControllers() {
-        let homeNavigation = UINavigationController()
-        homeCoordinator = HomeCoordinator(navigationController: homeNavigation, tabBarController: self)
-        homeCoordinator.start()
-            .sink(receiveValue: { _ in })
-            .store(in: &cancellables)
+    private func bind() {
+        rx.viewWillAppear
+            .take(1)
+            .mapToVoid()
+            .bind(to: viewModel.viewDidLoad)
+            .disposed(by: disposeBag)
 
-        let solendOrHistoryNavigation: UINavigationController
-        let historyOrFeedbackNavigation: UINavigationController
-        if available(.investSolendFeature) {
-            solendOrHistoryNavigation = UINavigationController()
-            solendCoordinator = SolendCoordinator(navigationController: solendOrHistoryNavigation)
-            solendCoordinator.start()
-                .sink(receiveValue: { _ in })
-                .store(in: &cancellables)
-            historyOrFeedbackNavigation = UINavigationController(rootViewController: History.Scene())
-        } else {
-            solendOrHistoryNavigation = UINavigationController(rootViewController: History.Scene())
-            historyOrFeedbackNavigation = UINavigationController(rootViewController: History.Scene())
+        // delay authentication status
+        DispatchQueue.main.asyncAfter(deadline: .now() + .milliseconds(300)) { [unowned self] in
+            self.viewModel.authenticationStatusDriver
+                .drive(onNext: { [weak self] in self?.handleAuthenticationStatus($0) })
+                .disposed(by: disposeBag)
         }
 
-        let settingsNavigation: UINavigationController
-        settingsNavigation = UINavigationController()
-        settingsCoordinator = SettingsCoordinator(navigationController: settingsNavigation)
-        settingsCoordinator.start()
-            .sink(receiveValue: { _ in })
-            .store(in: &cancellables)
+        viewModel.moveToHistory
+            .drive(onNext: { [unowned self] in
+                if available(.investSolendFeature) {
+                    changeItem(to: .history)
+                } else {
+                    // old position of history tab controller
+                    changeItem(to: .invest)
+                }
+            })
+            .disposed(by: disposeBag)
+        // locking status
+        viewModel.isLockedDriver
+            .drive(onNext: { [weak self] isLocked in
+                isLocked ? self?.showLockView() : self?.hideLockView()
+            })
+            .disposed(by: disposeBag)
 
-        viewControllers = [
-            homeNavigation,
-            solendOrHistoryNavigation,
-            UINavigationController(),
-            historyOrFeedbackNavigation,
-            settingsNavigation,
-        ]
-    }
-
-    private func setupTabs() {
-        TabItem.allCases.enumerated().forEach { index, item in
-            if item == .actions {
-                viewControllers?[index].tabBarItem = UITabBarItem(title: nil, image: nil, selectedImage: nil)
-            } else {
-                viewControllers?[index].tabBarItem = UITabBarItem(
-                    title: item.displayTitle,
-                    image: item.image,
-                    selectedImage: item.image
-                )
-            }
-        }
-    }
-
-    private func routeToFeedback() {
-        helpCenterLauncher.launch()
-    }
-
-    private func routeToSolendTutorial() {
-        var view = SolendTutorialView(viewModel: .init())
-        view.doneHandler = { [weak self] in
-            self?.changeItem(to: .invest)
-        }
-        let vc = UIHostingControllerWithoutNavigation(rootView: view)
-        vc.modalPresentationStyle = .fullScreen
-        present(vc, animated: true)
-    }
-    
-    private func routeToSendTransactionStatus(model: SendTransaction) {
-        sendStatusCoordinator = SendTransactionStatusCoordinator(parentController: self, transaction: model)
-        
-        sendStatusCoordinator?
-            .start()
-            .sink(receiveValue: { })
-            .store(in: &cancellables)
-    }
-
-    func changeItem(to item: TabItem) {
-        guard let viewControllers = viewControllers,
-              item.rawValue < viewControllers.count
-        else { return }
-        let viewController = viewControllers[item.rawValue]
-        selectedIndex = item.rawValue
-        _ = tabBarController(self, shouldSelect: viewController)
+        // blurEffectView
+        viewModel.authenticationStatusDriver
+            .map { $0 == nil }
+            .drive(blurEffectView.rx.isHidden)
+            .disposed(by: disposeBag)
     }
 }
 
@@ -246,13 +260,13 @@ extension TabBarController: UITabBarControllerDelegate {
         }
 
         if TabItem(rawValue: selectedIndex) == .history, !available(.investSolendFeature) {
-            routeToFeedback()
+            helpLauncher.launch()
             return false
         }
         customTabBar.updateSelectedViewPositionIfNeeded()
         if TabItem(rawValue: selectedIndex) == .invest {
             if available(.investSolendFeature), !Defaults.isSolendTutorialShown, available(.solendDisablePlaceholder) {
-                routeToSolendTutorial()
+                solendTutorialSubject.send()
                 return false
             }
         }
@@ -261,7 +275,7 @@ extension TabBarController: UITabBarControllerDelegate {
            (viewController as! UINavigationController).viewControllers.count == 1,
            self.selectedIndex == selectedIndex
         {
-            homeCoordinator?.scrollToTop()
+            homeTabClickedTwicelySubject.send()
         }
 
         return true
@@ -299,5 +313,16 @@ private extension TabItem {
         case .settings:
             return L10n.settings
         }
+    }
+}
+
+private extension UIViewController {
+    /// Recursively find last presentedViewController
+    /// - Returns: the last presented view controller
+    func findLastPresentedViewController() -> UIViewController {
+        if let presentedViewController = presentedViewController {
+            return presentedViewController.findLastPresentedViewController()
+        }
+        return self
     }
 }

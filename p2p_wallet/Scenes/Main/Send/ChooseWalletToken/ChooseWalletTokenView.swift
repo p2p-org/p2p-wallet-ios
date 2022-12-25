@@ -146,34 +146,29 @@ private extension ChooseWalletTokenView {
     }
 
     private var searchField: some View {
-        FocusedTextField(
-            text: $viewModel.searchText,
-            isFirstResponder: $viewModel.isSearchFieldFocused
-        ) { textField in
+        HStack(spacing: .zero) {
+            Image(uiImage: .standardSearch)
+                .searchFieldStyle()
 
-            let iconView = UIImageView(frame: CGRect(x: 10, y: 5, width: 20, height: 20))
-            iconView.image = .standardSearch.withRenderingMode(.alwaysTemplate)
-            iconView.tintColor = Asset.Colors.mountain.color
-            let iconContainerView: UIView = UIView(frame: CGRect(x: 20, y: 0, width: 36, height: 30))
-            iconContainerView.addSubview(iconView)
-            textField.leftView = iconContainerView
-            textField.leftViewMode = .always
+            FocusedTextField(
+                text: $viewModel.searchText,
+                isFirstResponder: $viewModel.isSearchFieldFocused
+            ) { textField in
+                textField.returnKeyType = .done
+                textField.backgroundColor = Asset.Colors.rain.color
+                textField.placeholder = L10n.search
+                textField.font = .font(of: .text3)
+            }
 
-            let closeView = UIButton(frame: CGRect(x: 4, y: 5, width: 20, height: 20))
-            closeView.setImage(.clean.withRenderingMode(.alwaysTemplate), for: .normal)
-            closeView.tintColor = Asset.Colors.mountain.color
-            closeView.onTap { [weak viewModel] in viewModel?.clearSearch.send() }
-            let closeContainerView: UIView = UIView(frame: CGRect(x: 10, y: 0, width: 36, height: 30))
-            closeContainerView.addSubview(closeView)
-            textField.rightView = closeContainerView
-            textField.rightViewMode = .whileEditing
-
-            textField.returnKeyType = .done
-            textField.backgroundColor = Asset.Colors.rain.color
-            textField.placeholder = L10n.search
-            textField.keyboardType = .default
-            textField.font = .font(of: .text3)
+            if !viewModel.searchText.isEmpty {
+                Button(action: viewModel.clearSearch.send) {
+                    Image(uiImage: .clean)
+                        .searchFieldStyle()
+                }
+                .frame(height: 44)
+            }
         }
+        .background(Color(Asset.Colors.rain.color))
         .cornerRadius(12)
         .frame(height: 44)
     }
@@ -199,5 +194,15 @@ private extension Text {
             .foregroundColor(Color(Asset.Colors.mountain.color))
             .padding(EdgeInsets(top: 20, leading: 20, bottom: 12, trailing: 20))
             .listRowBackground(Color(Asset.Colors.smoke.color))
+    }
+}
+
+private extension Image {
+    func searchFieldStyle() -> some View {
+        return self
+            .renderingMode(.template)
+            .foregroundColor(Color(Asset.Colors.mountain.color))
+            .frame(width: 20, height: 20)
+            .padding(.horizontal, 10)
     }
 }

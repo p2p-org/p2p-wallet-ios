@@ -15,7 +15,7 @@ import SolanaSwift
 import UIKit
 import OrcaSwapSwift
 
-class AppCoordinator: Coordinator<Void> {
+final class AppCoordinator: Coordinator<Void> {
     // MARK: - Dependencies
 
     private var appEventHandler: AppEventHandlerType = Resolver.resolve()
@@ -31,7 +31,7 @@ class AppCoordinator: Coordinator<Void> {
     var window: UIWindow?
     var showAuthenticationOnMainOnAppear = true
 
-    var reloadEvent: PassthroughSubject<Void, Never> = .init()
+    var reloadEvent = PassthroughSubject<Void, Never>()
 
     private var walletCreated: Bool = false
 
@@ -39,20 +39,22 @@ class AppCoordinator: Coordinator<Void> {
 
     override init() {
         super.init()
-        defer { Task { await appEventHandler.delegate = self } }
-        Task { await bind() }
+        defer { appEventHandler.delegate = self  }
+        bind()
     }
 
     // MARK: - Methods
 
+    /// Starting point for coordinator
     func start() {
         // set window
         window = UIWindow(frame: UIScreen.main.bounds)
-        if #available(iOS 13.0, *) {
-            window?.overrideUserInterfaceStyle = Defaults.appearance
-        }
+        
+        // set appearance
+        window?.overrideUserInterfaceStyle = Defaults.appearance
 
-        openSplash { [self] in
+        // open splash and wait for data
+        openSplash { [unowned self] in
             userWalletManager
                 .$wallet
                 .combineLatest(
@@ -65,12 +67,12 @@ class AppCoordinator: Coordinator<Void> {
                     if wallet != nil {
                         if self.walletCreated, available(.onboardingUsernameEnabled) {
                             self.walletCreated = false
-                            self.openCreateUsername()
+                            self.navigateToCreateUsername()
                         } else {
                             self.navigateToMain()
                         }
                     } else {
-                        self.newOnboardingFlow()
+                        self.navigateToOnboardingFlow()
                     }
                 }
                 .store(in: &subscriptions)
@@ -79,27 +81,7 @@ class AppCoordinator: Coordinator<Void> {
 
     // MARK: - Navigation
 
-    private func openCreateUsername() {
-        guard let window = window else { return }
-        coordinate(to: CreateUsernameCoordinator(navigationOption: .onboarding(window: window)))
-            .sink { [unowned self] in
-                self.navigateToMain()
-            }.store(in: &subscriptions)
-    }
-
-    func navigateToMain() {
-        // TODO: - Change to Main.Coordinator.start()
-        Task.detached {
-            try await Resolver.resolve(WalletMetadataService.self).update()
-            try await Resolver.resolve(OrcaSwapType.self).load()
-        }
-
-        let vm = Main.ViewModel()
-        let vc = Main.ViewController(viewModel: vm)
-        vc.authenticateWhenAppears = showAuthenticationOnMainOnAppear
-        hideLoadingAndTransitionTo(vc)
-    }
-
+    /// Open splash scene and wait for loading
     private func openSplash(_ completionHandler: @escaping () -> Void) {
         // TODO: - Return for new splash screen
         // let vc = SplashViewController()
@@ -126,7 +108,32 @@ class AppCoordinator: Coordinator<Void> {
         }
     }
 
-    private func newOnboardingFlow() {
+    /// Navigate to CreateUserName scene
+    private func navigateToCreateUsername() {
+        guard let window = window else { return }
+        coordinate(to: CreateUsernameCoordinator(navigationOption: .onboarding(window: window)))
+            .sink { [unowned self] in
+                self.navigateToMain()
+            }.store(in: &subscriptions)
+    }
+
+    /// Navigate to Main scene
+    private func navigateToMain() {
+        guard let window = window else { return }
+
+        Task.detached {
+            try await Resolver.resolve(WalletMetadataService.self).update()
+            try await Resolver.resolve(OrcaSwapType.self).load()
+        }
+
+        let coordinator = TabBarCoordinator(window: window, authenticateWhenAppears: showAuthenticationOnMainOnAppear)
+        coordinate(to: coordinator)
+            .sink(receiveValue: {})
+            .store(in: &subscriptions)
+    }
+
+    /// Navigate to onboarding flow if user is not yet created
+    private func navigateToOnboardingFlow() {
         guard let window = window else { return }
         let provider = Resolver.resolve(StartOnboardingNavigationProvider.self)
         let startCoordinator = provider.startCoordinator(for: window)
@@ -185,18 +192,18 @@ class AppCoordinator: Coordinator<Void> {
                         }
                     }
                 case .breakProcess:
-                    newOnboardingFlow()
+                    navigateToOnboardingFlow()
                 }
             })
             .store(in: &subscriptions)
     }
 
+    // MARK: - Helper
+
     private func saveSecurity(data: SecurityData) {
         Resolver.resolve(PincodeStorageType.self).save(data.pincode)
         Defaults.isBiometryEnabled = data.isBiometryEnabled
     }
-
-    // MARK: - Helper
 
     private func hideLoadingAndTransitionTo(_ vc: UIViewController) {
         window?.rootViewController?.view.hideLoadingIndicatorView()
