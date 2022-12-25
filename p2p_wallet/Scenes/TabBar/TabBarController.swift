@@ -265,10 +265,6 @@ extension TabBarController: UITabBarControllerDelegate {
             return true
         }
 
-        if TabItem(rawValue: selectedIndex) == .history, !available(.investSolendFeature) {
-            helpLauncher.launch()
-            return false
-        }
         customTabBar.updateSelectedViewPositionIfNeeded()
         if TabItem(rawValue: selectedIndex) == .invest {
             if !available(.investSolendFeature) {
