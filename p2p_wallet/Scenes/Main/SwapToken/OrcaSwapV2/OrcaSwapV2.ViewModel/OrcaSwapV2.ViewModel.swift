@@ -12,6 +12,7 @@ import RxCocoa
 import RxSwift
 import SolanaSwift
 import OrcaSwapSwift
+import FeeRelayerSwift
 
 extension OrcaSwapV2 {
     class ViewModel {
@@ -23,6 +24,7 @@ extension OrcaSwapV2 {
         @Injected var walletsRepository: WalletsRepository
         @Injected var notificationsService: NotificationService
         @Injected var pricesService: PricesServiceType
+        @Injected var relayContextManager: RelayContextManager
 
         // MARK: - Properties
 

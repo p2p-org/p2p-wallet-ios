@@ -132,7 +132,7 @@ class RecipientSearchViewModel: ObservableObject {
 
     private func search(query: String, autoSelectTheOnlyOneResultMode: AutoSelectTheOnlyOneResultMode?, fromQR: Bool) {
         searchTask?.cancel()
-        let currentSearchTerm = query.trimmingCharacters(in: .whitespaces).lowercased()
+        let currentSearchTerm = query.trimmingCharacters(in: .whitespaces)
         if currentSearchTerm.isEmpty {
             searchResult = nil
             isSearching = false

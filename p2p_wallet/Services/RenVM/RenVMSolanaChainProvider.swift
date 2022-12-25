@@ -37,8 +37,8 @@ class RenVMSolanaChainProvider: ChainProvider {
 private class RenVMFeeRelayerSolanaBlockchainClient: SolanaBlockchainClient {
     @Injected private var blockchainClient: SolanaBlockchainClient
     @Injected private var feeRelayerAPIClient: FeeRelayerAPIClient
-    @Injected private var feeRelayerContextManager: FeeRelayerContextManager
-    @Injected private var feeRelayer: FeeRelayer
+    @Injected private var relayContextManager: RelayContextManager
+    @Injected private var relayService: RelayService
     
     var apiClient: SolanaAPIClient {
         get { blockchainClient.apiClient }
@@ -106,9 +106,9 @@ private class RenVMFeeRelayerSolanaBlockchainClient: SolanaBlockchainClient {
         if preparedTransaction.transaction.instructions[0].programId == "BTC5yiRuonJKcQvD9j9QwYKPx4MCGbvkWfvHFyBJG6RY",
            preparedTransaction.transaction.instructions[1].programId == "KeccakSecp256k11111111111111111111111111111"
         {
-            let context = try await feeRelayerContextManager.getCurrentContext()
+            let context = try await relayContextManager.getCurrentContext()
             do {
-                return try await feeRelayer.topUpAndRelayTransaction(
+                return try await relayService.topUpAndRelayTransaction(
                     context,
                     preparedTransaction,
                     fee: nil,
