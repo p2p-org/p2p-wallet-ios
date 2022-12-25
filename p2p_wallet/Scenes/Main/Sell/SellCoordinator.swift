@@ -5,6 +5,7 @@ import SwiftUI
 import UIKit
 import SafariServices
 import Resolver
+import Sell
 
 enum SellCoordinatorResult {
     case completed
@@ -14,6 +15,7 @@ enum SellCoordinatorResult {
 final class SellCoordinator: Coordinator<SellCoordinatorResult> {
 
     @Injected private var analyticsManager: AnalyticsManager
+    @Injected private var sellDataService: any SellDataService
 
     // MARK: - Properties
 
@@ -77,9 +79,10 @@ final class SellCoordinator: Coordinator<SellCoordinatorResult> {
                             navigationController: navigationController
                         )
                     )
+                    .map {($0, transaction)}
                 }
             )
-                .handleEvents(receiveOutput: { [weak self, unowned mainSellVC] result in
+                .handleEvents(receiveOutput: { [weak self, unowned mainSellVC] result, sellTransaction in
                     guard let self = self else { return }
                     switch result {
                     case .transactionRemoved, .cancelled:
@@ -94,6 +97,11 @@ final class SellCoordinator: Coordinator<SellCoordinatorResult> {
                             self.navigationController.popToViewController(mainSellVC, animated: true)
                         } else {
                             self.navigationController.popToViewController(viewControllers[viewControllers.count - 3], animated: true)
+                        }
+                        
+                        // mark as completed
+                        Task {
+                            await self.sellDataService.markAsCompleted(id: sellTransaction.id)
                         }
                         
                         // Show status
