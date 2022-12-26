@@ -45,6 +45,7 @@ extension Resolver: ResolverRegistering {
         register {
             WarmupManager(processes: [
                 RemoteConfigWarmupProcess(),
+                ParallelWarmupProcesses()
             ])
         }.scope(.application)
 
@@ -427,6 +428,51 @@ extension Resolver: ResolverRegistering {
         register { SellTransactionsRepositoryImpl() }
             .implements(SellTransactionsRepository.self)
             .scope(.session)
+        
+        register {
+            MoonpaySellDataServiceProvider(moonpayAPI: resolve())
+        }
+        .implements((any SellDataServiceProvider).self)
+        .scope(.session)
+        
+        register {
+            MoonpaySellActionServiceProvider(moonpayAPI: resolve())
+        }
+        .implements((any SellActionServiceProvider).self)
+        .scope(.session)
+        
+        register {
+            MoonpaySellDataService(
+                userId: Resolver.resolve(UserWalletManager.self).wallet?.moonpayExternalClientId ?? "",
+                provider: resolve(),
+                priceProvider: resolve(),
+                sellTransactionsRepository: resolve()
+            )
+        }
+            .implements((any SellDataService).self)
+            .scope(.session)
+
+        register {
+            let endpoint: String
+            let apiKey: String
+            switch Defaults.moonpayEnvironment {
+            case .production:
+                endpoint = .secretConfig("MOONPAY_PRODUCTION_SELL_ENDPOINT")!
+                apiKey = .secretConfig("MOONPAY_PRODUCTION_API_KEY")!
+            case .sandbox:
+                endpoint = .secretConfig("MOONPAY_STAGING_SELL_ENDPOINT")!
+                apiKey = .secretConfig("MOONPAY_STAGING_API_KEY")!
+            }
+
+            return MoonpaySellActionService(
+                provider: resolve(),
+                refundWalletAddress: Resolver.resolve(UserWalletManager.self).wallet?.account.publicKey.base58EncodedString ?? "",
+                endpoint: endpoint,
+                apiKey: apiKey
+            )
+        }
+            .implements((any SellActionService).self)
+            .scope(.session)
     }
 
     /// Shared scope: share between screens
@@ -457,52 +503,6 @@ extension Resolver: ResolverRegistering {
         }
         .implements(RecipientSearchService.self)
         .scope(.shared)
-        
-        // Sell
-        register {
-            MoonpaySellDataServiceProvider(moonpayAPI: resolve())
-        }
-        .implements((any SellDataServiceProvider).self)
-        .scope(.shared)
-        
-        register {
-            MoonpaySellActionServiceProvider(moonpayAPI: resolve())
-        }
-        .implements((any SellActionServiceProvider).self)
-        .scope(.shared)
-        
-        register {
-            MoonpaySellDataService(
-                userId: Resolver.resolve(UserWalletManager.self).wallet?.moonpayExternalClientId ?? "",
-                provider: resolve(),
-                priceProvider: resolve(),
-                sellTransactionsRepository: resolve()
-            )
-        }
-            .implements((any SellDataService).self)
-            .scope(.shared)
-
-        register {
-            let endpoint: String
-            let apiKey: String
-            switch Defaults.moonpayEnvironment {
-            case .production:
-                endpoint = .secretConfig("MOONPAY_PRODUCTION_SELL_ENDPOINT")!
-                apiKey = .secretConfig("MOONPAY_PRODUCTION_API_KEY")!
-            case .sandbox:
-                endpoint = .secretConfig("MOONPAY_STAGING_SELL_ENDPOINT")!
-                apiKey = .secretConfig("MOONPAY_STAGING_API_KEY")!
-            }
-
-            return MoonpaySellActionService(
-                provider: resolve(),
-                refundWalletAddress: Resolver.resolve(UserWalletManager.self).wallet?.account.publicKey.base58EncodedString ?? "",
-                endpoint: endpoint,
-                apiKey: apiKey
-            )
-        }
-            .implements((any SellActionService).self)
-            .scope(.shared)
 
         // Banner
         register {

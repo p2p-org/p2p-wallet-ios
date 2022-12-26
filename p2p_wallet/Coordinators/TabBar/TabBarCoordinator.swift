@@ -253,10 +253,7 @@ final class TabBarCoordinator: Coordinator<Void> {
             }
         case .cashOut:
             if available(.sellScenarioEnabled) {
-                Task {
-                    let isSellEnabled = await sellDataService.isAvailable()
-                    analyticsManager.log(event: AmplitudeEvent.actionButtonClick(isSellEnabled: isSellEnabled))
-                }
+                analyticsManager.log(event: AmplitudeEvent.actionButtonClick(isSellEnabled: sellDataService.isAvailable))
                 
                 sellCoordinator = SellCoordinator(navigationController: navigationController)
                 sellCoordinator?.start()

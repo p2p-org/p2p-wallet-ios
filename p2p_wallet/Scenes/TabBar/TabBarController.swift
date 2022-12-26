@@ -268,10 +268,7 @@ extension TabBarController: UITabBarControllerDelegate {
         customTabBar.updateSelectedViewPositionIfNeeded()
         if TabItem(rawValue: selectedIndex) == .invest {
             if !available(.investSolendFeature) {
-                Task {
-                    let isSellEnabled = await sellDataService.isAvailable()
-                    analyticsManager.log(event: AmplitudeEvent.mainSwap(isSellEnabled: isSellEnabled))
-                }
+                analyticsManager.log(event: AmplitudeEvent.mainSwap(isSellEnabled: sellDataService.isAvailable))
             }
             if available(.investSolendFeature), !Defaults.isSolendTutorialShown, available(.solendDisablePlaceholder) {
                 solendTutorialSubject.send()
