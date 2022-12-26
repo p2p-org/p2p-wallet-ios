@@ -51,8 +51,8 @@ final class SendTransactionStatusViewModel: BaseViewModel, ObservableObject {
                 guard let self = self else { return }
                 self.subtitle = pendingTransaction?.sentAt.string(withFormat: "MMMM dd, yyyy @ HH:mm", locale: Locale.base) ?? ""
                 switch pendingTransaction?.status {
-                case .error:
-                    self.updateError()
+                case let .error(error):
+                    self.update(error: error)
                 case .finalized:
                     self.updateCompleted()
                 default:
@@ -118,9 +118,13 @@ final class SendTransactionStatusViewModel: BaseViewModel, ObservableObject {
         closeButtonTitle = L10n.done
     }
 
-    private func updateError() {
+    private func update(error: Error?) {
         title = L10n.transactionFailed
-        let text = L10n.theTransactionWasRejectedByTheSolanaBlockchain🥺
+        var text = L10n.theTransactionWasRejectedByTheSolanaBlockchain
+        if let error = error as? NSError, error.isNetworkConnectionError {
+            text = L10n.weCannotRetrieveTheTransactionStatusWithoutTheInternet
+        }
+        text = text.appending(" 🥺 ")
         let buttonText = L10n.tapForDetails
         let attributedError = NSMutableAttributedString(string: text, attributes: [
             .font: UIFont.font(of: .text4),

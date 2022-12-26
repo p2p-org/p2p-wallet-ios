@@ -40,7 +40,11 @@ extension TransactionHandler {
                 guard let self = self else { return }
 
                 // update status
-                self.notificationsService.showInAppNotification(.error(error))
+                if (error as NSError).isNetworkConnectionError {
+                    self.notificationsService.showConnectionErrorNotification()
+                } else {
+                    self.notificationsService.showInAppNotification(.error(error))
+                }
 
                 // mark transaction as failured
                 self.updateTransactionAtIndex(index) { currentValue in
