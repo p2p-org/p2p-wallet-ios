@@ -14,6 +14,7 @@ import Resolver
 import SolanaSwift
 import UIKit
 import OrcaSwapSwift
+import Sell
 
 final class AppCoordinator: Coordinator<Void> {
     // MARK: - Dependencies
@@ -126,11 +127,21 @@ final class AppCoordinator: Coordinator<Void> {
             try await Resolver.resolve(WalletMetadataService.self).update()
             try await Resolver.resolve(OrcaSwapType.self).load()
         }
-
-        let coordinator = TabBarCoordinator(window: window, authenticateWhenAppears: showAuthenticationOnMainOnAppear)
-        coordinate(to: coordinator)
-            .sink(receiveValue: {})
-            .store(in: &subscriptions)
+        
+        Task {
+            // load services
+            if available(.sellScenarioEnabled) {
+                await Resolver.resolve((any SellDataService).self).checkAvailability()
+            }
+            
+            // coordinate
+            await MainActor.run { [unowned self] in
+                let coordinator = TabBarCoordinator(window: window, authenticateWhenAppears: showAuthenticationOnMainOnAppear)
+                coordinate(to: coordinator)
+                    .sink(receiveValue: {})
+                    .store(in: &subscriptions)
+            }
+        }
     }
 
     /// Navigate to onboarding flow if user is not yet created
