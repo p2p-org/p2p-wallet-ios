@@ -78,34 +78,27 @@ extension History {
         init(accountSymbol: AccountSymbol? = nil) {
             self.accountSymbol = accountSymbol
 
-            // Output
-            var outputs: [HistoryOutput] = [
+            self.outputs = [
                 ProcessingTransactionsOutput(accountFilter: accountSymbol?.account),
                 PriceUpdatingOutput(),
             ]
-
-            // Refresh trigger
-            var refreshTriggers: [HistoryRefreshTrigger] = [
+            self.refreshTriggers =  [
                 PriceRefreshTrigger(),
                 ProcessingTransactionRefreshTrigger(),
             ]
 
-            if accountSymbol == nil {
-                outputs.append(SellTransactionsOutput())
-                refreshTriggers.append(SellTransactionsRefreshTrigger())
-            }
-
-            self.outputs = outputs
-            self.refreshTriggers = refreshTriggers
-
             super.init(isPaginationEnabled: true, limit: 10)
+            
+            if accountSymbol == nil, sellDataService.isAvailable {
+                self.outputs.append(SellTransactionsOutput())
+                self.refreshTriggers.append(SellTransactionsRefreshTrigger())
+            }
 
             // Register all refresh triggers
-            for trigger in refreshTriggers {
-                trigger.register()
-                    .emit(onNext: { [weak self] in self?.refreshUI() })
-                    .disposed(by: disposeBag)
-            }
+            Signal.merge(refreshTriggers.map { $0.register() })
+                .debounce(.milliseconds(300))
+                .emit(onNext: { [weak self] in self?.refreshUI() })
+                .disposed(by: disposeBag)
 
             // Build source
             buildSource()
