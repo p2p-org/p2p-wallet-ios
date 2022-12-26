@@ -106,8 +106,8 @@ final class SendTransactionDetailViewModel: BaseViewModel, ObservableObject {
             type: .accountCreationFee,
             title: L10n.accountCreationFee,
             subtitle: [(
-                amountFeeInToken.tokenAmount(symbol: state.tokenFee.symbol, maximumFractionDigits: Int(state.tokenFee.decimals)),
-                "\(Defaults.fiat.symbol)\(amountFeeInFiat.fixedDecimal(2))"
+                amountFeeInToken.tokenAmount(symbol: state.tokenFee.symbol, maximumFractionDigits: Int(state.tokenFee.decimals), roundingMode: .down),
+                amountFeeInFiat.fiatAmount(roundingMode: .down)
             )],
             image: .accountCreationFee,
             info: feeTokens == nil ? nil : { [weak self] in self?.feePrompt.send(feeTokens ?? []) },

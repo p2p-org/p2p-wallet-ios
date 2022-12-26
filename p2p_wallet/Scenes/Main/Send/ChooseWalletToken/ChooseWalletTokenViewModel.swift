@@ -67,8 +67,8 @@ final class ChooseWalletTokenViewModel: BaseViewModel, ObservableObject {
 private extension ChooseWalletTokenViewModel {
     func configureTitle(strategy: ChooseWalletTokenStrategy) -> String {
         switch strategy {
-        case .feeToken:
-            return L10n.PayThe0._03FeeWith
+        case let .feeToken(_, feeInFiat):
+            return L10n.payTheFeeWith("~\(feeInFiat.fiatAmount(roundingMode: .down))")
         case .sendToken:
             return L10n.pickAToken
         }

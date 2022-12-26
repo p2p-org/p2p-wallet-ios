@@ -41,14 +41,18 @@ final class SendInputFeePromptCoordinator: Coordinator<Wallet?> {
     }
 
     private func openChooseToken(from vc: UIViewController, viewModel: SendInputFeePromptViewModel) {
-        coordinate(to: ChooseWalletTokenCoordinator(strategy: .feeToken(tokens: availableFeeTokens), chosenWallet: feeToken, parentController: vc))
-            .sink { [weak self] value in
-                guard let token = value else { return }
-                viewModel.feeToken = token
-                self?.subject.send(viewModel.feeToken)
-                self?.subject.send(completion: .finished)
-                vc.dismiss(animated: true)
-            }
-            .store(in: &subscriptions)
+        coordinate(to: ChooseWalletTokenCoordinator(
+            strategy: .feeToken(tokens: availableFeeTokens, feeInFiat: viewModel.feeInFiat),
+            chosenWallet: feeToken,
+            parentController: vc)
+        )
+        .sink { [weak self] value in
+            guard let token = value else { return }
+            viewModel.feeToken = token
+            self?.subject.send(viewModel.feeToken)
+            self?.subject.send(completion: .finished)
+            vc.dismiss(animated: true)
+        }
+        .store(in: &subscriptions)
     }
 }
