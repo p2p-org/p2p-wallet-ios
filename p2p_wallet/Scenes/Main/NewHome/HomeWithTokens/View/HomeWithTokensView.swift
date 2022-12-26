@@ -58,7 +58,7 @@ struct HomeWithTokensView: View {
     
     private var header: some View {
         ActionsPanelView(
-            actionsPublisher: viewModel.actions,
+            actionsPublisher: viewModel.$actions.eraseToAnyPublisher(),
             balancePublisher: viewModel.balance,
             action: {
                 viewModel.actionClicked($0)

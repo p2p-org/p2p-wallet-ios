@@ -20,6 +20,9 @@ extension History {
         func register() -> Signal<Void> {
             sellDataService
                 .transactionsPublisher
+                .handleEvents(receiveOutput: { output in
+                    print("transactions.count: \(output.count)")
+                })
                 .asObservable()
                 .map { _ in () }
                 .asSignal(onErrorJustReturn: ())

@@ -31,7 +31,7 @@ final class HomeWithTokensViewModel: BaseViewModel, ObservableObject {
     let navigation: PassthroughSubject<HomeNavigation, Never>
 
     var balance: AnyPublisher<String, Never>
-    var actions: AnyPublisher<[WalletActionType], Never>
+    @Published private(set) var actions: [WalletActionType] = []
 
     @Published var scrollOnTheTop = true
 
@@ -39,8 +39,6 @@ final class HomeWithTokensViewModel: BaseViewModel, ObservableObject {
     @Published var items = [Wallet]()
     @Published var hiddenItems = [Wallet]()
     @Published var tokensIsHidden: Bool
-    @SwiftyUserDefault(keyPath: \.isSellAvailable, options: .cached)
-    static var cachedIsSellAvailable
 
     // MARK: - Initializer
 
@@ -63,13 +61,13 @@ final class HomeWithTokensViewModel: BaseViewModel, ObservableObject {
             .eraseToAnyPublisher()
         self.walletsRepository = walletsRepository
         
-        var actns = [WalletActionType.buy, .receive, .send, .swap]
-        if Self.cachedIsSellAvailable ?? false {
-            actns = [WalletActionType.buy, .receive, .send, .cashOut]
-        }
-        actions = Just(actns).eraseToAnyPublisher()
-        
         super.init()
+        
+        if sellDataService.isAvailable {
+            actions = [.buy, .receive, .send, .cashOut]
+        } else {
+            actions = [.buy, .receive, .send, .swap]
+        }
         
         walletsRepository.dataObservable
             .asPublisher()
@@ -96,11 +94,6 @@ final class HomeWithTokensViewModel: BaseViewModel, ObservableObject {
                 })
                 .store(in: &subscriptions)
         }
-        if available(.sellScenarioEnabled) {
-            Task {
-                Self.cachedIsSellAvailable = await sellDataService.isAvailable()
-            }
-        }
     }
 
     func viewAppeared() {
@@ -109,7 +102,7 @@ final class HomeWithTokensViewModel: BaseViewModel, ObservableObject {
         }
 
         analyticsManager.log(
-            event: AmplitudeEvent.mainScreenWalletsOpen(isSellEnabled: Self.cachedIsSellAvailable ?? false)
+            event: AmplitudeEvent.mainScreenWalletsOpen(isSellEnabled: sellDataService.isAvailable)
         )
     }
 

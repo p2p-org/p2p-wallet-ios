@@ -16,7 +16,6 @@ class WarmupManager {
     }
 
     func start() async {
-        // TODO: parallel processing
         for process in processes {
             await process.start()
         }
