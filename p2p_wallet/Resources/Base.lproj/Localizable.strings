@@ -1083,7 +1083,6 @@ Reset the PIN or wait for %@.";
 "Here’s what we found" = "Here’s what we found";
 "You can choose in which currency to pay with below." = "You can choose in which currency to pay with below.";
 "Switch to another token" = "Switch to another token";
-"Pay the ~$0.03 fee with" = "Pay the ~$0.03 fee with";
 "token account" = "token account";
 "Address not found. Try another one" = "Address not found. Try another one";
 "You cannot send funds to this address because it belongs to another token" = "You cannot send funds to this address because it belongs to another token";
