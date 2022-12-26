@@ -44,8 +44,7 @@ extension Resolver: ResolverRegistering {
         // Application warmup manager
         register {
             WarmupManager(processes: [
-                RemoteConfigWarmupProcess(),
-                ParallelWarmupProcesses()
+                RemoteConfigWarmupProcess()
             ])
         }.scope(.application)
 
