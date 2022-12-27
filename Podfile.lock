@@ -1,7 +1,4 @@
 PODS:
-  - Action (5.0.0):
-    - RxCocoa (~> 6.0)
-    - RxSwift (~> 6.0)
   - Amplitude (8.3.1)
   - AnalyticsManager (1.0.0):
     - Amplitude (~> 8.3.0)
@@ -242,7 +239,6 @@ PODS:
   - TweetNacl (1.0.2)
 
 DEPENDENCIES:
-  - Action (= 5.0.0)
   - AnalyticsManager (from `https://github.com/p2p-org/key-app-kit-swift.git`, branch `master`)
   - AppsFlyerFramework
   - BECollectionView (from `https://github.com/bigearsenal/BECollectionView.git`, branch `master`)
@@ -302,7 +298,6 @@ DEPENDENCIES:
 
 SPEC REPOS:
   trunk:
-    - Action
     - Amplitude
     - AppAuth
     - AppsFlyerFramework
@@ -531,7 +526,6 @@ CHECKOUT OPTIONS:
     :git: https://github.com/p2p-org/key-app-kit-swift.git
 
 SPEC CHECKSUMS:
-  Action: 47f1825511907b4fcd79dd7a7db9526c20f78018
   Amplitude: c25a44ad72b84e684fcf67c478c1fb5c95e286a3
   AnalyticsManager: 8c141df84886ab377bab4e662b9ebe26c1ea8509
   AppAuth: 8fca6b5563a5baef2c04bee27538025e4ceb2add
@@ -611,6 +605,6 @@ SPEC CHECKSUMS:
   TransactionParser: 3004420d52e7b1277dbcfd20b995a5de707705f3
   TweetNacl: 3abf4d1d2082b0114e7a67410e300892448951e6
 
-PODFILE CHECKSUM: 63f6fad80c5c991078442d1ec10c4eb3c5031c65
+PODFILE CHECKSUM: e383cc75a567adec9e05c1b65538e45f7dd73926
 
 COCOAPODS: 1.11.3

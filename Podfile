@@ -71,7 +71,6 @@ target 'p2p_wallet' do
   pod 'ReachabilitySwift', '~> 5.0.0'
 
   # reactive
-  pod 'Action', '5.0.0'
   pod 'RxAppState', '1.7.1'
   pod 'RxGesture', '4.0.4'
   pod 'RxSwift', '6.5.0'
