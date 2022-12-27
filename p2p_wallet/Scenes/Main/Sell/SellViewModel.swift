@@ -25,20 +25,7 @@ enum SellViewModelInputError: Error, Equatable {
     }
 }
 
-enum LoadingValue<T> {
-    case loading
-    case loaded(T)
-    case error(Error)
-    
-    var value: T? {
-        switch self {
-        case .loaded(let value):
-            return value
-        default:
-            return nil
-        }
-    }
-}
+private let decimals = 2
 
 @MainActor
 class SellViewModel: BaseViewModel, ObservableObject {
@@ -150,7 +137,7 @@ class SellViewModel: BaseViewModel, ObservableObject {
             }
             .map { baseAmount, exchangeRate in
                 guard let baseAmount else {return nil}
-                return baseAmount * exchangeRate.value
+                return (baseAmount * exchangeRate.value).rounded(decimals: decimals)
             }
             .assign(to: \.quoteAmount, on: self)
             .store(in: &subscriptions)
@@ -162,7 +149,7 @@ class SellViewModel: BaseViewModel, ObservableObject {
             }
             .map { quoteAmount, exchangeRate in
                 guard let quoteAmount, let exchangeRate = exchangeRate.value, exchangeRate != 0 else { return nil }
-                return quoteAmount / exchangeRate
+                return (quoteAmount / exchangeRate).rounded(decimals: decimals)
             }
             .assign(to: \.baseAmount, on: self)
             .store(in: &subscriptions)
@@ -328,7 +315,7 @@ class SellViewModel: BaseViewModel, ObservableObject {
                 let sellQuote = try await self.actionService.sellQuote(
                     baseCurrencyCode: baseCurrencyCode.lowercased(),
                     quoteCurrencyCode: quoteCurrencyCode.lowercased(),
-                    baseCurrencyAmount: baseAmount.rounded(decimals: 2),
+                    baseCurrencyAmount: baseAmount.rounded(decimals: decimals),
                     extraFeePercentage: 0
                 )
                 // update data
