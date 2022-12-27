@@ -41,7 +41,11 @@ extension TransactionHandler {
                 guard let self = self else { return }
 
                 // update status
-                self.notificationsService.showDefaultErrorNotification()
+                if (error as NSError).isNetworkConnectionError {
+                    self.notificationsService.showConnectionErrorNotification()
+                } else {
+                    self.notificationsService.showDefaultErrorNotification()
+                }
                 SentrySDK.capture(error: error)
 
                 // mark transaction as failured

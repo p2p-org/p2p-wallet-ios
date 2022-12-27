@@ -27,12 +27,16 @@ final class KeyboardAvoidingViewController<Content: View>: UIViewController {
 
     override func viewDidAppear(_ animated: Bool) {
         super.viewDidAppear(animated)
-        getAllTextFields(fromView: view).first?.becomeFirstResponder()
+        openKeyboard()
     }
 
     override func viewWillDisappear(_ animated: Bool) {
         super.viewWillDisappear(animated)
         hideKeyboard()
+    }
+
+    private func openKeyboard() {
+        getAllTextFields(fromView: view).first?.becomeFirstResponder()
     }
 
     private func setupLayout() {
