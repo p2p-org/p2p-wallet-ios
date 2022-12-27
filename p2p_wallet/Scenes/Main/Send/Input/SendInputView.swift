@@ -18,6 +18,8 @@ struct SendInputView: View {
                 .onTapGesture { self.viewModel.inputAmountViewModel.isFirstResponder = false }
 
             VStack(spacing: 8) {
+                Spacer()
+                    .frame(minHeight: 16, maxHeight: 52)
                 HStack(spacing: 4) {
                     Text(L10n.youWillSend)
                         .apply(style: .text4)
@@ -82,7 +84,6 @@ struct SendInputView: View {
                 }
             }
             .padding(.horizontal, 16)
-            .padding(.top, 60)
             .padding(.bottom, 16)
         }
     }

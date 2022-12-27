@@ -25,6 +25,7 @@ protocol NotificationService {
     func showAlert(title: String, text: String)
     func hideToasts()
     func showDefaultErrorNotification()
+    func showConnectionErrorNotification()
     func wasAppLaunchedFromPush(launchOptions: [UIApplication.LaunchOptionsKey: Any]?)
     func didReceivePush(userInfo: [AnyHashable: Any])
     func notificationWasOpened()
@@ -171,6 +172,10 @@ final class NotificationServiceImpl: NSObject, NotificationService {
         DispatchQueue.main.async {
             UIApplication.shared.showToastError()
         }
+    }
+
+    func showConnectionErrorNotification() {
+        showToast(title: "🥺", text: L10n.youHaveNoInternetConnection)
     }
 
     func wasAppLaunchedFromPush(launchOptions: [UIApplication.LaunchOptionsKey: Any]?) {
