@@ -168,11 +168,17 @@ class SellViewModel: BaseViewModel, ObservableObject {
             .store(in: &subscriptions)
         
         // update prices on base amount change
-        Publishers.CombineLatest3(
-            $baseAmount.removeDuplicates(),
-            $baseCurrencyCode,
-            $quoteCurrencyCode
-        )
+        $baseAmount
+            .removeDuplicates()
+            .withLatestFrom(
+                Publishers.CombineLatest(
+                    $baseCurrencyCode,
+                    $quoteCurrencyCode
+                ),
+                resultSelector: { baseAmount, el -> (Double?, String, String) in
+                    (baseAmount, el.0, el.1)
+                }
+            )
             .sink { [weak self] baseAmount, baseCurrencyCode, quoteCurrencyCode in
                 self?.updateFeesAndExchangeRates(
                     baseAmount: baseAmount,
@@ -240,13 +246,17 @@ class SellViewModel: BaseViewModel, ObservableObject {
             })
             .store(in: &subscriptions)
         
-        // re-calculate fee after every 10 m
+        // re-calculate fee after every 10 m if no input is active
         Timer.publish(every: 10, on: .main, in: .common)
             .autoconnect()
             .withLatestFrom(Publishers.CombineLatest3(
                 $baseAmount, $baseCurrencyCode, $quoteCurrencyCode
             ))
-            .filter { [weak self] _ in self?.status.isReady == true }
+            .filter { [weak self] _ in
+                self?.status.isReady == true &&
+                self?.isEnteringBaseAmount == false &&
+                self?.isEnteringQuoteAmount == false
+            }
             .receive(on: RunLoop.main)
             .sink { [weak self] baseAmount, baseCurrencyCode, quoteCurrencyCode in
                 self?.updateFeesAndExchangeRates(
@@ -270,6 +280,8 @@ class SellViewModel: BaseViewModel, ObservableObject {
             .store(in: &subscriptions)
     }
     
+    // MARK: - Helpers
+
     private func checkIfMoreBaseCurrencyNeeded() {
         maxBaseAmount = walletRepository.nativeWallet?.amount
         if maxBaseAmount < minBaseAmount {
@@ -294,8 +306,6 @@ class SellViewModel: BaseViewModel, ObservableObject {
         }
     }
     
-    // MARK: - Helpers
-
     private func updateFeesAndExchangeRates(
         baseAmount: Double?,
         baseCurrencyCode: String,
@@ -304,7 +314,7 @@ class SellViewModel: BaseViewModel, ObservableObject {
         updatePricesTask?.cancel()
         fee = .loading
         exchangeRate = .loading
-        updatePricesTask = Task {
+        updatePricesTask = Task { [unowned self] in
             // get sellQuote
             guard let baseAmount else {
                 return
