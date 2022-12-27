@@ -25,6 +25,21 @@ enum SellViewModelInputError: Error, Equatable {
     }
 }
 
+enum LoadingValue<T> {
+    case loading
+    case loaded(T)
+    case error(Error)
+    
+    var value: T? {
+        switch self {
+        case .loaded(let value):
+            return value
+        default:
+            return nil
+        }
+    }
+}
+
 @MainActor
 class SellViewModel: BaseViewModel, ObservableObject {
 
@@ -35,20 +50,18 @@ class SellViewModel: BaseViewModel, ObservableObject {
     @Injected private var actionService: any SellActionService
     @Injected private var analyticsManager: AnalyticsManager
 
-    // MARK: -
+    // MARK: - Properties
 
     private let navigation: PassthroughSubject<SellNavigation?, Never>
+    private var updatePricesTask: Task<Void, Never>?
 
-    // MARK: -
-
-    @Published var minBaseAmount: Double?
     /// Maximum value to sell from sell provider
     private var maxBaseProviderAmount: Double?
-    private let baseAmountTimer = Timer.publish(every: 10, on: .main, in: .common).autoconnect()
 
-    // MARK: - Properties
+    // MARK: - Subjects
     @Published var isMoreBaseCurrencyNeeded: Bool = false
 
+    @Published var minBaseAmount: Double?
     @Published var baseCurrencyCode: String = "SOL"
     @Published var baseAmount: Double?
     @Published var maxBaseAmount: Double?
@@ -58,19 +71,12 @@ class SellViewModel: BaseViewModel, ObservableObject {
     @Published var quoteAmount: Double?
     @Published var isEnteringQuoteAmount: Bool = false
     
-    @Published var exchangeRate: Double = 0
-    @Published var fee: Double = 0
-    @Published var status: SellDataServiceStatus = .initialized {
-        didSet {
-            switch status {
-            case .error(let error):
-                analyticsManager.log(event: AmplitudeEvent.sellClickedSorryMinAmount)
-            default:
-                break
-            }
-        }
-    }
+    @Published var exchangeRate: LoadingValue<Double> = .loaded(0)
+    @Published var fee: LoadingValue<Double> = .loaded(0)
+    @Published var status: SellDataServiceStatus = .initialized
     @Published var inputError: SellViewModelInputError?
+
+    // MARK: - Initializer
 
     init(navigation: PassthroughSubject<SellNavigation?, Never>) {
         self.navigation = navigation
@@ -81,129 +87,7 @@ class SellViewModel: BaseViewModel, ObservableObject {
         bind()
     }
 
-    private func bind() {
-        // enter base amount
-        Publishers.CombineLatest($baseAmount, $exchangeRate)
-            .filter { [weak self] _ in
-                self?.isEnteringBaseAmount == true
-            }
-            .map { baseAmount, exchangeRate in
-                guard let baseAmount else {return nil}
-                return baseAmount * exchangeRate
-            }
-            .assign(to: \.quoteAmount, on: self)
-            .store(in: &subscriptions)
-
-        // enter quote amount
-        Publishers.CombineLatest($quoteAmount, $exchangeRate)
-            .filter { [weak self] _ in
-                self?.isEnteringQuoteAmount == true
-            }
-            .map { quoteAmount, exchangeRate in
-                guard let quoteAmount, exchangeRate != 0 else { return nil }
-                return quoteAmount / exchangeRate
-            }
-            .assign(to: \.baseAmount, on: self)
-            .store(in: &subscriptions)
-        
-        // bind status publisher to status property
-        dataService.statusPublisher
-            .receive(on: RunLoop.main)
-            .assign(to: \.status, on: self)
-            .store(in: &subscriptions)
-
-        // bind dataService.data to viewModel's data
-        let dataPublisher = dataService.statusPublisher
-            .compactMap({ [weak self] status in
-                switch status {
-                case .ready:
-                    return (self?.dataService.currency, self?.dataService.fiat)
-                default:
-                    return nil
-                }
-            })
-            .receive(on: RunLoop.main)
-            .share()
-        
-        dataPublisher
-            .sink(receiveValue: { [weak self] currency, fiat in
-                guard let self = self else { return }
-                DispatchQueue.main.asyncAfter(deadline: .now() + 0.2) {
-                    self.baseAmount = currency?.minSellAmount ?? 0
-                    self.quoteCurrencyCode = fiat?.code ?? "USD"
-                    self.maxBaseProviderAmount = currency?.maxSellAmount ?? 0
-                    self.minBaseAmount = currency?.minSellAmount ?? 0
-                    self.baseCurrencyCode = "SOL"
-                    self.checkIfMoreBaseCurrencyNeeded()
-                }
-            })
-            .store(in: &subscriptions)
-
-        // Open pendings in case there are pending txs
-        dataPublisher
-            .withLatestFrom(dataService.transactionsPublisher)
-            .map { $0.filter { $0.status == .waitingForDeposit }}
-            .removeDuplicates()
-            .sink(receiveValue: { [weak self] transactions in
-                guard let self = self, let fiat = self.dataService.fiat else { return }
-                guard !self.isMoreBaseCurrencyNeeded else { return }
-                self.navigation.send(.showPending(transactions: transactions, fiat: fiat))
-            })
-            .store(in: &subscriptions)
-
-        // observe native wallet's changes
-        checkIfMoreBaseCurrencyNeeded()
-        walletRepository.dataDidChange
-            .publisher
-            .replaceError(with: ())
-            .receive(on: RunLoop.main)
-            .sink(receiveValue: { [weak self] val in
-                self?.checkIfMoreBaseCurrencyNeeded()
-            })
-            .store(in: &subscriptions)
-
-        Publishers.Merge(
-            $baseAmount,
-            baseAmountTimer.withLatestFrom($baseAmount)
-        )
-            .debounce(for: .seconds(0.5), scheduler: DispatchQueue.main)
-            .withLatestFrom(Publishers.CombineLatest3(
-                $baseCurrencyCode, $quoteCurrencyCode, $baseAmount.compactMap { $0 }
-            ))
-            .filter { [unowned self] _ in self.status.isReady && self.isEnteringBaseAmount }
-            .handleEvents(receiveOutput: { [unowned self] amount in
-                self.inputError = nil
-                self.checkError(amount: amount.2)
-            })
-            .map { [unowned self] base, quote, amount -> AnyPublisher<SellActionServiceQuote?, Never> in
-                self.calculateFee(
-                    amount: amount,
-                    baseCurrencyCode: base,
-                    quoteCurrencyCode: quote
-                )
-                    .map(Optional.init)
-                    .replaceError(with: nil)
-                    .eraseToAnyPublisher()
-            }
-            .subscribe(on: DispatchQueue.global())
-            .receive(on: DispatchQueue.main)
-            // Getting only last request
-            .switchToLatest()
-            .sink(receiveValue: { [unowned self] val in
-                guard let val else {
-                    if self.isEnteringBaseAmount {
-                        self.quoteAmount = 0
-                    } else {
-                        self.baseAmount = 0
-                    }
-                    return
-                }
-                self.fee = val.feeAmount + val.extraFeeAmount
-                self.quoteAmount = val.quoteCurrencyAmount
-                self.exchangeRate = val.baseCurrencyPrice
-            })
-            .store(in: &subscriptions)
-    }
+    // MARK: - Methods
 
     func warmUp() {
         Task { [unowned self] in
@@ -211,55 +95,6 @@ class SellViewModel: BaseViewModel, ObservableObject {
         }
     }
     
-    private func checkIfMoreBaseCurrencyNeeded() {
-        maxBaseAmount = walletRepository.nativeWallet?.amount
-        if maxBaseAmount < minBaseAmount {
-            isMoreBaseCurrencyNeeded = true
-        }
-    }
-
-    private func checkError(amount: Double) {
-        if amount < minBaseAmount {
-            inputError = .amountIsTooSmall(minBaseAmount: minBaseAmount, baseCurrencyCode: baseCurrencyCode)
-            analyticsManager.log(event: AmplitudeEvent.sellClickedServerError)
-        } else if amount > (maxBaseAmount ?? 0) {
-            inputError = .insufficientFunds(baseCurrencyCode: baseCurrencyCode)
-            analyticsManager.log(event: AmplitudeEvent.sellClickedServerError)
-        } else if amount > maxBaseProviderAmount {
-            inputError = .exceedsProviderLimit(
-                maxBaseProviderAmount: maxBaseProviderAmount,
-                baseCurrencyCode: baseCurrencyCode
-            )
-            analyticsManager.log(event: AmplitudeEvent.sellClickedServerError)
-        }
-    }
-
-    private func calculateFee(
-        amount: Double,
-        baseCurrencyCode: String,
-        quoteCurrencyCode: String
-    ) -> AnyPublisher<SellActionServiceQuote, Error> {
-        Deferred {
-            Future { promise in
-                Task { [unowned self] in
-                    do {
-                        let result = try await self.actionService.sellQuote(
-                            baseCurrencyCode: baseCurrencyCode.lowercased(),
-                            quoteCurrencyCode: quoteCurrencyCode.lowercased(),
-                            baseCurrencyAmount: amount.rounded(decimals: 2),
-                            extraFeePercentage: 0
-                        )
-                        promise(.success(result))
-                    } catch {
-                        promise(.failure(error))
-                    }
-                }
-            }
-        }.eraseToAnyPublisher()
-    }
-
-    // MARK: - Actions
-
     func sell() {
         analyticsManager.log(event: AmplitudeEvent.sellAmountNext)
         guard let fiat = dataService.fiat else { return }
@@ -291,6 +126,227 @@ class SellViewModel: BaseViewModel, ObservableObject {
             externalTransactionId: externalTransactionId
         )
         navigation.send(.webPage(url: url))
+    }
+    
+    // MARK: - Binding
+    
+    private func bind() {
+        bindData()
+        bindInput()
+    }
+    
+    private func bindInput() {
+        // verify base amount
+        $baseAmount
+            .sink { [weak self] amount in
+                self?.checkError(amount: amount ?? 0)
+            }
+            .store(in: &subscriptions)
+        
+        // fill quote amount base on base amount
+        Publishers.CombineLatest($baseAmount, $exchangeRate)
+            .filter { [weak self] _ in
+                self?.isEnteringQuoteAmount == false // when entering base amount or non of textfield chosen
+            }
+            .map { baseAmount, exchangeRate in
+                guard let baseAmount else {return nil}
+                return baseAmount * exchangeRate.value
+            }
+            .assign(to: \.quoteAmount, on: self)
+            .store(in: &subscriptions)
+
+        // fill base amount base on quote amount
+        Publishers.CombineLatest($quoteAmount, $exchangeRate)
+            .filter { [weak self] _ in
+                self?.isEnteringQuoteAmount == true
+            }
+            .map { quoteAmount, exchangeRate in
+                guard let quoteAmount, let exchangeRate = exchangeRate.value, exchangeRate != 0 else { return nil }
+                return quoteAmount / exchangeRate
+            }
+            .assign(to: \.baseAmount, on: self)
+            .store(in: &subscriptions)
+        
+        // update prices on base amount change
+        $baseAmount
+            .removeDuplicates()
+            .withLatestFrom(
+                Publishers.CombineLatest(
+                    $baseCurrencyCode,
+                    $quoteCurrencyCode
+                ),
+                resultSelector: { baseAmount, el -> (Double?, String, String) in
+                    (baseAmount, el.0, el.1)
+                }
+            )
+            .sink { [weak self] baseAmount, baseCurrencyCode, quoteCurrencyCode in
+                self?.updateFeesAndExchangeRates(
+                    baseAmount: baseAmount,
+                    baseCurrencyCode: baseCurrencyCode,
+                    quoteCurrencyCode: quoteCurrencyCode
+                )
+            }
+            .store(in: &subscriptions)
+    }
+    
+    private func bindData() {
+        // bind status publisher to status property
+        dataService.statusPublisher
+            .receive(on: RunLoop.main)
+            .assign(to: \.status, on: self)
+            .store(in: &subscriptions)
+        
+        // bind dataService.data to viewModel's data
+        let dataPublisher = dataService.statusPublisher
+            .compactMap({ [weak self] status in
+                switch status {
+                case .ready:
+                    return (self?.dataService.currency, self?.dataService.fiat)
+                default:
+                    return nil
+                }
+            })
+            .receive(on: RunLoop.main)
+            .share()
+        
+        dataPublisher
+            .receive(on: RunLoop.main)
+            .sink(receiveValue: { [weak self] currency, fiat in
+                guard let self = self else { return }
+                self.baseAmount = currency?.minSellAmount ?? 0
+                self.quoteCurrencyCode = fiat?.code ?? "USD"
+                self.maxBaseProviderAmount = currency?.maxSellAmount ?? 0
+                self.minBaseAmount = currency?.minSellAmount ?? 0
+                self.baseCurrencyCode = "SOL"
+                self.checkIfMoreBaseCurrencyNeeded()
+                self.updateFeesAndExchangeRates(baseAmount: self.baseAmount, baseCurrencyCode: self.baseCurrencyCode, quoteCurrencyCode: self.quoteCurrencyCode)
+            })
+            .store(in: &subscriptions)
+
+        // Open pendings in case there are pending txs
+        dataPublisher
+            .withLatestFrom(dataService.transactionsPublisher)
+            .map { $0.filter { $0.status == .waitingForDeposit }}
+            .removeDuplicates()
+            .sink(receiveValue: { [weak self] transactions in
+                guard let self = self, let fiat = self.dataService.fiat else { return }
+                guard !self.isMoreBaseCurrencyNeeded else { return }
+                self.navigation.send(.showPending(transactions: transactions, fiat: fiat))
+            })
+            .store(in: &subscriptions)
+
+        // observe native wallet's changes
+        checkIfMoreBaseCurrencyNeeded()
+        walletRepository.dataDidChange
+            .publisher
+            .replaceError(with: ())
+            .receive(on: RunLoop.main)
+            .sink(receiveValue: { [weak self] val in
+                self?.checkIfMoreBaseCurrencyNeeded()
+            })
+            .store(in: &subscriptions)
+        
+        // re-calculate fee after every 10 m if no input is active
+        Timer.publish(every: 10, on: .main, in: .common)
+            .autoconnect()
+            .withLatestFrom(Publishers.CombineLatest3(
+                $baseAmount, $baseCurrencyCode, $quoteCurrencyCode
+            ))
+            .filter { [weak self] _ in
+                self?.status.isReady == true &&
+                self?.isEnteringBaseAmount == false &&
+                self?.isEnteringQuoteAmount == false
+            }
+            .receive(on: RunLoop.main)
+            .sink { [weak self] baseAmount, baseCurrencyCode, quoteCurrencyCode in
+                self?.updateFeesAndExchangeRates(
+                    baseAmount: baseAmount,
+                    baseCurrencyCode: baseCurrencyCode,
+                    quoteCurrencyCode: quoteCurrencyCode
+                )
+            }
+            .store(in: &subscriptions)
+        
+        // analytics
+        $status
+            .sink { [weak self] status in
+                switch status {
+                case .error:
+                    self?.analyticsManager.log(event: AmplitudeEvent.sellClickedSorryMinAmount)
+                default:
+                    break
+                }
+            }
+            .store(in: &subscriptions)
+    }
+    
+    // MARK: - Helpers
+
+    private func checkIfMoreBaseCurrencyNeeded() {
+        maxBaseAmount = walletRepository.nativeWallet?.amount
+        if maxBaseAmount < minBaseAmount {
+            isMoreBaseCurrencyNeeded = true
+        }
+    }
+
+    private func checkError(amount: Double) {
+        inputError = nil
+        if amount < minBaseAmount {
+            inputError = .amountIsTooSmall(minBaseAmount: minBaseAmount, baseCurrencyCode: baseCurrencyCode)
+            analyticsManager.log(event: AmplitudeEvent.sellClickedServerError)
+        } else if amount > (maxBaseAmount ?? 0) {
+            inputError = .insufficientFunds(baseCurrencyCode: baseCurrencyCode)
+            analyticsManager.log(event: AmplitudeEvent.sellClickedServerError)
+        } else if amount > maxBaseProviderAmount {
+            inputError = .exceedsProviderLimit(
+                maxBaseProviderAmount: maxBaseProviderAmount,
+                baseCurrencyCode: baseCurrencyCode
+            )
+            analyticsManager.log(event: AmplitudeEvent.sellClickedServerError)
+        }
+    }
+    
+    private func updateFeesAndExchangeRates(
+        baseAmount: Double?,
+        baseCurrencyCode: String,
+        quoteCurrencyCode: String
+    ) {
+        updatePricesTask?.cancel()
+        fee = .loading
+        exchangeRate = .loading
+        
+        guard baseAmount >= minBaseAmount else {
+            return
+        }
+        
+        updatePricesTask = Task { [unowned self] in
+            // get sellQuote
+            guard let baseAmount else {
+                return
+            }
+            do {
+                let sellQuote = try await self.actionService.sellQuote(
+                    baseCurrencyCode: baseCurrencyCode.lowercased(),
+                    quoteCurrencyCode: quoteCurrencyCode.lowercased(),
+                    baseCurrencyAmount: baseAmount.rounded(decimals: 2),
+                    extraFeePercentage: 0
+                )
+                // update data
+                await MainActor.run { [weak self] in
+                    guard let self else { return }
+                    self.fee = .loaded(sellQuote.feeAmount + sellQuote.extraFeeAmount)
+                    self.exchangeRate = .loaded(sellQuote.baseCurrencyPrice)
+                }
+            } catch {
+                print(baseAmount, baseCurrencyCode, quoteCurrencyCode, error)
+                // update data
+                await MainActor.run { [weak self] in
+                    guard let self else { return }
+                    self.fee = .error(error)
+                    self.exchangeRate = .error(error)
+                }
+            }
+        }
     }
 }
 
