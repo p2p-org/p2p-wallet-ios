@@ -39,16 +39,15 @@ class SellViewModel: BaseViewModel, ObservableObject {
 
     private let navigation: PassthroughSubject<SellNavigation?, Never>
 
-    // MARK: -
+    // MARK: - Properties
 
-    @Published var minBaseAmount: Double?
     /// Maximum value to sell from sell provider
     private var maxBaseProviderAmount: Double?
-    private let baseAmountTimer = Timer.publish(every: 10, on: .main, in: .common).autoconnect()
 
-    // MARK: - Properties
+    // MARK: - Subjects
     @Published var isMoreBaseCurrencyNeeded: Bool = false
 
+    @Published var minBaseAmount: Double?
     @Published var baseCurrencyCode: String = "SOL"
     @Published var baseAmount: Double?
     @Published var maxBaseAmount: Double?
@@ -60,16 +59,7 @@ class SellViewModel: BaseViewModel, ObservableObject {
     
     @Published var exchangeRate: Double = 0
     @Published var fee: Double = 0
-    @Published var status: SellDataServiceStatus = .initialized {
-        didSet {
-            switch status {
-            case .error(let error):
-                analyticsManager.log(event: AmplitudeEvent.sellClickedSorryMinAmount)
-            default:
-                break
-            }
-        }
-    }
+    @Published var status: SellDataServiceStatus = .initialized
     @Published var inputError: SellViewModelInputError?
 
     init(navigation: PassthroughSubject<SellNavigation?, Never>) {
@@ -82,7 +72,27 @@ class SellViewModel: BaseViewModel, ObservableObject {
     }
 
     private func bind() {
-        // enter base amount
+        bindInput()
+        bindData()
+    }
+
+    func warmUp() {
+        Task { [unowned self] in
+            await dataService.update()
+        }
+    }
+    
+    // MARK: - Binding
+    
+    private func bindInput() {
+        // verify base amount
+        $baseAmount
+            .sink { [weak self] amount in
+                self?.checkError(amount: amount ?? 0)
+            }
+            .store(in: &subscriptions)
+        
+        // fill quote amount base on base amount
         Publishers.CombineLatest($baseAmount, $exchangeRate)
             .filter { [weak self] _ in
                 self?.isEnteringBaseAmount == true
@@ -94,7 +104,7 @@ class SellViewModel: BaseViewModel, ObservableObject {
             .assign(to: \.quoteAmount, on: self)
             .store(in: &subscriptions)
 
-        // enter quote amount
+        // fill base amount base on quote amount
         Publishers.CombineLatest($quoteAmount, $exchangeRate)
             .filter { [weak self] _ in
                 self?.isEnteringQuoteAmount == true
@@ -105,13 +115,15 @@ class SellViewModel: BaseViewModel, ObservableObject {
             }
             .assign(to: \.baseAmount, on: self)
             .store(in: &subscriptions)
-        
+    }
+    
+    private func bindData() {
         // bind status publisher to status property
         dataService.statusPublisher
             .receive(on: RunLoop.main)
             .assign(to: \.status, on: self)
             .store(in: &subscriptions)
-
+        
         // bind dataService.data to viewModel's data
         let dataPublisher = dataService.statusPublisher
             .compactMap({ [weak self] status in
@@ -161,54 +173,46 @@ class SellViewModel: BaseViewModel, ObservableObject {
                 self?.checkIfMoreBaseCurrencyNeeded()
             })
             .store(in: &subscriptions)
-
-        Publishers.Merge(
-            $baseAmount,
-            baseAmountTimer.withLatestFrom($baseAmount)
-        )
-            .debounce(for: .seconds(0.5), scheduler: DispatchQueue.main)
+        
+        // re-calculate fee after every 10 m
+        let sellQuotePublisher = Timer.publish(every: 10, on: .main, in: .common)
+            .autoconnect()
             .withLatestFrom(Publishers.CombineLatest3(
-                $baseCurrencyCode, $quoteCurrencyCode, $baseAmount.compactMap { $0 }
+                $baseAmount, $baseCurrencyCode, $quoteCurrencyCode
             ))
-            .filter { [unowned self] _ in self.status.isReady && self.isEnteringBaseAmount }
-            .handleEvents(receiveOutput: { [unowned self] amount in
-                self.inputError = nil
-                self.checkError(amount: amount.2)
-            })
-            .map { [unowned self] base, quote, amount -> AnyPublisher<SellActionServiceQuote?, Never> in
-                self.calculateFee(
-                    amount: amount,
-                    baseCurrencyCode: base,
-                    quoteCurrencyCode: quote
+            .filter { [weak self] _ in self?.status.isReady == true }
+            .asyncMap { [weak self] amount, base, quote -> SellActionServiceQuote? in
+                guard let self, let amount else { return nil }
+                let sellQuote = try? await self.actionService.sellQuote(
+                    baseCurrencyCode: base.lowercased(),
+                    quoteCurrencyCode: quote.lowercased(),
+                    baseCurrencyAmount: amount.rounded(decimals: 2),
+                    extraFeePercentage: 0
                 )
-                    .map(Optional.init)
-                    .replaceError(with: nil)
-                    .eraseToAnyPublisher()
+                return sellQuote ?? nil
             }
-            .subscribe(on: DispatchQueue.global())
-            .receive(on: DispatchQueue.main)
-            // Getting only last request
-            .switchToLatest()
-            .sink(receiveValue: { [unowned self] val in
-                guard let val else {
-                    if self.isEnteringBaseAmount {
-                        self.quoteAmount = 0
-                    } else {
-                        self.baseAmount = 0
-                    }
-                    return
-                }
-                self.fee = val.feeAmount + val.extraFeeAmount
-                self.quoteAmount = val.quoteCurrencyAmount
-                self.exchangeRate = val.baseCurrencyPrice
-            })
+        
+        sellQuotePublisher
+            .map { $0?.feeAmount + $0?.extraFeeAmount }
+            .assign(to: \.fee, on: self)
             .store(in: &subscriptions)
-    }
-
-    func warmUp() {
-        Task { [unowned self] in
-            await dataService.update()
-        }
+        
+        sellQuotePublisher
+            .map { $0?.baseCurrencyPrice ?? 0 }
+            .assign(to: \.exchangeRate, on: self)
+            .store(in: &subscriptions)
+        
+        // analytics
+        $status
+            .sink { [weak self] status in
+                switch status {
+                case .error:
+                    self?.analyticsManager.log(event: AmplitudeEvent.sellClickedSorryMinAmount)
+                default:
+                    break
+                }
+            }
+            .store(in: &subscriptions)
     }
     
     private func checkIfMoreBaseCurrencyNeeded() {
@@ -219,6 +223,7 @@ class SellViewModel: BaseViewModel, ObservableObject {
     }
 
     private func checkError(amount: Double) {
+        inputError = nil
         if amount < minBaseAmount {
             inputError = .amountIsTooSmall(minBaseAmount: minBaseAmount, baseCurrencyCode: baseCurrencyCode)
             analyticsManager.log(event: AmplitudeEvent.sellClickedServerError)
@@ -232,30 +237,6 @@ class SellViewModel: BaseViewModel, ObservableObject {
             )
             analyticsManager.log(event: AmplitudeEvent.sellClickedServerError)
         }
-    }
-
-    private func calculateFee(
-        amount: Double,
-        baseCurrencyCode: String,
-        quoteCurrencyCode: String
-    ) -> AnyPublisher<SellActionServiceQuote, Error> {
-        Deferred {
-            Future { promise in
-                Task { [unowned self] in
-                    do {
-                        let result = try await self.actionService.sellQuote(
-                            baseCurrencyCode: baseCurrencyCode.lowercased(),
-                            quoteCurrencyCode: quoteCurrencyCode.lowercased(),
-                            baseCurrencyAmount: amount.rounded(decimals: 2),
-                            extraFeePercentage: 0
-                        )
-                        promise(.success(result))
-                    } catch {
-                        promise(.failure(error))
-                    }
-                }
-            }
-        }.eraseToAnyPublisher()
     }
 
     // MARK: - Actions
