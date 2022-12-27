@@ -62,6 +62,8 @@ class SellViewModel: BaseViewModel, ObservableObject {
     @Published var status: SellDataServiceStatus = .initialized
     @Published var inputError: SellViewModelInputError?
 
+    // MARK: - Initializer
+
     init(navigation: PassthroughSubject<SellNavigation?, Never>) {
         self.navigation = navigation
         super.init()
@@ -71,10 +73,7 @@ class SellViewModel: BaseViewModel, ObservableObject {
         bind()
     }
 
-    private func bind() {
-        bindInput()
-        bindData()
-    }
+    // MARK: - Methods
 
     func warmUp() {
         Task { [unowned self] in
@@ -83,6 +82,11 @@ class SellViewModel: BaseViewModel, ObservableObject {
     }
     
     // MARK: - Binding
+    
+    private func bind() {
+        bindInput()
+        bindData()
+    }
     
     private func bindInput() {
         // verify base amount
