@@ -3,6 +3,7 @@ import SwiftUI
 import KeyAppUI
 import Combine
 import Resolver
+import SkeletonUI
 
 struct SellInputView: View {
     @Injected private var analyticsMAnager: AnalyticsManager
@@ -117,20 +118,60 @@ struct SellInputView: View {
 
     var exchangeRateView: some View {
         HStack {
-            Text("1 \(viewModel.baseCurrencyCode) ≈ \(viewModel.exchangeRate.toString()) \(viewModel.quoteCurrencyCode)")
+            switch viewModel.exchangeRate {
+            case .loading:
+                Text("1 SOL ≈ 12.05 USD")
+                    .skeleton(
+                        with: true,
+                        size: CGSize(width: 107, height: 16),
+                        animated: .default
+                    )
+            case .loaded(let exchangeRate):
+                Text("1 \(viewModel.baseCurrencyCode) ≈ \(exchangeRate.toString()) \(viewModel.quoteCurrencyCode)")
+                    .descriptionTextStyle()
+            case .error(let error):
+                #if !RELEASE
+                Text("\(L10n.errorWhenUpdatingPrices): \(error.localizedDescription)")
+                    .descriptionTextStyle(color: Color(Asset.Colors.rose.color))
+                #else
+                Text(L10n.errorWhenUpdatingPrices)
+                    .descriptionTextStyle(color: Color(Asset.Colors.rose.color))
+                #endif
+            }
+            
             Spacer()
         }
-            .descriptionTextStyle()
+            
             .padding(4)
             .padding(.bottom, 12)
     }
 
     var feeView: some View {
         HStack {
-            Text(L10n.includedFee("\(viewModel.fee) \(viewModel.quoteCurrencyCode)"))
+            switch viewModel.fee {
+            case .loading:
+                Text("Included fee 0.03 SOL")
+                    .descriptionTextStyle()
+                    .skeleton(
+                        with: true,
+                        size: CGSize(width: 126, height: 16),
+                        animated: .default
+                    )
+            case .loaded(let fee):
+                Text(L10n.includedFee("\(fee.toString()) \(viewModel.quoteCurrencyCode)"))
+                    .descriptionTextStyle()
+            case .error(let error):
+                #if !RELEASE
+                Text("\(L10n.errorWhenUpdatingPrices): \(error.localizedDescription)")
+                    .descriptionTextStyle(color: Color(Asset.Colors.rose.color))
+                #else
+                Text(L10n.errorWhenUpdatingPrices)
+                    .descriptionTextStyle(color: Color(Asset.Colors.rose.color))
+                #endif
+            }
+            
             Spacer()
         }
-            .descriptionTextStyle()
             .padding(4)
             .padding(.top, 12)
     }
@@ -162,8 +203,8 @@ private extension View {
             .padding(.horizontal, 16)
     }
 
-    func descriptionTextStyle() -> some View {
-        foregroundColor(Color(Asset.Colors.mountain.color))
+    func descriptionTextStyle(color: Color = Color(Asset.Colors.mountain.color)) -> some View {
+        foregroundColor(color)
             .font(uiFont: UIFont.font(of: .label1, weight: .regular))
     }
 }
