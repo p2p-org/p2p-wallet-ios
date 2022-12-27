@@ -35,11 +35,10 @@ class SellViewModel: BaseViewModel, ObservableObject {
     @Injected private var actionService: any SellActionService
     @Injected private var analyticsManager: AnalyticsManager
 
-    // MARK: -
+    // MARK: - Properties
 
     private let navigation: PassthroughSubject<SellNavigation?, Never>
-
-    // MARK: - Properties
+    private var updatePricesTask: Task<Void, Never>?
 
     /// Maximum value to sell from sell provider
     private var maxBaseProviderAmount: Double?
@@ -81,11 +80,44 @@ class SellViewModel: BaseViewModel, ObservableObject {
         }
     }
     
+    func sell() {
+        analyticsManager.log(event: AmplitudeEvent.sellAmountNext)
+        guard let fiat = dataService.fiat else { return }
+
+        try? openProviderWebView(
+            quoteCurrencyCode: fiat.code,
+            baseCurrencyAmount: baseAmount ?? 0,
+            externalTransactionId: dataService.userId
+        )
+    }
+
+    func goToSwap() {
+        navigation.send(.swap)
+        analyticsManager.log(event: AmplitudeEvent.sellSorryMinAmountSwap)
+    }
+
+    func sellAll() {
+        baseAmount = walletRepository.nativeWallet?.amount ?? 0
+    }
+
+    func openProviderWebView(
+        quoteCurrencyCode: String,
+        baseCurrencyAmount: Double,
+        externalTransactionId: String
+    ) throws {
+        let url = try actionService.createSellURL(
+            quoteCurrencyCode: quoteCurrencyCode,
+            baseCurrencyAmount: baseCurrencyAmount,
+            externalTransactionId: externalTransactionId
+        )
+        navigation.send(.webPage(url: url))
+    }
+    
     // MARK: - Binding
     
     private func bind() {
-        bindInput()
         bindData()
+        bindInput()
     }
     
     private func bindInput() {
@@ -142,16 +174,15 @@ class SellViewModel: BaseViewModel, ObservableObject {
             .share()
         
         dataPublisher
+            .receive(on: RunLoop.main)
             .sink(receiveValue: { [weak self] currency, fiat in
                 guard let self = self else { return }
-                DispatchQueue.main.asyncAfter(deadline: .now() + 0.2) {
-                    self.baseAmount = currency?.minSellAmount ?? 0
-                    self.quoteCurrencyCode = fiat?.code ?? "USD"
-                    self.maxBaseProviderAmount = currency?.maxSellAmount ?? 0
-                    self.minBaseAmount = currency?.minSellAmount ?? 0
-                    self.baseCurrencyCode = "SOL"
-                    self.checkIfMoreBaseCurrencyNeeded()
-                }
+                self.baseAmount = currency?.minSellAmount ?? 0
+                self.quoteCurrencyCode = fiat?.code ?? "USD"
+                self.maxBaseProviderAmount = currency?.maxSellAmount ?? 0
+                self.minBaseAmount = currency?.minSellAmount ?? 0
+                self.baseCurrencyCode = "SOL"
+                self.checkIfMoreBaseCurrencyNeeded()
             })
             .store(in: &subscriptions)
 
@@ -179,31 +210,20 @@ class SellViewModel: BaseViewModel, ObservableObject {
             .store(in: &subscriptions)
         
         // re-calculate fee after every 10 m
-        let sellQuotePublisher = Timer.publish(every: 10, on: .main, in: .common)
+        Timer.publish(every: 10, on: .main, in: .common)
             .autoconnect()
             .withLatestFrom(Publishers.CombineLatest3(
                 $baseAmount, $baseCurrencyCode, $quoteCurrencyCode
             ))
             .filter { [weak self] _ in self?.status.isReady == true }
-            .asyncMap { [weak self] amount, base, quote -> SellActionServiceQuote? in
-                guard let self, let amount else { return nil }
-                let sellQuote = try? await self.actionService.sellQuote(
-                    baseCurrencyCode: base.lowercased(),
-                    quoteCurrencyCode: quote.lowercased(),
-                    baseCurrencyAmount: amount.rounded(decimals: 2),
-                    extraFeePercentage: 0
+            .receive(on: RunLoop.main)
+            .sink { [weak self] baseAmount, baseCurrencyCode, quoteCurrencyCode in
+                self?.updateFeesAndExchangeRates(
+                    baseAmount: baseAmount,
+                    baseCurrencyCode: baseCurrencyCode,
+                    quoteCurrencyCode: quoteCurrencyCode
                 )
-                return sellQuote ?? nil
             }
-        
-        sellQuotePublisher
-            .map { $0?.feeAmount + $0?.extraFeeAmount }
-            .assign(to: \.fee, on: self)
-            .store(in: &subscriptions)
-        
-        sellQuotePublisher
-            .map { $0?.baseCurrencyPrice ?? 0 }
-            .assign(to: \.exchangeRate, on: self)
             .store(in: &subscriptions)
         
         // analytics
@@ -242,40 +262,34 @@ class SellViewModel: BaseViewModel, ObservableObject {
             analyticsManager.log(event: AmplitudeEvent.sellClickedServerError)
         }
     }
+    
+    // MARK: - Helpers
 
-    // MARK: - Actions
-
-    func sell() {
-        analyticsManager.log(event: AmplitudeEvent.sellAmountNext)
-        guard let fiat = dataService.fiat else { return }
-
-        try? openProviderWebView(
-            quoteCurrencyCode: fiat.code,
-            baseCurrencyAmount: baseAmount ?? 0,
-            externalTransactionId: dataService.userId
-        )
-    }
-
-    func goToSwap() {
-        navigation.send(.swap)
-        analyticsManager.log(event: AmplitudeEvent.sellSorryMinAmountSwap)
-    }
-
-    func sellAll() {
-        baseAmount = walletRepository.nativeWallet?.amount ?? 0
-    }
-
-    func openProviderWebView(
-        quoteCurrencyCode: String,
-        baseCurrencyAmount: Double,
-        externalTransactionId: String
-    ) throws {
-        let url = try actionService.createSellURL(
-            quoteCurrencyCode: quoteCurrencyCode,
-            baseCurrencyAmount: baseCurrencyAmount,
-            externalTransactionId: externalTransactionId
-        )
-        navigation.send(.webPage(url: url))
+    private func updateFeesAndExchangeRates(
+        baseAmount: Double?,
+        baseCurrencyCode: String,
+        quoteCurrencyCode: String
+    ) {
+        updatePricesTask?.cancel()
+        updatePricesTask = Task {
+            // get sellQuote
+            guard let baseAmount,
+                  let sellQuote = try? await self.actionService.sellQuote(
+                    baseCurrencyCode: baseCurrencyCode.lowercased(),
+                    quoteCurrencyCode: quoteCurrencyCode.lowercased(),
+                    baseCurrencyAmount: baseAmount.rounded(decimals: 2),
+                    extraFeePercentage: 0
+                  )
+            else {
+                return
+            }
+            // update data
+            await MainActor.run { [weak self] in
+                guard let self else { return }
+                self.fee = sellQuote.feeAmount + sellQuote.extraFeeAmount
+                self.exchangeRate = sellQuote.baseCurrencyPrice
+            }
+        }
     }
 }
 
