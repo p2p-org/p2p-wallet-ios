@@ -300,7 +300,9 @@ class SellViewModel: BaseViewModel, ObservableObject {
     ) {
         updatePricesTask?.cancel()
         fee = .loading
-        exchangeRate = .loading
+        if exchangeRate.value == nil {
+            exchangeRate = .loading
+        }
         
         guard baseAmount >= minBaseAmount else {
             return
@@ -330,7 +332,9 @@ class SellViewModel: BaseViewModel, ObservableObject {
                 await MainActor.run { [weak self] in
                     guard let self else { return }
                     self.fee = .error(error)
-                    self.exchangeRate = .error(error)
+                    if exchangeRate.value == nil {
+                        self.exchangeRate = .error(error)
+                    }
                 }
             }
         }
