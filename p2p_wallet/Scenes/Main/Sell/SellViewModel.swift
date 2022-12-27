@@ -314,6 +314,11 @@ class SellViewModel: BaseViewModel, ObservableObject {
         updatePricesTask?.cancel()
         fee = .loading
         exchangeRate = .loading
+        
+        guard baseAmount >= minBaseAmount else {
+            return
+        }
+        
         updatePricesTask = Task { [unowned self] in
             // get sellQuote
             guard let baseAmount else {
