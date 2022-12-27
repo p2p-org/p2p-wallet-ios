@@ -182,6 +182,7 @@ struct SellInputView: View {
             style: .primaryWhite,
             size: .large
         ) { [weak viewModel] in
+            UIApplication.shared.keyWindow?.endEditing(true)
             viewModel?.sell()
         }
         .disabled(viewModel.inputError != nil)
