@@ -25,6 +25,21 @@ enum SellViewModelInputError: Error, Equatable {
     }
 }
 
+enum LoadingValue<T> {
+    case loading
+    case loaded(T)
+    case error(Error)
+    
+    var value: T? {
+        switch self {
+        case .loaded(let value):
+            return value
+        default:
+            return nil
+        }
+    }
+}
+
 @MainActor
 class SellViewModel: BaseViewModel, ObservableObject {
 
@@ -56,8 +71,8 @@ class SellViewModel: BaseViewModel, ObservableObject {
     @Published var quoteAmount: Double?
     @Published var isEnteringQuoteAmount: Bool = false
     
-    @Published var exchangeRate: Double = 0
-    @Published var fee: Double = 0
+    @Published var exchangeRate: LoadingValue<Double> = .loaded(0)
+    @Published var fee: LoadingValue<Double> = .loaded(0)
     @Published var status: SellDataServiceStatus = .initialized
     @Published var inputError: SellViewModelInputError?
 
@@ -131,11 +146,11 @@ class SellViewModel: BaseViewModel, ObservableObject {
         // fill quote amount base on base amount
         Publishers.CombineLatest($baseAmount, $exchangeRate)
             .filter { [weak self] _ in
-                self?.isEnteringBaseAmount == true
+                self?.isEnteringQuoteAmount == false // when entering base amount or non of textfield chosen
             }
             .map { baseAmount, exchangeRate in
                 guard let baseAmount else {return nil}
-                return baseAmount * exchangeRate
+                return baseAmount * exchangeRate.value
             }
             .assign(to: \.quoteAmount, on: self)
             .store(in: &subscriptions)
@@ -146,10 +161,25 @@ class SellViewModel: BaseViewModel, ObservableObject {
                 self?.isEnteringQuoteAmount == true
             }
             .map { quoteAmount, exchangeRate in
-                guard let quoteAmount, exchangeRate != 0 else { return nil }
+                guard let quoteAmount, let exchangeRate = exchangeRate.value, exchangeRate != 0 else { return nil }
                 return quoteAmount / exchangeRate
             }
             .assign(to: \.baseAmount, on: self)
+            .store(in: &subscriptions)
+        
+        // update prices on base amount change
+        Publishers.CombineLatest3(
+            $baseAmount.removeDuplicates(),
+            $baseCurrencyCode,
+            $quoteCurrencyCode
+        )
+            .sink { [weak self] baseAmount, baseCurrencyCode, quoteCurrencyCode in
+                self?.updateFeesAndExchangeRates(
+                    baseAmount: baseAmount,
+                    baseCurrencyCode: baseCurrencyCode,
+                    quoteCurrencyCode: quoteCurrencyCode
+                )
+            }
             .store(in: &subscriptions)
     }
     
@@ -183,6 +213,7 @@ class SellViewModel: BaseViewModel, ObservableObject {
                 self.minBaseAmount = currency?.minSellAmount ?? 0
                 self.baseCurrencyCode = "SOL"
                 self.checkIfMoreBaseCurrencyNeeded()
+                self.updateFeesAndExchangeRates(baseAmount: self.baseAmount, baseCurrencyCode: self.baseCurrencyCode, quoteCurrencyCode: self.quoteCurrencyCode)
             })
             .store(in: &subscriptions)
 
@@ -271,23 +302,34 @@ class SellViewModel: BaseViewModel, ObservableObject {
         quoteCurrencyCode: String
     ) {
         updatePricesTask?.cancel()
+        fee = .loading
+        exchangeRate = .loading
         updatePricesTask = Task {
             // get sellQuote
-            guard let baseAmount,
-                  let sellQuote = try? await self.actionService.sellQuote(
+            guard let baseAmount else {
+                return
+            }
+            do {
+                let sellQuote = try await self.actionService.sellQuote(
                     baseCurrencyCode: baseCurrencyCode.lowercased(),
                     quoteCurrencyCode: quoteCurrencyCode.lowercased(),
                     baseCurrencyAmount: baseAmount.rounded(decimals: 2),
                     extraFeePercentage: 0
-                  )
-            else {
-                return
-            }
-            // update data
-            await MainActor.run { [weak self] in
-                guard let self else { return }
-                self.fee = sellQuote.feeAmount + sellQuote.extraFeeAmount
-                self.exchangeRate = sellQuote.baseCurrencyPrice
+                )
+                // update data
+                await MainActor.run { [weak self] in
+                    guard let self else { return }
+                    self.fee = .loaded(sellQuote.feeAmount + sellQuote.extraFeeAmount)
+                    self.exchangeRate = .loaded(sellQuote.baseCurrencyPrice)
+                }
+            } catch {
+                print(baseAmount, baseCurrencyCode, quoteCurrencyCode, error)
+                // update data
+                await MainActor.run { [weak self] in
+                    guard let self else { return }
+                    self.fee = .error(error)
+                    self.exchangeRate = .error(error)
+                }
             }
         }
     }
