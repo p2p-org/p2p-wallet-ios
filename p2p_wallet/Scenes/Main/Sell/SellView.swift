@@ -20,20 +20,15 @@ struct SellView: View {
                         SellInputView(viewModel: viewModel)
                     }
                 case .error:
-                    errorView
+                    SellErrorView {
+                        viewModel.goBack()
+                    }
                 }
             }
         }
         .toolbar {
             ToolbarItem(placement: .principal) { Text(L10n.cashOut + " SOL").fontWeight(.semibold) }
         }
-    }
-    
-    var errorView: some View {
-        Text("\(L10n.somethingWentWrong). \(L10n.tapToTryAgain)")
-            .onTapGesture {
-                viewModel.warmUp()
-            }
     }
 
     var balanceEmptyErrorView: some View {
