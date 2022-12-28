@@ -71,6 +71,7 @@ struct SellInputView: View {
                      textField.font = UIFont.font(of: .text3, weight: .regular)
                      textField.keyboardType = .decimalPad
                      textField.maximumFractionDigits = 2
+                     textField.decimalSeparator = "."
                  }
 
                  Text(viewModel.baseCurrencyCode)
@@ -107,6 +108,7 @@ struct SellInputView: View {
                 textField.font = UIFont.font(of: .title1, weight: .bold)
                 textField.keyboardType = .decimalPad
                 textField.maximumFractionDigits = 2
+                textField.decimalSeparator = "."
             }
 
             Text("≈ \(viewModel.quoteCurrencyCode)")
