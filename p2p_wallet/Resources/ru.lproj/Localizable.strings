@@ -1206,3 +1206,4 @@ You can try again, but your new transaction will be subject to the current rates
 "Error with deleting. Try again" = "Ошибка с удалением. Попробуй снова";
 "Done! Refresh History page for actual status" = "Выполнено! Обновить страницу истории для фактического статуса";
 "There is no %@ in your wallet to sell" = "В вашем кошельке нет %@ для продажи";
+"our service was ruined. Visit this page later" = "наша служба была испорчена.  Посетите эту страницу позже";
