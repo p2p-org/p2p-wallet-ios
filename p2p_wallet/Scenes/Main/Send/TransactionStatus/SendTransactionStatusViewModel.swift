@@ -64,15 +64,18 @@ final class SendTransactionStatusViewModel: BaseViewModel, ObservableObject {
 
         errorMessageTap
             .sink { [weak self] in
-                guard
-                    let self = self,
-                    let parsedTransaction = self.currentTransaction,
-                    let error = parsedTransaction.status.getError() as? SolanaError else { return }
+                guard let self = self else { return }
                 var params = SendTransactionStatusDetailsParameters(
                     title: L10n.somethingWentWrong,
-                    description: L10n.unknownError,
-                    fee: feeAmount
+                    description: L10n.unknownError
                 )
+
+                guard
+                    let parsedTransaction = self.currentTransaction,
+                    let error = parsedTransaction.status.getError() as? SolanaError else {
+                    self.openDetails.send(params)
+                    return
+                }
                 switch error {
                 case let .other(message) where message == "Blockhash not found":
                     params = .init(
@@ -87,7 +90,8 @@ final class SendTransactionStatusViewModel: BaseViewModel, ObservableObject {
                     params = .init(
                         title: L10n.errorProcessingInstruction0CustomProgramError0x1,
                         description: L10n.AnErrorOccuredWhileProcessingAnInstruction
-                            .theFirstElementOfTheTupleIndicatesTheInstructionIndexInWhichTheErrorOccured, fee: feeAmount
+                            .theFirstElementOfTheTupleIndicatesTheInstructionIndexInWhichTheErrorOccured,
+                        fee: feeAmount
                     )
                 case let .other(message) where message.contains("Already processed"):
                     params = .init(
@@ -100,8 +104,7 @@ final class SendTransactionStatusViewModel: BaseViewModel, ObservableObject {
                 case let .other(message):
                     params = .init(
                         title: L10n.somethingWentWrong,
-                        description: message,
-                        fee: feeAmount
+                        description: message
                     )
                 default:
                     break
