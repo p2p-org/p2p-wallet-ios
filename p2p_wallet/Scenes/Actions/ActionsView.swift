@@ -9,14 +9,17 @@ import Combine
 import KeyAppUI
 import SwiftUI
 import SwiftyUserDefaults
+import Sell
+import Resolver
 
 struct ActionsView: View {
+    @Injected private var sellDataService: any SellDataService
+    
     private let actionSubject = PassthroughSubject<Action, Never>()
     var action: AnyPublisher<Action, Never> { actionSubject.eraseToAnyPublisher() }
     private let cancelSubject = PassthroughSubject<Void, Never>()
     var cancel: AnyPublisher<Void, Never> { cancelSubject.eraseToAnyPublisher() }
-    @SwiftyUserDefault(keyPath: \.isSellAvailable, options: .cached)
-    var isSellAvailable: Bool?
+    var isSellAvailable: Bool { available(.sellScenarioEnabled) && sellDataService.isAvailable }
 
     var body: some View {
         VStack(spacing: 28) {
@@ -27,7 +30,7 @@ struct ActionsView: View {
                 .foregroundColor(Color(Asset.Colors.night.color))
                 .font(uiFont: .font(of: .text1, weight: .bold))
             VStack(spacing: 16) {
-                if isSellAvailable == true {
+                if isSellAvailable {
                     horizontalActionView(
                         image: .actionsCashOut,
                         title: "Cash Out",
@@ -198,6 +201,6 @@ extension ActionsView {
     var viewHeight: CGFloat {
         (UIScreen.main.bounds.width - 16 * 3)
         + (UIApplication.shared.kWindow?.safeAreaInsets.bottom ?? 0) + 210
-        + (isSellAvailable == true ? 100 : 0)
+        + (isSellAvailable ? 100 : 0)
     }
 }
