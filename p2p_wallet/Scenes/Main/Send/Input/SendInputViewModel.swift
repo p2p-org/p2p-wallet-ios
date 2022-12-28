@@ -170,7 +170,7 @@ final class SendInputViewModel: BaseViewModel, ObservableObject {
             if let amount = preChosenAmount {
                 Task {
                     inputAmountViewModel.mainAmountType = .token
-                    inputAmountViewModel.amountText = "\(amount)"
+                    inputAmountViewModel.amountText = amount.toString()
                     await MainActor.run { [unowned self] in
                         inputAmountViewModel.isDisabled = true
                     }
