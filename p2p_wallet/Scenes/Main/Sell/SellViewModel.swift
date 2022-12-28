@@ -88,7 +88,7 @@ class SellViewModel: BaseViewModel, ObservableObject {
 
         try? openProviderWebView(
             quoteCurrencyCode: fiat.code,
-            baseCurrencyAmount: baseAmount ?? 0,
+            baseCurrencyAmount: baseAmount?.rounded(decimals: 2) ?? 0,
             externalTransactionId: dataService.userId
         )
     }
@@ -99,7 +99,7 @@ class SellViewModel: BaseViewModel, ObservableObject {
     }
 
     func sellAll() {
-        baseAmount = walletRepository.nativeWallet?.amount ?? 0
+        baseAmount = walletRepository.nativeWallet?.amount?.rounded(decimals: decimals) ?? 0
     }
 
     func openProviderWebView(
