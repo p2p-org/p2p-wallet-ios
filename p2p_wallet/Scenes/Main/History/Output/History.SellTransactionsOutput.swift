@@ -26,33 +26,17 @@ extension History {
             // get transactions
             var transactions = sellDataService.transactions
             
-            // sort first
-            transactions.sort(by: { $0.createdAt?.timeIntervalSince1970 < $1.createdAt?.timeIntervalSince1970 })
-            
             /// Applies to output list
             var data = newData
-            for transaction in transactions {
-                // update if exists
-                if let index = data.firstIndex(where: {
-                    switch $0 {
-                    case .sellTransaction(let tx):
-                        return tx.id == transaction.id
-                    default:
-                        return false
-                    }
-                }) {
-                    switch data[index] {
-                    case .sellTransaction(let transaction):
-                        data[index] = .sellTransaction(transaction)
-                    default:
-                        break
-                    }
-                }
-                // append if not
-                else {
-                    data.insert(.sellTransaction(transaction), at: 0)
+            data.removeAll { item in
+                switch item {
+                case .sellTransaction:
+                    return true
+                default:
+                    return false
                 }
             }
+            data = transactions.map { HistoryItem.sellTransaction($0) } + data
             return data
         }
     }
