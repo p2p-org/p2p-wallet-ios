@@ -281,14 +281,14 @@ class SellViewModel: BaseViewModel, ObservableObject {
         if amount < minBaseAmount {
             inputError = .amountIsTooSmall(minBaseAmount: minBaseAmount, baseCurrencyCode: baseCurrencyCode)
             analyticsManager.log(event: AmplitudeEvent.sellClickedServerError)
-        } else if amount > (maxBaseAmount ?? 0) {
-            inputError = .insufficientFunds(baseCurrencyCode: baseCurrencyCode)
-            analyticsManager.log(event: AmplitudeEvent.sellClickedServerError)
         } else if amount > maxBaseProviderAmount {
             inputError = .exceedsProviderLimit(
                 maxBaseProviderAmount: maxBaseProviderAmount,
                 baseCurrencyCode: baseCurrencyCode
             )
+            analyticsManager.log(event: AmplitudeEvent.sellClickedServerError)
+        } else if amount > (maxBaseAmount ?? 0) {
+            inputError = .insufficientFunds(baseCurrencyCode: baseCurrencyCode)
             analyticsManager.log(event: AmplitudeEvent.sellClickedServerError)
         }
     }
