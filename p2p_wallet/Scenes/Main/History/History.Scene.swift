@@ -74,11 +74,46 @@ extension History {
             NBENewDynamicSectionsCollectionView(
                 viewModel: viewModel,
                 mapDataToSections: { viewModel in
-                    CollectionViewMappingStrategy_RxSwift.byData(
-                        viewModel: viewModel,
-                        forType: HistoryItem.self,
-                        where: \HistoryItem.blockTime
-                    ).reversed()
+                    // get items
+                    let items = viewModel.getData(type: HistoryItem.self)
+                    
+                    // put sell transactions first, then other transactions
+                    var sellTransactions = [HistoryItem]()
+                    var otherTransactions = [HistoryItem]()
+                    
+                    for item in items {
+                        switch item {
+                        case .sellTransaction:
+                            sellTransactions.append(item)
+                        case .parsedTransaction:
+                            otherTransactions.append(item)
+                        }
+                    }
+                    
+                    let sellTransactionsSection = BEDynamicSectionsCollectionView.SectionInfo(
+                        userInfo: "",
+                        items: sellTransactions
+                    )
+
+                    let dictionary = Dictionary(grouping: otherTransactions) { item -> Date in
+                        let date = item.blockTime ?? Date()
+                        return Calendar.current.startOfDay(for: date)
+                    }
+                    
+                    let dateFormatter = DateFormatter()
+                    dateFormatter.dateStyle = .medium
+                    dateFormatter.timeStyle = .none
+                    dateFormatter.locale = Locale.shared
+                    
+                    let otherTransactionsSections = dictionary.keys.sorted().reversed()
+                        .map { key in
+                            BEDynamicSectionsCollectionView.SectionInfo(
+                                userInfo: dateFormatter.string(from: key),
+                                items: dictionary[key] ?? []
+                            )
+                        }
+
+                    return [sellTransactionsSection] + otherTransactionsSections
                 },
                 layout: .init(
                     header: .init(
