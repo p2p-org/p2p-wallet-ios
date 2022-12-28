@@ -41,6 +41,8 @@ class SellViewModel: BaseViewModel, ObservableObject {
 
     private let navigation: PassthroughSubject<SellNavigation?, Never>
     private var updatePricesTask: Task<Void, Never>?
+    private let goBackSubject = PassthroughSubject<Void, Never>()
+    var back: AnyPublisher<Void, Never> { goBackSubject.eraseToAnyPublisher() }
 
     /// Maximum value to sell from sell provider
     private var maxBaseProviderAmount: Double?
@@ -75,6 +77,10 @@ class SellViewModel: BaseViewModel, ObservableObject {
     }
 
     // MARK: - Methods
+
+    func goBack() {
+        goBackSubject.send()
+    }
 
     func warmUp() {
         Task { [unowned self] in

@@ -43,15 +43,21 @@ final class SellCoordinator: Coordinator<SellCoordinatorResult> {
         
         // scene navigation
         navigation
-            .compactMap {$0}
+            .compactMap { $0 }
             .flatMap { [unowned self, unowned vc] in
                 navigate(to: $0, mainSellVC: vc)
             }
             .sink { _ in }
             .store(in: &subscriptions)
+        viewModel.back
+            .sink(receiveValue: { [unowned self] in
+                navigationController.popViewController(animated: true)
+                resultSubject.send(.none)
+            })
+            .store(in: &subscriptions)
 
         return Publishers.Merge(
-            vc.deallocatedPublisher().map { SellCoordinatorResult.none },
+            vc.deallocatedPublisher().map { .none },
             resultSubject.eraseToAnyPublisher()
         )
             .prefix(1)
