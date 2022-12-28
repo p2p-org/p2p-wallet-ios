@@ -85,9 +85,9 @@ final class SellCoordinator: Coordinator<SellCoordinatorResult> {
                 .handleEvents(receiveOutput: { [weak self, unowned mainSellVC] result, sellTransaction in
                     guard let self = self else { return }
                     switch result {
-                    case .transactionRemoved, .cancelled:
+                    case .transactionRemoved:
                         self.navigationController.popViewController(animated: true)
-                    case .cashOutInterupted:
+                    case .cashOutInterupted, .cancelled:
                         self.navigationController.popToRootViewController(animated: true)
                         self.resultSubject.send(.none)
                     case .transactionSent(let transaction):
