@@ -90,7 +90,7 @@ extension History {
                         }
                     }
                     
-                    let sellTransactionsSection = BEDynamicSectionsCollectionView.SectionInfo(
+                    let sellTransactionsSection: BEDynamicSectionsCollectionView.SectionInfo? = sellTransactions.isEmpty ? nil: .init(
                         userInfo: "",
                         items: sellTransactions
                     )
@@ -113,7 +113,12 @@ extension History {
                             )
                         }
 
-                    return [sellTransactionsSection] + otherTransactionsSections
+                    var result = [BEDynamicSectionsCollectionView.SectionInfo]()
+                    if let sellTransactionsSection {
+                        result.append(sellTransactionsSection)
+                    }
+                    result += otherTransactionsSections
+                    return result
                 },
                 layout: .init(
                     header: .init(
