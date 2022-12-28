@@ -340,9 +340,3 @@ class SellViewModel: BaseViewModel, ObservableObject {
         }
     }
 }
-
-extension SellViewModel {
-    enum _Error: Error {
-        case invalidAmount
-    }
-}
