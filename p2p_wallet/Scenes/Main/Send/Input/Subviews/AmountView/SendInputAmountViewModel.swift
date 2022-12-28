@@ -3,6 +3,8 @@ import KeyAppUI
 import SolanaSwift
 
 final class SendInputAmountViewModel: BaseViewModel, ObservableObject {
+    // MARK: - Nested type
+
     enum EnteredAmountType {
         case fiat
         case token
@@ -13,11 +15,13 @@ final class SendInputAmountViewModel: BaseViewModel, ObservableObject {
         let inToken: Double
     }
 
+    // MARK: - Actions
     let switchPressed = PassthroughSubject<Void, Never>()
     let maxAmountPressed = PassthroughSubject<Void, Never>()
     let changeAmount = PassthroughSubject<(amount: Amount, type: EnteredAmountType), Never>()
 
-    // State
+    // MARK: - Properties
+
     @Published var token: Wallet
     @Published var maxAmountToken: Double = 0
     var wasMaxUsed: Bool = false // Analytic param
@@ -118,6 +122,21 @@ final class SendInputAmountViewModel: BaseViewModel, ObservableObject {
                 }
                 self.updateCurrencyTitles()
                 self.updateDecimalsPoint()
+            }
+            .store(in: &subscriptions)
+        
+        $mainAmountType
+            .sink { [weak self] type in
+                guard let self else { return }
+                let currentWallet = self.token
+                switch type {
+                case .fiat:
+                    self.mainTokenText = self.fiat.code
+                    self.secondaryCurrencyText = currentWallet.token.symbol
+                case .token:
+                    self.mainTokenText = currentWallet.token.symbol
+                    self.secondaryCurrencyText = self.fiat.code
+                }
             }
             .store(in: &subscriptions)
     }
