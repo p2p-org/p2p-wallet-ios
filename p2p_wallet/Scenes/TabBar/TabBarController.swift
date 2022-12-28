@@ -11,12 +11,14 @@ import KeyAppUI
 import Resolver
 import SwiftUI
 import UIKit
+import RxSwift
 
 final class TabBarController: UITabBarController {
     @Injected private var analyticsManager: AnalyticsManager
     @Injected private var helpCenterLauncher: HelpCenterLauncher
 
     private var cancellables = Set<AnyCancellable>()
+    private let disposeBag = DisposeBag()
 
     private var solendCoordinator: SolendCoordinator!
     private var homeCoordinator: HomeCoordinator!
@@ -30,6 +32,7 @@ final class TabBarController: UITabBarController {
     @Injected private var walletsRepository: WalletsRepository
 
     private var customTabBar: CustomTabBar { tabBar as! CustomTabBar }
+    private var isDataUpdated = CurrentValueSubject<Bool, Never>(false)
 
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -75,6 +78,13 @@ final class TabBarController: UITabBarController {
                     .store(in: &cancellables)
             })
             .store(in: &cancellables)
+
+        walletsRepository.stateObservable
+            .observe(on: MainScheduler.instance)
+            .subscribe(onNext: { [weak self] state in
+                self?.isDataUpdated.send(state == .loading)
+            })
+            .disposed(by: disposeBag)
     }
 
     private func handleAction(_ action: ActionsView.Action) {
@@ -100,30 +110,7 @@ final class TabBarController: UITabBarController {
             }
             navigationController.show(vc, sender: nil)
         case .send:
-            let fiatAmount = walletsRepository.getWallets().reduce(0) { $0 + $1.amountInCurrentFiat }
-            let withTokens = fiatAmount > 0
-            if withTokens {
-                analyticsManager.log(event: AmplitudeEvent.sendViewed(lastScreen: "main_screen"))
-                sendCoordinator = SendCoordinator(rootViewController: navigationController, preChosenWallet: nil, hideTabBar: true)
-                sendCoordinator?.start()
-                    .sink { [weak self, weak navigationController] result in
-                        switch result {
-                        case let .sent(model):
-                            navigationController?.popToRootViewController(animated: true)
-                            self?.routeToSendTransactionStatus(model: model)
-                        case .cancelled:
-                            break
-                        }
-                    }
-                    .store(in: &cancellables)
-            } else {
-                emptySendCoordinator = SendEmptyCoordinator(navigationController: navigationController)
-                emptySendCoordinator?.start()
-                    .sink(receiveValue: { [weak self] _ in
-                        self?.emptySendCoordinator = nil
-                    })
-                    .store(in: &cancellables)
-            }
+            routeToSend(navigationController: navigationController)
             analyticsManager.log(event: AmplitudeEvent.sendViewed(lastScreen: "main_screen"))
         }
     }
@@ -228,6 +215,35 @@ final class TabBarController: UITabBarController {
             .start()
             .sink(receiveValue: { })
             .store(in: &cancellables)
+    }
+
+    private func routeToSend(navigationController: UINavigationController) {
+        let fiatAmount = walletsRepository.getWallets().reduce(0) { $0 + $1.amountInCurrentFiat }
+        let withTokens = fiatAmount > 0
+        if isDataUpdated.value {
+            navigationController.showAlert(title: L10n.TheDataIsBeingUpdated.pleaseTryAgainInAFewMinutes, message: nil)
+        } else if withTokens {
+            analyticsManager.log(event: AmplitudeEvent.sendViewed(lastScreen: "main_screen"))
+            sendCoordinator = SendCoordinator(rootViewController: navigationController, preChosenWallet: nil, hideTabBar: true)
+            sendCoordinator?.start()
+                .sink { [weak self, weak navigationController] result in
+                    switch result {
+                    case let .sent(model):
+                        navigationController?.popToRootViewController(animated: true)
+                        self?.routeToSendTransactionStatus(model: model)
+                    case .cancelled:
+                        break
+                    }
+                }
+                .store(in: &cancellables)
+        } else {
+            emptySendCoordinator = SendEmptyCoordinator(navigationController: navigationController)
+            emptySendCoordinator?.start()
+                .sink(receiveValue: { [weak self] _ in
+                    self?.emptySendCoordinator = nil
+                })
+                .store(in: &cancellables)
+        }
     }
 
     func changeItem(to item: TabItem) {

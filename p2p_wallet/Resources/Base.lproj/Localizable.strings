@@ -1141,3 +1141,4 @@ Reset the PIN or wait for %@.";
 "You will have to pay a one-time fee (~%@) to create an account for this address" = "You will have to pay a one-time fee (~%@) to create an account for this address";
 "We cannot retrieve the transaction status without the internet" = "We cannot retrieve the transaction status without the internet";
 "The transaction was rejected by the Solana blockchain" = "The transaction was rejected by the Solana blockchain";
+"The data is being updated. Please try again in a few minutes." = "The data is being updated. Please try again in a few minutes.";
