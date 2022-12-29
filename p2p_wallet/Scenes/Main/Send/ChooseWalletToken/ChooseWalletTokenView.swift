@@ -58,10 +58,6 @@ struct ChooseWalletTokenView: View {
                     }
                 }
             }
-        }.onDisappear {
-            DispatchQueue.main.async {
-                self.viewModel.isSearchFieldFocused = false
-            }
         }
     }
 
@@ -152,6 +148,8 @@ private extension ChooseWalletTokenView {
                 isFirstResponder: $viewModel.isSearchFieldFocused
             ) { textField in
                 textField.returnKeyType = .done
+                textField.autocorrectionType = .no
+                textField.spellCheckingType = .no
                 textField.backgroundColor = Asset.Colors.rain.color
                 textField.placeholder = L10n.search
                 textField.font = .font(of: .text3)
