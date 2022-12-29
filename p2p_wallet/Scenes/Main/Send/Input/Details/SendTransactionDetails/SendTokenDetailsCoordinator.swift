@@ -40,7 +40,7 @@ final class SendTransactionDetailsCoordinator: Coordinator<SendTransactionDetail
 
         transition = PanelTransition()
         transition?.containerHeight = view.viewHeight
-        let viewController = UIHostingController(rootView: view)
+        let viewController = UIHostingController(rootView: view, ignoresKeyboard: true)
         viewController.view.layer.cornerRadius = 20
         viewController.transitioningDelegate = transition
         viewController.modalPresentationStyle = .custom
