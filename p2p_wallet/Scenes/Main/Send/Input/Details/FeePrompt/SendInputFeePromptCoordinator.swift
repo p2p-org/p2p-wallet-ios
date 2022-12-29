@@ -25,8 +25,8 @@ final class SendInputFeePromptCoordinator: Coordinator<Wallet?> {
         parentController.present(controller, animated: true)
 
         viewModel.close
-            .sink(receiveValue: { [weak self] in
-                controller.dismiss(animated: true)
+            .sink(receiveValue: { [weak self, weak controller] in
+                controller?.dismiss(animated: true)
                 self?.subject.send(completion: .finished)
             })
             .store(in: &subscriptions)
