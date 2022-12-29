@@ -379,7 +379,7 @@ private extension SendInputViewModel {
                 title: L10n.tryAgain
             )
         case .error(reason: .insufficientFunds):
-            inputAmountViewModel.isError = false
+            inputAmountViewModel.isError = true
             actionButtonViewModel.actionButton = .init(
                 isEnabled: false,
                 title: L10n.insufficientFunds
