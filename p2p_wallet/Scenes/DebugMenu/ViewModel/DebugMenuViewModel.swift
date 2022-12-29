@@ -112,6 +112,7 @@ extension DebugMenuViewModel {
         case mockedApiGateway
         case mockedTKeyFacade
         case simulatedSocialError
+        case sell
 
         var title: String {
             switch self {
@@ -124,6 +125,7 @@ extension DebugMenuViewModel {
             case .simulatedSocialError: return "[Onboarding] Simulated Social Error"
             case .investSolend: return "Invest Solend"
             case .solendDisablePlaceholder: return "Solend Disable Placeholder"
+            case .sell: return "Sell (Off Ramp)"
             }
         }
 
@@ -138,6 +140,7 @@ extension DebugMenuViewModel {
             case .simulatedSocialError: return .simulatedSocialError
             case .investSolend: return .investSolendFeature
             case .solendDisablePlaceholder: return .solendDisablePlaceholder
+            case .sell: return .sellScenarioEnabled
             }
         }
     }
