@@ -110,9 +110,9 @@ final class SendInputCoordinator: Coordinator<SendResult> {
             feeInSOL: viewModel.currentState.fee,
             availableFeeTokens: feeWallets
         ))
-        .sink(receiveValue: { feeToken in
+        .sink(receiveValue: { [weak viewModel] feeToken in
             guard let feeToken = feeToken else { return }
-            viewModel.changeFeeToken.send(feeToken)
+            viewModel?.changeFeeToken.send(feeToken)
         })
         .store(in: &subscriptions)
     }
@@ -122,10 +122,10 @@ final class SendInputCoordinator: Coordinator<SendResult> {
             parentController: vc,
             sendInputViewModel: viewModel
         ))
-        .sink { result in
+        .sink { [weak self] result in
             switch result {
             case let .redirectToFeePrompt(tokens):
-                self.openFeePropmt(from: vc, viewModel: viewModel, feeWallets: tokens)
+                self?.openFeePropmt(from: vc, viewModel: viewModel, feeWallets: tokens)
             }
         }
         .store(in: &subscriptions)
