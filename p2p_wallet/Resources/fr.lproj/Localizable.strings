@@ -1168,3 +1168,4 @@ Reset the PIN or wait for %@." = "Il vous reste %@ tentatives pour saisir le cod
 "You will have to pay a one-time fee (~%@) to create an account for this address" = "Vous devrez payer des frais uniques (~%@) pour créer un compte pour cette adresse";
 "We cannot retrieve the transaction status without the internet" = "Nous ne pouvons pas récupérer le statut de la transaction sans Internet";
 "The transaction was rejected by the Solana blockchain" = "La transaction a été rejetée par la blockchain Solana";
+"The data is being updated. Please try again in a few minutes." = "Les données sont en cours de mise à jour.  S'il vous plait, réessayez dans quelques minutes.";
