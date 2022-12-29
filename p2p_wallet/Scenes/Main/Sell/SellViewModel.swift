@@ -95,7 +95,7 @@ class SellViewModel: BaseViewModel, ObservableObject {
         try? openProviderWebView(
             quoteCurrencyCode: fiat.code,
             baseCurrencyAmount: baseAmount?.rounded(decimals: 2) ?? 0,
-            externalTransactionId: dataService.userId
+            externalCustomerId: dataService.userId
         )
     }
 
@@ -111,12 +111,12 @@ class SellViewModel: BaseViewModel, ObservableObject {
     func openProviderWebView(
         quoteCurrencyCode: String,
         baseCurrencyAmount: Double,
-        externalTransactionId: String
+        externalCustomerId: String
     ) throws {
         let url = try actionService.createSellURL(
             quoteCurrencyCode: quoteCurrencyCode,
             baseCurrencyAmount: baseCurrencyAmount,
-            externalTransactionId: externalTransactionId
+            externalCustomerId: externalCustomerId
         )
         navigation.send(.webPage(url: url))
     }
