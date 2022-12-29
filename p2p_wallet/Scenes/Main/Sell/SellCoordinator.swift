@@ -108,9 +108,9 @@ final class SellCoordinator: Coordinator<SellCoordinatorResult> {
                             self.navigationController.popToViewController(viewControllers[viewControllers.count - 3], animated: true)
                         }
                         
-                        // mark as completed
+                        // mark as pending handly, as server may return status a little bit later
                         Task {
-                            await self.sellDataService.markAsCompleted(id: sellTransaction.id)
+                            await self.sellDataService.markAsPending(id: sellTransaction.id)
                         }
                         
                         // Show status
