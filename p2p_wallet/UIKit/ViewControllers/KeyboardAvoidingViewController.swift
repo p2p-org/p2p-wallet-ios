@@ -31,6 +31,13 @@ final class KeyboardAvoidingViewController<Content: View>: UIViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
         setupLayout()
+
+        NotificationCenter.default
+          .addObserver(self, selector: #selector(activityHandler(_:)),
+                       name: UIApplication.didBecomeActiveNotification, object: nil)
+        NotificationCenter.default
+          .addObserver(self, selector: #selector(activityHandler(_:)),
+                       name: UIApplication.didEnterBackgroundNotification, object: nil)
     }
 
     override func viewDidAppear(_ animated: Bool) {
@@ -63,6 +70,17 @@ final class KeyboardAvoidingViewController<Content: View>: UIViewController {
             } else {
                 return getAllTextFields(fromView: view)
             }
+        }
+    }
+
+    @objc private func activityHandler(_ notification: Notification) {
+        switch notification.name {
+        case UIApplication.didBecomeActiveNotification:
+            openKeyboard()
+        case UIApplication.didEnterBackgroundNotification:
+            hideKeyboard()
+        default:
+            break
         }
     }
 }
