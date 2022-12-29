@@ -221,7 +221,7 @@ final class SendInputViewModel: BaseViewModel, ObservableObject {
     }
 
     func openKeyboard() {
-        DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) {
+        DispatchQueue.main.async {
             guard !self.inputAmountViewModel.isFirstResponder else { return }
             self.inputAmountViewModel.isFirstResponder = true
         }
@@ -339,7 +339,7 @@ private extension SendInputViewModel {
         $status
             .sink { [weak self] value in
                 guard value == .ready else { return }
-                self?.openKeyboard()
+                DispatchQueue.main.asyncAfter(deadline: .now() + 0.5, execute: { self?.openKeyboard() })
             }
             .store(in: &subscriptions)
     }
