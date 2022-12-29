@@ -84,8 +84,8 @@ final class SendTransactionDetailViewModel: BaseViewModel, ObservableObject {
             title: L10n.transactionFee,
             subtitle: [(
                 state.fee.transaction == 0 ? L10n
-                    .freeLeftForToday(remainUsage) : amountFeeInToken.tokenAmount(symbol: state.tokenFee.symbol),
-                state.fee.transaction == 0 ? nil : "\(Defaults.fiat.symbol)\(amountFeeInFiat.fixedDecimal(2))"
+                    .freeLeftForToday(remainUsage) : amountFeeInToken.tokenAmount(symbol: state.tokenFee.symbol, roundingMode: .down),
+                state.fee.transaction == 0 ? nil : amountFeeInFiat.fiatAmount(roundingMode: .down)
             )],
             image: .transactionFee,
             isFree: state.fee.transaction == 0
@@ -122,12 +122,9 @@ final class SendTransactionDetailViewModel: BaseViewModel, ObservableObject {
         if state.token.address == state.tokenFee.address {
             totalAmount += state.feeInToken.total
         } else {
-            if state.feeInToken.transaction > 0 {
-                subtitles.append(convert(state.feeInToken.transaction, state.tokenFee))
-            }
-
-            if state.feeInToken.accountBalances > 0 {
-                subtitles.append(convert(state.feeInToken.accountBalances, state.tokenFee))
+            let fee = state.feeInToken.transaction + state.feeInToken.accountBalances
+            if fee > 0 {
+                subtitles.append(convert(fee, state.tokenFee))
             }
         }
 
@@ -145,7 +142,10 @@ final class SendTransactionDetailViewModel: BaseViewModel, ObservableObject {
         let amountInToken: Double = input.convertToBalance(decimals: token.decimals)
         let amountInFiat: Double = amountInToken * (pricesService.currentPrice(for: token.symbol)?.value ?? 0)
 
-        return (amountInToken.tokenAmount(symbol: token.symbol, maximumFractionDigits: Int(token.decimals)), "\(Defaults.fiat.symbol)\(amountInFiat.fixedDecimal(2))")
+        return (
+            amountInToken.tokenAmount(symbol: token.symbol, maximumFractionDigits: Int(token.decimals), roundingMode: .down),
+            amountInFiat.fiatAmount(roundingMode: .down)
+        )
     }
 
     private func updateCells(for state: SendInputState) {
