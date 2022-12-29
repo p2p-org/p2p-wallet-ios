@@ -58,10 +58,6 @@ struct ChooseWalletTokenView: View {
                     }
                 }
             }
-        }.onDisappear {
-            DispatchQueue.main.async {
-                self.viewModel.isSearchFieldFocused = false
-            }
         }
     }
 
