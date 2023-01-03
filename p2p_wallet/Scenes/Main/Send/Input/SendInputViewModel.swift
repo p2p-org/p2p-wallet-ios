@@ -157,9 +157,6 @@ final class SendInputViewModel: BaseViewModel, ObservableObject {
 
             let nextState = await stateMachine
                 .accept(action: .initialize(.init {
-                    // initialize swap service (reload if needed)
-                    try await Resolver.resolve(SwapServiceType.self).initialize()
-
                     // get current context
                     let feeRelayerContextManager = Resolver.resolve(FeeRelayerContextManager.self)
                     return try await feeRelayerContextManager.getCurrentContext()

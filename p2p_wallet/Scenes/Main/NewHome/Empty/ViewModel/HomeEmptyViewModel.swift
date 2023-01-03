@@ -13,18 +13,16 @@ import Resolver
 import RxCombine
 import SolanaSwift
 
-final class HomeEmptyViewModel: ObservableObject {
-    let input = Input()
-    let output: Output
+final class HomeEmptyViewModel: BaseViewModel, ObservableObject {
+    // MARK: - Dependencies
 
     @Injected private var analyticsManager: AnalyticsManager
     @Injected private var walletsRepository: WalletsRepository
-    private let pricesService: PricesServiceType = Resolver.resolve()
-    private var cancellable: AnyCancellable?
+    @Injected private var pricesService: PricesServiceType
     
-    let topUp = PassthroughSubject<Void, Never>()
-    let topUpCoin = PassthroughSubject<Token, Never>()
-    let receiveSubject = PassthroughSubject<PublicKey, Never>()
+    // MARK: - Properties
+    private var cancellable: AnyCancellable?
+    private let navigation: PassthroughSubject<HomeNavigation, Never>
     
     private var _popularCoins: [Token] = [.usdc, .nativeSolana, .renBTC, .eth, .usdt]
     var popularCoins: [PopularCoin] {
@@ -39,17 +37,15 @@ final class HomeEmptyViewModel: ObservableObject {
         }
     }
     
-    init() {
-        output = Output(
-            view: .init(),
-            coord: .init(
-                topUpShow: topUp.eraseToAnyPublisher(),
-                topUpCoinShow: topUpCoin.eraseToAnyPublisher(),
-                receive: receiveSubject.eraseToAnyPublisher()
-            )
-        )
+    // MARK: - Initializer
+    
+    init(navigation: PassthroughSubject<HomeNavigation, Never>) {
+        self.navigation = navigation
+        super.init()
     }
     
+    // MARK: - Actions
+
     func reloadData() async {
         walletsRepository.reload()
         
@@ -68,49 +64,13 @@ final class HomeEmptyViewModel: ObservableObject {
 
     func receiveClicked() {
         guard let solanaPubkey = try? PublicKey(string: walletsRepository.nativeWallet?.pubkey) else { return }
-        receiveSubject.send(solanaPubkey)
+        navigation.send(.receive(publicKey: solanaPubkey))
     }
     
     func buyTapped(index: Int) {
         let coin = _popularCoins[index]
         analyticsManager.log(event: AmplitudeEvent.mainScreenBuyToken(tokenName: coin.symbol))
-        topUpCoin.send(coin)
-    }
-}
-
-// MARK: - ViewModel
-
-extension HomeEmptyViewModel: ViewModel {
-    struct Input: ViewModelIO {
-        let view = View()
-        let coord = Coord()
-
-        struct View {}
-
-        class Coord {}
-    }
-
-    struct Output: ViewModelIO {
-        let view: View
-        let coord: Coord
-
-        class Coord {
-            var topUpShow: AnyPublisher<Void, Never>
-            var topUpCoinShow: AnyPublisher<Token, Never>
-            var receive: AnyPublisher<PublicKey, Never>
-
-            init(
-                topUpShow: AnyPublisher<Void, Never>,
-                topUpCoinShow: AnyPublisher<Token, Never>,
-                receive: AnyPublisher<PublicKey, Never>
-            ) {
-                self.topUpShow = topUpShow
-                self.topUpCoinShow = topUpCoinShow
-                self.receive = receive
-            }
-        }
-
-        struct View {}
+        navigation.send(.topUpCoin(coin))
     }
 }
 
