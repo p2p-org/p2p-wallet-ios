@@ -10,8 +10,32 @@ import SwiftUI
 struct RecipientSearchView: View {
     @ObservedObject var viewModel: RecipientSearchViewModel
     @SwiftUI.Environment(\.scenePhase) var scenePhase
-
+    
     var body: some View {
+        switch viewModel.loadingState {
+        case .notRequested:
+            Text("")
+        case .loading:
+            ProgressView()
+        case .loaded:
+            loadedView
+        case .error(let error):
+            VStack {
+                #if !RELEASE
+                Text(error)
+                    .foregroundColor(.red)
+                #endif
+                Text("\(L10n.somethingWentWrong). \(L10n.tapToTryAgain)?")
+                    .onTapGesture {
+                        Task {
+                            await viewModel.load()
+                        }
+                    }
+            }
+        }
+    }
+
+    var loadedView: some View {
         ZStack {
             Color(Asset.Colors.smoke.color)
                 .onTapGesture { viewModel.isFirstResponder = false }

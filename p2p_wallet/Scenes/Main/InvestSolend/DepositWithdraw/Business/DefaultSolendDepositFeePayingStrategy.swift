@@ -25,7 +25,7 @@ class DefaultSolendWithdrawFeePayingStrategy: SolendFeePayingStrategy {
         let feeInNativeToken = try await actionService.depositFee(amount: amount, symbol: symbol)
 
         // Fee in same requested spl token
-        let feeCalculator: FeeRelayerCalculator = DefaultFreeRelayerCalculator()
+        let feeCalculator: RelayFeeCalculator = DefaultRelayFeeCalculator()
         try await orca.load()
         let feeInToken = try await feeCalculator.calculateFeeInPayingToken(
             orcaSwap: orca,
