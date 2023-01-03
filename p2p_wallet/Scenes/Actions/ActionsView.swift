@@ -14,12 +14,17 @@ import Resolver
 
 struct ActionsView: View {
     @Injected private var sellDataService: any SellDataService
+    @Injected private var walletsRepository: WalletsRepository
     
     private let actionSubject = PassthroughSubject<Action, Never>()
     var action: AnyPublisher<Action, Never> { actionSubject.eraseToAnyPublisher() }
     private let cancelSubject = PassthroughSubject<Void, Never>()
     var cancel: AnyPublisher<Void, Never> { cancelSubject.eraseToAnyPublisher() }
-    var isSellAvailable: Bool { available(.sellScenarioEnabled) && sellDataService.isAvailable }
+    var isSellAvailable: Bool {
+        available(.sellScenarioEnabled) &&
+        sellDataService.isAvailable &&
+        !walletsRepository.getWallets().isTotalBalanceEmpty
+    }
 
     var body: some View {
         VStack(spacing: 28) {
