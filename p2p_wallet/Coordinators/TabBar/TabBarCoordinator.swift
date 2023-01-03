@@ -26,7 +26,7 @@ final class TabBarCoordinator: Coordinator<Void> {
     private var emptySendCoordinator: SendEmptyCoordinator?
     private var sendCoordinator: SendCoordinator?
     private var sendStatusCoordinator: SendTransactionStatusCoordinator?
-
+    
     // MARK: - Initializer
 
     init(
