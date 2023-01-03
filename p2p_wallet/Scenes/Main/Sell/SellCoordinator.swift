@@ -71,11 +71,8 @@ final class SellCoordinator: Coordinator<SellCoordinatorResult> {
         case .webPage(let url):
             return navigateToProviderWebPage(url: url)
                 .deallocatedPublisher()
-                .handleEvents(receiveOutput: {
-                    // returning from webview with warmUp may cause crash sometimes, reduce it by adding a pause
-                    DispatchQueue.main.asyncAfter(deadline: .now() + .milliseconds(300)) { [weak self] in
-                        self?.viewModel.warmUp()
-                    }
+                .handleEvents(receiveCompletion: { [weak self] _ in
+                    self?.viewModel.warmUp()
                 }).eraseToAnyPublisher()
 
         case .showPending(let transactions, let fiat):
@@ -124,8 +121,9 @@ final class SellCoordinator: Coordinator<SellCoordinatorResult> {
                 .eraseToAnyPublisher()
 
         case .swap:
-            return navigateToSwap().deallocatedPublisher()
-                .handleEvents(receiveOutput: { [unowned self] _ in
+            return navigateToSwap()
+                .deallocatedPublisher()
+                .handleEvents(receiveCompletion: { [unowned self] _ in
                     self.viewModel.warmUp()
                 }).eraseToAnyPublisher()
         }
