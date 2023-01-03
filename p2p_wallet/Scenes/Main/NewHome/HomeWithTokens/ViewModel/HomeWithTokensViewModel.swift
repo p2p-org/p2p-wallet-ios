@@ -66,7 +66,7 @@ final class HomeWithTokensViewModel: BaseViewModel, ObservableObject {
         if sellDataService.isAvailable {
             actions = [.buy, .receive, .send, .cashOut]
         } else {
-            actions = [.buy, .receive, .send, .swap]
+            actions = [.buy, .receive, .send]
         }
         
         walletsRepository.dataObservable
