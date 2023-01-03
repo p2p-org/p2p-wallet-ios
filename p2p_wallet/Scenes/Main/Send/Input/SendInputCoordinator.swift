@@ -34,6 +34,14 @@ final class SendInputCoordinator: Coordinator<SendResult> {
             self?.subject.send(.cancelled)
         }
 
+        controller.viewWillAppearPublisher.sink { _ in
+            DispatchQueue.main.async {
+                controller.navigationItem.largeTitleDisplayMode = .always
+                controller.navigationController?.navigationBar.prefersLargeTitles = true
+                controller.navigationController?.navigationBar.sizeToFit()
+            }
+        }.store(in: &subscriptions)
+
         viewModel.tokenViewModel.changeTokenPressed
             .sink { [weak self] in
                 controller.hideKeyboard()
@@ -77,6 +85,7 @@ final class SendInputCoordinator: Coordinator<SendResult> {
         default:
             vc.title = "\(recipient.address.prefix(6))...\(recipient.address.suffix(6))"
         }
+
         vc.navigationItem.largeTitleDisplayMode = .always
         vc.navigationController?.navigationBar.prefersLargeTitles = true
     }

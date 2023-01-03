@@ -7,6 +7,9 @@ import UIKit
 final class KeyboardAvoidingViewController<Content: View>: UIViewController {
     private let rootView: Content
     private let hostingController: UIHostingController<Content>
+    
+    private let viewWillAppearSubject: PassthroughSubject<Bool, Never> = .init()
+    public var viewWillAppearPublisher: AnyPublisher<Bool, Never> { viewWillAppearSubject.eraseToAnyPublisher() }
 
     init(rootView: Content, ignoresKeyboard: Bool = false) {
         self.rootView = rootView
@@ -25,16 +28,24 @@ final class KeyboardAvoidingViewController<Content: View>: UIViewController {
         setupLayout()
 
         NotificationCenter.default
-          .addObserver(self, selector: #selector(activityHandler(_:)),
-                       name: UIApplication.didBecomeActiveNotification, object: nil)
+            .addObserver(self, selector: #selector(activityHandler(_:)),
+                         name: UIApplication.didBecomeActiveNotification, object: nil)
         NotificationCenter.default
-          .addObserver(self, selector: #selector(activityHandler(_:)),
-                       name: UIApplication.didEnterBackgroundNotification, object: nil)
+            .addObserver(self, selector: #selector(activityHandler(_:)),
+                         name: UIApplication.didEnterBackgroundNotification, object: nil)
     }
 
     override func viewDidAppear(_ animated: Bool) {
         super.viewDidAppear(animated)
         openKeyboard()
+
+        
+    }
+    
+    override func viewWillAppear(_ animated: Bool) {
+        super.viewWillAppear(animated)
+        
+        viewWillAppearSubject.send(animated)
     }
 
     override func viewWillDisappear(_ animated: Bool) {
