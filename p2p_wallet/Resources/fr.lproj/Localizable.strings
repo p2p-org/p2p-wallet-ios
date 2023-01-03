@@ -1209,3 +1209,5 @@ You can try again, but your new transaction will be subject to the current rates
 "Done! Refresh History page for actual status" = "Fait!  Actualiser la page Historique pour le statut réel";
 "There is no %@ in your wallet to sell" = "Il n'y a pas de %@ dans votre portefeuille à vendre";
 "our service was ruined. Visit this page later" = "notre service a été ruiné.  Visitez cette page plus tard";
+"via bank transfer" = "par virement bancaire";
+"Cash out crypto to fiat" = "Encaisser crypto en fiat";

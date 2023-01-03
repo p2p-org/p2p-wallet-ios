@@ -1212,3 +1212,5 @@ You can try again, but your new transaction will be subject to the current rates
 "Done! Refresh History page for actual status" = "Xong! Làm mới trang Lịch sử để biết trạng thái thực tế";
 "There is no %@ in your wallet to sell" = "Không có %@ trong ví của bạn để bán";
 "our service was ruined. Visit this page later" = "dịch vụ của chúng tôi đã bị hủy hoại.  Truy cập trang này sau";
+"via bank transfer" = "qua chuyển khoản ngân hàng";
+"Cash out crypto to fiat" = "Rút tiền điện tử thành fiat";

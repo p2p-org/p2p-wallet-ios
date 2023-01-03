@@ -33,8 +33,8 @@ struct ActionsView: View {
                 if isSellAvailable {
                     horizontalActionView(
                         image: .actionsCashOut,
-                        title: "Cash Out",
-                        subtitle: "Cash out crypto to fiat",
+                        title: L10n.cashOutCryptoToFiat,
+                        subtitle: L10n.viaBankTransfer,
                         action: {
                             actionSubject.send(.cashOut)
                         }
