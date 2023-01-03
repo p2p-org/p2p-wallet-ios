@@ -1207,3 +1207,5 @@ You can try again, but your new transaction will be subject to the current rates
 "Done! Refresh History page for actual status" = "Выполнено! Обновить страницу истории для фактического статуса";
 "There is no %@ in your wallet to sell" = "В вашем кошельке нет %@ для продажи";
 "our service was ruined. Visit this page later" = "наша служба была испорчена.  Посетите эту страницу позже";
+"via bank transfer" = "банковским переводом";
+"Cash out crypto to fiat" = "Обналичить криптовалюту в фиат";
