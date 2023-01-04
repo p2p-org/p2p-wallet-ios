@@ -85,7 +85,7 @@ private struct Row: View {
             Text(key)
             Spacer()
             Text(value)
-                .lineLimit(3)
+                .lineLimit(6)
         }
     }
 }
