@@ -79,14 +79,25 @@ final class SendTransactionDetailViewModel: BaseViewModel, ObservableObject {
         let amountFeeInFiat: Double = amountFeeInToken *
             (pricesService.currentPrice(for: state.tokenFee.symbol)?.value ?? 0)
 
+        let mainText: String
+        let secondaryText: String?
+
+        switch true {
+        case state.fee.transaction == 0 && remainUsage == 0:
+            mainText = "0 \(state.tokenFee.symbol)"
+            secondaryText = "0"
+        case state.fee.transaction == 0:
+            mainText = L10n.freeLeftForToday(remainUsage)
+            secondaryText = nil
+        default:
+            mainText = amountFeeInToken.tokenAmount(symbol: state.tokenFee.symbol, roundingMode: .down)
+            secondaryText = amountFeeInFiat.fiatAmount(roundingMode: .down)
+        }
+
         return CellModel(
             type: .transactionFee,
             title: L10n.transactionFee,
-            subtitle: [(
-                state.fee.transaction == 0 ? L10n
-                    .freeLeftForToday(remainUsage) : amountFeeInToken.tokenAmount(symbol: state.tokenFee.symbol, roundingMode: .down),
-                state.fee.transaction == 0 ? nil : amountFeeInFiat.fiatAmount(roundingMode: .down)
-            )],
+            subtitle: [(mainText, secondaryText)],
             image: .transactionFee,
             isFree: state.fee.transaction == 0
         )
