@@ -1,10 +1,10 @@
 import Combine
+import FeeRelayerSwift
 import KeyAppUI
 import Resolver
 import RxSwift
 import SolanaSwift
 import TransactionParser
-import FeeRelayerSwift
 
 final class SendTransactionStatusViewModel: BaseViewModel, ObservableObject {
     @Injected private var transactionHandler: TransactionHandler
@@ -52,12 +52,12 @@ final class SendTransactionStatusViewModel: BaseViewModel, ObservableObject {
                 guard let self = self else { return }
                 self.subtitle = pendingTransaction?.sentAt.string(withFormat: "MMMM dd, yyyy @ HH:mm", locale: Locale.base) ?? ""
                 switch pendingTransaction?.status {
+                case .sending:
+                    break
                 case let .error(error):
                     self.update(error: error)
-                case .finalized:
-                    self.updateCompleted()
                 default:
-                    break
+                    self.updateCompleted()
                 }
                 self.currentTransaction = pendingTransaction?.parse(pricesService: self.priceService)
             }
