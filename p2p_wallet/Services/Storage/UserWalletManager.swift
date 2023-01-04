@@ -33,7 +33,7 @@ class UserWalletManager: ObservableObject {
         let moonpayAccount = try await Account(
             phrase: account.phrase,
             network: .mainnetBeta,
-            derivablePath: DerivablePath(type: .bip44Change, walletIndex: 101, accountIndex: 0)
+            derivablePath: DerivablePath(type: storage.derivablePath.type, walletIndex: 101, accountIndex: 0)
         )
 
         wallet = .init(
