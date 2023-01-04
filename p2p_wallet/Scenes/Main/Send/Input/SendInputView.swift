@@ -62,12 +62,18 @@ struct SendInputView: View {
                 case .ready:
                     SendInputAmountView(viewModel: viewModel.inputAmountViewModel)
                 }
-                
+
                 #if !RELEASE
                 Text(viewModel.calculationDebugText)
                     .font(uiFont: .font(of: .label2, weight: .regular))
                     .foregroundColor(Color(.red))
                     .multilineTextAlignment(.trailing)
+
+                NavigationLink {
+                    SendInputDebugView(state: viewModel.currentState)
+                } label: {
+                    Text("Debug state")
+                }
                 #endif
 
                 Spacer()
@@ -77,8 +83,8 @@ struct SendInputView: View {
                     TextButtonView(title: L10n.tryAgain, style: .primary, size: .large) {
                         viewModel.initialize()
                     }
-                        .cornerRadius(radius: 28, corners: .allCorners)
-                        .frame(height: TextButton.Size.large.height)
+                    .cornerRadius(radius: 28, corners: .allCorners)
+                    .frame(height: TextButton.Size.large.height)
                 case .initializing, .ready:
                     SendInputActionButtonView(viewModel: viewModel.actionButtonViewModel)
                 }
