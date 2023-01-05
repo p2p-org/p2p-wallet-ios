@@ -276,7 +276,7 @@ class SellViewModel: BaseViewModel, ObservableObject {
     // MARK: - Helpers
 
     private func checkIfMoreBaseCurrencyNeeded() {
-        maxBaseAmount = walletRepository.nativeWallet?.amount
+        maxBaseAmount = walletRepository.nativeWallet?.amount?.rounded(decimals: decimals, roundingMode: .down)
         if maxBaseAmount < minBaseAmount {
             isMoreBaseCurrencyNeeded = true
         }
