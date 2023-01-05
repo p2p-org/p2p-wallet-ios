@@ -38,20 +38,24 @@ final class SendTransactionDetailsCoordinator: Coordinator<SendTransactionDetail
 
         let view = SendTransactionDetailView(viewModel: viewModel)
 
-        transition = PanelTransition()
-        transition?.containerHeight = view.viewHeight
-        let viewController = UIHostingController(rootView: view, ignoresKeyboard: true)
+        let viewController = UIBottomSheetHostingController(rootView: view, ignoresKeyboard: true)
         viewController.view.layer.cornerRadius = 20
-        viewController.transitioningDelegate = transition
         viewController.modalPresentationStyle = .custom
-
+        
+        viewModel.$cellModels
+            .receive(on: RunLoop.main)
+            .sink { [weak viewController] _ in
+                viewController?.updatePresentationLayout(animated: true)
+            }
+            .store(in: &subscriptions)
+        
         transition?.dimmClicked
             .sink { [weak self] in
                 self?.viewController?.dismiss(animated: true)
                 self?.subject.send(completion: .finished)
             }
             .store(in: &subscriptions)
-        parentController.present(viewController, animated: true)
+        parentController.present(viewController, interactiveDismissalType: .standard)
         self.viewController = viewController
 
         return subject.eraseToAnyPublisher()
