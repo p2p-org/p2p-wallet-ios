@@ -51,9 +51,7 @@ struct SendTransactionDetailView: View {
         }
         .padding(.vertical, Constants.verticalPadding)
         .padding(.horizontal, Constants.contentHorizontalSpacing)
-        .sheetHeader(title: L10n.transactionDetails, withSeparator: false) {
-            viewModel.cancelSubject.send()
-        }
+        .sheetHeader(title: L10n.transactionDetails, withSeparator: false)
     }
 
     private func cellView(model: SendTransactionDetailViewModel.CellModel) -> some View {
