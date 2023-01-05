@@ -105,7 +105,7 @@ class SellViewModel: BaseViewModel, ObservableObject {
     }
 
     func sellAll() {
-        baseAmount = walletRepository.nativeWallet?.amount?.rounded(decimals: decimals) ?? 0
+        baseAmount = walletRepository.nativeWallet?.amount?.rounded(decimals: decimals, roundingMode: .down) ?? 0
     }
 
     func openProviderWebView(

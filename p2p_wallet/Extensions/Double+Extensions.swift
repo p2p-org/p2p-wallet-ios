@@ -148,14 +148,14 @@ extension Double {
         "\(toString(maximumFractionDigits: maximumFractionDigits))%"
     }
 
-    func rounded(decimals: Int?) -> Double {
+    func rounded(decimals: Int?, roundingMode: NumberFormatter.RoundingMode? = nil) -> Double {
         guard let decimals = decimals else { return self }
-        let realAmount = toString(maximumFractionDigits: decimals, groupingSeparator: nil)
+        let realAmount = toString(maximumFractionDigits: decimals, groupingSeparator: "", roundingMode: roundingMode)
         return realAmount.double ?? self
     }
 
-    func rounded(decimals: UInt8?) -> Double {
+    func rounded(decimals: UInt8?, roundingMode: NumberFormatter.RoundingMode? = nil) -> Double {
         guard let decimals = decimals else { return self }
-        return rounded(decimals: Int(decimals))
+        return rounded(decimals: Int(decimals), roundingMode: roundingMode)
     }
 }
