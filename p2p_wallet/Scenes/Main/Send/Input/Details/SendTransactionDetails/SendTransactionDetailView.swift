@@ -10,14 +10,12 @@ import KeyAppUI
 import SwiftUI
 
 private enum Constants {
-    static let verticalSpacing: CGFloat = 0
+    static let verticalSpacing: CGFloat = 32
     static let verticalPadding: CGFloat = 16
-    static let cellHeight: CGFloat = 90
     static let imageRightSpacing: CGFloat = 16
     static let contentHorizontalSpacing: CGFloat = 16
     static let imageSize: CGFloat = 48
     static let textSpacing: CGFloat = 2
-    static let buttonTopPadding: CGFloat = 16
     static let textHStackSpacing: CGFloat = 4
     static let infoHeight: CGFloat = 14
 }
@@ -45,7 +43,6 @@ struct SendTransactionDetailView: View {
                         .frame(maxWidth: .infinity)
                         .background(Color(Asset.Colors.rain.color))
                         .cornerRadius(12)
-                        .padding(.top, Constants.buttonTopPadding)
                 }
             )
         }
@@ -110,7 +107,6 @@ struct SendTransactionDetailView: View {
                 }
             }
         }
-        .frame(height: Constants.cellHeight)
     }
 }
 
