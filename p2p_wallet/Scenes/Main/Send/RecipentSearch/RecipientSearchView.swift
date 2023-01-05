@@ -10,7 +10,7 @@ import SwiftUI
 struct RecipientSearchView: View {
     @ObservedObject var viewModel: RecipientSearchViewModel
     @SwiftUI.Environment(\.scenePhase) var scenePhase
-    
+
     var body: some View {
         switch viewModel.loadingState {
         case .notRequested:
@@ -19,18 +19,9 @@ struct RecipientSearchView: View {
             ProgressView()
         case .loaded:
             loadedView
-        case .error(let error):
-            VStack {
-                #if !RELEASE
-                Text(error)
-                    .foregroundColor(.red)
-                #endif
-                Text("\(L10n.somethingWentWrong). \(L10n.tapToTryAgain)?")
-                    .onTapGesture {
-                        Task {
-                            await viewModel.load()
-                        }
-                    }
+        case .error(_):
+            RecipientErrorView {
+                Task { await viewModel.load() }
             }
         }
     }
