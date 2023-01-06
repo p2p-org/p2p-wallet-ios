@@ -104,17 +104,3 @@ class SendCoordinator: Coordinator<SendResult> {
         return result.prefix(1).eraseToAnyPublisher()
     }
 }
-
-class CustomUIHostingController<Content: View>: UIHostingController<Content> {
-    override func viewWillLayoutSubviews() {
-        super.viewWillLayoutSubviews()
-
-        if #available(iOS 15.0, *) {
-            //  Workaround for an iOS 15 SwiftUI bug(?):
-            //  The intrinsicContentSize of UIView is not updated
-            //  when the internal SwiftUI view changes size.
-
-            view.invalidateIntrinsicContentSize()
-        }
-    }
-}
