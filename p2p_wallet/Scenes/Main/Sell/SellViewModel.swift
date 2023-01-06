@@ -232,15 +232,8 @@ class SellViewModel: BaseViewModel, ObservableObject {
                 self.baseCurrencyCode = "SOL"
                 self.checkIfMoreBaseCurrencyNeeded()
                 self.updateFeesAndExchangeRates(baseAmount: self.baseAmount, baseCurrencyCode: self.baseCurrencyCode, quoteCurrencyCode: self.quoteCurrencyCode)
+                self.incompletedTransactions = self.dataService.transactions.filter { $0.status == .waitingForDeposit }
             })
-            .store(in: &subscriptions)
-
-        // Open pendings in case there are pending txs
-        dataPublisher
-            .withLatestFrom(dataService.transactionsPublisher)
-            .map { $0.filter { $0.status == .waitingForDeposit }}
-            .removeDuplicates()
-            .assign(to: \.incompletedTransactions, on: self)
             .store(in: &subscriptions)
 
         // observe native wallet's changes
