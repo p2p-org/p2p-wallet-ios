@@ -63,30 +63,36 @@ struct SendInputAmountView: View {
                                 .apply(style: .text4)
                                 .lineLimit(1)
                             Spacer()
-                            Text(L10n.tapToSwitchTo(viewModel.secondaryCurrencyText))
-                                .foregroundColor(Color(Asset.Colors.mountain.color))
-                                .apply(style: .text4)
-                                .lineLimit(1)
-                                .opacity(switchAreaOpacity)
-                                .layoutPriority(1)
+                            if viewModel.isSwitchMainAmountTypeAvailable {
+                                Text(L10n.tapToSwitchTo(viewModel.secondaryCurrencyText))
+                                    .foregroundColor(Color(Asset.Colors.mountain.color))
+                                    .apply(style: .text4)
+                                    .lineLimit(1)
+                                    .opacity(switchAreaOpacity)
+                                    .layoutPriority(1)
+                            }
                         }
                     }
-                    Button(
-                        action: viewModel.switchPressed.send,
-                        label: {
-                            Image(uiImage: UIImage.arrowUpDown)
-                                .renderingMode(.template)
-                                .foregroundColor(Color(mainColor))
-                                .frame(width: 16, height: 16)
-                                .opacity(switchAreaOpacity)
-                        })
-                    .frame(width: 24, height: 24)
+                    if viewModel.isSwitchMainAmountTypeAvailable {
+                        Button(
+                            action: viewModel.switchPressed.send,
+                            label: {
+                                Image(uiImage: UIImage.arrowUpDown)
+                                    .renderingMode(.template)
+                                    .foregroundColor(Color(mainColor))
+                                    .frame(width: 16, height: 16)
+                                    .opacity(switchAreaOpacity)
+                            })
+                        .frame(width: 24, height: 24)
+                    }
                 }
                 .padding(EdgeInsets(top: 21, leading: 24, bottom: 21, trailing: 12))
                 .background(RoundedRectangle(cornerRadius: 12))
                 .foregroundColor(Color(Asset.Colors.snow.color))
             }
-            tapToSwitchHiddenButton
+            if viewModel.isSwitchMainAmountTypeAvailable {
+                tapToSwitchHiddenButton
+            }
         }
         .frame(height: 90)
     }
@@ -117,7 +123,7 @@ struct SendInputAmountView_Previews: PreviewProvider {
         ZStack {
             Color(Asset.Colors.smoke.color)
             SendInputAmountView(
-                viewModel: SendInputAmountViewModel(initialToken: .init(token: .nativeSolana))
+                viewModel: SendInputAmountViewModel(initialToken: .init(token: .nativeSolana), allowSwitchingMainAmountType: false)
             )
             .padding(.horizontal, 16)
         }

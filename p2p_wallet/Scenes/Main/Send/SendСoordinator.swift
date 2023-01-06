@@ -32,6 +32,7 @@ class SendCoordinator: Coordinator<SendResult> {
     let preChosenWallet: Wallet?
     let preChosenRecipient: Recipient?
     let preChosenAmount: Double?
+    let allowSwitchingMainAmountType: Bool
 
     // MARK: - Initializer
 
@@ -41,7 +42,8 @@ class SendCoordinator: Coordinator<SendResult> {
         preChosenRecipient: Recipient? = nil,
         preChosenAmount: Double? = nil,
         hideTabBar: Bool = false,
-        source: SendSource = .none
+        source: SendSource = .none,
+        allowSwitchingMainAmountType: Bool
     ) {
         self.rootViewController = rootViewController
         self.preChosenWallet = preChosenWallet
@@ -49,6 +51,7 @@ class SendCoordinator: Coordinator<SendResult> {
         self.preChosenAmount = preChosenAmount
         self.hideTabBar = hideTabBar
         self.source = source
+        self.allowSwitchingMainAmountType = allowSwitchingMainAmountType
         super.init()
     }
 
@@ -77,7 +80,8 @@ class SendCoordinator: Coordinator<SendResult> {
             preChosenAmount: preChosenAmount,
             navigationController: rootViewController,
             source: source,
-            pushedWithoutRecipientSearchView: true
+            pushedWithoutRecipientSearchView: true,
+            allowSwitchingMainAmountType: allowSwitchingMainAmountType
         ))
     }
 
@@ -91,7 +95,8 @@ class SendCoordinator: Coordinator<SendResult> {
                     preChosenWallet: preChosenWallet,
                     preChosenAmount: preChosenAmount,
                     navigationController: rootViewController,
-                    source: source
+                    source: source,
+                    allowSwitchingMainAmountType: allowSwitchingMainAmountType
                 ))
             }
             .sink { [weak self] result in

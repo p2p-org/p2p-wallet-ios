@@ -91,7 +91,8 @@ final class SellPendingCoordinator: Coordinator<SellPendingCoordinatorResult> {
                         ),
                         preChosenAmount: transaction.baseCurrencyAmount,
                         hideTabBar: true,
-                        source: .sell
+                        source: .sell,
+                        allowSwitchingMainAmountType: false
                     )
                 )
             }

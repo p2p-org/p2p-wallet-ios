@@ -32,6 +32,7 @@ final class SendInputAmountViewModel: BaseViewModel, ObservableObject {
     @Published var amountTextColor: UIColor = Asset.Colors.night.color
     @Published var mainTokenText = ""
     @Published var mainAmountType: EnteredAmountType = .fiat
+    @Published var isSwitchMainAmountTypeAvailable = true
     @Published var isMaxButtonVisible: Bool = true
 
     @Published var secondaryAmountText = ""
@@ -45,11 +46,11 @@ final class SendInputAmountViewModel: BaseViewModel, ObservableObject {
 
     private let fiat: Fiat
 
-    init(initialToken: Wallet) {
+    init(initialToken: Wallet, allowSwitchingMainAmountType: Bool) {
         fiat = Defaults.fiat
         token = initialToken
         countAfterDecimalPoint = Constants.fiatDecimals
-
+        isSwitchMainAmountTypeAvailable = allowSwitchingMainAmountType
         super.init()
 
         maxAmountPressed
