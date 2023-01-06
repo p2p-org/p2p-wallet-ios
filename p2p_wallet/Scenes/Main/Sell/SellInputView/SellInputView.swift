@@ -129,7 +129,7 @@ struct SellInputView: View {
                         animated: .default
                     )
             case .loaded(let exchangeRate):
-                Text("1 \(viewModel.baseCurrencyCode) ≈ \(exchangeRate.toString()) \(viewModel.quoteCurrencyCode)")
+                Text("1 \(viewModel.baseCurrencyCode) ≈ \(exchangeRate.toString(maximumFractionDigits: 2)) \(viewModel.quoteCurrencyCode)")
                     .descriptionTextStyle()
             case .error(let error):
                 #if !RELEASE
