@@ -22,7 +22,10 @@ class UIBottomSheetHostingController<Content: View>: UIHostingController<Content
 
     /// fitting size for presented view, required by CustomPresentableViewController
     func calculateFittingHeightForPresentedView(targetWidth: CGFloat) -> CGFloat {
-        let expectedHeight = view.fittingHeight(targetWidth: targetWidth)
-        return heightModifier?(expectedHeight) ?? expectedHeight
+        var expectedHeight = view.fittingHeight(targetWidth: targetWidth)
+        expectedHeight = heightModifier?(expectedHeight) ?? expectedHeight
+        // FIXME: - Unknown why there is extra 32 px
+        expectedHeight -= 32
+        return expectedHeight
     }
 }
