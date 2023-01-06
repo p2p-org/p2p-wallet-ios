@@ -47,7 +47,7 @@ class SellViewModel: BaseViewModel, ObservableObject {
     private let transactionRemovedSubject = PassthroughSubject<Void, Never>()
     var transactionRemoved: AnyPublisher<Void, Never> { transactionRemovedSubject.eraseToAnyPublisher() }
     private let cashOutInteruptedSubject = PassthroughSubject<Void, Never>()
-    var cashOutInterupted: AnyPublisher<Void, Never> { transactionRemovedSubject.eraseToAnyPublisher() }
+    var cashOutInterupted: AnyPublisher<Void, Never> { cashOutInteruptedSubject.eraseToAnyPublisher() }
 
     /// Maximum value to sell from sell provider
     private var maxBaseProviderAmount: Double?
