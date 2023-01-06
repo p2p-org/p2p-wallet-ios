@@ -40,7 +40,6 @@ final class SendTransactionDetailsCoordinator: Coordinator<SendTransactionDetail
 
         let viewController = UIBottomSheetHostingController(rootView: view, ignoresKeyboard: true)
         viewController.view.layer.cornerRadius = 20
-        viewController.modalPresentationStyle = .custom
         
         viewModel.$cellModels
             .receive(on: RunLoop.main)
