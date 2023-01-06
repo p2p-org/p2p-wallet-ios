@@ -69,7 +69,7 @@ final class SendInputViewModel: BaseViewModel, ObservableObject {
     private let pricesService: PricesServiceType
     @Injected private var analyticsManager: AnalyticsManager
 
-    init(recipient: Recipient, preChosenWallet: Wallet?, preChosenAmount: Double?, source: SendSource) {
+    init(recipient: Recipient, preChosenWallet: Wallet?, preChosenAmount: Double?, source: SendSource, allowSwitchingMainAmountType: Bool) {
         self.source = source
         self.preChosenAmount = preChosenAmount
         let repository = Resolver.resolve(WalletsRepository.self)
@@ -136,7 +136,7 @@ final class SendInputViewModel: BaseViewModel, ObservableObject {
             )
         )
 
-        inputAmountViewModel = SendInputAmountViewModel(initialToken: tokenInWallet)
+        inputAmountViewModel = SendInputAmountViewModel(initialToken: tokenInWallet, allowSwitchingMainAmountType: allowSwitchingMainAmountType)
         actionButtonViewModel = SendInputActionButtonViewModel()
 
         tokenViewModel = SendInputTokenViewModel(initialToken: tokenInWallet)

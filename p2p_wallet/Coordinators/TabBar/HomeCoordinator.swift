@@ -128,7 +128,8 @@ final class HomeCoordinator: Coordinator<Void> {
                 to: SendCoordinator(
                     rootViewController: navigationController,
                     preChosenWallet: nil,
-                    hideTabBar: true
+                    hideTabBar: true,
+                    allowSwitchingMainAmountType: true
                 )
             )
             .receive(on: RunLoop.main)

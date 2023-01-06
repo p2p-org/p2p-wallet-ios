@@ -11,6 +11,7 @@ final class SendInputCoordinator: Coordinator<SendResult> {
     private var subject = PassthroughSubject<SendResult, Never>()
     private let source: SendSource
     private let pushedWithoutRecipientSearchView: Bool
+    private let allowSwitchingMainAmountType: Bool
 
     init(
         recipient: Recipient,
@@ -18,7 +19,8 @@ final class SendInputCoordinator: Coordinator<SendResult> {
         preChosenAmount: Double?,
         navigationController: UINavigationController,
         source: SendSource,
-        pushedWithoutRecipientSearchView: Bool = false
+        pushedWithoutRecipientSearchView: Bool = false,
+        allowSwitchingMainAmountType: Bool
     ) {
         self.recipient = recipient
         self.preChosenWallet = preChosenWallet
@@ -26,10 +28,11 @@ final class SendInputCoordinator: Coordinator<SendResult> {
         self.navigationController = navigationController
         self.source = source
         self.pushedWithoutRecipientSearchView = pushedWithoutRecipientSearchView
+        self.allowSwitchingMainAmountType = allowSwitchingMainAmountType
     }
 
     override func start() -> AnyPublisher<SendResult, Never> {
-        let viewModel = SendInputViewModel(recipient: recipient, preChosenWallet: preChosenWallet, preChosenAmount: preChosenAmount, source: source)
+        let viewModel = SendInputViewModel(recipient: recipient, preChosenWallet: preChosenWallet, preChosenAmount: preChosenAmount, source: source, allowSwitchingMainAmountType: allowSwitchingMainAmountType)
         let view = SendInputView(viewModel: viewModel)
         let controller = KeyboardAvoidingViewController(rootView: view, navigationBarVisibility: .visible)
 
