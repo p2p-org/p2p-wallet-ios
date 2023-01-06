@@ -106,6 +106,12 @@ class SellViewModel: BaseViewModel, ObservableObject {
 
     func sellAll() {
         baseAmount = walletRepository.nativeWallet?.amount?.rounded(decimals: decimals, roundingMode: .down) ?? 0
+        
+        // temporary solution when isEnterQuoteAmount, the quote amount will not be updated when baseAmount changed
+        // so we have to release this value
+        if isEnteringQuoteAmount {
+            isEnteringQuoteAmount = false
+        }
     }
 
     func openProviderWebView(
