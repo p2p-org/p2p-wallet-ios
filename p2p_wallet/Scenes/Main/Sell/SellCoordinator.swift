@@ -37,6 +37,20 @@ final class SellCoordinator: Coordinator<SellCoordinatorResult> {
     override func start() -> AnyPublisher<SellCoordinatorResult, Never> {
         // create viewController
         viewModel = SellViewModel(navigation: navigation)
+        
+        viewModel.transactionRemoved
+            .sink { [weak viewModel] _ in
+                viewModel?.warmUp()
+            }
+            .store(in: &subscriptions)
+        
+        viewModel.cashOutInterupted
+            .sink { [weak self] in
+                self?.navigationController.popToRootViewController(animated: true)
+                self?.resultSubject.send(.none)
+            }
+            .store(in: &subscriptions)
+        
         let vc = UIHostingController(rootView: SellView(viewModel: viewModel))
         vc.hidesBottomBarWhenPushed = navigationController.canHideBottomForNextPush
         navigationController.pushViewController(vc, animated: true)
@@ -119,7 +133,41 @@ final class SellCoordinator: Coordinator<SellCoordinatorResult> {
                 })
                 .map { _ in }
                 .eraseToAnyPublisher()
-
+        case .send(let fromWallet, let toRecipient, let amount, let sellTransaction):
+            return coordinate(to:
+                SendCoordinator(
+                    rootViewController: navigationController,
+                    preChosenWallet: fromWallet,
+                    preChosenRecipient: toRecipient,
+                    preChosenAmount: amount,
+                    hideTabBar: true,
+                    source: .sell,
+                    allowSwitchingMainAmountType: false
+                )
+            )
+            .handleEvents(receiveOutput: { [weak self, unowned mainSellVC] result in
+                guard let self = self else { return }
+                switch result {
+                case .sent(let transaction):
+                    // pop 1 viewcontrollers send
+                    self.navigationController.popToViewController(mainSellVC, animated: true)
+                    
+                    // mark as pending handly, as server may return status a little bit later
+                    Task {
+                        await self.sellDataService.markAsPending(id: sellTransaction.id)
+                    }
+                    
+                    // Show status
+                    self.navigateToSendTransactionStatus(model: transaction)
+                default:
+                    self.navigationController.popToRootViewController(animated: true)
+                }
+                print("SellNavigation result: \(result)")
+            }, receiveCompletion: { compl in
+                print("SellNavigation compl: \(compl)")
+            })
+            .map { _ in }
+            .eraseToAnyPublisher()
         case .swap:
             return navigateToSwap()
                 .deallocatedPublisher()

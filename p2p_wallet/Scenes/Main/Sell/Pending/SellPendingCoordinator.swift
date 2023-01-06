@@ -51,7 +51,7 @@ final class SellPendingCoordinator: Coordinator<SellPendingCoordinatorResult> {
             )
         )
         
-        let viewController = SellPendingView(viewModel: viewModel).asViewController()
+        let viewController = SellPendingView(viewModel: viewModel, withNavigationBar: true).asViewController()
         viewController.hidesBottomBarWhenPushed = navigationController.canHideBottomForNextPush
         viewController.navigationItem.title = "\(L10n.cashOut) \(tokenSymbol)"
         navigationController.pushViewController(viewController, animated: true)

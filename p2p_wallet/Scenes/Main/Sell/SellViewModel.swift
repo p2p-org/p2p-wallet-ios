@@ -7,6 +7,7 @@ import RxSwift
 import KeyAppUI
 import SolanaSwift
 import Sell
+import Send
 
 enum SellViewModelInputError: Error, Equatable {
     case amountIsTooSmall(minBaseAmount: Double?, baseCurrencyCode: String)
@@ -43,6 +44,10 @@ class SellViewModel: BaseViewModel, ObservableObject {
     private var updatePricesTask: Task<Void, Never>?
     private let goBackSubject = PassthroughSubject<Void, Never>()
     var back: AnyPublisher<Void, Never> { goBackSubject.eraseToAnyPublisher() }
+    private let transactionRemovedSubject = PassthroughSubject<Void, Never>()
+    var transactionRemoved: AnyPublisher<Void, Never> { transactionRemovedSubject.eraseToAnyPublisher() }
+    private let cashOutInteruptedSubject = PassthroughSubject<Void, Never>()
+    var cashOutInterupted: AnyPublisher<Void, Never> { transactionRemovedSubject.eraseToAnyPublisher() }
 
     /// Maximum value to sell from sell provider
     private var maxBaseProviderAmount: Double?
@@ -64,6 +69,10 @@ class SellViewModel: BaseViewModel, ObservableObject {
     @Published var fee: LoadingValue<Double> = .loaded(0)
     @Published var status: SellDataServiceStatus = .initialized
     @Published var inputError: SellViewModelInputError?
+    
+    @Published var isShowingAlert: Bool = false
+    
+    @Published var incompletedTransactions = [SellDataServiceTransaction]()
 
     // MARK: - Initializer
 
@@ -77,6 +86,10 @@ class SellViewModel: BaseViewModel, ObservableObject {
     }
 
     // MARK: - Methods
+    
+    func interuptCashOut() {
+        cashOutInteruptedSubject.send()
+    }
 
     func goBack() {
         goBackSubject.send()
@@ -227,12 +240,7 @@ class SellViewModel: BaseViewModel, ObservableObject {
             .withLatestFrom(dataService.transactionsPublisher)
             .map { $0.filter { $0.status == .waitingForDeposit }}
             .removeDuplicates()
-            .debounce(for: .milliseconds(300), scheduler: DispatchQueue.main)
-            .sink(receiveValue: { [weak self] transactions in
-                guard let self = self, let fiat = self.dataService.fiat else { return }
-                guard !self.isMoreBaseCurrencyNeeded else { return }
-                self.navigation.send(.showPending(transactions: transactions, fiat: fiat))
-            })
+            .assign(to: \.incompletedTransactions, on: self)
             .store(in: &subscriptions)
 
         // observe native wallet's changes
@@ -278,6 +286,60 @@ class SellViewModel: BaseViewModel, ObservableObject {
                 }
             }
             .store(in: &subscriptions)
+    }
+    
+    // MARK: - SellPendingViewModel
+
+    func createSellPendingViewModel(transaction: SellDataServiceTransaction) -> SellPendingViewModel? {
+        guard let fiat = dataService.fiat else {
+            return nil
+        }
+        // create viewModel, viewController and push to navigation stack
+        let tokenSymbol = "SOL"
+        let viewModel = SellPendingViewModel(
+            model: SellPendingViewModel.Model(
+                id: transaction.id,
+                tokenImage: .solanaIcon,
+                tokenSymbol: tokenSymbol,
+                tokenAmount: transaction.baseCurrencyAmount,
+                fiatAmount: transaction.quoteCurrencyAmount,
+                currency: fiat,
+                receiverAddress: transaction.depositWallet
+            )
+        )
+        
+        // observe viewModel's event
+        viewModel.transactionRemoved
+            .sink { [weak self] in
+                self?.transactionRemovedSubject.send()
+            }
+            .store(in: &subscriptions)
+
+        viewModel.back
+            .sink(receiveValue: { [weak self] in
+                self?.isShowingAlert = true
+            })
+            .store(in: &subscriptions)
+
+        viewModel.send
+            .sink(receiveValue: {[weak self] in
+                guard let self, let wallet = self.walletRepository.nativeWallet else { return }
+                self.navigation.send(
+                    .send(
+                        from: wallet,
+                        to: Recipient(
+                            address: transaction.depositWallet,
+                            category: .solanaAddress,
+                            attributes: [.funds]
+                        ),
+                        amount: transaction.baseCurrencyAmount,
+                        sellTransaction: transaction
+                    )
+                )
+            })
+            .store(in: &subscriptions)
+        
+        return viewModel
     }
     
     // MARK: - Helpers

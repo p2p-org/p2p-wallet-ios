@@ -5,6 +5,7 @@ import Sell
 
 struct SellPendingView: View {
     @ObservedObject var viewModel: SellPendingViewModel
+    let withNavigationBar: Bool
 
     var body: some View {
         ZStack {
@@ -12,7 +13,9 @@ struct SellPendingView: View {
                 .ignoresSafeArea()
             VStack {
                 VStack(spacing: 28) {
-                    navigationView
+                    if withNavigationBar {
+                        navigationView
+                    }
                     Text(L10n.pleaseSendCryptoToMoonPayAddress)
                         .multilineTextAlignment(.center)
                         .foregroundColor(Color(Asset.Colors.night.color))
@@ -170,7 +173,8 @@ struct SellPendingView_Previews: PreviewProvider {
                     currency: MoonpaySellDataServiceProvider.MoonpayFiat.eur,
                     receiverAddress: "FfRBerfgeritjg43fBeJEr"
                 )
-            )
+            ),
+            withNavigationBar: true
         )
     }
 }

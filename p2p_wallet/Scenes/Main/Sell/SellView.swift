@@ -16,6 +16,10 @@ struct SellView: View {
                 case .ready:
                     if viewModel.isMoreBaseCurrencyNeeded {
                         balanceEmptyErrorView
+                    } else if let transaction = viewModel.incompletedTransactions.first,
+                              let sellPendingViewModel = viewModel.createSellPendingViewModel(transaction: transaction)
+                    {
+                        SellPendingView(viewModel: sellPendingViewModel, withNavigationBar: false)
                     } else {
                         SellInputView(viewModel: viewModel)
                     }
@@ -28,6 +32,16 @@ struct SellView: View {
         }
         .toolbar {
             ToolbarItem(placement: .principal) { Text(L10n.cashOut + " SOL").fontWeight(.semibold) }
+        }
+        .alert(isPresented: $viewModel.isShowingAlert) {
+            Alert(
+                title: Text(L10n.areYouSure),
+                message: Text(L10n.areYouSureYouWantToInterruptCashOutProcessYourTransactionWonTBeFinished),
+                primaryButton: .default(Text(L10n.continueTransaction)),
+                secondaryButton: .destructive(Text(L10n.interrupt)) {
+                    viewModel.interuptCashOut()
+                }
+            )
         }
     }
 
