@@ -46,6 +46,7 @@ struct SendTransactionDetailView: View {
                 }
             )
         }
+        .padding(.top, 20)
         .padding(.vertical, Constants.verticalPadding)
         .padding(.horizontal, Constants.contentHorizontalSpacing)
         .sheetHeader(title: L10n.transactionDetails, withSeparator: false)
