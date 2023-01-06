@@ -88,11 +88,14 @@ struct SellInputView: View {
             viewModel.sellAll()
         } label: {
             HStack(spacing: 4) {
-                Text(L10n.sellAll)
+                Text(L10n.cashOut)
                     .foregroundColor(Color(Asset.Colors.mountain.color))
                     .font(uiFont: UIFont.font(of: .label1, weight: .regular))
-                Text((viewModel.maxBaseAmount ?? 0)
-                    .toString(maximumFractionDigits: 2, roundingMode: .down) + " \(viewModel.baseCurrencyCode)")
+                Text(
+                    L10n.all + " " +
+                    (viewModel.maxBaseAmount ?? 0).toString(maximumFractionDigits: 2, roundingMode: .down) +
+                    " \(viewModel.baseCurrencyCode)"
+                )
                     .foregroundColor(Color(Asset.Colors.sky.color))
                     .font(uiFont: UIFont.font(of: .label1, weight: .regular))
             }
@@ -180,7 +183,7 @@ struct SellInputView: View {
 
     var sellButton: some View {
         TextButtonView(
-            title:  viewModel.inputError != nil ? viewModel.inputError!.recomendation : L10n.sell((viewModel.baseAmount ?? 0).toString() + " \(viewModel.baseCurrencyCode)"),
+            title:  viewModel.inputError != nil ? viewModel.inputError!.recomendation : L10n.cashOut,
             style: .primaryWhite,
             size: .large
         ) { [weak viewModel] in
