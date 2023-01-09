@@ -314,15 +314,13 @@ class SellViewModel: BaseViewModel, ObservableObject {
             exchangeRate = .loading
         }
         
-        guard baseAmount >= minBaseAmount else {
+        guard let baseAmount, baseAmount >= minBaseAmount else {
+            fee = .loaded(0)
             return
         }
         
         updatePricesTask = Task { [unowned self] in
             // get sellQuote
-            guard let baseAmount else {
-                return
-            }
             do {
                 let sellQuote = try await self.actionService.sellQuote(
                     baseCurrencyCode: baseCurrencyCode.lowercased(),
