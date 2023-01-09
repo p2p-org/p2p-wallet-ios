@@ -26,7 +26,8 @@ final class SendTransactionDetailViewModel: BaseViewModel, ObservableObject {
     private lazy var feeWalletsService: SendChooseFeeService = SendChooseFeeServiceImpl(
         wallets: walletsRepository.getWallets(),
         feeRelayer: Resolver.resolve(),
-        orcaSwap: Resolver.resolve()
+        orcaSwap: Resolver.resolve(),
+        context: stateMachine.currentState.feeRelayerContext
     )
 
     @Published var cellModels: [CellModel] = []
