@@ -227,7 +227,6 @@ class SellViewModel: BaseViewModel, ObservableObject {
             .withLatestFrom(dataService.transactionsPublisher)
             .map { $0.filter { $0.status == .waitingForDeposit }}
             .removeDuplicates()
-            .debounce(for: .milliseconds(300), scheduler: DispatchQueue.main)
             .sink(receiveValue: { [weak self] transactions in
                 guard let self = self, let fiat = self.dataService.fiat else { return }
                 guard !self.isMoreBaseCurrencyNeeded else { return }
