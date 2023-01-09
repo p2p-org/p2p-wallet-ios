@@ -71,6 +71,7 @@ struct SellPendingView: View {
         .onAppear {
             viewModel.viewDidAppear()
         }
+        .navigationBarBackButtonHidden(true)
     }
 
     private var backgroundColor: Color {
