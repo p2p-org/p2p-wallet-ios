@@ -25,6 +25,7 @@ final class SellCoordinator: Coordinator<SellCoordinatorResult> {
     private let resultSubject = PassthroughSubject<SellCoordinatorResult, Never>()
     // TODO: Pass initial amount in token to view model
     private let initialAmountInToken: Double?
+    private var isCompleted = false
     
     // MARK: - Initializer
 
@@ -44,29 +45,36 @@ final class SellCoordinator: Coordinator<SellCoordinatorResult> {
         // scene navigation
         navigation
             .compactMap { $0 }
-            .flatMap { [unowned self, unowned vc] in
-                navigate(to: $0, mainSellVC: vc)
+            .flatMap { [unowned self] in
+                navigate(to: $0)
             }
             .sink { _ in }
             .store(in: &subscriptions)
+    
         viewModel.back
             .sink(receiveValue: { [unowned self] in
+                // pop viewcontroller and resultSubject.send(.none)
                 navigationController.popViewController(animated: true)
-                resultSubject.send(.none)
             })
             .store(in: &subscriptions)
+        
+        vc.deallocatedPublisher()
+            .sink { [weak self] _ in
+                guard let self else {return}
+                if !self.isCompleted {
+                    self.resultSubject.send(.none)
+                }
+            }
+            .store(in: &subscriptions)
 
-        return Publishers.Merge(
-            vc.deallocatedPublisher().map { .none },
-            resultSubject.eraseToAnyPublisher()
-        )
+        return resultSubject
             .prefix(1)
             .eraseToAnyPublisher()
     }
 
     // MARK: - Navigation
 
-    private func navigate(to scene: SellNavigation, mainSellVC: UIViewController) -> AnyPublisher<Void, Never> {
+    private func navigate(to scene: SellNavigation) -> AnyPublisher<Void, Never> {
         switch scene {
         case .webPage(let url):
             return navigateToProviderWebPage(url: url)
@@ -88,22 +96,20 @@ final class SellCoordinator: Coordinator<SellCoordinatorResult> {
                     .map {($0, transaction)}
                 }
             )
-                .handleEvents(receiveOutput: { [weak self, unowned mainSellVC] result, sellTransaction in
+                .handleEvents(receiveOutput: { [weak self] result, sellTransaction in
                     guard let self = self else { return }
                     switch result {
                     case .transactionRemoved:
                         self.navigationController.popViewController(animated: true)
                     case .cashOutInterupted, .cancelled:
+                        // pop to rootViewController and resultSubject.send(.none)
                         self.navigationController.popToRootViewController(animated: true)
-                        self.resultSubject.send(.none)
                     case .transactionSent(let transaction):
-                        // pop 2 viewcontrollers: send and the last pending one
-                        let viewControllers = self.navigationController.viewControllers
-                        if viewControllers.count < 3 {
-                            self.navigationController.popToViewController(mainSellVC, animated: true)
-                        } else {
-                            self.navigationController.popToViewController(viewControllers[viewControllers.count - 3], animated: true)
-                        }
+                        // mark as completed
+                        self.isCompleted = true
+                        
+                        // pop to rootViewController
+                        self.navigationController.popToRootViewController(animated: true)
                         
                         // mark as pending handly, as server may return status a little bit later
                         Task {
@@ -147,10 +153,9 @@ final class SellCoordinator: Coordinator<SellCoordinatorResult> {
     
     private func navigateToSendTransactionStatus(model: SendTransaction) {
         coordinate(to: SendTransactionStatusCoordinator(parentController: navigationController, transaction: model))
-            .sink(receiveValue: { [weak self] in
+            .sink(receiveCompletion: { [weak self] _ in
                 self?.resultSubject.send(.completed)
-                self?.navigationController.popToRootViewController(animated: true)
-            })
+            }, receiveValue: {})
             .store(in: &subscriptions)
     }
 }
