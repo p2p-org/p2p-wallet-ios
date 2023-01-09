@@ -245,16 +245,14 @@ class SellViewModel: BaseViewModel, ObservableObject {
             })
             .store(in: &subscriptions)
         
-        // re-calculate fee after every 10 m if no input is active
+        // re-calculate fee after every 10 s if no input is active
         Timer.publish(every: 10, on: .main, in: .common)
             .autoconnect()
             .withLatestFrom(Publishers.CombineLatest3(
                 $baseAmount, $baseCurrencyCode, $quoteCurrencyCode
             ))
             .filter { [weak self] _ in
-                self?.status.isReady == true &&
-                self?.isEnteringBaseAmount == false &&
-                self?.isEnteringQuoteAmount == false
+                self?.status.isReady == true
             }
             .receive(on: RunLoop.main)
             .sink { [weak self] baseAmount, baseCurrencyCode, quoteCurrencyCode in
