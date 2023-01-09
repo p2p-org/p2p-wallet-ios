@@ -2,6 +2,7 @@ import AnalyticsManager
 import Combine
 import Foundation
 import Combine
+import Reachability
 import Resolver
 import RxSwift
 import KeyAppUI
@@ -36,6 +37,7 @@ class SellViewModel: BaseViewModel, ObservableObject {
     @Injected private var dataService: any SellDataService
     @Injected private var actionService: any SellActionService
     @Injected private var analyticsManager: AnalyticsManager
+    @Injected private var reachability: Reachability
 
     // MARK: - Properties
 
@@ -132,6 +134,8 @@ class SellViewModel: BaseViewModel, ObservableObject {
     private func bind() {
         bindData()
         bindInput()
+
+        _ = reachability.check()
     }
     
     private func bindInput() {
@@ -256,6 +260,7 @@ class SellViewModel: BaseViewModel, ObservableObject {
             }
             .receive(on: RunLoop.main)
             .sink { [weak self] baseAmount, baseCurrencyCode, quoteCurrencyCode in
+                _ = self?.reachability.check()
                 self?.updateFeesAndExchangeRates(
                     baseAmount: baseAmount,
                     baseCurrencyCode: baseCurrencyCode,
@@ -335,7 +340,6 @@ class SellViewModel: BaseViewModel, ObservableObject {
                     self.exchangeRate = .loaded(sellQuote.baseCurrencyPrice)
                 }
             } catch {
-                print(baseAmount, baseCurrencyCode, quoteCurrencyCode, error)
                 // update data
                 await MainActor.run { [weak self] in
                     guard let self else { return }
