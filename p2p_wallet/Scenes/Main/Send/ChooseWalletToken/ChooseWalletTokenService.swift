@@ -12,12 +12,6 @@ final class ChooseWalletTokenServiceImpl: ChooseWalletTokenService {
 
     @Injected private var walletsRepository: WalletsRepository
 
-    private lazy var feeWalletsService: SendChooseFeeService = SendChooseFeeServiceImpl(
-        wallets: walletsRepository.getWallets(),
-        feeRelayer: Resolver.resolve(),
-        orcaSwap: Resolver.resolve()
-    )
-
     init(strategy: ChooseWalletTokenStrategy) {
         self.strategy = strategy
     }
