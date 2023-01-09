@@ -22,7 +22,6 @@ class SellPendingHostingController<Content: View>: UIHostingController<Content> 
     
     func setNavigationBar() {
         let customBackButton = UIBarButtonItem(image: .backArrow, style: .plain, target: self, action: #selector(backAction(sender:)))
-        customBackButton.imageInsets = UIEdgeInsets(top: 2, left: -8, bottom: 0, right: 0)
         navigationItem.leftBarButtonItem = customBackButton
         navigationItem.hidesBackButton = true
         navigationItem.largeTitleDisplayMode = .never
