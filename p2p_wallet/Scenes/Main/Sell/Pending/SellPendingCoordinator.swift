@@ -51,9 +51,14 @@ final class SellPendingCoordinator: Coordinator<SellPendingCoordinatorResult> {
             )
         )
         
-        let viewController = SellPendingView(viewModel: viewModel).asViewController()
+        let view = SellPendingView(viewModel: viewModel)
+        let viewController = SellPendingHostingController(rootView: view)
         viewController.hidesBottomBarWhenPushed = navigationController.canHideBottomForNextPush
         viewController.navigationItem.title = "\(L10n.cashOut) \(tokenSymbol)"
+        viewController.backButtonHandler = { [unowned self] in
+            self.resultSubject.send(.cashOutInterupted)
+        }
+        
         navigationController.pushViewController(viewController, animated: false)
         
         // observe viewModel's event
@@ -61,21 +66,6 @@ final class SellPendingCoordinator: Coordinator<SellPendingCoordinatorResult> {
             .sink { [weak self] in
                 self?.resultSubject.send(.transactionRemoved)
             }
-            .store(in: &subscriptions)
-
-        viewModel.back
-            .sink(receiveValue: { [unowned viewController] in
-                _ = viewController.showAlert(
-                    title: L10n.areYouSure,
-                    message: L10n.areYouSureYouWantToInterruptCashOutProcessYourTransactionWonTBeFinished,
-                    actions: [
-                        UIAlertAction(title: L10n.continueTransaction, style: .default),
-                        UIAlertAction(title: L10n.interrupt, style: .destructive) { [unowned self] _ in
-                            self.resultSubject.send(.cashOutInterupted)
-                        }
-                    ]
-                )
-            })
             .store(in: &subscriptions)
 
         viewModel.send
