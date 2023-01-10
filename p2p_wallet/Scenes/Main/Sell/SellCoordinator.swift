@@ -26,7 +26,7 @@ final class SellCoordinator: Coordinator<SellCoordinatorResult> {
     // TODO: Pass initial amount in token to view model
     private let initialAmountInToken: Double?
     private var isCompleted = false
-    private var shouldHideRemoveButtonOnFistApearance = false
+    private var shouldHideRemoveButtonOnFirstApearance = false
 
     // MARK: - Initializer
 
@@ -78,11 +78,11 @@ final class SellCoordinator: Coordinator<SellCoordinatorResult> {
     private func navigate(to scene: SellNavigation) -> AnyPublisher<Void, Never> {
         switch scene {
         case .webPage(let url):
-            self.shouldHideRemoveButtonOnFistApearance = true
             return navigateToProviderWebPage(url: url)
                 .deallocatedPublisher()
                 .handleEvents(receiveCompletion: { [weak self] _ in
                     self?.viewModel.warmUp()
+                    self?.shouldHideRemoveButtonOnFirstApearance = true
                 }).eraseToAnyPublisher()
 
         case .showPending(let transactions, let fiat):
@@ -100,7 +100,7 @@ final class SellCoordinator: Coordinator<SellCoordinatorResult> {
             )
                 .handleEvents(receiveOutput: { [weak self] result, sellTransaction in
                     guard let self = self else { return }
-                    self.shouldHideRemoveButtonOnFistApearance = false
+                    self.shouldHideRemoveButtonOnFirstApearance = false
                     switch result {
                     case .transactionRemoved:
                         self.navigationController.popViewController(animated: true)

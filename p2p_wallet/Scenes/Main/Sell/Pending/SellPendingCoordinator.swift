@@ -25,15 +25,15 @@ final class SellPendingCoordinator: Coordinator<SellPendingCoordinatorResult> {
     private let transaction: SellDataServiceTransaction
     private let fiat: any ProviderFiat
     private var resultSubject = PassthroughSubject<SellPendingCoordinatorResult, Never>()
-    private var shouldHideRemoveButtonOnFistApearance: Bool
+    private var shouldHideRemoveButtonOnFirstApearance: Bool
 
     // MARK: - Initializer
 
-    init(transaction: SellDataServiceTransaction, fiat: any ProviderFiat, navigationController: UINavigationController, shouldHideRemoveButtonOnFistApearance: Bool = false) {
+    init(transaction: SellDataServiceTransaction, fiat: any ProviderFiat, navigationController: UINavigationController, shouldHideRemoveButtonOnFirstApearance: Bool = false) {
         self.navigationController = navigationController
         self.transaction = transaction
         self.fiat = fiat
-        self.shouldHideRemoveButtonOnFistApearance = shouldHideRemoveButtonOnFistApearance
+        self.shouldHideRemoveButtonOnFirstApearance = shouldHideRemoveButtonOnFirstApearance
     }
 
     // MARK: - Methods
@@ -50,7 +50,7 @@ final class SellPendingCoordinator: Coordinator<SellPendingCoordinatorResult> {
                 fiatAmount: transaction.quoteCurrencyAmount,
                 currency: fiat,
                 receiverAddress: transaction.depositWallet,
-                shouldHideRemoveButtonOnFistApearance: shouldHideRemoveButtonOnFistApearance
+                shouldHideRemoveButtonOnFistApearance: shouldHideRemoveButtonOnFirstApearance
             )
         )
         
