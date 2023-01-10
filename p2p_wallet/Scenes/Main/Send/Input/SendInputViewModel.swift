@@ -26,7 +26,7 @@ final class SendInputViewModel: BaseViewModel, ObservableObject {
     let tokenViewModel: SendInputTokenViewModel
 
     @Published var status: Status = .initializing
-    
+
     #if !RELEASE
     @Published var calculationDebugText: String = ""
     #endif
@@ -161,52 +161,6 @@ final class SendInputViewModel: BaseViewModel, ObservableObject {
                     let feeRelayerContextManager = Resolver.resolve(FeeRelayerContextManager.self)
                     return try await feeRelayerContextManager.getCurrentContext()
                 }))
-            
-            #if !RELEASE
-            let context = try await Resolver.resolve(FeeRelayerContextManager.self)
-                .getCurrentContext()
-            let relayAccountStatus = context.relayAccountStatus
-            let relayAccountBalance = context.relayAccountStatus.balance ?? 0
-            let minRelayAccountBalance = context.minimumRelayAccountBalance
-            let feeInSOL = currentState.fee.total
-            let feeInToken = currentState.feeInToken.total
-            let exchangeRate: Double
-            
-            if feeInSOL != 0 {
-                exchangeRate = feeInToken.convertToBalance(decimals: currentState.tokenFee.decimals) / feeInSOL.convertToBalance(decimals: 9)
-            } else {
-                exchangeRate = 0
-            }
-            
-            var mark = "+"
-            let remainder = max(relayAccountBalance, minRelayAccountBalance) - min(relayAccountBalance, minRelayAccountBalance)
-            if relayAccountBalance < minRelayAccountBalance {
-                mark = "-"
-            }
-            
-            let expectedTransactionFee: UInt64
-            
-            if feeInSOL > 0 {
-                if mark == "+" {
-                    expectedTransactionFee = feeInSOL + remainder
-                } else if feeInSOL > remainder {
-                    expectedTransactionFee = feeInSOL - remainder
-                } else {
-                    expectedTransactionFee = 0
-                }
-            } else {
-                expectedTransactionFee = 0
-            }
-            
-            calculationDebugText = relayAccountStatus.description + " (A)\n"
-            calculationDebugText += "minRelayAccountBalance = \(minRelayAccountBalance) (B)\n"
-            calculationDebugText += "remainder (A - B) = \(mark)\(remainder) (R)\n"
-            calculationDebugText += "expected transaction fee in SOL = \(expectedTransactionFee) (E)\n"
-            calculationDebugText += "needed topUp amount (real fee) in SOL (E - R) = \(feeInSOL) (S)\n"
-            calculationDebugText += "expected transaction fee in Token = \(feeInToken) (T)\n"
-            calculationDebugText += "exchange rate (T/S) => 1 SOL = \(exchangeRate) (e)\n"
-            #endif
-            
 
             switch nextState.status {
             case .error(reason: .initializeFailed(_)):
@@ -223,10 +177,64 @@ final class SendInputViewModel: BaseViewModel, ObservableObject {
             self.inputAmountViewModel.isFirstResponder = true
         }
     }
+
+    func updateDebugText() async throws {
+        let context = try await Resolver.resolve(FeeRelayerContextManager.self)
+            .getCurrentContext()
+        let relayAccountStatus = context.relayAccountStatus
+        let relayAccountBalance = context.relayAccountStatus.balance ?? 0
+        let minRelayAccountBalance = context.minimumRelayAccountBalance
+        let feeInSOL = currentState.fee.total
+        let feeInToken = currentState.feeInToken.total
+        let exchangeRate: Double
+
+        if feeInSOL != 0 {
+            exchangeRate = feeInToken.convertToBalance(decimals: currentState.tokenFee.decimals) / feeInSOL.convertToBalance(decimals: 9)
+        } else {
+            exchangeRate = 0
+        }
+
+        var mark = "+"
+        let remainder = max(relayAccountBalance, minRelayAccountBalance) - min(relayAccountBalance, minRelayAccountBalance)
+        if relayAccountBalance < minRelayAccountBalance {
+            mark = "-"
+        }
+
+        let expectedTransactionFee: UInt64
+
+        if feeInSOL > 0 {
+            if mark == "+" {
+                expectedTransactionFee = feeInSOL + remainder
+            } else if feeInSOL > remainder {
+                expectedTransactionFee = feeInSOL - remainder
+            } else {
+                expectedTransactionFee = 0
+            }
+        } else {
+            expectedTransactionFee = 0
+        }
+
+        calculationDebugText = relayAccountStatus.description + " (A)\n"
+        calculationDebugText += "minRelayAccountBalance = \(minRelayAccountBalance) (B)\n"
+        calculationDebugText += "remainder (A - B) = \(mark)\(remainder) (R)\n"
+        calculationDebugText += "expected transaction fee in SOL = \(expectedTransactionFee) (E)\n"
+        calculationDebugText += "needed topUp amount (real fee) in SOL (E - R) = \(feeInSOL) (S)\n"
+        calculationDebugText += "expected transaction fee in Token = \(feeInToken) (T)\n"
+        calculationDebugText += "exchange rate (T/S) => 1 SOL = \(exchangeRate) (e)\n"
+    }
 }
 
 private extension SendInputViewModel {
     func bind() {
+        #if !RELEASE
+        stateMachine.statePublisher
+            .receive(on: DispatchQueue.main)
+            .sink { [weak self] value in
+                Task { try await self?.updateDebugText() }
+            }
+            .store(in: &subscriptions)
+        #endif
+        
         stateMachine.statePublisher
             .receive(on: DispatchQueue.main)
             .sink { [weak self] value in
@@ -336,7 +344,7 @@ private extension SendInputViewModel {
         $status
             .sink { [weak self] value in
                 guard value == .ready else { return }
-                DispatchQueue.main.asyncAfter(deadline: .now() + 0.5, execute: { self?.openKeyboard() })
+                DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) { self?.openKeyboard() }
             }
             .store(in: &subscriptions)
     }
@@ -394,7 +402,7 @@ private extension SendInputViewModel {
 
     func checkMaxButtonIfNeeded() {
         guard currentState.token.isNativeSOL else { return }
-        let range = currentState.maxAmountInputInSOLWithLeftAmount..<currentState.maxAmountInputInToken
+        let range = currentState.maxAmountInputInSOLWithLeftAmount ..< currentState.maxAmountInputInToken
         if range.contains(currentState.amountInToken) {
             if !wasMaxWarningToastShown {
                 handleSuccess(text: L10n.weLeftAMinimumSOLBalanceToSaveTheAccountAddress)
@@ -464,9 +472,9 @@ private extension SendInputViewModel {
         await MainActor.run {
             self.actionButtonViewModel.showFinished = true
         }
-        
+
         try? await Task.sleep(nanoseconds: 500_000_000)
-        
+
         await MainActor.run {
             let transaction = SendTransaction(state: self.currentState) {
                 try? await Resolver.resolve(SendHistoryService.self).insert(recipient)
