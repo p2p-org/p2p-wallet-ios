@@ -8,8 +8,6 @@ enum SendTransactionDetailsCoordinatorResult {
 }
 
 final class SendTransactionDetailsCoordinator: Coordinator<SendTransactionDetailsCoordinatorResult> {
-    private var transition: PanelTransition?
-    private var viewController: UIViewController?
 
     private let parentController: UIViewController
     private var subject = PassthroughSubject<SendTransactionDetailsCoordinatorResult, Never>()
@@ -23,36 +21,40 @@ final class SendTransactionDetailsCoordinator: Coordinator<SendTransactionDetail
 
     override func start() -> AnyPublisher<SendTransactionDetailsCoordinatorResult, Never> {
         let viewModel = SendTransactionDetailViewModel(stateMachine: sendInputViewModel.stateMachine)
-        viewModel.cancelSubject.sink(receiveValue: { [weak self] in
-            self?.viewController?.dismiss(animated: true)
-            self?.subject.send(completion: .finished)
-        })
-        .store(in: &subscriptions)
-
-        viewModel.feePrompt.sink { [weak self] tokens in
-            guard let self = self else { return }
-            self.viewController?.dismiss(animated: true)
-            self.subject.send(.redirectToFeePrompt(availableTokens: tokens))
-        }
-        .store(in: &subscriptions)
 
         let view = SendTransactionDetailView(viewModel: viewModel)
 
-        transition = PanelTransition()
-        transition?.containerHeight = view.viewHeight
-        let viewController = UIHostingController(rootView: view, ignoresKeyboard: true)
+        let viewController = UIBottomSheetHostingController(rootView: view, ignoresKeyboard: true)
         viewController.view.layer.cornerRadius = 20
-        viewController.transitioningDelegate = transition
-        viewController.modalPresentationStyle = .custom
+        
+        var shouldSendCompletion = true
+        viewModel.cancelSubject.sink(receiveValue: { [weak viewController] in
+            viewController?.dismiss(animated: true)
+        })
+        .store(in: &subscriptions)
 
-        transition?.dimmClicked
+        viewModel.feePrompt.sink { [weak self, weak viewController] tokens in
+            guard let self = self else { return }
+            shouldSendCompletion = false
+            viewController?.dismiss(animated: true)
+            self.subject.send(.redirectToFeePrompt(availableTokens: tokens))
+        }
+        .store(in: &subscriptions)
+        
+        viewModel.$cellModels
+            .receive(on: RunLoop.main)
+            .sink { [weak viewController] _ in
+                viewController?.updatePresentationLayout(animated: true)
+            }
+            .store(in: &subscriptions)
+        
+        viewController.deallocatedPublisher()
+            .filter {shouldSendCompletion}
             .sink { [weak self] in
-                self?.viewController?.dismiss(animated: true)
                 self?.subject.send(completion: .finished)
             }
             .store(in: &subscriptions)
-        parentController.present(viewController, animated: true)
-        self.viewController = viewController
+        parentController.present(viewController, interactiveDismissalType: .standard)
 
         return subject.eraseToAnyPublisher()
     }

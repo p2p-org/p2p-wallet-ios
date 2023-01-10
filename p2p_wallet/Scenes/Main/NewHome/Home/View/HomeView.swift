@@ -38,6 +38,7 @@ struct HomeView: View {
                 ) { [globalAppState] in
                     globalAppState.shouldPlayAnimationOnHome = false
                 }
+                .allowsHitTesting(false)
                 .ignoresSafeArea(.all)
             }
         }

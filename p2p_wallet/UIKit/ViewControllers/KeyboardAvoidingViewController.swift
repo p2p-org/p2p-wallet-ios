@@ -77,7 +77,9 @@ final class KeyboardAvoidingViewController<Content: View>: UIViewController {
     @objc private func activityHandler(_ notification: Notification) {
         switch notification.name {
         case UIApplication.didBecomeActiveNotification:
-            openKeyboard()
+            if presentedViewController == nil && navigationController?.presentedViewController == nil {
+                openKeyboard()
+            }
         case UIApplication.didEnterBackgroundNotification:
             hideKeyboard()
         default:
