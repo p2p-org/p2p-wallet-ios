@@ -32,6 +32,9 @@ struct SellView: View {
         .onAppear {
             viewModel.isEnteringBaseAmount = true
         }
+        .onForeground {
+            viewModel.isEnteringBaseAmount = true
+        }
     }
 
     var balanceEmptyErrorView: some View {
