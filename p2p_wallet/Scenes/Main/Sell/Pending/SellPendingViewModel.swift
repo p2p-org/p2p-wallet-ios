@@ -90,6 +90,6 @@ extension SellPendingViewModel {
         let fiatAmount: Double
         let currency: any ProviderFiat
         let receiverAddress: String
-        let shouldHideRemoveButtonOnFistApearance: Bool
+        let shouldHideRemoveButtonOnFirstApearance: Bool
     }
 }

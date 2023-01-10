@@ -45,7 +45,7 @@ struct SellPendingView: View {
                     )
                     .disabled(viewModel.isRemoving)
 
-                    if !viewModel.model.shouldHideRemoveButtonOnFistApearance {
+                    if !viewModel.model.shouldHideRemoveButtonOnFirstApearance {
                         Button(
                             action: {
                                 viewModel.removeClicked()
@@ -147,7 +147,7 @@ struct SellPendingView_Previews: PreviewProvider {
                     fiatAmount: 300.05,
                     currency: MoonpaySellDataServiceProvider.MoonpayFiat.eur,
                     receiverAddress: "FfRBerfgeritjg43fBeJEr",
-                    shouldHideRemoveButtonOnFistApearance: false
+                    shouldHideRemoveButtonOnFirstApearance: false
                 )
             )
         )
