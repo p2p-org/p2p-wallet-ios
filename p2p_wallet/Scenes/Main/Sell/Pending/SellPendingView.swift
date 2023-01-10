@@ -45,25 +45,27 @@ struct SellPendingView: View {
                     )
                     .disabled(viewModel.isRemoving)
 
-                    Button(
-                        action: {
-                            viewModel.removeClicked()
-                        },
-                        label: {
-                            Group {
-                                if viewModel.isRemoving {
-                                    ProgressView()
-                                } else {
-                                    Text(L10n.removeFromHistory)
+                    if !viewModel.model.shouldHideRemoveButtonOnFirstAppearance {
+                        Button(
+                            action: {
+                                viewModel.removeClicked()
+                            },
+                            label: {
+                                Group {
+                                    if viewModel.isRemoving {
+                                        ProgressView()
+                                    } else {
+                                        Text(L10n.removeFromHistory)
+                                    }
                                 }
+                                .foregroundColor(Color(Asset.Colors.night.color))
+                                .font(uiFont: .font(of: .text2, weight: .semibold))
+                                .frame(height: 56)
+                                
                             }
-                            .foregroundColor(Color(Asset.Colors.night.color))
-                            .font(uiFont: .font(of: .text2, weight: .semibold))
-                            .frame(height: 56)
-                            
-                        }
-                    )
-                    .disabled(viewModel.isRemoving)
+                        )
+                        .disabled(viewModel.isRemoving)
+                    }
                 }
             }
             .padding(.bottom, 16)
@@ -145,7 +147,8 @@ struct SellPendingView_Previews: PreviewProvider {
                     tokenAmount: 5,
                     fiatAmount: 300.05,
                     currency: MoonpaySellDataServiceProvider.MoonpayFiat.eur,
-                    receiverAddress: "FfRBerfgeritjg43fBeJEr"
+                    receiverAddress: "FfRBerfgeritjg43fBeJEr",
+                    shouldHideRemoveButtonOnFirstAppearance: false
                 )
             )
         )
