@@ -92,7 +92,8 @@ final class SellCoordinator: Coordinator<SellCoordinatorResult> {
                         to: SellPendingCoordinator(
                             transaction: transaction,
                             fiat: fiat,
-                            navigationController: navigationController
+                            navigationController: navigationController,
+                            shouldHideRemoveButtonOnFirstApearance: shouldHideRemoveButtonOnFirstApearance
                         )
                     )
                     .map {($0, transaction)}
