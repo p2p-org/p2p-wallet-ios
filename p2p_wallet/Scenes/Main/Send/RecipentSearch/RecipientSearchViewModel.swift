@@ -88,6 +88,7 @@ class RecipientSearchViewModel: ObservableObject {
             .store(in: &subscriptions)
 
         $input
+            .removeDuplicates()
             .combineLatest($userWalletEnvironments)
             .debounce(for: 0.2, scheduler: DispatchQueue.main)
             .sink { [weak self] (query: String, _) in
