@@ -25,13 +25,15 @@ final class SellPendingCoordinator: Coordinator<SellPendingCoordinatorResult> {
     private let transaction: SellDataServiceTransaction
     private let fiat: any ProviderFiat
     private var resultSubject = PassthroughSubject<SellPendingCoordinatorResult, Never>()
+    private var shouldHideRemoveButtonOnFistApearance: Bool
 
     // MARK: - Initializer
 
-    init(transaction: SellDataServiceTransaction, fiat: any ProviderFiat, navigationController: UINavigationController) {
+    init(transaction: SellDataServiceTransaction, fiat: any ProviderFiat, navigationController: UINavigationController, shouldHideRemoveButtonOnFistApearance: Bool = false) {
         self.navigationController = navigationController
         self.transaction = transaction
         self.fiat = fiat
+        self.shouldHideRemoveButtonOnFistApearance = shouldHideRemoveButtonOnFistApearance
     }
 
     // MARK: - Methods
@@ -47,7 +49,8 @@ final class SellPendingCoordinator: Coordinator<SellPendingCoordinatorResult> {
                 tokenAmount: transaction.baseCurrencyAmount,
                 fiatAmount: transaction.quoteCurrencyAmount,
                 currency: fiat,
-                receiverAddress: transaction.depositWallet
+                receiverAddress: transaction.depositWallet,
+                shouldHideRemoveButtonOnFistApearance: shouldHideRemoveButtonOnFistApearance
             )
         )
         
@@ -91,7 +94,7 @@ final class SellPendingCoordinator: Coordinator<SellPendingCoordinatorResult> {
                 case .sent(let transaction):
                     self?.resultSubject.send(.transactionSent(transaction))
                 default:
-                    self?.resultSubject.send(.cancelled)
+                    break
                 }
             }
             .store(in: &subscriptions)
