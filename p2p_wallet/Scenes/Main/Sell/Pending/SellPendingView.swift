@@ -71,6 +71,7 @@ struct SellPendingView: View {
         .onAppear {
             viewModel.viewDidAppear()
         }
+        .navigationTitle(L10n.cashOut + " " + viewModel.model.tokenSymbol)
         .navigationBarBackButtonHidden(true)
     }
 
