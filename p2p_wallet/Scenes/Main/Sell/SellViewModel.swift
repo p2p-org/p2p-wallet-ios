@@ -134,8 +134,6 @@ class SellViewModel: BaseViewModel, ObservableObject {
     private func bind() {
         bindData()
         bindInput()
-
-        _ = reachability.check()
     }
     
     private func bindInput() {
@@ -260,7 +258,6 @@ class SellViewModel: BaseViewModel, ObservableObject {
             }
             .receive(on: RunLoop.main)
             .sink { [weak self] baseAmount, baseCurrencyCode, quoteCurrencyCode in
-                _ = self?.reachability.check()
                 self?.updateFeesAndExchangeRates(
                     baseAmount: baseAmount,
                     baseCurrencyCode: baseCurrencyCode,
@@ -280,6 +277,11 @@ class SellViewModel: BaseViewModel, ObservableObject {
                 }
             }
             .store(in: &subscriptions)
+
+        try? reachability.startNotifier()
+        reachability.status.sink { [unowned self] _ in
+            _ = self.reachability.check()
+        }.store(in: &subscriptions)
     }
     
     // MARK: - Helpers
@@ -343,7 +345,11 @@ class SellViewModel: BaseViewModel, ObservableObject {
                 // update data
                 await MainActor.run { [weak self] in
                     guard let self else { return }
-                    self.fee = .error(error)
+                    if reachability.connection != .unavailable {
+                        self.fee = .error(error)
+                    } else {
+                        self.fee = .loaded(self.fee.value ?? 0)
+                    }
                     if exchangeRate.value == nil {
                         self.exchangeRate = .error(error)
                     }
