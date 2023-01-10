@@ -2,6 +2,7 @@ import AnalyticsManager
 import Combine
 import Foundation
 import Combine
+import Reachability
 import Resolver
 import RxSwift
 import KeyAppUI
@@ -36,6 +37,7 @@ class SellViewModel: BaseViewModel, ObservableObject {
     @Injected private var dataService: any SellDataService
     @Injected private var actionService: any SellActionService
     @Injected private var analyticsManager: AnalyticsManager
+    @Injected private var reachability: Reachability
 
     // MARK: - Properties
 
@@ -275,6 +277,11 @@ class SellViewModel: BaseViewModel, ObservableObject {
                 }
             }
             .store(in: &subscriptions)
+
+        try? reachability.startNotifier()
+        reachability.status.sink { [unowned self] _ in
+            _ = self.reachability.check()
+        }.store(in: &subscriptions)
     }
     
     // MARK: - Helpers
@@ -335,11 +342,14 @@ class SellViewModel: BaseViewModel, ObservableObject {
                     self.exchangeRate = .loaded(sellQuote.baseCurrencyPrice)
                 }
             } catch {
-                print(baseAmount, baseCurrencyCode, quoteCurrencyCode, error)
                 // update data
                 await MainActor.run { [weak self] in
                     guard let self else { return }
-                    self.fee = .error(error)
+                    if reachability.connection != .unavailable {
+                        self.fee = .error(error)
+                    } else {
+                        self.fee = .loaded(self.fee.value ?? 0)
+                    }
                     if exchangeRate.value == nil {
                         self.exchangeRate = .error(error)
                     }
