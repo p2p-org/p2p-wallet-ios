@@ -50,7 +50,7 @@ final class SellPendingCoordinator: Coordinator<SellPendingCoordinatorResult> {
                 fiatAmount: transaction.quoteCurrencyAmount,
                 currency: fiat,
                 receiverAddress: transaction.depositWallet,
-                shouldHideRemoveButtonOnFistApearance: shouldHideRemoveButtonOnFirstApearance
+                shouldHideRemoveButtonOnFirstApearance: shouldHideRemoveButtonOnFirstApearance
             )
         )
         
