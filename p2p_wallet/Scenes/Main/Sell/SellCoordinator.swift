@@ -9,6 +9,7 @@ import Sell
 
 enum SellCoordinatorResult {
     case completed
+    case interupted
     case none
 }
 
@@ -105,9 +106,11 @@ final class SellCoordinator: Coordinator<SellCoordinatorResult> {
                     switch result {
                     case .transactionRemoved:
                         self.navigationController.popViewController(animated: true)
-                    case .cashOutInterupted, .cancelled:
+                    case .cancelled:
                         // pop to rootViewController and resultSubject.send(.none)
                         self.navigationController.popToRootViewController(animated: true)
+                    case .cashOutInterupted:
+                        self.resultSubject.send(.interupted)
                     case .transactionSent(let transaction):
                         // mark as completed
                         self.isCompleted = true
