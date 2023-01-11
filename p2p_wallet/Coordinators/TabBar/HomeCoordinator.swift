@@ -174,6 +174,11 @@ final class HomeCoordinator: Coordinator<Void> {
                 switch result {
                 case .completed:
                     self?.tabBarController.changeItem(to: .history)
+                case .interupted:
+                    (self?.tabBarController.selectedViewController as? UINavigationController)?.popToRootViewController(animated: true)
+                    DispatchQueue.main.asyncAfter(deadline: .now() + 0.2) {
+                        self?.tabBarController.changeItem(to: .history)
+                    }
                 case .none:
                     break
                 }

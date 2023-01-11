@@ -9,6 +9,7 @@ import Sell
 
 enum SellCoordinatorResult {
     case completed
+    case interupted
     case none
 }
 
@@ -101,13 +102,18 @@ final class SellCoordinator: Coordinator<SellCoordinatorResult> {
             )
                 .handleEvents(receiveOutput: { [weak self] result, sellTransaction in
                     guard let self = self else { return }
-                    self.shouldHideRemoveButtonOnFirstAppearance = false
                     switch result {
                     case .transactionRemoved:
                         self.navigationController.popViewController(animated: true)
-                    case .cashOutInterupted, .cancelled:
+                    case .cancelled:
                         // pop to rootViewController and resultSubject.send(.none)
                         self.navigationController.popToRootViewController(animated: true)
+                    case .cashOutInterupted:
+                        if self.shouldHideRemoveButtonOnFirstAppearance {
+                            self.resultSubject.send(.interupted)
+                        } else {
+                            self.navigationController.popToRootViewController(animated: true)
+                        }
                     case .transactionSent(let transaction):
                         // mark as completed
                         self.isCompleted = true
@@ -123,6 +129,7 @@ final class SellCoordinator: Coordinator<SellCoordinatorResult> {
                         // Show status
                         self.navigateToSendTransactionStatus(model: transaction)
                     }
+                    self.shouldHideRemoveButtonOnFirstAppearance = false
                 })
                 .map { _ in }
                 .eraseToAnyPublisher()

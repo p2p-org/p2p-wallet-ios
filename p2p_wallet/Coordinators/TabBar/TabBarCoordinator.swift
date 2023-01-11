@@ -259,7 +259,7 @@ final class TabBarCoordinator: Coordinator<Void> {
                 sellCoordinator?.start()
                     .sink { [weak self] result in
                         switch result {
-                        case .completed:
+                        case .completed, .interupted:
                             self?.tabBarController.changeItem(to: .history)
                         case .none:
                             break
