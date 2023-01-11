@@ -96,6 +96,7 @@ struct SendTransactionDetailView: View {
                                     Text(subtitle.0)
                                         .foregroundColor(Color(model.isFree ? Asset.Colors.mint.color : Asset.Colors.night.color))
                                         .font(uiFont: .font(of: .label1, weight: model.isFree ? .semibold : .regular))
+                                        .fixedSize(horizontal: false, vertical: true)
                                     if let additionalText = subtitle.1 {
                                         Text("(\(additionalText))")
                                             .foregroundColor(Color(Asset.Colors.mountain.color))
