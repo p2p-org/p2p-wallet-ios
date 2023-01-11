@@ -196,6 +196,7 @@ class RecipientSearchViewModel: ObservableObject {
         do {
             try await Resolver.resolve(SwapServiceType.self).reload()
             loadingState = .loaded
+            isFirstResponder = true
         } catch {
             loadingState = .error(error.readableDescription)
         }
