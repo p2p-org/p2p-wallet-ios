@@ -10,8 +10,10 @@ import SwiftUI
 
 class SellPendingHostingController<Content: View>: UIHostingController<Content> {
     var backButtonHandler: (() -> Void)?
+    var shouldShowAlert: Bool
     
-    override init(rootView: Content) {
+    init(rootView: Content, shouldShowAlert: Bool) {
+        self.shouldShowAlert = shouldShowAlert
         super.init(rootView: rootView)
         setNavigationBar()
     }
@@ -28,6 +30,10 @@ class SellPendingHostingController<Content: View>: UIHostingController<Content> 
     }
 
     @objc func backAction(sender: UIBarButtonItem) {
+        guard shouldShowAlert else {
+            self.backButtonHandler?()
+            return
+        }
         // custom actions here
         showAlert(
             title: L10n.areYouSure,
