@@ -102,7 +102,6 @@ final class SellCoordinator: Coordinator<SellCoordinatorResult> {
             )
                 .handleEvents(receiveOutput: { [weak self] result, sellTransaction in
                     guard let self = self else { return }
-                    self.shouldHideRemoveButtonOnFirstAppearance = false
                     switch result {
                     case .transactionRemoved:
                         self.navigationController.popViewController(animated: true)
@@ -110,7 +109,11 @@ final class SellCoordinator: Coordinator<SellCoordinatorResult> {
                         // pop to rootViewController and resultSubject.send(.none)
                         self.navigationController.popToRootViewController(animated: true)
                     case .cashOutInterupted:
-                        self.resultSubject.send(.interupted)
+                        if self.shouldHideRemoveButtonOnFirstAppearance {
+                            self.resultSubject.send(.interupted)
+                        } else {
+                            self.navigationController.popToRootViewController(animated: true)
+                        }
                     case .transactionSent(let transaction):
                         // mark as completed
                         self.isCompleted = true
@@ -126,6 +129,7 @@ final class SellCoordinator: Coordinator<SellCoordinatorResult> {
                         // Show status
                         self.navigateToSendTransactionStatus(model: transaction)
                     }
+                    self.shouldHideRemoveButtonOnFirstAppearance = false
                 })
                 .map { _ in }
                 .eraseToAnyPublisher()
