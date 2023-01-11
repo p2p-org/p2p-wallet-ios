@@ -27,7 +27,6 @@ struct SellInputView: View {
                     baseAmountInputView
 
                     quoteAmountInputView
-                        .blockStyle()
 
                     VStack(alignment: .leading, spacing: 0) {
                         exchangeRateView
@@ -78,7 +77,7 @@ struct SellInputView: View {
                     .apply(style: .text3)
                     .foregroundColor(Color(Asset.Colors.night.color).opacity(0.3))
             }
-                .blockStyle(hasError: viewModel.inputError != nil)
+            .blockStyle(hasError: viewModel.inputError != nil && viewModel.isEnteringQuoteAmount == false)
         }
         .padding(.top, 44)
     }
@@ -118,7 +117,7 @@ struct SellInputView: View {
                 .foregroundColor(Color(Asset.Colors.night.color.withAlphaComponent(0.3)))
                 .font(uiFont: UIFont.font(of: .title1, weight: .bold))
         }
-        .font(uiFont: UIFont.font(of: .title1, weight: .bold))
+        .blockStyle(hasError: viewModel.inputError != nil && viewModel.isEnteringQuoteAmount)
     }
 
     var exchangeRateView: some View {
