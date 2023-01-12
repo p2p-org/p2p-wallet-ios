@@ -211,5 +211,9 @@
 	<string>Light</string>
 	<key>UIViewControllerBasedStatusBarAppearance</key>
 	<true/>
+	<key>IntercomUniversalLinkDomains</key>
+	<array>
+		<string>key.app</string>
+	</array>
 </dict>
 </plist>
