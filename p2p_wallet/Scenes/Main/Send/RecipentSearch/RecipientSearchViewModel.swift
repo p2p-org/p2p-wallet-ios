@@ -128,6 +128,7 @@ class RecipientSearchViewModel: ObservableObject {
     func searchQR(query: String, autoSelectTheOnlyOneResultMode: AutoSelectTheOnlyOneResultMode) {
         fromQR = true
         self.autoSelectTheOnlyOneResultMode = autoSelectTheOnlyOneResultMode
+        input.removeAll() // need to trigger publisher update in case of the same input
         input = query
     }
 
