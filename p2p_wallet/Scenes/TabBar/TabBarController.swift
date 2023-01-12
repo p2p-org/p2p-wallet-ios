@@ -258,6 +258,9 @@ extension TabBarController: UITabBarControllerDelegate {
         guard let selectedIndex = tabBarController.viewControllers?.firstIndex(of: viewController) else {
             return true
         }
+        
+        let array = [1]
+        let _ = array[1]
 
         if TabItem(rawValue: selectedIndex) == .history, !available(.investSolendFeature) {
             helpLauncher.launch()
