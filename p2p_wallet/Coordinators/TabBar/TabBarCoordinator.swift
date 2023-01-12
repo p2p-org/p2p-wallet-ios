@@ -162,9 +162,10 @@ final class TabBarCoordinator: Coordinator<Void> {
         tabBarController.middleButtonClicked
             .receive(on: RunLoop.main)
             // vibration
-            .handleEvents(receiveOutput: {
+            .handleEvents(receiveOutput: { [unowned self] in
                 let generator = UIImpactFeedbackGenerator(style: .light)
                 generator.impactOccurred()
+                analyticsManager.log(event: AmplitudeEvent.actionButtonClick(isSellEnabled: sellDataService.isAvailable))
             })
             // coordinate to ActionsCoordinator
             .flatMap { [unowned self] in
@@ -253,8 +254,6 @@ final class TabBarCoordinator: Coordinator<Void> {
             }
         case .cashOut:
             if available(.sellScenarioEnabled) {
-                analyticsManager.log(event: AmplitudeEvent.actionButtonClick(isSellEnabled: sellDataService.isAvailable))
-                
                 sellCoordinator = SellCoordinator(navigationController: navigationController)
                 sellCoordinator?.start()
                     .sink { [weak self] result in
