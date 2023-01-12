@@ -148,23 +148,25 @@ extension Double {
         roundingMode: NumberFormatter.RoundingMode? = nil,
         customFormattForLessThan1E_2: Bool = false
     ) -> String {
-        let formattedString: String
-        
+        // amount < 0.01
         if customFormattForLessThan1E_2 && self < 0.01 {
             if currency == .usd {
-                formattedString = "< \(currency.symbol) 0.01"
+                return "< \(currency.symbol) 0.01"
             } else {
-                formattedString = "< 0.01 \(currency.symbol)"
+                return "< 0.01 \(currency.symbol)"
             }
             
-        } else {
-            formattedString = toString(maximumFractionDigits: maximumFractionDigits, roundingMode: roundingMode)
         }
         
-        if currency == .usd {
-            return "\(currency.symbol) \(formattedString)"
-        } else {
-            return "\(formattedString) \(currency.symbol)"
+        // amount >= 0.01
+        else {
+            let formattedString = toString(maximumFractionDigits: maximumFractionDigits, roundingMode: roundingMode)
+            
+            if currency == .usd {
+                return "\(currency.symbol) \(formattedString)"
+            } else {
+                return "\(formattedString) \(currency.symbol)"
+            }
         }
     }
 
