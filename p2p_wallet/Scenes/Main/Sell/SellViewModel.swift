@@ -269,9 +269,14 @@ class SellViewModel: BaseViewModel, ObservableObject {
         // analytics
         $status
             .sink { [weak self] status in
+                guard let self = self else { return }
                 switch status {
                 case .error:
-                    self?.analyticsManager.log(event: AmplitudeEvent.sellClickedSorryMinAmount)
+                    self.analyticsManager.log(event: AmplitudeEvent.sellClickedServerError)
+                case .ready:
+                    if self.isMoreBaseCurrencyNeeded {
+                        self.analyticsManager.log(event: AmplitudeEvent.sellClickedSorryMinAmount)
+                    }
                 default:
                     break
                 }
@@ -297,16 +302,13 @@ class SellViewModel: BaseViewModel, ObservableObject {
         inputError = nil
         if amount < minBaseAmount {
             inputError = .amountIsTooSmall(minBaseAmount: minBaseAmount, baseCurrencyCode: baseCurrencyCode)
-            analyticsManager.log(event: AmplitudeEvent.sellClickedServerError)
         } else if amount > maxBaseProviderAmount {
             inputError = .exceedsProviderLimit(
                 maxBaseProviderAmount: maxBaseProviderAmount,
                 baseCurrencyCode: baseCurrencyCode
             )
-            analyticsManager.log(event: AmplitudeEvent.sellClickedServerError)
         } else if amount > (maxBaseAmount ?? 0) {
             inputError = .insufficientFunds(baseCurrencyCode: baseCurrencyCode)
-            analyticsManager.log(event: AmplitudeEvent.sellClickedServerError)
         }
     }
     
