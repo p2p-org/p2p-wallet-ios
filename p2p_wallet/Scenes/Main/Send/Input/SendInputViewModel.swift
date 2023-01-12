@@ -381,7 +381,7 @@ private extension SendInputViewModel {
                 isEnabled: false,
                 title: L10n.insufficientFunds
             )
-
+            checkMaxButtonIfNeeded()
         default:
             wasMaxWarningToastShown = false
             inputAmountViewModel.isError = false
