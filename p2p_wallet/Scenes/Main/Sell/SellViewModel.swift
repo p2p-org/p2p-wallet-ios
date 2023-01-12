@@ -297,7 +297,7 @@ class SellViewModel: BaseViewModel, ObservableObject {
         inputError = nil
         if amount < minBaseAmount {
             inputError = .amountIsTooSmall(minBaseAmount: minBaseAmount, baseCurrencyCode: baseCurrencyCode)
-            analyticsManager.log(event: AmplitudeEvent.sellClickedServerError)
+            analyticsManager.log(event: AmplitudeEvent.sellClickedSorryMinAmount)
         } else if amount > maxBaseProviderAmount {
             inputError = .exceedsProviderLimit(
                 maxBaseProviderAmount: maxBaseProviderAmount,
