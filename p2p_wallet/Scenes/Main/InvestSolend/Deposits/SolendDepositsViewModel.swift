@@ -63,7 +63,7 @@ class SolendDepositsViewModel: ObservableObject {
                         title: userDeposit.depositedAmount,
                         subtitle: L10n.yielding + " \((invest.market?.supplyInterest ?? "0").formatApy) APY",
                         rightTitle: (self.priceService.currentPrice(for: asset.symbol)?.value * userDeposit
-                            .depositedAmount.double).fiatAmount(currency: Defaults.fiat)
+                            .depositedAmount.double).fiatAmountFormattedString(currency: Defaults.fiat)
                     )
                 }
             }

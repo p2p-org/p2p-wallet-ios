@@ -81,7 +81,7 @@ class DepositSolendViewModel: ObservableObject {
     }
 
     var headerViewTitle: String {
-        maxAmount().tokenAmount(symbol: invest.asset.symbol)
+        maxAmount().tokenAmountFormattedString(symbol: invest.asset.symbol)
     }
 
     var headerViewSubtitle: String {
@@ -93,7 +93,7 @@ class DepositSolendViewModel: ObservableObject {
     var headerViewRightTitle: String {
         strategy == .deposit ?
             "\((invest.market?.supplyInterest ?? "0").formatApy)" :
-            tokenToAmount(amount: maxAmount()).fiatAmount(currency: fiat)
+            tokenToAmount(amount: maxAmount()).fiatAmountFormattedString(currency: fiat)
     }
 
     var headerViewRightSubtitle: String? {
@@ -138,7 +138,7 @@ class DepositSolendViewModel: ObservableObject {
         tokenFiatPrice = priceService.currentPrice(for: invest.asset.symbol)?.value
 
         feeText = defaultFeeText()
-        maxText = useMaxTitle + " \(maxAmount().tokenAmount(symbol: invest.asset.symbol))"
+        maxText = useMaxTitle + " \(maxAmount().tokenAmountFormattedString(symbol: invest.asset.symbol))"
 
         symbolSelected
             .combineLatest(
@@ -176,7 +176,7 @@ class DepositSolendViewModel: ObservableObject {
                 self.invest.userDeposit = deposit
                 DispatchQueue.main.async {
                     self.maxText = self
-                        .useMaxTitle + " \(self.maxAmount().tokenAmount(symbol: self.invest.asset.symbol))"
+                        .useMaxTitle + " \(self.maxAmount().tokenAmountFormattedString(symbol: self.invest.asset.symbol))"
                 }
             }
             .store(in: &subscriptions)
@@ -252,7 +252,7 @@ class DepositSolendViewModel: ObservableObject {
                 if maxAmount < inputLamport.convertToBalance(decimals: self.invest.asset.decimals) {
                     self
                         .buttonText =
-                        "\(L10n.maxAmountIs) \(maxAmount.tokenAmount(symbol: self.invest.asset.symbol))"
+                        "\(L10n.maxAmountIs) \(maxAmount.tokenAmountFormattedString(symbol: self.invest.asset.symbol))"
                     self.feeText = L10n.enterTheCorrectAmountToContinue
                     self.hasError = true
                     self.loading = false
@@ -318,8 +318,8 @@ class DepositSolendViewModel: ObservableObject {
         // Text label
         let tokenAmount = self.amountFrom(lamports: total)
         let fiatAmount = self.tokenToAmount(amount: self.amountFrom(lamports: total))
-        let amountText = tokenAmount.tokenAmount(symbol: self.invest.asset.symbol) + " (" + fiatAmount
-            .fiatAmount(currency: self.fiat) + ")"
+        let amountText = tokenAmount.tokenAmountFormattedString(symbol: self.invest.asset.symbol) + " (" + fiatAmount
+            .fiatAmountFormattedString(currency: self.fiat) + ")"
         self.feeText = "\(L10n.excludingFeesYouLlDeposit) \(amountText)"
 
         self.detailItem.send(

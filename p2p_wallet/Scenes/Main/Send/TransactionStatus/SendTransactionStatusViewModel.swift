@@ -26,12 +26,12 @@ final class SendTransactionStatusViewModel: BaseViewModel, ObservableObject {
 
     init(transaction: SendTransaction) {
         token = transaction.walletToken.token
-        transactionFiatAmount = "-\(transaction.amountInFiat.fiatAmount())"
-        transactionCryptoAmount = transaction.amount.tokenAmount(symbol: transaction.walletToken.token.symbol)
+        transactionFiatAmount = "-\(transaction.amountInFiat.fiatAmountFormattedString())"
+        transactionCryptoAmount = transaction.amount.tokenAmountFormattedString(symbol: transaction.walletToken.token.symbol)
 
         let feeToken = transaction.payingFeeWallet.token
         let feeAmount: String? = transaction.feeInToken == .zero ? nil : transaction.feeInToken.total
-            .convertToBalance(decimals: feeToken.decimals).tokenAmount(symbol: feeToken.symbol)
+            .convertToBalance(decimals: feeToken.decimals).tokenAmountFormattedString(symbol: feeToken.symbol)
         let feeInfo = feeAmount ?? L10n.freePaidByKeyApp
 
         var recipient: String = RecipientFormatter.format(destination: transaction.recipient.address)
