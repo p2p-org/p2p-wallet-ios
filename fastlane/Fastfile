@@ -30,6 +30,8 @@ JIRA_BASE_URL = ENV["JIRA_BASE_URL"]
 
 GIT_CHANGELOG = ENV["GIT_CHANGELOG"]
 
+SENTRY_TOKEN = ENV["SENTRY_TOKEN"]
+
 def delete_temp_keychain(name)
   delete_keychain(
     name: name
@@ -213,6 +215,7 @@ platform :ios do
 
     # create release build for this feature
     create_release_build('ad-hoc', 'Test')
+    upload_dsym_to_analytic_providers
 
     # upload to firebase and browser stack
     upload_build(
@@ -234,6 +237,14 @@ platform :ios do
       sh("echo BRANCH_NAME=#{branch} >> $GITHUB_ENV")
       sh("echo BUILD_NUMBER=#{current_build} >> $GITHUB_ENV")
     end
+  end
+  
+  lane :upload_dsym_to_analytic_providers do
+    sentry_upload_dsym(
+      auth_token: SENTRY_TOKEN,
+      org_slug: 'p2p-wallet',
+      project_slug: 'ios',
+    )
   end
 
   lane :release do
@@ -299,6 +310,7 @@ platform :ios do
 
     # create release build
     create_release_build('app-store', 'Release')
+    upload_dsym_to_analytic_providers
 
     # upload to testflight
     pilot(

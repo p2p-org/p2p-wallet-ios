@@ -128,7 +128,7 @@ private extension ParsedTransaction {
                 pricesService: pricesService,
                 amountInToken: transaction.rawAmount,
                 symbol: transaction.source?.token.symbol
-            ).toString(maximumFractionDigits: 2)
+            ).orZero.toString(maximumFractionDigits: 2)
             return (tokens: fromAmount, usd: usd)
         case let transaction as SwapInfo:
             let fromAmount = transaction.sourceAmount?
