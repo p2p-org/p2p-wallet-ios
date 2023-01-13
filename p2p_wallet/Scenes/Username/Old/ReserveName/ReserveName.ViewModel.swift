@@ -41,7 +41,7 @@ extension ReserveName {
         private let reserveNameHandler: ReserveNameHandler?
         private lazy var manager: GT3CaptchaManager = {
             let manager = GT3CaptchaManager(
-                api1: NameServiceImpl.captchaAPI1Url,
+                api1: GlobalAppState.shared.nameServiceEndpoint + "/auth/gt/register",
                 api2: nil,
                 timeout: 10
             )
