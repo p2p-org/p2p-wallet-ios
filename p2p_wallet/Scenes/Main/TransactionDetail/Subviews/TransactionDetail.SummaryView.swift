@@ -36,7 +36,7 @@ extension TransactionDetail {
                                     .getAmountInCurrentFiat(
                                         amountInToken: transaction.rawAmount,
                                         symbol: transaction.source?.token.symbol
-                                    ).toString(maximumFractionDigits: 2)
+                                    ).orZero.toString(maximumFractionDigits: 2)
                             case let transaction as SwapInfo:
                                 view?.logoImageView.setUp(wallet: transaction.source)
                                 view?.titleLabel.text = transaction.sourceAmount?
@@ -45,7 +45,7 @@ extension TransactionDetail {
                                     .getAmountInCurrentFiat(
                                         amountInToken: transaction.sourceAmount,
                                         symbol: transaction.source?.token.symbol
-                                    ).toString(maximumFractionDigits: 2)
+                                    ).orZero.toString(maximumFractionDigits: 2)
                             default:
                                 break
                             }
@@ -73,6 +73,7 @@ extension TransactionDetail {
                                         amountInToken: transaction.destinationAmount,
                                         symbol: transaction.destination?.token.symbol
                                     )
+                                    .orZero
                                     .toString(maximumFractionDigits: 2)
                             default:
                                 break

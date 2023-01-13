@@ -1,7 +1,4 @@
 PODS:
-  - Action (5.0.0):
-    - RxCocoa (~> 6.0)
-    - RxSwift (~> 6.0)
   - Amplitude (8.3.1)
   - AnalyticsManager (1.0.0):
     - Amplitude (~> 8.3.0)
@@ -213,9 +210,9 @@ PODS:
     - SolanaPricesAPIs
     - SolanaSwift
     - TransactionParser
-  - Sentry (7.18.1):
-    - Sentry/Core (= 7.18.1)
-  - Sentry/Core (7.18.1)
+  - Sentry (7.31.5):
+    - Sentry/Core (= 7.31.5)
+  - Sentry/Core (7.31.5)
   - SkeletonUI (1.0.9)
   - SkeletonView (1.30.4)
   - SolanaPricesAPIs (1.0.0):
@@ -242,7 +239,6 @@ PODS:
   - TweetNacl (1.0.2)
 
 DEPENDENCIES:
-  - Action (= 5.0.0)
   - AnalyticsManager (from `https://github.com/p2p-org/key-app-kit-swift.git`, branch `feature/pwn-6422`)
   - AppsFlyerFramework
   - BECollectionView (from `https://github.com/bigearsenal/BECollectionView.git`, branch `master`)
@@ -288,7 +284,7 @@ DEPENDENCIES:
   - RxGesture (= 4.0.4)
   - RxSwift (= 6.5.0)
   - Send (from `https://github.com/p2p-org/key-app-kit-swift.git`, branch `feature/pwn-6422`)
-  - Sentry (from `https://github.com/getsentry/sentry-cocoa.git`, tag `7.18.1`)
+  - Sentry (from `https://github.com/getsentry/sentry-cocoa.git`, tag `7.31.5`)
   - SkeletonUI (from `https://github.com/p2p-org/SkeletonUI.git`, branch `master`)
   - SolanaPricesAPIs (from `https://github.com/p2p-org/key-app-kit-swift.git`, branch `feature/pwn-6422`)
   - SolanaSwift (from `https://github.com/p2p-org/solana-swift.git`, branch `main`)
@@ -302,7 +298,6 @@ DEPENDENCIES:
 
 SPEC REPOS:
   trunk:
-    - Action
     - Amplitude
     - AppAuth
     - AppsFlyerFramework
@@ -424,7 +419,7 @@ EXTERNAL SOURCES:
     :git: https://github.com/p2p-org/key-app-kit-swift.git
   Sentry:
     :git: https://github.com/getsentry/sentry-cocoa.git
-    :tag: 7.18.1
+    :tag: 7.31.5
   SkeletonUI:
     :branch: master
     :git: https://github.com/p2p-org/SkeletonUI.git
@@ -513,7 +508,7 @@ CHECKOUT OPTIONS:
     :git: https://github.com/p2p-org/key-app-kit-swift.git
   Sentry:
     :git: https://github.com/getsentry/sentry-cocoa.git
-    :tag: 7.18.1
+    :tag: 7.31.5
   SkeletonUI:
     :commit: 98225dbb0459477dfeac063e1c7d0750102325d1
     :git: https://github.com/p2p-org/SkeletonUI.git
@@ -531,7 +526,6 @@ CHECKOUT OPTIONS:
     :git: https://github.com/p2p-org/key-app-kit-swift.git
 
 SPEC CHECKSUMS:
-  Action: 47f1825511907b4fcd79dd7a7db9526c20f78018
   Amplitude: c25a44ad72b84e684fcf67c478c1fb5c95e286a3
   AnalyticsManager: 8c141df84886ab377bab4e662b9ebe26c1ea8509
   AppAuth: 8fca6b5563a5baef2c04bee27538025e4ceb2add
@@ -596,7 +590,7 @@ SPEC CHECKSUMS:
   RxSwift: 5710a9e6b17f3c3d6e40d6e559b9fa1e813b2ef8
   secp256k1.swift: a7e7a214f6db6ce5db32cc6b2b45e5c4dd633634
   Send: 74c8ef0bf6c144dbb95e7dbe056e66294d2595cf
-  Sentry: 2d70348d6247a29702a8317e710c5ba890672df5
+  Sentry: 4c9babff9034785067c896fd580b1f7de44da020
   SkeletonUI: b5c868e6917123e3d442d6cef9c71fe048175f3b
   SkeletonView: 5a050f6411e697abd4cda0a8d767013399dccd69
   SolanaPricesAPIs: 994fc864deab0dad370bc1509102f91d81324019
@@ -611,6 +605,6 @@ SPEC CHECKSUMS:
   TransactionParser: 3004420d52e7b1277dbcfd20b995a5de707705f3
   TweetNacl: 3abf4d1d2082b0114e7a67410e300892448951e6
 
-PODFILE CHECKSUM: 67f49a4d85d51d9a6ce44675dcc3014def245c72
+PODFILE CHECKSUM: 76c588f42501eec5de2c68bd41139106d509fe79
 
 COCOAPODS: 1.11.3
