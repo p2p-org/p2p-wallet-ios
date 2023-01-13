@@ -90,8 +90,8 @@ final class SendTransactionDetailViewModel: BaseViewModel, ObservableObject {
             mainText = L10n.freeLeftForToday(remainUsage)
             secondaryText = nil
         default:
-            mainText = amountFeeInToken.tokenAmount(symbol: state.tokenFee.symbol, roundingMode: .down)
-            secondaryText = amountFeeInFiat.fiatAmount(roundingMode: .down)
+            mainText = amountFeeInToken.tokenAmountFormattedString(symbol: state.tokenFee.symbol, roundingMode: .down)
+            secondaryText = amountFeeInFiat.fiatAmountFormattedString(roundingMode: .down)
         }
 
         return CellModel(
@@ -117,8 +117,8 @@ final class SendTransactionDetailViewModel: BaseViewModel, ObservableObject {
             type: .accountCreationFee,
             title: L10n.accountCreationFee,
             subtitle: [(
-                amountFeeInToken.tokenAmount(symbol: state.tokenFee.symbol, maximumFractionDigits: Int(state.tokenFee.decimals), roundingMode: .down),
-                amountFeeInFiat.fiatAmount(roundingMode: .down)
+                amountFeeInToken.tokenAmountFormattedString(symbol: state.tokenFee.symbol, maximumFractionDigits: Int(state.tokenFee.decimals), roundingMode: .down),
+                amountFeeInFiat.fiatAmountFormattedString(roundingMode: .down)
             )],
             image: .accountCreationFee,
             info: feeTokens == nil ? nil : { [weak self] in self?.feePrompt.send(feeTokens ?? []) },
@@ -154,8 +154,8 @@ final class SendTransactionDetailViewModel: BaseViewModel, ObservableObject {
         let amountInFiat: Double = amountInToken * (pricesService.currentPrice(for: token.symbol)?.value ?? 0)
 
         return (
-            amountInToken.tokenAmount(symbol: token.symbol, maximumFractionDigits: Int(token.decimals), roundingMode: .down),
-            amountInFiat.fiatAmount(roundingMode: .down)
+            amountInToken.tokenAmountFormattedString(symbol: token.symbol, maximumFractionDigits: Int(token.decimals), roundingMode: .down),
+            amountInFiat.fiatAmountFormattedString(roundingMode: .down)
         )
     }
 
