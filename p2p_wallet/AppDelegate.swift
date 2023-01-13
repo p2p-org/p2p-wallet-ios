@@ -93,6 +93,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
             print("Intercom.setDeviceToken error: ", error)
         }
         proxyAppDelegate.application(application, didRegisterForRemoteNotificationsWithDeviceToken: deviceToken)
+        Defaults.apnsDeviceToken = deviceToken
     }
 
     func application(
