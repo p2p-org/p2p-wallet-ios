@@ -26,7 +26,18 @@ class GlobalAppState: ObservableObject {
     }
     
     // Endpoints
-    @Published var nameServiceEndpoint: String = NameServiceImpl.endpoint
+    @Published var nameServiceEndpoint: String {
+        didSet {
+            Defaults.forcedNameServiceEndpoint = nameServiceEndpoint
+            ResolverScope.session.reset()
+        }
+    }
 
-    private init() {}
+    private init() {
+        if let forcedValue = Defaults.forcedNameServiceEndpoint {
+            nameServiceEndpoint = forcedValue
+        } else {
+            nameServiceEndpoint = "https://\(String.secretConfig("NAME_SERVICE_ENDPOINT_NEW")!)"
+        }
+    }
 }
