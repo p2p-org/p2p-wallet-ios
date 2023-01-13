@@ -37,6 +37,9 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         _ application: UIApplication,
         didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey: Any]?
     ) -> Bool {
+        // TODO: - Support custom fiat later
+        Defaults.fiat = .usd
+        
         UserDefaults.standard.set(false, forKey: "_UIConstraintBasedLayoutLogUnsatisfiable")
         // TODO: - Swizzle localization later
 //        Bundle.swizzleLocalization()
