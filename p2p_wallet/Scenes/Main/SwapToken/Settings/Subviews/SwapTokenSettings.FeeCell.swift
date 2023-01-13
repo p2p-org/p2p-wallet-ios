@@ -39,7 +39,7 @@ extension SwapTokenSettings {
         func setUp(content: FeeCellContent) -> Self {
             if let wallet = content.wallet {
                 image.setUp(wallet: wallet)
-                amountLabel.text = "\(wallet.amount.toString(maximumFractionDigits: 9))"
+                amountLabel.text = "\(wallet.amount.orZero.toString(maximumFractionDigits: 9))"
                 walletIcon.isHidden = false
             } else {
                 image.tokenIcon.image = nil
