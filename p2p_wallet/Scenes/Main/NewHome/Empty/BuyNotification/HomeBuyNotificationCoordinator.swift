@@ -30,7 +30,6 @@ final class HomeBuyNotificationCoordinator: Coordinator<HomeBuyNotificationCoord
             self?.result.send(.showBuy)
         }
         let viewController = UIHostingController(rootView: view)
-        transition.containerHeight = 516
         viewController.view.layer.cornerRadius = 16
         viewController.transitioningDelegate = transition
         viewController.modalPresentationStyle = .custom

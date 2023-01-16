@@ -204,7 +204,6 @@ final class PincodeViewController: BaseViewController {
             })
         }
         transition = PanelTransition()
-        transition?.containerHeight = height == nil ? view.viewHeight : (height ?? 0)
         forgetPinViewController = UIHostingController(rootView: view)
         forgetPinViewController?.view.layer.cornerRadius = 20
         forgetPinViewController?.transitioningDelegate = transition

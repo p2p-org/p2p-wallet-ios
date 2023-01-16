@@ -28,7 +28,6 @@ final class SendTransactionStatusCoordinator: Coordinator<Void> {
             .store(in: &subscriptions)
 
         transition = PanelTransition()
-        transition?.containerHeight = 624
         transition?.dimmClicked
             .sink { [weak self] in self?.finish() }
             .store(in: &subscriptions)

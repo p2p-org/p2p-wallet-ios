@@ -108,20 +108,3 @@ struct SellTransactionDetailsView: View {
         )
     }
 }
-
-// MARK: - View Height
-
-extension SellTransactionDetailsView {
-    var viewHeight: CGFloat {
-        switch viewModel.strategy {
-        case .processing:
-            return 640
-        case .fundsWereSent:
-            return 718
-        case .youNeedToSend:
-            return 694
-        case .youVeNotSent:
-            return 682
-        }
-    }
-}

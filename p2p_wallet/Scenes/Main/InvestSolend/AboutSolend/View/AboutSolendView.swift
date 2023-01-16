@@ -67,9 +67,3 @@ struct AboutSolendView: View {
         }
     }
 }
-
-// MARK: - View Height
-
-extension AboutSolendView {
-    var viewHeight: CGFloat { 543 }
-}

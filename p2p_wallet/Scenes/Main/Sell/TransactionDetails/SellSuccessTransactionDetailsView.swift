@@ -96,14 +96,6 @@ extension SellSuccessTransactionDetailsView {
     }
 }
 
-// MARK: - View Height
-
-extension SellSuccessTransactionDetailsView {
-    var viewHeight: CGFloat {
-        632
-    }
-}
-
 fileprivate typealias TopViewModel = SellTransactionDetailsTopView.Model
 fileprivate typealias Model = SellSuccessTransactionDetailsView.Model
 

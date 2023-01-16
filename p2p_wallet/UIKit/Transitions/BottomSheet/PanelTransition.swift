@@ -15,8 +15,6 @@ class PanelTransition: NSObject, UIViewControllerTransitioningDelegate {
 
     private let driver = TransitionDriver()
 
-    var containerHeight: CGFloat = 0
-
     func presentationController(
         forPresented presented: UIViewController,
         presenting: UIViewController?,
@@ -27,7 +25,6 @@ class PanelTransition: NSObject, UIViewControllerTransitioningDelegate {
             presentedViewController: presented,
             presenting: presenting ?? source
         )
-        presentationController.containerHeight = containerHeight
         presentationController.driver = driver
         presentationController.dimmClicked
             .sink(receiveValue: { [weak self] in
