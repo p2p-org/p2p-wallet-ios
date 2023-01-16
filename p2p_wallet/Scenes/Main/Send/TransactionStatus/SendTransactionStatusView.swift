@@ -106,47 +106,41 @@ struct SendTransactionStatusView: View {
 struct SendTransactionStatusStatusView: View {
     let state: SendTransactionStatusViewModel.State
     let errorMessageTapAction: () -> Void
+    let appearance: SendTransactionStatusViewAppearance
 
     @State private var isAnimating = false
     @State private var isRotating = 0.0
     let animation: Animation = .linear(duration: 0.2).speed(0.1).repeatForever(autoreverses: false)
 
+    init(state: SendTransactionStatusViewModel.State, errorMessageTapAction: @escaping () -> Void) {
+        self.state = state
+        self.errorMessageTapAction = errorMessageTapAction
+        self.appearance = SendTransactionStatusViewAppearance(state: state)
+    }
+
     var body: some View {
         VStack {
             HStack(spacing: 12) {
                 ZStack(alignment: .center) {
-                    if case .loading = state {
+                    switch state {
+                    case .loading:
                         Image(uiImage: .transactionStatusLoadingWrapper)
                             .rotationEffect(.degrees(isAnimating ? 360 : 0.0))
                             .animation(isAnimating ? animation : .default, value: isAnimating)
                             .onAppear {
                                 DispatchQueue.main.async { isAnimating = true }
                             }
-                        Image(uiImage: image)
-                            .renderingMode(.template)
-                            .resizable()
-                            .foregroundColor(Color(Asset.Colors.mountain.color))
-                            .frame(width: 24, height: 24)
-                    } else if case .error = state {
+                    default:
                         Circle()
-                            .fill(color)
+                            .fill(appearance.circleColor)
                             .frame(width: 48, height: 48)
                             .cornerRadius(24)
-                        Image(uiImage: image)
-                            .resizable()
-                            .foregroundColor(Color(Asset.Colors.rose.color))
-                            .frame(width: 20, height: 18)
-                    } else {
-                        Circle()
-                            .fill(color)
-                            .frame(width: 48, height: 48)
-                            .cornerRadius(24)
-                        Image(uiImage: image)
-                            .renderingMode(.template)
-                            .resizable()
-                            .foregroundColor(Color(UIColor(red: 0.016, green: 0.816, blue: 0.016, alpha: 1)))
-                            .frame(width: 24, height: 24)
                     }
+                    Image(uiImage: appearance.image)
+                        .renderingMode(.template)
+                        .resizable()
+                        .foregroundColor(appearance.imageColor)
+                        .frame(width: appearance.imageSize.width, height: appearance.imageSize.height)
                 }
                 .padding(.leading, 5)
                 Group {
@@ -168,30 +162,8 @@ struct SendTransactionStatusStatusView: View {
             .padding(13)
         }
         .frame(maxWidth: .infinity)
-        .background(color)
+        .background(appearance.backgroundColor)
         .cornerRadius(12)
-    }
-
-    var image: UIImage {
-        switch state {
-        case .loading:
-            return .lightningFilled
-        case .error:
-            return .solendSubtract
-        case .succeed:
-            return .lightningFilled
-        }
-    }
-
-    var color: Color {
-        switch state {
-        case .loading:
-            return Color(Asset.Colors.cloud.color)
-        case .error:
-            return Color(UIColor(red: 255 / 255, green: 220 / 255, blue: 233 / 255, alpha: 0.3))
-        case .succeed:
-            return Color(.cdf6cd).opacity(0.3)
-        }
     }
 }
 
