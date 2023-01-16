@@ -59,7 +59,7 @@ final class ActionsCoordinator: Coordinator<ActionsCoordinator.Result> {
                     }
                 case .receive:
                     guard let pubkey = try? PublicKey(string: walletsRepository.nativeWallet?.pubkey) else { return }
-                    let coordinator = ReceiveCoordinator(navigationController: UINavigationController(rootViewController: viewController), pubKey: pubkey)
+                    let coordinator = ReceiveCoordinator(viewController: viewController, pubKey: pubkey)
                     coordinate(to: coordinator).sink { _ in }.store(in: &subscriptions)
                     analyticsManager.log(event: AmplitudeEvent.actionButtonReceive)
                     analyticsManager.log(event: AmplitudeEvent.mainScreenReceiveOpen)
@@ -88,7 +88,7 @@ final class ActionsCoordinator: Coordinator<ActionsCoordinator.Result> {
             })
             .store(in: &subscriptions)
 
-        return subject.prefix(1).eraseToAnyPublisher()
+        return subject.eraseToAnyPublisher()
     }
 }
 
