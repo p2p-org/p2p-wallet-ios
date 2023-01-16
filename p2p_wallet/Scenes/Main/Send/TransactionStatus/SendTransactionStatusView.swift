@@ -87,7 +87,7 @@ struct SendTransactionStatusView: View {
 
     var status: some View {
         SendTransactionStatusStatusView(
-            state: viewModel.state,
+            viewModel: viewModel,
             errorMessageTapAction: { [weak viewModel] in viewModel?.errorMessageTap.send() }
         )
     }
@@ -104,55 +104,68 @@ struct SendTransactionStatusView: View {
 }
 
 struct SendTransactionStatusStatusView: View {
-    let state: SendTransactionStatusViewModel.State
-    let errorMessageTapAction: () -> Void
-    let appearance: SendTransactionStatusViewAppearance
+    @ObservedObject private var viewModel: SendTransactionStatusViewModel
 
-    @State private var isAnimating = false
-    @State private var isRotating = 0.0
-    let animation: Animation = .linear(duration: 0.2).speed(0.1).repeatForever(autoreverses: false)
+    @State private var isRotatingAnimation = false
+    @State private var isColorTransition = true
+    @State private var previousAppearance: SendTransactionStatusViewAppearance?
+    @State private var currentAppearance: SendTransactionStatusViewAppearance
 
-    init(state: SendTransactionStatusViewModel.State, errorMessageTapAction: @escaping () -> Void) {
-        self.state = state
+    private let rotationAnimation = Animation.linear(duration: 0.2).speed(0.1).repeatForever(autoreverses: false)
+    private let scaleAnimation = Animation.easeInOut(duration: 0.2)
+    private let errorMessageTapAction: () -> Void
+
+    init(viewModel: SendTransactionStatusViewModel, errorMessageTapAction: @escaping () -> Void) {
+        self.viewModel = viewModel
+        self.currentAppearance = SendTransactionStatusViewAppearance(state: viewModel.state)
+        self.previousAppearance = nil
         self.errorMessageTapAction = errorMessageTapAction
-        self.appearance = SendTransactionStatusViewAppearance(state: state)
     }
+
+    private let maxScaleEffect: CGFloat = 1.0
+    private let minScaleEffect: CGFloat = 0
 
     var body: some View {
         VStack {
             HStack(spacing: 12) {
                 ZStack(alignment: .center) {
-                    switch state {
-                    case .loading:
-                        Image(uiImage: .transactionStatusLoadingWrapper)
-                            .rotationEffect(.degrees(isAnimating ? 360 : 0.0))
-                            .animation(isAnimating ? animation : .default, value: isAnimating)
-                            .onAppear {
-                                DispatchQueue.main.async { isAnimating = true }
-                            }
-                    default:
+                    if let previousColor = previousAppearance?.circleColor {
                         Circle()
-                            .fill(appearance.circleColor)
+                            .fill(previousColor)
                             .frame(width: 48, height: 48)
-                            .cornerRadius(24)
+                            .scaleEffect(maxScaleEffect)
                     }
-                    Image(uiImage: appearance.image)
+
+                    if case .loading = viewModel.state {
+                        Image(uiImage: .transactionStatusLoadingWrapper)
+                            .resizable()
+                            .frame(width: 48, height: 48)
+                            .rotationEffect(.degrees(isRotatingAnimation ? 360 : 0.0))
+                            .animation(isRotatingAnimation ? rotationAnimation : .default, value: isRotatingAnimation)
+                            .onAppear { DispatchQueue.main.async { isRotatingAnimation = true } }
+                    } else {
+                        Circle()
+                            .fill(currentAppearance.circleColor)
+                            .frame(width: 48, height: 48)
+                            .scaleEffect(isColorTransition ? maxScaleEffect : minScaleEffect)
+                    }
+
+                    Image(uiImage: currentAppearance.image)
                         .renderingMode(.template)
                         .resizable()
-                        .foregroundColor(appearance.imageColor)
-                        .frame(width: appearance.imageSize.width, height: appearance.imageSize.height)
+                        .scaledToFit()
+                        .foregroundColor(currentAppearance.imageColor)
+                        .frame(width: currentAppearance.imageSize.width, height: currentAppearance.imageSize.height)
                 }
                 .padding(.leading, 5)
                 Group {
-                    switch state {
+                    switch viewModel.state {
                     case let .loading(message), let .succeed(message: message):
                         Text(message)
-                            .apply(style: .text4)
-                            .foregroundColor(Color(Asset.Colors.night.color))
+                            .messageStyled()
                     case let .error(message):
                         Text(message)
-                            .apply(style: .text4)
-                            .foregroundColor(Color(Asset.Colors.night.color))
+                            .messageStyled()
                             .onTapGesture(perform: errorMessageTapAction)
                     }
                 }
@@ -162,8 +175,22 @@ struct SendTransactionStatusStatusView: View {
             .padding(13)
         }
         .frame(maxWidth: .infinity)
-        .background(appearance.backgroundColor)
+        .background(currentAppearance.backgroundColor)
         .cornerRadius(12)
+        .onReceive(viewModel.$state) { value in
+            previousAppearance = currentAppearance
+            currentAppearance = SendTransactionStatusViewAppearance(state: value)
+            isColorTransition = false
+            withAnimation(scaleAnimation) { isColorTransition = true }
+        }
+    }
+}
+
+private extension Text {
+    func messageStyled() -> some View {
+        return self.apply(style: .text4)
+            .foregroundColor(Color(Asset.Colors.night.color))
+            .fixedSize(horizontal: false, vertical: true)
     }
 }
 
