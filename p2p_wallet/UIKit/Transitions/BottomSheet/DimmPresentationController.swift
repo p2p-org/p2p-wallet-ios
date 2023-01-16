@@ -14,15 +14,25 @@ class DimmPresentationController: PresentationController {
 
     override var frameOfPresentedViewInContainerView: CGRect {
         let bounds = containerView!.bounds
+
+        let fittingSize = CGSize(
+        width: bounds.width,
+          height: UIView.layoutFittingCompressedSize.height
+        )
+
+        let targetHeight = presentedView?.systemLayoutSizeFitting(
+          fittingSize,
+          withHorizontalFittingPriority: .required,
+          verticalFittingPriority: .defaultLow
+        ).height ?? 0
+
         return CGRect(
             x: 0,
-            y: bounds.height - containerHeight,
+            y: bounds.height - targetHeight,
             width: bounds.width,
-            height: containerHeight
+            height: targetHeight
         )
     }
-
-    var containerHeight: CGFloat = 0
 
     override func presentationTransitionWillBegin() {
         super.presentationTransitionWillBegin()

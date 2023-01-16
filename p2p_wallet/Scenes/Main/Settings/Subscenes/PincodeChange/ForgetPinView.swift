@@ -50,6 +50,7 @@ struct ForgetPinView: View {
                 .apply(style: .text1)
                 .padding(.horizontal, 40)
                 .padding(.vertical, 24)
+                .fixedSize(horizontal: false, vertical: true)
 
             // Logout button
             TextButtonView(title: L10n.logOut, style: .second, size: .large, isLoading: isLoading) {
@@ -86,12 +87,6 @@ struct ForgetPinView: View {
                     .frame(width: 16, height: 16)
             }.frame(width: 24, height: 24)
         }
-    }
-}
-
-extension ForgetPinView {
-    var viewHeight: CGFloat {
-        max(35, UIApplication.shared.kWindow?.safeAreaInsets.bottom ?? 0) + 320
     }
 }
 

@@ -43,8 +43,6 @@ Coordinator<BuySelectCoordinatorResult<Model>>where Model == Cell.Model {
     override func start() -> AnyPublisher<BuySelectCoordinatorResult<Model>, Never> {
         let view = BuySelectView<Model, Cell>(viewModel: viewModel, title: title)
         let viewController = UIHostingController(rootView: view)
-
-        transition.containerHeight = contentHeight
         viewController.view.layer.cornerRadius = 16
         viewController.transitioningDelegate = transition
         viewController.modalPresentationStyle = .custom

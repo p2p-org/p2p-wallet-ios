@@ -25,10 +25,6 @@ struct DeleteRequestSuccessView: View {
     }
 }
 
-extension DeleteRequestSuccessView {
-    var viewHeight: CGFloat { 510 }
-}
-
 struct DeleteRequestSuccess_Previews: PreviewProvider {
     static var previews: some View {
         DeleteRequestSuccessView()

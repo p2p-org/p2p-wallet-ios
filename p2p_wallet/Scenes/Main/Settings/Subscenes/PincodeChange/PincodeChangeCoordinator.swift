@@ -48,8 +48,6 @@ class PincodeChangeCoordinator: Coordinator<Bool> {
             guard let self = self else { return }
             var view = ForgetPinView()
             view.close = { self.navVC.dismiss(animated: true) }
-
-            self.transition.containerHeight = view.viewHeight
             let viewController = UIHostingController(rootView: view)
             viewController.view.layer.cornerRadius = 20
             viewController.transitioningDelegate = self.transition

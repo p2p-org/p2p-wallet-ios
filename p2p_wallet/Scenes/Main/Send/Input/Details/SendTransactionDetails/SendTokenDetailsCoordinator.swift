@@ -39,7 +39,6 @@ final class SendTransactionDetailsCoordinator: Coordinator<SendTransactionDetail
         let view = SendTransactionDetailView(viewModel: viewModel)
 
         transition = PanelTransition()
-        transition?.containerHeight = view.viewHeight
         let feeController = UIHostingController(rootView: view)
         feeController.view.layer.cornerRadius = 20
         feeController.transitioningDelegate = transition

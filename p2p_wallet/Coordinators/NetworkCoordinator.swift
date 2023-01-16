@@ -21,7 +21,6 @@ final class NetworkCoordinator: Coordinator<Void> {
     override func start() -> AnyPublisher<Void, Never> {
         let viewModel = NetworkViewModel()
         let viewController = NetworkView(viewModel: viewModel).asViewController()
-        transition.containerHeight = 432
         viewController.view.layer.cornerRadius = 16
         viewController.transitioningDelegate = transition
         viewController.modalPresentationStyle = .custom

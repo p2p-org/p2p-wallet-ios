@@ -96,7 +96,6 @@ final class SolendDepositCoordinator: Coordinator<Bool> {
 
     private func showAboutSolend(depositVC: UIViewController) {
         let view = AboutSolendView()
-        transition.containerHeight = view.viewHeight
         let viewController = view.asViewController()
         viewController.view.layer.cornerRadius = 16
         viewController.transitioningDelegate = transition

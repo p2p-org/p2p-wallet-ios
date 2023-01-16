@@ -33,7 +33,6 @@ final class SolendTransactionDetailsCoordinator: Coordinator<Void> {
     override func start() -> AnyPublisher<Void, Never> {
         let viewModel = SolendTransactionDetailsViewModel(strategy: strategy, model: nil)
         let view = SolendTransactionDetailsView(viewModel: viewModel)
-        transition.containerHeight = view.viewHeight
         let viewController = view.asViewController()
         viewController.view.layer.cornerRadius = 16
         viewController.transitioningDelegate = transition

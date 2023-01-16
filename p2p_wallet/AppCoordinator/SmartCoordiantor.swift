@@ -56,7 +56,6 @@ class SmartCoordinatorBottomSheetPresentation: SmartCoordinatorPresentation {
 
     func run(presentedViewController: UIViewController) {
         // Prepare
-        transition.containerHeight = height
         transition.dimmClicked
             .sink(receiveValue: { _ in presentedViewController.dismiss(animated: true) })
             .store(in: &subscriptions)
