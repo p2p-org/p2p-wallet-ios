@@ -27,7 +27,6 @@ final class ActionsCoordinator: Coordinator<ActionsCoordinator.Result> {
     override func start() -> AnyPublisher<ActionsCoordinator.Result, Never> {
         let view = ActionsView()
         let viewController = view.asViewController()
-//        let navigationController = UINavigationController(rootViewController: viewController)
         viewController.view.layer.cornerRadius = 16
         viewController.transitioningDelegate = transition
         viewController.modalPresentationStyle = .custom
