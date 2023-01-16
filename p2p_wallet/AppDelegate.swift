@@ -18,6 +18,7 @@ import SolanaSwift
 import SwiftNotificationCenter
 @_exported import SwiftyUserDefaults
 import UIKit
+import Intercom
 
 @main
 class AppDelegate: UIResponder, UIApplicationDelegate {
@@ -89,7 +90,12 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
             await notificationService.sendRegisteredDeviceToken(deviceToken)
         }
         AppsFlyerLib.shared().registerUninstall(deviceToken)
+        Intercom.setDeviceToken(deviceToken) { error in
+            guard let error else { return }
+            print("Intercom.setDeviceToken error: ", error)
+        }
         proxyAppDelegate.application(application, didRegisterForRemoteNotificationsWithDeviceToken: deviceToken)
+        Defaults.apnsDeviceToken = deviceToken
     }
 
     func application(
