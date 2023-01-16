@@ -27,7 +27,6 @@ final class TransactionDetailsCoordinator: Coordinator<Void> {
 
     override func start() -> AnyPublisher<Void, Never> {
         let view = BuyTransactionDetailsView(model: model)
-        transition.containerHeight = view.viewHeight
         let viewController = view.asViewController()
         viewController.view.layer.cornerRadius = 16
         viewController.transitioningDelegate = transition

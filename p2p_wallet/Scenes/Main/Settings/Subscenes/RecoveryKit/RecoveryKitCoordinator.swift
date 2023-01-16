@@ -86,7 +86,6 @@ final class RecoveryKitCoordinator: Coordinator<Void> {
             self?.navigationController.dismiss(animated: true)
         }
         
-        transition.containerHeight = view.viewHeight
         let viewController = view.asViewController()
         let navigationController = UINavigationController(rootViewController: viewController)
         viewController.view.layer.cornerRadius = 16

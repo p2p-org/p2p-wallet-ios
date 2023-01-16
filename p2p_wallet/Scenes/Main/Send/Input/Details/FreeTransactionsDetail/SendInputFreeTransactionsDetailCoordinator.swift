@@ -19,7 +19,6 @@ final class SendInputFreeTransactionsDetailCoordinator: Coordinator<Void> {
         }
 
         transition = PanelTransition()
-        transition?.containerHeight = 452
         let feeController = UIHostingController(rootView: view, ignoresKeyboard: true)
         feeController.view.layer.cornerRadius = 20
         feeController.view.layer.maskedCorners = [.layerMinXMinYCorner, .layerMaxXMinYCorner]

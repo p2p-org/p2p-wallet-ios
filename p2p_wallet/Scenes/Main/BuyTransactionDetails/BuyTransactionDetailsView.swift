@@ -121,11 +121,3 @@ extension BuyTransactionDetailsView {
         }
     }
 }
-
-// MARK: - View Height
-
-extension BuyTransactionDetailsView {
-    var viewHeight: CGFloat {
-        664
-    }
-}

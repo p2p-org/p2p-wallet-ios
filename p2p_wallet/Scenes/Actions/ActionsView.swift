@@ -44,8 +44,9 @@ struct ActionsView: View {
                             actionSubject.send(.cashOut)
                         }
                     )
-                    .frame(height: 80)
+                    .frame(height: 83)
                 }
+
                 HStack(spacing: 16) {
                     actionView(
                         image: .homeBuyAction,
@@ -55,6 +56,8 @@ struct ActionsView: View {
                             actionSubject.send(.buy)
                         }
                     )
+                        .frame(width: 160, height: 160)
+
                     actionView(
                         image: .homeReceiveAction,
                         title: L10n.receive,
@@ -63,7 +66,9 @@ struct ActionsView: View {
                             actionSubject.send(.receive)
                         }
                     )
+                        .frame(width: 160, height: 160)
                 }
+
                 HStack(spacing: 16) {
                     actionView(
                         image: .homeSwapAction,
@@ -73,6 +78,8 @@ struct ActionsView: View {
                             actionSubject.send(.swap)
                         }
                     )
+                        .frame(width: 160, height: 160)
+                    
                     actionView(
                         image: .homeSendAction,
                         title: L10n.send,
@@ -81,8 +88,12 @@ struct ActionsView: View {
                             actionSubject.send(.send)
                         }
                     )
+                        .frame(width: 160, height: 160)
                 }
             }
+                .padding(.horizontal, 10)
+                .padding(.top, 6)
+
             Button(
                 action: {
                     cancelSubject.send()
@@ -97,10 +108,11 @@ struct ActionsView: View {
                         .cornerRadius(12)
                 }
             )
+            .padding(.top, 12)
         }
         .padding(.horizontal, 16)
         .padding(.bottom, 16)
-        .padding(.top, 6)
+        .padding(.top, 4)
         .previewLayout(.sizeThatFits)
     }
 
@@ -134,10 +146,12 @@ struct ActionsView: View {
                             Text(title)
                                 .foregroundColor(Color(Asset.Colors.night.color))
                                 .font(uiFont: .font(of: .text1, weight: .bold))
+                                .fixedSize(horizontal: false, vertical: true)
                             Text(subtitle)
                                 .foregroundColor(Color(Asset.Colors.mountain.color))
                                 .font(uiFont: .font(of: .label1, weight: .regular))
                                 .multilineTextAlignment(.leading)
+                                .fixedSize(horizontal: false, vertical: true)
                         }
                     }
                     .padding(.horizontal, 20)
@@ -175,10 +189,12 @@ struct ActionsView: View {
                             Text(title)
                                 .foregroundColor(Color(Asset.Colors.night.color))
                                 .font(uiFont: .font(of: .text1, weight: .bold))
+                                .fixedSize(horizontal: false, vertical: true)
                             Text(subtitle)
                                 .foregroundColor(Color(Asset.Colors.mountain.color))
                                 .font(uiFont: .font(of: .label1, weight: .regular))
                                 .multilineTextAlignment(.leading)
+                                .fixedSize(horizontal: false, vertical: true)
                         }
                         Spacer()
                     }
@@ -197,15 +213,5 @@ extension ActionsView {
         case swap
         case send
         case cashOut
-    }
-}
-
-// MARK: - View Height
-
-extension ActionsView {
-    var viewHeight: CGFloat {
-        (UIScreen.main.bounds.width - 16 * 3)
-        + (UIApplication.shared.kWindow?.safeAreaInsets.bottom ?? 0) + 210
-        + (isSellAvailable ? 100 : 0)
     }
 }

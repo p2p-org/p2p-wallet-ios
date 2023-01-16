@@ -76,7 +76,6 @@ final class SellTransactionDetailsCoorditor: Coordinator<SellTransactionDetailsC
                 transactionFee: L10n.freePaidByKeyApp
             )
         )
-        transition.containerHeight = view.viewHeight
         let controller = view.asViewController()
 
         let resultSubject = PassthroughSubject<Result, Never>()
@@ -111,7 +110,6 @@ final class SellTransactionDetailsCoorditor: Coordinator<SellTransactionDetailsC
             tokenSymbol: "SOL"
         )
         let view = SellTransactionDetailsView(viewModel: viewModel)
-        transition.containerHeight = view.viewHeight
         let controller = view.asViewController()
 
         let resultSubject = PassthroughSubject<Result, Never>()

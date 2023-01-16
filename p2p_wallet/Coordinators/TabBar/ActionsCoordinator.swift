@@ -26,13 +26,12 @@ final class ActionsCoordinator: Coordinator<ActionsCoordinator.Result> {
 
     override func start() -> AnyPublisher<ActionsCoordinator.Result, Never> {
         let view = ActionsView()
-        transition.containerHeight = view.viewHeight
         let viewController = view.asViewController()
-        let navigationController = UINavigationController(rootViewController: viewController)
+//        let navigationController = UINavigationController(rootViewController: viewController)
         viewController.view.layer.cornerRadius = 16
-        navigationController.transitioningDelegate = transition
-        navigationController.modalPresentationStyle = .custom
-        self.viewController.present(navigationController, animated: true)
+        viewController.transitioningDelegate = transition
+        viewController.modalPresentationStyle = .custom
+        self.viewController.present(viewController, animated: true)
 
         let subject = PassthroughSubject<ActionsCoordinator.Result, Never>()
         transition.dimmClicked
@@ -41,14 +40,16 @@ final class ActionsCoordinator: Coordinator<ActionsCoordinator.Result> {
             })
             .store(in: &subscriptions)
 
-        navigationController.onClose = {
+        viewController.onClose = {
             subject.send(.cancel)
         }
+
         view.cancel
             .sink(receiveValue: {
                 viewController.dismiss(animated: true)
             })
             .store(in: &subscriptions)
+
         view.action
             .sink(receiveValue: { [unowned self] actionType in
                 switch actionType {
@@ -58,7 +59,7 @@ final class ActionsCoordinator: Coordinator<ActionsCoordinator.Result> {
                     }
                 case .receive:
                     guard let pubkey = try? PublicKey(string: walletsRepository.nativeWallet?.pubkey) else { return }
-                    let coordinator = ReceiveCoordinator(navigationController: navigationController, pubKey: pubkey)
+                    let coordinator = ReceiveCoordinator(navigationController: UINavigationController(rootViewController: viewController), pubKey: pubkey)
                     coordinate(to: coordinator).sink { _ in }.store(in: &subscriptions)
                     analyticsManager.log(event: AmplitudeEvent.actionButtonReceive)
                     analyticsManager.log(event: AmplitudeEvent.mainScreenReceiveOpen)
@@ -87,7 +88,7 @@ final class ActionsCoordinator: Coordinator<ActionsCoordinator.Result> {
             })
             .store(in: &subscriptions)
 
-        return subject.eraseToAnyPublisher()
+        return subject.prefix(1).eraseToAnyPublisher()
     }
 }
 
