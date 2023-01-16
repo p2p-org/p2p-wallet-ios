@@ -1168,3 +1168,4 @@ Reset the PIN or wait for %@." = "Il vous reste %@ tentatives pour saisir le cod
 "The transaction was rejected by the Solana blockchain" = "La transaction a été rejetée par la blockchain Solana";
 "The data is being updated. Please try again in a few minutes." = "Les données sont en cours de mise à jour.  S'il vous plait, réessayez dans quelques minutes.";
 "Buy or receive to continue" = "Achetez ou recevez pour continuer";
+"Less than %@" = "Moins de %@";
