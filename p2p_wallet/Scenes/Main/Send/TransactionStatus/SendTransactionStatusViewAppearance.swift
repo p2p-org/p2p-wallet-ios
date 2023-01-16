@@ -21,7 +21,7 @@ struct SendTransactionStatusViewAppearance {
             imageSize = CGSize(width: 24, height: 24)
             backgroundColor = Color(.cdf6cd).opacity(0.3)
             circleColor = Color(.cdf6cd)
-            imageColor = Color(.h04d004)
+            imageColor = Color(.h04D004)
         case .error:
             image = .solendSubtract
             imageSize = CGSize(width: 20, height: 18)
