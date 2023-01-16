@@ -10,7 +10,7 @@ import Foundation
 import SolanaSwift
 
 final class ReceiveCoordinator: Coordinator<Void> {
-    private let navigationController: UINavigationController
+    private let viewController: UIViewController
     private let pubKey: PublicKey
     private let wallet: Wallet?
     private let isOpeningFromToken: Bool
@@ -21,7 +21,19 @@ final class ReceiveCoordinator: Coordinator<Void> {
         wallet: Wallet? = nil,
         isOpeningFromToken: Bool = false
     ) {
-        self.navigationController = navigationController
+        self.viewController = navigationController
+        self.pubKey = pubKey
+        self.wallet = wallet
+        self.isOpeningFromToken = isOpeningFromToken
+    }
+
+    init(
+        viewController: UIViewController,
+        pubKey: PublicKey,
+        wallet: Wallet? = nil,
+        isOpeningFromToken: Bool = false
+    ) {
+        self.viewController = viewController
         self.pubKey = pubKey
         self.wallet = wallet
         self.isOpeningFromToken = isOpeningFromToken
@@ -36,7 +48,11 @@ final class ReceiveCoordinator: Coordinator<Void> {
             viewModel: vm,
             isOpeningFromToken: isOpeningFromToken
         )
-        navigationController.present(vc, animated: true)
+        if let navigationController = viewController as? UINavigationController {
+            navigationController.present(vc, animated: true)
+        } else {
+            viewController.show(vc, sender: nil)
+        }
 
         let subject = PassthroughSubject<Void, Never>()
         vc.onClose = {
