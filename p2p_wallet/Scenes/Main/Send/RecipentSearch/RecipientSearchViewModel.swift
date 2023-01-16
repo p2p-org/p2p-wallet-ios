@@ -188,7 +188,7 @@ class RecipientSearchViewModel: ObservableObject {
     @MainActor
     func notifyAddressRecognized(recipient: Recipient) {
         let text = L10n.theAddressIsRecognized("\(recipient.address.prefix(6))...\(recipient.address.suffix(6))")
-        notificationService.showToast(title: "✅", text: text)
+        notificationService.showToast(title: "✅", text: text, haptic: false)
     }
     
     @MainActor
