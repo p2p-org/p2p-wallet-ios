@@ -109,14 +109,6 @@ struct SendTransactionDetailView: View {
     }
 }
 
-// MARK: - View Height
-
-extension SendTransactionDetailView {
-    var viewHeight: CGFloat {
-        624
-    }
-}
-
 // struct SendTokenDetails_Previews: PreviewProvider {
 //     static var previews: some View {
 //         SendTransactionDetailView(model: SendTransactionDetailView.Model(

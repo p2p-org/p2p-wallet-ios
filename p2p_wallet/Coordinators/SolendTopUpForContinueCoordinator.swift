@@ -29,7 +29,6 @@ final class SolendTopUpForContinueCoordinator: Coordinator<SolendTopUpForContinu
 
         let viewModel = SolendTopUpForContinueViewModel(model: model)
         let view = SolendTopUpForContinueView(viewModel: viewModel)
-        transition.containerHeight = view.viewHeight
         let viewController = view.asViewController()
         let navigationController = UINavigationController(rootViewController: viewController)
         viewController.view.layer.cornerRadius = 16

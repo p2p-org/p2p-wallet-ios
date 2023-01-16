@@ -36,7 +36,6 @@ final class SolendTokenActionCoordinator: Coordinator<SolendTokenActionCoordinat
             view = TokenToWithdrawView(models: model)
             viewController = (view as! TokenToWithdrawView).asViewController()
         }
-        transition.containerHeight = view.viewHeight
         viewController.view.layer.cornerRadius = 16
         viewController.transitioningDelegate = transition
         viewController.modalPresentationStyle = .custom
