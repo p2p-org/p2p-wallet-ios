@@ -10,6 +10,7 @@ import AppTrackingTransparency
 @_exported import BEPureLayout
 import FeeRelayerSwift
 import Firebase
+import Intercom
 import KeyAppKitLogger
 import KeyAppUI
 import Resolver
@@ -18,7 +19,6 @@ import SolanaSwift
 import SwiftNotificationCenter
 @_exported import SwiftyUserDefaults
 import UIKit
-import Intercom
 
 @main
 class AppDelegate: UIResponder, UIApplicationDelegate {
@@ -39,7 +39,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
     ) -> Bool {
         // TODO: - Support custom fiat later
         Defaults.fiat = .usd
-        
+
         UserDefaults.standard.set(false, forKey: "_UIConstraintBasedLayoutLogUnsatisfiable")
         // TODO: - Swizzle localization later
 //        Bundle.swizzleLocalization()
@@ -55,17 +55,17 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
 
         // Sentry
         #if !DEBUG
-        SentrySDK.start { options in
-            options
-                .dsn = .secretConfig("SENTRY_DSN")
-            options.tracesSampleRate = 1.0
+            SentrySDK.start { options in
+                options
+                    .dsn = .secretConfig("SENTRY_DSN")
+                options.tracesSampleRate = 1.0
 //            #if DEBUG
 //                options.debug = true
 //                options.tracesSampleRate = 0.0
 //            #endif
-            options.enableNetworkTracking = true
-            options.enableOutOfMemoryTracking = true
-        }
+                options.enableNetworkTracking = true
+                options.enableOutOfMemoryTracking = true
+            }
         #endif
 
         // set app coordinator
@@ -109,7 +109,31 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         proxyAppDelegate.application(application, didFailToRegisterForRemoteNotificationsWithError: error)
     }
 
-    func application(_: UIApplication, open url: URL, options: [UIApplication.OpenURLOptionsKey: Any] = [:]) -> Bool {
+    func application(
+        _: UIApplication,
+        open url: URL,
+        options: [UIApplication.OpenURLOptionsKey: Any] = [:]
+    ) -> Bool {
+        // Handle intercom deeplink
+        let expectedSchema: String
+        switch Environment.current {
+        case .release:
+            expectedSchema = "keyapp"
+        default:
+            expectedSchema = "keyapptest"
+        }
+
+        if url.scheme == expectedSchema {
+            if url.host == "intercom" {
+                if url.pathComponents.filter({ $0 != "/" }).first == "survey" {
+                    if let surveyID = url.pathComponents.last {
+                        Intercom.presentSurvey(surveyID)
+                        return true
+                    }
+                }
+            }
+        }
+
         var result = false
         Broadcaster.notify(AppUrlHandler.self) { result = result || $0.handle(url: url, options: options) }
         AppsFlyerLib.shared().handleOpen(url, options: options)
