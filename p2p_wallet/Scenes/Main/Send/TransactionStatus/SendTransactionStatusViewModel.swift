@@ -28,7 +28,7 @@ final class SendTransactionStatusViewModel: BaseViewModel, ObservableObject {
 
     init(transaction: SendTransaction) {
         token = transaction.walletToken.token
-        transactionFiatAmount = "-\(transaction.amountInFiat.fiatAmountFormattedString())"
+        transactionFiatAmount = "-\(transaction.amountInFiat.fiatAmountFormattedString(roundingMode: .down, customFormattForLessThan1E_2: true))"
         transactionCryptoAmount = transaction.amount.tokenAmountFormattedString(symbol: transaction.walletToken.token.symbol)
 
         let feeToken = transaction.payingFeeWallet.token

@@ -146,7 +146,9 @@ private extension SendInputAmountViewModel {
     func updateSecondaryAmount() {
         switch self.mainAmountType {
         case .token:
-            self.secondaryAmountText = (self.amount?.inToken * token.priceInCurrentFiat).formatFiatWithDown()
+            let fiatAmount = self.amount?.inToken * token.priceInCurrentFiat
+            let minCondition = fiatAmount > 0 && fiatAmount < Constants.minFiatDisplayAmount
+            self.secondaryAmountText = minCondition ? L10n.lessThan(Constants.minFiatDisplayAmount.formatFiatWithDown()) : fiatAmount.formatFiatWithDown()
 
         case .fiat:
             self.secondaryAmountText = (self.amount?.inFiat / token.priceInCurrentFiat).formatTokenWithDown(decimals: token.decimals)
@@ -179,6 +181,7 @@ private extension Wallet {
 
 private enum Constants {
     static let fiatDecimals = 2
+    static let minFiatDisplayAmount = 0.01
 }
 
 private extension SendInputAmountViewModel.Amount {
