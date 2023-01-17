@@ -84,6 +84,9 @@ extension DefaultsKeys {
     var isSolendTutorialShown: DefaultsKey<Bool> { .init(#function, defaultValue: false) }
     var isEarnBannerClosed: DefaultsKey<Bool> { .init(#function, defaultValue: false) }
 
+    // Send
+    var isTokenInputTypeChosen: DefaultsKey<Bool> { .init(#function, defaultValue: false) }
+
     var solanaNegativeStatusFrequency: DefaultsKey<String?> {
         .init(
             #function,
