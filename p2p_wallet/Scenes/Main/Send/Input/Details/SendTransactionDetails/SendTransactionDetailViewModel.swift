@@ -91,7 +91,7 @@ final class SendTransactionDetailViewModel: BaseViewModel, ObservableObject {
             secondaryText = nil
         default:
             mainText = amountFeeInToken.tokenAmountFormattedString(symbol: state.tokenFee.symbol, roundingMode: .down)
-            secondaryText = amountFeeInFiat.fiatAmountFormattedString(roundingMode: .down)
+            secondaryText = amountFeeInFiat.fiatAmountFormattedString(roundingMode: .down, customFormattForLessThan1E_2: true)
         }
 
         return CellModel(
@@ -118,7 +118,7 @@ final class SendTransactionDetailViewModel: BaseViewModel, ObservableObject {
             title: L10n.accountCreationFee,
             subtitle: [(
                 amountFeeInToken.tokenAmountFormattedString(symbol: state.tokenFee.symbol, maximumFractionDigits: Int(state.tokenFee.decimals), roundingMode: .down),
-                amountFeeInFiat.fiatAmountFormattedString(roundingMode: .down)
+                amountFeeInFiat.fiatAmountFormattedString(roundingMode: .down, customFormattForLessThan1E_2: true)
             )],
             image: .accountCreationFee,
             info: feeTokens == nil ? nil : { [weak self] in self?.feePrompt.send(feeTokens ?? []) },
@@ -155,7 +155,7 @@ final class SendTransactionDetailViewModel: BaseViewModel, ObservableObject {
 
         return (
             amountInToken.tokenAmountFormattedString(symbol: token.symbol, maximumFractionDigits: Int(token.decimals), roundingMode: .down),
-            amountInFiat.fiatAmountFormattedString(roundingMode: .down)
+            amountInFiat.fiatAmountFormattedString(roundingMode: .down, customFormattForLessThan1E_2: true)
         )
     }
 
