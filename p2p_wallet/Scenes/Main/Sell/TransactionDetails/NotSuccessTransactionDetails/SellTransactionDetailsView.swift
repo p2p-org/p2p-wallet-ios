@@ -141,8 +141,6 @@ struct SellTransactionDetailsView: View {
                     .font(uiFont: .font(of: .text2, weight: .semibold))
                     .frame(height: 56)
                     .frame(maxWidth: .infinity)
-                    .background(Color(Asset.Colors.rain.color))
-                    .cornerRadius(12)
                     .padding(.horizontal, 24)
             }
         )
