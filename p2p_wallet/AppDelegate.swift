@@ -21,7 +21,7 @@ import SwiftNotificationCenter
 import UIKit
 
 @main
-class AppDelegate: UIResponder, UIApplicationDelegate {
+class AppDelegate: UIResponder, UIApplicationDelegate, UNUserNotificationCenterDelegate {
     var window: UIWindow?
     private var appCoordinator: AppCoordinator?
 
@@ -114,26 +114,6 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         open url: URL,
         options: [UIApplication.OpenURLOptionsKey: Any] = [:]
     ) -> Bool {
-        // Handle intercom deeplink
-        let expectedSchema: String
-        switch Environment.current {
-        case .release:
-            expectedSchema = "keyapp"
-        default:
-            expectedSchema = "keyapptest"
-        }
-
-        if url.scheme == expectedSchema {
-            if url.host == "intercom" {
-                if url.pathComponents.filter({ $0 != "/" }).first == "survey" {
-                    if let surveyID = url.pathComponents.last {
-                        Intercom.presentSurvey(surveyID)
-                        return true
-                    }
-                }
-            }
-        }
-
         var result = false
         Broadcaster.notify(AppUrlHandler.self) { result = result || $0.handle(url: url, options: options) }
         AppsFlyerLib.shared().handleOpen(url, options: options)
@@ -145,6 +125,24 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         continue userActivity: NSUserActivity,
         restorationHandler: @escaping ([UIUserActivityRestoring]?) -> Void
     ) -> Bool {
+        // Handle intercom deeplink
+        if
+            let webpageURL = userActivity.webpageURL,
+            let urlComponents = URLComponents(url: webpageURL, resolvingAgainstBaseURL: true)
+        {
+            if urlComponents.path == "/intercom" {
+                if
+                    let queryItem = urlComponents.queryItems?.first(where: { $0.name == "intercom_survey_id" }),
+                    let value = queryItem.value
+                {
+                    DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) {
+                        GlobalAppState.shared.surveyID = value
+                    }
+                    return true
+                }
+            }
+        }
+
         AppsFlyerLib.shared().continue(userActivity, restorationHandler: nil)
         return proxyAppDelegate.application(application, continue: userActivity, restorationHandler: restorationHandler)
     }
