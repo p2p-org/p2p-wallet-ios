@@ -30,10 +30,10 @@ struct SellView: View {
             ToolbarItem(placement: .principal) { Text(L10n.cashOut + " SOL").fontWeight(.semibold) }
         }
         .onAppear {
-            viewModel.isEnteringBaseAmount = true
+            viewModel.isEnteringBaseAmount = !viewModel.shouldNotShowKeyboard
         }
         .onForeground {
-            viewModel.isEnteringBaseAmount = true
+            viewModel.isEnteringBaseAmount = !viewModel.shouldNotShowKeyboard
         }
     }
 

@@ -84,6 +84,7 @@ final class SellCoordinator: Coordinator<SellCoordinatorResult> {
                 .handleEvents(receiveCompletion: { [weak self] _ in
                     self?.viewModel.warmUp()
                     self?.shouldHideRemoveButtonOnFirstAppearance = true
+                    self?.viewModel.shouldNotShowKeyboard = false
                 }).eraseToAnyPublisher()
 
         case .showPending(let transactions, let fiat):
