@@ -53,16 +53,10 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         setupAppsFlyer()
         setupDefaultCurrency()
 
-        // Sentry
         #if !DEBUG
         SentrySDK.start { options in
-            options
-                .dsn = .secretConfig("SENTRY_DSN")
+            options.dsn = .secretConfig("SENTRY_DSN")
             options.tracesSampleRate = 1.0
-//            #if DEBUG
-//                options.debug = true
-//                options.tracesSampleRate = 0.0
-//            #endif
             options.enableNetworkTracking = true
             options.enableOutOfMemoryTracking = true
         }
