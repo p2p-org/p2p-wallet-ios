@@ -5,7 +5,6 @@
 //  Created by Chung Tran on 10/22/20.
 //
 
-import Action
 import AppsFlyerLib
 import AppTrackingTransparency
 @_exported import BEPureLayout
@@ -19,6 +18,7 @@ import SolanaSwift
 import SwiftNotificationCenter
 @_exported import SwiftyUserDefaults
 import UIKit
+import Intercom
 
 @main
 class AppDelegate: UIResponder, UIApplicationDelegate {
@@ -37,6 +37,9 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         _ application: UIApplication,
         didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey: Any]?
     ) -> Bool {
+        // TODO: - Support custom fiat later
+        Defaults.fiat = .usd
+        
         UserDefaults.standard.set(false, forKey: "_UIConstraintBasedLayoutLogUnsatisfiable")
         // TODO: - Swizzle localization later
 //        Bundle.swizzleLocalization()
@@ -87,7 +90,12 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
             await notificationService.sendRegisteredDeviceToken(deviceToken)
         }
         AppsFlyerLib.shared().registerUninstall(deviceToken)
+        Intercom.setDeviceToken(deviceToken) { error in
+            guard let error else { return }
+            print("Intercom.setDeviceToken error: ", error)
+        }
         proxyAppDelegate.application(application, didRegisterForRemoteNotificationsWithDeviceToken: deviceToken)
+        Defaults.apnsDeviceToken = deviceToken
     }
 
     func application(

@@ -120,7 +120,7 @@ final class BuyViewModel: ObservableObject {
         totalPublisher
             .receive(on: DispatchQueue.main)
             .sink(receiveValue: { value in
-                self.total = value.total.fiatAmount(
+                self.total = value.total.fiatAmountFormattedString(
                     maximumFractionDigits: 2,
                     currency: self.fiat
                 )
@@ -143,7 +143,7 @@ final class BuyViewModel: ObservableObject {
                 let minAmount = (self.buyMinPrices[aFiat.rawValue]?[aToken.name] ?? BuyViewModel.defaultMinAmount)
                 if minAmount > anAmount {
                     title = L10n.minimalTransactionIs(
-                        minAmount.fiatAmount(
+                        minAmount.fiatAmountFormattedString(
                             maximumFractionDigits: 2,
                             currency: self.fiat
                         )
@@ -152,7 +152,7 @@ final class BuyViewModel: ObservableObject {
                     enabled = false
                 } else if anAmount > BuyViewModel.defaultMaxAmount {
                     title = L10n.maximumTransactionIs(
-                        BuyViewModel.defaultMaxAmount.fiatAmount(
+                        BuyViewModel.defaultMaxAmount.fiatAmountFormattedString(
                             maximumFractionDigits: 2,
                             currency: self.fiat
                         )
