@@ -89,6 +89,7 @@ class UserWalletManager: ObservableObject {
         Defaults.forceCloseNameServiceBanner = false
         Defaults.shouldShowConfirmAlertOnSend = true
         Defaults.shouldShowConfirmAlertOnSwap = true
+        Defaults.isTokenInputTypeChosen = false
         
         walletSettings.reset()
 
