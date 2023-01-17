@@ -27,27 +27,29 @@ struct SendInputView: View {
 
                     Spacer()
 
-                    Button(action: viewModel.feeInfoPressed.send) {
-                        HStack(spacing: 4) {
-                            Text(viewModel.feeTitle)
-                                .apply(style: .text4)
-                                .foregroundColor(Color(Asset.Colors.sky.color))
-                                .onTapGesture(perform: viewModel.feeInfoPressed.send)
-                            if viewModel.isFeeLoading {
-                                CircularProgressIndicatorView(
-                                    backgroundColor: Asset.Colors.sky.color.withAlphaComponent(0.6),
-                                    foregroundColor: Asset.Colors.sky.color
-                                )
-                                .frame(width: 16, height: 16)
-                            } else {
-                                Button(action: viewModel.feeInfoPressed.send, label: {
-                                    Image(uiImage: UIImage.infoSend)
-                                        .resizable()
-                                        .frame(width: 16, height: 16)
-                                })
+                    if viewModel.isFeeTitleVisible {
+                        Button(action: viewModel.feeInfoPressed.send) {
+                            HStack(spacing: 4) {
+                                Text(viewModel.feeTitle)
+                                    .apply(style: .text4)
+                                    .foregroundColor(Color(Asset.Colors.sky.color))
+                                    .onTapGesture(perform: viewModel.feeInfoPressed.send)
+                                if viewModel.isFeeLoading {
+                                    CircularProgressIndicatorView(
+                                        backgroundColor: Asset.Colors.sky.color.withAlphaComponent(0.6),
+                                        foregroundColor: Asset.Colors.sky.color
+                                    )
+                                    .frame(width: 16, height: 16)
+                                } else {
+                                    Button(action: viewModel.feeInfoPressed.send, label: {
+                                        Image(uiImage: UIImage.infoSend)
+                                            .resizable()
+                                            .frame(width: 16, height: 16)
+                                    })
+                                }
                             }
-                        }
-                    }.allowsHitTesting(!viewModel.isFeeLoading && !viewModel.lock)
+                        }.allowsHitTesting(!viewModel.isFeeLoading && !viewModel.lock)
+                    }
                 }
                 .padding(.horizontal, 4)
 
