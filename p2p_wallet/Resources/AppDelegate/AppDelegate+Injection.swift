@@ -249,7 +249,7 @@ extension Resolver: ResolverRegistering {
                 contextManager: Resolver.resolve(),
                 solanaAPIClient: Resolver.resolve(),
                 blockchainClient: Resolver.resolve(),
-                feeRelayer: Resolver.resolve(),
+                relayService: Resolver.resolve(),
                 account: Resolver.resolve(AccountStorageType.self).account
             )
         }
@@ -286,6 +286,7 @@ extension Resolver: ResolverRegistering {
             .scope(.session)
 
         register { RelayServiceImpl(
+            contextManager: resolve(),
             orcaSwap: resolve(),
             accountStorage: resolve(),
             solanaApiClient: resolve(),
@@ -485,8 +486,8 @@ extension Resolver: ResolverRegistering {
                 solend: resolve(),
                 solana: resolve(),
                 feeRelayApi: resolve(),
-                feeRelay: resolve(),
-                feeRelayContextManager: resolve()
+                relayService: resolve(),
+                relayContextManager: resolve()
             )
         }
         .implements(SolendActionService.self)

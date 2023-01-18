@@ -123,10 +123,10 @@ final class SendInputViewModel: BaseViewModel, ObservableObject {
             initialState: state,
             services: .init(
                 swapService: SwapServiceImpl(
-                    feeRelayerCalculator: Resolver.resolve(FeeRelayer.self).feeCalculator, orcaSwap: Resolver.resolve()
+                    feeRelayerCalculator: Resolver.resolve(RelayService.self).feeCalculator, orcaSwap: Resolver.resolve()
                 ),
                 feeService: SendFeeCalculatorImpl(
-                    feeRelayerCalculator: Resolver.resolve(FeeRelayer.self).feeCalculator
+                    feeRelayerCalculator: Resolver.resolve(RelayService.self).feeCalculator
                 ),
                 solanaAPIClient: Resolver.resolve()
             )
@@ -158,13 +158,13 @@ final class SendInputViewModel: BaseViewModel, ObservableObject {
             let nextState = await stateMachine
                 .accept(action: .initialize(.init {
                     // get current context
-                    let feeRelayerContextManager = Resolver.resolve(FeeRelayerContextManager.self)
-                    return try await feeRelayerContextManager.getCurrentContext()
+                    let relayContextManager = Resolver.resolve(RelayContextManager.self)
+                    return try await relayContextManager.getCurrentContextOrUpdate()
                 }))
             
             #if !RELEASE
             let context = try await Resolver.resolve(FeeRelayerContextManager.self)
-                .getCurrentContext()
+                .getCurrentContextOrUpdate()
             let relayAccountStatus = context.relayAccountStatus
             let relayAccountBalance = context.relayAccountStatus.balance ?? 0
             let minRelayAccountBalance = context.minimumRelayAccountBalance
