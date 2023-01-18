@@ -492,7 +492,7 @@ CHECKOUT OPTIONS:
     :commit: 4022425d60c1609b17cbc156570171d230ea32b9
     :git: https://github.com/p2p-org/key-app-kit-swift.git
   OrcaSwapSwift:
-    :commit: e76b0650046ed3e380016775614d3e99fad8f1b1
+    :commit: 47d84350e0e6d4b273cafe5bfd1d6a8a193304bc
     :git: https://github.com/p2p-org/OrcaSwapSwift.git
   P2PSwift:
     :commit: 4022425d60c1609b17cbc156570171d230ea32b9
