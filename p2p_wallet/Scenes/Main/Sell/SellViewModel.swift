@@ -48,6 +48,7 @@ class SellViewModel: BaseViewModel, ObservableObject {
 
     /// Maximum value to sell from sell provider
     private var maxBaseProviderAmount: Double?
+    private var initialBaseAmount: Double?
 
     // MARK: - Subjects
     @Published var isMoreBaseCurrencyNeeded: Bool = false
@@ -70,8 +71,14 @@ class SellViewModel: BaseViewModel, ObservableObject {
 
     // MARK: - Initializer
 
-    init(navigation: PassthroughSubject<SellNavigation?, Never>) {
+    ///  - parameter initialBaseAmount: value that will be in the field by default
+    init(
+        initialBaseAmount: Double? = nil,
+        navigation: PassthroughSubject<SellNavigation?, Never>
+    ) {
         self.navigation = navigation
+        self.initialBaseAmount = initialBaseAmount
+        self.baseAmount = initialBaseAmount
         super.init()
 
         warmUp()
@@ -173,6 +180,7 @@ class SellViewModel: BaseViewModel, ObservableObject {
         // update prices on base amount change
         $baseAmount
             .removeDuplicates()
+            .filter { $0 != nil }
             .withLatestFrom(
                 Publishers.CombineLatest(
                     $baseCurrencyCode,
@@ -216,7 +224,7 @@ class SellViewModel: BaseViewModel, ObservableObject {
             .receive(on: RunLoop.main)
             .sink(receiveValue: { [weak self] currency, fiat in
                 guard let self = self else { return }
-                self.baseAmount = currency?.minSellAmount ?? 0
+                self.baseAmount = max(self.initialBaseAmount ?? 0, currency?.minSellAmount ?? 0)
                 self.quoteCurrencyCode = fiat?.code ?? "USD"
                 self.maxBaseProviderAmount = currency?.maxSellAmount ?? 0
                 self.minBaseAmount = currency?.minSellAmount ?? 0
