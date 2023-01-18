@@ -66,6 +66,7 @@ class SellViewModel: BaseViewModel, ObservableObject {
     @Published var fee: LoadingValue<Double> = .loaded(0)
     @Published var status: SellDataServiceStatus = .initialized
     @Published var inputError: SellViewModelInputError?
+    var shouldNotShowKeyboard = false
 
     // MARK: - Initializer
 
@@ -127,6 +128,7 @@ class SellViewModel: BaseViewModel, ObservableObject {
             externalCustomerId: externalCustomerId
         )
         navigation.send(.webPage(url: url))
+        shouldNotShowKeyboard = true
     }
     
     // MARK: - Binding
