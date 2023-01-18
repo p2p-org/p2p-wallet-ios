@@ -39,7 +39,7 @@ final class SellCoordinator: Coordinator<SellCoordinatorResult> {
     // MARK: - Methods
     override func start() -> AnyPublisher<SellCoordinatorResult, Never> {
         // create viewController
-        viewModel = SellViewModel(navigation: navigation)
+        viewModel = SellViewModel(initialBaseAmount: initialAmountInToken, navigation: navigation)
         let vc = UIHostingController(rootView: SellView(viewModel: viewModel))
         vc.hidesBottomBarWhenPushed = navigationController.canHideBottomForNextPush
         navigationController.pushViewController(vc, animated: true)
