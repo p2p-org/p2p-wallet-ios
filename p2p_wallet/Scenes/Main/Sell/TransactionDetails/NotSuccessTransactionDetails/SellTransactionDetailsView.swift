@@ -40,7 +40,7 @@ struct SellTransactionDetailsView: View {
 
     private var infoBlockView: some View {
         HStack(alignment: .top, spacing: 10) {
-            Image(uiImage: .sellPendingWarning)
+            Image(uiImage: .sellInfo)
                 .renderingMode(.template)
                 .foregroundColor(infoIconColor)
             Text(viewModel.infoText)
