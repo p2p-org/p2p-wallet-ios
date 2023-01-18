@@ -301,7 +301,7 @@ extension Resolver: ResolverRegistering {
 
         register { () -> RelayContextManager in
             if FeeRelayConfig.shared.disableFeeTransaction {
-                return FeeRelayerContextManagerDisabledFreeTrxImpl(
+                return RelayContextManagerDisabledFreeTrxImpl(
                     accountStorage: resolve(),
                     solanaAPIClient: resolve(),
                     feeRelayerAPIClient: resolve()
