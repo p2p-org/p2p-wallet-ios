@@ -340,7 +340,7 @@ class SwapServiceWithRelayImpl: SwapServiceType {
                 solanaAPIClient: solanaAPIClient,
                 orcaSwap: orcaSwap
             ),
-            destinationManager: DestinationFinderImpl(solanaAPIClient: solanaAPIClient),
+            destinationAnalysator: DestinationAnalysatorImpl(solanaAPIClient: solanaAPIClient),
             feePayerAddress: context.feePayerAddress,
             minimumTokenAccountBalance: context.minimumTokenAccountBalance,
             lamportsPerSignature: context.lamportsPerSignature

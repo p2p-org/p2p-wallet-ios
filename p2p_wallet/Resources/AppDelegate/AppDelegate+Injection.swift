@@ -318,7 +318,7 @@ extension Resolver: ResolverRegistering {
         
         register {
             DefaultSwapFeeRelayerCalculator(
-                destinationFinder: DestinationFinderImpl(solanaAPIClient: Resolver.resolve()),
+                destinationAnalysator: DestinationAnalysatorImpl(solanaAPIClient: Resolver.resolve()),
                 accountStorage: Resolver.resolve()
             )
         }
