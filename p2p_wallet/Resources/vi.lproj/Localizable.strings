@@ -1171,3 +1171,4 @@ Reset the PIN or wait for %@." = "Bạn còn %@ lần thử để nhập mã PIN
 "The transaction was rejected by the Solana blockchain" = "Giao dịch đã bị blockchain Solana từ chối";
 "The data is being updated. Please try again in a few minutes." = "Dữ liệu đang được cập nhật.  Vui lòng thử lại trong vài phút.";
 "Buy or receive to continue" = "Mua hoặc nhận để tiếp tục";
+"Less than %@" = "Ít hơn %@";

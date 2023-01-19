@@ -128,6 +128,7 @@ class RecipientSearchViewModel: ObservableObject {
     func searchQR(query: String, autoSelectTheOnlyOneResultMode: AutoSelectTheOnlyOneResultMode) {
         fromQR = true
         self.autoSelectTheOnlyOneResultMode = autoSelectTheOnlyOneResultMode
+        input.removeAll() // need to trigger publisher update in case of the same input
         input = query
     }
 
@@ -187,7 +188,7 @@ class RecipientSearchViewModel: ObservableObject {
     @MainActor
     func notifyAddressRecognized(recipient: Recipient) {
         let text = L10n.theAddressIsRecognized("\(recipient.address.prefix(6))...\(recipient.address.suffix(6))")
-        notificationService.showToast(title: "✅", text: text)
+        notificationService.showToast(title: "✅", text: text, haptic: false)
     }
     
     @MainActor
@@ -196,6 +197,7 @@ class RecipientSearchViewModel: ObservableObject {
         do {
             try await Resolver.resolve(SwapServiceType.self).reload()
             loadingState = .loaded
+            isFirstResponder = true
         } catch {
             loadingState = .error(error.readableDescription)
         }

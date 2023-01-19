@@ -87,7 +87,7 @@ struct SendTransactionStatusView: View {
 
     var status: some View {
         SendTransactionStatusStatusView(
-            state: viewModel.state,
+            viewModel: viewModel,
             errorMessageTapAction: { [weak viewModel] in viewModel?.errorMessageTap.send() }
         )
     }
@@ -104,61 +104,68 @@ struct SendTransactionStatusView: View {
 }
 
 struct SendTransactionStatusStatusView: View {
-    let state: SendTransactionStatusViewModel.State
-    let errorMessageTapAction: () -> Void
+    @ObservedObject private var viewModel: SendTransactionStatusViewModel
 
-    @State private var isAnimating = false
-    @State private var isRotating = 0.0
-    let animation: Animation = .linear(duration: 0.2).speed(0.1).repeatForever(autoreverses: false)
+    @State private var isRotatingAnimation = false
+    @State private var isColorTransition = true
+    @State private var previousAppearance: SendTransactionStatusViewAppearance?
+    @State private var currentAppearance: SendTransactionStatusViewAppearance
+
+    private let rotationAnimation = Animation.linear(duration: 0.2).speed(0.1).repeatForever(autoreverses: false)
+    private let scaleAnimation = Animation.easeInOut(duration: 0.2)
+    private let errorMessageTapAction: () -> Void
+
+    init(viewModel: SendTransactionStatusViewModel, errorMessageTapAction: @escaping () -> Void) {
+        self.viewModel = viewModel
+        self.currentAppearance = SendTransactionStatusViewAppearance(state: viewModel.state)
+        self.previousAppearance = nil
+        self.errorMessageTapAction = errorMessageTapAction
+    }
+
+    private let maxScaleEffect: CGFloat = 1.0
+    private let minScaleEffect: CGFloat = 0
 
     var body: some View {
         VStack {
             HStack(spacing: 12) {
                 ZStack(alignment: .center) {
-                    if case .loading = state {
-                        Image(uiImage: .transactionStatusLoadingWrapper)
-                            .rotationEffect(.degrees(isAnimating ? 360 : 0.0))
-                            .animation(isAnimating ? animation : .default, value: isAnimating)
-                            .onAppear {
-                                DispatchQueue.main.async { isAnimating = true }
-                            }
-                        Image(uiImage: image)
-                            .renderingMode(.template)
-                            .resizable()
-                            .foregroundColor(Color(Asset.Colors.mountain.color))
-                            .frame(width: 24, height: 24)
-                    } else if case .error = state {
+                    if let previousColor = previousAppearance?.circleColor {
                         Circle()
-                            .fill(color)
+                            .fill(previousColor)
                             .frame(width: 48, height: 48)
-                            .cornerRadius(24)
-                        Image(uiImage: image)
+                            .scaleEffect(maxScaleEffect)
+                    }
+
+                    if case .loading = viewModel.state {
+                        Image(uiImage: .transactionStatusLoadingWrapper)
                             .resizable()
-                            .foregroundColor(Color(Asset.Colors.rose.color))
-                            .frame(width: 20, height: 18)
+                            .frame(width: 48, height: 48)
+                            .rotationEffect(.degrees(isRotatingAnimation ? 360 : 0.0))
+                            .animation(isRotatingAnimation ? rotationAnimation : .default, value: isRotatingAnimation)
+                            .onAppear { DispatchQueue.main.async { isRotatingAnimation = true } }
                     } else {
                         Circle()
-                            .fill(color)
+                            .fill(currentAppearance.circleColor)
                             .frame(width: 48, height: 48)
-                            .cornerRadius(24)
-                        Image(uiImage: image)
-                            .renderingMode(.template)
-                            .resizable()
-                            .foregroundColor(Color(UIColor(red: 0.016, green: 0.816, blue: 0.016, alpha: 1)))
-                            .frame(width: 24, height: 24)
+                            .scaleEffect(isColorTransition ? maxScaleEffect : minScaleEffect)
                     }
+
+                    Image(uiImage: currentAppearance.image)
+                        .renderingMode(.template)
+                        .resizable()
+                        .scaledToFit()
+                        .foregroundColor(currentAppearance.imageColor)
+                        .frame(width: currentAppearance.imageSize.width, height: currentAppearance.imageSize.height)
                 }
                 .padding(.leading, 5)
                 Group {
-                    switch state {
+                    switch viewModel.state {
                     case let .loading(message), let .succeed(message: message):
                         Text(message)
-                            .apply(style: .text4)
-                            .foregroundColor(Color(Asset.Colors.night.color))
+                            .messageStyled()
                     case let .error(message):
                         Text(message)
-                            .apply(style: .text4)
-                            .foregroundColor(Color(Asset.Colors.night.color))
+                            .messageStyled()
                             .onTapGesture(perform: errorMessageTapAction)
                     }
                 }
@@ -168,30 +175,22 @@ struct SendTransactionStatusStatusView: View {
             .padding(13)
         }
         .frame(maxWidth: .infinity)
-        .background(color)
+        .background(currentAppearance.backgroundColor)
         .cornerRadius(12)
-    }
-
-    var image: UIImage {
-        switch state {
-        case .loading:
-            return .lightningFilled
-        case .error:
-            return .solendSubtract
-        case .succeed:
-            return .lightningFilled
+        .onReceive(viewModel.$state) { value in
+            previousAppearance = currentAppearance
+            currentAppearance = SendTransactionStatusViewAppearance(state: value)
+            isColorTransition = false
+            withAnimation(scaleAnimation) { isColorTransition = true }
         }
     }
+}
 
-    var color: Color {
-        switch state {
-        case .loading:
-            return Color(Asset.Colors.cloud.color)
-        case .error:
-            return Color(UIColor(red: 255 / 255, green: 220 / 255, blue: 233 / 255, alpha: 0.3))
-        case .succeed:
-            return Color(.cdf6cd).opacity(0.3)
-        }
+private extension Text {
+    func messageStyled() -> some View {
+        return self.apply(style: .text4)
+            .foregroundColor(Color(Asset.Colors.night.color))
+            .fixedSize(horizontal: false, vertical: true)
     }
 }
 
