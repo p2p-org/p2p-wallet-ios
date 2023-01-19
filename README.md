@@ -1,6 +1,6 @@
-# P2P Wallet
+# Key App
 
-P2P Wallet on Solana blockchain
+Key App wallet on Solana blockchain
 
 ## Features
 
@@ -48,8 +48,12 @@ MOONPAY_PRODUCTION_API_KEY = fake_api_key
 AMPLITUDE_API_KEY = fake_api_key
 
 // MARK: - FeeRelayer
+FEE_RELAYER_STAGING_ENDPOINT = test-solana-fee-relayer.wallet.p2p.org
 FEE_RELAYER_ENDPOINT = fee-relayer.solana.p2p.org
 TEST_ACCOUNT_SEED_PHRASE = account-test-seed-phrase-separated-by-hyphens
+
+// MARK: - NameService
+NAME_SERVICE_ENDPOINT = name_service.org
 ```
 - Run install.sh
 ```shell
@@ -144,10 +148,10 @@ Result
 
 ## UI Templates
 
-- Copy template `BEScene2.xctemplate` that is located under `Templates` folder to  `~/Library/Developer/Xcode/Templates/`
+- Copy template `MVVM-C.xctemplate` that is located under `Templates` folder to  `~/Library/Developer/Xcode/Templates/`
 ```zsh
-mkdir -p ~/Library/Developer/Xcode/Templates/BEScene2.xctemplate
-cp -R Templates/BEScene2.xctemplate ~/Library/Developer/Xcode/Templates
+mkdir -p ~/Library/Developer/Xcode/Templates/MVVM-C.xctemplate
+cp -R Templates/MVVM-C.xctemplate ~/Library/Developer/Xcode/Templates
 ```
 
 ## Dependency Injection
@@ -156,4 +160,58 @@ cp -R Templates/BEScene2.xctemplate ~/Library/Developer/Xcode/Templates
 
 ## Contribute
 
-We would love you for the contribution to **P2P Wallet**, check the ``LICENSE`` file for more info.
+We would love you for the contribution to **Key App**, check the ``LICENSE`` file for more info.
+
+
+## Feature Flags
+
+### Add feature flag steps
+
+- Add feature flag to Firebase Remote Config with style: `settingsFeature`
+- Add feature flag with the same title to `public extension Feature` struct
+
+```
+public extension Feature {
+    static let settingsFeature = Feature(rawValue: "settingsFeature")
+}
+```
+
+- Add feature flag to DebugMenuViewModel
+
+```
+extension DebugMenuViewModel {
+    enum Menu: Int, CaseIterable {
+        case newSettings
+
+        var title: String {
+            switch self {
+            case .newSettings:
+                return "New Settings"
+            }
+        }
+
+        var feature: Feature {
+            switch self {
+            case .newSettings:
+                return .settingsFeature
+            }
+        }
+    }
+}
+```
+
+### Feature flag using example
+
+```
+if available(.settingsFeature) {
+    showNewSettingsScreen(
+        input: input,
+        state: status.creditState
+    )
+} else {
+    showOldSettingsScreen(
+        input: input,
+        status: status
+    )
+}
+```

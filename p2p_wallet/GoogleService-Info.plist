@@ -3,9 +3,11 @@
 <plist version="1.0">
 <dict>
 	<key>CLIENT_ID</key>
-	<string>553127941597-a5pufrksaqk2dao10t9kam3kna2i6o2u.apps.googleusercontent.com</string>
+	<string>553127941597-2u6n7msb2bjqcoivbjlpb8cl4n6kq617.apps.googleusercontent.com</string>
 	<key>REVERSED_CLIENT_ID</key>
-	<string>com.googleusercontent.apps.553127941597-a5pufrksaqk2dao10t9kam3kna2i6o2u</string>
+	<string>com.googleusercontent.apps.553127941597-2u6n7msb2bjqcoivbjlpb8cl4n6kq617</string>
+	<key>ANDROID_CLIENT_ID</key>
+	<string>553127941597-2avem23ls8ajji5h3c8qpmsd7sops7qn.apps.googleusercontent.com</string>
 	<key>API_KEY</key>
 	<string>AIzaSyA9nMwBfzig-EcSl54duJm49Z5K6jjoaio</string>
 	<key>GCM_SENDER_ID</key>
@@ -13,7 +15,7 @@
 	<key>PLIST_VERSION</key>
 	<string>1</string>
 	<key>BUNDLE_ID</key>
-	<string>org.p2p.cyber</string>
+	<string>org.p2p.cyber.test</string>
 	<key>PROJECT_ID</key>
 	<string>p2p-wallet</string>
 	<key>STORAGE_BUCKET</key>
@@ -29,7 +31,7 @@
 	<key>IS_SIGNIN_ENABLED</key>
 	<true></true>
 	<key>GOOGLE_APP_ID</key>
-	<string>1:553127941597:ios:f3be04868ce5cd8c2c5234</string>
+	<string>1:553127941597:ios:d0d62699715445a02c5234</string>
 	<key>DATABASE_URL</key>
 	<string>https://p2p-wallet.firebaseio.com</string>
 </dict>

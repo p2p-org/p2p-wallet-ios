@@ -1,12 +1,15 @@
 //
-// Created by Giang Long Tran on 06.01.22.
+//  SortByDataStrategy.swift
+//  p2p_wallet
+//
+//  Created by Chung Tran on 14/11/2022.
 //
 
-import BECollectionView
+import BECollectionView_Combine
 import Foundation
 
 struct CollectionViewMappingStrategy {
-    static func byData<T: Hashable>(viewModel: BEListViewModelType, forType: T.Type,
+    static func byData<T: Hashable>(viewModel: BECollectionViewModelType, forType: T.Type,
                                     where datePath: KeyPath<T, Date>) -> [BEDynamicSectionsCollectionView.SectionInfo]
     {
         let transactions = viewModel.getData(type: forType)
@@ -19,7 +22,7 @@ struct CollectionViewMappingStrategy {
         return dateFormatter(dictionary: dictionary)
     }
 
-    static func byData<T: Hashable>(viewModel: BEListViewModelType, forType: T.Type,
+    static func byData<T: Hashable>(viewModel: BECollectionViewModelType, forType: T.Type,
                                     where datePath: KeyPath<T, Date?>) -> [BEDynamicSectionsCollectionView.SectionInfo]
     {
         let transactions = viewModel.getData(type: forType)

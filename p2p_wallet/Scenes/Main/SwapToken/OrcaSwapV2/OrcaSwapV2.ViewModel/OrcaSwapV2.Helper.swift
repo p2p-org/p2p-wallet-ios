@@ -125,7 +125,6 @@ extension OrcaSwapV2.ViewModel {
     func feesRequest() -> Single<[PayingFee]> {
         guard
             let sourceWallet = sourceWalletSubject.value,
-            let sourceWalletPubkey = sourceWallet.pubkey,
             let destinationWallet = destinationWalletSubject.value
         else {
             return .just([])
@@ -133,14 +132,11 @@ extension OrcaSwapV2.ViewModel {
 
         let bestPoolsPair = bestPoolsPairSubject.value
         let inputAmount = inputAmountSubject.value
-        let myWalletsMints = walletsRepository.getWallets().map(\.token.address)
         let slippage = slippageSubject.value
 
         return Single.async {
             try await self.swapService.getFees(
-                sourceAddress: sourceWalletPubkey,
                 sourceMint: sourceWallet.mintAddress,
-                availableSourceMintAddresses: myWalletsMints,
                 destinationAddress: destinationWallet.pubkey,
                 destinationToken: destinationWallet.token,
                 bestPoolsPair: bestPoolsPair,

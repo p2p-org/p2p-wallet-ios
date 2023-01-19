@@ -23,10 +23,10 @@ For _fastlane_ installation instructions, see [Installing _fastlane_](https://do
 
 
 
-### ios beta
+### ios upload_dsym_to_analytic_providers
 
 ```sh
-[bundle exec] fastlane ios beta
+[bundle exec] fastlane ios upload_dsym_to_analytic_providers
 ```
 
 

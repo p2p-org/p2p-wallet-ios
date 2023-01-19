@@ -5,7 +5,7 @@
 //  Created by Chung Tran on 10/29/20.
 //
 
-import Action
+import Combine
 import Foundation
 import SafariServices
 
@@ -24,7 +24,7 @@ extension UIViewController {
         let alertController = UIAlertController(title: title, message: message, preferredStyle: .alert)
         var allButtons = buttonTitles ?? [String]()
         if allButtons.isEmpty {
-            allButtons.append("OK")
+            allButtons.append(L10n.ok)
         }
 
         allButtons.enumerated().forEach { index, buttonTitle in
@@ -49,7 +49,8 @@ extension UIViewController {
         let alertController = UIAlertController(title: title, message: message, preferredStyle: .alert)
 
         if actions.isEmpty {
-            alertController.addAction(UIAlertAction(title: "OK", style: .default))
+            alertController.view.tintColor = UIColor.black
+            alertController.addAction(UIAlertAction(title: L10n.ok, style: .default))
         }
 
         for action in actions {
@@ -79,8 +80,8 @@ extension UIViewController {
         }
     }
 
-    func showErrorView(title: String? = nil, description: String? = nil, retryAction: CocoaAction? = nil) {
-        view.showErrorView(title: title, description: description, retryAction: retryAction)
+    func showErrorView(title: String? = nil, description: String? = nil, retryAction: (() -> Void)?) {
+        view.showErrorView(title: title, description: description, onRetry: retryAction)
     }
 
     func showWebsite(url: String) {
@@ -167,5 +168,67 @@ extension UIViewController {
     func forceResizeModal() {
         view.layoutIfNeeded()
         preferredContentSize.height += 1
+    }
+}
+
+// MARK: - ViewDidDisappearSwizzle
+
+private var onCloseKey: UInt8 = 0
+extension UIViewController {
+    var onClose: (() -> Void)? {
+        get {
+            objc_getAssociatedObject(
+                self,
+                &onCloseKey
+            ) as? () -> Void
+        }
+        set {
+            objc_setAssociatedObject(
+                self,
+                &onCloseKey,
+                newValue,
+                .OBJC_ASSOCIATION_RETAIN_NONATOMIC
+            )
+        }
+    }
+
+    @objc dynamic func viewDidDisappearOverride(_ animated: Bool) {
+        viewDidDisappearOverride(animated) // Incase we need to override this method
+        if isMovingFromParent || isBeingDismissed {
+            onClose?()
+        }
+    }
+
+    static func swizzleViewDidDisappear() {
+        if self != UIViewController.self { return }
+        let originalSelector = #selector(UIViewController.viewDidDisappear(_:))
+        let swizzledSelector = #selector(UIViewController.viewDidDisappearOverride(_:))
+        guard
+            let originalMethod = class_getInstanceMethod(self, originalSelector),
+            let swizzledMethod = class_getInstanceMethod(self, swizzledSelector)
+        else { return }
+        method_exchangeImplementations(originalMethod, swizzledMethod)
+    }
+}
+
+// MARK: - ViewDidAppearSwizzle
+
+extension UIViewController {
+    static func swizzleViewDidAppear() {
+        if self != UIViewController.self { return }
+        let originalSelector = #selector(UIViewController.viewDidAppear(_:))
+        let swizzledSelector = #selector(UIViewController.viewDidAppearOverride(_:))
+        guard
+            let originalMethod = class_getInstanceMethod(self, originalSelector),
+            let swizzledMethod = class_getInstanceMethod(self, swizzledSelector)
+        else { return }
+        method_exchangeImplementations(originalMethod, swizzledMethod)
+    }
+
+    @objc dynamic func viewDidAppearOverride(_ animated: Bool) {
+        viewDidAppearOverride(animated)
+        // TODO: - Finish logic. We need to finish code for getting analyticId from UIViewControllers and SwiftUI Views
+        guard let viewId = (UIApplication.topmostViewController() as? AnalyticView)?.analyticId else { return }
+        ScreenAnalyticTracker.shared.setCurrentViewId(viewId)
     }
 }

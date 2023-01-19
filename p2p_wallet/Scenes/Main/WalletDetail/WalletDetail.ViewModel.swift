@@ -87,15 +87,15 @@ extension WalletDetail {
                 .take(1)
                 .asSingle()
                 .subscribe(onSuccess: { [weak self] ticker in
-                    self?.analyticsManager.log(event: .tokenDetailsOpen(tokenTicker: ticker))
+                    self?.analyticsManager.log(event: AmplitudeEvent.tokenDetailsOpen(tokenTicker: ticker))
                 })
                 .disposed(by: disposeBag)
         }
 
         private func sendTokens() {
             guard let wallet = walletSubject.value else { return }
-            analyticsManager.log(event: .tokenDetailsSendClick)
-            analyticsManager.log(event: .sendViewed(lastScreen: "token_details"))
+            analyticsManager.log(event: AmplitudeEvent.tokenDetailsSendClick)
+            analyticsManager.log(event: AmplitudeEvent.sendViewed(lastScreen: "token_details"))
             navigatableSceneSubject.accept(.send(wallet: wallet))
         }
 
@@ -104,26 +104,26 @@ extension WalletDetail {
             if symbol == "SOL" {
                 tokens = .sol
             }
-            debugPrint(symbol)
+
             if symbol == "USDC" {
                 tokens = .usdc
             }
-            analyticsManager.log(event: .tokenDetailsBuyClick)
+            analyticsManager.log(event: AmplitudeEvent.tokenDetailsBuyClick)
             navigatableSceneSubject.accept(.buy(tokens: tokens))
         }
 
         private func receiveTokens() {
             guard let pubkey = walletSubject.value?.pubkey else { return }
-            analyticsManager.log(event: .tokenDetailQrClick)
-            analyticsManager.log(event: .tokenReceiveViewed)
-            analyticsManager.log(event: .receiveViewed(fromPage: "token_details"))
+            analyticsManager.log(event: AmplitudeEvent.tokenDetailQrClick)
+            analyticsManager.log(event: AmplitudeEvent.tokenReceiveViewed)
+            analyticsManager.log(event: AmplitudeEvent.receiveViewed(fromPage: "token_details"))
             navigatableSceneSubject.accept(.receive(walletPubkey: pubkey))
         }
 
         private func swapTokens() {
             guard let wallet = walletSubject.value else { return }
-            analyticsManager.log(event: .tokenDetailsSwapClick)
-            analyticsManager.log(event: .swapViewed(lastScreen: "token_details"))
+            analyticsManager.log(event: AmplitudeEvent.tokenDetailsSwapClick)
+            analyticsManager.log(event: AmplitudeEvent.swapViewed(lastScreen: "token_details"))
             navigatableSceneSubject.accept(.swap(fromWallet: wallet))
         }
     }
@@ -157,14 +157,16 @@ extension WalletDetail.ViewModel: WalletDetailViewModelType {
         case .buy:
             buyTokens()
         case .send:
+            analyticsManager.log(event: AmplitudeEvent.actionPanelSendToken(tokenName: symbol))
             sendTokens()
         case .swap:
+            analyticsManager.log(event: AmplitudeEvent.actionPanelSwapToken(tokenName: symbol))
             swapTokens()
         }
     }
 
     func showTransaction(_ transaction: ParsedTransaction) {
-        analyticsManager.log(event: .tokenDetailsDetailsOpen)
+        analyticsManager.log(event: AmplitudeEvent.tokenDetailsDetailsOpen)
         navigatableSceneSubject.accept(.transactionInfo(transaction))
     }
 }

@@ -2,7 +2,6 @@
 // Created by Giang Long Tran on 16.02.2022.
 //
 
-import BECollectionView
 import BEPureLayout
 import RxCocoa
 import RxSwift
@@ -87,7 +86,7 @@ class BaseWalletCell: BECompositionView {
         } else {
             coinNameRef.view?.text = item.token.name
         }
-        amountRef.view?.text = "\(item.amount.toString(maximumFractionDigits: 9)) \(item.token.symbol)"
+        amountRef.view?.text = "\(item.amount.orZero.toString(maximumFractionDigits: 9)) \(item.token.symbol)"
         amountInFiatRef.view?
             .text = "\(Defaults.fiat.symbol) \(item.amountInCurrentFiat.toString(maximumFractionDigits: 2))"
     }
