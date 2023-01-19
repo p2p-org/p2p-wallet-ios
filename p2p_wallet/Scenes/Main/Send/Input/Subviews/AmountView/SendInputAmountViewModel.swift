@@ -29,7 +29,7 @@ final class SendInputAmountViewModel: BaseViewModel, ObservableObject {
     @Published var amountText: String = ""
     @Published var amountTextColor: UIColor = Asset.Colors.night.color
     @Published var mainTokenText = ""
-    @Published var mainAmountType: EnteredAmountType = .fiat
+    @Published var mainAmountType: EnteredAmountType
     @Published var isMaxButtonVisible: Bool = true
 
     @Published var secondaryAmountText = ""
@@ -47,7 +47,7 @@ final class SendInputAmountViewModel: BaseViewModel, ObservableObject {
         fiat = Defaults.fiat
         token = initialToken
         countAfterDecimalPoint = Constants.fiatDecimals
-
+        mainAmountType = Defaults.isTokenInputTypeChosen ? .token : .fiat
         super.init()
 
         maxAmountPressed
@@ -116,6 +116,7 @@ final class SendInputAmountViewModel: BaseViewModel, ObservableObject {
                 case .fiat: self.mainAmountType = .token
                 case .token: self.mainAmountType = .fiat
                 }
+                self.saveInputTypeChoice()
                 if let oldAmount = self.amount {
                     // Toggle amount values because inputField is different type now
                     self.amount = Amount(inFiat: oldAmount.inToken, inToken: oldAmount.inFiat)
@@ -172,6 +173,10 @@ private extension SendInputAmountViewModel {
 
     func updateDecimalsPoint() {
         self.countAfterDecimalPoint = self.mainAmountType == .token ? token.decimals : Constants.fiatDecimals
+    }
+
+    func saveInputTypeChoice() {
+        Defaults.isTokenInputTypeChosen = self.mainAmountType == .token
     }
 }
 
