@@ -5,7 +5,7 @@
 //  Created by Chung Tran on 22/04/2022.
 //
 
-import Foundation
+import KeyAppUI
 import RxCocoa
 
 extension ConfirmReceivingBitcoin.ViewController {
@@ -42,7 +42,7 @@ extension ConfirmReceivingBitcoin.ViewController {
                                         NSMutableAttributedString()
                                             .text(L10n.accountCreationFee + ": ", size: 13, color: .textSecondary)
                                             .text(
-                                                "~" + Defaults.fiat.symbol + fee.toString(maximumFractionDigits: 2),
+                                                "~" + Defaults.fiat.symbol + fee.orZero.toString(maximumFractionDigits: 2),
                                                 size: 13,
                                                 color: .textBlack
                                             )
@@ -69,25 +69,21 @@ extension ConfirmReceivingBitcoin.ViewController {
 
             ReceiveToken.textBuilder(
                 text: L10n
-                    .ThisAddressAcceptsOnly.youMayLoseAssetsBySendingAnotherCoin(L10n.bitcoin)
+                    .YouReGoingToCreateAPublicBitcoinAddressThatWillBeValidForTheNext24Hours
+                    .youStillCanHoldAndSendBitcoinWithoutRestrictions
                     .asMarkdown()
             )
 
             ReceiveToken.textBuilder(
                 text: L10n
-                    .minimumTransactionAmountOf("0.000112 BTC")
-                    .asMarkdown()
-            )
-
-            ReceiveToken.textBuilder(
-                text: L10n.isTheRemainingTimeToSafelySendTheAssets("35:59:59")
+                    .itSAOneTimeAddressSoIfYouSendMultipleTransactionsYourMoneyWillBeLost
                     .asMarkdown()
             )
         }
     }
 
     func createRenBTCButton() -> UIView {
-        WLStepButton.main(text: "Pay 0.509 USDC & Continue")
+        TextButton(title: "Pay 0.509 USDC & Continue", style: .primary, size: .large)
             .setup { button in
                 Driver.combineLatest(
                     viewModel.totalFeeDriver,
@@ -99,10 +95,10 @@ extension ConfirmReceivingBitcoin.ViewController {
                         }
                         return L10n.payAndContinue(fee.toString(maximumFractionDigits: 9) + " " + wallet.token.symbol)
                     }
-                    .drive(button.rx.text)
+                    .drive(button.rx.title)
                     .disposed(by: disposeBag)
             }
-            .onTap { [unowned self] in
+            .onPressed { [unowned self] _ in
                 self.viewModel.createRenBTC()
             }
     }

@@ -5,7 +5,9 @@
 //  Created by Chung Tran on 22/12/2021.
 //
 
+import AnalyticsManager
 import Foundation
+import KeyAppUI
 import Resolver
 import RxCocoa
 import RxSwift
@@ -17,17 +19,25 @@ protocol NotificationService {
     func sendRegisteredDeviceToken(_ deviceToken: Data) async
     func deleteDeviceToken() async
     func showInAppNotification(_ notification: InAppNotification)
+    func showToast(title: String?, text: String?)
+    func showToast(title: String?, text: String?, withAutoHidden: Bool)
+    func showToast(title: String?, text: String?, haptic: Bool)
+    func showAlert(title: String, text: String)
+    func hideToasts()
+    func showDefaultErrorNotification()
     func wasAppLaunchedFromPush(launchOptions: [UIApplication.LaunchOptionsKey: Any]?)
     func didReceivePush(userInfo: [AnyHashable: Any])
     func notificationWasOpened()
     func unregisterForRemoteNotifications()
     func registerForRemoteNotifications()
+    func requestRemoteNotificationPermission()
 
     var showNotification: Observable<NotificationType> { get }
     var showFromLaunch: Bool { get }
 }
 
 final class NotificationServiceImpl: NSObject, NotificationService {
+    @Injected private var analyticsManager: AnalyticsManager
     @Injected private var accountStorage: AccountStorageType
     @Injected private var notificationRepository: NotificationRepository
 
@@ -70,6 +80,16 @@ final class NotificationServiceImpl: NSObject, NotificationService {
         }
     }
 
+    func requestRemoteNotificationPermission() {
+        UNUserNotificationCenter.current()
+            .requestAuthorization(options: [.alert, .sound, .badge]) { [weak self] granted, _ in
+                Defaults.didSetEnableNotifications = granted
+                if granted {
+                    self?.analyticsManager.log(event: AmplitudeEvent.pushApprove)
+                }
+            }
+    }
+
     func sendRegisteredDeviceToken(_ deviceToken: Data) async {
         UserDefaults.standard.set(deviceToken, forKey: deviceTokenKey)
         Defaults.wasFirstAttemptForSendingToken = true
@@ -104,17 +124,61 @@ final class NotificationServiceImpl: NSObject, NotificationService {
             deviceToken: token,
             clientId: publicKey
         ))
+        
+        UserDefaults.standard.removeObject(forKey: deviceTokenKey)
     }
 
     func showInAppNotification(_ notification: InAppNotification) {
         DispatchQueue.main.async {
             UIApplication.shared.showToast(message: self.createTextFromNotification(notification))
+            let generator = UINotificationFeedbackGenerator()
+            generator.notificationOccurred(.success)
+        }
+    }
+
+    func showToast(title: String?, text: String?) {
+        DispatchQueue.main.async {
+            UIApplication.shared.showToastError(title: title, text: text)
+        }
+    }
+
+    func showToast(title: String? = nil, text: String? = nil, withAutoHidden: Bool) {
+        DispatchQueue.main.async {
+            UIApplication.shared.showToastError(title: title, text: text, withAutoHidden: withAutoHidden)
+        }
+    }
+
+    func showToast(title: String?, text: String?, haptic: Bool) {
+        showToast(title: title, text: text)
+        if haptic {
+            let generator = UINotificationFeedbackGenerator()
+            generator.notificationOccurred(.success)
+        }
+    }
+
+    func showAlert(title: String, text: String) {
+        DispatchQueue.main.async {
+            UIApplication.shared.keyWindow?.topViewController()?
+                .showAlert(title: title, message: text)
+        }
+    }
+
+    func hideToasts() {
+        SnackBarManager.shared.dismissAll()
+    }
+
+    func showDefaultErrorNotification() {
+        DispatchQueue.main.async {
+            UIApplication.shared.showToastError()
         }
     }
 
     func wasAppLaunchedFromPush(launchOptions: [UIApplication.LaunchOptionsKey: Any]?) {
         if launchOptions?[.remoteNotification] != nil {
+            analyticsManager.log(event: AmplitudeEvent.appOpened(sourceOpen: "Push"))
             UserDefaults.standard.set(true, forKey: openAfterPushKey)
+        } else {
+            analyticsManager.log(event: AmplitudeEvent.appOpened(sourceOpen: "Direct"))
         }
     }
 
@@ -144,7 +208,7 @@ extension NotificationServiceImpl: UNUserNotificationCenterDelegate {
         willPresent _: UNNotification,
         withCompletionHandler completionHandler: @escaping (UNNotificationPresentationOptions) -> Void
     ) {
-        completionHandler([.alert, .sound, .badge])
+        completionHandler([.list, .banner, .sound, .badge])
     }
 }
 
@@ -201,11 +265,44 @@ private extension UIApplication {
             }
         }
     }
+
+    func showToastError(title: String? = nil, text: String? = nil, withAutoHidden: Bool = true) {
+        guard let window = kWindow else { return }
+        SnackBar(
+            title: title ?? "😓",
+            text: text ?? L10n.SomethingWentWrong.pleaseTryAgain
+        ).show(in: window, autoHide: withAutoHidden)
+    }
 }
 
 private extension Data {
     var formattedDeviceToken: String {
         let tokenParts = map { data in String(format: "%02.2hhx", data) }
         return tokenParts.joined()
+    }
+}
+
+private extension UIWindow {
+    func topViewController() -> UIViewController? {
+        rootViewController?.topMostViewController()
+    }
+}
+
+private extension UIViewController {
+    func topMostViewController() -> UIViewController? {
+        if presentedViewController == nil { return self }
+
+        if let navigation = presentedViewController as? UINavigationController {
+            return navigation.visibleViewController!.topMostViewController() ?? self
+        }
+
+        if let tab = presentedViewController as? UITabBarController {
+            if let selectedTab = tab.selectedViewController {
+                return selectedTab.topMostViewController() ?? self
+            }
+            return tab.topMostViewController() ?? self
+        }
+
+        return presentedViewController!.topMostViewController() ?? self
     }
 }

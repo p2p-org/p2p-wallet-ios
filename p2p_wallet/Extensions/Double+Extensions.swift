@@ -7,23 +7,16 @@
 
 import Foundation
 
-extension Optional where Wrapped == Double {
-    public func toString(
-        maximumFractionDigits: Int = 3,
-        showPlus: Bool = false,
-        showMinus: Bool = true,
-        groupingSeparator: String? = " ",
-        autoSetMaximumFractionDigits: Bool = false
-    ) -> String {
-        orZero.toString(
-            maximumFractionDigits: maximumFractionDigits,
-            showPlus: showPlus,
-            showMinus: showMinus,
-            groupingSeparator: groupingSeparator,
-            autoSetMaximumFractionDigits: autoSetMaximumFractionDigits
-        )
-    }
+// MARK: - Constants
 
+extension Double {
+    /// Maximum slippage value allowed
+    static var maxSlippage: Self { 0.5 }
+}
+
+// MARK: - Optional operations
+
+extension Optional where Wrapped == Double {
     public var orZero: Double {
         self ?? 0
     }
@@ -63,36 +56,42 @@ extension Optional where Wrapped == Double {
     }
 }
 
+// MARK: - Rounding
+
 extension Double {
-    static var maxSlippage: Self { 0.5 }
-
-    public func fixedDecimal(_ value: Int) -> String {
-        if value <= 0 { return "\(value)" }
-        if self == 0.0 {
-            var r = "0."
-            for _ in 0 ..< value { r += "0" }
-            return r
-        }
-
-        let formatter = NumberFormatter()
-        formatter.numberStyle = NumberFormatter.Style.decimal
-        formatter.roundingMode = NumberFormatter.RoundingMode.halfUp
-        formatter.maximumFractionDigits = value
-
-        return formatter.string(for: self) ?? toString(maximumFractionDigits: value)
+    func rounded(decimals: Int?) -> Double {
+        guard let decimals = decimals else { return self }
+        let realAmount = toString(maximumFractionDigits: decimals, groupingSeparator: nil)
+        return realAmount.double ?? self
     }
 
+    func rounded(decimals: UInt8?) -> Double {
+        guard let decimals = decimals else { return self }
+        return rounded(decimals: Int(decimals))
+    }
+}
+
+// MARK: - Format
+
+extension Double {
+    
+    /// Convert double value to string
     public func toString(
+        minimumFractionDigits: Int = 0,
         maximumFractionDigits: Int = 3,
         showPlus: Bool = false,
         showMinus: Bool = true,
         groupingSeparator: String? = nil,
-        autoSetMaximumFractionDigits: Bool = false
+        autoSetMaximumFractionDigits: Bool = false,
+        roundingMode: NumberFormatter.RoundingMode? = nil
     ) -> String {
         let formatter = NumberFormatter()
         formatter.groupingSize = 3
         formatter.numberStyle = .decimal
         formatter.decimalSeparator = "."
+        formatter.currencyDecimalSeparator = "."
+        formatter.groupingSeparator = " "
+        formatter.minimumFractionDigits = minimumFractionDigits
         if let groupingSeparator = groupingSeparator {
             formatter.groupingSeparator = groupingSeparator
         }
@@ -114,18 +113,72 @@ extension Double {
             }
         }
 
+        if let roundingMode = roundingMode {
+            formatter.roundingMode = roundingMode
+        }
+
         let number = showMinus ? self : abs(self)
         return formatter.string(from: number as NSNumber) ?? "0"
     }
 
-    func rounded(decimals: Int?) -> Double {
-        guard let decimals = decimals else { return self }
-        let realAmount = toString(maximumFractionDigits: decimals, groupingSeparator: nil)
-        return realAmount.double ?? self
+    public func fixedDecimal(_ maxDecimal: Int, minDecimal: Int = 0) -> String {
+        if maxDecimal <= 0 { return "\(maxDecimal)" }
+        if self == 0.0 {
+            var r = "0."
+            for _ in 0 ..< maxDecimal { r += "0" }
+            return r
+        }
+
+        let formatter = NumberFormatter()
+        formatter.numberStyle = NumberFormatter.Style.decimal
+        formatter.roundingMode = NumberFormatter.RoundingMode.halfUp
+        formatter.decimalSeparator = "."
+        formatter.minimumFractionDigits = minDecimal
+        formatter.maximumFractionDigits = maxDecimal
+
+        return formatter.string(for: self) ?? toString(
+            minimumFractionDigits: minDecimal,
+            maximumFractionDigits: maxDecimal
+        )
     }
 
-    func rounded(decimals: UInt8?) -> Double {
-        guard let decimals = decimals else { return self }
-        return rounded(decimals: Int(decimals))
+    func fiatAmountFormattedString(
+        maximumFractionDigits: Int = 2,
+        currency: Fiat = Defaults.fiat,
+        roundingMode: NumberFormatter.RoundingMode? = nil,
+        customFormattForLessThan1E_2: Bool = false
+    ) -> String {
+        // amount < 0.01
+        if customFormattForLessThan1E_2 && self < 0.01 {
+            if currency == .usd {
+                return "< \(currency.symbol) 0.01"
+            } else {
+                return "< 0.01 \(currency.symbol)"
+            }
+            
+        }
+        
+        // amount >= 0.01
+        else {
+            let formattedString = toString(maximumFractionDigits: maximumFractionDigits, roundingMode: roundingMode)
+            
+            if currency == .usd {
+                return "\(currency.symbol) \(formattedString)"
+            } else {
+                return "\(formattedString) \(currency.symbol)"
+            }
+        }
+    }
+
+    func tokenAmountFormattedString(
+        symbol: String,
+        maximumFractionDigits: Int = 9,
+        roundingMode: NumberFormatter.RoundingMode? = nil
+    ) -> String {
+        "\(toString(maximumFractionDigits: maximumFractionDigits)) \(symbol)"
+    }
+
+    func percentFormat(maximumFractionDigits: Int = 2) -> String {
+        "\(toString(maximumFractionDigits: maximumFractionDigits))%"
     }
 }

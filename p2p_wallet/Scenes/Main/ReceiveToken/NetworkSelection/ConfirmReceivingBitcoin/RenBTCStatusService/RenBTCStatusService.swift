@@ -16,15 +16,20 @@ import SolanaSwift
 class RenBTCStatusService: RenBTCStatusServiceType {
     @Injected private var solanaAPIClient: SolanaAPIClient
     @Injected private var blockchainClient: SolanaBlockchainClient
-    @Injected private var feeRelayerContextManager: FeeRelayerContextManager
+    @Injected private var relayContextManager: RelayContextManager
     @Injected private var feeRelayerAPIClient: FeeRelayerAPIClient
     @Injected private var accountStorage: AccountStorageType
     @Injected private var orcaSwap: OrcaSwapType
     @Injected private var walletsRepository: WalletsRepository
-    @Injected private var feeRelayer: FeeRelayer
+    @Injected private var relayService: RelayService
 
     private var minRenExemption: Lamports?
     private var lamportsPerSignature: Lamports?
+    private var rentExemptMinimum: Lamports?
+
+    private var renBTCMint: PublicKey {
+        Defaults.apiEndPoint.network == .mainnetBeta ? .renBTCMint : .renBTCMintDevnet
+    }
 
     func load() async throws {
         try await orcaSwap.load()
@@ -32,6 +37,7 @@ class RenBTCStatusService: RenBTCStatusServiceType {
         minRenExemption = try await solanaAPIClient
             .getMinimumBalanceForRentExemption(span: AccountInfo.BUFFER_LENGTH)
         lamportsPerSignature = try await solanaAPIClient.getLamportsPerSignature()
+        rentExemptMinimum = try await solanaAPIClient.getMinimumBalanceForRentExemption(span: 0)
     }
 
     func hasRenBTCAccountBeenCreated() -> Bool {
@@ -52,56 +58,93 @@ class RenBTCStatusService: RenBTCStatusServiceType {
             }
 
             var wallets = [Wallet]()
-            for await result in group where result.1 != nil && result.1! <= (result.0.lamports ?? 0) {
-                wallets.append(result.0)
+            for await(w, fee) in group where fee != nil && fee! <= (w.lamports ?? 0) {
+                // special case where wallet is native sol, needs to keeps rentExemptMinimum lamports in account to prevent error
+                // Transaction leaves an account with a lower balance than rent-exempt minimum
+                if w.isNativeSOL, (w.lamports ?? 0) - fee! < (rentExemptMinimum ?? 0) {
+                    continue
+                } else {
+                    wallets.append(w)
+                }
             }
             return wallets
         }
     }
 
-    func createAccount(payingFeeAddress address: String, payingFeeMintAddress mint: String) async throws {
-        guard let address = try? PublicKey(string: address),
-              let mint = try? PublicKey(string: mint) else { throw SolanaError.unknown }
+    func createAccount(payingFeeAddress address: String?, payingFeeMintAddress mint: String?) async throws {
         guard let account = accountStorage.account else { throw SolanaError.unauthorized }
 
-        // prepare transaction
-        let feePayer = try await feeRelayerContextManager.getCurrentContext().feePayerAddress
+        let feeCalculator: FeeCalculator?
+        let payingFeeToken: FeeRelayerSwift.TokenAccount?
+        let signers: [Account]
+
+        // CASE 1: User is paying for renBTC creation
+        if let address = address,
+           let mint = mint
+        {
+            feeCalculator = nil // use default solana's feeCalculator
+            payingFeeToken = .init(
+                address: try PublicKey(string: address),
+                mint: try PublicKey(string: mint)
+            )
+            signers = [account]
+        }
+
+        // CASE 2: Free renBTC creation
+        else {
+            class RenBTCFreeFeeCalculator: FeeCalculator {
+                func calculateNetworkFee(transaction _: SolanaSwift.Transaction) throws -> SolanaSwift.FeeAmount {
+                    .zero
+                }
+            }
+            feeCalculator = RenBTCFreeFeeCalculator()
+            payingFeeToken = nil
+            signers = []
+        }
+
+        // preparing process
+        let feePayer = try await relayContextManager.getCurrentContext().feePayerAddress
         async let preparing = blockchainClient.prepareTransaction(
             instructions: [
                 AssociatedTokenProgram.createAssociatedTokenAccountInstruction(
-                    mint: .renBTCMint,
+                    mint: renBTCMint,
                     owner: account.publicKey,
                     payer: feePayer
                 ),
             ],
-            signers: [account],
+            signers: signers,
             feePayer: feePayer,
-            feeCalculator: nil
+            feeCalculator: feeCalculator
         )
 
-        async let updating: () = feeRelayerContextManager.update()
+        // updating process
+        async let updating: () = relayContextManager.update()
 
+        // run concurrently
         let (preparedTransaction, _) = try await(preparing, updating)
 
-        let context = try await feeRelayerContextManager.getCurrentContext()
-        let tx = try await feeRelayer.topUpAndRelayTransaction(
+        // get context
+        let context = try await relayContextManager.getCurrentContext()
+
+        // relay transaction
+        let tx = try await relayService.topUpAndRelayTransaction(
             context,
             preparedTransaction,
-            fee: .init(address: address, mint: mint),
+            fee: payingFeeToken,
             config: .init(
                 operationType: .transfer,
-                currency: mint.base58EncodedString
+                currency: mint ?? renBTCMint.base58EncodedString
             )
         )
 
-        try await solanaAPIClient.waitForConfirmation(signature: tx, ignoreStatus: true)
+//        try await solanaAPIClient.waitForConfirmation(signature: tx, ignoreStatus: true)
 
         walletsRepository.batchUpdate { wallets in
             guard let string = wallets.first(where: { $0.isNativeSOL })?.pubkey,
                   let nativeWalletAddress = try? PublicKey(string: string),
                   let renBTCAddress = try? PublicKey.associatedTokenAddress(
                       walletAddress: nativeWalletAddress,
-                      tokenMintAddress: .renBTCMint
+                      tokenMintAddress: renBTCMint
                   )
             else { return wallets }
 
@@ -129,13 +172,13 @@ class RenBTCStatusService: RenBTCStatusServiceType {
             accountBalances: minRenExemption ?? 2_039_280
         )
 
-        let feeInSOL = try await feeRelayer.feeCalculator.calculateNeededTopUpAmount(
-            try await feeRelayerContextManager.getCurrentContext(),
+        let feeInSOL = try await relayService.feeCalculator.calculateNeededTopUpAmount(
+            try await relayContextManager.getCurrentContext(),
             expectedFee: feeAmount,
             payingTokenMint: mintAddress
         )
 
-        let feeInToken = try await feeRelayer.feeCalculator.calculateFeeInPayingToken(
+        let feeInToken = try await relayService.feeCalculator.calculateFeeInPayingToken(
             orcaSwap: orcaSwap,
             feeInSOL: feeInSOL,
             payingFeeTokenMint: mintAddress

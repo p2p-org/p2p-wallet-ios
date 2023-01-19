@@ -9,6 +9,12 @@ extension Moonpay {
         case unknown
     }
 
+    enum MoonpayPaymentMethod: String {
+        case creditDebitCard = "credit_debit_card"
+        case sepaBankTransfer = "sepa_bank_transfer"
+        case gbpBankTransfer = "gbp_bank_transfer"
+    }
+
     class Provider {
         private let api: API
 
@@ -18,7 +24,8 @@ extension Moonpay {
             baseCurrencyCode: String,
             quoteCurrencyCode: String,
             baseCurrencyAmount: Double?,
-            quoteCurrencyAmount: Double?
+            quoteCurrencyAmount: Double?,
+            paymentMethod: MoonpayPaymentMethod? = nil
         ) async throws -> BuyQuote {
             var params = [
                 "apiKey": api.apiKey,
@@ -34,6 +41,9 @@ extension Moonpay {
             }
             if let quoteCurrencyAmount = quoteCurrencyAmount {
                 params["quoteCurrencyAmount"] = quoteCurrencyAmount
+            }
+            if let paymentMethod = paymentMethod {
+                params["paymentMethod"] = paymentMethod.rawValue
             }
 
             var components = URLComponents(string: api.endpoint + "/currencies/\(quoteCurrencyCode)/buy_quote")!
@@ -97,5 +107,72 @@ extension Moonpay {
                 throw Error.message(message: data.message)
             }
         }
+
+        func bankTransferAvailability() async throws -> BankTransferAvailability {
+            struct IpAddress: Codable {
+                var alpha3: String?
+            }
+
+            var components = URLComponents(string: api.endpoint + "/ip_address")!
+            let params = ["apiKey": api.apiKey]
+            components.queryItems = params.map { key, value in
+                URLQueryItem(name: key, value: value)
+            }
+            components.percentEncodedQuery = components.percentEncodedQuery?.replacingOccurrences(of: "+", with: "%2B")
+            let urlRequest = URLRequest(url: components.url!)
+
+            let (data, _) = try await URLSession.shared.data(from: urlRequest)
+            guard
+                let json = try? JSONDecoder().decode(IpAddress.self, from: data),
+                let alpha3 = json.alpha3 else { return .init() }
+            return BankTransferAvailability(
+                gbp: alpha3 == "GBR",
+                eur: bankTransferAvailableAlpha3Codes().contains(alpha3)
+            )
+        }
+    }
+}
+
+extension Moonpay.Provider {
+    func bankTransferAvailableAlpha3Codes() -> [String] {
+        [
+            "AND",
+            "AUT",
+            "BEL",
+            "BGR",
+            "HRV",
+            "CYP",
+            "CZE",
+            "DNK",
+            "EST",
+            "FIN",
+            "FRA",
+            "DEU",
+            "GIB",
+            "GRC",
+            "HUN",
+            "ISL",
+            "IRL",
+            "ITA",
+            "LVA",
+            "LIE",
+            "LTU",
+            "LUX",
+            "MLT",
+            "MCO",
+            "NLD",
+            "NOR",
+            "POL",
+            "PRT",
+            "ROU",
+            "SMR",
+            "SVK",
+            "SVN",
+            "ESP",
+            "SWE",
+            "CHE",
+            "GBR",
+            "VAT",
+        ]
     }
 }

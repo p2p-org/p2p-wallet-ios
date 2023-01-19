@@ -6,10 +6,13 @@
 //
 
 import BEPureLayout
+import Combine
 import Foundation
 import Resolver
+import RxCombine
 import RxSwift
 import SolanaSwift
+import KeyAppUI
 import UIKit
 
 extension WalletDetail {
@@ -22,21 +25,20 @@ extension WalletDetail {
 
         var processingTransactionDoneHandler: (() -> Void)?
 
-        // MARK: - Subviews
-
-        private lazy var balanceView = BalanceView(viewModel: viewModel)
-        private let actionsView = ColorfulHorizontalView()
-
         // MARK: - Subscene
 
         private lazy var historyVC = History.Scene(account: viewModel.pubkey, symbol: viewModel.symbol)
-        private var coordinator: SendToken.Coordinator?
+        private var coordinator: SendCoordinator?
+        private var sendTransactionStatusCoordinator: SendTransactionStatusCoordinator?
+        private var subscriptions = Set<AnyCancellable>()
 
         // MARK: - Initializer
 
         init(viewModel: WalletDetailViewModelType) {
             self.viewModel = viewModel
             super.init()
+            hidesBottomBarWhenPushed = true
+            navigationItem.largeTitleDisplayMode = .never
         }
 
         // MARK: - Methods
@@ -46,7 +48,7 @@ extension WalletDetail {
 
             #if DEBUG
                 let rightButton = UIBarButtonItem(
-                    title: "Settings",
+                    title: L10n.settings,
                     style: .plain,
                     target: self,
                     action: #selector(showWalletSettings)
@@ -57,81 +59,101 @@ extension WalletDetail {
 
             let containerView = UIView(forAutoLayout: ())
 
-            actionsView.autoSetDimension(.height, toSize: 80)
+            let actionsPublisher = viewModel.walletActionsDriver
+                .asPublisher()
+                .assertNoFailure()
+            let balancePublisher = viewModel.walletDriver
+                .asPublisher()
+                .assertNoFailure()
+                .compactMap { $0?.amount?.tokenAmountFormattedString(symbol: $0?.token.symbol ?? "") }
+            let usdAmountPublisher = viewModel.walletDriver
+                .asPublisher()
+                .assertNoFailure()
+                .compactMap { $0?.amountInCurrentFiat.fiatAmountFormattedString() }
+            let actionsView = ActionsPanelView(
+                actionsPublisher: actionsPublisher.eraseToAnyPublisher(),
+                balancePublisher: balancePublisher.eraseToAnyPublisher(),
+                usdAmountPublisher: usdAmountPublisher.eraseToAnyPublisher()
+            ) { [unowned self] actionType in
+                viewModel.start(action: actionType)
+            }.uiView()
 
-            let stackView = UIStackView(
-                axis: .vertical,
-                spacing: 18,
-                alignment: .fill
-            ) {
-                balanceView.padding(.init(x: 18, y: 16))
-                actionsView.padding(.init(x: 18, y: 0))
-                containerView.padding(.init(top: 16, left: 8, bottom: 0, right: 8))
-            }
+            view.addSubview(actionsView)
+            actionsView.autoPinEdge(toSuperviewSafeArea: .top)
+            actionsView.autoPinEdge(toSuperviewEdge: .leading)
+            actionsView.autoPinEdge(toSuperviewEdge: .trailing)
+            actionsView.heightAnchor.constraint(equalToConstant: 228).isActive = true
 
-            view.addSubview(stackView)
-            stackView.autoPinEdgesToSuperviewEdges(with: .zero, excludingEdge: .top)
-            stackView.autoPinEdge(toSuperviewSafeArea: .top)
+            view.addSubview(containerView)
+            containerView.autoPinEdgesToSuperviewEdges(with: .zero, excludingEdge: .top)
+            containerView.autoPinEdge(.top, to: .bottom, of: actionsView)
 
             add(child: historyVC, to: containerView)
         }
 
+        override func viewDidAppear(_ animated: Bool) {
+            super.viewDidAppear(animated)
+            view.layoutIfNeeded()
+        }
+
         override func bind() {
             super.bind()
+
             viewModel.walletDriver
                 .map { $0?.token.name }
                 .drive(onNext: { [weak self] in
                     self?.navigationItem.title = $0
                 })
                 .disposed(by: disposeBag)
-
             viewModel.navigatableSceneDriver
                 .drive(onNext: { [weak self] in self?.navigate(to: $0) })
-                .disposed(by: disposeBag)
-
-            viewModel.walletActionsDriver
-                .drive(
-                    onNext: { [weak self] in
-                        guard let self = self else { return }
-
-                        self.actionsView.setArrangedSubviews($0.map(self.createWalletActionView))
-                    }
-                )
                 .disposed(by: disposeBag)
         }
 
         // MARK: - Navigation
 
+        private var buyCoordinator: BuyCoordinator?
         private func navigate(to scene: NavigatableScene?) {
             switch scene {
             case let .buy(crypto):
-                let vc = BuyPreparing.Scene(
-                    viewModel: BuyPreparing.SceneModel(
-                        crypto: crypto,
-                        exchangeService: Resolver.resolve()
+                let vc: UIViewController
+                if available(.buyScenarioEnabled) {
+                    // TODO: remove after moving to coordinator
+                    buyCoordinator = BuyCoordinator(
+                        context: .fromToken,
+                        defaultToken: crypto == .sol ? .nativeSolana : crypto == .usdc ? .usdc : .eth,
+                        presentingViewController: self,
+                        shouldPush: false
                     )
-                )
-                let navigation = UINavigationController(rootViewController: vc)
-                present(navigation, animated: true)
+                    buyCoordinator?.start().sink { _ in }.store(in: &subscriptions)
+                } else {
+                    vc = BuyPreparing.Scene(
+                        viewModel: BuyPreparing.SceneModel(
+                            crypto: crypto,
+                            exchangeService: Resolver.resolve()
+                        )
+                    )
+                    let navigation = UINavigationController(rootViewController: vc)
+                    present(navigation, animated: true)
+                }
             case let .settings(pubkey):
                 let vm = TokenSettingsViewModel(pubkey: pubkey)
                 let vc = TokenSettingsViewController(viewModel: vm)
                 vc.delegate = self
-                present(vc, animated: true, completion: nil)
+                present(vc, animated: true)
             case let .send(wallet):
-                let vm = SendToken.ViewModel(
-                    walletPubkey: wallet.pubkey,
-                    destinationAddress: nil,
-                    relayMethod: .default
-                )
-                if coordinator == nil, let navigationController = navigationController {
-                    coordinator = SendToken.Coordinator(
-                        viewModel: vm,
-                        navigationController: navigationController
-                    )
-                    coordinator?.doneHandler = processingTransactionDoneHandler
-                }
+                coordinator = SendCoordinator(rootViewController: navigationController!, preChosenWallet: wallet, hideTabBar: true)
                 coordinator?.start()
+                    .sink { [weak self] result in
+                        switch result {
+                        case let .sent(model):
+                            self?.navigationController?.popToViewController(ofClass: Self.self, animated: true)
+                            self?.showSendTransactionStatus(model: model)
+                        case .cancelled:
+                            break
+                        }
+                    }
+                    .store(in: &subscriptions)
             case let .receive(pubkey):
                 if let solanaPubkey = try? PublicKey(string: viewModel.walletsRepository.nativeWallet?.pubkey) {
                     let tokenWallet = viewModel.walletsRepository.getWallets().first(where: { $0.pubkey == pubkey })
@@ -159,16 +181,19 @@ extension WalletDetail {
             }
         }
 
-        private func createWalletActionView(actionType: WalletActionType) -> UIView {
-            WalletActionButton(actionType: actionType) { [weak self] in
-                self?.viewModel.start(action: actionType)
-            }
-        }
-
         // MARK: - Actions
 
         @objc func showWalletSettings() {
             viewModel.showWalletSettings()
+        }
+        
+        private func showSendTransactionStatus(model: SendTransaction) {
+            sendTransactionStatusCoordinator = SendTransactionStatusCoordinator(parentController: navigationController!, transaction: model)
+            
+            sendTransactionStatusCoordinator?
+                .start()
+                .sink(receiveValue: { })
+                .store(in: &subscriptions)
         }
     }
 }

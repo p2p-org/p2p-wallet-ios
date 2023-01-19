@@ -4,19 +4,20 @@
 //
 //  Created by Chung Tran on 05/05/2021.
 //
-
-import Action
 import Foundation
 
 extension UIView {
     @discardableResult
-    func showConnectionErrorView(refreshAction: CocoaAction? = nil) -> ConnectionErrorView {
+    func showConnectionErrorView(refreshAction: (() -> Void)?) -> ConnectionErrorView {
         hideConnectionErrorView()
 
         let errorView = ConnectionErrorView()
         errorView.refreshAction = refreshAction
         addSubview(errorView)
-        errorView.autoPinEdgesToSuperviewEdges()
+        errorView.autoPinEdge(toSuperviewEdge: .top)
+        errorView.autoPinEdge(toSuperviewEdge: .leading)
+        errorView.autoPinEdge(toSuperviewEdge: .trailing)
+        errorView.autoPinEdge(toSuperviewSafeArea: .bottom)
         return errorView
     }
 
@@ -33,6 +34,9 @@ class ConnectionErrorView: BEView {
         textColor: .h5887ff,
         label: L10n.refresh
     )
+        .onTap { [unowned self] in
+            refreshAction?()
+        }
 
     private lazy var contentView: UIView = {
         let view = UIView(backgroundColor: .white)
@@ -72,12 +76,8 @@ class ConnectionErrorView: BEView {
         return view
     }()
 
-    var refreshAction: CocoaAction? {
-        didSet {
-            refreshButton.rx.action = refreshAction
-        }
-    }
-
+    var refreshAction: (() -> Void)?
+    
     // MARK: - Methods
 
     override func commonInit() {

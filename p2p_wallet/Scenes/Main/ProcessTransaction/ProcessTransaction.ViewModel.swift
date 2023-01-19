@@ -113,26 +113,13 @@ extension ProcessTransaction.ViewModel: ProcessTransactionViewModelType {
 
     func handleErrorRetryOrMakeAnotherTransaction() {
         if pendingTransactionSubject.value.status.error == nil {
-            // log
-            let status = pendingTransactionSubject.value.status.rawValue
-            switch rawTransaction {
-            case is ProcessTransaction.SendTransaction:
-                analyticsManager.log(event: .sendMakeAnotherTransactionClick(txStatus: status))
-            case is ProcessTransaction.SwapTransaction:
-                analyticsManager.log(event: .swapMakeAnotherTransactionClick(txStatus: status))
-            default:
-                break
-            }
-
             navigate(to: .makeAnotherTransaction)
         } else {
             // log
             if let error = pendingTransactionSubject.value.status.error {
                 switch rawTransaction {
-                case is ProcessTransaction.SendTransaction:
-                    analyticsManager.log(event: .sendTryAgainClick(error: error.readableDescription))
                 case is ProcessTransaction.SwapTransaction:
-                    analyticsManager.log(event: .swapTryAgainClick(error: error.readableDescription))
+                    analyticsManager.log(event: AmplitudeEvent.swapTryAgainClick(error: error.readableDescription))
                 default:
                     break
                 }
@@ -153,10 +140,10 @@ extension ProcessTransaction.ViewModel: ProcessTransactionViewModelType {
         switch scene {
         case .explorer:
             switch rawTransaction {
-            case is ProcessTransaction.SendTransaction:
-                analyticsManager.log(event: .sendExplorerClick(txStatus: status))
+            case is SendTransaction:
+                analyticsManager.log(event: AmplitudeEvent.sendExplorerClick(txStatus: status))
             case is ProcessTransaction.SwapTransaction:
-                analyticsManager.log(event: .swapExplorerClick(txStatus: status))
+                analyticsManager.log(event: AmplitudeEvent.swapExplorerClick(txStatus: status))
             default:
                 break
             }

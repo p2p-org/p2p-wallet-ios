@@ -5,7 +5,9 @@
 //  Created by Chung Tran on 10/30/20.
 //
 
+import FirebaseRemoteConfig
 import Foundation
+import Onboarding
 import RenVMSwift
 import SolanaSwift
 import SwiftyUserDefaults
@@ -16,13 +18,21 @@ extension Fiat: DefaultsSerializable {}
 
 extension APIEndPoint: DefaultsSerializable {}
 
+extension CreateWalletFlowState: DefaultsSerializable {}
+
 extension DefaultsKeys {
+    // Device token
+    var apnsDeviceToken: DefaultsKey<Data?> { .init(#function, defaultValue: nil) }
+    
     // Keychain-keys
     var keychainPincodeKey: DefaultsKey<String?> { .init(#function, defaultValue: nil) }
+    var pincodeAttemptsKey: DefaultsKey<String?> { .init(#function, defaultValue: nil) }
     var keychainPhrasesKey: DefaultsKey<String?> { .init(#function, defaultValue: nil) }
     var keychainDerivableTypeKey: DefaultsKey<String?> { .init(#function, defaultValue: nil) }
     var keychainWalletIndexKey: DefaultsKey<String?> { .init(#function, defaultValue: nil) }
     var keychainNameKey: DefaultsKey<String?> { .init(#function, defaultValue: nil) }
+    var keychainEthAddressKey: DefaultsKey<String?> { .init(#function, defaultValue: nil) }
+    var keychainWalletMetadata: DefaultsKey<String?> { .init(#function, defaultValue: nil) }
 
     var didSetEnableBiometry: DefaultsKey<Bool> { .init(#function, defaultValue: false) }
     var isBiometryEnabled: DefaultsKey<Bool> { .init(#function, defaultValue: false) }
@@ -35,7 +45,10 @@ extension DefaultsKeys {
             defaultValue: .definedEndpoints.first!
         )
     }
+    var forcedFeeRelayerEndpoint: DefaultsKey<String?> { .init(#function, defaultValue: nil) }
+    var forcedNameServiceEndpoint: DefaultsKey<String?> { .init(#function, defaultValue: nil) }
 
+    var isCoingeckoProviderDisabled: DefaultsKey<Bool> { .init(#function, defaultValue: false) }
     var didBackupOffline: DefaultsKey<Bool> { .init(#function, defaultValue: false) }
     var walletName: DefaultsKey<[String: String]> { .init(#function, defaultValue: [:]) }
     var localizedLanguage: DefaultsKey<LocalizedLanguage> {
@@ -58,4 +71,40 @@ extension DefaultsKeys {
     var authenticationBlockingTime: DefaultsKey<Date?> { .init(#function, defaultValue: nil) }
     var shouldShowConfirmAlertOnSend: DefaultsKey<Bool> { .init(#function, defaultValue: true) }
     var shouldShowConfirmAlertOnSwap: DefaultsKey<Bool> { .init(#function, defaultValue: true) }
+
+    var onboardingLastState: DefaultsKey<CreateWalletFlowState?> { .init(#function, defaultValue: nil) }
+
+    // Sepa Buy
+    var buyLastPaymentMethod: DefaultsKey<PaymentType> {
+        .init(#function, defaultValue: PaymentType.bank)
+    }
+
+    var buyMinPrices: DefaultsKey<[String: [String: Double]]> {
+        .init(#function, defaultValue: [:])
+    }
+
+    // Solend
+    var isSolendTutorialShown: DefaultsKey<Bool> { .init(#function, defaultValue: false) }
+    var isEarnBannerClosed: DefaultsKey<Bool> { .init(#function, defaultValue: false) }
+
+    var solanaNegativeStatusFrequency: DefaultsKey<String?> {
+        .init(
+            #function,
+            defaultValue: RemoteConfig.remoteConfig().solanaNegativeStatusFrequency
+        )
+    }
+
+    var solanaNegativeStatusPercent: DefaultsKey<Int?> {
+        .init(
+            #function,
+            defaultValue: RemoteConfig.remoteConfig().solanaNegativeStatusPercent
+        )
+    }
+
+    var solanaNegativeStatusTimeFrequency: DefaultsKey<Int?> {
+        .init(
+            #function,
+            defaultValue: RemoteConfig.remoteConfig().solanaNegativeStatusTimeFrequency
+        )
+    }
 }

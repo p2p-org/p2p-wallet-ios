@@ -16,9 +16,9 @@ extension Settings {
         override init(viewModel: SettingsViewModelType) {
             super.init(viewModel: viewModel)
             data = [
-                .dark: interfaceStyle == .dark,
-                .light: interfaceStyle == .light,
-                .unspecified: interfaceStyle == .unspecified,
+                (.dark, interfaceStyle == .dark),
+                (.light, interfaceStyle == .light),
+                (.unspecified, interfaceStyle == .unspecified),
             ]
         }
 
@@ -33,9 +33,9 @@ extension Settings {
             return cell
         }
 
-        override func itemDidSelect(_ item: UIUserInterfaceStyle) {
-            super.itemDidSelect(item)
-            viewModel.setTheme(item)
+        override func itemDidSelect(at index: Int) {
+            super.itemDidSelect(at: index)
+            viewModel.setTheme(data[index].item)
         }
     }
 }
