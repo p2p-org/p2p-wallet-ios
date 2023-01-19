@@ -19,7 +19,7 @@ final class SendInputFeePromptViewModel: BaseViewModel, ObservableObject {
         title = L10n.thisAddressDoesnTHaveAnAccountForThisToken
         let priceService = Resolver.resolve(PricesServiceType.self)
         let price = priceService.currentPrice(for: feeToken.token.symbol)
-        let feeInFiat = (feeInToken.total.convertToBalance(decimals: feeToken.token.decimals) * price?.value)
+        let feeInFiat = (feeInToken.accountBalances.convertToBalance(decimals: feeToken.token.decimals) * price?.value)
         self.feeInFiat = feeInFiat
         let fiatAmount = feeInFiat.fiatAmountFormattedString(roundingMode: .down, customFormattForLessThan1E_2: true)
         description = L10n.youWillHaveToPayAOneTimeFeeToCreateAnAccountForThisAddress(fiatAmount)
