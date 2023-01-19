@@ -111,7 +111,6 @@ extension DebugMenuViewModel {
             case .mockedApiGateway: return "[Onboarding] API Gateway Mock"
             case .mockedTKeyFacade: return "[Onboarding] TKeyFacade Mock"
             case .simulatedSocialError: return "[Onboarding] Simulated Social Error"
-            case .newSettings: return "New Settings"
             case .investSolend: return "Invest Solend"
             case .solendDisablePlaceholder: return "Solend Disable Placeholder"
             }
@@ -126,7 +125,6 @@ extension DebugMenuViewModel {
             case .mockedApiGateway: return .mockedApiGateway
             case .mockedTKeyFacade: return .mockedTKeyFacade
             case .simulatedSocialError: return .simulatedSocialError
-            case .newSettings: return .settingsFeature
             case .investSolend: return .investSolendFeature
             case .solendDisablePlaceholder: return .solendDisablePlaceholder
             }

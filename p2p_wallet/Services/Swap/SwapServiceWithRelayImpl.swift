@@ -181,7 +181,7 @@ class SwapServiceWithRelayImpl: SwapServiceType {
         destinationToken: Token,
         payingWallet: Wallet
     ) async throws -> [PayingFee] {
-        let context = try await relayContextManager.getCurrentContext()
+        let context = try await relayContextManager.getCurrentContextOrUpdate()
         
         let sourceMint = try PublicKey(string: sourceMint)
         let destinationTokenMint = try PublicKey(string: destinationToken.address)
@@ -299,7 +299,7 @@ class SwapServiceWithRelayImpl: SwapServiceType {
         
         // update and get current context
         try await relayContextManager.update()
-        let context = try await relayContextManager.getCurrentContext()
+        let context = try await relayContextManager.getCurrentContextOrUpdate()
 
         // get paying fee token
         var payingFeeToken: FeeRelayerSwift.TokenAccount?
@@ -340,7 +340,7 @@ class SwapServiceWithRelayImpl: SwapServiceType {
                 solanaAPIClient: solanaAPIClient,
                 orcaSwap: orcaSwap
             ),
-            destinationManager: DestinationFinderImpl(solanaAPIClient: solanaAPIClient),
+            destinationAnalysator: DestinationAnalysatorImpl(solanaAPIClient: solanaAPIClient),
             feePayerAddress: context.feePayerAddress,
             minimumTokenAccountBalance: context.minimumTokenAccountBalance,
             lamportsPerSignature: context.lamportsPerSignature
@@ -358,7 +358,6 @@ class SwapServiceWithRelayImpl: SwapServiceType {
         )
 
         return try await relayService.topUpAndRelayTransaction(
-            context,
             result.transactions,
             fee: payingFeeToken,
             config: .init(
