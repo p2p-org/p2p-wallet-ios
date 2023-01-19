@@ -175,13 +175,13 @@ class QrCodeScannerVC: BaseVC {
 
     private func startCapturing() {
         DispatchQueue.global(qos: .background).async {
-            self.captureSession.startRunning()
+            self.captureSession?.startRunning()
         }
     }
     
     private func stopCapturing() {
         DispatchQueue.global(qos: .background).async {
-            self.captureSession.stopRunning()
+            self.captureSession?.stopRunning()
         }
     }
 }
