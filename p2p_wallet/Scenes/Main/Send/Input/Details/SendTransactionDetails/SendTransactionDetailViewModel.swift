@@ -34,14 +34,20 @@ final class SendTransactionDetailViewModel: BaseViewModel, ObservableObject {
         super.init()
 
         stateMachine.statePublisher
+            .receive(on: RunLoop.main)
             .sink { [weak self] (state: SendInputState) in
                 guard let self = self else { return }
                 self.accountCreationFeeCellModel = self.extractAccountCreationFeeCellModel(state: state, isLoading: true, feeTokens: nil)
                 self.updateCells(for: state)
-                Task {
+                Task { [weak self] in
+                    guard let self else { return }
                     let tokens = try? await self.feeWalletsService.getAvailableWalletsToPayFee(feeInSOL: stateMachine.currentState.fee)
-                    self.accountCreationFeeCellModel = self.extractAccountCreationFeeCellModel(state: state, isLoading: false, feeTokens: tokens)
-                    self.updateCells(for: state)
+                    
+                    await MainActor.run { [weak self] in
+                        guard let self else { return }
+                        self.accountCreationFeeCellModel = self.extractAccountCreationFeeCellModel(state: state, isLoading: false, feeTokens: tokens)
+                        self.updateCells(for: state)
+                    }
                 }
             }
             .store(in: &subscriptions)
@@ -67,7 +73,7 @@ final class SendTransactionDetailViewModel: BaseViewModel, ObservableObject {
             title: L10n.transactionFee,
             subtitle: (
                 state.fee.transaction == 0 ? L10n
-                    .freeLeftForToday(remainUsage) : amountFeeInToken.tokenAmount(symbol: state.tokenFee.symbol),
+                    .freeLeftForToday(remainUsage) : amountFeeInToken.tokenAmountFormattedString(symbol: state.tokenFee.symbol),
                 state.fee.transaction == 0 ? nil : "\(Defaults.fiat.symbol)\(amountFeeInFiat.fixedDecimal(2))"
             ),
             image: .transactionFee,
@@ -88,7 +94,7 @@ final class SendTransactionDetailViewModel: BaseViewModel, ObservableObject {
         return CellModel(
             title: L10n.accountCreationFee,
             subtitle: (
-                amountFeeInToken.tokenAmount(symbol: state.tokenFee.symbol),
+                amountFeeInToken.tokenAmountFormattedString(symbol: state.tokenFee.symbol),
                 "\(Defaults.fiat.symbol)\(amountFeeInFiat.fixedDecimal(2))"
             ),
             image: .accountCreationFee,
@@ -109,7 +115,7 @@ final class SendTransactionDetailViewModel: BaseViewModel, ObservableObject {
         return CellModel(
             title: L10n.total,
             subtitle: (
-                amountFeeInToken.tokenAmount(symbol: state.token.symbol),
+                amountFeeInToken.tokenAmountFormattedString(symbol: state.token.symbol),
                 "\(Defaults.fiat.symbol)\(amountFeeInFiat.fixedDecimal(2))"
             ),
             image: .totalSend
@@ -126,7 +132,7 @@ final class SendTransactionDetailViewModel: BaseViewModel, ObservableObject {
             CellModel(
                 title: L10n.recipientGets,
                 subtitle: (
-                    state.amountInToken.tokenAmount(symbol: state.token.symbol),
+                    state.amountInToken.tokenAmountFormattedString(symbol: state.token.symbol),
                     "\(Defaults.fiat.symbol)\(state.amountInFiat.fixedDecimal(2))"
                 ),
                 image: .recipientGet

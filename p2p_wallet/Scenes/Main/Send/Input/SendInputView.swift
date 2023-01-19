@@ -86,10 +86,13 @@ struct SendInputView: View {
                 }
                 
                 #if !RELEASE
-                Text(viewModel.calculationDebugText)
-                    .font(uiFont: .font(of: .label2, weight: .regular))
-                    .foregroundColor(Color(.red))
-                    .multilineTextAlignment(.trailing)
+                FeeRelayerDebugView(
+                    viewModel: .init(
+                        feeInSOL: viewModel.currentState.fee,
+                        feeInToken: viewModel.currentState.feeInToken,
+                        payingFeeTokenDecimals: viewModel.currentState.tokenFee.decimals
+                    )
+                )
                 #endif
 
                 Spacer()

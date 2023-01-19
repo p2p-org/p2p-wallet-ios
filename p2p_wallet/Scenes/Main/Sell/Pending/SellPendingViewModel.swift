@@ -36,8 +36,8 @@ final class SellPendingViewModel: BaseViewModel, ObservableObject {
 
     init(model: Model) {
         self.model = model
-        tokenAmount = model.tokenAmount.tokenAmount(symbol: model.tokenSymbol)
-        fiatAmount = "≈ \(model.fiatAmount.fiatAmount(currency: Fiat(rawValue: model.currency.rawValue) ?? .usd))"
+        tokenAmount = model.tokenAmount.tokenAmountFormattedString(symbol: model.tokenSymbol)
+        fiatAmount = "≈ \(model.fiatAmount.fiatAmountFormattedString(currency: Fiat(rawValue: model.currency.rawValue) ?? .usd))"
         receiverAddress = model.receiverAddress.truncatingMiddle(numOfSymbolsRevealed: 6)
     }
 

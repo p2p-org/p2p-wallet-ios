@@ -26,9 +26,9 @@ extension Endpoint {
 
     var baseURL: String {
         #if DEBUG
-            return "http://35.234.120.240:9090/"
+            return String.secretConfig("NOTIFICATION_SERVICE_ENDPOINT")!
         #else
-            return "https://push-service.wallet.p2p.org/"
+            return String.secretConfig("NOTIFICATION_SERVICE_ENDPOINT_RELEASE")!
         #endif
     }
 }

@@ -74,6 +74,11 @@ final class TabBarCoordinator: Coordinator<Void> {
         // configure window
         window.rootViewController?.view.hideLoadingIndicatorView()
         window.animate(newRootViewController: tabBarController)
+        
+        // re-register for push notification if not yet registered
+        if Defaults.didSetEnableNotifications && Defaults.apnsDeviceToken == nil {
+            UIApplication.shared.registerForRemoteNotifications()
+        }
 
         return closeSubject.prefix(1).eraseToAnyPublisher()
     }

@@ -53,7 +53,7 @@ final class SellTransactionDetailsViewModel: ObservableObject {
             currency: fiat
         )
 
-        let amountPart = topViewModel.tokenAmount.tokenAmount(symbol: topViewModel.tokenSymbol)
+        let amountPart = topViewModel.tokenAmount.tokenAmountFormattedString(symbol: topViewModel.tokenSymbol)
         switch strategy {
         case .processing:
             title = L10n.processing

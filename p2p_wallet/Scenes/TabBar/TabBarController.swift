@@ -7,12 +7,14 @@
 
 import Combine
 import AnalyticsManager
+import Intercom
 import KeyAppUI
 import Resolver
+import RxCocoa
+import RxSwift
 import SwiftUI
 import UIKit
 import Sell
-import RxSwift
 
 final class TabBarController: UITabBarController {
     
@@ -239,6 +241,16 @@ final class TabBarController: UITabBarController {
                 }
             })
             .disposed(by: disposeBag)
+
+        viewModel.moveToIntercomSurvey
+            .drive { id in
+                guard !id.isEmpty else { return }
+                DispatchQueue.main.asyncAfter(deadline: .now() + 1) {
+                    Intercom.presentSurvey(id)
+                }
+            }
+            .disposed(by: disposeBag)
+
         // locking status
         viewModel.isLockedDriver
             .drive(onNext: { [weak self] isLocked in

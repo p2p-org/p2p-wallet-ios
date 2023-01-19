@@ -67,6 +67,7 @@ final class AppCoordinator: Coordinator<Void> {
                 .receive(on: RunLoop.main)
                 .sink { [unowned self] wallet, _ in
                     if wallet != nil {
+                        self.analyticsManager.setUserId(wallet?.account.publicKey.base58EncodedString)
                         if self.walletCreated, available(.onboardingUsernameEnabled) {
                             self.walletCreated = false
                             self.navigateToCreateUsername()
@@ -74,6 +75,7 @@ final class AppCoordinator: Coordinator<Void> {
                             self.navigateToMain()
                         }
                     } else {
+                        self.analyticsManager.setUserId(nil)
                         self.navigateToOnboardingFlow()
                     }
                 }
