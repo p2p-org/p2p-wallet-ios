@@ -29,7 +29,7 @@ final class SendInputAmountViewModel: BaseViewModel, ObservableObject {
     @Published var amountText: String = ""
     @Published var amountTextColor: UIColor = Asset.Colors.night.color
     @Published var mainTokenText = ""
-    @Published var mainAmountType: EnteredAmountType = .fiat
+    @Published var mainAmountType: EnteredAmountType
     @Published var isMaxButtonVisible: Bool = true
 
     @Published var secondaryAmountText = ""
@@ -47,7 +47,7 @@ final class SendInputAmountViewModel: BaseViewModel, ObservableObject {
         fiat = Defaults.fiat
         token = initialToken
         countAfterDecimalPoint = Constants.fiatDecimals
-
+        mainAmountType = Defaults.isTokenInputTypeChosen ? .token : .fiat
         super.init()
 
         maxAmountPressed
@@ -116,6 +116,7 @@ final class SendInputAmountViewModel: BaseViewModel, ObservableObject {
                 case .fiat: self.mainAmountType = .token
                 case .token: self.mainAmountType = .fiat
                 }
+                self.saveInputTypeChoice()
                 if let oldAmount = self.amount {
                     // Toggle amount values because inputField is different type now
                     self.amount = Amount(inFiat: oldAmount.inToken, inToken: oldAmount.inFiat)
@@ -146,7 +147,9 @@ private extension SendInputAmountViewModel {
     func updateSecondaryAmount() {
         switch self.mainAmountType {
         case .token:
-            self.secondaryAmountText = (self.amount?.inToken * token.priceInCurrentFiat).formatFiatWithDown()
+            let fiatAmount = self.amount?.inToken * token.priceInCurrentFiat
+            let minCondition = fiatAmount > 0 && fiatAmount < Constants.minFiatDisplayAmount
+            self.secondaryAmountText = minCondition ? L10n.lessThan(Constants.minFiatDisplayAmount.formatFiatWithDown()) : fiatAmount.formatFiatWithDown()
 
         case .fiat:
             self.secondaryAmountText = (self.amount?.inFiat / token.priceInCurrentFiat).formatTokenWithDown(decimals: token.decimals)
@@ -171,6 +174,10 @@ private extension SendInputAmountViewModel {
     func updateDecimalsPoint() {
         self.countAfterDecimalPoint = self.mainAmountType == .token ? token.decimals : Constants.fiatDecimals
     }
+
+    func saveInputTypeChoice() {
+        Defaults.isTokenInputTypeChosen = self.mainAmountType == .token
+    }
 }
 
 private extension Wallet {
@@ -179,6 +186,7 @@ private extension Wallet {
 
 private enum Constants {
     static let fiatDecimals = 2
+    static let minFiatDisplayAmount = 0.01
 }
 
 private extension SendInputAmountViewModel.Amount {

@@ -68,7 +68,7 @@ private extension ChooseWalletTokenViewModel {
     func configureTitle(strategy: ChooseWalletTokenStrategy) -> String {
         switch strategy {
         case let .feeToken(_, feeInFiat):
-            return L10n.payTheFeeWith("~\(feeInFiat.fiatAmount(roundingMode: .down))")
+            return L10n.payTheFeeWith("~\(feeInFiat.fiatAmountFormattedString(roundingMode: .down))")
         case .sendToken:
             return L10n.pickAToken
         }

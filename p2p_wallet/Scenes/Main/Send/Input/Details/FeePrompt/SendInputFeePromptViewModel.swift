@@ -15,13 +15,13 @@ final class SendInputFeePromptViewModel: BaseViewModel, ObservableObject {
 
     let feeInFiat: Double
 
-    init(feeToken: Wallet, feeInSOL: FeeAmount, availableFeeTokens: [Wallet]) {
+    init(feeToken: Wallet, feeInToken: FeeAmount, availableFeeTokens: [Wallet]) {
         title = L10n.thisAddressDoesnTHaveAnAccountForThisToken
         let priceService = Resolver.resolve(PricesServiceType.self)
-        let price = priceService.currentPrice(for: Token.nativeSolana.symbol)
-        let feeInFiat = (feeInSOL.total.convertToBalance(decimals: Token.nativeSolana.decimals) * price?.value)
+        let price = priceService.currentPrice(for: feeToken.token.symbol)
+        let feeInFiat = (feeInToken.total.convertToBalance(decimals: feeToken.token.decimals) * price?.value)
         self.feeInFiat = feeInFiat
-        let fiatAmount = feeInFiat.fiatAmount(roundingMode: .down)
+        let fiatAmount = feeInFiat.fiatAmountFormattedString(roundingMode: .down, customFormattForLessThan1E_2: true)
         description = L10n.youWillHaveToPayAOneTimeFeeToCreateAnAccountForThisAddress(fiatAmount)
         continueTitle = L10n.continueWith(feeToken.token.symbol)
         isChooseTokenAvailable = availableFeeTokens.count > 1
