@@ -77,13 +77,9 @@ final class SendInputCoordinator: Coordinator<SendResult> {
     private func setTitle(to vc: UIViewController) {
         switch recipient.category {
         case let .username(name, domain):
-            if domain.isEmpty {
-                vc.title = "@\(name)"
-            } else {
-                vc.title = "@\([name, domain].joined(separator: "."))"
-            }
+            vc.title = RecipientFormatter.username(name: name, domain: domain)
         default:
-            vc.title = "\(recipient.address.prefix(6))...\(recipient.address.suffix(6))"
+            vc.title = RecipientFormatter.format(destination: recipient.address)
         }
 
         vc.navigationItem.largeTitleDisplayMode = .always
