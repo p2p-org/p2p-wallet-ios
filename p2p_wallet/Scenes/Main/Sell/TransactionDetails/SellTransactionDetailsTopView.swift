@@ -31,10 +31,10 @@ struct SellTransactionDetailsTopView: View {
                 .frame(width: 64, height: 64)
                 .cornerRadius(32)
             VStack(spacing: 4) {
-                Text(model.tokenAmount.tokenAmount(symbol: model.tokenSymbol))
+                Text(model.tokenAmount.tokenAmountFormattedString(symbol: model.tokenSymbol))
                     .foregroundColor(Color(Asset.Colors.night.color))
                     .font(uiFont: .font(of: .largeTitle, weight: .bold))
-                Text("≈ \(model.fiatAmount.fiatAmount(currency: model.currency))")
+                Text("≈ \(model.fiatAmount.fiatAmountFormattedString(currency: model.currency))")
                     .foregroundColor(Color(Asset.Colors.mountain.color))
                     .font(uiFont: .font(of: .text2))
             }

@@ -65,11 +65,11 @@ extension WalletDetail {
             let balancePublisher = viewModel.walletDriver
                 .asPublisher()
                 .assertNoFailure()
-                .compactMap { $0?.amount?.tokenAmount(symbol: $0?.token.symbol ?? "") }
+                .compactMap { $0?.amount?.tokenAmountFormattedString(symbol: $0?.token.symbol ?? "") }
             let usdAmountPublisher = viewModel.walletDriver
                 .asPublisher()
                 .assertNoFailure()
-                .compactMap { $0?.amountInCurrentFiat.fiatAmount() }
+                .compactMap { $0?.amountInCurrentFiat.fiatAmountFormattedString() }
             let actionsView = ActionsPanelView(
                 actionsPublisher: actionsPublisher.eraseToAnyPublisher(),
                 balancePublisher: balancePublisher.eraseToAnyPublisher(),

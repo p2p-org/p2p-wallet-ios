@@ -5,7 +5,6 @@
 //  Created by Ivan on 02.08.2022.
 //
 
-import Action
 import AnalyticsManager
 import Combine
 import Foundation
@@ -230,12 +229,10 @@ final class HomeCoordinator: Coordinator<Void> {
             return self.coordinate(to: coordinator)
                 .eraseToAnyPublisher()
         case .error(let show):
-            let walletsRepository = Resolver.resolve(WalletsRepository.self)
             if show {
-                homeView.view.showConnectionErrorView(refreshAction: CocoaAction { [unowned homeView] in
+                homeView.view.showConnectionErrorView(refreshAction: { [unowned homeView] in
                     homeView.view.hideConnectionErrorView()
-                    walletsRepository.reload()
-                    return .just(())
+                    Resolver.resolve(WalletsRepository.self).reload()
                 })
             }
             return Just(())

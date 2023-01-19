@@ -72,6 +72,7 @@ extension OrcaSwapV2 {
                     let destinationSymbol = destination.token.symbol
 
                     let fiatPrice = source.priceInCurrentFiat
+                        .orZero
                         .toString(maximumFractionDigits: 2)
                     let formattedFiatPrice = "(~\(Defaults.fiat.symbol)\(fiatPrice))"
 
@@ -111,6 +112,7 @@ extension OrcaSwapV2 {
                     let destinationSymbol = destination.token.symbol
 
                     let fiatPrice = destination.priceInCurrentFiat
+                        .orZero
                         .toString(maximumFractionDigits: 2)
                     let formattedFiatPrice = "(~\(Defaults.fiat.symbol)\(fiatPrice))"
 

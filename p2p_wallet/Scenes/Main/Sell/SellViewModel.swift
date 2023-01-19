@@ -17,11 +17,11 @@ enum SellViewModelInputError: Error, Equatable {
     var recomendation: String {
         switch self {
         case .amountIsTooSmall(let minBaseAmount, let baseCurrencyCode):
-            return L10n.theMinimumAmountIs(minBaseAmount.toString(), baseCurrencyCode)
+            return L10n.theMinimumAmountIs(minBaseAmount?.toString() ?? "2", baseCurrencyCode)
         case .insufficientFunds(let baseCurrencyCode):
             return L10n.notEnought(baseCurrencyCode)
         case .exceedsProviderLimit(let maxBaseProviderAmount, let baseCurrencyCode):
-            return L10n.theMaximumAmountIs(maxBaseProviderAmount.toString(), baseCurrencyCode)
+            return L10n.theMaximumAmountIs(maxBaseProviderAmount?.toString() ?? "1000", baseCurrencyCode)
         }
     }
 }
