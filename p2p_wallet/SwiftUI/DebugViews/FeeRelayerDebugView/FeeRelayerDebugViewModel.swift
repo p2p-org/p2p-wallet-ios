@@ -25,6 +25,7 @@ final class FeeRelayerDebugViewModel: BaseViewModel, ObservableObject {
     
     private func bind() {
         contextManager.contextPublisher
+            .receive(on: RunLoop.main)
             .map { [weak self] in
                 guard let self else { return "" }
                 return self.getCalculationDebugText(relayContext: $0)
