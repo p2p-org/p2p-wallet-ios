@@ -23,7 +23,6 @@ final class TabBarCoordinator: Coordinator<Void> {
     private let tabBarController: TabBarController
     private let closeSubject = PassthroughSubject<Void, Never>()
     
-    private var emptySendCoordinator: SendEmptyCoordinator?
     private var sendCoordinator: SendCoordinator?
     private var sendStatusCoordinator: SendTransactionStatusCoordinator?
     
@@ -218,30 +217,19 @@ final class TabBarCoordinator: Coordinator<Void> {
                 .sink(receiveValue: { _ in })
                 .store(in: &subscriptions)
         case .send:
-            let fiatAmount = walletsRepository.getWallets().reduce(0) { $0 + $1.amountInCurrentFiat }
-            let withTokens = fiatAmount > 0
-            if withTokens {
-                analyticsManager.log(event: AmplitudeEvent.sendViewed(lastScreen: "main_screen"))
-                sendCoordinator = SendCoordinator(rootViewController: navigationController, preChosenWallet: nil, hideTabBar: true)
-                sendCoordinator?.start()
-                    .sink { [weak self, weak navigationController] result in
-                        switch result {
-                        case let .sent(model):
-                            navigationController?.popToRootViewController(animated: true)
-                            self?.routeToSendTransactionStatus(model: model)
-                        case .cancelled:
-                            break
-                        }
+            analyticsManager.log(event: AmplitudeEvent.sendViewed(lastScreen: "main_screen"))
+            sendCoordinator = SendCoordinator(rootViewController: navigationController, preChosenWallet: nil, hideTabBar: true)
+            sendCoordinator?.start()
+                .sink { [weak self, weak navigationController] result in
+                    switch result {
+                    case let .sent(model):
+                        navigationController?.popToRootViewController(animated: true)
+                        self?.routeToSendTransactionStatus(model: model)
+                    case .cancelled:
+                        break
                     }
-                    .store(in: &subscriptions)
-            } else {
-                emptySendCoordinator = SendEmptyCoordinator(navigationController: navigationController)
-                emptySendCoordinator?.start()
-                    .sink(receiveValue: { [weak self] _ in
-                        self?.emptySendCoordinator = nil
-                    })
-                    .store(in: &subscriptions)
-            }
+                }
+                .store(in: &subscriptions)
         }
     }
 

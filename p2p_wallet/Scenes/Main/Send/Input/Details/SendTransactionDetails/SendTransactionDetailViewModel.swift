@@ -86,13 +86,13 @@ final class SendTransactionDetailViewModel: BaseViewModel, ObservableObject {
         switch true {
         case state.fee.transaction == 0 && remainUsage == 0:
             mainText = "0 \(state.tokenFee.symbol)"
-            secondaryText = "0"
+            secondaryText = "\(Defaults.fiat) 0"
         case state.fee.transaction == 0:
             mainText = L10n.freeLeftForToday(remainUsage)
             secondaryText = nil
         default:
-            mainText = amountFeeInToken.tokenAmount(symbol: state.tokenFee.symbol, roundingMode: .down)
-            secondaryText = amountFeeInFiat.fiatAmount(roundingMode: .down)
+            mainText = amountFeeInToken.tokenAmountFormattedString(symbol: state.tokenFee.symbol, roundingMode: .down)
+            secondaryText = amountFeeInFiat.fiatAmountFormattedString(roundingMode: .down, customFormattForLessThan1E_2: true)
         }
 
         return CellModel(
@@ -118,8 +118,8 @@ final class SendTransactionDetailViewModel: BaseViewModel, ObservableObject {
             type: .accountCreationFee,
             title: L10n.accountCreationFee,
             subtitle: [(
-                amountFeeInToken.tokenAmount(symbol: state.tokenFee.symbol, maximumFractionDigits: Int(state.tokenFee.decimals), roundingMode: .down),
-                amountFeeInFiat.fiatAmount(roundingMode: .down)
+                amountFeeInToken.tokenAmountFormattedString(symbol: state.tokenFee.symbol, maximumFractionDigits: Int(state.tokenFee.decimals), roundingMode: .down),
+                amountFeeInFiat.fiatAmountFormattedString(roundingMode: .down, customFormattForLessThan1E_2: true)
             )],
             image: .accountCreationFee,
             info: feeTokens == nil ? nil : { [weak self] in self?.feePrompt.send(feeTokens ?? []) },
@@ -155,8 +155,8 @@ final class SendTransactionDetailViewModel: BaseViewModel, ObservableObject {
         let amountInFiat: Double = amountInToken * (pricesService.currentPrice(for: token.symbol)?.value ?? 0)
 
         return (
-            amountInToken.tokenAmount(symbol: token.symbol, maximumFractionDigits: Int(token.decimals), roundingMode: .down),
-            amountInFiat.fiatAmount(roundingMode: .down)
+            amountInToken.tokenAmountFormattedString(symbol: token.symbol, maximumFractionDigits: Int(token.decimals), roundingMode: .down),
+            amountInFiat.fiatAmountFormattedString(roundingMode: .down, customFormattForLessThan1E_2: true)
         )
     }
 
