@@ -37,7 +37,6 @@ struct SendInputView: View {
                                 Text(viewModel.feeTitle)
                                     .apply(style: .text4)
                                     .foregroundColor(Color(Asset.Colors.sky.color))
-                                    .onTapGesture(perform: viewModel.feeInfoPressed.send)
                                 if viewModel.isFeeLoading {
                                     CircularProgressIndicatorView(
                                         backgroundColor: Asset.Colors.sky.color.withAlphaComponent(0.6),
@@ -45,14 +44,13 @@ struct SendInputView: View {
                                     )
                                     .frame(width: 16, height: 16)
                                 } else {
-                                    Button(action: viewModel.feeInfoPressed.send, label: {
-                                        Image(uiImage: UIImage.infoSend)
-                                            .resizable()
-                                            .frame(width: 16, height: 16)
-                                    })
+                                    Image(uiImage: UIImage.infoSend)
+                                        .resizable()
+                                        .frame(width: 16, height: 16)
                                 }
                             }
-                        }.allowsHitTesting(!viewModel.isFeeLoading && !viewModel.lock)
+                        }
+                        .allowsHitTesting(!viewModel.isFeeLoading && !viewModel.lock)
                     }
                 }
                 .padding(.horizontal, 4)
