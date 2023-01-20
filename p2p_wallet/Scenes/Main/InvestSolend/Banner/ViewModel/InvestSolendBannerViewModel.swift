@@ -133,7 +133,7 @@ class InvestSolendBannerViewModel: ObservableObject {
         let rewards = SolendMath.reward(marketInfos: marketInfos, userDeposits: userDeposits)
         return rewards
             .map { [priceService] (reward: SolendMath.Reward) -> Double in
-                let price = priceService.currentPrice(for: reward.symbol)?.value ?? 0.0
+                let price = priceService.currentPrice(mint: reward.symbol)?.value ?? 0.0
                 return reward.rate * price
             }
             .reduce(0, +)
@@ -145,7 +145,7 @@ class InvestSolendBannerViewModel: ObservableObject {
                 (deposit.depositedAmount.double ?? 0, deposit.symbol)
             }
             .map { [priceService] (amount: Double, symbol: String) -> Double in
-                let currentPrice = priceService.currentPrice(for: symbol)?.value ?? 0
+                let currentPrice = priceService.currentPrice(symbol: symbol)?.value ?? 0
                 return currentPrice * amount
             }
             .reduce(0, +)

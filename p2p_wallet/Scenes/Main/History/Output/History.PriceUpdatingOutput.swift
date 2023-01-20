@@ -23,7 +23,7 @@ extension History {
         private func updatedTransactionWithPrice(
             transaction: ParsedTransaction
         ) -> ParsedTransaction {
-            guard let price = pricesService.currentPrice(for: transaction.symbol)
+            guard let price = pricesService.currentPrice(mint: transaction.mintAddress)
             else { return transaction }
 
             var transaction = transaction

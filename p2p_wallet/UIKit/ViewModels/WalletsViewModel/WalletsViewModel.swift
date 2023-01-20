@@ -235,7 +235,7 @@ class WalletsViewModel: BEListViewModel<Wallet> {
     private func mapPrices(wallets: [Wallet]) -> [Wallet] {
         var wallets = wallets
         for i in 0 ..< wallets.count {
-            wallets[i].price = pricesService.currentPrice(for: wallets[i].token.symbol)
+            wallets[i].price = pricesService.currentPrice(mint: wallets[i].token.address)
         }
         return wallets
     }

@@ -67,8 +67,8 @@ extension OrcaSwapV2.ConfirmSwapping.ViewModel: OrcaSwapV2ConfirmSwappingViewMod
         !Defaults.shouldShowConfirmAlertOnSwap
     }
 
-    func getPrice(symbol: String) -> Double? {
-        pricesService.currentPrice(for: symbol)?.value
+    func getPrice(mint: String) -> Double? {
+        pricesService.currentPrice(mint: mint)?.value
     }
 
     func closeBanner() {

@@ -12,27 +12,46 @@ import RxSwift
 import SolanaPricesAPIs
 import SolanaSwift
 
+struct TokenPriceKey: Hashable, Codable {
+    let symbol: String
+    let mint: String
+    
+    init(symbol: String, mint: String) {
+        self.symbol = symbol
+        self.mint = mint
+    }
+    
+    init(token: Token) {
+        self.symbol = token.symbol
+        self.mint = token.address
+    }
+}
+
+typealias TokenPriceMap = [TokenPriceKey: CurrentPrice]
+
 protocol PricesServiceType {
     // Observables
-    var currentPricesDriver: Driver<Loadable<[String: CurrentPrice]>> { get }
+    var currentPricesDriver: Driver<Loadable<TokenPriceMap>> { get }
 
     // Getters
     func getWatchList() -> [Token]
-    func currentPrice(for coinName: String) -> CurrentPrice?
+    func currentPrice(mint: String) -> CurrentPrice?
+    
+    @available(*, deprecated, message: "Use ``currentPrice(mint:)`` insteed")
+    func currentPrice(symbol: String) -> CurrentPrice?
 
     // Actions
     func clearCurrentPrices()
     func addToWatchList(_ tokens: [Token])
     func fetchPrices(tokens: [Token], toFiat: Fiat)
     func fetchAllTokensPriceInWatchList()
-    func fetchHistoricalPrice(for coinName: String, period: Period) -> Single<[PriceRecord]>
-    func getCurrentPrices(tokens: [Token]?, toFiat: Fiat) async throws -> [String: CurrentPrice]
+    func getCurrentPrices(tokens: [Token]?, toFiat: Fiat) async throws -> TokenPriceMap
     func startObserving()
     func stopObserving()
 }
 
-class PricesLoadableRelay: LoadableRelay<[String: CurrentPrice]> {
-    override func map(oldData: [String: CurrentPrice]?, newData: [String: CurrentPrice]) -> [String: CurrentPrice] {
+class PricesLoadableRelay: LoadableRelay<[TokenPriceKey: CurrentPrice]> {
+    override func map(oldData: TokenPriceMap?, newData: TokenPriceMap) -> TokenPriceMap {
         guard var data = oldData else {
             return newData
         }
@@ -95,14 +114,14 @@ class PricesService {
     private func getCurrentPricesRequest(
         tokens: [Token]? = nil,
         toFiat: Fiat = Defaults.fiat
-    ) -> Single<[String: CurrentPrice]> {
+    ) -> Single<TokenPriceMap> {
         Single.async {
             try await self.getCurrentPrices(tokens: tokens, toFiat: toFiat)
         }
     }
 
-    func getCurrentPrices(tokens: [Token]? = nil, toFiat: Fiat = Defaults.fiat) async throws -> [String: CurrentPrice] {
-        let coins = (tokens ?? watchList).filter { !$0.symbol.contains("-") && !$0.symbol.contains("/") }
+    func getCurrentPrices(tokens: [Token]? = nil, toFiat: Fiat = Defaults.fiat) async throws -> TokenPriceMap {
+        let coins: [Token] = (tokens ?? watchList).filter { !$0.symbol.contains("-") && !$0.symbol.contains("/") }
             .map { token -> Token in
                 if token.symbol == "renBTC" {
                     return Token(token, customSymbol: "BTC")
@@ -115,10 +134,9 @@ class PricesService {
         }
 
         var newPrices = try await api.getCurrentPrices(coins: coins, toFiat: toFiat.code)
-        newPrices["renBTC"] = newPrices["BTC"]
         var prices = currentPricesSubject.value ?? [:]
         for newPrice in newPrices {
-            prices[newPrice.key] = newPrice.value
+            prices[.init(symbol: newPrice.key.symbol, mint: newPrice.key.address)] = newPrice.value
         }
         await storage.savePrices(prices)
         return prices
@@ -126,7 +144,7 @@ class PricesService {
 }
 
 extension PricesService: PricesServiceType {
-    var currentPricesDriver: Driver<Loadable<[String: CurrentPrice]>> {
+    var currentPricesDriver: Driver<Loadable<[TokenPriceKey: CurrentPrice]>> {
         currentPricesSubject.asDriver()
     }
 
@@ -134,8 +152,16 @@ extension PricesService: PricesServiceType {
         watchList
     }
 
-    func currentPrice(for coinName: String) -> CurrentPrice? {
-        currentPricesSubject.value?[coinName.uppercased()]
+    func currentPrice(mint: String) -> CurrentPrice? {
+        currentPricesSubject.value?.first(where: { (key: TokenPriceKey, value: CurrentPrice) in
+            key.mint == mint
+        })?.value
+    }
+    
+    func currentPrice(symbol: String) -> CurrentPrice? {
+        currentPricesSubject.value?.first(where: { (key: TokenPriceKey, value: CurrentPrice) in
+            key.symbol == symbol
+        })?.value
     }
 
     func clearCurrentPrices() {
