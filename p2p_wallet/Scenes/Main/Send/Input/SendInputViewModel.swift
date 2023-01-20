@@ -43,6 +43,7 @@ final class SendInputViewModel: BaseViewModel, ObservableObject {
 
     @Published var feeTitle = L10n.fees("")
     @Published var isFeeLoading: Bool = true
+    @Published var isFeeTitleVisible: Bool = true
 
     let feeInfoPressed = PassthroughSubject<Void, Never>()
     let openFeeInfo = PassthroughSubject<Bool, Never>()
@@ -242,10 +243,14 @@ private extension SendInputViewModel {
                 switch value.status {
                 case .error(reason: .networkConnectionError(_)):
                     self.handleConnectionError()
+                case .error(reason: .feeCalculationFailed):
+                    self.isFeeTitleVisible = false
                 default:
+                    self.isFeeTitleVisible = true
                     self.inputAmountViewModel.maxAmountToken = value.maxAmountInputInToken
                     self.updateFeeTitle()
                 }
+                self.updateInputAmountView()
             }
             .store(in: &subscriptions)
 
@@ -258,7 +263,6 @@ private extension SendInputViewModel {
                 case .fiat:
                     _ = await self.stateMachine.accept(action: .changeAmountInFiat(value.amount.inFiat))
                 }
-                self.updateInputAmountView()
             })
             .store(in: &subscriptions)
 
@@ -352,7 +356,7 @@ private extension SendInputViewModel {
 
 private extension SendInputViewModel {
     func updateInputAmountView() {
-        guard currentState.amountInToken != .zero else {
+        guard currentState.amountInToken != .zero || currentState.status == .error(reason: .feeCalculationFailed) else {
             inputAmountViewModel.isError = false
             actionButtonViewModel.actionButton = .zero
             return
@@ -390,6 +394,12 @@ private extension SendInputViewModel {
                 title: L10n.insufficientFunds
             )
             checkMaxButtonIfNeeded()
+        case .error(reason: .feeCalculationFailed):
+            inputAmountViewModel.isError = false
+            actionButtonViewModel.actionButton = .init(
+                isEnabled: false,
+                title: L10n.CannotCalculateFees.tryAgain
+            )
         default:
             wasMaxWarningToastShown = false
             inputAmountViewModel.isError = false
