@@ -33,7 +33,7 @@ struct SellPendingView: View {
                             viewModel.sendClicked()
                         },
                         label: {
-                            Text("\(L10n.send) \(viewModel.model.tokenSymbol)")
+                            Text(L10n.send)
                                 .foregroundColor(Color(Asset.Colors.snow.color))
                                 .font(uiFont: .font(of: .text2, weight: .semibold))
                                 .frame(height: 56)
