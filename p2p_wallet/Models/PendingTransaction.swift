@@ -126,7 +126,7 @@ extension PendingTransaction {
                 rawAmount: amount,
                 account: transaction.walletToken.pubkey
             )
-            amountInFiat = amount * pricesService.currentPrice(for: transaction.walletToken.token.symbol)?.value
+            amountInFiat = amount * pricesService.currentPrice(mint: transaction.walletToken.token.address)?.value
             fee = transaction.feeInToken
         case let transaction as ProcessTransaction.SwapTransaction:
             var destinationWallet = transaction.destinationWallet
@@ -146,7 +146,7 @@ extension PendingTransaction {
                 destinationAmount: transaction.estimatedAmount,
                 accountSymbol: nil
             )
-            amountInFiat = transaction.amount * pricesService.currentPrice(for: transaction.sourceWallet.token.symbol)?
+            amountInFiat = transaction.amount * pricesService.currentPrice(mint: transaction.sourceWallet.token.address)?
                 .value
             fee = transaction.fees.networkFees
         case let transaction as SendTransaction:

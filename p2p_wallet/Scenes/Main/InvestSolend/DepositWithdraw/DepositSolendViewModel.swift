@@ -135,7 +135,7 @@ class DepositSolendViewModel: ObservableObject {
         dataService = mocked ? SolendDataServiceMock() : Resolver.resolve(SolendDataService.self)
         actionService = mocked ? SolendActionServiceMock() : Resolver.resolve(SolendActionService.self)
         invest = (asset: initialAsset, market: nil, userDeposit: nil)
-        tokenFiatPrice = priceService.currentPrice(for: invest.asset.symbol)?.value
+        tokenFiatPrice = priceService.currentPrice(mint: invest.asset.mintAddress)?.value
 
         feeText = defaultFeeText()
         maxText = useMaxTitle + " \(maxAmount().tokenAmountFormattedString(symbol: invest.asset.symbol))"
@@ -299,10 +299,10 @@ class DepositSolendViewModel: ObservableObject {
     func processFee(fee: SolendFeePaying) {
         // Fee
         let transferFee = Double(fee.fee.transaction) / pow(10, Double(fee.decimals))
-        let fiatTransferFee: Double = transferFee * (self.priceService.currentPrice(for: fee.symbol)?.value ?? 0)
+        let fiatTransferFee: Double = transferFee * (self.priceService.currentPrice(symbol: fee.symbol)?.value ?? 0)
 
         let rentFee = Double(fee.fee.accountBalances) / pow(10, Double(fee.decimals))
-        let fiatRentFee: Double = rentFee * (self.priceService.currentPrice(for: fee.symbol)?.value ?? 0)
+        let fiatRentFee: Double = rentFee * (self.priceService.currentPrice(symbol: fee.symbol)?.value ?? 0)
 
         // Total
         var total: Lamports = self.inputLamport
@@ -500,7 +500,7 @@ class DepositSolendViewModel: ObservableObject {
                             imageUrl: URL(string: asset.logo ?? ""),
                             symbol: userDeposit?.symbol ?? "",
                             fiatAmount: userDeposit?.depositedAmount.double * priceService
-                                .currentPrice(for: userDeposit?.symbol ?? "")?.value,
+                                .currentPrice(mint: userDeposit?.symbol ?? "")?.value,
                             apy: market?.supplyInterest.double
                         )
                     }

@@ -135,8 +135,8 @@ extension ConfirmReceivingBitcoin {
 
             totalFeeSubject
                 .map { [weak self] fee -> Double? in
-                    guard let fee = fee, let symbol = self?.payingWalletSubject.value?.token.symbol,
-                          let price = self?.pricesService.currentPrice(for: symbol)?.value else { return nil }
+                    guard let fee = fee, let mint = self?.payingWalletSubject.value?.token.address,
+                          let price = self?.pricesService.currentPrice(mint: mint)?.value else { return nil }
                     return fee * price
                 }
                 .bind(to: feeInFiatSubject)

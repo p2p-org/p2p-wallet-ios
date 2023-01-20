@@ -67,7 +67,7 @@ final class SendTransactionDetailViewModel: BaseViewModel, ObservableObject {
 
         let amountFeeInToken = Double(state.feeInToken.transaction) / pow(10, Double(state.tokenFee.decimals))
         let amountFeeInFiat: Double = amountFeeInToken *
-            (pricesService.currentPrice(for: state.tokenFee.symbol)?.value ?? 0)
+            (pricesService.currentPrice(mint: state.tokenFee.address)?.value ?? 0)
 
         return CellModel(
             title: L10n.transactionFee,
@@ -89,7 +89,7 @@ final class SendTransactionDetailViewModel: BaseViewModel, ObservableObject {
 
         let amountFeeInToken = Double(state.feeInToken.accountBalances) / pow(10, Double(state.tokenFee.decimals))
         let amountFeeInFiat: Double = amountFeeInToken *
-            (pricesService.currentPrice(for: state.tokenFee.symbol)?.value ?? 0)
+            (pricesService.currentPrice(mint: state.tokenFee.address)?.value ?? 0)
 
         return CellModel(
             title: L10n.accountCreationFee,
@@ -110,7 +110,7 @@ final class SendTransactionDetailViewModel: BaseViewModel, ObservableObject {
         }
 
         let amountFeeInFiat: Double = amountFeeInToken *
-            (pricesService.currentPrice(for: state.token.symbol)?.value ?? 0)
+            (pricesService.currentPrice(mint: state.token.address)?.value ?? 0)
 
         return CellModel(
             title: L10n.total,
