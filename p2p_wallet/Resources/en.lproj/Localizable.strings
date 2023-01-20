@@ -1140,4 +1140,5 @@ Reset the PIN or wait for %@.";
 "The transaction was rejected by the Solana blockchain" = "The transaction was rejected by the Solana blockchain";
 "The data is being updated. Please try again in a few minutes." = "The data is being updated. Please try again in a few minutes.";
 "Buy or receive to continue" = "Buy or receive to continue";
+"Cannot calculate fees. Try again" = "Cannot calculate fees. Try again";
 "Less than %@" = "Less than %@";
