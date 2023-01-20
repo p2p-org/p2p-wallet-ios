@@ -366,14 +366,14 @@ private extension SendInputViewModel {
             inputAmountViewModel.isError = true
             actionButtonViewModel.actionButton = .init(
                 isEnabled: false,
-                title: L10n.max(maxAmount.tokenAmount(symbol: sourceWallet.token.symbol, roundingMode: .down))
+                title: L10n.max(maxAmount.tokenAmountFormattedString(symbol: sourceWallet.token.symbol, roundingMode: .down))
             )
             checkMaxButtonIfNeeded()
         case let .error(.inputTooLow(minAmount)):
             inputAmountViewModel.isError = true
             actionButtonViewModel.actionButton = .init(
                 isEnabled: false,
-                title: L10n.min(minAmount.tokenAmount(symbol: sourceWallet.token.symbol, roundingMode: .down))
+                title: L10n.min(minAmount.tokenAmountFormattedString(symbol: sourceWallet.token.symbol, roundingMode: .down))
             )
         case .error(reason: .insufficientAmountToCoverFee):
             inputAmountViewModel.isError = false
@@ -393,19 +393,19 @@ private extension SendInputViewModel {
                 isEnabled: false,
                 title: L10n.insufficientFunds
             )
+            checkMaxButtonIfNeeded()
         case .error(reason: .feeCalculationFailed):
             inputAmountViewModel.isError = false
             actionButtonViewModel.actionButton = .init(
                 isEnabled: false,
                 title: L10n.CannotCalculateFees.tryAgain
             )
-
         default:
             wasMaxWarningToastShown = false
             inputAmountViewModel.isError = false
             actionButtonViewModel.actionButton = .init(
                 isEnabled: true,
-                title: "\(L10n.send) \(currentState.amountInToken.tokenAmount(symbol: currentState.token.symbol, maximumFractionDigits: Int(currentState.token.decimals), roundingMode: .down))"
+                title: "\(L10n.send) \(currentState.amountInToken.tokenAmountFormattedString(symbol: currentState.token.symbol, maximumFractionDigits: Int(currentState.token.decimals), roundingMode: .down))"
             )
         }
     }
@@ -436,7 +436,7 @@ private extension SendInputViewModel {
             feeTitle = L10n
                 .fees(
                     currentState.feeInToken.total.convertToBalance(decimals: Int(currentState.tokenFee.decimals))
-                        .tokenAmount(symbol: symbol, roundingMode: .down)
+                        .tokenAmountFormattedString(symbol: symbol, roundingMode: .down)
                 )
         }
     }

@@ -341,7 +341,7 @@ extension TransactionDetail {
                                          withFiatValue: Bool = true) -> NSMutableAttributedString
         {
             let attStr = NSMutableAttributedString()
-                .text(amount.toString(maximumFractionDigits: 9) + " " + symbol, size: 15, color: .textBlack)
+                .text(amount.orZero.toString(maximumFractionDigits: 9) + " " + symbol, size: 15, color: .textBlack)
             if withFiatValue {
                 attStr.text(" ")
                     .text(
