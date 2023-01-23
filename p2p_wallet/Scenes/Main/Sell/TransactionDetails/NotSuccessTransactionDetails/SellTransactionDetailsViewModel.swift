@@ -10,8 +10,16 @@ import Combine
 import Foundation
 import Resolver
 import Sell
+import KeyAppUI
 
 final class SellTransactionDetailsViewModel: ObservableObject {
+
+    enum InfoText {
+        case raw(text: String)
+        case help(text: NSAttributedString)
+    }
+
+    let openHelp = PassthroughSubject<URL, Never>()
 
     @Injected private var analyticsManager: AnalyticsManager
     @Injected private var sellDataService: any SellDataService
@@ -22,7 +30,7 @@ final class SellTransactionDetailsViewModel: ObservableObject {
     let strategy: Strategy
     let transactionId: String
     let title: String
-    let infoText: String
+    let infoText: InfoText
     let isProcessing: Bool
     let topButtonTitle: String
     let bottomButtonTitle: String?
@@ -57,9 +65,9 @@ final class SellTransactionDetailsViewModel: ObservableObject {
         switch strategy {
         case .processing:
             title = L10n.processing
-            infoText = L10n
-                .SOLWasSentToMoonpayAndIsBeingProcessed
-                .anyQuestionsRegardingYourTransactionCanBeAnsweredViaMoonpayHelpCenter
+            let attributedText = NSMutableAttributedString(string: L10n.SOLWasSentToMoonpayAndIsBeingProcessed.anyQuestionsRegardingYourTransactionCanBeAnsweredVia, attributes: Constants.textAttributes)
+            attributedText.appending(NSMutableAttributedString(string: " \(L10n.moonpayHelpCenter)", attributes: Constants.helpAttributes))
+            infoText = .help(text: attributedText)
             sendInfo = (L10n.willBeSentTo, L10n.yourBankAccountViaMoonpay)
             isProcessing = true
             topButtonTitle = L10n.close
@@ -67,9 +75,9 @@ final class SellTransactionDetailsViewModel: ObservableObject {
             logAnalytics(status: "processing")
         case .fundsWereSent:
             title = L10n.theFundsWereSentToYourBankAccount
-            infoText = L10n
-                .ItUsuallyTakesUpTo3BusinessDays
-                .anyQuestionsRegardingYourTransactionCanBeAnsweredViaMoonpayHelpCenter
+            let attributedText = NSMutableAttributedString(string: L10n.ItUsuallyTakesUpTo3BusinessDays.anyQuestionsRegardingYourTransactionCanBeAnsweredVia, attributes: Constants.textAttributes)
+            attributedText.appending(NSMutableAttributedString(string: " \(L10n.moonpayHelpCenter)", attributes: Constants.helpAttributes))
+            infoText = .help(text: attributedText)
             sendInfo = (L10n.sentTo, L10n.yourBankAccountViaMoonpay)
             isProcessing = false
             topButtonTitle = L10n.close
@@ -78,9 +86,10 @@ final class SellTransactionDetailsViewModel: ObservableObject {
         case let .youNeedToSend(receiverAddress):
             self.receiverAddress = receiverAddress
             title = "\(L10n.youNeedToSend) \(amountPart)"
-            infoText = L10n
+            infoText = .raw(text: L10n
                 .ToFinishProcessingYourRequestYouNeedToSendSOLToTheAddressInTheDescription
                 .after7DaysThisTransactionWillBeAutomaticallyDeclined
+            )
             sendInfo = (L10n.sendTo, receiverAddress.truncatingMiddle(numOfSymbolsRevealed: 6))
             isProcessing = false
             topButtonTitle = "\(L10n.send) \(tokenSymbol)"
@@ -88,10 +97,11 @@ final class SellTransactionDetailsViewModel: ObservableObject {
             logAnalytics(status: "waiting for deposit")
         case .youVeNotSent:
             title = "\(L10n.youVeNotSent) \(amountPart)"
-            infoText = L10n
+            infoText = .raw(text: L10n
                 .YouDidnTFinishYourCashOutTransaction
                 .After7DaysYourTransactionHasBeenAutomaticallyDeclined
                 .youCanTryAgainButYourNewTransactionWillBeSubjectToTheCurrentRates
+            )
             sendInfo = nil
             isProcessing = false
             topButtonTitle = L10n.tryAgain
@@ -120,6 +130,11 @@ final class SellTransactionDetailsViewModel: ObservableObject {
     func addressCopied() {
         clipboardManager.copyToClipboard(receiverAddress ?? "")
         notificationsService.showToast(title: "🖤", text: L10n.addressWasCopiedToClipboard, haptic: true)
+    }
+
+    func helpTapped() {
+        guard let url = Constants.helpURL else { return }
+        self.openHelp.send(url)
     }
 
     private func removeClicked() {
@@ -177,4 +192,12 @@ extension SellTransactionDetailsViewModel {
         case tryAgain
         case send
     }
+}
+
+private enum Constants {
+    static let textAttributes: [NSAttributedString.Key: Any] = [.font: UIFont.font(of: .text3),
+                                                                    .foregroundColor: Asset.Colors.night.color]
+    static let helpAttributes: [NSAttributedString.Key: Any] = [.font: UIFont.font(of: .text3),
+                                                                         .foregroundColor: Asset.Colors.sky.color]
+    static let helpURL = URL(string: "https://support.moonpay.com/")
 }

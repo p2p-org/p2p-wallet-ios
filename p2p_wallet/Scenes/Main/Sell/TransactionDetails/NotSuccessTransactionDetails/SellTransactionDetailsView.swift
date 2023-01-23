@@ -43,9 +43,15 @@ struct SellTransactionDetailsView: View {
             Image(uiImage: .sellInfo)
                 .renderingMode(.template)
                 .foregroundColor(infoIconColor)
-            Text(viewModel.infoText)
-                .foregroundColor(infoBlockTextColor)
-                .font(uiFont: .font(of: .text3))
+            switch viewModel.infoText {
+            case let .raw(text):
+                Text(text)
+                    .foregroundColor(infoBlockTextColor)
+                    .apply(style: .text3)
+            case let .help(text):
+                Text(text)
+                    .onTapGesture(perform: viewModel.helpTapped)
+            }
         }
         .padding(12)
         .background(infoBlockBackgroundColor)
