@@ -81,6 +81,6 @@ struct MoonpayBuyProcessing: BuyProcessingServiceType {
 }
 
 extension MoonpayBuyProcessing.Environment {
-    var endpoint: String { "https://moonpay.wallet.p2p.org/" }
+    var endpoint: String { "https://moonpay.key.app/" }
     // var endpoint: String { "https://buy.moonpay.com" }
 }

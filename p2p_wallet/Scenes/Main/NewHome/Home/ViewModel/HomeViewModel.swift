@@ -69,6 +69,7 @@ class HomeViewModel: ObservableObject {
             }
         })
         .store(in: &cancellables)
+
         walletsRepository.stateObservable
             .asPublisher()
             .assertNoFailure()
