@@ -38,14 +38,20 @@ final class SendTransactionDetailViewModel: BaseViewModel, ObservableObject {
         super.init()
 
         stateMachine.statePublisher
+            .receive(on: RunLoop.main)
             .sink { [weak self] (state: SendInputState) in
                 guard let self = self else { return }
                 self.accountCreationFeeCellModel = self.extractAccountCreationFeeCellModel(state: state, isLoading: true, feeTokens: nil)
                 self.updateCells(for: state)
-                Task {
+                Task { [weak self] in
+                    guard let self else { return }
                     let tokens = try? await self.feeWalletsService.getAvailableWalletsToPayFee(feeInSOL: stateMachine.currentState.fee)
-                    self.accountCreationFeeCellModel = self.extractAccountCreationFeeCellModel(state: state, isLoading: false, feeTokens: tokens)
-                    self.updateCells(for: state)
+                    
+                    await MainActor.run { [weak self] in
+                        guard let self else { return }
+                        self.accountCreationFeeCellModel = self.extractAccountCreationFeeCellModel(state: state, isLoading: false, feeTokens: tokens)
+                        self.updateCells(for: state)
+                    }
                 }
             }
             .store(in: &subscriptions)

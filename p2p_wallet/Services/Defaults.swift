@@ -21,6 +21,9 @@ extension APIEndPoint: DefaultsSerializable {}
 extension CreateWalletFlowState: DefaultsSerializable {}
 
 extension DefaultsKeys {
+    // Device token
+    var apnsDeviceToken: DefaultsKey<Data?> { .init(#function, defaultValue: nil) }
+    
     // Keychain-keys
     var keychainPincodeKey: DefaultsKey<String?> { .init(#function, defaultValue: nil) }
     var pincodeAttemptsKey: DefaultsKey<String?> { .init(#function, defaultValue: nil) }

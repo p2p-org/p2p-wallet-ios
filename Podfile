@@ -71,7 +71,6 @@ target 'p2p_wallet' do
   pod 'ReachabilitySwift', '~> 5.0.0'
 
   # reactive
-  pod 'Action', '5.0.0'
   pod 'RxAppState', '1.7.1'
   pod 'RxGesture', '4.0.4'
   pod 'RxSwift', '6.5.0'
@@ -112,7 +111,7 @@ target 'p2p_wallet' do
   pod 'GoogleSignIn', '~> 6.2.0'
 
   # Sentry
-  pod 'Sentry', :git => 'https://github.com/getsentry/sentry-cocoa.git', :tag => '7.18.1'
+  pod 'Sentry', :git => 'https://github.com/getsentry/sentry-cocoa.git', :tag => '7.31.5'
 
   # AppsFlyer
   pod 'AppsFlyerFramework'

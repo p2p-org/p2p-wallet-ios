@@ -27,10 +27,6 @@ final class SendInputViewModel: BaseViewModel, ObservableObject {
 
     @Published var status: Status = .initializing
 
-    #if !RELEASE
-    @Published var calculationDebugText: String = ""
-    #endif
-
     var lock: Bool {
         switch status {
         case .initializing: return true
@@ -124,10 +120,10 @@ final class SendInputViewModel: BaseViewModel, ObservableObject {
             initialState: state,
             services: .init(
                 swapService: SwapServiceImpl(
-                    feeRelayerCalculator: Resolver.resolve(FeeRelayer.self).feeCalculator, orcaSwap: Resolver.resolve()
+                    feeRelayerCalculator: Resolver.resolve(RelayService.self).feeCalculator, orcaSwap: Resolver.resolve()
                 ),
                 feeService: SendFeeCalculatorImpl(
-                    feeRelayerCalculator: Resolver.resolve(FeeRelayer.self).feeCalculator
+                    feeRelayerCalculator: Resolver.resolve(RelayService.self).feeCalculator
                 ),
                 solanaAPIClient: Resolver.resolve()
             )
@@ -159,8 +155,8 @@ final class SendInputViewModel: BaseViewModel, ObservableObject {
             let nextState = await stateMachine
                 .accept(action: .initialize(.init {
                     // get current context
-                    let feeRelayerContextManager = Resolver.resolve(FeeRelayerContextManager.self)
-                    return try await feeRelayerContextManager.getCurrentContext()
+                    let relayContextManager = Resolver.resolve(RelayContextManager.self)
+                    return try await relayContextManager.getCurrentContextOrUpdate()
                 }))
 
             switch nextState.status {
@@ -178,64 +174,10 @@ final class SendInputViewModel: BaseViewModel, ObservableObject {
             self.inputAmountViewModel.isFirstResponder = true
         }
     }
-
-    func updateDebugText() async throws {
-        let context = try await Resolver.resolve(FeeRelayerContextManager.self)
-            .getCurrentContext()
-        let relayAccountStatus = context.relayAccountStatus
-        let relayAccountBalance = context.relayAccountStatus.balance ?? 0
-        let minRelayAccountBalance = context.minimumRelayAccountBalance
-        let feeInSOL = currentState.fee.total
-        let feeInToken = currentState.feeInToken.total
-        let exchangeRate: Double
-
-        if feeInSOL != 0 {
-            exchangeRate = feeInToken.convertToBalance(decimals: currentState.tokenFee.decimals) / feeInSOL.convertToBalance(decimals: 9)
-        } else {
-            exchangeRate = 0
-        }
-
-        var mark = "+"
-        let remainder = max(relayAccountBalance, minRelayAccountBalance) - min(relayAccountBalance, minRelayAccountBalance)
-        if relayAccountBalance < minRelayAccountBalance {
-            mark = "-"
-        }
-
-        let expectedTransactionFee: UInt64
-
-        if feeInSOL > 0 {
-            if mark == "+" {
-                expectedTransactionFee = feeInSOL + remainder
-            } else if feeInSOL > remainder {
-                expectedTransactionFee = feeInSOL - remainder
-            } else {
-                expectedTransactionFee = 0
-            }
-        } else {
-            expectedTransactionFee = 0
-        }
-
-        calculationDebugText = relayAccountStatus.description + " (A)\n"
-        calculationDebugText += "minRelayAccountBalance = \(minRelayAccountBalance) (B)\n"
-        calculationDebugText += "remainder (A - B) = \(mark)\(remainder) (R)\n"
-        calculationDebugText += "expected transaction fee in SOL = \(expectedTransactionFee) (E)\n"
-        calculationDebugText += "needed topUp amount (real fee) in SOL (E - R) = \(feeInSOL) (S)\n"
-        calculationDebugText += "expected transaction fee in Token = \(feeInToken) (T)\n"
-        calculationDebugText += "exchange rate (T/S) => 1 SOL = \(exchangeRate) (e)\n"
-    }
 }
 
 private extension SendInputViewModel {
-    func bind() {
-        #if !RELEASE
-        stateMachine.statePublisher
-            .receive(on: DispatchQueue.main)
-            .sink { [weak self] value in
-                Task { try await self?.updateDebugText() }
-            }
-            .store(in: &subscriptions)
-        #endif
-        
+    func bind() {        
         stateMachine.statePublisher
             .receive(on: DispatchQueue.main)
             .sink { [weak self] value in
