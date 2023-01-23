@@ -1165,8 +1165,6 @@ Reset the PIN or wait for %@.";
 "Continue transaction" = "Continue transaction";
 "Interrupt" = "Interrupt";
 "Your bank account via Moonpay" = "Your bank account via Moonpay";
-"SOL was sent to Moonpay and is being processed. Any questions regarding your transaction can be answered via Moonpay help center" = "SOL was sent to Moonpay and is being processed. Any questions regarding your transaction can be answered via Moonpay help center";
-"It usually takes up to 3 business days. Any questions regarding your transaction can be answered via Moonpay help center" = "It usually takes up to 3 business days. Any questions regarding your transaction can be answered via Moonpay help center";
 "You didn't finish your cash out transaction. After 7 days your transaction has been automatically declined. 
 
 You can try again, but your new transaction will be subject to the current rates." = "You didn't finish your cash out transaction. After 7 days your transaction has been automatically declined. 
@@ -1183,3 +1181,6 @@ You can try again, but your new transaction will be subject to the current rates
 "our service was ruined. Visit this page later" = "our service was ruined. Visit this page later";
 "via bank transfer" = "via bank transfer";
 "Cash out crypto to fiat" = "Cash out crypto to fiat";
+"SOL was sent to Moonpay and is being processed. Any questions regarding your transaction can be answered via" = "SOL was sent to Moonpay and is being processed. Any questions regarding your transaction can be answered via";
+"It usually takes up to 3 business days. Any questions regarding your transaction can be answered via" = "It usually takes up to 3 business days. Any questions regarding your transaction can be answered via";
+"Moonpay help center" = "Moonpay help center";
