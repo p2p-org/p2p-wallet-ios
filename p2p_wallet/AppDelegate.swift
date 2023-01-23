@@ -50,7 +50,6 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         FirebaseApp.configure()
 
         setupLoggers()
-        setupAppsFlyer()
         setupDefaultCurrency()
 
         #if !DEBUG
@@ -61,6 +60,10 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
             options.enableOutOfMemoryTracking = true
         }
         #endif
+
+        AppsFlyerLib.shared().appsFlyerDevKey = String.secretConfig("APPSFLYER_DEV_KEY")!
+        AppsFlyerLib.shared().appleAppID = String.secretConfig("APPSFLYER_APP_ID")!
+        AppsFlyerLib.shared().waitForATTUserAuthorization(timeoutInterval: 60)
 
         // set app coordinator
         appCoordinator = AppCoordinator()
@@ -155,12 +158,15 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
     }
 
     func applicationDidBecomeActive(_ application: UIApplication) {
-        #if DEBUG
-            AppsFlyerLib.shared().isDebug = true
-            AppsFlyerLib.shared().useUninstallSandbox = true
-        #endif
-        AppsFlyerLib.shared().waitForATTUserAuthorization(timeoutInterval: 60)
-        AppsFlyerLib.shared().start()
+        AppsFlyerLib.shared().start(completionHandler: { dictionary, error in
+            if error != nil {
+                print(error ?? "")
+                return
+            } else {
+                print(dictionary ?? "")
+                return
+            }
+        })
         if #available(iOS 14, *) {
             ATTrackingManager.requestTrackingAuthorization { status in
                 switch status {
@@ -193,14 +199,6 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
             }
         }
         proxyAppDelegate.applicationDidBecomeActive(application)
-    }
-
-    // MARK: - AppsFlyer
-
-    func setupAppsFlyer() {
-        AppsFlyerLib.shared().appsFlyerDevKey = String.secretConfig("APPSFLYER_DEV_KEY") ?? ""
-        AppsFlyerLib.shared().appleAppID = String.secretConfig("APPSFLYER_APP_ID") ?? ""
-        AppsFlyerLib.shared().deepLinkDelegate = self
     }
 
     func setupLoggers() {
@@ -243,8 +241,4 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         // Migrate all users to default currency
         Defaults.fiat = .usd
     }
-}
-
-extension AppDelegate: DeepLinkDelegate {
-    func didResolveDeepLink(_: DeepLinkResult) {}
 }
