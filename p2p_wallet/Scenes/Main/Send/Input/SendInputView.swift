@@ -10,10 +10,6 @@ import SwiftUI
 
 struct SendInputView: View {
     @ObservedObject var viewModel: SendInputViewModel
-    
-    #if !RELEASE
-    @State private var displayDebug = false
-    #endif
 
     var body: some View {
         ZStack(alignment: .top) {
@@ -68,12 +64,13 @@ struct SendInputView: View {
                 }
                 
                 #if !RELEASE
-                if displayDebug {
-                    Text(viewModel.calculationDebugText)
-                        .font(uiFont: .font(of: .label2, weight: .regular))
-                        .foregroundColor(Color(.red))
-                        .multilineTextAlignment(.trailing)
-                }
+                FeeRelayerDebugView(
+                    viewModel: .init(
+                        feeInSOL: viewModel.currentState.fee,
+                        feeInToken: viewModel.currentState.feeInToken,
+                        payingFeeTokenDecimals: viewModel.currentState.tokenFee.decimals
+                    )
+                )
                 #endif
 
                 Spacer()
@@ -91,10 +88,6 @@ struct SendInputView: View {
             }
             .padding(.horizontal, 16)
             .padding(.bottom, 16)
-        }.onReceive(viewModel.inputAmountViewModel.$isFirstResponder) { value in
-            #if !RELEASE
-            displayDebug = !value
-            #endif
         }
     }
 
