@@ -115,6 +115,8 @@ target 'p2p_wallet' do
 
   # AppsFlyer
   pod 'AppsFlyerFramework'
+  
+  pod 'Lokalise', '~> 0.10.0'
 
 #  target 'p2p_walletTests' do
 #    inherit! :search_paths
