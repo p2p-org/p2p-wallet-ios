@@ -10,6 +10,7 @@ import AppTrackingTransparency
 @_exported import BEPureLayout
 import FeeRelayerSwift
 import Firebase
+import Intercom
 import KeyAppKitLogger
 import KeyAppUI
 import Resolver
@@ -18,7 +19,6 @@ import SolanaSwift
 import SwiftNotificationCenter
 @_exported import SwiftyUserDefaults
 import UIKit
-import Intercom
 
 @main
 class AppDelegate: UIResponder, UIApplicationDelegate {
@@ -39,7 +39,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
     ) -> Bool {
         // TODO: - Support custom fiat later
         Defaults.fiat = .usd
-        
+
         UserDefaults.standard.set(false, forKey: "_UIConstraintBasedLayoutLogUnsatisfiable")
         // TODO: - Swizzle localization later
 //        Bundle.swizzleLocalization()
@@ -103,7 +103,11 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         proxyAppDelegate.application(application, didFailToRegisterForRemoteNotificationsWithError: error)
     }
 
-    func application(_: UIApplication, open url: URL, options: [UIApplication.OpenURLOptionsKey: Any] = [:]) -> Bool {
+    func application(
+        _: UIApplication,
+        open url: URL,
+        options: [UIApplication.OpenURLOptionsKey: Any] = [:]
+    ) -> Bool {
         var result = false
         Broadcaster.notify(AppUrlHandler.self) { result = result || $0.handle(url: url, options: options) }
         AppsFlyerLib.shared().handleOpen(url, options: options)
@@ -115,6 +119,24 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         continue userActivity: NSUserActivity,
         restorationHandler: @escaping ([UIUserActivityRestoring]?) -> Void
     ) -> Bool {
+        // Handle intercom deeplink
+        if
+            let webpageURL = userActivity.webpageURL,
+            let urlComponents = URLComponents(url: webpageURL, resolvingAgainstBaseURL: true)
+        {
+            if urlComponents.path == "/intercom" {
+                if
+                    let queryItem = urlComponents.queryItems?.first(where: { $0.name == "intercom_survey_id" }),
+                    let value = queryItem.value
+                {
+                    DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) {
+                        GlobalAppState.shared.surveyID = value
+                    }
+                    return true
+                }
+            }
+        }
+
         AppsFlyerLib.shared().continue(userActivity, restorationHandler: nil)
         return proxyAppDelegate.application(application, continue: userActivity, restorationHandler: restorationHandler)
     }

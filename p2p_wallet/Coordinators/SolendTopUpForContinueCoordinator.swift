@@ -50,13 +50,13 @@ final class SolendTopUpForContinueCoordinator: Coordinator<SolendTopUpForContinu
             })
             .store(in: &subscriptions)
         viewModel.receive
-            .sink(receiveValue: { [unowned self] in
-                let coordinator = ReceiveCoordinator(
+            .flatMap { [unowned self] in
+                coordinate(to: ReceiveCoordinator(
                     navigationController: navigationController,
                     pubKey: $0
-                )
-                coordinate(to: coordinator)
-            })
+                ))
+            }
+            .sink(receiveValue: { })
             .store(in: &subscriptions)
 
         viewModel.swap

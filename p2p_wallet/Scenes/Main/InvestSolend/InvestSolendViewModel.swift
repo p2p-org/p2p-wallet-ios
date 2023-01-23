@@ -177,7 +177,10 @@ class InvestSolendViewModel: ObservableObject {
 
     /// Request new data for data service
     func update() async throws {
-        try await dataService.update()
+        _ = try await (
+            dataService.update(),
+            Resolver.resolve(SwapServiceType.self).reload()
+        )
     }
 
     /// Show user's deposits
@@ -188,7 +191,7 @@ class InvestSolendViewModel: ObservableObject {
     func retry() {
         Task {
             if let action = actionService.getCurrentAction() {
-                try await actionService.clearAction()
+                try actionService.clearAction()
 
                 // TODO: refactor
                 switch action.type {

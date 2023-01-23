@@ -102,9 +102,11 @@ class RenBTCStatusService: RenBTCStatusServiceType {
             signers = []
         }
 
-        // preparing process
-        let feePayer = try await relayContextManager.getCurrentContext().feePayerAddress
-        async let preparing = blockchainClient.prepareTransaction(
+        // update and get current context
+        let context = try await relayContextManager.getCurrentContextOrUpdate()
+        
+        let feePayer = context.feePayerAddress
+        let preparedTransaction = try await blockchainClient.prepareTransaction(
             instructions: [
                 AssociatedTokenProgram.createAssociatedTokenAccountInstruction(
                     mint: renBTCMint,
@@ -117,18 +119,8 @@ class RenBTCStatusService: RenBTCStatusServiceType {
             feeCalculator: feeCalculator
         )
 
-        // updating process
-        async let updating: () = relayContextManager.update()
-
-        // run concurrently
-        let (preparedTransaction, _) = try await(preparing, updating)
-
-        // get context
-        let context = try await relayContextManager.getCurrentContext()
-
         // relay transaction
-        let tx = try await relayService.topUpAndRelayTransaction(
-            context,
+        _ = try await relayService.topUpAndRelayTransaction(
             preparedTransaction,
             fee: payingFeeToken,
             config: .init(
@@ -173,7 +165,7 @@ class RenBTCStatusService: RenBTCStatusServiceType {
         )
 
         let feeInSOL = try await relayService.feeCalculator.calculateNeededTopUpAmount(
-            try await relayContextManager.getCurrentContext(),
+            try await relayContextManager.getCurrentContextOrUpdate(),
             expectedFee: feeAmount,
             payingTokenMint: mintAddress
         )
