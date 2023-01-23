@@ -10,6 +10,7 @@ import Foundation
 import UIKit
 import Resolver
 import Sell
+import SafariServices
 
 private typealias Result = SellTransactionDetailsCoorditor.Result
 
@@ -132,11 +133,20 @@ final class SellTransactionDetailsCoorditor: Coordinator<SellTransactionDetailsC
                 }
             })
             .store(in: &subscriptions)
+        viewModel.openHelp
+            .sink { [weak self] url in self?.open(url: url, from: controller) }
+            .store(in: &subscriptions)
         controller.onClose = {
             resultSubject.send(.cancel)
         }
 
         return (controller, resultSubject)
+    }
+
+    private func open(url: URL, from parentVC: UIViewController) {
+        let vc = SFSafariViewController(url: url)
+        vc.modalPresentationStyle = .automatic
+        parentVC.present(vc, animated: true)
     }
 }
 
