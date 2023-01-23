@@ -4,9 +4,13 @@
 <dict>
 	<key>AMPLITUDE_API_KEY</key>
 	<string>$(AMPLITUDE_API_KEY)</string>
-    <key>NSAdvertisingAttributionReportEndpoint</key>
-    <string>https://appsflyer-skadnetwork.com/</string>
-    <key>API_GATEWAY_DEV</key>
+	<key>LOKALISE_PROJECT_ID</key>
+	<string>$(LOKALISE_PROJECT_ID)</string>
+	<key>LOKALISE_TOKEN</key>
+	<string>$(LOKALISE_TOKEN)</string>
+	<key>NSAdvertisingAttributionReportEndpoint</key>
+	<string>https://appsflyer-skadnetwork.com/</string>
+	<key>API_GATEWAY_DEV</key>
 	<string>$(API_GATEWAY_DEV)</string>
 	<key>API_GATEWAY_PROD</key>
 	<string>$(API_GATEWAY_PROD)</string>
