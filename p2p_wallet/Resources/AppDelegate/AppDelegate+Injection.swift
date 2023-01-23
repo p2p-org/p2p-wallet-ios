@@ -249,7 +249,7 @@ extension Resolver: ResolverRegistering {
                 contextManager: Resolver.resolve(),
                 solanaAPIClient: Resolver.resolve(),
                 blockchainClient: Resolver.resolve(),
-                feeRelayer: Resolver.resolve(),
+                relayService: Resolver.resolve(),
                 account: Resolver.resolve(AccountStorageType.self).account
             )
         }
@@ -286,6 +286,7 @@ extension Resolver: ResolverRegistering {
             .scope(.session)
 
         register { RelayServiceImpl(
+            contextManager: resolve(),
             orcaSwap: resolve(),
             accountStorage: resolve(),
             solanaApiClient: resolve(),
@@ -300,7 +301,7 @@ extension Resolver: ResolverRegistering {
 
         register { () -> RelayContextManager in
             if FeeRelayConfig.shared.disableFeeTransaction {
-                return FeeRelayerContextManagerDisabledFreeTrxImpl(
+                return RelayContextManagerDisabledFreeTrxImpl(
                     accountStorage: resolve(),
                     solanaAPIClient: resolve(),
                     feeRelayerAPIClient: resolve()
@@ -317,7 +318,7 @@ extension Resolver: ResolverRegistering {
         
         register {
             DefaultSwapFeeRelayerCalculator(
-                destinationFinder: DestinationFinderImpl(solanaAPIClient: Resolver.resolve()),
+                destinationAnalysator: DestinationAnalysatorImpl(solanaAPIClient: Resolver.resolve()),
                 accountStorage: Resolver.resolve()
             )
         }
@@ -485,8 +486,8 @@ extension Resolver: ResolverRegistering {
                 solend: resolve(),
                 solana: resolve(),
                 feeRelayApi: resolve(),
-                feeRelay: resolve(),
-                feeRelayContextManager: resolve()
+                relayService: resolve(),
+                relayContextManager: resolve()
             )
         }
         .implements(SolendActionService.self)
