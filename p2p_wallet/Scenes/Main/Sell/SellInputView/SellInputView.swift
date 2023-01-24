@@ -69,27 +69,9 @@ struct SellInputView: View {
                 Spacer()
 
                 if viewModel.showingBaseAmount {
-                    DecimalTextField(
-                        value: $viewModel.baseAmount,
-                        isFirstResponder: $viewModel.isEnteringBaseAmount
-                    ) { textField in
-                        textField.font = UIFont.font(of: .largeTitle, weight: .regular)
-                        textField.keyboardType = .decimalPad
-                        textField.maximumFractionDigits = 2
-                        textField.decimalSeparator = "."
-                        textField.textAlignment = .right
-                    }
+                    textField(value: $viewModel.baseAmount, isFirstResponder: $viewModel.isEnteringBaseAmount)
                 } else {
-                    DecimalTextField(
-                         value: $viewModel.quoteAmount,
-                         isFirstResponder: $viewModel.isEnteringQuoteAmount
-                     ) { textField in
-                         textField.font = UIFont.font(of: .largeTitle, weight: .regular)
-                         textField.keyboardType = .decimalPad
-                         textField.maximumFractionDigits = 2
-                         textField.decimalSeparator = "."
-                         textField.textAlignment = .right
-                     }
+                    textField(value: $viewModel.quoteAmount, isFirstResponder: $viewModel.isEnteringQuoteAmount)
                 }
             }
 
@@ -214,6 +196,19 @@ struct SellInputView: View {
         .disabled(viewModel.inputError != nil)
         .frame(height: 56)
         .padding(EdgeInsets(top: 0, leading: 16, bottom: 12, trailing: 16))
+    }
+
+    func textField(value: Binding<Double?>, isFirstResponder: Binding<Bool>) -> DecimalTextField {
+        DecimalTextField(
+             value: value,
+             isFirstResponder: isFirstResponder
+         ) { textField in
+             textField.font = .font(of: .largeTitle, weight: .regular)
+             textField.keyboardType = .decimalPad
+             textField.maximumFractionDigits = 2
+             textField.decimalSeparator = "."
+             textField.textAlignment = .right
+         }
     }
 }
 
