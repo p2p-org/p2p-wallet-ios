@@ -115,7 +115,7 @@ struct SellPendingView: View {
 
     private var textView: some View {
         HStack {
-            Text(L10n.sendTo)
+            Text(viewModel.model.shouldHideRemoveButtonOnFirstAppearance ? L10n.send : "\(L10n.send) \(viewModel.model.tokenSymbol)")
                 .foregroundColor(Color(Asset.Colors.night.color))
                 .font(uiFont: .font(of: .text3))
             Spacer()
