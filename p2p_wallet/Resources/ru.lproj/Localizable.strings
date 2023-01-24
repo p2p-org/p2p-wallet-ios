@@ -1220,3 +1220,6 @@ You can try again, but your new transaction will be subject to the current rates
 "Don’t show me again" = "Не показывай мне снова";
 "Let's go" = "Пойдем";
 "service is next step" = "обслуживание это следующий шаг";
+"You can only cash out SOL" = "Вы можете обналичить только SOL";
+"Swap your cryptocurrencies\nto SOL to cash out" = "Обменяйте свои криптовалюты\nна SOL, чтобы обналичить их.";
+"Got it" = "Понятно";

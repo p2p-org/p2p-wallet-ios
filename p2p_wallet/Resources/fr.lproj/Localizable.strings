@@ -1222,3 +1222,6 @@ You can try again, but your new transaction will be subject to the current rates
 "Don’t show me again" = "Ne me montre plus";
 "Let's go" = "Allons-y";
 "service is next step" = "le service est la prochaine étape";
+"You can only cash out SOL" = "Vous ne pouvez encaisser que SOL";
+"Swap your cryptocurrencies\nto SOL to cash out" = "Échangez vos crypto-monnaies\nvers SOL pour retirer de l'argent";
+"Got it" = "J'ai compris";
