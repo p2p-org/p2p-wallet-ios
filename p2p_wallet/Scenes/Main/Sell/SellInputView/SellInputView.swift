@@ -22,19 +22,15 @@ struct SellInputView: View {
 
     var body: some View {
         VStack(alignment: .leading, spacing: 0) {
+            exchangeRateView
+                .padding(.horizontal, 16)
+                .padding(.top, 6)
+
             ScrollView {
-                VStack(alignment: .leading, spacing: 8) {
+                VStack(alignment: .leading, spacing: 4) {
                     baseAmountInputView
 
-                    quoteAmountInputView
-
-                    VStack(alignment: .leading, spacing: 0) {
-                        exchangeRateView
-                        Rectangle().frame(height: 1)
-                            .foregroundColor(Color(Asset.Colors.smoke.color))
-                        feeView
-                    }
-                    .blockStyle()
+                    feeView
                 }
                 .frame(maxWidth: .infinity)
             }
@@ -58,28 +54,70 @@ struct SellInputView: View {
     // MARK: - Subviews
 
     var baseAmountInputView: some View {
-        VStack(alignment: .leading, spacing: 4) {
-            sellAllButton
-                .padding(.leading, 24)
+        VStack(alignment: .leading, spacing: 18) {
+            HStack {
+                switchButton
+                Spacer()
+                sellAllButton
+            }
 
             HStack {
-                DecimalTextField(
-                     value: $viewModel.baseAmount,
-                     isFirstResponder: $viewModel.isEnteringBaseAmount
-                 ) { textField in
-                     textField.font = UIFont.font(of: .text3, weight: .regular)
-                     textField.keyboardType = .decimalPad
-                     textField.maximumFractionDigits = 2
-                     textField.decimalSeparator = "."
-                 }
+                Text(viewModel.currentInputTypeCode)
+                   .apply(style: .largeTitle)
+                   .foregroundColor(Color(Asset.Colors.night.color))
 
-                 Text(viewModel.baseCurrencyCode)
-                    .apply(style: .text3)
-                    .foregroundColor(Color(Asset.Colors.night.color).opacity(0.3))
+                Spacer()
+
+                if viewModel.showingBaseAmount {
+                    DecimalTextField(
+                        value: $viewModel.baseAmount,
+                        isFirstResponder: $viewModel.isEnteringBaseAmount
+                    ) { textField in
+                        textField.font = UIFont.font(of: .largeTitle, weight: .regular)
+                        textField.keyboardType = .decimalPad
+                        textField.maximumFractionDigits = 2
+                        textField.decimalSeparator = "."
+                        textField.textAlignment = .right
+                    }
+                } else {
+                    DecimalTextField(
+                         value: $viewModel.quoteAmount,
+                         isFirstResponder: $viewModel.isEnteringQuoteAmount
+                     ) { textField in
+                         textField.font = UIFont.font(of: .largeTitle, weight: .regular)
+                         textField.keyboardType = .decimalPad
+                         textField.maximumFractionDigits = 2
+                         textField.decimalSeparator = "."
+                         textField.textAlignment = .right
+                     }
+                }
             }
-            .blockStyle(hasError: viewModel.inputError != nil && viewModel.isEnteringQuoteAmount == false)
+
+            HStack {
+                Text("Cash out SOL, receive \(viewModel.quoteCurrencyCode)")
+                    .apply(style: .label1)
+                    .foregroundColor(Color(Asset.Colors.mountain.color))
+
+                Spacer()
+                Text("≈ " + viewModel.quoteAmount?.toString() + "")
+                    .apply(style: .label1)
+                    .foregroundColor(Color(Asset.Colors.mountain.color))
+            }
         }
+        .blockStyle()
         .padding(.top, 44)
+    }
+
+    var switchButton: some View {
+        Button(action: {
+            viewModel.showingBaseAmount.toggle()
+        }) {
+            Text(
+                "Switch to " + (viewModel.showingBaseAmount ? viewModel.quoteCurrencyCode : viewModel.baseCurrencyCode)
+            )
+            .apply(style: .label1)
+            .foregroundColor(Color(Asset.Colors.sky.color))
+        }
     }
 
     var sellAllButton: some View {
@@ -87,37 +125,17 @@ struct SellInputView: View {
             viewModel.sellAll()
         } label: {
             HStack(spacing: 4) {
-                Text(L10n.cashOut)
+                Text(L10n.all)
+                    .apply(style: .label1)
                     .foregroundColor(Color(Asset.Colors.mountain.color))
-                    .font(uiFont: UIFont.font(of: .label1, weight: .regular))
                 Text(
-                    L10n.all + " " +
                     (viewModel.maxBaseAmount ?? 0).toString(maximumFractionDigits: 2, roundingMode: .down) +
                     " \(viewModel.baseCurrencyCode)"
                 )
+                .apply(style: .label1)
                     .foregroundColor(Color(Asset.Colors.sky.color))
-                    .font(uiFont: UIFont.font(of: .label1, weight: .regular))
             }
         }
-    }
-
-    var quoteAmountInputView: some View {
-        HStack {
-            DecimalTextField(
-                value: $viewModel.quoteAmount,
-                isFirstResponder: $viewModel.isEnteringQuoteAmount
-            ) { textField in
-                textField.font = UIFont.font(of: .title1, weight: .bold)
-                textField.keyboardType = .decimalPad
-                textField.maximumFractionDigits = 2
-                textField.decimalSeparator = "."
-            }
-
-            Text("≈ \(viewModel.quoteCurrencyCode)")
-                .foregroundColor(Color(Asset.Colors.night.color.withAlphaComponent(0.3)))
-                .font(uiFont: UIFont.font(of: .title1, weight: .bold))
-        }
-        .blockStyle(hasError: viewModel.inputError != nil && viewModel.isEnteringQuoteAmount)
     }
 
     var exchangeRateView: some View {
@@ -132,7 +150,7 @@ struct SellInputView: View {
                     )
             case .loaded(let exchangeRate):
                 Text("1 \(viewModel.baseCurrencyCode) ≈ \(exchangeRate.toString(maximumFractionDigits: 2)) \(viewModel.quoteCurrencyCode)")
-                    .descriptionTextStyle()
+                    .descriptionTextStyle(color: Color(Asset.Colors.night.color))
             case .error(let error):
                 #if !RELEASE
                 Text("\(L10n.errorWhenUpdatingPrices): \(error.localizedDescription)")
@@ -142,19 +160,18 @@ struct SellInputView: View {
                     .descriptionTextStyle(color: Color(Asset.Colors.rose.color))
                 #endif
             }
-            
             Spacer()
         }
-            
-            .padding(4)
-            .padding(.bottom, 12)
+            .padding(.bottom, 9)
     }
 
     var feeView: some View {
         HStack {
+            Spacer()
             switch viewModel.fee {
             case .loading:
-                Text("Included fee 0.03 SOL")
+                Text("All fees included 0.03 SOL")
+                    .multilineTextAlignment(.center)
                     .descriptionTextStyle()
                     .skeleton(
                         with: true,
@@ -162,18 +179,23 @@ struct SellInputView: View {
                         animated: .default
                     )
             case .loaded(let fee):
-                Text(L10n.includedFee("\(fee.toString()) \(viewModel.quoteCurrencyCode)"))
-                    .descriptionTextStyle()
+                Text("All fees included \(fee.baseAmount.toString(maximumFractionDigits: 2)) \(viewModel.baseCurrencyCode) ≈ \(fee.quoteAmount.toString()) \(viewModel.quoteCurrencyCode)")
+                    .apply(style: .label1)
+                    .multilineTextAlignment(.center)
+                    .foregroundColor(Color(Asset.Colors.night.color))
             case .error(let error):
                 #if !RELEASE
                 Text("\(L10n.errorWhenUpdatingPrices): \(error.localizedDescription)")
-                    .descriptionTextStyle(color: Color(Asset.Colors.rose.color))
+                    .apply(style: .label1)
+                    .multilineTextAlignment(.center)
+                    .foregroundColor(Color(Asset.Colors.rose.color))
                 #else
                 Text(L10n.errorWhenUpdatingPrices)
-                    .descriptionTextStyle(color: Color(Asset.Colors.rose.color))
+                    .apply(style: .label1)
+                    .multilineTextAlignment(.center)
+                    .foregroundColor(Color(Asset.Colors.rose.color))
                 #endif
             }
-            
             Spacer()
         }
             .padding(4)
@@ -198,11 +220,11 @@ struct SellInputView: View {
 private extension View {
     func blockStyle(hasError: Bool = false) -> some View {
         frame(maxWidth: .infinity)
-            .padding(12)
+            .padding(16)
             .background(Color(Asset.Colors.snow.color))
-            .cornerRadius(12)
+            .cornerRadius(16)
             .overlay(
-                RoundedRectangle(cornerRadius: 12)
+                RoundedRectangle(cornerRadius: 16)
                     .stroke(Color(Asset.Colors.rose.color), lineWidth: hasError ? 1 : 0)
             )
             .padding(.horizontal, 16)
@@ -214,9 +236,14 @@ private extension View {
     }
 }
 
-//
-//struct SellInputView_Previews: PreviewProvider {
-//    static var previews: some View {
-//        SellInputView(viewModel: .init())
-//    }
-//}
+
+struct SellInputView_Previews: PreviewProvider {
+    static var previews: some View {
+        SellInputView(viewModel:
+                .init(
+                    initialBaseAmount: 2,
+                    navigation: PassthroughSubject<SellNavigation?, Never>()
+                )
+        )
+    }
+}
