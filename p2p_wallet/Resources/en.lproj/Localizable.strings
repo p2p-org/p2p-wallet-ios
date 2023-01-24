@@ -1183,3 +1183,6 @@ You can try again, but your new transaction will be subject to the current rates
 "SOL was sent to Moonpay and is being processed. Any questions regarding your transaction can be answered via" = "SOL was sent to Moonpay and is being processed. Any questions regarding your transaction can be answered via";
 "It usually takes up to 3 business days. Any questions regarding your transaction can be answered via" = "It usually takes up to 3 business days. Any questions regarding your transaction can be answered via";
 "Moonpay help center" = "Moonpay help center";
+"You can only cash out SOL" = "You can only cash out SOL";
+"Swap your cryptocurrencies\nto SOL to cash out" = "Swap your cryptocurrencies\nto SOL to cash out";
+"Got it" = "Got it";

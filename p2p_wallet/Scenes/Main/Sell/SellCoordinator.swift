@@ -59,7 +59,13 @@ final class SellCoordinator: Coordinator<SellCoordinatorResult> {
                 navigationController.popViewController(animated: true)
             })
             .store(in: &subscriptions)
-        
+
+        viewModel.presentSOLInfo
+            .sink { [unowned self] in
+                self.coordinate(to: SellSOLInfoCoordinator(parentController: vc)).sink { }.store(in: &subscriptions)
+            }
+            .store(in: &subscriptions)
+
         vc.deallocatedPublisher()
             .sink { [weak self] _ in
                 guard let self else {return}

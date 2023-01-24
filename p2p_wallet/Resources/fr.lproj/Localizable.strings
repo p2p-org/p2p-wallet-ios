@@ -1212,3 +1212,6 @@ You can try again, but your new transaction will be subject to the current rates
 "SOL was sent to Moonpay and is being processed. Any questions regarding your transaction can be answered via" = "SOL a été envoyé à Moonpay et est en cours de traitement.  Toutes les questions concernant votre transaction peuvent être répondues via";
 "It usually takes up to 3 business days. Any questions regarding your transaction can be answered via" = "Cela prend généralement jusqu'à 3 jours ouvrables.  Toutes les questions concernant votre transaction peuvent être répondues via";
 "Moonpay help center" = "Centre d'aide Moonpay";
+"You can only cash out SOL" = "Vous ne pouvez encaisser que SOL";
+"Swap your cryptocurrencies\nto SOL to cash out" = "Échangez vos crypto-monnaies\nvers SOL pour retirer de l'argent";
+"Got it" = "J'ai compris";

@@ -1210,3 +1210,6 @@ You can try again, but your new transaction will be subject to the current rates
 "SOL was sent to Moonpay and is being processed. Any questions regarding your transaction can be answered via" = "SOL был отправлен в Moonpay и обрабатывается.  На любые вопросы, касающиеся вашей транзакции, можно ответить через";
 "It usually takes up to 3 business days. Any questions regarding your transaction can be answered via" = "Обычно это занимает до 3 рабочих дней.  На любые вопросы, касающиеся вашей транзакции, можно ответить через";
 "Moonpay help center" = "Справочный центр Мунпей";
+"You can only cash out SOL" = "Вы можете обналичить только SOL";
+"Swap your cryptocurrencies\nto SOL to cash out" = "Обменяйте свои криптовалюты\nна SOL, чтобы обналичить их.";
+"Got it" = "Понятно";

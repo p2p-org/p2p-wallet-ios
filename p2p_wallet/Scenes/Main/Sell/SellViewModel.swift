@@ -44,7 +44,9 @@ class SellViewModel: BaseViewModel, ObservableObject {
     private let navigation: PassthroughSubject<SellNavigation?, Never>
     private var updatePricesTask: Task<Void, Never>?
     private let goBackSubject = PassthroughSubject<Void, Never>()
+    private let presentSOLInfoSubject = PassthroughSubject<Void, Never>()
     var back: AnyPublisher<Void, Never> { goBackSubject.eraseToAnyPublisher() }
+    var presentSOLInfo: AnyPublisher<Void, Never> { presentSOLInfoSubject.eraseToAnyPublisher() }
 
     /// Maximum value to sell from sell provider
     private var maxBaseProviderAmount: Double?
@@ -293,6 +295,15 @@ class SellViewModel: BaseViewModel, ObservableObject {
             }
             .store(in: &subscriptions)
 
+        // navigation
+        dataService.statusPublisher
+            .receive(on: RunLoop.main)
+            .sink { [weak self] status in
+                guard case .ready = status else { return }
+                self?.presentInfoIfNeeded()
+            }
+            .store(in: &subscriptions)
+
         try? reachability.startNotifier()
         reachability.status.sink { [unowned self] _ in
             _ = self.reachability.check()
@@ -368,5 +379,11 @@ class SellViewModel: BaseViewModel, ObservableObject {
                 }
             }
         }
+    }
+
+    private func presentInfoIfNeeded() {
+        guard !Defaults.isSellInfoPresented else { return }
+        presentSOLInfoSubject.send(())
+        Defaults.isSellInfoPresented = true
     }
 }
