@@ -1172,7 +1172,6 @@ Reset the PIN or wait for %@." = "Il vous reste %@ tentatives pour saisir le cod
 "Included fee %@" = "Frais inclus %@";
 "The minimum amount is %@ %@" = "Le montant minimum est de %@ %@";
 "The maximum amount is %@ %@" = "Le montant maximum est de %@ %@";
-"Not enought %@" = "Pas assez %@";
 "Transaction succeeded" = "Transaction réussie";
 "Sent to" = "Envoyé à";
 "The transaction has been successfully completed " = "La transaction a été conclue avec succès";
@@ -1211,3 +1210,7 @@ You can try again, but your new transaction will be subject to the current rates
 "our service was ruined. Visit this page later" = "notre service a été ruiné.  Visitez cette page plus tard";
 "via bank transfer" = "par virement bancaire";
 "Cash out crypto to fiat" = "Encaisser crypto en fiat";
+"Cash out %@, receive %@" = "Encaisser %@, recevoir %@";
+"Switch to %@" = "Passer à %@";
+"All fees included %@ %@ ≈ %@ %@" = "Tous frais inclus %@ %@ ≈ %@ %@";
+"Not enough %@" = "Pas assez %@";

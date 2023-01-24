@@ -19,7 +19,7 @@ enum SellViewModelInputError: Error, Equatable {
         case .amountIsTooSmall(let minBaseAmount, let baseCurrencyCode):
             return L10n.theMinimumAmountIs(minBaseAmount?.toString() ?? "2", baseCurrencyCode)
         case .insufficientFunds(let baseCurrencyCode):
-            return L10n.notEnought(baseCurrencyCode)
+            return L10n.notEnough(baseCurrencyCode)
         case .exceedsProviderLimit(let maxBaseProviderAmount, let baseCurrencyCode):
             return L10n.theMaximumAmountIs(maxBaseProviderAmount?.toString() ?? "1000", baseCurrencyCode)
         }

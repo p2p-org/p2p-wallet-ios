@@ -1144,7 +1144,6 @@ Reset the PIN or wait for %@.";
 "Included fee %@" = "Included fee %@";
 "The minimum amount is %@ %@" = "The minimum amount is %@ %@";
 "The maximum amount is %@ %@" = "The maximum amount is %@ %@";
-"Not enought %@" = "Not enought %@";
 "Transaction succeeded" = "Transaction succeeded";
 "Sent to" = "Sent to";
 "The transaction has been successfully completed" = "The transaction has been successfully completed";
@@ -1182,3 +1181,7 @@ You can try again, but your new transaction will be subject to the current rates
 "our service was ruined. Visit this page later" = "our service was ruined. Visit this page later";
 "via bank transfer" = "via bank transfer";
 "Cash out crypto to fiat" = "Cash out crypto to fiat";
+"Cash out %@, receive %@" = "Cash out %@, receive %@";
+"Switch to %@" = "Switch to %@";
+"All fees included %@ %@ ≈ %@ %@" = "All fees included %@ %@ ≈ %@ %@";
+"Not enough %@" = "Not enough %@";
