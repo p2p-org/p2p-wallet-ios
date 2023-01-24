@@ -45,7 +45,7 @@ struct SellPendingView: View {
                     )
                     .disabled(viewModel.isRemoving)
 
-                    if !viewModel.model.shouldHideRemoveButtonOnFirstAppearance {
+                    if !viewModel.model.navigatedFromMoonpay {
                         Button(
                             action: {
                                 viewModel.removeClicked()
@@ -115,7 +115,7 @@ struct SellPendingView: View {
 
     private var textView: some View {
         HStack {
-            Text(viewModel.model.shouldHideRemoveButtonOnFirstAppearance ? L10n.send : "\(L10n.send) \(viewModel.model.tokenSymbol)")
+            Text(viewModel.model.navigatedFromMoonpay ? L10n.send : "\(L10n.send) \(viewModel.model.tokenSymbol)")
                 .foregroundColor(Color(Asset.Colors.night.color))
                 .font(uiFont: .font(of: .text3))
             Spacer()
@@ -148,7 +148,7 @@ struct SellPendingView_Previews: PreviewProvider {
                     fiatAmount: 300.05,
                     currency: MoonpaySellDataServiceProvider.MoonpayFiat.eur,
                     receiverAddress: "FfRBerfgeritjg43fBeJEr",
-                    shouldHideRemoveButtonOnFirstAppearance: false
+                    navigatedFromMoonpay: false
                 )
             )
         )

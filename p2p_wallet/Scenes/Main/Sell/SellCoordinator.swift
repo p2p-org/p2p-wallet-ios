@@ -27,7 +27,7 @@ final class SellCoordinator: Coordinator<SellCoordinatorResult> {
     // TODO: Pass initial amount in token to view model
     private let initialAmountInToken: Double?
     private var isCompleted = false
-    private var shouldHideRemoveButtonOnFirstAppearance = false
+    private var navigatedFromMoonpay = false
 
     // MARK: - Initializer
 
@@ -83,7 +83,7 @@ final class SellCoordinator: Coordinator<SellCoordinatorResult> {
                 .deallocatedPublisher()
                 .handleEvents(receiveCompletion: { [weak self] _ in
                     self?.viewModel.warmUp()
-                    self?.shouldHideRemoveButtonOnFirstAppearance = true
+                    self?.navigatedFromMoonpay = true
                     self?.viewModel.shouldNotShowKeyboard = false
                 }).eraseToAnyPublisher()
 
@@ -95,7 +95,7 @@ final class SellCoordinator: Coordinator<SellCoordinatorResult> {
                             transaction: transaction,
                             fiat: fiat,
                             navigationController: navigationController,
-                            shouldHideRemoveButtonOnFirstAppearance: shouldHideRemoveButtonOnFirstAppearance
+                            navigatedFromMoonpay: navigatedFromMoonpay
                         )
                     )
                     .map {($0, transaction)}
@@ -110,7 +110,7 @@ final class SellCoordinator: Coordinator<SellCoordinatorResult> {
                         // pop to rootViewController and resultSubject.send(.none)
                         self.navigationController.popToRootViewController(animated: true)
                     case .cashOutInterupted:
-                        if self.shouldHideRemoveButtonOnFirstAppearance {
+                        if self.navigatedFromMoonpay {
                             self.resultSubject.send(.interupted)
                         } else {
                             self.navigationController.popToRootViewController(animated: true)
@@ -130,7 +130,7 @@ final class SellCoordinator: Coordinator<SellCoordinatorResult> {
                         // Show status
                         self.navigateToSendTransactionStatus(model: transaction)
                     }
-                    self.shouldHideRemoveButtonOnFirstAppearance = false
+                    self.navigatedFromMoonpay = false
                 })
                 .map { _ in }
                 .eraseToAnyPublisher()

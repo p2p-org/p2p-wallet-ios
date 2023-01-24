@@ -25,15 +25,15 @@ final class SellPendingCoordinator: Coordinator<SellPendingCoordinatorResult> {
     private let transaction: SellDataServiceTransaction
     private let fiat: any ProviderFiat
     private var resultSubject = PassthroughSubject<SellPendingCoordinatorResult, Never>()
-    private var shouldHideRemoveButtonOnFirstAppearance: Bool
+    private var navigatedFromMoonpay: Bool
 
     // MARK: - Initializer
 
-    init(transaction: SellDataServiceTransaction, fiat: any ProviderFiat, navigationController: UINavigationController, shouldHideRemoveButtonOnFirstAppearance: Bool = false) {
+    init(transaction: SellDataServiceTransaction, fiat: any ProviderFiat, navigationController: UINavigationController, navigatedFromMoonpay: Bool = false) {
         self.navigationController = navigationController
         self.transaction = transaction
         self.fiat = fiat
-        self.shouldHideRemoveButtonOnFirstAppearance = shouldHideRemoveButtonOnFirstAppearance
+        self.navigatedFromMoonpay = navigatedFromMoonpay
     }
 
     // MARK: - Methods
@@ -50,12 +50,12 @@ final class SellPendingCoordinator: Coordinator<SellPendingCoordinatorResult> {
                 fiatAmount: transaction.quoteCurrencyAmount,
                 currency: fiat,
                 receiverAddress: transaction.depositWallet,
-                shouldHideRemoveButtonOnFirstAppearance: shouldHideRemoveButtonOnFirstAppearance
+                navigatedFromMoonpay: navigatedFromMoonpay
             )
         )
         
         let view = SellPendingView(viewModel: viewModel)
-        let viewController = SellPendingHostingController(rootView: view, shouldShowAlert: shouldHideRemoveButtonOnFirstAppearance)
+        let viewController = SellPendingHostingController(rootView: view, shouldShowAlert: navigatedFromMoonpay)
         viewController.hidesBottomBarWhenPushed = navigationController.canHideBottomForNextPush
         viewController.backButtonHandler = { [unowned self] in
             self.resultSubject.send(.cashOutInterupted)
