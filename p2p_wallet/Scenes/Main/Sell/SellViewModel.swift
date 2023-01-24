@@ -59,14 +59,14 @@ class SellViewModel: BaseViewModel, ObservableObject {
     @Published var baseAmount: Double?
     @Published var maxBaseAmount: Double?
     /// Mostly used to show keyboard
-    @Published var isEnteringBaseAmount: Bool = true
-    @Published var isEnteringQuoteAmount: Bool = false
-    
+    @Published var isEnteringBaseAmount = true
+    @Published var isEnteringQuoteAmount = false
+
     /// Switcher between TextFields
     @Published var showingBaseAmount: Bool = true
     @Published var quoteCurrencyCode: String = Fiat.usd.code
     @Published var quoteAmount: Double?
-    
+
     @Published var exchangeRate: LoadingValue<Double> = .loaded(0)
     @Published var fee: LoadingValue<SellViewModel.Fee> = .loaded(.zero)
     @Published var status: SellDataServiceStatus = .initialized
