@@ -76,7 +76,7 @@ struct SellInputView: View {
             }
 
             HStack {
-                Text("Cash out \(viewModel.baseCurrencyCode), receive \(viewModel.quoteCurrencyCode)")
+                Text(L10n.cashOutReceive(viewModel.baseCurrencyCode, (viewModel.quoteCurrencyCode)))
                     .apply(style: .label1)
                     .foregroundColor(Color(Asset.Colors.mountain.color))
 
@@ -95,7 +95,7 @@ struct SellInputView: View {
             viewModel.showingBaseAmount.toggle()
         }) {
             Text(
-                "Switch to " + (viewModel.showingBaseAmount ? viewModel.quoteCurrencyCode : viewModel.baseCurrencyCode)
+                L10n.switchTo(viewModel.showingBaseAmount ? viewModel.quoteCurrencyCode : viewModel.baseCurrencyCode)
             )
             .apply(style: .label1)
             .foregroundColor(Color(Asset.Colors.sky.color))
@@ -161,7 +161,7 @@ struct SellInputView: View {
                         animated: .default
                     )
             case .loaded(let fee):
-                Text("All fees included \(fee.baseAmount.toString(maximumFractionDigits: 2)) \(viewModel.baseCurrencyCode) ≈ \(fee.quoteAmount.toString()) \(viewModel.quoteCurrencyCode)")
+                Text(L10n.allFeesIncluded(fee.baseAmount.toString(maximumFractionDigits: 2), viewModel.baseCurrencyCode, fee.quoteAmount.toString(), viewModel.quoteCurrencyCode))
                     .apply(style: .label1)
                     .multilineTextAlignment(.center)
                     .foregroundColor(Color(Asset.Colors.night.color))

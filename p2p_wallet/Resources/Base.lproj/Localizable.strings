@@ -1145,7 +1145,6 @@ Reset the PIN or wait for %@.";
 "Included fee %@" = "Included fee %@";
 "The minimum amount is %@ %@" = "The minimum amount is %@ %@";
 "The maximum amount is %@ %@" = "The maximum amount is %@ %@";
-"Not enought %@" = "Not enought %@";
 "Transaction succeeded" = "Transaction succeeded";
 "Sent to" = "Sent to";
 "The transaction has been successfully completed" = "The transaction has been successfully completed";
@@ -1184,3 +1183,7 @@ You can try again, but your new transaction will be subject to the current rates
 "SOL was sent to Moonpay and is being processed. Any questions regarding your transaction can be answered via" = "SOL was sent to Moonpay and is being processed. Any questions regarding your transaction can be answered via";
 "It usually takes up to 3 business days. Any questions regarding your transaction can be answered via" = "It usually takes up to 3 business days. Any questions regarding your transaction can be answered via";
 "Moonpay help center" = "Moonpay help center";
+"Cash out %@, receive %@" = "Cash out %@, receive %@";
+"Switch to %@" = "Switch to %@";
+"All fees included %@ %@ ≈ %@ %@" = "All fees included %@ %@ ≈ %@ %@";
+"Not enough %@" = "Not enough %@";
