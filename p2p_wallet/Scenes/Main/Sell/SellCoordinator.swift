@@ -43,6 +43,7 @@ final class SellCoordinator: Coordinator<SellCoordinatorResult> {
         let vc = UIHostingController(rootView: SellView(viewModel: viewModel))
         vc.hidesBottomBarWhenPushed = navigationController.canHideBottomForNextPush
         navigationController.pushViewController(vc, animated: true)
+        setTitle(to: vc)
         
         // scene navigation
         navigation
@@ -72,6 +73,12 @@ final class SellCoordinator: Coordinator<SellCoordinatorResult> {
         return resultSubject
             .prefix(1)
             .eraseToAnyPublisher()
+    }
+
+    private func setTitle(to vc: UIViewController) {
+        vc.title = L10n.cashOut + "SOL"
+        vc.navigationItem.largeTitleDisplayMode = .always
+        vc.navigationController?.navigationBar.prefersLargeTitles = true
     }
 
     // MARK: - Navigation
