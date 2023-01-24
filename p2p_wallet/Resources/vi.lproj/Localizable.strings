@@ -1225,3 +1225,6 @@ You can try again, but your new transaction will be subject to the current rates
 "Don’t show me again" = "Đừng cho tôi xem lại";
 "Let's go" = "Đi nào";
 "service is next step" = "dịch vụ là bước tiếp theo";
+"You can only cash out SOL" = "Bạn chỉ có thể rút tiền SOL";
+"Swap your cryptocurrencies\nto SOL to cash out" = "Hoán đổi tiền điện tử của bạn\nsang SOL để rút tiền";
+"Got it" = "Hiểu rồi";

@@ -1193,3 +1193,6 @@ You can try again, but your new transaction will be subject to the current rates
 "Don’t show me again" = "Don’t show me again";
 "Let's go" = "Let's go";
 "service is next step" = "service is next step";
+"You can only cash out SOL" = "You can only cash out SOL";
+"Swap your cryptocurrencies\nto SOL to cash out" = "Swap your cryptocurrencies\nto SOL to cash out";
+"Got it" = "Got it";
