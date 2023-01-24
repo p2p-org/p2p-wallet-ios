@@ -76,7 +76,7 @@ struct SellInputView: View {
             }
 
             HStack {
-                Text("Cash out SOL, receive \(viewModel.quoteCurrencyCode)")
+                Text("Cash out \(viewModel.baseCurrencyCode), receive \(viewModel.quoteCurrencyCode)")
                     .apply(style: .label1)
                     .foregroundColor(Color(Asset.Colors.mountain.color))
 
