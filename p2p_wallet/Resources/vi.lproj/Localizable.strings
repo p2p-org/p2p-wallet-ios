@@ -1175,7 +1175,6 @@ Reset the PIN or wait for %@." = "Bạn còn %@ lần thử để nhập mã PIN
 "Included fee %@" = "Đã bao gồm phí %@";
 "The minimum amount is %@ %@" = "Số tiền tối thiểu là %@%@";
 "The maximum amount is %@ %@" = "Số tiền tối đa là %@%@";
-"Not enought %@" = "Chưa đủ %@";
 "Transaction succeeded" = "Giao dịch thành công";
 "Sent to" = "Gửi đến";
 "The transaction has been successfully completed " = "Giao dịch đã được hoàn tất thành công";
@@ -1214,3 +1213,7 @@ You can try again, but your new transaction will be subject to the current rates
 "our service was ruined. Visit this page later" = "dịch vụ của chúng tôi đã bị hủy hoại.  Truy cập trang này sau";
 "via bank transfer" = "qua chuyển khoản ngân hàng";
 "Cash out crypto to fiat" = "Rút tiền điện tử thành fiat";
+"Cash out %@, receive %@" = "Rút tiền %@, nhận %@";
+"Switch to %@" = "Chuyển sang %@";
+"All fees included %@ %@ ≈ %@ %@" = "Đã bao gồm tất cả các loại phí %@ %@ ≈ %@ %@";
+"Not enough %@" = "Không đủ %@";
