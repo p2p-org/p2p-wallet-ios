@@ -1187,9 +1187,6 @@ Reset the PIN or wait for %@." = "Bạn còn %@ lần thử để nhập mã PIN
 "Remove from history" = "Xóa khỏi lịch sử";
 "Please, send crypto to MoonPay address" = "Vui lòng gửi tiền điện tử đến địa chỉ MoonPay";
 "To finish processing your request you need to send SOL to the address in the description. After 7 days this transaction will be automatically declined." = "Để hoàn tất xử lý yêu cầu của bạn, bạn cần gửi SOL đến địa chỉ trong phần mô tả.  Sau 7 ngày, giao dịch này sẽ tự động bị từ chối.";
-"You need a little more %@" = "Bạn cần thêm một chút %@";
-"The current minimum amount is %@ %@" = "Số tiền tối thiểu hiện tại là %@ %@";
-"Go to Swap" = "Chuyển đến Hoán đổi";
 "Are you sure?" = "Bạn có chắc không?";
 "Are you sure you want to interrupt cash out process? Your transaction won't be finished." = "Bạn có chắc chắn muốn làm gián đoạn quá trình rút tiền không?  Giao dịch của bạn sẽ không kết thúc.";
 "Continue transaction" = "Tiếp tục giao dịch";
@@ -1217,7 +1214,6 @@ You can try again, but your new transaction will be subject to the current rates
 "Cash out %@, receive %@" = "Rút tiền %@, nhận %@";
 "Switch to %@" = "Chuyển sang %@";
 "All fees included %@ %@ ≈ %@ %@" = "Đã bao gồm tất cả các loại phí %@ %@ ≈ %@ %@";
-"Not enough %@" = "Không đủ %@";
 "You will be redirected to our payment provider" = "Bạn sẽ được chuyển hướng đến nhà cung cấp dịch vụ thanh toán của chúng tôi";
 "You will need to enter your IBAN and pass KYC" = "Bạn sẽ cần nhập IBAN của mình và vượt qua KYC";
 "Transfer SOL to our payment provider from Key App" = "Chuyển SOL cho nhà cung cấp dịch vụ thanh toán của chúng tôi từ Key App";
