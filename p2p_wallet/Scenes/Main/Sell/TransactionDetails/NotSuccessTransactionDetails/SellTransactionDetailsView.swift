@@ -31,59 +31,13 @@ struct SellTransactionDetailsView: View {
 
     private var descriptionBlockView: some View {
         VStack(spacing: 52) {
-            infoBlockView
+            SellTransactionDetailsInfoView(
+                viewModel: viewModel.infoModel,
+                helpAction: viewModel.helpTapped
+            )
             if viewModel.strategy != .youVeNotSent {
                 textView
             }
-        }
-    }
-
-    private var infoBlockView: some View {
-        HStack(alignment: .top, spacing: 10) {
-            Image(uiImage: .sellInfo)
-                .renderingMode(.template)
-                .foregroundColor(infoIconColor)
-            switch viewModel.infoText {
-            case let .raw(text):
-                Text(text)
-                    .foregroundColor(infoBlockTextColor)
-                    .apply(style: .text3)
-            case let .help(text):
-                Text(text)
-                    .onTapGesture(perform: viewModel.helpTapped)
-            }
-        }
-        .padding(12)
-        .background(infoBlockBackgroundColor)
-        .cornerRadius(12)
-    }
-
-    private var infoIconColor: Color {
-        switch viewModel.strategy {
-        case .processing, .fundsWereSent:
-            return Color(UIColor._9799Af)
-        case .youNeedToSend:
-            return Color(Asset.Colors.sun.color)
-        case .youVeNotSent:
-            return Color(Asset.Colors.rose.color)
-        }
-    }
-
-    private var infoBlockTextColor: Color {
-        switch viewModel.strategy {
-        case .processing, .fundsWereSent, .youNeedToSend:
-            return Color(Asset.Colors.night.color)
-        case .youVeNotSent:
-            return Color(Asset.Colors.rose.color)
-        }
-    }
-
-    private var infoBlockBackgroundColor: Color {
-        switch viewModel.strategy {
-        case .processing, .fundsWereSent, .youNeedToSend:
-            return Color(UIColor.e0E0E7)
-        case .youVeNotSent:
-            return Color(Asset.Colors.rose.color).opacity(0.1)
         }
     }
 
