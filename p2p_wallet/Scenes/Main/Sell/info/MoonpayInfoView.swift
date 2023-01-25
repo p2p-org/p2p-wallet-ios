@@ -14,7 +14,7 @@ struct MoonpayInfoView: View {
                    .padding(.vertical, 6)
             Image("moonpay-logo")
                 .padding(.top, 18)
-            Text("service is next step")
+            Text(L10n.serviceIsNextStep)
                 .fontWeight(.bold)
                 .apply(style: .title3)
 
@@ -47,20 +47,20 @@ struct MoonpayInfoView: View {
 
                 VStack(alignment: .leading, spacing: 16) {
                     VStack(alignment: .leading, spacing: 8) {
-                        Text("You will be redirected to our payment provider")
+                        Text(L10n.youWillBeRedirectedToOurPaymentProvider)
                             .apply(style: .text1)
                             .foregroundColor(Color(Asset.Colors.night.color))
 
-                        Text("You will need to enter your IBAN and pass KYC")
+                        Text(L10n.youWillNeedToEnterYourIBANAndPassKYC)
                             .apply(style: .text4)
                             .foregroundColor(Color(Asset.Colors.mountain.color))
                     }
 
                     VStack(alignment: .leading, spacing: 4) {
-                        Text("Transfer SOL to our payment provider from Key App")
+                        Text(L10n.transferSOLToOurPaymentProviderFromKeyApp)
                             .apply(style: .text1)
                             .foregroundColor(Color(Asset.Colors.night.color))
-                        Text("Nobody has access to your funds, so you need to execute the transaction cash out")
+                        Text(L10n.nobodyHasAccessToYourFundsSoYouNeedToExecuteTheTransactionCashOut)
                             .apply(style: .text4)
                             .foregroundColor(Color(Asset.Colors.mountain.color))
                     }
@@ -80,7 +80,7 @@ struct MoonpayInfoView: View {
             } label: {
                 HStack(spacing: 15) {
                     CheckboxView(isChecked: $isChecked)
-                    Text("Don’t show me again")
+                    Text(L10n.donTShowMeAgain)
                         .apply(style: .text3)
                         .foregroundColor(Color(Asset.Colors.night.color))
                     Spacer()
@@ -92,7 +92,7 @@ struct MoonpayInfoView: View {
             Spacer()
 
             TextButtonView(
-                title: "Let's go",
+                title: L10n.letSGo,
                 style: .primaryWhite,
                 size: .large,
                 onPressed: { actionButtonPressed?(isChecked) }
