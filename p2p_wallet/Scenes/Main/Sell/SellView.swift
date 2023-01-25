@@ -26,9 +26,6 @@ struct SellView: View {
                 }
             }
         }
-        .toolbar {
-            ToolbarItem(placement: .principal) { Text(L10n.cashOut + " SOL").fontWeight(.semibold) }
-        }
         .onAppear {
             viewModel.isEnteringBaseAmount = !viewModel.shouldNotShowKeyboard
         }

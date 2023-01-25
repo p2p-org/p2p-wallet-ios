@@ -1172,7 +1172,6 @@ Reset the PIN or wait for %@." = "У вас осталось %@ попыток �
 "Included fee %@" = "Включенная плата %@";
 "The minimum amount is %@ %@" = "Минимальная сумма %@ %@";
 "The maximum amount is %@ %@" = "Максимальная сумма %@ %@";
-"Not enought %@" = "Недостаточно %@";
 "Transaction succeeded" = "Транзакция прошла успешно";
 "Sent to" = "Отправлено";
 "The transaction has been successfully completed " = "Транзакция успешно завершена";
@@ -1210,3 +1209,7 @@ You can try again, but your new transaction will be subject to the current rates
 "SOL was sent to Moonpay and is being processed. Any questions regarding your transaction can be answered via" = "SOL был отправлен в Moonpay и обрабатывается.  На любые вопросы, касающиеся вашей транзакции, можно ответить через";
 "It usually takes up to 3 business days. Any questions regarding your transaction can be answered via" = "Обычно это занимает до 3 рабочих дней.  На любые вопросы, касающиеся вашей транзакции, можно ответить через";
 "Moonpay help center" = "Справочный центр Мунпей";
+"Cash out %@, receive %@" = "Обналичьте %@, получите %@";
+"Switch to %@" = "Переключиться на %@";
+"All fees included %@ %@ ≈ %@ %@" = "Все сборы включены %@ %@ ≈ %@ %@";
+"Not enough %@" = "Недостаточно <С>";
