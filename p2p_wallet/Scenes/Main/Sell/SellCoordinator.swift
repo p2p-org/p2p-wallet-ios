@@ -28,6 +28,8 @@ final class SellCoordinator: Coordinator<SellCoordinatorResult> {
     private let initialAmountInToken: Double?
     private var isCompleted = false
     private var shouldHideRemoveButtonOnFirstAppearance = false
+    private var transition: PanelTransition?
+    private var moonpayInfoViewController: UIViewController?
 
     // MARK: - Initializer
 
@@ -148,6 +150,31 @@ final class SellCoordinator: Coordinator<SellCoordinatorResult> {
                 .handleEvents(receiveCompletion: { [unowned self] _ in
                     self.viewModel.warmUp()
                 }).eraseToAnyPublisher()
+
+        case .moonpayInfo:
+            moonpayInfoViewController = UIHostingController(
+                rootView: MoonpayInfoView(
+                    actionButtonPressed: { [weak self] isChecked in
+                        if isChecked {
+                            Defaults.moonpayInfoShouldHide = true
+                        }
+                        self?.moonpayInfoViewController?.dismiss(animated: true) {
+                            self?.viewModel.openProviderWebView()
+                        }
+                    },
+                    isChecked: false)
+            )
+            guard let moonpayInfoViewController else {  return Just(()).eraseToAnyPublisher() }
+            transition = PanelTransition()
+            transition?.containerHeight = 541.adaptiveHeight
+            transition?.dimmClicked.sink(receiveValue: { [weak self] _ in
+                self?.moonpayInfoViewController?.dismiss(animated: true)
+            }).store(in: &subscriptions)
+            moonpayInfoViewController.view.layer.cornerRadius = 20
+            moonpayInfoViewController.transitioningDelegate = transition
+            moonpayInfoViewController.modalPresentationStyle = .custom
+            self.navigationController.viewControllers.last?.present(moonpayInfoViewController, animated: true)
+            return moonpayInfoViewController.deallocatedPublisher()
         }
     }
 
