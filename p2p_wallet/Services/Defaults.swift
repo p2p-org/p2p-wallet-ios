@@ -116,6 +116,10 @@ extension DefaultsKeys {
     var moonpayEnvironment: DefaultsKey<DefaultsKeys.MoonpayEnvironment> {
         DefaultsKey(#function, defaultValue: .production)
     }
+
+    var moonpayInfoShouldHide: DefaultsKey<Bool> {
+        .init(#function, defaultValue: false)
+    }
 }
 
 // MARK: - Moonpay Environment

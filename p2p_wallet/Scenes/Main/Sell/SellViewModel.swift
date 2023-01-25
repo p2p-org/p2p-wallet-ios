@@ -105,7 +105,16 @@ class SellViewModel: BaseViewModel, ObservableObject {
         }
     }
 
+    /// Sell button action
     func sell() {
+        guard Defaults.moonpayInfoShouldHide else {
+            self.navigation.send(.moonpayInfo)
+            return
+        }
+        openProviderWebView()
+    }
+
+    func openProviderWebView() {
         analyticsManager.log(event: AmplitudeEvent.sellAmountNext)
         guard let fiat = dataService.fiat else { return }
 
