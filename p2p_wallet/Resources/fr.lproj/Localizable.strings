@@ -1215,3 +1215,10 @@ You can try again, but your new transaction will be subject to the current rates
 "Switch to %@" = "Passer à %@";
 "All fees included %@ %@ ≈ %@ %@" = "Tous frais inclus %@ %@ ≈ %@ %@";
 "Not enough %@" = "Pas assez %@";
+"You will be redirected to our payment provider" = "Vous serez redirigé vers notre prestataire de paiement";
+"You will need to enter your IBAN and pass KYC" = "Vous devrez entrer votre IBAN et passer KYC";
+"Transfer SOL to our payment provider from Key App" = "Transférer SOL à notre fournisseur de paiement depuis Key App";
+"Nobody has access to your funds, so you need to execute the transaction cash out" = "Personne n'a accès à vos fonds, vous devez donc exécuter la transaction de retrait";
+"Don’t show me again" = "Ne me montre plus";
+"Let's go" = "Allons-y";
+"service is next step" = "le service est la prochaine étape";
