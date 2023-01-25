@@ -19,7 +19,7 @@ enum SellViewModelInputError: Error, Equatable {
         case .amountIsTooSmall(let minBaseAmount, let baseCurrencyCode):
             return L10n.theMinimumAmountIs(minBaseAmount?.toString() ?? "2", baseCurrencyCode)
         case .insufficientFunds(let baseCurrencyCode):
-            return L10n.notEnought(baseCurrencyCode)
+            return L10n.notEnough(baseCurrencyCode)
         case .exceedsProviderLimit(let maxBaseProviderAmount, let baseCurrencyCode):
             return L10n.theMaximumAmountIs(maxBaseProviderAmount?.toString() ?? "1000", baseCurrencyCode)
         }
@@ -38,6 +38,7 @@ class SellViewModel: BaseViewModel, ObservableObject {
     @Injected private var actionService: any SellActionService
     @Injected private var analyticsManager: AnalyticsManager
     @Injected private var reachability: Reachability
+    @Injected private var priceService: PricesService
 
     // MARK: - Properties
 
@@ -57,17 +58,28 @@ class SellViewModel: BaseViewModel, ObservableObject {
     @Published var baseCurrencyCode: String = "SOL"
     @Published var baseAmount: Double?
     @Published var maxBaseAmount: Double?
-    @Published var isEnteringBaseAmount: Bool = true
-    
+    /// Mostly used to show keyboard
+    @Published var isEnteringBaseAmount = true
+    @Published var isEnteringQuoteAmount = false
+
+    /// Switcher between TextFields
+    @Published var showingBaseAmount: Bool = true {
+        didSet {
+            isEnteringBaseAmount = showingBaseAmount
+            isEnteringQuoteAmount = !showingBaseAmount
+        }
+    }
     @Published var quoteCurrencyCode: String = Fiat.usd.code
     @Published var quoteAmount: Double?
-    @Published var isEnteringQuoteAmount: Bool = false
-    
+
     @Published var exchangeRate: LoadingValue<Double> = .loaded(0)
-    @Published var fee: LoadingValue<Double> = .loaded(0)
+    @Published var fee: LoadingValue<SellViewModel.Fee> = .loaded(.zero)
     @Published var status: SellDataServiceStatus = .initialized
     @Published var inputError: SellViewModelInputError?
     var shouldNotShowKeyboard = false
+    var currentInputTypeCode: String {
+        showingBaseAmount ? baseCurrencyCode : quoteCurrencyCode
+    }
 
     // MARK: - Initializer
 
@@ -97,7 +109,7 @@ class SellViewModel: BaseViewModel, ObservableObject {
             await dataService.update()
         }
     }
-    
+
     func sell() {
         analyticsManager.log(event: AmplitudeEvent.sellAmountNext)
         guard let fiat = dataService.fiat else { return }
@@ -137,14 +149,14 @@ class SellViewModel: BaseViewModel, ObservableObject {
         navigation.send(.webPage(url: url))
         shouldNotShowKeyboard = true
     }
-    
+
     // MARK: - Binding
-    
+
     private func bind() {
         bindData()
         bindInput()
     }
-    
+
     private func bindInput() {
         // verify base amount
         $baseAmount
@@ -152,7 +164,7 @@ class SellViewModel: BaseViewModel, ObservableObject {
                 self?.checkError(amount: amount ?? 0)
             }
             .store(in: &subscriptions)
-        
+
         // fill quote amount base on base amount
         Publishers.CombineLatest($baseAmount, $exchangeRate)
             .filter { [weak self] _ in
@@ -199,14 +211,14 @@ class SellViewModel: BaseViewModel, ObservableObject {
             }
             .store(in: &subscriptions)
     }
-    
+
     private func bindData() {
         // bind status publisher to status property
         dataService.statusPublisher
             .receive(on: RunLoop.main)
             .assign(to: \.status, on: self)
             .store(in: &subscriptions)
-        
+
         // bind dataService.data to viewModel's data
         let dataPublisher = dataService.statusPublisher
             .compactMap({ [weak self] status in
@@ -219,7 +231,7 @@ class SellViewModel: BaseViewModel, ObservableObject {
             })
             .receive(on: RunLoop.main)
             .share()
-        
+
         dataPublisher
             .receive(on: RunLoop.main)
             .sink(receiveValue: { [weak self] currency, fiat in
@@ -256,7 +268,7 @@ class SellViewModel: BaseViewModel, ObservableObject {
                 self?.checkIfMoreBaseCurrencyNeeded()
             })
             .store(in: &subscriptions)
-        
+
         // re-calculate fee after every 10 s if no input is active
         Timer.publish(every: 10, on: .main, in: .common)
             .autoconnect()
@@ -275,7 +287,7 @@ class SellViewModel: BaseViewModel, ObservableObject {
                 )
             }
             .store(in: &subscriptions)
-        
+
         // analytics
         $status
             .sink { [weak self] status in
@@ -298,7 +310,7 @@ class SellViewModel: BaseViewModel, ObservableObject {
             _ = self.reachability.check()
         }.store(in: &subscriptions)
     }
-    
+
     // MARK: - Helpers
 
     private func checkIfMoreBaseCurrencyNeeded() {
@@ -321,7 +333,7 @@ class SellViewModel: BaseViewModel, ObservableObject {
             inputError = .insufficientFunds(baseCurrencyCode: baseCurrencyCode)
         }
     }
-    
+
     private func updateFeesAndExchangeRates(
         baseAmount: Double?,
         baseCurrencyCode: String,
@@ -332,12 +344,12 @@ class SellViewModel: BaseViewModel, ObservableObject {
         if exchangeRate.value == nil {
             exchangeRate = .loading
         }
-        
+
         guard let baseAmount, baseAmount >= minBaseAmount else {
-            fee = .loaded(0)
+            fee = .loaded(.zero)
             return
         }
-        
+
         updatePricesTask = Task { [unowned self] in
             // get sellQuote
             do {
@@ -350,7 +362,13 @@ class SellViewModel: BaseViewModel, ObservableObject {
                 // update data
                 await MainActor.run { [weak self] in
                     guard let self else { return }
-                    self.fee = .loaded(sellQuote.feeAmount + sellQuote.extraFeeAmount)
+                    let baseCurrencyPrice = max(0.00001, self.priceService.getCurrentPrice(for: baseCurrencyCode) ?? 0)
+                    self.fee = .loaded(
+                        Fee(
+                            baseAmount: (sellQuote.feeAmount + sellQuote.extraFeeAmount) / baseCurrencyPrice,
+                            quoteAmount: sellQuote.feeAmount + sellQuote.extraFeeAmount
+                        )
+                    )
                     self.exchangeRate = .loaded(sellQuote.baseCurrencyPrice)
                 }
             } catch {
@@ -360,7 +378,7 @@ class SellViewModel: BaseViewModel, ObservableObject {
                     if reachability.connection != .unavailable {
                         self.fee = .error(error)
                     } else {
-                        self.fee = .loaded(self.fee.value ?? 0)
+                        self.fee = .loaded(self.fee.value ?? .zero)
                     }
                     if exchangeRate.value == nil {
                         self.exchangeRate = .error(error)
@@ -368,5 +386,14 @@ class SellViewModel: BaseViewModel, ObservableObject {
                 }
             }
         }
+    }
+}
+
+extension SellViewModel {
+    struct Fee {
+        var baseAmount: Double
+        var quoteAmount: Double
+
+        static let zero = SellViewModel.Fee(baseAmount: 0, quoteAmount: 0)
     }
 }
