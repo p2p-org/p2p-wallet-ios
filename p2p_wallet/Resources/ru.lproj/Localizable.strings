@@ -1213,3 +1213,10 @@ You can try again, but your new transaction will be subject to the current rates
 "Switch to %@" = "Переключиться на %@";
 "All fees included %@ %@ ≈ %@ %@" = "Все сборы включены %@ %@ ≈ %@ %@";
 "Not enough %@" = "Недостаточно <С>";
+"You will be redirected to our payment provider" = "Вы будете перенаправлены к нашему платежному провайдеру";
+"You will need to enter your IBAN and pass KYC" = "Вам нужно будет ввести свой IBAN и пройти KYC";
+"Transfer SOL to our payment provider from Key App" = "Переведите SOL нашему платежному провайдеру из Key App";
+"Nobody has access to your funds, so you need to execute the transaction cash out" = "Никто не имеет доступа к вашим средствам, поэтому вам необходимо выполнить транзакцию обналичивания.";
+"Don’t show me again" = "Не показывай мне снова";
+"Let's go" = "Пойдем";
+"service is next step" = "обслуживание это следующий шаг";

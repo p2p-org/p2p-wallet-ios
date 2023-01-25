@@ -1218,3 +1218,10 @@ You can try again, but your new transaction will be subject to the current rates
 "Switch to %@" = "Chuyển sang %@";
 "All fees included %@ %@ ≈ %@ %@" = "Đã bao gồm tất cả các loại phí %@ %@ ≈ %@ %@";
 "Not enough %@" = "Không đủ %@";
+"You will be redirected to our payment provider" = "Bạn sẽ được chuyển hướng đến nhà cung cấp dịch vụ thanh toán của chúng tôi";
+"You will need to enter your IBAN and pass KYC" = "Bạn sẽ cần nhập IBAN của mình và vượt qua KYC";
+"Transfer SOL to our payment provider from Key App" = "Chuyển SOL cho nhà cung cấp dịch vụ thanh toán của chúng tôi từ Key App";
+"Nobody has access to your funds, so you need to execute the transaction cash out" = "Không ai có quyền truy cập vào tiền của bạn, vì vậy bạn cần thực hiện giao dịch rút tiền";
+"Don’t show me again" = "Đừng cho tôi xem lại";
+"Let's go" = "Đi nào";
+"service is next step" = "dịch vụ là bước tiếp theo";

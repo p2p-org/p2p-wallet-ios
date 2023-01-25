@@ -1186,3 +1186,10 @@ You can try again, but your new transaction will be subject to the current rates
 "Switch to %@" = "Switch to %@";
 "All fees included %@ %@ ≈ %@ %@" = "All fees included %@ %@ ≈ %@ %@";
 "Not enough %@" = "Not enough %@";
+"You will be redirected to our payment provider" = "You will be redirected to our payment provider";
+"You will need to enter your IBAN and pass KYC" = "You will need to enter your IBAN and pass KYC";
+"Transfer SOL to our payment provider from Key App" = "Transfer SOL to our payment provider from Key App";
+"Nobody has access to your funds, so you need to execute the transaction cash out" = "Nobody has access to your funds, so you need to execute the transaction cash out";
+"Don’t show me again" = "Don’t show me again";
+"Let's go" = "Let's go";
+"service is next step" = "service is next step";
