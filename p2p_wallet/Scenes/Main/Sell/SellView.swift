@@ -23,7 +23,7 @@ struct SellView: View {
             }
         }
         .onAppear {
-            viewModel.isEnteringBaseAmount = !viewModel.shouldNotShowKeyboard
+            viewModel.appeared()
         }
         .onForeground {
             viewModel.isEnteringBaseAmount = !viewModel.shouldNotShowKeyboard
