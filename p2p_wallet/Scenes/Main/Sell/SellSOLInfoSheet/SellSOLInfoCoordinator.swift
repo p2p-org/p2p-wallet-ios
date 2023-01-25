@@ -13,11 +13,7 @@ final class SellSOLInfoCoordinator: Coordinator<Void> {
     }
 
     override func start() -> AnyPublisher<Void, Never> {
-        let view = SellSOLInfoView { [weak self] in
-            self?.viewController?.dismiss(animated: true)
-            self?.subject.send(completion: .finished)
-        }
-
+        let view = SellSOLInfoView { [weak self] in self?.finish() }
         transition = PanelTransition()
         transition?.containerHeight = 428.adaptiveHeight
         let viewController = UIHostingController(rootView: view)
@@ -26,14 +22,16 @@ final class SellSOLInfoCoordinator: Coordinator<Void> {
         viewController.modalPresentationStyle = .custom
 
         transition?.dimmClicked
-            .sink { [weak self] in
-                self?.viewController?.dismiss(animated: true)
-                self?.subject.send(completion: .finished)
-            }
+            .sink { [weak self] in self?.finish() }
             .store(in: &subscriptions)
         parentController.present(viewController, animated: true)
         self.viewController = viewController
 
-        return subject.eraseToAnyPublisher()
+        return subject.prefix(1).eraseToAnyPublisher()
+    }
+
+    private func finish() {
+        self.viewController?.dismiss(animated: true)
+        self.subject.send(())
     }
 }

@@ -65,7 +65,10 @@ final class SellCoordinator: Coordinator<SellCoordinatorResult> {
 
         viewModel.presentSOLInfo
             .sink { [unowned self] in
-                self.coordinate(to: SellSOLInfoCoordinator(parentController: vc)).sink { }.store(in: &subscriptions)
+                self.viewModel?.isEnteringBaseAmount = false
+                self.coordinate(to: SellSOLInfoCoordinator(parentController: vc)).sink {
+                    self.viewModel?.isEnteringBaseAmount = true
+                }.store(in: &subscriptions)
             }
             .store(in: &subscriptions)
 
