@@ -150,13 +150,6 @@ final class SellCoordinator: Coordinator<SellCoordinatorResult> {
                 .map { _ in }
                 .eraseToAnyPublisher()
 
-        case .swap:
-            return navigateToSwap()
-                .deallocatedPublisher()
-                .handleEvents(receiveCompletion: { [unowned self] _ in
-                    self.viewModel.warmUp()
-                }).eraseToAnyPublisher()
-
         case .moonpayInfo:
             moonpayInfoViewController = UIHostingController(
                 rootView: MoonpayInfoView(

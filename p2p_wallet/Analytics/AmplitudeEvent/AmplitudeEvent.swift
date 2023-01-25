@@ -324,7 +324,6 @@ enum AmplitudeEvent: AnalyticsEvent {
     case sellClicked(source: String)
     case sellClickedServerError
     case sellClickedSorryMinAmount
-    case sellSorryMinAmountSwap
     case sellFinishSend
     case sellAmount
     case sellAmountNext
