@@ -154,7 +154,7 @@ class SellViewModel: BaseViewModel, ObservableObject {
     }
 
     func appeared() {
-        guard !presentInfoIfNeeded() else { return }
+        guard !shouldPresentInfo() else { return }
         isEnteringBaseAmount = !shouldNotShowKeyboard
     }
 
@@ -396,7 +396,7 @@ class SellViewModel: BaseViewModel, ObservableObject {
         }
     }
 
-    private func presentInfoIfNeeded() -> Bool {
+    private func shouldPresentInfo() -> Bool {
         guard !Defaults.isSellInfoPresented else { return false }
         presentSOLInfoSubject.send(())
         Defaults.isSellInfoPresented = true
