@@ -63,7 +63,12 @@ class SellViewModel: BaseViewModel, ObservableObject {
     @Published var isEnteringQuoteAmount = false
 
     /// Switcher between TextFields
-    @Published var showingBaseAmount: Bool = true
+    @Published var showingBaseAmount: Bool = true {
+        didSet {
+            isEnteringBaseAmount = showingBaseAmount
+            isEnteringQuoteAmount = !showingBaseAmount
+        }
+    }
     @Published var quoteCurrencyCode: String = Fiat.usd.code
     @Published var quoteAmount: Double?
 
