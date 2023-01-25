@@ -153,6 +153,11 @@ class SellViewModel: BaseViewModel, ObservableObject {
         shouldNotShowKeyboard = true
     }
 
+    func appeared() {
+        guard !presentInfoIfNeeded() else { return }
+        isEnteringBaseAmount = !shouldNotShowKeyboard
+    }
+
     // MARK: - Binding
 
     private func bind() {
@@ -308,15 +313,6 @@ class SellViewModel: BaseViewModel, ObservableObject {
             }
             .store(in: &subscriptions)
 
-        // navigation
-        dataService.statusPublisher
-            .receive(on: RunLoop.main)
-            .sink { [weak self] status in
-                guard case .ready = status else { return }
-                self?.presentInfoIfNeeded()
-            }
-            .store(in: &subscriptions)
-
         try? reachability.startNotifier()
         reachability.status.sink { [unowned self] _ in
             _ = self.reachability.check()
@@ -400,10 +396,11 @@ class SellViewModel: BaseViewModel, ObservableObject {
         }
     }
 
-    private func presentInfoIfNeeded() {
-        guard !Defaults.isSellInfoPresented else { return }
+    private func presentInfoIfNeeded() -> Bool {
+        guard !Defaults.isSellInfoPresented else { return false }
         presentSOLInfoSubject.send(())
         Defaults.isSellInfoPresented = true
+        return true
     }
 }
 
