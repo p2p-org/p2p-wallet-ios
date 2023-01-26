@@ -25,9 +25,10 @@ struct SellErrorView: View {
                     Text(L10n.sorry)
                         .foregroundColor(Color(Asset.Colors.night.color))
                         .font(uiFont: .font(of: .title1, weight: .bold))
-                    Text(L10n.OurServiceWasRuined.visitThisPageLater)
+                    Text(L10n.OopsSomethingWentWrong.pleaseTryAgainLater)
                         .foregroundColor(Color(Asset.Colors.night.color))
                         .font(uiFont: .font(of: .text1))
+                        .multilineTextAlignment(.center)
                 }
             }
             Spacer()
