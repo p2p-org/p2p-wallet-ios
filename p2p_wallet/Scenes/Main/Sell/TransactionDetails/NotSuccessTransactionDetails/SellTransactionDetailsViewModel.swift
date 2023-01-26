@@ -80,14 +80,14 @@ final class SellTransactionDetailsViewModel: ObservableObject {
             sendInfo = (L10n.sendTo, receiverAddress.truncatingMiddle(numOfSymbolsRevealed: 6))
             isProcessing = false
             topButtonTitle = "\(L10n.send) \(tokenSymbol)"
-            bottomButtonTitle = L10n.removeFromHistory
+            bottomButtonTitle = L10n.delete
             logAnalytics(status: "waiting for deposit")
         case .youVeNotSent:
             title = "\(L10n.youVeNotSent) \(amountPart)"
             sendInfo = nil
             isProcessing = false
             topButtonTitle = L10n.tryAgain
-            bottomButtonTitle = L10n.deleteFromHistory
+            bottomButtonTitle = L10n.deleteTransaction
             logAnalytics(status: "expired")
         }
     }

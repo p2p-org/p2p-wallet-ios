@@ -52,7 +52,7 @@ final class SellPendingViewModel: BaseViewModel, ObservableObject {
                 try await sellDataService.deleteTransaction(id: model.id)
                 try? await sellDataService.updateIncompletedTransactions()
                 await MainActor.run { [unowned self] in
-                    notificationsService.showToast(title: "🤗", text: L10n.doneRefreshHistoryPageForActualStatus)
+                    notificationsService.showToast(title: "🤗", text: L10n.doneRefreshTheHistoryPageForTheUpdatedStatus)
                     isRemoving = false
                     transactionRemovedSubject.send()
                 }

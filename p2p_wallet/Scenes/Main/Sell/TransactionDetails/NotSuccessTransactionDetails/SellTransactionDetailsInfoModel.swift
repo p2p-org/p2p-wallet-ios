@@ -37,10 +37,7 @@ struct SellTransactionDetailsInfoModel {
             self.textColor = Asset.Colors.night.color
             self.backgroundColor = UIColor.e0E0E7
             self.icon = .sellPendingWarning
-            self.text = .raw(text: L10n
-                .ToFinishProcessingYourRequestYouNeedToSendSOLToTheAddressInTheDescription
-                .after7DaysThisTransactionWillBeAutomaticallyDeclined
-            )
+            self.text = .raw(text: L10n.youNeedToSendSOLToTheAddressInTheDescriptionToFinishYourCashOutOperation)
 
         case .youVeNotSent:
             self.iconColor = Asset.Colors.rose.color
