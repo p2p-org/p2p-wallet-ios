@@ -113,6 +113,8 @@ extension DefaultsKeys {
         .init(#function, defaultValue: nil)
     }
 
+    var isSellInfoPresented: DefaultsKey<Bool> { .init(#function, defaultValue: false) }
+
     var moonpayEnvironment: DefaultsKey<DefaultsKeys.MoonpayEnvironment> {
         DefaultsKey(#function, defaultValue: .production)
     }

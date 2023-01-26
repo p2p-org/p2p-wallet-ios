@@ -62,7 +62,16 @@ final class SellCoordinator: Coordinator<SellCoordinatorResult> {
                 navigationController.popViewController(animated: true)
             })
             .store(in: &subscriptions)
-        
+
+        viewModel.presentSOLInfo
+            .sink { [unowned self] in
+                self.viewModel?.isEnteringBaseAmount = false
+                self.coordinate(to: SellSOLInfoCoordinator(parentController: vc)).sink {
+                    self.viewModel?.isEnteringBaseAmount = true
+                }.store(in: &subscriptions)
+            }
+            .store(in: &subscriptions)
+
         vc.deallocatedPublisher()
             .sink { [weak self] _ in
                 guard let self else {return}
@@ -143,13 +152,6 @@ final class SellCoordinator: Coordinator<SellCoordinatorResult> {
                 })
                 .map { _ in }
                 .eraseToAnyPublisher()
-
-        case .swap:
-            return navigateToSwap()
-                .deallocatedPublisher()
-                .handleEvents(receiveCompletion: { [unowned self] _ in
-                    self.viewModel.warmUp()
-                }).eraseToAnyPublisher()
 
         case .moonpayInfo:
             moonpayInfoViewController = UIHostingController(

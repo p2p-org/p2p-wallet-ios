@@ -1155,9 +1155,6 @@ Reset the PIN or wait for %@.";
 "Remove from history" = "Remove from history";
 "Please, send crypto to MoonPay address" = "Please, send crypto to MoonPay address";
 "To finish processing your request you need to send SOL to the address in the description. After 7 days this transaction will be automatically declined." = "To finish processing your request you need to send SOL to the address in the description. After 7 days this transaction will be automatically declined.";
-"You need a little more %@" = "You need a little more %@";
-"The current minimum amount is %@ %@" = "The current minimum amount is %@ %@";
-"Go to Swap" = "Go to Swap";
 "Are you sure?" = "Are you sure?";
 "Are you sure you want to interrupt cash out process? Your transaction won't be finished." = "Are you sure you want to interrupt cash out process? Your transaction won't be finished.";
 "Continue transaction" = "Continue transaction";
@@ -1185,7 +1182,6 @@ You can try again, but your new transaction will be subject to the current rates
 "Cash out %@, receive %@" = "Cash out %@, receive %@";
 "Switch to %@" = "Switch to %@";
 "All fees included %@ %@ ≈ %@ %@" = "All fees included %@ %@ ≈ %@ %@";
-"Not enough %@" = "Not enough %@";
 "You will be redirected to our payment provider" = "You will be redirected to our payment provider";
 "You will need to enter your IBAN and pass KYC" = "You will need to enter your IBAN and pass KYC";
 "Transfer SOL to our payment provider from Key App" = "Transfer SOL to our payment provider from Key App";
@@ -1193,3 +1189,6 @@ You can try again, but your new transaction will be subject to the current rates
 "Don’t show me again" = "Don’t show me again";
 "Let's go" = "Let's go";
 "service is next step" = "service is next step";
+"You can only cash out SOL" = "You can only cash out SOL";
+"Swap your cryptocurrencies\nto SOL to cash out" = "Swap your cryptocurrencies\nto SOL to cash out";
+"Got it" = "Got it";
