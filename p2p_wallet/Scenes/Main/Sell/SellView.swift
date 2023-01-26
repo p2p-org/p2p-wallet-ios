@@ -28,6 +28,7 @@ struct SellView: View {
         .onForeground {
             viewModel.isEnteringBaseAmount = !viewModel.shouldNotShowKeyboard
         }
+        .navigationBarTitle("\(L10n.cashOut) SOL", displayMode: .large)
     }
 
     var loading: some View {
