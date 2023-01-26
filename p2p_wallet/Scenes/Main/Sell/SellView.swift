@@ -14,11 +14,7 @@ struct SellView: View {
                 case .initialized, .updating:
                     loading
                 case .ready:
-                    if viewModel.isMoreBaseCurrencyNeeded {
-                        balanceEmptyErrorView
-                    } else {
-                        SellInputView(viewModel: viewModel)
-                    }
+                    SellInputView(viewModel: viewModel)
                 case .error:
                     SellErrorView {
                         viewModel.goBack()
@@ -27,46 +23,11 @@ struct SellView: View {
             }
         }
         .onAppear {
-            viewModel.isEnteringBaseAmount = !viewModel.shouldNotShowKeyboard
+            viewModel.appeared()
         }
         .onForeground {
             viewModel.isEnteringBaseAmount = !viewModel.shouldNotShowKeyboard
         }
-    }
-
-    var balanceEmptyErrorView: some View {
-        VStack {
-            VStack(spacing: 8) {
-                Image(uiImage: UIImage.coins)
-                    .padding(.bottom, 12)
-                Text(L10n.youNeedALittleMore("SOL"))
-                    .foregroundColor(Color(Asset.Colors.night.color))
-                    .fontWeight(.bold)
-                    .apply(style: .title1)
-                    .padding(.horizontal, 36)
-                    .multilineTextAlignment(.center)
-                    .padding(.horizontal, 20)
-                Text(L10n.theCurrentMinimumAmountIs(viewModel.minBaseAmount?.toString() ?? "2", "SOL"))
-                    .foregroundColor(Color(Asset.Colors.night.color))
-                    .apply(style: .text1)
-                    .multilineTextAlignment(.center)
-                    .padding(.horizontal, 20)
-            }
-            .padding(.top, 80)
-
-            Spacer()
-
-            TextButtonView(
-                title: L10n.goToSwap,
-                style: .primaryWhite,
-                size: .large
-            ) { [weak viewModel] in
-                viewModel?.goToSwap()
-            }
-            .frame(height: 56)
-        }
-        .padding(.bottom, 20)
-        .padding(.horizontal, 16)
     }
 
     var loading: some View {

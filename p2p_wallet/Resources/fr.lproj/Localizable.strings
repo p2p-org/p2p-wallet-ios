@@ -1184,9 +1184,6 @@ Reset the PIN or wait for %@." = "Il vous reste %@ tentatives pour saisir le cod
 "Remove from history" = "Supprimer de l'histoire";
 "Please, send crypto to MoonPay address" = "S'il vous plaît, envoyez la crypto à l'adresse MoonPay";
 "To finish processing your request you need to send SOL to the address in the description. After 7 days this transaction will be automatically declined." = "Pour terminer le traitement de votre demande, vous devez envoyer SOL à l'adresse indiquée dans la description.  Après 7 jours, cette transaction sera automatiquement refusée.";
-"You need a little more %@" = "Vous avez besoin d'un peu plus %@";
-"The current minimum amount is %@ %@" = "Le montant minimum actuel est de %@ %@";
-"Go to Swap" = "Aller à Échanger";
 "Are you sure?" = "Êtes-vous sûr?";
 "Are you sure you want to interrupt cash out process? Your transaction won't be finished." = "Voulez-vous vraiment interrompre le processus de retrait ?  Votre transaction ne sera pas terminée.";
 "Continue transaction" = "Continuer la transaction";
@@ -1214,7 +1211,6 @@ You can try again, but your new transaction will be subject to the current rates
 "Cash out %@, receive %@" = "Encaisser %@, recevoir %@";
 "Switch to %@" = "Passer à %@";
 "All fees included %@ %@ ≈ %@ %@" = "Tous frais inclus %@ %@ ≈ %@ %@";
-"Not enough %@" = "Pas assez %@";
 "You will be redirected to our payment provider" = "Vous serez redirigé vers notre prestataire de paiement";
 "You will need to enter your IBAN and pass KYC" = "Vous devrez entrer votre IBAN et passer KYC";
 "Transfer SOL to our payment provider from Key App" = "Transférer SOL à notre fournisseur de paiement depuis Key App";
@@ -1222,3 +1218,6 @@ You can try again, but your new transaction will be subject to the current rates
 "Don’t show me again" = "Ne me montre plus";
 "Let's go" = "Allons-y";
 "service is next step" = "le service est la prochaine étape";
+"You can only cash out SOL" = "Vous ne pouvez encaisser que SOL";
+"Swap your cryptocurrencies\nto SOL to cash out" = "Échangez vos crypto-monnaies\nvers SOL pour retirer de l'argent";
+"Got it" = "J'ai compris";

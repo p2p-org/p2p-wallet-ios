@@ -11,15 +11,12 @@ import Sell
 
 enum SellViewModelInputError: Error, Equatable {
     case amountIsTooSmall(minBaseAmount: Double?, baseCurrencyCode: String)
-    case insufficientFunds(baseCurrencyCode: String)
     case exceedsProviderLimit(maxBaseProviderAmount: Double?, baseCurrencyCode: String)
     
     var recomendation: String {
         switch self {
         case .amountIsTooSmall(let minBaseAmount, let baseCurrencyCode):
             return L10n.theMinimumAmountIs(minBaseAmount?.toString() ?? "2", baseCurrencyCode)
-        case .insufficientFunds(let baseCurrencyCode):
-            return L10n.notEnough(baseCurrencyCode)
         case .exceedsProviderLimit(let maxBaseProviderAmount, let baseCurrencyCode):
             return L10n.theMaximumAmountIs(maxBaseProviderAmount?.toString() ?? "1000", baseCurrencyCode)
         }
@@ -45,7 +42,9 @@ class SellViewModel: BaseViewModel, ObservableObject {
     private let navigation: PassthroughSubject<SellNavigation?, Never>
     private var updatePricesTask: Task<Void, Never>?
     private let goBackSubject = PassthroughSubject<Void, Never>()
+    private let presentSOLInfoSubject = PassthroughSubject<Void, Never>()
     var back: AnyPublisher<Void, Never> { goBackSubject.eraseToAnyPublisher() }
+    var presentSOLInfo: AnyPublisher<Void, Never> { presentSOLInfoSubject.eraseToAnyPublisher() }
 
     /// Maximum value to sell from sell provider
     private var maxBaseProviderAmount: Double?
@@ -130,11 +129,6 @@ class SellViewModel: BaseViewModel, ObservableObject {
         )
     }
 
-    func goToSwap() {
-        navigation.send(.swap)
-        analyticsManager.log(event: AmplitudeEvent.sellSorryMinAmountSwap)
-    }
-
     func sellAll() {
         baseAmount = walletRepository.nativeWallet?.amount?.rounded(decimals: decimals, roundingMode: .down) ?? 0
         
@@ -157,6 +151,11 @@ class SellViewModel: BaseViewModel, ObservableObject {
         )
         navigation.send(.webPage(url: url))
         shouldNotShowKeyboard = true
+    }
+
+    func appeared() {
+        guard !shouldPresentInfo() else { return }
+        isEnteringBaseAmount = !shouldNotShowKeyboard
     }
 
     // MARK: - Binding
@@ -339,7 +338,7 @@ class SellViewModel: BaseViewModel, ObservableObject {
                 baseCurrencyCode: baseCurrencyCode
             )
         } else if amount > (maxBaseAmount ?? 0) {
-            inputError = .insufficientFunds(baseCurrencyCode: baseCurrencyCode)
+            inputError = .amountIsTooSmall(minBaseAmount: minBaseAmount, baseCurrencyCode: baseCurrencyCode)
         }
     }
 
@@ -395,6 +394,13 @@ class SellViewModel: BaseViewModel, ObservableObject {
                 }
             }
         }
+    }
+
+    private func shouldPresentInfo() -> Bool {
+        guard !Defaults.isSellInfoPresented else { return false }
+        presentSOLInfoSubject.send(())
+        Defaults.isSellInfoPresented = true
+        return true
     }
 }
 
