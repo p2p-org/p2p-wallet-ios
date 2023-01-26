@@ -58,7 +58,7 @@ class SellViewModel: BaseViewModel, ObservableObject {
     @Published var baseAmount: Double?
     @Published var maxBaseAmount: Double?
     /// Mostly used to show keyboard
-    @Published var isEnteringBaseAmount = true
+    @Published var isEnteringBaseAmount = false
     @Published var isEnteringQuoteAmount = false
 
     /// Switcher between TextFields
@@ -155,7 +155,10 @@ class SellViewModel: BaseViewModel, ObservableObject {
 
     func appeared() {
         guard !shouldPresentInfo() else { return }
-        isEnteringBaseAmount = !shouldNotShowKeyboard
+        /// Delay before showing keyboard
+        DispatchQueue.main.asyncAfter(deadline: .now() + 0.2) {
+            self.isEnteringBaseAmount = !self.shouldNotShowKeyboard
+        }
     }
 
     // MARK: - Binding
