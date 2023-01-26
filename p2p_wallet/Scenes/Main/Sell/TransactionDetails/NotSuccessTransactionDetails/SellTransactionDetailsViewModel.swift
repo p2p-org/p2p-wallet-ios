@@ -123,6 +123,9 @@ final class SellTransactionDetailsViewModel: ObservableObject {
         Task {
             do {
                 try await sellDataService.deleteTransaction(id: transactionId)
+                await MainActor.run { [unowned self] in
+                    notificationsService.showToast(title: "🤗", text: L10n.doneRefreshTheHistoryPageForTheUpdatedStatus)
+                }
             } catch {
                 await MainActor.run { [unowned self] in
                     notificationsService.showToast(title: "😢", text: L10n.ErrorWithDeleting.tryAgain)
