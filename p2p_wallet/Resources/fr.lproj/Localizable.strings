@@ -806,7 +806,6 @@ Reset the PIN or wait for %@." = "Il vous reste %@ tentatives pour saisir le cod
 "This phone has already been confirmed. Change phone number" = "Ce téléphone a déjà été confirmé.  Changer de numéro de téléphone";
 "Invalid value of OTP. Please try again to input correct value of OTP" = "Valeur invalide d'OTP.  Veuillez réessayer pour entrer la valeur correcte d'OTP";
 "Something went wrong. Please try again" = "Quelque chose s'est mal passé.  Veuillez réessayer";
-"You’re offline. Keep calm" = "Vous n'êtes pas connecté.  Rester calme";
 "Buy it" = "Achète-le";
 "Top up" = "Recharger";
 "Popular coins" = "Monnaies populaires";
@@ -1183,7 +1182,6 @@ Reset the PIN or wait for %@." = "Il vous reste %@ tentatives pour saisir le cod
 "Cash out" = "Encaisser";
 "Remove from history" = "Supprimer de l'histoire";
 "Please, send crypto to MoonPay address" = "S'il vous plaît, envoyez la crypto à l'adresse MoonPay";
-"To finish processing your request you need to send SOL to the address in the description. After 7 days this transaction will be automatically declined." = "Pour terminer le traitement de votre demande, vous devez envoyer SOL à l'adresse indiquée dans la description.  Après 7 jours, cette transaction sera automatiquement refusée.";
 "Are you sure?" = "Êtes-vous sûr?";
 "Are you sure you want to interrupt cash out process? Your transaction won't be finished." = "Voulez-vous vraiment interrompre le processus de retrait ?  Votre transaction ne sera pas terminée.";
 "Continue transaction" = "Continuer la transaction";
@@ -1195,14 +1193,11 @@ You can try again, but your new transaction will be subject to the current rates
 
  Vous pouvez réessayer, mais votre nouvelle transaction sera soumise aux tarifs en vigueur.";
 "Will be sent to" = "Sera envoyé à";
-"Delete from history" = "Supprimer de l'historique";
 "You need to send %@ SOL" = "Vous devez envoyer %@ SOL";
 "Funds were sent" = "Les fonds ont été envoyés";
 "To your bank account" = "Vers votre compte bancaire";
 "Error with deleting. Try again" = "Erreur lors de la suppression. Réessayer";
-"Done! Refresh History page for actual status" = "Fait!  Actualiser la page Historique pour le statut réel";
 "There is no %@ in your wallet to sell" = "Il n'y a pas de %@ dans votre portefeuille à vendre";
-"our service was ruined. Visit this page later" = "notre service a été ruiné.  Visitez cette page plus tard";
 "via bank transfer" = "par virement bancaire";
 "Cash out crypto to fiat" = "Encaisser crypto en fiat";
 "SOL was sent to Moonpay and is being processed. Any questions regarding your transaction can be answered via" = "SOL a été envoyé à Moonpay et est en cours de traitement.  Toutes les questions concernant votre transaction peuvent être répondues via";
@@ -1221,3 +1216,9 @@ You can try again, but your new transaction will be subject to the current rates
 "You can only cash out SOL" = "Vous ne pouvez encaisser que SOL";
 "Swap your cryptocurrencies\nto SOL to cash out" = "Échangez vos crypto-monnaies\nvers SOL pour retirer de l'argent";
 "Got it" = "J'ai compris";
+"No Internet connection" = "Pas de connexion Internet";
+"Oops, something went wrong.\nPlease try again later" = "Oups, quelque chose s'est mal passé.\nVeuillez réessayer plus tard";
+"You need to send SOL to the address in the description to finish your cash out operation." = "Vous devez envoyer SOL à l'adresse indiquée dans la description pour terminer votre opération de retrait.";
+"Delete" = "Supprimer";
+"Delete transaction" = "Supprimer l'opération";
+"Done! Refresh the history page for the updated status" = "Fait!  Actualiser la page d'historique pour le statut mis à jour";

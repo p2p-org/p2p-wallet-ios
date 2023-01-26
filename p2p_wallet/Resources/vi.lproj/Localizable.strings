@@ -810,7 +810,6 @@ Reset the PIN or wait for %@." = "Bạn còn %@ lần thử để nhập mã PIN
 "This phone has already been confirmed. Change phone number" = "Điện thoại này đã được xác nhận.  Thay đổi số điện thoại";
 "Invalid value of OTP. Please try again to input correct value of OTP" = "Giá trị OTP không hợp lệ.  Vui lòng thử lại để nhập đúng giá trị của OTP";
 "Something went wrong. Please try again" = "Đã xảy ra lỗi.  Vui lòng thử lại";
-"You’re offline. Keep calm" = "Bạn đang ngoại tuyến.  Giữ bình tĩnh";
 "Buy it" = "Mua nó";
 "Top up" = "Nạp tiền";
 "Popular coins" = "Xu phổ biến";
@@ -1186,7 +1185,6 @@ Reset the PIN or wait for %@." = "Bạn còn %@ lần thử để nhập mã PIN
 "Cash out" = "Rút tiền";
 "Remove from history" = "Xóa khỏi lịch sử";
 "Please, send crypto to MoonPay address" = "Vui lòng gửi tiền điện tử đến địa chỉ MoonPay";
-"To finish processing your request you need to send SOL to the address in the description. After 7 days this transaction will be automatically declined." = "Để hoàn tất xử lý yêu cầu của bạn, bạn cần gửi SOL đến địa chỉ trong phần mô tả.  Sau 7 ngày, giao dịch này sẽ tự động bị từ chối.";
 "Are you sure?" = "Bạn có chắc không?";
 "Are you sure you want to interrupt cash out process? Your transaction won't be finished." = "Bạn có chắc chắn muốn làm gián đoạn quá trình rút tiền không?  Giao dịch của bạn sẽ không kết thúc.";
 "Continue transaction" = "Tiếp tục giao dịch";
@@ -1198,14 +1196,11 @@ You can try again, but your new transaction will be subject to the current rates
 
  Bạn có thể thử lại, nhưng giao dịch mới của bạn sẽ phải tuân theo tỷ giá hiện tại.";
 "Will be sent to" = "Sẽ được gửi đến";
-"Delete from history" = "Xóa khỏi lịch sử";
 "You need to send %@ SOL" = "Bạn cần gửi %@SOL";
 "Funds were sent" = "Tiền đã được gửi";
 "To your bank account" = "Đến tài khoản ngân hàng của bạn";
 "Error with deleting. Try again" = "Lỗi khi xóa. Vui lòng thử lại";
-"Done! Refresh History page for actual status" = "Xong! Làm mới trang Lịch sử để biết trạng thái thực tế";
 "There is no %@ in your wallet to sell" = "Không có %@ trong ví của bạn để bán";
-"our service was ruined. Visit this page later" = "dịch vụ của chúng tôi đã bị hủy hoại.  Truy cập trang này sau";
 "via bank transfer" = "qua chuyển khoản ngân hàng";
 "Cash out crypto to fiat" = "Rút tiền điện tử thành fiat";
 "SOL was sent to Moonpay and is being processed. Any questions regarding your transaction can be answered via" = "SOL đã được gửi đến Moonpay và đang được xử lý.  Mọi thắc mắc liên quan đến giao dịch của bạn có thể được trả lời qua";
@@ -1224,3 +1219,9 @@ You can try again, but your new transaction will be subject to the current rates
 "You can only cash out SOL" = "Bạn chỉ có thể rút tiền SOL";
 "Swap your cryptocurrencies\nto SOL to cash out" = "Hoán đổi tiền điện tử của bạn\nsang SOL để rút tiền";
 "Got it" = "Hiểu rồi";
+"No Internet connection" = "Không có kết nối Internet";
+"Oops, something went wrong.\nPlease try again later" = "Rất tiếc, đã xảy ra lỗi.\nVui lòng thử lại sau";
+"You need to send SOL to the address in the description to finish your cash out operation." = "Bạn cần gửi SOL đến địa chỉ trong phần mô tả để hoàn tất thao tác rút tiền của mình.";
+"Delete" = "Xóa bỏ";
+"Delete transaction" = "Xóa giao dịch";
+"Done! Refresh the history page for the updated status" = "Xong!  Làm mới trang lịch sử để cập nhật trạng thái";
