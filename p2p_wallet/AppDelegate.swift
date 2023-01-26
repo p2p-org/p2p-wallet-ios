@@ -65,7 +65,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         AppsFlyerLib.shared().appleAppID = String.secretConfig("APPSFLYER_APP_ID")!
         AppsFlyerLib.shared().waitForATTUserAuthorization(timeoutInterval: 60)
 
-        // set app coordinator
+        // Set app coordinator
         appCoordinator = AppCoordinator()
         appCoordinator!.start()
         window = appCoordinator?.window
