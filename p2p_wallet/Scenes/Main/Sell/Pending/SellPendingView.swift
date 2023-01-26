@@ -55,7 +55,7 @@ struct SellPendingView: View {
                                     if viewModel.isRemoving {
                                         ProgressView()
                                     } else {
-                                        Text(L10n.removeFromHistory)
+                                        Text(L10n.delete)
                                     }
                                 }
                                 .foregroundColor(Color(Asset.Colors.night.color))
@@ -101,12 +101,9 @@ struct SellPendingView: View {
     private var infoBlockView: some View {
         HStack(alignment: .top, spacing: 10) {
             Image(uiImage: .sellPendingWarning)
-            Text(L10n
-                .ToFinishProcessingYourRequestYouNeedToSendSOLToTheAddressInTheDescription
-                .after7DaysThisTransactionWillBeAutomaticallyDeclined
-            )
-            .foregroundColor(Color(Asset.Colors.night.color))
-            .font(uiFont: .font(of: .text3))
+            Text(L10n.youNeedToSendSOLToTheAddressInTheDescriptionToFinishYourCashOutOperation)
+                .foregroundColor(Color(Asset.Colors.night.color))
+                .font(uiFont: .font(of: .text3))
         }
         .padding(12)
         .background(Color(Asset.Colors.rain.color))
