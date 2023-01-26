@@ -32,6 +32,12 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
     }
 
     private lazy var proxyAppDelegate = AppDelegateProxyService()
+    
+    override init() {
+        super.init()
+        
+        setupFirebaseLogging()
+    }
 
     func application(
         _ application: UIApplication,
@@ -65,7 +71,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         AppsFlyerLib.shared().appleAppID = String.secretConfig("APPSFLYER_APP_ID")!
         AppsFlyerLib.shared().waitForATTUserAuthorization(timeoutInterval: 60)
 
-        // set app coordinator
+        // Set app coordinator
         appCoordinator = AppCoordinator()
         appCoordinator!.start()
         window = appCoordinator?.window
@@ -240,5 +246,17 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         guard Defaults.fiat != .usd else { return }
         // Migrate all users to default currency
         Defaults.fiat = .usd
+    }
+    
+    private func setupFirebaseLogging() {
+        var arguments = ProcessInfo.processInfo.arguments
+        #if !RELEASE
+        arguments.removeAll { $0 == "-FIRDebugDisabled" }
+        arguments.append("-FIRDebugEnabled")
+        #else
+        arguments.removeAll { $0 == "-FIRDebugEnabled" }
+        arguments.append("-FIRDebugDisabled")
+        #endif
+        ProcessInfo.processInfo.setValue(arguments, forKey: "arguments")
     }
 }
