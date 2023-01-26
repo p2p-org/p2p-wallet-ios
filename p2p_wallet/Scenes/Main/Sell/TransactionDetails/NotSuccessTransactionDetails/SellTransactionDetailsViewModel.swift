@@ -121,7 +121,13 @@ final class SellTransactionDetailsViewModel: ObservableObject {
 
     private func removeClicked() {
         Task {
-            try await sellDataService.deleteTransaction(id: transactionId)
+            do {
+                try await sellDataService.deleteTransaction(id: transactionId)
+            } catch {
+                await MainActor.run { [unowned self] in
+                    notificationsService.showToast(title: "😢", text: L10n.ErrorWithDeleting.tryAgain)
+                }
+            }
         }
         resultSubject.send(.cancel)
     }
