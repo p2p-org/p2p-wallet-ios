@@ -178,6 +178,10 @@ extension Double {
         "\(toString(maximumFractionDigits: maximumFractionDigits)) \(symbol)"
     }
 
+    func formattedFiat(maximumFractionDigits: Int = 2, currency: Fiat = .usd, roundingMode: NumberFormatter.RoundingMode? = nil) -> String {
+        return "\(toString(maximumFractionDigits: maximumFractionDigits, roundingMode: roundingMode)) \(currency.code)"
+    }
+
     func percentFormat(maximumFractionDigits: Int = 2) -> String {
         "\(toString(maximumFractionDigits: maximumFractionDigits))%"
     }
