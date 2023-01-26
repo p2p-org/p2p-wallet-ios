@@ -57,8 +57,8 @@ final class SellPendingCoordinator: Coordinator<SellPendingCoordinatorResult> {
         let view = SellPendingView(viewModel: viewModel)
         let viewController = SellPendingHostingController(rootView: view, shouldShowAlert: shouldHideRemoveButtonOnFirstAppearance)
         viewController.hidesBottomBarWhenPushed = navigationController.canHideBottomForNextPush
-        viewController.backButtonHandler = { [unowned self] in
-            self.resultSubject.send(.cashOutInterupted)
+        viewController.backButtonHandler = { [weak self] in
+            self?.resultSubject.send(.cashOutInterupted)
         }
         
         navigationController.pushViewController(viewController, animated: false)
