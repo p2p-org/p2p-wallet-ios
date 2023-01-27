@@ -22,7 +22,7 @@ final class SendInputTokenViewModel: BaseViewModel, ObservableObject {
                 guard let self = self else { return }
                 self.amountText = value.amount?.toString(maximumFractionDigits: Int(value.token.decimals), roundingMode: .down) ?? ""
                 self.amountCurrency = value.token.symbol
-                self.amountInCurrentFiat = value.amountInCurrentFiat.fiatAmountFormattedString(roundingMode: .down)
+                self.amountInCurrentFiat = value.amountInCurrentFiat.fiatAmountFormattedString(roundingMode: .down, customFormattForLessThan1E_2: true)
                 self.tokenName = value.token.name
             }
             .store(in: &subscriptions)
