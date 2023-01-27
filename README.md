@@ -24,36 +24,15 @@ Key App wallet on Solana blockchain
 ```shell
 git clone git@github.com:p2p-org/p2p-wallet-ios.git && cd p2p-wallet-ios
 ```
-- Get submodules
-```shell
-git submodule update --init --recursive
-```
 - Set git hooks (Optional)
 ```shell
 git config core.hooksPath .githooks
 chmod -R +x .githooks
 ```
-- Add `Config.xcconfig` to `p2p-wallet-ios/p2p-wallet` contains following content
+- Ask team leader for `XCCONFIG_URL` and set env variable
+```shell
+export XCCONFIG_URL="<Provided by team leader>"
 ```
-// MARK: - Transak
-TRANSAK_STAGING_API_KEY = fake_api_key
-TRANSAK_PRODUCTION_API_KEY = fake_api_key
-TRANSAK_HOST_URL = p2p.org
-
-// Mark: - Moonpay
-MOONPAY_STAGING_API_KEY = fake_api_key
-MOONPAY_PRODUCTION_API_KEY = fake_api_key
-
-// MARK: - Amplitude
-AMPLITUDE_API_KEY = fake_api_key
-
-// MARK: - FeeRelayer
-FEE_RELAYER_STAGING_ENDPOINT = test-solana-fee-relayer.wallet.p2p.org
-FEE_RELAYER_ENDPOINT = fee-relayer.solana.p2p.org
-TEST_ACCOUNT_SEED_PHRASE = account-test-seed-phrase-separated-by-hyphens
-
-// MARK: - NameService
-NAME_SERVICE_ENDPOINT = name_service.org
 ```
 - Run install.sh
 ```shell
