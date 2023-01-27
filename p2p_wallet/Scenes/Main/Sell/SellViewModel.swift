@@ -112,7 +112,8 @@ class SellViewModel: BaseViewModel, ObservableObject {
     /// Sell button action
     func sell() {
         guard Defaults.moonpayInfoShouldHide else {
-            self.navigation.send(.moonpayInfo)
+            shouldNotShowKeyboard = true
+            navigation.send(.moonpayInfo)
             return
         }
         openProviderWebView()
