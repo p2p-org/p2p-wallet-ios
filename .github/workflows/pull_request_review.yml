@@ -4,6 +4,7 @@ on:
     types: [submitted]
 env: 
   XCCONFIG_URL: '${{ secrets.XCCONFIG_URL }}'
+  IS_CI: '${{ secrets.IS_CI }}'
 jobs:
   # Return task back to In Progress if pull request is changes requested
   return_task_to_in_progress:

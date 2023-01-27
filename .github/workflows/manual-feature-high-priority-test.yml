@@ -2,6 +2,7 @@ name: Manually build feature test with high priority
 on: workflow_dispatch
 env: 
   XCCONFIG_URL: '${{ secrets.XCCONFIG_URL }}'
+  IS_CI: '${{ secrets.IS_CI }}'
 jobs:
   upload_build_for_testing:
     name: Manually upload build for testing
