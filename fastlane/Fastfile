@@ -156,15 +156,8 @@ def commit_changes
   push_git_tags(tag: tag_name)
 end 
 
-def update_xcconfig
-  config_url = "../p2p_wallet/Config.xcconfig"
-  sh("curl", "-o", config_url, ENV['XCCONFIG_URL'])
-end
-
 platform :ios do
   lane :feature_test do
-    # update xcconfig
-    update_xcconfig
 
     # get current branch name
     branch = git_branch.downcase
@@ -248,8 +241,6 @@ platform :ios do
   end
 
   lane :release do
-    # update xcconfig
-    update_xcconfig
 
     # replace Test GoogleService-Info.plist by the Production one
     gs_info_plist_dir = "../p2p_wallet/GoogleService-Info.plist"
