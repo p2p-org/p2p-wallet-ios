@@ -17,10 +17,13 @@ final class KeyboardAvoidingViewController<Content: View>: UIViewController {
     
     private var originalIsNavigationBarHidden: Bool?
 
-    init(rootView: Content, navigationBarVisibility: NavigationBarVisibility = .default) {
+    private let viewWillAppearSubject: PassthroughSubject<Bool, Never> = .init()
+    public var viewWillAppearPublisher: AnyPublisher<Bool, Never> { viewWillAppearSubject.eraseToAnyPublisher() }
+    
+    init(rootView: Content, ignoresKeyboard: Bool = false, navigationBarVisibility: NavigationBarVisibility = .default) {
         self.rootView = rootView
         self.navigationBarVisibility = navigationBarVisibility
-        hostingController = UIHostingController(rootView: rootView)
+        hostingController = UIHostingController(rootView: rootView, ignoresKeyboard: ignoresKeyboard)
 
         super.init(nibName: nil, bundle: nil)
     }
@@ -33,11 +36,18 @@ final class KeyboardAvoidingViewController<Content: View>: UIViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
         setupLayout()
+
+        NotificationCenter.default
+            .addObserver(self, selector: #selector(activityHandler(_:)),
+                         name: UIApplication.didBecomeActiveNotification, object: nil)
+        NotificationCenter.default
+            .addObserver(self, selector: #selector(activityHandler(_:)),
+                         name: UIApplication.didEnterBackgroundNotification, object: nil)
     }
 
     override func viewDidAppear(_ animated: Bool) {
         super.viewDidAppear(animated)
-        getAllTextFields(fromView: view).first?.becomeFirstResponder()
+        openKeyboard()
         
         originalIsNavigationBarHidden = navigationController?.isNavigationBarHidden
         switch navigationBarVisibility {
@@ -48,6 +58,12 @@ final class KeyboardAvoidingViewController<Content: View>: UIViewController {
         case .hidden:
             navigationController?.setNavigationBarHidden(true, animated: false)
         }
+    }
+    
+    override func viewWillAppear(_ animated: Bool) {
+        super.viewWillAppear(animated)
+        
+        viewWillAppearSubject.send(animated)
     }
 
     override func viewWillDisappear(_ animated: Bool) {
@@ -64,6 +80,10 @@ final class KeyboardAvoidingViewController<Content: View>: UIViewController {
         }
     }
 
+    private func openKeyboard() {
+        getAllTextFields(fromView: view).first?.becomeFirstResponder()
+    }
+
     private func setupLayout() {
         addChild(hostingController)
         view.addSubview(hostingController.view)
@@ -78,6 +98,19 @@ final class KeyboardAvoidingViewController<Content: View>: UIViewController {
             } else {
                 return getAllTextFields(fromView: view)
             }
+        }
+    }
+
+    @objc private func activityHandler(_ notification: Notification) {
+        switch notification.name {
+        case UIApplication.didBecomeActiveNotification:
+            if presentedViewController == nil && navigationController?.presentedViewController == nil {
+                openKeyboard()
+            }
+        case UIApplication.didEnterBackgroundNotification:
+            hideKeyboard()
+        default:
+            break
         }
     }
 }

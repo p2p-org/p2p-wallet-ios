@@ -43,6 +43,14 @@ final class SendInputCoordinator: Coordinator<SendResult> {
             self?.subject.send(.cancelled)
         }
 
+        controller.viewWillAppearPublisher.sink { _ in
+            DispatchQueue.main.async {
+                controller.navigationItem.largeTitleDisplayMode = .always
+                controller.navigationController?.navigationBar.prefersLargeTitles = true
+                controller.navigationController?.navigationBar.sizeToFit()
+            }
+        }.store(in: &subscriptions)
+
         viewModel.tokenViewModel.changeTokenPressed
             .sink { [weak self] in
                 controller.hideKeyboard()
@@ -82,14 +90,11 @@ final class SendInputCoordinator: Coordinator<SendResult> {
     private func setTitle(to vc: UIViewController) {
         switch recipient.category {
         case let .username(name, domain):
-            if domain.isEmpty {
-                vc.title = "@\(name)"
-            } else {
-                vc.title = "@\([name, domain].joined(separator: "."))"
-            }
+            vc.title = RecipientFormatter.username(name: name, domain: domain)
         default:
-            vc.title = "\(recipient.address.prefix(6))...\(recipient.address.suffix(6))"
+            vc.title = RecipientFormatter.format(destination: recipient.address)
         }
+
         vc.navigationItem.largeTitleDisplayMode = .always
         vc.navigationController?.navigationBar.prefersLargeTitles = true
     }
@@ -120,11 +125,12 @@ final class SendInputCoordinator: Coordinator<SendResult> {
         coordinate(to: SendInputFeePromptCoordinator(
             parentController: vc,
             feeToken: feeToken,
+            feeInToken: viewModel.currentState.feeInToken,
             availableFeeTokens: feeWallets
         ))
-        .sink(receiveValue: { feeToken in
+        .sink(receiveValue: { [weak viewModel] feeToken in
             guard let feeToken = feeToken else { return }
-            viewModel.changeFeeToken.send(feeToken)
+            viewModel?.changeFeeToken.send(feeToken)
         })
         .store(in: &subscriptions)
     }
@@ -134,10 +140,10 @@ final class SendInputCoordinator: Coordinator<SendResult> {
             parentController: vc,
             sendInputViewModel: viewModel
         ))
-        .sink { result in
+        .sink { [weak self] result in
             switch result {
             case let .redirectToFeePrompt(tokens):
-                self.openFeePropmt(from: vc, viewModel: viewModel, feeWallets: tokens)
+                self?.openFeePropmt(from: vc, viewModel: viewModel, feeWallets: tokens)
             }
         }
         .store(in: &subscriptions)

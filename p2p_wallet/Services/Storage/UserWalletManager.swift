@@ -98,6 +98,7 @@ class UserWalletManager: ObservableObject {
         Defaults.shouldShowConfirmAlertOnSwap = true
         Defaults.moonpayInfoShouldHide = false
         Defaults.isSellInfoPresented = false
+        Defaults.isTokenInputTypeChosen = false
         
         walletSettings.reset()
 

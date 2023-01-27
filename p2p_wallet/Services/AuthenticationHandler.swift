@@ -8,6 +8,7 @@
 import Foundation
 import RxCocoa
 import RxSwift
+import Resolver
 
 protocol AuthenticationHandlerType {
     func authenticate(presentationStyle: AuthenticationPresentationStyle?)
@@ -23,6 +24,7 @@ final class AuthenticationHandler: AuthenticationHandlerType {
     private var timeRequiredForAuthentication = 10 // in seconds
     private var lastAuthenticationTimeStamp = 0
     private var isAuthenticationPaused = false
+    @Injected private var analyticsService: AnalyticsService
 
     // MARK: - Subjects
 
@@ -40,6 +42,8 @@ final class AuthenticationHandler: AuthenticationHandlerType {
             .subscribe(onNext: { [weak self] status in
                 if status == nil {
                     self?.lastAuthenticationTimeStamp = Int(Date().timeIntervalSince1970)
+                } else {
+                    self?.analyticsService.logEvent(.login)
                 }
             })
             .disposed(by: disposeBag)

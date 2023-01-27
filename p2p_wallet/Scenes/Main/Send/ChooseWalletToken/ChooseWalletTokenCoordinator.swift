@@ -3,7 +3,7 @@ import SolanaSwift
 import SwiftUI
 
 enum ChooseWalletTokenStrategy {
-    case feeToken(tokens: [Wallet])
+    case feeToken(tokens: [Wallet], feeInFiat: Double)
     case sendToken
 }
 
@@ -22,9 +22,14 @@ final class ChooseWalletTokenCoordinator: Coordinator<Wallet?> {
     override func start() -> AnyPublisher<Wallet?, Never> {
         let viewModel = ChooseWalletTokenViewModel(strategy: strategy, chosenToken: chosenWallet)
         let view = ChooseWalletTokenView(viewModel: viewModel)
-        let controller = KeyboardAvoidingViewController(rootView: view)
+        let controller = KeyboardAvoidingViewController(rootView: view, ignoresKeyboard: true)
 
         parentController.present(controller, animated: true)
+
+        controller.onClose = { [weak self] in
+            self?.subject.send(nil)
+            self?.subject.send(completion: .finished)
+        }
 
         viewModel.close
             .sink { [weak self] in self?.close(vc: controller, wallet: nil) }
