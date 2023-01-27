@@ -13,6 +13,12 @@ struct RecipientCell: View {
     @SwiftUI.Environment(\.isEnabled) var isEnabled: Bool
 
     let recipient: Recipient
+    let subtitle: String?
+
+    init(recipient: Recipient, subtitle: String? = nil) {
+        self.recipient = recipient
+        self.subtitle = subtitle
+    }
 
     var body: some View {
         switch recipient.category {
@@ -30,18 +36,20 @@ struct RecipientCell: View {
         case .solanaAddress:
             cell(
                 image: Image(uiImage: .newWalletCircle),
-                title: RecipientFormatter.format(destination: recipient.address)
+                title: RecipientFormatter.format(destination: recipient.address),
+                subtitle: subtitle
             )
         case let .solanaTokenAddress(_, token):
             cell(
                 image: CoinLogoImageViewRepresentable(size: 48, token: token),
                 title: RecipientFormatter.format(destination: recipient.address),
-                subtitle: "\(token.name) \(L10n.tokenAccount)"
+                subtitle: subtitle ?? "\(token.symbol) \(L10n.tokenAccount)"
             )
         default:
             cell(
                 image: Image(uiImage: .newWalletCircle),
-                title: RecipientFormatter.format(destination: recipient.address)
+                title: RecipientFormatter.format(destination: recipient.address),
+                subtitle: subtitle
             )
         }
     }

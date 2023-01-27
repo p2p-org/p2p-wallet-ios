@@ -25,13 +25,14 @@ struct ChooseWalletTokenView: View {
                 } else {
                     if viewModel.wallets.isEmpty {
                         emptyView
-                            .padding(.top, 48)
+                            .padding(.top, 30)
+                            .edgesIgnoringSafeArea(.bottom)
                     } else {
                         wrappedList {
                             if !viewModel.isSearchGoing {
                                 chosenTokenSection
                                     .onTapGesture {
-                                        viewModel.close.send()
+                                        viewModel.chooseTokenSubject.send(viewModel.chosenToken)
                                     }
                             }
                             
@@ -56,10 +57,6 @@ struct ChooseWalletTokenView: View {
                         .endEditingKeyboardOnDragGesture()
                     }
                 }
-            }
-        }.onDisappear {
-            DispatchQueue.main.async {
-                self.viewModel.isSearchFieldFocused = false
             }
         }
     }
@@ -126,12 +123,8 @@ private extension ChooseWalletTokenView {
     }
 
     private var emptyView: some View {
-        VStack(spacing: 24) {
-            Image(uiImage: .womanNotFound)
-                .resizable()
-                .aspectRatio(contentMode: .fit)
-                .frame(maxWidth: 220)
-            Text(L10n.TokenNotFound.tryAnotherOne)
+        VStack {
+            SendNotFoundView(text: L10n.TokenNotFound.tryAnotherOne)
             Spacer()
         }
     }
@@ -155,6 +148,8 @@ private extension ChooseWalletTokenView {
                 isFirstResponder: $viewModel.isSearchFieldFocused
             ) { textField in
                 textField.returnKeyType = .done
+                textField.autocorrectionType = .no
+                textField.spellCheckingType = .no
                 textField.backgroundColor = Asset.Colors.rain.color
                 textField.placeholder = L10n.search
                 textField.font = .font(of: .text3)

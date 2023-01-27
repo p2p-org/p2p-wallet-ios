@@ -25,6 +25,10 @@ class SendCoordinator: Coordinator<SendResult> {
     let hideTabBar: Bool
     let result = PassthroughSubject<SendResult, Never>()
 
+    @Injected var walletsRepository: WalletsRepository
+    
+    var isReady: Bool = false
+
     private let source: SendSource
 
     init(
@@ -41,6 +45,26 @@ class SendCoordinator: Coordinator<SendResult> {
     }
 
     override func start() -> AnyPublisher<SendResult, Never> {
+        if walletsRepository.currentState == .loaded {
+            let fiatAmount = walletsRepository.getWallets().reduce(0) { $0 + $1.amountInCurrentFiat }
+            let withTokens = fiatAmount > 0
+            if withTokens {
+                showSendFlow()
+            } else {
+                showEmptyState()
+            }
+
+        } else {
+            // Show not ready
+            rootViewController.showAlert(title: L10n.TheDataIsBeingUpdated.pleaseTryAgainInAFewMinutes, message: nil)
+            result.send(completion: .finished)
+        }
+
+        // Back
+        return result.prefix(1).eraseToAnyPublisher()
+    }
+
+    private func showSendFlow() {
         // Setup view
         let vm = RecipientSearchViewModel(preChosenWallet: preChosenWallet, source: source)
         vm.coordinator.selectRecipientPublisher
@@ -71,7 +95,7 @@ class SendCoordinator: Coordinator<SendResult> {
             .sink(receiveValue: { [weak vm] result in
                 vm?.searchQR(query: result, autoSelectTheOnlyOneResultMode: .enabled(delay: 0))
             }).store(in: &subscriptions)
-        
+
         Task {
             await vm.load()
         }
@@ -88,22 +112,12 @@ class SendCoordinator: Coordinator<SendResult> {
         vc.onClose = { [weak self] in
             self?.result.send(.cancelled)
         }
-
-        // Back
-        return result.prefix(1).eraseToAnyPublisher()
     }
-}
 
-class CustomUIHostingController<Content: View>: UIHostingController<Content> {
-    override func viewWillLayoutSubviews() {
-        super.viewWillLayoutSubviews()
-
-        if #available(iOS 15.0, *) {
-            //  Workaround for an iOS 15 SwiftUI bug(?):
-            //  The intrinsicContentSize of UIView is not updated
-            //  when the internal SwiftUI view changes size.
-
-            view.invalidateIntrinsicContentSize()
-        }
+    private func showEmptyState() {
+        let coordinator = SendEmptyCoordinator(navigationController: rootViewController)
+        coordinator.start()
+            .sink(receiveValue: { [weak self] _ in self?.result.send(completion: .finished) })
+            .store(in: &subscriptions)
     }
 }

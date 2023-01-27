@@ -171,6 +171,7 @@ final class SendInputViewModel: BaseViewModel, ObservableObject {
 
     func openKeyboard() {
         DispatchQueue.main.async {
+            guard !self.inputAmountViewModel.isFirstResponder else { return }
             self.inputAmountViewModel.isFirstResponder = true
         }
     }
@@ -287,7 +288,7 @@ private extension SendInputViewModel {
         $status
             .sink { [weak self] value in
                 guard value == .ready else { return }
-                self?.openKeyboard()
+                DispatchQueue.main.asyncAfter(deadline: .now() + 0.5, execute: { self?.openKeyboard() })
             }
             .store(in: &subscriptions)
     }
@@ -307,13 +308,7 @@ private extension SendInputViewModel {
                 isEnabled: false,
                 title: L10n.max(maxAmount.tokenAmountFormattedString(symbol: sourceWallet.token.symbol, roundingMode: .down))
             )
-            if currentState.token.isNativeSOL && currentState.amountInToken != currentState.maxAmountInputInToken {
-                if !wasMaxWarningToastShown {
-                    handleSuccess(text: L10n.weLeftAMinimumSOLBalanceToSaveTheAccountAddress)
-                    wasMaxWarningToastShown = true
-                }
-                inputAmountViewModel.isMaxButtonVisible = true
-            }
+            checkMaxButtonIfNeeded()
         case let .error(.inputTooLow(minAmount)):
             inputAmountViewModel.isError = true
             actionButtonViewModel.actionButton = .init(
@@ -333,12 +328,12 @@ private extension SendInputViewModel {
                 title: L10n.tryAgain
             )
         case .error(reason: .insufficientFunds):
-            inputAmountViewModel.isError = false
+            inputAmountViewModel.isError = true
             actionButtonViewModel.actionButton = .init(
                 isEnabled: false,
                 title: L10n.insufficientFunds
             )
-
+            checkMaxButtonIfNeeded()
         default:
             wasMaxWarningToastShown = false
             inputAmountViewModel.isError = false
@@ -346,6 +341,18 @@ private extension SendInputViewModel {
                 isEnabled: true,
                 title: "\(L10n.send) \(currentState.amountInToken.tokenAmountFormattedString(symbol: currentState.token.symbol, maximumFractionDigits: Int(currentState.token.decimals), roundingMode: .down))"
             )
+        }
+    }
+
+    func checkMaxButtonIfNeeded() {
+        guard currentState.token.isNativeSOL else { return }
+        let range = currentState.maxAmountInputInSOLWithLeftAmount..<currentState.maxAmountInputInToken
+        if range.contains(currentState.amountInToken) {
+            if !wasMaxWarningToastShown {
+                handleSuccess(text: L10n.weLeftAMinimumSOLBalanceToSaveTheAccountAddress)
+                wasMaxWarningToastShown = true
+            }
+            inputAmountViewModel.isMaxButtonVisible = true
         }
     }
 

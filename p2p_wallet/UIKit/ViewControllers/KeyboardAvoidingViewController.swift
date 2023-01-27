@@ -7,10 +7,13 @@ import UIKit
 final class KeyboardAvoidingViewController<Content: View>: UIViewController {
     private let rootView: Content
     private let hostingController: UIHostingController<Content>
+    
+    private let viewWillAppearSubject: PassthroughSubject<Bool, Never> = .init()
+    public var viewWillAppearPublisher: AnyPublisher<Bool, Never> { viewWillAppearSubject.eraseToAnyPublisher() }
 
-    init(rootView: Content) {
+    init(rootView: Content, ignoresKeyboard: Bool = false) {
         self.rootView = rootView
-        hostingController = UIHostingController(rootView: rootView)
+        hostingController = UIHostingController(rootView: rootView, ignoresKeyboard: ignoresKeyboard)
 
         super.init(nibName: nil, bundle: nil)
     }
@@ -23,16 +26,35 @@ final class KeyboardAvoidingViewController<Content: View>: UIViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
         setupLayout()
+
+        NotificationCenter.default
+            .addObserver(self, selector: #selector(activityHandler(_:)),
+                         name: UIApplication.didBecomeActiveNotification, object: nil)
+        NotificationCenter.default
+            .addObserver(self, selector: #selector(activityHandler(_:)),
+                         name: UIApplication.didEnterBackgroundNotification, object: nil)
     }
 
     override func viewDidAppear(_ animated: Bool) {
         super.viewDidAppear(animated)
-        getAllTextFields(fromView: view).first?.becomeFirstResponder()
+        openKeyboard()
+
+        
+    }
+    
+    override func viewWillAppear(_ animated: Bool) {
+        super.viewWillAppear(animated)
+        
+        viewWillAppearSubject.send(animated)
     }
 
     override func viewWillDisappear(_ animated: Bool) {
         super.viewWillDisappear(animated)
         hideKeyboard()
+    }
+
+    private func openKeyboard() {
+        getAllTextFields(fromView: view).first?.becomeFirstResponder()
     }
 
     private func setupLayout() {
@@ -49,6 +71,19 @@ final class KeyboardAvoidingViewController<Content: View>: UIViewController {
             } else {
                 return getAllTextFields(fromView: view)
             }
+        }
+    }
+
+    @objc private func activityHandler(_ notification: Notification) {
+        switch notification.name {
+        case UIApplication.didBecomeActiveNotification:
+            if presentedViewController == nil && navigationController?.presentedViewController == nil {
+                openKeyboard()
+            }
+        case UIApplication.didEnterBackgroundNotification:
+            hideKeyboard()
+        default:
+            break
         }
     }
 }
