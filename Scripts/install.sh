@@ -9,8 +9,8 @@ else
 	curl -o ./p2p_wallet/Config.xcconfig $XCCONFIG_URL
 fi
 
-# Install swiftgen
-brew install swiftgen
+# Install swiftgen & xcodegen
+brew install swiftgen xcodegen
 
 # Run swiftgen for the first time
 swiftgen config run --config swiftgen.yml
