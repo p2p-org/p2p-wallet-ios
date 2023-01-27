@@ -33,7 +33,7 @@ struct SellPendingView: View {
                             viewModel.sendClicked()
                         },
                         label: {
-                            Text(L10n.send)
+                            Text(viewModel.model.navigatedFromMoonpay ? L10n.send : "\(L10n.send) \(viewModel.model.tokenSymbol)")
                                 .foregroundColor(Color(Asset.Colors.snow.color))
                                 .font(uiFont: .font(of: .text2, weight: .semibold))
                                 .frame(height: 56)
@@ -112,7 +112,7 @@ struct SellPendingView: View {
 
     private var textView: some View {
         HStack {
-            Text(viewModel.model.navigatedFromMoonpay ? L10n.send : "\(L10n.send) \(viewModel.model.tokenSymbol)")
+            Text(L10n.sendTo)
                 .foregroundColor(Color(Asset.Colors.night.color))
                 .font(uiFont: .font(of: .text3))
             Spacer()
