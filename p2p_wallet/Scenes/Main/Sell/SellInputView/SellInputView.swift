@@ -81,7 +81,7 @@ struct SellInputView: View {
                     .foregroundColor(Color(Asset.Colors.mountain.color))
 
                 Spacer()
-                Text("≈ " + viewModel.quoteAmount?.toString() + " " + viewModel.quoteCurrencyCode)
+                Text("≈ " + viewModel.quoteReceiveAmount.toString() + " " + viewModel.quoteCurrencyCode)
                     .apply(style: .label1)
                     .foregroundColor(Color(Asset.Colors.mountain.color))
             }

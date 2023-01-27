@@ -79,6 +79,7 @@ class SellViewModel: BaseViewModel, ObservableObject {
     var currentInputTypeCode: String {
         showingBaseAmount ? baseCurrencyCode : quoteCurrencyCode
     }
+    @Published var quoteReceiveAmount: Double = 0
 
     // MARK: - Initializer
 
@@ -199,7 +200,7 @@ class SellViewModel: BaseViewModel, ObservableObject {
             }
             .assign(to: \.baseAmount, on: self)
             .store(in: &subscriptions)
-        
+
         // update prices on base amount change
         $baseAmount
             .removeDuplicates()
@@ -374,13 +375,15 @@ class SellViewModel: BaseViewModel, ObservableObject {
                 await MainActor.run { [weak self] in
                     guard let self else { return }
                     let baseCurrencyPrice = max(0.00001, self.priceService.getCurrentPrice(for: baseCurrencyCode) ?? 0)
+                    let totalFeeAmount = sellQuote.feeAmount + sellQuote.extraFeeAmount
                     self.fee = .loaded(
                         Fee(
-                            baseAmount: (sellQuote.feeAmount + sellQuote.extraFeeAmount) / baseCurrencyPrice,
-                            quoteAmount: sellQuote.feeAmount + sellQuote.extraFeeAmount
+                            baseAmount: (totalFeeAmount) / baseCurrencyPrice,
+                            quoteAmount: totalFeeAmount
                         )
                     )
                     self.exchangeRate = .loaded(sellQuote.baseCurrencyPrice)
+                    self.quoteReceiveAmount = max(0, (quoteAmount ?? 0) - totalFeeAmount)
                 }
             } catch {
                 // update data
