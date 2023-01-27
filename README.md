@@ -33,7 +33,6 @@ chmod -R +x .githooks
 ```shell
 export XCCONFIG_URL="<Provided by team leader>"
 ```
-```
 - Run install.sh
 ```shell
 chmod u+x Scripts/install.sh && Scripts/install.sh
