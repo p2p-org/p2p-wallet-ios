@@ -24,7 +24,7 @@ final class ChooseWalletTokenServiceImpl: ChooseWalletTokenService {
 
     func getWallets() async throws -> [Wallet] {
         switch strategy {
-        case let .feeToken(tokens):
+        case let .feeToken(tokens, _):
             return tokens
         case .sendToken:
             return walletsRepository.getWallets().filter { wallet in

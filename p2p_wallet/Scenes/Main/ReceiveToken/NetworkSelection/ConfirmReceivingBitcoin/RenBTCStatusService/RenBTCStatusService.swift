@@ -120,7 +120,7 @@ class RenBTCStatusService: RenBTCStatusServiceType {
         )
 
         // relay transaction
-        _ = try await relayService.topUpAndRelayTransaction(
+        _ = try await relayService.topUpIfNeededAndRelayTransaction(
             preparedTransaction,
             fee: payingFeeToken,
             config: .init(

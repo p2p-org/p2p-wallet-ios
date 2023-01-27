@@ -10,7 +10,7 @@ import KeyAppUI
 import SwiftUI
 
 struct SheetHeaderModifier: ViewModifier {
-    let title: String
+    let title: String?
     var withSeparator: Bool = true
     var bottomPadding: CGFloat = 20
     let close: (() -> Void)?
@@ -27,7 +27,7 @@ struct SheetHeaderModifier: ViewModifier {
 
 extension View {
     func sheetHeader(
-        title: String,
+        title: String?,
         withSeparator: Bool = true,
         bottomPadding: CGFloat = 20,
         close: (() -> Void)? = nil
@@ -42,7 +42,7 @@ extension View {
 }
 
 private struct SheetHeaderView: View {
-    let title: String
+    let title: String?
     let withSeparator: Bool
     let bottomPadding: CGFloat
     let close: (() -> Void)?
@@ -57,11 +57,14 @@ private struct SheetHeaderView: View {
                 if close != nil {
                     Spacer()
                 }
-                Text(title)
-                    .multilineTextAlignment(.center)
-                    .foregroundColor(Color(Asset.Colors.night.color))
-                    .font(uiFont: .font(of: .title3, weight: .semibold))
-                    .padding(.top, 18)
+                if let title {
+                    Text(title)
+                        .multilineTextAlignment(.center)
+                        .foregroundColor(Color(Asset.Colors.night.color))
+                        .font(uiFont: .font(of: .title3, weight: .semibold))
+                        .padding(.top, 18)
+                }
+                Spacer()
                 if let close = close {
                     Spacer()
                     Button(

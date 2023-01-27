@@ -21,6 +21,10 @@ enum SendSource: String {
 }
 
 class SendCoordinator: Coordinator<SendResult> {
+    
+    // MARK: - Dependencies
+
+    @Injected var walletsRepository: WalletsRepository
 
     // MARK: - Properties
 
@@ -58,11 +62,24 @@ class SendCoordinator: Coordinator<SendResult> {
     // MARK: - Methods
 
     override func start() -> AnyPublisher<SendResult, Never> {
-        // normal flow with no preChosenRecipient
-        if let recipient = preChosenRecipient {
-            return startFlowWithPreChosenRecipient(recipient)
+        if walletsRepository.currentState == .loaded {
+            let fiatAmount = walletsRepository.getWallets().reduce(0) { $0 + $1.amountInCurrentFiat }
+            let withTokens = fiatAmount > 0
+            if withTokens {
+                // normal flow with no preChosenRecipient
+                if let recipient = preChosenRecipient {
+                    return startFlowWithPreChosenRecipient(recipient)
+                } else {
+                    startFlowWithNoPreChosenRecipient()
+                }
+            } else {
+                showEmptyState()
+            }
+
         } else {
-            startFlowWithNoPreChosenRecipient()
+            // Show not ready
+            rootViewController.showAlert(title: L10n.TheDataIsBeingUpdated.pleaseTryAgainInAFewMinutes, message: nil)
+            result.send(completion: .finished)
         }
 
         // Back
@@ -136,18 +153,11 @@ class SendCoordinator: Coordinator<SendResult> {
             self?.result.send(.cancelled)
         }
     }
-}
 
-class CustomUIHostingController<Content: View>: UIHostingController<Content> {
-    override func viewWillLayoutSubviews() {
-        super.viewWillLayoutSubviews()
-
-        if #available(iOS 15.0, *) {
-            //  Workaround for an iOS 15 SwiftUI bug(?):
-            //  The intrinsicContentSize of UIView is not updated
-            //  when the internal SwiftUI view changes size.
-
-            view.invalidateIntrinsicContentSize()
-        }
+    private func showEmptyState() {
+        let coordinator = SendEmptyCoordinator(navigationController: rootViewController)
+        coordinator.start()
+            .sink(receiveValue: { [weak self] _ in self?.result.send(completion: .finished) })
+            .store(in: &subscriptions)
     }
 }

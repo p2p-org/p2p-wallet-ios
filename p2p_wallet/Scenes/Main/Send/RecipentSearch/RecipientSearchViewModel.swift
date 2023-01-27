@@ -88,6 +88,7 @@ class RecipientSearchViewModel: ObservableObject {
             .store(in: &subscriptions)
 
         $input
+            .removeDuplicates()
             .combineLatest($userWalletEnvironments)
             .debounce(for: 0.2, scheduler: DispatchQueue.main)
             .sink { [weak self] (query: String, _) in
@@ -127,6 +128,7 @@ class RecipientSearchViewModel: ObservableObject {
     func searchQR(query: String, autoSelectTheOnlyOneResultMode: AutoSelectTheOnlyOneResultMode) {
         fromQR = true
         self.autoSelectTheOnlyOneResultMode = autoSelectTheOnlyOneResultMode
+        input.removeAll() // need to trigger publisher update in case of the same input
         input = query
     }
 
@@ -164,8 +166,8 @@ class RecipientSearchViewModel: ObservableObject {
 
     @MainActor
     func past() {
+        guard let text = clipboardManager.stringFromClipboard(), !text.isEmpty else { return }
         isFirstResponder = false
-        guard let text = clipboardManager.stringFromClipboard() else { return }
         autoSelectTheOnlyOneResultMode = .enabled(delay: 0)
         input = text.trimmingCharacters(in: .whitespacesAndNewlines)
         notificationService.showToast(title: "✅", text: L10n.pastedFromClipboard)
@@ -186,7 +188,7 @@ class RecipientSearchViewModel: ObservableObject {
     @MainActor
     func notifyAddressRecognized(recipient: Recipient) {
         let text = L10n.theAddressIsRecognized("\(recipient.address.prefix(6))...\(recipient.address.suffix(6))")
-        notificationService.showToast(title: "✅", text: text)
+        notificationService.showToast(title: "✅", text: text, haptic: false)
     }
 
     @MainActor
@@ -195,6 +197,7 @@ class RecipientSearchViewModel: ObservableObject {
         do {
             try await Resolver.resolve(SwapServiceType.self).reload()
             loadingState = .loaded
+            isFirstResponder = true
         } catch {
             loadingState = .error(error.readableDescription)
         }
