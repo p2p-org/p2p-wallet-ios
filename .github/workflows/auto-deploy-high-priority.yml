@@ -6,6 +6,9 @@ concurrency:
   group: auto-deploy-high-priority-${{ github.event.pull_request.number || github.ref }}
   cancel-in-progress: true
 
+env: 
+  XCCONFIG_URL: '${{ secrets.XCCONFIG_URL }}'
+
 jobs:
   upload_build_for_testing:
     name: Upload build for testing
