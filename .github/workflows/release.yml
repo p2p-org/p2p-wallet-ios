@@ -1,5 +1,7 @@
 name: Release application
 on: workflow_dispatch
+env: 
+  XCCONFIG_URL: '${{ secrets.XCCONFIG_URL }}'
 jobs:
   deploy:
     name: Deploying to Testflight
