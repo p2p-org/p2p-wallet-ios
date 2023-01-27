@@ -8,6 +8,7 @@ concurrency:
 
 env: 
   XCCONFIG_URL: '${{ secrets.XCCONFIG_URL }}'
+  IS_CI: '${{ secrets.IS_CI }}'
 
 jobs:
   upload_build_for_testing:
