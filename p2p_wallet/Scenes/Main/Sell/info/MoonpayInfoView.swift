@@ -92,7 +92,7 @@ struct MoonpayInfoView: View {
             Spacer()
 
             TextButtonView(
-                title: L10n.letSGo,
+                title: L10n.letSGo + "!",
                 style: .primaryWhite,
                 size: .large,
                 onPressed: { actionButtonPressed?(isChecked) }
