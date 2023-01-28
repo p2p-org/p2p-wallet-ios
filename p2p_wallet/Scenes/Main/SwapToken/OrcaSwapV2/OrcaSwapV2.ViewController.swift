@@ -33,14 +33,14 @@ extension OrcaSwapV2 {
 
         // MARK: - Initializer
 
-        init(viewModel: OrcaSwapV2ViewModelType) {
+        init(viewModel: OrcaSwapV2ViewModelType, hidesBottomBarWhenPushed: Bool = true) {
             self.viewModel = viewModel
             super.init()
 
             navigationItem.title = L10n.swap
             navigationItem.rightBarButtonItem = settingButton
             navigationItem.largeTitleDisplayMode = .never
-            hidesBottomBarWhenPushed = true
+            self.hidesBottomBarWhenPushed = hidesBottomBarWhenPushed
             analyticsManager.log(event: AmplitudeEvent.swapStartScreen)
         }
 

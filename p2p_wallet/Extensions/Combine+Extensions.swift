@@ -103,6 +103,3 @@ extension NSObject {
         self.subject.send(completion: .finished)
     }
 }
-
-// MARK: -
-
