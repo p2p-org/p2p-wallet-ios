@@ -9,6 +9,7 @@ import Foundation
 import RxConcurrency
 import RxSwift
 import SolanaSwift
+import Sentry
 
 extension TransactionHandler {
     /// Send and observe transaction
@@ -40,7 +41,12 @@ extension TransactionHandler {
                 guard let self = self else { return }
 
                 // update status
-                self.notificationsService.showInAppNotification(.error(error))
+                if (error as NSError).isNetworkConnectionError {
+                    self.notificationsService.showConnectionErrorNotification()
+                } else {
+                    self.notificationsService.showDefaultErrorNotification()
+                }
+                SentrySDK.capture(error: error)
 
                 // mark transaction as failured
                 self.updateTransactionAtIndex(index) { currentValue in

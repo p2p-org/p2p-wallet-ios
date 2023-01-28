@@ -2,24 +2,41 @@ import Combine
 import Resolver
 import SolanaSwift
 
-final class SendInputFeePromptViewModel: ObservableObject {
+final class SendInputFeePromptViewModel: BaseViewModel, ObservableObject {
 
     let close = PassthroughSubject<Void, Never>()
     let chooseToken = PassthroughSubject<Void, Never>()
 
-    @Published var title = ""
-    @Published var description = ""
-    @Published var isChooseTokenAvailable = false
-    @Published var continueTitle = ""
+    @Published var title: String
+    @Published var description: String
+    @Published var isChooseTokenAvailable: Bool
+    @Published var continueTitle: String
+    @Published var feeToken: Wallet
 
-    init(feeToken: Token, availableFeeTokens: [Wallet]) {
+    let feeInFiat: Double
+
+    init(feeToken: Wallet, feeInToken: FeeAmount, availableFeeTokens: [Wallet]) {
         title = L10n.thisAddressDoesnTHaveAnAccountForThisToken
-        description = L10n.YouWillHaveToPayAOneTimeFee0._03ToCreateAnAccountForThisAddress
-        continueTitle = L10n.continueWith(feeToken.symbol)
+        let priceService = Resolver.resolve(PricesServiceType.self)
+        let price = priceService.currentPrice(mint: feeToken.token.address)
+        let feeInFiat = (feeInToken.accountBalances.convertToBalance(decimals: feeToken.token.decimals) * price?.value)
+        self.feeInFiat = feeInFiat
+        let fiatAmount = feeInFiat.fiatAmountFormattedString(roundingMode: .down, customFormattForLessThan1E_2: true)
+        description = L10n.youWillHaveToPayAOneTimeFeeToCreateAnAccountForThisAddress(fiatAmount)
+        continueTitle = L10n.continueWith(feeToken.token.symbol)
+        isChooseTokenAvailable = availableFeeTokens.count > 1
+        self.feeToken = feeToken
 
-        if availableFeeTokens.count > 1 {
+        super.init()
+
+        if isChooseTokenAvailable {
             description.append(". \(L10n.youCanChooseInWhichCurrencyToPayWithBelow)")
-            isChooseTokenAvailable = true
         }
+
+        $feeToken
+            .sink { [weak self] value in
+                self?.continueTitle = L10n.continueWith(value.token.symbol)
+            }
+            .store(in: &subscriptions)
     }
 }

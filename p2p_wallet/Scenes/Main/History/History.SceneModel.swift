@@ -3,6 +3,7 @@
 //
 
 import BECollectionView
+import Combine
 import FeeRelayerSwift
 import Foundation
 import History
@@ -12,9 +13,10 @@ import RxConcurrency
 import RxSwift
 import SolanaSwift
 import TransactionParser
+import Sell
 
 extension History {
-    class SceneModel: BEStreamListViewModel<ParsedTransaction> {
+    class SceneModel: BEStreamListViewModel<HistoryItem> {
         typealias AccountSymbol = (account: String, symbol: String)
 
         // MARK: - Dependencies
@@ -23,26 +25,25 @@ extension History {
         @Injected private var notificationService: NotificationService
         let transactionRepository = SolanaTransactionRepository(solanaAPIClient: Resolver.resolve())
         @Injected private var transactionParserRepository: TransactionParsedRepository
+        @Injected private var sellDataService: any SellDataService
 
         // MARK: - Properties
 
+        public let onTapPublisher: PassthroughSubject<HistoryItem, Never> = .init()
         private let disposeBag = DisposeBag()
 
         /// Symbol to filter coins
         let accountSymbol: AccountSymbol?
 
         /// Refresh handling
-        private let refreshTriggers: [HistoryRefreshTrigger] = [
-            PriceRefreshTrigger(),
-            ProcessingTransactionRefreshTrigger(),
-        ]
+        private var refreshTriggers: [HistoryRefreshTrigger]
 
         /// A list of source, where data can be fetched
         private var source: HistoryStreamSource = EmptyStreamSource()
 
         /// A list of output objects, that builds, forms, maps, filters and updates a final list.
         /// This list will be delivered to UI layer.
-        private let outputs: [HistoryOutput]
+        private var outputs: [HistoryOutput]
 
         enum State {
             case items
@@ -76,19 +77,28 @@ extension History {
 
         init(accountSymbol: AccountSymbol? = nil) {
             self.accountSymbol = accountSymbol
-            outputs = [
+
+            self.outputs = [
                 ProcessingTransactionsOutput(accountFilter: accountSymbol?.account),
                 PriceUpdatingOutput(),
             ]
+            self.refreshTriggers =  [
+                PriceRefreshTrigger(),
+                ProcessingTransactionRefreshTrigger(),
+            ]
 
             super.init(isPaginationEnabled: true, limit: 10)
+            
+            if accountSymbol == nil, sellDataService.isAvailable {
+                self.outputs.append(SellTransactionsOutput())
+                self.refreshTriggers.append(SellTransactionsRefreshTrigger())
+            }
 
             // Register all refresh triggers
-            for trigger in refreshTriggers {
-                trigger.register()
-                    .emit(onNext: { [weak self] in self?.refreshUI() })
-                    .disposed(by: disposeBag)
-            }
+            Signal.merge(refreshTriggers.map { $0.register() })
+                .debounce(.milliseconds(300))
+                .emit(onNext: { [weak self] in self?.refreshUI() })
+                .disposed(by: disposeBag)
 
             // Build source
             buildSource()
@@ -138,7 +148,14 @@ extension History {
             super.clear()
         }
 
-        override func next() -> Observable<[ParsedTransaction]> {
+        override func reload() {
+            super.reload()
+            Task {
+                await sellDataService.update()
+            }
+        }
+
+        override func next() -> Observable<[HistoryItem]> {
             AsyncThrowingStream<[HistoryStreamSource.Result], Error> { stream in
                 Task {
                     defer { stream.finish(throwing: nil) }
@@ -206,7 +223,7 @@ extension History {
                     )
                 }
 
-                return parsedTransactions
+                return parsedTransactions.map { .parsedTransaction($0) }
             }
             .do(onError: { [weak self] error in
                 DispatchQueue.main.async { [weak self] in
@@ -216,8 +233,8 @@ extension History {
             })
         }
 
-        override func join(_ newItems: [ParsedTransaction]) -> [ParsedTransaction] {
-            var filteredNewData: [ParsedTransaction] = []
+        override func join(_ newItems: [HistoryItem]) -> [HistoryItem] {
+            var filteredNewData: [HistoryItem] = []
             for trx in newItems {
                 if data.contains(where: { $0.signature == trx.signature }) { continue }
                 filteredNewData.append(trx)
@@ -225,11 +242,15 @@ extension History {
             return data + filteredNewData
         }
 
-        override func map(newData: [ParsedTransaction]) -> [ParsedTransaction] {
+        override func map(newData: [HistoryItem]) -> [HistoryItem] {
             // Apply output transformation
             var data = newData
             for output in outputs { data = output.process(newData: data) }
             return super.map(newData: data)
+        }
+
+        func onTap(item: HistoryItem) {
+            onTapPublisher.send(item)
         }
     }
 }

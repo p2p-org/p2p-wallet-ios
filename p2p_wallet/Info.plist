@@ -4,7 +4,9 @@
 <dict>
 	<key>AMPLITUDE_API_KEY</key>
 	<string>$(AMPLITUDE_API_KEY)</string>
-	<key>API_GATEWAY_DEV</key>
+    <key>NSAdvertisingAttributionReportEndpoint</key>
+    <string>https://appsflyer-skadnetwork.com/</string>
+    <key>API_GATEWAY_DEV</key>
 	<string>$(API_GATEWAY_DEV)</string>
 	<key>API_GATEWAY_PROD</key>
 	<string>$(API_GATEWAY_PROD)</string>
@@ -91,8 +93,12 @@
 	<true/>
 	<key>MOONPAY_PRODUCTION_API_KEY</key>
 	<string>$(MOONPAY_PRODUCTION_API_KEY)</string>
+	<key>MOONPAY_STAGING_SELL_ENDPOINT</key>
+	<string>$(MOONPAY_STAGING_SELL_ENDPOINT)</string>
 	<key>MOONPAY_STAGING_API_KEY</key>
 	<string>$(MOONPAY_STAGING_API_KEY)</string>
+	<key>MOONPAY_PRODUCTION_SELL_ENDPOINT</key>
+	<string>$(MOONPAY_PRODUCTION_SELL_ENDPOINT)</string>
 	<key>NAME_SERVICE_ENDPOINT</key>
 	<string>$(NAME_SERVICE_ENDPOINT)</string>
 	<key>NAME_SERVICE_ENDPOINT_NEW</key>

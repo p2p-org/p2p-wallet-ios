@@ -14,6 +14,7 @@ import Resolver
 import SolanaSwift
 import UIKit
 import OrcaSwapSwift
+import Sell
 
 final class AppCoordinator: Coordinator<Void> {
     // MARK: - Dependencies
@@ -26,6 +27,7 @@ final class AppCoordinator: Coordinator<Void> {
     @Injected var notificationService: NotificationService
     @Injected var userWalletManager: UserWalletManager
     @Injected var createNameService: CreateNameService
+    @Injected private var analyticsService: AnalyticsService
 
     // MARK: - Properties
 
@@ -128,11 +130,21 @@ final class AppCoordinator: Coordinator<Void> {
             try await Resolver.resolve(WalletMetadataService.self).update()
             try await Resolver.resolve(OrcaSwapType.self).load()
         }
-
-        let coordinator = TabBarCoordinator(window: window, authenticateWhenAppears: showAuthenticationOnMainOnAppear)
-        coordinate(to: coordinator)
-            .sink(receiveValue: {})
-            .store(in: &subscriptions)
+        
+        Task {
+            // load services
+            if available(.sellScenarioEnabled) {
+                await Resolver.resolve((any SellDataService).self).checkAvailability()
+            }
+            
+            // coordinate
+            await MainActor.run { [unowned self] in
+                let coordinator = TabBarCoordinator(window: window, authenticateWhenAppears: showAuthenticationOnMainOnAppear)
+                coordinate(to: coordinator)
+                    .sink(receiveValue: {})
+                    .store(in: &subscriptions)
+            }
+        }
     }
 
     /// Navigate to onboarding flow if user is not yet created
@@ -155,7 +167,7 @@ final class AppCoordinator: Coordinator<Void> {
                     walletCreated = true
 
                     analyticsManager.log(event: AmplitudeEvent.setupOpen(fromPage: "create_wallet"))
-                    analyticsManager.log(event: AmplitudeEvent.createConfirmPin(result: true))
+                    analyticsService.logEvent(.createConfirmPin(result: true))
 
                     saveSecurity(data: data.security)
                     // Setup user wallet
