@@ -3,6 +3,8 @@ import KeyAppUI
 import SolanaSwift
 
 final class SendInputAmountViewModel: BaseViewModel, ObservableObject {
+    // MARK: - Nested type
+
     enum EnteredAmountType {
         case fiat
         case token
@@ -13,9 +15,12 @@ final class SendInputAmountViewModel: BaseViewModel, ObservableObject {
         let inToken: Double
     }
 
+    // MARK: - Actions
     let switchPressed = PassthroughSubject<Void, Never>()
     let maxAmountPressed = PassthroughSubject<Void, Never>()
     let changeAmount = PassthroughSubject<(amount: Amount, type: EnteredAmountType), Never>()
+
+    // MARK: - Properties
 
     // State
     @Published var token: Wallet {
@@ -29,13 +34,15 @@ final class SendInputAmountViewModel: BaseViewModel, ObservableObject {
     @Published var amountText: String = ""
     @Published var amountTextColor: UIColor = Asset.Colors.night.color
     @Published var mainTokenText = ""
-    @Published var mainAmountType: EnteredAmountType
+    @Published var mainAmountType: EnteredAmountType = .fiat
+    @Published var isSwitchMainAmountTypeAvailable = true
     @Published var isMaxButtonVisible: Bool = true
 
     @Published var secondaryAmountText = ""
     @Published var secondaryCurrencyText = ""
 
     @Published var isFirstResponder: Bool = false
+    @Published var isDisabled = false
     @Published var amount: Amount?
     @Published var isError: Bool = false
     @Published var countAfterDecimalPoint: Int
@@ -43,10 +50,11 @@ final class SendInputAmountViewModel: BaseViewModel, ObservableObject {
     private let fiat: Fiat
     private var tokenChangedEvent = CurrentValueSubject<Wallet, Never>(.init(token: .nativeSolana))
 
-    init(initialToken: Wallet) {
+    init(initialToken: Wallet, allowSwitchingMainAmountType: Bool) {
         fiat = Defaults.fiat
         token = initialToken
         countAfterDecimalPoint = Constants.fiatDecimals
+        isSwitchMainAmountTypeAvailable = allowSwitchingMainAmountType
         mainAmountType = Defaults.isTokenInputTypeChosen ? .token : .fiat
         super.init()
 
@@ -123,6 +131,21 @@ final class SendInputAmountViewModel: BaseViewModel, ObservableObject {
                 }
                 self.updateCurrencyTitles()
                 self.updateDecimalsPoint()
+            }
+            .store(in: &subscriptions)
+        
+        $mainAmountType
+            .sink { [weak self] type in
+                guard let self else { return }
+                let currentWallet = self.token
+                switch type {
+                case .fiat:
+                    self.mainTokenText = self.fiat.code
+                    self.secondaryCurrencyText = currentWallet.token.symbol
+                case .token:
+                    self.mainTokenText = currentWallet.token.symbol
+                    self.secondaryCurrencyText = self.fiat.code
+                }
             }
             .store(in: &subscriptions)
     }

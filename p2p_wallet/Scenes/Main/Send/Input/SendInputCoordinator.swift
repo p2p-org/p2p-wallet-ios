@@ -7,25 +7,34 @@ final class SendInputCoordinator: Coordinator<SendResult> {
     private let navigationController: UINavigationController
     private let recipient: Recipient
     private let preChosenWallet: Wallet?
+    private let preChosenAmount: Double?
     private var subject = PassthroughSubject<SendResult, Never>()
     private let source: SendSource
+    private let pushedWithoutRecipientSearchView: Bool
+    private let allowSwitchingMainAmountType: Bool
 
     init(
         recipient: Recipient,
         preChosenWallet: Wallet?,
+        preChosenAmount: Double?,
         navigationController: UINavigationController,
-        source: SendSource
+        source: SendSource,
+        pushedWithoutRecipientSearchView: Bool = false,
+        allowSwitchingMainAmountType: Bool
     ) {
         self.recipient = recipient
         self.preChosenWallet = preChosenWallet
+        self.preChosenAmount = preChosenAmount
         self.navigationController = navigationController
         self.source = source
+        self.pushedWithoutRecipientSearchView = pushedWithoutRecipientSearchView
+        self.allowSwitchingMainAmountType = allowSwitchingMainAmountType
     }
 
     override func start() -> AnyPublisher<SendResult, Never> {
-        let viewModel = SendInputViewModel(recipient: recipient, preChosenWallet: preChosenWallet, source: source)
+        let viewModel = SendInputViewModel(recipient: recipient, preChosenWallet: preChosenWallet, preChosenAmount: preChosenAmount, source: source, allowSwitchingMainAmountType: allowSwitchingMainAmountType)
         let view = SendInputView(viewModel: viewModel)
-        let controller = KeyboardAvoidingViewController(rootView: view)
+        let controller = KeyboardAvoidingViewController(rootView: view, navigationBarVisibility: .visible)
 
         navigationController.pushViewController(controller, animated: true)
         setTitle(to: controller)
@@ -70,6 +79,10 @@ final class SendInputCoordinator: Coordinator<SendResult> {
                 self?.subject.send(.sent(model))
             }
             .store(in: &subscriptions)
+        
+        if pushedWithoutRecipientSearchView {
+            Task { await viewModel.load() }
+        }
 
         return subject.prefix(1).eraseToAnyPublisher()
     }

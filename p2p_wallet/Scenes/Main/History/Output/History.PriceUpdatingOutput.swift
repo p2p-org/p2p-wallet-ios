@@ -12,25 +12,31 @@ extension History {
     class PriceUpdatingOutput: HistoryOutput {
         @Injected private var pricesService: PricesServiceType
 
-        func process(newData: [ParsedTransaction]) -> [ParsedTransaction] {
-            var transactions = newData
-            for index in 0 ..< transactions.count {
-                transactions[index] = updatedTransactionWithPrice(transaction: transactions[index])
+        func process(newData: [HistoryItem]) -> [HistoryItem] {
+            var items = newData
+            for index in 0 ..< items.count {
+                items[index] = updatedTransactionWithPrice(item: items[index])
             }
-            return transactions
+            return items
         }
 
         private func updatedTransactionWithPrice(
-            transaction: ParsedTransaction
-        ) -> ParsedTransaction {
-            guard let price = pricesService.currentPrice(for: transaction.symbol)
-            else { return transaction }
+            item: HistoryItem
+        ) -> HistoryItem {
+            switch item {
+            case let .parsedTransaction(transaction):
+                guard let price = pricesService.currentPrice(for: transaction.symbol)
+                else { return .parsedTransaction(transaction) }
 
-            var transaction = transaction
-            let amount = transaction.amount
-            transaction.amountInFiat = amount * price.value
+                var transaction = transaction
+                let amount = transaction.amount
+                transaction.amountInFiat = amount * price.value
 
-            return transaction
+                return .parsedTransaction(transaction)
+            case let .sellTransaction(transaction):
+                return .sellTransaction(transaction) // doesn't need to update
+            }
+            
         }
     }
 }

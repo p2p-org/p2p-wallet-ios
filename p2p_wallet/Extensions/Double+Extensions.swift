@@ -59,15 +59,15 @@ extension Optional where Wrapped == Double {
 // MARK: - Rounding
 
 extension Double {
-    func rounded(decimals: Int?) -> Double {
+    func rounded(decimals: Int?, roundingMode: NumberFormatter.RoundingMode? = nil) -> Double {
         guard let decimals = decimals else { return self }
-        let realAmount = toString(maximumFractionDigits: decimals, groupingSeparator: nil)
+        let realAmount = toString(maximumFractionDigits: decimals, groupingSeparator: "", roundingMode: roundingMode)
         return realAmount.double ?? self
     }
 
-    func rounded(decimals: UInt8?) -> Double {
+    func rounded(decimals: UInt8?, roundingMode: NumberFormatter.RoundingMode? = nil) -> Double {
         guard let decimals = decimals else { return self }
-        return rounded(decimals: Int(decimals))
+        return rounded(decimals: Int(decimals), roundingMode: roundingMode)
     }
 }
 
@@ -176,6 +176,10 @@ extension Double {
         roundingMode: NumberFormatter.RoundingMode? = nil
     ) -> String {
         "\(toString(maximumFractionDigits: maximumFractionDigits)) \(symbol)"
+    }
+
+    func formattedFiat(maximumFractionDigits: Int = 2, currency: Fiat = .usd, roundingMode: NumberFormatter.RoundingMode? = nil) -> String {
+        return "\(toString(maximumFractionDigits: maximumFractionDigits, roundingMode: roundingMode)) \(currency.code)"
     }
 
     func percentFormat(maximumFractionDigits: Int = 2) -> String {

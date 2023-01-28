@@ -5,6 +5,7 @@
 //  Created by Ivan on 05.08.2022.
 //
 
+import AnalyticsManager
 import Combine
 import Foundation
 import Resolver
@@ -12,6 +13,8 @@ import RxCombine
 import RxSwift
 import SolanaSwift
 import UIKit
+import SwiftyUserDefaults
+import Sell
 
 final class HomeWithTokensViewModel: BaseViewModel, ObservableObject {
     // MARK: - Dependencies
@@ -20,20 +23,21 @@ final class HomeWithTokensViewModel: BaseViewModel, ObservableObject {
     @Injected private var pricesService: PricesServiceType
     @Injected private var solanaTracker: SolanaTracker
     @Injected private var notificationService: NotificationService
+    @Injected private var sellDataService: any SellDataService
+    @Injected private var analyticsManager: AnalyticsManager
 
     // MARK: - Properties
 
     let navigation: PassthroughSubject<HomeNavigation, Never>
 
     var balance: AnyPublisher<String, Never>
-    var actions: AnyPublisher<[WalletActionType], Never>
+    @Published private(set) var actions: [WalletActionType] = []
 
     @Published var scrollOnTheTop = true
 
     private var wallets = [Wallet]()
     @Published var items = [Wallet]()
     @Published var hiddenItems = [Wallet]()
-
     @Published var tokensIsHidden: Bool
 
     // MARK: - Initializer
@@ -57,9 +61,13 @@ final class HomeWithTokensViewModel: BaseViewModel, ObservableObject {
             .eraseToAnyPublisher()
         self.walletsRepository = walletsRepository
         
-        actions = Just([WalletActionType.buy, .receive, .send, .swap]).eraseToAnyPublisher()
-        
         super.init()
+        
+        if sellDataService.isAvailable {
+            actions = [.buy, .receive, .send, .cashOut]
+        } else {
+            actions = [.buy, .receive, .send]
+        }
         
         walletsRepository.dataObservable
             .asPublisher()
@@ -92,6 +100,10 @@ final class HomeWithTokensViewModel: BaseViewModel, ObservableObject {
         if available(.solanaNegativeStatus) {
             solanaTracker.startTracking()
         }
+
+        analyticsManager.log(
+            event: AmplitudeEvent.mainScreenWalletsOpen(isSellEnabled: sellDataService.isAvailable)
+        )
     }
 
     func reloadData() async {
@@ -116,6 +128,8 @@ final class HomeWithTokensViewModel: BaseViewModel, ObservableObject {
             navigation.send(.send)
         case .swap:
             navigation.send(.swap)
+        case .cashOut:
+            navigation.send(.cashOut)
         }
     }
 
@@ -139,6 +153,10 @@ final class HomeWithTokensViewModel: BaseViewModel, ObservableObject {
     func toggleHiddenTokensVisibility() {
         walletsRepository.toggleIsHiddenWalletShown()
         tokensIsHidden.toggle()
+    }
+
+    func sellTapped() {
+        navigation.send(.cashOut)
     }
 }
 
