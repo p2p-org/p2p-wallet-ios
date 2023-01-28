@@ -9,23 +9,23 @@ import Foundation
 import SolanaPricesAPIs
 
 protocol PricesStorage {
-    func retrievePrices() async -> [String: CurrentPrice]
-    func savePrices(_ prices: [String: CurrentPrice]) async
+    func retrievePrices() async -> TokenPriceMap
+    func savePrices(_ prices: TokenPriceMap) async
 }
 
 actor UserDefaultsPricesStorage: PricesStorage {
-    func retrievePrices() -> [String: CurrentPrice] {
-        var prices = [String: CurrentPrice]()
+    func retrievePrices() -> TokenPriceMap {
+        var prices: TokenPriceMap = [:]
         let data = Defaults.prices
         if !data.isEmpty,
-           let cachedPrices = try? PropertyListDecoder().decode([String: CurrentPrice].self, from: data)
+           let cachedPrices = try? PropertyListDecoder().decode(TokenPriceMap.self, from: data)
         {
             prices = cachedPrices
         }
         return prices
     }
 
-    func savePrices(_ prices: [String: CurrentPrice]) {
+    func savePrices(_ prices: TokenPriceMap) {
         guard let data = try? PropertyListEncoder().encode(prices) else { return }
         Defaults.prices = data
     }

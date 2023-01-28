@@ -127,7 +127,7 @@ private extension ParsedTransaction {
             let usd = "~ " + Defaults.fiat.symbol + getAmountInCurrentFiat(
                 pricesService: pricesService,
                 amountInToken: transaction.rawAmount,
-                symbol: transaction.source?.token.symbol
+                mint: transaction.source?.token.address
             ).orZero.toString(maximumFractionDigits: 2)
             return (tokens: fromAmount, usd: usd)
         case let transaction as SwapInfo:
@@ -139,12 +139,12 @@ private extension ParsedTransaction {
                 getAmountInCurrentFiat(
                     pricesService: pricesService,
                     amountInToken: transaction.sourceAmount,
-                    symbol: transaction.source?.token.symbol
+                    mint: transaction.source?.token.address
                 ) ?? 0,
                 getAmountInCurrentFiat(
                     pricesService: pricesService,
                     amountInToken: transaction.destinationAmount,
-                    symbol: transaction.destination?.token.symbol
+                    mint: transaction.destination?.token.address
                 ) ?? 0
             )
             return (
@@ -159,11 +159,11 @@ private extension ParsedTransaction {
     func getAmountInCurrentFiat(
         pricesService: PricesServiceType,
         amountInToken: Double?,
-        symbol: String?
+        mint: String?
     ) -> Double? {
         guard let amountInToken = amountInToken,
-              let symbol = symbol,
-              let price = pricesService.currentPrice(for: symbol)?.value
+              let mint = mint,
+              let price = pricesService.currentPrice(mint: mint)?.value
         else { return nil }
         return amountInToken * price
     }

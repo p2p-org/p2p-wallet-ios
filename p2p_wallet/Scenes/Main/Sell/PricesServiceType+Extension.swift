@@ -10,6 +10,6 @@ import Sell
 
 extension PricesService: SellPriceProvider {
     func getCurrentPrice(for coinName: String) -> Double? {
-        currentPrice(for: coinName)?.value
+        currentPrice(symbol: coinName)?.value
     }
 }

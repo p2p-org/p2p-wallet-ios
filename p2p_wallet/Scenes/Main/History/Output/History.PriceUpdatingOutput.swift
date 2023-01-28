@@ -25,7 +25,7 @@ extension History {
         ) -> HistoryItem {
             switch item {
             case let .parsedTransaction(transaction):
-                guard let price = pricesService.currentPrice(for: transaction.symbol)
+                guard let price = pricesService.currentPrice(mint: transaction.mintAddress)
                 else { return .parsedTransaction(transaction) }
 
                 var transaction = transaction
