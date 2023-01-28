@@ -500,7 +500,7 @@ class DepositSolendViewModel: ObservableObject {
                             imageUrl: URL(string: asset.logo ?? ""),
                             symbol: userDeposit?.symbol ?? "",
                             fiatAmount: userDeposit?.depositedAmount.double * priceService
-                                .currentPrice(mint: userDeposit?.symbol ?? "")?.value,
+                                .currentPrice(symbol: userDeposit?.symbol ?? "")?.value,
                             apy: market?.supplyInterest.double
                         )
                     }
