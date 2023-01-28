@@ -107,7 +107,7 @@ final class SendInputViewModel: BaseViewModel, ObservableObject {
         var exchangeRate = [String: CurrentPrice]()
         var tokens = Set<Token>()
         wallets.forEach {
-            exchangeRate[$0.token.symbol] = pricesService.currentPrice(for: $0.token.symbol)
+            exchangeRate[$0.token.symbol] = pricesService.currentPrice(mint: $0.token.address)
             tokens.insert($0.token)
         }
 
