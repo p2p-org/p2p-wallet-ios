@@ -31,7 +31,7 @@ struct ChooseWalletTokenItemView: View {
 
             Spacer()
 
-            Text(amountInCurrentFiat.fiatAmountFormattedString(roundingMode: .down))
+            Text(amountInCurrentFiat.fiatAmountFormattedString(roundingMode: .down, customFormattForLessThan1E_2: true))
                 .font(uiFont: .font(of: .text2, weight: .semibold))
                 .foregroundColor(Color(Asset.Colors.night.color))
         }

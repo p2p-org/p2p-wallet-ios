@@ -29,6 +29,6 @@ final class ScanQrCoordinator: Coordinator<String?> {
             self?.resultSubject.send(nil)
         }
         navigationController.present(vc, animated: true)
-        return resultSubject.eraseToAnyPublisher()
+        return resultSubject.first().eraseToAnyPublisher()
     }
 }

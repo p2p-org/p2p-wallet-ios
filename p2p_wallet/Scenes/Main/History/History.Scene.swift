@@ -74,18 +74,58 @@ extension History {
             NBENewDynamicSectionsCollectionView(
                 viewModel: viewModel,
                 mapDataToSections: { viewModel in
-                    CollectionViewMappingStrategy_RxSwift.byData(
-                        viewModel: viewModel,
-                        forType: ParsedTransaction.self,
-                        where: \ParsedTransaction.blockTime
-                    ).reversed()
+                    // get items
+                    let items = viewModel.getData(type: HistoryItem.self)
+                    
+                    // put sell transactions first, then other transactions
+                    var sellTransactions = [HistoryItem]()
+                    var otherTransactions = [HistoryItem]()
+                    
+                    for item in items {
+                        switch item {
+                        case .sellTransaction:
+                            sellTransactions.append(item)
+                        case .parsedTransaction:
+                            otherTransactions.append(item)
+                        }
+                    }
+                    
+                    let sellTransactionsSection: BEDynamicSectionsCollectionView.SectionInfo? = sellTransactions.isEmpty ? nil: .init(
+                        userInfo: "",
+                        items: sellTransactions
+                    )
+
+                    let dictionary = Dictionary(grouping: otherTransactions) { item -> Date in
+                        let date = item.blockTime ?? Date()
+                        return Calendar.current.startOfDay(for: date)
+                    }
+                    
+                    let dateFormatter = DateFormatter()
+                    dateFormatter.dateStyle = .medium
+                    dateFormatter.timeStyle = .none
+                    dateFormatter.locale = Locale.shared
+                    
+                    let otherTransactionsSections = dictionary.keys.sorted().reversed()
+                        .map { key in
+                            BEDynamicSectionsCollectionView.SectionInfo(
+                                userInfo: dateFormatter.string(from: key),
+                                items: dictionary[key] ?? []
+                            )
+                        }
+
+                    var result = [BEDynamicSectionsCollectionView.SectionInfo]()
+                    if let sellTransactionsSection {
+                        result.append(sellTransactionsSection)
+                    }
+                    result += otherTransactionsSections
+                    return result
                 },
                 layout: .init(
                     header: .init(
                         viewClass: SectionHeaderView.self,
                         heightDimension: .estimated(0)
                     ),
-                    cellType: Cell.self,
+                    cellType: TransactionCell.self,
                     emptyCellType: WLEmptyCell.self,
                     numberOfLoadingCells: 7,
                     interGroupSpacing: 1,
@@ -115,17 +155,24 @@ extension History {
 
 extension History.Scene: BECollectionViewDelegate {
     func beCollectionView(collectionView _: BECollectionViewBase, didSelect item: AnyHashable) {
-        guard let item = item as? ParsedTransaction else { return }
-        let viewController = History.TransactionViewController(
-            viewModel: .init(
-                transaction: item,
-                clipboardManager: clipboardManager,
-                pricesService: pricesService
+        guard let item = item as? HistoryItem else { return }
+
+        switch item {
+        case .parsedTransaction(let transaction):
+            let viewController = History.TransactionViewController(
+                viewModel: .init(
+                    transaction: transaction,
+                    clipboardManager: clipboardManager,
+                    pricesService: pricesService
+                )
             )
-        )
-        viewController.dismissCompletion = { [weak self] in
-            self?.dismiss(animated: true)
+            viewController.dismissCompletion = { [weak self] in
+                self?.dismiss(animated: true)
+            }
+            present(viewController, interactiveDismissalType: .none)
+        case .sellTransaction(_):
+            // Only history of all tokens support displaying sell transactions. 
+            viewModel.onTap(item: item)
         }
-        present(viewController, interactiveDismissalType: .none)
     }
 }
