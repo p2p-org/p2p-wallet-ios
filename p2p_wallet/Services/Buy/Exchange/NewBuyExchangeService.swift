@@ -1,5 +1,6 @@
 import Foundation
 import SolanaSwift
+import Moonpay
 
 struct MoonpayExchange: BuyExchangeService {
     let provider: Moonpay.Provider

@@ -357,7 +357,7 @@ class SwapServiceWithRelayImpl: SwapServiceType {
             blockhash: latestBlockhash
         )
 
-        return try await relayService.topUpAndRelayTransaction(
+        return try await relayService.topUpIfNeededAndRelayTransactions(
             result.transactions,
             fee: payingFeeToken,
             config: .init(

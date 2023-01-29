@@ -70,7 +70,8 @@ extension TransactionDetail {
                                 .map { [weak self] swapTransaction -> NSAttributedString? in
                                     self?.getAttributedString(
                                         amount: swapTransaction?.sourceAmount,
-                                        symbol: swapTransaction?.source?.token.symbol
+                                        symbol: swapTransaction?.source?.token.symbol,
+                                        mint: swapTransaction?.source?.token.address
                                     )
                                 }
                                 .drive(label.rx.attributedText)
@@ -86,7 +87,8 @@ extension TransactionDetail {
                                 .map { [weak self] swapTransaction -> NSAttributedString? in
                                     self?.getAttributedString(
                                         amount: swapTransaction?.destinationAmount,
-                                        symbol: swapTransaction?.destination?.token.symbol
+                                        symbol: swapTransaction?.destination?.token.symbol,
+                                        mint: swapTransaction?.destination?.token.address
                                     )
                                 }
                                 .drive(label.rx.attributedText)
@@ -110,7 +112,7 @@ extension TransactionDetail {
                     .setup { label in
                         viewModel.parsedTransactionDriver
                             .map { [weak self] in
-                                self?.getAttributedString(amount: abs($0?.amount ?? 0), symbol: $0?.symbol)
+                                self?.getAttributedString(amount: abs($0?.amount ?? 0), symbol: $0?.symbol, mint: $0?.mintAddress)
                             }
                             .drive(label.rx.attributedText)
                             .disposed(by: disposeBag)
@@ -134,31 +136,6 @@ extension TransactionDetail {
                     }
 
                 BEVStack(spacing: 8) {
-                    // deposit
-//                    UILabel(text: "0.02 SOL (Deposit)", textSize: 15, textAlignment: .right)
-//                        .setup { depositLabel in
-//                            feesDriver
-//                                .map { [weak self] feeAmount -> NSAttributedString? in
-//                                    guard let self = self else {return nil}
-//                                    let payingWallet = self.getPayingFeeWallet()
-//                                    let amount = feeAmount?.deposit
-//                                        .convertToBalance(decimals: payingWallet.token.decimals)
-//                                        .toString(maximumFractionDigits: 9)
-//
-//                                    return NSMutableAttributedString()
-//                                        .text(amount + " " + payingWallet.token.symbol + " ", size: 15, color: .textBlack)
-//                                        .text("(\(L10n.deposit))", size: 15, color: .textSecondary)
-//                                }
-//                                .drive(depositLabel.rx.attributedText)
-//                                .disposed(by: disposeBag)
-//
-//                            feesDriver
-//                                .map {$0?.deposit ?? 0}
-//                                .map {$0 == 0}
-//                                .drive(depositLabel.rx.isHidden)
-//                                .disposed(by: disposeBag)
-//                        }
-
                     // account creation fee
                     UILabel(
                         text: "0.02 SOL (BTC Account Creation)",
@@ -166,36 +143,37 @@ extension TransactionDetail {
                         numberOfLines: 2,
                         textAlignment: .right
                     )
-                        .setup { accountCreationLabel in
-                            feesDriver
-                                .map { [weak self] feeAmount -> NSAttributedString? in
-                                    guard let self = self else { return nil }
-                                    let payingWallet = self.getPayingFeeWallet()
-                                    let amount = feeAmount?.accountBalances
-                                        .convertToBalance(decimals: payingWallet.token.decimals)
+                    .setup { accountCreationLabel in
+                        feesDriver
+                            .map { [weak self] feeAmount -> NSAttributedString? in
+                                guard let self = self else { return nil }
+                                let payingWallet = self.getPayingFeeWallet()
+                                let amount = feeAmount?.accountBalances
+                                    .convertToBalance(decimals: payingWallet.token.decimals)
 
-                                    let createdWalletSymbol = self.viewModel.getCreatedAccountSymbol()
+                                let createdWalletSymbol = self.viewModel.getCreatedAccountSymbol()
 
-                                    return self.getAttributedString(
-                                        amount: amount,
-                                        symbol: payingWallet.token.symbol,
-                                        withFiatValue: false
-                                    )
-                                        .text(
-                                            " (\(L10n.accountCreation(createdWalletSymbol ?? L10n.unknownToken)))",
-                                            size: 15,
-                                            color: .textSecondary
-                                        )
-                                }
-                                .drive(accountCreationLabel.rx.attributedText)
-                                .disposed(by: disposeBag)
+                                return self.getAttributedString(
+                                    amount: amount,
+                                    symbol: payingWallet.token.symbol,
+                                    mint: payingWallet.token.address,
+                                    withFiatValue: false
+                                )
+                                .text(
+                                    " (\(L10n.accountCreation(createdWalletSymbol ?? L10n.unknownToken)))",
+                                    size: 15,
+                                    color: .textSecondary
+                                )
+                            }
+                            .drive(accountCreationLabel.rx.attributedText)
+                            .disposed(by: disposeBag)
 
-                            feesDriver
-                                .map { $0?.accountBalances ?? 0 }
-                                .map { $0 == 0 }
-                                .drive(accountCreationLabel.rx.isHidden)
-                                .disposed(by: disposeBag)
-                        }
+                        feesDriver
+                            .map { $0?.accountBalances ?? 0 }
+                            .map { $0 == 0 }
+                            .drive(accountCreationLabel.rx.isHidden)
+                            .disposed(by: disposeBag)
+                    }
 
                     // transfer fee
                     BEHStack(spacing: 4) {
@@ -212,10 +190,12 @@ extension TransactionDetail {
                                             return self.getAttributedString(
                                                 amount: amount,
                                                 symbol: payingWallet.token.symbol,
+                                                mint: payingWallet.token.address,
                                                 withFiatValue: false
                                             )
-                                                .text(" (\(L10n.transferFee))", size: 15, color: .textSecondary)
-                                        } else {
+                                            .text(" (\(L10n.transferFee))", size: 15, color: .textSecondary)
+                                        }
+                                        else {
                                             return NSMutableAttributedString()
                                                 .text(L10n.free, size: 15, weight: .semibold)
                                                 .text(" (\(L10n.paidByKeyApp))", size: 15, color: .h34c759)
@@ -249,14 +229,15 @@ extension TransactionDetail {
                                         let payingWallet = self.getPayingFeeWallet()
                                         let totalFee =
                                             ((feeAmount?.transaction ?? 0) + (feeAmount?.accountBalances ?? 0))
-                                            .convertToBalance(decimals: payingWallet.token.decimals)
+                                                .convertToBalance(decimals: payingWallet.token.decimals)
 
                                         return self.getAttributedString(
                                             amount: totalFee,
                                             symbol: payingWallet.token.symbol,
+                                            mint: payingWallet.token.address,
                                             withFiatValue: false
                                         )
-                                            .text(" (\(L10n.totalFee))", size: 15, color: .textSecondary)
+                                        .text(" (\(L10n.totalFee))", size: 15, color: .textSecondary)
                                     }
                                     .drive(totalFeeLabel.rx.attributedText)
                                     .disposed(by: disposeBag)
@@ -285,7 +266,8 @@ extension TransactionDetail {
                                 if amount > 0 {
                                     return self.getAttributedString(
                                         amount: amount,
-                                        symbol: transaction?.symbol
+                                        symbol: transaction?.symbol,
+                                        mint: transaction?.mintAddress
                                     )
                                 }
 
@@ -302,7 +284,8 @@ extension TransactionDetail {
                                         let totalAmount = fees + amount
                                         return self.getAttributedString(
                                             amount: totalAmount,
-                                            symbol: payingWallet.token.symbol
+                                            symbol: payingWallet.token.symbol,
+                                            mint: payingWallet.token.address
                                         )
                                     }
 
@@ -311,7 +294,8 @@ extension TransactionDetail {
                                         // amount spent
                                         let attrStr = self.getAttributedString(
                                             amount: amount,
-                                            symbol: transaction?.symbol
+                                            symbol: transaction?.symbol,
+                                            mint: transaction?.mintAddress
                                         )
 
                                         // fee (if exists)
@@ -321,7 +305,8 @@ extension TransactionDetail {
                                             attrStr.append(
                                                 self.getAttributedString(
                                                     amount: fees,
-                                                    symbol: payingWallet.token.symbol
+                                                    symbol: payingWallet.token.symbol,
+                                                    mint: payingWallet.token.address
                                                 )
                                             )
                                         }
@@ -337,15 +322,18 @@ extension TransactionDetail {
             }
         }
 
-        private func getAttributedString(amount: Double?, symbol: String?,
-                                         withFiatValue: Bool = true) -> NSMutableAttributedString
-        {
+        private func getAttributedString(
+            amount: Double?,
+            symbol: String?,
+            mint: String?,
+            withFiatValue: Bool = true
+        ) -> NSMutableAttributedString {
             let attStr = NSMutableAttributedString()
                 .text(amount.orZero.toString(maximumFractionDigits: 9) + " " + symbol, size: 15, color: .textBlack)
             if withFiatValue {
                 attStr.text(" ")
                     .text(
-                        "(~\(Defaults.fiat.symbol)\(viewModel.getAmountInCurrentFiat(amountInToken: amount, symbol: symbol)?.toString(maximumFractionDigits: 2) ?? "0"))",
+                        "(~\(Defaults.fiat.symbol)\(viewModel.getAmountInCurrentFiat(amountInToken: amount, mint: mint)?.toString(maximumFractionDigits: 2) ?? "0"))",
                         size: 15,
                         color: .textSecondary
                     )

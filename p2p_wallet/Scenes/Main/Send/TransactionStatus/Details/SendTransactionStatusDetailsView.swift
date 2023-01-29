@@ -22,7 +22,7 @@ struct SendTransactionStatusDetailsView: View {
                         .foregroundColor(Color(Asset.Colors.night.color))
 
                     if let fee = viewModel.feeInfo {
-                        Text(L10n.theFeeWasReservedSoYouWouldnTPayItAgainTheNextTimeYouCreatedATransactionOfTheSameType(fee))
+                        Text(fee)
                             .apply(style: .text3)
                             .foregroundColor(Color(Asset.Colors.night.color))
                             .padding(.all, 20)

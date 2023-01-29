@@ -15,22 +15,25 @@ final class SwapCoordinator: Coordinator<SwapCoordinator.Result> {
     private let navigationController: UINavigationController
     private let initialWallet: Wallet?
     private let analyticsManager: AnalyticsManager
+    private let hidesBottomBarWhenPushed: Bool
 
     private let subject = PassthroughSubject<SwapCoordinator.Result, Never>()
 
     init(
         navigationController: UINavigationController,
         initialWallet: Wallet?,
-        analyticsManager: AnalyticsManager = Resolver.resolve()
+        analyticsManager: AnalyticsManager = Resolver.resolve(),
+        hidesBottomBarWhenPushed: Bool = true
     ) {
         self.navigationController = navigationController
         self.initialWallet = initialWallet
         self.analyticsManager = analyticsManager
+        self.hidesBottomBarWhenPushed = hidesBottomBarWhenPushed
     }
 
     override func start() -> AnyPublisher<SwapCoordinator.Result, Never> {
         let viewModel = OrcaSwapV2.ViewModel(initialWallet: initialWallet)
-        let view = OrcaSwapV2.ViewController(viewModel: viewModel)
+        let view = OrcaSwapV2.ViewController(viewModel: viewModel, hidesBottomBarWhenPushed: hidesBottomBarWhenPushed)
         analyticsManager.log(event: AmplitudeEvent.mainScreenSwapOpen)
 
         view.doneHandler = { [weak self] in

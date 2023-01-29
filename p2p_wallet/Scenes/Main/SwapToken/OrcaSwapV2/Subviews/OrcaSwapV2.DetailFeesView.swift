@@ -12,7 +12,7 @@ import UIKit
 
 protocol DetailFeesViewModelType {
     var feesDriver: Driver<Loadable<[PayingFee]>> { get }
-    func getPrice(symbol: String) -> Double?
+    func getPrice(mint: String) -> Double?
 }
 
 extension OrcaSwapV2 {
@@ -81,7 +81,7 @@ extension OrcaSwapV2 {
 
         func formatAmount(fee: PayingFee, withFiat: Bool) -> NSAttributedString {
             let amount = fee.lamports.convertToBalance(decimals: fee.token.decimals)
-            let price = viewModel.getPrice(symbol: fee.token.symbol) ?? 0
+            let price = viewModel.getPrice(mint: fee.token.address) ?? 0
             let amountInFiat = amount * price
 
             let attributedString = NSMutableAttributedString()
@@ -103,20 +103,20 @@ extension OrcaSwapV2 {
         }
 
         func formatTotalFees(fees: [PayingFee]) -> NSAttributedString {
-            let totalFeesSymbol = fees.first(where: { $0.type == .transactionFee })?.token.symbol
-            if let totalFeesSymbol = totalFeesSymbol {
-                let totalFees = fees.filter { $0.token.symbol == totalFeesSymbol && $0.type != .liquidityProviderFee }
+            let feeToken = fees.first(where: { $0.type == .transactionFee })?.token
+            if let feeToken = feeToken {
+                let totalFees = fees.filter { $0.token.address == feeToken.address && $0.type != .liquidityProviderFee }
                 let decimals = totalFees.first?.token.decimals ?? 0
                 let amount =
                     totalFees
                         .reduce(UInt64(0)) { $0 + $1.lamports }
                         .convertToBalance(decimals: decimals)
-                let price = viewModel.getPrice(symbol: totalFeesSymbol) ?? 0
+                let price = viewModel.getPrice(mint: feeToken.address) ?? 0
                 let amountInFiat = amount * price
 
                 let attributedString = NSMutableAttributedString()
                     .text(
-                        amount.toString(maximumFractionDigits: Int(decimals)) + " \(totalFeesSymbol)",
+                        amount.toString(maximumFractionDigits: Int(decimals)) + " \(feeToken.symbol)",
                         size: 15,
                         weight: .semibold,
                         color: .textBlack

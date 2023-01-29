@@ -87,6 +87,9 @@ extension DefaultsKeys {
     var isSolendTutorialShown: DefaultsKey<Bool> { .init(#function, defaultValue: false) }
     var isEarnBannerClosed: DefaultsKey<Bool> { .init(#function, defaultValue: false) }
 
+    // Send
+    var isTokenInputTypeChosen: DefaultsKey<Bool> { .init(#function, defaultValue: false) }
+
     var solanaNegativeStatusFrequency: DefaultsKey<String?> {
         .init(
             #function,
@@ -106,5 +109,29 @@ extension DefaultsKeys {
             #function,
             defaultValue: RemoteConfig.remoteConfig().solanaNegativeStatusTimeFrequency
         )
+    }
+
+    // Sell/RampOff
+    var isSellAvailable: DefaultsKey<Bool?> {
+        .init(#function, defaultValue: nil)
+    }
+
+    var isSellInfoPresented: DefaultsKey<Bool> { .init(#function, defaultValue: false) }
+
+    var moonpayEnvironment: DefaultsKey<DefaultsKeys.MoonpayEnvironment> {
+        DefaultsKey(#function, defaultValue: .production)
+    }
+
+    var moonpayInfoShouldHide: DefaultsKey<Bool> {
+        .init(#function, defaultValue: false)
+    }
+}
+
+// MARK: - Moonpay Environment
+
+extension DefaultsKeys {
+    enum MoonpayEnvironment: String, DefaultsSerializable {
+        case production
+        case sandbox
     }
 }

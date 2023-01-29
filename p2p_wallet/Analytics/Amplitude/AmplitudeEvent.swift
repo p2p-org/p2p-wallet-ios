@@ -72,7 +72,7 @@ enum AmplitudeEvent: AnalyticsEvent {
 
     // MARK: - Main
 
-    case mainScreenWalletsOpen
+    case mainScreenWalletsOpen(isSellEnabled: Bool)
     case mainScreenBuyOpen
     case mainCopyAddress
     case mainScreenSendOpen
@@ -80,6 +80,7 @@ enum AmplitudeEvent: AnalyticsEvent {
     case mainScreenReceiveOpen
     case mainScreenTokenDetailsOpen(tokenTicker: String)
     case mainScreenBuyToken(tokenName: String)
+    case mainSwap(isSellEnabled: Bool)
 
     // token_details
     case tokenDetailsOpen(tokenTicker: String)
@@ -239,7 +240,7 @@ enum AmplitudeEvent: AnalyticsEvent {
 
     // General
     case appOpened(sourceOpen: String)
-    case actionButtonClick
+    case actionButtonClick(isSellEnabled: Bool)
 
     // Onboarding
     case restoreWalletButton
@@ -277,8 +278,20 @@ enum AmplitudeEvent: AnalyticsEvent {
     // MARK: - Seed
 
     case seedPhraseCopy
+
     // MARK: - User
 
     case userHasPositiveBalance(positive: Bool)
     case userAggregateBalance(balance: Double)
+
+    // MARK: - Sell
+
+    case sellClicked(source: String)
+    case sellClickedServerError
+    case sellClickedSorryMinAmount
+    case sellFinishSend
+    case sellAmount
+    case sellAmountNext
+    case sellMoonpay
+    case historySendClicked(status: String)
 }

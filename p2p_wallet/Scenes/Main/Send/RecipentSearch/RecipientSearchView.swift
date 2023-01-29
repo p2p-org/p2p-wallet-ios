@@ -10,7 +10,7 @@ import SwiftUI
 struct RecipientSearchView: View {
     @ObservedObject var viewModel: RecipientSearchViewModel
     @SwiftUI.Environment(\.scenePhase) var scenePhase
-    
+
     var body: some View {
         switch viewModel.loadingState {
         case .notRequested:
@@ -19,18 +19,9 @@ struct RecipientSearchView: View {
             ProgressView()
         case .loaded:
             loadedView
-        case .error(let error):
-            VStack {
-                #if !RELEASE
-                Text(error)
-                    .foregroundColor(.red)
-                #endif
-                Text("\(L10n.somethingWentWrong). \(L10n.tapToTryAgain)?")
-                    .onTapGesture {
-                        Task {
-                            await viewModel.load()
-                        }
-                    }
+        case .error(_):
+            RecipientErrorView {
+                Task { await viewModel.load() }
             }
         }
     }
@@ -65,7 +56,7 @@ struct RecipientSearchView: View {
                                 // Ok case
                                 if recipients.isEmpty {
                                     // Not found
-                                    RecipientNotFoundView()
+                                    SendNotFoundView(text: L10n.AddressNotFound.tryAnotherOne)
                                         .padding(.top, 32)
                                 } else {
                                     // With result
@@ -84,10 +75,20 @@ struct RecipientSearchView: View {
                                     reason: L10n.accountCreationForThisAddressIsNotPossibleDueToInsufficientFunds
                                 )
                             case let .selfSendingError(recipient):
-                                disabledAndReason(
-                                    recipient,
-                                    reason: L10n.youCannotSendTokensToYourself
-                                )
+                                switch recipient.category {
+                                case let .solanaTokenAddress(_, token):
+                                    disabledAndReason(
+                                        recipient,
+                                        reason: L10n.youCannotSendTokensToYourself,
+                                        subtitle: L10n.yourAddress(token.symbol)
+                                    )
+                                default:
+                                    disabledAndReason(
+                                        recipient,
+                                        reason: L10n.youCannotSendTokensToYourself,
+                                        subtitle: L10n.yourAddress("").replacingOccurrences(of: "  ", with: " ") // Empty param creates 2 spaces
+                                    )
+                                }
                             case .nameServiceError:
                                 tryLater(title: L10n.solanaNameServiceDoesnTRespond)
                                     .padding(.top, 38)
@@ -169,7 +170,7 @@ struct RecipientSearchView: View {
         .foregroundColor(Color(Asset.Colors.night.color))
     }
 
-    func disabledAndReason(_ recipient: Recipient, reason: String) -> some View {
+    func disabledAndReason(_ recipient: Recipient, reason: String, subtitle: String? = nil) -> some View {
         VStack(alignment: .leading, spacing: 32) {
             HStack {
                 Text(L10n.hereSWhatWeFound)
@@ -178,7 +179,7 @@ struct RecipientSearchView: View {
                 Spacer()
             }
 
-            RecipientCell(recipient: recipient)
+            RecipientCell(recipient: recipient, subtitle: subtitle)
                 .disabled(true)
 
             Text(reason)

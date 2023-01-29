@@ -7,25 +7,34 @@ final class SendInputCoordinator: Coordinator<SendResult> {
     private let navigationController: UINavigationController
     private let recipient: Recipient
     private let preChosenWallet: Wallet?
+    private let preChosenAmount: Double?
     private var subject = PassthroughSubject<SendResult, Never>()
     private let source: SendSource
+    private let pushedWithoutRecipientSearchView: Bool
+    private let allowSwitchingMainAmountType: Bool
 
     init(
         recipient: Recipient,
         preChosenWallet: Wallet?,
+        preChosenAmount: Double?,
         navigationController: UINavigationController,
-        source: SendSource
+        source: SendSource,
+        pushedWithoutRecipientSearchView: Bool = false,
+        allowSwitchingMainAmountType: Bool
     ) {
         self.recipient = recipient
         self.preChosenWallet = preChosenWallet
+        self.preChosenAmount = preChosenAmount
         self.navigationController = navigationController
         self.source = source
+        self.pushedWithoutRecipientSearchView = pushedWithoutRecipientSearchView
+        self.allowSwitchingMainAmountType = allowSwitchingMainAmountType
     }
 
     override func start() -> AnyPublisher<SendResult, Never> {
-        let viewModel = SendInputViewModel(recipient: recipient, preChosenWallet: preChosenWallet, source: source)
+        let viewModel = SendInputViewModel(recipient: recipient, preChosenWallet: preChosenWallet, preChosenAmount: preChosenAmount, source: source, allowSwitchingMainAmountType: allowSwitchingMainAmountType)
         let view = SendInputView(viewModel: viewModel)
-        let controller = KeyboardAvoidingViewController(rootView: view)
+        let controller = KeyboardAvoidingViewController(rootView: view, navigationBarVisibility: .visible)
 
         navigationController.pushViewController(controller, animated: true)
         setTitle(to: controller)
@@ -33,6 +42,14 @@ final class SendInputCoordinator: Coordinator<SendResult> {
         controller.onClose = { [weak self] in
             self?.subject.send(.cancelled)
         }
+
+        controller.viewWillAppearPublisher.sink { _ in
+            DispatchQueue.main.async {
+                controller.navigationItem.largeTitleDisplayMode = .always
+                controller.navigationController?.navigationBar.prefersLargeTitles = true
+                controller.navigationController?.navigationBar.sizeToFit()
+            }
+        }.store(in: &subscriptions)
 
         viewModel.tokenViewModel.changeTokenPressed
             .sink { [weak self] in
@@ -62,6 +79,10 @@ final class SendInputCoordinator: Coordinator<SendResult> {
                 self?.subject.send(.sent(model))
             }
             .store(in: &subscriptions)
+        
+        if pushedWithoutRecipientSearchView {
+            Task { await viewModel.load() }
+        }
 
         return subject.prefix(1).eraseToAnyPublisher()
     }
@@ -69,14 +90,11 @@ final class SendInputCoordinator: Coordinator<SendResult> {
     private func setTitle(to vc: UIViewController) {
         switch recipient.category {
         case let .username(name, domain):
-            if domain.isEmpty {
-                vc.title = "@\(name)"
-            } else {
-                vc.title = "@\([name, domain].joined(separator: "."))"
-            }
+            vc.title = RecipientFormatter.username(name: name, domain: domain)
         default:
-            vc.title = "\(recipient.address.prefix(6))...\(recipient.address.suffix(6))"
+            vc.title = RecipientFormatter.format(destination: recipient.address)
         }
+
         vc.navigationItem.largeTitleDisplayMode = .always
         vc.navigationController?.navigationBar.prefersLargeTitles = true
     }
@@ -107,11 +125,12 @@ final class SendInputCoordinator: Coordinator<SendResult> {
         coordinate(to: SendInputFeePromptCoordinator(
             parentController: vc,
             feeToken: feeToken,
+            feeInToken: viewModel.currentState.feeInToken,
             availableFeeTokens: feeWallets
         ))
-        .sink(receiveValue: { feeToken in
+        .sink(receiveValue: { [weak viewModel] feeToken in
             guard let feeToken = feeToken else { return }
-            viewModel.changeFeeToken.send(feeToken)
+            viewModel?.changeFeeToken.send(feeToken)
         })
         .store(in: &subscriptions)
     }
@@ -121,10 +140,10 @@ final class SendInputCoordinator: Coordinator<SendResult> {
             parentController: vc,
             sendInputViewModel: viewModel
         ))
-        .sink { result in
+        .sink { [weak self] result in
             switch result {
             case let .redirectToFeePrompt(tokens):
-                self.openFeePropmt(from: vc, viewModel: viewModel, feeWallets: tokens)
+                self?.openFeePropmt(from: vc, viewModel: viewModel, feeWallets: tokens)
             }
         }
         .store(in: &subscriptions)
