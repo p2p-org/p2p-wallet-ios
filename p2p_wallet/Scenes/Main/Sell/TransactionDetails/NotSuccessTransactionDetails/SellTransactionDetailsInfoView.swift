@@ -18,6 +18,7 @@ struct SellTransactionDetailsInfoView: View {
             case let .help(text):
                 Text(text)
                     .onTapGesture(perform: helpAction)
+                    .fixedSize(horizontal: false, vertical: true)
             }
         }
         .padding(12)
