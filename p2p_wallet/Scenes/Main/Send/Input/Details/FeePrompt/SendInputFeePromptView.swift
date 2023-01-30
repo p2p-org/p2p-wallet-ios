@@ -17,7 +17,7 @@ struct SendInputFeePromptView: View {
                 .edgesIgnoringSafeArea(.all)
 
             VStack(alignment: .center, spacing: 0) {
-                Image(uiImage: .sendFee)
+                Image(uiImage: .fee)
                     .resizable()
                     .aspectRatio(contentMode: .fit)
                     .frame(maxWidth: 300)

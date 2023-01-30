@@ -45,7 +45,7 @@ class HomeViewModel: ObservableObject {
             case .initializing, .loading:
                 return (State.pending, nil)
             case .loaded, .error:
-                let fiatAmount = data?.reduce(0) { $0 + $1.amountInCurrentFiat } ?? 0
+                let fiatAmount = data?.totalAmountInCurrentFiat ?? 0
                 return (fiatAmount > 0 ? State.withTokens : State.empty, fiatAmount)
             }
         }

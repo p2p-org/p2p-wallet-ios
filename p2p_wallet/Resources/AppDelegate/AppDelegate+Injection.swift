@@ -23,6 +23,8 @@ import SolanaSwift
 import Solend
 import SwiftyUserDefaults
 import TransactionParser
+import Moonpay
+import Sell
 
 extension Resolver: ResolverRegistering {
     public static func registerAllServices() {
@@ -42,7 +44,7 @@ extension Resolver: ResolverRegistering {
         // Application warmup manager
         register {
             WarmupManager(processes: [
-                RemoteConfigWarmupProcess(),
+                RemoteConfigWarmupProcess()
             ])
         }.scope(.application)
 
@@ -101,9 +103,26 @@ extension Resolver: ResolverRegistering {
         }.scope(.application)
 
         // AnalyticsManager
+        // Old
         register { AnalyticsManagerImpl(apiKey: .secretConfig("AMPLITUDE_API_KEY")!) }
             .implements(AnalyticsManager.self)
             .scope(.application)
+        // New
+        register { AnalyticsServiceImpl(providers: [
+            AmplitudeAnalyticsProvider(
+                apiKey: .secretConfig("AMPLITUDE_API_KEY")!,
+                userId: nil
+            ),
+            AppsFlyerAnalyticsProvider(
+                appsFlyerDevKey: String.secretConfig("APPSFLYER_DEV_KEY")!,
+                appleAppID: String.secretConfig("APPSFLYER_APP_ID")!
+            ),
+            FirebaseAnalyticsProvider()
+        ])
+        }
+        .implements(AnalyticsService.self)
+        .scope(.application)
+        
 
         // NotificationManager
         register(Reachability.self) {
@@ -328,6 +347,7 @@ extension Resolver: ResolverRegistering {
         // PricesService
         register { PricesService() }
             .implements(PricesServiceType.self)
+            .implements(SellPriceProvider.self)
             .scope(.session)
 
         // WalletsViewModel
@@ -420,12 +440,62 @@ extension Resolver: ResolverRegistering {
         register { AuthServiceImpl() }
             .implements(AuthService.self)
             .scope(.session)
+        
+        // Sell
+        register { SellTransactionsRepositoryImpl() }
+            .implements(SellTransactionsRepository.self)
+            .scope(.session)
+        
+        register {
+            MoonpaySellDataServiceProvider(moonpayAPI: resolve())
+        }
+        .implements((any SellDataServiceProvider).self)
+        .scope(.session)
+        
+        register {
+            MoonpaySellActionServiceProvider(moonpayAPI: resolve())
+        }
+        .implements((any SellActionServiceProvider).self)
+        .scope(.session)
+        
+        register {
+            MoonpaySellDataService(
+                userId: Resolver.resolve(UserWalletManager.self).wallet?.moonpayExternalClientId ?? "",
+                provider: resolve(),
+                priceProvider: resolve(),
+                sellTransactionsRepository: resolve()
+            )
+        }
+            .implements((any SellDataService).self)
+            .scope(.session)
+
+        register {
+            let endpoint: String
+            let apiKey: String
+            switch Defaults.moonpayEnvironment {
+            case .production:
+                endpoint = .secretConfig("MOONPAY_PRODUCTION_SELL_ENDPOINT")!
+                apiKey = .secretConfig("MOONPAY_PRODUCTION_API_KEY")!
+            case .sandbox:
+                endpoint = .secretConfig("MOONPAY_STAGING_SELL_ENDPOINT")!
+                apiKey = .secretConfig("MOONPAY_STAGING_API_KEY")!
+            }
+
+            return MoonpaySellActionService(
+                provider: resolve(),
+                refundWalletAddress: Resolver.resolve(UserWalletManager.self).wallet?.account.publicKey.base58EncodedString ?? "",
+                endpoint: endpoint,
+                apiKey: apiKey
+            )
+        }
+            .implements((any SellActionService).self)
+            .scope(.session)
     }
 
     /// Shared scope: share between screens
     private static func registerForSharedScope() {
         // BuyServices
-        register { Moonpay.Provider(api: Moonpay.API.fromEnvironment()) }
+        register { Moonpay.Provider(api: Moonpay.API.fromEnvironment(), serverSideAPI: Moonpay.API.fromEnvironment(kind: .server)) }
             .scope(.shared)
 
         register { Buy.MoonpayBuyProcessingFactory() }
@@ -438,7 +508,7 @@ extension Resolver: ResolverRegistering {
 
         register { MoonpayExchange(provider: resolve()) }
             .implements(BuyExchangeService.self)
-            .scope(.session)
+            .scope(.shared)
 
         // Buy
         register {
@@ -449,7 +519,7 @@ extension Resolver: ResolverRegistering {
             )
         }
         .implements(RecipientSearchService.self)
-        .scope(.session)
+        .scope(.shared)
 
         // Banner
         register {

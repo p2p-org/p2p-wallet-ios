@@ -84,7 +84,7 @@ final class SendTransactionDetailViewModel: BaseViewModel, ObservableObject {
 
         let amountFeeInToken = Double(state.feeInToken.transaction) / pow(10, Double(state.tokenFee.decimals))
         let amountFeeInFiat: Double = amountFeeInToken *
-            (pricesService.currentPrice(for: state.tokenFee.symbol)?.value ?? 0)
+            (pricesService.currentPrice(mint: state.tokenFee.address)?.value ?? 0)
 
         let mainText: String
         let secondaryText: String?
@@ -118,7 +118,7 @@ final class SendTransactionDetailViewModel: BaseViewModel, ObservableObject {
 
         let amountFeeInToken = Double(state.feeInToken.accountBalances) / pow(10, Double(state.tokenFee.decimals))
         let amountFeeInFiat: Double = amountFeeInToken *
-            (pricesService.currentPrice(for: state.tokenFee.symbol)?.value ?? 0)
+            (pricesService.currentPrice(mint: state.tokenFee.address)?.value ?? 0)
 
         return CellModel(
             type: .accountCreationFee,
@@ -158,7 +158,7 @@ final class SendTransactionDetailViewModel: BaseViewModel, ObservableObject {
 
     private func convert(_ input: Lamports, _ token: Token) -> (String, String?) {
         let amountInToken: Double = input.convertToBalance(decimals: token.decimals)
-        let amountInFiat: Double = amountInToken * (pricesService.currentPrice(for: token.symbol)?.value ?? 0)
+        let amountInFiat: Double = amountInToken * (pricesService.currentPrice(mint: token.address)?.value ?? 0)
 
         return (
             amountInToken.tokenAmountFormattedString(symbol: token.symbol, maximumFractionDigits: Int(token.decimals), roundingMode: .down),

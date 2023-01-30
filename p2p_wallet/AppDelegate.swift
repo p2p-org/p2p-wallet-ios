@@ -13,6 +13,7 @@ import Firebase
 import Intercom
 import KeyAppKitLogger
 import KeyAppUI
+import Lokalise
 import Resolver
 import Sentry
 import SolanaSwift
@@ -50,23 +51,26 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         FirebaseApp.configure()
 
         setupLoggers()
-        setupAppsFlyer()
         setupDefaultCurrency()
 
-        // Sentry
         #if !DEBUG
-            SentrySDK.start { options in
-                options
-                    .dsn = .secretConfig("SENTRY_DSN")
-                options.tracesSampleRate = 1.0
-//            #if DEBUG
-//                options.debug = true
-//                options.tracesSampleRate = 0.0
-//            #endif
-                options.enableNetworkTracking = true
-                options.enableOutOfMemoryTracking = true
-            }
+        SentrySDK.start { options in
+            options.dsn = .secretConfig("SENTRY_DSN")
+            options.tracesSampleRate = 1.0
+            options.enableNetworkTracking = true
+            options.enableOutOfMemoryTracking = true
+        }
         #endif
+
+        AppsFlyerLib.shared().appsFlyerDevKey = String.secretConfig("APPSFLYER_DEV_KEY")!
+        AppsFlyerLib.shared().appleAppID = String.secretConfig("APPSFLYER_APP_ID")!
+        AppsFlyerLib.shared().waitForATTUserAuthorization(timeoutInterval: 60)
+        
+        Lokalise.shared.setProjectID(
+            String.secretConfig("LOKALISE_PROJECT_ID")!,
+            token: String.secretConfig("LOKALISE_TOKEN")!
+        )
+        Lokalise.shared.swizzleMainBundle()
 
         // set app coordinator
         appCoordinator = AppCoordinator()
@@ -161,12 +165,15 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
     }
 
     func applicationDidBecomeActive(_ application: UIApplication) {
-        #if DEBUG
-            AppsFlyerLib.shared().isDebug = true
-            AppsFlyerLib.shared().useUninstallSandbox = true
-        #endif
-        AppsFlyerLib.shared().waitForATTUserAuthorization(timeoutInterval: 60)
-        AppsFlyerLib.shared().start()
+        AppsFlyerLib.shared().start(completionHandler: { dictionary, error in
+            if error != nil {
+                print(error ?? "")
+                return
+            } else {
+                print(dictionary ?? "")
+                return
+            }
+        })
         if #available(iOS 14, *) {
             ATTrackingManager.requestTrackingAuthorization { status in
                 switch status {
@@ -199,14 +206,6 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
             }
         }
         proxyAppDelegate.applicationDidBecomeActive(application)
-    }
-
-    // MARK: - AppsFlyer
-
-    func setupAppsFlyer() {
-        AppsFlyerLib.shared().appsFlyerDevKey = String.secretConfig("APPSFLYER_DEV_KEY") ?? ""
-        AppsFlyerLib.shared().appleAppID = String.secretConfig("APPSFLYER_APP_ID") ?? ""
-        AppsFlyerLib.shared().deepLinkDelegate = self
     }
 
     func setupLoggers() {
@@ -249,8 +248,4 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         // Migrate all users to default currency
         Defaults.fiat = .usd
     }
-}
-
-extension AppDelegate: DeepLinkDelegate {
-    func didResolveDeepLink(_: DeepLinkResult) {}
 }

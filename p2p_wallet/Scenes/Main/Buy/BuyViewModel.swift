@@ -45,6 +45,7 @@ final class BuyViewModel: ObservableObject {
     @Injected var exchangeService: BuyExchangeService
     @Injected var walletsRepository: WalletsRepository
     @Injected private var analyticsManager: AnalyticsManager
+    @Injected private var analyticsService: AnalyticsService
     @Injected private var pricesService: PricesServiceType
 
     // Defaults
@@ -53,7 +54,7 @@ final class BuyViewModel: ObservableObject {
     @SwiftyUserDefault(keyPath: \.buyMinPrices, options: .cached)
     var buyMinPrices: [String: [String: Double]]
 
-    private var tokenPrices: [Fiat: [String: Double?]] = [:]
+    private var tokenPrices: [Fiat: [TokenPriceKey: Double?]] = [:]
 
     // Defaults
     private static let defaultMinAmount = Double(40)
@@ -174,7 +175,8 @@ final class BuyViewModel: ObservableObject {
                     try await pricesService.getCurrentPrices(
                         tokens: BuyViewModel.tokens,
                         toFiat: fiat
-                    ).mapValues { $0.value }
+                    )
+                    .mapValues { $0.value }
             }
 
             let buyBankEnabled = available(.buyBankTransferEnabled)
@@ -286,7 +288,7 @@ final class BuyViewModel: ObservableObject {
             tokens.map {
                 TokenCellViewItem(
                     token: $0,
-                    amount: tokenPrices[fiat]?[$0.symbol.uppercased()] ?? 0,
+                    amount: tokenPrices[fiat]?[.init(token: token)] ?? 0,
                     fiat: fiat
                 )
             }
@@ -319,7 +321,7 @@ final class BuyViewModel: ObservableObject {
                 typeBankTransfer = "sepa_bank_transfer"
             }
         }
-        analyticsManager.log(event: AmplitudeEvent.buyButtonPressed(
+        analyticsService.logEvent(.buyButtonPressed(
             sumCurrency: fiatAmount,
             sumCoin: tokenAmount,
             currency: from.name,
@@ -347,64 +349,64 @@ final class BuyViewModel: ObservableObject {
             form,
             $selectedPayment.removeDuplicates()
         )
-            .debounce(for: .seconds(0.5), scheduler: DispatchQueue.main)
-            .map { form, paymentType -> (BuyCurrencyType, BuyCurrencyType, Double, PaymentType) in
-                let (fiat, token, fAmount, tAmount) = form
-                let from: BuyCurrencyType
-                let to: BuyCurrencyType
-                let amount: Double
-                if self.isEditingFiat {
-                    from = fiat
-                    to = token
-                    amount = fAmount
-                } else {
-                    from = token
-                    to = fiat
-                    amount = tAmount
-                }
-                let newPayment = (self.isGBPBankTransferEnabled && paymentType == .bank) ?
-                    PaymentType.gbpBank :
-                    paymentType
-                return (from, to, amount, newPayment)
+        .debounce(for: .seconds(0.5), scheduler: DispatchQueue.main)
+        .map { form, paymentType -> (BuyCurrencyType, BuyCurrencyType, Double, PaymentType) in
+            let (fiat, token, fAmount, tAmount) = form
+            let from: BuyCurrencyType
+            let to: BuyCurrencyType
+            let amount: Double
+            if self.isEditingFiat {
+                from = fiat
+                to = token
+                amount = fAmount
+            } else {
+                from = token
+                to = fiat
+                amount = tAmount
             }
-            .removeDuplicates(by: { aLeft, aRight in
-                let currencies = aLeft.0.isEqualTo(aRight.0) && aLeft.1.isEqualTo(aRight.1)
-                let amounts = aLeft.2 == aRight.2 && aLeft.3 == aRight.3
-                return currencies && amounts
-            }).handleEvents(receiveOutput: { [weak self] _ in
-                DispatchQueue.main.async {
-                    self?.isLoading = true
-                }
-            }).map { from, to, amount, paymentType -> AnyPublisher<Buy.ExchangeOutput?, Never> in
-                self.exchange(
-                    from: from,
-                    to: to,
-                    amount: amount,
-                    paymentType: paymentType
-                )
-                    .map(Optional.init)
-                    .replaceError(with: nil)
-                    .eraseToAnyPublisher()
+            let newPayment = (self.isGBPBankTransferEnabled && paymentType == .bank) ?
+                PaymentType.gbpBank :
+                paymentType
+            return (from, to, amount, newPayment)
+        }
+        .removeDuplicates(by: { aLeft, aRight in
+            let currencies = aLeft.0.isEqualTo(aRight.0) && aLeft.1.isEqualTo(aRight.1)
+            let amounts = aLeft.2 == aRight.2 && aLeft.3 == aRight.3
+            return currencies && amounts
+        }).handleEvents(receiveOutput: { [weak self] _ in
+            DispatchQueue.main.async {
+                self?.isLoading = true
             }
-            .subscribe(on: DispatchQueue.global())
-            .receive(on: DispatchQueue.main)
-            // Getting only last request
-            .switchToLatest()
-            .handleEvents(receiveOutput: { [weak self] output in
-                DispatchQueue.main.async {
-                    if output == nil {
-                        // removing calculated value on error
-                        if self?.isEditingFiat == true {
-                            self?.tokenAmount = "0".cryptoCurrencyFormat
-                        } else {
-                            self?.fiatAmount = "0".fiatFormat
-                        }
-                    }
-                    self?.isLoading = false
-                }
-            })
-            .compactMap { $0 }
+        }).map { from, to, amount, paymentType -> AnyPublisher<Buy.ExchangeOutput?, Never> in
+            self.exchange(
+                from: from,
+                to: to,
+                amount: amount,
+                paymentType: paymentType
+            )
+            .map(Optional.init)
+            .replaceError(with: nil)
             .eraseToAnyPublisher()
+        }
+        .subscribe(on: DispatchQueue.global())
+        .receive(on: DispatchQueue.main)
+        // Getting only last request
+        .switchToLatest()
+        .handleEvents(receiveOutput: { [weak self] output in
+            DispatchQueue.main.async {
+                if output == nil {
+                    // removing calculated value on error
+                    if self?.isEditingFiat == true {
+                        self?.tokenAmount = "0".cryptoCurrencyFormat
+                    } else {
+                        self?.fiatAmount = "0".fiatFormat
+                    }
+                }
+                self?.isLoading = false
+            }
+        })
+        .compactMap { $0 }
+        .eraseToAnyPublisher()
     }
 
     func exchange(

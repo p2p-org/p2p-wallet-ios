@@ -110,4 +110,28 @@ extension DefaultsKeys {
             defaultValue: RemoteConfig.remoteConfig().solanaNegativeStatusTimeFrequency
         )
     }
+
+    // Sell/RampOff
+    var isSellAvailable: DefaultsKey<Bool?> {
+        .init(#function, defaultValue: nil)
+    }
+
+    var isSellInfoPresented: DefaultsKey<Bool> { .init(#function, defaultValue: false) }
+
+    var moonpayEnvironment: DefaultsKey<DefaultsKeys.MoonpayEnvironment> {
+        DefaultsKey(#function, defaultValue: .production)
+    }
+
+    var moonpayInfoShouldHide: DefaultsKey<Bool> {
+        .init(#function, defaultValue: false)
+    }
+}
+
+// MARK: - Moonpay Environment
+
+extension DefaultsKeys {
+    enum MoonpayEnvironment: String, DefaultsSerializable {
+        case production
+        case sandbox
+    }
 }
