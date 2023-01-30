@@ -25,7 +25,7 @@ protocol TransactionDetailViewModelType: AnyObject {
     func getTransactionId() -> String?
     func getPayingFeeWallet() -> Wallet?
     func getCreatedAccountSymbol() -> String?
-    func getAmountInCurrentFiat(amountInToken: Double?, symbol: String?) -> Double?
+    func getAmountInCurrentFiat(amountInToken: Double?, mint: String?) -> Double?
 
     func navigate(to scene: TransactionDetail.NavigatableScene)
 
@@ -234,10 +234,10 @@ extension TransactionDetail.ViewModel: TransactionDetailViewModelType {
         return createdWallet
     }
 
-    func getAmountInCurrentFiat(amountInToken: Double?, symbol: String?) -> Double? {
+    func getAmountInCurrentFiat(amountInToken: Double?, mint: String?) -> Double? {
         guard let amountInToken = amountInToken,
-              let symbol = symbol,
-              let price = pricesService.currentPrice(for: symbol)?.value
+              let mint = mint,
+              let price = pricesService.currentPrice(mint: mint)?.value
         else {
             return nil
         }

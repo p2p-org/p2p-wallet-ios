@@ -22,6 +22,7 @@ class WalletGraphViewModel: BEListViewModel<PriceRecord> {
     }
 
     override func createRequest() -> Single<[PriceRecord]> {
-        pricesService.fetchHistoricalPrice(for: symbol, period: period)
+        .just([])
+        // pricesService.fetchHistoricalPrice(for: symbol, period: period)
     }
 }

@@ -5,14 +5,24 @@ import UIKit
 
 /// A view controller that embeds a SwiftUI view and controls Keyboard
 final class KeyboardAvoidingViewController<Content: View>: UIViewController {
+    enum NavigationBarVisibility {
+        case `default`
+        case hidden
+        case visible
+    }
+    
     private let rootView: Content
     private let hostingController: UIHostingController<Content>
+    private let navigationBarVisibility: NavigationBarVisibility
     
+    private var originalIsNavigationBarHidden: Bool?
+
     private let viewWillAppearSubject: PassthroughSubject<Bool, Never> = .init()
     public var viewWillAppearPublisher: AnyPublisher<Bool, Never> { viewWillAppearSubject.eraseToAnyPublisher() }
-
-    init(rootView: Content, ignoresKeyboard: Bool = false) {
+    
+    init(rootView: Content, ignoresKeyboard: Bool = false, navigationBarVisibility: NavigationBarVisibility = .default) {
         self.rootView = rootView
+        self.navigationBarVisibility = navigationBarVisibility
         hostingController = UIHostingController(rootView: rootView, ignoresKeyboard: ignoresKeyboard)
 
         super.init(nibName: nil, bundle: nil)
@@ -38,8 +48,16 @@ final class KeyboardAvoidingViewController<Content: View>: UIViewController {
     override func viewDidAppear(_ animated: Bool) {
         super.viewDidAppear(animated)
         openKeyboard()
-
         
+        originalIsNavigationBarHidden = navigationController?.isNavigationBarHidden
+        switch navigationBarVisibility {
+        case .default:
+            break
+        case .visible:
+            navigationController?.setNavigationBarHidden(false, animated: false)
+        case .hidden:
+            navigationController?.setNavigationBarHidden(true, animated: false)
+        }
     }
     
     override func viewWillAppear(_ animated: Bool) {
@@ -51,6 +69,15 @@ final class KeyboardAvoidingViewController<Content: View>: UIViewController {
     override func viewWillDisappear(_ animated: Bool) {
         super.viewWillDisappear(animated)
         hideKeyboard()
+        
+        switch navigationBarVisibility {
+        case .default:
+            break
+        default:
+            if let originalIsNavigationBarHidden {
+                navigationController?.setNavigationBarHidden(originalIsNavigationBarHidden, animated: false)
+            }
+        }
     }
 
     private func openKeyboard() {

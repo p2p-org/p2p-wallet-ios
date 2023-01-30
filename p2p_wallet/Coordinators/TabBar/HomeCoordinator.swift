@@ -19,6 +19,7 @@ enum HomeNavigation: Equatable {
     case receive(publicKey: PublicKey)
     case send
     case swap
+    case cashOut
     case earn
     case wallet(pubKey: String, tokenSymbol: String)
     case actions([WalletActionType])
@@ -38,6 +39,7 @@ final class HomeCoordinator: Coordinator<Void> {
     // MARK: - Properties
 
     private let navigationController: UINavigationController
+    private let tabBarController: TabBarController
     private let resultSubject = PassthroughSubject<Void, Never>()
     
     var tokensViewModel: HomeWithTokensViewModel?
@@ -45,8 +47,9 @@ final class HomeCoordinator: Coordinator<Void> {
 
     // MARK: - Initializers
 
-    init(navigationController: UINavigationController) {
+    init(navigationController: UINavigationController, tabBarController: TabBarController) {
         self.navigationController = navigationController
+        self.tabBarController = tabBarController
     }
 
     // MARK: - Public actions
@@ -73,16 +76,12 @@ final class HomeCoordinator: Coordinator<Void> {
         ).asViewController() as! UIHostingControllerWithoutNavigation<HomeView>
         
         // bind
-        homeView.viewWillAppear
-            .sink(receiveValue: { [unowned homeView] in
-                homeView.navigationIsHidden = true
-            })
-            .store(in: &subscriptions)
-        homeView.viewWillDisappear
-            .sink(receiveValue: { [unowned homeView] in
-                homeView.navigationIsHidden = false
-            })
-            .store(in: &subscriptions)
+        Publishers.Merge(
+            homeView.viewWillAppear.map { true },
+            homeView.viewWillDisappear.map { false }
+        )
+        .assign(to: \.navigationIsHidden, on: homeView)
+        .store(in: &subscriptions)
 
         // set view controller
         navigationController.setViewControllers([homeView], animated: false)
@@ -128,7 +127,8 @@ final class HomeCoordinator: Coordinator<Void> {
                 to: SendCoordinator(
                     rootViewController: navigationController,
                     preChosenWallet: nil,
-                    hideTabBar: true
+                    hideTabBar: true,
+                    allowSwitchingMainAmountType: true
                 )
             )
             .receive(on: RunLoop.main)
@@ -144,7 +144,6 @@ final class HomeCoordinator: Coordinator<Void> {
             })
             .map {_ in ()}
             .eraseToAnyPublisher()
-            
         case .swap:
             analyticsManager.log(event: AmplitudeEvent.swapViewed(lastScreen: "main_screen"))
             return coordinate(
@@ -160,6 +159,27 @@ final class HomeCoordinator: Coordinator<Void> {
                     break
                 case .done:
                     tokensViewModel?.scrollToTop()
+                }
+            })
+            .map {_ in ()}
+            .eraseToAnyPublisher()
+        case .cashOut:
+            analyticsManager.log(event: AmplitudeEvent.sellClicked(source: "Main"))
+            return coordinate(
+                to: SellCoordinator(navigationController: navigationController)
+            )
+            .receive(on: RunLoop.main)
+            .handleEvents(receiveOutput: { [weak self] result in
+                switch result {
+                case .completed:
+                    self?.tabBarController.changeItem(to: .history)
+                case .interupted:
+                    (self?.tabBarController.selectedViewController as? UINavigationController)?.popToRootViewController(animated: true)
+                    DispatchQueue.main.asyncAfter(deadline: .now() + 0.2) {
+                        self?.tabBarController.changeItem(to: .history)
+                    }
+                case .none:
+                    break
                 }
             })
             .map {_ in ()}
@@ -235,10 +255,10 @@ final class HomeCoordinator: Coordinator<Void> {
             animated: true
         )
     }
-    
+
     private func showSendTransactionStatus(model: SendTransaction) {
         coordinate(to: SendTransactionStatusCoordinator(parentController: navigationController, transaction: model))
-            .sink(receiveValue: { })
+            .sink(receiveValue: {})
             .store(in: &subscriptions)
     }
 }

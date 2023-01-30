@@ -5,7 +5,6 @@
 //  Created by Ivan on 05.08.2022.
 //
 
-import AnalyticsManager
 import Combine
 import KeyAppUI
 import Resolver
@@ -13,8 +12,6 @@ import SolanaSwift
 import SwiftUI
 
 struct HomeWithTokensView: View {
-    @Injected private var analyticsManager: AnalyticsManager
-    
     @ObservedObject var viewModel: HomeWithTokensViewModel
     
     @State private var currentUserInteractionCellID: String?
@@ -23,7 +20,6 @@ struct HomeWithTokensView: View {
     
     init(viewModel: HomeWithTokensViewModel) {
         self.viewModel = viewModel
-        analyticsManager.log(event: AmplitudeEvent.mainScreenWalletsOpen)
     }
     
     var body: some View {
@@ -59,17 +55,27 @@ struct HomeWithTokensView: View {
             viewModel.viewAppeared()
         }
     }
-
+    
     private var header: some View {
         ActionsPanelView(
-            actionsPublisher: viewModel.actions,
+            actionsPublisher: viewModel.$actions.eraseToAnyPublisher(),
             balancePublisher: viewModel.balance,
             action: {
                 viewModel.actionClicked($0)
             }
         )
     }
-    
+
+    // TODO: Sell Placeholder PWN-6246
+    private var sell: some View {
+        Button {
+            viewModel.sellTapped()
+        } label: {
+            Text("Ramp Off")
+        }
+
+    }
+
     private var content: some View {
         VStack(alignment: .leading, spacing: 0) {
             Text(L10n.tokens)

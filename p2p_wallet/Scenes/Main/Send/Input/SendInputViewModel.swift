@@ -40,6 +40,7 @@ final class SendInputViewModel: BaseViewModel, ObservableObject {
     @Published var feeTitle = L10n.fees("")
     @Published var isFeeLoading: Bool = true
     @Published var isFeeTitleVisible: Bool = true
+    @Published var loadingState: LoadableState = .loaded
 
     let feeInfoPressed = PassthroughSubject<Void, Never>()
     let openFeeInfo = PassthroughSubject<Bool, Never>()
@@ -56,15 +57,18 @@ final class SendInputViewModel: BaseViewModel, ObservableObject {
 
     private let source: SendSource
     private var wasMaxWarningToastShown: Bool = false
+    private let preChosenAmount: Double?
 
     // MARK: - Dependencies
 
     private let walletsRepository: WalletsRepository
     private let pricesService: PricesServiceType
     @Injected private var analyticsManager: AnalyticsManager
+    @Injected private var analyticsService: AnalyticsService
 
-    init(recipient: Recipient, preChosenWallet: Wallet?, source: SendSource) {
+    init(recipient: Recipient, preChosenWallet: Wallet?, preChosenAmount: Double?, source: SendSource, allowSwitchingMainAmountType: Bool) {
         self.source = source
+        self.preChosenAmount = preChosenAmount
         let repository = Resolver.resolve(WalletsRepository.self)
         walletsRepository = repository
         let wallets = repository.getWallets()
@@ -103,7 +107,7 @@ final class SendInputViewModel: BaseViewModel, ObservableObject {
         var exchangeRate = [String: CurrentPrice]()
         var tokens = Set<Token>()
         wallets.forEach {
-            exchangeRate[$0.token.symbol] = pricesService.currentPrice(for: $0.token.symbol)
+            exchangeRate[$0.token.symbol] = pricesService.currentPrice(mint: $0.token.address)
             tokens.insert($0.token)
         }
 
@@ -129,7 +133,7 @@ final class SendInputViewModel: BaseViewModel, ObservableObject {
             )
         )
 
-        inputAmountViewModel = SendInputAmountViewModel(initialToken: tokenInWallet)
+        inputAmountViewModel = SendInputAmountViewModel(initialToken: tokenInWallet, allowSwitchingMainAmountType: allowSwitchingMainAmountType)
         actionButtonViewModel = SendInputActionButtonViewModel()
 
         tokenViewModel = SendInputTokenViewModel(initialToken: tokenInWallet)
@@ -158,6 +162,17 @@ final class SendInputViewModel: BaseViewModel, ObservableObject {
                     let relayContextManager = Resolver.resolve(RelayContextManager.self)
                     return try await relayContextManager.getCurrentContextOrUpdate()
                 }))
+            
+            // disable adding amount if amount is pre-chosen
+            if let amount = preChosenAmount {
+                Task {
+                    inputAmountViewModel.mainAmountType = .token
+                    inputAmountViewModel.amountText = amount.toString()
+                    await MainActor.run { [unowned self] in
+                        inputAmountViewModel.isDisabled = true
+                    }
+                }
+            }
 
             switch nextState.status {
             case .error(reason: .initializeFailed(_)):
@@ -172,6 +187,17 @@ final class SendInputViewModel: BaseViewModel, ObservableObject {
         DispatchQueue.main.async {
             guard !self.inputAmountViewModel.isFirstResponder else { return }
             self.inputAmountViewModel.isFirstResponder = true
+        }
+    }
+    
+    @MainActor
+    func load() async {
+        loadingState = .loading
+        do {
+            try await Resolver.resolve(SwapServiceType.self).reload()
+            loadingState = .loaded
+        } catch {
+            loadingState = .error(error.readableDescription)
         }
     }
 }
@@ -465,7 +491,7 @@ private extension SendInputViewModel {
     }
 
     func logConfirmButtonClick() {
-        analyticsManager.log(event: AmplitudeEvent.sendnewConfirmButtonClick(
+        analyticsService.logEvent(.sendNewConfirmButtonClick(
             source: source.rawValue,
             token: currentState.token.symbol,
             max: inputAmountViewModel.wasMaxUsed,

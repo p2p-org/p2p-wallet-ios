@@ -140,8 +140,8 @@ extension OrcaSwapV2.ViewModel: OrcaSwapV2ViewModelType {
     }
     #endif
 
-    func getPrice(symbol: String) -> Double? {
-        pricesService.currentPrice(for: symbol)?.value
+    func getPrice(mint: String) -> Double? {
+        pricesService.currentPrice(mint: mint)?.value
     }
 
     // MARK: - Actions

@@ -24,7 +24,7 @@ class RecipientSearchViewModel: ObservableObject {
     private let sendHistoryService: SendHistoryService
     private let recipientSearchService: RecipientSearchService
     private var searchTask: Task<Void, Never>?
-
+    
     @Published var loadingState: LoadableState = .notRequested
     @Published var isFirstResponder: Bool = false
 
@@ -190,7 +190,7 @@ class RecipientSearchViewModel: ObservableObject {
         let text = L10n.theAddressIsRecognized("\(recipient.address.prefix(6))...\(recipient.address.suffix(6))")
         notificationService.showToast(title: "✅", text: text, haptic: false)
     }
-    
+
     @MainActor
     func load() async {
         loadingState = .loading
