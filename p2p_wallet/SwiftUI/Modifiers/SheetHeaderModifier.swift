@@ -64,7 +64,6 @@ private struct SheetHeaderView: View {
                         .font(uiFont: .font(of: .title3, weight: .semibold))
                         .padding(.top, 18)
                 }
-                Spacer()
                 if let close = close {
                     Spacer()
                     Button(
