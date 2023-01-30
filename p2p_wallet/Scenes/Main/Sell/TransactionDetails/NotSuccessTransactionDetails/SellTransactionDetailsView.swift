@@ -13,12 +13,14 @@ struct SellTransactionDetailsView: View {
     let viewModel: SellTransactionDetailsViewModel
 
     var body: some View {
-        VStack(spacing: 44) {
+        VStack(spacing: .zero) {
             VStack(spacing: 16) {
                 SellTransactionDetailsTopView(model: viewModel.topViewModel)
                 descriptionBlockView
                     .padding(.horizontal, 24)
             }
+            Spacer()
+                .frame(minHeight: 24, maxHeight: 44)
             buttonsView
         }
         .padding(.bottom, 16)
