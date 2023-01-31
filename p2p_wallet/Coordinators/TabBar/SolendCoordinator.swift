@@ -12,7 +12,6 @@ import SolanaSwift
 
 final class SolendCoordinator: Coordinator<Void> {
     private let navigationController: UINavigationController
-    private let transition = PanelTransition()
 
     init(navigationController: UINavigationController) {
         self.navigationController = navigationController
@@ -149,7 +148,6 @@ final class SolendCoordinator: Coordinator<Void> {
         let view = AboutSolendView()
         let viewController = view.asViewController()
         viewController.view.layer.cornerRadius = 16
-        viewController.transitioningDelegate = transition
         viewController.modalPresentationStyle = .custom
         depositVC.present(viewController, animated: true)
 
