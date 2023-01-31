@@ -18,8 +18,6 @@ final class SolendTransactionDetailsCoordinator: Coordinator<Void> {
     private let strategy: Strategy
     private let model: AnyPublisher<Model?, Never>
 
-    private let transition = PanelTransition()
-
     init(
         controller: UIViewController,
         strategy: Strategy,
@@ -35,7 +33,6 @@ final class SolendTransactionDetailsCoordinator: Coordinator<Void> {
         let view = SolendTransactionDetailsView(viewModel: viewModel)
         let viewController = view.asViewController()
         viewController.view.layer.cornerRadius = 16
-        viewController.transitioningDelegate = transition
         viewController.modalPresentationStyle = .custom
         controller.present(viewController, animated: true)
 

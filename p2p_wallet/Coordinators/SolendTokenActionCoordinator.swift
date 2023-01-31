@@ -13,8 +13,6 @@ final class SolendTokenActionCoordinator: Coordinator<SolendTokenActionCoordinat
     private let controller: UIViewController
     private let strategy: Strategy
 
-    private let transition = PanelTransition()
-
     init(
         controller: UIViewController,
         strategy: Strategy
@@ -37,7 +35,6 @@ final class SolendTokenActionCoordinator: Coordinator<SolendTokenActionCoordinat
             viewController = (view as! TokenToWithdrawView).asViewController()
         }
         viewController.view.layer.cornerRadius = 16
-        viewController.transitioningDelegate = transition
         viewController.modalPresentationStyle = .custom
         controller.present(viewController, animated: true)
 
