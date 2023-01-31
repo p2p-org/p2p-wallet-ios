@@ -10,7 +10,6 @@ enum HomeBuyNotificationCoordinatorResult {
 }
 
 final class HomeBuyNotificationCoordinator: Coordinator<HomeBuyNotificationCoordinatorResult> {
-    private let transition = PanelTransition()
     private let result = PassthroughSubject<HomeBuyNotificationCoordinatorResult, Never>()
     let controller: UIViewController
     let tokenFrom: Token
@@ -29,20 +28,14 @@ final class HomeBuyNotificationCoordinator: Coordinator<HomeBuyNotificationCoord
         ) { [weak self] in
             self?.result.send(.showBuy)
         }
-        let viewController = UIHostingController(rootView: view)
-        viewController.view.layer.cornerRadius = 16
-        viewController.transitioningDelegate = transition
+        let viewController = BottomSheetController(title: L10n.transactionDetails, rootView: view)
         viewController.modalPresentationStyle = .custom
         controller.present(viewController, animated: true)
-
-        viewController.onClose = { [weak self] in
-            self?.result.send(.cancel)
-        }
 
         return
             Publishers.MergeMany(
                 result.eraseToAnyPublisher(),
-                transition.dimmClicked
+                viewController.deallocatedPublisher()
                     .map { HomeBuyNotificationCoordinatorResult.cancel }.eraseToAnyPublisher()
             )
             .handleEvents(receiveOutput: { [weak viewController] _ in

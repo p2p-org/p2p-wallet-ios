@@ -2,11 +2,8 @@ import Combine
 import SwiftUI
 
 final class SendInputFreeTransactionsDetailCoordinator: Coordinator<Void> {
-    private var transition: PanelTransition?
-    private var feeController: UIViewController?
-
     private let parentController: UIViewController
-    private var subject = PassthroughSubject<Void, Never>()
+    private var feeController: UIViewController?
 
     init(parentController: UIViewController) {
         self.parentController = parentController
@@ -15,25 +12,12 @@ final class SendInputFreeTransactionsDetailCoordinator: Coordinator<Void> {
     override func start() -> AnyPublisher<Void, Never> {
         let view = SendInputFreeTransactionsDetailView { [weak self] in
             self?.feeController?.dismiss(animated: true)
-            self?.subject.send(completion: .finished)
         }
 
-        transition = PanelTransition()
-        let feeController = UIHostingController(rootView: view, ignoresKeyboard: true)
-        feeController.view.layer.cornerRadius = 20
-        feeController.view.layer.maskedCorners = [.layerMinXMinYCorner, .layerMaxXMinYCorner]
-        feeController.transitioningDelegate = transition
+        let feeController = BottomSheetController(rootView: view)
         feeController.modalPresentationStyle = .custom
-
-        transition?.dimmClicked
-            .sink { [weak self] in
-                self?.feeController?.dismiss(animated: true)
-                self?.subject.send(completion: .finished)
-            }
-            .store(in: &subscriptions)
         parentController.present(feeController, animated: true)
         self.feeController = feeController
-
-        return subject.eraseToAnyPublisher()
+        return feeController.deallocatedPublisher().prefix(1).eraseToAnyPublisher()
     }
 }
