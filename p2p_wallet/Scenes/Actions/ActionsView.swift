@@ -28,12 +28,6 @@ struct ActionsView: View {
 
     var body: some View {
         VStack(spacing: 28) {
-            Color(Asset.Colors.rain.color)
-                .frame(width: 31, height: 4)
-                .cornerRadius(2)
-            Text(L10n.actions)
-                .foregroundColor(Color(Asset.Colors.night.color))
-                .font(uiFont: .font(of: .text1, weight: .bold))
             VStack(spacing: 16) {
                 if isSellAvailable {
                     horizontalActionView(
@@ -92,7 +86,7 @@ struct ActionsView: View {
                 }
             }
                 .padding(.horizontal, 10)
-                .padding(.top, 6)
+                .padding(.top, 24)
 
             Button(
                 action: {
@@ -109,9 +103,9 @@ struct ActionsView: View {
                 }
             )
             .padding(.top, 12)
+            Spacer()
         }
         .padding(.horizontal, 16)
-        .padding(.bottom, 16)
         .padding(.top, 4)
         .previewLayout(.sizeThatFits)
     }

@@ -45,7 +45,7 @@ class PanelTransition: NSObject, UIViewControllerTransitioningDelegate {
         PresentAnimation()
     }
 
-    func animationController(forDismissed _: UIViewController) -> UIViewControllerAnimatedTransitioning? {
+    func animationController(forDismissed: UIViewController) -> UIViewControllerAnimatedTransitioning? {
         DismissAnimation()
     }
 
@@ -56,7 +56,7 @@ class PanelTransition: NSObject, UIViewControllerTransitioningDelegate {
         driver
     }
 
-    func interactionControllerForDismissal(using _: UIViewControllerAnimatedTransitioning)
+    func interactionControllerForDismissal(using: UIViewControllerAnimatedTransitioning)
     -> UIViewControllerInteractiveTransitioning? {
         driver
     }
