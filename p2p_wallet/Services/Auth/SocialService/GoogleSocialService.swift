@@ -6,7 +6,6 @@
 //
 
 import GoogleSignIn
-import SwiftNotificationCenter
 import UIKit
 
 final class GoogleSocialService: NSObject, SocialService {
@@ -15,7 +14,6 @@ final class GoogleSocialService: NSObject, SocialService {
     init(clientId: String) {
         signInConfig = GIDConfiguration(clientID: clientId)
         super.init()
-        Broadcaster.register(AppUrlHandler.self, observer: self)
     }
 
     @MainActor
@@ -88,8 +86,3 @@ private extension UIViewController {
 
 // MARK: - AppUrlHandler
 
-extension GoogleSocialService: AppUrlHandler {
-    func handle(url: URL, options _: [UIApplication.OpenURLOptionsKey: Any]) -> Bool {
-        GIDSignIn.sharedInstance.handle(url)
-    }
-}

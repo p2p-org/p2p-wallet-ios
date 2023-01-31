@@ -12,13 +12,22 @@ final class AppDelegateProxyService: NSObject, UIApplicationDelegate {
     private let serviceAppDelegates: [AppDelegateService]
 
     override init() {
-        var services = [AppDelegateService?]()
+        var services: [AppDelegateService] = [
+            GoogleAppDelegateService(),
+            LoggersAppDelegateService(),
+            NotificationsAppDelegateService(),
+            IntercomAppDelegateService(),
+            AppsFlyerAppDelegateService(),
+            LokaliseAppDelegateService(),
+        ]
+
         #if !RELEASE
             services.append(contentsOf: [
                 DebugAppDelegateService(),
             ])
         #endif
-        serviceAppDelegates = services.compactMap { $0 }
+
+        serviceAppDelegates = services
     }
 
     func application(
@@ -40,11 +49,15 @@ final class AppDelegateProxyService: NSObject, UIApplicationDelegate {
         open url: URL,
         options: [UIApplication.OpenURLOptionsKey: Any] = [:]
     ) -> Bool {
-        let result = serviceAppDelegates.compactMap {
-            $0.application?(app, open: url, options: options)
+        for serviceAppDelegate in serviceAppDelegates {
+            let result: Bool = serviceAppDelegate.application?(app, open: url, options: options) ?? false
+
+            if result {
+                return true
+            }
         }
 
-        return convert(result)
+        return false
     }
 
     func application(
@@ -52,15 +65,19 @@ final class AppDelegateProxyService: NSObject, UIApplicationDelegate {
         continue userActivity: NSUserActivity,
         restorationHandler: @escaping ([UIUserActivityRestoring]?) -> Void
     ) -> Bool {
-        let result = serviceAppDelegates.compactMap {
-            $0.application?(
+        for serviceAppDelegate in serviceAppDelegates {
+            let result: Bool = serviceAppDelegate.application?(
                 application,
                 continue: userActivity,
                 restorationHandler: restorationHandler
-            )
+            ) ?? false
+
+            if result {
+                return true
+            }
         }
 
-        return convert(result)
+        return false
     }
 
     func application(

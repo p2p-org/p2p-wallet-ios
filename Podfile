@@ -109,7 +109,6 @@ target 'p2p_wallet' do
   pod 'Firebase/Crashlytics'
   pod 'Firebase/RemoteConfig'
 
-  pod 'SwiftNotificationCenter'
   pod 'GoogleSignIn', '~> 6.2.4'
 
   # Sentry
