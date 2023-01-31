@@ -72,7 +72,7 @@ final class BuyCoordinator: Coordinator<Void> {
             .receive(on: RunLoop.main)
             .flatMap { [unowned self] exchangeOutput, exchangeRate, currency, token in
                 self.coordinate(to:
-                    TransactionDetailsCoordinator(
+                    BuyTransactionDetailsCoordinator(
                         controller: viewController,
                         model: .init(
                             price: exchangeRate,
