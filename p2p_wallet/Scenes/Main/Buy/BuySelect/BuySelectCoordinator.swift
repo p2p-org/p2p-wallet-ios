@@ -13,7 +13,6 @@ final class BuySelectCoordinator<Model, Cell: BuySelectViewModelCell>:
 Coordinator<BuySelectCoordinatorResult<Model>>where Model == Cell.Model {
     private let controller: UIViewController
     private let items: [Model]
-    private let contentHeight: CGFloat
     private var viewModel: BuySelectViewModel<Model>
     private var selectedModel: Model?
     private var title: String
@@ -22,13 +21,11 @@ Coordinator<BuySelectCoordinatorResult<Model>>where Model == Cell.Model {
         title: String,
         controller: UIViewController,
         items: [Model],
-        contentHeight: CGFloat = 0,
         selectedModel: Model? = nil
     ) {
         self.title = title
         self.controller = controller
         self.items = items
-        self.contentHeight = contentHeight
         self.selectedModel = selectedModel
 
         viewModel = BuySelectViewModel<Model>(
@@ -51,8 +48,8 @@ Coordinator<BuySelectCoordinatorResult<Model>>where Model == Cell.Model {
             )
                 .map { BuySelectCoordinatorResult.cancel },
             viewModel.coordinatorIO.didSelectModel.map { BuySelectCoordinatorResult.result(model: $0) }
-        ).handleEvents(receiveOutput: { _ in
+        ).prefix(1).handleEvents(receiveOutput: { _ in
             viewController.dismiss(animated: true)
-        }).prefix(1).eraseToAnyPublisher()
+        }).eraseToAnyPublisher()
     }
 }
