@@ -62,7 +62,7 @@ private struct SheetHeaderView: View {
                     .foregroundColor(Color(Asset.Colors.night.color))
                     .font(uiFont: .font(of: .title3, weight: .semibold))
                     .padding(.top, 18)
-                if let close = close {
+                if let close {
                     Spacer()
                     Button(
                         action: {

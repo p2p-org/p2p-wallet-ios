@@ -138,6 +138,8 @@ final class SendInputCoordinator: Coordinator<SendResult> {
             switch result {
             case let .redirectToFeePrompt(tokens):
                 self.openFeePropmt(from: vc, viewModel: viewModel, feeWallets: tokens)
+            case .cancel:
+                break
             }
         }
         .store(in: &subscriptions)

@@ -5,15 +5,11 @@ import SwiftUI
 
 enum SendTransactionDetailsCoordinatorResult {
     case redirectToFeePrompt(availableTokens: [Wallet])
+    case cancel
 }
 
 final class SendTransactionDetailsCoordinator: Coordinator<SendTransactionDetailsCoordinatorResult> {
-    private var transition: PanelTransition?
-    private var feeController: UIViewController?
-
     private let parentController: UIViewController
-    private var subject = PassthroughSubject<SendTransactionDetailsCoordinatorResult, Never>()
-
     private let sendInputViewModel: SendInputViewModel
 
     init(parentController: UIViewController, sendInputViewModel: SendInputViewModel) {
@@ -23,36 +19,21 @@ final class SendTransactionDetailsCoordinator: Coordinator<SendTransactionDetail
 
     override func start() -> AnyPublisher<SendTransactionDetailsCoordinatorResult, Never> {
         let viewModel = SendTransactionDetailViewModel(stateMachine: sendInputViewModel.stateMachine)
-        viewModel.cancelSubject.sink(receiveValue: { [weak self] in
-            self?.feeController?.dismiss(animated: true)
-            self?.subject.send(completion: .finished)
-        })
-        .store(in: &subscriptions)
-
-        viewModel.feePrompt.sink { [weak self] tokens in
-            guard let self = self else { return }
-            self.feeController?.dismiss(animated: true)
-            self.subject.send(.redirectToFeePrompt(availableTokens: tokens))
-        }
-        .store(in: &subscriptions)
-
         let view = SendTransactionDetailView(viewModel: viewModel)
-
-        transition = PanelTransition()
-        let feeController = UIHostingController(rootView: view)
-        feeController.view.layer.cornerRadius = 20
-        feeController.transitioningDelegate = transition
+        let feeController = BottomSheetController(rootView: view)
         feeController.modalPresentationStyle = .custom
-
-        transition?.dimmClicked
-            .sink { [weak self] in
-                self?.feeController?.dismiss(animated: true)
-                self?.subject.send(completion: .finished)
-            }
-            .store(in: &subscriptions)
         parentController.present(feeController, animated: true)
-        self.feeController = feeController
 
-        return subject.eraseToAnyPublisher()
+        let result = Publishers.Merge(
+            viewModel.cancelSubject.map { SendTransactionDetailsCoordinatorResult.cancel },
+            viewModel.feePrompt.map { SendTransactionDetailsCoordinatorResult.redirectToFeePrompt(availableTokens: $0) }
+        ).handleEvents(receiveOutput: { _ in
+            feeController.dismiss(animated: true)
+        })
+
+        return Publishers.Merge(
+            result,
+            feeController.deallocatedPublisher().map { SendTransactionDetailsCoordinatorResult.cancel }
+        ).prefix(1).eraseToAnyPublisher()
     }
 }
