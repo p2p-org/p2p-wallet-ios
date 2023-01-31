@@ -226,7 +226,9 @@ final class TabBarCoordinator: Coordinator<Void> {
                 .sink(receiveValue: {})
                 .store(in: &subscriptions)
         case .receive:
-            break
+            guard let pubkey = try? PublicKey(string: walletsRepository.nativeWallet?.pubkey) else { return }
+            let coordinator = ReceiveCoordinator(viewController: navigationController, pubKey: pubkey)
+            coordinate(to: coordinator).sink { _ in }.store(in: &subscriptions)
         case .swap:
             let swapCoordinator = SwapCoordinator(navigationController: navigationController, initialWallet: nil)
             coordinate(to: swapCoordinator)

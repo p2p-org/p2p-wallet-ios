@@ -77,13 +77,18 @@ extension TransitionDriver {
     private func handleDismiss(recognizer r: UIPanGestureRecognizer) {
         switch r.state {
         case .began:
-            pause() // Pause allows to detect isRunning
+            print(r)
+//            pause() // Pause allows to detect isRunning
 
-            if !isRunning {
-                presentedController?.dismiss(animated: true) // Start the new one
-            }
+//            if !isRunning {
+//                presentedController?.dismiss(animated: true) // Start the new one
+//            }
         case .changed:
+            completionSpeed = 1.1 - (percentComplete + r.incrementToBottom(maxTranslation: maxTranslation))
             update(percentComplete + r.incrementToBottom(maxTranslation: maxTranslation))
+            debugPrint(percentComplete + r.incrementToBottom(maxTranslation: maxTranslation))
+            debugPrint(arc4random())
+            debugPrint(percentComplete)
         case .ended, .cancelled:
             if r.isProjectedToDownHalf(maxTranslation: maxTranslation) {
                 finish()
@@ -98,7 +103,7 @@ extension TransitionDriver {
     }
 
     var maxTranslation: CGFloat {
-        presentedController?.view.frame.height ?? 0
+        presentedController?.view.bounds.height ?? 0
     }
 
     /// `pause()` before call `isRunning`
@@ -110,8 +115,7 @@ extension TransitionDriver {
 private extension UIPanGestureRecognizer {
     func isProjectedToDownHalf(maxTranslation: CGFloat) -> Bool {
         let endLocation = projectedLocation(decelerationRate: .fast)
-        let isPresentationCompleted = endLocation.y > maxTranslation / 2
-        return isPresentationCompleted
+        return endLocation.y > maxTranslation / 2
     }
 
     func incrementToBottom(maxTranslation: CGFloat) -> CGFloat {
