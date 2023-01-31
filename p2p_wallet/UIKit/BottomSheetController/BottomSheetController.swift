@@ -5,10 +5,11 @@ import KeyAppUI
 struct ModalView<Content: View>: View {
     let title: String?
     let content: Content
-    let showHandler = true
+    let showHandler: Bool
 
-    init(title: String? = nil, @ViewBuilder content: () -> Content) {
+    init(title: String? = nil, showHandler: Bool = true, @ViewBuilder content: () -> Content) {
         self.title = title
+        self.showHandler = showHandler
         self.content = content()
     }
 
@@ -36,8 +37,8 @@ struct ModalView<Content: View>: View {
 
 class BottomSheetController<Content: View>: UIHostingController<ModalView<Content>> {
 
-    @MainActor public init(title: String? = nil, rootView: Content) {
-        super.init(rootView: ModalView(title: title, content: {
+    @MainActor public init(title: String? = nil, showHandler: Bool = true, rootView: Content) {
+        super.init(rootView: ModalView(title: title, showHandler: showHandler, content: {
             rootView
         }))
     }

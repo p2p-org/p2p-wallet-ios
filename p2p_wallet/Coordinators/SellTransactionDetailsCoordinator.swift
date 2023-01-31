@@ -1,10 +1,3 @@
-//
-//  SellTransactionDetailsCoordinator.swift
-//  p2p_wallet
-//
-//  Created by Ivan on 14.12.2022.
-//
-
 import Combine
 import Foundation
 import UIKit
@@ -15,15 +8,11 @@ import SafariServices
 private typealias Result = SellTransactionDetailsCoorditor.Result
 
 final class SellTransactionDetailsCoorditor: Coordinator<SellTransactionDetailsCoorditor.Result> {
-    @Injected private var walletsRepository: WalletsRepository
-    
     private let viewController: UIViewController
     private let strategy: Strategy
     private let transaction: SellDataServiceTransaction
     private let fiat: Fiat
     private let date: Date
-
-    private let transition = PanelTransition()
 
     init(
         viewController: UIViewController,
@@ -50,8 +39,6 @@ final class SellTransactionDetailsCoorditor: Coordinator<SellTransactionDetailsC
             (controller, resultSubject) = startNotSuccessCoordinator(strategy: subStrategy)
         }
 
-        controller.view.layer.cornerRadius = 16
-        controller.transitioningDelegate = transition
         controller.modalPresentationStyle = .custom
         viewController.present(controller, animated: true)
 
@@ -80,19 +67,16 @@ final class SellTransactionDetailsCoorditor: Coordinator<SellTransactionDetailsC
 
         let resultSubject = PassthroughSubject<Result, Never>()
 
-        transition.dimmClicked
-            .sink(receiveValue: {
-                controller.dismiss(animated: true)
-            })
-            .store(in: &subscriptions)
         view.dismiss
             .sink(receiveValue: {
                 controller.dismiss(animated: true)
             })
             .store(in: &subscriptions)
-        controller.onClose = {
-            resultSubject.send(.cancel)
-        }
+
+        controller.deallocatedPublisher()
+            .map { Result.cancel }
+            .sink { resultSubject.send($0) }
+            .store(in: &subscriptions)
 
         return (controller, resultSubject)
     }
@@ -114,13 +98,8 @@ final class SellTransactionDetailsCoorditor: Coordinator<SellTransactionDetailsC
 
         let resultSubject = PassthroughSubject<Result, Never>()
 
-        transition.dimmClicked
-            .sink(receiveValue: {
-                controller.dismiss(animated: true)
-            })
-            .store(in: &subscriptions)
         viewModel.result
-            .sink(receiveValue: { [weak self] result in
+            .sink(receiveValue: { result in
                 switch result {
                 case .send:
                     resultSubject.send(.send)
@@ -134,9 +113,11 @@ final class SellTransactionDetailsCoorditor: Coordinator<SellTransactionDetailsC
         viewModel.openHelp
             .sink { [weak self] url in self?.open(url: url, from: controller) }
             .store(in: &subscriptions)
-        controller.onClose = {
-            resultSubject.send(.cancel)
-        }
+
+        controller.deallocatedPublisher()
+            .map { Result.cancel }
+            .sink { resultSubject.send($0) }
+            .store(in: &subscriptions)
 
         return (controller, resultSubject)
     }
