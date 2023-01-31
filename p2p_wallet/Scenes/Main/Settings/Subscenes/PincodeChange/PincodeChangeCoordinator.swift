@@ -8,7 +8,7 @@ import SwiftUI
 
 class PincodeChangeCoordinator: Coordinator<Bool> {
     private let navVC: UINavigationController
-    private let transition = PanelTransition()
+//    private let transition = PanelTransition()
 
     @Injected private var pincodeStorage: PincodeStorageType
     @Injected private var helpLauncher: HelpCenterLauncher
@@ -18,9 +18,9 @@ class PincodeChangeCoordinator: Coordinator<Bool> {
         self.navVC = navVC
         super.init()
 
-        transition.dimmClicked
-            .sink { navVC.dismiss(animated: true) }
-            .store(in: &subscriptions)
+//        transition.dimmClicked
+//            .sink { navVC.dismiss(animated: true) }
+//            .store(in: &subscriptions)
     }
 
     override func start() -> AnyPublisher<Bool, Never> {
@@ -48,9 +48,7 @@ class PincodeChangeCoordinator: Coordinator<Bool> {
             guard let self = self else { return }
             var view = ForgetPinView()
             view.close = { self.navVC.dismiss(animated: true) }
-            let viewController = UIHostingController(rootView: view)
-            viewController.view.layer.cornerRadius = 20
-            viewController.transitioningDelegate = self.transition
+            let viewController = BottomSheetController(rootView: view)
             viewController.modalPresentationStyle = .custom
             self.navVC.present(viewController, animated: true)
         }
