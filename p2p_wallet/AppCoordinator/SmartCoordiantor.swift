@@ -29,7 +29,7 @@ class SmartCoordinatorPushPresentation: SmartCoordinatorPresentation {
 
     func run(presentedViewController: UIViewController) {
         guard let presentingViewController = presentingViewController as? UINavigationController else {
-            print(SmartCoordinatorError.unsupportedPresentingViewController)
+//            print(SmartCoordinatorError.unsupportedPresentingViewController)
             return
         }
 
@@ -41,29 +41,18 @@ class SmartCoordinatorBottomSheetPresentation: SmartCoordinatorPresentation {
     var presentingViewController: UIViewController
 
     private var subscriptions = [AnyCancellable]()
-    private let transition: PanelTransition = .init()
-    private let height: CGFloat
 
-    init(from currentPresentation: SmartCoordinatorPresentation, height: CGFloat) {
+    init(from currentPresentation: SmartCoordinatorPresentation) {
         presentingViewController = currentPresentation.presentingViewController
-        self.height = height
     }
 
-    init(_ presentingViewController: UIViewController, height: CGFloat) {
+    init(_ presentingViewController: UIViewController) {
         self.presentingViewController = presentingViewController
-        self.height = height
     }
 
     func run(presentedViewController: UIViewController) {
         // Prepare
-        transition.dimmClicked
-            .sink(receiveValue: { _ in presentedViewController.dismiss(animated: true) })
-            .store(in: &subscriptions)
-
-        presentedViewController.view.layer.cornerRadius = 16
-        presentedViewController.transitioningDelegate = transition
         presentedViewController.modalPresentationStyle = .custom
-
         // Presentation
         presentingViewController.present(presentedViewController, animated: true)
     }
@@ -71,8 +60,6 @@ class SmartCoordinatorBottomSheetPresentation: SmartCoordinatorPresentation {
 
 class SmartCoordinator<T>: Coordinator<T> {
     let presentation: SmartCoordinatorPresentation
-
-    let result: PassthroughSubject<T, Never> = .init()
 
     init(presentation: SmartCoordinatorPresentation) {
         self.presentation = presentation
@@ -82,13 +69,9 @@ class SmartCoordinator<T>: Coordinator<T> {
     override final func start() -> Combine.AnyPublisher<T, Never> {
         let vc: UIViewController = build()
 
-        vc.onClose = { [weak self] in
-            self?.result.send(completion: .finished)
-        }
-
         presentation.run(presentedViewController: vc)
 
-        return result.prefix(1).eraseToAnyPublisher()
+        return vc.deallocatedPublisher().prefix(1).eraseToAnyPublisher()
     }
 
     func build() -> UIViewController {

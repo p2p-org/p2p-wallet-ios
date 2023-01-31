@@ -14,8 +14,6 @@ final class SolendTopUpForContinueCoordinator: Coordinator<SolendTopUpForContinu
     private let navigationController: UINavigationController
     private let model: SolendTopUpForContinueModel
 
-    private let transition = PanelTransition()
-
     init(
         navigationController: UINavigationController,
         model: SolendTopUpForContinueModel
@@ -32,7 +30,6 @@ final class SolendTopUpForContinueCoordinator: Coordinator<SolendTopUpForContinu
         let viewController = view.asViewController()
         let navigationController = UINavigationController(rootViewController: viewController)
         viewController.view.layer.cornerRadius = 16
-        navigationController.transitioningDelegate = transition
         navigationController.modalPresentationStyle = .custom
         self.navigationController.present(navigationController, animated: true)
 

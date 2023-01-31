@@ -10,7 +10,6 @@ import UIKit
 
 final class SolendDepositCoordinator: Coordinator<Bool> {
     private let controller: UINavigationController
-    private let transition = PanelTransition()
 
     let initialAsset: SolendConfigAsset
     let initialStrategy: DepositSolendViewModel.Strategy
@@ -98,7 +97,6 @@ final class SolendDepositCoordinator: Coordinator<Bool> {
         let view = AboutSolendView()
         let viewController = view.asViewController()
         viewController.view.layer.cornerRadius = 16
-        viewController.transitioningDelegate = transition
         viewController.modalPresentationStyle = .custom
         depositVC.present(viewController, animated: true)
 
