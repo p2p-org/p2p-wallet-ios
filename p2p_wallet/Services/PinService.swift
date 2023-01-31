@@ -13,8 +13,6 @@ protocol PincodeService {
     func attemptsLeft() -> Int
     func pincodeFailed() throws
     func resetAttempts()
-    
-    func validatePincode(_ pincode: String) throws -> Bool
 }
 
 class PincodeServiceImpl: PincodeService {
@@ -48,19 +46,5 @@ class PincodeServiceImpl: PincodeService {
     func resetAttempts() {
         // It's 1 because we have failure event only _after_ the attempt
         pincodeStorage.saveAttempt(0)
-    }
-    
-    func validatePincode(_ pincode: String) throws -> Bool {
-        guard attemptsLeft() > 0 else {
-            throw PincodeServiceError.maxAttemptsReached
-        }
-        
-        if pincodeStorage.pinCode == pincode {
-            pincodeSucceed()
-            return true
-        } else {
-            try pincodeFailed()
-            return false
-        }
     }
 }
