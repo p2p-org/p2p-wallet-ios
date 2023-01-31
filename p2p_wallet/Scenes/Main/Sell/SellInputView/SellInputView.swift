@@ -142,10 +142,9 @@ struct SellInputView: View {
                     .descriptionTextStyle(color: Color(Asset.Colors.rose.color))
                 #endif
             }
-            
+
             Spacer()
         }
-            
             .padding(4)
             .padding(.bottom, 12)
     }
