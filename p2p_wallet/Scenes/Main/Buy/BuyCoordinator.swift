@@ -13,8 +13,6 @@ final class BuyCoordinator: Coordinator<Void> {
     private var shouldPush = true
     private var defaultToken: Token?
     private let targetTokenSymbol: String?
-
-    private let vcPresentedPercentage = PassthroughSubject<CGFloat, Never>()
     @Injected private var analyticsManager: AnalyticsManager
 
     init(
@@ -34,7 +32,6 @@ final class BuyCoordinator: Coordinator<Void> {
     }
 
     override func start() -> AnyPublisher<Void, Never> {
-        let result = PassthroughSubject<Void, Never>()
         let viewModel = BuyViewModel(defaultToken: defaultToken, targetSymbol: targetTokenSymbol)
         let viewController = UIHostingController(rootView: BuyView(viewModel: viewModel))
         viewController.title = L10n.buy
@@ -49,7 +46,6 @@ final class BuyCoordinator: Coordinator<Void> {
             }
         } else {
             if shouldPush {
-                navigationController?.interactivePopGestureRecognizer?.addTarget(self, action: #selector(onGesture))
                 navigationController?.pushViewController(viewController, animated: true)
             } else {
                 let navigation = UINavigationController(rootViewController: viewController)
@@ -62,10 +58,6 @@ final class BuyCoordinator: Coordinator<Void> {
             .log(event: AmplitudeEvent
                 .buyScreenOpened(lastScreen: context == .fromHome ? "Main_Screen" : "Token_Screen"))
 
-        viewController.onClose = {
-            result.send()
-        }
-        
         viewController.navigationItem.largeTitleDisplayMode = .never
 
         viewModel.coordinatorIO.showDetail
@@ -73,7 +65,7 @@ final class BuyCoordinator: Coordinator<Void> {
             .flatMap { [unowned self] exchangeOutput, exchangeRate, currency, token in
                 self.coordinate(to:
                     BuyTransactionDetailsCoordinator(
-                        controller: viewController,
+                        controller: navigationController,
                         model: .init(
                             price: exchangeRate,
                             purchaseCost: exchangeOutput.purchaseCost,
@@ -91,12 +83,11 @@ final class BuyCoordinator: Coordinator<Void> {
             self.coordinate(
                 to: BuySelectCoordinator<TokenCellViewItem, BuySelectTokenCellView>(
                     title: L10n.coinsToBuy,
-                    controller: viewController,
+                    controller: navigationController,
                     items: tokens,
-                    contentHeight: 395,
                     selectedModel: tokens.first { $0.token.symbol == viewModel.token.symbol }
                 )
-            ).eraseToAnyPublisher()
+            )
         }.compactMap { result in
             switch result {
             case let .result(model):
@@ -112,12 +103,11 @@ final class BuyCoordinator: Coordinator<Void> {
             self.coordinate(
                 to: BuySelectCoordinator<Fiat, FiatCellView>(
                     title: L10n.currency,
-                    controller: viewController,
+                    controller: navigationController,
                     items: fiats,
-                    contentHeight: 436,
                     selectedModel: viewModel.fiat
                 )
-            ).eraseToAnyPublisher()
+            )
         }.compactMap { result in
             switch result {
             case let .result(model):
@@ -129,47 +119,17 @@ final class BuyCoordinator: Coordinator<Void> {
         .assign(to: \.value, on: viewModel.coordinatorIO.fiatSelected)
         .store(in: &subscriptions)
 
-        vcPresentedPercentage.eraseToAnyPublisher()
-            .sink(receiveValue: { val in
-                viewModel.coordinatorIO.navigationSlidingPercentage.send(val)
-            })
-            .store(in: &subscriptions)
-
-        viewModel.coordinatorIO.buy.sink(receiveValue: { [weak self] url in
+        viewModel.coordinatorIO.buy.sink(receiveValue: { [weak self, weak viewController] url in
+            guard let self else { return }
             let vc = SFSafariViewController(url: url)
             vc.modalPresentationStyle = .automatic
-            viewController.present(vc, animated: true)
-
-            vc.onClose = { [weak self] in
-                self?.analyticsManager.log(event: AmplitudeEvent.moonpayWindowClosed)
-            }
+            viewController?.present(vc, animated: true)
+            viewController?.deallocatedPublisher().sink(receiveValue: { _ in
+                self.analyticsManager.log(event: AmplitudeEvent.moonpayWindowClosed)
+            }).store(in: &self.subscriptions)
         }).store(in: &subscriptions)
 
-        return result.prefix(1).eraseToAnyPublisher()
-    }
-
-    // MARK: - Gesture
-
-    private var currentTransitionCoordinator: UIViewControllerTransitionCoordinator?
-
-    @objc private func onGesture(sender: UIGestureRecognizer) {
-        switch sender.state {
-        case .began, .changed:
-            if let ct = navigationController.transitionCoordinator {
-                currentTransitionCoordinator = ct
-            }
-        case .cancelled, .ended:
-            //            currentTransitionCoordinator = nil
-            break
-        case .possible, .failed:
-            break
-        @unknown default:
-            break
-        }
-//        if let currentTransitionCoordinator = currentTransitionCoordinator {
-//            vcPresentedPercentage.send(currentTransitionCoordinator.percentComplete)
-//        }
-        vcPresentedPercentage.send(navigationController.transitionCoordinator?.percentComplete ?? 1)
+        return viewController.deallocatedPublisher().prefix(1).eraseToAnyPublisher()
     }
 }
 

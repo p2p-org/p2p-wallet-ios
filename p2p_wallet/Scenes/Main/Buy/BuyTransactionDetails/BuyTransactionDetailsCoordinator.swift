@@ -24,10 +24,10 @@ final class BuyTransactionDetailsCoordinator: Coordinator<Void> {
         analyticsManager.log(event: AmplitudeEvent.buyTotalShowed)
 
         return Publishers.Merge(
-            view.dismiss.handleEvents(receiveOutput: { _ in
-                viewController.dismiss(animated: true)
+            view.dismiss.handleEvents(receiveOutput: { [weak viewController] _ in
+                viewController?.dismiss(animated: true)
             }),
-            controller.deallocatedPublisher()
+            viewController.deallocatedPublisher()
         ).prefix(1).eraseToAnyPublisher()
     }
 }

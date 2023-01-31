@@ -86,10 +86,6 @@ final class HomeCoordinator: Coordinator<Void> {
         // set view controller
         navigationController.setViewControllers([homeView], animated: false)
         navigationController.navigationItem.largeTitleDisplayMode = .never
-
-        navigationController.onClose = { [weak self] in
-            self?.resultSubject.send(())
-        }
         
         // handle navigation
         navigation
@@ -100,7 +96,7 @@ final class HomeCoordinator: Coordinator<Void> {
             .store(in: &subscriptions)
     
         // return publisher
-        return resultSubject.prefix(1).eraseToAnyPublisher()
+        return navigationController.deallocatedPublisher().prefix(1).eraseToAnyPublisher()
     }
 
     // MARK: - Navigation
@@ -110,7 +106,7 @@ final class HomeCoordinator: Coordinator<Void> {
         case .buy:
             if available(.buyScenarioEnabled) {
                 return coordinate(to: BuyCoordinator(navigationController: navigationController, context: .fromHome))
-                    .map {_ in ()}
+                    .map { _ in () }
                     .eraseToAnyPublisher()
             } else {
                 return Just(presentBuyView())

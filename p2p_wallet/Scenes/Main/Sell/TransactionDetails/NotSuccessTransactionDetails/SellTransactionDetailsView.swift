@@ -22,6 +22,7 @@ struct SellTransactionDetailsView: View {
             Spacer()
                 .frame(minHeight: 24, maxHeight: 44)
             buttonsView
+            Spacer()
         }
         .padding(.bottom, 16)
         .sheetHeader(
