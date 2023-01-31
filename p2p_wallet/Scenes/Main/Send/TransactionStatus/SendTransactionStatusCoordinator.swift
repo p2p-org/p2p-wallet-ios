@@ -3,8 +3,6 @@ import KeyAppUI
 import SwiftUI
 
 final class SendTransactionStatusCoordinator: Coordinator<Void> {
-    private var transition: PanelTransition?
-
     private let navigationController: UINavigationController
     private let container: UIViewController
 
@@ -22,24 +20,12 @@ final class SendTransactionStatusCoordinator: Coordinator<Void> {
     override func start() -> AnyPublisher<Void, Never> {
         let viewModel = SendTransactionStatusViewModel(transaction: transaction)
         let view = SendTransactionStatusView(viewModel: viewModel)
-
-        viewModel.close
-            .sink { [weak self] in self?.finish() }
-            .store(in: &subscriptions)
-
-        transition = PanelTransition()
-        transition?.dimmClicked
-            .sink { [weak self] in self?.finish() }
-            .store(in: &subscriptions)
-
-        let viewController = UIHostingController(rootView: view)
+        let viewController = BottomSheetController(rootView: view)
         navigationController.setViewControllers([viewController], animated: true)
         style(nc: navigationController)
         wrap(for: navigationController)
 
-        container.transitioningDelegate = transition
         container.modalPresentationStyle = .custom
-        container.view.layer.cornerRadius = 20
         container.view.layer.maskedCorners = [.layerMinXMinYCorner, .layerMaxXMinYCorner]
 
         parentController.present(container, animated: true)
@@ -48,6 +34,13 @@ final class SendTransactionStatusCoordinator: Coordinator<Void> {
             .sink { [weak self] params in
                 self?.openDetails(params: params)
             }
+            .store(in: &subscriptions)
+
+        Publishers.Merge(
+            viewModel.close,
+            viewController.deallocatedPublisher()
+        )
+            .sink { [weak self] in self?.finish() }
             .store(in: &subscriptions)
 
         return subject.prefix(1).eraseToAnyPublisher()

@@ -20,7 +20,7 @@ final class SendTransactionDetailsCoordinator: Coordinator<SendTransactionDetail
     override func start() -> AnyPublisher<SendTransactionDetailsCoordinatorResult, Never> {
         let viewModel = SendTransactionDetailViewModel(stateMachine: sendInputViewModel.stateMachine)
         let view = SendTransactionDetailView(viewModel: viewModel)
-        let feeController = BottomSheetController(rootView: view)
+        let feeController = BottomSheetController(showHandler: false, rootView: view)
         feeController.modalPresentationStyle = .custom
         parentController.present(feeController, animated: true)
 
