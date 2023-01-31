@@ -49,11 +49,7 @@ final class SolendTokenActionCoordinator: Coordinator<SolendTokenActionCoordinat
                 viewController.dismiss(animated: true)
             })
             .store(in: &subscriptions)
-        transition.dimmClicked
-            .sink(receiveValue: {
-                viewController.dismiss(animated: true)
-            })
-            .store(in: &subscriptions)
+        
         viewController.onClose = {
             resultSubject.send(.close)
         }

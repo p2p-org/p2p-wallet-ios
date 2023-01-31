@@ -151,11 +151,6 @@ final class SolendCoordinator: Coordinator<Void> {
         viewController.modalPresentationStyle = .custom
         depositVC.present(viewController, animated: true)
 
-        transition.dimmClicked
-            .sink(receiveValue: {
-                viewController.dismiss(animated: true)
-            })
-            .store(in: &subscriptions)
         view.cancel
             .sink(receiveValue: {
                 viewController.dismiss(animated: true)
