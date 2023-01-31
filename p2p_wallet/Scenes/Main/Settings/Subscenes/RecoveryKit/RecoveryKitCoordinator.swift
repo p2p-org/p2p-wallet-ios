@@ -14,15 +14,12 @@ final class RecoveryKitCoordinator: Coordinator<Void> {
     @Injected private var walletSettings: WalletSettings
     
     private let navigationController: UINavigationController
-    private let transition = PanelTransition()
 
     init(navigationController: UINavigationController) {
         self.navigationController = navigationController
     }
 
     override func start() -> AnyPublisher<Void, Never> {
-        let result = PassthroughSubject<Void, Never>()
-
         let vm = RecoveryKitViewModel()
         vm.coordinator.seedPhrase = { [weak navigationController] in
             let vm = SeedPhraseDetailViewModel()
@@ -42,13 +39,10 @@ final class RecoveryKitCoordinator: Coordinator<Void> {
         let vc = KeyAppHostingController(rootView: RecoveryKitView(viewModel: vm))
         vc.title = L10n.walletProtection
         vc.hidesBottomBarWhenPushed = true
-        vc.onClose = {
-            result.send()
-        }
 
         navigationController.pushViewController(vc, animated: true)
 
-        return result.prefix(1).eraseToAnyPublisher()
+        return vc.deallocatedPublisher().prefix(1).eraseToAnyPublisher()
     }
     
     func confirmDeleteAccountDialog() {
@@ -85,11 +79,9 @@ final class RecoveryKitCoordinator: Coordinator<Void> {
         view.onDone = { [weak self] in
             self?.navigationController.dismiss(animated: true)
         }
-        
-        let viewController = view.asViewController()
+
+        let viewController = BottomSheetController(rootView: view)
         let navigationController = UINavigationController(rootViewController: viewController)
-        viewController.view.layer.cornerRadius = 16
-        navigationController.transitioningDelegate = transition
         navigationController.modalPresentationStyle = .custom
         self.navigationController.present(navigationController, animated: true)
     }
