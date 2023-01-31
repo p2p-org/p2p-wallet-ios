@@ -56,10 +56,6 @@ final class ActionsCoordinator: Coordinator<ActionsCoordinator.Result> {
             viewController.deallocatedPublisher().map { ActionsCoordinator.Result.cancel }
         ).prefix(1).eraseToAnyPublisher()
     }
-
-    deinit {
-        debugPrint("ActionsCoordinator deinit")
-    }
 }
 
 // MARK: - Result
