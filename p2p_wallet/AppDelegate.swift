@@ -120,14 +120,19 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
     }
 
     func application(
-        _: UIApplication,
+        _ application: UIApplication,
         open url: URL,
         options: [UIApplication.OpenURLOptionsKey: Any] = [:]
     ) -> Bool {
         var result = false
         Broadcaster.notify(AppUrlHandler.self) { result = result || $0.handle(url: url, options: options) }
         AppsFlyerLib.shared().handleOpen(url, options: options)
-        return result
+        
+        if result {
+            return true
+        } else {
+            return proxyAppDelegate.application(application, open: url, options: options)
+        }
     }
 
     func application(
