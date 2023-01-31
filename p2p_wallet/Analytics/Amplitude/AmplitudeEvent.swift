@@ -55,6 +55,7 @@ enum AmplitudeEvent: AnalyticsEvent {
     case bioRejected
     case setupAllowPushOpen
     case pushApprove
+    case pushAllowed(value: Bool)
     case setupFinishOpen
     case setupFinishClick
     case setupWelcomeBackOpen

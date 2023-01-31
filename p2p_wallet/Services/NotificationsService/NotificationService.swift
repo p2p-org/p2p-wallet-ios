@@ -85,6 +85,7 @@ final class NotificationServiceImpl: NSObject, NotificationService {
         UNUserNotificationCenter.current()
             .requestAuthorization(options: [.alert, .sound, .badge]) { [weak self] granted, _ in
                 Defaults.didSetEnableNotifications = granted
+                self?.analyticsManager.log(event: AmplitudeEvent.pushAllowed(value: granted))
                 if granted {
                     self?.analyticsManager.log(event: AmplitudeEvent.pushApprove)
                 }
