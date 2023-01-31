@@ -20,7 +20,14 @@ struct ForgetPinView: View {
 
     var body: some View {
         VStack {
+            // Indicator
+            Color(Asset.Colors.rain.color)
+                .frame(width: 31, height: 4)
+                .cornerRadius(2)
+                .padding(.vertical, 6)
+
             // Header
+
             HStack {
                 SwiftUI.EmptyView()
                     .frame(width: 24)
@@ -61,8 +68,6 @@ struct ForgetPinView: View {
             .frame(height: TextButton.Size.large.height)
             .padding(.horizontal, 24)
             .padding(.vertical, 16)
-
-            Spacer()
         }
         .background(Color(.white))
         .cornerRadius(radius: 24, corners: [.topLeft, .topRight])

@@ -1,10 +1,3 @@
-//
-//  BuyTransactionDetailsView.swift
-//  p2p_wallet
-//
-//  Created by Ivan on 29.08.2022.
-//
-
 import Combine
 import KeyAppUI
 import SolanaSwift
@@ -17,40 +10,32 @@ struct BuyTransactionDetailsView: View {
     var dismiss: AnyPublisher<Void, Never> { dismissSubject.eraseToAnyPublisher() }
 
     var body: some View {
-        VStack(spacing: 18) {
-            Color(Asset.Colors.rain.color)
-                .frame(width: 31, height: 4)
-                .cornerRadius(2)
-                .padding(.top, 6)
-            VStack(spacing: 43) {
-                Text(L10n.transactionDetails)
-                    .foregroundColor(Color(Asset.Colors.night.color))
-                    .font(uiFont: .font(of: .title3, weight: .semibold))
-                VStack(spacing: 34) {
-                    VStack(spacing: 46) {
-                        Image(uiImage: .transactionDetailsCat)
-                        amounts
-                    }
-                    .padding(.horizontal, 14)
-                    Button(
-                        action: {
-                            dismissSubject.send()
-                        },
-                        label: {
-                            Text(L10n.done)
-                                .foregroundColor(Color(Asset.Colors.night.color))
-                                .font(uiFont: .font(of: .text2, weight: .bold))
-                                .frame(height: 56)
-                                .frame(maxWidth: .infinity)
-                                .background(Color(Asset.Colors.rain.color))
-                                .cornerRadius(12)
-                                .padding(.bottom, 16)
-                        }
-                    )
-                }
-                .padding(.horizontal, 24)
+        VStack(spacing: 34) {
+            VStack(spacing: 46) {
+                Image(uiImage: .transactionDetailsCat)
+                amounts
             }
+            .padding(.horizontal, 14)
+
+            Button(
+                action: {
+                    dismissSubject.send()
+                },
+                label: {
+                    Text(L10n.done)
+                        .foregroundColor(Color(Asset.Colors.night.color))
+                        .font(uiFont: .font(of: .text2, weight: .bold))
+                        .frame(height: 56)
+                        .frame(maxWidth: .infinity)
+                        .background(Color(Asset.Colors.rain.color))
+                        .cornerRadius(12)
+                        .padding(.bottom, 16)
+                }
+            )
+            Spacer()
         }
+        .padding(.horizontal, 24)
+        .padding(.top, 20)
     }
 
     private var amounts: some View {

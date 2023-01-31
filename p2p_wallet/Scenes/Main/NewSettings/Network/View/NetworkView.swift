@@ -1,10 +1,3 @@
-//
-//  NetworkView.swift
-//  p2p_wallet
-//
-//  Created by Ivan on 31.08.2022.
-//
-
 import KeyAppUI
 import SwiftUI
 
@@ -16,14 +9,6 @@ struct NetworkView: View {
 
     var body: some View {
         VStack(spacing: 32) {
-            VStack(spacing: 18) {
-                Color(Asset.Colors.rain.color)
-                    .frame(width: 31, height: 4)
-                    .cornerRadius(2)
-                Text(L10n.network)
-                    .foregroundColor(Color(Asset.Colors.night.color))
-                    .font(uiFont: .font(of: .title3, weight: .semibold))
-            }
             VStack {
                 VStack(spacing: 0) {
                     ForEach(viewModel.endPoints.indices, id: \.self) { index in
@@ -35,7 +20,6 @@ struct NetworkView: View {
                         )
                     }
                 }
-                Spacer()
                 Button(
                     action: {
                         viewModel.cancel()
@@ -52,6 +36,7 @@ struct NetworkView: View {
                     }
                 )
             }
+            Spacer()
         }
         .padding(.top, 6)
         .padding(.bottom, 16)
