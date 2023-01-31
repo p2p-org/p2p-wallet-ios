@@ -98,7 +98,7 @@ extension TransitionDriver {
     }
 
     var maxTranslation: CGFloat {
-        presentedController?.view.bounds.height ?? 0
+        presentedController?.view.frame.height ?? 0
     }
 
     /// `pause()` before call `isRunning`
@@ -110,7 +110,8 @@ extension TransitionDriver {
 private extension UIPanGestureRecognizer {
     func isProjectedToDownHalf(maxTranslation: CGFloat) -> Bool {
         let endLocation = projectedLocation(decelerationRate: .fast)
-        return endLocation.y > maxTranslation / 2
+        let isPresentationCompleted = endLocation.y > maxTranslation / 2
+        return isPresentationCompleted
     }
 
     func incrementToBottom(maxTranslation: CGFloat) -> CGFloat {
