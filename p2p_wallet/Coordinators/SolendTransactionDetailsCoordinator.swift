@@ -44,11 +44,7 @@ final class SolendTransactionDetailsCoordinator: Coordinator<Void> {
             })
             .store(in: &subscriptions)
         let resultSubject = PassthroughSubject<Void, Never>()
-        transition.dimmClicked
-            .sink(receiveValue: {
-                viewController.dismiss(animated: true)
-            })
-            .store(in: &subscriptions)
+
         viewController.onClose = {
             resultSubject.send()
         }

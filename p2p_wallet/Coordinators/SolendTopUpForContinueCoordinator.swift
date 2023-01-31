@@ -33,12 +33,6 @@ final class SolendTopUpForContinueCoordinator: Coordinator<SolendTopUpForContinu
         navigationController.modalPresentationStyle = .custom
         self.navigationController.present(navigationController, animated: true)
 
-        transition.dimmClicked
-            .merge(with: viewModel.close)
-            .sink(receiveValue: { _ in
-                viewController.dismiss(animated: true)
-            })
-            .store(in: &subscriptions)
         viewModel.buy
             .sink(receiveValue: { [unowned self] in
                 viewController.dismiss(animated: true)
