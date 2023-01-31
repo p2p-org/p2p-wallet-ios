@@ -11,6 +11,7 @@ struct SendInputFreeTransactionsDetailView: View {
                 .resizable()
                 .aspectRatio(contentMode: .fit)
                 .frame(maxWidth: 300)
+                .fixedSize()
 
             HStack(spacing: 16) {
                 ZStack {
@@ -27,9 +28,11 @@ struct SendInputFreeTransactionsDetailView: View {
                     Text("\(L10n.enjoyFreeTransactions)!")
                         .font(uiFont: .font(of: .text1, weight: .bold))
                         .foregroundColor(Color(Asset.Colors.night.color))
+                        .fixedSize(horizontal: false, vertical: true)
                     Text(L10n.onTheSolanaNetworkTheFirst100TransactionsInADayArePaidByKeyApp)
                         .apply(style: .label1)
                         .foregroundColor(Color(Asset.Colors.night.color))
+                        .fixedSize(horizontal: false, vertical: true)
                 }
             }
 
@@ -40,9 +43,10 @@ struct SendInputFreeTransactionsDetailView: View {
                 onPressed: actionButtonPressed
             )
             .frame(height: TextButton.Size.large.height)
+            .padding(.bottom, 12)
+            Spacer()
         }
         .padding(.horizontal, 16)
-        .sheetHeader(title: nil, withSeparator: false)
     }
 }
 

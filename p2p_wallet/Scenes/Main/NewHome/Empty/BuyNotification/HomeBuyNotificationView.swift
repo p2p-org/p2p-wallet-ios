@@ -8,7 +8,6 @@ struct HomeBuyNotificationView: View {
 
     var body: some View {
         HomeBuyNotification(
-            title: L10n.transactionDetails,
             buttonTitle: L10n.buy + " USDC",
             buttonTapped: buttonTapped
         ) {
@@ -30,56 +29,40 @@ struct HomeBuyNotificationView: View {
 struct HomeBuyNotification<Content: View>: View {
     let child: Content
     let buttonTapped: (() -> Void)?
-    let title: String
     let buttonTitle: String
 
     init(
-        title: String,
         buttonTitle: String,
         buttonTapped: (() -> Void)? = nil,
         @ViewBuilder child: () -> Content
     ) {
         self.child = child()
         self.buttonTapped = buttonTapped
-        self.title = title
         self.buttonTitle = buttonTitle
     }
 
     var body: some View {
         VStack {
-            Color(Asset.Colors.rain.color)
-                .frame(width: 31, height: 4)
-                .cornerRadius(2)
-                .padding(.top, 6)
-
-            Text(title)
-                .foregroundColor(Color(Asset.Colors.night.color))
-                .font(uiFont: .font(of: .title3, weight: .semibold))
-                .padding(.top, 11)
-
+            child
+                .padding(.top, 21)
+            Button(
+                action: {
+                    buttonTapped?()
+                },
+                label: {
+                    Text(buttonTitle)
+                        .foregroundColor(Color(Asset.Colors.lime.color))
+                        .font(uiFont: .font(of: .text2, weight: .bold))
+                        .frame(height: 58)
+                        .frame(maxWidth: .infinity)
+                        .background(Color(Asset.Colors.night.color))
+                        .cornerRadius(12)
+                        .padding(.horizontal, 2)
+                        .padding(.bottom, 16)
+                }
+            )
             Spacer()
-
-            VStack {
-                child.padding(.top, 21)
-                Spacer()
-                Button(
-                    action: {
-                        buttonTapped?()
-                    },
-                    label: {
-                        Text(buttonTitle)
-                            .foregroundColor(Color(Asset.Colors.lime.color))
-                            .font(uiFont: .font(of: .text2, weight: .bold))
-                            .frame(height: 58)
-                            .frame(maxWidth: .infinity)
-                            .background(Color(Asset.Colors.night.color))
-                            .cornerRadius(12)
-                            .padding(.horizontal, 2)
-                            .padding(.bottom, 16)
-                    }
-                )
-            }.padding(.horizontal, 24)
-        }
+        }.padding(.horizontal, 24)
     }
 }
 

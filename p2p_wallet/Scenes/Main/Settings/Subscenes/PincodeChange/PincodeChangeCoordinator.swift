@@ -8,7 +8,6 @@ import SwiftUI
 
 class PincodeChangeCoordinator: Coordinator<Bool> {
     private let navVC: UINavigationController
-//    private let transition = PanelTransition()
 
     @Injected private var pincodeStorage: PincodeStorageType
     @Injected private var helpLauncher: HelpCenterLauncher
@@ -17,10 +16,6 @@ class PincodeChangeCoordinator: Coordinator<Bool> {
     init(navVC: UINavigationController) {
         self.navVC = navVC
         super.init()
-
-//        transition.dimmClicked
-//            .sink { navVC.dismiss(animated: true) }
-//            .store(in: &subscriptions)
     }
 
     override func start() -> AnyPublisher<Bool, Never> {
@@ -31,14 +26,12 @@ class PincodeChangeCoordinator: Coordinator<Bool> {
         pincodeChangeStartVC.title = L10n.pinCode
         pincodeChangeStartVC.hidesBottomBarWhenPushed = true
 
-        pincodeChangeStartVC.onClose = { [result] in
-            result.send(false)
-            result.send(completion: .finished)
-        }
-
         navVC.pushViewController(pincodeChangeStartVC, animated: true)
 
-        return result.eraseToAnyPublisher()
+        return Publishers.Merge(
+            pincodeChangeStartVC.deallocatedPublisher().map { false },
+            result
+        ).prefix(1).eraseToAnyPublisher()
     }
 
     func openVerifyPincode() {

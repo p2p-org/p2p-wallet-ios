@@ -1,10 +1,3 @@
-//
-//  SendTransactionDetails.swift
-//  p2p_wallet
-//
-//  Created by Ivan on 28.11.2022.
-//
-
 import Combine
 import KeyAppUI
 import SwiftUI
