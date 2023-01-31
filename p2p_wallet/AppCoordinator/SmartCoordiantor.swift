@@ -60,6 +60,7 @@ class SmartCoordinatorBottomSheetPresentation: SmartCoordinatorPresentation {
 
 class SmartCoordinator<T>: Coordinator<T> {
     let presentation: SmartCoordinatorPresentation
+    let result = PassthroughSubject<T, Never>()
 
     init(presentation: SmartCoordinatorPresentation) {
         self.presentation = presentation
@@ -71,7 +72,7 @@ class SmartCoordinator<T>: Coordinator<T> {
 
         presentation.run(presentedViewController: vc)
 
-        return vc.deallocatedPublisher().prefix(1).eraseToAnyPublisher()
+        return result.prefix(1).eraseToAnyPublisher()
     }
 
     func build() -> UIViewController {
