@@ -33,10 +33,10 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
     }
 
     private lazy var proxyAppDelegate = AppDelegateProxyService()
-    
+
     override init() {
         super.init()
-        
+
         setupFirebaseLogging()
     }
 
@@ -71,7 +71,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         AppsFlyerLib.shared().appsFlyerDevKey = String.secretConfig("APPSFLYER_DEV_KEY")!
         AppsFlyerLib.shared().appleAppID = String.secretConfig("APPSFLYER_APP_ID")!
         AppsFlyerLib.shared().waitForATTUserAuthorization(timeoutInterval: 60)
-        
+
         Lokalise.shared.setProjectID(
             String.secretConfig("LOKALISE_PROJECT_ID")!,
             token: String.secretConfig("LOKALISE_TOKEN")!
@@ -124,15 +124,15 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         open url: URL,
         options: [UIApplication.OpenURLOptionsKey: Any] = [:]
     ) -> Bool {
-        var result = false
-        Broadcaster.notify(AppUrlHandler.self) { result = result || $0.handle(url: url, options: options) }
-        AppsFlyerLib.shared().handleOpen(url, options: options)
-        
-        if result {
+        var isGoogleServiceUrlHanded = false
+        Broadcaster.notify(AppUrlHandler.self) { isGoogleServiceUrlHanded = isGoogleServiceUrlHanded || $0.handle(url: url, options: options) }
+        if isGoogleServiceUrlHanded {
             return true
-        } else {
-            return proxyAppDelegate.application(application, open: url, options: options)
         }
+
+        AppsFlyerLib.shared().handleOpen(url, options: options)
+
+        return proxyAppDelegate.application(application, open: url, options: options)
     }
 
     func application(
@@ -259,7 +259,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         // Migrate all users to default currency
         Defaults.fiat = .usd
     }
-    
+
     private func setupFirebaseLogging() {
         var arguments = ProcessInfo.processInfo.arguments
         #if !RELEASE
