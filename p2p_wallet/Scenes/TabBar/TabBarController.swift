@@ -5,19 +5,18 @@
 //  Created by Ivan on 09.07.2022.
 //
 
-import Combine
 import AnalyticsManager
+import Combine
 import Intercom
 import KeyAppUI
 import Resolver
 import RxCocoa
 import RxSwift
+import Sell
 import SwiftUI
 import UIKit
-import Sell
 
 final class TabBarController: UITabBarController {
-    
     // MARK: - Dependencies
 
     @Injected private var analyticsManager: AnalyticsManager
@@ -46,6 +45,7 @@ final class TabBarController: UITabBarController {
     private var localAuthVC: PincodeViewController?
 
     // MARK: - Initializers
+
     init(
         viewModel: TabBarViewModel,
         authenticateWhenAppears: Bool
@@ -59,7 +59,7 @@ final class TabBarController: UITabBarController {
     public required init?(coder _: NSCoder) {
         fatalError("init(coder:) has not been implemented")
     }
-    
+
     // MARK: - Public actions
 
     func setupTabs() {
@@ -92,10 +92,10 @@ final class TabBarController: UITabBarController {
 
         // replace default TabBar by CustomTabBar
         setValue(CustomTabBar(frame: tabBar.frame), forKey: "tabBar")
-        
+
         // bind values
         bind()
-        
+
         // set up
         setUpTabBarAppearance()
         delegate = self
@@ -104,7 +104,7 @@ final class TabBarController: UITabBarController {
         if authenticateWhenAppears {
             viewModel.authenticate(presentationStyle: .login())
         }
-        
+
         // add blur EffectView for authentication scene
         view.addSubview(blurEffectView)
         blurEffectView.autoPinEdgesToSuperviewEdges()
@@ -119,7 +119,7 @@ final class TabBarController: UITabBarController {
             }
         }
     }
-    
+
     // MARK: - Authentications
 
     private func showLockView() {
@@ -233,12 +233,7 @@ final class TabBarController: UITabBarController {
 
         viewModel.moveToHistory
             .drive(onNext: { [unowned self] in
-                if available(.investSolendFeature) {
-                    changeItem(to: .history)
-                } else {
-                    // old position of history tab controller
-                    changeItem(to: .invest)
-                }
+                changeItem(to: .history)
             })
             .disposed(by: disposeBag)
 
