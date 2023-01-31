@@ -181,7 +181,6 @@ final class PincodeViewController: BaseViewController {
         viewModel.infoDidTap.send()
     }
 
-    private var transition: PanelTransition?
     private var forgetPinViewController: UIViewController?
     private func openForgotPIN(
         text: String? = L10n.ifYouForgetYourPINYouCanLogOutAndCreateANewOneWhenYouLogInAgain,
@@ -203,14 +202,10 @@ final class PincodeViewController: BaseViewController {
                 }
             })
         }
-        transition = PanelTransition()
-        forgetPinViewController = UIHostingController(rootView: view)
-        forgetPinViewController?.view.layer.cornerRadius = 20
-        forgetPinViewController?.transitioningDelegate = transition
+
+        forgetPinViewController = BottomSheetController(rootView: view)
         forgetPinViewController?.modalPresentationStyle = .custom
-        transition?.dimmClicked
-            .sink { [weak self] in self?.forgetPinViewController?.dismiss(animated: true) }
-            .store(in: &subscriptions)
+
         guard let forgetPinViewController = forgetPinViewController else {
             return
         }
