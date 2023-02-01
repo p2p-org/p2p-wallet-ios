@@ -49,7 +49,7 @@ final class SendEmptyCoordinator: Coordinator<Void> {
         )
         let viewController = view.asViewController(withoutUIKitNavBar: false)
         viewController.hidesBottomBarWhenPushed = true
-        viewController.navigationItem.title = L10n.buyOrReceiveCryptoToContinue
+        viewController.navigationItem.title = L10n.buyOrReceiveToContinue
         navigationController.pushViewController(viewController, animated: true)
 
         let resultSubject = PassthroughSubject<Void, Never>()

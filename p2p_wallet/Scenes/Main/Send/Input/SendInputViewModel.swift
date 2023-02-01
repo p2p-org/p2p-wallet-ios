@@ -39,6 +39,8 @@ final class SendInputViewModel: BaseViewModel, ObservableObject {
 
     @Published var feeTitle = L10n.fees("")
     @Published var isFeeLoading: Bool = true
+    
+    @Published var loadingState: LoadableState = .loaded
 
     let feeInfoPressed = PassthroughSubject<Void, Never>()
     let openFeeInfo = PassthroughSubject<Bool, Never>()
@@ -55,6 +57,7 @@ final class SendInputViewModel: BaseViewModel, ObservableObject {
 
     private let source: SendSource
     private var wasMaxWarningToastShown: Bool = false
+    private let preChosenAmount: Double?
 
     // MARK: - Dependencies
 
@@ -63,8 +66,9 @@ final class SendInputViewModel: BaseViewModel, ObservableObject {
     @Injected private var analyticsManager: AnalyticsManager
     @Injected private var analyticsService: AnalyticsService
 
-    init(recipient: Recipient, preChosenWallet: Wallet?, source: SendSource) {
+    init(recipient: Recipient, preChosenWallet: Wallet?, preChosenAmount: Double?, source: SendSource, allowSwitchingMainAmountType: Bool) {
         self.source = source
+        self.preChosenAmount = preChosenAmount
         let repository = Resolver.resolve(WalletsRepository.self)
         walletsRepository = repository
         let wallets = repository.getWallets()
@@ -103,7 +107,7 @@ final class SendInputViewModel: BaseViewModel, ObservableObject {
         var exchangeRate = [String: CurrentPrice]()
         var tokens = Set<Token>()
         wallets.forEach {
-            exchangeRate[$0.token.symbol] = pricesService.currentPrice(for: $0.token.symbol)
+            exchangeRate[$0.token.symbol] = pricesService.currentPrice(mint: $0.token.address)
             tokens.insert($0.token)
         }
 
@@ -129,7 +133,7 @@ final class SendInputViewModel: BaseViewModel, ObservableObject {
             )
         )
 
-        inputAmountViewModel = SendInputAmountViewModel(initialToken: tokenInWallet)
+        inputAmountViewModel = SendInputAmountViewModel(initialToken: tokenInWallet, allowSwitchingMainAmountType: allowSwitchingMainAmountType)
         actionButtonViewModel = SendInputActionButtonViewModel()
 
         tokenViewModel = SendInputTokenViewModel(initialToken: tokenInWallet)
@@ -159,6 +163,16 @@ final class SendInputViewModel: BaseViewModel, ObservableObject {
                     return try await relayContextManager.getCurrentContextOrUpdate()
                 }))
             
+            // disable adding amount if amount is pre-chosen
+            if let amount = preChosenAmount {
+                Task {
+                    inputAmountViewModel.mainAmountType = .token
+                    inputAmountViewModel.amountText = amount.toString()
+                    await MainActor.run { [unowned self] in
+                        inputAmountViewModel.isDisabled = true
+                    }
+                }
+            }
 
             switch nextState.status {
             case .error(reason: .initializeFailed(_)):
@@ -171,7 +185,19 @@ final class SendInputViewModel: BaseViewModel, ObservableObject {
 
     func openKeyboard() {
         DispatchQueue.main.async {
+            guard !self.inputAmountViewModel.isFirstResponder else { return }
             self.inputAmountViewModel.isFirstResponder = true
+        }
+    }
+    
+    @MainActor
+    func load() async {
+        loadingState = .loading
+        do {
+            try await Resolver.resolve(SwapServiceType.self).reload()
+            loadingState = .loaded
+        } catch {
+            loadingState = .error(error.readableDescription)
         }
     }
 }
@@ -287,7 +313,7 @@ private extension SendInputViewModel {
         $status
             .sink { [weak self] value in
                 guard value == .ready else { return }
-                self?.openKeyboard()
+                DispatchQueue.main.asyncAfter(deadline: .now() + 0.5, execute: { self?.openKeyboard() })
             }
             .store(in: &subscriptions)
     }
@@ -307,13 +333,7 @@ private extension SendInputViewModel {
                 isEnabled: false,
                 title: L10n.max(maxAmount.tokenAmountFormattedString(symbol: sourceWallet.token.symbol, roundingMode: .down))
             )
-            if currentState.token.isNativeSOL && currentState.amountInToken != currentState.maxAmountInputInToken {
-                if !wasMaxWarningToastShown {
-                    handleSuccess(text: L10n.weLeftAMinimumSOLBalanceToSaveTheAccountAddress)
-                    wasMaxWarningToastShown = true
-                }
-                inputAmountViewModel.isMaxButtonVisible = true
-            }
+            checkMaxButtonIfNeeded()
         case let .error(.inputTooLow(minAmount)):
             inputAmountViewModel.isError = true
             actionButtonViewModel.actionButton = .init(
@@ -333,12 +353,12 @@ private extension SendInputViewModel {
                 title: L10n.tryAgain
             )
         case .error(reason: .insufficientFunds):
-            inputAmountViewModel.isError = false
+            inputAmountViewModel.isError = true
             actionButtonViewModel.actionButton = .init(
                 isEnabled: false,
                 title: L10n.insufficientFunds
             )
-
+            checkMaxButtonIfNeeded()
         default:
             wasMaxWarningToastShown = false
             inputAmountViewModel.isError = false
@@ -346,6 +366,18 @@ private extension SendInputViewModel {
                 isEnabled: true,
                 title: "\(L10n.send) \(currentState.amountInToken.tokenAmountFormattedString(symbol: currentState.token.symbol, maximumFractionDigits: Int(currentState.token.decimals), roundingMode: .down))"
             )
+        }
+    }
+
+    func checkMaxButtonIfNeeded() {
+        guard currentState.token.isNativeSOL else { return }
+        let range = currentState.maxAmountInputInSOLWithLeftAmount..<currentState.maxAmountInputInToken
+        if range.contains(currentState.amountInToken) {
+            if !wasMaxWarningToastShown {
+                handleSuccess(text: L10n.weLeftAMinimumSOLBalanceToSaveTheAccountAddress)
+                wasMaxWarningToastShown = true
+            }
+            inputAmountViewModel.isMaxButtonVisible = true
         }
     }
 

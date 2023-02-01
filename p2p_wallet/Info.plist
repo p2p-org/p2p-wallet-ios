@@ -6,6 +6,10 @@
 	<string>$(AMPLITUDE_API_KEY)</string>
 	<key>AMPLITUDE_API_KEY_FEATURE</key>
 	<string>$(AMPLITUDE_API_KEY_FEATURE)</string>
+	<key>LOKALISE_PROJECT_ID</key>
+	<string>$(LOKALISE_PROJECT_ID)</string>
+	<key>LOKALISE_TOKEN</key>
+	<string>$(LOKALISE_TOKEN)</string>
 	<key>NSAdvertisingAttributionReportEndpoint</key>
 	<string>https://appsflyer-skadnetwork.com/</string>
 	<key>API_GATEWAY_DEV</key>
@@ -97,8 +101,12 @@
 	<true/>
 	<key>MOONPAY_PRODUCTION_API_KEY</key>
 	<string>$(MOONPAY_PRODUCTION_API_KEY)</string>
+	<key>MOONPAY_STAGING_SELL_ENDPOINT</key>
+	<string>$(MOONPAY_STAGING_SELL_ENDPOINT)</string>
 	<key>MOONPAY_STAGING_API_KEY</key>
 	<string>$(MOONPAY_STAGING_API_KEY)</string>
+	<key>MOONPAY_PRODUCTION_SELL_ENDPOINT</key>
+	<string>$(MOONPAY_PRODUCTION_SELL_ENDPOINT)</string>
 	<key>NAME_SERVICE_ENDPOINT</key>
 	<string>$(NAME_SERVICE_ENDPOINT)</string>
 	<key>NAME_SERVICE_ENDPOINT_NEW</key>

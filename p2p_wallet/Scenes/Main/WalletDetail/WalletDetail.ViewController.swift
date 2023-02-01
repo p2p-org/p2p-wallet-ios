@@ -113,6 +113,7 @@ extension WalletDetail {
         // MARK: - Navigation
 
         private var buyCoordinator: BuyCoordinator?
+        private var sellCoordinator: SellCoordinator?
         private func navigate(to scene: NavigatableScene?) {
             switch scene {
             case let .buy(crypto):
@@ -142,7 +143,7 @@ extension WalletDetail {
                 vc.delegate = self
                 present(vc, animated: true)
             case let .send(wallet):
-                coordinator = SendCoordinator(rootViewController: navigationController!, preChosenWallet: wallet, hideTabBar: true)
+                coordinator = SendCoordinator(rootViewController: navigationController!, preChosenWallet: wallet, hideTabBar: true, allowSwitchingMainAmountType: true)
                 coordinator?.start()
                     .sink { [weak self] result in
                         switch result {

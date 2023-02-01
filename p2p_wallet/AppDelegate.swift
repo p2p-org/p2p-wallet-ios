@@ -13,6 +13,7 @@ import Firebase
 import Intercom
 import KeyAppKitLogger
 import KeyAppUI
+import Lokalise
 import Resolver
 import Sentry
 import SolanaSwift
@@ -78,6 +79,12 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         AppsFlyerLib.shared().appsFlyerDevKey = String.secretConfig("APPSFLYER_DEV_KEY")!
         AppsFlyerLib.shared().appleAppID = appsFlyerAppId
         AppsFlyerLib.shared().waitForATTUserAuthorization(timeoutInterval: 60)
+        
+        Lokalise.shared.setProjectID(
+            String.secretConfig("LOKALISE_PROJECT_ID")!,
+            token: String.secretConfig("LOKALISE_TOKEN")!
+        )
+        Lokalise.shared.swizzleMainBundle()
 
         // Set app coordinator
         appCoordinator = AppCoordinator()

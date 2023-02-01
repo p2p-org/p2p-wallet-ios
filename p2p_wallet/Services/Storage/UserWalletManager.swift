@@ -29,6 +29,12 @@ class UserWalletManager: ObservableObject {
         try await storage.reloadSolanaAccount()
 
         guard let account = storage.account else { return }
+        
+        let moonpayAccount = try await Account(
+            phrase: account.phrase,
+            network: .mainnetBeta,
+            derivablePath: DerivablePath(type: storage.derivablePath.type, walletIndex: 101, accountIndex: 0)
+        )
 
         wallet = .init(
             seedPhrase: account.phrase,
@@ -36,7 +42,8 @@ class UserWalletManager: ObservableObject {
             name: storage.getName(),
             deviceShare: nil,
             ethAddress: storage.ethAddress,
-            account: account
+            account: account,
+            moonpayExternalClientId: moonpayAccount.publicKey.base58EncodedString
         )
     }
 
@@ -89,6 +96,9 @@ class UserWalletManager: ObservableObject {
         Defaults.forceCloseNameServiceBanner = false
         Defaults.shouldShowConfirmAlertOnSend = true
         Defaults.shouldShowConfirmAlertOnSwap = true
+        Defaults.moonpayInfoShouldHide = false
+        Defaults.isSellInfoPresented = false
+        Defaults.isTokenInputTypeChosen = false
         
         walletSettings.reset()
 
