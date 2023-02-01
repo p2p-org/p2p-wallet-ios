@@ -129,7 +129,8 @@ final class SendInputViewModel: BaseViewModel, ObservableObject {
                 feeService: SendFeeCalculatorImpl(
                     feeRelayerCalculator: Resolver.resolve(RelayService.self).feeCalculator
                 ),
-                solanaAPIClient: Resolver.resolve()
+                solanaAPIClient: Resolver.resolve(),
+                relayContextManager: Resolver.resolve()
             )
         )
 
@@ -156,19 +157,14 @@ final class SendInputViewModel: BaseViewModel, ObservableObject {
         Task { [weak self] in
             self?.status = .initializing
 
-            let nextState = await stateMachine
-                .accept(action: .initialize(.init {
-                    // get current context
-                    let relayContextManager = Resolver.resolve(RelayContextManager.self)
-                    return try await relayContextManager.getCurrentContextOrUpdate()
-                }))
-            
+            let nextState = await stateMachine.accept(action: .initialize)
+
             // disable adding amount if amount is pre-chosen
             if let amount = preChosenAmount {
                 Task {
                     inputAmountViewModel.mainAmountType = .token
                     inputAmountViewModel.amountText = amount.toString()
-                    await MainActor.run { [unowned self] in
+                    await MainActor.run {
                         inputAmountViewModel.isDisabled = true
                     }
                 }
