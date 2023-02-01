@@ -52,6 +52,8 @@ class WalletsViewModel: BEListViewModel<Wallet> {
 
         // observe prices
         pricesService.currentPricesDriver
+            .map(\.value)
+            .distinctUntilChanged()
             .drive(onNext: { [weak self] _ in
                 self?.updatePrices()
             })
@@ -254,6 +256,7 @@ class WalletsViewModel: BEListViewModel<Wallet> {
     private func updatePrices() {
         guard currentState == .loaded else { return }
         let wallets = mapPrices(wallets: data)
+            .sorted(by: Wallet.defaultSorter)
         overrideData(by: wallets)
     }
 
