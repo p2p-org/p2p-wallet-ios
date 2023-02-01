@@ -310,8 +310,10 @@ private extension Wallet {
                 PublicKey.usdcMint.base58EncodedString,
                 PublicKey.usdtMint.base58EncodedString
             ]
-            if prioritizedTokenMints.contains(lhs.token.address) || prioritizedTokenMints.contains(rhs.token.address) {
-                return prioritizedTokenMints.contains(lhs.token.address)
+            for mint in prioritizedTokenMints {
+                if mint == lhs.token.address || mint == rhs.token.address {
+                    return mint == lhs.token.address
+                }
             }
 
             // prefers token which more value than the other in fiat
