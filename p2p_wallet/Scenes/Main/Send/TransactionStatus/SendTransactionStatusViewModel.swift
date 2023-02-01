@@ -10,8 +10,6 @@ final class SendTransactionStatusViewModel: BaseViewModel, ObservableObject {
     @Injected private var priceService: PricesServiceType
 
     let close = PassthroughSubject<Void, Never>()
-    let errorMessageTap = PassthroughSubject<Void, Never>()
-    let openDetails = PassthroughSubject<SendTransactionStatusDetailsParameters, Never>()
 
     @Published var token: Token
     @Published var title: String = L10n.transactionSubmitted
@@ -20,6 +18,7 @@ final class SendTransactionStatusViewModel: BaseViewModel, ObservableObject {
     @Published var transactionCryptoAmount: String
     @Published var info = [(title: String, detail: String)]()
     @Published var state: State = .loading(message: L10n.itUsuallyTakes520SecondsForATransactionToComplete)
+    @Published var detailParams: SendTransactionStatusDetailsParameters = .init(title: "", description: "", fee: nil)
 
     private var currentTransaction: ParsedTransaction?
     private let disposeBag = DisposeBag()
@@ -58,56 +57,9 @@ final class SendTransactionStatusViewModel: BaseViewModel, ObservableObject {
                     break
                 }
                 self.currentTransaction = pendingTransaction?.parse(pricesService: self.priceService)
+                self.parseDetails(feeAmount: feeAmount)
             }
             .disposed(by: disposeBag)
-
-        errorMessageTap
-            .sink { [weak self] in
-                guard
-                    let self = self,
-                    let parsedTransaction = self.currentTransaction,
-                    let error = parsedTransaction.status.getError() as? SolanaError else { return }
-                var params = SendTransactionStatusDetailsParameters(
-                    title: L10n.somethingWentWrong,
-                    description: L10n.unknownError,
-                    fee: feeAmount
-                )
-                switch error {
-                case let .other(message) where message == "Blockhash not found":
-                    params = .init(
-                        title: L10n.blockhashNotFound,
-                        description: L10n.theBankHasNotSeenTheGivenOrTheTransactionIsTooOldAndTheHasBeenDiscarded(
-                            parsedTransaction.blockhash ?? "",
-                            parsedTransaction.blockhash ?? ""
-                        ),
-                        fee: feeAmount
-                    )
-                case let .other(message) where message.contains("Instruction"):
-                    params = .init(
-                        title: L10n.errorProcessingInstruction0CustomProgramError0x1,
-                        description: L10n.AnErrorOccuredWhileProcessingAnInstruction
-                            .theFirstElementOfTheTupleIndicatesTheInstructionIndexInWhichTheErrorOccured, fee: feeAmount
-                    )
-                case let .other(message) where message.contains("Already processed"):
-                    params = .init(
-                        title: L10n.thisTransactionHasAlreadyBeenProcessed,
-                        description: L10n.TheBankHasSeenThisTransactionBefore
-                            .thisCanOccurUnderNormalOperationWhenAUDPPacketIsDuplicatedAsAUserErrorFromAClientNotUpdatingItsOrAsADoubleSpendAttack(parsedTransaction
-                                .blockhash ?? ""),
-                        fee: feeAmount
-                    )
-                case let .other(message):
-                    params = .init(
-                        title: L10n.somethingWentWrong,
-                        description: message,
-                        fee: feeAmount
-                    )
-                default:
-                    break
-                }
-                self.openDetails.send(params)
-            }
-            .store(in: &subscriptions)
     }
 
     private func updateCompleted() {
@@ -131,6 +83,51 @@ final class SendTransactionStatusViewModel: BaseViewModel, ObservableObject {
             ])
         )
         state = .error(message: attributedError)
+    }
+
+    private func parseDetails(feeAmount: String?) {
+        guard
+            let parsedTransaction = self.currentTransaction,
+            let error = parsedTransaction.status.getError() as? SolanaError else { return }
+        var params = SendTransactionStatusDetailsParameters(
+            title: L10n.somethingWentWrong,
+            description: L10n.unknownError,
+            fee: feeAmount
+        )
+        switch error {
+        case let .other(message) where message == "Blockhash not found":
+            params = .init(
+                title: L10n.blockhashNotFound,
+                description: L10n.theBankHasNotSeenTheGivenOrTheTransactionIsTooOldAndTheHasBeenDiscarded(
+                    parsedTransaction.blockhash ?? "",
+                    parsedTransaction.blockhash ?? ""
+                ),
+                fee: feeAmount
+            )
+        case let .other(message) where message.contains("Instruction"):
+            params = .init(
+                title: L10n.errorProcessingInstruction0CustomProgramError0x1,
+                description: L10n.AnErrorOccuredWhileProcessingAnInstruction
+                    .theFirstElementOfTheTupleIndicatesTheInstructionIndexInWhichTheErrorOccured, fee: feeAmount
+            )
+        case let .other(message) where message.contains("Already processed"):
+            params = .init(
+                title: L10n.thisTransactionHasAlreadyBeenProcessed,
+                description: L10n.TheBankHasSeenThisTransactionBefore
+                    .thisCanOccurUnderNormalOperationWhenAUDPPacketIsDuplicatedAsAUserErrorFromAClientNotUpdatingItsOrAsADoubleSpendAttack(parsedTransaction
+                        .blockhash ?? ""),
+                fee: feeAmount
+            )
+        case let .other(message):
+            params = .init(
+                title: L10n.somethingWentWrong,
+                description: message,
+                fee: feeAmount
+            )
+        default:
+            break
+        }
+        self.detailParams = params
     }
 }
 

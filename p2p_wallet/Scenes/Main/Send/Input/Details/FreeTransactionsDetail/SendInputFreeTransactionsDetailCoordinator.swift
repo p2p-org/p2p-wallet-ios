@@ -15,7 +15,6 @@ final class SendInputFreeTransactionsDetailCoordinator: Coordinator<Void> {
         }
 
         let feeController = BottomSheetController(rootView: view)
-        feeController.modalPresentationStyle = .custom
         parentController.present(feeController, animated: true)
         self.feeController = feeController
         return feeController.deallocatedPublisher().prefix(1).eraseToAnyPublisher()

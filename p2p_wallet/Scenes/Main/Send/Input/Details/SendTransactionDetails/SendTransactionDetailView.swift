@@ -33,7 +33,7 @@ struct SendTransactionDetailView: View {
                     Text(L10n.cancel)
                         .foregroundColor(Color(Asset.Colors.night.color))
                         .font(uiFont: .font(of: .text1, weight: .bold))
-                        .frame(height: 60)
+                        .frame(height: TextButton.Size.large.height)
                         .frame(maxWidth: .infinity)
                         .background(Color(Asset.Colors.rain.color))
                         .cornerRadius(12)

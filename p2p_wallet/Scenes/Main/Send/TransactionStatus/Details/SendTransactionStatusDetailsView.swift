@@ -33,9 +33,9 @@ struct SendTransactionStatusDetailsView: View {
                     }
                 }
                 .padding(.top, 16)
+                .padding(.horizontal, 24)
             }
-            .padding(.horizontal, 24)
-            TextButtonView(title: L10n.close, style: .primaryWhite, size: .large, onPressed: viewModel.close.send)
+            TextButtonView(title: L10n.close, style: .primaryWhite, size: .large, onPressed: viewModel.closeAction)
                 .frame(height: TextButton.Size.large.height)
                 .padding(.horizontal, 24)
                 .padding(.top, 16)
@@ -43,6 +43,7 @@ struct SendTransactionStatusDetailsView: View {
                     Rectangle()
                         .foregroundColor(Color(Asset.Colors.snow.color))
                 )
+                .padding(.bottom, 12)
         }
         .navigationTitle(L10n.details)
         .navigationBarHidden(false)
@@ -59,7 +60,7 @@ struct SendTransactionStatusDetailsView_Previews: PreviewProvider {
                         description: "The bank has seen this transaction before. This can occur under normal operation when a UDP packet is duplicated, as a user error from a client not updating its `recent_blockhash`, or as a double-spend attack.",
                         
                         fee: nil
-                    )
+                    ), closeAction: { }
                 )
         )
     }

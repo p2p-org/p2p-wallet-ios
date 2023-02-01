@@ -21,7 +21,6 @@ final class SendTransactionDetailsCoordinator: Coordinator<SendTransactionDetail
         let viewModel = SendTransactionDetailViewModel(stateMachine: sendInputViewModel.stateMachine)
         let view = SendTransactionDetailView(viewModel: viewModel)
         let feeController = BottomSheetController(showHandler: false, rootView: view)
-        feeController.modalPresentationStyle = .custom
         parentController.present(feeController, animated: true)
 
         let result = Publishers.Merge(

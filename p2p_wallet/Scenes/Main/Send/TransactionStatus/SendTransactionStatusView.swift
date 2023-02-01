@@ -9,22 +9,24 @@ struct SendTransactionStatusView: View {
     }
 
     var body: some View {
-        VStack {
-            title
-                .padding(.top, 16)
-                .padding(.bottom, 20)
-            headerView
-            info
-                .padding(.top, 9)
-                .padding(.horizontal, 18)
-            status
-                .padding(.horizontal, 16)
-            Spacer()
-            button
-                .padding(.horizontal, 16)
-                .padding(.bottom, 4)
+        NavigationView {
+            VStack(spacing: 0) {
+                title
+                    .padding(.bottom, 20)
+                headerView
+                info
+                    .padding(.top, 9)
+                    .padding(.horizontal, 18)
+                status
+                    .padding(.top, 20)
+                    .padding(.horizontal, 16)
+                button
+                    .padding(.top, 32)
+                    .padding(.horizontal, 16)
+                    .padding(.bottom, 12)
+            }
+            .navigationBarHidden(true)
         }
-        .navigationBarHidden(true)
     }
 
     var title: some View {
@@ -44,23 +46,23 @@ struct SendTransactionStatusView: View {
     private var headerView: some View {
         VStack(alignment: .center, spacing: 0) {
             CoinLogoImageViewRepresentable(
-                size: 66,
+                size: 64,
                 token: viewModel.token
             )
-            .frame(width: 66, height: 66)
-            .cornerRadius(radius: 66 / 2, corners: .allCorners)
-            .padding(.top, 33)
+            .frame(width: 64, height: 64)
+            .cornerRadius(radius: 64 / 2, corners: .allCorners)
+            .padding(.top, 32)
             Text(viewModel.transactionFiatAmount)
                 .fontWeight(.bold)
                 .apply(style: .largeTitle)
                 .foregroundColor(Color(Asset.Colors.night.color))
-                .padding(.top, 17)
-                .padding(.bottom, 6)
+                .padding(.top, 16)
+                .padding(.bottom, 4)
             if !viewModel.transactionCryptoAmount.isEmpty {
                 Text(viewModel.transactionCryptoAmount)
                     .apply(style: .text2)
                     .foregroundColor(Color(Asset.Colors.mountain.color))
-                    .padding(.bottom, 34)
+                    .padding(.bottom, 32)
             }
         }
         .frame(maxWidth: .infinity)
@@ -88,7 +90,8 @@ struct SendTransactionStatusView: View {
     var status: some View {
         SendTransactionStatusStatusView(
             state: viewModel.state,
-            errorMessageTapAction: { [weak viewModel] in viewModel?.errorMessageTap.send() }
+            closeAction: viewModel.close.send,
+            params: $viewModel.detailParams
         )
     }
 
@@ -99,13 +102,14 @@ struct SendTransactionStatusView: View {
             size: .large,
             onPressed: viewModel.close.send
         )
-        .frame(height: 56)
+        .frame(height: TextButton.Size.large.height)
     }
 }
 
 struct SendTransactionStatusStatusView: View {
     let state: SendTransactionStatusViewModel.State
-    let errorMessageTapAction: () -> Void
+    let closeAction: () -> Void
+    @Binding var params: SendTransactionStatusDetailsParameters
 
     @State private var isAnimating = false
     @State private var isRotating = 0.0
@@ -156,10 +160,11 @@ struct SendTransactionStatusStatusView: View {
                             .apply(style: .text4)
                             .foregroundColor(Color(Asset.Colors.night.color))
                     case let .error(message):
-                        Text(message)
-                            .apply(style: .text4)
-                            .foregroundColor(Color(Asset.Colors.night.color))
-                            .onTapGesture(perform: errorMessageTapAction)
+                        NavigationLink(destination: SendTransactionStatusDetailsView(viewModel: .init(params: params, closeAction: closeAction))) {
+                            Text(message)
+                                .apply(style: .text4)
+                                .foregroundColor(Color(Asset.Colors.night.color))
+                        }
                     }
                 }
                 .padding(.leading, 2)

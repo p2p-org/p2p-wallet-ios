@@ -44,7 +44,6 @@ struct SendInputFreeTransactionsDetailView: View {
             )
             .frame(height: TextButton.Size.large.height)
             .padding(.bottom, 12)
-            Spacer()
         }
         .padding(.horizontal, 16)
     }
