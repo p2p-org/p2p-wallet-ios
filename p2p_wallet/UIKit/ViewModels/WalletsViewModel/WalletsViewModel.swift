@@ -300,31 +300,41 @@ class WalletsViewModel: BEListViewModel<Wallet> {
 private extension Wallet {
     static var defaultSorter: (Wallet, Wallet) -> Bool {
         { lhs, rhs in
-            // Solana
-            if lhs.isNativeSOL != rhs.isNativeSOL {
-                return lhs.isNativeSOL
-            }
-
+            // prefers non-liquidity token than liquidity tokens
             if lhs.token.isLiquidity != rhs.token.isLiquidity {
                 return !lhs.token.isLiquidity
             }
+            
+            // prefers prioritized tokens than others
+            let prioritizedTokenMints = [
+                PublicKey.usdcMint.base58EncodedString,
+                PublicKey.usdtMint.base58EncodedString
+            ]
+            if prioritizedTokenMints.contains(lhs.token.address) || prioritizedTokenMints.contains(rhs.token.address) {
+                return prioritizedTokenMints.contains(lhs.token.address)
+            }
 
+            // prefers token which more value than the other in fiat
             if lhs.amountInCurrentFiat != rhs.amountInCurrentFiat {
                 return lhs.amountInCurrentFiat > rhs.amountInCurrentFiat
             }
 
+            // prefers known token than unknown ones
             if lhs.token.symbol.isEmpty != rhs.token.symbol.isEmpty {
                 return !lhs.token.symbol.isEmpty
             }
 
+            // prefers token which more balance than the others
             if lhs.amount != rhs.amount {
                 return lhs.amount.orZero > rhs.amount.orZero
             }
 
+            // sort by symbol
             if lhs.token.symbol != rhs.token.symbol {
                 return lhs.token.symbol < rhs.token.symbol
             }
 
+            // then name
             return lhs.name < rhs.name
         }
     }
