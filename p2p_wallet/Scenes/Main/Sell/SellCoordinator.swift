@@ -28,7 +28,6 @@ final class SellCoordinator: Coordinator<SellCoordinatorResult> {
     private let initialAmountInToken: Double?
     private var isCompleted = false
     private var navigatedFromMoonpay = false
-    private var transition: PanelTransition?
     private var moonpayInfoViewController: UIViewController?
 
     // MARK: - Initializer
@@ -154,7 +153,7 @@ final class SellCoordinator: Coordinator<SellCoordinatorResult> {
                 .eraseToAnyPublisher()
 
         case .moonpayInfo:
-            moonpayInfoViewController = UIHostingController(
+            moonpayInfoViewController = BottomSheetController(
                 rootView: MoonpayInfoView(
                     actionButtonPressed: { [weak self] isChecked in
                         if isChecked {
@@ -167,14 +166,6 @@ final class SellCoordinator: Coordinator<SellCoordinatorResult> {
                     isChecked: false)
             )
             guard let moonpayInfoViewController else {  return Just(()).eraseToAnyPublisher() }
-            transition = PanelTransition()
-            transition?.containerHeight = 541.adaptiveHeight
-            transition?.dimmClicked.sink(receiveValue: { [weak self] _ in
-                self?.moonpayInfoViewController?.dismiss(animated: true)
-            }).store(in: &subscriptions)
-            moonpayInfoViewController.view.layer.cornerRadius = 20
-            moonpayInfoViewController.transitioningDelegate = transition
-            moonpayInfoViewController.modalPresentationStyle = .custom
             self.navigationController.viewControllers.last?.present(moonpayInfoViewController, animated: true)
             return moonpayInfoViewController.deallocatedPublisher()
         }

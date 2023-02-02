@@ -143,7 +143,7 @@ final class SendInputCoordinator: Coordinator<SendResult> {
         .sink { [weak self] result in
             switch result {
             case let .redirectToFeePrompt(tokens):
-                self.openFeePropmt(from: vc, viewModel: viewModel, feeWallets: tokens)
+                self?.openFeePropmt(from: vc, viewModel: viewModel, feeWallets: tokens)
             case .cancel:
                 break
             }
