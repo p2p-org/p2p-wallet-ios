@@ -12,6 +12,7 @@ final class DeeplinkAppDelegateService: NSObject, AppDelegateService {
     @Injected var userWalletManager: UserWalletManager
     @Injected var appEventHandler: AppEventHandlerType
     @Injected var pincodeStorageService: PincodeStorageType
+    @Injected var authService: AuthenticationHandlerType
 
     func application(_ app: UIApplication, open url: URL, options: [UIApplication.OpenURLOptionsKey: Any] = [:]) -> Bool {
         guard
@@ -34,8 +35,11 @@ final class DeeplinkAppDelegateService: NSObject, AppDelegateService {
                 appEventHandler.delegate?.disablePincodeOnFirstAppear()
                 pincodeStorageService.save(pincode)
                 Defaults.isBiometryEnabled = false
-                
+
                 try await userWalletManager.add(seedPhrase: seedPhrase.components(separatedBy: "-"), derivablePath: .default, name: nil, deviceShare: nil, ethAddress: nil)
+
+                try await Task.sleep(nanoseconds: 1_000_000_000)
+                authService.authenticate(presentationStyle: nil)
             }
             return true
         }
