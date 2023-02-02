@@ -8,21 +8,21 @@
 import Foundation
 
 extension NewAnalyticsEvent {
-    static let onboardingStartButton = NewAnalyticsEvent(name: "Onboarding_Start_Button")
-    static let creationPhoneScreen = NewAnalyticsEvent(name: "Creation_Phone_Screen")
+    static var onboardingStartButton: Self { .init(name: "Onboarding_Start_Button") }
+    static var creationPhoneScreen: Self { .init(name: "Creation_Phone_Screen") }
     static func createSmsValidation(result: Bool) -> NewAnalyticsEvent {
         NewAnalyticsEvent(name: "Create_Sms_Validation", parameters: ["Result": result])
     }
     static func createConfirmPin(result: Bool) -> NewAnalyticsEvent {
         NewAnalyticsEvent(name: "Create_Confirm_Pin", parameters: ["Result": result])
     }
-    static let usernameCreationScreen = NewAnalyticsEvent(name: "Username_Creation_Screen")
+    static var usernameCreationScreen: NewAnalyticsEvent { .init(name: "Username_Creation_Screen") }
     static func usernameCreationButton(result: Bool) -> NewAnalyticsEvent {
         NewAnalyticsEvent(name: "Username_Creation_Button", parameters: ["Result": result])
     }
-    static let restoreSeed = NewAnalyticsEvent(name: "Restore_Seed")
-    static let onboardingMerged = NewAnalyticsEvent(name: "Onboarding_Merged")
-    static let login = NewAnalyticsEvent(name: "Login")
+    static var restoreSeed: NewAnalyticsEvent { .init(name: "Restore_Seed") }
+    static var onboardingMerged: NewAnalyticsEvent { .init(name: "Onboarding_Merged") }
+    static var login: NewAnalyticsEvent { .init(name: "Login") }
     static func buyButtonPressed(
         sumCurrency: String,
         sumCoin: String,
@@ -39,7 +39,7 @@ extension NewAnalyticsEvent {
             "Coin": coin,
             "Payment_Method": paymentMethod,
             "Bank_Transfer": bankTransfer,
-            "Type_Bank_Transfer": typeBankTransfer
+            "Type_Bank_Transfer": typeBankTransfer ?? ""
         ])
     }
     static func sendNewConfirmButtonClick(
@@ -61,5 +61,5 @@ extension NewAnalyticsEvent {
             "Fiat_Input": fiatInput
         ])
     }
-    static let swapClickApproveButton = NewAnalyticsEvent(name: "Swap_Click_Approve_Button")
+    static var swapClickApproveButton: NewAnalyticsEvent { .init(name: "Swap_Click_Approve_Button") }
 }

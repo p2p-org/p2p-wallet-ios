@@ -290,7 +290,7 @@ enum AmplitudeEvent: AnalyticsEvent {
     case sellClickedServerError
     case sellClickedSorryMinAmount
     case sellFinishSend
-    case sellOnlySolNotification
+    case sellOnlySOLNotification
     case sellAmount
     case sellAmountNext
     case sellMoonpayOpenNotification
