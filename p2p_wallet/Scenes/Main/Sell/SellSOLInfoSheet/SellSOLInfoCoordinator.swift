@@ -2,7 +2,6 @@ import Combine
 import SwiftUI
 
 final class SellSOLInfoCoordinator: Coordinator<Void> {
-    private var transition: PanelTransition?
     private var viewController: UIViewController?
 
     private let parentController: UIViewController
@@ -14,15 +13,10 @@ final class SellSOLInfoCoordinator: Coordinator<Void> {
 
     override func start() -> AnyPublisher<Void, Never> {
         let view = SellSOLInfoView { [weak self] in self?.finish() }
-        transition = PanelTransition()
-        transition?.containerHeight = 428.adaptiveHeight
-        let viewController = UIHostingController(rootView: view)
-        viewController.view.layer.cornerRadius = 20
-        viewController.transitioningDelegate = transition
-        viewController.modalPresentationStyle = .custom
+        let viewController = BottomSheetController(rootView: view)
 
-        transition?.dimmClicked
-            .sink { [weak self] in self?.finish() }
+        viewController.deallocatedPublisher()
+            .sink { [weak self] in self?.subject.send() }
             .store(in: &subscriptions)
         parentController.present(viewController, animated: true)
         self.viewController = viewController
