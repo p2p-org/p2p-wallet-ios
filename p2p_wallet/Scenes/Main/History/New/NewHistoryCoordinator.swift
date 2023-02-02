@@ -10,7 +10,7 @@ import SwiftUI
 
 class NewHistoryCoordinator: SmartCoordinator<Void> {
     override func build() -> UIViewController {
-        let view = NewHistoryView()
+        let view = NewHistoryView(viewModel: .init(initialHistoryItem: []))
         return UIHostingController(rootView: view)
     }
 }
