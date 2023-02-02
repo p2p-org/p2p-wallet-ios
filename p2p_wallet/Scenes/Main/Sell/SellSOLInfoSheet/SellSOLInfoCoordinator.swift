@@ -1,7 +1,11 @@
 import Combine
 import SwiftUI
+import Resolver
+import AnalyticsManager
 
 final class SellSOLInfoCoordinator: Coordinator<Void> {
+    @Injected private var analyticsManager: AnalyticsManager
+    
     private var transition: PanelTransition?
     private var viewController: UIViewController?
 
@@ -13,7 +17,10 @@ final class SellSOLInfoCoordinator: Coordinator<Void> {
     }
 
     override func start() -> AnyPublisher<Void, Never> {
-        let view = SellSOLInfoView { [weak self] in self?.finish() }
+        let view = SellSOLInfoView { [weak self] in
+            self?.analyticsManager.log(event: AmplitudeEvent.sellOnlySolNotification)
+            self?.finish()
+        }
         transition = PanelTransition()
         transition?.containerHeight = 428.adaptiveHeight
         let viewController = UIHostingController(rootView: view)
