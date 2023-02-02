@@ -18,7 +18,7 @@ final class SellSOLInfoCoordinator: Coordinator<Void> {
 
     override func start() -> AnyPublisher<Void, Never> {
         let view = SellSOLInfoView { [weak self] in
-            self?.analyticsManager.log(event: AmplitudeEvent.sellOnlySolNotification)
+            self?.analyticsManager.log(event: .sellOnlySOLNotification)
             self?.finish()
         }
         transition = PanelTransition()
