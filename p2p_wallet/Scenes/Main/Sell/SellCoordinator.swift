@@ -161,6 +161,7 @@ final class SellCoordinator: Coordinator<SellCoordinatorResult> {
                             Defaults.moonpayInfoShouldHide = true
                         }
                         self?.moonpayInfoViewController?.dismiss(animated: true) {
+                            self?.analyticsManager.log(event: AmplitudeEvent.sellMoonpayOpenNotification)
                             self?.viewModel.openProviderWebView()
                         }
                     },
@@ -185,14 +186,6 @@ final class SellCoordinator: Coordinator<SellCoordinatorResult> {
         vc.modalPresentationStyle = .automatic
         navigationController.present(vc, animated: true)
         analyticsManager.log(event: AmplitudeEvent.sellMoonpay)
-        return vc
-    }
-
-    private func navigateToSwap() -> UIViewController {
-        let vm = OrcaSwapV2.ViewModel(initialWallet: nil)
-        let vc = OrcaSwapV2.ViewController(viewModel: vm)
-        vc.hidesBottomBarWhenPushed = navigationController.canHideBottomForNextPush
-        navigationController.present(vc, animated: true)
         return vc
     }
     
