@@ -161,7 +161,7 @@ final class SellCoordinator: Coordinator<SellCoordinatorResult> {
                             Defaults.moonpayInfoShouldHide = true
                         }
                         self?.moonpayInfoViewController?.dismiss(animated: true) {
-                            self?.analyticsManager.log(event: AmplitudeEvent.sellMoonpayOpenNotification)
+                            self?.analyticsManager.log(event: .sellMoonpayOpenNotification)
                             self?.viewModel.openProviderWebView()
                         }
                     },
