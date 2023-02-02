@@ -254,7 +254,7 @@ DEPENDENCIES:
   - CombineCocoa (= 0.4.0)
   - CountriesAPI (from `https://github.com/p2p-org/key-app-kit-swift.git`, branch `feature/send-v2`)
   - Down (from `https://github.com/p2p-org/Down.git`)
-  - FeeRelayerSwift (from `https://github.com/p2p-org/FeeRelayerSwift.git`, branch `master`)
+  - FeeRelayerSwift (from `https://github.com/p2p-org/FeeRelayerSwift.git`, branch `feature/PWN-7044`)
   - Firebase/Analytics
   - Firebase/Crashlytics
   - Firebase/RemoteConfig
@@ -381,7 +381,7 @@ EXTERNAL SOURCES:
   Down:
     :git: https://github.com/p2p-org/Down.git
   FeeRelayerSwift:
-    :branch: master
+    :branch: feature/PWN-7044
     :git: https://github.com/p2p-org/FeeRelayerSwift.git
   History:
     :branch: feature/send-v2
@@ -476,7 +476,7 @@ CHECKOUT OPTIONS:
     :commit: eee1d66d7ef71b892e72c8bc8d84fcdfeaab1918
     :git: https://github.com/p2p-org/Down.git
   FeeRelayerSwift:
-    :commit: 2ea7f8fe6d1dd37c966fe0f7638d65e0bca294ab
+    :commit: 87dc2ea9bc9353b6b16d06ed686bf88cb9c9401d
     :git: https://github.com/p2p-org/FeeRelayerSwift.git
   History:
     :commit: 36ac95d5061ac741279abaa35a70478446fa4752
@@ -628,6 +628,6 @@ SPEC CHECKSUMS:
   TransactionParser: 3004420d52e7b1277dbcfd20b995a5de707705f3
   TweetNacl: 3abf4d1d2082b0114e7a67410e300892448951e6
 
-PODFILE CHECKSUM: 55ad5aac3bade33a935c7870f57ea309a279c8d8
+PODFILE CHECKSUM: 13043b89abf3065b1024de8d5fc6fe1a423cdafa
 
 COCOAPODS: 1.11.3
