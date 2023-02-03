@@ -1,10 +1,3 @@
-//
-//  FirebaseAnalyticsProvider.swift
-//  p2p_wallet
-//
-//  Created by Ivan on 12.12.2022.
-//
-
 import Foundation
 import FirebaseAnalytics
 import AnalyticsManager
