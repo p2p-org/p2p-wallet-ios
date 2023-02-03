@@ -2,6 +2,8 @@ import SwiftUI
 import KeyAppUI
 
 struct NewHistoryErrorView: View {
+    let action: () -> ()
+
     var body: some View {
         ZStack {
             Color(Asset.Colors.smoke.color)
@@ -11,7 +13,7 @@ struct NewHistoryErrorView: View {
                 Text("Oops! Something happened.")
                     .apply(style: .text1)
                     .multilineTextAlignment(.center)
-                TextButtonView(title: L10n.refresh, style: .second, size: .large)
+                TextButtonView(title: L10n.refresh, style: .second, size: .large, onPressed: action)
                     .frame(height: TextButton.Size.large.height)
                 Spacer()
             }
@@ -23,6 +25,8 @@ struct NewHistoryErrorView: View {
 
 struct NewHistoryErrorView_Previews: PreviewProvider {
     static var previews: some View {
-        NewHistoryErrorView()
+        NewHistoryErrorView {
+            debugPrint("NewHistoryErrorView_Previews Pressed")
+        }
     }
 }
