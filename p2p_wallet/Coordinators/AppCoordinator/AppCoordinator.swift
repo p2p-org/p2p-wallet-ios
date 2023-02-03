@@ -166,7 +166,7 @@ final class AppCoordinator: Coordinator<Void> {
                 case let .created(data):
                     walletCreated = true
 
-                    analyticsManager.log(event: AmplitudeEvent.setupOpen(fromPage: "create_wallet"))
+                    analyticsManager.log(event: .setupOpen(fromPage: "create_wallet"))
                     analyticsService.logEvent(.createConfirmPin(result: true))
 
                     saveSecurity(data: data.security)
@@ -184,7 +184,7 @@ final class AppCoordinator: Coordinator<Void> {
                         try await Resolver.resolve(WalletMetadataService.self).update(initialMetadata: data.metadata)
                     }
                 case let .restored(data):
-                    analyticsManager.log(event: AmplitudeEvent.restoreConfirmPin(result: true))
+                    analyticsManager.log(event: .restoreConfirmPin(result: true))
 
                     let restoreMethod: String = data.metadata == nil ? "seed" : "web3auth"
                     analyticsManager.setIdentifier(AmplitudeIdentifier.userRestoreMethod(restoreMethod: restoreMethod))

@@ -113,7 +113,7 @@ private extension CreateUsernameViewModel {
         notificationService.showDefaultErrorNotification()
     }
 
-    func log(analyticEvent: AmplitudeEvent) {
+    func log(analyticEvent: KeyAppEvent) {
         analyticsManager.log(event: analyticEvent)
     }
 }

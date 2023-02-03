@@ -7,6 +7,7 @@
 
 import AppsFlyerLib
 import Foundation
+import AnalyticsManager
 
 final class AppsFlyerAnalyticsProvider: NSObject, AnalyticsProvider {
     init(appsFlyerDevKey: String, appleAppID: String) {
@@ -19,16 +20,21 @@ final class AppsFlyerAnalyticsProvider: NSObject, AnalyticsProvider {
         AppsFlyerLib.shared().deepLinkDelegate = self
     }
 
-    func logEvent(_ event: NewAnalyticsEvent) {
+    func logEvent(_ event: AnalyticsEvent) {
+        guard let eventName = event.eventName else { return }
         AppsFlyerLib.shared().logEvent(
-            name: event.name,
-            values: event.parameters,
+            name: eventName,
+            values: event.params,
             completionHandler: { (response: [String : Any]?, error: Error?) in
                 if let response = response {
+                    #if !RELEASE
                     print("In app event callback Success: ", response)
+                    #endif
                 }
                 if let error = error {
+                    #if !RELEASE
                     print("In app event callback ERROR:", error)
+                    #endif
                 }
             }
         )

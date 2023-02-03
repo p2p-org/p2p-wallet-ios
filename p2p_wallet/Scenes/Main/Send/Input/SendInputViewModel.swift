@@ -466,19 +466,19 @@ private extension SendInputViewModel {
 
 private extension SendInputViewModel {
     func logOpen() {
-        analyticsManager.log(event: AmplitudeEvent.sendnewInputScreen(source: source.rawValue))
+        analyticsManager.log(event: .sendnewInputScreen(source: source.rawValue))
     }
 
     func logEnjoyFeeTransaction() {
-        analyticsManager.log(event: AmplitudeEvent.sendnewFreeTransactionClick(source: source.rawValue))
+        analyticsManager.log(event: .sendnewFreeTransactionClick(source: source.rawValue))
     }
 
     func logChooseTokenClick() {
-        analyticsManager.log(event: AmplitudeEvent.sendnewTokenInputClick(source: source.rawValue))
+        analyticsManager.log(event: .sendnewTokenInputClick(source: source.rawValue))
     }
 
     func logFiatInputClick(isCrypto: Bool) {
-        analyticsManager.log(event: AmplitudeEvent.sendnewFiatInputClick(crypto: isCrypto, source: source.rawValue))
+        analyticsManager.log(event: .sendnewFiatInputClick(crypto: isCrypto, source: source.rawValue))
     }
 
     func logConfirmButtonClick() {

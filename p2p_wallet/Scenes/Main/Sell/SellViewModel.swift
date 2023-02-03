@@ -121,7 +121,7 @@ class SellViewModel: BaseViewModel, ObservableObject {
     }
 
     func openProviderWebView() {
-        analyticsManager.log(event: AmplitudeEvent.sellAmountNext)
+        analyticsManager.log(event: .sellAmountNext)
         guard let fiat = dataService.fiat else { return }
 
         try? openProviderWebView(
@@ -307,10 +307,10 @@ class SellViewModel: BaseViewModel, ObservableObject {
                 guard let self = self else { return }
                 switch status {
                 case .error:
-                    self.analyticsManager.log(event: AmplitudeEvent.sellClickedServerError)
+                    self.analyticsManager.log(event: .sellClickedServerError)
                 case .ready:
                     if self.isMoreBaseCurrencyNeeded {
-                        self.analyticsManager.log(event: AmplitudeEvent.sellClickedSorryMinAmount)
+                        self.analyticsManager.log(event: .sellClickedSorryMinAmount)
                     }
                 default:
                     break
