@@ -9,7 +9,7 @@ import Foundation
 import AnalyticsManager
 
 extension AnalyticsManager {
-    func log(event: KeyAppEvent) {
+    func log(event: KeyAppAnalyticsEvent) {
         log(event: event as AnalyticsEvent)
     }
 }
