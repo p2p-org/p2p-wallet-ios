@@ -1,5 +1,5 @@
 //
-//  KeyAppEvent.swift
+//  KeyAppAnalyticsEvent.swift
 //  p2p_wallet
 //
 //  Created by Ivan on 13.09.2022.
@@ -8,7 +8,7 @@
 import AnalyticsManager
 import Foundation
 
-enum KeyAppEvent: AnalyticsEvent {
+enum KeyAppAnalyticsEvent: AnalyticsEvent {
     // MARK: - Onboarding
 
     /// Event 32: The user sees the splash screen

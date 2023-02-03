@@ -1,7 +1,7 @@
 import Foundation
 import AnalyticsManager
 
-extension KeyAppEvent: MirrorableEnum {
+extension KeyAppAnalyticsEvent: MirrorableEnum {
     var eventName: String? {
         mirror.label.snakeAndFirstUppercased
     }
