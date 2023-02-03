@@ -7,11 +7,19 @@
 
 import AnalyticsManager
 
-enum AmplitudeIdentifier: AnalyticsIdentifier {
+enum AmplitudeIdentifier: AnalyticsIdentifier, MirrorableEnum {
     case userHasPositiveBalance(positive: Bool)
     case userAggregateBalance(balance: Double)
 
     // Onboarding
     case userRestoreMethod(restoreMethod: String)
     case userDeviceshare(deviceshare: Bool)
+    
+    var name: String {
+        mirror.label.snakeAndFirstUppercased ?? ""
+    }
+
+    var value: Any {
+        mirror.params.values.first ?? ""
+    }
 }
