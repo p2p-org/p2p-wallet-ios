@@ -64,7 +64,6 @@ final class SendInputViewModel: BaseViewModel, ObservableObject {
     private let walletsRepository: WalletsRepository
     private let pricesService: PricesServiceType
     @Injected private var analyticsManager: AnalyticsManager
-    @Injected private var analyticsService: AnalyticsService
 
     init(recipient: Recipient, preChosenWallet: Wallet?, preChosenAmount: Double?, source: SendSource, allowSwitchingMainAmountType: Bool) {
         self.source = source
@@ -482,7 +481,7 @@ private extension SendInputViewModel {
     }
 
     func logConfirmButtonClick() {
-        analyticsService.logEvent(.sendNewConfirmButtonClick(
+        analyticsManager.log(event: .sendNewConfirmButtonClick(
             source: source.rawValue,
             token: currentState.token.symbol,
             max: inputAmountViewModel.wasMaxUsed,

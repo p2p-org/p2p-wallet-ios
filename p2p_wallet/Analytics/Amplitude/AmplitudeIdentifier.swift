@@ -7,7 +7,7 @@
 
 import AnalyticsManager
 
-enum AmplitudeIdentifier: AnalyticsIdentifier, MirrorableEnum {
+enum AmplitudeIdentifier: MirrorableEnum {
     case userHasPositiveBalance(positive: Bool)
     case userAggregateBalance(balance: Double)
 
