@@ -44,14 +44,14 @@ struct SendEmptyView: View {
                             size: .large,
                             onPressed: buyCrypto
                         )
-                        .frame(height: 56)
+                        .frame(height: TextButton.Size.large.height)
                         TextButtonView(
                             title: L10n.receive,
                             style: .inverted,
                             size: .large,
                             onPressed: receive
                         )
-                        .frame(height: 56)
+                        .frame(height: TextButton.Size.large.height)
                     }
                 }
             }
