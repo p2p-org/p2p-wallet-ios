@@ -3,6 +3,10 @@ import Foundation
 import AnalyticsManager
 
 final class AppsFlyerAnalyticsProvider: NSObject, AnalyticsProvider {
+    var providerId: AnalyticsProviderId {
+        KeyAppAnalyticsProviderId.appsFlyer.rawValue
+    }
+    
     init(appsFlyerDevKey: String, appleAppID: String) {
         #if DEBUG
             AppsFlyerLib.shared().isDebug = true
