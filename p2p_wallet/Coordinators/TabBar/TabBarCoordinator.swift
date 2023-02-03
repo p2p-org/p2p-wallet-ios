@@ -139,6 +139,8 @@ final class TabBarCoordinator: Coordinator<Void> {
         let historyNavigation = UINavigationController()
         
         if available(.historyServiceEnabled) {
+            historyNavigation.navigationBar.prefersLargeTitles = true
+            
             let historyCoordinator = NewHistoryCoordinator(
                 presentation: SmartCoordinatorPushPresentation(historyNavigation)
             )
