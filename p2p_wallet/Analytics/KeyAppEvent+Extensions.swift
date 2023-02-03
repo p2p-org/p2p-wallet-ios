@@ -1,4 +1,6 @@
 import Foundation
+import AnalyticsManager
+
 extension KeyAppEvent: MirrorableEnum {
     var eventName: String? {
         mirror.label.snakeAndFirstUppercased
@@ -8,6 +10,15 @@ extension KeyAppEvent: MirrorableEnum {
         guard !mirror.params.isEmpty else { return nil }
         let formatted = mirror.params.map { ($0.key.snakeAndFirstUppercased ?? "", $0.value) }
         return Dictionary(uniqueKeysWithValues: formatted)
+    }
+    
+    var providerIds: [AnalyticsProviderId] {
+        let ids: [KeyAppAnalyticsProviderId] = [
+            .amplitude,
+            .appsFlyer,
+            .firebaseAnalytics
+        ]
+        return ids.map(\.rawValue)
     }
 }
 
