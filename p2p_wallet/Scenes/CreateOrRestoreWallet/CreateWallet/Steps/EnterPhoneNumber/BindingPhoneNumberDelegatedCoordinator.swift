@@ -8,15 +8,16 @@ import Foundation
 import Onboarding
 import Resolver
 import SwiftUI
+import AnalyticsManager
 
 class BindingPhoneNumberDelegatedCoordinator: DelegatedCoordinator<BindingPhoneNumberState> {
     @Injected private var helpLauncher: HelpCenterLauncher
-    @Injected private var analyticsService: AnalyticsService
+    @Injected private var analyticsManager: AnalyticsManager
 
     override func buildViewController(for state: BindingPhoneNumberState) -> UIViewController? {
         switch state {
         case let .enterPhoneNumber(initialPhoneNumber, _, _, _):
-            analyticsService.logEvent(.creationPhoneScreen)
+            analyticsManager.log(event: .creationPhoneScreen)
 
             let mv = EnterPhoneNumberViewModel(
                 phone: initialPhoneNumber,
@@ -67,10 +68,10 @@ class BindingPhoneNumberDelegatedCoordinator: DelegatedCoordinator<BindingPhoneN
                 vm?.isLoading = true
                 do {
                     try await stateMachine <- .enterOTP(opt: opt)
-                    self?.analyticsService.logEvent(.createSmsValidation(result: true))
+                    self?.analyticsManager.log(event: .createSmsValidation(result: true))
                 } catch {
                     vm?.coordinatorIO.error.send(error)
-                    self?.analyticsService.logEvent(.createSmsValidation(result: false))
+                    self?.analyticsManager.log(event: .createSmsValidation(result: false))
                 }
                 vm?.isLoading = false
             }.store(in: &subscriptions)

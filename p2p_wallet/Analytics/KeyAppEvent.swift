@@ -8,7 +8,7 @@
 import AnalyticsManager
 import Foundation
 
-enum KeyAppEvent: AnalyticsEvent, MirrorableEnum {
+enum KeyAppEvent: AnalyticsEvent {
     // MARK: - Onboarding
 
     /// Event 32: The user sees the splash screen
