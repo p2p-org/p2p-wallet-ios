@@ -10,12 +10,9 @@ import Amplitude
 import Foundation
 
 final class AmplitudeAnalyticsProvider: AnalyticsProvider {
-    init(apiKey: String, userId: String?) {
+    init(apiKey: String) {
         Amplitude.instance().trackingSessionEvents = true
         Amplitude.instance().initializeApiKey(apiKey)
-        if let userId = userId {
-            Amplitude.instance().setUserId(userId)
-        }
     }
 
     func logEvent(_ event: AnalyticsEvent) {
@@ -23,11 +20,16 @@ final class AmplitudeAnalyticsProvider: AnalyticsProvider {
         Amplitude.instance().logEvent(eventName, withEventProperties: event.params)
     }
 
-    func setIdentifier(_ identifier: AnalyticsIdentifier) {
+    func setIdentifier(_ identifier: AmplitudeIdentifier) {
         guard
             let value = identifier.value as? NSObject,
             let identify = AMPIdentify().set(identifier.name, value: value)
         else { return }
         Amplitude.instance().identify(identify)
+    }
+    
+    func setUserId(_ id: String?) {
+        guard let id else { return }
+        Amplitude.instance().setUserId(id)
     }
 }

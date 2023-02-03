@@ -27,7 +27,7 @@ final class AppCoordinator: Coordinator<Void> {
     @Injected var notificationService: NotificationService
     @Injected var userWalletManager: UserWalletManager
     @Injected var createNameService: CreateNameService
-    @Injected private var analyticsService: AnalyticsService
+    @Injected private var amplitudeAnalyticsProvider: AmplitudeAnalyticsProvider
 
     // MARK: - Properties
 
@@ -67,17 +67,17 @@ final class AppCoordinator: Coordinator<Void> {
                 )
                 .receive(on: RunLoop.main)
                 .sink { [unowned self] wallet, _ in
-                    if wallet != nil {
-                        self.analyticsManager.setUserId(wallet?.account.publicKey.base58EncodedString)
-                        if self.walletCreated, available(.onboardingUsernameEnabled) {
-                            self.walletCreated = false
-                            self.navigateToCreateUsername()
+                    if let wallet {
+                        amplitudeAnalyticsProvider.setUserId(wallet.account.publicKey.base58EncodedString)
+                        if walletCreated, available(.onboardingUsernameEnabled) {
+                            walletCreated = false
+                            navigateToCreateUsername()
                         } else {
-                            self.navigateToMain()
+                            navigateToMain()
                         }
                     } else {
-                        self.analyticsManager.setUserId(nil)
-                        self.navigateToOnboardingFlow()
+                        amplitudeAnalyticsProvider.setUserId(nil)
+                        navigateToOnboardingFlow()
                     }
                 }
                 .store(in: &subscriptions)
@@ -167,7 +167,7 @@ final class AppCoordinator: Coordinator<Void> {
                     walletCreated = true
 
                     analyticsManager.log(event: .setupOpen(fromPage: "create_wallet"))
-                    analyticsService.logEvent(.createConfirmPin(result: true))
+                    analyticsManager.log(event: .createConfirmPin(result: true))
 
                     saveSecurity(data: data.security)
                     // Setup user wallet
@@ -187,7 +187,7 @@ final class AppCoordinator: Coordinator<Void> {
                     analyticsManager.log(event: .restoreConfirmPin(result: true))
 
                     let restoreMethod: String = data.metadata == nil ? "seed" : "web3auth"
-                    analyticsManager.setIdentifier(AmplitudeIdentifier.userRestoreMethod(restoreMethod: restoreMethod))
+                    amplitudeAnalyticsProvider.setIdentifier(.userRestoreMethod(restoreMethod: restoreMethod))
 
                     saveSecurity(data: data.security)
                     // Setup user wallet

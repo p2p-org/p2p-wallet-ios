@@ -45,7 +45,6 @@ final class BuyViewModel: ObservableObject {
     @Injected var exchangeService: BuyExchangeService
     @Injected var walletsRepository: WalletsRepository
     @Injected private var analyticsManager: AnalyticsManager
-    @Injected private var analyticsService: AnalyticsService
     @Injected private var pricesService: PricesServiceType
 
     // Defaults
@@ -321,7 +320,7 @@ final class BuyViewModel: ObservableObject {
                 typeBankTransfer = "sepa_bank_transfer"
             }
         }
-        analyticsService.logEvent(.buyButtonPressed(
+        analyticsManager.log(event: .buyButtonPressed(
             sumCurrency: fiatAmount,
             sumCoin: tokenAmount,
             currency: from.name,

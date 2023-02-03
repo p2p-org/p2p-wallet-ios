@@ -10,11 +10,11 @@ protocol StartOnboardingNavigationProvider {
 final class StartOnboardingNavigationProviderImpl: StartOnboardingNavigationProvider {
     @Injected private var service: OnboardingService
     @Injected private var accountStorage: AccountStorageType
-    @Injected private var analyticsManager: AnalyticsManager
+    @Injected private var amplitudeAnalyticsProvider: AmplitudeAnalyticsProvider
 
     @MainActor func startCoordinator(for window: UIWindow) -> Coordinator<OnboardingResult> {
         let isDeviceShareAvailable = accountStorage.deviceShare != nil
-        analyticsManager.setIdentifier(AmplitudeIdentifier.userDeviceshare(deviceshare: isDeviceShareAvailable))
+        amplitudeAnalyticsProvider.setIdentifier(AmplitudeIdentifier.userDeviceshare(deviceshare: isDeviceShareAvailable))
 
         if isDeviceShareAvailable {
             return RestoreWalletCoordinator(navigation: .root(window: window))
