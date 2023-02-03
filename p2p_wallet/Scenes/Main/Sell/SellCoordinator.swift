@@ -184,7 +184,7 @@ final class SellCoordinator: Coordinator<SellCoordinatorResult> {
         let vc = SFSafariViewController(url: url)
         vc.modalPresentationStyle = .automatic
         navigationController.present(vc, animated: true)
-        analyticsManager.log(event: AmplitudeEvent.sellMoonpay)
+        analyticsManager.log(event: .sellMoonpay)
         return vc
     }
 

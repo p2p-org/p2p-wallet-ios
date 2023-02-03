@@ -75,7 +75,7 @@ final class SellPendingViewModel: BaseViewModel, ObservableObject {
     }
 
     func viewDidAppear() {
-        analyticsManager.log(event: AmplitudeEvent.sellFinishSend)
+        analyticsManager.log(event: .sellFinishSend)
     }
 }
 

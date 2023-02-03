@@ -7,14 +7,16 @@
 
 import Foundation
 import FirebaseAnalytics
+import AnalyticsManager
 
 final class FirebaseAnalyticsProvider: AnalyticsProvider {
     init() {}
 
-    func logEvent(_ event: NewAnalyticsEvent) {
+    func logEvent(_ event: AnalyticsEvent) {
+        guard let eventName = event.eventName else { return }
         Analytics.logEvent(
-            event.name,
-            parameters: event.parameters.isEmpty ? nil : event.parameters
+            eventName,
+            parameters: event.params
         )
     }
 }

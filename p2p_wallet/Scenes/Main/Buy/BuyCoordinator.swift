@@ -58,9 +58,7 @@ final class BuyCoordinator: Coordinator<Void> {
             }
         }
 
-        analyticsManager
-            .log(event: AmplitudeEvent
-                .buyScreenOpened(lastScreen: context == .fromHome ? "Main_Screen" : "Token_Screen"))
+        analyticsManager.log(event: .buyScreenOpened(lastScreen: context == .fromHome ? "Main_Screen" : "Token_Screen"))
 
         viewController.onClose = {
             result.send()
@@ -141,7 +139,7 @@ final class BuyCoordinator: Coordinator<Void> {
             viewController.present(vc, animated: true)
 
             vc.onClose = { [weak self] in
-                self?.analyticsManager.log(event: AmplitudeEvent.moonpayWindowClosed)
+                self?.analyticsManager.log(event: .moonpayWindowClosed)
             }
         }).store(in: &subscriptions)
 

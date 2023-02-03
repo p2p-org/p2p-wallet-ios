@@ -85,7 +85,7 @@ final class BuyViewModel: ObservableObject {
                 let oldToken = self.token
                 self.token = token ?? self.token
                 if initTokenWasSelected {
-                    analyticsManager.log(event: AmplitudeEvent.buyCoinChanged(
+                    analyticsManager.log(event: .buyCoinChanged(
                         fromCoin: oldToken.symbol,
                         toCoin: self.token.symbol
                     ))
@@ -105,7 +105,7 @@ final class BuyViewModel: ObservableObject {
                     }
                 }
                 if initFiatWasSelected {
-                    analyticsManager.log(event: AmplitudeEvent.buyCurrencyChanged(
+                    analyticsManager.log(event: .buyCurrencyChanged(
                         fromCurrency: oldFiat.code,
                         toCurrency: self.fiat.code
                     ))
@@ -232,7 +232,7 @@ final class BuyViewModel: ObservableObject {
     @MainActor func didSelectPayment(_ payment: PaymentTypeItem) {
         selectedPayment = payment.type
         setPaymentMethod(payment.type)
-        analyticsManager.log(event: AmplitudeEvent.buyChosenMethodPayment(type: payment.type.analyticName))
+        analyticsManager.log(event: .buyChosenMethodPayment(type: payment.type.analyticName))
     }
 
     // MARK: -
@@ -330,7 +330,7 @@ final class BuyViewModel: ObservableObject {
             bankTransfer: typeBankTransfer != nil,
             typeBankTransfer: typeBankTransfer
         ))
-        analyticsManager.log(event: AmplitudeEvent.moonpayWindowOpened)
+        analyticsManager.log(event: .moonpayWindowOpened)
     }
 
     // MARK: -
