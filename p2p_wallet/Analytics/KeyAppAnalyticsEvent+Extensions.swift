@@ -40,11 +40,32 @@ extension KeyAppAnalyticsEvent: MirrorableEnum {
 
     /// Array of sending providers, even will be sent to only these defined providers
     var providerIds: [AnalyticsProviderId] {
-        let ids: [KeyAppAnalyticsProviderId] = [
-            .amplitude,
-//            .appsFlyer,
-//            .firebaseAnalytics
+        // By default, all events will be sent to amplitude only
+        var ids: [KeyAppAnalyticsProviderId] = [
+            .amplitude
         ]
+        
+        // for some events, we will sent to appsFlyer and firebaseAnalytics
+        switch self {
+        case .onboardingStartButton,
+                .creationPhoneScreen,
+                .createSmsValidation,
+                .createConfirmPin,
+                .usernameCreationScreen,
+                .usernameCreationButton,
+                .restoreSeed,
+                .onboardingMerged,
+                .login,
+                .buyButtonPressed,
+                .sendNewConfirmButtonClick,
+                .swapClickApproveButton:
+            ids.append(contentsOf: [
+                .appsFlyer,
+                .firebaseAnalytics
+            ])
+        default:
+            break
+        }
         return ids.map(\.rawValue)
     }
 }
