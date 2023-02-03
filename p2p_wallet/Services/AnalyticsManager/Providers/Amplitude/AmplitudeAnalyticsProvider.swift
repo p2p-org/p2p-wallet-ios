@@ -3,6 +3,10 @@ import Foundation
 import AnalyticsManager
 
 final class AmplitudeAnalyticsProvider: AnalyticsProvider {
+    var providerId: AnalyticsProviderId {
+        KeyAppAnalyticsProviderId.amplitude.rawValue
+    }
+    
     init(apiKey: String) {
         Amplitude.instance().trackingSessionEvents = true
         Amplitude.instance().initializeApiKey(apiKey)
