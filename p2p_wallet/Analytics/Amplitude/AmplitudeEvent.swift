@@ -124,6 +124,15 @@ enum AmplitudeEvent: AnalyticsEvent {
     case sendFillingAddress
     case sendApprovedScreen
     case actionButtonSend
+    case sendNewConfirmButtonClick(
+        source: String,
+        token: String,
+        max: Bool,
+        amountToken: Double,
+        amountUSD: Double,
+        fee: Bool,
+        fiatInput: Bool
+    )
 
     // MARK: - Send new
 
@@ -199,6 +208,7 @@ enum AmplitudeEvent: AnalyticsEvent {
         priceSlippage: Double,
         feesSource: String
     )
+    case swapClickApproveButton
 
     // MARK: - Scan QR
 
@@ -237,6 +247,15 @@ enum AmplitudeEvent: AnalyticsEvent {
     case buyScreenOpened(lastScreen: String)
     case moonpayWindowOpened
     case moonpayWindowClosed
+    case buyButtonPressed(
+        sumCurrency: String,
+        sumCoin: String,
+        currency: String,
+        coin: String,
+        paymentMethod: String,
+        bankTransfer: Bool,
+        typeBankTransfer: String?
+    )
 
     // General
     case appOpened(sourceOpen: String)
@@ -253,6 +272,15 @@ enum AmplitudeEvent: AnalyticsEvent {
         milliseconds: Int,
         result: String
     )
+    case onboardingStartButton
+    case creationPhoneScreen
+    case createSmsValidation(result: Bool)
+    case createConfirmPin(result: Bool)
+    case usernameCreationScreen
+    case usernameCreationButton(result: Bool)
+    case restoreSeed
+    case onboardingMerged
+    case login
 
     // RenBTC
     case renbtcCreation(result: String)
