@@ -70,7 +70,7 @@ class SeedPhraseDetailViewModel: BaseViewModel, ObservableObject {
     }
 
     func copy() {
-        analyticsManager.log(event: AmplitudeEvent.seedPhraseCopy)
+        analyticsManager.log(event: .seedPhraseCopy)
         clipboardManger.copyToClipboard(phrase.joined(separator: " "))
         notificationsService.showInAppNotification(.custom("👯", L10n.copiedToClipboard))
     }

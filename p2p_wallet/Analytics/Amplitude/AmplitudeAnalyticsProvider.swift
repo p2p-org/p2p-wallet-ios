@@ -18,8 +18,9 @@ final class AmplitudeAnalyticsProvider: AnalyticsProvider {
         }
     }
 
-    func logEvent(_ event: NewAnalyticsEvent) {
-        Amplitude.instance().logEvent(event.name, withEventProperties: event.parameters)
+    func logEvent(_ event: AnalyticsEvent) {
+        guard let eventName = event.eventName else { return }
+        Amplitude.instance().logEvent(eventName, withEventProperties: event.params)
     }
 
     func setIdentifier(_ identifier: AnalyticsIdentifier) {

@@ -105,9 +105,9 @@ final class EnterSMSCodeViewModel: BaseOTPViewModel {
     func viewDidLoad() {
         switch strategy {
         case .create:
-            analyticsManager.log(event: AmplitudeEvent.createSmsScreen)
+            analyticsManager.log(event: .createSmsScreen)
         case .restore:
-            analyticsManager.log(event: AmplitudeEvent.restoreSmsScreen)
+            analyticsManager.log(event: .restoreSmsScreen)
         }
     }
 

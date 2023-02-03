@@ -62,7 +62,7 @@ final class RecoveryKitViewModel: ObservableObject {
     }
 
     func deleteAccount() {
-        analyticsManager.log(event: AmplitudeEvent.startDeleteAccount)
+        analyticsManager.log(event: .startDeleteAccount)
         coordinator.deleteAccount?()
     }
 

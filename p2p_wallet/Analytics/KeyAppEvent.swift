@@ -1,5 +1,5 @@
 //
-//  AmplitudeEvent.swift
+//  KeyAppEvent.swift
 //  p2p_wallet
 //
 //  Created by Ivan on 13.09.2022.
@@ -8,7 +8,7 @@
 import AnalyticsManager
 import Foundation
 
-enum AmplitudeEvent: AnalyticsEvent {
+enum KeyAppEvent: AnalyticsEvent {
     // MARK: - Onboarding
 
     /// Event 32: The user sees the splash screen
