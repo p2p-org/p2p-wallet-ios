@@ -4,7 +4,7 @@ platform :ios, '14.0'
 inhibit_all_warnings!
 
 # ENV Variables
-$keyAppKitPath = ENV['KEY_APP_KIT_SWIFT']
+$keyAppKitPath = '../p2p/key-app-kit-swift'#ENV['KEY_APP_KIT_SWIFT']
 $solanaSwiftPath = ENV['SOLANA_SWIFT']
 $keyAppUI = ENV['KEY_APP_UI']
 
