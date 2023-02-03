@@ -20,6 +20,7 @@ class HomeViewModel: ObservableObject {
     @Injected private var accountStorage: AccountStorageType
     @Injected private var nameStorage: NameStorageType
     @Injected private var createNameService: CreateNameService
+    @Injected private var amplitudeAnalyticsProvider: AmplitudeAnalyticsProvider
     private let walletsRepository: WalletsRepository
 
     @Published var state = State.pending
@@ -59,11 +60,11 @@ class HomeViewModel: ObservableObject {
             self.state = state
             if state != .pending {
                 self.initStateFinished = true
-                self.analyticsManager.setIdentifier(AmplitudeIdentifier.userHasPositiveBalance(positive: amount > 0))
+                self.amplitudeAnalyticsProvider.setIdentifier(.userHasPositiveBalance(positive: amount > 0))
                 self.analyticsManager.log(event: .userHasPositiveBalance(positive: amount > 0))
                 if let amount = amount {
                     let formatted = round(amount * 100) / 100.0
-                    self.analyticsManager.setIdentifier(AmplitudeIdentifier.userAggregateBalance(balance: formatted))
+                    self.amplitudeAnalyticsProvider.setIdentifier(.userAggregateBalance(balance: formatted))
                     self.analyticsManager.log(event: .userAggregateBalance(balance: formatted))
                 }
             }

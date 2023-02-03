@@ -1,5 +1,5 @@
 import Foundation
-extension KeyAppEvent {
+extension KeyAppEvent: MirrorableEnum {
     var eventName: String? {
         mirror.label.snakeAndFirstUppercased
     }
