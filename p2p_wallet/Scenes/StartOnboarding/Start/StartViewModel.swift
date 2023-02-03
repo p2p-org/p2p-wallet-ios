@@ -29,7 +29,7 @@ final class StartViewModel: BaseViewModel, ObservableObject {
             .store(in: &subscriptions)
 
         restoreWalletDidTap.sink { [unowned self] in
-            self.analyticsManager.log(event: AmplitudeEvent.restoreWalletButton)
+            self.analyticsManager.log(event: .restoreWalletButton)
         }.store(in: &subscriptions)
     }
 

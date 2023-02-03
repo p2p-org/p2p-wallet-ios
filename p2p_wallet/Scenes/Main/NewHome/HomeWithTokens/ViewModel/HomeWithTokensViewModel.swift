@@ -102,7 +102,7 @@ final class HomeWithTokensViewModel: BaseViewModel, ObservableObject {
         }
 
         analyticsManager.log(
-            event: AmplitudeEvent.mainScreenWalletsOpen(isSellEnabled: sellDataService.isAvailable)
+            event: .mainScreenWalletsOpen(isSellEnabled: sellDataService.isAvailable)
         )
     }
 

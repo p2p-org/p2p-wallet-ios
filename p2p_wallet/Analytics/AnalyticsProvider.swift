@@ -6,7 +6,8 @@
 //
 
 import Foundation
+import AnalyticsManager
 
 protocol AnalyticsProvider {
-    func logEvent(_ event: NewAnalyticsEvent)
+    func logEvent(_ event: AnalyticsEvent)
 }

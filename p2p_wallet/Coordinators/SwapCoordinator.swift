@@ -34,7 +34,7 @@ final class SwapCoordinator: Coordinator<SwapCoordinator.Result> {
     override func start() -> AnyPublisher<SwapCoordinator.Result, Never> {
         let viewModel = OrcaSwapV2.ViewModel(initialWallet: initialWallet)
         let view = OrcaSwapV2.ViewController(viewModel: viewModel, hidesBottomBarWhenPushed: hidesBottomBarWhenPushed)
-        analyticsManager.log(event: AmplitudeEvent.mainScreenSwapOpen)
+        analyticsManager.log(event: .mainScreenSwapOpen)
 
         view.doneHandler = { [weak self] in
             self?.navigationController.popToRootViewController(animated: true)

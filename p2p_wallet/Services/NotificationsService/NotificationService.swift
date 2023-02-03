@@ -86,7 +86,7 @@ final class NotificationServiceImpl: NSObject, NotificationService {
             .requestAuthorization(options: [.alert, .sound, .badge]) { [weak self] granted, _ in
                 Defaults.didSetEnableNotifications = granted
                 if granted {
-                    self?.analyticsManager.log(event: AmplitudeEvent.pushApprove)
+                    self?.analyticsManager.log(event: .pushApprove)
                 }
             }
     }
@@ -180,10 +180,10 @@ final class NotificationServiceImpl: NSObject, NotificationService {
 
     func wasAppLaunchedFromPush(launchOptions: [UIApplication.LaunchOptionsKey: Any]?) {
         if launchOptions?[.remoteNotification] != nil {
-            analyticsManager.log(event: AmplitudeEvent.appOpened(sourceOpen: "Push"))
+            analyticsManager.log(event: .appOpened(sourceOpen: "Push"))
             UserDefaults.standard.set(true, forKey: openAfterPushKey)
         } else {
-            analyticsManager.log(event: AmplitudeEvent.appOpened(sourceOpen: "Direct"))
+            analyticsManager.log(event: .appOpened(sourceOpen: "Direct"))
         }
     }
 

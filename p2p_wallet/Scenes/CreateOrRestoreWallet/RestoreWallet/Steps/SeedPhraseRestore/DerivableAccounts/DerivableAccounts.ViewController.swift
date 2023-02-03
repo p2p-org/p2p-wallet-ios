@@ -66,7 +66,7 @@ extension DerivableAccounts {
 
         override func viewDidLoad() {
             super.viewDidLoad()
-            analyticsManager.log(event: AmplitudeEvent.recoveryDerivableAccountsOpen)
+            analyticsManager.log(event: .recoveryDerivableAccountsOpen)
         }
 
         override func setUp() {
@@ -131,7 +131,7 @@ extension DerivableAccounts {
 
         func derivablePathsVC(didSelectPath path: DerivablePath) {
             viewModel.selectDerivationPath(path)
-            analyticsManager.log(event: AmplitudeEvent.recoveryDerivableAccountsPathSelected(path: path.rawValue))
+            analyticsManager.log(event: .recoveryDerivableAccountsPathSelected(path: path.rawValue))
         }
 
         @objc func chooseDerivationPath() {

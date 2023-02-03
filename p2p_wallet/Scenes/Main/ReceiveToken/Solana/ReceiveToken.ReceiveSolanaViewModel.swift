@@ -55,18 +55,18 @@ extension ReceiveToken {
         var username: String? { nameStorage.getName() }
 
         func copyAction() {
-            analyticsManager.log(event: AmplitudeEvent.receiveAddressCopied)
+            analyticsManager.log(event: .receiveAddressCopied)
             clipboardManger.copyToClipboard(pubkey)
             notificationsService.showInAppNotification(.done(L10n.addressCopiedToClipboard))
         }
 
         func shareAction(image: UIImage) {
-            analyticsManager.log(event: AmplitudeEvent.receiveUsercardShared)
+            analyticsManager.log(event: .receiveUsercardShared)
             navigationSubject.accept(.share(address: pubkey, qrCode: image))
         }
 
         func saveAction(image: UIImage) {
-            analyticsManager.log(event: AmplitudeEvent.receiveQRSaved)
+            analyticsManager.log(event: .receiveQRSaved)
             imageSaver.save(image: image) { [weak self] result in
                 switch result {
                 case .success:
@@ -85,7 +85,7 @@ extension ReceiveToken {
         }
 
         func showSOLAddressInExplorer() {
-            analyticsManager.log(event: AmplitudeEvent.receiveViewingExplorer)
+            analyticsManager.log(event: .receiveViewingExplorer)
             navigationSubject.accept(.showInExplorer(address: tokenWallet?.pubkey ?? pubkey))
         }
     }

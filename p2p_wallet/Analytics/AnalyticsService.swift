@@ -6,9 +6,16 @@
 //
 
 import Foundation
+import AnalyticsManager
 
 protocol AnalyticsService: AnyObject {
-    func logEvent(_ eventEvent: NewAnalyticsEvent)
+    func logEvent(_ event: AnalyticsEvent)
+}
+
+extension AnalyticsService {
+    func logEvent(_ event: KeyAppEvent) {
+        logEvent(event as AnalyticsEvent)
+    }
 }
 
 final class AnalyticsServiceImpl: AnalyticsService {
@@ -18,9 +25,16 @@ final class AnalyticsServiceImpl: AnalyticsService {
         self.providers = providers
     }
 
-    func logEvent(_ event: NewAnalyticsEvent) {
+    func logEvent(_ event: AnalyticsEvent) {
         providers.forEach {
             $0.logEvent(event)
         }
+    }
+}
+
+// TODO: - Remove later
+extension AnalyticsManager {
+    func log(event: KeyAppEvent) {
+        log(event: event as AnalyticsEvent)
     }
 }
