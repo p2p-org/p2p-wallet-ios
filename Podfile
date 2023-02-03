@@ -28,7 +28,8 @@ def key_app_kit
     "Send",
     "History",
     "Moonpay",
-    "Sell"
+    "Sell",
+    "Jupiter"
   ]
 
   if $keyAppKitPath
@@ -37,7 +38,7 @@ def key_app_kit
     end
   else
     $keyAppKitGit = 'https://github.com/p2p-org/key-app-kit-swift.git'
-    $keyAppKitBranch = 'master'
+    $keyAppKitBranch = 'feature/new-swap'
     for $dependency in $dependencies do
       pod $dependency, :git => $keyAppKitGit, :branch => $keyAppKitBranch
     end
@@ -62,7 +63,7 @@ target 'p2p_wallet' do
   if $solanaSwiftPath
     pod "SolanaSwift", :path => $solanaSwiftPath
   else
-    pod 'SolanaSwift', :git => 'https://github.com/p2p-org/solana-swift.git', :branch => 'main'
+    pod 'SolanaSwift', :git => 'https://github.com/p2p-org/solana-swift.git', :branch => 'feature/versioned-transaction'
   end
 
   # tools
