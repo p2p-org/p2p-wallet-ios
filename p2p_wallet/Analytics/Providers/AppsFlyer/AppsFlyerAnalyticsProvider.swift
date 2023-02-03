@@ -1,10 +1,3 @@
-//
-//  AppsFlyerAnalyticsProvider.swift
-//  p2p_wallet
-//
-//  Created by Ivan on 12.12.2022.
-//
-
 import AppsFlyerLib
 import Foundation
 import AnalyticsManager
