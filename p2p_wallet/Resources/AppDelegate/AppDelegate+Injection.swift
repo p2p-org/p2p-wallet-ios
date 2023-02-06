@@ -103,10 +103,16 @@ extension Resolver: ResolverRegistering {
         }
         .scope(.application)
 
+        let amplitudeApiKey: String
+        #if !RELEASE
+        amplitudeApiKey = .secretConfig("AMPLITUDE_API_KEY_FEATURE")!
+        #else
+        amplitudeApiKey = .secretConfig("AMPLITUDE_API_KEY")!
+        #endif
         // AnalyticsManager
         register {
             AmplitudeAnalyticsProvider(
-                apiKey: .secretConfig("AMPLITUDE_API_KEY")!
+                apiKey: amplitudeApiKey
             )
         }
         .scope(.application)
