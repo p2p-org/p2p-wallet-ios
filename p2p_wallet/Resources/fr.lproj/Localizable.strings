@@ -1225,3 +1225,4 @@ You can try again, but your new transaction will be subject to the current rates
 "Buy or receive to continue" = "Achetez ou recevez pour continuer";
 "Cannot calculate fees. Try again" = "Impossible de calculer les frais.  Essayer à nouveau";
 "Less than %@" = "Moins de %@";
+"Solana network" = "Réseau Solana";

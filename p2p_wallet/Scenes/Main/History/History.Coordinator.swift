@@ -82,21 +82,26 @@ class HistoryCoordinator: SmartCoordinator<Void> {
     }
 
     private func openSend(_ transaction: SellDataServiceTransaction) {
-        guard let viewController = presentation.presentingViewController as? UINavigationController else {
+        let walletsRepository = Resolver.resolve(WalletsRepository.self)
+        guard
+            let viewController = presentation.presentingViewController as? UINavigationController,
+                let nativeWallet = walletsRepository.nativeWallet
+        else {
             print(SmartCoordinatorError.unsupportedPresentingViewController)
             return
         }
 
-        let walletsRepository = Resolver.resolve(WalletsRepository.self)
         coordinate(to: SendCoordinator(
             rootViewController: viewController,
-            preChosenWallet: walletsRepository.nativeWallet,
-            preChosenRecipient: Recipient(
-                address: transaction.depositWallet,
-                category: .solanaAddress,
-                attributes: [.funds]
+            args: .fixed(
+                wallet: nativeWallet,
+                recipient: Recipient(
+                    address: transaction.depositWallet,
+                    category: .solanaAddress,
+                    attributes: [.funds]
+                ),
+                amount: transaction.baseCurrencyAmount
             ),
-            preChosenAmount: transaction.baseCurrencyAmount,
             allowSwitchingMainAmountType: false
         ))
         .sink { _ in }

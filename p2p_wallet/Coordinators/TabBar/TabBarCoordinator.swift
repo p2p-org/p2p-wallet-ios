@@ -237,7 +237,7 @@ final class TabBarCoordinator: Coordinator<Void> {
             let withTokens = fiatAmount > 0
             if withTokens {
                 analyticsManager.log(event: AmplitudeEvent.sendViewed(lastScreen: "main_screen"))
-                sendCoordinator = SendCoordinator(rootViewController: navigationController, preChosenWallet: nil, hideTabBar: true, allowSwitchingMainAmountType: true)
+                sendCoordinator = SendCoordinator(rootViewController: navigationController, allowSwitchingMainAmountType: true)
                 sendCoordinator?.start()
                     .sink { [weak self, weak navigationController] result in
                         switch result {
