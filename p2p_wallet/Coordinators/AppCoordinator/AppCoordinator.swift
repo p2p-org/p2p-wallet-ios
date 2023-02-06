@@ -187,7 +187,7 @@ final class AppCoordinator: Coordinator<Void> {
                     analyticsManager.log(event: .restoreConfirmPin(result: true))
 
                     let restoreMethod: String = data.metadata == nil ? "seed" : "web3auth"
-                    amplitudeAnalyticsProvider.setIdentifier(.userRestoreMethod(restoreMethod: restoreMethod))
+                    analyticsManager.log(parameter: .userRestoreMethod(restoreMethod))
 
                     saveSecurity(data: data.security)
                     // Setup user wallet
