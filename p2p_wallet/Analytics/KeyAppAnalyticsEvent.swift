@@ -319,8 +319,10 @@ enum KeyAppAnalyticsEvent: AnalyticsEvent {
     case sellClickedServerError
     case sellClickedSorryMinAmount
     case sellFinishSend
+    case sellOnlySOLNotification
     case sellAmount
     case sellAmountNext
+    case sellMoonpayOpenNotification
     case sellMoonpay
     case historySendClicked(status: String)
 }
