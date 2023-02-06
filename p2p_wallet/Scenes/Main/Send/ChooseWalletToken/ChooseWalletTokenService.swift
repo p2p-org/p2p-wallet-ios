@@ -3,7 +3,7 @@ import Send
 import Resolver
 
 protocol ChooseWalletTokenService {
-    func getWallets() async throws -> [Wallet]
+    func getWallets() -> [Wallet]
 }
 
 final class ChooseWalletTokenServiceImpl: ChooseWalletTokenService {
@@ -16,7 +16,7 @@ final class ChooseWalletTokenServiceImpl: ChooseWalletTokenService {
         self.strategy = strategy
     }
 
-    func getWallets() async throws -> [Wallet] {
+    func getWallets() -> [Wallet] {
         switch strategy {
         case let .feeToken(tokens, _):
             return tokens
