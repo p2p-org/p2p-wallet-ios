@@ -8,15 +8,12 @@ final class ChooseWalletTokenViewModel: BaseViewModel, ObservableObject {
     @Injected private var notifications: NotificationService
 
     let chooseTokenSubject = PassthroughSubject<Wallet, Never>()
-    let close = PassthroughSubject<Void, Never>()
     let clearSearch = PassthroughSubject<Void, Never>()
 
     @Published var wallets: [Wallet] = []
     @Published var searchText: String = ""
     @Published var isSearchFieldFocused: Bool = true
     @Published var isSearchGoing: Bool = false
-    @Published var title: String = ""
-    @Published var isLoading: Bool = true
 
     let chosenToken: Wallet
 
@@ -28,20 +25,9 @@ final class ChooseWalletTokenViewModel: BaseViewModel, ObservableObject {
         self.chosenToken = chosenToken
         self.service = ChooseWalletTokenServiceImpl(strategy: strategy)
         super.init()
-        self.title = configureTitle(strategy: strategy)
 
-        Task {
-            self.isLoading = true
-            do {
-                self.allWallets = try await service.getWallets()
-                self.wallets = allWallets.filter({ $0.token.address != chosenToken.token.address }).filteredAndSorted()
-                self.isLoading = false
-            }
-            catch {
-                self.isLoading = false
-                self.notifications.showDefaultErrorNotification()
-            }
-        }
+        self.allWallets = service.getWallets()
+        self.wallets = allWallets.filter({ $0.token.address != chosenToken.token.address }).filteredAndSorted()
 
         $searchText
             .debounce(for: .seconds(0.5), scheduler: DispatchQueue.main)
@@ -64,7 +50,7 @@ final class ChooseWalletTokenViewModel: BaseViewModel, ObservableObject {
     }
 }
 
-private extension ChooseWalletTokenViewModel {
+extension ChooseWalletTokenViewModel {
     func configureTitle(strategy: ChooseWalletTokenStrategy) -> String {
         switch strategy {
         case let .feeToken(_, feeInFiat):
