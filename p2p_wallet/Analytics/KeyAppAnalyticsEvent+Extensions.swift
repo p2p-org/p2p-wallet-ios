@@ -4,7 +4,7 @@ import AnalyticsManager
 extension KeyAppAnalyticsEvent: MirrorableEnum {
 
     /// The name of the event to send
-    var eventName: String? {
+    var name: String? {
         // By default, name of the event will be converted from `camelCase` to `Uppercased_Snake_Case` format
         // For example: `KeyAppAnalyticsEvent.mainScreenSwapOpen` will be converted to "Main_Screen_Swap_Open" automatically.
         // Example: modify the name manually and prevent default behavior
@@ -38,7 +38,7 @@ extension KeyAppAnalyticsEvent: MirrorableEnum {
         return Dictionary(uniqueKeysWithValues: formatted)
     }
 
-    /// Array of sending providers, even will be sent to only these defined providers
+    /// Array of sending providers, event will be sent to only these defined providers
     var providerIds: [AnalyticsProviderId] {
         // By default, all events will be sent to amplitude only
         var ids: [KeyAppAnalyticsProviderId] = [

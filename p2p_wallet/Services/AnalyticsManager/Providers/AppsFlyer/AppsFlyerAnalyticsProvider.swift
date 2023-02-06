@@ -18,7 +18,7 @@ final class AppsFlyerAnalyticsProvider: NSObject, AnalyticsProvider {
     }
 
     func logEvent(_ event: AnalyticsEvent) {
-        guard let eventName = event.eventName else { return }
+        guard let eventName = event.name else { return }
         AppsFlyerLib.shared().logEvent(
             name: eventName,
             values: event.params,
