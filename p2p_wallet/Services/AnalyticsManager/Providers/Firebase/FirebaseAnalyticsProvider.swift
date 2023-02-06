@@ -16,4 +16,6 @@ final class FirebaseAnalyticsProvider: AnalyticsProvider {
             parameters: event.params
         )
     }
+    
+    func logParameter(_ parameter: AnalyticsParameter) {}
 }

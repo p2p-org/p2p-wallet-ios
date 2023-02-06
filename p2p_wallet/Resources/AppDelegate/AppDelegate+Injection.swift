@@ -103,25 +103,14 @@ extension Resolver: ResolverRegistering {
         }
         .scope(.application)
 
-        let amplitudeApiKey: String
-        #if !RELEASE
-        amplitudeApiKey = .secretConfig("AMPLITUDE_API_KEY_FEATURE")!
-        #else
-        amplitudeApiKey = .secretConfig("AMPLITUDE_API_KEY")!
-        #endif
         // AnalyticsManager
         register {
-            AmplitudeAnalyticsProvider(
-                apiKey: amplitudeApiKey
-            )
+            AmplitudeAnalyticsProvider()
         }
         .scope(.application)
         
         register {
-            AppsFlyerAnalyticsProvider(
-                appsFlyerDevKey: String.secretConfig("APPSFLYER_DEV_KEY")!,
-                appleAppID: String.secretConfig("APPSFLYER_APP_ID")!
-            )
+            AppsFlyerAnalyticsProvider()
         }
         .scope(.application)
         
