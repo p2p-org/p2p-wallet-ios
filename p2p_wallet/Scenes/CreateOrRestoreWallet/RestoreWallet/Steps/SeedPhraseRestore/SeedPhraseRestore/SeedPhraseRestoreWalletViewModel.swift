@@ -21,16 +21,14 @@ final class SeedPhraseRestoreWalletViewModel: BaseViewModel, ObservableObject {
 
     // Word suggestions should appearr here
     @Published var suggestions = [String]()
-    #if DEBUG
-        @Published var seed =
-            "crowd level crater figure super canyon silver wheel release cage zoo crucial sail aerobic road awesome fatal comfort canvas obscure grow mechanic spirit pave"
-    #else
-        @Published var seed = ""
-    #endif
+    @Published var seed = ""
     @Published var canContinue: Bool = false
     @Published var isSeedFocused: Bool = false
 
     override init() {
+        #if DEBUG
+        seed = String.secretConfig("TEST_ACCOUNT_SEED_PHRASE")?.replacingOccurrences(of: "-", with: " ") ?? ""
+        #endif
         super.init()
         $seed.sink { [weak self] value in
             if value.split(separator: " ").count == 12 || value.split(separator: " ").count == 24 {
