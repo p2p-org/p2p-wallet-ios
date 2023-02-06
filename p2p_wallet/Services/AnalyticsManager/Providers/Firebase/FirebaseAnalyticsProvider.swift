@@ -10,7 +10,7 @@ final class FirebaseAnalyticsProvider: AnalyticsProvider {
     init() {}
 
     func logEvent(_ event: AnalyticsEvent) {
-        guard let eventName = event.eventName else { return }
+        guard let eventName = event.name else { return }
         Analytics.logEvent(
             eventName,
             parameters: event.params
