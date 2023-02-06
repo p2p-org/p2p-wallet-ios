@@ -5,34 +5,25 @@ import SwiftUI
 
 final class SendInputCoordinator: Coordinator<SendResult> {
     private let navigationController: UINavigationController
-    private let recipient: Recipient
-    private let preChosenWallet: Wallet?
-    private let preChosenAmount: Double?
     private var subject = PassthroughSubject<SendResult, Never>()
-    private let source: SendSource
-    private let pushedWithoutRecipientSearchView: Bool
-    private let allowSwitchingMainAmountType: Bool
+    private let parameters: SendInputParameters
 
     init(
-        recipient: Recipient,
-        preChosenWallet: Wallet?,
-        preChosenAmount: Double?,
-        navigationController: UINavigationController,
-        source: SendSource,
-        pushedWithoutRecipientSearchView: Bool = false,
-        allowSwitchingMainAmountType: Bool
+        parameters: SendInputParameters,
+        navigationController: UINavigationController
     ) {
-        self.recipient = recipient
-        self.preChosenWallet = preChosenWallet
-        self.preChosenAmount = preChosenAmount
         self.navigationController = navigationController
-        self.source = source
-        self.pushedWithoutRecipientSearchView = pushedWithoutRecipientSearchView
-        self.allowSwitchingMainAmountType = allowSwitchingMainAmountType
+        self.parameters = parameters
     }
 
     override func start() -> AnyPublisher<SendResult, Never> {
-        let viewModel = SendInputViewModel(recipient: recipient, preChosenWallet: preChosenWallet, preChosenAmount: preChosenAmount, source: source, allowSwitchingMainAmountType: allowSwitchingMainAmountType)
+        let viewModel = SendInputViewModel(
+            recipient: parameters.recipient,
+            preChosenWallet: parameters.preChosenWallet,
+            preChosenAmount: parameters.preChosenAmount,
+            source: parameters.source,
+            allowSwitchingMainAmountType: parameters.allowSwitchingMainAmountType
+        )
         let view = SendInputView(viewModel: viewModel)
         let controller = KeyboardAvoidingViewController(rootView: view, navigationBarVisibility: .visible)
 
@@ -80,7 +71,7 @@ final class SendInputCoordinator: Coordinator<SendResult> {
             }
             .store(in: &subscriptions)
         
-        if pushedWithoutRecipientSearchView {
+        if parameters.pushedWithoutRecipientSearchView {
             Task { await viewModel.load() }
         }
 
@@ -88,11 +79,11 @@ final class SendInputCoordinator: Coordinator<SendResult> {
     }
 
     private func setTitle(to vc: UIViewController) {
-        switch recipient.category {
+        switch parameters.recipient.category {
         case let .username(name, domain):
             vc.title = RecipientFormatter.username(name: name, domain: domain)
         default:
-            vc.title = RecipientFormatter.format(destination: recipient.address)
+            vc.title = RecipientFormatter.format(destination: parameters.recipient.address)
         }
 
         vc.navigationItem.largeTitleDisplayMode = .always
