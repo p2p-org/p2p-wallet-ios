@@ -1,7 +1,7 @@
 import Foundation
 import AnalyticsManager
 
-extension KeyAppAnalyticsEvent: MirrorableEnum {
+extension KeyAppAnalyticsEvent {
 
     /// The name of the event to send
     var name: String? {
@@ -68,20 +68,21 @@ extension KeyAppAnalyticsEvent: MirrorableEnum {
         }
         return ids.map(\.rawValue)
     }
-}
-
-extension String {
-    var snakeAndFirstUppercased: String? {
-        guard let snakeCase = snakeCased() else { return nil }
-        return snakeCase.prefix(1).uppercased() + snakeCase.dropFirst()
-    }
     
-    func snakeCased() -> String? {
-        let pattern = "([a-z0-9])([A-Z])"
+    // MARK: - Helpers
 
-        let regex = try? NSRegularExpression(pattern: pattern, options: [])
-        let range = NSRange(location: 0, length: count)
-        return regex?.stringByReplacingMatches(in: self, options: [], range: range, withTemplate: "$1_$2")
-            .uppercaseFirst
+    private var mirror: (label: String, params: [String: Any]) {
+        let reflection = Mirror(reflecting: self)
+        guard reflection.displayStyle == .enum,
+              let associated = reflection.children.first
+        else {
+            return ("\(self)", [:])
+        }
+        let values = Mirror(reflecting: associated.value).children
+        var valuesArray = [String: Any]()
+        for case let item in values where item.label != nil {
+            valuesArray[item.label!] = item.value
+        }
+        return (associated.label!, valuesArray)
     }
 }
