@@ -7,7 +7,14 @@ final class AmplitudeAnalyticsProvider: AnalyticsProvider {
         KeyAppAnalyticsProviderId.amplitude.rawValue
     }
     
-    init(apiKey: String) {
+    init() {
+        let apiKey: String
+        #if !RELEASE
+        apiKey = .secretConfig("AMPLITUDE_API_KEY_FEATURE")!
+        #else
+        apiKey = .secretConfig("AMPLITUDE_API_KEY")!
+        #endif
+        
         Amplitude.instance().trackingSessionEvents = true
         Amplitude.instance().initializeApiKey(apiKey)
     }
@@ -15,5 +22,13 @@ final class AmplitudeAnalyticsProvider: AnalyticsProvider {
     func logEvent(_ event: AnalyticsEvent) {
         guard let eventName = event.name else { return }
         Amplitude.instance().logEvent(eventName, withEventProperties: event.params)
+    }
+    
+    func logParameter(_ parameter: AnalyticsParameter) {
+        guard
+            let value = parameter.value as? NSObject,
+            let identify = AMPIdentify().set(parameter.name, value: value)
+        else { return }
+        Amplitude.instance().identify(identify)
     }
 }

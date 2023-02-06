@@ -55,7 +55,6 @@ enum KeyAppAnalyticsEvent: AnalyticsEvent {
     case bioRejected
     case setupAllowPushOpen
     case pushApprove
-    case pushAllowed(value: Bool)
     case setupFinishOpen
     case setupFinishClick
     case setupWelcomeBackOpen
@@ -307,11 +306,6 @@ enum KeyAppAnalyticsEvent: AnalyticsEvent {
     // MARK: - Seed
 
     case seedPhraseCopy
-
-    // MARK: - User
-
-    case userHasPositiveBalance(positive: Bool)
-    case userAggregateBalance(balance: Double)
 
     // MARK: - Sell
 

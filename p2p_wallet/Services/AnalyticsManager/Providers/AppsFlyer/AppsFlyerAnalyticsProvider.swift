@@ -7,7 +7,7 @@ final class AppsFlyerAnalyticsProvider: NSObject, AnalyticsProvider {
         KeyAppAnalyticsProviderId.appsFlyer.rawValue
     }
     
-    init(appsFlyerDevKey: String, appleAppID: String) {
+    override init() {
         #if DEBUG
             AppsFlyerLib.shared().isDebug = true
         #endif
@@ -36,6 +36,8 @@ final class AppsFlyerAnalyticsProvider: NSObject, AnalyticsProvider {
             }
         )
     }
+    
+    func logParameter(_ parameter: AnalyticsParameter) {}
 }
 
 // MARK: - DeepLinkDelegate
