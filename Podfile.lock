@@ -524,7 +524,7 @@ CHECKOUT OPTIONS:
     :commit: 36ac95d5061ac741279abaa35a70478446fa4752
     :git: https://github.com/p2p-org/key-app-kit-swift.git
   Send:
-    :commit: 2817c6a6352befefe9eb1509da6035f1ed76ef00
+    :commit: ebd233309461da3703e625e0e10bc6eb3b1b99fb
     :git: https://github.com/p2p-org/key-app-kit-swift.git
   Sentry:
     :git: https://github.com/getsentry/sentry-cocoa.git
