@@ -7,13 +7,14 @@ extension KeyAppAnalyticsEvent {
     var name: String? {
         // By default, name of the event will be converted from `camelCase` to `Uppercased_Snake_Case` format
         // For example: `KeyAppAnalyticsEvent.mainScreenSwapOpen` will be converted to "Main_Screen_Swap_Open" automatically.
-        // Example: modify the name manually and prevent default behavior
-        // switch self {
-        // case .login:
-        //     return "UserLoggedIn"
-        // default:
-        //     break
-        // }
+        
+        // Modify the name manually and prevent default behavior
+        switch self {
+        case sellOnlySOLNotification:
+            return "Sell_Only_SOL_Notification"
+        default:
+            break
+        }
         
         // Default converter from `camelCase` to `Uppercased_Snake_Case` format
         return mirror.label.snakeAndFirstUppercased
