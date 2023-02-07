@@ -10,7 +10,7 @@ extension KeyAppAnalyticsEvent {
         
         // Modify the name manually and prevent default behavior
         switch self {
-        case sellOnlySOLNotification:
+        case .sellOnlySOLNotification:
             return "Sell_Only_SOL_Notification"
         default:
             break
