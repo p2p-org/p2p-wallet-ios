@@ -24,7 +24,6 @@ enum HomeNavigation: Equatable {
     case wallet(pubKey: String, tokenSymbol: String)
     case actions([WalletActionType])
     // HomeEmpty
-    case topUp
     case topUpCoin(Token)
     // Error
     case error(show: Bool)
@@ -108,14 +107,9 @@ final class HomeCoordinator: Coordinator<Void> {
     private func navigate(to scene: HomeNavigation, homeView: UIViewController) -> AnyPublisher<Void, Never> {
         switch scene {
         case .buy:
-            if available(.buyScenarioEnabled) {
-                return coordinate(to: BuyCoordinator(navigationController: navigationController, context: .fromHome))
-                    .map {_ in ()}
-                    .eraseToAnyPublisher()
-            } else {
-                return Just(presentBuyView())
-                    .eraseToAnyPublisher()
-            }
+            return coordinate(to: BuyCoordinator(navigationController: navigationController, context: .fromHome))
+                .map {_ in ()}
+                .eraseToAnyPublisher()
         case .receive(let publicKey):
             let coordinator = ReceiveCoordinator(navigationController: navigationController, pubKey: publicKey)
             analyticsManager.log(event: .mainScreenReceiveOpen)
@@ -205,27 +199,15 @@ final class HomeCoordinator: Coordinator<Void> {
         case .actions:
             return Just(())
                 .eraseToAnyPublisher()
-        case .topUp:
-            return Just(!available(.buyScenarioEnabled) ? presentBuyView(): ())
-                .eraseToAnyPublisher()
         case .topUpCoin(let token):
             guard [Token.nativeSolana, .usdc].contains(token) else {
                 return Just(()).eraseToAnyPublisher()
             }
-            let coordinator: Coordinator<Void>
-            if available(.buyScenarioEnabled) {
-                coordinator = BuyCoordinator(
-                    navigationController: navigationController,
-                    context: .fromHome,
-                    defaultToken: token
-                )
-            } else {
-                coordinator = BuyPreparingCoordinator(
-                    navigationController: navigationController,
-                    strategy: .show,
-                    crypto: token == .usdc ? .usdc : token == .nativeSolana ? .sol : .eth
-                )
-            }
+            let coordinator = BuyCoordinator(
+                navigationController: navigationController,
+                context: .fromHome,
+                defaultToken: token
+            )
             return self.coordinate(to: coordinator)
                 .eraseToAnyPublisher()
         case .error(let show):
@@ -238,22 +220,6 @@ final class HomeCoordinator: Coordinator<Void> {
             return Just(())
                 .eraseToAnyPublisher()
         }
-    }
-
-    private func presentBuyView() {
-        navigationController.present(
-            BuyTokenSelection.Scene(onTap: { [unowned self] in
-                let coordinator = BuyPreparingCoordinator(
-                    navigationController: navigationController,
-                    strategy: .show,
-                    crypto: $0
-                )
-                coordinate(to: coordinator)
-                    .sink(receiveValue: {})
-                    .store(in: &subscriptions)
-            }),
-            animated: true
-        )
     }
 
     private func showSendTransactionStatus(model: SendTransaction) {
