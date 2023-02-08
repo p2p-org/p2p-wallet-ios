@@ -5,14 +5,19 @@
 //  Created by Giang Long Tran on 03.02.2023.
 //
 
-import SwiftUI
 import KeyAppUI
+import SwiftUI
 
 struct DetailTransactionView: View {
     @ObservedObject var viewModel: DetailTransactionViewModel
     
     var body: some View {
         VStack {
+            RoundedRectangle(cornerRadius: 2, style: .circular)
+                .fill(Color(Asset.Colors.rain.color))
+                .frame(width: 31, height: 4)
+                .padding(.top, 6)
+                
             title
                 .padding(.top, 16)
                 .padding(.bottom, 20)
@@ -44,16 +49,31 @@ struct DetailTransactionView: View {
         }
     }
     
+    private var amountInFiatColor: Color {
+        if case .error = viewModel.rendableTransaction.status.value {
+            return Color(Asset.Colors.rose.color)
+        }
+        
+        switch viewModel.rendableTransaction.amountInFiat {
+        case .positive:
+            return Color(Asset.Colors.mint.color)
+        default:
+            return Color(Asset.Colors.night.color)
+        }
+    }
+    
     private var headerView: some View {
         VStack(alignment: .center, spacing: 0) {
             TransactionDetailIconView(icon: viewModel.rendableTransaction.icon)
                 .padding(.top, 33)
-            Text(viewModel.rendableTransaction.amountInFiat)
-                .fontWeight(.bold)
-                .apply(style: .largeTitle)
-                .foregroundColor(Color(Asset.Colors.night.color))
-                .padding(.top, 17)
-                .padding(.bottom, 6)
+            if !viewModel.rendableTransaction.amountInFiat.value.isEmpty {
+                Text(viewModel.rendableTransaction.amountInFiat.value)
+                    .fontWeight(.bold)
+                    .apply(style: .largeTitle)
+                    .foregroundColor(amountInFiatColor)
+                    .padding(.top, 17)
+                    .padding(.bottom, 6)
+            }
             if !viewModel.rendableTransaction.amountInToken.isEmpty {
                 Text(viewModel.rendableTransaction.amountInToken)
                     .apply(style: .text2)
@@ -84,13 +104,8 @@ struct DetailTransactionView: View {
     }
 
     var status: some View {
-        SwiftUI.EmptyView()
+        TransactionDetailStatusView(status: viewModel.rendableTransaction.status.value) {}
     }
-//        SendTransactionStatusStatusView(
-//            viewModel: viewModel,
-//            errorMessageTapAction: { [weak viewModel] in viewModel?.errorMessageTap.send() }
-//        )
-//    }
 
     var button: some View {
         TextButtonView(
@@ -101,7 +116,6 @@ struct DetailTransactionView: View {
         )
         .frame(height: 56)
     }
-
 }
 
 struct DetailTransactionView_Previews: PreviewProvider {
