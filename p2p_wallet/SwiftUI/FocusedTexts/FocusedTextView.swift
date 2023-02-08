@@ -26,9 +26,10 @@ struct FocusedTextView: UIViewRepresentable {
     func updateUIView(_ uiView: UITextView, context _: Context) {
         uiView.text = text
         configuration(uiView)
-        switch isFirstResponder {
-        case true: uiView.becomeFirstResponder()
-        case false: uiView.resignFirstResponder()
+        if uiView.isFirstResponder, !isFirstResponder {
+            DispatchQueue.main.async { uiView.resignFirstResponder() }
+        } else if !uiView.isFirstResponder, isFirstResponder {
+            DispatchQueue.main.async { uiView.becomeFirstResponder() }
         }
     }
 
