@@ -37,7 +37,7 @@ def key_app_kit
     end
   else
     $keyAppKitGit = 'https://github.com/p2p-org/key-app-kit-swift.git'
-    $keyAppKitBranch = 'master'
+    $keyAppKitBranch = 'feature/pwn-7078-2'
     for $dependency in $dependencies do
       pod $dependency, :git => $keyAppKitGit, :branch => $keyAppKitBranch
     end
@@ -114,6 +114,9 @@ target 'p2p_wallet' do
 
   # Sentry
   pod 'Sentry', :git => 'https://github.com/getsentry/sentry-cocoa.git', :tag => '7.31.5'
+  
+  # Amplitude
+  pod 'Amplitude', '~> 8.3.0'
 
   # AppsFlyer
   pod 'AppsFlyerFramework'

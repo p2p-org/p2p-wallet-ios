@@ -118,8 +118,8 @@ final class HomeCoordinator: Coordinator<Void> {
             }
         case .receive(let publicKey):
             let coordinator = ReceiveCoordinator(navigationController: navigationController, pubKey: publicKey)
-            analyticsManager.log(event: AmplitudeEvent.mainScreenReceiveOpen)
-            analyticsManager.log(event: AmplitudeEvent.receiveViewed(fromPage: "main_screen"))
+            analyticsManager.log(event: .mainScreenReceiveOpen)
+            analyticsManager.log(event: .receiveViewed(fromPage: "main_screen"))
             return coordinate(to: coordinator)
                 .eraseToAnyPublisher()
         case .send:
@@ -145,7 +145,7 @@ final class HomeCoordinator: Coordinator<Void> {
             .map {_ in ()}
             .eraseToAnyPublisher()
         case .swap:
-            analyticsManager.log(event: AmplitudeEvent.swapViewed(lastScreen: "main_screen"))
+            analyticsManager.log(event: .swapViewed(lastScreen: "main_screen"))
             return coordinate(
                 to: SwapCoordinator(
                     navigationController: navigationController,
@@ -164,7 +164,7 @@ final class HomeCoordinator: Coordinator<Void> {
             .map {_ in ()}
             .eraseToAnyPublisher()
         case .cashOut:
-            analyticsManager.log(event: AmplitudeEvent.sellClicked(source: "Main"))
+            analyticsManager.log(event: .sellClicked(source: "Main"))
             return coordinate(
                 to: SellCoordinator(navigationController: navigationController)
             )

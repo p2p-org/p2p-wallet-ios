@@ -54,7 +54,7 @@ final class RecoveryKitCoordinator: Coordinator<Void> {
     func confirmDeleteAccountDialog() {
         let alert = UIAlertController(title: L10n.areYouSureYouWantToDeleteYourAccount, message: L10n.theDataWillBeClearedWithoutThePossibilityOfRecovery, preferredStyle: .alert)
         alert.addAction(.init(title: L10n.yesDeleteMyAccount, style: .destructive) { _ in
-            self.analyticsManager.log(event: AmplitudeEvent.confirmDeleteAccount)
+            self.analyticsManager.log(event: .confirmDeleteAccount)
             self.authenticationHandler.authenticate(
                 presentationStyle: .init(
                     options: [.fullscreen],
