@@ -66,3 +66,4 @@ jobs:
           JIRA_BASE_URL: '${{ secrets.JIRA_BASE_URL }}'
           GOOGLE_SERVICE_INFO_PLIST_URL: '${{ secrets.GOOGLE_SERVICE_INFO_PLIST_URL }}'
           XCCONFIG_URL: '${{ secrets.XCCONFIG_URL }}'
+          SENTRY_TOKEN: '${{ secrets.SENTRY_TOKEN }}'

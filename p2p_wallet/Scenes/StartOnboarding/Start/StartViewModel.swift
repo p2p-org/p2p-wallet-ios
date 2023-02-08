@@ -21,12 +21,14 @@ final class StartViewModel: BaseViewModel, ObservableObject {
         super.init()
         setData()
 
-        createWalletDidTap.sink { [unowned self] in
-            self.analyticsManager.log(event: AmplitudeEvent.onboardingStartButton)
-        }.store(in: &subscriptions)
+        createWalletDidTap
+            .sink { [unowned self] in
+                analyticsManager.log(event: .onboardingStartButton)
+            }
+            .store(in: &subscriptions)
 
         restoreWalletDidTap.sink { [unowned self] in
-            self.analyticsManager.log(event: AmplitudeEvent.restoreWalletButton)
+            self.analyticsManager.log(event: .restoreWalletButton)
         }.store(in: &subscriptions)
     }
 

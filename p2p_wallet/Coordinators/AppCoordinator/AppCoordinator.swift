@@ -14,6 +14,7 @@ import Resolver
 import SolanaSwift
 import UIKit
 import OrcaSwapSwift
+import Sell
 
 final class AppCoordinator: Coordinator<Void> {
     // MARK: - Dependencies
@@ -25,6 +26,7 @@ final class AppCoordinator: Coordinator<Void> {
     @Injected var notificationService: NotificationService
     @Injected var userWalletManager: UserWalletManager
     @Injected var createNameService: CreateNameService
+    @Injected private var amplitudeAnalyticsProvider: AmplitudeAnalyticsProvider
 
     // MARK: - Properties
 
@@ -64,15 +66,17 @@ final class AppCoordinator: Coordinator<Void> {
                 )
                 .receive(on: RunLoop.main)
                 .sink { [unowned self] wallet, _ in
-                    if wallet != nil {
-                        if self.walletCreated, available(.onboardingUsernameEnabled) {
-                            self.walletCreated = false
-                            self.navigateToCreateUsername()
+                    if let wallet {
+                        amplitudeAnalyticsProvider.setUserId(wallet.account.publicKey.base58EncodedString)
+                        if walletCreated, available(.onboardingUsernameEnabled) {
+                            walletCreated = false
+                            navigateToCreateUsername()
                         } else {
-                            self.navigateToMain()
+                            navigateToMain()
                         }
                     } else {
-                        self.navigateToOnboardingFlow()
+                        amplitudeAnalyticsProvider.setUserId(nil)
+                        navigateToOnboardingFlow()
                     }
                 }
                 .store(in: &subscriptions)
@@ -125,11 +129,21 @@ final class AppCoordinator: Coordinator<Void> {
             try await Resolver.resolve(WalletMetadataService.self).update()
             try await Resolver.resolve(OrcaSwapType.self).load()
         }
-
-        let coordinator = TabBarCoordinator(window: window, authenticateWhenAppears: showAuthenticationOnMainOnAppear)
-        coordinate(to: coordinator)
-            .sink(receiveValue: {})
-            .store(in: &subscriptions)
+        
+        Task {
+            // load services
+            if available(.sellScenarioEnabled) {
+                await Resolver.resolve((any SellDataService).self).checkAvailability()
+            }
+            
+            // coordinate
+            await MainActor.run { [unowned self] in
+                let coordinator = TabBarCoordinator(window: window, authenticateWhenAppears: showAuthenticationOnMainOnAppear)
+                coordinate(to: coordinator)
+                    .sink(receiveValue: {})
+                    .store(in: &subscriptions)
+            }
+        }
     }
 
     /// Navigate to onboarding flow if user is not yet created
@@ -151,8 +165,8 @@ final class AppCoordinator: Coordinator<Void> {
                 case let .created(data):
                     walletCreated = true
 
-                    analyticsManager.log(event: AmplitudeEvent.setupOpen(fromPage: "create_wallet"))
-                    analyticsManager.log(event: AmplitudeEvent.createConfirmPin(result: true))
+                    analyticsManager.log(event: .setupOpen(fromPage: "create_wallet"))
+                    analyticsManager.log(event: .createConfirmPin(result: true))
 
                     saveSecurity(data: data.security)
                     // Setup user wallet
@@ -169,10 +183,10 @@ final class AppCoordinator: Coordinator<Void> {
                         try await Resolver.resolve(WalletMetadataService.self).update(initialMetadata: data.metadata)
                     }
                 case let .restored(data):
-                    analyticsManager.log(event: AmplitudeEvent.restoreConfirmPin(result: true))
+                    analyticsManager.log(event: .restoreConfirmPin(result: true))
 
                     let restoreMethod: String = data.metadata == nil ? "seed" : "web3auth"
-                    analyticsManager.setIdentifier(AmplitudeIdentifier.userRestoreMethod(restoreMethod: restoreMethod))
+                    analyticsManager.log(parameter: .userRestoreMethod(restoreMethod))
 
                     saveSecurity(data: data.security)
                     // Setup user wallet

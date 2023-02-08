@@ -12,12 +12,38 @@ struct SendInputView: View {
     @ObservedObject var viewModel: SendInputViewModel
 
     var body: some View {
+        switch viewModel.loadingState {
+        case .notRequested:
+            Text("")
+        case .loading:
+            ProgressView()
+        case .loaded:
+            loadedView
+        case .error(let error):
+            VStack {
+                #if !RELEASE
+                Text(error)
+                    .foregroundColor(.red)
+                #endif
+                Text("\(L10n.somethingWentWrong). \(L10n.tapToTryAgain)?")
+                    .onTapGesture {
+                        Task {
+                            await viewModel.load()
+                        }
+                    }
+            }
+        }
+    }
+    
+    var loadedView: some View {
         ZStack(alignment: .top) {
             Color(Asset.Colors.smoke.color)
                 .edgesIgnoringSafeArea(.all)
                 .onTapGesture { self.viewModel.inputAmountViewModel.isFirstResponder = false }
 
             VStack(spacing: 8) {
+                Spacer()
+                    .frame(minHeight: 16, maxHeight: 52)
                 HStack(spacing: 4) {
                     Text(L10n.youWillSend)
                         .apply(style: .text4)
@@ -62,10 +88,13 @@ struct SendInputView: View {
                 }
                 
                 #if !RELEASE
-                Text(viewModel.calculationDebugText)
-                    .font(uiFont: .font(of: .label2, weight: .regular))
-                    .foregroundColor(Color(.red))
-                    .multilineTextAlignment(.trailing)
+                FeeRelayerDebugView(
+                    viewModel: .init(
+                        feeInSOL: viewModel.currentState.fee,
+                        feeInToken: viewModel.currentState.feeInToken,
+                        payingFeeTokenDecimals: viewModel.currentState.tokenFee.decimals
+                    )
+                )
                 #endif
 
                 Spacer()
@@ -82,7 +111,6 @@ struct SendInputView: View {
                 }
             }
             .padding(.horizontal, 16)
-            .padding(.top, 60)
             .padding(.bottom, 16)
         }
     }
@@ -147,7 +175,9 @@ struct SendInputView_Previews: PreviewProvider {
                     attributes: [.funds]
                 ),
                 preChosenWallet: nil,
-                source: .none
+                preChosenAmount: nil,
+                source: .none,
+                allowSwitchingMainAmountType: false
             )
         )
     }

@@ -23,7 +23,7 @@ struct ChooseWalletTokenItemView: View {
                     .apply(style: .text2)
                     .foregroundColor(Color(Asset.Colors.night.color))
                 if let amount = amount {
-                    Text(amount.tokenAmount(symbol: token.symbol, roundingMode: .down))
+                    Text(amount.tokenAmountFormattedString(symbol: token.symbol, roundingMode: .down))
                         .apply(style: .label1)
                         .foregroundColor(Color(Asset.Colors.mountain.color))
                 }
@@ -31,7 +31,7 @@ struct ChooseWalletTokenItemView: View {
 
             Spacer()
 
-            Text(amountInCurrentFiat.fiatAmount(roundingMode: .down))
+            Text(amountInCurrentFiat.fiatAmountFormattedString(roundingMode: .down, customFormattForLessThan1E_2: true))
                 .font(uiFont: .font(of: .text2, weight: .semibold))
                 .foregroundColor(Color(Asset.Colors.night.color))
         }

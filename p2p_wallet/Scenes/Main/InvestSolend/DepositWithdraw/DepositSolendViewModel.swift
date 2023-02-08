@@ -81,7 +81,7 @@ class DepositSolendViewModel: ObservableObject {
     }
 
     var headerViewTitle: String {
-        maxAmount().tokenAmount(symbol: invest.asset.symbol)
+        maxAmount().tokenAmountFormattedString(symbol: invest.asset.symbol)
     }
 
     var headerViewSubtitle: String {
@@ -93,7 +93,7 @@ class DepositSolendViewModel: ObservableObject {
     var headerViewRightTitle: String {
         strategy == .deposit ?
             "\((invest.market?.supplyInterest ?? "0").formatApy)" :
-            tokenToAmount(amount: maxAmount()).fiatAmount(currency: fiat)
+            tokenToAmount(amount: maxAmount()).fiatAmountFormattedString(currency: fiat)
     }
 
     var headerViewRightSubtitle: String? {
@@ -135,10 +135,10 @@ class DepositSolendViewModel: ObservableObject {
         dataService = mocked ? SolendDataServiceMock() : Resolver.resolve(SolendDataService.self)
         actionService = mocked ? SolendActionServiceMock() : Resolver.resolve(SolendActionService.self)
         invest = (asset: initialAsset, market: nil, userDeposit: nil)
-        tokenFiatPrice = priceService.currentPrice(for: invest.asset.symbol)?.value
+        tokenFiatPrice = priceService.currentPrice(mint: invest.asset.mintAddress)?.value
 
         feeText = defaultFeeText()
-        maxText = useMaxTitle + " \(maxAmount().tokenAmount(symbol: invest.asset.symbol))"
+        maxText = useMaxTitle + " \(maxAmount().tokenAmountFormattedString(symbol: invest.asset.symbol))"
 
         symbolSelected
             .combineLatest(
@@ -176,7 +176,7 @@ class DepositSolendViewModel: ObservableObject {
                 self.invest.userDeposit = deposit
                 DispatchQueue.main.async {
                     self.maxText = self
-                        .useMaxTitle + " \(self.maxAmount().tokenAmount(symbol: self.invest.asset.symbol))"
+                        .useMaxTitle + " \(self.maxAmount().tokenAmountFormattedString(symbol: self.invest.asset.symbol))"
                 }
             }
             .store(in: &subscriptions)
@@ -252,7 +252,7 @@ class DepositSolendViewModel: ObservableObject {
                 if maxAmount < inputLamport.convertToBalance(decimals: self.invest.asset.decimals) {
                     self
                         .buttonText =
-                        "\(L10n.maxAmountIs) \(maxAmount.tokenAmount(symbol: self.invest.asset.symbol))"
+                        "\(L10n.maxAmountIs) \(maxAmount.tokenAmountFormattedString(symbol: self.invest.asset.symbol))"
                     self.feeText = L10n.enterTheCorrectAmountToContinue
                     self.hasError = true
                     self.loading = false
@@ -299,10 +299,10 @@ class DepositSolendViewModel: ObservableObject {
     func processFee(fee: SolendFeePaying) {
         // Fee
         let transferFee = Double(fee.fee.transaction) / pow(10, Double(fee.decimals))
-        let fiatTransferFee: Double = transferFee * (self.priceService.currentPrice(for: fee.symbol)?.value ?? 0)
+        let fiatTransferFee: Double = transferFee * (self.priceService.currentPrice(symbol: fee.symbol)?.value ?? 0)
 
         let rentFee = Double(fee.fee.accountBalances) / pow(10, Double(fee.decimals))
-        let fiatRentFee: Double = rentFee * (self.priceService.currentPrice(for: fee.symbol)?.value ?? 0)
+        let fiatRentFee: Double = rentFee * (self.priceService.currentPrice(symbol: fee.symbol)?.value ?? 0)
 
         // Total
         var total: Lamports = self.inputLamport
@@ -318,8 +318,8 @@ class DepositSolendViewModel: ObservableObject {
         // Text label
         let tokenAmount = self.amountFrom(lamports: total)
         let fiatAmount = self.tokenToAmount(amount: self.amountFrom(lamports: total))
-        let amountText = tokenAmount.tokenAmount(symbol: self.invest.asset.symbol) + " (" + fiatAmount
-            .fiatAmount(currency: self.fiat) + ")"
+        let amountText = tokenAmount.tokenAmountFormattedString(symbol: self.invest.asset.symbol) + " (" + fiatAmount
+            .fiatAmountFormattedString(currency: self.fiat) + ")"
         self.feeText = "\(L10n.excludingFeesYouLlDeposit) \(amountText)"
 
         self.detailItem.send(
@@ -500,7 +500,7 @@ class DepositSolendViewModel: ObservableObject {
                             imageUrl: URL(string: asset.logo ?? ""),
                             symbol: userDeposit?.symbol ?? "",
                             fiatAmount: userDeposit?.depositedAmount.double * priceService
-                                .currentPrice(for: userDeposit?.symbol ?? "")?.value,
+                                .currentPrice(symbol: userDeposit?.symbol ?? "")?.value,
                             apy: market?.supplyInterest.double
                         )
                     }

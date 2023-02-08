@@ -171,23 +171,23 @@ extension SolendTransactionDetailsView {
         let feeSymbol: String
 
         var formattedAmount: String {
-            "\(amount.tokenAmount(symbol: symbol)) (~\(fiatAmount.fiatAmount()))"
+            "\(amount.tokenAmountFormattedString(symbol: symbol)) (~\(fiatAmount.fiatAmountFormattedString()))"
         }
 
         var formattedTotal: String {
             if let total = total {
-                return "\(total.tokenAmount(symbol: symbol)) (~\(fiatTotal.fiatAmount()))"
+                return "\(total.tokenAmountFormattedString(symbol: symbol)) (~\(fiatTotal.fiatAmountFormattedString()))"
             } else {
-                return "~\(fiatTotal.fiatAmount())"
+                return "~\(fiatTotal.fiatAmountFormattedString())"
             }
         }
 
         var formattedTransferFee: String {
-            "\(transferFee?.tokenAmount(symbol: feeSymbol) ?? "") (~\(fiatTransferFee?.fiatAmount() ?? ""))"
+            "\(transferFee?.tokenAmountFormattedString(symbol: feeSymbol) ?? "") (~\(fiatTransferFee?.fiatAmountFormattedString() ?? ""))"
         }
 
         var formattedFee: String {
-            "\(fee?.tokenAmount(symbol: feeSymbol) ?? "") (~\(fiatFee?.fiatAmount() ?? ""))"
+            "\(fee?.tokenAmountFormattedString(symbol: feeSymbol) ?? "") (~\(fiatFee?.fiatAmountFormattedString() ?? ""))"
         }
     }
 }

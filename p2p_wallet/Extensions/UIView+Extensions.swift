@@ -5,7 +5,6 @@
 //  Created by Chung Tran on 11/5/20.
 //
 
-import Action
 import Foundation
 
 extension UIView {
@@ -27,27 +26,6 @@ extension UIView {
         }.forEach {
             $0.removeFromSuperview()
         }
-    }
-
-    func showErrorView(title: String? = nil, description: String? = nil, retryAction: CocoaAction? = nil) {
-        removeErrorView()
-        let errorView = ErrorView(backgroundColor: .textWhite)
-        if let title = title {
-            errorView.titleLabel.text = title
-        }
-        if let description = description {
-            errorView.descriptionLabel.text = description
-        }
-        if let action = retryAction {
-            errorView.buttonAction = action
-        }
-        let spacer1 = UIView.spacer
-        let spacer2 = UIView.spacer
-        errorView.stackView.insertArrangedSubview(spacer1, at: 0)
-        errorView.stackView.addArrangedSubview(spacer2)
-        spacer1.heightAnchor.constraint(equalTo: spacer2.heightAnchor).isActive = true
-        addSubview(errorView)
-        errorView.autoPinEdgesToSuperviewEdges()
     }
     
     func showErrorView(title: String? = nil, description: String? = nil, onRetry: (() -> Void)?) {

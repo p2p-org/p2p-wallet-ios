@@ -26,7 +26,9 @@ def key_app_kit
     "P2PSwift",
     "Solend",
     "Send",
-    "History"
+    "History",
+    "Moonpay",
+    "Sell"
   ]
 
   if $keyAppKitPath
@@ -71,7 +73,6 @@ target 'p2p_wallet' do
   pod 'ReachabilitySwift', '~> 5.0.0'
 
   # reactive
-  pod 'Action', '5.0.0'
   pod 'RxAppState', '1.7.1'
   pod 'RxGesture', '4.0.4'
   pod 'RxSwift', '6.5.0'
@@ -97,7 +98,7 @@ target 'p2p_wallet' do
   pod 'JazziconSwift', :git => 'https://github.com/p2p-org/JazziconSwift.git', :branch => 'master'
   pod 'Kingfisher', '~> 7.3.2'
   pod 'ListPlaceholder', :git => 'https://github.com/p2p-org/ListPlaceholder.git', :branch => 'custom_gradient_color'
-  pod 'GT3Captcha-iOS'
+  pod 'GT3Captcha-iOS', '0.15.5'
   pod 'PhoneNumberKit', '3.3.4'
   pod 'SkeletonUI', :git => 'https://github.com/p2p-org/SkeletonUI.git', :branch => 'master'
   pod 'Introspect', '0.1.4'
@@ -109,13 +110,18 @@ target 'p2p_wallet' do
   pod 'Firebase/RemoteConfig'
 
   pod 'SwiftNotificationCenter'
-  pod 'GoogleSignIn'
+  pod 'GoogleSignIn', '~> 6.2.4'
 
   # Sentry
-  pod 'Sentry', :git => 'https://github.com/getsentry/sentry-cocoa.git', :tag => '7.18.1'
+  pod 'Sentry', :git => 'https://github.com/getsentry/sentry-cocoa.git', :tag => '7.31.5'
+  
+  # Amplitude
+  pod 'Amplitude', '~> 8.3.0'
 
   # AppsFlyer
   pod 'AppsFlyerFramework'
+  
+  pod 'Lokalise', '~> 0.10.0'
 
 #  target 'p2p_walletTests' do
 #    inherit! :search_paths

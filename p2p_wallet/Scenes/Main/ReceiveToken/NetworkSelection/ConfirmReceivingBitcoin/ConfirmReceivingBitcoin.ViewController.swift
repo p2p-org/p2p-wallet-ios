@@ -169,9 +169,8 @@ extension ConfirmReceivingBitcoin {
             viewModel.errorDriver
                 .drive(onNext: { [weak self] error in
                     if error != nil {
-                        self?.showErrorView(retryAction: .init { [weak self] in
+                        self?.showErrorView(retryAction: { [weak self] in
                             self?.viewModel.reload()
-                            return .just(())
                         })
                     }
                 })

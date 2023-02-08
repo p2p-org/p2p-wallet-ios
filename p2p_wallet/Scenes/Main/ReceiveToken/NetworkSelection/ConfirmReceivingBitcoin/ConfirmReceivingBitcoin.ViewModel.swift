@@ -135,8 +135,8 @@ extension ConfirmReceivingBitcoin {
 
             totalFeeSubject
                 .map { [weak self] fee -> Double? in
-                    guard let fee = fee, let symbol = self?.payingWalletSubject.value?.token.symbol,
-                          let price = self?.pricesService.currentPrice(for: symbol)?.value else { return nil }
+                    guard let fee = fee, let mint = self?.payingWalletSubject.value?.token.address,
+                          let price = self?.pricesService.currentPrice(mint: mint)?.value else { return nil }
                     return fee * price
                 }
                 .bind(to: feeInFiatSubject)
@@ -202,14 +202,14 @@ extension ConfirmReceivingBitcoin.ViewModel: ConfirmReceivingBitcoinViewModelTyp
                     payingFeeMintAddress: payingWalletSubject.value?.mintAddress
                 )
                 errorSubject.accept(nil)
-                analyticsManager.log(event: AmplitudeEvent.renbtcCreation(result: "success"))
+                analyticsManager.log(event: .renbtcCreation(result: "success"))
 
                 await MainActor.run { [weak self] in
                     self?.completion?()
                 }
             } catch {
                 errorSubject.accept(error.readableDescription)
-                analyticsManager.log(event: AmplitudeEvent.renbtcCreation(result: "fail"))
+                analyticsManager.log(event: .renbtcCreation(result: "fail"))
             }
 
             isLoadingSubject.accept(false)

@@ -318,11 +318,22 @@ private func calculateAvailableAmount(
 
     // subtract the fee when source wallet is the paying wallet
     if payingFeeWallet?.mintAddress == sourceWallet.mintAddress {
-        let networkFees = fees?.networkFees(of: sourceWallet.token.symbol)?.total
+        // get all fees related to tokens
+        var networkFeesInLamports = fees?.networkFees(of: sourceWallet.token.symbol)?
+            .total ?? 0
+        
+        // special case for wSOL, needs to keep minimumRelayAccountBalance for SOL account
+        if payingFeeWallet?.mintAddress == PublicKey.wrappedSOLMint.base58EncodedString {
+            let context = Resolver.resolve(RelayContextManager.self).currentContext
+            networkFeesInLamports += context?.minimumRelayAccountBalance ?? 0
+        }
+        
+        // convert to balance
+        let networkFees = networkFeesInLamports
             .convertToBalance(decimals: sourceWallet.token.decimals)
 
-        if let networkFees = networkFees,
-           let amount = sourceWallet.amount
+        // return amount
+        if let amount = sourceWallet.amount
         {
             if amount > networkFees {
                 return amount - networkFees

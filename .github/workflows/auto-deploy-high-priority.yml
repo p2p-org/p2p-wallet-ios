@@ -87,3 +87,4 @@ jobs:
           JIRA_BASE_URL: '${{ secrets.JIRA_BASE_URL }}'
           XCCONFIG_URL: '${{ secrets.XCCONFIG_URL }}'
           GIT_CHANGELOG: '${{ env.GIT_CHANGES }}'
+          SENTRY_TOKEN: '${{ secrets.SENTRY_TOKEN }}'

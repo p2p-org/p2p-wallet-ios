@@ -38,7 +38,7 @@ final class CreateUsernameViewModel: BaseViewModel, ObservableObject {
         super.init()
 
         bind()
-        log(analyticEvent: .usernameCreationScreen)
+        analyticsManager.log(event: .usernameCreationScreen)
     }
 }
 
@@ -76,7 +76,7 @@ private extension CreateUsernameViewModel {
             guard let self = self else { return }
             self.isLoading = true
             self.createNameService.create(username: self.username)
-            self.log(analyticEvent: .usernameCreationButton(result: true))
+            self.analyticsManager.log(event: .usernameCreationButton(result: true))
             self.close.send(())
         }.store(in: &subscriptions)
 
@@ -112,8 +112,8 @@ private extension CreateUsernameViewModel {
         notificationService.showDefaultErrorNotification()
     }
 
-    func log(analyticEvent: AmplitudeEvent) {
-        self.analyticsManager.log(event: analyticEvent)
+    func log(analyticEvent: KeyAppAnalyticsEvent) {
+        analyticsManager.log(event: analyticEvent)
     }
 }
 

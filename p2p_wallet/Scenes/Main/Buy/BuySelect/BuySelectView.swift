@@ -129,7 +129,7 @@ struct BuySelectTokenCellView: BuySelectViewModelCell {
                     .foregroundColor(Color(Asset.Colors.night.color))
                 if let amount = model.amount {
                     Text(
-                        amount.fiatAmount(
+                        amount.fiatAmountFormattedString(
                             maximumFractionDigits: 2,
                             currency: model.fiat ?? Fiat.usd
                         )

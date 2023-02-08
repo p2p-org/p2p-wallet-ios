@@ -35,8 +35,8 @@ extension TransactionDetail {
                                 view?.subtitleLabel.text = "~ " + Defaults.fiat.symbol + viewModel
                                     .getAmountInCurrentFiat(
                                         amountInToken: transaction.rawAmount,
-                                        symbol: transaction.source?.token.symbol
-                                    ).toString(maximumFractionDigits: 2)
+                                        mint: transaction.source?.token.address
+                                    ).orZero.toString(maximumFractionDigits: 2)
                             case let transaction as SwapInfo:
                                 view?.logoImageView.setUp(wallet: transaction.source)
                                 view?.titleLabel.text = transaction.sourceAmount?
@@ -44,8 +44,8 @@ extension TransactionDetail {
                                 view?.subtitleLabel.text = "~ " + Defaults.fiat.symbol + viewModel
                                     .getAmountInCurrentFiat(
                                         amountInToken: transaction.sourceAmount,
-                                        symbol: transaction.source?.token.symbol
-                                    ).toString(maximumFractionDigits: 2)
+                                        mint: transaction.source?.token.address
+                                    ).orZero.toString(maximumFractionDigits: 2)
                             default:
                                 break
                             }
@@ -71,8 +71,9 @@ extension TransactionDetail {
                                 view?.subtitleLabel.text = "~ " + Defaults.fiat.symbol +
                                     viewModel.getAmountInCurrentFiat(
                                         amountInToken: transaction.destinationAmount,
-                                        symbol: transaction.destination?.token.symbol
+                                        mint: transaction.destination?.token.address
                                     )
+                                    .orZero
                                     .toString(maximumFractionDigits: 2)
                             default:
                                 break

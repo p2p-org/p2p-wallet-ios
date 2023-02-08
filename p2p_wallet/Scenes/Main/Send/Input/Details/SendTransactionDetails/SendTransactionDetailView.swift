@@ -10,14 +10,12 @@ import KeyAppUI
 import SwiftUI
 
 private enum Constants {
-    static let verticalSpacing: CGFloat = 0
+    static let verticalSpacing: CGFloat = 32
     static let verticalPadding: CGFloat = 16
-    static let cellHeight: CGFloat = 90
     static let imageRightSpacing: CGFloat = 16
     static let contentHorizontalSpacing: CGFloat = 16
     static let imageSize: CGFloat = 48
     static let textSpacing: CGFloat = 2
-    static let buttonTopPadding: CGFloat = 16
     static let textHStackSpacing: CGFloat = 4
     static let infoHeight: CGFloat = 14
 }
@@ -31,6 +29,7 @@ struct SendTransactionDetailView: View {
         VStack(alignment: .leading, spacing: Constants.verticalSpacing) {
             ForEach(viewModel.cellModels) { model in
                 cellView(model: model)
+                    .onLongPressGesture(perform: { viewModel.longTapped.send(model) })
             }
             Button(
                 action: {
@@ -44,15 +43,13 @@ struct SendTransactionDetailView: View {
                         .frame(maxWidth: .infinity)
                         .background(Color(Asset.Colors.rain.color))
                         .cornerRadius(12)
-                        .padding(.top, Constants.buttonTopPadding)
                 }
             )
         }
+        .padding(.top, 20)
         .padding(.vertical, Constants.verticalPadding)
         .padding(.horizontal, Constants.contentHorizontalSpacing)
-        .sheetHeader(title: L10n.transactionDetails, withSeparator: false) {
-            viewModel.cancelSubject.send()
-        }
+        .sheetHeader(title: L10n.transactionDetails, withSeparator: false)
     }
 
     private func cellView(model: SendTransactionDetailViewModel.CellModel) -> some View {
@@ -93,27 +90,25 @@ struct SendTransactionDetailView: View {
                         )
                         .frame(width: 16, height: 16)
                     } else {
-                        Text(model.subtitle.0)
-                            .foregroundColor(Color(model.isFree ? Asset.Colors.mint.color : Asset.Colors.night.color))
-                            .font(uiFont: .font(of: .label1, weight: model.isFree ? .semibold : .regular))
-                        if let additionalText = model.subtitle.1 {
-                            Text("(\(additionalText))")
-                                .foregroundColor(Color(Asset.Colors.mountain.color))
-                                .font(uiFont: .font(of: .label1))
+                        VStack(alignment: .leading) {
+                            ForEach(model.subtitle, id: \.0) { subtitle in
+                                HStack {
+                                    Text(subtitle.0)
+                                        .foregroundColor(Color(model.isFree ? Asset.Colors.mint.color : Asset.Colors.night.color))
+                                        .font(uiFont: .font(of: .label1, weight: model.isFree ? .semibold : .regular))
+                                        .fixedSize(horizontal: false, vertical: true)
+                                    if let additionalText = subtitle.1 {
+                                        Text("(\(additionalText))")
+                                            .foregroundColor(Color(Asset.Colors.mountain.color))
+                                            .font(uiFont: .font(of: .label1))
+                                    }
+                                }
+                            }
                         }
                     }
                 }
             }
         }
-        .frame(height: Constants.cellHeight)
-    }
-}
-
-// MARK: - View Height
-
-extension SendTransactionDetailView {
-    var viewHeight: CGFloat {
-        624
     }
 }
 

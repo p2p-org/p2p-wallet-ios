@@ -30,7 +30,7 @@ final class HomeEmptyViewModel: BaseViewModel, ObservableObject {
             PopularCoin(
                 id: token.symbol,
                 title: title(for: token),
-                amount: pricesService.fiatAmount(for: token.symbol),
+                amount: pricesService.fiatAmount(mint: token.address),
                 actionTitle: ActionType.buy.description,
                 image: image(for: token)
             )
@@ -69,7 +69,7 @@ final class HomeEmptyViewModel: BaseViewModel, ObservableObject {
     
     func buyTapped(index: Int) {
         let coin = _popularCoins[index]
-        analyticsManager.log(event: AmplitudeEvent.mainScreenBuyToken(tokenName: coin.symbol))
+        analyticsManager.log(event: .mainScreenBuyToken(tokenName: coin.symbol))
         navigation.send(.topUpCoin(coin))
     }
 }
@@ -145,7 +145,7 @@ extension HomeEmptyViewModel {
 }
 
 private extension PricesServiceType {
-    func fiatAmount(for token: String) -> String {
-        "\(Defaults.fiat.symbol) \((currentPrice(for: token)?.value ?? 0).toString(minimumFractionDigits: 2, maximumFractionDigits: 2))"
+    func fiatAmount(mint: String) -> String {
+        "\(Defaults.fiat.symbol) \((currentPrice(mint: mint)?.value ?? 0).toString(minimumFractionDigits: 2, maximumFractionDigits: 2))"
     }
 }

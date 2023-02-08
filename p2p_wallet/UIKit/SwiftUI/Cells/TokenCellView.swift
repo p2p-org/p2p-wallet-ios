@@ -40,14 +40,14 @@ struct TokenCellView: View {
                     .font(uiFont: .font(of: .text2))
                     .foregroundColor(Color(Asset.Colors.night.color))
                 if item.amount != nil {
-                    Text(item.amount!.tokenAmount(symbol: item.token.symbol))
+                    Text(item.amount!.tokenAmountFormattedString(symbol: item.token.symbol))
                         .font(uiFont: .font(of: .label1))
                         .foregroundColor(Color(Asset.Colors.mountain.color))
                 }
             }
             Spacer()
             if item.amountInCurrentFiat != nil {
-                Text(item.amountInCurrentFiat!.fiatAmount())
+                Text(item.amountInCurrentFiat!.fiatAmountFormattedString(customFormattForLessThan1E_2: true))
                     .font(uiFont: .font(of: .text3, weight: .semibold))
                     .foregroundColor(Color(Asset.Colors.night.color))
             }

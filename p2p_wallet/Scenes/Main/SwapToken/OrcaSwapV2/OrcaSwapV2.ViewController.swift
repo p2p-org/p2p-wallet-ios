@@ -33,15 +33,15 @@ extension OrcaSwapV2 {
 
         // MARK: - Initializer
 
-        init(viewModel: OrcaSwapV2ViewModelType) {
+        init(viewModel: OrcaSwapV2ViewModelType, hidesBottomBarWhenPushed: Bool = true) {
             self.viewModel = viewModel
             super.init()
 
             navigationItem.title = L10n.swap
             navigationItem.rightBarButtonItem = settingButton
             navigationItem.largeTitleDisplayMode = .never
-            hidesBottomBarWhenPushed = true
-            analyticsManager.log(event: AmplitudeEvent.swapStartScreen)
+            self.hidesBottomBarWhenPushed = hidesBottomBarWhenPushed
+            analyticsManager.log(event: .swapStartScreen)
         }
 
         // MARK: - Methods
@@ -115,7 +115,7 @@ extension OrcaSwapV2 {
                 let vm = ConfirmSwapping.ViewModel(swapViewModel: viewModel)
                 let vc = ConfirmSwapping.ViewController(viewModel: vm)
                 show(vc, sender: nil)
-                analyticsManager.log(event: AmplitudeEvent.swapClickReviewButton)
+                analyticsManager.log(event: .swapClickReviewButton)
             case let .processTransaction(transaction):
                 let vm = ProcessTransaction.ViewModel(processingTransaction: transaction)
                 let vc = ProcessTransaction.ViewController(viewModel: vm)

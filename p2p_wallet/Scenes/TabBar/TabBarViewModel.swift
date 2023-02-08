@@ -14,7 +14,6 @@ import RxSwift
 import SolanaSwift
 
 final class TabBarViewModel {
-
     // Dependencies
     @Injected private var socket: Socket
     @Injected private var pricesService: PricesServiceType
@@ -26,37 +25,37 @@ final class TabBarViewModel {
     @Injected private var accountStorage: AccountStorageType
     @Injected private var nameService: NameService
     @Injected private var nameStorage: NameStorageType
-    
+
     private let transactionAnalytics = [
         Resolver.resolve(SwapTransactionAnalytics.self),
     ]
 
     // Input
     let viewDidLoad = PublishRelay<Void>()
-    
+
     init() {
         if #available(iOS 15.0, *) {
             socket.connect()
         }
         pricesService.startObserving()
         burnAndRelease.resume()
-        
+
         // RenBTC service
         Task {
             try await lockAndMint.resume()
         }
-        
+
         // Name service
         Task {
             guard let account = accountStorage.account else { return }
             let name: String = try await nameService.getName(account.publicKey.base58EncodedString) ?? ""
             nameStorage.save(name: name)
         }
-        
+
         // Notification
         notificationService.requestRemoteNotificationPermission()
     }
-    
+
     deinit {
         socket.disconnect()
         pricesService.stopObserving()
@@ -74,7 +73,7 @@ extension TabBarViewModel {
     var authenticationStatusDriver: Driver<AuthenticationPresentationStyle?> {
         authenticationHandler.authenticationStatusDriver
     }
-    
+
     var moveToHistory: Driver<Void> {
         Observable.merge(
             notificationService.showNotification
@@ -91,6 +90,31 @@ extension TabBarViewModel {
         .mapToVoid()
         .asDriver()
     }
-    
+
+    var moveToIntercomSurvey: Driver<String> {
+        Observable.merge(
+            authenticationHandler
+                .isLockedDriver
+                .asObservable()
+                .filter { value in
+                    GlobalAppState.shared.surveyID != nil && value == false
+                }
+                .mapToVoid(),
+
+            viewDidLoad
+                .filter { [weak self] in
+                    self?.notificationService.showFromLaunch == true
+                }
+        )
+        .mapToVoid()
+        .map {
+            GlobalAppState.shared.surveyID ?? ""
+        }
+        .do(onNext: { _ in
+            GlobalAppState.shared.surveyID = nil
+        })
+        .asDriver()
+    }
+
     var isLockedDriver: Driver<Bool> { authenticationHandler.isLockedDriver }
 }

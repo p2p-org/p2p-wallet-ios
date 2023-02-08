@@ -5,7 +5,6 @@
 //  Created by Chung Tran on 10/29/20.
 //
 
-import Action
 import Combine
 import Foundation
 import SafariServices
@@ -81,8 +80,8 @@ extension UIViewController {
         }
     }
 
-    func showErrorView(title: String? = nil, description: String? = nil, retryAction: CocoaAction? = nil) {
-        view.showErrorView(title: title, description: description, retryAction: retryAction)
+    func showErrorView(title: String? = nil, description: String? = nil, retryAction: (() -> Void)?) {
+        view.showErrorView(title: title, description: description, onRetry: retryAction)
     }
 
     func showWebsite(url: String) {

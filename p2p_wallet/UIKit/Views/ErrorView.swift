@@ -5,7 +5,6 @@
 //  Created by Chung Tran on 16/11/2020.
 //
 
-import Action
 import Foundation
 
 class MessageView: BEView {
@@ -37,17 +36,6 @@ class MessageView: BEView {
         ])
         actionButton.contentEdgeInsets = actionButton.contentEdgeInsets.modifying(dLeft: 16, dRight: 16)
         actionButton.isHidden = true
-    }
-
-    var buttonAction: CocoaAction? {
-        didSet {
-            guard let action = buttonAction else {
-                actionButton.isHidden = true
-                return
-            }
-            actionButton.isHidden = false
-            actionButton.rx.action = action
-        }
     }
 }
 

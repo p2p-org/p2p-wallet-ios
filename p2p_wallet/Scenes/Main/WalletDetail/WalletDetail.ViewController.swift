@@ -54,11 +54,11 @@ extension WalletDetail {
             let balancePublisher = viewModel.walletDriver
                 .asPublisher()
                 .assertNoFailure()
-                .compactMap { $0?.amount?.tokenAmount(symbol: $0?.token.symbol ?? "") }
+                .compactMap { $0?.amount?.tokenAmountFormattedString(symbol: $0?.token.symbol ?? "") }
             let usdAmountPublisher = viewModel.walletDriver
                 .asPublisher()
                 .assertNoFailure()
-                .compactMap { $0?.amountInCurrentFiat.fiatAmount() }
+                .compactMap { $0?.amountInCurrentFiat.fiatAmountFormattedString() }
             let actionsView = ActionsPanelView(
                 actionsPublisher: actionsPublisher.eraseToAnyPublisher(),
                 balancePublisher: balancePublisher.eraseToAnyPublisher(),
@@ -102,6 +102,7 @@ extension WalletDetail {
         // MARK: - Navigation
 
         private var buyCoordinator: BuyCoordinator?
+        private var sellCoordinator: SellCoordinator?
         private func navigate(to scene: NavigatableScene?) {
             switch scene {
             case let .buy(crypto):
@@ -126,7 +127,7 @@ extension WalletDetail {
                     present(navigation, animated: true)
                 }
             case let .send(wallet):
-                coordinator = SendCoordinator(rootViewController: navigationController!, preChosenWallet: wallet, hideTabBar: true)
+                coordinator = SendCoordinator(rootViewController: navigationController!, preChosenWallet: wallet, hideTabBar: true, allowSwitchingMainAmountType: true)
                 coordinator?.start()
                     .sink { [weak self] result in
                         switch result {

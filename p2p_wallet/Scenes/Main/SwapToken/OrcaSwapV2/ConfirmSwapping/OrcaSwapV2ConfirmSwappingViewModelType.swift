@@ -32,7 +32,7 @@ extension OrcaSwapV2ConfirmSwappingViewModelType {
             inputAmountDriver
         )
             .map { wallet, amount in
-                amount.toString(maximumFractionDigits: 9) + " " + wallet?.token.symbol
+                amount.orZero.toString(maximumFractionDigits: 9) + " " + wallet?.token.symbol
             }
     }
 
@@ -52,7 +52,7 @@ extension OrcaSwapV2ConfirmSwappingViewModelType {
             estimatedAmountDriver
         )
             .map { wallet, amount in
-                amount.toString(maximumFractionDigits: 9) + " " + wallet?.token.symbol
+                amount.orZero.toString(maximumFractionDigits: 9) + " " + wallet?.token.symbol
             }
     }
 
@@ -62,7 +62,7 @@ extension OrcaSwapV2ConfirmSwappingViewModelType {
             minimumReceiveAmountDriver
         )
             .map { wallet, amount in
-                amount.toString(maximumFractionDigits: 9) + " " + (wallet?.token.symbol ?? "")
+                amount.orZero.toString(maximumFractionDigits: 9) + " " + (wallet?.token.symbol ?? "")
             }
     }
 

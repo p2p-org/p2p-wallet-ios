@@ -5,21 +5,27 @@
 //  Created by Ivan on 09.07.2022.
 //
 
+import AnalyticsManager
 import Combine
+import Intercom
 import KeyAppUI
 import Resolver
+import RxCocoa
+import RxSwift
+import Sell
 import SwiftUI
 import UIKit
-import RxSwift
-import RxCocoa
 
 final class TabBarController: UITabBarController {
     // MARK: - Dependencies
 
+    @Injected private var analyticsManager: AnalyticsManager
     @Injected private var helpLauncher: HelpCenterLauncher
+    @Injected private var sellDataService: any SellDataService
     @Injected private var solanaTracker: SolanaTracker
 
     // MARK: - Publishers
+
     var middleButtonClicked: AnyPublisher<Void, Never> { customTabBar.middleButtonClicked }
     private let homeTabClickedTwicelySubject = PassthroughSubject<Void, Never>()
     var homeTabClickedTwicely: AnyPublisher<Void, Never> { homeTabClickedTwicelySubject.eraseToAnyPublisher() }
@@ -27,10 +33,11 @@ final class TabBarController: UITabBarController {
     var solendTutorialClicked: AnyPublisher<Void, Never> { solendTutorialSubject.eraseToAnyPublisher() }
 
     // MARK: - Properties
+
+    private let disposeBag = DisposeBag()
     private let viewModel: TabBarViewModel
     private let authenticateWhenAppears: Bool
-    
-    private let disposeBag = DisposeBag()
+
     private var subscriptions = Set<AnyCancellable>()
 
     private var customTabBar: CustomTabBar { tabBar as! CustomTabBar }
@@ -38,6 +45,7 @@ final class TabBarController: UITabBarController {
     private var localAuthVC: PincodeViewController?
 
     // MARK: - Initializers
+
     init(
         viewModel: TabBarViewModel,
         authenticateWhenAppears: Bool
@@ -51,7 +59,7 @@ final class TabBarController: UITabBarController {
     public required init?(coder _: NSCoder) {
         fatalError("init(coder:) has not been implemented")
     }
-    
+
     // MARK: - Public actions
 
     func setupTabs() {
@@ -84,10 +92,10 @@ final class TabBarController: UITabBarController {
 
         // replace default TabBar by CustomTabBar
         setValue(CustomTabBar(frame: tabBar.frame), forKey: "tabBar")
-        
+
         // bind values
         bind()
-        
+
         // set up
         setUpTabBarAppearance()
         delegate = self
@@ -96,7 +104,7 @@ final class TabBarController: UITabBarController {
         if authenticateWhenAppears {
             viewModel.authenticate(presentationStyle: .login())
         }
-        
+
         // add blur EffectView for authentication scene
         view.addSubview(blurEffectView)
         blurEffectView.autoPinEdgesToSuperviewEdges()
@@ -111,7 +119,7 @@ final class TabBarController: UITabBarController {
             }
         }
     }
-    
+
     // MARK: - Authentications
 
     private func showLockView() {
@@ -225,14 +233,19 @@ final class TabBarController: UITabBarController {
 
         viewModel.moveToHistory
             .drive(onNext: { [unowned self] in
-                if available(.investSolendFeature) {
-                    changeItem(to: .history)
-                } else {
-                    // old position of history tab controller
-                    changeItem(to: .invest)
-                }
+                changeItem(to: .history)
             })
             .disposed(by: disposeBag)
+
+        viewModel.moveToIntercomSurvey
+            .drive { id in
+                guard !id.isEmpty else { return }
+                DispatchQueue.main.asyncAfter(deadline: .now() + 1) {
+                    Intercom.presentSurvey(id)
+                }
+            }
+            .disposed(by: disposeBag)
+
         // locking status
         viewModel.isLockedDriver
             .drive(onNext: { [weak self] isLocked in
@@ -259,12 +272,11 @@ extension TabBarController: UITabBarControllerDelegate {
             return true
         }
 
-        if TabItem(rawValue: selectedIndex) == .history, !available(.investSolendFeature) {
-            helpLauncher.launch()
-            return false
-        }
         customTabBar.updateSelectedViewPositionIfNeeded()
         if TabItem(rawValue: selectedIndex) == .invest {
+            if !available(.investSolendFeature) {
+                analyticsManager.log(event: .mainSwap(isSellEnabled: sellDataService.isAvailable))
+            }
             if available(.investSolendFeature), !Defaults.isSolendTutorialShown, available(.solendDisablePlaceholder) {
                 solendTutorialSubject.send()
                 return false
@@ -290,11 +302,11 @@ private extension TabItem {
         case .wallet:
             return .tabBarSelectedWallet
         case .invest:
-            return available(.investSolendFeature) ? .tabBarEarn : .tabBarHistory
+            return available(.investSolendFeature) ? .tabBarEarn : .tabBarSwap
         case .actions:
             return UIImage()
         case .history:
-            return available(.investSolendFeature) ? .tabBarHistory : .tabBarFeedback
+            return .tabBarHistory
         case .settings:
             return .tabBarSettings
         }
@@ -305,11 +317,11 @@ private extension TabItem {
         case .wallet:
             return L10n.wallet
         case .invest:
-            return available(.investSolendFeature) ? L10n.earn : L10n.history
+            return available(.investSolendFeature) ? L10n.earn : L10n.swap
         case .actions:
             return ""
         case .history:
-            return available(.investSolendFeature) ? L10n.history : L10n.feedback
+            return L10n.history
         case .settings:
             return L10n.settings
         }

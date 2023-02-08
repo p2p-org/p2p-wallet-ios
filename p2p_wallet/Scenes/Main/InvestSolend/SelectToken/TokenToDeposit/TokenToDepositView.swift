@@ -68,7 +68,7 @@ struct TokenToDepositView: View {
                 .cornerRadius(24)
             }
             VStack(alignment: .leading, spacing: 6) {
-                Text(model.amount != nil ? model.amount?.tokenAmount(symbol: model.symbol) ?? "" : model.symbol)
+                Text(model.amount != nil ? model.amount?.tokenAmountFormattedString(symbol: model.symbol) ?? "" : model.symbol)
                     .foregroundColor(Color(Asset.Colors.night.color))
                     .font(uiFont: .font(of: .text2))
                 Text(model.name)

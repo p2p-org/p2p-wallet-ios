@@ -23,6 +23,8 @@ import SolanaSwift
 import Solend
 import SwiftyUserDefaults
 import TransactionParser
+import Moonpay
+import Sell
 
 extension Resolver: ResolverRegistering {
     public static func registerAllServices() {
@@ -42,7 +44,7 @@ extension Resolver: ResolverRegistering {
         // Application warmup manager
         register {
             WarmupManager(processes: [
-                RemoteConfigWarmupProcess(),
+                RemoteConfigWarmupProcess()
             ])
         }.scope(.application)
 
@@ -97,12 +99,35 @@ extension Resolver: ResolverRegistering {
                 localProvider: resolve(LocalWalletMetadataProvider.self),
                 remoteProvider: resolve(RemoteWalletMetadataProvider.self)
             )
-        }.scope(.application)
+        }
+        .scope(.application)
 
         // AnalyticsManager
-        register { AnalyticsManagerImpl(apiKey: .secretConfig("AMPLITUDE_API_KEY")!) }
-            .implements(AnalyticsManager.self)
-            .scope(.application)
+        register {
+            AmplitudeAnalyticsProvider()
+        }
+        .scope(.application)
+        
+        register {
+            AppsFlyerAnalyticsProvider()
+        }
+        .scope(.application)
+        
+        register {
+            FirebaseAnalyticsProvider()
+        }
+        .scope(.application)
+        
+        register {
+            AnalyticsManagerImpl(providers: [
+                resolve(AmplitudeAnalyticsProvider.self),
+                resolve(AppsFlyerAnalyticsProvider.self),
+                resolve(FirebaseAnalyticsProvider.self)
+            ])
+        }
+        .implements(AnalyticsManager.self)
+        .scope(.application)
+        
 
         // NotificationManager
         register(Reachability.self) {
@@ -248,7 +273,7 @@ extension Resolver: ResolverRegistering {
                 contextManager: Resolver.resolve(),
                 solanaAPIClient: Resolver.resolve(),
                 blockchainClient: Resolver.resolve(),
-                feeRelayer: Resolver.resolve(),
+                relayService: Resolver.resolve(),
                 account: Resolver.resolve(AccountStorageType.self).account
             )
         }
@@ -285,6 +310,7 @@ extension Resolver: ResolverRegistering {
             .scope(.session)
 
         register { RelayServiceImpl(
+            contextManager: resolve(),
             orcaSwap: resolve(),
             accountStorage: resolve(),
             solanaApiClient: resolve(),
@@ -299,7 +325,7 @@ extension Resolver: ResolverRegistering {
 
         register { () -> RelayContextManager in
             if FeeRelayConfig.shared.disableFeeTransaction {
-                return FeeRelayerContextManagerDisabledFreeTrxImpl(
+                return RelayContextManagerDisabledFreeTrxImpl(
                     accountStorage: resolve(),
                     solanaAPIClient: resolve(),
                     feeRelayerAPIClient: resolve()
@@ -316,7 +342,7 @@ extension Resolver: ResolverRegistering {
         
         register {
             DefaultSwapFeeRelayerCalculator(
-                destinationFinder: DestinationFinderImpl(solanaAPIClient: Resolver.resolve()),
+                destinationAnalysator: DestinationAnalysatorImpl(solanaAPIClient: Resolver.resolve()),
                 accountStorage: Resolver.resolve()
             )
         }
@@ -326,6 +352,7 @@ extension Resolver: ResolverRegistering {
         // PricesService
         register { PricesService() }
             .implements(PricesServiceType.self)
+            .implements(SellPriceProvider.self)
             .scope(.session)
 
         // WalletsViewModel
@@ -418,12 +445,62 @@ extension Resolver: ResolverRegistering {
         register { AuthServiceImpl() }
             .implements(AuthService.self)
             .scope(.session)
+        
+        // Sell
+        register { SellTransactionsRepositoryImpl() }
+            .implements(SellTransactionsRepository.self)
+            .scope(.session)
+        
+        register {
+            MoonpaySellDataServiceProvider(moonpayAPI: resolve())
+        }
+        .implements((any SellDataServiceProvider).self)
+        .scope(.session)
+        
+        register {
+            MoonpaySellActionServiceProvider(moonpayAPI: resolve())
+        }
+        .implements((any SellActionServiceProvider).self)
+        .scope(.session)
+        
+        register {
+            MoonpaySellDataService(
+                userId: Resolver.resolve(UserWalletManager.self).wallet?.moonpayExternalClientId ?? "",
+                provider: resolve(),
+                priceProvider: resolve(),
+                sellTransactionsRepository: resolve()
+            )
+        }
+            .implements((any SellDataService).self)
+            .scope(.session)
+
+        register {
+            let endpoint: String
+            let apiKey: String
+            switch Defaults.moonpayEnvironment {
+            case .production:
+                endpoint = .secretConfig("MOONPAY_PRODUCTION_SELL_ENDPOINT")!
+                apiKey = .secretConfig("MOONPAY_PRODUCTION_API_KEY")!
+            case .sandbox:
+                endpoint = .secretConfig("MOONPAY_STAGING_SELL_ENDPOINT")!
+                apiKey = .secretConfig("MOONPAY_STAGING_API_KEY")!
+            }
+
+            return MoonpaySellActionService(
+                provider: resolve(),
+                refundWalletAddress: Resolver.resolve(UserWalletManager.self).wallet?.account.publicKey.base58EncodedString ?? "",
+                endpoint: endpoint,
+                apiKey: apiKey
+            )
+        }
+            .implements((any SellActionService).self)
+            .scope(.session)
     }
 
     /// Shared scope: share between screens
     private static func registerForSharedScope() {
         // BuyServices
-        register { Moonpay.Provider(api: Moonpay.API.fromEnvironment()) }
+        register { Moonpay.Provider(api: Moonpay.API.fromEnvironment(), serverSideAPI: Moonpay.API.fromEnvironment(kind: .server)) }
             .scope(.shared)
 
         register { Buy.MoonpayBuyProcessingFactory() }
@@ -436,7 +513,7 @@ extension Resolver: ResolverRegistering {
 
         register { MoonpayExchange(provider: resolve()) }
             .implements(BuyExchangeService.self)
-            .scope(.session)
+            .scope(.shared)
 
         // Buy
         register {
@@ -447,7 +524,7 @@ extension Resolver: ResolverRegistering {
             )
         }
         .implements(RecipientSearchService.self)
-        .scope(.session)
+        .scope(.shared)
 
         // Banner
         register {
@@ -484,8 +561,8 @@ extension Resolver: ResolverRegistering {
                 solend: resolve(),
                 solana: resolve(),
                 feeRelayApi: resolve(),
-                feeRelay: resolve(),
-                feeRelayContextManager: resolve()
+                relayService: resolve(),
+                relayContextManager: resolve()
             )
         }
         .implements(SolendActionService.self)

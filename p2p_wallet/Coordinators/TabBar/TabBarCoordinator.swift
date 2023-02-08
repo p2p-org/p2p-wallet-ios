@@ -10,6 +10,7 @@ import Foundation
 import SolanaSwift
 import Resolver
 import AnalyticsManager
+import Sell
 
 final class TabBarCoordinator: Coordinator<Void> {
     
@@ -17,6 +18,7 @@ final class TabBarCoordinator: Coordinator<Void> {
     @Injected private var userWalletManager: UserWalletManager
     @Injected private var walletsRepository: WalletsRepository
     @Injected private var analyticsManager: AnalyticsManager
+    @Injected private var sellDataService: any SellDataService
 
     // MARK: - Properties
     private unowned var window: UIWindow!
@@ -26,6 +28,7 @@ final class TabBarCoordinator: Coordinator<Void> {
     private var emptySendCoordinator: SendEmptyCoordinator?
     private var sendCoordinator: SendCoordinator?
     private var sendStatusCoordinator: SendTransactionStatusCoordinator?
+    private var sellCoordinator: SellCoordinator?
 
     // MARK: - Initializer
 
@@ -50,7 +53,7 @@ final class TabBarCoordinator: Coordinator<Void> {
     override func start() -> AnyPublisher<Void, Never> {
         // set up tabs
         let firstTab = setUpHome()
-        let (secondTab, thirdTab) = setUpSolendHistoryOrFeedback()
+        let (secondTab, thirdTab) = setUpSolendSwapOrHistory()
         let forthTab = setUpSettings()
 
         // set viewcontrollers
@@ -71,6 +74,11 @@ final class TabBarCoordinator: Coordinator<Void> {
         // configure window
         window.rootViewController?.view.hideLoadingIndicatorView()
         window.animate(newRootViewController: tabBarController)
+        
+        // re-register for push notification if not yet registered
+        if Defaults.didSetEnableNotifications && Defaults.apnsDeviceToken == nil {
+            UIApplication.shared.registerForRemoteNotifications()
+        }
 
         return closeSubject.prefix(1).eraseToAnyPublisher()
     }
@@ -81,7 +89,7 @@ final class TabBarCoordinator: Coordinator<Void> {
     private func setUpHome() -> UIViewController {
         // create first active tab Home
         let homeNavigation = UINavigationController()
-        let homeCoordinator = HomeCoordinator(navigationController: homeNavigation)
+        let homeCoordinator = HomeCoordinator(navigationController: homeNavigation, tabBarController: tabBarController)
         
         // coordinate to homeCoordinator
         coordinate(to: homeCoordinator)
@@ -113,22 +121,28 @@ final class TabBarCoordinator: Coordinator<Void> {
     }
     
     /// Set up Solend, history or feedback scene
-    private func setUpSolendHistoryOrFeedback() -> (UIViewController, UIViewController) {
-        let solendOrHistoryNavigation: UINavigationController
-        let historyOrFeedbackNavigation: UINavigationController
+    private func setUpSolendSwapOrHistory() -> (UIViewController, UIViewController) {
+        let solendOrSwapNavigation = UINavigationController()
+        
         if available(.investSolendFeature) {
-            solendOrHistoryNavigation = UINavigationController()
-            let solendCoordinator = SolendCoordinator(navigationController: solendOrHistoryNavigation)
+            let solendCoordinator = SolendCoordinator(navigationController: solendOrSwapNavigation)
             coordinate(to: solendCoordinator)
                 .sink(receiveValue: { _ in })
                 .store(in: &subscriptions)
-            historyOrFeedbackNavigation = UINavigationController(rootViewController: History.Scene())
         } else {
-            solendOrHistoryNavigation = UINavigationController(rootViewController: History.Scene())
-            historyOrFeedbackNavigation = UINavigationController(rootViewController: History.Scene())
+            let swapCoordinator = SwapCoordinator(navigationController: solendOrSwapNavigation, initialWallet: nil, hidesBottomBarWhenPushed: false)
+            coordinate(to: swapCoordinator)
+                .sink(receiveValue: { _ in })
+                .store(in: &subscriptions)
         }
+        
+        let historyNavigation = UINavigationController()
+        let historyCoordinator = HistoryCoordinator(presentation: SmartCoordinatorPushPresentation(historyNavigation))
+        coordinate(to: historyCoordinator)
+            .sink(receiveValue: { _ in })
+            .store(in: &subscriptions)
 
-        return (solendOrHistoryNavigation, historyOrFeedbackNavigation)
+        return (solendOrSwapNavigation, historyNavigation)
     }
     
     /// Set up Settings scene
@@ -153,9 +167,10 @@ final class TabBarCoordinator: Coordinator<Void> {
         tabBarController.middleButtonClicked
             .receive(on: RunLoop.main)
             // vibration
-            .handleEvents(receiveOutput: {
+            .handleEvents(receiveOutput: { [unowned self] in
                 let generator = UIImpactFeedbackGenerator(style: .light)
                 generator.impactOccurred()
+                analyticsManager.log(event: .actionButtonClick(isSellEnabled: sellDataService.isAvailable))
             })
             // coordinate to ActionsCoordinator
             .flatMap { [unowned self] in
@@ -221,8 +236,8 @@ final class TabBarCoordinator: Coordinator<Void> {
             let fiatAmount = walletsRepository.getWallets().reduce(0) { $0 + $1.amountInCurrentFiat }
             let withTokens = fiatAmount > 0
             if withTokens {
-                analyticsManager.log(event: AmplitudeEvent.sendViewed(lastScreen: "main_screen"))
-                sendCoordinator = SendCoordinator(rootViewController: navigationController, preChosenWallet: nil, hideTabBar: true)
+                analyticsManager.log(event: .sendViewed(lastScreen: "main_screen"))
+                sendCoordinator = SendCoordinator(rootViewController: navigationController, preChosenWallet: nil, hideTabBar: true, allowSwitchingMainAmountType: true)
                 sendCoordinator?.start()
                     .sink { [weak self, weak navigationController] result in
                         switch result {
@@ -240,6 +255,20 @@ final class TabBarCoordinator: Coordinator<Void> {
                     .sink(receiveValue: { [weak self] _ in
                         self?.emptySendCoordinator = nil
                     })
+                    .store(in: &subscriptions)
+            }
+        case .cashOut:
+            if available(.sellScenarioEnabled) {
+                sellCoordinator = SellCoordinator(navigationController: navigationController)
+                sellCoordinator?.start()
+                    .sink { [weak self] result in
+                        switch result {
+                        case .completed, .interupted:
+                            self?.tabBarController.changeItem(to: .history)
+                        case .none:
+                            break
+                        }
+                    }
                     .store(in: &subscriptions)
             }
         }

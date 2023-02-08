@@ -32,6 +32,9 @@ class GlobalAppState: ObservableObject {
             ResolverScope.session.reset()
         }
     }
+    
+    // TODO: Refactor!
+    @Published var surveyID: String?
 
     private init() {
         if let forcedValue = Defaults.forcedNameServiceEndpoint {

@@ -106,10 +106,8 @@ private class RenVMFeeRelayerSolanaBlockchainClient: SolanaBlockchainClient {
         if preparedTransaction.transaction.instructions[0].programId == "BTC5yiRuonJKcQvD9j9QwYKPx4MCGbvkWfvHFyBJG6RY",
            preparedTransaction.transaction.instructions[1].programId == "KeccakSecp256k11111111111111111111111111111"
         {
-            let context = try await relayContextManager.getCurrentContext()
             do {
-                return try await relayService.topUpAndRelayTransaction(
-                    context,
+                return try await relayService.topUpIfNeededAndRelayTransaction(
                     preparedTransaction,
                     fee: nil,
                     config: .init(

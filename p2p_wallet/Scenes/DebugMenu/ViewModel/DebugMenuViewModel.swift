@@ -21,6 +21,8 @@ final class DebugMenuViewModel: BaseViewModel, ObservableObject {
     @Published var solanaEndpoints: [APIEndPoint]
     @Published var selectedEndpoint: APIEndPoint?
     @Published var feeRelayerEndpoints: [String]
+    @Published var moonpayEnvironments: [DefaultsKeys.MoonpayEnvironment] = [.production, .sandbox]
+    @Published var currentMoonpayEnvironment: DefaultsKeys.MoonpayEnvironment
     @Published var nameServiceEndpoints: [String]
 
     override init() {
@@ -52,12 +54,21 @@ final class DebugMenuViewModel: BaseViewModel, ObservableObject {
             "https://\(String.secretConfig("NAME_SERVICE_STAGING_ENDPOINT")!)"
         ]
 
+        currentMoonpayEnvironment = Defaults.moonpayEnvironment
+
         super.init()
 
-        $selectedEndpoint.sink { endpoint in
-            guard let endpoint = endpoint else { return }
-            Defaults.apiEndPoint = endpoint
-        }.store(in: &subscriptions)
+        $selectedEndpoint
+            .sink { endpoint in
+                guard let endpoint = endpoint else { return }
+                Defaults.apiEndPoint = endpoint
+            }
+            .store(in: &subscriptions)
+        $currentMoonpayEnvironment
+            .sink { environment in
+                Defaults.moonpayEnvironment = environment
+            }
+            .store(in: &subscriptions)
     }
 
     func setFeature(_ feature: Feature, isOn: Bool) {
@@ -100,6 +111,7 @@ extension DebugMenuViewModel {
         case mockedApiGateway
         case mockedTKeyFacade
         case simulatedSocialError
+        case sell
 
         var title: String {
             switch self {
@@ -111,6 +123,7 @@ extension DebugMenuViewModel {
             case .simulatedSocialError: return "[Onboarding] Simulated Social Error"
             case .investSolend: return "Invest Solend"
             case .solendDisablePlaceholder: return "Solend Disable Placeholder"
+            case .sell: return "Sell (Off Ramp)"
             }
         }
 
@@ -124,6 +137,7 @@ extension DebugMenuViewModel {
             case .simulatedSocialError: return .simulatedSocialError
             case .investSolend: return .investSolendFeature
             case .solendDisablePlaceholder: return .solendDisablePlaceholder
+            case .sell: return .sellScenarioEnabled
             }
         }
     }

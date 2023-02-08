@@ -15,6 +15,7 @@ enum WalletDetail {
         case send(wallet: Wallet)
         case receive(walletPubkey: String)
         case swap(fromWallet: Wallet)
+        case cashOut
         case transactionInfo(_ transaction: ParsedTransaction)
     }
 }

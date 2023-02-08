@@ -45,7 +45,7 @@ class HomeViewModel: ObservableObject {
             case .initializing, .loading:
                 return (State.pending, nil)
             case .loaded, .error:
-                let fiatAmount = data?.reduce(0) { $0 + $1.amountInCurrentFiat } ?? 0
+                let fiatAmount = data?.totalAmountInCurrentFiat ?? 0
                 return (fiatAmount > 0 ? State.withTokens : State.empty, fiatAmount)
             }
         }
@@ -59,16 +59,15 @@ class HomeViewModel: ObservableObject {
             self.state = state
             if state != .pending {
                 self.initStateFinished = true
-                self.analyticsManager.setIdentifier(AmplitudeIdentifier.userHasPositiveBalance(positive: amount > 0))
-                self.analyticsManager.log(event: AmplitudeEvent.userHasPositiveBalance(positive: amount > 0))
+                self.analyticsManager.log(parameter: .userHasPositiveBalance(amount > 0))
                 if let amount = amount {
                     let formatted = round(amount * 100) / 100.0
-                    self.analyticsManager.setIdentifier(AmplitudeIdentifier.userAggregateBalance(balance: formatted))
-                    self.analyticsManager.log(event: AmplitudeEvent.userAggregateBalance(balance: formatted))
+                    self.analyticsManager.log(parameter: .userAggregateBalance(formatted))
                 }
             }
         })
         .store(in: &cancellables)
+
         walletsRepository.stateObservable
             .asPublisher()
             .assertNoFailure()
@@ -90,7 +89,7 @@ class HomeViewModel: ObservableObject {
     func copyToClipboard() {
         clipboardManager.copyToClipboard(walletsRepository.nativeWallet?.pubkey ?? "")
         notificationsService.showToast(title: "🖤", text: L10n.addressWasCopiedToClipboard, haptic: true)
-        analyticsManager.log(event: AmplitudeEvent.mainCopyAddress)
+        analyticsManager.log(event: .mainCopyAddress)
     }
 
     func updateAddressIfNeeded() {

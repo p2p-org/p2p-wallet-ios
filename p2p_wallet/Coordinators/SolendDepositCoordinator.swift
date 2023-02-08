@@ -37,7 +37,7 @@ final class SolendDepositCoordinator: Coordinator<Bool> {
         }.store(in: &subscriptions)
 
         let view = DepositSolendView(viewModel: viewModel)
-        var depositVC = view.asViewController(withoutUIKitNavBar: false)
+        let depositVC = view.asViewController(withoutUIKitNavBar: false)
         controller.pushViewController(
             depositVC,
             animated: true

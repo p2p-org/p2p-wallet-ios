@@ -5,14 +5,15 @@
 //  Created by Chung Tran on 10/22/20.
 //
 
-import Action
 import AppsFlyerLib
 import AppTrackingTransparency
 @_exported import BEPureLayout
 import FeeRelayerSwift
 import Firebase
+import Intercom
 import KeyAppKitLogger
 import KeyAppUI
+import Lokalise
 import Resolver
 import Sentry
 import SolanaSwift
@@ -28,11 +29,20 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
     @Injected private var notificationService: NotificationService
 
     private lazy var proxyAppDelegate = AppDelegateProxyService()
+    
+    override init() {
+        super.init()
+        
+        setupFirebaseLogging()
+    }
 
     func application(
         _ application: UIApplication,
         didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey: Any]?
     ) -> Bool {
+        // TODO: - Support custom fiat later
+        Defaults.fiat = .usd
+
         UserDefaults.standard.set(false, forKey: "_UIConstraintBasedLayoutLogUnsatisfiable")
         // TODO: - Swizzle localization later
 //        Bundle.swizzleLocalization()
@@ -43,25 +53,36 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         FirebaseApp.configure()
 
         setupLoggers()
-        setupAppsFlyer()
         setupDefaultCurrency()
 
         // Sentry
         #if !DEBUG
         SentrySDK.start { options in
-            options
-                .dsn = .secretConfig("SENTRY_DSN")
+            options.dsn = .secretConfig("SENTRY_DSN")
             options.tracesSampleRate = 1.0
-//            #if DEBUG
-//                options.debug = true
-//                options.tracesSampleRate = 0.0
-//            #endif
             options.enableNetworkTracking = true
             options.enableOutOfMemoryTracking = true
         }
         #endif
 
-        // set app coordinator
+        // AppsFlyer
+        let appsFlyerAppId: String
+        #if !RELEASE
+        appsFlyerAppId = String.secretConfig("APPSFLYER_APP_ID_FEATURE")!
+        #else
+        appsFlyerAppId = String.secretConfig("APPSFLYER_APP_ID")!
+        #endif
+        AppsFlyerLib.shared().appsFlyerDevKey = String.secretConfig("APPSFLYER_DEV_KEY")!
+        AppsFlyerLib.shared().appleAppID = appsFlyerAppId
+        AppsFlyerLib.shared().waitForATTUserAuthorization(timeoutInterval: 60)
+        
+        Lokalise.shared.setProjectID(
+            String.secretConfig("LOKALISE_PROJECT_ID")!,
+            token: String.secretConfig("LOKALISE_TOKEN")!
+        )
+        Lokalise.shared.swizzleMainBundle()
+
+        // Set app coordinator
         appCoordinator = AppCoordinator()
         appCoordinator!.start()
         window = appCoordinator?.window
@@ -83,7 +104,12 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
             await notificationService.sendRegisteredDeviceToken(deviceToken)
         }
         AppsFlyerLib.shared().registerUninstall(deviceToken)
+        Intercom.setDeviceToken(deviceToken) { error in
+            guard let error else { return }
+            print("Intercom.setDeviceToken error: ", error)
+        }
         proxyAppDelegate.application(application, didRegisterForRemoteNotificationsWithDeviceToken: deviceToken)
+        Defaults.apnsDeviceToken = deviceToken
     }
 
     func application(
@@ -97,7 +123,11 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         proxyAppDelegate.application(application, didFailToRegisterForRemoteNotificationsWithError: error)
     }
 
-    func application(_: UIApplication, open url: URL, options: [UIApplication.OpenURLOptionsKey: Any] = [:]) -> Bool {
+    func application(
+        _: UIApplication,
+        open url: URL,
+        options: [UIApplication.OpenURLOptionsKey: Any] = [:]
+    ) -> Bool {
         var result = false
         Broadcaster.notify(AppUrlHandler.self) { result = result || $0.handle(url: url, options: options) }
         AppsFlyerLib.shared().handleOpen(url, options: options)
@@ -109,6 +139,24 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         continue userActivity: NSUserActivity,
         restorationHandler: @escaping ([UIUserActivityRestoring]?) -> Void
     ) -> Bool {
+        // Handle intercom deeplink
+        if
+            let webpageURL = userActivity.webpageURL,
+            let urlComponents = URLComponents(url: webpageURL, resolvingAgainstBaseURL: true)
+        {
+            if urlComponents.path == "/intercom" {
+                if
+                    let queryItem = urlComponents.queryItems?.first(where: { $0.name == "intercom_survey_id" }),
+                    let value = queryItem.value
+                {
+                    DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) {
+                        GlobalAppState.shared.surveyID = value
+                    }
+                    return true
+                }
+            }
+        }
+
         AppsFlyerLib.shared().continue(userActivity, restorationHandler: nil)
         return proxyAppDelegate.application(application, continue: userActivity, restorationHandler: restorationHandler)
     }
@@ -127,12 +175,15 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
     }
 
     func applicationDidBecomeActive(_ application: UIApplication) {
-        #if DEBUG
-            AppsFlyerLib.shared().isDebug = true
-            AppsFlyerLib.shared().useUninstallSandbox = true
-        #endif
-        AppsFlyerLib.shared().waitForATTUserAuthorization(timeoutInterval: 60)
-        AppsFlyerLib.shared().start()
+        AppsFlyerLib.shared().start(completionHandler: { dictionary, error in
+            if error != nil {
+                print(error ?? "")
+                return
+            } else {
+                print(dictionary ?? "")
+                return
+            }
+        })
         if #available(iOS 14, *) {
             ATTrackingManager.requestTrackingAuthorization { status in
                 switch status {
@@ -165,14 +216,6 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
             }
         }
         proxyAppDelegate.applicationDidBecomeActive(application)
-    }
-
-    // MARK: - AppsFlyer
-
-    func setupAppsFlyer() {
-        AppsFlyerLib.shared().appsFlyerDevKey = String.secretConfig("APPSFLYER_DEV_KEY") ?? ""
-        AppsFlyerLib.shared().appleAppID = String.secretConfig("APPSFLYER_APP_ID") ?? ""
-        AppsFlyerLib.shared().deepLinkDelegate = self
     }
 
     func setupLoggers() {
@@ -215,8 +258,16 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         // Migrate all users to default currency
         Defaults.fiat = .usd
     }
-}
-
-extension AppDelegate: DeepLinkDelegate {
-    func didResolveDeepLink(_: DeepLinkResult) {}
+    
+    private func setupFirebaseLogging() {
+        var arguments = ProcessInfo.processInfo.arguments
+        #if !RELEASE
+        arguments.removeAll { $0 == "-FIRDebugDisabled" }
+        arguments.append("-FIRDebugEnabled")
+        #else
+        arguments.removeAll { $0 == "-FIRDebugEnabled" }
+        arguments.append("-FIRDebugDisabled")
+        #endif
+        ProcessInfo.processInfo.setValue(arguments, forKey: "arguments")
+    }
 }

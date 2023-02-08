@@ -21,6 +21,9 @@ extension APIEndPoint: DefaultsSerializable {}
 extension CreateWalletFlowState: DefaultsSerializable {}
 
 extension DefaultsKeys {
+    // Device token
+    var apnsDeviceToken: DefaultsKey<Data?> { .init(#function, defaultValue: nil) }
+    
     // Keychain-keys
     var keychainPincodeKey: DefaultsKey<String?> { .init(#function, defaultValue: nil) }
     var pincodeAttemptsKey: DefaultsKey<String?> { .init(#function, defaultValue: nil) }
@@ -84,6 +87,9 @@ extension DefaultsKeys {
     var isSolendTutorialShown: DefaultsKey<Bool> { .init(#function, defaultValue: false) }
     var isEarnBannerClosed: DefaultsKey<Bool> { .init(#function, defaultValue: false) }
 
+    // Send
+    var isTokenInputTypeChosen: DefaultsKey<Bool> { .init(#function, defaultValue: false) }
+
     var solanaNegativeStatusFrequency: DefaultsKey<String?> {
         .init(
             #function,
@@ -103,5 +109,29 @@ extension DefaultsKeys {
             #function,
             defaultValue: RemoteConfig.remoteConfig().solanaNegativeStatusTimeFrequency
         )
+    }
+
+    // Sell/RampOff
+    var isSellAvailable: DefaultsKey<Bool?> {
+        .init(#function, defaultValue: nil)
+    }
+
+    var isSellInfoPresented: DefaultsKey<Bool> { .init(#function, defaultValue: false) }
+
+    var moonpayEnvironment: DefaultsKey<DefaultsKeys.MoonpayEnvironment> {
+        DefaultsKey(#function, defaultValue: .production)
+    }
+
+    var moonpayInfoShouldHide: DefaultsKey<Bool> {
+        .init(#function, defaultValue: false)
+    }
+}
+
+// MARK: - Moonpay Environment
+
+extension DefaultsKeys {
+    enum MoonpayEnvironment: String, DefaultsSerializable {
+        case production
+        case sandbox
     }
 }
