@@ -100,27 +100,33 @@ extension Resolver: ResolverRegistering {
                 localProvider: resolve(LocalWalletMetadataProvider.self),
                 remoteProvider: resolve(RemoteWalletMetadataProvider.self)
             )
-        }.scope(.application)
+        }
+        .scope(.application)
 
         // AnalyticsManager
-        // Old
-        register { AnalyticsManagerImpl(apiKey: .secretConfig("AMPLITUDE_API_KEY")!) }
-            .implements(AnalyticsManager.self)
-            .scope(.application)
-        // New
-        register { AnalyticsServiceImpl(providers: [
-            AmplitudeAnalyticsProvider(
-                apiKey: .secretConfig("AMPLITUDE_API_KEY")!,
-                userId: nil
-            ),
-            AppsFlyerAnalyticsProvider(
-                appsFlyerDevKey: String.secretConfig("APPSFLYER_DEV_KEY")!,
-                appleAppID: String.secretConfig("APPSFLYER_APP_ID")!
-            ),
-            FirebaseAnalyticsProvider()
-        ])
+        register {
+            AmplitudeAnalyticsProvider()
         }
-        .implements(AnalyticsService.self)
+        .scope(.application)
+        
+        register {
+            AppsFlyerAnalyticsProvider()
+        }
+        .scope(.application)
+        
+        register {
+            FirebaseAnalyticsProvider()
+        }
+        .scope(.application)
+        
+        register {
+            AnalyticsManagerImpl(providers: [
+                resolve(AmplitudeAnalyticsProvider.self),
+                resolve(AppsFlyerAnalyticsProvider.self),
+                resolve(FirebaseAnalyticsProvider.self)
+            ])
+        }
+        .implements(AnalyticsManager.self)
         .scope(.application)
         
 

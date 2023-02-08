@@ -170,7 +170,7 @@ final class TabBarCoordinator: Coordinator<Void> {
             .handleEvents(receiveOutput: { [unowned self] in
                 let generator = UIImpactFeedbackGenerator(style: .light)
                 generator.impactOccurred()
-                analyticsManager.log(event: AmplitudeEvent.actionButtonClick(isSellEnabled: sellDataService.isAvailable))
+                analyticsManager.log(event: .actionButtonClick(isSellEnabled: sellDataService.isAvailable))
             })
             // coordinate to ActionsCoordinator
             .flatMap { [unowned self] in
@@ -236,7 +236,7 @@ final class TabBarCoordinator: Coordinator<Void> {
             let fiatAmount = walletsRepository.getWallets().reduce(0) { $0 + $1.amountInCurrentFiat }
             let withTokens = fiatAmount > 0
             if withTokens {
-                analyticsManager.log(event: AmplitudeEvent.sendViewed(lastScreen: "main_screen"))
+                analyticsManager.log(event: .sendViewed(lastScreen: "main_screen"))
                 sendCoordinator = SendCoordinator(rootViewController: navigationController, preChosenWallet: nil, hideTabBar: true, allowSwitchingMainAmountType: true)
                 sendCoordinator?.start()
                     .sink { [weak self, weak navigationController] result in

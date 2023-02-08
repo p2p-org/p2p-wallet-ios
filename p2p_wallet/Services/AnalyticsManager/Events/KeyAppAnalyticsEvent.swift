@@ -1,5 +1,5 @@
 //
-//  AmplitudeEvent.swift
+//  KeyAppAnalyticsEvent.swift
 //  p2p_wallet
 //
 //  Created by Ivan on 13.09.2022.
@@ -8,7 +8,7 @@
 import AnalyticsManager
 import Foundation
 
-enum AmplitudeEvent: AnalyticsEvent {
+enum KeyAppAnalyticsEvent: AnalyticsEvent {
     // MARK: - Onboarding
 
     /// Event 32: The user sees the splash screen
@@ -124,6 +124,15 @@ enum AmplitudeEvent: AnalyticsEvent {
     case sendFillingAddress
     case sendApprovedScreen
     case actionButtonSend
+    case sendNewConfirmButtonClick(
+        source: String,
+        token: String,
+        max: Bool,
+        amountToken: Double,
+        amountUSD: Double,
+        fee: Bool,
+        fiatInput: Bool
+    )
 
     // MARK: - Send new
 
@@ -199,6 +208,7 @@ enum AmplitudeEvent: AnalyticsEvent {
         priceSlippage: Double,
         feesSource: String
     )
+    case swapClickApproveButton
 
     // MARK: - Scan QR
 
@@ -237,6 +247,15 @@ enum AmplitudeEvent: AnalyticsEvent {
     case buyScreenOpened(lastScreen: String)
     case moonpayWindowOpened
     case moonpayWindowClosed
+    case buyButtonPressed(
+        sumCurrency: String,
+        sumCoin: String,
+        currency: String,
+        coin: String,
+        paymentMethod: String,
+        bankTransfer: Bool,
+        typeBankTransfer: String?
+    )
 
     // General
     case appOpened(sourceOpen: String)
@@ -253,6 +272,15 @@ enum AmplitudeEvent: AnalyticsEvent {
         milliseconds: Int,
         result: String
     )
+    case onboardingStartButton
+    case creationPhoneScreen
+    case createSmsValidation(result: Bool)
+    case createConfirmPin(result: Bool)
+    case usernameCreationScreen
+    case usernameCreationButton(result: Bool)
+    case restoreSeed
+    case onboardingMerged
+    case login
 
     // RenBTC
     case renbtcCreation(result: String)
@@ -279,19 +307,16 @@ enum AmplitudeEvent: AnalyticsEvent {
 
     case seedPhraseCopy
 
-    // MARK: - User
-
-    case userHasPositiveBalance(positive: Bool)
-    case userAggregateBalance(balance: Double)
-
     // MARK: - Sell
 
     case sellClicked(source: String)
     case sellClickedServerError
     case sellClickedSorryMinAmount
     case sellFinishSend
+    case sellOnlySOLNotification
     case sellAmount
     case sellAmountNext
+    case sellMoonpayOpenNotification
     case sellMoonpay
     case historySendClicked(status: String)
 }

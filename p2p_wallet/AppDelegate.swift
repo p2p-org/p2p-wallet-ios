@@ -59,6 +59,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         setupLoggers()
         setupDefaultCurrency()
 
+        // Sentry
         #if !DEBUG
         SentrySDK.start { options in
             options.dsn = .secretConfig("SENTRY_DSN")
@@ -68,8 +69,15 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         }
         #endif
 
+        // AppsFlyer
+        let appsFlyerAppId: String
+        #if !RELEASE
+        appsFlyerAppId = String.secretConfig("APPSFLYER_APP_ID_FEATURE")!
+        #else
+        appsFlyerAppId = String.secretConfig("APPSFLYER_APP_ID")!
+        #endif
         AppsFlyerLib.shared().appsFlyerDevKey = String.secretConfig("APPSFLYER_DEV_KEY")!
-        AppsFlyerLib.shared().appleAppID = String.secretConfig("APPSFLYER_APP_ID")!
+        AppsFlyerLib.shared().appleAppID = appsFlyerAppId
         AppsFlyerLib.shared().waitForATTUserAuthorization(timeoutInterval: 60)
         
         Lokalise.shared.setProjectID(

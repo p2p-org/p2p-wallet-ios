@@ -129,7 +129,7 @@ extension ReceiveToken {
                 await MainActor.run {
                     clipboardManager.copyToClipboard(address)
                     notificationsService.showInAppNotification(.done(L10n.addressCopiedToClipboard))
-                    analyticsManager.log(event: AmplitudeEvent.receiveAddressCopied)
+                    analyticsManager.log(event: .receiveAddressCopied)
                 }
             }
         }
@@ -146,7 +146,7 @@ extension ReceiveToken {
         }
 
         func saveAction(image: UIImage) {
-            analyticsManager.log(event: AmplitudeEvent.receiveQRSaved)
+            analyticsManager.log(event: .receiveQRSaved)
             imageSaver.save(image: image) { [weak self] result in
                 switch result {
                 case .success:
@@ -168,7 +168,7 @@ extension ReceiveToken {
             Task {
                 guard let address = await persistentStore.gatewayAddress else { return }
                 await MainActor.run {
-                    analyticsManager.log(event: AmplitudeEvent.receiveViewingExplorer)
+                    analyticsManager.log(event: .receiveViewingExplorer)
                     navigationSubject.send(.showBTCExplorer(address: address))
                 }
             }
