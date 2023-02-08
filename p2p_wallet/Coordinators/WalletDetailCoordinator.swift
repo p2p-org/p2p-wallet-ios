@@ -32,7 +32,7 @@ final class WalletDetailCoordinator: Coordinator<WalletDetailCoordinator.Result>
     }
 
     override func start() -> AnyPublisher<WalletDetailCoordinator.Result, Never> {
-        analyticsManager.log(event: AmplitudeEvent.mainScreenTokenDetailsOpen(tokenTicker: model.symbol))
+        analyticsManager.log(event: .mainScreenTokenDetailsOpen(tokenTicker: model.symbol))
         let viewModel = WalletDetail.ViewModel(pubkey: model.pubKey, symbol: model.symbol)
         let view = WalletDetail.ViewController(viewModel: viewModel)
 

@@ -14,7 +14,6 @@ final class CreateUsernameViewModel: BaseViewModel, ObservableObject {
     @Injected private var notificationService: NotificationService
     @Injected private var createNameService: CreateNameService
     @Injected private var analyticsManager: AnalyticsManager
-    @Injected private var analyticsService: AnalyticsService
 
     // MARK: - Properties
 
@@ -39,7 +38,7 @@ final class CreateUsernameViewModel: BaseViewModel, ObservableObject {
         super.init()
 
         bind()
-        analyticsService.logEvent(.usernameCreationScreen)
+        analyticsManager.log(event: .usernameCreationScreen)
     }
 }
 
@@ -77,7 +76,7 @@ private extension CreateUsernameViewModel {
             guard let self = self else { return }
             self.isLoading = true
             self.createNameService.create(username: self.username)
-            self.analyticsService.logEvent(.usernameCreationButton(result: true))
+            self.analyticsManager.log(event: .usernameCreationButton(result: true))
             self.close.send(())
         }.store(in: &subscriptions)
 
@@ -113,7 +112,7 @@ private extension CreateUsernameViewModel {
         notificationService.showDefaultErrorNotification()
     }
 
-    func log(analyticEvent: AmplitudeEvent) {
+    func log(analyticEvent: KeyAppAnalyticsEvent) {
         analyticsManager.log(event: analyticEvent)
     }
 }
