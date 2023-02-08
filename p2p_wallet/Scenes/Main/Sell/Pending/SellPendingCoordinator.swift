@@ -73,22 +73,20 @@ final class SellPendingCoordinator: Coordinator<SellPendingCoordinatorResult> {
         if let nativeWallet = walletsRepository.nativeWallet {
             viewModel.send
                 .flatMap { [unowned self, navigationController] in
-                    coordinate(to:
-                                SendCoordinator(
-                                    rootViewController: navigationController,
-                                    args: .fixed(
-                                        wallet: nativeWallet,
-                                        recipient: Recipient(
-                                            address: transaction.depositWallet,
-                                            category: .solanaAddress,
-                                            attributes: [.funds]
-                                        ),
-                                        amount: transaction.baseCurrencyAmount
-                                    ),
-                                    source: .sell,
-                                    allowSwitchingMainAmountType: false
-                                )
-                    )
+                    coordinate(to: SendCoordinator(
+                        rootViewController: navigationController,
+                        args: .fixed(
+                            wallet: nativeWallet,
+                            recipient: Recipient(
+                                address: transaction.depositWallet,
+                                category: .solanaAddress,
+                                attributes: [.funds]
+                            ),
+                            amount: transaction.baseCurrencyAmount
+                        ),
+                        source: .sell,
+                        allowSwitchingMainAmountType: false
+                    ))
                 }
                 .sink { [weak self] res in
                     switch res {
