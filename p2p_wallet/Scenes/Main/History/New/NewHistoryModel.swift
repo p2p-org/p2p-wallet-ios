@@ -145,7 +145,7 @@ extension MockedHistoryRendableItem {
                 URL(string: Token.nativeSolana.logoURI!)!,
                 URL(string: Token.eth.logoURI!)!
             ),
-            title: "Receive",
+            title: "Swap",
             subtitle: "SOL to ETH",
             detail: "+3.5 ETH",
             subdetail: "-120 SOL"
@@ -212,8 +212,8 @@ extension MockedHistoryRendableItem {
             icon: .icon(.transactionCreateAccount),
             title: "Create account",
             subtitle: "5Rho...SheY",
-            detail: "+$1",
-            subdetail: "+1 USDC"
+            detail: "",
+            subdetail: ""
         )
     }
     
@@ -224,9 +224,9 @@ extension MockedHistoryRendableItem {
             change: .positive,
             icon: .icon(.transactionCloseAccount),
             title: "Close account",
-            subtitle: "Vote account: ....S39N",
-            detail: "+$122.12",
-            subdetail: "+5.21 SOL"
+            subtitle: "5Rho...SheY",
+            detail: "",
+            subdetail: ""
         )
     }
     
