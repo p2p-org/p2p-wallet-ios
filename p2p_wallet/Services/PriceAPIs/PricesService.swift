@@ -76,6 +76,9 @@ class PricesService {
 
         // get current price
         Task {
+            // migration
+            await migrate()
+            
             var initialValue = await storage.retrievePrices()
             if initialValue.values.isEmpty {
                 initialValue = try await getCurrentPrices()
@@ -92,6 +95,19 @@ class PricesService {
     }
 
     // MARK: - Helpers
+    
+    private func migrate() async {
+        // First migration to fix COPE token
+        let migration1Key = "PricesService.migration1Key"
+        
+        if UserDefaults.standard.bool(forKey: migration1Key) == false {
+            // clear current cache
+            await storage.savePrices([:])
+            
+            // mark as migrated
+            UserDefaults.standard.set(true, forKey: migration1Key)
+        }
+    }
 
     private func getCurrentPricesRequest(
         tokens: [Token]? = nil,
