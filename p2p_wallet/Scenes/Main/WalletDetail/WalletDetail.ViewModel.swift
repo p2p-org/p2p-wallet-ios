@@ -20,7 +20,6 @@ protocol WalletDetailViewModelType {
     var walletActionsDriver: Driver<[WalletActionType]> { get }
     var graphViewModel: WalletGraphViewModel { get }
 
-    func showWalletSettings()
     func start(action: WalletActionType)
     func showTransaction(_ transaction: ParsedTransaction)
     var pubkey: String { get }
@@ -148,11 +147,6 @@ extension WalletDetail.ViewModel: WalletDetailViewModelType {
     }
 
     // MARK: - Actions
-
-    func showWalletSettings() {
-        guard let pubkey = walletSubject.value?.pubkey else { return }
-        navigatableSceneSubject.accept(.settings(walletPubkey: pubkey))
-    }
 
     func start(action: WalletActionType) {
         switch action {
