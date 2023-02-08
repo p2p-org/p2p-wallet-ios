@@ -527,18 +527,6 @@ extension Resolver: ResolverRegistering {
         .implements(RecipientSearchService.self)
         .scope(.shared)
 
-        // Banner
-        register {
-            BannerServiceImpl(handlers: [
-                ReserveNameBannerHandler(nameStorage: resolve()),
-                BackupBannerHandler(backupStorage: resolve()),
-                FeedbackBannerHandler(),
-                // NotificationBannerHandler()
-            ])
-        }
-        .implements(Banners.Service.self)
-        .scope(.shared)
-
         // Solend
         register { SolendFFIWrapper() }
             .implements(Solend.self)
