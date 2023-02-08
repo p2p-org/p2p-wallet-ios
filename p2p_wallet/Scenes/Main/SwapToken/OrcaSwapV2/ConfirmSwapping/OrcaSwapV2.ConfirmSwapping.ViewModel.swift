@@ -9,12 +9,13 @@ import Foundation
 import Resolver
 import RxCocoa
 import SolanaSwift
+import AnalyticsManager
 
 extension OrcaSwapV2.ConfirmSwapping {
     final class ViewModel {
         // MARK: - Dependencies
 
-        @Injected private var analyticsService: AnalyticsService
+        @Injected private var analyticsManager: AnalyticsManager
         @Injected private var pricesService: PricesServiceType
 
         // MARK: - Properties
@@ -76,7 +77,7 @@ extension OrcaSwapV2.ConfirmSwapping.ViewModel: OrcaSwapV2ConfirmSwappingViewMod
 
     func authenticateAndSwap() {
         swapViewModel.authenticateAndSwap()
-        analyticsService.logEvent(.swapClickApproveButton)
+        analyticsManager.log(event: .swapClickApproveButton)
     }
 
     func showFeesInfo(_ info: PayingFee.Info) {

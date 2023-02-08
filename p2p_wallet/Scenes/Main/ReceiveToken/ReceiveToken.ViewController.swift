@@ -39,7 +39,7 @@ extension ReceiveToken {
             }
             hidesBottomBarWhenPushed = true
 
-            analyticsManager.log(event: AmplitudeEvent.receiveStartScreen)
+            analyticsManager.log(event: .receiveStartScreen)
         }
 
         @objc func goBack() {
@@ -186,7 +186,7 @@ extension ReceiveToken.ViewController {
             let vc = RenBTCReceivingStatuses.ViewController(viewModel: vm)
             show(UINavigationController(rootViewController: vc), sender: nil)
         case let .share(address, qrCode):
-            analyticsManager.log(event: AmplitudeEvent.QR_Share)
+            analyticsManager.log(event: .QR_Share)
             guard let qrCode = qrCode, let address = address else { return }
 
             let vc = UIActivityViewController(activityItems: [qrCode, address], applicationActivities: nil)

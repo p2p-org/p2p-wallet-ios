@@ -59,7 +59,7 @@ final class SendEmptyCoordinator: Coordinator<Void> {
         return resultSubject.prefix(1).eraseToAnyPublisher()
     }
 
-    private func log(event: AmplitudeEvent) {
+    private func log(event: KeyAppAnalyticsEvent) {
         analyticsManager.log(event: event)
     }
 }
