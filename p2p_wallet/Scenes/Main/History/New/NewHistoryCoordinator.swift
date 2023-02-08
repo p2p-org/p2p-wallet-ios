@@ -28,10 +28,12 @@ class NewHistoryCoordinator: SmartCoordinator<Void> {
             .sink { [weak self] action in
                 guard let self = self else { return }
                 switch action {
-                case let .openDetailByID(id):
-                    self.coordinate(to: TransactionDetailCoordinator(presentingViewController: self.presentation.presentingViewController))
-                        .sink { }
+                case let .openDetailByRendableItem(item):
+                    self.coordinate(to: TransactionDetailCoordinator(transaction: item, presentingViewController: self.presentation.presentingViewController))
+                        .sink { _ in }
                         .store(in: &self.subscriptions)
+                default:
+                    break
                 }
             }
             .store(in: &subscriptions)
