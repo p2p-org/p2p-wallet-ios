@@ -31,7 +31,9 @@ struct NewHistoryView: View {
                             Group {
                                 switch item {
                                 case let .rendable(rendableItem):
-                                    NewHistoryItemView(item: rendableItem) {}
+                                    NewHistoryItemView(item: rendableItem) {
+                                        viewModel.onTap(item: rendableItem)
+                                    }
                                 case .placeHolder:
                                     SwiftUI.EmptyView()
                                 case let .button(_, title, action):
