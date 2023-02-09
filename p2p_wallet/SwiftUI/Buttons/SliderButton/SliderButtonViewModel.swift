@@ -1,6 +1,6 @@
 import Combine
 
-final class SendInputActionButtonViewModel: BaseViewModel, ObservableObject {
+final class SliderActionButtonViewModel: ObservableObject {
     struct ActionButton {
         let isEnabled: Bool
         let title: String

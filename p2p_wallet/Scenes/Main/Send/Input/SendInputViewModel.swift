@@ -21,7 +21,7 @@ final class SendInputViewModel: BaseViewModel, ObservableObject {
 
     // MARK: - Sub view models
 
-    let actionButtonViewModel: SendInputActionButtonViewModel
+    let actionButtonViewModel: SliderActionButtonViewModel
     let inputAmountViewModel: SendInputAmountViewModel
     let tokenViewModel: SendInputTokenViewModel
 
@@ -134,7 +134,7 @@ final class SendInputViewModel: BaseViewModel, ObservableObject {
         )
 
         inputAmountViewModel = SendInputAmountViewModel(initialToken: tokenInWallet, allowSwitchingMainAmountType: allowSwitchingMainAmountType)
-        actionButtonViewModel = SendInputActionButtonViewModel()
+        actionButtonViewModel = SliderActionButtonViewModel()
 
         tokenViewModel = SendInputTokenViewModel(initialToken: tokenInWallet)
 
