@@ -4,15 +4,12 @@
 
 import Foundation
 import KeychainSwift
-import RxCocoa
-import RxSwift
 import SolanaSwift
 import Resolver
 
-class KeychainStorage {
+class KeychainStorage: StorageType {
     // MARK: - Constants
 
-    let onValueChangeSubject = PublishSubject<StorageValueOnChange>()
     let pincodeKey: String
     let pincodeAttemptsKey: String
     let phrasesKey: String
@@ -159,11 +156,5 @@ class KeychainStorage {
 
     private func removeAccountCache() {
         _account = nil
-    }
-}
-
-extension KeychainStorage: StorageType {
-    var onValueChange: Signal<StorageValueOnChange> {
-        onValueChangeSubject.asSignal(onErrorJustReturn: ("", nil))
     }
 }
