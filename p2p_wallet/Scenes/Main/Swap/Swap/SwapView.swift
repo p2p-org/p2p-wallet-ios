@@ -15,6 +15,9 @@ struct SwapView: View {
                     .apply(style: .label1)
                     .padding(.top, 4)
                     .foregroundColor(Color(Asset.Colors.night.color))
+                    .if(viewModel.arePricesLoading) { view in
+                        view.skeleton(with: true, size: CGSize(width: 160, height: 16))
+                    }
 
                 ZStack {
                     VStack(spacing: 8) {
