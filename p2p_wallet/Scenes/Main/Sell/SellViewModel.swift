@@ -374,8 +374,12 @@ class SellViewModel: BaseViewModel, ObservableObject {
                 )
                 // update data
                 await MainActor.run { [weak self] in
-                    guard let self else { return }
-                    let baseCurrencyPrice = max(0.00001, self.priceService.getCurrentPrice(for: baseCurrencyCode) ?? 0)
+                    guard let self,
+                          let mint = Token.moonpaySellSupportedTokens
+                            .first(where: {$0.symbol == baseCurrencyCode})?
+                            .address
+                    else { return }
+                    let baseCurrencyPrice = max(0.00001, self.priceService.currentPrice(mint: mint)?.value ?? 0)
                     let totalFeeAmount = sellQuote.feeAmount + sellQuote.extraFeeAmount
                     self.fee = .loaded(
                         Fee(

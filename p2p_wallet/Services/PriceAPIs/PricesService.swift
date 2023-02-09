@@ -12,22 +12,7 @@ import RxSwift
 import SolanaPricesAPIs
 import SolanaSwift
 
-struct TokenPriceKey: Hashable, Codable {
-    let symbol: String
-    let mint: String
-    
-    init(symbol: String, mint: String) {
-        self.symbol = symbol
-        self.mint = mint
-    }
-    
-    init(token: Token) {
-        self.symbol = token.symbol
-        self.mint = token.address
-    }
-}
-
-typealias TokenPriceMap = [TokenPriceKey: CurrentPrice]
+typealias TokenPriceMap = [String: CurrentPrice]
 
 protocol PricesServiceType {
     // Observables
@@ -36,9 +21,6 @@ protocol PricesServiceType {
     // Getters
     func getWatchList() -> [Token]
     func currentPrice(mint: String) -> CurrentPrice?
-    
-    @available(*, deprecated, message: "Use ``currentPrice(mint:)`` insteed")
-    func currentPrice(symbol: String) -> CurrentPrice?
 
     // Actions
     func clearCurrentPrices()
@@ -50,7 +32,7 @@ protocol PricesServiceType {
     func stopObserving()
 }
 
-class PricesLoadableRelay: LoadableRelay<[TokenPriceKey: CurrentPrice]> {
+class PricesLoadableRelay: LoadableRelay<[String: CurrentPrice]> {
     override func map(oldData: TokenPriceMap?, newData: TokenPriceMap) -> TokenPriceMap {
         guard var data = oldData else {
             return newData
@@ -94,6 +76,9 @@ class PricesService {
 
         // get current price
         Task {
+            // migration
+            await migrate()
+            
             var initialValue = await storage.retrievePrices()
             if initialValue.values.isEmpty {
                 initialValue = try await getCurrentPrices()
@@ -110,6 +95,19 @@ class PricesService {
     }
 
     // MARK: - Helpers
+    
+    private func migrate() async {
+        // First migration to fix COPE token
+        let migration1Key = "PricesService.migration1Key"
+        
+        if UserDefaults.standard.bool(forKey: migration1Key) == false {
+            // clear current cache
+            await storage.savePrices([:])
+            
+            // mark as migrated
+            UserDefaults.standard.set(true, forKey: migration1Key)
+        }
+    }
 
     private func getCurrentPricesRequest(
         tokens: [Token]? = nil,
@@ -121,22 +119,17 @@ class PricesService {
     }
 
     func getCurrentPrices(tokens: [Token]? = nil, toFiat: Fiat = Defaults.fiat) async throws -> TokenPriceMap {
-        let coins: [Token] = (tokens ?? watchList).filter { !$0.symbol.contains("-") && !$0.symbol.contains("/") }
-            .map { token -> Token in
-                if token.symbol == "renBTC" {
-                    return Token(token, customSymbol: "BTC")
-                }
-                return token
-            }
+        let coins: [Token] = (tokens ?? watchList)
+            .filter { !$0.symbol.contains("-") && !$0.symbol.contains("/") }
             .unique
         guard !coins.isEmpty else {
             return [:]
         }
 
-        var newPrices = try await api.getCurrentPrices(coins: coins, toFiat: toFiat.code)
+        let newPrices = try await api.getCurrentPrices(coins: coins, toFiat: toFiat.code)
         var prices = currentPricesSubject.value ?? [:]
         for newPrice in newPrices {
-            prices[.init(symbol: newPrice.key.symbol, mint: newPrice.key.address)] = newPrice.value
+            prices[newPrice.key.address] = newPrice.value
         }
         await storage.savePrices(prices)
         return prices
@@ -144,7 +137,7 @@ class PricesService {
 }
 
 extension PricesService: PricesServiceType {
-    var currentPricesDriver: Driver<Loadable<[TokenPriceKey: CurrentPrice]>> {
+    var currentPricesDriver: Driver<Loadable<[String: CurrentPrice]>> {
         currentPricesSubject.asDriver()
     }
 
@@ -153,15 +146,7 @@ extension PricesService: PricesServiceType {
     }
 
     func currentPrice(mint: String) -> CurrentPrice? {
-        currentPricesSubject.value?.first(where: { (key: TokenPriceKey, value: CurrentPrice) in
-            key.mint == mint
-        })?.value
-    }
-    
-    func currentPrice(symbol: String) -> CurrentPrice? {
-        currentPricesSubject.value?.first(where: { (key: TokenPriceKey, value: CurrentPrice) in
-            key.symbol == symbol
-        })?.value
+        currentPricesSubject.value?[mint]
     }
 
     func clearCurrentPrices() {

@@ -53,7 +53,7 @@ final class BuyViewModel: ObservableObject {
     @SwiftyUserDefault(keyPath: \.buyMinPrices, options: .cached)
     var buyMinPrices: [String: [String: Double]]
 
-    private var tokenPrices: [Fiat: [TokenPriceKey: Double?]] = [:]
+    private var tokenPrices: [Fiat: [String: Double?]] = [:]
 
     // Defaults
     private static let defaultMinAmount = Double(40)
@@ -287,7 +287,7 @@ final class BuyViewModel: ObservableObject {
             tokens.map {
                 TokenCellViewItem(
                     token: $0,
-                    amount: tokenPrices[fiat]?[.init(token: token)] ?? 0,
+                    amount: tokenPrices[fiat]?[token.address] ?? 0,
                     fiat: fiat
                 )
             }
