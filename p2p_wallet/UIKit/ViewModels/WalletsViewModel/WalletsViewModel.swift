@@ -332,3 +332,13 @@ private extension Wallet {
         }
     }
 }
+
+private extension Timer {
+    static func observable(
+        seconds: Int,
+        scheduler: SchedulerType = MainScheduler.instance
+    ) -> Observable<Void> {
+        Observable<Int>.timer(.seconds(0), period: .seconds(seconds), scheduler: scheduler)
+            .map { _ in () }
+    }
+}
