@@ -7,16 +7,9 @@
 
 import Foundation
 import KeychainSwift
-import RxCocoa
-import RxSwift
 import SolanaSwift
 
-typealias StorageValueOnChange = (key: String, value: Any?)
-
-protocol StorageType {
-    // listens to value changing
-    var onValueChange: Signal<StorageValueOnChange> { get }
-}
+protocol StorageType {}
 
 protocol ICloudStorageType: AnyObject, StorageType {
     func saveToICloud(account: RawAccount) -> Bool
