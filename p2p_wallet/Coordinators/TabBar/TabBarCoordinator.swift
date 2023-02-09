@@ -147,18 +147,11 @@ final class TabBarCoordinator: Coordinator<Void> {
     
     /// Set up Settings scene
     private func setUpSettings() -> UIViewController {
-        let settingsNavigation: UINavigationController
-        if available(.settingsFeature) {
-            settingsNavigation = UINavigationController()
-            let settingsCoordinator = SettingsCoordinator(navigationController: settingsNavigation)
-            coordinate(to: settingsCoordinator)
-                .sink(receiveValue: { _ in })
-                .store(in: &subscriptions)
-        } else {
-            settingsNavigation = UINavigationController(
-                rootViewController: Settings.ViewController(viewModel: Settings.ViewModel())
-            )
-        }
+        let settingsNavigation = UINavigationController()
+        let settingsCoordinator = SettingsCoordinator(navigationController: settingsNavigation)
+        coordinate(to: settingsCoordinator)
+            .sink(receiveValue: { _ in })
+            .store(in: &subscriptions)
         return settingsNavigation
     }
     
@@ -170,7 +163,7 @@ final class TabBarCoordinator: Coordinator<Void> {
             .handleEvents(receiveOutput: { [unowned self] in
                 let generator = UIImpactFeedbackGenerator(style: .light)
                 generator.impactOccurred()
-                analyticsManager.log(event: AmplitudeEvent.actionButtonClick(isSellEnabled: sellDataService.isAvailable))
+                analyticsManager.log(event: .actionButtonClick(isSellEnabled: sellDataService.isAvailable))
             })
             // coordinate to ActionsCoordinator
             .flatMap { [unowned self] in
@@ -236,7 +229,7 @@ final class TabBarCoordinator: Coordinator<Void> {
             let fiatAmount = walletsRepository.getWallets().reduce(0) { $0 + $1.amountInCurrentFiat }
             let withTokens = fiatAmount > 0
             if withTokens {
-                analyticsManager.log(event: AmplitudeEvent.sendViewed(lastScreen: "main_screen"))
+                analyticsManager.log(event: .sendViewed(lastScreen: "main_screen"))
                 sendCoordinator = SendCoordinator(rootViewController: navigationController, preChosenWallet: nil, hideTabBar: true, allowSwitchingMainAmountType: true)
                 sendCoordinator?.start()
                     .sink { [weak self, weak navigationController] result in

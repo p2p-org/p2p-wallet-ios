@@ -136,7 +136,7 @@ final class SellTransactionDetailsViewModel: ObservableObject {
     }
 
     private func logAnalytics(status: String) {
-        analyticsManager.log(event: AmplitudeEvent.historySendClicked(status: status))
+        analyticsManager.log(event: .historySendClicked(status: status))
     }
 }
 

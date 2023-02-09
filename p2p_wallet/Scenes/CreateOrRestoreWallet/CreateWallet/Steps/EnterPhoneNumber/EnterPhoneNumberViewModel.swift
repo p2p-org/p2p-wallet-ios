@@ -49,9 +49,9 @@ final class EnterPhoneNumberViewModel: BaseOTPViewModel {
     func buttonTaped() {
         switch strategy {
         case .create:
-            analyticsManager.log(event: AmplitudeEvent.createPhoneClickButton)
+            analyticsManager.log(event: .createPhoneClickButton)
         case .restore:
-            analyticsManager.log(event: AmplitudeEvent.restorePhoneClickButton)
+            analyticsManager.log(event: .restorePhoneClickButton)
         }
         guard
             let phone = phone,
@@ -136,7 +136,7 @@ final class EnterPhoneNumberViewModel: BaseOTPViewModel {
         case .create:
             break
         case .restore:
-            analyticsManager.log(event: AmplitudeEvent.restorePhoneScreen)
+            analyticsManager.log(event: .restorePhoneScreen)
         }
     }
 
