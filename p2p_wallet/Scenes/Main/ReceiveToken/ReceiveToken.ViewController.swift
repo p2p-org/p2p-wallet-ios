@@ -56,11 +56,11 @@ extension ReceiveToken {
                                 UIStackView(axis: .horizontal) {
                                     // Wallet Icon
                                     UIImageView(width: 44, height: 44)
-                                        .with(
-                                            .image,
-                                            drivenBy: viewModel.tokenTypeDriver.map { type in type.icon },
-                                            disposedBy: disposeBag
-                                        )
+                                        .setup { view in
+                                            viewModel.tokenTypeDriver.map { type in type.icon }
+                                                .drive(view.rx.image)
+                                                .disposed(by: disposeBag)
+                                        }
                                     // Text
                                     UIStackView(axis: .vertical, spacing: 4, alignment: .leading) {
                                         UILabel(
@@ -204,25 +204,14 @@ extension ReceiveToken.ViewController {
         case .showPhotoLibraryUnavailable:
             PhotoLibraryAlertPresenter().present(on: self)
         case .buy:
-            if available(.buyScenarioEnabled) {
-                buyCoordinator = BuyCoordinator(
-                    context: .fromRenBTC,
-                    presentingViewController: self,
-                    shouldPush: false
-                )
-                buyCoordinator?.start()
-                    .sink { _ in }
-                    .store(in: &subscriptions)
-            } else {
-                show(
-                    BuyTokenSelection.Scene(onTap: { [unowned self] crypto in
-                        let vm = BuyRoot.ViewModel()
-                        let vc = BuyRoot.ViewController(crypto: crypto, viewModel: vm)
-                        show(vc, sender: nil)
-                    }),
-                    sender: nil
-                )
-            }
+            buyCoordinator = BuyCoordinator(
+                context: .fromRenBTC,
+                presentingViewController: self,
+                shouldPush: false
+            )
+            buyCoordinator?.start()
+                .sink { _ in }
+                .store(in: &subscriptions)
         case .none:
             return
         }
