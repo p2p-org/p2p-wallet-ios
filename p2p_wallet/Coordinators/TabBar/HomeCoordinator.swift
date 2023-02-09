@@ -209,25 +209,52 @@ final class HomeCoordinator: Coordinator<Void> {
             return Just(!available(.buyScenarioEnabled) ? presentBuyView(): ())
                 .eraseToAnyPublisher()
         case .topUpCoin(let token):
-            guard [Token.nativeSolana, .usdc].contains(token) else {
-                return Just(()).eraseToAnyPublisher()
+            // SOL, USDC
+            if [Token.nativeSolana, .usdc].contains(token) {
+                let coordinator: Coordinator<Void>
+                if available(.buyScenarioEnabled) {
+                    coordinator = BuyCoordinator(
+                        navigationController: navigationController,
+                        context: .fromHome,
+                        defaultToken: token
+                    )
+                } else {
+                    coordinator = BuyPreparingCoordinator(
+                        navigationController: navigationController,
+                        strategy: .show,
+                        crypto: token == .usdc ? .usdc : token == .nativeSolana ? .sol : .eth
+                    )
+                }
+                return self.coordinate(to: coordinator)
+                    .eraseToAnyPublisher()
             }
-            let coordinator: Coordinator<Void>
-            if available(.buyScenarioEnabled) {
-                coordinator = BuyCoordinator(
-                    navigationController: navigationController,
-                    context: .fromHome,
-                    defaultToken: token
-                )
-            } else {
-                coordinator = BuyPreparingCoordinator(
-                    navigationController: navigationController,
-                    strategy: .show,
-                    crypto: token == .usdc ? .usdc : token == .nativeSolana ? .sol : .eth
-                )
+            
+            // Other
+            var token = token
+            if token == .renBTC {
+                token = Token(.renBTC, customSymbol: "BTC")
             }
-            return self.coordinate(to: coordinator)
-                .eraseToAnyPublisher()
+            return coordinate(
+                to: HomeBuyNotificationCoordinator(
+                    tokenFrom: .usdc, tokenTo: token, controller: navigationController
+                )
+            )
+            .flatMap { result -> AnyPublisher<Void, Never> in
+                switch result {
+                case .showBuy:
+                    return self.coordinate(
+                        to: BuyCoordinator(
+                            navigationController: self.navigationController,
+                            context: .fromHome,
+                            defaultToken: .usdc
+                        )
+                    )
+                default:
+                    return Just(()).eraseToAnyPublisher()
+                }
+            }
+            .eraseToAnyPublisher()
+            
         case .error(let show):
             if show {
                 homeView.view.showConnectionErrorView(refreshAction: { [unowned homeView] in
