@@ -13,7 +13,7 @@ struct ActionsView: View {
                 } label: {
                     cell(item: item)
                 }
-                    .frame(minHeight: 72)
+                    .frame(minHeight: 73)
             }
             TextButtonView(
                 title: L10n.close,
@@ -23,6 +23,7 @@ struct ActionsView: View {
             )
                 .frame(height: TextButton.Size.large.height)
                 .padding(.top, 8)
+                .padding(.bottom, 19)
             Spacer()
         }
             .padding(.horizontal, 16)
@@ -34,7 +35,8 @@ struct ActionsView: View {
     private func cell(item: ActionViewItem) -> some View {
         HStack(spacing: 16) {
             Image(uiImage: item.icon)
-            VStack(alignment: .leading, spacing: 4) {
+                .frame(width: 42, height: 42)
+            VStack(alignment: .leading, spacing: 6) {
                 Text(item.title)
                     .fontWeight(.bold)
                     .apply(style: .text2)
@@ -48,7 +50,7 @@ struct ActionsView: View {
             Spacer()
         }
             .padding(.horizontal, 20)
-            .padding(.vertical, 16)
+            .padding(.vertical, 18)
             .background(Color(Asset.Colors.snow.color))
             .cornerRadius(16)
     }
