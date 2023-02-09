@@ -6,6 +6,7 @@ import Foundation
 import Resolver
 import RxCocoa
 import RxSwift
+import RxCombine
 
 extension History {
     /// Updating price if exchange rate was change
@@ -14,7 +15,7 @@ extension History {
 
         func register() -> Signal<Void> {
             pricesService
-                .currentPricesDriver
+                .currentPricesPublisher
                 .asObservable()
                 .flatMap { _ in Observable<Void>.just(()) }
                 .asSignal(onErrorJustReturn: ())
