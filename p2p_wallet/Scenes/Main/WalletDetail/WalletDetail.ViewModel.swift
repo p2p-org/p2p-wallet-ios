@@ -72,9 +72,12 @@ extension WalletDetail {
 
         private func bindSubjectsIntoSubjects() {
             walletsRepository
-                .dataObservable
+                .dataPublisher
+                .map(Optional.init)
                 .map { [weak self] in $0?.first(where: { $0.pubkey == self?.pubkey }) }
+                .replaceError(with: nil)
                 .filter { $0 != nil }
+                .asObservable()
                 .bind(to: walletSubject)
                 .disposed(by: disposeBag)
 

@@ -10,7 +10,6 @@ import Combine
 import Foundation
 import RenVMSwift
 import Resolver
-import RxCombine
 import SolanaSwift
 
 final class HomeEmptyViewModel: BaseViewModel, ObservableObject {
@@ -50,9 +49,7 @@ final class HomeEmptyViewModel: BaseViewModel, ObservableObject {
         walletsRepository.reload()
         
         return await withCheckedContinuation { continuation in
-            cancellable = walletsRepository.stateObservable
-                .asPublisher()
-                .assertNoFailure()
+            cancellable = walletsRepository.statePublisher
                 .sink(receiveValue: { [weak self] in
                     if $0 == .loaded || $0 == .error {
                         continuation.resume()

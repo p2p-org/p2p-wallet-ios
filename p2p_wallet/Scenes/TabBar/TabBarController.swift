@@ -15,6 +15,7 @@ import RxSwift
 import Sell
 import SwiftUI
 import UIKit
+import RxAppState
 
 final class TabBarController: UITabBarController {
     // MARK: - Dependencies

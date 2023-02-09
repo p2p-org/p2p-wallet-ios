@@ -4,7 +4,6 @@ import Foundation
 import Combine
 import Reachability
 import Resolver
-import RxSwift
 import KeyAppUI
 import SolanaSwift
 import Sell
@@ -274,8 +273,6 @@ class SellViewModel: BaseViewModel, ObservableObject {
         // observe native wallet's changes
         checkIfMoreBaseCurrencyNeeded()
         walletRepository.dataDidChange
-            .publisher
-            .replaceError(with: ())
             .receive(on: RunLoop.main)
             .sink(receiveValue: { [weak self] val in
                 self?.checkIfMoreBaseCurrencyNeeded()

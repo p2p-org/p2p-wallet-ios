@@ -5,16 +5,14 @@
 //  Created by Chung Tran on 11/4/20.
 //
 
-import BECollectionView
+import BECollectionView_Combine
 import Foundation
 import Resolver
-import RxAppState
-import RxCocoa
-import RxSwift
 import SolanaSwift
 import Combine
+import RxCombine
 
-class WalletsViewModel: BEListViewModel<Wallet> {
+class WalletsViewModel: BECollectionViewModel<Wallet> {
     // MARK: - Dependencies
 
     @Injected private var accountStorage: SolanaAccountStorage
@@ -26,7 +24,6 @@ class WalletsViewModel: BEListViewModel<Wallet> {
     // MARK: - Properties
 
     private var defaultsDisposables = [DefaultsDisposable]()
-    private var disposeBag = DisposeBag()
     private var subscriptions = Set<AnyCancellable>()
     
     @MainActor private var lastGetNewWalletTime = Date()
@@ -38,7 +35,7 @@ class WalletsViewModel: BEListViewModel<Wallet> {
 
     // MARK: - Subjects
 
-    let isHiddenWalletsShown = BehaviorRelay<Bool>(value: false)
+    let isHiddenWalletsShown = CurrentValueSubject<Bool, Never>(false)
 
     // MARK: - Initializer
 
@@ -62,11 +59,15 @@ class WalletsViewModel: BEListViewModel<Wallet> {
 
         // observe tokens' balance
         socket.observeAllAccountsNotifications()
-            .observe(on: MainScheduler.instance)
-            .subscribe(onNext: { [weak self] notification in
+            .map(Optional.init)
+            .publisher
+            .replaceError(with: nil)
+            .compactMap { $0 }
+            .receive(on: RunLoop.main)
+            .sink { [weak self] notification in
                 self?.handleAccountNotification(notification)
-            })
-            .disposed(by: disposeBag)
+            }
+            .store(in: &subscriptions)
 
         // observe hideZeroBalances settings
         defaultsDisposables.append(Defaults.observe(\.hideZeroBalances) { [weak self] _ in
@@ -74,41 +75,44 @@ class WalletsViewModel: BEListViewModel<Wallet> {
         })
 
         // observe account notification
-        dataObservable
+        dataPublisher
             .map { [weak self] _ in self?.getWallets() ?? [] }
-            .subscribe(onNext: { [weak self] wallets in
+            .sink { [weak self] wallets in
                 for wallet in wallets where wallet.pubkey != nil {
                     Task { [weak self] in
                         try await self?.socket.subscribeAccountNotification(account: wallet.pubkey!)
                     }
                 }
-            })
-            .disposed(by: disposeBag)
+            }
+            .store(in: &subscriptions)
 
         // observe timer to update
-        Timer.observable(seconds: 10)
-            .observe(on: MainScheduler.instance)
-            .subscribe(onNext: {[weak self] _ in
+        Timer.publish(every: 1, on: .main, in: .default)
+            .autoconnect()
+            .sink {[weak self] _ in
                 self?.updateBalancesAndGetNewWalletIfNeeded()
-            })
-            .disposed(by: disposeBag)
+            }
+            .store(in: &subscriptions)
     }
 
     // MARK: - Methods
 
-    override func createRequest() -> Single<[Wallet]> {
-        Single<(Lamports, [Wallet])>.async { [weak self] in
-            guard let self = self,
-                  let account = self.accountStorage.account?.publicKey.base58EncodedString
-            else { throw SolanaError.unknown }
-            return try await(
-                self.solanaAPIClient.getBalance(account: account, commitment: "recent"),
-                self.solanaAPIClient.getTokenWallets(account: account)
-            )
-        }
-        .observe(on: ConcurrentDispatchQueueScheduler(qos: .userInitiated))
-        .map { [weak self] balance, wallets in
-            guard let self = self else { return [] }
+    override func createRequest() async throws -> [Wallet] {
+        guard let account = self.accountStorage.account?.publicKey.base58EncodedString
+        else { throw SolanaError.unknown }
+        
+        // get balances and wallet
+        let (balance, wallets) = try await(
+            self.solanaAPIClient.getBalance(account: account, commitment: "recent"),
+            self.solanaAPIClient.getTokenWallets(account: account)
+        )
+        
+        // sort in separated task
+        let sortedWallets = try await Task { [ weak self] in
+            
+            guard let self = self else {
+                throw CancellationError()
+            }
             var wallets = wallets
 
             // add sol wallet on top
@@ -128,15 +132,15 @@ class WalletsViewModel: BEListViewModel<Wallet> {
             wallets.sort(by: Wallet.defaultSorter)
 
             return wallets
-        }
-        .observe(on: MainScheduler.instance)
-        .do(onSuccess: { [weak self] wallets in
-            guard let self = self else { return }
-            let newTokens = wallets.map(\.token)
-                .filter { !self.pricesService.getWatchList().contains($0) }
-            self.pricesService.addToWatchList(newTokens)
-            self.pricesService.fetchPrices(tokens: newTokens, toFiat: Defaults.fiat)
-        })
+        }.value
+        
+        // fetch prices for new tokens
+        let newTokens = wallets.map(\.token)
+            .filter { !pricesService.getWatchList().contains($0) }
+        pricesService.addToWatchList(newTokens)
+        pricesService.fetchPrices(tokens: newTokens, toFiat: Defaults.fiat)
+        
+        return sortedWallets
     }
 
     override func reload() {
@@ -177,7 +181,7 @@ class WalletsViewModel: BEListViewModel<Wallet> {
             
             // On the other hands, The process of maping, shorting is time-comsuming, so we only retrieve new wallet and sort after 2 minutes
             let minComp = DateComponents(minute: 2)
-            if let date = Calendar.current.date(byAdding: minComp, to: await lastGetNewWalletTime),
+            if let date = Calendar.current.date(byAdding: minComp, to: lastGetNewWalletTime),
                Date() > date
             {
                 // 2 minutes has ended
@@ -206,11 +210,13 @@ class WalletsViewModel: BEListViewModel<Wallet> {
         }
     }
 
-    override var dataDidChange: Observable<Void> {
-        Observable.combineLatest(
+    override var dataDidChange: AnyPublisher<Void, Never> {
+        Publishers.CombineLatest(
             super.dataDidChange,
-            isHiddenWalletsShown.distinctUntilChanged()
-        ).map { _ in () }
+            isHiddenWalletsShown.removeDuplicates()
+        )
+            .map { _ in () }
+            .eraseToAnyPublisher()
     }
 
     // MARK: - getters
@@ -222,7 +228,7 @@ class WalletsViewModel: BEListViewModel<Wallet> {
     // MARK: - Actions
 
     @objc func toggleIsHiddenWalletShown() {
-        isHiddenWalletsShown.accept(!isHiddenWalletsShown.value)
+        isHiddenWalletsShown.send(!isHiddenWalletsShown.value)
     }
 
     func toggleWalletVisibility(_ wallet: Wallet) {
@@ -255,13 +261,13 @@ class WalletsViewModel: BEListViewModel<Wallet> {
     // MARK: - Helpers
 
     private func updatePrices() {
-        guard currentState == .loaded else { return }
+        guard state == .loaded else { return }
         let wallets = mapPrices(wallets: data)
         overrideData(by: wallets)
     }
 
     private func updateWalletsVisibility() {
-        guard currentState == .loaded else { return }
+        guard state == .loaded else { return }
         let wallets = mapVisibility(wallets: data)
         overrideData(by: wallets)
     }
@@ -330,15 +336,5 @@ private extension Wallet {
 
             return lhs.name < rhs.name
         }
-    }
-}
-
-private extension Timer {
-    static func observable(
-        seconds: Int,
-        scheduler: SchedulerType = MainScheduler.instance
-    ) -> Observable<Void> {
-        Observable<Int>.timer(.seconds(0), period: .seconds(seconds), scheduler: scheduler)
-            .map { _ in () }
     }
 }

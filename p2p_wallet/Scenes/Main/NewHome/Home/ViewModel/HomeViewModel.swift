@@ -9,8 +9,6 @@ import AnalyticsManager
 import Combine
 import Foundation
 import Resolver
-import RxCombine
-import RxSwift
 import SolanaSwift
 
 class HomeViewModel: ObservableObject {
@@ -37,20 +35,19 @@ class HomeViewModel: ObservableObject {
         self.walletsRepository = walletsRepository
         address = accountStorage.account?.publicKey.base58EncodedString.shortAddress ?? ""
 
-        Observable.combineLatest(
-            walletsRepository.stateObservable,
-            walletsRepository.dataObservable.filter { $0 != nil }
-        ).map { state, data -> (State, Double?) in
+        Publishers.CombineLatest(
+            walletsRepository.statePublisher,
+            walletsRepository.dataPublisher
+        )
+        .map { state, data -> (State, Double?) in
             switch state {
             case .initializing, .loading:
                 return (State.pending, nil)
             case .loaded, .error:
-                let fiatAmount = data?.totalAmountInCurrentFiat ?? 0
+                let fiatAmount = data.totalAmountInCurrentFiat
                 return (fiatAmount > 0 ? State.withTokens : State.empty, fiatAmount)
             }
         }
-        .asPublisher()
-        .assertNoFailure()
         .sink(receiveValue: { [weak self] state, amount in
             guard let self = self else { return }
             if self.initStateFinished, state == .pending { return }
@@ -68,9 +65,7 @@ class HomeViewModel: ObservableObject {
         })
         .store(in: &cancellables)
 
-        walletsRepository.stateObservable
-            .asPublisher()
-            .assertNoFailure()
+        walletsRepository.statePublisher
             .map { $0 == .error }
             .sink(receiveValue: { [weak self] hasError in
                 if hasError, self?.walletsRepository.getError() != nil {

@@ -5,25 +5,24 @@
 //  Created by Chung Tran on 23/03/2021.
 //
 
-import BECollectionView
+import BECollectionView_Combine
 import Foundation
-import RxCocoa
-import RxSwift
+import Combine
 import SolanaSwift
 
-protocol WalletsRepository: BEListViewModelType {
+protocol WalletsRepository: BECollectionViewModelType {
     var nativeWallet: Wallet? { get }
     func getWallets() -> [Wallet]
-    var stateObservable: Observable<BEFetcherState> { get }
-    var dataDidChange: Observable<Void> { get }
-    var dataObservable: Observable<[Wallet]?> { get }
+    var statePublisher: AnyPublisher<BEFetcherState, Never> { get }
+    var currentState: BEFetcherState { get }
+    var dataPublisher: AnyPublisher<[Wallet], Never> { get }
     func getError() -> Error?
     func reload()
     func toggleWalletVisibility(_ wallet: Wallet)
     func removeItem(where predicate: (Wallet) -> Bool) -> Wallet?
     func setState(_ state: BEFetcherState, withData data: [AnyHashable]?)
     func toggleIsHiddenWalletShown()
-    var isHiddenWalletsShown: BehaviorRelay<Bool> { get }
+    var isHiddenWalletsShown: CurrentValueSubject<Bool, Never> { get }
     func hiddenWallets() -> [Wallet]
     func refreshUI()
 
@@ -31,16 +30,23 @@ protocol WalletsRepository: BEListViewModelType {
 }
 
 extension WalletsViewModel: WalletsRepository {
+    var statePublisher: AnyPublisher<BEFetcherState, Never> {
+        $state.receive(on: RunLoop.main).eraseToAnyPublisher()
+    }
+    
+    var currentState: BEFetcherState {
+        state
+    }
+    
+    var dataPublisher: AnyPublisher<[Wallet], Never> {
+        $data.receive(on: RunLoop.main).eraseToAnyPublisher()
+    }
+    
     func getWallets() -> [Wallet] {
         data
     }
 
     func getError() -> Error? {
         error
-    }
-
-    func batchUpdate(closure: ([Wallet]) -> [Wallet]) {
-        let wallets = closure(getWallets())
-        overrideData(by: wallets)
     }
 }
