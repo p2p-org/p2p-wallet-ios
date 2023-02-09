@@ -12,6 +12,7 @@ import RxAppState
 import RxCocoa
 import RxSwift
 import SolanaSwift
+import Combine
 
 class WalletsViewModel: BEListViewModel<Wallet> {
     // MARK: - Dependencies
@@ -26,6 +27,7 @@ class WalletsViewModel: BEListViewModel<Wallet> {
 
     private var defaultsDisposables = [DefaultsDisposable]()
     private var disposeBag = DisposeBag()
+    private var subscriptions = Set<AnyCancellable>()
     
     @MainActor private var lastGetNewWalletTime = Date()
     private var updatingTask: Task<Void, Error>?
@@ -51,11 +53,12 @@ class WalletsViewModel: BEListViewModel<Wallet> {
         super.bind()
 
         // observe prices
-        pricesService.currentPricesDriver
-            .drive(onNext: { [weak self] _ in
+        pricesService.currentPricesPublisher
+            .receive(on: RunLoop.main)
+            .sink(receiveValue: { [weak self] _ in
                 self?.updatePrices()
             })
-            .disposed(by: disposeBag)
+            .store(in: &subscriptions)
 
         // observe tokens' balance
         socket.observeAllAccountsNotifications()
