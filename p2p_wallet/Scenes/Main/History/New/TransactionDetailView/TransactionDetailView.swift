@@ -27,7 +27,7 @@ struct DetailTransactionView: View {
                 .padding(.horizontal, 18)
             status
                 .padding(.horizontal, 16)
-            Spacer()
+                .padding(.bottom, 32)
             button
                 .padding(.horizontal, 16)
                 .padding(.bottom, 4)
@@ -78,6 +78,7 @@ struct DetailTransactionView: View {
                 Text(viewModel.rendableTransaction.amountInToken)
                     .apply(style: .text2)
                     .foregroundColor(Color(Asset.Colors.mountain.color))
+                    .padding(.top, viewModel.rendableTransaction.amountInFiat.value.isEmpty ? 16 : 0)
                     .padding(.bottom, 34)
             }
         }
@@ -108,9 +109,18 @@ struct DetailTransactionView: View {
     }
 
     var button: some View {
-        TextButtonView(
+        var style: TextButton.Style {
+            switch viewModel.style {
+            case .active:
+                return .primaryWhite
+            case .passive:
+                return .second
+            }
+        }
+        
+        return TextButtonView(
             title: viewModel.closeButtonTitle,
-            style: .primaryWhite,
+            style: style,
             size: .large,
             onPressed: viewModel.close.send
         )

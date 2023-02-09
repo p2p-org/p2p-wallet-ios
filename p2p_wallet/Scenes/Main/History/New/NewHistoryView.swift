@@ -17,13 +17,12 @@ struct NewHistoryView: View {
             ScrollView {
                 LazyVStack(alignment: .leading, spacing: 0) {
                     ForEach(viewModel.sections) { (section: NewHistorySection) in
-                        
                         Text(section.title)
                             .apply(style: .text4)
                             .foregroundColor(Color(Asset.Colors.mountain.color))
                             .padding(.top, 24)
                             .padding(.bottom, 12)
-                        
+
                         Color(Asset.Colors.snow.color)
                             .frame(height: 12)
                             .cornerRadius(radius: 16, corners: [.topLeft, .topRight])
@@ -31,7 +30,7 @@ struct NewHistoryView: View {
                             Group {
                                 switch item {
                                 case let .rendable(rendableItem):
-                                    NewHistoryItemView(item: rendableItem) { 
+                                    NewHistoryItemView(item: rendableItem) {
                                         viewModel.onTap(item: rendableItem)
                                     }
                                 case .placeHolder:
@@ -51,6 +50,7 @@ struct NewHistoryView: View {
                         Color(Asset.Colors.snow.color)
                             .frame(height: 12)
                             .cornerRadius(radius: 16, corners: [.bottomLeft, .bottomRight])
+                            .onAppear { Task { await viewModel.fetchMore() } }
 
                     }.padding(.horizontal, 16)
                 }
@@ -58,6 +58,7 @@ struct NewHistoryView: View {
             }
         }
         .background(Color(Asset.Colors.smoke.color))
+        .onAppear { Task { await viewModel.fetchMore() } }
     }
 }
 

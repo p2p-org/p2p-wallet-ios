@@ -46,6 +46,8 @@ enum NewHistoruItemChange {
 protocol NewHistoryRendableItem: Identifiable {
     var id: String { get }
     
+    var date: Date { get }
+    
     var status: NewHistoryItemStatus { get }
     
     var change: NewHistoruItemChange { get }
@@ -68,6 +70,8 @@ enum NewHistoryRendableItemIcon {
 struct MockedHistoryRendableItem: NewHistoryRendableItem {
     var id: String
     
+    var date: Date
+    
     var status: NewHistoryItemStatus
     
     var change: NewHistoruItemChange
@@ -87,6 +91,7 @@ extension MockedHistoryRendableItem {
     static func pendingSend() -> Self {
         .init(
             id: UUID().uuidString,
+            date: Date(),
             status: .pending,
             change: .negative,
             icon: .single(URL(string: Token.nativeSolana.logoURI!)!),
@@ -100,6 +105,7 @@ extension MockedHistoryRendableItem {
     static func send() -> Self {
         .init(
             id: UUID().uuidString,
+            date: Date(),
             status: .success,
             change: .negative,
             icon: .single(URL(string: Token.nativeSolana.logoURI!)!),
@@ -113,6 +119,7 @@ extension MockedHistoryRendableItem {
     static func failedSend() -> Self {
         .init(
             id: UUID().uuidString,
+            date: Date(),
             status: .failed,
             change: .negative,
             icon: .single(URL(string: Token.usdc.logoURI!)!),
@@ -126,6 +133,7 @@ extension MockedHistoryRendableItem {
     static func receive() -> Self {
         .init(
             id: UUID().uuidString,
+            date: Date(),
             status: .success,
             change: .positive,
             icon: .single(URL(string: Token.renBTC.logoURI!)!),
@@ -139,6 +147,7 @@ extension MockedHistoryRendableItem {
     static func swap() -> Self {
         .init(
             id: UUID().uuidString,
+            date: Date(),
             status: .success,
             change: .positive,
             icon: .double(
@@ -155,6 +164,7 @@ extension MockedHistoryRendableItem {
     static func burn() -> Self {
         .init(
             id: UUID().uuidString,
+            date: Date(),
             status: .success,
             change: .negative,
             icon: .single(URL(string: Token.renBTC.logoURI!)!),
@@ -168,6 +178,7 @@ extension MockedHistoryRendableItem {
     static func mint() -> Self {
         .init(
             id: UUID().uuidString,
+            date: Date(),
             status: .success,
             change: .positive,
             icon: .single(URL(string: Token.renBTC.logoURI!)!),
@@ -181,6 +192,7 @@ extension MockedHistoryRendableItem {
     static func stake() -> Self {
         .init(
             id: UUID().uuidString,
+            date: Date(),
             status: .success,
             change: .negative,
             icon: .single(URL(string: Token.nativeSolana.logoURI!)!),
@@ -194,6 +206,7 @@ extension MockedHistoryRendableItem {
     static func unstake() -> Self {
         .init(
             id: UUID().uuidString,
+            date: Date(),
             status: .success,
             change: .positive,
             icon: .single(URL(string: Token.nativeSolana.logoURI!)!),
@@ -207,6 +220,7 @@ extension MockedHistoryRendableItem {
     static func create() -> Self {
         .init(
             id: UUID().uuidString,
+            date: Date(),
             status: .success,
             change: .positive,
             icon: .icon(.transactionCreateAccount),
@@ -220,6 +234,7 @@ extension MockedHistoryRendableItem {
     static func close() -> Self {
         .init(
             id: UUID().uuidString,
+            date: Date(),
             status: .success,
             change: .positive,
             icon: .icon(.transactionCloseAccount),
@@ -233,6 +248,7 @@ extension MockedHistoryRendableItem {
     static func unknown() -> Self {
         .init(
             id: UUID().uuidString,
+            date: Date(),
             status: .success,
             change: .negative,
             icon: .icon(.planet),
