@@ -23,10 +23,6 @@ extension KeychainStorage: ICloudStorageType {
             accountsToSave = currentAccounts
         }
 
-        defer {
-            onValueChangeSubject.on(.next(("didBackupUsingIcloud", didBackupUsingIcloud)))
-        }
-
         // save
         if let data = try? JSONEncoder().encode(accountsToSave) {
             let icloudKeychain = KeychainSwift()
