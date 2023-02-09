@@ -147,19 +147,18 @@ final class HomeCoordinator: Coordinator<Void> {
         case .swap:
             analyticsManager.log(event: AmplitudeEvent.swapViewed(lastScreen: "main_screen"))
             return coordinate(
-                to: SwapCoordinator(
-                    navigationController: navigationController,
-                    initialWallet: nil
+                to: NewSwapCoordinator(
+                    navigationController: navigationController
                 )
             )
             .receive(on: RunLoop.main)
-            .handleEvents(receiveOutput: { [weak tokensViewModel] result in
-                switch result {
-                case .cancel:
-                    break
-                case .done:
-                    tokensViewModel?.scrollToTop()
-                }
+            .handleEvents(receiveOutput: { [weak tokensViewModel] in //result in
+//                switch result {
+//                case .cancel:
+//                    break
+//                case .done:
+//                    tokensViewModel?.scrollToTop()
+//                }
             })
             .map {_ in ()}
             .eraseToAnyPublisher()
