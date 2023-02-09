@@ -1224,3 +1224,4 @@ You can try again, but your new transaction will be subject to the current rates
 "The data is being updated. Please try again in a few minutes." = "Les données sont en cours de mise à jour.  S'il vous plait, réessayez dans quelques minutes.";
 "Buy or receive to continue" = "Achetez ou recevez pour continuer";
 "Less than %@" = "Moins de %@";
+"to phone number, username or address " = "au numéro de téléphone, nom d'utilisateur ou adresse";

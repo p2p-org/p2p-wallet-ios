@@ -10,13 +10,13 @@ import Foundation
 import SolanaSwift
 
 final class ReceiveCoordinator: Coordinator<Void> {
-    private let navigationController: UINavigationController
+    private let navigationController: UIViewController
     private let pubKey: PublicKey
     private let wallet: Wallet?
     private let isOpeningFromToken: Bool
 
     init(
-        navigationController: UINavigationController,
+        navigationController: UIViewController,
         pubKey: PublicKey,
         wallet: Wallet? = nil,
         isOpeningFromToken: Bool = false

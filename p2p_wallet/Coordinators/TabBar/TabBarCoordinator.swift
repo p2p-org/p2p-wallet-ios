@@ -211,7 +211,7 @@ final class TabBarCoordinator: Coordinator<Void> {
     }
     
     /// Handle actions given by Actions button
-    private func handleAction(_ action: ActionsView.Action) {
+    private func handleAction(_ action: ActionsViewModel.Action) {
         guard
             let navigationController = tabBarController.selectedViewController as? UINavigationController
         else { return }
@@ -226,7 +226,9 @@ final class TabBarCoordinator: Coordinator<Void> {
                 .sink(receiveValue: {})
                 .store(in: &subscriptions)
         case .receive:
-            break
+            guard let pubkey = try? PublicKey(string: walletsRepository.nativeWallet?.pubkey) else { return }
+            let coordinator = ReceiveCoordinator(navigationController: navigationController, pubKey: pubkey)
+            coordinate(to: coordinator).sink { _ in }.store(in: &subscriptions)
         case .swap:
             let swapCoordinator = SwapCoordinator(navigationController: navigationController, initialWallet: nil)
             coordinate(to: swapCoordinator)
