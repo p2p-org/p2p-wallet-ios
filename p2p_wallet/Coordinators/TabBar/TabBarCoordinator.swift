@@ -147,18 +147,11 @@ final class TabBarCoordinator: Coordinator<Void> {
     
     /// Set up Settings scene
     private func setUpSettings() -> UIViewController {
-        let settingsNavigation: UINavigationController
-        if available(.settingsFeature) {
-            settingsNavigation = UINavigationController()
-            let settingsCoordinator = SettingsCoordinator(navigationController: settingsNavigation)
-            coordinate(to: settingsCoordinator)
-                .sink(receiveValue: { _ in })
-                .store(in: &subscriptions)
-        } else {
-            settingsNavigation = UINavigationController(
-                rootViewController: Settings.ViewController(viewModel: Settings.ViewModel())
-            )
-        }
+        let settingsNavigation = UINavigationController()
+        let settingsCoordinator = SettingsCoordinator(navigationController: settingsNavigation)
+        coordinate(to: settingsCoordinator)
+            .sink(receiveValue: { _ in })
+            .store(in: &subscriptions)
         return settingsNavigation
     }
     

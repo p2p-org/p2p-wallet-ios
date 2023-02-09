@@ -18,9 +18,7 @@ protocol WalletDetailViewModelType {
     var navigatableSceneDriver: Driver<WalletDetail.NavigatableScene?> { get }
     var walletDriver: Driver<Wallet?> { get }
     var walletActionsDriver: Driver<[WalletActionType]> { get }
-    var graphViewModel: WalletGraphViewModel { get }
 
-    func showWalletSettings()
     func start(action: WalletActionType)
     func showTransaction(_ transaction: ParsedTransaction)
     var pubkey: String { get }
@@ -39,7 +37,6 @@ extension WalletDetail {
         // MARK: - Properties
 
         private let disposeBag = DisposeBag()
-        lazy var graphViewModel = WalletGraphViewModel(symbol: symbol)
 
         // MARK: - Subject
 
@@ -148,11 +145,6 @@ extension WalletDetail.ViewModel: WalletDetailViewModelType {
     }
 
     // MARK: - Actions
-
-    func showWalletSettings() {
-        guard let pubkey = walletSubject.value?.pubkey else { return }
-        navigatableSceneSubject.accept(.settings(walletPubkey: pubkey))
-    }
 
     func start(action: WalletActionType) {
         switch action {
