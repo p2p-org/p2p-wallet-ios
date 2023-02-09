@@ -30,7 +30,7 @@ final class SettingsCoordinator: Coordinator<Void> {
             .sink(receiveValue: { [unowned self] action in
                 switch action {
                 case .username:
-                    let vc = Settings.NewUsernameViewController(viewModel: Settings.ViewModel())
+                    let vc = NewUsernameViewController()
                     navigationController.pushViewController(vc, animated: true)
                 case .support:
                     helpLauncher.launch()

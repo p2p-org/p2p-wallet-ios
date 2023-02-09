@@ -137,7 +137,7 @@ final class ChooseRestoreOptionViewModel: BaseICloudRestoreViewModel, Observable
 
     private func log(option: RestoreOption) {
         analyticsManager.log(
-            event: AmplitudeEvent.selectRestoreOption(
+            event: .selectRestoreOption(
                 restoreOption: option.analyticsRawValue,
                 keychaineOption: options.contains(.keychain)
             )
