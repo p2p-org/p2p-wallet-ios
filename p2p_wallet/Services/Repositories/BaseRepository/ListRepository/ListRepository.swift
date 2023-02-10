@@ -87,7 +87,7 @@ class ListRepository<ItemType: Hashable>: ItemRepository<[ItemType]> {
             
             // resign state
             paginationStrategy.moveToNextPage()
-            paginationStrategy.checkIfLastPageLoaded()
+            paginationStrategy.checkIfLastPageLoaded(lastSnapshot: newData)
         }
         
         // without pagination
