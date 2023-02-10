@@ -32,6 +32,25 @@ class ListRepository<ItemType: Hashable>: ItemRepository<[ItemType]> {
         super.flush()
     }
     
+    /// Erase and reload all data
+    override func reload() {
+        super.reload()
+    }
+    
+    /// Refresh data
+    override func refresh() {
+        // if pagination enabled, erase and reload all data
+        if let paginationStrategy {
+            paginationStrategy.resetPagination()
+            super.reload()
+        }
+        
+        // if pagination is not enabled, just refresh data without erasing current data
+        else {
+            super.refresh()
+        }
+    }
+    
     /// Indicate if should fetch new data to prevent unwanted request
     /// - Returns: should fetch new data
     override func shouldRequest() -> Bool {
@@ -47,94 +66,82 @@ class ListRepository<ItemType: Hashable>: ItemRepository<[ItemType]> {
     
     /// Fetch next records if pagination is enabled
     func fetchNext() {
-        guard paginationStrategy != nil else {
+        // assert pagination is enabled
+        guard let paginationStrategy else {
             return
         }
+        
+        // call request
         super.request()
     }
     
+    /// Handle new data that just received
+    /// - Parameter newData: the new data received
     override func handleNewData(_ newItems: [ItemType]) {
-        let newData = self.join(newItems)
+        var newData = data
         
-        // resign state
-        if !isPaginationEnabled || newItems.count < limit {
-            isLastPageLoaded = true
+        // for pagination
+        if let paginationStrategy {
+            // append data that is currently not existed in current data array
+            newData += newItems.filter {!data.contains($0)}
+            
+            // resign state
+            paginationStrategy.moveToNextPage()
+            paginationStrategy.checkIfLastPageLoaded()
         }
         
-        // map
-        let mappedData = map(newData: newData)
-        super.handleNewData(mappedData)
-        
-        // get next offset
-        offset += limit
-    }
-    
-    func join(_ newItems: [ItemType]) -> [ItemType] {
-        if !isPaginationEnabled {
-            return newItems
+        // without pagination
+        else {
+            // replace the current data
+            newData = newItems
         }
-        return data + newItems.filter {!data.contains($0)}
+        
+        super.handleNewData(newData)
     }
     
+    /// Handle error when received
+    /// - Parameter err: the error received
+    override func handleError(_ err: Error) {
+        super.handleError(err)
+    }
+    
+    /// Force override current data with newData
+    /// - Parameter newData: newData to be overriden
     func overrideData(by newData: [ItemType]) {
-        let newData = map(newData: newData)
-        if newData != data {
-            super.handleNewData(newData)
-        }
+        super.handleNewData(newData)
     }
     
-    func map(newData: [ItemType]) -> [ItemType] {
-        var newData = newData
-        if let customFilter = customFilter {
-            newData = newData.filter {customFilter($0)}
-        }
-        if let sorter = self.customSorter {
-            newData = newData.sorted(by: sorter)
-        }
-        return newData
-    }
+//    func updateFirstPage(onSuccessFilterNewData: (([ItemType]) -> [ItemType])? = nil) {
+//        let originalOffset = offset
+//        offset = 0
+//
+//        task?.cancel()
+//
+//        task = Task {
+//            let onSuccess = onSuccessFilterNewData ?? {[weak self] newData in
+//                newData.filter {!(self?.data.contains($0) == true)}
+//            }
+//            var data = self.data
+//            let newData = try await self.createRequest()
+//            data = onSuccess(newData) + data
+//            self.overrideData(by: data)
+//        }
+//
+//        offset = originalOffset
+//    }
     
-    func setState(_ state: LoadingState, withData data: [AnyHashable]? = nil) {
-        self.state = state
-        if let data = data as? [ItemType] {
-            overrideData(by: data)
-        }
-    }
-    
-    func refreshUI() {
-        overrideData(by: data)
-    }
-    
-    func updateFirstPage(onSuccessFilterNewData: (([ItemType]) -> [ItemType])? = nil) {
-        let originalOffset = offset
-        offset = 0
-        
-        task?.cancel()
-        
-        task = Task {
-            let onSuccess = onSuccessFilterNewData ?? {[weak self] newData in
-                newData.filter {!(self?.data.contains($0) == true)}
-            }
-            var data = self.data
-            let newData = try await self.createRequest()
-            data = onSuccess(newData) + data
-            self.overrideData(by: data)
-        }
-        
-        offset = originalOffset
-    }
-    
-    func getCurrentPage() -> Int? {
-        guard isPaginationEnabled, limit != 0 else {return nil}
-        return offset / limit
-    }
-    
-    // MARK: - Helper
+    /// Update multiple records with a closure
+    /// - Parameter closure: updating closure
     func batchUpdate(closure: ([ItemType]) -> [ItemType]) {
         let newData = closure(data)
         overrideData(by: newData)
     }
     
+    /// Update item that matchs predicate
+    /// - Parameters:
+    ///   - predicate: predicate to find item
+    ///   - transform: transform item before udpate
+    /// - Returns: true if updated, false if not
     @discardableResult
     func updateItem(where predicate: (ItemType) -> Bool, transform: (ItemType) -> ItemType?) -> Bool {
         // modify items
@@ -152,6 +159,12 @@ class ListRepository<ItemType: Hashable>: ItemRepository<[ItemType]> {
         return itemsChanged
     }
     
+    /// Insert item into list or update if needed
+    /// - Parameters:
+    ///   - item: item to be inserted
+    ///   - predicate: predicate to find item
+    ///   - shouldUpdate: should update instead
+    /// - Returns: true if inserted, false if not
     @discardableResult
     func insert(_ item: ItemType, where predicate: ((ItemType) -> Bool)? = nil, shouldUpdate: Bool = false) -> Bool
     {
@@ -176,6 +189,9 @@ class ListRepository<ItemType: Hashable>: ItemRepository<[ItemType]> {
         return false
     }
     
+    /// Remove item that matches a predicate from list
+    /// - Parameter predicate: predicate to find item
+    /// - Returns: removed item
     @discardableResult
     func removeItem(where predicate: (ItemType) -> Bool) -> ItemType? {
         var result: ItemType?
@@ -187,9 +203,5 @@ class ListRepository<ItemType: Hashable>: ItemRepository<[ItemType]> {
             overrideData(by: data)
         }
         return nil
-    }
-    
-    func convertDataToAnyHashable() -> [AnyHashable] {
-        data as [AnyHashable]
     }
 }
