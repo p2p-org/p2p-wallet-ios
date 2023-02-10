@@ -167,9 +167,11 @@ struct RecipientSearchView: View {
                 .foregroundColor(Color(Asset.Colors.rose.color))
             Text(title)
                 .apply(style: .text3)
+                .accessibilityIdentifier("RecipientSearchView.tryLater.title")
             Text(L10n.weSuggestYouTryAgainLaterBecauseWeWillNotBeAbleToVerifyTheAddressIfYouContinue)
                 .apply(style: .text3)
                 .multilineTextAlignment(.center)
+                .accessibilityIdentifier("RecipientSearchView.tryLater.weSuggestYouTryAgainLaterBecauseWeWillNotBeAbleToVerifyTheAddressIfYouContinue")
         }
         .foregroundColor(Color(Asset.Colors.night.color))
     }
@@ -185,7 +187,7 @@ struct RecipientSearchView: View {
 
             RecipientCell(recipient: recipient, subtitle: subtitle)
                 .disabled(true)
-                .accessibilityIdentifier("RecipientSearchView.disabledAndReason.RecipientCell")
+//                .accessibilityIdentifier("RecipientSearchView.disabledAndReason.RecipientCell")
 
             Text(reason)
                 .apply(style: .text4)
