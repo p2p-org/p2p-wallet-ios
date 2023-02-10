@@ -8,9 +8,9 @@
 import Foundation
 import History
 import Resolver
+import SolanaPricesAPIs
 import SolanaSwift
 import TransactionParser
-import SolanaPricesAPIs
 
 protocol NewHistoryRepository {
     func clear() async
@@ -118,7 +118,7 @@ actor NewHistoryRepositoryWithOldProvider: NewHistoryRepository {
 
 struct RendableParsedTransaction: NewHistoryRendableItem {
     let trx: ParsedTransaction
-    
+
     var price: CurrentPrice?
 
     var id: String {
@@ -141,6 +141,10 @@ struct RendableParsedTransaction: NewHistoryRendableItem {
     }
 
     var change: NewHistoruItemChange {
+        if let info = trx.info as? SwapInfo {
+            return .positive
+        }
+        
         if trx.amount >= 0 {
             return .positive
         } else {
@@ -179,7 +183,12 @@ struct RendableParsedTransaction: NewHistoryRendableItem {
         if let info = trx.info as? SwapInfo {
             return "\(info.source?.token.symbol ?? "") to \(info.destination?.token.symbol ?? "")"
         } else if let info = trx.info as? TransferInfo {
-            return "To \(RecipientFormatter.shortFormat(destination: info.destination?.pubkey ?? ""))"
+            switch info.transferType {
+            case .send:
+                return "To \(RecipientFormatter.shortFormat(destination: info.destination?.pubkey ?? ""))"
+            default:
+                return "From \(RecipientFormatter.shortFormat(destination: info.destination?.pubkey ?? ""))"
+            }
         } else if let info = trx.info as? CloseAccountInfo {
             return "Close account"
         } else if let info = trx.info as? CreateAccountInfo {
@@ -204,17 +213,29 @@ struct RendableParsedTransaction: NewHistoryRendableItem {
     }
 
     var detail: String {
+        if let info = trx.info as? SwapInfo {
+            let amountText = info.destinationAmount?.tokenAmountFormattedString(symbol: info.destination?.token.symbol ?? "", maximumFractionDigits: Int(info.destination?.token.decimals ?? 0)) ?? ""
+            return "+\(amountText)"
+        }
+
         return ""
     }
 
     var subdetail: String {
         if let info = trx.info as? SwapInfo {
             if let amount = info.destinationAmount {
-                return amount.tokenAmountFormattedString(symbol: info.source?.token.symbol ?? "")
+                let amountText = amount.tokenAmountFormattedString(symbol: info.source?.token.symbol ?? "")
+                return "-\(amountText)"
             }
         } else if let info = trx.info as? TransferInfo {
             if let amount = info.amount {
-                return amount.tokenAmountFormattedString(symbol: info.source?.token.symbol ?? "")
+                let amountText = amount.tokenAmountFormattedString(symbol: info.source?.token.symbol ?? "")
+                switch info.transferType {
+                case .send:
+                    return "\(amountText)"
+                default:
+                    return "+\(amountText)"
+                }
             }
         }
         return ""
