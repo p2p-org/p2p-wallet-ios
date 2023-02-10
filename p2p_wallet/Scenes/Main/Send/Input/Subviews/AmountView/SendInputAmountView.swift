@@ -29,6 +29,7 @@ struct SendInputAmountView: View {
                                     textField.placeholder = "0"
                                     textField.isEnabled = !viewModel.isDisabled
                                 }
+                                .accessibilityIdentifier("input-amount")
 
                                 if viewModel.isMaxButtonVisible {
                                     TextButtonView(
@@ -45,6 +46,7 @@ struct SendInputAmountView: View {
                                             : textWidth(font: Constants.inputFount, text: viewModel.amountText)
                                     )
                                     .padding(.horizontal, 8)
+                                    .accessibilityIdentifier("max-button")
                                 }
                             }
 
@@ -52,6 +54,7 @@ struct SendInputAmountView: View {
                                 .foregroundColor(Color(mainColor))
                                 .font(uiFont: .systemFont(ofSize: UIFont.fontSize(of: .title2), weight: .bold))
                                 .opacity(switchAreaOpacity)
+                                .accessibilityIdentifier("current-currency")
                         }
                         HStack(spacing: 2) {
                             Text(viewModel.secondaryAmountText)
@@ -110,6 +113,7 @@ struct SendInputAmountView: View {
             VStack { }
                 .frame(width: 130, height: 90)
         })
+        .accessibilityIdentifier("switch-currency")
     }
 
     func textWidth(font: UIFont, text: String) -> CGFloat {

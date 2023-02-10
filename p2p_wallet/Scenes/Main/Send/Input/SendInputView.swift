@@ -71,12 +71,15 @@ struct SendInputView: View {
                                 })
                             }
                         }
-                    }.allowsHitTesting(!viewModel.isFeeLoading && !viewModel.lock)
+                    }
+                    .allowsHitTesting(!viewModel.isFeeLoading && !viewModel.lock)
+                    .accessibilityIdentifier("fee-label")
                 }
                 .padding(.horizontal, 4)
 
                 SendInputTokenView(viewModel: viewModel.tokenViewModel)
                     .allowsHitTesting(!viewModel.lock)
+                    .accessibilityIdentifier("token-view")
 
                 switch viewModel.status {
                 case .initializing:
@@ -108,6 +111,7 @@ struct SendInputView: View {
                         .frame(height: TextButton.Size.large.height)
                 case .initializing, .ready:
                     SliderActionButton(viewModel: viewModel.actionButtonViewModel)
+                        .accessibilityIdentifier("send-slider")
                 }
             }
             .padding(.horizontal, 16)
