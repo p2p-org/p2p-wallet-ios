@@ -18,6 +18,7 @@ struct SwapView: View {
                     .if(viewModel.arePricesLoading) { view in
                         view.skeleton(with: true, size: CGSize(width: 160, height: 16))
                     }
+                    .frame(height: 16)
 
                 ZStack {
                     VStack(spacing: 8) {

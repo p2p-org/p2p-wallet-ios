@@ -58,14 +58,13 @@ private extension SwapViewModel {
 
         swapWalletsRepository.state
             .sink { [weak self] currentState in
-                self?.isLoading = currentState == .loading
+                self?.isLoading = currentState == .loading || currentState == .initialized
             }
             .store(in: &subscriptions)
 
         swapWalletsRepository.tokens
-            .receive(on: RunLoop.main)
-            .sink { [weak self] data in
-                self?.prepareTokens(data: data)
+            .sinkAsync { [weak self] data in
+                self?.autoChooseSwapTokens(data: data)
             }
             .store(in: &subscriptions)
 
@@ -83,14 +82,14 @@ private extension SwapViewModel {
             .store(in: &subscriptions)
 
         $fromToken
-            .sink { [weak self] token in
-                self?.fromTokenViewModel.update(swapToken: token)
+            .sink { [weak fromTokenViewModel] token in
+                fromTokenViewModel?.token = token
             }
             .store(in: &subscriptions)
 
         $toToken
-            .sink { [weak self] token in
-                self?.toTokenViewModel.update(swapToken: token)
+            .sink { [weak toTokenViewModel] token in
+                toTokenViewModel?.token = token
             }
             .store(in: &subscriptions)
 
@@ -112,33 +111,30 @@ private extension SwapViewModel {
             .store(in: &subscriptions)
     }
 
-    func prepareTokens(data: SwapWalletsData) {
-        let walletUSDC = data.userTokens.first(where: { $0.mintAddress == Token.usdc.address })
-        let walletSolana = data.userTokens.first(where: { $0.mintAddress == Token.nativeSolana.address })
-        let jupiterUSDC = data.jupiterTokens.first(where: { $0.address == Token.usdc.address })
-        let jupiterSolana = data.jupiterTokens.first(where: { $0.address == Token.nativeSolana.address })
+    func autoChooseSwapTokens(data: SwapWalletsData) {
+        let usdc = data.tokens.first(where: { $0.jupiterToken.address == Token.usdc.address })
+        let solana = data.tokens.first(where: { $0.jupiterToken.address == Token.nativeSolana.address })
 
-        if data.userTokens.isEmpty, let jupiterUSDC, let jupiterSolana {
-            fromToken = SwapToken(jupiterToken: jupiterUSDC, userWallet: walletUSDC)
-            toToken = SwapToken(jupiterToken: jupiterSolana, userWallet: walletSolana)
-        } else if let walletUSDC, let jupiterUSDC, let jupiterSolana {
-            fromToken = SwapToken(jupiterToken: jupiterUSDC, userWallet: walletUSDC)
-            toToken = SwapToken(jupiterToken: jupiterSolana, userWallet: walletSolana)
-        } else if let walletSolana, let jupiterUSDC, let jupiterSolana {
-            fromToken = SwapToken(jupiterToken: jupiterSolana, userWallet: walletSolana)
-            toToken = SwapToken(jupiterToken: jupiterUSDC, userWallet: walletUSDC)
-        } else if let jupiterUSDC {
-            let biggestUserToken = data.userTokens.sorted(by: { $0.amountInCurrentFiat > $1.amountInCurrentFiat }).first
-            fromToken = SwapToken(
-                jupiterToken: data.jupiterTokens.first(where: { $0.address == biggestUserToken?.mintAddress }) ?? jupiterSolana ?? jupiterUSDC,
-                userWallet: biggestUserToken
-            )
-            toToken = SwapToken(jupiterToken: jupiterUSDC, userWallet: walletUSDC)
+        if data.userWallets.isEmpty, let usdc, let solana {
+            fromToken = usdc
+            toToken = solana
+        } else if usdc?.userWallet != nil, let usdc, let solana {
+            fromToken = usdc
+            toToken = solana
+        } else if solana?.userWallet != nil, let usdc, let solana {
+            fromToken = solana
+            toToken = usdc
+        } else if let usdc {
+            let userWallet = data.userWallets.sorted(by: { $0.amountInCurrentFiat > $1.amountInCurrentFiat }).first
+            let swapToken = data.tokens.first(where: { $0.jupiterToken.address == userWallet?.mintAddress })
+            fromToken = swapToken ?? solana ?? usdc
+            toToken = usdc
         }
     }
 
     func getPrices(from: SwapToken, to: SwapToken) {
         guard from.jupiterToken.address != to.jupiterToken.address else { return }
+
         priceInfoTask?.cancel()
         arePricesLoading = true
         priceInfoTask = Task {
