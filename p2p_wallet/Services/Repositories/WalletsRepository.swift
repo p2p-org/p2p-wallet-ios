@@ -25,6 +25,7 @@ protocol WalletsRepository: BECollectionViewModelType {
     var isHiddenWalletsShown: CurrentValueSubject<Bool, Never> { get }
     func hiddenWallets() -> [Wallet]
     func refreshUI()
+    func refresh()
 
     func batchUpdate(closure: ([Wallet]) -> [Wallet])
 }
