@@ -167,7 +167,7 @@ final class SendInputViewModel: BaseViewModel, ObservableObject {
                 Task {
                     inputAmountViewModel.mainAmountType = .token
                     inputAmountViewModel.amountText = amount.toString()
-                    await MainActor.run { [unowned self] in
+                    await MainActor.run {
                         inputAmountViewModel.isDisabled = true
                     }
                 }

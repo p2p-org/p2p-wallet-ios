@@ -5,7 +5,7 @@ protocol PaginationStrategy {
     /// Boolean value to indicate that last page was loaded or not
     var isLastPageLoaded: Bool { get }
     /// Check if last page loaded
-    func checkIfLastPageLoaded()
+    func checkIfLastPageLoaded<ItemType: Hashable>(lastSnapshot: [ItemType])
     /// Reset pagination
     func resetPagination()
     /// Move to next page
