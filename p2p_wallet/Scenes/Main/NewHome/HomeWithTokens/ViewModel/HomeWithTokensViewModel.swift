@@ -101,7 +101,10 @@ final class HomeWithTokensViewModel: BaseViewModel, ObservableObject {
     }
 
     func reloadData() async {
-        walletsRepository.refreshUI()
+        // reload
+        walletsRepository.reload()
+        
+        // wait for .loaded or .error event
         _ = try? await walletsRepository.statePublisher
             .filter { $0 == .loaded || $0 == .error }
             .eraseToAnyPublisher()
