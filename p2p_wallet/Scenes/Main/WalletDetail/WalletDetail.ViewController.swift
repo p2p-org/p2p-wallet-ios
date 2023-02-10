@@ -46,17 +46,6 @@ extension WalletDetail {
         override func setUp() {
             super.setUp()
 
-            #if DEBUG
-                let rightButton = UIBarButtonItem(
-                    title: L10n.settings,
-                    style: .plain,
-                    target: self,
-                    action: #selector(showWalletSettings)
-                )
-                rightButton.setTitleTextAttributes([.foregroundColor: UIColor.red], for: .normal)
-                navigationItem.rightBarButtonItem = rightButton
-            #endif
-
             let containerView = UIView(forAutoLayout: ())
 
             let actionsPublisher = viewModel.walletActionsDriver
@@ -117,31 +106,13 @@ extension WalletDetail {
         private func navigate(to scene: NavigatableScene?) {
             switch scene {
             case let .buy(crypto):
-                let vc: UIViewController
-                if available(.buyScenarioEnabled) {
-                    // TODO: remove after moving to coordinator
-                    buyCoordinator = BuyCoordinator(
-                        context: .fromToken,
-                        defaultToken: crypto == .sol ? .nativeSolana : crypto == .usdc ? .usdc : .eth,
-                        presentingViewController: self,
-                        shouldPush: false
-                    )
-                    buyCoordinator?.start().sink { _ in }.store(in: &subscriptions)
-                } else {
-                    vc = BuyPreparing.Scene(
-                        viewModel: BuyPreparing.SceneModel(
-                            crypto: crypto,
-                            exchangeService: Resolver.resolve()
-                        )
-                    )
-                    let navigation = UINavigationController(rootViewController: vc)
-                    present(navigation, animated: true)
-                }
-            case let .settings(pubkey):
-                let vm = TokenSettingsViewModel(pubkey: pubkey)
-                let vc = TokenSettingsViewController(viewModel: vm)
-                vc.delegate = self
-                present(vc, animated: true)
+                buyCoordinator = BuyCoordinator(
+                    context: .fromToken,
+                    defaultToken: crypto == .sol ? .nativeSolana : crypto == .usdc ? .usdc : .eth,
+                    presentingViewController: self,
+                    shouldPush: false
+                )
+                buyCoordinator?.start().sink { _ in }.store(in: &subscriptions)
             case let .send(wallet):
                 coordinator = SendCoordinator(rootViewController: navigationController!, preChosenWallet: wallet, hideTabBar: true, allowSwitchingMainAmountType: true)
                 coordinator?.start()
@@ -183,10 +154,6 @@ extension WalletDetail {
         }
 
         // MARK: - Actions
-
-        @objc func showWalletSettings() {
-            viewModel.showWalletSettings()
-        }
         
         private func showSendTransactionStatus(model: SendTransaction) {
             sendTransactionStatusCoordinator = SendTransactionStatusCoordinator(parentController: navigationController!, transaction: model)
@@ -196,11 +163,5 @@ extension WalletDetail {
                 .sink(receiveValue: { })
                 .store(in: &subscriptions)
         }
-    }
-}
-
-extension WalletDetail.ViewController: TokenSettingsViewControllerDelegate {
-    func tokenSettingsViewControllerDidCloseToken(_: TokenSettingsViewController) {
-        dismiss(animated: true, completion: nil)
     }
 }

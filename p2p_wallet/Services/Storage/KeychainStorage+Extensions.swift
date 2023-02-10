@@ -11,7 +11,6 @@ extension KeychainStorage: NameStorageType {
         } else {
             localKeychain.set(name, forKey: nameKey)
             saveNameToICloudIfAccountSaved()
-            onValueChangeSubject.on(.next(("getName", name)))
         }
     }
 

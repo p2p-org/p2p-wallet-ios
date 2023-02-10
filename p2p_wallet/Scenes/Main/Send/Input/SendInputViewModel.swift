@@ -64,7 +64,6 @@ final class SendInputViewModel: BaseViewModel, ObservableObject {
     private let walletsRepository: WalletsRepository
     private let pricesService: PricesServiceType
     @Injected private var analyticsManager: AnalyticsManager
-    @Injected private var analyticsService: AnalyticsService
 
     init(recipient: Recipient, preChosenWallet: Wallet?, preChosenAmount: Double?, source: SendSource, allowSwitchingMainAmountType: Bool) {
         self.source = source
@@ -168,7 +167,7 @@ final class SendInputViewModel: BaseViewModel, ObservableObject {
                 Task {
                     inputAmountViewModel.mainAmountType = .token
                     inputAmountViewModel.amountText = amount.toString()
-                    await MainActor.run { [unowned self] in
+                    await MainActor.run {
                         inputAmountViewModel.isDisabled = true
                     }
                 }
@@ -466,23 +465,23 @@ private extension SendInputViewModel {
 
 private extension SendInputViewModel {
     func logOpen() {
-        analyticsManager.log(event: AmplitudeEvent.sendnewInputScreen(source: source.rawValue))
+        analyticsManager.log(event: .sendnewInputScreen(source: source.rawValue))
     }
 
     func logEnjoyFeeTransaction() {
-        analyticsManager.log(event: AmplitudeEvent.sendnewFreeTransactionClick(source: source.rawValue))
+        analyticsManager.log(event: .sendnewFreeTransactionClick(source: source.rawValue))
     }
 
     func logChooseTokenClick() {
-        analyticsManager.log(event: AmplitudeEvent.sendnewTokenInputClick(source: source.rawValue))
+        analyticsManager.log(event: .sendnewTokenInputClick(source: source.rawValue))
     }
 
     func logFiatInputClick(isCrypto: Bool) {
-        analyticsManager.log(event: AmplitudeEvent.sendnewFiatInputClick(crypto: isCrypto, source: source.rawValue))
+        analyticsManager.log(event: .sendnewFiatInputClick(crypto: isCrypto, source: source.rawValue))
     }
 
     func logConfirmButtonClick() {
-        analyticsService.logEvent(.sendNewConfirmButtonClick(
+        analyticsManager.log(event: .sendNewConfirmButtonClick(
             source: source.rawValue,
             token: currentState.token.symbol,
             max: inputAmountViewModel.wasMaxUsed,
