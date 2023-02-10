@@ -1,37 +1,39 @@
 import Foundation
 import Combine
 
-class ListRepository<T: Hashable>: ItemRepository<[T]> {
+protocol PaginationStrategy {
+    var isLastPageLoaded: Bool { get }
+    func resetPagination()
+}
+
+/// Repository to manage a List of some Kind of item
+@MainActor
+class ListRepository<ItemType: Hashable>: ItemRepository<[ItemType]> {
 
     // MARK: - Properties
-
-    var isPaginationEnabled: Bool
-    var customFilter: ((T) -> Bool)?
-    var customSorter: ((T, T) -> Bool)?
-    var isEmpty: Bool {isLastPageLoaded && data.count == 0}
     
-    // For pagination
-    var limit: Int
-    var offset: Int
-    private var isLastPageLoaded = false
+    /// Strategy that indicates how pagination works, nil if pagination is disabled
+    let paginationStrategy: PaginationStrategy?
     
     // MARK: - Initializer
+
+    /// ListRepository's initializer
+    /// - Parameters:
+    ///   - initialData: initial data for begining state of the Repository
+    ///   - paginationStrategy: Strategy that indicates how pagination works, nil if pagination is disabled
     init(
-        initialData: [T] = [],
-        isPaginationEnabled: Bool = false,
-        limit: Int = 10,
-        offset: Int = 0
+        initialData: [ItemType] = [],
+        paginationStrategy: PaginationStrategy?
     ) {
-        self.isPaginationEnabled = isPaginationEnabled
-        self.limit = limit
-        self.offset = offset
+        self.paginationStrategy = paginationStrategy
         super.init(initialData: initialData)
     }
     
     // MARK: - Actions
+
+    /// Erase data and reset repository to its initial state
     override func flush() {
-        offset = 0
-        isLastPageLoaded = false
+        paginationStrategy?.resetPagination()
         super.flush()
     }
     
@@ -44,7 +46,7 @@ class ListRepository<T: Hashable>: ItemRepository<[T]> {
         super.request()
     }
     
-    override func handleNewData(_ newItems: [T]) {
+    override func handleNewData(_ newItems: [ItemType]) {
         let newData = self.join(newItems)
         
         // resign state
@@ -60,21 +62,21 @@ class ListRepository<T: Hashable>: ItemRepository<[T]> {
         offset += limit
     }
     
-    func join(_ newItems: [T]) -> [T] {
+    func join(_ newItems: [ItemType]) -> [ItemType] {
         if !isPaginationEnabled {
             return newItems
         }
         return data + newItems.filter {!data.contains($0)}
     }
     
-    func overrideData(by newData: [T]) {
+    func overrideData(by newData: [ItemType]) {
         let newData = map(newData: newData)
         if newData != data {
             super.handleNewData(newData)
         }
     }
     
-    func map(newData: [T]) -> [T] {
+    func map(newData: [ItemType]) -> [ItemType] {
         var newData = newData
         if let customFilter = customFilter {
             newData = newData.filter {customFilter($0)}
@@ -87,7 +89,7 @@ class ListRepository<T: Hashable>: ItemRepository<[T]> {
     
     func setState(_ state: LoadingState, withData data: [AnyHashable]? = nil) {
         self.state = state
-        if let data = data as? [T] {
+        if let data = data as? [ItemType] {
             overrideData(by: data)
         }
     }
@@ -96,7 +98,7 @@ class ListRepository<T: Hashable>: ItemRepository<[T]> {
         overrideData(by: data)
     }
     
-    func updateFirstPage(onSuccessFilterNewData: (([T]) -> [T])? = nil) {
+    func updateFirstPage(onSuccessFilterNewData: (([ItemType]) -> [ItemType])? = nil) {
         let originalOffset = offset
         offset = 0
         
@@ -121,13 +123,13 @@ class ListRepository<T: Hashable>: ItemRepository<[T]> {
     }
     
     // MARK: - Helper
-    func batchUpdate(closure: ([T]) -> [T]) {
+    func batchUpdate(closure: ([ItemType]) -> [ItemType]) {
         let newData = closure(data)
         overrideData(by: newData)
     }
     
     @discardableResult
-    func updateItem(where predicate: (T) -> Bool, transform: (T) -> T?) -> Bool {
+    func updateItem(where predicate: (ItemType) -> Bool, transform: (ItemType) -> ItemType?) -> Bool {
         // modify items
         var itemsChanged = false
         if let index = data.firstIndex(where: predicate),
@@ -144,7 +146,7 @@ class ListRepository<T: Hashable>: ItemRepository<[T]> {
     }
     
     @discardableResult
-    func insert(_ item: T, where predicate: ((T) -> Bool)? = nil, shouldUpdate: Bool = false) -> Bool
+    func insert(_ item: ItemType, where predicate: ((ItemType) -> Bool)? = nil, shouldUpdate: Bool = false) -> Bool
     {
         var items = data
         
@@ -168,8 +170,8 @@ class ListRepository<T: Hashable>: ItemRepository<[T]> {
     }
     
     @discardableResult
-    func removeItem(where predicate: (T) -> Bool) -> T? {
-        var result: T?
+    func removeItem(where predicate: (ItemType) -> Bool) -> ItemType? {
+        var result: ItemType?
         var data = self.data
         if let index = data.firstIndex(where: predicate) {
             result = data.remove(at: index)
