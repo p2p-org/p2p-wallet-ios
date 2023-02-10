@@ -79,6 +79,23 @@ struct DetailTransactionView: View {
                     .apply(style: .text2)
                     .foregroundColor(Color(Asset.Colors.mountain.color))
                     .padding(.top, viewModel.rendableTransaction.amountInFiat.value.isEmpty ? 16 : 0)
+            }
+            
+            if !viewModel.rendableTransaction.actions.isEmpty {
+                HStack(spacing: 32) {
+                    ForEach(viewModel.rendableTransaction.actions) { action in
+                        switch action {
+                        case .share:
+                            NewHistoryButtonAction(title: L10n.share, image: .share2) {}
+                        case .explorer:
+                            NewHistoryButtonAction(title: "Explore", image: .transactionShowInExplorer) {}
+                        }
+                    }
+                }
+                .padding(.top, 28)
+                .padding(.bottom, 48)
+            } else {
+                Rectangle()
                     .padding(.bottom, 34)
             }
         }
@@ -132,7 +149,8 @@ struct DetailTransactionView_Previews: PreviewProvider {
     static var previews: some View {
         DetailTransactionView(
             viewModel: .init(
-                rendableTransaction: MockedRendableDetailTransaction.send()
+                rendableDetailTransaction: MockedRendableDetailTransaction.send(),
+                style: .passive
             )
         )
     }

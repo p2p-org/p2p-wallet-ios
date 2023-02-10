@@ -7,6 +7,7 @@
 
 import Foundation
 import Combine
+import TransactionParser
 
 enum DetailTransactionStyle {
     case active
@@ -22,8 +23,14 @@ class DetailTransactionViewModel: BaseViewModel, ObservableObject {
     
     let close = PassthroughSubject<Void, Never>()
     
-    init(rendableTransaction: any RendableDetailTransaction, style: DetailTransactionStyle = .active) {
+    init(rendableDetailTransaction: any RendableDetailTransaction, style: DetailTransactionStyle = .active) {
         self.style = style
-        self.rendableTransaction = rendableTransaction
+        self.rendableTransaction = rendableDetailTransaction
+    }
+    
+    init(parsedTransaction: ParsedTransaction, style: DetailTransactionStyle = .active) {
+        self.style = style
+        self.rendableTransaction = RendableDetailParsedTransaction(trx: parsedTransaction)
     }
 }
+

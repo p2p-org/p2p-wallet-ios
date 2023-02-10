@@ -17,10 +17,10 @@ class NewHistoryCoordinator: SmartCoordinator<Void> {
             .sink { [weak self] action in
                 guard let self = self else { return }
                 switch action {
-                case let .openDetailByRendableItem(item):
+                case let .openDetailByParsedTransaction(trx):
                     self.coordinate(
                         to: TransactionDetailCoordinator(
-                            transaction: item,
+                            input: .parsedTransaction(trx),
                             style: .passive,
                             presentingViewController: self.presentation.presentingViewController
                         )
