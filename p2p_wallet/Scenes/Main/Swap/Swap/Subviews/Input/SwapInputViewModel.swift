@@ -33,7 +33,7 @@ final class SwapInputViewModel: BaseViewModel, ObservableObject {
     }
 
     func update(swapToken: SwapToken) {
-        self.balance = swapToken.wallet?.amount
+        self.balance = swapToken.userWallet?.amount
         self.tokenSymbol = swapToken.jupiterToken.symbol
         self.balanceText = balance?.tokenAmountFormattedString(symbol: tokenSymbol)
     }
@@ -41,10 +41,10 @@ final class SwapInputViewModel: BaseViewModel, ObservableObject {
 
 extension SwapInputViewModel {
     static func buildFromViewModel(swapToken: SwapToken) -> SwapInputViewModel {
-        SwapInputViewModel(title: L10n.youPay, isFirstResponder: true, isEditable: true, balance: swapToken.wallet?.amount, tokenSymbol: swapToken.jupiterToken.symbol)
+        SwapInputViewModel(title: L10n.youPay, isFirstResponder: true, isEditable: true, balance: swapToken.userWallet?.amount, tokenSymbol: swapToken.jupiterToken.symbol)
     }
 
     static func buildToViewModel(swapToken: SwapToken) -> SwapInputViewModel {
-        SwapInputViewModel(title: L10n.youReceive, isFirstResponder: false, isEditable: false, balance: swapToken.wallet?.amount, tokenSymbol: swapToken.jupiterToken.symbol)
+        SwapInputViewModel(title: L10n.youReceive, isFirstResponder: false, isEditable: false, balance: swapToken.userWallet?.amount, tokenSymbol: swapToken.jupiterToken.symbol)
     }
 }

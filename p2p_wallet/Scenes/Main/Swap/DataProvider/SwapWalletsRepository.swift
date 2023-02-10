@@ -4,6 +4,7 @@ import SolanaSwift
 import Resolver
 
 public enum SwapWalletsState {
+    case initialized
     case loading
     case loaded
     case error
@@ -11,7 +12,7 @@ public enum SwapWalletsState {
 
 struct SwapWalletsData {
     let userTokens: [Wallet]
-    let alljupiterTokens: [SolanaSwift.Token]
+    let jupiterTokens: [Jupiter.Token]
 }
 
 protocol SwapWalletsRepository {
@@ -32,30 +33,40 @@ final class SwapWalletsRepositoryImpl: SwapWalletsRepository {
     }
 
     // MARK: - Dependencies
-    private let jupiterClient = JupiterRestClientAPI(version: .v4)
+    private let jupiterClient: JupiterAPI
+    private let localProvider: SwapWalletsProvider
     @Injected private var walletsRepository: WalletsRepository
 
     // MARK: - Private params
     @Published private var stateSubject = CurrentValueSubject<SwapWalletsState, Never>(.loading)
-    @Published private var dataSubject = CurrentValueSubject<SwapWalletsData, Never>(.init(userTokens: [], alljupiterTokens: []))
+    @Published private var dataSubject = CurrentValueSubject<SwapWalletsData, Never>(.init(userTokens: [], jupiterTokens: []))
+
+    init(provider: SwapWalletsProvider, jupiterClient: JupiterAPI) {
+        self.localProvider = provider
+        self.jupiterClient = jupiterClient
+        self.stateSubject.send(.initialized)
+    }
 
     func load() async throws {
         stateSubject.send(.loading)
         do {
-            let tokens = try await jupiterClient.getTokens()
+            let tokens: [Jupiter.Token]
+            if let cachedData = localProvider.getTokens() {
+                tokens = cachedData
+            } else {
+                tokens = try await jupiterClient.getTokens()
+                try localProvider.save(tokens: tokens)
+            }
 
             let wallets = walletsRepository.getWallets()
             let userJupiterTokens = wallets.filter { wallet in
-                return tokens.contains(where: { jupiterToken in
-                    jupiterToken.address == wallet.mintAddress
-                })
+                tokens.contains(where: { $0.address == wallet.mintAddress })
             }
-            dataSubject.send(SwapWalletsData(userTokens: userJupiterTokens, alljupiterTokens: tokens))
+            dataSubject.send(SwapWalletsData(userTokens: userJupiterTokens, jupiterTokens: tokens))
             stateSubject.send(.loaded)
         }
         catch {
             stateSubject.send(.error)
         }
-
     }
 }
