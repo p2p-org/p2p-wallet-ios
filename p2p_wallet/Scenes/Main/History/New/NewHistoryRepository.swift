@@ -11,6 +11,7 @@ import Resolver
 import SolanaSwift
 import TransactionParser
 import SolanaPricesAPIs
+import Resolver
 
 protocol NewHistoryRepository {
     func clear() async
@@ -204,6 +205,19 @@ struct RendableParsedTransaction: NewHistoryRendableItem {
     }
 
     var detail: String {
+        var symbol: String?
+        if let info = trx.info as? SwapInfo {
+            symbol = info.symbol
+        } else if let info = trx.info as? TransferInfo {
+            symbol = info.symbol
+        }
+
+        if let symbol {
+            let priceService: PricesService = Resolver.resolve()
+            let price = priceService.getCurrentPrice(for: symbol)
+            return (price ?? 0 * trx.amount).fiatAmountFormattedString(customFormattForLessThan1E_2: true)
+        }
+        
         return ""
     }
 
