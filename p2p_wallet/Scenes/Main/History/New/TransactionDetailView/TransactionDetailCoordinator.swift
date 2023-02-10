@@ -32,8 +32,17 @@ class TransactionDetailCoordinator: SmartCoordinator<Void> {
 
         let vc = BottomSheetController(rootView: DetailTransactionView(viewModel: vm))
 
-        vm.close.sink { _ in
-            vc.dismiss(animated: true)
+        vm.action.sink { [weak self] action in
+            switch action {
+            case .close:
+                vc.dismiss(animated: true)
+            case let .share(url):
+                self?.presentation.presentingViewController.dismiss(animated: true) {
+                    let av = UIActivityViewController(activityItems: [url], applicationActivities: nil)
+                    UIApplication.shared.windows.first?.rootViewController?.present(av, animated: true, completion: nil)
+                }
+            }
+
         }.store(in: &subscriptions)
 
         return vc
