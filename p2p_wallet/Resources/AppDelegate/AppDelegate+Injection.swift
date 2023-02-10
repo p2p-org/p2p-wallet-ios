@@ -356,8 +356,8 @@ extension Resolver: ResolverRegistering {
             .implements(SellPriceProvider.self)
             .scope(.session)
 
-        // WalletsViewModel
-        register { WalletsViewModel() }
+        // WalletsRepositoryImpl
+        register { WalletsRepositoryImpl() }
             .implements(WalletsRepository.self)
             .scope(.session)
 

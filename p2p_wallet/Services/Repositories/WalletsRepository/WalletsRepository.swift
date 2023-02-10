@@ -5,22 +5,22 @@
 //  Created by Chung Tran on 23/03/2021.
 //
 
-import BECollectionView_Combine
 import Foundation
 import Combine
 import SolanaSwift
 
-protocol WalletsRepository: BECollectionViewModelType {
+protocol WalletsRepository {
+    var dataDidChange: AnyPublisher<Void, Never> { get }
     var nativeWallet: Wallet? { get }
     func getWallets() -> [Wallet]
-    var statePublisher: AnyPublisher<BEFetcherState, Never> { get }
-    var currentState: BEFetcherState { get }
+    var statePublisher: AnyPublisher<LoadingState, Never> { get }
+    var currentState: LoadingState { get }
     var dataPublisher: AnyPublisher<[Wallet], Never> { get }
     func getError() -> Error?
     func reload()
     func toggleWalletVisibility(_ wallet: Wallet)
     func removeItem(where predicate: (Wallet) -> Bool) -> Wallet?
-    func setState(_ state: BEFetcherState, withData data: [AnyHashable]?)
+    func setState(_ state: LoadingState, withData data: [AnyHashable]?)
     func toggleIsHiddenWalletShown()
     var isHiddenWalletsShown: CurrentValueSubject<Bool, Never> { get }
     func hiddenWallets() -> [Wallet]
@@ -30,12 +30,12 @@ protocol WalletsRepository: BECollectionViewModelType {
     func batchUpdate(closure: ([Wallet]) -> [Wallet])
 }
 
-extension WalletsViewModel: WalletsRepository {
-    var statePublisher: AnyPublisher<BEFetcherState, Never> {
+extension WalletsRepositoryImpl: WalletsRepository {
+    var statePublisher: AnyPublisher<LoadingState, Never> {
         $state.receive(on: RunLoop.main).eraseToAnyPublisher()
     }
     
-    var currentState: BEFetcherState {
+    var currentState: LoadingState {
         state
     }
     

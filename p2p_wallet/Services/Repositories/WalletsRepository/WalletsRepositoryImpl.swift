@@ -1,18 +1,10 @@
-//
-//  WalletsViewModel.swift
-//  p2p_wallet
-//
-//  Created by Chung Tran on 11/4/20.
-//
-
-import BECollectionView_Combine
 import Foundation
 import Resolver
 import SolanaSwift
 import Combine
 import RxCombine
 
-class WalletsViewModel: BECollectionViewModel<Wallet> {
+class WalletsRepositoryImpl: ListRepository<Wallet> {
     // MARK: - Dependencies
 
     @Injected private var accountStorage: SolanaAccountStorage
