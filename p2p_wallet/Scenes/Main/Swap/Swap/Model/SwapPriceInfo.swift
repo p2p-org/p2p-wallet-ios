@@ -6,6 +6,11 @@ struct SwapPriceInfo {
     init(fromPrice: Double, toPrice: Double) {
         self.fromPrice = fromPrice
         self.toPrice = toPrice
-        self.relation = fromPrice / toPrice
+        if toPrice != 0 {
+            self.relation = fromPrice / toPrice
+        }
+        else {
+            self.relation = 0
+        }
     }
 }

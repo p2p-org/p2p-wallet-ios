@@ -2,6 +2,6 @@ import SolanaSwift
 import Jupiter
 
 struct SwapToken {
-    let jupiterToken: SolanaSwift.Token
-    let wallet: Wallet?
+    let jupiterToken: Jupiter.Token
+    let userWallet: Wallet?
 }

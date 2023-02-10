@@ -32,6 +32,7 @@ struct SwapInputView: View {
                 if let fiatAmount = viewModel.fiatAmount, !viewModel.isLoading {
                     Text("≈\(fiatAmount)")
                         .subtitleStyle()
+                        .lineLimit(1)
                 }
             }
             .frame(minHeight: 16)

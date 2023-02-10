@@ -19,8 +19,8 @@ final class SwapViewModel: BaseViewModel, ObservableObject {
     @Published var isLoading: Bool = false
     @Published var arePricesLoading: Bool = false
 
-    @Published var fromToken: SwapToken = .init(jupiterToken: .nativeSolana, wallet: nil)
-    @Published var toToken: SwapToken = .init(jupiterToken: .usdc, wallet: nil)
+    @Published var fromToken: SwapToken = .nativeSolana
+    @Published var toToken: SwapToken = .nativeSolana
     @Published var priceInfo = SwapPriceInfo(fromPrice: 0, toPrice: 0)
     private var priceInfoTask: Task<Void, Never>?
 
@@ -30,8 +30,8 @@ final class SwapViewModel: BaseViewModel, ObservableObject {
     let actionButtonViewModel: SliderActionButtonViewModel
 
     override init() {
-        self.fromTokenViewModel = SwapInputViewModel.buildFromViewModel(swapToken: .init(jupiterToken: .usdc, wallet: nil))
-        self.toTokenViewModel = SwapInputViewModel.buildToViewModel(swapToken: .init(jupiterToken: .usdc, wallet: nil))
+        self.fromTokenViewModel = SwapInputViewModel.buildFromViewModel(swapToken: .nativeSolana)
+        self.toTokenViewModel = SwapInputViewModel.buildToViewModel(swapToken: .nativeSolana)
         self.actionButtonViewModel = SliderActionButtonViewModel()
         super.init()
         bind()
@@ -44,7 +44,7 @@ private extension SwapViewModel {
             .sink { [unowned self] value in
                 let amount = Double(value) ?? 0
                 self.toTokenViewModel.amountText = (amount * self.priceInfo.relation).toString(maximumFractionDigits: Int(self.toToken.jupiterToken.decimals), roundingMode: .down)
-                self.fromTokenViewModel.fiatAmount = (self.priceInfo.fromPrice * amount).fiatAmountFormattedString()
+                self.fromTokenViewModel.fiatAmount = "\((self.priceInfo.fromPrice * amount).toString(maximumFractionDigits: 2, roundingMode: .down)) \(Defaults.fiat.code)"
             }
             .store(in: &subscriptions)
 
@@ -96,8 +96,6 @@ private extension SwapViewModel {
 
         Publishers.CombineLatest($fromToken.eraseToAnyPublisher(), $toToken.eraseToAnyPublisher())
             .sink(receiveValue: { [weak self] fromToken, toToken in
-                debugPrint(fromToken.jupiterToken.symbol)
-                debugPrint(toToken.jupiterToken.symbol)
                 self?.getPrices(from: fromToken, to: toToken)
             })
             .store(in: &subscriptions)
@@ -117,22 +115,25 @@ private extension SwapViewModel {
     func prepareTokens(data: SwapWalletsData) {
         let walletUSDC = data.userTokens.first(where: { $0.mintAddress == Token.usdc.address })
         let walletSolana = data.userTokens.first(where: { $0.mintAddress == Token.nativeSolana.address })
-        let jupiterUSDC = data.alljupiterTokens.first(where: { $0.address == Token.usdc.address })
-        let jupiterSolana = data.alljupiterTokens.first(where: { $0.address == Token.nativeSolana.address })
+        let jupiterUSDC = data.jupiterTokens.first(where: { $0.address == Token.usdc.address })
+        let jupiterSolana = data.jupiterTokens.first(where: { $0.address == Token.nativeSolana.address })
 
         if data.userTokens.isEmpty, let jupiterUSDC, let jupiterSolana {
-            fromToken = SwapToken(jupiterToken: jupiterUSDC, wallet: walletUSDC)
-            toToken = SwapToken(jupiterToken: jupiterSolana, wallet: walletSolana)
+            fromToken = SwapToken(jupiterToken: jupiterUSDC, userWallet: walletUSDC)
+            toToken = SwapToken(jupiterToken: jupiterSolana, userWallet: walletSolana)
         } else if let walletUSDC, let jupiterUSDC, let jupiterSolana {
-            fromToken = SwapToken(jupiterToken: jupiterUSDC, wallet: walletUSDC)
-            toToken = SwapToken(jupiterToken: jupiterSolana, wallet: walletSolana)
+            fromToken = SwapToken(jupiterToken: jupiterUSDC, userWallet: walletUSDC)
+            toToken = SwapToken(jupiterToken: jupiterSolana, userWallet: walletSolana)
         } else if let walletSolana, let jupiterUSDC, let jupiterSolana {
-            fromToken = SwapToken(jupiterToken: jupiterSolana, wallet: walletSolana)
-            toToken = SwapToken(jupiterToken: jupiterUSDC, wallet: walletUSDC)
+            fromToken = SwapToken(jupiterToken: jupiterSolana, userWallet: walletSolana)
+            toToken = SwapToken(jupiterToken: jupiterUSDC, userWallet: walletUSDC)
         } else if let jupiterUSDC {
             let biggestUserToken = data.userTokens.sorted(by: { $0.amountInCurrentFiat > $1.amountInCurrentFiat }).first
-            fromToken = SwapToken(jupiterToken: data.alljupiterTokens.first(where: { $0.address == biggestUserToken?.mintAddress }) ?? jupiterSolana ?? jupiterUSDC, wallet: biggestUserToken)
-            toToken = SwapToken(jupiterToken: jupiterUSDC, wallet: walletUSDC)
+            fromToken = SwapToken(
+                jupiterToken: data.jupiterTokens.first(where: { $0.address == biggestUserToken?.mintAddress }) ?? jupiterSolana ?? jupiterUSDC,
+                userWallet: biggestUserToken
+            )
+            toToken = SwapToken(jupiterToken: jupiterUSDC, userWallet: walletUSDC)
         }
     }
 
@@ -142,10 +143,10 @@ private extension SwapViewModel {
         arePricesLoading = true
         priceInfoTask = Task {
             do {
-                let prices = try await pricesAPI.getCurrentPrices(coins: [from.jupiterToken, to.jupiterToken], toFiat: Defaults.fiat.code)
-                let fromPrice = prices[from.jupiterToken]??.value
-                let toPrice = prices[to.jupiterToken]??.value
-                self.priceInfo = SwapPriceInfo(fromPrice: fromPrice ?? 0, toPrice: toPrice ?? 0)
+                let fromToken = SolanaSwift.Token.init(jupiterToken: from.jupiterToken)
+                let toToken = SolanaSwift.Token.init(jupiterToken: to.jupiterToken)
+                let prices = try await pricesAPI.getCurrentPrices(coins: [fromToken, toToken], toFiat: Defaults.fiat.code)
+                self.priceInfo = SwapPriceInfo(fromPrice: prices[fromToken]??.value ?? 0, toPrice: prices[toToken]??.value ?? 0)
                 self.arePricesLoading = false
             }
             catch {
@@ -153,5 +154,35 @@ private extension SwapViewModel {
                 self.arePricesLoading = false
             }
         }
+    }
+}
+
+private extension SwapToken {
+    static let nativeSolana = SwapToken(
+        jupiterToken: .init(
+            address: SolanaSwift.Token.nativeSolana.address,
+            chainId: SolanaSwift.Token.nativeSolana.chainId,
+            decimals: Int(SolanaSwift.Token.nativeSolana.decimals),
+            name: SolanaSwift.Token.nativeSolana.name,
+            symbol: SolanaSwift.Token.nativeSolana.symbol,
+            logoURI: SolanaSwift.Token.nativeSolana.logoURI,
+            extensions: nil,
+            tags: []
+        ),
+        userWallet: nil)
+}
+
+private extension SolanaSwift.Token {
+    init(jupiterToken: Jupiter.Token) {
+        self.init(
+            _tags: nil,
+            chainId: jupiterToken.chainId,
+            address: jupiterToken.address,
+            symbol: jupiterToken.symbol,
+            name: jupiterToken.name,
+            decimals: Decimals(jupiterToken.decimals),
+            logoURI: jupiterToken.logoURI,
+            extensions: .init(coingeckoId: jupiterToken.extensions?.coingeckoId)
+        )
     }
 }
