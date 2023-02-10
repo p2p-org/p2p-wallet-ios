@@ -13,7 +13,7 @@ struct SwapInputView: View {
 
                 Spacer()
 
-                if viewModel.isEditable && viewModel.balanceText != nil && !viewModel.isLoading  {
+                if viewModel.isEditable && viewModel.balance != 0 && !viewModel.isLoading  {
                     allButton
                 }
             }
@@ -52,7 +52,7 @@ private extension SwapInputView {
             HStack(spacing: 4) {
                 Text(L10n.all.uppercaseFirst)
                     .subtitleStyle()
-                Text(viewModel.balanceText ?? "")
+                Text("\(viewModel.balanceText) \(viewModel.tokenSymbol)")
                     .apply(style: .label1)
                     .foregroundColor(Color(Asset.Colors.sky.color))
             }
@@ -96,7 +96,7 @@ private extension SwapInputView {
     }
 
     var balanceLabel: some View {
-        Text("\(L10n.balance) \(viewModel.balanceText ?? "0")")
+        Text("\(L10n.balance) \(viewModel.balanceText)")
             .subtitleStyle()
             .if(viewModel.isLoading) { view in
                 view.skeleton(with: true, size: CGSize(width: 84, height: 8))
