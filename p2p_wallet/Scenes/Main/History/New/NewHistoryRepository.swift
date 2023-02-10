@@ -13,16 +13,16 @@ import TransactionParser
 import SolanaPricesAPIs
 
 protocol NewHistoryRepository {
-    func clear()
+    func clear() async
     func fetch(_ count: Int) async throws -> [any NewHistoryRendableItem]
 }
 
 class EmptyNewHistoryRepository: NewHistoryRepository {
-    func clear() {}
+    func clear() async {}
     func fetch(_ count: Int) async throws -> [any NewHistoryRendableItem] { [] }
 }
 
-class NewHistoryRepositoryWithOldProvider: NewHistoryRepository {
+actor NewHistoryRepositoryWithOldProvider: NewHistoryRepository {
     @Injected private var priceService: PricesService
 
     var source: HistoryStreamSource = EmptyStreamSource()
@@ -37,7 +37,7 @@ class NewHistoryRepositoryWithOldProvider: NewHistoryRepository {
         self.source = source
     }
 
-    func clear() {
+    func clear() async {
         loadedSignatures = []
     }
 
@@ -95,6 +95,7 @@ class NewHistoryRepositoryWithOldProvider: NewHistoryRepository {
                     let (signatureInfo, _, _) = result
 
                     // Skip duplicated transaction
+                    if Task.isCancelled { return results }
                     if loadedSignatures.contains(where: { $0 == signatureInfo.signature }) { continue }
                     if results
                         .contains(where: { $0.0.signature == signatureInfo.signature }) { continue }
