@@ -202,14 +202,14 @@ extension ConfirmReceivingBitcoin.ViewModel: ConfirmReceivingBitcoinViewModelTyp
                     payingFeeMintAddress: payingWalletSubject.value?.mintAddress
                 )
                 errorSubject.accept(nil)
-                analyticsManager.log(event: AmplitudeEvent.renbtcCreation(result: "success"))
+                analyticsManager.log(event: .renbtcCreation(result: "success"))
 
                 await MainActor.run { [weak self] in
                     self?.completion?()
                 }
             } catch {
                 errorSubject.accept(error.readableDescription)
-                analyticsManager.log(event: AmplitudeEvent.renbtcCreation(result: "fail"))
+                analyticsManager.log(event: .renbtcCreation(result: "fail"))
             }
 
             isLoadingSubject.accept(false)
