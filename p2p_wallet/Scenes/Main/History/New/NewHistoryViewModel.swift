@@ -11,11 +11,10 @@ import History
 import Resolver
 import RxSwift
 import SolanaSwift
+import TransactionParser
 
 enum NewHistoryAction {
-    /// For demo only!
-    case openDetailByID(id: TransactionID)
-    case openDetailByRendableItem(_: any RendableDetailTransaction)
+    case openDetailByParsedTransaction(ParsedTransaction)
 }
 
 class NewHistoryViewModel: BaseViewModel, ObservableObject {
@@ -95,7 +94,7 @@ class NewHistoryViewModel: BaseViewModel, ObservableObject {
 
     func fetchMore() async {
         do {
-            var result = try await repository.fetch(20)
+            let result = try await repository.fetch(20)
                 .filter { item in !self.items.contains(where: { $0.id == item.id }) }
 
             items.append(contentsOf: result.map { .rendable($0) })
@@ -105,10 +104,8 @@ class NewHistoryViewModel: BaseViewModel, ObservableObject {
     }
 
     func onTap(item: any NewHistoryRendableItem) {
-        let index = sections[0].items.firstIndex { searchingItem in
-            item.id == searchingItem.id
+        if let item = item as? RendableParsedTransaction {
+            actionSubject.send(.openDetailByParsedTransaction(item.trx))
         }
-        guard let index = index else { return }
-        actionSubject.send(.openDetailByRendableItem(MockedRendableDetailTransaction.items[index % MockedRendableDetailTransaction.items.count]))
     }
 }
