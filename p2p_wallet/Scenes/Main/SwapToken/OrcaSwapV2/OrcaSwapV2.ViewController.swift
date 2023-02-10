@@ -72,7 +72,7 @@ extension OrcaSwapV2 {
         private func navigate(to scene: OrcaSwapV2.NavigatableScene?) {
             switch scene {
             case .settings:
-                let walletsViewModel: WalletsRepository = Resolver.resolve()
+                let walletsViewModel: any WalletsRepository = Resolver.resolve()
                 let vm = SwapTokenSettings.ViewModel(
                     nativeWallet: walletsViewModel.nativeWallet,
                     swapViewModel: viewModel

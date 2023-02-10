@@ -10,14 +10,14 @@ protocol BuyProcessingServiceType {
 
 protocol BuyProcessingFactory {
     func create(
-        walletRepository: WalletsRepository,
+        walletsRepository: any WalletsRepository,
         crypto: Buy.CryptoCurrency,
         initialAmount: Double,
         currency: Buy.FiatCurrency
     ) throws -> BuyProcessingServiceType
 
     func create(
-        walletRepository: WalletsRepository,
+        walletsRepository: any WalletsRepository,
         fromCurrency: BuyCurrencyType,
         amount: Double,
         toCurrency: BuyCurrencyType,
@@ -28,7 +28,7 @@ protocol BuyProcessingFactory {
 extension Buy {
     class MoonpayBuyProcessingFactory: BuyProcessingFactory {
         func create(
-            walletRepository: WalletsRepository,
+            walletsRepository: any WalletsRepository,
             crypto: CryptoCurrency,
             initialAmount: Double,
             currency: FiatCurrency
@@ -41,14 +41,14 @@ extension Buy {
                     .secretConfig("MOONPAY_PRODUCTION_API_KEY")! :
                     .secretConfig("MOONPAY_STAGING_API_KEY")!,
                 currencyCode: crypto.moonpayCode,
-                walletAddress: walletRepository.nativeWallet?.pubkey,
+                walletAddress: walletsRepository.nativeWallet?.pubkey,
                 baseCurrencyCode: currency.moonpayCode,
                 baseCurrencyAmount: initialAmount
             )
         }
 
         func create(
-            walletRepository: WalletsRepository,
+            walletsRepository: any WalletsRepository,
             fromCurrency: BuyCurrencyType,
             amount: Double,
             toCurrency: BuyCurrencyType,
@@ -69,7 +69,7 @@ extension Buy {
                     .secretConfig("MOONPAY_PRODUCTION_API_KEY")! :
                     .secretConfig("MOONPAY_STAGING_API_KEY")!,
                 currencyCode: to.moonpayCode,
-                walletAddress: walletRepository.nativeWallet?.pubkey,
+                walletAddress: walletsRepository.nativeWallet?.pubkey,
                 baseCurrencyCode: from.moonpayCode,
                 baseCurrencyAmount: amount,
                 paymentMethod: paymentMethod == "card" ? .creditDebitCard :

@@ -4,6 +4,7 @@ import SolanaSwift
 import Combine
 import RxCombine
 
+@MainActor
 class WalletsRepositoryImpl: ListRepository<Wallet> {
     // MARK: - Dependencies
 
@@ -27,20 +28,20 @@ class WalletsRepositoryImpl: ListRepository<Wallet> {
 
     // MARK: - Subjects
 
-    let isHiddenWalletsShown = CurrentValueSubject<Bool, Never>(false)
+    @Published var isHiddenWalletsShown = false
 
     // MARK: - Initializer
 
     init() {
-        super.init()
+        super.init(
+            paginationStrategy: nil
+        )
         bind()
     }
 
     // MARK: - Binding
 
-    override func bind() {
-        super.bind()
-
+    func bind() {
         // observe prices
         pricesService.currentPricesPublisher
             .receive(on: RunLoop.main)
@@ -202,15 +203,6 @@ class WalletsRepositoryImpl: ListRepository<Wallet> {
         }
     }
 
-    override var dataDidChange: AnyPublisher<Void, Never> {
-        Publishers.CombineLatest(
-            super.dataDidChange,
-            isHiddenWalletsShown.removeDuplicates()
-        )
-            .map { _ in () }
-            .eraseToAnyPublisher()
-    }
-
     // MARK: - getters
 
     func hiddenWallets() -> [Wallet] {
@@ -220,7 +212,7 @@ class WalletsRepositoryImpl: ListRepository<Wallet> {
     // MARK: - Actions
 
     @objc func toggleIsHiddenWalletShown() {
-        isHiddenWalletsShown.send(!isHiddenWalletsShown.value)
+        isHiddenWalletsShown.toggle()
     }
 
     func toggleWalletVisibility(_ wallet: Wallet) {

@@ -70,7 +70,7 @@ class SolendTopUpForContinueViewModel: ObservableObject {
     }
 
     func swapOrReceiveClicked() {
-        let walletsRepository: WalletsRepository = Resolver.resolve()
+        let walletsRepository: any WalletsRepository = Resolver.resolve()
         
         if withoutAnyTokens {
             guard let key = try? PublicKey(string: walletsRepository.nativeWallet?.pubkey) else { return }

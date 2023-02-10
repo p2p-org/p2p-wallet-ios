@@ -50,7 +50,7 @@ final class SolendDepositsCoordinator: Coordinator<Void> {
                 return
             }
 
-            let wallets: WalletsRepository = Resolver.resolve()
+            let wallets: any WalletsRepository = Resolver.resolve()
 
             let tokenAccount: Wallet? = wallets
                 .getWallets()

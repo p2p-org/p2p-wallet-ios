@@ -20,12 +20,12 @@ class DepositSolendViewModel: ObservableObject {
         .deposit: DefaultSolendDepositFeePayingStrategy(
             orca: Resolver.resolve(),
             actionService: Resolver.resolve(),
-            wallets: Resolver.resolve()
+            walletsRepository: Resolver.resolve()
         ),
         .withdraw: DefaultSolendWithdrawFeePayingStrategy(
             orca: Resolver.resolve(),
             actionService: Resolver.resolve(),
-            wallets: Resolver.resolve()
+            walletsRepository: Resolver.resolve()
         ),
     ]
     private var subscriptions = Set<AnyCancellable>()
@@ -50,7 +50,7 @@ class DepositSolendViewModel: ObservableObject {
 
     @Injected private var notificationService: NotificationService
     @Injected private var priceService: PricesServiceType
-    @Injected private var walletRepository: WalletsRepository
+    @Injected private var walletsRepository: any WalletsRepository
 
     @Published var focusSide: DepositWithdrawInputViewActiveSide = .left
     /// Is loading fees
@@ -120,7 +120,7 @@ class DepositSolendViewModel: ObservableObject {
 
     /// Balance for selected Token
     private var currentWallet: Wallet? {
-        walletRepository.getWallets().filter { $0.token.address == self.invest.asset.mintAddress }.first
+        walletsRepository.getWallets().filter { $0.token.address == self.invest.asset.mintAddress }.first
     }
 
     /// Rate for selected pair Token -> Fiat
@@ -462,7 +462,7 @@ class DepositSolendViewModel: ObservableObject {
     }
 
     private func availableDepositModels() -> [TokenToDepositView.Model] {
-        let wallets = walletRepository.getWallets()
+        let wallets = walletsRepository.getWallets()
         return market.compactMap { asset, market, _ in
             let wallet = wallets
                 .first { wallet in

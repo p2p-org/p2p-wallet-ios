@@ -14,7 +14,7 @@ import SolanaSwift
 import TransactionParser
 
 protocol WalletDetailViewModelType {
-    var walletsRepository: WalletsRepository { get }
+    var walletsRepository: any WalletsRepository { get }
     var navigatableSceneDriver: Driver<WalletDetail.NavigatableScene?> { get }
     var walletDriver: Driver<Wallet?> { get }
     var walletActionsDriver: Driver<[WalletActionType]> { get }
@@ -29,7 +29,7 @@ extension WalletDetail {
     class ViewModel {
         // MARK: - Dependencies
 
-        @Injected var walletsRepository: WalletsRepository
+        @Injected var walletsRepository: any WalletsRepository
         let pubkey: String
         let symbol: String
         @Injected var analyticsManager: AnalyticsManager

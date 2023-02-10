@@ -43,7 +43,7 @@ final class BuyViewModel: ObservableObject {
 
     // Dependencies
     @Injected var exchangeService: BuyExchangeService
-    @Injected var walletsRepository: WalletsRepository
+    @Injected var walletsRepository: any WalletsRepository
     @Injected private var analyticsManager: AnalyticsManager
     @Injected private var pricesService: PricesServiceType
 
@@ -454,7 +454,7 @@ final class BuyViewModel: ObservableObject {
         // HACK
         let paymentMethod = isGBPBankTransferEnabled ? "gbp_bank" : selectedPayment.rawValue
         let provider = try factory.create(
-            walletRepository: walletsRepository,
+            walletsRepository: walletsRepository,
             fromCurrency: from,
             amount: amount,
             toCurrency: to,

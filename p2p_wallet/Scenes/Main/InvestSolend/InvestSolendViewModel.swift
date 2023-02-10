@@ -32,7 +32,7 @@ class InvestSolendViewModel: ObservableObject {
     @Injected private var notificationService: NotificationService
     let dataService: SolendDataService
     let actionService: SolendActionService
-    let walletRepository: WalletsRepository
+    let walletsRepository: any WalletsRepository
 
     private var subscriptions = Set<AnyCancellable>()
 
@@ -68,11 +68,11 @@ class InvestSolendViewModel: ObservableObject {
     init(
         dataService: SolendDataService = Resolver.resolve(),
         actionService: SolendActionService = Resolver.resolve(),
-        walletRepository: WalletsRepository = Resolver.resolve()
+        walletsRepository: any WalletsRepository = Resolver.resolve()
     ) {
         self.dataService = dataService
         self.actionService = actionService
-        self.walletRepository = walletRepository
+        self.walletsRepository = walletsRepository
 
         // Updating data service depends on action service
         actionService.currentAction
@@ -89,7 +89,7 @@ class InvestSolendViewModel: ObservableObject {
                     try await dataService.update()
                 }
                 Task.detached {
-                    Resolver.resolve(WalletsRepository.self).reload()
+                    Resolver.resolve((any WalletsRepository).self).reload()
                 }
             }
             .store(in: &subscriptions)
@@ -123,7 +123,7 @@ class InvestSolendViewModel: ObservableObject {
                 self?.bannerError = nil
             }.store(in: &subscriptions)
 
-        let walletsStream: AnyPublisher<[Wallet]?, Never> = walletRepository
+        let walletsStream: AnyPublisher<[Wallet]?, Never> = walletsRepository
             .dataPublisher
             .map(Optional.init)
             .eraseToAnyPublisher()
@@ -232,7 +232,7 @@ class InvestSolendViewModel: ObservableObject {
             return
         }
 
-        let wallets: WalletsRepository = Resolver.resolve()
+        let wallets: any WalletsRepository = Resolver.resolve()
 
         // Get user token account
         let tokenAccount: Wallet? = wallets

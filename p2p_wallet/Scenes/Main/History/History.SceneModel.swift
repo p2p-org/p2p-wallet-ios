@@ -21,7 +21,7 @@ extension History {
 
         // MARK: - Dependencies
 
-        @Injected private var walletsRepository: WalletsRepository
+        @Injected private var walletsRepository: any WalletsRepository
         @Injected private var notificationService: NotificationService
         let transactionRepository = SolanaTransactionRepository(solanaAPIClient: Resolver.resolve())
         @Injected private var transactionParserRepository: TransactionParsedRepository

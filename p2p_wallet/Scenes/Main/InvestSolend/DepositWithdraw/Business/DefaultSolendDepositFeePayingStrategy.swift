@@ -12,12 +12,12 @@ import Solend
 class DefaultSolendWithdrawFeePayingStrategy: SolendFeePayingStrategy {
     let orca: OrcaSwap
     let actionService: SolendActionService
-    let wallets: WalletsRepository
+    let walletsRepository: any WalletsRepository
 
-    init(orca: OrcaSwap, actionService: SolendActionService, wallets: WalletsRepository) {
+    init(orca: OrcaSwap, actionService: SolendActionService, walletsRepository: any WalletsRepository) {
         self.orca = orca
         self.actionService = actionService
-        self.wallets = wallets
+        self.walletsRepository = walletsRepository
     }
 
     func calculate(amount: Lamports, symbol: String, mintAddress: String) async throws -> SolendFeePaying {
@@ -33,7 +33,7 @@ class DefaultSolendWithdrawFeePayingStrategy: SolendFeePayingStrategy {
             payingFeeTokenMint: try PublicKey(string: mintAddress)
         )
 
-        guard let nativeAccount = wallets.nativeWallet else {
+        guard let nativeAccount = walletsRepository.nativeWallet else {
             throw SolendFeePayingStrategyError.invalidNativeWallet
         }
 
@@ -48,7 +48,7 @@ class DefaultSolendWithdrawFeePayingStrategy: SolendFeePayingStrategy {
         )
 
         guard
-            let userSplAccount: Wallet = wallets.getWallets().first(where: { $0.token.address == mintAddress }),
+            let userSplAccount: Wallet = walletsRepository.getWallets().first(where: { $0.token.address == mintAddress }),
             let feeInToken = feeInToken
         else {
             return nativeFeePaying

@@ -9,8 +9,7 @@ import Foundation
 import Combine
 import SolanaSwift
 
-protocol WalletsRepository {
-    var dataDidChange: AnyPublisher<Void, Never> { get }
+protocol WalletsRepository: ObservableObject {
     var nativeWallet: Wallet? { get }
     func getWallets() -> [Wallet]
     var statePublisher: AnyPublisher<LoadingState, Never> { get }
@@ -20,11 +19,9 @@ protocol WalletsRepository {
     func reload()
     func toggleWalletVisibility(_ wallet: Wallet)
     func removeItem(where predicate: (Wallet) -> Bool) -> Wallet?
-    func setState(_ state: LoadingState, withData data: [AnyHashable]?)
     func toggleIsHiddenWalletShown()
-    var isHiddenWalletsShown: CurrentValueSubject<Bool, Never> { get }
+    var isHiddenWalletsShown: Bool { get }
     func hiddenWallets() -> [Wallet]
-    func refreshUI()
     func refresh()
 
     func batchUpdate(closure: ([Wallet]) -> [Wallet])

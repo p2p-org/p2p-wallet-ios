@@ -29,7 +29,7 @@ class SellViewModel: BaseViewModel, ObservableObject {
 
     // MARK: - Dependencies
 
-    @Injected private var walletRepository: WalletsRepository
+    @Injected private var walletsRepository: any WalletsRepository
     @Injected private var dataService: any SellDataService
     @Injected private var actionService: any SellActionService
     @Injected private var analyticsManager: AnalyticsManager
@@ -131,7 +131,7 @@ class SellViewModel: BaseViewModel, ObservableObject {
     }
 
     func sellAll() {
-        baseAmount = walletRepository.nativeWallet?.amount?.rounded(decimals: decimals, roundingMode: .down) ?? 0
+        baseAmount = walletsRepository.nativeWallet?.amount?.rounded(decimals: decimals, roundingMode: .down) ?? 0
         
         // temporary solution when isEnterQuoteAmount, the quote amount will not be updated when baseAmount changed
         // so we have to release this value
@@ -272,9 +272,8 @@ class SellViewModel: BaseViewModel, ObservableObject {
 
         // observe native wallet's changes
         checkIfMoreBaseCurrencyNeeded()
-        walletRepository.dataDidChange
-            .receive(on: RunLoop.main)
-            .sink(receiveValue: { [weak self] val in
+        walletsRepository.dataPublisher
+            .sink(receiveValue: { [weak self] _ in
                 self?.checkIfMoreBaseCurrencyNeeded()
             })
             .store(in: &subscriptions)
@@ -324,7 +323,7 @@ class SellViewModel: BaseViewModel, ObservableObject {
     // MARK: - Helpers
 
     private func checkIfMoreBaseCurrencyNeeded() {
-        maxBaseAmount = walletRepository.nativeWallet?.amount?.rounded(decimals: decimals, roundingMode: .down)
+        maxBaseAmount = walletsRepository.nativeWallet?.amount?.rounded(decimals: decimals, roundingMode: .down)
         if maxBaseAmount < minBaseAmount {
             isMoreBaseCurrencyNeeded = true
         }

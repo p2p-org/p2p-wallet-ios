@@ -42,7 +42,7 @@ extension ReceiveToken {
     class SceneModel: NSObject, ReceiveSceneModel {
         @Injected private var clipboardManager: ClipboardManagerType
         @Injected private var notificationsService: NotificationService
-        @Injected private var walletsRepository: WalletsRepository
+        @Injected private var walletsRepository: any WalletsRepository
 
         // MARK: - Properties
 

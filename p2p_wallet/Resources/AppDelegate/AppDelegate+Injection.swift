@@ -358,7 +358,7 @@ extension Resolver: ResolverRegistering {
 
         // WalletsRepositoryImpl
         register { WalletsRepositoryImpl() }
-            .implements(WalletsRepository.self)
+            .implements((any WalletsRepository).self)
             .scope(.session)
 
         // SwapService

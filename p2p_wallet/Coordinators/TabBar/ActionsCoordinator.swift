@@ -13,7 +13,7 @@ import SolanaSwift
 import UIKit
 
 final class ActionsCoordinator: Coordinator<ActionsCoordinator.Result> {
-    @Injected private var walletsRepository: WalletsRepository
+    @Injected private var walletsRepository: any WalletsRepository
     @Injected private var analyticsManager: AnalyticsManager
 
     private unowned var viewController: UIViewController

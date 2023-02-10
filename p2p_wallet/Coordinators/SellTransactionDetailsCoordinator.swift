@@ -15,7 +15,7 @@ import SafariServices
 private typealias Result = SellTransactionDetailsCoorditor.Result
 
 final class SellTransactionDetailsCoorditor: Coordinator<SellTransactionDetailsCoorditor.Result> {
-    @Injected private var walletsRepository: WalletsRepository
+    @Injected private var walletsRepository: any WalletsRepository
     
     private let viewController: UIViewController
     private let strategy: Strategy

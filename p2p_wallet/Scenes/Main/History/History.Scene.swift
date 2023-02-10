@@ -23,7 +23,7 @@ extension History {
 
             navigationItem.title = L10n.history
             // Start loading when wallets are ready.
-            Resolver.resolve(WalletsRepository.self)
+            Resolver.resolve((any WalletsRepository).self)
                 .dataPublisher
                 .asObservable()
                 .filter { $0.count > 0 }
@@ -39,7 +39,7 @@ extension History {
             isEmbedded = isEmbeded
 
             // Start loading when wallets are ready.
-            Resolver.resolve(WalletsRepository.self)
+            Resolver.resolve((any WalletsRepository).self)
                 .dataPublisher
                 .asObservable()
                 .filter { $0.count > 0 }

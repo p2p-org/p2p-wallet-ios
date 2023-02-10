@@ -16,7 +16,7 @@ final class HomeEmptyViewModel: BaseViewModel, ObservableObject {
     // MARK: - Dependencies
 
     @Injected private var analyticsManager: AnalyticsManager
-    @Injected private var walletsRepository: WalletsRepository
+    @Injected private var walletsRepository: any WalletsRepository
     @Injected private var pricesService: PricesServiceType
     
     // MARK: - Properties

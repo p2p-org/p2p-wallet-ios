@@ -32,7 +32,7 @@ extension SwapTokenSettings {
         }
 
         private let swapViewModel: OrcaSwapV2ViewModelType
-        @Injected private var walletRepository: WalletsRepository
+        @Injected private var walletsRepository: any WalletsRepository
         @Injected private var notificationService: NotificationService
 
         // MARK: - Subject
@@ -51,7 +51,7 @@ extension SwapTokenSettings {
                 guard let self = self else { return [] }
                 var list: [FeeCellContent] = []
 
-                for wallet in self.walletRepository.getWallets().filter({ wallet in wallet.amount > 0 }) {
+                for wallet in self.walletsRepository.getWallets().filter({ wallet in wallet.amount > 0 }) {
                     list.append(
                         .init(
                             wallet: wallet,
