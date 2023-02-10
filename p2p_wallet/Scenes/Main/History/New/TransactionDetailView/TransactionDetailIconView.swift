@@ -36,6 +36,7 @@ struct TransactionDetailIconView: View {
                     .resizable()
                     .cacheMemoryOnly()
                     .fade(duration: 0.25)
+                    .background(Circle().fill(Color(Asset.Colors.smoke.color)))
             case let .double(from, to):
                 ZStack(alignment: .center) {
                     KFImage
@@ -48,6 +49,7 @@ struct TransactionDetailIconView: View {
                         .cacheMemoryOnly()
                         .fade(duration: 0.25)
                         .frame(width: size, height: size)
+                        .background(Circle().fill(Color(Asset.Colors.smoke.color)))
                         .offset(x: -size/4)
                     
                     KFImage
@@ -60,6 +62,7 @@ struct TransactionDetailIconView: View {
                         .cacheMemoryOnly()
                         .fade(duration: 0.25)
                         .frame(width: size, height: size)
+                        .background(Circle().fill(Color(Asset.Colors.smoke.color)))
                         .offset(x: size/4)
                 }
             }

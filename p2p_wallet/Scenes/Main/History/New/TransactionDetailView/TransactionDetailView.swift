@@ -86,14 +86,18 @@ struct DetailTransactionView: View {
                     ForEach(viewModel.rendableTransaction.actions) { action in
                         switch action {
                         case .share:
-                            NewHistoryButtonAction(title: L10n.share, image: .share2) {}
+                            NewHistoryButtonAction(title: L10n.share, image: .share2) {
+                                viewModel.share()
+                            }
                         case .explorer:
-                            NewHistoryButtonAction(title: "Explore", image: .transactionShowInExplorer) {}
+                            NewHistoryButtonAction(title: "Explore", image: .transactionShowInExplorer) {
+                                viewModel.explore()
+                            }
                         }
                     }
                 }
                 .padding(.top, 28)
-                .padding(.bottom, 48)
+                .padding(.bottom, 32)
             } else {
                 Rectangle()
                     .padding(.bottom, 34)
@@ -139,7 +143,7 @@ struct DetailTransactionView: View {
             title: viewModel.closeButtonTitle,
             style: style,
             size: .large,
-            onPressed: viewModel.close.send
+            onPressed: { viewModel.action.send(.close) }
         )
         .frame(height: 56)
     }
