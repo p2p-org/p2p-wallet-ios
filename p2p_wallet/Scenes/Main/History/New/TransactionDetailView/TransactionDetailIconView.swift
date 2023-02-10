@@ -12,6 +12,7 @@ import SolanaSwift
 
 struct TransactionDetailIconView: View {
     private let size: CGFloat = 64
+    private let defaultBackground: some View = Circle().fill(Color(Asset.Colors.snow.color))
 
     let icon: DetailTransactionIcon
 
@@ -36,7 +37,7 @@ struct TransactionDetailIconView: View {
                     .resizable()
                     .cacheMemoryOnly()
                     .fade(duration: 0.25)
-                    .background(Circle().fill(Color(Asset.Colors.smoke.color)))
+                    .background(defaultBackground)
             case let .double(from, to):
                 ZStack(alignment: .center) {
                     KFImage
@@ -49,7 +50,7 @@ struct TransactionDetailIconView: View {
                         .cacheMemoryOnly()
                         .fade(duration: 0.25)
                         .frame(width: size, height: size)
-                        .background(Circle().fill(Color(Asset.Colors.smoke.color)))
+                        .background(defaultBackground)
                         .offset(x: -size/4)
                     
                     KFImage
@@ -62,7 +63,7 @@ struct TransactionDetailIconView: View {
                         .cacheMemoryOnly()
                         .fade(duration: 0.25)
                         .frame(width: size, height: size)
-                        .background(Circle().fill(Color(Asset.Colors.smoke.color)))
+                        .background(defaultBackground)
                         .offset(x: size/4)
                 }
             }
