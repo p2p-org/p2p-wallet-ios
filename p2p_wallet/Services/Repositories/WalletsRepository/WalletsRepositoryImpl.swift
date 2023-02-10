@@ -20,7 +20,6 @@ class WalletsRepositoryImpl: ListRepository<Wallet> {
     private var subscriptions = Set<AnyCancellable>()
     
     @MainActor private var lastGetNewWalletTime = Date()
-    private var updatingTask: Task<Void, Error>?
 
     // MARK: - Getters
 
@@ -80,7 +79,7 @@ class WalletsRepositoryImpl: ListRepository<Wallet> {
             .store(in: &subscriptions)
 
         // observe timer to update
-        Timer.publish(every: 1, on: .main, in: .default)
+        Timer.publish(every: 10, on: .main, in: .default)
             .autoconnect()
             .sink {[weak self] _ in
                 self?.updateBalancesAndGetNewWalletIfNeeded()
@@ -146,9 +145,9 @@ class WalletsRepositoryImpl: ListRepository<Wallet> {
     }
     
     private func updateBalancesAndGetNewWalletIfNeeded() {
-        updatingTask?.cancel()
+        loadingTask?.cancel()
         
-        updatingTask = Task {
+        loadingTask = Task {
             // Update balances needs to happen every 10 secs
             guard let account = self.accountStorage.account?.publicKey.base58EncodedString
             else { throw SolanaError.unknown }

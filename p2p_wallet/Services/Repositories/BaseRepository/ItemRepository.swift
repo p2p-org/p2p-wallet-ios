@@ -9,10 +9,10 @@ class ItemRepository<ItemType: Hashable>: ObservableObject {
     /// Initial data for initializing state
     private let initialData: ItemType
     
-    /// Current running task
-    private var loadingTask: Task<Void, Error>?
-    
     // MARK: - Public properties
+    
+    /// Current running task
+    var loadingTask: Task<Void, Error>?
     
     /// The current data
     @Published var data: ItemType

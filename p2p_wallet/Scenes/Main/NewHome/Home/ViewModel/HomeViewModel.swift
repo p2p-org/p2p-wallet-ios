@@ -40,7 +40,7 @@ class HomeViewModel: ObservableObject {
         bind()
         
         // reload
-        walletsRepository.reload()
+        reload()
     }
 
     // MARK: - Methods
@@ -76,10 +76,12 @@ private extension HomeViewModel {
 
         // state, address, error, log
         Publishers.CombineLatest(
-            walletsRepository.statePublisher,
-            walletsRepository.dataPublisher
+            walletsRepository.statePublisher.removeDuplicates(),
+            walletsRepository.dataPublisher.removeDuplicates()
         )
             .sink { [weak self] state, data in
+                print("state, data.count: ", state, data.count)
+                
                 guard let self else { return }
                 
                 // accumulate total amount
