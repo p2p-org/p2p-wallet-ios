@@ -5,13 +5,32 @@
 //  Created by Chung Tran on 05/05/2021.
 //
 import Foundation
+import SwiftUI
+
+struct ConnectionErrorView: UIViewRepresentable {
+    let refreshAction: (() -> Void)
+    
+    init(refreshAction: @escaping (() -> Void)) {
+        self.refreshAction = refreshAction
+    }
+    
+    func makeUIView(context: Context) -> ConnectionErrorView_UIKit {
+        let view = ConnectionErrorView_UIKit()
+        view.refreshAction = refreshAction
+        return view
+    }
+
+    func updateUIView(_ uiView: ConnectionErrorView_UIKit, context _: Context) {
+        
+    }
+}
 
 extension UIView {
     @discardableResult
-    func showConnectionErrorView(refreshAction: (() -> Void)?) -> ConnectionErrorView {
+    func showConnectionErrorView(refreshAction: (() -> Void)?) -> ConnectionErrorView_UIKit {
         hideConnectionErrorView()
 
-        let errorView = ConnectionErrorView()
+        let errorView = ConnectionErrorView_UIKit()
         errorView.refreshAction = refreshAction
         addSubview(errorView)
         errorView.autoPinEdge(toSuperviewEdge: .top)
@@ -22,11 +41,11 @@ extension UIView {
     }
 
     func hideConnectionErrorView() {
-        subviews.first(where: { $0 is ConnectionErrorView })?.removeFromSuperview()
+        subviews.first(where: { $0 is ConnectionErrorView_UIKit })?.removeFromSuperview()
     }
 }
 
-class ConnectionErrorView: BEView {
+class ConnectionErrorView_UIKit: BEView {
     // MARK: - Subviews
 
     private lazy var refreshButton = WLButton.stepButton(

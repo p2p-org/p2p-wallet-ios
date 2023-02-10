@@ -25,8 +25,6 @@ enum HomeNavigation: Equatable {
     case actions([WalletActionType])
     // HomeEmpty
     case topUpCoin(Token)
-    // Error
-    case error(show: Bool)
 }
 
 final class HomeCoordinator: Coordinator<Void> {
@@ -209,15 +207,6 @@ final class HomeCoordinator: Coordinator<Void> {
                 defaultToken: token
             )
             return self.coordinate(to: coordinator)
-                .eraseToAnyPublisher()
-        case .error(let show):
-            if show {
-                homeView.view.showConnectionErrorView(refreshAction: { [unowned homeView] in
-                    homeView.view.hideConnectionErrorView()
-                    Resolver.resolve(WalletsRepository.self).reload()
-                })
-            }
-            return Just(())
                 .eraseToAnyPublisher()
         }
     }

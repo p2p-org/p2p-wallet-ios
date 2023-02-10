@@ -28,6 +28,10 @@ struct HomeView: View {
                 navigation {
                     HomeEmptyView(viewModel: emptyViewModel)
                 }
+            case .error:
+                ConnectionErrorView {
+                    viewModel.reload()
+                }
             }
 
             if globalAppState.shouldPlayAnimationOnHome == true {
@@ -44,7 +48,7 @@ struct HomeView: View {
         }
     }
 
-    func navigation<Content: View>(@ViewBuilder content: @escaping () -> Content) -> some View {
+    private func navigation<Content: View>(@ViewBuilder content: @escaping () -> Content) -> some View {
         NavigationView {
             content()
                 .navigationBarTitleDisplayMode(.inline)
