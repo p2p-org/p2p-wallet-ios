@@ -26,9 +26,10 @@ struct NewHistoryButtonAction: View {
                             .resizable()
                             .renderingMode(.template)
                             .foregroundColor(.white)
-                            .frame(width: 18, height: 18)
+                            .frame(width: 20, height: 20)
                     )
                 Text(title)
+                    .fontWeight(.semibold)
                     .apply(style: .label2)
                     .foregroundColor(Color(Asset.Colors.night.color))
             }
