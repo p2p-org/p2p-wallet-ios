@@ -1,11 +1,6 @@
 import Foundation
 import Combine
 
-protocol PaginationStrategy {
-    var isLastPageLoaded: Bool { get }
-    func resetPagination()
-}
-
 /// Repository to manage a List of some Kind of item
 @MainActor
 class ListRepository<ItemType: Hashable>: ItemRepository<[ItemType]> {
@@ -37,12 +32,24 @@ class ListRepository<ItemType: Hashable>: ItemRepository<[ItemType]> {
         super.flush()
     }
     
-    // MARK: - Asynchronous request handler
+    /// Indicate if should fetch new data to prevent unwanted request
+    /// - Returns: should fetch new data
     override func shouldRequest() -> Bool {
-        super.shouldRequest() && !isLastPageLoaded
+        var shouldRequest = super.shouldRequest()
+        
+        // check if isLastPageLoaded
+        if let paginationStrategy {
+            shouldRequest = shouldRequest && !paginationStrategy.isLastPageLoaded
+        }
+        
+        return shouldRequest
     }
     
+    /// Fetch next records if pagination is enabled
     func fetchNext() {
+        guard paginationStrategy != nil else {
+            return
+        }
         super.request()
     }
     

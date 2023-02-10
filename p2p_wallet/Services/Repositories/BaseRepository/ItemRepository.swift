@@ -60,8 +60,19 @@ class ItemRepository<ItemType: Hashable>: ObservableObject {
         request()
     }
     
+    /// Indicate if should fetch new data to prevent unwanted request
+    /// - Returns: should fetch new data
+    func shouldRequest() -> Bool {
+        true
+    }
+    
     /// Request data from outside to get new data
     func request() {
+        // prevent unwanted request
+        guard shouldRequest() else {
+            return
+        }
+        
         // cancel previous request
         loadingTask?.cancel()
         
