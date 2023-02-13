@@ -7,7 +7,7 @@ import SolanaSwift
 final class SwapViewModel: BaseViewModel, ObservableObject {
 
     // MARK: - Dependencies
-    @Injected private var swapWalletsRepository: SwapWalletsRepository
+    @Injected private var swapWalletsRepository: JupiterTokensRepository
     @Injected private var pricesAPI: SolanaPricesAPI
     @Injected private var notificationService: NotificationService
 
@@ -111,7 +111,7 @@ private extension SwapViewModel {
             .store(in: &subscriptions)
     }
 
-    func autoChooseSwapTokens(data: SwapWalletsData) {
+    func autoChooseSwapTokens(data: JupiterTokensData) {
         let usdc = data.tokens.first(where: { $0.jupiterToken.address == Token.usdc.address })
         let solana = data.tokens.first(where: { $0.jupiterToken.address == Token.nativeSolana.address })
 
