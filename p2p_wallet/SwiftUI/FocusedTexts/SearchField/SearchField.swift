@@ -18,9 +18,9 @@ struct SearchField: View {
                 textField.returnKeyType = .done
                 textField.autocorrectionType = .no
                 textField.spellCheckingType = .no
-                textField.backgroundColor = Asset.Colors.rain.color
                 textField.placeholder = L10n.search
-                textField.font = .font(of: .text3)
+                textField.font = .font(of: .text1)
+                textField.textColor = .gray
             }
 
             if !searchText.isEmpty {
@@ -28,12 +28,12 @@ struct SearchField: View {
                     Image(uiImage: .clean)
                         .searchFieldStyle()
                 }
-                .frame(height: 44)
+                .frame(height: 38)
             }
         }
-        .background(Color(Asset.Colors.rain.color))
-        .cornerRadius(12)
-        .frame(height: 44)
+        .background(Color(.gray.withAlphaComponent(0.12)))
+        .cornerRadius(10)
+        .frame(height: 38)
     }
 }
 
@@ -41,8 +41,8 @@ private extension Image {
     func searchFieldStyle() -> some View {
         return self
             .renderingMode(.template)
-            .foregroundColor(Color(Asset.Colors.mountain.color))
-            .frame(width: 20, height: 20)
-            .padding(.horizontal, 10)
+            .foregroundColor(Color(.gray))
+            .frame(width: 16, height: 16)
+            .padding(.horizontal, 8)
     }
 }

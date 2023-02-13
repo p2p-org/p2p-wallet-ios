@@ -28,6 +28,8 @@ final class SwapViewModel: BaseViewModel, ObservableObject {
     let fromTokenViewModel: SwapInputViewModel
     let toTokenViewModel: SwapInputViewModel
     let actionButtonViewModel: SliderActionButtonViewModel
+    
+    var tokens: [SwapToken] = []
 
     override init() {
         self.fromTokenViewModel = SwapInputViewModel.buildFromViewModel(swapToken: .nativeSolana)
@@ -112,6 +114,7 @@ private extension SwapViewModel {
     }
 
     func autoChooseSwapTokens(data: JupiterTokensData) {
+        self.tokens = data.tokens
         let usdc = data.tokens.first(where: { $0.jupiterToken.address == Token.usdc.address })
         let solana = data.tokens.first(where: { $0.jupiterToken.address == Token.nativeSolana.address })
 
@@ -166,19 +169,4 @@ private extension SwapToken {
             tags: []
         ),
         userWallet: nil)
-}
-
-private extension SolanaSwift.Token {
-    init(jupiterToken: Jupiter.Token) {
-        self.init(
-            _tags: nil,
-            chainId: jupiterToken.chainId,
-            address: jupiterToken.address,
-            symbol: jupiterToken.symbol,
-            name: jupiterToken.name,
-            decimals: Decimals(jupiterToken.decimals),
-            logoURI: jupiterToken.logoURI,
-            extensions: .init(coingeckoId: jupiterToken.extensions?.coingeckoId)
-        )
-    }
 }

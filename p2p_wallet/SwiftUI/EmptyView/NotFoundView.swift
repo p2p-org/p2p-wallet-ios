@@ -1,5 +1,5 @@
 //
-//  SendNotFoundView.swift
+//  NotFoundView.swift
 //  p2p_wallet
 //
 //  Created by Giang Long Tran on 26.11.2022.
@@ -7,7 +7,7 @@
 
 import SwiftUI
 
-struct SendNotFoundView: View {
+struct NotFoundView: View {
     let text: String
 
     var body: some View {
@@ -22,8 +22,8 @@ struct SendNotFoundView: View {
     }
 }
 
-struct SendNotFoundView_Previews: PreviewProvider {
+struct NotFoundView_Previews: PreviewProvider {
     static var previews: some View {
-        SendNotFoundView(text: L10n.AddressNotFound.tryAnotherOne)
+        NotFoundView(text: L10n.AddressNotFound.tryAnotherOne)
     }
 }
