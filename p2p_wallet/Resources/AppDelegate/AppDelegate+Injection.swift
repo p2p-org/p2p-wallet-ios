@@ -499,12 +499,12 @@ extension Resolver: ResolverRegistering {
             .scope(.session)
 
         register {
-            SwapWalletsRepositoryImpl(
-                provider: SwapWalletsLocalProvider(),
+            JupiterTokensRepositoryImpl(
+                provider: JupiterTokensLocalProvider(),
                 jupiterClient: JupiterRestClientAPI(version: .v4)
             )
         }
-        .implements(SwapWalletsRepository.self)
+        .implements(JupiterTokensRepository.self)
         .scope(.session)
     }
 

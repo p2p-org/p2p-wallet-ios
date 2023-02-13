@@ -1,11 +1,11 @@
 import Jupiter
 
-protocol SwapWalletsProvider {
+protocol JupiterTokensProvider {
     func getTokens() -> [Jupiter.Token]?
     func save(tokens: [Jupiter.Token]?) throws
 }
 
-final class SwapWalletsLocalProvider: SwapWalletsProvider {
+final class JupiterTokensLocalProvider: JupiterTokensProvider {
 
     private struct SwapWalletsCache: Codable {
         let tokens: [Token]

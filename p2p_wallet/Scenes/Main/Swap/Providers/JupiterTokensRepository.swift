@@ -3,45 +3,45 @@ import Combine
 import SolanaSwift
 import Resolver
 
-public enum SwapWalletsState {
+public enum JupiterTokensState {
     case initialized
     case loading
     case loaded
     case error
 }
 
-struct SwapWalletsData {
+struct JupiterTokensData {
     let tokens: [SwapToken]
     let userWallets: [Wallet]
 }
 
-protocol SwapWalletsRepository {
-    var state: AnyPublisher<SwapWalletsState, Never> { get }
-    var tokens: AnyPublisher<SwapWalletsData, Never> { get }
+protocol JupiterTokensRepository {
+    var state: AnyPublisher<JupiterTokensState, Never> { get }
+    var tokens: AnyPublisher<JupiterTokensData, Never> { get }
 
     func load() async throws
 }
 
-final class SwapWalletsRepositoryImpl: SwapWalletsRepository {
+final class JupiterTokensRepositoryImpl: JupiterTokensRepository {
 
-    @MainActor var state: AnyPublisher<SwapWalletsState, Never> {
+    @MainActor var state: AnyPublisher<JupiterTokensState, Never> {
         stateSubject.receive(on: RunLoop.main).eraseToAnyPublisher()
     }
 
-    var tokens: AnyPublisher<SwapWalletsData, Never> {
+    var tokens: AnyPublisher<JupiterTokensData, Never> {
         dataSubject.eraseToAnyPublisher()
     }
 
     // MARK: - Dependencies
     private let jupiterClient: JupiterAPI
-    private let localProvider: SwapWalletsProvider
+    private let localProvider: JupiterTokensProvider
     @Injected private var walletsRepository: WalletsRepository
 
     // MARK: - Private params
-    @Published private var stateSubject = CurrentValueSubject<SwapWalletsState, Never>(.loading)
-    @Published private var dataSubject = CurrentValueSubject<SwapWalletsData, Never>(.init(tokens: [], userWallets: []))
+    @Published private var stateSubject = CurrentValueSubject<JupiterTokensState, Never>(.loading)
+    @Published private var dataSubject = CurrentValueSubject<JupiterTokensData, Never>(.init(tokens: [], userWallets: []))
 
-    init(provider: SwapWalletsProvider, jupiterClient: JupiterAPI) {
+    init(provider: JupiterTokensProvider, jupiterClient: JupiterAPI) {
         self.localProvider = provider
         self.jupiterClient = jupiterClient
         self.stateSubject.send(.initialized)
@@ -65,7 +65,7 @@ final class SwapWalletsRepositoryImpl: SwapWalletsRepository {
                 }
                 return SwapToken(jupiterToken: jupiterToken, userWallet: nil)
             }
-            dataSubject.send(SwapWalletsData(tokens: swapTokens, userWallets: wallets))
+            dataSubject.send(JupiterTokensData(tokens: swapTokens, userWallets: wallets))
             stateSubject.send(.loaded)
         }
         catch {
