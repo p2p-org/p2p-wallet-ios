@@ -8,6 +8,7 @@
 import Foundation
 import History
 import Resolver
+import Resolver
 import SolanaPricesAPIs
 import SolanaSwift
 import TransactionParser
@@ -118,7 +119,6 @@ actor NewHistoryRepositoryWithOldProvider: NewHistoryRepository {
 
 struct RendableParsedTransaction: NewHistoryRendableItem {
     let trx: ParsedTransaction
-
     var price: CurrentPrice?
 
     var id: String {
@@ -213,11 +213,19 @@ struct RendableParsedTransaction: NewHistoryRendableItem {
     }
 
     var detail: String {
+        var symbol: String?
         if let info = trx.info as? SwapInfo {
-            let amountText = info.destinationAmount?.tokenAmountFormattedString(symbol: info.destination?.token.symbol ?? "", maximumFractionDigits: Int(info.destination?.token.decimals ?? 0)) ?? ""
-            return "+\(amountText)"
+            symbol = info.symbol
+        } else if let info = trx.info as? TransferInfo {
+            symbol = info.symbol
         }
 
+        if let symbol {
+            let priceService: PricesService = Resolver.resolve()
+            let price = priceService.getCurrentPrice(for: symbol)
+            return (price ?? 0 * trx.amount).fiatAmountFormattedString(customFormattForLessThan1E_2: true)
+        }
+        
         return ""
     }
 
