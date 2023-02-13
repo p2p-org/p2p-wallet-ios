@@ -93,7 +93,7 @@ private extension HomeViewModel {
                 
                 // state
                 switch state {
-                case .initializing,
+                case .initialized,
                      .loading where !self.isInitialized:
                     self.state = .pending
                 case .error:
