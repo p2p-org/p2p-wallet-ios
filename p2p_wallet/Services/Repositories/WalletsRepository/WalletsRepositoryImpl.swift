@@ -2,7 +2,6 @@ import Foundation
 import Resolver
 import SolanaSwift
 import Combine
-import RxCombine
 
 @MainActor
 class WalletsRepositoryImpl: ListRepository<Wallet> {
@@ -52,7 +51,6 @@ class WalletsRepositoryImpl: ListRepository<Wallet> {
         // observe tokens' balance
         socket.observeAllAccountsNotifications()
             .map(Optional.init)
-            .publisher
             .replaceError(with: nil)
             .compactMap { $0 }
             .receive(on: RunLoop.main)
