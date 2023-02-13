@@ -2,7 +2,6 @@ import Combine
 import Foundation
 
 /// Repository to manage a List of some Kind of item
-@MainActor
 class ListRepository<ItemType: Hashable & Identifiable>: ItemRepository<[ItemType]> {
     // MARK: - Properties
     
@@ -26,32 +25,24 @@ class ListRepository<ItemType: Hashable & Identifiable>: ItemRepository<[ItemTyp
     // MARK: - Actions
 
     /// Erase data and reset repository to its initial state
-    override func reset(autoFetch: Bool = true) {
+    override func reset(autoFetch: Bool = true) -> RepositoryTask? {
         paginationStrategy?.resetPagination()
-        super.reset(autoFetch: autoFetch)
+        return super.reset(autoFetch: autoFetch)
     }
     
     /// Indicate if repository can fetch more data
     /// - Returns: should fetch new data
-    private func fetchable() -> Bool {
+    internal override func fetchable() -> Bool {
         guard let paginationStrategy else {
             return false
         }
         
-        return !paginationStrategy.isLastPageLoaded
-    }
-    
-    /// Fetch next records if pagination is enabled
-    func fetchNext() {
-        // assert pagination is enabled
-        guard fetchable() == true else { return }
-        
-        // call request
-        super.fetch()
+        return super.fetchable() && !paginationStrategy.isLastPage
     }
     
     /// Handle new data that just received
     /// - Parameter newData: the new data received
+    @MainActor
     override func handleData(_ newItems: [ItemType]) {
         var newData = data
         
@@ -61,8 +52,7 @@ class ListRepository<ItemType: Hashable & Identifiable>: ItemRepository<[ItemTyp
             newData += newItems.filter { !data.contains($0) }
             
             // resign state
-            paginationStrategy.moveToNextPage()
-            paginationStrategy.checkIfLastPageLoaded(lastSnapshot: newItems)
+            paginationStrategy.handle(data: newData)
         }
         
         // without pagination
@@ -78,11 +68,5 @@ class ListRepository<ItemType: Hashable & Identifiable>: ItemRepository<[ItemTyp
     /// - Parameter err: the error received
     override func handleError(_ err: Error) {
         super.handleError(err)
-    }
-    
-    /// Force override current data with newData
-    /// - Parameter newData: newData to be overriden
-    func overrideData(by newData: [ItemType]) {
-        super.handleData(newData)
     }
 }

@@ -6,8 +6,8 @@ class LimitOffsetPaginationStrategy: PaginationStrategy {
     // MARK: - Properties
 
     let limit: Int
-    @MainActor var offset: Int = 0
-    @MainActor var isLastPageLoaded: Bool = false
+    var offset: Int = 0
+    var isLastPage: Bool = false
     
     // MARK: - Initializer
 
@@ -15,15 +15,12 @@ class LimitOffsetPaginationStrategy: PaginationStrategy {
         self.limit = limit
     }
     
-    @MainActor func checkIfLastPageLoaded<ItemType: Hashable>(lastSnapshot: [ItemType]) {
-        isLastPageLoaded = lastSnapshot.count < limit
+    func handle<ItemType: Hashable>(data: [ItemType]) {
+        offset += data.count
+        isLastPage = data.count < limit
     }
     
-    @MainActor func resetPagination() {
+    func resetPagination() {
         offset = 0
-    }
-    
-    @MainActor func moveToNextPage() {
-        offset += limit
     }
 }
