@@ -1,17 +1,28 @@
 import SwiftUI
-import SolanaSwift
 import KeyAppUI
 
-struct ChooseWalletTokenItemView: View {
-    enum State {
-        case first, last, single, other
+enum SearchableItemViewState {
+    case first, last, single, other
+}
+
+struct SearchableItemView<Content: View>: View {
+
+    private let state: SearchableItemViewState
+    private let item: any SearchableItem
+    @ViewBuilder private let content: (any SearchableItem) -> Content
+
+    init(
+        @ViewBuilder content: @escaping (any SearchableItem) -> Content,
+        state: SearchableItemViewState,
+        item: any SearchableItem
+    ) {
+        self.content = content
+        self.state = state
+        self.item = item
     }
 
-    let wallet: Wallet
-    let state: State
-
     var body: some View {
-        TokenCellView(item: TokenCellViewItem(wallet: wallet), appearance: .other)
+        content(item)
             .padding(.horizontal, 16)
             .frame(height: 72)
             .background(

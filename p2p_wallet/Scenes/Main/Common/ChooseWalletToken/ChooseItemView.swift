@@ -2,11 +2,16 @@ import SwiftUI
 import KeyAppUI
 import SolanaSwift
 
-struct ChooseWalletTokenView: View {
-    @ObservedObject private var viewModel: ChooseWalletTokenViewModel
+struct ChooseItemView<Content: View>: View {
+    @ObservedObject private var viewModel: ChooseItemViewModel
+    @ViewBuilder private let content: (any SearchableItem) -> Content
 
-    init(viewModel: ChooseWalletTokenViewModel) {
+    init(
+        viewModel: ChooseItemViewModel,
+        @ViewBuilder content: @escaping (any SearchableItem) -> Content
+    ) {
         self.viewModel = viewModel
+        self.content = content
     }
 
     var body: some View {
@@ -22,7 +27,10 @@ struct ChooseWalletTokenView: View {
                 .padding(.top, 16)
 
                 // List of tokens
-                if viewModel.wallets.isEmpty {
+                if viewModel.isLoading {
+                    loadingView
+                        .padding(.top, 64)
+                } else if viewModel.wallets.isEmpty {
                     emptyView
                 } else {
                     listView
@@ -32,34 +40,12 @@ struct ChooseWalletTokenView: View {
         }
     }
 
-    @ViewBuilder
-    private func wrappedList<Content: View>(
-        @ViewBuilder content: @escaping () -> Content
-    ) -> some View {
-        if #available(iOS 15, *) {
-            List {
-                content()
-                    .listRowSeparator(.hidden)
-                    .listRowInsets(EdgeInsets())
-            }
-            .listStyle(.plain)
-            .background(Color(Asset.Colors.smoke.color))
-        } else {
-            ScrollView {
-                LazyVStack(spacing: 0) {
-                    content()
-                }
-                .background(Color(Asset.Colors.smoke.color))
-            }
-        }
-    }
-
-    private func state(for wallet: Wallet) -> ChooseWalletTokenItemView.State {
-        if viewModel.wallets.count == 1 {
+    private func state(for item: any SearchableItem, in section: ChooseItemListData) -> SearchableItemViewState {
+        if section.items.count == 1 {
             return .single
-        } else if viewModel.wallets.first == wallet {
+        } else if section.items.first?.id == item.id {
             return .first
-        } else if viewModel.wallets.last == wallet {
+        } else if section.items.last?.id == item.id {
             return .last
         } else {
             return .other
@@ -68,22 +54,31 @@ struct ChooseWalletTokenView: View {
 }
 
 // MARK: - Subviews
-private extension ChooseWalletTokenView {
+private extension ChooseItemView {
     private var emptyView: some View {
         Group {
-            SendNotFoundView(text: L10n.TokenNotFound.tryAnotherOne)
+            NotFoundView(text: L10n.TokenNotFound.tryAnotherOne)
                 .padding(.top, 30)
             Spacer()
         }
     }
 
+    private var loadingView: some View {
+        VStack {
+            SearchableItemSkeletonView()
+                .frame(height: 88)
+                .padding(.horizontal, 16)
+            Spacer()
+        }
+    }
+
     private var listView: some View {
-        wrappedList {
+        WrappedList {
             if !viewModel.isSearchGoing {
                 // Chosen token
                 Text(L10n.chosenToken)
                     .sectionStyle()
-                ChooseWalletTokenItemView(wallet: viewModel.chosenToken, state: .single)
+                SearchableItemView(content: content, state: .single, item: viewModel.chosenToken)
                     .listRowBackground(Color(Asset.Colors.smoke.color))
                     .onTapGesture {
                         viewModel.chooseTokenSubject.send(viewModel.chosenToken)
@@ -94,12 +89,17 @@ private extension ChooseWalletTokenView {
             Text(viewModel.isSearchGoing ? L10n.hereSWhatWeFound : L10n.otherTokens)
                 .sectionStyle()
 
-            ForEach(viewModel.wallets) { wallet in
-                ChooseWalletTokenItemView(wallet: wallet, state: state(for: wallet))
-                    .listRowBackground(Color(Asset.Colors.smoke.color))
-                    .onTapGesture {
-                        viewModel.chooseTokenSubject.send(wallet)
-                    }
+            ForEach(viewModel.wallets) { section in
+                ForEach(section.items.map({Container(wrapped: $0)})) { singleWallet  in
+                    SearchableItemView(content: content, state: state(for: singleWallet.wrapped, in: section), item: singleWallet.wrapped)
+                        .listRowBackground(Color(Asset.Colors.smoke.color))
+                        .onTapGesture {
+                            viewModel.chooseTokenSubject.send(singleWallet.wrapped)
+                        }
+                }
+                Rectangle()
+                    .frame(height: 12)
+                    .foregroundColor(Color(Asset.Colors.smoke.color))
             }
         }
         .padding(.bottom, 28)
@@ -114,4 +114,9 @@ private extension Text {
             .padding(EdgeInsets(top: 20, leading: 20, bottom: 12, trailing: 20))
             .listRowBackground(Color(Asset.Colors.smoke.color))
     }
+}
+
+private struct Container: Identifiable {
+    var wrapped: any SearchableItem
+    var id: String { wrapped.id }
 }
