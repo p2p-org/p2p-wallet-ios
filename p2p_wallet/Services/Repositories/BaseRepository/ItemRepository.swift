@@ -3,6 +3,8 @@ import Foundation
 
 /// Repository to manage some kind of Item
 class ItemRepository<ItemType: Hashable>: ObservableObject {
+    typealias RepositoryTask = Task<Void, Error>
+    
     // MARK: - Private properties
     
     /// Initial data for initializing state
@@ -11,7 +13,7 @@ class ItemRepository<ItemType: Hashable>: ObservableObject {
     // MARK: - Public properties
     
     /// Current running task
-    var loadingTask: Task<Void, Error>?
+    internal var currentTask: RepositoryTask?
     
     /// The current data
     @Published var data: ItemType
@@ -42,40 +44,51 @@ class ItemRepository<ItemType: Hashable>: ObservableObject {
     // MARK: - Actions
 
     /// Erase data and reset repository to its initial state
-    public func reset(autoFetch: Bool = true) {
+    @discardableResult public func reset(autoFetch: Bool = true) -> RepositoryTask? {
+        currentTask?.cancel()
+        currentTask = nil
+        
         data = initialData
         state = .initializing
         error = nil
         
         if autoFetch {
-            fetch()
+            return fetch()
         }
+        
+        return nil
+    }
+    
+    internal func fetchable() -> Bool {
+        return true
     }
     
     /// Request data from outside to get new data
-    public func fetch() {
+    @discardableResult public func fetch() -> RepositoryTask? {
         // Ensure only one task at current moment
-        guard loadingTask == nil else { return }
-        
-        // cancel previous request
-        loadingTask?.cancel()
+        guard state != .fetching else { return currentTask }
+        guard fetchable() else { return nil }
         
         // mark as loading
         state = .fetching
         error = nil
         
         // assign and execute loadingTask
-        loadingTask = Task {
+        currentTask = Task {
             do {
-                defer { loadingTask = nil }
-                
-                let newData = try await request()
+                defer { currentTask = nil }
+
+                let newData: ItemType = try await request()
                 await handleData(newData)
             } catch {
                 if error is CancellationError { return }
                 await handleError(error)
+
+                throw error
             }
         }
+        
+        return currentTask
     }
     
     /// Handle new data that just received
@@ -84,7 +97,7 @@ class ItemRepository<ItemType: Hashable>: ObservableObject {
     func handleData(_ newData: ItemType) {
         data = newData
         error = nil
-        state = .fetching
+        state = .ready
     }
     
     /// Handle error when received
