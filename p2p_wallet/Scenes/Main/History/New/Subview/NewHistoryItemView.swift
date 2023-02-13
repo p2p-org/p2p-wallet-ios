@@ -38,7 +38,6 @@ struct NewHistoryItemView: View {
         } label: {
             HStack {
                 NewHistoryIconView(icon: item.icon)
-
                 VStack(spacing: 4) {
                     HStack(spacing: 5) {
                         switch item.status {
