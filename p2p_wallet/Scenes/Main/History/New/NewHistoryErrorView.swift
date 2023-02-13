@@ -10,7 +10,7 @@ struct NewHistoryErrorView: View {
             VStack(spacing: 20) {
                 Image(uiImage: .catFail)
                     .padding(.bottom, 24) // 24 + 16
-                Text("Oops! Something happened.")
+                Text(L10n.oopsSomethingHappened)
                     .apply(style: .text1)
                     .multilineTextAlignment(.center)
                 TextButtonView(title: L10n.refresh, style: .second, size: .large, onPressed: action)
