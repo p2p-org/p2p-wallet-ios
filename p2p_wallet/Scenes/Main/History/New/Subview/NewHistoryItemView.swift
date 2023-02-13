@@ -38,7 +38,6 @@ struct NewHistoryItemView: View {
         } label: {
             HStack {
                 NewHistoryIconView(icon: item.icon)
-                    
                 VStack(spacing: 4) {
                     HStack(spacing: 5) {
                         switch item.status {
@@ -61,11 +60,15 @@ struct NewHistoryItemView: View {
                             .foregroundColor(titleColor)
                             .fontWeight(.semibold)
                             .apply(style: .text2)
+                            .lineLimit(2)
+                            .multilineTextAlignment(.leading)
                         Spacer()
                         Text(item.detail)
                             .fontWeight(.semibold)
                             .apply(style: .text2)
                             .foregroundColor(detailColor)
+                            .lineLimit(2)
+                            .multilineTextAlignment(.trailing)
                     }
 
                     HStack {
