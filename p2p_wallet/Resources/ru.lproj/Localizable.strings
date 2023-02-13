@@ -1225,3 +1225,5 @@ You can try again, but your new transaction will be subject to the current rates
 "Received from" = "Получен от";
 "There was a problem with the swap, your funds were refunded" = "Возникла проблема со свопом, ваши средства были возвращены";
 "%@ signature" = "%@ подпись";
+"Your history will appear here.\nTo get started you can:" = "Здесь появится ваша история.\nЧтобы начать, вы можете:";
+"Oops! Something happened." = "Ой!  Что-то произошло.";

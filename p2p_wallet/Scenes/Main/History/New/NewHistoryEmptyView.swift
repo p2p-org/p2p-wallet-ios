@@ -11,7 +11,7 @@ struct NewHistoryEmptyView: View {
             VStack(spacing: 20) {
                 Image(uiImage: .moneybox)
                     .padding(.bottom, 24) // 24 + 16
-                Text("Your history will appear here.\nTo get started you can:")
+                Text(L10n.YourHistoryWillAppearHere.toGetStartedYouCan)
                     .apply(style: .text1)
                     .multilineTextAlignment(.center)
                 TextButtonView(title: L10n.buyCrypto, style: .primary, size: .large, onPressed: primaryAction)

@@ -1199,3 +1199,5 @@ You can try again, but your new transaction will be subject to the current rates
 "Received from" = "Received from";
 "There was a problem with the swap, your funds were refunded" = "There was a problem with the swap, your funds were refunded";
 "%@ signature" = "%@ signature";
+"Your history will appear here.\nTo get started you can:" = "Your history will appear here.\nTo get started you can:";
+"Oops! Something happened." = "Oops! Something happened.";
