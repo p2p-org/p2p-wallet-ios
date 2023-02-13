@@ -61,14 +61,14 @@ final class SendInputViewModel: BaseViewModel, ObservableObject {
 
     // MARK: - Dependencies
 
-    private let walletsRepository: any WalletsRepository
+    private let walletsRepository: WalletsRepository
     private let pricesService: PricesServiceType
     @Injected private var analyticsManager: AnalyticsManager
 
     init(recipient: Recipient, preChosenWallet: Wallet?, preChosenAmount: Double?, source: SendSource, allowSwitchingMainAmountType: Bool) {
         self.source = source
         self.preChosenAmount = preChosenAmount
-        let repository = Resolver.resolve((any WalletsRepository).self)
+        let repository = Resolver.resolve(WalletsRepository.self)
         walletsRepository = repository
         let wallets = repository.getWallets()
 

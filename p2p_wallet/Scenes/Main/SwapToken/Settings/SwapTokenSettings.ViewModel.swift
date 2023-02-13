@@ -32,7 +32,7 @@ extension SwapTokenSettings {
         }
 
         private let swapViewModel: OrcaSwapV2ViewModelType
-        @Injected private var walletsRepository: any WalletsRepository
+        @Injected private var walletsRepository: WalletsRepository
         @Injected private var notificationService: NotificationService
 
         // MARK: - Subject

@@ -11,7 +11,7 @@ class SolendDepositsViewModel: ObservableObject {
     // MARK: - Services
 
     @Injected private var priceService: PricesService
-    @Injected private var walletsRepository: any WalletsRepository
+    @Injected private var walletsRepository: WalletsRepository
     private let dataService: SolendDataService
     
     // MARK: - State

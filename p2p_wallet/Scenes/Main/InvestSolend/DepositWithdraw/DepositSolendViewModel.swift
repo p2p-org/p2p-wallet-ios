@@ -50,7 +50,7 @@ class DepositSolendViewModel: ObservableObject {
 
     @Injected private var notificationService: NotificationService
     @Injected private var priceService: PricesServiceType
-    @Injected private var walletsRepository: any WalletsRepository
+    @Injected private var walletsRepository: WalletsRepository
 
     @Published var focusSide: DepositWithdrawInputViewActiveSide = .left
     /// Is loading fees

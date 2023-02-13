@@ -10,14 +10,14 @@ protocol BuyProcessingServiceType {
 
 protocol BuyProcessingFactory {
     func create(
-        walletsRepository: any WalletsRepository,
+        walletsRepository: WalletsRepository,
         crypto: Buy.CryptoCurrency,
         initialAmount: Double,
         currency: Buy.FiatCurrency
     ) throws -> BuyProcessingServiceType
 
     func create(
-        walletsRepository: any WalletsRepository,
+        walletsRepository: WalletsRepository,
         fromCurrency: BuyCurrencyType,
         amount: Double,
         toCurrency: BuyCurrencyType,
@@ -28,7 +28,7 @@ protocol BuyProcessingFactory {
 extension Buy {
     class MoonpayBuyProcessingFactory: BuyProcessingFactory {
         func create(
-            walletsRepository: any WalletsRepository,
+            walletsRepository: WalletsRepository,
             crypto: CryptoCurrency,
             initialAmount: Double,
             currency: FiatCurrency
@@ -48,7 +48,7 @@ extension Buy {
         }
 
         func create(
-            walletsRepository: any WalletsRepository,
+            walletsRepository: WalletsRepository,
             fromCurrency: BuyCurrencyType,
             amount: Double,
             toCurrency: BuyCurrencyType,

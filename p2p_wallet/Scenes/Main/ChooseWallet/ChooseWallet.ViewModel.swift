@@ -20,7 +20,7 @@ extension ChooseWallet {
         let selectedWallet: Wallet?
         private var myWallets: [Wallet]!
         let handler: WalletDidSelectHandler!
-        @Injected private var walletsRepository: any WalletsRepository
+        @Injected private var walletsRepository: WalletsRepository
         @Injected private var tokensRepository: TokensRepository
         @Injected private var analyticsManager: AnalyticsManager
         @Injected private var pricesService: PricesServiceType

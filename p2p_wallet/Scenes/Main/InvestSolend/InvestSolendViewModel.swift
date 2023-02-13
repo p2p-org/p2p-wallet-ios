@@ -32,7 +32,7 @@ class InvestSolendViewModel: ObservableObject {
     @Injected private var notificationService: NotificationService
     let dataService: SolendDataService
     let actionService: SolendActionService
-    let walletsRepository: any WalletsRepository
+    let walletsRepository: WalletsRepository
 
     private var subscriptions = Set<AnyCancellable>()
 
@@ -68,7 +68,7 @@ class InvestSolendViewModel: ObservableObject {
     init(
         dataService: SolendDataService = Resolver.resolve(),
         actionService: SolendActionService = Resolver.resolve(),
-        walletsRepository: any WalletsRepository = Resolver.resolve()
+        walletsRepository: WalletsRepository = Resolver.resolve()
     ) {
         self.dataService = dataService
         self.actionService = actionService
@@ -89,7 +89,7 @@ class InvestSolendViewModel: ObservableObject {
                     try await dataService.update()
                 }
                 Task.detached {
-                    Resolver.resolve((any WalletsRepository).self).reload()
+                    Resolver.resolve(WalletsRepository.self).reload()
                 }
             }
             .store(in: &subscriptions)
@@ -232,7 +232,7 @@ class InvestSolendViewModel: ObservableObject {
             return
         }
 
-        let wallets: any WalletsRepository = Resolver.resolve()
+        let wallets: WalletsRepository = Resolver.resolve()
 
         // Get user token account
         let tokenAccount: Wallet? = wallets

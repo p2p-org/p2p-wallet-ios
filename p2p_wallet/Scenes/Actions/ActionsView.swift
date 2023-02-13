@@ -14,7 +14,7 @@ import Resolver
 
 struct ActionsView: View {
     @Injected private var sellDataService: any SellDataService
-    @Injected private var walletsRepository: any WalletsRepository
+    @Injected private var walletsRepository: WalletsRepository
     
     private let actionSubject = PassthroughSubject<Action, Never>()
     var action: AnyPublisher<Action, Never> { actionSubject.eraseToAnyPublisher() }

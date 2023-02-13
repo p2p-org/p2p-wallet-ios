@@ -4,7 +4,7 @@ import SolanaSwift
 
 final class ChooseWalletTokenViewModel: BaseViewModel, ObservableObject {
 
-    @Injected private var walletsRepository: any WalletsRepository
+    @Injected private var walletsRepository: WalletsRepository
     @Injected private var notifications: NotificationService
 
     let chooseTokenSubject = PassthroughSubject<Wallet, Never>()

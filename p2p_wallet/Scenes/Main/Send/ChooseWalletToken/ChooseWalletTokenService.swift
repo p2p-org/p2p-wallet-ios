@@ -10,7 +10,7 @@ final class ChooseWalletTokenServiceImpl: ChooseWalletTokenService {
 
     private let strategy: ChooseWalletTokenStrategy
 
-    @Injected private var walletsRepository: any WalletsRepository
+    @Injected private var walletsRepository: WalletsRepository
 
     private lazy var feeWalletsService: SendChooseFeeService = SendChooseFeeServiceImpl(
         wallets: walletsRepository.getWallets(),

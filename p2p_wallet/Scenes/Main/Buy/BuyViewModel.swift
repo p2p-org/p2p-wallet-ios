@@ -43,7 +43,7 @@ final class BuyViewModel: ObservableObject {
 
     // Dependencies
     @Injected var exchangeService: BuyExchangeService
-    @Injected var walletsRepository: any WalletsRepository
+    @Injected var walletsRepository: WalletsRepository
     @Injected private var analyticsManager: AnalyticsManager
     @Injected private var pricesService: PricesServiceType
 

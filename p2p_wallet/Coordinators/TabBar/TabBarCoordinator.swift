@@ -16,7 +16,7 @@ final class TabBarCoordinator: Coordinator<Void> {
     
     // MARK: - Dependencies
     @Injected private var userWalletManager: UserWalletManager
-    @Injected private var walletsRepository: any WalletsRepository
+    @Injected private var walletsRepository: WalletsRepository
     @Injected private var analyticsManager: AnalyticsManager
     @Injected private var sellDataService: any SellDataService
 

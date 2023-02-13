@@ -19,7 +19,7 @@ final class SendTransactionDetailViewModel: BaseViewModel, ObservableObject {
 
     private let stateMachine: SendInputStateMachine
     @Injected private var pricesService: PricesServiceType
-    @Injected private var walletsRepository: any WalletsRepository
+    @Injected private var walletsRepository: WalletsRepository
     @Injected private var notificationsService: NotificationService
     @Injected private var clipboardManager: ClipboardManagerType
 

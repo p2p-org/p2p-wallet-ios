@@ -17,7 +17,7 @@ import Sell
 final class HomeWithTokensViewModel: BaseViewModel, ObservableObject {
     // MARK: - Dependencies
     
-    private let walletsRepository: any WalletsRepository
+    private let walletsRepository: WalletsRepository
     @Injected private var pricesService: PricesServiceType
     @Injected private var solanaTracker: SolanaTracker
     @Injected private var notificationService: NotificationService
@@ -43,7 +43,7 @@ final class HomeWithTokensViewModel: BaseViewModel, ObservableObject {
     init(navigation: PassthroughSubject<HomeNavigation, Never>) {
         self.navigation = navigation
 
-        let walletsRepository = Resolver.resolve((any WalletsRepository).self)
+        let walletsRepository = Resolver.resolve(WalletsRepository.self)
         tokensIsHidden = !walletsRepository.isHiddenWalletsShown
 
         balance = walletsRepository.statePublisher

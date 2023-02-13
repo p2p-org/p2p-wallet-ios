@@ -10,7 +10,7 @@ import NameService
 import Resolver
 
 class NameServiceUserDefaultCache: NameServiceCacheType {
-    @Injected private var walletsRepository: any WalletsRepository
+    @Injected private var walletsRepository: WalletsRepository
     @Injected private var nameStorage: NameStorageType
 
     private let locker = NSLock()

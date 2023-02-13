@@ -9,7 +9,7 @@ import Foundation
 import Combine
 import SolanaSwift
 
-protocol WalletsRepository: ObservableObject {
+protocol WalletsRepository {
     var nativeWallet: Wallet? { get }
     func getWallets() -> [Wallet]
     var statePublisher: AnyPublisher<LoadingState, Never> { get }
@@ -25,6 +25,7 @@ protocol WalletsRepository: ObservableObject {
     func refresh()
 
     func batchUpdate(closure: ([Wallet]) -> [Wallet])
+    var objectWillChange: ObservableObjectPublisher { get }
 }
 
 extension WalletsRepositoryImpl: WalletsRepository {

@@ -12,9 +12,9 @@ import Solend
 class DefaultSolendWithdrawFeePayingStrategy: SolendFeePayingStrategy {
     let orca: OrcaSwap
     let actionService: SolendActionService
-    let walletsRepository: any WalletsRepository
+    let walletsRepository: WalletsRepository
 
-    init(orca: OrcaSwap, actionService: SolendActionService, walletsRepository: any WalletsRepository) {
+    init(orca: OrcaSwap, actionService: SolendActionService, walletsRepository: WalletsRepository) {
         self.orca = orca
         self.actionService = actionService
         self.walletsRepository = walletsRepository

@@ -17,7 +17,7 @@ final class SellPendingCoordinator: Coordinator<SellPendingCoordinatorResult> {
     
     // MARK: - Dependencies
 
-    @Injected private var walletsRepository: any WalletsRepository
+    @Injected private var walletsRepository: WalletsRepository
     
     // MARK: - Properties
     

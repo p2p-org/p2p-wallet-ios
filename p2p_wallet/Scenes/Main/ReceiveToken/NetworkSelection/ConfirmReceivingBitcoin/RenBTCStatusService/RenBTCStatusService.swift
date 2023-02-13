@@ -20,7 +20,7 @@ class RenBTCStatusService: RenBTCStatusServiceType {
     @Injected private var feeRelayerAPIClient: FeeRelayerAPIClient
     @Injected private var accountStorage: AccountStorageType
     @Injected private var orcaSwap: OrcaSwapType
-    @Injected private var walletsRepository: any WalletsRepository
+    @Injected private var walletsRepository: WalletsRepository
     @Injected private var relayService: RelayService
 
     private var minRenExemption: Lamports?

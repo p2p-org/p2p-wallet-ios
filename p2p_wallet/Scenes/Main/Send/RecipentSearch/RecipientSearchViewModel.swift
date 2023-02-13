@@ -16,7 +16,7 @@ class RecipientSearchViewModel: ObservableObject {
     private let source: SendSource
 
     @Injected private var clipboardManager: ClipboardManagerType
-    @Injected private var walletsRepository: any WalletsRepository
+    @Injected private var walletsRepository: WalletsRepository
     @Injected private var tokensRepository: TokensRepository
     @Injected private var notificationService: NotificationService
     @Injected private var analyticsManager: AnalyticsManager

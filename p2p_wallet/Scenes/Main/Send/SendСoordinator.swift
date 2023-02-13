@@ -24,7 +24,7 @@ class SendCoordinator: Coordinator<SendResult> {
     
     // MARK: - Dependencies
 
-    @Injected var walletsRepository: any WalletsRepository
+    @Injected var walletsRepository: WalletsRepository
 
     // MARK: - Properties
 

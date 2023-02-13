@@ -29,7 +29,7 @@ class SellViewModel: BaseViewModel, ObservableObject {
 
     // MARK: - Dependencies
 
-    @Injected private var walletsRepository: any WalletsRepository
+    @Injected private var walletsRepository: WalletsRepository
     @Injected private var dataService: any SellDataService
     @Injected private var actionService: any SellActionService
     @Injected private var analyticsManager: AnalyticsManager

@@ -50,7 +50,7 @@ extension ConfirmReceivingBitcoin {
 
         @Injected private var renBTCStatusService: RenBTCStatusServiceType
         @Injected private var pricesService: PricesServiceType
-        @Injected private var walletsRepository: any WalletsRepository
+        @Injected private var walletsRepository: WalletsRepository
         @Injected private var userWalletManager: UserWalletManager
         @Injected private var analyticsManager: AnalyticsManager
 

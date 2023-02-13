@@ -21,7 +21,7 @@ class HomeViewModel: ObservableObject {
     @Injected private var accountStorage: AccountStorageType
     @Injected private var nameStorage: NameStorageType
     @Injected private var createNameService: CreateNameService
-    @Injected private var walletsRepository: any WalletsRepository
+    @Injected private var walletsRepository: WalletsRepository
 
     // MARK: - Published properties
 
