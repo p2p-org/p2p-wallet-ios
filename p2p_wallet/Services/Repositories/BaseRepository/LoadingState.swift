@@ -5,9 +5,9 @@ enum LoadingState {
     /// Nothing loaded
     case initializing
     /// Data is loading
-    case loading
-    /// Data is loaded
-    case loaded
+    case fetching
+    /// Data is ready to use
+    case ready
     /// Error
     case error
 }

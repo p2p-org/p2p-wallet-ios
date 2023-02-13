@@ -1,8 +1,7 @@
-import Foundation
 import Combine
+import Foundation
 
 /// Repository to manage some kind of Item
-@MainActor
 class ItemRepository<ItemType: Hashable>: ObservableObject {
     // MARK: - Private properties
     
@@ -27,7 +26,7 @@ class ItemRepository<ItemType: Hashable>: ObservableObject {
     
     /// ItemRepository's initializer
     /// - Parameter initialData: initial data for begining state of the Repository
-    init(initialData: ItemType) {
+    public init(initialData: ItemType) {
         self.initialData = initialData
         data = initialData
     }
@@ -36,74 +35,61 @@ class ItemRepository<ItemType: Hashable>: ObservableObject {
     
     /// The request to retrieve data into repository
     /// - Returns: item
-    func createRequest() async throws -> ItemType {
+    internal func request() async throws -> ItemType {
         fatalError("Must override")
     }
     
     // MARK: - Actions
 
     /// Erase data and reset repository to its initial state
-    func flush() {
+    public func reset(autoFetch: Bool = true) {
         data = initialData
         state = .initializing
         error = nil
-    }
-    
-    /// Erase and reload all data
-    func reload() {
-        flush()
-        request()
-    }
-    
-    /// Refresh data without erasing current data
-    func refresh() {
-        request()
-    }
-    
-    /// Indicate if should fetch new data to prevent unwanted request
-    /// - Returns: should fetch new data
-    func shouldRequest() -> Bool {
-        true
+        
+        if autoFetch {
+            fetch()
+        }
     }
     
     /// Request data from outside to get new data
-    func request() {
-        // prevent unwanted request
-        guard shouldRequest() else {
-            return
-        }
+    public func fetch() {
+        // Ensure only one task at current moment
+        guard loadingTask == nil else { return }
         
         // cancel previous request
         loadingTask?.cancel()
         
         // mark as loading
-        state = .loading
+        state = .fetching
         error = nil
         
         // assign and execute loadingTask
         loadingTask = Task {
             do {
-                let newData = try await createRequest()
-                handleNewData(newData)
+                defer { loadingTask = nil }
+                
+                let newData = try await request()
+                await handleData(newData)
             } catch {
-                if error is CancellationError {
-                    return
-                }
-                handleError(error)
+                if error is CancellationError { return }
+                await handleError(error)
             }
         }
     }
     
     /// Handle new data that just received
     /// - Parameter newData: the new data received
-    func handleNewData(_ newData: ItemType) {
+    @MainActor
+    func handleData(_ newData: ItemType) {
         data = newData
         error = nil
-        state = .loaded
+        state = .fetching
     }
     
     /// Handle error when received
     /// - Parameter err: the error received
+    @MainActor
     func handleError(_ err: Error) {
         error = err
         state = .error
