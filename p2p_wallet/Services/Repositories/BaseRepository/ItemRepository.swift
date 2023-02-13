@@ -18,7 +18,7 @@ class ItemRepository<ItemType: Hashable>: ObservableObject {
     @Published var data: ItemType
 
     /// The current loading state of the data
-    @Published var state: LoadingState = .initializing
+    @Published var state: LoadingState = .initialized
 
     /// Optional error if occurred
     @Published var error: Error?
@@ -45,7 +45,7 @@ class ItemRepository<ItemType: Hashable>: ObservableObject {
     /// Erase data and reset repository to its initial state
     func flush() {
         data = initialData
-        state = .initializing
+        state = .initialized
         error = nil
     }
     
