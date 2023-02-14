@@ -27,8 +27,8 @@ final class ChooseSendItemCoordinator: Coordinator<Wallet?> {
             service: buildService(strategy: strategy),
             chosenToken: chosenWallet
         )
-        let view = ChooseItemView<TokenCellView>(viewModel: viewModel) { item in
-            TokenCellView(item: .init(wallet: item as! Wallet), appearance: .other)
+        let view = ChooseItemView<TokenCellView>(viewModel: viewModel) { model in
+            TokenCellView(item: .init(wallet: model.item as! Wallet), appearance: .other)
         }
         let controller = KeyboardAvoidingViewController(rootView: view, ignoresKeyboard: true)
         navigationController.setViewControllers([controller], animated: false)

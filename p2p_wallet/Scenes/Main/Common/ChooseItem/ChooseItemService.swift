@@ -3,5 +3,5 @@ protocol ChooseItemService {
     var otherTokensTitle: String { get }
 
     func fetchItems() async throws -> [ChooseItemListSection]
-    func filterAndSort(items: [ChooseItemListSection], by keyword: String) -> [ChooseItemListSection]
+    func sort(items: [ChooseItemListSection]) -> [ChooseItemListSection]
 }

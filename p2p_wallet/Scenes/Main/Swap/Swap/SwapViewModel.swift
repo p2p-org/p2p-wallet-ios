@@ -28,8 +28,8 @@ final class SwapViewModel: BaseViewModel, ObservableObject {
     let fromTokenViewModel: SwapInputViewModel
     let toTokenViewModel: SwapInputViewModel
     let actionButtonViewModel: SliderActionButtonViewModel
-    
-    var tokens: [SwapToken] = []
+
+    var tokens: [SwapToken] = [] // TODO: Temprorary decision. Waiting for new repository class
 
     override init() {
         self.fromTokenViewModel = SwapInputViewModel.buildFromViewModel(swapToken: .nativeSolana)
