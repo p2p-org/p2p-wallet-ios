@@ -9,4 +9,4 @@ jobs:
   build-feature-test:
     uses: ./.github/workflows/build-feature-test.yml
     with:
-      with-high-priority: ${{ inputs.with-high-priority }}
+      with_high_priority: ${{ inputs.with_high_priority }}

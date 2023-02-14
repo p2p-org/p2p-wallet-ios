@@ -3,7 +3,7 @@ name: Create feature build
 on:
   workflow_call:
     inputs:
-      with-high-priority:
+      with_high_priority:
         required: true
         type: boolean
     # secrets:
