@@ -33,11 +33,12 @@ jobs:
           transition: ${{ secrets.JIRA_IN_PROGRESS_TRANSITION_NAME }}
 
   # Upload build for testing when pull request is approved
-  build-feature-test-when-pull-request-is-approved:
+  build-test-when-pull-request-is-approved:
     name: Upload build for testing when pull request is approved
     if: ${{ github.event.review.state == 'approved' && !contains(github.event.pull_request.labels.*.name, 'no-qa') }}
-    uses: ./.github/workflows/build-feature-test.yml
+    uses: ./.github/workflows/build-test.yml
     with:
       with_high_priority: ${{ contains(github.event.pull_request.labels.*.name, 'high') }}
       move_to_rft: true
+      lane: "feature_test"
     secrets: inherit

@@ -11,9 +11,10 @@ on:
         default: true 
 
 jobs:
-  build-feature-test:
-    uses: ./.github/workflows/build-feature-test.yml
+  build-test:
+    uses: ./.github/workflows/build-test.yml
     with:
       with_high_priority: ${{ inputs.with_high_priority }}
       move_to_rft: ${{ inputs.move_to_rft }}
+      lane: "feature_test"
     secrets: inherit
