@@ -4,11 +4,11 @@ import SolanaSwift
 
 struct ChooseItemView<Content: View>: View {
     @ObservedObject private var viewModel: ChooseItemViewModel
-    @ViewBuilder private let content: (any SearchableItem) -> Content
+    @ViewBuilder private let content: (any ChooseItemSearchableItem) -> Content
 
     init(
         viewModel: ChooseItemViewModel,
-        @ViewBuilder content: @escaping (any SearchableItem) -> Content
+        @ViewBuilder content: @escaping (any ChooseItemSearchableItem) -> Content
     ) {
         self.viewModel = viewModel
         self.content = content
@@ -20,8 +20,7 @@ struct ChooseItemView<Content: View>: View {
                 // Search field
                 SearchField(
                     searchText: $viewModel.searchText,
-                    isSearchFieldFocused: $viewModel.isSearchFieldFocused,
-                    clearSearchAction: viewModel.clearSearch.send
+                    isSearchFieldFocused: $viewModel.isSearchFieldFocused
                 )
                 .padding(.horizontal, 16)
                 .padding(.top, 16)
@@ -29,18 +28,17 @@ struct ChooseItemView<Content: View>: View {
                 // List of tokens
                 if viewModel.isLoading {
                     loadingView
-                        .padding(.top, 64)
-                } else if viewModel.wallets.isEmpty {
+                } else if viewModel.sections.isEmpty {
                     emptyView
                 } else {
                     listView
                 }
             }
-            .edgesIgnoringSafeArea(.bottom)
+            .ignoresSafeArea(.keyboard)
         }
     }
 
-    private func state(for item: any SearchableItem, in section: ChooseItemListData) -> SearchableItemViewState {
+    private func state(for item: any ChooseItemSearchableItem, in section: ChooseItemListSection) -> SearchableItemViewState {
         if section.items.count == 1 {
             return .single
         } else if section.items.first?.id == item.id {
@@ -64,46 +62,44 @@ private extension ChooseItemView {
     }
 
     private var loadingView: some View {
-        VStack {
-            SearchableItemSkeletonView()
-                .frame(height: 88)
-                .padding(.horizontal, 16)
-            Spacer()
-        }
+        ChooseItemSearchableItemLoadingView()
     }
 
     private var listView: some View {
         WrappedList {
             if !viewModel.isSearchGoing {
                 // Chosen token
-                Text(L10n.chosenToken)
+                Text(viewModel.chosenTokenTitle)
                     .sectionStyle()
-                SearchableItemView(content: content, state: .single, item: viewModel.chosenToken)
-                    .listRowBackground(Color(Asset.Colors.smoke.color))
+                ChooseItemSearchableItemView(content: content, state: .single, item: viewModel.chosenToken)
                     .onTapGesture {
                         viewModel.chooseTokenSubject.send(viewModel.chosenToken)
                     }
             }
 
             // Search resuls or all tokens
-            Text(viewModel.isSearchGoing ? L10n.hereSWhatWeFound : L10n.otherTokens)
+            Text(viewModel.isSearchGoing ? L10n.hereSWhatWeFound : viewModel.otherTokensTitle)
                 .sectionStyle()
 
-            ForEach(viewModel.wallets) { section in
+            ForEach(viewModel.sections) { section in
                 ForEach(section.items.map({Container(wrapped: $0)})) { singleWallet  in
-                    SearchableItemView(content: content, state: state(for: singleWallet.wrapped, in: section), item: singleWallet.wrapped)
-                        .listRowBackground(Color(Asset.Colors.smoke.color))
+                    ChooseItemSearchableItemView(content: content, state: state(for: singleWallet.wrapped, in: section), item: singleWallet.wrapped)
                         .onTapGesture {
                             viewModel.chooseTokenSubject.send(singleWallet.wrapped)
                         }
                 }
-                Rectangle()
-                    .frame(height: 12)
-                    .foregroundColor(Color(Asset.Colors.smoke.color))
+                spacer(height: 12)
             }
+            spacer(height: 28)
         }
-        .padding(.bottom, 28)
+        .environment(\.defaultMinListRowHeight, 12)
         .endEditingKeyboardOnDragGesture()
+    }
+
+    func spacer(height: CGFloat) -> some View {
+        Spacer()
+            .listRowBackground(Color(Asset.Colors.smoke.color))
+            .frame(height: height)
     }
 }
 
@@ -117,6 +113,6 @@ private extension Text {
 }
 
 private struct Container: Identifiable {
-    var wrapped: any SearchableItem
+    var wrapped: any ChooseItemSearchableItem
     var id: String { wrapped.id }
 }

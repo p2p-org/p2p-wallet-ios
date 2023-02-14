@@ -6,12 +6,7 @@ extension Array where Element == Wallet {
 
         if !keyword.isEmpty {
             let keyword = keyword.lowercased()
-            wallets = wallets
-                .filter { wallet in
-                    // Filter only wallets which name starts with keyword
-                    return wallet.token.name.lowercased().starts(with: keyword)
-                    || wallet.token.name.lowercased().split(separator: " ").map { $0.starts(with: keyword) }.contains(true)
-                }
+            wallets = wallets.filter {  $0.matches(keyword: keyword) }
         }
 
         let preferOrder: [String: Int] = ["USDC": 1, "USDT": 2]

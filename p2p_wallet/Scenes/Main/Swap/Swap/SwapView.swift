@@ -9,6 +9,10 @@ struct SwapView: View {
     var body : some View {
         ZStack {
             Color(Asset.Colors.smoke.color)
+                .onTapGesture {
+                    viewModel.fromTokenViewModel.isFirstResponder = false
+                    viewModel.toTokenViewModel.isFirstResponder = false
+                }
 
             VStack(spacing: .zero) {
                 Text(viewModel.header)
