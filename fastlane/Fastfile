@@ -254,7 +254,7 @@ platform :ios do
     # output
     if IS_CI
       sh("echo BRANCH_NAME=#{branch} >> $GITHUB_ENV")
-      sh("echo BUILD_NUMBER=#{current_build} >> $GITHUB_ENV")
+      sh("echo BUILD_NUMBER=#{version} >> $GITHUB_ENV")
     end
   end
 
