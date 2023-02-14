@@ -2,10 +2,10 @@ name: Create feature build
 
 on:
   workflow_call:
-    # inputs:
-    #   config-path:
-    #     required: true
-    #     type: string
+    inputs:
+      with-high-priority:
+        required: true
+        type: boolean
     # secrets:
     #   token:
     #     required: true
