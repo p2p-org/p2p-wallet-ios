@@ -1,7 +1,7 @@
 name: Pull request created
 on:
   pull_request:
-    types: [opened, synchronize, reopened, edited, ready_for_review]
+    types: [opened, convert_to_draft, ready_for_review]
 concurrency:
   group: pull-request-${{ github.event.pull_request.number || github.ref }}
   cancel-in-progress: true
