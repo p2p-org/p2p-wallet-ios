@@ -6,9 +6,6 @@ on:
       with_high_priority:
         required: true
         type: boolean
-    # secrets:
-    #   token:
-    #     required: true
 
 jobs:
   upload_build_for_testing:
