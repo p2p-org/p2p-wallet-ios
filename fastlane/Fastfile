@@ -214,7 +214,7 @@ def upload_test(build_prefix, tag_prefix)
   push_git_tags(tag: tag_name)
 
   # return version
-  current_build
+  return current_build
 end
 
 platform :ios do
