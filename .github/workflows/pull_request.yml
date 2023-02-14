@@ -29,12 +29,12 @@ jobs:
           string: ${{ github.event.pull_request.head.ref }}
           from: ""
 
-      - name: Move issue to REVIEW
-        if: ${{ steps.find_issue.outputs.issue && github.event.pull_request.draft == false }}
+      - name: Move issue to REVIEW or IN PROGRESS
+        if: ${{ steps.find_issue.outputs.issue }}
         uses: atlassian/gajira-transition@master
         with:
           issue: ${{ steps.find_issue.outputs.issue }}
-          transition: ${{ secrets.JIRA_REVIEW_TRANSITION_NAME }}
+          transition: ${{ github.event.pull_request.draft && 'In Progress' || secrets.JIRA_REVIEW_TRANSITION_NAME }}
 
       - name: Update PR description
         if: ${{ steps.find_issue.outputs.issue }}
