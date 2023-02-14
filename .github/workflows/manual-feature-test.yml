@@ -9,7 +9,9 @@ on:
         type: boolean
         description: Move task to Ready for testing
         default: true 
-
+concurrency:
+  group: manually-feature-test-${{ github.event.pull_request.number || github.ref }}
+  cancel-in-progress: true
 jobs:
   build-test:
     uses: ./.github/workflows/build-test.yml
