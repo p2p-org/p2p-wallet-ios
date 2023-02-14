@@ -5,11 +5,6 @@ enum ChooseItemSearchableItemViewState {
     case first, last, single, other
 }
 
-struct ChooseItemSearchableItemViewModel {
-    let item: any ChooseItemSearchableItem
-    let isChosen: Bool
-}
-
 struct ChooseItemSearchableItemView<Content: View>: View {
 
     private let state: ChooseItemSearchableItemViewState
