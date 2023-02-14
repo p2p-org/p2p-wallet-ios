@@ -6,6 +6,9 @@ on:
       with_high_priority:
         required: true
         type: boolean
+      move_to_rft:
+        required: true
+        type: boolean
 
 jobs:
   upload_build_for_testing:
@@ -96,7 +99,7 @@ jobs:
           comment: "A build ${{ env.BUILD_NUMBER }} added for testing this issue"
 
       - name: Move issue to READY FOR TESTING
-        if: ${{ steps.find_issue.outputs.issue }}
+        if: ${{ inputs.move_to_rft && steps.find_issue.outputs.issue }}
         uses: atlassian/gajira-transition@master
         with:
           issue: ${{ steps.find_issue.outputs.issue }}
