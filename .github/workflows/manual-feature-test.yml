@@ -5,9 +5,15 @@ on:
       with_high_priority:
         type: boolean
         description: With high priority
+      move_to_rft:
+        type: boolean
+        description: Move task to Ready for testing
+        default: true 
+
 jobs:
   build-feature-test:
     uses: ./.github/workflows/build-feature-test.yml
     with:
       with_high_priority: ${{ inputs.with_high_priority }}
+      move_to_rft: ${{ inputs.move_to_rft }}
     secrets: inherit
