@@ -16,13 +16,11 @@ struct WrappedList<Content: View>: View {
                     .listRowInsets(EdgeInsets())
             }
             .listStyle(.plain)
-            .background(Color(Asset.Colors.smoke.color))
         } else {
             ScrollView {
                 LazyVStack(spacing: 0) {
                     content()
                 }
-                .background(Color(Asset.Colors.smoke.color))
             }
         }
     }
