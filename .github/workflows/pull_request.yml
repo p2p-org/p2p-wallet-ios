@@ -40,7 +40,7 @@ jobs:
           transition: ${{ github.event.pull_request.draft && 'In Progress' || secrets.JIRA_REVIEW_TRANSITION_NAME }}
 
       - name: Update PR description
-        if: ${{ steps.find_issue.outputs.issue && github.event.action == "opened" }}
+        if: ${{ steps.find_issue.outputs.issue && github.event.action == 'opened' }}
         uses: tzkhan/pr-update-action@v2
         with:
           repo-token: "${{ secrets.SUBMODULES_ACCESS_TOKEN }}"
