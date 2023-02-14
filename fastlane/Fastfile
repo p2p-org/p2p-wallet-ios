@@ -240,13 +240,15 @@ platform :ios do
     end
 
     # upload test build
-    version = upload_test(
-      feature_number, # build prefix
-      "builds/feature_test" # tag prefix
-    )
+    version = (puts(
+      upload_test(
+        feature_number, # build prefix
+        "builds/feature_test" # tag prefix
+      )
+    ))
 
     # notify tester
-    message = "A build #{version.inspect} was uploaded for testing this feature. Link to issue: #{JIRA_BASE_URL}/browse/PWN-#{feature_number.to_s}"
+    message = "A build #{version} was uploaded for testing this feature. Link to issue: #{JIRA_BASE_URL}/browse/PWN-#{feature_number.to_s}"
     notify(message)
 
     # output
@@ -363,13 +365,15 @@ platform :ios do
     date = DateTime.parse(time).strftime("%d%m%Y")
 
     # upload test build
-    version = upload_test(
-      date, # build prefix
-      "builds/daily_test" # tag prefix
-    )
+    version = (puts(
+      upload_test(
+        date, # build prefix
+        "builds/daily_test" # tag prefix
+      )
+    ))
 
     # notify tester
-    message = "A daily build #{version.inspect} was uploaded."
+    message = "A daily build #{version} was uploaded."
     notify(message)
   end
 end
