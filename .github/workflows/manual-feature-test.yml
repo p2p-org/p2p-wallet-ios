@@ -4,7 +4,9 @@ on:
     inputs:
       with_high_priority:
         type: boolean
-        description: Build with high priority or not
+        description: With high priority
 jobs:
   build-feature-test:
     uses: ./.github/workflows/build-feature-test.yml
+    with:
+      with-high-priority: ${{ inputs.with-high-priority }}
