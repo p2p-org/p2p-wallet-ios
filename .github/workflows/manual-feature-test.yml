@@ -10,3 +10,4 @@ jobs:
     uses: ./.github/workflows/build-feature-test.yml
     with:
       with_high_priority: ${{ inputs.with_high_priority }}
+    secrets: inherit
