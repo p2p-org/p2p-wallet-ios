@@ -12,6 +12,9 @@ on:
       lane:
         required: true
         type: string
+      branch:
+        required: false
+        type: string
 
 jobs:
   upload_build_for_testing:
@@ -28,7 +31,7 @@ jobs:
       - name: Check out current branch
         uses: actions/checkout@v3
         with:
-          ref: ${{ github.event.pull_request.head.ref }}
+          ref: ${{ inputs.branch != '' && inputs.branch || github.event.pull_request.head.ref }}
           submodules: recursive
           token: ${{ secrets.SUBMODULES_ACCESS_TOKEN }}
 

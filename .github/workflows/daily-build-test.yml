@@ -10,4 +10,5 @@ jobs:
       with_high_priority: false
       move_to_rft: false
       lane: "daily_test"
+      branch: "develop"
     secrets: inherit
