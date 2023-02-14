@@ -137,7 +137,7 @@ def upload_build(configuration)
   )
 end 
 
-def notify(message)
+def notify(version, message)
   # upload to slack
   slack_upload(
     slack_api_token: SLACK_API_TOKEN,
@@ -240,16 +240,14 @@ platform :ios do
     end
 
     # upload test build
-    version = (puts(
-      upload_test(
-        feature_number, # build prefix
-        "builds/feature_test" # tag prefix
-      )
-    ))
+    version = upload_test(
+      feature_number, # build prefix
+      "builds/feature_test" # tag prefix
+    )
 
     # notify tester
     message = "A build #{version} was uploaded for testing this feature. Link to issue: #{JIRA_BASE_URL}/browse/PWN-#{feature_number.to_s}"
-    notify(message)
+    notify(version, message)
 
     # output
     if IS_CI
@@ -365,15 +363,13 @@ platform :ios do
     date = DateTime.parse(time).strftime("%d%m%Y")
 
     # upload test build
-    version = (puts(
-      upload_test(
-        date, # build prefix
-        "builds/daily_test" # tag prefix
-      )
-    ))
+    version = upload_test(
+      date, # build prefix
+      "builds/daily_test" # tag prefix
+    )
 
     # notify tester
     message = "A daily build #{version} was uploaded."
-    notify(message)
+    notify(version, message)
   end
 end
