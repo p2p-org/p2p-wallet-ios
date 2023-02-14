@@ -1,8 +1,16 @@
 name: Pull request created
 on:
   pull_request:
-    types: [opened]
+    types: [opened, synchronize, reopened, edited]
 jobs:
+  # Sets pull request status to pending if the title includes "WIP".
+  check_if_pending:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: wip/action@v1
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
   # Send task to review when pull request is opened
   return_task_to_in_progress:
     name: Send task to review and update description
@@ -25,7 +33,7 @@ jobs:
           from: ""
 
       - name: Move issue to REVIEW
-        if: ${{ steps.find_issue.outputs.issue }}
+        if: ${{ steps.find_issue.outputs.issue && github.event.status != "pending" }}
         uses: atlassian/gajira-transition@master
         with:
           issue: ${{ steps.find_issue.outputs.issue }}
