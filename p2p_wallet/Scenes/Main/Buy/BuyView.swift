@@ -117,7 +117,9 @@ struct BuyView: View {
                 case .right: viewModel.fiatSelectTapped()
                 case .none: return
                 }
-            }.padding(.horizontal, 16)
+            }
+            .accessibilityIdentifier("BuyView.input")
+            .padding(.horizontal, 16)
         }
     }
 
@@ -144,6 +146,7 @@ struct BuyView: View {
                                     }
                                 } label: {
                                     methodCard(item: item)
+                                        .accessibilityIdentifier("BuyView.methods")
                                         .foregroundColor(Color(Asset.Colors.night.color))
                                         .frame(width: 158)
                                 }.addBorder(
@@ -173,6 +176,7 @@ struct BuyView: View {
                 } label: {
                     Text("\(viewModel.total)")
                         .apply(style: .text3)
+                        .accessibilityIdentifier("BuyView.total")
                         .foregroundColor(Color(Asset.Colors.mountain.color))
                     Image(uiImage: Asset.MaterialIcon.chevronRight.image)
                         .foregroundColor(Color(Asset.Colors.mountain.color))
@@ -301,6 +305,7 @@ struct BuyView: View {
             viewModel?.buyButtonTapped()
         }
         .frame(height: 56)
+        .accessibilityIdentifier("BuyView.actionButtonView")
         .padding(EdgeInsets(top: 0, leading: 16, bottom: 12, trailing: 16))
         .disabled(!viewModel.buttonItem.enabled)
     }
