@@ -170,7 +170,7 @@ def upload_dsym_to_analytic_providers
   )
 end
 
-def upload_test(build_prefix, tag_prefix) {
+def upload_test(build_prefix, tag_prefix)
   # update xcconfig
   update_xcconfig
 
@@ -215,7 +215,7 @@ def upload_test(build_prefix, tag_prefix) {
 
   # return version
   current_build
-}
+end
 
 platform :ios do
   lane :feature_test do
