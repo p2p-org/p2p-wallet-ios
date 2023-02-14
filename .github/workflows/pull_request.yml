@@ -33,7 +33,7 @@ jobs:
           from: ""
 
       - name: Move issue to REVIEW
-        if: ${{ steps.find_issue.outputs.issue && github.event.status != "pending" }}
+        if: ${{ steps.find_issue.outputs.issue && github.event.status != 'pending' }}
         uses: atlassian/gajira-transition@master
         with:
           issue: ${{ steps.find_issue.outputs.issue }}
