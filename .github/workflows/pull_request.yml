@@ -1,7 +1,7 @@
 name: Pull request created
 on:
   pull_request:
-    types: [opened, synchronize, reopened, edited]
+    types: [opened]
 jobs:
   # Sets pull request status to pending if the title includes "WIP".
   check_if_pending:
