@@ -8,6 +8,7 @@
 public extension Feature {
     static let coinGeckoPriceProvider = Feature(rawValue: "coinGeckoPriceProvider")
     static let buyScenarioEnabled = Feature(rawValue: "keyapp_buy_scenario_enabled")
+    static let buyAndSellEnabled = Feature(rawValue: "keyapp_buy_and_sell_enabled")
     static let sellScenarioEnabled = Feature(rawValue: "keyapp_sell_scenario_enabled")
     static let buyBankTransferEnabled = Feature(rawValue: "buy_bank_transfer_enabled")
     static let settingsFeature = Feature(rawValue: "settingsFeature")
