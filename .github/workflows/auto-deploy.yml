@@ -2,11 +2,15 @@ name: Auto deploy
 on:
   pull_request:
 
+concurrency:
+  group: auto-deploy-${{ github.event.pull_request.number || github.ref }}
+  cancel-in-progress: true
+
 jobs:
   build-feature-test:
     uses: ./.github/workflows/build-feature-test.yml
     if: ${{ contains(github.event.pull_request.labels.*.name, 'auto:qa-deploy') && !contains(github.event.pull_request.labels.*.name, 'no-qa') }}
     with:
       with_high_priority: ${{ contains(github.event.pull_request.labels.*.name, 'high') }}
-      move_to_rft: false
+      move_to_rft: true
     secrets: inherit
