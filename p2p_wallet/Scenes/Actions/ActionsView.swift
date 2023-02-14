@@ -22,8 +22,12 @@ struct ActionsView: View {
     var cancel: AnyPublisher<Void, Never> { cancelSubject.eraseToAnyPublisher() }
     var isSellAvailable: Bool {
         available(.sellScenarioEnabled) &&
+        available(.buyAndSellEnabled) &&
         sellDataService.isAvailable &&
         !walletsRepository.getWallets().isTotalBalanceEmpty
+    }
+    var isBuyAvailable: Bool {
+        available(.buyAndSellEnabled)
     }
 
     var body: some View {
@@ -47,14 +51,26 @@ struct ActionsView: View {
                     .frame(height: 80)
                 }
                 HStack(spacing: 16) {
-                    actionView(
-                        image: .homeBuyAction,
-                        title: L10n.buy,
-                        subtitle: L10n.usingApplePayOrCreditCard,
-                        action: {
-                            actionSubject.send(.buy)
-                        }
-                    )
+                    if isBuyAvailable {
+                        actionView(
+                            image: .homeBuyAction,
+                            title: L10n.buy,
+                            subtitle: L10n.usingApplePayOrCreditCard,
+                            action: {
+                                actionSubject.send(.buy)
+                            }
+                        )
+                    } else {
+                        actionView(
+                            image: .homeSendAction,
+                            title: L10n.send,
+                            subtitle: "\(L10n.toUsernameOrAddress)\n",
+                            action: {
+                                actionSubject.send(.send)
+                            }
+                        )
+
+                    }
                     actionView(
                         image: .homeReceiveAction,
                         title: L10n.receive,
@@ -73,14 +89,18 @@ struct ActionsView: View {
                             actionSubject.send(.swap)
                         }
                     )
-                    actionView(
-                        image: .homeSendAction,
-                        title: L10n.send,
-                        subtitle: "\(L10n.toUsernameOrAddress)\n",
-                        action: {
-                            actionSubject.send(.send)
-                        }
-                    )
+                    if isBuyAvailable {
+                        actionView(
+                            image: .homeSendAction,
+                            title: L10n.send,
+                            subtitle: "\(L10n.toUsernameOrAddress)\n",
+                            action: {
+                                actionSubject.send(.send)
+                            }
+                        )
+                    } else {
+                        Spacer()
+                    }
                 }
             }
             Button(

@@ -77,26 +77,28 @@ struct HomeEmptyView: View {
 
     private var scrollingContent: some View {
         VStack(alignment: .leading, spacing: 12) {
-            Text(L10n.currenciesAvailable)
-                .foregroundColor(Color(Asset.Colors.night.color))
-                .font(uiFont: .font(of: .title3, weight: .semibold))
-                .padding(.horizontal, 16)
-            VStack(spacing: 12) {
-                ForEach(Array(viewModel.popularCoins.indices), id: \.self) { index in
-                    let coin = viewModel.popularCoins[index]
-                    Button(
-                        action: {
-                            viewModel.buyTapped(index: index)
-                        },
-                        label: {
-                            PopularCoinView(
-                                title: coin.title,
-                                subtitle: coin.amount,
-                                actionTitle: coin.actionTitle,
-                                image: coin.image
-                            )
-                        }
-                    )
+            if !viewModel.popularCoins.isEmpty {
+                Text(L10n.currenciesAvailable)
+                    .foregroundColor(Color(Asset.Colors.night.color))
+                    .font(uiFont: .font(of: .title3, weight: .semibold))
+                    .padding(.horizontal, 16)
+                VStack(spacing: 12) {
+                    ForEach(Array(viewModel.popularCoins.indices), id: \.self) { index in
+                        let coin = viewModel.popularCoins[index]
+                        Button(
+                            action: {
+                                viewModel.buyTapped(index: index)
+                            },
+                            label: {
+                                PopularCoinView(
+                                    title: coin.title,
+                                    subtitle: coin.amount,
+                                    actionTitle: coin.actionTitle,
+                                    image: coin.image
+                                )
+                            }
+                        )
+                    }
                 }
             }
         }

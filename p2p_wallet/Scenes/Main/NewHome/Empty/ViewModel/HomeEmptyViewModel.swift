@@ -23,17 +23,21 @@ final class HomeEmptyViewModel: BaseViewModel, ObservableObject {
     // MARK: - Properties
     private var cancellable: AnyCancellable?
     private let navigation: PassthroughSubject<HomeNavigation, Never>
-    
+
     private var _popularCoins: [Token] = [.usdc, .nativeSolana, /*.renBTC, */.eth, .usdt]
     var popularCoins: [PopularCoin] {
-        _popularCoins.map { token in
-            PopularCoin(
-                id: token.symbol,
-                title: title(for: token),
-                amount: pricesService.fiatAmount(mint: token.address),
-                actionTitle: ActionType.buy.description,
-                image: image(for: token)
-            )
+        if available(.buyAndSellEnabled) {
+            return _popularCoins.map { token in
+                PopularCoin(
+                    id: token.symbol,
+                    title: title(for: token),
+                    amount: pricesService.fiatAmount(mint: token.address),
+                    actionTitle: ActionType.buy.description,
+                    image: image(for: token)
+                )
+            }
+        } else {
+            return []
         }
     }
     
