@@ -14,9 +14,10 @@ final class ChooseSendFeeTokenService: ChooseItemService {
         [ChooseItemListSection(items: tokens)]
     }
 
-    func filterAndSort(items: [ChooseItemListSection], by keyword: String) -> [ChooseItemListSection] {
+    func sort(items: [ChooseItemListSection]) -> [ChooseItemListSection] {
         let newItems = items.map { section in
-            ChooseItemListSection(items: (section.items as! [Wallet]).filteredAndSorted(byKeyword: keyword))
+            guard let wallets = section.items as? [Wallet] else { return section }
+            return ChooseItemListSection(items: wallets.sorted())
         }
         let isEmpty = newItems.flatMap({ $0.items }).isEmpty
         return isEmpty ? [] : newItems

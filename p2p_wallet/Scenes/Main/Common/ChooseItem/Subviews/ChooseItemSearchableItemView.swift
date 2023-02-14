@@ -1,28 +1,34 @@
 import SwiftUI
 import KeyAppUI
 
-enum SearchableItemViewState {
+enum ChooseItemSearchableItemViewState {
     case first, last, single, other
+}
+
+struct ChooseItemSearchableItemViewModel {
+    let item: any ChooseItemSearchableItem
+    let isChosen: Bool
 }
 
 struct ChooseItemSearchableItemView<Content: View>: View {
 
-    private let state: SearchableItemViewState
-    private let item: any ChooseItemSearchableItem
-    @ViewBuilder private let content: (any ChooseItemSearchableItem) -> Content
+    private let state: ChooseItemSearchableItemViewState
+    @ViewBuilder private let content: (ChooseItemSearchableItemViewModel) -> Content
+    private let model: ChooseItemSearchableItemViewModel
 
     init(
-        @ViewBuilder content: @escaping (any ChooseItemSearchableItem) -> Content,
-        state: SearchableItemViewState,
-        item: any ChooseItemSearchableItem
+        @ViewBuilder content: @escaping (ChooseItemSearchableItemViewModel) -> Content,
+        state: ChooseItemSearchableItemViewState,
+        item: any ChooseItemSearchableItem,
+        isChosen: Bool
     ) {
         self.content = content
         self.state = state
-        self.item = item
+        self.model = ChooseItemSearchableItemViewModel(item: item, isChosen: isChosen)
     }
 
     var body: some View {
-        content(item)
+        content(model)
             .padding(.horizontal, 16)
             .frame(height: 72)
             .background(

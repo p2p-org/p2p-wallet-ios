@@ -4,11 +4,11 @@ import SolanaSwift
 
 struct ChooseItemView<Content: View>: View {
     @ObservedObject private var viewModel: ChooseItemViewModel
-    @ViewBuilder private let content: (any ChooseItemSearchableItem) -> Content
+    @ViewBuilder private let content: (ChooseItemSearchableItemViewModel) -> Content
 
     init(
         viewModel: ChooseItemViewModel,
-        @ViewBuilder content: @escaping (any ChooseItemSearchableItem) -> Content
+        @ViewBuilder content: @escaping (ChooseItemSearchableItemViewModel) -> Content
     ) {
         self.viewModel = viewModel
         self.content = content
@@ -38,7 +38,7 @@ struct ChooseItemView<Content: View>: View {
         }
     }
 
-    private func state(for item: any ChooseItemSearchableItem, in section: ChooseItemListSection) -> SearchableItemViewState {
+    private func state(for item: any ChooseItemSearchableItem, in section: ChooseItemListSection) -> ChooseItemSearchableItemViewState {
         if section.items.count == 1 {
             return .single
         } else if section.items.first?.id == item.id {
@@ -71,10 +71,15 @@ private extension ChooseItemView {
                 // Chosen token
                 Text(viewModel.chosenTokenTitle)
                     .sectionStyle()
-                ChooseItemSearchableItemView(content: content, state: .single, item: viewModel.chosenToken)
-                    .onTapGesture {
-                        viewModel.chooseTokenSubject.send(viewModel.chosenToken)
-                    }
+                ChooseItemSearchableItemView(
+                    content: content,
+                    state: .single,
+                    item: viewModel.chosenToken,
+                    isChosen: true
+                )
+                .onTapGesture {
+                    viewModel.chooseTokenSubject.send(viewModel.chosenToken)
+                }
             }
 
             // Search resuls or all tokens
@@ -83,10 +88,15 @@ private extension ChooseItemView {
 
             ForEach(viewModel.sections) { section in
                 ForEach(section.items.map({Container(wrapped: $0)})) { singleWallet  in
-                    ChooseItemSearchableItemView(content: content, state: state(for: singleWallet.wrapped, in: section), item: singleWallet.wrapped)
-                        .onTapGesture {
-                            viewModel.chooseTokenSubject.send(singleWallet.wrapped)
-                        }
+                    ChooseItemSearchableItemView(
+                        content: content,
+                        state: state(for: singleWallet.wrapped, in: section),
+                        item: singleWallet.wrapped,
+                        isChosen: false
+                    )
+                    .onTapGesture {
+                        viewModel.chooseTokenSubject.send(singleWallet.wrapped)
+                    }
                 }
                 spacer(height: 12)
             }

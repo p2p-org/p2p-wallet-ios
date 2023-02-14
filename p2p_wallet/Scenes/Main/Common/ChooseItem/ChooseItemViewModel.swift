@@ -4,9 +4,6 @@ import SolanaSwift
 
 final class ChooseItemViewModel: BaseViewModel, ObservableObject {
 
-    @Injected private var walletsRepository: WalletsRepository
-    @Injected private var notifications: NotificationService
-
     let chooseTokenSubject = PassthroughSubject<any ChooseItemSearchableItem, Never>()
 
     @Published var sections: [ChooseItemListSection] = []
@@ -21,7 +18,10 @@ final class ChooseItemViewModel: BaseViewModel, ObservableObject {
     let chosenToken: any ChooseItemSearchableItem
 
     private let service: ChooseItemService
-    private var allItems: [ChooseItemListSection] = [] // All avaialble items
+    private var allItems: [ChooseItemListSection] = [] // All available items
+
+    @Injected private var walletsRepository: WalletsRepository
+    @Injected private var notifications: NotificationService
 
     init(service: ChooseItemService, chosenToken: any ChooseItemSearchableItem) {
         self.chosenToken = chosenToken
@@ -31,17 +31,17 @@ final class ChooseItemViewModel: BaseViewModel, ObservableObject {
         Task {
             self.isLoading = true
             do {
-                self.allItems = try await service.fetchItems()
-                self.allItems = allItems.map { section in
+                let data = try await service.fetchItems()
+                let dataWithoutChosen = data.map { section in
                     ChooseItemListSection(items: section.items.filter({ $0.id != chosenToken.id }))
                 }
-                self.sections = self.service.filterAndSort(items: allItems, by: "")
-                self.isLoading = false
+                self.allItems = self.service.sort(items: dataWithoutChosen)
+                self.sections = self.allItems
             }
             catch {
-                self.isLoading = false
                 self.notifications.showDefaultErrorNotification()
             }
+            self.isLoading = false
         }
 
         $searchText
@@ -50,12 +50,11 @@ final class ChooseItemViewModel: BaseViewModel, ObservableObject {
                 guard let self else { return }
                 self.isSearchGoing = !value.isEmpty
                 if value.isEmpty {
-                    self.allItems = self.allItems.map { section in
-                        ChooseItemListSection(items: section.items.filter({ $0.id != chosenToken.id }))
-                    }
-                    self.sections = self.service.filterAndSort(items: self.allItems, by: "")
+                    self.sections = self.allItems
                 } else {
-                    self.sections = self.service.filterAndSort(items: self.allItems, by: value)
+                    // Do not split up sections if there is a keyword
+                    let searchedItems = self.allItems.flatMap({ $0.items }).filter({ $0.matches(keyword: value.lowercased()) })
+                    self.sections = self.service.sort(items: [ChooseItemListSection(items: searchedItems)])
                 }
             })
             .store(in: &subscriptions)

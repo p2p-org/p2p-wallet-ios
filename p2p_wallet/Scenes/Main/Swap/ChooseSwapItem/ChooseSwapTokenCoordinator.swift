@@ -20,8 +20,8 @@ final class ChooseSwapTokenCoordinator: Coordinator<SwapToken?> {
             service: ChooseSwapTokenService(swapTokens: tokens),
             chosenToken: chosenWallet
         )
-        let view = ChooseItemView<ChooseSwapTokenItemView>(viewModel: viewModel) { item in
-            ChooseSwapTokenItemView(token: item as! SwapToken)
+        let view = ChooseItemView<ChooseSwapTokenItemView>(viewModel: viewModel) { model in
+            ChooseSwapTokenItemView(token: model.item as! SwapToken, isChosen: model.isChosen)
         }
         let controller = KeyboardAvoidingViewController(rootView: view, ignoresKeyboard: true)
         controller.title = L10n.theTokenYouPay
