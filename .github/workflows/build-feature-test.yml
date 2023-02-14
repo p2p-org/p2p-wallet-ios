@@ -15,12 +15,25 @@ jobs:
     name: Manually upload build for testing
     runs-on: ${{ (inputs.with_high_priority && fromJSON('[ "self-hosted", "macOS" ]')) || 'macos-12' }} 
     steps:
+      - name: Cleanup build folder
+        run: |
+          ls -la ./
+          rm -rf ./* || true
+          rm -rf ./.??* || true
+          ls -la ./
+
       - name: Check out current branch
         uses: actions/checkout@v3
         with:
           ref: ${{ github.event.pull_request.head.ref }}
           submodules: recursive
           token: ${{ secrets.SUBMODULES_ACCESS_TOKEN }}
+
+      - name: Get last changes
+        id: get-changelog
+        shell: bash
+        run: |
+          echo "GIT_CHANGES=$(git log --oneline -n 15)" >> $GITHUB_ENV
 
       - name: Grant access to KeyAppUI
         uses: webfactory/ssh-agent@v0.5.4
@@ -74,6 +87,7 @@ jobs:
           SLACK_API_TOKEN: '${{ secrets.SLACK_API_TOKEN }}'
           JIRA_BASE_URL: '${{ secrets.JIRA_BASE_URL }}'
           XCCONFIG_URL: '${{ secrets.XCCONFIG_URL }}'
+          GIT_CHANGELOG: '${{ env.GIT_CHANGES }}'
           SENTRY_TOKEN: '${{ secrets.SENTRY_TOKEN }}'
     
       - name: Login to JIRA
