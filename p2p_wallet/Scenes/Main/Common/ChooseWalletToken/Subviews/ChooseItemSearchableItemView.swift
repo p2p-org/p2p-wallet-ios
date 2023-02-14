@@ -5,16 +5,16 @@ enum SearchableItemViewState {
     case first, last, single, other
 }
 
-struct SearchableItemView<Content: View>: View {
+struct ChooseItemSearchableItemView<Content: View>: View {
 
     private let state: SearchableItemViewState
-    private let item: any SearchableItem
-    @ViewBuilder private let content: (any SearchableItem) -> Content
+    private let item: any ChooseItemSearchableItem
+    @ViewBuilder private let content: (any ChooseItemSearchableItem) -> Content
 
     init(
-        @ViewBuilder content: @escaping (any SearchableItem) -> Content,
+        @ViewBuilder content: @escaping (any ChooseItemSearchableItem) -> Content,
         state: SearchableItemViewState,
-        item: any SearchableItem
+        item: any ChooseItemSearchableItem
     ) {
         self.content = content
         self.state = state
@@ -31,6 +31,7 @@ struct SearchableItemView<Content: View>: View {
                     .foregroundColor(Color(Asset.Colors.snow.color))
             )
             .padding(.horizontal, 16)
+            .listRowBackground(Color(Asset.Colors.smoke.color))
     }
 
     func cornerRadius() -> UIRectCorner {

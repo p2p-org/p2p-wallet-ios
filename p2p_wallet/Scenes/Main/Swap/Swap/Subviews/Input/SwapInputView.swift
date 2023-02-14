@@ -13,7 +13,7 @@ struct SwapInputView: View {
 
                 Spacer()
 
-                if viewModel.isEditable && viewModel.balance != 0 && !viewModel.isLoading  {
+                if viewModel.isEditable && viewModel.balance != nil && !viewModel.isLoading  {
                     allButton
                 }
             }
@@ -78,6 +78,7 @@ private extension SwapInputView {
                     .foregroundColor(Color(Asset.Colors.night.color))
             }
         }
+        .allowsHitTesting(!viewModel.isLoading)
     }
 
     var amountField: some View {
