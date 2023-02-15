@@ -1,4 +1,3 @@
-import RxSwift
 import Send
 import SolanaSwift
 
@@ -35,7 +34,7 @@ struct SendTransaction: RawTransactionType {
         self.execution = execution
     }
 
-    func createRequest() -> Single<String> {
-        Single.async { try await execution() }
+    func createRequest() async throws -> String {
+        try await execution()
     }
 }

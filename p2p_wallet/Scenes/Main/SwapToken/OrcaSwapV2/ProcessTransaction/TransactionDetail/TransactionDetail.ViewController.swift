@@ -9,12 +9,14 @@ import BEPureLayout
 import Foundation
 import TransactionParser
 import UIKit
+import RxSwift
 
 extension TransactionDetail {
     class ViewController: BaseViewController {
         // MARK: - Dependencies
 
         private let viewModel: TransactionDetailViewModelType
+        private let disposeBag = DisposeBag()
 
         // MARK: - Initializer
 

@@ -30,7 +30,7 @@ struct RecipientSearchField: View {
                 }
                 .frame(height: 24)
                 .padding(.vertical, 12)
-                .accessibilityIdentifier("search-input")
+                .accessibilityIdentifier("RecipientSearchField.FocusedTextField")
 
                 if isLoading {
                     Spinner()
@@ -43,6 +43,7 @@ struct RecipientSearchField: View {
                                 .frame(width: 18, height: 18)
                                 .foregroundColor(Color(Asset.Colors.night.color))
                         }
+                        .accessibilityIdentifier("RecipientSearchField.paste")
                 } else {
                     Button { text = "" }
                     label: {
@@ -51,6 +52,7 @@ struct RecipientSearchField: View {
                                 .frame(width: 12, height: 12)
                                 .foregroundColor(Color(Asset.Colors.night.color))
                         }
+                        .accessibilityIdentifier("RecipientSearchField.clear")
                 }
             }
             .padding(.horizontal, 18)
@@ -72,6 +74,7 @@ struct RecipientSearchField: View {
                         .opacity(0)
                 }
             }
+            .accessibilityIdentifier("RecipientSearchField.qr")
         }
     }
 }
