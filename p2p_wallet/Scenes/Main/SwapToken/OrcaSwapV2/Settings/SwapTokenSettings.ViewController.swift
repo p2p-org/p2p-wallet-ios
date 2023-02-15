@@ -7,12 +7,14 @@
 
 import Foundation
 import UIKit
+import RxSwift
 
 extension SwapTokenSettings {
     class ViewController: BaseVC {
         // MARK: - Dependencies
 
         private let viewModel: NewSwapTokenSettingsViewModelType
+        private let disposeBag = DisposeBag()
 
         // MARK: - Methods
 

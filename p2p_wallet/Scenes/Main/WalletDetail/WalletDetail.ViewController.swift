@@ -20,6 +20,7 @@ extension WalletDetail {
         // MARK: - Dependencies
 
         private let viewModel: WalletDetailViewModelType
+        private let disposeBag = DisposeBag()
 
         // MARK: - Handler
 

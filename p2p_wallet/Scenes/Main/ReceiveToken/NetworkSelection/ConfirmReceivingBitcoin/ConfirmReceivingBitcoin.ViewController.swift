@@ -15,6 +15,7 @@ extension ConfirmReceivingBitcoin {
         // MARK: - Properties
 
         let viewModel: ConfirmReceivingBitcoinViewModelType
+        let disposeBag = DisposeBag()
 
         // MARK: - Initializer
 
