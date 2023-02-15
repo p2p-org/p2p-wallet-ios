@@ -7,6 +7,7 @@
 
 import Foundation
 import RxConcurrency
+import RxCombine
 import RxSwift
 import SolanaSwift
 import Sentry
@@ -19,7 +20,30 @@ extension TransactionHandler {
     ) {
         processingTransaction.createRequest()
             .observe(on: MainScheduler.instance)
-            .subscribe(onSuccess: { [weak self] transactionID in
+            .publisher
+            .sink { [weak self] result in
+                switch result {
+                case .finished:
+                    break
+                case .failure(let error):
+                    guard let self = self else { return }
+
+                    // update status
+                    if (error as NSError).isNetworkConnectionError {
+                        self.notificationsService.showConnectionErrorNotification()
+                    } else {
+                        self.notificationsService.showDefaultErrorNotification()
+                    }
+                    SentrySDK.capture(error: error)
+
+                    // mark transaction as failured
+                    self.updateTransactionAtIndex(index) { currentValue in
+                        var info = currentValue
+                        info.status = .error(error)
+                        return info
+                    }
+                }
+            } receiveValue: { [weak self] transactionID in
                 guard let self = self else { return }
 
                 // show notification
@@ -37,77 +61,47 @@ extension TransactionHandler {
 
                 // observe confirmations
                 self.observe(index: index, transactionId: transactionID)
-            }, onFailure: { [weak self] error in
-                guard let self = self else { return }
-
-                // update status
-                if (error as NSError).isNetworkConnectionError {
-                    self.notificationsService.showConnectionErrorNotification()
-                } else {
-                    self.notificationsService.showDefaultErrorNotification()
-                }
-                SentrySDK.capture(error: error)
-
-                // mark transaction as failured
-                self.updateTransactionAtIndex(index) { currentValue in
-                    var info = currentValue
-                    info.status = .error(error)
-                    return info
-                }
-            })
-            .disposed(by: disposeBag)
+            }
+            .store(in: &subscriptions)
     }
 
     // MARK: - Helpers
 
     /// Observe confirmation statuses of given transaction
     private func observe(index: TransactionIndex, transactionId: String) {
-        let scheduler = ConcurrentDispatchQueueScheduler(qos: .default)
-
-        let signatureStatus = Single.async { [weak self] () -> SignatureStatus in
-            guard let self = self else { throw SolanaError.unknown }
-            return try await self.apiClient.getSignatureStatus(signature: transactionId, configs: nil)
-        }
-        signatureStatus
-            .subscribe(on: scheduler)
-            .observe(on: MainScheduler.instance)
-            .do(onSuccess: { [weak self] status in
-                guard let self = self else { throw SolanaError.unknown }
-                let txStatus: PendingTransaction.TransactionStatus
-
-                if status.confirmations == nil || status.confirmationStatus == "finalized" {
-                    txStatus = .finalized
-                } else {
-                    txStatus = .confirmed(Int(status.confirmations ?? 0))
+        Task { [weak self] in
+            guard let self else { return }
+            for try await status in self.apiClient.observeSignatureStatus(signature: transactionId) {
+                await MainActor.run { [weak self] in
+                    guard let self else { return }
+                    
+                    let txStatus: PendingTransaction.TransactionStatus
+                    var slot: UInt64?
+                    switch status {
+                    case .sending:
+                        return
+                    case .confirmed(let numberOfConfirmations, let sl):
+                        slot = sl
+                        txStatus = .confirmed(Int(numberOfConfirmations))
+                    case .finalized:
+                        txStatus = .finalized
+                        self.notificationsService.showInAppNotification(.done(L10n.transactionHasBeenConfirmed))
+                    case .error(let error):
+                        print(error ?? "")
+                        txStatus = .error(SolanaError.other(error ?? ""))
+                    }
+                    
+                    self.updateTransactionAtIndex(index) { currentValue in
+                        var value = currentValue
+                        value.status = txStatus
+                        if let slot {
+                            value.slot = slot
+                        }
+                        return value
+                    }
                 }
-
-                self.updateTransactionAtIndex(index) { currentValue in
-                    var value = currentValue
-                    value.status = txStatus
-                    value.slot = status.slot
-                    return value
-                }
-            })
-            .observe(on: scheduler)
-            .map { $0.confirmations == nil || $0.confirmationStatus == "finalized" }
-            .flatMapCompletable { confirmed in
-                if confirmed { return .empty() }
-                throw ProcessTransaction.Error.notEnoughNumberOfConfirmations
             }
-            .retry(maxAttempts: .max, delayInSeconds: 1)
-            .timeout(.seconds(60), scheduler: scheduler)
-            .observe(on: MainScheduler.instance)
-            .subscribe(onCompleted: { // [weak self] in
-//                self?.notificationsService.showInAppNotification(.done(L10n.transactionHasBeenConfirmed))
-            }, onError: { [weak self] error in
-                debugPrint(error)
-                self?.updateTransactionAtIndex(index) { currentValue in
-                    var value = currentValue
-                    value.status = .finalized
-                    return value
-                }
-            })
-            .disposed(by: disposeBag)
+        }
     }
 
     /// Update transaction
@@ -135,7 +129,7 @@ extension TransactionHandler {
 
             // update
             value[index] = newValue
-            transactionsSubject.accept(value)
+            transactionsSubject.send(value)
             return true
         }
 
