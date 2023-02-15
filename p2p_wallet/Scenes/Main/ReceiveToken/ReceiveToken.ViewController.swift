@@ -8,6 +8,7 @@ import Combine
 import KeyAppUI
 import Resolver
 import UIKit
+import RxSwift
 
 extension ReceiveToken {
     final class ViewController: BaseViewController {
@@ -17,6 +18,7 @@ extension ReceiveToken {
         private var buyCoordinator: BuyCoordinator?
 
         @Injected private var analyticsManager: AnalyticsManager
+        private let disposeBag = DisposeBag()
 
         init(viewModel: ReceiveSceneModel, isOpeningFromToken: Bool) {
             self.isOpeningFromToken = isOpeningFromToken

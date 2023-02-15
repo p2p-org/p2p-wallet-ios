@@ -14,6 +14,7 @@ import UIKit
 extension ReceiveToken {
     class NetworkSelectionScene: BaseViewController {
         private let viewModel: ReceiveSceneModel
+        private let disposeBag = DisposeBag()
 
         init(viewModel: ReceiveSceneModel) {
             self.viewModel = viewModel
