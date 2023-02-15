@@ -359,8 +359,8 @@ platform :ios do
     end
 
     # get current date
-    date = Time.now.to_s
-    date = DateTime.parse(time).strftime("%d%m%Y")
+    time = Time.now.to_s
+    date = DateTime.parse(time).strftime("%y%m%d")
 
     # upload test build
     version = upload_test(
