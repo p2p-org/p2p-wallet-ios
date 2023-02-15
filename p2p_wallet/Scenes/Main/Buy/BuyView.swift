@@ -3,7 +3,7 @@ import SkeletonUI
 import SolanaSwift
 import SwiftUI
 
-struct BuyView: View {
+struct BuyView: View, KeyboardVisibilityReadable {
     private let textLeadingPadding = 25.0
     private let cardLeadingPadding = 16.0
 
@@ -14,6 +14,7 @@ struct BuyView: View {
     @State var bottomOffset = CGFloat(110)
     @State var leftInputText: String = ""
     @State var rightInputText: String = ""
+    @State private var isKeyboardVisible = false
 
     init(viewModel: BuyViewModel) {
         self.viewModel = viewModel
@@ -38,6 +39,9 @@ struct BuyView: View {
                     input
                         .padding(.top, 10)
                         .padding(.bottom, 25)
+                        .onReceive(isKeyboardShown) { isKeyboardVisible in
+                            self.isKeyboardVisible = isKeyboardVisible
+                        }
                     Divider()
                         .frame(height: 1)
                         .overlay(Color(Asset.Colors.snow.color))
@@ -70,6 +74,7 @@ struct BuyView: View {
                 bottomOffset = 0
             }
         }
+        .ignoresSafeArea(.keyboard, edges: isKeyboardVisible ? .top : .bottom)
     }
 
     var icon: some View {
