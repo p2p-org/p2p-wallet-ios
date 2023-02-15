@@ -6,14 +6,14 @@
 //
 
 import Foundation
-import RxSwift
+import Combine
 import SolanaSwift
 import WebKit
 
 protocol DAppChannelDelegate: AnyObject {
-    func connect() -> Single<String>
-    func signTransaction(transaction: Transaction) -> Single<Transaction>
-    func signTransactions(transactions: [Transaction]) -> Single<[Transaction]>
+    func connect() -> AnyPublisher<String, Error>
+    func signTransaction(transaction: Transaction) -> AnyPublisher<Transaction, Error>
+    func signTransactions(transactions: [Transaction]) -> AnyPublisher<[Transaction], Error>
 }
 
 protocol DAppChannelType {
@@ -41,7 +41,7 @@ class DAppChannel: NSObject {
     // MARK: - Properties
 
     private weak var delegate: DAppChannelDelegate?
-    private let disposeBag = DisposeBag()
+    private var subscriptions = Set<AnyCancellable>()
 
     func setDelegate(_ delegate: DAppChannelDelegate) {
         self.delegate = delegate
@@ -102,9 +102,14 @@ extension DAppChannel: WKScriptMessageHandler {
 
         switch method {
         case "connect":
-            delegate.connect().subscribe(onSuccess: { [weak self] value in
-                self?.call(webView: webView, id: id, args: value)
-            }).disposed(by: disposeBag)
+            delegate.connect()
+                .map(Optional.init)
+                .replaceError(with: nil)
+                .compactMap { $0 }
+                .sink(receiveValue: { [weak self] value in
+                    self?.call(webView: webView, id: id, args: value)
+                })
+                .store(in: &subscriptions)
         case "signTransaction":
             do {
                 guard let rawData = body["args"] as? String,
@@ -115,14 +120,20 @@ extension DAppChannel: WKScriptMessageHandler {
                 }
 
                 let transaction = try Transaction.from(data: data)
-                delegate.signTransaction(transaction: transaction).subscribe(onSuccess: { [weak self] trx in
-                    do {
-                        var trx = trx
-                        self?.call(webView: webView, id: id, args: try trx.serialize().base64EncodedString())
-                    } catch let e {
-                        self?.call(webView: webView, id: id, error: e.localizedDescription)
-                    }
-                }).disposed(by: disposeBag)
+                delegate
+                    .signTransaction(transaction: transaction)
+                    .map(Optional.init)
+                    .replaceError(with: nil)
+                    .compactMap { $0 }
+                    .sink(receiveValue: { [weak self] trx in
+                        do {
+                            var trx = trx
+                            self?.call(webView: webView, id: id, args: try trx.serialize().base64EncodedString())
+                        } catch let e {
+                            self?.call(webView: webView, id: id, error: e.localizedDescription)
+                        }
+                    })
+                    .store(in: &subscriptions)
             } catch {
                 call(webView: webView, id: id, error: error.localizedDescription)
             }
@@ -134,16 +145,22 @@ extension DAppChannel: WKScriptMessageHandler {
 
             do {
                 let transactions = try data.map { try Transaction.from(data: Data(base64urlEncoded: $0)!) }
-                delegate.signTransactions(transactions: transactions).subscribe(onSuccess: { [weak self] values in
-                    do {
-                        self?.call(webView: webView, id: id, args: try values.map { trx -> String in
-                            var trx = trx
-                            return try trx.serialize().base64EncodedString()
-                        })
-                    } catch let e {
-                        self?.call(webView: webView, id: id, error: e.localizedDescription)
-                    }
-                }).disposed(by: disposeBag)
+                delegate
+                    .signTransactions(transactions: transactions)
+                    .map(Optional.init)
+                    .replaceError(with: nil)
+                    .compactMap { $0 }
+                    .sink(receiveValue: { [weak self] values in
+                        do {
+                            self?.call(webView: webView, id: id, args: try values.map { trx -> String in
+                                var trx = trx
+                                return try trx.serialize().base64EncodedString()
+                            })
+                        } catch let e {
+                            self?.call(webView: webView, id: id, error: e.localizedDescription)
+                        }
+                    })
+                    .store(in: &subscriptions)
             } catch let e {
                 call(webView: webView, id: id, error: e.localizedDescription)
             }
