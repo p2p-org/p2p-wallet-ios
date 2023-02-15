@@ -6,9 +6,6 @@
 //
 
 import Foundation
-import RxConcurrency
-import RxCombine
-import RxSwift
 import SolanaSwift
 import Sentry
 
@@ -18,39 +15,14 @@ extension TransactionHandler {
         index: TransactionIndex,
         processingTransaction: RawTransactionType
     ) {
-        processingTransaction.createRequest()
-            .observe(on: MainScheduler.instance)
-            .publisher
-            .sink { [weak self] result in
-                switch result {
-                case .finished:
-                    break
-                case .failure(let error):
-                    guard let self = self else { return }
-
-                    // update status
-                    if (error as NSError).isNetworkConnectionError {
-                        self.notificationsService.showConnectionErrorNotification()
-                    } else {
-                        self.notificationsService.showDefaultErrorNotification()
-                    }
-                    SentrySDK.capture(error: error)
-
-                    // mark transaction as failured
-                    self.updateTransactionAtIndex(index) { currentValue in
-                        var info = currentValue
-                        info.status = .error(error)
-                        return info
-                    }
-                }
-            } receiveValue: { [weak self] transactionID in
-                guard let self = self else { return }
-
+        Task {
+            do {
+                let transactionID = try await processingTransaction.createRequest()
                 // show notification
 //                self.notificationsService.showInAppNotification(.done(L10n.transactionHasBeenSent))
 
                 // update status
-                self.updateTransactionAtIndex(index) { _ in
+                await updateTransactionAtIndex(index) { _ in
                     .init(
                         transactionId: transactionID,
                         sentAt: Date(),
@@ -58,11 +30,27 @@ extension TransactionHandler {
                         status: .confirmed(0)
                     )
                 }
+                
 
                 // observe confirmations
-                self.observe(index: index, transactionId: transactionID)
+                observe(index: index, transactionId: transactionID)
+            } catch {
+                // update status
+                if (error as NSError).isNetworkConnectionError {
+                    self.notificationsService.showConnectionErrorNotification()
+                } else {
+                    self.notificationsService.showDefaultErrorNotification()
+                }
+                SentrySDK.capture(error: error)
+
+                // mark transaction as failured
+                await updateTransactionAtIndex(index) { currentValue in
+                    var info = currentValue
+                    info.status = .error(error)
+                    return info
+                }
             }
-            .store(in: &subscriptions)
+        }
     }
 
     // MARK: - Helpers
@@ -72,41 +60,38 @@ extension TransactionHandler {
         Task { [weak self] in
             guard let self else { return }
             for try await status in self.apiClient.observeSignatureStatus(signature: transactionId) {
-                await MainActor.run { [weak self] in
-                    guard let self else { return }
-                    
-                    let txStatus: PendingTransaction.TransactionStatus
-                    var slot: UInt64?
-                    switch status {
-                    case .sending:
-                        return
-                    case .confirmed(let numberOfConfirmations, let sl):
-                        slot = sl
-                        txStatus = .confirmed(Int(numberOfConfirmations))
-                    case .finalized:
-                        txStatus = .finalized
-                        self.notificationsService.showInAppNotification(.done(L10n.transactionHasBeenConfirmed))
-                    case .error(let error):
-                        print(error ?? "")
-                        txStatus = .error(SolanaError.other(error ?? ""))
+                let txStatus: PendingTransaction.TransactionStatus
+                var slot: UInt64?
+                switch status {
+                case .sending:
+                    return
+                case .confirmed(let numberOfConfirmations, let sl):
+                    slot = sl
+                    txStatus = .confirmed(Int(numberOfConfirmations))
+                case .finalized:
+                    txStatus = .finalized
+                    await MainActor.run { [weak self] in
+                        self?.notificationsService.showInAppNotification(.done(L10n.transactionHasBeenConfirmed))
                     }
-                    
-                    self.updateTransactionAtIndex(index) { currentValue in
-                        var value = currentValue
-                        value.status = txStatus
-                        if let slot {
-                            value.slot = slot
-                        }
-                        return value
+                case .error(let error):
+                    print(error ?? "")
+                    txStatus = .error(SolanaError.other(error ?? ""))
+                }
+                
+                await self.updateTransactionAtIndex(index) { currentValue in
+                    var value = currentValue
+                    value.status = txStatus
+                    if let slot {
+                        value.slot = slot
                     }
+                    return value
                 }
             }
         }
     }
 
     /// Update transaction
-    @discardableResult
-    private func updateTransactionAtIndex(
+    @MainActor @discardableResult private func updateTransactionAtIndex(
         _ index: TransactionIndex,
         update: (PendingTransaction) -> PendingTransaction
     ) -> Bool {
