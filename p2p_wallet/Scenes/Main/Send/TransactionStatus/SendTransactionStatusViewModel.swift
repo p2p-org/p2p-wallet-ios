@@ -48,6 +48,8 @@ final class SendTransactionStatusViewModel: BaseViewModel, ObservableObject {
         super.init()
         let transactionIndex = transactionHandler.sendTransaction(transaction)
         transactionHandler.observeTransaction(transactionIndex: transactionIndex)
+            .receive(on: DispatchQueue.main)
+            .asObservable()
             .subscribe { [weak self] pendingTransaction in
                 guard let self = self else { return }
                 self.subtitle = pendingTransaction?.sentAt.string(withFormat: "MMMM dd, yyyy @ HH:mm", locale: Locale.base) ?? ""

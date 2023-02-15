@@ -6,6 +6,7 @@ import Foundation
 import Resolver
 import RxCocoa
 import RxSwift
+import RxCombine
 
 extension History {
     /// Refreshing history if processing transaction appears.
@@ -17,6 +18,7 @@ extension History {
         func register() -> Signal<Void> {
             repository
                 .observeProcessingTransactions()
+                .asObservable()
                 .flatMap { _ in Observable<Void>.just(()) }
                 .asSignal(onErrorJustReturn: ())
         }
