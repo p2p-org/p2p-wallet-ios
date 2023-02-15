@@ -65,11 +65,13 @@ struct RecipientCell: View {
                     .foregroundColor(isEnabled ? Color(Asset.Colors.night.color) :
                         Color(Asset.Colors.night.color.withAlphaComponent(0.3)))
                     .lineLimit(1)
+                    .accessibilityIdentifier("RecipientCell.title")
                 if let subtitle {
                     Text(subtitle)
                         .foregroundColor(Color(Asset.Colors.mountain.color))
                         .apply(style: .label1)
                         .lineLimit(1)
+                        .accessibilityIdentifier("RecipientCell.subtitle")
                 }
             }
 
@@ -78,6 +80,7 @@ struct RecipientCell: View {
                 Text(date.timeAgoDisplay())
                     .apply(style: .label1)
                     .foregroundColor(Color(Asset.Colors.mountain.color))
+                    .accessibilityIdentifier("RecipientCell.createdDate")
             }
         }
     }

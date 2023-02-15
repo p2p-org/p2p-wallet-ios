@@ -11,6 +11,7 @@ import Resolver
 import RxCocoa
 import RxSwift
 import SolanaSwift
+import RxCombine
 
 protocol ProcessTransactionViewModelType {
     var navigationDriver: Driver<ProcessTransaction.NavigatableScene?> { get }
@@ -106,6 +107,8 @@ extension ProcessTransaction.ViewModel: ProcessTransactionViewModelType {
         // observe transaction based on transaction index
         transactionHandler.observeTransaction(transactionIndex: index)
             .map { $0 ?? unknownErrorInfo }
+            .receive(on: DispatchQueue.main)
+            .asObservable()
             .catchAndReturn(unknownErrorInfo)
             .bind(to: pendingTransactionSubject)
             .disposed(by: disposeBag)
