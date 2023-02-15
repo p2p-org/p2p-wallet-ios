@@ -48,6 +48,10 @@ extension AppCoordinator: AppEventHandlerDelegate {
         }
     }
     
+    func disablePincodeOnFirstAppear() {
+        showAuthenticationOnMainOnAppear = false
+    }
+    
     func refresh() {
         ResolverScope.session.reset()
         reloadEvent.send()
