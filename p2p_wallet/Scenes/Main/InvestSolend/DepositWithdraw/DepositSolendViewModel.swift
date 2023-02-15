@@ -297,12 +297,16 @@ class DepositSolendViewModel: ObservableObject {
     // MARK: -
 
     func processFee(fee: SolendFeePaying) {
+        let mint = Token.solendSupportedTokens
+            .first(where: {$0.symbol == fee.symbol})?
+            .address ?? ""
+        
         // Fee
         let transferFee = Double(fee.fee.transaction) / pow(10, Double(fee.decimals))
-        let fiatTransferFee: Double = transferFee * (self.priceService.currentPrice(symbol: fee.symbol)?.value ?? 0)
+        let fiatTransferFee: Double = transferFee * (self.priceService.currentPrice(mint: mint)?.value ?? 0)
 
         let rentFee = Double(fee.fee.accountBalances) / pow(10, Double(fee.decimals))
-        let fiatRentFee: Double = rentFee * (self.priceService.currentPrice(symbol: fee.symbol)?.value ?? 0)
+        let fiatRentFee: Double = rentFee * (self.priceService.currentPrice(mint: mint)?.value ?? 0)
 
         // Total
         var total: Lamports = self.inputLamport
@@ -495,12 +499,15 @@ class DepositSolendViewModel: ObservableObject {
             tokenSelectSubject.send(
                 deposits
                     .map { asset, market, userDeposit in
-                        TokenToWithdrawView.Model(
+                        let mint = Token.solendSupportedTokens
+                            .first(where: {$0.symbol == userDeposit?.symbol})?
+                            .address ?? ""
+                        return TokenToWithdrawView.Model(
                             amount: userDeposit?.depositedAmount.double,
                             imageUrl: URL(string: asset.logo ?? ""),
                             symbol: userDeposit?.symbol ?? "",
                             fiatAmount: userDeposit?.depositedAmount.double * priceService
-                                .currentPrice(symbol: userDeposit?.symbol ?? "")?.value,
+                                .currentPrice(mint: mint)?.value,
                             apy: market?.supplyInterest.double
                         )
                     }
