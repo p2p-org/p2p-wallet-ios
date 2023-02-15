@@ -15,6 +15,7 @@ import UIKit
 extension OrcaSwapV2 {
     class ViewController: BaseViewController {
         @Injected private var analyticsManager: AnalyticsManager
+        private let disposeBag = DisposeBag()
 
         private let settingButton = UIBarButtonItem(
             image: .settings,
