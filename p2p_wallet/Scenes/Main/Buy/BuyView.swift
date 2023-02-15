@@ -118,7 +118,6 @@ struct BuyView: View {
                 case .none: return
                 }
             }
-            .accessibilityIdentifier("BuyView.input")
             .padding(.horizontal, 16)
         }
     }
@@ -146,7 +145,7 @@ struct BuyView: View {
                                     }
                                 } label: {
                                     methodCard(item: item)
-                                        .accessibilityIdentifier("BuyView.methods")
+                                        .accessibilityIdentifier("BuyView.methods" + (item.type == viewModel.selectedPayment ? "_selected" : item.type.rawValue))
                                         .foregroundColor(Color(Asset.Colors.night.color))
                                         .frame(width: 158)
                                 }.addBorder(
