@@ -20,7 +20,6 @@ protocol WalletDetailViewModelType {
     var walletActionsDriver: Driver<[WalletActionType]> { get }
 
     func start(action: WalletActionType)
-    func showTransaction(_ transaction: ParsedTransaction)
     var pubkey: String { get }
     var symbol: String { get }
 }
@@ -161,10 +160,5 @@ extension WalletDetail.ViewModel: WalletDetailViewModelType {
         case .cashOut:
             cashOut()
         }
-    }
-
-    func showTransaction(_ transaction: ParsedTransaction) {
-        analyticsManager.log(event: .tokenDetailsDetailsOpen)
-        navigatableSceneSubject.accept(.transactionInfo(transaction))
     }
 }
