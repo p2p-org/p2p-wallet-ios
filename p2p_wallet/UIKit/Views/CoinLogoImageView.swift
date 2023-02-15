@@ -7,7 +7,6 @@
 
 import Foundation
 import JazziconSwift
-import RxSwift
 import SolanaSwift
 import UIKit
 
@@ -125,14 +124,6 @@ class CoinLogoImageView: BEView {
         if let wrappedBy = token?.wrappedBy {
             wrappingView.alpha = 1
             wrappingTokenIcon.image = wrappedBy.image
-        }
-    }
-}
-
-extension Reactive where Base: CoinLogoImageView {
-    var wallet: Binder<Wallet?> {
-        Binder(base) { view, wallet in
-            view.setUp(wallet: wallet)
         }
     }
 }
