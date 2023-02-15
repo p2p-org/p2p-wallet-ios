@@ -8,7 +8,7 @@
 import Combine
 import Foundation
 
-class ListAdapter<Item: Identifiable, Iterator: AsyncIteratorProtocol> where Iterator.Element == Item {
+class ListAdapter<Iterator: AsyncIteratorProtocol> where Iterator.Element == Identifiable {
     // MARK: - Nested types
     
     /// List adapter status
@@ -23,7 +23,7 @@ class ListAdapter<Item: Identifiable, Iterator: AsyncIteratorProtocol> where Ite
     /// List adapter state
     struct State {
         var status: Status = .ready
-        var data: [Item] = []
+        var data: [Iterator.Element] = []
         var fetchable: Bool = true
         var error: Error? = nil
     }
