@@ -6,7 +6,7 @@
 //
 
 import KeyAppUI
-
+import History
 import SwiftUI
 
 struct NewHistoryView: View {
@@ -66,16 +66,7 @@ struct NewHistoryView_Previews: PreviewProvider {
     static var previews: some View {
         NewHistoryView(
             viewModel: .init(
-                initialSections: [
-                    .init(
-                        title: "Today",
-                        items: NewHistoryItemView_Previews.items.map { .rendable($0) }
-                    ),
-                    .init(
-                        title: "Yesterday",
-                        items: NewHistoryItemView_Previews.items.map { .rendable($0) }
-                    )
-                ]
+                provider: MockKeyAppHistoryProvider()
             )
         )
     }

@@ -16,7 +16,11 @@ class UserWalletManager: ObservableObject {
     @Injected private var solanaTracker: SolanaTracker
 
     /// Current selected wallet
-    @Published private(set) var wallet: UserWallet?
+    @Published private(set) var wallet: UserWallet? {
+        didSet {
+            notificationsService.registerForRemoteNotifications()
+        }
+    }
 
     /// Check if user logged in using web3 auth
     var isUserLoggedInUsingWeb3: Bool {
@@ -80,7 +84,7 @@ class UserWalletManager: ObservableObject {
 
         // Notification service
         notificationsService.unregisterForRemoteNotifications()
-        Task.detached { [notificationsService] in await notificationsService.deleteDeviceToken() }
+        Task.detached { [notificationsService] in try await notificationsService.deleteDeviceToken() }
         Task.detached { try await Resolver.resolve(SendHistoryLocalProvider.self).save(nil) }
 
         // Storage

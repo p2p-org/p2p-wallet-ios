@@ -1229,3 +1229,9 @@ You can try again, but your new transaction will be subject to the current rates
 "%@ signature" = "signature %@";
 "Your history will appear here.\nTo get started you can:" = "Votre historique apparaîtra ici.\nPour commencer, vous pouvez :";
 "Oops! Something happened." = "Oops!  Quelque chose est arrivé.";
+"Stake" = "Miser";
+"Unstake" = "Décoller";
+"Mint" = "menthe";
+"Burn" = "Brûler";
+"Unknown" = "Inconnu";
+"Signature" = "Signature";

@@ -18,18 +18,57 @@ enum NewHistoryAction {
 }
 
 class NewHistoryViewModel: BaseViewModel, ObservableObject {
-    typealias HistoryItem = NewHistoryRendableItem
+    typealias List = ListAdapter<HistoryTransaction, NewHistoryServiceRepository.AsyncIterator>
 
-    var disposeBag = DisposeBag()
+    // Services
 
-    @Published var items: [NewHistoryItem] = []
+    private var userWalletManager: UserWalletManager
+
+    private var repository: NewHistoryServiceRepository
+
+    @Published private var list: List
+
+    // State
+
+    var listState: List.State { list.state }
+
+    var allTokens: [Token] = []
+
+    let actionSubject = PassthroughSubject<NewHistoryAction, Never>()
+
+    // Output
 
     var sections: [NewHistorySection] {
-        let dictionary = Dictionary(grouping: items) { item -> Date in
-            if case let .rendable(rendableItem) = item {
-                return Calendar.current.startOfDay(for: rendableItem.date)
-            }
-            return Calendar.current.startOfDay(for: Date())
+        buildSection()
+    }
+
+    init(
+        provider: KeyAppHistoryProvider = Resolver.resolve(),
+        userWalletManager: UserWalletManager = Resolver.resolve(),
+        mint: String? = nil
+    ) {
+        repository = NewHistoryServiceRepository(provider: provider)
+        self.userWalletManager = userWalletManager
+
+        let userWalletManager: UserWalletManager = Resolver.resolve()
+        list = .init(iterator: repository.getAll(account: userWalletManager.wallet?.account, mint: mint))
+
+        super.init()
+
+        list.$state
+            .receive(on: RunLoop.main)
+            .sink { [weak self] _ in
+                self?.objectWillChange.send()
+            }.store(in: &subscriptions)
+    }
+
+    func fetchMore() async {
+        list.fetch()
+    }
+
+    func buildSection() -> [NewHistorySection] {
+        let dictionary = Dictionary(grouping: listState.data) { transaction -> Date in
+            Calendar.current.startOfDay(for: transaction.date)
         }
 
         let dateFormatter = DateFormatter()
@@ -39,73 +78,19 @@ class NewHistoryViewModel: BaseViewModel, ObservableObject {
 
         let result = dictionary.keys.sorted().reversed()
             .map { key in
-                NewHistorySection(title: dateFormatter.string(from: key), items: dictionary[key] ?? [])
-            }
+                let items = dictionary[key]?.map { trx -> NewHistoryItem in
+                    .rendable(RendableHistoryTransactionListItem(trx: trx, allTokens: allTokens))
+                }
 
-        for section in result {
-            print(section.id)
-            for item in section.items {
-                print(item.id)
+                return NewHistorySection(title: dateFormatter.string(from: key), items: items ?? [])
             }
-        }
 
         return result
     }
 
-    let actionSubject = PassthroughSubject<NewHistoryAction, Never>()
-
-    private var repository: NewHistoryRepository
-
-    @Injected var walletRepository: WalletsRepository
-
-    init(initialSections: [NewHistorySection]) {
-        repository = EmptyNewHistoryRepository()
-    }
-
-    override init() {
-        repository = EmptyNewHistoryRepository()
-
-        super.init()
-
-        let transactionRepositopy = SolanaTransactionRepository(solanaAPIClient: Resolver.resolve())
-        walletRepository.dataObservable
-            .subscribe(onNext: { [weak self] wallets in
-                guard let wallets = wallets else { return }
-                let accountStreamSources = wallets
-                    .reversed()
-                    .map { wallet in
-                        AccountStreamSource(
-                            account: wallet.pubkey ?? "",
-                            symbol: wallet.token.symbol,
-                            transactionRepository: transactionRepositopy
-                        )
-                    }
-
-                let source = MultipleStreamSource(sources: accountStreamSources)
-
-                self?.repository = NewHistoryRepositoryWithOldProvider(source: source)
-                Task {
-                    self?.items = []
-                    await self?.fetchMore()
-                }
-            })
-            .disposed(by: disposeBag)
-    }
-
-    func fetchMore() async {
-        do {
-            let result = try await repository.fetch(20)
-                .filter { item in !self.items.contains(where: { $0.id == item.id }) }
-
-            items.append(contentsOf: result.map { .rendable($0) })
-        } catch {
-            print(error)
-        }
-    }
-
     func onTap(item: any NewHistoryRendableItem) {
-        if let item = item as? RendableParsedTransaction {
-            actionSubject.send(.openDetailByParsedTransaction(item.trx))
-        }
+//        if let item = item as? RendableParsedTransaction {
+//            actionSubject.send(.openDetailByParsedTransaction(item.trx))
+//        }
     }
 }

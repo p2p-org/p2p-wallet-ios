@@ -1232,3 +1232,9 @@ You can try again, but your new transaction will be subject to the current rates
 "%@ signature" = "%@ chữ ký";
 "Your history will appear here.\nTo get started you can:" = "Lịch sử của bạn sẽ xuất hiện ở đây.\nĐể bắt đầu, bạn có thể:";
 "Oops! Something happened." = "Ối!  Một cái gì đó đã xảy ra.";
+"Stake" = "Cổ phần";
+"Unstake" = "hủy bỏ cổ phần";
+"Mint" = "cây bạc hà";
+"Burn" = "Đốt cháy";
+"Unknown" = "không xác định";
+"Signature" = "Chữ ký";
