@@ -186,14 +186,15 @@ extension ConfirmReceivingBitcoin {
         private func navigate(to scene: NavigatableScene?) {
             switch scene {
             case let .chooseWallet(selectedWallet, payableWallets):
-                let vm = ChooseWallet.ViewModel(
-                    selectedWallet: selectedWallet,
-                    handler: viewModel,
-                    staticWallets: payableWallets,
-                    showOtherWallets: false
-                )
-                let vc = ChooseWallet.ViewController(title: L10n.chooseWallet, viewModel: vm)
-                present(vc, animated: true)
+//                let vm = ChooseWallet.ViewModel(
+//                    selectedWallet: selectedWallet,
+//                    handler: viewModel,
+//                    staticWallets: payableWallets,
+//                    showOtherWallets: false
+//                )
+//                let vc = ChooseWallet.ViewController(title: L10n.chooseWallet, viewModel: vm)
+//                present(vc, animated: true)
+                break
             default:
                 break
             }
