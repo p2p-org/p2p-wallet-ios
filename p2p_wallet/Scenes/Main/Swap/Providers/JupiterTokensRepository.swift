@@ -25,11 +25,11 @@ protocol JupiterTokensRepository {
 final class JupiterTokensRepositoryImpl: JupiterTokensRepository {
 
     @MainActor var state: AnyPublisher<JupiterTokensState, Never> {
-        stateSubject.receive(on: RunLoop.main).eraseToAnyPublisher()
+        $stateSubject.receive(on: RunLoop.main).eraseToAnyPublisher()
     }
 
     var tokens: AnyPublisher<JupiterTokensData, Never> {
-        dataSubject.eraseToAnyPublisher()
+        $dataSubject.eraseToAnyPublisher()
     }
 
     // MARK: - Dependencies
@@ -38,17 +38,18 @@ final class JupiterTokensRepositoryImpl: JupiterTokensRepository {
     @Injected private var walletsRepository: WalletsRepository
 
     // MARK: - Private params
-    @Published private var stateSubject = CurrentValueSubject<JupiterTokensState, Never>(.loading)
-    @Published private var dataSubject = CurrentValueSubject<JupiterTokensData, Never>(.init(tokens: [], userWallets: []))
+    @Published private var stateSubject: JupiterTokensState
+    @Published private var dataSubject: JupiterTokensData
 
     init(provider: JupiterTokensProvider, jupiterClient: JupiterAPI) {
         self.localProvider = provider
         self.jupiterClient = jupiterClient
-        self.stateSubject.send(.initialized)
+        self.stateSubject = .initialized
+        self.dataSubject = JupiterTokensData(tokens: [], userWallets: [])
     }
 
     func load() async throws {
-        stateSubject.send(.loading)
+        stateSubject = .loading
         do {
             let jupiterTokens: [Jupiter.Token]
             if let cachedData = localProvider.getTokens() {
@@ -65,11 +66,11 @@ final class JupiterTokensRepositoryImpl: JupiterTokensRepository {
                 }
                 return SwapToken(jupiterToken: jupiterToken, userWallet: nil)
             }
-            dataSubject.send(JupiterTokensData(tokens: swapTokens, userWallets: wallets))
-            stateSubject.send(.loaded)
+            dataSubject = JupiterTokensData(tokens: swapTokens, userWallets: wallets)
+            stateSubject = .loaded
         }
         catch {
-            stateSubject.send(.error)
+            stateSubject = .error
         }
     }
 }
