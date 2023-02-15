@@ -8,16 +8,15 @@
 import AnalyticsManager
 import Foundation
 import Resolver
-import RxCocoa
-import RxSwift
+import Combine
 import SolanaSwift
 import TransactionParser
 
 protocol WalletDetailViewModelType {
     var walletsRepository: WalletsRepository { get }
-    var navigatableSceneDriver: Driver<WalletDetail.NavigatableScene?> { get }
-    var walletDriver: Driver<Wallet?> { get }
-    var walletActionsDriver: Driver<[WalletActionType]> { get }
+    var navigatableScenePublisher: AnyPublisher<WalletDetail.NavigatableScene?, Never> { get }
+    var walletPublisher: AnyPublisher<Wallet?, Never> { get }
+    var walletActionsPublisher: AnyPublisher<[WalletActionType], Never> { get }
 
     func start(action: WalletActionType)
     var pubkey: String { get }
@@ -25,7 +24,8 @@ protocol WalletDetailViewModelType {
 }
 
 extension WalletDetail {
-    class ViewModel {
+    @MainActor
+    class ViewModel: ObservableObject {
         // MARK: - Dependencies
 
         @Injected var walletsRepository: WalletsRepository
@@ -35,13 +35,13 @@ extension WalletDetail {
 
         // MARK: - Properties
 
-        private let disposeBag = DisposeBag()
+        private var subscriptions = Set<AnyCancellable>()
 
         // MARK: - Subject
 
-        private let navigatableSceneSubject = BehaviorRelay<NavigatableScene?>(value: nil)
-        private let walletSubject = BehaviorRelay<Wallet?>(value: nil)
-        private lazy var walletActionsSubject = walletSubject
+        @Published private var navigatableScene: NavigatableScene?
+        @Published private var wallet: Wallet?
+        private lazy var walletActionsSubject = $wallet
             .map { wallet -> [WalletActionType] in
                 guard let wallet = wallet else { return [] }
 
@@ -71,28 +71,28 @@ extension WalletDetail {
 
         private func bindSubjectsIntoSubjects() {
             walletsRepository
-                .dataObservable
-                .map { [weak self] in $0?.first(where: { $0.pubkey == self?.pubkey }) }
+                .dataPublisher
+                .receive(on: DispatchQueue.main)
+                .map { [weak self] in $0.first(where: { $0.pubkey == self?.pubkey }) }
                 .filter { $0 != nil }
-                .bind(to: walletSubject)
-                .disposed(by: disposeBag)
+                .assign(to: \.wallet, on: self)
+                .store(in: &subscriptions)
 
-            walletSubject
+            $wallet
                 .filter { $0 != nil }
                 .map { $0!.token.symbol }
-                .take(1)
-                .asSingle()
-                .subscribe(onSuccess: { [weak self] ticker in
+                .prefix(1)
+                .sink { [weak self] ticker in
                     self?.analyticsManager.log(event: .tokenDetailsOpen(tokenTicker: ticker))
-                })
-                .disposed(by: disposeBag)
+                }
+                .store(in: &subscriptions)
         }
 
         private func sendTokens() {
-            guard let wallet = walletSubject.value else { return }
+            guard let wallet else { return }
             analyticsManager.log(event: .tokenDetailsSendClick)
             analyticsManager.log(event: .sendViewed(lastScreen: "token_details"))
-            navigatableSceneSubject.accept(.send(wallet: wallet))
+            navigatableScene = .send(wallet: wallet)
         }
 
         private func buyTokens() {
@@ -105,42 +105,47 @@ extension WalletDetail {
                 tokens = .usdc
             }
             analyticsManager.log(event: .tokenDetailsBuyClick)
-            navigatableSceneSubject.accept(.buy(tokens: tokens))
+            navigatableScene = .buy(tokens: tokens)
         }
 
         private func receiveTokens() {
-            guard let pubkey = walletSubject.value?.pubkey else { return }
+            guard let pubkey = wallet?.pubkey else { return }
             analyticsManager.log(event: .tokenDetailQrClick)
             analyticsManager.log(event: .tokenReceiveViewed)
             analyticsManager.log(event: .receiveViewed(fromPage: "token_details"))
-            navigatableSceneSubject.accept(.receive(walletPubkey: pubkey))
+            navigatableScene = .receive(walletPubkey: pubkey)
         }
 
         private func swapTokens() {
-            guard let wallet = walletSubject.value else { return }
+            guard let wallet else { return }
             analyticsManager.log(event: .tokenDetailsSwapClick)
             analyticsManager.log(event: .swapViewed(lastScreen: "token_details"))
-            navigatableSceneSubject.accept(.swap(fromWallet: wallet))
+            navigatableScene = .swap(fromWallet: wallet)
         }
 
         private func cashOut() {
-            navigatableSceneSubject.accept(.cashOut)
+            navigatableScene = .cashOut
         }
     }
 }
 
 extension WalletDetail.ViewModel: WalletDetailViewModelType {
-    var walletActionsDriver: Driver<[WalletActionType]> {
+    var walletActionsPublisher: AnyPublisher<[WalletActionType], Never> {
         walletActionsSubject
-            .asDriver(onErrorJustReturn: [])
+            .receive(on: DispatchQueue.main)
+            .eraseToAnyPublisher()
     }
 
-    var navigatableSceneDriver: Driver<WalletDetail.NavigatableScene?> {
-        navigatableSceneSubject.asDriver()
+    var navigatableScenePublisher: AnyPublisher<WalletDetail.NavigatableScene?, Never> {
+        $navigatableScene
+            .receive(on: DispatchQueue.main)
+            .eraseToAnyPublisher()
     }
 
-    var walletDriver: Driver<Wallet?> {
-        walletSubject.asDriver()
+    var walletPublisher: AnyPublisher<Wallet?, Never> {
+        $wallet
+            .receive(on: DispatchQueue.main)
+            .eraseToAnyPublisher()
     }
 
     // MARK: - Actions
