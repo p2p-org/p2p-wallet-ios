@@ -56,7 +56,7 @@ final class BuyViewModel: ObservableObject {
     private var tokenPrices: [Fiat: [String: Double?]] = [:]
 
     // Defaults
-    private static let defaultMinAmount = Double(40)
+    private static let defaultMinAmount = Double(30)
     private static let defaultMaxAmount = Double(10000)
     private static let tokens: [Token] = [.usdc, .nativeSolana]
     private static let fiats: [Fiat] = available(.buyBankTransferEnabled) ? [.eur, .gbp, .usd] : [.usd]
