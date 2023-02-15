@@ -3,7 +3,11 @@ enum FeeRelayerEndpoint {
         if let forcedUrl = GlobalAppState.shared.forcedFeeRelayerEndpoint {
             return forcedUrl
         } else {
-            return "https://\(String.secretConfig("FEE_RELAYER_ENDPOINT")!)"
+            if Environment.current == .release {
+                return "https://\(String.secretConfig("FEE_RELAYER_ENDPOINT")!)"
+            } else {
+                return "https://\(String.secretConfig("FEE_RELAYER_STAGING_ENDPOINT")!)"
+            }
         }
     }
 }

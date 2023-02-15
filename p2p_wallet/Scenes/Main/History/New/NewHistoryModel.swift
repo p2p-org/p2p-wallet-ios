@@ -6,6 +6,7 @@
 //
 
 import Foundation
+import History
 import SolanaSwift
 
 struct NewHistorySection: Identifiable {
@@ -40,6 +41,7 @@ enum NewHistoryItemStatus {
 
 enum NewHistoruItemChange {
     case positive
+    case unchanged
     case negative
 }
 
@@ -50,14 +52,14 @@ protocol NewHistoryRendableItem: Identifiable {
     
     var status: NewHistoryItemStatus { get }
     
-    var change: NewHistoruItemChange { get }
-    
     var icon: NewHistoryRendableItemIcon { get }
 
     var title: String { get }
+    
     var subtitle: String { get }
     
-    var detail: String { get }
+    var detail: (NewHistoruItemChange, String) { get }
+    
     var subdetail: String { get }
 }
 
@@ -74,17 +76,152 @@ struct MockedHistoryRendableItem: NewHistoryRendableItem {
     
     var status: NewHistoryItemStatus
     
-    var change: NewHistoruItemChange
-    
     var icon: NewHistoryRendableItemIcon
     
     var title: String
     
     var subtitle: String
     
-    var detail: String
+    var detail: (NewHistoruItemChange, String)
     
     var subdetail: String
+}
+
+struct RendableHistoryTransactionListItem: NewHistoryRendableItem {
+    private var trx: HistoryTransaction
+    
+    private var tokens: [Token]
+    
+    init(trx: HistoryTransaction, allTokens: [Token]) {
+        self.trx = trx
+        
+        tokens = trx.info.tokens?.map { internalToken -> Token? in
+            allTokens.first { token in
+                token.address == internalToken.info.mint
+            }
+        }
+        .compactMap { $0 } ?? []
+    }
+    
+    var id: String {
+        trx.txSignature
+    }
+    
+    var date: Date {
+        trx.date
+    }
+    
+    var status: NewHistoryItemStatus {
+        switch trx.status {
+        case .success:
+            return .success
+        case .failure:
+            return .failed
+        }
+    }
+    
+    var icon: NewHistoryRendableItemIcon {
+        switch trx.type {
+        case .swap:
+            let tokenA = trx.info.tokens?.first(where: { $0.info.swapRole == "swap_token_a" })
+            let tokenB = trx.info.tokens?.first(where: { $0.info.swapRole == "swap_token_b" })
+            
+            guard let tokenA, let tokenB else {
+                return .icon(.transactionSwap)
+            }
+            
+            let solanaTokenA = tokens.first(where: { $0.address == tokenA.info.mint })
+            let solanaTokenB = tokens.first(where: { $0.address == tokenB.info.mint })
+            
+            guard let solanaTokenA, let solanaTokenB else {
+                return .icon(.transactionSwap)
+            }
+            
+            guard
+                let urlStrA = solanaTokenA.logoURI,
+                let urlA = URL(string: urlStrA),
+                let urlStrB = solanaTokenB.logoURI,
+                let urlB = URL(string: urlStrB)
+            else {
+                return .icon(.transactionSwap)
+            }
+            
+            return .double(urlA, urlB)
+                
+        case .createAccount:
+            return .icon(.transactionCreateAccount)
+        case .closeAccount:
+            return .icon(.transactionCloseAccount)
+        case .unknown:
+            return .icon(.planet)
+            
+        default:
+            if let urlStr = tokens.first?.logoURI, let url = URL(string: urlStr) {
+                return .single(url)
+            } else {
+                return .icon(.transactionSend)
+            }
+        }
+    }
+    
+    var title: String {
+        switch trx.type {
+        case .swap:
+            if let swapProgramNames = trx.info.swapPrograms?.map(\.name).compactMap({ $0 }).joined(separator: ", ") {
+                return "\(L10n.swap) (\(swapProgramNames)"
+            } else {
+                return "\(L10n.swap)"
+            }
+        case .stake:
+            return "\(L10n.stake)"
+        case .unstake:
+            return "\(L10n.unstake)"
+        case .send:
+            return "\(L10n.send)"
+        case .receive:
+            return "\(L10n.receive)"
+        case .mint:
+            return "\(L10n.mint)"
+        case .burn:
+            return "\(L10n.burn)"
+        case .createAccount:
+            return "\(L10n.createAccount)"
+        case .closeAccount:
+            return "\(L10n.closeAccount)"
+        case .unknown:
+            return "\(L10n.unknown)"
+        }
+    }
+    
+    var subtitle: String {
+        switch trx.type {
+        case .swap:
+            let tokenASymbol = trx.info.tokens?.first(where: { $0.info.swapRole == "swap_token_a" })?.info.symbol
+            let tokenBSymbol = trx.info.tokens?.first(where: { $0.info.swapRole == "swap_token_b" })?.info.symbol
+            
+            guard let tokenASymbol, let tokenBSymbol else {
+                return ""
+            }
+            
+            return L10n.to(tokenASymbol, tokenBSymbol)
+        case .send:
+            let counterparty = trx.info.counterparty
+            return L10n.to(counterparty?.username ?? RecipientFormatter.shortFormat(destination: counterparty?.address ?? ""))
+        case .receive:
+            let counterparty = trx.info.counterparty
+            return "\(L10n.from) \(counterparty?.username ?? RecipientFormatter.shortFormat(destination: counterparty?.address ?? ""))"
+        default:
+            return "\(L10n.signature): \(RecipientFormatter.shortSignature(signature: trx.txSignature))"
+        }
+    }
+    
+    var detail: (NewHistoruItemChange, String) {
+        return (.unchanged, "")
+    }
+    
+    var subdetail: String {
+        return ""
+    }
 }
 
 extension MockedHistoryRendableItem {
@@ -93,11 +230,10 @@ extension MockedHistoryRendableItem {
             id: UUID().uuidString,
             date: Date(),
             status: .pending,
-            change: .negative,
             icon: .single(URL(string: Token.nativeSolana.logoURI!)!),
             title: "Sending...",
             subtitle: "To mad.p2p.sol",
-            detail: "–$122.12",
+            detail: (.negative, "–$122.12"),
             subdetail: "–5.21 SOL"
         )
     }
@@ -107,11 +243,10 @@ extension MockedHistoryRendableItem {
             id: UUID().uuidString,
             date: Date(),
             status: .success,
-            change: .negative,
             icon: .single(URL(string: Token.nativeSolana.logoURI!)!),
             title: "Send",
             subtitle: "To mad.p2p.sol",
-            detail: "–$122.12",
+            detail: (.negative, "–$122.12"),
             subdetail: "–5.21 SOL"
         )
     }
@@ -121,11 +256,11 @@ extension MockedHistoryRendableItem {
             id: UUID().uuidString,
             date: Date(),
             status: .failed,
-            change: .negative,
+            
             icon: .single(URL(string: Token.usdc.logoURI!)!),
             title: "Send",
             subtitle: "To mad.p2p.sol",
-            detail: "–$34.36",
+            detail: (.negative, "–$34.36"),
             subdetail: "–34.36 USDC"
         )
     }
@@ -135,11 +270,10 @@ extension MockedHistoryRendableItem {
             id: UUID().uuidString,
             date: Date(),
             status: .success,
-            change: .positive,
             icon: .single(URL(string: Token.renBTC.logoURI!)!),
             title: "Receive",
             subtitle: "From ...S39N",
-            detail: "+$5 268.65",
+            detail: (.positive, "+$5 268.65"),
             subdetail: "+0.3271523 renBTC"
         )
     }
@@ -149,14 +283,13 @@ extension MockedHistoryRendableItem {
             id: UUID().uuidString,
             date: Date(),
             status: .success,
-            change: .positive,
             icon: .double(
                 URL(string: Token.nativeSolana.logoURI!)!,
                 URL(string: Token.eth.logoURI!)!
             ),
             title: "Swap",
             subtitle: "SOL to ETH",
-            detail: "+3.5 ETH",
+            detail: (.positive, "+3.5 ETH"),
             subdetail: "-120 SOL"
         )
     }
@@ -166,11 +299,11 @@ extension MockedHistoryRendableItem {
             id: UUID().uuidString,
             date: Date(),
             status: .success,
-            change: .negative,
+            
             icon: .single(URL(string: Token.renBTC.logoURI!)!),
             title: "Burn",
             subtitle: "Signature: ...Hs7s",
-            detail: "–$5 268.65",
+            detail: (.negative, "–$5 268.65"),
             subdetail: "–0.3271523 renBTC"
         )
     }
@@ -180,11 +313,10 @@ extension MockedHistoryRendableItem {
             id: UUID().uuidString,
             date: Date(),
             status: .success,
-            change: .positive,
             icon: .single(URL(string: Token.renBTC.logoURI!)!),
             title: "Mint",
             subtitle: "Signature: ...Hs7s",
-            detail: "$5 268.65",
+            detail: (.positive, "$5 268.65"),
             subdetail: "0.3271523 renBTC"
         )
     }
@@ -194,11 +326,10 @@ extension MockedHistoryRendableItem {
             id: UUID().uuidString,
             date: Date(),
             status: .success,
-            change: .negative,
             icon: .single(URL(string: Token.nativeSolana.logoURI!)!),
             title: "Stake",
             subtitle: "Vote account: ....S39N",
-            detail: "–$122.12",
+            detail: (.negative, "–$122.12"),
             subdetail: "–5.21 SOL"
         )
     }
@@ -208,11 +339,10 @@ extension MockedHistoryRendableItem {
             id: UUID().uuidString,
             date: Date(),
             status: .success,
-            change: .positive,
             icon: .single(URL(string: Token.nativeSolana.logoURI!)!),
             title: "Unstake",
             subtitle: "Vote account: ....S39N",
-            detail: "+$122.12",
+            detail: (.positive, "+$122.12"),
             subdetail: "+5.21 SOL"
         )
     }
@@ -222,11 +352,10 @@ extension MockedHistoryRendableItem {
             id: UUID().uuidString,
             date: Date(),
             status: .success,
-            change: .positive,
             icon: .icon(.transactionCreateAccount),
             title: "Create account",
             subtitle: "5Rho...SheY",
-            detail: "",
+            detail: (.unchanged, ""),
             subdetail: ""
         )
     }
@@ -236,11 +365,10 @@ extension MockedHistoryRendableItem {
             id: UUID().uuidString,
             date: Date(),
             status: .success,
-            change: .positive,
             icon: .icon(.transactionCloseAccount),
             title: "Close account",
             subtitle: "5Rho...SheY",
-            detail: "",
+            detail: (.unchanged, ""),
             subdetail: ""
         )
     }
@@ -250,11 +378,10 @@ extension MockedHistoryRendableItem {
             id: UUID().uuidString,
             date: Date(),
             status: .success,
-            change: .negative,
             icon: .icon(.planet),
             title: "Unknown",
             subtitle: "Signature: ...Hs7s",
-            detail: "-$32.11",
+            detail: (.negative, "-$32.11"),
             subdetail: "–1 SOL"
         )
     }

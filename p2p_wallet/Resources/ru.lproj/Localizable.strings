@@ -1227,3 +1227,9 @@ You can try again, but your new transaction will be subject to the current rates
 "%@ signature" = "%@ подпись";
 "Your history will appear here.\nTo get started you can:" = "Здесь появится ваша история.\nЧтобы начать, вы можете:";
 "Oops! Something happened." = "Ой!  Что-то произошло.";
+"Stake" = "Ставка";
+"Unstake" = "Отменить ставку";
+"Mint" = "Монетный двор";
+"Burn" = "Гореть";
+"Unknown" = "Неизвестный";
+"Signature" = "Подпись";

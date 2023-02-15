@@ -24,9 +24,9 @@ struct NewHistoryItemView: View {
         case .pending:
             return Color(Asset.Colors.night.color)
         case .success:
-            switch item.change {
+            switch item.detail.0 {
             case .positive: return Color(Asset.Colors.mint.color)
-            case .negative: return Color(Asset.Colors.night.color)
+            case .negative, .unchanged: return Color(Asset.Colors.night.color)
             }
         case .failed: return Color(Asset.Colors.rose.color)
         }
@@ -63,7 +63,7 @@ struct NewHistoryItemView: View {
                             .lineLimit(2)
                             .multilineTextAlignment(.leading)
                         Spacer()
-                        Text(item.detail)
+                        Text(item.detail.1)
                             .fontWeight(.semibold)
                             .apply(style: .text2)
                             .foregroundColor(detailColor)
