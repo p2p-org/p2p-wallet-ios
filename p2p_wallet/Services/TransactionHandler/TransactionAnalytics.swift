@@ -31,7 +31,7 @@ class SwapTransactionAnalytics {
     // MARK: - Methods
 
     func observer(index: TransactionHandler.TransactionIndex) {
-        let publisher = transactionHandler.observeTransaction(transactionIndex: index)
+        transactionHandler.observeTransaction(transactionIndex: index)
         .compactMap { $0 }
         .withPrevious()
         .sink(receiveValue: { [weak self] param in
