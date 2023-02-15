@@ -9,8 +9,6 @@ import BEPureLayout
 import Combine
 import Foundation
 import Resolver
-import RxCombine
-import RxSwift
 import SolanaSwift
 import KeyAppUI
 import UIKit
@@ -20,7 +18,6 @@ extension WalletDetail {
         // MARK: - Dependencies
 
         private let viewModel: WalletDetailViewModelType
-        private let disposeBag = DisposeBag()
 
         // MARK: - Handler
 
@@ -49,16 +46,10 @@ extension WalletDetail {
 
             let containerView = UIView(forAutoLayout: ())
 
-            let actionsPublisher = viewModel.walletActionsDriver
-                .asPublisher()
-                .assertNoFailure()
-            let balancePublisher = viewModel.walletDriver
-                .asPublisher()
-                .assertNoFailure()
+            let actionsPublisher = viewModel.walletActionsPublisher
+            let balancePublisher = viewModel.walletPublisher
                 .compactMap { $0?.amount?.tokenAmountFormattedString(symbol: $0?.token.symbol ?? "") }
-            let usdAmountPublisher = viewModel.walletDriver
-                .asPublisher()
-                .assertNoFailure()
+            let usdAmountPublisher = viewModel.walletPublisher
                 .compactMap { $0?.amountInCurrentFiat.fiatAmountFormattedString() }
             let actionsView = ActionsPanelView(
                 actionsPublisher: actionsPublisher.eraseToAnyPublisher(),
@@ -89,15 +80,15 @@ extension WalletDetail {
         override func bind() {
             super.bind()
 
-            viewModel.walletDriver
+            viewModel.walletPublisher
                 .map { $0?.token.name }
-                .drive(onNext: { [weak self] in
+                .sink(receiveValue: { [weak self] in
                     self?.navigationItem.title = $0
                 })
-                .disposed(by: disposeBag)
-            viewModel.navigatableSceneDriver
-                .drive(onNext: { [weak self] in self?.navigate(to: $0) })
-                .disposed(by: disposeBag)
+                .store(in: &subscriptions)
+            viewModel.navigatableScenePublisher
+                .sink(receiveValue: { [weak self] in self?.navigate(to: $0) })
+                .store(in: &subscriptions)
         }
 
         // MARK: - Navigation
