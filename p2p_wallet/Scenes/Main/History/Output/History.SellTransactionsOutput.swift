@@ -24,7 +24,7 @@ extension History {
     
         func process(newData: [HistoryItem]) -> [HistoryItem] {
             // get transactions
-            var transactions = sellDataService.transactions
+            let transactions = sellDataService.transactions
             
             /// Applies to output list
             var data = newData

@@ -4,12 +4,16 @@
 
 import AnalyticsManager
 import Foundation
-import RxSwift
+import Combine
 
 class SwapTransactionAnalytics {
-    let disposeBag = DisposeBag()
+    // MARK: - Properties
+    
+    var subscriptions = Set<AnyCancellable>()
     let analyticsManager: AnalyticsManager
     let transactionHandler: TransactionHandlerType
+
+    // MARK: - Initializer
 
     init(analyticsManager: AnalyticsManager, transactionHandler: TransactionHandlerType) {
         self.analyticsManager = analyticsManager
@@ -17,38 +21,23 @@ class SwapTransactionAnalytics {
 
         transactionHandler
             .onNewTransaction
-            .subscribe(onNext: { [weak self] trx, index in
+            .receive(on: DispatchQueue.main)
+            .sink(receiveValue: { [weak self] trx, index in
                 if trx.rawTransaction.isSwap { self?.observer(index: index) }
             })
-            .disposed(by: disposeBag)
+            .store(in: &subscriptions)
     }
 
+    // MARK: - Methods
+
     func observer(index: TransactionHandler.TransactionIndex) {
-        Observable<PendingTransaction>.create { [unowned self] observer in
-            let localDisposable = transactionHandler.observeTransaction(transactionIndex: index)
-                .subscribe(onNext: { trx in
-                    guard let trx = trx else {
-                        observer.on(.completed)
-                        return
-                    }
-
-                    observer.on(.next(trx))
-                    switch trx.status {
-                    case .finalized, .error:
-                        observer.on(.completed)
-                    default:
-                        break
-                    }
-
-                })
-
-            return Disposables.create {
-                localDisposable.dispose()
-            }
-        }
-        .distinctUntilChanged(at: \.status.rawValue)
+        transactionHandler.observeTransaction(transactionIndex: index)
+        .compactMap { $0 }
         .withPrevious()
-        .subscribe(onNext: { prevTrx, trx in
+        .sink(receiveValue: { [weak self] param in
+            let prevTrx = param.previous
+            let trx = param.current
+            guard let self else { return }
             guard let rawTrx = trx.rawTransaction as? ProcessTransaction.SwapTransaction else { return }
 
             switch trx.status {
@@ -106,6 +95,6 @@ class SwapTransactionAnalytics {
                 break
             }
         })
-        .disposed(by: disposeBag)
+        .store(in: &subscriptions)
     }
 }
