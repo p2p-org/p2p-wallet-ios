@@ -9,6 +9,7 @@ import Resolver
 import SolanaSwift
 import TransactionParser
 import UIKit
+import RxSwift
 
 extension History {
     final class Scene: BaseViewController {
@@ -16,6 +17,7 @@ extension History {
         @Injected private var pricesService: PricesServiceType
 
         let viewModel: SceneModel
+        private let disposeBag = DisposeBag()
 
         override init() {
             viewModel = SceneModel()

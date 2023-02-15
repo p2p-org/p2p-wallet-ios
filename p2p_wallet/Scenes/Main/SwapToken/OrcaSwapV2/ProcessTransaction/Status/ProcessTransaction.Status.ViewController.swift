@@ -9,12 +9,14 @@ import BEPureLayout
 import FeeRelayerSwift
 import KeyAppUI
 import UIKit
+import RxSwift
 
 extension ProcessTransaction.Status {
     class ViewController: WLModalViewController {
         // MARK: - Dependencies
 
         private let viewModel: ProcessTransactionViewModelType
+        private let disposeBag = DisposeBag()
 
         // MARK: - Handlers
 
