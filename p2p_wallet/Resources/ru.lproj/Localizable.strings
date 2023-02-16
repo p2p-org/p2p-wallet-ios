@@ -1222,3 +1222,6 @@ You can try again, but your new transaction will be subject to the current rates
 "The data is being updated. Please try again in a few minutes." = "Данные обновляются.  Пожалуйста, попробуйте еще раз через несколько минут.";
 "Buy or receive to continue" = "Купить или получить, чтобы продолжить";
 "Less than %@" = "Меньше, чем %@";
+"Buy with Moonpay" = "Купить с Moonpay";
+"License" = "Лицензия";
+"Cashout with Moonpay" = "Вывод средств с Moonpay";

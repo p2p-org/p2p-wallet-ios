@@ -8,6 +8,8 @@ import SolanaSwift
 import SwiftyUserDefaults
 import UIKit
 
+let MoonpayLicenseURL = "https://www.moonpay.com/legal/licenses"
+
 final class BuyViewModel: ObservableObject {
     var coordinatorIO = CoordinatorIO()
 
@@ -23,7 +25,7 @@ final class BuyViewModel: ObservableObject {
     @Published var isLoading = false
     @Published var areMethodsLoading = true
     @Published var isLeftFocus = false
-    @Published var isRightFocus = true
+    @Published var isRightFocus = false
     @Published var exchangeOutput: Buy.ExchangeOutput?
     @Published var navigationSlidingPercentage: CGFloat = 1
     @Published var targetSymbol: String?
@@ -93,6 +95,7 @@ final class BuyViewModel: ObservableObject {
                 initTokenWasSelected = true
             }
             .store(in: &subscriptions)
+
         coordinatorIO.fiatSelected
             .sink { [unowned self] fiat in
                 let oldFiat = self.fiat
@@ -333,6 +336,11 @@ final class BuyViewModel: ObservableObject {
         analyticsManager.log(event: AmplitudeEvent.moonpayWindowOpened)
     }
 
+    func moonpayLicenseTap() {
+        let url = MoonpayLicenseURL
+        coordinatorIO.license.send(URL(string: url)!)
+    }
+
     // MARK: -
 
     var form: AnyPublisher<(Buy.FiatCurrency, Buy.CryptoCurrency, Double, Double), Never> {
@@ -505,6 +513,7 @@ final class BuyViewModel: ObservableObject {
         var tokenSelected = CurrentValueSubject<Token?, Never>(nil)
         var fiatSelected = CurrentValueSubject<Fiat?, Never>(nil)
         var buy = PassthroughSubject<URL, Never>()
+        var license = PassthroughSubject<URL, Never>()
     }
 
     struct ButtonItem: Equatable {
