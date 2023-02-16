@@ -8,6 +8,7 @@
 import BEPureLayout
 import Foundation
 import UIKit
+import RxSwift
 
 extension ProcessTransaction {
     final class ViewController: BaseVC {
@@ -17,6 +18,7 @@ extension ProcessTransaction {
         private var detailViewController: TransactionDetail.ViewController!
         private var statusViewController: Status.ViewController!
         private var statusViewControllerShown = false
+        private let disposeBag = DisposeBag()
 
         // MARK: - Handlers
 

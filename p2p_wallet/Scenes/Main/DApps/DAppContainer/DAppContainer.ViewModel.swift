@@ -7,13 +7,12 @@
 
 import Foundation
 import Resolver
-import RxCocoa
-import RxSwift
+import Combine
 import SolanaSwift
 import WebKit
 
 protocol DAppContainerViewModelType {
-    var navigationDriver: Driver<DAppContainer.NavigatableScene?> { get }
+    var navigationPublisher: AnyPublisher<DAppContainer.NavigatableScene?, Never> { get }
     func navigate(to scene: DAppContainer.NavigatableScene)
 
     func getWebviewConfiguration() -> WKWebViewConfiguration
@@ -34,7 +33,7 @@ extension DAppContainer {
 
         // MARK: - Subject
 
-        private let navigationSubject = BehaviorRelay<NavigatableScene?>(value: nil)
+        private let navigationSubject = CurrentValueSubject<NavigatableScene?, Never>(nil)
 
         init(dapp: DApp) {
             self.dapp = dapp
@@ -49,14 +48,14 @@ extension DAppContainer {
 }
 
 extension DAppContainer.ViewModel: DAppContainerViewModelType {
-    var navigationDriver: Driver<DAppContainer.NavigatableScene?> {
-        navigationSubject.asDriver()
+    var navigationPublisher: AnyPublisher<DAppContainer.NavigatableScene?, Never> {
+        navigationSubject.receive(on: DispatchQueue.main).eraseToAnyPublisher()
     }
 
     // MARK: - Actions
 
     func navigate(to scene: DAppContainer.NavigatableScene) {
-        navigationSubject.accept(scene)
+        navigationSubject.send(scene)
     }
 
     func getWebviewConfiguration() -> WKWebViewConfiguration {
@@ -69,30 +68,31 @@ extension DAppContainer.ViewModel: DAppContainerViewModelType {
 }
 
 extension DAppContainer.ViewModel: DAppChannelDelegate {
-    func connect() -> Single<String> {
+    func connect() -> AnyPublisher<String, Error> {
         guard let pubKey = walletsRepository.getWallets().first(where: { $0.isNativeSOL })?.pubkey else {
-            return .error(DAppChannelError.canNotFindWalletAddress)
+            return Fail(error: DAppChannelError.canNotFindWalletAddress)
+                .eraseToAnyPublisher()
         }
 
-        return .just(pubKey)
+        return Just(pubKey).setFailureType(to: Error.self).eraseToAnyPublisher()
     }
 
-    func signTransaction(transaction: Transaction) -> Single<Transaction> {
+    func signTransaction(transaction: Transaction) -> AnyPublisher<Transaction, Error> {
         do {
             var transaction = transaction
             guard let signer = accountStorage.account
             else { throw DAppChannelError.unauthorized }
 
             try transaction.sign(signers: [signer])
-            return .just(transaction)
+            return Just(transaction).setFailureType(to: Error.self).eraseToAnyPublisher()
         } catch let e {
-            return .error(e)
+            return Fail(error: e).eraseToAnyPublisher()
         }
     }
 
-    func signTransactions(transactions: [Transaction]) -> Single<[Transaction]> {
+    func signTransactions(transactions: [Transaction]) -> AnyPublisher<[Transaction], Error> {
         do {
-            return .just(try transactions.map { transaction in
+            return Just(try transactions.map { transaction in
                 var transaction = transaction
                 guard let signer = accountStorage.account
                 else { throw DAppChannelError.unauthorized }
@@ -100,8 +100,10 @@ extension DAppContainer.ViewModel: DAppChannelDelegate {
                 try transaction.sign(signers: [signer])
                 return transaction
             })
+                .setFailureType(to: Error.self)
+                .eraseToAnyPublisher()
         } catch let e {
-            return .error(e)
+            return Fail(error: e).eraseToAnyPublisher()
         }
     }
 }

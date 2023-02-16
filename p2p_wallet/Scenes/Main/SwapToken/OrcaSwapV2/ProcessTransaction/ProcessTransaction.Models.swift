@@ -6,15 +6,13 @@
 //
 
 import Foundation
-import RxConcurrency
-import RxSwift
 import SolanaSwift
 import OrcaSwapSwift
 
 // MARK: - Transaction type
 
 protocol RawTransactionType {
-    func createRequest() -> Single<String>
+    func createRequest() async throws -> String
     var mainDescription: String { get }
     var networkFees: (total: SolanaSwift.Lamports, token: SolanaSwift.Token)? { get }
 }
@@ -59,14 +57,14 @@ extension ProcessTransaction {
                 estimatedAmount.toString(maximumFractionDigits: 9) + " " + destinationWallet.token.symbol
         }
 
-        func createRequest() -> Single<String> {
+        func createRequest() async throws -> String {
             // check if payingWallet has enough balance to cover fee
             if let fees = fees.networkFees,
                let payingWallet = payingWallet,
                let currentAmount = payingWallet.lamports,
                fees.total > currentAmount
             {
-                return .error(SolanaError.other(
+                throw SolanaError.other(
                     L10n.yourAccountDoesNotHaveEnoughToCoverFees(payingWallet.token.symbol)
                         + ". "
                         + L10n
@@ -75,22 +73,21 @@ extension ProcessTransaction {
                         )
                         + ". "
                         + L10n.pleaseChooseAnotherTokenAndTryAgain
-                ))
+                )
             }
 
-            return Single.async {
-                try await swapService.swap(
-                    sourceAddress: sourceWallet.pubkey!,
-                    sourceTokenMint: sourceWallet.mintAddress,
-                    destinationAddress: destinationWallet.pubkey,
-                    destinationTokenMint: destinationWallet.mintAddress,
-                    payingTokenAddress: payingWallet?.pubkey,
-                    payingTokenMint: payingWallet?.mintAddress,
-                    poolsPair: poolsPair,
-                    amount: amount.toLamport(decimals: sourceWallet.token.decimals),
-                    slippage: slippage
-                )
-            }.map { $0.last ?? "" }
+            return try await swapService.swap(
+                sourceAddress: sourceWallet.pubkey!,
+                sourceTokenMint: sourceWallet.mintAddress,
+                destinationAddress: destinationWallet.pubkey,
+                destinationTokenMint: destinationWallet.mintAddress,
+                payingTokenAddress: payingWallet?.pubkey,
+                payingTokenMint: payingWallet?.mintAddress,
+                poolsPair: poolsPair,
+                amount: amount.toLamport(decimals: sourceWallet.token.decimals),
+                slippage: slippage
+            )
+                .last ?? ""
         }
 
         var networkFees: (total: Lamports, token: Token)? {
@@ -111,7 +108,7 @@ extension ProcessTransaction {
             L10n.closeAccount(closingWallet.token.symbol)
         }
 
-        func createRequest() -> Single<String> {
+        func createRequest() async throws -> String {
             fatalError("Not implemented")
             // guard let pubkey = closingWallet.pubkey else {
             //     return .error(Error.unknown)
