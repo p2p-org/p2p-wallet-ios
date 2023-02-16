@@ -12,7 +12,7 @@ protocol AnyRepository {
 
 protocol AnyListRepository: AnyRepository {
     /// ListItemType to be fetched
-    associatedtype ListItemType
+    associatedtype ListItemType: Identifiable
     /// Pagination strategy
     var paginationStrategy: PaginationStrategy? { get }
     /// Fetch list of item from outside

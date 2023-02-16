@@ -36,9 +36,9 @@ class ListViewModel<
     init(
         initialData: ItemType?,
         repository: Repository,
-        mappingStrategy: MappingStrategy
+        mappingStrategy: MappingStrategy? = nil
     ) {
-        self.mappingStrategy = mappingStrategy
+        self.mappingStrategy = mappingStrategy ?? AppendUniqueItemListMappingStrategy<Repository.ListItemType>() as! MappingStrategy
         super.init(
             initialData: initialData,
             repository: repository
