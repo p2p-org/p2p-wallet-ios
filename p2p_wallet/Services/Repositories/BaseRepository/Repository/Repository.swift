@@ -50,7 +50,7 @@ class ListRepository<ListItemType: Hashable>: AnyListRepository {
     }
 
     func fetch() async throws -> [ListItemType]? {
-        nil
+        fatalError()
     }
     
     func map(oldData: [ListItemType]?, newData: [ListItemType]?) -> [ListItemType]? {
