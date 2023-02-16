@@ -1196,3 +1196,6 @@ You can try again, but your new transaction will be subject to the current rates
 "The data is being updated. Please try again in a few minutes." = "The data is being updated. Please try again in a few minutes.";
 "Buy or receive to continue" = "Buy or receive to continue";
 "Less than %@" = "Less than %@";
+"Buy with Moonpay" = "Buy with Moonpay";
+"License" = "License";
+"Cashout with Moonpay" = "Cashout with Moonpay";

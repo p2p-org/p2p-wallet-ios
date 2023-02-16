@@ -42,6 +42,10 @@ struct SellInputView: View {
 //                UIApplication.shared.keyWindow?.endEditing(true)
 //            }
             Spacer()
+            if !viewModel.isEnteringBaseAmount, !viewModel.isEnteringQuoteAmount {
+                poweredBy
+                    .padding(.bottom, 37)
+            }
             sellButton
         }
         .frame(maxWidth: .infinity)
@@ -117,6 +121,26 @@ struct SellInputView: View {
                 .apply(style: .label1)
                     .foregroundColor(Color(Asset.Colors.sky.color))
             }
+        }
+    }
+
+    var poweredBy: some View {
+        HStack {
+            Spacer()
+            VStack(alignment: .center, spacing: 4) {
+                Text(L10n.poweredBy + " Moonpay")
+                    .apply(style: .label1)
+                    .foregroundColor(Color(UIColor._9799Af))
+                Button {
+                    viewModel.moonpayLicenseTap()
+                } label: {
+                    Text(L10n.license)
+                        .apply(style: .label1)
+                        .multilineTextAlignment(.center)
+                        .foregroundColor(Color(Asset.Colors.night.color))
+                }
+            }
+            Spacer()
         }
     }
 
