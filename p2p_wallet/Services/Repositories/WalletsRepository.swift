@@ -9,7 +9,9 @@ import BECollectionView
 import Foundation
 import RxCocoa
 import RxSwift
+import RxCombine
 import SolanaSwift
+import Combine
 
 protocol WalletsRepository: BEListViewModelType {
     var nativeWallet: Wallet? { get }
@@ -28,6 +30,9 @@ protocol WalletsRepository: BEListViewModelType {
     func refreshUI()
 
     func batchUpdate(closure: ([Wallet]) -> [Wallet])
+    
+    // Combine migration
+    var dataPublisher: AnyPublisher<[Wallet], Never> { get }
 }
 
 extension WalletsViewModel: WalletsRepository {
@@ -42,5 +47,13 @@ extension WalletsViewModel: WalletsRepository {
     func batchUpdate(closure: ([Wallet]) -> [Wallet]) {
         let wallets = closure(getWallets())
         overrideData(by: wallets)
+    }
+    
+    var dataPublisher: AnyPublisher<[Wallet], Never> {
+        dataObservable
+            .publisher
+            .compactMap { $0 }
+            .replaceError(with: [])
+            .eraseToAnyPublisher()
     }
 }
