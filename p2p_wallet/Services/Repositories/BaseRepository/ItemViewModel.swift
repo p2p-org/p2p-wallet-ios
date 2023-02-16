@@ -1,13 +1,21 @@
 import Foundation
 import Combine
 
-/// Repository to manage some kind of Item
+/// Reusable ViewModel to manage item
 @MainActor
-class ItemRepository<ItemType: Hashable>: ObservableObject {
+class ItemViewModel<Repository: AnyRepository>: ObservableObject {
+    // MARK: - Associated types
+    
+    /// Type of the item
+    typealias ItemType = Repository.ItemType
+    
     // MARK: - Private properties
     
     /// Initial data for initializing state
-    private let initialData: ItemType
+    private let initialData: ItemType?
+    
+    /// Repository that is responsible for fetching data
+    private let repository: Repository
     
     // MARK: - Public properties
     
@@ -15,7 +23,7 @@ class ItemRepository<ItemType: Hashable>: ObservableObject {
     var loadingTask: Task<Void, Error>?
     
     /// The current data
-    @Published var data: ItemType
+    @Published var data: ItemType?
 
     /// The current loading state of the data
     @Published var state: LoadingState = .initialized
@@ -23,21 +31,20 @@ class ItemRepository<ItemType: Hashable>: ObservableObject {
     /// Optional error if occurred
     @Published var error: Error?
     
+    
     // MARK: - Initializer
     
-    /// ItemRepository's initializer
-    /// - Parameter initialData: initial data for begining state of the Repository
-    init(initialData: ItemType) {
+    /// ItemViewModel's initializer
+    /// - Parameters:
+    ///   - initialData: initial data for begining state of the Repository
+    ///   - repository: repository to handle data fetching
+    init(
+        initialData: ItemType?,
+        repository: Repository
+    ) {
         self.initialData = initialData
+        self.repository = repository
         data = initialData
-    }
-    
-    // MARK: - Asynchronous request handler
-    
-    /// The request to retrieve data into repository
-    /// - Returns: item
-    func createRequest() async throws -> ItemType {
-        fatalError("Must override")
     }
     
     // MARK: - Actions
@@ -60,16 +67,10 @@ class ItemRepository<ItemType: Hashable>: ObservableObject {
         request()
     }
     
-    /// Indicate if should fetch new data to prevent unwanted request
-    /// - Returns: should fetch new data
-    func shouldRequest() -> Bool {
-        true
-    }
-    
     /// Request data from outside to get new data
     func request() {
         // prevent unwanted request
-        guard shouldRequest() else {
+        guard repository.shouldFetch() else {
             return
         }
         
@@ -81,9 +82,9 @@ class ItemRepository<ItemType: Hashable>: ObservableObject {
         error = nil
         
         // assign and execute loadingTask
-        loadingTask = Task {
+        loadingTask = Task { [unowned self] in
             do {
-                let newData = try await createRequest()
+                let newData = try await repository.fetch()
                 handleNewData(newData)
             } catch {
                 if error is CancellationError {
@@ -96,7 +97,7 @@ class ItemRepository<ItemType: Hashable>: ObservableObject {
     
     /// Handle new data that just received
     /// - Parameter newData: the new data received
-    func handleNewData(_ newData: ItemType) {
+    func handleNewData(_ newData: ItemType?) {
         data = newData
         error = nil
         state = .loaded
