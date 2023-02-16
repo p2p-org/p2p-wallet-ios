@@ -3,7 +3,7 @@ import Foundation
 /// Repository that is only responsible for fetching item
 protocol AnyRepository {
     /// ItemType to be fetched
-    associatedtype ItemType: ListItem
+    associatedtype ItemType
     /// Indicate if should fetching item
     func shouldFetch() -> Bool
     /// Fetch item from outside
@@ -12,7 +12,7 @@ protocol AnyRepository {
 
 protocol AnyListRepository: AnyRepository {
     /// ListItemType to be fetched
-    associatedtype ListItemType: ListItem
+    associatedtype ListItemType
     /// Pagination strategy
     var paginationStrategy: PaginationStrategy? { get }
     /// Fetch list of item from outside
@@ -32,25 +32,25 @@ protocol AnyListRepository: AnyRepository {
 //    }
 }
 
-//class ListRepository<ListItemType: ListItem>: AnyListRepository {
-//    // MARK: - Properties
-//
-//    /// Strategy that indicates how pagination works, nil if pagination is disabled
-//    let paginationStrategy: PaginationStrategy?
-//
-//    // MARK: - Initializer
-//    init(paginationStrategy: PaginationStrategy? = nil) {
-//        self.paginationStrategy = paginationStrategy
-//    }
-//
-//    func shouldFetch() -> Bool {
-//        true
-//    }
-//
-//    func fetch() async throws -> [ListItemType]? {
-//        fatalError("Must override")
-//    }
-//}
+class ListRepository<ListItemType: ListItem>: AnyListRepository {
+    // MARK: - Properties
+
+    /// Strategy that indicates how pagination works, nil if pagination is disabled
+    let paginationStrategy: PaginationStrategy?
+
+    // MARK: - Initializer
+    init(paginationStrategy: PaginationStrategy? = nil) {
+        self.paginationStrategy = paginationStrategy
+    }
+
+    func shouldFetch() -> Bool {
+        true
+    }
+
+    func fetch() async throws -> [ListItemType]? {
+        fatalError("Must override")
+    }
+}
 
 //extension AsyncSequence: Repository {
 //    func fetch() async throws {

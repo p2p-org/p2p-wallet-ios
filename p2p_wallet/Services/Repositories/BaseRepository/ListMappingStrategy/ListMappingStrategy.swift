@@ -5,7 +5,7 @@ protocol ListMappingStrategy {
     func map(oldData: Sequence?, newData: Sequence?) -> Sequence?
 }
 
-struct AppendUniqueItemListMappingStrategy<ItemType: ListItem>: ListMappingStrategy {
+struct AppendUniqueItemListMappingStrategy<ItemType: Identifiable>: ListMappingStrategy {
     func map(oldData: [ItemType]?, newData: [ItemType]?) -> [ItemType]? {
         guard var data = oldData else { return newData }
         // append data that is currently not existed in current data array
