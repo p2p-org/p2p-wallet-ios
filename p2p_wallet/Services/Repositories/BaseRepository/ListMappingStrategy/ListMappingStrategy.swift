@@ -1,18 +1,20 @@
 import Foundation
 
-protocol MappingStrategy {
-    associatedtype ItemType: ListItem
-    func map(oldData: ItemType?, newData: ItemType?) -> ItemType?
+protocol ListMappingStrategy {
+    associatedtype Sequence: Swift.Sequence
+    func map(oldData: Sequence?, newData: Sequence?) -> Sequence?
 }
 
-struct AppendUniqueItemListMappingStrategy<ItemType: ListItem>: MappingStrategy where ItemType: Collection, ItemType.Element: ListItem {
-    func map(oldData: ItemType?, newData: ItemType?) -> ItemType? {
+struct AppendUniqueItemListMappingStrategy<ItemType: ListItem>: ListMappingStrategy {
+    func map(oldData: [ItemType]?, newData: [ItemType]?) -> [ItemType]? {
         guard var data = oldData else { return newData }
         // append data that is currently not existed in current data array
         if let newData {
-            data += newData.filter { newRecord in
-                !data.contains { $0.id == newRecord.id }
-            }
+            data.append(contentsOf:
+                newData.filter { newRecord in
+                    !data.contains { $0.id == newRecord.id }
+                }
+            )
         }
         return data
     }

@@ -32,25 +32,25 @@ protocol AnyListRepository: AnyRepository {
 //    }
 }
 
-class ListRepository<ListItemType: ListItem>: AnyListRepository {
-    // MARK: - Properties
-
-    /// Strategy that indicates how pagination works, nil if pagination is disabled
-    let paginationStrategy: PaginationStrategy?
-
-    // MARK: - Initializer
-    init(paginationStrategy: PaginationStrategy? = nil) {
-        self.paginationStrategy = paginationStrategy
-    }
-
-    func shouldFetch() -> Bool {
-        true
-    }
-
-    func fetch() async throws -> [ListItemType]? {
-        fatalError("Must override")
-    }
-}
+//class ListRepository<ListItemType: ListItem>: AnyListRepository {
+//    // MARK: - Properties
+//
+//    /// Strategy that indicates how pagination works, nil if pagination is disabled
+//    let paginationStrategy: PaginationStrategy?
+//
+//    // MARK: - Initializer
+//    init(paginationStrategy: PaginationStrategy? = nil) {
+//        self.paginationStrategy = paginationStrategy
+//    }
+//
+//    func shouldFetch() -> Bool {
+//        true
+//    }
+//
+//    func fetch() async throws -> [ListItemType]? {
+//        fatalError("Must override")
+//    }
+//}
 
 //extension AsyncSequence: Repository {
 //    func fetch() async throws {
