@@ -8,7 +8,7 @@ enum ChooseWalletTokenStrategy {
     case sendToken
 }
 
-final class ChooseWalletTokenCoordinator: Coordinator<Wallet?> {
+final class ChooseSendItemCoordinator: Coordinator<Wallet?> {
     private let parentController: UIViewController
     private var subject = PassthroughSubject<Wallet?, Never>()
     private let strategy: ChooseWalletTokenStrategy
@@ -23,11 +23,16 @@ final class ChooseWalletTokenCoordinator: Coordinator<Wallet?> {
     }
 
     override func start() -> AnyPublisher<Wallet?, Never> {
-        let viewModel = ChooseWalletTokenViewModel(strategy: strategy, chosenToken: chosenWallet)
-        let view = ChooseWalletTokenView(viewModel: viewModel)
+        let viewModel = ChooseItemViewModel(
+            service: buildService(strategy: strategy),
+            chosenToken: chosenWallet
+        )
+        let view = ChooseItemView<TokenCellView>(viewModel: viewModel) { model in
+            TokenCellView(item: .init(wallet: model.item as! Wallet), appearance: .other)
+        }
         let controller = KeyboardAvoidingViewController(rootView: view, ignoresKeyboard: true)
         navigationController.setViewControllers([controller], animated: false)
-        controller.title = viewModel.configureTitle(strategy: strategy)
+        configureTitle(strategy: strategy, vc: controller)
         controller.navigationItem.rightBarButtonItem = UIBarButtonItem(image: Asset.MaterialIcon.close.image, style: .plain, target: self, action: #selector(closeButtonTapped))
         parentController.present(navigationController, animated: true)
 
@@ -37,7 +42,7 @@ final class ChooseWalletTokenCoordinator: Coordinator<Wallet?> {
         }
 
         viewModel.chooseTokenSubject
-            .sink { [weak self] value in self?.close(wallet: value) }
+            .sink { [weak self] value in self?.close(wallet: value as? Wallet) }
             .store(in: &subscriptions)
 
         return subject.eraseToAnyPublisher()
@@ -51,5 +56,23 @@ final class ChooseWalletTokenCoordinator: Coordinator<Wallet?> {
 
     @objc private func closeButtonTapped() {
         self.close(wallet: nil)
+    }
+
+    private func configureTitle(strategy: ChooseWalletTokenStrategy, vc: UIViewController) {
+        switch strategy {
+        case let .feeToken(_, feeInFiat):
+            vc.title = L10n.payTheFeeWith("~\(feeInFiat.fiatAmountFormattedString(roundingMode: .down))")
+        case .sendToken:
+            vc.title = L10n.pickAToken
+        }
+    }
+
+    private func buildService(strategy: ChooseWalletTokenStrategy) -> ChooseItemService {
+        switch strategy {
+        case .feeToken(let tokens, _):
+            return ChooseSendFeeTokenService(tokens: tokens)
+        case .sendToken:
+            return ChooseSendTokenService()
+        }
     }
 }
