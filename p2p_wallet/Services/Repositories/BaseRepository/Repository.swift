@@ -8,15 +8,17 @@ protocol AnyRepository {
     func shouldFetch() -> Bool
     /// Fetch item from outside
     func fetch() async throws -> ItemType?
+    /// FIXME: - Join
+    func map(oldData: ItemType?, newData: ItemType?) -> ItemType?
 }
 
 protocol AnyListRepository: AnyRepository {
+    /// ListItemType to be fetched
+    associatedtype ListItemType: Hashable
     /// Pagination strategy
     var paginationStrategy: PaginationStrategy? { get }
     /// Fetch list of item from outside
-    func fetch() async throws -> [ItemType]?
-    /// Reload
-    func reload()
+    func fetch() async throws -> [ListItemType]?
     
 //    /// Indicate if should fetch new data to prevent unwanted request
 //    /// - Returns: should fetch new data
@@ -32,20 +34,51 @@ protocol AnyListRepository: AnyRepository {
 //    }
 }
 
-//class ListRepository<ItemType: Hashable>: AnyRepository {
-//    // MARK: - Properties
-//
-//    /// Strategy that indicates how pagination works, nil if pagination is disabled
-//    let paginationStrategy: PaginationStrategy?
-//
-//    func shouldFetch() -> Bool {
-//        true
-//    }
-//
-//    func fetch() async throws -> [ItemType]? {
-//        nil
-//    }
-//}
+class ListRepository<ListItemType: Hashable>: AnyListRepository {
+    // MARK: - Properties
+
+    /// Strategy that indicates how pagination works, nil if pagination is disabled
+    let paginationStrategy: PaginationStrategy?
+
+    // MARK: - Initializer
+    init(paginationStrategy: PaginationStrategy? = nil) {
+        self.paginationStrategy = paginationStrategy
+    }
+
+    func shouldFetch() -> Bool {
+        true
+    }
+
+    func fetch() async throws -> [ListItemType]? {
+        nil
+    }
+    
+    func map(oldData: [ListItemType]?, newData: [ListItemType]?) -> [ListItemType]? {
+        guard var data = oldData else { return nil }
+
+        // for pagination
+        if let paginationStrategy = paginationStrategy {
+            // append data that is currently not existed in current data array
+            if let newData {
+                data += newData.filter {!data.contains($0)}
+            }
+
+            // resign state
+            paginationStrategy.moveToNextPage()
+            paginationStrategy.checkIfLastPageLoaded(lastSnapshot: newData)
+        }
+
+        // without pagination
+        else {
+            // replace the current data
+            if let newData {
+                data = newData
+            }
+        }
+
+        return data
+    }
+}
 
 //extension AsyncSequence: Repository {
 //    func fetch() async throws {

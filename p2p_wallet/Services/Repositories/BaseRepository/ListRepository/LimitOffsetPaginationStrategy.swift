@@ -15,7 +15,11 @@ class LimitOffsetPaginationStrategy: PaginationStrategy {
         self.limit = limit
     }
     
-    @MainActor func checkIfLastPageLoaded<ItemType: Hashable>(lastSnapshot: [ItemType]) {
+    @MainActor func checkIfLastPageLoaded<ItemType: Hashable>(lastSnapshot: [ItemType]?) {
+        guard let lastSnapshot else {
+            isLastPageLoaded = true
+            return
+        }
         isLastPageLoaded = lastSnapshot.count < limit
     }
     
