@@ -1,11 +1,11 @@
 import SwiftUI
 import KeyAppUI
 
-struct SendInputActionButtonView: View {
-    @ObservedObject private var viewModel: SendInputActionButtonViewModel
+struct SliderActionButton: View {
+    @ObservedObject private var viewModel: SliderActionButtonViewModel
     @State private var animatedFinish: Bool = false
 
-    init(viewModel: SendInputActionButtonViewModel) {
+    init(viewModel: SliderActionButtonViewModel) {
         self.viewModel = viewModel
     }
 

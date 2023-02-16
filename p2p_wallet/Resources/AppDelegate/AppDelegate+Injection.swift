@@ -25,6 +25,7 @@ import SwiftyUserDefaults
 import TransactionParser
 import Moonpay
 import Sell
+import Jupiter
 
 extension Resolver: ResolverRegistering {
     public static func registerAllServices() {
@@ -496,6 +497,15 @@ extension Resolver: ResolverRegistering {
         }
             .implements((any SellActionService).self)
             .scope(.session)
+
+        register {
+            JupiterTokensRepositoryImpl(
+                provider: JupiterTokensLocalProvider(),
+                jupiterClient: JupiterRestClientAPI(version: .v4)
+            )
+        }
+        .implements(JupiterTokensRepository.self)
+        .scope(.session)
     }
 
     /// Shared scope: share between screens
