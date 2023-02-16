@@ -10,9 +10,10 @@ protocol AnyRepository {
     func fetch() async throws -> ItemType?
 }
 
+/// Repository that is only responsible for fetching list of items
 protocol AnyListRepository: AnyRepository {
     /// ListItemType to be fetched
-    associatedtype ListItemType: Identifiable
+    associatedtype ListItemType: ListItem
     /// Pagination strategy
     var paginationStrategy: PaginationStrategy? { get }
     /// Fetch list of item from outside
