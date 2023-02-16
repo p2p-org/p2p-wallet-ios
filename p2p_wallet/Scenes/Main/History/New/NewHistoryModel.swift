@@ -149,23 +149,23 @@ struct RendableHistoryTransactionListItem: NewHistoryRendableItem {
                 let fromURL = data.from.token.logoUrl,
                 let toURL = data.to.token.logoUrl
             else {
-                return .icon(.transactionSwap)
+                return .icon(.buttonSwap)
             }
             return .double(fromURL, toURL)
         case let .createAccount(data):
-            return icon(url: data.token.logoUrl, defaultIcon: .transactionCreateAccount)
+            return icon(url: data.token.logoUrl, defaultIcon: .buyWallet)
         case let .closeAccount(data):
             return icon(url: data?.token.logoUrl, defaultIcon: .transactionCloseAccount)
         case let .mint(data):
             return icon(url: data.token.logoUrl, defaultIcon: .planet)
         case let .burn(data):
             return icon(url: data.token.logoUrl, defaultIcon: .planet)
-        case .unknown:
-            return .icon(.planet)
         case let .stake(data):
             return icon(url: data.token.logoUrl, defaultIcon: .planet)
         case let .unstake(data):
             return icon(url: data.token.logoUrl, defaultIcon: .planet)
+        case .unknown, .none:
+            return .icon(.planet)
         }
     }
     
@@ -191,7 +191,7 @@ struct RendableHistoryTransactionListItem: NewHistoryRendableItem {
             return L10n.createAccount
         case .closeAccount:
             return L10n.closeAccount
-        case .unknown:
+        case .unknown, .none:
             return L10n.unknown
         }
     }
@@ -202,7 +202,7 @@ struct RendableHistoryTransactionListItem: NewHistoryRendableItem {
             return L10n.send
         case .receive:
             return L10n.receive
-        case let .swap(data):
+        case .swap:
             return L10n.swap
         case let .stake(data):
             return "\(L10n.voteAccount): \(RecipientFormatter.shortFormat(destination: data.account.address))"
@@ -245,7 +245,10 @@ struct RendableHistoryTransactionListItem: NewHistoryRendableItem {
             } else {
                 return (.positive, "\(data.amount.usdAmount.fiatAmountFormattedString())")
             }
+        case .none:
+            return (.unchanged, "")
         }
+    
     }
     
     var subdetail: String {
@@ -278,6 +281,8 @@ struct RendableHistoryTransactionListItem: NewHistoryRendableItem {
             } else {
                 return "\(data.amount.tokenAmount.tokenAmountFormattedString(symbol: data.token.symbol))"
             }
+        case .none:
+            return ""
         }
     }
         
