@@ -26,6 +26,10 @@ enum RecipientFormatter {
     static func shortSignature(signature: String) -> String {
         return "...\(signature.suffix(4))"
     }
+    
+    static func signature(signature: String) -> String {
+        return "\(signature.prefix(4))...\(signature.suffix(4))"
+    }
 
     static func username(name: String, domain: String) -> String {
         if domain == "key" {

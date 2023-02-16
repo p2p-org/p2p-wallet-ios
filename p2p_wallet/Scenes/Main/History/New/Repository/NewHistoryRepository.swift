@@ -23,49 +23,70 @@ class NewHistoryServiceRepository: Repository {
         fatalError()
     }
 
-    class AsyncIterator: AsyncIteratorProtocol {
-        typealias Item = HistoryTransaction
+    func getAll(account: Account?, mint: String?) -> ItemSequence {
+        if let account {
+            return ItemSequence(provider: provider, secretKey: account.secretKey, pubKey: account.publicKey.base58EncodedString, mint: mint)
+        } else {
+            return ItemSequence(provider: provider, secretKey: Data(), pubKey: "", mint: mint)
+        }
+    }
+}
 
-        var provider: KeyAppHistoryProvider
-        var secretKey: Data
-        var pubKey: String
-        var mint: String?
+extension NewHistoryServiceRepository {
+    struct ItemSequence: AsyncSequence {
+        typealias Element = HistoryTransaction
 
-        var fetchable: Bool = true
-        var cache: [Item] = []
-        var offset = 0
-        var limit = 20
+        private var provider: KeyAppHistoryProvider
+        private var secretKey: Data
+        private var pubKey: String
+        private var mint: String?
 
-        init(provider: KeyAppHistoryProvider, secretKey: Data, pubKey: String, mint: String?) {
+        init(provider: KeyAppHistoryProvider, secretKey: Data, pubKey: String, mint: String? = nil) {
             self.provider = provider
             self.secretKey = secretKey
             self.pubKey = pubKey
             self.mint = mint
         }
 
-        func next() async throws -> Item? {
-            if cache.isEmpty && fetchable {
-                let result = try await provider.transactions(secretKey: secretKey, pubKey: pubKey, mint: mint, offset: offset, limit: limit)
-                cache.append(contentsOf: result)
+        class AsyncIterator: AsyncIteratorProtocol {
+            var provider: KeyAppHistoryProvider
+            var secretKey: Data
+            var pubKey: String
+            var mint: String?
 
-                fetchable = result.count == limit
+            var fetchable: Bool = true
+            var cache: [Element] = []
+            var offset = 0
+            let limit = 20
+
+            init(provider: KeyAppHistoryProvider, secretKey: Data, pubKey: String, mint: String?) {
+                self.provider = provider
+                self.secretKey = secretKey
+                self.pubKey = pubKey
+                self.mint = mint
             }
 
-            if cache.isEmpty && !fetchable {
-                return nil
-            } else if cache.isEmpty {
-                return nil
-            } else {
-                return cache.removeFirst()
+            func next() async throws -> HistoryTransaction? {
+                if cache.isEmpty && fetchable {
+                    let result = try await provider.transactions(secretKey: secretKey, pubKey: pubKey, mint: mint, offset: offset, limit: limit)
+                    cache.append(contentsOf: result)
+
+                    fetchable = result.count == limit
+                    offset += cache.count
+                }
+
+                if cache.isEmpty && !fetchable {
+                    return nil
+                } else if cache.isEmpty {
+                    return nil
+                } else {
+                    return cache.removeFirst()
+                }
             }
         }
-    }
 
-    func getAll(account: Account?, mint: String?) -> AsyncIterator {
-        if let account {
-            return AsyncIterator(provider: provider, secretKey: account.secretKey, pubKey: account.publicKey.base58EncodedString, mint: mint)
-        } else {
-            return AsyncIterator(provider: provider, secretKey: Data(), pubKey: "", mint: mint)
+        func makeAsyncIterator() -> AsyncIterator {
+            return AsyncIterator(provider: provider, secretKey: secretKey, pubKey: pubKey, mint: mint)
         }
     }
 }
