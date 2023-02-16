@@ -14,10 +14,10 @@ class ItemViewModel<Repository: AnyRepository>: ObservableObject {
     /// Initial data for initializing state
     private let initialData: ItemType?
     
-    /// Repository that is responsible for fetching data
-    private let repository: Repository
-    
     // MARK: - Public properties
+    
+    /// Repository that is responsible for fetching data
+    let repository: Repository
     
     /// Current running task
     var loadingTask: Task<Void, Error>?
