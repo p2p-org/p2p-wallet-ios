@@ -55,6 +55,7 @@ struct NewHistoryView: View {
                                         onPressed: action
                                     )
                                     .frame(height: TextButton.Size.large.height)
+                                    .padding(.all, 16)
                                 }
                             }
                             .padding(.top, section.items.first == item ? 4 : 0)

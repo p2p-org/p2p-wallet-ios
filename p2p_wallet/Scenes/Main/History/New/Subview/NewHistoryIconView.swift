@@ -24,6 +24,7 @@ struct NewHistoryIconView: View {
                     .fill(Color(Asset.Colors.smoke.color))
                     .overlay(
                         Image(uiImage: image)
+                            .renderingMode(.template)
                             .foregroundColor(Color(Asset.Colors.night.color))
                     )
             case let .single(url):
@@ -34,7 +35,7 @@ struct NewHistoryIconView: View {
                             |> RoundCornerImageProcessor(cornerRadius: largeSize)
                     )
                     .resizable()
-                    .cacheMemoryOnly()
+                    .diskCacheExpiration(.days(7))
                     .fade(duration: 0.25)
             case let .double(from, to):
                 RoundedRectangle(cornerRadius: 21)
@@ -47,7 +48,7 @@ struct NewHistoryIconView: View {
                                     |> RoundCornerImageProcessor(cornerRadius: smallSize)
                             )
                             .resizable()
-                            .cacheMemoryOnly()
+                            .diskCacheExpiration(.days(7))
                             .fade(duration: 0.25)
                             .frame(width: smallSize, height: smallSize),
 
@@ -61,7 +62,7 @@ struct NewHistoryIconView: View {
                                     |> RoundCornerImageProcessor(cornerRadius: smallSize)
                             )
                             .resizable()
-                            .cacheMemoryOnly()
+                            .diskCacheExpiration(.days(7))
                             .fade(duration: 0.25)
                             .frame(width: smallSize, height: smallSize),
 

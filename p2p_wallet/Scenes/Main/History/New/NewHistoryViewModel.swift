@@ -50,12 +50,7 @@ class NewHistoryViewModel: BaseViewModel, ObservableObject {
         super.init()
 
         // Emit changes to model
-        historyTransactionList.$state
-            .receive(on: RunLoop.main)
-            .sink { [weak self] _ in
-                self?.objectWillChange.send()
-            }.store(in: &subscriptions)
-//        historyTransactionList.listen(target: self, in: &subscriptions)
+        historyTransactionList.listen(target: self, in: &subscriptions)
     }
 
     func reload() {
@@ -90,10 +85,19 @@ class NewHistoryViewModel: BaseViewModel, ObservableObject {
         // Phase 2: Add skeleton
         if historyTransactionList.state.fetchable {
             if let lastSection = result.popLast() {
+                let insertedItems: [NewHistoryItem]
+
+                if historyTransactionList.state.error == nil {
+                    // Show skeleton
+                    insertedItems = [.button(id: UUID().uuidString, title: L10n.tryAgain, action: { [weak self] in self?.fetch() })]
+                } else {
+                    insertedItems = .generatePlaceholder(n: 1)
+                }
+
                 result.append(
                     .init(
                         title: lastSection.title,
-                        items: lastSection.items + .generatePlaceholder(n: 1)
+                        items: lastSection.items + insertedItems
                     )
                 )
             }
