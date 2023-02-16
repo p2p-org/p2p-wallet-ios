@@ -41,7 +41,7 @@ final class SendInputFeePromptCoordinator: Coordinator<Wallet?> {
     }
 
     private func openChooseToken(from vc: UIViewController, viewModel: SendInputFeePromptViewModel) {
-        coordinate(to: ChooseWalletTokenCoordinator(
+        coordinate(to: ChooseSendItemCoordinator(
             strategy: .feeToken(tokens: availableFeeTokens, feeInFiat: viewModel.feeInFiat),
             chosenWallet: feeToken,
             parentController: vc)
