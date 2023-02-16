@@ -28,30 +28,35 @@ struct BuyView: View {
                         .padding(.horizontal, 16)
                 }
 
-                VStack(alignment: .leading, spacing: 0) {
-                    HStack {
-                        Spacer()
-                        icon
-                            .padding(.top, 12)
-                        Spacer()
+                VStack(spacing: 16) {
+                    VStack(alignment: .leading, spacing: 0) {
+                        HStack {
+                            Spacer()
+                            icon
+                                .padding(.top, 12)
+                            Spacer()
+                        }
+                        input
+                            .padding(.top, 10)
+                            .padding(.bottom, 25)
+                        Divider()
+                            .frame(height: 1)
+                            .overlay(Color(Asset.Colors.snow.color))
+                        if viewModel.availableMethods.count > 1 || viewModel.areMethodsLoading {
+                            methods
+                                .padding(.top, 22)
+                        }
+                        
+                        total
+                            .padding(.top, 26)
                     }
-                    input
-                        .padding(.top, 10)
-                        .padding(.bottom, 25)
-                    Divider()
-                        .frame(height: 1)
-                        .overlay(Color(Asset.Colors.snow.color))
-                    if viewModel.availableMethods.count > 1 || viewModel.areMethodsLoading {
-                        methods
-                            .padding(.top, 22)
+                    .background(Color(Asset.Colors.rain.color))
+                    .cornerRadius(20)
+                    .padding([.leading, .trailing], 16)
+                    if !viewModel.isLeftFocus, !viewModel.isRightFocus {
+                        poweredBy
                     }
-
-                    total
-                        .padding(.top, 26)
                 }
-                .background(Color(Asset.Colors.rain.color))
-                .cornerRadius(20)
-                .padding([.leading, .trailing], 16)
                 .offset(y: min(20, 20 * UIScreen.main.bounds.height / 812))
             }.onAppear {
                 UIScrollView.appearance().keyboardDismissMode = .onDrag
@@ -62,12 +67,27 @@ struct BuyView: View {
             actionButtonView
         }
         .toolbar {
-            ToolbarItem(placement: .principal) { Text(L10n.buy).fontWeight(.semibold) }
+            ToolbarItem(placement: .principal) { Text(L10n.buyWithMoonpay).fontWeight(.semibold) }
         }
         .onAppear {
             withAnimation {
 //                viewModel.navigationSlidingPercentage = 0
                 bottomOffset = 0
+            }
+        }
+    }
+
+    var poweredBy: some View {
+        VStack(spacing: 4) {
+            Text(L10n.poweredBy + " Moonpay")
+                .apply(style: .label1)
+                .foregroundColor(Color(UIColor._9799Af))
+            Button {
+                viewModel.moonpayLicenseTap()
+            } label: {
+                Text(L10n.license)
+                    .apply(style: .label1)
+                    .foregroundColor(Color(Asset.Colors.night.color))
             }
         }
     }
