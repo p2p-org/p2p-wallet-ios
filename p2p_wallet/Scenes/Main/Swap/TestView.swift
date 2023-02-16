@@ -82,7 +82,7 @@ struct TestView: View {
         .onAppear {
             Task {
                 if tokens.isEmpty {
-                    tokens = try await jupiterClient.getTokens()
+//                    tokens = try await jupiterClient.getTokens()
                     inputToken = tokens[0]
                     outputToken = tokens[10]
                 }

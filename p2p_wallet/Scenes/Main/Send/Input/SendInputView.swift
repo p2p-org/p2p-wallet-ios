@@ -110,7 +110,7 @@ struct SendInputView: View {
                         .cornerRadius(radius: 28, corners: .allCorners)
                         .frame(height: TextButton.Size.large.height)
                 case .initializing, .ready:
-                    SendInputActionButtonView(viewModel: viewModel.actionButtonViewModel)
+                    SliderActionButton(viewModel: viewModel.actionButtonViewModel)
                         .accessibilityIdentifier("send-slider")
                 }
             }

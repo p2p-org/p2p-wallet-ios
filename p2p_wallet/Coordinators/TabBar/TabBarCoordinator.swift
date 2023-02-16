@@ -130,7 +130,7 @@ final class TabBarCoordinator: Coordinator<Void> {
                 .sink(receiveValue: { _ in })
                 .store(in: &subscriptions)
         } else {
-            let swapCoordinator = SwapCoordinator(navigationController: solendOrSwapNavigation, initialWallet: nil, hidesBottomBarWhenPushed: false)
+            let swapCoordinator = NewSwapCoordinator(navigationController: solendOrSwapNavigation)
             coordinate(to: swapCoordinator)
                 .sink(receiveValue: { _ in })
                 .store(in: &subscriptions)
@@ -221,7 +221,7 @@ final class TabBarCoordinator: Coordinator<Void> {
         case .receive:
             break
         case .swap:
-            let swapCoordinator = SwapCoordinator(navigationController: navigationController, initialWallet: nil)
+            let swapCoordinator = NewSwapCoordinator(navigationController: navigationController)
             coordinate(to: swapCoordinator)
                 .sink(receiveValue: { _ in })
                 .store(in: &subscriptions)
