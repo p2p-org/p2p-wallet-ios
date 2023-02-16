@@ -39,13 +39,17 @@ final class NewSwapCoordinator: Coordinator<Void> {
     }
 
     private func openChooseFromToken(viewModel: SwapViewModel) {
-        self.coordinate(to: ChooseSwapTokenCoordinator(chosenWallet: viewModel.fromToken, tokens: viewModel.tokens, navigationController: self.navigationController))
-            .sink { result in
-                if let result {
-                    viewModel.fromToken = result
-                }
+        self.coordinate(to: ChooseSwapTokenCoordinator(
+            chosenWallet: viewModel.currentState.fromToken,
+            tokens: viewModel.currentState.swapTokens,
+            navigationController: self.navigationController)
+        )
+        .sink { result in
+            if let result {
+                viewModel.changeFromToken.send(result)
             }
-            .store(in: &self.subscriptions)
+        }
+        .store(in: &self.subscriptions)
 
     }
 }

@@ -1,4 +1,4 @@
-struct SwapPriceInfo {
+struct SwapPriceInfo: Equatable {
     let fromPrice: Double
     let toPrice: Double
     let relation: Double
@@ -6,8 +6,8 @@ struct SwapPriceInfo {
     init(fromPrice: Double, toPrice: Double) {
         self.fromPrice = fromPrice
         self.toPrice = toPrice
-        if toPrice != 0 {
-            self.relation = fromPrice / toPrice
+        if fromPrice != 0 {
+            self.relation = toPrice / fromPrice
         }
         else {
             self.relation = 0

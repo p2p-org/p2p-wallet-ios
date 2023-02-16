@@ -1,25 +1,21 @@
-//
-//  SellErrorView.swift
-//  p2p_wallet
-//
-//  Created by Ivan on 28.12.2022.
-//
-
-import Combine
 import SwiftUI
 import KeyAppUI
 
-struct SellErrorView: View {
-    let goBack: () -> Void
+struct BaseErrorView: View {
 
-    init(goBack: @escaping () -> Void) {
-        self.goBack = goBack
+    struct Appearance {
+        let actionButtonHorizontalOffset: CGFloat
+        let imageTextPadding: CGFloat
     }
-    
+
+    let appearance: Appearance
+    let actionTitle: String
+    let action: () -> Void
+
     var body: some View {
         VStack {
             Spacer()
-            VStack(spacing: 30) {
+            VStack(spacing: appearance.imageTextPadding) {
                 Image(uiImage: .catFail)
                 VStack(spacing: 8) {
                     Text(L10n.sorry)
@@ -33,15 +29,14 @@ struct SellErrorView: View {
             }
             Spacer()
             TextButtonView(
-                title: L10n.goBack,
+                title: actionTitle,
                 style: .primaryWhite,
-                size: .large
-            ) {
-                goBack()
-            }
-            .frame(height: 56)
+                size: .large,
+                onPressed: action
+            )
+            .frame(height: TextButton.Size.large.height)
             .padding(.bottom, 32)
-            .padding(.horizontal, 23)
+            .padding(.horizontal, appearance.actionButtonHorizontalOffset)
         }
     }
 }
