@@ -22,11 +22,7 @@ struct SellInputView: View {
 
     var body: some View {
         VStack(alignment: .leading, spacing: 0) {
-            HStack {
-                Spacer()
-                exchangeRateView
-                Spacer()
-            }
+            exchangeRateView
                 .padding(.top, 6)
 
             ScrollView {
@@ -149,6 +145,7 @@ struct SellInputView: View {
 
     var exchangeRateView: some View {
         HStack {
+            Spacer()
             switch viewModel.exchangeRate {
             case .loading:
                 Text("1 SOL ≈ 12.05 USD")
