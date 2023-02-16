@@ -33,7 +33,6 @@ final class SwapInputViewModel: BaseViewModel, ObservableObject {
             .sink { [unowned self] value in
                 self.tokenSymbol = value.jupiterToken.symbol
                 self.balance = value.userWallet?.amount
-                self.amountText = self.amountText // To recalculate amounts
             }
             .store(in: &subscriptions)
 

@@ -16,7 +16,10 @@ struct SellView: View {
                 case .ready:
                     SellInputView(viewModel: viewModel)
                 case .error:
-                    SellErrorView {
+                    BaseErrorView(
+                        appearance: .init(actionButtonHorizontalOffset: 23, imageTextPadding: 30),
+                        actionTitle: L10n.goBack
+                    ) {
                         viewModel.goBack()
                     }
                 }
