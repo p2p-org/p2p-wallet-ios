@@ -8,7 +8,7 @@
 import Combine
 import Foundation
 
-class ListAdapter<Item: Identifiable, Iterator: AsyncIteratorProtocol> where Iterator.Element == Item {
+class ListAdapter<Sequence: AsyncSequence> where Sequence.Element: Identifiable {
     // MARK: - Nested types
     
     /// List adapter status
@@ -23,7 +23,7 @@ class ListAdapter<Item: Identifiable, Iterator: AsyncIteratorProtocol> where Ite
     /// List adapter state
     struct State {
         var status: Status = .ready
-        var data: [Item] = []
+        var data: [Sequence.Element] = []
         var fetchable: Bool = true
         var error: Error? = nil
     }
@@ -37,23 +37,26 @@ class ListAdapter<Item: Identifiable, Iterator: AsyncIteratorProtocol> where Ite
     @Published private(set) var state: State
     
     /// Iterator that help build a list
-    private var iterator: Iterator
+    private var sequence: Sequence
+    
+    private var iterator: Sequence.AsyncIterator
     
     /// Current fetching task
     private var currentTask: Task<Void, Error>?
     
     // MARK: - Initializing
     
-    init(iterator: Iterator, limit: Int = 20) {
+    init(sequence: Sequence, limit: Int = 20) {
         self.state = .init()
-        self.iterator = iterator
+        self.sequence = sequence
+        self.iterator = sequence.makeAsyncIterator()
         self.limit = limit
     }
     
     // MARK: - Actions
     
     /// Cancel current task and reset data.
-    func reset(newIterator: Iterator) {
+    func reset() {
         // Cancel current task
         currentTask?.cancel()
         currentTask = nil
@@ -64,7 +67,7 @@ class ListAdapter<Item: Identifiable, Iterator: AsyncIteratorProtocol> where Ite
         state.error = nil
         
         // Set new iterator
-        iterator = newIterator
+        iterator = sequence.makeAsyncIterator()
     }
  
     /// Fetch new data
@@ -85,16 +88,17 @@ class ListAdapter<Item: Identifiable, Iterator: AsyncIteratorProtocol> where Ite
             
             // Preparing
             var n = limit
-            var fetchedItems: [Item] = []
+            var fetchedItems: [Sequence.Element] = []
             
             // Fetching
             do {
-                while let item: Item = try await iterator.next(), n > 0 {
+                while let item: Sequence.Element = try await iterator.next(), n > 0 {
                     fetchedItems.append(item)
                     n -= 1
                 }
             } catch {
                 if !Task.isCancelled {
+                    print(error)
                     state.error = error
                 }
             }
@@ -103,7 +107,7 @@ class ListAdapter<Item: Identifiable, Iterator: AsyncIteratorProtocol> where Ite
             fetchedItems = fetchedItems.filter { fetchedItem in !state.data.contains { $0.id == fetchedItem.id } }
             
             // Update fetchable
-            state.fetchable = n > 0
+            state.fetchable = n == 0
             
             // Update data
             state.data = state.data + fetchedItems
@@ -114,5 +118,14 @@ class ListAdapter<Item: Identifiable, Iterator: AsyncIteratorProtocol> where Ite
         }
         
         return currentTask
+    }
+    
+    func listen<Target: ObservableObject>(target: Target, in storage: inout [AnyCancellable]) where Target.ObjectWillChangePublisher == ObservableObjectPublisher
+    {
+        $state
+            .receive(on: DispatchQueue.main)
+            .sink { [weak target] _ in
+                target?.objectWillChange.send()
+            }.store(in: &storage)
     }
 }

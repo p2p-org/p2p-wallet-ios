@@ -9,17 +9,21 @@ import Foundation
 import History
 import SolanaSwift
 
-struct NewHistorySection: Identifiable {
+struct NewHistorySection: Identifiable, Equatable {
     let title: String
     let items: [NewHistoryItem]
     
     var id: String { title }
+    
+    static func == (lhs: NewHistorySection, rhs: NewHistorySection) -> Bool {
+        lhs.id == rhs.id
+    }
 }
 
-enum NewHistoryItem: Identifiable {
+enum NewHistoryItem: Identifiable, Equatable {
     case rendable(any NewHistoryRendableItem)
     case button(id: String, title: String, action: () -> Void)
-    case placeHolder(id: String)
+    case placeHolder(id: String, fetchable: Bool)
     
     var id: String {
         switch self {
@@ -27,9 +31,23 @@ enum NewHistoryItem: Identifiable {
             return item.id
         case let .button(id, _, _):
             return id
-        case let .placeHolder(id):
+        case let .placeHolder(id, _):
             return id
         }
+    }
+    
+    static func == (lhs: NewHistoryItem, rhs: NewHistoryItem) -> Bool {
+        lhs.id == rhs.id
+    }
+}
+
+extension Array where Element == NewHistoryItem {
+    static func generatePlaceholder(n: Int) -> [NewHistoryItem] {
+        var r: [NewHistoryItem] = []
+        for _ in 0 ..< n {
+            r.append(.placeHolder(id: UUID().uuidString, fetchable: n == 1))
+        }
+        return r
     }
 }
 
@@ -94,17 +112,17 @@ struct RendableHistoryTransactionListItem: NewHistoryRendableItem {
     
     init(trx: HistoryTransaction, allTokens: [Token]) {
         self.trx = trx
-        
-        tokens = trx.info.tokens?.map { internalToken -> Token? in
-            allTokens.first { token in
-                token.address == internalToken.info.mint
-            }
-        }
-        .compactMap { $0 } ?? []
+        self.tokens = []
+//        tokens = trx.info?.tokens?.map { internalToken -> Token? in
+//            allTokens.first { token in
+//                token.address == internalToken.info.mint
+//            }
+//        }
+//        .compactMap { $0 } ?? []
     }
     
     var id: String {
-        trx.txSignature
+        trx.signature
     }
     
     var date: Date {
@@ -121,106 +139,154 @@ struct RendableHistoryTransactionListItem: NewHistoryRendableItem {
     }
     
     var icon: NewHistoryRendableItemIcon {
-        switch trx.type {
-        case .swap:
-            let tokenA = trx.info.tokens?.first(where: { $0.info.swapRole == "swap_token_a" })
-            let tokenB = trx.info.tokens?.first(where: { $0.info.swapRole == "swap_token_b" })
-            
-            guard let tokenA, let tokenB else {
-                return .icon(.transactionSwap)
-            }
-            
-            let solanaTokenA = tokens.first(where: { $0.address == tokenA.info.mint })
-            let solanaTokenB = tokens.first(where: { $0.address == tokenB.info.mint })
-            
-            guard let solanaTokenA, let solanaTokenB else {
-                return .icon(.transactionSwap)
-            }
-            
+        switch trx.info {
+        case let .send(data):
+            return icon(url: data.token.logoUrl, defaultIcon: .transactionSend)
+        case let .receive(data):
+            return icon(url: data.token.logoUrl, defaultIcon: .transactionReceive)
+        case let .swap(data):
             guard
-                let urlStrA = solanaTokenA.logoURI,
-                let urlA = URL(string: urlStrA),
-                let urlStrB = solanaTokenB.logoURI,
-                let urlB = URL(string: urlStrB)
+                let fromURL = data.from.token.logoUrl,
+                let toURL = data.to.token.logoUrl
             else {
                 return .icon(.transactionSwap)
             }
-            
-            return .double(urlA, urlB)
-                
-        case .createAccount:
-            return .icon(.transactionCreateAccount)
-        case .closeAccount:
-            return .icon(.transactionCloseAccount)
+            return .double(fromURL, toURL)
+        case let .createAccount(data):
+            return icon(url: data.token.logoUrl, defaultIcon: .transactionCreateAccount)
+        case let .closeAccount(data):
+            return icon(url: data?.token.logoUrl, defaultIcon: .transactionCloseAccount)
+        case let .mint(data):
+            return icon(url: data.token.logoUrl, defaultIcon: .planet)
+        case let .burn(data):
+            return icon(url: data.token.logoUrl, defaultIcon: .planet)
         case .unknown:
             return .icon(.planet)
-            
-        default:
-            if let urlStr = tokens.first?.logoURI, let url = URL(string: urlStr) {
-                return .single(url)
-            } else {
-                return .icon(.transactionSend)
-            }
+        case let .stake(data):
+            return icon(url: data.token.logoUrl, defaultIcon: .planet)
+        case let .unstake(data):
+            return icon(url: data.token.logoUrl, defaultIcon: .planet)
         }
     }
     
     var title: String {
-        switch trx.type {
-        case .swap:
-            if let swapProgramNames = trx.info.swapPrograms?.map(\.name).compactMap({ $0 }).joined(separator: ", ") {
-                return "\(L10n.swap) (\(swapProgramNames)"
-            } else {
-                return "\(L10n.swap)"
-            }
+        switch trx.info {
+        case let .send(data):
+            let target: String = data.account.username ?? RecipientFormatter.shortFormat(destination: data.account.address)
+            return L10n.to(target)
+        case let .receive(data):
+            let source: String = data.account.username ?? RecipientFormatter.shortFormat(destination: data.account.address)
+            return "\(L10n.from) \(source)"
+        case let .swap(data):
+            return L10n.to(data.from.token.symbol, data.to.token.symbol)
         case .stake:
-            return "\(L10n.stake)"
+            return L10n.stake
         case .unstake:
-            return "\(L10n.unstake)"
-        case .send:
-            return "\(L10n.send)"
-        case .receive:
-            return "\(L10n.receive)"
+            return L10n.unstake
         case .mint:
-            return "\(L10n.mint)"
+            return L10n.mint
         case .burn:
-            return "\(L10n.burn)"
+            return L10n.burn
         case .createAccount:
-            return "\(L10n.createAccount)"
+            return L10n.createAccount
         case .closeAccount:
-            return "\(L10n.closeAccount)"
+            return L10n.closeAccount
         case .unknown:
-            return "\(L10n.unknown)"
+            return L10n.unknown
         }
     }
     
     var subtitle: String {
-        switch trx.type {
-        case .swap:
-            let tokenASymbol = trx.info.tokens?.first(where: { $0.info.swapRole == "swap_token_a" })?.info.symbol
-            let tokenBSymbol = trx.info.tokens?.first(where: { $0.info.swapRole == "swap_token_b" })?.info.symbol
-            
-            guard let tokenASymbol, let tokenBSymbol else {
-                return ""
-            }
-            
-            return L10n.to(tokenASymbol, tokenBSymbol)
+        switch trx.info {
         case .send:
-            let counterparty = trx.info.counterparty
-            return L10n.to(counterparty?.username ?? RecipientFormatter.shortFormat(destination: counterparty?.address ?? ""))
+            return L10n.send
         case .receive:
-            let counterparty = trx.info.counterparty
-            return "\(L10n.from) \(counterparty?.username ?? RecipientFormatter.shortFormat(destination: counterparty?.address ?? ""))"
+            return L10n.receive
+        case let .swap(data):
+            return L10n.swap
+        case let .stake(data):
+            return "\(L10n.voteAccount): \(RecipientFormatter.shortFormat(destination: data.account.address))"
+        case let .unstake(data):
+            return "\(L10n.voteAccount): \(RecipientFormatter.shortFormat(destination: data.account.address))"
+        case .createAccount, .closeAccount:
+            return RecipientFormatter.signature(signature: trx.signature)
         default:
-            return "\(L10n.signature): \(RecipientFormatter.shortSignature(signature: trx.txSignature))"
+            return "\(L10n.signature): \(RecipientFormatter.shortSignature(signature: trx.signature))"
         }
     }
     
     var detail: (NewHistoruItemChange, String) {
-        return (.unchanged, "")
+        switch trx.info {
+        case let .send(data):
+            return (.negative, "\(data.amount.usdAmount.fiatAmountFormattedString())")
+        case let .receive(data):
+            return (.positive, "+\(data.amount.usdAmount.fiatAmountFormattedString())")
+        case let .swap(data):
+            return (.positive, "+\(data.to.amount.tokenAmount.tokenAmountFormattedString(symbol: data.to.token.symbol))")
+        case let .burn(data):
+            return (.negative, "\(data.amount.usdAmount.fiatAmountFormattedString())")
+        case let .mint(data):
+            return (.positive, "+\(data.amount.usdAmount.fiatAmountFormattedString())")
+        case let .stake(data):
+            return (.negative, "+\(data.amount.usdAmount.fiatAmountFormattedString())")
+        case let .unstake(data):
+            return (.positive, "+\(data.amount.usdAmount.fiatAmountFormattedString())")
+        case let .createAccount(data):
+            return (.positive, "+\(data.amount.usdAmount.fiatAmountFormattedString())")
+        case let .closeAccount(data):
+            if let data {
+                return (.negative, "-\(data.amount.usdAmount.fiatAmountFormattedString())")
+            } else {
+                return (.unchanged, "")
+            }
+        case let .unknown(data):
+            if data.amount.usdAmount >= 0 {
+                return (.positive, "+\(data.amount.usdAmount.fiatAmountFormattedString())")
+            } else {
+                return (.positive, "\(data.amount.usdAmount.fiatAmountFormattedString())")
+            }
+        }
     }
     
     var subdetail: String {
-        return ""
+        switch trx.info {
+        case let .send(data):
+            return "\(data.amount.tokenAmount.tokenAmountFormattedString(symbol: data.token.symbol))"
+        case let .receive(data):
+            return "+\(data.amount.tokenAmount.tokenAmountFormattedString(symbol: data.token.symbol))"
+        case let .swap(data):
+            return "\(data.from.amount.tokenAmount.tokenAmountFormattedString(symbol: data.from.token.symbol))"
+        case let .burn(data):
+            return "\(data.amount.tokenAmount.tokenAmountFormattedString(symbol: data.token.symbol))"
+        case let .mint(data):
+            return "+\(data.amount.tokenAmount.tokenAmountFormattedString(symbol: data.token.symbol))"
+        case let .stake(data):
+            return "\(data.amount.tokenAmount.tokenAmountFormattedString(symbol: data.token.symbol))"
+        case let .unstake(data):
+            return "+\(data.amount.tokenAmount.tokenAmountFormattedString(symbol: data.token.symbol))"
+        case let .createAccount(data):
+            return "+\(data.amount.tokenAmount.tokenAmountFormattedString(symbol: data.token.symbol))"
+        case let .closeAccount(data):
+            if let data {
+                return "+\(data.amount.tokenAmount.tokenAmountFormattedString(symbol: data.token.symbol))"
+            } else {
+                return ""
+            }
+        case let .unknown(data):
+            if data.amount.usdAmount >= 0 {
+                return "+\(data.amount.tokenAmount.tokenAmountFormattedString(symbol: data.token.symbol))"
+            } else {
+                return "\(data.amount.tokenAmount.tokenAmountFormattedString(symbol: data.token.symbol))"
+            }
+        }
+    }
+        
+    private func icon(url: URL?, defaultIcon: UIImage) -> NewHistoryRendableItemIcon {
+        if let url = url {
+            return .single(url)
+        } else {
+            return .icon(defaultIcon)
+        }
     }
 }
 

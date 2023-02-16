@@ -18,19 +18,13 @@ enum NewHistoryAction {
 }
 
 class NewHistoryViewModel: BaseViewModel, ObservableObject {
-    typealias List = ListAdapter<HistoryTransaction, NewHistoryServiceRepository.AsyncIterator>
-
     // Services
 
-    private var userWalletManager: UserWalletManager
-
-    private var repository: NewHistoryServiceRepository
-
-    @Published private var list: List
+    private let repository: NewHistoryServiceRepository
 
     // State
 
-    var listState: List.State { list.state }
+    let historyTransactionList: ListAdapter<NewHistoryServiceRepository.ItemSequence>
 
     var allTokens: [Token] = []
 
@@ -47,27 +41,35 @@ class NewHistoryViewModel: BaseViewModel, ObservableObject {
         userWalletManager: UserWalletManager = Resolver.resolve(),
         mint: String? = nil
     ) {
+        // Init services and repositories
         repository = NewHistoryServiceRepository(provider: provider)
-        self.userWalletManager = userWalletManager
 
-        let userWalletManager: UserWalletManager = Resolver.resolve()
-        list = .init(iterator: repository.getAll(account: userWalletManager.wallet?.account, mint: mint))
+        // Setup list adaptor
+        historyTransactionList = .init(sequence: repository.getAll(account: userWalletManager.wallet?.account, mint: mint))
 
         super.init()
 
-        list.$state
+        // Emit changes to model
+        historyTransactionList.$state
             .receive(on: RunLoop.main)
             .sink { [weak self] _ in
                 self?.objectWillChange.send()
             }.store(in: &subscriptions)
+//        historyTransactionList.listen(target: self, in: &subscriptions)
     }
 
-    func fetchMore() async {
-        list.fetch()
+    func reload() {
+        historyTransactionList.reset()
+        historyTransactionList.fetch()
+    }
+
+    func fetch() {
+        historyTransactionList.fetch()
     }
 
     func buildSection() -> [NewHistorySection] {
-        let dictionary = Dictionary(grouping: listState.data) { transaction -> Date in
+        // Phase 1: Split history transaction into section by date
+        let dictionary = Dictionary(grouping: historyTransactionList.state.data) { transaction -> Date in
             Calendar.current.startOfDay(for: transaction.date)
         }
 
@@ -76,7 +78,7 @@ class NewHistoryViewModel: BaseViewModel, ObservableObject {
         dateFormatter.timeStyle = .none
         dateFormatter.locale = Locale.shared
 
-        let result = dictionary.keys.sorted().reversed()
+        var result = dictionary.keys.sorted().reversed()
             .map { key in
                 let items = dictionary[key]?.map { trx -> NewHistoryItem in
                     .rendable(RendableHistoryTransactionListItem(trx: trx, allTokens: allTokens))
@@ -84,6 +86,24 @@ class NewHistoryViewModel: BaseViewModel, ObservableObject {
 
                 return NewHistorySection(title: dateFormatter.string(from: key), items: items ?? [])
             }
+
+        // Phase 2: Add skeleton
+        if historyTransactionList.state.fetchable {
+            if let lastSection = result.popLast() {
+                result.append(
+                    .init(
+                        title: lastSection.title,
+                        items: lastSection.items + .generatePlaceholder(n: 1)
+                    )
+                )
+            }
+        }
+
+        if historyTransactionList.state.status == .fetching && historyTransactionList.state.data.isEmpty {
+            return [
+                .init(title: "", items: .generatePlaceholder(n: 7))
+            ]
+        }
 
         return result
     }
