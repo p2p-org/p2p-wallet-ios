@@ -98,7 +98,7 @@ class ItemViewModel<Repository: AnyRepository>: ObservableObject {
     /// Handle new data that just received
     /// - Parameter newData: the new data received
     func handleNewData(_ newData: ItemType?) {
-        data = repository.map(oldData: data, newData: newData)
+        data = newData
         error = nil
         state = .loaded
     }

@@ -20,11 +20,11 @@ import Combine
 @MainActor
 class ListViewModel<
     Repository: AnyListRepository,
-    ListMappingStrategy: MappingStrategy
->: ItemViewModel<Repository> where ListMappingStrategy.ItemType == Repository.ItemType {
+    MappingStrategy: ListMappingStrategy
+>: ItemViewModel<Repository> where MappingStrategy.Sequence == Repository.ItemType {
     // MARK: - Properties
     
-    let mappingStrategy: ListMappingStrategy
+    let mappingStrategy: MappingStrategy
     
     // MARK: - Initializer
     
@@ -36,7 +36,7 @@ class ListViewModel<
     init(
         initialData: ItemType?,
         repository: Repository,
-        mappingStrategy: ListMappingStrategy
+        mappingStrategy: MappingStrategy
     ) {
         self.mappingStrategy = mappingStrategy
         super.init(
