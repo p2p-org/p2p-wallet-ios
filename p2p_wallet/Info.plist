@@ -113,26 +113,6 @@
 	<string>$(NAME_SERVICE_ENDPOINT_NEW)</string>
 	<key>NAME_SERVICE_STAGING_ENDPOINT</key>
 	<string>$(NAME_SERVICE_STAGING_ENDPOINT)</string>
-	<key>NSAppTransportSecurity</key>
-	<dict>
-		<key>NSExceptionDomains</key>
-		<dict>
-			<key>35.234.120.240:9090</key>
-			<dict>
-				<key>NSExceptionAllowsInsecureHTTPLoads</key>
-				<true/>
-				<key>NSIncludesSubdomains</key>
-				<true/>
-			</dict>
-			<key>beardict.net</key>
-			<dict>
-				<key>NSExceptionAllowsInsecureHTTPLoads</key>
-				<true/>
-				<key>NSIncludesSubdomains</key>
-				<true/>
-			</dict>
-		</dict>
-	</dict>
 	<key>NSCameraUsageDescription</key>
 	<string>This is required for the app to read wallet addresses from QR codes.</string>
 	<key>NSFaceIDUsageDescription</key>

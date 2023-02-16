@@ -11,6 +11,8 @@ import SolanaSwift
 protocol AppEventHandlerDelegate: AnyObject {
     func didStartLoading()
     func didStopLoading()
+    
+    func disablePincodeOnFirstAppear()
 
     func userDidChangeAPIEndpoint(to endpoint: APIEndPoint)
     func userDidChangeLanguage(to language: LocalizedLanguage)

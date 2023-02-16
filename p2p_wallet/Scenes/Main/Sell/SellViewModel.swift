@@ -4,7 +4,6 @@ import Foundation
 import Combine
 import Reachability
 import Resolver
-import RxSwift
 import KeyAppUI
 import SolanaSwift
 import Sell

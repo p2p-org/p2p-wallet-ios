@@ -1,0 +1,14 @@
+name: Daily build test
+on:
+  workflow_dispatch:
+  schedule:
+    - cron: "0 0 * * 1-5" # At 00:00 on every day-of-week from Monday through Friday.
+jobs:
+  update-daily-test-build-from-develop:
+    uses: ./.github/workflows/build-test.yml
+    with:
+      with_high_priority: false
+      move_to_rft: false
+      lane: "daily_test"
+      branch: "develop"
+    secrets: inherit

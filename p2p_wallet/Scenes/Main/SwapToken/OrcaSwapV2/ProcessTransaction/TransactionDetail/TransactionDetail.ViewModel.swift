@@ -81,7 +81,8 @@ extension TransactionDetail {
         func bind() {
             transactionHandler
                 .observeTransaction(transactionIndex: observingTransactionIndex!)
-                .observe(on: MainScheduler.instance)
+                .receive(on: DispatchQueue.main)
+                .asObservable()
                 .do(onNext: { [weak self] pendingTransaction in
                     guard let self = self else { return }
                     self.payingFeeWallet = pendingTransaction?.rawTransaction.payingWallet

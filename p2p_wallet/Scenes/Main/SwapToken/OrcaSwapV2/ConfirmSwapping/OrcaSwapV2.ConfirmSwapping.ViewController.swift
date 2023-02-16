@@ -7,12 +7,14 @@
 
 import Foundation
 import RxCocoa
+import RxSwift
 
 extension OrcaSwapV2.ConfirmSwapping {
     final class ViewController: BaseVC {
         // MARK: - Properties
 
         private let viewModel: OrcaSwapV2ConfirmSwappingViewModelType
+        private let disposeBag = DisposeBag()
 
         // MARK: - Subviews
 
