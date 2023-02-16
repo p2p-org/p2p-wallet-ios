@@ -22,8 +22,11 @@ struct SellInputView: View {
 
     var body: some View {
         VStack(alignment: .leading, spacing: 0) {
-            exchangeRateView
-                .padding(.horizontal, 16)
+            HStack {
+                Spacer()
+                exchangeRateView
+                Spacer()
+            }
                 .padding(.top, 6)
 
             ScrollView {
