@@ -1228,3 +1228,5 @@ You can try again, but your new transaction will be subject to the current rates
 "You receive" = "Vous recevez";
 "Counting..." = "Compte...";
 "The token you pay" = "Le jeton que vous payez";
+"You can enter “You pay” field only" = "Vous ne pouvez saisir que le champ "Vous payez"";
+"Not enough %@" = "Pas assez %@";

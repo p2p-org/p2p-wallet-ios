@@ -55,9 +55,13 @@ final class SwapViewModel: BaseViewModel, ObservableObject {
 private extension SwapViewModel {
     func bind() {
         fromTokenViewModel.$amountText
+            .debounce(for: 0.3, scheduler: DispatchQueue.main)
             .sinkAsync {  [unowned self] value in
-                let amount = Double(value) ?? 0
-                let _ = await self.stateMachine.accept(action: .changeAmountFrom(amount))
+                self.toTokenViewModel.isAmountLoading = true
+                self.arePricesLoading = true
+                let _ = await self.stateMachine.accept(action: .changeAmountFrom(Double(value) ?? 0))
+                self.toTokenViewModel.isAmountLoading = false
+                self.arePricesLoading = false
             }
             .store(in: &subscriptions)
 
@@ -72,12 +76,6 @@ private extension SwapViewModel {
             .sink { [weak self] value in
                 self?.fromTokenViewModel.isLoading = value == .loading
                 self?.toTokenViewModel.isLoading = value == .loading
-
-                if value == .loading {
-                    self?.actionButtonViewModel.actionButton = .init(isEnabled: false, title: L10n.counting)
-                } else {
-                    self?.actionButtonViewModel.actionButton = .init(isEnabled: false, title: L10n.enterTheAmount)
-                }
             }
             .store(in: &subscriptions)
 
@@ -100,7 +98,6 @@ private extension SwapViewModel {
         stateMachine.statePublisher
             .sinkAsync { [weak self] updatedState in
                 guard let self else { return }
-                debugPrint(updatedState.status)
                 self.updateInitializingState(status: updatedState.status)
 
                 self.fromTokenViewModel.token = updatedState.fromToken
@@ -111,8 +108,25 @@ private extension SwapViewModel {
 
                 self.fromTokenViewModel.fiatAmount = "\((updatedState.priceInfo.fromPrice * updatedState.amountFrom).toString(maximumFractionDigits: 2, roundingMode: .down)) \(Defaults.fiat.code)"
 
+                self.updateActionButton(for: updatedState)
             }
             .store(in: &subscriptions)
+
+        toTokenViewModel.amountFieldTap
+            .sink { [unowned self] in
+                self.notificationService.showToast(title: "🤖", text: L10n.youCanEnterYouPayFieldOnly)
+            }
+            .store(in: &subscriptions)
+
+        Publishers.CombineLatest(
+            $arePricesLoading.eraseToAnyPublisher(),
+            toTokenViewModel.$isAmountLoading.eraseToAnyPublisher()
+        )
+        .sink { [weak self] (value1, value2) in
+            guard value1 || value2 else { return }
+            self?.actionButtonViewModel.actionButton = .init(isEnabled: false, title: L10n.counting)
+        }
+        .store(in: &subscriptions)
     }
 
     func updateInitializingState(status: JupiterSwapState.Status) {
@@ -153,6 +167,26 @@ private extension SwapViewModel {
 
     func update(amount: Double, toToken: SwapToken) {
         self.toTokenViewModel.amountText = amount.toString(maximumFractionDigits: toToken.jupiterToken.decimals, roundingMode: .down)
-        
+    }
+
+    func updateActionButton(for state: JupiterSwapState) {
+        switch state.status {
+        case .ready:
+            if state.amountFrom == 0 {
+                actionButtonViewModel.actionButton = .init(isEnabled: false, title: L10n.enterTheAmount)
+            } else {
+                actionButtonViewModel.actionButton = .init(
+                    isEnabled: true,
+                    title: L10n.swap(state.fromToken.jupiterToken.symbol, state.toToken.jupiterToken.symbol)
+                )
+            }
+        case .requiredInitialize:
+            actionButtonViewModel.actionButton = .init(isEnabled: false, title: L10n.counting)
+        case .error(.notEnoughFromToken):
+            actionButtonViewModel.actionButton = .init(isEnabled: false, title: L10n.notEnough(state.fromToken.jupiterToken.symbol))
+        default:
+            //TODO: Handle in error tasks like https://p2pvalidator.atlassian.net/browse/PWN-7100
+            break
+        }
     }
 }

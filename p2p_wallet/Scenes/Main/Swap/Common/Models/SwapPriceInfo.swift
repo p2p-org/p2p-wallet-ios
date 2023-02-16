@@ -13,4 +13,10 @@ struct SwapPriceInfo: Equatable {
             self.relation = 0
         }
     }
+
+    init(fromPrice: Double, toPrice: Double, relation: Double) {
+        self.fromPrice = fromPrice
+        self.toPrice = toPrice
+        self.relation = relation
+    }
 }
