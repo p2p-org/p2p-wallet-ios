@@ -12,7 +12,7 @@ extension JupiterSwapBusinessLogic {
             let newPriceInfo = SwapPriceInfo(fromPrice: priceFromToken ?? 0, toPrice: state.priceInfo.toPrice)
             return state.copy(fromToken: token, priceInfo: newPriceInfo)
         } catch {
-            return state.copy(status: .error(reason: .priceFailure))
+            return state.copy(status: .error(reason: .coingeckoPriceFailure))
         }
     }
 
@@ -26,7 +26,7 @@ extension JupiterSwapBusinessLogic {
             let newPriceInfo = SwapPriceInfo(fromPrice: state.priceInfo.fromPrice, toPrice: priceToToken ?? 0)
             return state.copy(toToken: token, priceInfo: newPriceInfo)
         } catch {
-            return state.copy(status: .error(reason: .priceFailure))
+            return state.copy(status: .error(reason: .coingeckoPriceFailure))
         }
     }
 
@@ -40,7 +40,7 @@ extension JupiterSwapBusinessLogic {
             let newPriceInfo = try await getPrices(from: fromToken, to: toToken, services: services)
             return state.copy(fromToken: fromToken, toToken: toToken, priceInfo: newPriceInfo)
         } catch {
-            return state.copy(status: .error(reason: .priceFailure))
+            return state.copy(status: .error(reason: .coingeckoPriceFailure))
         }
     }
 }

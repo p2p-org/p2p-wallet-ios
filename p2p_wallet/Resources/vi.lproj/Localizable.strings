@@ -1231,3 +1231,5 @@ You can try again, but your new transaction will be subject to the current rates
 "You receive" = "Bạn nhận được";
 "Counting..." = "Đếm...";
 "The token you pay" = "Mã thông báo bạn thanh toán";
+"You can enter “You pay” field only" = "Bạn chỉ có thể nhập trường “Bạn thanh toán”";
+"Not enough %@" = "Không đủ %@";

@@ -1226,3 +1226,5 @@ You can try again, but your new transaction will be subject to the current rates
 "You receive" = "Вы получаете";
 "Counting..." = "Подсчет...";
 "The token you pay" = "Токен, который вы платите";
+"You can enter “You pay” field only" = "Вы можете ввести только поле «Вы платите»";
+"Not enough %@" = "Недостаточно <С>";

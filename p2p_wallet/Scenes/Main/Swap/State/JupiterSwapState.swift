@@ -9,7 +9,8 @@ struct JupiterSwapState: Equatable {
         case equalSwapTokens
 
         case unknown
-        case priceFailure
+        case coingeckoPriceFailure
+        case routeIsNotFound
     }
 
     enum Status: Equatable {
@@ -30,6 +31,9 @@ struct JupiterSwapState: Equatable {
     let toToken: SwapToken
     let priceInfo: SwapPriceInfo
 
+    let slippage: Int
+    let route: Route?
+
     init(
         status: Status,
         routeMap: RouteMap,
@@ -38,7 +42,9 @@ struct JupiterSwapState: Equatable {
         amountTo: Double,
         fromToken: SwapToken,
         toToken: SwapToken,
-        priceInfo: SwapPriceInfo
+        priceInfo: SwapPriceInfo,
+        slippage: Int,
+        route: Route? = nil
     ) {
         self.status = status
         self.routeMap = routeMap
@@ -48,6 +54,8 @@ struct JupiterSwapState: Equatable {
         self.fromToken = fromToken
         self.toToken = toToken
         self.priceInfo = priceInfo
+        self.slippage = slippage
+        self.route = route
     }
 
     static func zero(
@@ -58,7 +66,9 @@ struct JupiterSwapState: Equatable {
         amountTo: Double = .zero,
         fromToken: SwapToken = .nativeSolana,
         toToken: SwapToken = .nativeSolana,
-        priceInfo: SwapPriceInfo = SwapPriceInfo(fromPrice: .zero, toPrice: .zero)
+        priceInfo: SwapPriceInfo = SwapPriceInfo(fromPrice: .zero, toPrice: .zero),
+        slippage: Int = 0,
+        route: Route? = nil
     ) -> JupiterSwapState {
         .init(
             status: status,
@@ -68,7 +78,9 @@ struct JupiterSwapState: Equatable {
             amountTo: amountTo,
             fromToken: fromToken,
             toToken: toToken,
-            priceInfo: priceInfo
+            priceInfo: priceInfo,
+            slippage: slippage,
+            route: route
         )
     }
 
@@ -80,7 +92,9 @@ struct JupiterSwapState: Equatable {
         amountTo: Double? = nil,
         fromToken: SwapToken? = nil,
         toToken: SwapToken? = nil,
-        priceInfo: SwapPriceInfo? = nil
+        priceInfo: SwapPriceInfo? = nil,
+        slippage: Int? = nil,
+        route: Route? = nil
     ) -> JupiterSwapState {
         .init(
             status: status ?? self.status,
@@ -90,7 +104,9 @@ struct JupiterSwapState: Equatable {
             amountTo: amountTo ?? self.amountTo,
             fromToken: fromToken ?? self.fromToken,
             toToken: toToken ?? self.toToken,
-            priceInfo: priceInfo ?? self.priceInfo
+            priceInfo: priceInfo ?? self.priceInfo,
+            slippage: slippage ?? self.slippage,
+            route: route ?? self.route
         )
     }
 }

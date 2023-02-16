@@ -1,6 +1,7 @@
 import Combine
 
 final class SwapInputViewModel: BaseViewModel, ObservableObject {
+
     @Published var title: String
     @Published var amountText: String
     @Published var isFirstResponder: Bool
@@ -9,11 +10,13 @@ final class SwapInputViewModel: BaseViewModel, ObservableObject {
     @Published var balanceText: String = ""
     @Published var tokenSymbol: String = ""
     @Published var isLoading: Bool = false
+    @Published var isAmountLoading: Bool = false
     @Published var fiatAmount: String?
     @Published var token: SwapToken
 
     let allButtonPressed = PassthroughSubject<Void, Never>()
     let changeTokenPressed = PassthroughSubject<Void, Never>()
+    let amountFieldTap = PassthroughSubject<Void, Never>()
 
     init(title: String, isFirstResponder: Bool, isEditable: Bool, token: SwapToken) {
         self.title = title
