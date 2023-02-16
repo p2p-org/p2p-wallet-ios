@@ -1,9 +1,49 @@
 import Foundation
 import Combine
 
+//final class BooksRepository: ListRepository<String> {
+//    override func fetch() async throws -> [String] {
+//        ["BookA", "BookB"]
+//    }
+//}
+//
+//@MainActor
+//final class TestVM {
+//    let vm = ListViewModel(initialData: nil, repository: BooksRepository(), mappingStrategy: AppendUniqueItemListMappingStrategy<String>())
+//    
+//    func test() {
+//        vm.data?.first == "fasd"
+//    }
+//}
+
 /// Reusable ViewModel to manage a List of some Kind of item
 @MainActor
-class ListViewModel<Repository: AnyListRepository>: ItemViewModel<Repository> {
+class ListViewModel<
+    Repository: AnyListRepository,
+    ListMappingStrategy: MappingStrategy
+>: ItemViewModel<Repository> where ListMappingStrategy.ItemType == Repository.ItemType {
+    // MARK: - Properties
+    
+    let mappingStrategy: ListMappingStrategy
+    
+    // MARK: - Initializer
+    
+    /// ItemViewModel's initializer
+    /// - Parameters:
+    ///   - initialData: initial data for begining state of the Repository
+    ///   - repository: repository to handle data fetching
+    ///   - mappingStrategy: ListMappingStrategy
+    init(
+        initialData: ItemType?,
+        repository: Repository,
+        mappingStrategy: ListMappingStrategy
+    ) {
+        self.mappingStrategy = mappingStrategy
+        super.init(
+            initialData: initialData,
+            repository: repository
+        )
+    }
 
     // MARK: - Actions
 
@@ -36,6 +76,13 @@ class ListViewModel<Repository: AnyListRepository>: ItemViewModel<Repository> {
 
         // call request
         super.request()
+    }
+    
+    /// Handle new data that just received
+    /// - Parameter newData: the new data received
+    override func handleNewData(_ newData: ItemType?) {
+        let data = mappingStrategy.map(oldData: data, newData: newData)
+        super.handleNewData(data)
     }
 
 //    func updateFirstPage(onSuccessFilterNewData: (([ItemType]) -> [ItemType])? = nil) {
