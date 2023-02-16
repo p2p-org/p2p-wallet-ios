@@ -1,21 +1,6 @@
 import Foundation
 import Combine
 
-//final class BooksRepository: ListRepository<String> {
-//    override func fetch() async throws -> [String] {
-//        ["BookA", "BookB"]
-//    }
-//}
-//
-//@MainActor
-//final class TestVM {
-//    let vm = ListViewModel(initialData: nil, repository: BooksRepository(), mappingStrategy: AppendUniqueItemListMappingStrategy<String>())
-//    
-//    func test() {
-//        vm.data?.first == "fasd"
-//    }
-//}
-
 /// Reusable ViewModel to manage a List of some Kind of item
 @MainActor
 class ListViewModel<
