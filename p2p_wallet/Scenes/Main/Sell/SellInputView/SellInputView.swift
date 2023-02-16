@@ -32,14 +32,11 @@ struct SellInputView: View {
                     feeView
                 }
                 .frame(maxWidth: .infinity)
-            }
+            }.endEditingKeyboardOnDragGesture()
             .frame(maxWidth: .infinity)
-            .onAppear {
-                UIScrollView.appearance().keyboardDismissMode = .onDrag
+            .onTapGesture {
+                UIApplication.shared.keyWindow?.endEditing(true)
             }
-//            .onTapGesture {
-//                UIApplication.shared.keyWindow?.endEditing(true)
-//            }
             Spacer()
             if !viewModel.isEnteringBaseAmount, !viewModel.isEnteringQuoteAmount {
                 poweredBy
