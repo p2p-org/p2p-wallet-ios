@@ -7,6 +7,7 @@
 
 import Foundation
 import UIKit
+import Combine
 
 extension DAppContainer {
     class ViewController: BaseVC {
@@ -20,6 +21,8 @@ extension DAppContainer {
         }
 
         // MARK: - Properties
+        
+        private var subscriptions = Set<AnyCancellable>()
 
         // MARK: - Methods
 
@@ -33,9 +36,9 @@ extension DAppContainer {
 
         override func bind() {
             super.bind()
-            viewModel.navigationDriver
-                .drive(onNext: { [weak self] in self?.navigate(to: $0) })
-                .disposed(by: disposeBag)
+            viewModel.navigationPublisher
+                .sink(receiveValue: { [weak self] in self?.navigate(to: $0) })
+                .store(in: &subscriptions)
         }
 
         // MARK: - Navigation

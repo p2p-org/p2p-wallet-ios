@@ -21,7 +21,7 @@ PODS:
     - PureLayout
   - Cache (1.0.0)
   - CocoaDebug (1.7.2)
-  - CombineCocoa (0.4.0)
+  - CombineCocoa (0.4.1)
   - CountriesAPI (1.0.0)
   - CryptoSwift (1.6.0)
   - Down (0.11.0)
@@ -251,7 +251,6 @@ DEPENDENCIES:
   - BEPureLayout (from `https://github.com/p2p-org/BEPureLayout.git`, branch `master`)
   - Cache (from `https://github.com/p2p-org/key-app-kit-swift.git`, branch `master`)
   - CocoaDebug
-  - CombineCocoa (= 0.4.0)
   - CountriesAPI (from `https://github.com/p2p-org/key-app-kit-swift.git`, branch `master`)
   - Down (from `https://github.com/p2p-org/Down.git`)
   - FeeRelayerSwift (from `https://github.com/p2p-org/FeeRelayerSwift.git`, branch `master`)
@@ -556,7 +555,7 @@ SPEC CHECKSUMS:
   BEPureLayout: 970e31aa4fccf0f72ef2229b4e831ccdea33f026
   Cache: 63a27b5fe1aa85d9587eb557ce828de39867b6f4
   CocoaDebug: 61cf93ada6ce8f3407507dc01f9b874d91ac1d5c
-  CombineCocoa: 68a050228ce7c53c1c5ac2c57cccf92a7f5c5085
+  CombineCocoa: e5210dbfb480ff251078929459ac17e750e7af1d
   CountriesAPI: 26d03b67fb2fd4ff26111b71ed3d492a3babb592
   CryptoSwift: 562f8eceb40e80796fffc668b0cad9313284cfa6
   Down: b6ba1bc985c9d2f4e15e3b293d2207766fa12612
@@ -628,6 +627,6 @@ SPEC CHECKSUMS:
   TransactionParser: 3004420d52e7b1277dbcfd20b995a5de707705f3
   TweetNacl: 3abf4d1d2082b0114e7a67410e300892448951e6
 
-PODFILE CHECKSUM: e3bcfa21094bc6a760ad043d80db24d7867bc149
+PODFILE CHECKSUM: 65a72d822c18b8c5255ed4752e7e4700f6825135
 
 COCOAPODS: 1.11.3
