@@ -13,7 +13,7 @@ protocol AnyRepository {
 /// Repository that is only responsible for fetching list of items
 protocol AnyListRepository: AnyRepository {
     /// ListItemType to be fetched
-    associatedtype ListItemType: ListItem
+    associatedtype ListItemType: Hashable & Identifiable
     /// Pagination strategy
     var paginationStrategy: PaginationStrategy? { get }
     /// Fetch list of item from outside
@@ -33,7 +33,7 @@ protocol AnyListRepository: AnyRepository {
 //    }
 }
 
-class ListRepository<ListItemType: ListItem>: AnyListRepository {
+class ListRepository<ListItemType: Hashable & Identifiable>: AnyListRepository {
     // MARK: - Properties
 
     /// Strategy that indicates how pagination works, nil if pagination is disabled

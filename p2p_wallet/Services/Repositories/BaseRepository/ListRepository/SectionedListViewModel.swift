@@ -2,7 +2,7 @@ import Foundation
 import Combine
 
 protocol ListSection: Hashable {
-    associatedtype ItemType: ListItem
+    associatedtype ItemType: Hashable & Identifiable
     var id: UUID { get }
     var items: [ItemType] { get }
     var userInfo: AnyHashable { get }
