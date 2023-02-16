@@ -25,7 +25,7 @@ final class BuyViewModel: ObservableObject {
     @Published var isLoading = false
     @Published var areMethodsLoading = true
     @Published var isLeftFocus = false
-    @Published var isRightFocus = true
+    @Published var isRightFocus = false
     @Published var exchangeOutput: Buy.ExchangeOutput?
     @Published var navigationSlidingPercentage: CGFloat = 1
     @Published var targetSymbol: String?
