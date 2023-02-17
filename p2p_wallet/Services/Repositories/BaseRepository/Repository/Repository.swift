@@ -18,19 +18,6 @@ protocol AnyListRepository: AnyRepository {
     var paginationStrategy: PaginationStrategy? { get }
     /// Fetch list of item from outside
     func fetch() async throws -> [ListItemType]?
-    
-//    /// Indicate if should fetch new data to prevent unwanted request
-//    /// - Returns: should fetch new data
-//    func shouldFetch() -> Bool {
-//        var shouldRequest = super.shouldRequest()
-//
-//        // check if isLastPageLoaded
-//        if let paginationStrategy {
-//            shouldRequest = shouldRequest && !paginationStrategy.isLastPageLoaded
-//        }
-//
-//        return shouldRequest
-//    }
 }
 
 class ListRepository<ListItemType: Hashable & Identifiable>: AnyListRepository {
@@ -45,7 +32,14 @@ class ListRepository<ListItemType: Hashable & Identifiable>: AnyListRepository {
     }
 
     func shouldFetch() -> Bool {
-        true
+        var shouldRequest: Bool = true
+        
+        // check if isLastPageLoaded
+        if let paginationStrategy {
+            shouldRequest = shouldRequest && !paginationStrategy.isLastPageLoaded
+        }
+
+        return shouldRequest
     }
 
     func fetch() async throws -> [ListItemType]? {
