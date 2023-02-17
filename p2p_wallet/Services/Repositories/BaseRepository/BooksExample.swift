@@ -13,22 +13,22 @@ struct Book: Hashable & Identifiable {
     let name: String
 }
 
-// Then a Repository
-final class BooksRepository: ListRepository<Book> {
-    override func fetch() async throws -> [Book] {
-        [
-            .init(name: "Book1"),
-            .init(name: "Book2")
-        ]
-    }
-}
-
-// Then form viewModel
-@MainActor class Test {
-    func test() {
-        let vm = ListViewModel(
-            initialData: nil,
-            repository: BooksRepository(paginationStrategy: nil)
-        )
-    }
-}
+//// Then a Repository
+//final class BooksRepository: ListRepository<Book> {
+//    override func fetch() async throws -> [Book] {
+//        [
+//            .init(name: "Book1"),
+//            .init(name: "Book2")
+//        ]
+//    }
+//}
+//
+//// Then form viewModel
+//@MainActor class Test {
+//    func test() {
+//        let vm = ListViewModel(
+//            initialData: nil,
+//            repository: BooksRepository(paginationStrategy: nil)
+//        )
+//    }
+//}

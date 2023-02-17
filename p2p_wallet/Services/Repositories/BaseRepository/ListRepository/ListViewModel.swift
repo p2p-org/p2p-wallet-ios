@@ -3,32 +3,7 @@ import Combine
 
 /// Reusable ViewModel to manage a List of some Kind of item
 @MainActor
-class ListViewModel<
-    Repository: AnyListRepository,
-    MappingStrategy: ListMappingStrategy
->: ItemViewModel<Repository> where MappingStrategy.Sequence == Repository.ItemType {
-    // MARK: - Properties
-    
-    let mappingStrategy: MappingStrategy
-    
-    // MARK: - Initializer
-    
-    /// ItemViewModel's initializer
-    /// - Parameters:
-    ///   - initialData: initial data for begining state of the Repository
-    ///   - repository: repository to handle data fetching
-    ///   - mappingStrategy: ListMappingStrategy
-    init(
-        initialData: ItemType?,
-        repository: Repository,
-        mappingStrategy: MappingStrategy? = nil
-    ) {
-        self.mappingStrategy = mappingStrategy ?? AppendUniqueItemListMappingStrategy<Repository.ListItemType>() as! MappingStrategy
-        super.init(
-            initialData: initialData,
-            repository: repository
-        )
-    }
+class ListViewModel<Repository: AnyListRepository>: ItemViewModel<Repository> {
 
     // MARK: - Actions
 
@@ -66,8 +41,16 @@ class ListViewModel<
     /// Handle new data that just received
     /// - Parameter newData: the new data received
     override func handleNewData(_ newData: ItemType?) {
-        let data = mappingStrategy.map(oldData: data, newData: newData)
-        super.handleNewData(data)
+        guard var data = self.data as? [Repository.ListItemType],
+            let newData = newData as? [Repository.ListItemType]
+        else { return super.handleNewData(newData) }
+        // append data that is currently not existed in current data array
+        data.append(contentsOf:
+            newData.filter { newRecord in
+                !data.contains { $0.id == newRecord.id }
+            }
+        )
+        super.handleNewData(data as? Repository.ItemType)
     }
 
 //    func updateFirstPage(onSuccessFilterNewData: (([ItemType]) -> [ItemType])? = nil) {
