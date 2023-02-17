@@ -11,11 +11,13 @@ protocol AnyRepository {
 }
 
 /// Repository that is only responsible for fetching list of items
-protocol AnyListRepository: AnyRepository {
+protocol AnyListRepository {
     /// ListItemType to be fetched
-    associatedtype ListItemType: Hashable & Identifiable
+    associatedtype ItemType: Hashable & Identifiable
+    /// Indicate if should fetching item
+    func shouldFetch() -> Bool
     /// Fetch list of item from outside
-    func fetch() async throws -> [ListItemType]?
+    func fetch() async throws -> [ItemType]
 }
 
 protocol AnyPaginatedListRepository: AnyListRepository {
@@ -23,7 +25,7 @@ protocol AnyPaginatedListRepository: AnyListRepository {
     var paginationStrategy: PaginationStrategy { get }
 }
 
-class ListRepository<ListItemType: Hashable & Identifiable>: AnyListRepository {
+class ListRepository<ItemType: Hashable & Identifiable>: AnyListRepository {
     // MARK: - Properties
 
     /// Strategy that indicates how pagination works, nil if pagination is disabled
@@ -45,7 +47,7 @@ class ListRepository<ListItemType: Hashable & Identifiable>: AnyListRepository {
         return shouldRequest
     }
 
-    func fetch() async throws -> [ListItemType]? {
+    func fetch() async throws -> [ItemType] {
         fatalError("Must override")
     }
 }
