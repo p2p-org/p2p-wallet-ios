@@ -14,10 +14,13 @@ protocol AnyRepository {
 protocol AnyListRepository: AnyRepository {
     /// ListItemType to be fetched
     associatedtype ListItemType: Hashable & Identifiable
-    /// Pagination strategy
-    var paginationStrategy: PaginationStrategy? { get }
     /// Fetch list of item from outside
     func fetch() async throws -> [ListItemType]?
+}
+
+protocol AnyPaginatedListRepository: AnyListRepository {
+    /// Pagination strategy
+    var paginationStrategy: PaginationStrategy { get }
 }
 
 class ListRepository<ListItemType: Hashable & Identifiable>: AnyListRepository {

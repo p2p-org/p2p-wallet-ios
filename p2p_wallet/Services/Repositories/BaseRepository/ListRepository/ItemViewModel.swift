@@ -109,4 +109,9 @@ class ItemViewModel<Repository: AnyRepository>: ObservableObject {
         error = err
         state = .error
     }
+    
+    /// Override data
+    func overrideData(by newData: ItemType?) {
+        handleNewData(newData)
+    }
 }
