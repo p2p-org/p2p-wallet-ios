@@ -23,7 +23,7 @@ struct NewHistorySection: Identifiable, Equatable {
 enum NewHistoryItem: Identifiable, Equatable {
     case rendable(any NewHistoryRendableItem)
     case button(id: String, title: String, action: () -> Void)
-    case placeHolder(id: String, fetchable: Bool)
+    case placeHolder(id: String)
     
     var id: String {
         switch self {
@@ -31,7 +31,7 @@ enum NewHistoryItem: Identifiable, Equatable {
             return item.id
         case let .button(id, _, _):
             return id
-        case let .placeHolder(id, _):
+        case let .placeHolder(id):
             return id
         }
     }
@@ -45,7 +45,7 @@ extension Array where Element == NewHistoryItem {
     static func generatePlaceholder(n: Int) -> [NewHistoryItem] {
         var r: [NewHistoryItem] = []
         for _ in 0 ..< n {
-            r.append(.placeHolder(id: UUID().uuidString, fetchable: n == 1))
+            r.append(.placeHolder(id: UUID().uuidString))
         }
         return r
     }
@@ -79,6 +79,8 @@ protocol NewHistoryRendableItem: Identifiable {
     var detail: (NewHistoruItemChange, String) { get }
     
     var subdetail: String { get }
+    
+    var onTap: (() -> Void)? { get }
 }
 
 enum NewHistoryRendableItemIcon {
@@ -103,27 +105,27 @@ struct MockedHistoryRendableItem: NewHistoryRendableItem {
     var detail: (NewHistoruItemChange, String)
     
     var subdetail: String
+    
+    var onTap: (() -> Void)? = nil
 }
 
 struct RendableHistoryTransactionListItem: NewHistoryRendableItem {
     private var trx: HistoryTransaction
     
-    private var tokens: [Token]
+    // Use to map history token to solana token. They are identical but we need to extract png images.
+    private let allTokens: Set<SolanaSwift.Token>
     
-    init(trx: HistoryTransaction, allTokens: [Token]) {
+    init(trx: HistoryTransaction, allTokens: Set<SolanaSwift.Token>, onTap: (() -> Void)? = nil) {
         self.trx = trx
-        self.tokens = []
-//        tokens = trx.info?.tokens?.map { internalToken -> Token? in
-//            allTokens.first { token in
-//                token.address == internalToken.info.mint
-//            }
-//        }
-//        .compactMap { $0 } ?? []
+        self.allTokens = allTokens
+        self.onTap = onTap
     }
     
     var id: String {
         trx.signature
     }
+    
+    var onTap: (() -> Void)?
     
     var date: Date {
         trx.date
@@ -141,29 +143,30 @@ struct RendableHistoryTransactionListItem: NewHistoryRendableItem {
     var icon: NewHistoryRendableItemIcon {
         switch trx.info {
         case let .send(data):
-            return icon(url: data.token.logoUrl, defaultIcon: .transactionSend)
+            return icon(mint: data.token.mint, url: data.token.logoUrl, defaultIcon: .transactionSend)
         case let .receive(data):
-            return icon(url: data.token.logoUrl, defaultIcon: .transactionReceive)
+            return icon(mint: data.token.mint, url: data.token.logoUrl, defaultIcon: .transactionReceive)
         case let .swap(data):
             guard
-                let fromURL = data.from.token.logoUrl,
-                let toURL = data.to.token.logoUrl
+                let fromIcon = resolveTokenIconURL(mint: data.from.token.mint, fallbackImageURL: data.from.token.logoUrl),
+                let toIcon = resolveTokenIconURL(mint: data.to.token.mint, fallbackImageURL: data.to.token.logoUrl)
             else {
                 return .icon(.buttonSwap)
             }
-            return .double(fromURL, toURL)
+            
+            return .double(fromIcon, toIcon)
         case let .createAccount(data):
-            return icon(url: data.token.logoUrl, defaultIcon: .buyWallet)
+            return icon(mint: data.token.mint, url: data.token.logoUrl, defaultIcon: .buyWallet)
         case let .closeAccount(data):
-            return icon(url: data?.token.logoUrl, defaultIcon: .transactionCloseAccount)
+            return icon(mint: data?.token.mint, url: data?.token.logoUrl, defaultIcon: .transactionCloseAccount)
         case let .mint(data):
-            return icon(url: data.token.logoUrl, defaultIcon: .planet)
+            return icon(mint: data.token.mint, url: data.token.logoUrl, defaultIcon: .planet)
         case let .burn(data):
-            return icon(url: data.token.logoUrl, defaultIcon: .planet)
+            return icon(mint: data.token.mint, url: data.token.logoUrl, defaultIcon: .planet)
         case let .stake(data):
-            return icon(url: data.token.logoUrl, defaultIcon: .planet)
+            return icon(mint: data.token.mint, url: data.token.logoUrl, defaultIcon: .planet)
         case let .unstake(data):
-            return icon(url: data.token.logoUrl, defaultIcon: .planet)
+            return icon(mint: data.token.mint, url: data.token.logoUrl, defaultIcon: .planet)
         case .unknown, .none:
             return .icon(.planet)
         }
@@ -208,7 +211,6 @@ struct RendableHistoryTransactionListItem: NewHistoryRendableItem {
             return "\(L10n.voteAccount): \(RecipientFormatter.shortFormat(destination: data.account.address))"
         case let .unstake(data):
             return "\(L10n.voteAccount): \(RecipientFormatter.shortFormat(destination: data.account.address))"
-        case .createAccount, .closeAccount:
             return RecipientFormatter.signature(signature: trx.signature)
         default:
             return "\(L10n.signature): \(RecipientFormatter.shortSignature(signature: trx.signature))"
@@ -218,7 +220,7 @@ struct RendableHistoryTransactionListItem: NewHistoryRendableItem {
     var detail: (NewHistoruItemChange, String) {
         switch trx.info {
         case let .send(data):
-            return (.negative, "\(data.amount.usdAmount.fiatAmountFormattedString())")
+            return (.negative, "-\(data.amount.usdAmount.fiatAmountFormattedString())")
         case let .receive(data):
             return (.positive, "+\(data.amount.usdAmount.fiatAmountFormattedString())")
         case let .swap(data):
@@ -248,7 +250,6 @@ struct RendableHistoryTransactionListItem: NewHistoryRendableItem {
         case .none:
             return (.unchanged, "")
         }
-    
     }
     
     var subdetail: String {
@@ -286,8 +287,23 @@ struct RendableHistoryTransactionListItem: NewHistoryRendableItem {
         }
     }
         
-    private func icon(url: URL?, defaultIcon: UIImage) -> NewHistoryRendableItemIcon {
-        if let url = url {
+    /// Resolve token icon url
+    private func resolveTokenIconURL(mint: String?, fallbackImageURL: URL?) -> URL? {
+        if
+            let mint,
+            let urlStr: String = allTokens.first(where: { $0.address == mint })?.logoURI,
+            let url = URL(string: urlStr)
+        {
+            return url
+        } else if let fallbackImageURL {
+            return fallbackImageURL
+        }
+        
+        return nil
+    }
+    
+    private func icon(mint: String?, url: URL?, defaultIcon: UIImage) -> NewHistoryRendableItemIcon {
+        if let url = resolveTokenIconURL(mint: mint, fallbackImageURL: url) {
             return .single(url)
         } else {
             return .icon(defaultIcon)

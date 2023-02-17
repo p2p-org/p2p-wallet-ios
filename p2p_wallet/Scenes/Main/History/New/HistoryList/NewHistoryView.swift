@@ -41,12 +41,10 @@ struct NewHistoryView: View {
                                 switch item {
                                 case let .rendable(rendableItem):
                                     NewHistoryItemView(item: rendableItem) {
-                                        viewModel.onTap(item: rendableItem)
+                                        rendableItem.onTap?()
                                     }
-                                case let .placeHolder(_, fetchable):
+                                case .placeHolder:
                                     NewHistoryListSkeletonView()
-                                        // Load next item if the item is last
-                                        .onAppear(perform: fetchable ? { viewModel.fetch() } : nil)
                                 case let .button(_, title, action):
                                     TextButtonView(
                                         title: title,
@@ -67,6 +65,11 @@ struct NewHistoryView: View {
                                 isLast: section.items.last == item
                             )
                         }
+
+                        Rectangle()
+                            .fill(.clear)
+                            .contentShape(Rectangle())
+                            .onAppear(perform: section == viewModel.sections.last ? { viewModel.fetch() } : nil)
                     }.padding(.horizontal, 16)
                 }
                 .padding(.vertical, 8)
