@@ -103,7 +103,7 @@ private extension SwapViewModel {
                 self.fromTokenViewModel.token = updatedState.fromToken
                 self.toTokenViewModel.token = updatedState.toToken
 
-                self.updateHeader(priceInfo: updatedState.priceInfo, fromToken: updatedState.fromToken, toToken: updatedState.toToken)
+                self.updateHeader(priceInfo: updatedState.priceInfo, fromToken: updatedState.fromToken.jupiterToken, toToken: updatedState.toToken.jupiterToken)
                 self.update(amount: updatedState.amountTo, toToken: updatedState.toToken)
 
                 self.fromTokenViewModel.fiatAmount = "\((updatedState.priceInfo.fromPrice * updatedState.amountFrom).toString(maximumFractionDigits: 2, roundingMode: .down)) \(Defaults.fiat.code)"
@@ -146,7 +146,9 @@ private extension SwapViewModel {
         switchTokens
             .sinkAsync(receiveValue: { [weak self] _ in
                 guard let self else { return }
-                let _ = await self.stateMachine.accept(action: .changeBothTokens(from: self.currentState.toToken, to: self.currentState.fromToken))
+                let _ = await self.stateMachine.accept(
+                    action: .changeBothTokens(from: self.currentState.toToken, to: self.currentState.fromToken)
+                )
             })
             .store(in: &subscriptions)
 
@@ -157,16 +159,21 @@ private extension SwapViewModel {
             .store(in: &subscriptions)
     }
 
-    func updateHeader(priceInfo: SwapPriceInfo, fromToken: SwapToken, toToken: SwapToken) {
+    func updateHeader(priceInfo: SwapPriceInfo, fromToken: Jupiter.Token, toToken: Jupiter.Token) {
         if priceInfo.relation != 0 {
-            self.header = "\(1.tokenAmountFormattedString(symbol: toToken.jupiterToken.symbol, maximumFractionDigits: toToken.jupiterToken.decimals)) ≈ \(priceInfo.relation.tokenAmountFormattedString(symbol: fromToken.jupiterToken.symbol, maximumFractionDigits: fromToken.jupiterToken.decimals))"
+            let onetoToken = 1.tokenAmountFormattedString(symbol: toToken.symbol, maximumFractionDigits: toToken.decimals, roundingMode: .down)
+            let amountFromToken = priceInfo.relation.tokenAmountFormattedString(symbol: fromToken.symbol, maximumFractionDigits: fromToken.decimals, roundingMode: .down)
+            header = [onetoToken, amountFromToken].joined(separator: " ≈ ")
         } else {
-            self.header = ""
+            header = ""
         }
     }
 
     func update(amount: Double, toToken: SwapToken) {
-        self.toTokenViewModel.amountText = amount.toString(maximumFractionDigits: toToken.jupiterToken.decimals, roundingMode: .down)
+        toTokenViewModel.amountText = amount.toString(
+            maximumFractionDigits: toToken.jupiterToken.decimals,
+            roundingMode: .down
+        )
     }
 
     func updateActionButton(for state: JupiterSwapState) {

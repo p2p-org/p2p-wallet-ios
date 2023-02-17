@@ -60,7 +60,7 @@ private extension SwapView {
 
     var errorView: some View {
         BaseErrorView(
-            appearance: .init(actionButtonHorizontalOffset: 16, imageTextPadding: 20),
+            appearance: BaseErrorView.Appearance(actionButtonHorizontalOffset: 16, imageTextPadding: 20),
             actionTitle: L10n.tryAgain,
             action: viewModel.tryAgain.send
         )
