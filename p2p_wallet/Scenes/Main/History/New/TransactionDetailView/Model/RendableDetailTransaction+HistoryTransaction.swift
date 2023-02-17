@@ -15,15 +15,15 @@ struct RendableDetailHistoryTransaction: RendableDetailTransaction {
     
     let allTokens: Set<SolanaSwift.Token>
     
-    var status: CurrentValueSubject<DetailTransactionStatus, Never> {
+    var status: DetailTransactionStatus {
         switch trx.status {
         case .success:
-            return .init(.succeed(message: ""))
+            return .succeed(message: "")
         case .failure:
             if let error = trx.error?.description {
-                return .init(.error(message: NSAttributedString(string: error)))
+                return .error(message: NSAttributedString(string: error))
             } else {
-                return .init(.error(message: NSAttributedString(string: L10n.theTransactionHasBeenRejected)))
+                return .error(message: NSAttributedString(string: L10n.theTransactionHasBeenRejected))
             }
         }
     }

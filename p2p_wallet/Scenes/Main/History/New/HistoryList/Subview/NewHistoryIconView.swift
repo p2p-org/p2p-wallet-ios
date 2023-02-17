@@ -14,7 +14,7 @@ struct NewHistoryIconView: View {
     private let largeSize: CGFloat = 46
     private let smallSize: CGFloat = 29
 
-    let icon: NewHistoryRendableItemIcon
+    let icon: NewHistoryRendableListTransactionItemIcon
 
     var body: some View {
         Group {

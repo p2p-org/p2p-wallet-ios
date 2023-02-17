@@ -10,7 +10,7 @@ import Foundation
 import SolanaSwift
 
 struct MockedRendableDetailTransaction: RendableDetailTransaction {
-    var status: CurrentValueSubject<DetailTransactionStatus, Never>
+    var status: DetailTransactionStatus
     var title: String
     var subtitle: String
     var signature: String?
@@ -37,9 +37,7 @@ struct MockedRendableDetailTransaction: RendableDetailTransaction {
     
     static func send() -> Self {
         .init(
-            status: .init(
-                .succeed(message: L10n.theTransactionHasBeenSuccessfullyCompleted🤟)
-            ),
+            status: .succeed(message: L10n.theTransactionHasBeenSuccessfullyCompleted🤟),
             title: "Transaction submitted",
             subtitle: "August 22, 2022 @ 08:08",
             signature: "2PmjWNqQUd9AedT1nnFBdhRdw5JXkNTajBFZ6RmfpPorTMKcxBXkAPER2RmMLnuSS9RKsA1kynhCc8d6LjFQamLs",
@@ -59,9 +57,7 @@ struct MockedRendableDetailTransaction: RendableDetailTransaction {
     
     static func sending() -> Self {
         .init(
-            status: .init(
-                .loading(message: L10n.itUsuallyTakes520SecondsForATransactionToComplete)
-            ),
+            status: .loading(message: L10n.itUsuallyTakes520SecondsForATransactionToComplete),
             title: "Transaction submitted",
             subtitle: "August 22, 2022 @ 08:08",
             signature: "2PmjWNqQUd9AedT1nnFBdhRdw5JXkNTajBFZ6RmfpPorTMKcxBXkAPER2RmMLnuSS9RKsA1kynhCc8d6LjFQamLs",
@@ -81,9 +77,7 @@ struct MockedRendableDetailTransaction: RendableDetailTransaction {
     
     static func failedSend() -> Self {
         .init(
-            status: .init(
-                .error(message: NSAttributedString(string: L10n.theTransactionWasRejectedByTheSolanaBlockchain))
-            ),
+            status: .error(message: NSAttributedString(string: L10n.theTransactionWasRejectedByTheSolanaBlockchain)),
             title: "Transaction failed",
             subtitle: "August 22, 2022 @ 08:08",
             signature: "2PmjWNqQUd9AedT1nnFBdhRdw5JXkNTajBFZ6RmfpPorTMKcxBXkAPER2RmMLnuSS9RKsA1kynhCc8d6LjFQamLs",
@@ -103,9 +97,7 @@ struct MockedRendableDetailTransaction: RendableDetailTransaction {
     
     static func receive() -> Self {
         .init(
-            status: .init(
-                .succeed(message: L10n.theTransactionHasBeenSuccessfullyCompleted🤟)
-            ),
+            status: .succeed(message: L10n.theTransactionHasBeenSuccessfullyCompleted🤟),
             title: "Transaction submitted",
             subtitle: "August 22, 2022 @ 08:08",
             icon: .single(URL(string: Token.renBTC.logoURI!)!),
@@ -123,9 +115,7 @@ struct MockedRendableDetailTransaction: RendableDetailTransaction {
     
     static func swap1() -> Self {
         .init(
-            status: .init(
-                .succeed(message: L10n.theTransactionHasBeenSuccessfullyCompleted🤟)
-            ),
+            status: .succeed(message: L10n.theTransactionHasBeenSuccessfullyCompleted🤟),
             title: "Transaction submitted",
             subtitle: "August 22, 2022 @ 08:08",
             icon: .double(URL(string: Token.nativeSolana.logoURI!)!, URL(string: Token.eth.logoURI!)!),
@@ -143,9 +133,7 @@ struct MockedRendableDetailTransaction: RendableDetailTransaction {
     
     static func swap2() -> Self {
         .init(
-            status: .init(
-                .succeed(message: L10n.theTransactionHasBeenSuccessfullyCompleted🤟)
-            ),
+            status: .succeed(message: L10n.theTransactionHasBeenSuccessfullyCompleted🤟),
             title: "Transaction submitted",
             subtitle: "August 22, 2022 @ 08:08",
             icon: .icon(.buttonSwap),
@@ -163,9 +151,7 @@ struct MockedRendableDetailTransaction: RendableDetailTransaction {
     
     static func swap3() -> Self {
         .init(
-            status: .init(
-                .succeed(message: L10n.theTransactionHasBeenSuccessfullyCompleted🤟)
-            ),
+            status: .succeed(message: L10n.theTransactionHasBeenSuccessfullyCompleted🤟),
             title: "Transaction submitted",
             subtitle: "August 22, 2022 @ 08:08",
             icon: .icon(.buttonSwap),
@@ -183,9 +169,7 @@ struct MockedRendableDetailTransaction: RendableDetailTransaction {
     
     static func burn() -> Self {
         .init(
-            status: .init(
-                .succeed(message: L10n.theTransactionHasBeenSuccessfullyCompleted🤟)
-            ),
+            status: .succeed(message: L10n.theTransactionHasBeenSuccessfullyCompleted🤟),
             title: "Transaction submitted",
             subtitle: "August 22, 2022 @ 08:08",
             icon: .single(URL(string: Token.renBTC.logoURI!)!),
@@ -204,9 +188,7 @@ struct MockedRendableDetailTransaction: RendableDetailTransaction {
     
     static func mint() -> Self {
         .init(
-            status: .init(
-                .succeed(message: L10n.theTransactionHasBeenSuccessfullyCompleted🤟)
-            ),
+            status: .succeed(message: L10n.theTransactionHasBeenSuccessfullyCompleted🤟),
             title: "Transaction submitted",
             subtitle: "August 22, 2022 @ 08:08",
             icon: .single(URL(string: Token.renBTC.logoURI!)!),
@@ -225,9 +207,7 @@ struct MockedRendableDetailTransaction: RendableDetailTransaction {
     
     static func unstake() -> Self {
         .init(
-            status: .init(
-                .succeed(message: L10n.theTransactionHasBeenSuccessfullyCompleted🤟)
-            ),
+            status: .succeed(message: L10n.theTransactionHasBeenSuccessfullyCompleted🤟),
             title: "Transaction submitted",
             subtitle: "August 22, 2022 @ 08:08",
             icon: .single(URL(string: Token.nativeSolana.logoURI!)!),
@@ -246,9 +226,7 @@ struct MockedRendableDetailTransaction: RendableDetailTransaction {
     
     static func stake() -> Self {
         .init(
-            status: .init(
-                .succeed(message: L10n.theTransactionHasBeenSuccessfullyCompleted🤟)
-            ),
+            status: .succeed(message: L10n.theTransactionHasBeenSuccessfullyCompleted🤟),
             title: "Transaction submitted",
             subtitle: "August 22, 2022 @ 08:08",
             icon: .single(URL(string: Token.nativeSolana.logoURI!)!),
@@ -267,9 +245,7 @@ struct MockedRendableDetailTransaction: RendableDetailTransaction {
     
     static func closeAccount() -> Self {
         .init(
-            status: .init(
-                .succeed(message: L10n.theTransactionHasBeenSuccessfullyCompleted🤟)
-            ),
+            status: .succeed(message: L10n.theTransactionHasBeenSuccessfullyCompleted🤟),
             title: "Transaction submitted",
             subtitle: "August 22, 2022 @ 08:08",
             icon: .icon(.closeToken),
@@ -288,9 +264,7 @@ struct MockedRendableDetailTransaction: RendableDetailTransaction {
     
     static func createAccount() -> Self {
         .init(
-            status: .init(
-                .succeed(message: L10n.theTransactionHasBeenSuccessfullyCompleted🤟)
-            ),
+            status: .succeed(message: L10n.theTransactionHasBeenSuccessfullyCompleted🤟),
             title: "Transaction submitted",
             subtitle: "August 22, 2022 @ 08:08",
             icon: .icon(.transactionCreateAccount),
@@ -309,9 +283,7 @@ struct MockedRendableDetailTransaction: RendableDetailTransaction {
     
     static func unknown() -> Self {
         .init(
-            status: .init(
-                .succeed(message: L10n.theTransactionHasBeenSuccessfullyCompleted🤟)
-            ),
+            status: .succeed(message: L10n.theTransactionHasBeenSuccessfullyCompleted🤟),
             title: "Transaction submitted",
             subtitle: "August 22, 2022 @ 08:08",
             icon: .icon(.planet),

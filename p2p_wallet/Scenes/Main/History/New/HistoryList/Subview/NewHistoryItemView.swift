@@ -9,7 +9,7 @@ import KeyAppUI
 import SwiftUI
 
 struct NewHistoryItemView: View {
-    let item: any NewHistoryRendableItem
+    let item: any RendableListTransactionItem
     let onTap: () -> Void
 
     var titleColor: Color {
@@ -90,19 +90,19 @@ struct NewHistoryItemView: View {
 }
 
 struct NewHistoryItemView_Previews: PreviewProvider {
-    static let items: [any NewHistoryRendableItem] = [
-        MockedHistoryRendableItem.send(),
-        MockedHistoryRendableItem.pendingSend(),
-        MockedHistoryRendableItem.failedSend(),
-        MockedHistoryRendableItem.receive(),
-        MockedHistoryRendableItem.swap(),
-        MockedHistoryRendableItem.mint(),
-        MockedHistoryRendableItem.burn(),
-        MockedHistoryRendableItem.stake(),
-        MockedHistoryRendableItem.unstake(),
-        MockedHistoryRendableItem.create(),
-        MockedHistoryRendableItem.close(),
-        MockedHistoryRendableItem.unknown()
+    static let items: [any RendableListTransactionItem] = [
+        MockedRendableListTransactionItem.send(),
+        MockedRendableListTransactionItem.pendingSend(),
+        MockedRendableListTransactionItem.failedSend(),
+        MockedRendableListTransactionItem.receive(),
+        MockedRendableListTransactionItem.swap(),
+        MockedRendableListTransactionItem.mint(),
+        MockedRendableListTransactionItem.burn(),
+        MockedRendableListTransactionItem.stake(),
+        MockedRendableListTransactionItem.unstake(),
+        MockedRendableListTransactionItem.create(),
+        MockedRendableListTransactionItem.close(),
+        MockedRendableListTransactionItem.unknown()
     ]
 
     static var previews: some View {

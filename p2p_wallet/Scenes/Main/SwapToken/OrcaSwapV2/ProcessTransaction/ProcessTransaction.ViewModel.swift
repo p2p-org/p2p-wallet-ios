@@ -9,9 +9,9 @@ import AnalyticsManager
 import Foundation
 import Resolver
 import RxCocoa
+import RxCombine
 import RxSwift
 import SolanaSwift
-import RxCombine
 
 protocol ProcessTransactionViewModelType {
     var navigationDriver: Driver<ProcessTransaction.NavigatableScene?> { get }
@@ -50,8 +50,13 @@ extension ProcessTransaction {
         init(processingTransaction: RawTransactionType) {
             rawTransaction = processingTransaction
             pendingTransactionSubject =
-                BehaviorRelay<PendingTransaction>(value: .init(transactionId: nil, sentAt: Date(),
-                                                               rawTransaction: processingTransaction, status: .sending))
+                BehaviorRelay<PendingTransaction>(value: .init(
+                    trxIndex: 0,
+                    transactionId: nil,
+                    sentAt: Date(),
+                    rawTransaction: processingTransaction,
+                    status: .sending
+                ))
         }
 
         deinit {
@@ -98,6 +103,7 @@ extension ProcessTransaction.ViewModel: ProcessTransactionViewModelType {
 
         // send and catch error
         let unknownErrorInfo = PendingTransaction(
+            trxIndex: 0,
             transactionId: nil,
             sentAt: Date(),
             rawTransaction: rawTransaction,

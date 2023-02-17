@@ -17,8 +17,8 @@ struct NewHistoryView: View {
             ScrollView {
                 // Display error if no result
                 if
-                    viewModel.historyTransactionList.state.error != nil,
-                    viewModel.historyTransactionList.state.data.isEmpty
+                    viewModel.historyTransactions.state.error != nil,
+                    viewModel.historyTransactions.state.data.isEmpty
                 {
                     NewHistoryListErrorView {
                         viewModel.reload()
@@ -29,7 +29,7 @@ struct NewHistoryView: View {
 
                 // Render list
                 LazyVStack(alignment: .leading, spacing: 0) {
-                    ForEach(viewModel.sections) { (section: NewHistorySection) in
+                    ForEach(viewModel.sections) { (section: NewHistoryListSection) in
                         Text(section.title)
                             .apply(style: .text4)
                             .foregroundColor(Color(Asset.Colors.mountain.color))
@@ -39,10 +39,12 @@ struct NewHistoryView: View {
                         ForEach(section.items, id: \.id) { (item: NewHistoryItem) in
                             Group {
                                 switch item {
-                                case let .rendable(rendableItem):
+                                case let .rendableTransaction(rendableItem):
                                     NewHistoryItemView(item: rendableItem) {
                                         rendableItem.onTap?()
                                     }
+                                case let .rendableOffram(item):
+                                    ListOfframItemView(item: item) {}
                                 case .placeHolder:
                                     NewHistoryListSkeletonView()
                                 case let .button(_, title, action):

@@ -46,11 +46,29 @@ class DetailTransactionViewModel: BaseViewModel, ObservableObject {
         self.rendableTransaction = RendableDetailHistoryTransaction(trx: historyTransaction, allTokens: [])
 
         super.init()
-        
+
         Task {
             let tokenRepository: TokensRepository = Resolver.resolve()
             self.rendableTransaction = try await RendableDetailHistoryTransaction(trx: historyTransaction, allTokens: tokenRepository.getTokensList(useCache: true))
         }
+    }
+
+    init(pendingTransaction: PendingTransaction) {
+        let pendingService: TransactionHandlerType = Resolver.resolve()
+        let priceService: PricesService = Resolver.resolve()
+
+        self.style = .active
+        self.rendableTransaction = RendableDetailPendingTransaction(trx: pendingTransaction, priceService: priceService)
+
+        super.init()
+
+        pendingService
+            .observeTransaction(transactionIndex: pendingTransaction.trxIndex)
+            .sink { trx in
+                guard let trx = trx else { return }
+                self.rendableTransaction = RendableDetailPendingTransaction(trx: trx, priceService: priceService)
+            }
+            .store(in: &subscriptions)
     }
 
     func share() {
