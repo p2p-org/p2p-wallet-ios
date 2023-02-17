@@ -12,7 +12,7 @@ import SolanaSwift
 import TransactionParser
 
 protocol RendableDetailTransaction {
-    var status: CurrentValueSubject<DetailTransactionStatus, Never> { get }
+    var status: DetailTransactionStatus { get }
     
     var title: String { get }
     

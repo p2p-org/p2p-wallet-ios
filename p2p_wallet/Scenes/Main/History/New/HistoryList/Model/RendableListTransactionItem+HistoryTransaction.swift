@@ -1,118 +1,15 @@
 //
-//  NewHistoryModel.swift
+//  NewHistoryRendableListItem+HistoryTransaction.swift
 //  p2p_wallet
 //
-//  Created by Giang Long Tran on 02.02.2023.
+//  Created by Giang Long Tran on 17.02.2023.
 //
 
 import Foundation
 import History
 import SolanaSwift
 
-struct NewHistorySection: Identifiable, Equatable {
-    let title: String
-    let items: [NewHistoryItem]
-    
-    var id: String { title }
-    
-    static func == (lhs: NewHistorySection, rhs: NewHistorySection) -> Bool {
-        lhs.id == rhs.id
-    }
-}
-
-enum NewHistoryItem: Identifiable, Equatable {
-    case rendable(any NewHistoryRendableItem)
-    case button(id: String, title: String, action: () -> Void)
-    case placeHolder(id: String)
-    case fetch(id: String)
-    
-    var id: String {
-        switch self {
-        case let .rendable(item):
-            return item.id
-        case let .button(id, _, _):
-            return id
-        case let .placeHolder(id):
-            return id
-        case let .fetch(id):
-            return id
-        }
-    }
-    
-    static func == (lhs: NewHistoryItem, rhs: NewHistoryItem) -> Bool {
-        lhs.id == rhs.id
-    }
-}
-
-extension Array where Element == NewHistoryItem {
-    static func generatePlaceholder(n: Int) -> [NewHistoryItem] {
-        var r: [NewHistoryItem] = []
-        for _ in 0 ..< n {
-            r.append(.placeHolder(id: UUID().uuidString))
-        }
-        return r
-    }
-}
-
-enum NewHistoryItemStatus {
-    case success
-    case pending
-    case failed
-}
-
-enum NewHistoruItemChange {
-    case positive
-    case unchanged
-    case negative
-}
-
-protocol NewHistoryRendableItem: Identifiable {
-    var id: String { get }
-    
-    var date: Date { get }
-    
-    var status: NewHistoryItemStatus { get }
-    
-    var icon: NewHistoryRendableItemIcon { get }
-
-    var title: String { get }
-    
-    var subtitle: String { get }
-    
-    var detail: (NewHistoruItemChange, String) { get }
-    
-    var subdetail: String { get }
-    
-    var onTap: (() -> Void)? { get }
-}
-
-enum NewHistoryRendableItemIcon {
-    case icon(UIImage)
-    case single(URL)
-    case double(URL, URL)
-}
-
-struct MockedHistoryRendableItem: NewHistoryRendableItem {
-    var id: String
-    
-    var date: Date
-    
-    var status: NewHistoryItemStatus
-    
-    var icon: NewHistoryRendableItemIcon
-    
-    var title: String
-    
-    var subtitle: String
-    
-    var detail: (NewHistoruItemChange, String)
-    
-    var subdetail: String
-    
-    var onTap: (() -> Void)? = nil
-}
-
-struct RendableHistoryTransactionListItem: NewHistoryRendableItem {
+struct RendableListHistoryTransactionItem: RendableListTransactionItem {
     private var trx: HistoryTransaction
     
     // Use to map history token to solana token. They are identical but we need to extract png images.
@@ -134,7 +31,7 @@ struct RendableHistoryTransactionListItem: NewHistoryRendableItem {
         trx.date
     }
     
-    var status: NewHistoryItemStatus {
+    var status: NewHistoryRendableListTransactionItemStatus {
         switch trx.status {
         case .success:
             return .success
@@ -143,7 +40,7 @@ struct RendableHistoryTransactionListItem: NewHistoryRendableItem {
         }
     }
     
-    var icon: NewHistoryRendableItemIcon {
+    var icon: NewHistoryRendableListTransactionItemIcon {
         switch trx.info {
         case let .send(data):
             return icon(mint: data.token.mint, url: data.token.logoUrl, defaultIcon: .transactionSend)
@@ -219,7 +116,7 @@ struct RendableHistoryTransactionListItem: NewHistoryRendableItem {
         }
     }
     
-    var detail: (NewHistoruItemChange, String) {
+    var detail: (NewHistoryRendableListTransactionItemChange, String) {
         switch trx.info {
         case let .send(data):
             return (.negative, "-\(data.amount.usdAmount.fiatAmountFormattedString())")
@@ -257,13 +154,13 @@ struct RendableHistoryTransactionListItem: NewHistoryRendableItem {
     var subdetail: String {
         switch trx.info {
         case let .send(data):
-            return "\(data.amount.tokenAmount.tokenAmountFormattedString(symbol: data.token.symbol))"
+            return "-\(data.amount.tokenAmount.tokenAmountFormattedString(symbol: data.token.symbol))"
         case let .receive(data):
             return "+\(data.amount.tokenAmount.tokenAmountFormattedString(symbol: data.token.symbol))"
         case let .swap(data):
             return "\(data.from.amount.tokenAmount.tokenAmountFormattedString(symbol: data.from.token.symbol))"
         case let .burn(data):
-            return "\(data.amount.tokenAmount.tokenAmountFormattedString(symbol: data.token.symbol))"
+            return "-\(data.amount.tokenAmount.tokenAmountFormattedString(symbol: data.token.symbol))"
         case let .mint(data):
             return "+\(data.amount.tokenAmount.tokenAmountFormattedString(symbol: data.token.symbol))"
         case let .stake(data):
@@ -304,174 +201,11 @@ struct RendableHistoryTransactionListItem: NewHistoryRendableItem {
         return nil
     }
     
-    private func icon(mint: String?, url: URL?, defaultIcon: UIImage) -> NewHistoryRendableItemIcon {
+    private func icon(mint: String?, url: URL?, defaultIcon: UIImage) -> NewHistoryRendableListTransactionItemIcon {
         if let url = resolveTokenIconURL(mint: mint, fallbackImageURL: url) {
             return .single(url)
         } else {
             return .icon(defaultIcon)
         }
-    }
-}
-
-extension MockedHistoryRendableItem {
-    static func pendingSend() -> Self {
-        .init(
-            id: UUID().uuidString,
-            date: Date(),
-            status: .pending,
-            icon: .single(URL(string: Token.nativeSolana.logoURI!)!),
-            title: "Sending...",
-            subtitle: "To mad.p2p.sol",
-            detail: (.negative, "–$122.12"),
-            subdetail: "–5.21 SOL"
-        )
-    }
-    
-    static func send() -> Self {
-        .init(
-            id: UUID().uuidString,
-            date: Date(),
-            status: .success,
-            icon: .single(URL(string: Token.nativeSolana.logoURI!)!),
-            title: "Send",
-            subtitle: "To mad.p2p.sol",
-            detail: (.negative, "–$122.12"),
-            subdetail: "–5.21 SOL"
-        )
-    }
-    
-    static func failedSend() -> Self {
-        .init(
-            id: UUID().uuidString,
-            date: Date(),
-            status: .failed,
-            
-            icon: .single(URL(string: Token.usdc.logoURI!)!),
-            title: "Send",
-            subtitle: "To mad.p2p.sol",
-            detail: (.negative, "–$34.36"),
-            subdetail: "–34.36 USDC"
-        )
-    }
-    
-    static func receive() -> Self {
-        .init(
-            id: UUID().uuidString,
-            date: Date(),
-            status: .success,
-            icon: .single(URL(string: Token.renBTC.logoURI!)!),
-            title: "Receive",
-            subtitle: "From ...S39N",
-            detail: (.positive, "+$5 268.65"),
-            subdetail: "+0.3271523 renBTC"
-        )
-    }
-    
-    static func swap() -> Self {
-        .init(
-            id: UUID().uuidString,
-            date: Date(),
-            status: .success,
-            icon: .double(
-                URL(string: Token.nativeSolana.logoURI!)!,
-                URL(string: Token.eth.logoURI!)!
-            ),
-            title: "Swap",
-            subtitle: "SOL to ETH",
-            detail: (.positive, "+3.5 ETH"),
-            subdetail: "-120 SOL"
-        )
-    }
-    
-    static func burn() -> Self {
-        .init(
-            id: UUID().uuidString,
-            date: Date(),
-            status: .success,
-            
-            icon: .single(URL(string: Token.renBTC.logoURI!)!),
-            title: "Burn",
-            subtitle: "Signature: ...Hs7s",
-            detail: (.negative, "–$5 268.65"),
-            subdetail: "–0.3271523 renBTC"
-        )
-    }
-    
-    static func mint() -> Self {
-        .init(
-            id: UUID().uuidString,
-            date: Date(),
-            status: .success,
-            icon: .single(URL(string: Token.renBTC.logoURI!)!),
-            title: "Mint",
-            subtitle: "Signature: ...Hs7s",
-            detail: (.positive, "$5 268.65"),
-            subdetail: "0.3271523 renBTC"
-        )
-    }
-    
-    static func stake() -> Self {
-        .init(
-            id: UUID().uuidString,
-            date: Date(),
-            status: .success,
-            icon: .single(URL(string: Token.nativeSolana.logoURI!)!),
-            title: "Stake",
-            subtitle: "Vote account: ....S39N",
-            detail: (.negative, "–$122.12"),
-            subdetail: "–5.21 SOL"
-        )
-    }
-    
-    static func unstake() -> Self {
-        .init(
-            id: UUID().uuidString,
-            date: Date(),
-            status: .success,
-            icon: .single(URL(string: Token.nativeSolana.logoURI!)!),
-            title: "Unstake",
-            subtitle: "Vote account: ....S39N",
-            detail: (.positive, "+$122.12"),
-            subdetail: "+5.21 SOL"
-        )
-    }
-    
-    static func create() -> Self {
-        .init(
-            id: UUID().uuidString,
-            date: Date(),
-            status: .success,
-            icon: .icon(.transactionCreateAccount),
-            title: "Create account",
-            subtitle: "5Rho...SheY",
-            detail: (.unchanged, ""),
-            subdetail: ""
-        )
-    }
-    
-    static func close() -> Self {
-        .init(
-            id: UUID().uuidString,
-            date: Date(),
-            status: .success,
-            icon: .icon(.transactionCloseAccount),
-            title: "Close account",
-            subtitle: "5Rho...SheY",
-            detail: (.unchanged, ""),
-            subdetail: ""
-        )
-    }
-    
-    static func unknown() -> Self {
-        .init(
-            id: UUID().uuidString,
-            date: Date(),
-            status: .success,
-            icon: .icon(.planet),
-            title: "Unknown",
-            subtitle: "Signature: ...Hs7s",
-            detail: (.negative, "-$32.11"),
-            subdetail: "–1 SOL"
-        )
     }
 }

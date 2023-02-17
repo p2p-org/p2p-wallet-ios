@@ -13,14 +13,14 @@ import SolanaSwift
 struct RendableDetailParsedTransaction: RendableDetailTransaction {
     let trx: ParsedTransaction
     
-    var status: CurrentValueSubject<DetailTransactionStatus, Never> {
+    var status: DetailTransactionStatus {
         switch trx.status {
         case .confirmed:
-            return .init(.succeed(message: L10n.theTransactionHasBeenSuccessfullyCompleted))
+            return .succeed(message: L10n.theTransactionHasBeenSuccessfullyCompleted)
         case .requesting, .processing:
-            return .init(.loading(message: L10n.theTransactionIsBeingProcessed))
+            return .loading(message: L10n.theTransactionIsBeingProcessed)
         case let .error(error):
-            return .init(.error(message: NSAttributedString(string: error ?? "")))
+            return .error(message: NSAttributedString(string: error ?? ""))
         }
     }
     

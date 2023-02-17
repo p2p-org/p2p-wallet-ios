@@ -49,7 +49,7 @@ struct DetailTransactionView: View {
     }
     
     private var amountInFiatColor: Color {
-        if case .error = viewModel.rendableTransaction.status.value {
+        if case .error = viewModel.rendableTransaction.status {
             return Color(Asset.Colors.rose.color)
         }
         
@@ -99,6 +99,8 @@ struct DetailTransactionView: View {
                 .padding(.bottom, 32)
             } else {
                 Rectangle()
+                    .fill(.clear)
+                    .contentShape(Rectangle())
                     .padding(.bottom, 34)
             }
         }
@@ -134,7 +136,7 @@ struct DetailTransactionView: View {
 
     var status: some View {
         if
-            case let .succeed(message) = viewModel.rendableTransaction.status.value,
+            case let .succeed(message) = viewModel.rendableTransaction.status,
             message.isEmpty
         {
             return AnyView(
@@ -145,7 +147,7 @@ struct DetailTransactionView: View {
             )
         } else {
             return AnyView(
-                TransactionDetailStatusView(status: viewModel.rendableTransaction.status.value) {}
+                TransactionDetailStatusView(status: viewModel.rendableTransaction.status) {}
                     .padding(.horizontal, 16)
                     .padding(.bottom, 32)
             )

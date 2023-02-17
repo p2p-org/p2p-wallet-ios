@@ -7,9 +7,16 @@
 
 import Foundation
 import KeyAppUI
+import Resolver
+import Sell
+import Send
 import SwiftUI
 
 class NewHistoryCoordinator: SmartCoordinator<Void> {
+    deinit {
+        print("Deinit")
+    }
+    
     override func build() -> UIViewController {
         let vm = NewHistoryViewModel()
 
@@ -17,27 +24,47 @@ class NewHistoryCoordinator: SmartCoordinator<Void> {
             .sink { [weak self] action in
                 guard let self = self else { return }
 
-                let coordinator: TransactionDetailCoordinator
-
                 switch action {
                 case let .openParsedTransaction(trx):
-                    coordinator = TransactionDetailCoordinator(
+                    let coordinator = TransactionDetailCoordinator(
                         input: .parsedTransaction(trx),
                         style: .passive,
                         presentingViewController: self.presentation.presentingViewController
                     )
+
+                    self.coordinate(to: coordinator)
+                        .sink { result in
+                            print(result)
+                        }
+                        .store(in: &self.subscriptions)
+
                 case let .openHistoryTransaction(trx):
-                    coordinator = TransactionDetailCoordinator(
+                    let coordinator = TransactionDetailCoordinator(
                         input: .historyTransaction(trx),
                         style: .passive,
                         presentingViewController: self.presentation.presentingViewController
                     )
-                }
 
-                self
-                    .coordinate(to: coordinator)
-                    .sink { _ in }
-                    .store(in: &self.subscriptions)
+                    self.coordinate(to: coordinator)
+                        .sink { _ in }
+                        .store(in: &self.subscriptions)
+
+                case let .openSellTransaction(trx):
+                    self.openSell(trx)
+
+                case let .openPendingTransaction(trx):
+                    let coordinator = TransactionDetailCoordinator(
+                        input: .pendingTransaction(trx),
+                        style: .passive,
+                        presentingViewController: self.presentation.presentingViewController
+                    )
+
+                    self.coordinate(to: coordinator)
+                        .sink { result in
+                            print(result)
+                        }
+                        .store(in: &self.subscriptions)
+                }
             }
             .store(in: &subscriptions)
 
@@ -52,5 +79,41 @@ class NewHistoryCoordinator: SmartCoordinator<Void> {
         }.store(in: &subscriptions)
 
         return vc
+    }
+
+    private func openSell(_ transaction: SellDataServiceTransaction) {
+        guard let navigationController = presentation.presentingViewController as? UINavigationController else {
+            print(SmartCoordinatorError.unsupportedPresentingViewController)
+            return
+        }
+
+        coordinate(to: SellCoordinator(
+            initialAmountInToken: transaction.baseCurrencyAmount,
+            navigationController: navigationController
+        ))
+        .sink { _ in }
+        .store(in: &subscriptions)
+    }
+
+    private func openSend(_ transaction: SellDataServiceTransaction) {
+        guard let viewController = presentation.presentingViewController as? UINavigationController else {
+            print(SmartCoordinatorError.unsupportedPresentingViewController)
+            return
+        }
+
+        let walletsRepository = Resolver.resolve(WalletsRepository.self)
+        coordinate(to: SendCoordinator(
+            rootViewController: viewController,
+            preChosenWallet: walletsRepository.nativeWallet,
+            preChosenRecipient: Recipient(
+                address: transaction.depositWallet,
+                category: .solanaAddress,
+                attributes: [.funds]
+            ),
+            preChosenAmount: transaction.baseCurrencyAmount,
+            allowSwitchingMainAmountType: false
+        ))
+        .sink { _ in }
+        .store(in: &subscriptions)
     }
 }
