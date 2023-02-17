@@ -1228,3 +1228,5 @@ You can try again, but your new transaction will be subject to the current rates
 "The token you pay" = "Токен, который вы платите";
 "You can enter “You pay” field only" = "Вы можете ввести только поле «Вы платите»";
 "Not enough %@" = "Недостаточно <С>";
+"You can’t swap same token" = "Вы не можете поменять один и тот же токен";
+"Swap of these tokens isn’t possible" = "Обмен этими токенами невозможен";

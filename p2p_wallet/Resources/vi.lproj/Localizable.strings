@@ -1233,3 +1233,5 @@ You can try again, but your new transaction will be subject to the current rates
 "The token you pay" = "Mã thông báo bạn thanh toán";
 "You can enter “You pay” field only" = "Bạn chỉ có thể nhập trường “Bạn thanh toán”";
 "Not enough %@" = "Không đủ %@";
+"You can’t swap same token" = "Bạn không thể trao đổi cùng một mã thông báo";
+"Swap of these tokens isn’t possible" = "Hoán đổi các mã thông báo này là không thể";
