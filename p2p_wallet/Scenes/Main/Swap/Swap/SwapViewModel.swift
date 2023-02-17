@@ -81,17 +81,19 @@ private extension SwapViewModel {
 
         changeFromToken
             .sinkAsync { [weak self] token in
-                self?.arePricesLoading = true
-                let _ = await self?.stateMachine.accept(action: .changeFromToken(token))
-                self?.arePricesLoading = false
+                guard let self else { return }
+                self.setLoadingToken(viewModel: self.fromTokenViewModel, isOn: true)
+                let _ = await self.stateMachine.accept(action: .changeFromToken(token))
+                self.setLoadingToken(viewModel: self.fromTokenViewModel, isOn: false)
             }
             .store(in: &subscriptions)
 
         changeToToken
             .sinkAsync { [ weak self] token in
-                self?.arePricesLoading = true
-                let _ = await self?.stateMachine.accept(action: .changeToToken(token))
-                self?.arePricesLoading = false
+                guard let self else { return }
+                self.setLoadingToken(viewModel: self.toTokenViewModel, isOn: true)
+                let _ = await self.stateMachine.accept(action: .changeToToken(token))
+                self.setLoadingToken(viewModel: self.toTokenViewModel, isOn: false)
             }
             .store(in: &subscriptions)
 
@@ -118,12 +120,13 @@ private extension SwapViewModel {
             }
             .store(in: &subscriptions)
 
-        Publishers.CombineLatest(
+        Publishers.CombineLatest3(
             $arePricesLoading.eraseToAnyPublisher(),
-            toTokenViewModel.$isAmountLoading.eraseToAnyPublisher()
+            toTokenViewModel.$isAmountLoading.eraseToAnyPublisher(),
+            fromTokenViewModel.$isAmountLoading.eraseToAnyPublisher()
         )
-        .sink { [weak self] (value1, value2) in
-            guard value1 || value2 else { return }
+        .sink { [weak self] (value1, value2, value3) in
+            guard value1 || value2 || value3 else { return }
             self?.actionButtonViewModel.actionButton = .init(isEnabled: false, title: L10n.counting)
         }
         .store(in: &subscriptions)
@@ -146,9 +149,13 @@ private extension SwapViewModel {
         switchTokens
             .sinkAsync(receiveValue: { [weak self] _ in
                 guard let self else { return }
+                self.setLoadingToken(viewModel: self.fromTokenViewModel, isOn: true)
+                self.setLoadingToken(viewModel: self.toTokenViewModel, isOn: true)
                 let _ = await self.stateMachine.accept(
                     action: .changeBothTokens(from: self.currentState.toToken, to: self.currentState.fromToken)
                 )
+                self.setLoadingToken(viewModel: self.fromTokenViewModel, isOn: false)
+                self.setLoadingToken(viewModel: self.toTokenViewModel, isOn: false)
             })
             .store(in: &subscriptions)
 
@@ -180,20 +187,30 @@ private extension SwapViewModel {
         switch state.status {
         case .ready:
             if state.amountFrom == 0 {
-                actionButtonViewModel.actionButton = .init(isEnabled: false, title: L10n.enterTheAmount)
+                actionButtonViewModel.actionButton = SliderActionButtonViewModel.ActionButton(isEnabled: false, title: L10n.enterTheAmount)
             } else {
-                actionButtonViewModel.actionButton = .init(
+                actionButtonViewModel.actionButton = SliderActionButtonViewModel.ActionButton(
                     isEnabled: true,
                     title: L10n.swap(state.fromToken.jupiterToken.symbol, state.toToken.jupiterToken.symbol)
                 )
             }
         case .requiredInitialize:
-            actionButtonViewModel.actionButton = .init(isEnabled: false, title: L10n.counting)
+            actionButtonViewModel.actionButton = SliderActionButtonViewModel.ActionButton(isEnabled: false, title: L10n.counting)
         case .error(.notEnoughFromToken):
-            actionButtonViewModel.actionButton = .init(isEnabled: false, title: L10n.notEnough(state.fromToken.jupiterToken.symbol))
+            actionButtonViewModel.actionButton = SliderActionButtonViewModel.ActionButton(isEnabled: false, title: L10n.notEnough(state.fromToken.jupiterToken.symbol))
+        case .error(.equalSwapTokens):
+            actionButtonViewModel.actionButton = SliderActionButtonViewModel.ActionButton(isEnabled: false, title: L10n.youCanTSwapSameToken)
+        case .error(.routeIsNotFound):
+            actionButtonViewModel.actionButton = SliderActionButtonViewModel.ActionButton(isEnabled: false, title: L10n.swapOfTheseTokensIsnTPossible)
         default:
             //TODO: Handle in error tasks like https://p2pvalidator.atlassian.net/browse/PWN-7100
-            break
+            actionButtonViewModel.actionButton = SliderActionButtonViewModel.ActionButton(isEnabled: false, title: L10n.swapOfTheseTokensIsnTPossible)
         }
+    }
+
+    func setLoadingToken(viewModel: SwapInputViewModel, isOn: Bool) {
+        arePricesLoading = isOn
+        viewModel.isLoading = isOn
+        toTokenViewModel.isAmountLoading = isOn
     }
 }
