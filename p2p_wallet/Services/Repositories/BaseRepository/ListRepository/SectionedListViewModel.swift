@@ -9,10 +9,7 @@ protocol ListSection: Hashable {
 }
 
 @MainActor
-class SectionedListViewModel<
-    Repository: AnyListRepository,
-    MappingStrategy: ListMappingStrategy
->: ListViewModel<Repository, MappingStrategy> where MappingStrategy.Sequence == Repository.ItemType {
+class SectionedListViewModel<Repository: AnyListRepository>: ListViewModel<Repository> {
     @Published private var sections: [any ListSection]?
     
 }
