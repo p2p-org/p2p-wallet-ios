@@ -15,6 +15,8 @@ import TransactionParser
 
 enum NewHistoryAction {
     case openDetailByParsedTransaction(ParsedTransaction)
+
+    case openDetail(HistoryTransaction)
 }
 
 class NewHistoryViewModel: BaseViewModel, ObservableObject {
@@ -24,11 +26,9 @@ class NewHistoryViewModel: BaseViewModel, ObservableObject {
 
     // State
 
-    let historyTransactionList: ListAdapter<NewHistoryServiceRepository.ItemSequence>
+    let historyTransactionList: ListAdapter<AnyAsyncSequence<RendableHistoryTransactionListItem>>
 
-    var allTokens: [Token] = []
-
-    let actionSubject = PassthroughSubject<NewHistoryAction, Never>()
+    let actionSubject: PassthroughSubject<NewHistoryAction, Never>
 
     // Output
 
@@ -39,13 +39,30 @@ class NewHistoryViewModel: BaseViewModel, ObservableObject {
     init(
         provider: KeyAppHistoryProvider = Resolver.resolve(),
         userWalletManager: UserWalletManager = Resolver.resolve(),
+        tokensRepository: TokensRepository = Resolver.resolve(),
         mint: String? = nil
     ) {
         // Init services and repositories
         repository = NewHistoryServiceRepository(provider: provider)
+        
+        let actionSubject: PassthroughSubject<NewHistoryAction, Never> = .init()
+        self.actionSubject = actionSubject
 
         // Setup list adaptor
-        historyTransactionList = .init(sequence: repository.getAll(account: userWalletManager.wallet?.account, mint: mint))
+        historyTransactionList = .init(
+            sequence: repository
+                .getAll(account: userWalletManager.wallet?.account, mint: mint)
+                .map { trx in
+                    return await RendableHistoryTransactionListItem(
+                        trx: trx,
+                        allTokens: try tokensRepository.getTokensList(useCache: true),
+                        onTap: { [weak actionSubject] () -> Void in
+                            actionSubject?.send(.openDetail(trx))
+                        }
+                    )
+                }
+                .eraseToAnyAsyncSequence()
+        )
 
         super.init()
 
@@ -76,7 +93,7 @@ class NewHistoryViewModel: BaseViewModel, ObservableObject {
         var result = dictionary.keys.sorted().reversed()
             .map { key in
                 let items = dictionary[key]?.map { trx -> NewHistoryItem in
-                    .rendable(RendableHistoryTransactionListItem(trx: trx, allTokens: allTokens))
+                    .rendable(trx)
                 }
 
                 return NewHistorySection(title: dateFormatter.string(from: key), items: items ?? [])
@@ -89,9 +106,9 @@ class NewHistoryViewModel: BaseViewModel, ObservableObject {
 
                 if historyTransactionList.state.error == nil {
                     // Show skeleton
-                    insertedItems = [.button(id: UUID().uuidString, title: L10n.tryAgain, action: { [weak self] in self?.fetch() })]
-                } else {
                     insertedItems = .generatePlaceholder(n: 1)
+                } else {
+                    insertedItems = [.button(id: UUID().uuidString, title: L10n.tryAgain, action: { [weak self] in self?.fetch() })]
                 }
 
                 result.append(
@@ -110,11 +127,5 @@ class NewHistoryViewModel: BaseViewModel, ObservableObject {
         }
 
         return result
-    }
-
-    func onTap(item: any NewHistoryRendableItem) {
-//        if let item = item as? RendableParsedTransaction {
-//            actionSubject.send(.openDetailByParsedTransaction(item.trx))
-//        }
     }
 }

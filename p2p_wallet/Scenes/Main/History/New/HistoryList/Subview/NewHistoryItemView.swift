@@ -40,6 +40,22 @@ struct NewHistoryItemView: View {
                 NewHistoryIconView(icon: item.icon)
                 VStack(spacing: 4) {
                     HStack(spacing: 5) {
+                        Text(item.title)
+                            .foregroundColor(Color(Asset.Colors.night.color))
+                            .fontWeight(.semibold)
+                            .apply(style: .text2)
+                            .lineLimit(2)
+                            .multilineTextAlignment(.leading)
+                        Spacer()
+                        Text(item.detail.1)
+                            .fontWeight(.semibold)
+                            .apply(style: .text2)
+                            .foregroundColor(detailColor)
+                            .lineLimit(2)
+                            .multilineTextAlignment(.trailing)
+                    }
+
+                    HStack(spacing: 4) {
                         switch item.status {
                         case .failed:
                             Image(uiImage: .crossIcon)
@@ -56,22 +72,6 @@ struct NewHistoryItemView: View {
                         case .success:
                             SwiftUI.EmptyView()
                         }
-                        Text(item.title)
-                            .foregroundColor(titleColor)
-                            .fontWeight(.semibold)
-                            .apply(style: .text2)
-                            .lineLimit(2)
-                            .multilineTextAlignment(.leading)
-                        Spacer()
-                        Text(item.detail.1)
-                            .fontWeight(.semibold)
-                            .apply(style: .text2)
-                            .foregroundColor(detailColor)
-                            .lineLimit(2)
-                            .multilineTextAlignment(.trailing)
-                    }
-
-                    HStack {
                         Text(item.subtitle)
                             .foregroundColor(Color(Asset.Colors.mountain.color))
                             .apply(style: .label1)
