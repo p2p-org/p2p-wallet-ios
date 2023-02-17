@@ -14,9 +14,9 @@ import SolanaSwift
 import TransactionParser
 
 enum NewHistoryAction {
-    case openDetailByParsedTransaction(ParsedTransaction)
+    case openParsedTransaction(ParsedTransaction)
 
-    case openDetail(HistoryTransaction)
+    case openHistoryTransaction(HistoryTransaction)
 }
 
 class NewHistoryViewModel: BaseViewModel, ObservableObject {
@@ -44,7 +44,7 @@ class NewHistoryViewModel: BaseViewModel, ObservableObject {
     ) {
         // Init services and repositories
         repository = NewHistoryServiceRepository(provider: provider)
-        
+
         let actionSubject: PassthroughSubject<NewHistoryAction, Never> = .init()
         self.actionSubject = actionSubject
 
@@ -53,11 +53,11 @@ class NewHistoryViewModel: BaseViewModel, ObservableObject {
             sequence: repository
                 .getAll(account: userWalletManager.wallet?.account, mint: mint)
                 .map { trx in
-                    return await RendableHistoryTransactionListItem(
+                    await RendableHistoryTransactionListItem(
                         trx: trx,
                         allTokens: try tokensRepository.getTokensList(useCache: true),
-                        onTap: { [weak actionSubject] () -> Void in
-                            actionSubject?.send(.openDetail(trx))
+                        onTap: { [weak actionSubject] () in
+                            actionSubject?.send(.openHistoryTransaction(trx))
                         }
                     )
                 }
@@ -100,32 +100,33 @@ class NewHistoryViewModel: BaseViewModel, ObservableObject {
             }
 
         // Phase 2: Add skeleton
-        if historyTransactionList.state.fetchable {
-            if let lastSection = result.popLast() {
-                let insertedItems: [NewHistoryItem]
+        if let lastSection = result.popLast() {
+            var insertedItems: [NewHistoryItem] = []
 
-                if historyTransactionList.state.error == nil {
-                    // Show skeleton
-                    insertedItems = .generatePlaceholder(n: 1)
-                } else {
-                    insertedItems = [.button(id: UUID().uuidString, title: L10n.tryAgain, action: { [weak self] in self?.fetch() })]
-                }
-
-                result.append(
-                    .init(
-                        title: lastSection.title,
-                        items: lastSection.items + insertedItems
-                    )
-                )
+            if historyTransactionList.state.fetchable {
+                insertedItems = .generatePlaceholder(n: 1) + [.fetch(id: UUID().uuidString)]
             }
+
+            if historyTransactionList.state.error != nil {
+                insertedItems = [.button(id: UUID().uuidString, title: L10n.tryAgain, action: { [weak self] in self?.fetch() })]
+            }
+
+            result.append(
+                .init(
+                    title: lastSection.title,
+                    items: lastSection.items + insertedItems
+                )
+            )
         }
 
+        // Phase 2: Or replace with skeletons in first load
         if historyTransactionList.state.status == .fetching && historyTransactionList.state.data.isEmpty {
             return [
                 .init(title: "", items: .generatePlaceholder(n: 7))
             ]
         }
 
+        print(historyTransactionList.state.error)
         return result
     }
 }

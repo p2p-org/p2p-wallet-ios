@@ -1239,3 +1239,7 @@ You can try again, but your new transaction will be subject to the current rates
 "Unknown" = "không xác định";
 "Signature" = "Chữ ký";
 "Vote account" = "Tài khoản bình chọn";
+"Burn signature" = "Ghi chữ ký";
+"Mint signature" = "chữ ký bạc hà";
+"Unstake signature" = "Bỏ chữ ký";
+"Stake signature" = "chữ ký cổ phần";

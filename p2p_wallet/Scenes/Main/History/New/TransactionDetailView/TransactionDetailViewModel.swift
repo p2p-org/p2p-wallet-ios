@@ -7,6 +7,9 @@
 
 import Combine
 import Foundation
+import History
+import Resolver
+import SolanaSwift
 import TransactionParser
 
 enum DetailTransactionStyle {
@@ -38,11 +41,23 @@ class DetailTransactionViewModel: BaseViewModel, ObservableObject {
         self.rendableTransaction = RendableDetailParsedTransaction(trx: parsedTransaction)
     }
 
+    init(historyTransaction: HistoryTransaction) {
+        self.style = .passive
+        self.rendableTransaction = RendableDetailHistoryTransaction(trx: historyTransaction, allTokens: [])
+
+        super.init()
+        
+        Task {
+            let tokenRepository: TokensRepository = Resolver.resolve()
+            self.rendableTransaction = try await RendableDetailHistoryTransaction(trx: historyTransaction, allTokens: tokenRepository.getTokensList(useCache: true))
+        }
+    }
+
     func share() {
         guard let url = URL(string: "https://explorer.solana.com/tx/\(rendableTransaction.signature ?? "")") else { return }
         action.send(.share(url))
     }
-    
+
     func explore() {
         guard let url = URL(string: "https://explorer.solana.com/tx/\(rendableTransaction.signature ?? "")") else { return }
         UIApplication.shared.open(url)

@@ -1208,3 +1208,7 @@ You can try again, but your new transaction will be subject to the current rates
 "Unknown" = "Unknown";
 "Signature" = "Signature";
 "Vote account" = "Vote account";
+"Burn signature" = "Burn signature";
+"Mint signature" = "Mint signature";
+"Unstake signature" = "Unstake signature";
+"Stake signature" = "Stake signature";

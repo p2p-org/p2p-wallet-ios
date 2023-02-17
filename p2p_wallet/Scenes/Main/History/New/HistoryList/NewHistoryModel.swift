@@ -24,6 +24,7 @@ enum NewHistoryItem: Identifiable, Equatable {
     case rendable(any NewHistoryRendableItem)
     case button(id: String, title: String, action: () -> Void)
     case placeHolder(id: String)
+    case fetch(id: String)
     
     var id: String {
         switch self {
@@ -32,6 +33,8 @@ enum NewHistoryItem: Identifiable, Equatable {
         case let .button(id, _, _):
             return id
         case let .placeHolder(id):
+            return id
+        case let .fetch(id):
             return id
         }
     }
@@ -211,7 +214,6 @@ struct RendableHistoryTransactionListItem: NewHistoryRendableItem {
             return "\(L10n.voteAccount): \(RecipientFormatter.shortFormat(destination: data.account.address))"
         case let .unstake(data):
             return "\(L10n.voteAccount): \(RecipientFormatter.shortFormat(destination: data.account.address))"
-            return RecipientFormatter.signature(signature: trx.signature)
         default:
             return "\(L10n.signature): \(RecipientFormatter.shortSignature(signature: trx.signature))"
         }
@@ -230,7 +232,7 @@ struct RendableHistoryTransactionListItem: NewHistoryRendableItem {
         case let .mint(data):
             return (.positive, "+\(data.amount.usdAmount.fiatAmountFormattedString())")
         case let .stake(data):
-            return (.negative, "+\(data.amount.usdAmount.fiatAmountFormattedString())")
+            return (.negative, "-\(data.amount.usdAmount.fiatAmountFormattedString())")
         case let .unstake(data):
             return (.positive, "+\(data.amount.usdAmount.fiatAmountFormattedString())")
         case let .createAccount(data):
@@ -245,7 +247,7 @@ struct RendableHistoryTransactionListItem: NewHistoryRendableItem {
             if data.amount.usdAmount >= 0 {
                 return (.positive, "+\(data.amount.usdAmount.fiatAmountFormattedString())")
             } else {
-                return (.positive, "\(data.amount.usdAmount.fiatAmountFormattedString())")
+                return (.negative, "\(data.amount.usdAmount.fiatAmountFormattedString())")
             }
         case .none:
             return (.unchanged, "")
