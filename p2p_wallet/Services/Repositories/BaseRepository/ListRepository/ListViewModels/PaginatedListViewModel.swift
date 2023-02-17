@@ -19,17 +19,14 @@ class PaginatedListViewModel<Repository: AnyPaginatedListRepository>: ListViewMo
     
     /// Handle new data that just received
     /// - Parameter newData: the new data received
-    override func handleNewData(_ newData: ItemType?) {
-        guard var data = self.data as? [Repository.ListItemType],
-            let newData = newData as? [Repository.ListItemType]
-        else { return super.handleNewData(newData) }
+    override func handleNewData(_ newData: [ItemType]) {
         // append data that is currently not existed in current data array
         data.append(contentsOf:
             newData.filter { newRecord in
                 !data.contains { $0.id == newRecord.id }
             }
         )
-        super.handleNewData(data as? Repository.ItemType)
+        super.handleNewData(data)
     }
 
     /// Fetch next records if pagination is enabled
