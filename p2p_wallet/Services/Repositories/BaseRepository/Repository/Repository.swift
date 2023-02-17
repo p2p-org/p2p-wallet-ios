@@ -25,32 +25,32 @@ protocol AnyPaginatedListRepository: AnyListRepository {
     var paginationStrategy: PaginationStrategy { get }
 }
 
-class ListRepository<ItemType: Hashable & Identifiable>: AnyListRepository {
-    // MARK: - Properties
-
-    /// Strategy that indicates how pagination works, nil if pagination is disabled
-    let paginationStrategy: PaginationStrategy?
-
-    // MARK: - Initializer
-    init(paginationStrategy: PaginationStrategy? = nil) {
-        self.paginationStrategy = paginationStrategy
-    }
-
-    func shouldFetch() -> Bool {
-        var shouldRequest: Bool = true
-        
-        // check if isLastPageLoaded
-        if let paginationStrategy {
-            shouldRequest = shouldRequest && !paginationStrategy.isLastPageLoaded
-        }
-
-        return shouldRequest
-    }
-
-    func fetch() async throws -> [ItemType] {
-        fatalError("Must override")
-    }
-}
+//class ListRepository<ItemType: Hashable & Identifiable>: AnyListRepository {
+//    // MARK: - Properties
+//
+//    /// Strategy that indicates how pagination works, nil if pagination is disabled
+//    let paginationStrategy: PaginationStrategy?
+//
+//    // MARK: - Initializer
+//    init(paginationStrategy: PaginationStrategy? = nil) {
+//        self.paginationStrategy = paginationStrategy
+//    }
+//
+//    func shouldFetch() -> Bool {
+//        var shouldRequest: Bool = true
+//
+//        // check if isLastPageLoaded
+//        if let paginationStrategy {
+//            shouldRequest = shouldRequest && !paginationStrategy.isLastPageLoaded
+//        }
+//
+//        return shouldRequest
+//    }
+//
+//    func fetch() async throws -> [ItemType] {
+//        fatalError("Must override")
+//    }
+//}
 
 //extension AsyncSequence: Repository {
 //    func fetch() async throws {
