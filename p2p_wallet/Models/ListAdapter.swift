@@ -102,9 +102,7 @@ class ListAdapter<Sequence: AsyncSequence> where Sequence.Element: Identifiable 
         currentTask = nil
         
         // Reset state
-        state.data = []
-        state.status = .ready
-        state.error = nil
+        state = .init()
         
         // Set new iterator
         iterator = sequence.makeAsyncIterator()
@@ -125,6 +123,7 @@ class ListAdapter<Sequence: AsyncSequence> where Sequence.Element: Identifiable 
         // Create a new task
         currentTask = Task {
             state.status = .fetching
+            state.error = nil
             
             // Preparing
             var n = limit
@@ -136,6 +135,9 @@ class ListAdapter<Sequence: AsyncSequence> where Sequence.Element: Identifiable 
                     fetchedItems.append(item)
                     n -= 1
                 }
+                
+                // Update fetchable
+                state.fetchable = n == 0
             } catch {
                 if !Task.isCancelled {
                     print(error)
@@ -145,9 +147,6 @@ class ListAdapter<Sequence: AsyncSequence> where Sequence.Element: Identifiable 
             
             // Ensure unique id in list
             fetchedItems = fetchedItems.filter { fetchedItem in !state.data.contains { $0.id == fetchedItem.id } }
-            
-            // Update fetchable
-            state.fetchable = n == 0
             
             // Update data
             state.data = state.data + fetchedItems

@@ -16,20 +16,28 @@ class NewHistoryCoordinator: SmartCoordinator<Void> {
         vm.actionSubject
             .sink { [weak self] action in
                 guard let self = self else { return }
+
+                let coordinator: TransactionDetailCoordinator
+
                 switch action {
-                case let .openDetailByParsedTransaction(trx):
-                    self.coordinate(
-                        to: TransactionDetailCoordinator(
-                            input: .parsedTransaction(trx),
-                            style: .passive,
-                            presentingViewController: self.presentation.presentingViewController
-                        )
+                case let .openParsedTransaction(trx):
+                    coordinator = TransactionDetailCoordinator(
+                        input: .parsedTransaction(trx),
+                        style: .passive,
+                        presentingViewController: self.presentation.presentingViewController
                     )
+                case let .openHistoryTransaction(trx):
+                    coordinator = TransactionDetailCoordinator(
+                        input: .historyTransaction(trx),
+                        style: .passive,
+                        presentingViewController: self.presentation.presentingViewController
+                    )
+                }
+
+                self
+                    .coordinate(to: coordinator)
                     .sink { _ in }
                     .store(in: &self.subscriptions)
-                default:
-                    break
-                }
             }
             .store(in: &subscriptions)
 

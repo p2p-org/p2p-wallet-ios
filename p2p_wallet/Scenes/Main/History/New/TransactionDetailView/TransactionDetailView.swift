@@ -6,6 +6,7 @@
 //
 
 import KeyAppUI
+import Resolver
 import SwiftUI
 
 struct DetailTransactionView: View {
@@ -26,8 +27,6 @@ struct DetailTransactionView: View {
                 .padding(.top, 9)
                 .padding(.horizontal, 18)
             status
-                .padding(.horizontal, 16)
-                .padding(.bottom, 32)
             button
                 .padding(.horizontal, 16)
                 .padding(.bottom, 4)
@@ -115,10 +114,18 @@ struct DetailTransactionView: View {
                         .apply(style: .text4)
                         .foregroundColor(Color(Asset.Colors.mountain.color))
                     Spacer()
-                    Text(infoItem.value)
-                        .fontWeight(.bold)
-                        .apply(style: .text4)
-                        .foregroundColor(Color(Asset.Colors.night.color))
+                    Button {
+                        let clipboardManager: ClipboardManager = Resolver.resolve()
+                        clipboardManager.copyToClipboard(infoItem.copyableValue ?? "")
+                    } label: {
+                        Text(infoItem.value)
+                            .fontWeight(.bold)
+                            .apply(style: .text4)
+                            .foregroundColor(Color(Asset.Colors.night.color))
+                        if infoItem.copyableValue != nil {
+                            Image(uiImage: .copyReceiverAddress)
+                        }
+                    }.allowsHitTesting(infoItem.copyableValue != nil)
                 }
                 .frame(minHeight: 40)
             }
@@ -126,7 +133,23 @@ struct DetailTransactionView: View {
     }
 
     var status: some View {
-        TransactionDetailStatusView(status: viewModel.rendableTransaction.status.value) {}
+        if
+            case let .succeed(message) = viewModel.rendableTransaction.status.value,
+            message.isEmpty
+        {
+            return AnyView(
+                Rectangle()
+                    .fill(.clear)
+                    .contentShape(Rectangle())
+                    .padding(.bottom, 12)
+            )
+        } else {
+            return AnyView(
+                TransactionDetailStatusView(status: viewModel.rendableTransaction.status.value) {}
+                    .padding(.horizontal, 16)
+                    .padding(.bottom, 32)
+            )
+        }
     }
 
     var button: some View {

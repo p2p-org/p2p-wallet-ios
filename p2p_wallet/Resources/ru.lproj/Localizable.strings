@@ -1234,3 +1234,7 @@ You can try again, but your new transaction will be subject to the current rates
 "Unknown" = "Неизвестный";
 "Signature" = "Подпись";
 "Vote account" = "Аккаунт для голосования";
+"Burn signature" = "Записать подпись";
+"Mint signature" = "Подпись монетного двора";
+"Unstake signature" = "Отменить ставку подписи";
+"Stake signature" = "Подпись ставки";

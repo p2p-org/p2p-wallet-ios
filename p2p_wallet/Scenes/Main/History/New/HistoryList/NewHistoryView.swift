@@ -54,6 +54,11 @@ struct NewHistoryView: View {
                                     )
                                     .frame(height: TextButton.Size.large.height)
                                     .padding(.all, 16)
+                                case .fetch:
+                                    Rectangle()
+                                        .fill(.clear)
+                                        .contentShape(Rectangle())
+                                        .onAppear { viewModel.fetch() }
                                 }
                             }
                             .padding(.top, section.items.first == item ? 4 : 0)
@@ -65,15 +70,11 @@ struct NewHistoryView: View {
                                 isLast: section.items.last == item
                             )
                         }
-
-                        Rectangle()
-                            .fill(.clear)
-                            .contentShape(Rectangle())
-                            .onAppear(perform: section == viewModel.sections.last ? { viewModel.fetch() } : nil)
                     }.padding(.horizontal, 16)
                 }
                 .padding(.vertical, 8)
             }
+            .customRefreshable { await viewModel.reload() }
         }
         .background(Color(Asset.Colors.smoke.color))
         .onAppear { viewModel.fetch() }

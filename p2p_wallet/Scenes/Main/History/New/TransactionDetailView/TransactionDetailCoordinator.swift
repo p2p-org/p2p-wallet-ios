@@ -6,10 +6,12 @@
 //
 
 import Foundation
+import History
 import TransactionParser
 
 enum TransactionDetailCoordiantorInput {
     case parsedTransaction(ParsedTransaction)
+    case historyTransaction(HistoryTransaction)
 }
 
 class TransactionDetailCoordinator: SmartCoordinator<Void> {
@@ -28,6 +30,8 @@ class TransactionDetailCoordinator: SmartCoordinator<Void> {
         switch input {
         case let .parsedTransaction(trx):
             vm = DetailTransactionViewModel(parsedTransaction: trx, style: style)
+        case let .historyTransaction(trx):
+            vm = DetailTransactionViewModel(historyTransaction: trx)
         }
 
         let vc = BottomSheetController(rootView: DetailTransactionView(viewModel: vm))
