@@ -11,6 +11,10 @@ import SolanaSwift
 struct RendableSolanaAccountDetail: RendableAccountDetail {
     let wallet: Wallet
 
+    var title: String {
+        wallet.token.symbol
+    }
+
     var amountInToken: String {
         wallet.amount?.tokenAmountFormattedString(symbol: wallet.token.symbol) ?? ""
     }
@@ -21,11 +25,11 @@ struct RendableSolanaAccountDetail: RendableAccountDetail {
 
     var actions: [RendableAccountDetailAction] {
         if wallet.isNativeSOL || wallet.token.symbol == "USDC" {
-            return [.buy, .receive, .send, .swap]
+            return [.buy, .receive(.wallet(wallet)), .send, .swap]
         } else {
-            return [.receive, .send, .swap]
+            return [.receive(.wallet(wallet)), .send, .swap]
         }
     }
-    
+
     var onAction: (RendableAccountDetailAction) -> Void
 }

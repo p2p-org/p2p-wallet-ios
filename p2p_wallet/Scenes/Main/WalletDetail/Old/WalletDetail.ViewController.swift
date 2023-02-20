@@ -26,7 +26,6 @@ extension WalletDetail {
         // MARK: - Subscene
 
         private lazy var historyVC = History.Scene(account: viewModel.pubkey, symbol: viewModel.symbol)
-        private lazy var newHistoryVC = NewHistoryView(viewModel: .init(mint: ""))
 
         private var coordinator: SendCoordinator?
         private var sendTransactionStatusCoordinator: SendTransactionStatusCoordinator?

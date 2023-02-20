@@ -18,50 +18,11 @@ class NewHistoryCoordinator: SmartCoordinator<Void> {
 
         vm.actionSubject
             .sink { [weak self] action in
-                guard let self = self else { return }
-
-                switch action {
-                case let .openParsedTransaction(trx):
-                    let coordinator = TransactionDetailCoordinator(
-                        viewModel: .init(parsedTransaction: trx),
-                        presentingViewController: self.presentation.presentingViewController
-                    )
-
-                    self.coordinate(to: coordinator)
-                        .sink { result in
-                            print(result)
-                        }
-                        .store(in: &self.subscriptions)
-
-                case let .openHistoryTransaction(trx):
-                    let coordinator = TransactionDetailCoordinator(
-                        viewModel: .init(historyTransaction: trx),
-                        presentingViewController: self.presentation.presentingViewController
-                    )
-
-                    self.coordinate(to: coordinator)
-                        .sink { _ in }
-                        .store(in: &self.subscriptions)
-
-                case let .openSellTransaction(trx):
-                    self.openSell(trx)
-
-                case let .openPendingTransaction(trx):
-                    let coordinator = TransactionDetailCoordinator(
-                        viewModel: .init(pendingTransaction: trx),
-                        presentingViewController: self.presentation.presentingViewController
-                    )
-
-                    self.coordinate(to: coordinator)
-                        .sink { result in
-                            print(result)
-                        }
-                        .store(in: &self.subscriptions)
-                }
+                self?.openDetailTransaction(action: action)
             }
             .store(in: &subscriptions)
 
-        let view = NewHistoryView(viewModel: vm)
+        let view = NewHistoryView(viewModel: vm, header: SwiftUI.EmptyView())
         let vc = UIHostingControllerWithoutNavigation(rootView: view)
         vc.navigationIsHidden = false
         vc.title = L10n.history
@@ -72,6 +33,47 @@ class NewHistoryCoordinator: SmartCoordinator<Void> {
         }.store(in: &subscriptions)
 
         return vc
+    }
+
+    private func openDetailTransaction(action: NewHistoryAction) {
+        switch action {
+        case let .openParsedTransaction(trx):
+            let coordinator = TransactionDetailCoordinator(
+                viewModel: .init(parsedTransaction: trx),
+                presentingViewController: self.presentation.presentingViewController
+            )
+
+            self.coordinate(to: coordinator)
+                .sink { result in
+                    print(result)
+                }
+                .store(in: &self.subscriptions)
+
+        case let .openHistoryTransaction(trx):
+            let coordinator = TransactionDetailCoordinator(
+                viewModel: .init(historyTransaction: trx),
+                presentingViewController: self.presentation.presentingViewController
+            )
+
+            self.coordinate(to: coordinator)
+                .sink { _ in }
+                .store(in: &self.subscriptions)
+
+        case let .openSellTransaction(trx):
+            self.openSell(trx)
+
+        case let .openPendingTransaction(trx):
+            let coordinator = TransactionDetailCoordinator(
+                viewModel: .init(pendingTransaction: trx),
+                presentingViewController: self.presentation.presentingViewController
+            )
+
+            self.coordinate(to: coordinator)
+                .sink { result in
+                    print(result)
+                }
+                .store(in: &self.subscriptions)
+        }
     }
 
     private func openSell(_ transaction: SellDataServiceTransaction) {
