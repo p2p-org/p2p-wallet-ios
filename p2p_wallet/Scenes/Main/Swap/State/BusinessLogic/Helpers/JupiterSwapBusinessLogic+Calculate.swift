@@ -3,8 +3,12 @@ import SolanaSwift
 
 extension JupiterSwapBusinessLogic {
     static func calculateAmounts(state: JupiterSwapState, services: JupiterSwapServices) async -> JupiterSwapState {
+        guard state.fromToken.jupiterToken.address != state.toToken.jupiterToken.address else {
+            return state.copy(status: .error(reason: .equalSwapTokens))
+        }
+
         guard state.amountFrom > 0 else {
-            return state.copy(amountFrom: 0, amountTo: 0, route: nil)
+            return state.copy(status: .ready, amountFrom: 0, amountTo: 0, route: nil)
         }
 
         let amountFromLamports = state.amountFrom.toLamport(decimals: state.fromToken.jupiterToken.decimals)

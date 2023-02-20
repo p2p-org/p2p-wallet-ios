@@ -2,10 +2,6 @@ import SolanaSwift
 
 extension JupiterSwapBusinessLogic {
     static func getPrices(from: SwapToken, to: SwapToken, services: JupiterSwapServices) async throws -> SwapPriceInfo? {
-        guard from.jupiterToken.address != to.jupiterToken.address else {
-            throw JupiterSwapState.ErrorReason.equalSwapTokens
-        }
-
         let fromToken = SolanaSwift.Token(jupiterToken: from.jupiterToken)
         let toToken = SolanaSwift.Token(jupiterToken: to.jupiterToken)
 

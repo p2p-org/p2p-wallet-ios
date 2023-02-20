@@ -1,6 +1,29 @@
 import Jupiter
 
 enum JupiterSwapBusinessLogic {
+    static func jupiterSwapProgressState(
+        state: JupiterSwapState,
+        action: JupiterSwapAction
+    ) -> JupiterSwapState? {
+        let newState: JupiterSwapState?
+        switch action {
+        case .initialize:
+            newState = state.copy(status: .initializing)
+        case .changeAmountFrom:
+            newState = state.copy(status: .loadingAmountTo)
+        case .changeFromToken:
+            newState = state.copy(status: .loadingAmountTo)
+        case .changeToToken:
+            newState = state.copy(status: .loadingTokenTo)
+        case .changeBothTokens:
+            newState = state.copy(status: .switching)
+        case .update:
+            newState = nil
+        }
+
+        return newState
+    }
+
     static func jupiterSwapBusinessLogic(
         state: JupiterSwapState,
         action: JupiterSwapAction,
