@@ -22,7 +22,13 @@ final class NewSwapCoordinator: Coordinator<Void> {
         fromViewModel.changeTokenPressed
             .sink { [weak viewModel, weak self] in
                 guard let self, let viewModel else { return }
-                self.openChooseFromToken(viewModel: viewModel)
+                self.openChooseToken(viewModel: viewModel, fromToken: true)
+            }
+            .store(in: &subscriptions)
+        viewModel.toTokenViewModel.changeTokenPressed
+            .sink { [weak viewModel, weak self] in
+                guard let self, let viewModel else { return }
+                self.openChooseToken(viewModel: viewModel, fromToken: false)
             }
             .store(in: &subscriptions)
 
@@ -39,8 +45,25 @@ final class NewSwapCoordinator: Coordinator<Void> {
     @objc private func receiptButtonPressed() {
         
     }
+    
+    private func openChooseToken(viewModel: SwapViewModel, fromToken: Bool) {
+        coordinate(to: ChooseSwapTokenCoordinator(
+            chosenWallet: fromToken ? viewModel.fromToken : viewModel.toToken,
+            tokens: viewModel.tokens,
+            navigationController: navigationController
+        ))
+        .compactMap { $0 }
+        .sink {
+            if fromToken {
+                viewModel.fromToken = $0
+            } else {
+                viewModel.toToken = $0
+            }
+        }
+        .store(in: &subscriptions)
+    }
 
-    private func openChooseFromToken(viewModel: SwapViewModel) {
+private func openChooseFromToken(viewModel: SwapViewModel) {
         self.coordinate(to: ChooseSwapTokenCoordinator(
             chosenWallet: viewModel.currentState.fromToken,
             tokens: viewModel.currentState.swapTokens,
