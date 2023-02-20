@@ -12,12 +12,14 @@ final class NewSwapCoordinator: Coordinator<Void> {
 
     override func start() -> AnyPublisher<Void, Never> {
         let viewModel = SwapViewModel()
-        let view = SwapView(viewModel: viewModel)
+        let fromViewModel = SwapInputViewModel(stateMachine: viewModel.stateMachine, isFromToken: true)
+        let toViewModel = SwapInputViewModel(stateMachine: viewModel.stateMachine, isFromToken: false)
+        let view = SwapView(viewModel: viewModel, fromViewModel: fromViewModel, toViewModel: toViewModel)
         let controller = KeyboardAvoidingViewController(rootView: view)
         navigationController.pushViewController(controller, animated: true)
         style(controller: controller)
 
-        viewModel.fromTokenViewModel.changeTokenPressed
+        fromViewModel.changeTokenPressed
             .sink { [weak viewModel, weak self] in
                 guard let self, let viewModel else { return }
                 self.openChooseFromToken(viewModel: viewModel)

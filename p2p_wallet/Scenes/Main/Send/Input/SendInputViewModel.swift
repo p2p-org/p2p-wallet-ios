@@ -21,7 +21,6 @@ final class SendInputViewModel: BaseViewModel, ObservableObject {
 
     // MARK: - Sub view models
 
-    let actionButtonViewModel: SliderActionButtonViewModel
     let inputAmountViewModel: SendInputAmountViewModel
     let tokenViewModel: SendInputTokenViewModel
 
@@ -41,6 +40,11 @@ final class SendInputViewModel: BaseViewModel, ObservableObject {
     @Published var isFeeLoading: Bool = true
     
     @Published var loadingState: LoadableState = .loaded
+
+    // ActionButton
+    @Published var actionButtonData = SliderActionButtonData.zero
+    @Published var isSliderOn = false
+    @Published var showFinished = false
 
     let feeInfoPressed = PassthroughSubject<Void, Never>()
     let openFeeInfo = PassthroughSubject<Bool, Never>()
@@ -133,7 +137,6 @@ final class SendInputViewModel: BaseViewModel, ObservableObject {
         )
 
         inputAmountViewModel = SendInputAmountViewModel(initialToken: tokenInWallet, allowSwitchingMainAmountType: allowSwitchingMainAmountType)
-        actionButtonViewModel = SliderActionButtonViewModel()
 
         tokenViewModel = SendInputTokenViewModel(initialToken: tokenInWallet)
 
@@ -247,7 +250,7 @@ private extension SendInputViewModel {
                 guard let self = self else { return }
                 if isLoading {
                     self.feeTitle = L10n.fees("")
-                    self.actionButtonViewModel.actionButton = .init(isEnabled: false, title: L10n.calculatingTheFees)
+                    self.actionButtonData = SliderActionButtonData(isEnabled: false, title: L10n.calculatingTheFees)
                 } else {
                     self.updateInputAmountView()
                 }
@@ -289,7 +292,7 @@ private extension SendInputViewModel {
             }
             .store(in: &subscriptions)
 
-        actionButtonViewModel.$isSliderOn
+        $isSliderOn
             .sinkAsync(receiveValue: { [weak self] isSliderOn in
                 guard let self = self else { return }
                 if isSliderOn {
@@ -322,38 +325,38 @@ private extension SendInputViewModel {
     func updateInputAmountView() {
         guard currentState.amountInToken != .zero else {
             inputAmountViewModel.isError = false
-            actionButtonViewModel.actionButton = .zero
+            actionButtonData = SliderActionButtonData.zero
             return
         }
         switch currentState.status {
         case let .error(.inputTooHigh(maxAmount)):
             inputAmountViewModel.isError = true
-            actionButtonViewModel.actionButton = .init(
+            actionButtonData = SliderActionButtonData(
                 isEnabled: false,
                 title: L10n.max(maxAmount.tokenAmountFormattedString(symbol: sourceWallet.token.symbol, roundingMode: .down))
             )
             checkMaxButtonIfNeeded()
         case let .error(.inputTooLow(minAmount)):
             inputAmountViewModel.isError = true
-            actionButtonViewModel.actionButton = .init(
+            actionButtonData = SliderActionButtonData(
                 isEnabled: false,
                 title: L10n.min(minAmount.tokenAmountFormattedString(symbol: sourceWallet.token.symbol, roundingMode: .down))
             )
         case .error(reason: .insufficientAmountToCoverFee):
             inputAmountViewModel.isError = false
-            actionButtonViewModel.actionButton = .init(
+            actionButtonData = SliderActionButtonData(
                 isEnabled: false,
                 title: L10n.insufficientFundsToCoverFees
             )
         case .error(reason: .initializeFailed(_)):
             inputAmountViewModel.isError = false
-            actionButtonViewModel.actionButton = .init(
+            actionButtonData = SliderActionButtonData(
                 isEnabled: true,
                 title: L10n.tryAgain
             )
         case .error(reason: .insufficientFunds):
             inputAmountViewModel.isError = true
-            actionButtonViewModel.actionButton = .init(
+            actionButtonData = SliderActionButtonData(
                 isEnabled: false,
                 title: L10n.insufficientFunds
             )
@@ -361,7 +364,7 @@ private extension SendInputViewModel {
         default:
             wasMaxWarningToastShown = false
             inputAmountViewModel.isError = false
-            actionButtonViewModel.actionButton = .init(
+            actionButtonData = SliderActionButtonData(
                 isEnabled: true,
                 title: "\(L10n.send) \(currentState.amountInToken.tokenAmountFormattedString(symbol: currentState.token.symbol, maximumFractionDigits: Int(currentState.token.decimals), roundingMode: .down))"
             )
@@ -438,7 +441,7 @@ private extension SendInputViewModel {
         logConfirmButtonClick()
 
         await MainActor.run {
-            self.actionButtonViewModel.showFinished = true
+            self.showFinished = true
         }
         
         try? await Task.sleep(nanoseconds: 500_000_000)

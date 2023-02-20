@@ -3,16 +3,15 @@ import SwiftUI
 
 struct SwapView: View {
     @ObservedObject var viewModel: SwapViewModel
+    @ObservedObject var fromViewModel: SwapInputViewModel
+    @ObservedObject var toViewModel: SwapInputViewModel
 
     @State private var animatedFinish: Bool = false
 
     var body : some View {
         ZStack {
             Color(Asset.Colors.smoke.color)
-                .onTapGesture {
-                    viewModel.fromTokenViewModel.isFirstResponder = false
-                    viewModel.toTokenViewModel.isFirstResponder = false
-                }
+                .onTapGesture { UIApplication.shared.endEditing() }
 
             switch viewModel.initializingState {
             case .loading, .success:
@@ -38,8 +37,8 @@ private extension SwapView {
 
             ZStack {
                 VStack(spacing: 8) {
-                    SwapInputView(viewModel: viewModel.fromTokenViewModel)
-                    SwapInputView(viewModel: viewModel.toTokenViewModel)
+                    SwapInputView(viewModel: fromViewModel)
+                    SwapInputView(viewModel: toViewModel)
                 }
                 SwapSwitchButton(action: viewModel.switchTokens)
             }
@@ -52,7 +51,7 @@ private extension SwapView {
 
             Spacer()
 
-            SliderActionButton(viewModel: viewModel.actionButtonViewModel)
+            SliderActionButton(isSliderOn: $viewModel.isSliderOn, data: $viewModel.actionButtonData, showFinished: $viewModel.showFinished)
                 .padding(.bottom, 36)
         }
         .padding(.horizontal, 16)
@@ -64,11 +63,5 @@ private extension SwapView {
             actionTitle: L10n.tryAgain,
             action: viewModel.tryAgain.send
         )
-    }
-}
-
-struct SwapView_Previews: PreviewProvider {
-    static var previews: some View {
-        SwapView(viewModel: SwapViewModel())
     }
 }

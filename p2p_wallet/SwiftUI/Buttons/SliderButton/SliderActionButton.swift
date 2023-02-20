@@ -1,12 +1,28 @@
 import SwiftUI
 import KeyAppUI
 
+struct SliderActionButtonData {
+    let isEnabled: Bool
+    let title: String
+    static let zero = SliderActionButtonData(isEnabled: false, title: L10n.enterTheAmount)
+}
+
 struct SliderActionButton: View {
-    @ObservedObject private var viewModel: SliderActionButtonViewModel
+
+    @Binding var isSliderOn: Bool
+    @Binding var data: SliderActionButtonData
+    @Binding var showFinished: Bool
+
     @State private var animatedFinish: Bool = false
 
-    init(viewModel: SliderActionButtonViewModel) {
-        self.viewModel = viewModel
+    init(
+        isSliderOn: Binding<Bool>,
+        data: Binding<SliderActionButtonData>,
+        showFinished: Binding<Bool>
+    ) {
+        _isSliderOn = isSliderOn
+        _data = data
+        _showFinished = showFinished
     }
 
     var body: some View {
@@ -22,36 +38,36 @@ struct SliderActionButton: View {
                             .foregroundColor(Color(Asset.Colors.night.color))
                     )
             } else {
-                if viewModel.actionButton.isEnabled {
+                if data.isEnabled {
                     SliderButtonView(
-                        title: viewModel.actionButton.title,
+                        title: data.title,
                         image: .arrowRight,
                         style: .solidBlack,
-                        isOn: .init(get: { [weak viewModel] in
-                            viewModel?.isSliderOn ?? false
-                        }, set: { [weak viewModel] val in
-                            withAnimation { viewModel?.isSliderOn = val }
+                        isOn: Binding(get: {
+                            self.isSliderOn 
+                        }, set: { val in
+                            withAnimation { self.isSliderOn = val }
                         })
                     )
                 }
                 else {
-                    TextButtonView(title: viewModel.actionButton.title, style: .primary, size: .large)
+                    TextButtonView(title: data.title, style: .primary, size: .large)
                         .disabled(true)
                         .cornerRadius(radius: 32, corners: .allCorners)
                 }
             }
         }
         .frame(height: TextButton.Size.large.height)
-        .disabled(!viewModel.actionButton.isEnabled)
-        .allowsHitTesting(viewModel.actionButton.isEnabled)
+        .disabled(!data.isEnabled)
+        .allowsHitTesting(data.isEnabled)
         .transition(.asymmetric(insertion: .scale, removal: .scale).combined(with: .opacity))
         .animation(.default, value: animatedFinish)
         .padding(.top, 8)
-        .onReceive(viewModel.$showFinished) { value in
+        .onChange(of: showFinished, perform: { newValue in
             withAnimation {
-                self.animatedFinish = value
+                self.animatedFinish = newValue
             }
-        }
+        })
     }
 }
 

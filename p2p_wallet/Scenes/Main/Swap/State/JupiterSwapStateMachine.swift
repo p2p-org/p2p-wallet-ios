@@ -19,6 +19,9 @@ actor JupiterSwapStateMachine: StateMachine {
     }
 
     func accept(action: JupiterSwapAction) async -> JupiterSwapState {
+        if let progressState = JupiterSwapBusinessLogic.jupiterSwapProgressState(state: currentState, action: action) {
+            stateSubject.send(progressState)
+        }
         let newState = await JupiterSwapBusinessLogic.jupiterSwapBusinessLogic(state: currentState, action: action, services: services)
         stateSubject.send(newState)
         return newState

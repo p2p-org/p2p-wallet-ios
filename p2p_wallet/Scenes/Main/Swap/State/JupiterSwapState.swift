@@ -15,6 +15,10 @@ struct JupiterSwapState: Equatable {
 
     enum Status: Equatable {
         case requiredInitialize
+        case initializing
+        case loadingAmountTo
+        case loadingTokenTo
+        case switching
         case ready
         case error(reason: ErrorReason)
     }
