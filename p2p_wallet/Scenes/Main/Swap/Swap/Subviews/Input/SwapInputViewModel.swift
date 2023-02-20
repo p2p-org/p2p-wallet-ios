@@ -8,14 +8,14 @@ final class SwapInputViewModel: BaseViewModel, ObservableObject {
     let changeTokenPressed = PassthroughSubject<Void, Never>()
 
     @Published var title: String
-    @Published var amountText: String = ""
+    @Published var amountText = ""
     @Published var isFirstResponder: Bool
     @Published var isEditable: Bool
     @Published var balance: Double?
-    @Published var balanceText: String = ""
-    @Published var tokenSymbol: String = ""
-    @Published var isLoading: Bool = false
-    @Published var isAmountLoading: Bool = false
+    @Published var balanceText = ""
+    @Published var tokenSymbol = ""
+    @Published var isLoading = false
+    @Published var isAmountLoading = false
     @Published var fiatAmount: String?
     @Published var token: SwapToken
 
@@ -98,16 +98,16 @@ private extension SwapInputViewModel {
     func updateLoading(status: JupiterSwapState.Status) {
         switch status {
         case .requiredInitialize, .initializing:
-            self.isLoading = true
+            isLoading = true
         case .loadingAmountTo:
-            self.isAmountLoading = isFromToken ? false : true
+            isAmountLoading = isFromToken ? false : true
         case .loadingTokenTo:
-            self.isLoading = isFromToken ? false : true
+            isLoading = isFromToken ? false : true
         case .switching:
-            self.isLoading = true
+            isLoading = true
         default:
-            self.isLoading = false
-            self.isAmountLoading = false
+            isLoading = false
+            isAmountLoading = false
         }
     }
 }
