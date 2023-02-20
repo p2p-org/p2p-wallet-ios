@@ -493,7 +493,7 @@ CHECKOUT OPTIONS:
     :commit: 211f2ebf2c4c6db269009045bf6c062339c06c35
     :git: https://github.com/p2p-org/key-app-kit-swift.git
   Jupiter:
-    :commit: 211f2ebf2c4c6db269009045bf6c062339c06c35
+    :commit: 76db35a9d7cb6cfeade6434d7fc371aa06f42fff
     :git: https://github.com/p2p-org/key-app-kit-swift.git
   KeyAppKitCore:
     :commit: 211f2ebf2c4c6db269009045bf6c062339c06c35
