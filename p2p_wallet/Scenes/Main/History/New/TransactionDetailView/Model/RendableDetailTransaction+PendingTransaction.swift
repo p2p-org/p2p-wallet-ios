@@ -90,7 +90,7 @@ struct RendableDetailPendingTransaction: RendableDetailTransaction {
         case let transaction as SendTransaction:
             return .negative("-\(transaction.amountInFiat.fiatAmountFormattedString())")
         case let transaction as ProcessTransaction.SwapTransaction:
-            let amountInFiat: Double = (transaction.amount * priceService.currentPrice(mint: transaction.sourceWallet.token.address)?.value) ?? 0
+            let amountInFiat: Double = (transaction.amount * priceService.currentPrice(mint: transaction.sourceWallet.token.address)?.value)
             return .unchanged("\(amountInFiat.fiatAmountFormattedString())")
         default:
             return .unchanged("")

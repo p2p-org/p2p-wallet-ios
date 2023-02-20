@@ -32,7 +32,7 @@ class NewHistoryViewModel: BaseViewModel, ObservableObject {
 
     @Published private var sellTransansactions: [any RendableListOfframItem] = []
 
-    @Published private(set) var historyTransactions: ListState<any RendableListTransactionItem>
+    let historyTransactions: AsyncList<any RendableListTransactionItem>
 
     // Output
 
@@ -48,16 +48,7 @@ class NewHistoryViewModel: BaseViewModel, ObservableObject {
         self.actionSubject = actionSubject
         
         // Build history
-        historyTransactions = .init(
-            status: .ready,
-            data: mock,
-            fetchable: true,
-            error: nil
-        )
-        
-        self.fetch = {}
-        self.reload = {}
-        
+        historyTransactions = .init(sequence: mock.async.eraseToAnyAsyncSequence())
     }
 
     init(
@@ -75,7 +66,7 @@ class NewHistoryViewModel: BaseViewModel, ObservableObject {
         self.actionSubject = actionSubject
 
         // Setup list adaptor
-        let historyTransactionsAsyncList: AsyncList<any RendableListTransactionItem> = .init(
+        historyTransactions = .init(
             sequence: repository
                 .getAll(account: userWalletManager.wallet?.account, mint: mint)
                 .map { trx in
@@ -89,17 +80,6 @@ class NewHistoryViewModel: BaseViewModel, ObservableObject {
                 }
                 .eraseToAnyAsyncSequence()
         )
-        
-        fetch =  {
-            historyTransactionsAsyncList.fetch()
-        }
-        
-        reload = {
-            historyTransactionsAsyncList.reset()
-            historyTransactionsAsyncList.fetch()
-        }
-        
-        historyTransactions = .init()
         
         super.init()
 
@@ -126,24 +106,30 @@ class NewHistoryViewModel: BaseViewModel, ObservableObject {
             .store(in: &subscriptions)
 
         // Listen history transactions
-        historyTransactionsAsyncList.$state
-            .assign(to: &$historyTransactions)
+        historyTransactions.listen(target: self, in: &subscriptions)
+//        historyTransactionsAsyncList.$state
+//            .assign(to: &$historyTransactions)
     }
 
-    var reload: () -> Void
+    func reload() {
+        historyTransactions.reset()
+        historyTransactions.fetch()
+    }
 
-    var fetch: () -> Void
+    func fetch() {
+        historyTransactions.fetch()
+    }
 
     func buildSection() -> [NewHistoryListSection] {
         // Phase 1: Merge pending transaction with history transaction
 
         let filtedPendingTransaction = pendingTransactions.filter { pendingTransaction in
-            !historyTransactions.data.contains { historyTransaction in
+            !historyTransactions.contains { historyTransaction in
                 historyTransaction.id == pendingTransaction.id
             }
         }
 
-        let rendableTransactions: [any RendableListTransactionItem] = filtedPendingTransaction + historyTransactions.data
+        let rendableTransactions: [any RendableListTransactionItem] = filtedPendingTransaction + historyTransactions
 
         // Phase 2: Split transactions by date
         let dictionary = Dictionary(grouping: rendableTransactions) { transaction -> Date in
@@ -179,11 +165,11 @@ class NewHistoryViewModel: BaseViewModel, ObservableObject {
         if let lastSection = result.popLast() {
             var insertedItems: [NewHistoryItem] = []
 
-            if historyTransactions.fetchable {
+            if historyTransactions.state.fetchable {
                 insertedItems = .generatePlaceholder(n: 1) + [.fetch(id: UUID().uuidString)]
             }
 
-            if historyTransactions.error != nil {
+            if historyTransactions.state.error != nil {
                 insertedItems = [.button(id: UUID().uuidString, title: L10n.tryAgain, action: { [weak self] in self?.fetch() })]
             }
 
@@ -196,7 +182,7 @@ class NewHistoryViewModel: BaseViewModel, ObservableObject {
         }
 
         // Phase 5: Or replace with skeletons in first load
-        if historyTransactions.status == .fetching && result.isEmpty {
+        if historyTransactions.state.status == .fetching && result.isEmpty {
             return [
                 .init(title: "", items: .generatePlaceholder(n: 7))
             ]
