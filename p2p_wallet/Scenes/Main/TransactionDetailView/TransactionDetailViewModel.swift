@@ -36,8 +36,8 @@ class DetailTransactionViewModel: BaseViewModel, ObservableObject {
         self.rendableTransaction = rendableDetailTransaction
     }
 
-    init(parsedTransaction: ParsedTransaction, style: DetailTransactionStyle = .active) {
-        self.style = style
+    init(parsedTransaction: ParsedTransaction ) {
+        self.style = .passive
         self.rendableTransaction = RendableDetailParsedTransaction(trx: parsedTransaction)
     }
 
