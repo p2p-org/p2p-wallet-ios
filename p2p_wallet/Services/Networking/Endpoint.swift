@@ -25,10 +25,10 @@ extension Endpoint {
     }
 
     var baseURL: String {
-        #if DEBUG
-            return String.secretConfig("NOTIFICATION_SERVICE_ENDPOINT")!
+        #if RELEASE
+        return String.secretConfig("NOTIFICATION_SERVICE_ENDPOINT_RELEASE")!
         #else
-            return String.secretConfig("NOTIFICATION_SERVICE_ENDPOINT_RELEASE")!
+        return String.secretConfig("NOTIFICATION_SERVICE_ENDPOINT")!
         #endif
     }
 }
