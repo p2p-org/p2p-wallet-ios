@@ -8,6 +8,7 @@
 import Foundation
 
 struct MockRendableAccountDetail: RendableAccountDetail {
+    var title: String
     var amountInToken: String
     var amountInFiat: String
     var actions: [RendableAccountDetailAction]

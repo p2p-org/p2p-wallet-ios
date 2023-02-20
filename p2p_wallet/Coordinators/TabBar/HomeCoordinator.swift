@@ -21,7 +21,7 @@ enum HomeNavigation: Equatable {
     case swap
     case cashOut
     case earn
-    case wallet(pubKey: String, tokenSymbol: String)
+    case wallet(Wallet)
     case actions([WalletActionType])
     // HomeEmpty
     case topUpCoin(Token)
@@ -30,7 +30,6 @@ enum HomeNavigation: Equatable {
 }
 
 final class HomeCoordinator: Coordinator<Void> {
-    
     // MARK: - Dependencies
 
     @Injected private var analyticsManager: AnalyticsManager
@@ -40,7 +39,7 @@ final class HomeCoordinator: Coordinator<Void> {
     private let navigationController: UINavigationController
     private let tabBarController: TabBarController
     private let resultSubject = PassthroughSubject<Void, Never>()
-    
+
     var tokensViewModel: HomeWithTokensViewModel?
     let navigation = PassthroughSubject<HomeNavigation, Never>()
 
@@ -62,10 +61,10 @@ final class HomeCoordinator: Coordinator<Void> {
     override func start() -> AnyPublisher<Void, Never> {
         // Home with tokens
         tokensViewModel = HomeWithTokensViewModel(navigation: navigation)
-        
+
         // home with no token
         let emptyViewModel = HomeEmptyViewModel(navigation: navigation)
-        
+
         // home view
         let viewModel = HomeViewModel()
         let homeView = HomeView(
@@ -73,7 +72,7 @@ final class HomeCoordinator: Coordinator<Void> {
             viewModelWithTokens: tokensViewModel!,
             emptyViewModel: emptyViewModel
         ).asViewController() as! UIHostingControllerWithoutNavigation<HomeView>
-        
+
         // bind
         Publishers.Merge(
             homeView.viewWillAppear.map { true },
@@ -89,7 +88,7 @@ final class HomeCoordinator: Coordinator<Void> {
         navigationController.onClose = { [weak self] in
             self?.resultSubject.send(())
         }
-        
+
         // handle navigation
         navigation
             .flatMap { [unowned self] in
@@ -97,7 +96,7 @@ final class HomeCoordinator: Coordinator<Void> {
             }
             .sink(receiveValue: {})
             .store(in: &subscriptions)
-    
+
         // return publisher
         return resultSubject.prefix(1).eraseToAnyPublisher()
     }
@@ -108,7 +107,7 @@ final class HomeCoordinator: Coordinator<Void> {
         switch scene {
         case .buy:
             return coordinate(to: BuyCoordinator(navigationController: navigationController, context: .fromHome))
-                .map {_ in ()}
+                .map { _ in () }
                 .eraseToAnyPublisher()
         case .receive(let publicKey):
             let coordinator = ReceiveCoordinator(navigationController: navigationController, pubKey: publicKey)
@@ -128,7 +127,7 @@ final class HomeCoordinator: Coordinator<Void> {
             .receive(on: RunLoop.main)
             .handleEvents(receiveOutput: { [weak self] result in
                 switch result {
-                case let .sent(model):
+                case .sent(let model):
                     self?.navigationController.popToRootViewController(animated: true)
                     self?.showSendTransactionStatus(model: model)
                 case .cancelled:
@@ -136,7 +135,7 @@ final class HomeCoordinator: Coordinator<Void> {
                 }
 //                tokensViewModel?.scrollToTop()
             })
-            .map {_ in ()}
+            .map { _ in () }
             .eraseToAnyPublisher()
         case .swap:
             analyticsManager.log(event: .swapViewed(lastScreen: "main_screen"))
@@ -155,7 +154,7 @@ final class HomeCoordinator: Coordinator<Void> {
                     tokensViewModel?.scrollToTop()
                 }
             })
-            .map {_ in ()}
+            .map { _ in () }
             .eraseToAnyPublisher()
         case .cashOut:
             analyticsManager.log(event: .sellClicked(source: "Main"))
@@ -176,26 +175,39 @@ final class HomeCoordinator: Coordinator<Void> {
                     break
                 }
             })
-            .map {_ in ()}
+            .map { _ in () }
             .eraseToAnyPublisher()
         case .earn:
             return Just(())
                 .eraseToAnyPublisher()
-        case .wallet(let pubKey, let tokenSymbol):
-            let model = WalletDetailCoordinator.Model(pubKey: pubKey, symbol: tokenSymbol)
-            let coordinator = WalletDetailCoordinator(navigationController: navigationController, model: model)
-            return coordinate(to: coordinator)
-                .receive(on: RunLoop.main)
-                .handleEvents(receiveOutput: { [weak tokensViewModel] result in
-                    switch result {
-                    case .cancel:
-                        break
-                    case .done:
-                        tokensViewModel?.scrollToTop()
-                    }
-                })
-                .map {_ in ()}
+        case .wallet(let wallet):
+            if available(.historyServiceEnabled) {
+                analyticsManager.log(event: .mainScreenTokenDetailsOpen(tokenTicker: wallet.token.symbol))
+
+                return coordinate(
+                    to: DetailAccountCoordinator(
+                        args: .wallet(wallet),
+                        presentingViewController: navigationController
+                    )
+                )
+                .map { _ in () }
                 .eraseToAnyPublisher()
+            } else {
+                let model = WalletDetailCoordinator.Model(pubKey: wallet.pubkey ?? "", symbol: wallet.token.symbol)
+                let coordinator = WalletDetailCoordinator(navigationController: navigationController, model: model)
+                return coordinate(to: coordinator)
+                    .receive(on: RunLoop.main)
+                    .handleEvents(receiveOutput: { [weak tokensViewModel] result in
+                        switch result {
+                        case .cancel:
+                            break
+                        case .done:
+                            tokensViewModel?.scrollToTop()
+                        }
+                    })
+                    .map { _ in () }
+                    .eraseToAnyPublisher()
+            }
         case .actions:
             return Just(())
                 .eraseToAnyPublisher()
@@ -208,7 +220,7 @@ final class HomeCoordinator: Coordinator<Void> {
                 context: .fromHome,
                 defaultToken: token
             )
-            return self.coordinate(to: coordinator)
+            return coordinate(to: coordinator)
                 .eraseToAnyPublisher()
         case .error(let show):
             if show {

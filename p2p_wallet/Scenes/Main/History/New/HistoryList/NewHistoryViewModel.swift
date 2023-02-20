@@ -5,7 +5,6 @@
 //  Created by Giang Long Tran on 01.02.2023.
 //
 
-import AsyncAlgorithms
 import Combine
 import Foundation
 import History
@@ -27,9 +26,9 @@ enum NewHistoryAction {
 
 class NewHistoryViewModel: BaseViewModel, ObservableObject {
     // Subjects
-    
+
     let actionSubject: PassthroughSubject<NewHistoryAction, Never>
-    
+
     // State
 
     @Published private var pendingTransactions: [any RendableListTransactionItem] = []
@@ -128,27 +127,30 @@ class NewHistoryViewModel: BaseViewModel, ObservableObject {
 
         super.init()
 
-        // Listen sell service
-        sellDataService.transactionsPublisher
-            .sink { [weak self] transactions in
-                self?.sellTransansactions = transactions.map { trx in
-                    SellRendableListOfframItem(trx: trx) { [weak actionSubject] in
-                        actionSubject?.send(.openSellTransaction(trx))
+        // Ignore showing sell and pending trx
+        if mint == nil {
+            // Listen sell service
+            sellDataService.transactionsPublisher
+                .sink { [weak self] transactions in
+                    self?.sellTransansactions = transactions.map { trx in
+                        SellRendableListOfframItem(trx: trx) { [weak actionSubject] in
+                            actionSubject?.send(.openSellTransaction(trx))
+                        }
                     }
                 }
-            }
-            .store(in: &subscriptions)
+                .store(in: &subscriptions)
 
-        // Listen pending transactions
-        pendingTransactionService.observePendingTransactions()
-            .sink { [weak self] transactions in
-                self?.pendingTransactions = transactions.map { [weak actionSubject] trx in
-                    RendableListPendingTransactionItem(trx: trx) {
-                        actionSubject?.send(.openPendingTransaction(trx))
+            // Listen pending transactions
+            pendingTransactionService.observePendingTransactions()
+                .sink { [weak self] transactions in
+                    self?.pendingTransactions = transactions.map { [weak actionSubject] trx in
+                        RendableListPendingTransactionItem(trx: trx) {
+                            actionSubject?.send(.openPendingTransaction(trx))
+                        }
                     }
                 }
-            }
-            .store(in: &subscriptions)
+                .store(in: &subscriptions)
+        }
 
         // Listen history transactions
         historyTransactions.listen(target: self, in: &subscriptions)

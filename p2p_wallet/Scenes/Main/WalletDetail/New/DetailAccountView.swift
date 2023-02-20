@@ -5,6 +5,7 @@
 //  Created by Giang Long Tran on 19.02.2023.
 //
 
+import KeyAppUI
 import SwiftUI
 
 struct DetailAccountView: View {
@@ -12,41 +13,53 @@ struct DetailAccountView: View {
     @ObservedObject var historyList: NewHistoryViewModel
 
     var body: some View {
+        NewHistoryView(viewModel: historyList, header: header)
+            .background(Color(Asset.Colors.smoke.color).ignoresSafeArea())
+    }
+
+    var header: some View {
         VStack {
-            VStack {
+            VStack(spacing: 12) {
                 Text(detailAccount.rendableAccountDetail.amountInToken)
+                    .fontWeight(.bold)
+                    .apply(style: .largeTitle)
+                    .foregroundColor(Color(Asset.Colors.night.color))
                 Text(detailAccount.rendableAccountDetail.amountInFiat)
+                    .apply(style: .text3)
+                    .foregroundColor(Color(Asset.Colors.night.color))
             }
             .padding(.top, 24)
-            
+
             HStack(spacing: 32) {
                 ForEach(detailAccount.rendableAccountDetail.actions) { action in
                     CircleButton(title: action.title, image: action.icon) {
                         detailAccount.rendableAccountDetail.onAction(action)
                     }
                 }
-                
             }
-            
-            NewHistoryView(viewModel: historyList)
+            .padding(.vertical, 32)
         }
     }
 }
 
 struct DetailAccountView_Previews: PreviewProvider {
     static var previews: some View {
-        DetailAccountView(
+        let historyList = NewHistoryViewModel(
+            mock: [MockedRendableListTransactionItem.send()]
+        )
+        historyList.fetch()
+
+        return DetailAccountView(
             detailAccount: .init(
                 rendableAccountDetail: MockRendableAccountDetail(
+                    title: "USDC",
                     amountInToken: "1 000.97 USDC",
                     amountInFiat: "1 000.97 USDC",
-                    actions: [.buy, .receive, .send, .swap],
+                    actions: [.buy, .receive(.none), .send, .swap],
                     onAction: { _ in }
                 )
             ),
-            historyList: .init(
-                mock: [MockedRendableListTransactionItem.send()]
-            )
+            historyList: historyList
         )
     }
 }

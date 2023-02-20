@@ -6,8 +6,11 @@
 //
 
 import Foundation
+import SolanaSwift
 
 protocol RendableAccountDetail {
+    var title: String { get }
+
     var amountInToken: String { get }
     var amountInFiat: String { get }
 
@@ -15,15 +18,30 @@ protocol RendableAccountDetail {
     var onAction: (RendableAccountDetailAction) -> Void { get }
 }
 
-enum RendableAccountDetailAction: Int, Identifiable {
-    var id: Int { rawValue }
-
+enum RendableAccountDetailAction: Identifiable {
     case buy
-    case receive
+    case receive(ReceiveParam)
     case send
     case swap
-    case cashOut
- 
+
+    enum ReceiveParam {
+        case wallet(Wallet)
+        case none
+    }
+
+    var id: Int {
+        switch self {
+        case .buy:
+            return 0
+        case .receive:
+            return 1
+        case .send:
+            return 2
+        case .swap:
+            return 3
+        }
+    }
+
     var title: String {
         switch self {
         case .buy:
@@ -34,23 +52,19 @@ enum RendableAccountDetailAction: Int, Identifiable {
             return L10n.send
         case .swap:
             return L10n.swap
-        case .cashOut:
-            return L10n.cashOut
         }
     }
-    
+
     var icon: UIImage {
         switch self {
         case .receive:
-            return .homeReceive
+            return .buttonReceive
         case .buy:
-            return .homeBuy
+            return .buttonBuy
         case .send:
-            return .homeSend
+            return .buttonSend
         case .swap:
-            return .homeSwap
-        case .cashOut:
-            return .cashOut
+            return .buttonSwap
         }
     }
 }

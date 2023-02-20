@@ -15,7 +15,6 @@ enum DetailAccountAction {
     case openReceive
     case openSend
     case openSwap
-    case openCashout
 }
 
 class DetailAccountViewModel: BaseViewModel, ObservableObject {
@@ -48,8 +47,6 @@ class DetailAccountViewModel: BaseViewModel, ObservableObject {
                 actionSubject?.send(.openSend)
             case .receive:
                 actionSubject?.send(.openReceive)
-            case .cashOut:
-                actionSubject?.send(.openCashout)
             }
         }
 
@@ -66,8 +63,6 @@ class DetailAccountViewModel: BaseViewModel, ObservableObject {
             .compactMap { $0 }
             .map { RendableSolanaAccountDetail(wallet: $0, onAction: onAction) }
             .sink { [weak self] rendableAccountDetail in
-                print("Updating wallet")
-                print(self)
                 self?.rendableAccountDetail = rendableAccountDetail
             }
             .store(in: &subscriptions)
