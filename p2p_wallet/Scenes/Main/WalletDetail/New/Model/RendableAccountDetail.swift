@@ -23,4 +23,34 @@ enum RendableAccountDetailAction: Int, Identifiable {
     case send
     case swap
     case cashOut
+ 
+    var title: String {
+        switch self {
+        case .buy:
+            return L10n.buy
+        case .receive:
+            return L10n.receive
+        case .send:
+            return L10n.send
+        case .swap:
+            return L10n.swap
+        case .cashOut:
+            return L10n.cashOut
+        }
+    }
+    
+    var icon: UIImage {
+        switch self {
+        case .receive:
+            return .homeReceive
+        case .buy:
+            return .homeBuy
+        case .send:
+            return .homeSend
+        case .swap:
+            return .homeSwap
+        case .cashOut:
+            return .cashOut
+        }
+    }
 }

@@ -17,8 +17,8 @@ struct NewHistoryView: View {
             ScrollView {
                 // Display error if no result
                 if
-                    viewModel.historyTransactions.state.error != nil,
-                    viewModel.historyTransactions.state.data.isEmpty
+                    viewModel.historyTransactions.error != nil,
+                    viewModel.historyTransactions.data.isEmpty
                 {
                     NewHistoryListErrorView {
                         viewModel.reload()

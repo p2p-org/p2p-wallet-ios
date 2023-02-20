@@ -26,7 +26,7 @@ protocol RendableListTransactionItem: Identifiable {
     
     var subdetail: String { get }
     
-    var onTap: (() -> Void)? { get }
+    var onTap: (() -> Void)? { get set }
 }
 
 enum NewHistoryRendableListTransactionItemStatus {

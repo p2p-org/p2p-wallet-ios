@@ -23,6 +23,11 @@ class DetailAccountViewModel: BaseViewModel, ObservableObject {
 
     let actionSubject: PassthroughSubject<DetailAccountAction, Never>
 
+    init(rendableAccountDetail: RendableAccountDetail) {
+        self.rendableAccountDetail = rendableAccountDetail
+        actionSubject = .init()
+    }
+    
     /// Render solana wallet (account) and dynamically update it.
     init(
         walletsRepository: WalletsRepository = Resolver.resolve(),
