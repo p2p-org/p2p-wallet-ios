@@ -13,6 +13,7 @@ import RxSwift
 import Sell
 import SolanaSwift
 import TransactionParser
+import AsyncAlgorithms
 
 enum NewHistoryAction {
     case openParsedTransaction(ParsedTransaction)
@@ -25,17 +26,13 @@ enum NewHistoryAction {
 }
 
 class NewHistoryViewModel: BaseViewModel, ObservableObject {
-    // Services
-
-    private let repository: NewHistoryServiceRepository
-
     // State
 
     @Published private var pendingTransactions: [any RendableListTransactionItem] = []
 
     @Published private var sellTransansactions: [any RendableListOfframItem] = []
 
-    let historyTransactions: AsyncList<AnyAsyncSequence<RendableListHistoryTransactionItem>>
+    @Published private(set) var historyTransactions: ListState<any RendableListTransactionItem>
 
     // Output
 
@@ -44,6 +41,24 @@ class NewHistoryViewModel: BaseViewModel, ObservableObject {
     }
 
     let actionSubject: PassthroughSubject<NewHistoryAction, Never>
+    
+    init(mock: [any RendableListTransactionItem]) {
+        // Init service
+        let actionSubject: PassthroughSubject<NewHistoryAction, Never> = .init()
+        self.actionSubject = actionSubject
+        
+        // Build history
+        historyTransactions = .init(
+            status: .ready,
+            data: mock,
+            fetchable: true,
+            error: nil
+        )
+        
+        self.fetch = {}
+        self.reload = {}
+        
+    }
 
     init(
         provider: KeyAppHistoryProvider = Resolver.resolve(),
@@ -54,13 +69,13 @@ class NewHistoryViewModel: BaseViewModel, ObservableObject {
         mint: String? = nil
     ) {
         // Init services and repositories
-        repository = NewHistoryServiceRepository(provider: provider)
+        let repository = NewHistoryServiceRepository(provider: provider)
 
         let actionSubject: PassthroughSubject<NewHistoryAction, Never> = .init()
         self.actionSubject = actionSubject
 
         // Setup list adaptor
-        historyTransactions = .init(
+        let historyTransactionsAsyncList: AsyncList<any RendableListTransactionItem> = .init(
             sequence: repository
                 .getAll(account: userWalletManager.wallet?.account, mint: mint)
                 .map { trx in
@@ -74,7 +89,18 @@ class NewHistoryViewModel: BaseViewModel, ObservableObject {
                 }
                 .eraseToAnyAsyncSequence()
         )
-
+        
+        fetch =  {
+            historyTransactionsAsyncList.fetch()
+        }
+        
+        reload = {
+            historyTransactionsAsyncList.reset()
+            historyTransactionsAsyncList.fetch()
+        }
+        
+        historyTransactions = .init()
+        
         super.init()
 
         // Listen sell service
@@ -100,28 +126,24 @@ class NewHistoryViewModel: BaseViewModel, ObservableObject {
             .store(in: &subscriptions)
 
         // Listen history transactions
-        historyTransactions.listen(target: self, in: &subscriptions)
+        historyTransactionsAsyncList.$state
+            .assign(to: &$historyTransactions)
     }
 
-    func reload() {
-        historyTransactions.reset()
-        historyTransactions.fetch()
-    }
+    var reload: () -> Void
 
-    func fetch() {
-        historyTransactions.fetch()
-    }
+    var fetch: () -> Void
 
     func buildSection() -> [NewHistoryListSection] {
         // Phase 1: Merge pending transaction with history transaction
 
         let filtedPendingTransaction = pendingTransactions.filter { pendingTransaction in
-            !historyTransactions.state.data.contains { historyTransaction in
+            !historyTransactions.data.contains { historyTransaction in
                 historyTransaction.id == pendingTransaction.id
             }
         }
 
-        let rendableTransactions: [any RendableListTransactionItem] = filtedPendingTransaction + historyTransactions.state.data
+        let rendableTransactions: [any RendableListTransactionItem] = filtedPendingTransaction + historyTransactions.data
 
         // Phase 2: Split transactions by date
         let dictionary = Dictionary(grouping: rendableTransactions) { transaction -> Date in
@@ -157,11 +179,11 @@ class NewHistoryViewModel: BaseViewModel, ObservableObject {
         if let lastSection = result.popLast() {
             var insertedItems: [NewHistoryItem] = []
 
-            if historyTransactions.state.fetchable {
+            if historyTransactions.fetchable {
                 insertedItems = .generatePlaceholder(n: 1) + [.fetch(id: UUID().uuidString)]
             }
 
-            if historyTransactions.state.error != nil {
+            if historyTransactions.error != nil {
                 insertedItems = [.button(id: UUID().uuidString, title: L10n.tryAgain, action: { [weak self] in self?.fetch() })]
             }
 
@@ -174,7 +196,7 @@ class NewHistoryViewModel: BaseViewModel, ObservableObject {
         }
 
         // Phase 5: Or replace with skeletons in first load
-        if historyTransactions.state.status == .fetching && result.isEmpty {
+        if historyTransactions.status == .fetching && result.isEmpty {
             return [
                 .init(title: "", items: .generatePlaceholder(n: 7))
             ]

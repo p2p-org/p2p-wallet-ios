@@ -12,12 +12,41 @@ struct DetailAccountView: View {
     @ObservedObject var historyList: NewHistoryViewModel
 
     var body: some View {
-        Text(/*@START_MENU_TOKEN@*/"Hello, World!"/*@END_MENU_TOKEN@*/)
+        VStack {
+            VStack {
+                Text(detailAccount.rendableAccountDetail.amountInToken)
+                Text(detailAccount.rendableAccountDetail.amountInFiat)
+            }
+            .padding(.top, 24)
+            
+            HStack(spacing: 32) {
+                ForEach(detailAccount.rendableAccountDetail.actions) { action in
+                    CircleButton(title: action.title, image: action.icon) {
+                        detailAccount.rendableAccountDetail.onAction(action)
+                    }
+                }
+                
+            }
+            
+            NewHistoryView(viewModel: historyList)
+        }
     }
 }
 
 struct DetailAccountView_Previews: PreviewProvider {
     static var previews: some View {
-        DetailAccountView()
+        DetailAccountView(
+            detailAccount: .init(
+                rendableAccountDetail: MockRendableAccountDetail(
+                    amountInToken: "1 000.97 USDC",
+                    amountInFiat: "1 000.97 USDC",
+                    actions: [.buy, .receive, .send, .swap],
+                    onAction: { _ in }
+                )
+            ),
+            historyList: .init(
+                mock: [MockedRendableListTransactionItem.send()]
+            )
+        )
     }
 }

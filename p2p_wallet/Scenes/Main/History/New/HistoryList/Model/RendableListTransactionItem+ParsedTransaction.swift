@@ -16,7 +16,7 @@ struct RendableListParsedTransactionItem: RendableListTransactionItem {
 
     let priceService: PricesService
 
-    let onTap: (() -> Void)?
+    var onTap: (() -> Void)?
 
     var id: String {
         trx.signature ?? ""

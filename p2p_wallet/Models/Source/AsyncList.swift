@@ -8,45 +8,63 @@
 import Combine
 import Foundation
 
-class AsyncList<Sequence: AsyncSequence> where Sequence.Element: Identifiable {
-    // MARK: - Nested types
+/// List adapter status
+enum ListStateStatus {
+    /// Adapter is fetching new data
+    case fetching
     
-    /// List adapter status
-    enum Status {
-        /// Adapter is fetching new data
-        case fetching
-        
-        /// Adapter is ready to fetch new data
-        case ready
+    /// Adapter is ready to fetch new data
+    case ready
+}
+
+struct ListState<Element> {
+    var status: ListStateStatus = .ready
+    var data: [Element] = []
+    var fetchable: Bool = true
+    var error: Error? = nil
+    
+    init() {
+        status = .ready
+        data = []
+        fetchable = true
+        error = nil
     }
     
-    /// List adapter state
-    struct State {
-        var status: Status = .ready
-        var data: [Sequence.Element] = []
-        var fetchable: Bool = true
-        var error: Error? = nil
+    init(data: [Element]) {
+        self.status = .ready
+        self.data = data
+        self.fetchable = true
+        self.error = nil
     }
     
+    init(status: ListStateStatus, data: [Element], fetchable: Bool, error: Error?) {
+        self.status = status
+        self.data = data
+        self.fetchable = fetchable
+        self.error = error
+    }
+}
+
+class AsyncList<Element> {
     // MARK: - Variables
     
     /// Number of items that will be fetched by call ``fetch()``
     private let limit: Int
     
     /// Adapter current state
-    @Published private(set) var state: State
+    @Published private(set) var state: ListState<Element>
     
     /// Iterator that help build a list
-    private var sequence: Sequence
+    private var sequence: AnyAsyncSequence<Element>
     
-    private var iterator: Sequence.AsyncIterator
+    private var iterator: AnyAsyncSequence<Element>.AsyncIterator
     
     /// Current fetching task
     private var currentTask: Task<Void, Error>?
     
     // MARK: - Initializing
     
-    init(sequence: Sequence, limit: Int = 20) {
+    init(sequence: AnyAsyncSequence<Element>, limit: Int = 20) {
         self.state = .init()
         self.sequence = sequence
         self.iterator = sequence.makeAsyncIterator()
@@ -67,7 +85,7 @@ class AsyncList<Sequence: AsyncSequence> where Sequence.Element: Identifiable {
         // Set new iterator
         iterator = sequence.makeAsyncIterator()
     }
- 
+    
     /// Fetch new data
     @discardableResult func fetch() -> Task<Void, Error>? {
         // Ensure only one task at current moment
@@ -87,11 +105,11 @@ class AsyncList<Sequence: AsyncSequence> where Sequence.Element: Identifiable {
             
             // Preparing
             var n = limit
-            var fetchedItems: [Sequence.Element] = []
+            var fetchedItems: [Element] = []
             
             // Fetching
             do {
-                while let item: Sequence.Element = try await iterator.next(), n > 0 {
+                while let item: Element = try await iterator.next(), n > 0 {
                     fetchedItems.append(item)
                     n -= 1
                 }
@@ -104,9 +122,6 @@ class AsyncList<Sequence: AsyncSequence> where Sequence.Element: Identifiable {
                     state.error = error
                 }
             }
-            
-            // Ensure unique id in list
-            fetchedItems = fetchedItems.filter { fetchedItem in !state.data.contains { $0.id == fetchedItem.id } }
             
             // Update data
             state.data = state.data + fetchedItems

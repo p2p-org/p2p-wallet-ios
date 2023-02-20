@@ -8,7 +8,7 @@
 import KeyAppUI
 import SwiftUI
 
-struct NewHistoryButtonAction: View {
+struct CircleButton: View {
     let title: String
     let image: UIImage
     let onPressed: () -> Void
@@ -39,6 +39,6 @@ struct NewHistoryButtonAction: View {
 
 struct NewHistoryButtonAction_Previews: PreviewProvider {
     static var previews: some View {
-        NewHistoryButtonAction(title: "Share", image: .share2) {}
+        CircleButton(title: "Share", image: .share2) {}
     }
 }
