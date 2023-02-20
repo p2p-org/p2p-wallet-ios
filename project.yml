@@ -14,6 +14,11 @@ name: p2p_wallet
 
 # 3. Remove these comment when done
 
+packages:
+    AsyncAlgorithms:
+        url: https://github.com/apple/swift-async-algorithms
+        branch: main
+
 options:
     deploymentTarget: 
         iOS: 14.0
@@ -195,3 +200,4 @@ targets:
         dependencies:
             - framework: Frameworks/keyapp.xcframework
               embed: false
+            - package: AsyncAlgorithms
