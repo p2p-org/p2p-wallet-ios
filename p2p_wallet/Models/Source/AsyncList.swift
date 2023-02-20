@@ -21,13 +21,13 @@ struct ListState<Element> {
     var status: ListStateStatus = .ready
     var data: [Element] = []
     var fetchable: Bool = true
-    var error: Error? = nil
+    var error: Error?
     
     init() {
-        status = .ready
-        data = []
-        fetchable = true
-        error = nil
+        self.status = .ready
+        self.data = []
+        self.fetchable = true
+        self.error = nil
     }
     
     init(data: [Element]) {
@@ -45,7 +45,9 @@ struct ListState<Element> {
     }
 }
 
-class AsyncList<Element> {
+final class AsyncList<Element> {
+    typealias ID = KeyPath<Element, String>
+    
     // MARK: - Variables
     
     /// Number of items that will be fetched by call ``fetch()``
@@ -62,13 +64,17 @@ class AsyncList<Element> {
     /// Current fetching task
     private var currentTask: Task<Void, Error>?
     
+    /// The id of item. Will be used to ensure unique id in list.
+    private let id: ID?
+    
     // MARK: - Initializing
     
-    init(sequence: AnyAsyncSequence<Element>, limit: Int = 20) {
+    init(sequence: AnyAsyncSequence<Element>, id: ID? = nil, limit: Int = 20) {
         self.state = .init()
         self.sequence = sequence
         self.iterator = sequence.makeAsyncIterator()
         self.limit = limit
+        self.id = id
     }
     
     // MARK: - Actions
@@ -123,6 +129,15 @@ class AsyncList<Element> {
                 }
             }
             
+            // Ensure unique in list
+            if let id {
+                fetchedItems = fetchedItems.filter { fetchedItem in
+                    !state.data.contains {
+                        $0[keyPath: id] == fetchedItem[keyPath: id]
+                    }
+                }
+            }
+            
             // Update data
             state.data = state.data + fetchedItems
             
@@ -141,5 +156,28 @@ class AsyncList<Element> {
             .sink { [weak target] _ in
                 target?.objectWillChange.send()
             }.store(in: &storage)
+    }
+}
+
+extension AsyncList: Collection {
+    typealias Index = Int
+
+    // The upper and lower bounds of the collection, used in iterations
+    var startIndex: Index {
+        return state.data.startIndex
+    }
+    
+    var endIndex: Index {
+        return state.data.endIndex
+    }
+
+    // Required subscript, based on a dictionary index
+    subscript(index: Index) -> Element {
+        return state.data[index]
+    }
+
+    // Method that returns the next index when iterating
+    func index(after i: Index) -> Index {
+        return state.data.index(after: i)
     }
 }
