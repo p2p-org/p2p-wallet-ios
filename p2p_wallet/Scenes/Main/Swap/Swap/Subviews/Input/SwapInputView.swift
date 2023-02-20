@@ -90,8 +90,11 @@ private extension SwapInputView {
             textField.isEnabled = viewModel.isEditable
             textField.placeholder = "0"
         }
-        .if(viewModel.isLoading) { view in
+        .if(viewModel.isLoading || viewModel.isAmountLoading) { view in
             view.skeleton(with: true, size: CGSize(width: 84, height: 20))
+        }
+        .if(!viewModel.isEditable) { view in
+            view.onTapGesture(perform: viewModel.amountFieldTap.send)
         }
         .frame(height: 32)
     }

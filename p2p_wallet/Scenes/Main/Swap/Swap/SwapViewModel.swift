@@ -6,6 +6,12 @@ import SolanaSwift
 
 final class SwapViewModel: BaseViewModel, ObservableObject {
 
+    enum InitializingState {
+        case loading
+        case failed
+        case success
+    }
+
     // MARK: - Dependencies
     @Injected private var swapWalletsRepository: JupiterTokensRepository
     @Injected private var pricesAPI: SolanaPricesAPI
@@ -13,160 +19,133 @@ final class SwapViewModel: BaseViewModel, ObservableObject {
 
     // MARK: - Actions
     let switchTokens = PassthroughSubject<Void, Never>()
+    let tryAgain = PassthroughSubject<Void, Never>()
+    let changeFromToken = PassthroughSubject<SwapToken, Never>()
+    let changeToToken = PassthroughSubject<SwapToken, Never>()
 
     // MARK: - Params
     @Published var header: String = ""
-    @Published var isLoading: Bool = false
+    @Published var initializingState: InitializingState = .loading
     @Published var arePricesLoading: Bool = false
 
-    @Published var fromToken: SwapToken = .nativeSolana
-    @Published var toToken: SwapToken = .nativeSolana
-    @Published var priceInfo = SwapPriceInfo(fromPrice: 0, toPrice: 0)
-    private var priceInfoTask: Task<Void, Never>?
-
     // MARK: - Subviewmodels
-    let fromTokenViewModel: SwapInputViewModel
-    let toTokenViewModel: SwapInputViewModel
-    let actionButtonViewModel: SliderActionButtonViewModel
+    @Published var actionButtonData = SliderActionButtonData.zero
+    @Published var isSliderOn = false
+    @Published var showFinished = false
 
-    var tokens: [SwapToken] = [] // TODO: Temprorary decision. Waiting for new repository class
+    let stateMachine: JupiterSwapStateMachine
+    var currentState: JupiterSwapState { stateMachine.currentState }
 
     override init() {
-        self.fromTokenViewModel = SwapInputViewModel.buildFromViewModel(swapToken: .nativeSolana)
-        self.toTokenViewModel = SwapInputViewModel.buildToViewModel(swapToken: .nativeSolana)
-        self.actionButtonViewModel = SliderActionButtonViewModel()
+        self.stateMachine = JupiterSwapStateMachine(
+            initialState: JupiterSwapState.zero(status: .requiredInitialize),
+            services: .init(jupiterClient: JupiterRestClientAPI(version: .v4), pricesAPI: Resolver.resolve())
+        )
+
         super.init()
         bind()
+        bindActions()
     }
 }
 
 private extension SwapViewModel {
     func bind() {
-        fromTokenViewModel.$amountText
-            .sink { [unowned self] value in
-                let amount = Double(value) ?? 0
-                self.toTokenViewModel.amountText = (amount * self.priceInfo.relation).toString(maximumFractionDigits: Int(self.toToken.jupiterToken.decimals), roundingMode: .down)
-                self.fromTokenViewModel.fiatAmount = "\((self.priceInfo.fromPrice * amount).toString(maximumFractionDigits: 2, roundingMode: .down)) \(Defaults.fiat.code)"
-            }
-            .store(in: &subscriptions)
-
-        switchTokens
-            .sink { [unowned self] _ in
-                let fromHolder = self.fromToken
-                self.fromToken = self.toToken
-                self.toToken = fromHolder
-            }
-            .store(in: &subscriptions)
-
-        swapWalletsRepository.state
-            .sink { [weak self] currentState in
-                self?.isLoading = currentState == .loading || currentState == .initialized
-            }
-            .store(in: &subscriptions)
-
-        swapWalletsRepository.tokens
+        swapWalletsRepository.data
             .sinkAsync { [weak self] data in
-                self?.autoChooseSwapTokens(data: data)
+                let _ = await self?.stateMachine
+                    .accept(action: .initialize(swapTokens: data.swapTokens, routeMap: data.routeMap))
             }
             .store(in: &subscriptions)
 
-        $isLoading
-            .sink { [weak self] value in
-                self?.fromTokenViewModel.isLoading = value
-                self?.toTokenViewModel.isLoading = value
-
-                if value {
-                    self?.actionButtonViewModel.actionButton = .init(isEnabled: false, title: L10n.counting)
-                } else {
-                    self?.actionButtonViewModel.actionButton = .init(isEnabled: false, title: L10n.enterTheAmount)
-                }
+        changeFromToken
+            .sinkAsync { [weak self] token in
+                let _ = await self?.stateMachine.accept(action: .changeFromToken(token))
             }
             .store(in: &subscriptions)
 
-        $fromToken
-            .sink { [weak fromTokenViewModel] token in
-                fromTokenViewModel?.token = token
+        changeToToken
+            .sinkAsync { [ weak self] token in
+                let _ = await self?.stateMachine.accept(action: .changeToToken(token))
             }
             .store(in: &subscriptions)
 
-        $toToken
-            .sink { [weak toTokenViewModel] token in
-                toTokenViewModel?.token = token
+        stateMachine.statePublisher
+            .sinkAsync { [weak self] updatedState in
+                guard let self else { return }
+                self.handle(status: updatedState.status)
+                self.updateHeader(priceInfo: updatedState.priceInfo, fromToken: updatedState.fromToken.jupiterToken, toToken: updatedState.toToken.jupiterToken)
+                self.updateActionButton(for: updatedState)
             }
             .store(in: &subscriptions)
+    }
 
-        Publishers.CombineLatest($fromToken.eraseToAnyPublisher(), $toToken.eraseToAnyPublisher())
-            .sink(receiveValue: { [weak self] fromToken, toToken in
-                self?.getPrices(from: fromToken, to: toToken)
+    func handle(status: JupiterSwapState.Status) {
+        switch status {
+        case .requiredInitialize, .initializing:
+            self.initializingState = .loading
+        case .error(.initializationFailed):
+            self.initializingState = .failed
+        default:
+            self.initializingState = .success
+        }
+
+        switch status {
+        case .requiredInitialize, .initializing, .loadingTokenTo, .loadingAmountTo, .switching:
+            self.arePricesLoading = true
+        default:
+            self.arePricesLoading = false
+        }
+    }
+
+    func bindActions() {
+        switchTokens
+            .sinkAsync(receiveValue: { [weak self] _ in
+                guard let self else { return }
+                let _ = await self.stateMachine.accept(
+                    action: .changeBothTokens(from: self.currentState.toToken, to: self.currentState.fromToken)
+                )
             })
             .store(in: &subscriptions)
 
-        $priceInfo
-            .sink { [weak self] info in
+        tryAgain
+            .sinkAsync { [weak self] in
                 guard let self else { return }
-                if info.relation != 0 {
-                    self.header = "\(1.tokenAmountFormattedString(symbol: self.fromToken.jupiterToken.symbol, maximumFractionDigits: Int(self.fromToken.jupiterToken.decimals))) ≈ \(info.relation.tokenAmountFormattedString(symbol: self.toToken.jupiterToken.symbol, maximumFractionDigits: Int(self.toToken.jupiterToken.decimals)))"
-                } else {
-                    self.header = ""
-                }
             }
             .store(in: &subscriptions)
     }
 
-    func autoChooseSwapTokens(data: JupiterTokensData) {
-        self.tokens = data.tokens
-        let usdc = data.tokens.first(where: { $0.jupiterToken.address == Token.usdc.address })
-        let solana = data.tokens.first(where: { $0.jupiterToken.address == Token.nativeSolana.address })
-
-        if data.userWallets.isEmpty, let usdc, let solana {
-            fromToken = usdc
-            toToken = solana
-        } else if usdc?.userWallet != nil, let usdc, let solana {
-            fromToken = usdc
-            toToken = solana
-        } else if solana?.userWallet != nil, let usdc, let solana {
-            fromToken = solana
-            toToken = usdc
-        } else if let usdc {
-            let userWallet = data.userWallets.sorted(by: { $0.amountInCurrentFiat > $1.amountInCurrentFiat }).first
-            let swapToken = data.tokens.first(where: { $0.jupiterToken.address == userWallet?.mintAddress })
-            fromToken = swapToken ?? solana ?? usdc
-            toToken = usdc
+    func updateHeader(priceInfo: SwapPriceInfo, fromToken: Jupiter.Token, toToken: Jupiter.Token) {
+        if priceInfo.relation != 0 {
+            let onetoToken = 1.tokenAmountFormattedString(symbol: toToken.symbol, maximumFractionDigits: toToken.decimals, roundingMode: .down)
+            let amountFromToken = priceInfo.relation.tokenAmountFormattedString(symbol: fromToken.symbol, maximumFractionDigits: fromToken.decimals, roundingMode: .down)
+            header = [onetoToken, amountFromToken].joined(separator: " ≈ ")
+        } else {
+            header = ""
         }
     }
 
-    func getPrices(from: SwapToken, to: SwapToken) {
-        guard from.jupiterToken.address != to.jupiterToken.address else { return }
-
-        priceInfoTask?.cancel()
-        arePricesLoading = true
-        priceInfoTask = Task {
-            do {
-                let fromToken = SolanaSwift.Token.init(jupiterToken: from.jupiterToken)
-                let toToken = SolanaSwift.Token.init(jupiterToken: to.jupiterToken)
-                let prices = try await pricesAPI.getCurrentPrices(coins: [fromToken, toToken], toFiat: Defaults.fiat.code)
-                self.priceInfo = SwapPriceInfo(fromPrice: prices[fromToken]??.value ?? 0, toPrice: prices[toToken]??.value ?? 0)
-                self.arePricesLoading = false
+    func updateActionButton(for state: JupiterSwapState) {
+        switch state.status {
+        case .ready:
+            if state.amountFrom == 0 {
+                actionButtonData = SliderActionButtonData(isEnabled: false, title: L10n.enterTheAmount)
+            } else {
+                actionButtonData = SliderActionButtonData(
+                    isEnabled: true,
+                    title: L10n.swap(state.fromToken.jupiterToken.symbol, state.toToken.jupiterToken.symbol)
+                )
             }
-            catch {
-                self.priceInfo = SwapPriceInfo(fromPrice: 0, toPrice: 0)
-                self.arePricesLoading = false
-            }
+        case .requiredInitialize, .loadingTokenTo, .loadingAmountTo, .switching, .initializing:
+            actionButtonData = SliderActionButtonData(isEnabled: false, title: L10n.counting)
+        case .error(.notEnoughFromToken):
+            actionButtonData = SliderActionButtonData(isEnabled: false, title: L10n.notEnough(state.fromToken.jupiterToken.symbol))
+        case .error(.equalSwapTokens):
+            actionButtonData = SliderActionButtonData(isEnabled: false, title: L10n.youCanTSwapSameToken)
+        case .error(.routeIsNotFound):
+            actionButtonData = SliderActionButtonData(isEnabled: false, title: L10n.swapOfTheseTokensIsnTPossible)
+        default:
+            //TODO: Handle in error tasks like https://p2pvalidator.atlassian.net/browse/PWN-7100
+            actionButtonData = SliderActionButtonData(isEnabled: false, title: L10n.swapOfTheseTokensIsnTPossible)
         }
     }
-}
-
-private extension SwapToken {
-    static let nativeSolana = SwapToken(
-        jupiterToken: .init(
-            address: SolanaSwift.Token.nativeSolana.address,
-            chainId: SolanaSwift.Token.nativeSolana.chainId,
-            decimals: Int(SolanaSwift.Token.nativeSolana.decimals),
-            name: SolanaSwift.Token.nativeSolana.name,
-            symbol: SolanaSwift.Token.nativeSolana.symbol,
-            logoURI: SolanaSwift.Token.nativeSolana.logoURI,
-            extensions: nil,
-            tags: []
-        ),
-        userWallet: nil)
 }

@@ -1200,3 +1200,7 @@ You can try again, but your new transaction will be subject to the current rates
 "You receive" = "You receive";
 "Counting..." = "Counting...";
 "The token you pay" = "The token you pay";
+"You can enter “You pay” field only" = "You can enter “You pay” field only";
+"Not enough %@" = "Not enough %@";
+"You can’t swap same token" = "You can’t swap same token";
+"Swap of these tokens isn’t possible" = "Swap of these tokens isn’t possible";

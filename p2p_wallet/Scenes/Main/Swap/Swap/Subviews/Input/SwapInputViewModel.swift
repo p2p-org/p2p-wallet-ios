@@ -1,26 +1,39 @@
 import Combine
+import Resolver
 
 final class SwapInputViewModel: BaseViewModel, ObservableObject {
+
+    let allButtonPressed = PassthroughSubject<Void, Never>()
+    let amountFieldTap = PassthroughSubject<Void, Never>()
+    let changeTokenPressed = PassthroughSubject<Void, Never>()
+
     @Published var title: String
-    @Published var amountText: String
+    @Published var amountText = ""
     @Published var isFirstResponder: Bool
     @Published var isEditable: Bool
     @Published var balance: Double?
-    @Published var balanceText: String = ""
-    @Published var tokenSymbol: String = ""
-    @Published var isLoading: Bool = false
+    @Published var balanceText = ""
+    @Published var tokenSymbol = ""
+    @Published var isLoading = false
+    @Published var isAmountLoading = false
     @Published var fiatAmount: String?
     @Published var token: SwapToken
 
-    let allButtonPressed = PassthroughSubject<Void, Never>()
-    let changeTokenPressed = PassthroughSubject<Void, Never>()
+    private let stateMachine: JupiterSwapStateMachine
+    private let isFromToken: Bool
+    private var currentState: JupiterSwapState { stateMachine.currentState }
 
-    init(title: String, isFirstResponder: Bool, isEditable: Bool, token: SwapToken) {
-        self.title = title
-        self.amountText = ""
-        self.isFirstResponder = isFirstResponder
-        self.isEditable = isEditable
-        self.token = token
+    @Injected private var notificationService: NotificationService
+
+    init(stateMachine: JupiterSwapStateMachine, isFromToken: Bool) {
+        self.isFromToken = isFromToken
+        self.stateMachine = stateMachine
+
+        self.title = isFromToken ? L10n.youPay : L10n.youReceive
+        self.isFirstResponder = isFromToken
+        self.isEditable = isFromToken
+        self.token = stateMachine.currentState.fromToken
+
         super.init()
 
         allButtonPressed
@@ -33,7 +46,6 @@ final class SwapInputViewModel: BaseViewModel, ObservableObject {
             .sink { [unowned self] value in
                 self.tokenSymbol = value.jupiterToken.symbol
                 self.balance = value.userWallet?.amount
-                self.amountText = self.amountText // To recalculate amounts
             }
             .store(in: &subscriptions)
 
@@ -42,15 +54,60 @@ final class SwapInputViewModel: BaseViewModel, ObservableObject {
                 self.balanceText = value?.toString(maximumFractionDigits: self.token.jupiterToken.decimals) ?? "0"
             }
             .store(in: &subscriptions)
+
+        $amountText
+            .debounce(for: 0.3, scheduler: DispatchQueue.main)
+            .sinkAsync { [weak self] value in
+                guard let self = self else { return }
+                self.isAmountLoading = true && !self.isFromToken
+                if self.isFromToken {
+                    let _ = await self.stateMachine.accept(action: .changeAmountFrom(Double(value) ?? 0))
+                }
+                self.isAmountLoading = false && !self.isFromToken
+            }
+            .store(in: &subscriptions)
+
+        stateMachine.statePublisher
+            .receive(on: DispatchQueue.main)
+            .sink { [weak self] updatedState in
+                guard let self else { return }
+                self.token = self.isFromToken ? updatedState.fromToken : updatedState.toToken
+
+                if self.isFromToken {
+                    self.fiatAmount = "\((updatedState.priceInfo.fromPrice * updatedState.amountFrom).toString(maximumFractionDigits: 2, roundingMode: .down)) \(Defaults.fiat.code)"
+                } else {
+                    self.amountText = updatedState.amountTo.toString(
+                        maximumFractionDigits: updatedState.toToken.jupiterToken.decimals,
+                        roundingMode: .down
+                    )
+                }
+                self.updateLoading(status: updatedState.status)
+            }
+            .store(in: &subscriptions)
+
+        amountFieldTap
+            .sink { [unowned self] in
+                guard !self.isEditable else { return }
+                self.notificationService.showToast(title: "🤖", text: L10n.youCanEnterYouPayFieldOnly)
+            }
+            .store(in: &subscriptions)
     }
 }
 
-extension SwapInputViewModel {
-    static func buildFromViewModel(swapToken: SwapToken) -> SwapInputViewModel {
-        SwapInputViewModel(title: L10n.youPay, isFirstResponder: true, isEditable: true, token: swapToken)
-    }
-
-    static func buildToViewModel(swapToken: SwapToken) -> SwapInputViewModel {
-        SwapInputViewModel(title: L10n.youReceive, isFirstResponder: false, isEditable: false, token: swapToken)
+private extension SwapInputViewModel {
+    func updateLoading(status: JupiterSwapState.Status) {
+        switch status {
+        case .requiredInitialize, .initializing:
+            isLoading = true
+        case .loadingAmountTo:
+            isAmountLoading = isFromToken ? false : true
+        case .loadingTokenTo:
+            isLoading = isFromToken ? false : true
+        case .switching:
+            isLoading = true
+        default:
+            isLoading = false
+            isAmountLoading = false
+        }
     }
 }
