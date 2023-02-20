@@ -13,10 +13,6 @@ import Send
 import SwiftUI
 
 class NewHistoryCoordinator: SmartCoordinator<Void> {
-    deinit {
-        print("Deinit")
-    }
-    
     override func build() -> UIViewController {
         let vm = NewHistoryViewModel()
 
@@ -27,8 +23,7 @@ class NewHistoryCoordinator: SmartCoordinator<Void> {
                 switch action {
                 case let .openParsedTransaction(trx):
                     let coordinator = TransactionDetailCoordinator(
-                        input: .parsedTransaction(trx),
-                        style: .passive,
+                        viewModel: .init(parsedTransaction: trx),
                         presentingViewController: self.presentation.presentingViewController
                     )
 
@@ -40,8 +35,7 @@ class NewHistoryCoordinator: SmartCoordinator<Void> {
 
                 case let .openHistoryTransaction(trx):
                     let coordinator = TransactionDetailCoordinator(
-                        input: .historyTransaction(trx),
-                        style: .passive,
+                        viewModel: .init(historyTransaction: trx),
                         presentingViewController: self.presentation.presentingViewController
                     )
 
@@ -54,8 +48,7 @@ class NewHistoryCoordinator: SmartCoordinator<Void> {
 
                 case let .openPendingTransaction(trx):
                     let coordinator = TransactionDetailCoordinator(
-                        input: .pendingTransaction(trx),
-                        style: .passive,
+                        viewModel: .init(pendingTransaction: trx),
                         presentingViewController: self.presentation.presentingViewController
                     )
 
