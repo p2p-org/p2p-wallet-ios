@@ -1228,3 +1228,4 @@ You can try again, but your new transaction will be subject to the current rates
 "Buy or receive to continue" = "Mua hoặc nhận để tiếp tục";
 "Cannot calculate fees. Try again" = "Không thể tính phí.  Thử lại";
 "Less than %@" = "Ít hơn %@";
+"Solana network" = "mạng solana";

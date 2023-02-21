@@ -126,8 +126,6 @@ final class HomeCoordinator: Coordinator<Void> {
             return coordinate(
                 to: SendCoordinator(
                     rootViewController: navigationController,
-                    preChosenWallet: nil,
-                    hideTabBar: true,
                     allowSwitchingMainAmountType: true
                 )
             )
