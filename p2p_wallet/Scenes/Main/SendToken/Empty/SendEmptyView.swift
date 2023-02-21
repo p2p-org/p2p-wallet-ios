@@ -28,14 +28,14 @@ struct SendEmptyView: View {
                 VStack(alignment: .leading, spacing: 32) {
                     SendEmptyRowView(
                         image: .lightningFilled,
-                        text: L10n.sendCryptoInTheSolanaNetworkInstantlyAndWithoutFees
+                        text: L10n.sendCryptoInTheSolanaNetworkInstantlyAndWithoutFees,
+                        textAccessibilityIdentifier: "SendEmptyView.desc1"
                     )
-                    .accessibilityIdentifier("SendEmptyView.desc1")
                     SendEmptyRowView(
                         image: .user,
-                        text: L10n.effortlesslySendTokensWithUsernamesInsteadOfLongAddresses
+                        text: L10n.effortlesslySendTokensWithUsernamesInsteadOfLongAddresses,
+                        textAccessibilityIdentifier: "SendEmptyView.desc2"
                     )
-                    .accessibilityIdentifier("SendEmptyView.desc2")
                 }
                 .padding(.leading, 16)
                 .padding(.bottom, 20)
