@@ -24,7 +24,7 @@ struct NewHistoryView<Header: View>: View {
                 viewModel.historyTransactions.isEmpty
             {
                 NewHistoryListErrorView {
-                    viewModel.reload()
+                    Task { try await viewModel.reload() }
                 }
                 .padding(.horizontal, 16)
                 .padding(.top, 38)
@@ -79,7 +79,7 @@ struct NewHistoryView<Header: View>: View {
             }
             .padding(.vertical, 8)
         }
-        .customRefreshable { await viewModel.reload() }
+        .customRefreshable { try? await viewModel.reload() }
         .background(Color(Asset.Colors.smoke.color))
         .onAppear { viewModel.fetch() }
     }

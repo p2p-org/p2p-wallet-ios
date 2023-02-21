@@ -156,9 +156,9 @@ class NewHistoryViewModel: BaseViewModel, ObservableObject {
         historyTransactions.listen(target: self, in: &subscriptions)
     }
 
-    func reload() {
+    func reload() async throws {
         historyTransactions.reset()
-        historyTransactions.fetch()
+        try await historyTransactions.fetch()?.value
     }
 
     func fetch() {
