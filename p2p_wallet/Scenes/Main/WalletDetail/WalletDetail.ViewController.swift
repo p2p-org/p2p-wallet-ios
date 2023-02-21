@@ -143,7 +143,11 @@ extension WalletDetail {
                 vc.delegate = self
                 present(vc, animated: true)
             case let .send(wallet):
-                coordinator = SendCoordinator(rootViewController: navigationController!, preChosenWallet: wallet, hideTabBar: true, allowSwitchingMainAmountType: true)
+                coordinator = SendCoordinator(
+                    rootViewController: navigationController!,
+                    args: .wallet(wallet),
+                    allowSwitchingMainAmountType: true
+                )
                 coordinator?.start()
                     .sink { [weak self] result in
                         switch result {

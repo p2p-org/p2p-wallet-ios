@@ -70,33 +70,34 @@ final class SellPendingCoordinator: Coordinator<SellPendingCoordinatorResult> {
             }
             .store(in: &subscriptions)
 
-        viewModel.send
-            .flatMap { [unowned self, navigationController] in
-                coordinate(to:
-                    SendCoordinator(
+        if let nativeWallet = walletsRepository.nativeWallet {
+            viewModel.send
+                .flatMap { [unowned self, navigationController] in
+                    coordinate(to: SendCoordinator(
                         rootViewController: navigationController,
-                        preChosenWallet: walletsRepository.nativeWallet,
-                        preChosenRecipient: Recipient(
-                            address: transaction.depositWallet,
-                            category: .solanaAddress,
-                            attributes: [.funds]
+                        args: .fixed(
+                            wallet: nativeWallet,
+                            recipient: Recipient(
+                                address: transaction.depositWallet,
+                                category: .solanaAddress,
+                                attributes: [.funds]
+                            ),
+                            amount: transaction.baseCurrencyAmount
                         ),
-                        preChosenAmount: transaction.baseCurrencyAmount,
-                        hideTabBar: true,
                         source: .sell,
                         allowSwitchingMainAmountType: false
-                    )
-                )
-            }
-            .sink { [weak self] res in
-                switch res {
-                case .sent(let transaction):
-                    self?.resultSubject.send(.transactionSent(transaction))
-                default:
-                    break
+                    ))
                 }
-            }
-            .store(in: &subscriptions)
+                .sink { [weak self] res in
+                    switch res {
+                    case .sent(let transaction):
+                        self?.resultSubject.send(.transactionSent(transaction))
+                    default:
+                        break
+                    }
+                }
+                .store(in: &subscriptions)
+        }
         
         // return either vc was dellocated or result subject return a value
         return Publishers.Merge(
