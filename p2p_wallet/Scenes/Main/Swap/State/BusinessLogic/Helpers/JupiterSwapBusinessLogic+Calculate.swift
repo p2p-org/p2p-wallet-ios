@@ -48,7 +48,7 @@ extension JupiterSwapBusinessLogic {
                 status = .error(reason: .notEnoughFromToken)
             }
 
-            return state.copy(status: status, amountTo: amountTo, priceInfo: newPriceInfo)
+            return state.copy(status: status, amountTo: amountTo, priceInfo: newPriceInfo, route: route)
         }
         catch {
             return state.copy(status: .error(reason: .unknown))
