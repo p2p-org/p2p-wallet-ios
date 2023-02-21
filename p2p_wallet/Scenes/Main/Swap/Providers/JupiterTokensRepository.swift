@@ -3,20 +3,12 @@ import Combine
 import SolanaSwift
 import Resolver
 
-public enum JupiterTokensState {
-    case initialized
-    case loading
-    case loaded
-    case error
-}
-
 struct JupiterTokensData {
     let tokens: [SwapToken]
     let userWallets: [Wallet]
 }
 
 protocol JupiterTokensRepository {
-    var state: AnyPublisher<JupiterTokensState, Never> { get }
     var data: AnyPublisher<JupiterData, Never> { get }
     var routeMap: [String: [String]] { get }
 
@@ -29,9 +21,6 @@ struct JupiterData {
 }
 
 final class JupiterTokensRepositoryImpl: JupiterTokensRepository {
-@MainActor var state: AnyPublisher<JupiterTokensState, Never> {
-        $stateSubject.receive(on: RunLoop.main).eraseToAnyPublisher()
-    }
     var data: AnyPublisher<JupiterData, Never> {
         $dataSubject.eraseToAnyPublisher()
     }
@@ -71,5 +60,6 @@ final class JupiterTokensRepositoryImpl: JupiterTokensRepository {
             return SwapToken(jupiterToken: jupiterToken, userWallet: nil)
         }
         dataSubject = JupiterData(swapTokens: swapTokens, routeMap: routeMap)
+        self.routeMap = routeMap.indexesRouteMap
     }
 }
