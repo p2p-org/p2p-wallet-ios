@@ -84,7 +84,7 @@ struct RendableDetailHistoryTransaction: RendableDetailTransaction {
         case let .receive(data):
             return .positive("+\(data.amount.usdAmount.fiatAmountFormattedString())")
         case let .swap(data):
-            return .positive("+\(data.from.amount.usdAmount.fiatAmountFormattedString())")
+            return .positive("+\(data.to.amount.usdAmount.fiatAmountFormattedString())")
         case let .burn(data):
             return .negative("\(data.amount.usdAmount.fiatAmountFormattedString())")
         case let .mint(data):
