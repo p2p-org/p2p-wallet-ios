@@ -115,7 +115,8 @@ final class AsyncList<Element> {
             
             // Fetching
             do {
-                while let item: Element = try await iterator.next(), n > 0 {
+                while n > 0, let item: Element = try await iterator.next() {
+                    try Task.checkCancellation()
                     fetchedItems.append(item)
                     n -= 1
                 }

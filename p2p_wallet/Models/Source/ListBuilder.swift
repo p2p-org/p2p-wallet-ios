@@ -33,7 +33,14 @@ enum ListBuilder {
 
         return dictionary.keys.sorted().reversed()
             .map { key in
-                tranform(dateFormatter.string(from: key), dictionary[key] ?? [])
+                // Sort
+                var items = dictionary[key] ?? []
+                items.sort { lhs, rhs in
+                    lhs[keyPath: date] >= rhs[keyPath: date]
+                }
+
+                // Tranform
+                return tranform(dateFormatter.string(from: key), items)
             }
     }
 }
