@@ -74,7 +74,7 @@ struct JupiterSwapState: Equatable {
         slippage: Int = 0,
         route: Route? = nil
     ) -> JupiterSwapState {
-        .init(
+        JupiterSwapState(
             status: status,
             routeMap: routeMap,
             swapTokens: swapTokens,
@@ -100,7 +100,7 @@ struct JupiterSwapState: Equatable {
         slippage: Int? = nil,
         route: Route? = nil
     ) -> JupiterSwapState {
-        .init(
+        JupiterSwapState(
             status: status ?? self.status,
             routeMap: routeMap ?? self.routeMap,
             swapTokens: swapTokens ?? self.swapTokens,
