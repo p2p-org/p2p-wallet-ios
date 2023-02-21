@@ -67,7 +67,10 @@ struct RendableDetailParsedTransaction: RendableDetailTransaction {
             return .icon(.transactionCreateAccount)
         }
 
-        return .icon(.planet)
+        // TODO: Remove
+        return .icon(.transactionUndefined)
+         
+        // return .icon(.planet)
     }
     
     var amountInFiat: DetailTransactionChange {

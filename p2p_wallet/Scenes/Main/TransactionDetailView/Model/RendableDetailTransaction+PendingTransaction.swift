@@ -81,7 +81,8 @@ struct RendableDetailPendingTransaction: RendableDetailTransaction {
             
             return .double(fromUrl, toUrl)
         default:
-            return .icon(.planet)
+            return .icon(.transactionUndefined)
+            // return .icon(.planet)
         }
     }
     
