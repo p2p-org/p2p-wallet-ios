@@ -19,6 +19,7 @@ enum DetailTransactionStyle {
 
 enum DetailTransactionViewModelOutput {
     case share(URL)
+    case open(URL)
     case close
 }
 
@@ -78,6 +79,6 @@ class DetailTransactionViewModel: BaseViewModel, ObservableObject {
 
     func explore() {
         guard let url = URL(string: "https://explorer.solana.com/tx/\(rendableTransaction.signature ?? "")") else { return }
-        UIApplication.shared.open(url)
+        action.send(.open(url))
     }
 }
