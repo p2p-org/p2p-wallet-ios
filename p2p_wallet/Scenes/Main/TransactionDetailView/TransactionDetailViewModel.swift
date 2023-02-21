@@ -7,7 +7,6 @@
 
 import Combine
 import Foundation
-import History
 import Resolver
 import SolanaSwift
 import TransactionParser
@@ -39,18 +38,6 @@ class DetailTransactionViewModel: BaseViewModel, ObservableObject {
     init(parsedTransaction: ParsedTransaction ) {
         self.style = .passive
         self.rendableTransaction = RendableDetailParsedTransaction(trx: parsedTransaction)
-    }
-
-    init(historyTransaction: HistoryTransaction) {
-        self.style = .passive
-        self.rendableTransaction = RendableDetailHistoryTransaction(trx: historyTransaction, allTokens: [])
-
-        super.init()
-
-        Task {
-            let tokenRepository: TokensRepository = Resolver.resolve()
-            self.rendableTransaction = try await RendableDetailHistoryTransaction(trx: historyTransaction, allTokens: tokenRepository.getTokensList(useCache: true))
-        }
     }
 
     init(pendingTransaction: PendingTransaction) {
