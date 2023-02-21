@@ -40,7 +40,7 @@ class TransactionDetailCoordinator: SmartCoordinator<Void> {
                 }
                 self.result.send(completion: .finished)
             case let .open(url):
-                self.presentation.presentingViewController.dismiss(animated: true) {  in
+                self.presentation.presentingViewController.dismiss(animated: true) {  
                     UIApplication
                         .shared
                         .windows
