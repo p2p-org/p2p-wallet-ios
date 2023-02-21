@@ -49,7 +49,7 @@ final class NewSwapCoordinator: Coordinator<Void> {
     private func openChooseToken(viewModel: SwapViewModel, fromToken: Bool) {
         coordinate(to: ChooseSwapTokenCoordinator(
             chosenWallet: fromToken ? viewModel.fromToken : viewModel.toToken,
-            tokens: viewModel.tokens,
+            tokens: fromToken ? viewModel.tokens : viewModel.toTokens,
             navigationController: navigationController
         ))
         .compactMap { $0 }
