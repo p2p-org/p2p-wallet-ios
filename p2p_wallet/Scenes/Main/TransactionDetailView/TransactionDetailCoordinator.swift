@@ -7,8 +7,8 @@
 
 import Foundation
 import History
-import TransactionParser
 import SafariServices
+import TransactionParser
 
 class TransactionDetailCoordinator: SmartCoordinator<Void> {
     let viewModel: DetailTransactionViewModel
@@ -31,13 +31,22 @@ class TransactionDetailCoordinator: SmartCoordinator<Void> {
             case let .share(url):
                 self.presentation.presentingViewController.dismiss(animated: true) {
                     let av = UIActivityViewController(activityItems: [url], applicationActivities: nil)
-                    UIApplication.shared.windows.first?.rootViewController?.present(av, animated: true, completion: nil)
+                    UIApplication
+                        .shared
+                        .windows
+                        .first?
+                        .rootViewController?
+                        .present(av, animated: true, completion: nil)
                 }
                 self.result.send(completion: .finished)
             case let .open(url):
-                self.presentation.presentingViewController.dismiss(animated: true) { [weak self] in
-                    let svc = SFSafariViewController(url: url)
-                    self?.presentation.presentingViewController.present(svc, animated: true, completion: nil)
+                self.presentation.presentingViewController.dismiss(animated: true) {  in
+                    UIApplication
+                        .shared
+                        .windows
+                        .first?
+                        .rootViewController?
+                        .present(SFSafariViewController(url: url), animated: true, completion: nil)
                 }
             }
 

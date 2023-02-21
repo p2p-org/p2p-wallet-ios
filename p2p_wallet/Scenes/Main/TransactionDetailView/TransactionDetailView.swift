@@ -85,11 +85,11 @@ struct DetailTransactionView: View {
                     ForEach(viewModel.rendableTransaction.actions) { action in
                         switch action {
                         case .share:
-                            CircleButton(title: L10n.share, image: .share2) {
+                            CircleButton(title: L10n.share, image: .share1) {
                                 viewModel.share()
                             }
                         case .explorer:
-                            CircleButton(title: "Explore", image: .transactionShowInExplorer) {
+                            CircleButton(title: "Explore", image: .explorer) {
                                 viewModel.explore()
                             }
                         }
