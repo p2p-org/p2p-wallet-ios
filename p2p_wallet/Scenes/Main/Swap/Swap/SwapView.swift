@@ -50,9 +50,13 @@ private extension SwapView {
                 .padding(.top, 16)
 
             Spacer()
-
-            SliderActionButton(isSliderOn: $viewModel.isSliderOn, data: $viewModel.actionButtonData, showFinished: $viewModel.showFinished)
-                .padding(.bottom, 36)
+            
+            SliderActionButton(
+                isSliderOn: $viewModel.isSliderOn,
+                data: $viewModel.actionButtonData,
+                showFinished: $viewModel.showFinished
+            )
+            .padding(.bottom, 36)
         }
         .padding(.horizontal, 16)
     }
