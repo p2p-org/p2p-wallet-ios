@@ -35,13 +35,15 @@ final class SwapViewModel: BaseViewModel, ObservableObject {
 
     let stateMachine: JupiterSwapStateMachine
     var currentState: JupiterSwapState { stateMachine.currentState }
+    
+    private let preChosenWallet: Wallet?
 
-    override init() {
+    init(preChosenWallet: Wallet? = nil) {
         self.stateMachine = JupiterSwapStateMachine(
             initialState: JupiterSwapState.zero(status: .requiredInitialize),
             services: .init(jupiterClient: JupiterRestClientAPI(version: .v4), pricesAPI: Resolver.resolve())
         )
-
+        self.preChosenWallet = preChosenWallet
         super.init()
         bind()
         bindActions()
@@ -52,8 +54,13 @@ private extension SwapViewModel {
     func bind() {
         swapWalletsRepository.data
             .sinkAsync { [weak self] data in
+                let prechosenToken = data.swapTokens.first(where: { $0.address == self?.preChosenWallet?.mintAddress })
                 let _ = await self?.stateMachine
-                    .accept(action: .initialize(swapTokens: data.swapTokens, routeMap: data.routeMap))
+                    .accept(action: .initialize(
+                        swapTokens: data.swapTokens,
+                        routeMap: data.routeMap,
+                        fromToken: prechosenToken
+                    ))
             }
             .store(in: &subscriptions)
 

@@ -29,6 +29,8 @@ extension WalletDetail {
         // MARK: - Dependencies
 
         @Injected var walletsRepository: WalletsRepository
+        @Injected var jupiterTokensRepository: JupiterTokensRepository
+
         let pubkey: String
         let symbol: String
         @Injected var analyticsManager: AnalyticsManager
@@ -41,16 +43,7 @@ extension WalletDetail {
 
         @Published private var navigatableScene: NavigatableScene?
         @Published private var wallet: Wallet?
-        private lazy var walletActionsSubject = $wallet
-            .map { wallet -> [WalletActionType] in
-                guard let wallet = wallet else { return [] }
-
-                if wallet.isNativeSOL || wallet.token.symbol == "USDC" {
-                    return [.buy, .receive, .send, .swap]
-                } else {
-                    return [.receive, .send, .swap]
-                }
-            }
+        @Published private var walletActionsSubject = [WalletActionType]()
 
         // MARK: - Initializer
 
@@ -85,6 +78,28 @@ extension WalletDetail {
                 .sink { [weak self] ticker in
                     self?.analyticsManager.log(event: .tokenDetailsOpen(tokenTicker: ticker))
                 }
+                .store(in: &subscriptions)
+
+            Publishers.CombineLatest($wallet.eraseToAnyPublisher(), jupiterTokensRepository.data)
+                .map { (wallet, data) -> [WalletActionType] in
+                    guard let wallet = wallet else { return [] }
+
+                    var actions: [WalletActionType]
+                    if wallet.isNativeSOL || wallet.token.symbol == "USDC" {
+                        actions = [.buy, .receive, .send]
+                    } else {
+                        actions = [.receive, .send]
+                    }
+
+                    if available(.jupiterSwapEnabled) && data.swapTokens.contains(where: { $0.address == wallet.mintAddress }) {
+                        actions.append(.swap)
+                    } else if !available(.jupiterSwapEnabled) {
+                        // No restrictions for orca swap
+                        actions.append(.swap)
+                    }
+                    return actions
+                }
+                .assign(to: \.walletActionsSubject, on: self)
                 .store(in: &subscriptions)
         }
 
@@ -131,7 +146,7 @@ extension WalletDetail {
 
 extension WalletDetail.ViewModel: WalletDetailViewModelType {
     var walletActionsPublisher: AnyPublisher<[WalletActionType], Never> {
-        walletActionsSubject
+        $walletActionsSubject
             .receive(on: DispatchQueue.main)
             .eraseToAnyPublisher()
     }
