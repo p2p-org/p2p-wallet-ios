@@ -20,7 +20,7 @@ struct RendableListPendingTransactionItem: RendableListTransactionItem {
         trx.sentAt
     }
     
-    var status: NewHistoryRendableListTransactionItemStatus {
+    var status: RendableListTransactionItemStatus {
         if trx.transactionId != nil {
             return .success
         } else {
@@ -33,7 +33,7 @@ struct RendableListPendingTransactionItem: RendableListTransactionItem {
         }
     }
     
-    var icon: NewHistoryRendableListTransactionItemIcon {
+    var icon: RendableListTransactionItemIcon {
         switch trx.rawTransaction {
         case let transaction as SendTransaction:
             if
@@ -122,7 +122,7 @@ struct RendableListPendingTransactionItem: RendableListTransactionItem {
         }
     }
     
-    var detail: (NewHistoryRendableListTransactionItemChange, String) {
+    var detail: (RendableListTransactionItemChange, String) {
         switch trx.rawTransaction {
         case let transaction as SendTransaction:
             return (.negative, "-\(transaction.amountInFiat.fiatAmountFormattedString())")

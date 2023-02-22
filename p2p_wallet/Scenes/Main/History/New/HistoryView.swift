@@ -24,7 +24,7 @@ struct NewHistoryView<Header: View>: View {
                 viewModel.historyTransactions.state.status == .ready
             {
                 if viewModel.historyTransactions.state.error == nil {
-                    NewHistoryEmptyView {
+                    HistoryEmptyView {
                         viewModel.actionSubject.send(.openBuy)
                     } secondaryAction: {
                         viewModel.actionSubject.send(.openReceive)
@@ -42,7 +42,7 @@ struct NewHistoryView<Header: View>: View {
 
             // Render list
             LazyVStack(alignment: .leading, spacing: 0) {
-                ForEach(viewModel.sections) { (section: NewHistoryListSection) in
+                ForEach(viewModel.sections) { (section: HistorySection) in
                     Text(section.title)
                         .apply(style: .text4)
                         .foregroundColor(Color(Asset.Colors.mountain.color))
@@ -53,13 +53,13 @@ struct NewHistoryView<Header: View>: View {
                         Group {
                             switch item {
                             case let .rendableTransaction(rendableItem):
-                                NewHistoryItemView(item: rendableItem) {
+                                HistoryItemView(item: rendableItem) {
                                     rendableItem.onTap?()
                                 }
                             case let .rendableOffram(item):
-                                ListOfframItemView(item: item) {}
+                                HistoryOfframItemView(item: item) {}
                             case .placeHolder:
-                                NewHistoryListSkeletonView()
+                                HistoryListSkeletonView()
                             case let .button(_, title, action):
                                 TextButtonView(
                                     title: title,
@@ -125,7 +125,7 @@ private extension View {
     }
 }
 
-struct NewHistoryView_Previews: PreviewProvider {
+struct HistoryView_Previews: PreviewProvider {
     static var previews: some View {
         NewHistoryView(
             viewModel: .init(

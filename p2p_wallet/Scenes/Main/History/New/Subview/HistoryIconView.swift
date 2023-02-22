@@ -10,11 +10,11 @@ import Kingfisher
 import KeyAppUI
 import SolanaSwift
 
-struct NewHistoryIconView: View {
+struct HistoryIconView: View {
     private let largeSize: CGFloat = 46
     private let smallSize: CGFloat = 29
 
-    let icon: NewHistoryRendableListTransactionItemIcon
+    let icon: RendableListTransactionItemIcon
 
     var body: some View {
         Group {
@@ -74,12 +74,12 @@ struct NewHistoryIconView: View {
     }
 }
 
-struct NewHistoryIconView_Previews: PreviewProvider {
+struct HistoryIconView_Previews: PreviewProvider {
     static var previews: some View {
         VStack {
-            NewHistoryIconView(icon: .icon(.transactionCloseAccount))
-            NewHistoryIconView(icon: .single(URL(string: Token.nativeSolana.logoURI!)!))
-            NewHistoryIconView(icon: .double(
+            HistoryIconView(icon: .icon(.transactionCloseAccount))
+            HistoryIconView(icon: .single(URL(string: Token.nativeSolana.logoURI!)!))
+            HistoryIconView(icon: .double(
                 URL(string: Token.nativeSolana.logoURI!)!,
                 URL(string: Token.renBTC.logoURI!)!
             ))

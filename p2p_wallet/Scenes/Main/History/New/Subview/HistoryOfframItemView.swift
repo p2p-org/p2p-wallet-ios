@@ -8,7 +8,7 @@
 import KeyAppUI
 import SwiftUI
 
-struct ListOfframItemView: View {
+struct HistoryOfframItemView: View {
     let item: any RendableListOfframItem
     let onTap: () -> Void
 
@@ -69,7 +69,7 @@ struct ListOfframItemView: View {
     }
 }
 
-struct ListOfframItemView_Previews: PreviewProvider {
+struct HistoryOfframItemView_Previews: PreviewProvider {
     static let items: [any RendableListOfframItem] = [
         MockRendableListOfframItem.error(),
         MockRendableListOfframItem.waiting(),
@@ -80,7 +80,7 @@ struct ListOfframItemView_Previews: PreviewProvider {
         ScrollView {
             VStack {
                 ForEach(items, id: \.id) { item in
-                    ListOfframItemView(item: item) {}
+                    HistoryOfframItemView(item: item) {}
                 }
             }
         }
