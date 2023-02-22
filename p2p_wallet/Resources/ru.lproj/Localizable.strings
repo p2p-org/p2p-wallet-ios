@@ -1238,3 +1238,4 @@ You can try again, but your new transaction will be subject to the current rates
 "Mint signature" = "Подпись монетного двора";
 "Unstake signature" = "Отменить ставку подписи";
 "Stake signature" = "Подпись ставки";
+"Explorer" = "Исследователь";
