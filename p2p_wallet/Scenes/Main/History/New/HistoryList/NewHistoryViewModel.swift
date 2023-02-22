@@ -22,6 +22,10 @@ enum NewHistoryAction {
     case openSellTransaction(SellDataServiceTransaction)
 
     case openPendingTransaction(PendingTransaction)
+    
+    case openReceive
+    
+    case openBuy
 }
 
 class NewHistoryViewModel: BaseViewModel, ObservableObject {
@@ -104,7 +108,7 @@ class NewHistoryViewModel: BaseViewModel, ObservableObject {
         mint: String? = nil
     ) {
         // Init services and repositories
-        let repository = NewHistoryServiceRepository(provider: provider)
+        let repository = HistoryRepository(provider: provider)
 
         let actionSubject: PassthroughSubject<NewHistoryAction, Never> = .init()
         self.actionSubject = actionSubject

@@ -5,10 +5,10 @@
 //  Created by Giang Long Tran on 19.02.2023.
 //
 
+import Sell
 import SolanaSwift
 import SwiftUI
 import UIKit
-import Sell
 
 enum DetailAccountCoordinatorArgs {
     case wallet(Wallet)
@@ -105,6 +105,12 @@ class DetailAccountCoordinator: SmartCoordinator<WalletDetailCoordinator.Result>
                     print(result)
                 }
                 .store(in: &self.subscriptions)
+
+        case .openBuy:
+            self.openBuy()
+
+        case .openReceive:
+            self.openReceive()
         }
     }
 

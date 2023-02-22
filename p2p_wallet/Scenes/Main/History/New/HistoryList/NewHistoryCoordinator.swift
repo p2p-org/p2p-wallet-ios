@@ -10,6 +10,7 @@ import KeyAppUI
 import Resolver
 import Sell
 import Send
+import SolanaSwift
 import SwiftUI
 
 class NewHistoryCoordinator: SmartCoordinator<Void> {
@@ -73,6 +74,11 @@ class NewHistoryCoordinator: SmartCoordinator<Void> {
                     print(result)
                 }
                 .store(in: &self.subscriptions)
+
+        case .openBuy:
+            self.openBuy()
+        case .openReceive:
+            self.openReceive()
         }
     }
 
@@ -110,5 +116,28 @@ class NewHistoryCoordinator: SmartCoordinator<Void> {
         ))
         .sink { _ in }
         .store(in: &subscriptions)
+    }
+
+    func openReceive() {
+        let userWalletManager: UserWalletManager = Resolver.resolve()
+        guard let account = userWalletManager.wallet?.account else { return }
+
+        let vm = ReceiveToken.SceneModel(solanaPubkey: account.publicKey)
+        let vc = ReceiveToken.ViewController(viewModel: vm, isOpeningFromToken: true)
+        let navigation = UINavigationController(rootViewController: vc)
+        presentation.presentingViewController.present(navigation, animated: true)
+    }
+
+    func openBuy() {
+        let coordinator = BuyCoordinator(
+            context: .fromToken,
+            defaultToken: .nativeSolana,
+            presentingViewController: self.presentation.presentingViewController,
+            shouldPush: false
+        )
+
+        coordinate(to: coordinator)
+            .sink { _ in }
+            .store(in: &subscriptions)
     }
 }

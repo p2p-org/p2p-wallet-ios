@@ -18,16 +18,26 @@ struct NewHistoryView<Header: View>: View {
         ScrollView {
             header
 
-            // Display error if no result
+            // Display error or empty state
             if
-                viewModel.historyTransactions.state.error != nil,
-                viewModel.historyTransactions.isEmpty
+                viewModel.historyTransactions.isEmpty,
+                viewModel.historyTransactions.state.status == .ready
             {
-                NewHistoryListErrorView {
-                    Task { try await viewModel.reload() }
+                if viewModel.historyTransactions.state.error == nil {
+                    NewHistoryEmptyView {
+                        viewModel.actionSubject.send(.openBuy)
+                    } secondaryAction: {
+                        viewModel.actionSubject.send(.openReceive)
+                    }
+                    .padding(.horizontal, 16)
+                    .padding(.top, 38)
+                } else {
+                    NewHistoryListErrorView {
+                        Task { try await viewModel.reload() }
+                    }
+                    .padding(.horizontal, 16)
+                    .padding(.top, 38)
                 }
-                .padding(.horizontal, 16)
-                .padding(.top, 38)
             }
 
             // Render list
