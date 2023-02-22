@@ -10,7 +10,7 @@ import History
 import Resolver
 import SolanaSwift
 
-class NewHistoryServiceRepository: Repository {
+class HistoryRepository: Repository {
     typealias Element = HistoryTransaction
 
     var provider: KeyAppHistoryProvider
