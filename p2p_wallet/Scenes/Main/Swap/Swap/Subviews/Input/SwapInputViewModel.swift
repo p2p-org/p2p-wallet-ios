@@ -118,9 +118,9 @@ private extension SwapInputViewModel {
     func updateAmountFrom(state: JupiterSwapState) {
         switch state.status {
         case .error(reason: .notEnoughFromToken):
-            self.amountTextColor = Asset.Colors.rose.color
+            amountTextColor = Asset.Colors.rose.color
         default:
-            self.amountTextColor = Asset.Colors.night.color
+            amountTextColor = Asset.Colors.night.color
         }
 
         fiatAmount = [
