@@ -1,5 +1,6 @@
 import Combine
 import Resolver
+import KeyAppUI
 
 final class SwapInputViewModel: BaseViewModel, ObservableObject {
 
@@ -8,7 +9,8 @@ final class SwapInputViewModel: BaseViewModel, ObservableObject {
     let changeTokenPressed = PassthroughSubject<Void, Never>()
 
     @Published var title: String
-    @Published var amountText = ""
+    @Published var amount: Double?
+    @Published var amountTextColor = Asset.Colors.night.color
     @Published var isFirstResponder: Bool
     @Published var isEditable: Bool
     @Published var balance: Double?
@@ -38,7 +40,7 @@ final class SwapInputViewModel: BaseViewModel, ObservableObject {
 
         allButtonPressed
             .sink { [unowned self] _ in
-                self.amountText = "\(self.balance ?? 0)"
+                self.amount = self.balance
             }
             .store(in: &subscriptions)
 
@@ -55,14 +57,13 @@ final class SwapInputViewModel: BaseViewModel, ObservableObject {
             }
             .store(in: &subscriptions)
 
-        $amountText
+        $amount
             .debounce(for: 0.3, scheduler: DispatchQueue.main)
             .sinkAsync { [weak self] value in
-                guard let self = self else { return }
+                guard let self, self.isStateReady(status: self.currentState.status) else { return }
                 self.isAmountLoading = true && !self.isFromToken
                 if self.isFromToken {
-                    let _ = await self.stateMachine.accept(action: .changeAmountFrom(Double(value) ?? 0))
-                    
+                    let _ = await self.stateMachine.accept(action: .changeAmountFrom(value ?? 0))
                 }
                 self.isAmountLoading = false && !self.isFromToken
             }
@@ -73,16 +74,13 @@ final class SwapInputViewModel: BaseViewModel, ObservableObject {
             .sink { [weak self] updatedState in
                 guard let self else { return }
                 self.token = self.isFromToken ? updatedState.fromToken : updatedState.toToken
+                self.updateLoading(status: updatedState.status)
 
                 if self.isFromToken {
-                    self.fiatAmount = "\((updatedState.priceInfo.fromPrice * updatedState.amountFrom).toString(maximumFractionDigits: 2, roundingMode: .down)) \(Defaults.fiat.code)"
+                    self.updateAmountFrom(state: updatedState)
                 } else {
-                    self.amountText = updatedState.amountTo.toString(
-                        maximumFractionDigits: updatedState.toToken.jupiterToken.decimals,
-                        roundingMode: .down
-                    )
+                    self.updateAmountTo(state: updatedState)
                 }
-                self.updateLoading(status: updatedState.status)
             }
             .store(in: &subscriptions)
 
@@ -110,5 +108,28 @@ private extension SwapInputViewModel {
             isLoading = false
             isAmountLoading = false
         }
+    }
+
+    func updateAmountTo(state: JupiterSwapState) {
+        guard state.status != .loadingAmountTo else { return }
+        amount = state.amountTo
+    }
+
+    func updateAmountFrom(state: JupiterSwapState) {
+        switch state.status {
+        case .error(reason: .notEnoughFromToken):
+            amountTextColor = Asset.Colors.rose.color
+        default:
+            amountTextColor = Asset.Colors.night.color
+        }
+
+        fiatAmount = [
+            ((state.priceInfo.fromPrice * state.amountFrom).toString(maximumFractionDigits: 2, roundingMode: .down)),
+            Defaults.fiat.code
+        ].joined(separator: " ")
+    }
+
+    func isStateReady(status: JupiterSwapState.Status) -> Bool {
+        return status != .requiredInitialize && status != .initializing && status != .error(reason: .initializationFailed)
     }
 }

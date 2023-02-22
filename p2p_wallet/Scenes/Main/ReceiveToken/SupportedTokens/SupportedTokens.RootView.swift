@@ -6,7 +6,6 @@
 //
 
 import BECollectionView
-import RxSwift
 import UIKit
 
 extension SupportedTokens {

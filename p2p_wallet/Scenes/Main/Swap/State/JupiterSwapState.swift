@@ -3,7 +3,7 @@ import Jupiter
 struct JupiterSwapState: Equatable {
     enum ErrorReason: Equatable, Error {
         case initializationFailed
-        case networkConnectionError(NSError)
+        case networkConnectionError
 
         case notEnoughFromToken
         case equalSwapTokens
