@@ -12,27 +12,27 @@ import Resolver
 import SolanaSwift
 import TransactionParser
 
-enum DetailTransactionStyle {
+enum TransactionDetailStyle {
     case active
     case passive
 }
 
-enum DetailTransactionViewModelOutput {
+enum TransactionDetailViewModelOutput {
     case share(URL)
     case open(URL)
     case close
 }
 
-class DetailTransactionViewModel: BaseViewModel, ObservableObject {
-    @Published var rendableTransaction: any RendableDetailTransaction
+class TransactionDetailViewModel: BaseViewModel, ObservableObject {
+    @Published var rendableTransaction: any RendableTransactionDetail
 
     @Published var closeButtonTitle: String = L10n.done
 
-    let style: DetailTransactionStyle
+    let style: TransactionDetailStyle
 
-    let action: PassthroughSubject<DetailTransactionViewModelOutput, Never> = .init()
+    let action: PassthroughSubject<TransactionDetailViewModelOutput, Never> = .init()
 
-    init(rendableDetailTransaction: any RendableDetailTransaction, style: DetailTransactionStyle = .active) {
+    init(rendableDetailTransaction: any RendableTransactionDetail, style: TransactionDetailStyle = .active) {
         self.style = style
         self.rendableTransaction = rendableDetailTransaction
     }

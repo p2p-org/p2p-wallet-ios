@@ -10,12 +10,12 @@ import Foundation
 import History
 import SolanaSwift
 
-struct RendableDetailHistoryTransaction: RendableDetailTransaction {
+struct RendableDetailHistoryTransaction: RendableTransactionDetail {
     let trx: HistoryTransaction
     
     let allTokens: Set<SolanaSwift.Token>
     
-    var status: DetailTransactionStatus {
+    var status: TransactionDetailStatus {
         switch trx.status {
         case .success:
             return .succeed(message: "")
@@ -45,7 +45,7 @@ struct RendableDetailHistoryTransaction: RendableDetailTransaction {
         trx.signature
     }
     
-    var icon: DetailTransactionIcon {
+    var icon: TransactionDetailIcon {
         switch trx.info {
         case let .send(data):
             return icon(mint: data.token.mint, url: data.token.logoUrl, defaultIcon: .transactionSend)
@@ -77,7 +77,7 @@ struct RendableDetailHistoryTransaction: RendableDetailTransaction {
         }
     }
     
-    var amountInFiat: DetailTransactionChange {
+    var amountInFiat: TransactionDetailChange {
         switch trx.info {
         case let .send(data):
             return .negative("-\(data.amount.usdAmount.fiatAmountFormattedString())")
@@ -143,8 +143,8 @@ struct RendableDetailHistoryTransaction: RendableDetailTransaction {
         }
     }
     
-    var extra: [DetailTransactionExtraInfo] {
-        var result: [DetailTransactionExtraInfo] = []
+    var extra: [TransactionDetailExtraInfo] {
+        var result: [TransactionDetailExtraInfo] = []
         
         switch trx.info {
         case let .send(data):
@@ -188,7 +188,7 @@ struct RendableDetailHistoryTransaction: RendableDetailTransaction {
         return result
     }
     
-    var actions: [DetailTransactionAction] = [.share, .explorer]
+    var actions: [TransactionDetailAction] = [.share, .explorer]
     
     /// Resolve token icon url
     private func resolveTokenIconURL(mint: String?, fallbackImageURL: URL?) -> URL? {
@@ -205,7 +205,7 @@ struct RendableDetailHistoryTransaction: RendableDetailTransaction {
         return nil
     }
     
-    private func icon(mint: String?, url: URL?, defaultIcon: UIImage) -> DetailTransactionIcon {
+    private func icon(mint: String?, url: URL?, defaultIcon: UIImage) -> TransactionDetailIcon {
         if let url = resolveTokenIconURL(mint: mint, fallbackImageURL: url) {
             return .single(url)
         } else {
