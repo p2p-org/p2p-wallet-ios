@@ -134,11 +134,19 @@ def upload_build(configuration, browserstack_username, browserstack_access_key, 
   )
 
   # upload to browserstack
-  upload_to_browserstack_app_live(
-    browserstack_username: browserstack_username,
-    browserstack_access_key: browserstack_access_key,
-    custom_id: custom_id
-  )
+  if custom_id.nil?
+    upload_to_browserstack_app_live(
+      browserstack_username: browserstack_username,
+      browserstack_access_key: browserstack_access_key
+    )
+  else
+    upload_to_browserstack_app_automate(
+      browserstack_username: browserstack_username,
+      browserstack_access_key: browserstack_access_key,
+      custom_id: custom_id
+    )
+  end
+  
 end 
 
 def notify(version, message)
@@ -335,7 +343,7 @@ platform :ios do
     )
 
     # upload to browserstack
-    upload_to_browserstack_app_live(
+    upload_to_browserstack_app_automate(
       browserstack_username: BROWSERSTACK_USERNAME_NEW,
       browserstack_access_key: BROWSERSTACK_ACCESS_KEY_NEW,
       custom_id: "KeyApp_rc.ipa"
