@@ -4,20 +4,22 @@ import SolanaSwift
 import Resolver
 
 protocol JupiterTokensRepository {
-    var data: AnyPublisher<JupiterData, Never> { get }
+    var status: AnyPublisher<JupiterDataStatus, Never> { get }
 
-    func load() async throws
+    func load() async
 }
 
-struct JupiterData {
-    let swapTokens: [SwapToken]
-    let routeMap: RouteMap
+enum JupiterDataStatus {
+    case initial
+    case loading
+    case ready(swapTokens: [SwapToken], routeMap: RouteMap)
+    case failed
 }
 
 final class JupiterTokensRepositoryImpl: JupiterTokensRepository {
 
-    var data: AnyPublisher<JupiterData, Never> {
-        $dataSubject.eraseToAnyPublisher()
+    var status: AnyPublisher<JupiterDataStatus, Never> {
+        statusSubject.eraseToAnyPublisher()
     }
 
     // MARK: - Dependencies
@@ -26,33 +28,37 @@ final class JupiterTokensRepositoryImpl: JupiterTokensRepository {
     @Injected private var walletsRepository: WalletsRepository
 
     // MARK: - Private params
-    @Published private var dataSubject: JupiterData
+    private var statusSubject = CurrentValueSubject<JupiterDataStatus, Never>(.initial)
 
     init(provider: JupiterTokensProvider, jupiterClient: JupiterAPI) {
         self.localProvider = provider
         self.jupiterClient = jupiterClient
-        self.dataSubject = JupiterData(swapTokens: [], routeMap: .init(mintKeys: [], indexesRouteMap: [:]))
     }
 
-    func load() async throws {
-        let jupiterTokens: [Jupiter.Token]
-        let routeMap: RouteMap
-        if let cachedData = localProvider.getCachedData() {
-            jupiterTokens = cachedData.tokens
-            routeMap = cachedData.routeMap
-        } else {
-            jupiterTokens = try await jupiterClient.getTokens()
-            routeMap = try await jupiterClient.routeMap()
-            try localProvider.save(tokens: jupiterTokens, routeMap: routeMap)
-        }
-
-        let wallets = walletsRepository.getWallets()
-        let swapTokens = jupiterTokens.map { jupiterToken in
-            if let userWallet = wallets.first(where: { $0.mintAddress == jupiterToken.address }) {
-                return SwapToken(jupiterToken: jupiterToken, userWallet: userWallet)
+    func load() async {
+        statusSubject.send(.loading)
+        do {
+            let jupiterTokens: [Jupiter.Token]
+            let routeMap: RouteMap
+            if let cachedData = localProvider.getCachedData() {
+                jupiterTokens = cachedData.tokens
+                routeMap = cachedData.routeMap
+            } else {
+                jupiterTokens = try await jupiterClient.getTokens()
+                routeMap = try await jupiterClient.routeMap()
+                try localProvider.save(tokens: jupiterTokens, routeMap: routeMap)
             }
-            return SwapToken(jupiterToken: jupiterToken, userWallet: nil)
+            
+            let wallets = walletsRepository.getWallets()
+            let swapTokens = jupiterTokens.map { jupiterToken in
+                if let userWallet = wallets.first(where: { $0.mintAddress == jupiterToken.address }) {
+                    return SwapToken(jupiterToken: jupiterToken, userWallet: userWallet)
+                }
+                return SwapToken(jupiterToken: jupiterToken, userWallet: nil)
+            }
+            statusSubject.send(.ready(swapTokens: swapTokens, routeMap: routeMap))
+        } catch {
+            statusSubject.send(.failed)
         }
-        dataSubject = JupiterData(swapTokens: swapTokens, routeMap: routeMap)
     }
 }

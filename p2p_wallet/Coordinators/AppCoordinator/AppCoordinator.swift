@@ -130,7 +130,7 @@ final class AppCoordinator: Coordinator<Void> {
             try await Resolver.resolve(WalletMetadataService.self).update()
             try await Resolver.resolve(OrcaSwapType.self).load()
             if available(.jupiterSwapEnabled) {
-                try await Resolver.resolve(JupiterTokensRepository.self).load()
+                await Resolver.resolve(JupiterTokensRepository.self).load()
             }
         }
         
