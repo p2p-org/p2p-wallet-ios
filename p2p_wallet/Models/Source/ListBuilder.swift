@@ -26,21 +26,31 @@ enum ListBuilder {
         return dateFormatter
     }()
 
-    static func aggregate<T, V>(list: [T], by date: KeyPath<T, Date>, dateFormatter: DateFormatter = ListBuilder.defaultDateFormatter, tranform: (String, [T]) -> V) -> [V] {
+    static func aggregate<T, V>(list: [T], by dateKeyPath: KeyPath<T, Date>, dateFormatter: DateFormatter = ListBuilder.defaultDateFormatter, tranform: (String, [T]) -> V) -> [V] {
         let dictionary = Dictionary(grouping: list) { item -> Date in
-            Calendar.current.startOfDay(for: item[keyPath: date])
+            Calendar.current.startOfDay(for: item[keyPath: dateKeyPath])
         }
 
         return dictionary.keys.sorted().reversed()
-            .map { key in
+            .map { (date: Date) -> V in
                 // Sort
-                var items = dictionary[key] ?? []
+                var items = dictionary[date] ?? []
                 items.sort { lhs, rhs in
-                    lhs[keyPath: date] >= rhs[keyPath: date]
+                    lhs[keyPath: dateKeyPath] >= rhs[keyPath: dateKeyPath]
+                }
+                
+                // Date format
+                let dateStr: String
+                if Calendar.current.isDateInToday(date) {
+                    dateStr = L10n.today
+                } else if Calendar.current.isDateInYesterday(date) {
+                    dateStr = L10n.yesterday
+                } else {
+                    dateStr = dateFormatter.string(from: date)
                 }
 
                 // Tranform
-                return tranform(dateFormatter.string(from: key), items)
+                return tranform(dateStr, items)
             }
     }
 }
