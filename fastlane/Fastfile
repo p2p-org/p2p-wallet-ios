@@ -19,6 +19,9 @@ FIREBASE_CLI_TOKEN = ENV["FIREBASE_CLI_TOKEN"]
 BROWSERSTACK_USERNAME = ENV["BROWSERSTACK_USERNAME"]
 BROWSERSTACK_ACCESS_KEY = ENV["BROWSERSTACK_ACCESS_KEY"]
 
+BROWSERSTACK_USERNAME_NEW = ENV["BROWSERSTACK_USERNAME_NEW"]
+BROWSERSTACK_ACCESS_KEY_NEW = ENV["BROWSERSTACK_ACCESS_KEY_NEW"]
+
 PROVISIONING_REPO = ENV["PROVISIONING_REPO"]
 IS_CI = ENV["IS_CI"] == "true"
 
@@ -117,7 +120,7 @@ def create_release_build(match_type, configuration)
   )
 end
 
-def upload_build(configuration)
+def upload_build(configuration, browserstack_username, browserstack_access_key, custom_id)
   # upload to firebase
   firebaseAppId = FIREBASE_APP_ID
   if configuration == "Test"
@@ -132,8 +135,9 @@ def upload_build(configuration)
 
   # upload to browserstack
   upload_to_browserstack_app_live(
-    browserstack_username: BROWSERSTACK_USERNAME,
-    browserstack_access_key: BROWSERSTACK_ACCESS_KEY
+    browserstack_username: browserstack_username,
+    browserstack_access_key: browserstack_access_key,
+    custom_id: custom_id
   )
 end 
 
@@ -170,7 +174,7 @@ def upload_dsym_to_analytic_providers
   )
 end
 
-def upload_test(build_prefix, tag_prefix)
+def upload_test(build_prefix, tag_prefix, browserstack_username, browserstack_access_key, custom_id)
   # update xcconfig
   update_xcconfig
 
@@ -203,7 +207,7 @@ def upload_test(build_prefix, tag_prefix)
   upload_dsym_to_analytic_providers
 
   # upload to firebase and browser stack
-  upload_build("Test")
+  upload_build("Test", browserstack_username, browserstack_access_key, custom_id)
 
   # delete temp keychain
   delete_temp_keychain(TEMP_KEYCHAIN_USER)
@@ -242,7 +246,10 @@ platform :ios do
     # upload test build
     version = upload_test(
       feature_number, # build prefix
-      "builds/feature_test" # tag prefix
+      "builds/feature_test", # tag prefix
+      BROWSERSTACK_USERNAME,
+      BROWSERSTACK_ACCESS_KEY,
+      nil
     )
 
     # notify tester
@@ -327,6 +334,13 @@ platform :ios do
       ipa: "./p2p_wallet.ipa"
     )
 
+    # upload to browserstack
+    upload_to_browserstack_app_live(
+      browserstack_username: BROWSERSTACK_USERNAME_NEW,
+      browserstack_access_key: BROWSERSTACK_ACCESS_KEY_NEW,
+      custom_id: "KeyApp_rc.ipa"
+    )
+
     # post to slack
     full_version = "#{version} (#{build_number})"
     post_to_slack(
@@ -365,7 +379,10 @@ platform :ios do
     # upload test build
     version = upload_test(
       date, # build prefix
-      "builds/daily_test" # tag prefix
+      "builds/daily_test", # tag prefix
+      BROWSERSTACK_USERNAME_NEW,
+      BROWSERSTACK_ACCESS_KEY_NEW,
+      "KeyApp_dev.ipa"
     )
 
     # notify tester
