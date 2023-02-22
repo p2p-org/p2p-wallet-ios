@@ -23,7 +23,9 @@ enum RendableAccountDetailAction: Identifiable {
     case receive(ReceiveParam)
     case send
     case swap
+}
 
+extension RendableAccountDetailAction {
     enum ReceiveParam {
         case wallet(Wallet)
         case none

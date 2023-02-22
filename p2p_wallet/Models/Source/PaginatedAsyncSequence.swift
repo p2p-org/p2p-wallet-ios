@@ -10,18 +10,25 @@ import Foundation
 struct PaginatedAsyncSequence<Element>: AsyncSequence {
     typealias Element = Element
     typealias FetchFn = (_ offset: Int, _ limit: Int) async throws -> [Element]
-    
+
+    let limit: Int
     let fetchFn: FetchFn
-    
+
+    init(limit: Int = 20, fetchFn: @escaping FetchFn) {
+        self.fetchFn = fetchFn
+        self.limit = limit
+    }
+
     class AsyncIterator: AsyncIteratorProtocol {
         let fetchFn: FetchFn
         var fetchable: Bool = true
         var cache: [Element] = []
-        var offset = 0
-        let limit = 20
+        var offset: Int = 0
+        let limit: Int
 
-        init(fetchFn: @escaping FetchFn) {
+        init(fetchFn: @escaping FetchFn, limit: Int) {
             self.fetchFn = fetchFn
+            self.limit = limit
         }
 
         func next() async throws -> Element? {
@@ -44,6 +51,6 @@ struct PaginatedAsyncSequence<Element>: AsyncSequence {
     }
 
     func makeAsyncIterator() -> AsyncIterator {
-        return AsyncIterator(fetchFn: fetchFn)
+        return AsyncIterator(fetchFn: fetchFn, limit: limit)
     }
 }

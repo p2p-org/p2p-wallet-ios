@@ -8,6 +8,7 @@ struct HistoryEmptyView: View {
     var body: some View {
         VStack(spacing: 20) {
             Image(uiImage: .moneybox)
+                .padding(.top, 24)
                 .padding(.bottom, 50)
             Text(L10n.YourHistoryWillAppearHere.toGetStartedYouCan)
                 .apply(style: .text1)

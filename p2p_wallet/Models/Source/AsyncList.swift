@@ -17,6 +17,7 @@ enum ListStateStatus {
     case ready
 }
 
+/// A structure that describe in general a list
 struct ListState<Element> {
     var status: ListStateStatus = .ready
     var data: [Element] = []
@@ -45,6 +46,7 @@ struct ListState<Element> {
     }
 }
 
+/// A class holder
 final class AsyncList<Element> {
     typealias ID = KeyPath<Element, String>
     
