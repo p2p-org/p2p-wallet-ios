@@ -18,7 +18,7 @@ enum JupiterSwapBusinessLogic {
         case .changeBothTokens:
             newState = state.copy(status: .switching)
         case .update:
-            newState = nil
+            newState = state.copy(status: .loadingAmountTo)
         }
 
         return newState
@@ -67,7 +67,7 @@ enum JupiterSwapBusinessLogic {
             })
 
         case .update:
-            newState = await update(state: state, services: services)
+            newState = await calculateAmounts(state: state, services: services)
         }
 
         return newState
