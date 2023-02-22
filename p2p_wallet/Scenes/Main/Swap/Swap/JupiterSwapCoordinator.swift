@@ -1,17 +1,20 @@
 import Combine
 import SwiftUI
 import KeyAppUI
+import SolanaSwift
 
-final class NewSwapCoordinator: Coordinator<Void> {
+final class JupiterSwapCoordinator: Coordinator<Void> {
     private let navigationController: UINavigationController
     private var result = PassthroughSubject<Void, Never>()
-    
-    init(navigationController: UINavigationController) {
+    private let preChosenWallet: Wallet?
+
+    init(navigationController: UINavigationController, preChosenWallet: Wallet? = nil) {
         self.navigationController = navigationController
+        self.preChosenWallet = preChosenWallet
     }
     
     override func start() -> AnyPublisher<Void, Never> {
-        let viewModel = SwapViewModel()
+        let viewModel = SwapViewModel(preChosenWallet: preChosenWallet)
         let fromViewModel = SwapInputViewModel(stateMachine: viewModel.stateMachine, isFromToken: true)
         let toViewModel = SwapInputViewModel(stateMachine: viewModel.stateMachine, isFromToken: false)
         let view = SwapView(viewModel: viewModel, fromViewModel: fromViewModel, toViewModel: toViewModel)

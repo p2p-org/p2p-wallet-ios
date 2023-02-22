@@ -53,6 +53,7 @@ class TransactionHandler: TransactionHandlerType {
 
         // add to processing
         let trx = PendingTransaction(
+            trxIndex: txIndex,
             transactionId: nil,
             sentAt: Date(),
             rawTransaction: processingTransaction,

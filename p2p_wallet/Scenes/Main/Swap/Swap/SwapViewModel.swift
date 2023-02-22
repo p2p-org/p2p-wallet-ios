@@ -42,15 +42,16 @@ final class SwapViewModel: BaseViewModel, ObservableObject {
     
     var versionedTransaction: VersionedTransaction?
 
-    var toTokens: [SwapToken] {
-        getToTokens()
-    }
+    var toTokens: [SwapToken] = [] //  Мне кажется в текущих реалиях это должно быть в стейт машине
 
     let stateMachine: JupiterSwapStateMachine
     var currentState: JupiterSwapState { stateMachine.currentState }
+    
+    private let preChosenWallet: Wallet?
+    private var timer: Timer?
 
-    override init() {
-        self.stateMachine = JupiterSwapStateMachine(
+    init(preChosenWallet: Wallet? = nil) {
+        stateMachine = JupiterSwapStateMachine(
             initialState: .zero(status: .requiredInitialize),
             services: JupiterSwapServices(
                 jupiterClient: JupiterRestClientAPI(version: .v4),
@@ -58,18 +59,38 @@ final class SwapViewModel: BaseViewModel, ObservableObject {
                 solanaAPIClient: Resolver.resolve()
             )
         )
+        self.preChosenWallet = preChosenWallet
         super.init()
         bind()
         bindActions()
+    }
+
+    deinit {
+        timer?.invalidate()
     }
 }
 
 private extension SwapViewModel {
     func bind() {
-        swapWalletsRepository.data
-            .sinkAsync { [weak self] data in
-                let _ = await self?.stateMachine
-                    .accept(action: .initialize(swapTokens: data.swapTokens, routeMap: data.routeMap))
+        swapWalletsRepository.status
+            .sinkAsync { [weak self] dataStatus in
+                guard let self else { return }
+                switch dataStatus {
+                case .loading, .initial:
+                    self.initializingState = .loading
+                case let .ready(swapTokens, routeMap):
+                    let prechosenToken = swapTokens.first(where: { $0.address == self.preChosenWallet?.mintAddress })
+                    self.getToTokens(routeMap: routeMap)
+                    let _ = await self.stateMachine
+                        .accept(action: .initialize(
+                            swapTokens: swapTokens,
+                            routeMap: routeMap,
+                            fromToken: prechosenToken
+                        ))
+                case .failed:
+                    self.initializingState = .failed
+                }
+                
             }
             .store(in: &subscriptions)
 
@@ -97,19 +118,22 @@ private extension SwapViewModel {
 
     func handle(status: JupiterSwapState.Status) {
         switch status {
-        case .requiredInitialize, .initializing:
-            self.initializingState = .loading
+        case .requiredInitialize:
+            break
+        case .initializing:
+            initializingState = .loading
         case .error(.initializationFailed):
-            self.initializingState = .failed
+            initializingState = .failed
         default:
-            self.initializingState = .success
+            scheduleUpdate()
+            initializingState = .success
         }
 
         switch status {
-        case .requiredInitialize, .initializing, .loadingTokenTo, .loadingAmountTo, .switching:
-            self.arePricesLoading = true
+        case .initializing, .loadingTokenTo, .loadingAmountTo, .switching:
+            arePricesLoading = true
         default:
-            self.arePricesLoading = false
+            arePricesLoading = false
         }
     }
 
@@ -122,6 +146,26 @@ private extension SwapViewModel {
                 )
             })
             .store(in: &subscriptions)
+
+        tryAgain
+            .sinkAsync { [weak self] _ in
+                guard let self else { return }
+                if self.currentState.swapTokens.isEmpty {
+                    await self.swapWalletsRepository.load()
+                } else {
+                    let _ = await self.stateMachine.accept(action: .initialize(swapTokens: self.currentState.swapTokens, routeMap: self.currentState.routeMap, fromToken: self.currentState.fromToken))
+                }
+            }
+            .store(in: &subscriptions)
+    }
+
+    func scheduleUpdate() {
+        timer?.invalidate()
+        timer = .scheduledTimer(withTimeInterval: 20, repeats: true) { [weak self] _ in
+            Task {
+                let _ = await self?.stateMachine.accept(action: .update)
+            }
+        }
     }
 
     func updateHeader(priceInfo: SwapPriceInfo, fromToken: Jupiter.Token, toToken: Jupiter.Token) {
@@ -151,20 +195,19 @@ private extension SwapViewModel {
             actionButtonData = SliderActionButtonData(isEnabled: false, title: L10n.notEnough(state.fromToken.jupiterToken.symbol))
         case .error(.equalSwapTokens):
             actionButtonData = SliderActionButtonData(isEnabled: false, title: L10n.youCanTSwapSameToken)
-        case .error(.routeIsNotFound):
+        case .error(.networkConnectionError):
+            notificationService.showConnectionErrorNotification()
             actionButtonData = SliderActionButtonData(isEnabled: false, title: L10n.swapOfTheseTokensIsnTPossible)
         default:
-            //TODO: Handle in error tasks like https://p2pvalidator.atlassian.net/browse/PWN-7100
             actionButtonData = SliderActionButtonData(isEnabled: false, title: L10n.swapOfTheseTokensIsnTPossible)
         }
     }
 
-    private func getToTokens() -> [SwapToken] {
+    private func getToTokens(routeMap: RouteMap) {
         let selectedFromAddress = currentState.fromToken.jupiterToken.address
-        let routeMap = swapWalletsRepository.routeMap
-        let toAddresses = Set(routeMap[selectedFromAddress] ?? [])
+        let toAddresses = Set(routeMap.indexesRouteMap[selectedFromAddress] ?? [])
         let toTokens = currentState.swapTokens.filter { toAddresses.contains($0.jupiterToken.address) }
-        return toTokens
+        self.toTokens = toTokens
     }
 
     private func swapToken() async throws {

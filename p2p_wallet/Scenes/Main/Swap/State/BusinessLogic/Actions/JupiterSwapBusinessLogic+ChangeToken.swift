@@ -11,8 +11,8 @@ extension JupiterSwapBusinessLogic {
             let priceFromToken = try await getPrices(for: token, services: services)
             let newPriceInfo = SwapPriceInfo(fromPrice: priceFromToken ?? 0, toPrice: state.priceInfo.toPrice)
             return state.copy(fromToken: token, priceInfo: newPriceInfo)
-        } catch {
-            return state.copy(status: .error(reason: .coingeckoPriceFailure))
+        } catch let error {
+            return handle(error: error, for: state)
         }
     }
 
@@ -25,8 +25,8 @@ extension JupiterSwapBusinessLogic {
             let priceToToken = try await getPrices(for: token, services: services)
             let newPriceInfo = SwapPriceInfo(fromPrice: state.priceInfo.fromPrice, toPrice: priceToToken ?? 0)
             return state.copy(toToken: token, priceInfo: newPriceInfo)
-        } catch {
-            return state.copy(status: .error(reason: .coingeckoPriceFailure))
+        } catch let error {
+            return handle(error: error, for: state)
         }
     }
 
@@ -39,8 +39,15 @@ extension JupiterSwapBusinessLogic {
         do {
             let newPriceInfo = try await getPrices(from: fromToken, to: toToken, services: services)
             return state.copy(fromToken: fromToken, toToken: toToken, priceInfo: newPriceInfo)
-        } catch {
-            return state.copy(status: .error(reason: .coingeckoPriceFailure))
+        } catch let error {
+            return handle(error: error, for: state)
         }
+    }
+
+    private static func handle(error: Error, for state: JupiterSwapState) -> JupiterSwapState {
+        if (error as NSError).isNetworkConnectionError {
+            return state.copy(status: .error(reason: .networkConnectionError))
+        }
+        return state.copy(status: .error(reason: .coingeckoPriceFailure))
     }
 }

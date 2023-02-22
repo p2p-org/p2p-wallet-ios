@@ -3,8 +3,8 @@ import SolanaSwift
 
 extension JupiterSwapBusinessLogic {
     static func autoChoose(swapTokens: [SwapToken]) throws -> (fromToken: SwapToken, toToken: SwapToken) {
-        let usdc = swapTokens.first(where: { $0.jupiterToken.address == SolanaSwift.Token.usdc.address })
-        let solana = swapTokens.first(where: { $0.jupiterToken.address == SolanaSwift.Token.nativeSolana.address })
+        let usdc = swapTokens.first(where: { $0.address == SolanaSwift.Token.usdc.address })
+        let solana = swapTokens.first(where: { $0.address == SolanaSwift.Token.nativeSolana.address })
 
         let userWallets = swapTokens.compactMap { $0.userWallet }
 
@@ -16,8 +16,21 @@ extension JupiterSwapBusinessLogic {
             return (solana, usdc)
         } else if let usdc {
             let userWallet = userWallets.sorted(by: { $0.amountInCurrentFiat > $1.amountInCurrentFiat }).first
-            let swapToken = swapTokens.first(where: { $0.jupiterToken.address == userWallet?.mintAddress })
+            let swapToken = swapTokens.first(where: { $0.address == userWallet?.mintAddress })
             return (swapToken ?? solana ?? usdc, usdc)
+        }
+
+        throw JupiterSwapState.ErrorReason.unknown
+    }
+
+    static func autoChooseToToken(for fromToken: SwapToken, from swapTokens: [SwapToken]) throws -> SwapToken {
+        let usdc = swapTokens.first(where: { $0.address == SolanaSwift.Token.usdc.address })
+        let solana = swapTokens.first(where: { $0.address == SolanaSwift.Token.nativeSolana.address })
+
+        if let solana, fromToken.address == usdc?.address {
+            return solana
+        } else if let usdc {
+            return usdc
         }
 
         throw JupiterSwapState.ErrorReason.unknown

@@ -130,10 +130,7 @@ final class TabBarCoordinator: Coordinator<Void> {
                 .sink(receiveValue: { _ in })
                 .store(in: &subscriptions)
         } else {
-            let swapCoordinator = NewSwapCoordinator(navigationController: solendOrSwapNavigation)
-            coordinate(to: swapCoordinator)
-                .sink(receiveValue: { _ in })
-                .store(in: &subscriptions)
+            routeToSwap(nc: solendOrSwapNavigation, hidesBottomBarWhenPushed: false)
         }
         
         let historyNavigation = UINavigationController()
@@ -221,10 +218,7 @@ final class TabBarCoordinator: Coordinator<Void> {
         case .receive:
             break
         case .swap:
-            let swapCoordinator = NewSwapCoordinator(navigationController: navigationController)
-            coordinate(to: swapCoordinator)
-                .sink(receiveValue: { _ in })
-                .store(in: &subscriptions)
+            routeToSwap(nc: navigationController)
         case .send:
             let fiatAmount = walletsRepository.getWallets().reduce(0) { $0 + $1.amountInCurrentFiat }
             let withTokens = fiatAmount > 0
@@ -274,5 +268,19 @@ final class TabBarCoordinator: Coordinator<Void> {
             .start()
             .sink(receiveValue: { })
             .store(in: &subscriptions)
+    }
+
+    private func routeToSwap(nc: UINavigationController, hidesBottomBarWhenPushed: Bool = true) {
+        if available(.jupiterSwapEnabled) {
+            let swapCoordinator = JupiterSwapCoordinator(navigationController: nc)
+            coordinate(to: swapCoordinator)
+                .sink(receiveValue: { _ in })
+                .store(in: &subscriptions)
+        } else {
+            let swapCoordinator = SwapCoordinator(navigationController: nc, initialWallet: nil, hidesBottomBarWhenPushed: hidesBottomBarWhenPushed)
+            coordinate(to: swapCoordinator)
+                .sink(receiveValue: { _ in })
+                .store(in: &subscriptions)
+        }
     }
 }

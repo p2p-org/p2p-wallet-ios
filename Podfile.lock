@@ -502,7 +502,7 @@ CHECKOUT OPTIONS:
     :commit: 211f2ebf2c4c6db269009045bf6c062339c06c35
     :git: https://github.com/p2p-org/key-app-kit-swift.git
   KeyAppUI:
-    :commit: 68e9ee4f4af434dc131d128dacc96c7978f8992b
+    :commit: a044fd996ec9bdd2bd5c188ee4ab859cef598d12
     :git: "git@github.com:p2p-org/KeyAppUI.git"
   ListPlaceholder:
     :commit: 78dd312eb762d66a54c87cd6dd8045140da28c4b
