@@ -26,7 +26,7 @@ struct RendableListParsedTransactionItem: RendableListTransactionItem {
         trx.blockTime ?? Date()
     }
 
-    var status: NewHistoryRendableListTransactionItemStatus {
+    var status: RendableListTransactionItemStatus {
         switch trx.status {
         case .requesting, .processing:
             return .pending
@@ -37,7 +37,7 @@ struct RendableListParsedTransactionItem: RendableListTransactionItem {
         }
     }
 
-    var icon: NewHistoryRendableListTransactionItemIcon {
+    var icon: RendableListTransactionItemIcon {
         if let info = trx.info as? SwapInfo {
             if
                 let sourceImage = info.source?.token.logoURI,
@@ -97,7 +97,7 @@ struct RendableListParsedTransactionItem: RendableListTransactionItem {
         return "Signature: \(RecipientFormatter.shortSignature(signature: trx.signature ?? ""))"
     }
 
-    var detail: (NewHistoryRendableListTransactionItemChange, String) {
+    var detail: (RendableListTransactionItemChange, String) {
         var symbol: String?
 //        if let info = trx.info as? SwapInfo {
 //            symbol = info.symbol

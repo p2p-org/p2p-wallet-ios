@@ -8,7 +8,7 @@
 import KeyAppUI
 import SwiftUI
 
-struct NewHistoryListSkeletonView: View {
+struct HistoryListSkeletonView: View {
     var body: some View {
         HStack {
             Circle()
@@ -32,8 +32,8 @@ struct NewHistoryListSkeletonView: View {
     }
 }
 
-struct NewHistoryListSkeletonView_Previews: PreviewProvider {
+struct HistoryListSkeletonView_Previews: PreviewProvider {
     static var previews: some View {
-        NewHistoryListSkeletonView()
+        HistoryListSkeletonView()
     }
 }

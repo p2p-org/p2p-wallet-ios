@@ -7,13 +7,13 @@
 
 import Foundation
 
-struct NewHistoryListSection: Identifiable, Equatable {
+struct HistorySection: Identifiable, Equatable {
     let title: String
     let items: [NewHistoryItem]
 
     var id: String { title }
 
-    static func == (lhs: NewHistoryListSection, rhs: NewHistoryListSection) -> Bool {
+    static func == (lhs: HistorySection, rhs: HistorySection) -> Bool {
         lhs.id == rhs.id
     }
 }

@@ -8,7 +8,7 @@
 import KeyAppUI
 import SwiftUI
 
-struct NewHistoryListErrorView: View {
+struct HistoryListErrorView: View {
     let onTryAgain: () -> Void
 
     var body: some View {
@@ -32,8 +32,8 @@ struct NewHistoryListErrorView: View {
     }
 }
 
-struct NewHistoryListErrorView_Previews: PreviewProvider {
+struct HistoryListErrorView_Previews: PreviewProvider {
     static var previews: some View {
-        NewHistoryListErrorView() {}
+        HistoryListErrorView() {}
     }
 }

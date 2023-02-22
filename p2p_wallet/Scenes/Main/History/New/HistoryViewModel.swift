@@ -43,12 +43,12 @@ class HistoryViewModel: BaseViewModel, ObservableObject {
 
     // Output
 
-    var sections: [NewHistoryListSection] {
+    var sections: [HistorySection] {
         // Phase 1: Merge pending transaction with history transaction
         let rendableTransactions: [any RendableListTransactionItem] = ListBuilder.merge(primary: historyTransactions.state.data, secondary: pendingTransactions, by: \.id)
 
         // Phase 2: Split transactions by date
-        var sections: [NewHistoryListSection] = ListBuilder.aggregate(list: rendableTransactions, by: \.date) { title, items in
+        var sections: [HistorySection] = ListBuilder.aggregate(list: rendableTransactions, by: \.date) { title, items in
             .init(title: title, items: items.map { .rendableTransaction($0) })
         }
 

@@ -31,7 +31,7 @@ struct RendableListHistoryTransactionItem: RendableListTransactionItem {
         trx.date
     }
     
-    var status: NewHistoryRendableListTransactionItemStatus {
+    var status: RendableListTransactionItemStatus {
         switch trx.status {
         case .success:
             return .success
@@ -40,7 +40,7 @@ struct RendableListHistoryTransactionItem: RendableListTransactionItem {
         }
     }
     
-    var icon: NewHistoryRendableListTransactionItemIcon {
+    var icon: RendableListTransactionItemIcon {
         switch trx.info {
         case let .send(data):
             return icon(mint: data.token.mint, url: data.token.logoUrl, defaultIcon: .transactionSend)
@@ -116,7 +116,7 @@ struct RendableListHistoryTransactionItem: RendableListTransactionItem {
         }
     }
     
-    var detail: (NewHistoryRendableListTransactionItemChange, String) {
+    var detail: (RendableListTransactionItemChange, String) {
         switch trx.info {
         case let .send(data):
             return (.negative, "-\(data.amount.usdAmount.fiatAmountFormattedString())")
@@ -201,7 +201,7 @@ struct RendableListHistoryTransactionItem: RendableListTransactionItem {
         return nil
     }
     
-    private func icon(mint: String?, url: URL?, defaultIcon: UIImage) -> NewHistoryRendableListTransactionItemIcon {
+    private func icon(mint: String?, url: URL?, defaultIcon: UIImage) -> RendableListTransactionItemIcon {
         if let url = resolveTokenIconURL(mint: mint, fallbackImageURL: url) {
             return .single(url)
         } else {

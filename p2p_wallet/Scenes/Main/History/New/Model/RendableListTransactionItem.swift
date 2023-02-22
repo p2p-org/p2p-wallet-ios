@@ -14,34 +14,34 @@ protocol RendableListTransactionItem: Identifiable {
     
     var date: Date { get }
     
-    var status: NewHistoryRendableListTransactionItemStatus { get }
+    var status: RendableListTransactionItemStatus { get }
     
-    var icon: NewHistoryRendableListTransactionItemIcon { get }
+    var icon: RendableListTransactionItemIcon { get }
 
     var title: String { get }
     
     var subtitle: String { get }
     
-    var detail: (NewHistoryRendableListTransactionItemChange, String) { get }
+    var detail: (RendableListTransactionItemChange, String) { get }
     
     var subdetail: String { get }
     
     var onTap: (() -> Void)? { get set }
 }
 
-enum NewHistoryRendableListTransactionItemStatus {
+enum RendableListTransactionItemStatus {
     case success
     case pending
     case failed
 }
 
-enum NewHistoryRendableListTransactionItemChange {
+enum RendableListTransactionItemChange {
     case positive
     case unchanged
     case negative
 }
 
-enum NewHistoryRendableListTransactionItemIcon {
+enum RendableListTransactionItemIcon {
     case icon(UIImage)
     case single(URL)
     case double(URL, URL)

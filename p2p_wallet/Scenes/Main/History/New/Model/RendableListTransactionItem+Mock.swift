@@ -13,15 +13,15 @@ struct MockedRendableListTransactionItem: RendableListTransactionItem {
     
     var date: Date
     
-    var status: NewHistoryRendableListTransactionItemStatus
+    var status: RendableListTransactionItemStatus
     
-    var icon: NewHistoryRendableListTransactionItemIcon
+    var icon: RendableListTransactionItemIcon
     
     var title: String
     
     var subtitle: String
     
-    var detail: (NewHistoryRendableListTransactionItemChange, String)
+    var detail: (RendableListTransactionItemChange, String)
     
     var subdetail: String
     

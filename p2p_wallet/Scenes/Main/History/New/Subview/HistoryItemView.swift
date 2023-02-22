@@ -8,7 +8,7 @@
 import KeyAppUI
 import SwiftUI
 
-struct NewHistoryItemView: View {
+struct HistoryItemView: View {
     let item: any RendableListTransactionItem
     let onTap: () -> Void
 
@@ -37,7 +37,7 @@ struct NewHistoryItemView: View {
             onTap()
         } label: {
             HStack {
-                NewHistoryIconView(icon: item.icon)
+                HistoryIconView(icon: item.icon)
                 VStack(spacing: 4) {
                     HStack(spacing: 5) {
                         Text(item.title)
@@ -89,7 +89,7 @@ struct NewHistoryItemView: View {
     }
 }
 
-struct NewHistoryItemView_Previews: PreviewProvider {
+struct HistoryItemView_Previews: PreviewProvider {
     static let items: [any RendableListTransactionItem] = [
         MockedRendableListTransactionItem.send(),
         MockedRendableListTransactionItem.pendingSend(),
@@ -109,7 +109,7 @@ struct NewHistoryItemView_Previews: PreviewProvider {
         ScrollView {
             VStack {
                 ForEach(items, id: \.id) { item in
-                    NewHistoryItemView(item: item) {}
+                    HistoryItemView(item: item) {}
                 }
             }
         }

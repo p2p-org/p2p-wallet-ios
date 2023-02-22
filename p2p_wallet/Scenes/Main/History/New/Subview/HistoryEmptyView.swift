@@ -1,7 +1,7 @@
 import KeyAppUI
 import SwiftUI
 
-struct NewHistoryEmptyView: View {
+struct HistoryEmptyView: View {
     let primaryAction: () -> Void
     let secondaryAction: () -> Void
 
@@ -24,9 +24,9 @@ struct NewHistoryEmptyView: View {
     }
 }
 
-struct NewHistoryEmptyView_Previews: PreviewProvider {
+struct HistoryEmptyView_Previews: PreviewProvider {
     static var previews: some View {
-        NewHistoryEmptyView {
+        HistoryEmptyView {
             debugPrint("Primary action tapped")
         } secondaryAction: {
             debugPrint("Secondary action tapped")
