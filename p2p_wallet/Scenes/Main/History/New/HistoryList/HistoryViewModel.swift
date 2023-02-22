@@ -28,7 +28,7 @@ enum NewHistoryAction {
     case openBuy
 }
 
-class NewHistoryViewModel: BaseViewModel, ObservableObject {
+class HistoryViewModel: BaseViewModel, ObservableObject {
     // Subjects
 
     let actionSubject: PassthroughSubject<NewHistoryAction, Never>

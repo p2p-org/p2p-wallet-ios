@@ -15,7 +15,7 @@ import SwiftUI
 
 class NewHistoryCoordinator: SmartCoordinator<Void> {
     override func build() -> UIViewController {
-        let vm = NewHistoryViewModel()
+        let vm = HistoryViewModel()
 
         vm.actionSubject
             .sink { [weak self] action in

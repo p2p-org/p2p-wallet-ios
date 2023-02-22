@@ -24,7 +24,7 @@ class DetailAccountCoordinator: SmartCoordinator<WalletDetailCoordinator.Result>
 
     override func build() -> UIViewController {
         let detailAccountVM: DetailAccountViewModel
-        let historyListVM: NewHistoryViewModel
+        let historyListVM: HistoryViewModel
 
         switch self.args {
         case let .wallet(wallet):

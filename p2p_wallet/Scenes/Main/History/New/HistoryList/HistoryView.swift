@@ -10,7 +10,7 @@ import KeyAppUI
 import SwiftUI
 
 struct NewHistoryView<Header: View>: View {
-    @ObservedObject var viewModel: NewHistoryViewModel
+    @ObservedObject var viewModel: HistoryViewModel
 
     let header: Header
 
@@ -32,7 +32,7 @@ struct NewHistoryView<Header: View>: View {
                     .padding(.horizontal, 16)
                     .padding(.top, 38)
                 } else {
-                    NewHistoryListErrorView {
+                    HistoryErrorView {
                         Task { try await viewModel.reload() }
                     }
                     .padding(.horizontal, 16)
