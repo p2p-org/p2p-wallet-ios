@@ -40,7 +40,7 @@ final class SwapViewModel: BaseViewModel, ObservableObject {
     private var timer: Timer?
 
     init(preChosenWallet: Wallet? = nil) {
-        self.stateMachine = JupiterSwapStateMachine(
+        stateMachine = JupiterSwapStateMachine(
             initialState: JupiterSwapState.zero(status: .requiredInitialize),
             services: .init(jupiterClient: JupiterRestClientAPI(version: .v4), pricesAPI: Resolver.resolve())
         )
@@ -145,7 +145,7 @@ private extension SwapViewModel {
 
     func scheduleUpdate() {
         timer?.invalidate()
-        timer = Timer.scheduledTimer(withTimeInterval: 20, repeats: true) { [weak self] _ in
+        timer = .scheduledTimer(withTimeInterval: 20, repeats: true) { [weak self] _ in
             Task {
                 let _ = await self?.stateMachine.accept(action: .update)
             }
