@@ -78,6 +78,7 @@ extension TabBarViewModel {
         Observable.merge(
             notificationService.showNotification
                 .filter { $0 == .history }
+                .asObservable()
                 .mapToVoid(),
             viewDidLoad
                 .filter { [weak self] in
