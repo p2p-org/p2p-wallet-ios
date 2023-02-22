@@ -10,6 +10,7 @@ import RxCocoa
 import RxSwift
 import Resolver
 import AnalyticsManager
+import RxAppState
 
 protocol AuthenticationHandlerType {
     func authenticate(presentationStyle: AuthenticationPresentationStyle?)

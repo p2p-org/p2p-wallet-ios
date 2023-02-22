@@ -7,7 +7,9 @@
 
 import Foundation
 import RxSwift
+import RxCombine
 import SolanaSwift
+import Combine
 
 struct AccountsObservableEvent {
     let pubkey: String
@@ -18,6 +20,16 @@ protocol AccountObservableService {
     var isConnected: Bool { get }
     func subscribeAccountNotification(account: String) async throws
     func observeAllAccountsNotifications() -> Observable<AccountsObservableEvent>
+}
+
+// TODO: - Remove later
+extension AccountObservableService {
+    var allAccountsNotificcationsPublisher: AnyPublisher<AccountsObservableEvent, Never> {
+        observeAllAccountsNotifications()
+            .asPublisher()
+            .assertNoFailure()
+            .eraseToAnyPublisher()
+    }
 }
 
 private struct AccountObservableSubscribes {
