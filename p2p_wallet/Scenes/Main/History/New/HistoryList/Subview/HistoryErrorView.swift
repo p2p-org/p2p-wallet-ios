@@ -1,7 +1,7 @@
 import SwiftUI
 import KeyAppUI
 
-struct NewHistoryErrorView: View {
+struct HistoryErrorView: View {
     let action: () -> ()
 
     var body: some View {
@@ -23,9 +23,9 @@ struct NewHistoryErrorView: View {
     }
 }
 
-struct NewHistoryErrorView_Previews: PreviewProvider {
+struct HistoryErrorView_Previews: PreviewProvider {
     static var previews: some View {
-        NewHistoryErrorView {
+        HistoryErrorView {
             debugPrint("NewHistoryErrorView_Previews Pressed")
         }
     }

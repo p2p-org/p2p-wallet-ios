@@ -10,7 +10,7 @@ import SwiftUI
 
 struct DetailAccountView: View {
     @ObservedObject var detailAccount: DetailAccountViewModel
-    @ObservedObject var historyList: NewHistoryViewModel
+    @ObservedObject var historyList: HistoryViewModel
 
     var body: some View {
         NewHistoryView(viewModel: historyList, header: header)
@@ -44,7 +44,7 @@ struct DetailAccountView: View {
 
 struct DetailAccountView_Previews: PreviewProvider {
     static var previews: some View {
-        let historyList = NewHistoryViewModel(
+        let historyList = HistoryViewModel(
             mock: [MockedRendableListTransactionItem.send()]
         )
         historyList.fetch()
