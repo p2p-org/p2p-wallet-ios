@@ -24,6 +24,7 @@ extension JupiterSwapBusinessLogic {
                 routeMap: routeMap,
                 swapTokens: swapTokens,
                 amountFrom: 0,
+                amountFromFiat: 0,
                 amountTo: 0,
                 fromToken: tokens.fromToken,
                 toToken: tokens.toToken,

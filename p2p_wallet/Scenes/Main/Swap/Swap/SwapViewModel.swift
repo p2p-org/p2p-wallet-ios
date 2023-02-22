@@ -23,6 +23,7 @@ final class SwapViewModel: BaseViewModel, ObservableObject {
     let tryAgain = PassthroughSubject<Void, Never>()
     let changeFromToken = PassthroughSubject<SwapToken, Never>()
     let changeToToken = PassthroughSubject<SwapToken, Never>()
+    let submitTransaction = PassthroughSubject<PendingTransaction, Never>()
 
     // MARK: - Params
     @Published var header: String = ""
@@ -39,10 +40,9 @@ final class SwapViewModel: BaseViewModel, ObservableObject {
         }
     }
     @Published var showFinished = false
-    
-    var versionedTransaction: VersionedTransaction?
 
-    var toTokens: [SwapToken] = [] //  Мне кажется в текущих реалиях это должно быть в стейт машине
+    var versionedTransaction: VersionedTransaction? //  I think it should be placed inside StateMachine rn
+    var toTokens: [SwapToken] = [] //  I think it should be placed inside StateMachine rn
 
     let stateMachine: JupiterSwapStateMachine
     var currentState: JupiterSwapState { stateMachine.currentState }
@@ -160,12 +160,16 @@ private extension SwapViewModel {
     }
 
     func scheduleUpdate() {
-        timer?.invalidate()
+        cancelUpdate()
         timer = .scheduledTimer(withTimeInterval: 20, repeats: true) { [weak self] _ in
             Task {
                 let _ = await self?.stateMachine.accept(action: .update)
             }
         }
+    }
+
+    func cancelUpdate() {
+        timer?.invalidate()
     }
 
     func updateHeader(priceInfo: SwapPriceInfo, fromToken: Jupiter.Token, toToken: Jupiter.Token) {
@@ -226,21 +230,34 @@ private extension SwapViewModel {
     }
 
     private func sendToken() {
-        guard isSliderOn, let versionedTransaction = versionedTransaction else { return }
-
-        Task {
-            let account = userWalletManager.wallet!.account
-
-            do {
-                let transactionId = try await JupiterSwapBusinessLogic.sendToBlockchain(
-                    account: account,
-                    versionedTransaction: versionedTransaction,
-                    solanaAPIClient: stateMachine.services.solanaAPIClient
-                )
-                debugPrint("---transactionId: ", transactionId)
-            } catch {
-                actionButtonData = SliderActionButtonData(isEnabled: false, title: L10n.youCanTSwapSameToken)
-            }
-        }
+        guard isSliderOn, let versionedTransaction = versionedTransaction, let account = userWalletManager.wallet?.account else { return }
+        cancelUpdate()
+        let pendingTransaction = PendingTransaction(
+            trxIndex: 0,
+            sentAt: Date(),
+            rawTransaction: JupiterSwapTransaction(
+                execution: {
+                    let solanaAPIClient = Resolver.resolve(SolanaAPIClient.self)
+                    let blockHash = try await solanaAPIClient.getRecentBlockhash()
+                    var versionedTransaction = versionedTransaction
+                    versionedTransaction.setRecentBlockHash(blockHash)
+                    try versionedTransaction.sign(signers: [account])
+                    
+                    let serializedTransaction = try versionedTransaction.serialize().base64EncodedString()
+                    
+                    return try await solanaAPIClient.sendTransaction(
+                        transaction: serializedTransaction,
+                        configs: RequestConfiguration(encoding: "base64")!
+                    )
+                },
+                amountFrom: currentState.amountFrom,
+                amountTo: currentState.amountTo,
+                fromToken: currentState.fromToken,
+                toToken: currentState.toToken,
+                amountFromFiat: currentState.amountFromFiat
+            ),
+            status: .sending
+        )
+        submitTransaction.send(pendingTransaction)
     }
 }

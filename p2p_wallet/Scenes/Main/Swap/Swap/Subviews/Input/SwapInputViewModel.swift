@@ -124,7 +124,7 @@ private extension SwapInputViewModel {
         }
 
         fiatAmount = [
-            ((state.priceInfo.fromPrice * state.amountFrom).toString(maximumFractionDigits: 2, roundingMode: .down)),
+            state.amountFromFiat.toString(maximumFractionDigits: 2, roundingMode: .down),
             Defaults.fiat.code
         ].joined(separator: " ")
     }

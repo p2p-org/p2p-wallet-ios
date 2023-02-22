@@ -21,7 +21,13 @@ final class JupiterSwapCoordinator: Coordinator<Void> {
         let controller = KeyboardAvoidingViewController(rootView: view)
         navigationController.pushViewController(controller, animated: true)
         style(controller: controller)
-        
+
+        viewModel.submitTransaction
+            .sink { [weak self] transaction in
+                self?.openDetails(pendingTransaction: transaction)
+            }
+            .store(in: &subscriptions)
+
         fromViewModel.changeTokenPressed
             .sink { [weak viewModel, weak self] in
                 guard let self, let viewModel else { return }
@@ -64,5 +70,17 @@ final class JupiterSwapCoordinator: Coordinator<Void> {
             }
         }
         .store(in: &subscriptions)
+    }
+
+    private func openDetails(pendingTransaction: PendingTransaction) {
+        let viewModel = DetailTransactionViewModel(pendingTransaction: pendingTransaction)
+
+        coordinate(to: TransactionDetailCoordinator(viewModel: viewModel, presentingViewController: navigationController))
+            .sink(receiveCompletion: { [weak self] _ in
+                self?.navigationController.popViewController(animated: true, completion: {
+                    self?.result.send(())
+                })
+            }, receiveValue: { _ in })
+            .store(in: &subscriptions)
     }
 }
