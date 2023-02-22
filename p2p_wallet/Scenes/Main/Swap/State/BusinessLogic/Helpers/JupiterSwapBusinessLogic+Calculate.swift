@@ -8,7 +8,7 @@ extension JupiterSwapBusinessLogic {
         }
 
         guard state.amountFrom > 0 else {
-            return state.copy(status: .ready, amountFrom: 0, amountTo: 0, route: nil)
+            return state.copy(status: .ready, amountFrom: 0, amountFromFiat: 0, amountTo: 0, route: nil)
         }
 
         let amountFromLamports = state.amountFrom.toLamport(decimals: state.fromToken.jupiterToken.decimals)
