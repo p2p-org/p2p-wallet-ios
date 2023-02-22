@@ -26,9 +26,10 @@ extension History {
             navigationItem.title = L10n.history
             // Start loading when wallets are ready.
             Resolver.resolve(WalletsRepository.self)
-                .dataObservable
+                .dataPublisher
+                .asObservable()
                 .compactMap { $0 }
-                .filter { $0?.count ?? 0 > 0 }
+                .filter { $0.count > 0 }
                 .first()
                 .subscribe(onSuccess: { [weak self] _ in self?.viewModel.reload() })
                 .disposed(by: disposeBag)
@@ -42,9 +43,9 @@ extension History {
 
             // Start loading when wallets are ready.
             Resolver.resolve(WalletsRepository.self)
-                .dataObservable
-                .compactMap { $0 }
-                .filter { $0?.count ?? 0 > 0 }
+                .dataPublisher
+                .asObservable()
+                .filter { $0.count > 0 }
                 .first()
                 .subscribe(onSuccess: { [weak self] _ in self?.viewModel.reload() })
                 .disposed(by: disposeBag)
