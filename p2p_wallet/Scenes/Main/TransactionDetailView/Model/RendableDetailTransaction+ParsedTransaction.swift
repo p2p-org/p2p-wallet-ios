@@ -10,10 +10,10 @@ import Foundation
 import TransactionParser
 import SolanaSwift
 
-struct RendableDetailParsedTransaction: RendableDetailTransaction {
+struct RendableDetailParsedTransaction: RendableTransactionDetail {
     let trx: ParsedTransaction
     
-    var status: DetailTransactionStatus {
+    var status: TransactionDetailStatus {
         switch trx.status {
         case .confirmed:
             return .succeed(message: L10n.theTransactionHasBeenSuccessfullyCompleted)
@@ -43,7 +43,7 @@ struct RendableDetailParsedTransaction: RendableDetailTransaction {
         trx.signature ?? ""
     }
     
-    var icon: DetailTransactionIcon {
+    var icon: TransactionDetailIcon {
         if let info = trx.info as? SwapInfo {
             if
                 let sourceImage = info.source?.token.logoURI,
@@ -70,7 +70,7 @@ struct RendableDetailParsedTransaction: RendableDetailTransaction {
         return .icon(.planet)
     }
     
-    var amountInFiat: DetailTransactionChange {
+    var amountInFiat: TransactionDetailChange {
         .unchanged("")
     }
     
@@ -87,8 +87,8 @@ struct RendableDetailParsedTransaction: RendableDetailTransaction {
         return ""
     }
     
-    var extra: [DetailTransactionExtraInfo] {
-        var result: [DetailTransactionExtraInfo] = []
+    var extra: [TransactionDetailExtraInfo] {
+        var result: [TransactionDetailExtraInfo] = []
         
         if let info = trx.info as? TransferInfo {
             result.append(
@@ -110,5 +110,5 @@ struct RendableDetailParsedTransaction: RendableDetailTransaction {
         return result
     }
     
-    var actions: [DetailTransactionAction] = [.share, .explorer]
+    var actions: [TransactionDetailAction] = [.share, .explorer]
 }

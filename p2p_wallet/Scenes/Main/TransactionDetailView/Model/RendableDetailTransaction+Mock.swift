@@ -9,16 +9,16 @@ import Combine
 import Foundation
 import SolanaSwift
 
-struct MockedRendableDetailTransaction: RendableDetailTransaction {
-    var status: DetailTransactionStatus
+struct MockedRendableDetailTransaction: RendableTransactionDetail {
+    var status: TransactionDetailStatus
     var title: String
     var subtitle: String
     var signature: String?
-    var icon: DetailTransactionIcon
-    var amountInFiat: DetailTransactionChange
+    var icon: TransactionDetailIcon
+    var amountInFiat: TransactionDetailChange
     var amountInToken: String
-    var extra: [DetailTransactionExtraInfo]
-    var actions: [DetailTransactionAction]
+    var extra: [TransactionDetailExtraInfo]
+    var actions: [TransactionDetailAction]
     
     static let items: [MockedRendableDetailTransaction] = [
         .send(),

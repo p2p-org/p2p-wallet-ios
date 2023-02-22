@@ -11,9 +11,9 @@ import SafariServices
 import TransactionParser
 
 class TransactionDetailCoordinator: SmartCoordinator<Void> {
-    let viewModel: DetailTransactionViewModel
+    let viewModel: TransactionDetailViewModel
 
-    init(viewModel: DetailTransactionViewModel, presentingViewController: UIViewController) {
+    init(viewModel: TransactionDetailViewModel, presentingViewController: UIViewController) {
         self.viewModel = viewModel
         super.init(presentation: SmartCoordinatorPresentPresentation(presentingViewController))
     }

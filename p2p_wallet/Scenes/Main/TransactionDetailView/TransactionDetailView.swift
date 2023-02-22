@@ -10,7 +10,7 @@ import Resolver
 import SwiftUI
 
 struct DetailTransactionView: View {
-    @ObservedObject var viewModel: DetailTransactionViewModel
+    @ObservedObject var viewModel: TransactionDetailViewModel
     
     var body: some View {
         VStack {

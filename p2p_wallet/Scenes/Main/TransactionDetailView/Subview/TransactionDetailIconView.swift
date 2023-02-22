@@ -14,7 +14,7 @@ struct TransactionDetailIconView: View {
     private let size: CGFloat = 64
     private let defaultBackground: some View = Circle().fill(Color(Asset.Colors.snow.color))
 
-    let icon: DetailTransactionIcon
+    let icon: TransactionDetailIcon
 
     var body: some View {
         Group {
