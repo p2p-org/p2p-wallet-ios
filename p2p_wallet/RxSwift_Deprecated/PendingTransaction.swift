@@ -84,6 +84,7 @@ struct PendingTransaction {
         }
     }
 
+    let trxIndex: Int
     var transactionId: String?
     let sentAt: Date
     var writtenToRepository: Bool = false

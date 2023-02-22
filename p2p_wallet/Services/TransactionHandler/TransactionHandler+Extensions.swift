@@ -24,6 +24,7 @@ extension TransactionHandler {
                 // update status
                 await updateTransactionAtIndex(index) { _ in
                     .init(
+                        trxIndex: index,
                         transactionId: transactionID,
                         sentAt: Date(),
                         rawTransaction: processingTransaction,

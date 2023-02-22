@@ -5,8 +5,6 @@
 //  Created by Chung Tran on 13/10/2022.
 //
 
-import RxCocoa
-import RxSwift
 import UIKit
 import KeyAppUI
 
