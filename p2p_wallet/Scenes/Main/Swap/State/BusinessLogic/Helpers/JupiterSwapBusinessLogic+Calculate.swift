@@ -50,8 +50,15 @@ extension JupiterSwapBusinessLogic {
 
             return state.copy(status: status, amountTo: amountTo, priceInfo: newPriceInfo)
         }
-        catch {
-            return state.copy(status: .error(reason: .unknown))
+        catch let error {
+            return handle(error: error, for: state)
         }
+    }
+
+    private static func handle(error: Error, for state: JupiterSwapState) -> JupiterSwapState {
+        if (error as NSError).isNetworkConnectionError {
+            return state.copy(status: .error(reason: .networkConnectionError))
+        }
+        return state.copy(status: .error(reason: .routeIsNotFound))
     }
 }

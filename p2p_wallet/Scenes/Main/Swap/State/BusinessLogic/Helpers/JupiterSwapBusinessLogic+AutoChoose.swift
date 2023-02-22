@@ -27,10 +27,10 @@ extension JupiterSwapBusinessLogic {
         let usdc = swapTokens.first(where: { $0.address == SolanaSwift.Token.usdc.address })
         let solana = swapTokens.first(where: { $0.address == SolanaSwift.Token.nativeSolana.address })
 
-        if let usdc, fromToken.address == solana?.address {
-            return usdc
-        } else if let solana {
+        if let solana, fromToken.address == usdc?.address {
             return solana
+        } else if let usdc {
+            return usdc
         }
 
         throw JupiterSwapState.ErrorReason.unknown

@@ -80,9 +80,9 @@ extension WalletDetail {
                 }
                 .store(in: &subscriptions)
 
-            Publishers.CombineLatest($wallet.eraseToAnyPublisher(), jupiterTokensRepository.data)
-                .map { (wallet, data) -> [WalletActionType] in
-                    guard let wallet = wallet else { return [] }
+            Publishers.CombineLatest($wallet.eraseToAnyPublisher(), jupiterTokensRepository.status)
+                .map { (wallet, status) -> [WalletActionType] in
+                    guard let wallet else { return [] }
 
                     var actions: [WalletActionType]
                     if wallet.isNativeSOL || wallet.token.symbol == "USDC" {
@@ -91,8 +91,15 @@ extension WalletDetail {
                         actions = [.receive, .send]
                     }
 
-                    if available(.jupiterSwapEnabled) && data.swapTokens.contains(where: { $0.address == wallet.mintAddress }) {
-                        actions.append(.swap)
+                    if available(.jupiterSwapEnabled) {
+                        switch status {
+                        case .ready(let swapTokens, _):
+                            if swapTokens.contains(where: { $0.address == wallet.mintAddress }) {
+                                actions.append(.swap)
+                            }
+                        default:
+                            break
+                        }
                     } else if !available(.jupiterSwapEnabled) {
                         // No restrictions for orca swap
                         actions.append(.swap)
