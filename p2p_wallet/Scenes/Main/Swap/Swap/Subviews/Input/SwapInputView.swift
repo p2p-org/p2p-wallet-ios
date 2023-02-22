@@ -89,7 +89,6 @@ private extension SwapInputView {
             textField.isEnabled = viewModel.isEditable
             textField.placeholder = "0"
             textField.maximumFractionDigits = viewModel.token.jupiterToken.decimals
-            textField.max = viewModel.balance
         }
         .if(viewModel.isLoading || viewModel.isAmountLoading) { view in
             view.skeleton(with: true, size: CGSize(width: 84, height: 20))
