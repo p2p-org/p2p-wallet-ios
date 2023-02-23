@@ -80,6 +80,23 @@ struct RendableDetailPendingTransaction: RendableDetailTransaction {
             }
             
             return .double(fromUrl, toUrl)
+        case let transaction as JupiterSwapTransaction:
+            let fromUrlStr = transaction.fromToken.jupiterToken.logoURI
+            let toUrlStr = transaction.toToken.jupiterToken.logoURI
+
+            guard let fromUrlStr, let toUrlStr else {
+                return .icon(.buttonSwap)
+            }
+
+            let fromUrl = URL(string: fromUrlStr)
+            let toUrl = URL(string: toUrlStr)
+
+            guard let fromUrl, let toUrl else {
+                return .icon(.buttonSwap)
+            }
+
+            return .double(fromUrl, toUrl)
+
         default:
             return .icon(.transactionUndefined)
             // return .icon(.planet)
@@ -93,6 +110,8 @@ struct RendableDetailPendingTransaction: RendableDetailTransaction {
         case let transaction as ProcessTransaction.SwapTransaction:
             let amountInFiat: Double = (transaction.amount * priceService.currentPrice(mint: transaction.sourceWallet.token.address)?.value)
             return .unchanged("\(amountInFiat.fiatAmountFormattedString())")
+        case let transaction as JupiterSwapTransaction:
+            return .unchanged(transaction.amountFiat.fiatAmountFormattedString())
         default:
             return .unchanged("")
         }
@@ -104,6 +123,8 @@ struct RendableDetailPendingTransaction: RendableDetailTransaction {
             return "\(transaction.amount.tokenAmountFormattedString(symbol: transaction.walletToken.token.symbol))"
         case let transaction as ProcessTransaction.SwapTransaction:
             return "\(transaction.amount.tokenAmountFormattedString(symbol: transaction.sourceWallet.token.symbol)) → \(transaction.estimatedAmount.tokenAmountFormattedString(symbol: transaction.destinationWallet.token.symbol))"
+        case let transaction as JupiterSwapTransaction:
+            return transaction.mainDescription
         default:
             return ""
         }
@@ -164,7 +185,10 @@ struct RendableDetailPendingTransaction: RendableDetailTransaction {
                     result.append(.init(title: L10n.transactionFee, value: "\(formatedFeeAmount) (\(formattedFeeAmountInFiat))"))
                 }
             }
-            
+
+        case let transaction as JupiterSwapTransaction:
+            result.append(.init(title: L10n.transactionFee, value: L10n.freePaidByKeyApp))
+
         default:
             break
         }

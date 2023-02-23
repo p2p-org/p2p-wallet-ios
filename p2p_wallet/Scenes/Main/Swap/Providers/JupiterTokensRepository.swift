@@ -3,6 +3,11 @@ import Combine
 import SolanaSwift
 import Resolver
 
+struct JupiterTokensData {
+    let tokens: [SwapToken]
+    let userWallets: [Wallet]
+}
+
 protocol JupiterTokensRepository {
     var status: AnyPublisher<JupiterDataStatus, Never> { get }
 
@@ -21,6 +26,7 @@ final class JupiterTokensRepositoryImpl: JupiterTokensRepository {
     var status: AnyPublisher<JupiterDataStatus, Never> {
         statusSubject.eraseToAnyPublisher()
     }
+    var routeMap = [String: [String]]()
 
     // MARK: - Dependencies
     private let jupiterClient: JupiterAPI
