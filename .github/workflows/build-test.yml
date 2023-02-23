@@ -95,6 +95,8 @@ jobs:
           XCCONFIG_URL: '${{ secrets.XCCONFIG_URL }}'
           GIT_CHANGELOG: '${{ env.GIT_CHANGES }}'
           SENTRY_TOKEN: '${{ secrets.SENTRY_TOKEN }}'
+          BROWSERSTACK_USERNAME_NEW: '${{ secrets.BROWSERSTACK_USERNAME_NEW }}'
+          BROWSERSTACK_ACCESS_KEY_NEW: '${{ secrets.BROWSERSTACK_ACCESS_KEY_NEW }}'
     
       - name: Login to JIRA
         uses: atlassian/gajira-login@master
