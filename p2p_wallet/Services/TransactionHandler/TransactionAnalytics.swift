@@ -38,7 +38,7 @@ class SwapTransactionAnalytics {
             let prevTrx = param.previous
             let trx = param.current
             guard let self else { return }
-            guard let rawTrx = trx.rawTransaction as? ProcessTransaction.SwapTransaction else { return }
+            guard let rawTrx = trx.rawTransaction as? SwapTransaction else { return }
 
             switch trx.status {
             case .sending:
