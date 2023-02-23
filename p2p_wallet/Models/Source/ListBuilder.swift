@@ -10,7 +10,7 @@ import Foundation
 enum ListBuilder {
     static func merge<T>(primary: [T], secondary: [T], by id: KeyPath<T, String>) -> [T] {
         let filteredSecondary = secondary.filter { secondaryItem in
-            primary.contains { primaryItem in
+            !primary.contains { primaryItem in
                 primaryItem[keyPath: id] == secondaryItem[keyPath: id]
             }
         }
