@@ -148,7 +148,7 @@ extension TransactionHandler {
 
                 return wallets
             }
-        case let transaction as ProcessTransaction.CloseTransaction:
+        case let transaction as CloseTransaction:
             guard !socket.isConnected else { return }
 
             walletsRepository.batchUpdate { currentValue in
@@ -172,7 +172,7 @@ extension TransactionHandler {
                 return wallets
             }
 
-        case let transaction as ProcessTransaction.SwapTransaction:
+        case let transaction as SwapTransaction:
             walletsRepository.batchUpdate { currentValue in
                 var wallets = currentValue
 
