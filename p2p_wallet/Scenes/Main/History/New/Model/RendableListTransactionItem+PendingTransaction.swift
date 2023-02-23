@@ -45,7 +45,7 @@ struct RendableListPendingTransactionItem: RendableListTransactionItem {
                 return .icon(.transactionSend)
             }
             
-        case let transaction as ProcessTransaction.SwapTransaction:
+        case let transaction as SwapTransaction:
             let fromUrlStr = transaction.sourceWallet.token.logoURI
             let toUrlStr = transaction.destinationWallet.token.logoURI
             
@@ -80,7 +80,7 @@ struct RendableListPendingTransactionItem: RendableListTransactionItem {
                 return L10n.to
             }
             
-        case let transaction as ProcessTransaction.SwapTransaction:
+        case let transaction as SwapTransaction:
             return L10n.to(transaction.sourceWallet.token.symbol, transaction.destinationWallet.token.symbol)
         default:
             return L10n.unknown
@@ -93,7 +93,7 @@ struct RendableListPendingTransactionItem: RendableListTransactionItem {
             switch trx.rawTransaction {
             case _ as SendTransaction:
                 return "\(L10n.send)"
-            case _ as ProcessTransaction.SwapTransaction:
+            case _ as SwapTransaction:
                 return "\(L10n.swap)"
             default:
                 return "\(L10n.transactionFailed)"
@@ -106,7 +106,7 @@ struct RendableListPendingTransactionItem: RendableListTransactionItem {
                 } else {
                     return "\(L10n.send)"
                 }
-            case _ as ProcessTransaction.SwapTransaction:
+            case _ as SwapTransaction:
                 if trx.transactionId == nil {
                     return "\(L10n.swapping).."
                 } else {
@@ -126,7 +126,7 @@ struct RendableListPendingTransactionItem: RendableListTransactionItem {
         switch trx.rawTransaction {
         case let transaction as SendTransaction:
             return (.negative, "-\(transaction.amountInFiat.fiatAmountFormattedString())")
-        case let transaction as ProcessTransaction.SwapTransaction:
+        case let transaction as SwapTransaction:
             return (.positive, "+\(transaction.amount.tokenAmountFormattedString(symbol: transaction.sourceWallet.token.symbol))")
         default:
             return (.unchanged, "")
@@ -137,7 +137,7 @@ struct RendableListPendingTransactionItem: RendableListTransactionItem {
         switch trx.rawTransaction {
         case let transaction as SendTransaction:
             return "-\(transaction.amount.tokenAmountFormattedString(symbol: transaction.walletToken.token.symbol))"
-        case let transaction as ProcessTransaction.SwapTransaction:
+        case let transaction as SwapTransaction:
             return "-\(transaction.estimatedAmount.tokenAmountFormattedString(symbol: transaction.destinationWallet.token.symbol))"
         default:
             return ""

@@ -132,7 +132,6 @@ PODS:
     - GoogleUtilities/Logger
   - GoogleUtilities/UserDefaults (7.11.0):
     - GoogleUtilities/Logger
-  - GT3Captcha-iOS (0.15.5)
   - GTMAppAuth (1.3.1):
     - AppAuth/Core (~> 1.6)
     - GTMSessionFetcher/Core (< 3.0, >= 1.5)
@@ -260,7 +259,6 @@ DEPENDENCIES:
   - Firebase/Crashlytics
   - Firebase/RemoteConfig
   - GoogleSignIn (~> 6.2.4)
-  - GT3Captcha-iOS (= 0.15.5)
   - History (from `https://github.com/p2p-org/key-app-kit-swift.git`, branch `develop`)
   - Intercom (= 12.4.3)
   - Introspect (= 0.1.4)
@@ -285,11 +283,9 @@ DEPENDENCIES:
   - RenVMSwift (from `https://github.com/p2p-org/RenVMSwift.git`, branch `master`)
   - Resolver (= 1.5.0)
   - RxAppState (= 1.7.1)
-  - RxCocoa (= 6.5.0)
   - RxCombine (= 2.0.1)
   - RxConcurrency (from `https://github.com/TrGiLong/RxConcurrency.git`, branch `main`)
   - RxGesture (= 4.0.4)
-  - RxSwift (= 6.5.0)
   - Sell (from `https://github.com/p2p-org/key-app-kit-swift.git`, branch `develop`)
   - Send (from `https://github.com/p2p-org/key-app-kit-swift.git`, branch `develop`)
   - Sentry (from `https://github.com/getsentry/sentry-cocoa.git`, tag `7.31.5`)
@@ -324,7 +320,6 @@ SPEC REPOS:
     - GoogleDataTransport
     - GoogleSignIn
     - GoogleUtilities
-    - GT3Captcha-iOS
     - GTMAppAuth
     - GTMSessionFetcher
     - Intercom
@@ -574,7 +569,6 @@ SPEC CHECKSUMS:
   GoogleDataTransport: ea169759df570f4e37bdee1623ec32a7e64e67c4
   GoogleSignIn: 5651ce3a61e56ca864160e79b484cd9ed3f49b7a
   GoogleUtilities: c2bdc4cf2ce786c4d2e6b3bcfd599a25ca78f06f
-  GT3Captcha-iOS: 2be456783a54bc7ef40856d491dab4e4fe5d386e
   GTMAppAuth: 0ff230db599948a9ad7470ca667337803b3fc4dd
   GTMSessionFetcher: 3a63d75eecd6aa32c2fc79f578064e1214dfdec2
   History: 4f9ebb4f1ad6796e5b155e81a8fde40714bbeed8
@@ -629,6 +623,6 @@ SPEC CHECKSUMS:
   TransactionParser: 3004420d52e7b1277dbcfd20b995a5de707705f3
   TweetNacl: 3abf4d1d2082b0114e7a67410e300892448951e6
 
-PODFILE CHECKSUM: b39c0314262de56699f5a3469527f6e18da42805
+PODFILE CHECKSUM: 0abb7b9b9bb36b9dad69d14064ebd9db3d193c1d
 
 COCOAPODS: 1.11.3
