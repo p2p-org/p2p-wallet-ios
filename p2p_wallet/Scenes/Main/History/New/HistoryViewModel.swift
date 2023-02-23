@@ -71,7 +71,7 @@ class HistoryViewModel: BaseViewModel, ObservableObject {
 
         // Setup list adaptor
         let sequence = repository
-            .getAll(account: userWalletManager.wallet?.account, mint: nil)
+            .getAll(account: userWalletManager.wallet?.account, mint: mint)
             .map { trx -> any RendableListTransactionItem in
                 await RendableListHistoryTransactionItem(
                     trx: trx,
