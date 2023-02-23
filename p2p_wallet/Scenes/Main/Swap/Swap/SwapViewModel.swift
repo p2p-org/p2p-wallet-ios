@@ -5,6 +5,7 @@ import SolanaPricesAPIs
 import SolanaSwift
 
 final class SwapViewModel: BaseViewModel, ObservableObject {
+    // MARK: - Nested types
 
     enum InitializingState {
         case loading
@@ -13,26 +14,26 @@ final class SwapViewModel: BaseViewModel, ObservableObject {
     }
 
     // MARK: - Dependencies
+
     @Injected private var swapWalletsRepository: JupiterTokensRepository
     @Injected private var pricesAPI: SolanaPricesAPI
     @Injected private var notificationService: NotificationService
     @Injected private var userWalletManager: UserWalletManager
 
-    // MARK: - Actions
+    // MARK: - Subjects
+
     let switchTokens = PassthroughSubject<Void, Never>()
     let tryAgain = PassthroughSubject<Void, Never>()
     let changeFromToken = PassthroughSubject<SwapToken, Never>()
     let changeToToken = PassthroughSubject<SwapToken, Never>()
     let submitTransaction = PassthroughSubject<PendingTransaction, Never>()
 
-    // MARK: - Params
+    // MARK: - Published properties
+
     @Published var header: String = ""
     @Published var initializingState: InitializingState = .loading
     @Published var arePricesLoading: Bool = false
-
     @Published var priceInfo = SwapPriceInfo(fromPrice: 0, toPrice: 0)
-    private var priceInfoTask: Task<Void, Never>?
-
     @Published var actionButtonData = SliderActionButtonData.zero
     @Published var isSliderOn = false {
         didSet {
@@ -41,6 +42,9 @@ final class SwapViewModel: BaseViewModel, ObservableObject {
     }
     @Published var showFinished = false
 
+    // MARK: - Other properties
+
+    private var priceInfoTask: Task<Void, Never>?
     var versionedTransaction: VersionedTransaction? //  I think it should be placed inside StateMachine rn
     var toTokens: [SwapToken] = [] //  I think it should be placed inside StateMachine rn
 
@@ -49,6 +53,8 @@ final class SwapViewModel: BaseViewModel, ObservableObject {
     
     private let preChosenWallet: Wallet?
     private var timer: Timer?
+
+    // MARK: - Initializers
 
     init(preChosenWallet: Wallet? = nil) {
         stateMachine = JupiterSwapStateMachine(
@@ -71,8 +77,10 @@ final class SwapViewModel: BaseViewModel, ObservableObject {
 }
 
 private extension SwapViewModel {
+    // MARK: - Binding
+
     func bind() {
-        swapWalletsRepository.status
+        swapWalletsRepository.statusPublisher
             .sinkAsync { [weak self] dataStatus in
                 guard let self else { return }
                 switch dataStatus {

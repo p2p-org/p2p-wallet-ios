@@ -3,17 +3,24 @@ import Combine
 import SolanaSwift
 import Resolver
 
+/// Tokens data returned by Jupiter
 struct JupiterTokensData {
+    /// List of Jupiter's supported tokens
     let tokens: [SwapToken]
+    /// Wallets owned by user
     let userWallets: [Wallet]
 }
 
+/// Repository that handle JupiterTokens
 protocol JupiterTokensRepository {
-    var status: AnyPublisher<JupiterDataStatus, Never> { get }
-
+    /// Current status of repository
+    var statusPublisher: AnyPublisher<JupiterDataStatus, Never> { get }
+    
+    /// Load repository
     func load() async
 }
 
+/// Status of current JupiterData
 enum JupiterDataStatus {
     case initial
     case loading
@@ -21,23 +28,32 @@ enum JupiterDataStatus {
     case failed
 }
 
+/// Default implementaion of JupiterTokensRepository
 final class JupiterTokensRepositoryImpl: JupiterTokensRepository {
-
-    var status: AnyPublisher<JupiterDataStatus, Never> {
-        statusSubject.eraseToAnyPublisher()
-    }
     // MARK: - Dependencies
+
     private let jupiterClient: JupiterAPI
     private let localProvider: JupiterTokensProvider
     @Injected private var walletsRepository: WalletsRepository
 
-    // MARK: - Private params
+    // MARK: - Subjects
+
     private var statusSubject = CurrentValueSubject<JupiterDataStatus, Never>(.initial)
+    
+    // MARK: - Properties
+
+    var statusPublisher: AnyPublisher<JupiterDataStatus, Never> {
+        statusSubject.eraseToAnyPublisher()
+    }
+
+    // MARK: - Initializer
 
     init(provider: JupiterTokensProvider, jupiterClient: JupiterAPI) {
         self.localProvider = provider
         self.jupiterClient = jupiterClient
     }
+
+    // MARK: - Methods
 
     func load() async {
         statusSubject.send(.loading)

@@ -80,7 +80,7 @@ extension WalletDetail {
                 }
                 .store(in: &subscriptions)
 
-            Publishers.CombineLatest($wallet.eraseToAnyPublisher(), jupiterTokensRepository.status)
+            Publishers.CombineLatest($wallet.eraseToAnyPublisher(), jupiterTokensRepository.statusPublisher)
                 .map { (wallet, status) -> [WalletActionType] in
                     guard let wallet else { return [] }
 
