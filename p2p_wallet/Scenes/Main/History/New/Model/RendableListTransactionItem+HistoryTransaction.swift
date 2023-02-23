@@ -35,7 +35,7 @@ struct RendableListHistoryTransactionItem: RendableListTransactionItem {
         switch trx.status {
         case .success:
             return .success
-        case .failure:
+        case .failed:
             return .failed
         }
     }
@@ -160,7 +160,7 @@ struct RendableListHistoryTransactionItem: RendableListTransactionItem {
         case let .swap(data):
             return "\(data.from.amount.tokenAmount.tokenAmountFormattedString(symbol: data.from.token.symbol))"
         case let .burn(data):
-            return "-\(data.amount.tokenAmount.tokenAmountFormattedString(symbol: data.token.symbol))"
+            return "\(data.amount.tokenAmount.tokenAmountFormattedString(symbol: data.token.symbol))"
         case let .mint(data):
             return "+\(data.amount.tokenAmount.tokenAmountFormattedString(symbol: data.token.symbol))"
         case let .stake(data):

@@ -19,7 +19,7 @@ struct RendableDetailHistoryTransaction: RendableTransactionDetail {
         switch trx.status {
         case .success:
             return .succeed(message: "")
-        case .failure:
+        case .failed:
             if let error = trx.error?.description {
                 return .error(message: NSAttributedString(string: error))
             } else {
@@ -32,7 +32,7 @@ struct RendableDetailHistoryTransaction: RendableTransactionDetail {
         switch trx.status {
         case .success:
             return L10n.transactionSucceeded
-        case .failure:
+        case .failed:
             return L10n.transactionFailed
         }
     }
@@ -121,7 +121,7 @@ struct RendableDetailHistoryTransaction: RendableTransactionDetail {
         case let .swap(data):
             return "\((-data.from.amount.tokenAmount).tokenAmountFormattedString(symbol: data.from.token.symbol)) → \(data.to.amount.tokenAmount.tokenAmountFormattedString(symbol: data.to.token.symbol))"
         case let .burn(data):
-            return "\(data.amount.tokenAmount.tokenAmountFormattedString(symbol: data.token.symbol))"
+            return "\((-data.amount.tokenAmount).tokenAmountFormattedString(symbol: data.token.symbol))"
         case let .mint(data):
             return "\(data.amount.tokenAmount.tokenAmountFormattedString(symbol: data.token.symbol))"
         case let .stake(data):

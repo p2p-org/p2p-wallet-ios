@@ -1,32 +1,42 @@
-import SwiftUI
+//
+//  NewHistoryListErrorView.swift
+//  p2p_wallet
+//
+//  Created by Giang Long Tran on 16.02.2023.
+//
+
 import KeyAppUI
+import SwiftUI
 
 struct HistoryErrorView: View {
-    let action: () -> ()
+    let onTryAgain: () -> Void
 
     var body: some View {
-        ZStack {
-            Color(Asset.Colors.smoke.color)
-            VStack(spacing: 20) {
-                Image(uiImage: .catFail)
-                    .padding(.bottom, 24) // 24 + 16
-                Text(L10n.oopsSomethingHappened)
-                    .apply(style: .text1)
-                    .multilineTextAlignment(.center)
-                TextButtonView(title: L10n.refresh, style: .second, size: .large, onPressed: action)
-                    .frame(height: TextButton.Size.large.height)
-                Spacer()
+        VStack(spacing: 0) {
+            Image(uiImage: .catFail)
+                .padding(.top, 24)
+
+            Text(L10n.oopsSomethingHappened)
+                .padding(.top, 32)
+                .padding(.bottom, 24)
+
+            TextButtonView(title: L10n.tryAgain, style: .second, size: .large) {
+                onTryAgain()
             }
-            .padding(.top, 40)
-            .padding(.horizontal, 20)
-        }.edgesIgnoringSafeArea(.all)
+            .frame(height: TextButton.Size.large.height)
+            .padding(.horizontal, 16)
+            .padding(.bottom, 24)
+        }
+        .background(Color(Asset.Colors.snow.color))
+        .cornerRadius(radius: 16, corners: .allCorners)
     }
 }
 
 struct HistoryErrorView_Previews: PreviewProvider {
     static var previews: some View {
-        HistoryErrorView {
-            debugPrint("NewHistoryErrorView_Previews Pressed")
+        ZStack {
+            Color.gray
+            HistoryErrorView() {}
         }
     }
 }
