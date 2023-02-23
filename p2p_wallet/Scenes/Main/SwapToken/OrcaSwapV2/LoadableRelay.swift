@@ -9,20 +9,6 @@ import Foundation
 import RxCocoa
 import RxSwift
 
-public enum LoadableState: Equatable {
-    case notRequested
-    case loading
-    case loaded
-    case error(String?)
-
-    var isError: Bool {
-        switch self {
-        case .error: return true
-        default: return false
-        }
-    }
-}
-
 extension UIView {
     func setUp(
         _ loadableState: LoadableState,
@@ -83,21 +69,21 @@ extension Collection where Element == LoadableState {
     }
 }
 
-public class LoadableRelay<T> {
+class LoadableRelay<T> {
     // MARK: - Subject
 
     private let stateRelay = BehaviorRelay<LoadableState>(value: .notRequested)
 
     // MARK: - Properties
 
-    public var request: Single<T>
-    public private(set) var value: T?
-    public var state: LoadableState { stateRelay.value }
+    var request: Single<T>
+    private(set) var value: T?
+    var state: LoadableState { stateRelay.value }
 
     private var disposable: Disposable?
 
-    public var stateObservable: Observable<LoadableState> { stateRelay.asObservable() }
-    public var valueObservable: Observable<T?> {
+    var stateObservable: Observable<LoadableState> { stateRelay.asObservable() }
+    var valueObservable: Observable<T?> {
         stateRelay
             .map { [weak self] _ in self?.value }
             .asObservable()
@@ -105,27 +91,27 @@ public class LoadableRelay<T> {
 
     // MARK: - Initializer
 
-    public init(request: Single<T>) {
+    init(request: Single<T>) {
         self.request = request
     }
 
     // MARK: - Actions
 
     /// Flush result
-    public func flush() {
+    func flush() {
         cancelRequest()
         value = nil
         stateRelay.accept(.notRequested)
     }
 
     /// Flush result and refresh
-    public func reload() {
+    func reload() {
         flush()
         refresh()
     }
 
     /// Reload request
-    public func refresh() {
+    func refresh() {
         // Cancel previous request
         cancelRequest()
 
@@ -144,27 +130,27 @@ public class LoadableRelay<T> {
     }
 
     /// Mapping
-    public func map(oldData _: T?, newData: T) -> T {
+    func map(oldData _: T?, newData: T) -> T {
         newData
     }
 
     /// Cancel current request
-    public func cancelRequest() {
+    func cancelRequest() {
         disposable?.dispose()
     }
 
     /// Override value by a given value and set state to loaded
     /// - Parameter value: value for overriding
-    public func accept(_ value: T?, state: LoadableState) {
+    func accept(_ value: T?, state: LoadableState) {
         cancelRequest()
         self.value = value
         stateRelay.accept(state)
     }
 }
 
-public typealias Loadable<T> = (value: T?, state: LoadableState, reloadAction: (() -> Void)?)
+typealias Loadable<T> = (value: T?, state: LoadableState, reloadAction: (() -> Void)?)
 
-public extension LoadableRelay {
+extension LoadableRelay {
     /// Convert to driver to drive UI
     func asDriver() -> Driver<Loadable<T>> {
         stateObservable.asDriver(onErrorJustReturn: .notRequested)
@@ -172,7 +158,7 @@ public extension LoadableRelay {
     }
 }
 
-public extension Reactive where Base: UILabel {
+extension Reactive where Base: UILabel {
     /// Bindable sink for `loadbleText` property.
     func loadableText<T>(
         onLoaded: @escaping ((T?) -> String?)
@@ -183,7 +169,7 @@ public extension Reactive where Base: UILabel {
     }
 }
 
-public extension UILabel {
+extension UILabel {
     func set<T>(_ loadableValue: Loadable<T>, onLoaded: @escaping ((T?) -> String?)) {
         isUserInteractionEnabled = false
         switch loadableValue.state {
