@@ -16,22 +16,33 @@ final class SwapViewModel: BaseViewModel, ObservableObject {
     @Injected private var swapWalletsRepository: JupiterTokensRepository
     @Injected private var pricesAPI: SolanaPricesAPI
     @Injected private var notificationService: NotificationService
+    @Injected private var userWalletManager: UserWalletManager
 
     // MARK: - Actions
     let switchTokens = PassthroughSubject<Void, Never>()
     let tryAgain = PassthroughSubject<Void, Never>()
     let changeFromToken = PassthroughSubject<SwapToken, Never>()
     let changeToToken = PassthroughSubject<SwapToken, Never>()
+    let submitTransaction = PassthroughSubject<PendingTransaction, Never>()
 
     // MARK: - Params
     @Published var header: String = ""
     @Published var initializingState: InitializingState = .loading
     @Published var arePricesLoading: Bool = false
 
-    // MARK: - Subviewmodels
+    @Published var priceInfo = SwapPriceInfo(fromPrice: 0, toPrice: 0)
+    private var priceInfoTask: Task<Void, Never>?
+
     @Published var actionButtonData = SliderActionButtonData.zero
-    @Published var isSliderOn = false
+    @Published var isSliderOn = false {
+        didSet {
+            sendToken()
+        }
+    }
     @Published var showFinished = false
+
+    var versionedTransaction: VersionedTransaction? //  I think it should be placed inside StateMachine rn
+    var toTokens: [SwapToken] = [] //  I think it should be placed inside StateMachine rn
 
     let stateMachine: JupiterSwapStateMachine
     var currentState: JupiterSwapState { stateMachine.currentState }
@@ -41,8 +52,12 @@ final class SwapViewModel: BaseViewModel, ObservableObject {
 
     init(preChosenWallet: Wallet? = nil) {
         stateMachine = JupiterSwapStateMachine(
-            initialState: JupiterSwapState.zero(status: .requiredInitialize),
-            services: .init(jupiterClient: JupiterRestClientAPI(version: .v4), pricesAPI: Resolver.resolve())
+            initialState: .zero(status: .requiredInitialize),
+            services: JupiterSwapServices(
+                jupiterClient: JupiterRestClientAPI(version: .v4),
+                pricesAPI: Resolver.resolve(),
+                solanaAPIClient: Resolver.resolve()
+            )
         )
         self.preChosenWallet = preChosenWallet
         super.init()
@@ -65,6 +80,7 @@ private extension SwapViewModel {
                     self.initializingState = .loading
                 case let .ready(swapTokens, routeMap):
                     let prechosenToken = swapTokens.first(where: { $0.address == self.preChosenWallet?.mintAddress })
+                    self.getToTokens(routeMap: routeMap)
                     let _ = await self.stateMachine
                         .accept(action: .initialize(
                             swapTokens: swapTokens,
@@ -144,12 +160,16 @@ private extension SwapViewModel {
     }
 
     func scheduleUpdate() {
-        timer?.invalidate()
+        cancelUpdate()
         timer = .scheduledTimer(withTimeInterval: 20, repeats: true) { [weak self] _ in
             Task {
                 let _ = await self?.stateMachine.accept(action: .update)
             }
         }
+    }
+
+    func cancelUpdate() {
+        timer?.invalidate()
     }
 
     func updateHeader(priceInfo: SwapPriceInfo, fromToken: Jupiter.Token, toToken: Jupiter.Token) {
@@ -185,5 +205,59 @@ private extension SwapViewModel {
         default:
             actionButtonData = SliderActionButtonData(isEnabled: false, title: L10n.swapOfTheseTokensIsnTPossible)
         }
+    }
+
+    private func getToTokens(routeMap: RouteMap) {
+        let selectedFromAddress = currentState.fromToken.jupiterToken.address
+        let toAddresses = Set(routeMap.indexesRouteMap[selectedFromAddress] ?? [])
+        let toTokens = currentState.swapTokens.filter { toAddresses.contains($0.jupiterToken.address) }
+        self.toTokens = toTokens
+    }
+
+    private func swapToken() async throws {
+        guard let route = stateMachine.currentState.route else { return }
+
+        let account = userWalletManager.wallet!.account
+        let pubKey = account.publicKey.base58EncodedString
+        let jupiterClient = stateMachine.services.jupiterClient
+
+        versionedTransaction = try await jupiterClient.swap(
+            route: route,
+            userPublicKey: pubKey,
+            wrapUnwrapSol: true, feeAccount: nil, asLegacyTransaction: nil,
+            computeUnitPriceMicroLamports: nil, destinationWallet: nil
+        )
+    }
+
+    private func sendToken() {
+        guard isSliderOn, let versionedTransaction = versionedTransaction, let account = userWalletManager.wallet?.account else { return }
+        cancelUpdate()
+        let pendingTransaction = PendingTransaction(
+            trxIndex: 0,
+            sentAt: Date(),
+            rawTransaction: JupiterSwapTransaction(
+                execution: {
+                    let solanaAPIClient = Resolver.resolve(SolanaAPIClient.self)
+                    let blockHash = try await solanaAPIClient.getRecentBlockhash()
+                    var versionedTransaction = versionedTransaction
+                    versionedTransaction.setRecentBlockHash(blockHash)
+                    try versionedTransaction.sign(signers: [account])
+                    
+                    let serializedTransaction = try versionedTransaction.serialize().base64EncodedString()
+                    
+                    return try await solanaAPIClient.sendTransaction(
+                        transaction: serializedTransaction,
+                        configs: RequestConfiguration(encoding: "base64")!
+                    )
+                },
+                amountFrom: currentState.amountFrom,
+                amountTo: currentState.amountTo,
+                fromToken: currentState.fromToken,
+                toToken: currentState.toToken,
+                amountFromFiat: currentState.amountFromFiat
+            ),
+            status: .sending
+        )
+        submitTransaction.send(pendingTransaction)
     }
 }

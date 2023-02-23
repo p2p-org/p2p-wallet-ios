@@ -29,6 +29,7 @@ struct JupiterSwapState: Equatable {
     let swapTokens: [SwapToken]
 
     let amountFrom: Double
+    let amountFromFiat: Double
     let amountTo: Double
 
     let fromToken: SwapToken
@@ -43,6 +44,7 @@ struct JupiterSwapState: Equatable {
         routeMap: RouteMap,
         swapTokens: [SwapToken],
         amountFrom: Double,
+        amountFromFiat: Double,
         amountTo: Double,
         fromToken: SwapToken,
         toToken: SwapToken,
@@ -54,6 +56,7 @@ struct JupiterSwapState: Equatable {
         self.routeMap = routeMap
         self.swapTokens = swapTokens
         self.amountFrom = amountFrom
+        self.amountFromFiat = amountFromFiat
         self.amountTo = amountTo
         self.fromToken = fromToken
         self.toToken = toToken
@@ -67,6 +70,7 @@ struct JupiterSwapState: Equatable {
         routeMap: RouteMap = RouteMap(mintKeys: [], indexesRouteMap: [:]),
         swapTokens: [SwapToken] = [],
         amountFrom: Double = .zero,
+        amountFromFiat: Double = .zero,
         amountTo: Double = .zero,
         fromToken: SwapToken = .nativeSolana,
         toToken: SwapToken = .nativeSolana,
@@ -74,11 +78,12 @@ struct JupiterSwapState: Equatable {
         slippage: Int = 0,
         route: Route? = nil
     ) -> JupiterSwapState {
-        .init(
+        JupiterSwapState(
             status: status,
             routeMap: routeMap,
             swapTokens: swapTokens,
             amountFrom: amountFrom,
+            amountFromFiat: amountFromFiat,
             amountTo: amountTo,
             fromToken: fromToken,
             toToken: toToken,
@@ -93,6 +98,7 @@ struct JupiterSwapState: Equatable {
         routeMap: RouteMap? = nil,
         swapTokens: [SwapToken]? = nil,
         amountFrom: Double? = nil,
+        amountFromFiat: Double? = nil,
         amountTo: Double? = nil,
         fromToken: SwapToken? = nil,
         toToken: SwapToken? = nil,
@@ -100,11 +106,12 @@ struct JupiterSwapState: Equatable {
         slippage: Int? = nil,
         route: Route? = nil
     ) -> JupiterSwapState {
-        .init(
+        JupiterSwapState(
             status: status ?? self.status,
             routeMap: routeMap ?? self.routeMap,
             swapTokens: swapTokens ?? self.swapTokens,
             amountFrom: amountFrom ?? self.amountFrom,
+            amountFromFiat: amountFromFiat ?? self.amountFromFiat,
             amountTo: amountTo ?? self.amountTo,
             fromToken: fromToken ?? self.fromToken,
             toToken: toToken ?? self.toToken,

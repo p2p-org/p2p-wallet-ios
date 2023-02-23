@@ -8,7 +8,7 @@ extension JupiterSwapBusinessLogic {
         }
 
         guard state.amountFrom > 0 else {
-            return state.copy(status: .ready, amountFrom: 0, amountTo: 0, route: nil)
+            return state.copy(status: .ready, amountFrom: 0, amountFromFiat: 0, amountTo: 0, route: nil)
         }
 
         let amountFromLamports = state.amountFrom.toLamport(decimals: state.fromToken.jupiterToken.decimals)
@@ -48,7 +48,7 @@ extension JupiterSwapBusinessLogic {
                 status = .error(reason: .notEnoughFromToken)
             }
 
-            return state.copy(status: status, amountTo: amountTo, priceInfo: newPriceInfo)
+            return state.copy(status: status, amountTo: amountTo, priceInfo: newPriceInfo, route: route)
         }
         catch let error {
             return handle(error: error, for: state)
