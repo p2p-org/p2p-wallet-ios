@@ -9,7 +9,6 @@ import Foundation
 import Resolver
 import Combine
 import AnalyticsManager
-import RxAppState
 
 protocol AuthenticationHandlerType {
     func authenticate(presentationStyle: AuthenticationPresentationStyle?)
