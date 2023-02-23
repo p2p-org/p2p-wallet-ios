@@ -98,12 +98,17 @@ final class HomeWithTokensViewModel: BaseViewModel, ObservableObject {
         )
     }
 
-    func reloadData() async {
-        walletsRepository.reload()
+    func refresh() async {
+        // reload
+        walletsRepository.refresh()
+        
+        print(walletsRepository.state)
+        // wait for .loaded or .error event
         _ = try? await walletsRepository.statePublisher
             .filter { $0 == .loaded || $0 == .error }
             .eraseToAnyPublisher()
             .async()
+        print(walletsRepository.state)
     }
 
     func actionClicked(_ action: WalletActionType) {

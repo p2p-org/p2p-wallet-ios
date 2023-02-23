@@ -93,6 +93,23 @@ class WalletsViewModel: BECollectionViewModel<Wallet> {
     }
 
     // MARK: - Methods
+    
+    override func refresh() {
+        state = .loading
+        error = nil
+        
+        task = Task {
+            do {
+                let newData = try await createRequest()
+                handleNewData(newData)
+            } catch {
+                if error is CancellationError {
+                    return
+                }
+                handleError(error)
+            }
+        }
+    }
 
     override func createRequest() async throws -> [Wallet] {
         // assertion
