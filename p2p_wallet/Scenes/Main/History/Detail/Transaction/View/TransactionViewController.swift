@@ -9,6 +9,7 @@ import BEPureLayout
 import Resolver
 import RxCocoa
 import RxSwift
+import RxAppState
 
 extension History {
     final class TransactionViewController: WLModalViewController {
