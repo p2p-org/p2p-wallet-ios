@@ -10,6 +10,20 @@ import Resolver
 import Send
 import SolanaSwift
 
+enum LoadableState: Equatable {
+    case notRequested
+    case loading
+    case loaded
+    case error(String?)
+
+    var isError: Bool {
+        switch self {
+        case .error: return true
+        default: return false
+        }
+    }
+}
+
 class RecipientSearchViewModel: ObservableObject {
     private let preChosenWallet: Wallet?
     private var subscriptions = Set<AnyCancellable>()
