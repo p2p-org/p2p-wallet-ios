@@ -51,10 +51,6 @@ target 'p2p_wallet' do
   # development pods
   key_app_kit
   pod 'CocoaDebug', :configurations => ['Debug', 'Test']
-  pod 'BEPureLayout', :git => 'https://github.com/p2p-org/BEPureLayout.git', :branch => 'master'
-  pod 'BECollectionView_Core', :git => 'https://github.com/bigearsenal/BECollectionView.git', :branch => 'master'
-  pod 'BECollectionView', :git => 'https://github.com/bigearsenal/BECollectionView.git', :branch => 'master'
-  pod 'BECollectionView_Combine', :git => 'https://github.com/bigearsenal/BECollectionView.git', :branch => 'master'
   pod 'FeeRelayerSwift', :git => 'https://github.com/p2p-org/FeeRelayerSwift.git', :branch => 'master'
   pod 'OrcaSwapSwift', :git => 'https://github.com/p2p-org/OrcaSwapSwift.git', :branch => 'main'
   pod 'RenVMSwift', :git => 'https://github.com/p2p-org/RenVMSwift.git', :branch => 'master'
@@ -71,14 +67,20 @@ target 'p2p_wallet' do
   pod 'Periphery'
   pod 'SwiftFormat/CLI', '0.49.6'
   pod 'ReachabilitySwift', '~> 5.0.0'
+  
+  # deprecated BECollectionView - will be removed soon
+  pod 'BEPureLayout', :git => 'https://github.com/p2p-org/BEPureLayout.git', :branch => 'master'
+  pod 'BECollectionView_Core', :git => 'https://github.com/bigearsenal/BECollectionView.git', :branch => 'master'
+  pod 'BECollectionView_Combine', :git => 'https://github.com/bigearsenal/BECollectionView.git', :branch => 'master'
 
-  # reactive
+  # reactive - will be removed soon
   pod 'RxAppState', '1.7.1'
   pod 'RxGesture', '4.0.4'
   pod 'RxSwift', '6.5.0'
   pod 'RxCocoa', '6.5.0'
   pod 'RxConcurrency', :git => 'https://github.com/TrGiLong/RxConcurrency.git', :branch => 'main'
   pod 'RxCombine', '2.0.1'
+  pod 'BECollectionView', :git => 'https://github.com/bigearsenal/BECollectionView.git', :branch => 'master'
 
   # Kits
   pod 'KeychainSwift', '19.0.0'
