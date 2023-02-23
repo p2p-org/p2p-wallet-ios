@@ -85,7 +85,7 @@ extension TransactionDetail {
                 .asObservable()
                 .do(onNext: { [weak self] pendingTransaction in
                     guard let self = self else { return }
-                    self.payingFeeWallet = pendingTransaction?.rawTransaction.payingWallet
+                    self.payingFeeWallet = pendingTransaction?.rawTransaction.payingFeeWallet
                 })
                 .map { [weak self] pendingTransaction -> ParsedTransaction? in
                     guard let self = self else { return nil }

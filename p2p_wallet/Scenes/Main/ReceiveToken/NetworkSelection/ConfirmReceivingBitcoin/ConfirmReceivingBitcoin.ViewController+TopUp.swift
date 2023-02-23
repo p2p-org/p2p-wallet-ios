@@ -6,8 +6,6 @@
 //
 
 import Foundation
-import RxCocoa
-import RxSwift
 import KeyAppUI
 
 extension ConfirmReceivingBitcoin.ViewController {

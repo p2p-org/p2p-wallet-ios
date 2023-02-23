@@ -5,8 +5,7 @@
 //  Created by Chung Tran on 26/07/2021.
 //
 
-import BECollectionView
-import RxSwift
+import BECollectionView_Combine
 import UIKit
 
 extension ChooseWallet {

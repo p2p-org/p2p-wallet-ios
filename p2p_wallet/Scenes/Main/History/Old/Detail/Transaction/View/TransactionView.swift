@@ -12,6 +12,7 @@ import RxGesture
 import RxSwift
 import SolanaSwift
 import UIKit
+import ListPlaceholder
 
 extension History {
     final class TransactionView: BECompositionView {

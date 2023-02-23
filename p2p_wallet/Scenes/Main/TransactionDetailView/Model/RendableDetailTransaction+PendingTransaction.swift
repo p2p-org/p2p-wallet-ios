@@ -64,7 +64,7 @@ struct RendableDetailPendingTransaction: RendableTransactionDetail {
                 return .icon(.transactionSend)
             }
             
-        case let transaction as ProcessTransaction.SwapTransaction:
+        case let transaction as SwapTransaction:
             let fromUrlStr = transaction.sourceWallet.token.logoURI
             let toUrlStr = transaction.destinationWallet.token.logoURI
             
@@ -89,7 +89,7 @@ struct RendableDetailPendingTransaction: RendableTransactionDetail {
         switch trx.rawTransaction {
         case let transaction as SendTransaction:
             return .negative("-\(transaction.amountInFiat.fiatAmountFormattedString())")
-        case let transaction as ProcessTransaction.SwapTransaction:
+        case let transaction as SwapTransaction:
             let amountInFiat: Double = (transaction.amount * priceService.currentPrice(mint: transaction.sourceWallet.token.address)?.value)
             return .unchanged("\(amountInFiat.fiatAmountFormattedString())")
         default:
@@ -101,7 +101,7 @@ struct RendableDetailPendingTransaction: RendableTransactionDetail {
         switch trx.rawTransaction {
         case let transaction as SendTransaction:
             return "\(transaction.amount.tokenAmountFormattedString(symbol: transaction.walletToken.token.symbol))"
-        case let transaction as ProcessTransaction.SwapTransaction:
+        case let transaction as SwapTransaction:
             return "\(transaction.amount.tokenAmountFormattedString(symbol: transaction.sourceWallet.token.symbol)) → \(transaction.estimatedAmount.tokenAmountFormattedString(symbol: transaction.destinationWallet.token.symbol))"
         default:
             return ""
@@ -145,11 +145,11 @@ struct RendableDetailPendingTransaction: RendableTransactionDetail {
             if transaction.feeInToken.total == 0 {
                 result.append(.init(title: L10n.transactionFee, value: L10n.freePaidByKeyApp))
             } else {
-                let feeAmount: Double = transaction.feeInToken.total.convertToBalance(decimals: transaction.payingFeeWallet.token.decimals)
-                let formatedFeeAmount: String = feeAmount.tokenAmountFormattedString(symbol: transaction.payingFeeWallet.token.symbol)
+                let feeAmount: Double = transaction.feeInToken.total.convertToBalance(decimals: transaction.payingFeeWallet?.token.decimals)
+                let formatedFeeAmount: String = feeAmount.tokenAmountFormattedString(symbol: transaction.payingFeeWallet?.token.symbol ?? "")
                 result.append(.init(title: L10n.transactionFee, value: formatedFeeAmount))
             }
-        case let transaction as ProcessTransaction.SwapTransaction:
+        case let transaction as SwapTransaction:
             if let networkFees = transaction.networkFees {
                 if networkFees.total == 0 {
                     result.append(.init(title: L10n.transactionFee, value: L10n.freePaidByKeyApp))

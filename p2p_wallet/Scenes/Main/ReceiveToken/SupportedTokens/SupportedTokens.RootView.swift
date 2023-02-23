@@ -5,8 +5,7 @@
 //  Created by Andrew Vasiliev on 30.01.2022.
 //
 
-import BECollectionView
-import RxSwift
+import BECollectionView_Core
 import UIKit
 
 extension SupportedTokens {
