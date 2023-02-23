@@ -281,11 +281,9 @@ DEPENDENCIES:
   - RenVMSwift (from `https://github.com/p2p-org/RenVMSwift.git`, branch `master`)
   - Resolver (= 1.5.0)
   - RxAppState (= 1.7.1)
-  - RxCocoa (= 6.5.0)
   - RxCombine (= 2.0.1)
   - RxConcurrency (from `https://github.com/TrGiLong/RxConcurrency.git`, branch `main`)
   - RxGesture (= 4.0.4)
-  - RxSwift (= 6.5.0)
   - Sell (from `https://github.com/p2p-org/key-app-kit-swift.git`, branch `master`)
   - Send (from `https://github.com/p2p-org/key-app-kit-swift.git`, branch `master`)
   - Sentry (from `https://github.com/getsentry/sentry-cocoa.git`, tag `7.31.5`)
@@ -451,7 +449,7 @@ CHECKOUT OPTIONS:
     :commit: 4c0c34631ac9ead567d7ce241029177a1ac8a189
     :git: https://github.com/p2p-org/key-app-kit-swift.git
   BECollectionView:
-    :commit: fa27fd346aa54e8cac58b34f861b08a39e38db6f
+    :commit: 7badd35cd036735b9c6867e273b59430311f53e7
     :git: https://github.com/bigearsenal/BECollectionView.git
   BECollectionView_Combine:
     :commit: fa27fd346aa54e8cac58b34f861b08a39e38db6f
@@ -623,6 +621,6 @@ SPEC CHECKSUMS:
   TransactionParser: 3004420d52e7b1277dbcfd20b995a5de707705f3
   TweetNacl: 3abf4d1d2082b0114e7a67410e300892448951e6
 
-PODFILE CHECKSUM: 91059027997564db9b4ab1b89501d789d9fa0823
+PODFILE CHECKSUM: 4d49b2bd4b369bc0c1798915d6563f1c16141e57
 
 COCOAPODS: 1.11.3
