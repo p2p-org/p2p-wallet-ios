@@ -9,9 +9,8 @@ import Foundation
 import NameService
 import RenVMSwift
 import Resolver
-import RxCocoa
-import RxSwift
 import SolanaSwift
+import Combine
 
 final class TabBarViewModel {
     // Dependencies
@@ -31,7 +30,7 @@ final class TabBarViewModel {
     ]
 
     // Input
-    let viewDidLoad = PublishRelay<Void>()
+    let viewDidLoad = PassthroughSubject<Void, Never>()
 
     init() {
         if #available(iOS 15.0, *) {
@@ -70,51 +69,52 @@ final class TabBarViewModel {
 // MARK: - Output
 
 extension TabBarViewModel {
-    var authenticationStatusDriver: Driver<AuthenticationPresentationStyle?> {
-        authenticationHandler.authenticationStatusDriver
+    var authenticationStatusPublisher: AnyPublisher<AuthenticationPresentationStyle?, Never> {
+        authenticationHandler.authenticationStatusPublisher
     }
 
-    var moveToHistory: Driver<Void> {
-        Observable.merge(
+    var moveToHistory: AnyPublisher<Void, Never> {
+        Publishers.Merge(
             notificationService.showNotification
                 .filter { $0 == .history }
-                .mapToVoid(),
+                .map { _ in () },
             viewDidLoad
                 .filter { [weak self] in
                     self?.notificationService.showFromLaunch == true
                 }
-                .do(onNext: { [weak self] _ in
+                .handleEvents(receiveOutput: { [weak self] _ in
                     self?.notificationService.notificationWasOpened()
                 })
         )
-        .mapToVoid()
-        .asDriver()
+        .map { _ in () }
+        .receive(on: DispatchQueue.main)
+        .eraseToAnyPublisher()
     }
 
-    var moveToIntercomSurvey: Driver<String> {
-        Observable.merge(
+    var moveToIntercomSurvey: AnyPublisher<String, Never> {
+        Publishers.Merge(
             authenticationHandler
-                .isLockedDriver
-                .asObservable()
+                .isLockedPublisher
                 .filter { value in
                     GlobalAppState.shared.surveyID != nil && value == false
                 }
-                .mapToVoid(),
+                .map {_ in ()},
 
             viewDidLoad
                 .filter { [weak self] in
                     self?.notificationService.showFromLaunch == true
                 }
         )
-        .mapToVoid()
+        .map { _ in () }
         .map {
             GlobalAppState.shared.surveyID ?? ""
         }
-        .do(onNext: { _ in
+        .handleEvents(receiveOutput: { _ in
             GlobalAppState.shared.surveyID = nil
         })
-        .asDriver()
+        .receive(on: DispatchQueue.main)
+        .eraseToAnyPublisher()
     }
 
-    var isLockedDriver: Driver<Bool> { authenticationHandler.isLockedDriver }
+    var isLockedPublisher: AnyPublisher<Bool, Never> { authenticationHandler.isLockedPublisher }
 }

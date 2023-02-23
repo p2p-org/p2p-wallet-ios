@@ -10,8 +10,6 @@ import Combine
 import Intercom
 import KeyAppUI
 import Resolver
-import RxCocoa
-import RxSwift
 import Sell
 import SwiftUI
 import UIKit
@@ -34,11 +32,9 @@ final class TabBarController: UITabBarController {
 
     // MARK: - Properties
 
-    private let disposeBag = DisposeBag()
+    private var subscriptions = Set<AnyCancellable>()
     private let viewModel: TabBarViewModel
     private let authenticateWhenAppears: Bool
-
-    private var subscriptions = Set<AnyCancellable>()
 
     private var customTabBar: CustomTabBar { tabBar as! CustomTabBar }
     private lazy var blurEffectView: UIView = LockView()
@@ -216,48 +212,51 @@ final class TabBarController: UITabBarController {
             UITabBar.appearance().scrollEdgeAppearance = standardAppearance
         }
     }
+    
+    private var viewWillAppearTriggered = false
+    override func viewWillAppear(_ animated: Bool) {
+        super.viewWillAppear(animated)
+        if !viewWillAppearTriggered {
+            viewModel.viewDidLoad.send()
+            viewWillAppearTriggered = true
+        }
+    }
 
     private func bind() {
-        rx.viewWillAppear
-            .take(1)
-            .mapToVoid()
-            .bind(to: viewModel.viewDidLoad)
-            .disposed(by: disposeBag)
-
         // delay authentication status
         DispatchQueue.main.asyncAfter(deadline: .now() + .milliseconds(300)) { [unowned self] in
-            self.viewModel.authenticationStatusDriver
-                .drive(onNext: { [weak self] in self?.handleAuthenticationStatus($0) })
-                .disposed(by: disposeBag)
+            self.viewModel.authenticationStatusPublisher
+                .sink(receiveValue: { [weak self] in self?.handleAuthenticationStatus($0) })
+                .store(in: &subscriptions)
         }
 
         viewModel.moveToHistory
-            .drive(onNext: { [unowned self] in
+            .sink(receiveValue: { [unowned self] in
                 changeItem(to: .history)
             })
-            .disposed(by: disposeBag)
+            .store(in: &subscriptions)
 
         viewModel.moveToIntercomSurvey
-            .drive { id in
+            .sink { id in
                 guard !id.isEmpty else { return }
                 DispatchQueue.main.asyncAfter(deadline: .now() + 1) {
                     Intercom.presentSurvey(id)
                 }
             }
-            .disposed(by: disposeBag)
+            .store(in: &subscriptions)
 
         // locking status
-        viewModel.isLockedDriver
-            .drive(onNext: { [weak self] isLocked in
+        viewModel.isLockedPublisher
+            .sink(receiveValue: { [weak self] isLocked in
                 isLocked ? self?.showLockView() : self?.hideLockView()
             })
-            .disposed(by: disposeBag)
+            .store(in: &subscriptions)
 
         // blurEffectView
-        viewModel.authenticationStatusDriver
+        viewModel.authenticationStatusPublisher
             .map { $0 == nil }
-            .drive(blurEffectView.rx.isHidden)
-            .disposed(by: disposeBag)
+            .assign(to: \.isHidden, on: blurEffectView)
+            .store(in: &subscriptions)
     }
 }
 
