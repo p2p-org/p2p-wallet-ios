@@ -7,27 +7,26 @@
 
 import Foundation
 import Resolver
-import RxCocoa
-import RxSwift
+import Combine
 import SolanaSwift
 
 @MainActor
 protocol ReceiveSceneModel: BESceneModel {
-    var tokenTypeDriver: Driver<ReceiveToken.TokenType> { get }
-    var hasAddressesInfoDriver: Driver<Bool> { get }
-    var hasHintViewOnTopDriver: Driver<Bool> { get }
-    var addressesInfoIsOpenedDriver: Driver<Bool> { get }
-    var showHideAddressesInfoButtonTapSubject: PublishRelay<Void> { get }
-    var addressesHintIsHiddenDriver: Driver<Bool> { get }
-    var hideAddressesHintSubject: PublishRelay<Void> { get }
-    var tokenListAvailabilityDriver: Driver<Bool> { get }
+    var tokenTypePublisher: AnyPublisher<ReceiveToken.TokenType, Never> { get }
+    var hasAddressesInfoPublisher: AnyPublisher<Bool, Never> { get }
+    var hasHintViewOnTopPublisher: AnyPublisher<Bool, Never> { get }
+    var addressesInfoIsOpenedPublisher: AnyPublisher<Bool, Never> { get }
+    var showHideAddressesInfoButtonTapSubject: PassthroughSubject<Void, Never> { get }
+    var addressesHintIsHiddenPublisher: AnyPublisher<Bool, Never> { get }
+    var hideAddressesHintSubject: PassthroughSubject<Void, Never> { get }
+    var tokenListAvailabilityPublisher: AnyPublisher<Bool, Never> { get }
     var receiveSolanaViewModel: ReceiveTokenSolanaViewModelType { get }
     var receiveBitcoinViewModel: ReceiveToken.ReceiveBitcoinViewModel { get }
     var shouldShowChainsSwitcher: Bool { get }
     var tokenWallet: Wallet? { get }
     var qrHint: NSAttributedString { get }
     var isDisabledRenBtc: Bool { get }
-    var navigation: Driver<ReceiveToken.NavigatableScene?> { get }
+    var navigationPublisher: AnyPublisher<ReceiveToken.NavigatableScene?, Never> { get }
 
     func isRenBtcCreated() -> Bool
     func switchToken(_ tokenType: ReceiveToken.TokenType)
@@ -39,25 +38,25 @@ protocol ReceiveSceneModel: BESceneModel {
 
 extension ReceiveToken {
     @MainActor
-    class SceneModel: NSObject, ReceiveSceneModel {
+    class SceneModel: NSObject, ReceiveSceneModel, ObservableObject {
         @Injected private var clipboardManager: ClipboardManagerType
         @Injected private var notificationsService: NotificationService
         @Injected private var walletsRepository: WalletsRepository
 
         // MARK: - Properties
 
-        private let disposeBag = DisposeBag()
+        private var subscriptions = Set<AnyCancellable>()
         let receiveSolanaViewModel: ReceiveTokenSolanaViewModelType
         let receiveBitcoinViewModel: ReceiveToken.ReceiveBitcoinViewModel
 
         // MARK: - Subjects
 
-        let showHideAddressesInfoButtonTapSubject = PublishRelay<Void>()
-        let addressesHintIsHiddenSubject = BehaviorRelay<Bool>(value: false)
-        let hideAddressesHintSubject = PublishRelay<Void>()
-        private let navigationSubject = PublishRelay<NavigatableScene?>()
-        private let tokenTypeSubject = BehaviorRelay<TokenType>(value: .solana)
-        private let addressesInfoIsOpenedSubject = BehaviorRelay<Bool>(value: false)
+        let showHideAddressesInfoButtonTapSubject = PassthroughSubject<Void, Never>()
+        @Published private var addressesHintIsHidden = false
+        let hideAddressesHintSubject = PassthroughSubject<Void, Never>()
+        private let navigationSubject = PassthroughSubject<NavigatableScene?, Never>()
+        @Published private var tokenType: TokenType = .solana
+        @Published private var addressesInfoIsOpened: Bool = false
         let tokenWallet: Wallet?
         let qrHint: NSAttributedString
         let isDisabledRenBtc: Bool
@@ -128,10 +127,10 @@ extension ReceiveToken {
             debugPrint("\(String(describing: self)) deinited")
         }
 
-        var tokenTypeDriver: Driver<ReceiveToken.TokenType> { tokenTypeSubject.asDriver() }
+        var tokenTypePublisher: AnyPublisher<ReceiveToken.TokenType, Never> { $tokenType.receive(on: DispatchQueue.main).eraseToAnyPublisher() }
 
-        var hasAddressesInfoDriver: Driver<Bool> {
-            tokenTypeDriver
+        var hasAddressesInfoPublisher: AnyPublisher<Bool, Never> {
+            tokenTypePublisher
                 .map { [weak self] tokenType in
                     guard let self = self else { return false }
 
@@ -142,18 +141,19 @@ extension ReceiveToken {
                         return false
                     }
                 }
+                .eraseToAnyPublisher()
         }
 
-        var addressesInfoIsOpenedDriver: Driver<Bool> {
-            addressesInfoIsOpenedSubject.asDriver()
+        var addressesInfoIsOpenedPublisher: AnyPublisher<Bool, Never> {
+            $addressesInfoIsOpened.receive(on: DispatchQueue.main).eraseToAnyPublisher()
         }
 
-        var addressesHintIsHiddenDriver: Driver<Bool> {
-            addressesHintIsHiddenSubject.asDriver()
+        var addressesHintIsHiddenPublisher: AnyPublisher<Bool, Never> {
+            $addressesHintIsHidden.receive(on: DispatchQueue.main).eraseToAnyPublisher()
         }
 
-        var tokenListAvailabilityDriver: Driver<Bool> {
-            tokenTypeDriver
+        var tokenListAvailabilityPublisher: AnyPublisher<Bool, Never> {
+            tokenTypePublisher
                 .map { [weak self] in
                     switch $0 {
                     case .solana:
@@ -162,10 +162,11 @@ extension ReceiveToken {
                         return false
                     }
                 }
+                .eraseToAnyPublisher()
         }
 
-        var hasHintViewOnTopDriver: Driver<Bool> {
-            tokenTypeDriver
+        var hasHintViewOnTopPublisher: AnyPublisher<Bool, Never> {
+            tokenTypePublisher
                 .map { [weak self] tokenType in
                     guard let self = self else { return false }
 
@@ -176,10 +177,11 @@ extension ReceiveToken {
                         return false
                     }
                 }
+                .eraseToAnyPublisher()
         }
 
         func switchToken(_ tokenType: ReceiveToken.TokenType) {
-            tokenTypeSubject.accept(tokenType)
+            self.tokenType = tokenType
             if tokenType == .btc {
                 receiveBitcoinViewModel.acceptConditionAndLoadAddress()
             }
@@ -187,7 +189,7 @@ extension ReceiveToken {
 
         func showSelectionNetwork() {
             if !isDisabledRenBtc {
-                navigationSubject.accept(.networkSelection)
+                navigationSubject.send(.networkSelection)
             }
         }
 
@@ -209,28 +211,29 @@ extension ReceiveToken {
             walletsRepository.getWallets().contains(where: \.token.isRenBTC)
         }
 
-        var navigation: Driver<NavigatableScene?> { navigationSubject.asDriver(onErrorDriveWith: Driver.empty()) }
+        var navigationPublisher: AnyPublisher<NavigatableScene?, Never> {
+            navigationSubject.receive(on: DispatchQueue.main).eraseToAnyPublisher()
+        }
 
         private func bind() {
             showHideAddressesInfoButtonTapSubject
-                .subscribe(onNext: { [weak addressesInfoIsOpenedSubject] in
-                    guard let addressesInfoIsOpenedSubject = addressesInfoIsOpenedSubject else { return }
-                    addressesInfoIsOpenedSubject.accept(!addressesInfoIsOpenedSubject.value)
+                .sink(receiveValue: { [weak self] in
+                    self?.addressesInfoIsOpened.toggle()
                 })
-                .disposed(by: disposeBag)
+                .store(in: &subscriptions)
 
             hideAddressesHintSubject
-                .subscribe(onNext: { [weak addressesHintIsHiddenSubject] in
-                    guard let addressesHintIsHiddenSubject = addressesHintIsHiddenSubject else { return }
-                    addressesHintIsHiddenSubject.accept(true)
+                .sink(receiveValue: { [weak self] in
+                    self?.addressesHintIsHidden = true
                 })
-                .disposed(by: disposeBag)
+                .store(in: &subscriptions)
             
             receiveBitcoinViewModel
                 .navigationPublisher
-                .asObservable()
-                .bind(to: navigationSubject)
-                .disposed(by: disposeBag)
+                .sink { [weak self] scene in
+                    self?.navigationSubject.send(scene)
+                }
+                .store(in: &subscriptions)
         }
 
         private func showCopied() {
@@ -238,7 +241,7 @@ extension ReceiveToken {
         }
 
         func navigateToBuy() {
-            navigationSubject.accept(.buy)
+            navigationSubject.send(.buy)
         }
     }
 }

@@ -28,7 +28,7 @@ import Sell
 import Jupiter
 
 extension Resolver: ResolverRegistering {
-    public static func registerAllServices() {
+    @MainActor public static func registerAllServices() {
         registerForApplicationScope()
 
         registerForGraphScope()
@@ -186,7 +186,7 @@ extension Resolver: ResolverRegistering {
     }
 
     /// Graph scope: Recreate and reuse dependencies
-    private static func registerForGraphScope() {
+    @MainActor private static func registerForGraphScope() {
         // Intercom
         register { IntercomMessengerLauncher() }
             .implements(HelpCenterLauncher.self)
