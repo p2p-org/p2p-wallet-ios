@@ -109,19 +109,17 @@ private extension SwapViewModel {
         stateMachine.statePublisher
             .sinkAsync { [weak self] updatedState in
                 guard let self else { return }
-                self.handle(status: updatedState.status)
+                self.handle(state: updatedState)
                 self.updateHeader(priceInfo: updatedState.priceInfo, fromToken: updatedState.fromToken.jupiterToken, toToken: updatedState.toToken.jupiterToken)
                 self.updateActionButton(for: updatedState)
             }
             .store(in: &subscriptions)
     }
 
-    func handle(status: JupiterSwapState.Status) {
-        switch status {
-        case .requiredInitialize:
-            break
-        case .initializing:
-            initializingState = .loading
+    func handle(state: JupiterSwapState) {
+        switch state.status {
+        case .requiredInitialize, .initializing:
+            self.initializingState = .loading
         case .error(.initializationFailed):
             initializingState = .failed
         default:
@@ -129,9 +127,27 @@ private extension SwapViewModel {
             initializingState = .success
         }
 
-        switch status {
-        case .initializing, .loadingTokenTo, .loadingAmountTo, .switching:
+        switch state.status {
+        case .requiredInitialize, .initializing, .loadingTokenTo, .loadingAmountTo, .switching:
             arePricesLoading = true
+        case .ready:
+            arePricesLoading = false
+            guard state.amountFrom > 0 else { return }
+            Task {
+                actionButtonData = SliderActionButtonData(isEnabled: false, title: L10n.counting)
+                do {
+                    try await swapToken()
+                    actionButtonData = SliderActionButtonData(
+                        isEnabled: true,
+                        title: L10n.swap(state.fromToken.jupiterToken.symbol, state.toToken.jupiterToken.symbol)
+                    )
+                } catch {
+                    actionButtonData = SliderActionButtonData(
+                        isEnabled: false,
+                        title: L10n.swapOfTheseTokensIsnTPossible
+                    )
+                }
+            }
         default:
             arePricesLoading = false
         }
@@ -187,11 +203,6 @@ private extension SwapViewModel {
         case .ready:
             if state.amountFrom == 0 {
                 actionButtonData = SliderActionButtonData(isEnabled: false, title: L10n.enterTheAmount)
-            } else {
-                actionButtonData = SliderActionButtonData(
-                    isEnabled: true,
-                    title: L10n.swap(state.fromToken.jupiterToken.symbol, state.toToken.jupiterToken.symbol)
-                )
             }
         case .requiredInitialize, .loadingTokenTo, .loadingAmountTo, .switching, .initializing:
             actionButtonData = SliderActionButtonData(isEnabled: false, title: L10n.counting)
@@ -236,19 +247,37 @@ private extension SwapViewModel {
             trxIndex: 0,
             sentAt: Date(),
             rawTransaction: JupiterSwapTransaction(
-                execution: {
-                    let solanaAPIClient = Resolver.resolve(SolanaAPIClient.self)
-                    let blockHash = try await solanaAPIClient.getRecentBlockhash()
-                    var versionedTransaction = versionedTransaction
-                    versionedTransaction.setRecentBlockHash(blockHash)
-                    try versionedTransaction.sign(signers: [account])
+                execution: { [unowned stateMachine] in
+//                    // Send via solana without fee relayer
+//                    let solanaAPIClient = Resolver.resolve(SolanaAPIClient.self)
+//                    let blockHash = try await solanaAPIClient.getRecentBlockhash()
+//                    var versionedTransaction = versionedTransaction
+//                    versionedTransaction.setRecentBlockHash(blockHash)
+//                    try versionedTransaction.sign(signers: [account])
+//
+//                    let serializedTransaction = try versionedTransaction.serialize().base64EncodedString()
+//
+//                    return try await solanaAPIClient.sendTransaction(
+//                        transaction: serializedTransaction,
+//                        configs: RequestConfiguration(encoding: "base64")!
+//                    )
                     
-                    let serializedTransaction = try versionedTransaction.serialize().base64EncodedString()
-                    
-                    return try await solanaAPIClient.sendTransaction(
-                        transaction: serializedTransaction,
-                        configs: RequestConfiguration(encoding: "base64")!
-                    )
+                    // Send via fee relayer
+                    do {
+                        let transactionId = try await JupiterSwapBusinessLogic.sendToBlockchain(
+                            account: account,
+                            versionedTransaction: versionedTransaction,
+                            solanaAPIClient: stateMachine.services.solanaAPIClient
+                        )
+                        debugPrint("---transactionId: ", transactionId)
+                        return transactionId
+                    } catch {
+                        await MainActor.run { [weak self] in
+                            guard let self else { return }
+                            self.actionButtonData = SliderActionButtonData(isEnabled: false, title: L10n.youCanTSwapSameToken)
+                        }
+                        throw error
+                    }
                 },
                 amountFrom: currentState.amountFrom,
                 amountTo: currentState.amountTo,
