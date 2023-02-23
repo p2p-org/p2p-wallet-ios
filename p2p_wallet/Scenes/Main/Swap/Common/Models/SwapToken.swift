@@ -4,6 +4,8 @@ import Jupiter
 struct SwapToken: Equatable {
     let jupiterToken: Jupiter.Token
     let userWallet: Wallet?
+
+    var address: String { jupiterToken.address }
 }
 
 extension SwapToken {

@@ -3,20 +3,20 @@ import SolanaSwift
 
 extension JupiterSwapBusinessLogic {
     static func calculateAmounts(state: JupiterSwapState, services: JupiterSwapServices) async -> JupiterSwapState {
-        guard state.fromToken.jupiterToken.address != state.toToken.jupiterToken.address else {
+        guard state.fromToken.address != state.toToken.address else {
             return state.copy(status: .error(reason: .equalSwapTokens))
         }
 
         guard state.amountFrom > 0 else {
-            return state.copy(status: .ready, amountFrom: 0, amountTo: 0, route: nil)
+            return state.copy(status: .ready, amountFrom: 0, amountFromFiat: 0, amountTo: 0, route: nil)
         }
 
         let amountFromLamports = state.amountFrom.toLamport(decimals: state.fromToken.jupiterToken.decimals)
 
         do {
             let data = try await services.jupiterClient.quote(
-                inputMint: state.fromToken.jupiterToken.address,
-                outputMint: state.toToken.jupiterToken.address,
+                inputMint: state.fromToken.address,
+                outputMint: state.toToken.address,
                 amount: String(amountFromLamports),
                 swapMode: nil,
                 slippageBps: state.slippage,
@@ -50,8 +50,15 @@ extension JupiterSwapBusinessLogic {
 
             return state.copy(status: status, amountTo: amountTo, priceInfo: newPriceInfo, route: route)
         }
-        catch {
-            return state.copy(status: .error(reason: .unknown))
+        catch let error {
+            return handle(error: error, for: state)
         }
+    }
+
+    private static func handle(error: Error, for state: JupiterSwapState) -> JupiterSwapState {
+        if (error as NSError).isNetworkConnectionError {
+            return state.copy(status: .error(reason: .networkConnectionError))
+        }
+        return state.copy(status: .error(reason: .routeIsNotFound))
     }
 }

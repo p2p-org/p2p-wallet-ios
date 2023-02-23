@@ -7,6 +7,7 @@ extension JupiterSwapBusinessLogic {
         services: JupiterSwapServices,
         amountFrom: Double
     ) async -> JupiterSwapState {
-        return state.copy(amountFrom: amountFrom)
+        let amountFiat = state.priceInfo.fromPrice * amountFrom
+        return state.copy(amountFrom: amountFrom, amountFromFiat: amountFiat)
     }
 }

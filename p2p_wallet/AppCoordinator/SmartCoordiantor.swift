@@ -16,6 +16,27 @@ protocol SmartCoordinatorPresentation {
     func run(presentedViewController: UIViewController)
 }
 
+class SmartCoordinatorPresentPresentation: SmartCoordinatorPresentation {
+    var presentingViewController: UIViewController
+    
+    init(from currentPresentation: SmartCoordinatorPresentation) {
+        presentingViewController = currentPresentation.presentingViewController
+    }
+
+    init(_ presentingNavigationController: UIViewController) {
+        presentingViewController = presentingNavigationController
+    }
+    
+    func run(presentedViewController: UIViewController) {
+        guard let presentingViewController = presentingViewController as? UINavigationController else {
+            print(SmartCoordinatorError.unsupportedPresentingViewController)
+            return
+        }
+
+        presentingViewController.present(presentedViewController, animated: true)
+    }
+}
+
 class SmartCoordinatorPushPresentation: SmartCoordinatorPresentation {
     var presentingViewController: UIViewController
 

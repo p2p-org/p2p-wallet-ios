@@ -18,7 +18,7 @@ enum JupiterSwapBusinessLogic {
         case .changeBothTokens:
             newState = state.copy(status: .switching)
         case .update:
-            newState = nil
+            newState = state.copy(status: .loadingAmountTo)
         }
 
         return newState
@@ -31,8 +31,14 @@ enum JupiterSwapBusinessLogic {
     ) async -> JupiterSwapState {
         let newState: JupiterSwapState
         switch action {
-        case let .initialize(swapTokens, routeMap):
-            newState = await initializeAction(state: state, services: services, swapTokens: swapTokens, routeMap: routeMap)
+        case let .initialize(swapTokens, routeMap, fromToken):
+            newState = await initializeAction(
+                state: state,
+                services: services,
+                swapTokens: swapTokens,
+                routeMap: routeMap,
+                fromToken: fromToken
+            )
 
         case let .changeAmountFrom(amountFrom):
             newState = await executeAction(state, services, action: {
@@ -61,7 +67,7 @@ enum JupiterSwapBusinessLogic {
             })
 
         case .update:
-            newState = await update(state: state, services: services)
+            newState = await calculateAmounts(state: state, services: services)
         }
 
         return newState
