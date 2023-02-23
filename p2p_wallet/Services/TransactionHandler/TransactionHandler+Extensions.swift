@@ -141,7 +141,7 @@ extension TransactionHandler {
                 }
 
                 // update paying wallet
-                if let index = wallets.firstIndex(where: { $0.pubkey == transaction.payingFeeWallet.pubkey }) {
+                if let index = wallets.firstIndex(where: { $0.pubkey == transaction.payingFeeWallet?.pubkey }) {
                     let feeInToken = transaction.feeInToken
                     wallets[index].decreaseBalance(diffInLamports: feeInToken.total)
                 }
