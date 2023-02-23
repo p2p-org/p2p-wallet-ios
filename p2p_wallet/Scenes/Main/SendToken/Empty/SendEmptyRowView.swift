@@ -4,10 +4,12 @@ import SwiftUI
 struct SendEmptyRowView: View {
     private let image: UIImage
     private let text: String
+    private let textAccessibilityIdentifier: String
 
-    init(image: UIImage, text: String) {
+    init(image: UIImage, text: String, textAccessibilityIdentifier: String) {
         self.image = image
         self.text = text
+        self.textAccessibilityIdentifier = textAccessibilityIdentifier
     }
 
     var body: some View {
@@ -27,12 +29,13 @@ struct SendEmptyRowView: View {
                 .apply(style: .text3)
                 .fixedSize(horizontal: false, vertical: true)
                 .foregroundColor(Color(Asset.Colors.night.color))
+                .accessibilityIdentifier(textAccessibilityIdentifier)
         }
     }
 }
 
 struct SendEmptyRowView_Previews: PreviewProvider {
     static var previews: some View {
-        SendEmptyRowView(image: .user, text: L10n.receive)
+        SendEmptyRowView(image: .user, text: L10n.receive, textAccessibilityIdentifier: "")
     }
 }

@@ -27,7 +27,7 @@ import SwiftyUserDefaults
 import TransactionParser
 
 extension Resolver: ResolverRegistering {
-    public static func registerAllServices() {
+    @MainActor public static func registerAllServices() {
         registerForApplicationScope()
 
         registerForGraphScope()
@@ -191,7 +191,7 @@ extension Resolver: ResolverRegistering {
     }
 
     /// Graph scope: Recreate and reuse dependencies
-    private static func registerForGraphScope() {
+    @MainActor private static func registerForGraphScope() {
         // Intercom
         register { IntercomMessengerLauncher() }
             .implements(HelpCenterLauncher.self)
@@ -513,10 +513,6 @@ extension Resolver: ResolverRegistering {
         register { Buy.MoonpayBuyProcessingFactory() }
             .implements(BuyProcessingFactory.self)
             .scope(.application)
-
-        register { Buy.MoonpayExchange(provider: resolve()) }
-            .implements(Buy.ExchangeService.self)
-            .scope(.session)
 
         register { MoonpayExchange(provider: resolve()) }
             .implements(BuyExchangeService.self)

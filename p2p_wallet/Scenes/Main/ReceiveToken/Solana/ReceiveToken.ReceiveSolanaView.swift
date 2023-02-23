@@ -5,8 +5,6 @@
 //  Created by Chung Tran on 07/06/2021.
 //
 
-import RxCocoa
-import RxSwift
 import UIKit
 
 extension ReceiveToken {

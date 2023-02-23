@@ -111,7 +111,7 @@ class TransactionHandler: TransactionHandlerType {
                     {
                         return true
                     }
-                case let transaction as ProcessTransaction.SwapTransaction:
+                case let transaction as SwapTransaction:
                     if transaction.sourceWallet.pubkey == account ||
                         transaction.destinationWallet.pubkey == account ||
                         transaction.authority == account

@@ -7,15 +7,15 @@
 
 import BEPureLayout
 import Foundation
-import RxSwift
 import UIKit
+import Combine
 
 extension ConfirmReceivingBitcoin {
     class ViewController: WLModalViewController {
         // MARK: - Properties
 
         let viewModel: ConfirmReceivingBitcoinViewModelType
-        let disposeBag = DisposeBag()
+        var subscriptions = Set<AnyCancellable>()
 
         // MARK: - Initializer
 
@@ -48,20 +48,20 @@ extension ConfirmReceivingBitcoin {
 //                )
 //                    .padding(.init(top: 0, left: 18, bottom: 18, right: 18))
 //                    .setup { label in
-//                        viewModel.accountStatusDriver
+//                        viewModel.accountStatusPublisher
 //                            .map { $0 != .payingWalletAvailable }
-//                            .drive(label.rx.isHidden)
-//                            .disposed(by: disposeBag)
+//                            .assign(to: \.isHidden, on: label)
+//                            .store(in: &subscriptions)
 //                    }
 
                 // Additional spacer in top up view
 //                UIView.spacer
 //                    .setup { view in
 //                        view.autoSetDimension(.height, toSize: 14)
-//                        viewModel.accountStatusDriver
+//                        viewModel.accountStatusPublisher
 //                            .map { $0 != .topUpRequired && $0 != .freeCreationAvailable }
-//                            .drive(view.rx.isHidden)
-//                            .disposed(by: disposeBag)
+//                            .assign(to: \.isHidden, on: view)
+//                            .store(in: &subscriptions)
 //                    }
 
                 // Alert and separator
@@ -89,34 +89,34 @@ extension ConfirmReceivingBitcoin {
                 BEVStack(spacing: 10) {
                     createRenBTCFreeButton()
                         .setup { view in
-                            viewModel.accountStatusDriver
+                            viewModel.accountStatusPublisher
                                 .map { $0 != .freeCreationAvailable }
-                                .drive(view.rx.isHidden)
-                                .disposed(by: disposeBag)
+                                .assign(to: \.isHidden, on: view)
+                                .store(in: &subscriptions)
                         }
 
                     topUpButtonsView()
                         .setup { view in
-                            viewModel.accountStatusDriver
+                            viewModel.accountStatusPublisher
                                 .map { $0 != .topUpRequired }
-                                .drive(view.rx.isHidden)
-                                .disposed(by: disposeBag)
+                                .assign(to: \.isHidden, on: view)
+                                .store(in: &subscriptions)
                         }
 
                     shareSolanaAddressButton()
                         .setup { view in
-                            viewModel.accountStatusDriver
+                            viewModel.accountStatusPublisher
                                 .map { $0 != .topUpRequired }
-                                .drive(view.rx.isHidden)
-                                .disposed(by: disposeBag)
+                                .assign(to: \.isHidden, on: view)
+                                .store(in: &subscriptions)
                         }
 
                     createRenBTCButton()
                         .setup { view in
-                            viewModel.accountStatusDriver
+                            viewModel.accountStatusPublisher
                                 .map { $0 != .payingWalletAvailable }
-                                .drive(view.rx.isHidden)
-                                .disposed(by: disposeBag)
+                                .assign(to: \.isHidden, on: view)
+                                .store(in: &subscriptions)
                         }
                 }
                 .padding(.init(top: 0, left: 18, bottom: 18, right: 18))
@@ -127,26 +127,26 @@ extension ConfirmReceivingBitcoin {
             BEVStack(spacing: 12) {
                 createRenBTCFreeView()
                     .setup { view in
-                        viewModel.accountStatusDriver
+                        viewModel.accountStatusPublisher
                             .map { $0 != .freeCreationAvailable }
-                            .drive(view.rx.isHidden)
-                            .disposed(by: disposeBag)
+                            .assign(to: \.isHidden, on: view)
+                            .store(in: &subscriptions)
                     }
 
                 topUpRequiredView()
                     .setup { view in
-                        viewModel.accountStatusDriver
+                        viewModel.accountStatusPublisher
                             .map { $0 != .topUpRequired }
-                            .drive(view.rx.isHidden)
-                            .disposed(by: disposeBag)
+                            .assign(to: \.isHidden, on: view)
+                            .store(in: &subscriptions)
                     }
 
                 createRenBTCView()
                     .setup { view in
-                        viewModel.accountStatusDriver
+                        viewModel.accountStatusPublisher
                             .map { $0 != .payingWalletAvailable }
-                            .drive(view.rx.isHidden)
-                            .disposed(by: disposeBag)
+                            .assign(to: \.isHidden, on: view)
+                            .store(in: &subscriptions)
                     }
             }
         }
@@ -155,31 +155,31 @@ extension ConfirmReceivingBitcoin {
 
         override func bind() {
             super.bind()
-            viewModel.isLoadingDriver
-                .drive(onNext: { [weak self] isLoading in
+            viewModel.isLoadingPublisher
+                .sink(receiveValue: { [weak self] isLoading in
                     isLoading ? self?.showIndetermineHud() : self?.hideHud()
                 })
-                .disposed(by: disposeBag)
+                .store(in: &subscriptions)
 
-            viewModel.accountStatusDriver
-                .drive(onNext: { [weak self] _ in
+            viewModel.accountStatusPublisher
+                .sink(receiveValue: { [weak self] _ in
                     self?.updatePresentationLayout(animated: true)
                 })
-                .disposed(by: disposeBag)
+                .store(in: &subscriptions)
 
-            viewModel.errorDriver
-                .drive(onNext: { [weak self] error in
+            viewModel.errorPublisher
+                .sink(receiveValue: { [weak self] error in
                     if error != nil {
                         self?.showErrorView(retryAction: { [weak self] in
                             self?.viewModel.reload()
                         })
                     }
                 })
-                .disposed(by: disposeBag)
+                .store(in: &subscriptions)
 
-            viewModel.navigationDriver
-                .drive(onNext: { [weak self] in self?.navigate(to: $0) })
-                .disposed(by: disposeBag)
+            viewModel.navigationPublisher
+                .sink(receiveValue: { [weak self] in self?.navigate(to: $0) })
+                .store(in: &subscriptions)
         }
 
         // MARK: - Navigation
@@ -187,15 +187,14 @@ extension ConfirmReceivingBitcoin {
         private func navigate(to scene: NavigatableScene?) {
             switch scene {
             case let .chooseWallet(selectedWallet, payableWallets):
-//                let vm = ChooseWallet.ViewModel(
-//                    selectedWallet: selectedWallet,
-//                    handler: viewModel,
-//                    staticWallets: payableWallets,
-//                    showOtherWallets: false
-//                )
-//                let vc = ChooseWallet.ViewController(title: L10n.chooseWallet, viewModel: vm)
-//                present(vc, animated: true)
-                break
+                let vm = ChooseWallet.ViewModel(
+                    selectedWallet: selectedWallet,
+                    handler: viewModel,
+                    staticWallets: payableWallets,
+                    showOtherWallets: false
+                )
+                let vc = ChooseWallet.ViewController(title: L10n.chooseWallet, viewModel: vm)
+                present(vc, animated: true)
             default:
                 break
             }

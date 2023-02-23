@@ -9,9 +9,8 @@ import AnalyticsManager
 import Foundation
 import KeyAppUI
 import Resolver
-import RxCocoa
-import RxSwift
 import UIKit
+import Combine
 
 protocol NotificationService {
     typealias DeviceTokenResponse = JsonRpcResponseDto<DeviceTokenResponseDto>
@@ -33,7 +32,7 @@ protocol NotificationService {
     func registerForRemoteNotifications()
     func requestRemoteNotificationPermission()
 
-    var showNotification: Observable<NotificationType> { get }
+    var showNotification: AnyPublisher<NotificationType, Never> { get }
     var showFromLaunch: Bool { get }
 }
 
@@ -45,8 +44,8 @@ final class NotificationServiceImpl: NSObject, NotificationService {
     private let deviceTokenKey = "deviceToken"
     private let openAfterPushKey = "openAfterPushKey"
 
-    private let showNotificationRelay = PublishRelay<NotificationType>()
-    var showNotification: Observable<NotificationType> { showNotificationRelay.asObservable() }
+    private let showNotificationRelay = PassthroughSubject<NotificationType, Never>()
+    var showNotification: AnyPublisher<NotificationType, Never> { showNotificationRelay.receive(on: DispatchQueue.main).eraseToAnyPublisher() }
     var showFromLaunch: Bool { UserDefaults.standard.bool(forKey: openAfterPushKey) }
 
     override init() {
@@ -167,7 +166,7 @@ final class NotificationServiceImpl: NSObject, NotificationService {
     }
 
     func didReceivePush(userInfo _: [AnyHashable: Any]) {
-        showNotificationRelay.accept(.history)
+        showNotificationRelay.send(.history)
     }
 
     func notificationWasOpened() {

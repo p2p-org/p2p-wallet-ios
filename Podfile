@@ -51,10 +51,6 @@ target 'p2p_wallet' do
   # development pods
   key_app_kit
   pod 'CocoaDebug', :configurations => ['Debug', 'Test']
-  pod 'BEPureLayout', :git => 'https://github.com/p2p-org/BEPureLayout.git', :branch => 'master'
-  pod 'BECollectionView_Core', :git => 'https://github.com/bigearsenal/BECollectionView.git', :branch => 'master'
-  pod 'BECollectionView', :git => 'https://github.com/bigearsenal/BECollectionView.git', :branch => 'master'
-  pod 'BECollectionView_Combine', :git => 'https://github.com/bigearsenal/BECollectionView.git', :branch => 'master'
   pod 'FeeRelayerSwift', :git => 'https://github.com/p2p-org/FeeRelayerSwift.git', :branch => 'master'
   pod 'OrcaSwapSwift', :git => 'https://github.com/p2p-org/OrcaSwapSwift.git', :branch => 'main'
   pod 'RenVMSwift', :git => 'https://github.com/p2p-org/RenVMSwift.git', :branch => 'master'
@@ -72,13 +68,18 @@ target 'p2p_wallet' do
   pod 'SwiftFormat/CLI', '0.49.6'
   pod 'ReachabilitySwift', '~> 5.0.0'
 
-  # reactive
+  # Deprecating: will be removed after NewSwap, NewHistory
   pod 'RxAppState', '1.7.1'
-  pod 'RxGesture', '4.0.4'
-  pod 'RxSwift', '6.5.0'
-  pod 'RxCocoa', '6.5.0'
-  pod 'RxConcurrency', :git => 'https://github.com/TrGiLong/RxConcurrency.git', :branch => 'main'
   pod 'RxCombine', '2.0.1'
+  pod 'RxGesture', '4.0.4'
+  pod 'RxConcurrency', :git => 'https://github.com/TrGiLong/RxConcurrency.git', :branch => 'main'
+  pod 'BECollectionView', :git => 'https://github.com/bigearsenal/BECollectionView.git', :branch => 'master'
+
+  # Deprecating: BECollectionView_Combine - will be removed soon
+  pod 'ListPlaceholder', :git => 'https://github.com/p2p-org/ListPlaceholder.git', :branch => 'custom_gradient_color'
+  pod 'BEPureLayout', :git => 'https://github.com/p2p-org/BEPureLayout.git', :branch => 'master'
+  pod 'BECollectionView_Core', :git => 'https://github.com/bigearsenal/BECollectionView.git', :branch => 'master'
+  pod 'BECollectionView_Combine', :git => 'https://github.com/bigearsenal/BECollectionView.git', :branch => 'master'
 
   # Kits
   pod 'KeychainSwift', '19.0.0'
@@ -96,8 +97,6 @@ target 'p2p_wallet' do
   pod 'Resolver', '1.5.0'
   pod 'JazziconSwift', :git => 'https://github.com/p2p-org/JazziconSwift.git', :branch => 'master'
   pod 'Kingfisher', '~> 7.3.2'
-  pod 'ListPlaceholder', :git => 'https://github.com/p2p-org/ListPlaceholder.git', :branch => 'custom_gradient_color'
-  pod 'GT3Captcha-iOS', '0.15.5'
   pod 'PhoneNumberKit', '3.3.4'
   pod 'SkeletonUI', :git => 'https://github.com/p2p-org/SkeletonUI.git', :branch => 'master'
   pod 'Introspect', '0.1.4'
