@@ -287,7 +287,7 @@ extension OrcaSwapV2 {
                                 swapService: self.swapService,
                                 sourceWallet: sourceWallet,
                                 destinationWallet: destinationWallet,
-                                payingWallet: payingWallet,
+                                payingFeeWallet: payingWallet,
                                 authority: authority,
                                 poolsPair: bestPoolsPair,
                                 amount: inputAmount,

@@ -11,25 +11,8 @@ import OrcaSwapSwift
 
 // MARK: - Transaction type
 
-protocol RawTransactionType {
-    func createRequest() async throws -> String
-    var mainDescription: String { get }
-    var networkFees: (total: SolanaSwift.Lamports, token: SolanaSwift.Token)? { get }
-}
-
 extension RawTransactionType {
     var isSwap: Bool { self is ProcessTransaction.SwapTransaction }
-
-    var payingWallet: Wallet? {
-        switch self {
-        case let transaction as ProcessTransaction.SwapTransaction:
-            return transaction.payingWallet
-        case let transaction as SendTransaction:
-            return transaction.payingFeeWallet
-        default:
-            return nil
-        }
-    }
 }
 
 extension ProcessTransaction {
@@ -42,7 +25,7 @@ extension ProcessTransaction {
         let swapService: SwapServiceType
         let sourceWallet: Wallet
         let destinationWallet: Wallet
-        let payingWallet: Wallet?
+        let payingFeeWallet: Wallet?
         let authority: String?
         let poolsPair: PoolsPair
         let amount: Double
@@ -60,8 +43,8 @@ extension ProcessTransaction {
         func createRequest() async throws -> String {
             // check if payingWallet has enough balance to cover fee
             if let fees = fees.networkFees,
-               let payingWallet = payingWallet,
-               let currentAmount = payingWallet.lamports,
+               let payingWallet = payingFeeWallet,
+               let currentAmount = payingFeeWallet?.lamports,
                fees.total > currentAmount
             {
                 throw SolanaError.other(
@@ -81,8 +64,8 @@ extension ProcessTransaction {
                 sourceTokenMint: sourceWallet.mintAddress,
                 destinationAddress: destinationWallet.pubkey,
                 destinationTokenMint: destinationWallet.mintAddress,
-                payingTokenAddress: payingWallet?.pubkey,
-                payingTokenMint: payingWallet?.mintAddress,
+                payingTokenAddress: payingFeeWallet?.pubkey,
+                payingTokenMint: payingFeeWallet?.mintAddress,
                 poolsPair: poolsPair,
                 amount: amount.toLamport(decimals: sourceWallet.token.decimals),
                 slippage: slippage
@@ -92,7 +75,7 @@ extension ProcessTransaction {
 
         var networkFees: (total: Lamports, token: Token)? {
             guard let networkFees = fees.networkFees?.total,
-                  let payingFeeToken = payingWallet?.token
+                  let payingFeeToken = payingFeeWallet?.token
             else {
                 return nil
             }
@@ -101,6 +84,8 @@ extension ProcessTransaction {
     }
 
     struct CloseTransaction: RawTransactionType {
+        var payingFeeWallet: Wallet?
+        
         let closingWallet: Wallet
         let reimbursedAmount: UInt64
 

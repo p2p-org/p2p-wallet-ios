@@ -146,8 +146,8 @@ struct RendableDetailPendingTransaction: RendableDetailTransaction {
             if transaction.feeInToken.total == 0 {
                 result.append(.init(title: L10n.transactionFee, value: L10n.freePaidByKeyApp))
             } else {
-                let feeAmount: Double = transaction.feeInToken.total.convertToBalance(decimals: transaction.payingFeeWallet.token.decimals)
-                let formatedFeeAmount: String = feeAmount.tokenAmountFormattedString(symbol: transaction.payingFeeWallet.token.symbol)
+                let feeAmount: Double = transaction.feeInToken.total.convertToBalance(decimals: transaction.payingFeeWallet?.token.decimals)
+                let formatedFeeAmount: String = feeAmount.tokenAmountFormattedString(symbol: transaction.payingFeeWallet?.token.symbol ?? "")
                 result.append(.init(title: L10n.transactionFee, value: formatedFeeAmount))
             }
         case let transaction as ProcessTransaction.SwapTransaction:

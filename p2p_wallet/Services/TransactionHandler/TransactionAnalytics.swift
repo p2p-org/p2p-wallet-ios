@@ -50,7 +50,7 @@ class SwapTransactionAnalytics {
                         swapMAX: rawTrx.metaInfo.swapMAX,
                         swapUSD: rawTrx.metaInfo.swapUSD,
                         priceSlippage: rawTrx.slippage,
-                        feesSource: rawTrx.payingWallet?.token.name ?? "Unknown"
+                        feesSource: rawTrx.payingFeeWallet?.token.name ?? "Unknown"
                     )
                 )
             case let .confirmed(confirmation):
@@ -63,7 +63,7 @@ class SwapTransactionAnalytics {
                             swapMAX: rawTrx.metaInfo.swapMAX,
                             swapUSD: rawTrx.metaInfo.swapUSD,
                             priceSlippage: rawTrx.slippage,
-                            feesSource: rawTrx.payingWallet?.token.name ?? "Unknown"
+                            feesSource: rawTrx.payingFeeWallet?.token.name ?? "Unknown"
                         )
                     )
                 } else if prevTrx?.status.numberOfConfirmations == 0 {
@@ -75,7 +75,7 @@ class SwapTransactionAnalytics {
                             swapMAX: rawTrx.metaInfo.swapMAX,
                             swapUSD: rawTrx.metaInfo.swapUSD,
                             priceSlippage: rawTrx.slippage,
-                            feesSource: rawTrx.payingWallet?.token.name ?? "Unknown"
+                            feesSource: rawTrx.payingFeeWallet?.token.name ?? "Unknown"
                         )
                     )
                 }
@@ -88,7 +88,7 @@ class SwapTransactionAnalytics {
                         swapMAX: rawTrx.metaInfo.swapMAX,
                         swapUSD: rawTrx.metaInfo.swapUSD,
                         priceSlippage: rawTrx.slippage,
-                        feesSource: rawTrx.payingWallet?.token.name ?? "Unknown"
+                        feesSource: rawTrx.payingFeeWallet?.token.name ?? "Unknown"
                     )
                 )
             default:
