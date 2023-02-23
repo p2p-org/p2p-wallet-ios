@@ -158,8 +158,6 @@ class HistoryViewModel: BaseViewModel, ObservableObject {
 
         // Listen history transactions
         historyTransactions.listen(target: self, in: &subscriptions)
-        
-        historyTransactions.combine
     }
 
     func reload() async throws {
