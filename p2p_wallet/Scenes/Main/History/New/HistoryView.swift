@@ -20,10 +20,10 @@ struct NewHistoryView<Header: View>: View {
 
             // Display error or empty state
             if
-                viewModel.historyTransactions.isEmpty,
-                viewModel.historyTransactions.state.status == .ready
+                viewModel.output.data.isEmpty,
+                viewModel.output.status == .ready
             {
-                if viewModel.historyTransactions.state.error == nil {
+                if viewModel.output.error == nil {
                     HistoryEmptyView {
                         viewModel.actionSubject.send(.openBuy)
                     } secondaryAction: {
@@ -42,11 +42,11 @@ struct NewHistoryView<Header: View>: View {
 
             // Render list
             LazyVStack(alignment: .leading, spacing: 0) {
-                ForEach(viewModel.sections) { (section: HistorySection) in
+                ForEach(viewModel.output.data) { (section: HistorySection) in
                     Text(section.title)
                         .apply(style: .text4)
                         .foregroundColor(Color(Asset.Colors.mountain.color))
-                        .padding(.top, viewModel.sections.first == section ? 0 : 24)
+                        .padding(.top, viewModel.output.data.first == section ? 0 : 24)
                         .padding(.bottom, 12)
 
                     ForEach(section.items, id: \.id) { (item: NewHistoryItem) in
