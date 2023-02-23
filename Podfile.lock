@@ -196,6 +196,9 @@ PODS:
     - RxSwift (~> 6)
   - RxConcurrency (0.1.1):
     - RxSwift (~> 6.5.0)
+  - RxGesture (4.0.4):
+    - RxCocoa (~> 6.0)
+    - RxSwift (~> 6.0)
   - RxRelay (6.5.0):
     - RxSwift (= 6.5.0)
   - RxSwift (6.5.0)
@@ -280,6 +283,7 @@ DEPENDENCIES:
   - RxAppState (= 1.7.1)
   - RxCombine (= 2.0.1)
   - RxConcurrency (from `https://github.com/TrGiLong/RxConcurrency.git`, branch `main`)
+  - RxGesture (= 4.0.4)
   - Sell (from `https://github.com/p2p-org/key-app-kit-swift.git`, branch `master`)
   - Send (from `https://github.com/p2p-org/key-app-kit-swift.git`, branch `master`)
   - Sentry (from `https://github.com/getsentry/sentry-cocoa.git`, tag `7.31.5`)
@@ -333,6 +337,7 @@ SPEC REPOS:
     - RxAppState
     - RxCocoa
     - RxCombine
+    - RxGesture
     - RxRelay
     - RxSwift
     - secp256k1.swift
@@ -595,6 +600,7 @@ SPEC CHECKSUMS:
   RxCocoa: 94f817b71c07517321eb4f9ad299112ca8af743b
   RxCombine: 74cd98f7bb1d908eff3758d13651917fc296adb3
   RxConcurrency: fde98edd4056a8f13ff293689a25a17563e3e843
+  RxGesture: f3efb47ed2d26a8082f7b660d4a59970e275a7f8
   RxRelay: 1de1523e604c72b6c68feadedd1af3b1b4d0ecbd
   RxSwift: 5710a9e6b17f3c3d6e40d6e559b9fa1e813b2ef8
   secp256k1.swift: a7e7a214f6db6ce5db32cc6b2b45e5c4dd633634
@@ -615,6 +621,6 @@ SPEC CHECKSUMS:
   TransactionParser: 3004420d52e7b1277dbcfd20b995a5de707705f3
   TweetNacl: 3abf4d1d2082b0114e7a67410e300892448951e6
 
-PODFILE CHECKSUM: 3a6b32d374d94d1c53c89ab4ad929832eacc3c9e
+PODFILE CHECKSUM: 4d49b2bd4b369bc0c1798915d6563f1c16141e57
 
 COCOAPODS: 1.11.3

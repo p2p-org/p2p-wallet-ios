@@ -71,12 +71,13 @@ target 'p2p_wallet' do
   # Deprecating: will be removed after refactoring WalletsRepository
   pod 'RxAppState', '1.7.1'
   pod 'RxCombine', '2.0.1'
-
-  # Deprecating: will be removed after refactoring ChooseWallet
   pod 'BECollectionView', :git => 'https://github.com/bigearsenal/BECollectionView.git', :branch => 'master'
 
   # Deprecating: will be removed after refactoring MoonpayExchangeService
   pod 'RxConcurrency', :git => 'https://github.com/TrGiLong/RxConcurrency.git', :branch => 'main'
+  
+  # Deprecating: will be removed after New History
+  pod 'RxGesture', '4.0.4'
 
   # Deprecating: BECollectionView_Combine - will be removed soon
   pod 'ListPlaceholder', :git => 'https://github.com/p2p-org/ListPlaceholder.git', :branch => 'custom_gradient_color'
