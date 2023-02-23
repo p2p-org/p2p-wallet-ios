@@ -67,3 +67,5 @@ jobs:
           GOOGLE_SERVICE_INFO_PLIST_URL: '${{ secrets.GOOGLE_SERVICE_INFO_PLIST_URL }}'
           XCCONFIG_URL: '${{ secrets.XCCONFIG_URL }}'
           SENTRY_TOKEN: '${{ secrets.SENTRY_TOKEN }}'
+          BROWSERSTACK_USERNAME_NEW: '${{ secrets.BROWSERSTACK_USERNAME_NEW }}'
+          BROWSERSTACK_ACCESS_KEY_NEW: '${{ secrets.BROWSERSTACK_ACCESS_KEY_NEW }}'
