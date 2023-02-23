@@ -26,8 +26,6 @@ final class JupiterTokensRepositoryImpl: JupiterTokensRepository {
     var status: AnyPublisher<JupiterDataStatus, Never> {
         statusSubject.eraseToAnyPublisher()
     }
-    var routeMap = [String: [String]]()
-
     // MARK: - Dependencies
     private let jupiterClient: JupiterAPI
     private let localProvider: JupiterTokensProvider
