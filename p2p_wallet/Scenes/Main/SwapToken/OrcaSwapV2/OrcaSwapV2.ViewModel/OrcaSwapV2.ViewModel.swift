@@ -284,11 +284,11 @@ extension OrcaSwapV2 {
                     // show processing scene
                     self.navigationSubject.accept(
                         .processTransaction(
-                            ProcessTransaction.SwapTransaction(
+                            SwapTransaction(
                                 swapService: self.swapService,
                                 sourceWallet: sourceWallet,
                                 destinationWallet: destinationWallet,
-                                payingWallet: payingWallet,
+                                payingFeeWallet: payingWallet,
                                 authority: authority,
                                 poolsPair: bestPoolsPair,
                                 amount: inputAmount,
