@@ -46,14 +46,14 @@ final class SwapInputViewModel: BaseViewModel, ObservableObject {
 
         $token
             .sink { [unowned self] value in
-                self.tokenSymbol = value.jupiterToken.symbol
+                self.tokenSymbol = value.token.symbol
                 self.balance = value.userWallet?.amount
             }
             .store(in: &subscriptions)
 
         $balance
             .sink { [unowned self] value in
-                self.balanceText = value?.toString(maximumFractionDigits: self.token.jupiterToken.decimals) ?? "0"
+                self.balanceText = value?.toString(maximumFractionDigits: Int(self.token.token.decimals)) ?? "0"
             }
             .store(in: &subscriptions)
 

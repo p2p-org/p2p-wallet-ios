@@ -42,7 +42,7 @@ final class JupiterTokensRepositoryImpl: JupiterTokensRepository {
     func load() async {
         statusSubject.send(.loading)
         do {
-            let jupiterTokens: [Jupiter.Token]
+            let jupiterTokens: [Token]
             let routeMap: RouteMap
             if let cachedData = localProvider.getCachedData() {
                 jupiterTokens = cachedData.tokens
@@ -56,9 +56,9 @@ final class JupiterTokensRepositoryImpl: JupiterTokensRepository {
             let wallets = walletsRepository.getWallets()
             let swapTokens = jupiterTokens.map { jupiterToken in
                 if let userWallet = wallets.first(where: { $0.mintAddress == jupiterToken.address }) {
-                    return SwapToken(jupiterToken: jupiterToken, userWallet: userWallet)
+                    return SwapToken(token: jupiterToken, userWallet: userWallet)
                 }
-                return SwapToken(jupiterToken: jupiterToken, userWallet: nil)
+                return SwapToken(token: jupiterToken, userWallet: nil)
             }
             statusSubject.send(.ready(swapTokens: swapTokens, routeMap: routeMap))
         } catch {

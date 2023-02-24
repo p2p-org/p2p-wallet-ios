@@ -12,9 +12,9 @@ struct ChooseSwapTokenItemView: View {
         self.token = token
         self.isChosen = isChosen
         if isChosen {
-            self.subtitle = token.userWallet?.amount?.tokenAmountFormattedString(symbol: token.jupiterToken.symbol, maximumFractionDigits: token.jupiterToken.decimals) ?? token.jupiterToken.symbol
+            self.subtitle = token.userWallet?.amount?.tokenAmountFormattedString(symbol: token.token.symbol, maximumFractionDigits: Int(token.token.decimals)) ?? token.token.symbol
         } else {
-            self.subtitle = token.jupiterToken.symbol
+            self.subtitle = token.token.symbol
         }
     }
 
@@ -22,13 +22,13 @@ struct ChooseSwapTokenItemView: View {
         HStack(alignment: .center, spacing: 12) {
             CoinLogoImageViewRepresentable(
                 size: 48,
-                token: SolanaSwift.Token(jupiterToken: token.jupiterToken)
+                token: token.token
             )
             .frame(width: 48, height: 48)
             .cornerRadius(radius: 48/2, corners: .allCorners)
 
             VStack(alignment: .leading, spacing: 4) {
-                Text(token.jupiterToken.name)
+                Text(token.token.name)
                     .font(uiFont: .font(of: .text3, weight: .bold))
                     .foregroundColor(Color(Asset.Colors.night.color))
                     .lineLimit(1)

@@ -81,8 +81,8 @@ struct RendableDetailPendingTransaction: RendableDetailTransaction {
             
             return .double(fromUrl, toUrl)
         case let transaction as JupiterSwapTransaction:
-            let fromUrlStr = transaction.fromToken.jupiterToken.logoURI
-            let toUrlStr = transaction.toToken.jupiterToken.logoURI
+            let fromUrlStr = transaction.fromToken.token.logoURI
+            let toUrlStr = transaction.toToken.token.logoURI
 
             guard let fromUrlStr, let toUrlStr else {
                 return .icon(.buttonSwap)
