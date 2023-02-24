@@ -1239,3 +1239,6 @@ You can try again, but your new transaction will be subject to the current rates
 "Unstake signature" = "Отменить ставку подписи";
 "Stake signature" = "Подпись ставки";
 "Explorer" = "Исследователь";
+"Buy with Moonpay" = "Купить с Moonpay";
+"License" = "Лицензия";
+"Cashout with Moonpay" = "Вывод средств с Moonpay";

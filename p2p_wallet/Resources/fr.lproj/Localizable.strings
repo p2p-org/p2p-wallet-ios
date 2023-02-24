@@ -1241,3 +1241,6 @@ You can try again, but your new transaction will be subject to the current rates
 "Unstake signature" = "Détacher la signature";
 "Stake signature" = "Signature de mise";
 "Explorer" = "Explorateur";
+"Buy with Moonpay" = "Acheter avec Moonpay";
+"License" = "Licence";
+"Cashout with Moonpay" = "Paiement avec Moonpay";
