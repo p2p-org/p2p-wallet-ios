@@ -36,7 +36,7 @@ extension ProcessTransaction.Status {
         private func bind() {
             viewModel.pendingTransactionDriver
                 .map { info -> String in
-                    let originalText = info.rawTransaction is SwapTransaction ? L10n.theSwapIsBeingProcessed : L10n
+                    let originalText = info.rawTransaction is OrcaSwapTransaction ? L10n.theSwapIsBeingProcessed : L10n
                         .theTransactionIsBeingProcessed
 
                     switch info.status {
@@ -54,7 +54,7 @@ extension ProcessTransaction.Status {
                         }
                     case .finalized:
                         switch info.rawTransaction {
-                        case let transaction as SwapTransaction:
+                        case let transaction as OrcaSwapTransaction:
                             return L10n.swappedSuccessfully(
                                 transaction.sourceWallet.token.symbol,
                                 transaction.destinationWallet.token.symbol

@@ -9,7 +9,7 @@ protocol RawTransactionType {
     var payingFeeWallet: Wallet? { get }
 }
 
-struct SwapTransaction: RawTransactionType {
+struct OrcaSwapTransaction: RawTransactionType {
     struct MetaInfo {
         let swapMAX: Bool
         let swapUSD: Double

@@ -23,7 +23,7 @@ class SwapTransactionAnalytics {
             .onNewTransaction
             .receive(on: DispatchQueue.main)
             .sink(receiveValue: { [weak self] trx, index in
-                if trx.rawTransaction is SwapTransaction { self?.observer(index: index) }
+                if trx.rawTransaction is OrcaSwapTransaction { self?.observer(index: index) }
             })
             .store(in: &subscriptions)
     }
@@ -38,7 +38,7 @@ class SwapTransactionAnalytics {
             let prevTrx = param.previous
             let trx = param.current
             guard let self else { return }
-            guard let rawTrx = trx.rawTransaction as? SwapTransaction else { return }
+            guard let rawTrx = trx.rawTransaction as? OrcaSwapTransaction else { return }
 
             switch trx.status {
             case .sending:
