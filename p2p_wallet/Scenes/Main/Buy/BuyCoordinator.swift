@@ -143,6 +143,12 @@ final class BuyCoordinator: Coordinator<Void> {
             }
         }).store(in: &subscriptions)
 
+        viewModel.coordinatorIO.license.sink(receiveValue: { [weak self] url in
+            let vc = SFSafariViewController(url: url)
+            vc.modalPresentationStyle = .automatic
+            viewController.present(vc, animated: true)
+        }).store(in: &subscriptions)
+
         return result.prefix(1).eraseToAnyPublisher()
     }
 
