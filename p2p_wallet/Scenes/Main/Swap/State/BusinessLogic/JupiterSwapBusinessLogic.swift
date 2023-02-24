@@ -19,6 +19,8 @@ enum JupiterSwapBusinessLogic {
             newState = state.copy(status: .switching)
         case .update:
             newState = state.copy(status: .loadingAmountTo)
+        case .updateUserWallets:
+            newState = state.copy(status: .switching)
         }
 
         return newState
@@ -68,6 +70,12 @@ enum JupiterSwapBusinessLogic {
 
         case .update:
             newState = await calculateAmounts(state: state, services: services)
+        case let .updateUserWallets(userWallets):
+            newState = await executeAction(state, services, action: {
+                (try? await updateUserWallets(state: state, userWallets: userWallets)) ?? state
+            }, chains: {
+                [calculateAmounts]
+            })
         }
 
         return newState
