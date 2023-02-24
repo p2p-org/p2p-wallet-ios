@@ -17,6 +17,7 @@ final class SwapViewModel: BaseViewModel, ObservableObject {
     @Injected private var pricesAPI: SolanaPricesAPI
     @Injected private var notificationService: NotificationService
     @Injected private var userWalletManager: UserWalletManager
+    @Injected private var transactionHandler: TransactionHandler
 
     // MARK: - Actions
     let switchTokens = PassthroughSubject<Void, Never>()
@@ -234,29 +235,36 @@ private extension SwapViewModel {
     private func sendToken() {
         guard isSliderOn, let versionedTransaction = versionedTransaction, let account = userWalletManager.wallet?.account else { return }
         cancelUpdate()
+        let swapTransaction = JupiterSwapTransaction(
+            execution: { [unowned stateMachine, unowned self] in
+                do {
+                    let transactionId = try await JupiterSwapBusinessLogic.sendToBlockchain(
+                        account: account,
+                        versionedTransaction: versionedTransaction,
+                        solanaAPIClient: stateMachine.services.solanaAPIClient
+                    )
+                    debugPrint("---transactionId: ", transactionId)
+                    return transactionId
+                } catch {
+                    self.isSliderOn = false
+                    throw error
+                }
+            },
+            amountFrom: currentState.amountFrom,
+            amountTo: currentState.amountTo,
+            fromToken: currentState.fromToken,
+            toToken: currentState.toToken,
+            amountFromFiat: currentState.amountFromFiat
+        )
+        
+        let transactionIndex = transactionHandler.sendTransaction(
+            swapTransaction
+        )
+        
         let pendingTransaction = PendingTransaction(
-            trxIndex: 0,
+            trxIndex: transactionIndex,
             sentAt: Date(),
-            rawTransaction: JupiterSwapTransaction(
-                execution: { [unowned stateMachine] in
-                    do {
-                        let transactionId = try await JupiterSwapBusinessLogic.sendToBlockchain(
-                            account: account,
-                            versionedTransaction: versionedTransaction,
-                            solanaAPIClient: stateMachine.services.solanaAPIClient
-                        )
-                        debugPrint("---transactionId: ", transactionId)
-                        return transactionId
-                    } catch {
-                        throw error
-                    }
-                },
-                amountFrom: currentState.amountFrom,
-                amountTo: currentState.amountTo,
-                fromToken: currentState.fromToken,
-                toToken: currentState.toToken,
-                amountFromFiat: currentState.amountFromFiat
-            ),
+            rawTransaction: swapTransaction,
             status: .sending
         )
         submitTransaction.send(pendingTransaction)

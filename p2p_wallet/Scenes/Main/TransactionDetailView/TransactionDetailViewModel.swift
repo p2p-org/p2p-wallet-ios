@@ -51,9 +51,8 @@ class DetailTransactionViewModel: BaseViewModel, ObservableObject {
 
         super.init()
         
-        let transactionIndex = transactionHandler.sendTransaction(pendingTransaction.rawTransaction)
         pendingService
-            .observeTransaction(transactionIndex: transactionIndex)
+            .observeTransaction(transactionIndex: pendingTransaction.trxIndex)
             .sink { trx in
                 guard let trx = trx else { return }
                 self.rendableTransaction = RendableDetailPendingTransaction(trx: trx, priceService: priceService)
