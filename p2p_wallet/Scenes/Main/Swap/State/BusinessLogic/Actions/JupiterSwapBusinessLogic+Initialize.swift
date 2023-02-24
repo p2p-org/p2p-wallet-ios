@@ -18,6 +18,8 @@ extension JupiterSwapBusinessLogic {
             }
 
             let priceInfo = try await getPrices(from: tokens.fromToken, to: tokens.toToken, services: services)
+        
+            let possibleToTokens = getPossibleToTokens(fromTokenMint: tokens.fromToken.address, routeMap: routeMap, swapTokens: swapTokens)
 
             return .init(
                 status: .ready,
@@ -28,6 +30,7 @@ extension JupiterSwapBusinessLogic {
                 amountTo: 0,
                 fromToken: tokens.fromToken,
                 toToken: tokens.toToken,
+                possibleToTokens: possibleToTokens,
                 priceInfo: priceInfo ?? .init(fromPrice: 0, toPrice: 0),
                 slippage: 50
             )

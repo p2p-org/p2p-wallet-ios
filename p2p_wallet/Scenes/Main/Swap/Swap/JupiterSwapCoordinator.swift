@@ -60,7 +60,7 @@ final class JupiterSwapCoordinator: Coordinator<Void> {
     private func openChooseToken(viewModel: SwapViewModel, fromToken: Bool) {
         coordinate(to: ChooseSwapTokenCoordinator(
             chosenWallet: fromToken ? viewModel.currentState.fromToken : viewModel.currentState.toToken,
-            tokens: fromToken ? viewModel.currentState.swapTokens : viewModel.toTokens,
+            tokens: fromToken ? viewModel.currentState.swapTokens : viewModel.currentState.possibleToTokens,
             navigationController: navigationController
         ))
         .compactMap { $0 }
