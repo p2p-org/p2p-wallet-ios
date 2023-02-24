@@ -9,10 +9,6 @@ protocol RawTransactionType {
     var payingFeeWallet: Wallet? { get }
 }
 
-extension RawTransactionType {
-    var isSwap: Bool { self is SwapTransaction }
-}
-
 struct SwapTransaction: RawTransactionType {
     struct MetaInfo {
         let swapMAX: Bool

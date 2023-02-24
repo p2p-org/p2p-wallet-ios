@@ -23,7 +23,7 @@ class SwapTransactionAnalytics {
             .onNewTransaction
             .receive(on: DispatchQueue.main)
             .sink(receiveValue: { [weak self] trx, index in
-                if trx.rawTransaction.isSwap { self?.observer(index: index) }
+                if trx.rawTransaction is SwapTransaction { self?.observer(index: index) }
             })
             .store(in: &subscriptions)
     }
