@@ -248,10 +248,6 @@ private extension SwapViewModel {
                         debugPrint("---transactionId: ", transactionId)
                         return transactionId
                     } catch {
-                        await MainActor.run { [weak self] in
-                            guard let self else { return }
-                            self.actionButtonData = SliderActionButtonData(isEnabled: false, title: L10n.youCanTSwapSameToken)
-                        }
                         throw error
                     }
                 },

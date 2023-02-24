@@ -22,6 +22,8 @@ enum DetailTransactionViewModelOutput {
 }
 
 class DetailTransactionViewModel: BaseViewModel, ObservableObject {
+    @Injected private var transactionHandler: TransactionHandler
+    
     @Published var rendableTransaction: any RendableDetailTransaction
 
     @Published var closeButtonTitle: String = L10n.done
@@ -48,9 +50,10 @@ class DetailTransactionViewModel: BaseViewModel, ObservableObject {
         self.rendableTransaction = RendableDetailPendingTransaction(trx: pendingTransaction, priceService: priceService)
 
         super.init()
-
+        
+        let transactionIndex = transactionHandler.sendTransaction(pendingTransaction.rawTransaction)
         pendingService
-            .observeTransaction(transactionIndex: pendingTransaction.trxIndex)
+            .observeTransaction(transactionIndex: transactionIndex)
             .sink { trx in
                 guard let trx = trx else { return }
                 self.rendableTransaction = RendableDetailPendingTransaction(trx: trx, priceService: priceService)
