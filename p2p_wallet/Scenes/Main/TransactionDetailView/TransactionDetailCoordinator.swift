@@ -9,7 +9,7 @@ import Foundation
 import History
 import TransactionParser
 
-class TransactionDetailCoordinator: SmartCoordinator<Void> {
+class TransactionDetailCoordinator: SmartCoordinator<DetailTransactionStatus> {
     let viewModel: DetailTransactionViewModel
 
     init(viewModel: DetailTransactionViewModel, presentingViewController: UIViewController) {
@@ -26,17 +26,22 @@ class TransactionDetailCoordinator: SmartCoordinator<Void> {
             switch action {
             case .close:
                 vc.dismiss(animated: true)
-                self.result.send(completion: .finished)
+                self.handleResult()
             case let .share(url):
                 self.presentation.presentingViewController.dismiss(animated: true) {
                     let av = UIActivityViewController(activityItems: [url], applicationActivities: nil)
                     UIApplication.shared.windows.first?.rootViewController?.present(av, animated: true, completion: nil)
                 }
-                self.result.send(completion: .finished)
+                self.handleResult()
             }
 
         }.store(in: &subscriptions)
 
         return vc
+    }
+    
+    private func handleResult() {
+        result.send(viewModel.rendableTransaction.status)
+        result.send(completion: .finished)
     }
 }

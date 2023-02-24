@@ -272,7 +272,10 @@ final class TabBarCoordinator: Coordinator<Void> {
 
     private func routeToSwap(nc: UINavigationController, hidesBottomBarWhenPushed: Bool = true) {
         if available(.jupiterSwapEnabled) {
-            let swapCoordinator = JupiterSwapCoordinator(navigationController: nc)
+            let swapCoordinator = JupiterSwapCoordinator(
+                navigationController: nc,
+                dismissAfterCompletion: false
+            )
             coordinate(to: swapCoordinator)
                 .sink(receiveValue: { _ in })
                 .store(in: &subscriptions)

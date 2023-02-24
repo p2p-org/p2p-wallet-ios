@@ -7,10 +7,12 @@ final class JupiterSwapCoordinator: Coordinator<Void> {
     private let navigationController: UINavigationController
     private var result = PassthroughSubject<Void, Never>()
     private let preChosenWallet: Wallet?
+    private let dismissAfterCompletion: Bool
 
-    init(navigationController: UINavigationController, preChosenWallet: Wallet? = nil) {
+    init(navigationController: UINavigationController, preChosenWallet: Wallet? = nil, dismissAfterCompletion: Bool) {
         self.navigationController = navigationController
         self.preChosenWallet = preChosenWallet
+        self.dismissAfterCompletion = dismissAfterCompletion
     }
     
     override func start() -> AnyPublisher<Void, Never> {
@@ -76,11 +78,22 @@ final class JupiterSwapCoordinator: Coordinator<Void> {
 
     private func openDetails(pendingTransaction: PendingTransaction) {
         let viewModel = DetailTransactionViewModel(pendingTransaction: pendingTransaction)
-
+        var hasError = false
         coordinate(to: TransactionDetailCoordinator(viewModel: viewModel, presentingViewController: navigationController))
             .sink(receiveCompletion: { [weak self] _ in
-                self?.navigationController.popViewController(animated: true)
-            }, receiveValue: { _ in })
+                guard let self else { return }
+                if self.dismissAfterCompletion && !hasError {
+                    self.navigationController.popViewController(animated: true)
+                    self.result.send(())
+                }
+            }, receiveValue: { status in
+                switch status {
+                case .error:
+                    hasError = true
+                default:
+                    hasError = false
+                }
+            })
             .store(in: &subscriptions)
     }
 }

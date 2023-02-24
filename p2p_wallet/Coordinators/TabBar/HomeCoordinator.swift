@@ -142,7 +142,10 @@ final class HomeCoordinator: Coordinator<Void> {
             analyticsManager.log(event: .swapViewed(lastScreen: "main_screen"))
             if available(.jupiterSwapEnabled) {
                 return coordinate(
-                    to: JupiterSwapCoordinator(navigationController: navigationController)
+                    to: JupiterSwapCoordinator(
+                        navigationController: navigationController,
+                        dismissAfterCompletion: true
+                    )
                 )
                 .eraseToAnyPublisher()
             } else {
