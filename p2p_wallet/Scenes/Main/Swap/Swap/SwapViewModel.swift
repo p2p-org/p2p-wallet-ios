@@ -251,6 +251,7 @@ private extension SwapViewModel {
                         solanaAPIClient: stateMachine.services.solanaAPIClient
                     )
                     debugPrint("---transactionId: ", transactionId)
+                    self.isSliderOn = false
                     return transactionId
                 } catch {
                     self.isSliderOn = false
