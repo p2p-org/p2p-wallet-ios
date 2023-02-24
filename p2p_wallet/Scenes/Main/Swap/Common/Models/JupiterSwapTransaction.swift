@@ -1,11 +1,14 @@
 import SolanaSwift
 
 struct JupiterSwapTransaction: RawTransactionType {
-
     let mainDescription: String
     let amountFiat: Double
     let fromToken: SwapToken
     let toToken: SwapToken
+    var payingFeeWallet: Wallet? {
+        guard let token = networkFees?.token else { return nil }
+        return .init(lamports: 0, token: token)
+    }
 
     var networkFees: (total: SolanaSwift.Lamports, token: SolanaSwift.Token)?
 

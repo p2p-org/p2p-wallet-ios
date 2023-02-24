@@ -81,7 +81,7 @@ extension ProcessTransaction.ViewModel: ProcessTransactionViewModelType {
     }
 
     var isSwapping: Bool {
-        rawTransaction.isSwap
+        rawTransaction is SwapTransaction
     }
 
     var transactionID: String? {
