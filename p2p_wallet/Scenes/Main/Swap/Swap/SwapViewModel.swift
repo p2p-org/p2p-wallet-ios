@@ -72,6 +72,13 @@ final class SwapViewModel: BaseViewModel, ObservableObject {
 
 private extension SwapViewModel {
     func bind() {
+        Resolver.resolve(WalletsRepository.self)
+            .dataPublisher
+            .sinkAsync { [weak self] userWallets in
+                let _ = await self?.stateMachine.accept(action: .updateUserWallets(userWallets: userWallets))
+            }
+            .store(in: &subscriptions)
+        
         swapWalletsRepository.status
             .sinkAsync { [weak self] dataStatus in
                 guard let self else { return }
