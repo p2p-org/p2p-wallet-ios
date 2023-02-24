@@ -64,7 +64,7 @@ struct RendableDetailPendingTransaction: RendableDetailTransaction {
                 return .icon(.transactionSend)
             }
             
-        case let transaction as SwapTransaction:
+        case let transaction as OrcaSwapTransaction:
             let fromUrlStr = transaction.sourceWallet.token.logoURI
             let toUrlStr = transaction.destinationWallet.token.logoURI
             
@@ -107,7 +107,7 @@ struct RendableDetailPendingTransaction: RendableDetailTransaction {
         switch trx.rawTransaction {
         case let transaction as SendTransaction:
             return .negative("-\(transaction.amountInFiat.fiatAmountFormattedString())")
-        case let transaction as SwapTransaction:
+        case let transaction as OrcaSwapTransaction:
             let amountInFiat: Double = (transaction.amount * priceService.currentPrice(mint: transaction.sourceWallet.token.address)?.value)
             return .unchanged("\(amountInFiat.fiatAmountFormattedString())")
         case let transaction as JupiterSwapTransaction:
@@ -121,7 +121,7 @@ struct RendableDetailPendingTransaction: RendableDetailTransaction {
         switch trx.rawTransaction {
         case let transaction as SendTransaction:
             return "\(transaction.amount.tokenAmountFormattedString(symbol: transaction.walletToken.token.symbol))"
-        case let transaction as SwapTransaction:
+        case let transaction as OrcaSwapTransaction:
             return "\(transaction.amount.tokenAmountFormattedString(symbol: transaction.sourceWallet.token.symbol)) → \(transaction.estimatedAmount.tokenAmountFormattedString(symbol: transaction.destinationWallet.token.symbol))"
         case let transaction as JupiterSwapTransaction:
             return transaction.mainDescription
@@ -171,7 +171,7 @@ struct RendableDetailPendingTransaction: RendableDetailTransaction {
                 let formatedFeeAmount: String = feeAmount.tokenAmountFormattedString(symbol: transaction.payingFeeWallet?.token.symbol ?? "")
                 result.append(.init(title: L10n.transactionFee, value: formatedFeeAmount))
             }
-        case let transaction as SwapTransaction:
+        case let transaction as OrcaSwapTransaction:
             if let networkFees = transaction.networkFees {
                 if networkFees.total == 0 {
                     result.append(.init(title: L10n.transactionFee, value: L10n.freePaidByKeyApp))

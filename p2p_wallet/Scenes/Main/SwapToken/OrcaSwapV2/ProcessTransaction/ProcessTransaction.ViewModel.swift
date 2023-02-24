@@ -81,7 +81,7 @@ extension ProcessTransaction.ViewModel: ProcessTransactionViewModelType {
     }
 
     var isSwapping: Bool {
-        rawTransaction is SwapTransaction
+        rawTransaction is OrcaSwapTransaction
     }
 
     var transactionID: String? {
@@ -129,7 +129,7 @@ extension ProcessTransaction.ViewModel: ProcessTransactionViewModelType {
             // log
             if let error = pendingTransactionSubject.value.status.error {
                 switch rawTransaction {
-                case is SwapTransaction:
+                case is OrcaSwapTransaction:
                     analyticsManager.log(event: .swapTryAgainClick(error: error.readableDescription))
                 default:
                     break
@@ -153,7 +153,7 @@ extension ProcessTransaction.ViewModel: ProcessTransactionViewModelType {
             switch rawTransaction {
             case is SendTransaction:
                 analyticsManager.log(event: .sendExplorerClick(txStatus: status))
-            case is SwapTransaction:
+            case is OrcaSwapTransaction:
                 analyticsManager.log(event: .swapExplorerClick(txStatus: status))
             default:
                 break

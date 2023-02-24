@@ -128,7 +128,7 @@ extension PendingTransaction {
             )
             amountInFiat = amount * pricesService.currentPrice(mint: transaction.walletToken.token.address)?.value
             fee = transaction.feeInToken
-        case let transaction as SwapTransaction:
+        case let transaction as OrcaSwapTransaction:
             var destinationWallet = transaction.destinationWallet
             if let authority = try? PublicKey(string: authority),
                let mintAddress = try? PublicKey(string: destinationWallet.mintAddress)
