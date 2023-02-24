@@ -518,10 +518,6 @@ extension Resolver: ResolverRegistering {
             .implements(BuyProcessingFactory.self)
             .scope(.application)
 
-        register { Buy.MoonpayExchange(provider: resolve()) }
-            .implements(Buy.ExchangeService.self)
-            .scope(.session)
-
         register { MoonpayExchange(provider: resolve()) }
             .implements(BuyExchangeService.self)
             .scope(.shared)

@@ -24,14 +24,17 @@ struct SendEmptyView: View {
                     .font(uiFont: .font(of: .title2, weight: .bold))
                     .frame(maxWidth: .infinity)
                     .padding(.bottom, 4)
+                    .accessibilityIdentifier("SendEmptyView.title")
                 VStack(alignment: .leading, spacing: 32) {
                     SendEmptyRowView(
                         image: .lightningFilled,
-                        text: L10n.sendCryptoInTheSolanaNetworkInstantlyAndWithoutFees
+                        text: L10n.sendCryptoInTheSolanaNetworkInstantlyAndWithoutFees,
+                        textAccessibilityIdentifier: "SendEmptyView.desc1"
                     )
                     SendEmptyRowView(
                         image: .user,
-                        text: L10n.effortlesslySendTokensWithUsernamesInsteadOfLongAddresses
+                        text: L10n.effortlesslySendTokensWithUsernamesInsteadOfLongAddresses,
+                        textAccessibilityIdentifier: "SendEmptyView.desc2"
                     )
                 }
                 .padding(.leading, 16)
@@ -45,6 +48,7 @@ struct SendEmptyView: View {
                             onPressed: buyCrypto
                         )
                         .frame(height: 56)
+                        .accessibilityIdentifier("SendEmptyView.button1")
                         TextButtonView(
                             title: L10n.receive,
                             style: .inverted,
@@ -52,6 +56,7 @@ struct SendEmptyView: View {
                             onPressed: receive
                         )
                         .frame(height: 56)
+                        .accessibilityIdentifier("SendEmptyView.button2")
                     }
                 }
             }

@@ -1235,3 +1235,6 @@ You can try again, but your new transaction will be subject to the current rates
 "Not enough %@" = "Không đủ %@";
 "You can’t swap same token" = "Bạn không thể trao đổi cùng một mã thông báo";
 "Swap of these tokens isn’t possible" = "Hoán đổi các mã thông báo này là không thể";
+"Buy with Moonpay" = "Mua bằng Moonpay";
+"License" = "Giấy phép";
+"Cashout with Moonpay" = "Rút tiền với Moonpay";
