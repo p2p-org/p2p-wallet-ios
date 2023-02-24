@@ -24,7 +24,7 @@ final class HomeEmptyViewModel: BaseViewModel, ObservableObject {
     private var cancellable: AnyCancellable?
     private let navigation: PassthroughSubject<HomeNavigation, Never>
     
-    private var _popularCoins: [Token] = [.usdc, .nativeSolana, .renBTC, .eth, .usdt]
+    private var _popularCoins: [Token] = [.usdc, .nativeSolana, /*.renBTC, */.eth, .usdt]
     var popularCoins: [PopularCoin] {
         _popularCoins.map { token in
             PopularCoin(

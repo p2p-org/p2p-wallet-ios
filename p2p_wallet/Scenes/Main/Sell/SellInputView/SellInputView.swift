@@ -23,7 +23,6 @@ struct SellInputView: View {
     var body: some View {
         VStack(alignment: .leading, spacing: 0) {
             exchangeRateView
-                .padding(.horizontal, 16)
                 .padding(.top, 6)
 
             ScrollView {
@@ -33,15 +32,16 @@ struct SellInputView: View {
                     feeView
                 }
                 .frame(maxWidth: .infinity)
-            }
+            }.endEditingKeyboardOnDragGesture()
             .frame(maxWidth: .infinity)
-            .onAppear {
-                UIScrollView.appearance().keyboardDismissMode = .onDrag
+            .onTapGesture {
+                UIApplication.shared.keyWindow?.endEditing(true)
             }
-//            .onTapGesture {
-//                UIApplication.shared.keyWindow?.endEditing(true)
-//            }
             Spacer()
+            if !viewModel.isEnteringBaseAmount, !viewModel.isEnteringQuoteAmount {
+                poweredBy
+                    .padding(.bottom, 37)
+            }
             sellButton
         }
         .frame(maxWidth: .infinity)
@@ -120,8 +120,29 @@ struct SellInputView: View {
         }
     }
 
+    var poweredBy: some View {
+        HStack {
+            Spacer()
+            VStack(alignment: .center, spacing: 4) {
+                Text(L10n.poweredBy + " Moonpay")
+                    .apply(style: .label1)
+                    .foregroundColor(Color(UIColor._9799Af))
+                Button {
+                    viewModel.moonpayLicenseTap()
+                } label: {
+                    Text(L10n.license)
+                        .apply(style: .label1)
+                        .multilineTextAlignment(.center)
+                        .foregroundColor(Color(Asset.Colors.night.color))
+                }
+            }
+            Spacer()
+        }
+    }
+
     var exchangeRateView: some View {
         HStack {
+            Spacer()
             switch viewModel.exchangeRate {
             case .loading:
                 Text("1 SOL ≈ 12.05 USD")

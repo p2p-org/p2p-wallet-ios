@@ -1230,3 +1230,6 @@ You can try again, but your new transaction will be subject to the current rates
 "Not enough %@" = "Недостаточно <С>";
 "You can’t swap same token" = "Вы не можете поменять один и тот же токен";
 "Swap of these tokens isn’t possible" = "Обмен этими токенами невозможен";
+"Buy with Moonpay" = "Купить с Moonpay";
+"License" = "Лицензия";
+"Cashout with Moonpay" = "Вывод средств с Moonpay";

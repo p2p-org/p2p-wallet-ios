@@ -141,14 +141,14 @@ extension TransactionHandler {
                 }
 
                 // update paying wallet
-                if let index = wallets.firstIndex(where: { $0.pubkey == transaction.payingFeeWallet.pubkey }) {
+                if let index = wallets.firstIndex(where: { $0.pubkey == transaction.payingFeeWallet?.pubkey }) {
                     let feeInToken = transaction.feeInToken
                     wallets[index].decreaseBalance(diffInLamports: feeInToken.total)
                 }
 
                 return wallets
             }
-        case let transaction as ProcessTransaction.CloseTransaction:
+        case let transaction as CloseTransaction:
             guard !socket.isConnected else { return }
 
             walletsRepository.batchUpdate { currentValue in
@@ -172,7 +172,7 @@ extension TransactionHandler {
                 return wallets
             }
 
-        case let transaction as ProcessTransaction.SwapTransaction:
+        case let transaction as SwapTransaction:
             walletsRepository.batchUpdate { currentValue in
                 var wallets = currentValue
 

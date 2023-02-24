@@ -284,11 +284,9 @@ DEPENDENCIES:
   - RenVMSwift (from `https://github.com/p2p-org/RenVMSwift.git`, branch `master`)
   - Resolver (= 1.5.0)
   - RxAppState (= 1.7.1)
-  - RxCocoa (= 6.5.0)
   - RxCombine (= 2.0.1)
   - RxConcurrency (from `https://github.com/TrGiLong/RxConcurrency.git`, branch `main`)
   - RxGesture (= 4.0.4)
-  - RxSwift (= 6.5.0)
   - Sell (from `https://github.com/p2p-org/key-app-kit-swift.git`, branch `feature/new-swap`)
   - Send (from `https://github.com/p2p-org/key-app-kit-swift.git`, branch `feature/new-swap`)
   - Sentry (from `https://github.com/getsentry/sentry-cocoa.git`, tag `7.31.5`)
@@ -633,6 +631,6 @@ SPEC CHECKSUMS:
   TransactionParser: 3004420d52e7b1277dbcfd20b995a5de707705f3
   TweetNacl: 3abf4d1d2082b0114e7a67410e300892448951e6
 
-PODFILE CHECKSUM: c23dcba1938931a19309691b68d49d95d4a848d6
+PODFILE CHECKSUM: e76951d402fdc8bed7af44bf0a599f052de68924
 
 COCOAPODS: 1.11.3
