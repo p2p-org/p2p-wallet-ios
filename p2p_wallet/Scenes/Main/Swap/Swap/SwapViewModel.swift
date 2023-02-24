@@ -216,14 +216,6 @@ private extension SwapViewModel {
         }
     }
 
-//    private func getToTokens(routeMap: RouteMap) {
-//        let selectedFromAddress = currentState.fromToken.token.address
-//        let toAddresses = Set(routeMap.indexesRouteMap[selectedFromAddress] ?? [])
-//        let toTokens = currentState.swapTokens.filter { toAddresses.contains($0.token.address) }
-//        self.toTokens = toTokens
-//        print("Set to tokens: \(toTokens.count)")
-//    }
-
     private func swapToken() async throws {
         guard let route = stateMachine.currentState.route else { return }
 
