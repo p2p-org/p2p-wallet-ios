@@ -79,9 +79,7 @@ final class JupiterSwapCoordinator: Coordinator<Void> {
 
         coordinate(to: TransactionDetailCoordinator(viewModel: viewModel, presentingViewController: navigationController))
             .sink(receiveCompletion: { [weak self] _ in
-                self?.navigationController.popViewController(animated: true, completion: {
-                    self?.result.send(())
-                })
+                self?.navigationController.popViewController(animated: true)
             }, receiveValue: { _ in })
             .store(in: &subscriptions)
     }
