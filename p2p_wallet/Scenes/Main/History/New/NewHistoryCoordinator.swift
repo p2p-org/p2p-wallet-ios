@@ -61,7 +61,7 @@ class NewHistoryCoordinator: SmartCoordinator<Void> {
                 .store(in: &self.subscriptions)
 
         case let .openSellTransaction(trx):
-            self.openSell(trx)
+            self.openSellTransactionDetail(trx)
 
         case let .openPendingTransaction(trx):
             let coordinator = TransactionDetailCoordinator(
@@ -80,6 +80,46 @@ class NewHistoryCoordinator: SmartCoordinator<Void> {
         case .openReceive:
             self.openReceive()
         }
+    }
+    
+    private func openSellTransactionDetail(_ transaction: SellDataServiceTransaction) {
+        let strategy: SellTransactionDetailsViewModel.Strategy
+        switch transaction.status {
+        case .completed:
+            strategy = .fundsWereSent
+        case .waitingForDeposit:
+            strategy = .youNeedToSend(receiverAddress: transaction.depositWallet)
+        case .pending:
+            strategy = .processing
+        case .failed:
+            strategy = .youVeNotSent
+        }
+
+        coordinate(to:
+            SellTransactionDetailsCoorditor(
+                viewController: presentation.presentingViewController,
+                strategy: .notSuccess(strategy),
+                transaction: transaction,
+                fiat: .usd,
+                date: transaction.createdAt ?? Date()
+            )
+        )
+        .sink { [weak self] result in
+            guard let self else { return }
+            switch result {
+            case .send:
+                self.presentation.presentingViewController.presentedViewController?.dismiss(animated: true) {
+                    self.openSend(transaction)
+                }
+            case .tryAgain:
+                self.presentation.presentingViewController.presentedViewController?.dismiss(animated: true) {
+                    self.openSell(transaction)
+                }
+            default:
+                break
+            }
+        }
+        .store(in: &subscriptions)
     }
 
     private func openSell(_ transaction: SellDataServiceTransaction) {
