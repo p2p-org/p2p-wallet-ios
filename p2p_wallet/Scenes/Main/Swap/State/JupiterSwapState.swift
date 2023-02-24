@@ -35,6 +35,7 @@ struct JupiterSwapState: Equatable {
 
     let fromToken: SwapToken
     let toToken: SwapToken
+    let possibleToTokens: [SwapToken]
     let priceInfo: SwapPriceInfo
 
     let slippage: Int
@@ -49,6 +50,7 @@ struct JupiterSwapState: Equatable {
         amountTo: Double,
         fromToken: SwapToken,
         toToken: SwapToken,
+        possibleToTokens: [SwapToken],
         priceInfo: SwapPriceInfo,
         slippage: Int,
         route: Route? = nil
@@ -61,6 +63,7 @@ struct JupiterSwapState: Equatable {
         self.amountTo = amountTo
         self.fromToken = fromToken
         self.toToken = toToken
+        self.possibleToTokens = possibleToTokens
         self.priceInfo = priceInfo
         self.slippage = slippage
         self.route = route
@@ -75,6 +78,7 @@ struct JupiterSwapState: Equatable {
         amountTo: Double = .zero,
         fromToken: SwapToken = .nativeSolana,
         toToken: SwapToken = .nativeSolana,
+        possibleToTokens: [SwapToken] = [],
         priceInfo: SwapPriceInfo = SwapPriceInfo(fromPrice: .zero, toPrice: .zero),
         slippage: Int = 0,
         route: Route? = nil
@@ -88,6 +92,7 @@ struct JupiterSwapState: Equatable {
             amountTo: amountTo,
             fromToken: fromToken,
             toToken: toToken,
+            possibleToTokens: possibleToTokens,
             priceInfo: priceInfo,
             slippage: slippage,
             route: route
@@ -103,6 +108,7 @@ struct JupiterSwapState: Equatable {
         amountTo: Double? = nil,
         fromToken: SwapToken? = nil,
         toToken: SwapToken? = nil,
+        possibleToTokens: [SwapToken]? = nil,
         priceInfo: SwapPriceInfo? = nil,
         slippage: Int? = nil,
         route: Route? = nil
@@ -116,6 +122,7 @@ struct JupiterSwapState: Equatable {
             amountTo: amountTo ?? self.amountTo,
             fromToken: fromToken ?? self.fromToken,
             toToken: toToken ?? self.toToken,
+            possibleToTokens: possibleToTokens ?? self.possibleToTokens,
             priceInfo: priceInfo ?? self.priceInfo,
             slippage: slippage ?? self.slippage,
             route: route ?? self.route

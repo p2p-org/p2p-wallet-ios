@@ -42,7 +42,6 @@ final class SwapViewModel: BaseViewModel, ObservableObject {
     @Published var showFinished = false
 
     var versionedTransaction: VersionedTransaction? //  I think it should be placed inside StateMachine rn
-    var toTokens: [SwapToken] = [] //  I think it should be placed inside StateMachine rn
 
     let stateMachine: JupiterSwapStateMachine
     var currentState: JupiterSwapState { stateMachine.currentState }
@@ -80,7 +79,6 @@ private extension SwapViewModel {
                     self.initializingState = .loading
                 case let .ready(swapTokens, routeMap):
                     let prechosenToken = swapTokens.first(where: { $0.address == self.preChosenWallet?.mintAddress })
-                    self.getToTokens(routeMap: routeMap)
                     let _ = await self.stateMachine
                         .accept(action: .initialize(
                             swapTokens: swapTokens,
@@ -218,12 +216,13 @@ private extension SwapViewModel {
         }
     }
 
-    private func getToTokens(routeMap: RouteMap) {
-        let selectedFromAddress = currentState.fromToken.token.address
-        let toAddresses = Set(routeMap.indexesRouteMap[selectedFromAddress] ?? [])
-        let toTokens = currentState.swapTokens.filter { toAddresses.contains($0.token.address) }
-        self.toTokens = toTokens
-    }
+//    private func getToTokens(routeMap: RouteMap) {
+//        let selectedFromAddress = currentState.fromToken.token.address
+//        let toAddresses = Set(routeMap.indexesRouteMap[selectedFromAddress] ?? [])
+//        let toTokens = currentState.swapTokens.filter { toAddresses.contains($0.token.address) }
+//        self.toTokens = toTokens
+//        print("Set to tokens: \(toTokens.count)")
+//    }
 
     private func swapToken() async throws {
         guard let route = stateMachine.currentState.route else { return }
