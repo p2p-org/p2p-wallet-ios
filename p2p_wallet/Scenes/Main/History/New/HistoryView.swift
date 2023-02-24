@@ -52,12 +52,14 @@ struct NewHistoryView<Header: View>: View {
                     ForEach(section.items, id: \.id) { (item: NewHistoryItem) in
                         Group {
                             switch item {
-                            case let .rendableTransaction(rendableItem):
-                                HistoryItemView(item: rendableItem) {
-                                    rendableItem.onTap?()
+                            case let .rendableTransaction(item):
+                                HistoryItemView(item: item) {
+                                    item.onTap?()
                                 }
                             case let .rendableOffram(item):
-                                HistoryOfframItemView(item: item) {}
+                                HistoryOfframItemView(item: item) {
+                                    item.onTap?()
+                                }
                             case .placeHolder:
                                 HistoryListSkeletonView()
                             case let .button(_, title, action):
