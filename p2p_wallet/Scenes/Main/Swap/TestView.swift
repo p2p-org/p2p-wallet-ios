@@ -14,10 +14,10 @@ struct TestView: View {
     private let jupiterClient = JupiterRestClientAPI(version: .v4)
     @Injected private var walletsRepository: WalletsRepository
     
-    @State var tokens = [Jupiter.Token]()
+    @State var tokens = [Token]()
     
-    @State var inputToken: Jupiter.Token!
-    @State var outputToken: Jupiter.Token!
+    @State var inputToken: Token!
+    @State var outputToken: Token!
     
     @State var pendingQuote = false
     
@@ -131,26 +131,5 @@ struct TestView: View {
             
             pendingQuote = false
         }
-    }
-}
-
-extension Jupiter.Token: Hashable {
-    public static func == (lhs: Jupiter.Token, rhs: Jupiter.Token) -> Bool {
-        lhs.address == rhs.address && lhs.symbol == rhs.symbol && lhs.name == rhs.name
-    }
-    
-    public var id: String {
-        symbol + name + address
-    }
-    
-    public func hash(into hasher: inout Hasher) {
-        hasher.combine(address)
-        hasher.combine(chainId)
-        hasher.combine(decimals)
-        hasher.combine(name)
-        hasher.combine(symbol)
-        hasher.combine(logoURI)
-        hasher.combine(extensions?.coingeckoId)
-        hasher.combine(tags)
     }
 }

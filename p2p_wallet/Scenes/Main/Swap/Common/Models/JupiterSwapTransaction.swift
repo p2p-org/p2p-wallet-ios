@@ -24,8 +24,8 @@ struct JupiterSwapTransaction: RawTransactionType {
     ) {
         self.execution = execution
         self.mainDescription = [
-            amountFrom.tokenAmountFormattedString(symbol: fromToken.jupiterToken.symbol, maximumFractionDigits: fromToken.jupiterToken.decimals),
-            amountTo.tokenAmountFormattedString(symbol: toToken.jupiterToken.symbol, maximumFractionDigits: toToken.jupiterToken.decimals)
+            amountFrom.tokenAmountFormattedString(symbol: fromToken.token.symbol, maximumFractionDigits: Int(fromToken.token.decimals)),
+            amountTo.tokenAmountFormattedString(symbol: toToken.token.symbol, maximumFractionDigits: Int(toToken.token.decimals))
         ].joined(separator: " → ")
         self.amountFiat = amountFromFiat
         self.fromToken = fromToken

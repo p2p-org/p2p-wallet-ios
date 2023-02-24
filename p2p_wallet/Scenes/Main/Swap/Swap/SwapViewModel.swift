@@ -110,7 +110,7 @@ private extension SwapViewModel {
             .sinkAsync { [weak self] updatedState in
                 guard let self else { return }
                 self.handle(state: updatedState)
-                self.updateHeader(priceInfo: updatedState.priceInfo, fromToken: updatedState.fromToken.jupiterToken, toToken: updatedState.toToken.jupiterToken)
+                self.updateHeader(priceInfo: updatedState.priceInfo, fromToken: updatedState.fromToken.token, toToken: updatedState.toToken.token)
                 self.updateActionButton(for: updatedState)
             }
             .store(in: &subscriptions)
@@ -139,7 +139,7 @@ private extension SwapViewModel {
                     try await swapToken()
                     actionButtonData = SliderActionButtonData(
                         isEnabled: true,
-                        title: L10n.swap(state.fromToken.jupiterToken.symbol, state.toToken.jupiterToken.symbol)
+                        title: L10n.swap(state.fromToken.token.symbol, state.toToken.token.symbol)
                     )
                 } catch {
                     actionButtonData = SliderActionButtonData(
@@ -188,10 +188,10 @@ private extension SwapViewModel {
         timer?.invalidate()
     }
 
-    func updateHeader(priceInfo: SwapPriceInfo, fromToken: Jupiter.Token, toToken: Jupiter.Token) {
+    func updateHeader(priceInfo: SwapPriceInfo, fromToken: Token, toToken: Token) {
         if priceInfo.relation != 0 {
-            let onetoToken = 1.tokenAmountFormattedString(symbol: toToken.symbol, maximumFractionDigits: toToken.decimals, roundingMode: .down)
-            let amountFromToken = priceInfo.relation.tokenAmountFormattedString(symbol: fromToken.symbol, maximumFractionDigits: fromToken.decimals, roundingMode: .down)
+            let onetoToken = 1.tokenAmountFormattedString(symbol: toToken.symbol, maximumFractionDigits: Int(toToken.decimals), roundingMode: .down)
+            let amountFromToken = priceInfo.relation.tokenAmountFormattedString(symbol: fromToken.symbol, maximumFractionDigits: Int(fromToken.decimals), roundingMode: .down)
             header = [onetoToken, amountFromToken].joined(separator: " ≈ ")
         } else {
             header = ""
@@ -207,7 +207,7 @@ private extension SwapViewModel {
         case .requiredInitialize, .loadingTokenTo, .loadingAmountTo, .switching, .initializing:
             actionButtonData = SliderActionButtonData(isEnabled: false, title: L10n.counting)
         case .error(.notEnoughFromToken):
-            actionButtonData = SliderActionButtonData(isEnabled: false, title: L10n.notEnough(state.fromToken.jupiterToken.symbol))
+            actionButtonData = SliderActionButtonData(isEnabled: false, title: L10n.notEnough(state.fromToken.token.symbol))
         case .error(.equalSwapTokens):
             actionButtonData = SliderActionButtonData(isEnabled: false, title: L10n.youCanTSwapSameToken)
         case .error(.networkConnectionError):
@@ -219,9 +219,9 @@ private extension SwapViewModel {
     }
 
     private func getToTokens(routeMap: RouteMap) {
-        let selectedFromAddress = currentState.fromToken.jupiterToken.address
+        let selectedFromAddress = currentState.fromToken.token.address
         let toAddresses = Set(routeMap.indexesRouteMap[selectedFromAddress] ?? [])
-        let toTokens = currentState.swapTokens.filter { toAddresses.contains($0.jupiterToken.address) }
+        let toTokens = currentState.swapTokens.filter { toAddresses.contains($0.token.address) }
         self.toTokens = toTokens
     }
 

@@ -11,7 +11,7 @@ extension JupiterSwapBusinessLogic {
             return state.copy(status: .ready, amountFrom: 0, amountFromFiat: 0, amountTo: 0, route: nil)
         }
 
-        let amountFromLamports = state.amountFrom.toLamport(decimals: state.fromToken.jupiterToken.decimals)
+        let amountFromLamports = state.amountFrom.toLamport(decimals: state.fromToken.token.decimals)
 
         do {
             let data = try await services.jupiterClient.quote(
@@ -30,7 +30,7 @@ extension JupiterSwapBusinessLogic {
                 return state.copy(status: .error(reason: .routeIsNotFound))
             }
 
-            let amountTo = toAmountLamports.convertToBalance(decimals: state.toToken.jupiterToken.decimals)
+            let amountTo = toAmountLamports.convertToBalance(decimals: state.toToken.token.decimals)
             let newPriceInfo = SwapPriceInfo(
                 fromPrice: state.priceInfo.fromPrice,
                 toPrice: state.priceInfo.toPrice,
