@@ -88,7 +88,7 @@ private extension SwapInputView {
             textField.setContentHuggingPriority(.defaultHigh, for: .horizontal)
             textField.isEnabled = viewModel.isEditable
             textField.placeholder = "0"
-            textField.maximumFractionDigits = viewModel.token.jupiterToken.decimals
+            textField.maximumFractionDigits = Int(viewModel.token.token.decimals)
         }
         .if(viewModel.isLoading || viewModel.isAmountLoading) { view in
             view.skeleton(with: true, size: CGSize(width: 84, height: 20))
