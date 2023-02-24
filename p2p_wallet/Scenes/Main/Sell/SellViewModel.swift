@@ -161,6 +161,11 @@ class SellViewModel: BaseViewModel, ObservableObject {
             self.isEnteringBaseAmount = !self.shouldNotShowKeyboard
         }
     }
+    
+    func moonpayLicenseTap() {
+        let url = URL(string: MoonpayLicenseURL)!
+        navigation.send(.webPage(url: url))
+    }
 
     // MARK: - Binding
 

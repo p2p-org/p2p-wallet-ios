@@ -87,8 +87,7 @@ final class SellCoordinator: Coordinator<SellCoordinatorResult> {
     }
 
     private func setTitle(to vc: UIViewController) {
-        vc.title = "\(L10n.cashOut) SOL"
-        vc.navigationItem.largeTitleDisplayMode = .always
+        vc.title = "\(L10n.cashoutWithMoonpay) "
         vc.navigationController?.navigationBar.prefersLargeTitles = true
     }
 
