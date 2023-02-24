@@ -12,10 +12,7 @@ struct SendInputFeePromptView: View {
     }
 
     var body: some View {
-        ZStack {
-            Color(Asset.Colors.smoke.color)
-                .edgesIgnoringSafeArea(.all)
-
+        ColoredBackground {
             VStack(alignment: .center, spacing: 0) {
                 Image(uiImage: .fee)
                     .resizable()

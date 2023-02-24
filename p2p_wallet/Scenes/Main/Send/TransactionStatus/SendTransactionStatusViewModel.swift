@@ -2,7 +2,6 @@ import Combine
 import FeeRelayerSwift
 import KeyAppUI
 import Resolver
-import RxSwift
 import SolanaSwift
 import TransactionParser
 
@@ -24,16 +23,15 @@ final class SendTransactionStatusViewModel: BaseViewModel, ObservableObject {
     @Published var closeButtonTitle: String = L10n.done
 
     private var currentTransaction: ParsedTransaction?
-    private let disposeBag = DisposeBag()
 
     init(transaction: SendTransaction) {
         token = transaction.walletToken.token
         transactionFiatAmount = "-\(transaction.amountInFiat.fiatAmountFormattedString(roundingMode: .down, customFormattForLessThan1E_2: true))"
         transactionCryptoAmount = transaction.amount.tokenAmountFormattedString(symbol: transaction.walletToken.token.symbol)
 
-        let feeToken = transaction.payingFeeWallet.token
+        let feeToken = transaction.payingFeeWallet?.token
         let feeAmount: String? = transaction.feeInToken == .zero ? nil : transaction.feeInToken.total
-            .convertToBalance(decimals: feeToken.decimals).tokenAmountFormattedString(symbol: feeToken.symbol)
+            .convertToBalance(decimals: feeToken?.decimals).tokenAmountFormattedString(symbol: feeToken?.symbol ?? "")
         let feeInfo = feeAmount ?? L10n.freePaidByKeyApp
 
         var recipient: String = RecipientFormatter.format(destination: transaction.recipient.address)
@@ -48,7 +46,8 @@ final class SendTransactionStatusViewModel: BaseViewModel, ObservableObject {
         super.init()
         let transactionIndex = transactionHandler.sendTransaction(transaction)
         transactionHandler.observeTransaction(transactionIndex: transactionIndex)
-            .subscribe { [weak self] pendingTransaction in
+            .receive(on: DispatchQueue.main)
+            .sink(receiveValue: { [weak self] pendingTransaction in
                 guard let self = self else { return }
                 self.subtitle = pendingTransaction?.sentAt.string(withFormat: "MMMM dd, yyyy @ HH:mm", locale: Locale.base) ?? ""
                 switch pendingTransaction?.status {
@@ -60,8 +59,8 @@ final class SendTransactionStatusViewModel: BaseViewModel, ObservableObject {
                     self.updateCompleted()
                 }
                 self.currentTransaction = pendingTransaction?.parse(pricesService: self.priceService)
-            }
-            .disposed(by: disposeBag)
+            })
+            .store(in: &subscriptions)
 
         errorMessageTap
             .sink { [weak self] in

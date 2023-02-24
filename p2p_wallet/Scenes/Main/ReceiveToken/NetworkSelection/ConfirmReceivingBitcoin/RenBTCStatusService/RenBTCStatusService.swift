@@ -9,8 +9,6 @@ import FeeRelayerSwift
 import Foundation
 import OrcaSwapSwift
 import Resolver
-import RxConcurrency
-import RxSwift
 import SolanaSwift
 
 class RenBTCStatusService: RenBTCStatusServiceType {

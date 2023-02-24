@@ -15,6 +15,7 @@ import UIKit
 extension OrcaSwapV2 {
     class ViewController: BaseViewController {
         @Injected private var analyticsManager: AnalyticsManager
+        private let disposeBag = DisposeBag()
 
         private let settingButton = UIBarButtonItem(
             image: .settings,
@@ -41,7 +42,7 @@ extension OrcaSwapV2 {
             navigationItem.rightBarButtonItem = settingButton
             navigationItem.largeTitleDisplayMode = .never
             self.hidesBottomBarWhenPushed = hidesBottomBarWhenPushed
-            analyticsManager.log(event: AmplitudeEvent.swapStartScreen)
+            analyticsManager.log(event: .swapStartScreen)
         }
 
         // MARK: - Methods
@@ -115,7 +116,7 @@ extension OrcaSwapV2 {
                 let vm = ConfirmSwapping.ViewModel(swapViewModel: viewModel)
                 let vc = ConfirmSwapping.ViewController(viewModel: vm)
                 show(vc, sender: nil)
-                analyticsManager.log(event: AmplitudeEvent.swapClickReviewButton)
+                analyticsManager.log(event: .swapClickReviewButton)
             case let .processTransaction(transaction):
                 let vm = ProcessTransaction.ViewModel(processingTransaction: transaction)
                 let vc = ProcessTransaction.ViewController(viewModel: vm)

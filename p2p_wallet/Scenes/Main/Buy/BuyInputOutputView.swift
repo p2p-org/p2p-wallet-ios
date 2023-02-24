@@ -41,10 +41,12 @@ struct BuyInputOutputView: View {
                         side: .left
                     )
                         .padding(.leading, 8)
+                        .accessibilityIdentifier("BuyInputOutputView.leftInput")
 
                     currency(value: leftSubtitle) { onTap(.left) }
                         .lineLimit(1)
                         .padding(.trailing, 20)
+                        .accessibilityIdentifier("BuyInputOutputView.leftCurrency")
                 }.frame(width: reader.size.width / 2)
 
                 // Divider
@@ -61,10 +63,12 @@ struct BuyInputOutputView: View {
                         isFocued: false
                     )
                         .padding(.leading, 8)
+                        .accessibilityIdentifier("BuyInputOutputView.rightInput")
 
                     currency(value: rightSubtitle) { onTap(.right) }
                         .lineLimit(1)
                         .padding(.trailing, 20)
+                        .accessibilityIdentifier("BuyInputOutputView.rightCurrency")
                 }.frame(width: reader.size.width / 2)
             }
             .onAppear {

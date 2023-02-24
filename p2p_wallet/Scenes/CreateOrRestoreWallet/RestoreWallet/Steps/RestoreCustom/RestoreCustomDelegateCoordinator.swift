@@ -149,10 +149,10 @@ private extension RestoreCustomDelegatedCoordinator {
             viewModel?.isLoading = true
             do {
                 try await stateMachine <- .enterOTP(otp: otp)
-                self?.analyticsManager.log(event: AmplitudeEvent.restoreSmsValidation(result: true))
+                self?.analyticsManager.log(event: .restoreSmsValidation(result: true))
             } catch {
                 viewModel?.coordinatorIO.error.send(error)
-                self?.analyticsManager.log(event: AmplitudeEvent.restoreSmsValidation(result: false))
+                self?.analyticsManager.log(event: .restoreSmsValidation(result: false))
             }
             viewModel?.isLoading = false
         }.store(in: &subscriptions)

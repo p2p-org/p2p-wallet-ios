@@ -5,7 +5,7 @@
 //  Created by Andrew Vasiliev on 30.01.2022.
 //
 
-import BECollectionView
+import BECollectionView_Combine
 import SolanaSwift
 
 extension SupportedTokens {
@@ -39,7 +39,7 @@ extension SupportedTokens {
             if let cell = cell as? EmptyCell,
                let viewModel = viewModel as? SupportedTokensViewModelType
             {
-                cell.searchKey = viewModel.keyword
+                cell.searchKey = viewModel.keyword ?? ""
             }
 
             return cell

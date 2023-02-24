@@ -10,6 +10,20 @@ import Resolver
 import Send
 import SolanaSwift
 
+enum LoadableState: Equatable {
+    case notRequested
+    case loading
+    case loaded
+    case error(String?)
+
+    var isError: Bool {
+        switch self {
+        case .error: return true
+        default: return false
+        }
+    }
+}
+
 class RecipientSearchViewModel: ObservableObject {
     private let preChosenWallet: Wallet?
     private var subscriptions = Set<AnyCancellable>()
@@ -212,7 +226,7 @@ private extension RecipientSearchViewModel {
     }
 
     func logOpen() {
-        analyticsManager.log(event: AmplitudeEvent.sendnewRecipientScreen(source: source.rawValue))
+        analyticsManager.log(event: .sendnewRecipientScreen(source: source.rawValue))
     }
 
     func logRecipient(recipient: Recipient, fromQR: Bool) {
@@ -228,6 +242,6 @@ private extension RecipientSearchViewModel {
             }
         }
         analyticsManager
-            .log(event: AmplitudeEvent.sendnewRecipientAdd(type: inputType.rawValue, source: source.rawValue))
+            .log(event: .sendnewRecipientAdd(type: inputType.rawValue, source: source.rawValue))
     }
 }
