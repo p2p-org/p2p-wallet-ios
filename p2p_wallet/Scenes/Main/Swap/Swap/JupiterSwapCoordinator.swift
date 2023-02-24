@@ -29,14 +29,16 @@ final class JupiterSwapCoordinator: Coordinator<Void> {
             .store(in: &subscriptions)
 
         fromViewModel.changeTokenPressed
-            .sink { [weak viewModel, weak self] in
+            .sink { [weak viewModel, weak self, unowned fromViewModel] in
                 guard let self, let viewModel else { return }
+                fromViewModel.isFirstResponder = false
                 self.openChooseToken(viewModel: viewModel, fromToken: true)
             }
             .store(in: &subscriptions)
         toViewModel.changeTokenPressed
-            .sink { [weak viewModel, weak self] in
+            .sink { [weak viewModel, weak self, unowned fromViewModel] in
                 guard let self, let viewModel else { return }
+                fromViewModel.isFirstResponder = false
                 self.openChooseToken(viewModel: viewModel, fromToken: false)
             }
             .store(in: &subscriptions)
@@ -58,7 +60,7 @@ final class JupiterSwapCoordinator: Coordinator<Void> {
     private func openChooseToken(viewModel: SwapViewModel, fromToken: Bool) {
         coordinate(to: ChooseSwapTokenCoordinator(
             chosenWallet: fromToken ? viewModel.currentState.fromToken : viewModel.currentState.toToken,
-            tokens: fromToken ? viewModel.currentState.swapTokens : viewModel.toTokens,
+            tokens: fromToken ? viewModel.currentState.swapTokens : viewModel.currentState.possibleToTokens,
             navigationController: navigationController
         ))
         .compactMap { $0 }

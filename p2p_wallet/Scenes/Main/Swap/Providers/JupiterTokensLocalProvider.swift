@@ -1,17 +1,18 @@
 import Jupiter
+import SolanaSwift
 
 protocol JupiterTokensProvider {
     func getCachedData() -> JupiterTokensCache?
-    func save(tokens: [Jupiter.Token], routeMap: RouteMap) throws
+    func save(tokens: [Token], routeMap: RouteMap) throws
     func clear()
 }
 
 struct JupiterTokensCache: Codable {
-    let tokens: [Jupiter.Token]
+    let tokens: [Token]
     let routeMap: RouteMap
     let created: Date
 
-    init(tokens: [Jupiter.Token], routeMap: RouteMap) {
+    init(tokens: [Token], routeMap: RouteMap) {
         self.tokens = tokens
         self.routeMap = routeMap
         self.created = Date()
@@ -37,7 +38,7 @@ final class JupiterTokensLocalProvider: JupiterTokensProvider {
         }
     }
 
-    func save(tokens: [Jupiter.Token], routeMap: RouteMap) throws {
+    func save(tokens: [Token], routeMap: RouteMap) throws {
         let data = try JSONEncoder().encode(JupiterTokensCache(tokens: tokens, routeMap: routeMap))
         try data.write(to: cacheFile)
     }

@@ -1,12 +1,12 @@
 extension SwapToken: ChooseItemSearchableItem {
     var id: String {
-        jupiterToken.address
+        token.address
     }
 
     func matches(keyword: String) -> Bool {
-        jupiterToken.symbol.lowercased().hasPrefix(keyword.lowercased()) ||
-        jupiterToken.symbol.lowercased().contains(keyword.lowercased()) ||
-        jupiterToken.name.lowercased().hasPrefix(keyword.lowercased()) ||
-        jupiterToken.name.lowercased().contains(keyword.lowercased())
+        token.symbol.lowercased().hasPrefix(keyword.lowercased()) ||
+        token.symbol.lowercased().contains(keyword.lowercased()) ||
+        token.name.lowercased().hasPrefix(keyword.lowercased()) ||
+        token.name.lowercased().contains(keyword.lowercased())
     }
 }

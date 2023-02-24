@@ -31,14 +31,14 @@ private extension Array where Element == SwapToken {
         let preferOrder: [String: Int] = ["USDC": 1, "USDT": 2]
         return self
             .sorted { (lhs: SwapToken, rhs: SwapToken) -> Bool in
-                if preferOrder[lhs.jupiterToken.symbol] != nil || preferOrder[rhs.jupiterToken.symbol] != nil {
-                    return (preferOrder[lhs.jupiterToken.symbol] ?? 3) < (preferOrder[rhs.jupiterToken.symbol] ?? 3)
+                if preferOrder[lhs.token.symbol] != nil || preferOrder[rhs.token.symbol] != nil {
+                    return (preferOrder[lhs.token.symbol] ?? 3) < (preferOrder[rhs.token.symbol] ?? 3)
                 } else if let lhsWallet = lhs.userWallet, let rhsWallet = rhs.userWallet {
                     return lhsWallet.amountInCurrentFiat > rhsWallet.amountInCurrentFiat
                 } else if lhs.userWallet != nil || rhs.userWallet != nil {
                     return false
                 } else {
-                    return lhs.jupiterToken.name < rhs.jupiterToken.name
+                    return lhs.token.name < rhs.token.name
                 }
             }
     }
