@@ -6,7 +6,7 @@ import Resolver
 import SkeletonUI
 
 struct SellInputView: View {
-    @Injected private var analyticsMAnager: AnalyticsManager
+    @Injected private var analyticsManager: AnalyticsManager
 
     @ObservedObject var viewModel: SellViewModel
 
@@ -47,7 +47,7 @@ struct SellInputView: View {
         .frame(maxWidth: .infinity)
         .background(Color(Asset.Colors.smoke.color))
         .onAppear {
-            analyticsMAnager.log(event: AmplitudeEvent.sellAmount)
+            analyticsManager.log(event: .sellAmount)
         }
     }
 

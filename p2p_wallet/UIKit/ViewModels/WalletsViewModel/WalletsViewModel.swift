@@ -12,6 +12,7 @@ import RxAppState
 import RxCocoa
 import RxSwift
 import SolanaSwift
+import Combine
 
 class WalletsViewModel: BEListViewModel<Wallet> {
     // MARK: - Dependencies
@@ -26,6 +27,7 @@ class WalletsViewModel: BEListViewModel<Wallet> {
 
     private var defaultsDisposables = [DefaultsDisposable]()
     private var disposeBag = DisposeBag()
+    private var subscriptions = Set<AnyCancellable>()
     
     @MainActor private var lastGetNewWalletTime = Date()
     private var updatingTask: Task<Void, Error>?
@@ -51,11 +53,12 @@ class WalletsViewModel: BEListViewModel<Wallet> {
         super.bind()
 
         // observe prices
-        pricesService.currentPricesDriver
-            .drive(onNext: { [weak self] _ in
+        pricesService.currentPricesPublisher
+            .receive(on: RunLoop.main)
+            .sink(receiveValue: { [weak self] _ in
                 self?.updatePrices()
             })
-            .disposed(by: disposeBag)
+            .store(in: &subscriptions)
 
         // observe tokens' balance
         socket.observeAllAccountsNotifications()
@@ -254,6 +257,7 @@ class WalletsViewModel: BEListViewModel<Wallet> {
     private func updatePrices() {
         guard currentState == .loaded else { return }
         let wallets = mapPrices(wallets: data)
+            .sorted(by: Wallet.defaultSorter)
         overrideData(by: wallets)
     }
 
@@ -300,32 +304,54 @@ class WalletsViewModel: BEListViewModel<Wallet> {
 private extension Wallet {
     static var defaultSorter: (Wallet, Wallet) -> Bool {
         { lhs, rhs in
-            // Solana
-            if lhs.isNativeSOL != rhs.isNativeSOL {
-                return lhs.isNativeSOL
-            }
-
+            // prefers non-liquidity token than liquidity tokens
             if lhs.token.isLiquidity != rhs.token.isLiquidity {
                 return !lhs.token.isLiquidity
             }
+            
+            // prefers prioritized tokens than others
+            let prioritizedTokenMints = [
+                PublicKey.usdcMint.base58EncodedString,
+                PublicKey.usdtMint.base58EncodedString
+            ]
+            for mint in prioritizedTokenMints {
+                if mint == lhs.token.address || mint == rhs.token.address {
+                    return mint == lhs.token.address
+                }
+            }
 
+            // prefers token which more value than the other in fiat
             if lhs.amountInCurrentFiat != rhs.amountInCurrentFiat {
                 return lhs.amountInCurrentFiat > rhs.amountInCurrentFiat
             }
 
+            // prefers known token than unknown ones
             if lhs.token.symbol.isEmpty != rhs.token.symbol.isEmpty {
                 return !lhs.token.symbol.isEmpty
             }
 
+            // prefers token which more balance than the others
             if lhs.amount != rhs.amount {
                 return lhs.amount.orZero > rhs.amount.orZero
             }
 
+            // sort by symbol
             if lhs.token.symbol != rhs.token.symbol {
                 return lhs.token.symbol < rhs.token.symbol
             }
 
+            // then name
             return lhs.name < rhs.name
         }
+    }
+}
+
+private extension Timer {
+    static func observable(
+        seconds: Int,
+        scheduler: SchedulerType = MainScheduler.instance
+    ) -> Observable<Void> {
+        Observable<Int>.timer(.seconds(0), period: .seconds(seconds), scheduler: scheduler)
+            .map { _ in () }
     }
 }

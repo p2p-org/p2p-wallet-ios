@@ -33,7 +33,7 @@ final class TransactionDetailsCoordinator: Coordinator<Void> {
         viewController.transitioningDelegate = transition
         viewController.modalPresentationStyle = .custom
         controller.present(viewController, animated: true)
-        analyticsManager.log(event: AmplitudeEvent.buyTotalShowed)
+        analyticsManager.log(event: .buyTotalShowed)
 
         transition.dimmClicked
             .sink(receiveValue: {

@@ -6,6 +6,7 @@
 //
 
 import Foundation
+import ListPlaceholder
 
 class BaseCollectionViewCell: UICollectionViewCell {
     var padding: UIEdgeInsets { .init(all: 20) }

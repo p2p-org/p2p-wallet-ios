@@ -6,7 +6,6 @@
 //
 
 import Foundation
-import RxSwift
 import SolanaSwift
 
 /// The `RenBTCServiceType` helps to prepare with renBTC service.

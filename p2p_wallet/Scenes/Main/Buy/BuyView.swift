@@ -3,7 +3,7 @@ import SkeletonUI
 import SolanaSwift
 import SwiftUI
 
-struct BuyView: View {
+struct BuyView: View, KeyboardVisibilityReadable {
     private let textLeadingPadding = 25.0
     private let cardLeadingPadding = 16.0
 
@@ -14,6 +14,7 @@ struct BuyView: View {
     @State var bottomOffset = CGFloat(110)
     @State var leftInputText: String = ""
     @State var rightInputText: String = ""
+    @State private var isKeyboardVisible = false
 
     init(viewModel: BuyViewModel) {
         self.viewModel = viewModel
@@ -39,6 +40,9 @@ struct BuyView: View {
                         input
                             .padding(.top, 10)
                             .padding(.bottom, 25)
+                            .onReceive(isKeyboardShown) { isKeyboardVisible in
+                                self.isKeyboardVisible = isKeyboardVisible
+                            }
                         Divider()
                             .frame(height: 1)
                             .overlay(Color(Asset.Colors.snow.color))
@@ -75,6 +79,7 @@ struct BuyView: View {
                 bottomOffset = 0
             }
         }
+        .ignoresSafeArea(.keyboard, edges: isKeyboardVisible ? .top : .bottom)
     }
 
     var poweredBy: some View {
@@ -137,7 +142,8 @@ struct BuyView: View {
                 case .right: viewModel.fiatSelectTapped()
                 case .none: return
                 }
-            }.padding(.horizontal, 16)
+            }
+            .padding(.horizontal, 16)
         }
     }
 
@@ -164,6 +170,7 @@ struct BuyView: View {
                                     }
                                 } label: {
                                     methodCard(item: item)
+                                        .accessibilityIdentifier("BuyView.methods" + (item.type == viewModel.selectedPayment ? "_selected" : item.type.rawValue))
                                         .foregroundColor(Color(Asset.Colors.night.color))
                                         .frame(width: 158)
                                 }.addBorder(
@@ -193,6 +200,7 @@ struct BuyView: View {
                 } label: {
                     Text("\(viewModel.total)")
                         .apply(style: .text3)
+                        .accessibilityIdentifier("BuyView.total")
                         .foregroundColor(Color(Asset.Colors.mountain.color))
                     Image(uiImage: Asset.MaterialIcon.chevronRight.image)
                         .foregroundColor(Color(Asset.Colors.mountain.color))
@@ -321,6 +329,7 @@ struct BuyView: View {
             viewModel?.buyButtonTapped()
         }
         .frame(height: 56)
+        .accessibilityIdentifier("BuyView.actionButtonView")
         .padding(EdgeInsets(top: 0, leading: 16, bottom: 12, trailing: 16))
         .disabled(!viewModel.buttonItem.enabled)
     }

@@ -69,7 +69,7 @@ final class HomeEmptyViewModel: BaseViewModel, ObservableObject {
     
     func buyTapped(index: Int) {
         let coin = _popularCoins[index]
-        analyticsManager.log(event: AmplitudeEvent.mainScreenBuyToken(tokenName: coin.symbol))
+        analyticsManager.log(event: .mainScreenBuyToken(tokenName: coin.symbol))
         navigation.send(.topUpCoin(coin))
     }
 }

@@ -1,4 +1,3 @@
-import RxSwift
 import Send
 import SolanaSwift
 
@@ -7,7 +6,7 @@ struct SendTransaction: RawTransactionType {
     let recipient: Recipient
     let amount: Double
     let amountInFiat: Double
-    let payingFeeWallet: Wallet
+    let payingFeeWallet: Wallet?
     let feeInToken: FeeAmount
 
     let execution: () async throws -> TransactionID
@@ -22,7 +21,8 @@ struct SendTransaction: RawTransactionType {
     }
 
     var networkFees: (total: Lamports, token: Token)? {
-        (total: feeInToken.total, token: payingFeeWallet.token)
+        guard let payingFeeWallet else { return nil }
+        return (total: feeInToken.total, token: payingFeeWallet.token)
     }
 
     init(state: SendInputState, execution: @escaping () async throws -> TransactionID) {
@@ -35,7 +35,7 @@ struct SendTransaction: RawTransactionType {
         self.execution = execution
     }
 
-    func createRequest() -> Single<String> {
-        Single.async { try await execution() }
+    func createRequest() async throws -> String {
+        try await execution()
     }
 }

@@ -8,6 +8,8 @@
 import BEPureLayout
 import Resolver
 import RxCocoa
+import RxSwift
+import RxAppState
 
 extension History {
     final class TransactionViewController: WLModalViewController {
@@ -16,6 +18,7 @@ extension History {
         private lazy var customView = TransactionView()
 
         private let viewModel: TransactionViewModel
+        private let disposeBag = DisposeBag()
 
         init(viewModel: TransactionViewModel) {
             self.viewModel = viewModel

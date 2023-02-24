@@ -47,7 +47,6 @@ final class BuyViewModel: ObservableObject {
     @Injected var exchangeService: BuyExchangeService
     @Injected var walletsRepository: WalletsRepository
     @Injected private var analyticsManager: AnalyticsManager
-    @Injected private var analyticsService: AnalyticsService
     @Injected private var pricesService: PricesServiceType
 
     // Defaults
@@ -56,10 +55,10 @@ final class BuyViewModel: ObservableObject {
     @SwiftyUserDefault(keyPath: \.buyMinPrices, options: .cached)
     var buyMinPrices: [String: [String: Double]]
 
-    private var tokenPrices: [Fiat: [TokenPriceKey: Double?]] = [:]
+    private var tokenPrices: [Fiat: [String: Double?]] = [:]
 
     // Defaults
-    private static let defaultMinAmount = Double(40)
+    private static let defaultMinAmount = Double(30)
     private static let defaultMaxAmount = Double(10000)
     private static let tokens: [Token] = [.usdc, .nativeSolana]
     private static let fiats: [Fiat] = available(.buyBankTransferEnabled) ? [.eur, .gbp, .usd] : [.usd]
@@ -87,7 +86,7 @@ final class BuyViewModel: ObservableObject {
                 let oldToken = self.token
                 self.token = token ?? self.token
                 if initTokenWasSelected {
-                    analyticsManager.log(event: AmplitudeEvent.buyCoinChanged(
+                    analyticsManager.log(event: .buyCoinChanged(
                         fromCoin: oldToken.symbol,
                         toCoin: self.token.symbol
                     ))
@@ -108,7 +107,7 @@ final class BuyViewModel: ObservableObject {
                     }
                 }
                 if initFiatWasSelected {
-                    analyticsManager.log(event: AmplitudeEvent.buyCurrencyChanged(
+                    analyticsManager.log(event: .buyCurrencyChanged(
                         fromCurrency: oldFiat.code,
                         toCurrency: self.fiat.code
                     ))
@@ -235,7 +234,7 @@ final class BuyViewModel: ObservableObject {
     @MainActor func didSelectPayment(_ payment: PaymentTypeItem) {
         selectedPayment = payment.type
         setPaymentMethod(payment.type)
-        analyticsManager.log(event: AmplitudeEvent.buyChosenMethodPayment(type: payment.type.analyticName))
+        analyticsManager.log(event: .buyChosenMethodPayment(type: payment.type.analyticName))
     }
 
     // MARK: -
@@ -291,7 +290,7 @@ final class BuyViewModel: ObservableObject {
             tokens.map {
                 TokenCellViewItem(
                     token: $0,
-                    amount: tokenPrices[fiat]?[.init(token: token)] ?? 0,
+                    amount: tokenPrices[fiat]?[token.address] ?? 0,
                     fiat: fiat
                 )
             }
@@ -324,7 +323,7 @@ final class BuyViewModel: ObservableObject {
                 typeBankTransfer = "sepa_bank_transfer"
             }
         }
-        analyticsService.logEvent(.buyButtonPressed(
+        analyticsManager.log(event: .buyButtonPressed(
             sumCurrency: fiatAmount,
             sumCoin: tokenAmount,
             currency: from.name,
@@ -333,7 +332,7 @@ final class BuyViewModel: ObservableObject {
             bankTransfer: typeBankTransfer != nil,
             typeBankTransfer: typeBankTransfer
         ))
-        analyticsManager.log(event: AmplitudeEvent.moonpayWindowOpened)
+        analyticsManager.log(event: .moonpayWindowOpened)
     }
 
     func moonpayLicenseTap() {
