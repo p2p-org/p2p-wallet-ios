@@ -29,14 +29,16 @@ final class JupiterSwapCoordinator: Coordinator<Void> {
             .store(in: &subscriptions)
 
         fromViewModel.changeTokenPressed
-            .sink { [weak viewModel, weak self] in
+            .sink { [weak viewModel, weak self, unowned fromViewModel] in
                 guard let self, let viewModel else { return }
+                fromViewModel.isFirstResponder = false
                 self.openChooseToken(viewModel: viewModel, fromToken: true)
             }
             .store(in: &subscriptions)
         toViewModel.changeTokenPressed
-            .sink { [weak viewModel, weak self] in
+            .sink { [weak viewModel, weak self, unowned fromViewModel] in
                 guard let self, let viewModel else { return }
+                fromViewModel.isFirstResponder = false
                 self.openChooseToken(viewModel: viewModel, fromToken: false)
             }
             .store(in: &subscriptions)
