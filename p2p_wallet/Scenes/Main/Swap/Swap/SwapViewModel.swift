@@ -41,7 +41,7 @@ final class SwapViewModel: BaseViewModel, ObservableObject {
     }
     @Published var showFinished = false
 
-    var versionedTransaction: VersionedTransaction? //  I think it should be placed inside StateMachine rn
+    var versionedTransaction: VersionedTransaction? //  I think it should be placed inside StateMachine rn (need to conform VersionedTransaction to Equatable to do that)
 
     let stateMachine: JupiterSwapStateMachine
     var currentState: JupiterSwapState { stateMachine.currentState }
@@ -239,21 +239,6 @@ private extension SwapViewModel {
             sentAt: Date(),
             rawTransaction: JupiterSwapTransaction(
                 execution: { [unowned stateMachine] in
-//                    // Send via solana without fee relayer
-//                    let solanaAPIClient = Resolver.resolve(SolanaAPIClient.self)
-//                    let blockHash = try await solanaAPIClient.getRecentBlockhash()
-//                    var versionedTransaction = versionedTransaction
-//                    versionedTransaction.setRecentBlockHash(blockHash)
-//                    try versionedTransaction.sign(signers: [account])
-//
-//                    let serializedTransaction = try versionedTransaction.serialize().base64EncodedString()
-//
-//                    return try await solanaAPIClient.sendTransaction(
-//                        transaction: serializedTransaction,
-//                        configs: RequestConfiguration(encoding: "base64")!
-//                    )
-                    
-                    // Send via fee relayer
                     do {
                         let transactionId = try await JupiterSwapBusinessLogic.sendToBlockchain(
                             account: account,
