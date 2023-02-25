@@ -97,14 +97,15 @@ extension ProcessTransaction.Status {
                                     .map { pendingTransaction -> String? in
                                         // top up finished but transaction throws
                                         if pendingTransaction.status.error as? FeeRelayerError == .topUpSuccessButTransactionThrows,
-                                           let networkFees = pendingTransaction.rawTransaction.networkFees
+                                           let swapTransaction = pendingTransaction.rawTransaction as? SwapRawTransactionType,
+                                           let payingFeeWallet = swapTransaction.payingFeeWallet
                                         {
-                                            let fee = networkFees.total
+                                            let fee = swapTransaction.feeAmount.total
                                                 .convertToBalance(
-                                                    decimals: networkFees.token.decimals
+                                                    decimals: payingFeeWallet.token.decimals
                                                 ).toString()
                                                 + " "
-                                            + networkFees.token.symbol
+                                            + payingFeeWallet.token.symbol
                                             
                                             return L10n
                                                 .theFeeWasReservedSoYouWouldnTPayItAgainTheNextTimeYouCreatedATransactionOfTheSameType(

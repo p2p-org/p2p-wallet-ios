@@ -240,10 +240,35 @@ private extension SwapViewModel {
     }
 
     private func sendToken() {
-        guard isSliderOn, let versionedTransaction = versionedTransaction, let account = userWalletManager.wallet?.account else { return }
+        // assertion
+        guard isSliderOn,
+              let versionedTransaction = versionedTransaction,
+              let account = userWalletManager.wallet?.account,
+              let sourceWallet = currentState.fromToken.userWallet
+        else { return }
+        
+        // cancel updating
         cancelUpdate()
+        
+        // form transaction
+        let destinationWallet = currentState.toToken.userWallet ?? Wallet(pubkey: nil, token: currentState.toToken.token)
+        
         let swapTransaction = JupiterSwapTransaction(
-            execution: { [unowned stateMachine, unowned self] in
+            authority: account.publicKey.base58EncodedString,
+            amountFrom: currentState.amountFrom,
+            amountTo: currentState.amountTo,
+            sourceWallet: sourceWallet,
+            destinationWallet: destinationWallet,
+            fromAmount: currentState.amountFrom,
+            toAmount: currentState.amountTo,
+            slippage: 0.01, // FIXME: - actual slippage,
+            metaInfo: SwapMetaInfo(
+                swapMAX: false, // FIXME: - Swap max or not
+                swapUSD: 0 // FIXME:
+            ),
+            payingFeeWallet: nil, // FIXME: - PayingFeeWallet
+            feeAmount: .zero, // FIXME: - feeAmount
+            execution: { [unowned self] in
                 do {
                     let transactionId = try await JupiterSwapBusinessLogic.sendToBlockchain(
                         account: account,
@@ -257,13 +282,7 @@ private extension SwapViewModel {
                     self.isSliderOn = false
                     throw error
                 }
-            },
-            amountFrom: currentState.amountFrom,
-            amountTo: currentState.amountTo,
-            fromToken: currentState.fromToken,
-            toToken: currentState.toToken,
-            amountFromFiat: currentState.amountFromFiat
-        )
+            })
         
         let transactionIndex = transactionHandler.sendTransaction(
             swapTransaction

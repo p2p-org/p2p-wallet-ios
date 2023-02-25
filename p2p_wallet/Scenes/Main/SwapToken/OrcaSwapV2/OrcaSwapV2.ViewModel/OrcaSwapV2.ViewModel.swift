@@ -290,10 +290,10 @@ extension OrcaSwapV2 {
                                 payingFeeWallet: payingWallet,
                                 authority: authority,
                                 poolsPair: bestPoolsPair,
-                                amount: inputAmount,
-                                estimatedAmount: estimatedAmount,
+                                fromAmount: inputAmount,
+                                toAmount: estimatedAmount,
                                 slippage: slippage,
-                                fees: fees,
+                                feeDetails: fees,
                                 metaInfo: .init(
                                     swapMAX: swapMAX,
                                     swapUSD: swapUSD

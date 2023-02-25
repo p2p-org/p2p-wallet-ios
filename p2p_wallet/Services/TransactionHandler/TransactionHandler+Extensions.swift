@@ -142,7 +142,7 @@ extension TransactionHandler {
 
                 // update paying wallet
                 if let index = wallets.firstIndex(where: { $0.pubkey == transaction.payingFeeWallet?.pubkey }) {
-                    let feeInToken = transaction.feeInToken
+                    let feeInToken = transaction.feeAmount
                     wallets[index].decreaseBalance(diffInLamports: feeInToken.total)
                 }
 
@@ -172,7 +172,7 @@ extension TransactionHandler {
                 return wallets
             }
 
-        case let transaction as OrcaSwapTransaction:
+        case let transaction as SwapRawTransactionType:
             walletsRepository.batchUpdate { currentValue in
                 var wallets = currentValue
 
@@ -181,7 +181,7 @@ extension TransactionHandler {
                    let index = wallets.firstIndex(where: { $0.pubkey == transaction.sourceWallet.pubkey })
                 {
                     wallets[index]
-                        .decreaseBalance(diffInLamports: transaction.amount
+                        .decreaseBalance(diffInLamports: transaction.fromAmount
                             .toLamport(decimals: transaction.sourceWallet.token.decimals))
                 }
 
@@ -190,7 +190,7 @@ extension TransactionHandler {
                     // update only if socket is not connected
                     if !socket.isConnected {
                         wallets[index]
-                            .increaseBalance(diffInLamports: transaction.estimatedAmount
+                            .increaseBalance(diffInLamports: transaction.toAmount
                                 .toLamport(decimals: transaction.destinationWallet.token.decimals))
                     }
                 }
@@ -202,30 +202,17 @@ extension TransactionHandler {
                 ) {
                     var destinationWallet = transaction.destinationWallet
                     destinationWallet.pubkey = publicKey.base58EncodedString
-                    destinationWallet.lamports = transaction.estimatedAmount
+                    destinationWallet.lamports = transaction.toAmount
                         .toLamport(decimals: destinationWallet.token.decimals)
                     wallets.append(destinationWallet)
                 }
 
                 // update paying wallet
-                if !socket.isConnected {
-                    for fee in transaction.fees {
-                        switch fee.type {
-                        case .liquidityProviderFee:
-                            break
-                        case .accountCreationFee:
-                            if let index = wallets.firstIndex(where: { $0.mintAddress == fee.token.address }) {
-                                wallets[index].decreaseBalance(diffInLamports: fee.lamports)
-                            }
-                        case .orderCreationFee:
-                            break
-                        case .transactionFee:
-                            if let index = wallets.firstIndex(where: { $0.mintAddress == fee.token.address }) {
-                                wallets[index].decreaseBalance(diffInLamports: fee.lamports)
-                            }
-                        case .depositWillBeReturned:
-                            break
-                        }
+                if !socket.isConnected, let payingFeeWallet = transaction.payingFeeWallet {
+                    let fee = transaction.feeAmount
+                    
+                    if let index = wallets.firstIndex(where: { $0.pubkey == payingFeeWallet.pubkey }) {
+                        wallets[index].decreaseBalance(diffInLamports: fee.total)
                     }
                 }
 

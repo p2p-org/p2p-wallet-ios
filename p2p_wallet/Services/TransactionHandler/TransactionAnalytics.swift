@@ -22,8 +22,11 @@ class SwapTransactionAnalytics {
         transactionHandler
             .onNewTransaction
             .receive(on: DispatchQueue.main)
+            .filter {
+                $0.0.rawTransaction is SwapRawTransactionType
+            }
             .sink(receiveValue: { [weak self] trx, index in
-                if trx.rawTransaction is OrcaSwapTransaction { self?.observer(index: index) }
+                self?.observer(index: index)
             })
             .store(in: &subscriptions)
     }
@@ -38,7 +41,7 @@ class SwapTransactionAnalytics {
             let prevTrx = param.previous
             let trx = param.current
             guard let self else { return }
-            guard let rawTrx = trx.rawTransaction as? OrcaSwapTransaction else { return }
+            guard let rawTrx = trx.rawTransaction as? SwapRawTransactionType else { return }
 
             switch trx.status {
             case .sending:
@@ -46,7 +49,7 @@ class SwapTransactionAnalytics {
                     event: .swapUserConfirmed(
                         tokenA_Name: rawTrx.sourceWallet.token.symbol,
                         tokenB_Name: rawTrx.destinationWallet.token.symbol,
-                        swapSum: rawTrx.amount,
+                        swapSum: rawTrx.fromAmount,
                         swapMAX: rawTrx.metaInfo.swapMAX,
                         swapUSD: rawTrx.metaInfo.swapUSD,
                         priceSlippage: rawTrx.slippage,
@@ -59,7 +62,7 @@ class SwapTransactionAnalytics {
                         event: .swapStarted(
                             tokenA_Name: rawTrx.sourceWallet.token.symbol,
                             tokenB_Name: rawTrx.destinationWallet.token.symbol,
-                            swapSum: rawTrx.amount,
+                            swapSum: rawTrx.fromAmount,
                             swapMAX: rawTrx.metaInfo.swapMAX,
                             swapUSD: rawTrx.metaInfo.swapUSD,
                             priceSlippage: rawTrx.slippage,
@@ -71,7 +74,7 @@ class SwapTransactionAnalytics {
                         event: .swapApprovedByNetwork(
                             tokenA_Name: rawTrx.sourceWallet.token.symbol,
                             tokenB_Name: rawTrx.destinationWallet.token.symbol,
-                            swapSum: rawTrx.amount,
+                            swapSum: rawTrx.fromAmount,
                             swapMAX: rawTrx.metaInfo.swapMAX,
                             swapUSD: rawTrx.metaInfo.swapUSD,
                             priceSlippage: rawTrx.slippage,
@@ -84,7 +87,7 @@ class SwapTransactionAnalytics {
                     event: .swapCompleted(
                         tokenA_Name: rawTrx.sourceWallet.token.symbol,
                         tokenB_Name: rawTrx.destinationWallet.token.symbol,
-                        swapSum: rawTrx.amount,
+                        swapSum: rawTrx.fromAmount,
                         swapMAX: rawTrx.metaInfo.swapMAX,
                         swapUSD: rawTrx.metaInfo.swapUSD,
                         priceSlippage: rawTrx.slippage,
