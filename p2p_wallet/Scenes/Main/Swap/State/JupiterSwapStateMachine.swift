@@ -2,10 +2,6 @@ import Send // TODO: I will extract StateMachine in core module inside Key App K
 import Combine
 
 actor JupiterSwapStateMachine: StateMachine {
-    typealias Action = JupiterSwapAction
-    typealias Services = JupiterSwapServices
-    typealias State = JupiterSwapState
-
     private nonisolated let stateSubject: CurrentValueSubject<JupiterSwapState, Never>
 
     nonisolated var statePublisher: AnyPublisher<JupiterSwapState, Never> { stateSubject.eraseToAnyPublisher() }
