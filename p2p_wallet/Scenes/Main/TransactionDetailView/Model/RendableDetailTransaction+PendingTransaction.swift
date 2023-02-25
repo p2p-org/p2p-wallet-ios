@@ -64,7 +64,7 @@ struct RendableDetailPendingTransaction: RendableDetailTransaction {
                 return .icon(.transactionSend)
             }
             
-        case let transaction as OrcaSwapTransaction:
+        case let transaction as SwapRawTransactionType:
             let fromUrlStr = transaction.sourceWallet.token.logoURI
             let toUrlStr = transaction.destinationWallet.token.logoURI
             
@@ -80,22 +80,6 @@ struct RendableDetailPendingTransaction: RendableDetailTransaction {
             }
             
             return .double(fromUrl, toUrl)
-        case let transaction as JupiterSwapTransaction:
-            let fromUrlStr = transaction.fromToken.token.logoURI
-            let toUrlStr = transaction.toToken.token.logoURI
-
-            guard let fromUrlStr, let toUrlStr else {
-                return .icon(.buttonSwap)
-            }
-
-            let fromUrl = URL(string: fromUrlStr)
-            let toUrl = URL(string: toUrlStr)
-
-            guard let fromUrl, let toUrl else {
-                return .icon(.buttonSwap)
-            }
-
-            return .double(fromUrl, toUrl)
 
         default:
             return .icon(.transactionUndefined)
@@ -107,11 +91,9 @@ struct RendableDetailPendingTransaction: RendableDetailTransaction {
         switch trx.rawTransaction {
         case let transaction as SendTransaction:
             return .negative("-\(transaction.amountInFiat.fiatAmountFormattedString())")
-        case let transaction as OrcaSwapTransaction:
-            let amountInFiat: Double = (transaction.amount * priceService.currentPrice(mint: transaction.sourceWallet.token.address)?.value)
+        case let transaction as SwapRawTransactionType:
+            let amountInFiat: Double = (transaction.fromAmount * priceService.currentPrice(mint: transaction.sourceWallet.token.address)?.value)
             return .unchanged("\(amountInFiat.fiatAmountFormattedString())")
-        case let transaction as JupiterSwapTransaction:
-            return .unchanged(transaction.amountFiat.fiatAmountFormattedString())
         default:
             return .unchanged("")
         }
@@ -121,9 +103,7 @@ struct RendableDetailPendingTransaction: RendableDetailTransaction {
         switch trx.rawTransaction {
         case let transaction as SendTransaction:
             return "\(transaction.amount.tokenAmountFormattedString(symbol: transaction.walletToken.token.symbol))"
-        case let transaction as OrcaSwapTransaction:
-            return "\(transaction.amount.tokenAmountFormattedString(symbol: transaction.sourceWallet.token.symbol)) → \(transaction.estimatedAmount.tokenAmountFormattedString(symbol: transaction.destinationWallet.token.symbol))"
-        case let transaction as JupiterSwapTransaction:
+        case let transaction as SwapRawTransactionType:
             return transaction.mainDescription
         default:
             return ""
@@ -164,30 +144,30 @@ struct RendableDetailPendingTransaction: RendableDetailTransaction {
                 break
             }
             
-            if transaction.feeInToken.total == 0 {
+            if transaction.feeAmount.total == 0 {
                 result.append(.init(title: L10n.transactionFee, value: L10n.freePaidByKeyApp))
             } else {
-                let feeAmount: Double = transaction.feeInToken.total.convertToBalance(decimals: transaction.payingFeeWallet?.token.decimals)
+                let feeAmount: Double = transaction.feeAmount.total.convertToBalance(decimals: transaction.payingFeeWallet?.token.decimals)
                 let formatedFeeAmount: String = feeAmount.tokenAmountFormattedString(symbol: transaction.payingFeeWallet?.token.symbol ?? "")
                 result.append(.init(title: L10n.transactionFee, value: formatedFeeAmount))
             }
-        case let transaction as OrcaSwapTransaction:
-            if let networkFees = transaction.networkFees {
-                if networkFees.total == 0 {
-                    result.append(.init(title: L10n.transactionFee, value: L10n.freePaidByKeyApp))
-                } else {
-                    let feeAmount: Double = networkFees.total.convertToBalance(decimals: networkFees.token.decimals)
-                    let formatedFeeAmount: String = feeAmount.tokenAmountFormattedString(symbol: networkFees.token.symbol)
-                    
-                    let feeAmountInFiat: Double = feeAmount * priceService.currentPrice(mint: networkFees.token.address)?.value
-                    let formattedFeeAmountInFiat: String = feeAmountInFiat.fiatAmountFormattedString()
-                    
-                    result.append(.init(title: L10n.transactionFee, value: "\(formatedFeeAmount) (\(formattedFeeAmountInFiat))"))
-                }
+        case let transaction as SwapRawTransactionType:
+            let fees = transaction.feeAmount
+            
+            if fees.total == 0 {
+                result.append(.init(title: L10n.transactionFee, value: L10n.freePaidByKeyApp))
             }
-
-        case let transaction as JupiterSwapTransaction:
-            result.append(.init(title: L10n.transactionFee, value: L10n.freePaidByKeyApp))
+            
+            // net work fee
+            else if let payingFeeWallet = transaction.payingFeeWallet {
+                let feeAmount: Double = fees.total.convertToBalance(decimals: payingFeeWallet.token.decimals)
+                let formatedFeeAmount: String = feeAmount.tokenAmountFormattedString(symbol: payingFeeWallet.token.symbol)
+                
+                let feeAmountInFiat: Double = feeAmount * priceService.currentPrice(mint: payingFeeWallet.token.address)?.value
+                let formattedFeeAmountInFiat: String = feeAmountInFiat.fiatAmountFormattedString()
+                
+                result.append(.init(title: L10n.transactionFee, value: "\(formatedFeeAmount) (\(formattedFeeAmountInFiat))"))
+            }
 
         default:
             break
