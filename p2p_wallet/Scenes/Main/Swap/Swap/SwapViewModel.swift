@@ -68,6 +68,13 @@ final class SwapViewModel: BaseViewModel, ObservableObject {
     deinit {
         timer?.invalidate()
     }
+    
+    #if !RELEASE
+    func getRouteInSymbols() -> String? {
+        let tokensList = stateMachine.currentState.swapTokens.map(\.token)
+        return stateMachine.currentState.route?.toSymbols(tokensList: tokensList)
+    }
+    #endif
 }
 
 private extension SwapViewModel {
