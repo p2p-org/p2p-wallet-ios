@@ -65,7 +65,7 @@ extension TransactionHandler {
                 var slot: UInt64?
                 switch status {
                 case .sending:
-                    return
+                    continue
                 case .confirmed(let numberOfConfirmations, let sl):
                     slot = sl
                     txStatus = .confirmed(Int(numberOfConfirmations))
