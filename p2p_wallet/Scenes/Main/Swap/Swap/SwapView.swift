@@ -43,6 +43,11 @@ private extension SwapView {
                 SwapSwitchButton(action: viewModel.switchTokens)
             }
             .padding(.top, 36)
+            
+            #if !RELEASE
+            Text("Route: " + viewModel.getRouteInSymbols())
+                .foregroundColor(.red)
+            #endif
 
             Text(L10n.keyAppDoesnTMakeAnyProfitFromSwap💚)
                 .apply(style: .label1)
