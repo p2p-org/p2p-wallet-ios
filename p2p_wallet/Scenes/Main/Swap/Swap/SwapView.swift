@@ -15,7 +15,12 @@ struct SwapView: View {
 
             switch viewModel.initializingState {
             case .loading, .success:
-                contentView
+                ScrollView {
+                    contentView
+                }
+                    .customRefreshable {
+                        await viewModel.update()
+                    }
             case .failed:
                 errorView
             }
