@@ -8,11 +8,18 @@ final class ChooseSwapTokenCoordinator: Coordinator<SwapToken?> {
     private let chosenWallet: SwapToken
     private let navigationController: UINavigationController
     private let tokens: [SwapToken]
+    private let title: String
 
-    init(chosenWallet: SwapToken, tokens: [SwapToken], navigationController: UINavigationController) {
+    init(
+        chosenWallet: SwapToken,
+        tokens: [SwapToken],
+        navigationController: UINavigationController,
+        title: String? = nil
+    ) {
         self.chosenWallet = chosenWallet
         self.tokens = tokens
         self.navigationController = navigationController
+        self.title = title ?? L10n.theTokenYouPay
     }
 
     override func start() -> AnyPublisher<SwapToken?, Never> {
@@ -24,7 +31,7 @@ final class ChooseSwapTokenCoordinator: Coordinator<SwapToken?> {
             ChooseSwapTokenItemView(token: model.item as! SwapToken, isChosen: model.isChosen)
         }
         let controller = KeyboardAvoidingViewController(rootView: view, ignoresKeyboard: true)
-        controller.title = L10n.theTokenYouPay
+        controller.title = title
         navigationController.pushViewController(controller, animated: true)
 
         controller.onClose = { [weak self] in
