@@ -14,7 +14,7 @@ struct EndEditingKeyboardOnDragGesture: ViewModifier {
 extension View {
     func scrollDismissesKeyboard() -> some View {
         if #available(iOS 16.0, *) {
-            return scrollDismissesKeyboard(.automatic)
+            return scrollDismissesKeyboard(.immediately)
         } else {
             return modifier(EndEditingKeyboardOnDragGesture())
         }
