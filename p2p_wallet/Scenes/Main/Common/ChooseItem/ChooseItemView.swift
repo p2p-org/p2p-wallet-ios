@@ -104,7 +104,7 @@ private extension ChooseItemView {
         }
         .background(Color(Asset.Colors.smoke.color))
         .environment(\.defaultMinListRowHeight, 12)
-        .endEditingKeyboardOnDragGesture()
+        .scrollDismissesKeyboard()
     }
 
     func spacer(height: CGFloat) -> some View {
