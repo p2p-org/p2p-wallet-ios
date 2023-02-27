@@ -6,18 +6,20 @@ extension JupiterSwapBusinessLogic {
         let usdc = swapTokens.first(where: { $0.address == SolanaSwift.Token.usdc.address })
         let solana = swapTokens.first(where: { $0.address == SolanaSwift.Token.nativeSolana.address })
 
-        let userWallets = swapTokens.compactMap { $0.userWallet }
+        let userWallets = swapTokens.compactMap { $0.userWallet }.filter({ $0.amount > 0 })
 
         if userWallets.isEmpty, let usdc, let solana {
             return (usdc, solana)
-        } else if usdc?.userWallet != nil, let usdc, let solana {
+        } else if let usdcWallet = usdc?.userWallet, let usdc, let solana, usdcWallet.amount > 0 {
             return (usdc, solana)
-        } else if solana?.userWallet != nil, let usdc, let solana {
+        } else if let solanaWallet = solana?.userWallet, let usdc, let solana, solanaWallet.amount > 0 {
             return (solana, usdc)
-        } else if let usdc {
+        } else if let solana {
             let userWallet = userWallets.sorted(by: { $0.amountInCurrentFiat > $1.amountInCurrentFiat }).first
             let swapToken = swapTokens.first(where: { $0.address == userWallet?.mintAddress })
-            return (swapToken ?? solana ?? usdc, usdc)
+            if let swapToken {
+                return (swapToken, solana)
+            }
         }
 
         throw JupiterSwapState.ErrorReason.unknown
