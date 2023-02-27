@@ -70,9 +70,10 @@ private extension SwapView {
             .padding(.bottom, 36)
             
             #if !RELEASE
-            VStack(spacing: 10) {
+            VStack(alignment: .leading, spacing: 10) {
                 Text("Logs (tap to copy and clear):")
                     .apply(style: .label2)
+                Text(viewModel.swapTransaction?.prefix(30))
                 if let errorLogs = viewModel.errorLogs {
                     Text("ERROR:")
                         .apply(style: .label2)
