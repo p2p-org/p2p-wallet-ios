@@ -5,55 +5,49 @@
 //  Created by Chung Tran on 23/03/2021.
 //
 
-import BECollectionView
+import BECollectionView_Combine
 import Foundation
-import RxCocoa
-import RxSwift
-import RxCombine
 import SolanaSwift
 import Combine
 
-protocol WalletsRepository: BEListViewModelType {
+protocol WalletsRepository: BECollectionViewModelType {
     var nativeWallet: Wallet? { get }
     func getWallets() -> [Wallet]
-    var stateObservable: Observable<BEFetcherState> { get }
-    var dataDidChange: Observable<Void> { get }
-    var dataObservable: Observable<[Wallet]?> { get }
+    var statePublisher: AnyPublisher<BEFetcherState, Never> { get }
+    var dataDidChange: AnyPublisher<Void, Never> { get }
+    var dataPublisher: AnyPublisher<[Wallet], Never> { get }
     func getError() -> Error?
     func reload()
     func toggleWalletVisibility(_ wallet: Wallet)
     func removeItem(where predicate: (Wallet) -> Bool) -> Wallet?
     func setState(_ state: BEFetcherState, withData data: [AnyHashable]?)
     func toggleIsHiddenWalletShown()
-    var isHiddenWalletsShown: BehaviorRelay<Bool> { get }
+    var isHiddenWalletsShown: Bool { get }
     func hiddenWallets() -> [Wallet]
-    func refreshUI()
+    func refresh()
 
     func batchUpdate(closure: ([Wallet]) -> [Wallet])
-    
-    // Combine migration
-    var dataPublisher: AnyPublisher<[Wallet], Never> { get }
 }
 
 extension WalletsViewModel: WalletsRepository {
+    
+    var statePublisher: AnyPublisher<BEFetcherState, Never> {
+        $state.receive(on: DispatchQueue.main).eraseToAnyPublisher()
+    }
+    
+    var dataPublisher: AnyPublisher<[Wallet], Never> {
+        $data.receive(on: DispatchQueue.main).eraseToAnyPublisher()
+    }
+    
+    var currentState: BEFetcherState {
+        state
+    }
+    
     func getWallets() -> [Wallet] {
         data
     }
 
     func getError() -> Error? {
         error
-    }
-
-    func batchUpdate(closure: ([Wallet]) -> [Wallet]) {
-        let wallets = closure(getWallets())
-        overrideData(by: wallets)
-    }
-    
-    var dataPublisher: AnyPublisher<[Wallet], Never> {
-        dataObservable
-            .publisher
-            .compactMap { $0 }
-            .replaceError(with: [])
-            .eraseToAnyPublisher()
     }
 }
