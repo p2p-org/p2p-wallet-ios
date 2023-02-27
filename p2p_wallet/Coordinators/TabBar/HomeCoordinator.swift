@@ -200,16 +200,42 @@ final class HomeCoordinator: Coordinator<Void> {
             return Just(())
                 .eraseToAnyPublisher()
         case .topUpCoin(let token):
-            guard [Token.nativeSolana, .usdc].contains(token) else {
-                return Just(()).eraseToAnyPublisher()
+            // SOL, USDC
+            if [Token.nativeSolana, .usdc].contains(token) {
+                let coordinator = BuyCoordinator(
+                    navigationController: navigationController,
+                    context: .fromHome,
+                    defaultToken: token
+                )
+                return self.coordinate(to: coordinator)
+                    .eraseToAnyPublisher()
             }
-            let coordinator = BuyCoordinator(
-                navigationController: navigationController,
-                context: .fromHome,
-                defaultToken: token
+            
+            // Other
+            var token = token
+            if token == .renBTC {
+                token = Token(.renBTC, customSymbol: "BTC")
+            }
+            return coordinate(
+                to: HomeBuyNotificationCoordinator(
+                    tokenFrom: .usdc, tokenTo: token, controller: navigationController
+                )
             )
-            return self.coordinate(to: coordinator)
-                .eraseToAnyPublisher()
+            .flatMap { result -> AnyPublisher<Void, Never> in
+                switch result {
+                case .showBuy:
+                    return self.coordinate(
+                        to: BuyCoordinator(
+                            navigationController: self.navigationController,
+                            context: .fromHome,
+                            defaultToken: .usdc
+                        )
+                    )
+                default:
+                    return Just(()).eraseToAnyPublisher()
+                }
+            }
+            .eraseToAnyPublisher()
         case .error(let show):
             if show {
                 homeView.view.showConnectionErrorView(refreshAction: { [unowned homeView] in
