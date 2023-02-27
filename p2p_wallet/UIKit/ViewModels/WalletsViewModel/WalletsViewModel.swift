@@ -169,8 +169,19 @@ class WalletsViewModel: BEListViewModel<Wallet> {
             
             // update balance
             for i in 0..<data.count  {
-                if let newDataIndex = newData.firstIndex(where: {$0.pubkey == data[i].pubkey})
+                if let pubkey = data[i].pubkey,
+                   let newDataIndex = newData.firstIndex(where: {$0.pubkey == pubkey})
                 {
+                    // check if there is any pending transaction for this account
+                    let pendingTransactions = (transactionHandler?.getProccessingTransactions(of: pubkey) ?? [])
+                        .filter { $0.isProcessing }
+                    
+                    // ignore updating balance when there is any pending transaction for this account
+                    guard pendingTransactions.isEmpty else {
+                        continue
+                    }
+                    
+                    // update balance of account
                     data[i].lamports = newData[newDataIndex].lamports
                 }
             }
