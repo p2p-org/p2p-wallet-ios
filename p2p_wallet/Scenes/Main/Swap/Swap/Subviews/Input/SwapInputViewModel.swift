@@ -20,6 +20,7 @@ final class SwapInputViewModel: BaseViewModel, ObservableObject {
     @Published var isAmountLoading = false
     @Published var fiatAmount: String?
     @Published var token: SwapToken
+    let accessibilityIdentifierTokenPrefix: String
 
     private let stateMachine: JupiterSwapStateMachine
     private let isFromToken: Bool
@@ -36,6 +37,7 @@ final class SwapInputViewModel: BaseViewModel, ObservableObject {
         self.isEditable = isFromToken
         self.token = stateMachine.currentState.fromToken
 
+        accessibilityIdentifierTokenPrefix = isFromToken ? "from" : "to"
         super.init()
 
         allButtonPressed

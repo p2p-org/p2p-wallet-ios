@@ -9,6 +9,7 @@ struct SwapSwitchButton: View {
         Button(action: action.send, label: {
             Image(uiImage: .swapArrows)
         })
+        .accessibilityIdentifier("SwapView.switchButton")
         .background(
             Circle()
                 .foregroundColor(Color(Asset.Colors.rain.color))
