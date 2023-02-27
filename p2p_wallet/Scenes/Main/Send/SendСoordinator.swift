@@ -62,7 +62,7 @@ class SendCoordinator: Coordinator<SendResult> {
     // MARK: - Methods
 
     override func start() -> AnyPublisher<SendResult, Never> {
-        if walletsRepository.currentState == .loaded {
+        if walletsRepository.state == .loaded {
             let fiatAmount = walletsRepository.getWallets().reduce(0) { $0 + $1.amountInCurrentFiat }
             let withTokens = fiatAmount > 0
             if withTokens {

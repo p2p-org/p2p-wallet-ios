@@ -10,7 +10,6 @@ import Combine
 import Foundation
 import LocalAuthentication
 import Resolver
-import RxCombine
 import SolanaSwift
 
 final class SettingsViewModel: BaseViewModel, ObservableObject {
