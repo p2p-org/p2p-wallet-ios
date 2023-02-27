@@ -63,7 +63,8 @@ final class JupiterSwapCoordinator: Coordinator<Void> {
         coordinate(to: ChooseSwapTokenCoordinator(
             chosenWallet: fromToken ? viewModel.currentState.fromToken : viewModel.currentState.toToken,
             tokens: fromToken ? viewModel.currentState.swapTokens : viewModel.currentState.possibleToTokens,
-            navigationController: navigationController
+            navigationController: navigationController,
+            title: fromToken ? L10n.theTokenYouPay : L10n.theTokenYouReceive
         ))
         .compactMap { $0 }
         .sink {
