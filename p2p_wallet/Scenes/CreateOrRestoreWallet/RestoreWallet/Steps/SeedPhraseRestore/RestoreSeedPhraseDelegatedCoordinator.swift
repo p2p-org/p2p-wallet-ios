@@ -29,11 +29,13 @@ final class RestoreSeedPhraseDelegatedCoordinator: DelegatedCoordinator<RestoreS
 private extension RestoreSeedPhraseDelegatedCoordinator {
     func signInViewController() -> UIViewController {
         let viewModel = SeedPhraseRestoreWalletViewModel()
-        viewModel.finishedWithSeed.sinkAsync { [stateMachine] phrase in
+        viewModel.finishedWithSeed.sinkAsync { [weak viewModel, stateMachine] phrase in
+            viewModel?.isSeedFocused = false
             _ = try await stateMachine <- .chooseDerivationPath(phrase: phrase)
         }.store(in: &subscriptions)
 
-        viewModel.back.sinkAsync { [stateMachine] _ in
+        viewModel.back.sinkAsync { [weak viewModel, stateMachine] _ in
+            viewModel?.isSeedFocused = false
             _ = try await stateMachine <- .back
         }.store(in: &subscriptions)
 
