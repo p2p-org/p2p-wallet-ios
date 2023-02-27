@@ -21,6 +21,7 @@ struct SwapView: View {
                     .customRefreshable {
                         await viewModel.update()
                     }
+                    .scrollDismissesKeyboard()
             case .failed:
                 errorView
             }
