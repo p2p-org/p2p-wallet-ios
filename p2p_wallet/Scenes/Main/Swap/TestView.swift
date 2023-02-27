@@ -111,13 +111,21 @@ struct TestView: View {
             let solanaAPIClient: SolanaAPIClient = Resolver.resolve()
             
             do {
-                var versionedTransaction = try! await jupiterClient.swap(route: routes[0], userPublicKey: pubKey, wrapUnwrapSol: true, feeAccount: nil, asLegacyTransaction: nil, computeUnitPriceMicroLamports: nil, destinationWallet: nil)
+                var swapTransaction = try! await jupiterClient.swap(route: routes[0], userPublicKey: pubKey, wrapUnwrapSol: true, feeAccount: nil, asLegacyTransaction: nil, computeUnitPriceMicroLamports: nil, destinationWallet: nil)
                 
                 let blockHash = try await solanaAPIClient.getRecentBlockhash()
-                versionedTransaction?.setRecentBlockHash(blockHash)
-                try versionedTransaction?.sign(signers: [account])
                 
-                let serializedTransaction = try versionedTransaction?.serialize().base64EncodedString()
+                guard let swapTransaction,
+                      let base64Data = Data(base64Encoded: swapTransaction, options: .ignoreUnknownCharacters),
+                      var versionedTransaction = try? VersionedTransaction.deserialize(data: base64Data)
+                else {
+                    throw JupiterError.invalidResponse
+                }
+                
+                versionedTransaction.setRecentBlockHash(blockHash)
+                try versionedTransaction.sign(signers: [account])
+                
+                let serializedTransaction = try versionedTransaction.serialize().base64EncodedString()
                 serializedTransactionBase64 = serializedTransaction
                 
                 let transactionId = try await solanaAPIClient.sendTransaction(
