@@ -83,6 +83,8 @@ final class SwapViewModel: BaseViewModel, ObservableObject {
             text += #", "route": \#(route)"#
             text += #", "routeInSymbols": "\#(getRouteInSymbols()?.joined(separator: " -> ") ?? "")""#
         }
+        text += #", "amountFrom": "\#(stateMachine.currentState.amountFrom)""#
+        text += #", "amountTo": "\#(stateMachine.currentState.amountTo)""#
         
         if let interTokens = getRouteInSymbols() {
             text += #", "tokens": ["#
