@@ -18,10 +18,10 @@ struct SwapView: View {
                 ScrollView {
                     contentView
                 }
-                    .customRefreshable {
-                        await viewModel.update()
-                    }
-                    .scrollDismissesKeyboard()
+                .customRefreshable {
+                    await viewModel.update()
+                }
+                .scrollDismissesKeyboard()
             case .failed:
                 errorView
             }
@@ -36,6 +36,7 @@ private extension SwapView {
                 .apply(style: .label1)
                 .padding(.top, 4)
                 .foregroundColor(Color(Asset.Colors.night.color))
+                .accessibilityIdentifier("SwapView.priceInfoLabel")
                 .if(viewModel.arePricesLoading) { view in
                     view.skeleton(with: true, size: CGSize(width: 160, height: 16))
                 }
@@ -60,6 +61,7 @@ private extension SwapView {
                 .apply(style: .label1)
                 .foregroundColor(Color(Asset.Colors.mountain.color))
                 .padding(.top, 16)
+                .accessibilityIdentifier("SwapView.profitInfoLabel")
 
             Spacer()
             
@@ -68,6 +70,7 @@ private extension SwapView {
                 data: $viewModel.actionButtonData,
                 showFinished: $viewModel.showFinished
             )
+            .accessibilityIdentifier("SwapView.sliderButton")
             .padding(.bottom, 36)
             
             #if !RELEASE
