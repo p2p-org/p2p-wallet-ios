@@ -9,8 +9,6 @@ import AnalyticsManager
 import Combine
 import Foundation
 import Resolver
-import RxCombine
-import RxSwift
 import SolanaSwift
 import UIKit
 import SwiftyUserDefaults
@@ -46,18 +44,14 @@ final class HomeWithTokensViewModel: BaseViewModel, ObservableObject {
         self.navigation = navigation
 
         let walletsRepository = Resolver.resolve(WalletsRepository.self)
-        tokensIsHidden = !walletsRepository.isHiddenWalletsShown.value
+        tokensIsHidden = !walletsRepository.isHiddenWalletsShown
 
-        balance = Observable.zip(walletsRepository.dataObservable, walletsRepository.stateObservable)
-            .filter { $0.1 == .loaded }
-            .map { data, _ in
-                let data = data ?? []
+        balance = walletsRepository.dataPublisher
+            .map { data in
                 let equityValue = data.reduce(0) { $0 + $1.amountInCurrentFiat }
                 return "\(Defaults.fiat.symbol) \(equityValue.toString(maximumFractionDigits: 2))"
             }
-            .asPublisher()
-            .assertNoFailure()
-            .debounce(for: 0.1, scheduler: RunLoop.main)
+            .debounce(for: .seconds(0.1), scheduler: RunLoop.main)
             .eraseToAnyPublisher()
         self.walletsRepository = walletsRepository
         
@@ -69,13 +63,11 @@ final class HomeWithTokensViewModel: BaseViewModel, ObservableObject {
             actions = [.buy, .receive, .send]
         }
         
-        walletsRepository.dataObservable
-            .asPublisher()
-            .assertNoFailure()
-            .debounce(for: 0.1, scheduler: RunLoop.main)
+        walletsRepository.dataPublisher
+            .debounce(for: .seconds(0.1), scheduler: RunLoop.main)
             .sink(receiveValue: { [weak self] wallets in
-                guard let self = self, var wallets = wallets else { return }
-                wallets = wallets.filter { !$0.isNFTToken }
+                guard let self = self else { return }
+                let wallets = wallets.filter { !$0.isNFTToken }
                 self.wallets = wallets
                 let items = wallets.map { ($0, $0.isHidden) }
                 self.items = items.filter { !$0.1 }.map(\.0)
@@ -106,14 +98,17 @@ final class HomeWithTokensViewModel: BaseViewModel, ObservableObject {
         )
     }
 
-    func reloadData() async {
-        walletsRepository.reload()
-        _ = try? await walletsRepository.stateObservable
-            .asPublisher()
-            .assertNoFailure()
+    func refresh() async {
+        // reload
+        walletsRepository.refresh()
+        
+        print(walletsRepository.state)
+        // wait for .loaded or .error event
+        _ = try? await walletsRepository.statePublisher
             .filter { $0 == .loaded || $0 == .error }
             .eraseToAnyPublisher()
             .async()
+        print(walletsRepository.state)
     }
 
     func actionClicked(_ action: WalletActionType) {
