@@ -318,5 +318,8 @@ enum KeyAppAnalyticsEvent: AnalyticsEvent {
     case sellAmountNext
     case sellMoonpayOpenNotification
     case sellMoonpay
+    
+    // MARK: - History
+    case historyOpened
     case historySendClicked(status: String)
 }

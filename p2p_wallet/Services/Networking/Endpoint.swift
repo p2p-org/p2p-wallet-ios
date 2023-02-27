@@ -25,10 +25,6 @@ extension Endpoint {
     }
 
     var baseURL: String {
-        #if RELEASE
-        return String.secretConfig("NOTIFICATION_SERVICE_ENDPOINT_RELEASE")!
-        #else
-        return String.secretConfig("NOTIFICATION_SERVICE_ENDPOINT")!
-        #endif
+        GlobalAppState.shared.pushServiceEndpoint
     }
 }
