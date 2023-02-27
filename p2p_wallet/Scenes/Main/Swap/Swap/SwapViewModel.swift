@@ -41,8 +41,10 @@ final class SwapViewModel: BaseViewModel, ObservableObject {
         }
     }
     @Published var showFinished = false
-
-    var versionedTransaction: VersionedTransaction? //  I think it should be placed inside StateMachine rn (need to conform VersionedTransaction to Equatable to do that)
+    
+    #if !RELEASE
+    @Published var errorLogs: [String]?
+    #endif
 
     let stateMachine: JupiterSwapStateMachine
     var currentState: JupiterSwapState { stateMachine.currentState }
@@ -74,6 +76,12 @@ final class SwapViewModel: BaseViewModel, ObservableObject {
     }
     
     #if !RELEASE
+    func copyAndClearErrorLog() {
+        UIPasteboard.general.string = errorLogs?.joined(separator: "\n")
+        errorLogs = nil
+        notificationService.showToast(title: nil, text: "Error logs copied to clipboard")
+    }
+    
     func getRouteInSymbols() -> String? {
         let tokensList = stateMachine.currentState.swapTokens.map(\.token)
         return stateMachine.currentState.route?.toSymbols(tokensList: tokensList)
@@ -150,21 +158,10 @@ private extension SwapViewModel {
         case .ready:
             arePricesLoading = false
             guard state.amountFrom > 0 else { return }
-            Task {
-                actionButtonData = SliderActionButtonData(isEnabled: false, title: L10n.counting)
-                do {
-                    try await swapToken()
-                    actionButtonData = SliderActionButtonData(
-                        isEnabled: true,
-                        title: L10n.swap(state.fromToken.token.symbol, state.toToken.token.symbol)
-                    )
-                } catch {
-                    actionButtonData = SliderActionButtonData(
-                        isEnabled: false,
-                        title: L10n.swapOfTheseTokensIsnTPossible
-                    )
-                }
-            }
+            actionButtonData = SliderActionButtonData(
+                isEnabled: true,
+                title: L10n.swap(state.fromToken.token.symbol, state.toToken.token.symbol)
+            )
         default:
             arePricesLoading = false
         }
@@ -235,31 +232,20 @@ private extension SwapViewModel {
         }
     }
 
-    private func swapToken() async throws {
-        guard let route = stateMachine.currentState.route else { return }
-
-        let account = userWalletManager.wallet!.account
-        let pubKey = account.publicKey.base58EncodedString
-        let jupiterClient = stateMachine.services.jupiterClient
-
-        versionedTransaction = try await jupiterClient.swap(
-            route: route,
-            userPublicKey: pubKey,
-            wrapUnwrapSol: true, feeAccount: nil, asLegacyTransaction: nil,
-            computeUnitPriceMicroLamports: nil, destinationWallet: nil
-        )
-    }
-
     private func sendToken() {
         // assertion
         guard isSliderOn,
-              let versionedTransaction = versionedTransaction,
+              let route = stateMachine.currentState.route,
               let account = userWalletManager.wallet?.account,
               let sourceWallet = currentState.fromToken.userWallet
         else { return }
         
         // cancel updating
         cancelUpdate()
+        
+        #if !RELEASE
+        errorLogs = nil
+        #endif
         
         // form transaction
         let destinationWallet = currentState.toToken.userWallet ?? Wallet(pubkey: nil, token: currentState.toToken.token)
@@ -281,14 +267,39 @@ private extension SwapViewModel {
             feeAmount: .zero, // FIXME: - feeAmount
             execution: { [unowned self] in
                 do {
+                    let jupiterClient = stateMachine.services.jupiterClient
+                    
+                    let versionedTransaction = try await jupiterClient.swap(
+                        route: route,
+                        userPublicKey: account.publicKey.base58EncodedString,
+                        wrapUnwrapSol: true,
+                        feeAccount: nil,
+                        asLegacyTransaction: nil,
+                        computeUnitPriceMicroLamports: nil,
+                        destinationWallet: nil
+                    )
+                    
+                    guard versionedTransaction != nil else {
+                        throw JupiterError.invalidResponse
+                    }
+                    
                     let transactionId = try await JupiterSwapBusinessLogic.sendToBlockchain(
                         account: account,
-                        versionedTransaction: versionedTransaction,
+                        versionedTransaction: versionedTransaction!,
                         solanaAPIClient: stateMachine.services.solanaAPIClient
                     )
                     debugPrint("---transactionId: ", transactionId)
                     self.isSliderOn = false
                     return transactionId
+                } catch let error as SolanaSwift.APIClientError {
+                    switch error {
+                    case .responseError(let detail):
+                        self.errorLogs = detail.data?.logs
+                    default:
+                        break
+                    }
+                    self.isSliderOn = false
+                    throw error
                 } catch {
                     debugPrint("---errorSendingTransaction: ", error)
                     self.isSliderOn = false

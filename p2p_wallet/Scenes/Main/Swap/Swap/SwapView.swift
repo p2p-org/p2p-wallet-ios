@@ -50,8 +50,26 @@ private extension SwapView {
             .padding(.top, 36)
             
             #if !RELEASE
-            Text("Route: " + viewModel.getRouteInSymbols())
-                .foregroundColor(.red)
+            VStack(alignment: .leading, spacing: 10) {
+                Text("Route: " + viewModel.getRouteInSymbols())
+                    .apply(style: .label2)
+                    .foregroundColor(.red)
+                if let errorLogs = viewModel.errorLogs {
+                    VStack(alignment: .leading) {
+                        Text("Error (tap to copy and clear):")
+                            .apply(style: .label2)
+                        ForEach(errorLogs, id: \.self) { log in
+                            Text(log)
+                                .apply(style: .label2)
+                        }
+                    }
+                        .foregroundColor(.red)
+                        .onTapGesture {
+                            viewModel.copyAndClearErrorLog()
+                        }
+                }
+            }
+            
             #endif
 
             Text(L10n.keyAppDoesnTMakeAnyProfitFromSwap💚)
