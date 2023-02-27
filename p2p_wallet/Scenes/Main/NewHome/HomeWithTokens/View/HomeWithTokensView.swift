@@ -34,7 +34,7 @@ struct HomeWithTokensView: View {
                 }
             }
             .customRefreshable {
-                await viewModel.reloadData()
+                await viewModel.refresh()
             }
             .onReceive(viewModel.$scrollOnTheTop) { _ in
                 DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) {
