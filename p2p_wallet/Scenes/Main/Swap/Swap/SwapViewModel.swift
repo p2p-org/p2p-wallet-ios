@@ -85,6 +85,7 @@ final class SwapViewModel: BaseViewModel, ObservableObject {
         text += "}"
         UIPasteboard.general.string = text
         errorLogs = nil
+        swapTransaction = nil
         notificationService.showToast(title: nil, text: "Error logs copied to clipboard")
     }
     
