@@ -86,7 +86,7 @@ final class SwapViewModel: BaseViewModel, ObservableObject {
         UIPasteboard.general.string = text
         errorLogs = nil
         swapTransaction = nil
-        notificationService.showToast(title: nil, text: "Error logs copied to clipboard")
+        notificationService.showToast(title: "✅", text: "Logs copied to clipboard")
     }
     
     func getRouteInSymbols() -> String? {
@@ -100,6 +100,7 @@ private extension SwapViewModel {
     func bind() {
         Resolver.resolve(WalletsRepository.self)
             .dataPublisher
+            .removeDuplicates()
             .sinkAsync { [weak self] userWallets in
                 let _ = await self?.stateMachine.accept(action: .updateUserWallets(userWallets: userWallets))
             }
