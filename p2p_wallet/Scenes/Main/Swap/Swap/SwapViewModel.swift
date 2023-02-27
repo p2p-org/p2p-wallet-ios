@@ -279,6 +279,7 @@ private extension SwapViewModel {
                     self.isSliderOn = false
                     return transactionId
                 } catch {
+                    debugPrint("---errorSendingTransaction: ", error)
                     self.isSliderOn = false
                     throw error
                 }
