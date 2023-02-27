@@ -60,7 +60,7 @@ struct BuyInputOutputView: View {
                         fontSynchorinze: fontSynchorinze,
                         font: fontSynchorinze.font,
                         side: .right,
-                        isFocued: true
+                        isFocued: false
                     )
                         .padding(.leading, 8)
                         .accessibilityIdentifier("BuyInputOutputView.rightInput")
