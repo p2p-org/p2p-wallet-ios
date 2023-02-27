@@ -3,7 +3,7 @@ import Jupiter
 import SolanaSwift
 
 extension Route {
-    func toSymbols(tokensList: [Token]) -> String? {
+    func toSymbols(tokensList: [Token]) -> [String]? {
         // get marketInfos
         guard !marketInfos.isEmpty
         else {
@@ -24,6 +24,5 @@ extension Route {
                     .first(where: {$0.address == mint})?
                     .symbol ?? "UNKNOWN"
             }
-            .joined(separator: " -> ")
     }
 }

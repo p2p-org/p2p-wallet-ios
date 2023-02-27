@@ -79,9 +79,29 @@ final class SwapViewModel: BaseViewModel, ObservableObject {
     #if !RELEASE
     func copyAndClearLogs() {
         var text = #"{"swapTransaction": "\#(swapTransaction ?? "")""#
+        if let route = stateMachine.currentState.route?.jsonString {
+            text += #", "route": \#(route)"#
+            text += #", "routeInSymbols": "\#(getRouteInSymbols()?.joined(separator: " -> ") ?? "")""#
+        }
+        
+        if let interTokens = getRouteInSymbols() {
+            text += #", "tokens": ["#
+            for (index, interToken) in interTokens.enumerated() {
+                if index > 0 {
+                    text += ", "
+                }
+                
+                let token = stateMachine.currentState.swapTokens.first(where: {$0.token.symbol == interToken})
+                
+                text += #"{"pubkey": "\#(token?.userWallet?.pubkey ?? "null")", "balance": "\#(token?.userWallet?.amount ?? 0)", "symbol": "\#(token?.token.symbol ?? "")", "mint": "\#(token?.token.address ?? "")"}"#
+            }
+            text += #"]"#
+        }
+        
         if let errorLogs = errorLogs?.map({"\"\($0)\""}).joined(separator: ",") {
             text += #", "errorLogs": [\#(errorLogs)]"#
         }
+        
         text += "}"
         UIPasteboard.general.string = text
         errorLogs = nil
@@ -89,7 +109,7 @@ final class SwapViewModel: BaseViewModel, ObservableObject {
         notificationService.showToast(title: "✅", text: "Logs copied to clipboard")
     }
     
-    func getRouteInSymbols() -> String? {
+    func getRouteInSymbols() -> [String]? {
         let tokensList = stateMachine.currentState.swapTokens.map(\.token)
         return stateMachine.currentState.route?.toSymbols(tokensList: tokensList)
     }

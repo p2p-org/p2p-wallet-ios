@@ -51,7 +51,7 @@ private extension SwapView {
             .padding(.top, 36)
             
             #if !RELEASE
-            Text("Route: " + viewModel.getRouteInSymbols())
+            Text("Route: " + (viewModel.getRouteInSymbols()?.joined(separator: " -> ") ?? ""))
                 .apply(style: .label2)
                 .foregroundColor(.red)
             #endif
