@@ -69,6 +69,10 @@ final class SwapViewModel: BaseViewModel, ObservableObject {
         timer?.invalidate()
     }
     
+    func update() async {
+        let _ = await stateMachine.accept(action: .update)
+    }
+    
     #if !RELEASE
     func getRouteInSymbols() -> String? {
         let tokensList = stateMachine.currentState.swapTokens.map(\.token)
@@ -190,9 +194,9 @@ private extension SwapViewModel {
 
     func scheduleUpdate() {
         cancelUpdate()
-        timer = .scheduledTimer(withTimeInterval: 20, repeats: true) { [weak self] _ in
-            Task {
-                let _ = await self?.stateMachine.accept(action: .update)
+        timer = .scheduledTimer(withTimeInterval: 20, repeats: true) { _ in
+            Task { [weak self] in
+                await self?.update()
             }
         }
     }
