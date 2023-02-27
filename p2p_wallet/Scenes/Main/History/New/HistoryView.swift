@@ -8,6 +8,8 @@
 import History
 import KeyAppUI
 import SwiftUI
+import Resolver
+import AnalyticsManager
 
 struct NewHistoryView<Header: View>: View {
     @ObservedObject var viewModel: HistoryViewModel
@@ -93,7 +95,13 @@ struct NewHistoryView<Header: View>: View {
         }
         .customRefreshable { try? await viewModel.reload() }
         .background(Color(Asset.Colors.smoke.color))
-        .onAppear { viewModel.fetch() }
+        .onAppear {
+            let analytic: AnalyticsManager = Resolver.resolve()
+            analytic.log(event: KeyAppAnalyticsEvent.historyOpened)
+            print("History opened")
+            
+            viewModel.fetch()
+        }
     }
 }
 

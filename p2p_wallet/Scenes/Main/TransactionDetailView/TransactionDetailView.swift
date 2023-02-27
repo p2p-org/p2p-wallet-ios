@@ -121,7 +121,7 @@ struct DetailTransactionView: View {
                         clipboardManager.copyToClipboard(infoItem.copyableValue ?? "")
                         
                         let notification: NotificationService = Resolver.resolve()
-                        notification.showInAppNotification(.done(L10n.addressCopiedToClipboard))
+                        notification.showInAppNotification(.done(L10n.theAddressWasCopiedToClipboard))
                     } label: {
                         Text(infoItem.value)
                             .fontWeight(.bold)

@@ -147,10 +147,7 @@ extension Resolver: ResolverRegistering {
         .implements(TransactionParsedRepository.self)
         .scope(.application)
 
-        register {
-            KeyAppHistoryProviderImpl(endpoint: .secretConfig(Environment.current == .release ? "NOTIFICATION_SERVICE_ENDPOINT_RELEASE" : "NOTIFICATION_SERVICE_ENDPOINT")!)
-//            MockKeyAppHistoryProvider()
-        }
+        register { KeyAppHistoryProviderImpl(endpoint: GlobalAppState.shared.pushServiceEndpoint) }
         .implements(KeyAppHistoryProvider.self)
         .scope(.application)
 
