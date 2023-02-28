@@ -136,6 +136,16 @@ class SendCoordinator: Coordinator<SendResult> {
                 vm?.searchQR(query: result, autoSelectTheOnlyOneResultMode: .enabled(delay: 0))
             }).store(in: &subscriptions)
         
+        vm.coordinator.sendViaLinkPublisher
+            .sinkAsync { [weak self] seed in
+                guard let self else { return }
+                self.rootViewController.view.showIndetermineHud()
+                try await self.startSendViaLinkFlow(seed: seed)
+                self.rootViewController.view.hideHud()
+            }
+            .store(in: &subscriptions)
+        
+        
         Task {
             await vm.load()
         }
@@ -158,6 +168,42 @@ class SendCoordinator: Coordinator<SendResult> {
         let coordinator = SendEmptyCoordinator(navigationController: rootViewController)
         coordinator.start()
             .sink(receiveValue: { [weak self] _ in self?.result.send(completion: .finished) })
+            .store(in: &subscriptions)
+    }
+    
+    private func startSendViaLinkFlow(seed: String) async throws {
+        // create recipient
+        let keypair = try await KeyPair(
+            seed: seed,
+            salt: "",
+            passphrase: "",
+            network: .mainnetBeta,
+            derivablePath: .default
+        )
+        
+        let recipient = Recipient(
+            address: keypair.publicKey.base58EncodedString,
+            category: .solanaAddress,
+            attributes: [.funds]
+        )
+        
+        coordinate(to: SendInputCoordinator(
+            recipient: recipient,
+            preChosenWallet: nil,
+            preChosenAmount: nil,
+            navigationController: rootViewController,
+            source: .none,
+            allowSwitchingMainAmountType: true,
+            sendViaLinkSeed: seed
+        ))
+            .sink { [weak self] result in
+                switch result {
+                case let .sent(transaction):
+                    self?.result.send(.sent(transaction))
+                case .cancelled:
+                    break
+                }
+            }
             .store(in: &subscriptions)
     }
 }

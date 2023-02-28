@@ -181,7 +181,8 @@ struct SendInputView_Previews: PreviewProvider {
                 preChosenWallet: nil,
                 preChosenAmount: nil,
                 source: .none,
-                allowSwitchingMainAmountType: false
+                allowSwitchingMainAmountType: false,
+                isSendViaLink: false
             )
         )
     }
