@@ -16,10 +16,23 @@ struct SwapView: View {
 
             switch viewModel.initializingState {
             case .loading, .success:
-                ScrollView {
-                    contentView
+                VStack {
+                    ScrollView {
+                        contentView
+                    }
+                    .scrollDismissesKeyboard()
+
+                    Spacer()
+
+                    SliderActionButton(
+                        isSliderOn: $viewModel.isSliderOn,
+                        data: $viewModel.actionButtonData,
+                        showFinished: $viewModel.showFinished
+                    )
+                    .accessibilityIdentifier("SwapView.sliderButton")
+                    .padding(.bottom, 36)
                 }
-                .scrollDismissesKeyboard()
+                .padding(.horizontal, 16)
             case .failed:
                 errorView
             }
@@ -48,7 +61,7 @@ private extension SwapView {
                 SwapSwitchButton(action: viewModel.switchTokens)
             }
             .padding(.top, 36)
-            
+
             #if !RELEASE
             Text("Route: " + (viewModel.getRouteInSymbols()?.joined(separator: " -> ") ?? ""))
                 .apply(style: .label2)
@@ -62,15 +75,7 @@ private extension SwapView {
                 .accessibilityIdentifier("SwapView.profitInfoLabel")
 
             Spacer()
-            
-            SliderActionButton(
-                isSliderOn: $viewModel.isSliderOn,
-                data: $viewModel.actionButtonData,
-                showFinished: $viewModel.showFinished
-            )
-            .accessibilityIdentifier("SwapView.sliderButton")
-            .padding(.bottom, 36)
-            
+
             #if !RELEASE
             VStack(alignment: .leading, spacing: 10) {
                 Text("Logs (tap to copy and clear):")
@@ -100,7 +105,7 @@ private extension SwapView {
             
             #endif
         }
-        .padding(.horizontal, 16)
+        .onTapGesture { UIApplication.shared.endEditing() }
     }
 
     var errorView: some View {
