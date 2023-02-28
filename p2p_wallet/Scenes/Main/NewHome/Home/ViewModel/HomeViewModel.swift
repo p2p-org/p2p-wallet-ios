@@ -9,81 +9,44 @@ import AnalyticsManager
 import Combine
 import Foundation
 import Resolver
-import RxCombine
-import RxSwift
 import SolanaSwift
 
+@MainActor
 class HomeViewModel: ObservableObject {
+    // MARK: - Dependencies
+    
     @Injected private var analyticsManager: AnalyticsManager
     @Injected private var clipboardManager: ClipboardManagerType
     @Injected private var notificationsService: NotificationService
     @Injected private var accountStorage: AccountStorageType
     @Injected private var nameStorage: NameStorageType
     @Injected private var createNameService: CreateNameService
-    private let walletsRepository: WalletsRepository
+    @Injected private var walletsRepository: WalletsRepository
+
+    // MARK: - Published properties
 
     @Published var state = State.pending
     @Published var address = ""
 
-    private var cancellables = Set<AnyCancellable>()
+    // MARK: - Properties
 
-    private let error = PassthroughSubject<Bool, Never>()
-    var errorShow: AnyPublisher<Bool, Never> { error.eraseToAnyPublisher() }
+    private var subscriptions = Set<AnyCancellable>()
+    private var isInitialized = false
 
-    private var initStateFinished = false
+    // MARK: - Initializers
 
     init() {
-        let walletsRepository = Resolver.resolve(WalletsRepository.self)
-        self.walletsRepository = walletsRepository
-        address = accountStorage.account?.publicKey.base58EncodedString.shortAddress ?? ""
-
-        Observable.combineLatest(
-            walletsRepository.stateObservable,
-            walletsRepository.dataObservable.filter { $0 != nil }
-        ).map { state, data -> (State, Double?) in
-            switch state {
-            case .initializing, .loading:
-                return (State.pending, nil)
-            case .loaded, .error:
-                let fiatAmount = data?.totalAmountInCurrentFiat ?? 0
-                return (fiatAmount > 0 ? State.withTokens : State.empty, fiatAmount)
-            }
-        }
-        .asPublisher()
-        .assertNoFailure()
-        .sink(receiveValue: { [weak self] state, amount in
-            guard let self = self else { return }
-            if self.initStateFinished, state == .pending { return }
-
-            self.updateAddressIfNeeded()
-            self.state = state
-            if state != .pending {
-                self.initStateFinished = true
-                self.analyticsManager.log(parameter: .userHasPositiveBalance(amount > 0))
-                if let amount = amount {
-                    let formatted = round(amount * 100) / 100.0
-                    self.analyticsManager.log(parameter: .userAggregateBalance(formatted))
-                }
-            }
-        })
-        .store(in: &cancellables)
-
-        walletsRepository.stateObservable
-            .asPublisher()
-            .assertNoFailure()
-            .map { $0 == .error }
-            .sink(receiveValue: { [weak self] hasError in
-                if hasError, self?.walletsRepository.getError() != nil {
-                    self?.error.send(true)
-                } else {
-                    self?.error.send(false)
-                }
-            })
-            .store(in: &cancellables)
-
-        walletsRepository.reload()
-
+        // bind
         bind()
+        
+        // reload
+        reload()
+    }
+
+    // MARK: - Methods
+    
+    func reload() {
+        walletsRepository.reload()
     }
 
     func copyToClipboard() {
@@ -103,15 +66,58 @@ class HomeViewModel: ObservableObject {
 
 private extension HomeViewModel {
     func bind() {
+        // isInitialized
+        walletsRepository.statePublisher
+            .filter { $0 == .loaded }
+            .prefix(1)
+            .map { _ in true}
+            .assign(to: \.isInitialized, on: self)
+            .store(in: &subscriptions)
+
+        // state, address, error, log
+        Publishers.CombineLatest(
+            walletsRepository.statePublisher.removeDuplicates(),
+            walletsRepository.dataPublisher.removeDuplicates()
+        )
+            .sink { [weak self] state, data in
+                print("state, data.count: ", state, data.count)
+                
+                guard let self else { return }
+                
+                // accumulate total amount
+                let fiatAmount = data.totalAmountInCurrentFiat
+                let isEmpty = fiatAmount <= 0
+                
+                // address
+                self.updateAddressIfNeeded()
+                
+                // state
+                switch state {
+                case .initializing,
+                     .loading where !self.isInitialized:
+                    self.state = .pending
+                default:
+                    self.state = isEmpty ? .empty: .withTokens
+                    
+                    // log
+                    self.analyticsManager.log(parameter: .userHasPositiveBalance(!isEmpty))
+                    self.analyticsManager.log(parameter: .userAggregateBalance(fiatAmount))
+                }
+            }
+            .store(in: &subscriptions)
+        
+        // update name when needed
         createNameService.createNameResult
             .receive(on: DispatchQueue.main)
             .sink { [weak self] isSuccess in
                 guard isSuccess else { return }
                 self?.updateAddressIfNeeded()
             }
-            .store(in: &cancellables)
+            .store(in: &subscriptions)
     }
 }
+
+// MARK: - Nested types
 
 extension HomeViewModel {
     enum State {
@@ -120,6 +126,8 @@ extension HomeViewModel {
         case empty
     }
 }
+
+// MARK: - Helpers
 
 private extension String {
     var shortAddress: String {
