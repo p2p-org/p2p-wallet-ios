@@ -175,7 +175,7 @@ class SendCoordinator: Coordinator<SendResult> {
         // create recipient
         let keypair = try await KeyPair(
             seed: seed,
-            salt: "",
+            salt: .secretConfig("SEND_VIA_LINK_SALT")!,
             passphrase: "",
             network: .mainnetBeta,
             derivablePath: .default

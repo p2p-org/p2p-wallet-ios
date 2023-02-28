@@ -6,6 +6,8 @@
 	<string>$(AMPLITUDE_API_KEY)</string>
 	<key>LOKALISE_PROJECT_ID</key>
 	<string>$(LOKALISE_PROJECT_ID)</string>
+    <key>SEND_VIA_LINK_SALT</key>
+    <string>$(SEND_VIA_LINK_SALT)</string>
 	<key>LOKALISE_TOKEN</key>
 	<string>$(LOKALISE_TOKEN)</string>
 	<key>AMPLITUDE_API_KEY_FEATURE</key>
