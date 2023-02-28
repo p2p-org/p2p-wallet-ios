@@ -15,7 +15,7 @@ struct TransactionDetailStatusAppearance {
     let circleColor: Color
     let imageColor: Color
 
-    init(status: DetailTransactionStatus) {
+    init(status: TransactionDetailStatus) {
         switch status {
         case .loading:
             image = .lightningFilled
@@ -41,7 +41,7 @@ struct TransactionDetailStatusAppearance {
 
 
 struct TransactionDetailStatusView: View {
-    let status: DetailTransactionStatus
+    let status: TransactionDetailStatus
 
     @State private var isRotatingAnimation = false
     @State private var isColorTransition = true
@@ -52,7 +52,7 @@ struct TransactionDetailStatusView: View {
     private let scaleAnimation = Animation.easeInOut(duration: 0.2)
     private let errorMessageTapAction: () -> Void
 
-    init(status: DetailTransactionStatus, errorMessageTapAction: @escaping () -> Void) {
+    init(status: TransactionDetailStatus, errorMessageTapAction: @escaping () -> Void) {
         self.status = status
         self.errorMessageTapAction = errorMessageTapAction
         self.currentAppearance = TransactionDetailStatusAppearance(status: status)

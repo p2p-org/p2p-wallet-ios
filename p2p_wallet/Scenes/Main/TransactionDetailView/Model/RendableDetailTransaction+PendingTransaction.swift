@@ -9,12 +9,12 @@ import Combine
 import Foundation
 import SolanaPricesAPIs
 
-struct RendableDetailPendingTransaction: RendableDetailTransaction {
+struct RendableDetailPendingTransaction: RendableTransactionDetail {
     let trx: PendingTransaction
     
     let priceService: PricesService
     
-    var status: DetailTransactionStatus {
+    var status: TransactionDetailStatus {
         if trx.transactionId != nil {
             return .succeed(message: L10n.theTransactionHasBeenSuccessfullyCompleted)
         }
@@ -52,7 +52,7 @@ struct RendableDetailPendingTransaction: RendableDetailTransaction {
         trx.transactionId
     }
     
-    var icon: DetailTransactionIcon {
+    var icon: TransactionDetailIcon {
         switch trx.rawTransaction {
         case let transaction as SendTransaction:
             if
@@ -81,12 +81,11 @@ struct RendableDetailPendingTransaction: RendableDetailTransaction {
             
             return .double(fromUrl, toUrl)
         default:
-            return .icon(.transactionUndefined)
-            // return .icon(.planet)
+            return .icon(.planet)
         }
     }
     
-    var amountInFiat: DetailTransactionChange {
+    var amountInFiat: TransactionDetailChange {
         switch trx.rawTransaction {
         case let transaction as SendTransaction:
             return .negative("-\(transaction.amountInFiat.fiatAmountFormattedString())")
@@ -109,8 +108,8 @@ struct RendableDetailPendingTransaction: RendableDetailTransaction {
         }
     }
     
-    var extra: [DetailTransactionExtraInfo] {
-        var result: [DetailTransactionExtraInfo] = []
+    var extra: [TransactionDetailExtraInfo] {
+        var result: [TransactionDetailExtraInfo] = []
         
         switch trx.rawTransaction {
         case let transaction as SendTransaction:
@@ -172,7 +171,7 @@ struct RendableDetailPendingTransaction: RendableDetailTransaction {
         return result
     }
     
-    var actions: [DetailTransactionAction] {
+    var actions: [TransactionDetailAction] {
         switch trx.status {
         case .finalized:
             return [.share, .explorer]
