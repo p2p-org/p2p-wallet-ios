@@ -24,16 +24,17 @@ final class SwapInputViewModel: BaseViewModel, ObservableObject {
 
     private let stateMachine: JupiterSwapStateMachine
     private let isFromToken: Bool
+    private var openKeyboardOnStart: Bool
     private var currentState: JupiterSwapState { stateMachine.currentState }
 
     @Injected private var notificationService: NotificationService
 
-    init(stateMachine: JupiterSwapStateMachine, isFromToken: Bool) {
+    init(stateMachine: JupiterSwapStateMachine, isFromToken: Bool, openKeyboardOnStart: Bool) {
         self.isFromToken = isFromToken
         self.stateMachine = stateMachine
-
+        self.openKeyboardOnStart = openKeyboardOnStart
         self.title = isFromToken ? L10n.youPay : L10n.youReceive
-        self.isFirstResponder = isFromToken
+        self.isFirstResponder = false
         self.isEditable = isFromToken
         self.token = stateMachine.currentState.fromToken
 
@@ -77,7 +78,7 @@ final class SwapInputViewModel: BaseViewModel, ObservableObject {
                 guard let self else { return }
                 self.token = self.isFromToken ? updatedState.fromToken : updatedState.toToken
                 self.updateLoading(status: updatedState.status)
-
+                self.openKeyboardIfNeeded(status: updatedState.status)
                 if self.isFromToken {
                     self.updateAmountFrom(state: updatedState)
                 } else {
@@ -133,5 +134,14 @@ private extension SwapInputViewModel {
 
     func isStateReady(status: JupiterSwapState.Status) -> Bool {
         return status != .requiredInitialize && status != .initializing && status != .error(reason: .initializationFailed)
+    }
+
+    func openKeyboardIfNeeded(status: JupiterSwapState.Status) {
+        guard status == .ready else { return }
+
+        if openKeyboardOnStart, !isFirstResponder, isEditable {
+            isFirstResponder = true
+            openKeyboardOnStart = false
+        }
     }
 }

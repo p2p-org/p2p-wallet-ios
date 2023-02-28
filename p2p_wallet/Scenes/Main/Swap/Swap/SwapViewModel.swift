@@ -221,8 +221,8 @@ private extension SwapViewModel {
 
     func scheduleUpdate() {
         cancelUpdate()
-        timer = .scheduledTimer(withTimeInterval: 20, repeats: true) { _ in
-            Task { [weak self] in
+        timer = .scheduledTimer(withTimeInterval: 20, repeats: true) { [weak self] _ in
+            Task {
                 await self?.update()
             }
         }

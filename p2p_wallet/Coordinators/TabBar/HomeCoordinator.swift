@@ -144,7 +144,7 @@ final class HomeCoordinator: Coordinator<Void> {
                 return coordinate(
                     to: JupiterSwapCoordinator(
                         navigationController: navigationController,
-                        dismissAfterCompletion: true
+                        params: JupiterSwapParameters(dismissAfterCompletion: true, openKeyboardOnStart: true)
                     )
                 )
                 .eraseToAnyPublisher()
