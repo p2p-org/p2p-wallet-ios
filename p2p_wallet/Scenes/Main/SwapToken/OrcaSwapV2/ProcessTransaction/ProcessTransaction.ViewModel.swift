@@ -9,6 +9,7 @@ import AnalyticsManager
 import Foundation
 import Resolver
 import RxCocoa
+import RxCombine
 import RxSwift
 import SolanaSwift
 
@@ -49,15 +50,13 @@ extension ProcessTransaction {
         init(processingTransaction: RawTransactionType) {
             rawTransaction = processingTransaction
             pendingTransactionSubject =
-                BehaviorRelay<PendingTransaction>(value:
-                        .init(
-                            trxIndex: 0,
-                            transactionId: nil,
-                            sentAt: Date(),
-                            rawTransaction: processingTransaction,
-                            status: .sending
-                        )
-                )
+                BehaviorRelay<PendingTransaction>(value: .init(
+                    trxIndex: 0,
+                    transactionId: nil,
+                    sentAt: Date(),
+                    rawTransaction: processingTransaction,
+                    status: .sending
+                ))
         }
 
         deinit {

@@ -8,9 +8,9 @@
 import BEPureLayout
 import Combine
 import Foundation
+import KeyAppUI
 import Resolver
 import SolanaSwift
-import KeyAppUI
 import UIKit
 
 extension WalletDetail {
@@ -26,6 +26,7 @@ extension WalletDetail {
         // MARK: - Subscene
 
         private lazy var historyVC = History.Scene(account: viewModel.pubkey, symbol: viewModel.symbol)
+
         private var coordinator: SendCoordinator?
         private var jupiterSwapCoordinator: JupiterSwapCoordinator?
         private var sendTransactionStatusCoordinator: SendTransactionStatusCoordinator?
@@ -151,13 +152,13 @@ extension WalletDetail {
         }
 
         // MARK: - Actions
-        
+
         private func showSendTransactionStatus(model: SendTransaction) {
             sendTransactionStatusCoordinator = SendTransactionStatusCoordinator(parentController: navigationController!, transaction: model)
-            
+
             sendTransactionStatusCoordinator?
                 .start()
-                .sink(receiveValue: { })
+                .sink(receiveValue: {})
                 .store(in: &subscriptions)
         }
     }

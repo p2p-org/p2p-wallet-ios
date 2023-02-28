@@ -7,12 +7,13 @@
 
 import Foundation
 import History
+import SafariServices
 import TransactionParser
 
-class TransactionDetailCoordinator: SmartCoordinator<DetailTransactionStatus> {
-    let viewModel: DetailTransactionViewModel
+class TransactionDetailCoordinator: SmartCoordinator<TransactionDetailStatus> {
+    let viewModel: TransactionDetailViewModel
 
-    init(viewModel: DetailTransactionViewModel, presentingViewController: UIViewController) {
+    init(viewModel: TransactionDetailViewModel, presentingViewController: UIViewController) {
         self.viewModel = viewModel
         super.init(presentation: SmartCoordinatorPresentPresentation(presentingViewController))
     }
@@ -30,7 +31,22 @@ class TransactionDetailCoordinator: SmartCoordinator<DetailTransactionStatus> {
             case let .share(url):
                 self.presentation.presentingViewController.dismiss(animated: true) {
                     let av = UIActivityViewController(activityItems: [url], applicationActivities: nil)
-                    UIApplication.shared.windows.first?.rootViewController?.present(av, animated: true, completion: nil)
+                    UIApplication
+                        .shared
+                        .windows
+                        .first?
+                        .rootViewController?
+                        .present(av, animated: true, completion: nil)
+                }
+                self.handleResult()
+            case let .open(url):
+                self.presentation.presentingViewController.dismiss(animated: true) {
+                    UIApplication
+                        .shared
+                        .windows
+                        .first?
+                        .rootViewController?
+                        .present(SFSafariViewController(url: url), animated: true, completion: nil)
                 }
                 self.handleResult()
             }

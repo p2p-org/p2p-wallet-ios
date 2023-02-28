@@ -11,8 +11,8 @@ import History
 import SolanaSwift
 import TransactionParser
 
-protocol RendableDetailTransaction {
-    var status: DetailTransactionStatus { get }
+protocol RendableTransactionDetail {
+    var status: TransactionDetailStatus { get }
     
     var title: String { get }
     
@@ -20,18 +20,18 @@ protocol RendableDetailTransaction {
     
     var signature: String? { get }
     
-    var icon: DetailTransactionIcon { get }
+    var icon: TransactionDetailIcon { get }
     
-    var amountInFiat: DetailTransactionChange { get }
+    var amountInFiat: TransactionDetailChange { get }
     
     var amountInToken: String { get }
     
-    var extra: [DetailTransactionExtraInfo] { get }
+    var extra: [TransactionDetailExtraInfo] { get }
     
-    var actions: [DetailTransactionAction] { get }
+    var actions: [TransactionDetailAction] { get }
 }
 
-struct DetailTransactionExtraInfo {
+struct TransactionDetailExtraInfo {
     let title: String
     let value: String
     
@@ -44,20 +44,20 @@ struct DetailTransactionExtraInfo {
     }
 }
 
-enum DetailTransactionAction: Int, Identifiable {
+enum TransactionDetailAction: Int, Identifiable {
     var id: Int { self.rawValue }
     
     case share
     case explorer
 }
 
-enum DetailTransactionIcon {
+enum TransactionDetailIcon {
     case icon(UIImage)
     case single(URL)
     case double(URL, URL)
 }
 
-enum DetailTransactionChange {
+enum TransactionDetailChange {
     case positive(String)
     case negative(String)
     case unchanged(String)
@@ -71,7 +71,7 @@ enum DetailTransactionChange {
     }
 }
 
-enum DetailTransactionStatus: Equatable {
+enum TransactionDetailStatus: Equatable {
     case loading(message: String)
     case succeed(message: String)
     case error(message: NSAttributedString)
