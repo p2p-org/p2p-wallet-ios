@@ -133,8 +133,7 @@ final class HomeWithTokensViewModel: BaseViewModel, ObservableObject {
     }
 
     func tokenClicked(wallet: Wallet) {
-        guard let pubKey = wallet.pubkey else { return }
-        navigation.send(.wallet(pubKey: pubKey, tokenSymbol: wallet.token.symbol))
+        navigation.send(.wallet(wallet))
     }
 
     func scrollToTop() {

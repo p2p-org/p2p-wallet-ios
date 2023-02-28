@@ -15,8 +15,8 @@ import Combine
 protocol NotificationService {
     typealias DeviceTokenResponse = JsonRpcResponseDto<DeviceTokenResponseDto>
 
-    func sendRegisteredDeviceToken(_ deviceToken: Data) async
-    func deleteDeviceToken() async
+    func sendRegisteredDeviceToken(_ deviceToken: Data) async throws
+    func deleteDeviceToken() async throws
     func showInAppNotification(_ notification: InAppNotification)
     func showToast(title: String?, text: String?)
     func showToast(title: String?, text: String?, withAutoHidden: Bool)
@@ -51,21 +51,7 @@ final class NotificationServiceImpl: NSObject, NotificationService {
     override init() {
         super.init()
 
-        if !Defaults.wasFirstAttemptForSendingToken, Defaults.didSetEnableNotifications {
-            goFlowForUnregisteredUserWithToken()
-        }
-
         UNUserNotificationCenter.current().delegate = self
-        guard let deviceToken = UserDefaults.standard.data(forKey: deviceTokenKey) else { return }
-
-        Task.detached(priority: .background) { [unowned self] in
-            await sendRegisteredDeviceToken(deviceToken)
-        }
-    }
-
-    private func goFlowForUnregisteredUserWithToken() {
-        unregisterForRemoteNotifications()
-        registerForRemoteNotifications()
     }
 
     func unregisterForRemoteNotifications() {
@@ -88,42 +74,37 @@ final class NotificationServiceImpl: NSObject, NotificationService {
             }
     }
 
-    func sendRegisteredDeviceToken(_ deviceToken: Data) async {
-        UserDefaults.standard.set(deviceToken, forKey: deviceTokenKey)
-        Defaults.wasFirstAttemptForSendingToken = true
-        Defaults.lastDeviceToken = deviceToken
-
+    func sendRegisteredDeviceToken(_ deviceToken: Data) async throws {
         guard let publicKey = accountStorage.account?.publicKey.base58EncodedString else { return }
         let token = deviceToken.formattedDeviceToken
+        
+        let result = try await notificationRepository.sendDeviceToken(model: .init(
+            deviceToken: token,
+            clientId: publicKey,
+            deviceInfo: .init(
+                osName: UIDevice.current.systemName,
+                osVersion: UIDevice.current.systemVersion,
+                deviceModel: UIDevice.current.model
+            )
+        ))
+        
+        print(result)
 
-        do {
-            _ = try await notificationRepository.sendDeviceToken(model: .init(
-                deviceToken: token,
-                clientId: publicKey,
-                deviceInfo: .init(
-                    osName: UIDevice.current.systemName,
-                    osVersion: UIDevice.current.systemVersion,
-                    deviceModel: UIDevice.current.model
-                )
-            ))
-            UserDefaults.standard.removeObject(forKey: deviceTokenKey)
-        } catch {
-            UserDefaults.standard.set(deviceToken, forKey: deviceTokenKey)
-        }
+        Defaults.lastDeviceToken = deviceToken
     }
 
-    func deleteDeviceToken() async {
+    func deleteDeviceToken() async throws {
         guard
             let token = Defaults.lastDeviceToken?.formattedDeviceToken,
             let publicKey = accountStorage.account?.publicKey.base58EncodedString
         else { return }
 
-        _ = try? await notificationRepository.removeDeviceToken(model: .init(
+        _ = try await notificationRepository.removeDeviceToken(model: .init(
             deviceToken: token,
             clientId: publicKey
         ))
-        
-        UserDefaults.standard.removeObject(forKey: deviceTokenKey)
+
+        Defaults.lastDeviceToken = nil
     }
 
     func showInAppNotification(_ notification: InAppNotification) {

@@ -6,9 +6,9 @@
 //
 
 import AnalyticsManager
+import Combine
 import Foundation
 import Resolver
-import Combine
 import SolanaSwift
 import TransactionParser
 
@@ -20,6 +20,9 @@ protocol TransactionHandlerType {
 
     func observeProcessingTransactions(forAccount account: String) -> AnyPublisher<[ParsedTransaction], Never>
     func observeProcessingTransactions() -> AnyPublisher<[ParsedTransaction], Never>
+
+    func observePendingTransactions() -> AnyPublisher<[PendingTransaction], Never>
+    func getProcessingTransaction(index: Int) -> PendingTransaction
 
     func getProccessingTransactions(of account: String) -> [ParsedTransaction]
     func getProcessingTransaction() -> [ParsedTransaction]
@@ -130,5 +133,14 @@ class TransactionHandler: TransactionHandlerType {
             .compactMap { pt -> ParsedTransaction? in
                 pt.parse(pricesService: pricesService, authority: walletsRepository.nativeWallet?.pubkey)
             }
+    }
+
+    func observePendingTransactions() -> AnyPublisher<[PendingTransaction], Never> {
+        transactionsSubject
+            .eraseToAnyPublisher()
+    }
+
+    func getProcessingTransaction(index: Int) -> PendingTransaction {
+        transactionsSubject.value[index]
     }
 }

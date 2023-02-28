@@ -38,6 +38,7 @@ struct DebugMenuView: View {
                 }
                 Section(header: Text("Application")) {
                     TextFieldRow(title: "Wallet:", content: $globalAppState.forcedWalletAddress)
+                    TextFieldRow(title: "Push:", content: $globalAppState.pushServiceEndpoint)
                     Toggle("Prefer direct swap", isOn: $globalAppState.preferDirectSwap)
                     Button {
                         Task {
