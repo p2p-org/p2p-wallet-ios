@@ -65,7 +65,7 @@ final class SendInputViewModel: BaseViewModel, ObservableObject {
     private let pricesService: PricesServiceType
     @Injected private var analyticsManager: AnalyticsManager
 
-    init(recipient: Recipient, preChosenWallet: Wallet?, preChosenAmount: Double?, source: SendSource, allowSwitchingMainAmountType: Bool) {
+    init(recipient: Recipient, preChosenWallet: Wallet?, preChosenAmount: Double?, source: SendSource, allowSwitchingMainAmountType: Bool, isSendViaLink: Bool) {
         self.source = source
         self.preChosenAmount = preChosenAmount
         let repository = Resolver.resolve(WalletsRepository.self)
@@ -116,7 +116,8 @@ final class SendInputViewModel: BaseViewModel, ObservableObject {
             recipient: recipient,
             token: tokenInWallet.token,
             feeToken: feeTokenInWallet.token,
-            userWalletState: env
+            userWalletState: env,
+            isSendViaLink: isSendViaLink
         )
 
         stateMachine = .init(
@@ -443,6 +444,8 @@ private extension SendInputViewModel {
         
         try? await Task.sleep(nanoseconds: 500_000_000)
         
+        let isSendViaLink = stateMachine.currentState.isSendViaLink
+        
         await MainActor.run {
             let transaction = SendTransaction(state: self.currentState) {
                 try? await Resolver.resolve(SendHistoryService.self).insert(recipient)
@@ -451,7 +454,8 @@ private extension SendInputViewModel {
                     from: sourceWallet,
                     receiver: address,
                     amount: amountInToken,
-                    feeWallet: feeWallet
+                    feeWallet: feeWallet,
+                    ignoreTopUp: isSendViaLink
                 )
 
                 return trx

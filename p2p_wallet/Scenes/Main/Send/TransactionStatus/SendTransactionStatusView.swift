@@ -203,7 +203,8 @@ struct SendTransactionStatusView_Previews: PreviewProvider {
                         recipient: .init(address: "", category: .solanaAddress, attributes: .funds),
                         token: .nativeSolana,
                         feeToken: .nativeSolana,
-                        userWalletState: .empty
+                        userWalletState: .empty,
+                        isSendViaLink: false
                     )
                 ) { "0123abc" }
             )

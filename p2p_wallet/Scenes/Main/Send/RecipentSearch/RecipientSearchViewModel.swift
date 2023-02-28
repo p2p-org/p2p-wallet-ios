@@ -63,6 +63,9 @@ class RecipientSearchViewModel: ObservableObject {
 
         fileprivate let scanQRSubject: PassthroughSubject<Void, Never> = .init()
         var scanQRPublisher: AnyPublisher<Void, Never> { scanQRSubject.eraseToAnyPublisher() }
+        
+        fileprivate let sendViaLinkSubject: PassthroughSubject<String, Never> = .init()
+        var sendViaLinkPublisher: AnyPublisher<String, Never> { sendViaLinkSubject.eraseToAnyPublisher() }
     }
 
     let coordinator: Coordinator = .init()
@@ -223,12 +226,12 @@ class RecipientSearchViewModel: ObservableObject {
     }
     
     func sendViaLink() {
-        fatalError()
         // create seed
         let asciiCharacters = #"!#"$%&'()*+,-./0123456789:;<=>?@ABCDEFGHIJKLMNOPQRSTUVWXYZ[\]^_`abcdefghijklmnopqrstuvwxyz{|}~"#
         let seed = String((0..<16).map{ _ in asciiCharacters.randomElement()! })
-        // create recipient from seed
+        
         // select recipient
+        coordinator.sendViaLinkSubject.send(seed)
     }
 }
 
