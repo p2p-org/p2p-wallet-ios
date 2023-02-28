@@ -1216,3 +1216,5 @@ You can try again, but your new transaction will be subject to the current rates
 "License" = "License";
 "Cashout with Moonpay" = "Cashout with Moonpay";
 "The address was copied to clipboard" = "The address was copied to clipboard";
+"Send crypto via link" = "Send crypto via link";
+"You don’t need to know the address" = "You don’t need to know the address";

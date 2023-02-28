@@ -1248,3 +1248,5 @@ You can try again, but your new transaction will be subject to the current rates
 "License" = "Giấy phép";
 "Cashout with Moonpay" = "Rút tiền với Moonpay";
 "The address was copied to clipboard" = "Địa chỉ đã được sao chép vào clipboard";
+"Send crypto via link" = "Gửi tiền điện tử qua liên kết";
+"You don’t need to know the address" = "Bạn không cần biết địa chỉ";
