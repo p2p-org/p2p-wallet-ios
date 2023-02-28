@@ -3,24 +3,39 @@ import SwiftUI
 import KeyAppUI
 import SolanaSwift
 
+struct JupiterSwapParameters {
+    let preChosenWallet: Wallet?
+    let dismissAfterCompletion: Bool
+    let openKeyboardOnStart: Bool
+
+    init(dismissAfterCompletion: Bool, openKeyboardOnStart: Bool, preChosenWallet: Wallet? = nil) {
+        self.preChosenWallet = preChosenWallet
+        self.dismissAfterCompletion = dismissAfterCompletion
+        self.openKeyboardOnStart = openKeyboardOnStart
+    }
+}
+
 final class JupiterSwapCoordinator: Coordinator<Void> {
     private let navigationController: UINavigationController
     private var result = PassthroughSubject<Void, Never>()
-    private let preChosenWallet: Wallet?
-    private let dismissAfterCompletion: Bool
+    private let params: JupiterSwapParameters
 
-    init(navigationController: UINavigationController, preChosenWallet: Wallet? = nil, dismissAfterCompletion: Bool) {
+    init(navigationController: UINavigationController, params: JupiterSwapParameters) {
         self.navigationController = navigationController
-        self.preChosenWallet = preChosenWallet
-        self.dismissAfterCompletion = dismissAfterCompletion
+        self.params = params
     }
-    
+
     override func start() -> AnyPublisher<Void, Never> {
-        let viewModel = SwapViewModel(preChosenWallet: preChosenWallet)
-        let fromViewModel = SwapInputViewModel(stateMachine: viewModel.stateMachine, isFromToken: true)
-        let toViewModel = SwapInputViewModel(stateMachine: viewModel.stateMachine, isFromToken: false)
+        let viewModel = SwapViewModel(preChosenWallet: params.preChosenWallet)
+        let fromViewModel = SwapInputViewModel(stateMachine: viewModel.stateMachine, isFromToken: true, openKeyboardOnStart: params.openKeyboardOnStart)
+        let toViewModel = SwapInputViewModel(stateMachine: viewModel.stateMachine, isFromToken: false, openKeyboardOnStart: params.openKeyboardOnStart)
         let view = SwapView(viewModel: viewModel, fromViewModel: fromViewModel, toViewModel: toViewModel)
-        let controller = KeyboardAvoidingViewController(rootView: view)
+        let controller: UIViewController
+        if params.openKeyboardOnStart {
+            controller = KeyboardAvoidingViewController(rootView: view)
+        } else {
+            controller = UIHostingController(rootView: view)
+        }
         navigationController.pushViewController(controller, animated: true)
         style(controller: controller)
 
@@ -83,7 +98,7 @@ final class JupiterSwapCoordinator: Coordinator<Void> {
         coordinate(to: TransactionDetailCoordinator(viewModel: viewModel, presentingViewController: navigationController))
             .sink(receiveCompletion: { [weak self] _ in
                 guard let self else { return }
-                if self.dismissAfterCompletion && !hasError {
+                if self.params.dismissAfterCompletion && !hasError {
                     self.navigationController.popViewController(animated: true)
                     self.result.send(())
                 }

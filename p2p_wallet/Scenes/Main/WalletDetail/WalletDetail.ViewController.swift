@@ -136,8 +136,7 @@ extension WalletDetail {
                 if available(.jupiterSwapEnabled) {
                     jupiterSwapCoordinator = JupiterSwapCoordinator(
                         navigationController: navigationController!,
-                        preChosenWallet: wallet,
-                        dismissAfterCompletion: true
+                        params: JupiterSwapParameters(dismissAfterCompletion: true, openKeyboardOnStart: true, preChosenWallet: wallet)
                     )
                     jupiterSwapCoordinator?.start().sink(receiveValue: { _ in }).store(in: &subscriptions)
                 } else {
