@@ -122,7 +122,7 @@ extension TransactionHandler {
         return false
     }
 
-    private func updateRepository(with rawTransaction: RawTransactionType) {
+    @MainActor private func updateRepository(with rawTransaction: RawTransactionType) {
         switch rawTransaction {
         case let transaction as SendTransaction:
             guard !socket.isConnected else { return }
