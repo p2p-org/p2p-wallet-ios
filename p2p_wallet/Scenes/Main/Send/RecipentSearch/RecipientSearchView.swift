@@ -44,6 +44,20 @@ struct RecipientSearchView: View {
                     viewModel.qr()
                 }
                     .accessibilityIdentifier("RecipientSearchView.loadedView.RecipientSearchField")
+                
+                // Send via link
+                if viewModel.isSendViaLinkAvailable {
+                    Button {
+                        viewModel.sendViaLink()
+                    } label: {
+                        RecipientCell(
+                            image: Image(uiImage: .sendViaLinkCircle)
+                                .castToAnyView(),
+                            title: L10n.sendCryptoViaLink,
+                            subtitle: L10n.youDonTNeedToKnowTheAddress
+                        )
+                    }
+                }
 
                 // Result
                 if viewModel.isSearching {

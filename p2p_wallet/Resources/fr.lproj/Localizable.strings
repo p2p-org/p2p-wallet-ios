@@ -1245,3 +1245,5 @@ You can try again, but your new transaction will be subject to the current rates
 "License" = "Licence";
 "Cashout with Moonpay" = "Paiement avec Moonpay";
 "The address was copied to clipboard" = "L'adresse a été copiée dans le presse-papiers";
+"Send crypto via link" = "Envoyer la crypto via un lien";
+"You don’t need to know the address" = "Vous n'avez pas besoin de connaître l'adresse";

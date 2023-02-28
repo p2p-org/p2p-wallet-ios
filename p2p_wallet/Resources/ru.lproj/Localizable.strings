@@ -1243,3 +1243,5 @@ You can try again, but your new transaction will be subject to the current rates
 "License" = "Лицензия";
 "Cashout with Moonpay" = "Вывод средств с Moonpay";
 "The address was copied to clipboard" = "Адрес скопирован в буфер обмена";
+"Send crypto via link" = "Отправить криптовалюту по ссылке";
+"You don’t need to know the address" = "Вам не нужно знать адрес";

@@ -24,6 +24,7 @@ enum LoadableState: Equatable {
     }
 }
 
+@MainActor
 class RecipientSearchViewModel: ObservableObject {
     private let preChosenWallet: Wallet?
     private var subscriptions = Set<AnyCancellable>()
@@ -50,6 +51,8 @@ class RecipientSearchViewModel: ObservableObject {
 
     @Published var recipientsHistoryStatus: SendHistoryService.Status = .ready
     @Published var recipientsHistory: [Recipient] = []
+    
+    @Published var isSendViaLinkAvailable = false
 
     var autoSelectTheOnlyOneResultMode: AutoSelectTheOnlyOneResultMode?
     var fromQR: Bool = false
@@ -119,7 +122,6 @@ class RecipientSearchViewModel: ObservableObject {
         logOpen()
     }
 
-    @MainActor
     func autoSelectTheOnlyOneResult(result: RecipientSearchResult, fromQR: Bool) {
         // Wait result and select first result
         switch result {
@@ -178,7 +180,6 @@ class RecipientSearchViewModel: ObservableObject {
         }
     }
 
-    @MainActor
     func past() {
         guard let text = clipboardManager.stringFromClipboard(), !text.isEmpty else { return }
         isFirstResponder = false
@@ -187,25 +188,21 @@ class RecipientSearchViewModel: ObservableObject {
         notificationService.showToast(title: "✅", text: L10n.pastedFromClipboard)
     }
 
-    @MainActor
     func qr() {
         isFirstResponder = false
         coordinator.scanQRSubject.send(())
     }
 
-    @MainActor
     func selectRecipient(_ recipient: Recipient, fromQR: Bool = false) {
         logRecipient(recipient: recipient, fromQR: fromQR)
         coordinator.selectRecipientSubject.send(recipient)
     }
 
-    @MainActor
     func notifyAddressRecognized(recipient: Recipient) {
         let text = L10n.theAddressIsRecognized("\(recipient.address.prefix(6))...\(recipient.address.suffix(6))")
         notificationService.showToast(title: "✅", text: text, haptic: false)
     }
 
-    @MainActor
     func load() async {
         loadingState = .loading
         do {
@@ -215,6 +212,23 @@ class RecipientSearchViewModel: ObservableObject {
         } catch {
             loadingState = .error(error.readableDescription)
         }
+        await checkIfSendViaLinkAvailable()
+    }
+    
+    // MARK: - Send via link
+    
+    func checkIfSendViaLinkAvailable() async {
+        // FIXME: - Implementation later
+        isSendViaLinkAvailable = true
+    }
+    
+    func sendViaLink() {
+        fatalError()
+        // create seed
+        let asciiCharacters = #"!#"$%&'()*+,-./0123456789:;<=>?@ABCDEFGHIJKLMNOPQRSTUVWXYZ[\]^_`abcdefghijklmnopqrstuvwxyz{|}~"#
+        let seed = String((0..<16).map{ _ in asciiCharacters.randomElement()! })
+        // create recipient from seed
+        // select recipient
     }
 }
 
