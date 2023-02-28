@@ -93,7 +93,7 @@ final class JupiterSwapCoordinator: Coordinator<Void> {
     }
 
     private func openDetails(pendingTransaction: PendingTransaction) {
-        let viewModel = DetailTransactionViewModel(pendingTransaction: pendingTransaction)
+        let viewModel = TransactionDetailViewModel(pendingTransaction: pendingTransaction)
         var hasError = false
         coordinate(to: TransactionDetailCoordinator(viewModel: viewModel, presentingViewController: navigationController))
             .sink(receiveCompletion: { [weak self] _ in

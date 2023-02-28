@@ -31,4 +31,7 @@ public extension Feature {
 
     // Ren BTC
     static let receiveRenBtcEnabled = Feature(rawValue: "receive_ren_btc_enabled")
+    
+    // History
+    static let historyServiceEnabled = Feature(rawValue: "history_service_enabled")
 }

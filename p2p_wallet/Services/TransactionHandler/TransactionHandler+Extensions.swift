@@ -6,8 +6,8 @@
 //
 
 import Foundation
-import SolanaSwift
 import Sentry
+import SolanaSwift
 
 extension TransactionHandler {
     /// Send and observe transaction
@@ -31,7 +31,6 @@ extension TransactionHandler {
                         status: .confirmed(0)
                     )
                 }
-                
 
                 // observe confirmations
                 observe(index: index, transactionId: transactionID)
@@ -78,7 +77,7 @@ extension TransactionHandler {
                     print(error ?? "")
                     txStatus = .error(SolanaError.other(error ?? ""))
                 }
-                
+
                 await self.updateTransactionAtIndex(index) { currentValue in
                     var value = currentValue
                     value.status = txStatus

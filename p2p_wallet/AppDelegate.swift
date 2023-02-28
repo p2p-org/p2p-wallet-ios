@@ -105,7 +105,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         didRegisterForRemoteNotificationsWithDeviceToken deviceToken: Data
     ) {
         Task.detached(priority: .background) { [unowned self] in
-            await notificationService.sendRegisteredDeviceToken(deviceToken)
+            try await notificationService.sendRegisteredDeviceToken(deviceToken)
         }
         AppsFlyerLib.shared().registerUninstall(deviceToken)
         Intercom.setDeviceToken(deviceToken) { error in
