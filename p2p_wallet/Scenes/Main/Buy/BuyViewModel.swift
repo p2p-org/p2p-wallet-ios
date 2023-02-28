@@ -25,13 +25,14 @@ final class BuyViewModel: ObservableObject {
     @Published var isLeftFocus = false
     @Published var isRightFocus = true
     @Published var exchangeOutput: Buy.ExchangeOutput?
-    @Published var navigationSlidingPercentage: CGFloat = 1
     @Published var targetSymbol: String?
     @Published var buttonItem: ButtonItem = .init(
         title: L10n.buy + " \(defaultToken.symbol)",
         icon: .buyWallet,
         enabled: true
     )
+
+    @Published var activeSide: BuyInputOutputActiveSide = .left
 
     // MARK: -
 
@@ -82,6 +83,9 @@ final class BuyViewModel: ObservableObject {
 
         coordinatorIO.tokenSelected
             .sink { [unowned self] token in
+                self.isRightFocus = false
+                self.isLeftFocus = true
+
                 let oldToken = self.token
                 self.token = token ?? self.token
                 if initTokenWasSelected {
@@ -93,8 +97,12 @@ final class BuyViewModel: ObservableObject {
                 initTokenWasSelected = true
             }
             .store(in: &subscriptions)
+
         coordinatorIO.fiatSelected
             .sink { [unowned self] fiat in
+                self.isLeftFocus = false
+                self.isRightFocus = true
+
                 let oldFiat = self.fiat
                 self.fiat = fiat ?? self.fiat
                 Task {
@@ -114,9 +122,37 @@ final class BuyViewModel: ObservableObject {
             }
             .store(in: &subscriptions)
 
-        coordinatorIO.navigationSlidingPercentage.sink { percentage in
-            self.navigationSlidingPercentage = percentage * 110 * 2
-        }.store(in: &subscriptions)
+        Publishers.CombineLatest(
+            $isLeftFocus,
+            $isRightFocus
+        ).map { res in
+            if !res.0, !res.1 {
+                return .none
+            } else if res.0 {
+                return .left
+            } else {
+                return .right
+            }
+        }
+            .assign(to: \.activeSide, on: self)
+            .store(in: &subscriptions)
+
+        $activeSide
+            .debounce(for: 0.0, scheduler: DispatchQueue.main)
+            .sink { side in
+            switch side {
+            case .left:
+                self.isLeftFocus = true
+                self.isRightFocus = false
+            case .right:
+                self.isLeftFocus = false
+                self.isRightFocus = true
+            case .none:
+                self.isLeftFocus = false
+                self.isRightFocus = false
+            }
+        }
+            .store(in: &subscriptions)
 
         totalPublisher
             .receive(on: DispatchQueue.main)
@@ -500,7 +536,6 @@ final class BuyViewModel: ObservableObject {
         ), Never>()
         var showTokenSelect = PassthroughSubject<[TokenCellViewItem], Never>()
         var showFiatSelect = PassthroughSubject<[Fiat], Never>()
-        var navigationSlidingPercentage = PassthroughSubject<CGFloat, Never>()
         // Output
         var tokenSelected = CurrentValueSubject<Token?, Never>(nil)
         var fiatSelected = CurrentValueSubject<Fiat?, Never>(nil)

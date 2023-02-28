@@ -258,6 +258,7 @@ private extension SendInputViewModel {
         feeInfoPressed
             .sink { [weak self] in
                 guard let self = self else { return }
+                self.inputAmountViewModel.isFirstResponder = false
                 self.openFeeInfo.send(self.currentState.fee == .zero)
                 if self.currentState.fee == .zero,
                    self.feeTitle.elementsEqual(L10n.enjoyFreeTransactions)

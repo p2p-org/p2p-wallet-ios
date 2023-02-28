@@ -80,9 +80,7 @@ final class RecoveryKitCoordinator: Coordinator<Void> {
             self?.navigationController.dismiss(animated: true)
         }
 
-        let viewController = BottomSheetController(rootView: view)
-        let navigationController = UINavigationController(rootViewController: viewController)
-        navigationController.modalPresentationStyle = .custom
-        self.navigationController.present(navigationController, animated: true)
+        let viewController = BottomSheetController(showHandler: false, rootView: view)
+        self.navigationController.present(viewController, animated: true)
     }
 }

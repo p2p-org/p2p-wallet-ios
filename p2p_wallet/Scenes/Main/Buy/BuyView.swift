@@ -66,7 +66,6 @@ struct BuyView: View {
         }
         .onAppear {
             withAnimation {
-//                viewModel.navigationSlidingPercentage = 0
                 bottomOffset = 0
             }
         }
@@ -90,27 +89,28 @@ struct BuyView: View {
                 leftSubtitle: viewModel.token.symbol,
                 rightTitle: $viewModel.fiatAmount,
                 rightSubtitle: viewModel.fiat.code,
-                activeSide: .init(get: {
-                    if viewModel.isLeftFocus == false, viewModel.isRightFocus == false {
-                        return .none
-                    } else if viewModel.isLeftFocus == true {
-                        return .left
-                    } else {
-                        return .right
-                    }
-                }, set: { side in
-                    switch side {
-                    case .left:
-                        viewModel.isLeftFocus = true
-                        viewModel.isRightFocus = false
-                    case .right:
-                        viewModel.isLeftFocus = false
-                        viewModel.isRightFocus = true
-                    case .none:
-                        viewModel.isLeftFocus = false
-                        viewModel.isRightFocus = false
-                    }
-                })
+                activeSide: $viewModel.activeSide
+//                    .init(get: {
+//                    if viewModel.isLeftFocus == false, viewModel.isRightFocus == false {
+//                        return .none
+//                    } else if viewModel.isLeftFocus == true {
+//                        return .left
+//                    } else {
+//                        return .right
+//                    }
+//                }, set: { side in
+//                    switch side {
+//                    case .left:
+//                        viewModel.isLeftFocus = true
+//                        viewModel.isRightFocus = false
+//                    case .right:
+//                        viewModel.isLeftFocus = false
+//                        viewModel.isRightFocus = true
+//                    case .none:
+//                        viewModel.isLeftFocus = false
+//                        viewModel.isRightFocus = false
+//                    }
+//                })
             ) { sideTap in
                 switch sideTap {
                 case .left: viewModel.tokenSelectTapped()

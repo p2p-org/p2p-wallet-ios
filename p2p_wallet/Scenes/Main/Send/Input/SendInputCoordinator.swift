@@ -60,6 +60,7 @@ final class SendInputCoordinator: Coordinator<SendResult> {
 
         viewModel.openFeeInfo
             .sink { [weak self] isFree in
+                controller.view.endEditing(true)
                 if viewModel.currentState.amountInToken == 0, isFree {
                     self?.openFreeTransactionsDetail(from: controller)
                 } else {
