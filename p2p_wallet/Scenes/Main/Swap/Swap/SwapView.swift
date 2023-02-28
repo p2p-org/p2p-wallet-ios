@@ -12,14 +12,12 @@ struct SwapView: View {
         ZStack {
             Color(Asset.Colors.smoke.color)
                 .onTapGesture { UIApplication.shared.endEditing() }
+                .ignoresSafeArea()
 
             switch viewModel.initializingState {
             case .loading, .success:
                 ScrollView {
                     contentView
-                }
-                .customRefreshable {
-                    await viewModel.update()
                 }
                 .scrollDismissesKeyboard()
             case .failed:
