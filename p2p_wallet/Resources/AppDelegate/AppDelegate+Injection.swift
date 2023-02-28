@@ -41,7 +41,7 @@ extension Resolver: ResolverRegistering {
     // MARK: - Helpers
 
     /// Application scope: Lifetime app's services
-    private static func registerForApplicationScope() {
+    @MainActor private static func registerForApplicationScope() {
         // Application warmup manager
         register {
             WarmupManager(processes: [
@@ -253,7 +253,7 @@ extension Resolver: ResolverRegistering {
     }
 
     /// Session scope: Live when user is authenticated
-    private static func registerForSessionScope() {
+    @MainActor private static func registerForSessionScope() {
         // AuthenticationHandler
         register { AuthenticationHandler() }
             .implements(AuthenticationHandlerType.self)

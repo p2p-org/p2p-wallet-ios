@@ -11,7 +11,6 @@ import Resolver
 import RxCocoa
 import RxSwift
 import SolanaSwift
-import RxCombine
 
 protocol ProcessTransactionViewModelType {
     var navigationDriver: Driver<ProcessTransaction.NavigatableScene?> { get }
