@@ -2,7 +2,7 @@ import Jupiter
 import SolanaSwift
 
 extension JupiterSwapBusinessLogic {
-    static func autoChoose(swapTokens: [SwapToken]) throws -> (fromToken: SwapToken, toToken: SwapToken) {
+    static func autoChoose(swapTokens: [SwapToken]) -> (fromToken: SwapToken, toToken: SwapToken)? {
         let usdc = swapTokens.first(where: { $0.address == SolanaSwift.Token.usdc.address })
         let solana = swapTokens.first(where: { $0.address == SolanaSwift.Token.nativeSolana.address })
 
@@ -22,10 +22,10 @@ extension JupiterSwapBusinessLogic {
             }
         }
 
-        throw JupiterSwapState.ErrorReason.unknown
+        return nil
     }
 
-    static func autoChooseToToken(for fromToken: SwapToken, from swapTokens: [SwapToken]) throws -> SwapToken {
+    static func autoChooseToToken(for fromToken: SwapToken, from swapTokens: [SwapToken]) -> SwapToken? {
         let usdc = swapTokens.first(where: { $0.address == SolanaSwift.Token.usdc.address })
         let solana = swapTokens.first(where: { $0.address == SolanaSwift.Token.nativeSolana.address })
 
@@ -35,6 +35,6 @@ extension JupiterSwapBusinessLogic {
             return usdc
         }
 
-        throw JupiterSwapState.ErrorReason.unknown
+        return nil
     }
 }

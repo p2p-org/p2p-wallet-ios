@@ -59,7 +59,8 @@ final class SwapViewModel: BaseViewModel, ObservableObject {
             services: JupiterSwapServices(
                 jupiterClient: JupiterRestClientAPI(version: .v4),
                 pricesAPI: Resolver.resolve(),
-                solanaAPIClient: Resolver.resolve()
+                solanaAPIClient: Resolver.resolve(),
+                relayContextManager: Resolver.resolve()
             )
         )
         self.preChosenWallet = preChosenWallet
@@ -257,6 +258,11 @@ private extension SwapViewModel {
         case .error(.networkConnectionError):
             notificationService.showConnectionErrorNotification()
             actionButtonData = SliderActionButtonData(isEnabled: false, title: L10n.swapOfTheseTokensIsnTPossible)
+        case .error(.inputTooHigh(let max)):
+            actionButtonData = SliderActionButtonData(isEnabled: false, title: L10n.max(max.toString(maximumFractionDigits: Int(state.fromToken.token.decimals))))
+            if state.fromToken.address == Token.nativeSolana.address {
+                notificationService.showToast(title: "✅", text: L10n.weLeftAMinimumSOLBalanceToSaveTheAccountAddress)
+            }
         default:
             actionButtonData = SliderActionButtonData(isEnabled: false, title: L10n.swapOfTheseTokensIsnTPossible)
         }

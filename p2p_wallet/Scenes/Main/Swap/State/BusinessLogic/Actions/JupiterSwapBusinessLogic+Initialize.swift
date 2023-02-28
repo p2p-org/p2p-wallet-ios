@@ -11,10 +11,12 @@ extension JupiterSwapBusinessLogic {
     ) async -> JupiterSwapState {
         do {
             let tokens: (fromToken: SwapToken, toToken: SwapToken)
-            if let fromToken {
-                tokens = (fromToken, try autoChooseToToken(for: fromToken, from: swapTokens))
+            if let fromToken, let toToken = autoChooseToToken(for: fromToken, from: swapTokens) {
+                tokens = (fromToken, toToken)
+            } else if let chosenTokens = autoChoose(swapTokens: swapTokens) {
+                tokens = chosenTokens
             } else {
-                tokens = try autoChoose(swapTokens: swapTokens)
+                return .zero(status: .error(reason: .initializationFailed), routeMap: routeMap, swapTokens: swapTokens)
             }
 
             let priceInfo = try await getPrices(from: tokens.fromToken, to: tokens.toToken, services: services)

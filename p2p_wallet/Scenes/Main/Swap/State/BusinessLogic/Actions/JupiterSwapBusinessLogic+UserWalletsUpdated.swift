@@ -55,8 +55,10 @@ extension JupiterSwapBusinessLogic {
                 token: toUserWallet.token,
                 userWallet: toUserWallet
             )
+        } else if let chosenToToken = autoChooseToToken(for: fromToken, from: state.swapTokens) {
+            toToken = chosenToToken
         } else {
-            toToken = try JupiterSwapBusinessLogic.autoChooseToToken(for: fromToken, from: state.swapTokens)
+            return state.copy(status: .error(reason: .unknown), swapTokens: swapTokens, fromToken: fromToken)
         }
         
         // return state
