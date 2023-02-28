@@ -10,7 +10,7 @@ import Resolver
 import SwiftUI
 
 struct DetailTransactionView: View {
-    @ObservedObject var viewModel: DetailTransactionViewModel
+    @ObservedObject var viewModel: TransactionDetailViewModel
     
     var body: some View {
         VStack {
@@ -85,11 +85,11 @@ struct DetailTransactionView: View {
                     ForEach(viewModel.rendableTransaction.actions) { action in
                         switch action {
                         case .share:
-                            CircleButton(title: L10n.share, image: .share2) {
+                            CircleButton(title: L10n.share, image: .share1) {
                                 viewModel.share()
                             }
                         case .explorer:
-                            CircleButton(title: "Explore", image: .transactionShowInExplorer) {
+                            CircleButton(title: L10n.explorer, image: .explorer) {
                                 viewModel.explore()
                             }
                         }
@@ -119,6 +119,9 @@ struct DetailTransactionView: View {
                     Button {
                         let clipboardManager: ClipboardManager = Resolver.resolve()
                         clipboardManager.copyToClipboard(infoItem.copyableValue ?? "")
+                        
+                        let notification: NotificationService = Resolver.resolve()
+                        notification.showInAppNotification(.done(L10n.theAddressWasCopiedToClipboard))
                     } label: {
                         Text(infoItem.value)
                             .fontWeight(.bold)

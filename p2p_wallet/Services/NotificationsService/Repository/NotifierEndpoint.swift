@@ -14,7 +14,7 @@ enum NotifierEndpoint {
 
 extension NotifierEndpoint: Endpoint {
     var path: String {
-        "notifier"
+        ""
     }
 
     var method: RequestMethod {

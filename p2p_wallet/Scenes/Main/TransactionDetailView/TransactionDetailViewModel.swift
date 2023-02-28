@@ -7,37 +7,51 @@
 
 import Combine
 import Foundation
+import History
 import Resolver
 import SolanaSwift
 import TransactionParser
 
-enum DetailTransactionStyle {
+enum TransactionDetailStyle {
     case active
     case passive
 }
 
-enum DetailTransactionViewModelOutput {
+enum TransactionDetailViewModelOutput {
     case share(URL)
+    case open(URL)
     case close
 }
 
-class DetailTransactionViewModel: BaseViewModel, ObservableObject {
-    @Published var rendableTransaction: any RendableDetailTransaction
+class TransactionDetailViewModel: BaseViewModel, ObservableObject {
+    @Published var rendableTransaction: any RendableTransactionDetail
 
     @Published var closeButtonTitle: String = L10n.done
 
-    let style: DetailTransactionStyle
+    let style: TransactionDetailStyle
 
-    let action: PassthroughSubject<DetailTransactionViewModelOutput, Never> = .init()
+    let action: PassthroughSubject<TransactionDetailViewModelOutput, Never> = .init()
 
-    init(rendableDetailTransaction: any RendableDetailTransaction, style: DetailTransactionStyle = .active) {
+    init(rendableDetailTransaction: any RendableTransactionDetail, style: TransactionDetailStyle = .active) {
         self.style = style
         self.rendableTransaction = rendableDetailTransaction
     }
 
-    init(parsedTransaction: ParsedTransaction ) {
+    init(parsedTransaction: ParsedTransaction) {
         self.style = .passive
         self.rendableTransaction = RendableDetailParsedTransaction(trx: parsedTransaction)
+    }
+
+    init(historyTransaction: HistoryTransaction) {
+        self.style = .passive
+        self.rendableTransaction = RendableDetailHistoryTransaction(trx: historyTransaction, allTokens: [])
+
+        super.init()
+
+        Task {
+            let tokenRepository: TokensRepository = Resolver.resolve()
+            self.rendableTransaction = try await RendableDetailHistoryTransaction(trx: historyTransaction, allTokens: tokenRepository.getTokensList(useCache: true))
+        }
     }
 
     init(pendingTransaction: PendingTransaction) {
@@ -65,6 +79,6 @@ class DetailTransactionViewModel: BaseViewModel, ObservableObject {
 
     func explore() {
         guard let url = URL(string: "https://explorer.solana.com/tx/\(rendableTransaction.signature ?? "")") else { return }
-        UIApplication.shared.open(url)
+        action.send(.open(url))
     }
 }
