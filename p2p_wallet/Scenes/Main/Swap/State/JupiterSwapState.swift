@@ -1,11 +1,12 @@
 import Jupiter
 
 struct JupiterSwapState: Equatable {
-    enum ErrorReason: Equatable, Error {
+    enum ErrorReason: Equatable {
         case initializationFailed
         case networkConnectionError
 
         case notEnoughFromToken
+        case inputTooHigh(Double)
         case equalSwapTokens
 
         case unknown
