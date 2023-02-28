@@ -180,8 +180,8 @@ class WalletsViewModel: BECollectionViewModel<Wallet> {
             
             var data = self.data
             
-            if !data.isEmpty {
-                data[0].lamports = solBalance
+            if let index = data.firstIndex(where: { $0.isNativeSOL }) {
+                data[index].lamports = solBalance
             }
             
             // update balance
