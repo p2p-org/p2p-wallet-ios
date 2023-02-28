@@ -136,13 +136,7 @@ private extension SwapViewModel {
                 case .loading, .initial:
                     self.initializingState = .loading
                 case let .ready(swapTokens, routeMap):
-                    let prechosenToken = swapTokens.first(where: { $0.address == self.preChosenWallet?.mintAddress })
-                    let _ = await self.stateMachine
-                        .accept(action: .initialize(
-                            swapTokens: swapTokens,
-                            routeMap: routeMap,
-                            fromToken: prechosenToken
-                        ))
+                    await self.initialize(swapTokens: swapTokens, routeMap: routeMap)
                 case .failed:
                     self.initializingState = .failed
                 }
@@ -153,12 +147,14 @@ private extension SwapViewModel {
         changeFromToken
             .sinkAsync { [weak self] token in
                 let _ = await self?.stateMachine.accept(action: .changeFromToken(token))
+                Defaults.fromTokenAddress = token.address
             }
             .store(in: &subscriptions)
 
         changeToToken
             .sinkAsync { [ weak self] token in
                 let _ = await self?.stateMachine.accept(action: .changeToToken(token))
+                Defaults.toTokenAddress = token.address
             }
             .store(in: &subscriptions)
 
@@ -170,6 +166,24 @@ private extension SwapViewModel {
                 self.updateActionButton(for: updatedState)
             }
             .store(in: &subscriptions)
+    }
+
+    func initialize(swapTokens: [SwapToken], routeMap: RouteMap) async {
+        var prechosenFromToken: SwapToken?
+        var prechosenToToken: SwapToken?
+        if let fromTokenAddress = self.preChosenWallet?.mintAddress ?? Defaults.fromTokenAddress {
+            prechosenFromToken = swapTokens.first(where: { $0.address == fromTokenAddress })
+        }
+        if let toTokenAddress = Defaults.toTokenAddress {
+            prechosenToToken = swapTokens.first(where: { $0.address == toTokenAddress })
+        }
+        let _ = await self.stateMachine
+            .accept(action: .initialize(
+                swapTokens: swapTokens,
+                routeMap: routeMap,
+                fromToken: prechosenFromToken,
+                toToken: prechosenToToken
+            ))
     }
 
     func handle(state: JupiterSwapState) {
@@ -214,7 +228,7 @@ private extension SwapViewModel {
                 if self.currentState.swapTokens.isEmpty {
                     await self.swapWalletsRepository.load()
                 } else {
-                    let _ = await self.stateMachine.accept(action: .initialize(swapTokens: self.currentState.swapTokens, routeMap: self.currentState.routeMap, fromToken: self.currentState.fromToken))
+                    await self.initialize(swapTokens: self.currentState.swapTokens, routeMap: self.currentState.routeMap)
                 }
             }
             .store(in: &subscriptions)

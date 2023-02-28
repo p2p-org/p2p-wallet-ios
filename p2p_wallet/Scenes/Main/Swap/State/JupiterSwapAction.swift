@@ -2,7 +2,7 @@ import Jupiter
 import SolanaSwift
 
 enum JupiterSwapAction: Equatable {
-    case initialize(swapTokens: [SwapToken], routeMap: RouteMap, fromToken: SwapToken?)
+    case initialize(swapTokens: [SwapToken], routeMap: RouteMap, fromToken: SwapToken?, toToken: SwapToken?)
 
     case update
 
