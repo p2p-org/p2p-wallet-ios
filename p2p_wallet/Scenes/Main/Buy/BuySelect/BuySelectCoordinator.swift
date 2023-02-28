@@ -16,6 +16,7 @@ Coordinator<BuySelectCoordinatorResult<Model>>where Model == Cell.Model {
     private var viewModel: BuySelectViewModel<Model>
     private var selectedModel: Model?
     private var title: String
+    private let result = PassthroughSubject<BuySelectCoordinatorResult<Model>, Never>()
 
     init(
         title: String,
@@ -40,16 +41,23 @@ Coordinator<BuySelectCoordinatorResult<Model>>where Model == Cell.Model {
         viewController.preferredSheetSizing = .fit
         controller.present(viewController, animated: true)
 
-        return Publishers.Merge(
-            // Dismiss events
-            Publishers.MergeMany(
-                viewModel.coordinatorIO.didDissmiss.eraseToAnyPublisher(),
-                viewController.deallocatedPublisher().eraseToAnyPublisher()
-            )
-                .map { BuySelectCoordinatorResult.cancel },
-            viewModel.coordinatorIO.didSelectModel.map { BuySelectCoordinatorResult.result(model: $0) }
-        ).prefix(1).handleEvents(receiveOutput: { _ in
-            viewController.dismiss(animated: true)
-        }).eraseToAnyPublisher()
+        viewModel.coordinatorIO.didDissmiss
+            .sink(receiveValue: { [unowned self] _ in
+                viewController.dismiss(animated: true) {
+                    self.result.send(.cancel)
+                }
+            })
+            .store(in: &subscriptions)
+
+        viewModel.coordinatorIO.didSelectModel
+            .map { BuySelectCoordinatorResult.result(model: $0) }
+            .sink(receiveValue: { [unowned self] res in
+                viewController.dismiss(animated: true) {
+                    self.result.send(res)
+                }
+            })
+            .store(in: &subscriptions)
+
+        return result.prefix(1).eraseToAnyPublisher()
     }
 }

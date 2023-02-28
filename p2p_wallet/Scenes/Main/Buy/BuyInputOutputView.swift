@@ -36,6 +36,7 @@ struct BuyInputOutputView: View {
                     TextfieldView(
                         text: $leftTitle,
                         activeSide: $activeSide,
+                        isFocued: .init(get: { activeSide == .left }, set: { _, _ in }),
                         fontSynchorinze: fontSynchorinze,
                         font: fontSynchorinze.font,
                         side: .left
@@ -55,10 +56,10 @@ struct BuyInputOutputView: View {
                     TextfieldView(
                         text: $rightTitle,
                         activeSide: $activeSide,
+                        isFocued: .init(get: { activeSide == .right }, set: { _, _ in }),
                         fontSynchorinze: fontSynchorinze,
                         font: fontSynchorinze.font,
-                        side: .right,
-                        isFocued: true
+                        side: .right
                     )
                         .padding(.leading, 8)
 
@@ -171,10 +172,10 @@ private class FontSynchorinze: ObservableObject {
 private struct TextfieldView: UIViewRepresentable {
     @Binding var text: String
     @Binding var activeSide: BuyInputOutputActiveSide
+    @Binding var isFocued: Bool
     let fontSynchorinze: FontSynchorinze
     let font: UIFont
     let side: Side
-    var isFocued: Bool = false
 
     func makeUIView(context ctx: Context) -> UITextField {
         let textField = UITextField()
@@ -188,11 +189,6 @@ private struct TextfieldView: UIViewRepresentable {
         textField.text = text
         textField.keyboardType = .decimalPad
         textField.addTarget(ctx.coordinator, action: #selector(ctx.coordinator.textDidChanged), for: .editingChanged)
-        if isFocued {
-            DispatchQueue.main.asyncAfter(deadline: .now() + 0.7) {
-                textField.becomeFirstResponder()
-            }
-        }
         return textField
     }
 
@@ -200,6 +196,13 @@ private struct TextfieldView: UIViewRepresentable {
         textField.text = text
         ctx.coordinator.adjustFont(textField)
         textField.font = fontSynchorinze.font
+        if isFocued {
+            DispatchQueue.main.asyncAfter(deadline: .now() + 0.3) {
+                textField.becomeFirstResponder()
+            }
+        } else {
+            textField.resignFirstResponder()
+        }
     }
 
     func makeCoordinator() -> Coordinator {

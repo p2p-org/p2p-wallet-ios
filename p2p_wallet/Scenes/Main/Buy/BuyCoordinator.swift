@@ -79,7 +79,11 @@ final class BuyCoordinator: Coordinator<Void> {
             }.sink(receiveValue: { _ in })
             .store(in: &subscriptions)
 
-        viewModel.coordinatorIO.showTokenSelect.flatMap { [unowned self] tokens in
+        viewModel.coordinatorIO.showTokenSelect
+            .handleEvents(receiveOutput: { _ in
+                viewController.view.endEditing(true)
+            })
+            .flatMap { [unowned self] tokens in
             self.coordinate(
                 to: BuySelectCoordinator<TokenCellViewItem, BuySelectTokenCellView>(
                     title: L10n.coinsToBuy,
@@ -99,7 +103,11 @@ final class BuyCoordinator: Coordinator<Void> {
         .assign(to: \.value, on: viewModel.coordinatorIO.tokenSelected)
         .store(in: &subscriptions)
 
-        viewModel.coordinatorIO.showFiatSelect.flatMap { [unowned self] fiats in
+        viewModel.coordinatorIO.showFiatSelect
+            .handleEvents(receiveOutput: { _ in
+                viewController.view.endEditing(true)
+            })
+            .flatMap { [unowned self] fiats in
             self.coordinate(
                 to: BuySelectCoordinator<Fiat, FiatCellView>(
                     title: L10n.currency,

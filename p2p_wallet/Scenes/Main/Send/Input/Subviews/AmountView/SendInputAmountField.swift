@@ -42,7 +42,7 @@ struct SendInputAmountField: UIViewRepresentable {
             uiView.text = text
         }
         if uiView.isFirstResponder, !isFirstResponder {
-            DispatchQueue.main.async { uiView.resignFirstResponder() }
+            DispatchQueue.main.async { uiView.endEditing(true) }
         } else if !uiView.isFirstResponder, isFirstResponder {
             DispatchQueue.main.async { uiView.becomeFirstResponder() }
         }
