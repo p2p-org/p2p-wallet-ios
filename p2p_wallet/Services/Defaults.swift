@@ -125,6 +125,15 @@ extension DefaultsKeys {
     var moonpayInfoShouldHide: DefaultsKey<Bool> {
         .init(#function, defaultValue: false)
     }
+
+    // Jupiter Swap
+    var fromTokenAddress: DefaultsKey<String?> {
+        .init(#function, defaultValue: nil)
+    }
+
+    var toTokenAddress: DefaultsKey<String?> {
+        .init(#function, defaultValue: nil)
+    }
 }
 
 // MARK: - Moonpay Environment
