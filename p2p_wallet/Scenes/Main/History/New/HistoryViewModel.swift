@@ -9,7 +9,6 @@ import Combine
 import Foundation
 import History
 import Resolver
-import RxSwift
 import Sell
 import SolanaSwift
 import TransactionParser
