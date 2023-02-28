@@ -267,7 +267,7 @@ DEPENDENCIES:
   - Jupiter (from `https://github.com/p2p-org/key-app-kit-swift.git`, branch `feature/new-swap`)
   - KeyAppKitCore (from `https://github.com/p2p-org/key-app-kit-swift.git`, branch `feature/new-swap`)
   - KeyAppKitLogger (from `https://github.com/p2p-org/key-app-kit-swift.git`, branch `feature/new-swap`)
-  - "KeyAppUI (from `git@github.com:p2p-org/KeyAppUI.git`, branch `bugfix/PWN-7397`)"
+  - "KeyAppUI (from `git@github.com:p2p-org/KeyAppUI.git`, branch `main`)"
   - KeychainSwift (= 19.0.0)
   - Kingfisher (~> 7.3.2)
   - ListPlaceholder (from `https://github.com/p2p-org/ListPlaceholder.git`, branch `custom_gradient_color`)
@@ -399,7 +399,7 @@ EXTERNAL SOURCES:
     :branch: feature/new-swap
     :git: https://github.com/p2p-org/key-app-kit-swift.git
   KeyAppUI:
-    :branch: bugfix/PWN-7397
+    :branch: main
     :git: "git@github.com:p2p-org/KeyAppUI.git"
   ListPlaceholder:
     :branch: custom_gradient_color
@@ -497,7 +497,7 @@ CHECKOUT OPTIONS:
     :commit: 8602a0db435a83f736819370a8cbc154690d3487
     :git: https://github.com/p2p-org/key-app-kit-swift.git
   KeyAppUI:
-    :commit: c771abfb85f2c9b33f32aeb2f609e3e83daad1d8
+    :commit: 6287bc554c405a2b49f368746f08045cb3af5784
     :git: "git@github.com:p2p-org/KeyAppUI.git"
   ListPlaceholder:
     :commit: 78dd312eb762d66a54c87cd6dd8045140da28c4b
@@ -631,6 +631,6 @@ SPEC CHECKSUMS:
   TransactionParser: 3004420d52e7b1277dbcfd20b995a5de707705f3
   TweetNacl: 3abf4d1d2082b0114e7a67410e300892448951e6
 
-PODFILE CHECKSUM: 0bd2432dfb2d0da324187669256c9db77150e5b1
+PODFILE CHECKSUM: e76951d402fdc8bed7af44bf0a599f052de68924
 
 COCOAPODS: 1.11.3
