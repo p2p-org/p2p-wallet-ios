@@ -137,10 +137,24 @@ final class TabBarCoordinator: Coordinator<Void> {
         }
         
         let historyNavigation = UINavigationController()
-        let historyCoordinator = HistoryCoordinator(presentation: SmartCoordinatorPushPresentation(historyNavigation))
-        coordinate(to: historyCoordinator)
-            .sink(receiveValue: { _ in })
-            .store(in: &subscriptions)
+        
+        if available(.historyServiceEnabled) {
+            historyNavigation.navigationBar.prefersLargeTitles = true
+            
+            let historyCoordinator = NewHistoryCoordinator(
+                presentation: SmartCoordinatorPushPresentation(historyNavigation)
+            )
+            coordinate(to: historyCoordinator)
+                .sink(receiveValue: { _ in })
+                .store(in: &subscriptions)
+        } else {
+            let historyCoordinator = HistoryCoordinator(
+                presentation: SmartCoordinatorPushPresentation(historyNavigation)
+            )
+            coordinate(to: historyCoordinator)
+                .sink(receiveValue: { _ in })
+                .store(in: &subscriptions)
+        }
 
         return (solendOrSwapNavigation, historyNavigation)
     }

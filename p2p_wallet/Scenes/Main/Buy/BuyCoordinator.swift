@@ -185,6 +185,7 @@ extension BuyCoordinator {
         case fromToken
         case fromRenBTC
         case fromInvest
+        case fromHistory
 
         var screenName: String {
             switch self {
@@ -192,6 +193,7 @@ extension BuyCoordinator {
             case .fromToken: return "TokenScreen"
             case .fromRenBTC: return "RenBTCScreen"
             case .fromInvest: return "SolendScreen"
+            case .fromHistory: return "HistoryScreen"
             }
         }
     }
