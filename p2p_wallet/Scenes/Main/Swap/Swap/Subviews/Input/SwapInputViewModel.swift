@@ -120,7 +120,7 @@ private extension SwapInputViewModel {
 
     func updateAmountFrom(state: JupiterSwapState) {
         switch state.status {
-        case .error(reason: .notEnoughFromToken):
+        case .error(reason: .notEnoughFromToken), .error(reason: .inputTooHigh):
             amountTextColor = Asset.Colors.rose.color
         default:
             amountTextColor = Asset.Colors.night.color
