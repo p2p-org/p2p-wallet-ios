@@ -122,14 +122,14 @@ final class SellTransactionDetailsCoorditor: Coordinator<SellTransactionDetailsC
             })
             .store(in: &subscriptions)
         viewModel.result
-            .sink(receiveValue: { [weak self] result in
+            .sink(receiveValue: { [weak resultSubject, weak controller] result in
                 switch result {
                 case .send:
-                    resultSubject.send(.send)
+                    resultSubject?.send(.send)
                 case .cancel:
-                    controller.dismiss(animated: true)
+                    controller?.dismiss(animated: true)
                 case .tryAgain:
-                    resultSubject.send(.tryAgain)
+                    resultSubject?.send(.tryAgain)
                 }
             })
             .store(in: &subscriptions)
