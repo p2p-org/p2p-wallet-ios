@@ -42,25 +42,31 @@ struct SendInputView: View {
                 .onTapGesture { self.viewModel.inputAmountViewModel.isFirstResponder = false }
 
             inputView
-                .padding(.horizontal, 16)
-                .padding(.bottom, 16)
+                .padding(16)
         }
     }
     
     var inputView: some View {
         VStack(spacing: 8) {
-            #if !RELEASE
             if let link = viewModel.currentState.sendViaLinkSeed {
+                #if !RELEASE
                 Text("key.app/gift/\(link) (tap to copy)")
                     .apply(style: .label2)
                     .foregroundColor(.red)
                     .onTapGesture {
                         UIPasteboard.general.string = "key.app/gift/\(link)"
                     }
+                #endif
+                Text(L10n.anyoneWhoGetsThisLinkCanClaimTheFunds)
+                    .apply(style: .text3)
+                    .foregroundColor(Color(Asset.Colors.mountain.color))
+                    .frame(maxWidth: .infinity, alignment: .leading)
+                    .padding(.bottom, 16)
+            } else {
+                Spacer()
+                    .frame(minHeight: 16, maxHeight: 52)
             }
-            #endif
-            Spacer()
-                .frame(minHeight: 16, maxHeight: 52)
+
             HStack(spacing: 4) {
                 Text(L10n.youWillSend)
                     .apply(style: .text4)
