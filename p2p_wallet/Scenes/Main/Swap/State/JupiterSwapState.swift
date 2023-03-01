@@ -25,6 +25,11 @@ struct JupiterSwapState: Equatable {
         case error(reason: ErrorReason)
     }
 
+    enum SwapPriceImpact {
+        case medium
+        case high
+    }
+
     let status: Status
 
     let routeMap: RouteMap
@@ -33,6 +38,7 @@ struct JupiterSwapState: Equatable {
     let amountFrom: Double
     let amountFromFiat: Double
     let amountTo: Double
+    let amountToFiat: Double
 
     let fromToken: SwapToken
     let toToken: SwapToken
@@ -41,6 +47,7 @@ struct JupiterSwapState: Equatable {
 
     let slippage: Int
     let route: Route?
+    let priceImpact: SwapPriceImpact?
 
     init(
         status: Status,
@@ -49,12 +56,14 @@ struct JupiterSwapState: Equatable {
         amountFrom: Double,
         amountFromFiat: Double,
         amountTo: Double,
+        amountToFiat: Double,
         fromToken: SwapToken,
         toToken: SwapToken,
         possibleToTokens: [SwapToken],
         priceInfo: SwapPriceInfo,
         slippage: Int,
-        route: Route? = nil
+        route: Route? = nil,
+        priceImpact: SwapPriceImpact? = nil
     ) {
         self.status = status
         self.routeMap = routeMap
@@ -62,12 +71,14 @@ struct JupiterSwapState: Equatable {
         self.amountFrom = amountFrom
         self.amountFromFiat = amountFromFiat
         self.amountTo = amountTo
+        self.amountToFiat = amountToFiat
         self.fromToken = fromToken
         self.toToken = toToken
         self.possibleToTokens = possibleToTokens
         self.priceInfo = priceInfo
         self.slippage = slippage
         self.route = route
+        self.priceImpact = priceImpact
     }
 
     static func zero(
@@ -77,12 +88,14 @@ struct JupiterSwapState: Equatable {
         amountFrom: Double = .zero,
         amountFromFiat: Double = .zero,
         amountTo: Double = .zero,
+        amountToFiat: Double = .zero,
         fromToken: SwapToken = .nativeSolana,
         toToken: SwapToken = .nativeSolana,
         possibleToTokens: [SwapToken] = [],
         priceInfo: SwapPriceInfo = SwapPriceInfo(fromPrice: .zero, toPrice: .zero),
         slippage: Int = 0,
-        route: Route? = nil
+        route: Route? = nil,
+        priceImpact: SwapPriceImpact? = nil
     ) -> JupiterSwapState {
         JupiterSwapState(
             status: status,
@@ -91,12 +104,14 @@ struct JupiterSwapState: Equatable {
             amountFrom: amountFrom,
             amountFromFiat: amountFromFiat,
             amountTo: amountTo,
+            amountToFiat: amountToFiat,
             fromToken: fromToken,
             toToken: toToken,
             possibleToTokens: possibleToTokens,
             priceInfo: priceInfo,
             slippage: slippage,
-            route: route
+            route: route,
+            priceImpact: priceImpact
         )
     }
 
@@ -107,12 +122,14 @@ struct JupiterSwapState: Equatable {
         amountFrom: Double? = nil,
         amountFromFiat: Double? = nil,
         amountTo: Double? = nil,
+        amountToFiat: Double? = nil,
         fromToken: SwapToken? = nil,
         toToken: SwapToken? = nil,
         possibleToTokens: [SwapToken]? = nil,
         priceInfo: SwapPriceInfo? = nil,
         slippage: Int? = nil,
-        route: Route? = nil
+        route: Route? = nil,
+        priceImpact: SwapPriceImpact? = nil
     ) -> JupiterSwapState {
         JupiterSwapState(
             status: status ?? self.status,
@@ -121,12 +138,14 @@ struct JupiterSwapState: Equatable {
             amountFrom: amountFrom ?? self.amountFrom,
             amountFromFiat: amountFromFiat ?? self.amountFromFiat,
             amountTo: amountTo ?? self.amountTo,
+            amountToFiat: amountToFiat ?? self.amountToFiat,
             fromToken: fromToken ?? self.fromToken,
             toToken: toToken ?? self.toToken,
             possibleToTokens: possibleToTokens ?? self.possibleToTokens,
             priceInfo: priceInfo ?? self.priceInfo,
             slippage: slippage ?? self.slippage,
-            route: route ?? self.route
+            route: route ?? nil,
+            priceImpact: priceImpact ?? nil
         )
     }
 }

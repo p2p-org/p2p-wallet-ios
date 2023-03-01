@@ -17,11 +17,16 @@ struct SwapView: View {
             switch viewModel.initializingState {
             case .loading, .success:
                 VStack {
-                    ScrollView {
-                        contentView
+                    ScrollViewReader { value in
+                        ScrollView {
+                            contentView
+                        }
+                        .onChange(of: viewModel.currentState.priceImpact, perform: { priceImpact in
+                            guard priceImpact != nil else { return }
+                            value.scrollTo("\(SwapPriceImpactView.self)")
+                        })
+                        .scrollDismissesKeyboard()
                     }
-                    .scrollDismissesKeyboard()
-
                     Spacer()
 
                     SliderActionButton(
@@ -74,6 +79,13 @@ private extension SwapView {
                 .padding(.top, 16)
                 .accessibilityIdentifier("SwapView.profitInfoLabel")
 
+            if let priceImpact = viewModel.currentState.pr {
+                SwapPriceImpactView(priceImpact: priceImpact)
+                    .padding(.top, 23)
+                    .accessibilityIdentifier("SwapView.priceImpactView")
+                    .id("\(SwapPriceImpactView.self)")
+            }
+
             Spacer()
 
             #if !RELEASE
@@ -98,11 +110,10 @@ private extension SwapView {
                     }
                 }
             }
-                .foregroundColor(.red)
-                .onTapGesture {
-                    viewModel.copyAndClearLogs()
-                }
-            
+            .foregroundColor(.red)
+            .onTapGesture {
+                viewModel.copyAndClearLogs()
+            }
             #endif
         }
         .onTapGesture { UIApplication.shared.endEditing() }
