@@ -260,6 +260,7 @@ class SellViewModel: BaseViewModel, ObservableObject {
                 self.baseCurrencyCode = "SOL"
                 self.checkIfMoreBaseCurrencyNeeded()
                 self.updateFeesAndExchangeRates(baseAmount: self.baseAmount, baseCurrencyCode: self.baseCurrencyCode, quoteCurrencyCode: self.quoteCurrencyCode)
+                self.checkError(amount: self.baseAmount ?? 0)
             })
             .store(in: &subscriptions)
 
