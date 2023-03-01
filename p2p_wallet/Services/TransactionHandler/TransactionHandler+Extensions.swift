@@ -84,7 +84,9 @@ extension TransactionHandler {
             }
             
             // for production
+            var statuses: [TransactionStatus] = []
             for try await status in self.apiClient.observeSignatureStatus(signature: transactionId) {
+                statuses.append(status)
                 let txStatus: PendingTransaction.TransactionStatus
                 var slot: UInt64?
                 switch status {
@@ -109,6 +111,19 @@ extension TransactionHandler {
                     if let slot {
                         value.slot = slot
                     }
+                    return value
+                }
+            }
+            
+            // TODO: - Transaction was sent successfuly but we could not retrieve the status.
+            // Mark as finalized anyway or throw an error?
+            if statuses.isEmpty {
+                await MainActor.run { [weak self] in
+                    self?.notificationsService.showInAppNotification(.done(L10n.transactionHasBeenConfirmed))
+                }
+                await self.updateTransactionAtIndex(index) { currentValue in
+                    var value = currentValue
+                    value.status = .finalized
                     return value
                 }
             }
