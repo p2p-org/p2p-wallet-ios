@@ -20,6 +20,8 @@ final class JupiterSwapCoordinator: Coordinator<Void> {
     private var result = PassthroughSubject<Void, Never>()
     private let params: JupiterSwapParameters
 
+    private var slippage = 0.5
+
     init(navigationController: UINavigationController, params: JupiterSwapParameters) {
         self.navigationController = navigationController
         self.params = params
@@ -30,12 +32,12 @@ final class JupiterSwapCoordinator: Coordinator<Void> {
         let fromViewModel = SwapInputViewModel(stateMachine: viewModel.stateMachine, isFromToken: true, openKeyboardOnStart: params.openKeyboardOnStart)
         let toViewModel = SwapInputViewModel(stateMachine: viewModel.stateMachine, isFromToken: false, openKeyboardOnStart: params.openKeyboardOnStart)
         let view = SwapView(viewModel: viewModel, fromViewModel: fromViewModel, toViewModel: toViewModel)
-        let controller: UIViewController
-        if params.openKeyboardOnStart {
-            controller = KeyboardAvoidingViewController(rootView: view)
-        } else {
-            controller = UIHostingController(rootView: view)
-        }
+        let controller: UIViewController = view.asViewController(withoutUIKitNavBar: false)
+//        if params.openKeyboardOnStart {
+//            controller = KeyboardAvoidingViewController(rootView: view)
+//        } else {
+//            controller = UIHostingController(rootView: view)
+//        }
         navigationController.pushViewController(controller, animated: true)
         style(controller: controller)
 
@@ -64,14 +66,24 @@ final class JupiterSwapCoordinator: Coordinator<Void> {
     }
     
     func style(controller: UIViewController) {
-        navigationController.navigationBar.setBackgroundImage(UIImage(), for: .default)
-        navigationController.navigationBar.backgroundColor = Asset.Colors.smoke.color
+//        navigationController.navigationBar.setBackgroundImage(UIImage(), for: .default)
+//        navigationController.navigationBar.backgroundColor = Asset.Colors.smoke.color
         controller.title = L10n.swap
         controller.navigationItem.rightBarButtonItem = UIBarButtonItem(image: .receipt, style: .plain, target: self, action: #selector(receiptButtonPressed))
     }
     
     @objc private func receiptButtonPressed() {
-        
+        let settingsCoordinator = SwapSettingsCoordinator(
+            navigationController: navigationController,
+            slippage: slippage
+        )
+        coordinate(to: settingsCoordinator)
+            .sink(receiveValue: { [weak self] in
+                if let slippage = $0, slippage != 0 {
+                    self?.slippage = slippage
+                }
+            })
+            .store(in: &subscriptions)
     }
     
     private func openChooseToken(viewModel: SwapViewModel, fromToken: Bool) {
