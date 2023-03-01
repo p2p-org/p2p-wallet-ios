@@ -1247,3 +1247,4 @@ You can try again, but your new transaction will be subject to the current rates
 "You don’t need to know the address" = "Вам не нужно знать адрес";
 "Limit is %@ links per day. Try tomorrow" = "Лимит составляет %@ ссылок в день.  Попробуйте завтра";
 "Sending via link" = "Отправка по ссылке";
+"Anyone who gets this link can claim the funds" = "Любой, кто получит эту ссылку, может запросить средства";
