@@ -149,7 +149,8 @@ class DetailAccountCoordinator: SmartCoordinator<DetailAccountCoordinatorResult>
     }
 
     func openSwap() {
-        guard let rootViewController = presentation.presentingViewController as? UINavigationController
+        guard case let .wallet(wallet) = self.args,
+              let rootViewController = presentation.presentingViewController as? UINavigationController
         else { return }
         if available(.jupiterSwapEnabled) {
             coordinate(
