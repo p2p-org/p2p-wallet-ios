@@ -1224,3 +1224,6 @@ You can try again, but your new transaction will be subject to the current rates
 "Anyone who gets this link can claim the funds" = "Anyone who gets this link can claim the funds";
 "Creating your link" = "Creating your link";
 "This will take up to %@ seconds" = "This will take up to %@ seconds";
+"The link is ready!\nReceiver will be able to claim funds" = "The link is ready!\nReceiver will be able to claim funds";
+"Send via link" = "Send via link";
+"The link works only 1 time for any users.\nIf you log in yourself, the funds will be returned to your account" = "The link works only 1 time for any users.\nIf you log in yourself, the funds will be returned to your account";
