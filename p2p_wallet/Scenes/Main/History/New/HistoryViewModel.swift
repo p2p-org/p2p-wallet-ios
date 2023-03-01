@@ -37,6 +37,10 @@ class HistoryViewModel: BaseViewModel, ObservableObject {
     // State
 
     @Published var output: ListState<HistorySection> = .init()
+    
+    // Dependency
+
+    private var sellDataService: (any SellDataService)?
 
     init(mock: [any RendableListTransactionItem]) {
         // Init service
@@ -107,6 +111,8 @@ class HistoryViewModel: BaseViewModel, ObservableObject {
 
         let actionSubject: PassthroughSubject<NewHistoryAction, Never> = .init()
         self.actionSubject = actionSubject
+        self.sellDataService = sellDataService
+
 
         // Setup list adaptor
         let sequence = repository
@@ -159,10 +165,14 @@ class HistoryViewModel: BaseViewModel, ObservableObject {
     func reload() async throws {
         history.reset()
         try await history.fetch()?.value
+        await sellDataService?.update()
     }
 
     func fetch() {
         history.fetch()
+        Task {
+            await sellDataService?.update()
+        }
     }
 
     private func buildOutput(
