@@ -60,6 +60,6 @@ final class SendCreateLinkCoordinator: SmartCoordinator<Void> {
     
     private func showShareView() {
         let av = UIActivityViewController(activityItems: [link], applicationActivities: nil)
-        sendLinkCreatedVC.show(av, sender: nil)
+        sendLinkCreatedVC.present(vc, animated: true)
     }
 }
