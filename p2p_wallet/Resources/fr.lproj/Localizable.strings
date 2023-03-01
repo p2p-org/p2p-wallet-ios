@@ -1248,3 +1248,4 @@ You can try again, but your new transaction will be subject to the current rates
 "Send crypto via link" = "Envoyer la crypto via un lien";
 "You don’t need to know the address" = "Vous n'avez pas besoin de connaître l'adresse";
 "Limit is %@ links per day. Try tomorrow" = "La limite est de %@ liens par jour.  Essayez demain";
+"Sending via link" = "Envoi par lien";

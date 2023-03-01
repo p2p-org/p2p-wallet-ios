@@ -204,7 +204,7 @@ struct SendTransactionStatusView_Previews: PreviewProvider {
                         token: .nativeSolana,
                         feeToken: .nativeSolana,
                         userWalletState: .empty,
-                        isSendViaLink: false
+                        sendViaLinkSeed: nil
                     )
                 ) { "0123abc" }
             )
