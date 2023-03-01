@@ -18,8 +18,9 @@ final class SwapInputViewModel: BaseViewModel, ObservableObject {
     @Published var tokenSymbol = ""
     @Published var isLoading = false
     @Published var isAmountLoading = false
-    @Published var fiatAmount: String?
+    @Published var fiatAmount: Double?
     @Published var token: SwapToken
+    @Published var fiatAmountTextColor = Asset.Colors.silver.color
     let accessibilityIdentifierTokenPrefix: String
 
     private let stateMachine: JupiterSwapStateMachine
@@ -116,6 +117,18 @@ private extension SwapInputViewModel {
     func updateAmountTo(state: JupiterSwapState) {
         guard state.status != .loadingAmountTo else { return }
         amount = state.amountTo
+
+        switch state.priceImpact {
+        case .high:
+            fiatAmount = state.amountToFiat
+            fiatAmountTextColor = Asset.Colors.rose.color
+        case .medium:
+            fiatAmount = state.amountToFiat
+            fiatAmountTextColor = Asset.Colors.sun.color
+        default:
+            fiatAmount = nil
+            fiatAmountTextColor = .clear
+        }
     }
 
     func updateAmountFrom(state: JupiterSwapState) {
@@ -125,11 +138,7 @@ private extension SwapInputViewModel {
         default:
             amountTextColor = Asset.Colors.night.color
         }
-
-        fiatAmount = [
-            state.amountFromFiat.toString(maximumFractionDigits: 2, roundingMode: .down),
-            Defaults.fiat.code
-        ].joined(separator: " ")
+        fiatAmount = state.amountFromFiat
     }
 
     func isStateReady(status: JupiterSwapState.Status) -> Bool {
