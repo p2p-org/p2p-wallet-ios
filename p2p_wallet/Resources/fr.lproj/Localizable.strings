@@ -1250,3 +1250,5 @@ You can try again, but your new transaction will be subject to the current rates
 "Limit is %@ links per day. Try tomorrow" = "La limite est de %@ liens par jour.  Essayez demain";
 "Sending via link" = "Envoi par lien";
 "Anyone who gets this link can claim the funds" = "Toute personne qui obtient ce lien peut réclamer les fonds";
+"Creating your link" = "Création de votre lien";
+"This will take up to %@ seconds" = "Cela prendra jusqu'à %@ secondes";
