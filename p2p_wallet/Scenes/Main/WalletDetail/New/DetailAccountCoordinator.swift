@@ -183,6 +183,12 @@ class DetailAccountCoordinator: SmartCoordinator<WalletDetailCoordinator.Result>
                     self.coordinate(to: SendTransactionStatusCoordinator(parentController: rootViewController, transaction: model))
                         .sink(receiveValue: {})
                         .store(in: &self.subscriptions)
+                case let .sentViaLink:
+                    rootViewController.popToViewController(currentVC, animated: true)
+
+//                    self.coordinate(to: SendTransactionStatusCoordinator(parentController: rootViewController, transaction: model))
+//                        .sink(receiveValue: {})
+//                        .store(in: &self.subscriptions)
                 case .cancelled:
                     break
                 }
