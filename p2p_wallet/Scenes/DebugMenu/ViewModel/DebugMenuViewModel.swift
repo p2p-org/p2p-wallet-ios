@@ -112,7 +112,6 @@ extension DebugMenuViewModel {
         case mockedTKeyFacade
         case simulatedSocialError
         case sell
-        case jupiterSwap
 
         var title: String {
             switch self {
@@ -125,7 +124,6 @@ extension DebugMenuViewModel {
             case .investSolend: return "Invest Solend"
             case .solendDisablePlaceholder: return "Solend Disable Placeholder"
             case .sell: return "Sell (Off Ramp)"
-            case .jupiterSwap: return "Jupiter Swap"
             }
         }
 
@@ -140,7 +138,6 @@ extension DebugMenuViewModel {
             case .investSolend: return .investSolendFeature
             case .solendDisablePlaceholder: return .solendDisablePlaceholder
             case .sell: return .sellScenarioEnabled
-            case .jupiterSwap: return .jupiterSwapEnabled
             }
         }
     }

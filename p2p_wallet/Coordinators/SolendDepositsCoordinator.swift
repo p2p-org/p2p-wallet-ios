@@ -125,29 +125,15 @@ final class SolendDepositsCoordinator: Coordinator<Void> {
     }
 
     private func showTrade() {
-        if available(.jupiterSwapEnabled) {
-            coordinate(
-                to: JupiterSwapCoordinator(
-                    navigationController: controller,
-                    params: JupiterSwapParameters(dismissAfterCompletion: true, openKeyboardOnStart: true)
-                )
+        coordinate(
+            to: JupiterSwapCoordinator(
+                navigationController: controller,
+                params: JupiterSwapParameters(dismissAfterCompletion: true, openKeyboardOnStart: true)
             )
-                .sink { [unowned self] _ in
-                    controller.popToRootViewController(animated: true)
-                }
-                .store(in: &subscriptions)
-        } else {
-            let vm = OrcaSwapV2.ViewModel(initialWallet: nil)
-            let vc = OrcaSwapV2.ViewController(viewModel: vm)
-            
-            vc.doneHandler = { [unowned self] in
+        )
+            .sink { [unowned self] _ in
                 controller.popToRootViewController(animated: true)
-//                return continuation.resume(with: .success(true))
             }
-            vc.onClose = {
-//                continuation.resume(with: .success(false))
-            }
-            controller.show(vc, sender: nil)
-        }
+            .store(in: &subscriptions)
     }
 }

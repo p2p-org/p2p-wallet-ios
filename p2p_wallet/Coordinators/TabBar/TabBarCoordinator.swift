@@ -135,23 +135,14 @@ final class TabBarCoordinator: Coordinator<Void> {
         
         let historyNavigation = UINavigationController()
         
-        if available(.historyServiceEnabled) {
-            historyNavigation.navigationBar.prefersLargeTitles = true
-            
-            let historyCoordinator = NewHistoryCoordinator(
-                presentation: SmartCoordinatorPushPresentation(historyNavigation)
-            )
-            coordinate(to: historyCoordinator)
-                .sink(receiveValue: { _ in })
-                .store(in: &subscriptions)
-        } else {
-            let historyCoordinator = HistoryCoordinator(
-                presentation: SmartCoordinatorPushPresentation(historyNavigation)
-            )
-            coordinate(to: historyCoordinator)
-                .sink(receiveValue: { _ in })
-                .store(in: &subscriptions)
-        }
+        historyNavigation.navigationBar.prefersLargeTitles = true
+        
+        let historyCoordinator = NewHistoryCoordinator(
+            presentation: SmartCoordinatorPushPresentation(historyNavigation)
+        )
+        coordinate(to: historyCoordinator)
+            .sink(receiveValue: { _ in })
+            .store(in: &subscriptions)
 
         return (solendOrSwapNavigation, historyNavigation)
     }
@@ -285,19 +276,12 @@ final class TabBarCoordinator: Coordinator<Void> {
     }
 
     private func routeToSwap(nc: UINavigationController, hidesBottomBarWhenPushed: Bool = true) {
-        if available(.jupiterSwapEnabled) {
-            let swapCoordinator = JupiterSwapCoordinator(
-                navigationController: nc,
-                params: JupiterSwapParameters(dismissAfterCompletion: false, openKeyboardOnStart: false)
-            )
-            coordinate(to: swapCoordinator)
-                .sink(receiveValue: { _ in })
-                .store(in: &subscriptions)
-        } else {
-            let swapCoordinator = SwapCoordinator(navigationController: nc, initialWallet: nil, hidesBottomBarWhenPushed: hidesBottomBarWhenPushed)
-            coordinate(to: swapCoordinator)
-                .sink(receiveValue: { _ in })
-                .store(in: &subscriptions)
-        }
+        let swapCoordinator = JupiterSwapCoordinator(
+            navigationController: nc,
+            params: JupiterSwapParameters(dismissAfterCompletion: false, openKeyboardOnStart: false)
+        )
+        coordinate(to: swapCoordinator)
+            .sink(receiveValue: { _ in })
+            .store(in: &subscriptions)
     }
 }

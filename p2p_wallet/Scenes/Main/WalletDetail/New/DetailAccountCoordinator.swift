@@ -151,27 +151,16 @@ class DetailAccountCoordinator: SmartCoordinator<DetailAccountCoordinatorResult>
     func openSwap() {
         guard let rootViewController = presentation.presentingViewController as? UINavigationController
         else { return }
-        if available(.jupiterSwapEnabled) {
-            coordinate(
-                to: JupiterSwapCoordinator(
-                    navigationController: rootViewController,
-                    params: JupiterSwapParameters(dismissAfterCompletion: true, openKeyboardOnStart: true)
-                )
+        coordinate(
+            to: JupiterSwapCoordinator(
+                navigationController: rootViewController,
+                params: JupiterSwapParameters(dismissAfterCompletion: true, openKeyboardOnStart: true)
             )
-                .sink { [weak rootViewController] _ in
-                    rootViewController?.popToRootViewController(animated: true)
-                }
-                .store(in: &subscriptions)
-        } else {
-            let vm = OrcaSwapV2.ViewModel(initialWallet: wallet)
-            let vc = OrcaSwapV2.ViewController(viewModel: vm)
-            
-            vc.doneHandler = { [weak self, weak rootViewController] in
+        )
+            .sink { [weak rootViewController] _ in
                 rootViewController?.popToRootViewController(animated: true)
-                self?.result.send(.done)
             }
-            rootViewController.pushViewController(vc, animated: true)
-        }
+            .store(in: &subscriptions)
     }
 
     func openSend() {
