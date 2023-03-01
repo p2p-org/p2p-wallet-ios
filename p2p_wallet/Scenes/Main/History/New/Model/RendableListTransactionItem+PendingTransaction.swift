@@ -127,7 +127,7 @@ struct RendableListPendingTransactionItem: RendableListTransactionItem {
         case let transaction as SendTransaction:
             return (.negative, "-\(transaction.amountInFiat.fiatAmountFormattedString())")
         case let transaction as SwapTransaction:
-            return (.positive, "+\(transaction.amount.tokenAmountFormattedString(symbol: transaction.sourceWallet.token.symbol))")
+            return (.positive, "+\(transaction.estimatedAmount.tokenAmountFormattedString(symbol: transaction.destinationWallet.token.symbol))")
         default:
             return (.unchanged, "")
         }
@@ -138,7 +138,7 @@ struct RendableListPendingTransactionItem: RendableListTransactionItem {
         case let transaction as SendTransaction:
             return "-\(transaction.amount.tokenAmountFormattedString(symbol: transaction.walletToken.token.symbol))"
         case let transaction as SwapTransaction:
-            return "-\(transaction.estimatedAmount.tokenAmountFormattedString(symbol: transaction.destinationWallet.token.symbol))"
+            return "-\(transaction.amount.tokenAmountFormattedString(symbol: transaction.sourceWallet.token.symbol))"
         default:
             return ""
         }
