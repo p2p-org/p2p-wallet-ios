@@ -242,7 +242,7 @@ class SendCoordinator: Coordinator<SendResult> {
         
         coordinator.start()
             .sink(receiveCompletion: { [weak self] _ in
-                self?.result.send(completion: .finished)
+                self?.result.send(.sentViaLink(link: link, transaction: transaction))
             }, receiveValue: {})
             .store(in: &subscriptions)
     }

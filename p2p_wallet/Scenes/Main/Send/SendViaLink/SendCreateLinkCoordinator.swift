@@ -47,11 +47,11 @@ final class SendCreateLinkCoordinator: SmartCoordinator<Void> {
         let view = SendLinkCreatedView(
             link: link,
             formatedAmount: formatedAmount,
-            onClose: { [weak self] in
-                self?.result.send(completion: .finished)
+            onClose: { [unowned self] in
+                result.send(completion: .finished)
             },
-            onShare: { [weak self] in
-                self?.showShareView()
+            onShare: { [unowned self] in
+                showShareView()
             }
         )
         sendLinkCreatedVC = UIHostingControllerWithoutNavigation(rootView: view)
