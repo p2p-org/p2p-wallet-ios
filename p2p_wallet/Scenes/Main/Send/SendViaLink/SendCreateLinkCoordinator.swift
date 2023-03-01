@@ -30,9 +30,15 @@ final class SendCreateLinkCoordinator: SmartCoordinator<Void> {
     override func build() -> UIViewController {
         let view = SendCreateLinkView {
             Task { [unowned self] in
-                let _ = try await self.execution()
-                await MainActor.run { [weak self] in
-                    self?.showSendLinkCreatedView()
+                do {
+                    let _ = try await self.execution()
+                    await MainActor.run { [weak self] in
+                        self?.showSendLinkCreatedView()
+                    }
+                } catch {
+                    await MainActor.run { [weak self] in
+                        self?.showErrorView()
+                    }
                 }
             }
         }
@@ -61,5 +67,13 @@ final class SendCreateLinkCoordinator: SmartCoordinator<Void> {
     private func showShareView() {
         let av = UIActivityViewController(activityItems: [link], applicationActivities: nil)
         sendLinkCreatedVC.present(av, animated: true)
+    }
+    
+    private func showErrorView() {
+        let view = SendCreateLinkErrorView { [unowned self] in
+            result.send(completion: .finished)
+        }
+        let vc = UIHostingControllerWithoutNavigation(rootView: view)
+        sendCreateLinkVC.show(vc, sender: nil)
     }
 }
