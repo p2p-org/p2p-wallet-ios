@@ -10,9 +10,6 @@ PODS:
   - AppsFlyerFramework (6.10.0):
     - AppsFlyerFramework/Main (= 6.10.0)
   - AppsFlyerFramework/Main (6.10.0)
-  - BECollectionView (1.0.0):
-    - BECollectionView_Core
-    - RxCocoa (~> 6.5.0)
   - BECollectionView_Combine (1.0.0):
     - BECollectionView_Core
     - CombineCocoa (~> 0.4.0)
@@ -202,23 +199,6 @@ PODS:
   - RenVMSwift (2.0.1):
     - SolanaSwift (~> 2)
   - Resolver (1.5.0)
-  - RxAppState (1.7.1):
-    - RxCocoa (~> 6.2)
-    - RxSwift (~> 6.2)
-  - RxCocoa (6.5.0):
-    - RxRelay (= 6.5.0)
-    - RxSwift (= 6.5.0)
-  - RxCombine (2.0.1):
-    - RxRelay (~> 6)
-    - RxSwift (~> 6)
-  - RxConcurrency (0.1.1):
-    - RxSwift (~> 6.5.0)
-  - RxGesture (4.0.4):
-    - RxCocoa (~> 6.0)
-    - RxSwift (~> 6.0)
-  - RxRelay (6.5.0):
-    - RxSwift (= 6.5.0)
-  - RxSwift (6.5.0)
   - secp256k1.swift (0.1.4)
   - Sell (1.0.0):
     - Moonpay
@@ -261,7 +241,6 @@ DEPENDENCIES:
   - Amplitude (~> 8.3.0)
   - AnalyticsManager (from `https://github.com/p2p-org/key-app-kit-swift.git`, branch `feature/new-swap`)
   - AppsFlyerFramework
-  - BECollectionView (from `https://github.com/bigearsenal/BECollectionView.git`, branch `master`)
   - BECollectionView_Combine (from `https://github.com/bigearsenal/BECollectionView.git`, branch `master`)
   - BECollectionView_Core (from `https://github.com/bigearsenal/BECollectionView.git`, branch `master`)
   - BEPureLayout (from `https://github.com/p2p-org/BEPureLayout.git`, branch `master`)
@@ -298,10 +277,6 @@ DEPENDENCIES:
   - ReachabilitySwift (~> 5.0.0)
   - RenVMSwift (from `https://github.com/p2p-org/RenVMSwift.git`, branch `master`)
   - Resolver (= 1.5.0)
-  - RxAppState (= 1.7.1)
-  - RxCombine (= 2.0.1)
-  - RxConcurrency (from `https://github.com/TrGiLong/RxConcurrency.git`, branch `main`)
-  - RxGesture (= 4.0.4)
   - Sell (from `https://github.com/p2p-org/key-app-kit-swift.git`, branch `feature/new-swap`)
   - Send (from `https://github.com/p2p-org/key-app-kit-swift.git`, branch `feature/new-swap`)
   - Sentry (from `https://github.com/getsentry/sentry-cocoa.git`, tag `7.31.5`)
@@ -355,12 +330,6 @@ SPEC REPOS:
     - PureLayout
     - ReachabilitySwift
     - Resolver
-    - RxAppState
-    - RxCocoa
-    - RxCombine
-    - RxGesture
-    - RxRelay
-    - RxSwift
     - secp256k1.swift
     - SkeletonView
     - SwiftFormat
@@ -375,9 +344,6 @@ EXTERNAL SOURCES:
   AnalyticsManager:
     :branch: feature/new-swap
     :git: https://github.com/p2p-org/key-app-kit-swift.git
-  BECollectionView:
-    :branch: master
-    :git: https://github.com/bigearsenal/BECollectionView.git
   BECollectionView_Combine:
     :branch: master
     :git: https://github.com/bigearsenal/BECollectionView.git
@@ -440,9 +406,6 @@ EXTERNAL SOURCES:
   RenVMSwift:
     :branch: master
     :git: https://github.com/p2p-org/RenVMSwift.git
-  RxConcurrency:
-    :branch: main
-    :git: https://github.com/TrGiLong/RxConcurrency.git
   Sell:
     :branch: feature/new-swap
     :git: https://github.com/p2p-org/key-app-kit-swift.git
@@ -472,9 +435,6 @@ CHECKOUT OPTIONS:
   AnalyticsManager:
     :commit: 4d8ab9d649c6c743f95fdc1a36382147161b16b3
     :git: https://github.com/p2p-org/key-app-kit-swift.git
-  BECollectionView:
-    :commit: 7badd35cd036735b9c6867e273b59430311f53e7
-    :git: https://github.com/bigearsenal/BECollectionView.git
   BECollectionView_Combine:
     :commit: 7badd35cd036735b9c6867e273b59430311f53e7
     :git: https://github.com/bigearsenal/BECollectionView.git
@@ -538,9 +498,6 @@ CHECKOUT OPTIONS:
   RenVMSwift:
     :commit: 8f4dd6e2a47b1d7b02df362ba8aea9f04875243e
     :git: https://github.com/p2p-org/RenVMSwift.git
-  RxConcurrency:
-    :commit: dadb16c54bd42ca83c08f3d80f61fbfca93a585c
-    :git: https://github.com/TrGiLong/RxConcurrency.git
   Sell:
     :commit: 4d8ab9d649c6c743f95fdc1a36382147161b16b3
     :git: https://github.com/p2p-org/key-app-kit-swift.git
@@ -571,7 +528,6 @@ SPEC CHECKSUMS:
   AnalyticsManager: 7b708ebc326865ae7807ec17acdd02e0da545e7b
   AppAuth: 8fca6b5563a5baef2c04bee27538025e4ceb2add
   AppsFlyerFramework: dc8599db42e1669388287d47a1f0e6b8aa35639e
-  BECollectionView: 43168463a4e95065f7856ac8d148e3eb1e77b808
   BECollectionView_Combine: f2f203853b4dfe83b5fd97998d6787857b641a12
   BECollectionView_Core: 439e92310adb5a8deab08cc7af508cc31ed6a4f6
   BEPureLayout: 970e31aa4fccf0f72ef2229b4e831ccdea33f026
@@ -627,13 +583,6 @@ SPEC CHECKSUMS:
   ReachabilitySwift: 985039c6f7b23a1da463388634119492ff86c825
   RenVMSwift: 9cfd6610adc9c74a6e761c615cd30a31129e79c6
   Resolver: 68984624572763018fd8ec7b8e3e8df0e3b6bba5
-  RxAppState: 9c34f951d4ff8b9034f84016fe766202365bceb2
-  RxCocoa: 94f817b71c07517321eb4f9ad299112ca8af743b
-  RxCombine: 74cd98f7bb1d908eff3758d13651917fc296adb3
-  RxConcurrency: fde98edd4056a8f13ff293689a25a17563e3e843
-  RxGesture: f3efb47ed2d26a8082f7b660d4a59970e275a7f8
-  RxRelay: 1de1523e604c72b6c68feadedd1af3b1b4d0ecbd
-  RxSwift: 5710a9e6b17f3c3d6e40d6e559b9fa1e813b2ef8
   secp256k1.swift: a7e7a214f6db6ce5db32cc6b2b45e5c4dd633634
   Sell: 8348f46c2161074cc0c8e6265e3c96cba8d6ee60
   Send: 8506d6a096d33205dee3c60ee0471bcc8c460567
@@ -652,6 +601,6 @@ SPEC CHECKSUMS:
   TransactionParser: 3004420d52e7b1277dbcfd20b995a5de707705f3
   TweetNacl: 3abf4d1d2082b0114e7a67410e300892448951e6
 
-PODFILE CHECKSUM: e76951d402fdc8bed7af44bf0a599f052de68924
+PODFILE CHECKSUM: 467fd3c57533f992a215f4398cb19714f991ee68
 
 COCOAPODS: 1.11.3
