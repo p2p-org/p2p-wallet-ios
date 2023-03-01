@@ -39,7 +39,7 @@ class MessageView: BEView {
     }
 }
 
-class ErrorView: MessageView {
+class UIErrorView: MessageView {
     override func commonInit() {
         super.commonInit()
 
