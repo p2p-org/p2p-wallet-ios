@@ -24,6 +24,21 @@ enum LoadableState: Equatable {
     }
 }
 
+/// State for SendViaLink feature
+struct SendViaLinkState: Equatable {
+    /// Indicate if the feature itself is disabled or not (via FT)
+    let isDisabled: Bool
+    /// Default limit for a day
+    let limitPerDay: Int
+    /// Number of links used today
+    let numberOfLinksUsedToday: Int
+    
+    /// Indicate if user can create link
+    var canCreateLink: Bool {
+        !isDisabled && (numberOfLinksUsedToday < limitPerDay)
+    }
+}
+
 @MainActor
 class RecipientSearchViewModel: ObservableObject {
     private let preChosenWallet: Wallet?
@@ -52,7 +67,11 @@ class RecipientSearchViewModel: ObservableObject {
     @Published var recipientsHistoryStatus: SendHistoryService.Status = .ready
     @Published var recipientsHistory: [Recipient] = []
     
-    @Published var isSendViaLinkAvailable = false
+    @Published var sendViaLinkState = SendViaLinkState(
+        isDisabled: true,
+        limitPerDay: 30,
+        numberOfLinksUsedToday: 0
+    )
 
     var autoSelectTheOnlyOneResultMode: AutoSelectTheOnlyOneResultMode?
     var fromQR: Bool = false
@@ -209,20 +228,26 @@ class RecipientSearchViewModel: ObservableObject {
     func load() async {
         loadingState = .loading
         do {
-            try await Resolver.resolve(SwapServiceType.self).reload()
+            let _ = try await(
+                Resolver.resolve(SwapServiceType.self).reload(),
+                checkIfSendViaLinkAvailable()
+            )
             loadingState = .loaded
             isFirstResponder = true
         } catch {
             loadingState = .error(error.readableDescription)
         }
-        await checkIfSendViaLinkAvailable()
     }
     
     // MARK: - Send via link
     
-    func checkIfSendViaLinkAvailable() async {
+    func checkIfSendViaLinkAvailable() async throws {
         // FIXME: - Implementation later
-        isSendViaLinkAvailable = true
+        sendViaLinkState = .init(
+            isDisabled: false,
+            limitPerDay: 30,
+            numberOfLinksUsedToday: 0
+        )
     }
     
     func sendViaLink() {

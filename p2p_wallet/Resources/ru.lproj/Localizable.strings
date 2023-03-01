@@ -1245,3 +1245,4 @@ You can try again, but your new transaction will be subject to the current rates
 "The address was copied to clipboard" = "Адрес скопирован в буфер обмена";
 "Send crypto via link" = "Отправить криптовалюту по ссылке";
 "You don’t need to know the address" = "Вам не нужно знать адрес";
+"Limit is %@ links per day. Try tomorrow" = "Лимит составляет %@ ссылок в день.  Попробуйте завтра";

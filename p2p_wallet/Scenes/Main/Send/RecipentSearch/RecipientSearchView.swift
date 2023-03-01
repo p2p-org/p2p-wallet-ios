@@ -46,17 +46,25 @@ struct RecipientSearchView: View {
                     .accessibilityIdentifier("RecipientSearchView.loadedView.RecipientSearchField")
                 
                 // Send via link
-                if viewModel.isSendViaLinkAvailable {
+                if !viewModel.sendViaLinkState.isDisabled {
                     Button {
                         viewModel.sendViaLink()
                     } label: {
                         RecipientCell(
-                            image: Image(uiImage: .sendViaLinkCircle)
+                            image: Image(uiImage: viewModel.sendViaLinkState.canCreateLink ? .sendViaLinkCircle: .sendViaLinkCircleDisabled)
                                 .castToAnyView(),
                             title: L10n.sendCryptoViaLink,
-                            subtitle: L10n.youDonTNeedToKnowTheAddress
+                            subtitle: viewModel.sendViaLinkState.canCreateLink ? L10n.youDonTNeedToKnowTheAddress: L10n.LimitIsLinksPerDay.tryTomorrow(viewModel.sendViaLinkState.limitPerDay)
                         )
                     }
+                        .disabled(!viewModel.sendViaLinkState.canCreateLink)
+                        .padding(.horizontal, 16)
+                        .padding(.vertical, 12)
+                        .background(
+                            Color(.white)
+                                .cornerRadius(radius: 16, corners: .allCorners)
+                        )
+                        .padding(.top, 16)
                 }
 
                 // Result
