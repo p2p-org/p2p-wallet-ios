@@ -52,7 +52,7 @@ class SellViewModel: BaseViewModel, ObservableObject {
     // MARK: - Subjects
     @Published var isMoreBaseCurrencyNeeded: Bool = false
 
-    @Published var minBaseAmount: Double?
+    @Published var minBaseAmount: Double? = 2
     @Published var baseCurrencyCode: String = "SOL"
     @Published var baseAmount: Double?
     @Published var maxBaseAmount: Double?
@@ -336,7 +336,9 @@ class SellViewModel: BaseViewModel, ObservableObject {
 
     private func checkError(amount: Double) {
         inputError = nil
-        if amount < minBaseAmount {
+        if maxBaseAmount < minBaseAmount {
+            inputError = .amountIsTooSmall(minBaseAmount: minBaseAmount, baseCurrencyCode: baseCurrencyCode)
+        } else if amount < minBaseAmount {
             inputError = .amountIsTooSmall(minBaseAmount: minBaseAmount, baseCurrencyCode: baseCurrencyCode)
         } else if amount > maxBaseProviderAmount {
             inputError = .exceedsProviderLimit(
