@@ -16,13 +16,13 @@ final class SendCreateLinkCoordinator: SmartCoordinator<Void> {
     init(
         link: String,
         formatedAmount: String,
-        rootViewController: UIViewController,
+        navigationController: UINavigationController,
         execution: @escaping () async throws -> TransactionID
     ) {
         self.link = link
         self.formatedAmount = formatedAmount
         self.execution = execution
-        super.init(presentation: SmartCoordinatorPresentPresentation(rootViewController))
+        super.init(presentation: SmartCoordinatorPushPresentation(navigationController))
     }
     
     // MARK: - Builder
@@ -48,7 +48,7 @@ final class SendCreateLinkCoordinator: SmartCoordinator<Void> {
             link: link,
             formatedAmount: formatedAmount,
             onClose: { [weak self] in
-                self?.sendLinkCreatedVC.dismiss(animated: true)
+                self?.result.send(completion: .finished)
             },
             onShare: { [weak self] in
                 self?.showShareView()

@@ -448,17 +448,21 @@ private extension SendInputViewModel {
         
         await MainActor.run {
             let transaction = SendTransaction(state: self.currentState) {
-                try? await Resolver.resolve(SendHistoryService.self).insert(recipient)
+                if isSendingViaLink {
+                    fatalError("Implementing")
+                } else {
+                    try? await Resolver.resolve(SendHistoryService.self).insert(recipient)
 
-                let trx = try await Resolver.resolve(SendActionService.self).send(
-                    from: sourceWallet,
-                    receiver: address,
-                    amount: amountInToken,
-                    feeWallet: feeWallet,
-                    ignoreTopUp: isSendingViaLink
-                )
+                    let trx = try await Resolver.resolve(SendActionService.self).send(
+                        from: sourceWallet,
+                        receiver: address,
+                        amount: amountInToken,
+                        feeWallet: feeWallet,
+                        ignoreTopUp: isSendingViaLink
+                    )
 
-                return trx
+                    return trx
+                }
             }
             self.transaction.send(transaction)
         }
