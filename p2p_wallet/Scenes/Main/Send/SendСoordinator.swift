@@ -105,7 +105,7 @@ class SendCoordinator: Coordinator<SendResult> {
             switch result {
             case let .sent(transaction):
                 self?.result.send(.sent(transaction))
-            case let .sentViaLink:
+            case .sentViaLink:
                 break
             case .cancelled:
                 break
@@ -132,7 +132,7 @@ class SendCoordinator: Coordinator<SendResult> {
                 switch result {
                 case let .sent(transaction):
                     self?.result.send(.sent(transaction))
-                case let .sentViaLink:
+                case .sentViaLink:
                     break
                 case .cancelled:
                     break
@@ -231,13 +231,19 @@ class SendCoordinator: Coordinator<SendResult> {
         let coordinator = SendCreateLinkCoordinator(
             link: link,
             formatedAmount: formatedAmount,
-            rootViewController: rootViewController)
-        {
+            navigationController: rootViewController
+        ) {
+            // FIXME: - Remove later
+            try await Task.sleep(nanoseconds: 2_000_000_000)
             return ""
+//            return try await transaction.execution()
+            
         }
         
         coordinator.start()
-            .sink(receiveCompletion: { [weak self] _ in self?.result.send(completion: .finished) }, receiveValue: {})
+            .sink(receiveCompletion: { [weak self] _ in
+                self?.result.send(completion: .finished)
+            }, receiveValue: {})
             .store(in: &subscriptions)
     }
 }
