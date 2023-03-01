@@ -219,3 +219,8 @@ extension String {
     }
 }
 
+extension String {
+    static var fakeTransactionSignature: String {
+        "<FakeTransactionSignature>"
+    }
+}

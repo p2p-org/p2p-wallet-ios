@@ -449,7 +449,9 @@ private extension SendInputViewModel {
         await MainActor.run {
             let transaction = SendTransaction(state: self.currentState) {
                 if isSendingViaLink {
-                    fatalError("Implementing")
+                    // FIXME: - Real implementation later
+                    try await Task.sleep(nanoseconds: 2_000_000_000)
+                    return .fakeTransactionSignature
                 } else {
                     try? await Resolver.resolve(SendHistoryService.self).insert(recipient)
 
