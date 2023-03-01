@@ -7,11 +7,14 @@ extension JupiterSwapBusinessLogic {
         services: JupiterSwapServices,
         swapTokens: [SwapToken],
         routeMap: RouteMap,
-        fromToken: SwapToken?
+        fromToken: SwapToken?,
+        toToken: SwapToken?
     ) async -> JupiterSwapState {
         do {
             let tokens: (fromToken: SwapToken, toToken: SwapToken)
-            if let fromToken, let toToken = autoChooseToToken(for: fromToken, from: swapTokens) {
+            if let fromToken, let toToken {
+                tokens = (fromToken, toToken)
+            } else if let fromToken, let toToken = autoChooseToToken(for: fromToken, from: swapTokens) {
                 tokens = (fromToken, toToken)
             } else if let chosenTokens = autoChoose(swapTokens: swapTokens) {
                 tokens = chosenTokens
