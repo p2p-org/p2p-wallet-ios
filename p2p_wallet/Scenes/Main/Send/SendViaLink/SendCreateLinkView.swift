@@ -26,7 +26,7 @@ struct SendCreateLinkView: View {
                 
                 Text(L10n.thisWillTakeUpToSeconds(5))
                     .apply(style: .text2)
-                    .foregroundColor(silver)
+                    .foregroundColor(subColor)
                     .padding(.bottom, 60)
 
                 IndeterminateProgressBar(indicatorColor: mainColor)
