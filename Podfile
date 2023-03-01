@@ -69,13 +69,6 @@ target 'p2p_wallet' do
   pod 'SwiftFormat/CLI', '0.49.6'
   pod 'ReachabilitySwift', '~> 5.0.0'
 
-  # Deprecating: will be removed after NewSwap, NewHistory
-  pod 'RxAppState', '1.7.1'
-  pod 'RxCombine', '2.0.1'
-  pod 'RxGesture', '4.0.4'
-  pod 'RxConcurrency', :git => 'https://github.com/TrGiLong/RxConcurrency.git', :branch => 'main'
-  pod 'BECollectionView', :git => 'https://github.com/bigearsenal/BECollectionView.git', :branch => 'master'
-
   # Deprecating: BECollectionView_Combine - will be removed soon
   pod 'ListPlaceholder', :git => 'https://github.com/p2p-org/ListPlaceholder.git', :branch => 'custom_gradient_color'
   pod 'BEPureLayout', :git => 'https://github.com/p2p-org/BEPureLayout.git', :branch => 'master'
