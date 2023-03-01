@@ -12,6 +12,7 @@ struct SendLinkCreatedView: View {
     let link: String
     let formatedAmount: String
     let onClose: () -> Void
+    let onShare: () -> Void
     
     var body: some View {
         VStack {
@@ -68,7 +69,10 @@ struct SendLinkCreatedView: View {
             TextButtonView(
                 title: L10n.share,
                 style: .primaryWhite,
-                size: .large
+                size: .large,
+                onPressed: {
+                    onShare()
+                }
             )
                 .frame(height: TextButton.Size.large.height)
                 .padding(.bottom, 32)
@@ -83,7 +87,8 @@ struct SendLinkCreatedView_Previews: PreviewProvider {
         SendLinkCreatedView(
             link: "key.app/Ro8Andswf",
             formatedAmount: "7.12 SOL",
-            onClose: {}
+            onClose: {},
+            onShare: {}
         )
     }
 }
