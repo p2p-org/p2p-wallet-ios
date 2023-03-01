@@ -56,6 +56,12 @@ struct SendInputView: View {
                     .onTapGesture {
                         UIPasteboard.general.string = "key.app/gift/\(link)"
                     }
+                Text("\(viewModel.currentState.recipient.address) (tap to copy)")
+                    .apply(style: .label2)
+                    .foregroundColor(.red)
+                    .onTapGesture {
+                        UIPasteboard.general.string = viewModel.currentState.recipient.address
+                    }
                 #endif
                 Text(L10n.anyoneWhoGetsThisLinkCanClaimTheFunds)
                     .apply(style: .text3)
