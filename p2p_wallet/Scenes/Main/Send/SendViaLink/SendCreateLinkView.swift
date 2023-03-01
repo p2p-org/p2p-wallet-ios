@@ -5,6 +5,7 @@ struct SendCreateLinkView: View {
 
     let onAppear: () -> Void
     private let mainColor = Color(Asset.Colors.night.color)
+    private let subColor = Color(Asset.Colors.silver.color)
     private let animationSize = CGSize(width: 272, height: 204)
 
     var body: some View {
@@ -24,8 +25,8 @@ struct SendCreateLinkView: View {
                     .padding(.bottom, 16)
                 
                 Text(L10n.thisWillTakeUpToSeconds(5))
-                    .apply(style: .title3)
-                    .foregroundColor(mainColor)
+                    .apply(style: .text2)
+                    .foregroundColor(silver)
                     .padding(.bottom, 60)
 
                 IndeterminateProgressBar(indicatorColor: mainColor)
