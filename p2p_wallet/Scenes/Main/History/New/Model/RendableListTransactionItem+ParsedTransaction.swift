@@ -84,9 +84,9 @@ struct RendableListParsedTransactionItem: RendableListTransactionItem {
     }
 
     var subtitle: String {
-        if let info = trx.info as? SwapInfo {
+        if trx.info is SwapInfo {
             return "Swap"
-        } else if let info = trx.info as? TransferInfo {
+        } else if trx.info is TransferInfo {
             return "Send"
         } else if let info = trx.info as? CloseAccountInfo {
             return RecipientFormatter.format(destination: info.closedWallet?.pubkey ?? "")
@@ -98,7 +98,7 @@ struct RendableListParsedTransactionItem: RendableListTransactionItem {
     }
 
     var detail: (RendableListTransactionItemChange, String) {
-        var symbol: String?
+//        var symbol: String?
 //        if let info = trx.info as? SwapInfo {
 //            symbol = info.symbol
 //        } else if let info = trx.info as? TransferInfo {
