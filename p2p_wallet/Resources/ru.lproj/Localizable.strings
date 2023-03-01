@@ -1248,3 +1248,5 @@ You can try again, but your new transaction will be subject to the current rates
 "Limit is %@ links per day. Try tomorrow" = "Лимит составляет %@ ссылок в день.  Попробуйте завтра";
 "Sending via link" = "Отправка по ссылке";
 "Anyone who gets this link can claim the funds" = "Любой, кто получит эту ссылку, может запросить средства";
+"Creating your link" = "Создание вашей ссылки";
+"This will take up to %@ seconds" = "Это займет до %@ секунд";

@@ -1253,3 +1253,5 @@ You can try again, but your new transaction will be subject to the current rates
 "Limit is %@ links per day. Try tomorrow" = "Giới hạn là %@ liên kết mỗi ngày.  Hãy thử vào ngày mai";
 "Sending via link" = "Gửi qua liên kết";
 "Anyone who gets this link can claim the funds" = "Bất kỳ ai nhận được liên kết này đều có thể yêu cầu tiền";
+"Creating your link" = "Tạo liên kết của bạn";
+"This will take up to %@ seconds" = "Quá trình này sẽ mất tối đa %@ giây";

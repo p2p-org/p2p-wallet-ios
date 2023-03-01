@@ -1222,3 +1222,5 @@ You can try again, but your new transaction will be subject to the current rates
 "Limit is %@ links per day. Try tomorrow" = "Limit is %@ links per day. Try tomorrow";
 "Sending via link" = "Sending via link";
 "Anyone who gets this link can claim the funds" = "Anyone who gets this link can claim the funds";
+"Creating your link" = "Creating your link";
+"This will take up to %@ seconds" = "This will take up to %@ seconds";
