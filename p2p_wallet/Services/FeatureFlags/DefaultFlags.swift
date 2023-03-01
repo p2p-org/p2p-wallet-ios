@@ -18,10 +18,7 @@ func setupDefaultFlags() {
             FeatureFlag(feature: .mockedApiGateway, enabled: false),
             FeatureFlag(feature: .mockedTKeyFacade, enabled: false),
             FeatureFlag(feature: .mockedDeviceShare, enabled: false),
-            FeatureFlag(feature: .simulatedSocialError, enabled: false),
-            
-            // History
-            FeatureFlag(feature: .historyServiceEnabled, enabled: true)
+            FeatureFlag(feature: .simulatedSocialError, enabled: false)
         ]
     )
 }
