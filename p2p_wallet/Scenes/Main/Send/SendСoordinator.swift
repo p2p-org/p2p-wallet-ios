@@ -13,6 +13,7 @@ import SwiftUI
 
 enum SendResult {
     case sent(SendTransaction)
+    case sentViaLink(link: String, transaction: SendTransaction)
     case cancelled
 }
 
@@ -68,7 +69,7 @@ class SendCoordinator: Coordinator<SendResult> {
             if withTokens {
                 // normal flow with no preChosenRecipient
                 if let recipient = preChosenRecipient {
-                    return startFlowWithPreChosenRecipient(recipient)
+                    startFlowWithPreChosenRecipient(recipient)
                 } else {
                     startFlowWithNoPreChosenRecipient()
                 }
@@ -90,7 +91,7 @@ class SendCoordinator: Coordinator<SendResult> {
     
     private func startFlowWithPreChosenRecipient(
         _ recipient: Recipient
-    ) -> AnyPublisher<SendResult, Never> {
+    ) {
         coordinate(to: SendInputCoordinator(
             recipient: recipient,
             preChosenWallet: preChosenWallet,
@@ -100,6 +101,17 @@ class SendCoordinator: Coordinator<SendResult> {
             pushedWithoutRecipientSearchView: true,
             allowSwitchingMainAmountType: allowSwitchingMainAmountType
         ))
+        .sink { [weak self] result in
+            switch result {
+            case let .sent(transaction):
+                self?.result.send(.sent(transaction))
+            case let .sentViaLink:
+                break
+            case .cancelled:
+                break
+            }
+        }
+        .store(in: &subscriptions)
     }
 
     private func startFlowWithNoPreChosenRecipient() {
@@ -120,6 +132,8 @@ class SendCoordinator: Coordinator<SendResult> {
                 switch result {
                 case let .sent(transaction):
                     self?.result.send(.sent(transaction))
+                case let .sentViaLink:
+                    break
                 case .cancelled:
                     break
                 }
@@ -140,7 +154,7 @@ class SendCoordinator: Coordinator<SendResult> {
             .sinkAsync { [weak self] seed in
                 guard let self else { return }
                 self.rootViewController.view.showIndetermineHud()
-                try await self.startSendViaLinkFlow(seed: seed)
+                try? await self.startSendViaLinkFlow(seed: seed)
                 self.rootViewController.view.hideHud()
             }
             .store(in: &subscriptions)
@@ -200,10 +214,30 @@ class SendCoordinator: Coordinator<SendResult> {
                 switch result {
                 case let .sent(transaction):
                     self?.result.send(.sent(transaction))
+                case let .sentViaLink(link, transaction):
+                    self?.startSendViaLinkCompletionFlow(
+                        link: link,
+                        formatedAmount: transaction.amount.tokenAmountFormattedString(symbol: transaction.walletToken.token.symbol),
+                        transaction: transaction
+                    )
                 case .cancelled:
                     break
                 }
             }
+            .store(in: &subscriptions)
+    }
+    
+    private func startSendViaLinkCompletionFlow(link: String, formatedAmount: String, transaction: SendTransaction){
+        let coordinator = SendCreateLinkCoordinator(
+            link: link,
+            formatedAmount: formatedAmount,
+            rootViewController: rootViewController)
+        {
+            return ""
+        }
+        
+        coordinator.start()
+            .sink(receiveCompletion: { [weak self] _ in self?.result.send(completion: .finished) }, receiveValue: {})
             .store(in: &subscriptions)
     }
 }

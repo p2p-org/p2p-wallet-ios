@@ -79,8 +79,13 @@ final class SendInputCoordinator: Coordinator<SendResult> {
             .store(in: &subscriptions)
 
         viewModel.transaction
-            .sink { [weak self] model in
-                self?.subject.send(.sent(model))
+            .sink { [weak self, viewModel] model in
+                if let seed = viewModel.stateMachine.currentState.sendViaLinkSeed {
+                    let link = "https://key.app/gift/\(seed)"
+                    self?.subject.send(.sentViaLink(link: link, transaction: model))
+                } else {
+                    self?.subject.send(.sent(model))
+                }
             }
             .store(in: &subscriptions)
         
