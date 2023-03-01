@@ -14,9 +14,6 @@ final class SendInputCoordinator: Coordinator<SendResult> {
     private let allowSwitchingMainAmountType: Bool
     
     private let sendViaLinkSeed: String?
-    private var isSendViaLink: Bool {
-        sendViaLinkSeed != nil
-    }
 
     init(
         recipient: Recipient,
@@ -39,12 +36,12 @@ final class SendInputCoordinator: Coordinator<SendResult> {
     }
 
     override func start() -> AnyPublisher<SendResult, Never> {
-        let viewModel = SendInputViewModel(recipient: recipient, preChosenWallet: preChosenWallet, preChosenAmount: preChosenAmount, source: source, allowSwitchingMainAmountType: allowSwitchingMainAmountType, isSendViaLink: isSendViaLink)
+        let viewModel = SendInputViewModel(recipient: recipient, preChosenWallet: preChosenWallet, preChosenAmount: preChosenAmount, source: source, allowSwitchingMainAmountType: allowSwitchingMainAmountType, sendViaLinkSeed: sendViaLinkSeed)
         let view = SendInputView(viewModel: viewModel)
         let controller = KeyboardAvoidingViewController(rootView: view, navigationBarVisibility: .visible)
 
         navigationController.pushViewController(controller, animated: true)
-        setTitle(to: controller)
+        setTitle(to: controller, isSendViaLink: sendViaLinkSeed != nil)
 
         controller.onClose = { [weak self] in
             self?.subject.send(.cancelled)
@@ -94,12 +91,16 @@ final class SendInputCoordinator: Coordinator<SendResult> {
         return subject.prefix(1).eraseToAnyPublisher()
     }
 
-    private func setTitle(to vc: UIViewController) {
-        switch recipient.category {
-        case let .username(name, domain):
-            vc.title = RecipientFormatter.username(name: name, domain: domain)
-        default:
-            vc.title = RecipientFormatter.format(destination: recipient.address)
+    private func setTitle(to vc: UIViewController, isSendViaLink: Bool) {
+        if isSendViaLink {
+            vc.title = L10n.sendingViaLink
+        } else {
+            switch recipient.category {
+            case let .username(name, domain):
+                vc.title = RecipientFormatter.username(name: name, domain: domain)
+            default:
+                vc.title = RecipientFormatter.format(destination: recipient.address)
+            }
         }
 
         vc.navigationItem.largeTitleDisplayMode = .always

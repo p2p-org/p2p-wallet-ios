@@ -1251,3 +1251,4 @@ You can try again, but your new transaction will be subject to the current rates
 "Send crypto via link" = "Gửi tiền điện tử qua liên kết";
 "You don’t need to know the address" = "Bạn không cần biết địa chỉ";
 "Limit is %@ links per day. Try tomorrow" = "Giới hạn là %@ liên kết mỗi ngày.  Hãy thử vào ngày mai";
+"Sending via link" = "Gửi qua liên kết";
