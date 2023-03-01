@@ -80,13 +80,9 @@ final class SolendCoordinator: Coordinator<Void> {
                         guard let self = self else { return }
                         switch result {
                         case .showTrade:
-                            Task {
-                                let done = await self.showTrade()
-                                if done {
-                                    self.navigationController.dismiss(animated: true)
-                                }
-                            }
-                        case let .showBuy(symbol): self.showBuy(symbol: symbol)
+                            self.showTrade()
+                        case let .showBuy(symbol):
+                            self.showBuy(symbol: symbol)
                         default: break
                         }
                     })
@@ -129,17 +125,28 @@ final class SolendCoordinator: Coordinator<Void> {
             .store(in: &subscriptions)
     }
 
-    private func showTrade() async -> Bool {
-        let vm = OrcaSwapV2.ViewModel(initialWallet: nil)
-        let vc = OrcaSwapV2.ViewController(viewModel: vm)
-
-        return await withCheckedContinuation { continuation in
+    private func showTrade() {
+        if available(.jupiterSwapEnabled) {
+            coordinate(
+                to: JupiterSwapCoordinator(
+                    navigationController: navigationController,
+                    params: JupiterSwapParameters(dismissAfterCompletion: true, openKeyboardOnStart: true)
+                )
+            )
+                .sink { [unowned self] _ in
+                    navigationController.dismiss(animated: true)
+                }
+                .store(in: &subscriptions)
+        } else {
+            let vm = OrcaSwapV2.ViewModel(initialWallet: nil)
+            let vc = OrcaSwapV2.ViewController(viewModel: vm)
+            
             vc.doneHandler = { [unowned self] in
                 navigationController.popToRootViewController(animated: true)
-                return continuation.resume(with: .success(true))
+//                return continuation.resume(with: .success(true))
             }
             vc.onClose = {
-                continuation.resume(with: .success(false))
+//                continuation.resume(with: .success(false))
             }
             navigationController.show(vc, sender: nil)
         }

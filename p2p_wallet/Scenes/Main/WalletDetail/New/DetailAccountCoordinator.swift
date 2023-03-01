@@ -14,7 +14,12 @@ enum DetailAccountCoordinatorArgs {
     case wallet(Wallet)
 }
 
-class DetailAccountCoordinator: SmartCoordinator<WalletDetailCoordinator.Result> {
+enum DetailAccountCoordinatorResult {
+    case cancel
+    case done
+}
+
+class DetailAccountCoordinator: SmartCoordinator<DetailAccountCoordinatorResult> {
     let args: DetailAccountCoordinatorArgs
 
     init(args: DetailAccountCoordinatorArgs, presentingViewController: UINavigationController) {
@@ -144,18 +149,29 @@ class DetailAccountCoordinator: SmartCoordinator<WalletDetailCoordinator.Result>
     }
 
     func openSwap() {
-        guard
-            case let .wallet(wallet) = self.args,
-            let navigationController = presentation.presentingViewController as? UINavigationController
+        guard let rootViewController = presentation.presentingViewController as? UINavigationController
         else { return }
-
-        let vm = OrcaSwapV2.ViewModel(initialWallet: wallet)
-        let vc = OrcaSwapV2.ViewController(viewModel: vm)
-        vc.doneHandler = { [weak self] in
-            navigationController.popToRootViewController(animated: true)
-            self?.result.send(.done)
+        if available(.jupiterSwapEnabled) {
+            coordinate(
+                to: JupiterSwapCoordinator(
+                    navigationController: rootViewController,
+                    params: JupiterSwapParameters(dismissAfterCompletion: true, openKeyboardOnStart: true)
+                )
+            )
+                .sink { [weak rootViewController] _ in
+                    rootViewController?.popToRootViewController(animated: true)
+                }
+                .store(in: &subscriptions)
+        } else {
+            let vm = OrcaSwapV2.ViewModel(initialWallet: wallet)
+            let vc = OrcaSwapV2.ViewController(viewModel: vm)
+            
+            vc.doneHandler = { [weak self, weak rootViewController] in
+                rootViewController?.popToRootViewController(animated: true)
+                self?.result.send(.done)
+            }
+            rootViewController.pushViewController(vc, animated: true)
         }
-        self.presentation.presentingViewController.show(vc, sender: nil)
     }
 
     func openSend() {
