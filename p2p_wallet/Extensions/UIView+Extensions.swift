@@ -22,7 +22,7 @@ extension UIView {
 
     func removeErrorView() {
         subviews.filter {
-            $0 is ErrorView
+            $0 is UIErrorView
         }.forEach {
             $0.removeFromSuperview()
         }
@@ -30,7 +30,7 @@ extension UIView {
     
     func showErrorView(title: String? = nil, description: String? = nil, onRetry: (() -> Void)?) {
         removeErrorView()
-        let errorView = ErrorView(backgroundColor: .textWhite)
+        let errorView = UIErrorView(backgroundColor: .textWhite)
         if let title = title {
             errorView.titleLabel.text = title
         }

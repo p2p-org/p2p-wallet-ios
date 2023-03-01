@@ -1,17 +1,15 @@
-//
-//  NewHistoryListErrorView.swift
-//  p2p_wallet
-//
-//  Created by Giang Long Tran on 16.02.2023.
-//
 
 import KeyAppUI
 import SwiftUI
 
-struct HistoryErrorView: View {
-    let onTryAgain: () -> Void
-
-    var body: some View {
+public struct ErrorView: View {
+    public let onTryAgain: () -> Void
+    
+    public init(onTryAgain: @escaping () -> Void) {
+        self.onTryAgain = onTryAgain
+    }
+    
+    public var body: some View {
         VStack(spacing: 0) {
             Image(uiImage: .catFail)
                 .padding(.top, 24)
@@ -27,16 +25,11 @@ struct HistoryErrorView: View {
             .padding(.horizontal, 16)
             .padding(.bottom, 24)
         }
-        .background(Color(Asset.Colors.snow.color))
-        .cornerRadius(radius: 16, corners: .allCorners)
     }
 }
 
 struct HistoryErrorView_Previews: PreviewProvider {
     static var previews: some View {
-        ZStack {
-            Color.gray
-            HistoryErrorView() {}
-        }
+        ErrorView() {}
     }
 }
