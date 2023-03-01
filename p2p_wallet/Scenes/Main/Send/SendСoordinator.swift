@@ -235,11 +235,16 @@ class SendCoordinator: Coordinator<SendResult> {
         ) {
             let transactionHandler = Resolver.resolve(TransactionHandlerType.self)
             let index = transactionHandler.sendTransaction(transaction)
-            _ = try? await transactionHandler.observeTransaction(transactionIndex: index)
+            let tx = try? await transactionHandler.observeTransaction(transactionIndex: index)
                 .compactMap {$0}
-                .first(where: {$0.status.isFinalized || ($0.status.numberOfConfirmations ?? 0) > 0})
+                .first(where: {$0.status.error != nil || $0.status.isFinalized || ($0.status.numberOfConfirmations ?? 0) > 0})
                 .eraseToAnyPublisher()
                 .async()
+            
+            if let error = tx?.status.error {
+                self.handleError(error: error)
+            }
+            
             return transactionHandler.getProcessingTransaction(index: index).transactionId ?? ""
         }
         
@@ -248,5 +253,9 @@ class SendCoordinator: Coordinator<SendResult> {
                 self?.result.send(.sentViaLink(link: link, transaction: transaction))
             }, receiveValue: {})
             .store(in: &subscriptions)
+    }
+    
+    private func handleError(error: Error) {
+        fatalError("Handle error later")
     }
 }
