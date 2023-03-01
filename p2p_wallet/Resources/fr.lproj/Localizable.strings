@@ -1237,6 +1237,7 @@ You can try again, but your new transaction will be subject to the current rates
 "Cashout with Moonpay" = "Paiement avec Moonpay";
 "The token you receive" = "Le jeton que vous recevez";
 "Received from" = "Reçu de";
+"Swap details" = "Détails de l'échange";
 "There was a problem with the swap, your funds were refunded" = "Il y a eu un problème avec le swap, vos fonds ont été remboursés";
 "%@ signature" = "signature %@";
 "Your history will appear here.\nTo get started you can:" = "Votre historique apparaîtra ici.\nPour commencer, vous pouvez :";
@@ -1257,3 +1258,4 @@ You can try again, but your new transaction will be subject to the current rates
 "License" = "Licence";
 "Cashout with Moonpay" = "Paiement avec Moonpay";
 "The address was copied to clipboard" = "L'adresse a été copiée dans le presse-papiers";
+"The slippage could be" = "Le glissement pourrait être";

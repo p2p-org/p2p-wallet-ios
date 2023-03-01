@@ -1241,6 +1241,7 @@ You can try again, but your new transaction will be subject to the current rates
 "The token you receive" = "Mã thông báo bạn nhận được";
 "Received from" = "Nhận được tư";
 "There was a problem with the swap, your funds were refunded" = "Đã xảy ra sự cố với giao dịch hoán đổi, tiền của bạn đã được hoàn trả";
+"Swap details" = "chi tiết hoán đổi";
 "%@ signature" = "%@ chữ ký";
 "Your history will appear here.\nTo get started you can:" = "Lịch sử của bạn sẽ xuất hiện ở đây.\nĐể bắt đầu, bạn có thể:";
 "Oops! Something happened." = "Ối!  Một cái gì đó đã xảy ra.";
@@ -1260,3 +1261,4 @@ You can try again, but your new transaction will be subject to the current rates
 "License" = "Giấy phép";
 "Cashout with Moonpay" = "Rút tiền với Moonpay";
 "The address was copied to clipboard" = "Địa chỉ đã được sao chép vào clipboard";
+"The slippage could be" = "Sự trượt giá có thể là";
