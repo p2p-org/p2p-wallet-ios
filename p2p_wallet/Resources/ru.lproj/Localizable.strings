@@ -1250,3 +1250,6 @@ You can try again, but your new transaction will be subject to the current rates
 "Anyone who gets this link can claim the funds" = "Любой, кто получит эту ссылку, может запросить средства";
 "Creating your link" = "Создание вашей ссылки";
 "This will take up to %@ seconds" = "Это займет до %@ секунд";
+"The link is ready!\nReceiver will be able to claim funds" = "Ссылка готова!\nПолучатель сможет запросить средства";
+"Send via link" = "Отправить по ссылке";
+"The link works only 1 time for any users.\nIf you log in yourself, the funds will be returned to your account" = "Ссылка работает только 1 раз для любых пользователей.\nЕсли вы авторизуетесь сами, средства будут возвращены на ваш счет";
