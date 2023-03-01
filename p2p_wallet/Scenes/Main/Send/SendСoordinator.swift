@@ -233,11 +233,14 @@ class SendCoordinator: Coordinator<SendResult> {
             formatedAmount: formatedAmount,
             navigationController: rootViewController
         ) {
-            // FIXME: - Remove later
-            try await Task.sleep(nanoseconds: 2_000_000_000)
-            return ""
-//            return try await transaction.execution()
-            
+            let transactionHandler = Resolver.resolve(TransactionHandlerType.self)
+            let index = transactionHandler.sendTransaction(transaction)
+            _ = try? await transactionHandler.observeTransaction(transactionIndex: index)
+                .compactMap {$0}
+                .first(where: {$0.status.isFinalized || ($0.status.numberOfConfirmations ?? 0) > 0})
+                .eraseToAnyPublisher()
+                .async()
+            return transactionHandler.getProcessingTransaction(index: index).transactionId ?? ""
         }
         
         coordinator.start()

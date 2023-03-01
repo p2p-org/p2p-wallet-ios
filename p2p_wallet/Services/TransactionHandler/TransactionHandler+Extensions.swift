@@ -59,6 +59,31 @@ extension TransactionHandler {
     private func observe(index: TransactionIndex, transactionId: String) {
         Task { [weak self] in
             guard let self else { return }
+            // for debuging
+            if transactionId == .fakeTransactionSignature {
+                // mark as confirmed
+                await self.updateTransactionAtIndex(index) { currentValue in
+                    var value = currentValue
+                    value.status = .confirmed(3)
+                    return value
+                }
+                
+                // wait for 2 secs
+                try await Task.sleep(nanoseconds: 2_000_000_000)
+                
+                // mark as finalized
+                await MainActor.run { [weak self] in
+                    self?.notificationsService.showInAppNotification(.done(L10n.transactionHasBeenConfirmed))
+                }
+                await self.updateTransactionAtIndex(index) { currentValue in
+                    var value = currentValue
+                    value.status = .finalized
+                    return value
+                }
+                return
+            }
+            
+            // for production
             for try await status in self.apiClient.observeSignatureStatus(signature: transactionId) {
                 let txStatus: PendingTransaction.TransactionStatus
                 var slot: UInt64?
