@@ -227,7 +227,7 @@ class SendCoordinator: Coordinator<SendResult> {
             .store(in: &subscriptions)
     }
     
-    private func startSendViaLinkCompletionFlow(link: String, formatedAmount: String, transaction: SendTransaction){
+    private func startSendViaLinkCompletionFlow(link: String, formatedAmount: String, transaction: SendTransaction) {
         let coordinator = SendCreateLinkCoordinator(
             link: link,
             formatedAmount: formatedAmount,
@@ -242,7 +242,7 @@ class SendCoordinator: Coordinator<SendResult> {
                 .async()
             
             if let error = tx?.status.error {
-                self.handleError(error: error)
+                self.handleSendViaLinkError(error: error)
             }
             
             return transactionHandler.getProcessingTransaction(index: index).transactionId ?? ""
@@ -255,7 +255,7 @@ class SendCoordinator: Coordinator<SendResult> {
             .store(in: &subscriptions)
     }
     
-    private func handleError(error: Error) {
+    private func handleSendViaLinkError(error: Error) {
         fatalError("Handle error later")
     }
 }
