@@ -242,7 +242,7 @@ class SendCoordinator: Coordinator<SendResult> {
                 .async()
             
             if let error = tx?.status.error {
-                self.handleSendViaLinkError(error: error)
+                throw error
             }
             
             return transactionHandler.getProcessingTransaction(index: index).transactionId ?? ""
@@ -253,9 +253,5 @@ class SendCoordinator: Coordinator<SendResult> {
                 self?.result.send(.sentViaLink(link: link, transaction: transaction))
             }, receiveValue: {})
             .store(in: &subscriptions)
-    }
-    
-    private func handleSendViaLinkError(error: Error) {
-        fatalError("Handle error later")
     }
 }

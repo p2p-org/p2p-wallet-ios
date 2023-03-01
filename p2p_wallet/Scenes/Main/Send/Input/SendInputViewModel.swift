@@ -451,6 +451,7 @@ private extension SendInputViewModel {
                 if isSendingViaLink {
                     // FIXME: - Real implementation later
                     try await Task.sleep(nanoseconds: 2_000_000_000)
+                    if Int.random(in: 0..<4) == 3 { throw SolanaError.unknown }
                     return .fakeTransactionSignature
                 } else {
                     try? await Resolver.resolve(SendHistoryService.self).insert(recipient)
