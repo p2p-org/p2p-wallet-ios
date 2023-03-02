@@ -1259,3 +1259,7 @@ You can try again, but your new transaction will be subject to the current rates
 "Cashout with Moonpay" = "Paiement avec Moonpay";
 "The address was copied to clipboard" = "L'adresse a été copiée dans le presse-papiers";
 "The slippage could be" = "Le glissement pourrait être";
+"Swapping Through" = "Permutation";
+"Liquidity fee" = "Commission de liquidité";
+"Estimated fees" = "Frais Estimés";
+"Minimum received" = "Minimum reçu";
