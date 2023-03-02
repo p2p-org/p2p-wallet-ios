@@ -12,14 +12,12 @@ private extension Double {
     static let maximumSlippage: Double = 50
 }
 
-final class SwapSettingsViewModel<
-    Route: SwapSettingsRouteInfo
->: BaseViewModel, ObservableObject {
+final class SwapSettingsViewModel: BaseViewModel, ObservableObject {
     
     // MARK: - Properties
 
-    @Published var routes: [Route]
-    @Published var currentRoute: Route
+    @Published var routes: [SwapSettingsRouteInfo]
+    @Published var currentRoute: SwapSettingsRouteInfo
     
     @Published var networkFee: SwapSettingsFeeInfo?
     @Published var accountCreationFee: SwapSettingsFeeInfo?
@@ -67,8 +65,8 @@ final class SwapSettingsViewModel<
     // MARK: - Initializer
 
     init(
-        routes: [Route],
-        currentRoute: Route,
+        routes: [SwapSettingsRouteInfo],
+        currentRoute: SwapSettingsRouteInfo,
         networkFee: SwapSettingsFeeInfo? = nil,
         accountCreationFee: SwapSettingsFeeInfo? = nil,
         liquidityFee: [SwapSettingsFeeInfo] = [],
