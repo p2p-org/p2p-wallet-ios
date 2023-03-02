@@ -8,7 +8,13 @@ extension JupiterSwapBusinessLogic {
         }
 
         guard state.amountFrom > 0 else {
-            return state.copy(status: .ready, amountFrom: 0, amountFromFiat: 0, amountTo: 0, route: nil)
+            return state.copy(
+                status: .ready,
+                amountFrom: 0,
+                amountFromFiat: 0,
+                amountTo: 0,
+                amountToFiat: 0
+            )
         }
 
         let amountFromLamports = state.amountFrom.toLamport(decimals: state.fromToken.token.decimals)
@@ -27,7 +33,7 @@ extension JupiterSwapBusinessLogic {
             )
 
             guard let route = data.data.first, let toAmountLamports = Lamports(route.outAmount) else {
-                return state.copy(status: .error(reason: .routeIsNotFound))
+                return state.copy(status: .error(reason: .routeIsNotFound), amountTo: 0, amountToFiat: 0)
             }
 
             let amountTo = toAmountLamports.convertToBalance(decimals: state.toToken.token.decimals)
@@ -37,7 +43,27 @@ extension JupiterSwapBusinessLogic {
                 relation: Double(state.amountFrom/amountTo)
             )
 
-            return await validateAmounts(state: state.copy(status: .ready, amountTo: amountTo, priceInfo: newPriceInfo, route: route), services: services)
+            let priceImpact: JupiterSwapState.SwapPriceImpact?
+            switch route.priceImpactPct {
+            case let val where val >= 0.01 && val < 0.03:
+                priceImpact = .medium
+            case let val where val >= 0.03:
+                priceImpact = .high
+            default:
+                priceImpact = nil
+            }
+
+            return await validateAmounts(
+                state: state.copy(
+                    status: .ready,
+                    amountTo: amountTo,
+                    amountToFiat: amountTo * newPriceInfo.toPrice,
+                    priceInfo: newPriceInfo,
+                    route: route,
+                    priceImpact: priceImpact
+                ),
+                services: services
+            )
         }
         catch let error {
             return handle(error: error, for: state)
@@ -66,7 +92,7 @@ extension JupiterSwapBusinessLogic {
             status = .error(reason: .notEnoughFromToken)
         }
 
-        return state.copy(status: status)
+        return state.copy(status: status, route: state.route, priceImpact: state.priceImpact)
     }
 
     private static func validateNativeSOL(balance: Double, state: JupiterSwapState, services: JupiterSwapServices) async -> JupiterSwapState.Status {

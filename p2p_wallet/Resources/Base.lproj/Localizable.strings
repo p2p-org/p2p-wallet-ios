@@ -1230,4 +1230,5 @@ You can try again, but your new transaction will be subject to the current rates
 "License" = "License";
 "Cashout with Moonpay" = "Cashout with Moonpay";
 "The address was copied to clipboard" = "The address was copied to clipboard";
+"The price is higher because of your trade size. Consider splitting your transaction into multiple swaps." = "The price is higher because of your trade size. Consider splitting your transaction into multiple swaps.";
 "The slippage could be" = "The slippage could be";

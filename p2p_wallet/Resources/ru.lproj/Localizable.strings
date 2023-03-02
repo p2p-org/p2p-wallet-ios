@@ -1256,4 +1256,5 @@ You can try again, but your new transaction will be subject to the current rates
 "License" = "Лицензия";
 "Cashout with Moonpay" = "Вывод средств с Moonpay";
 "The address was copied to clipboard" = "Адрес скопирован в буфер обмена";
+"The price is higher because of your trade size. Consider splitting your transaction into multiple swaps." = "Цена выше из-за размера вашей сделки.  Подумайте о том, чтобы разделить вашу транзакцию на несколько свопов.";
 "The slippage could be" = "Проскальзывание может быть";
