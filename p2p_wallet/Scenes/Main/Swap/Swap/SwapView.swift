@@ -74,6 +74,11 @@ private extension SwapView {
             Text("Route: " + (viewModel.getRouteInSymbols()?.joined(separator: " -> ") ?? ""))
                 .apply(style: .label2)
                 .foregroundColor(.red)
+            
+            // Slippage (for debugging)
+            Text("Slippage: \(Double(viewModel.stateMachine.currentState.slippage) / 100)%")
+                .apply(style: .label2)
+                .foregroundColor(.red)
             #endif
 
             // Disclaimer

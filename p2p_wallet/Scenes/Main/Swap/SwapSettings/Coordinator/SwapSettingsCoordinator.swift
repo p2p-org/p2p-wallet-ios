@@ -53,7 +53,8 @@ final class SwapSettingsCoordinator<Route: SwapSettingsRouteInfo>: Coordinator<S
                 return viewModel?.finalSlippage
             }
             .sink { [weak self] slippage in
-                self?.result.send(.selectedSlippage(Int(slippage * 100)))
+                let slippage = Int(slippage * 100)
+                self?.result.send(.selectedSlippage(slippage))
             }
             .store(in: &subscriptions)
         
