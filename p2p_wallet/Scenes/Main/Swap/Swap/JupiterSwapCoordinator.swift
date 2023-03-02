@@ -19,8 +19,7 @@ final class JupiterSwapCoordinator: Coordinator<Void> {
     private let navigationController: UINavigationController
     private var result = PassthroughSubject<Void, Never>()
     private let params: JupiterSwapParameters
-
-    private var slippage = 0.5
+    private var viewModel: SwapViewModel!
 
     init(navigationController: UINavigationController, params: JupiterSwapParameters) {
         self.navigationController = navigationController
@@ -28,7 +27,7 @@ final class JupiterSwapCoordinator: Coordinator<Void> {
     }
 
     override func start() -> AnyPublisher<Void, Never> {
-        let viewModel = SwapViewModel(preChosenWallet: params.preChosenWallet)
+        viewModel = SwapViewModel(preChosenWallet: params.preChosenWallet)
         let fromViewModel = SwapInputViewModel(stateMachine: viewModel.stateMachine, isFromToken: true, openKeyboardOnStart: params.openKeyboardOnStart)
         let toViewModel = SwapInputViewModel(stateMachine: viewModel.stateMachine, isFromToken: false, openKeyboardOnStart: params.openKeyboardOnStart)
         let view = SwapView(viewModel: viewModel, fromViewModel: fromViewModel, toViewModel: toViewModel)
@@ -48,17 +47,17 @@ final class JupiterSwapCoordinator: Coordinator<Void> {
             .store(in: &subscriptions)
 
         fromViewModel.changeTokenPressed
-            .sink { [weak viewModel, weak self, unowned fromViewModel] in
-                guard let self, let viewModel else { return }
+            .sink { [weak self, unowned fromViewModel] in
+                guard let self else { return }
                 fromViewModel.isFirstResponder = false
-                self.openChooseToken(viewModel: viewModel, fromToken: true)
+                self.openChooseToken(fromToken: true)
             }
             .store(in: &subscriptions)
         toViewModel.changeTokenPressed
-            .sink { [weak viewModel, weak self, unowned fromViewModel] in
-                guard let self, let viewModel else { return }
+            .sink { [weak self, unowned fromViewModel] in
+                guard let self else { return }
                 fromViewModel.isFirstResponder = false
-                self.openChooseToken(viewModel: viewModel, fromToken: false)
+                self.openChooseToken(fromToken: false)
             }
             .store(in: &subscriptions)
         
@@ -73,20 +72,29 @@ final class JupiterSwapCoordinator: Coordinator<Void> {
     }
     
     @objc private func receiptButtonPressed() {
+        guard let route = viewModel.currentState.route else {
+            return
+        }
         let settingsCoordinator = SwapSettingsCoordinator(
             navigationController: navigationController,
-            slippage: slippage
+            slippage: Double(viewModel.currentState.slippage / 100),
+            routes: [],
+            currentRoute: route,
+            swapTokens: viewModel.currentState.swapTokens
         )
         coordinate(to: settingsCoordinator)
-            .sink(receiveValue: { [weak self] in
-                if let slippage = $0, slippage != 0 {
-                    self?.slippage = slippage
+            .sink(receiveValue: { [weak viewModel] result in
+                switch result {
+                case let .selectedSlippage(slippage):
+                    fatalError()
+                case let .selectedRoute(route):
+                    fatalError()
                 }
             })
             .store(in: &subscriptions)
     }
     
-    private func openChooseToken(viewModel: SwapViewModel, fromToken: Bool) {
+    private func openChooseToken(fromToken: Bool) {
         coordinate(to: ChooseSwapTokenCoordinator(
             chosenWallet: fromToken ? viewModel.currentState.fromToken : viewModel.currentState.toToken,
             tokens: fromToken ? viewModel.currentState.swapTokens : viewModel.currentState.possibleToTokens,
@@ -94,11 +102,11 @@ final class JupiterSwapCoordinator: Coordinator<Void> {
             title: fromToken ? L10n.theTokenYouPay : L10n.theTokenYouReceive
         ))
         .compactMap { $0 }
-        .sink {
+        .sink { [weak viewModel] in
             if fromToken {
-                viewModel.changeFromToken.send($0)
+                viewModel?.changeFromToken.send($0)
             } else {
-                viewModel.changeToToken.send($0)
+                viewModel?.changeToToken.send($0)
             }
         }
         .store(in: &subscriptions)

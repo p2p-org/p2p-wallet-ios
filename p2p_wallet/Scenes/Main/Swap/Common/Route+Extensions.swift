@@ -26,3 +26,17 @@ extension Route {
             }
     }
 }
+
+extension Route: SwapSettingsRouteInfo {
+    var name: String {
+        marketInfos.map(\.label).joined(separator: ", ")
+    }
+    
+    var description: String {
+        name
+    }
+    
+    var tokens: String {
+        (toSymbols(tokensList: []) ?? []).compactMap {$0}.joined(separator: " -> ")
+    }
+}
