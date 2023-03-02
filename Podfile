@@ -11,55 +11,12 @@ $keyAppUI = ENV['KEY_APP_UI']
 puts $keyAppKitPath
 puts $keyAppUI
 
-def key_app_kit
-  $dependencies = [
-    "TransactionParser",
-    "NameService",
-    "AnalyticsManager",
-    "Cache",
-    "KeyAppKitLogger",
-    "SolanaPricesAPIs",
-    "Onboarding",
-    "JSBridge",
-    "CountriesAPI",
-    "KeyAppKitCore",
-    "P2PSwift",
-    "Solend",
-    "Send",
-    "History",
-    "Moonpay",
-    "Sell"
-  ]
-
-  if $keyAppKitPath
-    for $dependency in $dependencies do
-      pod $dependency, :path => $keyAppKitPath
-    end
-  else
-    $keyAppKitGit = 'https://github.com/p2p-org/key-app-kit-swift.git'
-    $keyAppKitBranch = 'develop'
-    for $dependency in $dependencies do
-      pod $dependency, :git => $keyAppKitGit, :branch => $keyAppKitBranch
-    end
-  end
-end
-
 target 'p2p_wallet' do
   # Comment the next line if you don't want to use dynamic frameworks
   use_frameworks!
 
   # development pods
-  key_app_kit
   pod 'CocoaDebug', :configurations => ['Debug', 'Test']
-  pod 'FeeRelayerSwift', :git => 'https://github.com/p2p-org/FeeRelayerSwift.git', :branch => 'master'
-  pod 'OrcaSwapSwift', :git => 'https://github.com/p2p-org/OrcaSwapSwift.git', :branch => 'main'
-  pod 'RenVMSwift', :git => 'https://github.com/p2p-org/RenVMSwift.git', :branch => 'master'
-  
-  if $solanaSwiftPath
-    pod "SolanaSwift", :path => $solanaSwiftPath
-  else
-    pod 'SolanaSwift', :git => 'https://github.com/p2p-org/solana-swift.git', :branch => 'main'
-  end
 
   # tools
   pod 'SwiftGen', '~> 6.0'
