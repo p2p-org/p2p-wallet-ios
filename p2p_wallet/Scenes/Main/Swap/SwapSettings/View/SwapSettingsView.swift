@@ -49,6 +49,7 @@ struct SwapSettingsView<Route: SwapSettingsRouteInfo>: View {
                     .padding(.horizontal, (20-7.41)/2)
                     .castToAnyView()
             )
+                .contentShape(Rectangle())
                 .onTapGesture {
                     viewModel.navigateToSelectRoute()
                 }
