@@ -31,15 +31,15 @@ extension JupiterSwapBusinessLogic {
         }
     }
 
-    static func changeBothTokens(
+    static func switchFromAndToTokens(
         state: JupiterSwapState,
-        services: JupiterSwapServices,
-        fromToken: SwapToken,
-        toToken: SwapToken
+        services: JupiterSwapServices
     ) async -> JupiterSwapState {
         do {
-            let newPriceInfo = try await getPrices(from: fromToken, to: toToken, services: services)
-            return state.copy(fromToken: fromToken, toToken: toToken, priceInfo: newPriceInfo)
+            let newFromToken = state.toToken
+            let newToToken = state.fromToken
+            let newPriceInfo = try await getPrices(from: newFromToken, to: newToToken, services: services)
+            return state.copy(fromToken: newFromToken, toToken: newToToken, priceInfo: newPriceInfo)
         } catch let error {
             return handle(error: error, for: state)
         }

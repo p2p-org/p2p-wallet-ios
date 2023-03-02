@@ -15,12 +15,16 @@ enum JupiterSwapBusinessLogic {
             newState = state.copy(status: .loadingAmountTo)
         case .changeToToken:
             newState = state.copy(status: .loadingTokenTo)
-        case .changeBothTokens:
+        case .switchFromAndToTokens:
             newState = state.copy(status: .switching)
         case .update:
             newState = state.copy(status: .loadingAmountTo)
         case .updateUserWallets:
             newState = state.copy(status: .switching)
+        case .chooseRoute:
+            newState = state.copy(status: .loadingAmountTo)
+        case .changeSlippage:
+            newState = state.copy(status: .loadingAmountTo)
         }
 
         return newState
@@ -51,20 +55,22 @@ enum JupiterSwapBusinessLogic {
             })
 
         case let .changeFromToken(swapToken):
+            guard swapToken != state.fromToken else { return state }
             newState = await executeAction(state, services, action: {
                 await changeFromToken(state: state, services: services, token: swapToken)
             }, chains: {
                 [calculateAmounts]
             })
         case let .changeToToken(swapToken):
+            guard swapToken != state.fromToken else { return state }
             newState = await executeAction(state, services, action: {
                 await changeToToken(state: state, services: services, token: swapToken)
             }, chains: {
                 [calculateAmounts]
             })
-        case let .changeBothTokens(from, to):
+        case .switchFromAndToTokens:
             newState = await executeAction(state, services, action: {
-                await changeBothTokens(state: state, services: services, fromToken: from, toToken: to)
+                await switchFromAndToTokens(state: state, services: services)
             }, chains: {
                 [calculateAmounts]
             })
@@ -77,6 +83,15 @@ enum JupiterSwapBusinessLogic {
             }, chains: {
                 [calculateAmounts]
             })
+        case let .changeSlippage(slippage):
+            newState = await executeAction(state, services, action: {
+                changeSlippage(state: state, slippage: slippage)
+            }, chains: {
+                [calculateAmounts]
+            })
+        case let .chooseRoute(route):
+            let state = state.copy(route: route)
+            newState = await calculateAmounts(state: state, services: services)
         }
 
         return newState

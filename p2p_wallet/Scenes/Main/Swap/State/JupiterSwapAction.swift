@@ -10,6 +10,9 @@ enum JupiterSwapAction: Equatable {
 
     case changeFromToken(SwapToken)
     case changeToToken(SwapToken)
-    case changeBothTokens(from: SwapToken, to: SwapToken)
+    case switchFromAndToTokens
     case updateUserWallets(userWallets: [Wallet])
+    
+    case chooseRoute(Route)
+    case changeSlippage(Int)
 }
