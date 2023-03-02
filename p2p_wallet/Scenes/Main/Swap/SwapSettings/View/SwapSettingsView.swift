@@ -8,8 +8,8 @@
 import SwiftUI
 import KeyAppUI
 
-struct SwapSettingsView: View {
-    @ObservedObject var viewModel: SwapSettingsViewModel
+struct SwapSettingsView<Route: SwapSettingsRouteInfo>: View {
+    @ObservedObject var viewModel: SwapSettingsViewModel<Route>
     
     @State private var failureSlippage: Bool = false
     @State private var textFieldColor: UIColor = Asset.Colors.night.color
@@ -91,7 +91,7 @@ struct SwapSettingsView: View {
     
     private func feeRow(
         title: String,
-        fee: SwapSettingsViewModel.FeeInfo?,
+        fee: SwapSettingsFeeInfo?,
         canBePaidByKeyApp: Bool
     ) -> some View {
         commonRow(
@@ -104,7 +104,7 @@ struct SwapSettingsView: View {
     
     private func feeRow(
         title: String,
-        fees: [SwapSettingsViewModel.FeeInfo]
+        fees: [SwapSettingsFeeInfo]
     ) -> some View {
         commonRow(
             title: title,
@@ -217,10 +217,16 @@ struct SwapSettingsView: View {
 }
 
 struct SwapSettingsView_Previews: PreviewProvider {
+    struct MockRouteInfo: SwapSettingsRouteInfo {
+        let name: String
+        let description: String
+        let tokens: String
+    }
+    
     static var previews: some View {
         SwapSettingsView(
             viewModel: .init(
-                currentRoute: .init(
+                currentRoute: MockRouteInfo(
                     name: "Raydium",
                     description: "Best price",
                     tokens: "SOL→CLMM→USDC→CRAY"
