@@ -101,6 +101,7 @@ final class SwapSettingsCoordinator<Route: SwapSettingsRouteInfo>: Coordinator<S
             selectedIndex: viewModel.routes.firstIndex(where: {$0.id == viewModel.currentRoute.id})
         ) { [unowned self] route in
             viewModel.currentRoute = route
+            navigationController.presentedViewController?.dismiss(animated: true)
         }
         
         let viewController = UIBottomSheetHostingController(rootView: view)
