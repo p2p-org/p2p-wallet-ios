@@ -28,6 +28,10 @@ extension Route {
 }
 
 extension Route: SwapSettingsRouteInfo {
+    public var id: String {
+        marketInfos.map(\.id).joined()
+    }
+    
     var name: String {
         marketInfos.map(\.label).joined(separator: ", ")
     }

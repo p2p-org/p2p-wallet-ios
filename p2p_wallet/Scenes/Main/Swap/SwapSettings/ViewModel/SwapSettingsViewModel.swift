@@ -18,8 +18,8 @@ final class SwapSettingsViewModel<
     
     // MARK: - Properties
 
-    @Published var routeInfos: [Route] = []
-    @Published var currentRoute: Route?
+    @Published var routes: [Route]
+    @Published var currentRoute: Route
     
     @Published var networkFee: SwapSettingsFeeInfo?
     @Published var accountCreationFee: SwapSettingsFeeInfo?
@@ -59,11 +59,16 @@ final class SwapSettingsViewModel<
         nil
     ]
     
+    private let selectRouteSubject = PassthroughSubject<Void, Never>()
+    var selectRoutePublisher: AnyPublisher<Void, Never> {
+        selectRouteSubject.eraseToAnyPublisher()
+    }
+    
     // MARK: - Initializer
 
     init(
-        routeInfos: [Route] = [],
-        currentRoute: Route? = nil,
+        routes: [Route],
+        currentRoute: Route,
         networkFee: SwapSettingsFeeInfo? = nil,
         accountCreationFee: SwapSettingsFeeInfo? = nil,
         liquidityFee: [SwapSettingsFeeInfo] = [],
@@ -73,7 +78,7 @@ final class SwapSettingsViewModel<
         failureSlippage: Bool = false,
         slippageWasSetUp: Bool = false
     ) {
-        self.routeInfos = routeInfos
+        self.routes = routes
         self.currentRoute = currentRoute
         self.networkFee = networkFee
         self.accountCreationFee = accountCreationFee
@@ -86,6 +91,12 @@ final class SwapSettingsViewModel<
         
         super.init()
         setUpSlippage(slippage)
+    }
+    
+    // MARK: - Methods
+
+    func navigateToSelectRoute() {
+        selectRouteSubject.send(())
     }
 
     // MARK: - Helpers
