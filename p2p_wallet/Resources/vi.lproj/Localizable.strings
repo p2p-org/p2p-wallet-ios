@@ -1262,3 +1262,7 @@ You can try again, but your new transaction will be subject to the current rates
 "Cashout with Moonpay" = "Rút tiền với Moonpay";
 "The address was copied to clipboard" = "Địa chỉ đã được sao chép vào clipboard";
 "The slippage could be" = "Sự trượt giá có thể là";
+"Swapping Through" = "Hoán đổi thông qua";
+"Liquidity fee" = "phí thanh khoản";
+"Estimated fees" = "Tổng phí ước tính";
+"Minimum received" = "Tối thiểu nhận được";
