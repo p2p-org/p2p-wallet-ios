@@ -8,6 +8,7 @@
 import Combine
 import Foundation
 import UIKit
+import SwiftUI
 
 enum SwapSettingsCoordinatorResult<Route: SwapSettingsRouteInfo> {
     case selectedSlippage(Int)
@@ -21,6 +22,8 @@ final class SwapSettingsCoordinator<Route: SwapSettingsRouteInfo>: Coordinator<S
     private let routes: [Route]
     private let swapTokens: [SwapToken]
     private var result = PassthroughSubject<SwapSettingsCoordinatorResult<Route>, Never>()
+    
+    private var viewModel: SwapSettingsViewModel<Route>!
 
     init(
         navigationController: UINavigationController,
@@ -38,11 +41,18 @@ final class SwapSettingsCoordinator<Route: SwapSettingsRouteInfo>: Coordinator<S
 
     override func start() -> AnyPublisher<SwapSettingsCoordinatorResult<Route>, Never> {
         // create viewModel
-        let viewModel = SwapSettingsViewModel(
-            routeInfos: routes,
+        viewModel = SwapSettingsViewModel(
+            routes: routes,
             currentRoute: currentRoute,
             slippage: slippage
         )
+        
+        // navigation
+        viewModel.selectRoutePublisher
+            .sink { [unowned self] _ in
+                showChooseRoute()
+            }
+            .store(in: &subscriptions)
         
         // observe changes
         viewModel.$slippage
@@ -81,5 +91,24 @@ final class SwapSettingsCoordinator<Route: SwapSettingsRouteInfo>: Coordinator<S
             .store(in: &subscriptions)
         
         return result.eraseToAnyPublisher()
+    }
+    
+    // MARK: - Helpers
+
+    func showChooseRoute() {
+        let view = SwapSelectRouteView(
+            routes: viewModel.routes,
+            selectedRoute: Binding(
+                get: { [unowned self] in
+                    viewModel.currentRoute
+                },
+                set: { [unowned self] in
+                    viewModel.currentRoute = $0
+                }
+            )
+        )
+        
+        let viewController = UIBottomSheetHostingController(rootView: view)
+        navigationController.present(viewController, interactiveDismissalType: .standard)
     }
 }

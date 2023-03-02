@@ -78,7 +78,7 @@ final class JupiterSwapCoordinator: Coordinator<Void> {
         let settingsCoordinator = SwapSettingsCoordinator(
             navigationController: navigationController,
             slippage: Double(viewModel.currentState.slippage) / 100,
-            routes: [],
+            routes: viewModel.currentState.routes,
             currentRoute: route,
             swapTokens: viewModel.currentState.swapTokens
         )

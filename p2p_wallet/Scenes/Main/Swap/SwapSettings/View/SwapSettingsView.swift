@@ -40,8 +40,8 @@ struct SwapSettingsView<Route: SwapSettingsRouteInfo>: View {
             // Route
             commonRow(
                 title: L10n.swappingThrough,
-                subtitle: viewModel.currentRoute?.tokens,
-                trailingSubtitle: viewModel.currentRoute?.description,
+                subtitle: viewModel.currentRoute.tokens,
+                trailingSubtitle: viewModel.currentRoute.description,
                 trailingView: Image(uiImage: .nextArrow)
                     .resizable()
                     .frame(width: 7.41, height: 12)
@@ -49,6 +49,9 @@ struct SwapSettingsView<Route: SwapSettingsRouteInfo>: View {
                     .padding(.horizontal, (20-7.41)/2)
                     .castToAnyView()
             )
+                .onTapGesture {
+                    viewModel.navigateToSelectRoute()
+                }
             
             // Network fee
             feeRow(
@@ -216,15 +219,27 @@ struct SwapSettingsView<Route: SwapSettingsRouteInfo>: View {
 }
 
 struct SwapSettingsView_Previews: PreviewProvider {
-    struct MockRouteInfo: SwapSettingsRouteInfo {
-        let name: String
-        let description: String
-        let tokens: String
-    }
-    
     static var previews: some View {
         SwapSettingsView(
             viewModel: .init(
+                routes: [
+                    MockRouteInfo(
+                        id: "1",
+                        name: "Raydium",
+                        description: "Best price",
+                        tokens: "SOL→CLMM→USDC→CRAY"
+                    ),
+                    MockRouteInfo(
+                        name: "Raydium 95% + Orca 5%",
+                        description: "-0.0006 TokenB",
+                        tokens: "SOL→CLMM→USDC→CRAY"
+                    ),
+                    MockRouteInfo(
+                        name: "Raydium 95% + Orca 5%",
+                        description: "-0.0006 TokenB",
+                        tokens: "SOL→CLMM→USDC→CRAY"
+                    )
+                ],
                 currentRoute: MockRouteInfo(
                     name: "Raydium",
                     description: "Best price",

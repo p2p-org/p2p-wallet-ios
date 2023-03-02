@@ -32,10 +32,13 @@ extension JupiterSwapBusinessLogic {
                 enforceSingleTx: nil
             )
             
+            // routes
+            let routes = data.data
+            
             // if pre chosen route is stil available, choose it
             // if not choose the first one
             guard let route = data.data.first(
-                where: {$0.marketInfos.map(\.id) == state.route?.marketInfos.map(\.id)})
+                where: {$0.id == state.route?.id})
                     ?? data.data.first,
                 let toAmountLamports = Lamports(route.outAmount)
             else {
@@ -66,6 +69,7 @@ extension JupiterSwapBusinessLogic {
                     amountToFiat: amountTo * newPriceInfo.toPrice,
                     priceInfo: newPriceInfo,
                     route: route,
+                    routes: routes,
                     priceImpact: priceImpact
                 ),
                 services: services
