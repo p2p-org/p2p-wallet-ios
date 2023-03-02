@@ -25,22 +25,27 @@ extension Route {
                     .symbol ?? "UNKNOWN"
             }
     }
+    
+    func chainDescription(tokensList: [Token]) -> String {
+        toSymbols(tokensList: tokensList)?.compactMap {$0}.joined(separator: " -> ") ?? ""
+    }
+    
+    func bestPriceDescription(bestPrice: UInt64?, tokenB: Token?) -> String? {
+        guard let bestPrice, let myPrices = UInt64(outAmount) else { return nil }
+        return myPrices >= bestPrice ?
+            L10n.bestPrice:
+            "-" + (bestPrice-myPrices)
+                .convertToBalance(decimals: tokenB?.decimals ?? 0)
+                .tokenAmountFormattedString(symbol: tokenB?.symbol ?? "")
+    }
 }
 
-extension Route: SwapSettingsRouteInfo {
+extension Route {
     public var id: String {
         marketInfos.map(\.id).joined()
     }
     
     var name: String {
-        marketInfos.map(\.label).joined(separator: ", ")
-    }
-    
-    var description: String {
-        "Best price"
-    }
-    
-    var tokens: String {
-        (toSymbols(tokensList: []) ?? []).compactMap {$0}.joined(separator: " -> ")
+        marketInfos.map(\.label).joined(separator: " + ")
     }
 }

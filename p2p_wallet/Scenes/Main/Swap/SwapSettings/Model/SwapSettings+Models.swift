@@ -1,10 +1,18 @@
 //
 import Foundation
 
-protocol SwapSettingsRouteInfo: Identifiable {
-    var name: String { get}
-    var description: String { get}
-    var tokens: String { get}
+struct SwapSettingsRouteInfo: Identifiable {
+    init(id: String = UUID().uuidString, name: String, description: String, tokensChain: String) {
+        self.id = id
+        self.name = name
+        self.description = description
+        self.tokensChain = tokensChain
+    }
+    
+    let id: String
+    let name: String
+    let description: String
+    let tokensChain: String
 }
 
 struct SwapSettingsTokenAmountInfo {
@@ -32,20 +40,4 @@ struct SwapSettingsFeeInfo {
     var amountInFiatDescription: String? {
         amount == 0 ? L10n.free: "≈ " + (amountInFiat?.fiatAmountFormattedString() ?? "")
     }
-}
-
-// MARK: - Mocking
-
-struct MockRouteInfo: SwapSettingsRouteInfo {
-    init(id: String = UUID().uuidString, name: String, description: String, tokens: String) {
-        self.id = id
-        self.name = name
-        self.description = description
-        self.tokens = tokens
-    }
-    
-    let id: String
-    let name: String
-    let description: String
-    let tokens: String
 }

@@ -8,8 +8,8 @@
 import SwiftUI
 import KeyAppUI
 
-struct SwapSettingsView<Route: SwapSettingsRouteInfo>: View {
-    @ObservedObject var viewModel: SwapSettingsViewModel<Route>
+struct SwapSettingsView: View {
+    @ObservedObject var viewModel: SwapSettingsViewModel
     
     @State private var failureSlippage: Bool = false
     @State private var textFieldColor: UIColor = Asset.Colors.night.color
@@ -40,7 +40,7 @@ struct SwapSettingsView<Route: SwapSettingsRouteInfo>: View {
             // Route
             commonRow(
                 title: L10n.swappingThrough,
-                subtitle: viewModel.currentRoute.tokens,
+                subtitle: viewModel.currentRoute.tokensChain,
                 trailingSubtitle: viewModel.currentRoute.description,
                 trailingView: Image(uiImage: .nextArrow)
                     .resizable()
@@ -224,27 +224,27 @@ struct SwapSettingsView_Previews: PreviewProvider {
         SwapSettingsView(
             viewModel: .init(
                 routes: [
-                    MockRouteInfo(
+                    .init(
                         id: "1",
                         name: "Raydium",
                         description: "Best price",
-                        tokens: "SOL→CLMM→USDC→CRAY"
+                        tokensChain: "SOL→CLMM→USDC→CRAY"
                     ),
-                    MockRouteInfo(
+                    .init(
                         name: "Raydium 95% + Orca 5%",
                         description: "-0.0006 TokenB",
-                        tokens: "SOL→CLMM→USDC→CRAY"
+                        tokensChain: "SOL→CLMM→USDC→CRAY"
                     ),
-                    MockRouteInfo(
+                    .init(
                         name: "Raydium 95% + Orca 5%",
                         description: "-0.0006 TokenB",
-                        tokens: "SOL→CLMM→USDC→CRAY"
+                        tokensChain: "SOL→CLMM→USDC→CRAY"
                     )
                 ],
-                currentRoute: MockRouteInfo(
+                currentRoute: .init(
                     name: "Raydium",
                     description: "Best price",
-                    tokens: "SOL→CLMM→USDC→CRAY"
+                    tokensChain: "SOL→CLMM→USDC→CRAY"
                 ),
                 networkFee: .init(
                     amount: 0,

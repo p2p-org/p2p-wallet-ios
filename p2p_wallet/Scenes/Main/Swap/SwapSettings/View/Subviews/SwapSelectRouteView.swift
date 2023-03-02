@@ -1,10 +1,10 @@
 import SwiftUI
 import KeyAppUI
 
-struct SwapSelectRouteView<Route: SwapSettingsRouteInfo>: View {
-    @State var routes: [Route]
+struct SwapSelectRouteView: View {
+    @State var routes: [SwapSettingsRouteInfo]
     @State var selectedIndex: Int?
-    let onTapDone: (Route) -> Void
+    let onTapDone: (SwapSettingsRouteInfo) -> Void
     
     var body: some View {
         if #available(iOS 15.0, *) {
@@ -68,7 +68,7 @@ struct SwapSelectRouteView<Route: SwapSettingsRouteInfo>: View {
         }
     }
     
-    func routeCell(route: Route, isSelected: Bool) -> some View {
+    func routeCell(route: SwapSettingsRouteInfo, isSelected: Bool) -> some View {
         HStack {
             // info
             VStack(alignment: .leading, spacing: 4) {
@@ -96,21 +96,21 @@ struct SwapSelectRouteView_Previews: PreviewProvider {
     static var previews: some View {
         SwapSelectRouteView(
             routes: [
-                MockRouteInfo(
+                .init(
                     id: "1",
                     name: "Raydium",
                     description: "Best price",
-                    tokens: "SOL→CLMM→USDC→CRAY"
+                    tokensChain: "SOL→CLMM→USDC→CRAY"
                 ),
-                MockRouteInfo(
+                .init(
                     name: "Raydium 95% + Orca 5%",
                     description: "-0.0006 TokenB",
-                    tokens: "SOL→CLMM→USDC→CRAY"
+                    tokensChain: "SOL→CLMM→USDC→CRAY"
                 ),
-                MockRouteInfo(
+                .init(
                     name: "Raydium 95% + Orca 5%",
                     description: "-0.0006 TokenB",
-                    tokens: "SOL→CLMM→USDC→CRAY"
+                    tokensChain: "SOL→CLMM→USDC→CRAY"
                 )
             ],
             selectedIndex: 0

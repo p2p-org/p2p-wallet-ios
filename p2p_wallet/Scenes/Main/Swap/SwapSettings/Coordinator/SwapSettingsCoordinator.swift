@@ -9,21 +9,22 @@ import Combine
 import Foundation
 import UIKit
 import SwiftUI
+import Jupiter
 
-enum SwapSettingsCoordinatorResult<Route: SwapSettingsRouteInfo> {
+enum SwapSettingsCoordinatorResult {
     case selectedSlippage(Int)
     case selectedRoute(Route)
 }
 
-final class SwapSettingsCoordinator<Route: SwapSettingsRouteInfo>: Coordinator<SwapSettingsCoordinatorResult<Route>> {
+final class SwapSettingsCoordinator: Coordinator<SwapSettingsCoordinatorResult> {
     private let navigationController: UINavigationController
     private let slippage: Double
     private let currentRoute: Route
     private let routes: [Route]
     private let swapTokens: [SwapToken]
-    private var result = PassthroughSubject<SwapSettingsCoordinatorResult<Route>, Never>()
+    private var result = PassthroughSubject<SwapSettingsCoordinatorResult, Never>()
     
-    private var viewModel: SwapSettingsViewModel<Route>!
+    private var viewModel: SwapSettingsViewModel!
 
     init(
         navigationController: UINavigationController,
@@ -39,11 +40,24 @@ final class SwapSettingsCoordinator<Route: SwapSettingsRouteInfo>: Coordinator<S
         self.swapTokens = swapTokens
     }
 
-    override func start() -> AnyPublisher<SwapSettingsCoordinatorResult<Route>, Never> {
+    override func start() -> AnyPublisher<SwapSettingsCoordinatorResult, Never> {
         // create viewModel
+        let bestPrice = routes.map(\.outAmount).compactMap(UInt64.init).max()
+        let tokenB = swapTokens.map(\.token).first(where: {$0.address == routes.first?.marketInfos.last?.outputMint})
+        
         viewModel = SwapSettingsViewModel(
-            routes: routes,
-            currentRoute: currentRoute,
+            routes: routes.map {.init(
+                id: $0.id,
+                name: $0.name,
+                description: $0.bestPriceDescription(bestPrice: bestPrice, tokenB: tokenB) ?? "",
+                tokensChain: $0.chainDescription(tokensList: swapTokens.map(\.token))
+            )},
+            currentRoute: .init(
+                id: currentRoute.id,
+                name: currentRoute.name,
+                description: currentRoute.bestPriceDescription(bestPrice: bestPrice, tokenB: tokenB) ?? "",
+                tokensChain: currentRoute.chainDescription(tokensList: swapTokens.map(\.token))
+            ),
             slippage: slippage
         )
         
@@ -69,7 +83,9 @@ final class SwapSettingsCoordinator<Route: SwapSettingsRouteInfo>: Coordinator<S
             .store(in: &subscriptions)
         
         viewModel.$currentRoute
-            .compactMap { $0 }
+            .compactMap {[weak self] selectedRoute in
+                self?.routes.first(where: {$0.id == selectedRoute.id})
+            }
             .sink { [weak self] route in
                 self?.result.send(.selectedRoute(route))
             }
