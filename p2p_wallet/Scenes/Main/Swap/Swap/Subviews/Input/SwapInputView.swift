@@ -31,8 +31,8 @@ struct SwapInputView: View {
                 Spacer()
 
                 if let fiatAmount = viewModel.fiatAmount, !viewModel.isLoading {
-                    Text("≈\(fiatAmount)")
-                        .subtitleStyle()
+                    Text("≈\(fiatAmount.toString(maximumFractionDigits: 2, roundingMode: .down)) \(Defaults.fiat.code)")
+                        .subtitleStyle(color: Color(viewModel.fiatAmountTextColor))
                         .lineLimit(1)
                         .accessibilityIdentifier("SwapInputView.\(viewModel.accessibilityIdentifierTokenPrefix)FiatLabel")
                 }
@@ -116,7 +116,7 @@ private extension SwapInputView {
 }
 
 private extension Text {
-    func subtitleStyle() -> some View {
-        return self.apply(style: .label1).foregroundColor(Color(UIColor._9799Af))
+    func subtitleStyle(color: Color = Color(Asset.Colors.silver.color)) -> some View {
+        return self.apply(style: .label1).foregroundColor(color)
     }
 }

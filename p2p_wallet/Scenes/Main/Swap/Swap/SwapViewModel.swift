@@ -31,9 +31,6 @@ final class SwapViewModel: BaseViewModel, ObservableObject {
     @Published var initializingState: InitializingState = .loading
     @Published var arePricesLoading: Bool = false
 
-    @Published var priceInfo = SwapPriceInfo(fromPrice: 0, toPrice: 0)
-    private var priceInfoTask: Task<Void, Never>?
-
     @Published var actionButtonData = SliderActionButtonData.zero
     @Published var isSliderOn = false {
         didSet {

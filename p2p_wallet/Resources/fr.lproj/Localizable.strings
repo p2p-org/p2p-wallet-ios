@@ -1258,4 +1258,5 @@ You can try again, but your new transaction will be subject to the current rates
 "License" = "Licence";
 "Cashout with Moonpay" = "Paiement avec Moonpay";
 "The address was copied to clipboard" = "L'adresse a été copiée dans le presse-papiers";
+"The price is higher because of your trade size. Consider splitting your transaction into multiple swaps." = "Le prix est plus élevé en raison de la taille de votre commerce.  Envisagez de diviser votre transaction en plusieurs swaps.";
 "The slippage could be" = "Le glissement pourrait être";

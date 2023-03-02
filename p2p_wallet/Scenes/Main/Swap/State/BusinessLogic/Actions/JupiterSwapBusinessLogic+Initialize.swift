@@ -33,6 +33,7 @@ extension JupiterSwapBusinessLogic {
                 amountFrom: 0,
                 amountFromFiat: 0,
                 amountTo: 0,
+                amountToFiat: 0,
                 fromToken: tokens.fromToken,
                 toToken: tokens.toToken,
                 possibleToTokens: possibleToTokens,
