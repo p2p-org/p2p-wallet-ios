@@ -1263,3 +1263,7 @@ You can try again, but your new transaction will be subject to the current rates
 "The address was copied to clipboard" = "Địa chỉ đã được sao chép vào clipboard";
 "The price is higher because of your trade size. Consider splitting your transaction into multiple swaps." = "Giá cao hơn vì quy mô giao dịch của bạn.  Cân nhắc chia giao dịch của bạn thành nhiều giao dịch hoán đổi.";
 "The slippage could be" = "Sự trượt giá có thể là";
+"Swapping Through" = "Hoán đổi thông qua";
+"Liquidity fee" = "phí thanh khoản";
+"Estimated fees" = "Tổng phí ước tính";
+"Minimum received" = "Tối thiểu nhận được";
