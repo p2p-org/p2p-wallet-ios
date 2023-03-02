@@ -90,7 +90,9 @@ final class JupiterSwapCoordinator: Coordinator<Void> {
                         await viewModel?.stateMachine.accept(action: .changeSlippage(slippage))
                     }
                 case let .selectedRoute(route):
-                    fatalError()
+                    Task { [weak viewModel] in
+                        await viewModel?.stateMachine.accept(action: .chooseRoute(route))
+                    }
                 }
             })
             .store(in: &subscriptions)
