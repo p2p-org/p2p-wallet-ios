@@ -124,7 +124,7 @@ struct SwapSettingsView<Route: SwapSettingsRouteInfo>: View {
             .frame(width: 20, height: 20)
             .castToAnyView()
     ) -> some View {
-        HStack {
+        HStack(spacing: 10) {
             VStack(alignment: .leading, spacing: 4) {
                 Text(title)
                     .apply(style: .text3)
@@ -139,7 +139,6 @@ struct SwapSettingsView<Route: SwapSettingsRouteInfo>: View {
                 .apply(style: .label1)
                 .foregroundColor(Color(Asset.Colors.mountain.color))
                 .layoutPriority(1)
-                .padding(.trailing, 10)
             
             trailingView
         }

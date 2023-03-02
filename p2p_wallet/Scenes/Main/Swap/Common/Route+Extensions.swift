@@ -33,7 +33,7 @@ extension Route: SwapSettingsRouteInfo {
     }
     
     var description: String {
-        name
+        "Best price"
     }
     
     var tokens: String {
