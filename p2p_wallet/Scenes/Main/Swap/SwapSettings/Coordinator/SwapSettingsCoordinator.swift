@@ -98,17 +98,13 @@ final class SwapSettingsCoordinator<Route: SwapSettingsRouteInfo>: Coordinator<S
     func showChooseRoute() {
         let view = SwapSelectRouteView(
             routes: viewModel.routes,
-            selectedRoute: Binding(
-                get: { [unowned self] in
-                    viewModel.currentRoute
-                },
-                set: { [unowned self] in
-                    viewModel.currentRoute = $0
-                }
-            )
-        )
+            selectedIndex: viewModel.routes.firstIndex(where: {$0.id == viewModel.currentRoute.id})
+        ) { [unowned self] route in
+            viewModel.currentRoute = route
+        }
         
         let viewController = UIBottomSheetHostingController(rootView: view)
+        viewController.view.layer.cornerRadius = 20
         navigationController.present(viewController, interactiveDismissalType: .standard)
     }
 }
