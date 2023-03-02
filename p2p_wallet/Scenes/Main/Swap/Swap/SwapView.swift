@@ -79,7 +79,7 @@ private extension SwapView {
                 .padding(.top, 16)
                 .accessibilityIdentifier("SwapView.profitInfoLabel")
 
-            if let priceImpact = viewModel.currentState.pr {
+            if let priceImpact = viewModel.currentState.priceImpact {
                 SwapPriceImpactView(priceImpact: priceImpact)
                     .padding(.top, 23)
                     .accessibilityIdentifier("SwapView.priceImpactView")
