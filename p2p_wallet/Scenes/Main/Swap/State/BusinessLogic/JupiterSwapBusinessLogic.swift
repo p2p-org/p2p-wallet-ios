@@ -26,6 +26,8 @@ enum JupiterSwapBusinessLogic {
             return nil
         case .changeSlippageBps:
             return state.modified { $0.status = .loadingAmountTo }
+        case .createTransaction:
+            return state.modified { $0.status = .loadingTransaction }
         }
     }
 
@@ -35,10 +37,11 @@ enum JupiterSwapBusinessLogic {
         services: JupiterSwapServices
     ) async -> JupiterSwapState {
         switch action {
-        case let .initialize(swapTokens, routeMap, fromToken, toToken):
+        case let .initialize(account, swapTokens, routeMap, fromToken, toToken):
             return await initializeAction(
                 state: state,
                 services: services,
+                account: account,
                 swapTokens: swapTokens,
                 routeMap: routeMap,
                 fromToken: fromToken,
@@ -113,6 +116,10 @@ enum JupiterSwapBusinessLogic {
             return state.modified {
                 $0.route = route
             }
+
+        case .createTransaction:
+            return await createTransaction(state: state, services: services)
+
         }
     }
 }

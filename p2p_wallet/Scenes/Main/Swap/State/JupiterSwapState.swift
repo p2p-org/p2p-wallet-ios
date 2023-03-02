@@ -16,6 +16,7 @@ struct JupiterSwapState: Equatable {
         case unknown
         case coingeckoPriceFailure
         case routeIsNotFound
+        case createTransactionFailed
     }
 
     enum Status: Equatable {
@@ -23,7 +24,7 @@ struct JupiterSwapState: Equatable {
         case initializing
         case loadingAmountTo
         case loadingTokenTo
-        case quoteLoading
+        case loadingTransaction
         case switching
         case ready
         case error(reason: ErrorReason)
@@ -39,6 +40,9 @@ struct JupiterSwapState: Equatable {
     /// Status of current state
     var status: Status
 
+    /// User account to create a transaction
+    var account: KeyPair?
+
     /// Available routes for every token mint
     var routeMap: RouteMap
     
@@ -47,7 +51,10 @@ struct JupiterSwapState: Equatable {
     
     /// Pre-selected route
     var route: Route?
-    
+
+    /// Current swap transaction for the state
+    var swapTransaction: String?
+
     /// All available routes for current tokens pair
     var routes: [Route]
     
