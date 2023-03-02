@@ -40,8 +40,8 @@ struct SwapSettingsView: View {
             // Route
             commonRow(
                 title: L10n.swappingThrough,
-                subtitle: viewModel.currentRoute?.tokens,
-                trailingSubtitle: viewModel.currentRoute?.description,
+                subtitle: viewModel.currentRoute.tokensChain,
+                trailingSubtitle: viewModel.currentRoute.description,
                 trailingView: Image(uiImage: .nextArrow)
                     .resizable()
                     .frame(width: 7.41, height: 12)
@@ -49,6 +49,10 @@ struct SwapSettingsView: View {
                     .padding(.horizontal, (20-7.41)/2)
                     .castToAnyView()
             )
+                .contentShape(Rectangle())
+                .onTapGesture {
+                    viewModel.navigateToSelectRoute()
+                }
             
             // Network fee
             feeRow(
@@ -91,7 +95,7 @@ struct SwapSettingsView: View {
     
     private func feeRow(
         title: String,
-        fee: SwapSettingsViewModel.FeeInfo?,
+        fee: SwapSettingsFeeInfo?,
         canBePaidByKeyApp: Bool
     ) -> some View {
         commonRow(
@@ -104,7 +108,7 @@ struct SwapSettingsView: View {
     
     private func feeRow(
         title: String,
-        fees: [SwapSettingsViewModel.FeeInfo]
+        fees: [SwapSettingsFeeInfo]
     ) -> some View {
         commonRow(
             title: title,
@@ -124,7 +128,7 @@ struct SwapSettingsView: View {
             .frame(width: 20, height: 20)
             .castToAnyView()
     ) -> some View {
-        HStack {
+        HStack(spacing: 10) {
             VStack(alignment: .leading, spacing: 4) {
                 Text(title)
                     .apply(style: .text3)
@@ -139,7 +143,6 @@ struct SwapSettingsView: View {
                 .apply(style: .label1)
                 .foregroundColor(Color(Asset.Colors.mountain.color))
                 .layoutPriority(1)
-                .padding(.trailing, 10)
             
             trailingView
         }
@@ -220,10 +223,28 @@ struct SwapSettingsView_Previews: PreviewProvider {
     static var previews: some View {
         SwapSettingsView(
             viewModel: .init(
+                routes: [
+                    .init(
+                        id: "1",
+                        name: "Raydium",
+                        description: "Best price",
+                        tokensChain: "SOL→CLMM→USDC→CRAY"
+                    ),
+                    .init(
+                        name: "Raydium 95% + Orca 5%",
+                        description: "-0.0006 TokenB",
+                        tokensChain: "SOL→CLMM→USDC→CRAY"
+                    ),
+                    .init(
+                        name: "Raydium 95% + Orca 5%",
+                        description: "-0.0006 TokenB",
+                        tokensChain: "SOL→CLMM→USDC→CRAY"
+                    )
+                ],
                 currentRoute: .init(
                     name: "Raydium",
                     description: "Best price",
-                    tokens: "SOL→CLMM→USDC→CRAY"
+                    tokensChain: "SOL→CLMM→USDC→CRAY"
                 ),
                 networkFee: .init(
                     amount: 0,

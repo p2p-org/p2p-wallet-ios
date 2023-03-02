@@ -13,49 +13,15 @@ private extension Double {
 }
 
 final class SwapSettingsViewModel: BaseViewModel, ObservableObject {
-    // MARK: - Nested type
-
-    struct RouteInfo {
-        let name: String
-        let description: String
-        let tokens: String
-    }
-    
-    struct TokenAmountInfo {
-        let amount: Double
-        let token: String?
-        
-        var amountDescription: String? {
-            amount.tokenAmountFormattedString(symbol: token ?? "")
-        }
-    }
-    
-    struct FeeInfo {
-        let amount: Double
-        let token: String?
-        let amountInFiat: Double?
-        let canBePaidByKeyApp: Bool
-        
-        var amountDescription: String? {
-            amount == 0 && canBePaidByKeyApp ? L10n.paidByKeyApp: amount.tokenAmountFormattedString(symbol: token ?? "")
-        }
-        var shouldHighlightAmountDescription: Bool {
-            amount == 0 && canBePaidByKeyApp
-        }
-        
-        var amountInFiatDescription: String? {
-            amount == 0 ? L10n.free: "≈ " + (amountInFiat?.fiatAmountFormattedString() ?? "")
-        }
-    }
     
     // MARK: - Properties
 
-    @Published var routeInfos: [RouteInfo] = []
-    @Published var currentRoute: RouteInfo?
+    @Published var routes: [SwapSettingsRouteInfo]
+    @Published var currentRoute: SwapSettingsRouteInfo
     
-    @Published var networkFee: FeeInfo?
-    @Published var accountCreationFee: FeeInfo?
-    @Published var liquidityFee: [FeeInfo] = []
+    @Published var networkFee: SwapSettingsFeeInfo?
+    @Published var accountCreationFee: SwapSettingsFeeInfo?
+    @Published var liquidityFee: [SwapSettingsFeeInfo] = []
     
     var estimatedFees: String {
         (liquidityFee + [networkFee, accountCreationFee].compactMap {$0})
@@ -64,7 +30,7 @@ final class SwapSettingsViewModel: BaseViewModel, ObservableObject {
             .formattedFiat()
     }
 
-    @Published var minimumReceived: TokenAmountInfo?
+    @Published var minimumReceived: SwapSettingsTokenAmountInfo?
 
     @Published var selectedIndex: Int = 0 {
         didSet {
@@ -91,21 +57,26 @@ final class SwapSettingsViewModel: BaseViewModel, ObservableObject {
         nil
     ]
     
+    private let selectRouteSubject = PassthroughSubject<Void, Never>()
+    var selectRoutePublisher: AnyPublisher<Void, Never> {
+        selectRouteSubject.eraseToAnyPublisher()
+    }
+    
     // MARK: - Initializer
 
     init(
-        routeInfos: [RouteInfo] = [],
-        currentRoute: RouteInfo? = nil,
-        networkFee: FeeInfo? = nil,
-        accountCreationFee: FeeInfo? = nil,
-        liquidityFee: [FeeInfo] = [],
-        minimumReceived: TokenAmountInfo? = nil,
+        routes: [SwapSettingsRouteInfo],
+        currentRoute: SwapSettingsRouteInfo,
+        networkFee: SwapSettingsFeeInfo? = nil,
+        accountCreationFee: SwapSettingsFeeInfo? = nil,
+        liquidityFee: [SwapSettingsFeeInfo] = [],
+        minimumReceived: SwapSettingsTokenAmountInfo? = nil,
         selectedIndex: Int = 0,
         slippage: Double,
         failureSlippage: Bool = false,
         slippageWasSetUp: Bool = false
     ) {
-        self.routeInfos = routeInfos
+        self.routes = routes
         self.currentRoute = currentRoute
         self.networkFee = networkFee
         self.accountCreationFee = accountCreationFee
@@ -118,6 +89,12 @@ final class SwapSettingsViewModel: BaseViewModel, ObservableObject {
         
         super.init()
         setUpSlippage(slippage)
+    }
+    
+    // MARK: - Methods
+
+    func navigateToSelectRoute() {
+        selectRouteSubject.send(())
     }
 
     // MARK: - Helpers

@@ -214,7 +214,7 @@ private extension SwapViewModel {
             .sinkAsync(receiveValue: { [weak self] _ in
                 guard let self else { return }
                 let _ = await self.stateMachine.accept(
-                    action: .changeBothTokens(from: self.currentState.toToken, to: self.currentState.fromToken)
+                    action: .switchFromAndToTokens
                 )
             })
             .store(in: &subscriptions)

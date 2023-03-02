@@ -31,8 +31,17 @@ extension JupiterSwapBusinessLogic {
                 userPublicKey: nil,
                 enforceSingleTx: nil
             )
-
-            guard let route = data.data.first, let toAmountLamports = Lamports(route.outAmount) else {
+            
+            // routes
+            let routes = data.data
+            
+            // if pre chosen route is stil available, choose it
+            // if not choose the first one
+            guard let route = data.data.first(
+                where: {$0.id == state.route?.id})
+                    ?? data.data.first,
+                let toAmountLamports = Lamports(route.outAmount)
+            else {
                 return state.copy(status: .error(reason: .routeIsNotFound), amountTo: 0, amountToFiat: 0)
             }
 
@@ -60,6 +69,7 @@ extension JupiterSwapBusinessLogic {
                     amountToFiat: amountTo * newPriceInfo.toPrice,
                     priceInfo: newPriceInfo,
                     route: route,
+                    routes: routes,
                     priceImpact: priceImpact
                 ),
                 services: services
