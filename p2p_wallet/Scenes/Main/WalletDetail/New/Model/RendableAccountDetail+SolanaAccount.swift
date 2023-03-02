@@ -12,7 +12,7 @@ struct RendableSolanaAccountDetail: RendableAccountDetail {
     let wallet: Wallet
 
     var title: String {
-        wallet.token.symbol
+        wallet.token.name
     }
 
     var amountInToken: String {

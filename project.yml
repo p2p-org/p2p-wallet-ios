@@ -160,22 +160,6 @@ targets:
                 CURRENT_PROJECT_VERSION: 1
                 OTHER_LDFLAGS:
                 - "$(inherited)"
-                - "-framework"
-                - "\"BEPureLayout\""
-                - "-framework"
-                - "\"CFNetwork\""
-                - "-framework"
-                - "\"Foundation\""
-                - "-framework"
-                - "\"PureLayout\""
-                - "-framework"
-                - "\"RxCocoa\""
-                - "-framework"
-                - "\"RxRelay\""
-                - "-framework"
-                - "\"RxSwift\""
-                - "-framework"
-                - "\"SolanaSwift\""
                 PRODUCT_NAME: "$(TARGET_NAME)"
                 DEBUG_INFORMATION_FORMAT: "dwarf-with-dsym"
             configs:

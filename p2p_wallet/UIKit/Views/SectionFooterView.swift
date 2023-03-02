@@ -9,7 +9,7 @@ import Foundation
 
 class SectionFooterView: UICollectionReusableView {
     lazy var stackView = UIStackView(axis: .vertical, spacing: 16, alignment: .center, distribution: .fill)
-    lazy var errorView = ErrorView(cornerRadius: 16)
+    lazy var errorView = UIErrorView(cornerRadius: 16)
     lazy var emptyView = EmptyView(cornerRadius: 16)
 
     override init(frame: CGRect) {

@@ -28,23 +28,23 @@ PODS:
   - FeeRelayerSwift (3.1.2):
     - OrcaSwapSwift (~> 2)
     - SolanaSwift (~> 2)
-  - Firebase/Analytics (10.5.0):
+  - Firebase/Analytics (10.6.0):
     - Firebase/Core
-  - Firebase/Core (10.5.0):
+  - Firebase/Core (10.6.0):
     - Firebase/CoreOnly
-    - FirebaseAnalytics (~> 10.5.0)
-  - Firebase/CoreOnly (10.5.0):
-    - FirebaseCore (= 10.5.0)
-  - Firebase/Crashlytics (10.5.0):
+    - FirebaseAnalytics (~> 10.6.0)
+  - Firebase/CoreOnly (10.6.0):
+    - FirebaseCore (= 10.6.0)
+  - Firebase/Crashlytics (10.6.0):
     - Firebase/CoreOnly
-    - FirebaseCrashlytics (~> 10.5.0)
-  - Firebase/RemoteConfig (10.5.0):
+    - FirebaseCrashlytics (~> 10.6.0)
+  - Firebase/RemoteConfig (10.6.0):
     - Firebase/CoreOnly
-    - FirebaseRemoteConfig (~> 10.5.0)
-  - FirebaseABTesting (10.5.0):
+    - FirebaseRemoteConfig (~> 10.6.0)
+  - FirebaseABTesting (10.6.0):
     - FirebaseCore (~> 10.0)
-  - FirebaseAnalytics (10.5.0):
-    - FirebaseAnalytics/AdIdSupport (= 10.5.0)
+  - FirebaseAnalytics (10.6.0):
+    - FirebaseAnalytics/AdIdSupport (= 10.6.0)
     - FirebaseCore (~> 10.0)
     - FirebaseInstallations (~> 10.0)
     - GoogleUtilities/AppDelegateSwizzler (~> 7.8)
@@ -52,54 +52,65 @@ PODS:
     - GoogleUtilities/Network (~> 7.8)
     - "GoogleUtilities/NSData+zlib (~> 7.8)"
     - nanopb (< 2.30910.0, >= 2.30908.0)
-  - FirebaseAnalytics/AdIdSupport (10.5.0):
+  - FirebaseAnalytics/AdIdSupport (10.6.0):
     - FirebaseCore (~> 10.0)
     - FirebaseInstallations (~> 10.0)
-    - GoogleAppMeasurement (= 10.5.0)
+    - GoogleAppMeasurement (= 10.6.0)
     - GoogleUtilities/AppDelegateSwizzler (~> 7.8)
     - GoogleUtilities/MethodSwizzler (~> 7.8)
     - GoogleUtilities/Network (~> 7.8)
     - "GoogleUtilities/NSData+zlib (~> 7.8)"
     - nanopb (< 2.30910.0, >= 2.30908.0)
-  - FirebaseCore (10.5.0):
+  - FirebaseCore (10.6.0):
     - FirebaseCoreInternal (~> 10.0)
     - GoogleUtilities/Environment (~> 7.8)
     - GoogleUtilities/Logger (~> 7.8)
-  - FirebaseCoreInternal (10.5.0):
-    - "GoogleUtilities/NSData+zlib (~> 7.8)"
-  - FirebaseCrashlytics (10.5.0):
+  - FirebaseCoreExtension (10.6.0):
     - FirebaseCore (~> 10.0)
+  - FirebaseCoreInternal (10.6.0):
+    - "GoogleUtilities/NSData+zlib (~> 7.8)"
+  - FirebaseCrashlytics (10.6.0):
+    - FirebaseCore (~> 10.5)
     - FirebaseInstallations (~> 10.0)
+    - FirebaseSessions (~> 10.5)
     - GoogleDataTransport (~> 9.2)
     - GoogleUtilities/Environment (~> 7.8)
     - nanopb (< 2.30910.0, >= 2.30908.0)
     - PromisesObjC (~> 2.1)
-  - FirebaseInstallations (10.5.0):
+  - FirebaseInstallations (10.6.0):
     - FirebaseCore (~> 10.0)
     - GoogleUtilities/Environment (~> 7.8)
     - GoogleUtilities/UserDefaults (~> 7.8)
     - PromisesObjC (~> 2.1)
-  - FirebaseRemoteConfig (10.5.0):
+  - FirebaseRemoteConfig (10.6.0):
     - FirebaseABTesting (~> 10.0)
     - FirebaseCore (~> 10.0)
     - FirebaseInstallations (~> 10.0)
     - GoogleUtilities/Environment (~> 7.8)
     - "GoogleUtilities/NSData+zlib (~> 7.8)"
-  - GoogleAppMeasurement (10.5.0):
-    - GoogleAppMeasurement/AdIdSupport (= 10.5.0)
+  - FirebaseSessions (10.6.0):
+    - FirebaseCore (~> 10.5)
+    - FirebaseCoreExtension (~> 10.0)
+    - FirebaseInstallations (~> 10.0)
+    - GoogleDataTransport (~> 9.2)
+    - GoogleUtilities/Environment (~> 7.10)
+    - nanopb (< 2.30910.0, >= 2.30908.0)
+    - PromisesSwift (~> 2.1)
+  - GoogleAppMeasurement (10.6.0):
+    - GoogleAppMeasurement/AdIdSupport (= 10.6.0)
     - GoogleUtilities/AppDelegateSwizzler (~> 7.8)
     - GoogleUtilities/MethodSwizzler (~> 7.8)
     - GoogleUtilities/Network (~> 7.8)
     - "GoogleUtilities/NSData+zlib (~> 7.8)"
     - nanopb (< 2.30910.0, >= 2.30908.0)
-  - GoogleAppMeasurement/AdIdSupport (10.5.0):
-    - GoogleAppMeasurement/WithoutAdIdSupport (= 10.5.0)
+  - GoogleAppMeasurement/AdIdSupport (10.6.0):
+    - GoogleAppMeasurement/WithoutAdIdSupport (= 10.6.0)
     - GoogleUtilities/AppDelegateSwizzler (~> 7.8)
     - GoogleUtilities/MethodSwizzler (~> 7.8)
     - GoogleUtilities/Network (~> 7.8)
     - "GoogleUtilities/NSData+zlib (~> 7.8)"
     - nanopb (< 2.30910.0, >= 2.30908.0)
-  - GoogleAppMeasurement/WithoutAdIdSupport (10.5.0):
+  - GoogleAppMeasurement/WithoutAdIdSupport (10.6.0):
     - GoogleUtilities/AppDelegateSwizzler (~> 7.8)
     - GoogleUtilities/MethodSwizzler (~> 7.8)
     - GoogleUtilities/Network (~> 7.8)
@@ -184,6 +195,8 @@ PODS:
   - PhoneNumberKit/UIKit (3.3.4):
     - PhoneNumberKit/PhoneNumberKitCore
   - PromisesObjC (2.2.0)
+  - PromisesSwift (2.2.0):
+    - PromisesObjC (= 2.2.0)
   - PureLayout (3.1.9)
   - ReachabilitySwift (5.0.0)
   - RenVMSwift (2.0.1):
@@ -315,10 +328,12 @@ SPEC REPOS:
     - FirebaseABTesting
     - FirebaseAnalytics
     - FirebaseCore
+    - FirebaseCoreExtension
     - FirebaseCoreInternal
     - FirebaseCrashlytics
     - FirebaseInstallations
     - FirebaseRemoteConfig
+    - FirebaseSessions
     - GoogleAppMeasurement
     - GoogleDataTransport
     - GoogleSignIn
@@ -336,6 +351,7 @@ SPEC REPOS:
     - Periphery
     - PhoneNumberKit
     - PromisesObjC
+    - PromisesSwift
     - PureLayout
     - ReachabilitySwift
     - Resolver
@@ -454,7 +470,7 @@ EXTERNAL SOURCES:
 
 CHECKOUT OPTIONS:
   AnalyticsManager:
-    :commit: 52e555fda5552e4fda3069f62258a1fdefdfe679
+    :commit: 4d8ab9d649c6c743f95fdc1a36382147161b16b3
     :git: https://github.com/p2p-org/key-app-kit-swift.git
   BECollectionView:
     :commit: 7badd35cd036735b9c6867e273b59430311f53e7
@@ -469,10 +485,10 @@ CHECKOUT OPTIONS:
     :commit: 9b4ab977660c8554d23a2d9b83b6ac6c6058b3b7
     :git: https://github.com/p2p-org/BEPureLayout.git
   Cache:
-    :commit: 52e555fda5552e4fda3069f62258a1fdefdfe679
+    :commit: 4d8ab9d649c6c743f95fdc1a36382147161b16b3
     :git: https://github.com/p2p-org/key-app-kit-swift.git
   CountriesAPI:
-    :commit: 52e555fda5552e4fda3069f62258a1fdefdfe679
+    :commit: 4d8ab9d649c6c743f95fdc1a36382147161b16b3
     :git: https://github.com/p2p-org/key-app-kit-swift.git
   Down:
     :commit: eee1d66d7ef71b892e72c8bc8d84fcdfeaab1918
@@ -481,22 +497,22 @@ CHECKOUT OPTIONS:
     :commit: cd15f95dca00f080606fa7a2075bca927016a2da
     :git: https://github.com/p2p-org/FeeRelayerSwift.git
   History:
-    :commit: 52e555fda5552e4fda3069f62258a1fdefdfe679
+    :commit: 4d8ab9d649c6c743f95fdc1a36382147161b16b3
     :git: https://github.com/p2p-org/key-app-kit-swift.git
   JazziconSwift:
     :commit: f9c9f898402db4e62d482f4c90670652c221fa12
     :git: https://github.com/p2p-org/JazziconSwift.git
   JSBridge:
-    :commit: 52e555fda5552e4fda3069f62258a1fdefdfe679
+    :commit: 4d8ab9d649c6c743f95fdc1a36382147161b16b3
     :git: https://github.com/p2p-org/key-app-kit-swift.git
   Jupiter:
-    :commit: 52e555fda5552e4fda3069f62258a1fdefdfe679
+    :commit: 4d8ab9d649c6c743f95fdc1a36382147161b16b3
     :git: https://github.com/p2p-org/key-app-kit-swift.git
   KeyAppKitCore:
-    :commit: 52e555fda5552e4fda3069f62258a1fdefdfe679
+    :commit: 4d8ab9d649c6c743f95fdc1a36382147161b16b3
     :git: https://github.com/p2p-org/key-app-kit-swift.git
   KeyAppKitLogger:
-    :commit: 52e555fda5552e4fda3069f62258a1fdefdfe679
+    :commit: 4d8ab9d649c6c743f95fdc1a36382147161b16b3
     :git: https://github.com/p2p-org/key-app-kit-swift.git
   KeyAppUI:
     :commit: f6b064703f9b9107817b36fd286b126c1cdad643
@@ -505,19 +521,19 @@ CHECKOUT OPTIONS:
     :commit: 78dd312eb762d66a54c87cd6dd8045140da28c4b
     :git: https://github.com/p2p-org/ListPlaceholder.git
   Moonpay:
-    :commit: 52e555fda5552e4fda3069f62258a1fdefdfe679
+    :commit: 4d8ab9d649c6c743f95fdc1a36382147161b16b3
     :git: https://github.com/p2p-org/key-app-kit-swift.git
   NameService:
-    :commit: 52e555fda5552e4fda3069f62258a1fdefdfe679
+    :commit: 4d8ab9d649c6c743f95fdc1a36382147161b16b3
     :git: https://github.com/p2p-org/key-app-kit-swift.git
   Onboarding:
-    :commit: 52e555fda5552e4fda3069f62258a1fdefdfe679
+    :commit: 4d8ab9d649c6c743f95fdc1a36382147161b16b3
     :git: https://github.com/p2p-org/key-app-kit-swift.git
   OrcaSwapSwift:
     :commit: 47d84350e0e6d4b273cafe5bfd1d6a8a193304bc
     :git: https://github.com/p2p-org/OrcaSwapSwift.git
   P2PSwift:
-    :commit: 52e555fda5552e4fda3069f62258a1fdefdfe679
+    :commit: 4d8ab9d649c6c743f95fdc1a36382147161b16b3
     :git: https://github.com/p2p-org/key-app-kit-swift.git
   RenVMSwift:
     :commit: 8f4dd6e2a47b1d7b02df362ba8aea9f04875243e
@@ -526,10 +542,10 @@ CHECKOUT OPTIONS:
     :commit: dadb16c54bd42ca83c08f3d80f61fbfca93a585c
     :git: https://github.com/TrGiLong/RxConcurrency.git
   Sell:
-    :commit: 52e555fda5552e4fda3069f62258a1fdefdfe679
+    :commit: 4d8ab9d649c6c743f95fdc1a36382147161b16b3
     :git: https://github.com/p2p-org/key-app-kit-swift.git
   Send:
-    :commit: 52e555fda5552e4fda3069f62258a1fdefdfe679
+    :commit: 4d8ab9d649c6c743f95fdc1a36382147161b16b3
     :git: https://github.com/p2p-org/key-app-kit-swift.git
   Sentry:
     :git: https://github.com/getsentry/sentry-cocoa.git
@@ -538,16 +554,16 @@ CHECKOUT OPTIONS:
     :commit: 98225dbb0459477dfeac063e1c7d0750102325d1
     :git: https://github.com/p2p-org/SkeletonUI.git
   SolanaPricesAPIs:
-    :commit: 52e555fda5552e4fda3069f62258a1fdefdfe679
+    :commit: 4d8ab9d649c6c743f95fdc1a36382147161b16b3
     :git: https://github.com/p2p-org/key-app-kit-swift.git
   SolanaSwift:
-    :commit: 7dd507d85a3fd26f9a23dbdad5df0c671d41911b
+    :commit: b1ff87cb6a0e68074d64304110e8d2259ffe1d62
     :git: https://github.com/p2p-org/solana-swift.git
   Solend:
-    :commit: 52e555fda5552e4fda3069f62258a1fdefdfe679
+    :commit: 4d8ab9d649c6c743f95fdc1a36382147161b16b3
     :git: https://github.com/p2p-org/key-app-kit-swift.git
   TransactionParser:
-    :commit: 52e555fda5552e4fda3069f62258a1fdefdfe679
+    :commit: 4d8ab9d649c6c743f95fdc1a36382147161b16b3
     :git: https://github.com/p2p-org/key-app-kit-swift.git
 
 SPEC CHECKSUMS:
@@ -566,15 +582,17 @@ SPEC CHECKSUMS:
   CryptoSwift: 562f8eceb40e80796fffc668b0cad9313284cfa6
   Down: b6ba1bc985c9d2f4e15e3b293d2207766fa12612
   FeeRelayerSwift: 1fee81a40cc11c147b534b1afd46b147480a88dc
-  Firebase: 3d6637234ab163e31852834617b4fe1df3b7af6d
-  FirebaseABTesting: 8cb5cc4e395c8dce8a2820a6a329020ead56fe2f
-  FirebaseAnalytics: 6f7430030cb6b22fe1db2e3bed782e999b76dc00
-  FirebaseCore: 324b8d182d9ff7e3f6d1fa2f04b082d1c7a3e366
-  FirebaseCoreInternal: e463f41bb935cd049505bf7e9a5bdd7dcea90df6
-  FirebaseCrashlytics: ea94bc81f67d5d4702d0c782da13e1483217bac8
-  FirebaseInstallations: 935bc4abb6f7a035cab7a0c31cb777b2be3dd254
-  FirebaseRemoteConfig: acc04f51d74adfd9d5439d32126e01b520983737
-  GoogleAppMeasurement: 40c70a7d89013f0eca72006c4b9732163ea4cdae
+  Firebase: f13680471b021937f2230ea8503c7809d8c29806
+  FirebaseABTesting: cec558d2e670053b1e862c98cfecae64aecfd629
+  FirebaseAnalytics: 9f382605c5ee412b039212f054bf7a403d9850c1
+  FirebaseCore: fa80ad16a62d52f67274b5b88304c3a318bbf9a4
+  FirebaseCoreExtension: 318e5ee9ad4092b00423c2bddd51c3f5c3585973
+  FirebaseCoreInternal: c7cd505e2136811096b225ac388d6254a2622362
+  FirebaseCrashlytics: ede07e7f433a0a2270112baf2d156b111cfb422d
+  FirebaseInstallations: 13dde135fa0524e15bddb133ccc8465c53a1b3f3
+  FirebaseRemoteConfig: 7ef4dd164f3066c64ca1efab0f990152a6b94fc0
+  FirebaseSessions: 60e877d5159eb571a3d82df68947a7941b475a20
+  GoogleAppMeasurement: 686b48c3c895f3c55c70719041913d5d150b74f6
   GoogleDataTransport: ea169759df570f4e37bdee1623ec32a7e64e67c4
   GoogleSignIn: 5651ce3a61e56ca864160e79b484cd9ed3f49b7a
   GoogleUtilities: c2bdc4cf2ce786c4d2e6b3bcfd599a25ca78f06f
@@ -604,6 +622,7 @@ SPEC CHECKSUMS:
   Periphery: 5c554376fdaa3c8eaded190dda7eb1728280f328
   PhoneNumberKit: 441e8b26ec88d598e3591de9061eff18f5dd12e8
   PromisesObjC: 09985d6d70fbe7878040aa746d78236e6946d2ef
+  PromisesSwift: cf9eb58666a43bbe007302226e510b16c1e10959
   PureLayout: 5fb5e5429519627d60d079ccb1eaa7265ce7cf88
   ReachabilitySwift: 985039c6f7b23a1da463388634119492ff86c825
   RenVMSwift: 9cfd6610adc9c74a6e761c615cd30a31129e79c6
