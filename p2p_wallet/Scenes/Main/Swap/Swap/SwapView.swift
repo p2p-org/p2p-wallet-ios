@@ -48,6 +48,7 @@ struct SwapView: View {
 private extension SwapView {
     var contentView: some View {
         VStack(spacing: .zero) {
+            // Header
             Text(viewModel.header)
                 .apply(style: .label1)
                 .padding(.top, 4)
@@ -58,6 +59,7 @@ private extension SwapView {
                 }
                 .frame(height: 16)
 
+            // Inputs
             ZStack {
                 VStack(spacing: 8) {
                     SwapInputView(viewModel: fromViewModel)
@@ -68,17 +70,20 @@ private extension SwapView {
             .padding(.top, 36)
 
             #if !RELEASE
+            // Route (for debugging)
             Text("Route: " + (viewModel.getRouteInSymbols()?.joined(separator: " -> ") ?? ""))
                 .apply(style: .label2)
                 .foregroundColor(.red)
             #endif
 
+            // Disclaimer
             Text(L10n.keyAppDoesnTMakeAnyProfitFromSwap💚)
                 .apply(style: .label1)
                 .foregroundColor(Color(Asset.Colors.mountain.color))
                 .padding(.top, 16)
                 .accessibilityIdentifier("SwapView.profitInfoLabel")
 
+            // Price impact
             if let priceImpact = viewModel.currentState.priceImpact {
                 SwapPriceImpactView(priceImpact: priceImpact)
                     .padding(.top, 23)
@@ -89,6 +94,7 @@ private extension SwapView {
             Spacer()
 
             #if !RELEASE
+            // Logs (for debugging)
             VStack(alignment: .leading, spacing: 10) {
                 Text("Logs (tap to copy and clear):")
                     .apply(style: .label2)
