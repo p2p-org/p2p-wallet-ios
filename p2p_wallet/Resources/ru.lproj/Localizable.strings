@@ -1235,6 +1235,7 @@ You can try again, but your new transaction will be subject to the current rates
 "Cashout with Moonpay" = "Вывод средств с Moonpay";
 "The token you receive" = "Токен, который вы получаете";
 "Received from" = "Получен от";
+"Swap details" = "Поменять детали";
 "There was a problem with the swap, your funds were refunded" = "Возникла проблема со свопом, ваши средства были возвращены";
 "%@ signature" = "%@ подпись";
 "Your history will appear here.\nTo get started you can:" = "Здесь появится ваша история.\nЧтобы начать, вы можете:";
@@ -1256,3 +1257,4 @@ You can try again, but your new transaction will be subject to the current rates
 "Cashout with Moonpay" = "Вывод средств с Moonpay";
 "The address was copied to clipboard" = "Адрес скопирован в буфер обмена";
 "The price is higher because of your trade size. Consider splitting your transaction into multiple swaps." = "Цена выше из-за размера вашей сделки.  Подумайте о том, чтобы разделить вашу транзакцию на несколько свопов.";
+"The slippage could be" = "Проскальзывание может быть";
