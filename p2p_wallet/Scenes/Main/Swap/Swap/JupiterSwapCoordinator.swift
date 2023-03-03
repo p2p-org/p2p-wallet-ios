@@ -81,6 +81,11 @@ final class JupiterSwapCoordinator: Coordinator<Void> {
         // observe stateMachine status
         viewModel.stateMachine.statePublisher
             .map { state -> SwapSettingsViewModel.Status in
+                // assert route
+                guard let route = state.route else {
+                    return .loading
+                }
+
                 switch state.status {
                 case .ready:
                     return .loaded(
@@ -88,14 +93,14 @@ final class JupiterSwapCoordinator: Coordinator<Void> {
                             routes: state.routes.map {.init(
                                 id: $0.id,
                                 name: $0.name,
-                                description: $0.bestPriceDescription(bestPrice: bestPrice, tokenB: tokenB) ?? "",
+                                description: $0.bestPriceDescription(bestOutAmount: state.bestOutAmount, toTokenDecimals: state.toToken.token.decimals, toTokenSymbol: state.toToken.token.symbol) ?? "",
                                 tokensChain: $0.chainDescription(tokensList: state.swapTokens.map(\.token))
                             )},
                             currentRoute: .init(
-                                id: state.route?.id,
-                                name: state.route?.name,
-                                description: state.route?.bestPriceDescription(bestPrice: bestPrice, tokenB: tokenB) ?? "",
-                                tokensChain: state.route?.chainDescription(tokensList: state.swapTokens.map(\.token))
+                                id: route.id,
+                                name: route.name,
+                                description: route.bestPriceDescription(bestOutAmount: state.bestOutAmount, toTokenDecimals: state.toToken.token.decimals, toTokenSymbol: state.toToken.token.symbol) ?? "",
+                                tokensChain: route.chainDescription(tokensList: state.swapTokens.map(\.token))
                             ),
                             networkFee: .init(amount: 0, token: nil, amountInFiat: nil, canBePaidByKeyApp: true),
                             accountCreationFee: .init(amount: 0, token: nil, amountInFiat: nil, canBePaidByKeyApp: true),
