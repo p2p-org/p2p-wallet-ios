@@ -1,7 +1,7 @@
 //
 import Foundation
 
-struct SwapSettingsRouteInfo: Identifiable {
+struct SwapSettingsRouteInfo: Identifiable, Equatable {
     init(id: String = UUID().uuidString, name: String, description: String, tokensChain: String) {
         self.id = id
         self.name = name
@@ -15,7 +15,7 @@ struct SwapSettingsRouteInfo: Identifiable {
     let tokensChain: String
 }
 
-struct SwapSettingsTokenAmountInfo {
+struct SwapSettingsTokenAmountInfo: Equatable {
     let amount: Double
     let token: String?
     
@@ -24,7 +24,7 @@ struct SwapSettingsTokenAmountInfo {
     }
 }
 
-struct SwapSettingsFeeInfo {
+struct SwapSettingsFeeInfo: Equatable {
     let amount: Double
     let token: String?
     let amountInFiat: Double?
