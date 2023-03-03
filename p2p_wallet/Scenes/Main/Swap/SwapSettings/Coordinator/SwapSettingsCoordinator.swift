@@ -46,18 +46,24 @@ final class SwapSettingsCoordinator: Coordinator<SwapSettingsCoordinatorResult> 
         let tokenB = swapTokens.map(\.token).first(where: {$0.address == routes.first?.marketInfos.last?.outputMint})
         
         viewModel = SwapSettingsViewModel(
-            routes: routes.map {.init(
-                id: $0.id,
-                name: $0.name,
-                description: $0.bestPriceDescription(bestPrice: bestPrice, tokenB: tokenB) ?? "",
-                tokensChain: $0.chainDescription(tokensList: swapTokens.map(\.token))
-            )},
-            currentRoute: .init(
-                id: currentRoute.id,
-                name: currentRoute.name,
-                description: currentRoute.bestPriceDescription(bestPrice: bestPrice, tokenB: tokenB) ?? "",
-                tokensChain: currentRoute.chainDescription(tokensList: swapTokens.map(\.token))
-            ),
+            status: .loaded(.init(
+                routes: routes.map {.init(
+                    id: $0.id,
+                    name: $0.name,
+                    description: $0.bestPriceDescription(bestPrice: bestPrice, tokenB: tokenB) ?? "",
+                    tokensChain: $0.chainDescription(tokensList: swapTokens.map(\.token))
+                )},
+                currentRoute: .init(
+                    id: currentRoute.id,
+                    name: currentRoute.name,
+                    description: currentRoute.bestPriceDescription(bestPrice: bestPrice, tokenB: tokenB) ?? "",
+                    tokensChain: currentRoute.chainDescription(tokensList: swapTokens.map(\.token))
+                ),
+                networkFee: .init(amount: 0, token: nil, amountInFiat: nil, canBePaidByKeyApp: true),
+                accountCreationFee: .init(amount: 0, token: nil, amountInFiat: nil, canBePaidByKeyApp: true),
+                liquidityFee: [],
+                minimumReceived: .init(amount: 0, token: nil)
+            )),
             slippage: slippage
         )
         
@@ -82,9 +88,14 @@ final class SwapSettingsCoordinator: Coordinator<SwapSettingsCoordinatorResult> 
             }
             .store(in: &subscriptions)
         
-        viewModel.$currentRoute
-            .compactMap {[weak self] selectedRoute in
-                self?.routes.first(where: {$0.id == selectedRoute.id})
+        viewModel.$status
+            .compactMap { [weak self] status -> Route? in
+                switch status {
+                case .loading:
+                    return nil
+                case .loaded(let info):
+                    return self?.routes.first(where: {$0.id == info.currentRoute.id})
+                }
             }
             .sink { [weak self] route in
                 self?.result.send(.selectedRoute(route))
@@ -112,11 +123,13 @@ final class SwapSettingsCoordinator: Coordinator<SwapSettingsCoordinatorResult> 
     // MARK: - Helpers
 
     func showChooseRoute() {
+        let routes = viewModel.info?.routes ?? []
         let view = SwapSelectRouteView(
-            routes: viewModel.routes,
-            selectedIndex: viewModel.routes.firstIndex(where: {$0.id == viewModel.currentRoute.id})
+            routes: routes,
+            selectedIndex: routes.firstIndex(where: {$0.id == viewModel.info?.currentRoute.id})
         ) { [unowned self] route in
-            viewModel.currentRoute = route
+            // FIXME: - Later
+//            viewModel.currentRoute = route
             navigationController.presentedViewController?.dismiss(animated: true)
         }
         
