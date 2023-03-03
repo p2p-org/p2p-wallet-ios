@@ -1241,3 +1241,4 @@ You can try again, but your new transaction will be subject to the current rates
 "With Key App, all transactions you make on the Solana network are free" = "With Key App, all transactions you make on the Solana network are free";
 "Okay" = "Okay";
 "A fee paid to the liquidity providers" = "A fee paid to the liquidity providers";
+"%@ Liquidity fee %@" = "%@ Liquidity fee %@";

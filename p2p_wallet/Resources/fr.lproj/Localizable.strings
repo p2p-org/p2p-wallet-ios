@@ -1270,3 +1270,4 @@ You can try again, but your new transaction will be subject to the current rates
 "With Key App, all transactions you make on the Solana network are free" = "Avec Key App, toutes les transactions que vous effectuez sur le réseau Solana sont gratuites";
 "Okay" = "D'accord";
 "A fee paid to the liquidity providers" = "Une commission versée aux apporteurs de liquidité";
+"%@ Liquidity fee %@" = "%@ Commission de liquidité %@";

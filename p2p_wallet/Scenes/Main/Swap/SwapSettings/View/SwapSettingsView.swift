@@ -274,27 +274,35 @@ struct SwapSettingsView_Previews: PreviewProvider {
                     ),
                     networkFee: .init(
                         amount: 0,
-                        token: nil,
+                        tokenSymbol: nil,
+                        tokenName: nil,
                         amountInFiat: nil,
+                        pct: nil,
                         canBePaidByKeyApp: true
                     ),
                     accountCreationFee: .init(
                         amount: 0.8,
-                        token: "Token A",
+                        tokenSymbol: "Token A",
+                        tokenName: "Token A Name",
                         amountInFiat: 6.1,
+                        pct: nil,
                         canBePaidByKeyApp: false
                     ),
                     liquidityFee: [
                         .init(
                             amount: 0.991,
-                            token: "TokenC",
+                            tokenSymbol: "Token C",
+                            tokenName: "Token C Name",
                             amountInFiat: 0.05,
+                            pct: 0.01,
                             canBePaidByKeyApp: false
                         ),
                         .init(
                             amount: 0.991,
-                            token: "TokenD",
+                            tokenSymbol: "Token D",
+                            tokenName: "Token D Name",
                             amountInFiat: 0.05,
+                            pct: 0.01,
                             canBePaidByKeyApp: false
                         )
                     ],

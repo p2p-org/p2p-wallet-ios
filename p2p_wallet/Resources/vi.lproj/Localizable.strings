@@ -1273,3 +1273,4 @@ You can try again, but your new transaction will be subject to the current rates
 "With Key App, all transactions you make on the Solana network are free" = "Với Key App, mọi giao dịch bạn thực hiện trên mạng Solana đều miễn phí";
 "Okay" = "Đồng ý";
 "A fee paid to the liquidity providers" = "Một khoản phí trả cho các nhà cung cấp thanh khoản";
+"%@ Liquidity fee %@" = "%@ Phí thanh khoản %@";
