@@ -149,7 +149,7 @@ extension Resolver: ResolverRegistering {
 
         register { KeyAppHistoryProviderImpl(endpoint: GlobalAppState.shared.pushServiceEndpoint) }
         .implements(KeyAppHistoryProvider.self)
-        .scope(.application)
+        .scope(.session)
 
         register { NotificationServiceImpl() }
             .implements(NotificationService.self)
