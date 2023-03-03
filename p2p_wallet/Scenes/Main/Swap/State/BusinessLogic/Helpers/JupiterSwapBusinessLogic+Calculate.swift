@@ -76,8 +76,10 @@ extension JupiterSwapBusinessLogic {
                 .convertToBalance(decimals: Token.nativeSolana.decimals)
             let networkFee = SwapFeeInfo(
                 amount: networkFeeAmount,
-                token: "SOL",
+                tokenSymbol: "SOL",
+                tokenName: "Solana",
                 amountInFiat: solanaPrice * networkFeeAmount,
+                pct: nil,
                 canBePaidByKeyApp: true
             )
             
@@ -91,8 +93,10 @@ extension JupiterSwapBusinessLogic {
                 .convertToBalance(decimals: Token.nativeSolana.decimals)
             let accountCreationFee = SwapFeeInfo(
                 amount: accountCreationFeeAmount,
-                token: "SOL",
+                tokenSymbol: "SOL",
+                tokenName: "Solana",
                 amountInFiat: solanaPrice * accountCreationFeeAmount,
+                pct: nil,
                 canBePaidByKeyApp: false
             )
             
@@ -109,8 +113,10 @@ extension JupiterSwapBusinessLogic {
                     
                     return SwapFeeInfo(
                         amount: amount,
-                        token: token.symbol,
+                        tokenSymbol: token.symbol,
+                        tokenName: token.name,
                         amountInFiat: price * amount,
+                        pct: lqFee.pct,
                         canBePaidByKeyApp: false
                     )
                 }

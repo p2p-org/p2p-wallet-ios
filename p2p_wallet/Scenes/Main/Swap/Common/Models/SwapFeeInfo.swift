@@ -2,12 +2,14 @@ import Foundation
 
 struct SwapFeeInfo: Equatable {
     let amount: Double
-    let token: String?
+    let tokenSymbol: String?
+    let tokenName: String?
     let amountInFiat: Double?
+    let pct: Double?
     let canBePaidByKeyApp: Bool
     
     var amountDescription: String? {
-        amount == 0 && canBePaidByKeyApp ? L10n.paidByKeyApp: amount.tokenAmountFormattedString(symbol: token ?? "")
+        amount == 0 && canBePaidByKeyApp ? L10n.paidByKeyApp: amount.tokenAmountFormattedString(symbol: tokenName ?? "")
     }
     var shouldHighlightAmountDescription: Bool {
         amount == 0 && canBePaidByKeyApp

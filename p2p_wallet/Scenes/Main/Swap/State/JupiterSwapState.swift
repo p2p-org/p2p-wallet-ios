@@ -71,8 +71,22 @@ struct JupiterSwapState: Equatable {
         route: Route? = nil,
         routes: [Route] = [],
         priceImpact: SwapPriceImpact? = nil,
-        networkFee: SwapFeeInfo = .init(amount: 0, token: nil, amountInFiat: nil, canBePaidByKeyApp: true),
-        accountCreationFee: SwapFeeInfo = .init(amount: 0, token: nil, amountInFiat: nil, canBePaidByKeyApp: false),
+        networkFee: SwapFeeInfo = .init(
+            amount: 0,
+            tokenSymbol: nil,
+            tokenName: nil,
+            amountInFiat: nil,
+            pct: nil,
+            canBePaidByKeyApp: true
+        ),
+        accountCreationFee: SwapFeeInfo = .init(
+            amount: 0,
+            tokenSymbol: nil,
+            tokenName: nil,
+            amountInFiat: nil,
+            pct: nil,
+            canBePaidByKeyApp: false
+        ),
         liquidityFee: [SwapFeeInfo] = []
     ) {
         self.status = status
