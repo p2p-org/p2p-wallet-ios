@@ -17,7 +17,7 @@ final class SwapSettingsViewModel: BaseViewModel, ObservableObject {
 
     struct Info: Equatable {
         let routes: [SwapSettingsRouteInfo]
-        let currentRoute: SwapSettingsRouteInfo
+        var currentRoute: SwapSettingsRouteInfo
         let networkFee: SwapSettingsFeeInfo
         let accountCreationFee: SwapSettingsFeeInfo
         let liquidityFee: [SwapSettingsFeeInfo]
