@@ -14,6 +14,13 @@ private extension Double {
 
 final class SwapSettingsViewModel: BaseViewModel, ObservableObject {
     
+    // MARK: - Output
+    
+    private let infoClickedSubject = PassthroughSubject<SwapSettingsInfoViewModel.Strategy, Never>()
+    var infoClicked: AnyPublisher<SwapSettingsInfoViewModel.Strategy, Never> {
+        infoClickedSubject.eraseToAnyPublisher()
+    }
+    
     // MARK: - Properties
 
     @Published var routes: [SwapSettingsRouteInfo]
@@ -57,12 +64,26 @@ final class SwapSettingsViewModel: BaseViewModel, ObservableObject {
         nil
     ]
     
+    private var formattedSlippage: Double? {
+        var slippageWithoutComma = slippage.replacingOccurrences(of: ",", with: ".")
+        if slippageWithoutComma.last == "." {
+            slippageWithoutComma.removeLast()
+        }
+        return Double(slippageWithoutComma)
+    }
+    
+    var finalSlippage: Double? {
+        slippages[selectedIndex] ?? formattedSlippage
+    }
+    
     private let selectRouteSubject = PassthroughSubject<Void, Never>()
     var selectRoutePublisher: AnyPublisher<Void, Never> {
         selectRouteSubject.eraseToAnyPublisher()
     }
     
-    // MARK: - Initializer
+    private var slippageWasSetUp = false
+    
+    // MARK: - Init
 
     init(
         routes: [SwapSettingsRouteInfo],
@@ -90,28 +111,6 @@ final class SwapSettingsViewModel: BaseViewModel, ObservableObject {
         super.init()
         setUpSlippage(slippage)
     }
-    
-    // MARK: - Methods
-
-    func navigateToSelectRoute() {
-        selectRouteSubject.send(())
-    }
-
-    // MARK: - Helpers
-
-    private var formattedSlippage: Double? {
-        var slippageWithoutComma = slippage.replacingOccurrences(of: ",", with: ".")
-        if slippageWithoutComma.last == "." {
-            slippageWithoutComma.removeLast()
-        }
-        return Double(slippageWithoutComma)
-    }
-    
-    var finalSlippage: Double? {
-        slippages[selectedIndex] ?? formattedSlippage
-    }
-    
-    private var slippageWasSetUp = false
 
     private func setUpSlippage(_ slippage: Double) {
         if let index = slippages.firstIndex(of: slippage) {
@@ -124,5 +123,53 @@ final class SwapSettingsViewModel: BaseViewModel, ObservableObject {
             self.slippage = formattedSlippage
         }
         slippageWasSetUp = true
+    }
+    
+    func rowClicked(type: SwapSettingsView.ActiveInfoRow) {
+        let fees: [SwapSettingsInfoViewModel.Fee]
+        if type == .liquidityFee {
+            // TODO: For Artem
+            fees = [
+                SwapSettingsInfoViewModel.Fee(
+                    title: "Provider with really looong name Liquidity fee 0.04%",
+                    subtitle: "0.12 TokenA",
+                    amount: "≈0.03 USD"
+                ),
+                SwapSettingsInfoViewModel.Fee(
+                    title: "Provider with really looong name Liquidity fee 0.04%",
+                    subtitle: "0.12 TokenA",
+                    amount: "≈0.03 USD"
+                ),
+                SwapSettingsInfoViewModel.Fee(
+                    title: "Provider with really looong name Liquidity fee 0.04%",
+                    subtitle: "0.12 TokenA",
+                    amount: "≈0.03 USD"
+                )
+            ]
+        } else {
+            fees = []
+        }
+        
+        guard let strategy = type.settingsInfo(fees: fees) else { return }
+        infoClickedSubject.send(strategy)
+    }
+}
+
+// MARK: - Mapping
+
+private extension SwapSettingsView.ActiveInfoRow {
+    func settingsInfo(fees: [SwapSettingsInfoViewModel.Fee]) -> SwapSettingsInfoViewModel.Strategy? {
+        switch self {
+        case .route:
+            return nil
+        case .networkFee:
+            return .enjoyFreeTransaction
+        case .accountCreationFee:
+            return .accountCreationFee
+        case .liquidityFee:
+            return .liquidityFee(fees: fees)
+        case .minimumReceived:
+            return .minimumReceived
+        }
     }
 }

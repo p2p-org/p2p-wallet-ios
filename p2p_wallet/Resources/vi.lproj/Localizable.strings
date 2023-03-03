@@ -1268,3 +1268,8 @@ You can try again, but your new transaction will be subject to the current rates
 "Estimated fees" = "Tổng phí ước tính";
 "Minimum received" = "Tối thiểu nhận được";
 "Best price" = "Giá tốt nhất";
+"The minimum amount you will receive. If the price slips any further, your transaction will revert." = "Số tiền tối thiểu bạn sẽ nhận được.  Nếu giá trượt hơn nữa, giao dịch của bạn sẽ hoàn nguyên.";
+"When you trade the token for the first time, Solana charges a one-time fee for creating an account." = "Khi bạn giao dịch mã thông báo lần đầu tiên, Solana tính phí một lần để tạo tài khoản.";
+"With Key App, all transactions you make on the Solana network are free" = "Với Key App, mọi giao dịch bạn thực hiện trên mạng Solana đều miễn phí";
+"Okay" = "Đồng ý";
+"A fee paid to the liquidity providers" = "Một khoản phí trả cho các nhà cung cấp thanh khoản";

@@ -1236,3 +1236,8 @@ You can try again, but your new transaction will be subject to the current rates
 "Estimated fees" = "Estimated fees";
 "Minimum received" = "Minimum received";
 "Best price" = "Best price";
+"The minimum amount you will receive. If the price slips any further, your transaction will revert." = "The minimum amount you will receive. If the price slips any further, your transaction will revert.";
+"When you trade the token for the first time, Solana charges a one-time fee for creating an account." = "When you trade the token for the first time, Solana charges a one-time fee for creating an account.";
+"With Key App, all transactions you make on the Solana network are free" = "With Key App, all transactions you make on the Solana network are free";
+"Okay" = "Okay";
+"A fee paid to the liquidity providers" = "A fee paid to the liquidity providers";

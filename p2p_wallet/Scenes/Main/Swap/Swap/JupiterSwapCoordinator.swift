@@ -72,9 +72,8 @@ final class JupiterSwapCoordinator: Coordinator<Void> {
     }
     
     @objc private func receiptButtonPressed() {
-        guard let route = viewModel.currentState.route else {
-            return
-        }
+        guard let route = viewModel.currentState.route else { return }
+
         let settingsCoordinator = SwapSettingsCoordinator(
             navigationController: navigationController,
             slippage: Double(viewModel.currentState.slippage) / 100,

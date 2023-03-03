@@ -19,14 +19,14 @@ struct SwapSettingsView: View {
             Section {
                 fisrtSectionRows
             }
-            
             Section {
                 commonRow(
                     title: L10n.minimumReceived,
-                    subtitle: viewModel.minimumReceived?.amountDescription
+                    subtitle: viewModel.minimumReceived?.amountDescription,
+                    activeInfoRow: .minimumReceived
                 )
+                .padding(.vertical, 14)
             }
-            
             Section(header: Text(L10n.slippage)) {
                 slippageRows
             }
@@ -41,6 +41,7 @@ struct SwapSettingsView: View {
             commonRow(
                 title: L10n.swappingThrough,
                 subtitle: viewModel.currentRoute.tokensChain,
+                activeInfoRow: .route,
                 trailingSubtitle: viewModel.currentRoute.description,
                 trailingView: Image(uiImage: .nextArrow)
                     .resizable()
@@ -49,58 +50,60 @@ struct SwapSettingsView: View {
                     .padding(.horizontal, (20-7.41)/2)
                     .castToAnyView()
             )
-                .contentShape(Rectangle())
-                .onTapGesture {
-                    viewModel.navigateToSelectRoute()
-                }
+            .padding(.vertical, 14)
             
             // Network fee
             feeRow(
                 title: L10n.networkFee,
                 fee: viewModel.networkFee,
-                canBePaidByKeyApp: true
+                canBePaidByKeyApp: true,
+                activeInfoRow: .networkFee
             )
+            .padding(.vertical, 14)
             
             // Account creation fee
             feeRow(
                 title: L10n.accountCreationFee,
                 fee: viewModel.accountCreationFee,
-                canBePaidByKeyApp: false
+                canBePaidByKeyApp: false,
+                activeInfoRow: .accountCreationFee
             )
+            .padding(.vertical, 14)
             
             // Liquidity fee
             feeRow(
                 title: L10n.liquidityFee,
                 fees: viewModel.liquidityFee
             )
+            .padding(.vertical, 14)
             
             // Estimated fee
             HStack {
                 Text(L10n.estimatedFees)
                     .fontWeight(.semibold)
                     .apply(style: .text3)
-                    .padding(.vertical, 10)
                 
                 Spacer()
                 
                 Text(viewModel.estimatedFees)
                     .fontWeight(.semibold)
                     .apply(style: .text3)
-                    .padding(.vertical, 10)
             }
-                .frame(maxWidth: .infinity)
+            .frame(maxWidth: .infinity)
+            .padding(.vertical, 14)
         }
-            .listRowInsets(EdgeInsets(top: 14, leading: 20, bottom: 14, trailing: 20))
     }
     
     private func feeRow(
         title: String,
         fee: SwapSettingsFeeInfo?,
-        canBePaidByKeyApp: Bool
+        canBePaidByKeyApp: Bool,
+        activeInfoRow: ActiveInfoRow?
     ) -> some View {
         commonRow(
             title: title,
             subtitle: fee?.amountDescription,
+            activeInfoRow: activeInfoRow,
             subtitleColor: fee?.shouldHighlightAmountDescription == true ? Asset.Colors.mint.color: Asset.Colors.mountain.color,
             trailingSubtitle: fee?.amountInFiatDescription
         )
@@ -113,6 +116,7 @@ struct SwapSettingsView: View {
         commonRow(
             title: title,
             subtitle: fees.compactMap(\.amountDescription).joined(separator: ", "),
+            activeInfoRow: .liquidityFee,
             trailingSubtitle: "≈ " + fees.compactMap(\.amountInFiat).reduce(0.0, +).fiatAmountFormattedString()
         )
     }
@@ -120,6 +124,7 @@ struct SwapSettingsView: View {
     private func commonRow(
         title: String,
         subtitle: String?,
+        activeInfoRow: ActiveInfoRow?,
         subtitleColor: UIColor = Asset.Colors.mountain.color,
         trailingSubtitle: String? = nil,
         trailingView: AnyView = Image(uiImage: .infoStraight)
@@ -128,13 +133,15 @@ struct SwapSettingsView: View {
             .frame(width: 20, height: 20)
             .castToAnyView()
     ) -> some View {
-        HStack(spacing: 10) {
+        HStack {
             VStack(alignment: .leading, spacing: 4) {
                 Text(title)
                     .apply(style: .text3)
-                Text(subtitle)
-                    .apply(style: .label1)
-                    .foregroundColor(Color(subtitleColor))
+                if subtitle?.isEmpty == false {
+                    Text(subtitle)
+                        .apply(style: .label1)
+                        .foregroundColor(Color(subtitleColor))
+                }
             }
             
             Spacer()
@@ -143,10 +150,14 @@ struct SwapSettingsView: View {
                 .apply(style: .label1)
                 .foregroundColor(Color(Asset.Colors.mountain.color))
                 .layoutPriority(1)
+                .padding(.trailing, 10)
             
             trailingView
+                .onTapGesture {
+                    guard let activeInfoRow = activeInfoRow else { return }
+                    viewModel.rowClicked(type: activeInfoRow)
+                }
         }
-        .frame(maxWidth: .infinity)
     }
     
     // MARK: - Slippage section
@@ -219,65 +230,14 @@ struct SwapSettingsView: View {
     }
 }
 
-struct SwapSettingsView_Previews: PreviewProvider {
-    static var previews: some View {
-        SwapSettingsView(
-            viewModel: .init(
-                routes: [
-                    .init(
-                        id: "1",
-                        name: "Raydium",
-                        description: "Best price",
-                        tokensChain: "SOL→CLMM→USDC→CRAY"
-                    ),
-                    .init(
-                        name: "Raydium 95% + Orca 5%",
-                        description: "-0.0006 TokenB",
-                        tokensChain: "SOL→CLMM→USDC→CRAY"
-                    ),
-                    .init(
-                        name: "Raydium 95% + Orca 5%",
-                        description: "-0.0006 TokenB",
-                        tokensChain: "SOL→CLMM→USDC→CRAY"
-                    )
-                ],
-                currentRoute: .init(
-                    name: "Raydium",
-                    description: "Best price",
-                    tokensChain: "SOL→CLMM→USDC→CRAY"
-                ),
-                networkFee: .init(
-                    amount: 0,
-                    token: nil,
-                    amountInFiat: nil,
-                    canBePaidByKeyApp: true
-                ),
-                accountCreationFee: .init(
-                    amount: 0.8,
-                    token: "Token A",
-                    amountInFiat: 6.1,
-                    canBePaidByKeyApp: false
-                ),
-                liquidityFee: [
-                    .init(
-                        amount: 0.991,
-                        token: "TokenC",
-                        amountInFiat: 0.05,
-                        canBePaidByKeyApp: false
-                    ),
-                    .init(
-                        amount: 0.991,
-                        token: "TokenD",
-                        amountInFiat: 0.05,
-                        canBePaidByKeyApp: false
-                    )
-                ],
-                minimumReceived: .init(
-                    amount: 0.91,
-                    token: "TokenB"
-                ),
-                slippage: 0.5
-            )
-        )
+// MARK: - ActiveInfoRow
+
+extension SwapSettingsView {
+    enum ActiveInfoRow {
+        case route
+        case networkFee
+        case accountCreationFee
+        case liquidityFee
+        case minimumReceived
     }
 }

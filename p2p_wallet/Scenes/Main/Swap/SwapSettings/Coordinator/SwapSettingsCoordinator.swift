@@ -22,7 +22,9 @@ final class SwapSettingsCoordinator: Coordinator<SwapSettingsCoordinatorResult> 
     private let currentRoute: Route
     private let routes: [Route]
     private let swapTokens: [SwapToken]
-    private var result = PassthroughSubject<SwapSettingsCoordinatorResult, Never>()
+    private let result = PassthroughSubject<SwapSettingsCoordinatorResult, Never>()
+    
+    private let transition = PanelTransition()
     
     private var viewModel: SwapSettingsViewModel!
 
@@ -105,6 +107,12 @@ final class SwapSettingsCoordinator: Coordinator<SwapSettingsCoordinatorResult> 
                 self?.result.send(completion: .finished)
             })
             .store(in: &subscriptions)
+
+        viewModel.infoClicked
+            .sink(receiveValue: { [unowned self] strategy in
+                presentSettingsInfo(strategy: strategy)
+            })
+            .store(in: &subscriptions)
         
         return result.eraseToAnyPublisher()
     }
@@ -123,5 +131,34 @@ final class SwapSettingsCoordinator: Coordinator<SwapSettingsCoordinatorResult> 
         let viewController = UIBottomSheetHostingController(rootView: view)
         viewController.view.layer.cornerRadius = 20
         navigationController.present(viewController, interactiveDismissalType: .standard)
+    }
+    
+    private func presentSettingsInfo(strategy: SwapSettingsInfoViewModel.Strategy) {
+        let viewModel = SwapSettingsInfoViewModel(strategy: strategy)
+        let viewController: UIViewController
+        let view = SwapSettingsInfoView(viewModel: viewModel)
+        
+        switch strategy {
+        case .enjoyFreeTransaction, .accountCreationFee, .minimumReceived:
+            transition.containerHeight = 504
+        case .liquidityFee:
+            transition.containerHeight = 634
+        }
+        viewController = view.asViewController()
+        viewController.view.layer.cornerRadius = 16
+        viewController.transitioningDelegate = transition
+        viewController.modalPresentationStyle = .custom
+        navigationController.present(viewController, animated: true)
+        
+        transition.dimmClicked
+            .sink(receiveValue: { _ in
+                viewController.dismiss(animated: true)
+            })
+            .store(in: &subscriptions)
+        viewModel.close
+            .sink(receiveValue: { _ in
+                viewController.dismiss(animated: true)
+            })
+            .store(in: &subscriptions)
     }
 }
