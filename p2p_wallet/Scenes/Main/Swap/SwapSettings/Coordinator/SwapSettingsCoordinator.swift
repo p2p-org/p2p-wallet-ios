@@ -200,31 +200,12 @@ final class SwapSettingsCoordinator: Coordinator<SwapSettingsCoordinatorResult> 
     }
     
     private func presentSettingsInfo(strategy: SwapSettingsInfoViewModel.Strategy) {
-//        let viewModel = SwapSettingsInfoViewModel(strategy: strategy)
-//        let viewController: UIViewController
-//        let view = SwapSettingsInfoView(viewModel: viewModel)
-//        
-//        switch strategy {
-//        case .enjoyFreeTransaction, .accountCreationFee, .minimumReceived:
-//            transition.containerHeight = 504
-//        case .liquidityFee:
-//            transition.containerHeight = 634
-//        }
-//        viewController = view.asViewController()
-//        viewController.view.layer.cornerRadius = 16
-//        viewController.transitioningDelegate = transition
-//        viewController.modalPresentationStyle = .custom
-//        navigationController.present(viewController, animated: true)
-//        
-//        transition.dimmClicked
-//            .sink(receiveValue: { _ in
-//                viewController.dismiss(animated: true)
-//            })
-//            .store(in: &subscriptions)
-//        viewModel.close
-//            .sink(receiveValue: { _ in
-//                viewController.dismiss(animated: true)
-//            })
-//            .store(in: &subscriptions)
+        let viewModel = SwapSettingsInfoViewModel(strategy: strategy)
+        
+        let view = SwapSettingsInfoView(viewModel: viewModel)
+        
+        let viewController = UIBottomSheetHostingController(rootView: view)
+        viewController.view.layer.cornerRadius = 20
+        navigationController.present(viewController, interactiveDismissalType: .standard)
     }
 }
