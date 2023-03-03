@@ -143,7 +143,7 @@ final class SwapSettingsCoordinator: Coordinator<SwapSettingsCoordinatorResult> 
         statusSubject
             .receive(on: RunLoop.main)
             .sink { [weak viewController] _ in
-                viewController?.updatePresentationLayout(animated: true)
+                viewController?.updatePresentationLayout(animated: false)
             }
             .store(in: &subscriptions)
     }
