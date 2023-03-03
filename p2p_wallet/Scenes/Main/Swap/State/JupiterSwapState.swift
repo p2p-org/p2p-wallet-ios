@@ -44,8 +44,9 @@ struct JupiterSwapState: Equatable {
     let toToken: SwapToken
     let possibleToTokens: [SwapToken]
     let priceInfo: SwapPriceInfo
-
-    let slippage: Int
+    
+    /// SlippageBps is slippage multiplied by 100 (be careful)
+    let slippageBps: Int
     let route: Route?
     let routes: [Route]
     let priceImpact: SwapPriceImpact?
@@ -66,7 +67,7 @@ struct JupiterSwapState: Equatable {
         toToken: SwapToken,
         possibleToTokens: [SwapToken],
         priceInfo: SwapPriceInfo,
-        slippage: Int,
+        slippageBps: Int,
         route: Route? = nil,
         routes: [Route] = [],
         priceImpact: SwapPriceImpact? = nil,
@@ -85,7 +86,7 @@ struct JupiterSwapState: Equatable {
         self.toToken = toToken
         self.possibleToTokens = possibleToTokens
         self.priceInfo = priceInfo
-        self.slippage = slippage
+        self.slippageBps = slippageBps
         self.route = route
         self.routes = routes
         self.priceImpact = priceImpact
@@ -106,7 +107,7 @@ struct JupiterSwapState: Equatable {
         toToken: SwapToken = .nativeSolana,
         possibleToTokens: [SwapToken] = [],
         priceInfo: SwapPriceInfo = SwapPriceInfo(fromPrice: .zero, toPrice: .zero),
-        slippage: Int = 0,
+        slippageBps: Int = 0,
         route: Route? = nil,
         routes: [Route] = [],
         priceImpact: SwapPriceImpact? = nil
@@ -123,7 +124,7 @@ struct JupiterSwapState: Equatable {
             toToken: toToken,
             possibleToTokens: possibleToTokens,
             priceInfo: priceInfo,
-            slippage: slippage,
+            slippageBps: slippageBps,
             route: route,
             routes: routes,
             priceImpact: priceImpact
@@ -142,7 +143,7 @@ struct JupiterSwapState: Equatable {
         toToken: SwapToken? = nil,
         possibleToTokens: [SwapToken]? = nil,
         priceInfo: SwapPriceInfo? = nil,
-        slippage: Int? = nil,
+        slippageBps: Int? = nil,
         route: Route? = nil,
         routes: [Route]? = nil,
         priceImpact: SwapPriceImpact? = nil,
@@ -162,7 +163,7 @@ struct JupiterSwapState: Equatable {
             toToken: toToken ?? self.toToken,
             possibleToTokens: possibleToTokens ?? self.possibleToTokens,
             priceInfo: priceInfo ?? self.priceInfo,
-            slippage: slippage ?? self.slippage,
+            slippageBps: slippageBps ?? self.slippageBps,
             route: route ?? self.route,
             routes: routes ?? self.routes,
             priceImpact: priceImpact ?? self.priceImpact,
@@ -176,5 +177,15 @@ struct JupiterSwapState: Equatable {
 
     var bestOutAmount: UInt64 {
         routes.map(\.outAmount).compactMap(UInt64.init).max() ?? 0
+    }
+    
+    var minimumReceivedAmount: Double? {
+        guard let outAmountString = route?.outAmount,
+              let outAmount = UInt64(outAmountString)
+        else {
+            return nil
+        }
+        let slippage = Double(slippageBps) / 100
+        return outAmount.convertToBalance(decimals: toToken.token.decimals) * (1 - slippage)
     }
 }

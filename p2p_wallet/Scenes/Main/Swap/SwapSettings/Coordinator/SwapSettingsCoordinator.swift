@@ -12,7 +12,7 @@ import SwiftUI
 import Jupiter
 
 enum SwapSettingsCoordinatorResult {
-    case selectedSlippage(Int)
+    case selectedSlippageBps(Int)
     case selectedRoute(SwapSettingsRouteInfo)
 }
 
@@ -68,8 +68,8 @@ final class SwapSettingsCoordinator: Coordinator<SwapSettingsCoordinatorResult> 
                 return viewModel?.finalSlippage
             }
             .sink { [weak self] slippage in
-                let slippage = Int(slippage * 100)
-                self?.result.send(.selectedSlippage(slippage))
+                let slippageBps = Int(slippage * 100)
+                self?.result.send(.selectedSlippageBps(slippageBps))
             }
             .store(in: &subscriptions)
         
@@ -134,9 +134,9 @@ final class SwapSettingsCoordinator: Coordinator<SwapSettingsCoordinatorResult> 
                             networkFee: state.networkFee,
                             accountCreationFee: state.accountCreationFee,
                             liquidityFee: state.liquidityFee,
-                            minimumReceived: .init(
-                                amount: 0,
-                                token: nil
+                            minimumReceived: state.minimumReceivedAmount == nil ? nil: .init(
+                                amount: state.minimumReceivedAmount!,
+                                token: state.toToken.token.symbol
                             )
                         )
                     )

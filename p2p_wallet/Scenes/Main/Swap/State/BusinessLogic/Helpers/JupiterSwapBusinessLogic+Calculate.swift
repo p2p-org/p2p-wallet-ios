@@ -26,7 +26,7 @@ extension JupiterSwapBusinessLogic {
                 outputMint: state.toToken.address,
                 amount: String(amountFromLamports),
                 swapMode: nil,
-                slippageBps: state.slippage,
+                slippageBps: state.slippageBps,
                 feeBps: nil,
                 onlyDirectRoutes: nil,
                 userPublicKey: nil,

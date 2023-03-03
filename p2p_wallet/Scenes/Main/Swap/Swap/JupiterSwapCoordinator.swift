@@ -75,7 +75,7 @@ final class JupiterSwapCoordinator: Coordinator<Void> {
         // create coordinator
         let settingsCoordinator = SwapSettingsCoordinator(
             navigationController: navigationController,
-            slippage: Double(viewModel.currentState.slippage) / 100,
+            slippage: Double(viewModel.currentState.slippageBps) / 100,
             swapStatePublisher: viewModel.stateMachine.statePublisher
         )
         
@@ -83,9 +83,9 @@ final class JupiterSwapCoordinator: Coordinator<Void> {
         coordinate(to: settingsCoordinator)
             .sink(receiveValue: { [weak viewModel] result in
                 switch result {
-                case let .selectedSlippage(slippage):
+                case let .selectedSlippageBps(slippageBps):
                     Task { [weak viewModel] in
-                        await viewModel?.stateMachine.accept(action: .changeSlippage(slippage))
+                        await viewModel?.stateMachine.accept(action: .changeSlippageBps(slippageBps))
                     }
                 case let .selectedRoute(routeInfo):
                     guard let route = viewModel?.currentState.routes.first(where: {$0.id == routeInfo.id}),
