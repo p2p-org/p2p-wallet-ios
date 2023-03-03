@@ -1,5 +1,6 @@
 import Jupiter
 import SolanaSwift
+import Resolver
 
 extension JupiterSwapBusinessLogic {
     static func calculateAmounts(state: JupiterSwapState, services: JupiterSwapServices) async -> JupiterSwapState {
@@ -68,10 +69,15 @@ extension JupiterSwapBusinessLogic {
             let context = try await services.relayContextManager.getCurrentContextOrUpdate()
     
             // FIXME: - network fee with fee relayer, Temporarily paying with SOL
-            let networkFee = SwapTokenAmountInfo(
-                amount: context.lamportsPerSignature
-                    .convertToBalance(decimals: Token.nativeSolana.decimals),
-                token: "SOL"
+            let solanaPrice = Resolver.resolve(PricesService.self).getCurrentPrice(for: "SOL")
+            
+            let networkFeeAmount = context.lamportsPerSignature
+                .convertToBalance(decimals: Token.nativeSolana.decimals)
+            let networkFee = SwapFeeInfo(
+                amount: networkFeeAmount,
+                token: "SOL",
+                amountInFiat: solanaPrice * networkFeeAmount,
+                canBePaidByKeyApp: true
             )
             
             // FIXME: - account creation fee with fee relayer, Temporarily paying with SOL
@@ -80,10 +86,13 @@ extension JupiterSwapBusinessLogic {
                     state.swapTokens.first(where: { $0.token.address == mint && $0.userWallet == nil })?.address
                 }
             
-            let accountCreationFee = SwapTokenAmountInfo(
-                amount: (context.minimumTokenAccountBalance * UInt64(nonCreatedTokenMints.count))
-                    .convertToBalance(decimals: Token.nativeSolana.decimals),
-                token: "SOL"
+            let accountCreationFeeAmount = (context.minimumTokenAccountBalance * UInt64(nonCreatedTokenMints.count))
+                .convertToBalance(decimals: Token.nativeSolana.decimals)
+            let accountCreationFee = SwapFeeInfo(
+                amount: accountCreationFeeAmount,
+                token: "SOL",
+                amountInFiat: solanaPrice * accountCreationFeeAmount,
+                canBePaidByKeyApp: false
             )
 
             return await validateAmounts(

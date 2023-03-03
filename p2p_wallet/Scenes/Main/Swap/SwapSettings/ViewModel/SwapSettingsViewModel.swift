@@ -24,7 +24,7 @@ final class SwapSettingsViewModel: BaseViewModel, ObservableObject {
         let minimumReceived: SwapTokenAmountInfo?
         
         var estimatedFees: String {
-            (liquidityFee + [networkFee, accountCreationFee].compactMap {$0})
+            "≈ " + (liquidityFee + [networkFee, accountCreationFee].compactMap {$0})
                 .compactMap(\.amountInFiat)
                 .reduce(0.0, +)
                 .formattedFiat()

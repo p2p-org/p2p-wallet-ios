@@ -14,6 +14,6 @@ struct SwapFeeInfo: Equatable {
     }
     
     var amountInFiatDescription: String? {
-        amount == 0 ? L10n.free: "≈ " + (amountInFiat?.fiatAmountFormattedString() ?? "")
+        amount == 0 && canBePaidByKeyApp ? L10n.free: "≈ " + (amountInFiat?.fiatAmountFormattedString() ?? "")
     }
 }
