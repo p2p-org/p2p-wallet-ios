@@ -102,9 +102,9 @@ final class JupiterSwapCoordinator: Coordinator<Void> {
                                 description: route.priceDescription(bestOutAmount: state.bestOutAmount, toTokenDecimals: state.toToken.token.decimals, toTokenSymbol: state.toToken.token.symbol) ?? "",
                                 tokensChain: route.chainDescription(tokensList: state.swapTokens.map(\.token))
                             ),
-                            networkFee: .init( // FIXME: - Network fee using fee relayer
-                                amount: 0,
-                                token: nil,
+                            networkFee: .init(
+                                amount: state.networkFee.amount,
+                                token: state.networkFee.token,
                                 amountInFiat: nil,
                                 canBePaidByKeyApp: true
                             ),
