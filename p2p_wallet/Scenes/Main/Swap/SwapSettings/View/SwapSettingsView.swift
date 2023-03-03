@@ -70,10 +70,14 @@ struct SwapSettingsView: View {
             )
             
             // Liquidity fee
-            feeRow(
-                title: L10n.liquidityFee,
-                fees: viewModel.info?.liquidityFee ?? []
-            )
+            if let liquidityFee = viewModel.info?.liquidityFee,
+               !liquidityFee.isEmpty
+            {
+                feeRow(
+                    title: L10n.liquidityFee,
+                    fees: liquidityFee
+                )
+            }
             
             // Estimated fee
             HStack {

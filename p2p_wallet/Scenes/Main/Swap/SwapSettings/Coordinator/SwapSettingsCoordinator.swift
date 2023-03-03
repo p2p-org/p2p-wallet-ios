@@ -133,7 +133,7 @@ final class SwapSettingsCoordinator: Coordinator<SwapSettingsCoordinatorResult> 
                             ),
                             networkFee: state.networkFee,
                             accountCreationFee: state.accountCreationFee,
-                            liquidityFee: [],
+                            liquidityFee: state.liquidityFee,
                             minimumReceived: .init(
                                 amount: 0,
                                 token: nil
