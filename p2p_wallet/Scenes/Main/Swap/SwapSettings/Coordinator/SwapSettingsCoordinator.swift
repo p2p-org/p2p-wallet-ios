@@ -13,59 +13,43 @@ import Jupiter
 
 enum SwapSettingsCoordinatorResult {
     case selectedSlippage(Int)
-    case selectedRoute(Route)
+    case selectedRoute(SwapSettingsRouteInfo)
 }
 
 final class SwapSettingsCoordinator: Coordinator<SwapSettingsCoordinatorResult> {
+    
+    // MARK: - Public properties
+
+    let statusSubject = PassthroughSubject<SwapSettingsViewModel.Status, Never>()
+    
+    // MARK: - Private properties
+
     private let navigationController: UINavigationController
     private let slippage: Double
-    private let currentRoute: Route
-    private let routes: [Route]
-    private let swapTokens: [SwapToken]
     private var result = PassthroughSubject<SwapSettingsCoordinatorResult, Never>()
-    
     private var viewModel: SwapSettingsViewModel!
+
+    // MARK: - Initializer
 
     init(
         navigationController: UINavigationController,
-        slippage: Double,
-        routes: [Route],
-        currentRoute: Route,
-        swapTokens: [SwapToken]
+        slippage: Double
     ) {
         self.navigationController = navigationController
         self.slippage = slippage
-        self.currentRoute = currentRoute
-        self.routes = routes
-        self.swapTokens = swapTokens
     }
 
     override func start() -> AnyPublisher<SwapSettingsCoordinatorResult, Never> {
         // create viewModel
-        let bestPrice = routes.map(\.outAmount).compactMap(UInt64.init).max()
-        let tokenB = swapTokens.map(\.token).first(where: {$0.address == routes.first?.marketInfos.last?.outputMint})
-        
         viewModel = SwapSettingsViewModel(
-            status: .loaded(.init(
-                routes: routes.map {.init(
-                    id: $0.id,
-                    name: $0.name,
-                    description: $0.bestPriceDescription(bestPrice: bestPrice, tokenB: tokenB) ?? "",
-                    tokensChain: $0.chainDescription(tokensList: swapTokens.map(\.token))
-                )},
-                currentRoute: .init(
-                    id: currentRoute.id,
-                    name: currentRoute.name,
-                    description: currentRoute.bestPriceDescription(bestPrice: bestPrice, tokenB: tokenB) ?? "",
-                    tokensChain: currentRoute.chainDescription(tokensList: swapTokens.map(\.token))
-                ),
-                networkFee: .init(amount: 0, token: nil, amountInFiat: nil, canBePaidByKeyApp: true),
-                accountCreationFee: .init(amount: 0, token: nil, amountInFiat: nil, canBePaidByKeyApp: true),
-                liquidityFee: [],
-                minimumReceived: .init(amount: 0, token: nil)
-            )),
+            status: .loading,
             slippage: slippage
         )
+        
+        // observe statusSubject
+        statusSubject
+            .assign(to: \.status, on: viewModel)
+            .store(in: &subscriptions)
         
         // navigation
         viewModel.selectRoutePublisher
@@ -89,12 +73,12 @@ final class SwapSettingsCoordinator: Coordinator<SwapSettingsCoordinatorResult> 
             .store(in: &subscriptions)
         
         viewModel.$status
-            .compactMap { [weak self] status -> Route? in
+            .compactMap { status in
                 switch status {
                 case .loading:
                     return nil
                 case .loaded(let info):
-                    return self?.routes.first(where: {$0.id == info.currentRoute.id})
+                    return info.currentRoute
                 }
             }
             .sink { [weak self] route in
