@@ -20,7 +20,7 @@ final class SwapSettingsCoordinator: Coordinator<SwapSettingsCoordinatorResult> 
     
     // MARK: - Public properties
 
-    let statusSubject = PassthroughSubject<SwapSettingsViewModel.Status, Never>()
+    let statusSubject = CurrentValueSubject<SwapSettingsViewModel.Status, Never>(.loading)
     
     // MARK: - Private properties
 
@@ -125,9 +125,15 @@ final class SwapSettingsCoordinator: Coordinator<SwapSettingsCoordinatorResult> 
                 }
                 .eraseToAnyPublisher()
         ) { [unowned self] routeInfo in
-            // FIXME: - Later
-//                    viewModel.currentRoute = route
-            navigationController.presentedViewController?.dismiss(animated: true)
+            switch viewModel.status {
+            case .loading:
+                break
+            case .loaded(let info):
+                var info = info
+                info.currentRoute = routeInfo
+                viewModel.status = .loaded(info)
+                navigationController.presentedViewController?.dismiss(animated: true)
+            }
         }
         
         let viewController = UIBottomSheetHostingController(rootView: view)
