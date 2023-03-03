@@ -128,25 +128,29 @@ final class SwapSettingsViewModel: BaseViewModel, ObservableObject {
     }
     
     func rowClicked(identifier: SwapSettingsView.RowIdentifier) {
-        let fees: [SwapSettingsInfoViewModel.Fee]
-        if identifier == .liquidityFee, let info {
-            fees = info.liquidityFee
-                .map { lqFee in
-                    .init(
-                        title: L10n.liquidityFee(
-                            lqFee.tokenName ?? L10n.unknownToken,
-                            "\(lqFee.pct == nil ? L10n.unknown: "\(lqFee.pct!)")%"
-                        ),
-                        subtitle: lqFee.amount.tokenAmountFormattedString(symbol: lqFee.tokenSymbol ?? "UNKNOWN"),
-                        amount: lqFee.amountInFiatDescription
-                    )
-                }
+        if identifier == .route {
+            selectRouteSubject.send()
         } else {
-            fees = []
+            let fees: [SwapSettingsInfoViewModel.Fee]
+            if identifier == .liquidityFee, let info {
+                fees = info.liquidityFee
+                    .map { lqFee in
+                        .init(
+                            title: L10n.liquidityFee(
+                                lqFee.tokenName ?? L10n.unknownToken,
+                                "\(lqFee.pct == nil ? L10n.unknown: "\(lqFee.pct!)")%"
+                            ),
+                            subtitle: lqFee.amount.tokenAmountFormattedString(symbol: lqFee.tokenSymbol ?? "UNKNOWN"),
+                            amount: lqFee.amountInFiatDescription
+                        )
+                    }
+            } else {
+                fees = []
+            }
+            
+            guard let strategy = identifier.settingsInfo(fees: fees) else { return }
+            infoClickedSubject.send(strategy)
         }
-
-        guard let strategy = identifier.settingsInfo(fees: fees) else { return }
-        infoClickedSubject.send(strategy)
     }
 }
 
