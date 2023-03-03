@@ -1,8 +1,8 @@
 import Combine
 import Resolver
 import Jupiter
-import SolanaPricesAPIs
 import SolanaSwift
+import AnalyticsManager
 
 final class SwapViewModel: BaseViewModel, ObservableObject {
 
@@ -14,10 +14,10 @@ final class SwapViewModel: BaseViewModel, ObservableObject {
 
     // MARK: - Dependencies
     @Injected private var swapWalletsRepository: JupiterTokensRepository
-    @Injected private var pricesAPI: SolanaPricesAPI
     @Injected private var notificationService: NotificationService
     @Injected private var userWalletManager: UserWalletManager
     @Injected private var transactionHandler: TransactionHandler
+    @Injected private var analyticsManager: AnalyticsManager
 
     // MARK: - Actions
     let switchTokens = PassthroughSubject<Void, Never>()
@@ -38,7 +38,7 @@ final class SwapViewModel: BaseViewModel, ObservableObject {
         }
     }
     @Published var showFinished = false
-    
+
     #if !RELEASE
     @Published var swapTransaction: String?
     @Published var errorLogs: [String]?
@@ -46,11 +46,12 @@ final class SwapViewModel: BaseViewModel, ObservableObject {
 
     let stateMachine: JupiterSwapStateMachine
     var currentState: JupiterSwapState { stateMachine.currentState }
-    
+
     private let preChosenWallet: Wallet?
     private var timer: Timer?
+    private let source: JupiterSwapSource
 
-    init(preChosenWallet: Wallet? = nil) {
+    init(source: JupiterSwapSource, preChosenWallet: Wallet? = nil) {
         stateMachine = JupiterSwapStateMachine(
             initialState: .zero,
             services: JupiterSwapServices(
@@ -61,6 +62,7 @@ final class SwapViewModel: BaseViewModel, ObservableObject {
             )
         )
         self.preChosenWallet = preChosenWallet
+        self.source = source
         super.init()
         bind()
         bindActions()
@@ -145,15 +147,19 @@ private extension SwapViewModel {
 
         changeFromToken
             .sinkAsync { [weak self] token in
-                await self?.stateMachine.accept(action: .changeFromToken(token))
+                guard let self else { return }
+                let newState = await self.stateMachine.accept(action: .changeFromToken(token))
                 Defaults.fromTokenAddress = token.address
+                self.logChangeToken(isFrom: true, token: token, amount: newState.amountFrom)
             }
             .store(in: &subscriptions)
 
         changeToToken
             .sinkAsync { [ weak self] token in
-                await self?.stateMachine.accept(action: .changeToToken(token))
+                guard let self else { return }
+                let newState = await self.stateMachine.accept(action: .changeToToken(token))
                 Defaults.toTokenAddress = token.address
+                self.logChangeToken(isFrom: false, token: token, amount: newState.amountTo)
             }
             .store(in: &subscriptions)
 
@@ -163,6 +169,8 @@ private extension SwapViewModel {
                 self.handle(state: updatedState)
                 self.updateHeader(priceInfo: updatedState.priceInfo, fromToken: updatedState.fromToken.token, toToken: updatedState.toToken.token)
                 self.updateActionButton(for: updatedState)
+                self.log(priceImpact: updatedState.priceImpact, value: updatedState.route?.priceImpactPct)
+                self.log(from: updatedState.status)
             }
             .store(in: &subscriptions)
     }
@@ -176,13 +184,14 @@ private extension SwapViewModel {
         if let toTokenAddress = Defaults.toTokenAddress {
             prechosenToToken = swapTokens.first(where: { $0.address == toTokenAddress })
         }
-        let _ = await self.stateMachine
+        let newState = await self.stateMachine
             .accept(action: .initialize(
                 swapTokens: swapTokens,
                 routeMap: routeMap,
                 fromToken: prechosenFromToken,
                 toToken: prechosenToToken
             ))
+        logStart(from: newState.fromToken, to: newState.toToken)
     }
 
     func handle(state: JupiterSwapState) {
@@ -215,9 +224,8 @@ private extension SwapViewModel {
         switchTokens
             .sinkAsync(receiveValue: { [weak self] _ in
                 guard let self else { return }
-                await self.stateMachine.accept(
-                    action: .switchFromAndToTokens
-                )
+                let newState = await self.stateMachine.accept(action: .switchFromAndToTokens)
+                self.logSwitch(from: newState.fromToken, to: newState.toToken)
             })
             .store(in: &subscriptions)
 
@@ -333,6 +341,7 @@ private extension SwapViewModel {
             pendingTransaction,
             formattedSlippage
         ))
+        logSwapApprove()
     }
     
     private func createSwapExecution(account: Account, sourceWallet: Wallet) async throws -> String {
@@ -396,5 +405,65 @@ private extension SwapViewModel {
             slippageString.removeLast()
         }
         return slippageString + "%"
+    }
+}
+
+// MARK: - Analytics
+extension SwapViewModel {
+    func logSettingsClick() {
+        analyticsManager.log(event: .swapSettingsClick)
+    }
+
+    func logReturnFromChangeToken(isFrom: Bool) {
+        analyticsManager.log(event: isFrom ? .swapReturnFromChangingTokenA : .swapReturnFromChangingTokenB)
+    }
+
+    func logTransactionProgressOpened() {
+        analyticsManager.log(event: .swapTransactionProgressScreen)
+    }
+
+    func logTransactionProgressDone() {
+        analyticsManager.log(event: .swapTransactionProgressScreenDone)
+    }
+
+    private func logSwapApprove() {
+        analyticsManager.log(event: .swapClickApproveButtonNew(tokenA: currentState.fromToken.token.symbol, tokenB: currentState.toToken.token.symbol, swapSum: currentState.amountFrom, swapUSD: currentState.amountFromFiat))
+    }
+
+    private func log(from status: JupiterSwapState.Status) {
+        switch status {
+        case .error(.notEnoughFromToken):
+            analyticsManager.log(event: .swapErrorTokenAInsufficientAmount)
+        case .error(.routeIsNotFound):
+            analyticsManager.log(event: .swapErrorTokenPairNotExist)
+        default:
+            break
+        }
+    }
+
+    private func logStart(from: SwapToken, to: SwapToken) {
+        analyticsManager.log(event: .swapStartScreenNew(lastScreen: source.rawValue, from: from.token.symbol, to: to.token.symbol))
+    }
+
+    private func logSwitch(from: SwapToken, to: SwapToken) {
+        analyticsManager.log(event: .swapSwitchTokens(tokenAName: from.token.symbol, tokenBName: to.token.symbol))
+    }
+
+    private func log(priceImpact: JupiterSwapState.SwapPriceImpact?, value: Double?) {
+        guard let priceImpact, let value else { return }
+        switch priceImpact {
+        case .medium:
+            analyticsManager.log(event: .swapPriceImpactLow(priceImpact: value))
+        case .high:
+            analyticsManager.log(event: .swapPriceImpactHigh(priceImpact: value))
+        }
+    }
+
+    private func logChangeToken(isFrom: Bool, token: SwapToken, amount: Double) {
+        if isFrom {
+            analyticsManager.log(event: .swapChangingTokenA(tokenAName: token.token.symbol, tokenAValue: amount))
+        } else {
+            analyticsManager.log(event: .swapChangingTokenB(tokenBName: token.token.symbol, tokenBValue: amount))
+        }
     }
 }
