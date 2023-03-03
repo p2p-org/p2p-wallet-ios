@@ -112,6 +112,7 @@ final class JupiterSwapCoordinator: Coordinator<Void> {
                     return .loading
                 }
             }
+            .receive(on: DispatchQueue.main)
             .sink { [weak settingsCoordinator] status in
                 settingsCoordinator?.statusSubject.send(status)
             }
@@ -125,8 +126,10 @@ final class JupiterSwapCoordinator: Coordinator<Void> {
                     Task { [weak viewModel] in
                         await viewModel?.stateMachine.accept(action: .changeSlippage(slippage))
                     }
-                case let .selectedRoute(route):
-                    guard let route = viewModel?.currentState.routes.first(where: {$0.id == route.id}) else {
+                case let .selectedRoute(routeInfo):
+                    guard let route = viewModel?.currentState.routes.first(where: {$0.id == routeInfo.id}),
+                          route.id != viewModel?.currentState.route?.id
+                    else {
                         return
                     }
                     Task { [weak viewModel] in
