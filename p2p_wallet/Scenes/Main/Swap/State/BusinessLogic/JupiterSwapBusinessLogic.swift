@@ -55,14 +55,12 @@ enum JupiterSwapBusinessLogic {
             })
 
         case let .changeFromToken(swapToken):
-            guard swapToken != state.fromToken else { return state }
             newState = await executeAction(state, services, action: {
                 await changeFromToken(state: state, services: services, token: swapToken)
             }, chains: {
                 [calculateAmounts]
             })
         case let .changeToToken(swapToken):
-            guard swapToken != state.fromToken else { return state }
             newState = await executeAction(state, services, action: {
                 await changeToToken(state: state, services: services, token: swapToken)
             }, chains: {

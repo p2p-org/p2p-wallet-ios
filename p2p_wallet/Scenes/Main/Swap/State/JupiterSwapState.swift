@@ -50,8 +50,8 @@ struct JupiterSwapState: Equatable {
     let routes: [Route]
     let priceImpact: SwapPriceImpact?
     
-//    var networkFee: SwapTokenAmountInfo
-//    var accountCreationFee: SwapTokenAmountInfo
+    var networkFee: SwapTokenAmountInfo
+    var accountCreationFee: SwapTokenAmountInfo
 
     init(
         status: Status,
@@ -68,7 +68,9 @@ struct JupiterSwapState: Equatable {
         slippage: Int,
         route: Route? = nil,
         routes: [Route] = [],
-        priceImpact: SwapPriceImpact? = nil
+        priceImpact: SwapPriceImpact? = nil,
+        networkFee: SwapTokenAmountInfo = .init(amount: 0, token: nil),
+        accountCreationFee: SwapTokenAmountInfo = .init(amount: 0, token: nil)
     ) {
         self.status = status
         self.routeMap = routeMap
@@ -85,6 +87,8 @@ struct JupiterSwapState: Equatable {
         self.route = route
         self.routes = routes
         self.priceImpact = priceImpact
+        self.networkFee = networkFee
+        self.accountCreationFee = accountCreationFee
     }
 
     static func zero(
@@ -138,7 +142,9 @@ struct JupiterSwapState: Equatable {
         slippage: Int? = nil,
         route: Route? = nil,
         routes: [Route]? = nil,
-        priceImpact: SwapPriceImpact? = nil
+        priceImpact: SwapPriceImpact? = nil,
+        networkFee: SwapTokenAmountInfo? = nil,
+        accountCreationFee: SwapTokenAmountInfo? = nil
     ) -> JupiterSwapState {
         JupiterSwapState(
             status: status ?? self.status,
@@ -155,7 +161,9 @@ struct JupiterSwapState: Equatable {
             slippage: slippage ?? self.slippage,
             route: route ?? self.route,
             routes: routes ?? self.routes,
-            priceImpact: priceImpact ?? nil
+            priceImpact: priceImpact ?? self.priceImpact,
+            networkFee: networkFee ?? self.networkFee,
+            accountCreationFee: accountCreationFee ?? self.accountCreationFee
         )
     }
     

@@ -97,7 +97,7 @@ struct SwapSettingsView: View {
     
     private func feeRow(
         title: String,
-        fee: SwapSettingsFeeInfo?,
+        fee: SwapFeeInfo?,
         canBePaidByKeyApp: Bool
     ) -> some View {
         commonRow(
@@ -110,7 +110,7 @@ struct SwapSettingsView: View {
     
     private func feeRow(
         title: String,
-        fees: [SwapSettingsFeeInfo]
+        fees: [SwapFeeInfo]
     ) -> some View {
         commonRow(
             title: title,

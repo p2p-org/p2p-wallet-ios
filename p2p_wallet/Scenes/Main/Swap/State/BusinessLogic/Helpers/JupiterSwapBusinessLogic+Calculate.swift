@@ -45,6 +45,7 @@ extension JupiterSwapBusinessLogic {
                 return state.copy(status: .error(reason: .routeIsNotFound), amountTo: 0, amountToFiat: 0)
             }
 
+            // to amount
             let amountTo = toAmountLamports.convertToBalance(decimals: state.toToken.token.decimals)
             let newPriceInfo = SwapPriceInfo(
                 fromPrice: state.priceInfo.fromPrice,
@@ -52,6 +53,7 @@ extension JupiterSwapBusinessLogic {
                 relation: Double(state.amountFrom/amountTo)
             )
 
+            // price impact
             let priceImpact: JupiterSwapState.SwapPriceImpact?
             switch route.priceImpactPct {
             case let val where val >= 0.01 && val < 0.03:
@@ -61,6 +63,28 @@ extension JupiterSwapBusinessLogic {
             default:
                 priceImpact = nil
             }
+            
+            // get fee relayer context
+            let context = try await services.relayContextManager.getCurrentContextOrUpdate()
+    
+            // FIXME: - network fee with fee relayer, Temporarily paying with SOL
+            let networkFee = SwapTokenAmountInfo(
+                amount: context.lamportsPerSignature
+                    .convertToBalance(decimals: Token.nativeSolana.decimals),
+                token: "SOL"
+            )
+            
+            // FIXME: - account creation fee with fee relayer, Temporarily paying with SOL
+            let nonCreatedTokenMints = route.marketInfos.map(\.outputMint)
+                .compactMap { mint in
+                    state.swapTokens.first(where: { $0.token.address == mint && $0.userWallet == nil })?.address
+                }
+            
+            let accountCreationFee = SwapTokenAmountInfo(
+                amount: (context.minimumTokenAccountBalance * UInt64(nonCreatedTokenMints.count))
+                    .convertToBalance(decimals: Token.nativeSolana.decimals),
+                token: "SOL"
+            )
 
             return await validateAmounts(
                 state: state.copy(
@@ -70,7 +94,9 @@ extension JupiterSwapBusinessLogic {
                     priceInfo: newPriceInfo,
                     route: route,
                     routes: routes,
-                    priceImpact: priceImpact
+                    priceImpact: priceImpact,
+                    networkFee: networkFee,
+                    accountCreationFee: accountCreationFee
                 ),
                 services: services
             )
