@@ -69,7 +69,8 @@ extension JupiterSwapBusinessLogic {
             let context = try await services.relayContextManager.getCurrentContextOrUpdate()
     
             // FIXME: - network fee with fee relayer, Temporarily paying with SOL
-            let solanaPrice = Resolver.resolve(PricesService.self).getCurrentPrice(for: "SOL")
+            let priceService = Resolver.resolve(PricesService.self)
+            let solanaPrice = priceService.getCurrentPrice(for: Token.nativeSolana.address)
             
             let networkFeeAmount = context.lamportsPerSignature
                 .convertToBalance(decimals: Token.nativeSolana.decimals)
@@ -94,6 +95,25 @@ extension JupiterSwapBusinessLogic {
                 amountInFiat: solanaPrice * accountCreationFeeAmount,
                 canBePaidByKeyApp: false
             )
+            
+            // Liquidity fees
+            let liquidityFees = route.marketInfos.map(\.lpFee)
+                .compactMap { lqFee -> SwapFeeInfo? in
+                    guard let token = state.swapTokens.map(\.token).first(where: { $0.address == lqFee.mint }),
+                          let amount = UInt64(lqFee.amount)?.convertToBalance(decimals: token.decimals)
+                    else {
+                        return nil
+                    }
+                    
+                    let price = priceService.getCurrentPrice(for: token.address)
+                    
+                    return SwapFeeInfo(
+                        amount: amount,
+                        token: token.symbol,
+                        amountInFiat: price * amount,
+                        canBePaidByKeyApp: false
+                    )
+                }
 
             return await validateAmounts(
                 state: state.copy(
@@ -105,7 +125,8 @@ extension JupiterSwapBusinessLogic {
                     routes: routes,
                     priceImpact: priceImpact,
                     networkFee: networkFee,
-                    accountCreationFee: accountCreationFee
+                    accountCreationFee: accountCreationFee,
+                    liquidityFee: liquidityFees
                 ),
                 services: services
             )
