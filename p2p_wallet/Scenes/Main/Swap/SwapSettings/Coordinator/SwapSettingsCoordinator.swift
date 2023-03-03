@@ -101,6 +101,12 @@ final class SwapSettingsCoordinator: Coordinator<SwapSettingsCoordinatorResult> 
                 self?.result.send(completion: .finished)
             })
             .store(in: &subscriptions)
+
+        viewModel.infoClicked
+            .sink(receiveValue: { [unowned self] strategy in
+                presentSettingsInfo(strategy: strategy)
+            })
+            .store(in: &subscriptions)
         
         return result.eraseToAnyPublisher()
     }
@@ -191,5 +197,15 @@ final class SwapSettingsCoordinator: Coordinator<SwapSettingsCoordinatorResult> 
                 viewController?.updatePresentationLayout(animated: false)
             }
             .store(in: &subscriptions)
+    }
+    
+    private func presentSettingsInfo(strategy: SwapSettingsInfoViewModel.Strategy) {
+        let viewModel = SwapSettingsInfoViewModel(strategy: strategy)
+        
+        let view = SwapSettingsInfoView(viewModel: viewModel)
+        
+        let viewController = UIBottomSheetHostingController(rootView: view)
+        viewController.view.layer.cornerRadius = 20
+        navigationController.present(viewController, interactiveDismissalType: .standard)
     }
 }

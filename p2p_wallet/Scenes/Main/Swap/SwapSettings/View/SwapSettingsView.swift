@@ -25,11 +25,11 @@ struct SwapSettingsView: View {
                 Section {
                     commonRow(
                         title: L10n.minimumReceived,
-                        subtitle: minimumReceived.amountDescription
+                        subtitle: minimumReceived.amountDescription,
+                        identifier: .minimumReceived
                     )
                 }
             }
-            
             Section(header: Text(L10n.slippage)) {
                 slippageRows
             }
@@ -50,25 +50,24 @@ struct SwapSettingsView: View {
                     .frame(width: 7.41, height: 12)
                     .padding(.vertical, (20-12)/2)
                     .padding(.horizontal, (20-7.41)/2)
-                    .castToAnyView()
+                    .castToAnyView(),
+                identifier: .route
             )
-                .contentShape(Rectangle())
-                .onTapGesture {
-                    viewModel.navigateToSelectRoute()
-                }
             
             // Network fee
             feeRow(
                 title: L10n.networkFee,
                 fee: viewModel.info?.networkFee,
-                canBePaidByKeyApp: true
+                canBePaidByKeyApp: true,
+                identifier: .networkFee
             )
             
             // Account creation fee
             feeRow(
                 title: L10n.accountCreationFee,
                 fee: viewModel.info?.accountCreationFee,
-                canBePaidByKeyApp: false
+                canBePaidByKeyApp: false,
+                identifier: .accountCreationFee
             )
             
             // Liquidity fee
@@ -77,7 +76,8 @@ struct SwapSettingsView: View {
             {
                 feeRow(
                     title: L10n.liquidityFee,
-                    fees: liquidityFee
+                    fees: liquidityFee,
+                    identifier: .liquidityFee
                 )
             }
             
@@ -86,7 +86,6 @@ struct SwapSettingsView: View {
                 Text(L10n.estimatedFees)
                     .fontWeight(.semibold)
                     .apply(style: .text3)
-                    .padding(.vertical, 10)
                 
                 Spacer()
                 
@@ -96,32 +95,35 @@ struct SwapSettingsView: View {
                     .padding(.vertical, 10)
                     .skeleton(with: viewModel.status == .loading, size: .init(width: 52, height: 16))
             }
-                .frame(maxWidth: .infinity)
+            .frame(maxWidth: .infinity)
         }
-            
     }
     
     private func feeRow(
         title: String,
         fee: SwapFeeInfo?,
-        canBePaidByKeyApp: Bool
+        canBePaidByKeyApp: Bool,
+        identifier: RowIdentifier?
     ) -> some View {
         commonRow(
             title: title,
             subtitle: fee?.amountDescription,
             subtitleColor: fee?.shouldHighlightAmountDescription == true ? Asset.Colors.mint.color: Asset.Colors.mountain.color,
-            trailingSubtitle: fee?.amountInFiatDescription
+            trailingSubtitle: fee?.amountInFiatDescription,
+            identifier: identifier
         )
     }
     
     private func feeRow(
         title: String,
-        fees: [SwapFeeInfo]
+        fees: [SwapFeeInfo],
+        identifier: RowIdentifier?
     ) -> some View {
         commonRow(
             title: title,
             subtitle: fees.compactMap(\.amountDescription).joined(separator: ", "),
-            trailingSubtitle: "≈ " + fees.compactMap(\.amountInFiat).reduce(0.0, +).fiatAmountFormattedString()
+            trailingSubtitle: "≈ " + fees.compactMap(\.amountInFiat).reduce(0.0, +).fiatAmountFormattedString(),
+            identifier: identifier
         )
     }
     
@@ -134,7 +136,8 @@ struct SwapSettingsView: View {
             .resizable()
             .foregroundColor(Color(Asset.Colors.mountain.color))
             .frame(width: 20, height: 20)
-            .castToAnyView()
+            .castToAnyView(),
+        identifier: RowIdentifier?
     ) -> some View {
         HStack(alignment: .center, spacing: 10) {
             VStack(alignment: .leading, spacing: 4) {
@@ -155,6 +158,10 @@ struct SwapSettingsView: View {
                 .skeleton(with: viewModel.status == .loading, size: .init(width: 52, height: 16))
             
             trailingView
+                .onTapGesture {
+                    guard let identifier else { return }
+                    viewModel.rowClicked(identifier: identifier)
+                }
         }
         .frame(maxWidth: .infinity)
         .listRowInsets(.init(top: 0, leading: 0, bottom: 0, trailing: 0))
@@ -267,27 +274,35 @@ struct SwapSettingsView_Previews: PreviewProvider {
                     ),
                     networkFee: .init(
                         amount: 0,
-                        token: nil,
+                        tokenSymbol: nil,
+                        tokenName: nil,
                         amountInFiat: nil,
+                        pct: nil,
                         canBePaidByKeyApp: true
                     ),
                     accountCreationFee: .init(
                         amount: 0.8,
-                        token: "Token A",
+                        tokenSymbol: "Token A",
+                        tokenName: "Token A Name",
                         amountInFiat: 6.1,
+                        pct: nil,
                         canBePaidByKeyApp: false
                     ),
                     liquidityFee: [
                         .init(
                             amount: 0.991,
-                            token: "TokenC",
+                            tokenSymbol: "Token C",
+                            tokenName: "Token C Name",
                             amountInFiat: 0.05,
+                            pct: 0.01,
                             canBePaidByKeyApp: false
                         ),
                         .init(
                             amount: 0.991,
-                            token: "TokenD",
+                            tokenSymbol: "Token D",
+                            tokenName: "Token D Name",
                             amountInFiat: 0.05,
+                            pct: 0.01,
                             canBePaidByKeyApp: false
                         )
                     ],
@@ -302,5 +317,17 @@ struct SwapSettingsView_Previews: PreviewProvider {
                 )
             }
         }
+    }
+}
+
+// MARK: - Row idenfifier
+
+extension SwapSettingsView {
+    enum RowIdentifier: Equatable {
+        case route
+        case networkFee
+        case accountCreationFee
+        case liquidityFee
+        case minimumReceived
     }
 }
