@@ -93,13 +93,13 @@ final class JupiterSwapCoordinator: Coordinator<Void> {
                             routes: state.routes.map {.init(
                                 id: $0.id,
                                 name: $0.name,
-                                description: $0.bestPriceDescription(bestOutAmount: state.bestOutAmount, toTokenDecimals: state.toToken.token.decimals, toTokenSymbol: state.toToken.token.symbol) ?? "",
+                                description: $0.priceDescription(bestOutAmount: state.bestOutAmount, toTokenDecimals: state.toToken.token.decimals, toTokenSymbol: state.toToken.token.symbol) ?? "",
                                 tokensChain: $0.chainDescription(tokensList: state.swapTokens.map(\.token))
                             )},
                             currentRoute: .init(
                                 id: route.id,
                                 name: route.name,
-                                description: route.bestPriceDescription(bestOutAmount: state.bestOutAmount, toTokenDecimals: state.toToken.token.decimals, toTokenSymbol: state.toToken.token.symbol) ?? "",
+                                description: route.priceDescription(bestOutAmount: state.bestOutAmount, toTokenDecimals: state.toToken.token.decimals, toTokenSymbol: state.toToken.token.symbol) ?? "",
                                 tokensChain: route.chainDescription(tokensList: state.swapTokens.map(\.token))
                             ),
                             networkFee: .init(amount: 0, token: nil, amountInFiat: nil, canBePaidByKeyApp: true),
