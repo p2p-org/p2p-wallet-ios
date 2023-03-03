@@ -9,7 +9,7 @@ struct SwapFeeInfo: Equatable {
     let canBePaidByKeyApp: Bool
     
     var amountDescription: String? {
-        amount == 0 && canBePaidByKeyApp ? L10n.paidByKeyApp: amount.tokenAmountFormattedString(symbol: tokenName ?? "")
+        amount == 0 && canBePaidByKeyApp ? L10n.paidByKeyApp: amount.tokenAmountFormattedString(symbol: tokenSymbol ?? "")
     }
     var shouldHighlightAmountDescription: Bool {
         amount == 0 && canBePaidByKeyApp
