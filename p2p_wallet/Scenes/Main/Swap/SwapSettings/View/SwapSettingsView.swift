@@ -25,7 +25,8 @@ struct SwapSettingsView: View {
                 Section {
                     commonRow(
                         title: L10n.minimumReceived,
-                        subtitle: minimumReceived.amountDescription
+                        subtitle: minimumReceived.amountDescription,
+                        identifier: .minimumReceived
                     )
                 }
             }
@@ -49,21 +50,24 @@ struct SwapSettingsView: View {
                     .frame(width: 7.41, height: 12)
                     .padding(.vertical, (20-12)/2)
                     .padding(.horizontal, (20-7.41)/2)
-                    .castToAnyView()
+                    .castToAnyView(),
+                identifier: .route
             )
             
             // Network fee
             feeRow(
                 title: L10n.networkFee,
                 fee: viewModel.info?.networkFee,
-                canBePaidByKeyApp: true
+                canBePaidByKeyApp: true,
+                identifier: .networkFee
             )
             
             // Account creation fee
             feeRow(
                 title: L10n.accountCreationFee,
                 fee: viewModel.info?.accountCreationFee,
-                canBePaidByKeyApp: false
+                canBePaidByKeyApp: false,
+                identifier: .accountCreationFee
             )
             
             // Liquidity fee
@@ -72,7 +76,8 @@ struct SwapSettingsView: View {
             {
                 feeRow(
                     title: L10n.liquidityFee,
-                    fees: liquidityFee
+                    fees: liquidityFee,
+                    identifier: .liquidityFee
                 )
             }
             
@@ -97,24 +102,28 @@ struct SwapSettingsView: View {
     private func feeRow(
         title: String,
         fee: SwapFeeInfo?,
-        canBePaidByKeyApp: Bool
+        canBePaidByKeyApp: Bool,
+        identifier: RowIdentifier?
     ) -> some View {
         commonRow(
             title: title,
             subtitle: fee?.amountDescription,
             subtitleColor: fee?.shouldHighlightAmountDescription == true ? Asset.Colors.mint.color: Asset.Colors.mountain.color,
-            trailingSubtitle: fee?.amountInFiatDescription
+            trailingSubtitle: fee?.amountInFiatDescription,
+            identifier: identifier
         )
     }
     
     private func feeRow(
         title: String,
-        fees: [SwapFeeInfo]
+        fees: [SwapFeeInfo],
+        identifier: RowIdentifier?
     ) -> some View {
         commonRow(
             title: title,
             subtitle: fees.compactMap(\.amountDescription).joined(separator: ", "),
-            trailingSubtitle: "≈ " + fees.compactMap(\.amountInFiat).reduce(0.0, +).fiatAmountFormattedString()
+            trailingSubtitle: "≈ " + fees.compactMap(\.amountInFiat).reduce(0.0, +).fiatAmountFormattedString(),
+            identifier: identifier
         )
     }
     
@@ -127,7 +136,8 @@ struct SwapSettingsView: View {
             .resizable()
             .foregroundColor(Color(Asset.Colors.mountain.color))
             .frame(width: 20, height: 20)
-            .castToAnyView()
+            .castToAnyView(),
+        identifier: RowIdentifier?
     ) -> some View {
         HStack(alignment: .center, spacing: 10) {
             VStack(alignment: .leading, spacing: 4) {
@@ -149,8 +159,8 @@ struct SwapSettingsView: View {
             
             trailingView
                 .onTapGesture {
-//                    guard let activeInfoRow = activeInfoRow else { return }
-//                    viewModel.rowClicked(type: activeInfoRow)
+                    guard let identifier else { return }
+                    viewModel.rowClicked(identifier: identifier)
                 }
         }
         .frame(maxWidth: .infinity)
@@ -302,8 +312,10 @@ struct SwapSettingsView_Previews: PreviewProvider {
     }
 }
 
+// MARK: - Row idenfifier
+
 extension SwapSettingsView {
-    enum ActiveInfoRow {
+    enum RowIdentifier: Equatable {
         case route
         case networkFee
         case accountCreationFee

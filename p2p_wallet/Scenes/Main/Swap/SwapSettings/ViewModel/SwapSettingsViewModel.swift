@@ -127,39 +127,39 @@ final class SwapSettingsViewModel: BaseViewModel, ObservableObject {
         slippageWasSetUp = true
     }
     
-//    func rowClicked(type: SwapSettingsView.ActiveInfoRow) {
-//        let fees: [SwapSettingsInfoViewModel.Fee]
-//        if type == .liquidityFee {
-//            // TODO: For Artem
-//            fees = [
-//                SwapSettingsInfoViewModel.Fee(
-//                    title: "Provider with really looong name Liquidity fee 0.04%",
-//                    subtitle: "0.12 TokenA",
-//                    amount: "≈0.03 USD"
-//                ),
-//                SwapSettingsInfoViewModel.Fee(
-//                    title: "Provider with really looong name Liquidity fee 0.04%",
-//                    subtitle: "0.12 TokenA",
-//                    amount: "≈0.03 USD"
-//                ),
-//                SwapSettingsInfoViewModel.Fee(
-//                    title: "Provider with really looong name Liquidity fee 0.04%",
-//                    subtitle: "0.12 TokenA",
-//                    amount: "≈0.03 USD"
-//                )
-//            ]
-//        } else {
-//            fees = []
-//        }
-//
-//        guard let strategy = type.settingsInfo(fees: fees) else { return }
-//        infoClickedSubject.send(strategy)
-//    }
+    func rowClicked(identifier: SwapSettingsView.RowIdentifier) {
+        let fees: [SwapSettingsInfoViewModel.Fee]
+        if identifier == .liquidityFee {
+            // TODO: For Artem
+            fees = [
+                SwapSettingsInfoViewModel.Fee(
+                    title: "Provider with really looong name Liquidity fee 0.04%",
+                    subtitle: "0.12 TokenA",
+                    amount: "≈0.03 USD"
+                ),
+                SwapSettingsInfoViewModel.Fee(
+                    title: "Provider with really looong name Liquidity fee 0.04%",
+                    subtitle: "0.12 TokenA",
+                    amount: "≈0.03 USD"
+                ),
+                SwapSettingsInfoViewModel.Fee(
+                    title: "Provider with really looong name Liquidity fee 0.04%",
+                    subtitle: "0.12 TokenA",
+                    amount: "≈0.03 USD"
+                )
+            ]
+        } else {
+            fees = []
+        }
+
+        guard let strategy = identifier.settingsInfo(fees: fees) else { return }
+        infoClickedSubject.send(strategy)
+    }
 }
 
 // MARK: - Mapping
 
-private extension SwapSettingsView.ActiveInfoRow {
+private extension SwapSettingsView.RowIdentifier {
     func settingsInfo(fees: [SwapSettingsInfoViewModel.Fee]) -> SwapSettingsInfoViewModel.Strategy? {
         switch self {
         case .route:
