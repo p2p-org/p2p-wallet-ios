@@ -107,18 +107,38 @@ final class SwapSettingsCoordinator: Coordinator<SwapSettingsCoordinatorResult> 
     // MARK: - Helpers
 
     func showChooseRoute() {
-        let routes = viewModel.info?.routes ?? []
         let view = SwapSelectRouteView(
-            routes: routes,
-            selectedIndex: routes.firstIndex(where: {$0.id == viewModel.info?.currentRoute.id})
-        ) { [unowned self] route in
+            statusPublisher: statusSubject
+                .map { status in
+                    switch status {
+                    case .loading:
+                        return .loading
+                    case .loaded(let info):
+                        return .loaded(
+                            routeInfos: info.routes,
+                            selectedIndex: info.routes
+                                .firstIndex(
+                                    where: {$0.id == info.currentRoute.id}
+                                )
+                        )
+                    }
+                }
+                .eraseToAnyPublisher()
+        ) { [unowned self] routeInfo in
             // FIXME: - Later
-//            viewModel.currentRoute = route
+//                    viewModel.currentRoute = route
             navigationController.presentedViewController?.dismiss(animated: true)
         }
         
         let viewController = UIBottomSheetHostingController(rootView: view)
         viewController.view.layer.cornerRadius = 20
         navigationController.present(viewController, interactiveDismissalType: .standard)
+        
+        statusSubject
+            .receive(on: RunLoop.main)
+            .sink { [weak viewController] _ in
+                viewController?.updatePresentationLayout(animated: true)
+            }
+            .store(in: &subscriptions)
     }
 }
