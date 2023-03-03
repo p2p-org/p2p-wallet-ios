@@ -1263,3 +1263,8 @@ You can try again, but your new transaction will be subject to the current rates
 "Estimated fees" = "Ориентировочные сборы";
 "Minimum received" = "Минимум получен";
 "Best price" = "Лучшая цена";
+"The minimum amount you will receive. If the price slips any further, your transaction will revert." = "Минимальная сумма, которую вы получите.  Если цена еще больше упадет, ваша транзакция будет отменена.";
+"When you trade the token for the first time, Solana charges a one-time fee for creating an account." = "Когда вы торгуете токеном в первый раз, Solana взимает единовременную плату за создание учетной записи.";
+"With Key App, all transactions you make on the Solana network are free" = "С приложением Key все транзакции, которые вы совершаете в сети Solana, бесплатны.";
+"Okay" = "Хорошо";
+"A fee paid to the liquidity providers" = "Комиссия, выплачиваемая поставщикам ликвидности";

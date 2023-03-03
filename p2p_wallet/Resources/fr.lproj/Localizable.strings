@@ -1265,3 +1265,8 @@ You can try again, but your new transaction will be subject to the current rates
 "Estimated fees" = "Frais Estimés";
 "Minimum received" = "Minimum reçu";
 "Best price" = "Meilleur prix";
+"The minimum amount you will receive. If the price slips any further, your transaction will revert." = "Le montant minimum que vous recevrez.  Si le prix glisse davantage, votre transaction sera annulée.";
+"When you trade the token for the first time, Solana charges a one-time fee for creating an account." = "Lorsque vous échangez le jeton pour la première fois, Solana facture des frais uniques pour la création d'un compte.";
+"With Key App, all transactions you make on the Solana network are free" = "Avec Key App, toutes les transactions que vous effectuez sur le réseau Solana sont gratuites";
+"Okay" = "D'accord";
+"A fee paid to the liquidity providers" = "Une commission versée aux apporteurs de liquidité";
