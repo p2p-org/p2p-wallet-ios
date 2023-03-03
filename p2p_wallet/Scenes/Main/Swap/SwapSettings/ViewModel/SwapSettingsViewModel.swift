@@ -21,23 +21,42 @@ final class SwapSettingsViewModel: BaseViewModel, ObservableObject {
         infoClickedSubject.eraseToAnyPublisher()
     }
     
-    // MARK: - Properties
+    // MARK: - Nested type
 
-    @Published var routes: [SwapSettingsRouteInfo]
-    @Published var currentRoute: SwapSettingsRouteInfo
-    
-    @Published var networkFee: SwapSettingsFeeInfo?
-    @Published var accountCreationFee: SwapSettingsFeeInfo?
-    @Published var liquidityFee: [SwapSettingsFeeInfo] = []
-    
-    var estimatedFees: String {
-        (liquidityFee + [networkFee, accountCreationFee].compactMap {$0})
-            .compactMap(\.amountInFiat)
-            .reduce(0.0, +)
-            .formattedFiat()
+    struct Info: Equatable {
+        let routes: [SwapSettingsRouteInfo]
+        var currentRoute: SwapSettingsRouteInfo
+        let networkFee: SwapFeeInfo
+        let accountCreationFee: SwapFeeInfo
+        let liquidityFee: [SwapFeeInfo]
+        let minimumReceived: SwapTokenAmountInfo?
+        
+        var estimatedFees: String {
+            "≈ " + (liquidityFee + [networkFee, accountCreationFee].compactMap {$0})
+                .compactMap(\.amountInFiat)
+                .reduce(0.0, +)
+                .formattedFiat()
+        }
     }
 
-    @Published var minimumReceived: SwapSettingsTokenAmountInfo?
+    enum Status: Equatable {
+        case loading
+        case loaded(Info)
+    }
+    
+    
+    // MARK: - Properties
+
+    @Published var status: Status
+
+    var info: Info? {
+        switch status {
+        case .loading:
+            return nil
+        case .loaded(let info):
+            return info
+        }
+    }
 
     @Published var selectedIndex: Int = 0 {
         didSet {
@@ -86,28 +105,11 @@ final class SwapSettingsViewModel: BaseViewModel, ObservableObject {
     // MARK: - Init
 
     init(
-        routes: [SwapSettingsRouteInfo],
-        currentRoute: SwapSettingsRouteInfo,
-        networkFee: SwapSettingsFeeInfo? = nil,
-        accountCreationFee: SwapSettingsFeeInfo? = nil,
-        liquidityFee: [SwapSettingsFeeInfo] = [],
-        minimumReceived: SwapSettingsTokenAmountInfo? = nil,
-        selectedIndex: Int = 0,
-        slippage: Double,
-        failureSlippage: Bool = false,
-        slippageWasSetUp: Bool = false
+        status: Status,
+        slippage: Double
     ) {
-        self.routes = routes
-        self.currentRoute = currentRoute
-        self.networkFee = networkFee
-        self.accountCreationFee = accountCreationFee
-        self.liquidityFee = liquidityFee
-        self.minimumReceived = minimumReceived
-        self.selectedIndex = selectedIndex
+        self.status = status
         self.customSelected = false
-        self.failureSlippage = failureSlippage
-        self.slippageWasSetUp = slippageWasSetUp
-        
         super.init()
         setUpSlippage(slippage)
     }
@@ -125,34 +127,34 @@ final class SwapSettingsViewModel: BaseViewModel, ObservableObject {
         slippageWasSetUp = true
     }
     
-    func rowClicked(type: SwapSettingsView.ActiveInfoRow) {
-        let fees: [SwapSettingsInfoViewModel.Fee]
-        if type == .liquidityFee {
-            // TODO: For Artem
-            fees = [
-                SwapSettingsInfoViewModel.Fee(
-                    title: "Provider with really looong name Liquidity fee 0.04%",
-                    subtitle: "0.12 TokenA",
-                    amount: "≈0.03 USD"
-                ),
-                SwapSettingsInfoViewModel.Fee(
-                    title: "Provider with really looong name Liquidity fee 0.04%",
-                    subtitle: "0.12 TokenA",
-                    amount: "≈0.03 USD"
-                ),
-                SwapSettingsInfoViewModel.Fee(
-                    title: "Provider with really looong name Liquidity fee 0.04%",
-                    subtitle: "0.12 TokenA",
-                    amount: "≈0.03 USD"
-                )
-            ]
-        } else {
-            fees = []
-        }
-        
-        guard let strategy = type.settingsInfo(fees: fees) else { return }
-        infoClickedSubject.send(strategy)
-    }
+//    func rowClicked(type: SwapSettingsView.ActiveInfoRow) {
+//        let fees: [SwapSettingsInfoViewModel.Fee]
+//        if type == .liquidityFee {
+//            // TODO: For Artem
+//            fees = [
+//                SwapSettingsInfoViewModel.Fee(
+//                    title: "Provider with really looong name Liquidity fee 0.04%",
+//                    subtitle: "0.12 TokenA",
+//                    amount: "≈0.03 USD"
+//                ),
+//                SwapSettingsInfoViewModel.Fee(
+//                    title: "Provider with really looong name Liquidity fee 0.04%",
+//                    subtitle: "0.12 TokenA",
+//                    amount: "≈0.03 USD"
+//                ),
+//                SwapSettingsInfoViewModel.Fee(
+//                    title: "Provider with really looong name Liquidity fee 0.04%",
+//                    subtitle: "0.12 TokenA",
+//                    amount: "≈0.03 USD"
+//                )
+//            ]
+//        } else {
+//            fees = []
+//        }
+//
+//        guard let strategy = type.settingsInfo(fees: fees) else { return }
+//        infoClickedSubject.send(strategy)
+//    }
 }
 
 // MARK: - Mapping

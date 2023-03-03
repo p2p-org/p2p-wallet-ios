@@ -4,8 +4,8 @@ import SolanaSwift
 extension JupiterSwapBusinessLogic {
     static func changeSlippage(
         state: JupiterSwapState,
-        slippage: Int
+        slippageBps: Int
     ) -> JupiterSwapState {
-        state.copy(slippage: slippage)
+        state.copy(slippageBps: slippageBps)
     }
 }

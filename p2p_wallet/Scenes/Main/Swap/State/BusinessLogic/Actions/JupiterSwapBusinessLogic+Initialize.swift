@@ -38,7 +38,7 @@ extension JupiterSwapBusinessLogic {
                 toToken: tokens.toToken,
                 possibleToTokens: possibleToTokens,
                 priceInfo: priceInfo ?? .init(fromPrice: 0, toPrice: 0),
-                slippage: 50
+                slippageBps: 50
             )
         } catch {
             return .zero(status: .error(reason: .initializationFailed), routeMap: routeMap, swapTokens: swapTokens)
