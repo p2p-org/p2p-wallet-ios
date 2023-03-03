@@ -128,47 +128,31 @@ final class SwapSettingsViewModel: BaseViewModel, ObservableObject {
     }
     
     func rowClicked(identifier: SwapSettingsView.RowIdentifier) {
-        if identifier == .route {
-            selectRouteSubject.send()
-        } else {
-            let fees: [SwapSettingsInfoViewModel.Fee]
-            if identifier == .liquidityFee, let info {
-                fees = info.liquidityFee
-                    .map { lqFee in
-                        .init(
-                            title: L10n.liquidityFee(
-                                lqFee.tokenName ?? L10n.unknownToken,
-                                "\(lqFee.pct == nil ? L10n.unknown: "\(lqFee.pct!)")%"
-                            ),
-                            subtitle: lqFee.amount.tokenAmountFormattedString(symbol: lqFee.tokenSymbol ?? "UNKNOWN"),
-                            amount: lqFee.amountInFiatDescription
-                        )
-                    }
-            } else {
-                fees = []
-            }
-            
-            guard let strategy = identifier.settingsInfo(fees: fees) else { return }
-            infoClickedSubject.send(strategy)
+        switch identifier {
+        case .networkFee:
+            infoClickedSubject.send(.enjoyFreeTransaction)
+        case .accountCreationFee:
+            infoClickedSubject.send(.accountCreationFee)
+        case .liquidityFee:
+            guard let info else { return }
+            let fees = info.liquidityFee
+                .map { lqFee in
+                    SwapSettingsInfoViewModel.Fee(
+                        title: L10n.liquidityFee(
+                            lqFee.tokenName ?? L10n.unknownToken,
+                            "\(lqFee.pct == nil ? L10n.unknown: "\(lqFee.pct!)")%"
+                        ),
+                        subtitle: lqFee.amount.tokenAmountFormattedString(symbol: lqFee.tokenSymbol ?? "UNKNOWN"),
+                        amount: lqFee.amountInFiatDescription
+                    )
+                }
+            infoClickedSubject.send(.liquidityFee(fees: fees))
+        case .minimumReceived:
+            infoClickedSubject.send(.minimumReceived)
         }
     }
-}
-
-// MARK: - Mapping
-
-private extension SwapSettingsView.RowIdentifier {
-    func settingsInfo(fees: [SwapSettingsInfoViewModel.Fee]) -> SwapSettingsInfoViewModel.Strategy? {
-        switch self {
-        case .route:
-            return nil
-        case .networkFee:
-            return .enjoyFreeTransaction
-        case .accountCreationFee:
-            return .accountCreationFee
-        case .liquidityFee:
-            return .liquidityFee(fees: fees)
-        case .minimumReceived:
-            return .minimumReceived
-        }
+    
+    func routeClicked() {
+        selectRouteSubject.send()
     }
 }

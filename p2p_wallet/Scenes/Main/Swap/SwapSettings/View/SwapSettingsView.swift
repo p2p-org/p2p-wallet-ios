@@ -51,8 +51,12 @@ struct SwapSettingsView: View {
                     .padding(.vertical, (20-12)/2)
                     .padding(.horizontal, (20-7.41)/2)
                     .castToAnyView(),
-                identifier: .route
+                identifier: nil
             )
+            .contentShape(Rectangle())
+            .onTapGesture {
+                viewModel.routeClicked()
+            }
             
             // Network fee
             feeRow(
@@ -324,7 +328,6 @@ struct SwapSettingsView_Previews: PreviewProvider {
 
 extension SwapSettingsView {
     enum RowIdentifier: Equatable {
-        case route
         case networkFee
         case accountCreationFee
         case liquidityFee
