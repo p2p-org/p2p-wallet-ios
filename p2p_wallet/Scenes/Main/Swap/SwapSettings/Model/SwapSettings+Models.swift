@@ -15,15 +15,6 @@ struct SwapSettingsRouteInfo: Identifiable, Equatable {
     let tokensChain: String
 }
 
-struct SwapSettingsTokenAmountInfo: Equatable {
-    let amount: Double
-    let token: String?
-    
-    var amountDescription: String? {
-        amount.tokenAmountFormattedString(symbol: token ?? "")
-    }
-}
-
 struct SwapSettingsFeeInfo: Equatable {
     let amount: Double
     let token: String?
