@@ -21,11 +21,13 @@ struct SwapSettingsView: View {
                 fisrtSectionRows
             }
             
-            Section {
-                commonRow(
-                    title: L10n.minimumReceived,
-                    subtitle: viewModel.info?.minimumReceived?.amountDescription
-                )
+            if let minimumReceived = viewModel.info?.minimumReceived {
+                Section {
+                    commonRow(
+                        title: L10n.minimumReceived,
+                        subtitle: minimumReceived.amountDescription
+                    )
+                }
             }
             
             Section(header: Text(L10n.slippage)) {
