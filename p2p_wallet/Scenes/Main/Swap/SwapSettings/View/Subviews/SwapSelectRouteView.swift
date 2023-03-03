@@ -71,6 +71,7 @@ struct SwapSelectRouteView: View {
                     onTapDone(routes[selectedIndex])
                 }
                 .padding(.horizontal, 16)
+                .padding(.bottom, 20)
 
             // TextButtonView notwork with bottom sheet??
 //            TextButtonView(
