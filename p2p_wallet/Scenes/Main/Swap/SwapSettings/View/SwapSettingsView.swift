@@ -7,6 +7,7 @@
 
 import SwiftUI
 import KeyAppUI
+import SkeletonUI
 
 struct SwapSettingsView: View {
     @ObservedObject var viewModel: SwapSettingsViewModel
@@ -23,7 +24,7 @@ struct SwapSettingsView: View {
             Section {
                 commonRow(
                     title: L10n.minimumReceived,
-                    subtitle: viewModel.minimumReceived?.amountDescription
+                    subtitle: viewModel.info?.minimumReceived?.amountDescription
                 )
             }
             
@@ -40,8 +41,8 @@ struct SwapSettingsView: View {
             // Route
             commonRow(
                 title: L10n.swappingThrough,
-                subtitle: viewModel.currentRoute.tokensChain,
-                trailingSubtitle: viewModel.currentRoute.description,
+                subtitle: viewModel.info?.currentRoute.tokensChain,
+                trailingSubtitle: viewModel.info?.currentRoute.description,
                 trailingView: Image(uiImage: .nextArrow)
                     .resizable()
                     .frame(width: 7.41, height: 12)
@@ -57,21 +58,21 @@ struct SwapSettingsView: View {
             // Network fee
             feeRow(
                 title: L10n.networkFee,
-                fee: viewModel.networkFee,
+                fee: viewModel.info?.networkFee,
                 canBePaidByKeyApp: true
             )
             
             // Account creation fee
             feeRow(
                 title: L10n.accountCreationFee,
-                fee: viewModel.accountCreationFee,
+                fee: viewModel.info?.accountCreationFee,
                 canBePaidByKeyApp: false
             )
             
             // Liquidity fee
             feeRow(
                 title: L10n.liquidityFee,
-                fees: viewModel.liquidityFee
+                fees: viewModel.info?.liquidityFee ?? []
             )
             
             // Estimated fee
@@ -83,14 +84,15 @@ struct SwapSettingsView: View {
                 
                 Spacer()
                 
-                Text(viewModel.estimatedFees)
+                Text(viewModel.info?.estimatedFees)
                     .fontWeight(.semibold)
                     .apply(style: .text3)
                     .padding(.vertical, 10)
+                    .skeleton(with: viewModel.status == .loading, size: .init(width: 52, height: 16))
             }
                 .frame(maxWidth: .infinity)
         }
-            .listRowInsets(EdgeInsets(top: 14, leading: 20, bottom: 14, trailing: 20))
+            
     }
     
     private func feeRow(
@@ -128,13 +130,14 @@ struct SwapSettingsView: View {
             .frame(width: 20, height: 20)
             .castToAnyView()
     ) -> some View {
-        HStack(spacing: 10) {
+        HStack(alignment: .center, spacing: 10) {
             VStack(alignment: .leading, spacing: 4) {
                 Text(title)
                     .apply(style: .text3)
                 Text(subtitle)
                     .apply(style: .label1)
                     .foregroundColor(Color(subtitleColor))
+                    .skeleton(with: viewModel.status == .loading, size: .init(width: 100, height: 12))
             }
             
             Spacer()
@@ -143,10 +146,14 @@ struct SwapSettingsView: View {
                 .apply(style: .label1)
                 .foregroundColor(Color(Asset.Colors.mountain.color))
                 .layoutPriority(1)
+                .skeleton(with: viewModel.status == .loading, size: .init(width: 52, height: 16))
             
             trailingView
         }
         .frame(maxWidth: .infinity)
+        .listRowInsets(.init(top: 0, leading: 0, bottom: 0, trailing: 0))
+        .padding(.horizontal, 20)
+        .padding(.vertical, 14)
     }
     
     // MARK: - Slippage section
@@ -220,64 +227,74 @@ struct SwapSettingsView: View {
 }
 
 struct SwapSettingsView_Previews: PreviewProvider {
+    static let viewModel = SwapSettingsViewModel(
+        status: .loading,
+        slippage: 0.5
+    )
     static var previews: some View {
-        SwapSettingsView(
-            viewModel: .init(
-                routes: [
-                    .init(
-                        id: "1",
+        SwapSettingsView(viewModel: viewModel)
+        .onAppear {
+            DispatchQueue.main.asyncAfter(deadline: .now() + .seconds(2)) {
+                let info = SwapSettingsViewModel.Info(
+                    routes: [
+                        .init(
+                            id: "1",
+                            name: "Raydium",
+                            description: "Best price",
+                            tokensChain: "SOL→CLMM→USDC→CRAY"
+                        ),
+                        .init(
+                            name: "Raydium 95% + Orca 5%",
+                            description: "-0.0006 TokenB",
+                            tokensChain: "SOL→CLMM→USDC→CRAY"
+                        ),
+                        .init(
+                            name: "Raydium 95% + Orca 5%",
+                            description: "-0.0006 TokenB",
+                            tokensChain: "SOL→CLMM→USDC→CRAY"
+                        )
+                    ],
+                    currentRoute: .init(
                         name: "Raydium",
                         description: "Best price",
                         tokensChain: "SOL→CLMM→USDC→CRAY"
                     ),
-                    .init(
-                        name: "Raydium 95% + Orca 5%",
-                        description: "-0.0006 TokenB",
-                        tokensChain: "SOL→CLMM→USDC→CRAY"
+                    networkFee: .init(
+                        amount: 0,
+                        token: nil,
+                        amountInFiat: nil,
+                        canBePaidByKeyApp: true
                     ),
-                    .init(
-                        name: "Raydium 95% + Orca 5%",
-                        description: "-0.0006 TokenB",
-                        tokensChain: "SOL→CLMM→USDC→CRAY"
-                    )
-                ],
-                currentRoute: .init(
-                    name: "Raydium",
-                    description: "Best price",
-                    tokensChain: "SOL→CLMM→USDC→CRAY"
-                ),
-                networkFee: .init(
-                    amount: 0,
-                    token: nil,
-                    amountInFiat: nil,
-                    canBePaidByKeyApp: true
-                ),
-                accountCreationFee: .init(
-                    amount: 0.8,
-                    token: "Token A",
-                    amountInFiat: 6.1,
-                    canBePaidByKeyApp: false
-                ),
-                liquidityFee: [
-                    .init(
-                        amount: 0.991,
-                        token: "TokenC",
-                        amountInFiat: 0.05,
+                    accountCreationFee: .init(
+                        amount: 0.8,
+                        token: "Token A",
+                        amountInFiat: 6.1,
                         canBePaidByKeyApp: false
                     ),
-                    .init(
-                        amount: 0.991,
-                        token: "TokenD",
-                        amountInFiat: 0.05,
-                        canBePaidByKeyApp: false
+                    liquidityFee: [
+                        .init(
+                            amount: 0.991,
+                            token: "TokenC",
+                            amountInFiat: 0.05,
+                            canBePaidByKeyApp: false
+                        ),
+                        .init(
+                            amount: 0.991,
+                            token: "TokenD",
+                            amountInFiat: 0.05,
+                            canBePaidByKeyApp: false
+                        )
+                    ],
+                    minimumReceived: .init(
+                        amount: 0.91,
+                        token: "TokenB"
                     )
-                ],
-                minimumReceived: .init(
-                    amount: 0.91,
-                    token: "TokenB"
-                ),
-                slippage: 0.5
-            )
-        )
+                )
+
+                viewModel.status = .loaded(
+                    info
+                )
+            }
+        }
     }
 }

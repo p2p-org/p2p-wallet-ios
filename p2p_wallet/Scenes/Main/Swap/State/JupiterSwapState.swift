@@ -155,4 +155,10 @@ struct JupiterSwapState: Equatable {
             priceImpact: priceImpact ?? nil
         )
     }
+    
+    // MARK: - Getters
+
+    var bestOutAmount: UInt64 {
+        routes.map(\.outAmount).compactMap(UInt64.init).max() ?? 0
+    }
 }

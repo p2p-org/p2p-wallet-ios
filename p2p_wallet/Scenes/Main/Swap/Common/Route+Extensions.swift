@@ -30,13 +30,19 @@ extension Route {
         toSymbols(tokensList: tokensList)?.compactMap {$0}.joined(separator: " -> ") ?? ""
     }
     
-    func bestPriceDescription(bestPrice: UInt64?, tokenB: Token?) -> String? {
-        guard let bestPrice, let myPrices = UInt64(outAmount) else { return nil }
-        return myPrices >= bestPrice ?
-            L10n.bestPrice:
-            "-" + (bestPrice-myPrices)
-                .convertToBalance(decimals: tokenB?.decimals ?? 0)
-                .tokenAmountFormattedString(symbol: tokenB?.symbol ?? "")
+    func priceDescription(
+        bestOutAmount: UInt64,
+        toTokenDecimals: Decimals,
+        toTokenSymbol: String
+    ) -> String? {
+        guard let myOutAmount = UInt64(outAmount) else { return nil }
+        if myOutAmount >= bestOutAmount {
+            return L10n.bestPrice
+        } else {
+            return "-" + (bestOutAmount-myOutAmount)
+                .convertToBalance(decimals: toTokenDecimals)
+                .tokenAmountFormattedString(symbol: toTokenSymbol)
+        }
     }
 }
 

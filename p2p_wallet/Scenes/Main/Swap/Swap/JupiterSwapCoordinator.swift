@@ -72,16 +72,53 @@ final class JupiterSwapCoordinator: Coordinator<Void> {
     }
     
     @objc private func receiptButtonPressed() {
-        guard let route = viewModel.currentState.route else {
-            return
-        }
+        // create coordinator
         let settingsCoordinator = SwapSettingsCoordinator(
             navigationController: navigationController,
-            slippage: Double(viewModel.currentState.slippage) / 100,
-            routes: viewModel.currentState.routes,
-            currentRoute: route,
-            swapTokens: viewModel.currentState.swapTokens
+            slippage: Double(viewModel.currentState.slippage) / 100
         )
+        
+        // observe stateMachine status
+        viewModel.stateMachine.statePublisher
+            .map { state -> SwapSettingsViewModel.Status in
+                // assert route
+                guard let route = state.route else {
+                    return .loading
+                }
+
+                switch state.status {
+                case .ready:
+                    return .loaded(
+                        .init(
+                            routes: state.routes.map {.init(
+                                id: $0.id,
+                                name: $0.name,
+                                description: $0.priceDescription(bestOutAmount: state.bestOutAmount, toTokenDecimals: state.toToken.token.decimals, toTokenSymbol: state.toToken.token.symbol) ?? "",
+                                tokensChain: $0.chainDescription(tokensList: state.swapTokens.map(\.token))
+                            )},
+                            currentRoute: .init(
+                                id: route.id,
+                                name: route.name,
+                                description: route.priceDescription(bestOutAmount: state.bestOutAmount, toTokenDecimals: state.toToken.token.decimals, toTokenSymbol: state.toToken.token.symbol) ?? "",
+                                tokensChain: route.chainDescription(tokensList: state.swapTokens.map(\.token))
+                            ),
+                            networkFee: .init(amount: 0, token: nil, amountInFiat: nil, canBePaidByKeyApp: true),
+                            accountCreationFee: .init(amount: 0, token: nil, amountInFiat: nil, canBePaidByKeyApp: true),
+                            liquidityFee: [],
+                            minimumReceived: .init(amount: 0, token: nil)
+                        )
+                    )
+                default:
+                    return .loading
+                }
+            }
+            .receive(on: DispatchQueue.main)
+            .sink { [weak settingsCoordinator] status in
+                settingsCoordinator?.statusSubject.send(status)
+            }
+            .store(in: &subscriptions)
+        
+        // coordinate
         coordinate(to: settingsCoordinator)
             .sink(receiveValue: { [weak viewModel] result in
                 switch result {
@@ -89,7 +126,12 @@ final class JupiterSwapCoordinator: Coordinator<Void> {
                     Task { [weak viewModel] in
                         await viewModel?.stateMachine.accept(action: .changeSlippage(slippage))
                     }
-                case let .selectedRoute(route):
+                case let .selectedRoute(routeInfo):
+                    guard let route = viewModel?.currentState.routes.first(where: {$0.id == routeInfo.id}),
+                          route.id != viewModel?.currentState.route?.id
+                    else {
+                        return
+                    }
                     Task { [weak viewModel] in
                         await viewModel?.stateMachine.accept(action: .chooseRoute(route))
                     }

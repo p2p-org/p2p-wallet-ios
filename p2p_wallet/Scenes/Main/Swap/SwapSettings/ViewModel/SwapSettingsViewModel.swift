@@ -13,24 +13,42 @@ private extension Double {
 }
 
 final class SwapSettingsViewModel: BaseViewModel, ObservableObject {
+    // MARK: - Nested type
+
+    struct Info: Equatable {
+        let routes: [SwapSettingsRouteInfo]
+        var currentRoute: SwapSettingsRouteInfo
+        let networkFee: SwapSettingsFeeInfo
+        let accountCreationFee: SwapSettingsFeeInfo
+        let liquidityFee: [SwapSettingsFeeInfo]
+        let minimumReceived: SwapSettingsTokenAmountInfo?
+        
+        var estimatedFees: String {
+            (liquidityFee + [networkFee, accountCreationFee].compactMap {$0})
+                .compactMap(\.amountInFiat)
+                .reduce(0.0, +)
+                .formattedFiat()
+        }
+    }
+
+    enum Status: Equatable {
+        case loading
+        case loaded(Info)
+    }
+    
     
     // MARK: - Properties
 
-    @Published var routes: [SwapSettingsRouteInfo]
-    @Published var currentRoute: SwapSettingsRouteInfo
-    
-    @Published var networkFee: SwapSettingsFeeInfo?
-    @Published var accountCreationFee: SwapSettingsFeeInfo?
-    @Published var liquidityFee: [SwapSettingsFeeInfo] = []
-    
-    var estimatedFees: String {
-        (liquidityFee + [networkFee, accountCreationFee].compactMap {$0})
-            .compactMap(\.amountInFiat)
-            .reduce(0.0, +)
-            .formattedFiat()
-    }
+    @Published var status: Status
 
-    @Published var minimumReceived: SwapSettingsTokenAmountInfo?
+    var info: Info? {
+        switch status {
+        case .loading:
+            return nil
+        case .loaded(let info):
+            return info
+        }
+    }
 
     @Published var selectedIndex: Int = 0 {
         didSet {
@@ -65,28 +83,11 @@ final class SwapSettingsViewModel: BaseViewModel, ObservableObject {
     // MARK: - Initializer
 
     init(
-        routes: [SwapSettingsRouteInfo],
-        currentRoute: SwapSettingsRouteInfo,
-        networkFee: SwapSettingsFeeInfo? = nil,
-        accountCreationFee: SwapSettingsFeeInfo? = nil,
-        liquidityFee: [SwapSettingsFeeInfo] = [],
-        minimumReceived: SwapSettingsTokenAmountInfo? = nil,
-        selectedIndex: Int = 0,
-        slippage: Double,
-        failureSlippage: Bool = false,
-        slippageWasSetUp: Bool = false
+        status: Status,
+        slippage: Double
     ) {
-        self.routes = routes
-        self.currentRoute = currentRoute
-        self.networkFee = networkFee
-        self.accountCreationFee = accountCreationFee
-        self.liquidityFee = liquidityFee
-        self.minimumReceived = minimumReceived
-        self.selectedIndex = selectedIndex
+        self.status = status
         self.customSelected = false
-        self.failureSlippage = failureSlippage
-        self.slippageWasSetUp = slippageWasSetUp
-        
         super.init()
         setUpSlippage(slippage)
     }
