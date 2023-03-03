@@ -52,6 +52,6 @@ extension Route {
     }
     
     var name: String {
-        marketInfos.map(\.label).joined(separator: " + ")
+        marketInfos.map(\.label).joined(separator: " x ")
     }
 }
