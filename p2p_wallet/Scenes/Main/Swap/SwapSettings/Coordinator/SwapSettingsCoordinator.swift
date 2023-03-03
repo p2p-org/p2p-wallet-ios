@@ -59,6 +59,12 @@ final class SwapSettingsCoordinator: Coordinator<SwapSettingsCoordinatorResult> 
             }
             .store(in: &subscriptions)
         
+        viewModel.infoClicked
+            .sink(receiveValue: { [unowned self] strategy in
+                presentSettingsInfo(strategy: strategy)
+            })
+            .store(in: &subscriptions)
+        
         // observe changes
         viewModel.$slippage
             .compactMap { [weak viewModel] _ -> Double? in
@@ -99,12 +105,6 @@ final class SwapSettingsCoordinator: Coordinator<SwapSettingsCoordinatorResult> 
         viewController.deallocatedPublisher()
             .sink(receiveValue: { [weak self] in
                 self?.result.send(completion: .finished)
-            })
-            .store(in: &subscriptions)
-
-        viewModel.infoClicked
-            .sink(receiveValue: { [unowned self] strategy in
-                presentSettingsInfo(strategy: strategy)
             })
             .store(in: &subscriptions)
         
