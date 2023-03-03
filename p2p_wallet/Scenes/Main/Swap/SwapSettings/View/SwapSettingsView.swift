@@ -88,6 +88,7 @@ struct SwapSettingsView: View {
                     .fontWeight(.semibold)
                     .apply(style: .text3)
                     .padding(.vertical, 10)
+                    .skeleton(with: viewModel.status == .loading, size: .init(width: 52, height: 16))
             }
                 .frame(maxWidth: .infinity)
         }
@@ -123,7 +124,6 @@ struct SwapSettingsView: View {
         subtitle: String?,
         subtitleColor: UIColor = Asset.Colors.mountain.color,
         trailingSubtitle: String? = nil,
-        isLoading: Bool = true,
         trailingView: AnyView = Image(uiImage: .infoStraight)
             .resizable()
             .foregroundColor(Color(Asset.Colors.mountain.color))
@@ -137,7 +137,7 @@ struct SwapSettingsView: View {
                 Text(subtitle)
                     .apply(style: .label1)
                     .foregroundColor(Color(subtitleColor))
-                    .skeleton(with: isLoading, size: .init(width: 100, height: 12))
+                    .skeleton(with: viewModel.status == .loading, size: .init(width: 100, height: 12))
             }
             
             Spacer()
@@ -146,7 +146,7 @@ struct SwapSettingsView: View {
                 .apply(style: .label1)
                 .foregroundColor(Color(Asset.Colors.mountain.color))
                 .layoutPriority(1)
-                .skeleton(with: isLoading, size: .init(width: 52, height: 16))
+                .skeleton(with: viewModel.status == .loading, size: .init(width: 52, height: 16))
             
             trailingView
         }
@@ -234,67 +234,67 @@ struct SwapSettingsView_Previews: PreviewProvider {
     static var previews: some View {
         SwapSettingsView(viewModel: viewModel)
         .onAppear {
-//            DispatchQueue.main.asyncAfter(deadline: .now() + .milliseconds(500)) {
-//                let info = SwapSettingsViewModel.Info(
-//                    routes: [
-//                        .init(
-//                            id: "1",
-//                            name: "Raydium",
-//                            description: "Best price",
-//                            tokensChain: "SOL→CLMM→USDC→CRAY"
-//                        ),
-//                        .init(
-//                            name: "Raydium 95% + Orca 5%",
-//                            description: "-0.0006 TokenB",
-//                            tokensChain: "SOL→CLMM→USDC→CRAY"
-//                        ),
-//                        .init(
-//                            name: "Raydium 95% + Orca 5%",
-//                            description: "-0.0006 TokenB",
-//                            tokensChain: "SOL→CLMM→USDC→CRAY"
-//                        )
-//                    ],
-//                    currentRoute: .init(
-//                        name: "Raydium",
-//                        description: "Best price",
-//                        tokensChain: "SOL→CLMM→USDC→CRAY"
-//                    ),
-//                    networkFee: .init(
-//                        amount: 0,
-//                        token: nil,
-//                        amountInFiat: nil,
-//                        canBePaidByKeyApp: true
-//                    ),
-//                    accountCreationFee: .init(
-//                        amount: 0.8,
-//                        token: "Token A",
-//                        amountInFiat: 6.1,
-//                        canBePaidByKeyApp: false
-//                    ),
-//                    liquidityFee: [
-//                        .init(
-//                            amount: 0.991,
-//                            token: "TokenC",
-//                            amountInFiat: 0.05,
-//                            canBePaidByKeyApp: false
-//                        ),
-//                        .init(
-//                            amount: 0.991,
-//                            token: "TokenD",
-//                            amountInFiat: 0.05,
-//                            canBePaidByKeyApp: false
-//                        )
-//                    ],
-//                    minimumReceived: .init(
-//                        amount: 0.91,
-//                        token: "TokenB"
-//                    )
-//                )
-//
-//                viewModel.status = .loaded(
-//                    info
-//                )
-//            }
+            DispatchQueue.main.asyncAfter(deadline: .now() + .seconds(2)) {
+                let info = SwapSettingsViewModel.Info(
+                    routes: [
+                        .init(
+                            id: "1",
+                            name: "Raydium",
+                            description: "Best price",
+                            tokensChain: "SOL→CLMM→USDC→CRAY"
+                        ),
+                        .init(
+                            name: "Raydium 95% + Orca 5%",
+                            description: "-0.0006 TokenB",
+                            tokensChain: "SOL→CLMM→USDC→CRAY"
+                        ),
+                        .init(
+                            name: "Raydium 95% + Orca 5%",
+                            description: "-0.0006 TokenB",
+                            tokensChain: "SOL→CLMM→USDC→CRAY"
+                        )
+                    ],
+                    currentRoute: .init(
+                        name: "Raydium",
+                        description: "Best price",
+                        tokensChain: "SOL→CLMM→USDC→CRAY"
+                    ),
+                    networkFee: .init(
+                        amount: 0,
+                        token: nil,
+                        amountInFiat: nil,
+                        canBePaidByKeyApp: true
+                    ),
+                    accountCreationFee: .init(
+                        amount: 0.8,
+                        token: "Token A",
+                        amountInFiat: 6.1,
+                        canBePaidByKeyApp: false
+                    ),
+                    liquidityFee: [
+                        .init(
+                            amount: 0.991,
+                            token: "TokenC",
+                            amountInFiat: 0.05,
+                            canBePaidByKeyApp: false
+                        ),
+                        .init(
+                            amount: 0.991,
+                            token: "TokenD",
+                            amountInFiat: 0.05,
+                            canBePaidByKeyApp: false
+                        )
+                    ],
+                    minimumReceived: .init(
+                        amount: 0.91,
+                        token: "TokenB"
+                    )
+                )
+
+                viewModel.status = .loaded(
+                    info
+                )
+            }
         }
     }
 }
