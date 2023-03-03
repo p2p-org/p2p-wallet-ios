@@ -21,11 +21,13 @@ struct SwapSettingsView: View {
                 fisrtSectionRows
             }
             
-            Section {
-                commonRow(
-                    title: L10n.minimumReceived,
-                    subtitle: viewModel.info?.minimumReceived?.amountDescription
-                )
+            if let minimumReceived = viewModel.info?.minimumReceived {
+                Section {
+                    commonRow(
+                        title: L10n.minimumReceived,
+                        subtitle: minimumReceived.amountDescription
+                    )
+                }
             }
             
             Section(header: Text(L10n.slippage)) {
@@ -70,10 +72,14 @@ struct SwapSettingsView: View {
             )
             
             // Liquidity fee
-            feeRow(
-                title: L10n.liquidityFee,
-                fees: viewModel.info?.liquidityFee ?? []
-            )
+            if let liquidityFee = viewModel.info?.liquidityFee,
+               !liquidityFee.isEmpty
+            {
+                feeRow(
+                    title: L10n.liquidityFee,
+                    fees: liquidityFee
+                )
+            }
             
             // Estimated fee
             HStack {
@@ -97,7 +103,7 @@ struct SwapSettingsView: View {
     
     private func feeRow(
         title: String,
-        fee: SwapSettingsFeeInfo?,
+        fee: SwapFeeInfo?,
         canBePaidByKeyApp: Bool
     ) -> some View {
         commonRow(
@@ -110,7 +116,7 @@ struct SwapSettingsView: View {
     
     private func feeRow(
         title: String,
-        fees: [SwapSettingsFeeInfo]
+        fees: [SwapFeeInfo]
     ) -> some View {
         commonRow(
             title: title,

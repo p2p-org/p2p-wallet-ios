@@ -23,7 +23,7 @@ enum JupiterSwapBusinessLogic {
             newState = state.copy(status: .switching)
         case .chooseRoute:
             newState = state.copy(status: .loadingAmountTo)
-        case .changeSlippage:
+        case .changeSlippageBps:
             newState = state.copy(status: .loadingAmountTo)
         }
 
@@ -55,14 +55,12 @@ enum JupiterSwapBusinessLogic {
             })
 
         case let .changeFromToken(swapToken):
-            guard swapToken != state.fromToken else { return state }
             newState = await executeAction(state, services, action: {
                 await changeFromToken(state: state, services: services, token: swapToken)
             }, chains: {
                 [calculateAmounts]
             })
         case let .changeToToken(swapToken):
-            guard swapToken != state.fromToken else { return state }
             newState = await executeAction(state, services, action: {
                 await changeToToken(state: state, services: services, token: swapToken)
             }, chains: {
@@ -83,9 +81,9 @@ enum JupiterSwapBusinessLogic {
             }, chains: {
                 [calculateAmounts]
             })
-        case let .changeSlippage(slippage):
+        case let .changeSlippageBps(slippageBps):
             newState = await executeAction(state, services, action: {
-                changeSlippage(state: state, slippage: slippage)
+                changeSlippage(state: state, slippageBps: slippageBps)
             }, chains: {
                 [calculateAmounts]
             })
