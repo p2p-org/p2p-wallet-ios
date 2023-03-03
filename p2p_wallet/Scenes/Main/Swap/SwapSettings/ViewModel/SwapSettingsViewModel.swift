@@ -129,25 +129,18 @@ final class SwapSettingsViewModel: BaseViewModel, ObservableObject {
     
     func rowClicked(identifier: SwapSettingsView.RowIdentifier) {
         let fees: [SwapSettingsInfoViewModel.Fee]
-        if identifier == .liquidityFee {
-            // TODO: For Artem
-            fees = [
-                SwapSettingsInfoViewModel.Fee(
-                    title: "Provider with really looong name Liquidity fee 0.04%",
-                    subtitle: "0.12 TokenA",
-                    amount: "≈0.03 USD"
-                ),
-                SwapSettingsInfoViewModel.Fee(
-                    title: "Provider with really looong name Liquidity fee 0.04%",
-                    subtitle: "0.12 TokenA",
-                    amount: "≈0.03 USD"
-                ),
-                SwapSettingsInfoViewModel.Fee(
-                    title: "Provider with really looong name Liquidity fee 0.04%",
-                    subtitle: "0.12 TokenA",
-                    amount: "≈0.03 USD"
-                )
-            ]
+        if identifier == .liquidityFee, let info {
+            fees = info.liquidityFee
+                .map { lqFee in
+                    .init(
+                        title: L10n.liquidityFee(
+                            lqFee.tokenName ?? L10n.unknownToken,
+                            "\(lqFee.pct == nil ? L10n.unknown: "\(lqFee.pct!)")%"
+                        ),
+                        subtitle: lqFee.amount.tokenAmountFormattedString(symbol: lqFee.tokenSymbol ?? "UNKNOWN"),
+                        amount: lqFee.amountInFiatDescription
+                    )
+                }
         } else {
             fees = []
         }
