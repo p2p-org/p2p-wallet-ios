@@ -1,6 +1,7 @@
 import Combine
 import Resolver
 import KeyAppUI
+import AnalyticsManager
 
 final class SwapInputViewModel: BaseViewModel, ObservableObject {
 
@@ -28,7 +29,9 @@ final class SwapInputViewModel: BaseViewModel, ObservableObject {
     private var openKeyboardOnStart: Bool
     private var currentState: JupiterSwapState { stateMachine.currentState }
 
+    // MARK: - Dependencies
     @Injected private var notificationService: NotificationService
+    @Injected private var analyticsManager: AnalyticsManager
 
     init(stateMachine: JupiterSwapStateMachine, isFromToken: Bool, openKeyboardOnStart: Bool) {
         self.isFromToken = isFromToken
@@ -45,6 +48,7 @@ final class SwapInputViewModel: BaseViewModel, ObservableObject {
         allButtonPressed
             .sink { [unowned self] _ in
                 self.amount = self.balance
+                self.logAllClick()
             }
             .store(in: &subscriptions)
 
@@ -65,6 +69,7 @@ final class SwapInputViewModel: BaseViewModel, ObservableObject {
             .debounce(for: 0.3, scheduler: DispatchQueue.main)
             .sinkAsync { [weak self] value in
                 guard let self, self.isStateReady(status: self.currentState.status) else { return }
+                self.logChange(amount: value)
                 self.isAmountLoading = true && !self.isFromToken
                 if self.isFromToken {
                     let _ = await self.stateMachine.accept(action: .changeAmountFrom(value ?? 0))
@@ -92,6 +97,12 @@ final class SwapInputViewModel: BaseViewModel, ObservableObject {
             .sink { [unowned self] in
                 guard !self.isEditable else { return }
                 self.notificationService.showToast(title: "🤖", text: L10n.youCanEnterYouPayFieldOnly)
+            }
+            .store(in: &subscriptions)
+
+        changeTokenPressed
+            .sink { [weak self] _ in
+                self?.logChangeTokenClick()
             }
             .store(in: &subscriptions)
     }
@@ -151,6 +162,30 @@ private extension SwapInputViewModel {
         if openKeyboardOnStart, !isFirstResponder, isEditable {
             isFirstResponder = true
             openKeyboardOnStart = false
+        }
+    }
+}
+
+// MARK: - Analytics
+private extension SwapInputViewModel {
+    func logAllClick() {
+        analyticsManager.log(event: .swapChangingValueTokenAAll(tokenAValue: balance ?? 0))
+    }
+
+    func logChangeTokenClick() {
+        if isFromToken {
+            analyticsManager.log(event: .swapChangingTokenAClick(tokenAName: token.token.symbol))
+        } else {
+            analyticsManager.log(event: .swapChangingTokenBClick(tokenBName: token.token.symbol))
+        }
+    }
+
+    func logChange(amount: Double?) {
+        let value = amount ?? 0
+        if isFromToken {
+            analyticsManager.log(event: .swapChangingValueTokenA(tokenAName: token.token.symbol, tokenAValue: value))
+        } else {
+            analyticsManager.log(event: .swapChangingValueTokenB(tokenBName: token.token.symbol, tokenBValue: value))
         }
     }
 }

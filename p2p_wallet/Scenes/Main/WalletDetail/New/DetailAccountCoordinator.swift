@@ -156,7 +156,7 @@ class DetailAccountCoordinator: SmartCoordinator<DetailAccountCoordinatorResult>
             coordinate(
                 to: JupiterSwapCoordinator(
                     navigationController: rootViewController,
-                    params: JupiterSwapParameters(dismissAfterCompletion: true, openKeyboardOnStart: true)
+                    params: JupiterSwapParameters(dismissAfterCompletion: true, openKeyboardOnStart: true, source: .tapToken)
                 )
             )
                 .sink { [weak rootViewController] _ in
