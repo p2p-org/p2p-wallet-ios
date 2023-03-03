@@ -49,6 +49,9 @@ struct JupiterSwapState: Equatable {
     let route: Route?
     let routes: [Route]
     let priceImpact: SwapPriceImpact?
+    
+//    var networkFee: SwapTokenAmountInfo
+//    var accountCreationFee: SwapTokenAmountInfo
 
     init(
         status: Status,
