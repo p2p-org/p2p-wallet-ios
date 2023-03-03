@@ -14,5 +14,5 @@ enum JupiterSwapAction: Equatable {
     case updateUserWallets(userWallets: [Wallet])
     
     case chooseRoute(Route)
-    case changeSlippage(Int)
+    case changeSlippageBps(Int)
 }

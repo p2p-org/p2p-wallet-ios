@@ -7,6 +7,7 @@
 
 import SwiftUI
 import KeyAppUI
+import SkeletonUI
 
 struct SwapSettingsView: View {
     @ObservedObject var viewModel: SwapSettingsViewModel
@@ -19,13 +20,14 @@ struct SwapSettingsView: View {
             Section {
                 fisrtSectionRows
             }
-            Section {
-                commonRow(
-                    title: L10n.minimumReceived,
-                    subtitle: viewModel.minimumReceived?.amountDescription,
-                    activeInfoRow: .minimumReceived
-                )
-                .padding(.vertical, 14)
+            
+            if let minimumReceived = viewModel.info?.minimumReceived {
+                Section {
+                    commonRow(
+                        title: L10n.minimumReceived,
+                        subtitle: minimumReceived.amountDescription
+                    )
+                }
             }
             Section(header: Text(L10n.slippage)) {
                 slippageRows
@@ -40,9 +42,8 @@ struct SwapSettingsView: View {
             // Route
             commonRow(
                 title: L10n.swappingThrough,
-                subtitle: viewModel.currentRoute.tokensChain,
-                activeInfoRow: .route,
-                trailingSubtitle: viewModel.currentRoute.description,
+                subtitle: viewModel.info?.currentRoute.tokensChain,
+                trailingSubtitle: viewModel.info?.currentRoute.description,
                 trailingView: Image(uiImage: .nextArrow)
                     .resizable()
                     .frame(width: 7.41, height: 12)
@@ -50,32 +51,30 @@ struct SwapSettingsView: View {
                     .padding(.horizontal, (20-7.41)/2)
                     .castToAnyView()
             )
-            .padding(.vertical, 14)
             
             // Network fee
             feeRow(
                 title: L10n.networkFee,
-                fee: viewModel.networkFee,
-                canBePaidByKeyApp: true,
-                activeInfoRow: .networkFee
+                fee: viewModel.info?.networkFee,
+                canBePaidByKeyApp: true
             )
-            .padding(.vertical, 14)
             
             // Account creation fee
             feeRow(
                 title: L10n.accountCreationFee,
-                fee: viewModel.accountCreationFee,
-                canBePaidByKeyApp: false,
-                activeInfoRow: .accountCreationFee
+                fee: viewModel.info?.accountCreationFee,
+                canBePaidByKeyApp: false
             )
-            .padding(.vertical, 14)
             
             // Liquidity fee
-            feeRow(
-                title: L10n.liquidityFee,
-                fees: viewModel.liquidityFee
-            )
-            .padding(.vertical, 14)
+            if let liquidityFee = viewModel.info?.liquidityFee,
+               !liquidityFee.isEmpty
+            {
+                feeRow(
+                    title: L10n.liquidityFee,
+                    fees: liquidityFee
+                )
+            }
             
             // Estimated fee
             HStack {
@@ -85,25 +84,24 @@ struct SwapSettingsView: View {
                 
                 Spacer()
                 
-                Text(viewModel.estimatedFees)
+                Text(viewModel.info?.estimatedFees)
                     .fontWeight(.semibold)
                     .apply(style: .text3)
+                    .padding(.vertical, 10)
+                    .skeleton(with: viewModel.status == .loading, size: .init(width: 52, height: 16))
             }
             .frame(maxWidth: .infinity)
-            .padding(.vertical, 14)
         }
     }
     
     private func feeRow(
         title: String,
-        fee: SwapSettingsFeeInfo?,
-        canBePaidByKeyApp: Bool,
-        activeInfoRow: ActiveInfoRow?
+        fee: SwapFeeInfo?,
+        canBePaidByKeyApp: Bool
     ) -> some View {
         commonRow(
             title: title,
             subtitle: fee?.amountDescription,
-            activeInfoRow: activeInfoRow,
             subtitleColor: fee?.shouldHighlightAmountDescription == true ? Asset.Colors.mint.color: Asset.Colors.mountain.color,
             trailingSubtitle: fee?.amountInFiatDescription
         )
@@ -111,12 +109,11 @@ struct SwapSettingsView: View {
     
     private func feeRow(
         title: String,
-        fees: [SwapSettingsFeeInfo]
+        fees: [SwapFeeInfo]
     ) -> some View {
         commonRow(
             title: title,
             subtitle: fees.compactMap(\.amountDescription).joined(separator: ", "),
-            activeInfoRow: .liquidityFee,
             trailingSubtitle: "≈ " + fees.compactMap(\.amountInFiat).reduce(0.0, +).fiatAmountFormattedString()
         )
     }
@@ -124,7 +121,6 @@ struct SwapSettingsView: View {
     private func commonRow(
         title: String,
         subtitle: String?,
-        activeInfoRow: ActiveInfoRow?,
         subtitleColor: UIColor = Asset.Colors.mountain.color,
         trailingSubtitle: String? = nil,
         trailingView: AnyView = Image(uiImage: .infoStraight)
@@ -133,15 +129,14 @@ struct SwapSettingsView: View {
             .frame(width: 20, height: 20)
             .castToAnyView()
     ) -> some View {
-        HStack {
+        HStack(alignment: .center, spacing: 10) {
             VStack(alignment: .leading, spacing: 4) {
                 Text(title)
                     .apply(style: .text3)
-                if subtitle?.isEmpty == false {
-                    Text(subtitle)
-                        .apply(style: .label1)
-                        .foregroundColor(Color(subtitleColor))
-                }
+                Text(subtitle)
+                    .apply(style: .label1)
+                    .foregroundColor(Color(subtitleColor))
+                    .skeleton(with: viewModel.status == .loading, size: .init(width: 100, height: 12))
             }
             
             Spacer()
@@ -150,14 +145,18 @@ struct SwapSettingsView: View {
                 .apply(style: .label1)
                 .foregroundColor(Color(Asset.Colors.mountain.color))
                 .layoutPriority(1)
-                .padding(.trailing, 10)
+                .skeleton(with: viewModel.status == .loading, size: .init(width: 52, height: 16))
             
             trailingView
                 .onTapGesture {
-                    guard let activeInfoRow = activeInfoRow else { return }
-                    viewModel.rowClicked(type: activeInfoRow)
+//                    guard let activeInfoRow = activeInfoRow else { return }
+//                    viewModel.rowClicked(type: activeInfoRow)
                 }
         }
+        .frame(maxWidth: .infinity)
+        .listRowInsets(.init(top: 0, leading: 0, bottom: 0, trailing: 0))
+        .padding(.horizontal, 20)
+        .padding(.vertical, 14)
     }
     
     // MARK: - Slippage section
@@ -230,7 +229,78 @@ struct SwapSettingsView: View {
     }
 }
 
-// MARK: - ActiveInfoRow
+struct SwapSettingsView_Previews: PreviewProvider {
+    static let viewModel = SwapSettingsViewModel(
+        status: .loading,
+        slippage: 0.5
+    )
+    static var previews: some View {
+        SwapSettingsView(viewModel: viewModel)
+        .onAppear {
+            DispatchQueue.main.asyncAfter(deadline: .now() + .seconds(2)) {
+                let info = SwapSettingsViewModel.Info(
+                    routes: [
+                        .init(
+                            id: "1",
+                            name: "Raydium",
+                            description: "Best price",
+                            tokensChain: "SOL→CLMM→USDC→CRAY"
+                        ),
+                        .init(
+                            name: "Raydium 95% + Orca 5%",
+                            description: "-0.0006 TokenB",
+                            tokensChain: "SOL→CLMM→USDC→CRAY"
+                        ),
+                        .init(
+                            name: "Raydium 95% + Orca 5%",
+                            description: "-0.0006 TokenB",
+                            tokensChain: "SOL→CLMM→USDC→CRAY"
+                        )
+                    ],
+                    currentRoute: .init(
+                        name: "Raydium",
+                        description: "Best price",
+                        tokensChain: "SOL→CLMM→USDC→CRAY"
+                    ),
+                    networkFee: .init(
+                        amount: 0,
+                        token: nil,
+                        amountInFiat: nil,
+                        canBePaidByKeyApp: true
+                    ),
+                    accountCreationFee: .init(
+                        amount: 0.8,
+                        token: "Token A",
+                        amountInFiat: 6.1,
+                        canBePaidByKeyApp: false
+                    ),
+                    liquidityFee: [
+                        .init(
+                            amount: 0.991,
+                            token: "TokenC",
+                            amountInFiat: 0.05,
+                            canBePaidByKeyApp: false
+                        ),
+                        .init(
+                            amount: 0.991,
+                            token: "TokenD",
+                            amountInFiat: 0.05,
+                            canBePaidByKeyApp: false
+                        )
+                    ],
+                    minimumReceived: .init(
+                        amount: 0.91,
+                        token: "TokenB"
+                    )
+                )
+
+                viewModel.status = .loaded(
+                    info
+                )
+            }
+        }
+    }
+}
 
 extension SwapSettingsView {
     enum ActiveInfoRow {
