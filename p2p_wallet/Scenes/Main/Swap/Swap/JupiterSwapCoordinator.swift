@@ -75,51 +75,9 @@ final class JupiterSwapCoordinator: Coordinator<Void> {
         // create coordinator
         let settingsCoordinator = SwapSettingsCoordinator(
             navigationController: navigationController,
-            slippage: Double(viewModel.currentState.slippage) / 100
+            slippage: Double(viewModel.currentState.slippage) / 100,
+            swapStatePublisher: viewModel.stateMachine.statePublisher
         )
-        
-        // observe stateMachine status
-        viewModel.stateMachine.statePublisher
-            .map { state -> SwapSettingsViewModel.Status in
-                // assert route
-                guard let route = state.route else {
-                    return .loading
-                }
-
-                switch state.status {
-                case .ready:
-                    return .loaded(
-                        .init(
-                            routes: state.routes.map {.init(
-                                id: $0.id,
-                                name: $0.name,
-                                description: $0.priceDescription(bestOutAmount: state.bestOutAmount, toTokenDecimals: state.toToken.token.decimals, toTokenSymbol: state.toToken.token.symbol) ?? "",
-                                tokensChain: $0.chainDescription(tokensList: state.swapTokens.map(\.token))
-                            )},
-                            currentRoute: .init(
-                                id: route.id,
-                                name: route.name,
-                                description: route.priceDescription(bestOutAmount: state.bestOutAmount, toTokenDecimals: state.toToken.token.decimals, toTokenSymbol: state.toToken.token.symbol) ?? "",
-                                tokensChain: route.chainDescription(tokensList: state.swapTokens.map(\.token))
-                            ),
-                            networkFee: state.networkFee,
-                            accountCreationFee: state.accountCreationFee,
-                            liquidityFee: [],
-                            minimumReceived: .init(
-                                amount: 0,
-                                token: nil
-                            )
-                        )
-                    )
-                default:
-                    return .loading
-                }
-            }
-            .receive(on: DispatchQueue.main)
-            .sink { [weak settingsCoordinator] status in
-                settingsCoordinator?.statusSubject.send(status)
-            }
-            .store(in: &subscriptions)
         
         // coordinate
         coordinate(to: settingsCoordinator)

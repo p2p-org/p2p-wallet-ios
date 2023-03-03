@@ -17,26 +17,27 @@ enum SwapSettingsCoordinatorResult {
 }
 
 final class SwapSettingsCoordinator: Coordinator<SwapSettingsCoordinatorResult> {
-    
-    // MARK: - Public properties
 
-    let statusSubject = CurrentValueSubject<SwapSettingsViewModel.Status, Never>(.loading)
-    
-    // MARK: - Private properties
+    // MARK: - Properties
 
     private let navigationController: UINavigationController
     private let slippage: Double
     private var result = PassthroughSubject<SwapSettingsCoordinatorResult, Never>()
     private var viewModel: SwapSettingsViewModel!
+    private let statusSubject = CurrentValueSubject<SwapSettingsViewModel.Status, Never>(.loading)
 
     // MARK: - Initializer
 
     init(
         navigationController: UINavigationController,
-        slippage: Double
+        slippage: Double,
+        swapStatePublisher: AnyPublisher<JupiterSwapState, Never>
     ) {
         self.navigationController = navigationController
         self.slippage = slippage
+        
+        super.init()
+        bind(swapStatePublisher: swapStatePublisher)
     }
 
     override func start() -> AnyPublisher<SwapSettingsCoordinatorResult, Never> {
@@ -46,7 +47,7 @@ final class SwapSettingsCoordinator: Coordinator<SwapSettingsCoordinatorResult> 
             slippage: slippage
         )
         
-        // observe statusSubject
+        // observe swapStatePublisher
         statusSubject
             .assign(to: \.status, on: viewModel)
             .store(in: &subscriptions)
@@ -105,6 +106,50 @@ final class SwapSettingsCoordinator: Coordinator<SwapSettingsCoordinatorResult> 
     }
     
     // MARK: - Helpers
+    
+    private func bind(swapStatePublisher: AnyPublisher<JupiterSwapState, Never>) {
+        swapStatePublisher
+            .map { state -> SwapSettingsViewModel.Status in
+                // assert route
+                guard let route = state.route else {
+                    return .loading
+                }
+
+                switch state.status {
+                case .ready:
+                    return .loaded(
+                        .init(
+                            routes: state.routes.map {.init(
+                                id: $0.id,
+                                name: $0.name,
+                                description: $0.priceDescription(bestOutAmount: state.bestOutAmount, toTokenDecimals: state.toToken.token.decimals, toTokenSymbol: state.toToken.token.symbol) ?? "",
+                                tokensChain: $0.chainDescription(tokensList: state.swapTokens.map(\.token))
+                            )},
+                            currentRoute: .init(
+                                id: route.id,
+                                name: route.name,
+                                description: route.priceDescription(bestOutAmount: state.bestOutAmount, toTokenDecimals: state.toToken.token.decimals, toTokenSymbol: state.toToken.token.symbol) ?? "",
+                                tokensChain: route.chainDescription(tokensList: state.swapTokens.map(\.token))
+                            ),
+                            networkFee: state.networkFee,
+                            accountCreationFee: state.accountCreationFee,
+                            liquidityFee: [],
+                            minimumReceived: .init(
+                                amount: 0,
+                                token: nil
+                            )
+                        )
+                    )
+                default:
+                    return .loading
+                }
+            }
+            .receive(on: DispatchQueue.main)
+            .sink { [weak statusSubject] status in
+                statusSubject?.send(status)
+            }
+            .store(in: &subscriptions)
+    }
 
     func showChooseRoute() {
         let view = SwapSelectRouteView(
