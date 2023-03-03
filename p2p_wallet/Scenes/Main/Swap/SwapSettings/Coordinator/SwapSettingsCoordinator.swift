@@ -53,15 +53,9 @@ final class SwapSettingsCoordinator: Coordinator<SwapSettingsCoordinatorResult> 
             .store(in: &subscriptions)
         
         // navigation
-        viewModel.selectRoutePublisher
-            .sink { [unowned self] _ in
-                showChooseRoute()
-            }
-            .store(in: &subscriptions)
-        
-        viewModel.infoClicked
-            .sink(receiveValue: { [unowned self] strategy in
-                presentSettingsInfo(strategy: strategy)
+        viewModel.rowTapped
+            .sink(receiveValue: { [unowned self] rowIdentifier in
+                presentSettingsInfo(rowIdentifier: rowIdentifier)
             })
             .store(in: &subscriptions)
         
@@ -199,13 +193,47 @@ final class SwapSettingsCoordinator: Coordinator<SwapSettingsCoordinatorResult> 
             .store(in: &subscriptions)
     }
     
-    private func presentSettingsInfo(strategy: SwapSettingsInfoViewModel.Strategy) {
+    private func presentSettingsInfo(rowIdentifier: SwapSettingsView.RowIdentifier) {
+        // map row identifier to strategy
+        let strategy: SwapSettingsInfoViewModel.Strategy
+        switch rowIdentifier {
+        case .route:
+            // for route, there is a special case
+            showChooseRoute()
+            return
+        case .networkFee:
+            strategy = .enjoyFreeTransaction
+        case .accountCreationFee:
+            strategy = .accountCreationFee
+        case .liquidityFee:
+            guard let info = viewModel.info else { return }
+            let fees = info.liquidityFee
+                .map { lqFee in
+                    SwapSettingsInfoViewModel.Fee(
+                        title: L10n.liquidityFee(
+                            lqFee.tokenName ?? L10n.unknownToken,
+                            "\(lqFee.pct == nil ? L10n.unknown: "\(lqFee.pct!)")%"
+                        ),
+                        subtitle: lqFee.amount.tokenAmountFormattedString(symbol: lqFee.tokenSymbol ?? "UNKNOWN"),
+                        amount: lqFee.amountInFiatDescription
+                    )
+                }
+            strategy = .liquidityFee(fees: fees)
+        case .minimumReceived:
+            strategy = .minimumReceived
+        }
+        
+        // create viewModel
         let viewModel = SwapSettingsInfoViewModel(strategy: strategy)
         
+        // create view
         let view = SwapSettingsInfoView(viewModel: viewModel)
         
+        // create hosting controller
         let viewController = UIBottomSheetHostingController(rootView: view)
         viewController.view.layer.cornerRadius = 20
+        
+        // present bottomSheet
         navigationController.present(viewController, interactiveDismissalType: .standard)
     }
 }

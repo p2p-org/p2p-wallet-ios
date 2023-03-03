@@ -16,9 +16,9 @@ final class SwapSettingsViewModel: BaseViewModel, ObservableObject {
     
     // MARK: - Output
     
-    private let infoClickedSubject = PassthroughSubject<SwapSettingsInfoViewModel.Strategy, Never>()
-    var infoClicked: AnyPublisher<SwapSettingsInfoViewModel.Strategy, Never> {
-        infoClickedSubject.eraseToAnyPublisher()
+    private let rowTappedSubject = PassthroughSubject<SwapSettingsView.RowIdentifier, Never>()
+    var rowTapped: AnyPublisher<SwapSettingsView.RowIdentifier, Never> {
+        rowTappedSubject.eraseToAnyPublisher()
     }
     
     // MARK: - Nested type
@@ -95,11 +95,6 @@ final class SwapSettingsViewModel: BaseViewModel, ObservableObject {
         slippages[selectedIndex] ?? formattedSlippage
     }
     
-    private let selectRouteSubject = PassthroughSubject<Void, Never>()
-    var selectRoutePublisher: AnyPublisher<Void, Never> {
-        selectRouteSubject.eraseToAnyPublisher()
-    }
-    
     private var slippageWasSetUp = false
     
     // MARK: - Init
@@ -128,31 +123,6 @@ final class SwapSettingsViewModel: BaseViewModel, ObservableObject {
     }
     
     func rowClicked(identifier: SwapSettingsView.RowIdentifier) {
-        switch identifier {
-        case .networkFee:
-            infoClickedSubject.send(.enjoyFreeTransaction)
-        case .accountCreationFee:
-            infoClickedSubject.send(.accountCreationFee)
-        case .liquidityFee:
-            guard let info else { return }
-            let fees = info.liquidityFee
-                .map { lqFee in
-                    SwapSettingsInfoViewModel.Fee(
-                        title: L10n.liquidityFee(
-                            lqFee.tokenName ?? L10n.unknownToken,
-                            "\(lqFee.pct == nil ? L10n.unknown: "\(lqFee.pct!)")%"
-                        ),
-                        subtitle: lqFee.amount.tokenAmountFormattedString(symbol: lqFee.tokenSymbol ?? "UNKNOWN"),
-                        amount: lqFee.amountInFiatDescription
-                    )
-                }
-            infoClickedSubject.send(.liquidityFee(fees: fees))
-        case .minimumReceived:
-            infoClickedSubject.send(.minimumReceived)
-        }
-    }
-    
-    func routeClicked() {
-        selectRouteSubject.send()
+        rowTappedSubject.send(identifier)
     }
 }
