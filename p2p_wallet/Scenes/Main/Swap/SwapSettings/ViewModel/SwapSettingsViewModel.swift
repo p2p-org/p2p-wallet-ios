@@ -18,13 +18,13 @@ final class SwapSettingsViewModel: BaseViewModel, ObservableObject {
     struct Info: Equatable {
         let routes: [SwapSettingsRouteInfo]
         var currentRoute: SwapSettingsRouteInfo
-        let networkFee: SwapSettingsFeeInfo
-        let accountCreationFee: SwapSettingsFeeInfo
-        let liquidityFee: [SwapSettingsFeeInfo]
-        let minimumReceived: SwapSettingsTokenAmountInfo?
+        let networkFee: SwapFeeInfo
+        let accountCreationFee: SwapFeeInfo
+        let liquidityFee: [SwapFeeInfo]
+        let minimumReceived: SwapTokenAmountInfo?
         
         var estimatedFees: String {
-            (liquidityFee + [networkFee, accountCreationFee].compactMap {$0})
+            "≈ " + (liquidityFee + [networkFee, accountCreationFee].compactMap {$0})
                 .compactMap(\.amountInFiat)
                 .reduce(0.0, +)
                 .formattedFiat()
