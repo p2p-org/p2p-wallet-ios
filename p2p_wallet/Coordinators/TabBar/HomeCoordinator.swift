@@ -21,7 +21,7 @@ enum HomeNavigation: Equatable {
     case swap
     case cashOut
     case earn
-    case wallet(Wallet)
+    case solanaAccount(SolanaAccountsManager.Account)
     case actions([WalletActionType])
     // HomeEmpty
     case topUpCoin(Token)
@@ -40,7 +40,7 @@ final class HomeCoordinator: Coordinator<Void> {
     private let tabBarController: TabBarController
     private let resultSubject = PassthroughSubject<Void, Never>()
 
-    var tokensViewModel: HomeWithTokensViewModel?
+    var tokensViewModel: HomeAccountsViewModel?
     let navigation = PassthroughSubject<HomeNavigation, Never>()
 
     // MARK: - Initializers
@@ -60,7 +60,7 @@ final class HomeCoordinator: Coordinator<Void> {
 
     override func start() -> AnyPublisher<Void, Never> {
         // Home with tokens
-        tokensViewModel = HomeWithTokensViewModel(navigation: navigation)
+        tokensViewModel = HomeAccountsViewModel(navigation: navigation)
 
         // home with no token
         let emptyViewModel = HomeEmptyViewModel(navigation: navigation)
@@ -180,20 +180,20 @@ final class HomeCoordinator: Coordinator<Void> {
         case .earn:
             return Just(())
                 .eraseToAnyPublisher()
-        case .wallet(let wallet):
+        case .solanaAccount(let solanaAccount):
             if available(.historyServiceEnabled) {
-                analyticsManager.log(event: .mainScreenTokenDetailsOpen(tokenTicker: wallet.token.symbol))
+                analyticsManager.log(event: .mainScreenTokenDetailsOpen(tokenTicker: solanaAccount.data.token.symbol))
 
                 return coordinate(
                     to: DetailAccountCoordinator(
-                        args: .wallet(wallet),
+                        args: .solanaAccount(solanaAccount),
                         presentingViewController: navigationController
                     )
                 )
                 .map { _ in () }
                 .eraseToAnyPublisher()
             } else {
-                let model = WalletDetailCoordinator.Model(pubKey: wallet.pubkey ?? "", symbol: wallet.token.symbol)
+                let model = WalletDetailCoordinator.Model(pubKey: solanaAccount.data.pubkey ?? "", symbol: solanaAccount.data.token.symbol)
                 let coordinator = WalletDetailCoordinator(navigationController: navigationController, model: model)
                 return coordinate(to: coordinator)
                     .receive(on: RunLoop.main)

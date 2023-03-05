@@ -52,7 +52,7 @@ extension WalletDetail {
                 .compactMap { $0?.amount?.tokenAmountFormattedString(symbol: $0?.token.symbol ?? "") }
             let usdAmountPublisher = viewModel.walletPublisher
                 .compactMap { $0?.amountInCurrentFiat.fiatAmountFormattedString() }
-            let actionsView = ActionsPanelView(
+            let actionsView = ActionsPanelBridgeView(
                 actionsPublisher: actionsPublisher.eraseToAnyPublisher(),
                 balancePublisher: balancePublisher.eraseToAnyPublisher(),
                 usdAmountPublisher: usdAmountPublisher.eraseToAnyPublisher()

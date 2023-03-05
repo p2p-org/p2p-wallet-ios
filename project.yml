@@ -14,6 +14,9 @@ name: p2p_wallet
 
 # 3. Remove these comment when done
 packages:
+#    Cache:
+#        url: https://github.com/hyperoslo/Cache.git
+#        from: 6.0.0
     Web3:
         url: https://github.com/Boilertalk/Web3.swift.git
         from: 0.8.1
@@ -28,7 +31,7 @@ packages:
         branch: master
     KeyAppKit:
         url: https://github.com/p2p-org/key-app-kit-swift.git
-        branch: master
+        branch: develop
     RenVMSwift:
         url: https://github.com/p2p-org/RenVMSwift.git
         branch: develop
@@ -246,6 +249,8 @@ targets:
             - package: SolanaSwift
             - package: OrcaSwapSwift
             - package: Web3
+
+#            - package: Cache
 
             - framework: Frameworks/keyapp.xcframework
               embed: false

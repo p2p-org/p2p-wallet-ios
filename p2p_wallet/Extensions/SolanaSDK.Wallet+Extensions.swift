@@ -28,6 +28,7 @@ extension Wallet {
         token.address
     }
 
+    @available(*, deprecated)
     var isHidden: Bool {
         guard let pubkey = pubkey else { return false }
         if Defaults.hiddenWalletPubkey.contains(pubkey) {
@@ -40,6 +41,7 @@ extension Wallet {
         return false
     }
 
+    @available(*, deprecated)
     var isBeingCreated: Bool? {
         get {
             getParsedUserInfo().isBeingCreated
@@ -51,6 +53,7 @@ extension Wallet {
         }
     }
 
+    @available(*, deprecated)
     var creatingError: String? {
         get {
             getParsedUserInfo().creatingError
@@ -62,6 +65,7 @@ extension Wallet {
         }
     }
 
+    @available(*, deprecated)
     var isProcessing: Bool? {
         get {
             getParsedUserInfo().isProcessing
@@ -73,6 +77,7 @@ extension Wallet {
         }
     }
 
+    @available(*, deprecated)
     var price: CurrentPrice? {
         get {
             getParsedUserInfo().price
@@ -84,30 +89,36 @@ extension Wallet {
         }
     }
 
+    @available(*, deprecated)
     var priceInCurrentFiat: Double? {
         price?.value
     }
 
+    @available(*, deprecated)
     var amountInCurrentFiat: Double {
         amount * priceInCurrentFiat
     }
 
+    @available(*, deprecated)
     mutating func updateVisibility() {
         var userInfo = getParsedUserInfo()
         userInfo._isHidden = isHidden
         self.userInfo = userInfo
     }
 
+    @available(*, deprecated)
     mutating func setName(_ name: String) {
         var userInfo = getParsedUserInfo()
         userInfo._customName = name
         self.userInfo = userInfo
     }
 
+    @available(*, deprecated)
     func getParsedUserInfo() -> SolanaWalletUserInfo {
         userInfo as? SolanaWalletUserInfo ?? SolanaWalletUserInfo()
     }
 
+    @available(*, deprecated)
     mutating func updateBalance(diff: Double) {
         guard diff != 0 else { return }
 
@@ -125,11 +136,13 @@ extension Wallet {
         }
     }
 
+    @available(*, deprecated)
     mutating func increaseBalance(diffInLamports: Lamports) {
         let currentBalance = lamports ?? 0
         lamports = currentBalance + diffInLamports
     }
 
+    @available(*, deprecated)
     mutating func decreaseBalance(diffInLamports: Lamports) {
         let currentBalance = lamports ?? 0
         if currentBalance >= diffInLamports {

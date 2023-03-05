@@ -126,4 +126,41 @@ class CoinLogoImageView: BEView {
             wrappingTokenIcon.image = wrappedBy.image
         }
     }
+
+    func setup(preferredImage: UIImage?, url: URL?, key: String, wrapped: Bool) {
+        // default
+        wrappingView.alpha = 0
+        backgroundColor = .clear
+        tokenIcon.isHidden = false
+
+        // with token
+        if let image = preferredImage {
+            tokenIcon.image = image
+        } else {
+            var seed = Self.cachedJazziconSeeds[key]
+            if seed == nil {
+                seed = UInt32.random(in: 0 ..< 10_000_000)
+                Self.cachedJazziconSeeds[key] = seed
+            }
+
+            tokenIcon.isHidden = true
+            self.seed = seed
+
+            tokenIcon.setImage(urlString: url?.absoluteString) { [weak self] result in
+                switch result {
+                case .success:
+                    self?.tokenIcon.isHidden = false
+                    self?.seed = nil
+                case .failure:
+                    self?.tokenIcon.isHidden = true
+                }
+            }
+        }
+
+        // wrapped by
+        if wrapped {
+            wrappingView.alpha = 1
+            wrappingTokenIcon.image = .wrappedToken
+        }
+    }
 }

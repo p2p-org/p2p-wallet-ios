@@ -11,7 +11,7 @@ import SwiftUI
 import UIKit
 
 enum DetailAccountCoordinatorArgs {
-    case wallet(Wallet)
+    case solanaAccount(SolanaAccountsManager.Account)
 }
 
 class DetailAccountCoordinator: SmartCoordinator<WalletDetailCoordinator.Result> {
@@ -27,9 +27,9 @@ class DetailAccountCoordinator: SmartCoordinator<WalletDetailCoordinator.Result>
         let historyListVM: HistoryViewModel
 
         switch self.args {
-        case let .wallet(wallet):
-            detailAccountVM = .init(wallet: wallet)
-            historyListVM = .init(mint: wallet.mintAddress)
+        case let .solanaAccount(account):
+            detailAccountVM = .init(solanaAccount: account)
+            historyListVM = .init(mint: account.data.token.address)
         }
 
         historyListVM.actionSubject
@@ -129,12 +129,12 @@ class DetailAccountCoordinator: SmartCoordinator<WalletDetailCoordinator.Result>
     }
 
     func openReceive() {
-        guard case let .wallet(wallet) = self.args else { return }
+        guard case let .solanaAccount(account) = self.args else { return }
 
-        if let solanaPubkey = try? PublicKey(string: wallet.pubkey ?? "") {
+        if let solanaPubkey = try? PublicKey(string: account.data.pubkey ?? "") {
             let vm = ReceiveToken.SceneModel(
                 solanaPubkey: solanaPubkey,
-                solanaTokenWallet: wallet,
+                solanaTokenWallet: account.data,
                 isOpeningFromToken: true
             )
             let vc = ReceiveToken.ViewController(viewModel: vm, isOpeningFromToken: true)
@@ -145,11 +145,11 @@ class DetailAccountCoordinator: SmartCoordinator<WalletDetailCoordinator.Result>
 
     func openSwap() {
         guard
-            case let .wallet(wallet) = self.args,
+            case let .solanaAccount(account) = self.args,
             let navigationController = presentation.presentingViewController as? UINavigationController
         else { return }
 
-        let vm = OrcaSwapV2.ViewModel(initialWallet: wallet)
+        let vm = OrcaSwapV2.ViewModel(initialWallet: account.data)
         let vc = OrcaSwapV2.ViewController(viewModel: vm)
         vc.doneHandler = { [weak self] in
             navigationController.popToRootViewController(animated: true)
@@ -160,14 +160,14 @@ class DetailAccountCoordinator: SmartCoordinator<WalletDetailCoordinator.Result>
 
     func openSend() {
         guard
-            case let .wallet(wallet) = self.args,
+            case let .solanaAccount(account) = self.args,
             let rootViewController = presentation.presentingViewController as? UINavigationController,
             let currentVC = rootViewController.viewControllers.last
         else { return }
 
         let coordinator = SendCoordinator(
             rootViewController: rootViewController,
-            preChosenWallet: wallet,
+            preChosenWallet: account.data,
             hideTabBar: true,
             allowSwitchingMainAmountType: true
         )
@@ -191,10 +191,10 @@ class DetailAccountCoordinator: SmartCoordinator<WalletDetailCoordinator.Result>
     }
 
     func openBuy() {
-        guard case let .wallet(wallet) = self.args else { return }
+        guard case let .solanaAccount(account) = self.args else { return }
 
         let token: Token
-        switch wallet.token.symbol {
+        switch account.data.token.symbol {
         case "SOL":
             token = .nativeSolana
         case "USDC":

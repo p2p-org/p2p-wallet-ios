@@ -26,11 +26,11 @@ class DetailAccountViewModel: BaseViewModel, ObservableObject {
         self.rendableAccountDetail = rendableAccountDetail
         actionSubject = .init()
     }
-    
-    /// Render solana wallet (account) and dynamically update it.
+
+    /// Render solana account and dynamically update it.
     init(
-        walletsRepository: WalletsRepository = Resolver.resolve(),
-        wallet: Wallet
+        solanaAccountsManager: SolanaAccountsManager = Resolver.resolve(),
+        solanaAccount: SolanaAccountsManager.Account
     ) {
         // Init action subject
         let actionSubject = PassthroughSubject<DetailAccountAction, Never>()
@@ -51,17 +51,17 @@ class DetailAccountViewModel: BaseViewModel, ObservableObject {
         }
 
         // Render solana wallet (account)
-        rendableAccountDetail = RendableSolanaAccountDetail(wallet: wallet, onAction: onAction)
+        rendableAccountDetail = RendableNewSolanaAccountDetail(account: solanaAccount, onAction: onAction)
 
         super.init()
 
         // Dynamic updating wallet and render it
-        walletsRepository
-            .dataPublisher
+        solanaAccountsManager
+            .$state
             .receive(on: RunLoop.main)
-            .map { $0.first(where: { $0.pubkey == wallet.pubkey }) }
+            .map { $0.item.first(where: { $0.data.pubkey == solanaAccount.data.pubkey }) }
             .compactMap { $0 }
-            .map { RendableSolanaAccountDetail(wallet: $0, onAction: onAction) }
+            .map { RendableNewSolanaAccountDetail(account: $0, onAction: onAction) }
             .sink { [weak self] rendableAccountDetail in
                 self?.rendableAccountDetail = rendableAccountDetail
             }
