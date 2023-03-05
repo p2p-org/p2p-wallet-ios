@@ -11,6 +11,9 @@ import Resolver
 import SolanaPricesAPIs
 import SolanaSwift
 
+/// This manager class monitors solana accounts and their changing real time by using socket and 10 seconds updating timer.
+///
+/// It also calculates ``amountInFiat`` by integrating with ``NewPriceService``.
 class SolanaAccountsManager: NSObject, ObservableObject {
     private var subscriptions = [AnyCancellable]()
 
@@ -22,7 +25,8 @@ class SolanaAccountsManager: NSObject, ObservableObject {
         accountStorage: SolanaAccountStorage = Resolver.resolve(),
         solanaAPIClient: SolanaAPIClient = Resolver.resolve(),
         tokensService: SolanaTokensRepository = Resolver.resolve(),
-        priceService: NewPriceService = Resolver.resolve()
+        priceService: NewPriceService = Resolver.resolve(),
+        accountObservableService: AccountObservableService = Resolver.resolve()
     ) {
         asyncValue = .init(initialItem: []) {
             guard let accountAddress = accountStorage.account?.publicKey.base58EncodedString else {
@@ -74,6 +78,28 @@ class SolanaAccountsManager: NSObject, ObservableObject {
             .autoconnect()
             .receive(on: DispatchQueue.main)
             .sink(receiveValue: { [weak self] _ in self?.asyncValue.fetch() })
+            .store(in: &subscriptions)
+
+        // Observe solana accounts
+        $state
+            .sink { state in
+                for account in state.item {
+                    guard let pubkey = account.data.pubkey else { continue }
+                    Task {
+                        try await accountObservableService.subscribeAccountNotification(account: pubkey)
+                    }
+                }
+            }
+            .store(in: &subscriptions)
+
+        // Update solana accounts
+        accountObservableService
+            .allAccountsNotificcationsPublisher
+            .sink { _ in
+                Task { [weak self] in
+                    try await self?.fetch()
+                }
+            }
             .store(in: &subscriptions)
 
         // First fetch
