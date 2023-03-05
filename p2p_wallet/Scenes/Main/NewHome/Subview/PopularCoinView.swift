@@ -61,3 +61,10 @@ struct PopularCoinView: View {
         }
     }
 }
+
+struct PopularCoinView_Previews: PreviewProvider {
+    static var previews: some View {
+        PopularCoinView(title: "USDC", subtitle: "USD Coint", actionTitle: "Buy", image: .usdc)
+    }
+}
+

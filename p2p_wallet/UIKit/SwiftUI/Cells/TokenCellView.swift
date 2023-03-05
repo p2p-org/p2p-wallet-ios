@@ -39,7 +39,7 @@ struct TokenCellView: View {
 
     var body: some View {
         HStack(alignment: .center, spacing: 12) {
-            CoinLogoImageViewRepresentable(size: appearance.logoImageSize, token: item.token)
+            CoinLogoImageViewRepresentable(size: appearance.logoImageSize, args: .token(item.token))
                 .frame(width: appearance.logoImageSize, height: appearance.logoImageSize)
             VStack(alignment: .leading, spacing: appearance.textPadding) {
                 Text(item.token.name)

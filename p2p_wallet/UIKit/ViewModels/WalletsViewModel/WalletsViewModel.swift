@@ -12,6 +12,7 @@ import SolanaSwift
 import Combine
 
 @MainActor
+@available(*, deprecated)
 class WalletsViewModel: BECollectionViewModel<Wallet> {
     // MARK: - Dependencies
 

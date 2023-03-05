@@ -13,7 +13,7 @@ struct SendInputTokenView: View {
     var body: some View {
         Button(action: viewModel.changeTokenPressed.send) {
             HStack(spacing: 0) {
-                CoinLogoImageViewRepresentable(size: 48, token: viewModel.token.token)
+                CoinLogoImageViewRepresentable(size: 48, args: .token(viewModel.token.token))
                     .frame(width: 48, height: 48)
                     .cornerRadius(radius: 48 / 2, corners: .allCorners)
                     .padding(.vertical, 4)

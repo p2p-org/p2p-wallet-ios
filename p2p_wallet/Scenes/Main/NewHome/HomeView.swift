@@ -12,7 +12,7 @@ struct HomeView: View {
     @StateObject var viewModel: HomeViewModel
     @StateObject var globalAppState: GlobalAppState = .shared
 
-    let viewModelWithTokens: HomeWithTokensViewModel
+    let viewModelWithTokens: HomeAccountsViewModel
     let emptyViewModel: HomeEmptyViewModel
 
     var body: some View {
@@ -22,7 +22,7 @@ struct HomeView: View {
                 HomeSkeletonView()
             case .withTokens:
                 navigation {
-                    HomeWithTokensView(viewModel: viewModelWithTokens)
+                    HomeAccountsView(viewModel: viewModelWithTokens)
                 }
             case .empty:
                 navigation {
@@ -41,6 +41,12 @@ struct HomeView: View {
                 .allowsHitTesting(false)
                 .ignoresSafeArea(.all)
             }
+        }
+        .onAppear {
+            viewModel.viewAppeared()
+        }
+        .onReceive(NotificationCenter.default.publisher(for: UIApplication.didBecomeActiveNotification)) { _ in
+            viewModel.viewAppeared()
         }
     }
 

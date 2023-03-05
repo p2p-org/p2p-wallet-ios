@@ -41,7 +41,7 @@ struct RecipientCell: View {
             )
         case let .solanaTokenAddress(_, token):
             cell(
-                image: CoinLogoImageViewRepresentable(size: 48, token: token),
+                image: CoinLogoImageViewRepresentable(size: 48, args: .token(token)),
                 title: RecipientFormatter.format(destination: recipient.address),
                 subtitle: subtitle ?? "\(token.symbol) \(L10n.tokenAccount)"
             )

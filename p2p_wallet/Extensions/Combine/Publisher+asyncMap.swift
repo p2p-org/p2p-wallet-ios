@@ -10,6 +10,17 @@ import Foundation
 
 // https://www.swiftbysundell.com/articles/calling-async-functions-within-a-combine-pipeline/
 
+extension Publisher where Failure == Never {
+    func weakAssign<T: AnyObject>(
+        to keyPath: ReferenceWritableKeyPath<T, Output>,
+        on object: T
+    ) -> AnyCancellable {
+        sink { [weak object] value in
+            object?[keyPath: keyPath] = value
+        }
+    }
+}
+
 extension Publisher {
     func asyncMap<T>(
         _ transform: @escaping (Output) async -> T

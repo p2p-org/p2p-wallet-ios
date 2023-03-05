@@ -8,26 +8,26 @@
 import Foundation
 import SolanaSwift
 
-struct RendableSolanaAccountDetail: RendableAccountDetail {
-    let wallet: Wallet
+struct RendableNewSolanaAccountDetail: RendableAccountDetail {
+    let account: SolanaAccountsManager.Account
 
     var title: String {
-        wallet.token.name
+        account.data.token.name
     }
 
     var amountInToken: String {
-        wallet.amount?.tokenAmountFormattedString(symbol: wallet.token.symbol) ?? ""
+        account.data.amount?.tokenAmountFormattedString(symbol: account.data.token.symbol) ?? ""
     }
 
     var amountInFiat: String {
-        wallet.amountInCurrentFiat.fiatAmountFormattedString()
+        account.amountInFiat.fiatAmountFormattedString()
     }
 
     var actions: [RendableAccountDetailAction] {
-        if wallet.isNativeSOL || wallet.token.symbol == "USDC" {
-            return [.buy, .receive(.wallet(wallet)), .send, .swap]
+        if account.data.isNativeSOL || account.data.token.symbol == "USDC" {
+            return [.buy, .receive(.solanaAccount(account)), .send, .swap]
         } else {
-            return [.receive(.wallet(wallet)), .send, .swap]
+            return [.receive(.solanaAccount(account)), .send, .swap]
         }
     }
 

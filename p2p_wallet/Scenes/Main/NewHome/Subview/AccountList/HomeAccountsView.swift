@@ -11,16 +11,13 @@ import Resolver
 import SolanaSwift
 import SwiftUI
 
-struct HomeWithTokensView: View {
-    @ObservedObject var viewModel: HomeWithTokensViewModel
+struct HomeAccountsView: View {
+    @ObservedObject var viewModel: HomeAccountsViewModel
     
-    @State private var currentUserInteractionCellID: String?
-    @State private var scrollAnimationIsEnded = true
-    @State private var isEarnBannerClosed = Defaults.isEarnBannerClosed
-    
-    init(viewModel: HomeWithTokensViewModel) {
-        self.viewModel = viewModel
-    }
+    @State var isHiddenSectionDisabled: Bool = true
+    @State var currentUserInteractionCellID: String?
+    @State var scrollAnimationIsEnded = true
+    @State var isEarnBannerClosed = Defaults.isEarnBannerClosed
     
     var body: some View {
         ScrollViewReader { reader in
@@ -34,7 +31,11 @@ struct HomeWithTokensView: View {
                 }
             }
             .customRefreshable {
-                await viewModel.refresh()
+                do {
+                    try await viewModel.refresh()
+                } catch {
+                    error.capture()
+                }
             }
             .onReceive(viewModel.$scrollOnTheTop) { _ in
                 DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) {
@@ -48,32 +49,17 @@ struct HomeWithTokensView: View {
                 scrollAnimationIsEnded = false
             }
         }
-        .onAppear {
-            viewModel.viewAppeared()
-        }
-        .onReceive(NotificationCenter.default.publisher(for: UIApplication.didBecomeActiveNotification)) { _ in
-            viewModel.viewAppeared()
-        }
     }
     
     private var header: some View {
         ActionsPanelView(
-            actionsPublisher: viewModel.$actions.eraseToAnyPublisher(),
-            balancePublisher: viewModel.balance,
+            actions: viewModel.actions,
+            balance: viewModel.balance,
+            usdAmount: "",
             action: {
                 viewModel.actionClicked($0)
             }
         )
-    }
-
-    // TODO: Sell Placeholder PWN-6246
-    private var sell: some View {
-        Button {
-            viewModel.sellTapped()
-        } label: {
-            Text("Ramp Off")
-        }
-
     }
 
     private var content: some View {
@@ -83,23 +69,23 @@ struct HomeWithTokensView: View {
                 .foregroundColor(Color(Asset.Colors.night.color))
                 .padding(.horizontal, 16)
                 .padding(.bottom, 8)
-            wrappedList(itemsCount: viewModel.items.count) {
-                ForEach(viewModel.items) {
-                    swipeTokenCell(isVisible: true, wallet: $0)
+            wrappedList(itemsCount: viewModel.accounts.count) {
+                ForEach(viewModel.accounts, id: \.id) {
+                    tokenCell(rendableAccount: $0, isVisiable: true)
                 }
             }
-            if !viewModel.hiddenItems.isEmpty {
+            if !viewModel.hiddenAccounts.isEmpty {
                 Button(
                     action: {
                         let generator = UIImpactFeedbackGenerator(style: .light)
                         generator.impactOccurred()
                         withAnimation {
-                            viewModel.toggleHiddenTokensVisibility()
+                            isHiddenSectionDisabled.toggle()
                         }
                     },
                     label: {
                         HStack(spacing: 8) {
-                            Image(uiImage: viewModel.tokensIsHidden ? .eyeHiddenTokens : .eyeHiddenTokensHide)
+                            Image(uiImage: isHiddenSectionDisabled ? .eyeHiddenTokens : .eyeHiddenTokensHide)
                             Text(L10n.hiddenTokens)
                                 .foregroundColor(Color(Asset.Colors.mountain.color))
                                 .font(.system(size: 16))
@@ -110,10 +96,10 @@ struct HomeWithTokensView: View {
                         .padding(.horizontal, 16)
                     }
                 )
-                if !viewModel.tokensIsHidden {
-                    wrappedList(itemsCount: viewModel.hiddenItems.count) {
-                        ForEach(viewModel.hiddenItems) {
-                            swipeTokenCell(isVisible: false, wallet: $0)
+                if !isHiddenSectionDisabled {
+                    wrappedList(itemsCount: viewModel.hiddenAccounts.count) {
+                        ForEach(viewModel.hiddenAccounts, id: \.id) {
+                            tokenCell(rendableAccount: $0, isVisiable: false)
                         }
                         .transition(AnyTransition.opacity.animation(.linear(duration: 0.3)))
                     }
@@ -121,46 +107,19 @@ struct HomeWithTokensView: View {
             }
         }
     }
-    
-    private func tokenOperation(title: String, image: UIImage, action: @escaping () -> Void) -> some View {
-        Button(
-            action: action,
-            label: {
-                VStack(spacing: 8) {
-                    Image(uiImage: image)
-                        .resizable()
-                        .scaledToFit()
-                    Text(title)
-                        .font(uiFont: .font(of: .label2, weight: .semibold))
-                        .foregroundColor(Color(Asset.Colors.night.color))
+
+    private func tokenCell(rendableAccount: any RendableAccount, isVisiable: Bool) -> some View {
+        HomeAccountView(rendable: rendableAccount)
+            .do { view in
+                switch rendableAccount.extraAction {
+                case let .visiable(action):
+                    return AnyView(view.swipeActions(isVisible: isVisiable, currentUserInteractionCellID: $currentUserInteractionCellID, action: action))
+                case .none:
+                    return AnyView(view)
                 }
-                .frame(width: 56)
             }
-        )
-        .buttonStyle(PlainButtonStyle()) // prevent getting called on tapping cell
-    }
-    
-    private func tokenCell(wallet: Wallet) -> some View {
-        TokenCellView(item: TokenCellViewItem(wallet: wallet))
             .frame(height: 72)
             .padding(.horizontal, 16)
-            .onTapGesture {
-                viewModel.tokenClicked(wallet: wallet)
-            }
-    }
-    
-    private func swipeTokenCell(isVisible: Bool, wallet: Wallet) -> some View {
-        TokenCellView(item: TokenCellViewItem(wallet: wallet))
-            .swipeActions(isVisible: isVisible, currentUserInteractionCellID: $currentUserInteractionCellID, action: {
-                withAnimation {
-                    viewModel.toggleTokenVisibility(wallet: wallet)
-                }
-            })
-            .frame(height: 72)
-            .padding(.horizontal, 16)
-            .onTapGesture {
-                viewModel.tokenClicked(wallet: wallet)
-            }
     }
     
     @ViewBuilder

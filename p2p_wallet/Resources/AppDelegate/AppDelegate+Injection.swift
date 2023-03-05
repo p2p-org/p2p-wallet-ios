@@ -148,8 +148,8 @@ extension Resolver: ResolverRegistering {
         .scope(.application)
 
         register { KeyAppHistoryProviderImpl(endpoint: GlobalAppState.shared.pushServiceEndpoint) }
-        .implements(KeyAppHistoryProvider.self)
-        .scope(.application)
+            .implements(KeyAppHistoryProvider.self)
+            .scope(.application)
 
         register { NotificationServiceImpl() }
             .implements(NotificationService.self)
@@ -359,9 +359,18 @@ extension Resolver: ResolverRegistering {
             .implements(SellPriceProvider.self)
             .scope(.session)
 
+        register { NewPriceService() }
+            .scope(.session)
+
         // WalletsViewModel
         register { WalletsViewModel() }
             .implements(WalletsRepository.self)
+            .scope(.session)
+
+        register { SolanaAccountsManager() }
+            .scope(.session)
+        
+        register {FavouriteAccountsStore() }
             .scope(.session)
 
         // SwapService
