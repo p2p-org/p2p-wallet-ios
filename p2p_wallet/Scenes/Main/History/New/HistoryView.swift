@@ -34,9 +34,11 @@ struct NewHistoryView<Header: View>: View {
                     .padding(.horizontal, 16)
                     .padding(.top, 38)
                 } else {
-                    HistoryErrorView {
+                    ErrorView {
                         Task { try await viewModel.reload() }
                     }
+                    .background(Color(Asset.Colors.snow.color))
+                    .cornerRadius(radius: 16, corners: .allCorners)
                     .padding(.horizontal, 16)
                     .padding(.top, 38)
                 }

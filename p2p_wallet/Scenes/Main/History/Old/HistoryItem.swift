@@ -26,7 +26,7 @@ enum HistoryItem: Hashable {
         switch self {
         case .parsedTransaction(let transaction):
             return transaction.blockTime
-        case .sellTransaction(let transaction):
+        case .sellTransaction:
             return nil
         }
     }
