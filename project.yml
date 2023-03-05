@@ -32,6 +32,8 @@ packages:
     KeyAppKit:
         url: https://github.com/p2p-org/key-app-kit-swift.git
         branch: develop
+    KeyAppBusiness:
+        path: ./Packages/KeyAppBusiness
     RenVMSwift:
         url: https://github.com/p2p-org/RenVMSwift.git
         branch: develop
@@ -243,6 +245,7 @@ targets:
               product: Moonpay
 
             - package: Wormhole
+            - package: KeyAppBusiness
 
             - package: RenVMSwift
             - package: FeeRelayerSwift
