@@ -33,9 +33,19 @@ final class HomeAccountsViewModel: BaseViewModel, ObservableObject {
     /// Solana accounts.
     @Published private(set) var solanaAccountsState: AsyncValueState<[RendableSolanaAccount]> = .init(value: [])
 
+    @Published private(set) var wormholeAccount: RendableMockAccount = .init(
+        id: "0x00",
+        icon: .image(.ethereumIcon),
+        wrapped: false,
+        title: "Wrapped Ethereum",
+        subtitle: "0.999717252 WETH",
+        detail: .button(label: "Claim", action: {}),
+        tags: []
+    )
+
     /// Primary list accounts.
     var accounts: [any RendableAccount] {
-        solanaAccountsState.value.filter { rendableAccount in
+        [wormholeAccount] + solanaAccountsState.value.filter { rendableAccount in
             Self.shouldInVisiableSection(rendableAccount: rendableAccount, hideZeroBalance: hideZeroBalance)
         }
     }

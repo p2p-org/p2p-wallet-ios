@@ -41,8 +41,12 @@ struct HomeAccountView: View {
                 Text(text)
                     .font(uiFont: .font(of: .text3, weight: .semibold))
                     .foregroundColor(Color(Asset.Colors.night.color))
-            case .button:
-                Text("Some button")
+            case let .button(text, action):
+                TextButtonView(title: text, style: .primaryWhite, size: .small, onPressed: action)
+                    .frame(
+                        width: 60,
+                        height: TextButton.Size.small.height
+                    )
             }
         }
         .contentShape(Rectangle())
