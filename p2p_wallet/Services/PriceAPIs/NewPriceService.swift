@@ -11,12 +11,15 @@ import Resolver
 import SolanaPricesAPIs
 import SolanaSwift
 
+/// This class service allow client to get exchange rate between token and fiat (exchange rate == price).
+///
+/// Each exchange  has 15 minutes lifetime. When the lifetime is expired, the new rate will be requested.
 class NewPriceService {
     @Injected private var api: SolanaPricesAPI
 
     let cache: LongTermCache<String, CurrentPrice> = .init(entryLifetime: 60 * 15, maximumEntryCount: 999)
 
-    /// Single get price
+    /// Get exchange rate for solana token.
     func getPrice(token: Token, fiat: String = Defaults.fiat.rawValue) async throws -> CurrentPrice? {
         guard let coingeckoId = token.extensions?.coingeckoId else { return nil }
 
@@ -34,7 +37,7 @@ class NewPriceService {
         }
     }
 
-    /// Batch request
+    /// Batch request exchange rate for solana tokens
     // TODO: Optimize batch requesting
     func getPrices(tokens: [Token], fiat: String = Defaults.fiat.rawValue) async throws -> [Token: CurrentPrice?] {
         if let cachedResult = getPricesFromCache(tokens: tokens) {
@@ -73,7 +76,8 @@ class NewPriceService {
         return result
     }
 
-    func primaryKey(_ id: String, _ fiat: String) -> String {
+    /// Helper method for extracing cache key.
+    private func primaryKey(_ id: String, _ fiat: String) -> String {
         "\(id)-\(fiat)"
     }
 }
