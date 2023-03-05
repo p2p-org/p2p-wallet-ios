@@ -59,7 +59,7 @@ class DetailAccountViewModel: BaseViewModel, ObservableObject {
         solanaAccountsManager
             .$state
             .receive(on: RunLoop.main)
-            .map { $0.item.first(where: { $0.data.pubkey == solanaAccount.data.pubkey }) }
+            .map { $0.value.first(where: { $0.data.pubkey == solanaAccount.data.pubkey }) }
             .compactMap { $0 }
             .map { RendableNewSolanaAccountDetail(account: $0, onAction: onAction) }
             .sink { [weak self] rendableAccountDetail in

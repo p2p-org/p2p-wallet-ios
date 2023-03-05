@@ -55,7 +55,7 @@ class HomeViewModel: ObservableObject {
     }
 
     func copyToClipboard() {
-        clipboardManager.copyToClipboard(solanaAccountsManager.state.item.nativeWallet?.data.pubkey ?? "")
+        clipboardManager.copyToClipboard(solanaAccountsManager.state.value.nativeWallet?.data.pubkey ?? "")
         notificationsService.showToast(title: "🖤", text: L10n.addressWasCopiedToClipboard, haptic: true)
         analyticsManager.log(event: .mainCopyAddress)
     }
@@ -109,7 +109,7 @@ private extension HomeViewModel {
                 guard let self else { return }
 
                 // accumulate total amount
-                let fiatAmount = state.item.totalAmountInCurrentFiat
+                let fiatAmount = state.value.totalAmountInCurrentFiat
                 let isEmpty = fiatAmount <= 0
 
                 // address
