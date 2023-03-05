@@ -13,6 +13,7 @@ import RxSwift
 import SolanaSwift
 import OrcaSwapSwift
 import FeeRelayerSwift
+import RxConcurrency
 
 extension OrcaSwapV2 {
     class ViewModel {

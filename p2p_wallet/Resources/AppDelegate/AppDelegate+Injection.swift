@@ -25,6 +25,7 @@ import SolanaSwift
 import Solend
 import SwiftyUserDefaults
 import TransactionParser
+import KeyAppBusiness
 
 extension Resolver: ResolverRegistering {
     @MainActor public static func registerAllServices() {
@@ -359,7 +360,7 @@ extension Resolver: ResolverRegistering {
             .implements(SellPriceProvider.self)
             .scope(.session)
 
-        register { NewPriceService() }
+        register { PriceService(api: resolve()) }
             .scope(.session)
 
         // WalletsViewModel

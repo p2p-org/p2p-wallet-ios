@@ -4,7 +4,15 @@ import XCTest
 import SolanaPricesAPIs
 import SolanaSwift
 
-final class KeyAppBusinessTests: XCTestCase {
+final class PriceServiceTests: XCTestCase {
+    func testKey() {
+        let api = MockSolanaPricesAPI()
+        let priceService = PriceService(api: api, lifetime: 10)
+        
+        let key = priceService.primaryKey("123", "usd")
+        XCTAssertEqual(key, "123-usd")
+    }
+    
     // Ensure the price service work correctly with lifetime.
     func testLifetimeForSingleToken() async throws {
         // Set 10 seconds lifetime

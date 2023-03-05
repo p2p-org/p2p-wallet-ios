@@ -7,6 +7,7 @@
 
 import Combine
 import Foundation
+import KeyAppBusiness
 import Resolver
 import SolanaPricesAPIs
 import SolanaSwift
@@ -25,7 +26,7 @@ class SolanaAccountsManager: NSObject, ObservableObject {
         accountStorage: SolanaAccountStorage = Resolver.resolve(),
         solanaAPIClient: SolanaAPIClient = Resolver.resolve(),
         tokensService: SolanaTokensRepository = Resolver.resolve(),
-        priceService: NewPriceService = Resolver.resolve(),
+        priceService: PriceService = Resolver.resolve(),
         accountObservableService: AccountObservableService = Resolver.resolve()
     ) {
         asyncValue = .init(initialItem: []) {
@@ -52,7 +53,10 @@ class SolanaAccountsManager: NSObject, ObservableObject {
             newAccounts = [solanaAccount] + splAccounts.map { Account(data: $0, price: nil) }
 
             // Updating balance
-            let prices = try await priceService.getPrices(tokens: newAccounts.map(\.data.token))
+            let prices = try await priceService.getPrices(
+                tokens: newAccounts.map(\.data.token),
+                fiat: Defaults.fiat.rawValue
+            )
 
             for index in newAccounts.indices {
                 let token = newAccounts[index].data.token
