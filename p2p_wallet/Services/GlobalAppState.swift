@@ -33,7 +33,7 @@ class GlobalAppState: ObservableObject {
         }
     }
     
-    @Published var pushServiceEndpoint: String = Environment.current == .release || Environment.test ?
+    @Published var pushServiceEndpoint: String = Environment.current == .release || Environment.current == .test ?
         String.secretConfig("NOTIFICATION_SERVICE_ENDPOINT_RELEASE")! :
         String.secretConfig("NOTIFICATION_SERVICE_ENDPOINT")!
     
