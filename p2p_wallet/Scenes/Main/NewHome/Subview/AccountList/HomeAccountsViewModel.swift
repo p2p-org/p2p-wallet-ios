@@ -31,18 +31,18 @@ final class HomeAccountsViewModel: BaseViewModel, ObservableObject {
     @Published private(set) var hideZeroBalance: Bool = Defaults.hideZeroBalances
 
     /// Solana accounts.
-    @Published private(set) var solanaAccountsState: AsynValueState<[RendableSolanaAccount]> = .init(item: [])
+    @Published private(set) var solanaAccountsState: AsyncValueState<[RendableSolanaAccount]> = .init(value: [])
 
     /// Primary list accounts.
     var accounts: [any RendableAccount] {
-        solanaAccountsState.item.filter { rendableAccount in
+        solanaAccountsState.value.filter { rendableAccount in
             Self.shouldInVisiableSection(rendableAccount: rendableAccount, hideZeroBalance: hideZeroBalance)
         }
     }
 
     /// Secondary list accounts. Will be hidded normally and need to be manually action from user to show in view.
     var hiddenAccounts: [any RendableAccount] {
-        solanaAccountsState.item.filter { rendableAccount in
+        solanaAccountsState.value.filter { rendableAccount in
             Self.shouldInIgnoreSection(rendableAccount: rendableAccount, hideZeroBalance: hideZeroBalance)
         }
     }
@@ -74,8 +74,8 @@ final class HomeAccountsViewModel: BaseViewModel, ObservableObject {
         })
 
         solanaAccountsManager.$state
-            .map { (state: AsynValueState<[SolanaAccountsManager.Account]>) -> String in
-                let equityValue: Double = state.item.reduce(0) { $0 + $1.amountInFiat }
+            .map { (state: AsyncValueState<[SolanaAccountsManager.Account]>) -> String in
+                let equityValue: Double = state.value.reduce(0) { $0 + $1.amountInFiat }
                 return "\(Defaults.fiat.symbol) \(equityValue.toString(maximumFractionDigits: 2))"
             }
             .debounce(for: .seconds(0.1), scheduler: RunLoop.main)
@@ -139,7 +139,7 @@ final class HomeAccountsViewModel: BaseViewModel, ObservableObject {
     func actionClicked(_ action: WalletActionType) {
         switch action {
         case .receive:
-            guard let pubkey = try? PublicKey(string: solanaAccountsManager.state.item.nativeWallet?.data.pubkey) else { return }
+            guard let pubkey = try? PublicKey(string: solanaAccountsManager.state.value.nativeWallet?.data.pubkey) else { return }
             navigation.send(.receive(publicKey: pubkey))
         case .buy:
             navigation.send(.buy)

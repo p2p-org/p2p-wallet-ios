@@ -14,25 +14,25 @@ enum AsynValueStatus {
     case ready
 }
 
-struct AsynValueState<T> {
+struct AsyncValueState<T> {
     var status: AsynValueStatus = .initializing
-    var item: T
+    var value: T
     var error: Error?
     
-    func apply<Output>(_ transform: (T) -> Output) -> AsynValueState<Output> {
+    func apply<Output>(_ transform: (T) -> Output) -> AsyncValueState<Output> {
         .init(
             status: status,
-            item: transform(item),
+            value: transform(value),
             error: error
         )
     }
 }
 
-extension AsynValueState where T: Sequence {
-    func innerApply<Output>(_ transform: (T.Element) -> Output) -> AsynValueState<[Output]> {
+extension AsyncValueState where T: Sequence {
+    func innerApply<Output>(_ transform: (T.Element) -> Output) -> AsyncValueState<[Output]> {
         .init(
             status: status,
-            item: item.map { transform($0) },
+            value: value.map { transform($0) },
             error: error
         )
     }
@@ -41,10 +41,10 @@ extension AsynValueState where T: Sequence {
 class AsyncValue<T> {
     typealias Request = () async throws -> T
     
-    @Published var state: AsynValueState<T>
+    @Published var state: AsyncValueState<T>
     
     init(initialItem: T, request: @escaping Request) {
-        state = .init(status: .initializing, item: initialItem)
+        state = .init(status: .initializing, value: initialItem)
         self.request = request
     }
     
@@ -68,7 +68,7 @@ class AsyncValue<T> {
             
             // Fetching
             do {
-                self.state.item = try await request()
+                self.state.value = try await request()
             } catch {
                 if !Task.isCancelled {
                     state.error = error

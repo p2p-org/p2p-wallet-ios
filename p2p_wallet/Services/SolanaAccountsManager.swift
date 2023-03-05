@@ -19,7 +19,7 @@ class SolanaAccountsManager: NSObject, ObservableObject {
 
     private let asyncValue: AsyncValue<[Account]>
 
-    @Published var state: AsynValueState<[Account]> = .init(item: [])
+    @Published var state: AsyncValueState<[Account]> = .init(value: [])
 
     init(
         accountStorage: SolanaAccountStorage = Resolver.resolve(),
@@ -83,7 +83,7 @@ class SolanaAccountsManager: NSObject, ObservableObject {
         // Observe solana accounts
         $state
             .sink { state in
-                for account in state.item {
+                for account in state.value {
                     guard let pubkey = account.data.pubkey else { continue }
                     Task {
                         try await accountObservableService.subscribeAccountNotification(account: pubkey)
