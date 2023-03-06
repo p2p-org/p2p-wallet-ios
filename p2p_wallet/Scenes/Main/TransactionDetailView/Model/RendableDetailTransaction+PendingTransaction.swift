@@ -20,7 +20,10 @@ struct RendableDetailPendingTransaction: RendableTransactionDetail {
         }
         
         switch trx.status {
-        case .error:
+        case let .error(message):
+            if message.readableDescription.contains("Slippage tolerance exceeded") {
+                return .error(message: NSAttributedString(string: message.readableDescription))
+            }
             return .error(message: NSAttributedString(string: L10n.theTransactionWasRejectedByTheSolanaBlockchain))
         case .finalized:
             return .succeed(message: L10n.theTransactionHasBeenSuccessfullyCompleted)
@@ -184,4 +187,9 @@ struct RendableDetailPendingTransaction: RendableTransactionDetail {
         }
     }
 }
-    
+
+extension NSAttributedString {
+    var isSlippageError: Bool {
+        string.contains("Slippage tolerance exceeded")
+    }
+}

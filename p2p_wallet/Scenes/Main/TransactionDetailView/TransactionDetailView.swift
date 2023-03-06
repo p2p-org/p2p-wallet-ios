@@ -150,7 +150,10 @@ struct DetailTransactionView: View {
             )
         } else {
             return AnyView(
-                TransactionDetailStatusView(status: viewModel.rendableTransaction.status) {}
+                TransactionDetailStatusView(
+                    status: viewModel.rendableTransaction.status,
+                    context: viewModel.statusContext
+                ) {}
                     .padding(.horizontal, 16)
                     .padding(.bottom, 32)
             )
