@@ -80,7 +80,7 @@ enum JupiterSwapBusinessLogic {
         case .update:
             return await calculateAmounts(state: state, services: services)
         case let .updateUserWallets(userWallets):
-            let state = (try? await updateUserWallets(state: state, userWallets: userWallets)) ?? state
+            let state = await updateUserWallets(state: state, userWallets: userWallets)
             return await calculateAmounts(state: state, services: services)
         case let .changeSlippageBps(slippageBps):
             let state = state.modified {
