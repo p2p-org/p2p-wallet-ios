@@ -1,5 +1,6 @@
 import Jupiter
 import SolanaSwift
+import Resolver
 
 extension JupiterSwapBusinessLogic {
     static func initializeAction(
@@ -10,38 +11,40 @@ extension JupiterSwapBusinessLogic {
         fromToken: SwapToken?,
         toToken: SwapToken?
     ) async -> JupiterSwapState {
-        do {
-            let tokens: (fromToken: SwapToken, toToken: SwapToken)
-            if let fromToken, let toToken {
-                tokens = (fromToken, toToken)
-            } else if let fromToken, let toToken = autoChooseToToken(for: fromToken, from: swapTokens) {
-                tokens = (fromToken, toToken)
-            } else if let chosenTokens = autoChoose(swapTokens: swapTokens) {
-                tokens = chosenTokens
-            } else {
-                return .zero(status: .error(reason: .initializationFailed), routeMap: routeMap, swapTokens: swapTokens)
+        // get prices
+        let tokensPriceMap = await Resolver.resolve(PricesStorage.self).retrievePrices()
+            .reduce([String: Double]()) { combined, element in
+                guard let value = element.value.value else { return combined }
+                var combined = combined
+                combined[element.key] = value
+                return combined
             }
-
-            let priceInfo = try await getPrices(from: tokens.fromToken, to: tokens.toToken, services: services)
         
-            let possibleToTokens = getPossibleToTokens(fromTokenMint: tokens.fromToken.address, routeMap: routeMap, swapTokens: swapTokens)
-
-            return .init(
-                status: .ready,
-                routeMap: routeMap,
-                swapTokens: swapTokens,
-                amountFrom: 0,
-                amountFromFiat: 0,
-                amountTo: 0,
-                amountToFiat: 0,
-                fromToken: tokens.fromToken,
-                toToken: tokens.toToken,
-                possibleToTokens: possibleToTokens,
-                priceInfo: priceInfo ?? .init(fromPrice: 0, toPrice: 0),
-                slippageBps: 50
-            )
-        } catch {
-            return .zero(status: .error(reason: .initializationFailed), routeMap: routeMap, swapTokens: swapTokens)
+        // get tokens
+        let tokens: (fromToken: SwapToken, toToken: SwapToken)
+        if let fromToken, let toToken {
+            tokens = (fromToken, toToken)
+        } else if let fromToken, let toToken = autoChooseToToken(for: fromToken, from: swapTokens) {
+            tokens = (fromToken, toToken)
+        } else if let chosenTokens = autoChoose(swapTokens: swapTokens) {
+            tokens = chosenTokens
+        } else {
+            return .zero.modified {
+                $0.status = .ready
+                $0.tokensPriceMap = tokensPriceMap
+                $0.routeMap = routeMap
+                $0.swapTokens = swapTokens
+            }
+        }
+        
+        return .zero.modified {
+            $0.status = .ready
+            $0.routeMap = routeMap
+            $0.swapTokens = swapTokens
+            $0.tokensPriceMap = tokensPriceMap
+            $0.fromToken = tokens.fromToken
+            $0.toToken = tokens.toToken
+            $0.slippageBps = Int(Defaults.slippage * 100)
         }
     }
 }
