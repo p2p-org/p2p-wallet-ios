@@ -1216,3 +1216,6 @@ You can try again, but your new transaction will be subject to the current rates
 "License" = "License";
 "Cashout with Moonpay" = "Cashout with Moonpay";
 "The address was copied to clipboard" = "The address was copied to clipboard";
+"Confirm claiming the tokens " = "Confirm claiming the tokens";
+"Claim %@" = "Claim %@";
+"With Key App, the first transaction is free. Also all the transactions above $300 are free" = "With Key App, the first transaction is free. Also all the transactions above $300 are free";

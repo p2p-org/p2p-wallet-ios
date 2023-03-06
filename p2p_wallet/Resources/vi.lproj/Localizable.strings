@@ -1248,3 +1248,6 @@ You can try again, but your new transaction will be subject to the current rates
 "License" = "Giấy phép";
 "Cashout with Moonpay" = "Rút tiền với Moonpay";
 "The address was copied to clipboard" = "Địa chỉ đã được sao chép vào clipboard";
+"Confirm claiming the tokens " = "Xác nhận yêu cầu mã thông báo";
+"Claim %@" = "Yêu cầu %@";
+"With Key App, the first transaction is free. Also all the transactions above $300 are free" = "Với Key App, giao dịch đầu tiên là miễn phí.  Ngoài ra, tất cả các giao dịch trên $300 đều miễn phí";

@@ -1243,3 +1243,6 @@ You can try again, but your new transaction will be subject to the current rates
 "License" = "Лицензия";
 "Cashout with Moonpay" = "Вывод средств с Moonpay";
 "The address was copied to clipboard" = "Адрес скопирован в буфер обмена";
+"Confirm claiming the tokens " = "Подтвердить получение токенов";
+"Claim %@" = "Претензия %@";
+"With Key App, the first transaction is free. Also all the transactions above $300 are free" = "С Key App первая транзакция бесплатна.  Также все транзакции свыше $300 бесплатны.";
