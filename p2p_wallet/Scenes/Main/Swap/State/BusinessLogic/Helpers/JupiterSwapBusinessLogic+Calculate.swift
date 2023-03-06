@@ -48,63 +48,12 @@ extension JupiterSwapBusinessLogic {
                 }
             }
 
-            // to amount
-            let amountTo = toAmountLamports.convertToBalance(decimals: state.toToken.token.decimals)
-            let newPriceInfo = SwapPriceInfo(
-                fromPrice: state.priceInfo.fromPrice,
-                toPrice: state.priceInfo.toPrice,
-                relation: Double(state.amountFrom/amountTo)
-            )
-
-            // price impact
-            
-            
-            // get fee relayer context
-            let context = try await services.relayContextManager.getCurrentContextOrUpdate()
-    
-            // FIXME: - network fee with fee relayer, Temporarily paying with SOL
-            let priceService = Resolver.resolve(PricesService.self)
-            let solanaPrice = priceService.getCurrentPrice(for: Token.nativeSolana.address)
-            
-            
-            
-            // FIXME: - account creation fee with fee relayer, Temporarily paying with SOL
-            
-            
-            // Liquidity fees
-            let liquidityFees = route.marketInfos.map(\.lpFee)
-                .compactMap { lqFee -> SwapFeeInfo? in
-                    guard let token = state.swapTokens.map(\.token).first(where: { $0.address == lqFee.mint }),
-                          let amount = UInt64(lqFee.amount)?.convertToBalance(decimals: token.decimals)
-                    else {
-                        return nil
-                    }
-                    
-                    let price = priceService.getCurrentPrice(for: token.address)
-                    
-                    return SwapFeeInfo(
-                        amount: amount,
-                        tokenSymbol: token.symbol,
-                        tokenName: token.name,
-                        amountInFiat: price * amount,
-                        pct: lqFee.pct,
-                        canBePaidByKeyApp: false
-                    )
-                }
-
             return await validateAmounts(
-                state: state.copy(
-                    status: .ready,
-                    amountTo: amountTo,
-                    amountToFiat: amountTo * newPriceInfo.toPrice,
-                    priceInfo: newPriceInfo,
-                    route: route,
-                    routes: routes,
-                    priceImpact: priceImpact,
-                    networkFee: networkFee,
-                    accountCreationFee: accountCreationFee,
-                    liquidityFee: liquidityFees
-                ),
+                state: state.modified {
+                    $0.status = .ready
+                    $0.route = route
+                    $0.routes = routes
+                },
                 services: services
             )
         }
