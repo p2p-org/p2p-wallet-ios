@@ -24,7 +24,7 @@ final class SwapViewModel: BaseViewModel, ObservableObject {
     let tryAgain = PassthroughSubject<Void, Never>()
     let changeFromToken = PassthroughSubject<SwapToken, Never>()
     let changeToToken = PassthroughSubject<SwapToken, Never>()
-    let submitTransaction = PassthroughSubject<PendingTransaction, Never>()
+    let submitTransaction = PassthroughSubject<(PendingTransaction, String), Never>()
 
     // MARK: - Params
     @Published var header: String = ""
@@ -306,7 +306,7 @@ private extension SwapViewModel {
             destinationWallet: destinationWallet,
             fromAmount: currentState.amountFrom,
             toAmount: currentState.amountTo,
-            slippage: 0.01, // FIXME: - actual slippage,
+            slippage: Double(stateMachine.currentState.slippageBps) / 100,
             metaInfo: SwapMetaInfo(
                 swapMAX: false, // FIXME: - Swap max or not
                 swapUSD: 0 // FIXME:
@@ -327,7 +327,10 @@ private extension SwapViewModel {
             rawTransaction: swapTransaction,
             status: .sending
         )
-        submitTransaction.send(pendingTransaction)
+        submitTransaction.send((
+            pendingTransaction,
+            formattedSlippage
+        ))
     }
     
     private func createSwapExecution(account: Account, sourceWallet: Wallet) async throws -> String {
@@ -380,5 +383,16 @@ private extension SwapViewModel {
             isSliderOn = false
             throw error
         }
+    }
+}
+
+private extension SwapViewModel {
+    var formattedSlippage: String {
+        let slippage = Double(stateMachine.currentState.slippageBps) / 100
+        var slippageString = String(format: "%.2f", slippage)
+        while slippageString.last == "0" {
+            slippageString.removeLast()
+        }
+        return slippageString + "%"
     }
 }

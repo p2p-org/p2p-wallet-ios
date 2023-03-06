@@ -25,13 +25,28 @@ enum TransactionDetailViewModelOutput {
 
 class TransactionDetailViewModel: BaseViewModel, ObservableObject {
     @Injected private var transactionHandler: TransactionHandler
-    @Published var rendableTransaction: any RendableTransactionDetail
+    @Published var rendableTransaction: any RendableTransactionDetail {
+        didSet {
+            switch rendableTransaction.status {
+            case let .error(message):
+                if message.isSlippageError {
+                    closeButtonTitle = L10n.increaseSlippageAndTryAgain
+                } else {
+                    closeButtonTitle = L10n.slippageError
+                }
+            default:
+                break
+            }
+        }
+    }
 
     @Published var closeButtonTitle: String = L10n.done
 
     let style: TransactionDetailStyle
 
-    let action: PassthroughSubject<TransactionDetailViewModelOutput, Never> = .init()
+    let action = PassthroughSubject<TransactionDetailViewModelOutput, Never>()
+    
+    var statusContext: String?
 
     init(rendableDetailTransaction: any RendableTransactionDetail, style: TransactionDetailStyle = .active) {
         self.style = style
@@ -55,11 +70,12 @@ class TransactionDetailViewModel: BaseViewModel, ObservableObject {
         }
     }
 
-    init(pendingTransaction: PendingTransaction) {
+    init(pendingTransaction: PendingTransaction, statusContext: String? = nil) {
         let pendingService: TransactionHandlerType = Resolver.resolve()
         let priceService: PricesService = Resolver.resolve()
 
         self.style = .active
+        self.statusContext = statusContext
         self.rendableTransaction = RendableDetailPendingTransaction(trx: pendingTransaction, priceService: priceService)
 
         super.init()

@@ -59,20 +59,6 @@ final class SwapSettingsCoordinator: Coordinator<SwapSettingsCoordinatorResult> 
             })
             .store(in: &subscriptions)
         
-        // observe changes
-        viewModel.$slippage
-            .compactMap { [weak viewModel] _ -> Double? in
-                guard viewModel?.failureSlippage != true else {
-                    return nil
-                }
-                return viewModel?.finalSlippage
-            }
-            .sink { [weak self] slippage in
-                let slippageBps = Int(slippage * 100)
-                self?.result.send(.selectedSlippageBps(slippageBps))
-            }
-            .store(in: &subscriptions)
-        
         viewModel.$status
             .compactMap { status in
                 switch status {
@@ -98,6 +84,8 @@ final class SwapSettingsCoordinator: Coordinator<SwapSettingsCoordinatorResult> 
         // complete Coordinator
         viewController.deallocatedPublisher()
             .sink(receiveValue: { [weak self] in
+                let slippageBps = Int((self?.viewModel.finalSlippage ?? 0) * 100)
+                self?.result.send(.selectedSlippageBps(slippageBps))
                 self?.result.send(completion: .finished)
             })
             .store(in: &subscriptions)

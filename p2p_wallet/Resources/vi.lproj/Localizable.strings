@@ -1274,3 +1274,6 @@ You can try again, but your new transaction will be subject to the current rates
 "Okay" = "Đồng ý";
 "A fee paid to the liquidity providers" = "Một khoản phí trả cho các nhà cung cấp thanh khoản";
 "%@ Liquidity fee %@" = "%@ Phí thanh khoản %@";
+"Low slippage %@. We recommend to increase slippage manually" = "Độ trượt thấp %@.  Chúng tôi khuyên bạn nên tăng trượt theo cách thủ công";
+"Low slippage. We recommend to increase slippage manually" = "Độ trượt thấp.  Chúng tôi khuyên bạn nên tăng trượt theo cách thủ công";
+"Increase slippage and try again" = "Tăng độ trượt giá và thử lại";
