@@ -49,7 +49,7 @@ private extension SwapView {
     var contentView: some View {
         VStack(spacing: .zero) {
             // Header
-            Text(viewModel.header)
+            Text(viewModel.currentState.exchangeRateInfo)
                 .apply(style: .label1)
                 .padding(.top, 4)
                 .foregroundColor(Color(Asset.Colors.night.color))

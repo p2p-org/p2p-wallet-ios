@@ -27,7 +27,6 @@ final class SwapViewModel: BaseViewModel, ObservableObject {
     let submitTransaction = PassthroughSubject<(PendingTransaction, String), Never>()
 
     // MARK: - Params
-    @Published var header: String = ""
     @Published var initializingState: InitializingState = .loading
     @Published var arePricesLoading: Bool = false
 
@@ -120,15 +119,6 @@ final class SwapViewModel: BaseViewModel, ObservableObject {
 
 private extension SwapViewModel {
     func bind() {
-        // user wallets
-        Resolver.resolve(WalletsRepository.self)
-            .dataPublisher
-            .removeDuplicates()
-            .sinkAsync { [weak self] userWallets in
-                await self?.stateMachine.accept(action: .updateUserWallets(userWallets: userWallets))
-            }
-            .store(in: &subscriptions)
-        
         // swap wallets status
         swapWalletsRepository.status
             .sinkAsync { [weak self] dataStatus in
@@ -144,8 +134,31 @@ private extension SwapViewModel {
                 
             }
             .store(in: &subscriptions)
+        
+        // listen to state of the stateMachine
+        stateMachine.statePublisher
+            .sinkAsync { [weak self] updatedState in
+                guard let self else { return }
+                self.handle(state: updatedState)
+                self.updateActionButton(for: updatedState)
+                self.log(priceImpact: updatedState.priceImpact, value: updatedState.route?.priceImpactPct)
+                self.log(from: updatedState.status)
+            }
+            .store(in: &subscriptions)
+        
+        // update user wallets only when initializingState is success
+        Resolver.resolve(WalletsRepository.self)
+            .dataPublisher
+            .filter { [weak self] _ in self?.initializingState == .success }
+            .removeDuplicates()
+            .sinkAsync { [weak self] userWallets in
+                await self?.stateMachine.accept(action: .updateUserWallets(userWallets: userWallets))
+            }
+            .store(in: &subscriptions)
 
+        // update fromToken only when initializingState is success
         changeFromToken
+            .filter { [weak self] _ in self?.initializingState == .success }
             .sinkAsync { [weak self] token in
                 guard let self else { return }
                 let newState = await self.stateMachine.accept(action: .changeFromToken(token))
@@ -154,23 +167,14 @@ private extension SwapViewModel {
             }
             .store(in: &subscriptions)
 
+        // update toToken only when initializingState is success
         changeToToken
+            .filter { [weak self] _ in self?.initializingState == .success }
             .sinkAsync { [ weak self] token in
                 guard let self else { return }
                 let newState = await self.stateMachine.accept(action: .changeToToken(token))
                 Defaults.toTokenAddress = token.address
                 self.logChangeToken(isFrom: false, token: token, amount: newState.amountTo)
-            }
-            .store(in: &subscriptions)
-
-        stateMachine.statePublisher
-            .sinkAsync { [weak self] updatedState in
-                guard let self else { return }
-                self.handle(state: updatedState)
-                self.updateHeader(priceInfo: updatedState.priceInfo, fromToken: updatedState.fromToken.token, toToken: updatedState.toToken.token)
-                self.updateActionButton(for: updatedState)
-                self.log(priceImpact: updatedState.priceImpact, value: updatedState.route?.priceImpactPct)
-                self.log(from: updatedState.status)
             }
             .store(in: &subscriptions)
     }
@@ -252,16 +256,6 @@ private extension SwapViewModel {
 
     func cancelUpdate() {
         timer?.invalidate()
-    }
-
-    func updateHeader(priceInfo: SwapPriceInfo, fromToken: Token, toToken: Token) {
-        if priceInfo.relation != 0 {
-            let onetoToken = 1.tokenAmountFormattedString(symbol: toToken.symbol, maximumFractionDigits: Int(toToken.decimals), roundingMode: .down)
-            let amountFromToken = priceInfo.relation.tokenAmountFormattedString(symbol: fromToken.symbol, maximumFractionDigits: Int(fromToken.decimals), roundingMode: .down)
-            header = [onetoToken, amountFromToken].joined(separator: " ≈ ")
-        } else {
-            header = ""
-        }
     }
 
     func updateActionButton(for state: JupiterSwapState) {

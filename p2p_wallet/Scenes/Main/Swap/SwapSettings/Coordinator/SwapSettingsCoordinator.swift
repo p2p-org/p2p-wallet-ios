@@ -126,7 +126,8 @@ final class SwapSettingsCoordinator: Coordinator<SwapSettingsCoordinatorResult> 
                             minimumReceived: state.minimumReceivedAmount == nil ? nil: .init(
                                 amount: state.minimumReceivedAmount!,
                                 token: state.toToken.token.symbol
-                            )
+                            ),
+                            exchangeRateInfo: state.exchangeRateInfo
                         )
                     )
                 default:
