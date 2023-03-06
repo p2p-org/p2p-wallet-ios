@@ -81,7 +81,7 @@ extension DetailAccountViewModel {
             default:
                 return false
             }
-        } else if !available(.jupiterSwapEnabled) {
+        } else {
             return true
         }
     }
