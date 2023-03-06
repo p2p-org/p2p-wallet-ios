@@ -71,7 +71,7 @@ final class SwapViewModel: BaseViewModel, ObservableObject {
     }
     
     func update() async {
-        let _ = await stateMachine.accept(action: .update)
+        await stateMachine.accept(action: .update)
     }
     
     #if !RELEASE
@@ -123,7 +123,7 @@ private extension SwapViewModel {
             .dataPublisher
             .removeDuplicates()
             .sinkAsync { [weak self] userWallets in
-                let _ = await self?.stateMachine.accept(action: .updateUserWallets(userWallets: userWallets))
+                await self?.stateMachine.accept(action: .updateUserWallets(userWallets: userWallets))
             }
             .store(in: &subscriptions)
         
@@ -164,14 +164,14 @@ private extension SwapViewModel {
 
         changeFromToken
             .sinkAsync { [weak self] token in
-                let _ = await self?.stateMachine.accept(action: .changeFromToken(token))
+                await self?.stateMachine.accept(action: .changeFromToken(token))
                 Defaults.fromTokenAddress = token.address
             }
             .store(in: &subscriptions)
 
         changeToToken
             .sinkAsync { [ weak self] token in
-                let _ = await self?.stateMachine.accept(action: .changeToToken(token))
+                await self?.stateMachine.accept(action: .changeToToken(token))
                 Defaults.toTokenAddress = token.address
             }
             .store(in: &subscriptions)
@@ -234,7 +234,7 @@ private extension SwapViewModel {
         switchTokens
             .sinkAsync(receiveValue: { [weak self] _ in
                 guard let self else { return }
-                let _ = await self.stateMachine.accept(
+                await self.stateMachine.accept(
                     action: .switchFromAndToTokens
                 )
             })
