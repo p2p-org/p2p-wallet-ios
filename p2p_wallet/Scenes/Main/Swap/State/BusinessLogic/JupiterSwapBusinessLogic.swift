@@ -51,45 +51,55 @@ enum JupiterSwapBusinessLogic {
             newState = await executeAction(state, services, action: {
                 await changeAmountFrom(state: state, services: services, amountFrom: amountFrom)
             }, chains: {
-                [calculateAmounts]
+                [
+                    calculateRoute,
+                    calculateToAmountAndFees
+                ]
             })
 
         case let .changeFromToken(swapToken):
             newState = await executeAction(state, services, action: {
                 await changeFromToken(state: state, services: services, token: swapToken)
             }, chains: {
-                [calculateAmounts]
+                [
+                    calculateRoute,
+                    calculateToAmountAndFees
+                ]
             })
         case let .changeToToken(swapToken):
             newState = await executeAction(state, services, action: {
                 await changeToToken(state: state, services: services, token: swapToken)
             }, chains: {
-                [calculateAmounts]
+                [
+                    calculateRoute,
+                    calculateToAmountAndFees
+                ]
             })
         case .switchFromAndToTokens:
             newState = await executeAction(state, services, action: {
                 await switchFromAndToTokens(state: state, services: services)
             }, chains: {
-                [calculateAmounts]
+                [
+                    calculateRoute,
+                    calculateToAmountAndFees
+                ]
             })
 
         case .update:
-            newState = await calculateAmounts(state: state, services: services)
+            newState = await executeAction(state, services, action: {
+                await calculateRoute(state: state, services: services)
+            }, chains: {
+                [
+                    calculateToAmountAndFees
+                ]
+            })
         case let .updateUserWallets(userWallets):
-            newState = await executeAction(state, services, action: {
-                (try? await updateUserWallets(state: state, userWallets: userWallets)) ?? state
-            }, chains: {
-                [calculateAmounts]
-            })
+            newState = (try? await updateUserWallets(state: state, userWallets: userWallets, services: services)) ?? state
         case let .changeSlippageBps(slippageBps):
-            newState = await executeAction(state, services, action: {
-                changeSlippage(state: state, slippageBps: slippageBps)
-            }, chains: {
-                [calculateAmounts]
-            })
+            newState = await changeSlippage(state: state, slippageBps: slippageBps, services: services)
         case let .chooseRoute(route):
             let state = state.copy(route: route)
-            newState = await calculateAmounts(state: state, services: services)
+            newState = await calculateToAmountAndFees(state: state, services: services)
         }
 
         return newState
