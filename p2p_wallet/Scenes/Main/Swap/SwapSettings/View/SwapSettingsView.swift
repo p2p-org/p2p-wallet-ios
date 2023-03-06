@@ -71,7 +71,7 @@ struct SwapSettingsView: View {
                     .padding(.vertical, (20-12)/2)
                     .padding(.horizontal, (20-7.41)/2)
                     .castToAnyView(),
-                identifier: nil
+                identifier: .route
             )
             .contentShape(Rectangle())
             .onTapGesture {
