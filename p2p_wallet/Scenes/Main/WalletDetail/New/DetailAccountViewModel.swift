@@ -22,6 +22,8 @@ class DetailAccountViewModel: BaseViewModel, ObservableObject {
 
     let actionSubject: PassthroughSubject<DetailAccountAction, Never>
 
+    @Injected private var jupiterTokensRepository: JupiterTokensRepository
+
     init(rendableAccountDetail: RendableAccountDetail) {
         self.rendableAccountDetail = rendableAccountDetail
         actionSubject = .init()
@@ -51,19 +53,30 @@ class DetailAccountViewModel: BaseViewModel, ObservableObject {
         }
 
         // Render solana wallet (account)
-        rendableAccountDetail = RendableSolanaAccountDetail(wallet: wallet, onAction: onAction)
+        let isSwapAvailableDefault = available(.jupiterSwapEnabled) ? false : true
+        rendableAccountDetail = RendableSolanaAccountDetail(wallet: wallet, isSwapAvailable: isSwapAvailableDefault, onAction: onAction)
 
         super.init()
 
         // Dynamic updating wallet and render it
-        walletsRepository
-            .dataPublisher
-            .receive(on: RunLoop.main)
-            .map { $0.first(where: { $0.pubkey == wallet.pubkey }) }
-            .compactMap { $0 }
-            .map { RendableSolanaAccountDetail(wallet: $0, onAction: onAction) }
-            .sink { [weak self] rendableAccountDetail in
-                self?.rendableAccountDetail = rendableAccountDetail
+        let walletPublisher = walletsRepository.dataPublisher.compactMap { $0.first(where: { $0.pubkey == wallet.pubkey }) }
+        Publishers.CombineLatest(walletPublisher, jupiterTokensRepository.status)
+            .sink { [weak self] (wallet, status) in
+                var isSwapAvailable: Bool = false
+                if available(.jupiterSwapEnabled) {
+                    switch status {
+                    case .ready(let swapTokens, _):
+                        if swapTokens.contains(where: { $0.address == wallet.mintAddress }) {
+                            isSwapAvailable = true
+                        }
+                    default:
+                        break
+                    }
+                } else if !available(.jupiterSwapEnabled) {
+                    // No restrictions for orca swap
+                    isSwapAvailable = true
+                }
+                self?.rendableAccountDetail = RendableSolanaAccountDetail(wallet: wallet, isSwapAvailable: isSwapAvailable, onAction: onAction)
             }
             .store(in: &subscriptions)
     }
