@@ -20,7 +20,7 @@ struct RendableDetailParsedTransaction: RendableTransactionDetail {
         case .requesting, .processing:
             return .loading(message: L10n.theTransactionIsBeingProcessed)
         case let .error(error):
-            return .error(message: NSAttributedString(string: error ?? ""))
+            return .error(message: NSAttributedString(string: error ?? ""), error: trx.status.getError())
         }
     }
     

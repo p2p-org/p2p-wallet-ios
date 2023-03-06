@@ -344,7 +344,7 @@ private extension SwapViewModel {
         logSwapApprove()
     }
     
-    private func createSwapExecution(account: Account, sourceWallet: Wallet) async throws -> String {
+    private func createSwapExecution(account: KeyPair, sourceWallet: Wallet) async throws -> String {
         // assertion
         guard let route = stateMachine.currentState.route
         else { throw JupiterError.invalidResponse }
@@ -424,6 +424,14 @@ extension SwapViewModel {
 
     func logTransactionProgressDone() {
         analyticsManager.log(event: .swapTransactionProgressScreenDone)
+    }
+
+    func logTransaction(error: Error?) {
+        if let error, error.isSlippageError {
+            analyticsManager.log(event: .swapErrorSlippage)
+        } else {
+            analyticsManager.log(event: .swapErrorDefault(isBlockchainRelated: error is SolanaError))
+        }
     }
 
     private func logSwapApprove() {
