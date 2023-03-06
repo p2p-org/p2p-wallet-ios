@@ -1243,3 +1243,5 @@ You can try again, but your new transaction will be subject to the current rates
 "Okay" = "Okay";
 "A fee paid to the liquidity providers" = "A fee paid to the liquidity providers";
 "%@ Liquidity fee %@" = "%@ Liquidity fee %@";
+"Low slippage %@. We recommend to increase slippage manually" = "Low slippage %@. We recommend to increase slippage manually";
+"Increase slippage and try again" = "Increase slippage and try again";

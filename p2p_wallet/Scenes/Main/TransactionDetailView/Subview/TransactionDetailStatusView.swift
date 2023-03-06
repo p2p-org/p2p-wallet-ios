@@ -42,6 +42,7 @@ struct TransactionDetailStatusAppearance {
 
 struct TransactionDetailStatusView: View {
     let status: TransactionDetailStatus
+    let context: String?
 
     @State private var isRotatingAnimation = false
     @State private var isColorTransition = true
@@ -52,8 +53,9 @@ struct TransactionDetailStatusView: View {
     private let scaleAnimation = Animation.easeInOut(duration: 0.2)
     private let errorMessageTapAction: () -> Void
 
-    init(status: TransactionDetailStatus, errorMessageTapAction: @escaping () -> Void) {
+    init(status: TransactionDetailStatus, context: String? = nil, errorMessageTapAction: @escaping () -> Void) {
         self.status = status
+        self.context = context
         self.errorMessageTapAction = errorMessageTapAction
         self.currentAppearance = TransactionDetailStatusAppearance(status: status)
         self.previousAppearance = nil
@@ -101,9 +103,14 @@ struct TransactionDetailStatusView: View {
                         Text(message)
                             .messageStyled()
                     case let .error(message):
-                        Text(message)
-                            .messageStyled()
-                            .onTapGesture(perform: errorMessageTapAction)
+                        if !message.isSlippageError {
+                            Text(message)
+                                .messageStyled()
+                                .onTapGesture(perform: errorMessageTapAction)
+                        } else {
+                            Text(L10n.LowSlippage.weRecommendToIncreaseSlippageManually(context))
+                                .messageStyled()
+                        }
                     }
                 }
                 .padding(.leading, 2)
