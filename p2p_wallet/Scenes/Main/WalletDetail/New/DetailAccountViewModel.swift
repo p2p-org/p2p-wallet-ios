@@ -22,16 +22,15 @@ class DetailAccountViewModel: BaseViewModel, ObservableObject {
 
     let actionSubject: PassthroughSubject<DetailAccountAction, Never>
 
-    @Injected private var jupiterTokensRepository: JupiterTokensRepository
-
     init(rendableAccountDetail: RendableAccountDetail) {
         self.rendableAccountDetail = rendableAccountDetail
         actionSubject = .init()
     }
-    
+
     /// Render solana wallet (account) and dynamically update it.
     init(
         walletsRepository: WalletsRepository = Resolver.resolve(),
+        jupiterTokensRepository: JupiterTokensRepository = Resolver.resolve(),
         wallet: Wallet
     ) {
         // Init action subject
@@ -61,23 +60,29 @@ class DetailAccountViewModel: BaseViewModel, ObservableObject {
         // Dynamic updating wallet and render it
         let walletPublisher = walletsRepository.dataPublisher.compactMap { $0.first(where: { $0.pubkey == wallet.pubkey }) }
         Publishers.CombineLatest(walletPublisher, jupiterTokensRepository.status)
-            .sink { [weak self] (wallet, status) in
-                var isSwapAvailable: Bool = false
-                if available(.jupiterSwapEnabled) {
-                    switch status {
-                    case .ready(let swapTokens, _):
-                        if swapTokens.contains(where: { $0.address == wallet.mintAddress }) {
-                            isSwapAvailable = true
-                        }
-                    default:
-                        break
-                    }
-                } else if !available(.jupiterSwapEnabled) {
-                    // No restrictions for orca swap
-                    isSwapAvailable = true
-                }
-                self?.rendableAccountDetail = RendableSolanaAccountDetail(wallet: wallet, isSwapAvailable: isSwapAvailable, onAction: onAction)
+            .sink { [weak self] wallet, status in
+                self?.rendableAccountDetail = RendableSolanaAccountDetail(
+                    wallet: wallet,
+                    isSwapAvailable: Self.isSwapAvailableFor(wallet: wallet, for: status),
+                    onAction: onAction
+                )
             }
             .store(in: &subscriptions)
+    }
+}
+
+extension DetailAccountViewModel {
+    /// Check swap action is available for this account (wallet).
+    static func isSwapAvailableFor(wallet: Wallet, for status: JupiterDataStatus) -> Bool {
+        if available(.jupiterSwapEnabled) {
+            switch status {
+            case .ready(let swapTokens, _) where swapTokens.contains(where: { $0.address == wallet.mintAddress }):
+                return true
+            default:
+                return false
+            }
+        } else if !available(.jupiterSwapEnabled) {
+            return true
+        }
     }
 }

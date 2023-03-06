@@ -10,6 +10,7 @@ import SolanaSwift
 
 struct RendableSolanaAccountDetail: RendableAccountDetail {
     let wallet: Wallet
+    
     let isSwapAvailable: Bool
 
     var title: String {
