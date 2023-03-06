@@ -21,7 +21,7 @@ enum JupiterSwapBusinessLogic {
         case .updateUserWallets:
             return state.modified { $0.status = .switching }
         case .updateTokensPriceMap:
-            return state // no change
+            return nil
         case .chooseRoute:
             return state.modified { $0.status = .loadingAmountTo }
         case .changeSlippageBps:
@@ -84,8 +84,8 @@ enum JupiterSwapBusinessLogic {
         case let .updateUserWallets(userWallets):
             return await updateUserWallets(state: state, userWallets: userWallets, services: services)
         case let .updateTokensPriceMap(tokensPriceMap):
-            return state.modified { state in
-                state.tokensPriceMap = tokensPriceMap
+            return state.modified {
+                $0.tokensPriceMap = tokensPriceMap
             }
         case let .changeSlippageBps(slippageBps):
             // return current state if slippage isn't changed
