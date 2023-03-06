@@ -46,7 +46,7 @@ enum JupiterSwapBusinessLogic {
             )
 
         case let .changeAmountFrom(amountFrom):
-            return await calculateAmounts(
+            return await calculateRoute(
                 state: state,
                 newFromAmount: amountFrom,
                 services: services
@@ -56,7 +56,7 @@ enum JupiterSwapBusinessLogic {
             let state = state.modified {
                 $0.fromToken = swapToken
             }
-            return await calculateAmounts(
+            return await calculateRoute(
                 state: state,
                 services: services
             )
@@ -64,7 +64,7 @@ enum JupiterSwapBusinessLogic {
             let state = state.modified {
                 $0.toToken = swapToken
             }
-            return await calculateAmounts(
+            return await calculateRoute(
                 state: state,
                 services: services
             )
@@ -75,30 +75,37 @@ enum JupiterSwapBusinessLogic {
                 $0.fromToken = newFromToken
                 $0.toToken = newToToken
             }
-            return await calculateAmounts(
+            return await calculateRoute(
                 state: state,
                 services: services
             )
         case .update:
-            return await calculateAmounts(state: state, services: services)
+            return await calculateRoute(state: state, services: services)
         case let .updateUserWallets(userWallets):
-            let state = await updateUserWallets(state: state, userWallets: userWallets)
-            return await calculateAmounts(state: state, services: services)
+            return await updateUserWallets(state: state, userWallets: userWallets, services: services)
         case let .updateTokensPriceMap(tokensPriceMap):
-            let state = state.modified { state in
+            return state.modified { state in
                 state.tokensPriceMap = tokensPriceMap
             }
-            return state
         case let .changeSlippageBps(slippageBps):
+            // return current state if slippage isn't changed
+            guard slippageBps != state.slippageBps else { return state }
+            
+            // modify slippage
             let state = state.modified {
                 $0.slippageBps = slippageBps
             }
-            return await calculateAmounts(state: state, services: services)
+            
+            // re-calculate the route
+            return await calculateRoute(state: state, services: services)
         case let .chooseRoute(route):
-            let state = state.modified {
+            // return current route if it is not changed
+            guard route != state.route else { return state }
+            
+            // modify the route
+            return state.modified {
                 $0.route = route
             }
-            return await calculateAmounts(state: state, services: services)
         }
     }
 }
