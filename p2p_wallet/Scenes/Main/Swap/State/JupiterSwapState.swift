@@ -86,6 +86,14 @@ struct JupiterSwapState: Equatable {
         priceInfo.toPrice * amountTo
     }
     
+    /// Price info between from token and to token
+    var priceInfo: SwapPriceInfo {
+        SwapPriceInfo(
+            fromPrice: tokensPriceMap[fromToken.address] ?? 0,
+            toPrice: tokensPriceMap[toToken.address] ?? 0,
+            relation: amountTo > 0 ? amountFrom/amountTo: 0)
+    }
+    
     var priceImpact: SwapPriceImpact? {
         switch route?.priceImpactPct {
         case let val where val >= 0.01 && val < 0.03:
@@ -118,7 +126,7 @@ struct JupiterSwapState: Equatable {
     
     /// Network fee of the transaction, can be modified by the fee relayer service
     var networkFee: SwapFeeInfo? {
-        guard let route else { return nil }
+        guard let relayContext else { return nil }
         
         // FIXME: - network fee with fee relayer, Temporarily paying with SOL
         let networkFeeAmount = relayContext.lamportsPerSignature // user's signature only
@@ -127,14 +135,14 @@ struct JupiterSwapState: Equatable {
             amount: networkFeeAmount,
             tokenSymbol: "SOL",
             tokenName: "Solana",
-            amountInFiat: tokenPriceMap[Token.nativeSolana.address].value * networkFeeAmount,
+            amountInFiat: tokensPriceMap[Token.nativeSolana.address] * networkFeeAmount,
             pct: nil,
             canBePaidByKeyApp: true
         )
     }
     
     var accountCreationFee: SwapFeeInfo? {
-        guard let route else { return nil }
+        guard let route, let relayContext else { return nil }
         let nonCreatedTokenMints = route.marketInfos.map(\.outputMint)
             .compactMap { mint in
                 swapTokens.first(where: { $0.token.address == mint && $0.userWallet == nil })?.address
@@ -142,11 +150,11 @@ struct JupiterSwapState: Equatable {
         
         let accountCreationFeeAmount = (relayContext.minimumTokenAccountBalance * UInt64(nonCreatedTokenMints.count))
             .convertToBalance(decimals: Token.nativeSolana.decimals)
-        let accountCreationFee = SwapFeeInfo(
+        return SwapFeeInfo(
             amount: accountCreationFeeAmount,
             tokenSymbol: "SOL",
             tokenName: "Solana",
-            amountInFiat: tokenPriceMap[Token.nativeSolana.address].value * accountCreationFeeAmount,
+            amountInFiat: tokensPriceMap[Token.nativeSolana.address] * accountCreationFeeAmount,
             pct: nil,
             canBePaidByKeyApp: false
         )
@@ -156,19 +164,17 @@ struct JupiterSwapState: Equatable {
         guard let route else { return [] }
         return route.marketInfos.map(\.lpFee)
             .compactMap { lqFee -> SwapFeeInfo? in
-                guard let token = state.swapTokens.map(\.token).first(where: { $0.address == lqFee.mint }),
+                guard let token = swapTokens.map(\.token).first(where: { $0.address == lqFee.mint }),
                       let amount = UInt64(lqFee.amount)?.convertToBalance(decimals: token.decimals)
                 else {
                     return nil
                 }
                 
-                let price = priceService.getCurrentPrice(for: token.address)
-                
                 return SwapFeeInfo(
                     amount: amount,
                     tokenSymbol: token.symbol,
                     tokenName: token.name,
-                    amountInFiat: price * amount,
+                    amountInFiat: tokensPriceMap[token.address] * amount,
                     pct: lqFee.pct,
                     canBePaidByKeyApp: false
                 )
@@ -181,11 +187,10 @@ struct JupiterSwapState: Equatable {
         Self.init(
             status: .requiredInitialize,
             routeMap: RouteMap(mintKeys: [], indexesRouteMap: [:]),
-            tokenPriceMap: [:],
+            tokensPriceMap: [:],
             route: nil,
             routes: [],
             swapTokens: [],
-            priceInfo: SwapPriceInfo(fromPrice: .zero, toPrice: .zero),
             fromToken: .nativeSolana,
             toToken: .nativeSolana,
             slippageBps: 0,

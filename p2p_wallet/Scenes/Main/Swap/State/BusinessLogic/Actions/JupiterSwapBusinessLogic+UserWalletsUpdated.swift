@@ -12,7 +12,7 @@ extension JupiterSwapBusinessLogic {
     static func updateUserWallets(
         state: JupiterSwapState,
         userWallets: [Wallet]
-    ) async throws -> JupiterSwapState {
+    ) async -> JupiterSwapState {
         // map updated user wallet to swapTokens
         let swapTokens = state.swapTokens.map { swapToken in
             if let userWallet = userWallets.first(where: { $0.mintAddress == swapToken.address }) {
@@ -58,10 +58,18 @@ extension JupiterSwapBusinessLogic {
         } else if let chosenToToken = autoChooseToToken(for: fromToken, from: state.swapTokens) {
             toToken = chosenToToken
         } else {
-            return state.copy(status: .error(reason: .unknown), swapTokens: swapTokens, fromToken: fromToken)
+            return state.modified {
+                $0.status = .error(reason: .unknown)
+                $0.swapTokens = swapTokens
+                $0.fromToken = fromToken
+            }
         }
         
         // return state
-        return state.copy(swapTokens: swapTokens, fromToken: fromToken, toToken: toToken)
+        return state.modified {
+            $0.swapTokens = swapTokens
+            $0.fromToken = fromToken
+            $0.toToken = toToken
+        }
     }
 }

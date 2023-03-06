@@ -3,23 +3,31 @@ import SolanaSwift
 import Resolver
 
 extension JupiterSwapBusinessLogic {
-    static func calculateAmounts(state: JupiterSwapState, services: JupiterSwapServices) async -> JupiterSwapState {
+    static func calculateAmounts(
+        state: JupiterSwapState,
+        newFromAmount: Double? = nil,
+        services: JupiterSwapServices
+    ) async -> JupiterSwapState {
         // assert from token is not equal to toToken
         guard state.fromToken.address != state.toToken.address else {
             return state.error(.equalSwapTokens)
         }
 
         // assert amountFrom is not 0
-        guard state.amountFrom > 0 else {
+        let amountFrom = newFromAmount ?? state.amountFrom
+        guard amountFrom > 0
+        else {
             return state.modified {
                 $0.status = .ready
                 $0.route = nil
             }
         }
 
-        let amountFromLamports = state.amountFrom.toLamport(decimals: state.fromToken.token.decimals)
+        // get lamport
+        let amountFromLamports = amountFrom.toLamport(decimals: state.fromToken.token.decimals)
 
         do {
+            // call api to get routes and amount
             let data = try await services.jupiterClient.quote(
                 inputMint: state.fromToken.address,
                 outputMint: state.toToken.address,
@@ -39,8 +47,7 @@ extension JupiterSwapBusinessLogic {
             // if not choose the first one
             guard let route = data.data.first(
                 where: {$0.id == state.route?.id})
-                    ?? data.data.first,
-                let toAmountLamports = Lamports(route.outAmount)
+                    ?? data.data.first
             else {
                 return state.modified {
                     $0.status = .error(reason: .routeIsNotFound)
@@ -64,9 +71,9 @@ extension JupiterSwapBusinessLogic {
 
     private static func handle(error: Error, for state: JupiterSwapState) -> JupiterSwapState {
         if (error as NSError).isNetworkConnectionError {
-            return state.copy(status: .error(reason: .networkConnectionError))
+            return state.error(.networkConnectionError)
         }
-        return state.copy(status: .error(reason: .routeIsNotFound))
+        return state.error(.routeIsNotFound)
     }
 
     private static func validateAmounts(state: JupiterSwapState, services: JupiterSwapServices) async -> JupiterSwapState {
@@ -84,7 +91,7 @@ extension JupiterSwapBusinessLogic {
             status = .error(reason: .notEnoughFromToken)
         }
 
-        return state.copy(status: status, route: state.route, priceImpact: state.priceImpact)
+        return state.modified { $0.status = status }
     }
 
     private static func validateNativeSOL(balance: Double, state: JupiterSwapState, services: JupiterSwapServices) async -> JupiterSwapState.Status {
