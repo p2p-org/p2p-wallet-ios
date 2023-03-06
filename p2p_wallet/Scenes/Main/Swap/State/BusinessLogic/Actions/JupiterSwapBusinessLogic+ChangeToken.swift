@@ -10,8 +10,7 @@ extension JupiterSwapBusinessLogic {
         do {
             let priceFromToken = try await getPrices(for: token, services: services)
             let newPriceInfo = SwapPriceInfo(fromPrice: priceFromToken ?? 0, toPrice: state.priceInfo.toPrice)
-            let possibleToTokens = getPossibleToTokens(fromTokenMint: token.address, routeMap: state.routeMap, swapTokens: state.swapTokens)
-            return state.copy(fromToken: token, possibleToTokens: possibleToTokens, priceInfo: newPriceInfo)
+            return state.copy(fromToken: token, priceInfo: newPriceInfo)
         } catch let error {
             return handle(error: error, for: state)
         }
