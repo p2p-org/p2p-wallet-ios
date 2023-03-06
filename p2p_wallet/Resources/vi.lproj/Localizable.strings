@@ -1248,3 +1248,15 @@ You can try again, but your new transaction will be subject to the current rates
 "License" = "Giấy phép";
 "Cashout with Moonpay" = "Rút tiền với Moonpay";
 "The address was copied to clipboard" = "Địa chỉ đã được sao chép vào clipboard";
+"My Solana Address" = "Địa chỉ Solana của tôi";
+"My username" = "Tên người dùng của tôi";
+"My Ethereum address" = "Địa chỉ Ethereum của tôi";
+"Send %@ to your Ethereum address" = "Gửi %@ đến địa chỉ Ethereum của bạn";
+"We bridge it to Solana with Wormhole" = "Chúng tôi kết nối nó với Solana bằng Wormhole";
+"You only need to sign a transaction with Key App" = "Bạn chỉ cần ký giao dịch với Key App";
+"We refund bridging costs for any transactions over $50" = "Chúng tôi hoàn trả chi phí bắc cầu cho bất kỳ giao dịch nào trên $50";
+"Your username was copied" = "Tên người dùng của bạn đã được sao chép";
+"Your Solana address was copied" = "Địa chỉ Solana của bạn đã được sao chép";
+"Your Ethereum address was copied" = "Địa chỉ Ethereum của bạn đã được sao chép";
+"Copy address" = "sao chép địa chỉ";
+"Receive %@ on %@" = "Nhận %@ trên %@";
