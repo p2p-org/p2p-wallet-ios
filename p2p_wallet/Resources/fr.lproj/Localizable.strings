@@ -1271,3 +1271,6 @@ You can try again, but your new transaction will be subject to the current rates
 "Okay" = "D'accord";
 "A fee paid to the liquidity providers" = "Une commission versée aux apporteurs de liquidité";
 "%@ Liquidity fee %@" = "%@ Commission de liquidité %@";
+"Low slippage %@. We recommend to increase slippage manually" = "Faible glissement %@.  Nous recommandons d'augmenter le glissement manuellement";
+"Low slippage. We recommend to increase slippage manually" = "Faible glissement.  Nous recommandons d'augmenter le glissement manuellement";
+"Increase slippage and try again" = "Augmentez le glissement et réessayez";

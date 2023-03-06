@@ -1269,3 +1269,6 @@ You can try again, but your new transaction will be subject to the current rates
 "Okay" = "Хорошо";
 "A fee paid to the liquidity providers" = "Комиссия, выплачиваемая поставщикам ликвидности";
 "%@ Liquidity fee %@" = "%@ Плата за ликвидность %@";
+"Low slippage %@. We recommend to increase slippage manually" = "Низкое проскальзывание %@.  Рекомендуем увеличить проскальзывание вручную";
+"Low slippage. We recommend to increase slippage manually" = "Низкое проскальзывание.  Рекомендуем увеличить проскальзывание вручную";
+"Increase slippage and try again" = "Увеличьте проскальзывание и повторите попытку.";

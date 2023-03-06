@@ -41,8 +41,8 @@ final class JupiterSwapCoordinator: Coordinator<Void> {
         style(controller: controller)
 
         viewModel.submitTransaction
-            .sink { [weak self] transaction in
-                self?.openDetails(pendingTransaction: transaction)
+            .sink { [weak self] transaction, statusContext in
+                self?.openDetails(pendingTransaction: transaction, statusContext: statusContext)
             }
             .store(in: &subscriptions)
 
@@ -72,6 +72,55 @@ final class JupiterSwapCoordinator: Coordinator<Void> {
     }
     
     @objc private func receiptButtonPressed() {
+        openSwapSettings()
+    }
+    
+    private func openChooseToken(fromToken: Bool) {
+        coordinate(to: ChooseSwapTokenCoordinator(
+            chosenWallet: fromToken ? viewModel.currentState.fromToken : viewModel.currentState.toToken,
+            tokens: fromToken ? viewModel.currentState.swapTokens : viewModel.currentState.possibleToTokens,
+            navigationController: navigationController,
+            title: fromToken ? L10n.theTokenYouPay : L10n.theTokenYouReceive
+        ))
+        .compactMap { $0 }
+        .sink { [weak viewModel] in
+            if fromToken {
+                viewModel?.changeFromToken.send($0)
+            } else {
+                viewModel?.changeToToken.send($0)
+            }
+        }
+        .store(in: &subscriptions)
+    }
+
+    private func openDetails(pendingTransaction: PendingTransaction, statusContext: String?) {
+        let viewModel = TransactionDetailViewModel(pendingTransaction: pendingTransaction, statusContext: statusContext)
+        var hasError = false
+        coordinate(to: TransactionDetailCoordinator(
+            viewModel: viewModel,
+            presentingViewController: navigationController
+        ))
+        .sink(receiveCompletion: { [weak self] _ in
+            guard let self else { return }
+            if self.params.dismissAfterCompletion && !hasError {
+                self.navigationController.popViewController(animated: true)
+                self.result.send(())
+            }
+        }, receiveValue: { [weak self] status in
+            switch status {
+            case let .error(message):
+                hasError = true
+                if message.isSlippageError {
+                    self?.openSwapSettings()
+                }
+            default:
+                hasError = false
+            }
+        })
+        .store(in: &subscriptions)
+    }
+
+    private func openSwapSettings() {
         // create coordinator
         let settingsCoordinator = SwapSettingsCoordinator(
             navigationController: navigationController,
@@ -96,45 +145,6 @@ final class JupiterSwapCoordinator: Coordinator<Void> {
                     Task { [weak viewModel] in
                         await viewModel?.stateMachine.accept(action: .chooseRoute(route))
                     }
-                }
-            })
-            .store(in: &subscriptions)
-    }
-    
-    private func openChooseToken(fromToken: Bool) {
-        coordinate(to: ChooseSwapTokenCoordinator(
-            chosenWallet: fromToken ? viewModel.currentState.fromToken : viewModel.currentState.toToken,
-            tokens: fromToken ? viewModel.currentState.swapTokens : viewModel.currentState.possibleToTokens,
-            navigationController: navigationController,
-            title: fromToken ? L10n.theTokenYouPay : L10n.theTokenYouReceive
-        ))
-        .compactMap { $0 }
-        .sink { [weak viewModel] in
-            if fromToken {
-                viewModel?.changeFromToken.send($0)
-            } else {
-                viewModel?.changeToToken.send($0)
-            }
-        }
-        .store(in: &subscriptions)
-    }
-
-    private func openDetails(pendingTransaction: PendingTransaction) {
-        let viewModel = TransactionDetailViewModel(pendingTransaction: pendingTransaction)
-        var hasError = false
-        coordinate(to: TransactionDetailCoordinator(viewModel: viewModel, presentingViewController: navigationController))
-            .sink(receiveCompletion: { [weak self] _ in
-                guard let self else { return }
-                if self.params.dismissAfterCompletion && !hasError {
-                    self.navigationController.popViewController(animated: true)
-                    self.result.send(())
-                }
-            }, receiveValue: { status in
-                switch status {
-                case .error:
-                    hasError = true
-                default:
-                    hasError = false
                 }
             })
             .store(in: &subscriptions)
