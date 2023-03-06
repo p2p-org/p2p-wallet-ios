@@ -1217,3 +1217,15 @@ You can try again, but your new transaction will be subject to the current rates
 "License" = "License";
 "Cashout with Moonpay" = "Cashout with Moonpay";
 "The address was copied to clipboard" = "The address was copied to clipboard";
+"My Solana Address" = "My Solana Address";
+"My username" = "My username";
+"My Ethereum address" = "My Ethereum address";
+"Send %@ to your Ethereum address" = "Send %@ to your Ethereum address";
+"We bridge it to Solana with Wormhole" = "We bridge it to Solana with Wormhole";
+"You only need to sign a transaction with Key App" = "You only need to sign a transaction with Key App";
+"We refund bridging costs for any transactions over $50" = "We refund bridging costs for any transactions over $50";
+"Your username was copied" = "Your username was copied";
+"Your Solana address was copied" = "Your Solana address was copied";
+"Your Ethereum address was copied" = "Your Ethereum address was copied";
+"Copy address" = "Copy address";
+"Receive %@ on %@" = "Receive %@ on %@";

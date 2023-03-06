@@ -1243,3 +1243,15 @@ You can try again, but your new transaction will be subject to the current rates
 "License" = "Лицензия";
 "Cashout with Moonpay" = "Вывод средств с Moonpay";
 "The address was copied to clipboard" = "Адрес скопирован в буфер обмена";
+"My Solana Address" = "Мой адрес Солана";
+"My username" = "Мое имя пользователя";
+"My Ethereum address" = "Мой Эфириум адрес";
+"Send %@ to your Ethereum address" = "Отправьте %@ на свой адрес Ethereum";
+"We bridge it to Solana with Wormhole" = "Мы соединяем его с Соланой с помощью Wormhole";
+"You only need to sign a transaction with Key App" = "Вам нужно только подписать транзакцию с Key App";
+"We refund bridging costs for any transactions over $50" = "Мы возмещаем промежуточные расходы для любых транзакций на сумму более 50 долларов США.";
+"Your username was copied" = "Ваше имя пользователя было скопировано";
+"Your Solana address was copied" = "Ваш адрес в Солане был скопирован";
+"Your Ethereum address was copied" = "Ваш адрес Ethereum был скопирован";
+"Copy address" = "Скопировать адрес";
+"Receive %@ on %@" = "Получить %@ на %@";
