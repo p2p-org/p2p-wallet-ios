@@ -15,7 +15,7 @@ import SolanaSwift
 /// This manager class monitors solana accounts and their changing real time by using socket and 10 seconds updating timer.
 ///
 /// It also calculates ``amountInFiat`` by integrating with ``NewPriceService``.
-class SolanaAccountsManager: NSObject, ObservableObject {
+class SolanaAccountsService: NSObject, ObservableObject {
     private var subscriptions = [AnyCancellable]()
 
     private let asyncValue: AsyncValue<[Account]>
@@ -118,7 +118,7 @@ class SolanaAccountsManager: NSObject, ObservableObject {
     }
 }
 
-extension Array where Element == SolanaAccountsManager.Account {
+extension Array where Element == SolanaAccountsService.Account {
     /// Helper method for quickly extraction native account.
     var nativeWallet: Element? {
         first(where: { $0.data.isNativeSOL })
@@ -133,7 +133,7 @@ extension Array where Element == SolanaAccountsManager.Account {
     }
 }
 
-extension SolanaAccountsManager {
+extension SolanaAccountsService {
     /// Solana account data structure.
     /// This class is combination of raw account data and additional application data.
     struct Account: Identifiable, Equatable {

@@ -11,7 +11,7 @@ import SwiftUI
 import UIKit
 
 enum DetailAccountCoordinatorArgs {
-    case solanaAccount(SolanaAccountsManager.Account)
+    case solanaAccount(SolanaAccountsService.Account)
 }
 
 class DetailAccountCoordinator: SmartCoordinator<WalletDetailCoordinator.Result> {

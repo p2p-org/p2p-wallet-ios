@@ -18,7 +18,7 @@ final class HomeAccountsViewModel: BaseViewModel, ObservableObject {
 
     // MARK: - Dependencies
 
-    private let solanaAccountsManager: SolanaAccountsManager
+    private let solanaAccountsManager: SolanaAccountsService
     @Injected private var analyticsManager: AnalyticsManager
 
     // MARK: - Properties
@@ -60,7 +60,7 @@ final class HomeAccountsViewModel: BaseViewModel, ObservableObject {
     // MARK: - Initializer
 
     init(
-        solanaAccountsManager: SolanaAccountsManager = Resolver.resolve(),
+        solanaAccountsManager: SolanaAccountsService = Resolver.resolve(),
         favouriteAccountsStore: FavouriteAccountsStore = Resolver.resolve(),
         solanaTracker: SolanaTracker = Resolver.resolve(),
         notificationService: NotificationService = Resolver.resolve(),
@@ -84,7 +84,7 @@ final class HomeAccountsViewModel: BaseViewModel, ObservableObject {
         })
 
         solanaAccountsManager.$state
-            .map { (state: AsyncValueState<[SolanaAccountsManager.Account]>) -> String in
+            .map { (state: AsyncValueState<[SolanaAccountsService.Account]>) -> String in
                 let equityValue: Double = state.value.reduce(0) { $0 + $1.amountInFiat }
                 return "\(Defaults.fiat.symbol) \(equityValue.toString(maximumFractionDigits: 2))"
             }
