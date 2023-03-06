@@ -55,15 +55,7 @@ extension JupiterSwapBusinessLogic {
             )
 
             // price impact
-            let priceImpact: JupiterSwapState.SwapPriceImpact?
-            switch route.priceImpactPct {
-            case let val where val >= 0.01 && val < 0.03:
-                priceImpact = .medium
-            case let val where val >= 0.03:
-                priceImpact = .high
-            default:
-                priceImpact = nil
-            }
+            
             
             // get fee relayer context
             let context = try await services.relayContextManager.getCurrentContextOrUpdate()
@@ -84,21 +76,7 @@ extension JupiterSwapBusinessLogic {
             )
             
             // FIXME: - account creation fee with fee relayer, Temporarily paying with SOL
-            let nonCreatedTokenMints = route.marketInfos.map(\.outputMint)
-                .compactMap { mint in
-                    state.swapTokens.first(where: { $0.token.address == mint && $0.userWallet == nil })?.address
-                }
             
-            let accountCreationFeeAmount = (context.minimumTokenAccountBalance * UInt64(nonCreatedTokenMints.count))
-                .convertToBalance(decimals: Token.nativeSolana.decimals)
-            let accountCreationFee = SwapFeeInfo(
-                amount: accountCreationFeeAmount,
-                tokenSymbol: "SOL",
-                tokenName: "Solana",
-                amountInFiat: solanaPrice * accountCreationFeeAmount,
-                pct: nil,
-                canBePaidByKeyApp: false
-            )
             
             // Liquidity fees
             let liquidityFees = route.marketInfos.map(\.lpFee)

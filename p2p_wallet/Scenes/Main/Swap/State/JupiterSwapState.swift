@@ -1,6 +1,9 @@
 import Jupiter
+import FeeRelayerSwift
 
 struct JupiterSwapState: Equatable {
+    // MARK: - Nested type
+    
     enum ErrorReason: Equatable {
         case initializationFailed
         case networkConnectionError
@@ -30,83 +33,130 @@ struct JupiterSwapState: Equatable {
         case high
     }
 
+    // MARK: - Properties
+
+    /// Status of current state
     let status: Status
 
+    /// Available routes for every token mint
     let routeMap: RouteMap
+    
+    /// Pre-selected route
+    let route: Route?
+    
+    /// All available routes for current tokens pair
+    let routes: [Route]
+    
+    /// Info of all swappable tokens
     let swapTokens: [SwapToken]
-
-    let amountFrom: Double
-    let amountFromFiat: Double
-    let amountTo: Double
-    let amountToFiat: Double
-
-    let fromToken: SwapToken
-    let toToken: SwapToken
-    let possibleToTokens: [SwapToken]
+    
+    /// Price info between from token and to token
     let priceInfo: SwapPriceInfo
+
+    /// Token that user's swapping from
+    let fromToken: SwapToken
+
+    /// Token that user's swapping to
+    let toToken: SwapToken
     
     /// SlippageBps is slippage multiplied by 100 (be careful)
     let slippageBps: Int
-    let route: Route?
-    let routes: [Route]
-    let priceImpact: SwapPriceImpact?
     
-    var networkFee: SwapFeeInfo
-    var accountCreationFee: SwapFeeInfo
-    var liquidityFee: [SwapFeeInfo]
+    /// FeeRelayer's relay context
+    let relayContext: RelayContext
 
-    init(
-        status: Status,
-        routeMap: RouteMap,
-        swapTokens: [SwapToken],
-        amountFrom: Double,
-        amountFromFiat: Double,
-        amountTo: Double,
-        amountToFiat: Double,
-        fromToken: SwapToken,
-        toToken: SwapToken,
-        possibleToTokens: [SwapToken],
-        priceInfo: SwapPriceInfo,
-        slippageBps: Int,
-        route: Route? = nil,
-        routes: [Route] = [],
-        priceImpact: SwapPriceImpact? = nil,
-        networkFee: SwapFeeInfo = .init(
-            amount: 0,
-            tokenSymbol: nil,
-            tokenName: nil,
-            amountInFiat: nil,
-            pct: nil,
-            canBePaidByKeyApp: true
-        ),
-        accountCreationFee: SwapFeeInfo = .init(
-            amount: 0,
-            tokenSymbol: nil,
-            tokenName: nil,
-            amountInFiat: nil,
+    /// Network fee of the transaction, can be modified by the fee relayer service
+    var networkFee: SwapFeeInfo
+    
+    // MARK: - Computed properties
+    
+    var amountFrom: Double {
+        guard let route, let amountFrom = UInt64(route.inAmount) else { return 0 }
+        return amountFrom.convertToBalance(decimals: fromToken.token.decimals)
+    }
+    
+    var amountFromFiat: Double {
+        priceInfo.fromPrice * amountFrom
+    }
+    
+    var amountTo: Double {
+        guard let route, let amountTo = UInt64(route.outAmount) else { return 0 }
+        return amountTo.convertToBalance(decimals: toToken.token.decimals)
+    }
+    
+    var amountToFiat: Double {
+        priceInfo.toPrice * amountTo
+    }
+    
+    var priceImpact: SwapPriceImpact? {
+        switch route?.priceImpactPct {
+        case let val where val >= 0.01 && val < 0.03:
+            return .medium
+        case let val where val >= 0.03:
+            return .high
+        default:
+            return nil
+        }
+    }
+
+    var bestOutAmount: UInt64 {
+        routes.map(\.outAmount).compactMap(UInt64.init).max() ?? 0
+    }
+    
+    var minimumReceivedAmount: Double? {
+        guard let outAmountString = route?.outAmount,
+              let outAmount = UInt64(outAmountString)
+        else {
+            return nil
+        }
+        let slippage = Double(slippageBps) / 100
+        return outAmount.convertToBalance(decimals: toToken.token.decimals) * (1 - slippage)
+    }
+    
+    var possibleToTokens: [SwapToken] {
+        let toAddresses = Set(routeMap.indexesRouteMap[fromToken.address] ?? [])
+        return swapTokens.filter { toAddresses.contains($0.token.address) }
+    }
+    
+    var accountCreationFee: SwapFeeInfo {
+        let nonCreatedTokenMints = route.marketInfos.map(\.outputMint)
+            .compactMap { mint in
+                swapTokens.first(where: { $0.token.address == mint && $0.userWallet == nil })?.address
+            }
+        
+        let accountCreationFeeAmount = (context.minimumTokenAccountBalance * UInt64(nonCreatedTokenMints.count))
+            .convertToBalance(decimals: Token.nativeSolana.decimals)
+        let accountCreationFee = SwapFeeInfo(
+            amount: accountCreationFeeAmount,
+            tokenSymbol: "SOL",
+            tokenName: "Solana",
+            amountInFiat: solanaPrice * accountCreationFeeAmount,
             pct: nil,
             canBePaidByKeyApp: false
-        ),
-        liquidityFee: [SwapFeeInfo] = []
-    ) {
-        self.status = status
-        self.routeMap = routeMap
-        self.swapTokens = swapTokens
-        self.amountFrom = amountFrom
-        self.amountFromFiat = amountFromFiat
-        self.amountTo = amountTo
-        self.amountToFiat = amountToFiat
-        self.fromToken = fromToken
-        self.toToken = toToken
-        self.possibleToTokens = possibleToTokens
-        self.priceInfo = priceInfo
-        self.slippageBps = slippageBps
-        self.route = route
-        self.routes = routes
-        self.priceImpact = priceImpact
-        self.networkFee = networkFee
-        self.accountCreationFee = accountCreationFee
-        self.liquidityFee = liquidityFee
+        )
+    }
+    
+    var liquidityFee: [SwapFeeInfo] {
+        guard let route else { return [] }
+        return route.marketInfos.map(\.lpFee)
+            .compactMap { lqFee -> SwapFeeInfo? in
+                guard let token = state.swapTokens.map(\.token).first(where: { $0.address == lqFee.mint }),
+                      let amount = UInt64(lqFee.amount)?.convertToBalance(decimals: token.decimals)
+                else {
+                    return nil
+                }
+                
+                let price = priceService.getCurrentPrice(for: token.address)
+                
+                return SwapFeeInfo(
+                    amount: amount,
+                    tokenSymbol: token.symbol,
+                    tokenName: token.name,
+                    amountInFiat: price * amount,
+                    pct: lqFee.pct,
+                    canBePaidByKeyApp: false
+                )
+            }
     }
 
     static func zero(
@@ -185,21 +235,5 @@ struct JupiterSwapState: Equatable {
             accountCreationFee: accountCreationFee ?? self.accountCreationFee,
             liquidityFee: liquidityFee ?? self.liquidityFee
         )
-    }
-    
-    // MARK: - Getters
-
-    var bestOutAmount: UInt64 {
-        routes.map(\.outAmount).compactMap(UInt64.init).max() ?? 0
-    }
-    
-    var minimumReceivedAmount: Double? {
-        guard let outAmountString = route?.outAmount,
-              let outAmount = UInt64(outAmountString)
-        else {
-            return nil
-        }
-        let slippage = Double(slippageBps) / 100
-        return outAmount.convertToBalance(decimals: toToken.token.decimals) * (1 - slippage)
     }
 }
