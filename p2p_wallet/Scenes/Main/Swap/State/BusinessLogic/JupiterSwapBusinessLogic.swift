@@ -5,29 +5,28 @@ enum JupiterSwapBusinessLogic {
         state: JupiterSwapState,
         action: JupiterSwapAction
     ) -> JupiterSwapState? {
-        let newState: JupiterSwapState?
         switch action {
         case .initialize:
-            newState = state.copy(status: .initializing)
+            return state.modified { $0.status = .initializing }
         case .changeAmountFrom:
-            newState = state.copy(status: .loadingAmountTo)
+            return state.modified { $0.status = .loadingAmountTo }
         case .changeFromToken:
-            newState = state.copy(status: .loadingAmountTo)
+            return state.modified { $0.status = .loadingAmountTo }
         case .changeToToken:
-            newState = state.copy(status: .loadingTokenTo)
+            return state.modified { $0.status = .loadingAmountTo }
         case .switchFromAndToTokens:
-            newState = state.copy(status: .switching)
+            return state.modified { $0.status = .switching }
         case .update:
-            newState = state.copy(status: .loadingAmountTo)
+            return state.modified { $0.status = .loadingAmountTo }
         case .updateUserWallets:
-            newState = state.copy(status: .switching)
+            return state.modified { $0.status = .switching }
+        case .updateTokensPriceMap:
+            return nil
         case .chooseRoute:
-            newState = state.copy(status: .loadingAmountTo)
+            return nil
         case .changeSlippageBps:
-            newState = state.copy(status: .loadingAmountTo)
+            return state.modified { $0.status = .loadingAmountTo }
         }
-
-        return newState
     }
 
     static func jupiterSwapBusinessLogic(
@@ -35,10 +34,9 @@ enum JupiterSwapBusinessLogic {
         action: JupiterSwapAction,
         services: JupiterSwapServices
     ) async -> JupiterSwapState {
-        let newState: JupiterSwapState
         switch action {
         case let .initialize(swapTokens, routeMap, fromToken, toToken):
-            newState = await initializeAction(
+            return await initializeAction(
                 state: state,
                 services: services,
                 swapTokens: swapTokens,
@@ -48,70 +46,66 @@ enum JupiterSwapBusinessLogic {
             )
 
         case let .changeAmountFrom(amountFrom):
-            newState = await executeAction(state, services, action: {
-                await changeAmountFrom(state: state, services: services, amountFrom: amountFrom)
-            }, chains: {
-                [calculateAmounts]
-            })
+            return await calculateRoute(
+                state: state,
+                newFromAmount: amountFrom,
+                services: services
+            )
 
         case let .changeFromToken(swapToken):
-            newState = await executeAction(state, services, action: {
-                await changeFromToken(state: state, services: services, token: swapToken)
-            }, chains: {
-                [calculateAmounts]
-            })
+            let state = state.modified {
+                $0.fromToken = swapToken
+            }
+            return await calculateRoute(
+                state: state,
+                services: services
+            )
         case let .changeToToken(swapToken):
-            newState = await executeAction(state, services, action: {
-                await changeToToken(state: state, services: services, token: swapToken)
-            }, chains: {
-                [calculateAmounts]
-            })
+            let state = state.modified {
+                $0.toToken = swapToken
+            }
+            return await calculateRoute(
+                state: state,
+                services: services
+            )
         case .switchFromAndToTokens:
-            newState = await executeAction(state, services, action: {
-                await switchFromAndToTokens(state: state, services: services)
-            }, chains: {
-                [calculateAmounts]
-            })
-
+            let newFromToken = state.toToken
+            let newToToken = state.fromToken
+            let state = state.modified {
+                $0.fromToken = newFromToken
+                $0.toToken = newToToken
+            }
+            return await calculateRoute(
+                state: state,
+                services: services
+            )
         case .update:
-            newState = await calculateAmounts(state: state, services: services)
+            return await calculateRoute(state: state, services: services)
         case let .updateUserWallets(userWallets):
-            newState = await executeAction(state, services, action: {
-                (try? await updateUserWallets(state: state, userWallets: userWallets)) ?? state
-            }, chains: {
-                [calculateAmounts]
-            })
+            return await updateUserWallets(state: state, userWallets: userWallets, services: services)
+        case let .updateTokensPriceMap(tokensPriceMap):
+            return state.modified {
+                $0.tokensPriceMap = tokensPriceMap
+            }
         case let .changeSlippageBps(slippageBps):
-            newState = await executeAction(state, services, action: {
-                changeSlippage(state: state, slippageBps: slippageBps)
-            }, chains: {
-                [calculateAmounts]
-            })
+            // return current state if slippage isn't changed
+            guard slippageBps != state.slippageBps else { return state }
+            
+            // modify slippage
+            let state = state.modified {
+                $0.slippageBps = slippageBps
+            }
+            
+            // re-calculate the route
+            return await calculateRoute(state: state, services: services)
         case let .chooseRoute(route):
-            let state = state.copy(route: route)
-            newState = await calculateAmounts(state: state, services: services)
+            // return current route if it is not changed
+            guard route != state.route else { return state }
+            
+            // modify the route
+            return state.modified {
+                $0.route = route
+            }
         }
-
-        return newState
     }
-}
-
-private typealias JupiterSwapLogicChainNode = (_ state: JupiterSwapState, _ service: JupiterSwapServices) async -> JupiterSwapState
-
-private func executeAction(
-    _: JupiterSwapState,
-    _ services: JupiterSwapServices,
-    action: () async -> JupiterSwapState,
-    chains: () -> [JupiterSwapLogicChainNode]
-) async -> JupiterSwapState {
-    let state = await action()
-    return await executeChain(state, services, chains())
-}
-
-private func executeChain(_ state: JupiterSwapState, _ service: JupiterSwapServices, _ chains: [JupiterSwapLogicChainNode]) async -> JupiterSwapState {
-    var state = state
-    for node in chains {
-        state = await node(state, service)
-    }
-    return state
 }
