@@ -108,7 +108,7 @@ struct TransactionDetailStatusView: View {
                                 .messageStyled()
                                 .onTapGesture(perform: errorMessageTapAction)
                         } else {
-                            Text(L10n.LowSlippage.weRecommendToIncreaseSlippageManually(context))
+                            Text(L10n.LowSlippage.weRecommendToIncreaseSlippageManually(context ?? ""))
                                 .messageStyled()
                         }
                     }
