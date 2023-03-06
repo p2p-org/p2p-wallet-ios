@@ -14,6 +14,7 @@ actor JupiterSwapStateMachine: StateMachine {
         self.services = services
     }
 
+    @discardableResult
     func accept(action: JupiterSwapAction) async -> JupiterSwapState {
         if let progressState = JupiterSwapBusinessLogic.jupiterSwapProgressState(state: currentState, action: action) {
             stateSubject.send(progressState)

@@ -118,6 +118,7 @@ final class SwapViewModel: BaseViewModel, ObservableObject {
 
 private extension SwapViewModel {
     func bind() {
+        // user wallets
         Resolver.resolve(WalletsRepository.self)
             .dataPublisher
             .removeDuplicates()
@@ -126,6 +127,26 @@ private extension SwapViewModel {
             }
             .store(in: &subscriptions)
         
+        // prices service
+        Resolver.resolve(PricesServiceType.self)
+            .currentPricesPublisher
+            .receive(on: DispatchQueue.main)
+            .map { pricesMap -> [String: Double] in
+                pricesMap
+                    .reduce([String: Double]()) { combined, element in
+                        guard let value = element.value.value else { return combined }
+                        var combined = combined
+                        combined[element.key] = value
+                        return combined
+                    }
+            }
+            .sinkAsync { [weak self] pricesMap in
+                print(pricesMap)
+                await self?.stateMachine.accept(action: .updateTokensPriceMap(pricesMap))
+            }
+            .store(in: &subscriptions)
+        
+        // swap wallets status
         swapWalletsRepository.status
             .sinkAsync { [weak self] dataStatus in
                 guard let self else { return }
