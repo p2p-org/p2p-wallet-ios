@@ -156,7 +156,7 @@ private extension SwapViewModel {
             .sinkAsync { [weak self] token in
                 let newState = await self?.stateMachine.accept(action: .changeFromToken(token))
                 Defaults.fromTokenAddress = token.address
-                if newState?.status == .ready && newState?.amountTo > 0 {
+                if newState?.isTransactionCanBeCreated == true {
                     let _ = await self?.stateMachine.accept(action: .createTransaction)
                 }
             }
@@ -168,7 +168,7 @@ private extension SwapViewModel {
             .sinkAsync { [ weak self] token in
                 let newState = await self?.stateMachine.accept(action: .changeToToken(token))
                 Defaults.toTokenAddress = token.address
-                if newState?.status == .ready && newState?.amountTo > 0 {
+                if newState?.isTransactionCanBeCreated == true {
                     let _ = await self?.stateMachine.accept(action: .createTransaction)
                 }
             }
