@@ -1245,3 +1245,6 @@ You can try again, but your new transaction will be subject to the current rates
 "License" = "Licence";
 "Cashout with Moonpay" = "Paiement avec Moonpay";
 "The address was copied to clipboard" = "L'adresse a été copiée dans le presse-papiers";
+"Confirm claiming the tokens " = "Confirmer la réclamation des jetons";
+"Claim %@" = "Revendication %@";
+"With Key App, the first transaction is free. Also all the transactions above $300 are free" = "Avec Key App, la première transaction est gratuite.  De plus, toutes les transactions supérieures à 300 $ sont gratuites";
