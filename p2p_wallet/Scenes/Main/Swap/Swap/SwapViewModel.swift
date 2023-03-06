@@ -52,7 +52,7 @@ final class SwapViewModel: BaseViewModel, ObservableObject {
 
     init(preChosenWallet: Wallet? = nil) {
         stateMachine = JupiterSwapStateMachine(
-            initialState: .zero(status: .requiredInitialize),
+            initialState: .zero,
             services: JupiterSwapServices(
                 jupiterClient: JupiterRestClientAPI(version: .v4),
                 pricesAPI: Resolver.resolve(),

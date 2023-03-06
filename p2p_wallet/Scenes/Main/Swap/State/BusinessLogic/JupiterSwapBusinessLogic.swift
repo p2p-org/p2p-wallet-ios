@@ -5,29 +5,26 @@ enum JupiterSwapBusinessLogic {
         state: JupiterSwapState,
         action: JupiterSwapAction
     ) -> JupiterSwapState? {
-        let newState: JupiterSwapState?
         switch action {
         case .initialize:
-            newState = state.copy(status: .initializing)
+            return state.modified { $0.status = .initializing }
         case .changeAmountFrom:
-            newState = state.copy(status: .loadingAmountTo)
+            return state.modified { $0.status = .loadingAmountTo }
         case .changeFromToken:
-            newState = state.copy(status: .loadingAmountTo)
+            return state.modified { $0.status = .loadingAmountTo }
         case .changeToToken:
-            newState = state.copy(status: .loadingTokenTo)
+            return state.modified { $0.status = .loadingAmountTo }
         case .switchFromAndToTokens:
-            newState = state.copy(status: .switching)
+            return state.modified { $0.status = .switching }
         case .update:
-            newState = state.copy(status: .loadingAmountTo)
+            return state.modified { $0.status = .loadingAmountTo }
         case .updateUserWallets:
-            newState = state.copy(status: .switching)
+            return state.modified { $0.status = .switching }
         case .chooseRoute:
-            newState = state.copy(status: .loadingAmountTo)
+            return state.modified { $0.status = .loadingAmountTo }
         case .changeSlippageBps:
-            newState = state.copy(status: .loadingAmountTo)
+            return state.modified { $0.status = .loadingAmountTo }
         }
-
-        return newState
     }
 
     static func jupiterSwapBusinessLogic(
@@ -88,7 +85,9 @@ enum JupiterSwapBusinessLogic {
                 [calculateAmounts]
             })
         case let .chooseRoute(route):
-            let state = state.copy(route: route)
+            let state = state.modified { state in
+                state.route = route
+            }
             newState = await calculateAmounts(state: state, services: services)
         }
 
