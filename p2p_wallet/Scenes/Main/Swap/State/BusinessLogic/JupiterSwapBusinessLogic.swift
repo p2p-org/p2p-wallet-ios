@@ -58,6 +58,7 @@ enum JupiterSwapBusinessLogic {
             }
             return await calculateRoute(
                 state: state,
+                newFromAmount: 0, // Reset fromAmount if from token is changed
                 services: services
             )
         case let .changeToToken(swapToken):
