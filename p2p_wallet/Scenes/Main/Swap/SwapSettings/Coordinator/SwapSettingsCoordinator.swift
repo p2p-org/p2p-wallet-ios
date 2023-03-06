@@ -156,18 +156,21 @@ final class SwapSettingsCoordinator: Coordinator<SwapSettingsCoordinatorResult> 
                         )
                     }
                 }
-                .eraseToAnyPublisher()
-        ) { [unowned self] routeInfo in
-            switch viewModel.status {
-            case .loading:
-                break
-            case .loaded(let info):
-                var info = info
-                info.currentRoute = routeInfo
-                viewModel.status = .loaded(info)
+                .eraseToAnyPublisher(),
+            onSelectRoute: { [unowned self] routeInfo in
+                switch viewModel.status {
+                case .loading:
+                    break
+                case .loaded(let info):
+                    var info = info
+                    info.currentRoute = routeInfo
+                    viewModel.status = .loaded(info)
+                }
+            },
+            onTapDone: { [unowned self] in
                 navigationController.presentedViewController?.dismiss(animated: true)
             }
-        }
+        )
         
         let viewController = UIBottomSheetHostingController(rootView: view)
         viewController.view.layer.cornerRadius = 20
