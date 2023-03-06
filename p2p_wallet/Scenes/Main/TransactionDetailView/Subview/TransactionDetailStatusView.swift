@@ -102,8 +102,8 @@ struct TransactionDetailStatusView: View {
                     case let .loading(message), let .succeed(message: message):
                         Text(message)
                             .messageStyled()
-                    case let .error(message):
-                        if !message.isSlippageError {
+                    case let .error(message, error):
+                        if let error, !error.isSlippageError {
                             Text(message)
                                 .messageStyled()
                                 .onTapGesture(perform: errorMessageTapAction)
