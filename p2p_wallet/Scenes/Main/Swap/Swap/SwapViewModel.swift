@@ -117,15 +117,6 @@ final class SwapViewModel: BaseViewModel, ObservableObject {
 
 private extension SwapViewModel {
     func bind() {
-        // user wallets
-        Resolver.resolve(WalletsRepository.self)
-            .dataPublisher
-            .removeDuplicates()
-            .sinkAsync { [weak self] userWallets in
-                await self?.stateMachine.accept(action: .updateUserWallets(userWallets: userWallets))
-            }
-            .store(in: &subscriptions)
-        
         // swap wallets status
         swapWalletsRepository.status
             .sinkAsync { [weak self] dataStatus in
@@ -141,26 +132,41 @@ private extension SwapViewModel {
                 
             }
             .store(in: &subscriptions)
+        
+        // listen to state of the stateMachine
+        stateMachine.statePublisher
+            .sinkAsync { [weak self] updatedState in
+                guard let self else { return }
+                self.handle(state: updatedState)
+                self.updateActionButton(for: updatedState)
+            }
+            .store(in: &subscriptions)
+        
+        // update user wallets only when initializingState is success
+        Resolver.resolve(WalletsRepository.self)
+            .dataPublisher
+            .filter { [weak self] _ in self?.initializingState == .success }
+            .removeDuplicates()
+            .sinkAsync { [weak self] userWallets in
+                await self?.stateMachine.accept(action: .updateUserWallets(userWallets: userWallets))
+            }
+            .store(in: &subscriptions)
 
+        // update fromToken only when initializingState is success
         changeFromToken
+            .filter { [weak self] _ in self?.initializingState == .success }
             .sinkAsync { [weak self] token in
                 await self?.stateMachine.accept(action: .changeFromToken(token))
                 Defaults.fromTokenAddress = token.address
             }
             .store(in: &subscriptions)
 
+        // update toToken only when initializingState is success
         changeToToken
+            .filter { [weak self] _ in self?.initializingState == .success }
             .sinkAsync { [ weak self] token in
                 await self?.stateMachine.accept(action: .changeToToken(token))
                 Defaults.toTokenAddress = token.address
-            }
-            .store(in: &subscriptions)
-
-        stateMachine.statePublisher
-            .sinkAsync { [weak self] updatedState in
-                guard let self else { return }
-                self.handle(state: updatedState)
-                self.updateActionButton(for: updatedState)
             }
             .store(in: &subscriptions)
     }
