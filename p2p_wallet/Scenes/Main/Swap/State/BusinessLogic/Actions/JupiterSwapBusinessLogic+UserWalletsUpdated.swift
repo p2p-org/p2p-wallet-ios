@@ -71,6 +71,7 @@ extension JupiterSwapBusinessLogic {
             toToken.address == state.toToken.address
         {
             return state.modified {
+                $0.status = .ready
                 $0.swapTokens = swapTokens
                 $0.fromToken = fromToken
                 $0.toToken = toToken
@@ -79,6 +80,7 @@ extension JupiterSwapBusinessLogic {
         
         // otherwise update the route also
         let state = state.modified {
+            $0.status = .ready
             $0.swapTokens = swapTokens
             $0.fromToken = fromToken
             $0.toToken = toToken
