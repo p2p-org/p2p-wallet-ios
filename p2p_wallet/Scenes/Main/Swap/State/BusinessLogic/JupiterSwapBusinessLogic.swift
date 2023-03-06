@@ -49,6 +49,10 @@ enum JupiterSwapBusinessLogic {
             )
 
         case let .changeAmountFrom(amountFrom):
+            let state = state.modified {
+                $0.route = nil
+                $0.swapTransaction = nil
+            }
             return await calculateRoute(
                 state: state,
                 newFromAmount: amountFrom,
@@ -58,6 +62,7 @@ enum JupiterSwapBusinessLogic {
         case let .changeFromToken(swapToken):
             let state = state.modified {
                 $0.fromToken = swapToken
+                $0.swapTransaction = nil
             }
             return await calculateRoute(
                 state: state,
@@ -67,6 +72,7 @@ enum JupiterSwapBusinessLogic {
         case let .changeToToken(swapToken):
             let state = state.modified {
                 $0.toToken = swapToken
+                $0.swapTransaction = nil
             }
             return await calculateRoute(
                 state: state,
@@ -78,6 +84,7 @@ enum JupiterSwapBusinessLogic {
             let state = state.modified {
                 $0.fromToken = newFromToken
                 $0.toToken = newToToken
+                $0.swapTransaction = nil
             }
             return await calculateRoute(
                 state: state,
@@ -104,6 +111,7 @@ enum JupiterSwapBusinessLogic {
             let state = state.modified {
                 $0.status = .ready
                 $0.slippageBps = slippageBps
+                $0.swapTransaction = nil
             }
             
             // re-calculate the route
@@ -113,10 +121,12 @@ enum JupiterSwapBusinessLogic {
             guard route != state.route else { return state }
             
             // modify the route
-            return state.modified {
+            let state = state.modified {
                 $0.route = route
+                $0.swapTransaction = nil
             }
 
+            return await createTransaction(state: state, services: services)
         case .createTransaction:
             return await createTransaction(state: state, services: services)
 

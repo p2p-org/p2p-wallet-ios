@@ -43,6 +43,8 @@ enum JupiterSwapAction: Equatable {
             return "chooseRoute(\(route.id))"
         case .changeSlippageBps(let int):
             return "changeSlippageBps(\(int))"
+        case .createTransaction:
+            return "createTransaction"
         }
     }
 }

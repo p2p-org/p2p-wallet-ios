@@ -68,7 +68,7 @@ final class SwapInputViewModel: BaseViewModel, ObservableObject {
                 self.isAmountLoading = true && !self.isFromToken
                 if self.isFromToken {
                     let newState = await self.stateMachine.accept(action: .changeAmountFrom(value ?? 0))
-                    if newState.amountFrom > 0 {
+                    if newState.isTransactionCanBeCreated {
                         await self.stateMachine.accept(action: .createTransaction)
                     }
                 }
