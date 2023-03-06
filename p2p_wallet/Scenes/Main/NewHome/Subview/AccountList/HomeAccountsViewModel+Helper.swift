@@ -42,7 +42,7 @@ extension HomeAccountsViewModel {
         }
     }
 
-    static var defaultSolanaAccountsSorter: (SolanaAccountsManager.Account, SolanaAccountsManager.Account) -> Bool {
+    static var defaultSolanaAccountsSorter: (SolanaAccountsService.Account, SolanaAccountsService.Account) -> Bool {
         { lhs, rhs in
             // prefers non-liquidity token than liquidity tokens
             if lhs.data.token.isLiquidity != rhs.data.token.isLiquidity {

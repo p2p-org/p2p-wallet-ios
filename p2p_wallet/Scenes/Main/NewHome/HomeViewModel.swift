@@ -23,7 +23,7 @@ class HomeViewModel: ObservableObject {
     @Injected private var accountStorage: AccountStorageType
     @Injected private var nameStorage: NameStorageType
     @Injected private var createNameService: CreateNameService
-    @Injected private var solanaAccountsManager: SolanaAccountsManager
+    @Injected private var solanaAccountsManager: SolanaAccountsService
     @Injected private var sellDataService: any SellDataService
 
     // MARK: - Published properties

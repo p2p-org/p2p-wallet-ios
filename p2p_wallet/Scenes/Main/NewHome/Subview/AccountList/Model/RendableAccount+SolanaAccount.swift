@@ -8,7 +8,7 @@
 import Foundation
 
 struct RendableSolanaAccount: RendableAccount {
-    let account: SolanaAccountsManager.Account
+    let account: SolanaAccountsService.Account
     
     var id: String {
         account.id

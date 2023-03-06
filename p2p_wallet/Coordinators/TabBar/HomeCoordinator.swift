@@ -21,7 +21,7 @@ enum HomeNavigation: Equatable {
     case swap
     case cashOut
     case earn
-    case solanaAccount(SolanaAccountsManager.Account)
+    case solanaAccount(SolanaAccountsService.Account)
     case actions([WalletActionType])
     // HomeEmpty
     case topUpCoin(Token)

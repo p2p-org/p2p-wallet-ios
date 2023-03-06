@@ -368,7 +368,7 @@ extension Resolver: ResolverRegistering {
             .implements(WalletsRepository.self)
             .scope(.session)
 
-        register { SolanaAccountsManager() }
+        register { SolanaAccountsService() }
             .scope(.session)
         
         register {FavouriteAccountsStore() }

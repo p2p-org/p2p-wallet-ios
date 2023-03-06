@@ -9,7 +9,7 @@ import Foundation
 import SolanaSwift
 
 struct RendableNewSolanaAccountDetail: RendableAccountDetail {
-    let account: SolanaAccountsManager.Account
+    let account: SolanaAccountsService.Account
 
     var title: String {
         account.data.token.name

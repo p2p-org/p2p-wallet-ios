@@ -29,8 +29,8 @@ class DetailAccountViewModel: BaseViewModel, ObservableObject {
 
     /// Render solana account and dynamically update it.
     init(
-        solanaAccountsManager: SolanaAccountsManager = Resolver.resolve(),
-        solanaAccount: SolanaAccountsManager.Account
+        solanaAccountsManager: SolanaAccountsService = Resolver.resolve(),
+        solanaAccount: SolanaAccountsService.Account
     ) {
         // Init action subject
         let actionSubject = PassthroughSubject<DetailAccountAction, Never>()
