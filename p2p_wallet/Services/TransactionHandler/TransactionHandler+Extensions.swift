@@ -22,7 +22,7 @@ extension TransactionHandler {
 //                self.notificationsService.showInAppNotification(.done(L10n.transactionHasBeenSent))
 
                 // update status
-                await updateTransactionAtIndex(index) { _ in
+                _ = await updateTransactionAtIndex(index) { _ in
                     .init(
                         trxIndex: index,
                         transactionId: transactionID,
@@ -44,7 +44,7 @@ extension TransactionHandler {
                 SentrySDK.capture(error: error)
 
                 // mark transaction as failured
-                await updateTransactionAtIndex(index) { currentValue in
+                _ = await updateTransactionAtIndex(index) { currentValue in
                     var info = currentValue
                     info.status = .error(error)
                     return info
@@ -70,15 +70,12 @@ extension TransactionHandler {
                     txStatus = .confirmed(Int(numberOfConfirmations))
                 case .finalized:
                     txStatus = .finalized
-                    await MainActor.run { [weak self] in
-                        self?.notificationsService.showInAppNotification(.done(L10n.transactionHasBeenConfirmed))
-                    }
                 case .error(let error):
                     print(error ?? "")
                     txStatus = .error(SolanaError.other(error ?? ""))
                 }
 
-                await self.updateTransactionAtIndex(index) { currentValue in
+                _ = await self.updateTransactionAtIndex(index) { currentValue in
                     var value = currentValue
                     value.status = txStatus
                     if let slot {
