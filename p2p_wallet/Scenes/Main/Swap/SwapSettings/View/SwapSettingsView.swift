@@ -16,6 +16,25 @@ struct SwapSettingsView: View {
     @State private var textFieldColor: UIColor = Asset.Colors.night.color
     
     var body: some View {
+        VStack(spacing: 4) {
+            exchangeRate
+            list
+        }
+    }
+    
+    var exchangeRate: some View {
+        Text(viewModel.info?.exchangeRateInfo)
+            .apply(style: .label1)
+            .foregroundColor(Color(Asset.Colors.night.color))
+            .accessibilityIdentifier("SwapView.priceInfoLabel")
+            .if(viewModel.status == .loading) { view in
+                view.skeleton(with: true, size: CGSize(width: 160, height: 16))
+            }
+            .frame(maxWidth: .infinity, alignment: .center)
+            .frame(height: 16)
+    }
+    
+    var list: some View {
         List {
             Section {
                 fisrtSectionRows
@@ -34,6 +53,7 @@ struct SwapSettingsView: View {
                 slippageRows
             }
         }
+        .listStyle(InsetGroupedListStyle())
     }
     
     // MARK: - First section
@@ -313,7 +333,8 @@ struct SwapSettingsView_Previews: PreviewProvider {
                     minimumReceived: .init(
                         amount: 0.91,
                         token: "TokenB"
-                    )
+                    ),
+                    exchangeRateInfo: "1 SOL ≈ 12.85 USD"
                 )
 
                 viewModel.status = .loaded(

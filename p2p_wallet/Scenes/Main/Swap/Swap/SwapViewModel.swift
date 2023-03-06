@@ -27,7 +27,6 @@ final class SwapViewModel: BaseViewModel, ObservableObject {
     let submitTransaction = PassthroughSubject<(PendingTransaction, String), Never>()
 
     // MARK: - Params
-    @Published var header: String = ""
     @Published var initializingState: InitializingState = .loading
     @Published var arePricesLoading: Bool = false
 
@@ -161,7 +160,6 @@ private extension SwapViewModel {
             .sinkAsync { [weak self] updatedState in
                 guard let self else { return }
                 self.handle(state: updatedState)
-                self.updateHeader(priceInfo: updatedState.priceInfo, fromToken: updatedState.fromToken.token, toToken: updatedState.toToken.token)
                 self.updateActionButton(for: updatedState)
             }
             .store(in: &subscriptions)
@@ -244,16 +242,6 @@ private extension SwapViewModel {
 
     func cancelUpdate() {
         timer?.invalidate()
-    }
-
-    func updateHeader(priceInfo: SwapPriceInfo, fromToken: Token, toToken: Token) {
-        if priceInfo.relation != 0 {
-            let onetoToken = 1.tokenAmountFormattedString(symbol: toToken.symbol, maximumFractionDigits: Int(toToken.decimals), roundingMode: .down)
-            let amountFromToken = priceInfo.relation.tokenAmountFormattedString(symbol: fromToken.symbol, maximumFractionDigits: Int(fromToken.decimals), roundingMode: .down)
-            header = [onetoToken, amountFromToken].joined(separator: " ≈ ")
-        } else {
-            header = ""
-        }
     }
 
     func updateActionButton(for state: JupiterSwapState) {

@@ -181,6 +181,16 @@ struct JupiterSwapState: Equatable {
             }
     }
     
+    var exchangeRateInfo: String? {
+        guard priceInfo.relation != 0 else {
+            return nil
+        }
+        
+        let onetoToken = 1.tokenAmountFormattedString(symbol: toToken.token.symbol, maximumFractionDigits: Int(toToken.token.decimals), roundingMode: .down)
+        let amountFromToken = priceInfo.relation.tokenAmountFormattedString(symbol: fromToken.token.symbol, maximumFractionDigits: Int(fromToken.token.decimals), roundingMode: .down)
+        return [onetoToken, amountFromToken].joined(separator: " ≈ ")
+    }
+    
     // MARK: - Initializing state
 
     static var zero: Self {
