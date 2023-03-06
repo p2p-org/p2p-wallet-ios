@@ -94,6 +94,13 @@ final class SwapInputViewModel: BaseViewModel, ObservableObject {
                 self.notificationService.showToast(title: "🤖", text: L10n.youCanEnterYouPayFieldOnly)
             }
             .store(in: &subscriptions)
+
+        changeTokenPressed
+            .sink { [weak self] in
+                guard let self, self.isFromToken else { return }
+                self.amount = 0
+            }
+            .store(in: &subscriptions)
     }
 }
 
