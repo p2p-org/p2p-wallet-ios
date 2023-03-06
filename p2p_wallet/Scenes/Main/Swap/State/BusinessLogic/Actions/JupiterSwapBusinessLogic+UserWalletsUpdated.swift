@@ -11,7 +11,8 @@ import SolanaSwift
 extension JupiterSwapBusinessLogic {
     static func updateUserWallets(
         state: JupiterSwapState,
-        userWallets: [Wallet]
+        userWallets: [Wallet],
+        services: JupiterSwapServices
     ) async -> JupiterSwapState {
         // map updated user wallet to swapTokens
         let swapTokens = state.swapTokens.map { swapToken in
@@ -65,11 +66,23 @@ extension JupiterSwapBusinessLogic {
             }
         }
         
-        // return state
-        return state.modified {
+        // if from and to token stay unchanged, update only the token with new balance, not the route
+        if fromToken.address == state.fromToken.address &&
+            toToken.address == state.toToken.address
+        {
+            return state.modified {
+                $0.swapTokens = swapTokens
+                $0.fromToken = fromToken
+                $0.toToken = toToken
+            }
+        }
+        
+        // otherwise update the route also
+        let state = state.modified {
             $0.swapTokens = swapTokens
             $0.fromToken = fromToken
             $0.toToken = toToken
         }
+        return await calculateRoute(state: state, services: services)
     }
 }

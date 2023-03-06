@@ -3,7 +3,7 @@ import SolanaSwift
 import Resolver
 
 extension JupiterSwapBusinessLogic {
-    static func calculateAmounts(
+    static func calculateRoute(
         state: JupiterSwapState,
         newFromAmount: Double? = nil,
         services: JupiterSwapServices
