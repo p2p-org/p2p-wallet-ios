@@ -19,29 +19,27 @@ extension JupiterSwapBusinessLogic {
             } else if let chosenTokens = autoChoose(swapTokens: swapTokens) {
                 tokens = chosenTokens
             } else {
-                return .zero(status: .error(reason: .initializationFailed), routeMap: routeMap, swapTokens: swapTokens)
+                return .zero.modified {
+                    $0.status = .ready
+                    $0.routeMap = routeMap
+                    $0.swapTokens = swapTokens
+                }
             }
-
-            let priceInfo = try await getPrices(from: tokens.fromToken, to: tokens.toToken, services: services)
-        
-            let possibleToTokens = getPossibleToTokens(fromTokenMint: tokens.fromToken.address, routeMap: routeMap, swapTokens: swapTokens)
-
-            return .init(
-                status: .ready,
-                routeMap: routeMap,
-                swapTokens: swapTokens,
-                amountFrom: 0,
-                amountFromFiat: 0,
-                amountTo: 0,
-                amountToFiat: 0,
-                fromToken: tokens.fromToken,
-                toToken: tokens.toToken,
-                possibleToTokens: possibleToTokens,
-                priceInfo: priceInfo ?? .init(fromPrice: 0, toPrice: 0),
-                slippageBps: 50
-            )
+            
+            return .zero.modified {
+                $0.status = .ready
+                $0.routeMap = routeMap
+                $0.swapTokens = swapTokens
+                $0.fromToken = tokens.fromToken
+                $0.toToken = tokens.toToken
+                $0.slippageBps = Int(Defaults.slippage * 100)
+            }
         } catch {
-            return .zero(status: .error(reason: .initializationFailed), routeMap: routeMap, swapTokens: swapTokens)
+            return .zero.modified {
+                $0.status = .error(reason: .initializationFailed)
+                $0.routeMap = routeMap
+                $0.swapTokens = swapTokens
+            }
         }
     }
 }
