@@ -4,18 +4,17 @@ import Resolver
 
 extension JupiterSwapBusinessLogic {
     static func calculateAmounts(state: JupiterSwapState, services: JupiterSwapServices) async -> JupiterSwapState {
+        // assert from token is not equal to toToken
         guard state.fromToken.address != state.toToken.address else {
-            return state.copy(status: .error(reason: .equalSwapTokens))
+            return state.error(.equalSwapTokens)
         }
 
+        // assert amountFrom is not 0
         guard state.amountFrom > 0 else {
-            return state.copy(
-                status: .ready,
-                amountFrom: 0,
-                amountFromFiat: 0,
-                amountTo: 0,
-                amountToFiat: 0
-            )
+            return state.modified {
+                $0.status = .ready
+                $0.route = nil
+            }
         }
 
         let amountFromLamports = state.amountFrom.toLamport(decimals: state.fromToken.token.decimals)
@@ -43,7 +42,10 @@ extension JupiterSwapBusinessLogic {
                     ?? data.data.first,
                 let toAmountLamports = Lamports(route.outAmount)
             else {
-                return state.copy(status: .error(reason: .routeIsNotFound), amountTo: 0, amountToFiat: 0)
+                return state.modified {
+                    $0.status = .error(reason: .routeIsNotFound)
+                    $0.route = nil
+                }
             }
 
             // to amount
@@ -64,16 +66,7 @@ extension JupiterSwapBusinessLogic {
             let priceService = Resolver.resolve(PricesService.self)
             let solanaPrice = priceService.getCurrentPrice(for: Token.nativeSolana.address)
             
-            let networkFeeAmount = context.lamportsPerSignature
-                .convertToBalance(decimals: Token.nativeSolana.decimals)
-            let networkFee = SwapFeeInfo(
-                amount: networkFeeAmount,
-                tokenSymbol: "SOL",
-                tokenName: "Solana",
-                amountInFiat: solanaPrice * networkFeeAmount,
-                pct: nil,
-                canBePaidByKeyApp: true
-            )
+            
             
             // FIXME: - account creation fee with fee relayer, Temporarily paying with SOL
             

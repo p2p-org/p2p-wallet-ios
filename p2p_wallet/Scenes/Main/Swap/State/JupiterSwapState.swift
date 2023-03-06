@@ -1,5 +1,6 @@
 import Jupiter
 import FeeRelayerSwift
+import SolanaSwift
 
 struct JupiterSwapState: Equatable {
     // MARK: - Nested type
@@ -36,37 +37,37 @@ struct JupiterSwapState: Equatable {
     // MARK: - Properties
 
     /// Status of current state
-    let status: Status
+    var status: Status
 
     /// Available routes for every token mint
-    let routeMap: RouteMap
+    var routeMap: RouteMap
+    
+    /// Current token prices map
+    var tokenPriceMap: TokenPriceMap
     
     /// Pre-selected route
-    let route: Route?
+    var route: Route?
     
     /// All available routes for current tokens pair
-    let routes: [Route]
+    var routes: [Route]
     
     /// Info of all swappable tokens
-    let swapTokens: [SwapToken]
+    var swapTokens: [SwapToken]
     
     /// Price info between from token and to token
-    let priceInfo: SwapPriceInfo
+    var priceInfo: SwapPriceInfo
 
     /// Token that user's swapping from
-    let fromToken: SwapToken
+    var fromToken: SwapToken
 
     /// Token that user's swapping to
-    let toToken: SwapToken
+    var toToken: SwapToken
     
     /// SlippageBps is slippage multiplied by 100 (be careful)
-    let slippageBps: Int
+    var slippageBps: Int
     
     /// FeeRelayer's relay context
-    let relayContext: RelayContext
-
-    /// Network fee of the transaction, can be modified by the fee relayer service
-    var networkFee: SwapFeeInfo
+    var relayContext: RelayContext?
     
     // MARK: - Computed properties
     
@@ -118,19 +119,37 @@ struct JupiterSwapState: Equatable {
         return swapTokens.filter { toAddresses.contains($0.token.address) }
     }
     
-    var accountCreationFee: SwapFeeInfo {
+    /// Network fee of the transaction, can be modified by the fee relayer service
+    var networkFee: SwapFeeInfo? {
+        guard let route else { return nil }
+        
+        // FIXME: - network fee with fee relayer, Temporarily paying with SOL
+        let networkFeeAmount = relayContext.lamportsPerSignature // user's signature only
+            .convertToBalance(decimals: Token.nativeSolana.decimals)
+        return SwapFeeInfo(
+            amount: networkFeeAmount,
+            tokenSymbol: "SOL",
+            tokenName: "Solana",
+            amountInFiat: tokenPriceMap[Token.nativeSolana.address].value * networkFeeAmount,
+            pct: nil,
+            canBePaidByKeyApp: true
+        )
+    }
+    
+    var accountCreationFee: SwapFeeInfo? {
+        guard let route else { return nil }
         let nonCreatedTokenMints = route.marketInfos.map(\.outputMint)
             .compactMap { mint in
                 swapTokens.first(where: { $0.token.address == mint && $0.userWallet == nil })?.address
             }
         
-        let accountCreationFeeAmount = (context.minimumTokenAccountBalance * UInt64(nonCreatedTokenMints.count))
+        let accountCreationFeeAmount = (relayContext.minimumTokenAccountBalance * UInt64(nonCreatedTokenMints.count))
             .convertToBalance(decimals: Token.nativeSolana.decimals)
         let accountCreationFee = SwapFeeInfo(
             amount: accountCreationFeeAmount,
             tokenSymbol: "SOL",
             tokenName: "Solana",
-            amountInFiat: solanaPrice * accountCreationFeeAmount,
+            amountInFiat: tokenPriceMap[Token.nativeSolana.address].value * accountCreationFeeAmount,
             pct: nil,
             canBePaidByKeyApp: false
         )
@@ -158,82 +177,36 @@ struct JupiterSwapState: Equatable {
                 )
             }
     }
+    
+    // MARK: - Initializing state
 
-    static func zero(
-        status: Status = .requiredInitialize,
-        routeMap: RouteMap = RouteMap(mintKeys: [], indexesRouteMap: [:]),
-        swapTokens: [SwapToken] = [],
-        amountFrom: Double = .zero,
-        amountFromFiat: Double = .zero,
-        amountTo: Double = .zero,
-        amountToFiat: Double = .zero,
-        fromToken: SwapToken = .nativeSolana,
-        toToken: SwapToken = .nativeSolana,
-        possibleToTokens: [SwapToken] = [],
-        priceInfo: SwapPriceInfo = SwapPriceInfo(fromPrice: .zero, toPrice: .zero),
-        slippageBps: Int = 0,
-        route: Route? = nil,
-        routes: [Route] = [],
-        priceImpact: SwapPriceImpact? = nil
-    ) -> JupiterSwapState {
-        JupiterSwapState(
-            status: status,
-            routeMap: routeMap,
-            swapTokens: swapTokens,
-            amountFrom: amountFrom,
-            amountFromFiat: amountFromFiat,
-            amountTo: amountTo,
-            amountToFiat: amountToFiat,
-            fromToken: fromToken,
-            toToken: toToken,
-            possibleToTokens: possibleToTokens,
-            priceInfo: priceInfo,
-            slippageBps: slippageBps,
-            route: route,
-            routes: routes,
-            priceImpact: priceImpact
+    static var zero: Self {
+        Self.init(
+            status: .requiredInitialize,
+            routeMap: RouteMap(mintKeys: [], indexesRouteMap: [:]),
+            tokenPriceMap: [:],
+            route: nil,
+            routes: [],
+            swapTokens: [],
+            priceInfo: SwapPriceInfo(fromPrice: .zero, toPrice: .zero),
+            fromToken: .nativeSolana,
+            toToken: .nativeSolana,
+            slippageBps: 0,
+            relayContext: nil
         )
     }
+    
+    // MARK: - Modified function
+    
+    func error(_ reason: ErrorReason) -> Self {
+        var state = self
+        state.status = .error(reason: reason)
+        return state
+    }
 
-    func copy(
-        status: Status? = nil,
-        routeMap: RouteMap? = nil,
-        swapTokens: [SwapToken]? = nil,
-        amountFrom: Double? = nil,
-        amountFromFiat: Double? = nil,
-        amountTo: Double? = nil,
-        amountToFiat: Double? = nil,
-        fromToken: SwapToken? = nil,
-        toToken: SwapToken? = nil,
-        possibleToTokens: [SwapToken]? = nil,
-        priceInfo: SwapPriceInfo? = nil,
-        slippageBps: Int? = nil,
-        route: Route? = nil,
-        routes: [Route]? = nil,
-        priceImpact: SwapPriceImpact? = nil,
-        networkFee: SwapFeeInfo? = nil,
-        accountCreationFee: SwapFeeInfo? = nil,
-        liquidityFee: [SwapFeeInfo]? = nil
-    ) -> JupiterSwapState {
-        JupiterSwapState(
-            status: status ?? self.status,
-            routeMap: routeMap ?? self.routeMap,
-            swapTokens: swapTokens ?? self.swapTokens,
-            amountFrom: amountFrom ?? self.amountFrom,
-            amountFromFiat: amountFromFiat ?? self.amountFromFiat,
-            amountTo: amountTo ?? self.amountTo,
-            amountToFiat: amountToFiat ?? self.amountToFiat,
-            fromToken: fromToken ?? self.fromToken,
-            toToken: toToken ?? self.toToken,
-            possibleToTokens: possibleToTokens ?? self.possibleToTokens,
-            priceInfo: priceInfo ?? self.priceInfo,
-            slippageBps: slippageBps ?? self.slippageBps,
-            route: route ?? self.route,
-            routes: routes ?? self.routes,
-            priceImpact: priceImpact ?? self.priceImpact,
-            networkFee: networkFee ?? self.networkFee,
-            accountCreationFee: accountCreationFee ?? self.accountCreationFee,
-            liquidityFee: liquidityFee ?? self.liquidityFee
-        )
+    func modified(_ modify: (inout Self) -> Void) -> Self {
+        var state = self
+        modify(&state)
+        return state
     }
 }
