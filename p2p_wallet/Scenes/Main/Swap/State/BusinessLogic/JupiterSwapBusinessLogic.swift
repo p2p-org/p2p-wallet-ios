@@ -23,7 +23,7 @@ enum JupiterSwapBusinessLogic {
         case .updateTokensPriceMap:
             return nil
         case .chooseRoute:
-            return state.modified { $0.status = .loadingAmountTo }
+            return nil
         case .changeSlippageBps:
             return state.modified { $0.status = .loadingAmountTo }
         }
