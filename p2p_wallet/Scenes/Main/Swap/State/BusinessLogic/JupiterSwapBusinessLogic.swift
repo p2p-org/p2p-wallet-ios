@@ -89,10 +89,16 @@ enum JupiterSwapBusinessLogic {
             }
         case let .changeSlippageBps(slippageBps):
             // return current state if slippage isn't changed
-            guard slippageBps != state.slippageBps else { return state }
+            guard slippageBps != state.slippageBps else {
+                return state
+                    .modified {
+                        $0.status = .ready
+                    }
+            }
             
             // modify slippage
             let state = state.modified {
+                $0.status = .ready
                 $0.slippageBps = slippageBps
             }
             
