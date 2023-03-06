@@ -15,7 +15,8 @@ struct SwapSelectRouteView: View {
     // MARK: - Properties
 
     let statusPublisher: AnyPublisher<Status, Never>
-    let onTapDone: (SwapSettingsRouteInfo) -> Void
+    let onSelectRoute: (SwapSettingsRouteInfo) -> Void
+    let onTapDone: () -> Void
     
     @State private var isLoading = false
     @State private var routes: [SwapSettingsRouteInfo] = []
@@ -46,6 +47,8 @@ struct SwapSelectRouteView: View {
                             .contentShape(Rectangle())
                             .onTapGesture {
                                 self.selectedIndex = index
+                                guard index < routes.count else { return }
+                                onSelectRoute(routes[index])
                             }
                         
                         if index != routes.count - 1 {
@@ -67,8 +70,7 @@ struct SwapSelectRouteView: View {
                         .fill(Color(Asset.Colors.rain.color))
                 )
                 .onTapGesture {
-                    guard let selectedIndex, selectedIndex < routes.count else { return }
-                    onTapDone(routes[selectedIndex])
+                    onTapDone()
                 }
                 .padding(.horizontal, 16)
                 .padding(.bottom, 20)
@@ -128,7 +130,8 @@ struct SwapSelectRouteView_Previews: PreviewProvider {
     static var previews: some View {
         SwapSelectRouteView(
             statusPublisher: subject.eraseToAnyPublisher(),
-            onTapDone: {_ in }
+            onSelectRoute: {_ in },
+            onTapDone: {}
         )
             .onAppear {
                 DispatchQueue.main.asyncAfter(deadline: .now() + .seconds(2)) {
