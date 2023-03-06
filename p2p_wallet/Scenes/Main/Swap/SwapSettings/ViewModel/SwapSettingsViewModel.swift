@@ -30,6 +30,7 @@ final class SwapSettingsViewModel: BaseViewModel, ObservableObject {
         let accountCreationFee: SwapFeeInfo
         let liquidityFee: [SwapFeeInfo]
         let minimumReceived: SwapTokenAmountInfo?
+        let exchangeRateInfo: String?
         
         var estimatedFees: String {
             "≈ " + (liquidityFee + [networkFee, accountCreationFee].compactMap {$0})
