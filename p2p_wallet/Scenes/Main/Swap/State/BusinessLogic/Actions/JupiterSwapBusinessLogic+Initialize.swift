@@ -1,5 +1,6 @@
 import Jupiter
 import SolanaSwift
+import Resolver
 
 extension JupiterSwapBusinessLogic {
     static func initializeAction(
@@ -10,6 +11,16 @@ extension JupiterSwapBusinessLogic {
         fromToken: SwapToken?,
         toToken: SwapToken?
     ) async -> JupiterSwapState {
+        // get prices
+        let tokensPriceMap = await Resolver.resolve(PricesStorage.self).retrievePrices()
+            .reduce([String: Double]()) { combined, element in
+                guard let value = element.value.value else { return combined }
+                var combined = combined
+                combined[element.key] = value
+                return combined
+            }
+        
+        // get tokens
         let tokens: (fromToken: SwapToken, toToken: SwapToken)
         if let fromToken, let toToken {
             tokens = (fromToken, toToken)
@@ -20,6 +31,7 @@ extension JupiterSwapBusinessLogic {
         } else {
             return .zero.modified {
                 $0.status = .ready
+                $0.tokensPriceMap = tokensPriceMap
                 $0.routeMap = routeMap
                 $0.swapTokens = swapTokens
             }
@@ -29,6 +41,7 @@ extension JupiterSwapBusinessLogic {
             $0.status = .ready
             $0.routeMap = routeMap
             $0.swapTokens = swapTokens
+            $0.tokensPriceMap = tokensPriceMap
             $0.fromToken = tokens.fromToken
             $0.toToken = tokens.toToken
             $0.slippageBps = Int(Defaults.slippage * 100)
