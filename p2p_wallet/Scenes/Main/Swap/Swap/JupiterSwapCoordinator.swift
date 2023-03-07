@@ -26,6 +26,8 @@ final class JupiterSwapCoordinator: Coordinator<Void> {
     private var result = PassthroughSubject<Void, Never>()
     private let params: JupiterSwapParameters
     private var viewModel: SwapViewModel!
+    
+    private var swapSettingBarButton: UIBarButtonItem!
 
     init(navigationController: UINavigationController, params: JupiterSwapParameters) {
         self.navigationController = navigationController
@@ -74,7 +76,27 @@ final class JupiterSwapCoordinator: Coordinator<Void> {
 //        navigationController.navigationBar.setBackgroundImage(UIImage(), for: .default)
 //        navigationController.navigationBar.backgroundColor = Asset.Colors.smoke.color
         controller.title = L10n.swap
-        controller.navigationItem.rightBarButtonItem = UIBarButtonItem(image: .receipt, style: .plain, target: self, action: #selector(receiptButtonPressed))
+        swapSettingBarButton = UIBarButtonItem(image: .receipt, style: .plain, target: self, action: #selector(receiptButtonPressed))
+        
+        // show rightBarButtonItem only on successful loading
+        viewModel.$initializingState
+            .map { state -> Bool in
+                switch state {
+                case .loading, .failed:
+                    return false
+                case .success:
+                    return true
+                }
+            }
+            .removeDuplicates()
+            .sink { [weak controller, weak swapSettingBarButton] show in
+                if !show {
+                    controller?.navigationItem.rightBarButtonItem = nil
+                } else if controller?.navigationItem.rightBarButtonItem == nil {
+                    controller?.navigationItem.rightBarButtonItem = swapSettingBarButton
+                }
+            }
+            .store(in: &subscriptions)
     }
     
     @objc private func receiptButtonPressed() {

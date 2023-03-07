@@ -126,6 +126,7 @@ private extension SwapViewModel {
     func bind() {
         // swap wallets status
         swapWalletsRepository.status
+            .receive(on: DispatchQueue.main)
             .sinkAsync { [weak self] dataStatus in
                 guard let self else { return }
                 switch dataStatus {
