@@ -12,6 +12,8 @@ import Resolver
 import Sell
 import SolanaSwift
 import SwiftyUserDefaults
+import KeyAppKitCore
+import KeyAppBusiness
 
 final class HomeAccountsViewModel: BaseViewModel, ObservableObject {
     private var defaultsDisposables: [DefaultsDisposable] = []

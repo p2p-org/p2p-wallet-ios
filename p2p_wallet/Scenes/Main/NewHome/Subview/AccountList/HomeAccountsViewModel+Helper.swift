@@ -7,6 +7,7 @@
 
 import Foundation
 import SolanaSwift
+import KeyAppBusiness
 
 extension Wallet {
     var isNFTToken: Bool {

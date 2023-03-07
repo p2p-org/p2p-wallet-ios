@@ -11,6 +11,7 @@ import Foundation
 import Resolver
 import SolanaSwift
 import TransactionParser
+import KeyAppBusiness
 
 protocol TransactionHandlerType {
     typealias TransactionIndex = Int
@@ -38,7 +39,7 @@ class TransactionHandler: TransactionHandlerType {
     @Injected var apiClient: SolanaAPIClient
     @Injected var walletsRepository: WalletsRepository
     @Injected var pricesService: PricesServiceType
-    @Injected var socket: AccountObservableService
+    @Injected var socket: SolanaAccountsObservableService
 
     // MARK: - Properties
 

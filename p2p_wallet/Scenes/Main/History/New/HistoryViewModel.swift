@@ -12,6 +12,7 @@ import Resolver
 import Sell
 import SolanaSwift
 import TransactionParser
+import KeyAppKitCore
 
 enum NewHistoryAction {
     case openParsedTransaction(ParsedTransaction)

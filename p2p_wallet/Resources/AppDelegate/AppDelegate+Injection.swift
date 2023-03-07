@@ -10,6 +10,7 @@ import CountriesAPI
 import FeeRelayerSwift
 import FirebaseRemoteConfig
 import History
+import KeyAppBusiness
 import Moonpay
 import NameService
 import Onboarding
@@ -25,7 +26,6 @@ import SolanaSwift
 import Solend
 import SwiftyUserDefaults
 import TransactionParser
-import KeyAppBusiness
 
 extension Resolver: ResolverRegistering {
     @MainActor public static func registerAllServices() {
@@ -296,8 +296,8 @@ extension Resolver: ResolverRegistering {
             .scope(.session)
 
         // AccountObservableService
-        register { AccountsObservableServiceImpl(solanaSocket: resolve()) }
-            .implements(AccountObservableService.self)
+        register { SolananAccountsObservableServiceImpl(solanaSocket: resolve()) }
+            .implements(SolanaAccountsObservableService.self)
             .scope(.session)
 
         // TransactionHandler (new)
@@ -368,10 +368,19 @@ extension Resolver: ResolverRegistering {
             .implements(WalletsRepository.self)
             .scope(.session)
 
-        register { SolanaAccountsService() }
-            .scope(.session)
-        
-        register {FavouriteAccountsStore() }
+        register {
+            SolanaAccountsService(
+                accountStorage: resolve(),
+                solanaAPIClient: resolve(),
+                tokensService: resolve(),
+                priceService: resolve(),
+                accountObservableService: resolve(),
+                fiat: Defaults.fiat.rawValue
+            )
+        }
+        .scope(.session)
+
+        register { FavouriteAccountsStore() }
             .scope(.session)
 
         // SwapService

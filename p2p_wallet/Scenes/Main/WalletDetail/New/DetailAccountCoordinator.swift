@@ -9,6 +9,7 @@ import Sell
 import SolanaSwift
 import SwiftUI
 import UIKit
+import KeyAppBusiness
 
 enum DetailAccountCoordinatorArgs {
     case solanaAccount(SolanaAccountsService.Account)

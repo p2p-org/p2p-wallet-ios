@@ -9,6 +9,7 @@ import Combine
 import Foundation
 import Resolver
 import SolanaSwift
+import KeyAppBusiness
 
 enum DetailAccountAction {
     case openBuy
