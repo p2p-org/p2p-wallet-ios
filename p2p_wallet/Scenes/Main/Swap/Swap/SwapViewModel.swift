@@ -76,34 +76,36 @@ final class SwapViewModel: BaseViewModel, ObservableObject {
 
     #if !RELEASE
     func copyAndClearLogs() {
-        var text = #"{"swapTransaction": "\#(currentState.swapTransaction ?? "")""#
-        if let route = stateMachine.currentState.route?.jsonString {
-            text += #", "route": \#(route)"#
-            text += #", "routeInSymbols": "\#(getRouteInSymbols()?.joined(separator: " -> ") ?? "")""#
-        }
-        text += #", "amountFrom": "\#(stateMachine.currentState.amountFrom)""#
-        text += #", "amountTo": "\#(stateMachine.currentState.amountTo)""#
-        
-        if let interTokens = getRouteInSymbols() {
-            text += #", "tokens": ["#
-            for (index, interToken) in interTokens.enumerated() {
-                if index > 0 {
-                    text += ", "
-                }
+        let tokens = (getRouteInSymbols() ?? [])
+            .compactMap { symbol -> SwapLogsInfo.TokenInfo? in
+                guard let token = stateMachine.currentState.swapTokens
+                    .first(where: {$0.token.symbol == symbol})
+                else { return nil }
                 
-                let token = stateMachine.currentState.swapTokens.first(where: {$0.token.symbol == interToken})
-                
-                text += #"{"pubkey": "\#(token?.userWallet?.pubkey ?? "null")", "balance": "\#(token?.userWallet?.amount ?? 0)", "symbol": "\#(token?.token.symbol ?? "")", "mint": "\#(token?.token.address ?? "")"}"#
+                return .init(
+                    pubkey: token.userWallet?.pubkey,
+                    balance: token.userWallet?.amount,
+                    symbol: token.token.symbol,
+                    mint: token.token.address
+                )
             }
-            text += #"]"#
-        }
         
-        if let errorLogs = errorLogs?.map({"\"\($0)\""}).joined(separator: ",") {
-            text += #", "errorLogs": [\#(errorLogs)]"#
-        }
+        let logsInfo = SwapLogsInfo(
+            swapTransaction: currentState.swapTransaction,
+            route: stateMachine.currentState.route,
+            routeInSymbols: getRouteInSymbols()?.joined(separator: " -> "),
+            amountFrom: stateMachine.currentState.amountFrom,
+            amountTo: stateMachine.currentState.amountTo,
+            tokens: tokens,
+            errorLogs: errorLogs,
+            fees: .init(
+                networkFee: stateMachine.currentState.networkFee,
+                accountCreationFee: stateMachine.currentState.accountCreationFee,
+                liquidityFee: stateMachine.currentState.liquidityFee
+            )
+        )
         
-        text += "}"
-        UIPasteboard.general.string = text
+        UIPasteboard.general.string = logsInfo.jsonString
         errorLogs = nil
         notificationService.showToast(title: "✅", text: "Logs copied to clipboard")
     }

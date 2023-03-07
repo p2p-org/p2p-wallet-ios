@@ -84,7 +84,8 @@ extension JupiterSwapBusinessLogic {
                     $0.status = .ready
                     $0.route = route
                     $0.routes = routes
-                    $0.tokensPriceMap = tokensPriceMap
+                    $0.tokensPriceMap = $0.tokensPriceMap
+                        .merging(tokensPriceMap, uniquingKeysWith: { (_, new) in new })
                 },
                 services: services
             )
