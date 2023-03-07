@@ -1,6 +1,6 @@
 import Foundation
 
-struct SwapFeeInfo: Equatable {
+struct SwapFeeInfo: Codable, Equatable {
     let amount: Double
     let tokenSymbol: String?
     let tokenName: String?
