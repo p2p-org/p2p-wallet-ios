@@ -135,7 +135,8 @@ class HistoryViewModel: BaseViewModel, ObservableObject {
             }
 
         // Listen pending transactions
-        let pendings = pendingTransactionService.observePendingTransactions()
+        let pendings = Just([PendingTransaction]()).eraseToAnyPublisher()
+//        let pendings = pendingTransactionService.observePendingTransactions()
             .map { transactions in
                 transactions.map { [weak actionSubject] trx in
                     RendableListPendingTransactionItem(trx: trx) {
