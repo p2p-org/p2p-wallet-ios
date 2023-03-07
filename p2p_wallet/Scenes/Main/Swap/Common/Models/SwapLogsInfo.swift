@@ -10,6 +10,7 @@ struct SwapLogsInfo: Codable {
     let tokens: [TokenInfo]
     let errorLogs: [String]?
     let fees: Fees?
+    let prices: [String: Double]?
     
     struct TokenInfo: Codable {
         let pubkey: String?
