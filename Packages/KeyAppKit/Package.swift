@@ -283,6 +283,7 @@ let package = Package(
         .target(
             name: "Wormhole",
             dependencies: [
+                "KeyAppBusiness",
                 .product(name: "Web3", package: "Web3.swift"),
                 .product(name: "Web3ContractABI", package: "Web3.swift"),
                 .product(name: "SolanaSwift", package: "solana-swift"),
