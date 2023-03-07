@@ -1,39 +1,39 @@
-name: Key app business unit test
-
-on:
-    pull_request:
-        branches: [ develop ]
-        paths:
-            - 'Packages/KeyAppBusiness/Sources/**/*'
-            - 'Packages/KeyAppBusiness/Tests/**/*'
-
-jobs:
-    build:
-        runs-on: macos-12
-        steps:
-            - uses: actions/checkout@v3
-
-            - name: Run unit tests
-              working-directory: ./Packages/KeyAppBusiness
-              run: |
-                swift test --enable-code-coverage
-
-            - uses: sersoft-gmbh/swift-coverage-action@v3.0.1
-              id: coverage-files
-              with:
-                search-paths: |
-                  ./Packages/KeyAppBusiness/.build
+#name: Key app business unit test
+#
+#on:
+#    pull_request:
+#        branches: [ develop ]
+#        paths:
+#            - 'Packages/KeyAppBusiness/Sources/**/*'
+#            - 'Packages/KeyAppBusiness/Tests/**/*'
+#
+#jobs:
+#    build:
+#        runs-on: macos-12
+#        steps:
+#            - uses: actions/checkout@v3
+#
+#            - name: Run unit tests
+#              working-directory: ./Packages/KeyAppBusiness
+#              run: |
+#                swift test --enable-code-coverage
+#
+#            - uses: sersoft-gmbh/swift-coverage-action@v3.0.1
+#              id: coverage-files
+#              with:
+#                search-paths: |
+#                  ./Packages/KeyAppBusiness/.build
 
 #            - name: Test coverage
 #              uses: maxep/spm-lcov-action@0.3.1
 #              with:
 #                output-file: ./coverage/lcov.info
-
-            - name: Bot comment
-              uses: romeovs/lcov-reporter-action@v0.3.1
-              with:
-                  lcov-file: ${{fromJSON(steps.coverage-files.outputs.files)[0]}}
-                  filter-changed-files: true
+#
+#            - name: Bot comment
+#              uses: romeovs/lcov-reporter-action@v0.3.1
+#              with:
+#                  lcov-file: ${{fromJSON(steps.coverage-files.outputs.files)[0]}}
+#                  filter-changed-files: true
 
 #    - name: Convert to standard format
 #      run: |

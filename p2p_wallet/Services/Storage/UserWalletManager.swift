@@ -3,6 +3,7 @@
 // found in the LICENSE file.
 
 import Combine
+import KeyAppBusiness
 import Onboarding
 import RenVMSwift
 import Resolver
@@ -32,13 +33,16 @@ class UserWalletManager: ObservableObject {
     func refresh() async throws {
         try await storage.reloadSolanaAccount()
 
+        // Legacy code
         guard let account = storage.account else { return }
-        
-        let moonpayAccount = try await Account(
+
+        let moonpayAccount = try await KeyPair(
             phrase: account.phrase,
             network: .mainnetBeta,
             derivablePath: DerivablePath(type: storage.derivablePath.type, walletIndex: 101, accountIndex: 0)
         )
+
+        let ethereumKeyPair = try EthereumKeyPair(phrase: account.phrase.joined(separator: " "))
 
         wallet = .init(
             seedPhrase: account.phrase,
@@ -47,7 +51,8 @@ class UserWalletManager: ObservableObject {
             deviceShare: nil,
             ethAddress: storage.ethAddress,
             account: account,
-            moonpayExternalClientId: moonpayAccount.publicKey.base58EncodedString
+            moonpayExternalClientId: moonpayAccount.publicKey.base58EncodedString,
+            ethereumKeypair: ethereumKeyPair
         )
     }
 
@@ -64,7 +69,7 @@ class UserWalletManager: ObservableObject {
         try storage.save(walletIndex: derivablePath.walletIndex)
         storage.save(name: name ?? "")
         try storage.save(ethAddress: ethAddress ?? "")
-        
+
         // Services
         try await Resolver.resolve(SendHistoryLocalProvider.self).save(nil)
 
@@ -72,9 +77,9 @@ class UserWalletManager: ObservableObject {
         if let deviceShare = deviceShare, ethAddress != nil {
             try storage.save(deviceShare: deviceShare)
         }
-        
+
         try await refresh()
-        
+
         notificationsService.registerForRemoteNotifications()
     }
 
@@ -103,7 +108,7 @@ class UserWalletManager: ObservableObject {
         Defaults.moonpayInfoShouldHide = false
         Defaults.isSellInfoPresented = false
         Defaults.isTokenInputTypeChosen = false
-        
+
         walletSettings.reset()
 
         // Reset wallet

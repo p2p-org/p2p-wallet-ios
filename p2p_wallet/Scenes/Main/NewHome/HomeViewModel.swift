@@ -8,6 +8,7 @@
 import AnalyticsManager
 import Combine
 import Foundation
+import KeyAppBusiness
 import Resolver
 import Sell
 import SolanaSwift

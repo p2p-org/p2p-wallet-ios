@@ -6,7 +6,7 @@
 //
 
 import Foundation
-import SolanaSwift
+import KeyAppBusiness
 
 struct RendableNewSolanaAccountDetail: RendableAccountDetail {
     let account: SolanaAccountsService.Account

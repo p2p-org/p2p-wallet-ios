@@ -12,6 +12,7 @@ import Resolver
 import SolanaSwift
 import SwiftUI
 import UIKit
+import KeyAppBusiness
 
 enum HomeNavigation: Equatable {
     // HomeWithTokens

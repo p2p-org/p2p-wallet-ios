@@ -6,10 +6,11 @@
 //
 
 import BECollectionView_Combine
+import Combine
 import Foundation
+import KeyAppBusiness
 import Resolver
 import SolanaSwift
-import Combine
 
 @MainActor
 @available(*, deprecated)
@@ -19,14 +20,14 @@ class WalletsViewModel: BECollectionViewModel<Wallet> {
     @Injected private var accountStorage: SolanaAccountStorage
     @Injected private var solanaAPIClient: SolanaAPIClient
     @Injected private var pricesService: PricesServiceType
-    @Injected private var socket: AccountObservableService
+    @Injected private var socket: SolanaAccountsObservableService
     @WeakLazyInjected private var transactionHandler: TransactionHandlerType?
 
     // MARK: - Properties
 
     private var defaultsDisposables = [DefaultsDisposable]()
     private var subscriptions = Set<AnyCancellable>()
-    
+
     private var lastGetNewWalletTime = Date()
     private var updatingTask: Task<Void, Error>?
 
@@ -94,11 +95,11 @@ class WalletsViewModel: BECollectionViewModel<Wallet> {
     }
 
     // MARK: - Methods
-    
+
     override func refresh() {
         state = .loading
         error = nil
-        
+
         task = Task {
             do {
                 let newData = try await createRequest()
@@ -114,15 +115,15 @@ class WalletsViewModel: BECollectionViewModel<Wallet> {
 
     override func createRequest() async throws -> [Wallet] {
         // assertion
-        guard let account = self.accountStorage.account?.publicKey.base58EncodedString
+        guard let account = accountStorage.account?.publicKey.base58EncodedString
         else { throw SolanaError.unknown }
-        
+
         // get balance/wallet
-        let (balance, wallets) = try await(
-            self.solanaAPIClient.getBalance(account: account, commitment: "recent"),
-            self.solanaAPIClient.getTokenWallets(account: account)
+        let (balance, wallets) = try await (
+            solanaAPIClient.getBalance(account: account, commitment: "recent"),
+            solanaAPIClient.getTokenWallets(account: account)
         )
-        
+
         // sort and map on different thread
         return await Task<[Wallet], Never> { [weak self] in
             guard let self = self else { return [] }
@@ -147,14 +148,14 @@ class WalletsViewModel: BECollectionViewModel<Wallet> {
             return wallets
         }.value
     }
-    
+
     override func handleNewData(_ newData: [Wallet]) {
         super.handleNewData(newData)
         // observe prices
         let newTokens = newData.map(\.token)
             .filter { !self.pricesService.getWatchList().contains($0) }
-        self.pricesService.addToWatchList(newTokens)
-        self.pricesService.fetchPrices(tokens: newTokens, toFiat: Defaults.fiat)
+        pricesService.addToWatchList(newTokens)
+        pricesService.fetchPrices(tokens: newTokens, toFiat: Defaults.fiat)
     }
 
     override func reload() {
@@ -165,45 +166,45 @@ class WalletsViewModel: BECollectionViewModel<Wallet> {
 
         super.reload()
     }
-    
+
     private func updateBalancesAndGetNewWalletIfNeeded() {
         updatingTask?.cancel()
-        
+
         updatingTask = Task {
             // Update balances needs to happen every 10 secs
             guard let account = self.accountStorage.account?.publicKey.base58EncodedString
             else { throw SolanaError.unknown }
-            
-            let (solBalance, newData) = try await(
+
+            let (solBalance, newData) = try await (
                 self.solanaAPIClient.getBalance(account: account, commitment: "recent"),
                 try await self.solanaAPIClient.getTokenWallets(account: account)
             )
-            
+
             var data = self.data
-            
+
             if let index = data.firstIndex(where: { $0.isNativeSOL }) {
                 data[index].lamports = solBalance
             }
-            
+
             // update balance
-            for i in 0..<data.count  {
+            for i in 0 ..< data.count {
                 if let pubkey = data[i].pubkey,
-                   let newDataIndex = newData.firstIndex(where: {$0.pubkey == pubkey})
+                   let newDataIndex = newData.firstIndex(where: { $0.pubkey == pubkey })
                 {
                     // check if there is any pending transaction for this account
                     let pendingTransactions = (transactionHandler?.getProccessingTransactions(of: pubkey) ?? [])
                         .filter { $0.isProcessing }
-                    
+
                     // ignore updating balance when there is any pending transaction for this account
                     guard pendingTransactions.isEmpty else {
                         continue
                     }
-                    
+
                     // update balance of account
                     data[i].lamports = newData[newDataIndex].lamports
                 }
             }
-            
+
             // On the other hands, The process of maping, shorting is time-comsuming, so we only retrieve new wallet and sort after 2 minutes
             let minComp = DateComponents(minute: 2)
             if let date = Calendar.current.date(byAdding: minComp, to: lastGetNewWalletTime),
@@ -213,20 +214,20 @@ class WalletsViewModel: BECollectionViewModel<Wallet> {
                 var newWallets = newData
                     .filter { wl in !data.contains(where: { $0.pubkey == wl.pubkey }) }
                     .filter { $0.lamports != 0 }
-                
+
                 if !newWallets.isEmpty {
                     newWallets = self.mapPrices(wallets: newWallets)
                     newWallets = self.mapVisibility(wallets: newWallets)
                     data.append(contentsOf: newWallets)
                     data.sort(by: Wallet.defaultSorter)
                 }
-                
+
                 // save timestamp
                 await MainActor.run {
                     lastGetNewWalletTime = Date()
                 }
             }
-            
+
             // save
             let updatedData = data
             await MainActor.run { [weak self] in
@@ -240,9 +241,9 @@ class WalletsViewModel: BECollectionViewModel<Wallet> {
             $state.removeDuplicates(),
             $isHiddenWalletsShown.removeDuplicates()
         )
-            .map { _ in () }
-            .receive(on: DispatchQueue.main)
-            .eraseToAnyPublisher()
+        .map { _ in () }
+        .receive(on: DispatchQueue.main)
+        .eraseToAnyPublisher()
     }
 
     // MARK: - getters
@@ -323,7 +324,7 @@ class WalletsViewModel: BECollectionViewModel<Wallet> {
 
     // MARK: - Account notifications
 
-    private func handleAccountNotification(_ notification: AccountsObservableEvent) {
+    private func handleAccountNotification(_ notification: SolanaAccountEvent) {
         // update
         updateItem(where: { $0.pubkey == notification.pubkey }, transform: { wallet in
             var wallet = wallet
@@ -340,7 +341,7 @@ private extension Wallet {
             if lhs.token.isLiquidity != rhs.token.isLiquidity {
                 return !lhs.token.isLiquidity
             }
-            
+
             // prefers prioritized tokens than others
             let prioritizedTokenMints = [
                 PublicKey.usdcMint.base58EncodedString,
