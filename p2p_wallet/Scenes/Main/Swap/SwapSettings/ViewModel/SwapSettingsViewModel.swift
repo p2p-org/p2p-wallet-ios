@@ -6,6 +6,8 @@
 //
 
 import Combine
+import Resolver
+import AnalyticsManager
 
 private extension Double {
     static let minSlippage: Double = 0.01
@@ -97,7 +99,9 @@ final class SwapSettingsViewModel: BaseViewModel, ObservableObject {
     }
     
     private var slippageWasSetUp = false
-    
+
+    @Injected private var analyticsManager: AnalyticsManager
+
     // MARK: - Init
 
     init(
@@ -125,5 +129,38 @@ final class SwapSettingsViewModel: BaseViewModel, ObservableObject {
     
     func rowClicked(identifier: SwapSettingsView.RowIdentifier) {
         rowTappedSubject.send(identifier)
+        log(fee: identifier)
+    }
+}
+
+// MARK: - Analytics
+extension SwapSettingsViewModel {
+    func logRoute() {
+        guard let currentRoute = info?.currentRoute.name else { return }
+        analyticsManager.log(event: .swapSettingsSwappingThroughChoice(variant: currentRoute))
+    }
+
+    func log(slippage: Double) {
+        let isCustom = slippage > 1
+        if isCustom {
+            analyticsManager.log(event: .swapSettingsSlippageCustom(slippageLevelPercent: slippage))
+        } else {
+            analyticsManager.log(event: .swapSettingsSlippage(slippageLevelPercent: slippage))
+        }
+    }
+
+    private func log(fee: SwapSettingsView.RowIdentifier) {
+        switch fee {
+        case .route:
+            analyticsManager.log(event: .swapSettingsFeeClick(feeName: "Swapping_Through"))
+        case .networkFee:
+            analyticsManager.log(event: .swapSettingsFeeClick(feeName: "Network_Fee"))
+        case .accountCreationFee:
+            analyticsManager.log(event: .swapSettingsFeeClick(feeName: "Sol_Account_Creation"))
+        case .liquidityFee:
+            analyticsManager.log(event: .swapSettingsFeeClick(feeName: "Liquidity_Fee"))
+        default:
+            break
+        }
     }
 }

@@ -1,8 +1,8 @@
 import Combine
 import Resolver
 import Jupiter
-import SolanaPricesAPIs
 import SolanaSwift
+import AnalyticsManager
 
 final class SwapViewModel: BaseViewModel, ObservableObject {
 
@@ -14,9 +14,9 @@ final class SwapViewModel: BaseViewModel, ObservableObject {
 
     // MARK: - Dependencies
     @Injected private var swapWalletsRepository: JupiterTokensRepository
-    @Injected private var pricesAPI: SolanaPricesAPI
     @Injected private var notificationService: NotificationService
     @Injected private var transactionHandler: TransactionHandler
+    @Injected private var analyticsManager: AnalyticsManager
     @Injected private var userWalletManager: UserWalletManager
 
     // MARK: - Actions
@@ -44,11 +44,12 @@ final class SwapViewModel: BaseViewModel, ObservableObject {
 
     let stateMachine: JupiterSwapStateMachine
     var currentState: JupiterSwapState { stateMachine.currentState }
-    
+
     private let preChosenWallet: Wallet?
     private var timer: Timer?
+    private let source: JupiterSwapSource
 
-    init(preChosenWallet: Wallet? = nil) {
+    init(source: JupiterSwapSource, preChosenWallet: Wallet? = nil) {
         stateMachine = JupiterSwapStateMachine(
             initialState: .zero,
             services: JupiterSwapServices(
@@ -59,6 +60,7 @@ final class SwapViewModel: BaseViewModel, ObservableObject {
             )
         )
         self.preChosenWallet = preChosenWallet
+        self.source = source
         super.init()
         bind()
         bindActions()
@@ -137,6 +139,8 @@ private extension SwapViewModel {
                 guard let self else { return }
                 self.handle(state: updatedState)
                 self.updateActionButton(for: updatedState)
+                self.log(priceImpact: updatedState.priceImpact, value: updatedState.route?.priceImpactPct)
+                self.log(from: updatedState.status)
             }
             .store(in: &subscriptions)
         
@@ -154,10 +158,12 @@ private extension SwapViewModel {
         changeFromToken
             .filter { [weak self] _ in self?.initializingState == .success }
             .sinkAsync { [weak self] token in
-                let newState = await self?.stateMachine.accept(action: .changeFromToken(token))
+                guard let self else { return }
+                let newState = await self.stateMachine.accept(action: .changeFromToken(token))
                 Defaults.fromTokenAddress = token.address
-                if newState?.isTransactionCanBeCreated == true {
-                    let _ = await self?.stateMachine.accept(action: .createTransaction)
+                self.logChangeToken(isFrom: true, token: token, amount: newState.amountFrom)
+                if newState.isTransactionCanBeCreated == true {
+                    await self.stateMachine.accept(action: .createTransaction)
                 }
             }
             .store(in: &subscriptions)
@@ -166,10 +172,12 @@ private extension SwapViewModel {
         changeToToken
             .filter { [weak self] _ in self?.initializingState == .success }
             .sinkAsync { [ weak self] token in
-                let newState = await self?.stateMachine.accept(action: .changeToToken(token))
+                guard let self else { return }
+                let newState = await self.stateMachine.accept(action: .changeToToken(token))
                 Defaults.toTokenAddress = token.address
-                if newState?.isTransactionCanBeCreated == true {
-                    let _ = await self?.stateMachine.accept(action: .createTransaction)
+                self.logChangeToken(isFrom: false, token: token, amount: newState.amountTo)
+                if newState.isTransactionCanBeCreated == true {
+                    await self.stateMachine.accept(action: .createTransaction)
                 }
             }
             .store(in: &subscriptions)
@@ -184,7 +192,7 @@ private extension SwapViewModel {
         if let toTokenAddress = Defaults.toTokenAddress {
             prechosenToToken = swapTokens.first(where: { $0.address == toTokenAddress })
         }
-        let _ = await self.stateMachine
+        let newState = await self.stateMachine
             .accept(action: .initialize(
                 account: userWalletManager.wallet?.account,
                 swapTokens: swapTokens,
@@ -192,6 +200,7 @@ private extension SwapViewModel {
                 fromToken: prechosenFromToken,
                 toToken: prechosenToToken
             ))
+        logStart(from: newState.fromToken, to: newState.toToken)
     }
 
     func handle(state: JupiterSwapState) {
@@ -224,9 +233,8 @@ private extension SwapViewModel {
         switchTokens
             .sinkAsync(receiveValue: { [weak self] _ in
                 guard let self else { return }
-                await self.stateMachine.accept(
-                    action: .switchFromAndToTokens
-                )
+                let newState = await self.stateMachine.accept(action: .switchFromAndToTokens)
+                self.logSwitch(from: newState.fromToken, to: newState.toToken)
             })
             .store(in: &subscriptions)
 
@@ -331,6 +339,7 @@ private extension SwapViewModel {
             pendingTransaction,
             formattedSlippage
         ))
+        logSwapApprove()
     }
 
     private func createSwapExecution(account: KeyPair) async throws -> String {
@@ -376,5 +385,73 @@ private extension SwapViewModel {
             slippageString.removeLast()
         }
         return slippageString + "%"
+    }
+}
+
+// MARK: - Analytics
+extension SwapViewModel {
+    func logSettingsClick() {
+        analyticsManager.log(event: .swapSettingsClick)
+    }
+
+    func logReturnFromChangeToken(isFrom: Bool) {
+        analyticsManager.log(event: isFrom ? .swapReturnFromChangingTokenA : .swapReturnFromChangingTokenB)
+    }
+
+    func logTransactionProgressOpened() {
+        analyticsManager.log(event: .swapTransactionProgressScreen)
+    }
+
+    func logTransactionProgressDone() {
+        analyticsManager.log(event: .swapTransactionProgressScreenDone)
+    }
+
+    func logTransaction(error: Error?) {
+        if let error, error.isSlippageError {
+            analyticsManager.log(event: .swapErrorSlippage)
+        } else {
+            analyticsManager.log(event: .swapErrorDefault(isBlockchainRelated: error is SolanaError))
+        }
+    }
+
+    private func logSwapApprove() {
+        analyticsManager.log(event: .swapClickApproveButtonNew(tokenA: currentState.fromToken.token.symbol, tokenB: currentState.toToken.token.symbol, swapSum: currentState.amountFrom, swapUSD: currentState.amountFromFiat))
+    }
+
+    private func log(from status: JupiterSwapState.Status) {
+        switch status {
+        case .error(.notEnoughFromToken):
+            analyticsManager.log(event: .swapErrorTokenAInsufficientAmount)
+        case .error(.routeIsNotFound):
+            analyticsManager.log(event: .swapErrorTokenPairNotExist)
+        default:
+            break
+        }
+    }
+
+    private func logStart(from: SwapToken, to: SwapToken) {
+        analyticsManager.log(event: .swapStartScreenNew(lastScreen: source.rawValue, from: from.token.symbol, to: to.token.symbol))
+    }
+
+    private func logSwitch(from: SwapToken, to: SwapToken) {
+        analyticsManager.log(event: .swapSwitchTokens(tokenAName: from.token.symbol, tokenBName: to.token.symbol))
+    }
+
+    private func log(priceImpact: JupiterSwapState.SwapPriceImpact?, value: Double?) {
+        guard let priceImpact, let value else { return }
+        switch priceImpact {
+        case .medium:
+            analyticsManager.log(event: .swapPriceImpactLow(priceImpact: value))
+        case .high:
+            analyticsManager.log(event: .swapPriceImpactHigh(priceImpact: value))
+        }
+    }
+
+    private func logChangeToken(isFrom: Bool, token: SwapToken, amount: Double) {
+        if isFrom {
+            analyticsManager.log(event: .swapChangingTokenA(tokenAName: token.token.symbol, tokenAValue: amount))
+        } else {
+            analyticsManager.log(event: .swapChangingTokenB(tokenBName: token.token.symbol, tokenBValue: amount))
+        }
     }
 }

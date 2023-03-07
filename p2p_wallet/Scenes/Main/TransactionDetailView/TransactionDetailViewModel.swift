@@ -28,8 +28,8 @@ class TransactionDetailViewModel: BaseViewModel, ObservableObject {
     @Published var rendableTransaction: any RendableTransactionDetail {
         didSet {
             switch rendableTransaction.status {
-            case let .error(message):
-                if message.isSlippageError {
+            case let .error(_, error):
+                if let error, error.isSlippageError {
                     closeButtonTitle = L10n.increaseSlippageAndTryAgain
                 } else {
                     closeButtonTitle = L10n.slippageError
