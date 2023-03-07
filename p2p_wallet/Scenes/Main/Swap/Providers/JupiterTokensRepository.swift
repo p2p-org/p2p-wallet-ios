@@ -27,12 +27,15 @@ final class JupiterTokensRepositoryImpl: JupiterTokensRepository {
         statusSubject.eraseToAnyPublisher()
     }
     // MARK: - Dependencies
+
     private let jupiterClient: JupiterAPI
     private let localProvider: JupiterTokensProvider
     @Injected private var walletsRepository: WalletsRepository
 
     // MARK: - Private params
+
     private var statusSubject = CurrentValueSubject<JupiterDataStatus, Never>(.initial)
+    private var task: Task<Void, Never>?
 
     init(provider: JupiterTokensProvider, jupiterClient: JupiterAPI) {
         self.localProvider = provider
@@ -40,19 +43,42 @@ final class JupiterTokensRepositoryImpl: JupiterTokensRepository {
     }
 
     func load() async {
+        // cancel previous task
+        task?.cancel()
+        task = nil
+        
+        // assign task
+        task = Task { [weak self] in
+            await self?.fetch()
+        }
+        
+        await task?.value
+    }
+    
+    private func fetch() async {
         statusSubject.send(.loading)
         do {
             let jupiterTokens: [Token]
             let routeMap: RouteMap
+            
+            try Task.checkCancellation()
+            
+            // get data from memory first
             if let cachedData = localProvider.getCachedData() {
                 jupiterTokens = cachedData.tokens
                 routeMap = cachedData.routeMap
-            } else {
-                jupiterTokens = try await jupiterClient.getTokens()
-                routeMap = try await jupiterClient.routeMap()
+            }
+            
+            // retrive to get data
+            else {
+                (jupiterTokens, routeMap) = try await(
+                    jupiterClient.getTokens(),
+                    jupiterClient.routeMap()
+                )
                 try localProvider.save(tokens: jupiterTokens, routeMap: routeMap)
             }
             
+            // map userWallets with jupiter tokens
             let wallets = walletsRepository.getWallets()
             let swapTokens = jupiterTokens.map { jupiterToken in
                 if let userWallet = wallets.first(where: { $0.mintAddress == jupiterToken.address }) {
@@ -60,8 +86,12 @@ final class JupiterTokensRepositoryImpl: JupiterTokensRepository {
                 }
                 return SwapToken(token: jupiterToken, userWallet: nil)
             }
+            try Task.checkCancellation()
             statusSubject.send(.ready(swapTokens: swapTokens, routeMap: routeMap))
         } catch {
+            guard !(error is CancellationError) else {
+                return
+            }
             statusSubject.send(.failed)
         }
     }

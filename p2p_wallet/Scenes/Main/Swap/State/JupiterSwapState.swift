@@ -98,7 +98,8 @@ struct JupiterSwapState: Equatable {
         SwapPriceInfo(
             fromPrice: tokensPriceMap[fromToken.address] ?? 0,
             toPrice: tokensPriceMap[toToken.address] ?? 0,
-            relation: amountTo > 0 ? amountFrom/amountTo: 0)
+            relation: amountTo > 0 ? amountFrom/amountTo: 0
+        )
     }
     
     var priceImpact: SwapPriceImpact? {
