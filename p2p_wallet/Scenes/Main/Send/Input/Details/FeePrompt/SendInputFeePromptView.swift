@@ -27,6 +27,7 @@ struct SendInputFeePromptView: View {
                     .multilineTextAlignment(.center)
                     .foregroundColor(Color(mainColor))
                     .padding(.horizontal, 32)
+                    .accessibilityIdentifier("SendInputFeePromptView.title")
 
                 Text(viewModel.description)
                     .apply(style: .text1)
@@ -34,6 +35,7 @@ struct SendInputFeePromptView: View {
                     .foregroundColor(Color(mainColor))
                     .padding(.top, 16)
                     .padding(.horizontal, 16)
+                    .accessibilityIdentifier("SendInputFeePromptView.description")
 
                 Spacer()
 
