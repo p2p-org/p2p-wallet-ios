@@ -2,11 +2,12 @@ import Jupiter
 import SolanaSwift
 
 enum JupiterSwapAction: Equatable {
-    case initialize(swapTokens: [SwapToken], routeMap: RouteMap, fromToken: SwapToken?, toToken: SwapToken?)
+    case initialize(account: KeyPair?, swapTokens: [SwapToken], routeMap: RouteMap, fromToken: SwapToken?, toToken: SwapToken?)
 
     case update
 
     case changeAmountFrom(Double)
+    case createTransaction
 
     case changeFromToken(SwapToken)
     case changeToToken(SwapToken)
@@ -42,6 +43,8 @@ enum JupiterSwapAction: Equatable {
             return "chooseRoute(\(route.id))"
         case .changeSlippageBps(let int):
             return "changeSlippageBps(\(int))"
+        case .createTransaction:
+            return "createTransaction"
         }
     }
 }

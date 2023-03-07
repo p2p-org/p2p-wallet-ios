@@ -6,6 +6,7 @@ extension JupiterSwapBusinessLogic {
     static func initializeAction(
         state: JupiterSwapState,
         services: JupiterSwapServices,
+        account: KeyPair?,
         swapTokens: [SwapToken],
         routeMap: RouteMap,
         fromToken: SwapToken?,
@@ -33,6 +34,7 @@ extension JupiterSwapBusinessLogic {
             tokens = chosenTokens
         } else {
             return .zero.modified {
+                $0.account = account
                 $0.status = .ready
                 $0.tokensPriceMap = tokensPriceMap
                 $0.routeMap = routeMap
@@ -43,6 +45,7 @@ extension JupiterSwapBusinessLogic {
         
         return .zero.modified {
             $0.status = .ready
+            $0.account = account
             $0.routeMap = routeMap
             $0.swapTokens = swapTokens
             $0.tokensPriceMap = tokensPriceMap

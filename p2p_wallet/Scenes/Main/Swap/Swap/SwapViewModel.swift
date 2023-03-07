@@ -16,8 +16,8 @@ final class SwapViewModel: BaseViewModel, ObservableObject {
     @Injected private var swapWalletsRepository: JupiterTokensRepository
     @Injected private var pricesAPI: SolanaPricesAPI
     @Injected private var notificationService: NotificationService
-    @Injected private var userWalletManager: UserWalletManager
     @Injected private var transactionHandler: TransactionHandler
+    @Injected private var userWalletManager: UserWalletManager
 
     // MARK: - Actions
     let switchTokens = PassthroughSubject<Void, Never>()
@@ -33,13 +33,12 @@ final class SwapViewModel: BaseViewModel, ObservableObject {
     @Published var actionButtonData = SliderActionButtonData.zero
     @Published var isSliderOn = false {
         didSet {
-            sendToken()
+            swapToken()
         }
     }
     @Published var showFinished = false
-    
+
     #if !RELEASE
-    @Published var swapTransaction: String?
     @Published var errorLogs: [String]?
     #endif
 
@@ -68,14 +67,14 @@ final class SwapViewModel: BaseViewModel, ObservableObject {
     deinit {
         timer?.invalidate()
     }
-    
+
     func update() async {
         await stateMachine.accept(action: .update)
     }
-    
+
     #if !RELEASE
     func copyAndClearLogs() {
-        var text = #"{"swapTransaction": "\#(swapTransaction ?? "")""#
+        var text = #"{"swapTransaction": "\#(currentState.swapTransaction ?? "")""#
         if let route = stateMachine.currentState.route?.jsonString {
             text += #", "route": \#(route)"#
             text += #", "routeInSymbols": "\#(getRouteInSymbols()?.joined(separator: " -> ") ?? "")""#
@@ -104,7 +103,6 @@ final class SwapViewModel: BaseViewModel, ObservableObject {
         text += "}"
         UIPasteboard.general.string = text
         errorLogs = nil
-        swapTransaction = nil
         notificationService.showToast(title: "✅", text: "Logs copied to clipboard")
     }
     
@@ -156,8 +154,11 @@ private extension SwapViewModel {
         changeFromToken
             .filter { [weak self] _ in self?.initializingState == .success }
             .sinkAsync { [weak self] token in
-                await self?.stateMachine.accept(action: .changeFromToken(token))
+                let newState = await self?.stateMachine.accept(action: .changeFromToken(token))
                 Defaults.fromTokenAddress = token.address
+                if newState?.isTransactionCanBeCreated == true {
+                    let _ = await self?.stateMachine.accept(action: .createTransaction)
+                }
             }
             .store(in: &subscriptions)
 
@@ -165,8 +166,11 @@ private extension SwapViewModel {
         changeToToken
             .filter { [weak self] _ in self?.initializingState == .success }
             .sinkAsync { [ weak self] token in
-                await self?.stateMachine.accept(action: .changeToToken(token))
+                let newState = await self?.stateMachine.accept(action: .changeToToken(token))
                 Defaults.toTokenAddress = token.address
+                if newState?.isTransactionCanBeCreated == true {
+                    let _ = await self?.stateMachine.accept(action: .createTransaction)
+                }
             }
             .store(in: &subscriptions)
     }
@@ -182,6 +186,7 @@ private extension SwapViewModel {
         }
         let _ = await self.stateMachine
             .accept(action: .initialize(
+                account: userWalletManager.wallet?.account,
                 swapTokens: swapTokens,
                 routeMap: routeMap,
                 fromToken: prechosenFromToken,
@@ -256,7 +261,7 @@ private extension SwapViewModel {
             if state.amountFrom == 0 {
                 actionButtonData = SliderActionButtonData(isEnabled: false, title: L10n.enterTheAmount)
             }
-        case .requiredInitialize, .loadingTokenTo, .loadingAmountTo, .switching, .initializing:
+        case .requiredInitialize, .loadingTokenTo, .loadingAmountTo, .switching, .initializing, .loadingTransaction:
             actionButtonData = SliderActionButtonData(isEnabled: false, title: L10n.counting)
         case .error(.notEnoughFromToken):
             actionButtonData = SliderActionButtonData(isEnabled: false, title: L10n.notEnough(state.fromToken.token.symbol))
@@ -275,9 +280,9 @@ private extension SwapViewModel {
         }
     }
 
-    private func sendToken() {
+    private func swapToken() {
         guard isSliderOn,
-              let account = userWalletManager.wallet?.account,
+              let account = currentState.account,
               let sourceWallet = currentState.fromToken.userWallet
         else {
             return
@@ -287,7 +292,6 @@ private extension SwapViewModel {
         cancelUpdate()
         
         #if !RELEASE
-        swapTransaction = nil
         errorLogs = nil
         #endif
         
@@ -310,7 +314,7 @@ private extension SwapViewModel {
             payingFeeWallet: nil, // FIXME: - PayingFeeWallet
             feeAmount: .zero, // FIXME: - feeAmount
             execution: { [unowned self] in
-                try await createSwapExecution(account: account, sourceWallet: sourceWallet)
+                try await createSwapExecution(account: account)
             })
         
         let transactionIndex = transactionHandler.sendTransaction(
@@ -328,34 +332,16 @@ private extension SwapViewModel {
             formattedSlippage
         ))
     }
-    
-    private func createSwapExecution(account: Account, sourceWallet: Wallet) async throws -> String {
-        // assertion
-        guard let route = stateMachine.currentState.route
-        else { throw JupiterError.invalidResponse }
-        
+
+    private func createSwapExecution(account: KeyPair) async throws -> String {
         do {
-            let jupiterClient = stateMachine.services.jupiterClient
-            
-            let swapTransaction = try await jupiterClient.swap(
-                route: route,
-                userPublicKey: account.publicKey.base58EncodedString,
-                wrapUnwrapSol: true,
-                feeAccount: nil,
-                asLegacyTransaction: nil,
-                computeUnitPriceMicroLamports: nil,
-                destinationWallet: nil
-            )
-            
-            self.swapTransaction = swapTransaction
-            
-            guard let swapTransaction,
+            guard let swapTransaction = currentState.swapTransaction,
                   let base64Data = Data(base64Encoded: swapTransaction, options: .ignoreUnknownCharacters),
                   let versionedTransaction = try? VersionedTransaction.deserialize(data: base64Data)
             else {
                 throw JupiterError.invalidResponse
             }
-            
+
             let transactionId = try await JupiterSwapBusinessLogic.sendToBlockchain(
                 account: account,
                 versionedTransaction: versionedTransaction,
