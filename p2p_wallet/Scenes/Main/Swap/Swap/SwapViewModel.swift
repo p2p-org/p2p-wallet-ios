@@ -102,7 +102,12 @@ final class SwapViewModel: BaseViewModel, ObservableObject {
                 networkFee: stateMachine.currentState.networkFee,
                 accountCreationFee: stateMachine.currentState.accountCreationFee,
                 liquidityFee: stateMachine.currentState.liquidityFee
-            )
+            ),
+            prices: stateMachine.currentState.tokensPriceMap
+                .filter { (key, _) in
+                    currentState.fromToken.token.address.contains(key) ||
+                        currentState.toToken.token.address.contains(key)
+                }
         )
         
         UIPasteboard.general.string = logsInfo.jsonString
