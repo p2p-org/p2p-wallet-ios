@@ -36,7 +36,6 @@ final class JupiterTokensRepositoryImpl: JupiterTokensRepository {
 
     private var statusSubject = CurrentValueSubject<JupiterDataStatus, Never>(.initial)
     private var task: Task<Void, Never>?
-    private var isInitialized = false
 
     init(provider: JupiterTokensProvider, jupiterClient: JupiterAPI) {
         self.localProvider = provider
@@ -64,25 +63,19 @@ final class JupiterTokensRepositoryImpl: JupiterTokensRepository {
             
             try Task.checkCancellation()
             
-            // if it is the first time user initialize the repository
-            if !isInitialized {
+            // get data from memory first
+            if let cachedData = localProvider.getCachedData() {
+                jupiterTokens = cachedData.tokens
+                routeMap = cachedData.routeMap
+            }
+            
+            // retrive to get data
+            else {
                 (jupiterTokens, routeMap) = try await(
                     jupiterClient.getTokens(),
                     jupiterClient.routeMap()
                 )
                 try localProvider.save(tokens: jupiterTokens, routeMap: routeMap)
-                isInitialized = true
-            }
-            
-            // if it is not the first time, use cached data to reduce network calls
-            else if let cachedData = localProvider.getCachedData() {
-                jupiterTokens = cachedData.tokens
-                routeMap = cachedData.routeMap
-            }
-
-            // return error if no cached data found
-            else {
-                throw JupiterError.invalidResponse
             }
             
             // map userWallets with jupiter tokens

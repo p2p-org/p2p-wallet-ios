@@ -505,11 +505,17 @@ extension Resolver: ResolverRegistering {
 
         register {
             JupiterTokensRepositoryImpl(
-                provider: JupiterTokensLocalProvider(),
+                provider: resolve(),
                 jupiterClient: JupiterRestClientAPI(version: .v4)
             )
         }
         .implements(JupiterTokensRepository.self)
+        .scope(.session)
+        
+        register {
+            JupiterInMemoryTokensProvider()
+        }
+        .implements(JupiterTokensProvider.self)
         .scope(.session)
     }
 
