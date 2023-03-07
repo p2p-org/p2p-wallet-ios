@@ -20,7 +20,7 @@ PODS:
   - BEPureLayout (0.4.0):
     - PureLayout
   - Cache (1.0.0)
-  - CocoaDebug (1.7.5)
+  - CocoaDebug (1.7.6)
   - CombineCocoa (0.4.1)
   - CountriesAPI (1.0.0)
   - CryptoSwift (1.6.0)
@@ -187,7 +187,7 @@ PODS:
   - OrcaSwapSwift (2.1.1):
     - SolanaSwift (~> 2)
   - P2PSwift (1.0.0)
-  - Periphery (2.12.0)
+  - Periphery (2.12.1)
   - PhoneNumberKit (3.3.4):
     - PhoneNumberKit/PhoneNumberKitCore (= 3.3.4)
     - PhoneNumberKit/UIKit (= 3.3.4)
@@ -470,7 +470,7 @@ EXTERNAL SOURCES:
 
 CHECKOUT OPTIONS:
   AnalyticsManager:
-    :commit: 4d8ab9d649c6c743f95fdc1a36382147161b16b3
+    :commit: 48dc6f43a4879e8f0d30139703f9f642496b0fe9
     :git: https://github.com/p2p-org/key-app-kit-swift.git
   BECollectionView:
     :commit: 7badd35cd036735b9c6867e273b59430311f53e7
@@ -485,10 +485,10 @@ CHECKOUT OPTIONS:
     :commit: 9b4ab977660c8554d23a2d9b83b6ac6c6058b3b7
     :git: https://github.com/p2p-org/BEPureLayout.git
   Cache:
-    :commit: 4d8ab9d649c6c743f95fdc1a36382147161b16b3
+    :commit: 48dc6f43a4879e8f0d30139703f9f642496b0fe9
     :git: https://github.com/p2p-org/key-app-kit-swift.git
   CountriesAPI:
-    :commit: 4d8ab9d649c6c743f95fdc1a36382147161b16b3
+    :commit: 48dc6f43a4879e8f0d30139703f9f642496b0fe9
     :git: https://github.com/p2p-org/key-app-kit-swift.git
   Down:
     :commit: eee1d66d7ef71b892e72c8bc8d84fcdfeaab1918
@@ -497,22 +497,22 @@ CHECKOUT OPTIONS:
     :commit: cd15f95dca00f080606fa7a2075bca927016a2da
     :git: https://github.com/p2p-org/FeeRelayerSwift.git
   History:
-    :commit: 4d8ab9d649c6c743f95fdc1a36382147161b16b3
+    :commit: 48dc6f43a4879e8f0d30139703f9f642496b0fe9
     :git: https://github.com/p2p-org/key-app-kit-swift.git
   JazziconSwift:
     :commit: f9c9f898402db4e62d482f4c90670652c221fa12
     :git: https://github.com/p2p-org/JazziconSwift.git
   JSBridge:
-    :commit: 4d8ab9d649c6c743f95fdc1a36382147161b16b3
+    :commit: 48dc6f43a4879e8f0d30139703f9f642496b0fe9
     :git: https://github.com/p2p-org/key-app-kit-swift.git
   Jupiter:
-    :commit: 4d8ab9d649c6c743f95fdc1a36382147161b16b3
+    :commit: 48dc6f43a4879e8f0d30139703f9f642496b0fe9
     :git: https://github.com/p2p-org/key-app-kit-swift.git
   KeyAppKitCore:
-    :commit: 4d8ab9d649c6c743f95fdc1a36382147161b16b3
+    :commit: 48dc6f43a4879e8f0d30139703f9f642496b0fe9
     :git: https://github.com/p2p-org/key-app-kit-swift.git
   KeyAppKitLogger:
-    :commit: 4d8ab9d649c6c743f95fdc1a36382147161b16b3
+    :commit: 48dc6f43a4879e8f0d30139703f9f642496b0fe9
     :git: https://github.com/p2p-org/key-app-kit-swift.git
   KeyAppUI:
     :commit: f6b064703f9b9107817b36fd286b126c1cdad643
@@ -521,19 +521,19 @@ CHECKOUT OPTIONS:
     :commit: 78dd312eb762d66a54c87cd6dd8045140da28c4b
     :git: https://github.com/p2p-org/ListPlaceholder.git
   Moonpay:
-    :commit: 4d8ab9d649c6c743f95fdc1a36382147161b16b3
+    :commit: 48dc6f43a4879e8f0d30139703f9f642496b0fe9
     :git: https://github.com/p2p-org/key-app-kit-swift.git
   NameService:
-    :commit: 4d8ab9d649c6c743f95fdc1a36382147161b16b3
+    :commit: 48dc6f43a4879e8f0d30139703f9f642496b0fe9
     :git: https://github.com/p2p-org/key-app-kit-swift.git
   Onboarding:
-    :commit: 4d8ab9d649c6c743f95fdc1a36382147161b16b3
+    :commit: 48dc6f43a4879e8f0d30139703f9f642496b0fe9
     :git: https://github.com/p2p-org/key-app-kit-swift.git
   OrcaSwapSwift:
     :commit: 47d84350e0e6d4b273cafe5bfd1d6a8a193304bc
     :git: https://github.com/p2p-org/OrcaSwapSwift.git
   P2PSwift:
-    :commit: 4d8ab9d649c6c743f95fdc1a36382147161b16b3
+    :commit: 48dc6f43a4879e8f0d30139703f9f642496b0fe9
     :git: https://github.com/p2p-org/key-app-kit-swift.git
   RenVMSwift:
     :commit: 8f4dd6e2a47b1d7b02df362ba8aea9f04875243e
@@ -542,10 +542,10 @@ CHECKOUT OPTIONS:
     :commit: dadb16c54bd42ca83c08f3d80f61fbfca93a585c
     :git: https://github.com/TrGiLong/RxConcurrency.git
   Sell:
-    :commit: 4d8ab9d649c6c743f95fdc1a36382147161b16b3
+    :commit: 48dc6f43a4879e8f0d30139703f9f642496b0fe9
     :git: https://github.com/p2p-org/key-app-kit-swift.git
   Send:
-    :commit: 4d8ab9d649c6c743f95fdc1a36382147161b16b3
+    :commit: 48dc6f43a4879e8f0d30139703f9f642496b0fe9
     :git: https://github.com/p2p-org/key-app-kit-swift.git
   Sentry:
     :git: https://github.com/getsentry/sentry-cocoa.git
@@ -554,16 +554,16 @@ CHECKOUT OPTIONS:
     :commit: 98225dbb0459477dfeac063e1c7d0750102325d1
     :git: https://github.com/p2p-org/SkeletonUI.git
   SolanaPricesAPIs:
-    :commit: 4d8ab9d649c6c743f95fdc1a36382147161b16b3
+    :commit: 48dc6f43a4879e8f0d30139703f9f642496b0fe9
     :git: https://github.com/p2p-org/key-app-kit-swift.git
   SolanaSwift:
     :commit: b1ff87cb6a0e68074d64304110e8d2259ffe1d62
     :git: https://github.com/p2p-org/solana-swift.git
   Solend:
-    :commit: 4d8ab9d649c6c743f95fdc1a36382147161b16b3
+    :commit: 48dc6f43a4879e8f0d30139703f9f642496b0fe9
     :git: https://github.com/p2p-org/key-app-kit-swift.git
   TransactionParser:
-    :commit: 4d8ab9d649c6c743f95fdc1a36382147161b16b3
+    :commit: 48dc6f43a4879e8f0d30139703f9f642496b0fe9
     :git: https://github.com/p2p-org/key-app-kit-swift.git
 
 SPEC CHECKSUMS:
@@ -576,7 +576,7 @@ SPEC CHECKSUMS:
   BECollectionView_Core: 439e92310adb5a8deab08cc7af508cc31ed6a4f6
   BEPureLayout: 970e31aa4fccf0f72ef2229b4e831ccdea33f026
   Cache: 63a27b5fe1aa85d9587eb557ce828de39867b6f4
-  CocoaDebug: fab63960955ae3ea6d50d599e9db1f17e364fe80
+  CocoaDebug: cfa9c2e77fe93837289b77d9d1c7b4aac17b5843
   CombineCocoa: e5210dbfb480ff251078929459ac17e750e7af1d
   CountriesAPI: 26d03b67fb2fd4ff26111b71ed3d492a3babb592
   CryptoSwift: 562f8eceb40e80796fffc668b0cad9313284cfa6
@@ -619,7 +619,7 @@ SPEC CHECKSUMS:
   Onboarding: 6afe81c16c3641737644ed0427a7553b9451fa62
   OrcaSwapSwift: 8184e41e83f5349b38cc229532331064f8ed1fe8
   P2PSwift: 0b7b5a3aebc6bea985a2f5aa39cba99de84dbd80
-  Periphery: 5c554376fdaa3c8eaded190dda7eb1728280f328
+  Periphery: c118b711d58ead9f97ffd4ae858730da302b314d
   PhoneNumberKit: 441e8b26ec88d598e3591de9061eff18f5dd12e8
   PromisesObjC: 09985d6d70fbe7878040aa746d78236e6946d2ef
   PromisesSwift: cf9eb58666a43bbe007302226e510b16c1e10959
