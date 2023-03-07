@@ -162,8 +162,8 @@ private extension SwapViewModel {
                 let newState = await self.stateMachine.accept(action: .changeFromToken(token))
                 Defaults.fromTokenAddress = token.address
                 self.logChangeToken(isFrom: true, token: token, amount: newState.amountFrom)
-                if newState?.isTransactionCanBeCreated == true {
-                    let _ = await self?.stateMachine.accept(action: .createTransaction)
+                if newState.isTransactionCanBeCreated == true {
+                    await self.stateMachine.accept(action: .createTransaction)
                 }
             }
             .store(in: &subscriptions)
@@ -176,8 +176,8 @@ private extension SwapViewModel {
                 let newState = await self.stateMachine.accept(action: .changeToToken(token))
                 Defaults.toTokenAddress = token.address
                 self.logChangeToken(isFrom: false, token: token, amount: newState.amountTo)
-                if newState?.isTransactionCanBeCreated == true {
-                    let _ = await self?.stateMachine.accept(action: .createTransaction)
+                if newState.isTransactionCanBeCreated == true {
+                    await self.stateMachine.accept(action: .createTransaction)
                 }
             }
             .store(in: &subscriptions)
