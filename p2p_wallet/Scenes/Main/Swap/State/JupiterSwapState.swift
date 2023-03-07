@@ -190,12 +190,29 @@ struct JupiterSwapState: Equatable {
     }
     
     var exchangeRateInfo: String? {
-        guard priceInfo.relation != 0 else {
-            return nil
+        // price from jupiter
+        let rate: Double?
+        if priceInfo.relation != 0 {
+            rate = priceInfo.relation
         }
         
+        // price from coingecko
+        else if let fromPrice = tokensPriceMap[fromToken.token.address],
+                let toPrice = tokensPriceMap[toToken.token.address],
+                fromPrice != 0
+        {
+            rate = toPrice / fromPrice
+        }
+        
+        // otherwise
+        else {
+            rate = nil
+        }
+        
+        guard let rate else { return nil }
+        
         let onetoToken = 1.tokenAmountFormattedString(symbol: toToken.token.symbol, maximumFractionDigits: Int(toToken.token.decimals), roundingMode: .down)
-        let amountFromToken = priceInfo.relation.tokenAmountFormattedString(symbol: fromToken.token.symbol, maximumFractionDigits: Int(fromToken.token.decimals), roundingMode: .down)
+        let amountFromToken = rate.tokenAmountFormattedString(symbol: fromToken.token.symbol, maximumFractionDigits: Int(fromToken.token.decimals), roundingMode: .down)
         return [onetoToken, amountFromToken].joined(separator: " ≈ ")
     }
     
