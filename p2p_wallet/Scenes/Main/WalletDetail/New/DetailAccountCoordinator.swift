@@ -156,13 +156,14 @@ class DetailAccountCoordinator: SmartCoordinator<DetailAccountCoordinatorResult>
             coordinate(
                 to: JupiterSwapCoordinator(
                     navigationController: rootViewController,
-                    params: JupiterSwapParameters(dismissAfterCompletion: true, openKeyboardOnStart: true, source: .tapToken)
+                    // params: JupiterSwapParameters(dismissAfterCompletion: true, openKeyboardOnStart: true, source: .tapToken)
+                    params: JupiterSwapParameters(dismissAfterCompletion: true, openKeyboardOnStart: true, preChosenWallet: wallet)
                 )
             )
-                .sink { [weak rootViewController] _ in
-                    rootViewController?.popToRootViewController(animated: true)
-                }
-                .store(in: &subscriptions)
+            .sink { [weak rootViewController] _ in
+                rootViewController?.popToRootViewController(animated: true)
+            }
+            .store(in: &subscriptions)
         } else {
             let vm = OrcaSwapV2.ViewModel(initialWallet: wallet)
             let vc = OrcaSwapV2.ViewController(viewModel: vm)
