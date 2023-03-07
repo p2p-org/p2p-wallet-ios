@@ -20,9 +20,7 @@ struct SwapInputView: View {
             }
             HStack {
                 changeTokenButton
-
-                Spacer()
-
+                    .layoutPriority(1)
                 amountField
             }
             HStack {
@@ -89,15 +87,21 @@ private extension SwapInputView {
         DecimalTextField(value: $viewModel.amount, isFirstResponder: $viewModel.isFirstResponder, textColor: $viewModel.amountTextColor) { textField in
             textField.font = .font(of: .title1)
             textField.keyboardType = .decimalPad
-            textField.setContentHuggingPriority(.defaultHigh, for: .horizontal)
             textField.isEnabled = viewModel.isEditable
             textField.placeholder = "0"
             textField.maximumFractionDigits = Int(viewModel.token.token.decimals)
             textField.decimalSeparator = "."
+            textField.adjustsFontSizeToFitWidth = true
+            textField.textAlignment = .right
+            textField.max = 9_999_999_999_999
         }
+        .frame(maxWidth: .infinity)
         .accessibilityIdentifier("SwapInputView.\(viewModel.accessibilityIdentifierTokenPrefix)Input")
         .if(viewModel.isLoading || viewModel.isAmountLoading) { view in
-            view.skeleton(with: true, size: CGSize(width: 84, height: 20))
+            HStack {
+                Spacer()
+                view.skeleton(with: true, size: CGSize(width: 84, height: 20))
+            }
         }
         .if(!viewModel.isEditable) { view in
             view.onTapGesture(perform: viewModel.amountFieldTap.send)
