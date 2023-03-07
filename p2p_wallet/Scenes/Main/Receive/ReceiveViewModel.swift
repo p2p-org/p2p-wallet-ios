@@ -1,6 +1,6 @@
 import Combine
-import Foundation
 import CoreImage.CIFilterBuiltins
+import Foundation
 import Resolver
 
 @MainActor class ReceiveViewModel: BaseViewModel, ObservableObject {
@@ -10,7 +10,7 @@ import Resolver
 
     // MARK: -
 
-    @Published var items: [any ReceiveCellItem] = []
+    @Published var items: [any ReceiveRendableItem] = []
     @Published var qrImage: UIImage
 
     // MARK: -
@@ -26,18 +26,18 @@ import Resolver
         self.address = address
         super.init()
         self.items = [
-            ListRowReceiveCellItem(
+            ListReceiveItem(
                 id: FieldId.solana.rawValue,
                 title: L10n.mySolanaAddress,
                 description: address,
                 showTopCorners: true,
-                showBottomCorners: (username == nil)
+                showBottomCorners: username == nil
             )
         ]
         if let username {
-            self.items.append(ListDividerReceiveCellItem())
-            self.items.append(
-                ListRowReceiveCellItem(
+            items.append(ListDividerReceiveItem())
+            items.append(
+                ListReceiveItem(
                     id: FieldId.username.rawValue,
                     title: L10n.myUsername,
                     description: username,
@@ -56,16 +56,16 @@ import Resolver
         super.init()
 
         self.items = [
-            ListRowReceiveCellItem(
+            ListReceiveItem(
                 id: FieldId.eth.rawValue,
                 title: L10n.myEthereumAddress,
                 description: ethAddress,
                 showTopCorners: true,
                 showBottomCorners: true
             ),
-            SpacerReceiveCellItem(),
-            RefundBannerReceiveCellItem(text: L10n.weRefundBridgingCostsForAnyTransactionsOver50),
-            SpacerReceiveCellItem(),
+            SpacerReceiveItem(),
+            RefundBannerReceiveItem(text: L10n.weRefundBridgingCostsForAnyTransactionsOver50),
+            SpacerReceiveItem(),
             InstructionsReceiveCellItem(
                 instructions: [
                     ("1", L10n.sendToYourEthereumAddress(token)),
@@ -78,8 +78,8 @@ import Resolver
 
     // MARK: -
 
-    func itemTapped(_ item: any ReceiveCellItem) {
-        if let row = item as? ListRowReceiveCellItem {
+    func itemTapped(_ item: any Rendable) {
+        if let row = item as? ListReceiveItem {
             clipboardManager.copyToClipboard(row.description)
             var message = ""
             switch FieldId(rawValue: row.id) {
@@ -100,7 +100,8 @@ import Resolver
         clipboardManager.copyToClipboard(address)
         notificationsService.showInAppNotification(.init(
             emoji: "✅",
-            message: kind == .eth ? L10n.yourEthereumAddressWasCopied : L10n.yourSolanaAddressWasCopied)
+            message: kind == .eth ? L10n.yourEthereumAddressWasCopied : L10n.yourSolanaAddressWasCopied
+        )
         )
     }
 

@@ -1,5 +1,5 @@
-import SwiftUI
 import KeyAppUI
+import SwiftUI
 
 struct ReceiveView: View {
     @ObservedObject var viewModel: ReceiveViewModel
@@ -20,11 +20,11 @@ struct ReceiveView: View {
                         viewModel.buttonTapped()
                     }
                 )
-                    .frame(height: TextButton.Size.large.height)
-                    .padding(.bottom, 36)
-                    .padding(.horizontal, 16)
+                .frame(height: TextButton.Size.large.height)
+                .padding(.bottom, 36)
+                .padding(.horizontal, 16)
             }
-                .padding(.top, 20)
+            .padding(.top, 20)
         }
     }
 
@@ -46,16 +46,15 @@ struct ReceiveView: View {
 
     var list: some View {
         VStack(spacing: 0) {
-            ForEach(viewModel.items, id: \.self.hashValue) { item in
-                AnyReceiveCellRenderableView(item: item)
+            ForEach(viewModel.items, id: \.id) { item in
+                AnyRendable(item: item)
                     .onTapGesture {
                         viewModel.itemTapped(item)
                     }
             }
         }
-            .padding(.horizontal, 16)
+        .padding(.horizontal, 16)
     }
-
 }
 
 struct ReceiveView_Previews: PreviewProvider {
