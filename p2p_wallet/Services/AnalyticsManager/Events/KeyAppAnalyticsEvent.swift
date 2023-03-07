@@ -210,6 +210,36 @@ enum KeyAppAnalyticsEvent: AnalyticsEvent {
     )
     case swapClickApproveButton
 
+    // MARK: - Jupiter swap
+    case swapStartScreenNew(lastScreen: String, from: String, to: String)
+    case swapChangingTokenAClick(tokenAName: String)
+    case swapChangingTokenBClick(tokenBName: String)
+    case swapChangingTokenA(tokenAName: String, tokenAValue: Double)
+    case swapReturnFromChangingTokenA
+    case swapChangingTokenB(tokenBName: String, tokenBValue: Double)
+    case swapReturnFromChangingTokenB
+    case swapChangingValueTokenA(tokenAName: String, tokenAValue: Double)
+    case swapChangingValueTokenB(tokenBName: String, tokenBValue: Double)
+    case swapChangingValueTokenAAll(tokenAValue: Double)
+    case swapSwitchTokens(tokenAName: String, tokenBName: String)
+    case swapPriceImpactLow(priceImpact: Double)
+    case swapPriceImpactHigh(priceImpact: Double)
+    case swapErrorTokenAInsufficientAmount
+    case swapErrorTokenPairNotExist
+    case swapClickApproveButtonNew(tokenA: String, tokenB: String, swapSum: Double, swapUSD: Double)
+
+    // Transaction detail
+    case swapTransactionProgressScreen
+    case swapTransactionProgressScreenDone
+    case swapErrorDefault(isBlockchainRelated: Bool)
+    case swapErrorSlippage
+    // Swap settings
+
+    case swapSettingsClick
+    case swapSettingsFeeClick(feeName: String)
+    case swapSettingsSlippage(slippageLevelPercent: Double)
+    case swapSettingsSlippageCustom(slippageLevelPercent: Double)
+    case swapSettingsSwappingThroughChoice(variant: String)
     // MARK: - Scan QR
 
     case scanQrSuccess

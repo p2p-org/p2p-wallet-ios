@@ -3,15 +3,21 @@ import SwiftUI
 import KeyAppUI
 import SolanaSwift
 
+enum JupiterSwapSource: String {
+    case actionPanel, tapMain, tapToken, solend
+}
+
 struct JupiterSwapParameters {
     let preChosenWallet: Wallet?
     let dismissAfterCompletion: Bool
     let openKeyboardOnStart: Bool
+    let source: JupiterSwapSource // This param's necessary for the analytic. It doesn't do any logic
 
-    init(dismissAfterCompletion: Bool, openKeyboardOnStart: Bool, preChosenWallet: Wallet? = nil) {
+    init(dismissAfterCompletion: Bool, openKeyboardOnStart: Bool, source: JupiterSwapSource, preChosenWallet: Wallet? = nil) {
         self.preChosenWallet = preChosenWallet
         self.dismissAfterCompletion = dismissAfterCompletion
         self.openKeyboardOnStart = openKeyboardOnStart
+        self.source = source
     }
 }
 
@@ -27,7 +33,7 @@ final class JupiterSwapCoordinator: Coordinator<Void> {
     }
 
     override func start() -> AnyPublisher<Void, Never> {
-        viewModel = SwapViewModel(preChosenWallet: params.preChosenWallet)
+        viewModel = SwapViewModel(source: params.source, preChosenWallet: params.preChosenWallet)
         let fromViewModel = SwapInputViewModel(stateMachine: viewModel.stateMachine, isFromToken: true, openKeyboardOnStart: params.openKeyboardOnStart)
         let toViewModel = SwapInputViewModel(stateMachine: viewModel.stateMachine, isFromToken: false, openKeyboardOnStart: params.openKeyboardOnStart)
         let view = SwapView(viewModel: viewModel, fromViewModel: fromViewModel, toViewModel: toViewModel)
@@ -74,7 +80,7 @@ final class JupiterSwapCoordinator: Coordinator<Void> {
     @objc private func receiptButtonPressed() {
         openSwapSettings()
     }
-    
+
     private func openChooseToken(fromToken: Bool) {
         coordinate(to: ChooseSwapTokenCoordinator(
             chosenWallet: fromToken ? viewModel.currentState.fromToken : viewModel.currentState.toToken,
@@ -82,35 +88,41 @@ final class JupiterSwapCoordinator: Coordinator<Void> {
             navigationController: navigationController,
             title: fromToken ? L10n.theTokenYouPay : L10n.theTokenYouReceive
         ))
-        .compactMap { $0 }
-        .sink { [weak viewModel] in
-            if fromToken {
-                viewModel?.changeFromToken.send($0)
-            } else {
-                viewModel?.changeToToken.send($0)
+        .sink(receiveValue: { [weak viewModel] chosenToken in
+            guard let chosenToken else {
+                viewModel?.logReturnFromChangeToken(isFrom: fromToken)
+                return
             }
-        }
+            if fromToken {
+                viewModel?.changeFromToken.send(chosenToken)
+            } else {
+                viewModel?.changeToToken.send(chosenToken)
+            }
+        })
         .store(in: &subscriptions)
     }
 
     private func openDetails(pendingTransaction: PendingTransaction, statusContext: String?) {
         let viewModel = TransactionDetailViewModel(pendingTransaction: pendingTransaction, statusContext: statusContext)
         var hasError = false
+        self.viewModel.logTransactionProgressOpened()
         coordinate(to: TransactionDetailCoordinator(
             viewModel: viewModel,
             presentingViewController: navigationController
         ))
         .sink(receiveCompletion: { [weak self] _ in
             guard let self else { return }
+            self.viewModel.logTransactionProgressDone()
             if self.params.dismissAfterCompletion && !hasError {
                 self.navigationController.popViewController(animated: true)
                 self.result.send(())
             }
         }, receiveValue: { [weak self] status in
             switch status {
-            case let .error(message):
+            case let .error(_, error):
                 hasError = true
-                if message.isSlippageError {
+                self?.viewModel.logTransaction(error: error)
+                if let error, error.isSlippageError {
                     self?.openSwapSettings()
                 }
             default:
@@ -127,7 +139,8 @@ final class JupiterSwapCoordinator: Coordinator<Void> {
             slippage: Double(viewModel.currentState.slippageBps) / 100,
             swapStatePublisher: viewModel.stateMachine.statePublisher
         )
-        
+        viewModel.logSettingsClick()
+
         // coordinate
         coordinate(to: settingsCoordinator)
             .sink(receiveValue: { [weak viewModel] result in
