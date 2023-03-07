@@ -1248,3 +1248,15 @@ You can try again, but your new transaction will be subject to the current rates
 "Confirm claiming the tokens " = "Confirmer la réclamation des jetons";
 "Claim %@" = "Revendication %@";
 "With Key App, the first transaction is free. Also all the transactions above $300 are free" = "Avec Key App, la première transaction est gratuite.  De plus, toutes les transactions supérieures à 300 $ sont gratuites";
+"My Solana Address" = "Mon adresse Solana";
+"My username" = "Mon nom d'utilisateur";
+"My Ethereum address" = "Mon adresse Ethereum";
+"Send %@ to your Ethereum address" = "Envoyez %@ à votre adresse Ethereum";
+"We bridge it to Solana with Wormhole" = "Nous le relions à Solana avec Wormhole";
+"You only need to sign a transaction with Key App" = "Il vous suffit de signer une transaction avec Key App";
+"We refund bridging costs for any transactions over $50" = "Nous remboursons les frais de transition pour toute transaction supérieure à 50 $";
+"Your username was copied" = "Votre nom d'utilisateur a été copié";
+"Your Solana address was copied" = "Votre adresse Solana a été copiée";
+"Your Ethereum address was copied" = "Votre adresse Ethereum a été copiée";
+"Copy address" = "Copier l'adresse";
+"Receive %@ on %@" = "Recevoir %@ sur %@";
