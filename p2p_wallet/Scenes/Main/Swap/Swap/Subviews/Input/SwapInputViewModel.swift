@@ -62,12 +62,15 @@ final class SwapInputViewModel: BaseViewModel, ObservableObject {
             .store(in: &subscriptions)
 
         $amount
-            .debounce(for: 0.3, scheduler: DispatchQueue.main)
+            .debounce(for: 0.4, scheduler: DispatchQueue.main)
             .sinkAsync { [weak self] value in
                 guard let self, self.isStateReady(status: self.currentState.status) else { return }
                 self.isAmountLoading = true && !self.isFromToken
                 if self.isFromToken {
-                    let _ = await self.stateMachine.accept(action: .changeAmountFrom(value ?? 0))
+                    let newState = await self.stateMachine.accept(action: .changeAmountFrom(value ?? 0))
+                    if newState.isTransactionCanBeCreated {
+                        await self.stateMachine.accept(action: .createTransaction)
+                    }
                 }
                 self.isAmountLoading = false && !self.isFromToken
             }

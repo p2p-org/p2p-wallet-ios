@@ -10,7 +10,7 @@ import SolanaSwift
 
 extension JupiterSwapBusinessLogic {
     static func sendToBlockchain(
-        account: Account,
+        account: KeyPair,
         versionedTransaction: VersionedTransaction,
         solanaAPIClient: SolanaAPIClient
     ) async throws -> String {
