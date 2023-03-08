@@ -8,7 +8,8 @@
 import Combine
 import Foundation
 
-final class SwapSettingsInfoViewModel {
+@MainActor
+final class SwapSettingsInfoViewModel: BaseViewModel, ObservableObject {
     let image: UIImage
     let title: String
     let subtitle: String
