@@ -75,6 +75,11 @@ struct JupiterSwapState: Equatable {
     
     // MARK: - Computed properties
     
+    /// All the wallets that user owns
+    var userWallets: [Wallet] {
+        swapTokens.compactMap(\.userWallet)
+    }
+    
     var amountFrom: Double {
         guard let route, let amountFrom = UInt64(route.inAmount) else { return 0 }
         return amountFrom.convertToBalance(decimals: fromToken.token.decimals)
@@ -134,35 +139,42 @@ struct JupiterSwapState: Equatable {
     
     /// Network fee of the transaction, can be modified by the fee relayer service
     var networkFee: SwapFeeInfo? {
-        guard let relayContext else { return nil }
+        // FIXME: - Relay context and free transaction
+        guard let signatureFee = route?.fees?.signatureFee
+        else { return nil }
         
-        // FIXME: - network fee with fee relayer, Temporarily paying with SOL
-        let networkFeeAmount = relayContext.lamportsPerSignature // user's signature only
-            .convertToBalance(decimals: Token.nativeSolana.decimals)
+        // FIXME: - paying fee token
+        let payingFeeToken = Token.nativeSolana
+        
+        let networkFeeAmount = signatureFee
+            .convertToBalance(decimals: payingFeeToken.decimals)
+        
         return SwapFeeInfo(
             amount: networkFeeAmount,
-            tokenSymbol: "SOL",
-            tokenName: "Solana",
-            amountInFiat: tokensPriceMap[Token.nativeSolana.address] * networkFeeAmount,
+            tokenSymbol: payingFeeToken.symbol,
+            tokenName: payingFeeToken.name,
+            amountInFiat: tokensPriceMap[payingFeeToken.address] * networkFeeAmount,
             pct: nil,
             canBePaidByKeyApp: true
         )
     }
     
     var accountCreationFee: SwapFeeInfo? {
-        guard let route, let relayContext else { return nil }
-        let nonCreatedTokenMints = route.marketInfos.map(\.outputMint)
-            .compactMap { mint in
-                swapTokens.first(where: { $0.token.address == mint && $0.userWallet == nil })?.address
-            }
+        // FIXME: - Relay context and relay account
+        guard let route,
+              let fees = route.fees
+        else { return nil }
         
-        let accountCreationFeeAmount = (relayContext.minimumTokenAccountBalance * UInt64(nonCreatedTokenMints.count))
-            .convertToBalance(decimals: Token.nativeSolana.decimals)
+        // FIXME: - paying fee token
+        let payingFeeToken = Token.nativeSolana
+        
+        let accountCreationFee = (fees.openOrdersDeposits + fees.ataDeposits).reduce(0, +)
+            .convertToBalance(decimals: payingFeeToken.decimals)
         return SwapFeeInfo(
-            amount: accountCreationFeeAmount,
-            tokenSymbol: "SOL",
-            tokenName: "Solana",
-            amountInFiat: tokensPriceMap[Token.nativeSolana.address] * accountCreationFeeAmount,
+            amount: accountCreationFee,
+            tokenSymbol: payingFeeToken.symbol,
+            tokenName: payingFeeToken.symbol,
+            amountInFiat: tokensPriceMap[payingFeeToken.address] * accountCreationFee,
             pct: nil,
             canBePaidByKeyApp: false
         )
