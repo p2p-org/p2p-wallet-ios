@@ -11,13 +11,15 @@ struct JupiterSwapParameters {
     let preChosenWallet: Wallet?
     let dismissAfterCompletion: Bool
     let openKeyboardOnStart: Bool
+    let hideTabBar: Bool
     let source: JupiterSwapSource // This param's necessary for the analytic. It doesn't do any logic
 
-    init(dismissAfterCompletion: Bool, openKeyboardOnStart: Bool, source: JupiterSwapSource, preChosenWallet: Wallet? = nil) {
+    init(dismissAfterCompletion: Bool, openKeyboardOnStart: Bool, source: JupiterSwapSource, preChosenWallet: Wallet? = nil, hideTabBar: Bool = false) {
         self.preChosenWallet = preChosenWallet
         self.dismissAfterCompletion = dismissAfterCompletion
         self.openKeyboardOnStart = openKeyboardOnStart
         self.source = source
+        self.hideTabBar = hideTabBar
     }
 }
 
@@ -40,6 +42,7 @@ final class JupiterSwapCoordinator: Coordinator<Void> {
         let toViewModel = SwapInputViewModel(stateMachine: viewModel.stateMachine, isFromToken: false, openKeyboardOnStart: params.openKeyboardOnStart)
         let view = SwapView(viewModel: viewModel, fromViewModel: fromViewModel, toViewModel: toViewModel)
         let controller: UIViewController = view.asViewController(withoutUIKitNavBar: false)
+        controller.hidesBottomBarWhenPushed = params.hideTabBar
 //        if params.openKeyboardOnStart {
 //            controller = KeyboardAvoidingViewController(rootView: view)
 //        } else {
