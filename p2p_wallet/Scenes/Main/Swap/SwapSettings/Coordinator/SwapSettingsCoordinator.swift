@@ -201,27 +201,27 @@ final class SwapSettingsCoordinator: Coordinator<SwapSettingsCoordinatorResult> 
             strategy = .accountCreationFee
         case .liquidityFee:
             guard let info = viewModel.info else { return }
-            let fees = info.liquidityFee
-                .map { lqFee in
-                    SwapSettingsInfoViewModel.Fee(
-                        title: L10n.liquidityFee(
-                            lqFee.tokenName ?? L10n.unknownToken,
-                            "\(lqFee.pct == nil ? L10n.unknown: "\(lqFee.pct!)")%"
-                        ),
-                        subtitle: lqFee.amount.tokenAmountFormattedString(symbol: lqFee.tokenSymbol ?? "UNKNOWN"),
-                        amount: lqFee.amountInFiatDescription
-                    )
-                }
+            let fees = info.liquidityFee.mappedToSwapSettingInfoViewModelFee()
             strategy = .liquidityFee(fees: fees)
         case .minimumReceived:
             strategy = .minimumReceived
         }
         
         // create viewModel
-        let viewModel = SwapSettingsInfoViewModel(strategy: strategy)
+        let settingsInfoViewModel = SwapSettingsInfoViewModel(strategy: strategy)
+        
+        // observe viewModel status
+        viewModel.$status
+            .map { $0.info?.liquidityFee }
+            .compactMap { $0 }
+            .sink { [weak settingsInfoViewModel] fees in
+                settingsInfoViewModel?.fees = fees.mappedToSwapSettingInfoViewModelFee()
+            }
+            .store(in: &subscriptions)
+            
         
         // create view
-        let view = SwapSettingsInfoView(viewModel: viewModel)
+        let view = SwapSettingsInfoView(viewModel: settingsInfoViewModel)
         
         // create hosting controller
         let viewController = UIBottomSheetHostingController(rootView: view)
@@ -229,5 +229,22 @@ final class SwapSettingsCoordinator: Coordinator<SwapSettingsCoordinatorResult> 
         
         // present bottomSheet
         navigationController.present(viewController, interactiveDismissalType: .standard)
+    }
+}
+
+// MARK: - Helpers
+
+private extension Array where Element == SwapFeeInfo {
+    func mappedToSwapSettingInfoViewModelFee() -> [SwapSettingsInfoViewModel.Fee] {
+        map { lqFee in
+            SwapSettingsInfoViewModel.Fee(
+                title: L10n.liquidityFee(
+                    lqFee.tokenName ?? L10n.unknownToken,
+                    "\(lqFee.pct == nil ? L10n.unknown: "\(lqFee.pct!)")%"
+                ),
+                subtitle: lqFee.amount.tokenAmountFormattedString(symbol: lqFee.tokenSymbol ?? "UNKNOWN"),
+                amount: lqFee.amountInFiatDescription
+            )
+        }
     }
 }
