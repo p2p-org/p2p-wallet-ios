@@ -143,7 +143,11 @@ final class HomeCoordinator: Coordinator<Void> {
                 return coordinate(
                     to: JupiterSwapCoordinator(
                         navigationController: navigationController,
-                        params: JupiterSwapParameters(dismissAfterCompletion: true, openKeyboardOnStart: true, source: .actionPanel)
+                        params: JupiterSwapParameters(
+                            dismissAfterCompletion: true,
+                            openKeyboardOnStart: true,
+                            source: .actionPanel
+                        )
                     )
                 )
                 .eraseToAnyPublisher()
