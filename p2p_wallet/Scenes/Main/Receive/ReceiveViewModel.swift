@@ -3,77 +3,103 @@ import CoreImage.CIFilterBuiltins
 import Foundation
 import Resolver
 
-@MainActor class ReceiveViewModel: BaseViewModel, ObservableObject {
-    let qrCenterImage: UIImage?
-    let address: String
-    private var kind: Kind = .solana
+enum ReceiveNetwork {
+    case solana(tokenSymbol: String)
+    case ethereum(tokenSymbol: String)
+}
 
+class ReceiveViewModel: BaseViewModel, ObservableObject {
     // MARK: -
+
+    let network: ReceiveNetwork
+    let address: String
 
     @Published var items: [any ReceiveRendableItem] = []
     @Published var qrImage: UIImage
+    @Published var qrCenterImage: UIImage?
 
     // MARK: -
 
     @Injected private var clipboardManager: ClipboardManagerType
     @Injected private var notificationsService: NotificationService
 
-    // MARK: -
+    init(
+        network: ReceiveNetwork,
+        userWalletManager: UserWalletManager = Resolver.resolve()
+    ) {
+        /// Assign network type
+        self.network = network
 
-    init(address: String, username: String?, qrCenterImage: UIImage? = nil) {
-        self.qrImage = ReceiveViewModel.generateQRCode(from: address) ?? UIImage()
-        self.qrCenterImage = qrCenterImage
-        self.address = address
-        super.init()
-        self.items = [
-            ListReceiveItem(
-                id: FieldId.solana.rawValue,
-                title: L10n.mySolanaAddress,
-                description: address,
-                showTopCorners: true,
-                showBottomCorners: username == nil
-            )
-        ]
-        if let username {
-            items.append(ListDividerReceiveItem())
-            items.append(
-                ListReceiveItem(
-                    id: FieldId.username.rawValue,
-                    title: L10n.myUsername,
-                    description: username,
-                    showTopCorners: false,
-                    showBottomCorners: true
-                )
-            )
+        /// Extract user wallet from manager.
+        guard let userWallet = userWalletManager.wallet else {
+            self.address = ""
+            self.qrImage = UIImage()
+            super.init()
+
+            return
         }
-    }
 
-    init(ethAddress: String, token: String, qrCenterImage: UIImage? = nil) {
-        self.qrImage = ReceiveViewModel.generateQRCode(from: ethAddress) ?? UIImage()
-        self.qrCenterImage = qrCenterImage
-        self.address = ethAddress
-        self.kind = .eth
+        switch network {
+        case .solana:
+            self.address = userWallet.account.publicKey.base58EncodedString
+            self.qrImage = ReceiveViewModel.generateQRCode(from: address) ?? UIImage()
+
+            // Build list items
+            func solanaNetwork(address: String, username: String?) -> [any ReceiveRendableItem] {
+                var items: [any ReceiveRendableItem] = [
+                    ListReceiveItem(
+                        id: FieldId.solana.rawValue,
+                        title: L10n.mySolanaAddress,
+                        description: address,
+                        showTopCorners: true,
+                        showBottomCorners: userWallet.name == nil
+                    )
+                ]
+
+                if let username = username {
+                    items += [
+                        ListDividerReceiveItem(),
+                        ListReceiveItem(
+                            id: FieldId.username.rawValue,
+                            title: L10n.myUsername,
+                            description: username,
+                            showTopCorners: false,
+                            showBottomCorners: true
+                        )
+                    ]
+                }
+
+                return items
+            }
+
+            self.items = solanaNetwork(address: address, username: userWallet.name)
+
+        case let .ethereum(tokenSymbol):
+            self.address = userWallet.ethereumKeypair.address
+            self.qrImage = ReceiveViewModel.generateQRCode(from: address) ?? UIImage()
+
+            self.items = [
+                ListReceiveItem(
+                    id: FieldId.eth.rawValue,
+                    title: L10n.myEthereumAddress,
+                    description: address,
+                    showTopCorners: true,
+                    showBottomCorners: true
+                ),
+                SpacerReceiveItem(),
+                RefundBannerReceiveItem(text: L10n.weRefundBridgingCostsForAnyTransactionsOver50),
+                SpacerReceiveItem(),
+                InstructionsReceiveCellItem(
+                    instructions: [
+                        ("1", L10n.sendToYourEthereumAddress(tokenSymbol)),
+                        ("2", L10n.weBridgeItToSolanaWithWormhole)
+                    ],
+                    tip: L10n.youOnlyNeedToSignATransactionWithKeyApp
+                )
+            ]
+        }
+
         super.init()
-
-        self.items = [
-            ListReceiveItem(
-                id: FieldId.eth.rawValue,
-                title: L10n.myEthereumAddress,
-                description: ethAddress,
-                showTopCorners: true,
-                showBottomCorners: true
-            ),
-            SpacerReceiveItem(),
-            RefundBannerReceiveItem(text: L10n.weRefundBridgingCostsForAnyTransactionsOver50),
-            SpacerReceiveItem(),
-            InstructionsReceiveCellItem(
-                instructions: [
-                    ("1", L10n.sendToYourEthereumAddress(token)),
-                    ("2", L10n.weBridgeItToSolanaWithWormhole)
-                ],
-                tip: L10n.youOnlyNeedToSignATransactionWithKeyApp
-            )
-        ]
     }
 
     // MARK: -
@@ -97,12 +123,16 @@ import Resolver
     }
 
     func buttonTapped() {
+        let message: String
+        switch network {
+        case .solana:
+            message = L10n.yourSolanaAddressWasCopied
+        case .ethereum:
+            message = L10n.yourEthereumAddressWasCopied
+        }
+
         clipboardManager.copyToClipboard(address)
-        notificationsService.showInAppNotification(.init(
-            emoji: "✅",
-            message: kind == .eth ? L10n.yourEthereumAddressWasCopied : L10n.yourSolanaAddressWasCopied
-        )
-        )
+        notificationsService.showInAppNotification(.init(emoji: "✅", message: message))
     }
 
     // MARK: -
@@ -126,10 +156,5 @@ extension ReceiveViewModel {
         case eth
         case solana
         case username
-    }
-
-    enum Kind {
-        case solana
-        case eth
     }
 }

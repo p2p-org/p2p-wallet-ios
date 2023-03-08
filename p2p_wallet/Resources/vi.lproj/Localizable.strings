@@ -1263,3 +1263,6 @@ You can try again, but your new transaction will be subject to the current rates
 "Your Ethereum address was copied" = "Địa chỉ Ethereum của bạn đã được sao chép";
 "Copy address" = "sao chép địa chỉ";
 "Receive %@ on %@" = "Nhận %@ trên %@";
+"Supported tokens" = "Mã thông báo được hỗ trợ";
+"Receive tokens on Ethereum and Solana" = "Nhận mã thông báo trên Ethereum và Solana";
+"Choose network" = "Chọn mạng";

@@ -8,11 +8,11 @@
 import AnalyticsManager
 import Combine
 import Foundation
+import KeyAppBusiness
 import Resolver
 import SolanaSwift
 import SwiftUI
 import UIKit
-import KeyAppBusiness
 
 enum HomeNavigation: Equatable {
     // HomeWithTokens
@@ -111,9 +111,9 @@ final class HomeCoordinator: Coordinator<Void> {
                 .map { _ in () }
                 .eraseToAnyPublisher()
         case .receive(let publicKey):
-            let coordinator = ReceiveCoordinator(navigationController: navigationController, pubKey: publicKey)
-            analyticsManager.log(event: .mainScreenReceiveOpen)
-            analyticsManager.log(event: .receiveViewed(fromPage: "main_screen"))
+            let coordinator = SupportedTokensCoordinator(
+                presentation: SmartCoordinatorPushPresentation(navigationController)
+            )
             return coordinate(to: coordinator)
                 .eraseToAnyPublisher()
         case .send:
@@ -220,10 +220,10 @@ final class HomeCoordinator: Coordinator<Void> {
                     context: .fromHome,
                     defaultToken: token
                 )
-                return self.coordinate(to: coordinator)
+                return coordinate(to: coordinator)
                     .eraseToAnyPublisher()
             }
-            
+
             // Other
             var token = token
             if token == .renBTC {
