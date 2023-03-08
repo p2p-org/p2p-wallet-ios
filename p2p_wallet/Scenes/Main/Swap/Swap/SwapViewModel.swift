@@ -330,7 +330,9 @@ private extension SwapViewModel {
             payingFeeWallet: nil, // FIXME: - PayingFeeWallet
             feeAmount: .zero, // FIXME: - feeAmount
             execution: { [unowned self] in
-                try await createSwapExecution(account: account)
+                let transactionId = try await self.createSwapExecution(account: account)
+                self.logSwapApprove(signature: transactionId)
+                return transactionId
             })
         
         let transactionIndex = transactionHandler.sendTransaction(
@@ -347,7 +349,6 @@ private extension SwapViewModel {
             pendingTransaction,
             formattedSlippage
         ))
-        logSwapApprove()
     }
 
     private func createSwapExecution(account: KeyPair) async throws -> String {
@@ -422,8 +423,8 @@ extension SwapViewModel {
         }
     }
 
-    private func logSwapApprove() {
-        analyticsManager.log(event: .swapClickApproveButtonNew(tokenA: currentState.fromToken.token.symbol, tokenB: currentState.toToken.token.symbol, swapSum: currentState.amountFrom, swapUSD: currentState.amountFromFiat))
+    private func logSwapApprove(signature: String) {
+        analyticsManager.log(event: .swapClickApproveButtonNew(tokenA: currentState.fromToken.token.symbol, tokenB: currentState.toToken.token.symbol, swapSum: currentState.amountFrom, swapUSD: currentState.amountFromFiat, signature: signature))
     }
 
     private func log(from status: JupiterSwapState.Status) {
