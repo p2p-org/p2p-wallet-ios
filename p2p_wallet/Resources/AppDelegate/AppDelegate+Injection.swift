@@ -513,7 +513,7 @@ extension Resolver: ResolverRegistering {
         .scope(.session)
         
         register {
-            JupiterInMemoryTokensProvider()
+            JupiterTokensLocalProvider()
         }
         .implements(JupiterTokensProvider.self)
         .scope(.session)
