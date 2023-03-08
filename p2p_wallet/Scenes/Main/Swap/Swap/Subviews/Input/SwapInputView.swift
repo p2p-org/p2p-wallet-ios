@@ -1,5 +1,6 @@
 import KeyAppUI
 import SwiftUI
+import SolanaSwift
 
 struct SwapInputView: View {
 
@@ -93,7 +94,7 @@ private extension SwapInputView {
             textField.decimalSeparator = "."
             textField.adjustsFontSizeToFitWidth = true
             textField.textAlignment = .right
-            textField.max = 9_999_999_999_999
+            textField.max = viewModel.token.token.maxAmount
         }
         .frame(maxWidth: .infinity)
         .accessibilityIdentifier("SwapInputView.\(viewModel.accessibilityIdentifierTokenPrefix)Input")
