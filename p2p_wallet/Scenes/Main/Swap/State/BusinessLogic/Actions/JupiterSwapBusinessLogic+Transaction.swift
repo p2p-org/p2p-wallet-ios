@@ -20,9 +20,7 @@ extension JupiterSwapBusinessLogic {
                 userPublicKey: account.publicKey.base58EncodedString,
                 wrapUnwrapSol: true,
                 feeAccount: nil,
-                asLegacyTransaction: nil,
-                computeUnitPriceMicroLamports: nil,
-                destinationWallet: nil
+                computeUnitPriceMicroLamports: nil
             )
 
             return state.modified {
