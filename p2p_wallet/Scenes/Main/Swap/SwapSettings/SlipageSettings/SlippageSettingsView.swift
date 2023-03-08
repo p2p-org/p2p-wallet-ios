@@ -9,12 +9,15 @@ import SwiftUI
 import KeyAppUI
 
 struct SlippageSettingsView: View {
-    @ObservedObject private var viewModel: SlippageSettingsViewModel
+    @StateObject private var viewModel: SlippageSettingsViewModel
     
     @State private var textFieldColor: UIColor = Asset.Colors.night.color
     
-    init(viewModel: SlippageSettingsViewModel) {
-        self.viewModel = viewModel
+    let onSelectSlippage: (Double) -> Void
+    
+    init(slippage: Double, onSelectSlippage: @escaping (Double) -> Void) {
+        self._viewModel = StateObject(wrappedValue: .init(slippage: slippage))
+        self.onSelectSlippage = onSelectSlippage
     }
     
     var body: some View {
@@ -30,6 +33,10 @@ struct SlippageSettingsView: View {
         }
         .onChange(of: viewModel.isCustomSlippageValid) { isSlippageValid in
             textFieldColor = isSlippageValid ? Asset.Colors.night.color : Asset.Colors.rose.color
+        }
+        .onChange(of: viewModel.selectedSlippage) { selectedSlippage in
+            guard let selectedSlippage else { return }
+            onSelectSlippage(selectedSlippage)
         }
     }
     
@@ -109,7 +116,7 @@ struct SlippageSettingsView_Previews: PreviewProvider {
     static var previews: some View {
         List {
             Section {
-                SlippageSettingsView(viewModel: .init(slippage: 0.5))
+                SlippageSettingsView(slippage: 0.5) {_ in }
             }
         }
     }

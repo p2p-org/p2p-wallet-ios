@@ -47,9 +47,9 @@ struct SwapSettingsView: View {
                 }
             }
             Section(header: Text(L10n.slippage)) {
-                SlippageSettingsView(
-                    viewModel: SlippageSettingsViewModel(slippage: 0.5)
-                )
+                SlippageSettingsView(slippage: 0.5) { selectedSlippage in
+                    viewModel.slippage = selectedSlippage
+                }
             }
         }
         .listStyle(InsetGroupedListStyle())
