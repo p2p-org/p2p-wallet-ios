@@ -25,6 +25,7 @@ final class SwapSettingsCoordinator: Coordinator<SwapSettingsCoordinatorResult> 
     private var result = PassthroughSubject<SwapSettingsCoordinatorResult, Never>()
     private var viewModel: SwapSettingsViewModel!
     private let statusSubject = CurrentValueSubject<SwapSettingsViewModel.Status, Never>(.loading)
+    private var selectRouteViewController: CustomPresentableViewController!
 
     // MARK: - Initializer
 
@@ -168,6 +169,9 @@ final class SwapSettingsCoordinator: Coordinator<SwapSettingsCoordinatorResult> 
                     info.currentRoute = routeInfo
                     viewModel.status = .loaded(info)
                     viewModel.logRoute()
+                    selectRouteViewController.dismiss(animated: true) { [weak self] in
+                        self?.navigationController.popViewController(animated: true)
+                    }
                 }
             },
             onTapDone: { [unowned self] in
@@ -175,14 +179,14 @@ final class SwapSettingsCoordinator: Coordinator<SwapSettingsCoordinatorResult> 
             }
         )
         
-        let viewController = UIBottomSheetHostingController(rootView: view)
-        viewController.view.layer.cornerRadius = 20
-        navigationController.present(viewController, interactiveDismissalType: .standard)
+        selectRouteViewController = UIBottomSheetHostingController(rootView: view)
+        selectRouteViewController.view.layer.cornerRadius = 20
+        navigationController.present(selectRouteViewController, interactiveDismissalType: .standard)
         
         statusSubject
             .receive(on: RunLoop.main)
-            .sink { [weak viewController] _ in
-                viewController?.updatePresentationLayout(animated: false)
+            .sink { [weak selectRouteViewController] _ in
+                selectRouteViewController?.updatePresentationLayout(animated: false)
             }
             .store(in: &subscriptions)
     }
@@ -224,10 +228,10 @@ final class SwapSettingsCoordinator: Coordinator<SwapSettingsCoordinatorResult> 
         let view = SwapSettingsInfoView(viewModel: viewModel)
         
         // create hosting controller
-        let viewController = UIBottomSheetHostingController(rootView: view)
-        viewController.view.layer.cornerRadius = 20
+        selectRouteViewController = UIBottomSheetHostingController(rootView: view)
+        selectRouteViewController.view.layer.cornerRadius = 20
         
         // present bottomSheet
-        navigationController.present(viewController, interactiveDismissalType: .standard)
+        navigationController.present(selectRouteViewController, interactiveDismissalType: .standard)
     }
 }
