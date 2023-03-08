@@ -216,6 +216,13 @@ final class SwapSettingsCoordinator: Coordinator<SwapSettingsCoordinatorResult> 
         // create viewModel
         let settingsInfoViewModel = SwapSettingsInfoViewModel(strategy: strategy)
         
+        // handle closing
+        settingsInfoViewModel.close
+            .sink { [weak self] _ in
+                self?.selectRouteViewController.dismiss(animated: true)
+            }
+            .store(in: &subscriptions)
+        
         // create view
         let view = SwapSettingsInfoView(viewModel: settingsInfoViewModel)
         
@@ -227,15 +234,18 @@ final class SwapSettingsCoordinator: Coordinator<SwapSettingsCoordinatorResult> 
         navigationController.present(selectRouteViewController, interactiveDismissalType: .standard)
         
         // observe viewModel status
-        viewModel.$status
-            .compactMap { $0.info?.liquidityFee.mappedToSwapSettingInfoViewModelFee() }
-            .sink { [weak settingsInfoViewModel] fees in
-                settingsInfoViewModel?.fees = fees
-                DispatchQueue.main.async { [weak self] in
-                    self?.selectRouteViewController.updatePresentationLayout(animated: true)
+        // TODO: - Only liquidity fees?
+        if rowIdentifier == .liquidityFee {
+            viewModel.$status
+                .compactMap { $0.info?.liquidityFee.mappedToSwapSettingInfoViewModelFee() }
+                .sink { [weak settingsInfoViewModel] fees in
+                    settingsInfoViewModel?.fees = fees
+                    DispatchQueue.main.async { [weak self] in
+                        self?.selectRouteViewController.updatePresentationLayout(animated: true)
+                    }
                 }
-            }
-            .store(in: &subscriptions)
+                .store(in: &subscriptions)
+        }
     }
 }
 
