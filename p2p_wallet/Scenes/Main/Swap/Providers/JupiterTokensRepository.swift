@@ -37,11 +37,7 @@ final class JupiterTokensRepositoryImpl: JupiterTokensRepository {
     private var statusSubject = CurrentValueSubject<JupiterDataStatus, Never>(.initial)
     private var task: Task<Void, Never>?
     
-    #if !RELEASE
-    let loadingPeriodInMinutes: Int = 15 // 15 minutes
-    #else
     let loadingPeriodInMinutes: Int = 60 * 24 // 1 days
-    #endif
 
     init(provider: JupiterTokensProvider, jupiterClient: JupiterAPI) {
         self.localProvider = provider
