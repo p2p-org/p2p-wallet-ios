@@ -89,18 +89,31 @@ struct SlippageSettingsView: View {
                                     )
                             )
                         
-                        DecimalTextField(
-                            value: $viewModel.customSlippage,
-                            isFirstResponder: $viewModel.isCustomSlippageSelected,
-                            textColor: $textFieldColor
-                        ) { textField in
-                            textField.font = .font(of: .text3)
-                            textField.keyboardType = .decimalPad
-                            textField.placeholder = "0"
-                            textField.maximumFractionDigits = 2
-                            textField.decimalSeparator = "."
+                        HStack(alignment: .center, spacing: 4) {
+                            DecimalTextField(
+                                value: $viewModel.customSlippage,
+                                isFirstResponder: $viewModel.isCustomSlippageSelected,
+                                textColor: $textFieldColor
+                            ) { textField in
+                                textField.font = .font(of: .text3)
+                                textField.keyboardType = .decimalPad
+                                textField.placeholder = "0"
+                                textField.maximumFractionDigits = 2
+                                textField.decimalSeparator = "."
+                                textField.setContentHuggingPriority(.required, for: .horizontal)
+                            }
+                            
+                            Text("%")
+                                .apply(style: .text3)
+                                .foregroundColor(Color(Asset.Colors.night.color.withAlphaComponent(0.3)))
+
+                            Spacer(minLength: 0)
+                        }
+                        .onTapGesture {
+                            viewModel.isCustomSlippageSelected.toggle()
                         }
                         .padding(.horizontal, 16)
+                        
                     }
                     Text("\(L10n.theSlippageCouldBe) 0.01-50%")
                         .foregroundColor(viewModel.isCustomSlippageValid ? Color(Asset.Colors.mountain.color): Color(Asset.Colors.rose.color))
