@@ -130,7 +130,7 @@ final class TabBarCoordinator: Coordinator<Void> {
                 .sink(receiveValue: { _ in })
                 .store(in: &subscriptions)
         } else {
-            routeToSwap(nc: solendOrSwapNavigation, hidesBottomBarWhenPushed: false, source: .tapMain)
+            routeToSwap(nc: solendOrSwapNavigation, hidesBottomBarWhenPushed: false, source: .tapMain, push: true)
         }
         
         let historyNavigation = UINavigationController()
@@ -232,7 +232,7 @@ final class TabBarCoordinator: Coordinator<Void> {
         case .receive:
             break
         case .swap:
-            routeToSwap(nc: navigationController, source: .actionPanel)
+            routeToSwap(nc: navigationController, source: .actionPanel, push: false)
         case .send:
             let fiatAmount = walletsRepository.getWallets().reduce(0) { $0 + $1.amountInCurrentFiat }
             let withTokens = fiatAmount > 0
@@ -284,12 +284,22 @@ final class TabBarCoordinator: Coordinator<Void> {
             .store(in: &subscriptions)
     }
 
-    private func routeToSwap(nc: UINavigationController, hidesBottomBarWhenPushed: Bool = true, source: JupiterSwapSource) {
+    private func routeToSwap(nc: UINavigationController, hidesBottomBarWhenPushed: Bool = true, source: JupiterSwapSource, push: Bool) {
         if available(.jupiterSwapEnabled) {
-            let swapCoordinator = JupiterSwapCoordinator(
-                navigationController: nc,
-                params: JupiterSwapParameters(dismissAfterCompletion: false, openKeyboardOnStart: false, source: source)
-            )
+            let swapCoordinator: JupiterSwapCoordinator
+            let params = JupiterSwapParameters(dismissAfterCompletion: false, openKeyboardOnStart: false, source: source)
+            if push {
+                swapCoordinator = .init(
+                    navigationController: nc,
+                    params: params
+                )
+            } else {
+                swapCoordinator = .init(
+                    presentedViewController: nc,
+                    params: params
+                )
+            }
+            
             coordinate(to: swapCoordinator)
                 .sink(receiveValue: { _ in })
                 .store(in: &subscriptions)

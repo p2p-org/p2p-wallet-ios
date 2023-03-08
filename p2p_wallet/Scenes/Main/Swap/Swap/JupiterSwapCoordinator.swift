@@ -21,9 +21,8 @@ struct JupiterSwapParameters {
     }
 }
 
-final class JupiterSwapCoordinator: Coordinator<Void> {
+final class JupiterSwapCoordinator: SmartCoordinator<Void> {
     private let navigationController: UINavigationController
-    private var result = PassthroughSubject<Void, Never>()
     private let params: JupiterSwapParameters
     private var viewModel: SwapViewModel!
     
@@ -32,9 +31,16 @@ final class JupiterSwapCoordinator: Coordinator<Void> {
     init(navigationController: UINavigationController, params: JupiterSwapParameters) {
         self.navigationController = navigationController
         self.params = params
+        super.init(presentation: SmartCoordinatorPushPresentation(navigationController))
+    }
+    
+    init(presentedViewController: UIViewController, params: JupiterSwapParameters) {
+        self.navigationController = UINavigationController()
+        self.params = params
+        super.init(presentation: SmartCoordinatorPresentPresentation(presentedViewController))
     }
 
-    override func start() -> AnyPublisher<Void, Never> {
+    override func build() -> UIViewController {
         viewModel = SwapViewModel(source: params.source, preChosenWallet: params.preChosenWallet)
         let fromViewModel = SwapInputViewModel(stateMachine: viewModel.stateMachine, isFromToken: true, openKeyboardOnStart: params.openKeyboardOnStart)
         let toViewModel = SwapInputViewModel(stateMachine: viewModel.stateMachine, isFromToken: false, openKeyboardOnStart: params.openKeyboardOnStart)
@@ -45,7 +51,6 @@ final class JupiterSwapCoordinator: Coordinator<Void> {
 //        } else {
 //            controller = UIHostingController(rootView: view)
 //        }
-        navigationController.pushViewController(controller, animated: true)
         style(controller: controller)
 
         viewModel.submitTransaction
@@ -69,7 +74,13 @@ final class JupiterSwapCoordinator: Coordinator<Void> {
             }
             .store(in: &subscriptions)
         
-        return result.prefix(1).eraseToAnyPublisher()
+        if presentation is SmartCoordinatorPushPresentation {
+            return controller
+        } else {
+            contro
+            navigationController.setViewControllers([controller], animated: false)
+            return navigationController
+        }
     }
     
     func style(controller: UIViewController) {
