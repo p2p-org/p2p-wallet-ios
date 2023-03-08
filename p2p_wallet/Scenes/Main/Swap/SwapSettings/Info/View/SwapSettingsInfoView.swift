@@ -9,7 +9,7 @@ import SwiftUI
 import KeyAppUI
 
 struct SwapSettingsInfoView: View {
-    let viewModel: SwapSettingsInfoViewModel
+    @ObservedObject var viewModel: SwapSettingsInfoViewModel
     
     var body: some View {
         VStack(spacing: 30) {
