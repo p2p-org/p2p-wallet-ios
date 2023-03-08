@@ -14,7 +14,7 @@ final class SwapSettingsInfoViewModel {
     let subtitle: String
     let buttonTitle: String
 
-    @Published private(set) var fees = [Fee]()
+    @Published var fees = [Fee]()
     
     // MARK: - Output
     
