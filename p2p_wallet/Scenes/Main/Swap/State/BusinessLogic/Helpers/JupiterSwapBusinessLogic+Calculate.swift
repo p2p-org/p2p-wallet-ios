@@ -37,7 +37,7 @@ extension JupiterSwapBusinessLogic {
                 slippageBps: state.slippageBps,
                 feeBps: nil,
                 onlyDirectRoutes: nil,
-                userPublicKey: nil,
+                userPublicKey: state.account?.publicKey.base58EncodedString,
                 enforceSingleTx: nil
             )
             
