@@ -288,7 +288,12 @@ final class TabBarCoordinator: Coordinator<Void> {
         if available(.jupiterSwapEnabled) {
             let swapCoordinator = JupiterSwapCoordinator(
                 navigationController: nc,
-                params: JupiterSwapParameters(dismissAfterCompletion: false, openKeyboardOnStart: false, source: source)
+                params: JupiterSwapParameters(
+                    dismissAfterCompletion: false,
+                    openKeyboardOnStart: false,
+                    source: source,
+                    hideTabBar: hidesBottomBarWhenPushed
+                )
             )
             coordinate(to: swapCoordinator)
                 .sink(receiveValue: { _ in })
