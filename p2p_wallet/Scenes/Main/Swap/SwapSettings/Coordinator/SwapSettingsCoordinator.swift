@@ -181,8 +181,10 @@ final class SwapSettingsCoordinator: Coordinator<SwapSettingsCoordinatorResult> 
         
         statusSubject
             .receive(on: RunLoop.main)
-            .sink { [weak viewController] _ in
-                viewController?.updatePresentationLayout(animated: false)
+            .sink { _ in
+                DispatchQueue.main.async { [weak viewController] in
+                    viewController?.updatePresentationLayout(animated: true)
+                }
             }
             .store(in: &subscriptions)
     }
@@ -201,27 +203,17 @@ final class SwapSettingsCoordinator: Coordinator<SwapSettingsCoordinatorResult> 
             strategy = .accountCreationFee
         case .liquidityFee:
             guard let info = viewModel.info else { return }
-            let fees = info.liquidityFee
-                .map { lqFee in
-                    SwapSettingsInfoViewModel.Fee(
-                        title: L10n.liquidityFee(
-                            lqFee.tokenName ?? L10n.unknownToken,
-                            "\(lqFee.pct == nil ? L10n.unknown: "\(lqFee.pct!)")%"
-                        ),
-                        subtitle: lqFee.amount.tokenAmountFormattedString(symbol: lqFee.tokenSymbol ?? "UNKNOWN"),
-                        amount: lqFee.amountInFiatDescription
-                    )
-                }
+            let fees = info.liquidityFee.mappedToSwapSettingInfoViewModelFee()
             strategy = .liquidityFee(fees: fees)
         case .minimumReceived:
             strategy = .minimumReceived
         }
         
         // create viewModel
-        let viewModel = SwapSettingsInfoViewModel(strategy: strategy)
+        let settingsInfoViewModel = SwapSettingsInfoViewModel(strategy: strategy)
         
         // create view
-        let view = SwapSettingsInfoView(viewModel: viewModel)
+        let view = SwapSettingsInfoView(viewModel: settingsInfoViewModel)
         
         // create hosting controller
         let viewController = UIBottomSheetHostingController(rootView: view)
@@ -229,5 +221,33 @@ final class SwapSettingsCoordinator: Coordinator<SwapSettingsCoordinatorResult> 
         
         // present bottomSheet
         navigationController.present(viewController, interactiveDismissalType: .standard)
+        
+        // observe viewModel status
+        viewModel.$status
+            .compactMap { $0.info?.liquidityFee.mappedToSwapSettingInfoViewModelFee() }
+            .sink { [weak settingsInfoViewModel] fees in
+                settingsInfoViewModel?.fees = fees
+                DispatchQueue.main.async { [weak viewController] in
+                    viewController?.updatePresentationLayout(animated: true)
+                }
+            }
+            .store(in: &subscriptions)
+    }
+}
+
+// MARK: - Helpers
+
+private extension Array where Element == SwapFeeInfo {
+    func mappedToSwapSettingInfoViewModelFee() -> [SwapSettingsInfoViewModel.Fee] {
+        map { lqFee in
+            SwapSettingsInfoViewModel.Fee(
+                title: L10n.liquidityFee(
+                    lqFee.tokenName ?? L10n.unknownToken,
+                    "\(lqFee.pct == nil ? L10n.unknown: "\(lqFee.pct!)")%"
+                ),
+                subtitle: lqFee.amount.tokenAmountFormattedString(symbol: lqFee.tokenSymbol ?? "UNKNOWN"),
+                amount: lqFee.amountInFiatDescription
+            )
+        }
     }
 }

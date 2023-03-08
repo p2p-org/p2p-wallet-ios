@@ -8,13 +8,14 @@
 import Combine
 import Foundation
 
-final class SwapSettingsInfoViewModel {
+@MainActor
+final class SwapSettingsInfoViewModel: BaseViewModel, ObservableObject {
     let image: UIImage
     let title: String
     let subtitle: String
     let buttonTitle: String
 
-    @Published private(set) var fees = [Fee]()
+    @Published var fees = [Fee]()
     
     // MARK: - Output
     

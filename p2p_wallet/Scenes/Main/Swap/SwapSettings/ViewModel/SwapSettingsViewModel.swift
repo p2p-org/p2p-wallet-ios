@@ -45,6 +45,15 @@ final class SwapSettingsViewModel: BaseViewModel, ObservableObject {
     enum Status: Equatable {
         case loading
         case loaded(Info)
+        
+        var info: Info? {
+            switch self {
+            case .loading:
+                return nil
+            case .loaded(let info):
+                return info
+            }
+        }
     }
     
     
@@ -53,12 +62,7 @@ final class SwapSettingsViewModel: BaseViewModel, ObservableObject {
     @Published var status: Status
 
     var info: Info? {
-        switch status {
-        case .loading:
-            return nil
-        case .loaded(let info):
-            return info
-        }
+        status.info
     }
 
     @Published var selectedIndex: Int = 0 {
