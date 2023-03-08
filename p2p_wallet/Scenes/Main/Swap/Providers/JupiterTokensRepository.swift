@@ -36,6 +36,12 @@ final class JupiterTokensRepositoryImpl: JupiterTokensRepository {
 
     private var statusSubject = CurrentValueSubject<JupiterDataStatus, Never>(.initial)
     private var task: Task<Void, Never>?
+    
+    #if !RELEASE
+    let loadingPeriodInMinutes: Int = 15 // 15 minutes
+    #else
+    let loadingPeriodInMinutes: Int = 60 * 24 // 1 days
+    #endif
 
     init(provider: JupiterTokensProvider, jupiterClient: JupiterAPI) {
         self.localProvider = provider
@@ -63,18 +69,31 @@ final class JupiterTokensRepositoryImpl: JupiterTokensRepository {
             
             try Task.checkCancellation()
             
-            // get data from memory first
-            if let cachedData = localProvider.getCachedData() {
+            // get the date component
+            var dayComponent = DateComponents()
+            dayComponent.minute = loadingPeriodInMinutes
+            
+            // get cachedData if it is not expired
+            if let cachedData = localProvider.getCachedData(),
+               let dateToExpired = Calendar.current.date(byAdding: dayComponent, to: cachedData.created),
+               Date() < dateToExpired
+            {
                 jupiterTokens = cachedData.tokens
                 routeMap = cachedData.routeMap
             }
             
             // retrive to get data
             else {
+                // clear expired data
+                localProvider.clear()
+                
+                // get new data
                 (jupiterTokens, routeMap) = try await(
                     jupiterClient.getTokens(),
                     jupiterClient.routeMap()
                 )
+                
+                // save new data
                 try localProvider.save(tokens: jupiterTokens, routeMap: routeMap)
             }
             
