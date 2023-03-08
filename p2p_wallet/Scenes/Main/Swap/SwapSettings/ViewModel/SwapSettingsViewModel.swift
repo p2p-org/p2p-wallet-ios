@@ -9,11 +9,6 @@ import Combine
 import Resolver
 import AnalyticsManager
 
-private extension Double {
-    static let minSlippage: Double = 0.01
-    static let maximumSlippage: Double = 50
-}
-
 final class SwapSettingsViewModel: BaseViewModel, ObservableObject {
     
     // MARK: - Output
@@ -23,8 +18,37 @@ final class SwapSettingsViewModel: BaseViewModel, ObservableObject {
         rowTappedSubject.eraseToAnyPublisher()
     }
     
-    // MARK: - Nested type
+    // MARK: - Dependencies
 
+    @Injected private var analyticsManager: AnalyticsManager
+    
+    // MARK: - Properties
+
+    @Published var status: Status
+    @Published var slippage: Double?
+
+    var info: Info? {
+        status.info
+    }
+    
+    // MARK: - Initializer
+    
+    init(status: Status, slippage: Double?) {
+        self.status = status
+        self.slippage = slippage
+    }
+
+    // MARK: - Actions
+    
+    func rowClicked(identifier: SwapSettingsView.RowIdentifier) {
+        rowTappedSubject.send(identifier)
+        log(fee: identifier)
+    }
+}
+
+// MARK: - Nested type
+
+extension SwapSettingsViewModel {
     struct Info: Equatable {
         let routes: [SwapSettingsRouteInfo]
         var currentRoute: SwapSettingsRouteInfo
@@ -55,89 +79,10 @@ final class SwapSettingsViewModel: BaseViewModel, ObservableObject {
             }
         }
     }
-    
-    
-    // MARK: - Properties
-
-    @Published var status: Status
-
-    var info: Info? {
-        status.info
-    }
-
-    @Published var selectedIndex: Int = 0 {
-        didSet {
-            if selectedIndex != slippages.count - 1 {
-                slippage = ""
-            }
-            if slippageWasSetUp {
-                customSelected = selectedIndex == slippages.count - 1
-            }
-        }
-    }
-    @Published var slippage = "" {
-        didSet {
-            failureSlippage = !slippage.isEmpty && (formattedSlippage < .minSlippage || formattedSlippage > .maximumSlippage)
-        }
-    }
-    @Published var customSelected: Bool
-    @Published var failureSlippage = false
-    
-    let slippages: [Double?] = [
-        0.1,
-        0.5,
-        1,
-        nil
-    ]
-    
-    private var formattedSlippage: Double? {
-        var slippageWithoutComma = slippage.replacingOccurrences(of: ",", with: ".")
-        if slippageWithoutComma.last == "." {
-            slippageWithoutComma.removeLast()
-        }
-        return Double(slippageWithoutComma)
-    }
-    
-    var finalSlippage: Double? {
-        slippages[selectedIndex] ?? formattedSlippage
-    }
-    
-    private var slippageWasSetUp = false
-
-    @Injected private var analyticsManager: AnalyticsManager
-
-    // MARK: - Init
-
-    init(
-        status: Status,
-        slippage: Double
-    ) {
-        self.status = status
-        self.customSelected = false
-        super.init()
-        setUpSlippage(slippage)
-    }
-
-    private func setUpSlippage(_ slippage: Double) {
-        if let index = slippages.firstIndex(of: slippage) {
-            selectedIndex = index
-        } else {
-            selectedIndex = slippages.count - 1
-            let formattedSlippage = (String(format: "%.2f", slippage))
-                .replacingOccurrences(of: ",", with: Locale.current.decimalSeparator ?? ".")
-                .replacingOccurrences(of: ".", with: Locale.current.decimalSeparator ?? ".")
-            self.slippage = formattedSlippage
-        }
-        slippageWasSetUp = true
-    }
-    
-    func rowClicked(identifier: SwapSettingsView.RowIdentifier) {
-        rowTappedSubject.send(identifier)
-        log(fee: identifier)
-    }
 }
 
 // MARK: - Analytics
+
 extension SwapSettingsViewModel {
     func logRoute() {
         guard let currentRoute = info?.currentRoute.name else { return }
