@@ -85,9 +85,14 @@ final class SwapSettingsCoordinator: Coordinator<SwapSettingsCoordinatorResult> 
         // complete Coordinator
         viewController.deallocatedPublisher()
             .sink(receiveValue: { [weak self] in
-                let slippageBps = Int((self?.viewModel.finalSlippage ?? 0) * 100)
-                self?.viewModel.log(slippage: self?.viewModel.finalSlippage ?? 0)
-                self?.result.send(.selectedSlippageBps(slippageBps))
+                if let slippage = self?.viewModel.slippage,
+                   slippage > 0
+                {
+                    let slippageBps = Int(slippage * 100)
+                    self?.viewModel.log(slippage: slippage)
+                    self?.result.send(.selectedSlippageBps(slippageBps))
+                }
+                
                 self?.result.send(completion: .finished)
             })
             .store(in: &subscriptions)

@@ -47,7 +47,7 @@ struct SwapSettingsView: View {
                 }
             }
             Section(header: Text(L10n.slippage)) {
-                SlippageSettingsView(slippage: 0.5) { selectedSlippage in
+                SlippageSettingsView(slippage: viewModel.slippage) { selectedSlippage in
                     viewModel.slippage = selectedSlippage
                 }
             }
