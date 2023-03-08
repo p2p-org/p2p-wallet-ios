@@ -45,7 +45,7 @@ struct SlippageSettingsView: View {
     @ViewBuilder
     func staticSelectionCell(index: Int, slippage: Double) -> some View {
         HStack {
-            Text("\(String(format: "%.1f", slippage))% \(viewModel.selectedSlippage ?? 0)")
+            Text("\(String(format: "%.1f", slippage))%")
                 .foregroundColor(Color(Asset.Colors.night.color))
                 .font(uiFont: .font(of: .text3))
             Spacer()
