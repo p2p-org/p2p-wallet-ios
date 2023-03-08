@@ -181,8 +181,10 @@ final class SwapSettingsCoordinator: Coordinator<SwapSettingsCoordinatorResult> 
         
         statusSubject
             .receive(on: RunLoop.main)
-            .sink { [weak viewController] _ in
-                viewController?.updatePresentationLayout(animated: false)
+            .sink { _ in
+                DispatchQueue.main.async { [weak viewController] in
+                    viewController?.updatePresentationLayout(animated: true)
+                }
             }
             .store(in: &subscriptions)
     }
@@ -210,16 +212,6 @@ final class SwapSettingsCoordinator: Coordinator<SwapSettingsCoordinatorResult> 
         // create viewModel
         let settingsInfoViewModel = SwapSettingsInfoViewModel(strategy: strategy)
         
-        // observe viewModel status
-        viewModel.$status
-            .map { $0.info?.liquidityFee }
-            .compactMap { $0 }
-            .sink { [weak settingsInfoViewModel] fees in
-                settingsInfoViewModel?.fees = fees.mappedToSwapSettingInfoViewModelFee()
-            }
-            .store(in: &subscriptions)
-            
-        
         // create view
         let view = SwapSettingsInfoView(viewModel: settingsInfoViewModel)
         
@@ -229,6 +221,17 @@ final class SwapSettingsCoordinator: Coordinator<SwapSettingsCoordinatorResult> 
         
         // present bottomSheet
         navigationController.present(viewController, interactiveDismissalType: .standard)
+        
+        // observe viewModel status
+        viewModel.$status
+            .compactMap { $0.info?.liquidityFee.mappedToSwapSettingInfoViewModelFee() }
+            .sink { [weak settingsInfoViewModel] fees in
+                settingsInfoViewModel?.fees = fees
+                DispatchQueue.main.async { [weak viewController] in
+                    viewController?.updatePresentationLayout(animated: true)
+                }
+            }
+            .store(in: &subscriptions)
     }
 }
 
