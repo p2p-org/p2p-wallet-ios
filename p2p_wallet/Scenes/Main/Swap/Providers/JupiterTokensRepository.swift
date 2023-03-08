@@ -78,8 +78,21 @@ final class JupiterTokensRepositoryImpl: JupiterTokensRepository {
                 try localProvider.save(tokens: jupiterTokens, routeMap: routeMap)
             }
             
+            // wait for wallets repository to be loaded and get wallets
+            let wallets = try await Publishers.CombineLatest(
+                walletsRepository.statePublisher,
+                walletsRepository.dataPublisher
+            )
+                .filter { (state, _) in
+                      state == .loaded
+                }
+                .map { _, wallets in
+                    return wallets
+                }
+                .eraseToAnyPublisher()
+                .async()
+            
             // map userWallets with jupiter tokens
-            let wallets = walletsRepository.getWallets()
             let swapTokens = jupiterTokens.map { jupiterToken in
                 if let userWallet = wallets.first(where: { $0.mintAddress == jupiterToken.address }) {
                     return SwapToken(token: jupiterToken, userWallet: userWallet)
