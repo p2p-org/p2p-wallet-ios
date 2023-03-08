@@ -5,12 +5,12 @@
 //  Created by Ivan on 07.12.2022.
 //
 
+import AnalyticsManager
 import Combine
 import Foundation
-import UIKit
-import SolanaSwift
 import Resolver
-import AnalyticsManager
+import SolanaSwift
+import UIKit
 
 final class SendEmptyCoordinator: Coordinator<Void> {
     @Injected private var walletsRepository: WalletsRepository
@@ -37,11 +37,8 @@ final class SendEmptyCoordinator: Coordinator<Void> {
                     .store(in: &self.subscriptions)
             },
             receive: {
-                guard
-                    let pubKey = try? PublicKey(string: self.walletsRepository.nativeWallet?.pubkey)
-                else { return }
                 self.log(event: .sendnewReceiveClickButton(source: self.source.rawValue))
-                let coordinator = ReceiveCoordinator(navigationController: self.navigationController, pubKey: pubKey)
+                let coordinator = ReceiveCoordinator(network: .solana(tokenSymbol: "SOL"), navigationController: self.navigationController)
                 self.coordinate(to: coordinator)
                     .sink { _ in }
                     .store(in: &self.subscriptions)

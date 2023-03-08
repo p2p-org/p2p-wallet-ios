@@ -1258,3 +1258,6 @@ You can try again, but your new transaction will be subject to the current rates
 "Your Ethereum address was copied" = "Ваш адрес Ethereum был скопирован";
 "Copy address" = "Скопировать адрес";
 "Receive %@ on %@" = "Получить %@ на %@";
+"Supported tokens" = "Поддерживаемые токены";
+"Receive tokens on Ethereum and Solana" = "Получайте токены на Ethereum и Solana";
+"Choose network" = "Выберите сеть";

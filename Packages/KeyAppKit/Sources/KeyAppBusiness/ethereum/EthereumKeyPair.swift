@@ -9,6 +9,8 @@ import Foundation
 import WalletCore
 import Web3
 
+/// Ethereum key pair.
+/// This class stores secret data.
 public struct EthereumKeyPair: Equatable, Hashable {
     public enum Error: Swift.Error {
         case invalidPhrase

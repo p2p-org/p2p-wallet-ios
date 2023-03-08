@@ -29,6 +29,8 @@ struct UserWallet: Identifiable, Hashable, Equatable {
     /// Moonpay external client id for identifyting user's moonpay buy & sell transactions.
     let moonpayExternalClientId: String?
 
+    /// Default ethereum wallet keypair.
+    /// The value was derived from the seed phrase.
     let ethereumKeypair: EthereumKeyPair
 
     init(

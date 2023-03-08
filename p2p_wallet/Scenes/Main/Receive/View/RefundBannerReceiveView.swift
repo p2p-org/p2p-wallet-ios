@@ -6,8 +6,8 @@
 //
 
 import Foundation
-import SwiftUI
 import KeyAppUI
+import SwiftUI
 
 struct RefundBannerReceiveView: View {
     var item: RefundBannerReceiveItem
@@ -19,6 +19,7 @@ struct RefundBannerReceiveView: View {
                 .fontWeight(.semibold)
                 .apply(style: .text2)
                 .multilineTextAlignment(.leading)
+            Spacer()
             Image(uiImage: .receiveBills)
         }
         .padding(.horizontal, 20)

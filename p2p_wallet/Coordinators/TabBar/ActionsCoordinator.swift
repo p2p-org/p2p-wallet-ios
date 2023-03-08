@@ -58,7 +58,7 @@ final class ActionsCoordinator: Coordinator<ActionsCoordinator.Result> {
                     }
                 case .receive:
                     guard let pubkey = try? PublicKey(string: walletsRepository.nativeWallet?.pubkey) else { return }
-                    let coordinator = ReceiveCoordinator(navigationController: navigationController, pubKey: pubkey)
+                    let coordinator = SupportedTokensCoordinator(presentation: SmartCoordinatorPushPresentation(navigationController))
                     coordinate(to: coordinator).sink { _ in }.store(in: &subscriptions)
                     analyticsManager.log(event: .actionButtonReceive)
                     analyticsManager.log(event: .mainScreenReceiveOpen)

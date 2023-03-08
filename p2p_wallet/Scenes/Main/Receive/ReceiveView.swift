@@ -57,8 +57,9 @@ struct ReceiveView: View {
     }
 }
 
-struct ReceiveView_Previews: PreviewProvider {
-    static var previews: some View {
-        ReceiveView(viewModel: .init(ethAddress: "0x0ea9f413a9be5afcec51d1bc8fd20b29bef5709c", token: "USDC", qrCenterImage: UIImage.usdc))
-    }
-}
+// TODO: Refactor
+//struct ReceiveView_Previews: PreviewProvider {
+//    static var previews: some View {
+//        ReceiveView(viewModel: .init(ethAddress: "0x0ea9f413a9be5afcec51d1bc8fd20b29bef5709c", token: "USDC", qrCenterImage: UIImage.usdc))
+//    }
+//}
