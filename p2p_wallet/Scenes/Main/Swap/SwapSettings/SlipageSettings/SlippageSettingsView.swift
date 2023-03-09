@@ -88,30 +88,7 @@ struct SlippageSettingsView: View {
                                     )
                             )
                         
-                        HStack(alignment: .center, spacing: 4) {
-                            DecimalTextField(
-                                value: $viewModel.customSlippage,
-                                isFirstResponder: $viewModel.isCustomSlippageSelected,
-                                textColor: $textFieldColor
-                            ) { textField in
-                                textField.font = .font(of: .text3)
-                                textField.keyboardType = .decimalPad
-                                textField.placeholder = "0"
-                                textField.maximumFractionDigits = 2
-                                textField.decimalSeparator = "."
-                                textField.setContentHuggingPriority(.required, for: .horizontal)
-                            }
-                            
-                            Text("%")
-                                .apply(style: .text3)
-                                .foregroundColor(Color(Asset.Colors.night.color.withAlphaComponent(0.3)))
-
-                            Spacer(minLength: 0)
-                        }
-                        .onTapGesture {
-                            viewModel.isCustomSlippageSelected.toggle()
-                        }
-                        .padding(.horizontal, 16)
+                        percentSuffixTextField
                         
                     }
                     Text("\(L10n.theSlippageCouldBe) 0.01-50%")
@@ -121,6 +98,33 @@ struct SlippageSettingsView: View {
             }
         }
         .padding(.vertical, 16)
+    }
+    
+    var percentSuffixTextField: some View {
+        HStack(alignment: .center, spacing: 4) {
+            DecimalTextField(
+                value: $viewModel.customSlippage,
+                isFirstResponder: $viewModel.isCustomSlippageSelected,
+                textColor: $textFieldColor
+            ) { textField in
+                textField.font = .font(of: .text3)
+                textField.keyboardType = .decimalPad
+                textField.placeholder = "0"
+                textField.maximumFractionDigits = 2
+                textField.decimalSeparator = "."
+                textField.setContentHuggingPriority(.required, for: .horizontal)
+            }
+            
+            Text("%")
+                .apply(style: .text3)
+                .foregroundColor(Color(Asset.Colors.night.color.withAlphaComponent(0.3)))
+
+            Spacer(minLength: 0)
+        }
+            .onTapGesture {
+                viewModel.isCustomSlippageSelected.toggle()
+            }
+            .padding(.horizontal, 16)
     }
 }
 
