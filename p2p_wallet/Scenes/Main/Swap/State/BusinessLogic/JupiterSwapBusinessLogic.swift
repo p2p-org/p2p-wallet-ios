@@ -137,12 +137,12 @@ enum JupiterSwapBusinessLogic {
                 services: services
             )
 
-        case let .changeFromToken:
+        case .changeFromToken:
             // return state as amount from is reset to nil
             return state.modified {
                 $0.status = .ready
             }
-        case let .changeToToken:
+        case .changeToToken:
             // recalculate route if amountFrom > 0
             if state.amountFrom > 0 {
                 // recalculate the route and re create transaction
@@ -198,13 +198,13 @@ enum JupiterSwapBusinessLogic {
             return state.modified {
                 $0.tokensPriceMap = tokensPriceMap
             }
-        case let .changeSlippageBps:
+        case .changeSlippageBps:
             // recalculate the route and re create transaction
             return await recalculateRouteAndRecreateTransaction(
                 state: state,
                 services: services
             )
-        case let .chooseRoute:
+        case .chooseRoute:
             // create swap transaction
             return await createTransaction(state: state, services: services)
         }
