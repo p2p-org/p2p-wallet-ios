@@ -9,12 +9,7 @@ extension JupiterSwapBusinessLogic {
         newFromAmount: Double? = nil,
         services: JupiterSwapServices
     ) async -> JupiterSwapState {
-        // assert from token is not equal to toToken
-        guard state.fromToken.address != state.toToken.address else {
-            return state.error(.equalSwapTokens)
-        }
-
-        // assert amountFrom is not 0
+        // get current from amount
         let amountFrom = newFromAmount ?? state.amountFrom
         guard amountFrom > 0
         else {
@@ -22,6 +17,16 @@ extension JupiterSwapBusinessLogic {
                 $0.status = .ready
                 $0.route = nil
             }
+        }
+        
+        // assert from token is not equal to toToken
+        guard state.fromToken.address != state.toToken.address else {
+            return state.error(.equalSwapTokens)
+        }
+        
+        // mark route as nil for recalculating
+        let state = state.modified {
+            $0.route = nil
         }
 
         // get lamport

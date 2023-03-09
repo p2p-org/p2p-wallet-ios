@@ -170,9 +170,6 @@ private extension SwapViewModel {
                 let newState = await self.stateMachine.accept(action: .changeFromToken(token))
                 Defaults.fromTokenAddress = token.address
                 self.logChangeToken(isFrom: true, token: token, amount: newState.amountFrom)
-                if newState.isTransactionCanBeCreated == true {
-                    await self.stateMachine.accept(action: .createTransaction)
-                }
             }
             .store(in: &subscriptions)
 
@@ -184,9 +181,6 @@ private extension SwapViewModel {
                 let newState = await self.stateMachine.accept(action: .changeToToken(token))
                 Defaults.toTokenAddress = token.address
                 self.logChangeToken(isFrom: false, token: token, amount: newState.amountTo)
-                if newState.isTransactionCanBeCreated == true {
-                    await self.stateMachine.accept(action: .createTransaction)
-                }
             }
             .store(in: &subscriptions)
     }
@@ -277,7 +271,7 @@ private extension SwapViewModel {
             if state.amountFrom == 0 {
                 actionButtonData = SliderActionButtonData(isEnabled: false, title: L10n.enterTheAmount)
             }
-        case .requiredInitialize, .loadingTokenTo, .loadingAmountTo, .switching, .initializing, .loadingTransaction:
+        case .requiredInitialize, .loadingTokenTo, .loadingAmountTo, .switching, .initializing:
             actionButtonData = SliderActionButtonData(isEnabled: false, title: L10n.counting)
         case .error(.notEnoughFromToken):
             actionButtonData = SliderActionButtonData(isEnabled: false, title: L10n.notEnough(state.fromToken.token.symbol))
