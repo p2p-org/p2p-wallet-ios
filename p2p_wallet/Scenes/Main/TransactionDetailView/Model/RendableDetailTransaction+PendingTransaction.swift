@@ -24,7 +24,9 @@ struct RendableDetailPendingTransaction: RendableTransactionDetail {
             if errorModel.isSlippageError {
                 return .error(message: NSAttributedString(string: errorModel.readableDescription), error: errorModel)
             }
-            return .error(message: NSAttributedString(string: L10n.theTransactionWasRejectedByTheSolanaBlockchain), error: errorModel)
+            return .error(message: NSAttributedString(
+                string: L10n.OopsSomethingWentWrong.pleaseTryAgainLater), error: errorModel
+            )
         case .finalized:
             return .succeed(message: L10n.theTransactionHasBeenSuccessfullyCompleted)
         default:
@@ -190,6 +192,6 @@ struct RendableDetailPendingTransaction: RendableTransactionDetail {
 
 extension Error {
     var isSlippageError: Bool {
-        self.readableDescription.contains("Slippage tolerance exceeded")
+        readableDescription.contains("Slippage tolerance exceeded")
     }
 }

@@ -1274,3 +1274,4 @@ You can try again, but your new transaction will be subject to the current rates
 "Low slippage %@. We recommend to increase slippage manually" = "Faible glissement %@.  Nous recommandons d'augmenter le glissement manuellement";
 "Low slippage. We recommend to increase slippage manually" = "Faible glissement.  Nous recommandons d'augmenter le glissement manuellement";
 "Increase slippage and try again" = "Augmentez le glissement et réessayez";
+"Oops, something went wrong. Please try again later" = "Oups, quelque chose s'est mal passé.  Veuillez réessayer plus tard";
