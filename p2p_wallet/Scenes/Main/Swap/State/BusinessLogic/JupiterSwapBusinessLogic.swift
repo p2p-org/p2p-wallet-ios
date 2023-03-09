@@ -219,7 +219,12 @@ enum JupiterSwapBusinessLogic {
         // calculate new route
         let state = await calculateRoute(state: state, services: services)
         
-        // create transaction
-        return await createTransaction(state: state, services: services)
+        // create transaction if status is ready
+        if state.status == .ready {
+            return await createTransaction(state: state, services: services)
+        }
+        
+        // else return state
+        return state
     }
 }
