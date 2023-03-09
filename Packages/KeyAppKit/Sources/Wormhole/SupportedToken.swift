@@ -18,5 +18,20 @@ public enum SupportedToken {
         case bnb = "0x418d75f65a02b3d53b2418fb8e1fe493759c7605"
         case matic = "0x7d1afa7b718fb893db30a3abc0cfc608aacfebb0"
         case avax = "0x85f138bfee4ef8e540890cfb48f620571d67eda3"
+
+        var solanaMintAddress: String {
+            let map: [ERC20: String] = [
+                .sol: "So11111111111111111111111111111111111111112",
+                .usdc: "A9mUU4qviSctJVPJdBJWkb28deg915LYJKrzQ19ji3FM",
+                .usdt: "Dn4noZ5jgGfkntzcQSUZ8czkreiZ1ForXYoV2H8Dm7S1",
+                .ust: "7gjNiPun3AzEazTZoFEjZgcBMeuaXdpjHq2raZTmTrfs",
+                .luna: "F6v4wfAdJB8D8p77bMXZgYt8TDKsYxLYxH5AFhUkYx9W",
+                .bnb: "9gP2kCy3wA1ctvYWQk75guqXuHfrEomqydHLtcTCqiLa",
+                .matic: "C7NNPWuZCNjZBfW5p6JvGsR8pUdsRpEdP1ZAhnoDwj7h",
+                .avax: "KgV1GvrHQmRBY8sHQQeUKwTm2r2h8t4C8qt12Cw1HVE",
+            ]
+
+            return map[self]!
+        }
     }
 }

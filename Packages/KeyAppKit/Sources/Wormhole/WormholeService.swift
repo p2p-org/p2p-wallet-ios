@@ -9,6 +9,8 @@ import Foundation
 import KeyAppBusiness
 
 public enum WormholeService {
+    typealias TokenBridge = (token: EthereumToken, solanaAddress: String)
+
     public static func supportedTokens(tokenService: EthereumTokensRepository) async throws -> [EthereumToken] {
         return try await withThrowingTaskGroup(of: EthereumToken.self) { group in
             SupportedToken.ERC20.allCases.forEach { token in
