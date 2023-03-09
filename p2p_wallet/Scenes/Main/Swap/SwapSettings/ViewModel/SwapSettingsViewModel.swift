@@ -25,7 +25,7 @@ final class SwapSettingsViewModel: BaseViewModel, ObservableObject {
     // MARK: - Properties
 
     @Published var status: Status
-    @Published var slippage: Double
+    @Published var slippage: Double?
 
     var info: Info? {
         status.info
