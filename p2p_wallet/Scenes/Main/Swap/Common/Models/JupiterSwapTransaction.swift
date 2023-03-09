@@ -2,8 +2,6 @@ import SolanaSwift
 
 struct JupiterSwapTransaction: SwapRawTransactionType {
     let authority: String?
-    let amountFrom: Double
-    let amountTo: Double
     let sourceWallet: Wallet
     let destinationWallet: Wallet
     let fromAmount: Double
@@ -16,8 +14,8 @@ struct JupiterSwapTransaction: SwapRawTransactionType {
     
     var mainDescription: String {
         [
-            amountFrom.tokenAmountFormattedString(symbol: sourceWallet.token.symbol, maximumFractionDigits: Int(sourceWallet.token.decimals)),
-            amountTo.tokenAmountFormattedString(symbol: destinationWallet.token.symbol, maximumFractionDigits: Int(destinationWallet.token.decimals))
+            fromAmount.tokenAmountFormattedString(symbol: sourceWallet.token.symbol, maximumFractionDigits: Int(sourceWallet.token.decimals)),
+            toAmount.tokenAmountFormattedString(symbol: destinationWallet.token.symbol, maximumFractionDigits: Int(destinationWallet.token.decimals))
         ].joined(separator: " → ")
     }
 

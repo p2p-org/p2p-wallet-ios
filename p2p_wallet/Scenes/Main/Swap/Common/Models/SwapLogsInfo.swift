@@ -5,8 +5,8 @@ struct SwapLogsInfo: Codable {
     let swapTransaction: String?
     let route: Route?
     let routeInSymbols: String?
-    let amountFrom: Double
-    let amountTo: Double
+    let amountFrom: Double?
+    let amountTo: Double?
     let tokens: [TokenInfo]
     let errorLogs: [String]?
     let fees: Fees?
