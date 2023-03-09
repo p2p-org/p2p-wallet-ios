@@ -51,7 +51,7 @@ extension JupiterSwapBusinessLogic {
             $0.tokensPriceMap = tokensPriceMap
             $0.fromToken = tokens.fromToken
             $0.toToken = tokens.toToken
-            $0.slippageBps = Int(Defaults.slippage * 100)
+            $0.slippageBps = Int(0.5 * 100)
             $0.relayContext = relayContext
         }
     }
