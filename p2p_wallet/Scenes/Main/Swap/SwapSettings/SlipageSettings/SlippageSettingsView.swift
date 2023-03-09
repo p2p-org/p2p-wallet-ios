@@ -121,6 +121,7 @@ struct SlippageSettingsView: View {
 
             Spacer(minLength: 0)
         }
+            .contentShape(Rectangle())
             .onTapGesture {
                 viewModel.isCustomSlippageSelected.toggle()
             }

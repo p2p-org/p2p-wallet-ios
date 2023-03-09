@@ -123,7 +123,7 @@ struct JupiterSwapState: Equatable {
         else {
             return nil
         }
-        let slippage = Double(slippageBps) / 100
+        let slippage = Double(slippageBps) / 100 / 100
         return outAmount.convertToBalance(decimals: toToken.token.decimals) * (1 - slippage)
     }
     
