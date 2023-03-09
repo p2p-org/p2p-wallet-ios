@@ -85,9 +85,14 @@ final class SwapSettingsCoordinator: Coordinator<SwapSettingsCoordinatorResult> 
         // complete Coordinator
         viewController.deallocatedPublisher()
             .sink(receiveValue: { [weak self] in
-                let slippageBps = Int((self?.viewModel.finalSlippage ?? 0) * 100)
-                self?.viewModel.log(slippage: self?.viewModel.finalSlippage ?? 0)
-                self?.result.send(.selectedSlippageBps(slippageBps))
+                if let slippage = self?.viewModel.slippage,
+                   slippage > 0
+                {
+                    let slippageBps = Int(slippage * 100)
+                    self?.viewModel.log(slippage: slippage)
+                    self?.result.send(.selectedSlippageBps(slippageBps))
+                }
+                
                 self?.result.send(completion: .finished)
             })
             .store(in: &subscriptions)
@@ -257,7 +262,7 @@ private extension Array where Element == SwapFeeInfo {
             SwapSettingsInfoViewModel.Fee(
                 title: L10n.liquidityFee(
                     lqFee.tokenName ?? L10n.unknownToken,
-                    "\(lqFee.pct == nil ? L10n.unknown: "\(lqFee.pct!)")%"
+                    "\(lqFee.pct == nil ? L10n.unknown: "\(lqFee.pct!.toString(maximumFractionDigits: 9))")%"
                 ),
                 subtitle: lqFee.amount.tokenAmountFormattedString(symbol: lqFee.tokenSymbol ?? "UNKNOWN"),
                 amount: lqFee.amountInFiatDescription
