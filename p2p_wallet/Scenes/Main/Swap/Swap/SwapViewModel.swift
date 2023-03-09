@@ -53,7 +53,7 @@ final class SwapViewModel: BaseViewModel, ObservableObject {
         stateMachine = JupiterSwapStateMachine(
             initialState: .zero,
             services: JupiterSwapServices(
-                jupiterClient: JupiterRestClientAPI(version: .v4),
+                jupiterClient: Resolver.resolve(),
                 pricesAPI: Resolver.resolve(),
                 solanaAPIClient: Resolver.resolve(),
                 relayContextManager: Resolver.resolve()

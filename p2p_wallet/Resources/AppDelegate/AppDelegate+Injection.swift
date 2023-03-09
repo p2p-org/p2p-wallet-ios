@@ -506,10 +506,20 @@ extension Resolver: ResolverRegistering {
         register {
             JupiterTokensRepositoryImpl(
                 provider: resolve(),
-                jupiterClient: JupiterRestClientAPI(version: .v4)
+                jupiterClient: resolve()
             )
         }
         .implements(JupiterTokensRepository.self)
+        .scope(.session)
+        
+        register {
+            JupiterRestClientAPI(
+                host: GlobalAppState.shared.newSwapEndpoint,
+                tokensHost: GlobalAppState.shared.newSwapEndpoint == "https://quote-api.jup.ag" ? "https://cache.jup.ag/tokens": nil,
+                version: .v4
+            )
+        }
+        .implements(JupiterAPI.self)
         .scope(.session)
         
         register {
