@@ -13,9 +13,9 @@ struct SlippageSettingsView: View {
     
     @State private var textFieldColor: UIColor = Asset.Colors.night.color
     
-    let onSelectSlippage: (Double) -> Void
+    let onSelectSlippage: (Double?) -> Void
     
-    init(slippage: Double, onSelectSlippage: @escaping (Double) -> Void) {
+    init(slippage: Double?, onSelectSlippage: @escaping (Double?) -> Void) {
         self._viewModel = StateObject(wrappedValue: .init(slippage: slippage))
         self.onSelectSlippage = onSelectSlippage
     }
@@ -35,7 +35,6 @@ struct SlippageSettingsView: View {
             textFieldColor = isSlippageValid ? Asset.Colors.night.color : Asset.Colors.rose.color
         }
         .onChange(of: viewModel.selectedSlippage) { selectedSlippage in
-            guard let selectedSlippage else { return }
             onSelectSlippage(selectedSlippage)
         }
     }

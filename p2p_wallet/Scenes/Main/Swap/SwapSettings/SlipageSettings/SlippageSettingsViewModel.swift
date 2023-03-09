@@ -46,7 +46,7 @@ final class SlippageSettingsViewModel: BaseViewModel, ObservableObject {
     
     // MARK: - Initializer
 
-    init(slippage: Double) {
+    init(slippage: Double?) {
         super.init()
         
         if let index = slippages.firstIndex(of: slippage) {
