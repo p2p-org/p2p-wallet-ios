@@ -254,9 +254,3 @@ struct JupiterSwapState: Equatable {
         return state
     }
 }
-
-extension JupiterSwapState {
-    var isTransactionCanBeCreated: Bool {
-        return amountTo > 0 && status == .ready
-    }
-}

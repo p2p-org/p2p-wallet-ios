@@ -98,7 +98,8 @@ enum JupiterSwapBusinessLogic {
                 $0.status = .loadingAmountTo
                 $0.route = route
                 $0.swapTransaction = nil
-                $0.amountTo = nil
+                $0.amountTo = UInt64(route.outAmount)?
+                    .convertToBalance(decimals: state.toToken.token.decimals)
             }
         case let .changeSlippageBps(slippageBps):
             return state.modified {
@@ -197,13 +198,13 @@ enum JupiterSwapBusinessLogic {
             return state.modified {
                 $0.tokensPriceMap = tokensPriceMap
             }
-        case let .changeSlippageBps(slippageBps):
+        case let .changeSlippageBps:
             // recalculate the route and re create transaction
             return await recalculateRouteAndRecreateTransaction(
                 state: state,
                 services: services
             )
-        case let .chooseRoute(route):
+        case let .chooseRoute:
             // create swap transaction
             return await createTransaction(state: state, services: services)
         }
