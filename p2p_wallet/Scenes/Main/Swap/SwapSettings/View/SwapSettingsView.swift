@@ -54,6 +54,7 @@ struct SwapSettingsView: View {
                 }
             }
         }
+        .modifier(ListBackgroundModifier(separatorColor: Asset.Colors.rain.color))
         .listStyle(InsetGroupedListStyle())
         .scrollDismissesKeyboard()
     }
