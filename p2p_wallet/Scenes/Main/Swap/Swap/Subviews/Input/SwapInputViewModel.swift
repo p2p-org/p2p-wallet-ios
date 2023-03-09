@@ -71,10 +71,21 @@ final class SwapInputViewModel: BaseViewModel, ObservableObject {
                 guard let self, self.isStateReady(status: self.currentState.status) else { return }
                 self.logChange(amount: value)
                 self.isAmountLoading = true && !self.isFromToken
-                if self.isFromToken {
+                if self.isFromToken && self.stateMachine.currentState.amountFrom != value {
                     await self.stateMachine.accept(action: .changeAmountFrom(value ?? 0))
                 }
                 self.isAmountLoading = false && !self.isFromToken
+            }
+            .store(in: &subscriptions)
+        
+        stateMachine.statePublisher
+            .map(\.amountFrom)
+            .receive(on: RunLoop.main)
+            .sink { [weak self] value in
+                guard let self else { return }
+                if self.isFromToken {
+                    self.amount = value
+                }
             }
             .store(in: &subscriptions)
 
