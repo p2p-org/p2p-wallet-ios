@@ -170,9 +170,6 @@ private extension SwapViewModel {
                 let newState = await self.stateMachine.accept(action: .changeFromToken(token))
                 Defaults.fromTokenAddress = token.address
                 self.logChangeToken(isFrom: true, token: token, amount: newState.amountFrom)
-                if newState.isTransactionCanBeCreated == true {
-                    await self.stateMachine.accept(action: .createTransaction)
-                }
             }
             .store(in: &subscriptions)
 
@@ -184,9 +181,6 @@ private extension SwapViewModel {
                 let newState = await self.stateMachine.accept(action: .changeToToken(token))
                 Defaults.toTokenAddress = token.address
                 self.logChangeToken(isFrom: false, token: token, amount: newState.amountTo)
-                if newState.isTransactionCanBeCreated == true {
-                    await self.stateMachine.accept(action: .createTransaction)
-                }
             }
             .store(in: &subscriptions)
     }
@@ -277,7 +271,7 @@ private extension SwapViewModel {
             if state.amountFrom == 0 {
                 actionButtonData = SliderActionButtonData(isEnabled: false, title: L10n.enterTheAmount)
             }
-        case .requiredInitialize, .loadingTokenTo, .loadingAmountTo, .switching, .initializing, .loadingTransaction:
+        case .requiredInitialize, .loadingTokenTo, .loadingAmountTo, .switching, .initializing:
             actionButtonData = SliderActionButtonData(isEnabled: false, title: L10n.counting)
         case .error(.notEnoughFromToken):
             actionButtonData = SliderActionButtonData(isEnabled: false, title: L10n.notEnough(state.fromToken.token.symbol))
@@ -299,7 +293,9 @@ private extension SwapViewModel {
     private func swapToken() {
         guard isSliderOn,
               let account = currentState.account,
-              let sourceWallet = currentState.fromToken.userWallet
+              let sourceWallet = currentState.fromToken.userWallet,
+              let amountFrom = currentState.amountFrom,
+              let amountTo = currentState.amountTo
         else {
             return
         }
@@ -316,12 +312,10 @@ private extension SwapViewModel {
         
         let swapTransaction = JupiterSwapTransaction(
             authority: account.publicKey.base58EncodedString,
-            amountFrom: currentState.amountFrom,
-            amountTo: currentState.amountTo,
             sourceWallet: sourceWallet,
             destinationWallet: destinationWallet,
-            fromAmount: currentState.amountFrom,
-            toAmount: currentState.amountTo,
+            fromAmount: amountFrom,
+            toAmount: amountTo,
             slippage: Double(stateMachine.currentState.slippageBps) / 100,
             metaInfo: SwapMetaInfo(
                 swapMAX: false, // FIXME: - Swap max or not
@@ -424,7 +418,8 @@ extension SwapViewModel {
     }
 
     private func logSwapApprove(signature: String) {
-        analyticsManager.log(event: .swapClickApproveButtonNew(tokenA: currentState.fromToken.token.symbol, tokenB: currentState.toToken.token.symbol, swapSum: currentState.amountFrom, swapUSD: currentState.amountFromFiat, signature: signature))
+        guard let amountFrom = currentState.amountFrom else { return }
+        analyticsManager.log(event: .swapClickApproveButtonNew(tokenA: currentState.fromToken.token.symbol, tokenB: currentState.toToken.token.symbol, swapSum: amountFrom, swapUSD: currentState.amountFromFiat, signature: signature))
     }
 
     private func log(from status: JupiterSwapState.Status) {
@@ -456,7 +451,8 @@ extension SwapViewModel {
         }
     }
 
-    private func logChangeToken(isFrom: Bool, token: SwapToken, amount: Double) {
+    private func logChangeToken(isFrom: Bool, token: SwapToken, amount: Double?) {
+        guard let amount else { return }
         if isFrom {
             analyticsManager.log(event: .swapChangingTokenA(tokenAName: token.token.symbol, tokenAValue: amount))
         } else {

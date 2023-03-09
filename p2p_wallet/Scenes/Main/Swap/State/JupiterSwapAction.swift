@@ -7,7 +7,6 @@ enum JupiterSwapAction: Equatable {
     case update
 
     case changeAmountFrom(Double)
-    case createTransaction
 
     case changeFromToken(SwapToken)
     case changeToToken(SwapToken)
@@ -43,8 +42,6 @@ enum JupiterSwapAction: Equatable {
             return "chooseRoute(\(route.id))"
         case .changeSlippageBps(let int):
             return "changeSlippageBps(\(int))"
-        case .createTransaction:
-            return "createTransaction"
         }
     }
 }

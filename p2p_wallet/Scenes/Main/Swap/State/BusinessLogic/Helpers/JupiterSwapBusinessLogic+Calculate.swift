@@ -6,26 +6,24 @@ import SolanaPricesAPIs
 extension JupiterSwapBusinessLogic {
     static func calculateRoute(
         state: JupiterSwapState,
-        newFromAmount: Double? = nil,
         services: JupiterSwapServices
     ) async -> JupiterSwapState {
+        // get current from amount
+        guard let amountFrom = state.amountFrom, amountFrom > 0
+        else {
+            return state.modified {
+                $0.status = .ready
+            }
+        }
+        
         // assert from token is not equal to toToken
         guard state.fromToken.address != state.toToken.address else {
             return state.error(.equalSwapTokens)
         }
 
-        // assert amountFrom is not 0
-        let amountFrom = newFromAmount ?? state.amountFrom
-        guard amountFrom > 0
-        else {
-            return state.modified {
-                $0.status = .ready
-                $0.route = nil
-            }
-        }
-
         // get lamport
-        let amountFromLamports = amountFrom.toLamport(decimals: state.fromToken.token.decimals)
+        let amountFromLamports = amountFrom
+            .toLamport(decimals: state.fromToken.token.decimals)
 
         do {
             // call api to get routes and amount
@@ -84,6 +82,8 @@ extension JupiterSwapBusinessLogic {
                     $0.status = .ready
                     $0.route = route
                     $0.routes = routes
+                    $0.amountTo = UInt64(route.outAmount)?
+                        .convertToBalance(decimals: state.toToken.token.decimals)
                     $0.tokensPriceMap = $0.tokensPriceMap
                         .merging(tokensPriceMap, uniquingKeysWith: { (_, new) in new })
                 },
@@ -121,10 +121,13 @@ extension JupiterSwapBusinessLogic {
     }
 
     private static func validateNativeSOL(balance: Double, state: JupiterSwapState, services: JupiterSwapServices) async -> JupiterSwapState.Status {
+        guard let amountFrom = state.amountFrom else {
+            return .error(reason: .routeIsNotFound)
+        }
         do {
             let decimals = state.fromToken.token.decimals
             let minBalance = try await services.relayContextManager.getCurrentContextOrUpdate().minimumRelayAccountBalance
-            let remains = (balance - state.amountFrom).toLamport(decimals: decimals)
+            let remains = (balance - amountFrom).toLamport(decimals: decimals)
             if remains > 0 && remains < minBalance {
                 let maximumInput = (balance.toLamport(decimals: decimals) - minBalance).convertToBalance(decimals: decimals)
                 return .error(reason: .inputTooHigh(maximumInput))
