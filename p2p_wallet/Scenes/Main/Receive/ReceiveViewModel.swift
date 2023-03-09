@@ -56,7 +56,7 @@ class ReceiveViewModel: BaseViewModel, ObservableObject {
                         title: L10n.mySolanaAddress,
                         description: address,
                         showTopCorners: true,
-                        showBottomCorners: userWallet.name == nil
+                        showBottomCorners: username == nil
                     )
                 ]
 
