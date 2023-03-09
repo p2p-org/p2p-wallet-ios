@@ -38,7 +38,7 @@ final class SendEmptyCoordinator: Coordinator<Void> {
             },
             receive: {
                 self.log(event: .sendnewReceiveClickButton(source: self.source.rawValue))
-                let coordinator = ReceiveCoordinator(network: .solana(tokenSymbol: "SOL", tokenImage: (Token.nativeSolana.image, nil)), navigationController: self.navigationController)
+                let coordinator = ReceiveCoordinator(network: .solana(tokenSymbol: "SOL", tokenImage: .image(.solanaIcon)), navigationController: self.navigationController)
                 self.coordinate(to: coordinator)
                     .sink { _ in }
                     .store(in: &self.subscriptions)

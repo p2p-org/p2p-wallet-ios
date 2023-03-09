@@ -4,9 +4,13 @@ import Foundation
 import Resolver
 
 enum ReceiveNetwork {
-    typealias TokenImage = (UIImage?, URL?)
-    case solana(tokenSymbol: String, tokenImage: TokenImage?)
-    case ethereum(tokenSymbol: String, tokenImage: TokenImage?)
+    enum Image {
+        case url(URL)
+        case image(UIImage)
+    }
+
+    case solana(tokenSymbol: String, tokenImage: Image?)
+    case ethereum(tokenSymbol: String, tokenImage: Image?)
 }
 
 class ReceiveViewModel: BaseViewModel, ObservableObject {
@@ -42,11 +46,19 @@ class ReceiveViewModel: BaseViewModel, ObservableObject {
         }
 
         switch network {
-        case .solana(_, let icon):
+        case let .solana(_, icon):
             self.address = userWallet.account.publicKey.base58EncodedString
             self.qrImage = ReceiveViewModel.generateQRCode(from: address) ?? UIImage()
-            self.qrCenterImage = icon?.0
-            self.qrCenterImageURL = icon?.1
+
+            // Set token icon
+            switch icon {
+            case let .image(image):
+                self.qrCenterImage = image
+            case let .url(url):
+                self.qrCenterImageURL = url
+            case .none:
+                break
+            }
 
             // Build list items
             func solanaNetwork(address: String, username: String?) -> [any ReceiveRendableItem] {
@@ -81,8 +93,16 @@ class ReceiveViewModel: BaseViewModel, ObservableObject {
         case let .ethereum(tokenSymbol, icon):
             self.address = userWallet.ethereumKeypair.address
             self.qrImage = ReceiveViewModel.generateQRCode(from: address) ?? UIImage()
-            self.qrCenterImage = icon?.0
-            self.qrCenterImageURL = icon?.1
+
+            // Set token icon
+            switch icon {
+            case let .image(image):
+                self.qrCenterImage = image
+            case let .url(url):
+                self.qrCenterImageURL = url
+            case .none:
+                break
+            }
 
             self.items = [
                 ListReceiveItem(

@@ -32,18 +32,17 @@ class SupportedTokensCoordinator: SmartCoordinator<Void> {
     }
 
     func openReceive(item: SupportedTokenItem) {
+        // Coordinate to receive
         func _openReceive(network: ReceiveNetwork) {
             self.coordinate(to: ReceiveCoordinator(network: network, presentation: self.presentation))
                 .sink {}
                 .store(in: &subscriptions)
         }
-        var image: ReceiveNetwork.TokenImage = (nil, nil)
-        if case .url(let url) = item.icon {
-            image = (nil, url)
-        } else if case .image(let img) = item.icon {
-            image = (img, nil)
-        }
+
+        var image: ReceiveNetwork.Image? = .init(icon: item.icon)
+
         if item.availableNetwork.count == 1, let network = item.availableNetwork.first {
+            // Token supports only one network.
             switch network {
             case .solana:
                 _openReceive(network: .solana(tokenSymbol: item.symbol, tokenImage: image))
@@ -51,6 +50,7 @@ class SupportedTokensCoordinator: SmartCoordinator<Void> {
                 _openReceive(network: .ethereum(tokenSymbol: item.symbol, tokenImage: image))
             }
         } else {
+            // Token supports many networks.
             let coordinator = SupportedTokenNetworksCoordinator(supportedToken: item, viewController: self.presentation.presentingViewController)
             self.coordinate(to: coordinator)
                 .sink { selectedNetwork in
@@ -63,6 +63,19 @@ class SupportedTokensCoordinator: SmartCoordinator<Void> {
                     }
                 }
                 .store(in: &subscriptions)
+        }
+    }
+}
+
+extension ReceiveNetwork.Image {
+    init?(icon: SupportedTokenItemIcon) {
+        switch icon {
+        case let .url(url):
+            self = .url(url)
+        case let .image(uiImage):
+            self = .image(uiImage)
+        case .placeholder:
+            return nil
         }
     }
 }
