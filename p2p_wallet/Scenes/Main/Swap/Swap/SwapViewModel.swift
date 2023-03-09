@@ -293,7 +293,9 @@ private extension SwapViewModel {
     private func swapToken() {
         guard isSliderOn,
               let account = currentState.account,
-              let sourceWallet = currentState.fromToken.userWallet
+              let sourceWallet = currentState.fromToken.userWallet,
+              let amountFrom = currentState.amountFrom,
+              let amountTo = currentState.amountTo
         else {
             return
         }
@@ -310,12 +312,10 @@ private extension SwapViewModel {
         
         let swapTransaction = JupiterSwapTransaction(
             authority: account.publicKey.base58EncodedString,
-            amountFrom: currentState.amountFrom,
-            amountTo: currentState.amountTo,
             sourceWallet: sourceWallet,
             destinationWallet: destinationWallet,
-            fromAmount: currentState.amountFrom,
-            toAmount: currentState.amountTo,
+            fromAmount: amountFrom,
+            toAmount: amountTo,
             slippage: Double(stateMachine.currentState.slippageBps) / 100,
             metaInfo: SwapMetaInfo(
                 swapMAX: false, // FIXME: - Swap max or not
@@ -418,7 +418,8 @@ extension SwapViewModel {
     }
 
     private func logSwapApprove(signature: String) {
-        analyticsManager.log(event: .swapClickApproveButtonNew(tokenA: currentState.fromToken.token.symbol, tokenB: currentState.toToken.token.symbol, swapSum: currentState.amountFrom, swapUSD: currentState.amountFromFiat, signature: signature))
+        guard let amountFrom = currentState.amountFrom else { return }
+        analyticsManager.log(event: .swapClickApproveButtonNew(tokenA: currentState.fromToken.token.symbol, tokenB: currentState.toToken.token.symbol, swapSum: amountFrom, swapUSD: currentState.amountFromFiat, signature: signature))
     }
 
     private func log(from status: JupiterSwapState.Status) {
@@ -450,7 +451,8 @@ extension SwapViewModel {
         }
     }
 
-    private func logChangeToken(isFrom: Bool, token: SwapToken, amount: Double) {
+    private func logChangeToken(isFrom: Bool, token: SwapToken, amount: Double?) {
+        guard let amount else { return }
         if isFrom {
             analyticsManager.log(event: .swapChangingTokenA(tokenAName: token.token.symbol, tokenAValue: amount))
         } else {
