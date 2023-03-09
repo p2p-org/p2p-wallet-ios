@@ -262,7 +262,7 @@ private extension Array where Element == SwapFeeInfo {
             SwapSettingsInfoViewModel.Fee(
                 title: L10n.liquidityFee(
                     lqFee.tokenName ?? L10n.unknownToken,
-                    "\(lqFee.pct == nil ? L10n.unknown: "\(lqFee.pct!)")%"
+                    "\(lqFee.pct == nil ? L10n.unknown: "\(lqFee.pct!.toString(maximumFractionDigits: 9))")%"
                 ),
                 subtitle: lqFee.amount.tokenAmountFormattedString(symbol: lqFee.tokenSymbol ?? "UNKNOWN"),
                 amount: lqFee.amountInFiatDescription
