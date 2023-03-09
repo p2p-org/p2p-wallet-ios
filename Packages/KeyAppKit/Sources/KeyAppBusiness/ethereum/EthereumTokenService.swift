@@ -29,16 +29,7 @@ public final class EthereumTokensRepository {
             return value
         }
 
-        let metadata: EthereumTokenMetadata = try await withCheckedThrowingContinuation { continuation in
-            web3.eth.getTokenMetadata(address: ethereumAddress) { response in
-                switch response.status {
-                case let .success(metadata):
-                    continuation.resume(returning: metadata)
-                case let .failure(error):
-                    continuation.resume(throwing: error)
-                }
-            }
-        }
+        let metadata: EthereumTokenMetadata = try await web3.eth.getTokenMetadata(address: ethereumAddress)
 
         let token = EthereumToken(address: ethereumAddress, metadata: metadata)
         await cache.insert(token, forKey: ethereumAddress)

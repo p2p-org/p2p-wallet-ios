@@ -9,7 +9,7 @@ import Foundation
 import Web3
 
 /// Ethereum token structure
-public struct EthereumToken {
+public struct EthereumToken: Equatable {
     /// Token name
     public let name: String
     
@@ -25,6 +25,7 @@ public struct EthereumToken {
     /// Token contract type
     public let contractType: ContractType
 
+    /// Erc-20 Token
     internal init(address: EthereumAddress, metadata: EthereumTokenMetadata) {
         self.name = metadata.name ?? ""
         self.symbol = metadata.symbol ?? ""
@@ -33,6 +34,7 @@ public struct EthereumToken {
         self.contractType = .erc20(contract: address)
     }
     
+    /// Native token
     public init() {
         self.name = "Ethereum"
         self.symbol = "ETH"
@@ -44,7 +46,7 @@ public struct EthereumToken {
 
 public extension EthereumToken {
     /// Ethereum token contract standards.
-    enum ContractType {
+    enum ContractType: Equatable {
         /// Native token
         case native
         
