@@ -53,6 +53,7 @@ struct SwapSettingsView: View {
             }
         }
         .listStyle(InsetGroupedListStyle())
+        .scrollDismissesKeyboard()
     }
     
     // MARK: - First section
