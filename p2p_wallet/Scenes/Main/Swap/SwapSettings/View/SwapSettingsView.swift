@@ -13,9 +13,11 @@ struct SwapSettingsView: View {
     @ObservedObject var viewModel: SwapSettingsViewModel
     
     var body: some View {
-        VStack(spacing: 4) {
-            exchangeRate
-            list
+        ColoredBackground {
+            VStack(spacing: 4) {
+                exchangeRate
+                list
+            }
         }
     }
     
@@ -34,7 +36,7 @@ struct SwapSettingsView: View {
     var list: some View {
         List {
             Section {
-                fisrtSectionRows
+                firstSectionRows
             }
             
             if let minimumReceived = viewModel.info?.minimumReceived {
@@ -58,7 +60,7 @@ struct SwapSettingsView: View {
     
     // MARK: - First section
 
-    private var fisrtSectionRows: some View {
+    private var firstSectionRows: some View {
         Group {
             // Route
             commonRow(
