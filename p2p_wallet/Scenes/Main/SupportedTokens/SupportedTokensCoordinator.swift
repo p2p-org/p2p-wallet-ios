@@ -37,13 +37,18 @@ class SupportedTokensCoordinator: SmartCoordinator<Void> {
                 .sink {}
                 .store(in: &subscriptions)
         }
-
+        var image: ReceiveNetwork.TokenImage = (nil, nil)
+        if case .url(let url) = item.icon {
+            image = (nil, url)
+        } else if case .image(let img) = item.icon {
+            image = (img, nil)
+        }
         if item.availableNetwork.count == 1, let network = item.availableNetwork.first {
             switch network {
             case .solana:
-                _openReceive(network: .solana(tokenSymbol: item.symbol))
+                _openReceive(network: .solana(tokenSymbol: item.symbol, tokenImage: image))
             case .ethereum:
-                _openReceive(network: .ethereum(tokenSymbol: item.symbol))
+                _openReceive(network: .ethereum(tokenSymbol: item.symbol, tokenImage: image))
             }
         } else {
             let coordinator = SupportedTokenNetworksCoordinator(supportedToken: item, viewController: self.presentation.presentingViewController)
@@ -52,9 +57,9 @@ class SupportedTokensCoordinator: SmartCoordinator<Void> {
                     guard let selectedNetwork else { return }
                     switch selectedNetwork {
                     case .solana:
-                        _openReceive(network: .solana(tokenSymbol: item.symbol))
+                        _openReceive(network: .solana(tokenSymbol: item.symbol, tokenImage: image))
                     case .ethereum:
-                        _openReceive(network: .ethereum(tokenSymbol: item.symbol))
+                        _openReceive(network: .ethereum(tokenSymbol: item.symbol, tokenImage: image))
                     }
                 }
                 .store(in: &subscriptions)

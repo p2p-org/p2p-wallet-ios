@@ -1,8 +1,10 @@
 import KeyAppUI
 import SwiftUI
+import Kingfisher
 
 struct ReceiveView: View {
     @ObservedObject var viewModel: ReceiveViewModel
+    let iconSize = CGFloat(36.0)
 
     var body: some View {
         ZStack {
@@ -35,11 +37,22 @@ struct ReceiveView: View {
                 .resizable()
                 .scaledToFit()
                 .frame(width: 200, height: 200)
-            if let center = viewModel.qrCenterImage {
-                Image(uiImage: center)
+            if let centerImage = viewModel.qrCenterImage {
+                Image(uiImage: centerImage)
                     .resizable()
                     .scaledToFit()
-                    .frame(width: 36, height: 36)
+                    .frame(width: 32, height: 32)
+            } else if let centerImageURL = viewModel.qrCenterImageURL {
+                KFImage
+                    .url(centerImageURL)
+                    .setProcessor(
+                        DownsamplingImageProcessor(size: .init(width: iconSize * 2, height: iconSize * 2))
+                            |> RoundCornerImageProcessor(cornerRadius: iconSize)
+                    )
+                    .resizable()
+                    .diskCacheExpiration(.days(7))
+                    .fade(duration: 0.25)
+                    .frame(width: iconSize, height: iconSize)
             }
         }
     }
