@@ -111,6 +111,7 @@ final class JupiterSwapCoordinator: Coordinator<Void> {
             chosenWallet: fromToken ? viewModel.currentState.fromToken : viewModel.currentState.toToken,
             tokens: fromToken ? viewModel.currentState.swapTokens : viewModel.currentState.possibleToTokens,
             navigationController: navigationController,
+            fromToken: fromToken,
             title: fromToken ? L10n.theTokenYouPay : L10n.theTokenYouReceive
         ))
         .sink(receiveValue: { [weak viewModel] chosenToken in

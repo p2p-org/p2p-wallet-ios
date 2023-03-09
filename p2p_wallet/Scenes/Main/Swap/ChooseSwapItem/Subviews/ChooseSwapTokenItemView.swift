@@ -5,16 +5,24 @@ import SolanaSwift
 struct ChooseSwapTokenItemView: View {
 
     private let token: SwapToken
-    private let isChosen: Bool
     private let subtitle: String
+    private let chosen: Bool
+    private let fromToken: Bool
 
-    init(token: SwapToken, isChosen: Bool) {
+    init(
+        token: SwapToken,
+        chosen: Bool,
+        fromToken: Bool
+    ) {
         self.token = token
-        self.isChosen = isChosen
-        if isChosen {
-            self.subtitle = token.userWallet?.amount?.tokenAmountFormattedString(symbol: token.token.symbol, maximumFractionDigits: Int(token.token.decimals)) ?? token.token.symbol
+        self.chosen = chosen
+        self.fromToken = fromToken
+        if fromToken {
+            subtitle = token.userWallet?.amount?.tokenAmountFormattedString(
+                symbol: token.token.symbol, maximumFractionDigits: Int(token.token.decimals)
+            ) ?? token.token.symbol
         } else {
-            self.subtitle = token.token.symbol
+            subtitle = token.token.symbol
         }
     }
 
@@ -37,11 +45,31 @@ struct ChooseSwapTokenItemView: View {
                     .foregroundColor(Color(Asset.Colors.mountain.color))
             }
             Spacer()
-            if let amountInCurrentFiat = token.userWallet?.amountInCurrentFiat, !isChosen {
+            rightView
+        }.contentShape(Rectangle())
+    }
+
+    @ViewBuilder private var rightView: some View {
+        if fromToken {
+            if let amountInCurrentFiat = token.userWallet?.amountInCurrentFiat {
                 Text(amountInCurrentFiat.fiatAmountFormattedString(customFormattForLessThan1E_2: true))
                     .font(uiFont: .font(of: .text3, weight: .semibold))
                     .foregroundColor(Color(Asset.Colors.night.color))
+            } else {
+                SwiftUI.EmptyView()
             }
-        }.contentShape(Rectangle())
+        } else {
+            if token.isPopular, !chosen {
+                Text(L10n.popular)
+                    .font(uiFont: .font(of: .text4))
+                    .foregroundColor(Color(Asset.Colors.mountain.color))
+                    .padding(.horizontal, 8)
+                    .padding(.vertical, 3)
+                    .background(Color(Asset.Colors.rain.color))
+                    .cornerRadius(32)
+            } else {
+                SwiftUI.EmptyView()
+            }
+        }
     }
 }
