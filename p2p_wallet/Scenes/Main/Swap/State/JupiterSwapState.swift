@@ -62,9 +62,15 @@ struct JupiterSwapState: Equatable {
 
     /// Token that user's swapping from
     var fromToken: SwapToken
+    
+    /// Amount from
+    var amountFrom: Double?
 
     /// Token that user's swapping to
     var toToken: SwapToken
+    
+    /// Amount to
+    var amountTo: Double?
     
     /// SlippageBps is slippage multiplied by 100 (be careful)
     var slippageBps: Int
@@ -79,18 +85,8 @@ struct JupiterSwapState: Equatable {
         swapTokens.compactMap(\.userWallet)
     }
     
-    var amountFrom: Double {
-        guard let route, let amountFrom = UInt64(route.inAmount) else { return 0 }
-        return amountFrom.convertToBalance(decimals: fromToken.token.decimals)
-    }
-    
     var amountFromFiat: Double {
         priceInfo.fromPrice * amountFrom
-    }
-    
-    var amountTo: Double {
-        guard let route, let amountTo = UInt64(route.outAmount) else { return 0 }
-        return amountTo.convertToBalance(decimals: toToken.token.decimals)
     }
     
     var amountToFiat: Double {
