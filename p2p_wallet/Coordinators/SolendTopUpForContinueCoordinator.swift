@@ -7,6 +7,7 @@
 
 import Combine
 import UIKit
+import SolanaSwift
 
 final class SolendTopUpForContinueCoordinator: Coordinator<SolendTopUpForContinueCoordinator.Result> {
     typealias Model = SolendTopUpForContinueModel
@@ -52,7 +53,7 @@ final class SolendTopUpForContinueCoordinator: Coordinator<SolendTopUpForContinu
         viewModel.receive
             .flatMap { [unowned self] _ in
                 coordinate(to: ReceiveCoordinator(
-                    network: .solana(tokenSymbol: "SOL"),
+                    network: .solana(tokenSymbol: "SOL", tokenImage: (Token.nativeSolana.image, nil)),
                     navigationController: navigationController
                 ))
             }

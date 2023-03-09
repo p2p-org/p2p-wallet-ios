@@ -28,9 +28,9 @@ final class ReceiveCoordinator: SmartCoordinator<Void> {
         let viewController = UIHostingController(rootView: view)
 
         switch network {
-        case let .solana(symbol):
+        case let .solana(symbol, _):
             viewController.navigationItem.title = L10n.receiveOn(symbol, "Solana")
-        case let .ethereum(symbol):
+        case let .ethereum(symbol, _):
             viewController.navigationItem.title = L10n.receiveOn(symbol, "Ethereum")
         }
 
