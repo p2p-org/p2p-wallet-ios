@@ -4,8 +4,9 @@ import Foundation
 import Resolver
 
 enum ReceiveNetwork {
-    case solana(tokenSymbol: String)
-    case ethereum(tokenSymbol: String)
+    typealias TokenImage = (UIImage?, URL?)
+    case solana(tokenSymbol: String, tokenImage: TokenImage?)
+    case ethereum(tokenSymbol: String, tokenImage: TokenImage?)
 }
 
 class ReceiveViewModel: BaseViewModel, ObservableObject {
@@ -17,6 +18,7 @@ class ReceiveViewModel: BaseViewModel, ObservableObject {
     @Published var items: [any ReceiveRendableItem] = []
     @Published var qrImage: UIImage
     @Published var qrCenterImage: UIImage?
+    @Published var qrCenterImageURL: URL?
 
     // MARK: -
 
@@ -40,9 +42,11 @@ class ReceiveViewModel: BaseViewModel, ObservableObject {
         }
 
         switch network {
-        case .solana:
+        case .solana(_, let icon):
             self.address = userWallet.account.publicKey.base58EncodedString
             self.qrImage = ReceiveViewModel.generateQRCode(from: address) ?? UIImage()
+            self.qrCenterImage = icon?.0
+            self.qrCenterImageURL = icon?.1
 
             // Build list items
             func solanaNetwork(address: String, username: String?) -> [any ReceiveRendableItem] {
@@ -74,9 +78,11 @@ class ReceiveViewModel: BaseViewModel, ObservableObject {
 
             self.items = solanaNetwork(address: address, username: userWallet.name)
 
-        case let .ethereum(tokenSymbol):
+        case let .ethereum(tokenSymbol, icon):
             self.address = userWallet.ethereumKeypair.address
             self.qrImage = ReceiveViewModel.generateQRCode(from: address) ?? UIImage()
+            self.qrCenterImage = icon?.0
+            self.qrCenterImageURL = icon?.1
 
             self.items = [
                 ListReceiveItem(
