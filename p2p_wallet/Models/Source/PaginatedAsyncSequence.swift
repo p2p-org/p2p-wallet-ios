@@ -34,6 +34,8 @@ struct PaginatedAsyncSequence<Element>: AsyncSequence {
         func next() async throws -> Element? {
             if cache.isEmpty && fetchable {
                 let result = try await fetchFn(offset, limit)
+                if Task.isCancelled { return nil }
+
                 cache.append(contentsOf: result)
 
                 fetchable = result.count == limit
