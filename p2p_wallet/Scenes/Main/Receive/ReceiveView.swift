@@ -61,9 +61,9 @@ struct ReceiveView: View {
         VStack(spacing: 0) {
             ForEach(viewModel.items, id: \.id) { item in
                 AnyRendable(item: item)
-                    .onTapGesture {
+                    .onLongPressGesture(perform: {
                         viewModel.itemTapped(item)
-                    }
+                    })
             }
         }
         .padding(.horizontal, 16)
