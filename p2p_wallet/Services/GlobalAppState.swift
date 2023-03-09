@@ -58,7 +58,7 @@ class GlobalAppState: ObservableObject {
         if let forcedValue = Defaults.forcedNewSwapEndpoint {
             newSwapEndpoint = forcedValue
         } else {
-            newSwapEndpoint = "https://quote-api.jup.ag"
+            newSwapEndpoint = "https://swap.key.app"
         }
     }
 }
