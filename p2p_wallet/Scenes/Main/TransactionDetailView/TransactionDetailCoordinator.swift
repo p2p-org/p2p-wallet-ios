@@ -19,14 +19,20 @@ class TransactionDetailCoordinator: SmartCoordinator<Void> {
     }
 
     override func build() -> UIViewController {
-        let vc = BottomSheetController(rootView: DetailTransactionView(viewModel: viewModel))
+        // create bottomsheet
+        let vc = UIBottomSheetHostingController(
+            rootView: DetailTransactionView(viewModel: viewModel),
+            ignoresKeyboard: true
+        )
+        vc.view.layer.cornerRadius = 20
 
-        viewModel.action.sink { [weak self] action in
+        // observe action
+        viewModel.action.sink { [weak self, weak vc] action in
             guard let self = self else { return }
 
             switch action {
             case .close:
-                vc.dismiss(animated: true)
+                vc?.dismiss(animated: true)
                 self.result.send(completion: .finished)
             case let .share(url):
                 self.presentation.presentingViewController.dismiss(animated: true) {
@@ -51,6 +57,15 @@ class TransactionDetailCoordinator: SmartCoordinator<Void> {
             }
 
         }.store(in: &subscriptions)
+        
+        // observe data to change bottomsheet's height
+        viewModel.$rendableTransaction
+            .sink { _ in
+                DispatchQueue.main.async { [weak vc] in
+                    vc?.updatePresentationLayout(animated: true)
+                }
+            }
+            .store(in: &subscriptions)
 
         return vc
     }
