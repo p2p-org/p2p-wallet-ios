@@ -7,12 +7,22 @@ extension JupiterSwapBusinessLogic {
         services: JupiterSwapServices
     ) async -> JupiterSwapState {
         do {
+            let state = state.modified {
+                $0.swapTransaction = nil
+            }
+            
+            guard state.isTransactionCanBeCreated else {
+                return state
+            }
+            
             guard let route = state.route else {
-                return state.error(.routeIsNotFound)
+//                return state.error(.routeIsNotFound)
+                return state
             }
 
             guard let account = state.account else {
-                return state.error(.createTransactionFailed)
+//                return state.error(.createTransactionFailed)
+                return state
             }
 
             let swapTransaction = try await services.jupiterClient.swap(

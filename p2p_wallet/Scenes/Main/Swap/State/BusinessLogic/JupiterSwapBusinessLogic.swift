@@ -26,8 +26,6 @@ enum JupiterSwapBusinessLogic {
             return nil
         case .changeSlippageBps:
             return state.modified { $0.status = .loadingAmountTo }
-        case .createTransaction:
-            return state.modified { $0.status = .loadingTransaction }
         }
     }
 
@@ -49,20 +47,17 @@ enum JupiterSwapBusinessLogic {
             )
 
         case let .changeAmountFrom(amountFrom):
-            let state = state.modified {
-                $0.route = nil
-                $0.swapTransaction = nil
-            }
-            return await calculateRoute(
+            let state = await calculateRoute(
                 state: state,
                 newFromAmount: amountFrom,
                 services: services
             )
+            
+            return await createTransaction(state: state, services: services)
 
         case let .changeFromToken(swapToken):
             let state = state.modified {
                 $0.fromToken = swapToken
-                $0.swapTransaction = nil
             }
             return await calculateRoute(
                 state: state,
@@ -70,28 +65,31 @@ enum JupiterSwapBusinessLogic {
                 services: services
             )
         case let .changeToToken(swapToken):
-            let state = state.modified {
+            var state = state.modified {
                 $0.toToken = swapToken
-                $0.swapTransaction = nil
             }
-            return await calculateRoute(
+            state = await calculateRoute(
                 state: state,
                 services: services
             )
+            return await createTransaction(state: state, services: services)
         case .switchFromAndToTokens:
             let newFromToken = state.toToken
             let newToToken = state.fromToken
-            let state = state.modified {
+            let newFromAmount = state.amountTo
+            var state = state.modified {
                 $0.fromToken = newFromToken
                 $0.toToken = newToToken
-                $0.swapTransaction = nil
             }
-            return await calculateRoute(
+            state = await calculateRoute(
                 state: state,
+                newFromAmount: newFromAmount,
                 services: services
             )
+            return await createTransaction(state: state, services: services)
         case .update:
-            return await calculateRoute(state: state, services: services)
+            let state = await calculateRoute(state: state, services: services)
+            return await createTransaction(state: state, services: services)
         case let .updateUserWallets(userWallets):
             return await updateUserWallets(state: state, userWallets: userWallets, services: services)
         case let .updateTokensPriceMap(tokensPriceMap):
@@ -108,14 +106,16 @@ enum JupiterSwapBusinessLogic {
             }
             
             // modify slippage
-            let state = state.modified {
+            var state = state.modified {
                 $0.status = .ready
                 $0.slippageBps = slippageBps
-                $0.swapTransaction = nil
             }
             
             // re-calculate the route
-            return await calculateRoute(state: state, services: services)
+            state = await calculateRoute(state: state, services: services)
+            
+            // create swap transaction
+            return await createTransaction(state: state, services: services)
         case let .chooseRoute(route):
             // return current route if it is not changed
             guard route != state.route else { return state }
@@ -123,11 +123,9 @@ enum JupiterSwapBusinessLogic {
             // modify the route
             let state = state.modified {
                 $0.route = route
-                $0.swapTransaction = nil
             }
-
-            return await createTransaction(state: state, services: services)
-        case .createTransaction:
+            
+            // create swap transaction
             return await createTransaction(state: state, services: services)
 
         }
