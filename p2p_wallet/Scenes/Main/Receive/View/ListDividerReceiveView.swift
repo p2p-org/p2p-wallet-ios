@@ -10,9 +10,10 @@ import SwiftUI
 
 struct ListDividerReceiveView: View {
     var body: some View {
-        Color(Asset.Colors.rain.color)
-            .padding(.leading, 20)
+        Divider()
             .frame(height: 1)
+            .overlay(Color(Asset.Colors.rain.color))
+            .padding(.leading, 20)
     }
 }
 
