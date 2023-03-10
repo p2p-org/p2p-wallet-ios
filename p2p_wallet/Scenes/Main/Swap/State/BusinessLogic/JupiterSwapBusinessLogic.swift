@@ -235,6 +235,10 @@ enum JupiterSwapBusinessLogic {
                 feeAccount: nil,
                 computeUnitPriceMicroLamports: nil
             )
+            
+            guard let swapTransaction else {
+                throw JupiterError.invalidResponse
+            }
 
             return state.modified {
                 $0.status = .ready
