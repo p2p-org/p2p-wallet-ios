@@ -287,6 +287,8 @@ private extension SwapViewModel {
             if state.fromToken.address == Token.nativeSolana.address {
                 notificationService.showToast(title: "✅", text: L10n.weLeftAMinimumSOLBalanceToSaveTheAccountAddress)
             }
+        case .error(.createTransactionFailed):
+            actionButtonData = SliderActionButtonData(isEnabled: false, title: L10n.creatingTransactionFailed)
         default:
             actionButtonData = SliderActionButtonData(isEnabled: false, title: L10n.swapOfTheseTokensIsnTPossible)
         }
