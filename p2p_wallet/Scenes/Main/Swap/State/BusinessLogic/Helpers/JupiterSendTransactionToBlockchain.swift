@@ -17,11 +17,11 @@ extension JupiterSwapBusinessLogic {
         // get versioned transaction
         var versionedTransaction = versionedTransaction
         
-        // get blockhash if needed
-        if versionedTransaction.message.value.recentBlockhash == nil {
-            let blockHash = try await solanaAPIClient.getRecentBlockhash()
-            versionedTransaction.setRecentBlockHash(blockHash)
-        }
+        // get blockhash if needed (don't need any more)
+//        if versionedTransaction.message.value.recentBlockhash == nil {
+//            let blockHash = try await solanaAPIClient.getRecentBlockhash()
+//            versionedTransaction.setRecentBlockHash(blockHash)
+//        }
         
         // sign transaction
         try versionedTransaction.sign(signers: [account])
