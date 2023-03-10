@@ -2,6 +2,7 @@ import Combine
 import SwiftUI
 import KeyAppUI
 import SolanaSwift
+import Resolver
 
 enum JupiterSwapSource: String {
     case actionPanel, tapMain, tapToken, solend
@@ -37,21 +38,33 @@ final class JupiterSwapCoordinator: Coordinator<Void> {
     }
 
     override func start() -> AnyPublisher<Void, Never> {
+        // create shared stateMachine
+        let stateMachine = JupiterSwapStateMachine(
+            initialState: .zero,
+            services: JupiterSwapServices(
+                jupiterClient: Resolver.resolve(),
+                pricesAPI: Resolver.resolve(),
+                solanaAPIClient: Resolver.resolve(),
+                relayContextManager: Resolver.resolve()
+            )
+        )
+        
         // input viewModels
         let fromTokenInputViewModel = SwapInputViewModel(
-            stateMachine: viewModel.stateMachine,
+            stateMachine: stateMachine,
             isFromToken: true,
             openKeyboardOnStart: params.openKeyboardOnStart
         )
         
         let toTokenInputViewModel = SwapInputViewModel(
-            stateMachine: viewModel.stateMachine,
+            stateMachine: stateMachine,
             isFromToken: false,
             openKeyboardOnStart: params.openKeyboardOnStart
         )
         
         // swap viewModel
         viewModel = SwapViewModel(
+            stateMachine: stateMachine,
             fromTokenInputViewModel: fromTokenInputViewModel,
             toTokenInputViewModel: toTokenInputViewModel,
             source: params.source,
