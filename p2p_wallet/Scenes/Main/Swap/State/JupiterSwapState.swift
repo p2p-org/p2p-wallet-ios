@@ -25,6 +25,7 @@ struct JupiterSwapState: Equatable {
         case loadingAmountTo
         case loadingTokenTo
         case switching
+        case creatingSwapTransaction
         case ready
         case error(reason: ErrorReason)
     }
