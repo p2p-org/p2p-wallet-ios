@@ -12,6 +12,16 @@ public enum AsynValueStatus {
     case initializing
     case fetching
     case ready
+    
+    static public func combine(lhs: Self, rhs: Self) -> Self {
+        if lhs == .initializing || rhs == .initializing {
+            return .initializing
+        } else if lhs == .fetching || rhs == .fetching {
+            return .fetching
+        } else {
+            return .ready
+        }
+    }
 }
 
 public struct AsyncValueState<T> {
@@ -34,8 +44,8 @@ public struct AsyncValueState<T> {
     }
 }
 
-extension AsyncValueState where T: Sequence {
-    public func innerApply<Output>(_ transform: (T.Element) -> Output) -> AsyncValueState<[Output]> {
+public extension AsyncValueState where T: Sequence {
+    func innerApply<Output>(_ transform: (T.Element) -> Output) -> AsyncValueState<[Output]> {
         .init(
             status: status,
             value: value.map { transform($0) },
@@ -45,13 +55,25 @@ extension AsyncValueState where T: Sequence {
 }
 
 public class AsyncValue<T> {
-    public typealias Request = () async throws -> T
+    public typealias Request = () async -> (T?, Error?)
+    public typealias ThrowableRequest = () async throws -> T
     
     @Published public var state: AsyncValueState<T>
     
     public init(initialItem: T, request: @escaping Request) {
         state = .init(status: .initializing, value: initialItem)
         self.request = request
+    }
+    
+    public init(initialItem: T, request: @escaping ThrowableRequest) {
+        state = .init(status: .initializing, value: initialItem)
+        self.request = {
+            do {
+                return (try await request(), nil)
+            } catch {
+                return (nil, error)
+            }
+        }
     }
     
     private var request: Request
@@ -67,6 +89,12 @@ public class AsyncValue<T> {
         
         // Create a new task
         currentTask = Task {
+            defer {
+                // Finish task
+                currentTask = nil
+                state.status = .ready
+            }
+            
             // Prepare
             if state.status == .ready {
                 state.status = .fetching
@@ -74,17 +102,12 @@ public class AsyncValue<T> {
             state.error = nil
             
             // Fetching
-            do {
-                self.state.value = try await request()
-            } catch {
-                if !Task.isCancelled {
-                    state.error = error
-                }
-            }
+            let (value, error) = await request()
             
-            // Finish task
-            currentTask = nil
-            state.status = .ready
+            if Task.isCancelled { return }
+            
+            if let value { self.state.value = value }
+            self.state.error = error
         }
         
         return currentTask

@@ -9,6 +9,7 @@ import AnalyticsManager
 import Combine
 import Foundation
 import KeyAppBusiness
+import KeyAppKitCore
 import Resolver
 import Sell
 import SolanaSwift
@@ -17,6 +18,9 @@ import SolanaSwift
 class HomeViewModel: ObservableObject {
     // MARK: - Dependencies
 
+    @Injected private var solanaAccountsService: SolanaAccountsService
+    @Injected private var ethereumAccountsService: EthereumAccountsService
+
     @Injected private var analyticsManager: AnalyticsManager
     @Injected private var clipboardManager: ClipboardManagerType
     @Injected private var solanaTracker: SolanaTracker
@@ -24,7 +28,6 @@ class HomeViewModel: ObservableObject {
     @Injected private var accountStorage: AccountStorageType
     @Injected private var nameStorage: NameStorageType
     @Injected private var createNameService: CreateNameService
-    @Injected private var solanaAccountsManager: SolanaAccountsService
     @Injected private var sellDataService: any SellDataService
 
     // MARK: - Published properties
@@ -51,12 +54,12 @@ class HomeViewModel: ObservableObject {
 
     func reload() {
         Task {
-            try await solanaAccountsManager.fetch()
+            try await solanaAccountsService.fetch()
         }
     }
 
     func copyToClipboard() {
-        clipboardManager.copyToClipboard(solanaAccountsManager.state.value.nativeWallet?.data.pubkey ?? "")
+        clipboardManager.copyToClipboard(solanaAccountsService.state.value.nativeWallet?.data.pubkey ?? "")
         notificationsService.showToast(title: "🖤", text: L10n.addressWasCopiedToClipboard, haptic: true)
         analyticsManager.log(event: .mainCopyAddress)
     }
@@ -95,39 +98,78 @@ private extension HomeViewModel {
                 .store(in: &subscriptions)
         }
 
-        // isInitialized
-        solanaAccountsManager
+        // Check if accounts managers was initialized.
+        let solanaInitialization = solanaAccountsService
             .$state
             .map { $0.status != .initializing }
+
+        let ethereumInitialization = ethereumAccountsService
+            .$state
+            .map { $0.status != .initializing }
+
+        // Merge two services.
+        Publishers
+            .CombineLatest(solanaInitialization, ethereumInitialization)
+            .map { $0 && $1 }
             .weakAssign(to: \.isInitialized, on: self)
             .store(in: &subscriptions)
 
         // state, address, error, log
-        solanaAccountsManager
-            .$state
+
+        Publishers
+            .CombineLatest(solanaAccountsService.$state, ethereumAccountsService.$state)
             .receive(on: RunLoop.main)
-            .sink { [weak self] state in
+            .sink { [weak self] solanaState, ethereumState in
                 guard let self else { return }
 
-                // accumulate total amount
-                let fiatAmount = state.value.totalAmountInCurrentFiat
-                let isEmpty = fiatAmount <= 0
+                let hasAnyTokenWithPositiveBalance =
+                    solanaState.value.contains(where: { account in (account.data.lamports ?? 0) > 0 }) &&
+                    ethereumState.value.contains(where: { account in account.balance > 0 })
 
-                // address
+                // TODO: Bad place
                 self.updateAddressIfNeeded()
 
-                switch state.status {
+                // Merge two status
+                let mergedStatus = AsynValueStatus.combine(lhs: solanaState.status, rhs: ethereumState.status)
+
+                switch mergedStatus {
                 case .initializing:
                     self.state = .pending
                 default:
-                    self.state = isEmpty ? .empty : .withTokens
+                    self.state = hasAnyTokenWithPositiveBalance ? .withTokens : .empty
 
                     // log
-                    self.analyticsManager.log(parameter: .userHasPositiveBalance(!isEmpty))
-                    self.analyticsManager.log(parameter: .userAggregateBalance(fiatAmount))
+//                    self.analyticsManager.log(parameter: .userHasPositiveBalance(hasAnyTokenWithPositiveBalance))
+//                    self.analyticsManager.log(parameter: .userAggregateBalance(fiatAmount))
                 }
             }
             .store(in: &subscriptions)
+
+//        solanaAccountsService
+//            .$state
+//            .receive(on: RunLoop.main)
+//            .sink { [weak self] state in
+//                guard let self else { return }
+//
+//                // accumulate total amount
+//                let fiatAmount = state.value.totalAmountInCurrentFiat
+//                let isEmpty = fiatAmount <= 0
+//
+//                // address
+//                self.updateAddressIfNeeded()
+//
+//                switch state.status {
+//                case .initializing:
+//                    self.state = .pending
+//                default:
+//                    self.state = isEmpty ? .empty : .withTokens
+//
+//                    // log
+//                    self.analyticsManager.log(parameter: .userHasPositiveBalance(!isEmpty))
+//                    self.analyticsManager.log(parameter: .userAggregateBalance(fiatAmount))
+//                }
+//            }
+//            .store(in: &subscriptions)
 
         // update name when needed
         createNameService.createNameResult
