@@ -113,7 +113,8 @@ struct JupiterSwapState: Equatable {
     }
     
     var priceImpact: SwapPriceImpact? {
-        switch route?.priceImpactPct {
+        guard let value = route?.priceImpactPct else { return nil }
+        switch value {
         case let val where val >= 0.01 && val < 0.03:
             return .medium
         case let val where val >= 0.03:
