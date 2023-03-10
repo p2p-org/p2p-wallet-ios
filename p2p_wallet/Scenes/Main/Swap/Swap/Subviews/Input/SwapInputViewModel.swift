@@ -77,13 +77,6 @@ final class SwapInputViewModel: BaseViewModel, ObservableObject {
                 self.isAmountLoading = false && !self.isFromToken
             }
             .store(in: &subscriptions)
-        
-        stateMachine.forceUpdateAmountFromPublisher
-            .receive(on: RunLoop.main)
-            .sink { [weak self] value in
-                self?.amount = value
-            }
-            .store(in: &subscriptions)
 
         stateMachine.statePublisher
             .receive(on: DispatchQueue.main)

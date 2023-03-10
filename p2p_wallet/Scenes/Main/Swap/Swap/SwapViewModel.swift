@@ -27,6 +27,9 @@ final class SwapViewModel: BaseViewModel, ObservableObject {
     let submitTransaction = PassthroughSubject<(PendingTransaction, String), Never>()
 
     // MARK: - Params
+    var fromTokenInputViewModel: SwapInputViewModel
+    var toTokenInputViewModel: SwapInputViewModel
+    
     @Published var initializingState: InitializingState = .loading
     @Published var arePricesLoading: Bool = false
 
@@ -49,16 +52,16 @@ final class SwapViewModel: BaseViewModel, ObservableObject {
     private var timer: Timer?
     private let source: JupiterSwapSource
 
-    init(source: JupiterSwapSource, preChosenWallet: Wallet? = nil) {
-        stateMachine = JupiterSwapStateMachine(
-            initialState: .zero,
-            services: JupiterSwapServices(
-                jupiterClient: Resolver.resolve(),
-                pricesAPI: Resolver.resolve(),
-                solanaAPIClient: Resolver.resolve(),
-                relayContextManager: Resolver.resolve()
-            )
-        )
+    init(
+        stateMachine: JupiterSwapStateMachine,
+        fromTokenInputViewModel: SwapInputViewModel,
+        toTokenInputViewModel: SwapInputViewModel,
+        source: JupiterSwapSource,
+        preChosenWallet: Wallet? = nil
+    ) {
+        self.fromTokenInputViewModel = fromTokenInputViewModel
+        self.toTokenInputViewModel = toTokenInputViewModel
+        self.stateMachine = stateMachine
         self.preChosenWallet = preChosenWallet
         self.source = source
         super.init()
@@ -238,6 +241,14 @@ private extension SwapViewModel {
             .sinkAsync(receiveValue: { [weak self] _ in
                 guard let self else { return }
                 let newState = await self.stateMachine.accept(action: .switchFromAndToTokens)
+                
+                // when switching from and to token, the amountFrom token is taken from amountTo
+                // but the input textfield value is not changed accordingly, so we must synchronize
+                // textView's amount with new amountFrom by modifying amount Published value
+                await MainActor.run { [weak self] in
+                    guard let self else { return }
+                    self.fromTokenInputViewModel.amount = self.currentState.amountFrom
+                }
                 self.logSwitch(from: newState.fromToken, to: newState.toToken)
             })
             .store(in: &subscriptions)
