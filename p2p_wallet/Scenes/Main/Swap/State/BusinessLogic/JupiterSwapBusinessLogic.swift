@@ -208,10 +208,6 @@ enum JupiterSwapBusinessLogic {
             let state = state.modified {
                 $0.status = .creatingSwapTransaction
             }
-            return await createTransaction(
-                state: state,
-                services: services
-            )
         }
     }
     
