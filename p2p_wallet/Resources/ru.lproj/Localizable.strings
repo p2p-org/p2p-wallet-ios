@@ -1273,3 +1273,5 @@ You can try again, but your new transaction will be subject to the current rates
 "Low slippage. We recommend to increase slippage manually" = "Низкое проскальзывание.  Рекомендуем увеличить проскальзывание вручную";
 "Increase slippage and try again" = "Увеличьте проскальзывание и повторите попытку.";
 "Oops, something went wrong. Please try again later" = "Упс! Что-то пошло не так.  Пожалуйста, повторите попытку позже";
+"Integrity of the route has been compromised" = "Целостность маршрута нарушена";
+"Creating transaction failed" = "Не удалось создать транзакцию";
