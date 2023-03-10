@@ -2,6 +2,7 @@ import Combine
 import SwiftUI
 import KeyAppUI
 import SolanaSwift
+import Resolver
 
 enum JupiterSwapSource: String {
     case actionPanel, tapMain, tapToken, solend
@@ -37,10 +38,41 @@ final class JupiterSwapCoordinator: Coordinator<Void> {
     }
 
     override func start() -> AnyPublisher<Void, Never> {
-        viewModel = SwapViewModel(source: params.source, preChosenWallet: params.preChosenWallet)
-        let fromViewModel = SwapInputViewModel(stateMachine: viewModel.stateMachine, isFromToken: true, openKeyboardOnStart: params.openKeyboardOnStart)
-        let toViewModel = SwapInputViewModel(stateMachine: viewModel.stateMachine, isFromToken: false, openKeyboardOnStart: params.openKeyboardOnStart)
-        let view = SwapView(viewModel: viewModel, fromViewModel: fromViewModel, toViewModel: toViewModel)
+        // create shared stateMachine
+        let stateMachine = JupiterSwapStateMachine(
+            initialState: .zero,
+            services: JupiterSwapServices(
+                jupiterClient: Resolver.resolve(),
+                pricesAPI: Resolver.resolve(),
+                solanaAPIClient: Resolver.resolve(),
+                relayContextManager: Resolver.resolve()
+            )
+        )
+        
+        // input viewModels
+        let fromTokenInputViewModel = SwapInputViewModel(
+            stateMachine: stateMachine,
+            isFromToken: true,
+            openKeyboardOnStart: params.openKeyboardOnStart
+        )
+        
+        let toTokenInputViewModel = SwapInputViewModel(
+            stateMachine: stateMachine,
+            isFromToken: false,
+            openKeyboardOnStart: params.openKeyboardOnStart
+        )
+        
+        // swap viewModel
+        viewModel = SwapViewModel(
+            stateMachine: stateMachine,
+            fromTokenInputViewModel: fromTokenInputViewModel,
+            toTokenInputViewModel: toTokenInputViewModel,
+            source: params.source,
+            preChosenWallet: params.preChosenWallet
+        )
+        
+        // view
+        let view = SwapView(viewModel: viewModel)
         let controller: UIViewController = view.asViewController(withoutUIKitNavBar: false)
         controller.hidesBottomBarWhenPushed = params.hideTabBar
 //        if params.openKeyboardOnStart {
@@ -57,17 +89,17 @@ final class JupiterSwapCoordinator: Coordinator<Void> {
             }
             .store(in: &subscriptions)
 
-        fromViewModel.changeTokenPressed
-            .sink { [weak self, unowned fromViewModel] in
+        fromTokenInputViewModel.changeTokenPressed
+            .sink { [weak self, unowned fromTokenInputViewModel] in
                 guard let self else { return }
-                fromViewModel.isFirstResponder = false
+                fromTokenInputViewModel.isFirstResponder = false
                 self.openChooseToken(fromToken: true)
             }
             .store(in: &subscriptions)
-        toViewModel.changeTokenPressed
-            .sink { [weak self, unowned fromViewModel] in
+        toTokenInputViewModel.changeTokenPressed
+            .sink { [weak self, unowned fromTokenInputViewModel] in
                 guard let self else { return }
-                fromViewModel.isFirstResponder = false
+                fromTokenInputViewModel.isFirstResponder = false
                 self.openChooseToken(fromToken: false)
             }
             .store(in: &subscriptions)

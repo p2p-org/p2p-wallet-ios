@@ -3,11 +3,9 @@ import Combine
 
 actor JupiterSwapStateMachine: StateMachine {
     private nonisolated let stateSubject: CurrentValueSubject<JupiterSwapState, Never>
-    private nonisolated let forceUpdateAmountFromSubject = PassthroughSubject<Double?, Never>()
 
     nonisolated var statePublisher: AnyPublisher<JupiterSwapState, Never> { stateSubject.eraseToAnyPublisher() }
     nonisolated var currentState: JupiterSwapState { stateSubject.value }
-    nonisolated var forceUpdateAmountFromPublisher: AnyPublisher<Double?, Never> { forceUpdateAmountFromSubject.eraseToAnyPublisher() }
 
     nonisolated let services: JupiterSwapServices
 
@@ -40,15 +38,7 @@ actor JupiterSwapStateMachine: StateMachine {
             action: action,
             services: services
         )
-        
-        // force update amount
-        switch action {
-        case .switchFromAndToTokens:
-            forceUpdateAmountFromSubject.send(newState.amountFrom)
-        default:
-            break
-        }
-        
+
         // return the state
         stateSubject.send(newState)
         
