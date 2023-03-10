@@ -28,6 +28,15 @@ struct JupiterSwapState: Equatable {
         case creatingSwapTransaction
         case ready
         case error(reason: ErrorReason)
+        
+        var hasError: Bool {
+            switch self {
+            case .error:
+                return true
+            default:
+                return false
+            }
+        }
     }
 
     enum SwapPriceImpact {

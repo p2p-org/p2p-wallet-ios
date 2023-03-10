@@ -5,6 +5,12 @@ enum JupiterSwapBusinessLogic {
         state: JupiterSwapState,
         action: JupiterSwapAction
     ) -> Bool {
+        // perform action whenever error appears
+        if state.status.hasError {
+            return true
+        }
+        
+        // otherwise check the action
         switch action {
         case .initialize:
             return true
