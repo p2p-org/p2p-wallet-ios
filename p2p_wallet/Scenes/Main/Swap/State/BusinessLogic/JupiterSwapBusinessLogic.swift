@@ -205,7 +205,7 @@ enum JupiterSwapBusinessLogic {
             )
         case .chooseRoute:
             // create swap transaction
-            let state = state.modified {
+            return state.modified {
                 $0.status = .creatingSwapTransaction
             }
         }
