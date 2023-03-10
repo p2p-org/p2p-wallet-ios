@@ -184,7 +184,6 @@ extension Resolver: ResolverRegistering {
         if !Defaults.isCoingeckoProviderDisabled {
             register { CoinGeckoPricesAPI() }
                 .implements(SolanaPricesAPI.self)
-                .implements(CoinGeckoPricesAPI.self)
                 .scope(.application)
         } else {
             register { CryptoComparePricesAPI(apikey: .secretConfig("CRYPTO_COMPARE_API_KEY")) }
