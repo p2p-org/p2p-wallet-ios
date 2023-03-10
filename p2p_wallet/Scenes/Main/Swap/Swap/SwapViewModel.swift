@@ -219,6 +219,8 @@ private extension SwapViewModel {
         switch state.status {
         case .requiredInitialize, .initializing, .loadingTokenTo, .loadingAmountTo, .switching:
             arePricesLoading = true
+        case .creatingSwapTransaction:
+            arePricesLoading = false
         case .ready:
             arePricesLoading = false
             guard state.amountFrom > 0 else { return }
@@ -226,7 +228,7 @@ private extension SwapViewModel {
                 isEnabled: true,
                 title: L10n.swap(state.fromToken.token.symbol, state.toToken.token.symbol)
             )
-        default:
+        case .error:
             arePricesLoading = false
         }
     }
@@ -271,7 +273,7 @@ private extension SwapViewModel {
             if state.amountFrom == 0 {
                 actionButtonData = SliderActionButtonData(isEnabled: false, title: L10n.enterTheAmount)
             }
-        case .requiredInitialize, .loadingTokenTo, .loadingAmountTo, .switching, .initializing:
+        case .requiredInitialize, .loadingTokenTo, .loadingAmountTo, .switching, .initializing, .creatingSwapTransaction:
             actionButtonData = SliderActionButtonData(isEnabled: false, title: L10n.counting)
         case .error(.notEnoughFromToken):
             actionButtonData = SliderActionButtonData(isEnabled: false, title: L10n.notEnough(state.fromToken.token.symbol))
