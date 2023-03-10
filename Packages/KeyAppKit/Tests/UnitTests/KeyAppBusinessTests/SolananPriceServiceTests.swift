@@ -7,7 +7,7 @@ import SolanaSwift
 final class PriceServiceTests: XCTestCase {
     func testKey() {
         let api = MockSolanaPricesAPI()
-        let priceService = PriceService(api: api, lifetime: 10)
+        let priceService = SolanaPriceService(api: api, lifetime: 10)
         
         let key = priceService.primaryKey("123", "usd")
         XCTAssertEqual(key, "123-usd")
@@ -17,7 +17,7 @@ final class PriceServiceTests: XCTestCase {
     func testLifetimeForSingleToken() async throws {
         // Set 10 seconds lifetime
         let api = MockSolanaPricesAPI()
-        let priceService = PriceService(api: api, lifetime: 10)
+        let priceService = SolanaPriceService(api: api, lifetime: 10)
 
         api.currentPriceResponse = [
             .nativeSolana: CurrentPrice(value: 12.0, change24h: nil)
@@ -53,7 +53,7 @@ final class PriceServiceTests: XCTestCase {
     func testLifetimeForBatchTokens() async throws {
         // Set 10 seconds lifetime
         let api = MockSolanaPricesAPI()
-        let priceService = PriceService(api: api, lifetime: 10)
+        let priceService = SolanaPriceService(api: api, lifetime: 10)
 
         api.currentPriceResponse = [
             .nativeSolana: CurrentPrice(value: 12.0, change24h: nil),

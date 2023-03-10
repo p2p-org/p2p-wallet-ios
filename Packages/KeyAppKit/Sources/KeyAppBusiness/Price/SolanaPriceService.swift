@@ -13,7 +13,7 @@ import SolanaSwift
 /// This class service allow client to get exchange rate between token and fiat.
 ///
 /// Each rate has 15 minutes lifetime. When the lifetime is expired, the new rate will be requested.
-public class PriceService {
+public class SolanaPriceService {
     /// Provider.
     internal let api: SolanaPricesAPI
 
@@ -24,7 +24,7 @@ public class PriceService {
         self.api = api
         self.cache = LongTermCache(entryLifetime: lifetime, maximumEntryCount: 999)
     }
-
+    
     /// Get exchange rate for solana token.
     public func getPrice(token: Token, fiat: String) async throws -> CurrentPrice? {
         guard let coingeckoId = token.extensions?.coingeckoId else { return nil }

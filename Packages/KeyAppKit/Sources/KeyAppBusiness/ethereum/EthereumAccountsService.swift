@@ -8,6 +8,7 @@
 import Combine
 import Foundation
 import KeyAppKitCore
+import SolanaPricesAPIs
 import Web3
 
 public final class EthereumAccountsService: NSObject, ObservableObject {
@@ -21,42 +22,75 @@ public final class EthereumAccountsService: NSObject, ObservableObject {
         address: String,
         web3: Web3,
         ethereumTokenRepository: EthereumTokensRepository,
-        priceService: PriceService,
+        priceService: EthereumPriceService,
         trackingList: [EthereumAddress],
-        fiat: String
+        fiat: String,
+        errorObservable: any ErrorObserver
     ) {
         let address = try? EthereumAddress(hex: address, eip55: false)
 
         asyncValue = .init(initialItem: [], request: {
             guard let address else {
-                throw Error.invalidEthereumAddress
+                return (nil, Error.invalidEthereumAddress)
             }
 
-            // Fetch balance and token balances
-            let (balance, wallet) = try await (
-                web3.eth.getBalance(address: address, block: .latest),
-                web3.eth.getTokenBalances(address: address)
-            )
+            do {
+                // Fetch balance and token balances
+                let (balance, wallet) = try await (
+                    web3.eth.getBalance(address: address, block: .latest),
+                    web3.eth.getTokenBalances(address: address)
+                )
 
-            var tokenBalances = wallet.tokenBalances
+                var nativeAccount = Account(token: .init(), balance: balance.quantity, price: nil)
 
-            // Filter token by tracking list
-            if !trackingList.isEmpty {
-                tokenBalances = tokenBalances.filter { balance in
-                    trackingList.contains(balance.contractAddress)
+                // Build token accounts
+                var tokenBalances = wallet.tokenBalances
+
+                // Filter token by tracking list
+                if !trackingList.isEmpty {
+                    tokenBalances = tokenBalances.filter { balance in
+                        trackingList.contains(balance.contractAddress)
+                    }
                 }
+
+                // Build token accounts
+                var resolvedTokenAccounts: [Account] = try await Self.resolveTokenAccounts(
+                    balances: tokenBalances,
+                    repository: ethereumTokenRepository
+                )
+
+                do {
+                    // Fetch prices
+                    let (etherumPrice, tokenPrices) = try await (
+                        priceService.getEthereumPrice(fiat: fiat),
+                        priceService.getPrices(tokens: resolvedTokenAccounts.map(\.token), fiat: fiat)
+                    )
+
+                    // Set price to native token
+                    nativeAccount.price = etherumPrice
+
+                    // Set price to tokens.
+                    for index in resolvedTokenAccounts.indices {
+                        let token = resolvedTokenAccounts[index].token
+                        if let price = tokenPrices[token] {
+                            resolvedTokenAccounts[index].price = price
+                        }
+                    }
+                } catch {
+                    return ([nativeAccount] + resolvedTokenAccounts, error)
+                }
+
+                return ([nativeAccount] + resolvedTokenAccounts, nil)
+            } catch {
+                return (nil, error)
             }
-
-            // Build token accounts
-            let resolvedTokenAccounts: [Account] = try await Self.resolveTokenAccounts(
-                balances: tokenBalances,
-                repository: ethereumTokenRepository
-            )
-
-            return [Account(token: .init(), balance: balance.quantity)] + resolvedTokenAccounts
         })
 
         super.init()
+
+        errorObservable
+            .handleAsyncValue($state)
+            .store(in: &subscriptions)
 
         asyncValue
             .$state
@@ -110,8 +144,27 @@ public final class EthereumAccountsService: NSObject, ObservableObject {
 
 extension EthereumAccountsService {
     public struct Account: Equatable {
-        let token: EthereumToken
-        let balance: BigUInt
+        public let token: EthereumToken
+        public let balance: BigUInt
+        public fileprivate(set) var price: Double?
+
+        internal init(token: EthereumToken, balance: BigUInt, price: Double? = nil) {
+            self.token = token
+            self.balance = balance
+            self.price = price
+        }
+
+        public var amountInFiat: Double {
+            return 0.0
+//            // Displayed format
+//            let (quotient, remainder) = balance.quotientAndRemainder(dividingBy: BigUInt(10).power(Int(token.decimals))))
+//
+//
+//            Decimal
+//            let amount = (balance * pow(10, -Double(token.decimals))).rounded(toPlaces: token.decimals)
+//            amount * (price?.value ?? 0)
+//            EthereumQuantity
+        }
     }
 
     enum Error: Swift.Error {

@@ -11,6 +11,7 @@ import FeeRelayerSwift
 import FirebaseRemoteConfig
 import History
 import KeyAppBusiness
+import KeyAppKitCore
 import Moonpay
 import NameService
 import Onboarding
@@ -43,6 +44,9 @@ extension Resolver: ResolverRegistering {
 
     /// Application scope: Lifetime app's services
     @MainActor private static func registerForApplicationScope() {
+        register { SentryErrorObserver() }
+            .implements(ErrorObserver.self)
+
         // Application warmup manager
         register {
             WarmupManager(processes: [
@@ -104,6 +108,13 @@ extension Resolver: ResolverRegistering {
             )
         }
         .scope(.application)
+
+        // Prices
+        register { SolanaPriceService(api: resolve()) }
+            .scope(.application)
+
+        register { EthereumPriceService(api: resolve()) }
+            .scope(.application)
 
         // AnalyticsManager
         register {
@@ -173,6 +184,7 @@ extension Resolver: ResolverRegistering {
         if !Defaults.isCoingeckoProviderDisabled {
             register { CoinGeckoPricesAPI() }
                 .implements(SolanaPricesAPI.self)
+                .implements(CoinGeckoPricesAPI.self)
                 .scope(.application)
         } else {
             register { CryptoComparePricesAPI(apikey: .secretConfig("CRYPTO_COMPARE_API_KEY")) }
@@ -186,6 +198,9 @@ extension Resolver: ResolverRegistering {
 
         register { CreateNameServiceImpl() }
             .implements(CreateNameService.self)
+            .scope(.application)
+
+        register { EthereumTokensRepository(web3: resolve()) }
             .scope(.application)
     }
 
@@ -256,8 +271,6 @@ extension Resolver: ResolverRegistering {
             .implements(JWTTokenValidator.self)
 
         register { Web3(rpcURL: "https://eth-mainnet.g.alchemy.com/v2/a3NxxBPY4WUcsXnivRq-ikYKXFB67oXm") }
-        
-        register { EthereumTokensRepository(web3: resolve()) }
     }
 
     /// Session scope: Live when user is authenticated
@@ -365,9 +378,6 @@ extension Resolver: ResolverRegistering {
             .implements(SellPriceProvider.self)
             .scope(.session)
 
-        register { PriceService(api: resolve()) }
-            .scope(.session)
-
         // WalletsViewModel
         register { WalletsViewModel() }
             .implements(WalletsRepository.self)
@@ -380,7 +390,21 @@ extension Resolver: ResolverRegistering {
                 tokensService: resolve(),
                 priceService: resolve(),
                 accountObservableService: resolve(),
-                fiat: Defaults.fiat.rawValue
+                fiat: Defaults.fiat.rawValue,
+                errorObservable: resolve()
+            )
+        }
+        .scope(.session)
+
+        register {
+            EthereumAccountsService(
+                address: resolve(UserWalletManager.self).wallet?.ethereumKeypair.address ?? "",
+                web3: resolve(),
+                ethereumTokenRepository: resolve(),
+                priceService: resolve(),
+                trackingList: [],
+                fiat: Defaults.fiat.rawValue,
+                errorObservable: resolve()
             )
         }
         .scope(.session)

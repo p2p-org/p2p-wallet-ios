@@ -25,50 +25,64 @@ public final class SolanaAccountsService: NSObject, ObservableObject {
         accountStorage: SolanaAccountStorage,
         solanaAPIClient: SolanaAPIClient,
         tokensService: SolanaTokensRepository,
-        priceService: PriceService,
+        priceService: SolanaPriceService,
         accountObservableService: SolanaAccountsObservableService,
-        fiat: String
+        fiat: String,
+        errorObservable: any ErrorObserver
     ) {
         asyncValue = .init(initialItem: []) {
             guard let accountAddress = accountStorage.account?.publicKey.base58EncodedString else {
-                throw Error.authorityError
+                return (nil, Error.authorityError)
             }
 
             var newAccounts: [Account] = []
 
-            // Updating native account balance and get spl tokens
-            let (balance, splAccounts) = try await (
-                // TODO: Check commitment value! Previously was ``recent``
-                solanaAPIClient.getBalance(account: accountAddress, commitment: "processed"),
-                solanaAPIClient.getTokenWallets(account: accountAddress, tokensRepository: tokensService)
-            )
-
-            let solanaAccount = Account(
-                data: Wallet.nativeSolana(
-                    pubkey: accountAddress,
-                    lamport: balance
+            do {
+                // Updating native account balance and get spl tokens
+                let (balance, splAccounts) = try await (
+                    // TODO: Check commitment value! Previously was ``recent``
+                    solanaAPIClient.getBalance(account: accountAddress, commitment: "processed"),
+                    solanaAPIClient.getTokenWallets(account: accountAddress, tokensRepository: tokensService)
                 )
-            )
 
-            newAccounts = [solanaAccount] + splAccounts.map { Account(data: $0, price: nil) }
+                let solanaAccount = Account(
+                    data: Wallet.nativeSolana(
+                        pubkey: accountAddress,
+                        lamport: balance
+                    )
+                )
 
-            // Updating balance
-            let prices = try await priceService.getPrices(
-                tokens: newAccounts.map(\.data.token),
-                fiat: fiat
-            )
+                newAccounts = [solanaAccount] + splAccounts.map { Account(data: $0, price: nil) }
 
-            for index in newAccounts.indices {
-                let token = newAccounts[index].data.token
-                if let price = prices[token] {
-                    newAccounts[index].price = price
+                do {
+                    // Updating balance
+                    let prices = try await priceService.getPrices(
+                        tokens: newAccounts.map(\.data.token),
+                        fiat: fiat
+                    )
+
+                    for index in newAccounts.indices {
+                        let token = newAccounts[index].data.token
+                        if let price = prices[token] {
+                            newAccounts[index].price = price
+                        }
+                    }
+                } catch {
+                    return (newAccounts, error)
                 }
-            }
 
-            return newAccounts
+                return (newAccounts, nil)
+            } catch {
+                return (nil, error)
+            }
         }
 
         super.init()
+
+        // Report error
+        errorObservable
+            .handleAsyncValue($state)
+            .store(in: &subscriptions)
 
         // Emit data
         asyncValue
@@ -118,25 +132,25 @@ public final class SolanaAccountsService: NSObject, ObservableObject {
     }
 }
 
-extension Array where Element == SolanaAccountsService.Account {
+public extension Array where Element == SolanaAccountsService.Account {
     /// Helper method for quickly extraction native account.
-    public var nativeWallet: Element? {
+    var nativeWallet: Element? {
         first(where: { $0.data.isNativeSOL })
     }
 
-    public var totalAmountInCurrentFiat: Double {
+    var totalAmountInCurrentFiat: Double {
         reduce(0) { $0 + $1.amountInFiat }
     }
 
-    public var isTotalBalanceEmpty: Bool {
+    var isTotalBalanceEmpty: Bool {
         totalAmountInCurrentFiat == 0
     }
 }
 
-extension SolanaAccountsService {
+public extension SolanaAccountsService {
     /// Solana account data structure.
     /// This class is combination of raw account data and additional application data.
-    public struct Account: Identifiable, Equatable {
+    struct Account: Identifiable, Equatable {
         public var id: String {
             data.pubkey ?? data.token.address
         }
@@ -153,13 +167,13 @@ extension SolanaAccountsService {
         }
     }
 
-    public enum Status {
+    enum Status {
         case initializing
         case updating
         case ready
     }
 
-    public enum Error: Swift.Error {
+    enum Error: Swift.Error {
         case authorityError
     }
 }
