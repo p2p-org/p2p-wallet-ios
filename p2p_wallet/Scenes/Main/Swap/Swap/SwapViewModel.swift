@@ -456,7 +456,7 @@ extension SwapViewModel {
         analyticsManager.log(event: .swapSwitchTokens(tokenAName: from.token.symbol, tokenBName: to.token.symbol))
     }
 
-    private func log(priceImpact: JupiterSwapState.SwapPriceImpact?, value: Double?) {
+    private func log(priceImpact: JupiterSwapState.SwapPriceImpact?, value: Decimal?) {
         guard let priceImpact, let value else { return }
         switch priceImpact {
         case .medium:
