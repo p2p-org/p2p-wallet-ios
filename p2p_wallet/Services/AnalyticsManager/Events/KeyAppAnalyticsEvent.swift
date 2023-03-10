@@ -222,8 +222,8 @@ enum KeyAppAnalyticsEvent: AnalyticsEvent {
     case swapChangingValueTokenB(tokenBName: String, tokenBValue: Double)
     case swapChangingValueTokenAAll(tokenAValue: Double)
     case swapSwitchTokens(tokenAName: String, tokenBName: String)
-    case swapPriceImpactLow(priceImpact: Double)
-    case swapPriceImpactHigh(priceImpact: Double)
+    case swapPriceImpactLow(priceImpact: Decimal)
+    case swapPriceImpactHigh(priceImpact: Decimal)
     case swapErrorTokenAInsufficientAmount
     case swapErrorTokenPairNotExist
     case swapClickApproveButtonNew(tokenA: String, tokenB: String, swapSum: Double, swapUSD: Double, signature: String)
