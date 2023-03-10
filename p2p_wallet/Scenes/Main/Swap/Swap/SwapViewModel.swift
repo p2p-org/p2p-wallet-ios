@@ -53,6 +53,7 @@ final class SwapViewModel: BaseViewModel, ObservableObject {
     private let source: JupiterSwapSource
 
     init(
+        stateMachine: JupiterSwapStateMachine,
         fromTokenInputViewModel: SwapInputViewModel,
         toTokenInputViewModel: SwapInputViewModel,
         source: JupiterSwapSource,
@@ -60,15 +61,7 @@ final class SwapViewModel: BaseViewModel, ObservableObject {
     ) {
         self.fromTokenInputViewModel = fromTokenInputViewModel
         self.toTokenInputViewModel = toTokenInputViewModel
-        stateMachine = JupiterSwapStateMachine(
-            initialState: .zero,
-            services: JupiterSwapServices(
-                jupiterClient: Resolver.resolve(),
-                pricesAPI: Resolver.resolve(),
-                solanaAPIClient: Resolver.resolve(),
-                relayContextManager: Resolver.resolve()
-            )
-        )
+        self.stateMachine = stateMachine
         self.preChosenWallet = preChosenWallet
         self.source = source
         super.init()
