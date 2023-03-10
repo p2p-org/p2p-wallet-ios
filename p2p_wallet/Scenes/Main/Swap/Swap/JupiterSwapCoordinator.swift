@@ -37,10 +37,29 @@ final class JupiterSwapCoordinator: Coordinator<Void> {
     }
 
     override func start() -> AnyPublisher<Void, Never> {
-        viewModel = SwapViewModel(source: params.source, preChosenWallet: params.preChosenWallet)
-        let fromViewModel = SwapInputViewModel(stateMachine: viewModel.stateMachine, isFromToken: true, openKeyboardOnStart: params.openKeyboardOnStart)
-        let toViewModel = SwapInputViewModel(stateMachine: viewModel.stateMachine, isFromToken: false, openKeyboardOnStart: params.openKeyboardOnStart)
-        let view = SwapView(viewModel: viewModel, fromViewModel: fromViewModel, toViewModel: toViewModel)
+        // input viewModels
+        let fromTokenInputViewModel = SwapInputViewModel(
+            stateMachine: viewModel.stateMachine,
+            isFromToken: true,
+            openKeyboardOnStart: params.openKeyboardOnStart
+        )
+        
+        let toTokenInputViewModel = SwapInputViewModel(
+            stateMachine: viewModel.stateMachine,
+            isFromToken: false,
+            openKeyboardOnStart: params.openKeyboardOnStart
+        )
+        
+        // swap viewModel
+        viewModel = SwapViewModel(
+            fromTokenInputViewModel: fromTokenInputViewModel,
+            toTokenInputViewModel: toTokenInputViewModel,
+            source: params.source,
+            preChosenWallet: params.preChosenWallet
+        )
+        
+        // view
+        let view = SwapView(viewModel: viewModel)
         let controller: UIViewController = view.asViewController(withoutUIKitNavBar: false)
         controller.hidesBottomBarWhenPushed = params.hideTabBar
 //        if params.openKeyboardOnStart {
@@ -57,17 +76,17 @@ final class JupiterSwapCoordinator: Coordinator<Void> {
             }
             .store(in: &subscriptions)
 
-        fromViewModel.changeTokenPressed
-            .sink { [weak self, unowned fromViewModel] in
+        fromTokenInputViewModel.changeTokenPressed
+            .sink { [weak self, unowned fromTokenInputViewModel] in
                 guard let self else { return }
-                fromViewModel.isFirstResponder = false
+                fromTokenInputViewModel.isFirstResponder = false
                 self.openChooseToken(fromToken: true)
             }
             .store(in: &subscriptions)
-        toViewModel.changeTokenPressed
-            .sink { [weak self, unowned fromViewModel] in
+        toTokenInputViewModel.changeTokenPressed
+            .sink { [weak self, unowned fromTokenInputViewModel] in
                 guard let self else { return }
-                fromViewModel.isFirstResponder = false
+                fromTokenInputViewModel.isFirstResponder = false
                 self.openChooseToken(fromToken: false)
             }
             .store(in: &subscriptions)
