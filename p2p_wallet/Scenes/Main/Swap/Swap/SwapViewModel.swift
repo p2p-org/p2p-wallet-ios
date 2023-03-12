@@ -240,15 +240,20 @@ private extension SwapViewModel {
         switchTokens
             .sinkAsync(receiveValue: { [weak self] _ in
                 guard let self else { return }
+                // cache the current amountTo
+                let newAmountFrom = self.currentState.amountTo
+                
+                // switch from and to token
                 let newState = await self.stateMachine.accept(action: .switchFromAndToTokens)
                 
-                // when switching from and to token, the amountFrom token is taken from amountTo
-                // but the input textfield value is not changed accordingly, so we must synchronize
-                // textView's amount with new amountFrom by modifying amount Published value
+                // change amountFrom into newAmountFrom
+                // the changeAmountFrom action will be kicked
                 await MainActor.run { [weak self] in
                     guard let self else { return }
-                    self.fromTokenInputViewModel.amount = self.currentState.amountFrom
+                    self.fromTokenInputViewModel.amount = newAmountFrom
                 }
+                
+                // log
                 self.logSwitch(from: newState.fromToken, to: newState.toToken)
             })
             .store(in: &subscriptions)
