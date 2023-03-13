@@ -44,15 +44,29 @@ final class ChooseSwapTokenService: ChooseItemService {
     }
 
     func sort(items: [ChooseItemListSection]) -> [ChooseItemListSection] {
-        let newItems = items.map { section in
+        let sections = items.map { section in
             guard let tokens = section.items as? [SwapToken] else { return section }
             return ChooseItemListSection(items: tokens.sorted(
                 preferTokens: preferTokens,
                 sortByName: !fromToken
             ))
         }
-        let isEmpty = newItems.flatMap { $0.items }.isEmpty
-        return isEmpty ? [] : newItems
+        return validateEmpty(sections: sections)
+    }
+
+    func sortFiltered(by keyword: String, items: [ChooseItemListSection]) -> [ChooseItemListSection] {
+        let sections = items.map { section in
+            guard let tokens = section.items as? [SwapToken] else { return section }
+            return ChooseItemListSection(items: tokens.sorted(by: { lhs, rhs in
+                lhs.token.name.lowercased().starts(with: keyword) || lhs.token.symbol.lowercased().starts(with: keyword)
+            }))
+        }
+        return validateEmpty(sections: sections)
+    }
+
+    private func validateEmpty(sections: [ChooseItemListSection]) -> [ChooseItemListSection] {
+        let isEmpty = sections.flatMap { $0.items }.isEmpty
+        return isEmpty ? [] : sections
     }
 }
 

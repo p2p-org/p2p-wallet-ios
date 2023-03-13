@@ -23,6 +23,10 @@ final class ChooseSendTokenService: ChooseItemService {
         let isEmpty = newItems.flatMap({ $0.items }).isEmpty
         return isEmpty ? [] : newItems
     }
+
+    func sortFiltered(by keyword: String, items: [ChooseItemListSection]) -> [ChooseItemListSection] {
+        sort(items: items)
+    }
 }
 
 
