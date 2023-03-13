@@ -5,6 +5,7 @@
 //  Created by Ivan on 28.02.2023.
 //
 
+import Combine
 import SwiftUI
 import KeyAppUI
 import SkeletonUI
@@ -63,66 +64,76 @@ struct SwapSettingsView: View {
 
     private var firstSectionRows: some View {
         Group {
-            // Route
-            commonRow(
-                title: L10n.swappingThrough,
-                subtitle: viewModel.info?.currentRoute.tokensChain,
-                trailingSubtitle: viewModel.info?.currentRoute.description,
-                trailingView: Image(uiImage: .nextArrow)
-                    .resizable()
-                    .frame(width: 7.41, height: 12)
-                    .padding(.vertical, (20-12)/2)
-                    .padding(.horizontal, (20-7.41)/2)
-                    .castToAnyView(),
-                identifier: .route
-            )
-            .contentShape(Rectangle())
-            .onTapGesture {
-                viewModel.rowClicked(identifier: .route)
+            if !viewModel.status.isEmpty {
+                // Route
+                commonRow(
+                    title: L10n.swappingThrough,
+                    subtitle: viewModel.info?.currentRoute.tokensChain,
+                    trailingSubtitle: viewModel.info?.currentRoute.description,
+                    trailingView: Image(uiImage: .nextArrow)
+                        .resizable()
+                        .frame(width: 7.41, height: 12)
+                        .padding(.vertical, (20-12)/2)
+                        .padding(.horizontal, (20-7.41)/2)
+                        .castToAnyView(),
+                    identifier: .route
+                )
+                .contentShape(Rectangle())
+                .onTapGesture {
+                    viewModel.rowClicked(identifier: .route)
+                }
             }
             
-            // Network fee
-            feeRow(
-                title: L10n.networkFee,
-                fee: viewModel.info?.networkFee,
-                canBePaidByKeyApp: true,
-                identifier: .networkFee
-            )
-            
-            // Account creation fee
-            feeRow(
-                title: L10n.accountCreationFee,
-                fee: viewModel.info?.accountCreationFee,
-                canBePaidByKeyApp: false,
-                identifier: .accountCreationFee
-            )
-            
-            // Liquidity fee
-            if let liquidityFee = viewModel.info?.liquidityFee,
-               !liquidityFee.isEmpty
-            {
+            if !viewModel.status.isEmpty {
+                // Network fee
                 feeRow(
-                    title: L10n.liquidityFee,
-                    fees: liquidityFee,
-                    identifier: .liquidityFee
+                    title: L10n.networkFee,
+                    fee: viewModel.info?.networkFee,
+                    canBePaidByKeyApp: true,
+                    identifier: .networkFee
                 )
             }
             
-            // Estimated fee
-            HStack {
-                Text(L10n.estimatedFees)
-                    .fontWeight(.semibold)
-                    .apply(style: .text3)
-                
-                Spacer()
-                
-                Text(viewModel.info?.estimatedFees)
-                    .fontWeight(.semibold)
-                    .apply(style: .text3)
-                    .padding(.vertical, 10)
-                    .skeleton(with: viewModel.status == .loading, size: .init(width: 52, height: 16))
+            if !viewModel.status.isEmpty {
+                // Account creation fee
+                feeRow(
+                    title: L10n.accountCreationFee,
+                    fee: viewModel.info?.accountCreationFee,
+                    canBePaidByKeyApp: false,
+                    identifier: .accountCreationFee
+                )
             }
-            .frame(maxWidth: .infinity)
+            
+            if !viewModel.status.isEmpty {
+                // Liquidity fee
+                if let liquidityFee = viewModel.info?.liquidityFee,
+                   !liquidityFee.isEmpty
+                {
+                    feeRow(
+                        title: L10n.liquidityFee,
+                        fees: liquidityFee,
+                        identifier: .liquidityFee
+                    )
+                }
+            }
+            
+            if !viewModel.status.isEmpty {
+                // Estimated fee
+                HStack {
+                    Text(L10n.estimatedFees)
+                        .fontWeight(.semibold)
+                        .apply(style: .text3)
+                    
+                    Spacer()
+                    
+                    Text(viewModel.info?.estimatedFees)
+                        .fontWeight(.semibold)
+                        .apply(style: .text3)
+                        .padding(.vertical, 10)
+                        .skeleton(with: viewModel.status == .loading, size: .init(width: 52, height: 16))
+                }
+                .frame(maxWidth: .infinity)
+            }
         }
     }
     
@@ -200,7 +211,8 @@ struct SwapSettingsView: View {
 struct SwapSettingsView_Previews: PreviewProvider {
     static let viewModel = SwapSettingsViewModel(
         status: .loading,
-        slippage: 0.5
+        slippage: 0.5,
+        swapStatePublisher: PassthroughSubject<JupiterSwapState, Never>().eraseToAnyPublisher()
     )
     static var previews: some View {
         SwapSettingsView(viewModel: viewModel)
