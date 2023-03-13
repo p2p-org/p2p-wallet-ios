@@ -50,11 +50,11 @@ struct SendInputView: View {
         VStack(spacing: 8) {
             if let link = viewModel.currentState.sendViaLinkSeed {
                 #if !RELEASE
-                Text("key.app/gift/\(link) (tap to copy)")
+                Text("\(.sendViaLinkPrefix)/\(link) (tap to copy)")
                     .apply(style: .label2)
                     .foregroundColor(.red)
                     .onTapGesture {
-                        UIPasteboard.general.string = "key.app/gift/\(link)"
+                        UIPasteboard.general.string = "\(String.sendViaLinkPrefix)/\(link)"
                     }
                 Text("\(viewModel.currentState.recipient.address) (tap to copy)")
                     .apply(style: .label2)
