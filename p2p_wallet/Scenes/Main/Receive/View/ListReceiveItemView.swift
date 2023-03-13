@@ -14,21 +14,17 @@ struct ListReceiveItemView: View {
 
     var body: some View {
         VStack(alignment: .leading, spacing: 4) {
-            HStack {
-                Text(item.title)
-                    .foregroundColor(Color(Asset.Colors.night.color))
-                    .fontWeight(.semibold)
-                    .apply(style: .text2)
-                    .multilineTextAlignment(.leading)
-                Spacer()
-            }
-            HStack {
-                Text(item.description)
-                    .foregroundColor(Color(Asset.Colors.mountain.color))
-                    .apply(style: .text4)
-                    .multilineTextAlignment(.leading)
-                Spacer()
-            }
+            Text(item.title)
+                .foregroundColor(Color(Asset.Colors.night.color))
+                .fontWeight(.semibold)
+                .apply(style: .text2)
+                .multilineTextAlignment(.leading)
+                .frame(maxWidth: .infinity, alignment: .leading)
+            Text(item.description)
+                .foregroundColor(Color(Asset.Colors.mountain.color))
+                .apply(style: .text4)
+                .multilineTextAlignment(.leading)
+                .frame(maxWidth: .infinity, alignment: .leading)
         }
         .padding(.horizontal, 20)
         .padding(.top, item.showTopCorners ? 16 : 8)
