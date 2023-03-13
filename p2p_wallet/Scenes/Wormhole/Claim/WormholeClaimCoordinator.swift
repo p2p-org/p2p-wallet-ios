@@ -32,7 +32,7 @@ class WormholeClaimCoordinator: SmartCoordinator<WormholeClaimCoordinatorResult>
                         .sink { _ in }
                         .store(in: &self.subscriptions)
                 case let .claiming(trx):
-                    self.dismiss(.claiming(trx))
+                    self.pop(.claiming(trx))
                 }
             }
             .store(in: &subscriptions)

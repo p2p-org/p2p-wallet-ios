@@ -91,6 +91,7 @@ final class HomeAccountsViewModel: BaseViewModel, ObservableObject {
                     }
                 }
             }
+            .receive(on: RunLoop.main)
             .weakAssign(to: \.ethereumAccountsState, on: self)
             .store(in: &subscriptions)
 
@@ -100,6 +101,7 @@ final class HomeAccountsViewModel: BaseViewModel, ObservableObject {
                 let equityValue: Double = state.value.reduce(0) { $0 + $1.amountInFiat }
                 return "\(Defaults.fiat.symbol) \(equityValue.toString(maximumFractionDigits: 2))"
             }
+            .receive(on: RunLoop.main)
             .weakAssign(to: \.balance, on: self)
             .store(in: &subscriptions)
 
@@ -145,6 +147,7 @@ final class HomeAccountsViewModel: BaseViewModel, ObservableObject {
                     )
                 }
             }
+            .receive(on: RunLoop.main)
             .weakAssign(to: \.solanaAccountsState, on: self)
             .store(in: &subscriptions)
     }

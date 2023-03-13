@@ -40,7 +40,7 @@ class SupportedTokensCoordinator: SmartCoordinator<Void> {
                 .store(in: &subscriptions)
         }
 
-        var image: ReceiveNetwork.Image? = .init(icon: item.icon)
+        let image = ReceiveNetwork.Image(icon: item.icon)
 
         if item.availableNetwork.count == 1, let network = item.availableNetwork.first {
             // Token supports only one network.
