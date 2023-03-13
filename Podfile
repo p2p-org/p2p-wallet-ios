@@ -50,7 +50,7 @@ target 'p2p_wallet' do
 
   # development pods
   key_app_kit
-  pod 'CocoaDebug', :configurations => ['Debug', 'Test']
+  pod 'CocoaDebug', '1.7.2', :configurations => ['Debug', 'Test']
   pod 'FeeRelayerSwift', :git => 'https://github.com/p2p-org/FeeRelayerSwift.git', :branch => 'master'
   pod 'OrcaSwapSwift', :git => 'https://github.com/p2p-org/OrcaSwapSwift.git', :branch => 'main'
   pod 'RenVMSwift', :git => 'https://github.com/p2p-org/RenVMSwift.git', :branch => 'master'
