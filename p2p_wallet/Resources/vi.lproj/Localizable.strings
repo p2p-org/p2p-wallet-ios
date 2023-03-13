@@ -1278,5 +1278,6 @@ You can try again, but your new transaction will be subject to the current rates
 "Low slippage. We recommend to increase slippage manually" = "Độ trượt thấp.  Chúng tôi khuyên bạn nên tăng trượt theo cách thủ công";
 "Increase slippage and try again" = "Tăng độ trượt giá và thử lại";
 "Oops, something went wrong. Please try again later" = "Rất tiếc, đã xảy ra sự cố.  Vui lòng thử lại sau";
+"popular" = "phổ biến";
 "Integrity of the route has been compromised" = "Tính toàn vẹn của tuyến đường đã bị xâm phạm";
 "Creating transaction failed" = "Tạo giao dịch không thành công";
