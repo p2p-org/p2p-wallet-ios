@@ -58,11 +58,13 @@ final class ChooseSwapTokenService: ChooseItemService {
         let sections = items.map { section in
             guard var tokens = section.items as? [SwapToken] else { return section }
             tokens = tokens.sorted(by: { lhs, rhs in
+                // Put 'start' matches in the beginning of array, 'contains' after
                 lhs.token.name.lowercased().starts(with: keyword) || lhs.token.symbol.lowercased().starts(with: keyword)
             })
             if let index = tokens.firstIndex(where: {
                 $0.token.name.lowercased().elementsEqual(keyword) || $0.token.symbol.lowercased().elementsEqual(keyword)
             }) {
+                // Put exact match in the first place
                 let exactKeywordToken = tokens.remove(at: index)
                 tokens.insert(exactKeywordToken, at: .zero)
             }
