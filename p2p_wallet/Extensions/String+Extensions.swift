@@ -58,6 +58,10 @@ extension String {
     static func secretConfig(_ key: String) -> String? {
         Bundle.main.infoDictionary?[key] as? String
     }
+    
+    static var sendViaLinkPrefix: String {
+        #"https://key.app/t"#
+    }
 }
 
 extension String {
