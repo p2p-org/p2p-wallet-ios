@@ -25,6 +25,8 @@ final class SwapViewModel: BaseViewModel, ObservableObject {
     let changeFromToken = PassthroughSubject<SwapToken, Never>()
     let changeToToken = PassthroughSubject<SwapToken, Never>()
     let submitTransaction = PassthroughSubject<(PendingTransaction, String), Never>()
+    let appeared = PassthroughSubject<Void, Never>()
+    let disappeared = PassthroughSubject<Void, Never>()
 
     // MARK: - Params
     var fromTokenInputViewModel: SwapInputViewModel
@@ -78,6 +80,17 @@ final class SwapViewModel: BaseViewModel, ObservableObject {
             action: .update,
             waitForPreviousActionToComplete: true
         )
+    }
+
+    func reset() {
+        // This function resets inputs and logs after a successful swap
+        fromTokenInputViewModel.amount = .zero
+        isSliderOn = false
+        showFinished = false
+        cancelUpdate()
+        #if !RELEASE
+        errorLogs?.removeAll()
+        #endif
     }
 
     #if !RELEASE
@@ -196,6 +209,19 @@ private extension SwapViewModel {
                 )
                 Defaults.toTokenAddress = token.address
                 self.logChangeToken(isFrom: false, token: token, amount: newState.amountTo)
+            }
+            .store(in: &subscriptions)
+
+        appeared
+            .sink { [weak self] in
+                guard let self, self.currentState.status == .ready else { return }
+                self.scheduleUpdate()
+            }
+            .store(in: &subscriptions)
+
+        disappeared
+            .sink { [weak self] in
+                self?.cancelUpdate()
             }
             .store(in: &subscriptions)
     }
