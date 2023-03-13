@@ -56,10 +56,17 @@ final class ChooseSwapTokenService: ChooseItemService {
 
     func sortFiltered(by keyword: String, items: [ChooseItemListSection]) -> [ChooseItemListSection] {
         let sections = items.map { section in
-            guard let tokens = section.items as? [SwapToken] else { return section }
-            return ChooseItemListSection(items: tokens.sorted(by: { lhs, rhs in
+            guard var tokens = section.items as? [SwapToken] else { return section }
+            tokens = tokens.sorted(by: { lhs, rhs in
                 lhs.token.name.lowercased().starts(with: keyword) || lhs.token.symbol.lowercased().starts(with: keyword)
-            }))
+            })
+            if let index = tokens.firstIndex(where: {
+                $0.token.name.lowercased().elementsEqual(keyword) || $0.token.symbol.lowercased().elementsEqual(keyword)
+            }) {
+                let exactKeywordToken = tokens.remove(at: index)
+                tokens.insert(exactKeywordToken, at: .zero)
+            }
+            return ChooseItemListSection(items: tokens)
         }
         return validateEmpty(sections: sections)
     }
