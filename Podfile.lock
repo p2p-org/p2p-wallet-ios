@@ -251,7 +251,7 @@ DEPENDENCIES:
   - BECollectionView_Core (from `https://github.com/bigearsenal/BECollectionView.git`, branch `master`)
   - BEPureLayout (from `https://github.com/p2p-org/BEPureLayout.git`, branch `master`)
   - Cache (from `https://github.com/p2p-org/key-app-kit-swift.git`, branch `develop`)
-  - CocoaDebug
+  - CocoaDebug (= 1.7.2)
   - CountriesAPI (from `https://github.com/p2p-org/key-app-kit-swift.git`, branch `develop`)
   - Down (from `https://github.com/p2p-org/Down.git`)
   - FeeRelayerSwift (from `https://github.com/p2p-org/FeeRelayerSwift.git`, branch `master`)
@@ -623,6 +623,6 @@ SPEC CHECKSUMS:
   TransactionParser: 3004420d52e7b1277dbcfd20b995a5de707705f3
   TweetNacl: 3abf4d1d2082b0114e7a67410e300892448951e6
 
-PODFILE CHECKSUM: 0abb7b9b9bb36b9dad69d14064ebd9db3d193c1d
+PODFILE CHECKSUM: 82a0dc1b8346c54907727f908af27fb753a3c5f1
 
 COCOAPODS: 1.11.3
