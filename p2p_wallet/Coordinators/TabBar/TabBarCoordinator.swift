@@ -235,7 +235,6 @@ final class TabBarCoordinator: Coordinator<Void> {
         case .receive:
             let coordinator = SupportedTokensCoordinator(presentation: SmartCoordinatorPushPresentation(navigationController))
             coordinate(to: coordinator).sink { _ in }.store(in: &subscriptions)
-            break
         case .swap:
             let swapCoordinator = SwapCoordinator(navigationController: navigationController, initialWallet: nil)
             coordinate(to: swapCoordinator)
