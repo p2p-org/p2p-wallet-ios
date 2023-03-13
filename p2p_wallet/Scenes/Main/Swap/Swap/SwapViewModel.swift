@@ -181,8 +181,20 @@ private extension SwapViewModel {
             .filter { [weak self] _ in self?.initializingState == .success }
             .sinkAsync { [ weak self] token in
                 guard let self else { return }
+                
+                // cache from amount
+                let fromAmount = self.currentState.amountFrom
+                
+                // change to token
                 let newState = await self.stateMachine.accept(action: .changeToToken(token))
+                
+                // accept new amountFrom value (to recalculate the rate)
+                await self.stateMachine.accept(action: .changeAmountFrom(fromAmount))
+                
+                // save to cache
                 Defaults.toTokenAddress = token.address
+                
+                // log
                 self.logChangeToken(isFrom: false, token: token, amount: newState.amountTo)
             }
             .store(in: &subscriptions)
