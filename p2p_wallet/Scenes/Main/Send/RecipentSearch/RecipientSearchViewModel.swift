@@ -242,12 +242,21 @@ class RecipientSearchViewModel: ObservableObject {
     // MARK: - Send via link
     
     func checkIfSendViaLinkAvailable() async throws {
-        // FIXME: - Implementation later
-        sendViaLinkState = .init(
-            isDisabled: false,
-            limitPerDay: 30,
-            numberOfLinksUsedToday: 0
-        )
+        if available(.sendViaLinkEnabled) {
+            // ask for limit
+            // FIXME: - Implementation later
+            sendViaLinkState = .init(
+                isDisabled: false,
+                limitPerDay: 30,
+                numberOfLinksUsedToday: 0
+            )
+        } else {
+            sendViaLinkState = .init(
+                isDisabled: true,
+                limitPerDay: 0,
+                numberOfLinksUsedToday: 0
+            )
+        }
     }
     
     func sendViaLink() {
