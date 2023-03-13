@@ -32,10 +32,10 @@ extension JupiterSwapBusinessLogic {
             return transactionId
         }
         
-        // catch BlockhashNotFound error
+        // retry with specific errors
         catch let APIClientError.responseError(response) where
                 response.message == "Transaction simulation failed: Blockhash not found" ||
-                response.message?.hasSuffix("custom program error: 0x1786")
+                response.message?.hasSuffix("custom program error: 0x1786") == true
         {
 
             // re-create transaction
