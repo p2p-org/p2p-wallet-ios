@@ -33,7 +33,11 @@ class SmartCoordinatorPresentPresentation: SmartCoordinatorPresentation {
             return
         }
 
-        presentingViewController.present(presentedViewController, animated: true)
+        if let presentedViewController = presentedViewController as? CustomPresentableViewController {
+            presentingViewController.present(presentedViewController, interactiveDismissalType: .standard)
+        } else {
+            presentingViewController.present(presentedViewController, animated: true)
+        }
     }
 }
 

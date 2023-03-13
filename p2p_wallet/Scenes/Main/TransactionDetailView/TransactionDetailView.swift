@@ -167,13 +167,20 @@ struct DetailTransactionView: View {
             }
         }
         
-        return TextButtonView(
-            title: viewModel.closeButtonTitle,
-            style: style,
-            size: .large,
-            onPressed: { viewModel.action.send(.close) }
+        return Button(
+            action: {
+                viewModel.action.send(.close)
+            },
+            label: {
+                Text(viewModel.closeButtonTitle)
+                    .font(uiFont: style.font(size: .large))
+                    .foregroundColor(Color(style.foreground))
+                    .frame(maxWidth: .infinity)
+                    .frame(height: 56)
+                    .background(Color(style.backgroundColor))
+                    .cornerRadius(12)
+            }
         )
-        .frame(height: 56)
     }
 }
 

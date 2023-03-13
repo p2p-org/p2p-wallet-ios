@@ -148,7 +148,7 @@ final class TabBarController: UITabBarController {
         )
         localAuthVC = PincodeViewController(viewModel: pincodeViewModel)
         if authStyle.options.contains(.fullscreen) {
-            localAuthVC?.modalPresentationStyle = .fullScreen
+            localAuthVC?.modalPresentationStyle = .custom
         }
 
         var authSuccess = false
