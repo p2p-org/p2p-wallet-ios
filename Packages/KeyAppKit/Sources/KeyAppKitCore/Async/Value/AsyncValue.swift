@@ -13,7 +13,7 @@ public enum AsynValueStatus {
     case fetching
     case ready
     
-    static public func combine(lhs: Self, rhs: Self) -> Self {
+    public static func combine(lhs: Self, rhs: Self) -> Self {
         if lhs == .initializing || rhs == .initializing {
             return .initializing
         } else if lhs == .fetching || rhs == .fetching {
@@ -92,7 +92,6 @@ public class AsyncValue<T> {
             defer {
                 // Finish task
                 currentTask = nil
-                state.status = .ready
             }
             
             // Prepare
@@ -108,6 +107,13 @@ public class AsyncValue<T> {
             
             if let value { self.state.value = value }
             self.state.error = error
+            
+            // Initialising failure
+            if state.status == .initializing, error != nil {
+                state.status = .initializing
+            } else {
+                state.status = .ready
+            }
         }
         
         return currentTask

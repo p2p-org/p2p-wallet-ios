@@ -5,19 +5,17 @@
 //  Created by Ivan on 20.11.2022.
 //
 
+import Combine
 import Foundation
 import NameService
 import RenVMSwift
 import Resolver
 import SolanaSwift
-import Combine
 
 final class TabBarViewModel {
     // Dependencies
     @Injected private var socket: Socket
     @Injected private var pricesService: PricesServiceType
-    @Injected private var lockAndMint: LockAndMintService
-    @Injected private var burnAndRelease: BurnAndReleaseService
     @Injected private var authenticationHandler: AuthenticationHandlerType
     @Injected private var notificationService: NotificationService
 
@@ -37,12 +35,6 @@ final class TabBarViewModel {
             socket.connect()
         }
         pricesService.startObserving()
-        burnAndRelease.resume()
-
-        // RenBTC service
-        Task {
-            try await lockAndMint.resume()
-        }
 
         // Name service
         Task {
@@ -98,7 +90,7 @@ extension TabBarViewModel {
                 .filter { value in
                     GlobalAppState.shared.surveyID != nil && value == false
                 }
-                .map {_ in ()},
+                .map { _ in () },
 
             viewDidLoad
                 .filter { [weak self] in

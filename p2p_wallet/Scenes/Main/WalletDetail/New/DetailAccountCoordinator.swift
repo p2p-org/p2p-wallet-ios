@@ -5,11 +5,11 @@
 //  Created by Giang Long Tran on 19.02.2023.
 //
 
+import KeyAppBusiness
 import Sell
 import SolanaSwift
 import SwiftUI
 import UIKit
-import KeyAppBusiness
 
 enum DetailAccountCoordinatorArgs {
     case solanaAccount(SolanaAccountsService.Account)
@@ -131,13 +131,15 @@ class DetailAccountCoordinator: SmartCoordinator<WalletDetailCoordinator.Result>
 
     func openReceive() {
         guard case let .solanaAccount(account) = self.args,
-              let navigationController = presentation.presentingViewController as? UINavigationController else {
-                return
+              let navigationController = presentation.presentingViewController as? UINavigationController
+        else {
+            return
         }
+
         let coordinator = ReceiveCoordinator(
             network: .solana(
                 tokenSymbol: account.data.token.symbol,
-                tokenImage: (account.data.token.image, URL(string: account.data.token.logoURI ?? ""))
+                tokenImage: .init(token: account.data.token)
             ),
             presentation: SmartCoordinatorPushPresentation(navigationController)
         )
@@ -214,5 +216,17 @@ class DetailAccountCoordinator: SmartCoordinator<WalletDetailCoordinator.Result>
         coordinate(to: coordinator)
             .sink { _ in }
             .store(in: &subscriptions)
+    }
+}
+
+extension ReceiveNetwork.Image {
+    init?(token: Token) {
+        if let image = token.image {
+            self = .image(image)
+        } else if let urlStr = token.logoURI, let url = URL(string: urlStr) {
+            self = .url(url)
+        } else {
+            return nil
+        }
     }
 }

@@ -157,10 +157,10 @@ public extension SolanaAccountsService {
         }
 
         /// Data field
-        public let data: SolanaSwift.Wallet
+        public var data: SolanaSwift.Wallet
 
         /// The fetched price at current moment of time.
-        fileprivate(set) var price: CurrentPrice?
+        public fileprivate(set) var price: CurrentPrice?
 
         /// Get current amount in fiat.
         public var amountInFiat: Double {

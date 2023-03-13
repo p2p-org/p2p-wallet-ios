@@ -131,7 +131,7 @@ private extension HomeViewModel {
 
                 // Merge two status
                 let mergedStatus = AsynValueStatus.combine(lhs: solanaState.status, rhs: ethereumState.status)
-
+                
                 switch mergedStatus {
                 case .initializing:
                     self.state = .pending
@@ -144,32 +144,6 @@ private extension HomeViewModel {
                 }
             }
             .store(in: &subscriptions)
-
-//        solanaAccountsService
-//            .$state
-//            .receive(on: RunLoop.main)
-//            .sink { [weak self] state in
-//                guard let self else { return }
-//
-//                // accumulate total amount
-//                let fiatAmount = state.value.totalAmountInCurrentFiat
-//                let isEmpty = fiatAmount <= 0
-//
-//                // address
-//                self.updateAddressIfNeeded()
-//
-//                switch state.status {
-//                case .initializing:
-//                    self.state = .pending
-//                default:
-//                    self.state = isEmpty ? .empty : .withTokens
-//
-//                    // log
-//                    self.analyticsManager.log(parameter: .userHasPositiveBalance(!isEmpty))
-//                    self.analyticsManager.log(parameter: .userAggregateBalance(fiatAmount))
-//                }
-//            }
-//            .store(in: &subscriptions)
 
         // update name when needed
         createNameService.createNameResult

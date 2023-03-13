@@ -84,7 +84,6 @@ final class HomeAccountsViewModel: BaseViewModel, ObservableObject {
         // Listen changing accounts from accounts manager
         // Ethereum accounts
         ethereumAccountsService.$state
-            .debounce(for: .seconds(0.1), scheduler: RunLoop.main)
             .map { state in
                 state.innerApply { account in
                     RendableEthereumAccount(account: account) {
@@ -101,12 +100,10 @@ final class HomeAccountsViewModel: BaseViewModel, ObservableObject {
                 let equityValue: Double = state.value.reduce(0) { $0 + $1.amountInFiat }
                 return "\(Defaults.fiat.symbol) \(equityValue.toString(maximumFractionDigits: 2))"
             }
-            .debounce(for: .seconds(0.1), scheduler: RunLoop.main)
             .weakAssign(to: \.balance, on: self)
             .store(in: &subscriptions)
 
         solanaAccountsService.$state
-            .debounce(for: .seconds(0.1), scheduler: RunLoop.main)
             .map { state in
                 // Filter NFT
                 state.apply { accounts in

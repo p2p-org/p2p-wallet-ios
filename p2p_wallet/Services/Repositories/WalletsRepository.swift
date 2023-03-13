@@ -6,48 +6,126 @@
 //
 
 import BECollectionView_Combine
-import Foundation
-import SolanaSwift
 import Combine
+import Foundation
+import KeyAppBusiness
+import KeyAppKitCore
+import Resolver
+import SolanaSwift
 
-protocol WalletsRepository: BECollectionViewModelType {
+@available(*, deprecated, message: "Use SolanaAccountsService")
+protocol WalletsRepository {
     var nativeWallet: Wallet? { get }
+    
     func getWallets() -> [Wallet]
+    
     var statePublisher: AnyPublisher<BEFetcherState, Never> { get }
     var dataDidChange: AnyPublisher<Void, Never> { get }
     var dataPublisher: AnyPublisher<[Wallet], Never> { get }
+    
     func getError() -> Error?
+    
     func reload()
-    func toggleWalletVisibility(_ wallet: Wallet)
-    func removeItem(where predicate: (Wallet) -> Bool) -> Wallet?
-    func setState(_ state: BEFetcherState, withData data: [AnyHashable]?)
-    func toggleIsHiddenWalletShown()
-    var isHiddenWalletsShown: Bool { get }
-    func hiddenWallets() -> [Wallet]
     func refresh()
 
-    func batchUpdate(closure: ([Wallet]) -> [Wallet])
+    var state: BEFetcherState { get }
 }
 
-extension WalletsViewModel: WalletsRepository {
+@available(*, deprecated, message: "Use SolanaAccountsService")
+class WalletsRepositoryImpl: NSObject, WalletsRepository {
+    private var subscriptions = [AnyCancellable]()
+    private let solanaAccountsService: SolanaAccountsService
+    
+    init(
+        solanaAccountsService: SolanaAccountsService = Resolver.resolve(),
+        pricesService: PricesService = Resolver.resolve()
+    ) {
+        self.solanaAccountsService = solanaAccountsService
+        
+        super.init()
+        
+        solanaAccountsService
+            .$state
+            .sink { state in
+                // Updating old prices service
+                let tokens = state.value.map(\.data.token)
+                pricesService.addToWatchList(tokens)
+            }
+            .store(in: &subscriptions)
+    }
+    
+    var nativeWallet: SolanaSwift.Wallet? {
+        let nativeAccount = solanaAccountsService.state.value.nativeWallet
+        
+        // Manually set price
+        var wallet = nativeAccount?.data
+        wallet?.price = nativeAccount?.price
+        
+        return wallet
+    }
+    
+    func getWallets() -> [SolanaSwift.Wallet] {
+        solanaAccountsService.state.value.map { account in
+            // Manually set price
+            var wallet = account.data
+            wallet.price = account.price
+            
+            return wallet
+        }
+    }
+    
+    static func stateMapping(status: AsynValueStatus, error: Swift.Error?) -> BEFetcherState {
+        if error != nil {
+            return BEFetcherState.error
+        }
+        
+        switch status {
+        case .initializing:
+            return BEFetcherState.initializing
+        case .fetching:
+            return BEFetcherState.loading
+        case .ready:
+            return BEFetcherState.loaded
+        }
+    }
     
     var statePublisher: AnyPublisher<BEFetcherState, Never> {
-        $state.receive(on: DispatchQueue.main).eraseToAnyPublisher()
+        solanaAccountsService
+            .$state
+            .map { state in
+                Self.stateMapping(status: state.status, error: state.error)
+            }
+            .removeDuplicates()
+            .eraseToAnyPublisher()
     }
     
-    var dataPublisher: AnyPublisher<[Wallet], Never> {
-        $data.receive(on: DispatchQueue.main).eraseToAnyPublisher()
+    var state: BEFetcherState {
+        Self.stateMapping(status: solanaAccountsService.state.status, error: solanaAccountsService.state.error)
     }
     
-    var currentState: BEFetcherState {
-        state
+    var dataDidChange: AnyPublisher<Void, Never> {
+        solanaAccountsService.$state
+            .map(\.value)
+            .removeDuplicates()
+            .map { _ in () }
+            .eraseToAnyPublisher()
     }
     
-    func getWallets() -> [Wallet] {
-        data
+    var dataPublisher: AnyPublisher<[SolanaSwift.Wallet], Never> {
+        solanaAccountsService.$state
+            .map { state in state.value.map(\.data) }
+            .eraseToAnyPublisher()
     }
-
-    func getError() -> Error? {
-        error
+    
+    func getError() -> Swift.Error? {
+        solanaAccountsService.state.error
+    }
+    
+    func reload() {
+        Task { try await solanaAccountsService.fetch() }
+    }
+    
+    func refresh() {
+        Task { try await solanaAccountsService.fetch() }
     }
 }

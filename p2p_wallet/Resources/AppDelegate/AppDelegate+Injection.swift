@@ -248,10 +248,6 @@ extension Resolver: ResolverRegistering {
         ) }
         .implements(SolanaTokensRepository.self)
 
-        // DAppChannnel
-        register { DAppChannel() }
-            .implements(DAppChannelType.self)
-
         // QrCodeImageRender
         register { ReceiveToken.QrCodeImageRenderImpl() }
             .implements(QrCodeImageRender.self)
@@ -378,7 +374,7 @@ extension Resolver: ResolverRegistering {
             .scope(.session)
 
         // WalletsViewModel
-        register { WalletsViewModel() }
+        register { WalletsRepositoryImpl() }
             .implements(WalletsRepository.self)
             .scope(.session)
 
