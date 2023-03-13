@@ -110,12 +110,16 @@ class SmartCoordinator<T>: Coordinator<T> {
     func dismiss(_ event: T) {
         ignoreOnCloseEvent = true
 
+        presentation.presentingViewController.dismiss(animated: true) { [weak self] in
+            self?.result.send(event)
+        }
+    }
+
+    func pop(_ event: T) {
+        ignoreOnCloseEvent = true
+
         if let navigation = presentation.presentingViewController as? UINavigationController {
             navigation.popViewController(animated: true) { [weak self] in
-                self?.result.send(event)
-            }
-        } else {
-            presentation.presentingViewController.dismiss(animated: true) { [weak self] in
                 self?.result.send(event)
             }
         }

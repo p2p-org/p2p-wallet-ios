@@ -19,6 +19,7 @@ class SupportedTokenNetworksCoordinator: SmartCoordinator<SupportedTokenItemNetw
 
     override func build() -> UIViewController {
         let view = SupportedTokenNetworksView(item: supportedToken) { [weak self] network in
+            
             self?.dismiss(network)
         }
 
