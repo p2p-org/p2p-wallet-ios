@@ -14,6 +14,7 @@ class ReceiveViewModel: BaseViewModel, ObservableObject {
 
     let network: ReceiveNetwork
     let address: String
+    private var notificationTimer: Timer?
 
     @Published var items: [any ReceiveRendableItem] = []
     @Published var qrImage: UIImage
@@ -66,7 +67,7 @@ class ReceiveViewModel: BaseViewModel, ObservableObject {
                         ListReceiveItem(
                             id: FieldId.username.rawValue,
                             title: L10n.myUsername,
-                            description: username,
+                            description: username.withNameServiceDomain(),
                             showTopCorners: false,
                             showBottomCorners: true
                         )
@@ -124,7 +125,7 @@ class ReceiveViewModel: BaseViewModel, ObservableObject {
             case .none:
                 message = ""
             }
-            notificationsService.showInAppNotification(.init(emoji: "✅", message: message))
+            sendNotification(text: message)
         }
     }
 
@@ -136,9 +137,22 @@ class ReceiveViewModel: BaseViewModel, ObservableObject {
         case .ethereum:
             message = L10n.yourEthereumAddressWasCopied
         }
-
         clipboardManager.copyToClipboard(address)
-        notificationsService.showInAppNotification(.init(emoji: "✅", message: message))
+        sendNotification(text: message)
+    }
+
+    // MARK: - Notification
+
+    private var shouldShowNotification = true
+    private func sendNotification(text: String) {
+        notificationTimer?.invalidate()
+        notificationTimer = Timer.scheduledTimer(withTimeInterval: 1, repeats: false, block: { [weak self] (timer) in
+            self?.shouldShowNotification = true
+        })
+        if shouldShowNotification {
+            notificationsService.showInAppNotification(.init(emoji: "✅", message: text))
+            shouldShowNotification = false
+        }
     }
 
     // MARK: -

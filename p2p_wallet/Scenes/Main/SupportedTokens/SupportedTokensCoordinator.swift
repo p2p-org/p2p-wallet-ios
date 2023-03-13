@@ -26,6 +26,7 @@ class SupportedTokensCoordinator: SmartCoordinator<Void> {
         let view = SupportedTokensView(viewModel: vm)
 
         let vc = UIHostingController(rootView: view)
+        vc.hidesBottomBarWhenPushed = true
         vc.title = L10n.supportedTokens
 
         return vc
