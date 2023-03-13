@@ -72,7 +72,10 @@ final class SwapInputViewModel: BaseViewModel, ObservableObject {
                 self.logChange(amount: value)
                 self.isAmountLoading = true && !self.isFromToken
                 if self.isFromToken {
-                    await self.stateMachine.accept(action: .changeAmountFrom(value ?? 0))
+                    await self.stateMachine.accept(
+                        action: .changeAmountFrom(value ?? 0),
+                        waitForPreviousActionToComplete: false
+                    )
                 }
                 self.isAmountLoading = false && !self.isFromToken
             }

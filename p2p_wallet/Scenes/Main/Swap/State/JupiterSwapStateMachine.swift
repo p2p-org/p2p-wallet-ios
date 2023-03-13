@@ -1,18 +1,23 @@
 import Combine
 
-public protocol StateMachine {
-    var services: Services { get }
-    func accept(action: Action, cancelPreviousAction: Bool) async -> State
-}
-
-
-actor JupiterSwapStateMachine: StateMachine {
+actor JupiterSwapStateMachine {
+    // MARK: - Nested type
+    
+    /// The cache that handle currentTask and currentAction
+    /// Must be actor to make sure that currentTask and currentAction are thread-safe
+    private actor Cache {
+        /// Current executing task
+        fileprivate var currentTask: Task<JupiterSwapState, Never>?
+        /// Save the current task
+        fileprivate func saveCurrentTask(_ task: Task<JupiterSwapState, Never>?) {
+            currentTask = task
+        }
+    }
+    
     // MARK: - Properties
 
     private nonisolated let stateSubject: CurrentValueSubject<JupiterSwapState, Never>
-    
-    private var currentTask: Task<JupiterSwapState, Never>?
-    private var currentAction: JupiterSwapAction?
+    private nonisolated let cache = Cache()
 
     // MARK: - Public properties
 
@@ -30,37 +35,42 @@ actor JupiterSwapStateMachine: StateMachine {
     
     // MARK: - Accept function
 
+    @discardableResult
     nonisolated func accept(
         action newAction: JupiterSwapAction,
-        cancelPreviousAction: Bool = true
+        waitForPreviousActionToComplete: Bool
     ) async -> JupiterSwapState {
-        // cancel current action if needed
-        if cancelPreviousAction {
-            await currentTask?.cancel()
+        // cancel previous task when waitForPreviousActionToComplete = false
+        if waitForPreviousActionToComplete == false {
+            await cache.currentTask?.cancel()
         }
         
         // dispatch new action (can be immediately or after current action)
-        return await task(action: newAction)
+        let task = await task(action: newAction)
+        
+        // save task to cache
+        await cache.saveCurrentTask(task)
+        
+        // await it value
+        return await task.value
     }
     
     // MARK: - Dispatching
     
-    private func task(action: JupiterSwapAction) async -> JupiterSwapState {
-        // save current action
-        saveCurrentAction(action)
-        
+    private func task(action: JupiterSwapAction) -> Task<JupiterSwapState, Never> {
         // assign task
-        currentTask = Task { await dispatch(action: action) }
+        let currentState = currentState
+        let task = Task { [weak self] in
+            guard let self else { return currentState}
+            return await self.dispatch(action: action)
+        }
         
-        // append task to current stack
-        return await currentTask!.value
+        // return task to listener
+        return task
     }
     
     @discardableResult
     private func dispatch(action: JupiterSwapAction) async -> JupiterSwapState {
-        // save the last state
-        let lastState = currentState
-        
         // assert if action should be performed
         // for example if data is not changed, perform action is not needed
         guard JupiterSwapBusinessLogic.shouldPerformAction(
@@ -74,12 +84,11 @@ actor JupiterSwapStateMachine: StateMachine {
         if let progressState = JupiterSwapBusinessLogic.jupiterSwapProgressState(
             state: currentState, action: action
         ) {
-            guard Task.isNotCancelled else { return lastState }
             stateSubject.send(progressState)
         }
         
         // perform the action
-        guard Task.isNotCancelled else { return lastState }
+        guard Task.isNotCancelled else { return currentState }
         var newState = await JupiterSwapBusinessLogic.jupiterSwapBusinessLogic(
             state: currentState,
             action: action,
@@ -87,25 +96,19 @@ actor JupiterSwapStateMachine: StateMachine {
         )
 
         // return the state
-        guard Task.isNotCancelled else { return lastState }
+        guard Task.isNotCancelled else { return currentState }
         stateSubject.send(newState)
         
-        // FIXME: - Create transaction if needed
-        guard Task.isNotCancelled else { return lastState }
+        // Create transaction if needed
+        guard Task.isNotCancelled else { return currentState }
         newState = await JupiterSwapBusinessLogic.createTransaction(
             state: newState,
             services: services
         )
         
-        guard Task.isNotCancelled else { return lastState }
+        guard Task.isNotCancelled else { return currentState }
         stateSubject.send(newState)
         
         return newState
-    }
-    
-    // MARK: - Helpers
-
-    private func saveCurrentAction(_ action: JupiterSwapAction) {
-        currentAction = action
     }
 }

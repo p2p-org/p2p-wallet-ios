@@ -204,7 +204,10 @@ final class JupiterSwapCoordinator: Coordinator<Void> {
                 switch result {
                 case let .selectedSlippageBps(slippageBps):
                     Task { [weak viewModel] in
-                        await viewModel?.stateMachine.accept(action: .changeSlippageBps(slippageBps))
+                        await viewModel?.stateMachine.accept(
+                            action: .changeSlippageBps(slippageBps),
+                            waitForPreviousActionToComplete: false
+                        )
                     }
                 case let .selectedRoute(routeInfo):
                     guard let route = viewModel?.currentState.routes.first(where: {$0.id == routeInfo.id}),
@@ -213,7 +216,10 @@ final class JupiterSwapCoordinator: Coordinator<Void> {
                         return
                     }
                     Task { [weak viewModel] in
-                        await viewModel?.stateMachine.accept(action: .chooseRoute(route))
+                        await viewModel?.stateMachine.accept(
+                            action: .chooseRoute(route),
+                            waitForPreviousActionToComplete: false
+                        )
                     }
                 }
             })
