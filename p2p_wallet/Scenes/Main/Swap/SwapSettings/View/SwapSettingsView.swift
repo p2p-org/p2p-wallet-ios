@@ -234,7 +234,7 @@ struct SwapSettingsView_Previews: PreviewProvider {
                         amount: 0,
                         tokenSymbol: nil,
                         tokenName: nil,
-                        amountInFiat: nil,
+                        tokenPriceInCurrentFiat: nil,
                         pct: nil,
                         canBePaidByKeyApp: true
                     ),
@@ -242,7 +242,7 @@ struct SwapSettingsView_Previews: PreviewProvider {
                         amount: 0.8,
                         tokenSymbol: "Token A",
                         tokenName: "Token A Name",
-                        amountInFiat: 6.1,
+                        tokenPriceInCurrentFiat: 6.1 / 0.8,
                         pct: nil,
                         canBePaidByKeyApp: false
                     ),
@@ -251,7 +251,7 @@ struct SwapSettingsView_Previews: PreviewProvider {
                             amount: 0.991,
                             tokenSymbol: "Token C",
                             tokenName: "Token C Name",
-                            amountInFiat: 0.05,
+                            tokenPriceInCurrentFiat: 0.05 / 0.991,
                             pct: 0.01,
                             canBePaidByKeyApp: false
                         ),
@@ -259,7 +259,7 @@ struct SwapSettingsView_Previews: PreviewProvider {
                             amount: 0.991,
                             tokenSymbol: "Token D",
                             tokenName: "Token D Name",
-                            amountInFiat: 0.05,
+                            tokenPriceInCurrentFiat: 0.05 / 0.991,
                             pct: 0.01,
                             canBePaidByKeyApp: false
                         )

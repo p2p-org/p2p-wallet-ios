@@ -85,9 +85,6 @@ struct JupiterSwapState: Equatable {
     /// SlippageBps is slippage multiplied by 100 (be careful)
     var slippageBps: Int
     
-    /// FeeRelayer's relay context
-    var relayContext: RelayContext?
-    
     // MARK: - Computed properties
     
     /// All the wallets that user owns
@@ -159,7 +156,7 @@ struct JupiterSwapState: Equatable {
             amount: networkFeeAmount,
             tokenSymbol: payingFeeToken.symbol,
             tokenName: payingFeeToken.name,
-            amountInFiat: tokensPriceMap[payingFeeToken.address] * networkFeeAmount,
+            tokenPriceInCurrentFiat: tokensPriceMap[payingFeeToken.address],
             pct: nil,
             canBePaidByKeyApp: true
         )
@@ -174,13 +171,13 @@ struct JupiterSwapState: Equatable {
         // FIXME: - paying fee token
         let payingFeeToken = Token.nativeSolana
         
-        let accountCreationFee = (fees.openOrdersDeposits + fees.ataDeposits).reduce(0, +)
+        let accountCreationFee = fees.totalFeeAndDeposits
             .convertToBalance(decimals: payingFeeToken.decimals)
         return SwapFeeInfo(
             amount: accountCreationFee,
             tokenSymbol: payingFeeToken.symbol,
             tokenName: payingFeeToken.symbol,
-            amountInFiat: tokensPriceMap[payingFeeToken.address] * accountCreationFee,
+            tokenPriceInCurrentFiat: tokensPriceMap[payingFeeToken.address],
             pct: nil,
             canBePaidByKeyApp: false
         )
@@ -200,7 +197,7 @@ struct JupiterSwapState: Equatable {
                     amount: amount,
                     tokenSymbol: token.symbol,
                     tokenName: token.name,
-                    amountInFiat: tokensPriceMap[token.address] * amount,
+                    tokenPriceInCurrentFiat: tokensPriceMap[token.address],
                     pct: lqFee.pct,
                     canBePaidByKeyApp: false
                 )
@@ -246,8 +243,7 @@ struct JupiterSwapState: Equatable {
             swapTokens: [],
             fromToken: .nativeSolana,
             toToken: .nativeSolana,
-            slippageBps: 0,
-            relayContext: nil
+            slippageBps: 0
         )
     }
     
