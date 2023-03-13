@@ -6,9 +6,12 @@
 //
 
 import KeyAppUI
+import SolanaSwift
 import SwiftUI
 
 struct WormholeClaimView: View {
+    @ObservedObject var viewModel: WormholeClaimViewModel
+
     var body: some View {
         VStack(spacing: 0) {
             Text(L10n.confirmClaimingTheTokens)
@@ -22,24 +25,30 @@ struct WormholeClaimView: View {
                 .frame(width: 64, height: 64)
                 .padding(.top, 28)
 
-            Text("0.999717252 WETH")
+            Text(viewModel.model.title)
                 .fontWeight(.bold)
                 .apply(style: .largeTitle)
                 .padding(.top, 16)
 
-            Text("~ $1 219.87")
-                .apply(style: .text2)
-                .foregroundColor(Color(Asset.Colors.mountain.color))
-                .padding(.top, 4)
+            if !viewModel.model.subtitle.isEmpty {
+                Text(viewModel.model.subtitle)
+                    .apply(style: .text2)
+                    .foregroundColor(Color(Asset.Colors.mountain.color))
+                    .padding(.top, 4)
+            }
 
             HStack(alignment: .center) {
                 Text(L10n.fee)
                 Spacer()
                 Text(L10n.paidByKeyApp)
-                Image(uiImage: .info)
-                    .resizable()
-                    .foregroundColor(Color(Asset.Colors.mountain.color))
-                    .frame(width: 20, height: 20)
+                Button {
+                    viewModel.action.send(.openFee)
+                } label: {
+                    Image(uiImage: .info)
+                        .resizable()
+                        .foregroundColor(Color(Asset.Colors.mountain.color))
+                        .frame(width: 20, height: 20)
+                }
             }
             .padding(.horizontal, 16)
             .padding(.vertical, 14)
@@ -48,11 +57,13 @@ struct WormholeClaimView: View {
                     .fill(Color(Asset.Colors.snow.color))
             )
             .padding(.top, 32)
-            
+
             Spacer()
-            
-            TextButtonView(title: L10n.claim("0.999717252 WETH"), style: .primaryWhite, size: .large)
-                .frame(height: TextButton.Size.large.height)
+
+            TextButtonView(title: L10n.claim(viewModel.model.title), style: .primaryWhite, size: .large) {
+                viewModel.claim()
+            }
+            .frame(height: TextButton.Size.large.height)
         }
         .padding(.horizontal, 16)
         .background(
@@ -64,6 +75,14 @@ struct WormholeClaimView: View {
 
 struct WormholeClaimView_Previews: PreviewProvider {
     static var previews: some View {
-        WormholeClaimView()
+        WormholeClaimView(viewModel:
+            .init(
+                model: .init(
+                    icon: URL(string: Token.eth.logoURI!)!,
+                    title: "0.999717252 ETH",
+                    subtitle: "~ $1 219.87"
+                )
+            )
+        )
     }
 }

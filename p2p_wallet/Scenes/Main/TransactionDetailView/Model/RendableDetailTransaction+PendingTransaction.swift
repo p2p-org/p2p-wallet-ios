@@ -7,6 +7,7 @@
 
 import Combine
 import Foundation
+import KeyAppKitCore
 import SolanaPricesAPIs
 
 struct RendableDetailPendingTransaction: RendableTransactionDetail {
@@ -80,6 +81,13 @@ struct RendableDetailPendingTransaction: RendableTransactionDetail {
             }
             
             return .double(fromUrl, toUrl)
+            
+        case let transaction as WormholeClaimTransaction:
+            guard let url = transaction.token.logo else {
+                return .icon(.planet)
+            }
+            
+            return .single(url)
         default:
             return .icon(.planet)
         }
@@ -92,6 +100,12 @@ struct RendableDetailPendingTransaction: RendableTransactionDetail {
         case let transaction as SwapTransaction:
             let amountInFiat: Double = (transaction.amount * priceService.currentPrice(mint: transaction.sourceWallet.token.address)?.value)
             return .unchanged("\(amountInFiat.fiatAmountFormattedString())")
+        case let transaction as WormholeClaimTransaction:
+            if let value = CurrencyFormatter().string(for: transaction.amountInFiat) {
+                return .positive("+\(value)")
+            } else {
+                return .unchanged("")
+            }
         default:
             return .unchanged("")
         }
@@ -103,6 +117,11 @@ struct RendableDetailPendingTransaction: RendableTransactionDetail {
             return "\(transaction.amount.tokenAmountFormattedString(symbol: transaction.walletToken.token.symbol))"
         case let transaction as SwapTransaction:
             return "\(transaction.amount.tokenAmountFormattedString(symbol: transaction.sourceWallet.token.symbol)) → \(transaction.estimatedAmount.tokenAmountFormattedString(symbol: transaction.destinationWallet.token.symbol))"
+        case let transaction as WormholeClaimTransaction:
+            guard let value = CryptoFormatter().string(for: transaction.amountInCrypto) else {
+                return ""
+            }
+            return "\(value)"
         default:
             return ""
         }

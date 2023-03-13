@@ -14,10 +14,10 @@ import SolanaSwift
 /// This manager class monitors solana accounts and their changing real time by using socket and 10 seconds updating timer.
 ///
 /// It also calculates ``amountInFiat`` by integrating with ``NewPriceService``.
-public final class SolanaAccountsService: NSObject, ObservableObject {
-    private var subscriptions = [AnyCancellable]()
+public final class SolanaAccountsService: NSObject, AccountsService, ObservableObject {
+    var subscriptions = [AnyCancellable]()
 
-    private let asyncValue: AsyncValue<[Account]>
+    let asyncValue: AsyncValue<[Account]>
 
     @Published public var state: AsyncValueState<[Account]> = .init(value: [])
 
@@ -30,6 +30,7 @@ public final class SolanaAccountsService: NSObject, ObservableObject {
         fiat: String,
         errorObservable: any ErrorObserver
     ) {
+        // Setup async value
         asyncValue = .init(initialItem: []) {
             guard let accountAddress = accountStorage.account?.publicKey.base58EncodedString else {
                 return (nil, Error.authorityError)

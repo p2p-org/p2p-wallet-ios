@@ -10,16 +10,12 @@ public protocol NetworkManager {
 }
 
 public struct URLSessionMock: NetworkManager {
+    var handler: ((URLRequest) async throws -> Data)?
+
     public init() {}
 
     public func requestData(request: URLRequest) async throws -> Data {
-        debugPrint(request.allHTTPHeaderFields)
-        if let body = request.httpBody {
-            debugPrint(String(data: body, encoding: .utf8))
-            debugPrint(try? JSONSerialization.jsonObject(with: body))
-        }
-
-        return Data()
+        return try await handler?(request) ?? Data()
     }
 }
 

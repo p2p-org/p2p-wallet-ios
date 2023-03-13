@@ -7,6 +7,7 @@
 
 import Cache
 import Foundation
+import KeyAppKitCore
 import SolanaPricesAPIs
 
 /// This class service allow client to get exchange rate between token and fiat.
@@ -24,7 +25,7 @@ public class EthereumPriceService {
         self.cache = LongTermCache(entryLifetime: lifetime, maximumEntryCount: 999)
     }
 
-    public func getEthereumPrice(fiat: String) async throws -> Double {
+    public func getEthereumPrice(fiat: String) async throws -> Price {
         let response = try await api.getSimplePrice(ids: ["ethereum"], fiat: [fiat])
         guard
             let token = response["ethereum"],
@@ -33,11 +34,11 @@ public class EthereumPriceService {
             throw Error.canNotExtractEthereumPrice
         }
 
-        return price
+        return .init(currencyCode: fiat.uppercased(), value: price)
     }
 
     /// Get prices for erc-20 tokens.
-    public func getPrices(tokens: [EthereumToken], fiat: String) async throws -> [EthereumToken: Double?] {
+    public func getPrices(tokens: [EthereumToken], fiat: String) async throws -> [EthereumToken: Price] {
         let contractAddresses = tokens.map { token -> String? in
             switch token.contractType {
             case let .erc20(contract: address):
@@ -54,9 +55,10 @@ public class EthereumPriceService {
             tokens.map { token in
                 switch token.contractType {
                 case let .erc20(contract: address):
-                    return (token, result[address.hex(eip55: true)]?[fiat])
+                    let value = result[address.hex(eip55: true)]?[fiat]
+                    return (token, .init(currencyCode: fiat.uppercased(), value: value))
                 default:
-                    return (token, nil)
+                    return (token, .init(currencyCode: fiat.uppercased(), value: nil))
                 }
             },
             uniquingKeysWith: { _, last in last }

@@ -23,7 +23,7 @@ class OrcaSwapStrategyTests: XCTestCase {
     XCTAssertEqual(trx.source?.token.symbol, "SRM")
 
     XCTAssertEqual(trx.destinationAmount, 0.00036488500000000001)
-    XCTAssertEqual(trx.destination?.pubkey, "BjUEdE292SLEq9mMeKtY3GXL6wirn7DqJPhrukCqAUua")
+    XCTAssertEqual(trx.destination?.pubkey, "GYALxPybCjyv7N3DjpPQG3tH6M52UPLZ9eRyP5A7CXhW")
     XCTAssertEqual(trx.destination?.token.symbol, "SOL")
   }
 
@@ -39,7 +39,7 @@ class OrcaSwapStrategyTests: XCTestCase {
     XCTAssertEqual(trx.source?.token.symbol, "SOL")
 
     XCTAssertEqual(trx.destinationAmount, 0.088808)
-    XCTAssertEqual(trx.destination?.pubkey, "HVc47am8HPYgvkkCiFJzV6Q8qsJJKJUYT6o7ucd6ZYXY")
+    XCTAssertEqual(trx.destination?.pubkey, "ENYTT4Nw5YYKry9okt4Yx1dNJHzsUrH3s6HaeL1PtDb3")
     XCTAssertEqual(trx.destination?.token.symbol, "SLIM")
   }
 

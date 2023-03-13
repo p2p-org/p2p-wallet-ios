@@ -23,7 +23,7 @@ public struct EthereumToken: Hashable {
     public let logo: URL?
     
     /// Token contract type
-    public let contractType: ContractType
+    public var contractType: ContractType
 
     /// Erc-20 Token
     internal init(address: EthereumAddress, metadata: EthereumTokenMetadata) {
@@ -35,12 +35,12 @@ public struct EthereumToken: Hashable {
     }
     
     /// Native token
-    public init() {
+    public init(address: EthereumAddress) {
         self.name = "Ethereum"
         self.symbol = "ETH"
-        self.decimals = 1
+        self.decimals = 18
         self.logo = URL(string: "https://raw.githubusercontent.com/p2p-org/solana-token-list/main/assets/mainnet/Es9vMFrzaCERmJfrF4H2FYD4KCoNkY11McCe8BenwNYB/logo.png")
-        self.contractType = .native
+        self.contractType = .native(address: address)
     }
 }
 
@@ -48,7 +48,7 @@ public extension EthereumToken {
     /// Ethereum token contract standards.
     enum ContractType: Hashable {
         /// Native token
-        case native
+        case native(address: EthereumAddress)
         
         /// ERC-20 Token standard
         case erc20(contract: EthereumAddress)

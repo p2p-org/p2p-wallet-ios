@@ -7,6 +7,7 @@
 
 import Cache
 import Foundation
+import KeyAppKitCore
 import SolanaPricesAPIs
 import SolanaSwift
 
@@ -24,7 +25,7 @@ public class SolanaPriceService {
         self.api = api
         self.cache = LongTermCache(entryLifetime: lifetime, maximumEntryCount: 999)
     }
-    
+
     /// Get exchange rate for solana token.
     public func getPrice(token: Token, fiat: String) async throws -> CurrentPrice? {
         guard let coingeckoId = token.extensions?.coingeckoId else { return nil }

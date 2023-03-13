@@ -11,7 +11,7 @@ import KeyAppKitCore
 import SolanaPricesAPIs
 import Web3
 
-public final class EthereumAccountsService: NSObject, ObservableObject {
+public final class EthereumAccountsService: NSObject, AccountsService, ObservableObject {
     private var subscriptions = [AnyCancellable]()
 
     private let asyncValue: AsyncValue<[Account]>
@@ -41,7 +41,7 @@ public final class EthereumAccountsService: NSObject, ObservableObject {
                     web3.eth.getTokenBalances(address: address)
                 )
 
-                var nativeAccount = Account(token: .init(), balance: balance.quantity, price: nil)
+                var nativeAccount = Account(token: .init(address: address), balance: balance.quantity, price: nil)
 
                 // Build token accounts
                 var tokenBalances = wallet.tokenBalances
@@ -97,9 +97,9 @@ public final class EthereumAccountsService: NSObject, ObservableObject {
             .weakAssign(to: \.state, on: self)
             .store(in: &subscriptions)
 
-        // Update every 10 seconds accounts and balance
+        // Update every 30 seconds accounts and balance
         Timer
-            .publish(every: 10, on: .main, in: .default)
+            .publish(every: 30, on: .main, in: .default)
             .autoconnect()
             .receive(on: DispatchQueue.main)
             .sink(receiveValue: { [weak self] _ in self?.asyncValue.fetch() })
@@ -111,6 +111,7 @@ public final class EthereumAccountsService: NSObject, ObservableObject {
         }
     }
 
+    /// Method resolve ethereum erc-20 token accounts.
     internal static func resolveTokenAccounts(
         balances: [EthereumTokenBalances.Balance],
         repository: EthereumTokensRepository
@@ -146,28 +147,47 @@ extension EthereumAccountsService {
     public struct Account: Equatable {
         public let token: EthereumToken
         public let balance: BigUInt
-        public fileprivate(set) var price: Double?
+        public fileprivate(set) var price: Price?
 
-        internal init(token: EthereumToken, balance: BigUInt, price: Double? = nil) {
+        internal init(token: EthereumToken, balance: BigUInt, price: Price? = nil) {
             self.token = token
             self.balance = balance
             self.price = price
         }
 
-        public var amountInFiat: Double {
-            return 0.0
-//            // Displayed format
-//            let (quotient, remainder) = balance.quotientAndRemainder(dividingBy: BigUInt(10).power(Int(token.decimals))))
-//
-//
-//            Decimal
-//            let amount = (balance * pow(10, -Double(token.decimals))).rounded(toPlaces: token.decimals)
-//            amount * (price?.value ?? 0)
-//            EthereumQuantity
+        /// Convert balance into user-friendly format by using decimals.
+        public var representedBalance: CryptoAmount {
+            return .init(
+                amount: BigUInt.divide(balance, BigUInt(10).power(Int(token.decimals))),
+                symbol: token.symbol,
+                decimals: token.decimals
+            )
+        }
+
+        /// Balance in fiat
+        public var balanceInFiat: CurrencyAmount? {
+            guard
+                let price,
+                let rate = price.value
+            else {
+                return nil
+            }
+
+            return .init(
+                value: representedBalance.amount * rate,
+                currencyCode: price.currencyCode
+            )
         }
     }
 
     enum Error: Swift.Error {
         case invalidEthereumAddress
+    }
+}
+
+extension BigUInt {
+    static func divide(_ lhs: BigUInt, _ rhs: BigUInt) -> Decimal {
+        let (quotient, remainder) = lhs.quotientAndRemainder(dividingBy: rhs)
+        return Decimal(string: String(quotient))! + Decimal(string: String(remainder))! / Decimal(string: String(rhs))!
     }
 }

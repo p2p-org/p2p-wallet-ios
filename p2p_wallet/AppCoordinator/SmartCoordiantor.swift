@@ -105,8 +105,15 @@ class SmartCoordinator<T>: Coordinator<T> {
 
     func dismiss(_ event: T) {
         ignoreOnCloseEvent = true
-        presentation.presentingViewController.dismiss(animated: true) { [weak self] in
-            self?.result.send(event)
+
+        if let navigation = presentation.presentingViewController as? UINavigationController {
+            navigation.popViewController(animated: true) { [weak self] in
+                self?.result.send(event)
+            }
+        } else {
+            presentation.presentingViewController.dismiss(animated: true) { [weak self] in
+                self?.result.send(event)
+            }
         }
     }
 
@@ -122,6 +129,7 @@ class SmartCoordinator<T>: Coordinator<T> {
 
 //        vc.deallocatedPublisher()
 //            .sink { [weak self] _ in
+//                guard self?.ignoreOnCloseEvent == false else { return }
 //                self?.result.send(completion: .finished)
 //            }.store(in: &subscriptions)
 
