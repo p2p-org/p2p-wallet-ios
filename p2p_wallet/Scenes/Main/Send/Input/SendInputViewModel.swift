@@ -448,6 +448,7 @@ private extension SendInputViewModel {
         
         await MainActor.run {
             let transaction = SendTransaction(state: self.currentState) {
+                #if DEBUG
                 if isSendingViaLink {
                     // FIXME: - Real implementation later
                     try await Task.sleep(nanoseconds: 2_000_000_000)
@@ -461,11 +462,26 @@ private extension SendInputViewModel {
                         receiver: address,
                         amount: amountInToken,
                         feeWallet: feeWallet,
-                        ignoreTopUp: isSendingViaLink
+                        ignoreTopUp: isSendingViaLink,
+                        memo: nil
                     )
 
                     return trx
                 }
+                #else
+                try? await Resolver.resolve(SendHistoryService.self).insert(recipient)
+
+                let trx = try await Resolver.resolve(SendActionService.self).send(
+                    from: sourceWallet,
+                    receiver: address,
+                    amount: amountInToken,
+                    feeWallet: feeWallet,
+                    ignoreTopUp: isSendingViaLink,
+                    memo: isSendingViaLink ? .secretConfig("SEND_VIA_LINK_MEMO_PREFIX")!: nil
+                )
+
+                return trx
+                #endif
             }
             self.transaction.send(transaction)
         }
