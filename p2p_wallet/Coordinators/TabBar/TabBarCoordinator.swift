@@ -289,8 +289,8 @@ final class TabBarCoordinator: Coordinator<Void> {
             let swapCoordinator = JupiterSwapCoordinator(
                 navigationController: nc,
                 params: JupiterSwapParameters(
-                    dismissAfterCompletion: false,
-                    openKeyboardOnStart: false,
+                    dismissAfterCompletion: source == .actionPanel,
+                    openKeyboardOnStart: source == .actionPanel,
                     source: source,
                     hideTabBar: hidesBottomBarWhenPushed
                 )
