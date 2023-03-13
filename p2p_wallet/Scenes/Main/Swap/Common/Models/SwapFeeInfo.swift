@@ -4,7 +4,7 @@ struct SwapFeeInfo: Codable, Equatable {
     let amount: Double
     let tokenSymbol: String?
     let tokenName: String?
-    let amountInFiat: Double?
+    let tokenPriceInCurrentFiat: Double?
     let pct: Decimal?
     let canBePaidByKeyApp: Bool
     
@@ -17,5 +17,9 @@ struct SwapFeeInfo: Codable, Equatable {
     
     var amountInFiatDescription: String? {
         amount == 0 && canBePaidByKeyApp ? L10n.free: "≈ " + (amountInFiat?.fiatAmountFormattedString() ?? "")
+    }
+    
+    var amountInFiat: Double? {
+        amount * tokenPriceInCurrentFiat
     }
 }
