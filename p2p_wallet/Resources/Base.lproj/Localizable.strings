@@ -1220,7 +1220,7 @@ You can try again, but your new transaction will be subject to the current rates
 "Confirm claiming the tokens " = "Confirm claiming the tokens";
 "Claim %@" = "Claim %@";
 "With Key App, the first transaction is free. Also all the transactions above $300 are free" = "With Key App, the first transaction is free. Also all the transactions above $300 are free";
-"My Solana Address" = "My Solana Address";
+"My Solana address" = "My Solana address";
 "My username" = "My username";
 "My Ethereum address" = "My Ethereum address";
 "Send %@ to your Ethereum address" = "Send %@ to your Ethereum address";

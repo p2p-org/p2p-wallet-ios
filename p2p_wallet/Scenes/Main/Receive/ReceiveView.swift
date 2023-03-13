@@ -41,7 +41,9 @@ struct ReceiveView: View {
                 Image(uiImage: centerImage)
                     .resizable()
                     .scaledToFit()
-                    .frame(width: 32, height: 32)
+                    .frame(width: iconSize, height: iconSize)
+                    .background(Color(Asset.Colors.snow.color))
+                    .cornerRadius(radius: iconSize / 2, corners: .allCorners)
             } else if let centerImageURL = viewModel.qrCenterImageURL {
                 KFImage
                     .url(centerImageURL)
@@ -53,6 +55,8 @@ struct ReceiveView: View {
                     .diskCacheExpiration(.days(7))
                     .fade(duration: 0.25)
                     .frame(width: iconSize, height: iconSize)
+                    .background(Color(Asset.Colors.snow.color))
+                    .cornerRadius(radius: iconSize / 2, corners: .allCorners)
             }
         }
     }

@@ -11,6 +11,8 @@ import Foundation
 import RenVMSwift
 import Resolver
 import SolanaSwift
+import KeyAppKitCore
+import KeyAppBusiness
 
 final class HomeEmptyViewModel: BaseViewModel, ObservableObject {
     // MARK: - Dependencies
@@ -18,6 +20,7 @@ final class HomeEmptyViewModel: BaseViewModel, ObservableObject {
     @Injected private var analyticsManager: AnalyticsManager
     @Injected private var walletsRepository: WalletsRepository
     @Injected private var pricesService: PricesServiceType
+    @Injected private var solanaAccountsService: SolanaAccountsService
     
     // MARK: - Properties
     private var cancellable: AnyCancellable?
@@ -60,8 +63,8 @@ final class HomeEmptyViewModel: BaseViewModel, ObservableObject {
     }
 
     func receiveClicked() {
-        guard let solanaPubkey = try? PublicKey(string: walletsRepository.nativeWallet?.pubkey) else { return }
-        navigation.send(.receive(publicKey: solanaPubkey))
+        guard let pubkey = try? PublicKey(string: solanaAccountsService.state.value.nativeWallet?.data.pubkey) else { return }
+        navigation.send(.receive(publicKey: pubkey))
     }
     
     func buyTapped(index: Int) {

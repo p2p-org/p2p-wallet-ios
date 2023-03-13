@@ -80,9 +80,8 @@ class SupportedTokensViewModel: BaseViewModel, ObservableObject {
         }
 
         // Build final tokens list.
-        $solana
+        Publishers.Zip($solana, $ethereum)
             .receive(on: DispatchQueue.global(qos: .userInitiated))
-            .combineLatest($ethereum)
             .map(SupportedTokensBusinnes.combineSolanaWithEthereum)
             .combineLatest($filter)
             .map(SupportedTokensBusinnes.filterByKeyword)
