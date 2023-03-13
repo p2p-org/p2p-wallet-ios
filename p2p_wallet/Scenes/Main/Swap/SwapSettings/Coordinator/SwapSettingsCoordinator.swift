@@ -126,8 +126,8 @@ final class SwapSettingsCoordinator: Coordinator<SwapSettingsCoordinatorResult> 
                                 description: route.priceDescription(bestOutAmount: state.bestOutAmount, toTokenDecimals: state.toToken.token.decimals, toTokenSymbol: state.toToken.token.symbol) ?? "",
                                 tokensChain: route.chainDescription(tokensList: state.swapTokens.map(\.token))
                             ),
-                            networkFee: state.networkFee ?? SwapFeeInfo(amount: 0.000005, tokenSymbol: "SOL", tokenName: "Solana", amountInFiat: 0.0001, pct: 0.01, canBePaidByKeyApp: true),
-                            accountCreationFee: state.accountCreationFee ?? SwapFeeInfo(amount: 0, tokenSymbol: "SOL", tokenName: "Solana", amountInFiat: 0, pct: 0, canBePaidByKeyApp: false),
+                            networkFee: state.networkFee ?? SwapFeeInfo(amount: 0.000005, tokenSymbol: "SOL", tokenName: "Solana", tokenPriceInCurrentFiat: nil, pct: 0.01, canBePaidByKeyApp: true),
+                            accountCreationFee: state.accountCreationFee ?? SwapFeeInfo(amount: 0, tokenSymbol: "SOL", tokenName: "Solana", tokenPriceInCurrentFiat: nil, pct: 0, canBePaidByKeyApp: false),
                             liquidityFee: state.liquidityFee,
                             minimumReceived: state.minimumReceivedAmount == nil ? nil: .init(
                                 amount: state.minimumReceivedAmount!,
