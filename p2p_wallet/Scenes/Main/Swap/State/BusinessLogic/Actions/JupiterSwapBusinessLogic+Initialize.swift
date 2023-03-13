@@ -21,9 +21,6 @@ extension JupiterSwapBusinessLogic {
                 return combined
             }
         
-        // get relay context
-        let relayContext = try? await services.relayContextManager.getCurrentContextOrUpdate()
-        
         // get tokens
         let tokens: (fromToken: SwapToken, toToken: SwapToken)
         if let fromToken, let toToken {
@@ -39,7 +36,6 @@ extension JupiterSwapBusinessLogic {
                 $0.tokensPriceMap = tokensPriceMap
                 $0.routeMap = routeMap
                 $0.swapTokens = swapTokens
-                $0.relayContext = relayContext
             }
         }
         
@@ -52,7 +48,6 @@ extension JupiterSwapBusinessLogic {
             $0.fromToken = tokens.fromToken
             $0.toToken = tokens.toToken
             $0.slippageBps = Int(0.5 * 100)
-            $0.relayContext = relayContext
         }
     }
 }
