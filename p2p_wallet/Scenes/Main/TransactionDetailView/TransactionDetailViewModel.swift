@@ -32,7 +32,7 @@ class TransactionDetailViewModel: BaseViewModel, ObservableObject {
                 if let error, error.isSlippageError {
                     closeButtonTitle = L10n.increaseSlippageAndTryAgain
                 } else {
-                    closeButtonTitle = L10n.slippageError
+                    closeButtonTitle = L10n.tryAgain
                 }
             default:
                 break
