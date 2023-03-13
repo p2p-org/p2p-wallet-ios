@@ -33,7 +33,10 @@ extension JupiterSwapBusinessLogic {
         }
         
         // catch BlockhashNotFound error
-        catch let APIClientError.responseError(response) where response.message == "Transaction simulation failed: Blockhash not found" {
+        catch let APIClientError.responseError(response) where
+                response.message == "Transaction simulation failed: Blockhash not found" ||
+                response.message?.hasSuffix("custom program error: 0x1786")
+        {
 
             // re-create transaction
             let swapTransaction = try await services.jupiterClient.swap(
