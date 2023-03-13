@@ -112,6 +112,7 @@ extension DebugMenuViewModel {
         case mockedTKeyFacade
         case simulatedSocialError
         case sell
+        case sendViaLink
 
         var title: String {
             switch self {
@@ -124,6 +125,7 @@ extension DebugMenuViewModel {
             case .investSolend: return "Invest Solend"
             case .solendDisablePlaceholder: return "Solend Disable Placeholder"
             case .sell: return "Sell (Off Ramp)"
+            case .sendViaLink: return "Send via link"
             }
         }
 
@@ -138,6 +140,7 @@ extension DebugMenuViewModel {
             case .investSolend: return .investSolendFeature
             case .solendDisablePlaceholder: return .solendDisablePlaceholder
             case .sell: return .sellScenarioEnabled
+            case .sendViaLink: return .sendViaLinkEnabled
             }
         }
     }
