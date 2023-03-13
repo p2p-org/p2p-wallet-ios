@@ -130,18 +130,18 @@ class DetailAccountCoordinator: SmartCoordinator<WalletDetailCoordinator.Result>
     }
 
     func openReceive() {
-        guard case let .solanaAccount(account) = self.args else { return }
-
-        if let solanaPubkey = try? PublicKey(string: account.data.pubkey ?? "") {
-            let vm = ReceiveToken.SceneModel(
-                solanaPubkey: solanaPubkey,
-                solanaTokenWallet: account.data,
-                isOpeningFromToken: true
-            )
-            let vc = ReceiveToken.ViewController(viewModel: vm, isOpeningFromToken: true)
-            let navigation = UINavigationController(rootViewController: vc)
-            presentation.presentingViewController.present(navigation, animated: true)
+        guard case let .solanaAccount(account) = self.args,
+              let navigationController = presentation.presentingViewController as? UINavigationController else {
+                return
         }
+        let coordinator = ReceiveCoordinator(
+            network: .solana(
+                tokenSymbol: account.data.token.symbol,
+                tokenImage: (account.data.token.image, URL(string: account.data.token.logoURI ?? ""))
+            ),
+            presentation: SmartCoordinatorPushPresentation(navigationController)
+        )
+        coordinator.start().sink { _ in }.store(in: &subscriptions)
     }
 
     func openSwap() {
