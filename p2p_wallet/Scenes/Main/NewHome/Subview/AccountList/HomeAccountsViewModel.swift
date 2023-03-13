@@ -8,19 +8,21 @@
 import AnalyticsManager
 import Combine
 import Foundation
+import KeyAppBusiness
+import KeyAppKitCore
 import Resolver
 import Sell
 import SolanaSwift
 import SwiftyUserDefaults
-import KeyAppKitCore
-import KeyAppBusiness
 
 final class HomeAccountsViewModel: BaseViewModel, ObservableObject {
     private var defaultsDisposables: [DefaultsDisposable] = []
 
     // MARK: - Dependencies
 
-    private let solanaAccountsManager: SolanaAccountsService
+    private let solanaAccountsService: SolanaAccountsService
+    private let ethereumAccountsService: EthereumAccountsService
+
     @Injected private var analyticsManager: AnalyticsManager
 
     // MARK: - Properties
@@ -34,22 +36,14 @@ final class HomeAccountsViewModel: BaseViewModel, ObservableObject {
 
     /// Solana accounts.
     @Published private(set) var solanaAccountsState: AsyncValueState<[RendableSolanaAccount]> = .init(value: [])
-
-    @Published private(set) var wormholeAccount: RendableMockAccount = .init(
-        id: "0x00",
-        icon: .image(.ethereumIcon),
-        wrapped: false,
-        title: "Wrapped Ethereum",
-        subtitle: "0.999717252 WETH",
-        detail: .button(label: "Claim", action: {}),
-        tags: []
-    )
+    @Published private(set) var ethereumAccountsState: AsyncValueState<[RendableEthereumAccount]> = .init(value: [])
 
     /// Primary list accounts.
     var accounts: [any RendableAccount] {
-        [wormholeAccount] + solanaAccountsState.value.filter { rendableAccount in
-            Self.shouldInVisiableSection(rendableAccount: rendableAccount, hideZeroBalance: hideZeroBalance)
-        }
+        ethereumAccountsState.value
+            + solanaAccountsState.value.filter { rendableAccount in
+                Self.shouldInVisiableSection(rendableAccount: rendableAccount, hideZeroBalance: hideZeroBalance)
+            }
     }
 
     /// Secondary list accounts. Will be hidded normally and need to be manually action from user to show in view.
@@ -62,7 +56,8 @@ final class HomeAccountsViewModel: BaseViewModel, ObservableObject {
     // MARK: - Initializer
 
     init(
-        solanaAccountsManager: SolanaAccountsService = Resolver.resolve(),
+        solanaAccountsService: SolanaAccountsService = Resolver.resolve(),
+        ethereumAccountsService: EthereumAccountsService = Resolver.resolve(),
         favouriteAccountsStore: FavouriteAccountsStore = Resolver.resolve(),
         solanaTracker: SolanaTracker = Resolver.resolve(),
         notificationService: NotificationService = Resolver.resolve(),
@@ -70,7 +65,8 @@ final class HomeAccountsViewModel: BaseViewModel, ObservableObject {
         navigation: PassthroughSubject<HomeNavigation, Never>
     ) {
         self.navigation = navigation
-        self.solanaAccountsManager = solanaAccountsManager
+        self.solanaAccountsService = solanaAccountsService
+        self.ethereumAccountsService = ethereumAccountsService
 
         if sellDataService.isAvailable {
             actions = [.buy, .receive, .send, .cashOut]
@@ -85,7 +81,22 @@ final class HomeAccountsViewModel: BaseViewModel, ObservableObject {
             self?.hideZeroBalance = change.newValue ?? false
         })
 
-        solanaAccountsManager.$state
+        // Listen changing accounts from accounts manager
+        // Ethereum accounts
+        ethereumAccountsService.$state
+            .debounce(for: .seconds(0.1), scheduler: RunLoop.main)
+            .map { state in
+                state.innerApply { account in
+                    RendableEthereumAccount(account: account) {
+                        navigation.send(.claim(account))
+                    }
+                }
+            }
+            .weakAssign(to: \.ethereumAccountsState, on: self)
+            .store(in: &subscriptions)
+
+        // Solana accounts
+        solanaAccountsService.$state
             .map { (state: AsyncValueState<[SolanaAccountsService.Account]>) -> String in
                 let equityValue: Double = state.value.reduce(0) { $0 + $1.amountInFiat }
                 return "\(Defaults.fiat.symbol) \(equityValue.toString(maximumFractionDigits: 2))"
@@ -94,8 +105,7 @@ final class HomeAccountsViewModel: BaseViewModel, ObservableObject {
             .weakAssign(to: \.balance, on: self)
             .store(in: &subscriptions)
 
-        // Listen changing accounts from accounts manager
-        solanaAccountsManager.$state
+        solanaAccountsService.$state
             .debounce(for: .seconds(0.1), scheduler: RunLoop.main)
             .map { state in
                 // Filter NFT
@@ -118,8 +128,6 @@ final class HomeAccountsViewModel: BaseViewModel, ObservableObject {
                     if ignores.contains(account.data.pubkey ?? "") {
                         tags.insert(.ignore)
                     }
-
-                    print("Tags: ", tags)
 
                     return RendableSolanaAccount(
                         account: account,
@@ -145,13 +153,16 @@ final class HomeAccountsViewModel: BaseViewModel, ObservableObject {
     }
 
     func refresh() async throws {
-        try await solanaAccountsManager.fetch()
+        let _ = try await (
+            solanaAccountsService.fetch(),
+            ethereumAccountsService.fetch()
+        )
     }
 
     func actionClicked(_ action: WalletActionType) {
         switch action {
         case .receive:
-            guard let pubkey = try? PublicKey(string: solanaAccountsManager.state.value.nativeWallet?.data.pubkey) else { return }
+            guard let pubkey = try? PublicKey(string: solanaAccountsService.state.value.nativeWallet?.data.pubkey) else { return }
             navigation.send(.receive(publicKey: pubkey))
         case .buy:
             navigation.send(.buy)

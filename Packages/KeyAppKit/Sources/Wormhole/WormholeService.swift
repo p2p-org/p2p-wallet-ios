@@ -24,7 +24,7 @@ public enum WormholeService {
                 tokens.append(token)
             }
 
-            return [EthereumToken()] + tokens
+            return tokens
         }
     }
 }

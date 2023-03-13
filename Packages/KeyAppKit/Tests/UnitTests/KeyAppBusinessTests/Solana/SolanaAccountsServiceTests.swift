@@ -2,6 +2,7 @@
 import XCTest
 
 import Combine
+import KeyAppKitCore
 import SolanaPricesAPIs
 import SolanaSwift
 
@@ -16,7 +17,8 @@ final class SolanaAccountsServiceTests: XCTestCase {
             tokensService: MockSolanaTokensRepository(),
             priceService: SolanaPriceService(api: MockSolanaPricesAPI()),
             accountObservableService: MockSolanaAccountsObservableService(),
-            fiat: "usd"
+            fiat: "usd",
+            errorObservable: MockErrorObservable()
         )
 
         // After 1 second
@@ -44,7 +46,8 @@ final class SolanaAccountsServiceTests: XCTestCase {
             tokensService: MockSolanaTokensRepository(),
             priceService: SolanaPriceService(api: MockSolanaPricesAPI()),
             accountObservableService: observableService,
-            fiat: "usd"
+            fiat: "usd",
+            errorObservable: MockErrorObservable()
         )
 
         // After 1 second

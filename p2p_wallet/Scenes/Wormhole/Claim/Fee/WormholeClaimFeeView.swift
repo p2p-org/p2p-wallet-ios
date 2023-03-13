@@ -9,9 +9,12 @@ import KeyAppUI
 import SwiftUI
 
 struct WormholeClaimFee: View {
+    let close: (() -> Void)?
+
     var body: some View {
         VStack {
             Image(uiImage: .fee)
+                .padding(.top, 33)
 
             HStack {
                 Circle()
@@ -43,8 +46,8 @@ struct WormholeClaimFee: View {
                 WormholeFeeView(title: "You will get", subtitle: "0.999717252 WETH", detail: "~ $1,215.75")
             }
             .padding(.top, 16)
-            
-            TextButtonView(title: L10n.ok, style: .second, size: .large)
+
+            TextButtonView(title: L10n.ok, style: .second, size: .large, onPressed: close)
                 .frame(height: TextButton.Size.large.height)
                 .padding(.top, 20)
         }
@@ -76,6 +79,6 @@ private struct WormholeFeeView: View {
 
 struct WormholeClaimFee_Previews: PreviewProvider {
     static var previews: some View {
-        WormholeClaimFee()
+        WormholeClaimFee {}
     }
 }

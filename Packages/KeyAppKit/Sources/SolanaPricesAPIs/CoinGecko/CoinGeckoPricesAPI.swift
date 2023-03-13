@@ -30,7 +30,7 @@ public class CoinGeckoPricesAPI: SolanaPricesAPI {
     }
     
     /// Simple price response data struct. [Contract: [Fiat: Price]]
-    public typealias SimplePriceResponse = [String: [String: Double]]
+    public typealias SimplePriceResponse = [String: [String: Decimal]]
     
     /// Return simple price by id.
     public func getSimplePrice(ids: [String], fiat: [String]) async throws -> SimplePriceResponse {

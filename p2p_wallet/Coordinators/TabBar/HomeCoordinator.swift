@@ -23,6 +23,7 @@ enum HomeNavigation: Equatable {
     case cashOut
     case earn
     case solanaAccount(SolanaAccountsService.Account)
+    case claim(EthereumAccountsService.Account)
     case actions([WalletActionType])
     // HomeEmpty
     case topUpCoin(Token)
@@ -135,6 +136,26 @@ final class HomeCoordinator: Coordinator<Void> {
                     break
                 }
 //                tokensViewModel?.scrollToTop()
+            })
+            .map { _ in () }
+            .eraseToAnyPublisher()
+        case .claim(let account):
+            return coordinate(
+                to: WormholeClaimCoordinator(account: account, presentation: SmartCoordinatorPushPresentation(navigationController))
+            )
+            .handleEvents(receiveOutput: { [weak self] result in
+                guard let self = self else { return }
+                switch result {
+                case .claiming(let pendingTrx):
+                    self.coordinate(
+                        to: TransactionDetailCoordinator(
+                            viewModel: .init(pendingTransaction: pendingTrx),
+                            presentingViewController: self.navigationController
+                        )
+                    )
+                    .sink { _ in }
+                    .store(in: &self.subscriptions)
+                }
             })
             .map { _ in () }
             .eraseToAnyPublisher()

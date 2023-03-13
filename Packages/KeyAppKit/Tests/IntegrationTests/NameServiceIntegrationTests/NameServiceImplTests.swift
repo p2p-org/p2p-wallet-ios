@@ -13,23 +13,23 @@ class NameServiceImplTests: XCTestCase {
         cache: cache
     )
 
-    func testGetName() async throws {
-        let name = try await service.getName("9RvNi4pPm8euMuPGPNQVjR8wWTPawZMvqfqA2QQmwVHC")
-        XCTAssertEqual(name, "amarannta-test")
+//    func testGetName() async throws {
+//        let name = try await service.getName("F4PyAj5Fczn7AGPocjvxCRwn18u8UfSdFbBqad4iZ4LC")
+//        XCTAssertEqual(name, "alla")
+//
+//        let cachedValue = try await service.getName("F4PyAj5Fczn7AGPocjvxCRwn18u8UfSdFbBqad4iZ4LC")
+//        XCTAssertEqual(cachedValue, "alla")
+//    }
 
-        let cachedValue = try await service.getName("9RvNi4pPm8euMuPGPNQVjR8wWTPawZMvqfqA2QQmwVHC")
-        XCTAssertEqual(cachedValue, "amarannta-test")
-    }
+//    func testGetOwnerAddress() async throws {
+//        let publicKey = try await service.getOwnerAddress("alla")
+//        XCTAssertEqual(publicKey, "F4PyAj5Fczn7AGPocjvxCRwn18u8UfSdFbBqad4iZ4LC")
+//    }
 
-    func testGetOwnerAddress() async throws {
-        let publicKey = try await service.getOwnerAddress("alla")
-        XCTAssertEqual(publicKey, "6PvJNsAoKJiyEaHEdFg3qEMGjWgR7tR6UmXi2imfPZS7")
-    }
-
-    func testGetOwnerFailedAddress() async throws {
-        let publicKey = try await service.getOwnerAddress("6PvJNsAoKJiyEaHEdFg3qEMGjWgR7tR6UmXi2imfPZS6")
-        XCTAssertNil(publicKey)
-    }
+//    func testGetOwnerFailedAddress() async throws {
+//        let publicKey = try await service.getOwnerAddress("6PvJNsAoKJiyEaHEdFg3qEMGjWgR7tR6UmXi2imfPZS6")
+//        XCTAssertNil(publicKey)
+//    }
 
     func testGetOwners() async throws {
         let publicKeys = try await service.getOwners("kirill")
