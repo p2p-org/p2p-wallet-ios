@@ -3,8 +3,6 @@ import SwiftUI
 
 struct SwapView: View {
     @ObservedObject var viewModel: SwapViewModel
-    @ObservedObject var fromViewModel: SwapInputViewModel
-    @ObservedObject var toViewModel: SwapInputViewModel
 
     @State private var animatedFinish: Bool = false
 
@@ -62,8 +60,8 @@ private extension SwapView {
             // Inputs
             ZStack {
                 VStack(spacing: 8) {
-                    SwapInputView(viewModel: fromViewModel)
-                    SwapInputView(viewModel: toViewModel)
+                    SwapInputView(viewModel: viewModel.fromTokenInputViewModel)
+                    SwapInputView(viewModel: viewModel.toTokenInputViewModel)
                 }
                 SwapSwitchButton(action: viewModel.switchTokens)
             }

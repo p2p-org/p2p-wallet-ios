@@ -27,6 +27,9 @@ final class SwapViewModel: BaseViewModel, ObservableObject {
     let submitTransaction = PassthroughSubject<(PendingTransaction, String), Never>()
 
     // MARK: - Params
+    var fromTokenInputViewModel: SwapInputViewModel
+    var toTokenInputViewModel: SwapInputViewModel
+    
     @Published var initializingState: InitializingState = .loading
     @Published var arePricesLoading: Bool = false
 
@@ -49,16 +52,16 @@ final class SwapViewModel: BaseViewModel, ObservableObject {
     private var timer: Timer?
     private let source: JupiterSwapSource
 
-    init(source: JupiterSwapSource, preChosenWallet: Wallet? = nil) {
-        stateMachine = JupiterSwapStateMachine(
-            initialState: .zero,
-            services: JupiterSwapServices(
-                jupiterClient: Resolver.resolve(),
-                pricesAPI: Resolver.resolve(),
-                solanaAPIClient: Resolver.resolve(),
-                relayContextManager: Resolver.resolve()
-            )
-        )
+    init(
+        stateMachine: JupiterSwapStateMachine,
+        fromTokenInputViewModel: SwapInputViewModel,
+        toTokenInputViewModel: SwapInputViewModel,
+        source: JupiterSwapSource,
+        preChosenWallet: Wallet? = nil
+    ) {
+        self.fromTokenInputViewModel = fromTokenInputViewModel
+        self.toTokenInputViewModel = toTokenInputViewModel
+        self.stateMachine = stateMachine
         self.preChosenWallet = preChosenWallet
         self.source = source
         super.init()
@@ -219,6 +222,8 @@ private extension SwapViewModel {
         switch state.status {
         case .requiredInitialize, .initializing, .loadingTokenTo, .loadingAmountTo, .switching:
             arePricesLoading = true
+        case .creatingSwapTransaction:
+            arePricesLoading = false
         case .ready:
             arePricesLoading = false
             guard state.amountFrom > 0 else { return }
@@ -226,7 +231,7 @@ private extension SwapViewModel {
                 isEnabled: true,
                 title: L10n.swap(state.fromToken.token.symbol, state.toToken.token.symbol)
             )
-        default:
+        case .error:
             arePricesLoading = false
         }
     }
@@ -235,7 +240,20 @@ private extension SwapViewModel {
         switchTokens
             .sinkAsync(receiveValue: { [weak self] _ in
                 guard let self else { return }
+                // cache the current amountTo
+                let newAmountFrom = self.currentState.amountTo
+                
+                // switch from and to token
                 let newState = await self.stateMachine.accept(action: .switchFromAndToTokens)
+                
+                // change amountFrom into newAmountFrom
+                // the changeAmountFrom action will be kicked
+                await MainActor.run { [weak self] in
+                    guard let self else { return }
+                    self.fromTokenInputViewModel.amount = newAmountFrom
+                }
+                
+                // log
                 self.logSwitch(from: newState.fromToken, to: newState.toToken)
             })
             .store(in: &subscriptions)
@@ -271,7 +289,7 @@ private extension SwapViewModel {
             if state.amountFrom == 0 {
                 actionButtonData = SliderActionButtonData(isEnabled: false, title: L10n.enterTheAmount)
             }
-        case .requiredInitialize, .loadingTokenTo, .loadingAmountTo, .switching, .initializing:
+        case .requiredInitialize, .loadingTokenTo, .loadingAmountTo, .switching, .initializing, .creatingSwapTransaction:
             actionButtonData = SliderActionButtonData(isEnabled: false, title: L10n.counting)
         case .error(.notEnoughFromToken):
             actionButtonData = SliderActionButtonData(isEnabled: false, title: L10n.notEnough(state.fromToken.token.symbol))
@@ -285,6 +303,8 @@ private extension SwapViewModel {
             if state.fromToken.address == Token.nativeSolana.address {
                 notificationService.showToast(title: "✅", text: L10n.weLeftAMinimumSOLBalanceToSaveTheAccountAddress)
             }
+        case .error(.createTransactionFailed):
+            actionButtonData = SliderActionButtonData(isEnabled: false, title: L10n.creatingTransactionFailed)
         default:
             actionButtonData = SliderActionButtonData(isEnabled: false, title: L10n.swapOfTheseTokensIsnTPossible)
         }
@@ -441,7 +461,7 @@ extension SwapViewModel {
         analyticsManager.log(event: .swapSwitchTokens(tokenAName: from.token.symbol, tokenBName: to.token.symbol))
     }
 
-    private func log(priceImpact: JupiterSwapState.SwapPriceImpact?, value: Double?) {
+    private func log(priceImpact: JupiterSwapState.SwapPriceImpact?, value: Decimal?) {
         guard let priceImpact, let value else { return }
         switch priceImpact {
         case .medium:

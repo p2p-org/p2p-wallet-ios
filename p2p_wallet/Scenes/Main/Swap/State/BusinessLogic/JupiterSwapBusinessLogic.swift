@@ -5,6 +5,12 @@ enum JupiterSwapBusinessLogic {
         state: JupiterSwapState,
         action: JupiterSwapAction
     ) -> Bool {
+        // perform action whenever error appears
+        if state.status.hasError {
+            return true
+        }
+        
+        // otherwise check the action
         switch action {
         case .initialize:
             return true
@@ -75,7 +81,7 @@ enum JupiterSwapBusinessLogic {
                 $0.swapTransaction = nil
                 $0.routes = []
                 $0.fromToken = state.toToken
-                $0.amountFrom = state.amountTo
+                $0.amountFrom = nil
                 $0.toToken = state.fromToken
                 $0.amountTo = nil
             }
@@ -131,22 +137,21 @@ enum JupiterSwapBusinessLogic {
             )
 
         case .changeAmountFrom:
-            // recalculate the route and re create transaction
-            return await recalculateRouteAndRecreateTransaction(
+            // recalculate the route and mark status as creatingTransaction
+            return await recalculateRouteAndMarkAsCreatingTransaction(
                 state: state,
                 services: services
             )
-
         case .changeFromToken:
             // return state as amount from is reset to nil
             return state.modified {
                 $0.status = .ready
             }
         case .changeToToken:
-            // recalculate route if amountFrom > 0
+            // recalculate route and make transaction if amountFrom > 0
             if state.amountFrom > 0 {
-                // recalculate the route and re create transaction
-                return await recalculateRouteAndRecreateTransaction(
+                // recalculate the route and mark status as creatingTransaction
+                return await recalculateRouteAndMarkAsCreatingTransaction(
                     state: state,
                     services: services
                 )
@@ -158,14 +163,12 @@ enum JupiterSwapBusinessLogic {
             }
             
         case .switchFromAndToTokens:
-            // recalculate the route and re create transaction
-            return await recalculateRouteAndRecreateTransaction(
-                state: state,
-                services: services
-            )
+            return state.modified {
+                $0.status = .ready
+            }
         case .update:
-            // recalculate the route and re create transaction
-            return await recalculateRouteAndRecreateTransaction(
+            // recalculate the route and mark status as creatingTransaction
+            return await recalculateRouteAndMarkAsCreatingTransaction(
                 state: state,
                 services: services
             )
@@ -187,8 +190,8 @@ enum JupiterSwapBusinessLogic {
             
             // otherwise
             else {
-                // recalculate the route and re create transaction
-                return await recalculateRouteAndRecreateTransaction(
+                // recalculate the route and mark status as creatingTransaction
+                return await recalculateRouteAndMarkAsCreatingTransaction(
                     state: state,
                     services: services
                 )
@@ -199,32 +202,81 @@ enum JupiterSwapBusinessLogic {
                 $0.tokensPriceMap = tokensPriceMap
             }
         case .changeSlippageBps:
-            // recalculate the route and re create transaction
-            return await recalculateRouteAndRecreateTransaction(
+            // recalculate the route and mark status as creatingTransaction
+            return await recalculateRouteAndMarkAsCreatingTransaction(
                 state: state,
                 services: services
             )
         case .chooseRoute:
             // create swap transaction
-            return await createTransaction(state: state, services: services)
+            return state.modified {
+                $0.status = .creatingSwapTransaction
+            }
+        }
+    }
+    
+    static func createTransaction(
+        state: JupiterSwapState,
+        services: JupiterSwapServices
+    ) async -> JupiterSwapState {
+        do {
+            guard state.status == .creatingSwapTransaction else {
+                return state
+            }
+            
+            guard let route = state.route else {
+                return state.error(.routeIsNotFound)
+            }
+
+            guard let account = state.account else {
+                return state.error(.createTransactionFailed)
+            }
+
+            let swapTransaction = try await services.jupiterClient.swap(
+                route: route,
+                userPublicKey: account.publicKey.base58EncodedString,
+                wrapUnwrapSol: true,
+                feeAccount: nil,
+                computeUnitPriceMicroLamports: nil
+            )
+            
+            guard let swapTransaction else {
+                throw JupiterError.invalidResponse
+            }
+
+            return state.modified {
+                $0.status = .ready
+                $0.swapTransaction = swapTransaction
+            }
+        }
+        catch let error {
+            if (error as NSError).isNetworkConnectionError {
+                return state.error(.networkConnectionError)
+            }
+            return state.error(.createTransactionFailed)
         }
     }
     
     // MARK: - Helpers
 
-    private static func recalculateRouteAndRecreateTransaction(
+    private static func recalculateRouteAndMarkAsCreatingTransaction(
         state: JupiterSwapState,
         services: JupiterSwapServices
     ) async -> JupiterSwapState {
-        // calculate new route
-        let state = await calculateRoute(state: state, services: services)
+        // recalculate the route
+        let state = await calculateRoute(
+            state: state,
+            services: services
+        )
         
-        // create transaction if status is ready
-        if state.status == .ready {
-            return await createTransaction(state: state, services: services)
+        // check if status is ready
+        guard state.status == .ready else {
+            return state
         }
         
-        // else return state
-        return state
+        // mark as creating swap transaction
+        return state.modified {
+            $0.status = .creatingSwapTransaction
+        }
     }
 }

@@ -1246,3 +1246,5 @@ You can try again, but your new transaction will be subject to the current rates
 "Low slippage %@. We recommend to increase slippage manually" = "Low slippage %@. We recommend to increase slippage manually";
 "Increase slippage and try again" = "Increase slippage and try again";
 "popular" = "popular";
+"Integrity of the route has been compromised" = "Integrity of the route has been compromised";
+"Creating transaction failed" = "Creating transaction failed";
