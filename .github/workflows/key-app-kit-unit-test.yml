@@ -16,18 +16,20 @@ jobs:
             - name: Run unit tests
               working-directory: ./Packages/KeyAppKit
               run: |
-                swift test --enable-code-coverage
+                xcodebuild -scheme KeyAppKit-Package test -destination "platform=iOS Simulator,name=iPhone 14,OS=latest" -parallel-testing-worker-count 3 -parallel-testing-enabled YES -enableCodeCoverage YES
+#                swift test --enable-code-coverage
 
             - uses: sersoft-gmbh/swift-coverage-action@v3.0.1
               id: coverage-files
-              with:
-                search-paths: |
-                  ./Packages/KeyAppKit/.build
+#              with:
+#                search-paths: |
+#                  ./Packages/KeyAppKit/.build
 
             - name: Test coverage
               uses: maxep/spm-lcov-action@0.3.1
               with:
                 output-file: ./coverage/lcov.info
+                target-name-filter: '(KeyAppBusiness|Wormhole|Moonpay)'
 
             - name: Bot comment
               uses: romeovs/lcov-reporter-action@v0.3.1
@@ -35,7 +37,6 @@ jobs:
                   lcov-file: ${{fromJSON(steps.coverage-files.outputs.files)[0]}}
                   filter-changed-files: true
 
-                  
 #    - name: Convert to standard format
 #      run: |
 #        xcrun llvm-cov export -format="lcov" .build/debug/KeyAppKitPackageTests.xctest/Contents/MacOS/KeyAppKitPackageTests -instr-profile .build/debug/codecov/default.profdata > info.lcov
