@@ -128,30 +128,6 @@ class RenBTCStatusService: RenBTCStatusServiceType {
         )
 
 //        try await solanaAPIClient.waitForConfirmation(signature: tx, ignoreStatus: true)
-
-        walletsRepository.batchUpdate { wallets in
-            guard let string = wallets.first(where: { $0.isNativeSOL })?.pubkey,
-                  let nativeWalletAddress = try? PublicKey(string: string),
-                  let renBTCAddress = try? PublicKey.associatedTokenAddress(
-                      walletAddress: nativeWalletAddress,
-                      tokenMintAddress: renBTCMint
-                  )
-            else { return wallets }
-
-            var wallets = wallets
-
-            if !wallets.contains(where: { $0.pubkey == renBTCAddress.base58EncodedString }) {
-                wallets.append(
-                    .init(
-                        pubkey: renBTCAddress.base58EncodedString,
-                        lamports: 0,
-                        token: .renBTC
-                    )
-                )
-            }
-
-            return wallets
-        }
     }
 
     func getCreationFee(payingFeeMintAddress mintAddress: String) async throws -> Lamports {

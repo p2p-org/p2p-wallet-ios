@@ -8,7 +8,6 @@ import Foundation
 import Resolver
 import Send
 import SolanaSwift
-import Send
 import SwiftUI
 
 enum SendResult {
@@ -21,7 +20,6 @@ enum SendSource: String {
 }
 
 class SendCoordinator: Coordinator<SendResult> {
-    
     // MARK: - Dependencies
 
     @Injected var walletsRepository: WalletsRepository
@@ -85,9 +83,9 @@ class SendCoordinator: Coordinator<SendResult> {
         // Back
         return result.prefix(1).eraseToAnyPublisher()
     }
-    
+
     // MARK: - Helpers
-    
+
     private func startFlowWithPreChosenRecipient(
         _ recipient: Recipient
     ) -> AnyPublisher<SendResult, Never> {
