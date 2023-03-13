@@ -14,14 +14,22 @@ extension JupiterSwapBusinessLogic {
         versionedTransaction: VersionedTransaction,
         solanaAPIClient: SolanaAPIClient
     ) async throws -> String {
-
-        let blockHash = try await solanaAPIClient.getRecentBlockhash()
+        // get versioned transaction
         var versionedTransaction = versionedTransaction
-        versionedTransaction.setRecentBlockHash(blockHash)
+        
+        // get blockhash if needed (don't need any more)
+//        if versionedTransaction.message.value.recentBlockhash == nil {
+//            let blockHash = try await solanaAPIClient.getRecentBlockhash()
+//            versionedTransaction.setRecentBlockHash(blockHash)
+//        }
+        
+        // sign transaction
         try versionedTransaction.sign(signers: [account])
 
+        // serialize transaction
         let serializedTransaction = try versionedTransaction.serialize().base64EncodedString()
 
+        // send to blockchain
         return try await solanaAPIClient.sendTransaction(
             transaction: serializedTransaction ,
             configs: RequestConfiguration(encoding: "base64")!
