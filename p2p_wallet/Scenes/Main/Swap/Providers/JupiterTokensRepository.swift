@@ -99,7 +99,7 @@ final class JupiterTokensRepositoryImpl: JupiterTokensRepository {
                 walletsRepository.dataPublisher
             )
                 .filter { (state, _) in
-                      state == .loaded
+                    state == .loaded
                 }
                 .map { _, wallets in
                     return wallets

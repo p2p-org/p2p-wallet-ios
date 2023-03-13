@@ -130,7 +130,7 @@ struct SwapSelectRouteView_Previews: PreviewProvider {
     static var previews: some View {
         SwapSelectRouteView(
             statusPublisher: subject.eraseToAnyPublisher(),
-            onSelectRoute: {_ in },
+            onSelectRoute: { _ in },
             onTapDone: {}
         )
             .onAppear {
