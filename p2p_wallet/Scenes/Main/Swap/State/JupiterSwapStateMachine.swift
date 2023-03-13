@@ -45,8 +45,12 @@ actor JupiterSwapStateMachine {
             await cache.currentTask?.cancel()
         }
         
-        // dispatch new action (can be immediately or after current action)
-        let task = await task(action: newAction)
+        // create task to dispatch new action (can be immediately or after current action)
+        let currentState = currentState
+        let task = Task { [weak self] in
+            guard let self else { return currentState}
+            return await self.dispatch(action: newAction)
+        }
         
         // save task to cache
         await cache.saveCurrentTask(task)
@@ -56,18 +60,6 @@ actor JupiterSwapStateMachine {
     }
     
     // MARK: - Dispatching
-    
-    private func task(action: JupiterSwapAction) -> Task<JupiterSwapState, Never> {
-        // assign task
-        let currentState = currentState
-        let task = Task { [weak self] in
-            guard let self else { return currentState}
-            return await self.dispatch(action: action)
-        }
-        
-        // return task to listener
-        return task
-    }
     
     @discardableResult
     private func dispatch(action: JupiterSwapAction) async -> JupiterSwapState {
