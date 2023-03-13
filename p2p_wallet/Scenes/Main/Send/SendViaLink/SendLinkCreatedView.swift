@@ -85,7 +85,7 @@ struct SendLinkCreatedView: View {
 struct SendLinkCreatedView_Previews: PreviewProvider {
     static var previews: some View {
         SendLinkCreatedView(
-            link: "key.app/Ro8Andswf",
+            link: "test.com/Ro8Andswf",
             formatedAmount: "7.12 SOL",
             onClose: {},
             onShare: {}
