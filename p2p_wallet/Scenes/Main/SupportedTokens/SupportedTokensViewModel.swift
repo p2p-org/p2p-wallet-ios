@@ -46,14 +46,6 @@ class SupportedTokensViewModel: BaseViewModel, ObservableObject {
             // List all tokens
             let tokens = try await solanaTokenRepository.getTokensList()
 
-            // List stable coins
-            let stableCoints: [SolanaSwift.Token] = [
-                .usdt,
-                .usdc,
-                .eth,
-                .nativeSolana
-            ]
-
             // Filter tokens
             let filteredToken = tokens
                 .filter { token in
@@ -65,12 +57,11 @@ class SupportedTokensViewModel: BaseViewModel, ObservableObject {
                 }
                 .filter { token in
                     // Ignore stable coin by symbol, because there are many of them.
-                    !stableCoints.map(\.symbol).contains(token.symbol.trimmingCharacters(in: .whitespacesAndNewlines))
+                    !SupportedTokensBusinnes.wellKnownTokens.map(\.symbol).contains(token.symbol.trimmingCharacters(in: .whitespacesAndNewlines))
                 }
+                .map { SupportedTokenItem(solana: $0) }
 
-            solana = Set(
-                (stableCoints + filteredToken).map { SupportedTokenItem(solana: $0) }
-            )
+            solana = Set(SupportedTokensBusinnes.wellKnownTokens + filteredToken)
         }
 
         // Get ethereum list
@@ -103,7 +94,10 @@ private enum SupportedTokensBusinnes {
 
         // Merge by symbol. Is it a good way?
         for ethereumToken in ethereum {
-            let index = result.firstIndex { solanaToken in solanaToken.symbol == ethereumToken.symbol }
+            let index = result.firstIndex { solanaToken in
+                let ethSynonym = Self.knownSynonymTokens[solanaToken.symbol]
+                return solanaToken.symbol == ethereumToken.symbol || ethSynonym == ethereumToken.symbol
+            }
             if let index {
                 // Merge with solana.
 
@@ -160,9 +154,60 @@ private enum SupportedTokensBusinnes {
             "USDC",
             "USDT",
             "ETH",
-            "SOL"
+            "SOL",
+            "AVAX",
+            "BNB",
+            "WBNB",
+            "MATIC",
+            "CRV"
         ]
 
         return priority.firstIndex { i in i == symbol } ?? priority.count
     }
+
+    static var knownSynonymTokens: [String: String] {
+        // key - solana symbol, value - eth symbol
+        [
+            "BNB": "WBNB",
+            "AVAX": "WAVAX"
+        ]
+    }
+
+    static var wellKnownTokens: [SupportedTokenItem] {
+        [
+            SupportedTokenItem(
+                icon: .url(URL(string: "https://assets.coingecko.com/coins/images/4128/large/solana.png?1640133422")!),
+                name: "Solana", symbol: "SOL", availableNetwork: [.ethereum, .solana]
+            ),
+            SupportedTokenItem(
+                icon: .url(URL(string: "https://assets.coingecko.com/coins/images/279/large/ethereum.png?1595348880")!),
+                name: "Ethereum", symbol: "ETH", availableNetwork: [.ethereum, .solana]
+            ),
+            SupportedTokenItem(
+                icon: .url(URL(string: "https://assets.coingecko.com/coins/images/6319/large/USD_Coin_icon.png?1547042389")!),
+                name: "USDC", symbol: "USDC", availableNetwork: [.ethereum, .solana]
+            ),
+            SupportedTokenItem(
+                icon: .url(URL(string: "https://assets.coingecko.com/coins/images/325/large/Tether.png?1668148663")!),
+                name: "USDT", symbol: "USDT", availableNetwork: [.ethereum, .solana]
+            ),
+            SupportedTokenItem(
+                icon: .url(URL(string: "https://assets.coingecko.com/coins/images/12559/large/Avalanche_Circle_RedWhite_Trans.png?1670992574")!),
+                name: "Avalanche", symbol: "AVAX", availableNetwork: [.ethereum, .solana]
+            ),
+            SupportedTokenItem(
+                icon: .url(URL(string: "https://assets.coingecko.com/coins/images/825/large/bnb-icon2_2x.png?1644979850")!),
+                name: "Binance Coin", symbol: "BNB", availableNetwork: [.ethereum, .solana]
+            ),
+            SupportedTokenItem(
+                icon: .url(URL(string: "https://assets.coingecko.com/coins/images/4713/large/matic-token-icon.png?1624446912")!),
+                name: "Polygon", symbol: "MATIC", availableNetwork: [.ethereum, .solana]
+            ),
+            SupportedTokenItem(
+                icon: .url(URL(string: "https://assets.coingecko.com/coins/images/12124/large/Curve.png?1597369484")!),
+                name: "Curve DAO Token", symbol: "CRV", availableNetwork: [.ethereum, .solana]
+            )
+        ]
+    }
+
 }
