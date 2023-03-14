@@ -19,7 +19,7 @@ public struct JSONRPCResponse<T: Codable, U: Codable>: Codable {
     }
 }
 
-public struct JSONRPCError<U: Codable>: Codable {
+public struct JSONRPCError<U: Codable>: Codable, Error {
     public let code: Int
     public let message: String
     public let data: U?
