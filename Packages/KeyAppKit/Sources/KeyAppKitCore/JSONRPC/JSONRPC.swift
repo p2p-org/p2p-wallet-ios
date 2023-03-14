@@ -19,7 +19,7 @@ public struct JSONRPCResponse<T: Codable, U: Codable>: Codable {
     }
 }
 
-public struct JSONRPCError<U: Codable>: Codable, Error {
+public struct JSONRPCError<U: Codable>: Codable, LocalizedError {
     public let code: Int
     public let message: String
     public let data: U?
@@ -28,6 +28,10 @@ public struct JSONRPCError<U: Codable>: Codable, Error {
         self.code = code
         self.message = message
         self.data = data
+    }
+
+    public var errorDescription: String? {
+        return "Code \(code). Reason: \(message)"
     }
 }
 

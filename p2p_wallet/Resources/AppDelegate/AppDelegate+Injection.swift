@@ -28,6 +28,7 @@ import Solend
 import SwiftyUserDefaults
 import TransactionParser
 import Web3
+import Wormhole
 
 extension Resolver: ResolverRegistering {
     @MainActor public static func registerAllServices() {
@@ -114,6 +115,10 @@ extension Resolver: ResolverRegistering {
             .scope(.application)
 
         register { EthereumPriceService(api: resolve()) }
+            .scope(.application)
+
+        register { WormholeRPCAPI(endpoint: "https://bridge-service.keyapp.org") }
+            .implements(WormholeAPI.self)
             .scope(.application)
 
         // AnalyticsManager
@@ -270,6 +275,18 @@ extension Resolver: ResolverRegistering {
 
     /// Session scope: Live when user is authenticated
     @MainActor private static func registerForSessionScope() {
+        register {
+            let userWalletsManager: UserWalletManager = resolve()
+
+            return WormholeService(
+                api: resolve(),
+                ethereumKeypair: userWalletsManager.wallet?.ethereumKeypair,
+                solanaKeyPair: userWalletsManager.wallet?.account,
+                errorObservable: resolve()
+            )
+        }
+        .scope(.session)
+
         // AuthenticationHandler
         register { AuthenticationHandler() }
             .implements(AuthenticationHandlerType.self)

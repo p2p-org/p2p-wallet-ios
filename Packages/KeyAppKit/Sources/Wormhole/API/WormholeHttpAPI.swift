@@ -8,34 +8,52 @@
 import Foundation
 import KeyAppKitCore
 
-class WormholeRPCAPI: WormholeAPI {
+public class WormholeRPCAPI: WormholeAPI {
     let client: HTTPJSONRPCCLient
     
-    init(endpoint: String, urlSession: URLSession = URLSession.shared) {
+    public init(endpoint: String, urlSession: URLSession = URLSession.shared) {
         self.client = .init(endpoint: endpoint, urlSession: urlSession)
     }
     
-    func getEthereumBundle(userWallet: String, recipient: String, token: String?, amount: String, slippage: UInt8) async throws -> WormholeBundle {
-        try await self.client.call(
+    public func getEthereumBundle(userWallet: String, recipient: String, token: String?, amount: String, slippage: UInt8?) async throws -> WormholeBundle {
+        /// Internal structure for params
+        struct Params: Codable {
+            let userWallet: String
+            let recipient: String
+            let token: String?
+            let amount: String
+            let slippage: UInt8?
+            
+            enum CodingKeys: String, CodingKey {
+                case userWallet = "user_wallet"
+                case recipient
+                case token
+                case amount
+                case slippage
+            }
+        }
+        
+        // Request
+        return try await self.client.call(
             method: "get_ethereum_bundle",
-            params: [
-                "user_wallet": userWallet,
-                "recipient": recipient,
-                "token": token,
-                "amount": amount,
-                "slippage": try String(slippage),
-            ]
+            params: Params(
+                userWallet: userWallet,
+                recipient: recipient,
+                token: token,
+                amount: amount,
+                slippage: slippage
+            )
         )
     }
     
-    func sendEthereumBundle(bundle: WormholeBundle) async throws {
+    public func sendEthereumBundle(bundle: WormholeBundle) async throws {
         try await self.client.invoke(
             method: "send_ethereum_bundle",
             params: ["bundle": bundle]
         )
     }
     
-    func getEthereumFees(userWallet: String, recipient: String, token: String?, amount: String) async throws -> EthereumFees {
+    public func getEthereumFees(userWallet: String, recipient: String, token: String?, amount: String) async throws -> EthereumFees {
         try await self.client.call(
             method: "get_ethereum_fees",
             params: [

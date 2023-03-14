@@ -5,11 +5,13 @@
 //  Created by Giang Long Tran on 06.03.2023.
 //
 
+import KeyAppKitCore
 import KeyAppUI
 import SwiftUI
+import Wormhole
 
 struct WormholeClaimFee: View {
-    let close: (() -> Void)?
+    @ObservedObject var viewModel: WormholeClaimFeeViewModel
 
     var body: some View {
         VStack {
@@ -41,13 +43,23 @@ struct WormholeClaimFee: View {
             .padding(.top, 20)
 
             VStack(spacing: 24) {
-                WormholeFeeView(title: "You will get", subtitle: "0.999717252 WETH", detail: "~ $1,215.75")
-                WormholeFeeView(title: "You will get", subtitle: "0.999717252 WETH", detail: "Free")
-                WormholeFeeView(title: "You will get", subtitle: "0.999717252 WETH", detail: "~ $1,215.75")
+                WormholeFeeView(title: "You will get", subtitle: viewModel.data.receive.crypto, detail: viewModel.data.receive.fiat)
+
+                if let networkFee = viewModel.data.networkFee {
+                    WormholeFeeView(title: "Network Fee", subtitle: networkFee.crypto, detail: networkFee.fiat)
+                }
+
+                if let accountsFee = viewModel.data.accountCreationFee {
+                    WormholeFeeView(title: "Account creation Fee", subtitle: accountsFee.crypto, detail: accountsFee.fiat)
+                }
+
+                if let wormholeBridgeAndTrxFee = viewModel.data.wormholeBridgeAndTrxFee {
+                    WormholeFeeView(title: "Wormhole Bridge and Transaction Fee", subtitle: wormholeBridgeAndTrxFee.crypto, detail: wormholeBridgeAndTrxFee.fiat)
+                }
             }
             .padding(.top, 16)
 
-            TextButtonView(title: L10n.ok, style: .second, size: .large, onPressed: close)
+            TextButtonView(title: L10n.ok, style: .second, size: .large) { viewModel.close() }
                 .frame(height: TextButton.Size.large.height)
                 .padding(.top, 20)
         }
@@ -79,6 +91,15 @@ private struct WormholeFeeView: View {
 
 struct WormholeClaimFee_Previews: PreviewProvider {
     static var previews: some View {
-        WormholeClaimFee {}
+        WormholeClaimFee(
+            viewModel: .init(
+                data: .init(
+                    receive: ("0.999717252 ETH", "~ $1,215.75", false),
+                    networkFee: ("Paid by Key App", "Free", true),
+                    accountCreationFee: ("0.999717252 WETH", "~ $1,215.75", false),
+                    wormholeBridgeAndTrxFee: ("0.999717252 WETH", "~ $1,215.75", false)
+                )
+            )
+        )
     }
 }

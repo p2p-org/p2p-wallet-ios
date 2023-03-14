@@ -27,10 +27,14 @@ class WormholeClaimCoordinator: SmartCoordinator<WormholeClaimCoordinatorResult>
             .sink { [weak self] action in
                 guard let self = self else { return }
                 switch action {
-                case .openFee:
-                    self.coordinate(to: WormholeClaimFeeCoordinator(presentation: SmartCoordinatorPresentPresentation(from: self.presentation)))
-                        .sink { _ in }
-                        .store(in: &self.subscriptions)
+                case let .openFee(bundle):
+                    self.coordinate(to: WormholeClaimFeeCoordinator(
+                        account: self.account,
+                        bundle: bundle,
+                        presentation: SmartCoordinatorPresentPresentation(from: self.presentation))
+                    )
+                    .sink { _ in }
+                    .store(in: &self.subscriptions)
                 case let .claiming(trx):
                     self.pop(.claiming(trx))
                 }

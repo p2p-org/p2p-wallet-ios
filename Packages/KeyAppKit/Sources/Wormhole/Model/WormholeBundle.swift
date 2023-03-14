@@ -8,30 +8,30 @@
 import Foundation
 
 /// A data structure for handling bridging ethereum network to solana network.
-struct WormholeBundle: Codable, Hashable {
-    let bundleId: String
+public struct WormholeBundle: Codable, Hashable {
+    public let bundleId: String
     
-    let userWallet: String
+    public let userWallet: String
     
-    let recipient: String
+    public let recipient: String
     
-    let token: String
+    public let token: String
     
-    let withCompensation: WithCompensation
+    public let withCompensation: WithCompensation
     
-    let expiresAt: String
+    public let expiresAt: String
     
-    var expiresAtDate: Date? {
+    public var expiresAtDate: Date? {
         Self.expiresAtFormatter.date(from: self.expiresAt)
     }
     
-    let transactions: [String]
+    public let transactions: [String]
     
-    let signatures: [String]?
+    public let signatures: [String]?
     
-    let fees: EthereumFees
+    public let fees: EthereumFees
 
-    enum CodingKeys: String, CodingKey {
+    public enum CodingKeys: String, CodingKey {
         case bundleId = "bundle_id"
         case userWallet = "user_wallet"
         case recipient
@@ -53,7 +53,7 @@ struct WormholeBundle: Codable, Hashable {
         return dateFormatter
     }()
     
-    init(from decoder: Decoder) throws {
+    public init(from decoder: Decoder) throws {
         let container = try decoder.container(keyedBy: CodingKeys.self)
         self.bundleId = try container.decode(String.self, forKey: .bundleId)
         self.userWallet = try container.decode(String.self, forKey: .userWallet)
@@ -72,7 +72,7 @@ struct WormholeBundle: Codable, Hashable {
         }
     }
     
-    func encode(to encoder: Encoder) throws {
+    public func encode(to encoder: Encoder) throws {
         var container = encoder.container(keyedBy: CodingKeys.self)
         try container.encode(self.bundleId, forKey: .bundleId)
         try container.encode(self.userWallet, forKey: .userWallet)
@@ -92,7 +92,7 @@ struct WormholeBundle: Codable, Hashable {
     }
 }
 
-enum WithCompensation: Codable, Hashable {
+public enum WithCompensation: Codable, Hashable {
     case yes
     
     case no(CompensationReason)
@@ -102,7 +102,7 @@ enum WithCompensation: Codable, Hashable {
         case no
     }
     
-    init(from decoder: Decoder) throws {
+    public init(from decoder: Decoder) throws {
         let container = try decoder.container(keyedBy: CodingKeys.self)
         var allKeys = ArraySlice(container.allKeys)
         guard let onlyKey = allKeys.popFirst(), allKeys.isEmpty else {
@@ -117,7 +117,7 @@ enum WithCompensation: Codable, Hashable {
         }
     }
 
-    func encode(to encoder: Encoder) throws {
+    public func encode(to encoder: Encoder) throws {
         var container = encoder.container(keyedBy: CodingKeys.self)
         switch self {
         case .no(let reason):
@@ -128,24 +128,9 @@ enum WithCompensation: Codable, Hashable {
     }
 }
 
-enum CompensationReason: String, Codable, Hashable {
+public enum CompensationReason: String, Codable, Hashable {
     case gasPriceTooHigh = "gas_price_too_high"
     case amountTooLow = "amount_too_low"
     case limitExceed = "limit_exceed"
 }
 
-struct EthereumFees: Codable, Hashable {
-    let gas: Fee
-    let arbiter: Fee
-    let createAccount: Fee?
-}
-
-struct Fee: Codable, Hashable {
-    let amount: String
-    let usdAmount: String
-    
-    enum CodingKeys: String, CodingKey {
-        case amount
-        case usdAmount = "usd_amount"
-    }
-}
