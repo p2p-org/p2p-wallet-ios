@@ -28,6 +28,9 @@ public class HTTPJSONRPCCLient {
         }
         
         var request = URLRequest(url: url)
+        request.httpMethod = "POST"
+        request.setValue("application/json", forHTTPHeaderField: "Accept")
+        request.setValue("application/json", forHTTPHeaderField: "Content-Type")
         
         let rpcBody = JSONRPCRequest(
             id: UUID().uuidString,
@@ -58,6 +61,9 @@ public class HTTPJSONRPCCLient {
         }
         
         var request = URLRequest(url: url)
+        request.httpMethod = "POST"
+        request.setValue("application/json", forHTTPHeaderField: "Accept")
+        request.setValue("application/json", forHTTPHeaderField: "Content-Type")
         
         let rpcBody = JSONRPCRequest(
             id: UUID().uuidString,
@@ -68,6 +74,8 @@ public class HTTPJSONRPCCLient {
         request.httpBody = try JSONEncoder().encode(rpcBody)
         
         let (data, _) = try await urlSession.data(for: request)
+        debugPrint(String(data: data, encoding: .utf8) as Any)
+        
         let jsonResponse = try Self.decoder.decode(JSONRPCResponse<Result, AdditionalError>.self, from: data)
         
         if let error = jsonResponse.error {

@@ -14,22 +14,26 @@ struct WormholeClaimView: View {
 
     var body: some View {
         VStack(spacing: 0) {
+            // Title
             Text(L10n.confirmClaimingTheTokens)
                 .fontWeight(.medium)
                 .apply(style: .title2)
                 .padding(.top, 16)
 
+            // Logo
             Image(uiImage: .ethereumIcon)
                 .resizable()
                 .clipShape(Circle())
                 .frame(width: 64, height: 64)
                 .padding(.top, 28)
 
+            // Amount in crypto
             Text(viewModel.model.title)
                 .fontWeight(.bold)
                 .apply(style: .largeTitle)
                 .padding(.top, 16)
 
+            // Amount in currency
             if !viewModel.model.subtitle.isEmpty {
                 Text(viewModel.model.subtitle)
                     .apply(style: .text2)
@@ -37,12 +41,13 @@ struct WormholeClaimView: View {
                     .padding(.top, 4)
             }
 
+            // Fee
             HStack(alignment: .center) {
                 Text(L10n.fee)
                 Spacer()
-                Text(L10n.paidByKeyApp)
+                Text(viewModel.feeAmountInFiat)
                 Button {
-                    viewModel.action.send(.openFee)
+                    viewModel.action.send(.openFee(viewModel.bundle))
                 } label: {
                     Image(uiImage: .info)
                         .resizable()
@@ -60,9 +65,11 @@ struct WormholeClaimView: View {
 
             Spacer()
 
+            // Button
             TextButtonView(title: L10n.claim(viewModel.model.title), style: .primaryWhite, size: .large) {
                 viewModel.claim()
             }
+            .disabled(viewModel.bundle.state.status != .ready)
             .frame(height: TextButton.Size.large.height)
         }
         .padding(.horizontal, 16)

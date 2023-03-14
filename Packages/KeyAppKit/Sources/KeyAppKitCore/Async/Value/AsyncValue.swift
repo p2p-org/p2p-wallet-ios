@@ -54,7 +54,7 @@ public extension AsyncValueState where T: Sequence {
     }
 }
 
-public class AsyncValue<T> {
+public class AsyncValue<T>: ObservableObject {
     public typealias Request = () async -> (T?, Error?)
     public typealias ThrowableRequest = () async throws -> T
     
@@ -65,15 +65,20 @@ public class AsyncValue<T> {
         self.request = request
     }
     
-    public init(initialItem: T, request: @escaping ThrowableRequest) {
+    public init(initialItem: T, throwableRequest: @escaping ThrowableRequest) {
         state = .init(status: .initializing, value: initialItem)
-        self.request = {
+        request = {
             do {
-                return (try await request(), nil)
+                return (try await throwableRequest(), nil)
             } catch {
                 return (nil, error)
             }
         }
+    }
+    
+    public init(just item: T) {
+        state = .init(status: .ready, value: item)
+        request = { (item, nil) }
     }
     
     private var request: Request

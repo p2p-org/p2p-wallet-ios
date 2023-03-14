@@ -64,16 +64,10 @@ class SupportedTokensViewModel: BaseViewModel, ObservableObject {
             solana = Set(SupportedTokensBusinnes.wellKnownTokens + filteredToken)
         }
 
-        // Get ethereum list
-        Task {
-            let tokens = try await WormholeService.supportedTokens(tokenService: ethereumTokenRepository)
-            ethereum = Set(tokens.map { token in SupportedTokenItem(ethereum: token) })
-        }
-
         // Build final tokens list.
-        Publishers.Zip($solana, $ethereum)
+        $solana
             .receive(on: DispatchQueue.global(qos: .userInitiated))
-            .map(SupportedTokensBusinnes.combineSolanaWithEthereum)
+            .map { Array($0) }
             .combineLatest($filter)
             .map(SupportedTokensBusinnes.filterByKeyword)
             .map { [weak self] in $0.sorted { SupportedTokensBusinnes.sortToken(lhs: $0, rhs: $1, filter: self?.filter ?? "") } }
@@ -88,32 +82,6 @@ class SupportedTokensViewModel: BaseViewModel, ObservableObject {
 }
 
 private enum SupportedTokensBusinnes {
-    /// Combine solana and ethereum tokens.
-    static func combineSolanaWithEthereum(solana: Set<SupportedTokenItem>, ethereum: Set<SupportedTokenItem>) -> [SupportedTokenItem] {
-        var result: [SupportedTokenItem] = Array(solana)
-
-        // Merge by symbol. Is it a good way?
-        for ethereumToken in ethereum {
-            let index = result.firstIndex { solanaToken in
-                let ethSynonym = Self.knownSynonymTokens[solanaToken.symbol]
-                return solanaToken.symbol == ethereumToken.symbol || ethSynonym == ethereumToken.symbol
-            }
-            if let index {
-                // Merge with solana.
-
-                result[index].availableNetwork += [.ethereum]
-
-                // result[index] = ethereumToken
-                // result[index].availableNetwork = [.solana, .ethereum]
-            } else {
-                // Insert as ethereum only token.
-                result += [ethereumToken]
-            }
-        }
-
-        return result
-    }
-
     /// Filter by symbol or name.
     static func filterByKeyword(tokens: [SupportedTokenItem], filter: String) -> [SupportedTokenItem] {
         if filter.isEmpty {
@@ -209,5 +177,4 @@ private enum SupportedTokensBusinnes {
             )
         ]
     }
-
 }

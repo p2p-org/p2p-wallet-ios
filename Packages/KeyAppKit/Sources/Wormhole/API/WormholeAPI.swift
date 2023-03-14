@@ -7,8 +7,8 @@
 
 import Foundation
 
-protocol WormholeAPI {
-    func getEthereumBundle(userWallet: String, recipient: String, token: String?, amount: String, slippage: UInt8) async throws -> WormholeBundle
+public protocol WormholeAPI {
+    func getEthereumBundle(userWallet: String, recipient: String, token: String?, amount: String, slippage: UInt8?) async throws -> WormholeBundle
 
     func sendEthereumBundle(bundle: WormholeBundle) async throws
 
