@@ -68,6 +68,7 @@ target 'p2p_wallet' do
   pod 'Periphery'
   pod 'SwiftFormat/CLI', '0.49.6'
   pod 'ReachabilitySwift', '~> 5.0.0'
+  pod 'Task_retrying', :git => 'https://github.com/bigearsenal/task-retrying-swift.git', :branch => 'master'
 
   # Deprecating: will be removed after NewSwap, NewHistory
   pod 'RxAppState', '1.7.1'

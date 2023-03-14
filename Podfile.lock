@@ -251,7 +251,7 @@ PODS:
   - SwiftLint (0.50.3)
   - SwiftNotificationCenter (1.0.4)
   - SwiftyUserDefaults (5.3.0)
-  - Task_retrying (1.0.3)
+  - Task_retrying (1.0.4)
   - TransactionParser (1.0.0):
     - Cache
     - SolanaSwift (~> 2)
@@ -314,6 +314,7 @@ DEPENDENCIES:
   - SwiftLint
   - SwiftNotificationCenter
   - SwiftyUserDefaults (= 5.3.0)
+  - Task_retrying (from `https://github.com/bigearsenal/task-retrying-swift.git`, branch `master`)
   - TransactionParser (from `https://github.com/p2p-org/key-app-kit-swift.git`, branch `feature/new-swap`)
 
 SPEC REPOS:
@@ -368,7 +369,6 @@ SPEC REPOS:
     - SwiftLint
     - SwiftNotificationCenter
     - SwiftyUserDefaults
-    - Task_retrying
     - TweetNacl
 
 EXTERNAL SOURCES:
@@ -464,6 +464,9 @@ EXTERNAL SOURCES:
   Solend:
     :branch: feature/new-swap
     :git: https://github.com/p2p-org/key-app-kit-swift.git
+  Task_retrying:
+    :branch: master
+    :git: https://github.com/bigearsenal/task-retrying-swift.git
   TransactionParser:
     :branch: feature/new-swap
     :git: https://github.com/p2p-org/key-app-kit-swift.git
@@ -557,11 +560,14 @@ CHECKOUT OPTIONS:
     :commit: 34b3665dd958e4e9c85979d5fd395851eb30e1af
     :git: https://github.com/p2p-org/key-app-kit-swift.git
   SolanaSwift:
-    :commit: c3b9f0cdc078ab0da05f3ad0ac9d240481ae5c3a
+    :commit: a70c3a467460b85d1f315ed89700d49bd4be1e73
     :git: https://github.com/p2p-org/solana-swift.git
   Solend:
     :commit: 34b3665dd958e4e9c85979d5fd395851eb30e1af
     :git: https://github.com/p2p-org/key-app-kit-swift.git
+  Task_retrying:
+    :commit: 1249b3524378423c848cef39fb220041e00a08ec
+    :git: https://github.com/bigearsenal/task-retrying-swift.git
   TransactionParser:
     :commit: 34b3665dd958e4e9c85979d5fd395851eb30e1af
     :git: https://github.com/p2p-org/key-app-kit-swift.git
@@ -648,10 +654,10 @@ SPEC CHECKSUMS:
   SwiftLint: 77f7cb2b9bb81ab4a12fcc86448ba3f11afa50c6
   SwiftNotificationCenter: 760386da2ce03d3594cb5e96d1e22ec80b44b46f
   SwiftyUserDefaults: 63f80248cf5bfb3458825d9a78f2eb7e1293a040
-  Task_retrying: 9e19177e42b162d1d54317f9cfcbabc01d057c38
+  Task_retrying: f1e1451775721d9540ed1b4a3bafb2f4f59833ec
   TransactionParser: 3004420d52e7b1277dbcfd20b995a5de707705f3
   TweetNacl: 3abf4d1d2082b0114e7a67410e300892448951e6
 
-PODFILE CHECKSUM: c3553d8cfa759fd95b6ba484b8c7e1c86efe89e0
+PODFILE CHECKSUM: f0d38e15f852dd31e5d39e1d87476e9aa06006fc
 
 COCOAPODS: 1.11.3
