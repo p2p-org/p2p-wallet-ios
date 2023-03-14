@@ -323,6 +323,15 @@ class WalletsViewModel: BECollectionViewModel<Wallet> {
     // MARK: - Account notifications
 
     private func handleAccountNotification(_ notification: AccountsObservableEvent) {
+        // check if there is any pending transaction for this account
+        let pendingTransactions = (transactionHandler?.getProccessingTransactions(of: notification.pubkey) ?? [])
+            .filter { $0.isProcessing }
+        
+        // ignore updating balance when there is any pending transaction for this account
+        guard pendingTransactions.isEmpty else {
+            return
+        }
+        
         // update
         updateItem(where: { $0.pubkey == notification.pubkey }, transform: { wallet in
             var wallet = wallet
