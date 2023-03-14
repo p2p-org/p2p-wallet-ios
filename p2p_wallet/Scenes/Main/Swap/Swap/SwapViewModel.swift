@@ -267,7 +267,7 @@ private extension SwapViewModel {
             arePricesLoading = false
         case .ready:
             arePricesLoading = false
-            guard state.amountFrom > 0 else { return }
+            guard state.swapTransaction != nil else { return }
             actionButtonData = SliderActionButtonData(
                 isEnabled: true,
                 title: L10n.swap(state.fromToken.token.symbol, state.toToken.token.symbol)
