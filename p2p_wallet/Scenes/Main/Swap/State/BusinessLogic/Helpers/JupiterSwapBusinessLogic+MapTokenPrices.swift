@@ -1,4 +1,5 @@
 import Foundation
+import SolanaSwift
 
 extension JupiterSwapBusinessLogic {
     static func mapTokenPrices(
@@ -11,7 +12,10 @@ extension JupiterSwapBusinessLogic {
         tokens.append(state.toToken.token)
         
         // get prices of transitive tokens
-        let mints = route.getMints()
+        guard let mints = state.route?.getMints() else {
+            return state.tokensPriceMap
+        }
+        
         if mints.count > 2 {
             for mint in mints {
                 if let token = state.swapTokens.map(\.token).first(where: {$0.address == mint}) {

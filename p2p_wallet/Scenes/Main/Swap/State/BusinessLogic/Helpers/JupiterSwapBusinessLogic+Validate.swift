@@ -1,4 +1,5 @@
 import Foundation
+import SolanaSwift
 
 enum JupiterSwapAmountValidationError: Swift.Error {
     case notEnoughFromToken
