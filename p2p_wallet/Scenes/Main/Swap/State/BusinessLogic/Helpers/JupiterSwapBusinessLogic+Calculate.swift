@@ -3,12 +3,7 @@ import SolanaSwift
 import Resolver
 import SolanaPricesAPIs
 
-enum JupiterSwapGeneralError: Swift.Error {
-    case networkError
-    case unknown
-}
-
-enum JupiterSwapRouteCalculationError: Swift.Error {
+enum JupiterSwapRouteCalculationError: JupiterSwapError {
     case amountFromIsZero
     case swapToSameToken
     case routeNotFound

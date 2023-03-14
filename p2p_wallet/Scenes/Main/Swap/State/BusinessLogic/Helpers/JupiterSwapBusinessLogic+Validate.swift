@@ -1,7 +1,7 @@
 import Foundation
 import SolanaSwift
 
-enum JupiterSwapAmountValidationError: Swift.Error {
+enum JupiterSwapAmountValidationError: JupiterSwapError {
     case notEnoughFromToken
     case amountFromIsZero
     case inputTooHigh(Double) // FIXME: - Naming?

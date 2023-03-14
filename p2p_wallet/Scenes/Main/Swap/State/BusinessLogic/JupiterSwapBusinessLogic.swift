@@ -289,13 +289,20 @@ enum JupiterSwapBusinessLogic {
             return state.modified {
                 $0.status = .creatingSwapTransaction
             }
-        } catch is JupiterSwapRouteCalculationError {
-            
-        } catch is JupiterSwapAmountValidationError {
-            
-        } catch {
-            
         }
         
+        catch {
+            // catch Jupiter Swap Error
+            if error is JupiterSwapError {
+                return state.modified {
+                    $0.status = .error
+                }
+            }
+            
+            // convert all other error to unknown
+            return state.modified {
+                $0.status = .error
+            }
+        }
     }
 }
