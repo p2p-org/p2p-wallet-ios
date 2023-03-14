@@ -15,7 +15,7 @@ enum JupiterSwapBusinessLogic {
         case .initialize:
             return true
         case .update:
-            return state.amountFrom != nil
+            return state.amountFrom > 0
         case .changeAmountFrom(let amountFrom):
             return state.amountFrom != amountFrom
         case .changeFromToken(let fromToken):
