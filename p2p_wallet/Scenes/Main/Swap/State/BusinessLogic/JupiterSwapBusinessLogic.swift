@@ -40,7 +40,7 @@ enum JupiterSwapBusinessLogic {
         action: JupiterSwapAction
     ) -> JupiterSwapState? {
         #if !RELEASE
-        print("JupiterSwapBusinessLogic.action: \(action.description)")
+        print("JupiterSwapBusinessLogic.action: \(action.description) in progress")
         #endif
         
         switch action {
