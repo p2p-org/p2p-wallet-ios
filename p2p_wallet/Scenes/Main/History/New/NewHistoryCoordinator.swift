@@ -77,8 +77,12 @@ class NewHistoryCoordinator: SmartCoordinator<Void> {
 
         case .openBuy:
             self.openBuy()
+
         case .openReceive:
             self.openReceive()
+            
+        case .openSwap(let wallet):
+            self.openSwap(wallet: wallet)
         }
     }
     
@@ -166,6 +170,21 @@ class NewHistoryCoordinator: SmartCoordinator<Void> {
         let vc = ReceiveToken.ViewController(viewModel: vm, isOpeningFromToken: true)
         let navigation = UINavigationController(rootViewController: vc)
         presentation.presentingViewController.present(navigation, animated: true)
+    }
+
+    func openSwap(wallet: Wallet?) {
+        guard let navigationController = presentation.presentingViewController as? UINavigationController else {
+            return
+        }
+        let coordinator = SwapCoordinator(
+            navigationController: navigationController,
+            initialWallet: wallet,
+            hidesBottomBarWhenPushed: true
+        )
+
+        coordinate(to: coordinator)
+            .sink { _ in }
+            .store(in: &subscriptions)
     }
 
     func openBuy() {

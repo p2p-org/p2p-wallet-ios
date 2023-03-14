@@ -1299,3 +1299,4 @@ You can try again, but your new transaction will be subject to the current rates
 "Token you receive" = "Токен, который вы получаете";
 "You can’t swap between the same token" = "Вы не можете переключаться между одним и тем же токеном";
 "Enter amount" = "Введите сумму";
+"To make a transfer to %@ you have to swap %@ to %@" = "Чтобы сделать перевод в %@, вы должны поменять местами %@ на %@";
