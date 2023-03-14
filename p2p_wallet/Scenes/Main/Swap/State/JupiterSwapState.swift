@@ -177,11 +177,12 @@ struct JupiterSwapState: Equatable {
         let accountCreationFee: Double
         
         // convert to toToken
-        if let solPrice = tokensPriceMap[Token.nativeSolana.address],
-           solPrice > 0
+        if let tokenPrice = tokensPriceMap[toToken.address],
+           tokenPrice > 0
         {
             payingFeeToken = toToken.token
-            accountCreationFee = (tokensPriceMap[payingFeeToken.address] / solPrice) * accountCreationFeeInSOL
+            accountCreationFee = ((tokensPriceMap[Token.nativeSolana.address] / tokenPrice) * accountCreationFeeInSOL)
+                .rounded(decimals: payingFeeToken.decimals)
         }
         
         // fallback to SOL
