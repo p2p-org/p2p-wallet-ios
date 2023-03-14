@@ -7,16 +7,16 @@ extension JupiterSwapBusinessLogic {
         account: KeyPair?,
         route: Route?,
         jupiterClient: JupiterAPI
-    ) async throws -> JupiterSwapState {
+    ) async throws -> String {
         do {
             // assert needed infos
             guard let account else {
-                throw JupiterSwapCreateTransactionError.unauthorized
+                throw JupiterSwapError.createTransactionError(.unauthorized)
             }
             
             // assert route
-            guard let route = state.route else {
-                throw JupiterSwapGeneralError.routeNotFound
+            guard let route else {
+                throw JupiterSwapError.createTransactionError(.routeNotFound)
             }
 
             let swapTransaction = try await jupiterClient.swap(
@@ -28,20 +28,17 @@ extension JupiterSwapBusinessLogic {
             )
             
             guard let swapTransaction else {
-                throw JupiterSwapCreateTransactionError.creationFailed
+                throw JupiterSwapError.createTransactionError(.transactionIsNil)
             }
-
-            return state.modified {
-                $0.status = .ready
-                $0.swapTransaction = swapTransaction
-            }
+            
+            return swapTransaction
         }
         // catch network error and map it to JupiterSwapRouteCalculationError to make sure that only 1 type of error returned
         catch {
             if (error as NSError).isNetworkConnectionError {
-                throw JupiterSwapGeneralError.networkError
+                throw JupiterSwapError.createTransactionError(.networkError)
             }
-            throw JupiterSwapGeneralError.unknown
+            throw JupiterSwapError.createTransactionError(.unknown)
         }
     }
 }

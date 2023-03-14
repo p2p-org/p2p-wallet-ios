@@ -215,6 +215,38 @@ enum JupiterSwapBusinessLogic {
         }
     }
     
+    static func createTransaction(
+        state: JupiterSwapState,
+        services: JupiterSwapServices
+    ) async -> JupiterSwapState {
+        do {
+            let swapTransaction = try await createTransaction(
+                account: state.account,
+                route: state.route,
+                jupiterClient: services.jupiterClient
+            )
+
+            return state.modified {
+                $0.status = .ready
+                $0.swapTransaction = swapTransaction
+            }
+        }
+        
+        catch {
+            // catch Jupiter Swap Error
+            if let error = error as? JupiterSwapError {
+                return state.modified {
+                    $0.status = .error(error)
+                }
+            }
+            
+            // LIKELY NEVER CALLED: convert all other error to unknown
+            return state.modified {
+                $0.status = .error(JupiterSwapError.unknown)
+            }
+        }
+    }
+    
     // MARK: - Helpers
 
     private static func recalculateRouteAndMarkAsCreatingTransaction(
@@ -274,7 +306,7 @@ enum JupiterSwapBusinessLogic {
             
             // LIKELY NEVER CALLED: convert all other error to unknown
             return state.modified {
-                $0.status = .error(JupiterSwapGeneralError.unknown)
+                $0.status = .error(JupiterSwapError.unknown)
             }
         }
     }

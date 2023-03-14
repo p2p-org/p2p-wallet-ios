@@ -15,12 +15,14 @@ struct JupiterSwapState: Equatable {
         case ready
         case error(JupiterSwapError)
         
-        var hasError: Bool {
+        var hasError: Bool { error != nil }
+        
+        var error: JupiterSwapError? {
             switch self {
-            case .error:
-                return true
+            case .error(let error):
+                return error
             default:
-                return false
+                return nil
             }
         }
     }

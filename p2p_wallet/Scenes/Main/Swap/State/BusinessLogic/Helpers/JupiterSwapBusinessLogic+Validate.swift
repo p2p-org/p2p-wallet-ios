@@ -14,12 +14,12 @@ extension JupiterSwapBusinessLogic {
         // assert balance is not nil
         guard let balance = fromToken.userWallet?.amount
         else {
-            throw JupiterSwapAmountValidationError.notEnoughFromToken
+            throw JupiterSwapError.validationError(.notEnoughFromToken)
         }
         
         // if amount from is greater than current balance
         if amountFrom > balance {
-            throw JupiterSwapAmountValidationError.notEnoughFromToken
+            throw JupiterSwapError.validationError(.notEnoughFromToken)
         }
         
         // if amount from is SOL, validate its balance
@@ -46,7 +46,7 @@ extension JupiterSwapBusinessLogic {
     ) async throws {
         // assert amount from
         guard let amountFrom else {
-            throw JupiterSwapAmountValidationError.amountFromIsZero
+            throw JupiterSwapError.validationError(.amountFromIsZero)
         }
         do {
             // assert min SOL account balance
@@ -59,15 +59,15 @@ extension JupiterSwapBusinessLogic {
             let remains = (balance - amountFrom).toLamport(decimals: decimals)
             if remains > 0 && remains < minBalance {
                 let maximumInput = (balance.toLamport(decimals: decimals) - minBalance).convertToBalance(decimals: decimals)
-                throw JupiterSwapAmountValidationError.inputTooHigh(maximumInput)
+                throw JupiterSwapError.validationError(.inputTooHigh(maximumInput))
             } else {
                 return
             }
         } catch {
             if (error as NSError).isNetworkConnectionError {
-                throw JupiterSwapGeneralError.networkError
+                throw JupiterSwapError.validationError(.networkError)
             }
-            throw JupiterSwapGeneralError.unknown
+            throw JupiterSwapError.validationError(.unknown)
         }
     }
 }

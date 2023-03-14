@@ -149,8 +149,14 @@ private extension SwapInputViewModel {
 
     func updateAmountFrom(state: JupiterSwapState) {
         switch state.status {
-        case .error(reason: .notEnoughFromToken), .error(reason: .inputTooHigh):
-            amountTextColor = Asset.Colors.rose.color
+        case let .error(.validationError(error)):
+            switch error {
+            case .notEnoughFromToken, .inputTooHigh:
+                amountTextColor = Asset.Colors.rose.color
+            default:
+                break
+            }
+            
         default:
             amountTextColor = Asset.Colors.night.color
         }
@@ -158,7 +164,7 @@ private extension SwapInputViewModel {
     }
 
     func isStateReady(status: JupiterSwapState.Status) -> Bool {
-        return status != .requiredInitialize && status != .initializing && status != .error(reason: .initializationFailed)
+        return status != .requiredInitialize && status != .initializing && status.error == .initializingError
     }
 
     func openKeyboardIfNeeded(status: JupiterSwapState.Status) {
