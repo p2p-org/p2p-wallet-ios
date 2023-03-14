@@ -1,4 +1,5 @@
 import Combine
+import Send // FIXME: - Remove later
 
 actor JupiterSwapStateMachine {
     // MARK: - Nested type
@@ -37,17 +38,20 @@ actor JupiterSwapStateMachine {
 
     @discardableResult
     nonisolated func accept(
-        action newAction: JupiterSwapAction,
-        waitForPreviousActionToComplete: Bool
+        action newAction: JupiterSwapAction
     ) async -> JupiterSwapState {
-        // cancel previous task when waitForPreviousActionToComplete = false
-        if waitForPreviousActionToComplete == false {
-            await cache.currentTask?.cancel()
+        // define if needs to cancel previous action
+        let cancelPreviousAction: Bool
+        switch newAction {
+        case .update, .updateUserWallets, .updateTokensPriceMap:
+            cancelPreviousAction = false
+        default:
+            cancelPreviousAction = true
         }
         
-        // otherwise wait for current task to complete if it has not been cancelled
-        else if await cache.currentTask?.isCancelled != true {
-            _ = await cache.currentTask?.value
+        // cancel previous action if needed
+        if cancelPreviousAction {
+            await cache.currentTask?.cancel()
         }
         
         // create task to dispatch new action (can be immediately or after current action)
