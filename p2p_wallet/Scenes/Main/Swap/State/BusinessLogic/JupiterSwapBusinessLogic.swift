@@ -135,6 +135,9 @@ enum JupiterSwapBusinessLogic {
                 fromToken: fromToken,
                 toToken: toToken
             )
+                .modified {
+                    $0.status = .ready
+                }
 
         case .changeAmountFrom:
             // recalculate the route and mark status as creatingTransaction
