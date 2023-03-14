@@ -4,24 +4,14 @@ import Jupiter
 
 extension JupiterSwapBusinessLogic {
     static func createTransaction(
-        account: KeyPair?,
-        route: Route?,
+        userPublicKey: PublicKey,
+        route: Route,
         jupiterClient: JupiterAPI
     ) async throws -> String {
         do {
-            // assert needed infos
-            guard let account else {
-                throw JupiterSwapError.createTransactionError(.unauthorized)
-            }
-            
-            // assert route
-            guard let route else {
-                throw JupiterSwapError.createTransactionError(.routeNotFound)
-            }
-
             let swapTransaction = try await jupiterClient.swap(
                 route: route,
-                userPublicKey: account.publicKey.base58EncodedString,
+                userPublicKey: userPublicKey.base58EncodedString,
                 wrapUnwrapSol: true,
                 feeAccount: nil,
                 computeUnitPriceMicroLamports: nil

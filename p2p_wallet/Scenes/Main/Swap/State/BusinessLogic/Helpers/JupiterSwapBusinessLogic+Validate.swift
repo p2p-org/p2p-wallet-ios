@@ -62,9 +62,9 @@ extension JupiterSwapBusinessLogic {
             }
         } catch {
             if (error as NSError).isNetworkConnectionError {
-                throw JupiterSwapError.validationError(.networkError)
+                throw JupiterSwapError.networkError
             }
-            throw JupiterSwapError.validationError(.unknown)
+            throw JupiterSwapError.unknown
         }
     }
 }

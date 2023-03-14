@@ -319,40 +319,19 @@ private extension SwapViewModel {
             actionButtonData = SliderActionButtonData(isEnabled: false, title: L10n.initializingError)
         case let .error(.routeCalculationError(description)):
             switch description {
-            case .amountFromIsZero:
-                actionButtonData = SliderActionButtonData(
-                    isEnabled: false,
-                    title: L10n.enterTheAmount
-                )
-            case .swapToSameToken:
-                actionButtonData = SliderActionButtonData(
-                    isEnabled: false,
-                    title: L10n.swapOfTheseTokensIsnTPossible
-                )
-            case .amountToIsZero:
-                actionButtonData = SliderActionButtonData(
-                    isEnabled: false,
-                    title: L10n.amountIsTooSmall
-                )
             case .routeNotFound:
                 actionButtonData = SliderActionButtonData(
                     isEnabled: false,
                     title: L10n.swapOfTheseTokensIsnTPossible
                 )
-            case .networkError:
-                notificationService.showConnectionErrorNotification()
-                actionButtonData = SliderActionButtonData(
-                    isEnabled: false,
-                    title: L10n.noInternetConnection
-                )
-            case .unknown:
-                actionButtonData = SliderActionButtonData(
-                    isEnabled: false,
-                    title: L10n.unknownError
-                )
             }
         case let .error(.validationError(description)):
             switch description {
+            case .unauthorized:
+                actionButtonData = SliderActionButtonData(
+                    isEnabled: false,
+                    title: L10n.unauthorized
+                )
             case .notEnoughFromToken:
                 actionButtonData = SliderActionButtonData(
                     isEnabled: false,
@@ -368,30 +347,19 @@ private extension SwapViewModel {
                 if state.fromToken.address == Token.nativeSolana.address {
                     notificationService.showToast(title: "✅", text: L10n.weLeftAMinimumSOLBalanceToSaveTheAccountAddress)
                 }
-            case .networkError:
-                notificationService.showConnectionErrorNotification()
-                actionButtonData = SliderActionButtonData(
-                    isEnabled: false,
-                    title: L10n.noInternetConnection
-                )
-            case .unknown:
-                actionButtonData = SliderActionButtonData(
-                    isEnabled: false,
-                    title: L10n.unknownError
-                )
-            }
-        case let .error(.createTransactionError(description)):
-            switch description {
-            case .unauthorized:
-                actionButtonData = SliderActionButtonData(
-                    isEnabled: false,
-                    title: L10n.unauthorized
-                )
-            case .routeNotFound:
+            case .swapToSameToken:
                 actionButtonData = SliderActionButtonData(
                     isEnabled: false,
                     title: L10n.swapOfTheseTokensIsnTPossible
                 )
+            case .amountToIsZero:
+                actionButtonData = SliderActionButtonData(
+                    isEnabled: false,
+                    title: L10n.amountIsTooSmall
+                )
+            }
+        case let .error(.createTransactionError(description)):
+            switch description {
             case .transactionIsNil:
                 actionButtonData = SliderActionButtonData(
                     isEnabled: false,
@@ -409,6 +377,13 @@ private extension SwapViewModel {
                     title: L10n.unknownError
                 )
             }
+            
+        case .error(.networkError):
+            notificationService.showConnectionErrorNotification()
+            actionButtonData = SliderActionButtonData(
+                isEnabled: false,
+                title: L10n.noInternetConnection
+            )
         case .error(.unknown):
             actionButtonData = SliderActionButtonData(
                 isEnabled: false,

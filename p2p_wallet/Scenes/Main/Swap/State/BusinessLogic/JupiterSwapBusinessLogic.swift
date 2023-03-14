@@ -220,9 +220,18 @@ enum JupiterSwapBusinessLogic {
         services: JupiterSwapServices
     ) async -> JupiterSwapState {
         do {
+            // assert
+            guard let userPublicKey = state.account?.publicKey else {
+                throw JupiterSwapError.validationError(.unauthorized)
+            }
+            
+            guard let route = state.route else {
+                throw JupiterSwapError.routeCalculationError(.routeNotFound)
+            }
+            
             let swapTransaction = try await createTransaction(
-                account: state.account,
-                route: state.route,
+                userPublicKey: userPublicKey,
+                route: route,
                 jupiterClient: services.jupiterClient
             )
 

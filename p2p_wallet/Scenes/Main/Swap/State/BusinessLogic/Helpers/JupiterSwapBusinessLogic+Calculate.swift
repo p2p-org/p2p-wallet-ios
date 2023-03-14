@@ -22,12 +22,12 @@ extension JupiterSwapBusinessLogic {
         // get current from amount
         guard let amountFrom, amountFrom > 0
         else {
-            throw JupiterSwapError.routeCalculationError(.amountFromIsZero)
+            throw JupiterSwapError.validationError(.amountFromIsZero)
         }
         
         // assert from token is not equal to toToken
         guard fromToken.address != toToken.address else {
-            throw JupiterSwapError.routeCalculationError(.swapToSameToken)
+            throw JupiterSwapError.validationError(.swapToSameToken)
         }
 
         // get lamport
@@ -53,9 +53,9 @@ extension JupiterSwapBusinessLogic {
         // catch network error and map it to JupiterSwapRouteCalculationError to make sure that only 1 type of error returned
         catch {
             if (error as NSError).isNetworkConnectionError {
-                throw JupiterSwapError.routeCalculationError(.networkError)
+                throw JupiterSwapError.networkError
             }
-            throw JupiterSwapError.routeCalculationError(.unknown)
+            throw JupiterSwapError.unknown
         }
         
         // if pre chosen route is stil available, choose it
