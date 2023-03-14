@@ -86,7 +86,7 @@ actor JupiterSwapStateMachine {
         
         // perform the action
         guard Task.isNotCancelled else { return currentState }
-        var newState = await JupiterSwapBusinessLogic.jupiterSwapBusinessLogic(
+        let mainActionState = await JupiterSwapBusinessLogic.jupiterSwapBusinessLogic(
             state: currentState,
             action: action,
             services: services
@@ -94,18 +94,18 @@ actor JupiterSwapStateMachine {
 
         // return the state
         guard Task.isNotCancelled else { return currentState }
-        stateSubject.send(newState)
+        stateSubject.send(mainActionState)
         
         // Create transaction if needed
         guard Task.isNotCancelled else { return currentState }
-        newState = await JupiterSwapBusinessLogic.createTransaction(
-            state: newState,
+        let createTransactionState = await JupiterSwapBusinessLogic.createTransaction(
+            state: currentState,
             services: services
         )
         
         guard Task.isNotCancelled else { return currentState }
-        stateSubject.send(newState)
+        stateSubject.send(createTransactionState)
         
-        return newState
+        return currentState
     }
 }
