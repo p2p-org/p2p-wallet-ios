@@ -45,6 +45,11 @@ actor JupiterSwapStateMachine {
             await cache.currentTask?.cancel()
         }
         
+        // otherwise wait for current task to complete if it has not been cancelled
+        else if await cache.currentTask?.isCancelled != true {
+            _ = await cache.currentTask?.value
+        }
+        
         // create task to dispatch new action (can be immediately or after current action)
         let currentState = currentState
         let task = Task { [weak self] in
