@@ -77,8 +77,7 @@ final class SwapViewModel: BaseViewModel, ObservableObject {
 
     func update() async {
         await stateMachine.accept(
-            action: .update,
-            waitForPreviousActionToComplete: true
+            action: .update
         )
     }
 
@@ -178,8 +177,7 @@ private extension SwapViewModel {
             .removeDuplicates()
             .sinkAsync { [weak self] userWallets in
                 await self?.stateMachine.accept(
-                    action: .updateUserWallets(userWallets: userWallets),
-                    waitForPreviousActionToComplete: true
+                    action: .updateUserWallets(userWallets: userWallets)
                 )
             }
             .store(in: &subscriptions)
@@ -190,8 +188,7 @@ private extension SwapViewModel {
             .sinkAsync { [weak self] token in
                 guard let self else { return }
                 let newState = await self.stateMachine.accept(
-                    action: .changeFromToken(token),
-                    waitForPreviousActionToComplete: false
+                    action: .changeFromToken(token)
                 )
                 Defaults.fromTokenAddress = token.address
                 self.logChangeToken(isFrom: true, token: token, amount: newState.amountFrom)
@@ -204,8 +201,7 @@ private extension SwapViewModel {
             .sinkAsync { [ weak self] token in
                 guard let self else { return }
                 let newState = await self.stateMachine.accept(
-                    action: .changeToToken(token),
-                    waitForPreviousActionToComplete: false
+                    action: .changeToToken(token)
                 )
                 Defaults.toTokenAddress = token.address
                 self.logChangeToken(isFrom: false, token: token, amount: newState.amountTo)
@@ -243,8 +239,7 @@ private extension SwapViewModel {
                     routeMap: routeMap,
                     fromToken: prechosenFromToken,
                     toToken: prechosenToToken
-                ),
-                waitForPreviousActionToComplete: false
+                )
             )
         logStart(from: newState.fromToken, to: newState.toToken)
     }
@@ -286,8 +281,7 @@ private extension SwapViewModel {
                 
                 // switch from and to token
                 let newState = await self.stateMachine.accept(
-                    action: .switchFromAndToTokens,
-                    waitForPreviousActionToComplete: false
+                    action: .switchFromAndToTokens
                 )
                 
                 // change amountFrom into newAmountFrom
