@@ -163,20 +163,37 @@ struct JupiterSwapState: Equatable {
     }
     
     var accountCreationFee: SwapFeeInfo? {
-        // FIXME: - Relay context and relay account
+        // get route & fees
         guard let route,
               let fees = route.fees
         else { return nil }
         
-        // FIXME: - paying fee token
-        let payingFeeToken = Token.nativeSolana
+        // get fee in SOL
+        let accountCreationFeeInSOL = fees.totalFeeAndDeposits
+            .convertToBalance(decimals: Token.nativeSolana.decimals)
         
-        let accountCreationFee = fees.totalFeeAndDeposits
-            .convertToBalance(decimals: payingFeeToken.decimals)
+        // prepare for converting
+        let payingFeeToken: Token
+        let accountCreationFee: Double
+        
+        // convert to toToken
+        if let solPrice = tokensPriceMap[Token.nativeSolana.address],
+           solPrice > 0
+        {
+            payingFeeToken = toToken.token
+            accountCreationFee = (tokensPriceMap[payingFeeToken.address] / solPrice) * accountCreationFeeInSOL
+        }
+        
+        // fallback to SOL
+        else {
+            payingFeeToken = Token.nativeSolana
+            accountCreationFee = accountCreationFeeInSOL
+        }
+        
         return SwapFeeInfo(
             amount: accountCreationFee,
             tokenSymbol: payingFeeToken.symbol,
-            tokenName: payingFeeToken.symbol,
+            tokenName: payingFeeToken.name,
             tokenPriceInCurrentFiat: tokensPriceMap[payingFeeToken.address],
             pct: nil,
             canBePaidByKeyApp: false
