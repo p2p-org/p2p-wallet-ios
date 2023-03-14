@@ -264,11 +264,25 @@ enum JupiterSwapBusinessLogic {
         services: JupiterSwapServices
     ) async -> JupiterSwapState {
         do {
+            // modify state
+            var state = state
+            
             // recalculate the route
-            var state = try await calculateRoute(
-                state: state,
-                services: services
+            let routeCalculationResult = try await calculateRoute(
+                amountFrom: state.amountFrom,
+                fromToken: state.fromToken.token,
+                toToken: state.toToken.token,
+                slippageBps: state.slippageBps,
+                userPublicKey: state.account?.publicKey,
+                currentRouteId: state.route?.id,
+                jupiterClient: services.jupiterClient
             )
+            
+            state = state.modified {
+                $0.route = routeCalculationResult.route
+                $0.routes = routeCalculationResult.routes
+                $0.amountTo = routeCalculationResult.amountTo
+            }
             
             // map prices
             let tokensPriceMap = await mapTokenPrices(
@@ -281,8 +295,9 @@ enum JupiterSwapBusinessLogic {
             
             // validate amount
             try await validateAmounts(
-                state: state,
-                services: services
+                fromToken: state.fromToken,
+                amountFrom: state.amountFrom,
+                relayContextManager: services.relayContextManager
             )
             
             // mark as creating swap transaction

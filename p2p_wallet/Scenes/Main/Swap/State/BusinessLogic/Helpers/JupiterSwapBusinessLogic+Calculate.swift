@@ -7,40 +7,52 @@ enum JupiterSwapRouteCalculationError: JupiterSwapError {
     case amountFromIsZero
     case swapToSameToken
     case routeNotFound
+    case amountToIsZero
+}
+
+struct JupiterSwapRouteCalculationResult {
+    let route: Route
+    let routes: [Route]
+    let amountTo: Double
 }
 
 extension JupiterSwapBusinessLogic {
     static func calculateRoute(
-        state: JupiterSwapState,
-        services: JupiterSwapServices
-    ) async throws -> JupiterSwapState {
+        amountFrom: Double?,
+        fromToken: Token,
+        toToken: Token,
+        slippageBps: Int,
+        userPublicKey: PublicKey?,
+        currentRouteId: String?,
+        jupiterClient: JupiterAPI
+    ) async throws -> JupiterSwapRouteCalculationResult {
         // get current from amount
-        guard let amountFrom = state.amountFrom, amountFrom > 0
+        guard let amountFrom, amountFrom > 0
         else {
             throw JupiterSwapRouteCalculationError.amountFromIsZero
         }
         
         // assert from token is not equal to toToken
-        guard state.fromToken.address != state.toToken.address else {
+        guard fromToken.address != toToken.address else {
             throw JupiterSwapRouteCalculationError.swapToSameToken
         }
 
         // get lamport
         let amountFromLamports = amountFrom
-            .toLamport(decimals: state.fromToken.token.decimals)
+            .toLamport(decimals: fromToken.decimals)
         
         // call api to get routes and amount
         let routes: [Route]
         do {
-            routes = try await services.jupiterClient.quote(
-                inputMint: state.fromToken.address,
-                outputMint: state.toToken.address,
+            routes = try await jupiterClient.quote(
+                inputMint: fromToken.address,
+                outputMint: toToken.address,
                 amount: String(amountFromLamports),
                 swapMode: nil,
-                slippageBps: state.slippageBps,
+                slippageBps: slippageBps,
                 feeBps: nil,
                 onlyDirectRoutes: nil,
-                userPublicKey: state.account?.publicKey.base58EncodedString,
+                userPublicKey: userPublicKey?.base58EncodedString,
                 enforceSingleTx: nil
             ).data
         }
@@ -56,17 +68,18 @@ extension JupiterSwapBusinessLogic {
         // if pre chosen route is stil available, choose it
         // if not choose the first one
         guard let route = routes.first(
-            where: {$0.id == state.route?.id})
-                ?? routes.first
+            where: {$0.id == currentRouteId})
+                ?? routes.first,
+              let amountOut = UInt64(route.outAmount)
         else {
             throw JupiterSwapRouteCalculationError.routeNotFound
         }
         
-        return state.modified {
-            $0.route = route
-            $0.routes = routes
-            $0.amountTo = UInt64(route.outAmount)?
-                .convertToBalance(decimals: state.toToken.token.decimals)
-        }
+        return .init(
+            route: route,
+            routes: routes,
+            amountTo: amountOut
+                .convertToBalance(decimals: toToken.decimals)
+        )
     }
 }

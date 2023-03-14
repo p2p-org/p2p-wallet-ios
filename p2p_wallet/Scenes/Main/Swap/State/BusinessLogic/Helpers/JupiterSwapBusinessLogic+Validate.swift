@@ -1,5 +1,6 @@
 import Foundation
 import SolanaSwift
+import FeeRelayerSwift
 
 enum JupiterSwapAmountValidationError: JupiterSwapError {
     case notEnoughFromToken
@@ -9,26 +10,32 @@ enum JupiterSwapAmountValidationError: JupiterSwapError {
 
 extension JupiterSwapBusinessLogic {
     static func validateAmounts(
-        state: JupiterSwapState,
-        services: JupiterSwapServices
+        fromToken: SwapToken,
+        amountFrom: Double?,
+        relayContextManager: RelayContextManager
     ) async throws {
         // get status
         let status: JupiterSwapState.Status
         
         // assert balance is not nil
-        guard let balance = state.fromToken.userWallet?.amount
+        guard let balance = fromToken.userWallet?.amount
         else {
             throw JupiterSwapAmountValidationError.notEnoughFromToken
         }
         
         // if amount from is greater than current balance
-        if state.amountFrom > balance {
+        if amountFrom > balance {
             throw JupiterSwapAmountValidationError.notEnoughFromToken
         }
         
         // if amount from is SOL, validate its balance
-        else if state.fromToken.address == Token.nativeSolana.address {
-            try await validateNativeSOL(balance: balance, state: state, services: services)
+        else if fromToken.address == Token.nativeSolana.address {
+            try await validateNativeSOL(
+                balance: balance,
+                amountFrom: amountFrom,
+                fromToken: fromToken.token,
+                relayContextManager: relayContextManager
+            )
         }
         
         // all goods!
@@ -39,17 +46,18 @@ extension JupiterSwapBusinessLogic {
 
     private static func validateNativeSOL(
         balance: Double,
-        state: JupiterSwapState,
-        services: JupiterSwapServices
+        amountFrom: Double?,
+        fromToken: Token,
+        relayContextManager: RelayContextManager
     ) async throws {
         // assert amount from
-        guard let amountFrom = state.amountFrom else {
+        guard let amountFrom else {
             throw JupiterSwapAmountValidationError.amountFromIsZero
         }
         do {
             // assert min SOL account balance
-            let decimals = state.fromToken.token.decimals
-            let minBalance = try await services.relayContextManager
+            let decimals = fromToken.decimals
+            let minBalance = try await relayContextManager
                 .getCurrentContextOrUpdate()
                 .minimumRelayAccountBalance
             
