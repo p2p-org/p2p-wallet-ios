@@ -138,7 +138,7 @@ enum JupiterSwapBusinessLogic {
 
         case .changeAmountFrom:
             // recalculate the route and mark status as creatingTransaction
-            return await recalculateRouteAndMarkAsCreatingTransaction(
+            return try await recalculateRouteAndMarkAsCreatingTransaction(
                 state: state,
                 services: services
             )
@@ -151,7 +151,7 @@ enum JupiterSwapBusinessLogic {
             // recalculate route and make transaction if amountFrom > 0
             if state.amountFrom > 0 {
                 // recalculate the route and mark status as creatingTransaction
-                return await recalculateRouteAndMarkAsCreatingTransaction(
+                return try await recalculateRouteAndMarkAsCreatingTransaction(
                     state: state,
                     services: services
                 )
@@ -168,7 +168,7 @@ enum JupiterSwapBusinessLogic {
             }
         case .update:
             // recalculate the route and mark status as creatingTransaction
-            return await recalculateRouteAndMarkAsCreatingTransaction(
+            return try await recalculateRouteAndMarkAsCreatingTransaction(
                 state: state,
                 services: services
             )
@@ -191,7 +191,7 @@ enum JupiterSwapBusinessLogic {
             // otherwise
             else {
                 // recalculate the route and mark status as creatingTransaction
-                return await recalculateRouteAndMarkAsCreatingTransaction(
+                return try await recalculateRouteAndMarkAsCreatingTransaction(
                     state: state,
                     services: services
                 )
@@ -203,7 +203,7 @@ enum JupiterSwapBusinessLogic {
             }
         case .changeSlippageBps:
             // recalculate the route and mark status as creatingTransaction
-            return await recalculateRouteAndMarkAsCreatingTransaction(
+            return try await recalculateRouteAndMarkAsCreatingTransaction(
                 state: state,
                 services: services
             )
@@ -262,17 +262,27 @@ enum JupiterSwapBusinessLogic {
     private static func recalculateRouteAndMarkAsCreatingTransaction(
         state: JupiterSwapState,
         services: JupiterSwapServices
-    ) async -> JupiterSwapState {
+    ) async throws -> JupiterSwapState {
         // recalculate the route
-        let state = await calculateRoute(
+        var state = try await calculateRoute(
             state: state,
             services: services
         )
         
-        // check if status is ready
-        guard state.status == .ready else {
-            return state
+        // map prices
+        let tokensPriceMap = await mapTokenPrices(
+            state: state,
+            services: services
+        )
+        state = state.modified {
+            $0.tokensPriceMap = tokensPriceMap
         }
+        
+        // validate amount
+        try await validateAmounts(
+            state: state,
+            services: services
+        )
         
         // mark as creating swap transaction
         return state.modified {

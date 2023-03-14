@@ -32,7 +32,6 @@ extension JupiterSwapBusinessLogic {
         } else {
             return .zero.modified {
                 $0.account = account
-                $0.status = .ready
                 $0.tokensPriceMap = tokensPriceMap
                 $0.routeMap = routeMap
                 $0.swapTokens = swapTokens
@@ -40,7 +39,6 @@ extension JupiterSwapBusinessLogic {
         }
         
         return .zero.modified {
-            $0.status = .ready
             $0.account = account
             $0.routeMap = routeMap
             $0.swapTokens = swapTokens
