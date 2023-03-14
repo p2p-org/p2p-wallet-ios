@@ -11,6 +11,62 @@ import SolanaSwift
 extension JupiterSwapBusinessLogic {
     static func sendToBlockchain(
         account: KeyPair,
+        swapTransaction: String,
+        route: Route,
+        services: JupiterSwapServices
+    ) async throws -> String {
+        // get versioned transaction
+        guard let base64Data = Data(base64Encoded: swapTransaction, options: .ignoreUnknownCharacters),
+              let versionedTransaction = try? VersionedTransaction.deserialize(data: base64Data)
+        else {
+            throw JupiterError.invalidResponse
+        }
+
+        // send to block chain
+        do {
+            let transactionId = try await sendToBlockchain(
+                account: account,
+                versionedTransaction: versionedTransaction,
+                solanaAPIClient: services.solanaAPIClient
+            )
+            return transactionId
+        }
+        
+        // retry with specific errors
+        catch let APIClientError.responseError(response) where
+                response.message == "Transaction simulation failed: Blockhash not found" ||
+                response.message?.hasSuffix("custom program error: 0x1786") == true
+        {
+
+            // re-create transaction
+            let swapTransaction = try await services.jupiterClient.swap(
+                route: route,
+                userPublicKey: account.publicKey.base58EncodedString,
+                wrapUnwrapSol: true,
+                feeAccount: nil,
+                computeUnitPriceMicroLamports: nil
+            )
+            
+            // get versioned transaction
+            guard let swapTransaction,
+                  let base64Data = Data(base64Encoded: swapTransaction, options: .ignoreUnknownCharacters),
+                  let versionedTransaction = try? VersionedTransaction.deserialize(data: base64Data)
+            else {
+                throw JupiterError.invalidResponse
+            }
+            
+            // resend the transaction
+            let transactionId = try await sendToBlockchain(
+                account: account,
+                versionedTransaction: versionedTransaction,
+                solanaAPIClient: services.solanaAPIClient
+            )
+            return transactionId
+        }
+    }
+    
+    private static func sendToBlockchain(
+        account: KeyPair,
         versionedTransaction: VersionedTransaction,
         solanaAPIClient: SolanaAPIClient
     ) async throws -> String {

@@ -385,18 +385,21 @@ private extension SwapViewModel {
 
     private func createSwapExecution(account: KeyPair) async throws -> String {
         do {
+            // get swapTransaction & route
             guard let swapTransaction = currentState.swapTransaction,
-                  let base64Data = Data(base64Encoded: swapTransaction, options: .ignoreUnknownCharacters),
-                  let versionedTransaction = try? VersionedTransaction.deserialize(data: base64Data)
+                  let route = currentState.route
             else {
                 throw JupiterError.invalidResponse
             }
-
+            
+            // send to blockchain
             let transactionId = try await JupiterSwapBusinessLogic.sendToBlockchain(
                 account: account,
-                versionedTransaction: versionedTransaction,
-                solanaAPIClient: stateMachine.services.solanaAPIClient
+                swapTransaction: swapTransaction,
+                route: route,
+                services: stateMachine.services
             )
+            
             debugPrint("---transactionId: ", transactionId)
             isSliderOn = false
             return transactionId
