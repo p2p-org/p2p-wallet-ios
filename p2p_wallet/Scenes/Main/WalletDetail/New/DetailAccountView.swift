@@ -55,7 +55,7 @@ struct DetailAccountView_Previews: PreviewProvider {
                     title: "USDC",
                     amountInToken: "1 000.97 USDC",
                     amountInFiat: "1 000.97 USDC",
-                    actions: [.buy, .receive(.none), .send, .swap],
+                    actions: [.buy, .receive(.none), .send, .swap(nil)],
                     onAction: { _ in }
                 )
             ),

@@ -31,12 +31,12 @@ class DetailAccountCoordinator: SmartCoordinator<DetailAccountCoordinatorResult>
 
     override func build() -> UIViewController {
         let detailAccountVM: DetailAccountViewModel
-        let historyListVM: HistoryViewModel
+        let historyListVM: DetailHistoryViewModel
 
         switch self.args {
         case let .solanaAccount(account):
             detailAccountVM = .init(solanaAccount: account)
-            historyListVM = .init(mint: account.data.token.address)
+            historyListVM = .init(mint: account.data.token.address, account: account)
         }
 
         historyListVM.actionSubject
@@ -118,6 +118,9 @@ class DetailAccountCoordinator: SmartCoordinator<DetailAccountCoordinatorResult>
 
         case .openReceive:
             self.openReceive()
+            
+        case .openSwap(let wallet):
+            self.openSwap(wallet: wallet)
         }
     }
 
@@ -210,6 +213,10 @@ class DetailAccountCoordinator: SmartCoordinator<DetailAccountCoordinatorResult>
     func openSwap() {
         guard case let .solanaAccount(account) = self.args,
               let rootViewController = presentation.presentingViewController as? UINavigationController
+    func openSwap(wallet: Wallet? = nil) {
+        guard
+            case let .solanaAccount(account) = self.args,
+            let navigationController = presentation.presentingViewController as? UINavigationController
         else { return }
         if available(.jupiterSwapEnabled) {
             coordinate(
