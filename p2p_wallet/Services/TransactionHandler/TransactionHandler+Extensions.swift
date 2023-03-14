@@ -102,7 +102,7 @@ extension TransactionHandler {
                let numberOfConfirmations = newValue.status.numberOfConfirmations,
                numberOfConfirmations > 0
             {
-                // manually update balances if socket is not connected
+                // manually update balances
                 updateRepository(with: newValue.rawTransaction)
 
                 // mark as written
@@ -121,8 +121,6 @@ extension TransactionHandler {
     @MainActor private func updateRepository(with rawTransaction: RawTransactionType) {
         switch rawTransaction {
         case let transaction as SendTransaction:
-            guard !socket.isConnected else { return }
-
             walletsRepository.batchUpdate { currentValue in
                 var wallets = currentValue
 
@@ -145,8 +143,6 @@ extension TransactionHandler {
                 return wallets
             }
         case let transaction as CloseTransaction:
-            guard !socket.isConnected else { return }
-
             walletsRepository.batchUpdate { currentValue in
                 var wallets = currentValue
                 var reimbursedAmount = transaction.reimbursedAmount
@@ -172,9 +168,8 @@ extension TransactionHandler {
             walletsRepository.batchUpdate { currentValue in
                 var wallets = currentValue
 
-                // update source wallet if socket is not connected
-                if !socket.isConnected,
-                   let index = wallets.firstIndex(where: { $0.pubkey == transaction.sourceWallet.pubkey })
+                // update source wallet
+                if let index = wallets.firstIndex(where: { $0.pubkey == transaction.sourceWallet.pubkey })
                 {
                     wallets[index]
                         .decreaseBalance(diffInLamports: transaction.fromAmount
@@ -183,15 +178,12 @@ extension TransactionHandler {
 
                 // update destination wallet if exists
                 if let index = wallets.firstIndex(where: { $0.pubkey == transaction.destinationWallet.pubkey }) {
-                    // update only if socket is not connected
-                    if !socket.isConnected {
-                        wallets[index]
-                            .increaseBalance(diffInLamports: transaction.toAmount
-                                .toLamport(decimals: transaction.destinationWallet.token.decimals))
-                    }
+                    wallets[index]
+                        .increaseBalance(diffInLamports: transaction.toAmount
+                            .toLamport(decimals: transaction.destinationWallet.token.decimals))
                 }
 
-                // add destination wallet if not exists, event when socket is connected, because socket doesn't handle new wallet
+                // add destination wallet if not exists
                 else if let publicKey = try? PublicKey.associatedTokenAddress(
                     walletAddress: try PublicKey(string: transaction.authority),
                     tokenMintAddress: try PublicKey(string: transaction.destinationWallet.mintAddress)
@@ -204,7 +196,7 @@ extension TransactionHandler {
                 }
 
                 // update paying wallet
-                if !socket.isConnected, let payingFeeWallet = transaction.payingFeeWallet {
+                if let payingFeeWallet = transaction.payingFeeWallet {
                     let fee = transaction.feeAmount
                     
                     if let index = wallets.firstIndex(where: { $0.pubkey == payingFeeWallet.pubkey }) {

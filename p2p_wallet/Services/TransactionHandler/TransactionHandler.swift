@@ -38,7 +38,6 @@ class TransactionHandler: TransactionHandlerType {
     @Injected var apiClient: SolanaAPIClient
     @Injected var walletsRepository: WalletsRepository
     @Injected var pricesService: PricesServiceType
-    @Injected var socket: AccountObservableService
 
     // MARK: - Properties
 
