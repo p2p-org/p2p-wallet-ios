@@ -293,15 +293,15 @@ enum JupiterSwapBusinessLogic {
         
         catch {
             // catch Jupiter Swap Error
-            if error is JupiterSwapError {
+            if let error = error as? JupiterSwapError {
                 return state.modified {
-                    $0.status = .error
+                    $0.status = .error(error)
                 }
             }
             
-            // convert all other error to unknown
+            // LIKELY NEVER CALLED: convert all other error to unknown
             return state.modified {
-                $0.status = .error
+                $0.status = .error(JupiterSwapGeneralError.unknown)
             }
         }
     }

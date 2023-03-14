@@ -4,20 +4,6 @@ import SolanaSwift
 
 struct JupiterSwapState: Equatable {
     // MARK: - Nested type
-    
-    enum ErrorReason: Equatable {
-        case initializationFailed
-        case networkConnectionError
-
-        case notEnoughFromToken
-        case inputTooHigh(Double)
-        case equalSwapTokens
-
-        case unknown
-        case coingeckoPriceFailure
-        case routeIsNotFound
-        case createTransactionFailed
-    }
 
     enum Status: Equatable {
         case requiredInitialize
@@ -27,7 +13,7 @@ struct JupiterSwapState: Equatable {
         case switching
         case creatingSwapTransaction
         case ready
-        case error(reason: ErrorReason)
+        case error(JupiterSwapError)
         
         var hasError: Bool {
             switch self {
