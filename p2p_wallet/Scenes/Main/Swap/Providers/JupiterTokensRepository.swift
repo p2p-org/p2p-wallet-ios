@@ -31,6 +31,7 @@ final class JupiterTokensRepositoryImpl: JupiterTokensRepository {
     private let jupiterClient: JupiterAPI
     private let localProvider: JupiterTokensProvider
     @Injected private var walletsRepository: WalletsRepository
+    @Injected private var tokensRepositoryCache: SolanaTokensRepositoryCache
 
     // MARK: - Private params
 
@@ -108,10 +109,20 @@ final class JupiterTokensRepositoryImpl: JupiterTokensRepository {
                 .async()
             
             // map userWallets with jupiter tokens
+            let solanaTokens = await tokensRepositoryCache.getTokens() ?? []
             let swapTokens = jupiterTokens.map { jupiterToken in
+                
+                // if userWallet found
                 if let userWallet = wallets.first(where: { $0.mintAddress == jupiterToken.address }) {
-                    return SwapToken(token: jupiterToken, userWallet: userWallet)
+                    return SwapToken(token: userWallet.token, userWallet: userWallet)
                 }
+                
+                // if solana tokens found
+                if let token = solanaTokens.first(where: {$0.address == jupiterToken.address}) {
+                    return SwapToken(token: token, userWallet: nil)
+                }
+                
+                // otherwise return jupiter token
                 return SwapToken(token: jupiterToken, userWallet: nil)
             }
             try Task.checkCancellation()
