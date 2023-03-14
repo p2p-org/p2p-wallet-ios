@@ -432,7 +432,9 @@ private extension SwapViewModel {
             debugPrint("---errorSendingTransaction: ", error)
             switch error {
             case .responseError(let detail):
+                #if !RELEASE
                 errorLogs = detail.data?.logs
+                #endif
             default:
                 break
             }
