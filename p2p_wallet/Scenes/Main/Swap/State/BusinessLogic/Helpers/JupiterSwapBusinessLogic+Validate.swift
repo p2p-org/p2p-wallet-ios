@@ -2,12 +2,6 @@ import Foundation
 import SolanaSwift
 import FeeRelayerSwift
 
-enum JupiterSwapAmountValidationError: JupiterSwapError {
-    case notEnoughFromToken
-    case amountFromIsZero
-    case inputTooHigh(Double) // FIXME: - Naming?
-}
-
 extension JupiterSwapBusinessLogic {
     static func validateAmounts(
         fromToken: SwapToken,

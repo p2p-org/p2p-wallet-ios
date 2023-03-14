@@ -234,12 +234,6 @@ struct JupiterSwapState: Equatable {
     }
     
     // MARK: - Modified function
-    
-    func error(_ reason: ErrorReason) -> Self {
-        var state = self
-        state.status = .error(reason: reason)
-        return state
-    }
 
     func modified(_ modify: (inout Self) -> Void) -> Self {
         var state = self

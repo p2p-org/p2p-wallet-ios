@@ -215,48 +215,6 @@ enum JupiterSwapBusinessLogic {
         }
     }
     
-    static func createTransaction(
-        state: JupiterSwapState,
-        services: JupiterSwapServices
-    ) async -> JupiterSwapState {
-        do {
-            guard state.status == .creatingSwapTransaction else {
-                return state
-            }
-            
-            guard let route = state.route else {
-                return state.error(.routeIsNotFound)
-            }
-
-            guard let account = state.account else {
-                return state.error(.createTransactionFailed)
-            }
-
-            let swapTransaction = try await services.jupiterClient.swap(
-                route: route,
-                userPublicKey: account.publicKey.base58EncodedString,
-                wrapUnwrapSol: true,
-                feeAccount: nil,
-                computeUnitPriceMicroLamports: nil
-            )
-            
-            guard let swapTransaction else {
-                throw JupiterError.invalidResponse
-            }
-
-            return state.modified {
-                $0.status = .ready
-                $0.swapTransaction = swapTransaction
-            }
-        }
-        catch let error {
-            if (error as NSError).isNetworkConnectionError {
-                return state.error(.networkConnectionError)
-            }
-            return state.error(.createTransactionFailed)
-        }
-    }
-    
     // MARK: - Helpers
 
     private static func recalculateRouteAndMarkAsCreatingTransaction(

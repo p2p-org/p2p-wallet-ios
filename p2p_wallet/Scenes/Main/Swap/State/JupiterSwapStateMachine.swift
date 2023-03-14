@@ -97,10 +97,14 @@ actor JupiterSwapStateMachine {
         stateSubject.send(newState)
         
         // Create transaction if needed
+        guard currentState.status == .creatingSwapTransaction else {
+            return currentState
+        }
         guard Task.isNotCancelled else { return currentState }
         newState = await JupiterSwapBusinessLogic.createTransaction(
-            state: newState,
-            services: services
+            account: currentState.account,
+            route: currentState.route,
+            jupiterClient: services.jupiterClient
         )
         
         guard Task.isNotCancelled else { return currentState }

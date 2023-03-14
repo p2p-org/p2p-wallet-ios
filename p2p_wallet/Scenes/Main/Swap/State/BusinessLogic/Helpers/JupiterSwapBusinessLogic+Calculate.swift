@@ -3,13 +3,6 @@ import SolanaSwift
 import Resolver
 import SolanaPricesAPIs
 
-enum JupiterSwapRouteCalculationError: JupiterSwapError {
-    case amountFromIsZero
-    case swapToSameToken
-    case routeNotFound
-    case amountToIsZero
-}
-
 struct JupiterSwapRouteCalculationResult {
     let route: Route
     let routes: [Route]
@@ -72,7 +65,7 @@ extension JupiterSwapBusinessLogic {
                 ?? routes.first,
               let amountOut = UInt64(route.outAmount)
         else {
-            throw JupiterSwapRouteCalculationError.routeNotFound
+            throw JupiterSwapGeneralError.routeNotFound
         }
         
         return .init(
