@@ -8,9 +8,6 @@ extension JupiterSwapBusinessLogic {
         amountFrom: Double?,
         relayContextManager: RelayContextManager
     ) async throws {
-        // get status
-        let status: JupiterSwapState.Status
-        
         // assert balance is not nil
         guard let balance = fromToken.userWallet?.amount
         else {
