@@ -40,10 +40,23 @@ actor JupiterSwapStateMachine {
     nonisolated func accept(
         action newAction: JupiterSwapAction
     ) async -> JupiterSwapState {
+        // assert if action should be performed
+        // for example if data is not changed, perform action is not needed
+        guard JupiterSwapBusinessLogic.shouldPerformAction(
+            state: currentState,
+            action: newAction
+        ) else {
+            print("JupiterSwapBusinessLogic.action: \(newAction.description) ignored")
+            return currentState
+        }
+        
+        // log
+        print("JupiterSwapBusinessLogic.action: \(newAction.description) triggerred")
+        
         // define if needs to cancel previous action
         let cancelPreviousAction: Bool
         switch newAction {
-        case .update, .updateUserWallets, .updateTokensPriceMap:
+        case .updateUserWallets, .updateTokensPriceMap:
             cancelPreviousAction = false
         default:
             cancelPreviousAction = true
@@ -72,14 +85,8 @@ actor JupiterSwapStateMachine {
     
     @discardableResult
     private func dispatch(action: JupiterSwapAction) async -> JupiterSwapState {
-        // assert if action should be performed
-        // for example if data is not changed, perform action is not needed
-        guard JupiterSwapBusinessLogic.shouldPerformAction(
-            state: currentState,
-            action: action
-        ) else {
-            return currentState
-        }
+        // log
+        print("JupiterSwapBusinessLogic.action: \(action.description) dispatched")
         
         // return the progress (loading state)
         if let progressState = JupiterSwapBusinessLogic.jupiterSwapProgressState(
@@ -89,7 +96,10 @@ actor JupiterSwapStateMachine {
         }
         
         // perform the action
-        guard Task.isNotCancelled else { return currentState }
+        guard Task.isNotCancelled else {
+            print("JupiterSwapBusinessLogic.action: \(action.description) cancelled")
+            return currentState
+        }
         let mainActionState = await JupiterSwapBusinessLogic.jupiterSwapBusinessLogic(
             state: currentState,
             action: action,
@@ -97,18 +107,29 @@ actor JupiterSwapStateMachine {
         )
 
         // return the state
-        guard Task.isNotCancelled else { return currentState }
+        guard Task.isNotCancelled else {
+            print("JupiterSwapBusinessLogic.action: \(action.description) cancelled")
+            return currentState
+        }
         stateSubject.send(mainActionState)
         
         // Create transaction if needed
-        guard Task.isNotCancelled else { return currentState }
+        guard Task.isNotCancelled else {
+            print("JupiterSwapBusinessLogic.action: \(action.description) cancelled")
+            return currentState
+        }
         let createTransactionState = await JupiterSwapBusinessLogic.createTransaction(
             state: currentState,
             services: services
         )
         
-        guard Task.isNotCancelled else { return currentState }
+        guard Task.isNotCancelled else {
+            print("JupiterSwapBusinessLogic.action: \(action.description) cancelled")
+            return currentState
+        }
         stateSubject.send(createTransactionState)
+        
+        print("JupiterSwapBusinessLogic.action: \(action.description) finished")
         
         return currentState
     }
