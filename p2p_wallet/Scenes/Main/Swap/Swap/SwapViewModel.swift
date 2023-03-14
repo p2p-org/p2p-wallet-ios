@@ -385,9 +385,8 @@ private extension SwapViewModel {
 
     private func createSwapExecution(account: KeyPair) async throws -> String {
         do {
-            // get swapTransaction & route
-            guard let swapTransaction = currentState.swapTransaction,
-                  let route = currentState.route
+            // get route
+            guard let route = currentState.route
             else {
                 throw JupiterError.invalidResponse
             }
@@ -395,7 +394,7 @@ private extension SwapViewModel {
             // send to blockchain
             let transactionId = try await JupiterSwapBusinessLogic.sendToBlockchain(
                 account: account,
-                swapTransaction: swapTransaction,
+                swapTransaction: currentState.swapTransaction,
                 route: route,
                 services: stateMachine.services
             )
