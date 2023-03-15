@@ -1,4 +1,5 @@
 import Combine
+import Send // FIXME: - Remove later
 
 actor JupiterSwapStateMachine {
     // MARK: - Nested type
@@ -37,11 +38,32 @@ actor JupiterSwapStateMachine {
 
     @discardableResult
     nonisolated func accept(
-        action newAction: JupiterSwapAction,
-        waitForPreviousActionToComplete: Bool
+        action newAction: JupiterSwapAction
     ) async -> JupiterSwapState {
-        // cancel previous task when waitForPreviousActionToComplete = false
-        if waitForPreviousActionToComplete == false {
+        // assert if action should be performed
+        // for example if data is not changed, perform action is not needed
+        guard JupiterSwapBusinessLogic.shouldPerformAction(
+            state: currentState,
+            action: newAction
+        ) else {
+            print("JupiterSwapBusinessLogic.action: \(newAction.description) ignored")
+            return currentState
+        }
+        
+        // log
+        print("JupiterSwapBusinessLogic.action: \(newAction.description) triggerred")
+        
+        // define if needs to cancel previous action
+        let cancelPreviousAction: Bool
+        switch newAction {
+        case .updateUserWallets, .updateTokensPriceMap:
+            cancelPreviousAction = false
+        default:
+            cancelPreviousAction = true
+        }
+        
+        // cancel previous action if needed
+        if cancelPreviousAction {
             await cache.currentTask?.cancel()
         }
         
@@ -63,14 +85,8 @@ actor JupiterSwapStateMachine {
     
     @discardableResult
     private func dispatch(action: JupiterSwapAction) async -> JupiterSwapState {
-        // assert if action should be performed
-        // for example if data is not changed, perform action is not needed
-        guard JupiterSwapBusinessLogic.shouldPerformAction(
-            state: currentState,
-            action: action
-        ) else {
-            return currentState
-        }
+        // log
+        print("JupiterSwapBusinessLogic.action: \(action.description) dispatched")
         
         // return the progress (loading state)
         if let progressState = JupiterSwapBusinessLogic.jupiterSwapProgressState(
@@ -80,27 +96,41 @@ actor JupiterSwapStateMachine {
         }
         
         // perform the action
-        guard Task.isNotCancelled else { return currentState }
-        var newState = await JupiterSwapBusinessLogic.jupiterSwapBusinessLogic(
+        guard Task.isNotCancelled else {
+            print("JupiterSwapBusinessLogic.action: \(action.description) cancelled")
+            return currentState
+        }
+        let mainActionState = await JupiterSwapBusinessLogic.jupiterSwapBusinessLogic(
             state: currentState,
             action: action,
             services: services
         )
 
         // return the state
-        guard Task.isNotCancelled else { return currentState }
-        stateSubject.send(newState)
+        guard Task.isNotCancelled else {
+            print("JupiterSwapBusinessLogic.action: \(action.description) cancelled")
+            return currentState
+        }
+        stateSubject.send(mainActionState)
         
         // Create transaction if needed
-        guard Task.isNotCancelled else { return currentState }
-        newState = await JupiterSwapBusinessLogic.createTransaction(
-            state: newState,
+        guard Task.isNotCancelled else {
+            print("JupiterSwapBusinessLogic.action: \(action.description) cancelled")
+            return currentState
+        }
+        let createTransactionState = await JupiterSwapBusinessLogic.createTransaction(
+            state: currentState,
             services: services
         )
         
-        guard Task.isNotCancelled else { return currentState }
-        stateSubject.send(newState)
+        guard Task.isNotCancelled else {
+            print("JupiterSwapBusinessLogic.action: \(action.description) cancelled")
+            return currentState
+        }
+        stateSubject.send(createTransactionState)
         
-        return newState
+        print("JupiterSwapBusinessLogic.action: \(action.description) finished")
+        
+        return currentState
     }
 }

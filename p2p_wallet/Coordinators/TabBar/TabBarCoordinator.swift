@@ -289,14 +289,17 @@ final class TabBarCoordinator: Coordinator<Void> {
             let swapCoordinator = JupiterSwapCoordinator(
                 navigationController: nc,
                 params: JupiterSwapParameters(
-                    dismissAfterCompletion: false,
-                    openKeyboardOnStart: false,
+                    dismissAfterCompletion: source != .tapMain,
+                    openKeyboardOnStart: source != .tapMain,
                     source: source,
                     hideTabBar: hidesBottomBarWhenPushed
                 )
             )
             coordinate(to: swapCoordinator)
-                .sink(receiveValue: { _ in })
+                .sink(receiveValue: { [weak self] _ in
+                    guard self?.tabBarController.selectedIndex != TabItem.wallet.rawValue else { return }
+                    self?.tabBarController.changeItem(to: .wallet)
+                })
                 .store(in: &subscriptions)
         } else {
             let swapCoordinator = SwapCoordinator(navigationController: nc, initialWallet: nil, hidesBottomBarWhenPushed: hidesBottomBarWhenPushed)

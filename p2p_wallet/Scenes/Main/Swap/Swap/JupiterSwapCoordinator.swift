@@ -104,12 +104,10 @@ final class JupiterSwapCoordinator: Coordinator<Void> {
             }
             .store(in: &subscriptions)
         
-        return result.prefix(1).eraseToAnyPublisher()
+        return result.eraseToAnyPublisher()
     }
     
     func style(controller: UIViewController) {
-//        navigationController.navigationBar.setBackgroundImage(UIImage(), for: .default)
-//        navigationController.navigationBar.backgroundColor = Asset.Colors.smoke.color
         controller.title = L10n.swap
         swapSettingBarButton = UIBarButtonItem(image: .receipt, style: .plain, target: self, action: #selector(receiptButtonPressed))
         
@@ -171,9 +169,13 @@ final class JupiterSwapCoordinator: Coordinator<Void> {
         .sink(receiveCompletion: { [weak self] _ in
             guard let self else { return }
             self.viewModel.logTransactionProgressDone()
-            if self.params.dismissAfterCompletion && !hasError {
+            guard !hasError else { return }
+            self.result.send(())
+            if self.params.dismissAfterCompletion {
                 self.navigationController.popViewController(animated: true)
-                self.result.send(())
+                self.result.send(completion: .finished)
+            } else {
+                self.viewModel.reset()
             }
         }, receiveValue: { [weak self] status in
             switch status {
@@ -206,8 +208,7 @@ final class JupiterSwapCoordinator: Coordinator<Void> {
                 case let .selectedSlippageBps(slippageBps):
                     Task { [weak viewModel] in
                         await viewModel?.stateMachine.accept(
-                            action: .changeSlippageBps(slippageBps),
-                            waitForPreviousActionToComplete: false
+                            action: .changeSlippageBps(slippageBps)
                         )
                     }
                 case let .selectedRoute(routeInfo):
@@ -218,8 +219,7 @@ final class JupiterSwapCoordinator: Coordinator<Void> {
                     }
                     Task { [weak viewModel] in
                         await viewModel?.stateMachine.accept(
-                            action: .chooseRoute(route),
-                            waitForPreviousActionToComplete: false
+                            action: .chooseRoute(route)
                         )
                     }
                 }
