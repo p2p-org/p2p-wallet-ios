@@ -78,20 +78,24 @@ class WormholeClaimViewModel: BaseViewModel, ObservableObject {
 
     func claim() {
         if let model = model as? WormholeClaimEthereumModel {
-            action.send(
-                .claiming(
-                    PendingTransaction(
-                        trxIndex: 0,
-                        sentAt: Date(),
-                        rawTransaction: WormholeClaimTransaction(
-                            token: model.account.token,
-                            amountInCrypto: model.account.representedBalance,
-                            amountInFiat: model.account.balanceInFiat
-                        ),
-                        status: .sending
-                    )
-                )
+            guard let bundle = bundle.state.value else {
+                Error.missingBundle.capture()
+                return
+            }
+
+            let rawTransaction = WormholeClaimTransaction(
+                wormholeService: Resolver.resolve(),
+                token: model.account.token,
+                amountInCrypto: model.account.representedBalance,
+                amountInFiat: model.account.balanceInFiat,
+                bundle: bundle
             )
+
+            let transactionHandler: TransactionHandler = Resolver.resolve()
+            let index = transactionHandler.sendTransaction(rawTransaction)
+            let pendingTransaction = transactionHandler.getProcessingTransaction(index: index)
+
+            action.send(.claiming(pendingTransaction))
         }
     }
 }
@@ -100,5 +104,9 @@ extension WormholeClaimViewModel {
     enum Action {
         case openFee(AsyncValue<WormholeBundle?>)
         case claiming(PendingTransaction)
+    }
+
+    enum Error: Swift.Error {
+        case missingBundle
     }
 }

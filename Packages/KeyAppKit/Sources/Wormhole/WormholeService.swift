@@ -9,6 +9,7 @@ import Foundation
 import KeyAppBusiness
 import KeyAppKitCore
 import SolanaSwift
+import Web3
 
 public class WormholeService {
     let api: WormholeAPI
@@ -33,12 +34,15 @@ public class WormholeService {
 
             // Detect token (native token or erc-20 token)
             let token: String?
+            let slippage: UInt8?
 
             switch account.token.contractType {
             case .native:
                 token = nil
+                slippage = nil
             case let .erc20(contract: contract):
                 token = contract.hex(eip55: false)
+                slippage = 5
             }
 
             let bundle = try await api.getEthereumBundle(
@@ -46,23 +50,37 @@ public class WormholeService {
                 recipient: solanaKeyPair.publicKey.base58EncodedString,
                 token: token,
                 amount: String(account.balance),
-                slippage: nil
+                slippage: slippage
             )
 
             return bundle
         }
     }
 
-    func signBundle(bundle: WormholeBundle) async throws -> WormholeBundle {
+    public func sendBundle(bundle: WormholeBundle) async throws {
+        let signedBundle = try signBundle(bundle: bundle)
+        try await api.sendEthereumBundle(bundle: signedBundle)
+    }
+
+    internal func signBundle(bundle: WormholeBundle) throws -> WormholeBundle {
         guard let ethereumKeypair else {
             throw ServiceError.authorizationError
         }
 
-        bundle.signatures = bundle.transactions.map { transaction -> String in
-            let decodedRawTrasaction: RLPItem = try RLPDecoder().decode(transaction.hexToBytes())
-            
-            EthereumTransaction
+        // Mutable bundle
+        var bundle = bundle
+
+        // Sign transactions
+        bundle.signatures = try bundle.transactions.map { transaction -> String in
+            let rlpItem: RLPItem = try RLPDecoder().decode(transaction.hexToBytes())
+
+            let transaction = try EthereumTransaction(rlp: rlpItem)
+            let signedTransaction = try ethereumKeypair.sign(transaction: transaction)
+
+            return try signedTransaction.rawTransaction().hex()
         }
+
+        return bundle
     }
 
 //    typealias TokenBridge = (token: EthereumToken, solanaAddress: String)

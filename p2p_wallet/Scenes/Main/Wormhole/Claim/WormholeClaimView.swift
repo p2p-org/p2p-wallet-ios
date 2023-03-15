@@ -6,6 +6,7 @@
 //
 
 import KeyAppUI
+import Kingfisher
 import SolanaSwift
 import SwiftUI
 
@@ -21,11 +22,32 @@ struct WormholeClaimView: View {
                 .padding(.top, 16)
 
             // Logo
-            Image(uiImage: .ethereumIcon)
-                .resizable()
-                .clipShape(Circle())
-                .frame(width: 64, height: 64)
-                .padding(.top, 28)
+
+            if let url = viewModel.model.icon {
+                KFImage
+                    .url(url)
+                    .setProcessor(
+                        DownsamplingImageProcessor(size: .init(width: 128, height: 128))
+                            |> RoundCornerImageProcessor(cornerRadius: 64)
+                    )
+                    .resizable()
+                    .diskCacheExpiration(.days(7))
+                    .fade(duration: 0.1)
+                    .frame(width: 64, height: 64)
+                    .padding(.top, 28)
+
+            } else {
+                Circle()
+                    .fill(Color(Asset.Colors.smoke.color))
+                    .overlay(
+                        Image(uiImage: .imageOutlineIcon)
+                            .renderingMode(.template)
+                            .foregroundColor(Color(Asset.Colors.mountain.color))
+                    )
+                    .clipped()
+                    .frame(width: 64, height: 64)
+                    .padding(.top, 28)
+            }
 
             // Amount in crypto
             Text(viewModel.model.title)
