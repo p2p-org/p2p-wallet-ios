@@ -118,7 +118,7 @@ class WalletsViewModel: BECollectionViewModel<Wallet> {
         
         // get balance/wallet
         let (balance, wallets) = try await(
-            self.solanaAPIClient.getBalance(account: account, commitment: "recent"),
+            self.solanaAPIClient.getBalance(account: account, commitment: "processed"),
             self.solanaAPIClient.getTokenWallets(account: account)
         )
         
@@ -174,7 +174,7 @@ class WalletsViewModel: BECollectionViewModel<Wallet> {
             else { throw SolanaError.unknown }
             
             let (solBalance, newData) = try await(
-                self.solanaAPIClient.getBalance(account: account, commitment: "recent"),
+                self.solanaAPIClient.getBalance(account: account, commitment: "processed"),
                 try await self.solanaAPIClient.getTokenWallets(account: account)
             )
             
