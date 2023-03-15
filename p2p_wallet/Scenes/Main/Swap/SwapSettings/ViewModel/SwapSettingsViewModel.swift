@@ -8,6 +8,7 @@
 import Combine
 import Resolver
 import AnalyticsManager
+import Jupiter
 
 protocol SwapSettingsViewModelIO: AnyObject {
     var rowTapped: AnyPublisher<SwapSettingsView.RowIdentifier, Never> { get }
@@ -15,90 +16,53 @@ protocol SwapSettingsViewModelIO: AnyObject {
 
 final class SwapSettingsViewModel: BaseViewModel, ObservableObject {
     
-    // Dependencies
+    // MARK: - Dependencies
+
     @Injected private var analyticsManager: AnalyticsManager
     
-    // Properties
-    @Published var status: Status
-    @Published var slippage: Double?
-    
-    var info: Info? {
-        status.info
-    }
+    // MARK: - Published properties
 
-    // Subjects
+    @Published var currentState: JupiterSwapState
+    
+    @Published var selectedRoute: Route?
+    @Published var selectedSlippageBps: Int
+    
+
+    // MARK: - Properties
+
+    private let stateMachine: JupiterSwapStateMachine
     private let rowTappedSubject = PassthroughSubject<SwapSettingsView.RowIdentifier, Never>()
+    
+    var info: JupiterSwapStateInfo {
+        currentState.info
+    }
     
     // MARK: - Initializer
     
-    init(
-        status: Status,
-        slippage: Double,
-        swapStatePublisher: AnyPublisher<JupiterSwapState, Never>
-    ) {
-        self.status = status
-        self.slippage = slippage
+    init(stateMachine: JupiterSwapStateMachine) {
+        // capture state machine
+        self.stateMachine = stateMachine
+        // copy current state
+        self.currentState = stateMachine.currentState
+        // copy selected route
+        self.selectedRoute = stateMachine.currentState.route
+        // copy selected slippage
+        self.selectedSlippageBps = stateMachine.currentState.slippageBps
+        
         super.init()
-        bind(swapStatePublisher: swapStatePublisher)
+        bind()
     }
 
-    private func bind(swapStatePublisher: AnyPublisher<JupiterSwapState, Never>) {
-        swapStatePublisher
-            .map { state -> SwapSettingsViewModel.Status in
-                switch state.status {
-                case .ready:
-                    guard let route = state.route else { return .empty }
-                    return .loaded(
-                        .init(
-                            routes: state.routes.map {.init(
-                                id: $0.id,
-                                name: $0.name,
-                                description: $0.priceDescription(bestOutAmount: state.bestOutAmount, toTokenDecimals: state.toToken.token.decimals, toTokenSymbol: state.toToken.token.symbol) ?? "",
-                                tokensChain: $0.chainDescription(tokensList: state.swapTokens.map(\.token))
-                            )},
-                            currentRoute: .init(
-                                id: route.id,
-                                name: route.name,
-                                description: route.priceDescription(
-                                    bestOutAmount: state.bestOutAmount,
-                                    toTokenDecimals: state.toToken.token.decimals,
-                                    toTokenSymbol: state.toToken.token.symbol
-                                ) ?? "",
-                                tokensChain: route.chainDescription(tokensList: state.swapTokens.map(\.token))
-                            ),
-                            networkFee: state.networkFee ?? SwapFeeInfo(
-                                amount: 0.000005,
-                                tokenSymbol: "SOL",
-                                tokenName: "Solana",
-                                tokenPriceInCurrentFiat: nil,
-                                pct: 0.01,
-                                canBePaidByKeyApp: true
-                            ),
-                            accountCreationFee: state.accountCreationFee ?? SwapFeeInfo(
-                                amount: 0,
-                                tokenSymbol: "SOL",
-                                tokenName: "Solana",
-                                tokenPriceInCurrentFiat: nil,
-                                pct: 0,
-                                canBePaidByKeyApp: false
-                            ),
-                            liquidityFee: state.liquidityFee,
-                            minimumReceived: state.minimumReceivedAmount == nil ? nil: .init(
-                                amount: state.minimumReceivedAmount!,
-                                token: state.toToken.token.symbol
-                            ),
-                            exchangeRateInfo: state.exchangeRateInfo
-                        )
-                    )
-                case .requiredInitialize, .initializing, .error:
-                    return .empty
-                default:
-                    return .loading
-                }
-            }
+    private func bind() {
+        stateMachine.statePublisher
             .receive(on: DispatchQueue.main)
-            .sink { [weak self] newStatus in
-                self?.status = newStatus
+            .sink { [weak self] state in
+                guard let self else { return }
+                // map state to current state, replace by current context
+                self.currentState = state.modified {
+                    $0.route = self.selectedRoute
+                    $0.slippageBps = self.selectedSlippageBps
+                }
             }
             .store(in: &subscriptions)
     }
@@ -119,56 +83,11 @@ extension SwapSettingsViewModel: SwapSettingsViewModelIO {
     }
 }
 
-// MARK: - Nested type
-
-extension SwapSettingsViewModel {
-    struct Info: Equatable {
-        let routes: [SwapSettingsRouteInfo]
-        var currentRoute: SwapSettingsRouteInfo
-        let networkFee: SwapFeeInfo
-        let accountCreationFee: SwapFeeInfo
-        let liquidityFee: [SwapFeeInfo]
-        let minimumReceived: SwapTokenAmountInfo?
-        let exchangeRateInfo: String?
-        
-        var estimatedFees: String {
-            "≈ " + (liquidityFee + [networkFee, accountCreationFee].compactMap { $0 })
-                .compactMap(\.amountInFiat)
-                .reduce(0.0, +)
-                .formattedFiat()
-        }
-    }
-
-    enum Status: Equatable {
-        case loading
-        case loaded(Info)
-        case empty
-        
-        var info: Info? {
-            switch self {
-            case .loading, .empty:
-                return nil
-            case .loaded(let info):
-                return info
-            }
-        }
-        
-        var isEmpty: Bool {
-            switch self {
-            case .loading, .loaded:
-                return false
-            case .empty:
-                return true
-            }
-        }
-    }
-}
-
 // MARK: - Analytics
 
 extension SwapSettingsViewModel {
     func logRoute() {
-        guard let currentRoute = info?.currentRoute.name else { return }
+        guard let currentRoute = info.currentRoute?.name else { return }
         analyticsManager.log(event: .swapSettingsSwappingThroughChoice(variant: currentRoute))
     }
 
