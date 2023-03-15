@@ -102,7 +102,7 @@ extension JupiterSwapBusinessLogic {
         return state.error(.routeIsNotFound)
     }
 
-    private static func validateAmounts(state: JupiterSwapState, services: JupiterSwapServices) async -> JupiterSwapState {
+    static func validateAmounts(state: JupiterSwapState, services: JupiterSwapServices) async -> JupiterSwapState {
         let status: JupiterSwapState.Status
 
         if let balance = state.fromToken.userWallet?.amount {
