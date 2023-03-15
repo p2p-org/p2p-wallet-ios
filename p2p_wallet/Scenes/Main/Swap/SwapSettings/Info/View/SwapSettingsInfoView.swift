@@ -7,12 +7,13 @@
 
 import SwiftUI
 import KeyAppUI
+import SkeletonUI
 
 struct SwapSettingsInfoView: View {
     @ObservedObject var viewModel: SwapSettingsInfoViewModel
     
     var body: some View {
-        VStack(spacing: 30) {
+        VStack {
             Image(uiImage: viewModel.image)
             HStack(spacing: 16) {
                 Image(uiImage: .transactionFee)
@@ -33,9 +34,24 @@ struct SwapSettingsInfoView: View {
             .frame(maxWidth: .infinity)
             .background(Color(Asset.Colors.cloud.color))
             .cornerRadius(12)
-            if !viewModel.fees.isEmpty {
-                feesView
+            .padding(.bottom, 30)
+            
+            switch viewModel.loadableFee {
+            case .loading:
+                feeView(
+                    title: L10n.liquidityFee,
+                    subtitle: "",
+                    rightTitle: nil,
+                    isLoading: true
+                )
+                    .padding(.bottom, 30)
+            case let .loaded(fees) where !fees.isEmpty:
+                feesView(fees: fees)
+                    .padding(.bottom, 30)
+            default:
+                HStack {}
             }
+            
             Button(
                 action: {
                     viewModel.closeClicked()
@@ -56,9 +72,9 @@ struct SwapSettingsInfoView: View {
         .sheetHeader(title: nil, withSeparator: false)
     }
 
-    private var feesView: some View {
+    private func feesView(fees: [SwapSettingsInfoViewModel.Fee]) -> some View {
         VStack(spacing: 24) {
-            ForEach(Array(zip(viewModel.fees.indices, viewModel.fees)), id: \.0) { index, fee in
+            ForEach(Array(zip(fees.indices, fees)), id: \.0) { index, fee in
                 feeView(
                     title: fee.title,
                     subtitle: fee.subtitle,
@@ -68,21 +84,29 @@ struct SwapSettingsInfoView: View {
         }
     }
 
-    private func feeView(title: String, subtitle: String, rightTitle: String?) -> some View {
+    private func feeView(
+        title: String,
+        subtitle: String,
+        rightTitle: String?,
+        isLoading: Bool = false
+    ) -> some View {
         HStack {
             VStack(alignment: .leading, spacing: 4) {
                 Text(title)
                     .fixedSize(horizontal: false, vertical: true)
                     .font(uiFont: .font(of: .text3))
                     .foregroundColor(Color(Asset.Colors.night.color))
+                    .skeleton(with: isLoading, size: .init(width: 100, height: 16))
                 Text(subtitle)
                     .font(uiFont: .font(of: .label1))
                     .foregroundColor(Color(Asset.Colors.mountain.color))
+                    .skeleton(with: isLoading, size: .init(width: 52, height: 12))
             }
             Spacer()
             Text(rightTitle ?? "")
                 .font(uiFont: .font(of: .label1))
                 .foregroundColor(Color(Asset.Colors.mountain.color))
+                .skeleton(with: isLoading, size: .init(width: 52, height: 12))
         }
     }
 }

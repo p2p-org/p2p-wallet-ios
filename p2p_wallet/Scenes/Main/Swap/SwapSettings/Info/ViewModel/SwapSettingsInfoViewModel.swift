@@ -10,12 +10,18 @@ import Foundation
 
 @MainActor
 final class SwapSettingsInfoViewModel: BaseViewModel, ObservableObject {
+    
+    enum LoadableFee {
+        case loading
+        case loaded([Fee])
+    }
+    
     let image: UIImage
     let title: String
     let subtitle: String
     let buttonTitle: String
 
-    @Published var fees = [Fee]()
+    @Published var loadableFee: LoadableFee = .loaded([])
     
     // MARK: - Output
     
@@ -41,12 +47,11 @@ final class SwapSettingsInfoViewModel: BaseViewModel, ObservableObject {
             title = L10n.minimumReceived
             subtitle = L10n.TheMinimumAmountYouWillReceive.ifThePriceSlipsAnyFurtherYourTransactionWillRevert
             buttonTitle = L10n.done + "👍"
-        case let .liquidityFee(fees):
+        case .liquidityFee:
             image = .liquidityFee
             title = L10n.liquidityFee
             subtitle = L10n.aFeePaidToTheLiquidityProviders
             buttonTitle = L10n.okay + "👍"
-            self.fees = fees
         }
     }
     
@@ -62,7 +67,7 @@ extension SwapSettingsInfoViewModel {
         case enjoyFreeTransaction
         case accountCreationFee
         case minimumReceived
-        case liquidityFee(fees: [Fee])
+        case liquidityFee
     }
 }
 
