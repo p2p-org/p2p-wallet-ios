@@ -52,11 +52,11 @@ struct SwapSettingsView: View {
                 )
             }
             
-//            Section(header: Text(L10n.slippage)) {
-//                SlippageSettingsView(slippage: viewModel.slippage) { selectedSlippage in
-//                    viewModel.slippage = selectedSlippage
-//                }
-//            }
+            Section(header: Text(L10n.slippage)) {
+                SlippageSettingsView(slippage: viewModel.selectedSlippage) { selectedSlippage in
+                    viewModel.selectedSlippage = selectedSlippage
+                }
+            }
         }
         .modifier(ListBackgroundModifier(separatorColor: Asset.Colors.rain.color))
         .listStyle(InsetGroupedListStyle())

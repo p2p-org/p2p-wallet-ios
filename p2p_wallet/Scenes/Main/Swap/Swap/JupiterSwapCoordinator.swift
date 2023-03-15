@@ -202,6 +202,7 @@ final class JupiterSwapCoordinator: Coordinator<Void> {
 
         // coordinate
         coordinate(to: settingsCoordinator)
+            .prefix(1)
             .sink(receiveValue: { [weak viewModel] result in
                 switch result {
                 case let .selectedSlippageBps(slippageBps):

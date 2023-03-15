@@ -23,8 +23,7 @@ final class SwapSettingsViewModel: BaseViewModel, ObservableObject {
     // MARK: - Published properties
 
     @Published var currentState: JupiterSwapState
-    
-    @Published var selectedSlippageBps: Int
+    var selectedSlippage: Double?
     
 
     // MARK: - Properties
@@ -52,7 +51,8 @@ final class SwapSettingsViewModel: BaseViewModel, ObservableObject {
         // copy current state
         self.currentState = stateMachine.currentState
         // copy selected slippage
-        self.selectedSlippageBps = stateMachine.currentState.slippageBps
+        self.selectedSlippage = (Double(stateMachine.currentState.slippageBps) / 100)
+            .rounded(decimals: 2)
         
         super.init()
         bind()
