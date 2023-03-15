@@ -8,6 +8,22 @@ struct SwapFeeInfo: Codable, Equatable {
     let pct: Decimal?
     let canBePaidByKeyApp: Bool
     
+    init(
+        amount: Double,
+        tokenSymbol: String? = nil,
+        tokenName: String? = nil,
+        tokenPriceInCurrentFiat: Double? = nil,
+        pct: Decimal? = nil,
+        canBePaidByKeyApp: Bool
+    ) {
+        self.amount = amount
+        self.tokenSymbol = tokenSymbol
+        self.tokenName = tokenName
+        self.tokenPriceInCurrentFiat = tokenPriceInCurrentFiat
+        self.pct = pct
+        self.canBePaidByKeyApp = canBePaidByKeyApp
+    }
+    
     var amountDescription: String? {
         amount == 0 && canBePaidByKeyApp ? L10n.paidByKeyApp: amount.tokenAmountFormattedString(symbol: tokenSymbol ?? "")
     }

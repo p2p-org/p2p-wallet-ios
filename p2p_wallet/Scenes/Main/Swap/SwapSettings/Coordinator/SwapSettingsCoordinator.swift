@@ -19,54 +19,32 @@ enum SwapSettingsCoordinatorResult {
 final class SwapSettingsCoordinator: Coordinator<SwapSettingsCoordinatorResult> {
 
     // MARK: - Properties
-
+    private let stateMachine: JupiterSwapStateMachine
     private let navigationController: UINavigationController
-    private let slippage: Double
     private var result = PassthroughSubject<SwapSettingsCoordinatorResult, Never>()
     private var viewModel: SwapSettingsViewModel!
-    private let swapStatePublisher: AnyPublisher<JupiterSwapState, Never>
     private var selectRouteViewController: CustomPresentableViewController!
 
     // MARK: - Initializer
 
     init(
         navigationController: UINavigationController,
-        slippage: Double,
-        swapStatePublisher: AnyPublisher<JupiterSwapState, Never>
+        stateMachine: JupiterSwapStateMachine
     ) {
         self.navigationController = navigationController
-        self.slippage = slippage
-        self.swapStatePublisher = swapStatePublisher
+        self.stateMachine = stateMachine
         super.init()
     }
 
     override func start() -> AnyPublisher<SwapSettingsCoordinatorResult, Never> {
         // create viewModel
-        viewModel = SwapSettingsViewModel(
-            status: .loading,
-            slippage: slippage,
-            swapStatePublisher: swapStatePublisher
-        )
+        viewModel = SwapSettingsViewModel(stateMachine: stateMachine)
         
         // navigation
         viewModel.rowTapped
             .sink(receiveValue: { [unowned self] rowIdentifier in
                 presentSettingsInfo(rowIdentifier: rowIdentifier)
             })
-            .store(in: &subscriptions)
-        
-        viewModel.$status
-            .compactMap { status in
-                switch status {
-                case .loading, .empty:
-                    return nil
-                case .loaded(let info):
-                    return info.currentRoute
-                }
-            }
-            .sink { [weak self] route in
-                self?.result.send(.selectedRoute(route))
-            }
             .store(in: &subscriptions)
         
         // create view
@@ -80,7 +58,7 @@ final class SwapSettingsCoordinator: Coordinator<SwapSettingsCoordinatorResult> 
         // complete Coordinator
         viewController.deallocatedPublisher()
             .sink(receiveValue: { [weak self] in
-                if let slippage = self?.viewModel.slippage,
+                if let slippage = self?.viewModel.selectedSlippage,
                    slippage > 0
                 {
                     let slippageBps = Int(slippage * 100)
@@ -97,31 +75,23 @@ final class SwapSettingsCoordinator: Coordinator<SwapSettingsCoordinatorResult> 
 
     func showChooseRoute() {
         let view = SwapSelectRouteView(
-            statusPublisher: viewModel.$status
-                .map { status in
-                    switch status {
-                    case .loading, .empty:
+            statusPublisher: stateMachine.statePublisher
+                .map { state in
+                    if state.isSettingsLoading {
                         return .loading
-                    case .loaded(let info):
+                    } else {
                         return .loaded(
-                            routeInfos: info.routes,
-                            selectedIndex: info.routes.firstIndex { $0.id == info.currentRoute.id }
+                            routeInfos: state.routes.map { $0.mapToInfo(currentState: state) },
+                            selectedIndex: state.routes.firstIndex(where: {$0.id == state.route?.id})
                         )
                     }
                 }
                 .eraseToAnyPublisher(),
             onSelectRoute: { [unowned self] routeInfo in
-                switch viewModel.status {
-                case .loading, .empty:
-                    break
-                case .loaded(let info):
-                    var info = info
-                    info.currentRoute = routeInfo
-                    viewModel.status = .loaded(info)
-                    viewModel.logRoute()
-                    selectRouteViewController.dismiss(animated: true) { [weak self] in
-                        self?.navigationController.popViewController(animated: true)
-                    }
+                viewModel.logRoute()
+                result.send(.selectedRoute(routeInfo))
+                selectRouteViewController.dismiss(animated: true) { [weak self] in
+                    self?.navigationController.popViewController(animated: true)
                 }
             },
             onTapDone: { [unowned self] in
@@ -133,7 +103,7 @@ final class SwapSettingsCoordinator: Coordinator<SwapSettingsCoordinatorResult> 
         selectRouteViewController.view.layer.cornerRadius = 20
         navigationController.present(selectRouteViewController, interactiveDismissalType: .standard)
         
-        viewModel.$status
+        stateMachine.statePublisher
             .receive(on: RunLoop.main)
             .sink { _ in
                 DispatchQueue.main.async { [weak self] in
@@ -156,8 +126,8 @@ final class SwapSettingsCoordinator: Coordinator<SwapSettingsCoordinatorResult> 
         case .accountCreationFee:
             strategy = .accountCreationFee
         case .liquidityFee:
-            guard let info = viewModel.info else { return }
-            let fees = info.liquidityFee.mappedToSwapSettingInfoViewModelFee()
+            let fees = viewModel.info.liquidityFee
+                .mappedToSwapSettingInfoViewModelFee()
             strategy = .liquidityFee(fees: fees)
         case .minimumReceived:
             strategy = .minimumReceived
@@ -186,8 +156,8 @@ final class SwapSettingsCoordinator: Coordinator<SwapSettingsCoordinatorResult> 
         // observe viewModel status
         // TODO: - Only liquidity fees?
         if rowIdentifier == .liquidityFee {
-            viewModel.$status
-                .compactMap { $0.info?.liquidityFee.mappedToSwapSettingInfoViewModelFee() }
+            viewModel.$currentState
+                .map { $0.info.liquidityFee.mappedToSwapSettingInfoViewModelFee() }
                 .sink { [weak settingsInfoViewModel] fees in
                     settingsInfoViewModel?.fees = fees
                     DispatchQueue.main.async { [weak self] in
