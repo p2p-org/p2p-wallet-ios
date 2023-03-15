@@ -414,7 +414,6 @@ extension Resolver: ResolverRegistering {
                 web3: resolve(),
                 ethereumTokenRepository: resolve(),
                 priceService: resolve(),
-                trackingList: [],
                 fiat: Defaults.fiat.rawValue,
                 errorObservable: resolve()
             )

@@ -9,7 +9,9 @@ import Foundation
 
 public struct EthereumFees: Codable, Hashable {
     public let gas: Fee
+
     public let arbiter: Fee
+
     public let createAccount: Fee?
 
     public var totalInUSD: Decimal {

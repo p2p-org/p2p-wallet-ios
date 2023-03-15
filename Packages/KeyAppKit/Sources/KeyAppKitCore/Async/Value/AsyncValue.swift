@@ -42,6 +42,17 @@ public struct AsyncValueState<T> {
             error: error
         )
     }
+    
+    public var isFetching: Bool {
+        switch status {
+        case .initializing:
+            return error == nil ? true : false
+        case .fetching:
+            return true
+        case .ready:
+            return false
+        }
+    }
 }
 
 public extension AsyncValueState where T: Sequence {
