@@ -15,7 +15,7 @@ enum JupiterSwapBusinessLogic {
         case .initialize:
             return true
         case .update:
-            return true
+            return state.amountFrom > 0
         case .changeAmountFrom(let amountFrom):
             return state.amountFrom != amountFrom
         case .changeFromToken(let fromToken):
@@ -40,7 +40,7 @@ enum JupiterSwapBusinessLogic {
         action: JupiterSwapAction
     ) -> JupiterSwapState? {
         #if !RELEASE
-        print("JupiterSwapBusinessLogic.action: \(action.description)")
+        print("JupiterSwapBusinessLogic.action: \(action.description) in progress")
         #endif
         
         switch action {
@@ -125,15 +125,15 @@ enum JupiterSwapBusinessLogic {
         services: JupiterSwapServices
     ) async -> JupiterSwapState {
         switch action {
-        case let .initialize(account, swapTokens, routeMap, fromToken, toToken):
+        case let .initialize(account, jupiterTokens, routeMap, preChosenFromTokenMintAddress, preChosenToTokenMintAddress):
             return await initializeAction(
                 state: state,
                 services: services,
                 account: account,
-                swapTokens: swapTokens,
+                jupiterTokens: jupiterTokens,
                 routeMap: routeMap,
-                fromToken: fromToken,
-                toToken: toToken
+                preChosenFromTokenMintAddress: preChosenFromTokenMintAddress,
+                preChosenToTokenMintAddress: preChosenToTokenMintAddress
             )
 
         case .changeAmountFrom:

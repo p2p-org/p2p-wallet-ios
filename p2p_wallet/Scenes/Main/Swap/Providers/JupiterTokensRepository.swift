@@ -4,7 +4,7 @@ import SolanaSwift
 import Resolver
 
 struct JupiterTokensData {
-    let tokens: [SwapToken]
+    let tokens: [Token]
     let userWallets: [Wallet]
 }
 
@@ -17,7 +17,7 @@ protocol JupiterTokensRepository {
 enum JupiterDataStatus {
     case initial
     case loading
-    case ready(swapTokens: [SwapToken], routeMap: RouteMap)
+    case ready(jupiterTokens: [Token], routeMap: RouteMap)
     case failed
 }
 
@@ -31,6 +31,7 @@ final class JupiterTokensRepositoryImpl: JupiterTokensRepository {
     private let jupiterClient: JupiterAPI
     private let localProvider: JupiterTokensProvider
     @Injected private var walletsRepository: WalletsRepository
+    @Injected private var tokensRepositoryCache: SolanaTokensRepositoryCache
 
     // MARK: - Private params
 
@@ -60,7 +61,7 @@ final class JupiterTokensRepositoryImpl: JupiterTokensRepository {
     private func fetch() async {
         statusSubject.send(.loading)
         do {
-            let jupiterTokens: [Token]
+            var jupiterTokens: [Token]
             let routeMap: RouteMap
             
             try Task.checkCancellation()
@@ -93,29 +94,20 @@ final class JupiterTokensRepositoryImpl: JupiterTokensRepository {
                 try localProvider.save(tokens: jupiterTokens, routeMap: routeMap)
             }
             
-            // wait for wallets repository to be loaded and get wallets
-            let wallets = try await Publishers.CombineLatest(
-                walletsRepository.statePublisher,
-                walletsRepository.dataPublisher
-            )
-                .filter { (state, _) in
-                    state == .loaded
-                }
-                .map { _, wallets in
-                    return wallets
-                }
-                .eraseToAnyPublisher()
-                .async()
+            // get solana cached token list
+            let solanaTokens = await tokensRepositoryCache.getTokens() ?? []
             
-            // map userWallets with jupiter tokens
-            let swapTokens = jupiterTokens.map { jupiterToken in
-                if let userWallet = wallets.first(where: { $0.mintAddress == jupiterToken.address }) {
-                    return SwapToken(token: jupiterToken, userWallet: userWallet)
+            // map solanaTokens to jupiter token
+            jupiterTokens = jupiterTokens.map { jupiterToken in
+                if let token = solanaTokens.first(where: {$0.address == jupiterToken.address}) {
+                    return token
                 }
-                return SwapToken(token: jupiterToken, userWallet: nil)
+                return jupiterToken
             }
+            
+            // return status ready
             try Task.checkCancellation()
-            statusSubject.send(.ready(swapTokens: swapTokens, routeMap: routeMap))
+            statusSubject.send(.ready(jupiterTokens: jupiterTokens, routeMap: routeMap))
         } catch {
             guard !(error is CancellationError) else {
                 return

@@ -118,7 +118,7 @@ class WalletsViewModel: BECollectionViewModel<Wallet> {
         
         // get balance/wallet
         let (balance, wallets) = try await(
-            self.solanaAPIClient.getBalance(account: account, commitment: "recent"),
+            self.solanaAPIClient.getBalance(account: account, commitment: "processed"),
             self.solanaAPIClient.getTokenWallets(account: account)
         )
         
@@ -174,7 +174,7 @@ class WalletsViewModel: BECollectionViewModel<Wallet> {
             else { throw SolanaError.unknown }
             
             let (solBalance, newData) = try await(
-                self.solanaAPIClient.getBalance(account: account, commitment: "recent"),
+                self.solanaAPIClient.getBalance(account: account, commitment: "processed"),
                 try await self.solanaAPIClient.getTokenWallets(account: account)
             )
             
@@ -323,6 +323,15 @@ class WalletsViewModel: BECollectionViewModel<Wallet> {
     // MARK: - Account notifications
 
     private func handleAccountNotification(_ notification: AccountsObservableEvent) {
+        // check if there is any pending transaction for this account
+        let pendingTransactions = (transactionHandler?.getProccessingTransactions(of: notification.pubkey) ?? [])
+            .filter { $0.isProcessing }
+        
+        // ignore updating balance when there is any pending transaction for this account
+        guard pendingTransactions.isEmpty else {
+            return
+        }
+        
         // update
         updateItem(where: { $0.pubkey == notification.pubkey }, transform: { wallet in
             var wallet = wallet
