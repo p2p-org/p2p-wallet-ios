@@ -20,7 +20,7 @@ struct JupiterSwapStateInfo: Equatable {
     let routes: [SwapSettingsRouteInfo]
     var currentRoute: SwapSettingsRouteInfo?
     let networkFee: SwapFeeInfo
-    let accountCreationFee: SwapFeeInfo
+    let accountCreationFee: SwapFeeInfo?
     let liquidityFee: [SwapFeeInfo]
     let minimumReceived: SwapTokenAmountInfo?
     let exchangeRateInfo: String?
@@ -61,21 +61,10 @@ extension JupiterSwapState {
             currentRoute: route?
                 .mapToInfo(currentState: self),
             networkFee: networkFee ?? SwapFeeInfo(
-                amount: 0.000005,
-                tokenSymbol: "SOL",
-                tokenName: "Solana",
-                tokenPriceInCurrentFiat: nil,
-                pct: 0.01,
+                amount: 0,
                 canBePaidByKeyApp: true
             ),
-            accountCreationFee: accountCreationFee ?? SwapFeeInfo(
-                amount: 0,
-                tokenSymbol: "SOL",
-                tokenName: "Solana",
-                tokenPriceInCurrentFiat: nil,
-                pct: 0,
-                canBePaidByKeyApp: false
-            ),
+            accountCreationFee: accountCreationFee,
             liquidityFee: liquidityFee,
             minimumReceived: minimumReceivedAmount == nil ? nil: .init(
                 amount: minimumReceivedAmount!,
@@ -83,5 +72,17 @@ extension JupiterSwapState {
             ),
             exchangeRateInfo: exchangeRateInfo
         )
+    }
+    
+    var isSettingsLoading: Bool {
+        // observe stateMachine status
+        switch status {
+        case .requiredInitialize, .initializing, .loadingAmountTo, .loadingTokenTo, .switching:
+            return true
+        case .ready, .creatingSwapTransaction:
+            return false
+        case .error:
+            return false
+        }
     }
 }

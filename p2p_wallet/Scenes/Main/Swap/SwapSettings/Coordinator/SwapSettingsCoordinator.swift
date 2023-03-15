@@ -76,28 +76,19 @@ final class SwapSettingsCoordinator: Coordinator<SwapSettingsCoordinatorResult> 
         let view = SwapSelectRouteView(
             statusPublisher: stateMachine.statePublisher
                 .map { state in
-                    // assert that route is not empty
-                    guard !state.routes.isEmpty else {
+                    if state.isSettingsLoading {
                         return .loading
-                    }
-                    
-                    // observe stateMachine status
-                    switch state.status {
-                    case .requiredInitialize, .initializing, .loadingAmountTo, .loadingTokenTo, .switching:
-                        return .loading
-                    case .ready, .creatingSwapTransaction:
+                    } else {
                         return .loaded(
                             routeInfos: state.routes.map { $0.mapToInfo(currentState: state) },
                             selectedIndex: state.routes.firstIndex(where: {$0.id == state.route?.id})
                         )
-                    case .error:
-                        return .loading
                     }
                 }
                 .eraseToAnyPublisher(),
             onSelectRoute: { [unowned self] routeInfo in
-                viewModel.selectedRoute = stateMachine.currentState.routes.first(where: {$0.id == routeInfo.id}) ?? stateMachine.currentState.routes.first
                 viewModel.logRoute()
+                result.send(.selectedRoute(routeInfo))
                 selectRouteViewController.dismiss(animated: true) { [weak self] in
                     self?.navigationController.popViewController(animated: true)
                 }

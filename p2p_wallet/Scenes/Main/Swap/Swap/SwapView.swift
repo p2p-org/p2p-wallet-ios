@@ -40,12 +40,6 @@ struct SwapView: View {
                 errorView
             }
         }
-        .onAppear {
-            viewModel.appeared.send()
-        }
-        .onDisappear {
-            viewModel.disappeared.send()
-        }
     }
 }
 
