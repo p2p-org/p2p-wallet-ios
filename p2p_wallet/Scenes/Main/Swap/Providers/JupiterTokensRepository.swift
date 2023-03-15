@@ -4,7 +4,7 @@ import SolanaSwift
 import Resolver
 
 struct JupiterTokensData {
-    let tokens: [SwapToken]
+    let tokens: [Token]
     let userWallets: [Wallet]
 }
 
@@ -17,7 +17,7 @@ protocol JupiterTokensRepository {
 enum JupiterDataStatus {
     case initial
     case loading
-    case ready(swapTokens: [SwapToken], routeMap: RouteMap)
+    case ready(jupiterTokens: [Token], routeMap: RouteMap)
     case failed
 }
 
@@ -94,20 +94,6 @@ final class JupiterTokensRepositoryImpl: JupiterTokensRepository {
                 try localProvider.save(tokens: jupiterTokens, routeMap: routeMap)
             }
             
-            // wait for wallets repository to be loaded and get wallets
-            let wallets = try await Publishers.CombineLatest(
-                walletsRepository.statePublisher,
-                walletsRepository.dataPublisher
-            )
-                .filter { (state, _) in
-                      state == .loaded
-                }
-                .map { _, wallets in
-                    return wallets
-                }
-                .eraseToAnyPublisher()
-                .async()
-            
             // get solana cached token list
             let solanaTokens = await tokensRepositoryCache.getTokens() ?? []
             
@@ -119,20 +105,9 @@ final class JupiterTokensRepositoryImpl: JupiterTokensRepository {
                 return jupiterToken
             }
             
-            // map userWallets with jupiter tokens
-            let swapTokens = jupiterTokens
-                .map { jupiterToken in
-                
-                // if userWallet found
-                if let userWallet = wallets.first(where: { $0.mintAddress == jupiterToken.address }) {
-                    return SwapToken(token: userWallet.token, userWallet: userWallet)
-                }
-                
-                // otherwise return jupiter token with no userWallet
-                return SwapToken(token: jupiterToken, userWallet: nil)
-            }
+            // return status ready
             try Task.checkCancellation()
-            statusSubject.send(.ready(swapTokens: swapTokens, routeMap: routeMap))
+            statusSubject.send(.ready(jupiterTokens: jupiterTokens, routeMap: routeMap))
         } catch {
             guard !(error is CancellationError) else {
                 return
