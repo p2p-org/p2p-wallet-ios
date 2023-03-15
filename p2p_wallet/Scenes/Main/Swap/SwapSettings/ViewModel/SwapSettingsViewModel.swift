@@ -24,7 +24,6 @@ final class SwapSettingsViewModel: BaseViewModel, ObservableObject {
 
     @Published var currentState: JupiterSwapState
     
-    @Published var selectedRoute: Route?
     @Published var selectedSlippageBps: Int
     
 
@@ -37,6 +36,14 @@ final class SwapSettingsViewModel: BaseViewModel, ObservableObject {
         currentState.info
     }
     
+    var isLoading: Bool {
+        currentState.isSettingsLoading
+    }
+    
+    var isLoadingOrRouteNotNil: Bool {
+        isLoading || (currentState.route != nil)
+    }
+    
     // MARK: - Initializer
     
     init(stateMachine: JupiterSwapStateMachine) {
@@ -44,8 +51,6 @@ final class SwapSettingsViewModel: BaseViewModel, ObservableObject {
         self.stateMachine = stateMachine
         // copy current state
         self.currentState = stateMachine.currentState
-        // copy selected route
-        self.selectedRoute = stateMachine.currentState.route
         // copy selected slippage
         self.selectedSlippageBps = stateMachine.currentState.slippageBps
         
@@ -59,10 +64,7 @@ final class SwapSettingsViewModel: BaseViewModel, ObservableObject {
             .sink { [weak self] state in
                 guard let self else { return }
                 // map state to current state, replace by current context
-                self.currentState = state.modified {
-                    $0.route = self.selectedRoute
-                    $0.slippageBps = self.selectedSlippageBps
-                }
+                self.currentState = state
             }
             .store(in: &subscriptions)
     }

@@ -27,7 +27,7 @@ struct SwapSettingsView: View {
             .apply(style: .label1)
             .foregroundColor(Color(Asset.Colors.night.color))
             .accessibilityIdentifier("SwapView.priceInfoLabel")
-            .if(viewModel.status == .loading) { view in
+            .if(viewModel.isLoading) { view in
                 view.skeleton(with: true, size: CGSize(width: 160, height: 16))
             }
             .frame(maxWidth: .infinity, alignment: .center)
@@ -52,11 +52,11 @@ struct SwapSettingsView: View {
                 )
             }
             
-            Section(header: Text(L10n.slippage)) {
-                SlippageSettingsView(slippage: viewModel.slippage) { selectedSlippage in
-                    viewModel.slippage = selectedSlippage
-                }
-            }
+//            Section(header: Text(L10n.slippage)) {
+//                SlippageSettingsView(slippage: viewModel.slippage) { selectedSlippage in
+//                    viewModel.slippage = selectedSlippage
+//                }
+//            }
         }
         .modifier(ListBackgroundModifier(separatorColor: Asset.Colors.rain.color))
         .listStyle(InsetGroupedListStyle())
@@ -67,44 +67,29 @@ struct SwapSettingsView: View {
 
     private var firstSectionRows: some View {
         Group {
-            if !viewModel.status.isEmpty {
-                // Route
-                commonRow(
-                    title: L10n.swappingThrough,
-                    subtitle: viewModel.info.currentRoute.tokensChain,
-                    trailingSubtitle: viewModel.info.currentRoute.description,
-                    trailingView: Image(uiImage: .nextArrow)
-                        .resizable()
-                        .frame(width: 7.41, height: 12)
-                        .padding(.vertical, (20-12)/2)
-                        .padding(.horizontal, (20-7.41)/2)
-                        .castToAnyView(),
-                    identifier: .route
-                )
-                .contentShape(Rectangle())
-                .onTapGesture {
-                    viewModel.rowClicked(identifier: .route)
-                }
+            // Route
+            if viewModel.isLoadingOrRouteNotNil {
+                routeView
             }
             
             // Network fee
             feeRow(
                 title: L10n.networkFee,
-                fee: (viewModel.info.networkFee ?? SwapFeeInfo(amount: 0, canBePaidByKeyApp: true)),
+                fee: viewModel.info.networkFee,
                 identifier: .networkFee
             )
-            
-            if !viewModel.status.isEmpty {
-                // Account creation fee
+
+            // Account creation fee
+            if viewModel.isLoadingOrRouteNotNil {
                 feeRow(
                     title: L10n.accountCreationFee,
                     fee: viewModel.info.accountCreationFee,
                     identifier: .accountCreationFee
                 )
             }
-            
-            if !viewModel.status.isEmpty {
-                // Liquidity fee
+
+            // Liquidity fee
+            if viewModel.isLoadingOrRouteNotNil {
                 if let liquidityFee = viewModel.info.liquidityFee,
                    !liquidityFee.isEmpty
                 {
@@ -115,24 +100,43 @@ struct SwapSettingsView: View {
                     )
                 }
             }
-            
-            if !viewModel.status.isEmpty {
-                // Estimated fee
+
+            // Estimated fee
+            if viewModel.isLoadingOrRouteNotNil {
                 HStack {
                     Text(L10n.estimatedFees)
                         .fontWeight(.semibold)
                         .apply(style: .text3)
-                    
+
                     Spacer()
-                    
+
                     Text(viewModel.info.estimatedFees)
                         .fontWeight(.semibold)
                         .apply(style: .text3)
                         .padding(.vertical, 10)
-                        .skeleton(with: viewModel.status == .loading, size: .init(width: 52, height: 16))
+                        .skeleton(with: viewModel.isLoading, size: .init(width: 52, height: 16))
                 }
                 .frame(maxWidth: .infinity)
             }
+        }
+    }
+    
+    private var routeView: some View {
+        commonRow(
+            title: L10n.swappingThrough,
+            subtitle: viewModel.info.currentRoute?.tokensChain,
+            trailingSubtitle: viewModel.info.currentRoute?.description,
+            trailingView: Image(uiImage: .nextArrow)
+                .resizable()
+                .frame(width: 7.41, height: 12)
+                .padding(.vertical, (20-12)/2)
+                .padding(.horizontal, (20-7.41)/2)
+                .castToAnyView(),
+            identifier: .route
+        )
+        .contentShape(Rectangle())
+        .onTapGesture {
+            viewModel.rowClicked(identifier: .route)
         }
     }
     
@@ -182,7 +186,7 @@ struct SwapSettingsView: View {
                 Text(subtitle)
                     .apply(style: .label1)
                     .foregroundColor(Color(subtitleColor))
-                    .skeleton(with: viewModel.status == .loading, size: .init(width: 100, height: 12))
+                    .skeleton(with: viewModel.isLoading, size: .init(width: 100, height: 12))
             }
             
             Spacer()
@@ -191,7 +195,7 @@ struct SwapSettingsView: View {
                 .apply(style: .label1)
                 .foregroundColor(Color(Asset.Colors.mountain.color))
                 .layoutPriority(1)
-                .skeleton(with: viewModel.status == .loading, size: .init(width: 52, height: 16))
+                .skeleton(with: viewModel.isLoading, size: .init(width: 52, height: 16))
             
             trailingView
                 .onTapGesture {
@@ -206,88 +210,88 @@ struct SwapSettingsView: View {
     }
 }
 
-struct SwapSettingsView_Previews: PreviewProvider {
-    static let viewModel = SwapSettingsViewModel(
-        status: .loading,
-        slippage: 0.5,
-        swapStatePublisher: PassthroughSubject<JupiterSwapState, Never>().eraseToAnyPublisher()
-    )
-    static var previews: some View {
-        SwapSettingsView(viewModel: viewModel)
-        .onAppear {
-            DispatchQueue.main.asyncAfter(deadline: .now() + .seconds(2)) {
-                let info = SwapSettingsViewModel.Info(
-                    routes: [
-                        .init(
-                            id: "1",
-                            name: "Raydium",
-                            description: "Best price",
-                            tokensChain: "SOL→CLMM→USDC→CRAY"
-                        ),
-                        .init(
-                            name: "Raydium 95% + Orca 5%",
-                            description: "-0.0006 TokenB",
-                            tokensChain: "SOL→CLMM→USDC→CRAY"
-                        ),
-                        .init(
-                            name: "Raydium 95% + Orca 5%",
-                            description: "-0.0006 TokenB",
-                            tokensChain: "SOL→CLMM→USDC→CRAY"
-                        )
-                    ],
-                    currentRoute: .init(
-                        name: "Raydium",
-                        description: "Best price",
-                        tokensChain: "SOL→CLMM→USDC→CRAY"
-                    ),
-                    networkFee: .init(
-                        amount: 0,
-                        tokenSymbol: nil,
-                        tokenName: nil,
-                        tokenPriceInCurrentFiat: nil,
-                        pct: nil,
-                        canBePaidByKeyApp: true
-                    ),
-                    accountCreationFee: .init(
-                        amount: 0.8,
-                        tokenSymbol: "Token A",
-                        tokenName: "Token A Name",
-                        tokenPriceInCurrentFiat: 6.1 / 0.8,
-                        pct: nil,
-                        canBePaidByKeyApp: false
-                    ),
-                    liquidityFee: [
-                        .init(
-                            amount: 0.991,
-                            tokenSymbol: "Token C",
-                            tokenName: "Token C Name",
-                            tokenPriceInCurrentFiat: 0.05 / 0.991,
-                            pct: 0.01,
-                            canBePaidByKeyApp: false
-                        ),
-                        .init(
-                            amount: 0.991,
-                            tokenSymbol: "Token D",
-                            tokenName: "Token D Name",
-                            tokenPriceInCurrentFiat: 0.05 / 0.991,
-                            pct: 0.01,
-                            canBePaidByKeyApp: false
-                        )
-                    ],
-                    minimumReceived: .init(
-                        amount: 0.91,
-                        token: "TokenB"
-                    ),
-                    exchangeRateInfo: "1 SOL ≈ 12.85 USD"
-                )
-
-                viewModel.status = .loaded(
-                    info
-                )
-            }
-        }
-    }
-}
+//struct SwapSettingsView_Previews: PreviewProvider {
+//    static let viewModel = SwapSettingsViewModel(
+//        status: .loading,
+//        slippage: 0.5,
+//        swapStatePublisher: PassthroughSubject<JupiterSwapState, Never>().eraseToAnyPublisher()
+//    )
+//    static var previews: some View {
+//        SwapSettingsView(viewModel: viewModel)
+//        .onAppear {
+//            DispatchQueue.main.asyncAfter(deadline: .now() + .seconds(2)) {
+//                let info = SwapSettingsViewModel.Info(
+//                    routes: [
+//                        .init(
+//                            id: "1",
+//                            name: "Raydium",
+//                            description: "Best price",
+//                            tokensChain: "SOL→CLMM→USDC→CRAY"
+//                        ),
+//                        .init(
+//                            name: "Raydium 95% + Orca 5%",
+//                            description: "-0.0006 TokenB",
+//                            tokensChain: "SOL→CLMM→USDC→CRAY"
+//                        ),
+//                        .init(
+//                            name: "Raydium 95% + Orca 5%",
+//                            description: "-0.0006 TokenB",
+//                            tokensChain: "SOL→CLMM→USDC→CRAY"
+//                        )
+//                    ],
+//                    currentRoute: .init(
+//                        name: "Raydium",
+//                        description: "Best price",
+//                        tokensChain: "SOL→CLMM→USDC→CRAY"
+//                    ),
+//                    networkFee: .init(
+//                        amount: 0,
+//                        tokenSymbol: nil,
+//                        tokenName: nil,
+//                        tokenPriceInCurrentFiat: nil,
+//                        pct: nil,
+//                        canBePaidByKeyApp: true
+//                    ),
+//                    accountCreationFee: .init(
+//                        amount: 0.8,
+//                        tokenSymbol: "Token A",
+//                        tokenName: "Token A Name",
+//                        tokenPriceInCurrentFiat: 6.1 / 0.8,
+//                        pct: nil,
+//                        canBePaidByKeyApp: false
+//                    ),
+//                    liquidityFee: [
+//                        .init(
+//                            amount: 0.991,
+//                            tokenSymbol: "Token C",
+//                            tokenName: "Token C Name",
+//                            tokenPriceInCurrentFiat: 0.05 / 0.991,
+//                            pct: 0.01,
+//                            canBePaidByKeyApp: false
+//                        ),
+//                        .init(
+//                            amount: 0.991,
+//                            tokenSymbol: "Token D",
+//                            tokenName: "Token D Name",
+//                            tokenPriceInCurrentFiat: 0.05 / 0.991,
+//                            pct: 0.01,
+//                            canBePaidByKeyApp: false
+//                        )
+//                    ],
+//                    minimumReceived: .init(
+//                        amount: 0.91,
+//                        token: "TokenB"
+//                    ),
+//                    exchangeRateInfo: "1 SOL ≈ 12.85 USD"
+//                )
+//
+//                viewModel.status = .loaded(
+//                    info
+//                )
+//            }
+//        }
+//    }
+//}
 
 // MARK: - Row idenfifier
 
