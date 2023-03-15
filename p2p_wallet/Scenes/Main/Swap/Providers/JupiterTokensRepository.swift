@@ -31,6 +31,7 @@ final class JupiterTokensRepositoryImpl: JupiterTokensRepository {
     private let jupiterClient: JupiterAPI
     private let localProvider: JupiterTokensProvider
     @Injected private var walletsRepository: WalletsRepository
+    @Injected private var tokensRepositoryCache: SolanaTokensRepositoryCache
 
     // MARK: - Private params
 
@@ -60,7 +61,7 @@ final class JupiterTokensRepositoryImpl: JupiterTokensRepository {
     private func fetch() async {
         statusSubject.send(.loading)
         do {
-            let jupiterTokens: [Token]
+            var jupiterTokens: [Token]
             let routeMap: RouteMap
             
             try Task.checkCancellation()
@@ -107,11 +108,27 @@ final class JupiterTokensRepositoryImpl: JupiterTokensRepository {
                 .eraseToAnyPublisher()
                 .async()
             
-            // map userWallets with jupiter tokens
-            let swapTokens = jupiterTokens.map { jupiterToken in
-                if let userWallet = wallets.first(where: { $0.mintAddress == jupiterToken.address }) {
-                    return SwapToken(token: jupiterToken, userWallet: userWallet)
+            // get solana cached token list
+            let solanaTokens = await tokensRepositoryCache.getTokens() ?? []
+            
+            // map solanaTokens to jupiter token
+            jupiterTokens = jupiterTokens.map { jupiterToken in
+                if let token = solanaTokens.first(where: {$0.address == jupiterToken.address}) {
+                    return token
                 }
+                return jupiterToken
+            }
+            
+            // map userWallets with jupiter tokens
+            let swapTokens = jupiterTokens
+                .map { jupiterToken in
+                
+                // if userWallet found
+                if let userWallet = wallets.first(where: { $0.mintAddress == jupiterToken.address }) {
+                    return SwapToken(token: userWallet.token, userWallet: userWallet)
+                }
+                
+                // otherwise return jupiter token with no userWallet
                 return SwapToken(token: jupiterToken, userWallet: nil)
             }
             try Task.checkCancellation()
