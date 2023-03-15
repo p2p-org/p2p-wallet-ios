@@ -23,7 +23,7 @@ struct SwapSettingsView: View {
     }
     
     var exchangeRate: some View {
-        Text(viewModel.info?.exchangeRateInfo)
+        Text(viewModel.info.exchangeRateInfo)
             .apply(style: .label1)
             .foregroundColor(Color(Asset.Colors.night.color))
             .accessibilityIdentifier("SwapView.priceInfoLabel")
@@ -40,15 +40,18 @@ struct SwapSettingsView: View {
                 firstSectionRows
             }
             
-            if let minimumReceived = viewModel.info?.minimumReceived {
-                Section {
-                    commonRow(
-                        title: L10n.minimumReceived,
-                        subtitle: minimumReceived.amountDescription,
-                        identifier: .minimumReceived
+            Section {
+                commonRow(
+                    title: L10n.minimumReceived,
+                    subtitle: (
+                        viewModel.info.minimumReceived ??
+                        SwapTokenAmountInfo(amount: 0, token: "")
                     )
-                }
+                        .amountDescription,
+                    identifier: .minimumReceived
+                )
             }
+            
             Section(header: Text(L10n.slippage)) {
                 SlippageSettingsView(slippage: viewModel.slippage) { selectedSlippage in
                     viewModel.slippage = selectedSlippage
@@ -68,8 +71,8 @@ struct SwapSettingsView: View {
                 // Route
                 commonRow(
                     title: L10n.swappingThrough,
-                    subtitle: viewModel.info?.currentRoute.tokensChain,
-                    trailingSubtitle: viewModel.info?.currentRoute.description,
+                    subtitle: viewModel.info.currentRoute.tokensChain,
+                    trailingSubtitle: viewModel.info.currentRoute.description,
                     trailingView: Image(uiImage: .nextArrow)
                         .resizable()
                         .frame(width: 7.41, height: 12)
@@ -84,29 +87,25 @@ struct SwapSettingsView: View {
                 }
             }
             
-            if !viewModel.status.isEmpty {
-                // Network fee
-                feeRow(
-                    title: L10n.networkFee,
-                    fee: viewModel.info?.networkFee,
-                    canBePaidByKeyApp: true,
-                    identifier: .networkFee
-                )
-            }
+            // Network fee
+            feeRow(
+                title: L10n.networkFee,
+                fee: (viewModel.info.networkFee ?? SwapFeeInfo(amount: 0, canBePaidByKeyApp: true)),
+                identifier: .networkFee
+            )
             
             if !viewModel.status.isEmpty {
                 // Account creation fee
                 feeRow(
                     title: L10n.accountCreationFee,
-                    fee: viewModel.info?.accountCreationFee,
-                    canBePaidByKeyApp: false,
+                    fee: viewModel.info.accountCreationFee,
                     identifier: .accountCreationFee
                 )
             }
             
             if !viewModel.status.isEmpty {
                 // Liquidity fee
-                if let liquidityFee = viewModel.info?.liquidityFee,
+                if let liquidityFee = viewModel.info.liquidityFee,
                    !liquidityFee.isEmpty
                 {
                     feeRow(
@@ -126,7 +125,7 @@ struct SwapSettingsView: View {
                     
                     Spacer()
                     
-                    Text(viewModel.info?.estimatedFees)
+                    Text(viewModel.info.estimatedFees)
                         .fontWeight(.semibold)
                         .apply(style: .text3)
                         .padding(.vertical, 10)
@@ -140,7 +139,6 @@ struct SwapSettingsView: View {
     private func feeRow(
         title: String,
         fee: SwapFeeInfo?,
-        canBePaidByKeyApp: Bool,
         identifier: RowIdentifier?
     ) -> some View {
         commonRow(

@@ -196,8 +196,7 @@ final class JupiterSwapCoordinator: Coordinator<Void> {
         // create coordinator
         let settingsCoordinator = SwapSettingsCoordinator(
             navigationController: navigationController,
-            slippage: Double(viewModel.currentState.slippageBps) / 100,
-            swapStatePublisher: viewModel.stateMachine.statePublisher
+            stateMachine: viewModel.stateMachine
         )
         viewModel.logSettingsClick()
 
