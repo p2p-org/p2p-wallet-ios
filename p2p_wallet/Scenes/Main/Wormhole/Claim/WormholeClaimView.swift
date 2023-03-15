@@ -65,9 +65,18 @@ struct WormholeClaimView: View {
 
             // Fee
             HStack(alignment: .center) {
+                // Title
                 Text(L10n.fee)
                 Spacer()
+
+                // Amount
                 Text(viewModel.feeAmountInFiat)
+                    .skeleton(
+                        with: viewModel.bundle.state.isFetching,
+                        size: .init(width: 100, height: 24)
+                    )
+
+                // Button
                 Button {
                     viewModel.action.send(.openFee(viewModel.bundle))
                 } label: {

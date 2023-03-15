@@ -14,6 +14,7 @@ import Resolver
 import Sell
 import SolanaSwift
 import SwiftyUserDefaults
+import Wormhole
 
 final class HomeAccountsViewModel: BaseViewModel, ObservableObject {
     private var defaultsDisposables: [DefaultsDisposable] = []
@@ -84,6 +85,23 @@ final class HomeAccountsViewModel: BaseViewModel, ObservableObject {
         // Listen changing accounts from accounts manager
         // Ethereum accounts
         ethereumAccountsService.$state
+            .map { state in
+                state.apply { accounts in
+                    // Filter accounts by supported Wormhole
+                    accounts.filter { account in
+                        switch account.token.contractType {
+                        case .native:
+                            // We always support native token
+                            return true
+                        case let .erc20(contract):
+                            // Check erc-20 tokens
+                            return Wormhole.SupportedToken.bridges.contains { bridge in
+                                bridge.ethAddress == contract.hex(eip55: true)
+                            }
+                        }
+                    }
+                }
+            }
             .map { state in
                 state.innerApply { account in
                     RendableEthereumAccount(account: account) {

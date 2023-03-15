@@ -34,4 +34,24 @@ public enum SupportedToken {
             return map[self]!
         }
     }
+
+    public struct WormholeBridge {
+        public let name: String
+        public let coingekoID: String
+        public let ethAddress: String?
+        public let solAddress: String?
+    }
+
+    public static let bridges: [WormholeBridge] = [
+        .init(name: "SOL", coingekoID: "solana", ethAddress: "So11111111111111111111111111111111111111112", solAddress: "0xD31a59c85aE9D8edEFeC411D448f90841571b89c"),
+        .init(name: "ETH", coingekoID: "ethereum", ethAddress: nil, solAddress: "7vfCXTUXx5WJV5JADk17DUJ4ksgau7utNKj4b963voxs"),
+        .init(name: "USDC", coingekoID: "usd-coin", ethAddress: "0xa0b86991c6218b36c1d19d4a2e9eb0ce3606eb48", solAddress: "A9mUU4qviSctJVPJdBJWkb28deg915LYJKrzQ19ji3FM"),
+        .init(name: "USDT", coingekoID: "tether", ethAddress: "0xdac17f958d2ee523a2206206994597c13d831ec7", solAddress: "Dn4noZ5jgGfkntzcQSUZ8czkreiZ1ForXYoV2H8Dm7S1"),
+        .init(name: "UST", coingekoID: "terrausd", ethAddress: "0xa693b19d2931d498c5b318df961919bb4aee87a5", solAddress: "9vMJfxuKxXBoEa7rM12mYLMwTacLMLDJqHozw96WQL8i"),
+        .init(name: "CRV", coingekoID: "curve-dao-token", ethAddress: "0xd533a949740bb3306d119cc777fa900ba034cd52", solAddress: "7gjNiPun3AzEazTZoFEjZgcBMeuaXdpjHq2raZTmTrfs"),
+        .init(name: "LUNA", coingekoID: "terra-luna", ethAddress: "0xbd31ea8212119f94a611fa969881cba3ea06fa3d", solAddress: "F6v4wfAdJB8D8p77bMXZgYt8TDKsYxLYxH5AFhUkYx9W"),
+        .init(name: "BNB", coingekoID: "binancecoin", ethAddress: "0x418d75f65a02b3d53b2418fb8e1fe493759c7605", solAddress: "F6v4wfAdJB8D8p77bMXZgYt8TDKsYxLYxH5AFhUkYx9W"),
+        .init(name: "Matic", coingekoID: "matic-network", ethAddress: "0x7d1afa7b718fb893db30a3abc0cfc608aacfebb0", solAddress: "C7NNPWuZCNjZBfW5p6JvGsR8pUdsRpEdP1ZAhnoDwj7h"),
+        .init(name: "AVAX", coingekoID: "avalanche-2", ethAddress: "0x85f138bfee4ef8e540890cfb48f620571d67eda3", solAddress: "KgV1GvrHQmRBY8sHQQeUKwTm2r2h8t4C8qt12Cw1HVE"),
+    ]
 }

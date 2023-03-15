@@ -23,7 +23,6 @@ public final class EthereumAccountsService: NSObject, AccountsService, Observabl
         web3: Web3,
         ethereumTokenRepository: EthereumTokensRepository,
         priceService: EthereumPriceService,
-        trackingList: [EthereumAddress],
         fiat: String,
         errorObservable: any ErrorObserver
     ) {
@@ -45,13 +44,6 @@ public final class EthereumAccountsService: NSObject, AccountsService, Observabl
 
                 // Build token accounts
                 var tokenBalances = wallet.tokenBalances
-
-                // Filter token by tracking list
-                if !trackingList.isEmpty {
-                    tokenBalances = tokenBalances.filter { balance in
-                        trackingList.contains(balance.contractAddress)
-                    }
-                }
 
                 // Build token accounts
                 var resolvedTokenAccounts: [Account] = try await Self.resolveTokenAccounts(
