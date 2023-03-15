@@ -27,7 +27,7 @@ public struct WormholeBundle: Codable, Hashable {
     
     public let transactions: [String]
     
-    public let signatures: [String]?
+    public var signatures: [String]?
     
     public let fees: EthereumFees
 
