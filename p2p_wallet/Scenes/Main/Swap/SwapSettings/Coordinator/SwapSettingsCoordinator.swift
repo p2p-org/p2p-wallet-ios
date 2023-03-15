@@ -24,7 +24,7 @@ final class SwapSettingsCoordinator: Coordinator<SwapSettingsCoordinatorResult> 
     private let slippage: Double
     private var result = PassthroughSubject<SwapSettingsCoordinatorResult, Never>()
     private var viewModel: SwapSettingsViewModel!
-    private let statusSubject = CurrentValueSubject<SwapSettingsViewModel.Status, Never>(.loading)
+    private let swapStatePublisher: AnyPublisher<JupiterSwapState, Never>
     private var selectRouteViewController: CustomPresentableViewController!
 
     // MARK: - Initializer
@@ -36,22 +36,17 @@ final class SwapSettingsCoordinator: Coordinator<SwapSettingsCoordinatorResult> 
     ) {
         self.navigationController = navigationController
         self.slippage = slippage
-        
+        self.swapStatePublisher = swapStatePublisher
         super.init()
-        bind(swapStatePublisher: swapStatePublisher)
     }
 
     override func start() -> AnyPublisher<SwapSettingsCoordinatorResult, Never> {
         // create viewModel
         viewModel = SwapSettingsViewModel(
             status: .loading,
-            slippage: slippage
+            slippage: slippage,
+            swapStatePublisher: swapStatePublisher
         )
-        
-        // observe swapStatePublisher
-        statusSubject
-            .assign(to: \.status, on: viewModel)
-            .store(in: &subscriptions)
         
         // navigation
         viewModel.rowTapped
@@ -63,7 +58,7 @@ final class SwapSettingsCoordinator: Coordinator<SwapSettingsCoordinatorResult> 
         viewModel.$status
             .compactMap { status in
                 switch status {
-                case .loading:
+                case .loading, .empty:
                     return nil
                 case .loaded(let info):
                     return info.currentRoute
@@ -99,75 +94,25 @@ final class SwapSettingsCoordinator: Coordinator<SwapSettingsCoordinatorResult> 
         
         return result.eraseToAnyPublisher()
     }
-    
-    // MARK: - Helpers
-    
-    private func bind(swapStatePublisher: AnyPublisher<JupiterSwapState, Never>) {
-        swapStatePublisher
-            .map { state -> SwapSettingsViewModel.Status in
-                // assert route
-                guard let route = state.route else {
-                    return .loading
-                }
-
-                switch state.status {
-                case .ready:
-                    return .loaded(
-                        .init(
-                            routes: state.routes.map {.init(
-                                id: $0.id,
-                                name: $0.name,
-                                description: $0.priceDescription(bestOutAmount: state.bestOutAmount, toTokenDecimals: state.toToken.token.decimals, toTokenSymbol: state.toToken.token.symbol) ?? "",
-                                tokensChain: $0.chainDescription(tokensList: state.swapTokens.map(\.token))
-                            )},
-                            currentRoute: .init(
-                                id: route.id,
-                                name: route.name,
-                                description: route.priceDescription(bestOutAmount: state.bestOutAmount, toTokenDecimals: state.toToken.token.decimals, toTokenSymbol: state.toToken.token.symbol) ?? "",
-                                tokensChain: route.chainDescription(tokensList: state.swapTokens.map(\.token))
-                            ),
-                            networkFee: state.networkFee ?? SwapFeeInfo(amount: 0.000005, tokenSymbol: "SOL", tokenName: "Solana", tokenPriceInCurrentFiat: nil, pct: 0.01, canBePaidByKeyApp: true),
-                            accountCreationFee: state.accountCreationFee ?? SwapFeeInfo(amount: 0, tokenSymbol: "SOL", tokenName: "Solana", tokenPriceInCurrentFiat: nil, pct: 0, canBePaidByKeyApp: false),
-                            liquidityFee: state.liquidityFee,
-                            minimumReceived: state.minimumReceivedAmount == nil ? nil: .init(
-                                amount: state.minimumReceivedAmount!,
-                                token: state.toToken.token.symbol
-                            ),
-                            exchangeRateInfo: state.exchangeRateInfo
-                        )
-                    )
-                default:
-                    return .loading
-                }
-            }
-            .receive(on: DispatchQueue.main)
-            .sink { [weak statusSubject] status in
-                statusSubject?.send(status)
-            }
-            .store(in: &subscriptions)
-    }
 
     func showChooseRoute() {
         let view = SwapSelectRouteView(
-            statusPublisher: statusSubject
+            statusPublisher: viewModel.$status
                 .map { status in
                     switch status {
-                    case .loading:
+                    case .loading, .empty:
                         return .loading
                     case .loaded(let info):
                         return .loaded(
                             routeInfos: info.routes,
-                            selectedIndex: info.routes
-                                .firstIndex(
-                                    where: {$0.id == info.currentRoute.id}
-                                )
+                            selectedIndex: info.routes.firstIndex { $0.id == info.currentRoute.id }
                         )
                     }
                 }
                 .eraseToAnyPublisher(),
             onSelectRoute: { [unowned self] routeInfo in
                 switch viewModel.status {
-                case .loading:
+                case .loading, .empty:
                     break
                 case .loaded(let info):
                     var info = info
@@ -188,7 +133,7 @@ final class SwapSettingsCoordinator: Coordinator<SwapSettingsCoordinatorResult> 
         selectRouteViewController.view.layer.cornerRadius = 20
         navigationController.present(selectRouteViewController, interactiveDismissalType: .standard)
         
-        statusSubject
+        viewModel.$status
             .receive(on: RunLoop.main)
             .sink { _ in
                 DispatchQueue.main.async { [weak self] in
