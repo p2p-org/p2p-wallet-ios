@@ -53,6 +53,18 @@ public class WormholeService {
         }
     }
 
+    func signBundle(bundle: WormholeBundle) async throws -> WormholeBundle {
+        guard let ethereumKeypair else {
+            throw ServiceError.authorizationError
+        }
+
+        bundle.signatures = bundle.transactions.map { transaction -> String in
+            let decodedRawTrasaction: RLPItem = try RLPDecoder().decode(transaction.hexToBytes())
+            
+            EthereumTransaction
+        }
+    }
+
 //    typealias TokenBridge = (token: EthereumToken, solanaAddress: String)
 //
 //    public static func supportedTokens(tokenService: EthereumTokensRepository) async throws -> [EthereumToken] {
