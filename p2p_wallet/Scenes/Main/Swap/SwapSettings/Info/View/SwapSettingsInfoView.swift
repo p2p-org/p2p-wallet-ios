@@ -13,7 +13,6 @@ struct SwapSettingsInfoView: View {
     
     var body: some View {
         VStack(spacing: 30) {
-//            Spacer()
             Image(uiImage: viewModel.image)
             HStack(spacing: 16) {
                 Image(uiImage: .transactionFee)
