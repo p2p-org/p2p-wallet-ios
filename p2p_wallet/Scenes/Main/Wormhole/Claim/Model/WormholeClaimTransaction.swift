@@ -9,13 +9,23 @@ import Foundation
 import KeyAppBusiness
 import KeyAppKitCore
 import SolanaSwift
+import Wormhole
 
 struct WormholeClaimTransaction: RawTransactionType {
+    /// Wormhole service
+    let wormholeService: WormholeService
+
+    /// Ethereum token
     let token: EthereumToken
 
+    /// Amount in crypto
     let amountInCrypto: CryptoAmount
 
+    /// Amount in fiat
     let amountInFiat: CurrencyAmount?
+
+    /// Wormhole bundle
+    let bundle: WormholeBundle
 
     var mainDescription: String = "Claim"
 
@@ -24,8 +34,7 @@ struct WormholeClaimTransaction: RawTransactionType {
     var payingFeeWallet: SolanaSwift.Wallet? = nil
 
     func createRequest() async throws -> String {
-        try await Task.sleep(nanoseconds: 3_000_000_000)
-
+        try await wormholeService.sendBundle(bundle: bundle)
         return UUID().uuidString
     }
 }

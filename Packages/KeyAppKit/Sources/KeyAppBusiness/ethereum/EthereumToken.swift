@@ -39,7 +39,7 @@ public struct EthereumToken: Hashable {
         self.name = "Ethereum"
         self.symbol = "ETH"
         self.decimals = 18
-        self.logo = URL(string: "https://raw.githubusercontent.com/p2p-org/solana-token-list/main/assets/mainnet/Es9vMFrzaCERmJfrF4H2FYD4KCoNkY11McCe8BenwNYB/logo.png")
+        self.logo = URL(string: "https://assets.coingecko.com/coins/images/279/large/ethereum.png?1595348880")
         self.contractType = .native(address: address)
     }
 }
