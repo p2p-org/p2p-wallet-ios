@@ -126,9 +126,7 @@ final class SwapSettingsCoordinator: Coordinator<SwapSettingsCoordinatorResult> 
         case .accountCreationFee:
             strategy = .accountCreationFee
         case .liquidityFee:
-            let fees = viewModel.info.liquidityFee
-                .mappedToSwapSettingInfoViewModelFee()
-            strategy = .liquidityFee(fees: fees)
+            strategy = .liquidityFee
         case .minimumReceived:
             strategy = .minimumReceived
         }
@@ -154,12 +152,17 @@ final class SwapSettingsCoordinator: Coordinator<SwapSettingsCoordinatorResult> 
         navigationController.present(selectRouteViewController, interactiveDismissalType: .standard)
         
         // observe viewModel status
-        // TODO: - Only liquidity fees?
         if rowIdentifier == .liquidityFee {
             viewModel.$currentState
-                .map { $0.info.liquidityFee.mappedToSwapSettingInfoViewModelFee() }
-                .sink { [weak settingsInfoViewModel] fees in
-                    settingsInfoViewModel?.fees = fees
+                .filter { _ in
+                    // TODO: - Only liquidity fees?
+                    strategy == .liquidityFee
+                }
+                .map {
+                    $0.mappedToSwapSettingInfoViewModelFee()
+                }
+                .sink { [weak settingsInfoViewModel] loadableFee in
+                    settingsInfoViewModel?.loadableFee = loadableFee
                     DispatchQueue.main.async { [weak self] in
                         self?.selectRouteViewController.updatePresentationLayout(animated: true)
                     }
@@ -171,17 +174,23 @@ final class SwapSettingsCoordinator: Coordinator<SwapSettingsCoordinatorResult> 
 
 // MARK: - Helpers
 
-private extension Array where Element == SwapFeeInfo {
-    func mappedToSwapSettingInfoViewModelFee() -> [SwapSettingsInfoViewModel.Fee] {
-        map { lqFee in
-            SwapSettingsInfoViewModel.Fee(
-                title: L10n.liquidityFee(
-                    lqFee.tokenName ?? L10n.unknownToken,
-                    "\(lqFee.pct == nil ? L10n.unknown: "\(NSDecimalNumber(decimal: lqFee.pct!).doubleValue.toString(maximumFractionDigits: 9))")%"
-                ),
-                subtitle: lqFee.amount.tokenAmountFormattedString(symbol: lqFee.tokenSymbol ?? "UNKNOWN"),
-                amount: lqFee.amountInFiatDescription
-            )
+private extension JupiterSwapState {
+    func mappedToSwapSettingInfoViewModelFee() -> SwapSettingsInfoViewModel.LoadableFee {
+        guard route != nil else {
+            return .loading
         }
+        
+        return .loaded(
+            info.liquidityFee.map { lqFee in
+                SwapSettingsInfoViewModel.Fee(
+                    title: L10n.liquidityFee(
+                        lqFee.tokenName ?? L10n.unknownToken,
+                        "\(lqFee.pct == nil ? L10n.unknown: "\(NSDecimalNumber(decimal: lqFee.pct!).doubleValue.toString(maximumFractionDigits: 9))")%"
+                    ),
+                    subtitle: lqFee.amount.tokenAmountFormattedString(symbol: lqFee.tokenSymbol ?? "UNKNOWN"),
+                    amount: lqFee.amountInFiatDescription
+                )
+            }
+        )
     }
 }
