@@ -26,6 +26,7 @@ public class WormholeService {
         self.errorObservable = errorObservable
     }
 
+    /// Method for get claiming bundle.
     public func getBundle(account: EthereumAccountsService.Account) async throws -> WormholeBundle {
         try await errorObservable.run {
             guard let ethereumKeypair, let solanaKeyPair else {
@@ -45,6 +46,7 @@ public class WormholeService {
                 slippage = 5
             }
 
+            // Request bundle
             let bundle = try await api.getEthereumBundle(
                 userWallet: ethereumKeypair.address,
                 recipient: solanaKeyPair.publicKey.base58EncodedString,
@@ -57,11 +59,13 @@ public class WormholeService {
         }
     }
 
+    /// Submit bundle for starting claim.
     public func sendBundle(bundle: WormholeBundle) async throws {
         let signedBundle = try signBundle(bundle: bundle)
         try await api.sendEthereumBundle(bundle: signedBundle)
     }
 
+    /// Sign transaction
     internal func signBundle(bundle: WormholeBundle) throws -> WormholeBundle {
         guard let ethereumKeypair else {
             throw ServiceError.authorizationError
@@ -82,23 +86,4 @@ public class WormholeService {
 
         return bundle
     }
-
-//    typealias TokenBridge = (token: EthereumToken, solanaAddress: String)
-//
-//    public static func supportedTokens(tokenService: EthereumTokensRepository) async throws -> [EthereumToken] {
-//        return try await withThrowingTaskGroup(of: EthereumToken.self) { group in
-//            SupportedToken.ERC20.allCases.forEach { token in
-//                group.addTask {
-//                    try await tokenService.resolve(address: token.rawValue)
-//                }
-//            }
-//
-//            var tokens: [EthereumToken] = []
-//            for try await token in group {
-//                tokens.append(token)
-//            }
-//
-//            return tokens
-//        }
-//    }
 }
