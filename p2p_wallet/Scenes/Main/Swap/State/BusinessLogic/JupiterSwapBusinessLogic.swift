@@ -125,15 +125,15 @@ enum JupiterSwapBusinessLogic {
         services: JupiterSwapServices
     ) async -> JupiterSwapState {
         switch action {
-        case let .initialize(account, swapTokens, routeMap, fromToken, toToken):
+        case let .initialize(account, jupiterTokens, routeMap, preChosenFromTokenMintAddress, preChosenToTokenMintAddress):
             return await initializeAction(
                 state: state,
                 services: services,
                 account: account,
-                swapTokens: swapTokens,
+                jupiterTokens: jupiterTokens,
                 routeMap: routeMap,
-                fromToken: fromToken,
-                toToken: toToken
+                preChosenFromTokenMintAddress: preChosenFromTokenMintAddress,
+                preChosenToTokenMintAddress: preChosenToTokenMintAddress
             )
 
         case .changeAmountFrom:

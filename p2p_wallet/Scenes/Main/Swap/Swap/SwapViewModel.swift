@@ -150,8 +150,8 @@ private extension SwapViewModel {
                 switch dataStatus {
                 case .loading, .initial:
                     self.initializingState = .loading
-                case let .ready(swapTokens, routeMap):
-                    await self.initialize(swapTokens: swapTokens, routeMap: routeMap)
+                case let .ready(jupiterTokens, routeMap):
+                    await self.initialize(jupiterTokens: jupiterTokens, routeMap: routeMap)
                 case .failed:
                     self.initializingState = .failed
                 }
@@ -222,23 +222,15 @@ private extension SwapViewModel {
             .store(in: &subscriptions)
     }
 
-    func initialize(swapTokens: [SwapToken], routeMap: RouteMap) async {
-        var prechosenFromToken: SwapToken?
-        var prechosenToToken: SwapToken?
-        if let fromTokenAddress = self.preChosenWallet?.mintAddress ?? Defaults.fromTokenAddress {
-            prechosenFromToken = swapTokens.first(where: { $0.address == fromTokenAddress })
-        }
-        if let toTokenAddress = Defaults.toTokenAddress {
-            prechosenToToken = swapTokens.first(where: { $0.address == toTokenAddress })
-        }
+    func initialize(jupiterTokens: [Token], routeMap: RouteMap) async {
         let newState = await self.stateMachine
             .accept(
                 action: .initialize(
                     account: userWalletManager.wallet?.account,
-                    swapTokens: swapTokens,
+                    jupiterTokens: jupiterTokens,
                     routeMap: routeMap,
-                    fromToken: prechosenFromToken,
-                    toToken: prechosenToToken
+                    preChosenFromTokenMintAddress: preChosenWallet?.mintAddress ?? Defaults.fromTokenAddress,
+                    preChosenToTokenMintAddress: Defaults.toTokenAddress
                 )
             )
         logStart(from: newState.fromToken, to: newState.toToken)
@@ -299,11 +291,7 @@ private extension SwapViewModel {
         tryAgain
             .sinkAsync { [weak self] _ in
                 guard let self else { return }
-                if self.currentState.swapTokens.isEmpty {
-                    await self.swapWalletsRepository.load()
-                } else {
-                    await self.initialize(swapTokens: self.currentState.swapTokens, routeMap: self.currentState.routeMap)
-                }
+                await self.swapWalletsRepository.load()
             }
             .store(in: &subscriptions)
     }
