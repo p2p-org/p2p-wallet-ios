@@ -24,7 +24,7 @@ struct ListReceiveItemView: View {
                 .foregroundColor(Color(Asset.Colors.mountain.color))
                 .apply(style: .text4)
                 .multilineTextAlignment(.leading)
-                .frame(maxWidth: .infinity, alignment: .leading)
+                .frame(alignment: .leading)
         }
         .padding(.horizontal, 20)
         .padding(.top, item.showTopCorners ? 16 : 8)
@@ -42,7 +42,7 @@ struct ListReceiveItemView_Previews: PreviewProvider {
         ListReceiveItemView(item: .init(
             id: "1",
             title: "2",
-            description: "desc",
+            description: "0x9b7e823BC5578bcBeA74ba04F003167c590Aea0d",
             showTopCorners: true,
             showBottomCorners: true)
         )

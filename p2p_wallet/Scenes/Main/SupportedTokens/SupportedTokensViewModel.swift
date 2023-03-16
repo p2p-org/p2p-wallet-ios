@@ -81,7 +81,7 @@ class SupportedTokensViewModel: BaseViewModel, ObservableObject {
     }
 }
 
-private enum SupportedTokensBusinnes {
+enum SupportedTokensBusinnes {
     /// Filter by symbol or name.
     static func filterByKeyword(tokens: [SupportedTokenItem], filter: String) -> [SupportedTokenItem] {
         if filter.isEmpty {
