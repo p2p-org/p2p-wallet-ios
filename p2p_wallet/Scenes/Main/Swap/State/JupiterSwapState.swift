@@ -65,7 +65,7 @@ struct JupiterSwapState: Equatable {
     var swapTransaction: String?
 
     /// All available routes for current tokens pair
-    var routes: [Route]
+    var routes: [RouteWrapper]
     
     /// Info of all swappable tokens
     var swapTokens: [SwapToken]
@@ -122,7 +122,7 @@ struct JupiterSwapState: Equatable {
     }
 
     var bestOutAmount: UInt64 {
-        routes.map(\.outAmount).compactMap(UInt64.init).max() ?? 0
+        routes.map(\.route.outAmount).compactMap(UInt64.init).max() ?? 0
     }
     
     var minimumReceivedAmount: Double? {
@@ -248,7 +248,15 @@ struct JupiterSwapState: Equatable {
         let amountFromToken = rate.tokenAmountFormattedString(symbol: fromToken.token.symbol, maximumFractionDigits: Int(fromToken.token.decimals), roundingMode: .down)
         return [onetoToken, amountFromToken].joined(separator: " ≈ ")
     }
-    
+
+    // Pre-selected route in raw string
+    var rawRoute: String? {
+        if let route = route {
+            return routes.first(where: { $0.route.id == route.id })?.rawRoute
+        }
+        return nil
+    }
+
     // MARK: - Initializing state
 
     static var zero: Self {

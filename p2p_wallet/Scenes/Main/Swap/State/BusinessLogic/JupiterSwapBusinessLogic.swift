@@ -224,7 +224,7 @@ enum JupiterSwapBusinessLogic {
                 return state
             }
             
-            guard let route = state.route else {
+            guard let route = state.rawRoute else {
                 return state.error(.routeIsNotFound)
             }
 

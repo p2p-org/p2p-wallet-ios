@@ -115,10 +115,10 @@ final class SwapSettingsCoordinator: Coordinator<SwapSettingsCoordinatorResult> 
                     return .loaded(
                         .init(
                             routes: state.routes.map {.init(
-                                id: $0.id,
-                                name: $0.name,
-                                description: $0.priceDescription(bestOutAmount: state.bestOutAmount, toTokenDecimals: state.toToken.token.decimals, toTokenSymbol: state.toToken.token.symbol) ?? "",
-                                tokensChain: $0.chainDescription(tokensList: state.swapTokens.map(\.token))
+                                id: $0.route.id,
+                                name: $0.route.name,
+                                description: $0.route.priceDescription(bestOutAmount: state.bestOutAmount, toTokenDecimals: state.toToken.token.decimals, toTokenSymbol: state.toToken.token.symbol) ?? "",
+                                tokensChain: $0.route.chainDescription(tokensList: state.swapTokens.map(\.token))
                             )},
                             currentRoute: .init(
                                 id: route.id,

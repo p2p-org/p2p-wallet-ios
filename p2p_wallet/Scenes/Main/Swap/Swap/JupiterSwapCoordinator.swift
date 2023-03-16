@@ -213,14 +213,14 @@ final class JupiterSwapCoordinator: Coordinator<Void> {
                         )
                     }
                 case let .selectedRoute(routeInfo):
-                    guard let route = viewModel?.currentState.routes.first(where: {$0.id == routeInfo.id}),
-                          route.id != viewModel?.currentState.route?.id
+                    guard let route = viewModel?.currentState.routes.first(where: {$0.route.id == routeInfo.id}),
+                          route.route.id != viewModel?.currentState.route?.id
                     else {
                         return
                     }
                     Task { [weak viewModel] in
                         await viewModel?.stateMachine.accept(
-                            action: .chooseRoute(route),
+                            action: .chooseRoute(route.route),
                             waitForPreviousActionToComplete: false
                         )
                     }

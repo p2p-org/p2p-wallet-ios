@@ -27,7 +27,7 @@ extension JupiterSwapBusinessLogic {
 
         do {
             // call api to get routes and amount
-            let data = try await services.jupiterClient.quote(
+            let routes = try await services.jupiterClient.quote(
                 inputMint: state.fromToken.address,
                 outputMint: state.toToken.address,
                 amount: String(amountFromLamports),
@@ -38,15 +38,12 @@ extension JupiterSwapBusinessLogic {
                 userPublicKey: state.account?.publicKey.base58EncodedString,
                 enforceSingleTx: nil
             )
-            
-            // routes
-            let routes = data.data
-            
+
             // if pre chosen route is stil available, choose it
             // if not choose the first one
-            guard let route = data.data.first(
-                where: {$0.id == state.route?.id})
-                    ?? data.data.first
+            guard let route = routes.first(
+                where: {$0.route.id == state.route?.id})?.route
+                    ?? routes.first?.route
             else {
                 return state.modified {
                     $0.status = .error(reason: .routeIsNotFound)
@@ -91,6 +88,7 @@ extension JupiterSwapBusinessLogic {
             )
         }
         catch let error {
+            debugPrint(error)
             return handle(error: error, for: state)
         }
     }

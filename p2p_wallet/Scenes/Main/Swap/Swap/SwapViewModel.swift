@@ -412,7 +412,7 @@ private extension SwapViewModel {
     private func createSwapExecution(account: KeyPair) async throws -> String {
         do {
             // get route
-            guard let route = currentState.route
+            guard let route = currentState.rawRoute
             else {
                 throw JupiterError.invalidResponse
             }
