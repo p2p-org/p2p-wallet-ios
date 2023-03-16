@@ -1234,7 +1234,6 @@ You can try again, but your new transaction will be subject to the current rates
 "You can enter “You pay” field only" = "Bạn chỉ có thể nhập trường “Bạn thanh toán”";
 "Not enough %@" = "Không đủ %@";
 "You can’t swap same token" = "Bạn không thể trao đổi cùng một mã thông báo";
-"Swap of these tokens isn’t possible" = "Hoán đổi các mã thông báo này là không thể";
 "Buy with Moonpay" = "Mua bằng Moonpay";
 "License" = "Giấy phép";
 "Cashout with Moonpay" = "Rút tiền với Moonpay";
@@ -1281,3 +1280,4 @@ You can try again, but your new transaction will be subject to the current rates
 "popular" = "phổ biến";
 "Integrity of the route has been compromised" = "Tính toàn vẹn của tuyến đường đã bị xâm phạm";
 "Creating transaction failed" = "Tạo giao dịch không thành công";
+"No swap options for these tokens" = "Không có tùy chọn hoán đổi cho các mã thông báo này";
