@@ -38,10 +38,18 @@ final class SendEmptyCoordinator: Coordinator<Void> {
             },
             receive: {
                 self.log(event: .sendnewReceiveClickButton(source: self.source.rawValue))
-                let coordinator = ReceiveCoordinator(network: .solana(tokenSymbol: "SOL", tokenImage: .image(.solanaIcon)), navigationController: self.navigationController)
-                self.coordinate(to: coordinator)
-                    .sink { _ in }
-                    .store(in: &self.subscriptions)
+                // TODO: Put FT here
+                if true {
+                    let coordinator = SupportedTokensCoordinator(presentation: SmartCoordinatorPushPresentation(self.navigationController))
+                    self.coordinate(to: coordinator)
+                        .sink { _ in }
+                        .store(in: &self.subscriptions)
+                } else {
+                    let coordinator = ReceiveCoordinator(network: .solana(tokenSymbol: "SOL", tokenImage: .image(.solanaIcon)), navigationController: self.navigationController)
+                    self.coordinate(to: coordinator)
+                        .sink { _ in }
+                        .store(in: &self.subscriptions)
+                }
             }
         )
         let viewController = view.asViewController(withoutUIKitNavBar: false)
