@@ -249,6 +249,7 @@ let package = Package(
                 "SolanaPricesAPIs",
                 "TransactionParser",
                 "History",
+                "Wormhole",
             ]
         ),
 

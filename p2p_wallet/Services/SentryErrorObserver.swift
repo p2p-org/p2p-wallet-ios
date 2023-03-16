@@ -12,7 +12,7 @@ import Sentry
 class SentryErrorObserver: ErrorObserver {
     func handleError(_ error: Error) {
         // Debug print
-        #if DEBU
+        #if DEBUG
         debugPrint(error)
         #endif
         

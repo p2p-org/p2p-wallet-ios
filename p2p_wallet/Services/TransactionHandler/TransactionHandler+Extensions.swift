@@ -18,9 +18,6 @@ extension TransactionHandler {
         Task {
             do {
                 let transactionID = try await processingTransaction.createRequest()
-                // show notification
-//                self.notificationsService.showInAppNotification(.done(L10n.transactionHasBeenSent))
-
                 // update status
                 await updateTransactionAtIndex(index) { _ in
                     .init(
@@ -32,18 +29,20 @@ extension TransactionHandler {
                     )
                 }
 
-                // observe confirmations
+                // Observe confirmations
                 observe(index: index, transactionId: transactionID)
             } catch {
-                // update status
+                // Update status
                 if (error as NSError).isNetworkConnectionError {
                     self.notificationsService.showConnectionErrorNotification()
                 } else {
                     self.notificationsService.showDefaultErrorNotification()
                 }
-                SentrySDK.capture(error: error)
 
-                // mark transaction as failured
+                // Report error
+                errorObserver.handleError(error)
+
+                // Mark transaction as failured
                 await updateTransactionAtIndex(index) { currentValue in
                     var info = currentValue
                     info.status = .error(error)

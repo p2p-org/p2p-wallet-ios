@@ -15,30 +15,31 @@ public extension EthereumTransaction {
             throw EthereumSignedTransaction.Error.rlpItemInvalid
         }
 
-        if array.count == 7 {
+        if array.count == 9 {
             guard
                 let nonce = array[0].bigUInt,
                 let gasPrice = array[1].bigUInt,
                 let gasLimit = array[2].bigUInt,
-                let fromBytes = array[3].bytes,
-                let toBytes = array[4].bytes,
-                let from = try? EthereumAddress(rawAddress: fromBytes),
-                let to = try? EthereumAddress(rawAddress: toBytes),
-                let value = array[5].bigUInt,
-                let data = array[6].bytes
+                let toBytes = array[3].bytes,
+                let value = array[4].bigUInt,
+                let data = array[5].bytes,
+                let chainID = array[6].uint
             else {
                 throw EthereumSignedTransaction.Error.rlpItemInvalid
             }
+            
+            print(chainID)
 
-            self.init(
+            try self.init(
                 nonce: EthereumQuantity(quantity: nonce),
                 gasPrice: EthereumQuantity(quantity: gasPrice),
                 gasLimit: EthereumQuantity(quantity: gasLimit),
-                from: from,
-                to: to,
+                to: EthereumAddress(rawAddress: toBytes),
                 value: EthereumQuantity(quantity: value),
                 data: EthereumData(data)
             )
+
+            return
         }
 
         throw EthereumSignedTransaction.Error.rlpItemInvalid

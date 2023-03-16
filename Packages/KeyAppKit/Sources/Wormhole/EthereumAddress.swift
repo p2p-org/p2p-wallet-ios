@@ -8,8 +8,8 @@
 import Foundation
 import Web3
 
-public extension EthereumAddress {
-    static func isValidRecipient(_ hex: String) -> Bool {
+public enum EthereumAddressValidation {
+    public static func validate(_ hex: String) -> Bool {
         if !hex.hasPrefix("0x") {
             return false
         }
