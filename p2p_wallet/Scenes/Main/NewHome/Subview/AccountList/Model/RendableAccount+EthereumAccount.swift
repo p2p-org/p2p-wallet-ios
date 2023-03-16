@@ -14,8 +14,8 @@ struct RendableEthereumAccount: RendableAccount {
     
     var id: String {
         switch account.token.contractType {
-        case let .native(address):
-            return address.hex(eip55: false)
+        case .native:
+            return account.address
         case let .erc20(contract):
             return contract.hex(eip55: false)
         }
@@ -43,7 +43,7 @@ struct RendableEthereumAccount: RendableAccount {
     }
     
     var detail: AccountDetail {
-        return .button(label: L10n.claim, action: onTap)
+        return .button(label: isClaiming ? L10n.claiming : L10n.claim, action: onClaim)
     }
     
     var extraAction: AccountExtraAction? {
@@ -54,5 +54,9 @@ struct RendableEthereumAccount: RendableAccount {
         []
     }
     
-    var onTap: (() -> Void)?
+    let isClaiming: Bool
+    
+    let onTap: (() -> Void)?
+    
+    let onClaim: (() -> Void)?
 }

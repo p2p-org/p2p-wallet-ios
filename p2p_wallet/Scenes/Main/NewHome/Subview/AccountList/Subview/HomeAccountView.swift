@@ -50,8 +50,10 @@ struct HomeAccountView: View {
             }
         }
         .contentShape(Rectangle())
-        .onTapGesture {
-            rendable.onTap?()
+        .if(rendable.onTap != nil) { view in
+            view.onTapGesture {
+                rendable.onTap?()
+            }
         }
     }
 }

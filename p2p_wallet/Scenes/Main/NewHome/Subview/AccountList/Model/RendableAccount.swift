@@ -9,7 +9,7 @@ import Foundation
 
 protocol RendableAccount: Identifiable where ID == String {
     var id: String { get }
-    
+
     var icon: AccountIcon { get }
 
     var wrapped: Bool { get }

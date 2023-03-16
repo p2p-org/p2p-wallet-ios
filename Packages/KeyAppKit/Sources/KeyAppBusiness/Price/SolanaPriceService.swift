@@ -27,20 +27,18 @@ public class SolanaPriceService {
     }
 
     /// Get exchange rate for solana token.
-    public func getPrice(token: Token, fiat: String) async throws -> CurrentPrice? {
-        guard let coingeckoId = token.extensions?.coingeckoId else { return nil }
-
-        if let cachedValue = cache.value(forKey: primaryKey(coingeckoId, fiat)) {
+    public func getPrice(token: Token, fiat: String) async throws -> CurrentPrice {
+        if let cachedValue = cache.value(forKey: primaryKey(token.address, fiat)) {
             return cachedValue
         } else {
             let result = try await api.getCurrentPrices(coins: [token], toFiat: fiat)
 
-            if let result: CurrentPrice = result.values.first ?? nil {
-                cache.insert(result, forKey: primaryKey(coingeckoId, fiat))
-                return result
-            } else {
-                return nil
-            }
+            let currentPrice: CurrentPrice = (result.values.first ?? nil)
+                ?? CurrentPrice(value: 0.0)
+
+            cache.insert(currentPrice, forKey: primaryKey(token.address, fiat))
+
+            return currentPrice
         }
     }
 
@@ -51,14 +49,21 @@ public class SolanaPriceService {
             return cachedResult
         } else {
             let prices = try await api.getCurrentPrices(coins: tokens, toFiat: fiat)
-
+            
+            for token in tokens {
+                let currentPrice: CurrentPrice = (prices[token] ?? nil)
+                    ?? CurrentPrice(value: 0.0)
+                
+                cache.insert(
+                    currentPrice,
+                    forKey: primaryKey(token.address, fiat)
+                )
+            }
             for record in prices {
-                if
-                    let coingeckoId = record.key.extensions?.coingeckoId,
-                    let value = record.value
-                {
-                    cache.insert(value, forKey: primaryKey(coingeckoId, fiat))
-                }
+                cache.insert(
+                    record.value ?? .init(value: 0.0),
+                    forKey: primaryKey(record.key.address, fiat)
+                )
             }
 
             return prices
@@ -70,10 +75,7 @@ public class SolanaPriceService {
         var result: [Token: CurrentPrice?] = [:]
 
         for token in tokens {
-            if
-                let coingeckoId = token.extensions?.coingeckoId,
-                let value = cache.value(forKey: primaryKey(coingeckoId, fiat))
-            {
+            if let value = cache.value(forKey: primaryKey(token.address, fiat)) {
                 result[token] = value
             } else {
                 return nil
@@ -84,7 +86,7 @@ public class SolanaPriceService {
     }
 
     /// Helper method for extracing cache key.
-    internal func primaryKey(_ id: String, _ fiat: String) -> String {
-        "\(id)-\(fiat)"
+    internal func primaryKey(_ mint: String, _ fiat: String) -> String {
+        "\(mint)-\(fiat)"
     }
 }

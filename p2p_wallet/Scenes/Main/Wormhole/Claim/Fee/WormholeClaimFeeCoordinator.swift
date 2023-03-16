@@ -5,6 +5,7 @@
 //  Created by Giang Long Tran on 12.03.2023.
 //
 
+import Combine
 import Foundation
 import KeyAppBusiness
 import KeyAppKitCore
@@ -23,13 +24,22 @@ class WormholeClaimFeeCoordinator: SmartCoordinator<Void> {
 
     override func build() -> UIViewController {
         let vm = WormholeClaimFeeViewModel(account: account, bundle: bundle)
+        let view = WormholeClaimFee(viewModel: vm)
+        let vc = UIBottomSheetHostingController(rootView: view)
+
+        vm.objectWillChange
+            .sink { [weak vc] _ in
+                DispatchQueue.main.async {
+                    vc?.updatePresentationLayout(animated: true)
+                }
+            }
+            .store(in: &subscriptions)
 
         vm.closeAction.sink { [weak self] _ in
             self?.presentation.presentingViewController.dismiss(animated: true)
         }
         .store(in: &subscriptions)
 
-        let view = WormholeClaimFee(viewModel: vm)
-        return BottomSheetController(rootView: view)
+        return vc
     }
 }

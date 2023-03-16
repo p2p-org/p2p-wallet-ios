@@ -40,13 +40,19 @@ public final class EthereumAccountsService: NSObject, AccountsService, Observabl
                     web3.eth.getTokenBalances(address: address)
                 )
 
-                var nativeAccount = Account(token: .init(address: address), balance: balance.quantity, price: nil)
+                var nativeAccount = Account(
+                    address: address.hex(eip55: false),
+                    token: .init(),
+                    balance: balance.quantity,
+                    price: nil
+                )
 
                 // Build token accounts
-                var tokenBalances = wallet.tokenBalances
+                let tokenBalances = wallet.tokenBalances
 
                 // Build token accounts
                 var resolvedTokenAccounts: [Account] = try await Self.resolveTokenAccounts(
+                    address: address.hex(eip55: false),
                     balances: tokenBalances,
                     repository: ethereumTokenRepository
                 )
@@ -105,6 +111,7 @@ public final class EthereumAccountsService: NSObject, AccountsService, Observabl
 
     /// Method resolve ethereum erc-20 token accounts.
     internal static func resolveTokenAccounts(
+        address: String,
         balances: [EthereumTokenBalances.Balance],
         repository: EthereumTokensRepository
     ) async throws -> [Account] {
@@ -124,7 +131,7 @@ public final class EthereumAccountsService: NSObject, AccountsService, Observabl
             }
 
             return result.map { item in
-                Account(token: item.1, balance: item.0.tokenBalance ?? 0)
+                Account(address: address, token: item.1, balance: item.0.tokenBalance ?? 0)
             }
         }
     }
@@ -137,11 +144,13 @@ public final class EthereumAccountsService: NSObject, AccountsService, Observabl
 
 extension EthereumAccountsService {
     public struct Account: Equatable {
+        public let address: String
         public let token: EthereumToken
         public let balance: BigUInt
         public fileprivate(set) var price: Price?
 
-        internal init(token: EthereumToken, balance: BigUInt, price: Price? = nil) {
+        internal init(address: String, token: EthereumToken, balance: BigUInt, price: Price? = nil) {
+            self.address = address
             self.token = token
             self.balance = balance
             self.price = price

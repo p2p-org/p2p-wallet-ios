@@ -59,6 +59,7 @@ final class HomeAccountsViewModel: BaseViewModel, ObservableObject {
     init(
         solanaAccountsService: SolanaAccountsService = Resolver.resolve(),
         ethereumAccountsService: EthereumAccountsService = Resolver.resolve(),
+        wormholeService: WormholeService = Resolver.resolve(),
         favouriteAccountsStore: FavouriteAccountsStore = Resolver.resolve(),
         solanaTracker: SolanaTracker = Resolver.resolve(),
         notificationService: NotificationService = Resolver.resolve(),
@@ -102,13 +103,36 @@ final class HomeAccountsViewModel: BaseViewModel, ObservableObject {
                     }
                 }
             }
+
             .map { state in
-                state.innerApply { account in
-                    RendableEthereumAccount(account: account) {
-                        navigation.send(.claim(account))
+                Task.detached { try await wormholeService.wormholeClaimMonitoreService.refresh() }
+
+                return wormholeService.wormholeClaimMonitoreService.$bundles
+                    .map { bundlesStatus in
+                        state.innerApply { account in
+                            let bundleStatus: WormholeBundleStatus? = bundlesStatus.first {
+                                switch account.token.contractType {
+                                case .native:
+                                    return $0.token == nil
+                                case let .erc20(contract):
+                                    return $0.token == contract.hex(eip55: false)
+                                }
+                            }
+
+                            let isClaiming = bundleStatus != nil
+
+                            return RendableEthereumAccount(
+                                account: account,
+                                isClaiming: isClaiming,
+                                onTap: nil,
+                                onClaim: isClaiming ? nil : {
+                                    navigation.send(.claim(account))
+                                }
+                            )
+                        }
                     }
-                }
             }
+            .switchToLatest()
             .receive(on: RunLoop.main)
             .weakAssign(to: \.ethereumAccountsState, on: self)
             .store(in: &subscriptions)

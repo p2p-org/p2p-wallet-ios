@@ -1235,3 +1235,5 @@ You can try again, but your new transaction will be subject to the current rates
 "Receive tokens on Ethereum and Solana" = "Receive tokens on Ethereum and Solana";
 "Choose network" = "Choose network";
 "Claim" = "Claim";
+"You will get" = "You will get";
+"Claiming..." = "Claiming...";

@@ -43,25 +43,39 @@ struct WormholeClaimFee: View {
             .padding(.top, 20)
 
             VStack(spacing: 24) {
-                WormholeFeeView(title: "You will get", subtitle: viewModel.data.receive.crypto, detail: viewModel.data.receive.fiat)
+                if let receive = viewModel.receive {
+                    WormholeFeeView(title: "You will get", subtitle: receive.crypto, detail: receive.fiat)
+                }
 
-                if let networkFee = viewModel.data.networkFee {
+                if let networkFee = viewModel.networkFee {
                     WormholeFeeView(title: "Network Fee", subtitle: networkFee.crypto, detail: networkFee.fiat)
                 }
 
-                if let accountsFee = viewModel.data.accountCreationFee {
+                if let accountsFee = viewModel.accountCreationFee {
                     WormholeFeeView(title: "Account creation Fee", subtitle: accountsFee.crypto, detail: accountsFee.fiat)
                 }
 
-                if let wormholeBridgeAndTrxFee = viewModel.data.wormholeBridgeAndTrxFee {
+                if let wormholeBridgeAndTrxFee = viewModel.wormholeBridgeAndTrxFee {
                     WormholeFeeView(title: "Wormhole Bridge and Transaction Fee", subtitle: wormholeBridgeAndTrxFee.crypto, detail: wormholeBridgeAndTrxFee.fiat)
                 }
             }
             .padding(.top, 16)
 
-            TextButtonView(title: L10n.ok, style: .second, size: .large) { viewModel.close() }
-                .frame(height: TextButton.Size.large.height)
-                .padding(.top, 20)
+            Button(
+                action: {
+                    viewModel.close()
+                },
+                label: {
+                    Text(L10n.ok)
+                        .font(uiFont: TextButton.Style.second.font(size: .large))
+                        .foregroundColor(Color(TextButton.Style.second.foreground))
+                        .frame(maxWidth: .infinity)
+                        .frame(height: 56)
+                        .background(Color(TextButton.Style.second.backgroundColor))
+                        .cornerRadius(12)
+                }
+            )
+            .padding(.top, 20)
         }
         .padding(.horizontal, 16)
     }
@@ -93,12 +107,10 @@ struct WormholeClaimFee_Previews: PreviewProvider {
     static var previews: some View {
         WormholeClaimFee(
             viewModel: .init(
-                data: .init(
-                    receive: ("0.999717252 ETH", "~ $1,215.75", false),
-                    networkFee: ("Paid by Key App", "Free", true),
-                    accountCreationFee: ("0.999717252 WETH", "~ $1,215.75", false),
-                    wormholeBridgeAndTrxFee: ("0.999717252 WETH", "~ $1,215.75", false)
-                )
+                receive: ("0.999717252 ETH", "~ $1,215.75", false),
+                networkFee: ("Paid by Key App", "Free", true),
+                accountCreationFee: ("0.999717252 WETH", "~ $1,215.75", false),
+                wormholeBridgeAndTrxFee: ("0.999717252 WETH", "~ $1,215.75", false)
             )
         )
     }

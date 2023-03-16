@@ -107,10 +107,16 @@ let package = Package(
         .package(url: "https://github.com/krzyzanowskim/CryptoSwift.git", .upToNextMajor(from: "1.6.0")),
         .package(url: "https://github.com/Boilertalk/Web3.swift.git", from: "0.6.0"),
         .package(url: "https://github.com/trustwallet/wallet-core", branch: "master"),
+        .package(url: "https://github.com/attaswift/BigInt.git", from: "5.3.0"),
     ],
     targets: [
         // Core
-        .target(name: "KeyAppKitCore"),
+        .target(
+            name: "KeyAppKitCore",
+            dependencies: [
+                .product(name: "BigInt", package: "BigInt"),
+            ]
+        ),
 
         // Cache
         .target(name: "Cache"),
