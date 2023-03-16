@@ -1231,7 +1231,6 @@ You can try again, but your new transaction will be subject to the current rates
 "You can enter “You pay” field only" = "Vous ne pouvez saisir que le champ "Vous payez"";
 "Not enough %@" = "Pas assez %@";
 "You can’t swap same token" = "Vous ne pouvez pas échanger le même jeton";
-"Swap of these tokens isn’t possible" = "L'échange de ces jetons n'est pas possible";
 "Buy with Moonpay" = "Acheter avec Moonpay";
 "License" = "Licence";
 "Cashout with Moonpay" = "Paiement avec Moonpay";
@@ -1278,3 +1277,4 @@ You can try again, but your new transaction will be subject to the current rates
 "popular" = "populaire";
 "Integrity of the route has been compromised" = "L'intégrité de l'itinéraire a été compromise";
 "Creating transaction failed" = "Échec de la création de la transaction";
+"No swap options for these tokens" = "Aucune option d'échange pour ces jetons";

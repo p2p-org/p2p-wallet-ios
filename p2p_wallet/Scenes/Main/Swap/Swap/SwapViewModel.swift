@@ -321,10 +321,8 @@ private extension SwapViewModel {
             }
         case .error(.createTransactionFailed):
             actionButtonData = SliderActionButtonData(isEnabled: false, title: L10n.creatingTransactionFailed)
-        case .error(.routeIsNotFound) where currentState.amountTo == 0:
-            actionButtonData = SliderActionButtonData(isEnabled: false, title: L10n.amountIsTooSmall)
-        case .error(.routeIsNotFound) where !currentState.isSwappingAvailable:
-            actionButtonData = SliderActionButtonData(isEnabled: false, title: L10n.swapOfTheseTokensIsnTPossible)
+        case .error(.routeIsNotFound):
+            actionButtonData = SliderActionButtonData(isEnabled: false, title: L10n.noSwapOptionsForTheseTokens)
         default:
             actionButtonData = SliderActionButtonData(isEnabled: false, title: L10n.somethingWentWrong)
         }
