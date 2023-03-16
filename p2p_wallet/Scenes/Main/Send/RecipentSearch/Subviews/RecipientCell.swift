@@ -39,6 +39,14 @@ struct RecipientCell: View {
                 title: RecipientFormatter.format(destination: recipient.address),
                 subtitle: subtitle
             )
+
+        case .ethereumAddress:
+            cell(
+                image: Image(uiImage: .ethereumIcon),
+                title: RecipientFormatter.format(destination: recipient.address),
+                subtitle: nil
+            )
+
         case let .solanaTokenAddress(_, token):
             cell(
                 image: CoinLogoImageViewRepresentable(size: 48, args: .token(token)),
@@ -57,6 +65,7 @@ struct RecipientCell: View {
     private func cell(image: some View, title: String, subtitle: String? = nil) -> some View {
         HStack {
             image
+                .clipShape(Circle())
                 .frame(width: 48, height: 48)
             VStack(alignment: .leading, spacing: 6) {
                 Text(title)

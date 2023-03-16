@@ -5,6 +5,7 @@
 import Foundation
 import NameService
 import SolanaSwift
+import Wormhole
 
 public class RecipientSearchServiceImpl: RecipientSearchService {
     let nameService: NameService
@@ -25,6 +26,11 @@ public class RecipientSearchServiceImpl: RecipientSearchService {
         // assertion
         guard !input.isEmpty else {
             return .ok([])
+        }
+        if EthereumAddressValidation.validate(input) {
+            return .ok([
+                .init(address: input, category: .ethereumAddress, attributes: [])
+            ])
         }
 
         // search by solana address
