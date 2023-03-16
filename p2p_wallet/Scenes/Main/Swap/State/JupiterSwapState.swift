@@ -249,6 +249,11 @@ struct JupiterSwapState: Equatable {
         return [onetoToken, amountFromToken].joined(separator: " ≈ ")
     }
     
+    var isSwappingAvailable: Bool {
+        routeMap.indexesRouteMap[fromToken.address]?
+            .contains(toToken.address) == true
+    }
+    
     // MARK: - Initializing state
 
     static var zero: Self {
