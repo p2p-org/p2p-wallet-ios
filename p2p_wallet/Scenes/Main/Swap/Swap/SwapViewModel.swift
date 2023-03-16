@@ -297,7 +297,7 @@ private extension SwapViewModel {
     func updateActionButton(for state: JupiterSwapState) {
         switch state.status {
         case .ready:
-            if state.amountFrom == 0 {
+            if state.amountFrom == nil || state.amountFrom == 0 {
                 actionButtonData = SliderActionButtonData(isEnabled: false, title: L10n.enterTheAmount)
             }
         case .requiredInitialize, .loadingTokenTo, .loadingAmountTo, .switching, .initializing, .creatingSwapTransaction:
