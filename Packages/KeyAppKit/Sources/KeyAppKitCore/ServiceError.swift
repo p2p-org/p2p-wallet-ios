@@ -10,3 +10,7 @@ import Foundation
 public enum ServiceError: Error {
     case authorizationError
 }
+
+public enum CodingError: Error {
+    case invalidValue
+}

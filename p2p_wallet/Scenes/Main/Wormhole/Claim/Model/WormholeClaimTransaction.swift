@@ -34,7 +34,8 @@ struct WormholeClaimTransaction: RawTransactionType {
     var payingFeeWallet: SolanaSwift.Wallet? = nil
 
     func createRequest() async throws -> String {
-        try await wormholeService.sendBundle(bundle: bundle)
+        try await wormholeService.simulateBundle(bundle: bundle)
+
         return UUID().uuidString
     }
 }

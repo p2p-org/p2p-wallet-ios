@@ -53,6 +53,13 @@ public class WormholeRPCAPI: WormholeAPI {
         )
     }
     
+    public func simulateEthereumBundle(bundle: WormholeBundle) async throws {
+        try await self.client.invoke(
+            method: "simulate_ethereum_bundle",
+            params: ["bundle": bundle]
+        )
+    }
+    
     public func getEthereumFees(userWallet: String, recipient: String, token: String?, amount: String) async throws -> EthereumFees {
         try await self.client.call(
             method: "get_ethereum_fees",

@@ -6,6 +6,7 @@
 //
 
 import Foundation
+import KeyAppKitCore
 
 public struct EthereumFees: Codable, Hashable {
     public let gas: Fee
@@ -25,8 +26,48 @@ public struct Fee: Codable, Hashable {
     public let amount: String
     public let usdAmount: String
 
+    let chain: String
+    let token: String?
+
+    public var feeToken: FeeToken {
+        try! .init(chain: chain, token: token)
+    }
+
     enum CodingKeys: String, CodingKey {
         case amount
         case usdAmount = "usd_amount"
+        case chain
+        case token
+    }
+
+    public init(from decoder: Decoder) throws {
+        let container = try decoder.container(keyedBy: CodingKeys.self)
+        self.amount = try container.decode(String.self, forKey: .amount)
+        self.usdAmount = try container.decode(String.self, forKey: .usdAmount)
+        self.chain = try container.decode(String.self, forKey: .chain)
+        self.token = try container.decodeIfPresent(String.self, forKey: .token)
+
+        switch chain {
+        case "Ethereum", "Solana":
+            return
+        default:
+            throw CodingError.invalidValue
+        }
+    }
+}
+
+public enum FeeToken: Codable, Hashable {
+    case ethereum(String?)
+    case solana(String?)
+
+    public init(chain: String, token: String?) throws {
+        switch chain {
+        case "Ethereum":
+            self = .ethereum(token)
+        case "Solana":
+            self = .solana(token)
+        default:
+            throw CodingError.invalidValue
+        }
     }
 }

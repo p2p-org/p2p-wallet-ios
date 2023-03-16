@@ -59,10 +59,19 @@ public class WormholeService {
         }
     }
 
+    public func simulateBundle(bundle: WormholeBundle) async throws {
+        try await errorObservable.run {
+            let signedBundle = try signBundle(bundle: bundle)
+            try await api.simulateEthereumBundle(bundle: signedBundle)
+        }
+    }
+
     /// Submit bundle for starting claim.
     public func sendBundle(bundle: WormholeBundle) async throws {
-        let signedBundle = try signBundle(bundle: bundle)
-        try await api.sendEthereumBundle(bundle: signedBundle)
+        try await errorObservable.run {
+            let signedBundle = try signBundle(bundle: bundle)
+            try await api.sendEthereumBundle(bundle: signedBundle)
+        }
     }
 
     /// Sign transaction
@@ -75,15 +84,38 @@ public class WormholeService {
         var bundle = bundle
 
         // Sign transactions
-        bundle.signatures = try bundle.transactions.map { transaction -> String in
+        bundle.signatures = try bundle.transactions.map { transaction -> EthereumSignature in
+            print(transaction)
             let rlpItem: RLPItem = try RLPDecoder().decode(transaction.hexToBytes())
 
             let transaction = try EthereumTransaction(rlp: rlpItem)
-            let signedTransaction = try ethereumKeypair.sign(transaction: transaction)
+            let signedTransaction = try ethereumKeypair.sign(transaction: transaction, chainID: 1)
 
-            return try signedTransaction.rawTransaction().hex()
+            debugPrint(transaction)
+            debugPrint(signedTransaction)
+
+            print(signedTransaction.verifySignature())
+            print(try signedTransaction.rawTransaction().hex())
+
+            signedTransaction.verifySignature()
+
+            let signature = EthereumSignature(
+                r: signedTransaction.r.hex(),
+                s: signedTransaction.s.hex(),
+                v: try UInt64(signedTransaction.v.quantity)
+            )
+
+            debugPrint(signature)
+
+            return signature
         }
 
         return bundle
+    }
+}
+
+public extension WormholeService {
+    enum Error: Swift.Error {
+        case invalidVSign
     }
 }
