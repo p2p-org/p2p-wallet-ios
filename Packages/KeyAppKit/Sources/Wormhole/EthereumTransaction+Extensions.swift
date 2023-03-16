@@ -15,7 +15,7 @@ public extension EthereumTransaction {
             throw EthereumSignedTransaction.Error.rlpItemInvalid
         }
 
-        if array.count == 9 {
+        if array.count > 7 {
             guard
                 let nonce = array[0].bigUInt,
                 let gasPrice = array[1].bigUInt,

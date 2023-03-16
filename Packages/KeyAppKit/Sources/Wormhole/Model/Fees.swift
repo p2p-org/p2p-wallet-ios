@@ -26,8 +26,8 @@ public struct Fee: Codable, Hashable {
     public let amount: String
     public let usdAmount: String
 
-    let chain: String
-    let token: String?
+    private let chain: String
+    private let token: String?
 
     public var feeToken: FeeToken {
         try! .init(chain: chain, token: token)
@@ -53,6 +53,12 @@ public struct Fee: Codable, Hashable {
         default:
             throw CodingError.invalidValue
         }
+    }
+}
+
+public extension CurrencyAmount {
+    init(fee: Fee) {
+        self.init(value: Decimal(string: fee.usdAmount) ?? 0.0, currencyCode: "USD")
     }
 }
 

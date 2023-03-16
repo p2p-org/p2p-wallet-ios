@@ -40,9 +40,7 @@ struct WormholeClaimEthereumModel: WormholeClaimModel {
             return ""
         }
 
-        guard let formattedValue = CurrencyFormatter().string(for: currencyAmount) else {
-            return ""
-        }
+        let formattedValue = CurrencyFormatter().string(amount: currencyAmount)
         return "~ \(formattedValue)"
     }
 }

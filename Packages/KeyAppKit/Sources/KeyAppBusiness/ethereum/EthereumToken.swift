@@ -35,12 +35,12 @@ public struct EthereumToken: Hashable {
     }
     
     /// Native token
-    public init(address: EthereumAddress) {
+    public init() {
         self.name = "Ethereum"
         self.symbol = "ETH"
         self.decimals = 18
         self.logo = URL(string: "https://assets.coingecko.com/coins/images/279/large/ethereum.png?1595348880")
-        self.contractType = .native(address: address)
+        self.contractType = .native
     }
 }
 
@@ -48,7 +48,7 @@ public extension EthereumToken {
     /// Ethereum token contract standards.
     enum ContractType: Hashable {
         /// Native token
-        case native(address: EthereumAddress)
+        case native
         
         /// ERC-20 Token standard
         case erc20(contract: EthereumAddress)

@@ -71,4 +71,22 @@ public class WormholeRPCAPI: WormholeAPI {
             ]
         )
     }
+    
+    public func listEthereumBundles(userWallet: String) async throws -> [WormholeBundleStatus] {
+        try await self.client.call(
+            method: "list_ethereum_bundles",
+            params: [
+                "user_wallet": userWallet,
+            ]
+        )
+    }
+    
+    public func getEthereumBundleStatus(bundleID: String) async throws -> WormholeBundleStatus {
+        try await self.client.call(
+            method: "get_ethereum_bundle_status",
+            params: [
+                "bundle_id": bundleID,
+            ]
+        )
+    }
 }

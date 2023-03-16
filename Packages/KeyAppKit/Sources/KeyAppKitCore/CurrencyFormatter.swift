@@ -20,6 +20,10 @@ public struct CurrencyAmount: Hashable {
 
 /// The class for formatting Key App currency
 public class CurrencyFormatter: Formatter {
+    public func string(amount: CurrencyAmount) -> String {
+        string(for: amount) ?? "N/A"
+    }
+
     override public func string(for obj: Any?) -> String? {
         guard let obj = obj as? CurrencyAmount else {
             return nil
@@ -40,7 +44,6 @@ public class CurrencyFormatter: Formatter {
         formatter.groupingSize = 3
         formatter.currencyDecimalSeparator = "."
         formatter.currencyGroupingSeparator = " "
-//        formatter.roundingMode = .
 
         let value: String? = formatter.string(for: obj.value)
         return value

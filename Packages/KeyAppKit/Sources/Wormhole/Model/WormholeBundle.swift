@@ -22,7 +22,7 @@ public struct WormholeBundle: Codable, Hashable {
     
     public let expiresAt: Int
     
-    public var expiresAtDate: Date? {
+    public var expiresAtDate: Date {
         Date(timeIntervalSince1970: TimeInterval(self.expiresAt))
     }
     

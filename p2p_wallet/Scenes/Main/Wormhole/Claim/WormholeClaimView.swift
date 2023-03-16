@@ -53,6 +53,7 @@ struct WormholeClaimView: View {
             Text(viewModel.model.title)
                 .fontWeight(.bold)
                 .apply(style: .largeTitle)
+                .multilineTextAlignment(.center)
                 .padding(.top, 16)
 
             // Amount in currency

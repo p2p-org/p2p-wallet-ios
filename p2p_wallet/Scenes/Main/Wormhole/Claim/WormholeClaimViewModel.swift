@@ -51,17 +51,36 @@ class WormholeClaimViewModel: BaseViewModel, ObservableObject {
         // Listen changing in bundle value
         bundle.listen(target: self, in: &subscriptions)
 
+        // Update fee
         bundle.$state
             .map(\.value?.fees)
             .receive(on: RunLoop.main)
             .sink { [weak self] fees in
                 guard let self = self else { return }
+
                 if let fees {
                     self.feeAmountInFiat = CurrencyFormatter().string(
                         for: CurrencyAmount(value: fees.totalInUSD, currencyCode: "USD")
                     ) ?? "N/A"
                 } else {
                     self.feeAmountInFiat = L10n.isUnavailable(L10n.value)
+                }
+            }
+            .store(in: &subscriptions)
+
+        // Update timer
+        bundle.$state
+            .map(\.value?.expiresAtDate)
+            .compactMap { $0 }
+            .receive(on: RunLoop.main)
+            .removeDuplicates()
+            .sink { [weak self] expiresAtDate in
+                guard let self = self else { return }
+
+                let elapsed = expiresAtDate.timeIntervalSince(Date()) - 1
+
+                DispatchQueue.main.asyncAfter(deadline: .now() + elapsed) { [weak self] in
+                    self?.bundle.fetch()
                 }
             }
             .store(in: &subscriptions)
