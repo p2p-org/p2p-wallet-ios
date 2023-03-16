@@ -25,6 +25,8 @@ final class SwapViewModel: BaseViewModel, ObservableObject {
     let changeFromToken = PassthroughSubject<SwapToken, Never>()
     let changeToToken = PassthroughSubject<SwapToken, Never>()
     let submitTransaction = PassthroughSubject<(PendingTransaction, String), Never>()
+    let viewAppeared = PassthroughSubject<Void, Never>()
+    let viewDisappeared = PassthroughSubject<Void, Never>()
 
     // MARK: - Params
     var fromTokenInputViewModel: SwapInputViewModel
@@ -47,10 +49,12 @@ final class SwapViewModel: BaseViewModel, ObservableObject {
 
     let stateMachine: JupiterSwapStateMachine
     var currentState: JupiterSwapState { stateMachine.currentState }
+    var continueUpdateOnDisappear = false // Special flag for update if view is disappeared
 
     private let preChosenWallet: Wallet?
     private var timer: Timer?
     private let source: JupiterSwapSource
+    private var wasMinToastShown = false // Special flag not to show toast again if state has not changed
 
     init(
         stateMachine: JupiterSwapStateMachine,
@@ -136,6 +140,15 @@ final class SwapViewModel: BaseViewModel, ObservableObject {
         return stateMachine.currentState.route?.toSymbols(tokensList: tokensList)
     }
     #endif
+
+    func scheduleUpdate() {
+        cancelUpdate()
+        timer = .scheduledTimer(withTimeInterval: 20, repeats: true) { [weak self] _ in
+            Task {
+                await self?.update()
+            }
+        }
+    }
 }
 
 private extension SwapViewModel {
@@ -274,15 +287,21 @@ private extension SwapViewModel {
                 await self.swapWalletsRepository.load()
             }
             .store(in: &subscriptions)
-    }
 
-    func scheduleUpdate() {
-        cancelUpdate()
-        timer = .scheduledTimer(withTimeInterval: 20, repeats: true) { [weak self] _ in
-            Task {
-                await self?.update()
+        viewAppeared
+            .sink { [weak self] in
+                guard let self, self.initializingState == .success else { return }
+                self.scheduleUpdate()
+                self.continueUpdateOnDisappear = false //  Reset value
             }
-        }
+            .store(in: &subscriptions)
+
+        viewDisappeared
+            .sink { [weak self] in
+                guard let self, !self.continueUpdateOnDisappear else { return }
+                self.cancelUpdate()
+            }
+            .store(in: &subscriptions)
     }
 
     func cancelUpdate() {
@@ -316,8 +335,9 @@ private extension SwapViewModel {
             actionButtonData = SliderActionButtonData(isEnabled: false, title: L10n.noInternetConnection)
         case .error(.inputTooHigh(let max)):
             actionButtonData = SliderActionButtonData(isEnabled: false, title: L10n.max(max.toString(maximumFractionDigits: Int(state.fromToken.token.decimals))))
-            if state.fromToken.address == Token.nativeSolana.address {
+            if state.fromToken.address == Token.nativeSolana.address, !wasMinToastShown {
                 notificationService.showToast(title: "✅", text: L10n.weLeftAMinimumSOLBalanceToSaveTheAccountAddress)
+                wasMinToastShown = true
             }
         case .error(.createTransactionFailed):
             actionButtonData = SliderActionButtonData(isEnabled: false, title: L10n.creatingTransactionFailed)
@@ -327,6 +347,14 @@ private extension SwapViewModel {
             actionButtonData = SliderActionButtonData(isEnabled: false, title: L10n.swapOfTheseTokensIsnTPossible)
         default:
             actionButtonData = SliderActionButtonData(isEnabled: false, title: L10n.somethingWentWrong)
+        }
+
+        guard wasMinToastShown else { return }
+        switch state.status {
+        case .error(.inputTooHigh), .loadingAmountTo:
+            break
+        default:
+            wasMinToastShown = false
         }
     }
 
