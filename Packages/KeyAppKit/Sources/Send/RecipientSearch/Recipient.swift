@@ -28,6 +28,7 @@ public struct Recipient: Hashable, Codable {
         case solanaTokenAddress(walletAddress: PublicKey, token: Token)
 
         case bitcoinAddress
+        case ethereumAddress
 
         public var isDirectSPLTokenAddress: Bool {
             switch self {

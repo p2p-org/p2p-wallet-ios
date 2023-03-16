@@ -6,6 +6,7 @@ import AnalyticsManager
 import Combine
 import Foundation
 import History
+import KeyAppBusiness
 import Resolver
 import Send
 import SolanaSwift
@@ -30,7 +31,7 @@ class RecipientSearchViewModel: ObservableObject {
     private let source: SendSource
 
     @Injected private var clipboardManager: ClipboardManagerType
-    @Injected private var walletsRepository: WalletsRepository
+    @Injected private var solanaAccountsService: SolanaAccountsService
     @Injected private var tokensRepository: TokensRepository
     @Injected private var notificationService: NotificationService
     @Injected private var analyticsManager: AnalyticsManager
@@ -38,7 +39,7 @@ class RecipientSearchViewModel: ObservableObject {
     private let sendHistoryService: SendHistoryService
     private let recipientSearchService: RecipientSearchService
     private var searchTask: Task<Void, Never>?
-    
+
     @Published var loadingState: LoadableState = .notRequested
     @Published var isFirstResponder: Bool = false
 
@@ -76,7 +77,7 @@ class RecipientSearchViewModel: ObservableObject {
         self.source = source
 
         userWalletEnvironments = .init(
-            wallets: walletsRepository.getWallets(),
+            wallets: solanaAccountsService.state.value.map(\.data),
             exchangeRate: [:],
             tokens: []
         )

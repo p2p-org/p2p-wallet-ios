@@ -19,7 +19,7 @@ struct RecipientSearchView: View {
             ProgressView()
         case .loaded:
             loadedView
-        case .error(_):
+        case .error:
             RecipientErrorView {
                 Task { await viewModel.load() }
             }
@@ -43,7 +43,7 @@ struct RecipientSearchView: View {
                 } scan: {
                     viewModel.qr()
                 }
-                    .accessibilityIdentifier("RecipientSearchView.loadedView.RecipientSearchField")
+                .accessibilityIdentifier("RecipientSearchView.loadedView.RecipientSearchField")
 
                 // Result
                 if viewModel.isSearching {
@@ -305,7 +305,7 @@ struct RecipientSearchView: View {
                                 Spacer()
                             }
                         }
-                            .accessibilityIdentifier("RecipientSearchView.okView.recipientCell")
+                        .accessibilityIdentifier("RecipientSearchView.okView.recipientCell")
 
                         if recipient.category == .solanaAddress && !recipient.attributes.contains(.funds) {
                             HStack {
