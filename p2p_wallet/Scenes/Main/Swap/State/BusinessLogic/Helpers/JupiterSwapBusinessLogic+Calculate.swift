@@ -50,6 +50,7 @@ extension JupiterSwapBusinessLogic {
             else {
                 return state.modified {
                     $0.status = .error(reason: .routeIsNotFound)
+                    $0.routes = routes
                     $0.route = nil
                 }
             }

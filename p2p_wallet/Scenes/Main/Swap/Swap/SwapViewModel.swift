@@ -239,11 +239,6 @@ private extension SwapViewModel {
             arePricesLoading = false
         case .ready:
             arePricesLoading = false
-            guard state.swapTransaction != nil else { return }
-            actionButtonData = SliderActionButtonData(
-                isEnabled: true,
-                title: L10n.swap(state.fromToken.token.symbol, state.toToken.token.symbol)
-            )
         case .error:
             arePricesLoading = false
         }
@@ -295,10 +290,20 @@ private extension SwapViewModel {
     }
 
     func updateActionButton(for state: JupiterSwapState) {
+        // assert that amount > 0
+        guard let amount = state.amountFrom, amount > 0 else {
+            actionButtonData = SliderActionButtonData(isEnabled: false, title: L10n.enterTheAmount)
+            return
+        }
+        
+        // observe status
         switch state.status {
         case .ready:
-            if state.amountFrom == nil || state.amountFrom == 0 {
-                actionButtonData = SliderActionButtonData(isEnabled: false, title: L10n.enterTheAmount)
+            if state.swapTransaction != nil {
+                actionButtonData = SliderActionButtonData(
+                    isEnabled: true,
+                    title: L10n.swap(state.fromToken.token.symbol, state.toToken.token.symbol)
+                )
             }
         case .requiredInitialize, .loadingTokenTo, .loadingAmountTo, .switching, .initializing, .creatingSwapTransaction:
             actionButtonData = SliderActionButtonData(isEnabled: false, title: L10n.counting)
@@ -308,7 +313,7 @@ private extension SwapViewModel {
             actionButtonData = SliderActionButtonData(isEnabled: false, title: L10n.youCanTSwapSameToken)
         case .error(.networkConnectionError):
             notificationService.showConnectionErrorNotification()
-            actionButtonData = SliderActionButtonData(isEnabled: false, title: L10n.swapOfTheseTokensIsnTPossible)
+            actionButtonData = SliderActionButtonData(isEnabled: false, title: L10n.noInternetConnection)
         case .error(.inputTooHigh(let max)):
             actionButtonData = SliderActionButtonData(isEnabled: false, title: L10n.max(max.toString(maximumFractionDigits: Int(state.fromToken.token.decimals))))
             if state.fromToken.address == Token.nativeSolana.address {
@@ -316,8 +321,12 @@ private extension SwapViewModel {
             }
         case .error(.createTransactionFailed):
             actionButtonData = SliderActionButtonData(isEnabled: false, title: L10n.creatingTransactionFailed)
-        default:
+        case .error(.routeIsNotFound) where currentState.amountTo == 0:
+            actionButtonData = SliderActionButtonData(isEnabled: false, title: L10n.amountIsTooSmall)
+        case .error(.routeIsNotFound) where !currentState.isSwappingAvailable:
             actionButtonData = SliderActionButtonData(isEnabled: false, title: L10n.swapOfTheseTokensIsnTPossible)
+        default:
+            actionButtonData = SliderActionButtonData(isEnabled: false, title: L10n.somethingWentWrong)
         }
     }
 
