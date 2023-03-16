@@ -69,7 +69,7 @@ extension JupiterSwapBusinessLogic {
                 }
             }
             
-            let tokensPriceMap = ((try? await services.pricesAPI.getCurrentPrices(coins: tokens, toFiat: Defaults.fiat.symbol)) ?? [:])
+            let tokensPriceMap = ((try? await services.pricesAPI.getCurrentPrices(coins: tokens, toFiat: Defaults.fiat.code)) ?? [:])
                 .reduce([String: Double]()) { combined, element in
                     guard let value = element.value?.value else { return combined }
                     var combined = combined
