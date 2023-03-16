@@ -25,6 +25,7 @@ struct ReceiveView: View {
                     title: L10n.copyAddress,
                     style: .primaryWhite,
                     size: .large,
+                    trailing: UIImage.transactionsCopy.withTintColor(Asset.Colors.snow.color),
                     onPressed: {
                         viewModel.buttonTapped()
                     }
