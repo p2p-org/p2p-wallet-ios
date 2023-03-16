@@ -10,9 +10,16 @@ struct ReceiveView: View {
         ZStack {
             Color(UIColor.f2F5Fa)
                 .edgesIgnoringSafeArea(.all)
-            VStack(spacing: 28) {
-                qr
-                list
+            VStack {
+                ScrollView {
+                    VStack(spacing: 28) {
+                        qr
+                        list
+                        Spacer()
+                    }
+                    .padding(.top, 20)
+                }
+                .scrollOnlyOnOverflow()
                 Spacer()
                 TextButtonView(
                     title: L10n.copyAddress,
@@ -26,7 +33,6 @@ struct ReceiveView: View {
                 .padding(.bottom, 36)
                 .padding(.horizontal, 16)
             }
-            .padding(.top, 20)
         }
     }
 
@@ -49,8 +55,11 @@ struct ReceiveView: View {
                     .url(centerImageURL)
                     .setProcessor(
                         DownsamplingImageProcessor(size: .init(width: iconSize * 2, height: iconSize * 2))
-                            |> RoundCornerImageProcessor(cornerRadius: iconSize)
+                        |> RoundCornerImageProcessor(cornerRadius: iconSize)
                     )
+                    .placeholder {
+                        placeholderIcon
+                    }
                     .resizable()
                     .diskCacheExpiration(.days(7))
                     .fade(duration: 0.25)
@@ -65,12 +74,25 @@ struct ReceiveView: View {
         VStack(spacing: 0) {
             ForEach(viewModel.items, id: \.id) { item in
                 AnyRendable(item: item)
-                    .onLongPressGesture(perform: {
-                        viewModel.itemTapped(item)
-                    })
+                    .delayedGesture(
+                        LongPressGesture(minimumDuration: 0.5)
+                            .onEnded { _ in viewModel.itemTapped(item) }
+                    )
             }
+            .padding(.horizontal, 16)
         }
-        .padding(.horizontal, 16)
+    }
+
+    var placeholderIcon: some View {
+        Circle()
+            .fill(Color(Asset.Colors.smoke.color))
+            .overlay(
+                Image(uiImage: .imageOutlineIcon)
+                    .renderingMode(.template)
+                    .foregroundColor(Color(Asset.Colors.mountain.color))
+            )
+            .clipped()
+            .frame(width: iconSize, height: iconSize)
     }
 }
 
