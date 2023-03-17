@@ -11,66 +11,6 @@ import KeyAppKitCore
 import SolanaSwift
 import Web3
 
-public struct WormholeBundleStatus: Codable, Hashable {
-    public let bundleId: String
-    public let userWallet: String
-    public let recipient: String
-    public let token: String?
-    public let amount: String?
-    public let fees: String?
-    public let status: Status
-
-    enum CodingKeys: String, CodingKey {
-        case bundleId = "bundle_id"
-        case userWallet = "user_wallet"
-        case recipient
-        case token
-        case amount
-        case fees
-        case status
-    }
-
-    public enum Status: Codable, Hashable {
-        case pending
-        case completed
-    }
-}
-
-public class WormholeClaimMonitoreService: ObservableObject {
-    let ethereumKeypair: EthereumKeyPair?
-    let api: WormholeAPI
-
-    @Published public var bundles: [WormholeBundleStatus] = []
-
-    init(ethereumKeypair: EthereumKeyPair?, api: WormholeAPI) {
-        self.ethereumKeypair = ethereumKeypair
-        self.api = api
-        self.bundles = []
-    }
-
-    public func refresh() async throws {
-        guard let ethereumKeypair else {
-            throw ServiceError.authorizationError
-        }
-
-        bundles = try await api.listEthereumBundles(userWallet: ethereumKeypair.address)
-    }
-
-    public func add(bundle: WormholeBundle) {
-        bundles.append(
-            .init(
-                bundleId: bundle.bundleId,
-                userWallet: bundle.userWallet,
-                recipient: bundle.recipient,
-                token: bundle.token,
-                amount: nil,
-                fees: nil,
-                status: .pending
-            )
-        )
-    }
-}
-
 public class WormholeService {
     let api: WormholeAPI
 
@@ -81,14 +21,24 @@ public class WormholeService {
 
     let errorObservable: ErrorObserver
 
-    public init(api: WormholeAPI, ethereumKeypair: EthereumKeyPair?, solanaKeyPair: KeyPair?, errorObservable: ErrorObserver) {
+    public init(
+        api: WormholeAPI,
+        ethereumKeypair: EthereumKeyPair?,
+        solanaKeyPair: KeyPair?,
+        errorObservable: ErrorObserver
+    ) {
         self.api = api
         self.ethereumKeypair = ethereumKeypair
         self.solanaKeyPair = solanaKeyPair
         self.errorObservable = errorObservable
 
-        self.wormholeClaimMonitoreService = .init(ethereumKeypair: ethereumKeypair, api: api)
-        Task { try await self.wormholeClaimMonitoreService.refresh() }
+        self.wormholeClaimMonitoreService = .init(
+            ethereumKeypair: ethereumKeypair,
+            api: api,
+            errorObserver: errorObservable
+        )
+
+        wormholeClaimMonitoreService.refresh()
     }
 
     /// Method for get claiming bundle.

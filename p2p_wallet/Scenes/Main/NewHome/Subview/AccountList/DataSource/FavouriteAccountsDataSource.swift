@@ -7,7 +7,7 @@
 
 import Foundation
 
-class FavouriteAccountsStore: ObservableObject {
+class FavouriteAccountsDataSource: ObservableObject {
     /// Ignore list
     @Published var favourites: [String] {
         didSet {
@@ -38,7 +38,7 @@ class FavouriteAccountsStore: ObservableObject {
     }
 }
 
-extension FavouriteAccountsStore {
+extension FavouriteAccountsDataSource {
     /// This helper method detects account, that should be in hidden section
     static func shouldInHiddenList(pubkey: String?, hideZeroBalance: Bool, amount: UInt64, favourites: [String], ignores: [String]) -> Bool {
         guard let pubkey = pubkey else { return false }
