@@ -117,7 +117,7 @@ extension Resolver: ResolverRegistering {
         register { EthereumPriceService(api: resolve()) }
             .scope(.application)
 
-        register { WormholeRPCAPI(endpoint: "https://bridge-service.keyapp.org") }
+        register { WormholeRPCAPI(endpoint: "https://bridge-service.key.app") }
             .implements(WormholeAPI.self)
             .scope(.application)
 
