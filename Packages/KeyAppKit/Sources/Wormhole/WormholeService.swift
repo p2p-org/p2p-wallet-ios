@@ -78,6 +78,8 @@ public class WormholeService {
         try await errorObservable.run {
             let signedBundle = try signBundle(bundle: bundle)
             try await api.simulateEthereumBundle(bundle: signedBundle)
+
+            wormholeClaimMonitoreService.add(bundle: bundle)
         }
     }
 
@@ -86,6 +88,8 @@ public class WormholeService {
         try await errorObservable.run {
             let signedBundle = try signBundle(bundle: bundle)
             try await api.sendEthereumBundle(bundle: signedBundle)
+
+            wormholeClaimMonitoreService.add(bundle: bundle)
         }
     }
 

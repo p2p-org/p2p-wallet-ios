@@ -31,7 +31,7 @@ public struct WormholeBundleStatus: Codable, Hashable {
         case status
     }
 
-    public enum Status: Codable, Hashable {
+    public enum Status: String, Codable, Hashable {
         case pending
         case completed
     }
@@ -45,13 +45,15 @@ public class WormholeClaimMonitoreService: ObservableObject {
     let localBundles: AsyncValue<[WormholeBundleStatus]> = .init(just: [])
     let remoteBundles: AsyncValue<[WormholeBundleStatus]>
 
+    var timer: Timer?
+
     @Published public var bundles: AsyncValueState<[WormholeBundleStatus]> = .init(value: [])
 
     init(ethereumKeypair: EthereumKeyPair?, api: WormholeAPI, errorObserver: ErrorObserver) {
         self.ethereumKeypair = ethereumKeypair
         self.api = api
 
-        self.remoteBundles = .init(initialItem: []) {
+        remoteBundles = .init(initialItem: []) {
             guard let ethereumKeypair else {
                 throw ServiceError.authorizationError
             }
@@ -95,9 +97,13 @@ public class WormholeClaimMonitoreService: ObservableObject {
             .handleAsyncValue(remoteBundles.$state)
             .store(in: &subscriptions)
 
-        Timer.scheduledTimer(withTimeInterval: 30, repeats: true) { _ in
+        timer = Timer.scheduledTimer(withTimeInterval: 30, repeats: true) { _ in
             self.remoteBundles.fetch()
         }
+    }
+
+    deinit {
+        timer?.invalidate()
     }
 
     public func refresh() {
