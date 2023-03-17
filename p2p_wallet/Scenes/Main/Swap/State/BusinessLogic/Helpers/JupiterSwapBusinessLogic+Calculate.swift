@@ -44,13 +44,17 @@ extension JupiterSwapBusinessLogic {
             
             // if pre chosen route is stil available, choose it
             // if not choose the first one
-            guard let route = data.data.first(
-                where: {$0.id == state.route?.id})
-                    ?? data.data.first
-            else {
+            guard let route = (data.data?.first { $0.id == state.route?.id } ?? data.data?.first) else {
+                let status: JupiterSwapState.Status
+                if let errorMessage = data.message,
+                    errorMessage.contains("The value \"NaN\" cannot be converted to a number") {
+                    status = .error(reason: .minimumAmount)
+                } else {
+                    status = .error(reason: .routeIsNotFound)
+                }
                 return state.modified {
-                    $0.status = .error(reason: .routeIsNotFound)
-                    $0.routes = routes
+                    $0.status = status
+                    $0.routes = routes ?? []
                     $0.route = nil
                 }
             }
@@ -82,7 +86,7 @@ extension JupiterSwapBusinessLogic {
                 state: state.modified {
                     $0.status = .ready
                     $0.route = route
-                    $0.routes = routes
+                    $0.routes = routes ?? []
                     $0.amountTo = UInt64(route.outAmount)?
                         .convertToBalance(decimals: state.toToken.token.decimals)
                     $0.tokensPriceMap = $0.tokensPriceMap
@@ -99,7 +103,10 @@ extension JupiterSwapBusinessLogic {
     private static func handle(error: Error, for state: JupiterSwapState) -> JupiterSwapState {
         if (error as NSError).isNetworkConnectionError {
             return state.error(.networkConnectionError)
+        } else if (error as NSError).domain.contains("The value \"NaN\" cannot be converted to a number") {
+            return state.error(.minimumAmount)
         }
+        debugPrint("---error: ", error.readableDescription)
         return state.error(.routeIsNotFound)
     }
 
