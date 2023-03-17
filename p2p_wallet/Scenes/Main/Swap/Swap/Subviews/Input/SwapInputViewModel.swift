@@ -20,8 +20,13 @@ final class SwapInputViewModel: BaseViewModel, ObservableObject {
     @Published var isLoading = false
     @Published var isAmountLoading = false
     @Published var fiatAmount: Double?
-    @Published var token: SwapToken
+    @Published var token: SwapToken {
+        didSet {
+            decimalLength = Int(token.token.decimals)
+        }
+    }
     @Published var fiatAmountTextColor = Asset.Colors.silver.color
+    @Published var decimalLength: Int
     let accessibilityIdentifierTokenPrefix: String
 
     private let stateMachine: JupiterSwapStateMachine
@@ -41,6 +46,7 @@ final class SwapInputViewModel: BaseViewModel, ObservableObject {
         self.isFirstResponder = false
         self.isEditable = isFromToken
         self.token = stateMachine.currentState.fromToken
+        decimalLength = Int(stateMachine.currentState.fromToken.token.decimals)
 
         accessibilityIdentifierTokenPrefix = isFromToken ? "from" : "to"
         super.init()
