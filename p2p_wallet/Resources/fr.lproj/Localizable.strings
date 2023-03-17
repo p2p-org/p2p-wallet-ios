@@ -1227,14 +1227,11 @@ You can try again, but your new transaction will be subject to the current rates
 "Key App doesn’t make any profit from swap 💚" = "Key App ne tire aucun profit de l'échange 💚";
 "You receive" = "Vous recevez";
 "Counting..." = "Compte...";
-"The token you pay" = "Le jeton que vous payez";
 "You can enter “You pay” field only" = "Vous ne pouvez saisir que le champ "Vous payez"";
 "Not enough %@" = "Pas assez %@";
-"You can’t swap same token" = "Vous ne pouvez pas échanger le même jeton";
 "Buy with Moonpay" = "Acheter avec Moonpay";
 "License" = "Licence";
 "Cashout with Moonpay" = "Paiement avec Moonpay";
-"The token you receive" = "Le jeton que vous recevez";
 "Received from" = "Reçu de";
 "Swap details" = "Détails de l'échange";
 "There was a problem with the swap, your funds were refunded" = "Il y a eu un problème avec le swap, vos fonds ont été remboursés";
@@ -1278,3 +1275,6 @@ You can try again, but your new transaction will be subject to the current rates
 "Integrity of the route has been compromised" = "L'intégrité de l'itinéraire a été compromise";
 "Creating transaction failed" = "Échec de la création de la transaction";
 "No swap options for these tokens" = "Aucune option d'échange pour ces jetons";
+"Token you pay" = "Jeton que vous payez";
+"Token you receive" = "Jeton que vous recevez";
+"You can’t swap between the same token" = "Vous ne pouvez pas échanger entre le même jeton";

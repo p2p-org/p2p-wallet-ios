@@ -329,7 +329,7 @@ private extension SwapViewModel {
         case .error(.notEnoughFromToken):
             actionButtonData = SliderActionButtonData(isEnabled: false, title: L10n.notEnough(state.fromToken.token.symbol))
         case .error(.equalSwapTokens):
-            actionButtonData = SliderActionButtonData(isEnabled: false, title: L10n.youCanTSwapSameToken)
+            actionButtonData = SliderActionButtonData(isEnabled: false, title: L10n.youCanTSwapBetweenTheSameToken)
         case .error(.networkConnectionError):
             notificationService.showConnectionErrorNotification()
             actionButtonData = SliderActionButtonData(isEnabled: false, title: L10n.noInternetConnection)
