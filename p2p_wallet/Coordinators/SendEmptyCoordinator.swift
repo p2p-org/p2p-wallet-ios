@@ -38,8 +38,7 @@ final class SendEmptyCoordinator: Coordinator<Void> {
             },
             receive: {
                 self.log(event: .sendnewReceiveClickButton(source: self.source.rawValue))
-                // TODO: Put FT here
-                if true {
+                if available(.ethAddressEnabled) {
                     let coordinator = SupportedTokensCoordinator(presentation: SmartCoordinatorPushPresentation(self.navigationController))
                     self.coordinate(to: coordinator)
                         .sink { _ in }
