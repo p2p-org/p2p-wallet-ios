@@ -10,6 +10,7 @@ import Sell
 import SolanaSwift
 import SwiftUI
 import UIKit
+import Wormhole
 
 enum DetailAccountCoordinatorArgs {
     case solanaAccount(SolanaAccountsService.Account)
@@ -137,15 +138,23 @@ class DetailAccountCoordinator: SmartCoordinator<WalletDetailCoordinator.Result>
         }
 
         // TODO: Put FT here
-        if SupportedTokensBusinnes.wellKnownTokens.contains(where: { token in
-            token.symbol.lowercased() == account.data.token.symbol.lowercased()
-        }) {
+        let supportedBridgeTokens = Wormhole.SupportedToken.bridges
+            .map(\.solAddress)
+            .compactMap { $0 }
+
+        if account.data.isNativeSOL || supportedBridgeTokens.contains(account.data.token.address) {
             var icon: SupportedTokenItemIcon = .image(UIImage.imageOutlineIcon)
             if let logoURL = URL(string: account.data.token.logoURI ?? "") {
                 icon = .url(logoURL)
             }
-            openReceive(item: .init(icon: icon, name: account.data.name, symbol: account.data.token.symbol,
-                                    availableNetwork: [.solana, .ethereum]))
+            self.openReceive(item:
+                .init(
+                    icon: icon,
+                    name: account.data.name,
+                    symbol: account.data.token.symbol,
+                    availableNetwork: [.solana, .ethereum]
+                )
+            )
         } else {
             let coordinator = ReceiveCoordinator(
                 network: .solana(
