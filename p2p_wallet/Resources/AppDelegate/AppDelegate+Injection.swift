@@ -420,7 +420,7 @@ extension Resolver: ResolverRegistering {
         }
         .scope(.session)
 
-        register { FavouriteAccountsStore() }
+        register { FavouriteAccountsDataSource() }
             .scope(.session)
 
         // SwapService

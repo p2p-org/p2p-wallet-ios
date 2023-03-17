@@ -60,7 +60,7 @@ final class HomeAccountsViewModel: BaseViewModel, ObservableObject {
         solanaAccountsService: SolanaAccountsService = Resolver.resolve(),
         ethereumAccountsService: EthereumAccountsService = Resolver.resolve(),
         wormholeService: WormholeService = Resolver.resolve(),
-        favouriteAccountsStore: FavouriteAccountsStore = Resolver.resolve(),
+        favouriteAccountsStore: FavouriteAccountsDataSource = Resolver.resolve(),
         solanaTracker: SolanaTracker = Resolver.resolve(),
         notificationService: NotificationService = Resolver.resolve(),
         sellDataService: any SellDataService = Resolver.resolve(),
@@ -103,36 +103,29 @@ final class HomeAccountsViewModel: BaseViewModel, ObservableObject {
                     }
                 }
             }
-
-            .map { state in
-                Task.detached { try await wormholeService.wormholeClaimMonitoreService.refresh() }
-
-                return wormholeService.wormholeClaimMonitoreService.$bundles
-                    .map { bundlesStatus in
-                        state.innerApply { account in
-                            let bundleStatus: WormholeBundleStatus? = bundlesStatus.first {
-                                switch account.token.contractType {
-                                case .native:
-                                    return $0.token == nil
-                                case let .erc20(contract):
-                                    return $0.token == contract.hex(eip55: false)
-                                }
-                            }
-
-                            let isClaiming = bundleStatus != nil
-
-                            return RendableEthereumAccount(
-                                account: account,
-                                isClaiming: isClaiming,
-                                onTap: nil,
-                                onClaim: isClaiming ? nil : {
-                                    navigation.send(.claim(account))
-                                }
-                            )
-                        }
-                    }
+            .combineLatest(wormholeService.wormholeClaimMonitoreService.$bundles)
+            .map { accounts, statuses in
+                // Aggregate accounts with bundle status
+                EthereumAccountsDataSource.aggregate(
+                    accounts: accounts,
+                    wormholeBundlesStatus: statuses
+                )
             }
-            .switchToLatest()
+            .map { (accounts: [EthereumAccountsDataSource.Account]) in
+
+                accounts.map { account in
+                    let isClaiming = account.wormholeBundle != nil
+
+                    return RendableEthereumAccount(
+                        account: account.account,
+                        isClaiming: isClaiming,
+                        onTap: nil,
+                        onClaim: isClaiming ? nil : {
+                            navigation.send(.claim(account.account))
+                        }
+                    )
+                }
+            }
             .receive(on: RunLoop.main)
             .weakAssign(to: \.ethereumAccountsState, on: self)
             .store(in: &subscriptions)
