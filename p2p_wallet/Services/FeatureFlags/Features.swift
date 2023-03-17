@@ -33,4 +33,7 @@ public extension Feature {
     
     // History
     static let historyServiceEnabled = Feature(rawValue: "history_service_enabled")
+
+    // Eth
+    static let ethAddressEnabled = Feature(rawValue: "eth_address_enabled")
 }
