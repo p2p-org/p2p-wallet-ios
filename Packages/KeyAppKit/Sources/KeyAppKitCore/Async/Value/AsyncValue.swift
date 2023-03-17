@@ -13,6 +13,16 @@ public enum AsynValueStatus {
     case fetching
     case ready
     
+    public static func combine(_ status: [Self]) -> Self {
+        if status.contains(.initializing) {
+            return .initializing
+        } else if status.contains(.fetching) {
+            return .fetching
+        } else {
+            return .ready
+        }
+    }
+    
     public static func combine(lhs: Self, rhs: Self) -> Self {
         if lhs == .initializing || rhs == .initializing {
             return .initializing

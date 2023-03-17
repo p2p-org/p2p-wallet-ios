@@ -104,16 +104,19 @@ final class HomeAccountsViewModel: BaseViewModel, ObservableObject {
                 }
             }
             .combineLatest(wormholeService.wormholeClaimMonitoreService.$bundles)
-            .map { accounts, statuses in
+            .map { accounts, bundles in
                 // Aggregate accounts with bundle status
-                EthereumAccountsDataSource.aggregate(
-                    accounts: accounts,
-                    wormholeBundlesStatus: statuses
+                AsyncValueState(
+                    status: AsynValueStatus.combine([accounts.status, bundles.status]),
+                    value: EthereumAccountsDataSource.aggregate(
+                        accounts: accounts.value,
+                        wormholeBundlesStatus: bundles.value
+                    ),
+                    error: accounts.error ?? bundles.error
                 )
             }
-            .map { (accounts: [EthereumAccountsDataSource.Account]) in
-
-                accounts.map { account in
+            .map { accounts in
+                accounts.innerApply { account in
                     let isClaiming = account.wormholeBundle != nil
 
                     return RendableEthereumAccount(
@@ -128,6 +131,16 @@ final class HomeAccountsViewModel: BaseViewModel, ObservableObject {
             }
             .receive(on: RunLoop.main)
             .weakAssign(to: \.ethereumAccountsState, on: self)
+            .store(in: &subscriptions)
+
+        ethereumAccountsService
+            .$state
+            .map(\.status)
+            .filter { $0 == .fetching }
+            .removeDuplicates()
+            .sink { _ in
+                wormholeService.wormholeClaimMonitoreService.refresh()
+            }
             .store(in: &subscriptions)
 
         // Solana accounts

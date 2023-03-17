@@ -42,11 +42,20 @@ struct HomeAccountView: View {
                     .font(uiFont: .font(of: .text3, weight: .semibold))
                     .foregroundColor(Color(Asset.Colors.night.color))
             case let .button(text, action):
-                TextButtonView(title: text, style: .primaryWhite, size: .small, onPressed: action)
-                    .frame(
-                        width: 60,
-                        height: TextButton.Size.small.height
-                    )
+                Button(
+                    action: { action?() },
+                    label: {
+                        Text(text)
+                            .padding(.horizontal, 12)
+                            .font(uiFont: TextButton.Style.second.font(size: .small))
+                            .foregroundColor(Color(
+                                action == nil ? TextButton.Style.primaryWhite.disabledForegroundColor! : TextButton.Style.primaryWhite.foreground
+                            ))
+                            .frame(height: TextButton.Size.small.height)
+                            .background(Color(action == nil ? TextButton.Style.primaryWhite.disabledBackgroundColor! : TextButton.Style.primaryWhite.backgroundColor))
+                            .cornerRadius(12)
+                    }
+                ).disabled(action == nil)
             }
         }
         .contentShape(Rectangle())

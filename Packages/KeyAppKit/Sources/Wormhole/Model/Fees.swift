@@ -14,6 +14,12 @@ public struct EthereumFees: Codable, Hashable {
     public let arbiter: Fee
 
     public let createAccount: Fee?
+    
+    enum CodingKeys: String, CodingKey {
+        case gas
+        case arbiter
+        case createAccount = "create_account"
+    }
 
     public var totalInUSD: Decimal {
         return (Decimal(string: gas.usdAmount) ?? 0.0) +
