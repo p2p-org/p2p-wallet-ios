@@ -12,6 +12,14 @@ extension KeyAppAnalyticsEvent {
         switch self {
         case .sellOnlySOLNotification:
             return "Sell_Only_SOL_Notification"
+        case .swapChangingTokenAClick:
+            return "Swap_Changing_Token_A_Click"
+        case .swapChangingTokenBClick:
+            return "Swap_Changing_Token_B_Click"
+        case .swapErrorTokenAInsufficientAmount:
+            return "Swap_Error_Token_A_Insufficient_Amount"
+        case .swapChangingValueTokenAAll:
+            return "Swap_Changing_Value_Token_A_All"
         default:
             break
         }
@@ -26,13 +34,23 @@ extension KeyAppAnalyticsEvent {
         
         // The same for params, params key & value can be customized too, if not, it will be automatically converted to `Uppercased_Snake_Case`
         
-        // Example: modify the key & value manually and prevent default behavior if needed
-        // switch self {
-        // case let .login(userId: String):
-        //     return ["Id": userId] // by default userId -> User_Id
-        // default:
-        //     break
-        // }
+        // Modify the key & value manually and prevent default behavior
+        switch self {
+        case let .swapChangingTokenAClick(tokenAName):
+            return ["Token_A_Name": tokenAName]
+        case let .swapChangingTokenBClick(tokenBName):
+            return ["Token_B_Name": tokenBName]
+        case let .swapChangingValueTokenA(tokenAName, tokenAValue):
+            return ["Token_A_Name": tokenAName, "Token_A_Value": tokenAValue]
+        case let .swapChangingValueTokenB(tokenBName, tokenBValue):
+            return ["Token_B_Name": tokenBName, "Token_B_Value": tokenBValue]
+        case let .swapChangingValueTokenAAll(tokenAName, tokenAValue):
+            return ["Token_A_Name": tokenAName, "Token_A_Value": tokenAValue]
+        case let .swapSwitchTokens(tokenAName, tokenBName):
+            return ["Token_A_Name": tokenAName, "Token_B_Name": tokenBName]
+        default:
+            break
+        }
         
         // Default converter from `camelCase` to `Uppercased_Snake_Case` format
         let formatted = mirror.params.map { ($0.key.snakeAndFirstUppercased ?? "", $0.value) }
