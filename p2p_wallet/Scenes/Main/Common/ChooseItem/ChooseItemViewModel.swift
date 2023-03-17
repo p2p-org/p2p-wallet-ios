@@ -57,9 +57,10 @@ final class ChooseItemViewModel: BaseViewModel, ObservableObject {
                     let searchedItems = self.allItems
                         .flatMap { $0.items }
                         .filter { $0.matches(keyword: value.lowercased()) }
-                    self.sections = self.service.sort(items: [ChooseItemListSection(
-                        items: searchedItems
-                    )])
+                    self.sections = self.service.sortFiltered(
+                        by: value.lowercased(),
+                        items: [ChooseItemListSection(items: searchedItems)]
+                    )
                 }
             })
             .store(in: &subscriptions)
