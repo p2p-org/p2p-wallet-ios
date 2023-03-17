@@ -25,6 +25,10 @@ class TransactionDetailCoordinator: SmartCoordinator<TransactionDetailStatus> {
             ignoresKeyboard: true
         )
         vc.view.layer.cornerRadius = 20
+        vc.onClose = { [weak self] in
+            // Handle result if no action is chosen and sheet is closed by click on gray area
+            self?.handleResult()
+        }
 
         // observe action
         viewModel.action.sink { [weak self, weak vc] action in
