@@ -41,7 +41,7 @@ final class HomeAccountsViewModel: BaseViewModel, ObservableObject {
 
     /// Primary list accounts.
     var accounts: [any RendableAccount] {
-        ethereumAccountsState.value.filter { _ in available(.ethAddressEnabled)}
+        ethereumAccountsState.value.filter { _ in available(.ethAddressEnabled) }
             + solanaAccountsState.value.filter { rendableAccount in
                 Self.shouldInVisiableSection(rendableAccount: rendableAccount, hideZeroBalance: hideZeroBalance)
             }
