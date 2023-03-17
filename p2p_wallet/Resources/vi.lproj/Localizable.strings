@@ -1281,3 +1281,4 @@ You can try again, but your new transaction will be subject to the current rates
 "Token you pay" = "Mã thông báo bạn thanh toán";
 "Token you receive" = "Mã thông báo bạn nhận được";
 "You can’t swap between the same token" = "Bạn không thể hoán đổi giữa cùng một mã thông báo";
+"Enter amount" = "Nhập số tiền";

@@ -311,7 +311,7 @@ private extension SwapViewModel {
     func updateActionButton(for state: JupiterSwapState) {
         // assert that amount > 0
         guard let amount = state.amountFrom, amount > 0 else {
-            actionButtonData = SliderActionButtonData(isEnabled: false, title: L10n.enterTheAmount)
+            actionButtonData = SliderActionButtonData.zero
             return
         }
         
