@@ -1281,3 +1281,4 @@ You can try again, but your new transaction will be subject to the current rates
 "Integrity of the route has been compromised" = "Tính toàn vẹn của tuyến đường đã bị xâm phạm";
 "Creating transaction failed" = "Tạo giao dịch không thành công";
 "No swap options for these tokens" = "Không có tùy chọn hoán đổi cho các mã thông báo này";
+"You have entered too little" = "Bạn đã nhập quá ít";
