@@ -44,15 +44,38 @@ final class ChooseSwapTokenService: ChooseItemService {
     }
 
     func sort(items: [ChooseItemListSection]) -> [ChooseItemListSection] {
-        let newItems = items.map { section in
+        let sections = items.map { section in
             guard let tokens = section.items as? [SwapToken] else { return section }
             return ChooseItemListSection(items: tokens.sorted(
                 preferTokens: preferTokens,
                 sortByName: !fromToken
             ))
         }
-        let isEmpty = newItems.flatMap { $0.items }.isEmpty
-        return isEmpty ? [] : newItems
+        return validateEmpty(sections: sections)
+    }
+
+    func sortFiltered(by keyword: String, items: [ChooseItemListSection]) -> [ChooseItemListSection] {
+        let sections = items.map { section in
+            guard var tokens = section.items as? [SwapToken] else { return section }
+            tokens = tokens.sorted(by: { lhs, rhs in
+                // Put 'start' matches in the beginning of array, 'contains' after
+                lhs.token.name.lowercased().starts(with: keyword) || lhs.token.symbol.lowercased().starts(with: keyword)
+            })
+            if let index = tokens.firstIndex(where: {
+                $0.token.name.lowercased().elementsEqual(keyword) || $0.token.symbol.lowercased().elementsEqual(keyword)
+            }) {
+                // Put exact match in the first place
+                let exactKeywordToken = tokens.remove(at: index)
+                tokens.insert(exactKeywordToken, at: .zero)
+            }
+            return ChooseItemListSection(items: tokens)
+        }
+        return validateEmpty(sections: sections)
+    }
+
+    private func validateEmpty(sections: [ChooseItemListSection]) -> [ChooseItemListSection] {
+        let isEmpty = sections.flatMap { $0.items }.isEmpty
+        return isEmpty ? [] : sections
     }
 }
 

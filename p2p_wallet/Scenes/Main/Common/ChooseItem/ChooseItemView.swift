@@ -102,7 +102,7 @@ private extension ChooseItemView {
             }
             spacer(height: 28)
         }
-        .background(Color(Asset.Colors.smoke.color))
+        .modifier(ListBackgroundModifier(separatorColor: Asset.Colors.smoke.color))
         .environment(\.defaultMinListRowHeight, 12)
         .scrollDismissesKeyboard()
     }
