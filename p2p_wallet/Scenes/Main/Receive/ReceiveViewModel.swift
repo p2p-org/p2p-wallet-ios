@@ -88,7 +88,6 @@ class ReceiveViewModel: BaseViewModel, ObservableObject {
 
                 return items
             }
-
             self.items = solanaNetwork(address: address, username: userWallet.name)
 
         case let .ethereum(tokenSymbol, icon):

@@ -136,14 +136,61 @@ class DetailAccountCoordinator: SmartCoordinator<WalletDetailCoordinator.Result>
             return
         }
 
-        let coordinator = ReceiveCoordinator(
-            network: .solana(
-                tokenSymbol: account.data.token.symbol,
-                tokenImage: .init(token: account.data.token)
-            ),
-            presentation: SmartCoordinatorPushPresentation(navigationController)
-        )
-        coordinator.start().sink { _ in }.store(in: &subscriptions)
+        // TODO: Put FT here
+        if SupportedTokensBusinnes.wellKnownTokens.contains(where: { token in
+            token.symbol.lowercased() == account.data.token.symbol.lowercased()
+        }) {
+            var icon: SupportedTokenItemIcon = .image(UIImage.imageOutlineIcon)
+            if let logoURL = URL(string: account.data.token.logoURI ?? "") {
+                icon = .url(logoURL)
+            }
+            openReceive(item: .init(icon: icon, name: account.data.name, symbol: account.data.token.symbol,
+                                    availableNetwork: [.solana, .ethereum]))
+        } else {
+            let coordinator = ReceiveCoordinator(
+                network: .solana(
+                    tokenSymbol: account.data.token.symbol,
+                    tokenImage: .init(token: account.data.token)
+                ),
+                presentation: SmartCoordinatorPushPresentation(navigationController)
+            )
+            coordinator.start().sink { _ in }.store(in: &subscriptions)
+        }
+    }
+
+    private func openReceive(item: SupportedTokenItem) {
+        // Coordinate to receive
+        func _openReceive(network: ReceiveNetwork) {
+            self.coordinate(to: ReceiveCoordinator(network: network, presentation: self.presentation))
+                .sink {}
+                .store(in: &subscriptions)
+        }
+
+        let image = ReceiveNetwork.Image(icon: item.icon)
+
+        if item.availableNetwork.count == 1, let network = item.availableNetwork.first {
+            // Token supports only one network.
+            switch network {
+            case .solana:
+                _openReceive(network: .solana(tokenSymbol: item.symbol, tokenImage: image))
+            case .ethereum:
+                _openReceive(network: .ethereum(tokenSymbol: item.symbol, tokenImage: image))
+            }
+        } else {
+            // Token supports many networks.
+            let coordinator = SupportedTokenNetworksCoordinator(supportedToken: item, viewController: self.presentation.presentingViewController)
+            self.coordinate(to: coordinator)
+                .sink { selectedNetwork in
+                    guard let selectedNetwork else { return }
+                    switch selectedNetwork {
+                    case .solana:
+                        _openReceive(network: .solana(tokenSymbol: item.symbol, tokenImage: image))
+                    case .ethereum:
+                        _openReceive(network: .ethereum(tokenSymbol: item.symbol, tokenImage: image))
+                    }
+                }
+                .store(in: &subscriptions)
+        }
     }
 
     func openSwap() {

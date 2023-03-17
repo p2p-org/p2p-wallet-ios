@@ -15,11 +15,15 @@ enum SupportedTokenItemIcon {
     case placeholder
 }
 
-enum SupportedTokenItemNetwork: Int, Identifiable {
+enum SupportedTokenItemNetwork: Int, Identifiable, Comparable {
     var id: Int { rawValue }
 
     case solana
     case ethereum
+
+    static func < (lhs: SupportedTokenItemNetwork, rhs: SupportedTokenItemNetwork) -> Bool {
+        lhs.id < rhs.id
+    }
 }
 
 struct SupportedTokenItem: Identifiable, Hashable {
@@ -33,11 +37,12 @@ struct SupportedTokenItem: Identifiable, Hashable {
 
     var availableNetwork: [SupportedTokenItemNetwork]
 
-    init(icon: SupportedTokenItemIcon, name: String, symbol: String, availableNetwork: [SupportedTokenItemNetwork]) {
+    init(icon: SupportedTokenItemIcon, name: String, symbol: String, availableNetwork: Set<SupportedTokenItemNetwork>) {
         self.icon = icon
         self.name = name
         self.symbol = symbol
-        self.availableNetwork = availableNetwork
+        self.availableNetwork = [SupportedTokenItemNetwork](availableNetwork)
+            .sorted()
     }
 
     init(solana token: SolanaSwift.Token) {
