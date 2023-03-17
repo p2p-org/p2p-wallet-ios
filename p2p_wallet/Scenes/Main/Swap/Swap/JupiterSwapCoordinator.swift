@@ -137,6 +137,7 @@ final class JupiterSwapCoordinator: Coordinator<Void> {
     }
 
     private func openChooseToken(fromToken: Bool) {
+        self.viewModel.continueUpdateOnDisappear = true
         coordinate(to: ChooseSwapTokenCoordinator(
             chosenWallet: fromToken ? viewModel.currentState.fromToken : viewModel.currentState.toToken,
             tokens: fromToken ? viewModel.currentState.swapTokens : viewModel.currentState.possibleToTokens,
@@ -193,6 +194,7 @@ final class JupiterSwapCoordinator: Coordinator<Void> {
     }
 
     private func openSwapSettings() {
+        self.viewModel.continueUpdateOnDisappear = true
         // create coordinator
         let settingsCoordinator = SwapSettingsCoordinator(
             navigationController: navigationController,
