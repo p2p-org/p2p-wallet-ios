@@ -112,11 +112,16 @@ final class HomeCoordinator: Coordinator<Void> {
                 .map { _ in () }
                 .eraseToAnyPublisher()
         case .receive(let publicKey):
-            let coordinator = SupportedTokensCoordinator(
-                presentation: SmartCoordinatorPushPresentation(navigationController)
-            )
-            return coordinate(to: coordinator)
-                .eraseToAnyPublisher()
+            if available(.ethAddressEnabled) {
+                let coordinator = SupportedTokensCoordinator(
+                    presentation: SmartCoordinatorPushPresentation(navigationController)
+                )
+                return coordinate(to: coordinator)
+                    .eraseToAnyPublisher()
+            } else {
+                let coordinator = ReceiveCoordinator(network: .solana(tokenSymbol: "SOL", tokenImage: .image(.solanaIcon)), presentation: SmartCoordinatorPushPresentation(navigationController))
+                return coordinate(to: coordinator).eraseToAnyPublisher()
+            }
         case .send:
             return coordinate(
                 to: SendCoordinator(

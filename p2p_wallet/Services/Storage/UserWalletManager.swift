@@ -89,7 +89,10 @@ class UserWalletManager: ObservableObject {
 
         // Notification service
         notificationsService.unregisterForRemoteNotifications()
-        Task.detached { [notificationsService] in try await notificationsService.deleteDeviceToken() }
+        Task.detached { [notificationsService] in
+            let ethAddress = available(.ethAddressEnabled) ? self.wallet?.ethAddress : nil
+            try await notificationsService.deleteDeviceToken(ethAddress: ethAddress)
+        }
         Task.detached { try await Resolver.resolve(SendHistoryLocalProvider.self).save(nil) }
 
         // Storage

@@ -233,8 +233,13 @@ final class TabBarCoordinator: Coordinator<Void> {
                 .sink(receiveValue: {})
                 .store(in: &subscriptions)
         case .receive:
-            let coordinator = SupportedTokensCoordinator(presentation: SmartCoordinatorPushPresentation(navigationController))
-            coordinate(to: coordinator).sink { _ in }.store(in: &subscriptions)
+            if available(.ethAddressEnabled) {
+                let coordinator = SupportedTokensCoordinator(presentation: SmartCoordinatorPushPresentation(navigationController))
+                coordinate(to: coordinator).sink { _ in }.store(in: &subscriptions)
+            } else {
+                let coordinator = ReceiveCoordinator(network: .solana(tokenSymbol: "SOL", tokenImage: .image(.solanaIcon)), presentation: SmartCoordinatorPushPresentation(navigationController))
+                coordinate(to: coordinator).sink { _ in }.store(in: &subscriptions)
+            }
         case .swap:
             let swapCoordinator = SwapCoordinator(navigationController: navigationController, initialWallet: nil)
             coordinate(to: swapCoordinator)
