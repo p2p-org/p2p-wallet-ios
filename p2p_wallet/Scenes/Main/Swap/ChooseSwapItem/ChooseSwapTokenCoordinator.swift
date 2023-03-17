@@ -22,7 +22,7 @@ final class ChooseSwapTokenCoordinator: Coordinator<SwapToken?> {
         self.tokens = tokens
         self.navigationController = navigationController
         self.fromToken = fromToken
-        self.title = title ?? L10n.theTokenYouPay
+        self.title = title ?? L10n.tokenYouPay
     }
 
     override func start() -> AnyPublisher<SwapToken?, Never> {

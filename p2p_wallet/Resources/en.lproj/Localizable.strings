@@ -1198,14 +1198,11 @@ You can try again, but your new transaction will be subject to the current rates
 "Key App doesn’t make any profit from swap 💚" = "Key App doesn’t make any profit from swap 💚";
 "You receive" = "You receive";
 "Counting..." = "Counting...";
-"The token you pay" = "The token you pay";
 "You can enter “You pay” field only" = "You can enter “You pay” field only";
 "Not enough %@" = "Not enough %@";
-"You can’t swap same token" = "You can’t swap same token";
 "Buy with Moonpay" = "Buy with Moonpay";
 "License" = "License";
 "Cashout with Moonpay" = "Cashout with Moonpay";
-"The token you receive" = "The token you receive";
 "Received from" = "Received from";
 "Swap details" = "Swap details";
 "There was a problem with the swap, your funds were refunded" = "There was a problem with the swap, your funds were refunded";
@@ -1247,3 +1244,6 @@ You can try again, but your new transaction will be subject to the current rates
 "Integrity of the route has been compromised" = "Integrity of the route has been compromised";
 "Creating transaction failed" = "Creating transaction failed";
 "No swap options for these tokens" = "No swap options for these tokens";
+"Token you pay" = "Token you pay";
+"Token you receive" = "Token you receive";
+"You can’t swap between the same token" = "You can’t swap between the same token";
