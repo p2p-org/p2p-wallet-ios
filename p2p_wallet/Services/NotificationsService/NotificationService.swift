@@ -15,8 +15,8 @@ import Combine
 protocol NotificationService {
     typealias DeviceTokenResponse = JsonRpcResponseDto<DeviceTokenResponseDto>
 
-    func sendRegisteredDeviceToken(_ deviceToken: Data) async throws
-    func deleteDeviceToken() async throws
+    func sendRegisteredDeviceToken(_ deviceToken: Data, ethAddress: String?) async throws
+    func deleteDeviceToken(ethAddress: String?) async throws
     func showInAppNotification(_ notification: InAppNotification)
     func showToast(title: String?, text: String?)
     func showToast(title: String?, text: String?, withAutoHidden: Bool)
@@ -74,13 +74,14 @@ final class NotificationServiceImpl: NSObject, NotificationService {
             }
     }
 
-    func sendRegisteredDeviceToken(_ deviceToken: Data) async throws {
+    func sendRegisteredDeviceToken(_ deviceToken: Data, ethAddress: String? = nil) async throws {
         guard let publicKey = accountStorage.account?.publicKey.base58EncodedString else { return }
         let token = deviceToken.formattedDeviceToken
         
         let result = try await notificationRepository.sendDeviceToken(model: .init(
             deviceToken: token,
             clientId: publicKey,
+            ethPubkey: ethAddress,
             deviceInfo: .init(
                 osName: UIDevice.current.systemName,
                 osVersion: UIDevice.current.systemVersion,
@@ -93,15 +94,15 @@ final class NotificationServiceImpl: NSObject, NotificationService {
         Defaults.lastDeviceToken = deviceToken
     }
 
-    func deleteDeviceToken() async throws {
+    func deleteDeviceToken(ethAddress: String? = nil) async throws {
         guard
             let token = Defaults.lastDeviceToken?.formattedDeviceToken,
             let publicKey = accountStorage.account?.publicKey.base58EncodedString
         else { return }
-
         _ = try await notificationRepository.removeDeviceToken(model: .init(
             deviceToken: token,
-            clientId: publicKey
+            clientId: publicKey,
+            ethPubkey: ethAddress
         ))
 
         Defaults.lastDeviceToken = nil

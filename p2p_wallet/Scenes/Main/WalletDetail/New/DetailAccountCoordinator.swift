@@ -136,8 +136,7 @@ class DetailAccountCoordinator: SmartCoordinator<WalletDetailCoordinator.Result>
             return
         }
 
-        // TODO: Put FT here
-        if SupportedTokensBusinnes.wellKnownTokens.contains(where: { token in
+        if available(.ethAddressEnabled) && SupportedTokensBusinnes.wellKnownTokens.contains(where: { token in
             token.symbol.lowercased() == account.data.token.symbol.lowercased()
         }) {
             var icon: SupportedTokenItemIcon = .image(UIImage.imageOutlineIcon)

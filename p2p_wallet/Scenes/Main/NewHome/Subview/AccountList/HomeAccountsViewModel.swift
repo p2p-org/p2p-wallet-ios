@@ -41,7 +41,7 @@ final class HomeAccountsViewModel: BaseViewModel, ObservableObject {
 
     /// Primary list accounts.
     var accounts: [any RendableAccount] {
-        ethereumAccountsState.value
+        ethereumAccountsState.value.filter { _ in available(.ethAddressEnabled)}
             + solanaAccountsState.value.filter { rendableAccount in
                 Self.shouldInVisiableSection(rendableAccount: rendableAccount, hideZeroBalance: hideZeroBalance)
             }
@@ -171,10 +171,10 @@ final class HomeAccountsViewModel: BaseViewModel, ObservableObject {
     }
 
     func refresh() async throws {
-        let _ = try await (
-            solanaAccountsService.fetch(),
-            ethereumAccountsService.fetch()
-        )
+        _ = try await solanaAccountsService.fetch()
+        if available(.ethAddressEnabled) {
+            _ = try await ethereumAccountsService.fetch()
+        }
     }
 
     func actionClicked(_ action: WalletActionType) {
