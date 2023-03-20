@@ -33,7 +33,6 @@ final class EthereumAccountsServiceTests: XCTestCase {
             web3: web3,
             ethereumTokenRepository: EthereumTokensRepository(web3: web3),
             priceService: priceService,
-            trackingList: [],
             fiat: "usd",
             errorObservable: MockErrorObservable()
         )

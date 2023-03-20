@@ -322,6 +322,13 @@ let package = Package(
             dependencies: ["KeyAppBusiness"],
             path: "Tests/UnitTests/KeyAppBusinessTests"
         ),
+
+        .target(
+            name: "Jupiter",
+            dependencies: [
+                .product(name: "SolanaSwift", package: "solana-swift"),
+            ]
+        ),
     ]
 )
 
