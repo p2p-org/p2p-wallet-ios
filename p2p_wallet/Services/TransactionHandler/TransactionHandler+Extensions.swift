@@ -19,7 +19,7 @@ extension TransactionHandler {
             do {
                 let transactionID = try await processingTransaction.createRequest()
                 // update status
-                await updateTransactionAtIndex(index) { _ in
+                _ = await updateTransactionAtIndex(index) { _ in
                     .init(
                         trxIndex: index,
                         transactionId: transactionID,
@@ -42,8 +42,8 @@ extension TransactionHandler {
                 // Report error
                 errorObserver.handleError(error)
 
-                // Mark transaction as failured
-                await updateTransactionAtIndex(index) { currentValue in
+                // mark transaction as failured
+                _ = await updateTransactionAtIndex(index) { currentValue in
                     var info = currentValue
                     info.status = .error(error)
                     return info
@@ -69,15 +69,12 @@ extension TransactionHandler {
                     txStatus = .confirmed(Int(numberOfConfirmations))
                 case .finalized:
                     txStatus = .finalized
-                    await MainActor.run { [weak self] in
-                        self?.notificationsService.showInAppNotification(.done(L10n.transactionHasBeenConfirmed))
-                    }
                 case .error(let error):
                     print(error ?? "")
                     txStatus = .error(SolanaError.other(error ?? ""))
                 }
 
-                await self.updateTransactionAtIndex(index) { currentValue in
+                _ = await self.updateTransactionAtIndex(index) { currentValue in
                     var value = currentValue
                     value.status = txStatus
                     if let slot {
@@ -99,7 +96,7 @@ extension TransactionHandler {
         if let currentValue = value[safe: index] {
             var newValue = update(currentValue)
 
-            // update
+           // update
             value[index] = newValue
             transactionsSubject.send(value)
             return true

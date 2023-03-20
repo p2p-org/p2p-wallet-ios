@@ -16,7 +16,12 @@ enum DetailAccountCoordinatorArgs {
     case solanaAccount(SolanaAccountsService.Account)
 }
 
-class DetailAccountCoordinator: SmartCoordinator<WalletDetailCoordinator.Result> {
+enum DetailAccountCoordinatorResult {
+    case cancel
+    case done
+}
+
+class DetailAccountCoordinator: SmartCoordinator<DetailAccountCoordinatorResult> {
     let args: DetailAccountCoordinatorArgs
 
     init(args: DetailAccountCoordinatorArgs, presentingViewController: UINavigationController) {
@@ -203,18 +208,36 @@ class DetailAccountCoordinator: SmartCoordinator<WalletDetailCoordinator.Result>
     }
 
     func openSwap() {
-        guard
-            case let .solanaAccount(account) = self.args,
-            let navigationController = presentation.presentingViewController as? UINavigationController
+        guard case let .solanaAccount(account) = self.args,
+              let rootViewController = presentation.presentingViewController as? UINavigationController
         else { return }
-
-        let vm = OrcaSwapV2.ViewModel(initialWallet: account.data)
-        let vc = OrcaSwapV2.ViewController(viewModel: vm)
-        vc.doneHandler = { [weak self] in
-            navigationController.popToRootViewController(animated: true)
-            self?.result.send(.done)
+        if available(.jupiterSwapEnabled) {
+            coordinate(
+                to: JupiterSwapCoordinator(
+                    navigationController: rootViewController,
+                    params: .init(
+                        dismissAfterCompletion: true,
+                        openKeyboardOnStart: true,
+                        source: .tapToken,
+                        preChosenWallet: account.data,
+                        hideTabBar: true
+                    )
+                )
+            )
+            .sink { [weak rootViewController] _ in
+                rootViewController?.popToRootViewController(animated: true)
+            }
+            .store(in: &subscriptions)
+        } else {
+            let vm = OrcaSwapV2.ViewModel(initialWallet: wallet)
+            let vc = OrcaSwapV2.ViewController(viewModel: vm)
+            
+            vc.doneHandler = { [weak self, weak rootViewController] in
+                rootViewController?.popToRootViewController(animated: true)
+                self?.result.send(.done)
+            }
+            rootViewController.pushViewController(vc, animated: true)
         }
-        self.presentation.presentingViewController.show(vc, sender: nil)
     }
 
     func openSend() {

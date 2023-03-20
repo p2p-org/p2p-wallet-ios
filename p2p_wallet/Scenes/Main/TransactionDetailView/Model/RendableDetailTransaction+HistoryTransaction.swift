@@ -21,9 +21,9 @@ struct RendableDetailHistoryTransaction: RendableTransactionDetail {
             return .succeed(message: "")
         case .failed:
             if let error = trx.error?.description {
-                return .error(message: NSAttributedString(string: error))
+                return .error(message: NSAttributedString(string: error), error: nil)
             } else {
-                return .error(message: NSAttributedString(string: L10n.theTransactionHasBeenRejected))
+                return .error(message: NSAttributedString(string: L10n.theTransactionHasBeenRejected), error: nil)
             }
         }
     }

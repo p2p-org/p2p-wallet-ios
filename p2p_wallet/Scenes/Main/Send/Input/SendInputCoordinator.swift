@@ -100,7 +100,7 @@ final class SendInputCoordinator: Coordinator<SendResult> {
     }
 
     private func openChooseWalletToken(from vc: UIViewController, viewModel: SendInputViewModel) {
-        coordinate(to: ChooseWalletTokenCoordinator(
+        coordinate(to: ChooseSendItemCoordinator(
             strategy: .sendToken,
             chosenWallet: viewModel.sourceWallet,
             parentController: vc

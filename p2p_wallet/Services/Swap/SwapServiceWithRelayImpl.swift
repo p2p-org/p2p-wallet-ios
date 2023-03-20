@@ -49,7 +49,7 @@ class SwapServiceWithRelayImpl: SwapServiceType {
         payingWallet: Wallet?,
         inputAmount: Double?,
         slippage: Double
-    ) async throws -> SwapFeeInfo {
+    ) async throws -> _SwapFeeInfo {
         let bestPoolsPair = bestPoolsPair
         // Network fees
         let networkFees: [PayingFee]
@@ -75,7 +75,7 @@ class SwapServiceWithRelayImpl: SwapServiceType {
             slippage: slippage
         )
 
-        return SwapFeeInfo(fees: networkFees + liquidityProviderFees)
+        return _SwapFeeInfo(fees: networkFees + liquidityProviderFees)
     }
 
     func findPosibleDestinationMints(fromMint: String) throws -> [String] {

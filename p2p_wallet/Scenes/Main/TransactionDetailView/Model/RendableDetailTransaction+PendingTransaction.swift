@@ -21,8 +21,13 @@ struct RendableDetailPendingTransaction: RendableTransactionDetail {
         }
         
         switch trx.status {
-        case .error:
-            return .error(message: NSAttributedString(string: L10n.theTransactionWasRejectedByTheSolanaBlockchain))
+        case let .error(errorModel):
+            if errorModel.isSlippageError {
+                return .error(message: NSAttributedString(string: errorModel.readableDescription), error: errorModel)
+            }
+            return .error(message: NSAttributedString(
+                string: L10n.OopsSomethingWentWrong.pleaseTryAgainLater), error: errorModel
+            )
         case .finalized:
             return .succeed(message: L10n.theTransactionHasBeenSuccessfullyCompleted)
         default:
@@ -65,7 +70,7 @@ struct RendableDetailPendingTransaction: RendableTransactionDetail {
                 return .icon(.transactionSend)
             }
             
-        case let transaction as SwapTransaction:
+        case let transaction as SwapRawTransactionType:
             let fromUrlStr = transaction.sourceWallet.token.logoURI
             let toUrlStr = transaction.destinationWallet.token.logoURI
             
@@ -97,8 +102,8 @@ struct RendableDetailPendingTransaction: RendableTransactionDetail {
         switch trx.rawTransaction {
         case let transaction as SendTransaction:
             return .negative("-\(transaction.amountInFiat.fiatAmountFormattedString())")
-        case let transaction as SwapTransaction:
-            let amountInFiat: Double = (transaction.amount * priceService.currentPrice(mint: transaction.sourceWallet.token.address)?.value)
+        case let transaction as SwapRawTransactionType:
+            let amountInFiat: Double = (transaction.fromAmount * priceService.currentPrice(mint: transaction.sourceWallet.token.address)?.value)
             return .unchanged("\(amountInFiat.fiatAmountFormattedString())")
         case let transaction as WormholeClaimTransaction:
             if let value = CurrencyFormatter().string(for: transaction.amountInFiat) {
@@ -161,28 +166,31 @@ struct RendableDetailPendingTransaction: RendableTransactionDetail {
                 break
             }
             
-            if transaction.feeInToken.total == 0 {
+            if transaction.feeAmount.total == 0 {
                 result.append(.init(title: L10n.transactionFee, value: L10n.freePaidByKeyApp))
             } else {
-                let feeAmount: Double = transaction.feeInToken.total.convertToBalance(decimals: transaction.payingFeeWallet?.token.decimals)
+                let feeAmount: Double = transaction.feeAmount.total.convertToBalance(decimals: transaction.payingFeeWallet?.token.decimals)
                 let formatedFeeAmount: String = feeAmount.tokenAmountFormattedString(symbol: transaction.payingFeeWallet?.token.symbol ?? "")
                 result.append(.init(title: L10n.transactionFee, value: formatedFeeAmount))
             }
-        case let transaction as SwapTransaction:
-            if let networkFees = transaction.networkFees {
-                if networkFees.total == 0 {
-                    result.append(.init(title: L10n.transactionFee, value: L10n.freePaidByKeyApp))
-                } else {
-                    let feeAmount: Double = networkFees.total.convertToBalance(decimals: networkFees.token.decimals)
-                    let formatedFeeAmount: String = feeAmount.tokenAmountFormattedString(symbol: networkFees.token.symbol)
-                    
-                    let feeAmountInFiat: Double = feeAmount * priceService.currentPrice(mint: networkFees.token.address)?.value
-                    let formattedFeeAmountInFiat: String = feeAmountInFiat.fiatAmountFormattedString()
-                    
-                    result.append(.init(title: L10n.transactionFee, value: "\(formatedFeeAmount) (\(formattedFeeAmountInFiat))"))
-                }
+        case let transaction as SwapRawTransactionType:
+            let fees = transaction.feeAmount
+            
+            if fees.total == 0 {
+                result.append(.init(title: L10n.transactionFee, value: L10n.freePaidByKeyApp))
             }
             
+            // net work fee
+            else if let payingFeeWallet = transaction.payingFeeWallet {
+                let feeAmount: Double = fees.total.convertToBalance(decimals: payingFeeWallet.token.decimals)
+                let formatedFeeAmount: String = feeAmount.tokenAmountFormattedString(symbol: payingFeeWallet.token.symbol)
+                
+                let feeAmountInFiat: Double = feeAmount * priceService.currentPrice(mint: payingFeeWallet.token.address)?.value
+                let formattedFeeAmountInFiat: String = feeAmountInFiat.fiatAmountFormattedString()
+                
+                result.append(.init(title: L10n.transactionFee, value: "\(formatedFeeAmount) (\(formattedFeeAmountInFiat))"))
+            }
+
         default:
             break
         }
@@ -199,4 +207,9 @@ struct RendableDetailPendingTransaction: RendableTransactionDetail {
         }
     }
 }
-    
+
+extension Error {
+    var isSlippageError: Bool {
+        readableDescription.contains("Slippage tolerance exceeded")
+    }
+}

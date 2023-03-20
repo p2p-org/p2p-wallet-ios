@@ -21,7 +21,7 @@ target 'p2p_wallet' do
   if $solanaSwiftPath
     pod "SolanaSwift", :path => $solanaSwiftPath
   else
-    pod 'SolanaSwift', :git => 'https://github.com/p2p-org/solana-swift.git', :branch => 'main'
+    pod 'SolanaSwift', :git => 'https://github.com/p2p-org/solana-swift.git', :branch => 'feature/versioned-transaction'
   end
 
   # tools
@@ -30,6 +30,7 @@ target 'p2p_wallet' do
   pod 'Periphery'
   pod 'SwiftFormat/CLI', '0.49.6'
   pod 'ReachabilitySwift', '~> 5.0.0'
+  pod 'Task_retrying', :git => 'https://github.com/bigearsenal/task-retrying-swift.git', :branch => 'master'
 
   # Deprecating: BECollectionView_Combine - will be removed soon
   pod 'ListPlaceholder', :git => 'https://github.com/p2p-org/ListPlaceholder.git', :branch => 'custom_gradient_color'
