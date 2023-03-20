@@ -33,6 +33,9 @@ public struct WormholeBundleStatus: Codable, Hashable {
 
     public enum Status: String, Codable, Hashable {
         case pending
+        case expired
+        case canceled
+        case inProgress = "in_progress"
         case completed
     }
 }
