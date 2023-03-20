@@ -257,6 +257,8 @@ targets:
               product: KeyAppBusiness
             - package: KeyAppKit
               product: Wormhole
+            - package: KeyAppKit
+              product: Jupiter
 
             - package: RenVMSwift
             - package: FeeRelayerSwift
