@@ -52,14 +52,14 @@ target 'p2p_wallet' do
   # development pods
   key_app_kit
   pod 'CocoaDebug', '1.7.2', :configurations => ['Debug', 'Test']
-  pod 'FeeRelayerSwift', :git => 'https://github.com/p2p-org/FeeRelayerSwift.git', :branch => 'feature/versioned-transaction'
+  pod 'FeeRelayerSwift', :git => 'https://github.com/p2p-org/FeeRelayerSwift.git', :branch => 'master'
   pod 'OrcaSwapSwift', :git => 'https://github.com/p2p-org/OrcaSwapSwift.git', :branch => 'main'
   pod 'RenVMSwift', :git => 'https://github.com/p2p-org/RenVMSwift.git', :branch => 'master'
   
   if $solanaSwiftPath
     pod "SolanaSwift", :path => $solanaSwiftPath
   else
-    pod 'SolanaSwift', :git => 'https://github.com/p2p-org/solana-swift.git', :branch => 'feature/versioned-transaction'
+    pod 'SolanaSwift', :git => 'https://github.com/p2p-org/solana-swift.git', :branch => 'main'
   end
 
   # tools

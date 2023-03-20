@@ -28,8 +28,8 @@ final class ChooseItemViewModel: BaseViewModel, ObservableObject {
         self.service = service
         super.init()
 
+        self.isLoading = true
         Task {
-            self.isLoading = true
             do {
                 let data = try await service.fetchItems()
                 let dataWithoutChosen = data.map { section in
@@ -38,6 +38,7 @@ final class ChooseItemViewModel: BaseViewModel, ObservableObject {
                     )
                 }
                 self.allItems = self.service.sort(items: dataWithoutChosen)
+                self.sections = self.allItems
             }
             catch {
                 self.notifications.showDefaultErrorNotification()

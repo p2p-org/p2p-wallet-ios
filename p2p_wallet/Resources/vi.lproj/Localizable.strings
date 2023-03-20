@@ -1230,14 +1230,11 @@ You can try again, but your new transaction will be subject to the current rates
 "Key App doesn’t make any profit from swap 💚" = "Ứng dụng chính không kiếm được bất kỳ lợi nhuận nào từ trao đổi 💚";
 "You receive" = "Bạn nhận được";
 "Counting..." = "Đếm...";
-"The token you pay" = "Mã thông báo bạn thanh toán";
 "You can enter “You pay” field only" = "Bạn chỉ có thể nhập trường “Bạn thanh toán”";
 "Not enough %@" = "Không đủ %@";
-"You can’t swap same token" = "Bạn không thể trao đổi cùng một mã thông báo";
 "Buy with Moonpay" = "Mua bằng Moonpay";
 "License" = "Giấy phép";
 "Cashout with Moonpay" = "Rút tiền với Moonpay";
-"The token you receive" = "Mã thông báo bạn nhận được";
 "Received from" = "Nhận được tư";
 "There was a problem with the swap, your funds were refunded" = "Đã xảy ra sự cố với giao dịch hoán đổi, tiền của bạn đã được hoàn trả";
 "Swap details" = "chi tiết hoán đổi";
@@ -1282,3 +1279,7 @@ You can try again, but your new transaction will be subject to the current rates
 "Creating transaction failed" = "Tạo giao dịch không thành công";
 "No swap options for these tokens" = "Không có tùy chọn hoán đổi cho các mã thông báo này";
 "You have entered too little" = "Bạn đã nhập quá ít";
+"Token you pay" = "Mã thông báo bạn thanh toán";
+"Token you receive" = "Mã thông báo bạn nhận được";
+"You can’t swap between the same token" = "Bạn không thể hoán đổi giữa cùng một mã thông báo";
+"Enter amount" = "Nhập số tiền";

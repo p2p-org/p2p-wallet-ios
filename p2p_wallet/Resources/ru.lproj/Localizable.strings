@@ -1225,14 +1225,11 @@ You can try again, but your new transaction will be subject to the current rates
 "Key App doesn’t make any profit from swap 💚" = "Key App не получает прибыли от свопа 💚";
 "You receive" = "Вы получаете";
 "Counting..." = "Подсчет...";
-"The token you pay" = "Токен, который вы платите";
 "You can enter “You pay” field only" = "Вы можете ввести только поле «Вы платите»";
 "Not enough %@" = "Недостаточно <С>";
-"You can’t swap same token" = "Вы не можете поменять один и тот же токен";
 "Buy with Moonpay" = "Купить с Moonpay";
 "License" = "Лицензия";
 "Cashout with Moonpay" = "Вывод средств с Moonpay";
-"The token you receive" = "Токен, который вы получаете";
 "Received from" = "Получен от";
 "Swap details" = "Поменять детали";
 "There was a problem with the swap, your funds were refunded" = "Возникла проблема со свопом, ваши средства были возвращены";
@@ -1277,3 +1274,7 @@ You can try again, but your new transaction will be subject to the current rates
 "Creating transaction failed" = "Не удалось создать транзакцию";
 "No swap options for these tokens" = "Нет вариантов обмена для этих токенов";
 "You have entered too little" = "Вы ввели слишком мало";
+"Token you pay" = "Токен, который вы платите";
+"Token you receive" = "Токен, который вы получаете";
+"You can’t swap between the same token" = "Вы не можете переключаться между одним и тем же токеном";
+"Enter amount" = "Введите сумму";
