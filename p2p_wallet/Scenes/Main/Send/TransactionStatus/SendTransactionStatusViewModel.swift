@@ -30,7 +30,7 @@ final class SendTransactionStatusViewModel: BaseViewModel, ObservableObject {
         transactionCryptoAmount = transaction.amount.tokenAmountFormattedString(symbol: transaction.walletToken.token.symbol)
 
         let feeToken = transaction.payingFeeWallet?.token
-        let feeAmount: String? = transaction.feeInToken == .zero ? nil : transaction.feeInToken.total
+        let feeAmount: String? = transaction.feeAmount == .zero ? nil : transaction.feeAmount.total
             .convertToBalance(decimals: feeToken?.decimals).tokenAmountFormattedString(symbol: feeToken?.symbol ?? "")
         let feeInfo = feeAmount ?? L10n.freePaidByKeyApp
 

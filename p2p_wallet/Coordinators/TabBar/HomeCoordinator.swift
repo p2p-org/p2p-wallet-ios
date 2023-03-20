@@ -166,23 +166,37 @@ final class HomeCoordinator: Coordinator<Void> {
             .eraseToAnyPublisher()
         case .swap:
             analyticsManager.log(event: .swapViewed(lastScreen: "main_screen"))
-            return coordinate(
-                to: SwapCoordinator(
-                    navigationController: navigationController,
-                    initialWallet: nil
+            if available(.jupiterSwapEnabled) {
+                return coordinate(
+                    to: JupiterSwapCoordinator(
+                        navigationController: navigationController,
+                        params: JupiterSwapParameters(
+                            dismissAfterCompletion: true,
+                            openKeyboardOnStart: true,
+                            source: .actionPanel
+                        )
+                    )
                 )
-            )
-            .receive(on: RunLoop.main)
-            .handleEvents(receiveOutput: { [weak tokensViewModel] result in
-                switch result {
-                case .cancel:
-                    break
-                case .done:
-                    tokensViewModel?.scrollToTop()
-                }
-            })
-            .map { _ in () }
-            .eraseToAnyPublisher()
+                .eraseToAnyPublisher()
+            } else {
+                return coordinate(
+                    to: SwapCoordinator(
+                        navigationController: navigationController,
+                        initialWallet: nil
+                    )
+                )
+                .receive(on: RunLoop.main)
+                .handleEvents(receiveOutput: { [weak tokensViewModel] result in
+                    switch result {
+                    case .cancel:
+                        break
+                    case .done:
+                        tokensViewModel?.scrollToTop()
+                    }
+                })
+                .map {_ in ()}
+                .eraseToAnyPublisher()
+            }
         case .cashOut:
             analyticsManager.log(event: .sellClicked(source: "Main"))
             return coordinate(

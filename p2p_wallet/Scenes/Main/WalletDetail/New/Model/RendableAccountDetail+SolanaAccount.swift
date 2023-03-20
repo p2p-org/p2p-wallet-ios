@@ -10,6 +10,8 @@ import KeyAppBusiness
 
 struct RendableNewSolanaAccountDetail: RendableAccountDetail {
     let account: SolanaAccountsService.Account
+    
+    let isSwapAvailable: Bool
 
     var title: String {
         account.data.token.name
@@ -24,11 +26,16 @@ struct RendableNewSolanaAccountDetail: RendableAccountDetail {
     }
 
     var actions: [RendableAccountDetailAction] {
+        var walletActions: [RendableAccountDetailAction]
         if account.data.isNativeSOL || account.data.token.symbol == "USDC" {
-            return [.buy, .receive(.solanaAccount(account)), .send, .swap]
+            walletActions = [.buy, .receive(.solanaAccount(account)), .send, .swap]
         } else {
-            return [.receive(.solanaAccount(account)), .send, .swap]
+            walletActions = [.receive(.solanaAccount(account)), .send, .swap]
         }
+        if isSwapAvailable {
+            walletActions.append(.swap)
+        }
+        return walletActions
     }
 
     var onAction: (RendableAccountDetailAction) -> Void

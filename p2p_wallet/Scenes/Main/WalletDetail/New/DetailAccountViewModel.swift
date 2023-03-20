@@ -31,7 +31,9 @@ class DetailAccountViewModel: BaseViewModel, ObservableObject {
     /// Render solana account and dynamically update it.
     init(
         solanaAccountsManager: SolanaAccountsService = Resolver.resolve(),
-        solanaAccount: SolanaAccountsService.Account
+        solanaAccount: SolanaAccountsService.Account,
+        jupiterTokensRepository: JupiterTokensRepository = Resolver.resolve(),
+        wallet: Wallet
     ) {
         // Init action subject
         let actionSubject = PassthroughSubject<DetailAccountAction, Never>()
@@ -52,7 +54,8 @@ class DetailAccountViewModel: BaseViewModel, ObservableObject {
         }
 
         // Render solana wallet (account)
-        rendableAccountDetail = RendableNewSolanaAccountDetail(account: solanaAccount, onAction: onAction)
+        let isSwapAvailableDefault = available(.jupiterSwapEnabled) ? false : true
+        rendableAccountDetail = RendableNewSolanaAccountDetail(account: solanaAccount, isSwapAvailable: isSwapAvailableDefault, onAction: onAction)
 
         super.init()
 
@@ -67,5 +70,21 @@ class DetailAccountViewModel: BaseViewModel, ObservableObject {
                 self?.rendableAccountDetail = rendableAccountDetail
             }
             .store(in: &subscriptions)
+    }
+}
+
+extension DetailAccountViewModel {
+    /// Check swap action is available for this account (wallet).
+    static func isSwapAvailableFor(wallet: Wallet, for status: JupiterDataStatus) -> Bool {
+        if available(.jupiterSwapEnabled) {
+            switch status {
+            case .ready(let swapTokens, _) where swapTokens.contains(where: { $0.address == wallet.mintAddress }):
+                return true
+            default:
+                return false
+            }
+        } else {
+            return true
+        }
     }
 }

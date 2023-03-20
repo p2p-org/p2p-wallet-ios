@@ -111,6 +111,8 @@ class UserWalletManager: ObservableObject {
         Defaults.moonpayInfoShouldHide = false
         Defaults.isSellInfoPresented = false
         Defaults.isTokenInputTypeChosen = false
+        Defaults.fromTokenAddress = nil
+        Defaults.toTokenAddress = nil
 
         walletSettings.reset()
 

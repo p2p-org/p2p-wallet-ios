@@ -114,7 +114,7 @@ class TransactionHandler: TransactionHandlerType {
                     {
                         return true
                     }
-                case let transaction as SwapTransaction:
+                case let transaction as SwapRawTransactionType: // OrcaSwap, JupiterSwap
                     if transaction.sourceWallet.pubkey == account ||
                         transaction.destinationWallet.pubkey == account ||
                         transaction.authority == account

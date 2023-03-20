@@ -5,51 +5,60 @@ import OrcaSwapSwift
 protocol RawTransactionType {
     func createRequest() async throws -> String
     var mainDescription: String { get }
-    var networkFees: (total: SolanaSwift.Lamports, token: SolanaSwift.Token)? { get }
     var payingFeeWallet: Wallet? { get }
+    var feeAmount: FeeAmount { get }
 }
 
-extension RawTransactionType {
-    var isSwap: Bool { self is SwapTransaction }
+struct SwapMetaInfo {
+    let swapMAX: Bool
+    let swapUSD: Double
 }
 
-struct SwapTransaction: RawTransactionType {
-    struct MetaInfo {
-        let swapMAX: Bool
-        let swapUSD: Double
-    }
+protocol SwapRawTransactionType: RawTransactionType {
+    var authority: String? { get }
+    var sourceWallet: Wallet { get }
+    var destinationWallet: Wallet { get }
+    var fromAmount: Double { get }
+    var toAmount: Double { get }
+    var slippage: Double { get }
+    var metaInfo: SwapMetaInfo { get }
+}
 
+struct OrcaSwapTransaction: SwapRawTransactionType {
+    
     let swapService: SwapServiceType
     let sourceWallet: Wallet
     let destinationWallet: Wallet
     let payingFeeWallet: Wallet?
     let authority: String?
     let poolsPair: PoolsPair
-    let amount: Double
-    let estimatedAmount: Double
+    let fromAmount: Double
+    let toAmount: Double
     let slippage: Double
-    let fees: [PayingFee]
-    let metaInfo: MetaInfo
+    let feeDetails: [PayingFee]
+    let metaInfo: SwapMetaInfo
+    
+    
+    var feeAmount: FeeAmount {
+        feeDetails.networkFees ?? .zero
+    }
 
     var mainDescription: String {
-        amount.toString(maximumFractionDigits: 9) + " " + sourceWallet.token.symbol +
-            " → " +
-            estimatedAmount.toString(maximumFractionDigits: 9) + " " + destinationWallet.token.symbol
+        "\(fromAmount.tokenAmountFormattedString(symbol: sourceWallet.token.symbol)) → \(toAmount.tokenAmountFormattedString(symbol: destinationWallet.token.symbol))"
     }
 
     func createRequest() async throws -> String {
         // check if payingWallet has enough balance to cover fee
-        if let fees = fees.networkFees,
-           let payingWallet = payingFeeWallet,
+        if let payingWallet = payingFeeWallet,
            let currentAmount = payingFeeWallet?.lamports,
-           fees.total > currentAmount
+           feeAmount.total > currentAmount
         {
             throw SolanaError.other(
                 L10n.yourAccountDoesNotHaveEnoughToCoverFees(payingWallet.token.symbol)
                     + ". "
                     + L10n
                     .needsAtLeast(
-                        "\(fees.total.convertToBalance(decimals: payingWallet.token.decimals)) \(payingWallet.token.symbol)"
+                        "\(feeAmount.total.convertToBalance(decimals: payingWallet.token.decimals)) \(payingWallet.token.symbol)"
                     )
                     + ". "
                     + L10n.pleaseChooseAnotherTokenAndTryAgain
@@ -64,24 +73,17 @@ struct SwapTransaction: RawTransactionType {
             payingTokenAddress: payingFeeWallet?.pubkey,
             payingTokenMint: payingFeeWallet?.mintAddress,
             poolsPair: poolsPair,
-            amount: amount.toLamport(decimals: sourceWallet.token.decimals),
+            amount: fromAmount.toLamport(decimals: sourceWallet.token.decimals),
             slippage: slippage
         )
             .last ?? ""
     }
-
-    var networkFees: (total: Lamports, token: Token)? {
-        guard let networkFees = fees.networkFees?.total,
-              let payingFeeToken = payingFeeWallet?.token
-        else {
-            return nil
-        }
-        return (total: networkFees, payingFeeToken)
-    }
 }
 
 struct CloseTransaction: RawTransactionType {
-    var payingFeeWallet: Wallet?
+    var payingFeeWallet: SolanaSwift.Wallet?
+    
+    var feeAmount: SolanaSwift.FeeAmount
     
     let closingWallet: Wallet
     let reimbursedAmount: UInt64
@@ -96,10 +98,6 @@ struct CloseTransaction: RawTransactionType {
         //     return .error(Error.unknown)
         // }
         // return closeTokenAccount(tokenPubkey: pubkey)
-    }
-
-    var networkFees: (total: Lamports, token: Token)? {
-        (total: 5000, token: .nativeSolana) // TODO: Fix later
     }
 }
 

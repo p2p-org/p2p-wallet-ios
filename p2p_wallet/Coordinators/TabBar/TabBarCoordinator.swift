@@ -130,10 +130,7 @@ final class TabBarCoordinator: Coordinator<Void> {
                 .sink(receiveValue: { _ in })
                 .store(in: &subscriptions)
         } else {
-            let swapCoordinator = SwapCoordinator(navigationController: solendOrSwapNavigation, initialWallet: nil, hidesBottomBarWhenPushed: false)
-            coordinate(to: swapCoordinator)
-                .sink(receiveValue: { _ in })
-                .store(in: &subscriptions)
+            routeToSwap(nc: solendOrSwapNavigation, hidesBottomBarWhenPushed: false, source: .tapMain)
         }
         
         let historyNavigation = UINavigationController()
@@ -241,10 +238,7 @@ final class TabBarCoordinator: Coordinator<Void> {
                 coordinate(to: coordinator).sink { _ in }.store(in: &subscriptions)
             }
         case .swap:
-            let swapCoordinator = SwapCoordinator(navigationController: navigationController, initialWallet: nil)
-            coordinate(to: swapCoordinator)
-                .sink(receiveValue: { _ in })
-                .store(in: &subscriptions)
+            routeToSwap(nc: navigationController, source: .actionPanel)
         case .send:
             let fiatAmount = walletsRepository.getWallets().reduce(0) { $0 + $1.amountInCurrentFiat }
             let withTokens = fiatAmount > 0
@@ -294,5 +288,30 @@ final class TabBarCoordinator: Coordinator<Void> {
             .start()
             .sink(receiveValue: { })
             .store(in: &subscriptions)
+    }
+
+    private func routeToSwap(nc: UINavigationController, hidesBottomBarWhenPushed: Bool = true, source: JupiterSwapSource) {
+        if available(.jupiterSwapEnabled) {
+            let swapCoordinator = JupiterSwapCoordinator(
+                navigationController: nc,
+                params: JupiterSwapParameters(
+                    dismissAfterCompletion: source != .tapMain,
+                    openKeyboardOnStart: source != .tapMain,
+                    source: source,
+                    hideTabBar: hidesBottomBarWhenPushed
+                )
+            )
+            coordinate(to: swapCoordinator)
+                .sink(receiveValue: { [weak self] _ in
+                    guard self?.tabBarController.selectedIndex != TabItem.wallet.rawValue else { return }
+                    self?.tabBarController.changeItem(to: .wallet)
+                })
+                .store(in: &subscriptions)
+        } else {
+            let swapCoordinator = SwapCoordinator(navigationController: nc, initialWallet: nil, hidesBottomBarWhenPushed: hidesBottomBarWhenPushed)
+            coordinate(to: swapCoordinator)
+                .sink(receiveValue: { _ in })
+                .store(in: &subscriptions)
+        }
     }
 }
