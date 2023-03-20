@@ -17,12 +17,6 @@ target 'p2p_wallet' do
 
   # development pods
   pod 'CocoaDebug', '1.7.2', :configurations => ['Debug', 'Test']
-  
-  if $solanaSwiftPath
-    pod "SolanaSwift", :path => $solanaSwiftPath
-  else
-    pod 'SolanaSwift', :git => 'https://github.com/p2p-org/solana-swift.git', :branch => 'main'
-  end
 
   # tools
   pod 'SwiftGen', '~> 6.0'

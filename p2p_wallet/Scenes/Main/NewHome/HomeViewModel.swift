@@ -131,7 +131,10 @@ private extension HomeViewModel {
 
                 // Merge two status
                 let mergedStatus = AsynValueStatus.combine(lhs: solanaState.status, rhs: ethereumState.status)
-                
+
+                print(solanaState.status, solanaState.error)
+                print(ethereumState.status, ethereumState.error)
+
                 switch mergedStatus {
                 case .initializing:
                     self.state = .pending

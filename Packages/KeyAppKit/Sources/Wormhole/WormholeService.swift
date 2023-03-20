@@ -50,15 +50,12 @@ public class WormholeService {
 
             // Detect token (native token or erc-20 token)
             let token: String?
-            let slippage: UInt8?
 
             switch account.token.contractType {
             case .native:
                 token = nil
-                slippage = nil
             case let .erc20(contract: contract):
                 token = contract.hex(eip55: false)
-                slippage = 5
             }
 
             // Request bundle
@@ -67,7 +64,7 @@ public class WormholeService {
                 recipient: solanaKeyPair.publicKey.base58EncodedString,
                 token: token,
                 amount: String(account.balance),
-                slippage: slippage
+                slippage: 5
             )
 
             return bundle
