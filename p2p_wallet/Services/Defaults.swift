@@ -47,6 +47,7 @@ extension DefaultsKeys {
     }
     var forcedFeeRelayerEndpoint: DefaultsKey<String?> { .init(#function, defaultValue: nil) }
     var forcedNameServiceEndpoint: DefaultsKey<String?> { .init(#function, defaultValue: nil) }
+    var forcedNewSwapEndpoint: DefaultsKey<String?> { .init(#function, defaultValue: nil) }
 
     var isCoingeckoProviderDisabled: DefaultsKey<Bool> { .init(#function, defaultValue: false) }
     var didBackupOffline: DefaultsKey<Bool> { .init(#function, defaultValue: false) }
@@ -56,7 +57,7 @@ extension DefaultsKeys {
     }
 
     var appearance: DefaultsKey<UIUserInterfaceStyle> { .init(#function, defaultValue: .unspecified) }
-    var slippage: DefaultsKey<Double> { .init(#function, defaultValue: 0.01) }
+    var slippage: DefaultsKey<Double> { .init(#function, defaultValue: 0.05) }
     var fiat: DefaultsKey<Fiat> { .init(#function, defaultValue: .usd) }
     var hiddenWalletPubkey: DefaultsKey<[String]> { .init(#function, defaultValue: []) }
     var unhiddenWalletPubkey: DefaultsKey<[String]> { .init(#function, defaultValue: []) }
@@ -124,6 +125,15 @@ extension DefaultsKeys {
 
     var moonpayInfoShouldHide: DefaultsKey<Bool> {
         .init(#function, defaultValue: false)
+    }
+
+    // Jupiter Swap
+    var fromTokenAddress: DefaultsKey<String?> {
+        .init(#function, defaultValue: nil)
+    }
+
+    var toTokenAddress: DefaultsKey<String?> {
+        .init(#function, defaultValue: nil)
     }
 }
 

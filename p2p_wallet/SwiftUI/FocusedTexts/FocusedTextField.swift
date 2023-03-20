@@ -2,19 +2,19 @@ import SwiftUI
 import UIKit
 import KeyAppUI
 
-struct FocusedTextField: UIViewRepresentable {
+struct FocusedTextField<T: UITextField>: UIViewRepresentable {
     @Binding private var isFirstResponder: Bool
     @Binding private var text: String
     @Binding private var textColor: UIColor
     private let validation: NSPredicate?
-    private var configuration = { (_: UITextField) in }
+    private var configuration = { (_: T) in }
 
     init(
         text: Binding<String>,
         isFirstResponder: Binding<Bool>,
         textColor: Binding<UIColor> = Binding.constant(Asset.Colors.night.color),
         validation: NSPredicate? = nil,
-        configuration: @escaping (UITextField) -> Void = { _ in }
+        configuration: @escaping (T) -> Void = { _ in }
     ) {
         self.configuration = configuration
         self.validation = validation
@@ -23,8 +23,8 @@ struct FocusedTextField: UIViewRepresentable {
         _textColor = textColor
     }
 
-    func makeUIView(context: Context) -> UITextField {
-        let view = UITextField()
+    func makeUIView(context: Context) -> T {
+        let view = T()
         view.setContentCompressionResistancePriority(.defaultLow, for: .horizontal)
         view.delegate = context.coordinator
         view.addTarget(
@@ -36,7 +36,7 @@ struct FocusedTextField: UIViewRepresentable {
         return view
     }
 
-    func updateUIView(_ uiView: UITextField, context _: Context) {
+    func updateUIView(_ uiView: T, context _: Context) {
         if uiView.text != text {
             uiView.text = text
         }
