@@ -92,11 +92,6 @@ public struct HistoryTransaction: Identifiable, Codable {
 }
 
 public extension HistoryTransaction {
-    struct Account: Codable {
-        public var address: String
-        public var username: String?
-    }
-
     struct NamedAccount: Codable {
         public var address: String
         public var name: String?
@@ -140,7 +135,7 @@ public extension HistoryTransaction {
     }
 
     struct Transfer: Codable {
-        public let account: Account
+        public let account: NamedAccount
         public let token: Token
         public let amount: Amount
     }
@@ -160,7 +155,7 @@ public extension HistoryTransaction {
     }
 
     struct Info: Codable {
-        public let account: Account?
+        public let account: NamedAccount?
         public let tokens: [Token]?
         public let swapPrograms: [NamedAccount]?
         public let voteAccount: VoteAccount?
