@@ -100,6 +100,11 @@ let package = Package(
             name: "KeyAppBusiness",
             targets: ["KeyAppBusiness"]
         ),
+        
+        .library(
+            name: "Jupiter",
+            targets: ["Jupiter"]
+        ),
     ],
     dependencies: [
         .package(url: "https://github.com/p2p-org/solana-swift", branch: "main"),
