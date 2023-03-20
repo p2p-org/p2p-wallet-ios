@@ -86,16 +86,13 @@ private extension SwapInputView {
     }
 
     var amountField: some View {
-        AmountTextField(
-            value: $viewModel.amount,
-            isFirstResponder: $viewModel.isFirstResponder,
-            textColor: $viewModel.amountTextColor,
-            maxFractionDigits: Int(viewModel.token.token.decimals),
-            decimalSeparator: "."
-        ) { textField in
+        DecimalTextField(value: $viewModel.amount, isFirstResponder: $viewModel.isFirstResponder, textColor: $viewModel.amountTextColor) { textField in
             textField.font = .font(of: .title1)
+            textField.keyboardType = .decimalPad
             textField.isEnabled = viewModel.isEditable
             textField.placeholder = "0"
+            textField.maximumFractionDigits = Int(viewModel.token.token.decimals)
+            textField.decimalSeparator = "."
             textField.adjustsFontSizeToFitWidth = true
             textField.textAlignment = .right
             textField.max = viewModel.token.token.maxAmount
