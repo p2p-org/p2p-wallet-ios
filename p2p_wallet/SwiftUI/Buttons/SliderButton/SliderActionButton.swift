@@ -4,7 +4,7 @@ import KeyAppUI
 struct SliderActionButtonData {
     let isEnabled: Bool
     let title: String
-    static let zero = SliderActionButtonData(isEnabled: false, title: L10n.enterTheAmount)
+    static let zero = SliderActionButtonData(isEnabled: false, title: L10n.enterAmount)
 }
 
 struct SliderActionButton: View {
