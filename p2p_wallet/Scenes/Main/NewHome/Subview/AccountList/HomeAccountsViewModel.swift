@@ -42,7 +42,11 @@ final class HomeAccountsViewModel: BaseViewModel, ObservableObject {
 
     /// Primary list accounts.
     var accounts: [any RendableAccount] {
-        ethereumAccountsState.value.filter { _ in available(.ethAddressEnabled) }
+        ethereumAccountsState.value
+            .filter { account in
+                let balanceInFiat = account.account.balanceInFiat ?? .init(value: 0, currencyCode: Defaults.fiat.rawValue)
+                return available(.ethAddressEnabled) && balanceInFiat >= CurrencyAmount(usd: 1)
+            }
             + solanaAccountsState.value.filter { rendableAccount in
                 Self.shouldInVisiableSection(rendableAccount: rendableAccount, hideZeroBalance: hideZeroBalance)
             }
@@ -50,9 +54,14 @@ final class HomeAccountsViewModel: BaseViewModel, ObservableObject {
 
     /// Secondary list accounts. Will be hidded normally and need to be manually action from user to show in view.
     var hiddenAccounts: [any RendableAccount] {
-        solanaAccountsState.value.filter { rendableAccount in
-            Self.shouldInIgnoreSection(rendableAccount: rendableAccount, hideZeroBalance: hideZeroBalance)
-        }
+        ethereumAccountsState.value
+            .filter { account in
+                let balanceInFiat = account.account.balanceInFiat ?? .init(value: 0, currencyCode: Defaults.fiat.rawValue)
+                return available(.ethAddressEnabled) && balanceInFiat < CurrencyAmount(usd: 1)
+            }
+            + solanaAccountsState.value.filter { rendableAccount in
+                Self.shouldInIgnoreSection(rendableAccount: rendableAccount, hideZeroBalance: hideZeroBalance)
+            }
     }
 
     // MARK: - Initializer
