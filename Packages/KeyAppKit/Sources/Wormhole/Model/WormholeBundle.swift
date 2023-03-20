@@ -16,7 +16,7 @@ public struct WormholeBundle: Codable, Hashable {
     
     public let recipient: String
     
-    public let token: String?
+    public let resultAmount: TokenAmount
     
     public let compensationDeclineReason: CompensationDeclineReason?
     
@@ -36,7 +36,7 @@ public struct WormholeBundle: Codable, Hashable {
         case bundleId = "bundle_id"
         case userWallet = "user_wallet"
         case recipient
-        case token
+        case resultAmount = "result_amount"
         case compensationDeclineReason = "compensation_decline_reason"
         case expiresAt = "expires_at"
         case transactions

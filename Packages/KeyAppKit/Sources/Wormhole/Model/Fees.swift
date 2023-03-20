@@ -9,11 +9,11 @@ import Foundation
 import KeyAppKitCore
 
 public struct EthereumFees: Codable, Hashable {
-    public let gas: Fee
+    public let gas: TokenAmount
 
-    public let arbiter: Fee
+    public let arbiter: TokenAmount
 
-    public let createAccount: Fee?
+    public let createAccount: TokenAmount?
     
     enum CodingKeys: String, CodingKey {
         case gas
@@ -28,7 +28,7 @@ public struct EthereumFees: Codable, Hashable {
     }
 }
 
-public struct Fee: Codable, Hashable {
+public struct TokenAmount: Codable, Hashable {
     public let amount: String
     public let usdAmount: String
 
@@ -63,7 +63,7 @@ public struct Fee: Codable, Hashable {
 }
 
 public extension CurrencyAmount {
-    init(fee: Fee) {
+    init(fee: TokenAmount) {
         self.init(value: Decimal(string: fee.usdAmount) ?? 0.0, currencyCode: "USD")
     }
 }
