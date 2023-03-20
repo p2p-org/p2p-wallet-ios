@@ -190,7 +190,7 @@ def upload_test(build_prefix, tag_prefix, browserstack_username, browserstack_ac
   build_number = 1
 
   # if there is existing builds
-  last_tag = last_git_tag(pattern: tag_prefix + "/" + build_prefix.to_s)
+  last_tag = last_git_tag(pattern: tag_prefix + "/" + build_prefix.to_s + "." + "*")
   unless last_tag.nil?
     # increase build_number
     last_build_number = last_tag.split(".").last.to_i
