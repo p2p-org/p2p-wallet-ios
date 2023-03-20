@@ -202,6 +202,7 @@ private extension SwapViewModel {
                 await self.stateMachine.accept(
                     action: .changeFromToken(token)
                 )
+                self.fromTokenInputViewModel.amount = nil // Reset previously set amount with new from token
                 Defaults.fromTokenAddress = token.address
             }
             .store(in: &subscriptions)

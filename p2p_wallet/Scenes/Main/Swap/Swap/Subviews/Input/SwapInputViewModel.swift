@@ -28,6 +28,7 @@ final class SwapInputViewModel: BaseViewModel, ObservableObject {
     private let isFromToken: Bool
     private var openKeyboardOnStart: Bool
     private var currentState: JupiterSwapState { stateMachine.currentState }
+    private var skipLogAmount = false
 
     // MARK: - Dependencies
     @Injected private var notificationService: NotificationService
@@ -47,6 +48,7 @@ final class SwapInputViewModel: BaseViewModel, ObservableObject {
 
         allButtonPressed
             .sink { [unowned self] _ in
+                self.skipLogAmount = true // Do not log amount change as it has its own event - logAllClick
                 self.amount = self.balance
                 self.logAllClick()
             }
@@ -104,11 +106,7 @@ final class SwapInputViewModel: BaseViewModel, ObservableObject {
 
         changeTokenPressed
             .sink { [weak self] in
-                guard let self else { return }
-                self.logChangeTokenClick()
-                if self.isFromToken {
-                    self.amount = 0
-                }
+                self?.logChangeTokenClick()
             }
             .store(in: &subscriptions)
     }
@@ -190,6 +188,12 @@ private extension SwapInputViewModel {
 
     func logChange(amount: Double?) {
         guard let amount else { return }
+
+        guard !skipLogAmount else {
+            skipLogAmount = false
+            return
+        }
+
         if isFromToken {
             analyticsManager.log(event: .swapChangingValueTokenA(tokenAName: token.token.symbol, tokenAValue: amount))
         } else {
