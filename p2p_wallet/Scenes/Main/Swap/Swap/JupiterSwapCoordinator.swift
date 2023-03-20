@@ -146,7 +146,7 @@ final class JupiterSwapCoordinator: Coordinator<Void> {
             tokens: fromToken ? viewModel.currentState.swapTokens : viewModel.currentState.possibleToTokens,
             navigationController: navigationController,
             fromToken: fromToken,
-            title: fromToken ? L10n.theTokenYouPay : L10n.theTokenYouReceive
+            title: fromToken ? L10n.tokenYouPay : L10n.tokenYouReceive
         ))
         .sink(receiveValue: { [weak viewModel] chosenToken in
             guard let chosenToken else {

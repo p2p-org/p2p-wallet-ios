@@ -311,7 +311,7 @@ private extension SwapViewModel {
     func updateActionButton(for state: JupiterSwapState) {
         // assert that amount > 0
         guard let amount = state.amountFrom, amount > 0 else {
-            actionButtonData = SliderActionButtonData(isEnabled: false, title: L10n.enterTheAmount)
+            actionButtonData = SliderActionButtonData.zero
             return
         }
         
@@ -329,7 +329,7 @@ private extension SwapViewModel {
         case .error(.notEnoughFromToken):
             actionButtonData = SliderActionButtonData(isEnabled: false, title: L10n.notEnough(state.fromToken.token.symbol))
         case .error(.equalSwapTokens):
-            actionButtonData = SliderActionButtonData(isEnabled: false, title: L10n.youCanTSwapSameToken)
+            actionButtonData = SliderActionButtonData(isEnabled: false, title: L10n.youCanTSwapBetweenTheSameToken)
         case .error(.networkConnectionError):
             notificationService.showConnectionErrorNotification()
             actionButtonData = SliderActionButtonData(isEnabled: false, title: L10n.noInternetConnection)
@@ -343,6 +343,8 @@ private extension SwapViewModel {
             actionButtonData = SliderActionButtonData(isEnabled: false, title: L10n.creatingTransactionFailed)
         case .error(.routeIsNotFound):
             actionButtonData = SliderActionButtonData(isEnabled: false, title: L10n.noSwapOptionsForTheseTokens)
+        case .error(.minimumAmount):
+            actionButtonData = SliderActionButtonData(isEnabled: false, title: L10n.youHaveEnteredTooLittle)
         default:
             actionButtonData = SliderActionButtonData(isEnabled: false, title: L10n.somethingWentWrong)
         }
