@@ -70,8 +70,16 @@ class WormholeClaimFeeViewModel: BaseViewModel, ObservableObject {
                     return
                 }
 
+                let cryptoAmount = CryptoAmount(
+                    bigUInt: BigUInt(stringLiteral: bundle.resultAmount.amount),
+                    symbol: account.token.symbol,
+                    decimals: account.token.decimals
+                )
+
+                let fiatAmount = CurrencyAmount(usd: Decimal(string: bundle.resultAmount.usdAmount) ?? 0)
+
                 self.receive = (
-                    cryptoFormatter.string(amount: account.representedBalance),
+                    cryptoFormatter.string(amount: cryptoAmount),
                     currencyFormatter.string(for: account.balanceInFiat) ?? "",
                     false
                 )

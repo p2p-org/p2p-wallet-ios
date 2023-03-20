@@ -16,17 +16,15 @@ public struct WormholeBundleStatus: Codable, Hashable {
     public let bundleId: String
     public let userWallet: String
     public let recipient: String
-    public let token: String?
-    public let amount: String?
-    public let fees: String?
+    public let resultAmount: TokenAmount
+    public let fees: EthereumFees?
     public let status: Status
 
     enum CodingKeys: String, CodingKey {
         case bundleId = "bundle_id"
         case userWallet = "user_wallet"
         case recipient
-        case token
-        case amount
+        case resultAmount = "result_amount"
         case fees
         case status
     }
@@ -114,20 +112,12 @@ public class WormholeClaimMonitoreService: ObservableObject {
     }
 
     public func add(bundle: WormholeBundle) {
-        let contract: String?
-        if case let .ethereum(erc20Contract) = bundle.resultAmount.feeToken {
-            contract = erc20Contract
-        } else {
-            contract = nil
-        }
-
-        return localBundles.state.value.append(.init(
+        localBundles.state.value.append(.init(
             bundleId: bundle.bundleId,
             userWallet: bundle.userWallet,
             recipient: bundle.recipient,
-            token: contract,
-            amount: nil,
-            fees: nil,
+            resultAmount: bundle.resultAmount,
+            fees: bundle.fees,
             status: .pending
         ))
     }
