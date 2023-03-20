@@ -74,7 +74,7 @@ internal struct TransactionsRequestParams: Codable {
     }
 }
 
-extension TransactionsRequestParams: Signature {
+extension TransactionsRequestParams: Onboarding.Signature {
     mutating func signed(secretKey: Data) throws {
         signature = try signAsBase58(secretKey: secretKey)
     }
