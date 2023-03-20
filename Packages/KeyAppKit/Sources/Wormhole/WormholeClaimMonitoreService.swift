@@ -114,11 +114,18 @@ public class WormholeClaimMonitoreService: ObservableObject {
     }
 
     public func add(bundle: WormholeBundle) {
-        localBundles.state.value.append(.init(
+        let contract: String?
+        if case let .ethereum(erc20Contract) = bundle.resultAmount.feeToken {
+            contract = erc20Contract
+        } else {
+            contract = nil
+        }
+
+        return localBundles.state.value.append(.init(
             bundleId: bundle.bundleId,
             userWallet: bundle.userWallet,
             recipient: bundle.recipient,
-            token: bundle.token,
+            token: contract,
             amount: nil,
             fees: nil,
             status: .pending
