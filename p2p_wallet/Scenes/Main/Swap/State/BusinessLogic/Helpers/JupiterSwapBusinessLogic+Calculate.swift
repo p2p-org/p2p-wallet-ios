@@ -58,29 +58,6 @@ extension JupiterSwapBusinessLogic {
                     $0.route = nil
                 }
             }
-            
-            // get all tokens that involved in the swap and get the price
-            var tokens = [Token]()
-            tokens.append(state.fromToken.token)
-            tokens.append(state.toToken.token)
-            
-            // get prices of transitive tokens
-            let mints = route.getMints()
-            if mints.count > 2 {
-                for mint in mints {
-                    if let token = state.swapTokens.map(\.token).first(where: {$0.address == mint}) {
-                        tokens.append(token)
-                    }
-                }
-            }
-            
-            let tokensPriceMap = ((try? await services.pricesAPI.getCurrentPrices(coins: tokens, toFiat: Defaults.fiat.code)) ?? [:])
-                .reduce([String: Double]()) { combined, element in
-                    guard let value = element.value?.value else { return combined }
-                    var combined = combined
-                    combined[element.key.address] = value
-                    return combined
-                }
 
             return await validateAmounts(
                 state: state.modified {
@@ -89,8 +66,6 @@ extension JupiterSwapBusinessLogic {
                     $0.routes = routes ?? []
                     $0.amountTo = UInt64(route.outAmount)?
                         .convertToBalance(decimals: state.toToken.token.decimals)
-                    $0.tokensPriceMap = $0.tokensPriceMap
-                        .merging(tokensPriceMap, uniquingKeysWith: { (_, new) in new })
                 },
                 services: services
             )
