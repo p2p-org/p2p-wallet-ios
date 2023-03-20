@@ -14,6 +14,7 @@ import Resolver
 import Sell
 import SolanaSwift
 import SwiftyUserDefaults
+import Web3
 import Wormhole
 
 final class HomeAccountsViewModel: BaseViewModel, ObservableObject {
@@ -97,7 +98,13 @@ final class HomeAccountsViewModel: BaseViewModel, ObservableObject {
                         case let .erc20(contract):
                             // Check erc-20 tokens
                             return Wormhole.SupportedToken.bridges.contains { bridge in
-                                bridge.ethAddress == contract.hex(eip55: true)
+                                if let bridgeTokenAddress = bridge.ethAddress {
+                                    // Supported bridge token is erc-20
+                                    return (try? EthereumAddress(hex: bridgeTokenAddress, eip55: false)) == contract
+                                } else {
+                                    // Supported bridge token is native.
+                                    return false
+                                }
                             }
                         }
                     }
@@ -117,7 +124,7 @@ final class HomeAccountsViewModel: BaseViewModel, ObservableObject {
             }
             .map { accounts in
                 accounts.innerApply { account in
-                    let isClaiming = account.wormholeBundle != nil
+                    let isClaiming = account.wormholeBundle?.status == .pending
 
                     return RendableEthereumAccount(
                         account: account.account,
