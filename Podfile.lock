@@ -180,7 +180,7 @@ DEPENDENCIES:
   - Resolver (= 1.5.0)
   - Sentry (from `https://github.com/getsentry/sentry-cocoa.git`, tag `7.31.5`)
   - SkeletonUI (from `https://github.com/p2p-org/SkeletonUI.git`, branch `master`)
-  - SolanaSwift (from `https://github.com/p2p-org/solana-swift.git`, branch `feature/versioned-transaction`)
+  - SolanaSwift (from `https://github.com/p2p-org/solana-swift.git`, branch `main`)
   - SwiftFormat/CLI (= 0.49.6)
   - SwiftGen (~> 6.0)
   - SwiftLint
@@ -243,7 +243,7 @@ EXTERNAL SOURCES:
     :branch: master
     :git: https://github.com/p2p-org/SkeletonUI.git
   SolanaSwift:
-    :branch: feature/versioned-transaction
+    :branch: main
     :git: https://github.com/p2p-org/solana-swift.git
   Task_retrying:
     :branch: master
@@ -266,7 +266,7 @@ CHECKOUT OPTIONS:
     :commit: 98225dbb0459477dfeac063e1c7d0750102325d1
     :git: https://github.com/p2p-org/SkeletonUI.git
   SolanaSwift:
-    :commit: bed1efaff54f7ab5fba0f52a121329574d2c9764
+    :commit: 2ffd3fdc4a9af39632569dbbf16066c3827ae78f
     :git: https://github.com/p2p-org/solana-swift.git
   Task_retrying:
     :commit: 1249b3524378423c848cef39fb220041e00a08ec
@@ -317,6 +317,6 @@ SPEC CHECKSUMS:
   Task_retrying: f1e1451775721d9540ed1b4a3bafb2f4f59833ec
   TweetNacl: 3abf4d1d2082b0114e7a67410e300892448951e6
 
-PODFILE CHECKSUM: 42186efbc1da72f705fa0d56dd0159baea7a914c
+PODFILE CHECKSUM: bfee4a72c40a76c41f7755602d81dfab466e9a72
 
 COCOAPODS: 1.11.3
