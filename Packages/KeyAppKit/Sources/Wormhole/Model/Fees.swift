@@ -14,7 +14,7 @@ public struct EthereumFees: Codable, Hashable {
     public let arbiter: TokenAmount
 
     public let createAccount: TokenAmount?
-    
+
     enum CodingKeys: String, CodingKey {
         case gas
         case arbiter
@@ -62,9 +62,9 @@ public struct TokenAmount: Codable, Hashable {
     }
 }
 
-public extension CurrencyAmount {
-    init(fee: TokenAmount) {
-        self.init(value: Decimal(string: fee.usdAmount) ?? 0.0, currencyCode: "USD")
+extension TokenAmount: CurrentyConverable {
+    public var asCurrencyAmount: CurrencyAmount {
+        .init(usd: Decimal(string: usdAmount) ?? 0)
     }
 }
 

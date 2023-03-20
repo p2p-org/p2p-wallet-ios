@@ -6,22 +6,23 @@
 //
 
 import Foundation
+import KeyAppKitCore
 import Web3
 
 /// Ethereum token structure
 public struct EthereumToken: Hashable {
     /// Token name
     public let name: String
-    
+
     /// Token symbol
     public let symbol: String
-    
+
     /// Token decimals
     public let decimals: UInt8
-    
+
     /// Token logo
     public let logo: URL?
-    
+
     /// Token contract type
     public var contractType: ContractType
 
@@ -33,7 +34,7 @@ public struct EthereumToken: Hashable {
         self.logo = metadata.logo
         self.contractType = .erc20(contract: address)
     }
-    
+
     /// Native token
     public init() {
         self.name = "Ethereum"
@@ -49,8 +50,19 @@ public extension EthereumToken {
     enum ContractType: Hashable {
         /// Native token
         case native
-        
+
         /// ERC-20 Token standard
         case erc20(contract: EthereumAddress)
+    }
+}
+
+extension EthereumToken: AnyToken {
+    public var tokenPrimaryKey: String {
+        switch contractType {
+        case .native:
+            return "native-ethereum"
+        case let .erc20(contract):
+            return "erc-20-\(contract.hex(eip55: false))"
+        }
     }
 }
