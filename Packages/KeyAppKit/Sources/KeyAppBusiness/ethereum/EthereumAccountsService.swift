@@ -159,9 +159,8 @@ extension EthereumAccountsService {
         /// Convert balance into user-friendly format by using decimals.
         public var representedBalance: CryptoAmount {
             return .init(
-                amount: BigUInt.divide(balance, BigUInt(10).power(Int(token.decimals))),
-                symbol: token.symbol,
-                decimals: token.decimals
+                amount: balance,
+                token: token
             )
         }
 

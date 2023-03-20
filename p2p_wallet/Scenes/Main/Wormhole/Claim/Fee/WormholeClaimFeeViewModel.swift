@@ -71,9 +71,8 @@ class WormholeClaimFeeViewModel: BaseViewModel, ObservableObject {
                 }
 
                 let cryptoAmount = CryptoAmount(
-                    bigUInt: BigUInt(stringLiteral: bundle.resultAmount.amount),
-                    symbol: account.token.symbol,
-                    decimals: account.token.decimals
+                    amount: BigUInt(stringLiteral: bundle.resultAmount.amount),
+                    token: account.token
                 )
 
                 let fiatAmount = CurrencyAmount(usd: Decimal(string: bundle.resultAmount.usdAmount) ?? 0)
@@ -92,7 +91,7 @@ class WormholeClaimFeeViewModel: BaseViewModel, ObservableObject {
 
                 self.networkFee = (
                     cryptoFormatter.string(amount: networkCryptoAmount),
-                    currencyFormatter.string(amount: CurrencyAmount(fee: bundle.fees.gas)),
+                    currencyFormatter.string(amount: bundle.fees.gas),
                     networkCryptoAmount.amount == 0
                 )
 
@@ -105,7 +104,7 @@ class WormholeClaimFeeViewModel: BaseViewModel, ObservableObject {
 
                     self.accountCreationFee = (
                         cryptoFormatter.string(amount: accountsCryptoAmount),
-                        currencyFormatter.string(amount: CurrencyAmount(fee: createAccount)),
+                        currencyFormatter.string(amount: createAccount),
                         accountsCryptoAmount.amount == 0
                     )
                 }
@@ -118,7 +117,7 @@ class WormholeClaimFeeViewModel: BaseViewModel, ObservableObject {
 
                 self.wormholeBridgeAndTrxFee = (
                     cryptoFormatter.string(amount: arbiterAmount),
-                    currencyFormatter.string(amount: CurrencyAmount(fee: bundle.fees.arbiter)),
+                    currencyFormatter.string(amount: bundle.fees.arbiter),
                     arbiterAmount.amount == 0
                 )
             }
@@ -149,26 +148,13 @@ extension WormholeClaimViewModel {
                 throw WormholeClaimViewModel.ResolveError.canNotResolveToken
             }
 
-            return CryptoAmount(
-                bigUInt: BigUInt(stringLiteral: amount),
-                symbol: token.symbol,
-                decimals: token.decimals
-            )
+            return CryptoAmount(amount: amount, token: token)
         case let .ethereum(address):
             if let address {
                 let token = try await ethereumTokenRepository.resolve(address: address)
-                return CryptoAmount(
-                    bigUInt: BigUInt(stringLiteral: amount),
-                    symbol: token.symbol,
-                    decimals: token.decimals
-                )
+                return CryptoAmount(amount: amount, token: token)
             } else {
-                let token = EthereumToken()
-                return CryptoAmount(
-                    bigUInt: BigUInt(stringLiteral: amount),
-                    symbol: token.symbol,
-                    decimals: token.decimals
-                )
+                return CryptoAmount(amount: amount, token: EthereumToken())
             }
         }
     }

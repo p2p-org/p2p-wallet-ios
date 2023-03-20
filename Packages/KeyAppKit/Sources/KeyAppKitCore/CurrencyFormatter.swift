@@ -44,21 +44,37 @@ extension CurrencyAmount: Comparable {
     }
 }
 
+public protocol CurrentyConverable {
+    var asCurrencyAmount: CurrencyAmount { get }
+}
+
 /// The class for formatting Key App currency
 public class CurrencyFormatter: Formatter {
     public func string(amount: CurrencyAmount) -> String {
         string(for: amount) ?? "N/A"
     }
 
+    public func string(amount: CurrentyConverable) -> String {
+        string(for: amount) ?? "N/A"
+    }
+
     override public func string(for obj: Any?) -> String? {
-        guard let obj = obj as? CurrencyAmount else {
-            return nil
+        let amount: CurrencyAmount?
+
+        if let obj = obj as? CurrentyConverable {
+            amount = obj.asCurrencyAmount
+        } else if let obj = obj as? CurrencyAmount {
+            amount = obj
+        } else {
+            amount = nil
         }
+
+        guard let amount else { return nil }
 
         let formatter = NumberFormatter()
 
         // Set currency mode
-        formatter.currencyCode = obj.currencyCode
+        formatter.currencyCode = amount.currencyCode
         formatter.numberStyle = .currency
         formatter.locale = Locale(identifier: "en-US")
 
@@ -71,7 +87,7 @@ public class CurrencyFormatter: Formatter {
         formatter.currencyDecimalSeparator = "."
         formatter.currencyGroupingSeparator = " "
 
-        let value: String? = formatter.string(for: obj.value)
+        let value: String? = formatter.string(for: amount.value)
         return value
     }
 }
