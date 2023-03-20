@@ -15,8 +15,8 @@ extension SwapToken {
 }
 
 extension SwapToken {
-    static let preferTokens = ["USDC", "USDT", "SOL", "ETH"]
-    
+    static let preferTokens = ["USDC", "USDT", "SOL", "WBTC", "WETH"]
+
     var isPopular: Bool {
         Self.preferTokens.contains(token.symbol)
     }
