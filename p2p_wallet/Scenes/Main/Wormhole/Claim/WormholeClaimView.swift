@@ -98,7 +98,7 @@ struct WormholeClaimView: View {
             Spacer()
 
             // Button
-            TextButtonView(title: L10n.claim(viewModel.model.title), style: .primaryWhite, size: .large) {
+            TextButtonView(title: viewModel.buttonText, style: .primaryWhite, size: .large) {
                 viewModel.claim()
             }
             .disabled(viewModel.bundle.state.status != .ready)

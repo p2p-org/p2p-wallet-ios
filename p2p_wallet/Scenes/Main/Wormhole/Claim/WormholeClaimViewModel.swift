@@ -18,7 +18,9 @@ class WormholeClaimViewModel: BaseViewModel, ObservableObject {
     let bundle: AsyncValue<WormholeBundle?>
 
     @Published var model: any WormholeClaimModel
+
     @Published var feeAmountInFiat: String = ""
+    @Published var buttonText: String = ""
 
     init(model: WormholeClaimMockModel) {
         self.model = model
@@ -66,6 +68,28 @@ class WormholeClaimViewModel: BaseViewModel, ObservableObject {
                     self.feeAmountInFiat = L10n.isUnavailable(L10n.value)
                 }
             }
+            .store(in: &subscriptions)
+
+        // Update button title
+        bundle.$state
+            .map(\.value?.resultAmount)
+            .map { resultAmount in
+                if let resultAmount = resultAmount {
+                    let cryptoFormatter = CryptoFormatter()
+
+                    let cryptoAmount = CryptoAmount(
+                        bigUInt: BigUInt(stringLiteral: resultAmount.amount),
+                        symbol: account.token.symbol,
+                        decimals: account.token.decimals
+                    )
+
+                    return L10n.claim(cryptoFormatter.string(amount: cryptoAmount))
+                } else {
+                    return L10n.loading
+                }
+            }
+            .receive(on: RunLoop.main)
+            .weakAssign(to: \.buttonText, on: self)
             .store(in: &subscriptions)
 
         // Update timer
