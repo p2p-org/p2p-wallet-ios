@@ -1275,6 +1275,7 @@ You can try again, but your new transaction will be subject to the current rates
 "Integrity of the route has been compromised" = "L'intégrité de l'itinéraire a été compromise";
 "Creating transaction failed" = "Échec de la création de la transaction";
 "No swap options for these tokens" = "Aucune option d'échange pour ces jetons";
+"You have entered too little" = "Vous avez entré trop peu";
 "Token you pay" = "Jeton que vous payez";
 "Token you receive" = "Jeton que vous recevez";
 "You can’t swap between the same token" = "Vous ne pouvez pas échanger entre le même jeton";

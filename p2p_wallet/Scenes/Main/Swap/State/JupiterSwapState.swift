@@ -17,6 +17,7 @@ struct JupiterSwapState: Equatable {
         case coingeckoPriceFailure
         case routeIsNotFound
         case createTransactionFailed
+        case minimumAmount
     }
 
     enum Status: Equatable {
