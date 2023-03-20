@@ -1258,3 +1258,6 @@ You can try again, but your new transaction will be subject to the current rates
 "The link is ready!\nReceiver will be able to claim funds" = "Liên kết đã sẵn sàng!\nNgười nhận sẽ có thể yêu cầu tiền";
 "Send via link" = "Gửi qua liên kết";
 "The link works only 1 time for any users.\nIf you log in yourself, the funds will be returned to your account" = "Liên kết chỉ hoạt động 1 lần cho bất kỳ người dùng nào.\nNếu bạn tự đăng nhập, tiền sẽ được trả lại vào tài khoản của bạn";
+"Send via one-time link" = "Gửi qua liên kết một lần";
+"Send crypto via one-time link" = "Gửi tiền điện tử qua liên kết một lần";
+"Anyone who gets this one-time link can claim the funds" = "Bất kỳ ai nhận được liên kết một lần này đều có thể yêu cầu tiền";

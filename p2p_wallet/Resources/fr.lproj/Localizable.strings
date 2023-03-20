@@ -1255,3 +1255,6 @@ You can try again, but your new transaction will be subject to the current rates
 "The link is ready!\nReceiver will be able to claim funds" = "Le lien est prêt !\nLe destinataire pourra réclamer des fonds";
 "Send via link" = "Envoyer via lien";
 "The link works only 1 time for any users.\nIf you log in yourself, the funds will be returned to your account" = "Le lien ne fonctionne qu'une seule fois pour tous les utilisateurs.\nSi vous vous connectez vous-même, les fonds seront reversés sur votre compte";
+"Send via one-time link" = "Envoyer via un lien unique";
+"Send crypto via one-time link" = "Envoyer la crypto via un lien unique";
+"Anyone who gets this one-time link can claim the funds" = "Toute personne qui obtient ce lien unique peut réclamer les fonds";

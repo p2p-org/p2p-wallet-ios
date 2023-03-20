@@ -63,7 +63,7 @@ struct SendInputView: View {
                         UIPasteboard.general.string = viewModel.currentState.recipient.address
                     }
                 #endif
-                Text(L10n.anyoneWhoGetsThisLinkCanClaimTheFunds)
+                Text(L10n.anyoneWhoGetsThisOneTimeLinkCanClaimTheFunds)
                     .apply(style: .text3)
                     .foregroundColor(Color(Asset.Colors.mountain.color))
                     .frame(maxWidth: .infinity, alignment: .leading)
