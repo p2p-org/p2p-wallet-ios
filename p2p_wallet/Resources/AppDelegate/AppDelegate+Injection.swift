@@ -25,6 +25,9 @@ import SolanaSwift
 import Solend
 import SwiftyUserDefaults
 import TransactionParser
+import Moonpay
+import Sell
+import Jupiter
 
 extension Resolver: ResolverRegistering {
     @MainActor public static func registerAllServices() {
@@ -497,7 +500,32 @@ extension Resolver: ResolverRegistering {
                 apiKey: apiKey
             )
         }
-        .implements((any SellActionService).self)
+            .implements((any SellActionService).self)
+            .scope(.session)
+
+        register {
+            JupiterTokensRepositoryImpl(
+                provider: resolve(),
+                jupiterClient: resolve()
+            )
+        }
+        .implements(JupiterTokensRepository.self)
+        .scope(.session)
+        
+        register {
+            JupiterRestClientAPI(
+                host: GlobalAppState.shared.newSwapEndpoint,
+                tokensHost: GlobalAppState.shared.newSwapEndpoint == "https://quote-api.jup.ag" ? "https://cache.jup.ag": nil,
+                version: .v4
+            )
+        }
+        .implements(JupiterAPI.self)
+        .scope(.session)
+        
+        register {
+            JupiterTokensLocalProvider()
+        }
+        .implements(JupiterTokensProvider.self)
         .scope(.session)
     }
 

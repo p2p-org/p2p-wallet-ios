@@ -6,8 +6,9 @@ struct SendTransaction: RawTransactionType {
     let recipient: Recipient
     let amount: Double
     let amountInFiat: Double
-    let payingFeeWallet: Wallet?
-    let feeInToken: FeeAmount
+    
+    var payingFeeWallet: Wallet?
+    var feeAmount: FeeAmount
 
     let execution: () async throws -> TransactionID
 
@@ -20,18 +21,17 @@ struct SendTransaction: RawTransactionType {
             .symbol + " → " + (username ?? recipient.address.truncatingMiddle(numOfSymbolsRevealed: 4))
     }
 
-    var networkFees: (total: Lamports, token: Token)? {
-        guard let payingFeeWallet else { return nil }
-        return (total: feeInToken.total, token: payingFeeWallet.token)
-    }
-
     init(state: SendInputState, execution: @escaping () async throws -> TransactionID) {
         walletToken = state.sourceWallet!
         recipient = state.recipient
         amount = state.amountInToken
-        payingFeeWallet = state.feeWallet!
-        feeInToken = state.feeInToken
+//        fees = [
+//            .init(type: .transactionFee, lamports: state.feeInToken.transaction, token: state.tokenFee),
+//            .init(type: .accountCreationFee(), lamports: state.feeInToken.accountBalances, token: state.tokenFee)
+//        ]
         amountInFiat = state.amountInFiat
+        payingFeeWallet = state.feeWallet
+        feeAmount = state.feeInToken
         self.execution = execution
     }
 
