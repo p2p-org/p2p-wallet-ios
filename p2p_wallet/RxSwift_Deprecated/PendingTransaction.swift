@@ -117,18 +117,17 @@ extension PendingTransaction {
 
         switch rawTransaction {
         case let transaction as SendTransaction:
-            let amount = transaction.amount
             value = TransferInfo(
                 source: transaction.walletToken,
                 destination: Wallet(pubkey: transaction.recipient.address, lamports: 0, token: transaction.walletToken.token),
                 authority: authority,
                 destinationAuthority: nil,
-                rawAmount: amount,
+                rawAmount: transaction.amount,
                 account: transaction.walletToken.pubkey
             )
-            amountInFiat = amount * pricesService.currentPrice(mint: transaction.walletToken.token.address)?.value
-            fee = transaction.feeInToken
-        case let transaction as SwapTransaction:
+            amountInFiat = transaction.amountInFiat
+            fee = transaction.feeAmount
+        case let transaction as SwapRawTransactionType:
             var destinationWallet = transaction.destinationWallet
             if let authority = try? PublicKey(string: authority),
                let mintAddress = try? PublicKey(string: destinationWallet.mintAddress)
@@ -141,25 +140,14 @@ extension PendingTransaction {
 
             value = SwapInfo(
                 source: transaction.sourceWallet,
-                sourceAmount: transaction.amount,
+                sourceAmount: transaction.fromAmount,
                 destination: destinationWallet,
-                destinationAmount: transaction.estimatedAmount,
+                destinationAmount: transaction.toAmount,
                 accountSymbol: nil
             )
-            amountInFiat = transaction.amount * pricesService.currentPrice(mint: transaction.sourceWallet.token.address)?
+            amountInFiat = transaction.fromAmount * pricesService.currentPrice(mint: transaction.sourceWallet.token.address)?
                 .value
-            fee = transaction.fees.networkFees
-        case let transaction as SendTransaction:
-            value = TransferInfo(
-                source: transaction.walletToken,
-                destination: Wallet(pubkey: transaction.recipient.address, lamports: 0, token: transaction.walletToken.token),
-                authority: authority,
-                destinationAuthority: nil,
-                rawAmount: transaction.amount,
-                account: transaction.walletToken.pubkey
-            )
-            amountInFiat = transaction.amountInFiat
-            fee = transaction.feeInToken
+            fee = transaction.feeAmount
         default:
             return nil
         }

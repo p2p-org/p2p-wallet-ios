@@ -155,6 +155,8 @@ PODS:
   - Introspect (0.1.4)
   - JazziconSwift (1.1.0)
   - JSBridge (1.0.0)
+  - Jupiter (1.0.0):
+    - SolanaSwift
   - KeyAppKitCore (1.0.0)
   - KeyAppKitLogger (1.0.7)
   - KeyAppUI (0.1.2):
@@ -249,7 +251,7 @@ PODS:
   - SwiftLint (0.50.3)
   - SwiftNotificationCenter (1.0.4)
   - SwiftyUserDefaults (5.3.0)
-  - Task_retrying (1.0.3)
+  - Task_retrying (1.0.4)
   - TransactionParser (1.0.0):
     - Cache
     - SolanaSwift (~> 2)
@@ -277,6 +279,7 @@ DEPENDENCIES:
   - Introspect (= 0.1.4)
   - JazziconSwift (from `https://github.com/p2p-org/JazziconSwift.git`, branch `master`)
   - JSBridge (from `https://github.com/p2p-org/key-app-kit-swift.git`, branch `feature/send-via-link`)
+  - Jupiter (from `https://github.com/p2p-org/key-app-kit-swift.git`, branch `feature/send-via-link`)
   - KeyAppKitCore (from `https://github.com/p2p-org/key-app-kit-swift.git`, branch `feature/send-via-link`)
   - KeyAppKitLogger (from `https://github.com/p2p-org/key-app-kit-swift.git`, branch `feature/send-via-link`)
   - "KeyAppUI (from `git@github.com:p2p-org/KeyAppUI.git`, branch `main`)"
@@ -311,6 +314,7 @@ DEPENDENCIES:
   - SwiftLint
   - SwiftNotificationCenter
   - SwiftyUserDefaults (= 5.3.0)
+  - Task_retrying (from `https://github.com/bigearsenal/task-retrying-swift.git`, branch `master`)
   - TransactionParser (from `https://github.com/p2p-org/key-app-kit-swift.git`, branch `feature/send-via-link`)
 
 SPEC REPOS:
@@ -365,7 +369,6 @@ SPEC REPOS:
     - SwiftLint
     - SwiftNotificationCenter
     - SwiftyUserDefaults
-    - Task_retrying
     - TweetNacl
 
 EXTERNAL SOURCES:
@@ -402,6 +405,9 @@ EXTERNAL SOURCES:
     :branch: master
     :git: https://github.com/p2p-org/JazziconSwift.git
   JSBridge:
+    :branch: feature/send-via-link
+    :git: https://github.com/p2p-org/key-app-kit-swift.git
+  Jupiter:
     :branch: feature/send-via-link
     :git: https://github.com/p2p-org/key-app-kit-swift.git
   KeyAppKitCore:
@@ -458,13 +464,16 @@ EXTERNAL SOURCES:
   Solend:
     :branch: feature/send-via-link
     :git: https://github.com/p2p-org/key-app-kit-swift.git
+  Task_retrying:
+    :branch: master
+    :git: https://github.com/bigearsenal/task-retrying-swift.git
   TransactionParser:
     :branch: feature/send-via-link
     :git: https://github.com/p2p-org/key-app-kit-swift.git
 
 CHECKOUT OPTIONS:
   AnalyticsManager:
-    :commit: b3dc1105f3bde2e07d1a4bb9432d969800e4977f
+    :commit: 736235511287449fa28e274033e9b753419f3bbf
     :git: https://github.com/p2p-org/key-app-kit-swift.git
   BECollectionView:
     :commit: 7badd35cd036735b9c6867e273b59430311f53e7
@@ -479,31 +488,34 @@ CHECKOUT OPTIONS:
     :commit: 9b4ab977660c8554d23a2d9b83b6ac6c6058b3b7
     :git: https://github.com/p2p-org/BEPureLayout.git
   Cache:
-    :commit: b3dc1105f3bde2e07d1a4bb9432d969800e4977f
+    :commit: 736235511287449fa28e274033e9b753419f3bbf
     :git: https://github.com/p2p-org/key-app-kit-swift.git
   CountriesAPI:
-    :commit: b3dc1105f3bde2e07d1a4bb9432d969800e4977f
+    :commit: 736235511287449fa28e274033e9b753419f3bbf
     :git: https://github.com/p2p-org/key-app-kit-swift.git
   Down:
     :commit: eee1d66d7ef71b892e72c8bc8d84fcdfeaab1918
     :git: https://github.com/p2p-org/Down.git
   FeeRelayerSwift:
-    :commit: 2e3d66a1e3d58011e24ed6e70269d56b0edc18d8
+    :commit: adad3c446988f96886916334b1329721ba9b48c8
     :git: https://github.com/p2p-org/FeeRelayerSwift.git
   History:
-    :commit: b3dc1105f3bde2e07d1a4bb9432d969800e4977f
+    :commit: 736235511287449fa28e274033e9b753419f3bbf
     :git: https://github.com/p2p-org/key-app-kit-swift.git
   JazziconSwift:
     :commit: f9c9f898402db4e62d482f4c90670652c221fa12
     :git: https://github.com/p2p-org/JazziconSwift.git
   JSBridge:
-    :commit: b3dc1105f3bde2e07d1a4bb9432d969800e4977f
+    :commit: 736235511287449fa28e274033e9b753419f3bbf
+    :git: https://github.com/p2p-org/key-app-kit-swift.git
+  Jupiter:
+    :commit: 736235511287449fa28e274033e9b753419f3bbf
     :git: https://github.com/p2p-org/key-app-kit-swift.git
   KeyAppKitCore:
-    :commit: b3dc1105f3bde2e07d1a4bb9432d969800e4977f
+    :commit: 736235511287449fa28e274033e9b753419f3bbf
     :git: https://github.com/p2p-org/key-app-kit-swift.git
   KeyAppKitLogger:
-    :commit: b3dc1105f3bde2e07d1a4bb9432d969800e4977f
+    :commit: 736235511287449fa28e274033e9b753419f3bbf
     :git: https://github.com/p2p-org/key-app-kit-swift.git
   KeyAppUI:
     :commit: 96679bc3564f7f07ad049bef984768724cf081eb
@@ -512,19 +524,19 @@ CHECKOUT OPTIONS:
     :commit: 78dd312eb762d66a54c87cd6dd8045140da28c4b
     :git: https://github.com/p2p-org/ListPlaceholder.git
   Moonpay:
-    :commit: b3dc1105f3bde2e07d1a4bb9432d969800e4977f
+    :commit: 736235511287449fa28e274033e9b753419f3bbf
     :git: https://github.com/p2p-org/key-app-kit-swift.git
   NameService:
-    :commit: b3dc1105f3bde2e07d1a4bb9432d969800e4977f
+    :commit: 736235511287449fa28e274033e9b753419f3bbf
     :git: https://github.com/p2p-org/key-app-kit-swift.git
   Onboarding:
-    :commit: b3dc1105f3bde2e07d1a4bb9432d969800e4977f
+    :commit: 736235511287449fa28e274033e9b753419f3bbf
     :git: https://github.com/p2p-org/key-app-kit-swift.git
   OrcaSwapSwift:
     :commit: 47d84350e0e6d4b273cafe5bfd1d6a8a193304bc
     :git: https://github.com/p2p-org/OrcaSwapSwift.git
   P2PSwift:
-    :commit: b3dc1105f3bde2e07d1a4bb9432d969800e4977f
+    :commit: 736235511287449fa28e274033e9b753419f3bbf
     :git: https://github.com/p2p-org/key-app-kit-swift.git
   RenVMSwift:
     :commit: 8f4dd6e2a47b1d7b02df362ba8aea9f04875243e
@@ -533,10 +545,10 @@ CHECKOUT OPTIONS:
     :commit: dadb16c54bd42ca83c08f3d80f61fbfca93a585c
     :git: https://github.com/TrGiLong/RxConcurrency.git
   Sell:
-    :commit: b3dc1105f3bde2e07d1a4bb9432d969800e4977f
+    :commit: 736235511287449fa28e274033e9b753419f3bbf
     :git: https://github.com/p2p-org/key-app-kit-swift.git
   Send:
-    :commit: b3dc1105f3bde2e07d1a4bb9432d969800e4977f
+    :commit: 736235511287449fa28e274033e9b753419f3bbf
     :git: https://github.com/p2p-org/key-app-kit-swift.git
   Sentry:
     :git: https://github.com/getsentry/sentry-cocoa.git
@@ -545,16 +557,19 @@ CHECKOUT OPTIONS:
     :commit: 98225dbb0459477dfeac063e1c7d0750102325d1
     :git: https://github.com/p2p-org/SkeletonUI.git
   SolanaPricesAPIs:
-    :commit: b3dc1105f3bde2e07d1a4bb9432d969800e4977f
+    :commit: 736235511287449fa28e274033e9b753419f3bbf
     :git: https://github.com/p2p-org/key-app-kit-swift.git
   SolanaSwift:
-    :commit: 17f62d901f1fa054d132cc6d6f7e56f8b2277f35
+    :commit: 8026a6bd55e777637c649a09cc226a8ea79e6a4a
     :git: https://github.com/p2p-org/solana-swift.git
   Solend:
-    :commit: b3dc1105f3bde2e07d1a4bb9432d969800e4977f
+    :commit: 736235511287449fa28e274033e9b753419f3bbf
     :git: https://github.com/p2p-org/key-app-kit-swift.git
+  Task_retrying:
+    :commit: 1249b3524378423c848cef39fb220041e00a08ec
+    :git: https://github.com/bigearsenal/task-retrying-swift.git
   TransactionParser:
-    :commit: b3dc1105f3bde2e07d1a4bb9432d969800e4977f
+    :commit: 736235511287449fa28e274033e9b753419f3bbf
     :git: https://github.com/p2p-org/key-app-kit-swift.git
 
 SPEC CHECKSUMS:
@@ -594,6 +609,7 @@ SPEC CHECKSUMS:
   Introspect: b62c4dd2063072327c21d618ef2bedc3c87bc366
   JazziconSwift: d1d6f81e5e460b94b2cd0a898dab66178aeab070
   JSBridge: 5a257c92ad65fb16b255480cb3b2b867cc6ee39c
+  Jupiter: b7e6f73d73f7cccdd42f1e9e803c338e67f613e8
   KeyAppKitCore: f041e93e735a3aa26b7436fd0825844f546777b3
   KeyAppKitLogger: 1db675b452a0faa4bd0097f5c88fcc635ed67205
   KeyAppUI: c1c83d207c55d53c9a438a752fb8f4e68f857a0e
@@ -638,10 +654,10 @@ SPEC CHECKSUMS:
   SwiftLint: 77f7cb2b9bb81ab4a12fcc86448ba3f11afa50c6
   SwiftNotificationCenter: 760386da2ce03d3594cb5e96d1e22ec80b44b46f
   SwiftyUserDefaults: 63f80248cf5bfb3458825d9a78f2eb7e1293a040
-  Task_retrying: 9e19177e42b162d1d54317f9cfcbabc01d057c38
+  Task_retrying: f1e1451775721d9540ed1b4a3bafb2f4f59833ec
   TransactionParser: 3004420d52e7b1277dbcfd20b995a5de707705f3
   TweetNacl: 3abf4d1d2082b0114e7a67410e300892448951e6
 
-PODFILE CHECKSUM: a9c7628b03a02fb7abb98b781e324561ec3d7c59
+PODFILE CHECKSUM: 694091c12cdef2689d48e271d83747be8ce16a1f
 
 COCOAPODS: 1.11.3

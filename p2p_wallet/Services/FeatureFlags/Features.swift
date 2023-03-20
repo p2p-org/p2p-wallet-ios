@@ -10,6 +10,7 @@ public extension Feature {
     static let sellScenarioEnabled = Feature(rawValue: "keyapp_sell_scenario_enabled")
     static let buyBankTransferEnabled = Feature(rawValue: "buy_bank_transfer_enabled")
     static let newOnboardingFlow = Feature(rawValue: "newOnboardingFlow")
+    static let jupiterSwapEnabled = Feature(rawValue: "keyapp_swap_jupiter_enabled")
 
     // Username
     static let onboardingUsernameEnabled = Feature(rawValue: "ios_onboarding_username_enabled")

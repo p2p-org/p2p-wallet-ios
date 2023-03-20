@@ -32,7 +32,7 @@ struct SellInputView: View {
                     feeView
                 }
                 .frame(maxWidth: .infinity)
-            }.endEditingKeyboardOnDragGesture()
+            }.scrollDismissesKeyboard()
             .frame(maxWidth: .infinity)
             .onTapGesture {
                 UIApplication.shared.keyWindow?.endEditing(true)
