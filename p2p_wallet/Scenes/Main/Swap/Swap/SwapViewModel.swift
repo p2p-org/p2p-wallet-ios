@@ -172,6 +172,7 @@ private extension SwapViewModel {
         
         // listen to state of the stateMachine
         stateMachine.statePublisher
+            .receive(on: RunLoop.main)
             .sinkAsync { [weak self] updatedState in
                 guard let self else { return }
                 self.handle(state: updatedState)
