@@ -26,8 +26,7 @@ struct RendableDetailPendingTransaction: RendableTransactionDetail {
                 return .error(message: NSAttributedString(string: errorModel.readableDescription), error: errorModel)
             }
             return .error(message: NSAttributedString(
-                string: L10n.OopsSomethingWentWrong.pleaseTryAgainLater), error: errorModel
-            )
+                string: L10n.OopsSomethingWentWrong.pleaseTryAgainLater), error: errorModel)
         case .finalized:
             return .succeed(message: L10n.theTransactionHasBeenSuccessfullyCompleted)
         default:
@@ -120,8 +119,8 @@ struct RendableDetailPendingTransaction: RendableTransactionDetail {
         switch trx.rawTransaction {
         case let transaction as SendTransaction:
             return "\(transaction.amount.tokenAmountFormattedString(symbol: transaction.walletToken.token.symbol))"
-        case let transaction as SwapTransaction:
-            return "\(transaction.amount.tokenAmountFormattedString(symbol: transaction.sourceWallet.token.symbol)) → \(transaction.estimatedAmount.tokenAmountFormattedString(symbol: transaction.destinationWallet.token.symbol))"
+        case let transaction as SwapRawTransactionType:
+            return transaction.mainDescription
         case let transaction as WormholeClaimTransaction:
             guard let value = CryptoFormatter().string(for: transaction.amountInCrypto) else {
                 return ""

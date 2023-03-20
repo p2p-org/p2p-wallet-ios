@@ -229,7 +229,7 @@ class DetailAccountCoordinator: SmartCoordinator<DetailAccountCoordinatorResult>
             }
             .store(in: &subscriptions)
         } else {
-            let vm = OrcaSwapV2.ViewModel(initialWallet: wallet)
+            let vm = OrcaSwapV2.ViewModel(initialWallet: account.data)
             let vc = OrcaSwapV2.ViewController(viewModel: vm)
             
             vc.doneHandler = { [weak self, weak rootViewController] in

@@ -7,9 +7,9 @@
 
 import Combine
 import Foundation
+import KeyAppBusiness
 import Resolver
 import SolanaSwift
-import KeyAppBusiness
 
 enum DetailAccountAction {
     case openBuy
@@ -32,8 +32,7 @@ class DetailAccountViewModel: BaseViewModel, ObservableObject {
     init(
         solanaAccountsManager: SolanaAccountsService = Resolver.resolve(),
         solanaAccount: SolanaAccountsService.Account,
-        jupiterTokensRepository: JupiterTokensRepository = Resolver.resolve(),
-        wallet: Wallet
+        jupiterTokensRepository: JupiterTokensRepository = Resolver.resolve()
     ) {
         // Init action subject
         let actionSubject = PassthroughSubject<DetailAccountAction, Never>()
@@ -65,7 +64,13 @@ class DetailAccountViewModel: BaseViewModel, ObservableObject {
             .receive(on: RunLoop.main)
             .map { $0.value.first(where: { $0.data.pubkey == solanaAccount.data.pubkey }) }
             .compactMap { $0 }
-            .map { RendableNewSolanaAccountDetail(account: $0, onAction: onAction) }
+            .map {
+                RendableNewSolanaAccountDetail(
+                    account: $0,
+                    isSwapAvailable: isSwapAvailableDefault,
+                    onAction: onAction
+                )
+            }
             .sink { [weak self] rendableAccountDetail in
                 self?.rendableAccountDetail = rendableAccountDetail
             }

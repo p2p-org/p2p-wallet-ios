@@ -122,7 +122,7 @@ public class AsyncValue<T>: ObservableObject {
             
             // Prepare
             if state.status == .ready {
-                state.status = .fetching
+                self.state.status = .fetching
             }
             state.error = nil
             
@@ -135,10 +135,10 @@ public class AsyncValue<T>: ObservableObject {
             self.state.error = error
             
             // Initialising failure
-            if state.status == .initializing, error != nil {
-                state.status = .initializing
+            if state.status == .initializing, error != nil, value == nil {
+                self.state.status = .initializing
             } else {
-                state.status = .ready
+                self.state.status = .ready
             }
         }
         

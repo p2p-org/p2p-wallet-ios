@@ -124,7 +124,6 @@ PODS:
   - KeychainSwift (19.0.0)
   - Kingfisher (7.3.2)
   - ListPlaceholder (1.5)
-  - LoggerSwift (1.0.2)
   - lottie-ios (3.5.0)
   - nanopb (2.30909.0):
     - nanopb/decode (= 2.30909.0)
@@ -141,23 +140,16 @@ PODS:
   - PromisesObjC (2.1.1)
   - ReachabilitySwift (5.0.0)
   - Resolver (1.5.0)
-  - secp256k1.swift (0.1.4)
   - Sentry (7.31.5):
     - Sentry/Core (= 7.31.5)
   - Sentry/Core (7.31.5)
   - SkeletonUI (1.0.9)
-  - SolanaSwift (2.5.3):
-    - LoggerSwift (~> 1.0.2)
-    - secp256k1.swift (~> 0.1.0)
-    - Task_retrying (~> 1.0.3)
-    - TweetNacl (~> 1.0.2)
   - SwiftFormat/CLI (0.49.6)
   - SwiftGen (6.6.2)
   - SwiftLint (0.50.3)
   - SwiftNotificationCenter (1.0.4)
   - SwiftyUserDefaults (5.3.0)
   - Task_retrying (1.0.4)
-  - TweetNacl (1.0.2)
 
 DEPENDENCIES:
   - AppsFlyerFramework
@@ -180,7 +172,6 @@ DEPENDENCIES:
   - Resolver (= 1.5.0)
   - Sentry (from `https://github.com/getsentry/sentry-cocoa.git`, tag `7.31.5`)
   - SkeletonUI (from `https://github.com/p2p-org/SkeletonUI.git`, branch `master`)
-  - SolanaSwift (from `https://github.com/p2p-org/solana-swift.git`, branch `main`)
   - SwiftFormat/CLI (= 0.49.6)
   - SwiftGen (~> 6.0)
   - SwiftLint
@@ -211,7 +202,6 @@ SPEC REPOS:
     - Introspect
     - KeychainSwift
     - Kingfisher
-    - LoggerSwift
     - lottie-ios
     - nanopb
     - Periphery
@@ -219,13 +209,11 @@ SPEC REPOS:
     - PromisesObjC
     - ReachabilitySwift
     - Resolver
-    - secp256k1.swift
     - SwiftFormat
     - SwiftGen
     - SwiftLint
     - SwiftNotificationCenter
     - SwiftyUserDefaults
-    - TweetNacl
 
 EXTERNAL SOURCES:
   Down:
@@ -242,9 +230,6 @@ EXTERNAL SOURCES:
   SkeletonUI:
     :branch: master
     :git: https://github.com/p2p-org/SkeletonUI.git
-  SolanaSwift:
-    :branch: main
-    :git: https://github.com/p2p-org/solana-swift.git
   Task_retrying:
     :branch: master
     :git: https://github.com/bigearsenal/task-retrying-swift.git
@@ -265,9 +250,6 @@ CHECKOUT OPTIONS:
   SkeletonUI:
     :commit: 98225dbb0459477dfeac063e1c7d0750102325d1
     :git: https://github.com/p2p-org/SkeletonUI.git
-  SolanaSwift:
-    :commit: 2ffd3fdc4a9af39632569dbbf16066c3827ae78f
-    :git: https://github.com/p2p-org/solana-swift.git
   Task_retrying:
     :commit: 1249b3524378423c848cef39fb220041e00a08ec
     :git: https://github.com/bigearsenal/task-retrying-swift.git
@@ -297,7 +279,6 @@ SPEC CHECKSUMS:
   KeychainSwift: a06190cf933ad46b1e0abc3d77d29c06331715c7
   Kingfisher: 0086ad83719761ba9b2cdaf6ef4d5b4878cbae23
   ListPlaceholder: 2d7950014852ee5613d636cf14fd1bb93419e330
-  LoggerSwift: df24fc6290d4a9ccd3b5d87a2301504cd9f49b3d
   lottie-ios: c55158d67d0629a260625cc2ded2052b829e3c3e
   nanopb: b552cce312b6c8484180ef47159bc0f65a1f0431
   Periphery: 5c554376fdaa3c8eaded190dda7eb1728280f328
@@ -305,18 +286,15 @@ SPEC CHECKSUMS:
   PromisesObjC: ab77feca74fa2823e7af4249b8326368e61014cb
   ReachabilitySwift: 985039c6f7b23a1da463388634119492ff86c825
   Resolver: 68984624572763018fd8ec7b8e3e8df0e3b6bba5
-  secp256k1.swift: a7e7a214f6db6ce5db32cc6b2b45e5c4dd633634
   Sentry: 4c9babff9034785067c896fd580b1f7de44da020
   SkeletonUI: b5c868e6917123e3d442d6cef9c71fe048175f3b
-  SolanaSwift: 5b5f638b0d9568cea01c382465f84ba85ebb3efa
   SwiftFormat: e40542bcf76fdaa006d0dc26a9ca8278ca028d76
   SwiftGen: 1366a7f71aeef49954ca5a63ba4bef6b0f24138c
   SwiftLint: 77f7cb2b9bb81ab4a12fcc86448ba3f11afa50c6
   SwiftNotificationCenter: 760386da2ce03d3594cb5e96d1e22ec80b44b46f
   SwiftyUserDefaults: 63f80248cf5bfb3458825d9a78f2eb7e1293a040
   Task_retrying: f1e1451775721d9540ed1b4a3bafb2f4f59833ec
-  TweetNacl: 3abf4d1d2082b0114e7a67410e300892448951e6
 
-PODFILE CHECKSUM: bfee4a72c40a76c41f7755602d81dfab466e9a72
+PODFILE CHECKSUM: e82625b330af7d6b6070f2d7a1675af4a903eca4
 
 COCOAPODS: 1.11.3

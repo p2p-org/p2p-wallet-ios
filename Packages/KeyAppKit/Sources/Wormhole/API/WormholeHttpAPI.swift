@@ -15,14 +15,14 @@ public class WormholeRPCAPI: WormholeAPI {
         self.client = .init(endpoint: endpoint, urlSession: urlSession)
     }
     
-    public func getEthereumBundle(userWallet: String, recipient: String, token: String?, amount: String, slippage: UInt8?) async throws -> WormholeBundle {
+    public func getEthereumBundle(userWallet: String, recipient: String, token: String?, amount: String, slippage: UInt8) async throws -> WormholeBundle {
         /// Internal structure for params
         struct Params: Codable {
             let userWallet: String
             let recipient: String
             let token: String?
             let amount: String
-            let slippage: UInt8?
+            let slippage: UInt8
             
             enum CodingKeys: String, CodingKey {
                 case userWallet = "user_wallet"
