@@ -3,11 +3,6 @@ import Combine
 import SolanaSwift
 import Resolver
 
-struct JupiterTokensData {
-    let tokens: [Token]
-    let userWallets: [Wallet]
-}
-
 protocol JupiterTokensRepository {
     var status: AnyPublisher<JupiterDataStatus, Never> { get }
 
