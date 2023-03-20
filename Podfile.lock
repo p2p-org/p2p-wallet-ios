@@ -500,7 +500,7 @@ CHECKOUT OPTIONS:
     :commit: 92fa623589b69ec118840beb3f8e6b8a742cfaf6
     :git: https://github.com/p2p-org/FeeRelayerSwift.git
   History:
-    :commit: 820153cab1aa936d55172c4aeee1513c26787cca
+    :commit: 42f0426e7c523160b4abf7f8f51f0e41cee9dce7
     :git: https://github.com/p2p-org/key-app-kit-swift.git
   JazziconSwift:
     :commit: f9c9f898402db4e62d482f4c90670652c221fa12
