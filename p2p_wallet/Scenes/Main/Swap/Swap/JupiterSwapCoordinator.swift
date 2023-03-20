@@ -93,6 +93,7 @@ final class JupiterSwapCoordinator: Coordinator<Void> {
             .sink { [weak self, unowned fromTokenInputViewModel] in
                 guard let self else { return }
                 fromTokenInputViewModel.isFirstResponder = false
+                UIApplication.shared.endEditing()
                 self.openChooseToken(fromToken: true)
             }
             .store(in: &subscriptions)
@@ -100,6 +101,7 @@ final class JupiterSwapCoordinator: Coordinator<Void> {
             .sink { [weak self, unowned fromTokenInputViewModel] in
                 guard let self else { return }
                 fromTokenInputViewModel.isFirstResponder = false
+                UIApplication.shared.endEditing()
                 self.openChooseToken(fromToken: false)
             }
             .store(in: &subscriptions)
@@ -133,6 +135,7 @@ final class JupiterSwapCoordinator: Coordinator<Void> {
     }
     
     @objc private func receiptButtonPressed() {
+        UIApplication.shared.endEditing()
         openSwapSettings()
     }
 
