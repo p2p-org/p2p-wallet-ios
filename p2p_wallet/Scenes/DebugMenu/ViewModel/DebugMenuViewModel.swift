@@ -24,6 +24,7 @@ final class DebugMenuViewModel: BaseViewModel, ObservableObject {
     @Published var moonpayEnvironments: [DefaultsKeys.MoonpayEnvironment] = [.production, .sandbox]
     @Published var currentMoonpayEnvironment: DefaultsKeys.MoonpayEnvironment
     @Published var nameServiceEndpoints: [String]
+    @Published var newSwapEndpoints: [String]
 
     override init() {
         features = Menu.allCases
@@ -52,6 +53,11 @@ final class DebugMenuViewModel: BaseViewModel, ObservableObject {
         nameServiceEndpoints = [
             "https://\(String.secretConfig("NAME_SERVICE_ENDPOINT_NEW")!)",
             "https://\(String.secretConfig("NAME_SERVICE_STAGING_ENDPOINT")!)"
+        ]
+        
+        newSwapEndpoints = [
+            "https://quote-api.jup.ag",
+            "https://swap.key.app"
         ]
 
         currentMoonpayEnvironment = Defaults.moonpayEnvironment
@@ -112,6 +118,7 @@ extension DebugMenuViewModel {
         case mockedTKeyFacade
         case simulatedSocialError
         case sell
+        case jupiterSwap
 
         var title: String {
             switch self {
@@ -124,6 +131,7 @@ extension DebugMenuViewModel {
             case .investSolend: return "Invest Solend"
             case .solendDisablePlaceholder: return "Solend Disable Placeholder"
             case .sell: return "Sell (Off Ramp)"
+            case .jupiterSwap: return "Jupiter Swap"
             }
         }
 
@@ -138,6 +146,7 @@ extension DebugMenuViewModel {
             case .investSolend: return .investSolendFeature
             case .solendDisablePlaceholder: return .solendDisablePlaceholder
             case .sell: return .sellScenarioEnabled
+            case .jupiterSwap: return .jupiterSwapEnabled
             }
         }
     }
