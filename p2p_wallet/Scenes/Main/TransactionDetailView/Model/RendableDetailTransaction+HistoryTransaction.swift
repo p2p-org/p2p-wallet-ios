@@ -151,16 +151,16 @@ struct RendableDetailHistoryTransaction: RendableTransactionDetail {
             result.append(
                 .init(
                     title: L10n.sendTo,
-                    value: RecipientFormatter.format(destination: data.account.username ?? data.account.address),
-                    copyableValue: data.account.username ?? data.account.address
+                    value: RecipientFormatter.format(destination: data.account.name ?? data.account.address),
+                    copyableValue: data.account.name ?? data.account.address
                 )
             )
         case let .receive(data):
             result.append(
                 .init(
                     title: L10n.receivedFrom,
-                    value: RecipientFormatter.format(destination: data.account.username ?? data.account.address),
-                    copyableValue: data.account.username ?? data.account.address
+                    value: RecipientFormatter.format(destination: data.account.name ?? data.account.address),
+                    copyableValue: data.account.name ?? data.account.address
                 )
             )
         case .burn:
