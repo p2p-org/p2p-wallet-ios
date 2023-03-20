@@ -16,6 +16,32 @@ public struct CurrencyAmount: Hashable {
         self.value = value
         self.currencyCode = currencyCode
     }
+
+    public init(usd: Decimal) {
+        self.value = usd
+        self.currencyCode = "USD"
+    }
+}
+
+extension CurrencyAmount: Comparable {
+    /// Compare currency amount. The currency should be same, otherweise it will return false.
+    public static func < (lhs: CurrencyAmount, rhs: CurrencyAmount) -> Bool {
+        // We not allow to compare two currency
+        guard lhs.currencyCode == rhs.currencyCode else {
+            return false
+        }
+
+        return lhs.value < rhs.value
+    }
+
+    public static func == (lhs: CurrencyAmount, rhs: CurrencyAmount) -> Bool {
+        // We not allow to compare two currency
+        guard lhs.currencyCode == rhs.currencyCode else {
+            return false
+        }
+
+        return lhs.value == rhs.value
+    }
 }
 
 /// The class for formatting Key App currency
