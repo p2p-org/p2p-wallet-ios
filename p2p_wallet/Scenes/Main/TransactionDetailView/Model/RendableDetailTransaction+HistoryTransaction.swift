@@ -177,7 +177,7 @@ struct RendableDetailHistoryTransaction: RendableTransactionDetail {
             result.append(.init(title: L10n.signature, value: RecipientFormatter.signature(signature: trx.signature)))
         }
         
-        if trx.fees.allSatisfy({ fee in fee.payer == "FG4Y3yX4AAchp1HvNZ7LfzFTewF2f6nDoMDCohTFrdpT" }) {
+        if trx.fees.allSatisfy({ fee in Constants.feeRelayerAccounts.contains(fee.payer) }) {
             result.append(.init(title: L10n.transactionFee, value: L10n.freePaidByKeyApp))
         } else {
             let feeDetail = trx.fees.map { fee in
@@ -212,4 +212,11 @@ struct RendableDetailHistoryTransaction: RendableTransactionDetail {
             return .icon(defaultIcon)
         }
     }
+}
+
+private enum Constants {
+    static let swapFeeRelayerAccount = "JdYkwaUrvoeYsCbPgnt3AAa1qzjV2CtoRqU3bzuAvQu"
+    static let feeRelayerAccount = "FG4Y3yX4AAchp1HvNZ7LfzFTewF2f6nDoMDCohTFrdpT"
+
+    static var feeRelayerAccounts = [Constants.swapFeeRelayerAccount, Constants.feeRelayerAccount]
 }
