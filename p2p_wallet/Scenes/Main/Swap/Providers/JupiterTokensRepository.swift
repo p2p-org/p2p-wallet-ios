@@ -99,7 +99,6 @@ final class JupiterTokensRepositoryImpl: JupiterTokensRepository {
                 }
                 return jupiterToken
             }
-            jupiterTokens = modifyNames(tokens: jupiterTokens)
             
             // return status ready
             try Task.checkCancellation()
@@ -111,22 +110,4 @@ final class JupiterTokensRepositoryImpl: JupiterTokensRepository {
             statusSubject.send(.failed)
         }
     }
-
-    private func modifyNames(tokens: [Token]) -> [Token] {
-        tokens.map { token in
-            if token.address == Constants.wrappedBTCAddress {
-                return Token(_tags: nil, chainId: token.chainId, address: token.address, symbol: token.symbol, name: Constants.btcName, decimals: token.decimals, logoURI: token.logoURI, extensions: token.extensions)
-            } else if token.address == Token.eth.address {
-                return Token(_tags: nil, chainId: token.chainId, address: token.address, symbol: token.symbol, name: Constants.ethName, decimals: token.decimals, logoURI: token.logoURI, extensions: token.extensions)
-            } else {
-                return token
-            }
-        }
-    }
-}
-
-private struct Constants {
-    static let wrappedBTCAddress = "3NZ9JMVBmGAqocybic2c7LQCJScmgsAZ6vQqTDzcqmJh"
-    static let btcName = "Bitcoin"
-    static let ethName = "Ethereum"
 }
