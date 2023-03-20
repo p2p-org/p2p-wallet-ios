@@ -1253,3 +1253,6 @@ You can try again, but your new transaction will be subject to the current rates
 "The link is ready!\nReceiver will be able to claim funds" = "Ссылка готова!\nПолучатель сможет запросить средства";
 "Send via link" = "Отправить по ссылке";
 "The link works only 1 time for any users.\nIf you log in yourself, the funds will be returned to your account" = "Ссылка работает только 1 раз для любых пользователей.\nЕсли вы авторизуетесь сами, средства будут возвращены на ваш счет";
+"Send via one-time link" = "Отправить по одноразовой ссылке";
+"Send crypto via one-time link" = "Отправить криптовалюту по одноразовой ссылке";
+"Anyone who gets this one-time link can claim the funds" = "Любой, кто получит эту одноразовую ссылку, может потребовать средства";

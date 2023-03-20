@@ -98,7 +98,7 @@ final class SendInputCoordinator: Coordinator<SendResult> {
 
     private func setTitle(to vc: UIViewController, isSendViaLink: Bool) {
         if isSendViaLink {
-            vc.title = L10n.sendingViaLink
+            vc.title = L10n.sendViaOneTimeLink
         } else {
             switch recipient.category {
             case let .username(name, domain):

@@ -1226,3 +1226,6 @@ You can try again, but your new transaction will be subject to the current rates
 "The link is ready!\nReceiver will be able to claim funds" = "The link is ready!\nReceiver will be able to claim funds";
 "Send via link" = "Send via link";
 "The link works only 1 time for any users.\nIf you log in yourself, the funds will be returned to your account" = "The link works only 1 time for any users.\nIf you log in yourself, the funds will be returned to your account";
+"Send via one-time link" = "Send via one-time link";
+"Send crypto via one-time link" = "Send crypto via one-time link";
+"Anyone who gets this one-time link can claim the funds" = "Anyone who gets this one-time link can claim the funds";
