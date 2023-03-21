@@ -1286,6 +1286,7 @@ You can try again, but your new transaction will be subject to the current rates
 "Integrity of the route has been compromised" = "Целостность маршрута нарушена";
 "Creating transaction failed" = "Не удалось создать транзакцию";
 "No swap options for these tokens" = "Нет вариантов обмена для этих токенов";
+"You have entered too little" = "Вы ввели слишком мало";
 "Token you pay" = "Токен, который вы платите";
 "Token you receive" = "Токен, который вы получаете";
 "You can’t swap between the same token" = "Вы не можете переключаться между одним и тем же токеном";
