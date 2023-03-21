@@ -98,7 +98,9 @@ final class TabBarController: UITabBarController {
 
         // authenticate if needed
         if authenticateWhenAppears {
+            #if !DEBUG
             viewModel.authenticate(presentationStyle: .login())
+            #endif
         }
 
         // add blur EffectView for authentication scene
