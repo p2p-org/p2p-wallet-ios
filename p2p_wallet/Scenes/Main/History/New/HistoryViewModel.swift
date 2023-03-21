@@ -145,11 +145,20 @@ class HistoryViewModel: BaseViewModel, ObservableObject {
         // Using this code if need to listen pending transactions
         let pendings = pendingTransactionService.observePendingTransactions()
             .map { transactions in
-                transactions.map { [weak actionSubject] trx in
-                    RendableListPendingTransactionItem(trx: trx) {
-                        actionSubject?.send(.openPendingTransaction(trx))
+                transactions
+                    .filter { pendingTransation in
+                        switch pendingTransation.rawTransaction {
+                        case let trx as SendTransaction where trx.isSendingViaLink:
+                            return false
+                        default:
+                            return true
+                        }
                     }
-                }
+                    .map { [weak actionSubject] trx in
+                        RendableListPendingTransactionItem(trx: trx) {
+                            actionSubject?.send(.openPendingTransaction(trx))
+                        }
+                    }
             }
 
         super.init()
