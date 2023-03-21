@@ -76,7 +76,7 @@ final class SendInputViewModel: BaseViewModel, ObservableObject {
     private let walletsRepository: WalletsRepository
     private let pricesService: PricesServiceType
     @Injected private var analyticsManager: AnalyticsManager
-    @Injected private var sendViaLinkStorage: SendViaLinkStorageType
+    @Injected private var sendViaLinkStorage: SendViaLinkStorage
 
     init(recipient: Recipient, preChosenWallet: Wallet?, preChosenAmount: Double?, source: SendSource, allowSwitchingMainAmountType: Bool, sendViaLinkSeed: String?) {
         self.source = source
