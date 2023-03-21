@@ -142,7 +142,7 @@ extension WalletDetail {
             guard let wallet else { return }
             analyticsManager.log(event: .tokenDetailsSwapClick)
             analyticsManager.log(event: .swapViewed(lastScreen: "token_details"))
-            navigatableScene = .swap(fromWallet: wallet)
+            navigatableScene = .swap(fromWallet: wallet, toWallet: nil)
         }
 
         private func cashOut() {

@@ -19,7 +19,7 @@ public enum SupportedToken {
         case matic = "0x7d1afa7b718fb893db30a3abc0cfc608aacfebb0"
         case avax = "0x85f138bfee4ef8e540890cfb48f620571d67eda3"
 
-        var solanaMintAddress: String {
+        public var solanaMintAddress: String {
             let map: [ERC20: String] = [
                 .sol: "So11111111111111111111111111111111111111112",
                 .usdc: "A9mUU4qviSctJVPJdBJWkb28deg915LYJKrzQ19ji3FM",

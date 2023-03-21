@@ -28,10 +28,10 @@ struct RendableNewSolanaAccountDetail: RendableAccountDetail {
     var actions: [RendableAccountDetailAction] {
         var walletActions: [RendableAccountDetailAction]
         if account.data.isNativeSOL || account.data.token.symbol == "USDC" {
-            walletActions = [.buy, .receive(.solanaAccount(account)), .send, .swap]
-            return [.buy, .receive(.solanaAccount(account)), .send, .swap(nil)]
+            walletActions = [.buy, .receive(.solanaAccount(account)), .send, .swap(account.data)]
+            return [.buy, .receive(.solanaAccount(account)), .send, .swap(account.data)]
         } else {
-            return [.receive(.solanaAccount(account)), .send, .swap(nil)]
+            return [.receive(.solanaAccount(account)), .send, .swap(account.data)]
         }
     }
 

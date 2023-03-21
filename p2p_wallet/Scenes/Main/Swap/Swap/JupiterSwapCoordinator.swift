@@ -10,13 +10,15 @@ enum JupiterSwapSource: String {
 
 struct JupiterSwapParameters {
     let preChosenWallet: Wallet?
+    let destinationWallet: Wallet?
     let dismissAfterCompletion: Bool
     let openKeyboardOnStart: Bool
     let hideTabBar: Bool
     let source: JupiterSwapSource // This param's necessary for the analytic. It doesn't do any logic
 
-    init(dismissAfterCompletion: Bool, openKeyboardOnStart: Bool, source: JupiterSwapSource, preChosenWallet: Wallet? = nil, hideTabBar: Bool = false) {
+    init(dismissAfterCompletion: Bool, openKeyboardOnStart: Bool, source: JupiterSwapSource, preChosenWallet: Wallet? = nil, destinationWallet: Wallet? = nil, hideTabBar: Bool = false) {
         self.preChosenWallet = preChosenWallet
+        self.destinationWallet = destinationWallet
         self.dismissAfterCompletion = dismissAfterCompletion
         self.openKeyboardOnStart = openKeyboardOnStart
         self.source = source
@@ -68,7 +70,8 @@ final class JupiterSwapCoordinator: Coordinator<Void> {
             fromTokenInputViewModel: fromTokenInputViewModel,
             toTokenInputViewModel: toTokenInputViewModel,
             source: params.source,
-            preChosenWallet: params.preChosenWallet
+            preChosenWallet: params.preChosenWallet,
+            destinationWallet: params.destinationWallet
         )
         
         // view

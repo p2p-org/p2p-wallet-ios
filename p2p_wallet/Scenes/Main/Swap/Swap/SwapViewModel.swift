@@ -52,6 +52,7 @@ final class SwapViewModel: BaseViewModel, ObservableObject {
     var continueUpdateOnDisappear = false // Special flag for update if view is disappeared
 
     private let preChosenWallet: Wallet?
+    private let destinationWallet: Wallet?
     private var timer: Timer?
     private let source: JupiterSwapSource
     private var wasMinToastShown = false // Special flag not to show toast again if state has not changed
@@ -61,12 +62,14 @@ final class SwapViewModel: BaseViewModel, ObservableObject {
         fromTokenInputViewModel: SwapInputViewModel,
         toTokenInputViewModel: SwapInputViewModel,
         source: JupiterSwapSource,
-        preChosenWallet: Wallet? = nil
+        preChosenWallet: Wallet? = nil,
+        destinationWallet: Wallet? = nil
     ) {
         self.fromTokenInputViewModel = fromTokenInputViewModel
         self.toTokenInputViewModel = toTokenInputViewModel
         self.stateMachine = stateMachine
         self.preChosenWallet = preChosenWallet
+        self.destinationWallet = destinationWallet
         self.source = source
         super.init()
         bind()
@@ -229,7 +232,7 @@ private extension SwapViewModel {
                     jupiterTokens: jupiterTokens,
                     routeMap: routeMap,
                     preChosenFromTokenMintAddress: preChosenWallet?.mintAddress ?? Defaults.fromTokenAddress,
-                    preChosenToTokenMintAddress: Defaults.toTokenAddress
+                    preChosenToTokenMintAddress: destinationWallet?.mintAddress ?? Defaults.toTokenAddress
                 )
             )
         logStart(from: newState.fromToken, to: newState.toToken)
