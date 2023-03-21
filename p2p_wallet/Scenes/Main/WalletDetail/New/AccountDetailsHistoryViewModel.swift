@@ -28,8 +28,8 @@ final class DetailHistoryViewModel: HistoryViewModel {
             items: [
                 .swapBanner(
                     id: UUID().uuidString,
-                    text: L10n.toMakeATransferToYouHaveToSwapTo("ETH", account?.data.token.symbol ?? "", "USDCet"),
-                    buttonTitle: "\(L10n.swap.capitalized) \(account?.data.token.symbol ?? "") → USDCet",
+                    text: L10n.toMakeATransferToYouHaveToSwapTo("ETH", account?.data.token.symbol ?? "", Token.usdcet.symbol),
+                    buttonTitle: "\(L10n.swap.capitalized) \(account?.data.token.symbol ?? "") → \(Token.usdcet.symbol)",
                     action: { [weak self] in
                         self?.actionSubject.send(.openSwap(self?.account?.data, Wallet(token: .usdcet)))
                     },
