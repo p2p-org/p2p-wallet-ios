@@ -1278,3 +1278,4 @@ You can try again, but your new transaction will be subject to the current rates
 "Token you receive" = "Токен, который вы получаете";
 "You can’t swap between the same token" = "Вы не можете переключаться между одним и тем же токеном";
 "Enter amount" = "Введите сумму";
+"Enter greater value" = "Введите большее значение";
