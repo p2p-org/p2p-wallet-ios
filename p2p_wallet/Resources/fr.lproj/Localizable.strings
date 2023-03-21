@@ -1294,3 +1294,5 @@ You can try again, but your new transaction will be subject to the current rates
 "You can’t swap between the same token" = "Vous ne pouvez pas échanger entre le même jeton";
 "Enter amount" = "Entrer le montant";
 "With Key App, all transactions you make on the Solana network are free" = "Avec Key App, toutes les transactions que vous effectuez sur le réseau Solana sont gratuites";
+"Sent via one-time link" = "Envoyé via un lien unique";
+"%@ transactions" = "%@ opérations";
