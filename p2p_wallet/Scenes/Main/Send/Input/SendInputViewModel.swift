@@ -389,7 +389,13 @@ private extension SendInputViewModel {
     }
 
     func updateFeeTitle() {
-        if currentState.fee == .zero, currentState.amountInToken == 0, currentState.amountInFiat == 0 {
+        // if send via link, just return enjoyFreeTransactions
+        if currentState.isSendingViaLink {
+            feeTitle = L10n.enjoyFreeTransactions
+        }
+        
+        // otherwise show fees in conditions
+        else if currentState.fee == .zero, currentState.amountInToken == 0, currentState.amountInFiat == 0 {
             feeTitle = L10n.enjoyFreeTransactions
         } else if currentState.fee == .zero {
             feeTitle = L10n.fees(0)
