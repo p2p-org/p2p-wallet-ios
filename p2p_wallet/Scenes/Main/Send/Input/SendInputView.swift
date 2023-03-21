@@ -109,17 +109,16 @@ struct SendInputView: View {
 
             Spacer()
 
-            switch viewModel.status {
-            case .initializingFailed:
-                TextButtonView(title: L10n.tryAgain, style: .primary, size: .large) {
-                    viewModel.initialize()
+            sendButton
+            
+            #if DEBUG
+            HStack {
+                Spacer()
+                Toggle(isOn: $viewModel.isFakeSendTransaction) {
+                    Text("Fake Transaction")
                 }
-                    .cornerRadius(radius: 28, corners: .allCorners)
-                    .frame(height: TextButton.Size.large.height)
-            case .initializing, .ready:
-                SliderActionButton(isSliderOn: $viewModel.isSliderOn, data: $viewModel.actionButtonData, showFinished: $viewModel.showFinished)
-                    .accessibilityIdentifier("send-slider")
             }
+            #endif
             
             #if !RELEASE
             debugView
@@ -176,6 +175,22 @@ struct SendInputView: View {
         .frame(height: 90)
     }
     
+    @ViewBuilder
+    var sendButton: some View {
+        switch viewModel.status {
+        case .initializingFailed:
+            TextButtonView(title: L10n.tryAgain, style: .primary, size: .large) {
+                viewModel.initialize()
+            }
+            .cornerRadius(radius: 28, corners: .allCorners)
+            .frame(height: TextButton.Size.large.height)
+        case .initializing, .ready:
+            SliderActionButton(isSliderOn: $viewModel.isSliderOn, data: $viewModel.actionButtonData, showFinished: $viewModel.showFinished)
+                .accessibilityIdentifier("send-slider")
+        }
+    }
+    
+    #if !RELEASE
     var debugView: some View {
         Group {
             if let link = viewModel.currentState.sendViaLinkSeed {
@@ -202,6 +217,7 @@ struct SendInputView: View {
             )
         }
     }
+    #endif
 }
 
 struct SendInputView_Previews: PreviewProvider {
