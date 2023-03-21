@@ -41,7 +41,9 @@ struct SendInputView: View {
                 .edgesIgnoringSafeArea(.all)
                 .onTapGesture { self.viewModel.inputAmountViewModel.isFirstResponder = false }
 
-            inputView
+            ScrollView {
+                inputView
+            }
                 .padding(16)
         }
     }
@@ -49,20 +51,6 @@ struct SendInputView: View {
     var inputView: some View {
         VStack(spacing: 8) {
             if let link = viewModel.currentState.sendViaLinkSeed {
-                #if !RELEASE
-                Text("\(.sendViaLinkPrefix)/\(link) (tap to copy)")
-                    .apply(style: .label2)
-                    .foregroundColor(.red)
-                    .onTapGesture {
-                        UIPasteboard.general.string = "\(String.sendViaLinkPrefix)/\(link)"
-                    }
-                Text("\(viewModel.currentState.recipient.address) (tap to copy)")
-                    .apply(style: .label2)
-                    .foregroundColor(.red)
-                    .onTapGesture {
-                        UIPasteboard.general.string = viewModel.currentState.recipient.address
-                    }
-                #endif
                 Text(L10n.anyoneWhoGetsThisOneTimeLinkCanClaimTheFunds)
                     .apply(style: .text3)
                     .foregroundColor(Color(Asset.Colors.mountain.color))
@@ -118,16 +106,6 @@ struct SendInputView: View {
             case .ready:
                 SendInputAmountView(viewModel: viewModel.inputAmountViewModel)
             }
-            
-            #if !RELEASE
-            FeeRelayerDebugView(
-                viewModel: .init(
-                    feeInSOL: viewModel.currentState.fee,
-                    feeInToken: viewModel.currentState.feeInToken,
-                    payingFeeTokenDecimals: viewModel.currentState.tokenFee.decimals
-                )
-            )
-            #endif
 
             Spacer()
 
@@ -142,6 +120,10 @@ struct SendInputView: View {
                 SliderActionButton(isSliderOn: $viewModel.isSliderOn, data: $viewModel.actionButtonData, showFinished: $viewModel.showFinished)
                     .accessibilityIdentifier("send-slider")
             }
+            
+            #if !RELEASE
+            debugView
+            #endif
         }
     }
 
@@ -192,6 +174,33 @@ struct SendInputView: View {
         .padding(EdgeInsets(top: 21, leading: 24, bottom: 21, trailing: 12))
         .background(RoundedRectangle(cornerRadius: 12).fill(Color(Asset.Colors.snow.color)))
         .frame(height: 90)
+    }
+    
+    var debugView: some View {
+        Group {
+            if let link = viewModel.currentState.sendViaLinkSeed {
+                Text("\(.sendViaLinkPrefix)/\(link) (tap to copy)")
+                    .apply(style: .label2)
+                    .foregroundColor(.red)
+                    .onTapGesture {
+                        UIPasteboard.general.string = "\(String.sendViaLinkPrefix)/\(link)"
+                    }
+                Text("\(viewModel.currentState.recipient.address) (tap to copy)")
+                    .apply(style: .label2)
+                    .foregroundColor(.red)
+                    .onTapGesture {
+                        UIPasteboard.general.string = viewModel.currentState.recipient.address
+                    }
+            }
+            
+            FeeRelayerDebugView(
+                viewModel: .init(
+                    feeInSOL: viewModel.currentState.fee,
+                    feeInToken: viewModel.currentState.feeInToken,
+                    payingFeeTokenDecimals: viewModel.currentState.tokenFee.decimals
+                )
+            )
+        }
     }
 }
 
