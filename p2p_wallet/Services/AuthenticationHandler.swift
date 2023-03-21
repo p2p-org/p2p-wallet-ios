@@ -78,7 +78,9 @@ final class AuthenticationHandler: AuthenticationHandlerType {
                 if Int(Date().timeIntervalSince1970) >= self.lastAuthenticationTimeStamp + self
                     .timeRequiredForAuthentication
                 {
+                    #if !DEBUG
                     self.authenticate(presentationStyle: .login())
+                    #endif
                 }
 
                 self.isLockedSubject.send(false)
