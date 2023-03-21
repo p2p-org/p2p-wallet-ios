@@ -478,7 +478,7 @@ private extension SendInputViewModel {
                     if Int.random(in: 0..<4) == 3 { throw SolanaError.unknown }
                     // save to storage
                     if self.currentState.isSendingViaLink {
-                        self.saveSendViaLinkSeedToStorage()
+                        self.saveSendViaLinkTransaction()
                     }
                     
                     return .fakeTransactionSignature(id: self.currentState.sendViaLinkSeed ?? UUID().uuidString)
@@ -497,7 +497,7 @@ private extension SendInputViewModel {
                 
                 // save to storage
                 if self.currentState.isSendingViaLink {
-                    self.saveSendViaLinkSeedToStorage()
+                    self.saveSendViaLinkTransaction()
                 }
 
                 return trx
@@ -508,9 +508,18 @@ private extension SendInputViewModel {
     
     // MARK: - Helpers
 
-    func saveSendViaLinkSeedToStorage() {
+    func saveSendViaLinkTransaction() {
         guard let seed = currentState.sendViaLinkSeed else { return }
-        sendViaLinkStorage.save(seed: seed)
+        let lamports = currentState.amountInFiat
+        let token = currentState.token
+        sendViaLinkStorage.save(
+            transaction: .init(
+                amount: currentState.amountInToken,
+                amountInFiat: currentState.amountInFiat,
+                token: token,
+                seed: seed
+            )
+        )
     }
 }
 

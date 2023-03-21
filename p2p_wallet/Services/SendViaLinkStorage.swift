@@ -1,12 +1,21 @@
 import Foundation
 import Resolver
+import SolanaSwift
+import SwiftyUserDefaults
+
+struct SendViaLinkTransactionInfo: Codable {
+    let amount: Double
+    let amountInFiat: Double
+    let token: Token
+    let seed: String
+}
 
 protocol SendViaLinkStorage {
     @discardableResult
-    func save(seed: String) -> Bool
+    func save(transaction: SendViaLinkTransactionInfo) -> Bool
     @discardableResult
     func remove(seed: String) -> Bool
-    func getSeeds() -> [String]
+    func getTransactions() -> [SendViaLinkTransactionInfo]
 }
 
 final class SendViaLinkStorageImpl: SendViaLinkStorage {
@@ -17,17 +26,17 @@ final class SendViaLinkStorageImpl: SendViaLinkStorage {
     }
     
     @discardableResult
-    func save(seed: String) -> Bool {
+    func save(transaction: SendViaLinkTransactionInfo) -> Bool {
         // get seeds
-        var seeds = getSeeds()
+        var seeds = getTransactions()
         
         // assert that seeds has not already existed
-        guard !seeds.contains(seed) else {
+        guard !seeds.contains(where: { $0.seed == transaction.seed }) else {
             return true
         }
         
         // append seed
-        seeds.append(seed)
+        seeds.append(transaction)
         
         // save
         return save(seeds: seeds)
@@ -35,27 +44,27 @@ final class SendViaLinkStorageImpl: SendViaLinkStorage {
     
     func remove(seed: String) -> Bool {
         // get seeds from keychain
-        var seeds = getSeeds()
+        var seeds = getTransactions()
         
         // remove seed
-        seeds.removeAll(where: { $0 == seed })
+        seeds.removeAll(where: { $0.seed == seed })
         
         // save
         return save(seeds: seeds)
     }
     
-    func getSeeds() -> [String] {
+    func getTransactions() -> [SendViaLinkTransactionInfo] {
         guard let userPubkey else {
             return []
         }
-        return Defaults.sendViaLinkSeeds[userPubkey] ?? []
+        return Defaults.sendViaLinkTransactions[userPubkey] ?? []
     }
     
-    private func save(seeds: [String]) -> Bool {
+    private func save(seeds: [SendViaLinkTransactionInfo]) -> Bool {
         guard let userPubkey else {
             return false
         }
-        Defaults.sendViaLinkSeeds[userPubkey] = seeds
+        Defaults.sendViaLinkTransactions[userPubkey] = seeds
         return true
     }
 }
