@@ -41,7 +41,6 @@ final class SendViaLinkStorageImpl: SendViaLinkStorage {
     // MARK: - Properties
     
     private var subscription: DefaultsDisposable?
-    private let locker = NSLock()
     private let transactionsSubject = CurrentValueSubject<[SendViaLinkTransactionInfo], Never>([])
     
     // MARK: - Computed properties
@@ -73,7 +72,6 @@ final class SendViaLinkStorageImpl: SendViaLinkStorage {
     
     @discardableResult
     func save(transaction: SendViaLinkTransactionInfo) -> Bool {
-        locker.lock(); defer { locker.unlock() }
         
         // get seeds
         var seeds = getTransactions()
@@ -91,7 +89,6 @@ final class SendViaLinkStorageImpl: SendViaLinkStorage {
     }
     
     func remove(seed: String) -> Bool {
-        locker.lock(); defer { locker.unlock() }
         
         // get seeds from keychain
         var seeds = getTransactions()
@@ -104,7 +101,6 @@ final class SendViaLinkStorageImpl: SendViaLinkStorage {
     }
     
     func getTransactions() -> [SendViaLinkTransactionInfo] {
-        locker.lock(); defer { locker.unlock() }
         
         guard let userPubkey else {
             return []
