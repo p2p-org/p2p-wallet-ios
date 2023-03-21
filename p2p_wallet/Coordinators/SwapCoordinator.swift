@@ -14,6 +14,7 @@ import SolanaSwift
 final class SwapCoordinator: Coordinator<SwapCoordinator.Result> {
     private let navigationController: UINavigationController
     private let initialWallet: Wallet?
+    private let destinationWallet: Wallet?
     private let analyticsManager: AnalyticsManager
     private let hidesBottomBarWhenPushed: Bool
 
@@ -22,17 +23,19 @@ final class SwapCoordinator: Coordinator<SwapCoordinator.Result> {
     init(
         navigationController: UINavigationController,
         initialWallet: Wallet?,
+        destinationWallet: Wallet?,
         analyticsManager: AnalyticsManager = Resolver.resolve(),
         hidesBottomBarWhenPushed: Bool = true
     ) {
         self.navigationController = navigationController
         self.initialWallet = initialWallet
+        self.destinationWallet = destinationWallet
         self.analyticsManager = analyticsManager
         self.hidesBottomBarWhenPushed = hidesBottomBarWhenPushed
     }
 
     override func start() -> AnyPublisher<SwapCoordinator.Result, Never> {
-        let viewModel = OrcaSwapV2.ViewModel(initialWallet: initialWallet)
+        let viewModel = OrcaSwapV2.ViewModel(initialWallet: initialWallet, destinationWallet: destinationWallet)
         let view = OrcaSwapV2.ViewController(viewModel: viewModel, hidesBottomBarWhenPushed: hidesBottomBarWhenPushed)
         analyticsManager.log(event: .mainScreenSwapOpen)
 

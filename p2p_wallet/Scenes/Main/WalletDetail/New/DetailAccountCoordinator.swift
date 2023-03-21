@@ -119,8 +119,8 @@ class DetailAccountCoordinator: SmartCoordinator<DetailAccountCoordinatorResult>
         case .openReceive:
             self.openReceive()
             
-        case .openSwap(let wallet):
-            self.openSwap(wallet: wallet)
+        case .openSwap(let wallet, let destination):
+            self.openSwap(destination: destination)
         }
     }
 
@@ -210,13 +210,9 @@ class DetailAccountCoordinator: SmartCoordinator<DetailAccountCoordinatorResult>
         }
     }
 
-    func openSwap() {
+    func openSwap(destination: Wallet? = nil) {
         guard case let .solanaAccount(account) = self.args,
               let rootViewController = presentation.presentingViewController as? UINavigationController
-    func openSwap(wallet: Wallet? = nil) {
-        guard
-            case let .solanaAccount(account) = self.args,
-            let navigationController = presentation.presentingViewController as? UINavigationController
         else { return }
         if available(.jupiterSwapEnabled) {
             coordinate(
@@ -227,6 +223,7 @@ class DetailAccountCoordinator: SmartCoordinator<DetailAccountCoordinatorResult>
                         openKeyboardOnStart: true,
                         source: .tapToken,
                         preChosenWallet: account.data,
+                        destinationWallet: destination,
                         hideTabBar: true
                     )
                 )
@@ -236,7 +233,7 @@ class DetailAccountCoordinator: SmartCoordinator<DetailAccountCoordinatorResult>
             }
             .store(in: &subscriptions)
         } else {
-            let vm = OrcaSwapV2.ViewModel(initialWallet: account.data)
+            let vm = OrcaSwapV2.ViewModel(initialWallet: account.data, destinationWallet: destination)
             let vc = OrcaSwapV2.ViewController(viewModel: vm)
             
             vc.doneHandler = { [weak self, weak rootViewController] in

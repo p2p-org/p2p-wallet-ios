@@ -27,7 +27,7 @@ enum NewHistoryAction {
 
     case openBuy
 
-    case openSwap(Wallet?)
+    case openSwap(Wallet?, Wallet?)
 }
 
 class HistoryViewModel: BaseViewModel, ObservableObject {

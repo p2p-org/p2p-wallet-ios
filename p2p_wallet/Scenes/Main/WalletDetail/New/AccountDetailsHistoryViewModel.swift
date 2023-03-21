@@ -4,6 +4,7 @@ import KeyAppKitCore
 import History
 import Resolver
 import SolanaSwift
+import Wormhole
 
 final class DetailHistoryViewModel: HistoryViewModel {
     @Injected private var helpLauncher: HelpCenterLauncher
@@ -30,7 +31,7 @@ final class DetailHistoryViewModel: HistoryViewModel {
                     text: L10n.toMakeATransferToYouHaveToSwapTo("ETH", account?.data.token.symbol ?? "", "USDCet"),
                     buttonTitle: "\(L10n.swap.capitalized) \(account?.data.token.symbol ?? "") → USDCet",
                     action: { [weak self] in
-                        self?.actionSubject.send(.openSwap(self?.account?.data))
+                        self?.actionSubject.send(.openSwap(self?.account?.data, Wallet(token: .usdcet)))
                     },
                     helpAction: { [weak self] in
                         self?.helpLauncher.launch()
@@ -47,6 +48,21 @@ final class DetailHistoryViewModel: HistoryViewModel {
             data: newData,
             fetchable: state.fetchable,
             error: state.error
+        )
+    }
+}
+
+private extension Token {
+    static var usdcet: Self {
+        .init(
+            _tags: nil,
+            chainId: 101,
+            address: SupportedToken.ERC20.usdc.solanaMintAddress,
+            symbol: "USDCet",
+            name: "USD Coin (Wormhole)",
+            decimals: 6,
+            logoURI: "https://raw.githubusercontent.com/solana-labs/token-list/main/assets/mainnet/A9mUU4qviSctJVPJdBJWkb28deg915LYJKrzQ19ji3FM/logo.png",
+            extensions: .init(coingeckoId: "usd-coin")
         )
     }
 }

@@ -81,8 +81,8 @@ class NewHistoryCoordinator: SmartCoordinator<Void> {
         case .openReceive:
             self.openReceive()
             
-        case .openSwap(let wallet):
-            self.openSwap(wallet: wallet)
+        case .openSwap(let wallet, let destinationWallet):
+            self.openSwap(wallet: wallet, destination: destinationWallet)
         }
     }
     
@@ -172,13 +172,14 @@ class NewHistoryCoordinator: SmartCoordinator<Void> {
         presentation.presentingViewController.present(navigation, animated: true)
     }
 
-    func openSwap(wallet: Wallet?) {
+    func openSwap(wallet: Wallet?, destination: Wallet? = nil) {
         guard let navigationController = presentation.presentingViewController as? UINavigationController else {
             return
         }
         let coordinator = SwapCoordinator(
             navigationController: navigationController,
             initialWallet: wallet,
+            destinationWallet: destination,
             hidesBottomBarWhenPushed: true
         )
 
