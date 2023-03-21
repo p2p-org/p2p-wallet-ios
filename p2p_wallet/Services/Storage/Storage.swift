@@ -22,6 +22,14 @@ protocol NameStorageType: StorageType {
     func getName() -> String?
 }
 
+protocol SendViaLinkStorageType: StorageType {
+    @discardableResult
+    func save(seed: String) -> Bool
+    @discardableResult
+    func remove(seed: String) -> Bool
+    func getSeeds() -> [String]
+}
+
 protocol PincodeStorageType {
     func saveAttempt(_ attempt: Int)
     var attempt: Int? { get }

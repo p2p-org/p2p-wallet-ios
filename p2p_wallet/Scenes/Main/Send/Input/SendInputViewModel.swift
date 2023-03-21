@@ -76,6 +76,7 @@ final class SendInputViewModel: BaseViewModel, ObservableObject {
     private let walletsRepository: WalletsRepository
     private let pricesService: PricesServiceType
     @Injected private var analyticsManager: AnalyticsManager
+    @Injected private var sendViaLinkStorage: SendViaLinkStorageType
 
     init(recipient: Recipient, preChosenWallet: Wallet?, preChosenAmount: Double?, source: SendSource, allowSwitchingMainAmountType: Bool, sendViaLinkSeed: String?) {
         self.source = source
@@ -465,15 +466,26 @@ private extension SendInputViewModel {
         
         await MainActor.run {
             let transaction = SendTransaction(state: self.currentState) {
+                // save recipient except send via link
+                if !self.currentState.isSendingViaLink {
+                    try? await Resolver.resolve(SendHistoryService.self).insert(recipient)
+                }
+                
+                // Fake transaction for testing
                 #if DEBUG
                 if self.isFakeSendTransaction {
                     try await Task.sleep(nanoseconds: 2_000_000_000)
                     if Int.random(in: 0..<4) == 3 { throw SolanaError.unknown }
+                    // save to storage
+                    if self.currentState.isSendingViaLink {
+                        self.saveSendViaLinkSeedToStorage()
+                    }
+                    
                     return .fakeTransactionSignature(id: self.currentState.sendViaLinkSeed ?? UUID().uuidString)
                 }
                 #endif
-                try? await Resolver.resolve(SendHistoryService.self).insert(recipient)
-
+                
+                // Real transaction
                 let trx = try await Resolver.resolve(SendActionService.self).send(
                     from: sourceWallet,
                     receiver: address,
@@ -482,11 +494,23 @@ private extension SendInputViewModel {
                     ignoreTopUp: isSendingViaLink,
                     memo: isSendingViaLink ? .secretConfig("SEND_VIA_LINK_MEMO_PREFIX")!: nil
                 )
+                
+                // save to storage
+                if self.currentState.isSendingViaLink {
+                    self.saveSendViaLinkSeedToStorage()
+                }
 
                 return trx
             }
             self.transaction.send(transaction)
         }
+    }
+    
+    // MARK: - Helpers
+
+    func saveSendViaLinkSeedToStorage() {
+        guard let seed = currentState.sendViaLinkSeed else { return }
+        sendViaLinkStorage.save(seed: seed)
     }
 }
 

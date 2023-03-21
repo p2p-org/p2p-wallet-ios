@@ -72,6 +72,7 @@ extension Resolver: ResolverRegistering {
             .implements(PincodeStorageType.self)
             .implements(AccountStorageType.self)
             .implements(PincodeSeedPhrasesStorage.self)
+            .implements(SendViaLinkStorageType.self)
             .implements((AccountStorageType & NameStorageType).self)
             .implements((AccountStorageType & PincodeStorageType & NameStorageType).self)
             .implements((ICloudStorageType & AccountStorageType & NameStorageType).self)

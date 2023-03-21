@@ -9,6 +9,7 @@ struct SendTransaction: RawTransactionType {
     
     var payingFeeWallet: Wallet?
     var feeAmount: FeeAmount
+    var sendViaLinkSeed: String?
 
     let execution: () async throws -> TransactionID
 
@@ -32,10 +33,17 @@ struct SendTransaction: RawTransactionType {
         amountInFiat = state.amountInFiat
         payingFeeWallet = state.feeWallet
         feeAmount = state.feeInToken
+        sendViaLinkSeed = state.sendViaLinkSeed
         self.execution = execution
     }
 
     func createRequest() async throws -> String {
         try await execution()
+    }
+    
+    // MARK: - Getters
+
+    var isSendingViaLink: Bool {
+        sendViaLinkSeed != nil
     }
 }
