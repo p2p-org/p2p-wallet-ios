@@ -139,6 +139,11 @@ extension DefaultsKeys {
     var toTokenAddress: DefaultsKey<String?> {
         .init(#function, defaultValue: nil)
     }
+    
+    // Send via link: seeds mapped by user publickeys
+    var sendViaLinkSeeds: DefaultsKey<[String: [String]]> {
+        .init(#function, defaultValue: [:])
+    }
 }
 
 // MARK: - Moonpay Environment
