@@ -1291,3 +1291,4 @@ You can try again, but your new transaction will be subject to the current rates
 "Token you receive" = "Токен, который вы получаете";
 "You can’t swap between the same token" = "Вы не можете переключаться между одним и тем же токеном";
 "Enter amount" = "Введите сумму";
+"With Key App, all transactions you make on the Solana network are free" = "С Key App все транзакции, которые вы совершаете в сети Solana, бесплатны.";
