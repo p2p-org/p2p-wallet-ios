@@ -61,8 +61,7 @@ final class SendViaLinkStorageImpl: SendViaLinkStorage {
 
         // observe changes
         subscription = Defaults.observe(\.sendViaLinkTransactions) { [weak self] transactions in
-            guard let userPubkey = self?.userPubkey,
-                  let newValue = transactions.newValue?[userPubkey]
+            guard let newValue = self?.getTransactions()
             else { return }
             self?.transactionsSubject.send(newValue)
         }
@@ -72,47 +71,66 @@ final class SendViaLinkStorageImpl: SendViaLinkStorage {
     
     @discardableResult
     func save(transaction: SendViaLinkTransactionInfo) -> Bool {
-        
         // get seeds
-        var seeds = getTransactions()
+        var transactions = getTransactions()
         
         // assert that seeds has not already existed
-        guard !seeds.contains(where: { $0.seed == transaction.seed }) else {
+        guard !transactions.contains(where: { $0.seed == transaction.seed }) else {
             return true
         }
         
         // append seed
-        seeds.append(transaction)
+        transactions.append(transaction)
         
         // save
-        return save(seeds: seeds)
+        return save(transactions: transactions)
     }
     
     func remove(seed: String) -> Bool {
-        
         // get seeds from keychain
-        var seeds = getTransactions()
+        var transactions = getTransactions()
         
         // remove seed
-        seeds.removeAll(where: { $0.seed == seed })
+        transactions.removeAll(where: { $0.seed == seed })
         
         // save
-        return save(seeds: seeds)
+        return save(transactions: transactions)
     }
     
     func getTransactions() -> [SendViaLinkTransactionInfo] {
-        
-        guard let userPubkey else {
+        guard let userPubkey,
+              let data = Defaults.sendViaLinkTransactions,
+              let dict = try? JSONDecoder().decode([String: [SendViaLinkTransactionInfo]].self, from: data)
+        else {
             return []
         }
-        return Defaults.sendViaLinkTransactions[userPubkey] ?? []
+        return dict[userPubkey] ?? []
     }
     
-    private func save(seeds: [SendViaLinkTransactionInfo]) -> Bool {
+    private func save(transactions: [SendViaLinkTransactionInfo]) -> Bool {
+        // assert user pubkey
         guard let userPubkey else {
             return false
         }
-        Defaults.sendViaLinkTransactions[userPubkey] = seeds
+        
+        // assure that dictionary is alway non-optional
+        var newValue = [String: [SendViaLinkTransactionInfo]]()
+        if let data = Defaults.sendViaLinkTransactions,
+           let dict = try? JSONDecoder().decode([String: [SendViaLinkTransactionInfo]].self, from: data)
+        {
+            newValue = dict
+        }
+        
+        // modify value
+        newValue[userPubkey] = transactions
+        
+        // encode to data
+        guard let data = try? JSONEncoder().encode(newValue) else {
+            return false
+        }
+        
+        // save to UserDefaults
+        Defaults.sendViaLinkTransactions = data
         return true
     }
 }

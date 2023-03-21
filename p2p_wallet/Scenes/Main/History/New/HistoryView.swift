@@ -19,6 +19,9 @@ struct NewHistoryView<Header: View>: View {
     var body: some View {
         ScrollView {
             header
+            
+            // Send via link
+            sendViaLinkView
 
             // Display error or empty state
             if
@@ -103,6 +106,15 @@ struct NewHistoryView<Header: View>: View {
             print("History opened")
             
             viewModel.fetch()
+        }
+    }
+    
+    // MARK: - View builder
+    
+    @ViewBuilder
+    var sendViaLinkView: some View {
+        if !viewModel.sendViaLinkTransactions.isEmpty {
+            Text("SendViaLink: \(viewModel.sendViaLinkTransactions.count)")
         }
     }
 }
