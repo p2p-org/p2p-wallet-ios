@@ -15,13 +15,26 @@ struct NewHistoryView<Header: View>: View {
     @ObservedObject var viewModel: HistoryViewModel
 
     let header: Header
-
+    
     var body: some View {
-        ScrollView {
-            header
-            
+        VStack(spacing: 0) {
             // Send via link
             sendViaLinkView
+            
+            // Divider
+            Divider()
+                .frame(height: 1)
+                .foregroundColor(Color(Asset.Colors.rain.color))
+                .padding(.leading, 20)
+            
+            // history
+            transactionsHistoryView
+        }
+    }
+
+    var transactionsHistoryView: some View {
+        ScrollView {
+            header
 
             // Display error or empty state
             if
@@ -114,7 +127,32 @@ struct NewHistoryView<Header: View>: View {
     @ViewBuilder
     var sendViaLinkView: some View {
         if !viewModel.sendViaLinkTransactions.isEmpty {
-            Text("SendViaLink: \(viewModel.sendViaLinkTransactions.count)")
+            HStack(alignment: .center, spacing: 12) {
+                Image(uiImage: .sendViaLinkPlain)
+                    .resizable()
+                    .frame(width: 24, height: 24)
+                    .foregroundColor(Color(Asset.Colors.night.color))
+                
+                VStack(alignment: .leading, spacing: 4) {
+                    Text(L10n.sentViaOneTimeLink)
+                        .fontWeight(.semibold)
+                        .apply(style: .text3)
+                    
+                    Text(L10n.transactions(viewModel.sendViaLinkTransactions.count))
+                        .apply(style: .label1)
+                        .foregroundColor(Color(Asset.Colors.mountain.color))
+                }
+                
+                Spacer()
+                
+                Image(uiImage: .nextArrow)
+                    .resizable()
+                    .frame(width: 7.41, height: 12)
+                    .padding(.vertical, (24-12)/2)
+                    .padding(.horizontal, (24-7.41)/2)
+                    .foregroundColor(Color(Asset.Colors.mountain.color))
+            }
+            .padding(.init(top: 12, leading: 16, bottom: 11, trailing: 16))
         }
     }
 }
