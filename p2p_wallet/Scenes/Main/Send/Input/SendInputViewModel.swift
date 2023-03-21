@@ -469,7 +469,7 @@ private extension SendInputViewModel {
                 if self.isFakeSendTransaction {
                     try await Task.sleep(nanoseconds: 2_000_000_000)
                     if Int.random(in: 0..<4) == 3 { throw SolanaError.unknown }
-                    return .fakeTransactionSignature
+                    return .fakeTransactionSignature(id: self.currentState.sendViaLinkSeed ?? UUID().uuidString)
                 }
                 #endif
                 try? await Resolver.resolve(SendHistoryService.self).insert(recipient)

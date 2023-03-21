@@ -60,7 +60,8 @@ extension TransactionHandler {
         Task { [weak self] in
             guard let self else { return }
             // for debuging
-            if transactionId == .fakeTransactionSignature {
+            #if DEBUG
+            if transactionId.hasPrefix(.fakeTransactionSignaturePrefix) {
                 // mark as confirmed
                 await self.updateTransactionAtIndex(index) { currentValue in
                     var value = currentValue
@@ -82,6 +83,7 @@ extension TransactionHandler {
                 }
                 return
             }
+            #endif
             
             // for production
             var statuses: [TransactionStatus] = []
