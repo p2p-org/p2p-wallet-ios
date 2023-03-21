@@ -45,6 +45,14 @@ final class SendInputViewModel: BaseViewModel, ObservableObject {
     @Published var actionButtonData = SliderActionButtonData.zero
     @Published var isSliderOn = false
     @Published var showFinished = false
+    
+    #if DEBUG
+    @Published var isFakeSendTransaction: Bool = Defaults.isFakeSendTransaction {
+        didSet {
+            Defaults.isFakeSendTransaction = isFakeSendTransaction
+        }
+    }
+    #endif
 
     let feeInfoPressed = PassthroughSubject<Void, Never>()
     let openFeeInfo = PassthroughSubject<Bool, Never>()
@@ -458,26 +466,12 @@ private extension SendInputViewModel {
         await MainActor.run {
             let transaction = SendTransaction(state: self.currentState) {
                 #if DEBUG
-                if isSendingViaLink {
-                    // FIXME: - Real implementation later
+                if self.isFakeSendTransaction {
                     try await Task.sleep(nanoseconds: 2_000_000_000)
                     if Int.random(in: 0..<4) == 3 { throw SolanaError.unknown }
                     return .fakeTransactionSignature
-                } else {
-                    try? await Resolver.resolve(SendHistoryService.self).insert(recipient)
-
-                    let trx = try await Resolver.resolve(SendActionService.self).send(
-                        from: sourceWallet,
-                        receiver: address,
-                        amount: amountInToken,
-                        feeWallet: feeWallet,
-                        ignoreTopUp: isSendingViaLink,
-                        memo: nil
-                    )
-
-                    return trx
                 }
-                #else
+                #endif
                 try? await Resolver.resolve(SendHistoryService.self).insert(recipient)
 
                 let trx = try await Resolver.resolve(SendActionService.self).send(
@@ -490,7 +484,6 @@ private extension SendInputViewModel {
                 )
 
                 return trx
-                #endif
             }
             self.transaction.send(transaction)
         }

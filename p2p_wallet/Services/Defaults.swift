@@ -111,6 +111,10 @@ extension DefaultsKeys {
             defaultValue: RemoteConfig.remoteConfig().solanaNegativeStatusTimeFrequency
         )
     }
+    
+    #if DEBUG
+    var isFakeSendTransaction: DefaultsKey<Bool> { .init(#function, defaultValue: false) }
+    #endif
 
     // Sell/RampOff
     var isSellAvailable: DefaultsKey<Bool?> {
