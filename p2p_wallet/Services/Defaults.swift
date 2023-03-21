@@ -141,8 +141,8 @@ extension DefaultsKeys {
     }
     
     // Send via link: seeds mapped by user publickeys
-    var sendViaLinkTransactions: DefaultsKey<[String: [SendViaLinkTransactionInfo]]> {
-        .init(#function, defaultValue: [:])
+    var sendViaLinkTransactions: DefaultsKey<Data?> {
+        .init(#function, defaultValue: nil)
     }
 }
 

@@ -37,10 +37,12 @@ class HistoryViewModel: BaseViewModel, ObservableObject {
     // State
 
     @Published var output: ListState<HistorySection> = .init()
+    @Published var sendViaLinkTransactions: [SendViaLinkTransactionInfo] = []
     
     // Dependency
 
     private var sellDataService: (any SellDataService)?
+    @Injected private var sendViaLinkStorage: SendViaLinkStorage
 
     init(mock: [any RendableListTransactionItem]) {
         // Init service
@@ -97,6 +99,8 @@ class HistoryViewModel: BaseViewModel, ObservableObject {
             .receive(on: RunLoop.main)
             .sink { self.output = $0 }
             .store(in: &subscriptions)
+        
+        bind()
     }
 
     init(
@@ -171,6 +175,8 @@ class HistoryViewModel: BaseViewModel, ObservableObject {
             .receive(on: RunLoop.main)
             .sink { self.output = $0 }
             .store(in: &subscriptions)
+        
+        bind()
     }
 
     func reload() async throws {
@@ -184,6 +190,18 @@ class HistoryViewModel: BaseViewModel, ObservableObject {
         Task {
             await sellDataService?.update()
         }
+    }
+    
+    // MARK: - Helpers
+
+    private func bind() {
+        // send via link
+        sendViaLinkStorage.transactionsPublisher
+            .receive(on: RunLoop.main)
+            .sink { [weak self] transactionInfos in
+                self?.sendViaLinkTransactions = transactionInfos
+            }
+            .store(in: &subscriptions)
     }
 
     private func buildOutput(
