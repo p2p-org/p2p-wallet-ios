@@ -345,7 +345,7 @@ private extension SwapViewModel {
         case .error(.routeIsNotFound):
             actionButtonData = SliderActionButtonData(isEnabled: false, title: L10n.noSwapOptionsForTheseTokens)
         case .error(.minimumAmount):
-            actionButtonData = SliderActionButtonData(isEnabled: false, title: L10n.youHaveEnteredTooLittle)
+            actionButtonData = SliderActionButtonData(isEnabled: false, title: L10n.enterGreaterValue)
         default:
             actionButtonData = SliderActionButtonData(isEnabled: false, title: L10n.somethingWentWrong)
         }
