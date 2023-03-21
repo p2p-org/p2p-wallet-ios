@@ -22,6 +22,8 @@ class KeychainStorage: StorageType {
 
     let iCloudAccountsKey = "Keychain.Accounts"
     private let iCloudKeychainToLocalKeychainMigrated = "iCloudKeychainToLocalKeychainMigrated"
+    
+    let iCloudSendViaLinkSeedsKey = "Keychain.iCloudSendViaLinkSeedsKey"
 
     // MARK: - Properties
 
