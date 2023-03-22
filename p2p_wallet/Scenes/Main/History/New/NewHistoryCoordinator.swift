@@ -12,6 +12,7 @@ import Sell
 import Send
 import SolanaSwift
 import SwiftUI
+import Combine
 
 class NewHistoryCoordinator: SmartCoordinator<Void> {
     override func build() -> UIViewController {
@@ -19,7 +20,7 @@ class NewHistoryCoordinator: SmartCoordinator<Void> {
 
         vm.actionSubject
             .sink { [weak self] action in
-                self?.openDetailTransaction(action: action)
+                self?.openAction(action: action)
             }
             .store(in: &subscriptions)
 
@@ -36,7 +37,7 @@ class NewHistoryCoordinator: SmartCoordinator<Void> {
         return vc
     }
 
-    private func openDetailTransaction(action: NewHistoryAction) {
+    private func openAction(action: NewHistoryAction) {
         switch action {
         case let .openParsedTransaction(trx):
             let coordinator = TransactionDetailCoordinator(
@@ -79,6 +80,8 @@ class NewHistoryCoordinator: SmartCoordinator<Void> {
             self.openBuy()
         case .openReceive:
             self.openReceive()
+        case let .openSentViaLinkHistoryView(transactionsPublisher):
+            openSentViaLinkHistoryView(transactionsPublisher: transactionsPublisher)
         }
     }
     
@@ -158,7 +161,7 @@ class NewHistoryCoordinator: SmartCoordinator<Void> {
         .store(in: &subscriptions)
     }
 
-    func openReceive() {
+    private func openReceive() {
         let userWalletManager: UserWalletManager = Resolver.resolve()
         guard let account = userWalletManager.wallet?.account else { return }
 
@@ -168,7 +171,7 @@ class NewHistoryCoordinator: SmartCoordinator<Void> {
         presentation.presentingViewController.present(navigation, animated: true)
     }
 
-    func openBuy() {
+    private func openBuy() {
         let coordinator = BuyCoordinator(
             context: .fromToken,
             defaultToken: .nativeSolana,
@@ -179,5 +182,17 @@ class NewHistoryCoordinator: SmartCoordinator<Void> {
         coordinate(to: coordinator)
             .sink { _ in }
             .store(in: &subscriptions)
+    }
+    
+    private func openSentViaLinkHistoryView(transactionsPublisher: AnyPublisher<[SendViaLinkTransactionInfo], Never>) {
+        // create viewController
+        let vc = SentViaLinkHistoryView(
+            transactionsPublisher: transactionsPublisher
+        ) { selectedTransaction in
+            
+        }
+            .asViewController(withoutUIKitNavBar: false)
+        vc.title = L10n.sentViaOneTimeLink
+        presentation.presentingViewController.show(vc, sender: nil)
     }
 }
