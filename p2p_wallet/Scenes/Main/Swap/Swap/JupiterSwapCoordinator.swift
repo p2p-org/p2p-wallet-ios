@@ -5,7 +5,7 @@ import SolanaSwift
 import Resolver
 
 enum JupiterSwapSource: String {
-    case actionPanel, tapMain, tapToken, solend
+    case actionPanel = "Action_Panel", tapMain = "Tap_Main", tapToken = "Tap_Token", solend = "Solend"
 }
 
 struct JupiterSwapParameters {
@@ -131,7 +131,11 @@ final class JupiterSwapCoordinator: Coordinator<Void> {
             }
             .store(in: &subscriptions)
     }
-    
+
+    func logOpenFromTab() {
+        viewModel.logStartFromMain()
+    }
+
     @objc private func receiptButtonPressed() {
         openSwapSettings()
     }

@@ -118,6 +118,10 @@ actor JupiterSwapStateMachine {
             print("JupiterSwapBusinessLogic.action: \(action.description) cancelled")
             return currentState
         }
+        // Do not trigger stateSubject sending createTransactionState if it is not necessary
+        guard currentState.status == .creatingSwapTransaction else {
+            return currentState
+        }
         let createTransactionState = await JupiterSwapBusinessLogic.createTransaction(
             state: currentState,
             services: services
