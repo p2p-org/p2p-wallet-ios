@@ -37,7 +37,7 @@ struct SentViaLinkHistoryView: View {
     // MARK: - ViewBuilders
     
     @ViewBuilder
-    func sectionHeaderView(section: SVLSection) -> some View {
+    private func sectionHeaderView(section: SVLSection) -> some View {
         HStack {
             Text(section.id.uppercased())
                 .fontWeight(.semibold)
@@ -50,7 +50,7 @@ struct SentViaLinkHistoryView: View {
     }
 
     @ViewBuilder
-    func transactionView(
+    private func transactionView(
         transaction: SendViaLinkTransactionInfo
     ) -> some View {
         HStack(alignment: .center, spacing: 12) {
@@ -91,24 +91,7 @@ struct SentViaLinkHistoryView: View {
         // group transactions into section
         self.sections = Dictionary(
             grouping: sortedTransactions
-        ) { transaction in
-            
-            // get transaction timestamp
-            let timestamp = transaction.timestamp
-            
-            // if today
-            if Calendar.current.isDateInToday(timestamp) {
-                return L10n.today
-            }
-            
-            // if another day
-            else {
-                let dateFormatter = DateFormatter()
-                dateFormatter.dateFormat = "MMMM d, yyyy"
-                let someDateString = dateFormatter.string(from: timestamp)
-                return someDateString
-            }
-        }
+        ) { $0.creationDayInString }
             .map { key, value in
                 .init(id: key, transactions: value)
             }
