@@ -1,5 +1,4 @@
 protocol ChooseItemService {
-    var chosenTokenTitle: String { get }
     var otherTokensTitle: String { get }
 
     func fetchItems() async throws -> [ChooseItemListSection]

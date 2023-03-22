@@ -3,8 +3,7 @@ import Resolver
 
 final class ChooseSendTokenService: ChooseItemService {
 
-    var chosenTokenTitle: String = L10n.chosenToken
-    var otherTokensTitle: String = L10n.otherTokens
+    let otherTokensTitle = L10n.otherTokens
 
     @Injected private var walletsRepository: WalletsRepository
 
