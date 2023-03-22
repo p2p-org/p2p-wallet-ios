@@ -8,8 +8,13 @@
 import SwiftUI
 import Combine
 import KeyAppUI
+import Resolver
 
 struct SentViaLinkTransactionDetailView: View {
+    // MARK: - Dependencies
+
+    @Injected private var notificationService: NotificationService
+    
     // MARK: - Properties
     
     let transactionPublisher: AnyPublisher<SendViaLinkTransactionInfo, Never>
@@ -108,6 +113,7 @@ struct SentViaLinkTransactionDetailView: View {
                 }
                 let pasteboard = UIPasteboard.general
                 pasteboard.string = String.sendViaLinkPrefix + "/" + seed
+                notificationService.showInAppNotification(.done(L10n.copiedToClipboard))
             } label: {
                 Image(uiImage: .copyFill)
                     .resizable()
@@ -128,11 +134,14 @@ struct SentViaLinkTransactionDetailView: View {
                 .background(Color(Asset.Colors.smoke.color))
                 .cornerRadius(radius: 24, corners: .allCorners)
             
-            Text(L10n.TheOneTimeLinkCanBeUsedToSendFundsToAnyoneWithoutNeedingAnAddress.theFundsCanBeClaimedByAnyoneWithALink)
+            Text(L10n.TheOneTimeLinkCanBeUsedToSendFundsToAnyoneWithoutNeedingAnAddress
+                .theFundsCanBeClaimedByAnyoneWithALink
+            )
                 .apply(style: .text4)
+                .frame(height: 70)
         }
             .padding(.horizontal, 16)
-            .padding(.vertical, 12)
+            .padding(.vertical, 4)
             .background(Color(Asset.Colors.cloud.color))
             .cornerRadius(radius: 12, corners: .allCorners)
             .padding(.horizontal, 12)
@@ -163,7 +172,7 @@ struct SentViaLinkTransactionDetailView: View {
     
     private var closeButton: some View {
         Button {
-            onShare()
+            onClose()
         } label: {
             HStack {
                 Spacer()
