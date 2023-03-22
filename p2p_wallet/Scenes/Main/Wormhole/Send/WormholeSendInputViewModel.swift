@@ -14,13 +14,17 @@ import Wormhole
 class WormholeSendInputViewModel: BaseViewModel, ObservableObject {
     let stateMachine: WormholeSendInputStateMachine
 
-    @Published var input: String = ""
-
     @Published var state: WormholeSendInputState
 
+    // Input
+    @Published var input: String = ""
     @Published var countAfterDecimalPoint: Int = 8
-
     @Published var isFirstResponder: Bool = false
+
+    // ActionButton
+    @Published var actionButtonData = SliderActionButtonData.zero
+    @Published var isSliderOn = false
+    @Published var showFinished = false
 
     init(
         recipient: Recipient,
@@ -79,6 +83,8 @@ class WormholeSendInputViewModel: BaseViewModel, ObservableObject {
                 Task {
                     let input = input.replacingOccurrences(of: " ", with: "")
                     await self.stateMachine.accept(action: .updateInput(amount: BigUInt(input, radix: 10) ?? 0))
+                    // TODO: Remove it, just for testing
+//                    self.actionButtonData = Double(input) > 0 ? SliderActionButtonData(isEnabled: true, title: L10n.send(input, "WETH")) : SliderActionButtonData.zero
                 }
             }
             .store(in: &subscriptions)
