@@ -73,10 +73,6 @@ class WormholeSendInputViewModel: BaseViewModel, ObservableObject {
 
         super.init()
 
-        Task {
-            let _ = await stateMachine.accept(action: .initialize)
-        }
-
         $input
             .debounce(for: 0.2, scheduler: DispatchQueue.main)
             .sink { input in

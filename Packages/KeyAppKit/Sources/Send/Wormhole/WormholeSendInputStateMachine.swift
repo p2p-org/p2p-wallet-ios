@@ -1,13 +1,13 @@
 //
 //  File.swift
-//  
+//
 //
 //  Created by Giang Long Tran on 21.03.2023.
 //
 
+import Combine
 import Foundation
 import Wormhole
-import Combine
 
 public class WormholeSendInputStateMachine: StateMachine {
     public typealias State = WormholeSendInputState
@@ -23,7 +23,8 @@ public class WormholeSendInputStateMachine: StateMachine {
         self.services = services
         self.state = .init(initialState)
         
-        self.state
+        state
+            .removeDuplicates()
             .sink { [weak self] state in
                 guard let self else { return }
                 Task {
@@ -39,12 +40,11 @@ public class WormholeSendInputStateMachine: StateMachine {
     
     public func accept(action: WormholeSendInputAction) async -> State {
         if let currentTask {
-            if self.state.value.isCancable() {
+            if state.value.isCancable() {
                 currentTask.cancel()
             } else {
                 let _ = await currentTask.value
             }
-            
         }
         
         currentTask = Task {
