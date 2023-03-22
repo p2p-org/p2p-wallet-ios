@@ -203,31 +203,35 @@ class SendCoordinator: Coordinator<SendResult> {
         
         coordinate(to: SendInputCoordinator(
             recipient: recipient,
-            preChosenWallet: nil,
-            preChosenAmount: nil,
+            preChosenWallet: preChosenWallet,
+            preChosenAmount: preChosenAmount,
             navigationController: rootViewController,
             source: .none,
             allowSwitchingMainAmountType: true,
             sendViaLinkSeed: seed
         ))
-            .sink { [weak self] result in
-                switch result {
-                case let .sent(transaction):
-                    self?.result.send(.sent(transaction))
-                case let .sentViaLink(link, transaction):
-                    self?.startSendViaLinkCompletionFlow(
-                        link: link,
-                        formatedAmount: transaction.amount.tokenAmountFormattedString(symbol: transaction.walletToken.token.symbol),
-                        transaction: transaction
-                    )
-                case .cancelled:
-                    break
-                }
+        .sink { [weak self] result in
+            switch result {
+            case let .sent(transaction):
+                self?.result.send(.sent(transaction))
+            case let .sentViaLink(link, transaction):
+                self?.startSendViaLinkCompletionFlow(
+                    link: link,
+                    formatedAmount: transaction.amount.tokenAmountFormattedString(symbol: transaction.walletToken.token.symbol),
+                    transaction: transaction
+                )
+            case .cancelled:
+                break
             }
-            .store(in: &subscriptions)
+        }
+        .store(in: &subscriptions)
     }
     
-    private func startSendViaLinkCompletionFlow(link: String, formatedAmount: String, transaction: SendTransaction) {
+    private func startSendViaLinkCompletionFlow(
+        link: String,
+        formatedAmount: String,
+        transaction: SendTransaction
+    ) {
         let coordinator = SendCreateLinkCoordinator(
             link: link,
             formatedAmount: formatedAmount,
@@ -248,10 +252,19 @@ class SendCoordinator: Coordinator<SendResult> {
             return transactionHandler.getProcessingTransaction(index: index).transactionId ?? ""
         }
         
-        coordinator.start()
-            .sink(receiveCompletion: { [weak self] _ in
-                self?.result.send(.sentViaLink(link: link, transaction: transaction))
-            }, receiveValue: {})
+        coordinate(to: coordinator)
+            .sinkAsync{ [weak self] result in
+                guard let self = self else { return }
+                switch result {
+                case .normal:
+                    self.result.send(.sentViaLink(link: link, transaction: transaction))
+                case .error:
+                    var viewControllers = self.rootViewController.viewControllers
+                    viewControllers.remove(at: viewControllers.count - 2)
+                    self.rootViewController.viewControllers = viewControllers
+                    _ = self.rootViewController.popViewController(animated: true)
+                }
+            }
             .store(in: &subscriptions)
     }
 }
