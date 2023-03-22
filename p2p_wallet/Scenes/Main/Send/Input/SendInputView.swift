@@ -77,9 +77,13 @@ struct SendInputView: View {
                 }
                 .padding(.horizontal, 4)
 
-                SendInputTokenView(viewModel: viewModel.tokenViewModel)
-                    .allowsHitTesting(!viewModel.lock)
-                    .accessibilityIdentifier("token-view")
+                SendInputTokenView(
+                    wallet: viewModel.sourceWallet,
+                    isChangeEnabled: viewModel.isTokenChoiceEnabled,
+                    changeAction: viewModel.changeTokenPressed.send
+                )
+                .allowsHitTesting(!viewModel.lock)
+                .accessibilityIdentifier("token-view")
 
                 switch viewModel.status {
                 case .initializing:
