@@ -58,7 +58,11 @@ class RecipientSearchViewModel: ObservableObject {
     @Published var loadingState: LoadableState = .notRequested
     @Published var isFirstResponder: Bool = false
 
-    @Published var input: String = ""
+    @Published var input = "" {
+        didSet {
+            sendViaLinkVisible = input.isEmpty
+        }
+    }
     @Published var searchResult: RecipientSearchResult? = nil
     @Published var userWalletEnvironments: UserWalletEnvironments = .empty
 
@@ -72,6 +76,7 @@ class RecipientSearchViewModel: ObservableObject {
         limitPerDay: 30,
         numberOfLinksUsedToday: 0
     )
+    @Published var sendViaLinkVisible = true
 
     var autoSelectTheOnlyOneResultMode: AutoSelectTheOnlyOneResultMode?
     var fromQR: Bool = false
@@ -196,7 +201,7 @@ class RecipientSearchViewModel: ObservableObject {
                 {
                     try? await Task.sleep(nanoseconds: autoSelectTheOnlyOneResultMode.delay!)
                     guard !Task.isCancelled else { return }
-                    await autoSelectTheOnlyOneResult(result: result, fromQR: fromQR)
+                    autoSelectTheOnlyOneResult(result: result, fromQR: fromQR)
                 }
             }
         }
@@ -244,14 +249,14 @@ class RecipientSearchViewModel: ObservableObject {
     func checkIfSendViaLinkAvailable() async throws {
         if available(.sendViaLinkEnabled) {
             // ask for limit
-            // FIXME: - Implementation later
-            sendViaLinkState = .init(
+            // TODO: - Implementation later
+            sendViaLinkState = SendViaLinkState(
                 isDisabled: false,
                 limitPerDay: 30,
                 numberOfLinksUsedToday: 0
             )
         } else {
-            sendViaLinkState = .init(
+            sendViaLinkState = SendViaLinkState(
                 isDisabled: true,
                 limitPerDay: 0,
                 numberOfLinksUsedToday: 0
