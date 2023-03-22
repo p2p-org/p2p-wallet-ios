@@ -121,19 +121,35 @@ final class TabBarController: UITabBarController {
     }
 
     // MARK: - Authentications
+    
+    private var lockWindow: UIWindow?
+    
+    private func setUpLockWindow() {
+        lockWindow = UIWindow(frame: UIScreen.main.bounds)
+        let lockVC = BaseVC()
+        let lockView = LockView()
+        lockVC.view.addSubview(lockView)
+        lockView.autoPinEdgesToSuperviewEdges()
+        lockWindow?.rootViewController = lockVC
+    }
 
     private func showLockView() {
-        UIApplication.shared.kWindow?.endEditing(true)
-        let lockView = LockView()
-        UIApplication.shared.windows.last?.addSubview(lockView)
-        lockView.autoPinEdgesToSuperviewEdges()
+        setUpLockWindow()
+        lockWindow?.makeKeyAndVisible()
         solanaTracker.stopTracking()
+    }
+    
+    private func removeLockWindow() {
+        lockWindow?.rootViewController?.view.removeFromSuperview()
+        lockWindow?.rootViewController = nil
+        lockWindow?.isHidden = true
+        lockWindow?.windowScene = nil
     }
 
     private func hideLockView() {
-        for view in UIApplication.shared.windows.last?.subviews ?? [] where view is LockView {
-            view.removeFromSuperview()
-        }
+        guard lockWindow != nil else { return }
+        UIApplication.shared.windows.first?.makeKeyAndVisible()
+        removeLockWindow()
     }
 
     private func handleAuthenticationStatus(_ authStyle: AuthenticationPresentationStyle?) {
@@ -180,6 +196,7 @@ final class TabBarController: UITabBarController {
     }
 
     private func presentLocalAuth() {
+        hideLockView()
         let keyWindow = UIApplication.shared.windows.filter(\.isKeyWindow).first
         let topController = keyWindow?.rootViewController?.findLastPresentedViewController()
         if topController is UIAlertController {
