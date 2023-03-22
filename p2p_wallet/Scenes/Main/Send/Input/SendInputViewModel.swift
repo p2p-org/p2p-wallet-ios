@@ -517,7 +517,8 @@ private extension SendInputViewModel {
                 amount: currentState.amountInToken,
                 amountInFiat: currentState.amountInFiat,
                 token: token,
-                seed: seed
+                seed: seed,
+                timestamp: Date()
             )
         )
     }

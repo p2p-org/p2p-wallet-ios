@@ -261,8 +261,7 @@ class RecipientSearchViewModel: ObservableObject {
     
     func sendViaLink() {
         // create seed
-        let asciiCharacters = #"!$'()*+,-.0123456789@ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz~"#
-        let seed = String((0..<16).map{ _ in asciiCharacters.randomElement()! })
+        let seed = String.generateSendViaLinkSeed()
         
         // select recipient
         coordinator.sendViaLinkSubject.send(seed)
