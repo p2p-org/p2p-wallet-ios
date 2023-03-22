@@ -32,7 +32,7 @@ struct SentViaLinkTransactionDetailView: View {
             // Header
             Text(L10n.sentViaOneTimeLink)
                 .fontWeight(.semibold)
-                .apply(style: .title1)
+                .apply(style: .title3)
                 .padding(.bottom, 4)
             
             // Subtitle
@@ -67,12 +67,11 @@ struct SentViaLinkTransactionDetailView: View {
     private var tokensInfo: some View {
         VStack(alignment: .center) {
             // Logo
-            CoinLogoImageViewRepresentable(
-                size: 64,
-                token: transaction?.token
-            )
-            .frame(width: 64, height: 64)
-            .cornerRadius(radius: 64/2, corners: .allCorners)
+            if let urlString = transaction?.token.logoURI,
+               let url = URL(string: urlString)
+            {
+                TransactionDetailIconView(icon: .single(url))
+            }
             
             // Amount in fiat
             Text("- \(transaction?.amountInFiat.fiatAmountFormattedString() ?? "")")
@@ -178,7 +177,7 @@ struct SentViaLinkTransactionDetailView: View {
             .padding(.horizontal, 19)
             .cornerRadius(radius: 12, corners: .allCorners)
             .padding(.horizontal, 16)
-            .padding(.bottom, 32)
+            .padding(.bottom, 8)
         }
     }
 }
