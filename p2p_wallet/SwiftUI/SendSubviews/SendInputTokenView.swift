@@ -1,25 +1,29 @@
 import KeyAppUI
 import SwiftUI
+import SolanaSwift
 
 struct SendInputTokenView: View {
-    @ObservedObject private var viewModel: SendInputTokenViewModel
-
     private let mainColor = Color(Asset.Colors.night.color)
+    private let wallet: Wallet
+    private let changeAction: () -> Void
+    private let isChangeEnabled: Bool
 
-    init(viewModel: SendInputTokenViewModel) {
-        self.viewModel = viewModel
+    init(wallet: Wallet, isChangeEnabled: Bool, changeAction: @escaping () -> Void) {
+        self.wallet = wallet
+        self.changeAction = changeAction
+        self.isChangeEnabled = isChangeEnabled
     }
 
     var body: some View {
-        Button(action: viewModel.changeTokenPressed.send) {
+        Button(action: changeAction) {
             HStack(spacing: 0) {
-                CoinLogoImageViewRepresentable(size: 48, args: .token(viewModel.token.token))
+                CoinLogoImageViewRepresentable(size: 48, args: .token(wallet.token))
                     .frame(width: 48, height: 48)
                     .cornerRadius(radius: 48 / 2, corners: .allCorners)
                     .padding(.vertical, 4)
 
                 VStack(alignment: .leading, spacing: 6) {
-                    Text(viewModel.tokenName)
+                    Text(wallet.token.name)
                         .lineLimit(1)
                         .foregroundColor(mainColor)
                         .font(uiFont: .systemFont(ofSize: UIFont.fontSize(of: .text2), weight: .semibold))
@@ -31,13 +35,13 @@ struct SendInputTokenView: View {
                             .scaledToFit()
                             .foregroundColor(Color(Asset.Colors.mountain.color))
                             .frame(width: 16, height: 16)
-                        Text(viewModel.amountText)
+                        Text(wallet.amount?.toString(maximumFractionDigits: Int(wallet.token.decimals), roundingMode: .down) ?? "")
                             .foregroundColor(Color(Asset.Colors.mountain.color))
                             .apply(style: .text4)
                             .lineLimit(1)
                         Spacer()
                             .frame(width: 2)
-                        Text(viewModel.amountCurrency)
+                        Text(wallet.token.symbol)
                             .foregroundColor(Color(Asset.Colors.mountain.color))
                             .apply(style: .text4)
                             .lineLimit(1)
@@ -49,12 +53,12 @@ struct SendInputTokenView: View {
 
                 Spacer()
 
-                Text(viewModel.amountInCurrentFiat)
+                Text(wallet.amountInCurrentFiat.fiatAmountFormattedString(roundingMode: .down, customFormattForLessThan1E_2: true))
                     .font(uiFont: .systemFont(ofSize: UIFont.fontSize(of: .text2), weight: .semibold))
                     .foregroundColor(mainColor)
                     .padding(EdgeInsets(top: 18, leading: 8, bottom: 18, trailing: 8))
 
-                if viewModel.isTokenChoiceEnabled {
+                if isChangeEnabled {
                     Image(uiImage: Asset.MaterialIcon.expandMore.image)
                         .renderingMode(.template)
                         .foregroundColor(mainColor)
@@ -64,7 +68,7 @@ struct SendInputTokenView: View {
             .padding(EdgeInsets(top: 8, leading: 16, bottom: 8, trailing: 12))
             .background(RoundedRectangle(cornerRadius: 12))
             .foregroundColor(Color(Asset.Colors.snow.color))
-        }.allowsHitTesting(viewModel.isTokenChoiceEnabled)
+        }.allowsHitTesting(isChangeEnabled)
     }
 }
 
@@ -72,7 +76,7 @@ struct SendInputTokenView_Previews: PreviewProvider {
     static var previews: some View {
         ZStack {
             Color(Asset.Colors.rain.color)
-            SendInputTokenView(viewModel: SendInputTokenViewModel(initialToken: .init(token: .nativeSolana)))
+            SendInputTokenView(wallet: Wallet(token: .nativeSolana), isChangeEnabled: true, changeAction: { })
                 .padding(.horizontal, 16)
         }
     }
