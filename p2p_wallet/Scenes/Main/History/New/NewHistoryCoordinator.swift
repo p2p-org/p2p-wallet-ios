@@ -30,6 +30,10 @@ class NewHistoryCoordinator: SmartCoordinator<Void> {
         vc.title = L10n.history
         vc.view.backgroundColor = Asset.Colors.smoke.color
 
+        vc.viewDidAppear.sink {
+            vc.navigationItem.largeTitleDisplayMode = .never
+        }.store(in: &subscriptions)
+
         return vc
     }
 
@@ -181,15 +185,13 @@ class NewHistoryCoordinator: SmartCoordinator<Void> {
     }
     
     private func openSentViaLinkHistoryView(transactionsPublisher: AnyPublisher<[SendViaLinkTransactionInfo], Never>) {
-        // create viewController
-        let vc = SentViaLinkHistoryView(
-            transactionsPublisher: transactionsPublisher
-        ) { selectedTransaction in
-            
-        }
-            .asViewController(withoutUIKitNavBar: false)
-        vc.title = L10n.sentViaOneTimeLink
-        vc.view.backgroundColor = Asset.Colors.smoke.color
-        presentation.presentingViewController.show(vc, sender: nil)
+        let coordinator = SentViaLinkHistoryCoordinator(
+            transactionsPublisher: transactionsPublisher,
+            presentation: SmartCoordinatorPushPresentation(presentation.presentingViewController as! UINavigationController)
+        )
+        
+        coordinate(to: coordinator)
+            .sink { _ in }
+            .store(in: &subscriptions)
     }
 }

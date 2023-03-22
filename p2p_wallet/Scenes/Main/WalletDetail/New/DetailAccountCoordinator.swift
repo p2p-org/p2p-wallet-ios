@@ -118,8 +118,8 @@ class DetailAccountCoordinator: SmartCoordinator<DetailAccountCoordinatorResult>
 
         case .openReceive:
             self.openReceive()
-        case let .openSentViaLinkHistoryView(transactionsPublisher):
-            openSentViaLinkHistoryView(transactionsPublisher: transactionsPublisher)
+        case .openSentViaLinkHistoryView:
+            break
         }
     }
 
@@ -246,18 +246,5 @@ class DetailAccountCoordinator: SmartCoordinator<DetailAccountCoordinatorResult>
         coordinate(to: coordinator)
             .sink { _ in }
             .store(in: &subscriptions)
-    }
-    
-    private func openSentViaLinkHistoryView(transactionsPublisher: AnyPublisher<[SendViaLinkTransactionInfo], Never>) {
-        // create viewController
-        let vc = SentViaLinkHistoryView(
-            transactionsPublisher: transactionsPublisher
-        ) { selectedTransaction in
-            
-        }
-            .asViewController(withoutUIKitNavBar: false)
-        vc.title = L10n.sentViaOneTimeLink
-        vc.view.backgroundColor = Asset.Colors.smoke.color
-        presentation.presentingViewController.show(vc, sender: nil)
     }
 }
