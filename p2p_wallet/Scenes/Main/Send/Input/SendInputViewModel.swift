@@ -23,7 +23,6 @@ final class SendInputViewModel: BaseViewModel, ObservableObject {
     // MARK: - Sub view models
 
     let inputAmountViewModel: SendInputAmountViewModel
-    let tokenViewModel: SendInputTokenViewModel
 
     @Published var status: Status = .initializing
 
@@ -46,7 +45,10 @@ final class SendInputViewModel: BaseViewModel, ObservableObject {
     @Published var actionButtonData = SliderActionButtonData.zero
     @Published var isSliderOn = false
     @Published var showFinished = false
+    
+    let isTokenChoiceEnabled: Bool
 
+    let changeTokenPressed = PassthroughSubject<Void, Never>()
     let feeInfoPressed = PassthroughSubject<Void, Never>()
     let openFeeInfo = PassthroughSubject<Bool, Never>()
     let changeFeeToken = PassthroughSubject<Wallet, Never>()
@@ -144,14 +146,12 @@ final class SendInputViewModel: BaseViewModel, ObservableObject {
 
         inputAmountViewModel = SendInputAmountViewModel(initialToken: tokenInWallet, allowSwitchingMainAmountType: allowSwitchingMainAmountType)
 
-        tokenViewModel = SendInputTokenViewModel(initialToken: tokenInWallet)
-
         let preChoosenWalletAvailable = preChosenWallet != nil
         let recipientIsDirectSPLTokenAddress = recipient.category.isDirectSPLTokenAddress
         let thereIsOnlyOneOrNoneWallets = wallets.filter(\.isSendable).count <= 1
         let shouldDisableChosingToken = preChoosenWalletAvailable || recipientIsDirectSPLTokenAddress ||
             thereIsOnlyOneOrNoneWallets
-        tokenViewModel.isTokenChoiceEnabled = !shouldDisableChosingToken
+        isTokenChoiceEnabled = !shouldDisableChosingToken
 
         super.init()
 
@@ -245,7 +245,6 @@ private extension SendInputViewModel {
                 _ = await self?.stateMachine.accept(action: .changeUserToken(value.token))
                 await MainActor.run { [weak self] in
                     self?.inputAmountViewModel.token = value
-                    self?.tokenViewModel.token = value
                     self?.isFeeLoading = false
                 }
             })
@@ -307,7 +306,7 @@ private extension SendInputViewModel {
             })
             .store(in: &subscriptions)
 
-        tokenViewModel.changeTokenPressed
+        changeTokenPressed
             .sink { [weak self] in self?.logChooseTokenClick() }
             .store(in: &subscriptions)
 
