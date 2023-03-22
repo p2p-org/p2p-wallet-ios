@@ -66,10 +66,11 @@ class RecipientSearchViewModel: ObservableObject {
     let coordinator: Coordinator = .init()
 
     init(
+        preChosenWallet: Wallet?,
+        source: SendSource,
         recipientSearchService: RecipientSearchService = Resolver.resolve(),
         sendHistoryService: SendHistoryService = Resolver.resolve(),
-        preChosenWallet: Wallet?,
-        source: SendSource
+        userWalletManager: UserWalletManager = Resolver.resolve()
     ) {
         self.recipientSearchService = recipientSearchService
         self.preChosenWallet = preChosenWallet
@@ -78,6 +79,7 @@ class RecipientSearchViewModel: ObservableObject {
 
         userWalletEnvironments = .init(
             wallets: solanaAccountsService.state.value.map(\.data),
+            ethereumAccount: userWalletManager.wallet?.ethereumKeypair.address,
             exchangeRate: [:],
             tokens: []
         )

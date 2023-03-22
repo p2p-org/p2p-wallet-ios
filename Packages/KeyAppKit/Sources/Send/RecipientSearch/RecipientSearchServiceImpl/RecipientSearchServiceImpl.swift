@@ -23,22 +23,32 @@ public class RecipientSearchServiceImpl: RecipientSearchService {
         env: UserWalletEnvironments,
         preChosenToken: Token?
     ) async -> RecipientSearchResult {
-        // assertion
+        // Assertion
         guard !input.isEmpty else {
             return .ok([])
         }
+
+        // Validate ethereum address.
         if EthereumAddressValidation.validate(input) {
+            // Check self-sending
+            if env.ethereumAccount == input.lowercased() {
+                return .selfSendingError(
+                    recipient: .init(address: input, category: .ethereumAddress, attributes: [])
+                )
+            }
+
+            // Ok
             return .ok([
                 .init(address: input, category: .ethereumAddress, attributes: [])
             ])
         }
 
-        // search by solana address
+        // Search by solana address
         if !input.contains(" "), let address = try? PublicKey(string: input), !address.bytes.isEmpty {
             return await searchBySolanaAddress(address, env: env, preChosenToken: preChosenToken)
         }
 
-        // search by name
+        // Search by name
         return await searchByName(input, env: env)
     }
 }

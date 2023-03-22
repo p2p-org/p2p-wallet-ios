@@ -104,6 +104,7 @@ class SendCoordinator: Coordinator<SendResult> {
         // Setup view
         let vm = RecipientSearchViewModel(preChosenWallet: preChosenWallet, source: source)
         vm.coordinator.selectRecipientPublisher
+            .filter { $0.category != .ethereumAddress }
             .flatMap { [unowned self] in
                 self.coordinate(to: SendInputCoordinator(
                     recipient: $0,
@@ -124,6 +125,16 @@ class SendCoordinator: Coordinator<SendResult> {
             }
             .store(in: &subscriptions)
 
+        vm.coordinator.selectRecipientPublisher
+            .filter { $0.category == .ethereumAddress }
+            .flatMap { [unowned self] in
+                self.coordinate(
+                    to: WormholeSendInputCoordinator(recipient: $0, from: rootViewController)
+                )
+            }
+            .sink { [weak self] _ in }
+            .store(in: &subscriptions)
+
         vm.coordinator.scanQRPublisher
             .flatMap { [unowned self] in
                 self.coordinate(to: ScanQrCoordinator(navigationController: rootViewController))
@@ -133,7 +144,7 @@ class SendCoordinator: Coordinator<SendResult> {
             .sink(receiveValue: { [weak vm] result in
                 vm?.searchQR(query: result, autoSelectTheOnlyOneResultMode: .enabled(delay: 0))
             }).store(in: &subscriptions)
-        
+
         Task {
             await vm.load()
         }
