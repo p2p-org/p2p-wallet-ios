@@ -156,6 +156,15 @@ struct NewHistoryView<Header: View>: View {
                 .foregroundColor(Color(Asset.Colors.rain.color))
                 .padding(.leading, 20)
         }
+            .contentShape(Rectangle())
+            .onTapGesture {
+                viewModel.actionSubject.send(
+                    .openSentViaLinkHistoryView(
+                        viewModel.$sendViaLinkTransactions
+                            .eraseToAnyPublisher()
+                    )
+                )
+            }
     }
 }
 
