@@ -147,4 +147,12 @@ class MockSolanaAPIClientBase: SolanaAPIClient {
     func getRecentPerformanceSamples(limit: [UInt]) async throws -> [SolanaSwift.PerfomanceSamples] {
         fatalError()
     }
+
+    func getSlot() async throws -> UInt64 {
+        fatalError()
+    }
+
+    func getAddressLookupTable(accountKey: SolanaSwift.PublicKey) async throws -> SolanaSwift.AddressLookupTableAccount? {
+        fatalError()
+    }
 }
