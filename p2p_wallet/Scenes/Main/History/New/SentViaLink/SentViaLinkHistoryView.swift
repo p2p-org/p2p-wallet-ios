@@ -2,10 +2,17 @@ import SwiftUI
 import Combine
 
 struct SentViaLinkHistoryView: View {
+    // MARK: - Nested type
+
+    struct SVLSection: Identifiable {
+        let id: String
+        let transactions: [SendViaLinkTransactionInfo]
+    }
+    
     // MARK: - Properties
     
     let transactionsPublisher: AnyPublisher<[SendViaLinkTransactionInfo], Never>
-    @State var transactions: [SendViaLinkTransactionInfo] = []
+    @State var sections: [SVLSection] = []
     
     let onSelectTransaction: (SendViaLinkTransactionInfo) -> Void
     
@@ -13,18 +20,48 @@ struct SentViaLinkHistoryView: View {
 
     var body: some View {
         ScrollView {
-            LazyVStack {
-                ForEach(transactions) { transaction in
-                    transactionView(transaction: transaction)
+            LazyVStack(pinnedViews: [.sectionHeaders]) {
+                ForEach(sections) { section in
+                    Section(header: sectionHeaderView(section: section)) {
+                        ForEach(section.transactions) { transaction in
+                            transactionView(transaction: transaction)
+                        }
+                    }
                 }
             }
         }
             .onReceive(transactionsPublisher) { transactions in
-                self.transactions = transactions
+                // group transactions into section
+                self.sections = Dictionary(grouping: transactions) { transaction in
+                    
+                    // get transaction timestamp
+                    let timestamp = transaction.timestamp
+                    
+                    // if today
+                    if Calendar.current.isDateInToday(timestamp) {
+                        return L10n.today
+                    }
+                    
+                    // if another day
+                    else {
+                        let dateFormatter = DateFormatter()
+                        dateFormatter.dateFormat = "MMMM d, yyyy"
+                        let someDateString = dateFormatter.string(from: timestamp)
+                        return someDateString
+                    }
+                }
+                    .map { key, value in
+                        .init(id: key, transactions: value)
+                    }
             }
     }
     
-    // MARK: - ViewBuilder
+    // MARK: - ViewBuilders
+    
+    @ViewBuilder
+    func sectionHeaderView(section: SVLSection) -> some View {
+        Text(section.id)
+    }
 
     @ViewBuilder
     func transactionView(
