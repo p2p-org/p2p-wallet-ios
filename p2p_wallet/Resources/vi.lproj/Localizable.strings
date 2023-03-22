@@ -1298,4 +1298,5 @@ You can try again, but your new transaction will be subject to the current rates
 "Enter amount" = "Nhập số tiền";
 "With Key App, all transactions you make on the Solana network are free" = "Với Key App, mọi giao dịch bạn thực hiện trên mạng Solana đều miễn phí";
 "Sent via one-time link" = "Gửi qua liên kết một lần";
+"Creating your\none-time link" = "Tạo liên kết một lần\ncủa bạn";
 "%@ transactions" = "%@ giao dịch";

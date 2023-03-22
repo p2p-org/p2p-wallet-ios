@@ -13,12 +13,12 @@ struct SendCreateLinkView: View {
             Color(Asset.Colors.smoke.color)
                 .edgesIgnoringSafeArea(.all)
             VStack(spacing: 0) {
-                LottieView(lottieFile: "walletAnimation", loopMode: .loop)
+                LottieView(lottieFile: "sendViaLinkAnimation", loopMode: .loop)
                     .scaledToFill()
                     .frame(width: animationSize.width, height: animationSize.height)
                     .padding(.bottom, 36)
 
-                Text(L10n.creatingYourLink)
+                Text(L10n.creatingYourOneTimeLink)
                     .apply(style: .largeTitle)
                     .foregroundColor(mainColor)
                     .transition(.opacity.animation(.linear))
