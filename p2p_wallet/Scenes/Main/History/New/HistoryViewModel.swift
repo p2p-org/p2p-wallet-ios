@@ -41,6 +41,8 @@ class HistoryViewModel: BaseViewModel, ObservableObject {
     @Published var output: ListState<HistorySection> = .init()
     @Published var sendViaLinkTransactions: [SendViaLinkTransactionInfo] = []
     
+    let showSendViaLinkTransaction: Bool
+    
     // Dependency
 
     private var sellDataService: (any SellDataService)?
@@ -54,6 +56,7 @@ class HistoryViewModel: BaseViewModel, ObservableObject {
         // Build history
         history = .init(sequence: mock.async.eraseToAnyAsyncSequence())
 
+        self.showSendViaLinkTransaction = false
         super.init()
 
         history
@@ -92,6 +95,7 @@ class HistoryViewModel: BaseViewModel, ObservableObject {
 
         history = .init(sequence: sequence, id: \.id)
         
+        self.showSendViaLinkTransaction = false
         super.init()
 
         history
@@ -167,6 +171,7 @@ class HistoryViewModel: BaseViewModel, ObservableObject {
                     }
             }
 
+        self.showSendViaLinkTransaction = true
         super.init()
 
         // Build output
