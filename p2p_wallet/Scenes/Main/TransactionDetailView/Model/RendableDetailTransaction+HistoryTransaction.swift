@@ -151,7 +151,7 @@ struct RendableDetailHistoryTransaction: RendableTransactionDetail {
             result.append(
                 .init(
                     title: L10n.sendTo,
-                    value: RecipientFormatter.format(destination: data.account.name ?? data.account.address),
+                    value: data.account.name ?? RecipientFormatter.format(destination: data.account.address),
                     copyableValue: data.account.name ?? data.account.address
                 )
             )
@@ -159,7 +159,7 @@ struct RendableDetailHistoryTransaction: RendableTransactionDetail {
             result.append(
                 .init(
                     title: L10n.receivedFrom,
-                    value: RecipientFormatter.format(destination: data.account.name ?? data.account.address),
+                    value: data.account.name ?? RecipientFormatter.format(destination: data.account.address),
                     copyableValue: data.account.name ?? data.account.address
                 )
             )
