@@ -8,8 +8,8 @@
 import KeyAppKitCore
 import KeyAppUI
 import Kingfisher
-import SwiftUI
 import SolanaSwift // TODO: check if I am needed later when wallet is sent to SendInputTokenView
+import SwiftUI
 
 struct WormholeSendInputView: View {
     @ObservedObject var viewModel: WormholeSendInputViewModel
@@ -66,9 +66,28 @@ struct WormholeSendInputView: View {
                 }
                 .padding(.horizontal, 8)
 
-                SendInputTokenView(wallet: Wallet(token: .eth), isChangeEnabled: true, changeAction: {
-                    // TODO: Pass here action from viewModel in https://github.com/p2p-org/p2p-wallet-ios/pull/1080
-                })
+                switch viewModel.state {
+                case let .initializing(input):
+                    SendInputTokenView(wallet: input.solanaAccount.data, isChangeEnabled: true, skeleton: true, changeAction: {
+                        // TODO: Pass here action from viewModel in https://github.com/p2p-org/p2p-wallet-ios/pull/1080
+                    })
+                case let .ready(input, _, _, _):
+                    SendInputTokenView(wallet: input.solanaAccount.data, isChangeEnabled: true, changeAction: {
+                        // TODO: Pass here action from viewModel in https://github.com/p2p-org/p2p-wallet-ios/pull/1080
+                    })
+                case let .calculating(input):
+                    SendInputTokenView(wallet: input.solanaAccount.data, isChangeEnabled: true, changeAction: {
+                        // TODO: Pass here action from viewModel in https://github.com/p2p-org/p2p-wallet-ios/pull/1080
+                    })
+                case let .error(input, _, _):
+                    SendInputTokenView(wallet: input.solanaAccount.data, isChangeEnabled: true, changeAction: {
+                        // TODO: Pass here action from viewModel in https://github.com/p2p-org/p2p-wallet-ios/pull/1080
+                    })
+                default:
+                    SendInputTokenView(wallet: Wallet(token: .eth), isChangeEnabled: true, skeleton: true, changeAction: {
+                        // TODO: Pass here action from viewModel in https://github.com/p2p-org/p2p-wallet-ios/pull/1080
+                    })
+                }
             }
             
             VStack(spacing: 6) {

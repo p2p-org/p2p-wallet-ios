@@ -159,13 +159,13 @@ public enum WormholeSendInputAction {
 }
 
 public struct WormholeSendInputBase: Equatable {
-    let solanaAccount: SolanaAccountsService.Account
+    public let solanaAccount: SolanaAccountsService.Account
     
-    var amount: BigUInt
+    public var amount: BigUInt
     
-    let recipient: String
+    public let recipient: String
     
-    let feePayer: String
+    public let feePayer: String
     
     public init(
         solanaAccount: SolanaAccountsService.Account,
