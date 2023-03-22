@@ -186,7 +186,6 @@ final class JupiterSwapCoordinator: Coordinator<Void> {
             switch status {
             case let .error(_, error):
                 hasError = true
-                self?.viewModel.logTransaction(error: error)
                 if let error, error.isSlippageError {
                     self?.openSwapSettings()
                 }
