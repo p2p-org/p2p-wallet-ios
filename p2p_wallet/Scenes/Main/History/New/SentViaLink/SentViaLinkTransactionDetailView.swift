@@ -43,6 +43,9 @@ struct SentViaLinkTransactionDetailView: View {
             
             // Links info
             linksInfo
+            
+            // One time link info
+            oneTimeLinkInfo
         }
             .cornerRadius(radius: 20, corners: .allCorners)
             .onReceive(transactionPublisher) { transaction in
@@ -104,6 +107,28 @@ struct SentViaLinkTransactionDetailView: View {
             }
         }
             .padding(.init(top: 36, leading: 16, bottom: 32, trailing: 16))
+    }
+    
+    private var oneTimeLinkInfo: some View {
+        HStack(alignment: .center, spacing: 12) {
+            
+            Image(uiImage: .infoFill)
+                .resizable()
+                .frame(width: 20, height: 20)
+                .foregroundColor(Color(Asset.Colors.night.color))
+                .padding(14)
+                .background(Color(Asset.Colors.smoke.color))
+                .cornerRadius(radius: 24, corners: .allCorners)
+            
+            Text(L10n.TheOneTimeLinkCanBeUsedToSendFundsToAnyoneWithoutNeedingAnAddress.theFundsCanBeClaimedByAnyoneWithALink)
+                .apply(style: .text4)
+        }
+            .padding(.horizontal, 16)
+            .padding(.vertical, 12)
+            .background(Color(Asset.Colors.cloud.color))
+            .cornerRadius(radius: 12, corners: .allCorners)
+            .padding(.horizontal, 12)
+            .padding(.bottom, 16)
     }
 }
 
