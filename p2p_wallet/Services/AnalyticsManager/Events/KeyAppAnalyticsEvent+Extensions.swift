@@ -53,7 +53,24 @@ extension KeyAppAnalyticsEvent {
         }
         
         // Default converter from `camelCase` to `Uppercased_Snake_Case` format
-        let formatted = mirror.params.map { ($0.key.snakeAndFirstUppercased ?? "", $0.value) }
+        let formatted = mirror.params.map {
+            var key = $0.key.snakeAndFirstUppercased
+            
+            switch key {
+            case "Token_BName":
+                key = "Token_B_Name"
+            case "Token_BValue":
+                key = "Token_B_Value"
+            case "Token_AName":
+                key = "Token_A_Name"
+            case "Token_AValue":
+                key = "Token_A_Value"
+            default:
+                break
+            }
+            
+            return (key ?? "", $0.value)
+        }
         return Dictionary(uniqueKeysWithValues: formatted)
     }
 
