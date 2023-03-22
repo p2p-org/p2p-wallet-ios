@@ -12,7 +12,6 @@ final class ChooseItemViewModel: BaseViewModel, ObservableObject {
     @Published var isSearchGoing: Bool = false
     @Published var isLoading: Bool = true
 
-    var chosenTokenTitle: String { service.chosenTokenTitle }
     var otherTokensTitle: String { service.otherTokensTitle }
 
     let chosenToken: any ChooseItemSearchableItem
@@ -20,7 +19,6 @@ final class ChooseItemViewModel: BaseViewModel, ObservableObject {
     private let service: ChooseItemService
     private var allItems: [ChooseItemListSection] = [] // All available items
 
-    @Injected private var walletsRepository: WalletsRepository
     @Injected private var notifications: NotificationService
 
     init(service: ChooseItemService, chosenToken: any ChooseItemSearchableItem) {

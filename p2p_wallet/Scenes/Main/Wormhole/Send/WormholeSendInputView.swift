@@ -112,6 +112,7 @@ struct WormholeSendInputView: View {
                 .background(Color(Asset.Colors.snow.color))
                 .cornerRadius(16)
             }
+            .onTapGesture(perform: viewModel.changeTokenPressed.send)
             
             VStack(spacing: 6) {
                 HStack {
