@@ -232,3 +232,11 @@ extension String {
         fakeTransactionSignaturePrefix + "<\(id)>"
     }
 }
+
+// MARK: - SendViaLink
+extension String {
+    static func generateSendViaLinkSeed() -> String {
+        let asciiCharacters = #"!$'()*+,-.0123456789@ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz~"#
+        return String((0..<16).map{ _ in asciiCharacters.randomElement()! })
+    }
+}
