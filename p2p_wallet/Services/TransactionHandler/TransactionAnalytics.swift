@@ -41,8 +41,8 @@ class SwapTransactionAnalytics {
             let prevTrx = param.previous
             let trx = param.current
             guard let self else { return }
-            guard let rawTrx = trx.rawTransaction as? SwapRawTransactionType else { return }
-
+            guard let rawTrx = trx.rawTransaction as? SwapRawTransactionType, !available(.jupiterSwapEnabled) else { return }
+            // WARNING: This swap analytics is only for old swap
             switch trx.status {
             case .sending:
                 self.analyticsManager.log(

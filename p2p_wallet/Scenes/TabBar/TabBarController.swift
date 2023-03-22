@@ -29,6 +29,8 @@ final class TabBarController: UITabBarController {
     var homeTabClickedTwicely: AnyPublisher<Void, Never> { homeTabClickedTwicelySubject.eraseToAnyPublisher() }
     private let solendTutorialSubject = PassthroughSubject<Void, Never>()
     var solendTutorialClicked: AnyPublisher<Void, Never> { solendTutorialSubject.eraseToAnyPublisher() }
+    private let jupiterSwapClickedSubject = PassthroughSubject<Void, Never>()
+    var jupiterSwapClicked: AnyPublisher<Void, Never> { jupiterSwapClickedSubject.eraseToAnyPublisher() }
 
     // MARK: - Properties
 
@@ -276,9 +278,12 @@ extension TabBarController: UITabBarControllerDelegate {
         customTabBar.updateSelectedViewPositionIfNeeded()
         if TabItem(rawValue: selectedIndex) == .invest {
             if !available(.investSolendFeature) {
-                analyticsManager.log(event: .mainSwap(isSellEnabled: sellDataService.isAvailable))
-            }
-            if available(.investSolendFeature), !Defaults.isSolendTutorialShown, available(.solendDisablePlaceholder) {
+                if available(.jupiterSwapEnabled) {
+                    jupiterSwapClickedSubject.send()
+                } else {
+                    analyticsManager.log(event: .mainSwap(isSellEnabled: sellDataService.isAvailable))
+                }
+            } else if !Defaults.isSolendTutorialShown, available(.solendDisablePlaceholder) {
                 solendTutorialSubject.send()
                 return false
             }
