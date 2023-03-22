@@ -1258,7 +1258,6 @@ You can try again, but your new transaction will be subject to the current rates
 "Integrity of the route has been compromised" = "Integrity of the route has been compromised";
 "Creating transaction failed" = "Creating transaction failed";
 "No swap options for these tokens" = "No swap options for these tokens";
-"You have entered too little" = "You have entered too little";
 "Token you pay" = "Token you pay";
 "Token you receive" = "Token you receive";
 "You can’t swap between the same token" = "You can’t swap between the same token";
@@ -1270,3 +1269,4 @@ You can try again, but your new transaction will be subject to the current rates
 "Unknown time" = "Unknown time";
 "Unique one-time link works once only" = "Unique one-time link works once only";
 "The one-time link can be used to send funds to anyone without needing an address. The funds can be claimed by anyone with a link." = "The one-time link can be used to send funds to anyone without needing an address. The funds can be claimed by anyone with a link.";
+"Enter greater value" = "Enter greater value";

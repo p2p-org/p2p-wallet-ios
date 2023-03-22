@@ -29,6 +29,7 @@ final class TabBarCoordinator: Coordinator<Void> {
     private var sendCoordinator: SendCoordinator?
     private var sendStatusCoordinator: SendTransactionStatusCoordinator?
     private var sellCoordinator: SellCoordinator?
+    private var jupiterSwapTabCoordinator: JupiterSwapCoordinator?
 
     // MARK: - Initializer
 
@@ -116,6 +117,12 @@ final class TabBarCoordinator: Coordinator<Void> {
             .sink(receiveValue: { [weak self] in
                 self?.navigateToSolendTutorial()
             })
+            .store(in: &subscriptions)
+
+        tabBarController.jupiterSwapClicked
+            .sink { [weak self] in
+                self?.jupiterSwapTabCoordinator?.logOpenFromTab()
+            }
             .store(in: &subscriptions)
         return homeNavigation
     }
@@ -298,6 +305,9 @@ final class TabBarCoordinator: Coordinator<Void> {
                     hideTabBar: hidesBottomBarWhenPushed
                 )
             )
+            if source == .tapMain {
+                jupiterSwapTabCoordinator = swapCoordinator
+            }
             coordinate(to: swapCoordinator)
                 .sink(receiveValue: { [weak self] _ in
                     guard self?.tabBarController.selectedIndex != TabItem.wallet.rawValue else { return }

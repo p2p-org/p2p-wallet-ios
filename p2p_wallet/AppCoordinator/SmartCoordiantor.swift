@@ -108,8 +108,10 @@ class SmartCoordinator<T>: Coordinator<T> {
     override final func start() -> Combine.AnyPublisher<T, Never> {
         let vc: UIViewController = build()
 
-        vc.onClose = { [weak self] in
-            self?.result.send(completion: .finished)
+        if vc.onClose == nil {
+            vc.onClose = { [weak self] in
+                self?.result.send(completion: .finished)
+            }
         }
 
         presentation.run(presentedViewController: vc)

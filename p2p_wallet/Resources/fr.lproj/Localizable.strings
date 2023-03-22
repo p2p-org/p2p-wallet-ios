@@ -1300,3 +1300,4 @@ You can try again, but your new transaction will be subject to the current rates
 "Unknown time" = "Heure inconnue";
 "Unique one-time link works once only" = "Le lien unique unique ne fonctionne qu'une seule fois";
 "The one-time link can be used to send funds to anyone without needing an address. The funds can be claimed by anyone with a link." = "Le lien unique peut être utilisé pour envoyer des fonds à n'importe qui sans avoir besoin d'une adresse.  Les fonds peuvent être réclamés par toute personne disposant d'un lien.";
+"Enter greater value" = "Entrez une valeur supérieure";
