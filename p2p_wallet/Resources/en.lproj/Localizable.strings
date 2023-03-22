@@ -1266,3 +1266,6 @@ You can try again, but your new transaction will be subject to the current rates
 "Sent via one-time link" = "Sent via one-time link";
 "Creating your\none-time link" = "Creating your\none-time link";
 "%@ transactions" = "%@ transactions";
+"Unknown time" = "Unknown time";
+"Unique one-time link works once only" = "Unique one-time link works once only";
+"The one-time link can be used to send funds to anyone without needing an address. The funds can be claimed by anyone with a link." = "The one-time link can be used to send funds to anyone without needing an address. The funds can be claimed by anyone with a link.";

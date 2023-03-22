@@ -1295,3 +1295,6 @@ You can try again, but your new transaction will be subject to the current rates
 "Sent via one-time link" = "Отправлено по одноразовой ссылке";
 "Creating your\none-time link" = "Создание \nодноразовой ссылки";
 "%@ transactions" = "%@ транзакции";
+"Unknown time" = "Неизвестное время";
+"Unique one-time link works once only" = "Уникальная одноразовая ссылка работает только один раз";
+"The one-time link can be used to send funds to anyone without needing an address. The funds can be claimed by anyone with a link." = "Одноразовую ссылку можно использовать для отправки средств кому угодно без указания адреса.  Забрать средства может любой, у кого есть ссылка.";
