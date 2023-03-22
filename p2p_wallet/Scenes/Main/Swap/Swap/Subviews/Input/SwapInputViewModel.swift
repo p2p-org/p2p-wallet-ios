@@ -28,6 +28,7 @@ final class SwapInputViewModel: BaseViewModel, ObservableObject {
     private let isFromToken: Bool
     private var openKeyboardOnStart: Bool
     private var currentState: JupiterSwapState { stateMachine.currentState }
+    private var skipLogAmount = false
 
     // MARK: - Dependencies
     @Injected private var notificationService: NotificationService
@@ -47,6 +48,7 @@ final class SwapInputViewModel: BaseViewModel, ObservableObject {
 
         allButtonPressed
             .sink { [unowned self] _ in
+                self.skipLogAmount = true // Do not log amount change as it has its own event - logAllClick
                 self.amount = self.balance
                 self.logAllClick()
             }
@@ -104,9 +106,7 @@ final class SwapInputViewModel: BaseViewModel, ObservableObject {
 
         changeTokenPressed
             .sink { [weak self] in
-                guard let self, self.isFromToken else { return }
-                self.logChangeTokenClick()
-                self.amount = 0
+                self?.logChangeTokenClick()
             }
             .store(in: &subscriptions)
     }
@@ -131,7 +131,9 @@ private extension SwapInputViewModel {
 
     func updateAmountTo(state: JupiterSwapState) {
         guard state.status != .loadingAmountTo else { return }
-        amount = state.amountTo
+        if amount != state.amountTo {
+            amount = state.amountTo
+        }
 
         switch state.priceImpact {
         case .high:
@@ -173,7 +175,7 @@ private extension SwapInputViewModel {
 // MARK: - Analytics
 private extension SwapInputViewModel {
     func logAllClick() {
-        analyticsManager.log(event: .swapChangingValueTokenAAll(tokenAValue: balance ?? 0))
+        analyticsManager.log(event: .swapChangingValueTokenAAll(tokenAName: token.token.symbol, tokenAValue: balance ?? 0))
     }
 
     func logChangeTokenClick() {
@@ -185,11 +187,17 @@ private extension SwapInputViewModel {
     }
 
     func logChange(amount: Double?) {
-        let value = amount ?? 0
+        guard let amount else { return }
+
+        guard !skipLogAmount else {
+            skipLogAmount = false
+            return
+        }
+
         if isFromToken {
-            analyticsManager.log(event: .swapChangingValueTokenA(tokenAName: token.token.symbol, tokenAValue: value))
+            analyticsManager.log(event: .swapChangingValueTokenA(tokenAName: token.token.symbol, tokenAValue: amount))
         } else {
-            analyticsManager.log(event: .swapChangingValueTokenB(tokenBName: token.token.symbol, tokenBValue: value))
+            analyticsManager.log(event: .swapChangingValueTokenB(tokenBName: token.token.symbol, tokenBValue: amount))
         }
     }
 }
