@@ -31,30 +31,7 @@ struct SentViaLinkHistoryView: View {
                 }
             }
         }
-            .onReceive(transactionsPublisher) { transactions in
-                // group transactions into section
-                self.sections = Dictionary(grouping: transactions) { transaction in
-                    
-                    // get transaction timestamp
-                    let timestamp = transaction.timestamp
-                    
-                    // if today
-                    if Calendar.current.isDateInToday(timestamp) {
-                        return L10n.today
-                    }
-                    
-                    // if another day
-                    else {
-                        let dateFormatter = DateFormatter()
-                        dateFormatter.dateFormat = "MMMM d, yyyy"
-                        let someDateString = dateFormatter.string(from: timestamp)
-                        return someDateString
-                    }
-                }
-                    .map { key, value in
-                        .init(id: key, transactions: value)
-                    }
-            }
+            .onReceive(transactionsPublisher, perform: onReceive(transactions:))
     }
     
     // MARK: - ViewBuilders
@@ -101,6 +78,39 @@ struct SentViaLinkHistoryView: View {
             .contentShape(Rectangle())
             .onTapGesture {
                 onSelectTransaction(transaction)
+            }
+    }
+    
+    // MARK: - Helpers
+    
+    private func onReceive(transactions: [SendViaLinkTransactionInfo]) {
+        // sort transaction
+        let sortedTransactions = transactions
+            .sorted(by: {$0.timestamp > $1.timestamp})
+        
+        // group transactions into section
+        self.sections = Dictionary(
+            grouping: sortedTransactions
+        ) { transaction in
+            
+            // get transaction timestamp
+            let timestamp = transaction.timestamp
+            
+            // if today
+            if Calendar.current.isDateInToday(timestamp) {
+                return L10n.today
+            }
+            
+            // if another day
+            else {
+                let dateFormatter = DateFormatter()
+                dateFormatter.dateFormat = "MMMM d, yyyy"
+                let someDateString = dateFormatter.string(from: timestamp)
+                return someDateString
+            }
+        }
+            .map { key, value in
+                .init(id: key, transactions: value)
             }
     }
 }
