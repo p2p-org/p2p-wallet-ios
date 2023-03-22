@@ -56,9 +56,11 @@ extension OrcaSwapV2 {
         // MARK: - setter
 
         init(
-            initialWallet: Wallet?
+            initialWallet: Wallet?,
+            destinationWallet: Wallet?
         ) {
             payingWalletSubject.accept(walletsRepository.nativeWallet)
+            destinationWalletSubject.accept(destinationWallet)
             reload()
             bind(initialWallet: initialWallet ?? walletsRepository.nativeWallet)
         }

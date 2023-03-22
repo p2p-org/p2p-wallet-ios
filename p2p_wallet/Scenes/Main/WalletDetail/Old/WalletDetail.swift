@@ -14,7 +14,7 @@ enum WalletDetail {
         case buy(tokens: Buy.CryptoCurrency)
         case send(wallet: Wallet)
         case receive(walletPubkey: String)
-        case swap(fromWallet: Wallet)
+        case swap(fromWallet: Wallet, toWallet: Wallet?)
         case cashOut
     }
 }
