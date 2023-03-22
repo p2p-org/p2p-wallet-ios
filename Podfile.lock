@@ -240,7 +240,7 @@ PODS:
   - SolanaSwift (2.5.3):
     - LoggerSwift (~> 1.0.2)
     - secp256k1.swift (~> 0.1.0)
-    - Task_retrying (~> 1.0.3)
+    - Task_retrying (~> 2.0.0)
     - TweetNacl (~> 1.0.2)
   - Solend (1.0.0):
     - FeeRelayerSwift
@@ -251,7 +251,7 @@ PODS:
   - SwiftLint (0.50.3)
   - SwiftNotificationCenter (1.0.4)
   - SwiftyUserDefaults (5.3.0)
-  - Task_retrying (1.0.4)
+  - Task_retrying (2.0.0)
   - TransactionParser (1.0.0):
     - Cache
     - SolanaSwift (~> 2)
@@ -560,13 +560,13 @@ CHECKOUT OPTIONS:
     :commit: 42f0426e7c523160b4abf7f8f51f0e41cee9dce7
     :git: https://github.com/p2p-org/key-app-kit-swift.git
   SolanaSwift:
-    :commit: 2ffd3fdc4a9af39632569dbbf16066c3827ae78f
+    :commit: c8409fe0255308974b5f23a9b56ecd55382ec304
     :git: https://github.com/p2p-org/solana-swift.git
   Solend:
     :commit: 42f0426e7c523160b4abf7f8f51f0e41cee9dce7
     :git: https://github.com/p2p-org/key-app-kit-swift.git
   Task_retrying:
-    :commit: 1249b3524378423c848cef39fb220041e00a08ec
+    :commit: 208f1e8dfa93022a7d39ab5b334d5f43a934d4b1
     :git: https://github.com/bigearsenal/task-retrying-swift.git
   TransactionParser:
     :commit: 42f0426e7c523160b4abf7f8f51f0e41cee9dce7
@@ -647,14 +647,14 @@ SPEC CHECKSUMS:
   SkeletonUI: b5c868e6917123e3d442d6cef9c71fe048175f3b
   SkeletonView: 5a050f6411e697abd4cda0a8d767013399dccd69
   SolanaPricesAPIs: 994fc864deab0dad370bc1509102f91d81324019
-  SolanaSwift: 5b5f638b0d9568cea01c382465f84ba85ebb3efa
+  SolanaSwift: 7b92e865054d0580b64e08268503be13c6dc1152
   Solend: c1ea93f70694b61758a182e5b26a8799ad7376cd
   SwiftFormat: e40542bcf76fdaa006d0dc26a9ca8278ca028d76
   SwiftGen: 1366a7f71aeef49954ca5a63ba4bef6b0f24138c
   SwiftLint: 77f7cb2b9bb81ab4a12fcc86448ba3f11afa50c6
   SwiftNotificationCenter: 760386da2ce03d3594cb5e96d1e22ec80b44b46f
   SwiftyUserDefaults: 63f80248cf5bfb3458825d9a78f2eb7e1293a040
-  Task_retrying: f1e1451775721d9540ed1b4a3bafb2f4f59833ec
+  Task_retrying: e7de6ee0c52218fbc3f34491ba84d62d43b2e0f8
   TransactionParser: 3004420d52e7b1277dbcfd20b995a5de707705f3
   TweetNacl: 3abf4d1d2082b0114e7a67410e300892448951e6
 

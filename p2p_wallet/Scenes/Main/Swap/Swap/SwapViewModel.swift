@@ -3,6 +3,7 @@ import Resolver
 import Jupiter
 import SolanaSwift
 import AnalyticsManager
+import Task_retrying
 
 final class SwapViewModel: BaseViewModel, ObservableObject {
 
@@ -177,7 +178,6 @@ private extension SwapViewModel {
                 guard let self else { return }
                 self.handle(state: updatedState)
                 self.updateActionButton(for: updatedState)
-                self.log(priceImpact: updatedState.priceImpact, value: updatedState.route?.priceImpactPct)
                 self.log(from: updatedState.status)
             }
             .store(in: &subscriptions)
@@ -217,6 +217,7 @@ private extension SwapViewModel {
                 )
                 Defaults.toTokenAddress = token.address
                 self.logChangeToken(isFrom: false, token: token, amount: newState.amountTo)
+                self.log(priceImpact: newState.priceImpact, value: newState.route?.priceImpactPct)
             }
             .store(in: &subscriptions)
     }
@@ -444,10 +445,12 @@ private extension SwapViewModel {
                 break
             }
             isSliderOn = false
+            logTransaction(error: error)
             throw error
         } catch {
             debugPrint("---errorSendingTransaction: ", error)
             isSliderOn = false
+            logTransaction(error: error)
             throw error
         }
     }
@@ -486,7 +489,7 @@ extension SwapViewModel {
         if let error, error.isSlippageError {
             analyticsManager.log(event: .swapErrorSlippage)
         } else {
-            analyticsManager.log(event: .swapErrorDefault(isBlockchainRelated: error is SolanaError))
+            analyticsManager.log(event: .swapErrorDefault(isBlockchainRelated: error?.isSolanaBlockchainRelatedError ?? false))
         }
     }
 
