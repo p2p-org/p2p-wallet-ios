@@ -178,7 +178,7 @@ private extension SwapViewModel {
                 self.handle(state: updatedState)
                 self.updateActionButton(for: updatedState)
                 self.log(priceImpact: updatedState.priceImpact, value: updatedState.route?.priceImpactPct)
-                self.log(from: updatedState.status)
+                self.log(amountFrom: updatedState.amountFrom, from: updatedState.status)
             }
             .store(in: &subscriptions)
         
@@ -199,11 +199,12 @@ private extension SwapViewModel {
             .filter { [weak self] _ in self?.initializingState == .success }
             .sinkAsync { [weak self] token in
                 guard let self else { return }
-                let newState = await self.stateMachine.accept(
+                self.logChangeToken(isFrom: true, token: token)
+                await self.stateMachine.accept(
                     action: .changeFromToken(token)
                 )
+                self.fromTokenInputViewModel.amount = nil // Reset previously set amount with new from token
                 Defaults.fromTokenAddress = token.address
-                self.logChangeToken(isFrom: true, token: token, amount: newState.amountFrom)
             }
             .store(in: &subscriptions)
 
@@ -212,11 +213,11 @@ private extension SwapViewModel {
             .filter { [weak self] _ in self?.initializingState == .success }
             .sinkAsync { [ weak self] token in
                 guard let self else { return }
-                let newState = await self.stateMachine.accept(
+                self.logChangeToken(isFrom: false, token: token)
+                await self.stateMachine.accept(
                     action: .changeToToken(token)
                 )
                 Defaults.toTokenAddress = token.address
-                self.logChangeToken(isFrom: false, token: token, amount: newState.amountTo)
             }
             .store(in: &subscriptions)
     }
@@ -232,7 +233,10 @@ private extension SwapViewModel {
                     preChosenToTokenMintAddress: Defaults.toTokenAddress
                 )
             )
-        logStart(from: newState.fromToken, to: newState.toToken)
+        if source != .tapMain {
+            // Tap main has own logic of calling this method. See 'logStartFromMain'
+            logStart(from: newState.fromToken, to: newState.toToken)
+        }
     }
 
     func handle(state: JupiterSwapState) {
@@ -490,12 +494,18 @@ extension SwapViewModel {
         }
     }
 
+    func logStartFromMain() {
+        logStart(from: currentState.fromToken, to: currentState.toToken)
+    }
+
     private func logSwapApprove(signature: String) {
         guard let amountFrom = currentState.amountFrom else { return }
         analyticsManager.log(event: .swapClickApproveButtonNew(tokenA: currentState.fromToken.token.symbol, tokenB: currentState.toToken.token.symbol, swapSum: amountFrom, swapUSD: currentState.amountFromFiat, signature: signature))
     }
 
-    private func log(from status: JupiterSwapState.Status) {
+    private func log(amountFrom: Double?, from status: JupiterSwapState.Status) {
+        guard amountFrom > 0 else { return }
+        // Do not log anything if amountFrom is not set
         switch status {
         case .error(.notEnoughFromToken):
             analyticsManager.log(event: .swapErrorTokenAInsufficientAmount)
@@ -524,8 +534,8 @@ extension SwapViewModel {
         }
     }
 
-    private func logChangeToken(isFrom: Bool, token: SwapToken, amount: Double?) {
-        guard let amount else { return }
+    private func logChangeToken(isFrom: Bool, token: SwapToken) {
+        let amount = token.userWallet?.amount ?? 0
         if isFrom {
             analyticsManager.log(event: .swapChangingTokenA(tokenAName: token.token.symbol, tokenAValue: amount))
         } else {
