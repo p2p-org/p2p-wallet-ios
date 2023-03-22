@@ -26,6 +26,8 @@ enum NewHistoryAction {
     case openReceive
 
     case openBuy
+
+    case openSwap(Wallet?, Wallet?)
 }
 
 class HistoryViewModel: BaseViewModel, ObservableObject {
@@ -178,7 +180,7 @@ class HistoryViewModel: BaseViewModel, ObservableObject {
         }
     }
 
-    private func buildOutput(
+    func buildOutput(
         history: ListState<any RendableListTransactionItem>,
         sells: [any RendableListOfframItem] = [],
         pendings: [any RendableListTransactionItem] = []

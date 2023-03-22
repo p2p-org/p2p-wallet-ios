@@ -31,12 +31,12 @@ class DetailAccountCoordinator: SmartCoordinator<DetailAccountCoordinatorResult>
 
     override func build() -> UIViewController {
         let detailAccountVM: DetailAccountViewModel
-        let historyListVM: HistoryViewModel
+        let historyListVM: DetailHistoryViewModel
 
         switch self.args {
         case let .solanaAccount(account):
             detailAccountVM = .init(solanaAccount: account)
-            historyListVM = .init(mint: account.data.token.address)
+            historyListVM = .init(mint: account.data.token.address, account: account)
         }
 
         historyListVM.actionSubject
@@ -118,6 +118,9 @@ class DetailAccountCoordinator: SmartCoordinator<DetailAccountCoordinatorResult>
 
         case .openReceive:
             self.openReceive()
+            
+        case .openSwap(let wallet, let destination):
+            self.openSwap(destination: destination)
         }
     }
 
@@ -142,12 +145,15 @@ class DetailAccountCoordinator: SmartCoordinator<DetailAccountCoordinatorResult>
             return
         }
 
-        // TODO: Put FT here
         let supportedBridgeTokens = Wormhole.SupportedToken.bridges
             .map(\.solAddress)
+            .compactMap { $0 } +
+        Wormhole.SupportedToken.bridges
+            .map(\.receiveFromAddress)
             .compactMap { $0 }
 
-        if account.data.isNativeSOL || supportedBridgeTokens.contains(account.data.token.address) {
+        if available(.ethAddressEnabled) &&
+            (account.data.isNativeSOL || supportedBridgeTokens.contains(account.data.token.address)) {
             var icon: SupportedTokenItemIcon = .image(UIImage.imageOutlineIcon)
             if let logoURL = URL(string: account.data.token.logoURI ?? "") {
                 icon = .url(logoURL)
@@ -207,7 +213,7 @@ class DetailAccountCoordinator: SmartCoordinator<DetailAccountCoordinatorResult>
         }
     }
 
-    func openSwap() {
+    func openSwap(destination: Wallet? = nil) {
         guard case let .solanaAccount(account) = self.args,
               let rootViewController = presentation.presentingViewController as? UINavigationController
         else { return }
@@ -220,6 +226,7 @@ class DetailAccountCoordinator: SmartCoordinator<DetailAccountCoordinatorResult>
                         openKeyboardOnStart: true,
                         source: .tapToken,
                         preChosenWallet: account.data,
+                        destinationWallet: destination,
                         hideTabBar: true
                     )
                 )
@@ -229,7 +236,7 @@ class DetailAccountCoordinator: SmartCoordinator<DetailAccountCoordinatorResult>
             }
             .store(in: &subscriptions)
         } else {
-            let vm = OrcaSwapV2.ViewModel(initialWallet: account.data)
+            let vm = OrcaSwapV2.ViewModel(initialWallet: account.data, destinationWallet: destination)
             let vc = OrcaSwapV2.ViewController(viewModel: vm)
             
             vc.doneHandler = { [weak self, weak rootViewController] in

@@ -15,7 +15,7 @@ enum DetailAccountAction {
     case openBuy
     case openReceive
     case openSend
-    case openSwap
+    case openSwap(Wallet?)
 }
 
 class DetailAccountViewModel: BaseViewModel, ObservableObject {
@@ -44,7 +44,7 @@ class DetailAccountViewModel: BaseViewModel, ObservableObject {
             case .buy:
                 actionSubject?.send(.openBuy)
             case .swap:
-                actionSubject?.send(.openSwap)
+                actionSubject?.send(.openSwap(solanaAccount.data))
             case .send:
                 actionSubject?.send(.openSend)
             case .receive:

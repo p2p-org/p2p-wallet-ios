@@ -182,7 +182,8 @@ final class HomeCoordinator: Coordinator<Void> {
                 return coordinate(
                     to: SwapCoordinator(
                         navigationController: navigationController,
-                        initialWallet: nil
+                        initialWallet: nil,
+                        destinationWallet: nil
                     )
                 )
                 .receive(on: RunLoop.main)

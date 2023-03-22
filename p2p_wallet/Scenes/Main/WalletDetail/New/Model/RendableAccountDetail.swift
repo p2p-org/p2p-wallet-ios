@@ -23,7 +23,7 @@ enum RendableAccountDetailAction: Identifiable {
     case buy
     case receive(ReceiveParam)
     case send
-    case swap
+    case swap(Wallet?)
 }
 
 extension RendableAccountDetailAction {

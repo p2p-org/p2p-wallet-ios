@@ -133,15 +133,15 @@ extension WalletDetail {
                     let navigation = UINavigationController(rootViewController: vc)
                     present(navigation, animated: true)
                 }
-            case let .swap(wallet):
+            case let .swap(wallet, destination):
                 if available(.jupiterSwapEnabled) {
                     jupiterSwapCoordinator = JupiterSwapCoordinator(
                         navigationController: navigationController!,
-                        params: JupiterSwapParameters(dismissAfterCompletion: true, openKeyboardOnStart: true, source: .tapToken, preChosenWallet: wallet)
+                        params: JupiterSwapParameters(dismissAfterCompletion: true, openKeyboardOnStart: true, source: .tapToken, preChosenWallet: wallet, destinationWallet: destination)
                     )
                     jupiterSwapCoordinator?.start().sink(receiveValue: { _ in }).store(in: &subscriptions)
                 } else {
-                    let vm = OrcaSwapV2.ViewModel(initialWallet: wallet)
+                    let vm = OrcaSwapV2.ViewModel(initialWallet: wallet, destinationWallet: destination)
                     let vc = OrcaSwapV2.ViewController(viewModel: vm)
                     vc.doneHandler = processingTransactionDoneHandler
                     show(vc, sender: nil)

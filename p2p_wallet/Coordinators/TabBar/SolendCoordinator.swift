@@ -138,7 +138,7 @@ final class SolendCoordinator: Coordinator<Void> {
                 }
                 .store(in: &subscriptions)
         } else {
-            let vm = OrcaSwapV2.ViewModel(initialWallet: nil)
+            let vm = OrcaSwapV2.ViewModel(initialWallet: nil, destinationWallet: nil)
             let vc = OrcaSwapV2.ViewController(viewModel: vm)
             
             vc.doneHandler = { [unowned self] in
