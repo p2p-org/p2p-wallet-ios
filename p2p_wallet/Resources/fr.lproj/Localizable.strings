@@ -1295,4 +1295,5 @@ You can try again, but your new transaction will be subject to the current rates
 "Enter amount" = "Entrer le montant";
 "With Key App, all transactions you make on the Solana network are free" = "Avec Key App, toutes les transactions que vous effectuez sur le réseau Solana sont gratuites";
 "Sent via one-time link" = "Envoyé via un lien unique";
+"Creating your\none-time link" = "Création de votre\nlien unique";
 "%@ transactions" = "%@ opérations";

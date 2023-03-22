@@ -1293,4 +1293,5 @@ You can try again, but your new transaction will be subject to the current rates
 "Enter amount" = "Введите сумму";
 "With Key App, all transactions you make on the Solana network are free" = "С Key App все транзакции, которые вы совершаете в сети Solana, бесплатны.";
 "Sent via one-time link" = "Отправлено по одноразовой ссылке";
+"Creating your\none-time link" = "Создание \nодноразовой ссылки";
 "%@ transactions" = "%@ транзакции";
