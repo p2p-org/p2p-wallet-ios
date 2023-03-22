@@ -45,6 +45,7 @@ final class SendInputCoordinator: Coordinator<SendResult> {
 
         controller.onClose = { [weak self] in
             self?.subject.send(.cancelled)
+            self?.subject.send(completion: .finished)
         }
 
         controller.viewWillAppearPublisher.sink { _ in
@@ -94,6 +95,7 @@ final class SendInputCoordinator: Coordinator<SendResult> {
                     self?.subject.send(.sentViaLink(link: link, transaction: model))
                 } else {
                     self?.subject.send(.sent(model))
+                    self?.subject.send(completion: .finished)
                 }
             }
             .store(in: &subscriptions)
@@ -102,7 +104,7 @@ final class SendInputCoordinator: Coordinator<SendResult> {
             Task { await viewModel.load() }
         }
 
-        return subject.prefix(1).eraseToAnyPublisher()
+        return subject.eraseToAnyPublisher()
     }
 
     private func setTitle(to vc: UIViewController, isSendViaLink: Bool) {
