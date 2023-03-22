@@ -6,6 +6,7 @@ final class SentViaLinkHistoryCoordinator: SmartCoordinator<Void> {
     // MARK: - Properties
 
     private let transactionsPublisher: AnyPublisher<[SendViaLinkTransactionInfo], Never>
+    private var transactionDetailVC: CustomPresentableViewController!
     
     // MARK: - Initializer
 
@@ -24,6 +25,7 @@ final class SentViaLinkHistoryCoordinator: SmartCoordinator<Void> {
         let vc = SentViaLinkHistoryView(
             transactionsPublisher: transactionsPublisher
         ) { [weak self] selectedTransaction in
+            // transaction selected
             self?.openSendViaLinkTransactionDetail(transaction: selectedTransaction)
         }
             .asViewController(withoutUIKitNavBar: false)
@@ -44,29 +46,34 @@ final class SentViaLinkHistoryCoordinator: SmartCoordinator<Void> {
         // create view
         let view = SentViaLinkTransactionDetailView(
             transactionPublisher: transactionPublisher,
-            onShare: {
-                
+            onShare: { [weak self] in
+                self?.showShareView()
             },
-            onClose: {
-                
+            onClose: { [weak self] in
+                self?.transactionDetailVC.dismiss(animated: true)
             }
         )
         
         // create bottom sheet
-        let vc = UIBottomSheetHostingController(rootView: view, ignoresKeyboard: true)
-        vc.view.layer.cornerRadius = 20
+        transactionDetailVC = UIBottomSheetHostingController(rootView: view, ignoresKeyboard: true)
+        transactionDetailVC.view.layer.cornerRadius = 20
         
         // present bottom sheet
-        presentation.presentingViewController.present(vc, interactiveDismissalType: .standard)
+        presentation.presentingViewController.present(transactionDetailVC, interactiveDismissalType: .standard)
         
         // update presentation layout when info changes
         transactionPublisher
             .receive(on: RunLoop.main)
             .sink { _ in
-                DispatchQueue.main.async { [weak vc] in
-                    vc?.updatePresentationLayout(animated: true)
+                DispatchQueue.main.async { [weak self] in
+                    self?.transactionDetailVC.updatePresentationLayout(animated: true)
                 }
             }
             .store(in: &subscriptions)
+    }
+    
+    private func showShareView() {
+        let av = UIActivityViewController(activityItems: [link], applicationActivities: nil)
+        transactionDetailVC.present(av, animated: true)
     }
 }
