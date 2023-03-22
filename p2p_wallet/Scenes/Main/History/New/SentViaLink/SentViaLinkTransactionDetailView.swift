@@ -15,6 +15,9 @@ struct SentViaLinkTransactionDetailView: View {
     let transactionPublisher: AnyPublisher<SendViaLinkTransactionInfo, Never>
     @State private var transaction: SendViaLinkTransactionInfo?
     
+    let onShare: () -> Void
+    let onClose: () -> Void
+    
     // MARK: - Body
 
     var body: some View {
@@ -46,6 +49,12 @@ struct SentViaLinkTransactionDetailView: View {
             
             // One time link info
             oneTimeLinkInfo
+            
+            // Share button
+            shareButton
+            
+            // Close button
+            closeButton
         }
             .cornerRadius(radius: 20, corners: .allCorners)
             .onReceive(transactionPublisher) { transaction in
@@ -130,6 +139,48 @@ struct SentViaLinkTransactionDetailView: View {
             .padding(.horizontal, 12)
             .padding(.bottom, 16)
     }
+    
+    private var shareButton: some View {
+        Button {
+            onShare()
+        } label: {
+            HStack {
+                Spacer()
+                Text(L10n.share)
+                    .fontWeight(.semibold)
+                    .apply(style: .text3)
+                    .foregroundColor(Color(Asset.Colors.snow.color))
+                Spacer()
+            }
+                .padding(.vertical, 16)
+                .padding(.horizontal, 19)
+                .background(Color(Asset.Colors.night.color))
+                .cornerRadius(radius: 12, corners: .allCorners)
+                .padding(.horizontal, 16)
+                .padding(.bottom, 12)
+        }
+
+    }
+    
+    private var closeButton: some View {
+        Button {
+            onShare()
+        } label: {
+            HStack {
+                Spacer()
+                Text(L10n.close)
+                    .fontWeight(.semibold)
+                    .apply(style: .text3)
+                    .foregroundColor(Color(Asset.Colors.night.color))
+                Spacer()
+            }
+            .padding(.vertical, 16)
+            .padding(.horizontal, 19)
+            .cornerRadius(radius: 12, corners: .allCorners)
+            .padding(.horizontal, 16)
+            .padding(.bottom, 32)
+        }
+    }
 }
 
 #if DEBUG
@@ -137,7 +188,9 @@ struct SentViaLinkTransactionDetailView_Previews: PreviewProvider {
     static var previews: some View {
         SentViaLinkTransactionDetailView(
             transactionPublisher: Just([SendViaLinkTransactionInfo].mocked.first!)
-                .eraseToAnyPublisher()
+                .eraseToAnyPublisher(),
+            onShare: {},
+            onClose: {}
         )
     }
 }
