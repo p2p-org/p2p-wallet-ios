@@ -50,7 +50,7 @@ struct SendInputView: View {
     
     var inputView: some View {
         VStack(spacing: 8) {
-            if let link = viewModel.currentState.sendViaLinkSeed {
+            if viewModel.currentState.sendViaLinkSeed != nil {
                 Text(L10n.anyoneWhoGetsThisOneTimeLinkCanClaimTheFunds)
                     .apply(style: .text3)
                     .foregroundColor(Color(Asset.Colors.mountain.color))
