@@ -165,7 +165,12 @@ struct WormholeSendInputView: View {
             
             Spacer()
             
-            SliderActionButton(isSliderOn: .constant(false), data: .constant(.zero), showFinished: .constant(false))
+            SliderActionButton(
+                isSliderOn: $viewModel.isSliderOn,
+                data: $viewModel.actionButtonData,
+                showFinished: $viewModel.showFinished
+            )
+            .padding(.bottom, 16)
         }
         .padding(.horizontal, 16)
         .background(
