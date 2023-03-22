@@ -40,7 +40,7 @@ struct SendInputFreeTransactionsDetailView: View {
             }
 
             TextButtonView(
-                title: "\(L10n.awesome) 👍",
+                title: "\(isFreeTransactionsLimited ? L10n.awesome: L10n.gotIt) 👍",
                 style: .primaryWhite,
                 size: .large,
                 onPressed: actionButtonPressed
