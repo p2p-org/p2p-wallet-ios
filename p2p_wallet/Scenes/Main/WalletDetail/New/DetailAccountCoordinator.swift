@@ -145,12 +145,15 @@ class DetailAccountCoordinator: SmartCoordinator<DetailAccountCoordinatorResult>
             return
         }
 
-        // TODO: Put FT here
         let supportedBridgeTokens = Wormhole.SupportedToken.bridges
             .map(\.solAddress)
+            .compactMap { $0 } +
+        Wormhole.SupportedToken.bridges
+            .map(\.receiveFromAddress)
             .compactMap { $0 }
 
-        if account.data.isNativeSOL || supportedBridgeTokens.contains(account.data.token.address) {
+        if available(.ethAddressEnabled) &&
+            (account.data.isNativeSOL || supportedBridgeTokens.contains(account.data.token.address)) {
             var icon: SupportedTokenItemIcon = .image(UIImage.imageOutlineIcon)
             if let logoURL = URL(string: account.data.token.logoURI ?? "") {
                 icon = .url(logoURL)
