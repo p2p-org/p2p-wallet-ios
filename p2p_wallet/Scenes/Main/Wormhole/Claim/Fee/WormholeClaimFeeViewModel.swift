@@ -86,7 +86,7 @@ class WormholeClaimFeeViewModel: BaseViewModel, ObservableObject {
                 // Network fee
                 let networkCryptoAmount = try await WormholeClaimViewModel.resolveCrytoAmount(
                     amount: bundle.fees.gas.amount,
-                    feeToken: bundle.fees.gas.feeToken
+                    feeToken: bundle.fees.gas.token
                 )
 
                 self.networkFee = (
@@ -99,7 +99,7 @@ class WormholeClaimFeeViewModel: BaseViewModel, ObservableObject {
                 if let createAccount = bundle.fees.createAccount {
                     let accountsCryptoAmount = try await WormholeClaimViewModel.resolveCrytoAmount(
                         amount: createAccount.amount,
-                        feeToken: createAccount.feeToken
+                        feeToken: createAccount.token
                     )
 
                     self.accountCreationFee = (
@@ -112,7 +112,7 @@ class WormholeClaimFeeViewModel: BaseViewModel, ObservableObject {
                 // Network fee
                 let arbiterAmount = try await WormholeClaimViewModel.resolveCrytoAmount(
                     amount: bundle.fees.arbiter.amount,
-                    feeToken: bundle.fees.arbiter.feeToken
+                    feeToken: bundle.fees.arbiter.token
                 )
 
                 self.wormholeBridgeAndTrxFee = (
@@ -136,7 +136,7 @@ extension WormholeClaimViewModel {
 
     static func resolveCrytoAmount(
         amount: String,
-        feeToken: Wormhole.FeeToken,
+        feeToken: Wormhole.WormholeToken,
         solanaTokenRepository: TokensRepository = Resolver.resolve(),
         ethereumTokenRepository: EthereumTokensRepository = Resolver.resolve()
     ) async throws -> CryptoAmount {

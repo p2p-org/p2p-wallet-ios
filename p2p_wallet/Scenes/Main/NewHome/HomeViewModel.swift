@@ -122,6 +122,10 @@ private extension HomeViewModel {
             .sink { [weak self] solanaState, ethereumState in
                 guard let self else { return }
 
+                let solanaTotalBalance = solanaState.value.reduce(into: 0) { partialResult, account in
+                    partialResult = partialResult + account.amountInFiat
+                }
+
                 let hasAnyTokenWithPositiveBalance =
                     solanaState.value.contains(where: { account in (account.data.lamports ?? 0) > 0 }) ||
                     ethereumState.value.contains(where: { account in account.balance > 0 })
@@ -132,9 +136,6 @@ private extension HomeViewModel {
                 // Merge two status
                 let mergedStatus = AsynValueStatus.combine(lhs: solanaState.status, rhs: ethereumState.status)
 
-                print(solanaState.status, solanaState.error)
-                print(ethereumState.status, ethereumState.error)
-
                 switch mergedStatus {
                 case .initializing:
                     self.state = .pending
@@ -142,8 +143,8 @@ private extension HomeViewModel {
                     self.state = hasAnyTokenWithPositiveBalance ? .withTokens : .empty
 
                     // log
-//                    self.analyticsManager.log(parameter: .userHasPositiveBalance(hasAnyTokenWithPositiveBalance))
-//                    self.analyticsManager.log(parameter: .userAggregateBalance(fiatAmount))
+                    self.analyticsManager.log(parameter: .userHasPositiveBalance(solanaTotalBalance > 0))
+                    self.analyticsManager.log(parameter: .userAggregateBalance(solanaTotalBalance))
                 }
             }
             .store(in: &subscriptions)

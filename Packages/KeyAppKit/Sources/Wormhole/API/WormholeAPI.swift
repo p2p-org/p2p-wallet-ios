@@ -14,9 +14,25 @@ public protocol WormholeAPI {
 
     func simulateEthereumBundle(bundle: WormholeBundle) async throws
 
-    func getEthereumFees(userWallet: String, recipient: String, token: String?, amount: String) async throws -> EthereumFees
+    func getEthereumFees(userWallet: String, recipient: String, token: String?, amount: String) async throws -> ClaimFees
 
     func listEthereumBundles(userWallet: String) async throws -> [WormholeBundleStatus]
 
     func getEthereumBundleStatus(bundleID: String) async throws -> WormholeBundleStatus
+
+    func transferFromSolana(
+        userWallet: String,
+        feePayer: String,
+        from: String,
+        recipient: String,
+        mint: String?,
+        amount: String
+    ) async throws -> [String]
+    
+    func getTransferFees(
+        userWallet: String,
+        recipient: String,
+        mint: String?,
+        amount: String
+    ) async throws -> SendFees
 }

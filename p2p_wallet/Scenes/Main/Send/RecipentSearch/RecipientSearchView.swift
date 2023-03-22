@@ -390,12 +390,10 @@ struct RecipientSearchView_Previews: PreviewProvider {
         NavigationView {
             RecipientSearchView(
                 viewModel: .init(
-                    recipientSearchService: RecipientSearchServiceMock(
-                        result: okNoFundCase
-                    ),
-                    sendHistoryService: SendHistoryService(provider: SendHistoryLocalProvider()),
                     preChosenWallet: nil,
-                    source: .none
+                    source: .none,
+                    recipientSearchService: RecipientSearchServiceMock(result: okNoFundCase),
+                    sendHistoryService: SendHistoryService(provider: SendHistoryLocalProvider())
                 )
             )
         }

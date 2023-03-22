@@ -100,7 +100,7 @@ let package = Package(
             name: "KeyAppBusiness",
             targets: ["KeyAppBusiness"]
         ),
-        
+
         .library(
             name: "Jupiter",
             targets: ["Jupiter"]
@@ -115,14 +115,6 @@ let package = Package(
         .package(url: "https://github.com/attaswift/BigInt.git", from: "5.3.0"),
     ],
     targets: [
-        // Core
-        .target(
-            name: "KeyAppKitCore",
-            dependencies: [
-                .product(name: "BigInt", package: "BigInt"),
-            ]
-        ),
-
         // Cache
         .target(name: "Cache"),
 
@@ -310,6 +302,13 @@ let package = Package(
         ),
 
         .target(
+            name: "Jupiter",
+            dependencies: [
+                .product(name: "SolanaSwift", package: "solana-swift"),
+            ]
+        ),
+
+        .target(
             name: "KeyAppBusiness",
             dependencies: [
                 "KeyAppKitCore",
@@ -328,10 +327,11 @@ let package = Package(
             path: "Tests/UnitTests/KeyAppBusinessTests"
         ),
 
+        // Core
         .target(
-            name: "Jupiter",
+            name: "KeyAppKitCore",
             dependencies: [
-                .product(name: "SolanaSwift", package: "solana-swift"),
+                .product(name: "BigInt", package: "BigInt"),
             ]
         ),
     ]

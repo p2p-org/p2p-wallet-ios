@@ -21,6 +21,23 @@ public struct CurrencyAmount: Hashable {
         self.value = usd
         self.currencyCode = "USD"
     }
+
+    public static var zero: Self = .init(usd: 0)
+}
+
+public extension CurrencyAmount {
+    static func + (lhs: Self, rhs: Self) -> Self {
+        guard lhs.currencyCode == rhs.currencyCode else {
+            return lhs
+        }
+
+        return .init(value: lhs.value + rhs.value, currencyCode: lhs.currencyCode)
+    }
+
+    static func + (lhs: Self, rhs: Self?) -> Self {
+        guard let rhs else { return lhs }
+        return lhs + rhs
+    }
 }
 
 extension CurrencyAmount: Comparable {

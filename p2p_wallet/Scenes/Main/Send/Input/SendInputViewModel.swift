@@ -6,6 +6,7 @@ import AnalyticsManager
 import Combine
 import FeeRelayerSwift
 import Foundation
+import KeyAppBusiness
 import KeyAppUI
 import Resolver
 import Send
@@ -38,7 +39,7 @@ final class SendInputViewModel: BaseViewModel, ObservableObject {
 
     @Published var feeTitle = L10n.fees("")
     @Published var isFeeLoading: Bool = true
-    
+
     @Published var loadingState: LoadableState = .loaded
 
     // ActionButton
@@ -114,7 +115,12 @@ final class SendInputViewModel: BaseViewModel, ObservableObject {
             tokens.insert($0.token)
         }
 
-        let env = UserWalletEnvironments(wallets: wallets, exchangeRate: exchangeRate, tokens: tokens)
+        let env = UserWalletEnvironments(
+            wallets: wallets,
+            ethereumAccount: nil,
+            exchangeRate: exchangeRate,
+            tokens: tokens
+        )
 
         let state = SendInputState.zero(
             recipient: recipient,
@@ -164,7 +170,7 @@ final class SendInputViewModel: BaseViewModel, ObservableObject {
                     let relayContextManager = Resolver.resolve(RelayContextManager.self)
                     return try await relayContextManager.getCurrentContextOrUpdate()
                 }))
-            
+
             // disable adding amount if amount is pre-chosen
             if let amount = preChosenAmount {
                 Task {
@@ -191,7 +197,7 @@ final class SendInputViewModel: BaseViewModel, ObservableObject {
             self.inputAmountViewModel.isFirstResponder = true
         }
     }
-    
+
     @MainActor
     func load() async {
         loadingState = .loading
@@ -315,7 +321,7 @@ private extension SendInputViewModel {
         $status
             .sink { [weak self] value in
                 guard value == .ready else { return }
-                DispatchQueue.main.asyncAfter(deadline: .now() + 0.5, execute: { self?.openKeyboard() })
+                DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) { self?.openKeyboard() }
             }
             .store(in: &subscriptions)
     }
@@ -373,7 +379,7 @@ private extension SendInputViewModel {
 
     func checkMaxButtonIfNeeded() {
         guard currentState.token.isNativeSOL else { return }
-        let range = currentState.maxAmountInputInSOLWithLeftAmount..<currentState.maxAmountInputInToken
+        let range = currentState.maxAmountInputInSOLWithLeftAmount ..< currentState.maxAmountInputInToken
         if range.contains(currentState.amountInToken) {
             if !wasMaxWarningToastShown {
                 handleSuccess(text: L10n.weLeftAMinimumSOLBalanceToSaveTheAccountAddress)
@@ -443,9 +449,9 @@ private extension SendInputViewModel {
         await MainActor.run {
             self.showFinished = true
         }
-        
+
         try? await Task.sleep(nanoseconds: 500_000_000)
-        
+
         await MainActor.run {
             let transaction = SendTransaction(state: self.currentState) {
                 try? await Resolver.resolve(SendHistoryService.self).insert(recipient)

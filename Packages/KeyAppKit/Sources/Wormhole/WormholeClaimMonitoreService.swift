@@ -17,7 +17,7 @@ public struct WormholeBundleStatus: Codable, Hashable {
     public let userWallet: String
     public let recipient: String
     public let resultAmount: TokenAmount
-    public let fees: EthereumFees?
+    public let fees: ClaimFees?
     public let status: Status
 
     enum CodingKeys: String, CodingKey {

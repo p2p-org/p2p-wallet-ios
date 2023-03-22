@@ -23,7 +23,7 @@ class EthereumAccountsDataSource: ObservableObject {
         accounts.map { account in
             // Get the corresponding Wormhole bundle status for this Ethereum account
             let bundleStatus: WormholeBundleStatus? = wormholeBundlesStatus.first { bundle in
-                switch (account.token.contractType, bundle.resultAmount.feeToken) {
+                switch (account.token.contractType, bundle.resultAmount.token) {
                 case let (.native, .ethereum(contract)):
                     // If the account is for the native token, check if the bundle token is nil
                     return contract == nil

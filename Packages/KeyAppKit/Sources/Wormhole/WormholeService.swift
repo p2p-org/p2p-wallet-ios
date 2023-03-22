@@ -90,6 +90,44 @@ public class WormholeService {
         }
     }
 
+    public func transferFromSolana(
+        feePayer: String,
+        from: String,
+        recipient: String,
+        mint: String?,
+        amount: String
+    ) async throws -> [String] {
+        guard let solanaKeyPair else {
+            throw ServiceError.authorizationError
+        }
+
+        return try await api.transferFromSolana(
+            userWallet: solanaKeyPair.publicKey.base58EncodedString,
+            feePayer: solanaKeyPair.publicKey.base58EncodedString,
+            from: from,
+            recipient: recipient,
+            mint: mint,
+            amount: amount
+        )
+    }
+
+    public func getTransferFees(
+        recipient: String,
+        mint: String?,
+        amount: String
+    ) async throws -> SendFees {
+        guard let solanaKeyPair else {
+            throw ServiceError.authorizationError
+        }
+
+        return try await api.getTransferFees(
+            userWallet: solanaKeyPair.publicKey.base58EncodedString,
+            recipient: recipient,
+            mint: mint,
+            amount: amount
+        )
+    }
+
     /// Sign transaction
     internal func signBundle(bundle: WormholeBundle) throws -> WormholeBundle {
         guard let ethereumKeypair else {
@@ -106,21 +144,14 @@ public class WormholeService {
             let transaction = try EthereumTransaction(rlp: rlpItem)
             let signedTransaction = try ethereumKeypair.sign(transaction: transaction, chainID: 1)
 
-            debugPrint(transaction)
-            debugPrint(signedTransaction)
-
             print(signedTransaction.verifySignature())
             print(try signedTransaction.rawTransaction().hex())
-
-            signedTransaction.verifySignature()
 
             let signature = EthereumSignature(
                 r: signedTransaction.r.hex(),
                 s: signedTransaction.s.hex(),
                 v: try UInt64(signedTransaction.v.quantity)
             )
-
-            debugPrint(signature)
 
             return signature
         }

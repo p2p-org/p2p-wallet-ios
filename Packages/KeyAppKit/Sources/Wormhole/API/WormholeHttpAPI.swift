@@ -7,6 +7,7 @@
 
 import Foundation
 import KeyAppKitCore
+import BigInt
 
 public class WormholeRPCAPI: WormholeAPI {
     let client: HTTPJSONRPCCLient
@@ -60,7 +61,7 @@ public class WormholeRPCAPI: WormholeAPI {
         )
     }
     
-    public func getEthereumFees(userWallet: String, recipient: String, token: String?, amount: String) async throws -> EthereumFees {
+    public func getEthereumFees(userWallet: String, recipient: String, token: String?, amount: String) async throws -> ClaimFees {
         try await self.client.call(
             method: "get_ethereum_fees",
             params: [
@@ -88,5 +89,52 @@ public class WormholeRPCAPI: WormholeAPI {
                 "bundle_id": bundleID,
             ]
         )
+    }
+    
+    public func transferFromSolana(
+        userWallet: String,
+        feePayer: String,
+        from: String,
+        recipient: String,
+        mint: String?,
+        amount: String
+    ) async throws -> [String] {
+        return []
+        
+//        try await self.client.call(
+//            method: "transfer_from_solana",
+//            params: [
+//                "user_wallet": userWallet,
+//                "feePayer": feePayer,
+//                "from": from,
+//                "recipient": recipient,
+//                "mint": mint,
+//                "amount": amount,
+//            ]
+//        )
+    }
+    
+    public func getTransferFees(userWallet: String, recipient: String, mint: String?, amount: String) async throws -> SendFees {
+        
+        try await Task.sleep(nanoseconds: 1_000_000_000)
+        
+        let usdAmount: String = try String(BigUInt(stringLiteral: amount))
+        
+        return try .init(
+            arbiter: .init(amount: "1", usdAmount: usdAmount, chain: "Solana", contract: nil),
+            networkFee: .init(amount: "1", usdAmount: usdAmount, chain: "Solana", contract: nil),
+            messageAccountRent: .init(amount: "1", usdAmount: usdAmount, chain: "Solana", contract: nil),
+            bridgeFee: .init(amount: "1", usdAmount: usdAmount, chain: "Solana", contract: nil)
+        )
+        
+//        try await self.client.call(
+//            method: "get_send_fees",
+//            params: [
+//                "user_wallet": userWallet,
+//                "recipient": recipient,
+//                "mint": mint,
+//                "amount": amount,
+//            ]
+//        )
     }
 }
