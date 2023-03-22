@@ -9,6 +9,7 @@ import KeyAppKitCore
 import KeyAppUI
 import Kingfisher
 import SwiftUI
+import SolanaSwift // TODO: check if I am needed later when wallet is sent to SendInputTokenView
 
 struct WormholeSendInputView: View {
     @ObservedObject var viewModel: WormholeSendInputViewModel
@@ -64,53 +65,10 @@ struct WormholeSendInputView: View {
                     }
                 }
                 .padding(.horizontal, 8)
-                
-                HStack(spacing: 12) {
-                    KFImage
-                        .url(URL(string: "https://assets.coingecko.com/coins/images/279/large/ethereum.png?1595348880")!)
-                        .setProcessor(
-                            DownsamplingImageProcessor(size: .init(width: 48*2, height: 48*2))
-                                |> RoundCornerImageProcessor(cornerRadius: 48)
-                        )
-                        .resizable()
-                        .diskCacheExpiration(.days(7))
-                        .fade(duration: 0.1)
-                        .background(Circle().fill(Color(Asset.Colors.snow.color)))
-                        .frame(width: 48, height: 48)
-                    
-                    VStack(alignment: .leading, spacing: 6) {
-                        Text("Wrapped Ethereum")
-                            .fontWeight(.semibold)
-                            .apply(style: .text2)
-                        
-                        HStack {
-                            Image(uiImage: UIImage.buyWallet)
-                                .renderingMode(.template)
-                                .resizable()
-                                .scaledToFit()
-                                .foregroundColor(Color(Asset.Colors.mountain.color))
-                                .frame(width: 16, height: 16)
-                            Text("1 WETH")
-                                .apply(style: .text4)
-                                .foregroundColor(Color(Asset.Colors.mountain.color))
-                        }
-                    }
-                    
-                    Spacer()
-                    
-                    Text("$ 1 215.75")
-                        .fontWeight(.semibold)
-                        .apply(style: .text2)
-                    
-                    Image(uiImage: Asset.MaterialIcon.expandMore.image)
-                        .renderingMode(.template)
-                        .foregroundColor(Color(Asset.Colors.night.color))
-                        .frame(width: 24, height: 24)
-                }
-                .padding(.horizontal, 20)
-                .padding(.vertical, 16)
-                .background(Color(Asset.Colors.snow.color))
-                .cornerRadius(16)
+
+                SendInputTokenView(wallet: Wallet(token: .eth), isChangeEnabled: true, changeAction: {
+                    // TODO: Pass here action from viewModel in https://github.com/p2p-org/p2p-wallet-ios/pull/1080
+                })
             }
             
             VStack(spacing: 6) {
