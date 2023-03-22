@@ -1265,3 +1265,5 @@ You can try again, but your new transaction will be subject to the current rates
 "With Key App, all transactions you make on the Solana network are free" = "With Key App, all transactions you make on the Solana network are free";
 "Sent via one-time link" = "Sent via one-time link";
 "%@ transactions" = "%@ transactions";
+"Unknown time" = "Unknown time";
+"Unique one-time link works once only" = "Unique one-time link works once only";

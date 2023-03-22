@@ -1294,3 +1294,5 @@ You can try again, but your new transaction will be subject to the current rates
 "With Key App, all transactions you make on the Solana network are free" = "С Key App все транзакции, которые вы совершаете в сети Solana, бесплатны.";
 "Sent via one-time link" = "Отправлено по одноразовой ссылке";
 "%@ transactions" = "%@ транзакции";
+"Unknown time" = "Неизвестное время";
+"Unique one-time link works once only" = "Уникальная одноразовая ссылка работает только один раз";
