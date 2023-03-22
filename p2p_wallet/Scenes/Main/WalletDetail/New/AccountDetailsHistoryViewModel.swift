@@ -7,7 +7,9 @@ import SolanaSwift
 import Wormhole
 
 final class DetailHistoryViewModel: HistoryViewModel {
+
     @Injected private var helpLauncher: HelpCenterLauncher
+
     let account: SolanaAccountsService.Account?
 
     init(
@@ -42,7 +44,16 @@ final class DetailHistoryViewModel: HistoryViewModel {
 
         let state = super.buildOutput(history: history, sells: sells, pendings: pendings)
         var newData = state.data
-        newData.insert(bannerSection, at: 0)
+        let supportedBridgeTokens = Wormhole.SupportedToken.bridges
+            .map(\.solAddress)
+            .compactMap { $0 } +
+        Wormhole.SupportedToken.bridges
+            .map(\.receiveFromAddress)
+            .compactMap { $0 }
+        if available(.ethAddressEnabled) &&
+            (account?.data.isNativeSOL == true || supportedBridgeTokens.contains(account?.data.token.address ?? "")) {
+            newData.insert(bannerSection, at: 0)
+        }
         return .init(
             status: state.status,
             data: newData,
