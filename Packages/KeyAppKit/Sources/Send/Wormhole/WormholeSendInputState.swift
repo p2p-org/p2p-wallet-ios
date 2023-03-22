@@ -26,7 +26,7 @@ public enum WormholeSendInputState: Equatable {
     
     case calculating(newInput: WormholeSendInputBase)
     
-    case error(input: WormholeSendInputBase, error: WormholeSendInputError)
+    case error(input: WormholeSendInputBase, fees: SendFees?, error: WormholeSendInputError)
     
     case unauthorized
     
@@ -85,7 +85,7 @@ public enum WormholeSendInputState: Equatable {
                         amount: String(input.amount)
                     )
                 } catch {
-                    return .error(input: input, error: .calculationFeeFailure)
+                    return .error(input: input, fees: nil, error: .calculationFeeFailure)
                 }
                 
                 let transactions: [String]
@@ -98,7 +98,7 @@ public enum WormholeSendInputState: Equatable {
                         amount: String(input.amount)
                     )
                 } catch {
-                    return .error(input: input, error: .getTransferTransactionsFailure)
+                    return .error(input: input, fees: fees, error: .getTransferTransactionsFailure)
                 }
                 
                 return .ready(input: input, transactions: transactions, fees: fees, alert: nil)
@@ -111,7 +111,7 @@ public enum WormholeSendInputState: Equatable {
                 return self
             }
             
-        case let .error(input, _):
+        case let .error(input, _, _):
             switch action {
             case let .updateInput(newInput):
                 var input = input
@@ -131,6 +131,8 @@ public enum WormholeSendInputState: Equatable {
 extension WormholeSendInputState: AutoTriggerState {
     public func trigger(service: WormholeService) async -> WormholeSendInputAction? {
         switch self {
+        case .initializing:
+            return .initialize
         case .calculating:
             return .calculate
         default:
@@ -142,18 +144,10 @@ extension WormholeSendInputState: AutoTriggerState {
 extension WormholeSendInputState: CancableState {
     public func isCancable() -> Bool {
         switch self {
-        case .initializing:
-            return false
-        case .initializingFailure:
-            return false
-        case .ready:
+        case .initializing, .initializingFailure, .ready, .unauthorized, .error:
             return false
         case .calculating:
             return true
-        case .error:
-            return false
-        case .unauthorized:
-            return false
         }
     }
 }
