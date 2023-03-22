@@ -16,6 +16,28 @@ struct SendViaLinkTransactionInfo: Codable, Identifiable {
     var id: String {
         seed
     }
+    
+    var creationDayInString: String {
+        // if today
+        if Calendar.current.isDateInToday(timestamp) {
+            return L10n.today
+        }
+        
+        // if another day
+        else {
+            let dateFormatter = DateFormatter()
+            dateFormatter.dateFormat = "MMMM d, yyyy"
+            let someDateString = dateFormatter.string(from: timestamp)
+            return someDateString
+        }
+    }
+    
+    var creationTimeInString: String {
+        let dateFormatter = DateFormatter()
+        dateFormatter.dateFormat = "HH:mm"
+        let someDateString = dateFormatter.string(from: timestamp)
+        return someDateString
+    }
 }
 
 #if DEBUG

@@ -1300,3 +1300,6 @@ You can try again, but your new transaction will be subject to the current rates
 "Sent via one-time link" = "Gửi qua liên kết một lần";
 "Creating your\none-time link" = "Tạo liên kết một lần\ncủa bạn";
 "%@ transactions" = "%@ giao dịch";
+"Unknown time" = "thời gian không xác định";
+"Unique one-time link works once only" = "Liên kết một lần duy nhất chỉ hoạt động một lần";
+"The one-time link can be used to send funds to anyone without needing an address. The funds can be claimed by anyone with a link." = "Liên kết một lần có thể được sử dụng để gửi tiền cho bất kỳ ai mà không cần địa chỉ.  Tiền có thể được yêu cầu bởi bất kỳ ai có liên kết.";
