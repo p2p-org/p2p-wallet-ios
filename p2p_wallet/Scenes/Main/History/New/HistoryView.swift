@@ -19,13 +19,9 @@ struct NewHistoryView<Header: View>: View {
     var body: some View {
         VStack(spacing: 0) {
             // Send via link
-            sendViaLinkView
-            
-            // Divider
-            Divider()
-                .frame(height: 1)
-                .foregroundColor(Color(Asset.Colors.rain.color))
-                .padding(.leading, 20)
+            if !viewModel.sendViaLinkTransactions.isEmpty {
+                sendViaLinkView
+            }
             
             // history
             transactionsHistoryView
@@ -126,7 +122,7 @@ struct NewHistoryView<Header: View>: View {
     
     @ViewBuilder
     var sendViaLinkView: some View {
-        if !viewModel.sendViaLinkTransactions.isEmpty {
+        VStack {
             HStack(alignment: .center, spacing: 12) {
                 Image(uiImage: .sendViaLinkPlain)
                     .resizable()
@@ -153,6 +149,12 @@ struct NewHistoryView<Header: View>: View {
                     .foregroundColor(Color(Asset.Colors.mountain.color))
             }
             .padding(.init(top: 12, leading: 16, bottom: 11, trailing: 16))
+            
+            // Divider
+            Divider()
+                .frame(height: 1)
+                .foregroundColor(Color(Asset.Colors.rain.color))
+                .padding(.leading, 20)
         }
     }
 }

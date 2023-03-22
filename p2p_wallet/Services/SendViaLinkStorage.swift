@@ -11,7 +11,7 @@ struct SendViaLinkTransactionInfo: Codable, Identifiable {
     let amountInFiat: Double
     let token: Token
     let seed: String
-    let timestamp: Date?
+    let timestamp: Date
     
     var id: String {
         seed
@@ -27,7 +27,7 @@ extension Array where Element == SendViaLinkTransactionInfo {
                 amountInFiat: 20,
                 token: .nativeSolana,
                 seed: .generateSendViaLinkSeed(),
-                timestamp: nil // Today
+                timestamp: Date() // Today
             ),
             .init(
                 amount: 1,
@@ -125,7 +125,7 @@ final class SendViaLinkStorageImpl: SendViaLinkStorage {
         }
         
         // append seed
-        transactions.append(transaction)
+        transactions.insert(transaction, at: 0)
         
         // save
         return save(transactions: transactions)
