@@ -497,7 +497,7 @@ CHECKOUT OPTIONS:
     :commit: eee1d66d7ef71b892e72c8bc8d84fcdfeaab1918
     :git: https://github.com/p2p-org/Down.git
   FeeRelayerSwift:
-    :commit: 71b2b3f35ac13ca643123c3ccbccc163f859777d
+    :commit: 95808a932a53e8da133c894e6a2190cc785e7ccc
     :git: https://github.com/p2p-org/FeeRelayerSwift.git
   History:
     :commit: fb4348d8304466e192a366a91d997a796fb304a2
