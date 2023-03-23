@@ -9,6 +9,7 @@ import History
 import Resolver
 import Send
 import SolanaSwift
+import FeeRelayerSwift
 
 enum LoadableState: Equatable {
     case notRequested
@@ -27,7 +28,7 @@ enum LoadableState: Equatable {
 /// State for SendViaLink feature
 struct SendViaLinkState: Equatable {
     /// Indicate if the feature itself is disabled or not (via FT)
-    let isDisabled: Bool
+    let isFeatureDisabled: Bool
     /// Default limit for a day
     let limitPerDay: Int
     /// Number of links used today
@@ -35,7 +36,7 @@ struct SendViaLinkState: Equatable {
     
     /// Indicate if user can create link
     var canCreateLink: Bool {
-        !isDisabled && (numberOfLinksUsedToday < limitPerDay)
+        !isFeatureDisabled && (numberOfLinksUsedToday < limitPerDay)
     }
 }
 
@@ -72,7 +73,7 @@ class RecipientSearchViewModel: ObservableObject {
     @Published var recipientsHistory: [Recipient] = []
     
     @Published var sendViaLinkState = SendViaLinkState(
-        isDisabled: true,
+        isFeatureDisabled: true,
         limitPerDay: 30,
         numberOfLinksUsedToday: 0
     )
@@ -248,16 +249,23 @@ class RecipientSearchViewModel: ObservableObject {
     
     func checkIfSendViaLinkAvailable() async throws {
         if available(.sendViaLinkEnabled) {
-            // ask for limit
-            // TODO: - Implementation later
+            // get relay context
+            let usageStatus = try await Resolver.resolve(RelayContextManager.self)
+                .getCurrentContextOrUpdate()
+                .usageStatus
+            
+            // get limit per day and nummber of used
+            let limitPerDay = usageStatus.maxTokenAccountCreationCount
+            let usedToday = usageStatus.tokenAccountCreationCountUsed
+            
             sendViaLinkState = SendViaLinkState(
-                isDisabled: false,
-                limitPerDay: 30,
-                numberOfLinksUsedToday: 0
+                isFeatureDisabled: false,
+                limitPerDay: limitPerDay,
+                numberOfLinksUsedToday: usedToday
             )
         } else {
             sendViaLinkState = SendViaLinkState(
-                isDisabled: true,
+                isFeatureDisabled: true,
                 limitPerDay: 0,
                 numberOfLinksUsedToday: 0
             )
