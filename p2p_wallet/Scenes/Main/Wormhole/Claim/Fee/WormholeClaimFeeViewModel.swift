@@ -148,13 +148,13 @@ extension WormholeClaimViewModel {
                 throw WormholeClaimViewModel.ResolveError.canNotResolveToken
             }
 
-            return CryptoAmount(amount: amount, token: token)
+            return CryptoAmount(bigUIntString: amount, token: token)
         case let .ethereum(address):
             if let address {
                 let token = try await ethereumTokenRepository.resolve(address: address)
-                return CryptoAmount(amount: amount, token: token)
+                return CryptoAmount(bigUIntString: amount, token: token)
             } else {
-                return CryptoAmount(amount: amount, token: EthereumToken())
+                return CryptoAmount(bigUIntString: amount, token: EthereumToken())
             }
         }
     }

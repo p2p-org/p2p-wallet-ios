@@ -78,7 +78,7 @@ class WormholeClaimViewModel: BaseViewModel, ObservableObject {
                     let cryptoFormatter = CryptoFormatter()
 
                     let cryptoAmount = CryptoAmount(
-                        amount: resultAmount.amount,
+                        bigUIntString: resultAmount.amount,
                         token: account.token
                     )
 

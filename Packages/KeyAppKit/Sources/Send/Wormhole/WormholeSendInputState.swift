@@ -8,6 +8,7 @@
 import BigInt
 import Foundation
 import KeyAppBusiness
+import KeyAppKitCore
 import Wormhole
 
 public enum WormholeSendInputState: Equatable {
@@ -82,7 +83,7 @@ public enum WormholeSendInputState: Equatable {
             switch action {
             case let .updateInput(newInput):
                 var input = input
-                input.amount = newInput
+                input.amount = CryptoAmount(floatString: newInput, token: input.solanaAccount.data.token)?.value ?? 0
                 return .calculating(newInput: input)
             default:
                 return self
@@ -130,7 +131,7 @@ public enum WormholeSendInputState: Equatable {
                 
             case let .updateInput(newInput):
                 var input = input
-                input.amount = newInput
+                input.amount = CryptoAmount(floatString: newInput, token: input.solanaAccount.data.token)?.value ?? 0
                 return .calculating(newInput: input)
             default:
                 return self
@@ -140,7 +141,7 @@ public enum WormholeSendInputState: Equatable {
             switch action {
             case let .updateInput(newInput):
                 var input = input
-                input.amount = newInput
+                input.amount = CryptoAmount(floatString: newInput, token: input.solanaAccount.data.token)?.value ?? 0
                 return .calculating(newInput: input)
             case .calculate:
                 return .calculating(newInput: input)
@@ -179,7 +180,7 @@ extension WormholeSendInputState: CancableState {
 
 public enum WormholeSendInputAction {
     case initialize
-    case updateInput(amount: BigUInt)
+    case updateInput(amount: String)
     case calculate
 }
 

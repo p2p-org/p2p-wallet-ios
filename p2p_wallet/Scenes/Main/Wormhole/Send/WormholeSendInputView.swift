@@ -14,7 +14,7 @@ import SwiftUI
 struct WormholeSendInputView: View {
     @ObservedObject var viewModel: WormholeSendInputViewModel
     
-    let currencyFormatter: CurrencyFormatter = .init()
+    let inputFount = UIFont.font(of: .title2, weight: .bold)
     
     var body: some View {
         VStack(alignment: .leading, spacing: 0) {
@@ -69,55 +69,64 @@ struct WormholeSendInputView: View {
                 )
             }
             
-            VStack(spacing: 6) {
-                HStack {
-                    ZStack {
-                        SendInputAmountField(
-                            text: $viewModel.input,
-                            isFirstResponder: $viewModel.isFirstResponder,
-                            countAfterDecimalPoint: $viewModel.countAfterDecimalPoint,
-                            textColor: .constant(.black)
-                        )
+            if let account = viewModel.adapter.inputAccount {
+                VStack(spacing: 6) {
+                    HStack {
+                        ZStack {
+                            SendInputAmountField(
+                                text: $viewModel.input,
+                                isFirstResponder: $viewModel.isFirstResponder,
+                                countAfterDecimalPoint: $viewModel.countAfterDecimalPoint,
+                                textColor: .constant(.black)
+                            ) { textField in
+                                textField.font = inputFount
+                                textField.placeholder = "0"
+                            }
+                            
+                            TextButtonView(
+                                title: L10n.max.uppercased(),
+                                style: .second,
+                                size: .small
+                            ) {}
+                                .transition(.opacity.animation(.easeInOut))
+                                .cornerRadius(radius: 32, corners: .allCorners)
+                                .frame(width: 68)
+                                .offset(x: viewModel.input.isEmpty
+                                    ? 16.0
+                                    : textWidth(font: inputFount, text: viewModel.input)
+                                )
+                                .padding(.horizontal, 8)
+                                .accessibilityIdentifier("max-button")
+                        }
+                        .frame(height: 28)
                         
-                        TextButtonView(
-                            title: L10n.max.uppercased(),
-                            style: .second,
-                            size: .small
-                        ) {}
-                            .transition(.opacity.animation(.easeInOut))
-                            .cornerRadius(radius: 32, corners: .allCorners)
-                            .frame(width: 68)
-                            .offset(x: true
-                                ? 16.0
-                                : textWidth(font: UIFont.font(of: .title2, weight: .bold), text: "1")
-                            )
-                            .padding(.horizontal, 8)
-                            .accessibilityIdentifier("max-button")
+                        Text(viewModel.adapter.inputAccount?.data.token.symbol ?? "")
+                            .fontWeight(.bold)
+                            .apply(style: .title2)
                     }
-                    .frame(height: 28)
                     
-                    Text("WETH")
-                        .fontWeight(.bold)
-                        .apply(style: .title2)
-                }
-                
-                HStack {
-                    Text("1 215.75 USD")
+                    HStack {
+                        Text(viewModel.adapter.amountInFiatString)
+                            .apply(style: .text4)
+                            .foregroundColor(Color(Asset.Colors.mountain.color))
+                        
+                        Spacer()
+                        
+                        Text(
+                            L10n.tapToSwitchTo(
+                                viewModel.inputMode == .crypto ? (viewModel.adapter.inputAccount?.data.token.symbol ?? "") : Defaults.fiat.name
+                            )
+                        )
                         .apply(style: .text4)
                         .foregroundColor(Color(Asset.Colors.mountain.color))
-                    
-                    Spacer()
-                    
-                    Text("WETH")
-                        .apply(style: .text4)
-                        .foregroundColor(Color(Asset.Colors.mountain.color))
+                    }
                 }
+                .padding(.horizontal, 20)
+                .padding(.vertical, 16)
+                .background(Color(Asset.Colors.snow.color))
+                .cornerRadius(16)
+                .padding(.top, 8)
             }
-            .padding(.horizontal, 20)
-            .padding(.vertical, 16)
-            .background(Color(Asset.Colors.snow.color))
-            .cornerRadius(16)
-            .padding(.top, 8)
             
             Spacer()
             

@@ -10,7 +10,6 @@ import NameService
 import Resolver
 
 class NameServiceUserDefaultCache: NameServiceCacheType {
-    @Injected private var walletsRepository: WalletsRepository
     @Injected private var nameStorage: NameStorageType
 
     private let locker = NSLock()
@@ -26,6 +25,8 @@ class NameServiceUserDefaultCache: NameServiceCacheType {
     }
 
     func getName(for owner: String) -> NameServiceSearchResult? {
+        let walletsRepository: WalletsRepository = Resolver.resolve()
+        
         if walletsRepository.getWallets().contains(where: { $0.pubkey == owner }),
            let name = nameStorage.getName()
         {

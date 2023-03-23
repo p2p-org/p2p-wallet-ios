@@ -65,7 +65,15 @@ public final class SolanaAccountsService: NSObject, AccountsService, ObservableO
                     for index in newAccounts.indices {
                         let token = newAccounts[index].data.token
                         if let price = prices[token] {
-                            newAccounts[index].price = price
+                            // Convert to token
+                            let value: Decimal?
+                            if let priceValue = price?.value {
+                                value = Decimal(floatLiteral: priceValue)
+                            } else {
+                                value = nil
+                            }
+
+                            newAccounts[index].price = .init(currencyCode: fiat.uppercased(), value: value, token: token)
                         }
                     }
                 } catch {
@@ -140,7 +148,7 @@ public extension Array where Element == SolanaAccountsService.Account {
     }
 
     var totalAmountInCurrentFiat: Double {
-        reduce(0) { $0 + $1.amountInFiat }
+        reduce(0) { $0 + $1.amountInFiatDouble }
     }
 
     var isTotalBalanceEmpty: Bool {
@@ -160,12 +168,25 @@ public extension SolanaAccountsService {
         public var data: SolanaSwift.Wallet
 
         /// The fetched price at current moment of time.
-        public fileprivate(set) var price: CurrentPrice?
+        public fileprivate(set) var price: TokenPrice?
+
+        public var cryptoAmount: CryptoAmount {
+            .init(uint64: data.lamports ?? 0, token: data.token)
+        }
 
         /// Get current amount in fiat.
-        public var amountInFiat: Double {
-            (data.amount ?? 0) * (price?.value ?? 0)
+        public var amountInFiat: CurrencyAmount? {
+            guard let price else { return nil }
+            return cryptoAmount.unsafeToFiatAmount(price: price)
         }
+
+        @available(*, deprecated, message: "Migrate to amountInFiat")
+        public var amountInFiatDouble: Double {
+            guard let amountInFiat else { return 0.0 }
+            return NSDecimalNumber(decimal: amountInFiat.value).doubleValue
+        }
+        
+        
     }
 
     enum Status {

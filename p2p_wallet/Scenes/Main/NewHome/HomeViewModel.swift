@@ -123,7 +123,7 @@ private extension HomeViewModel {
                 guard let self else { return }
 
                 let solanaTotalBalance = solanaState.value.reduce(into: 0) { partialResult, account in
-                    partialResult = partialResult + account.amountInFiat
+                    partialResult = partialResult + account.amountInFiatDouble
                 }
 
                 let hasAnyTokenWithPositiveBalance =

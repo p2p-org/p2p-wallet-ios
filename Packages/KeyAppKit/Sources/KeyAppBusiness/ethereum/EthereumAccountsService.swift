@@ -147,9 +147,9 @@ extension EthereumAccountsService {
         public let address: String
         public let token: EthereumToken
         public let balance: BigUInt
-        public fileprivate(set) var price: Price?
+        public fileprivate(set) var price: TokenPrice?
 
-        internal init(address: String, token: EthereumToken, balance: BigUInt, price: Price? = nil) {
+        internal init(address: String, token: EthereumToken, balance: BigUInt, price: TokenPrice? = nil) {
             self.address = address
             self.token = token
             self.balance = balance

@@ -48,12 +48,11 @@ public class WormholeSendInputStateMachine: StateMachine {
         }
         
         currentTask = Task {
-            defer { currentTask = nil }
-
             let nextState = await self.state.value.onAccept(action: action, service: self.services)
 
             if Task.isCancelled { return }
 
+            currentTask = nil
             self.state.send(nextState)
         }
         
