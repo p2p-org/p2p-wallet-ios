@@ -9,6 +9,7 @@ import History
 import Resolver
 import Send
 import SolanaSwift
+import FeeRelayerSwift
 
 enum LoadableState: Equatable {
     case notRequested
@@ -248,17 +249,19 @@ class RecipientSearchViewModel: ObservableObject {
     
     func checkIfSendViaLinkAvailable() async throws {
         if available(.sendViaLinkEnabled) {
-            // ask for limit
+            // get relay context
             let usageStatus = try await Resolver.resolve(RelayContextManager.self)
                 .getCurrentContextOrUpdate()
                 .usageStatus
             
+            // get limit per day and nummber of used
             let limitPerDay = usageStatus.maxTokenAccountCreationCount
+            let usedToday = usageStatus.tokenAccountCreationCountUsed
             
             sendViaLinkState = SendViaLinkState(
                 isFeatureDisabled: false,
                 limitPerDay: limitPerDay,
-                numberOfLinksUsedToday: 0
+                numberOfLinksUsedToday: usedToday
             )
         } else {
             sendViaLinkState = SendViaLinkState(
