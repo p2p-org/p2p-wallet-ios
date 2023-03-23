@@ -34,7 +34,7 @@ class WormholeSendInputCoordinator: SmartCoordinator<String> {
 
     private func openChooseWormholeToken(from vc: UIViewController, viewModel: WormholeSendInputViewModel) {
         coordinate(to: ChooseWormholeTokenCoordinator(
-            chosenWallet: Wallet(token: Token.nativeSolana), // TODO: HARDCODE, fix after logic is done
+            chosenWallet: viewModel.adapter.inputAccount?.data ?? Wallet(token: .eth),
             parentController: vc
         ))
         .sink { walletToken in
