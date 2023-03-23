@@ -46,7 +46,7 @@ struct RecipientSearchView: View {
                     .accessibilityIdentifier("RecipientSearchView.loadedView.RecipientSearchField")
                 
                 // Send via link
-                if !viewModel.sendViaLinkState.isDisabled, viewModel.sendViaLinkVisible {
+                if !viewModel.sendViaLinkState.isFeatureDisabled, viewModel.sendViaLinkVisible {
                     Button {
                         viewModel.sendViaLink()
                     } label: {
