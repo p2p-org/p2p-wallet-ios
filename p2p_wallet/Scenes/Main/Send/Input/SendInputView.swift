@@ -111,16 +111,14 @@ struct SendInputView: View {
 
             sendButton
             
-            #if DEBUG
+            #if !RELEASE
             HStack {
                 Spacer()
                 Toggle(isOn: $viewModel.isFakeSendTransaction) {
                     Text("Fake Transaction")
                 }
             }
-            #endif
-            
-            #if !RELEASE
+
             debugView
             #endif
         }
