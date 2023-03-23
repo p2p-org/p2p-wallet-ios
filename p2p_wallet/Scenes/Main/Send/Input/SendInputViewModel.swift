@@ -46,7 +46,7 @@ final class SendInputViewModel: BaseViewModel, ObservableObject {
     @Published var isSliderOn = false
     @Published var showFinished = false
     
-    #if DEBUG
+    #if !RELEASE
     @Published var isFakeSendTransaction: Bool = Defaults.isFakeSendTransaction {
         didSet {
             Defaults.isFakeSendTransaction = isFakeSendTransaction
@@ -472,7 +472,7 @@ private extension SendInputViewModel {
                 }
                 
                 // Fake transaction for testing
-                #if DEBUG
+                #if !RELEASE
                 if self.isFakeSendTransaction {
                     try await Task.sleep(nanoseconds: 2_000_000_000)
                     if Int.random(in: 0..<4) == 3 { throw SolanaError.unknown }
