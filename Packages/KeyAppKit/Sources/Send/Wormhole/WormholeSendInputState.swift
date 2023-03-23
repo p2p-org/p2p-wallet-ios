@@ -13,22 +13,32 @@ import Wormhole
 public enum WormholeSendInputState: Equatable {
     public typealias Service = WormholeService
     
-    case initializing(input: WormholeSendInputBase)
+    case unauthorized
     
-    case initializingFailure(error: InitializingError)
+    case initializing(
+        input: WormholeSendInputBase
+    )
+    
+    case initializingFailure(
+        input: WormholeSendInputBase?,
+        error: InitializingError
+    )
     
     case ready(
         input: WormholeSendInputBase,
-        transactions: [String],
-        fees: SendFees,
+        output: WormholeSendOutputBase,
         alert: WormholeSendInputAlert?
     )
     
-    case calculating(newInput: WormholeSendInputBase)
+    case calculating(
+        newInput: WormholeSendInputBase
+    )
     
-    case error(input: WormholeSendInputBase, fees: SendFees?, error: WormholeSendInputError)
-    
-    case unauthorized
+    case error(
+        input: WormholeSendInputBase,
+        output: WormholeSendOutputBase?,
+        error: WormholeSendInputError
+    )
     
     public func onAccept(action: WormholeSendInputAction, service: WormholeService) async -> Self {
         switch self {
@@ -43,7 +53,7 @@ public enum WormholeSendInputState: Equatable {
                         amount: String(input.amount)
                     )
                 } catch {
-                    return .initializingFailure(error: .getTransactionsFailure)
+                    return .initializingFailure(input: input, error: .getTransactionsFailure)
                 }
                 
                 let transactions: [String]
@@ -56,15 +66,19 @@ public enum WormholeSendInputState: Equatable {
                         amount: String(input.amount)
                     )
                 } catch {
-                    return .initializingFailure(error: .calculateFeeFailure)
+                    return .initializingFailure(input: input, error: .calculateFeeFailure)
                 }
             
-                return .ready(input: input, transactions: transactions, fees: fees, alert: nil)
+                return .ready(
+                    input: input,
+                    output: .init(transactions: transactions, fees: fees),
+                    alert: nil
+                )
             default:
                 return self
             }
             
-        case let .ready(input, _, _, _):
+        case let .ready(input, _, _):
             switch action {
             case let .updateInput(newInput):
                 var input = input
@@ -85,7 +99,7 @@ public enum WormholeSendInputState: Equatable {
                         amount: String(input.amount)
                     )
                 } catch {
-                    return .error(input: input, fees: nil, error: .calculationFeeFailure)
+                    return .error(input: input, output: nil, error: .calculationFeeFailure)
                 }
                 
                 let transactions: [String]
@@ -98,10 +112,21 @@ public enum WormholeSendInputState: Equatable {
                         amount: String(input.amount)
                     )
                 } catch {
-                    return .error(input: input, fees: fees, error: .getTransferTransactionsFailure)
+                    return .error(
+                        input: input,
+                        output: .init(transactions: [], fees: fees),
+                        error: .getTransferTransactionsFailure
+                    )
                 }
                 
-                return .ready(input: input, transactions: transactions, fees: fees, alert: nil)
+                return .ready(
+                    input: input,
+                    output: .init(
+                        transactions: transactions,
+                        fees: fees
+                    ),
+                    alert: nil
+                )
                 
             case let .updateInput(newInput):
                 var input = input
@@ -177,6 +202,16 @@ public struct WormholeSendInputBase: Equatable {
         self.amount = amount
         self.recipient = recipient
         self.feePayer = feePayer
+    }
+}
+
+public struct WormholeSendOutputBase: Equatable {
+    public let transactions: [String]
+    public let fees: SendFees
+    
+    public init(transactions: [String], fees: SendFees) {
+        self.transactions = transactions
+        self.fees = fees
     }
 }
 

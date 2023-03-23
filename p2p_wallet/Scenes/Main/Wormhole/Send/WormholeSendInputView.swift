@@ -23,6 +23,7 @@ struct WormholeSendInputView: View {
                 Text("0x0ea9...f5709c")
                     .fontWeight(.bold)
                     .apply(style: .largeTitle)
+                
                 Text("Would be completed on the Ethereum network")
                     .apply(style: .text3)
                     .foregroundColor(Color(Asset.Colors.mountain.color))
@@ -40,54 +41,34 @@ struct WormholeSendInputView: View {
                     
                     Button {} label: {
                         HStack(spacing: 4) {
-                            switch viewModel.state {
-                            case .calculating, .initializing:
-                                Text("Fees: ")
-                                    .apply(style: .text4)
-                                    .foregroundColor(Color(Asset.Colors.sky.color))
+                            Text(viewModel.adapter.fees)
+                                .apply(style: .text4)
+                                .foregroundColor(Color(Asset.Colors.sky.color))
+                            
+                            if viewModel.adapter.feesLoading {
                                 CircularProgressIndicatorView(
                                     backgroundColor: Asset.Colors.sky.color.withAlphaComponent(0.6),
                                     foregroundColor: Asset.Colors.sky.color
                                 )
                                 .frame(width: 16, height: 16)
-                                
-                            case let .ready(_, _, fees, _):
-                                Text("Fees: \(currencyFormatter.string(amount: fees.totalInFiat))")
-                                    .apply(style: .text4)
-                                    .foregroundColor(Color(Asset.Colors.sky.color))
+                            } else {
                                 Image(uiImage: UIImage.infoSend)
                                     .resizable()
                                     .frame(width: 16, height: 16)
-                            default:
-                                SwiftUI.EmptyView()
                             }
                         }
                     }
                 }
                 .padding(.horizontal, 8)
 
-                switch viewModel.state {
-                case let .initializing(input):
-                    SendInputTokenView(wallet: input.solanaAccount.data, isChangeEnabled: true, skeleton: true, changeAction: {
+                SendInputTokenView(
+                    wallet: viewModel.adapter.inputAccount?.data ?? Wallet(token: .eth),
+                    isChangeEnabled: true,
+                    skeleton: viewModel.adapter.inputAccountSkeleton,
+                    changeAction: {
                         // TODO: Pass here action from viewModel in https://github.com/p2p-org/p2p-wallet-ios/pull/1080
-                    })
-                case let .ready(input, _, _, _):
-                    SendInputTokenView(wallet: input.solanaAccount.data, isChangeEnabled: true, changeAction: {
-                        // TODO: Pass here action from viewModel in https://github.com/p2p-org/p2p-wallet-ios/pull/1080
-                    })
-                case let .calculating(input):
-                    SendInputTokenView(wallet: input.solanaAccount.data, isChangeEnabled: true, changeAction: {
-                        // TODO: Pass here action from viewModel in https://github.com/p2p-org/p2p-wallet-ios/pull/1080
-                    })
-                case let .error(input, _, _):
-                    SendInputTokenView(wallet: input.solanaAccount.data, isChangeEnabled: true, changeAction: {
-                        // TODO: Pass here action from viewModel in https://github.com/p2p-org/p2p-wallet-ios/pull/1080
-                    })
-                default:
-                    SendInputTokenView(wallet: Wallet(token: .eth), isChangeEnabled: true, skeleton: true, changeAction: {
-                        // TODO: Pass here action from viewModel in https://github.com/p2p-org/p2p-wallet-ios/pull/1080
-                    })
-                }
+                    }
+                )
             }
             .onTapGesture(perform: viewModel.changeTokenPressed.send)
             

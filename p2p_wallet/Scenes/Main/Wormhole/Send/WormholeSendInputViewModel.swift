@@ -7,6 +7,7 @@
 
 import Foundation
 import KeyAppBusiness
+import KeyAppKitCore
 import Resolver
 import Send
 import Wormhole
@@ -19,6 +20,9 @@ class WormholeSendInputViewModel: BaseViewModel, ObservableObject {
     let stateMachine: WormholeSendInputStateMachine
 
     @Published var state: WormholeSendInputState
+    var adapter: WormholeSendInputStateAdapter {
+        .init(state: state)
+    }
 
     // Input
     @Published var input: String = ""
@@ -57,7 +61,10 @@ class WormholeSendInputViewModel: BaseViewModel, ObservableObject {
 
         // Ensure at lease one avaiable wallet for bridging.
         guard let initialSolanaAccount = availableBridgeAccounts.first else {
-            let state: WormholeSendInputState = .initializingFailure(error: .missingArguments)
+            let state: WormholeSendInputState = .initializingFailure(
+                input: nil,
+                error: .missingArguments
+            )
             self.state = state
             stateMachine = .init(initialState: state, services: wormholeService)
             super.init()
@@ -87,8 +94,6 @@ class WormholeSendInputViewModel: BaseViewModel, ObservableObject {
                 Task {
                     let input = input.replacingOccurrences(of: " ", with: "")
                     await self.stateMachine.accept(action: .updateInput(amount: BigUInt(input, radix: 10) ?? 0))
-                    // TODO: Remove it, just for testing
-//                    self.actionButtonData = Double(input) > 0 ? SliderActionButtonData(isEnabled: true, title: L10n.send(input, "WETH")) : SliderActionButtonData.zero
                 }
             }
             .store(in: &subscriptions)
@@ -103,5 +108,68 @@ class WormholeSendInputViewModel: BaseViewModel, ObservableObject {
             .receive(on: RunLoop.main)
             .weakAssign(to: \.state, on: self)
             .store(in: &subscriptions)
+    }
+}
+
+struct WormholeSendInputStateAdapter {
+    let currencyFormatter: CurrencyFormatter = .init()
+
+    var state: WormholeSendInputState
+
+    var inputAccount: SolanaAccountsService.Account? {
+        switch state {
+        case let .initializing(input):
+            return input.solanaAccount
+        case let .ready(input, output, alert):
+            return input.solanaAccount
+        case let .calculating(newInput):
+            return newInput.solanaAccount
+        case let .error(input, output, error):
+            return input.solanaAccount
+        case .unauthorized, .initializingFailure:
+            return nil
+        }
+    }
+
+    var selectedToken: SolanaToken {
+        inputAccount?.data.token ?? .nativeSolana
+    }
+
+    var inputAccountSkeleton: Bool {
+        inputAccount == nil
+    }
+
+    var fees: String {
+        switch state {
+        case let .initializing(input):
+            return ""
+        case let .ready(input, output, alert):
+            return "Fees: \(currencyFormatter.string(amount: output.fees.totalInFiat))"
+        case let .calculating(newInput):
+            return ""
+        case let .error(input, output, error):
+            if let output {
+                return "Fees: \(currencyFormatter.string(amount: output.fees.totalInFiat))"
+            } else {
+                return ""
+            }
+        case .unauthorized, .initializingFailure:
+            return ""
+        }
+    }
+    
+    var feesLoading: Bool {
+        switch state {
+        case let .initializing(input):
+            return true
+        case let .ready(input, output, alert):
+            return false
+        case let .calculating(newInput):
+            return true
+        case let .error(input, output, error):
+            return false
+        case .unauthorized, .initializingFailure:
+            return false
+        }
     }
 }
