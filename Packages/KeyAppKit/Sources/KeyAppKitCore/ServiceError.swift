@@ -1,6 +1,6 @@
 //
 //  File.swift
-//  
+//
 //
 //  Created by Giang Long Tran on 14.03.2023.
 //
@@ -13,4 +13,8 @@ public enum ServiceError: Error {
 
 public enum CodingError: Error {
     case invalidValue
+}
+
+public enum ConvertError: Error {
+    case invalidPriceForToken(expected: String, actual: String)
 }

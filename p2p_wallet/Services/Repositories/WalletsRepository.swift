@@ -59,7 +59,7 @@ class WalletsRepositoryImpl: NSObject, WalletsRepository {
         
         // Manually set price
         var wallet = nativeAccount?.data
-        wallet?.price = nativeAccount?.price
+        wallet?.price = .init(value: nativeAccount?.price?.doubleValue)
         
         return wallet
     }
@@ -68,7 +68,7 @@ class WalletsRepositoryImpl: NSObject, WalletsRepository {
         solanaAccountsService.state.value.map { account in
             // Manually set price
             var wallet = account.data
-            wallet.price = account.price
+            wallet.price = .init(value: account.price?.doubleValue)
             
             return wallet
         }

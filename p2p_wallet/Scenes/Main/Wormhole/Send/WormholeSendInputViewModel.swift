@@ -5,15 +5,19 @@
 //  Created by Giang Long Tran on 22.03.2023.
 //
 
+import Combine
 import Foundation
 import KeyAppBusiness
 import KeyAppKitCore
 import Resolver
 import Send
 import Wormhole
-import Combine
 
 class WormholeSendInputViewModel: BaseViewModel, ObservableObject {
+    enum InputMode {
+        case fiat
+        case crypto
+    }
 
     let changeTokenPressed = PassthroughSubject<Void, Never>()
 
@@ -28,6 +32,7 @@ class WormholeSendInputViewModel: BaseViewModel, ObservableObject {
     @Published var input: String = ""
     @Published var countAfterDecimalPoint: Int = 8
     @Published var isFirstResponder: Bool = false
+    @Published var inputMode: InputMode = .fiat
 
     // ActionButton
     @Published var actionButtonData = SliderActionButtonData.zero
@@ -93,18 +98,19 @@ class WormholeSendInputViewModel: BaseViewModel, ObservableObject {
             .sink { input in
                 Task {
                     let input = input.replacingOccurrences(of: " ", with: "")
-                    await self.stateMachine.accept(action: .updateInput(amount: BigUInt(input, radix: 10) ?? 0))
+                    await self.stateMachine.accept(action: .updateInput(amount: input))
                 }
             }
             .store(in: &subscriptions)
 
         stateMachine.state
             .sink { state in
-                print("SendInputState", state)
+                debugPrint("SendInputState", state)
             }
             .store(in: &subscriptions)
 
         stateMachine.state
+            .removeDuplicates()
             .receive(on: RunLoop.main)
             .weakAssign(to: \.state, on: self)
             .store(in: &subscriptions)
@@ -112,23 +118,28 @@ class WormholeSendInputViewModel: BaseViewModel, ObservableObject {
 }
 
 struct WormholeSendInputStateAdapter {
+    let cryptoFormatter: CryptoFormatter = .init()
     let currencyFormatter: CurrencyFormatter = .init()
 
     var state: WormholeSendInputState
 
-    var inputAccount: SolanaAccountsService.Account? {
+    var input: WormholeSendInputBase? {
         switch state {
         case let .initializing(input):
-            return input.solanaAccount
+            return input
         case let .ready(input, output, alert):
-            return input.solanaAccount
+            return input
         case let .calculating(newInput):
-            return newInput.solanaAccount
+            return newInput
         case let .error(input, output, error):
-            return input.solanaAccount
+            return input
         case .unauthorized, .initializingFailure:
             return nil
         }
+    }
+
+    var inputAccount: SolanaAccountsService.Account? {
+        return input?.solanaAccount
     }
 
     var selectedToken: SolanaToken {
@@ -137,6 +148,23 @@ struct WormholeSendInputStateAdapter {
 
     var inputAccountSkeleton: Bool {
         inputAccount == nil
+    }
+
+    private var cryptoAmount: CryptoAmount {
+        guard let input = input else {
+            return .init(amount: 0, token: SolanaToken.nativeSolana)
+        }
+
+        return .init(amount: input.amount, token: input.solanaAccount.data.token)
+    }
+
+    var amountInFiatString: String {
+        guard
+            let price = input?.solanaAccount.price,
+            let currencyAmount = try? cryptoAmount.toFiatAmount(price: price)
+        else { return "" }
+
+        return currencyFormatter.string(amount: currencyAmount)
     }
 
     var fees: String {
@@ -157,7 +185,7 @@ struct WormholeSendInputStateAdapter {
             return ""
         }
     }
-    
+
     var feesLoading: Bool {
         switch state {
         case let .initializing(input):

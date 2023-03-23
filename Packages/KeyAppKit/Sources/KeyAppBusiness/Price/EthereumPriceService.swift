@@ -25,7 +25,7 @@ public class EthereumPriceService {
         self.cache = LongTermCache(entryLifetime: lifetime, maximumEntryCount: 999)
     }
 
-    public func getEthereumPrice(fiat: String) async throws -> Price {
+    public func getEthereumPrice(fiat: String) async throws -> TokenPrice {
         let response = try await api.getSimplePrice(ids: ["ethereum"], fiat: [fiat])
         guard
             let token = response["ethereum"],
@@ -34,11 +34,11 @@ public class EthereumPriceService {
             throw Error.canNotExtractEthereumPrice
         }
 
-        return .init(currencyCode: fiat.uppercased(), value: price)
+        return .init(currencyCode: fiat.uppercased(), value: price, token: EthereumToken())
     }
 
     /// Get prices for erc-20 tokens.
-    public func getPrices(tokens: [EthereumToken], fiat: String) async throws -> [EthereumToken: Price] {
+    public func getPrices(tokens: [EthereumToken], fiat: String) async throws -> [EthereumToken: TokenPrice] {
         let contractAddresses = tokens.map { token -> String? in
             switch token.contractType {
             case let .erc20(contract: address):
@@ -56,9 +56,9 @@ public class EthereumPriceService {
                 switch token.contractType {
                 case let .erc20(contract: address):
                     let value = result[address.hex(eip55: true)]?[fiat]
-                    return (token, .init(currencyCode: fiat.uppercased(), value: value))
+                    return (token, .init(currencyCode: fiat.uppercased(), value: value, token: token))
                 default:
-                    return (token, .init(currencyCode: fiat.uppercased(), value: nil))
+                    return (token, .init(currencyCode: fiat.uppercased(), value: nil, token: token))
                 }
             },
             uniquingKeysWith: { _, last in last }

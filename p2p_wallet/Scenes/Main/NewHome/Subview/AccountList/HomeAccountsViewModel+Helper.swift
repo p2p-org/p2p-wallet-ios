@@ -63,7 +63,7 @@ extension HomeAccountsViewModel {
 
             // prefers token which more value than the other in fiat
             if lhs.amountInFiat != rhs.amountInFiat {
-                return lhs.amountInFiat > rhs.amountInFiat
+                return lhs.amountInFiatDouble > rhs.amountInFiatDouble
             }
 
             // prefers known token than unknown ones

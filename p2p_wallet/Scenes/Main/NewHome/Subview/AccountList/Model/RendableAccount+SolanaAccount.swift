@@ -44,7 +44,7 @@ struct RendableSolanaAccount: RendableAccount {
     var detail: AccountDetail {
         return .text(
             account
-                .amountInFiat
+                .amountInFiatDouble
                 .fiatAmountFormattedString(customFormattForLessThan1E_2: true)
         )
     }

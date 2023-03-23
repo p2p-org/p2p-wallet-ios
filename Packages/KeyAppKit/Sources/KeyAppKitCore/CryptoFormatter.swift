@@ -21,7 +21,11 @@ public protocol AnyToken {
 
 /// Token amount struct
 public struct CryptoAmount: Hashable {
-    public let amount: Decimal
+    public let value: BigUInt
+
+    public var amount: Decimal {
+        BigUInt.divide(value, BigUInt(10).power(Int(decimals)))
+    }
 
     public let symbol: String
 
@@ -30,17 +34,79 @@ public struct CryptoAmount: Hashable {
     public let smartContract: String
 
     public init(amount: BigUInt, token: AnyToken) {
-        self.amount = BigUInt.divide(amount, BigUInt(10).power(Int(token.decimals)))
+        self.value = amount
         self.symbol = token.symbol
         self.decimals = token.decimals
         self.smartContract = token.tokenPrimaryKey
     }
 
-    public init(amount: String, token: AnyToken) {
+    public init(uint64 amount: UInt64, token: AnyToken) {
+        self.init(
+            amount: BigUInt(integerLiteral: amount),
+            token: token
+        )
+    }
+
+    public init(bigUIntString amount: String, token: AnyToken) {
         self.init(
             amount: BigUInt(stringLiteral: amount),
             token: token
         )
+    }
+
+    public init?(floatString amount: String, token: AnyToken) {
+        let parts = amount.components(separatedBy: ".")
+
+        if parts.count == 1 {
+            let intValue = parts.first!
+            let zeroPadding = String.init(repeating: "0", count: Int(token.decimals))
+            
+            let number = intValue + zeroPadding
+
+            self.init(
+                bigUIntString: number,
+                token: token
+            )
+            
+            return
+        }
+
+        guard parts.count == 2 else { return nil }
+        
+        let integerPart = parts.first!
+        var floatingPart = parts.last!
+
+        var zeroPaddingCount = Int(token.decimals) - floatingPart.count
+        var zeroPaddingStr = ""
+
+        if zeroPaddingCount > 0 {
+            zeroPaddingStr = .init(repeating: "0", count: zeroPaddingCount)
+        } else if zeroPaddingCount < 0 {
+            floatingPart = String(floatingPart.prefix(-zeroPaddingCount))
+        }
+
+        let number = integerPart + floatingPart + zeroPaddingStr
+
+        self.init(
+            bigUIntString: number,
+            token: token
+        )
+    }
+
+    public func toFiatAmount(price: TokenPrice) throws -> CurrencyAmount {
+        guard price.smartContract == smartContract else {
+            throw ConvertError.invalidPriceForToken(expected: symbol, actual: price.symbol)
+        }
+
+        return .init(value: amount * (price.value ?? 0), currencyCode: price.currencyCode)
+    }
+
+    public func unsafeToFiatAmount(price: TokenPrice) -> CurrencyAmount {
+        guard price.smartContract == smartContract else {
+            return .init(value: 0, currencyCode: price.currencyCode)
+        }
+
+        return .init(value: amount * (price.value ?? 0), currencyCode: price.currencyCode)
     }
 }
 

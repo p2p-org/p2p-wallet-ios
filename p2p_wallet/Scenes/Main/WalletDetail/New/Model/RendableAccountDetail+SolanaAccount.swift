@@ -22,7 +22,7 @@ struct RendableNewSolanaAccountDetail: RendableAccountDetail {
     }
 
     var amountInFiat: String {
-        account.amountInFiat.fiatAmountFormattedString()
+        account.amountInFiatDouble.fiatAmountFormattedString()
     }
 
     var actions: [RendableAccountDetailAction] {
