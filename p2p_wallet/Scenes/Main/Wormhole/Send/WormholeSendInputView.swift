@@ -89,6 +89,7 @@ struct WormholeSendInputView: View {
                     })
                 }
             }
+            .onTapGesture(perform: viewModel.changeTokenPressed.send)
             
             VStack(spacing: 6) {
                 HStack {
