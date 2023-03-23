@@ -7,7 +7,7 @@ struct SentViaLinkHistoryView: View {
 
     struct SVLSection: Identifiable {
         let id: String
-        let transactions: [SendViaLinkTransactionInfo]
+        var transactions: [SendViaLinkTransactionInfo]
     }
     
     // MARK: - Properties
@@ -47,6 +47,7 @@ struct SentViaLinkHistoryView: View {
         }
             .padding(.vertical, 8)
             .padding(.horizontal, 16)
+            .background(Color(Asset.Colors.smoke.color))
     }
 
     @ViewBuilder
@@ -89,12 +90,25 @@ struct SentViaLinkHistoryView: View {
             .sorted(by: {$0.timestamp > $1.timestamp})
         
         // group transactions into section
-        self.sections = Dictionary(
-            grouping: sortedTransactions
-        ) { $0.creationDayInString }
-            .map { key, value in
-                .init(id: key, transactions: value)
+        var sections = [SVLSection]()
+        for transaction in sortedTransactions {
+            // if sections exists
+            if let index = sections.firstIndex(
+                where: { $0.id == transaction.creationDayInString }
+            ) {
+                sections[index].transactions.append(transaction)
             }
+            // else create section
+            else {
+                sections.append(
+                    .init(
+                        id: transaction.creationDayInString,
+                        transactions: [transaction]
+                    )
+                )
+            }
+        }
+        self.sections = sections
     }
 }
 
