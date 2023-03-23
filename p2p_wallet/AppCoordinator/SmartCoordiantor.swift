@@ -98,7 +98,7 @@ class SmartCoordinatorBottomSheetPresentation: SmartCoordinatorPresentation {
 class SmartCoordinator<T>: Coordinator<T> {
     let presentation: SmartCoordinatorPresentation
 
-    let result: PassthroughSubject<T, Never> = .init()
+    let result = PassthroughSubject<T, Never>()
 
     init(presentation: SmartCoordinatorPresentation) {
         self.presentation = presentation

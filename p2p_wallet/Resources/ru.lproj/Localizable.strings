@@ -1299,3 +1299,4 @@ You can try again, but your new transaction will be subject to the current rates
 "Unique one-time link works once only" = "Уникальная одноразовая ссылка работает только один раз";
 "The one-time link can be used to send funds to anyone without needing an address. The funds can be claimed by anyone with a link." = "Одноразовую ссылку можно использовать для отправки средств кому угодно без указания адреса.  Забрать средства может любой, у кого есть ссылка.";
 "Enter greater value" = "Введите большее значение";
+"Create a one-time link" = "Создать одноразовую ссылку";

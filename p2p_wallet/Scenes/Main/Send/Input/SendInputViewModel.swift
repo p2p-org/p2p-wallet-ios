@@ -78,7 +78,14 @@ final class SendInputViewModel: BaseViewModel, ObservableObject {
     @Injected private var analyticsManager: AnalyticsManager
     @Injected private var sendViaLinkStorage: SendViaLinkStorage
 
-    init(recipient: Recipient, preChosenWallet: Wallet?, preChosenAmount: Double?, source: SendSource, allowSwitchingMainAmountType: Bool, sendViaLinkSeed: String?) {
+    init(
+        recipient: Recipient,
+        preChosenWallet: Wallet?,
+        preChosenAmount: Double?,
+        source: SendSource,
+        allowSwitchingMainAmountType: Bool,
+        sendViaLinkSeed: String?
+    ) {
         self.source = source
         self.preChosenAmount = preChosenAmount
         let repository = Resolver.resolve(WalletsRepository.self)
@@ -307,6 +314,8 @@ private extension SendInputViewModel {
                 guard let self = self else { return }
                 if isSliderOn {
                     await self.send()
+                    self.isSliderOn = false
+                    self.showFinished = false
                 }
             })
             .store(in: &subscriptions)
@@ -374,10 +383,17 @@ private extension SendInputViewModel {
         default:
             wasMaxWarningToastShown = false
             inputAmountViewModel.isError = false
-            actionButtonData = SliderActionButtonData(
-                isEnabled: true,
-                title: "\(L10n.send) \(currentState.amountInToken.tokenAmountFormattedString(symbol: currentState.token.symbol, maximumFractionDigits: Int(currentState.token.decimals), roundingMode: .down))"
-            )
+            if currentState.isSendingViaLink {
+                actionButtonData = SliderActionButtonData(
+                    isEnabled: true,
+                    title: "\(L10n.send) \(currentState.amountInToken.tokenAmountFormattedString(symbol: currentState.token.symbol, maximumFractionDigits: Int(currentState.token.decimals), roundingMode: .down))"
+                )
+            } else {
+                actionButtonData = SliderActionButtonData(
+                    isEnabled: true,
+                    title: L10n.createAOneTimeLink
+                )
+            }
         }
     }
 

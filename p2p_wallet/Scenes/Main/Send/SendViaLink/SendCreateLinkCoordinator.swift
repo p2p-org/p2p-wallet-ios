@@ -1,15 +1,17 @@
 import Foundation
 import SolanaSwift
+import Combine
 
-final class SendCreateLinkCoordinator: SmartCoordinator<Void> {
+final class SendCreateLinkCoordinator: Coordinator<SendCreateLinkCoordinator.Result> {
     // MARK: - Properties
+    
+    private let result = PassthroughSubject<SendCreateLinkCoordinator.Result, Never>()
 
     let link: String
     let formatedAmount: String
     
     var execution: () async throws -> TransactionID
-    var sendCreateLinkVC: UIViewController!
-    var sendLinkCreatedVC: UIViewController!
+    private let navigationController: UINavigationController
     
     // MARK: - Initializer
 
@@ -22,12 +24,12 @@ final class SendCreateLinkCoordinator: SmartCoordinator<Void> {
         self.link = link
         self.formatedAmount = formatedAmount
         self.execution = execution
-        super.init(presentation: SmartCoordinatorPushPresentation(navigationController))
+        self.navigationController = navigationController
     }
     
     // MARK: - Builder
 
-    override func build() -> UIViewController {
+    override func start() -> AnyPublisher<SendCreateLinkCoordinator.Result, Never> {
         let view = SendCreateLinkView {
             Task { [unowned self] in
                 do {
@@ -42,9 +44,16 @@ final class SendCreateLinkCoordinator: SmartCoordinator<Void> {
                 }
             }
         }
-        sendCreateLinkVC = UIHostingControllerWithoutNavigation(rootView: view)
-
-        return sendCreateLinkVC
+        let sendCreateLinkVC = UIHostingControllerWithoutNavigation(rootView: view)
+        navigationController.show(sendCreateLinkVC, sender: nil)
+        
+        sendCreateLinkVC.deallocatedPublisher()
+            .sink(receiveValue: { [weak self] _ in
+                self?.result.send(.normal)
+            })
+            .store(in: &subscriptions)
+        
+        return result.prefix(1).eraseToAnyPublisher()
     }
     
     // MARK: - Helper
@@ -54,26 +63,35 @@ final class SendCreateLinkCoordinator: SmartCoordinator<Void> {
             link: link,
             formatedAmount: formatedAmount,
             onClose: { [unowned self] in
-                result.send(completion: .finished)
+                result.send(.normal)
             },
             onShare: { [unowned self] in
                 showShareView()
             }
         )
-        sendLinkCreatedVC = UIHostingControllerWithoutNavigation(rootView: view)
-        sendCreateLinkVC.show(sendLinkCreatedVC, sender: nil)
+        let sendLinkCreatedVC = UIHostingControllerWithoutNavigation(rootView: view)
+        navigationController.show(sendLinkCreatedVC, sender: nil)
     }
     
     private func showShareView() {
         let av = UIActivityViewController(activityItems: [link], applicationActivities: nil)
-        sendLinkCreatedVC.present(av, animated: true)
+        navigationController.present(av, animated: true)
     }
     
     private func showErrorView() {
         let view = SendCreateLinkErrorView { [unowned self] in
-            result.send(completion: .finished)
+            result.send(.error)
         }
         let vc = UIHostingControllerWithoutNavigation(rootView: view)
-        sendCreateLinkVC.show(vc, sender: nil)
+        navigationController.show(vc, sender: nil)
+    }
+}
+
+// MARK: Result
+
+extension SendCreateLinkCoordinator {
+    enum Result {
+        case error
+        case normal
     }
 }
