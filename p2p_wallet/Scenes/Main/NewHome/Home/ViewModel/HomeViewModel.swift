@@ -86,8 +86,8 @@ private extension HomeViewModel {
                 
                 // accumulate total amount
                 let fiatAmount = data.totalAmountInCurrentFiat
-                let isEmpty = fiatAmount <= 0
-                
+                let arePriceRetrieved = data.compactMap({ $0.price }).count > 0
+                let isEmpty = fiatAmount <= 0 && arePriceRetrieved
                 // address
                 self.updateAddressIfNeeded()
                 
