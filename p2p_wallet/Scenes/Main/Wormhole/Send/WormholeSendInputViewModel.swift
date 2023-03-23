@@ -10,8 +10,12 @@ import KeyAppBusiness
 import Resolver
 import Send
 import Wormhole
+import Combine
 
 class WormholeSendInputViewModel: BaseViewModel, ObservableObject {
+
+    let changeTokenPressed = PassthroughSubject<Void, Never>()
+
     let stateMachine: WormholeSendInputStateMachine
 
     @Published var state: WormholeSendInputState

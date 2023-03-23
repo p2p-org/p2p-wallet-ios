@@ -1,16 +1,25 @@
+import Resolver
+import KeyAppBusiness
+import Combine
 import SolanaSwift
+import Wormhole
 
-final class ChooseSendFeeTokenService: ChooseItemService {
+final class ChooseWormholeTokenService: ChooseItemService {
 
     let otherTokensTitle = L10n.otherTokens
 
-    private let tokens: [Wallet]
-    init(tokens: [Wallet]) {
-        self.tokens = tokens
-    }
+    @Injected private var accountsService: SolanaAccountsService
 
     func fetchItems() async throws -> [ChooseItemListSection] {
-        [ChooseItemListSection(items: tokens)]
+        // TODO: Add possibility to handle accountsService.state publisher and update ChooseItemService accordingly
+        let wallets = accountsService.state.value
+            .filter {
+                !$0.data.isNFTToken &&
+                $0.data.amount > 0 &&
+                SupportedToken.ERC20.allCases.map { $0.solanaMintAddress }.contains($0.data.mintAddress)
+            }
+            .map { $0.data }
+        return [ChooseItemListSection(items: wallets)]
     }
 
     func sort(items: [ChooseItemListSection]) -> [ChooseItemListSection] {

@@ -69,7 +69,7 @@ private extension ChooseItemView {
         WrappedList {
             if !viewModel.isSearchGoing {
                 // Chosen token
-                Text(viewModel.chosenTokenTitle)
+                Text(L10n.chosenToken.uppercased())
                     .sectionStyle()
                 ChooseItemSearchableItemView(
                     content: content,
@@ -83,7 +83,7 @@ private extension ChooseItemView {
             }
 
             // Search resuls or all tokens
-            Text(viewModel.isSearchGoing ? L10n.hereSWhatWeFound : viewModel.otherTokensTitle)
+            Text(viewModel.isSearchGoing ? L10n.hereSWhatWeFound.uppercased() : viewModel.otherTokensTitle.uppercased())
                 .sectionStyle()
 
             ForEach(viewModel.sections) { section in

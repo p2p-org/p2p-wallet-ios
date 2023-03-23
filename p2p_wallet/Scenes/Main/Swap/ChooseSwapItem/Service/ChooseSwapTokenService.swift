@@ -2,8 +2,7 @@ import Resolver
 
 final class ChooseSwapTokenService: ChooseItemService {
 
-    let chosenTokenTitle: String = L10n.chosenToken.uppercased()
-    let otherTokensTitle: String = L10n.allTokens.uppercased()
+    let otherTokensTitle = L10n.allTokens
 
     private let swapTokens: [SwapToken]
     private let fromToken: Bool
