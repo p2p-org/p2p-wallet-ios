@@ -45,7 +45,7 @@ final class SendCreateLinkCoordinator: Coordinator<SendCreateLinkCoordinator.Res
             }
         }
         let sendCreateLinkVC = UIHostingControllerWithoutNavigation(rootView: view)
-        navigationController.show(sendCreateLinkVC, sender: nil)
+        navigationController.pushViewController(sendCreateLinkVC, animated: true)
         
         sendCreateLinkVC.deallocatedPublisher()
             .sink(receiveValue: { [weak self] _ in
@@ -70,7 +70,7 @@ final class SendCreateLinkCoordinator: Coordinator<SendCreateLinkCoordinator.Res
             }
         )
         let sendLinkCreatedVC = UIHostingControllerWithoutNavigation(rootView: view)
-        navigationController.show(sendLinkCreatedVC, sender: nil)
+        navigationController.pushViewController(sendLinkCreatedVC, animated: true)
     }
     
     private func showShareView() {
@@ -83,7 +83,7 @@ final class SendCreateLinkCoordinator: Coordinator<SendCreateLinkCoordinator.Res
             result.send(.error)
         }
         let vc = UIHostingControllerWithoutNavigation(rootView: view)
-        navigationController.show(vc, sender: nil)
+        navigationController.pushViewController(vc, animated: true)
     }
 }
 
