@@ -12,10 +12,16 @@ class PanelTransition: NSObject, UIViewControllerTransitioningDelegate {
     private var cancellables = Set<AnyCancellable>()
     private let subject = PassthroughSubject<Void, Never>()
     var dimmClicked: AnyPublisher<Void, Never> { subject.eraseToAnyPublisher() }
+    
+    var presentationController: DimmPresentationController?
 
     private let driver = TransitionDriver()
 
-    var containerHeight: CGFloat = 0
+    var containerHeight: CGFloat = 0 {
+        didSet {
+            presentationController?.containerHeight = containerHeight
+        }
+    }
 
     func presentationController(
         forPresented presented: UIViewController,
@@ -34,6 +40,8 @@ class PanelTransition: NSObject, UIViewControllerTransitioningDelegate {
                 self?.subject.send()
             })
             .store(in: &cancellables)
+        
+        self.presentationController = presentationController
 
         return presentationController
     }
