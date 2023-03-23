@@ -60,7 +60,7 @@ extension String {
     }
     
     static var sendViaLinkPrefix: String {
-        #"https://key.app/t"#
+        #"https://t.key.app"#
     }
 }
 
