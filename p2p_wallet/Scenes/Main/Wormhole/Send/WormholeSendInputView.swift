@@ -65,12 +65,9 @@ struct WormholeSendInputView: View {
                     wallet: viewModel.adapter.inputAccount?.data ?? Wallet(token: .eth),
                     isChangeEnabled: true,
                     skeleton: viewModel.adapter.inputAccountSkeleton,
-                    changeAction: {
-                        // TODO: Pass here action from viewModel in https://github.com/p2p-org/p2p-wallet-ios/pull/1080
-                    }
+                    changeAction: viewModel.changeTokenPressed.send
                 )
             }
-            .onTapGesture(perform: viewModel.changeTokenPressed.send)
             
             VStack(spacing: 6) {
                 HStack {
