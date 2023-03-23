@@ -492,7 +492,8 @@ private extension SendInputViewModel {
                     amount: amountInToken,
                     feeWallet: feeWallet,
                     ignoreTopUp: isSendingViaLink,
-                    memo: isSendingViaLink ? .secretConfig("SEND_VIA_LINK_MEMO_PREFIX")!: nil
+                    memo: isSendingViaLink ? .secretConfig("SEND_VIA_LINK_MEMO_PREFIX")!: nil,
+                    operationType: isSendingViaLink ? .sendViaLink: .transfer
                 )
                 
                 // save to storage
@@ -510,7 +511,6 @@ private extension SendInputViewModel {
 
     func saveSendViaLinkTransaction() {
         guard let seed = currentState.sendViaLinkSeed else { return }
-        let lamports = currentState.amountInFiat
         let token = currentState.token
         sendViaLinkStorage.save(
             transaction: .init(
