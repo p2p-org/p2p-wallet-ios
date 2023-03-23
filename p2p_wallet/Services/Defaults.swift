@@ -112,7 +112,7 @@ extension DefaultsKeys {
         )
     }
     
-    #if DEBUG
+    #if !RELEASE
     var isFakeSendTransaction: DefaultsKey<Bool> { .init(#function, defaultValue: false) }
     #endif
 
