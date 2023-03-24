@@ -148,21 +148,28 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         continue userActivity: NSUserActivity,
         restorationHandler: @escaping ([UIUserActivityRestoring]?) -> Void
     ) -> Bool {
-        // Handle intercom deeplink
+        // Deeplink
         if
             let webpageURL = userActivity.webpageURL,
             let urlComponents = URLComponents(url: webpageURL, resolvingAgainstBaseURL: true)
         {
-            if urlComponents.path == "/intercom" {
-                if
-                    let queryItem = urlComponents.queryItems?.first(where: { $0.name == "intercom_survey_id" }),
-                    let value = queryItem.value
-                {
-                    DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) {
-                        GlobalAppState.shared.surveyID = value
-                    }
-                    return true
+            // Intercom survey
+            if urlComponents.path == "/intercom",
+               let queryItem = urlComponents.queryItems?.first(where: { $0.name == "intercom_survey_id" }),
+               let value = queryItem.value
+            {
+                DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) {
+                    GlobalAppState.shared.surveyID = value
                 }
+                return true
+            }
+            
+            // send via link
+            else if webpageURL.host == "t.key.app" {
+                DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) {
+                    GlobalAppState.shared.sendViaLinkSeed = urlComponents.path
+                }
+                return true
             }
         }
 
