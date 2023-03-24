@@ -150,7 +150,14 @@ class WalletsViewModel: BECollectionViewModel<Wallet> {
     override func handleNewData(_ newData: [Wallet]) {
         super.handleNewData(newData)
         // observe prices
-        let newTokens = newData.filter { !self.pricesService.getWatchList().contains($0.token) || $0.price == nil }.map(\.token)
+        let newTokens = newData
+            .filter { !self.pricesService.getWatchList().contains($0.token) || $0.price == nil }
+            .compactMap({ element in
+                if element.token.extensions?.coingeckoId != nil {
+                    return element.token
+                }
+                return nil
+            })
         self.pricesService.addToWatchList(newTokens)
         self.pricesService.fetchPrices(tokens: newTokens, toFiat: Defaults.fiat)
     }
