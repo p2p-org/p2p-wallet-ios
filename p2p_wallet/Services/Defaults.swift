@@ -114,6 +114,7 @@ extension DefaultsKeys {
     
     #if !RELEASE
     var isFakeSendTransaction: DefaultsKey<Bool> { .init(#function, defaultValue: false) }
+    var isFakeSendTransactionError: DefaultsKey<Bool> { .init(#function, defaultValue: false) }
     #endif
 
     // Sell/RampOff
