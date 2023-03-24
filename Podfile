@@ -3,14 +3,6 @@ platform :ios, '14.0'
 # ignore all warnings from all pods
 inhibit_all_warnings!
 
-# ENV Variables
-$keyAppKitPath = ENV['KEY_APP_KIT_SWIFT']
-$solanaSwiftPath = ENV['SOLANA_SWIFT']
-$keyAppUI = ENV['KEY_APP_UI']
-
-puts $keyAppKitPath
-puts $keyAppUI
-
 target 'p2p_wallet' do
   # Comment the next line if you don't want to use dynamic frameworks
   use_frameworks!

@@ -9,4 +9,3 @@ import Foundation
 import SolanaSwift
 
 public typealias SolanaTokensService = TokensRepository
-public typealias SolanaToken = Token
