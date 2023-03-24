@@ -8,7 +8,6 @@
 import Combine
 import Foundation
 import NameService
-import RenVMSwift
 import Resolver
 import SolanaSwift
 

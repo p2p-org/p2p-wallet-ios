@@ -82,9 +82,6 @@ extension ReceiveToken {
                                     }
                                 }
                                 .padding(.init(x: 15, y: 15))
-                                .onTap { [unowned self] in
-                                    viewModel.showSelectionNetwork()
-                                }
                                 UIStackView(axis: .vertical, alignment: .fill) {
                                     UIView(height: 1, backgroundColor: .f2f2f7)
                                     UIButton(
@@ -120,12 +117,6 @@ extension ReceiveToken {
                         .setup { view in
                             viewModel.tokenTypePublisher.map { token in token != .solana }.assign(to: \.isHidden, on: view).store(in: &subscriptions)
                         }
-                    ReceiveBitcoinView(viewModel: viewModel.receiveBitcoinViewModel).setup { view in
-                        viewModel.tokenTypePublisher
-                            .map { token in token != .btc }
-                            .assign(to: \.isHidden, on: view)
-                            .store(in: &subscriptions)
-                    }
 
                     UIStackView(axis: .vertical, spacing: 16, alignment: .fill) {
                         ShowHideButton(
@@ -179,14 +170,6 @@ extension ReceiveToken.ViewController {
             let url = "https://explorer.solana.com/address/\(mintAddress)"
             guard let vc = WebViewController.inReaderMode(url: url) else { return }
             present(vc, animated: true)
-        case let .showBTCExplorer(address):
-            let url = "https://btc.com/btc/address/\(address)"
-            guard let vc = WebViewController.inReaderMode(url: url) else { return }
-            present(vc, animated: true)
-        case .showRenBTCReceivingStatus:
-            let vm = RenBTCReceivingStatuses.ViewModel(receiveBitcoinViewModel: viewModel.receiveBitcoinViewModel)
-            let vc = RenBTCReceivingStatuses.ViewController(viewModel: vm)
-            show(UINavigationController(rootViewController: vc), sender: nil)
         case let .share(address, qrCode):
             analyticsManager.log(event: .QR_Share)
             guard let qrCode = qrCode, let address = address else { return }
@@ -196,9 +179,6 @@ extension ReceiveToken.ViewController {
         case .help:
             let vc = ReceiveToken.HelpViewController()
             present(vc, animated: true)
-        case .networkSelection:
-            let vc = ReceiveToken.NetworkSelectionScene(viewModel: viewModel)
-            show(vc, sender: nil)
         case .showSupportedTokens:
             let vm = SupportedTokens.ViewModel()
             let vc = SupportedTokens.ViewController(viewModel: vm)

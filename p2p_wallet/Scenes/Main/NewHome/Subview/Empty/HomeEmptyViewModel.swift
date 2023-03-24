@@ -8,7 +8,6 @@
 import AnalyticsManager
 import Combine
 import Foundation
-import RenVMSwift
 import Resolver
 import SolanaSwift
 import KeyAppKitCore
