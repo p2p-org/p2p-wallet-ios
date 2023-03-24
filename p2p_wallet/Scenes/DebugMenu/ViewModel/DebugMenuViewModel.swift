@@ -57,7 +57,8 @@ final class DebugMenuViewModel: BaseViewModel, ObservableObject {
         
         newSwapEndpoints = [
             "https://quote-api.jup.ag",
-            "https://swap.key.app"
+            "https://swap.key.app",
+            "https://swap.keyapp.org"
         ]
 
         currentMoonpayEnvironment = Defaults.moonpayEnvironment
