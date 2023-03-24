@@ -54,25 +54,29 @@ public struct CryptoAmount: Hashable {
         )
     }
 
+    public init(token: AnyToken) {
+        self.init(amount: 0, token: token)
+    }
+
     public init?(floatString amount: String, token: AnyToken) {
         let parts = amount.components(separatedBy: ".")
 
         if parts.count == 1 {
             let intValue = parts.first!
-            let zeroPadding = String.init(repeating: "0", count: Int(token.decimals))
-            
+            let zeroPadding = String(repeating: "0", count: Int(token.decimals))
+
             let number = intValue + zeroPadding
 
             self.init(
                 bigUIntString: number,
                 token: token
             )
-            
+
             return
         }
 
         guard parts.count == 2 else { return nil }
-        
+
         let integerPart = parts.first!
         var floatingPart = parts.last!
 
@@ -107,6 +111,16 @@ public struct CryptoAmount: Hashable {
         }
 
         return .init(value: amount * (price.value ?? 0), currencyCode: price.currencyCode)
+    }
+}
+
+extension CryptoAmount: Comparable {
+    public static func < (lhs: CryptoAmount, rhs: CryptoAmount) -> Bool {
+        guard lhs.smartContract == rhs.smartContract else {
+            return false
+        }
+
+        return lhs.value < rhs.value
     }
 }
 

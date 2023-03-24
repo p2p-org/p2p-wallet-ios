@@ -118,13 +118,11 @@ public class WormholeRPCAPI: WormholeAPI {
         
         try await Task.sleep(nanoseconds: 1_000_000_000)
         
-        let usdAmount: String = try String(BigUInt(stringLiteral: amount))
-        
         return try .init(
-            arbiter: .init(amount: "1", usdAmount: usdAmount, chain: "Solana", contract: nil),
-            networkFee: .init(amount: "1", usdAmount: usdAmount, chain: "Solana", contract: nil),
-            messageAccountRent: .init(amount: "1", usdAmount: usdAmount, chain: "Solana", contract: nil),
-            bridgeFee: .init(amount: "1", usdAmount: usdAmount, chain: "Solana", contract: nil)
+            arbiter: .init(amount: "1", usdAmount: "1.52", chain: "Solana", contract: nil),
+            networkFee: .init(amount: "1", usdAmount: "8.23", chain: "Solana", contract: nil),
+            messageAccountRent: .init(amount: "1", usdAmount: "1.23", chain: "Solana", contract: nil),
+            bridgeFee: .init(amount: "1", usdAmount: "0.55", chain: "Solana", contract: nil)
         )
         
 //        try await self.client.call(

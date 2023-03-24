@@ -5,22 +5,23 @@
 //  Created by Ivan on 16.11.2022.
 //
 
+import AnalyticsManager
 import Combine
 import Foundation
-import SolanaSwift
 import Resolver
-import AnalyticsManager
 import Sell
+import SolanaSwift
 
 final class TabBarCoordinator: Coordinator<Void> {
-    
     // MARK: - Dependencies
+
     @Injected private var userWalletManager: UserWalletManager
     @Injected private var walletsRepository: WalletsRepository
     @Injected private var analyticsManager: AnalyticsManager
     @Injected private var sellDataService: any SellDataService
 
     // MARK: - Properties
+
     private unowned var window: UIWindow!
     private let tabBarController: TabBarController
     private let closeSubject = PassthroughSubject<Void, Never>()
@@ -98,7 +99,7 @@ final class TabBarCoordinator: Coordinator<Void> {
         
         // navigate to Earn from homeCoordinator
         homeCoordinator.navigation
-            .filter {$0 == .earn}
+            .filter { $0 == .earn }
             .sink(receiveValue: { [unowned self] _ in
                 tabBarController.changeItem(to: .invest)
             })
@@ -251,6 +252,11 @@ final class TabBarCoordinator: Coordinator<Void> {
                         case let .sent(model):
                             navigationController?.popToRootViewController(animated: true)
                             self?.routeToSendTransactionStatus(model: model)
+                            
+                        case let .wormhole(pending):
+                            navigationController?.popToRootViewController(animated: true)
+                            self?.showTransaction(pendingTransaction: pending)
+                            
                         case .cancelled:
                             break
                         }
@@ -286,7 +292,13 @@ final class TabBarCoordinator: Coordinator<Void> {
         
         sendStatusCoordinator?
             .start()
-            .sink(receiveValue: { })
+            .sink(receiveValue: {})
+            .store(in: &subscriptions)
+    }
+    
+    private func showTransaction(pendingTransaction: PendingTransaction) {
+        coordinate(to: TransactionDetailCoordinator(viewModel: .init(pendingTransaction: pendingTransaction), presentingViewController: tabBarController))
+            .sink(receiveValue: { _ in })
             .store(in: &subscriptions)
     }
 

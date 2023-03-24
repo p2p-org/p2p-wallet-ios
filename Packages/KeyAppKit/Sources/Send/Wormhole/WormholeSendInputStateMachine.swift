@@ -9,7 +9,7 @@ import Combine
 import Foundation
 import Wormhole
 
-public class WormholeSendInputStateMachine: StateMachine {
+public class WormholeSendInputStateMachine: StateMachine, ObservableObject {
     public typealias State = WormholeSendInputState
     public typealias Action = WormholeSendInputAction
     public typealias Services = WormholeService
@@ -33,6 +33,11 @@ public class WormholeSendInputStateMachine: StateMachine {
                     }
                 }
             }
+            .store(in: &subscriptions)
+        
+        state
+            .removeDuplicates()
+            .sink { [weak self] _ in self?.objectWillChange.send() }
             .store(in: &subscriptions)
     }
     

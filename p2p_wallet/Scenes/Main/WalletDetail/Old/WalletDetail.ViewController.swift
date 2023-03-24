@@ -115,6 +115,11 @@ extension WalletDetail {
                         case let .sent(model):
                             self?.navigationController?.popToViewController(ofClass: Self.self, animated: true)
                             self?.showSendTransactionStatus(model: model)
+
+                        case let .wormhole(pending):
+                            self?.navigationController?.popToViewController(ofClass: Self.self, animated: true)
+                            self?.showTransaction(pendingTransaction: pending)
+
                         case .cancelled:
                             break
                         }
@@ -152,6 +157,13 @@ extension WalletDetail {
         }
 
         // MARK: - Actions
+
+        private func showTransaction(pendingTransaction: PendingTransaction) {
+            TransactionDetailCoordinator(viewModel: .init(pendingTransaction: pendingTransaction), presentingViewController: navigationController!)
+                .start()
+                .sink(receiveValue: { _ in })
+                .store(in: &subscriptions)
+        }
 
         private func showSendTransactionStatus(model: SendTransaction) {
             sendTransactionStatusCoordinator = SendTransactionStatusCoordinator(parentController: navigationController!, transaction: model)

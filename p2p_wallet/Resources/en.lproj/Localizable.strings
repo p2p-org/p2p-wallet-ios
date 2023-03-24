@@ -1271,3 +1271,5 @@ You can try again, but your new transaction will be subject to the current rates
 "You can’t swap between the same token" = "You can’t swap between the same token";
 "Enter amount" = "Enter amount";
 "To make a transfer to %@ you have to swap %@ to %@" = "To make a transfer to %@ you have to swap %@ to %@";
+"Cannot calculate fees. Try again" = "Cannot calculate fees. Try again";
+"Using Wormhole bridge" = "Using Wormhole bridge";

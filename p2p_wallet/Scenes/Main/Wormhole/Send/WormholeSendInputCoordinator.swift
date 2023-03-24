@@ -7,10 +7,14 @@
 
 import Foundation
 import Send
-import SwiftUI
 import SolanaSwift
+import SwiftUI
 
-class WormholeSendInputCoordinator: SmartCoordinator<String> {
+enum WormholeSendInputCoordinatorResult {
+    case transaction(PendingTransaction)
+}
+
+class WormholeSendInputCoordinator: SmartCoordinator<WormholeSendInputCoordinatorResult> {
     let recipient: Recipient
 
     init(recipient: Recipient, from: UINavigationController) {
@@ -23,13 +27,26 @@ class WormholeSendInputCoordinator: SmartCoordinator<String> {
         let view = WormholeSendInputView(viewModel: viewModel)
         let vc = UIHostingController(rootView: view)
 
-        viewModel.changeTokenPressed
-            .sink { [weak self] in
-                self?.openChooseWormholeToken(from: vc, viewModel: viewModel)
+        viewModel.action
+            .sink { [weak self] action in
+                switch action {
+                case .openPickAccount:
+                    self?.openChooseWormholeToken(from: vc, viewModel: viewModel)
+                case .openFees:
+                    self?.openFees(stateMachine: viewModel.stateMachine)
+                case let .send(trx):
+                    self?.pop(.transaction(trx))
+                }
             }
             .store(in: &subscriptions)
 
         return vc
+    }
+
+    private func openFees(stateMachine: WormholeSendInputStateMachine) {
+        coordinate(to: WormholeSendFeesCoordinator(stateMachine: stateMachine, presentedVC: presentation.presentingViewController))
+            .sink { _ in }
+            .store(in: &subscriptions)
     }
 
     private func openChooseWormholeToken(from vc: UIViewController, viewModel: WormholeSendInputViewModel) {
@@ -39,7 +56,7 @@ class WormholeSendInputCoordinator: SmartCoordinator<String> {
         ))
         .sink { walletToken in
             if let walletToken = walletToken {
-                // TODO: fix after logic is done
+                viewModel.selectSolanaAccount(wallet: walletToken)
             }
         }
         .store(in: &subscriptions)

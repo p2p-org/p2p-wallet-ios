@@ -20,7 +20,7 @@ struct WormholeSendInputView: View {
         VStack(alignment: .leading, spacing: 0) {
             // Title
             VStack(alignment: .leading, spacing: 12) {
-                Text("0x0ea9...f5709c")
+                Text(RecipientFormatter.format(destination: viewModel.recipient.address))
                     .fontWeight(.bold)
                     .apply(style: .largeTitle)
                 
@@ -39,7 +39,9 @@ struct WormholeSendInputView: View {
                     
                     Spacer()
                     
-                    Button {} label: {
+                    Button {
+                        viewModel.action.send(.openFees)
+                    } label: {
                         HStack(spacing: 4) {
                             Text(viewModel.adapter.fees)
                                 .apply(style: .text4)
@@ -64,20 +66,21 @@ struct WormholeSendInputView: View {
                 SendInputTokenView(
                     wallet: viewModel.adapter.inputAccount?.data ?? Wallet(token: .eth),
                     isChangeEnabled: true,
-                    skeleton: viewModel.adapter.inputAccountSkeleton,
-                    changeAction: viewModel.changeTokenPressed.send
-                )
+                    skeleton: viewModel.adapter.inputAccountSkeleton
+                ) {
+                    viewModel.action.send(.openPickAccount)
+                }
             }
             
             if let account = viewModel.adapter.inputAccount {
                 VStack(spacing: 6) {
                     HStack {
-                        ZStack {
+                        ZStack(alignment: .leading) {
                             SendInputAmountField(
                                 text: $viewModel.input,
                                 isFirstResponder: $viewModel.isFirstResponder,
-                                countAfterDecimalPoint: $viewModel.countAfterDecimalPoint,
-                                textColor: .constant(.black)
+                                textColor: viewModel.adapter.inputColor,
+                                countAfterDecimalPoint: viewModel.countAfterDecimalPoint
                             ) { textField in
                                 textField.font = inputFount
                                 textField.placeholder = "0"
@@ -87,16 +90,18 @@ struct WormholeSendInputView: View {
                                 title: L10n.max.uppercased(),
                                 style: .second,
                                 size: .small
-                            ) {}
-                                .transition(.opacity.animation(.easeInOut))
-                                .cornerRadius(radius: 32, corners: .allCorners)
-                                .frame(width: 68)
-                                .offset(x: viewModel.input.isEmpty
-                                    ? 16.0
-                                    : textWidth(font: inputFount, text: viewModel.input)
-                                )
-                                .padding(.horizontal, 8)
-                                .accessibilityIdentifier("max-button")
+                            ) {
+                                viewModel.maxAction()
+                            }
+                            .transition(.opacity.animation(.easeInOut))
+                            .cornerRadius(radius: 32, corners: .allCorners)
+                            .frame(width: 68)
+                            .offset(x: viewModel.input.isEmpty
+                                ? 16
+                                : textWidth(font: inputFount, text: viewModel.input)
+                            )
+                            .padding(.horizontal, 8)
+                            .accessibilityIdentifier("max-button")
                         }
                         .frame(height: 28)
                         
@@ -114,7 +119,7 @@ struct WormholeSendInputView: View {
                         
                         Text(
                             L10n.tapToSwitchTo(
-                                viewModel.inputMode == .crypto ? (viewModel.adapter.inputAccount?.data.token.symbol ?? "") : Defaults.fiat.name
+                                viewModel.inputMode == .crypto ? (viewModel.adapter.inputAccount?.data.token.symbol ?? "") : Defaults.fiat.code
                             )
                         )
                         .apply(style: .text4)
@@ -132,8 +137,8 @@ struct WormholeSendInputView: View {
             
             SliderActionButton(
                 isSliderOn: $viewModel.isSliderOn,
-                data: $viewModel.actionButtonData,
-                showFinished: $viewModel.showFinished
+                data: viewModel.adapter.sliderButton,
+                showFinished: viewModel.showFinished
             )
             .padding(.bottom, 16)
         }

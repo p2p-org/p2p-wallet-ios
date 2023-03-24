@@ -22,8 +22,8 @@ struct SendInputAmountView: View {
                                 SendInputAmountField(
                                     text: $viewModel.amountText,
                                     isFirstResponder: $viewModel.isFirstResponder,
-                                    countAfterDecimalPoint: $viewModel.countAfterDecimalPoint,
-                                    textColor: $viewModel.amountTextColor
+                                    textColor: viewModel.amountTextColor,
+                                    countAfterDecimalPoint: viewModel.countAfterDecimalPoint
                                 ) { textField in
                                     textField.font = Constants.inputFount
                                     textField.placeholder = "0"
@@ -42,8 +42,8 @@ struct SendInputAmountView: View {
                                     .cornerRadius(radius: 32, corners: .allCorners)
                                     .frame(width: 68)
                                     .offset(x: viewModel.amountText.isEmpty
-                                            ? 16.0
-                                            : textWidth(font: Constants.inputFount, text: viewModel.amountText)
+                                        ? 16.0
+                                        : textWidth(font: Constants.inputFount, text: viewModel.amountText)
                                     )
                                     .padding(.horizontal, 8)
                                     .accessibilityIdentifier("max-button")
@@ -85,7 +85,8 @@ struct SendInputAmountView: View {
                                     .foregroundColor(Color(mainColor))
                                     .frame(width: 16, height: 16)
                                     .opacity(switchAreaOpacity)
-                            })
+                            }
+                        )
                         .frame(width: 24, height: 24)
                     }
                 }
@@ -102,15 +103,15 @@ struct SendInputAmountView: View {
 
     var tapToSwitchHiddenButton: some View {
         Button(action: {
-            withAnimation(.easeInOut(duration: 0.3), {
+            withAnimation(.easeInOut(duration: 0.3)) {
                 self.switchAreaOpacity = 0.3
-            })
+            }
             self.viewModel.switchPressed.send()
-            withAnimation(.easeInOut(duration: 0.3), {
+            withAnimation(.easeInOut(duration: 0.3)) {
                 self.switchAreaOpacity = 1
-            })
+            }
         }, label: {
-            VStack { }
+            VStack {}
                 .frame(width: 130, height: 90)
         })
         .accessibilityIdentifier("switch-currency")

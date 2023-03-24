@@ -1302,3 +1302,5 @@ You can try again, but your new transaction will be subject to the current rates
 "You can’t swap between the same token" = "Vous ne pouvez pas échanger entre le même jeton";
 "Enter amount" = "Entrer le montant";
 "To make a transfer to %@ you have to swap %@ to %@" = "Pour effectuer un transfert vers %@ vous devez échanger %@ vers %@";
+"Cannot calculate fees. Try again" = "Impossible de calculer les frais.  Essayer à nouveau";
+"Using Wormhole bridge" = "Utilisation du pont Wormhole";
