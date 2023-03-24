@@ -171,15 +171,16 @@ extension Resolver: ResolverRegistering {
             .implements(PricesStorage.self)
             .scope(.application)
 
-        if !Defaults.isCoingeckoProviderDisabled {
-            register { CoinGeckoPricesAPI() }
-                .implements(SolanaPricesAPI.self)
-                .scope(.application)
-        } else {
-            register { CryptoComparePricesAPI(apikey: .secretConfig("CRYPTO_COMPARE_API_KEY")) }
-                .implements(SolanaPricesAPI.self)
-                .scope(.application)
-        }
+//        if !Defaults.isCoingeckoProviderDisabled {
+        // TODO: Attention. Hot fix, condition removed due to remote config fetch problem
+        register { CoinGeckoPricesAPI() }
+            .implements(SolanaPricesAPI.self)
+            .scope(.application)
+//        } else {
+//            register { CryptoComparePricesAPI(apikey: .secretConfig("CRYPTO_COMPARE_API_KEY")) }
+//                .implements(SolanaPricesAPI.self)
+//                .scope(.application)
+//        }
 
         register { InMemoryTokensRepositoryCache() }
             .implements(SolanaTokensRepositoryCache.self)
