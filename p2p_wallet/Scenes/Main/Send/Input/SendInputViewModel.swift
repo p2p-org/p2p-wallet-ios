@@ -52,6 +52,11 @@ final class SendInputViewModel: BaseViewModel, ObservableObject {
             Defaults.isFakeSendTransaction = isFakeSendTransaction
         }
     }
+    @Published var isFakeSendTransactionError: Bool = Defaults.isFakeSendTransactionError {
+        didSet {
+            Defaults.isFakeSendTransactionError = isFakeSendTransactionError
+        }
+    }
     #endif
 
     let feeInfoPressed = PassthroughSubject<Void, Never>()
@@ -491,7 +496,9 @@ private extension SendInputViewModel {
                 #if !RELEASE
                 if self.isFakeSendTransaction {
                     try await Task.sleep(nanoseconds: 2_000_000_000)
-                    if Int.random(in: 0..<4) == 3 { throw SolanaError.unknown }
+                    if self.isFakeSendTransactionError {
+                        throw SolanaError.unknown
+                    }
                     // save to storage
                     if self.currentState.isSendingViaLink {
                         self.saveSendViaLinkTransaction()
