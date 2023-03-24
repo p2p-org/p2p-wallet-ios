@@ -8,11 +8,22 @@
 import Foundation
 import KeyAppBusiness
 import KeyAppKitCore
+import Wormhole
 
 protocol WormholeClaimModel {
     var icon: URL? { get }
+
     var title: String { get }
+
     var subtitle: String { get }
+
+    var claimButtonTitle: String { get }
+
+    var claimButtonEnable: Bool { get }
+
+    var fees: String { get }
+
+    var feesButtonEnable: Bool { get }
 }
 
 struct WormholeClaimMockModel: WormholeClaimModel {
@@ -21,10 +32,19 @@ struct WormholeClaimMockModel: WormholeClaimModel {
     var title: String
 
     var subtitle: String
+
+    var claimButtonTitle: String
+
+    var claimButtonEnable: Bool
+
+    var fees: String
+
+    var feesButtonEnable: Bool
 }
 
 struct WormholeClaimEthereumModel: WormholeClaimModel {
     let account: EthereumAccountsService.Account
+    let bundle: AsyncValueState<WormholeBundle?>
 
     var icon: URL? {
         account.token.logo
@@ -42,5 +62,49 @@ struct WormholeClaimEthereumModel: WormholeClaimModel {
 
         let formattedValue = CurrencyFormatter().string(amount: currencyAmount)
         return "~ \(formattedValue)"
+    }
+
+    var claimButtonTitle: String {
+        let resultAmount = bundle.value?.resultAmount
+
+        if let resultAmount = resultAmount {
+            let cryptoFormatter = CryptoFormatter()
+
+            let cryptoAmount = CryptoAmount(
+                bigUIntString: resultAmount.amount,
+                token: account.token
+            )
+
+            return L10n.claim(cryptoFormatter.string(amount: cryptoAmount))
+        } else {
+            if bundle.error != nil {
+                return L10n.tryAgain
+            } else {
+                return L10n.loading
+            }
+        }
+    }
+
+    var claimButtonEnable: Bool {
+        switch bundle.status {
+        case .fetching, .initializing:
+            return false
+        case .ready:
+            return true
+        }
+    }
+
+    var fees: String {
+        let fees = bundle.value?.fees
+
+        guard let fees else {
+            return L10n.isUnavailable(L10n.value)
+        }
+
+        return CurrencyFormatter().string(amount: fees.totalInFiat)
+    }
+
+    var feesButtonEnable: Bool {
+        bundle.value?.fees != nil
     }
 }
