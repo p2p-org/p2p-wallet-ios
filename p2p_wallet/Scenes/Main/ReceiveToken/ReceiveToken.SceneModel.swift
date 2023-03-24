@@ -21,7 +21,6 @@ protocol ReceiveSceneModel: BESceneModel {
     var hideAddressesHintSubject: PassthroughSubject<Void, Never> { get }
     var tokenListAvailabilityPublisher: AnyPublisher<Bool, Never> { get }
     var receiveSolanaViewModel: ReceiveTokenSolanaViewModelType { get }
-    var receiveBitcoinViewModel: ReceiveToken.ReceiveBitcoinViewModel { get }
     var shouldShowChainsSwitcher: Bool { get }
     var tokenWallet: Wallet? { get }
     var qrHint: NSAttributedString { get }
@@ -29,8 +28,6 @@ protocol ReceiveSceneModel: BESceneModel {
     var navigationPublisher: AnyPublisher<ReceiveToken.NavigatableScene?, Never> { get }
 
     func isRenBtcCreated() -> Bool
-    func switchToken(_ tokenType: ReceiveToken.TokenType)
-    func showSelectionNetwork()
     func copyDirectAddress()
     func copyMintAddress()
     func navigateToBuy()
@@ -47,7 +44,6 @@ extension ReceiveToken {
 
         private var subscriptions = Set<AnyCancellable>()
         let receiveSolanaViewModel: ReceiveTokenSolanaViewModelType
-        let receiveBitcoinViewModel: ReceiveToken.ReceiveBitcoinViewModel
 
         // MARK: - Subjects
 
@@ -114,10 +110,6 @@ extension ReceiveToken {
                 hasExplorerButton: hasExplorerButton
             )
 
-            receiveBitcoinViewModel = ReceiveToken.ReceiveBitcoinViewModel(
-                hasExplorerButton: hasExplorerButton
-            )
-
             super.init()
 
             bind()
@@ -180,19 +172,6 @@ extension ReceiveToken {
                 .eraseToAnyPublisher()
         }
 
-        func switchToken(_ tokenType: ReceiveToken.TokenType) {
-            self.tokenType = tokenType
-            if tokenType == .btc {
-                receiveBitcoinViewModel.acceptConditionAndLoadAddress()
-            }
-        }
-
-        func showSelectionNetwork() {
-            if !isDisabledRenBtc {
-                navigationSubject.send(.networkSelection)
-            }
-        }
-
         func copyDirectAddress() {
             guard let address = tokenWallet?.pubkey else { return assertionFailure() }
 
@@ -226,13 +205,6 @@ extension ReceiveToken {
                 .sink(receiveValue: { [weak self] in
                     self?.addressesHintIsHidden = true
                 })
-                .store(in: &subscriptions)
-            
-            receiveBitcoinViewModel
-                .navigationPublisher
-                .sink { [weak self] scene in
-                    self?.navigationSubject.send(scene)
-                }
                 .store(in: &subscriptions)
         }
 

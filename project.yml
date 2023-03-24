@@ -31,9 +31,6 @@ packages:
         branch: master
     KeyAppKit:
         path: ./Packages/KeyAppKit
-    RenVMSwift:
-        url: https://github.com/p2p-org/RenVMSwift.git
-        branch: develop
     BECollectionView:
         url: https://github.com/bigearsenal/BECollectionView.git
         branch: master
@@ -260,7 +257,6 @@ targets:
             - package: KeyAppKit
               product: Jupiter
 
-            - package: RenVMSwift
             - package: FeeRelayerSwift
             - package: SolanaSwift
             - package: OrcaSwapSwift

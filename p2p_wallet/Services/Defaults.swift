@@ -8,7 +8,6 @@
 import FirebaseRemoteConfig
 import Foundation
 import Onboarding
-import RenVMSwift
 import SolanaSwift
 import SwiftyUserDefaults
 

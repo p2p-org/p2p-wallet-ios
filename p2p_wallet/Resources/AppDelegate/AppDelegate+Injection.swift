@@ -18,7 +18,6 @@ import Onboarding
 import OrcaSwapSwift
 import P2PSwift
 import Reachability
-import RenVMSwift
 import Resolver
 import Sell
 import Send
@@ -448,59 +447,6 @@ extension Resolver: ResolverRegistering {
         }
         .implements(OrcaSwapType.self)
         .scope(.session)
-
-        // RenVMSwift
-        register { RenVMSwift.RpcClient(network: Defaults.apiEndPoint.network == .mainnetBeta ? .mainnet : .testnet) }
-            .implements(RenVMRpcClientType.self)
-            .scope(.session)
-
-        register { RenVMSolanaChainProvider() }
-            .implements(RenVMSwift.ChainProvider.self)
-
-        register {
-            UserDefaultsBurnAndReleasePersistentStore(
-                userDefaultKeyForSubmitedBurnTransactions: BurnAndRelease.keyForSubmitedBurnTransaction
-            )
-        }
-        .implements(BurnAndReleasePersistentStore.self)
-
-        register {
-            BurnAndReleaseServiceImpl(
-                rpcClient: resolve(),
-                chainProvider: resolve(),
-                destinationChain: .bitcoin,
-                persistentStore: resolve(),
-                version: "1"
-            )
-        }
-        .implements(BurnAndReleaseService.self)
-
-        register {
-            UserDefaultLockAndMintServicePersistentStore(
-                userDefaultKeyForSession: LockAndMint.keyForSession,
-                userDefaultKeyForGatewayAddress: LockAndMint.keyForGatewayAddress,
-                userDefaultKeyForProcessingTransactions: LockAndMint.keyForProcessingTransactions,
-                showLog: true
-            )
-        }
-        .implements(LockAndMintServicePersistentStore.self)
-
-        register {
-            LockAndMintServiceImpl(
-                persistentStore: resolve(),
-                chainProvider: resolve(),
-                rpcClient: resolve(),
-                mintToken: .bitcoin,
-                showLog: true
-            )
-        }
-        .implements(LockAndMintService.self)
-        .scope(.session)
-
-        // RenBTCStatusService
-        register { RenBTCStatusService() }
-            .implements(RenBTCStatusServiceType.self)
-            .scope(.session)
 
         // HttpClient
         register { HttpClientImpl() }
