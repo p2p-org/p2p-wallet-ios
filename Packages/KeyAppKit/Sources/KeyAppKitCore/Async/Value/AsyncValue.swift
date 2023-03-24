@@ -65,6 +65,12 @@ public struct AsyncValueState<T> {
     }
 }
 
+public extension AsyncValueState {
+    var hasError: Bool {
+        error != nil
+    }
+}
+
 public extension AsyncValueState where T: Sequence {
     func innerApply<Output>(_ transform: (T.Element) -> Output) -> AsyncValueState<[Output]> {
         .init(

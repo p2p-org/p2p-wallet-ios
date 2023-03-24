@@ -67,12 +67,12 @@ public protocol CurrentyConverable {
 
 /// The class for formatting Key App currency
 public class CurrencyFormatter: Formatter {
-    public func string(amount: CurrencyAmount) -> String {
-        string(for: amount) ?? "N/A"
+    public func string(amount: CurrencyAmount, defaultValue: String = "N/A") -> String {
+        string(for: amount) ?? defaultValue
     }
 
-    public func string(amount: CurrentyConverable) -> String {
-        string(for: amount) ?? "N/A"
+    public func string(amount: CurrentyConverable, defaultValue: String = "N/A") -> String {
+        string(for: amount) ?? defaultValue
     }
 
     override public func string(for obj: Any?) -> String? {

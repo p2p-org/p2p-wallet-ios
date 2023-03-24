@@ -71,7 +71,7 @@ struct WormholeClaimView: View {
                 Spacer()
 
                 // Amount
-                Text(viewModel.feeAmountInFiat)
+                Text(viewModel.model.fees)
                     .skeleton(
                         with: viewModel.bundle.state.isFetching,
                         size: .init(width: 100, height: 24)
@@ -86,6 +86,7 @@ struct WormholeClaimView: View {
                         .foregroundColor(Color(Asset.Colors.mountain.color))
                         .frame(width: 20, height: 20)
                 }
+                .disabled(viewModel.model.claimButtonEnable)
             }
             .padding(.horizontal, 16)
             .padding(.vertical, 14)
@@ -98,10 +99,10 @@ struct WormholeClaimView: View {
             Spacer()
 
             // Button
-            TextButtonView(title: viewModel.buttonText, style: .primaryWhite, size: .large) {
+            TextButtonView(title: viewModel.model.claimButtonTitle, style: .primaryWhite, size: .large) {
                 viewModel.claim()
             }
-            .disabled(viewModel.bundle.state.status != .ready)
+            .disabled(viewModel.model.claimButtonEnable)
             .frame(height: TextButton.Size.large.height)
         }
         .padding(.horizontal, 16)
@@ -119,7 +120,11 @@ struct WormholeClaimView_Previews: PreviewProvider {
                 model: .init(
                     icon: URL(string: Token.eth.logoURI!)!,
                     title: "0.999717252 ETH",
-                    subtitle: "~ $1 219.87"
+                    subtitle: "~ $1 219.87",
+                    claimButtonTitle: "Claim 0.999717252 ETH",
+                    claimButtonEnable: true,
+                    fees: "$76.23",
+                    feesButtonEnable: true
                 )
             )
         )

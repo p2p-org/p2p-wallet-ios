@@ -19,9 +19,6 @@ class WormholeClaimViewModel: BaseViewModel, ObservableObject {
 
     @Published var model: any WormholeClaimModel
 
-    @Published var feeAmountInFiat: String = ""
-    @Published var buttonText: String = ""
-
     init(model: WormholeClaimMockModel) {
         self.model = model
         self.bundle = .init(just: nil)
@@ -35,7 +32,7 @@ class WormholeClaimViewModel: BaseViewModel, ObservableObject {
         wormholeAPI: WormholeService = Resolver.resolve(),
         notificationService: NotificationService = Resolver.resolve()
     ) {
-        self.model = WormholeClaimEthereumModel(account: account)
+        self.model = WormholeClaimEthereumModel(account: account, bundle: .init(value: nil))
         self.bundle = .init(initialItem: nil) {
             // Request to get bundle
             do {
@@ -53,42 +50,11 @@ class WormholeClaimViewModel: BaseViewModel, ObservableObject {
         // Listen changing in bundle value
         bundle.listen(target: self, in: &subscriptions)
 
-        // Update fee
         bundle.$state
-            .map(\.value?.fees)
             .receive(on: RunLoop.main)
-            .sink { [weak self] fees in
-                guard let self = self else { return }
-
-                if let fees {
-                    self.feeAmountInFiat = CurrencyFormatter().string(
-                        for: CurrencyAmount(value: fees.totalInUSD, currencyCode: "USD")
-                    ) ?? "N/A"
-                } else {
-                    self.feeAmountInFiat = L10n.isUnavailable(L10n.value)
-                }
+            .sink { [weak self] state in
+                self?.model = WormholeClaimEthereumModel(account: account, bundle: state)
             }
-            .store(in: &subscriptions)
-
-        // Update button title
-        bundle.$state
-            .map(\.value?.resultAmount)
-            .map { resultAmount in
-                if let resultAmount = resultAmount {
-                    let cryptoFormatter = CryptoFormatter()
-
-                    let cryptoAmount = CryptoAmount(
-                        bigUIntString: resultAmount.amount,
-                        token: account.token
-                    )
-
-                    return L10n.claim(cryptoFormatter.string(amount: cryptoAmount))
-                } else {
-                    return L10n.loading
-                }
-            }
-            .receive(on: RunLoop.main)
-            .weakAssign(to: \.buttonText, on: self)
             .store(in: &subscriptions)
 
         // Update timer
@@ -108,7 +74,7 @@ class WormholeClaimViewModel: BaseViewModel, ObservableObject {
             }
             .store(in: &subscriptions)
 
-        // Update error
+        // Notify user an error
         bundle.$state
             .map(\.error)
             .compactMap { $0 }
@@ -120,24 +86,28 @@ class WormholeClaimViewModel: BaseViewModel, ObservableObject {
 
     func claim() {
         if let model = model as? WormholeClaimEthereumModel {
-            guard let bundle = bundle.state.value else {
-                Error.missingBundle.capture()
-                return
+            if bundle.state.hasError {
+                bundle.fetch()
+            } else {
+                guard let bundle = bundle.state.value else {
+                    Error.missingBundle.capture()
+                    return
+                }
+
+                let rawTransaction = WormholeClaimTransaction(
+                    wormholeService: Resolver.resolve(),
+                    token: model.account.token,
+                    amountInCrypto: model.account.representedBalance,
+                    amountInFiat: model.account.balanceInFiat,
+                    bundle: bundle
+                )
+
+                let transactionHandler: TransactionHandler = Resolver.resolve()
+                let index = transactionHandler.sendTransaction(rawTransaction)
+                let pendingTransaction = transactionHandler.getProcessingTransaction(index: index)
+
+                action.send(.claiming(pendingTransaction))
             }
-
-            let rawTransaction = WormholeClaimTransaction(
-                wormholeService: Resolver.resolve(),
-                token: model.account.token,
-                amountInCrypto: model.account.representedBalance,
-                amountInFiat: model.account.balanceInFiat,
-                bundle: bundle
-            )
-
-            let transactionHandler: TransactionHandler = Resolver.resolve()
-            let index = transactionHandler.sendTransaction(rawTransaction)
-            let pendingTransaction = transactionHandler.getProcessingTransaction(index: index)
-
-            action.send(.claiming(pendingTransaction))
         }
     }
 }

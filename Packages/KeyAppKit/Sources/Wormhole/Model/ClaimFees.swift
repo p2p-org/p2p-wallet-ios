@@ -21,10 +21,9 @@ public struct ClaimFees: Codable, Hashable {
         case createAccount = "create_account"
     }
 
-    public var totalInUSD: Decimal {
-        return (Decimal(string: gas.usdAmount) ?? 0.0) +
-            (Decimal(string: arbiter.usdAmount) ?? 0.0) +
-            (Decimal(string: createAccount?.usdAmount ?? "0.0") ?? 0.0)
+    public var totalInFiat: CurrencyAmount {
+        return gas.asCurrencyAmount
+            + arbiter.asCurrencyAmount
+            + createAccount?.asCurrencyAmount
     }
 }
-
