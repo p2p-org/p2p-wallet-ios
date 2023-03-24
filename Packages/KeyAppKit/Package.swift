@@ -331,6 +331,7 @@ let package = Package(
         .target(
             name: "KeyAppKitCore",
             dependencies: [
+                .product(name: "SolanaSwift", package: "solana-swift"),
                 .product(name: "BigInt", package: "BigInt"),
             ]
         ),

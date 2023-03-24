@@ -7,6 +7,7 @@
 
 import Foundation
 
+// A structure for handling token price
 public struct TokenPrice: Hashable, CustomStringConvertible {
     /// ISO 4217 Currency code
     public let currencyCode: String

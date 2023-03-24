@@ -15,6 +15,8 @@ import SolanaSwift
 ///
 /// It also calculates ``amountInFiat`` by integrating with ``NewPriceService``.
 public final class SolanaAccountsService: NSObject, AccountsService, ObservableObject {
+    public typealias Account = SolanaAccount
+    
     var subscriptions = [AnyCancellable]()
 
     let asyncValue: AsyncValue<[Account]>
@@ -157,44 +159,6 @@ public extension Array where Element == SolanaAccountsService.Account {
 }
 
 public extension SolanaAccountsService {
-    /// Solana account data structure.
-    /// This class is combination of raw account data and additional application data.
-    struct Account: Identifiable, Equatable {
-        public var id: String {
-            data.pubkey ?? data.token.address
-        }
-
-        /// Data field
-        public var data: SolanaSwift.Wallet
-
-        /// The fetched price at current moment of time.
-        public fileprivate(set) var price: TokenPrice?
-
-        public var cryptoAmount: CryptoAmount {
-            .init(uint64: data.lamports ?? 0, token: data.token)
-        }
-
-        /// Get current amount in fiat.
-        public var amountInFiat: CurrencyAmount? {
-            guard let price else { return nil }
-            return cryptoAmount.unsafeToFiatAmount(price: price)
-        }
-
-        @available(*, deprecated, message: "Migrate to amountInFiat")
-        public var amountInFiatDouble: Double {
-            guard let amountInFiat else { return 0.0 }
-            return NSDecimalNumber(decimal: amountInFiat.value).doubleValue
-        }
-        
-        
-    }
-
-    enum Status {
-        case initializing
-        case updating
-        case ready
-    }
-
     enum Error: Swift.Error {
         case authorityError
     }

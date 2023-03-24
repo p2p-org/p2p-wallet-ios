@@ -2,30 +2,37 @@
 //  File.swift
 //
 //
-//  Created by Giang Long Tran on 11.03.2023.
+//  Created by Giang Long Tran on 24.03.2023.
 //
 
 import Foundation
 
 /// Amount in fiat struct
 public struct CurrencyAmount: Hashable {
+    /// Value
     public let value: Decimal
+    
+    /// ISO 4217 Currency code
     public let currencyCode: String
 
+    /// Initialize amount in specific ``currencyCode``
     public init(value: Decimal, currencyCode: String) {
         self.value = value
         self.currencyCode = currencyCode
     }
 
+    /// Usd amount
     public init(usd: Decimal) {
         self.value = usd
         self.currencyCode = "USD"
     }
 
+    /// Zero value in usd
     public static var zero: Self = .init(usd: 0)
 }
 
 public extension CurrencyAmount {
+    /// Additonal operation. Return left side if their ``currencyCode`` is different
     static func + (lhs: Self, rhs: Self) -> Self {
         guard lhs.currencyCode == rhs.currencyCode else {
             return lhs
@@ -34,6 +41,7 @@ public extension CurrencyAmount {
         return .init(value: lhs.value + rhs.value, currencyCode: lhs.currencyCode)
     }
 
+    /// Additonal operation. Return left side if their ``currencyCode`` is different
     static func + (lhs: Self, rhs: Self?) -> Self {
         guard let rhs else { return lhs }
         return lhs + rhs
@@ -58,53 +66,5 @@ extension CurrencyAmount: Comparable {
         }
 
         return lhs.value == rhs.value
-    }
-}
-
-public protocol CurrentyConverable {
-    var asCurrencyAmount: CurrencyAmount { get }
-}
-
-/// The class for formatting Key App currency
-public class CurrencyFormatter: Formatter {
-    public func string(amount: CurrencyAmount, defaultValue: String = "N/A") -> String {
-        string(for: amount) ?? defaultValue
-    }
-
-    public func string(amount: CurrentyConverable, defaultValue: String = "N/A") -> String {
-        string(for: amount) ?? defaultValue
-    }
-
-    override public func string(for obj: Any?) -> String? {
-        let amount: CurrencyAmount?
-
-        if let obj = obj as? CurrentyConverable {
-            amount = obj.asCurrencyAmount
-        } else if let obj = obj as? CurrencyAmount {
-            amount = obj
-        } else {
-            amount = nil
-        }
-
-        guard let amount else { return nil }
-
-        let formatter = NumberFormatter()
-
-        // Set currency mode
-        formatter.currencyCode = amount.currencyCode
-        formatter.numberStyle = .currency
-        formatter.locale = Locale(identifier: "en-US")
-
-        // Fix prefix padding
-        // formatter.negativePrefix = "\(formatter.negativePrefix!) "
-        // formatter.positivePrefix = "\(formatter.positivePrefix!) "
-
-        // Set style
-        formatter.groupingSize = 3
-        formatter.currencyDecimalSeparator = "."
-        formatter.currencyGroupingSeparator = " "
-
-        let value: String? = formatter.string(for: amount.value)
-        return value
     }
 }
