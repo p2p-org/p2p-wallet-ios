@@ -20,7 +20,7 @@ struct RecipientSearchView: View {
         case .loaded:
             loadedView
         case .error(_):
-            RecipientErrorView {
+            ErrorView {
                 Task { await viewModel.load() }
             }
         }
