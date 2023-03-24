@@ -34,7 +34,7 @@ struct SendInputView: View {
             }
         }
     }
-    
+
     var loadedView: some View {
         ZStack(alignment: .top) {
             Color(Asset.Colors.smoke.color)
@@ -93,7 +93,7 @@ struct SendInputView: View {
                 case .ready:
                     SendInputAmountView(viewModel: viewModel.inputAmountViewModel)
                 }
-                
+
                 #if !RELEASE
                 FeeRelayerDebugView(
                     viewModel: .init(
@@ -111,11 +111,15 @@ struct SendInputView: View {
                     TextButtonView(title: L10n.tryAgain, style: .primary, size: .large) {
                         viewModel.initialize()
                     }
-                        .cornerRadius(radius: 28, corners: .allCorners)
-                        .frame(height: TextButton.Size.large.height)
+                    .cornerRadius(radius: 28, corners: .allCorners)
+                    .frame(height: TextButton.Size.large.height)
                 case .initializing, .ready:
-                    SliderActionButton(isSliderOn: $viewModel.isSliderOn, data: $viewModel.actionButtonData, showFinished: $viewModel.showFinished)
-                        .accessibilityIdentifier("send-slider")
+                    SliderActionButton(
+                        isSliderOn: $viewModel.isSliderOn,
+                        data: viewModel.actionButtonData,
+                        showFinished: viewModel.showFinished
+                    )
+                    .accessibilityIdentifier("send-slider")
                 }
             }
             .padding(.horizontal, 16)

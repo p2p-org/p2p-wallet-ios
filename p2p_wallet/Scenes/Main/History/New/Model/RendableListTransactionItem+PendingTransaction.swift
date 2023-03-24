@@ -61,6 +61,23 @@ struct RendableListPendingTransactionItem: RendableListTransactionItem {
             }
             
             return .double(fromUrl, toUrl)
+            
+        case let transaction as WormholeClaimTransaction:
+            guard let url = transaction.token.logo else {
+                return .icon(.planet)
+            }
+            
+            return .single(url)
+            
+        case let transaction as WormholeSendTransaction:
+            if
+                let urlStr = transaction.account.data.token.logoURI,
+                let url = URL(string: urlStr)
+            {
+                return .single(url)
+            } else {
+                return .icon(.transactionSend)
+            }
         default:
             return .icon(.planet)
         }
@@ -82,6 +99,13 @@ struct RendableListPendingTransactionItem: RendableListTransactionItem {
             
         case let transaction as SwapRawTransactionType:
             return L10n.to(transaction.sourceWallet.token.symbol, transaction.destinationWallet.token.symbol)
+            
+        case let transaction as WormholeClaimTransaction:
+            return "Wormhole"
+            
+        case let transaction as WormholeSendTransaction:
+            return "Wormhole"
+            
         default:
             return L10n.unknown
         }
@@ -95,6 +119,10 @@ struct RendableListPendingTransactionItem: RendableListTransactionItem {
                 return "\(L10n.send)"
             case _ as SwapRawTransactionType:
                 return "\(L10n.swap)"
+            case let transaction as WormholeClaimTransaction:
+                return "Claim"
+            case let transaction as WormholeSendTransaction:
+                return "Send"
             default:
                 return "\(L10n.transactionFailed)"
             }

@@ -137,10 +137,12 @@ final class HomeCoordinator: Coordinator<Void> {
                 case .sent(let model):
                     self?.navigationController.popToRootViewController(animated: true)
                     self?.showSendTransactionStatus(model: model)
+                case .wormhole(let trx):
+                    self?.navigationController.popToRootViewController(animated: true)
+                    self?.showTransaction(pendingTransaction: trx)
                 case .cancelled:
                     break
                 }
-//                tokensViewModel?.scrollToTop()
             })
             .map { _ in () }
             .eraseToAnyPublisher()
@@ -195,7 +197,7 @@ final class HomeCoordinator: Coordinator<Void> {
                         tokensViewModel?.scrollToTop()
                     }
                 })
-                .map {_ in ()}
+                .map { _ in () }
                 .eraseToAnyPublisher()
             }
         case .cashOut:
@@ -300,6 +302,12 @@ final class HomeCoordinator: Coordinator<Void> {
             return Just(())
                 .eraseToAnyPublisher()
         }
+    }
+
+    private func showTransaction(pendingTransaction: PendingTransaction) {
+        coordinate(to: TransactionDetailCoordinator(viewModel: .init(pendingTransaction: pendingTransaction), presentingViewController: navigationController))
+            .sink(receiveValue: { _ in })
+            .store(in: &subscriptions)
     }
 
     private func showSendTransactionStatus(model: SendTransaction) {

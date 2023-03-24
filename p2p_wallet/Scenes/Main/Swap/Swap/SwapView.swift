@@ -29,8 +29,8 @@ struct SwapView: View {
 
                     SliderActionButton(
                         isSliderOn: $viewModel.isSliderOn,
-                        data: $viewModel.actionButtonData,
-                        showFinished: $viewModel.showFinished
+                        data: viewModel.actionButtonData,
+                        showFinished: viewModel.showFinished
                     )
                     .accessibilityIdentifier("SwapView.sliderButton")
                     .padding(.bottom, 36)

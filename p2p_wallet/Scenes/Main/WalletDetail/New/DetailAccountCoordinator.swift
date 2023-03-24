@@ -118,8 +118,8 @@ class DetailAccountCoordinator: SmartCoordinator<DetailAccountCoordinatorResult>
 
         case .openReceive:
             self.openReceive()
-            
-        case .openSwap(let wallet, let destination):
+
+        case let .openSwap(wallet, destination):
             self.openSwap(destination: destination)
         }
     }
@@ -148,12 +148,13 @@ class DetailAccountCoordinator: SmartCoordinator<DetailAccountCoordinatorResult>
         let supportedBridgeTokens = Wormhole.SupportedToken.bridges
             .map(\.solAddress)
             .compactMap { $0 } +
-        Wormhole.SupportedToken.bridges
+            Wormhole.SupportedToken.bridges
             .map(\.receiveFromAddress)
             .compactMap { $0 }
 
         if available(.ethAddressEnabled) &&
-            (account.data.isNativeSOL || supportedBridgeTokens.contains(account.data.token.address)) {
+            (account.data.isNativeSOL || supportedBridgeTokens.contains(account.data.token.address))
+        {
             var icon: SupportedTokenItemIcon = .image(UIImage.imageOutlineIcon)
             if let logoURL = URL(string: account.data.token.logoURI ?? "") {
                 icon = .url(logoURL)
@@ -238,7 +239,7 @@ class DetailAccountCoordinator: SmartCoordinator<DetailAccountCoordinatorResult>
         } else {
             let vm = OrcaSwapV2.ViewModel(initialWallet: account.data, destinationWallet: destination)
             let vc = OrcaSwapV2.ViewController(viewModel: vm)
-            
+
             vc.doneHandler = { [weak self, weak rootViewController] in
                 rootViewController?.popToRootViewController(animated: true)
                 self?.result.send(.done)
@@ -266,6 +267,13 @@ class DetailAccountCoordinator: SmartCoordinator<DetailAccountCoordinatorResult>
                 guard let self = self else { return }
 
                 switch result {
+                case let .wormhole(pending):
+                    rootViewController.popToViewController(currentVC, animated: true)
+
+                    self.coordinate(to: TransactionDetailCoordinator(viewModel: .init(pendingTransaction: pending), presentingViewController: rootViewController))
+                        .sink(receiveValue: { _ in })
+                        .store(in: &self.subscriptions)
+
                 case let .sent(model):
                     rootViewController.popToViewController(currentVC, animated: true)
 

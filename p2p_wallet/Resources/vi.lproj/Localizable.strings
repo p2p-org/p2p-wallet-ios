@@ -1305,3 +1305,5 @@ You can try again, but your new transaction will be subject to the current rates
 "You can’t swap between the same token" = "Bạn không thể hoán đổi giữa cùng một mã thông báo";
 "Enter amount" = "Nhập số tiền";
 "To make a transfer to %@ you have to swap %@ to %@" = "Để chuyển sang %@, bạn phải hoán đổi %@ thành %@";
+"Cannot calculate fees. Try again" = "Không thể tính phí.  Thử lại";
+"Using Wormhole bridge" = "Sử dụng cầu Wormhole";

@@ -1,27 +1,14 @@
-import SwiftUI
 import KeyAppUI
+import SwiftUI
 import UIKit
 
 struct SendInputAmountField: UIViewRepresentable {
-    @Binding private var isFirstResponder: Bool
-    @Binding private var text: String
-    @Binding private var textColor: UIColor
-    @Binding private var countAfterDecimalPoint: Int
-    private var configuration = { (_: UITextField) in }
+    @Binding var text: String
+    @Binding var isFirstResponder: Bool
 
-    init(
-        text: Binding<String>,
-        isFirstResponder: Binding<Bool>,
-        countAfterDecimalPoint: Binding<Int>,
-        textColor: Binding<UIColor>,
-        configuration: @escaping (UITextField) -> Void = { _ in }
-    ) {
-        self.configuration = configuration
-        _text = text
-        _isFirstResponder = isFirstResponder
-        _textColor = textColor
-        _countAfterDecimalPoint = countAfterDecimalPoint
-    }
+    let textColor: UIColor
+    let countAfterDecimalPoint: Int
+    let configuration: (UITextField) -> Void
 
     func makeUIView(context: Context) -> UITextField {
         let view = UITextField()
@@ -51,18 +38,18 @@ struct SendInputAmountField: UIViewRepresentable {
     }
 
     func makeCoordinator() -> Coordinator {
-        Coordinator(text: $text, isFirstResponder: $isFirstResponder, countAfterDecimalPoint: $countAfterDecimalPoint)
+        Coordinator(text: $text, isFirstResponder: $isFirstResponder, countAfterDecimalPoint: countAfterDecimalPoint)
     }
 
     class Coordinator: NSObject, UITextFieldDelegate {
         @Binding var text: String
         @Binding var isFirstResponder: Bool
-        @Binding var countAfterDecimalPoint: Int
+        let countAfterDecimalPoint: Int
 
-        init(text: Binding<String>, isFirstResponder: Binding<Bool>, countAfterDecimalPoint: Binding<Int>) {
+        init(text: Binding<String>, isFirstResponder: Binding<Bool>, countAfterDecimalPoint: Int) {
             _text = text
             _isFirstResponder = isFirstResponder
-            _countAfterDecimalPoint = countAfterDecimalPoint
+            self.countAfterDecimalPoint = countAfterDecimalPoint
         }
 
         @objc func textViewDidChange(_ textField: UITextField) {
@@ -77,9 +64,11 @@ struct SendInputAmountField: UIViewRepresentable {
             isFirstResponder = false
         }
 
-        func textField(_ textField: UITextField, shouldChangeCharactersIn range: NSRange,
-                       replacementString string: String) -> Bool
-        {
+        func textField(
+            _ textField: UITextField,
+            shouldChangeCharactersIn range: NSRange,
+            replacementString string: String
+        ) -> Bool {
             if string == "\n", textField.returnKeyType == .done {
                 isFirstResponder = false
                 return false
@@ -113,7 +102,8 @@ struct SendInputAmountField: UIViewRepresentable {
 
             if (string.isEmpty || string.starts(with: "0"))
                 && updatedText.starts(with: "0\(decimalSeparator)")
-                && number == 0 {
+                && number == 0
+            {
                 // Allow to write 0,0000
                 return isNotMaxSymbolsAfterSeparator(text: updatedText, string: string)
             }

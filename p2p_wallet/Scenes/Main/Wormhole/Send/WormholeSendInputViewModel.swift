@@ -11,15 +11,24 @@ import KeyAppBusiness
 import KeyAppKitCore
 import Resolver
 import Send
+import SolanaSwift
 import Wormhole
 
 class WormholeSendInputViewModel: BaseViewModel, ObservableObject {
+    enum Action {
+        case openPickAccount
+        case openFees
+        case send(PendingTransaction)
+    }
+
     enum InputMode {
         case fiat
         case crypto
     }
 
-    let changeTokenPressed = PassthroughSubject<Void, Never>()
+    let action = PassthroughSubject<Action, Never>()
+
+    let solanaAccountsService: SolanaAccountsService
 
     let stateMachine: WormholeSendInputStateMachine
 
@@ -27,6 +36,9 @@ class WormholeSendInputViewModel: BaseViewModel, ObservableObject {
     var adapter: WormholeSendInputStateAdapter {
         .init(state: state)
     }
+
+    // Constants
+    let recipient: Recipient
 
     // Input
     @Published var input: String = ""
@@ -45,6 +57,9 @@ class WormholeSendInputViewModel: BaseViewModel, ObservableObject {
         wormholeService: WormholeService = Resolver.resolve(),
         solanaAccountsService: SolanaAccountsService = Resolver.resolve()
     ) {
+        self.recipient = recipient
+        self.solanaAccountsService = solanaAccountsService
+
         // Ensure user wallet is available
         guard let wallet = userWalletManager.wallet else {
             let state: WormholeSendInputState = .unauthorized
@@ -54,15 +69,7 @@ class WormholeSendInputViewModel: BaseViewModel, ObservableObject {
             return
         }
 
-        let supportedToken = SupportedToken.bridges.map(\.solAddress).compactMap { $0 }
-
-        var availableBridgeAccounts = solanaAccountsService.state.value.filter { account in
-            supportedToken.contains(account.data.token.address)
-        }
-
-        if let nativeWallet = solanaAccountsService.state.value.nativeWallet {
-            availableBridgeAccounts.append(nativeWallet)
-        }
+        let availableBridgeAccounts = Self.resolveSupportedSolanaAccounts(solanaAccountsService: solanaAccountsService)
 
         // Ensure at lease one avaiable wallet for bridging.
         guard let initialSolanaAccount = availableBridgeAccounts.first else {
@@ -80,7 +87,7 @@ class WormholeSendInputViewModel: BaseViewModel, ObservableObject {
         let state: WormholeSendInputState = .initializing(
             input: .init(
                 solanaAccount: initialSolanaAccount,
-                amount: 0,
+                amount: .init(amount: 0, token: initialSolanaAccount.data.token),
                 recipient: recipient.address,
                 feePayer: wallet.account.publicKey.base58EncodedString
             )
@@ -93,12 +100,21 @@ class WormholeSendInputViewModel: BaseViewModel, ObservableObject {
 
         super.init()
 
+        $isSliderOn
+            .sink { value in
+                guard value else { return }
+                Task { await self.send() }
+            }
+            .store(in: &subscriptions)
+
+        // Update state machine
         $input
+            .dropFirst()
             .debounce(for: 0.2, scheduler: DispatchQueue.main)
             .sink { input in
                 Task {
                     let input = input.replacingOccurrences(of: " ", with: "")
-                    await self.stateMachine.accept(action: .updateInput(amount: input))
+                    let _ = await self.stateMachine.accept(action: .updateInput(amount: input))
                 }
             }
             .store(in: &subscriptions)
@@ -115,89 +131,64 @@ class WormholeSendInputViewModel: BaseViewModel, ObservableObject {
             .weakAssign(to: \.state, on: self)
             .store(in: &subscriptions)
     }
+
+    func maxAction() {
+        let maxAvailableAmount: Decimal = adapter.inputAccount?.cryptoAmount.amount ?? 0
+        input = "\(maxAvailableAmount)"
+    }
+
+    func selectSolanaAccount(wallet: Wallet) {
+        let accounts = Self.resolveSupportedSolanaAccounts(solanaAccountsService: solanaAccountsService)
+
+        let selectedAccount = accounts.first { account in
+            account.data.mintAddress == wallet.mintAddress
+        }
+
+        guard let selectedAccount else { return }
+
+        Task { _ = await stateMachine.accept(action: .updateSolanaAccount(account: selectedAccount)) }
+    }
+
+    func send() async {
+        guard
+            case .ready = adapter.state,
+            let input = adapter.input,
+            let output = adapter.output
+        else {
+            return
+        }
+
+        showFinished = true
+
+        let rawTransaction = WormholeSendTransaction(
+            account: input.solanaAccount,
+            recipient: input.recipient,
+            amount: input.amount,
+            fees: output.fees
+        )
+
+        let transactionHandler: TransactionHandler = Resolver.resolve()
+        let index = transactionHandler.sendTransaction(rawTransaction)
+        let pendingTransaction = transactionHandler.getProcessingTransaction(index: index)
+
+        action.send(.send(pendingTransaction))
+    }
 }
 
-struct WormholeSendInputStateAdapter {
-    let cryptoFormatter: CryptoFormatter = .init()
-    let currencyFormatter: CurrencyFormatter = .init()
+extension WormholeSendInputViewModel {
+    static func resolveSupportedSolanaAccounts(
+        solanaAccountsService: SolanaAccountsService = Resolver.resolve()
+    ) -> [SolanaAccountsService.Account] {
+        let supportedToken = SupportedToken.bridges.map(\.solAddress).compactMap { $0 }
 
-    var state: WormholeSendInputState
-
-    var input: WormholeSendInputBase? {
-        switch state {
-        case let .initializing(input):
-            return input
-        case let .ready(input, output, alert):
-            return input
-        case let .calculating(newInput):
-            return newInput
-        case let .error(input, output, error):
-            return input
-        case .unauthorized, .initializingFailure:
-            return nil
-        }
-    }
-
-    var inputAccount: SolanaAccountsService.Account? {
-        return input?.solanaAccount
-    }
-
-    var selectedToken: SolanaToken {
-        inputAccount?.data.token ?? .nativeSolana
-    }
-
-    var inputAccountSkeleton: Bool {
-        inputAccount == nil
-    }
-
-    private var cryptoAmount: CryptoAmount {
-        guard let input = input else {
-            return .init(amount: 0, token: SolanaToken.nativeSolana)
+        var availableBridgeAccounts = solanaAccountsService.state.value.filter { account in
+            supportedToken.contains(account.data.token.address)
         }
 
-        return .init(amount: input.amount, token: input.solanaAccount.data.token)
-    }
-
-    var amountInFiatString: String {
-        guard
-            let price = input?.solanaAccount.price,
-            let currencyAmount = try? cryptoAmount.toFiatAmount(price: price)
-        else { return "" }
-
-        return currencyFormatter.string(amount: currencyAmount)
-    }
-
-    var fees: String {
-        switch state {
-        case let .initializing(input):
-            return ""
-        case let .ready(input, output, alert):
-            return "Fees: \(currencyFormatter.string(amount: output.fees.totalInFiat))"
-        case let .calculating(newInput):
-            return ""
-        case let .error(input, output, error):
-            if let output {
-                return "Fees: \(currencyFormatter.string(amount: output.fees.totalInFiat))"
-            } else {
-                return ""
-            }
-        case .unauthorized, .initializingFailure:
-            return ""
+        if let nativeWallet = solanaAccountsService.state.value.nativeWallet {
+            availableBridgeAccounts.append(nativeWallet)
         }
-    }
 
-    var feesLoading: Bool {
-        switch state {
-        case let .initializing(input):
-            return true
-        case let .ready(input, output, alert):
-            return false
-        case let .calculating(newInput):
-            return true
-        case let .error(input, output, error):
-            return false
-        case .unauthorized, .initializingFailure:
-            return false
-        }
+        return availableBridgeAccounts
     }
 }

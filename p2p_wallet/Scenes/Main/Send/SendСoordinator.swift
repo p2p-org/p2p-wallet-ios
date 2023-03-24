@@ -12,6 +12,7 @@ import SwiftUI
 
 enum SendResult {
     case sent(SendTransaction)
+    case wormhole(PendingTransaction)
     case cancelled
 }
 
@@ -119,6 +120,8 @@ class SendCoordinator: Coordinator<SendResult> {
                 switch result {
                 case let .sent(transaction):
                     self?.result.send(.sent(transaction))
+                case let .wormhole(transaction):
+                    self?.result.send(.wormhole(transaction))
                 case .cancelled:
                     break
                 }
@@ -132,7 +135,12 @@ class SendCoordinator: Coordinator<SendResult> {
                     to: WormholeSendInputCoordinator(recipient: $0, from: rootViewController)
                 )
             }
-            .sink { [weak self] _ in }
+            .sink { [weak self] result in
+                switch result {
+                case let .transaction(transaction):
+                    self?.result.send(.wormhole(transaction))
+                }
+            }
             .store(in: &subscriptions)
 
         vm.coordinator.scanQRPublisher

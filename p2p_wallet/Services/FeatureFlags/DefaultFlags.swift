@@ -13,13 +13,14 @@ func setupDefaultFlags() {
     defaultFlags = StaticFlagsFetcher(
         featureFlags: [
             FeatureFlag(feature: .newOnboardingFlow, enabled: true),
+            FeatureFlag(feature: .coinGeckoPriceProvider, enabled: true),
 
             // Onboarding testing
             FeatureFlag(feature: .mockedApiGateway, enabled: false),
             FeatureFlag(feature: .mockedTKeyFacade, enabled: false),
             FeatureFlag(feature: .mockedDeviceShare, enabled: false),
             FeatureFlag(feature: .simulatedSocialError, enabled: false),
-            
+
             // History
             FeatureFlag(feature: .historyServiceEnabled, enabled: true)
         ]

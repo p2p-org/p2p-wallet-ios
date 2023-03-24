@@ -92,6 +92,16 @@ struct RendableDetailPendingTransaction: RendableTransactionDetail {
             }
             
             return .single(url)
+            
+        case let transaction as WormholeSendTransaction:
+            if
+                let urlStr = transaction.account.data.token.logoURI,
+                let url = URL(string: urlStr)
+            {
+                return .single(url)
+            } else {
+                return .icon(.transactionSend)
+            }
         default:
             return .icon(.planet)
         }
@@ -110,6 +120,9 @@ struct RendableDetailPendingTransaction: RendableTransactionDetail {
             } else {
                 return .unchanged("")
             }
+        case let transaction as WormholeSendTransaction:
+            let value = CurrencyFormatter().string(amount: transaction.currencyAmount)
+            return .negative(value)
         default:
             return .unchanged("")
         }
@@ -125,6 +138,10 @@ struct RendableDetailPendingTransaction: RendableTransactionDetail {
             guard let value = CryptoFormatter().string(for: transaction.amountInCrypto) else {
                 return ""
             }
+            return "\(value)"
+            
+        case let transaction as WormholeSendTransaction:
+            let value = CryptoFormatter().string(amount: transaction.amount)
             return "\(value)"
         default:
             return ""
