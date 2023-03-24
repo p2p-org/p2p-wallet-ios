@@ -48,6 +48,9 @@ extension NewDerivableAccounts {
         init(phrases: [String]) {
             self.phrases = phrases
             accountsListViewModel = ListViewModel(phrases: phrases)
+            
+            super.init()
+            selectDerivableType(selectedDerivablePath.type)
         }
 
         struct CoordinatorIO {
@@ -88,6 +91,7 @@ extension NewDerivableAccounts.ViewModel: NewDrivableAccountsViewModelType {
     }
 
     func selectDerivableType(_ type: DerivablePath.DerivableType) {
+        selectedDerivablePath = DerivablePath(type: type, walletIndex: selectedDerivablePath.walletIndex, accountIndex: selectedDerivablePath.accountIndex)
         accountsListViewModel.cancelRequest()
         accountsListViewModel.setDerivableType(type)
         accountsListViewModel.reload()
