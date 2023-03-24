@@ -13,8 +13,6 @@ final class SendCreateLinkCoordinator: Coordinator<SendCreateLinkCoordinator.Res
     var execution: () async throws -> TransactionID
     private let navigationController: UINavigationController
     
-    private var sendCreateLinkVC: UIViewController!
-    
     // MARK: - Initializer
 
     init(
@@ -46,16 +44,16 @@ final class SendCreateLinkCoordinator: Coordinator<SendCreateLinkCoordinator.Res
                 }
             }
         }
-        sendCreateLinkVC = UIHostingControllerWithoutNavigation(rootView: view)
+        let sendCreateLinkVC = UIHostingControllerWithoutNavigation(rootView: view)
         navigationController.pushViewController(sendCreateLinkVC, animated: true)
         
         sendCreateLinkVC.deallocatedPublisher()
             .sink(receiveValue: { [weak self] _ in
-                self?.result.send(.normal)
+                self?.result.send(completion: .finished)
             })
             .store(in: &subscriptions)
         
-        return result.prefix(1).eraseToAnyPublisher()
+        return result.eraseToAnyPublisher()
     }
     
     // MARK: - Helper
@@ -72,13 +70,12 @@ final class SendCreateLinkCoordinator: Coordinator<SendCreateLinkCoordinator.Res
             }
         )
         let sendLinkCreatedVC = UIHostingControllerWithoutNavigation(rootView: view)
-//        navigationController.pushViewController(sendLinkCreatedVC, animated: true) // Not works in ios 16.4 (Dev beta). Don't know why??
-        sendCreateLinkVC.show(sendLinkCreatedVC, sender: nil)
+        navigationController.pushViewController(sendLinkCreatedVC, animated: true)
     }
     
     private func showShareView() {
         let av = UIActivityViewController(activityItems: [link], applicationActivities: nil)
-        sendCreateLinkVC.present(av, animated: true)
+        navigationController.present(av, animated: true)
     }
     
     private func showErrorView() {
@@ -86,8 +83,7 @@ final class SendCreateLinkCoordinator: Coordinator<SendCreateLinkCoordinator.Res
             result.send(.error)
         }
         let vc = UIHostingControllerWithoutNavigation(rootView: view)
-//        navigationController.pushViewController(vc, animated: true) // Not works in ios 16.4 (Dev beta). Don't know why??
-        sendCreateLinkVC.show(vc, sender: nil)
+        navigationController.pushViewController(vc, animated: true)
     }
 }
 

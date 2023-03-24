@@ -253,7 +253,7 @@ class SendCoordinator: Coordinator<SendResult> {
         }
         
         coordinate(to: coordinator)
-            .sinkAsync{ [weak self] result in
+            .sink(receiveValue: { [weak self] result  in
                 guard let self = self else { return }
                 switch result {
                 case .normal:
@@ -264,7 +264,7 @@ class SendCoordinator: Coordinator<SendResult> {
                     self.rootViewController.viewControllers = viewControllers
                     _ = self.rootViewController.popViewController(animated: true)
                 }
-            }
+            })
             .store(in: &subscriptions)
     }
 }

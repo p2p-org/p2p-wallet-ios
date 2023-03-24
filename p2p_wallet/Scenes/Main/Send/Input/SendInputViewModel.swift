@@ -504,7 +504,7 @@ private extension SendInputViewModel {
                         self.saveSendViaLinkTransaction()
                     }
                     
-                    return .fakeTransactionSignature(id: self.currentState.sendViaLinkSeed ?? UUID().uuidString)
+                    return .fakeTransactionSignature(id: UUID().uuidString)
                 }
                 #endif
                 
