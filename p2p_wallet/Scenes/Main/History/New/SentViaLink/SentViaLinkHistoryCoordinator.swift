@@ -47,7 +47,7 @@ final class SentViaLinkHistoryCoordinator: SmartCoordinator<Void> {
         let view = SentViaLinkTransactionDetailView(
             transactionPublisher: transactionPublisher,
             onShare: { [weak self] in
-                self?.showShareView()
+                self?.showShareView(link: .sendViaLinkPrefix + "/" + transaction.seed)
             },
             onClose: { [weak self] in
                 self?.transactionDetailVC.dismiss(animated: true)
@@ -72,7 +72,7 @@ final class SentViaLinkHistoryCoordinator: SmartCoordinator<Void> {
             .store(in: &subscriptions)
     }
     
-    private func showShareView() {
+    private func showShareView(link: String) {
         let av = UIActivityViewController(activityItems: [link], applicationActivities: nil)
         transactionDetailVC.present(av, animated: true)
     }
