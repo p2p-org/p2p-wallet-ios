@@ -27,7 +27,7 @@ class WormholeClaimViewModel: BaseViewModel, ObservableObject {
     }
 
     init(
-        account: EthereumAccountsService.Account,
+        account: EthereumAccount,
         ethereumAccountsService: EthereumAccountsService = Resolver.resolve(),
         wormholeAPI: WormholeService = Resolver.resolve(),
         notificationService: NotificationService = Resolver.resolve()

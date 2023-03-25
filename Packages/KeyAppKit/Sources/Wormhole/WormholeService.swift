@@ -6,7 +6,6 @@
 //
 
 import Foundation
-import KeyAppBusiness
 import KeyAppKitCore
 import SolanaSwift
 import Web3
@@ -42,7 +41,7 @@ public class WormholeService {
     }
 
     /// Method for get claiming bundle.
-    public func getBundle(account: EthereumAccountsService.Account) async throws -> WormholeBundle {
+    public func getBundle(account: EthereumAccount) async throws -> WormholeBundle {
         try await errorObservable.run {
             guard let ethereumKeypair, let solanaKeyPair else {
                 throw ServiceError.authorizationError

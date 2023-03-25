@@ -42,7 +42,7 @@ class WormholeClaimFeeViewModel: BaseViewModel, ObservableObject {
     }
 
     init(
-        account: EthereumAccountsService.Account,
+        account: EthereumAccount,
         bundle: AsyncValue<WormholeBundle?>,
         ethereumTokenService: EthereumTokensRepository = Resolver.resolve(),
         solanaTokenService: TokensRepository = Resolver.resolve()

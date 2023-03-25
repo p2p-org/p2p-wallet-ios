@@ -3,7 +3,7 @@
 // found in the LICENSE file.
 
 import Combine
-import KeyAppBusiness
+import KeyAppKitCore
 import Onboarding
 import Resolver
 import SolanaSwift

@@ -6,7 +6,7 @@
 //
 
 import Foundation
-import KeyAppBusiness
+import KeyAppKitCore
 import SwiftUI
 
 enum WormholeClaimCoordinatorResult {
@@ -14,9 +14,9 @@ enum WormholeClaimCoordinatorResult {
 }
 
 class WormholeClaimCoordinator: SmartCoordinator<WormholeClaimCoordinatorResult> {
-    let account: EthereumAccountsService.Account
+    let account: EthereumAccount
 
-    init(account: EthereumAccountsService.Account, presentation: SmartCoordinatorPresentation) {
+    init(account: EthereumAccount, presentation: SmartCoordinatorPresentation) {
         self.account = account
         super.init(presentation: presentation)
     }
