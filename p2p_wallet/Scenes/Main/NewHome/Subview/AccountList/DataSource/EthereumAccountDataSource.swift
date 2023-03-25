@@ -6,18 +6,19 @@
 //
 
 import Foundation
-import KeyAppBusiness
+import KeyAppKitCore
+import Web3
 import Wormhole
 
 class EthereumAccountsDataSource: ObservableObject {
     struct Account {
-        let account: EthereumAccountsService.Account
+        let account: EthereumAccount
         let wormholeBundle: WormholeBundleStatus?
     }
 
     // This function aggregates Ethereum accounts with their corresponding Wormhole bundle status
     static func aggregate(
-        accounts: [EthereumAccountsService.Account],
+        accounts: [EthereumAccount],
         wormholeBundlesStatus: [WormholeBundleStatus]
     ) -> [Account] {
         accounts.map { account in

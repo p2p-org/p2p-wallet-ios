@@ -12,6 +12,8 @@ import SolanaPricesAPIs
 import Web3
 
 public final class EthereumAccountsService: NSObject, AccountsService, ObservableObject {
+    public typealias Account = EthereumAccount
+    
     private var subscriptions = [AnyCancellable]()
 
     private let asyncValue: AsyncValue<[Account]>
@@ -143,43 +145,6 @@ public final class EthereumAccountsService: NSObject, AccountsService, Observabl
 }
 
 extension EthereumAccountsService {
-    public struct Account: Equatable {
-        public let address: String
-        public let token: EthereumToken
-        public let balance: BigUInt
-        public fileprivate(set) var price: TokenPrice?
-
-        internal init(address: String, token: EthereumToken, balance: BigUInt, price: TokenPrice? = nil) {
-            self.address = address
-            self.token = token
-            self.balance = balance
-            self.price = price
-        }
-
-        /// Convert balance into user-friendly format by using decimals.
-        public var representedBalance: CryptoAmount {
-            return .init(
-                amount: balance,
-                token: token
-            )
-        }
-
-        /// Balance in fiat
-        public var balanceInFiat: CurrencyAmount? {
-            guard
-                let price,
-                let rate = price.value
-            else {
-                return nil
-            }
-
-            return .init(
-                value: representedBalance.amount * rate,
-                currencyCode: price.currencyCode
-            )
-        }
-    }
-
     enum Error: Swift.Error {
         case invalidEthereumAddress
     }

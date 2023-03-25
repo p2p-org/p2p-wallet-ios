@@ -6,7 +6,6 @@
 //
 
 import Foundation
-import KeyAppKitCore
 import Web3
 
 /// Ethereum token structure
@@ -26,15 +25,6 @@ public struct EthereumToken: Hashable {
     /// Token contract type
     public var contractType: ContractType
 
-    /// Erc-20 Token
-    internal init(address: EthereumAddress, metadata: EthereumTokenMetadata) {
-        self.name = metadata.name ?? ""
-        self.symbol = metadata.symbol ?? ""
-        self.decimals = metadata.decimals ?? 1
-        self.logo = metadata.logo
-        self.contractType = .erc20(contract: address)
-    }
-
     /// Native token
     public init() {
         self.name = "Ethereum"
@@ -42,6 +32,14 @@ public struct EthereumToken: Hashable {
         self.decimals = 18
         self.logo = URL(string: "https://assets.coingecko.com/coins/images/279/large/ethereum.png?1595348880")
         self.contractType = .native
+    }
+
+    public init(name: String, symbol: String, decimals: UInt8, logo: URL?, contractType: ContractType) {
+        self.name = name
+        self.symbol = symbol
+        self.decimals = decimals
+        self.logo = logo
+        self.contractType = contractType
     }
 }
 

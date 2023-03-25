@@ -10,7 +10,7 @@ import KeyAppBusiness
 import KeyAppKitCore
 
 struct RendableEthereumAccount: RendableAccount {
-    let account: EthereumAccountsService.Account
+    let account: EthereumAccount
     
     var id: String {
         switch account.token.contractType {

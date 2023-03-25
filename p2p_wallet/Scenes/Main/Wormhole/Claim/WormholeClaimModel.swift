@@ -43,7 +43,7 @@ struct WormholeClaimMockModel: WormholeClaimModel {
 }
 
 struct WormholeClaimEthereumModel: WormholeClaimModel {
-    let account: EthereumAccountsService.Account
+    let account: EthereumAccount
     let bundle: AsyncValueState<WormholeBundle?>
 
     var icon: URL? {

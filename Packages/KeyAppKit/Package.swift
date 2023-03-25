@@ -333,6 +333,9 @@ let package = Package(
             dependencies: [
                 .product(name: "SolanaSwift", package: "solana-swift"),
                 .product(name: "BigInt", package: "BigInt"),
+                .product(name: "Web3", package: "Web3.swift"),
+                .product(name: "Web3ContractABI", package: "Web3.swift"),
+                .product(name: "WalletCore", package: "wallet-core"),
             ]
         ),
     ]

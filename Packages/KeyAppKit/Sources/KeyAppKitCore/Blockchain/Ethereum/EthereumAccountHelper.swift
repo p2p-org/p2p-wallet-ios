@@ -7,7 +7,7 @@
 
 import Foundation
 
-public extension Array where Element == EthereumAccountsService.Account {
+public extension Array where Element == EthereumAccount {
     /// Helper method for quickly extraction native account.
     var native: Element? {
         first {

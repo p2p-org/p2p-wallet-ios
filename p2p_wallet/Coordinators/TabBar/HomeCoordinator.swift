@@ -8,7 +8,7 @@
 import AnalyticsManager
 import Combine
 import Foundation
-import KeyAppBusiness
+import KeyAppKitCore
 import Resolver
 import SolanaSwift
 import SwiftUI
@@ -22,8 +22,8 @@ enum HomeNavigation: Equatable {
     case swap
     case cashOut
     case earn
-    case solanaAccount(SolanaAccountsService.Account)
-    case claim(EthereumAccountsService.Account)
+    case solanaAccount(SolanaAccount)
+    case claim(EthereumAccount)
     case actions([WalletActionType])
     // HomeEmpty
     case topUpCoin(Token)

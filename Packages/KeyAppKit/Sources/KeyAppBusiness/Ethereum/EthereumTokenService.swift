@@ -7,6 +7,7 @@
 
 import Cache
 import Foundation
+import KeyAppKitCore
 import Web3
 
 /// The repository for fetching token metadata and cache for later usage.
@@ -40,4 +41,17 @@ public final class EthereumTokensRepository {
 
 extension EthereumTokensRepository {
     enum Error: Swift.Error {}
+}
+
+extension EthereumToken {
+    /// Erc-20 Token
+    init(address: EthereumAddress, metadata: EthereumTokenMetadata) {
+        self.init(
+            name: metadata.name ?? "",
+            symbol: metadata.symbol ?? "",
+            decimals: metadata.decimals ?? 1,
+            logo: metadata.logo,
+            contractType: .erc20(contract: address)
+        )
+    }
 }

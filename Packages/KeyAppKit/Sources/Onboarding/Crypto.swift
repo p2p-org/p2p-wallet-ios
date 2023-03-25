@@ -23,8 +23,7 @@ internal enum Crypto {
     }
 
     internal static func extractSymmetricKey(seedPhrase: String) throws -> Data {
-        Data(try extractSeedPhrase(phrase: seedPhrase, path: "m/44'/101'/0'/0'")
-            .prefix(32))
+        try extractOnboardingSeedPhrase(phrase: seedPhrase, path: "m/44'/101'/0'/0'")
     }
 
     static func encryptMetadata(seedPhrase: String, data: Data) throws -> EncryptedMetadata {

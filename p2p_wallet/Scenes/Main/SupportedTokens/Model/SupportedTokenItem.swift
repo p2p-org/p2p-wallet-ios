@@ -6,7 +6,7 @@
 //
 
 import Foundation
-import KeyAppBusiness
+import KeyAppKitCore
 import SolanaSwift
 
 enum SupportedTokenItemIcon {
@@ -45,7 +45,7 @@ struct SupportedTokenItem: Identifiable, Hashable {
             .sorted()
     }
 
-    init(solana token: SolanaSwift.Token) {
+    init(solana token: SolanaToken) {
         if
             let uri = token.logoURI,
             let url = URL(string: uri)
