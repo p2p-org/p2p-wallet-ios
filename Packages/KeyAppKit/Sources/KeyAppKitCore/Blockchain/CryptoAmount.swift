@@ -13,7 +13,7 @@ public struct CryptoAmount: Hashable {
     public let value: BigUInt
 
     public var amount: Decimal {
-        BigUInt.divide(value, BigUInt(10).power(Int(decimals)))
+        BigUInt.toDecimal(value, exponent: -Int(decimals))
     }
 
     public let symbol: String
@@ -23,10 +23,10 @@ public struct CryptoAmount: Hashable {
     public let smartContract: String
 
     public init(amount: BigUInt, token: AnyToken) {
-        self.value = amount
-        self.symbol = token.symbol
-        self.decimals = token.decimals
-        self.smartContract = token.tokenPrimaryKey
+        value = amount
+        symbol = token.symbol
+        decimals = token.decimals
+        smartContract = token.tokenPrimaryKey
     }
 
     public init(uint64 amount: UInt64, token: AnyToken) {
@@ -48,6 +48,8 @@ public struct CryptoAmount: Hashable {
     }
 
     public init?(floatString amount: String, token: AnyToken) {
+        if amount.isEmpty { return nil }
+
         let parts = amount.components(separatedBy: ".")
 
         if parts.count == 1 {
@@ -69,7 +71,7 @@ public struct CryptoAmount: Hashable {
         let integerPart = parts.first!
         var floatingPart = parts.last!
 
-        var zeroPaddingCount = Int(token.decimals) - floatingPart.count
+        let zeroPaddingCount = Int(token.decimals) - floatingPart.count
         var zeroPaddingStr = ""
 
         if zeroPaddingCount > 0 {
@@ -110,5 +112,20 @@ extension CryptoAmount: Comparable {
         }
 
         return lhs.value < rhs.value
+    }
+}
+
+extension BigUInt {
+//    static func divide(_ lhs: BigUInt, _ rhs: BigUInt) -> Decimal {
+//        let (quotient, remainder) = lhs.quotientAndRemainder(dividingBy: rhs)
+//        return Decimal(string: String(quotient))! + Decimal(string: String(remainder))! / Decimal(string:
+//        String(rhs))!
+//    }
+
+    static func toDecimal(_ value: BigUInt, exponent: Int) -> Decimal {
+        guard let value = Decimal(string: String(value)) else {
+            return 0.0
+        }
+        return Decimal(sign: .plus, exponent: exponent, significand: value)
     }
 }

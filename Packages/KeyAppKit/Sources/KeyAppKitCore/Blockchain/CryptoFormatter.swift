@@ -23,7 +23,7 @@ public class CryptoFormatter: Formatter {
     }
 
     @available(*, unavailable)
-    public required init?(coder: NSCoder) {
+    public required init?(coder _: NSCoder) {
         fatalError()
     }
 
@@ -65,9 +65,3 @@ public class CryptoFormatter: Formatter {
     }
 }
 
-extension BigUInt {
-    static func divide(_ lhs: BigUInt, _ rhs: BigUInt) -> Decimal {
-        let (quotient, remainder) = lhs.quotientAndRemainder(dividingBy: rhs)
-        return Decimal(string: String(quotient))! + Decimal(string: String(remainder))! / Decimal(string: String(rhs))!
-    }
-}

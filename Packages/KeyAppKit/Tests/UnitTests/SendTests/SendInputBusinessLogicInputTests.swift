@@ -12,6 +12,7 @@ import XCTest
 class SendInputBusinessLogicInputTests: XCTestCase {
     let defaultUserWalletState: UserWalletEnvironments = .init(
         wallets: [.nativeSolana(pubkey: "8JmwhqewSppZ2sDNqGZoKu3bWh8wUKZP8mdbP4M1XQx1", lamport: 30_000_000)],
+        ethereumAccount: nil,
         exchangeRate: ["SOL": .init(value: 12.5)],
         tokens: [.nativeSolana]
     )

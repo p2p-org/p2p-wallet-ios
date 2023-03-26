@@ -338,6 +338,12 @@ let package = Package(
                 .product(name: "WalletCore", package: "wallet-core"),
             ]
         ),
+
+        .testTarget(
+            name: "KeyAppKitCoreTests",
+            dependencies: ["KeyAppKitCore"],
+            path: "Tests/UnitTests/KeyAppKitCoreTests"
+        ),
     ]
 )
 
