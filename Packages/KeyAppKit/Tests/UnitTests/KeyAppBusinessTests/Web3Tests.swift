@@ -1,4 +1,5 @@
 @testable import KeyAppBusiness
+import Web3
 import Web3ContractABI
 import XCTest
 

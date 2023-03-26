@@ -3,10 +3,11 @@
 // found in the LICENSE file.
 
 import Foundation
+import KeyAppKitCore
 import NameService
+@testable import Send
 import SolanaSwift
 import XCTest
-@testable import Send
 
 class RecipientSearchUsernameTests: XCTestCase {
     let defaultInitialWalletEnvs: UserWalletEnvironments = .init(
@@ -27,6 +28,7 @@ class RecipientSearchUsernameTests: XCTestCase {
                 token: .usdt
             ),
         ],
+        ethereumAccount: nil,
         exchangeRate: [:],
         tokens: [.nativeSolana, .usdc, .usdt]
     )

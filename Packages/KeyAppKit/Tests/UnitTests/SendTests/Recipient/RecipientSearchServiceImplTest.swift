@@ -27,6 +27,7 @@ class RecipientSearchServiceImplTest: XCTestCase {
                 token: .usdt
             ),
         ],
+        ethereumAccount: nil,
         exchangeRate: [:],
         tokens: [.nativeSolana, .usdc, .usdt]
     )
@@ -291,6 +292,7 @@ class RecipientSearchServiceImplTest: XCTestCase {
                     token: .usdt
                 ),
             ],
+            ethereumAccount: nil,
             exchangeRate: [:],
             tokens: [.nativeSolana, .usdc, .usdt]
         )
@@ -369,6 +371,7 @@ class RecipientSearchServiceImplTest: XCTestCase {
                     token: .usdt
                 ),
             ],
+            ethereumAccount: nil,
             exchangeRate: [:],
             tokens: [.nativeSolana, .usdc, .usdt]
         )
