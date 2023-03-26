@@ -55,7 +55,10 @@ public class CryptoFormatter: Formatter {
         formatter.groupingSeparator = " "
         formatter.maximumFractionDigits = Int(amount.decimals)
 
-        var formattedAmount = formatter.string(for: amount.amount) ?? "0"
+        let convertedValue = Decimal(string: String(amount.amount))
+        guard var formattedAmount = formatter.string(for: convertedValue) else {
+            return nil
+        }
 
         if !prefix.isEmpty {
             formattedAmount = prefix + " \(formattedAmount)"
@@ -64,4 +67,3 @@ public class CryptoFormatter: Formatter {
         return "\(formattedAmount) \(amount.symbol)"
     }
 }
-

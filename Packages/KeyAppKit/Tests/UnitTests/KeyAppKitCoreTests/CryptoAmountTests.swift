@@ -67,7 +67,7 @@ final class CryptoAmountTests: XCTestCase {
         XCTAssertNil(amount)
     }
 
-    func testMegalargeString() throws {
+    func testSuperLargeString() throws {
         let amountInput = "123456789123456789"
         let token = EthereumToken(name: "Megacoin", symbol: "MGC", decimals: 255, logo: nil, contractType: .native)
         let amount = CryptoAmount(floatString: amountInput, token: token)

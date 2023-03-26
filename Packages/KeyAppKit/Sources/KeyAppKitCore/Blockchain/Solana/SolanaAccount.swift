@@ -39,6 +39,6 @@ public struct SolanaAccount: Identifiable, Equatable {
     @available(*, deprecated, message: "Migrate to amountInFiat")
     public var amountInFiatDouble: Double {
         guard let amountInFiat else { return 0.0 }
-        return NSDecimalNumber(decimal: amountInFiat.value).doubleValue
+        return Double(amountInFiat.value.description) ?? 0.0
     }
 }

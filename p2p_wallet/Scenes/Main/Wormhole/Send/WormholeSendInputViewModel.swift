@@ -133,8 +133,8 @@ class WormholeSendInputViewModel: BaseViewModel, ObservableObject {
     }
 
     func maxAction() {
-        let maxAvailableAmount: Decimal = adapter.inputAccount?.cryptoAmount.amount ?? 0
-        input = "\(maxAvailableAmount)"
+        let maxAvailableAmount = adapter.inputAccount?.cryptoAmount.amount ?? 0
+        input = String(maxAvailableAmount)
     }
 
     func selectSolanaAccount(wallet: Wallet) {

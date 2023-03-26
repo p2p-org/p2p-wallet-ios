@@ -122,7 +122,7 @@ struct SupportedTokensView_Previews: PreviewProvider {
                         name: "USD Coin",
                         symbol: "USDC",
                         availableNetwork: [.solana]
-                    )
+                    ),
                 ]
             )
         )

@@ -5,6 +5,7 @@
 //  Created by Giang Long Tran on 21.03.2023.
 //
 
+import BigDecimal
 import Foundation
 import KeyAppKitCore
 
@@ -29,16 +30,16 @@ public struct TokenAmount: Codable, Hashable {
         self.usdAmount = usdAmount
         self.chain = chain
         self.contract = contract
-        self.token = try WormholeToken(chain: chain, token: contract)
+        token = try WormholeToken(chain: chain, token: contract)
     }
 
     public init(from decoder: Decoder) throws {
         let container = try decoder.container(keyedBy: CodingKeys.self)
-        self.amount = try container.decode(String.self, forKey: .amount)
-        self.usdAmount = try container.decode(String.self, forKey: .usdAmount)
-        self.chain = try container.decode(String.self, forKey: .chain)
-        self.contract = try container.decodeIfPresent(String.self, forKey: .contract)
-        self.token = try WormholeToken(chain: chain, token: contract)
+        amount = try container.decode(String.self, forKey: .amount)
+        usdAmount = try container.decode(String.self, forKey: .usdAmount)
+        chain = try container.decode(String.self, forKey: .chain)
+        contract = try container.decodeIfPresent(String.self, forKey: .contract)
+        token = try WormholeToken(chain: chain, token: contract)
     }
 
     public func encode(to encoder: Encoder) throws {
@@ -50,8 +51,8 @@ public struct TokenAmount: Codable, Hashable {
     }
 }
 
-extension TokenAmount: CurrentyConverable {
+extension TokenAmount: CurrencyConvertible {
     public var asCurrencyAmount: CurrencyAmount {
-        .init(usd: Decimal(string: usdAmount) ?? 0)
+        .init(usdStr: usdAmount)
     }
 }

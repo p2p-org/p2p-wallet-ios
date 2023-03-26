@@ -17,4 +17,5 @@ public enum CodingError: Error {
 
 public enum ConvertError: Error {
     case invalidPriceForToken(expected: String, actual: String)
+    case enormousValue
 }
