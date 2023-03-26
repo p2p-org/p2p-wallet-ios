@@ -86,7 +86,7 @@ struct WormholeClaimView: View {
                         .foregroundColor(Color(Asset.Colors.mountain.color))
                         .frame(width: 20, height: 20)
                 }
-                .disabled(viewModel.model.claimButtonEnable)
+                .disabled(!viewModel.model.claimButtonEnable)
             }
             .padding(.horizontal, 16)
             .padding(.vertical, 14)
@@ -102,7 +102,7 @@ struct WormholeClaimView: View {
             TextButtonView(title: viewModel.model.claimButtonTitle, style: .primaryWhite, size: .large) {
                 viewModel.claim()
             }
-            .disabled(viewModel.model.claimButtonEnable)
+            .disabled(!viewModel.model.claimButtonEnable)
             .frame(height: TextButton.Size.large.height)
         }
         .padding(.horizontal, 16)
