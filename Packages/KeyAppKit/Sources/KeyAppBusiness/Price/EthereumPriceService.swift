@@ -22,7 +22,7 @@ public class EthereumPriceService {
 
     public init(api: CoinGeckoPricesAPI, lifetime: TimeInterval = 60 * 15) {
         self.api = api
-        self.cache = LongTermCache(entryLifetime: lifetime, maximumEntryCount: 999)
+        cache = LongTermCache(entryLifetime: lifetime, maximumEntryCount: 999)
     }
 
     public func getEthereumPrice(fiat: String) async throws -> TokenPrice {
@@ -49,7 +49,11 @@ public class EthereumPriceService {
         }
         .compactMap { $0 }
 
-        let result = try await api.getSimpleTokenPrice(platform: "ethereum", contractAddresses: contractAddresses, fiat: ["usd"])
+        let result = try await api.getSimpleTokenPrice(
+            platform: "ethereum",
+            contractAddresses: contractAddresses,
+            fiat: ["usd"]
+        )
 
         return Dictionary(
             tokens.map { token in
@@ -58,7 +62,7 @@ public class EthereumPriceService {
                     let value = result[address.hex(eip55: true)]?[fiat]
                     return (token, .init(currencyCode: fiat.uppercased(), value: value, token: token))
                 default:
-                    return (token, .init(currencyCode: fiat.uppercased(), value: nil, token: token))
+                    return (token, .init(currencyCode: fiat.uppercased(), value: Decimal(0.0), token: token))
                 }
             },
             uniquingKeysWith: { _, last in last }

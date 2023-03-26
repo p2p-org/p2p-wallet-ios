@@ -44,16 +44,16 @@ class WormholeClaimFeeViewModel: BaseViewModel, ObservableObject {
     init(
         account: EthereumAccount,
         bundle: AsyncValue<WormholeBundle?>,
-        ethereumTokenService: EthereumTokensRepository = Resolver.resolve(),
-        solanaTokenService: TokensRepository = Resolver.resolve()
+        ethereumTokenService _: EthereumTokensRepository = Resolver.resolve(),
+        solanaTokenService _: TokensRepository = Resolver.resolve()
     ) {
         let cryptoFormatter = CryptoFormatter()
         let currencyFormatter = CurrencyFormatter()
 
-        self.receive = nil
-        self.networkFee = nil
-        self.accountCreationFee = nil
-        self.wormholeBridgeAndTrxFee = nil
+        receive = nil
+        networkFee = nil
+        accountCreationFee = nil
+        wormholeBridgeAndTrxFee = nil
 
         super.init()
 
@@ -75,7 +75,7 @@ class WormholeClaimFeeViewModel: BaseViewModel, ObservableObject {
                     token: account.token
                 )
 
-                let fiatAmount = CurrencyAmount(usd: Decimal(string: bundle.resultAmount.usdAmount) ?? 0)
+                let fiatAmount = CurrencyAmount(usdStr: bundle.resultAmount.usdAmount)
 
                 self.receive = (
                     cryptoFormatter.string(amount: cryptoAmount),

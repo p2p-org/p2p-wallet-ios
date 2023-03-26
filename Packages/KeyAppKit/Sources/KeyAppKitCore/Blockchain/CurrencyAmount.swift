@@ -5,26 +5,33 @@
 //  Created by Giang Long Tran on 24.03.2023.
 //
 
+import BigDecimal
 import Foundation
 
 /// Amount in fiat struct
 public struct CurrencyAmount: Hashable {
     /// Value
-    public let value: Decimal
-    
+    public let value: BigDecimal
+
     /// ISO 4217 Currency code
     public let currencyCode: String
 
-    /// Initialize amount in specific ``currencyCode``
-    public init(value: Decimal, currencyCode: String) {
+    /// Initialise amount in specific ``currencyCode``
+    public init(value: BigDecimal, currencyCode: String) {
         self.value = value
         self.currencyCode = currencyCode
     }
 
-    /// Usd amount
-    public init(usd: Decimal) {
-        self.value = usd
-        self.currencyCode = "USD"
+    /// USD amount
+    public init(usd: BigDecimal) {
+        value = usd
+        currencyCode = "USD"
+    }
+
+    /// USD amount
+    public init(usdStr: String) {
+        value = (try? BigDecimal(fromString: usdStr)) ?? 0.0
+        currencyCode = "USD"
     }
 
     /// Zero value in usd
@@ -32,7 +39,7 @@ public struct CurrencyAmount: Hashable {
 }
 
 public extension CurrencyAmount {
-    /// Additonal operation. Return left side if their ``currencyCode`` is different
+    /// Additional operation. Return left side if their ``currencyCode`` is different
     static func + (lhs: Self, rhs: Self) -> Self {
         guard lhs.currencyCode == rhs.currencyCode else {
             return lhs

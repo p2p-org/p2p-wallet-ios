@@ -5,6 +5,7 @@
 //  Created by Giang Long Tran on 24.03.2023.
 //
 
+import BigDecimal
 import BigInt
 import Foundation
 
@@ -12,8 +13,8 @@ import Foundation
 public struct CryptoAmount: Hashable {
     public let value: BigUInt
 
-    public var amount: Decimal {
-        BigUInt.toDecimal(value, exponent: -Int(decimals))
+    public var amount: BigDecimal {
+        BigDecimal(integerValue: BigInt(value), scale: Int(decimals))
     }
 
     public let symbol: String
@@ -116,15 +117,9 @@ extension CryptoAmount: Comparable {
 }
 
 extension BigUInt {
-//    static func divide(_ lhs: BigUInt, _ rhs: BigUInt) -> Decimal {
-//        let (quotient, remainder) = lhs.quotientAndRemainder(dividingBy: rhs)
-//        return Decimal(string: String(quotient))! + Decimal(string: String(remainder))! / Decimal(string:
-//        String(rhs))!
-//    }
-
-    static func toDecimal(_ value: BigUInt, exponent: Int) -> Decimal {
+    static func toDecimal(_ value: BigUInt, exponent: Int) throws -> Decimal {
         guard let value = Decimal(string: String(value)) else {
-            return 0.0
+            throw ConvertError.enormousValue
         }
         return Decimal(sign: .plus, exponent: exponent, significand: value)
     }

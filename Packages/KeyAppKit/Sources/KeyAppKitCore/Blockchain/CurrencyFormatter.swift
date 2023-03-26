@@ -8,7 +8,7 @@
 import Foundation
 
 /// Helper protocol for quickly converting to ``CurrencyAmount``.
-public protocol CurrentyConverable {
+public protocol CurrencyConvertible {
     var asCurrencyAmount: CurrencyAmount { get }
 }
 
@@ -18,14 +18,14 @@ public class CurrencyFormatter: Formatter {
         string(for: amount) ?? defaultValue
     }
 
-    public func string(amount: CurrentyConverable, defaultValue: String = "N/A") -> String {
+    public func string(amount: CurrencyConvertible, defaultValue: String = "N/A") -> String {
         string(for: amount) ?? defaultValue
     }
 
     override public func string(for obj: Any?) -> String? {
         let amount: CurrencyAmount?
 
-        if let obj = obj as? CurrentyConverable {
+        if let obj = obj as? CurrencyConvertible {
             amount = obj.asCurrencyAmount
         } else if let obj = obj as? CurrencyAmount {
             amount = obj
@@ -51,7 +51,8 @@ public class CurrencyFormatter: Formatter {
         formatter.currencyDecimalSeparator = "."
         formatter.currencyGroupingSeparator = " "
 
-        let value: String? = formatter.string(for: amount.value)
+        let decimalAmount = Decimal(string: String(amount.value))
+        let value: String? = formatter.string(for: decimalAmount)
         return value
     }
 }
