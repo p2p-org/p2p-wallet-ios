@@ -9,11 +9,13 @@ import SwiftUI
 import Combine
 import KeyAppUI
 import Resolver
+import Send
 
 struct SentViaLinkTransactionDetailView: View {
     // MARK: - Dependencies
 
     @Injected private var notificationService: NotificationService
+    @Injected private var sendViaLinkDataService: SendViaLinkDataService
     
     // MARK: - Properties
     
@@ -22,6 +24,17 @@ struct SentViaLinkTransactionDetailView: View {
     
     let onShare: () -> Void
     let onClose: () -> Void
+    
+    // MARK: - Computed properties
+
+    var link: String? {
+        guard let seed = transaction?.seed,
+              let link = sendViaLinkDataService.createURL(givenSeed: seed)?.absoluteString
+        else {
+            return nil
+        }
+        return link
+    }
     
     // MARK: - Body
 
@@ -97,7 +110,7 @@ struct SentViaLinkTransactionDetailView: View {
     private var linksInfo: some View {
         HStack {
             VStack(alignment: .leading, spacing: 4) {
-                Text(String.sendViaLinkPrefix + "/" + (transaction?.seed ?? ""))
+                Text(link)
                     .fontWeight(.semibold)
                     .apply(style: .text3)
                 Text(L10n.uniqueOneTimeLinkWorksOnceOnly)
@@ -108,11 +121,8 @@ struct SentViaLinkTransactionDetailView: View {
             Spacer()
             
             Button {
-                guard let seed = transaction?.seed else {
-                    return
-                }
                 let pasteboard = UIPasteboard.general
-                pasteboard.string = String.sendViaLinkPrefix + "/" + seed
+                pasteboard.string = link
                 notificationService.showInAppNotification(.done(L10n.copiedToClipboard))
             } label: {
                 Image(uiImage: .copyFill)

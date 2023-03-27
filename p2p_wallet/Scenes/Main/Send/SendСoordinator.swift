@@ -26,6 +26,7 @@ class SendCoordinator: Coordinator<SendResult> {
     // MARK: - Dependencies
 
     @Injected var walletsRepository: WalletsRepository
+    @Injected private var sendViaLinkDataService: SendViaLinkDataService
 
     // MARK: - Properties
 
@@ -151,10 +152,10 @@ class SendCoordinator: Coordinator<SendResult> {
             }).store(in: &subscriptions)
         
         vm.coordinator.sendViaLinkPublisher
-            .sinkAsync { [weak self] seed in
+            .sinkAsync { [weak self] in
                 guard let self else { return }
                 self.rootViewController.view.showIndetermineHud()
-                try? await self.startSendViaLinkFlow(seed: seed)
+                try? await self.startSendViaLinkFlow()
                 self.rootViewController.view.hideHud()
             }
             .store(in: &subscriptions)
@@ -185,15 +186,14 @@ class SendCoordinator: Coordinator<SendResult> {
             .store(in: &subscriptions)
     }
     
-    private func startSendViaLinkFlow(seed: String) async throws {
+    private func startSendViaLinkFlow() async throws {
         // create recipient
-        let keypair = try await KeyPair(
-            seed: seed,
-            salt: .secretConfig("SEND_VIA_LINK_SALT")!,
-            passphrase: "",
-            network: .mainnetBeta,
-            derivablePath: .default
-        )
+        guard let url = sendViaLinkDataService.createURL(givenSeed: nil),
+              let keypair = try await sendViaLinkDataService.generateKeyPair(url: url),
+              let seed = sendViaLinkDataService.getSeedFromURL(url)
+        else {
+            return
+        }
         
         let recipient = Recipient(
             address: keypair.publicKey.base58EncodedString,

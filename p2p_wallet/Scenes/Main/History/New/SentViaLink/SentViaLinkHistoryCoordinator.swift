@@ -1,6 +1,8 @@
 import Foundation
 import KeyAppUI
 import Combine
+import Resolver
+import Send
 
 final class SentViaLinkHistoryCoordinator: SmartCoordinator<Void> {
     // MARK: - Properties
@@ -38,6 +40,11 @@ final class SentViaLinkHistoryCoordinator: SmartCoordinator<Void> {
     // MARK: - Helpers
 
     private func openSendViaLinkTransactionDetail(transaction: SendViaLinkTransactionInfo) {
+        guard let url = Resolver.resolve(SendViaLinkDataService.self).createURL(givenSeed: transaction.seed)
+        else {
+            return
+        }
+        
         // get publisher
         let transactionPublisher = transactionsPublisher
             .compactMap { $0.first(where: {$0.seed == transaction.seed} ) }
@@ -47,7 +54,7 @@ final class SentViaLinkHistoryCoordinator: SmartCoordinator<Void> {
         let view = SentViaLinkTransactionDetailView(
             transactionPublisher: transactionPublisher,
             onShare: { [weak self] in
-                self?.showShareView(link: .sendViaLinkPrefix + "/" + transaction.seed)
+                self?.showShareView(link: url.absoluteString)
             },
             onClose: { [weak self] in
                 self?.transactionDetailVC.dismiss(animated: true)

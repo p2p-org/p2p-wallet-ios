@@ -198,11 +198,11 @@ struct SendInputView: View {
     var debugView: some View {
         Group {
             if let link = viewModel.currentState.sendViaLinkSeed {
-                Text("\(.sendViaLinkPrefix)/\(link) (tap to copy)")
+                Text("\(viewModel.getSendViaLinkURL() ?? "") (tap to copy)")
                     .apply(style: .label2)
                     .foregroundColor(.red)
                     .onTapGesture {
-                        UIPasteboard.general.string = "\(String.sendViaLinkPrefix)/\(link)"
+                        UIPasteboard.general.string = viewModel.getSendViaLinkURL()
                     }
                 Text("\(viewModel.currentState.recipient.address) (tap to copy)")
                     .apply(style: .label2)

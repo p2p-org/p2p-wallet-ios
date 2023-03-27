@@ -58,10 +58,6 @@ extension String {
     static func secretConfig(_ key: String) -> String? {
         Bundle.main.infoDictionary?[key] as? String
     }
-    
-    static var sendViaLinkPrefix: String {
-        #"https://t.key.app"#
-    }
 }
 
 extension String {
@@ -230,13 +226,5 @@ extension String {
     
     static func fakeTransactionSignature(id: String) -> String {
         fakeTransactionSignaturePrefix + "<\(id)>"
-    }
-}
-
-// MARK: - SendViaLink
-extension String {
-    static func generateSendViaLinkSeed() -> String {
-        let asciiCharacters = #"!$'()*+,-.0123456789@ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz~"#
-        return String((0..<16).map{ _ in asciiCharacters.randomElement()! })
     }
 }
