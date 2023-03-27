@@ -17,7 +17,7 @@ struct NewHistoryView<Header: View>: View {
     let header: Header
     
     var body: some View {
-        if viewModel.showSendViaLinkTransaction {
+        if viewModel.showSendViaLinkTransaction && !viewModel.sendViaLinkTransactions.isEmpty  {
             VStack(spacing: 0) {
                 // Send via link
                 if !viewModel.sendViaLinkTransactions.isEmpty {
