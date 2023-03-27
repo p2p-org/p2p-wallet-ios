@@ -5,7 +5,7 @@ import SolanaSwift
 import Resolver
 
 enum JupiterSwapSource: String {
-    case actionPanel, tapMain, tapToken, solend
+    case actionPanel = "Action_Panel", tapMain = "Tap_Main", tapToken = "Tap_Token", solend = "Solend"
 }
 
 struct JupiterSwapParameters {
@@ -96,6 +96,7 @@ final class JupiterSwapCoordinator: Coordinator<Void> {
             .sink { [weak self, unowned fromTokenInputViewModel] in
                 guard let self else { return }
                 fromTokenInputViewModel.isFirstResponder = false
+                UIApplication.shared.endEditing()
                 self.openChooseToken(fromToken: true)
             }
             .store(in: &subscriptions)
@@ -103,6 +104,7 @@ final class JupiterSwapCoordinator: Coordinator<Void> {
             .sink { [weak self, unowned fromTokenInputViewModel] in
                 guard let self else { return }
                 fromTokenInputViewModel.isFirstResponder = false
+                UIApplication.shared.endEditing()
                 self.openChooseToken(fromToken: false)
             }
             .store(in: &subscriptions)
@@ -134,8 +136,13 @@ final class JupiterSwapCoordinator: Coordinator<Void> {
             }
             .store(in: &subscriptions)
     }
-    
+
+    func logOpenFromTab() {
+        viewModel.logStartFromMain()
+    }
+
     @objc private func receiptButtonPressed() {
+        UIApplication.shared.endEditing()
         openSwapSettings()
     }
 
@@ -185,7 +192,6 @@ final class JupiterSwapCoordinator: Coordinator<Void> {
             switch status {
             case let .error(_, error):
                 hasError = true
-                self?.viewModel.logTransaction(error: error)
                 if let error, error.isSlippageError {
                     self?.openSwapSettings()
                 }

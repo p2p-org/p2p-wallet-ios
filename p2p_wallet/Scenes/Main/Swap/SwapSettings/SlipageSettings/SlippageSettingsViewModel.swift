@@ -5,13 +5,19 @@ private extension Double {
     static let maximumSlippage: Double = 50
 }
 
+enum JupiterSwapSlippage {
+    static let min = 0.1
+    static let avg = 0.5
+    static let max = 1.0
+}
+
 @MainActor
 final class SlippageSettingsViewModel: BaseViewModel, ObservableObject {
 
     // MARK: - Constants
     
     let slippages: [Double?] = [
-        0.1, 0.5, 1, nil
+        JupiterSwapSlippage.min, JupiterSwapSlippage.avg, JupiterSwapSlippage.max, nil
     ]
     
     // MARK: - Properties

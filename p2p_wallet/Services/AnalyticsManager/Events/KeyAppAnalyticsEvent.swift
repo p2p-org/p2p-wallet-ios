@@ -220,7 +220,7 @@ enum KeyAppAnalyticsEvent: AnalyticsEvent {
     case swapReturnFromChangingTokenB
     case swapChangingValueTokenA(tokenAName: String, tokenAValue: Double)
     case swapChangingValueTokenB(tokenBName: String, tokenBValue: Double)
-    case swapChangingValueTokenAAll(tokenAValue: Double)
+    case swapChangingValueTokenAAll(tokenAName: String, tokenAValue: Double)
     case swapSwitchTokens(tokenAName: String, tokenBName: String)
     case swapPriceImpactLow(priceImpact: Decimal)
     case swapPriceImpactHigh(priceImpact: Decimal)
