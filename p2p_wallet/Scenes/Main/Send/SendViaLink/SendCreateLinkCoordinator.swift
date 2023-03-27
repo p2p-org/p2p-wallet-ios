@@ -47,13 +47,7 @@ final class SendCreateLinkCoordinator: Coordinator<SendCreateLinkCoordinator.Res
         let sendCreateLinkVC = UIHostingControllerWithoutNavigation(rootView: view)
         navigationController.pushViewController(sendCreateLinkVC, animated: true)
         
-        sendCreateLinkVC.deallocatedPublisher()
-            .sink(receiveValue: { [weak self] _ in
-                self?.result.send(completion: .finished)
-            })
-            .store(in: &subscriptions)
-        
-        return result.eraseToAnyPublisher()
+        return result.prefix(1).eraseToAnyPublisher()
     }
     
     // MARK: - Helper
