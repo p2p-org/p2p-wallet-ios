@@ -135,6 +135,21 @@ actor JupiterSwapStateMachine {
         
         print("JupiterSwapBusinessLogic.action: \(action.description) finished")
         
+        // FIXME: - Optional part of action, refactor later
+        guard Task.isNotCancelled else {
+            return currentState
+        }
+        
+        let updatePricesState = await JupiterSwapBusinessLogic.updatePrices(
+            state: currentState,
+            services: services
+        )
+        
+        guard Task.isNotCancelled else {
+            return currentState
+        }
+        stateSubject.send(updatePricesState)
+        
         return currentState
     }
 }
