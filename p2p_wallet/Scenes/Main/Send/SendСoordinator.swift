@@ -188,8 +188,8 @@ class SendCoordinator: Coordinator<SendResult> {
     
     private func startSendViaLinkFlow() async throws {
         // create recipient
-        guard let url = sendViaLinkDataService.createURL(givenSeed: nil),
-              let keypair = try await sendViaLinkDataService.generateKeyPair(url: url),
+        let url = sendViaLinkDataService.createURL()
+        guard let keypair = try await sendViaLinkDataService.generateKeyPair(url: url),
               let seed = sendViaLinkDataService.getSeedFromURL(url)
         else {
             return

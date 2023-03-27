@@ -93,7 +93,7 @@ final class SendInputCoordinator: Coordinator<SendResult> {
             .sink { [weak self, viewModel] model in
                 if let seed = viewModel.stateMachine.currentState.sendViaLinkSeed {
                     let sendViaLinkDataService = Resolver.resolve(SendViaLinkDataService.self)
-                    guard let link = sendViaLinkDataService.createURL(givenSeed: seed)?.absoluteString
+                    guard let link = sendViaLinkDataService.restoreURL(givenSeed: seed)?.absoluteString
                     else {
                         return
                     }
