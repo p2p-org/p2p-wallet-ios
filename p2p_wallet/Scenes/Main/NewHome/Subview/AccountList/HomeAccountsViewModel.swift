@@ -1,10 +1,3 @@
-//
-//  HomeWithTokensViewModel.swift
-//  p2p_wallet
-//
-//  Created by Ivan on 05.08.2022.
-//
-
 import AnalyticsManager
 import Combine
 import Foundation
@@ -26,6 +19,7 @@ final class HomeAccountsViewModel: BaseViewModel, ObservableObject {
     private let ethereumAccountsService: EthereumAccountsService
 
     @Injected private var analyticsManager: AnalyticsManager
+    private var notificationService: NotificationService
 
     // MARK: - Properties
 
@@ -87,6 +81,7 @@ final class HomeAccountsViewModel: BaseViewModel, ObservableObject {
         self.navigation = navigation
         self.solanaAccountsService = solanaAccountsService
         self.ethereumAccountsService = ethereumAccountsService
+        self.notificationService = notificationService
 
         if sellDataService.isAvailable {
             actions = [.buy, .receive, .send, .cashOut]
@@ -174,6 +169,15 @@ final class HomeAccountsViewModel: BaseViewModel, ObservableObject {
             .removeDuplicates()
             .sink { _ in
                 wormholeService.wormholeClaimMonitoreService.refresh()
+            }
+            .store(in: &subscriptions)
+
+        ethereumAccountsService
+            .$state
+            .map(\.error)
+            .compactMap { $0 }
+            .sink { [weak self] _ in
+                self?.notificationService.showInAppNotification(.error(L10n.ThereWasAProblemWithClaiming.pleaseTryAgain))
             }
             .store(in: &subscriptions)
 

@@ -1348,3 +1348,6 @@ You can try again, but your new transaction will be subject to the current rates
 "Reload" = "tải lại";
 "You’ve got" = "Bạn đã có";
 "The fee is more than the amount sent" = "Phí nhiều hơn số tiền gửi";
+"Value is unavailable" = "Giá trị không khả dụng";
+"The fees are bigger than the transaction amount" = "Các khoản phí lớn hơn số tiền giao dịch";
+"There was a problem with claiming. Please try again" = "Đã xảy ra sự cố khi xác nhận quyền sở hữu.  Vui lòng thử lại";

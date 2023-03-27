@@ -1313,3 +1313,6 @@ You can try again, but your new transaction will be subject to the current rates
 "Reload" = "Reload";
 "You’ve got" = "You’ve got";
 "The fee is more than the amount sent" = "The fee is more than the amount sent";
+"Value is unavailable" = "Value is unavailable";
+"The fees are bigger than the transaction amount" = "The fees are bigger than the transaction amount";
+"There was a problem with claiming. Please try again" = "There was a problem with claiming. Please try again";
