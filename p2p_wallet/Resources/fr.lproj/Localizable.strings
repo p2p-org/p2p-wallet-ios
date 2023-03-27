@@ -1302,3 +1302,4 @@ You can try again, but your new transaction will be subject to the current rates
 "Enter greater value" = "Entrez une valeur supérieure";
 "Create a one-time link" = "Créer un lien unique";
 "Limit is %@ one-time links per day. Try tomorrow" = "La limite est de %@ liens uniques par jour.  Essayez demain";
+"Your one-time link is copied" = "Votre lien unique est copié";

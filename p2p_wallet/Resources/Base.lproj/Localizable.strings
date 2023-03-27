@@ -1271,3 +1271,4 @@ You can try again, but your new transaction will be subject to the current rates
 "Enter greater value" = "Enter greater value";
 "Create a one-time link" = "Create a one-time link";
 "Limit is %@ one-time links per day. Try tomorrow" = "Limit is %@ one-time links per day. Try tomorrow";
+"Your one-time link is copied" = "Your one-time link is copied";
