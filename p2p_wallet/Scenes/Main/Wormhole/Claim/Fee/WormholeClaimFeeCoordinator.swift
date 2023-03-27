@@ -26,6 +26,7 @@ class WormholeClaimFeeCoordinator: SmartCoordinator<Void> {
         let vm = WormholeClaimFeeViewModel(account: account, bundle: bundle)
         let view = WormholeClaimFee(viewModel: vm)
         let vc = UIBottomSheetHostingController(rootView: view)
+        vc.view.layer.cornerRadius = 20
 
         vm.objectWillChange
             .sink { [weak vc] _ in

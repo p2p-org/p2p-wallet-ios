@@ -95,13 +95,17 @@ struct WormholeClaimEthereumModel: WormholeClaimModel {
     }
 
     var fees: String {
-        let fees = bundle.value?.fees
+        let bundle = bundle.value
 
-        guard let fees else {
+        guard let bundle else {
             return L10n.isUnavailable(L10n.value)
         }
 
-        return CurrencyFormatter().string(amount: fees.totalInFiat)
+        if bundle.compensationDeclineReason == nil {
+            return L10n.paidByKeyApp
+        }
+
+        return CurrencyFormatter().string(amount: bundle.fees.totalInFiat)
     }
 
     var feesButtonEnable: Bool {
