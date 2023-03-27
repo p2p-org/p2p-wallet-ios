@@ -23,7 +23,12 @@ final class SwapSettingsViewModel: BaseViewModel, ObservableObject {
     // MARK: - Published properties
 
     @Published var currentState: JupiterSwapState
-    var selectedSlippage: Double?
+    var selectedSlippage: Double? {
+        didSet {
+            guard let selectedSlippage else { return }
+            self.log(slippage: selectedSlippage)
+        }
+    }
     
 
     // MARK: - Properties
@@ -88,13 +93,13 @@ extension SwapSettingsViewModel: SwapSettingsViewModelIO {
 // MARK: - Analytics
 
 extension SwapSettingsViewModel {
-    func logRoute() {
-        guard let currentRoute = info.currentRoute?.name else { return }
-        analyticsManager.log(event: .swapSettingsSwappingThroughChoice(variant: currentRoute))
+    func log(routeInfo: SwapSettingsRouteInfo) {
+        analyticsManager.log(event: .swapSettingsSwappingThroughChoice(variant: routeInfo.name))
     }
 
     func log(slippage: Double) {
-        let isCustom = slippage > 1
+        let slippage = slippage.rounded(decimals: 2)
+        let isCustom = ![JupiterSwapSlippage.min, JupiterSwapSlippage.avg, JupiterSwapSlippage.max].contains(slippage)
         if isCustom {
             analyticsManager.log(event: .swapSettingsSlippageCustom(slippageLevelPercent: slippage))
         } else {

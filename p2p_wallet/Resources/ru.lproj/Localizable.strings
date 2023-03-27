@@ -1302,3 +1302,4 @@ You can try again, but your new transaction will be subject to the current rates
 "To make a transfer to %@ you have to swap %@ to %@" = "Чтобы сделать перевод в %@, вы должны поменять местами %@ на %@";
 "Cannot calculate fees. Try again" = "Не могу рассчитать комиссию.  Попробуйте еще раз";
 "Using Wormhole bridge" = "Использование моста червоточины";
+"Enter greater value" = "Введите большее значение";

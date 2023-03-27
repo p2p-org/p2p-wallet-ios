@@ -62,7 +62,6 @@ final class SwapSettingsCoordinator: Coordinator<SwapSettingsCoordinatorResult> 
                    slippage > 0
                 {
                     let slippageBps = Int(slippage * 100)
-                    self?.viewModel.log(slippage: slippage)
                     self?.result.send(.selectedSlippageBps(slippageBps))
                 }
                 
@@ -88,7 +87,7 @@ final class SwapSettingsCoordinator: Coordinator<SwapSettingsCoordinatorResult> 
                 }
                 .eraseToAnyPublisher(),
             onSelectRoute: { [unowned self] routeInfo in
-                viewModel.logRoute()
+                viewModel.log(routeInfo: routeInfo)
                 result.send(.selectedRoute(routeInfo))
                 selectRouteViewController.dismiss(animated: true) { [weak self] in
                     self?.navigationController.popViewController(animated: true)
