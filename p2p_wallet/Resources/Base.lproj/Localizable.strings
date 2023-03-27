@@ -1228,7 +1228,6 @@ You can try again, but your new transaction will be subject to the current rates
 "The address was copied to clipboard" = "The address was copied to clipboard";
 "Send crypto via link" = "Send crypto via link";
 "You don’t need to know the address" = "You don’t need to know the address";
-"Limit is %@ links per day. Try tomorrow" = "Limit is %@ links per day. Try tomorrow";
 "Sending via link" = "Sending via link";
 "Anyone who gets this link can claim the funds" = "Anyone who gets this link can claim the funds";
 "Creating your link" = "Creating your link";
@@ -1271,3 +1270,4 @@ You can try again, but your new transaction will be subject to the current rates
 "The one-time link can be used to send funds to anyone without needing an address. The funds can be claimed by anyone with a link." = "The one-time link can be used to send funds to anyone without needing an address. The funds can be claimed by anyone with a link.";
 "Enter greater value" = "Enter greater value";
 "Create a one-time link" = "Create a one-time link";
+"Limit is %@ one-time links per day. Try tomorrow" = "Limit is %@ one-time links per day. Try tomorrow";
