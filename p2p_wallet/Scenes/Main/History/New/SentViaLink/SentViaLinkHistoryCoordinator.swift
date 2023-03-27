@@ -40,7 +40,8 @@ final class SentViaLinkHistoryCoordinator: SmartCoordinator<Void> {
     // MARK: - Helpers
 
     private func openSendViaLinkTransactionDetail(transaction: SendViaLinkTransactionInfo) {
-        guard let url = Resolver.resolve(SendViaLinkDataService.self).createURL(givenSeed: transaction.seed)
+        guard let url = Resolver.resolve(SendViaLinkDataService.self)
+            .restoreURL(givenSeed: transaction.seed)
         else {
             return
         }
