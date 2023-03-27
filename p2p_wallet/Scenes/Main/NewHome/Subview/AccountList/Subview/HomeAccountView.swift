@@ -16,14 +16,23 @@ struct HomeAccountView: View {
         HStack(alignment: .center, spacing: 12) {
             switch rendable.icon {
             case let .url(url):
-                CoinLogoImageViewRepresentable(size: iconSize, args: .manual(preferredImage: nil, url: url, key: "", wrapped: rendable.wrapped))
-                    .frame(width: iconSize, height: iconSize)
+                CoinLogoImageViewRepresentable(
+                    size: iconSize,
+                    args: .manual(preferredImage: nil, url: url, key: "", wrapped: rendable.wrapped)
+                )
+                .frame(width: iconSize, height: iconSize)
             case let .image(image):
-                CoinLogoImageViewRepresentable(size: iconSize, args: .manual(preferredImage: image, url: nil, key: "", wrapped: rendable.wrapped))
-                    .frame(width: iconSize, height: iconSize)
+                CoinLogoImageViewRepresentable(
+                    size: iconSize,
+                    args: .manual(preferredImage: image, url: nil, key: "", wrapped: rendable.wrapped)
+                )
+                .frame(width: iconSize, height: iconSize)
             case let .random(seed):
-                CoinLogoImageViewRepresentable(size: iconSize, args: .manual(preferredImage: nil, url: nil, key: seed, wrapped: rendable.wrapped))
-                    .frame(width: iconSize, height: iconSize)
+                CoinLogoImageViewRepresentable(
+                    size: iconSize,
+                    args: .manual(preferredImage: nil, url: nil, key: seed, wrapped: rendable.wrapped)
+                )
+                .frame(width: iconSize, height: iconSize)
             }
 
             VStack(alignment: .leading, spacing: 4) {
@@ -43,16 +52,20 @@ struct HomeAccountView: View {
                     .foregroundColor(Color(Asset.Colors.night.color))
             case let .button(text, action):
                 Button(
-                    action: { action?() },
+                    action: {
+                        action()
+                    },
                     label: {
                         Text(text)
                             .padding(.horizontal, 12)
                             .font(uiFont: TextButton.Style.second.font(size: .small))
                             .foregroundColor(Color(
-                                action == nil ? TextButton.Style.primaryWhite.disabledForegroundColor! : TextButton.Style.primaryWhite.foreground
+                                action == nil ? TextButton.Style.primaryWhite.disabledForegroundColor! : TextButton
+                                    .Style.primaryWhite.foreground
                             ))
                             .frame(height: TextButton.Size.small.height)
-                            .background(Color(action == nil ? TextButton.Style.primaryWhite.disabledBackgroundColor! : TextButton.Style.primaryWhite.backgroundColor))
+                            .background(Color(action == nil ? TextButton.Style.primaryWhite
+                                    .disabledBackgroundColor! : TextButton.Style.primaryWhite.backgroundColor))
                             .cornerRadius(12)
                     }
                 ).disabled(action == nil)

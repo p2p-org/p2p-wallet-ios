@@ -33,8 +33,11 @@ struct WormholeClaimFee: View {
                     Text(L10n.enjoyFreeTransactions)
                         .fontWeight(.semibold)
                         .apply(style: .text1)
-                    Text(L10n.WithKeyAppTheFirstTransactionIsFree.alsoAllTheTransactionsAbove300AreFree)
+                    Text(L10n.AllTransactionsOverAreFree.keyAppWillCoverAllFeesForYou("$50"))
                         .apply(style: .text4)
+                        .multilineTextAlignment(.leading)
+                        .lineLimit(5)
+                        .fixedSize(horizontal: false, vertical: true)
                 }
             }
             .padding(.all, 16)
@@ -52,11 +55,19 @@ struct WormholeClaimFee: View {
                 }
 
                 if let accountsFee = viewModel.accountCreationFee {
-                    WormholeFeeView(title: "Account creation Fee", subtitle: accountsFee.crypto, detail: accountsFee.fiat)
+                    WormholeFeeView(
+                        title: "Account creation Fee",
+                        subtitle: accountsFee.crypto,
+                        detail: accountsFee.fiat
+                    )
                 }
 
                 if let wormholeBridgeAndTrxFee = viewModel.wormholeBridgeAndTrxFee {
-                    WormholeFeeView(title: "Wormhole Bridge and Transaction Fee", subtitle: wormholeBridgeAndTrxFee.crypto, detail: wormholeBridgeAndTrxFee.fiat)
+                    WormholeFeeView(
+                        title: "Wormhole Bridge and Transaction Fee",
+                        subtitle: wormholeBridgeAndTrxFee.crypto,
+                        detail: wormholeBridgeAndTrxFee.fiat
+                    )
                 }
             }
             .padding(.top, 16)

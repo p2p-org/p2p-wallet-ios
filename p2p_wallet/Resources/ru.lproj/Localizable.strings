@@ -1303,3 +1303,4 @@ You can try again, but your new transaction will be subject to the current rates
 "Cannot calculate fees. Try again" = "Не могу рассчитать комиссию.  Попробуйте еще раз";
 "Using Wormhole bridge" = "Использование моста червоточины";
 "Enter greater value" = "Введите большее значение";
+"All transactions over %@ are free. Key App will cover all fees for you." = "Все транзакции свыше %@ бесплатны.  Key App покроет все расходы за вас.";

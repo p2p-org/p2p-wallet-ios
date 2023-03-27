@@ -59,7 +59,7 @@ public class EthereumPriceService {
             tokens.map { token in
                 switch token.contractType {
                 case let .erc20(contract: address):
-                    let value = result[address.hex(eip55: true)]?[fiat]
+                    let value = result[address.hex(eip55: false)]?[fiat]
                     return (token, .init(currencyCode: fiat.uppercased(), value: value, token: token))
                 default:
                     return (token, .init(currencyCode: fiat.uppercased(), value: Decimal(0.0), token: token))
