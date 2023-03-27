@@ -1316,3 +1316,7 @@ You can try again, but your new transaction will be subject to the current rates
 "Value is unavailable" = "Value is unavailable";
 "The fees are bigger than the transaction amount" = "The fees are bigger than the transaction amount";
 "There was a problem with claiming. Please try again" = "There was a problem with claiming. Please try again";
+"Cannot calculate fees. Try again" = "Cannot calculate fees. Try again";
+"All transactions over %@ are free. Key App will cover all fees for you." = "All transactions over %@ are free. Key App will cover all fees for you.";
+"Enter greater value" = "Enter greater value";
+"Using Wormhole bridge" = "Using Wormhole bridge";

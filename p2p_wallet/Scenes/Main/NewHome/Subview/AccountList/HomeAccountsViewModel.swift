@@ -74,7 +74,7 @@ final class HomeAccountsViewModel: BaseViewModel, ObservableObject {
         wormholeService: WormholeService = Resolver.resolve(),
         favouriteAccountsStore: FavouriteAccountsDataSource = Resolver.resolve(),
         solanaTracker _: SolanaTracker = Resolver.resolve(),
-        notificationService _: NotificationService = Resolver.resolve(),
+        notificationService: NotificationService = Resolver.resolve(),
         sellDataService: any SellDataService = Resolver.resolve(),
         navigation: PassthroughSubject<HomeNavigation, Never>
     ) {
