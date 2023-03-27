@@ -25,6 +25,12 @@ extension Token {
         return UIImage(named: imageName)
         // swiftlint:enable swiftgen_assets
     }
+    
+    var maxAmount: Double {
+        (Double(Lamports.max) / pow(10, Double(decimals)))
+            .rounded(decimals: 0, roundingMode: .down)
+
+    }
 }
 
 extension Token {

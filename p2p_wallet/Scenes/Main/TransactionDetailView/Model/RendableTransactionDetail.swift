@@ -71,8 +71,23 @@ enum TransactionDetailChange {
     }
 }
 
-enum TransactionDetailStatus: Equatable {
+enum TransactionDetailStatus {
     case loading(message: String)
     case succeed(message: String)
-    case error(message: NSAttributedString)
+    case error(message: NSAttributedString, error: Error?)
+}
+
+extension TransactionDetailStatus: Equatable {
+    static func == (lhs: TransactionDetailStatus, rhs: TransactionDetailStatus) -> Bool {
+        switch (lhs, rhs) {
+        case let (.loading(lhsMessage), .loading(rhsMessage)):
+            return lhsMessage == rhsMessage
+        case let (.succeed(lhsMessage), .succeed(rhsMessage)):
+            return lhsMessage == rhsMessage
+        case let (.error(lhsMessage, lhsError), .error(rhsMessage, rhsError)):
+            return lhsMessage == rhsMessage && lhsError?.localizedDescription == rhsError?.localizedDescription
+        default:
+            return false
+        }
+    }
 }

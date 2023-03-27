@@ -10,7 +10,7 @@ import History
 import SafariServices
 import TransactionParser
 
-class TransactionDetailCoordinator: SmartCoordinator<Void> {
+class TransactionDetailCoordinator: SmartCoordinator<TransactionDetailStatus> {
     let viewModel: TransactionDetailViewModel
 
     init(viewModel: TransactionDetailViewModel, presentingViewController: UIViewController) {
@@ -25,6 +25,10 @@ class TransactionDetailCoordinator: SmartCoordinator<Void> {
             ignoresKeyboard: true
         )
         vc.view.layer.cornerRadius = 20
+        vc.onClose = { [weak self] in
+            // Handle result if no action is chosen and sheet is closed by click on gray area
+            self?.handleResult()
+        }
 
         // observe action
         viewModel.action.sink { [weak self, weak vc] action in
@@ -33,7 +37,7 @@ class TransactionDetailCoordinator: SmartCoordinator<Void> {
             switch action {
             case .close:
                 vc?.dismiss(animated: true)
-                self.result.send(completion: .finished)
+                self.handleResult()
             case let .share(url):
                 self.presentation.presentingViewController.dismiss(animated: true) {
                     let av = UIActivityViewController(activityItems: [url], applicationActivities: nil)
@@ -44,9 +48,9 @@ class TransactionDetailCoordinator: SmartCoordinator<Void> {
                         .rootViewController?
                         .present(av, animated: true, completion: nil)
                 }
-                self.result.send(completion: .finished)
+                self.handleResult()
             case let .open(url):
-                self.presentation.presentingViewController.dismiss(animated: true) {  
+                self.presentation.presentingViewController.dismiss(animated: true) {
                     UIApplication
                         .shared
                         .windows
@@ -54,6 +58,7 @@ class TransactionDetailCoordinator: SmartCoordinator<Void> {
                         .rootViewController?
                         .present(SFSafariViewController(url: url), animated: true, completion: nil)
                 }
+                self.handleResult()
             }
 
         }.store(in: &subscriptions)
@@ -68,5 +73,10 @@ class TransactionDetailCoordinator: SmartCoordinator<Void> {
             .store(in: &subscriptions)
 
         return vc
+    }
+    
+    private func handleResult() {
+        result.send(viewModel.rendableTransaction.status)
+        result.send(completion: .finished)
     }
 }

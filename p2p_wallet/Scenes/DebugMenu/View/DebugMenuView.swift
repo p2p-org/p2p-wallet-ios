@@ -99,6 +99,15 @@ struct DebugMenuView: View {
                         }
                     }
                 }
+                
+                Section(header: Text("New swap endpoint")) {
+                    Picker("URL", selection: $globalAppState.newSwapEndpoint) {
+                        Text("Unknown").tag(nil as String?)
+                        ForEach(viewModel.newSwapEndpoints, id: \.self) { endpoint in
+                            Text(endpoint).tag(endpoint as String?)
+                        }
+                    }
+                }
 
                 Section(header: Text("Mocked device share")) {
                     Toggle("Enabled", isOn: $onboardingConfig.isDeviceShareMocked)
