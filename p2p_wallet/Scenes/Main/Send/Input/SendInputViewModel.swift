@@ -81,7 +81,6 @@ final class SendInputViewModel: BaseViewModel, ObservableObject {
     private let walletsRepository: WalletsRepository
     private let pricesService: PricesServiceType
     @Injected private var analyticsManager: AnalyticsManager
-    @Injected private var sendViaLinkStorage: SendViaLinkStorage
 
     init(
         recipient: Recipient,
@@ -491,70 +490,113 @@ private extension SendInputViewModel {
         try? await Task.sleep(nanoseconds: 500_000_000)
         
         let isSendingViaLink = stateMachine.currentState.isSendingViaLink
+        let isFakeSendTransaction = isFakeSendTransaction
+        let isFakeSendTransactionError = isFakeSendTransactionError
+        let sendViaLinkSeed = stateMachine.currentState.sendViaLinkSeed
+        let token = currentState.token
+        let amountInFiat = currentState.amountInFiat
         
         await MainActor.run {
-            let transaction = SendTransaction(state: self.currentState) { [weak self] in
-                guard let self else {
-                    throw SolanaError.unknown
-                }
-                // save recipient except send via link
-                if !self.currentState.isSendingViaLink {
-                    try? await Resolver.resolve(SendHistoryService.self).insert(recipient)
-                }
-                
-                // Fake transaction for testing
-                #if !RELEASE
-                if self.isFakeSendTransaction {
-                    try await Task.sleep(nanoseconds: 2_000_000_000)
-                    if self.isFakeSendTransactionError {
-                        throw SolanaError.unknown
-                    }
-                    // save to storage
-                    if self.currentState.isSendingViaLink {
-                        self.saveSendViaLinkTransaction()
-                    }
-                    
-                    return .fakeTransactionSignature(id: UUID().uuidString)
-                }
-                #endif
-                
-                // Real transaction
-                let trx = try await Resolver.resolve(SendActionService.self).send(
-                    from: sourceWallet,
-                    receiver: address,
-                    amount: amountInToken,
-                    feeWallet: feeWallet,
-                    ignoreTopUp: isSendingViaLink,
-                    memo: isSendingViaLink ? .secretConfig("SEND_VIA_LINK_MEMO_PREFIX")!: nil,
-                    operationType: isSendingViaLink ? .sendViaLink: .transfer
+            let transaction = SendTransaction(state: self.currentState) {
+                try await createTransactionExecution(
+                    isSendingViaLink: isSendingViaLink,
+                    isFakeSendTransaction: isFakeSendTransaction,
+                    isFakeSendTransactionError: isFakeSendTransactionError,
+                    recipient: recipient,
+                    sendViaLinkSeed: sendViaLinkSeed,
+                    token: token,
+                    amountInToken: amountInToken,
+                    amountInFiat: amountInFiat,
+                    sourceWallet: sourceWallet,
+                    address: address,
+                    feeWallet: feeWallet
                 )
-                
-                // save to storage
-                if self.currentState.isSendingViaLink {
-                    self.saveSendViaLinkTransaction()
-                }
-
-                return trx
             }
             self.transaction.send(transaction)
         }
     }
-    
-    // MARK: - Helpers
+}
 
-    func saveSendViaLinkTransaction() {
-        guard let seed = currentState.sendViaLinkSeed else { return }
-        let token = currentState.token
-        sendViaLinkStorage.save(
-            transaction: .init(
-                amount: currentState.amountInToken,
-                amountInFiat: currentState.amountInFiat,
+// MARK: - Independent helper to avoid retain cycle, refactor later
+
+private func createTransactionExecution(
+    isSendingViaLink: Bool,
+    isFakeSendTransaction: Bool,
+    isFakeSendTransactionError: Bool,
+    recipient: Recipient,
+    sendViaLinkSeed: String?,
+    token: Token,
+    amountInToken: Double,
+    amountInFiat: Double,
+    sourceWallet: Wallet,
+    address: String,
+    feeWallet: Wallet?
+) async throws -> TransactionID {
+    // save recipient except send via link
+    if !isSendingViaLink {
+        try? await Resolver.resolve(SendHistoryService.self).insert(recipient)
+    }
+    
+    // Fake transaction for testing
+    #if !RELEASE
+    if isFakeSendTransaction {
+        try await Task.sleep(nanoseconds: 2_000_000_000)
+        if isFakeSendTransactionError {
+            throw SolanaError.unknown
+        }
+        // save to storage
+        if isSendingViaLink, let sendViaLinkSeed {
+            saveSendViaLinkTransaction(
+                seed: sendViaLinkSeed,
                 token: token,
-                seed: seed,
-                timestamp: Date()
+                amountInToken: amountInToken,
+                amountInFiat: amountInFiat
             )
+        }
+        
+        return .fakeTransactionSignature(id: UUID().uuidString)
+    }
+    #endif
+    
+    // Real transaction
+    let trx = try await Resolver.resolve(SendActionService.self).send(
+        from: sourceWallet,
+        receiver: address,
+        amount: amountInToken,
+        feeWallet: feeWallet,
+        ignoreTopUp: isSendingViaLink,
+        memo: isSendingViaLink ? .secretConfig("SEND_VIA_LINK_MEMO_PREFIX")!: nil,
+        operationType: isSendingViaLink ? .sendViaLink: .transfer
+    )
+    
+    // save to storage
+    if isSendingViaLink, let sendViaLinkSeed {
+        saveSendViaLinkTransaction(
+            seed: sendViaLinkSeed,
+            token: token,
+            amountInToken: amountInToken,
+            amountInFiat: amountInFiat
         )
     }
+    
+    return trx
+}
+
+private func saveSendViaLinkTransaction(
+    seed: String,
+    token: Token,
+    amountInToken: Double,
+    amountInFiat: Double
+) {
+    Resolver.resolve(SendViaLinkStorage.self).save(
+        transaction: .init(
+            amount: amountInToken,
+            amountInFiat: amountInFiat,
+            token: token,
+            seed: seed,
+            timestamp: Date()
+        )
+    )
 }
 
 // MARK: - Analytics
