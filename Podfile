@@ -28,7 +28,8 @@ def key_app_kit
     "Send",
     "History",
     "Moonpay",
-    "Sell"
+    "Sell",
+    "Jupiter"
   ]
 
   if $keyAppKitPath
@@ -37,7 +38,7 @@ def key_app_kit
     end
   else
     $keyAppKitGit = 'https://github.com/p2p-org/key-app-kit-swift.git'
-    $keyAppKitBranch = 'develop'
+    $keyAppKitBranch = 'master'
     for $dependency in $dependencies do
       pod $dependency, :git => $keyAppKitGit, :branch => $keyAppKitBranch
     end
@@ -67,6 +68,7 @@ target 'p2p_wallet' do
   pod 'Periphery'
   pod 'SwiftFormat/CLI', '0.49.6'
   pod 'ReachabilitySwift', '~> 5.0.0'
+  pod 'Task_retrying', :git => 'https://github.com/bigearsenal/task-retrying-swift.git', :branch => 'master'
 
   # Deprecating: will be removed after NewSwap, NewHistory
   pod 'RxAppState', '1.7.1'

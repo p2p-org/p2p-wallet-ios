@@ -28,6 +28,7 @@ extension WalletDetail {
         private lazy var historyVC = History.Scene(account: viewModel.pubkey, symbol: viewModel.symbol)
 
         private var coordinator: SendCoordinator?
+        private var jupiterSwapCoordinator: JupiterSwapCoordinator?
         private var sendTransactionStatusCoordinator: SendTransactionStatusCoordinator?
         private var subscriptions = Set<AnyCancellable>()
 
@@ -133,10 +134,18 @@ extension WalletDetail {
                     present(navigation, animated: true)
                 }
             case let .swap(wallet):
-                let vm = OrcaSwapV2.ViewModel(initialWallet: wallet)
-                let vc = OrcaSwapV2.ViewController(viewModel: vm)
-                vc.doneHandler = processingTransactionDoneHandler
-                show(vc, sender: nil)
+                if available(.jupiterSwapEnabled) {
+                    jupiterSwapCoordinator = JupiterSwapCoordinator(
+                        navigationController: navigationController!,
+                        params: JupiterSwapParameters(dismissAfterCompletion: true, openKeyboardOnStart: true, source: .tapToken, preChosenWallet: wallet)
+                    )
+                    jupiterSwapCoordinator?.start().sink(receiveValue: { _ in }).store(in: &subscriptions)
+                } else {
+                    let vm = OrcaSwapV2.ViewModel(initialWallet: wallet)
+                    let vc = OrcaSwapV2.ViewController(viewModel: vm)
+                    vc.doneHandler = processingTransactionDoneHandler
+                    show(vc, sender: nil)
+                }
             default:
                 break
             }
