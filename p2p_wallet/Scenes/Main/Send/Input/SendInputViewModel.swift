@@ -394,7 +394,7 @@ private extension SendInputViewModel {
         default:
             wasMaxWarningToastShown = false
             inputAmountViewModel.isError = false
-            if currentState.isSendingViaLink {
+            if !currentState.isSendingViaLink {
                 actionButtonData = SliderActionButtonData(
                     isEnabled: true,
                     title: "\(L10n.send) \(currentState.amountInToken.tokenAmountFormattedString(symbol: currentState.token.symbol, maximumFractionDigits: Int(currentState.token.decimals), roundingMode: .down))"
