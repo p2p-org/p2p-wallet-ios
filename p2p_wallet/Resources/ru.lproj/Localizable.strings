@@ -1343,3 +1343,6 @@ You can try again, but your new transaction will be subject to the current rates
 "Reload" = "Перезагрузить";
 "You’ve got" = "У тебя есть";
 "The fee is more than the amount sent" = "Комиссия больше отправленной суммы";
+"Value is unavailable" = "Значение недоступно";
+"The fees are bigger than the transaction amount" = "Комиссия больше, чем сумма транзакции";
+"There was a problem with claiming. Please try again" = "Возникла проблема с претензией.  Пожалуйста, попробуйте еще раз";
