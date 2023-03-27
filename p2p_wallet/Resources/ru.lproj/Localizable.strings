@@ -1254,7 +1254,6 @@ You can try again, but your new transaction will be subject to the current rates
 "The address was copied to clipboard" = "Адрес скопирован в буфер обмена";
 "Send crypto via link" = "Отправить криптовалюту по ссылке";
 "You don’t need to know the address" = "Вам не нужно знать адрес";
-"Limit is %@ links per day. Try tomorrow" = "Лимит составляет %@ ссылок в день.  Попробуйте завтра";
 "Sending via link" = "Отправка по ссылке";
 "Anyone who gets this link can claim the funds" = "Любой, кто получит эту ссылку, может запросить средства";
 "Creating your link" = "Создание вашей ссылки";
@@ -1300,3 +1299,4 @@ You can try again, but your new transaction will be subject to the current rates
 "The one-time link can be used to send funds to anyone without needing an address. The funds can be claimed by anyone with a link." = "Одноразовую ссылку можно использовать для отправки средств кому угодно без указания адреса.  Забрать средства может любой, у кого есть ссылка.";
 "Enter greater value" = "Введите большее значение";
 "Create a one-time link" = "Создать одноразовую ссылку";
+"Limit is %@ one-time links per day. Try tomorrow" = "Лимит составляет %@ разовых ссылок в день.  Попробуйте завтра";
