@@ -227,7 +227,8 @@ final class SendInputViewModel: BaseViewModel, ObservableObject {
     
     func getSendViaLinkURL() -> String? {
         guard let seed = currentState.sendViaLinkSeed else { return nil }
-        return Resolver.resolve(SendViaLinkDataService.self).restoreURL(givenSeed: seed)?
+        return try? Resolver.resolve(SendViaLinkDataService.self)
+            .restoreURL(givenSeed: seed)
             .absoluteString
     }
 }

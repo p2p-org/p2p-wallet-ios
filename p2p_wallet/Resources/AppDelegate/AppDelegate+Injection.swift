@@ -303,7 +303,8 @@ extension Resolver: ResolverRegistering {
                 passphrase: "",
                 network: .mainnetBeta,
                 derivablePath: .default,
-                host: "t.key.app"
+                host: "t.key.app",
+                solanaAPIClient: resolve()
             )
         }
         .implements(SendViaLinkDataService.self)

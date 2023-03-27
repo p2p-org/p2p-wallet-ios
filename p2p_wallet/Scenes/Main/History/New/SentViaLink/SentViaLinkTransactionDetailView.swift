@@ -29,7 +29,7 @@ struct SentViaLinkTransactionDetailView: View {
 
     var link: String? {
         guard let seed = transaction?.seed,
-              let link = sendViaLinkDataService.restoreURL(givenSeed: seed)?.absoluteString
+              let link = try? sendViaLinkDataService.restoreURL(givenSeed: seed).absoluteString
         else {
             return nil
         }
