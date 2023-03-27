@@ -295,6 +295,19 @@ extension Resolver: ResolverRegistering {
             SendHistoryService(provider: resolve(SendHistoryLocalProvider.self))
         }
         .scope(.session)
+        
+        // SendViaLink
+        register {
+            SendViaLinkDataServiceImpl(
+                salt: .secretConfig("SEND_VIA_LINK_SALT")!,
+                passphrase: "",
+                network: .mainnetBeta,
+                derivablePath: .default,
+                host: "t.key.app"
+            )
+        }
+        .implements(SendViaLinkDataService.self)
+        .scope(.session)
 
         // SolanaSocket
         register { Socket(url: URL(string: Defaults.apiEndPoint.socketUrl)!) }

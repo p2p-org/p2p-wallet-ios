@@ -89,8 +89,8 @@ class RecipientSearchViewModel: ObservableObject {
         fileprivate let scanQRSubject: PassthroughSubject<Void, Never> = .init()
         var scanQRPublisher: AnyPublisher<Void, Never> { scanQRSubject.eraseToAnyPublisher() }
         
-        fileprivate let sendViaLinkSubject: PassthroughSubject<String, Never> = .init()
-        var sendViaLinkPublisher: AnyPublisher<String, Never> { sendViaLinkSubject.eraseToAnyPublisher() }
+        fileprivate let sendViaLinkSubject: PassthroughSubject<Void, Never> = .init()
+        var sendViaLinkPublisher: AnyPublisher<Void, Never> { sendViaLinkSubject.eraseToAnyPublisher() }
     }
 
     let coordinator: Coordinator = .init()
@@ -273,11 +273,7 @@ class RecipientSearchViewModel: ObservableObject {
     }
     
     func sendViaLink() {
-        // create seed
-        let seed = String.generateSendViaLinkSeed()
-        
-        // select recipient
-        coordinator.sendViaLinkSubject.send(seed)
+        coordinator.sendViaLinkSubject.send(())
     }
 }
 

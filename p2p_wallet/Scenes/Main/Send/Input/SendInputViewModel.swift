@@ -224,6 +224,12 @@ final class SendInputViewModel: BaseViewModel, ObservableObject {
             loadingState = .error(error.readableDescription)
         }
     }
+    
+    func getSendViaLinkURL() -> String? {
+        guard let seed = currentState.sendViaLinkSeed else { return nil }
+        return Resolver.resolve(SendViaLinkDataService.self).createURL(givenSeed: seed)?
+            .absoluteString
+    }
 }
 
 private extension SendInputViewModel {
