@@ -6,6 +6,7 @@
 //
 
 import BigInt
+import BigDecimal
 import Foundation
 import XCTest
 @testable import KeyAppKitCore
@@ -36,7 +37,7 @@ final class CryptoAmountTests: XCTestCase {
 
         XCTAssertEqual(amount?.value, 10_123_456_789_123_456_789)
         XCTAssertEqual(amount?.decimals, token.decimals)
-        XCTAssertEqual(amount?.amount, Decimal(string: "10.123456789123456789")!)
+        XCTAssertEqual(amount?.amount, try! BigDecimal(fromString: "10.123456789123456789"))
     }
 
     func testParsingMaxDecimalString() throws {
@@ -46,7 +47,7 @@ final class CryptoAmountTests: XCTestCase {
 
         XCTAssertEqual(amount?.value, 10_123_456_789_123_456_789)
         XCTAssertEqual(amount?.decimals, token.decimals)
-        XCTAssertEqual(amount?.amount, Decimal(string: "10.123456789123456789")!)
+        XCTAssertEqual(amount?.amount, try! BigDecimal(fromString: "10.123456789123456789"))
     }
 
     func testParsingWithoutDecimalString() throws {
@@ -56,7 +57,7 @@ final class CryptoAmountTests: XCTestCase {
 
         XCTAssertEqual(amount?.value, BigUInt(stringLiteral: "123456789123456789000000000000000000"))
         XCTAssertEqual(amount?.decimals, token.decimals)
-        XCTAssertEqual(amount?.amount, Decimal(string: "123456789123456789")!)
+        XCTAssertEqual(amount?.amount, try! BigDecimal(fromString: "123456789123456789"))
     }
 
     func testParsingInvalidString() throws {

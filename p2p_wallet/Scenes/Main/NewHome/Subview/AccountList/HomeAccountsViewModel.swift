@@ -44,8 +44,7 @@ final class HomeAccountsViewModel: BaseViewModel, ObservableObject {
     var accounts: [any RendableAccount] {
         ethereumAccountsState.value
             .filter { account in
-                let balanceInFiat = account.account.balanceInFiat ?? .init(value: 0, currencyCode: Defaults.fiat.rawValue)
-                return available(.ethAddressEnabled) && balanceInFiat >= CurrencyAmount(usd: 1)
+                return available(.ethAddressEnabled) && account.onClaim != nil
             }
             + solanaAccountsState.value.filter { rendableAccount in
                 Self.shouldInVisiableSection(rendableAccount: rendableAccount, hideZeroBalance: hideZeroBalance)
@@ -56,8 +55,7 @@ final class HomeAccountsViewModel: BaseViewModel, ObservableObject {
     var hiddenAccounts: [any RendableAccount] {
         ethereumAccountsState.value
             .filter { account in
-                let balanceInFiat = account.account.balanceInFiat ?? .init(value: 0, currencyCode: Defaults.fiat.rawValue)
-                return available(.ethAddressEnabled) && balanceInFiat < CurrencyAmount(usd: 1)
+                return available(.ethAddressEnabled) && account.onClaim == nil
             }
             + solanaAccountsState.value.filter { rendableAccount in
                 Self.shouldInIgnoreSection(rendableAccount: rendableAccount, hideZeroBalance: hideZeroBalance)
@@ -71,8 +69,8 @@ final class HomeAccountsViewModel: BaseViewModel, ObservableObject {
         ethereumAccountsService: EthereumAccountsService = Resolver.resolve(),
         wormholeService: WormholeService = Resolver.resolve(),
         favouriteAccountsStore: FavouriteAccountsDataSource = Resolver.resolve(),
-        solanaTracker: SolanaTracker = Resolver.resolve(),
-        notificationService: NotificationService = Resolver.resolve(),
+        solanaTracker _: SolanaTracker = Resolver.resolve(),
+        notificationService _: NotificationService = Resolver.resolve(),
         sellDataService: any SellDataService = Resolver.resolve(),
         navigation: PassthroughSubject<HomeNavigation, Never>
     ) {
@@ -135,13 +133,21 @@ final class HomeAccountsViewModel: BaseViewModel, ObservableObject {
                 accounts.innerApply { account in
                     let isClaiming = account.wormholeBundle?.status == .pending
 
+                    let balanceInFiat = account.account.balanceInFiat ?? .init(
+                        value: 0,
+                        currencyCode: Defaults.fiat.rawValue
+                    )
+
+                    let isClaimable = !(account.wormholeBundle?.status == .pending)
+                        && balanceInFiat >= CurrencyAmount(usd: 1)
+
                     return RendableEthereumAccount(
                         account: account.account,
                         isClaiming: isClaiming,
                         onTap: nil,
-                        onClaim: isClaiming ? nil : {
+                        onClaim: isClaimable ? {
                             navigation.send(.claim(account.account))
-                        }
+                        } : nil
                     )
                 }
             }
@@ -226,7 +232,8 @@ final class HomeAccountsViewModel: BaseViewModel, ObservableObject {
     func actionClicked(_ action: WalletActionType) {
         switch action {
         case .receive:
-            guard let pubkey = try? PublicKey(string: solanaAccountsService.state.value.nativeWallet?.data.pubkey) else { return }
+            guard let pubkey = try? PublicKey(string: solanaAccountsService.state.value.nativeWallet?.data.pubkey)
+            else { return }
             navigation.send(.receive(publicKey: pubkey))
         case .buy:
             navigation.send(.buy)
