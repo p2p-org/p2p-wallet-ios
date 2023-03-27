@@ -232,22 +232,9 @@ class SendCoordinator: Coordinator<SendResult> {
         let coordinator = SendCreateLinkCoordinator(
             link: link,
             formatedAmount: formatedAmount,
-            navigationController: rootViewController
-        ) {
-            let transactionHandler = Resolver.resolve(TransactionHandlerType.self)
-            let index = transactionHandler.sendTransaction(transaction)
-            let tx = try? await transactionHandler.observeTransaction(transactionIndex: index)
-                .compactMap {$0}
-                .first(where: {$0.status.error != nil || $0.status.isFinalized || ($0.status.numberOfConfirmations ?? 0) > 0})
-                .eraseToAnyPublisher()
-                .async()
-            
-            if let error = tx?.status.error {
-                throw error
-            }
-            
-            return transactionHandler.getProcessingTransaction(index: index).transactionId ?? ""
-        }
+            navigationController: rootViewController,
+            transaction: transaction
+        )
         
         coordinate(to: coordinator)
             .sink(receiveValue: { [weak self] result  in
