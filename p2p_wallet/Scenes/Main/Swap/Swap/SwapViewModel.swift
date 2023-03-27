@@ -4,6 +4,7 @@ import Jupiter
 import SolanaSwift
 import AnalyticsManager
 import Task_retrying
+import Sentry
 
 final class SwapViewModel: BaseViewModel, ObservableObject {
 
@@ -450,11 +451,13 @@ private extension SwapViewModel {
             }
             isSliderOn = false
             logTransaction(error: error)
+            SentrySDK.capture(error: error)
             throw error
         } catch {
             debugPrint("---errorSendingTransaction: ", error)
             isSliderOn = false
             logTransaction(error: error)
+            SentrySDK.capture(error: error)
             throw error
         }
     }
