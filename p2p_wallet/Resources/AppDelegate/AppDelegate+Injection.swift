@@ -80,7 +80,7 @@ extension Resolver: ResolverRegistering {
         
         register { SendViaLinkStorageImpl() }
             .implements(SendViaLinkStorage.self)
-            .scope(.application)
+            .scope(.session)
 
         // API Gateway
         register { () -> APIGatewayClient in
