@@ -1,14 +1,8 @@
-//
-//  WormholeClaimViewModel.swift
-//  p2p_wallet
-//
-//  Created by Giang Long Tran on 11.03.2023.
-//
-
 import Combine
 import Foundation
 import KeyAppBusiness
 import KeyAppKitCore
+import Reachability
 import Resolver
 import Wormhole
 
@@ -18,6 +12,11 @@ class WormholeClaimViewModel: BaseViewModel, ObservableObject {
     let bundle: AsyncValue<WormholeBundle?>
 
     @Published var model: any WormholeClaimModel
+    @Published var feeAmountInFiat: String = ""
+    @Published var buttonText: String = ""
+    @Published var buttonDisabled = false
+
+    @Injected private var reachability: Reachability
 
     init(model: WormholeClaimMockModel) {
         self.model = model
@@ -79,9 +78,21 @@ class WormholeClaimViewModel: BaseViewModel, ObservableObject {
             .map(\.error)
             .compactMap { $0 }
             .sink { error in
-                notificationService.showInAppNotification(.error("\(error.localizedDescription)"))
+                if let error = error as? JSONRPCError<String>, error.code == 32007 {
+                    notificationService.showInAppNotification(.error(L10n.theFeesAreBiggerThanTheTransactionAmount))
+                } else {
+                    notificationService.showInAppNotification(.error("\(error.localizedDescription)"))
+                }
+                self.feeAmountInFiat = L10n.valueIsUnavailable
             }
             .store(in: &subscriptions)
+
+        bundle.$state.map { !($0.status == .ready) }.weakAssign(to: \.buttonDisabled, on: self).store(in: &subscriptions)
+
+        try? reachability.startNotifier()
+        reachability.status.sink { [unowned self] _ in
+            _ = self.reachability.check()
+        }.store(in: &subscriptions)
     }
 
     func claim() {

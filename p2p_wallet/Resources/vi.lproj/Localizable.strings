@@ -1309,3 +1309,6 @@ You can try again, but your new transaction will be subject to the current rates
 "Using Wormhole bridge" = "Sử dụng cầu Wormhole";
 "Enter greater value" = "Nhập giá trị lớn hơn";
 "All transactions over %@ are free. Key App will cover all fees for you." = "Tất cả các giao dịch trên %@ đều miễn phí.  Ứng dụng chính sẽ chi trả mọi khoản phí cho bạn.";
+"Value is unavailable" = "Giá trị không khả dụng";
+"The fees are bigger than the transaction amount" = "Các khoản phí lớn hơn số tiền giao dịch";
+"There was a problem with claiming. Please try again" = "Đã xảy ra sự cố khi xác nhận quyền sở hữu.  Vui lòng thử lại";

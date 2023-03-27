@@ -1265,12 +1265,12 @@ You can try again, but your new transaction will be subject to the current rates
 "Integrity of the route has been compromised" = "Integrity of the route has been compromised";
 "Creating transaction failed" = "Creating transaction failed";
 "No swap options for these tokens" = "No swap options for these tokens";
+"You have entered too little" = "You have entered too little";
 "Token you pay" = "Token you pay";
 "Token you receive" = "Token you receive";
 "You can’t swap between the same token" = "You can’t swap between the same token";
 "Enter amount" = "Enter amount";
 "To make a transfer to %@ you have to swap %@ to %@" = "To make a transfer to %@ you have to swap %@ to %@";
-"Cannot calculate fees. Try again" = "Cannot calculate fees. Try again";
-"Using Wormhole bridge" = "Using Wormhole bridge";
-"Enter greater value" = "Enter greater value";
-"All transactions over %@ are free. Key App will cover all fees for you." = "All transactions over %@ are free. Key App will cover all fees for you.";
+"Value is unavailable" = "Value is unavailable";
+"The fees are bigger than the transaction amount" = "The fees are bigger than the transaction amount";
+"There was a problem with claiming. Please try again" = "There was a problem with claiming. Please try again";
