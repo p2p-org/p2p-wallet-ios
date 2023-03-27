@@ -1,10 +1,3 @@
-//
-//  File.swift
-//
-//
-//  Created by Giang Long Tran on 07.03.2023.
-//
-
 import Foundation
 
 public enum SupportedToken {

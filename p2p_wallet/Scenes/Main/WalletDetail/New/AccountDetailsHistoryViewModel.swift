@@ -44,10 +44,10 @@ final class DetailHistoryViewModel: HistoryViewModel {
 
         let state = super.buildOutput(history: history, sells: sells, pendings: pendings)
         var newData = state.data
-        let supportedBridgeTokens = Wormhole.SupportedToken.bridges
+        let supportedBridgeTokens = Wormhole.SupportedToken.bridges.filter { ["USDC", "USDT"].contains($0.name) }
             .map(\.solAddress)
             .compactMap { $0 } +
-        Wormhole.SupportedToken.bridges
+        Wormhole.SupportedToken.bridges.filter { ["USDC", "USDT"].contains($0.name) }
             .map(\.receiveFromAddress)
             .compactMap { $0 }
         if available(.ethAddressEnabled) &&
