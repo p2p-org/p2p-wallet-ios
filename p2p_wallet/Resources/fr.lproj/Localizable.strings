@@ -1309,3 +1309,7 @@ You can try again, but your new transaction will be subject to the current rates
 "Value is unavailable" = "La valeur n'est pas disponible";
 "The fees are bigger than the transaction amount" = "Les frais sont supérieurs au montant de la transaction";
 "There was a problem with claiming. Please try again" = "Il y a eu un problème avec la réclamation.  Veuillez réessayer";
+"Cannot calculate fees. Try again" = "Impossible de calculer les frais.  Essayer à nouveau";
+"All transactions over %@ are free. Key App will cover all fees for you." = "Toutes les transactions sur %@ sont gratuites.  Key App couvrira tous les frais pour vous.";
+"Enter greater value" = "Entrez une valeur supérieure";
+"Using Wormhole bridge" = "Utilisation du pont Wormhole";
