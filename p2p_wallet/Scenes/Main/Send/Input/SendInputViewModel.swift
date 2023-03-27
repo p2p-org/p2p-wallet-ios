@@ -493,7 +493,10 @@ private extension SendInputViewModel {
         let isSendingViaLink = stateMachine.currentState.isSendingViaLink
         
         await MainActor.run {
-            let transaction = SendTransaction(state: self.currentState) {
+            let transaction = SendTransaction(state: self.currentState) { [weak self] in
+                guard let self else {
+                    throw SolanaError.unknown
+                }
                 // save recipient except send via link
                 if !self.currentState.isSendingViaLink {
                     try? await Resolver.resolve(SendHistoryService.self).insert(recipient)
