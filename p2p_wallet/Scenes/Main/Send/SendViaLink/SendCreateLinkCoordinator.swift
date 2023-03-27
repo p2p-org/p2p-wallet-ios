@@ -69,17 +69,20 @@ final class SendCreateLinkCoordinator: Coordinator<SendCreateLinkCoordinator.Res
     // MARK: - Helper
 
     private func showSendLinkCreatedView() {
-        let view = SendLinkCreatedView(
-            link: link,
-            formatedAmount: formatedAmount,
-            onClose: { [unowned self] in
+        let viewModel = SendLinkCreatedViewModel(link: link, formatedAmount: formatedAmount)
+        let sendLinkCreatedVC = SendLinkCreatedView(viewModel: viewModel).asViewController()
+        
+        viewModel.close
+            .sink(receiveValue: { [unowned self] in
                 result.send(.normal)
-            },
-            onShare: { [unowned self] in
-                showShareView()
-            }
-        )
-        let sendLinkCreatedVC = UIHostingControllerWithoutNavigation(rootView: view)
+            })
+            .store(in: &subscriptions)
+        viewModel.share
+            .sink(receiveValue: { [weak self] in
+                self?.showShareView()
+            })
+            .store(in: &subscriptions)
+        
         navigationController.pushViewController(sendLinkCreatedVC, animated: true)
     }
     
