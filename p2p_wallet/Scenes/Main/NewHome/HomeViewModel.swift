@@ -121,7 +121,7 @@ private extension HomeViewModel {
             .receive(on: RunLoop.main)
             .sink { [weak self] solanaState, ethereumState in
                 guard let self else { return }
-
+                
                 let solanaTotalBalance = solanaState.value.reduce(into: 0) { partialResult, account in
                     partialResult = partialResult + account.amountInFiatDouble
                 }

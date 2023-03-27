@@ -30,6 +30,7 @@ public struct WormholeBundleStatus: Codable, Hashable {
     }
 
     public enum Status: String, Codable, Hashable {
+        case failed
         case pending
         case expired
         case canceled

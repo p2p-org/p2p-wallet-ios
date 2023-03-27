@@ -19,13 +19,7 @@ class WormholeClaimFeeViewModel: BaseViewModel, ObservableObject {
 
     let closeAction: PassthroughSubject<Void, Never> = .init()
 
-    @Published var receive: Amount?
-
-    @Published var networkFee: Amount?
-
-    @Published var accountCreationFee: Amount?
-
-    @Published var wormholeBridgeAndTrxFee: Amount?
+    @Published var adapter: WormholeClaimFeeAdapter? = nil
 
     init(
         receive: Amount,
@@ -33,10 +27,12 @@ class WormholeClaimFeeViewModel: BaseViewModel, ObservableObject {
         accountCreationFee: Amount?,
         wormholeBridgeAndTrxFee: Amount?
     ) {
-        self.receive = receive
-        self.networkFee = networkFee
-        self.accountCreationFee = accountCreationFee
-        self.wormholeBridgeAndTrxFee = wormholeBridgeAndTrxFee
+        adapter = .init(
+            receive: receive,
+            networkFee: networkFee,
+            accountCreationFee: accountCreationFee,
+            wormholeBridgeAndTrxFee: wormholeBridgeAndTrxFee
+        )
 
         super.init()
     }
@@ -44,16 +40,11 @@ class WormholeClaimFeeViewModel: BaseViewModel, ObservableObject {
     init(
         account: EthereumAccount,
         bundle: AsyncValue<WormholeBundle?>,
-        ethereumTokenService _: EthereumTokensRepository = Resolver.resolve(),
-        solanaTokenService _: TokensRepository = Resolver.resolve()
+        ethereumTokenService: EthereumTokensRepository = Resolver.resolve(),
+        solanaTokenService: SolanaTokensRepository = Resolver.resolve()
     ) {
         let cryptoFormatter = CryptoFormatter()
         let currencyFormatter = CurrencyFormatter()
-
-        receive = nil
-        networkFee = nil
-        accountCreationFee = nil
-        wormholeBridgeAndTrxFee = nil
 
         super.init()
 
@@ -62,64 +53,16 @@ class WormholeClaimFeeViewModel: BaseViewModel, ObservableObject {
             .$state
             .sinkAsync { [weak self] state in
                 guard let self = self else { return }
-                guard let bundle = state.value else {
-                    self.receive = nil
-                    self.networkFee = nil
-                    self.accountCreationFee = nil
-                    self.wormholeBridgeAndTrxFee = nil
-                    return
-                }
-
-                let cryptoAmount = CryptoAmount(
-                    amount: BigUInt(stringLiteral: bundle.resultAmount.amount),
-                    token: account.token
-                )
-
-                let fiatAmount = CurrencyAmount(usdStr: bundle.resultAmount.usdAmount)
-
-                self.receive = (
-                    cryptoFormatter.string(amount: cryptoAmount),
-                    currencyFormatter.string(for: account.balanceInFiat) ?? "",
-                    false
-                )
-
-                // Network fee
-                let networkCryptoAmount = try await WormholeClaimViewModel.resolveCrytoAmount(
-                    amount: bundle.fees.gas.amount,
-                    feeToken: bundle.fees.gas.token
-                )
-
-                self.networkFee = (
-                    cryptoFormatter.string(amount: networkCryptoAmount),
-                    currencyFormatter.string(amount: bundle.fees.gas),
-                    networkCryptoAmount.amount == 0
-                )
-
-                // Accounts fee
-                if let createAccount = bundle.fees.createAccount {
-                    let accountsCryptoAmount = try await WormholeClaimViewModel.resolveCrytoAmount(
-                        amount: createAccount.amount,
-                        feeToken: createAccount.token
+                do {
+                    self.adapter = await .init(
+                        account: account,
+                        state: state,
+                        ethereumTokenService: ethereumTokenService,
+                        solanaTokenService: solanaTokenService
                     )
-
-                    self.accountCreationFee = (
-                        cryptoFormatter.string(amount: accountsCryptoAmount),
-                        currencyFormatter.string(amount: createAccount),
-                        accountsCryptoAmount.amount == 0
-                    )
+                } catch {
+                    self.adapter = nil
                 }
-
-                // Network fee
-                let arbiterAmount = try await WormholeClaimViewModel.resolveCrytoAmount(
-                    amount: bundle.fees.arbiter.amount,
-                    feeToken: bundle.fees.arbiter.token
-                )
-
-                self.wormholeBridgeAndTrxFee = (
-                    cryptoFormatter.string(amount: arbiterAmount),
-                    currencyFormatter.string(amount: bundle.fees.arbiter),
-                    arbiterAmount.amount == 0
-                )
             }
             .store(in: &subscriptions)
     }
