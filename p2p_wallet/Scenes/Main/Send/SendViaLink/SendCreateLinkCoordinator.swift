@@ -32,24 +32,38 @@ final class SendCreateLinkCoordinator: Coordinator<SendCreateLinkCoordinator.Res
     }
     
     func bind() {
-        let transactionHandler = Resolver.resolve(TransactionHandlerType.self)
-        let index = transactionHandler.sendTransaction(transaction)
-        
-        transactionHandler.observeTransaction(transactionIndex: index)
-            .compactMap {$0}
-            .filter {
-                $0.status.error != nil || $0.status.isFinalized || ($0.status.numberOfConfirmations ?? 0) > 0
-            }
-            .prefix(1)
-            .receive(on: RunLoop.main)
-            .sink { [weak self] tx in
-                if tx.status.error != nil {
-                    self?.showErrorView()
-                } else {
+        Task {
+            do {
+                _ = try await transaction.createRequest()
+                await MainActor.run { [weak self] in
                     self?.showSendLinkCreatedView()
                 }
+            } catch {
+                await MainActor.run { [weak self] in
+                    self?.showErrorView()
+                }
             }
-            .store(in: &subscriptions)
+        }
+        
+        // TODO: - TransactionHandler did not return the transaction, why?
+//        let transactionHandler = Resolver.resolve(TransactionHandlerType.self)
+//        let index = transactionHandler.sendTransaction(transaction)
+//
+//        transactionHandler.observeTransaction(transactionIndex: index)
+//            .compactMap {$0}
+//            .filter {
+//                $0.status.error != nil || $0.status.isFinalized || ($0.status.numberOfConfirmations ?? 0) > 0
+//            }
+//            .prefix(1)
+//            .receive(on: RunLoop.main)
+//            .sink { [weak self] tx in
+//                if tx.status.error != nil {
+//                    self?.showErrorView()
+//                } else {
+//                    self?.showSendLinkCreatedView()
+//                }
+//            }
+//            .store(in: &subscriptions)
     }
     
     // MARK: - Builder
