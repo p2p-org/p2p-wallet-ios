@@ -1305,3 +1305,4 @@ You can try again, but your new transaction will be subject to the current rates
 "Enter greater value" = "Nhập giá trị lớn hơn";
 "Create a one-time link" = "Tạo liên kết một lần";
 "Limit is %@ one-time links per day. Try tomorrow" = "Giới hạn là %@ liên kết một lần mỗi ngày.  Hãy thử vào ngày mai";
+"Your one-time link is copied" = "Liên kết một lần của bạn được sao chép";

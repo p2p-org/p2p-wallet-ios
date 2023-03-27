@@ -123,7 +123,7 @@ struct SentViaLinkTransactionDetailView: View {
             Button {
                 let pasteboard = UIPasteboard.general
                 pasteboard.string = link
-                notificationService.showInAppNotification(.done(L10n.copiedToClipboard))
+                notificationService.showInAppNotification(.done(L10n.yourOneTimeLinkIsCopied))
             } label: {
                 Image(uiImage: .copyFill)
                     .resizable()

@@ -1300,3 +1300,4 @@ You can try again, but your new transaction will be subject to the current rates
 "Enter greater value" = "Введите большее значение";
 "Create a one-time link" = "Создать одноразовую ссылку";
 "Limit is %@ one-time links per day. Try tomorrow" = "Лимит составляет %@ разовых ссылок в день.  Попробуйте завтра";
+"Your one-time link is copied" = "Ваша одноразовая ссылка скопирована";
