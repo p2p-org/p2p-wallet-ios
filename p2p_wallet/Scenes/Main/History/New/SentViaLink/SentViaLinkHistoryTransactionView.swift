@@ -41,10 +41,12 @@ struct SentViaLinkHistoryTransactionView: View {
     }
 }
 
+#if DEBUG
 struct SentViaLinkHistoryTransactionView_Previews: PreviewProvider {
     static var previews: some View {
         SentViaLinkHistoryTransactionView(
-            transaction: Array.mocked.first!
+            transaction: Array<SendViaLinkTransactionInfo>.mocked.first!
         )
     }
 }
+#endif
