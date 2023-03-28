@@ -30,23 +30,33 @@ enum NewHistoryAction {
 }
 
 class HistoryViewModel: BaseViewModel, ObservableObject {
+    
     // Subjects
-
     let actionSubject: PassthroughSubject<NewHistoryAction, Never>
 
     let history: AsyncList<any RendableListTransactionItem>
 
-    // State
+    // MARK: - View Input
 
-    @Published var output: ListState<HistorySection> = .init()
-    @Published var sendViaLinkTransactions: [SendViaLinkTransactionInfo] = []
+    @Published var output = ListState<HistorySection>()
+    @Published var sendViaLinkTransactions = [SendViaLinkTransactionInfo]() {
+        didSet {
+            if sendViaLinkTransactions.count == 1 {
+                linkTransactionsTitle = "1 \(L10n.transaction.lowercased())"
+            } else {
+                linkTransactionsTitle = L10n.transactions(sendViaLinkTransactions.count)
+            }
+        }
+    }
+    @Published var linkTransactionsTitle = ""
     
     let showSendViaLinkTransaction: Bool
     
     // Dependency
-
     private var sellDataService: (any SellDataService)?
     @Injected private var sendViaLinkStorage: SendViaLinkStorage
+    
+    // MARK: - Init
 
     init(mock: [any RendableListTransactionItem]) {
         // Init service
@@ -185,6 +195,8 @@ class HistoryViewModel: BaseViewModel, ObservableObject {
         
         bind()
     }
+    
+    // MARK: - View Output
 
     func reload() async throws {
         history.reset()

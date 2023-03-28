@@ -9,10 +9,8 @@ import SwiftUI
 import KeyAppUI
 
 struct SendLinkCreatedView: View {
-    let link: String
-    let formatedAmount: String
-    let onClose: () -> Void
-    let onShare: () -> Void
+    
+    let viewModel: SendLinkCreatedViewModel
     
     var body: some View {
         VStack {
@@ -20,11 +18,12 @@ struct SendLinkCreatedView: View {
             HStack {
                 Spacer()
                 Button {
-                    onClose()
+                    viewModel.closeClicked()
                 } label: {
                     Image(systemName: "xmark")
                         .resizable()
                         .frame(width: 16, height: 16)
+                        .padding(8)
                 }
                 .foregroundColor(Color(Asset.Colors.night.color))
             }
@@ -32,7 +31,7 @@ struct SendLinkCreatedView: View {
             Spacer()
             
             // Header
-            Text(L10n.theLinkIsReadyReceiverWillBeAbleToClaimFunds)
+            Text(L10n.theOneTimeLinkIsReadyTheFundsCanBeClaimed)
                 .apply(style: .largeTitle)
                 .multilineTextAlignment(.center)
                 .foregroundColor(Color(Asset.Colors.night.color))
@@ -42,11 +41,19 @@ struct SendLinkCreatedView: View {
             RecipientCell(
                 image: Image(uiImage: .sendViaLinkCircleCompleted)
                     .castToAnyView(),
-                title: L10n.sendViaLink,
-                subtitle: link,
-                trailingView: Text(formatedAmount)
-                    .font(uiFont: UIFont.font(of: .text3, weight: .semibold))
-                    .castToAnyView()
+                title: viewModel.formatedAmount,
+                subtitle: viewModel.link,
+                trailingView: Button(
+                    action: {
+                        viewModel.copyClicked()
+                    },
+                    label: {
+                        Image(uiImage: .copyFill)
+                            .resizable()
+                            .frame(width: 24, height: 24)
+                    }
+                )
+                .castToAnyView()
             )
                 .padding(.horizontal, 16)
                 .padding(.vertical, 12)
@@ -57,7 +64,7 @@ struct SendLinkCreatedView: View {
                 .padding(.bottom, 28)
             
             // Subtitle
-            Text(L10n.TheLinkWorksOnly1TimeForAnyUsers.ifYouLogInYourselfTheFundsWillBeReturnedToYourAccount)
+            Text(L10n.ifYouWantToGetYourMoneyBackJustOpenLinkByYourself)
                 .apply(style: .text3)
                 .multilineTextAlignment(.center)
                 .foregroundColor(Color(Asset.Colors.mountain.color))
@@ -71,7 +78,7 @@ struct SendLinkCreatedView: View {
                 style: .primaryWhite,
                 size: .large,
                 onPressed: {
-                    onShare()
+                    viewModel.shareClicked()
                 }
             )
                 .frame(height: TextButton.Size.large.height)
@@ -85,10 +92,10 @@ struct SendLinkCreatedView: View {
 struct SendLinkCreatedView_Previews: PreviewProvider {
     static var previews: some View {
         SendLinkCreatedView(
-            link: "test.com/Ro8Andswf",
-            formatedAmount: "7.12 SOL",
-            onClose: {},
-            onShare: {}
+            viewModel: SendLinkCreatedViewModel(
+                link: "test.com/Ro8Andswf",
+                formatedAmount: "7.12 SOL"
+            )
         )
     }
 }

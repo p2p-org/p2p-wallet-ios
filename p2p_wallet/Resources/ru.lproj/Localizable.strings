@@ -1300,3 +1300,7 @@ You can try again, but your new transaction will be subject to the current rates
 "Enter greater value" = "Введите большее значение";
 "Create a one-time link" = "Создать одноразовую ссылку";
 "Limit is %@ one-time links per day. Try tomorrow" = "Лимит составляет %@ разовых ссылок в день.  Попробуйте завтра";
+"Your one-time link is copied" = "Ваша одноразовая ссылка скопирована";
+"Key App one-time transfer link" = "Ссылка для одноразового переноса ключа";
+"The one-time link is ready! The funds can be claimed" = "Одноразовая ссылка готова!  Средства могут быть востребованы";
+"If you want to get your money back just open link by yourself" = "Если вы хотите вернуть свои деньги, просто откройте ссылку самостоятельно";
