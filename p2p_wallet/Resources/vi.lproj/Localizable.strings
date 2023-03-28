@@ -1284,3 +1284,4 @@ You can try again, but your new transaction will be subject to the current rates
 "You can’t swap between the same token" = "Bạn không thể hoán đổi giữa cùng một mã thông báo";
 "Enter amount" = "Nhập số tiền";
 "Enter greater value" = "Nhập giá trị lớn hơn";
+"Token rates are unavailable. Everything works as usual and all funds are safe." = "Tỷ lệ mã thông báo không có sẵn.  Mọi thứ hoạt động như bình thường và tất cả các khoản tiền đều an toàn.";

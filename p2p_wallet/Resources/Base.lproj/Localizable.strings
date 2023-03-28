@@ -1250,3 +1250,4 @@ You can try again, but your new transaction will be subject to the current rates
 "You can’t swap between the same token" = "You can’t swap between the same token";
 "Enter amount" = "Enter amount";
 "Enter greater value" = "Enter greater value";
+"Token rates are unavailable. Everything works as usual and all funds are safe." = "Token rates are unavailable. Everything works as usual and all funds are safe.";
