@@ -265,6 +265,15 @@ final class TabBarController: UITabBarController {
                 }
             }
             .store(in: &subscriptions)
+        
+        viewModel.moveToSendViaLinkClaim
+            .sink { seed in
+                guard !seed.isEmpty else { return }
+                DispatchQueue.main.asyncAfter(deadline: .now() + .milliseconds(300)) { [weak self] in
+                    self?.showAlert(title: "Received sendViaLinkSeed", message: seed)
+                }
+            }
+            .store(in: &subscriptions)
 
         // locking status
         viewModel.isLockedPublisher
