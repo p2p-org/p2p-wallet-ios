@@ -7,17 +7,11 @@ import Send
 final class SentViaLinkHistoryCoordinator: SmartCoordinator<Void> {
     // MARK: - Properties
 
-    private let transactionsPublisher: AnyPublisher<[SendViaLinkTransactionInfo], Never>
     private var transactionDetailVC: CustomPresentableViewController!
     
-    // MARK: - Initializer
-
-    init(
-        transactionsPublisher: AnyPublisher<[SendViaLinkTransactionInfo], Never>,
-        presentation: SmartCoordinatorPresentation
-    ) {
-        self.transactionsPublisher = transactionsPublisher
-        super.init(presentation: presentation)
+    private var transactionsPublisher: AnyPublisher<[SendViaLinkTransactionInfo], Never> {
+        let sendViaLinkStorage: SendViaLinkStorage = Resolver.resolve()
+        return sendViaLinkStorage.transactionsPublisher
     }
     
     // MARK: - Methods
