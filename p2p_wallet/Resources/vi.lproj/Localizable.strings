@@ -1305,3 +1305,7 @@ You can try again, but your new transaction will be subject to the current rates
 "Enter greater value" = "Nhập giá trị lớn hơn";
 "Create a one-time link" = "Tạo liên kết một lần";
 "Limit is %@ one-time links per day. Try tomorrow" = "Giới hạn là %@ liên kết một lần mỗi ngày.  Hãy thử vào ngày mai";
+"Your one-time link is copied" = "Liên kết một lần của bạn được sao chép";
+"Key App one-time transfer link" = "Liên kết chuyển một lần của Key App";
+"The one-time link is ready! The funds can be claimed" = "Liên kết một lần đã sẵn sàng!  Các khoản tiền có thể được yêu cầu";
+"If you want to get your money back just open link by yourself" = "Nếu bạn muốn lấy lại tiền của mình, chỉ cần tự mở liên kết";

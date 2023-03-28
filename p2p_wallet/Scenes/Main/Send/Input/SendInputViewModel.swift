@@ -55,6 +55,17 @@ final class SendInputViewModel: BaseViewModel, ObservableObject {
     @Published var isFakeSendTransactionError: Bool = Defaults.isFakeSendTransactionError {
         didSet {
             Defaults.isFakeSendTransactionError = isFakeSendTransactionError
+            if isFakeSendTransactionError {
+                isFakeSendTransactionNetworkError = false
+            }
+        }
+    }
+    @Published var isFakeSendTransactionNetworkError: Bool = Defaults.isFakeSendTransactionNetworkError {
+        didSet {
+            Defaults.isFakeSendTransactionNetworkError = isFakeSendTransactionNetworkError
+            if isFakeSendTransactionNetworkError {
+                isFakeSendTransactionError = false
+            }
         }
     }
     #endif
@@ -394,7 +405,7 @@ private extension SendInputViewModel {
         default:
             wasMaxWarningToastShown = false
             inputAmountViewModel.isError = false
-            if currentState.isSendingViaLink {
+            if !currentState.isSendingViaLink {
                 actionButtonData = SliderActionButtonData(
                     isEnabled: true,
                     title: "\(L10n.send) \(currentState.amountInToken.tokenAmountFormattedString(symbol: currentState.token.symbol, maximumFractionDigits: Int(currentState.token.decimals), roundingMode: .down))"
@@ -492,6 +503,7 @@ private extension SendInputViewModel {
         let isSendingViaLink = stateMachine.currentState.isSendingViaLink
         let isFakeSendTransaction = isFakeSendTransaction
         let isFakeSendTransactionError = isFakeSendTransactionError
+        let isFakeSendTransactionNetworkError = isFakeSendTransactionNetworkError
         let sendViaLinkSeed = stateMachine.currentState.sendViaLinkSeed
         let token = currentState.token
         let amountInFiat = currentState.amountInFiat
@@ -502,6 +514,7 @@ private extension SendInputViewModel {
                     isSendingViaLink: isSendingViaLink,
                     isFakeSendTransaction: isFakeSendTransaction,
                     isFakeSendTransactionError: isFakeSendTransactionError,
+                    isFakeSendTransactionNetworkError: isFakeSendTransactionNetworkError,
                     recipient: recipient,
                     sendViaLinkSeed: sendViaLinkSeed,
                     token: token,
@@ -523,6 +536,7 @@ private func createTransactionExecution(
     isSendingViaLink: Bool,
     isFakeSendTransaction: Bool,
     isFakeSendTransactionError: Bool,
+    isFakeSendTransactionNetworkError: Bool,
     recipient: Recipient,
     sendViaLinkSeed: String?,
     token: Token,
@@ -543,6 +557,9 @@ private func createTransactionExecution(
         try await Task.sleep(nanoseconds: 2_000_000_000)
         if isFakeSendTransactionError {
             throw SolanaError.unknown
+        }
+        if isFakeSendTransactionNetworkError {
+            throw NSError(domain: "Network error", code: NSURLErrorNetworkConnectionLost)
         }
         // save to storage
         if isSendingViaLink, let sendViaLinkSeed {

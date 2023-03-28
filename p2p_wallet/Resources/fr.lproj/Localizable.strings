@@ -1302,3 +1302,7 @@ You can try again, but your new transaction will be subject to the current rates
 "Enter greater value" = "Entrez une valeur supérieure";
 "Create a one-time link" = "Créer un lien unique";
 "Limit is %@ one-time links per day. Try tomorrow" = "La limite est de %@ liens uniques par jour.  Essayez demain";
+"Your one-time link is copied" = "Votre lien unique est copié";
+"Key App one-time transfer link" = "Lien de transfert unique de l'application clé";
+"The one-time link is ready! The funds can be claimed" = "Le lien unique est prêt !  Les fonds peuvent être réclamés";
+"If you want to get your money back just open link by yourself" = "Si vous voulez récupérer votre argent, ouvrez simplement le lien par vous-même";

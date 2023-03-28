@@ -128,7 +128,7 @@ struct NewHistoryView<Header: View>: View {
                         .fontWeight(.semibold)
                         .apply(style: .text3)
                     
-                    Text(L10n.transactions(viewModel.sendViaLinkTransactions.count))
+                    Text(viewModel.linkTransactionsTitle)
                         .apply(style: .label1)
                         .foregroundColor(Color(Asset.Colors.mountain.color))
                 }

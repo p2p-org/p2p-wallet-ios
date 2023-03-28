@@ -1271,3 +1271,7 @@ You can try again, but your new transaction will be subject to the current rates
 "Enter greater value" = "Enter greater value";
 "Create a one-time link" = "Create a one-time link";
 "Limit is %@ one-time links per day. Try tomorrow" = "Limit is %@ one-time links per day. Try tomorrow";
+"Your one-time link is copied" = "Your one-time link is copied";
+"Key App one-time transfer link" = "Key App one-time transfer link";
+"The one-time link is ready! The funds can be claimed" = "The one-time link is ready! The funds can be claimed";
+"If you want to get your money back just open link by yourself" = "If you want to get your money back just open link by yourself";

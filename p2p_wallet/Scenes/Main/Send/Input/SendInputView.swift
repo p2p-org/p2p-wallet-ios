@@ -117,8 +117,13 @@ struct SendInputView: View {
                     Text("Fake Transaction")
                 }
                 if viewModel.isFakeSendTransaction {
-                    Toggle(isOn: $viewModel.isFakeSendTransactionError) {
-                        Text("With Error")
+                    VStack {
+                        Toggle(isOn: $viewModel.isFakeSendTransactionError) {
+                            Text("With Error")
+                        }
+                        Toggle(isOn: $viewModel.isFakeSendTransactionNetworkError) {
+                            Text("With Network Error")
+                        }
                     }
                 }
                 
