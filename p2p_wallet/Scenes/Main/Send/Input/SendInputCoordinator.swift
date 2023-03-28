@@ -2,6 +2,7 @@ import Combine
 import Send
 import SolanaSwift
 import SwiftUI
+import Resolver
 
 final class SendInputCoordinator: Coordinator<SendResult> {
     private let navigationController: UINavigationController
@@ -91,7 +92,13 @@ final class SendInputCoordinator: Coordinator<SendResult> {
         viewModel.transaction
             .sink { [weak self, viewModel] model in
                 if let seed = viewModel.stateMachine.currentState.sendViaLinkSeed {
-                    let link = "\(String.sendViaLinkPrefix)/\(seed)"
+                    let sendViaLinkDataService = Resolver.resolve(SendViaLinkDataService.self)
+                    guard let link = try? sendViaLinkDataService
+                        .restoreURL(givenSeed: seed)
+                        .absoluteString
+                    else {
+                        return
+                    }
                     self?.subject.send(.sentViaLink(link: link, transaction: model))
                 } else {
                     self?.subject.send(.sent(model))

@@ -1256,7 +1256,6 @@ You can try again, but your new transaction will be subject to the current rates
 "The address was copied to clipboard" = "L'adresse a été copiée dans le presse-papiers";
 "Send crypto via link" = "Envoyer la crypto via un lien";
 "You don’t need to know the address" = "Vous n'avez pas besoin de connaître l'adresse";
-"Limit is %@ links per day. Try tomorrow" = "La limite est de %@ liens par jour.  Essayez demain";
 "Sending via link" = "Envoi par lien";
 "Anyone who gets this link can claim the funds" = "Toute personne qui obtient ce lien peut réclamer les fonds";
 "Creating your link" = "Création de votre lien";
@@ -1302,3 +1301,4 @@ You can try again, but your new transaction will be subject to the current rates
 "The one-time link can be used to send funds to anyone without needing an address. The funds can be claimed by anyone with a link." = "Le lien unique peut être utilisé pour envoyer des fonds à n'importe qui sans avoir besoin d'une adresse.  Les fonds peuvent être réclamés par toute personne disposant d'un lien.";
 "Enter greater value" = "Entrez une valeur supérieure";
 "Create a one-time link" = "Créer un lien unique";
+"Limit is %@ one-time links per day. Try tomorrow" = "La limite est de %@ liens uniques par jour.  Essayez demain";

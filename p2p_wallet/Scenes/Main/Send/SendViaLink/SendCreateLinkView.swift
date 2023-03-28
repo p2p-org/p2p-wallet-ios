@@ -3,7 +3,6 @@ import KeyAppUI
 
 struct SendCreateLinkView: View {
 
-    let onAppear: () -> Void
     private let mainColor = Color(Asset.Colors.night.color)
     private let subColor = Color(Asset.Colors.silver.color)
     private let animationSize = CGSize(width: 272, height: 204)
@@ -36,14 +35,11 @@ struct SendCreateLinkView: View {
             .padding(.horizontal, 20)
             .padding(.bottom, animationSize.height / 2)
         }
-        .onAppear {
-            onAppear()
-        }
     }
 }
 
 struct SendCreateLinkView_Previews: PreviewProvider {
     static var previews: some View {
-        SendCreateLinkView {}
+        SendCreateLinkView()
     }
 }

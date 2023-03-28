@@ -26,6 +26,7 @@ class SendCoordinator: Coordinator<SendResult> {
     // MARK: - Dependencies
 
     @Injected var walletsRepository: WalletsRepository
+    @Injected private var sendViaLinkDataService: SendViaLinkDataService
 
     // MARK: - Properties
 
@@ -151,10 +152,10 @@ class SendCoordinator: Coordinator<SendResult> {
             }).store(in: &subscriptions)
         
         vm.coordinator.sendViaLinkPublisher
-            .sinkAsync { [weak self] seed in
+            .sinkAsync { [weak self] in
                 guard let self else { return }
                 self.rootViewController.view.showIndetermineHud()
-                try? await self.startSendViaLinkFlow(seed: seed)
+                try? await self.startSendViaLinkFlow()
                 self.rootViewController.view.hideHud()
             }
             .store(in: &subscriptions)
@@ -185,15 +186,11 @@ class SendCoordinator: Coordinator<SendResult> {
             .store(in: &subscriptions)
     }
     
-    private func startSendViaLinkFlow(seed: String) async throws {
+    private func startSendViaLinkFlow() async throws {
         // create recipient
-        let keypair = try await KeyPair(
-            seed: seed,
-            salt: .secretConfig("SEND_VIA_LINK_SALT")!,
-            passphrase: "",
-            network: .mainnetBeta,
-            derivablePath: .default
-        )
+        let url = sendViaLinkDataService.createURL()
+        let keypair = try await sendViaLinkDataService.generateKeyPair(url: url)
+        let seed = try sendViaLinkDataService.getSeedFromURL(url)
         
         let recipient = Recipient(
             address: keypair.publicKey.base58EncodedString,
@@ -235,22 +232,9 @@ class SendCoordinator: Coordinator<SendResult> {
         let coordinator = SendCreateLinkCoordinator(
             link: link,
             formatedAmount: formatedAmount,
-            navigationController: rootViewController
-        ) {
-            let transactionHandler = Resolver.resolve(TransactionHandlerType.self)
-            let index = transactionHandler.sendTransaction(transaction)
-            let tx = try? await transactionHandler.observeTransaction(transactionIndex: index)
-                .compactMap {$0}
-                .first(where: {$0.status.error != nil || $0.status.isFinalized || ($0.status.numberOfConfirmations ?? 0) > 0})
-                .eraseToAnyPublisher()
-                .async()
-            
-            if let error = tx?.status.error {
-                throw error
-            }
-            
-            return transactionHandler.getProcessingTransaction(index: index).transactionId ?? ""
-        }
+            navigationController: rootViewController,
+            transaction: transaction
+        )
         
         coordinate(to: coordinator)
             .sink(receiveValue: { [weak self] result  in
