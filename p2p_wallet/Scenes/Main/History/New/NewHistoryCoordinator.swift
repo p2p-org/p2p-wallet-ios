@@ -188,8 +188,6 @@ class NewHistoryCoordinator: SmartCoordinator<Void> {
     
     private func openSentViaLinkHistoryView() {
         let coordinator = SentViaLinkHistoryCoordinator(
-            transactionsPublisher: viewModel.$sendViaLinkTransactions
-                .eraseToAnyPublisher(),
             presentation: SmartCoordinatorPushPresentation(presentation.presentingViewController as! UINavigationController)
         )
         
