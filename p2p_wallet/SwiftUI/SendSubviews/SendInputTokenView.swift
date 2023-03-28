@@ -5,12 +5,14 @@ import SwiftUI
 struct SendInputTokenView: View {
     let mainColor = Color(Asset.Colors.night.color)
     let wallet: Wallet
+    let amountInFiat: Double // It is separated from the wallet due to new SolanaAccount structures
     let changeAction: () -> Void
     let isChangeEnabled: Bool
     let skeleton: Bool
 
-    init(wallet: Wallet, isChangeEnabled: Bool, skeleton: Bool = false, changeAction: @escaping () -> Void) {
+    init(wallet: Wallet, amountInFiat: Double, isChangeEnabled: Bool, skeleton: Bool = false, changeAction: @escaping () -> Void) {
         self.wallet = wallet
+        self.amountInFiat = amountInFiat
         self.changeAction = changeAction
         self.isChangeEnabled = isChangeEnabled
         self.skeleton = skeleton
@@ -61,7 +63,7 @@ struct SendInputTokenView: View {
 
                 Spacer()
 
-                Text(wallet.amountInCurrentFiat.fiatAmountFormattedString(roundingMode: .down, customFormattForLessThan1E_2: true))
+                Text(amountInFiat.fiatAmountFormattedString(roundingMode: .down, customFormattForLessThan1E_2: true))
                     .font(uiFont: .systemFont(ofSize: UIFont.fontSize(of: .text2), weight: .semibold))
                     .foregroundColor(mainColor)
                     .padding(EdgeInsets(top: 18, leading: 8, bottom: 18, trailing: 8))
@@ -85,7 +87,7 @@ struct SendInputTokenView_Previews: PreviewProvider {
     static var previews: some View {
         ZStack {
             Color(Asset.Colors.rain.color)
-            SendInputTokenView(wallet: Wallet(token: .nativeSolana), isChangeEnabled: true, changeAction: {})
+            SendInputTokenView(wallet: Wallet(token: .nativeSolana), amountInFiat: 1.0, isChangeEnabled: true, changeAction: {})
                 .padding(.horizontal, 16)
         }
     }

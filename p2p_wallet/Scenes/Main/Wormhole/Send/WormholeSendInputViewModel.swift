@@ -13,6 +13,7 @@ import Resolver
 import Send
 import SolanaSwift
 import Wormhole
+import BigDecimal
 
 class WormholeSendInputViewModel: BaseViewModel, ObservableObject {
     enum Action {
@@ -27,6 +28,8 @@ class WormholeSendInputViewModel: BaseViewModel, ObservableObject {
     }
 
     let action = PassthroughSubject<Action, Never>()
+    let switchPressed = PassthroughSubject<Void, Never>()
+    let maxPressed = PassthroughSubject<Void, Never>()
 
     let solanaAccountsService: SolanaAccountsService
 
@@ -45,6 +48,10 @@ class WormholeSendInputViewModel: BaseViewModel, ObservableObject {
     @Published var countAfterDecimalPoint: Int = 8
     @Published var isFirstResponder: Bool = false
     @Published var inputMode: InputMode = .fiat
+    @Published var secondaryAmountString = "" // It is needed to display valut with precision in case the max amount is set via fiat mode
+
+    // This flag is used to switch input publisher handler because we have already set amounts manually (due to fiat inaccuracy)
+    private var wasMaxUsed: Bool = false
 
     // ActionButton
     @Published var actionButtonData = SliderActionButtonData.zero
@@ -111,10 +118,22 @@ class WormholeSendInputViewModel: BaseViewModel, ObservableObject {
         $input
             .dropFirst()
             .debounce(for: 0.2, scheduler: DispatchQueue.main)
-            .sink { input in
+            .sink { [weak self] input in
+                guard let self, let account = self.adapter.inputAccount, !self.wasMaxUsed else {
+                    self?.wasMaxUsed = false
+                    return
+                }
                 Task {
                     let input = input.replacingOccurrences(of: " ", with: "")
-                    let _ = await self.stateMachine.accept(action: .updateInput(amount: input))
+                    if self.inputMode == .fiat {
+                        let fiatAmount = CurrencyAmount(usdStr: input)
+                        let cryptoAmount = fiatAmount.toCryptoAmount(account: account)
+                        let _ = await self.stateMachine.accept(action: .updateInput(amount: String(self.adapter.cryptoFormatter.string(amount: cryptoAmount).split(separator: " ")[0])))
+                        self.secondaryAmountString = self.adapter.cryptoFormatter.string(amount: cryptoAmount, withCode: false)
+                    } else {
+                        let _ = await self.stateMachine.accept(action: .updateInput(amount: input))
+                        self.secondaryAmountString = self.adapter.currencyFormatter.string(amount: account.amountInFiat ?? CurrencyAmount(usd: 0), withCode: false)
+                    }
                 }
             }
             .store(in: &subscriptions)
@@ -130,11 +149,45 @@ class WormholeSendInputViewModel: BaseViewModel, ObservableObject {
             .receive(on: RunLoop.main)
             .weakAssign(to: \.state, on: self)
             .store(in: &subscriptions)
-    }
 
-    func maxAction() {
-        let maxAvailableAmount = adapter.inputAccount?.cryptoAmount.amount ?? 0
-        input = String(maxAvailableAmount)
+        maxPressed
+            .sink { [weak self] _ in
+                guard let self, let account = self.adapter.inputAccount else { return }
+                let maxAvailableAmount: String
+                switch self.inputMode {
+                case .fiat:
+                    maxAvailableAmount = self.adapter.currencyFormatter.string(amount: account.amountInFiat ?? CurrencyAmount(usd: 0), withCode: false)
+                    self.secondaryAmountString = self.adapter.cryptoFormatter.string(amount: account.cryptoAmount, withCode: false)
+                case .crypto:
+                    maxAvailableAmount = self.adapter.cryptoFormatter.string(amount: account.cryptoAmount, withCode: false)
+                    self.secondaryAmountString = self.adapter.currencyFormatter.string(amount: account.amountInFiat ?? CurrencyAmount(usd: 0), withCode: false)
+                }
+                self.wasMaxUsed = true
+                self.input = maxAvailableAmount
+            }
+            .store(in: &subscriptions)
+
+        switchPressed
+            .sink { [weak self] _ in
+                guard let self else { return }
+                switch self.inputMode {
+                case .fiat: self.inputMode = .crypto
+                case .crypto: self.inputMode = .fiat
+                }
+            }
+            .store(in: &subscriptions)
+
+        $inputMode
+            .sink { [weak self] newMode in
+                guard let self, let account = self.adapter.inputAccount else { return }
+                switch newMode {
+                case .crypto:
+                    self.countAfterDecimalPoint = Int(account.data.token.decimals)
+                case .fiat:
+                    self.countAfterDecimalPoint = 2
+                }
+            }
+            .store(in: &subscriptions)
     }
 
     func selectSolanaAccount(wallet: Wallet) {

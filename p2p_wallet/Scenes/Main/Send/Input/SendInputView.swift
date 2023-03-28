@@ -79,6 +79,7 @@ struct SendInputView: View {
 
                 SendInputTokenView(
                     wallet: viewModel.sourceWallet,
+                    amountInFiat: viewModel.sourceWallet.amountInCurrentFiat,
                     isChangeEnabled: viewModel.isTokenChoiceEnabled,
                     changeAction: viewModel.changeTokenPressed.send
                 )
@@ -91,7 +92,7 @@ struct SendInputView: View {
                 case .initializingFailed:
                     initializationFailedView
                 case .ready:
-                    SendInputAmountView(viewModel: viewModel.inputAmountViewModel)
+                    SendInputAmountWrapperView(viewModel: viewModel.inputAmountViewModel)
                 }
 
                 #if !RELEASE
