@@ -101,12 +101,12 @@ class PricesService {
             .filter { !$0.symbol.contains("-") && !$0.symbol.contains("/") }
             .unique
         guard !coins.isEmpty else {
-            return [:]
+            return currentPricesSubject.value
         }
 
         let newPrices = try await api.getCurrentPrices(coins: coins, toFiat: toFiat.code)
         var prices = currentPricesSubject.value
-        for newPrice in newPrices {
+        for newPrice in newPrices where newPrice.value != nil {
             prices[newPrice.key.address] = newPrice.value
         }
         await storage.savePrices(prices)
@@ -142,20 +142,18 @@ extension PricesService: PricesServiceType {
     }
 
     func fetchPrices(tokens: [Token], toFiat: Fiat = Defaults.fiat) {
-        guard
-            !tokens.isEmpty,
-            fetchingTask == nil
-        else { return }
+        guard !tokens.isEmpty else { return }
 
+        fetchingTask?.cancel()
         fetchingTask = Task { [weak self] in
-            defer { fetchingTask = nil }
-
+            guard let self else { return }
             do {
-                guard let self else { return }
                 let currentPrice = try await self.getCurrentPrices(tokens: tokens, toFiat: toFiat)
+                try Task.checkCancellation()
                 self.currentPricesSubject.send(currentPrice)
             } catch {
-                notificationService
+                guard Task.isNotCancelled else { return }
+                self.notificationService
                     .showInAppNotification(
                         .custom(
                             "😢",
