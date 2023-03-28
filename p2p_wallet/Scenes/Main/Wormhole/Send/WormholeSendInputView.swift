@@ -15,7 +15,8 @@ struct WormholeSendInputView: View {
     @ObservedObject var viewModel: WormholeSendInputViewModel
     
     let inputFount = UIFont.font(of: .title2, weight: .bold)
-    
+    @State private var switchAreaOpacity: Double = 1
+
     var body: some View {
         VStack(alignment: .leading, spacing: 0) {
             // Title
@@ -65,71 +66,27 @@ struct WormholeSendInputView: View {
 
                 SendInputTokenView(
                     wallet: viewModel.adapter.inputAccount?.data ?? Wallet(token: .eth),
+                    amountInFiat: viewModel.adapter.inputAccount?.amountInFiatDouble ?? 0.0,
                     isChangeEnabled: true,
                     skeleton: viewModel.adapter.inputAccountSkeleton
                 ) {
                     viewModel.action.send(.openPickAccount)
                 }
             }
-            
+
             if let account = viewModel.adapter.inputAccount {
-                VStack(spacing: 6) {
-                    HStack {
-                        ZStack(alignment: .leading) {
-                            SendInputAmountField(
-                                text: $viewModel.input,
-                                isFirstResponder: $viewModel.isFirstResponder,
-                                textColor: viewModel.adapter.inputColor,
-                                countAfterDecimalPoint: viewModel.countAfterDecimalPoint
-                            ) { textField in
-                                textField.font = inputFount
-                                textField.placeholder = "0"
-                            }
-                            
-                            TextButtonView(
-                                title: L10n.max.uppercased(),
-                                style: .second,
-                                size: .small
-                            ) {
-                                viewModel.maxAction()
-                            }
-                            .transition(.opacity.animation(.easeInOut))
-                            .cornerRadius(radius: 32, corners: .allCorners)
-                            .frame(width: 68)
-                            .offset(x: viewModel.input.isEmpty
-                                ? 16
-                                : textWidth(font: inputFount, text: viewModel.input)
-                            )
-                            .padding(.horizontal, 8)
-                            .accessibilityIdentifier("max-button")
-                        }
-                        .frame(height: 28)
-                        
-                        Text(viewModel.adapter.inputAccount?.data.token.symbol ?? "")
-                            .fontWeight(.bold)
-                            .apply(style: .title2)
-                    }
-                    
-                    HStack {
-                        Text(viewModel.adapter.amountInFiatString)
-                            .apply(style: .text4)
-                            .foregroundColor(Color(Asset.Colors.mountain.color))
-                        
-                        Spacer()
-                        
-                        Text(
-                            L10n.tapToSwitchTo(
-                                viewModel.inputMode == .crypto ? (viewModel.adapter.inputAccount?.data.token.symbol ?? "") : Defaults.fiat.code
-                            )
-                        )
-                        .apply(style: .text4)
-                        .foregroundColor(Color(Asset.Colors.mountain.color))
-                    }
-                }
-                .padding(.horizontal, 20)
-                .padding(.vertical, 16)
-                .background(Color(Asset.Colors.snow.color))
-                .cornerRadius(16)
+                SendInputAmountView(
+                    amountText: $viewModel.input,
+                    isFirstResponder: $viewModel.isFirstResponder,
+                    amountTextColor: viewModel.adapter.inputColor,
+                    countAfterDecimalPoint: viewModel.countAfterDecimalPoint,
+                    mainTokenText: viewModel.inputMode == .crypto ? account.data.token.symbol : viewModel.adapter.fiatString,
+                    secondaryAmountText: viewModel.secondaryAmountString,
+                    secondaryCurrencyText: viewModel.inputMode == .crypto ? viewModel.adapter.fiatString: account.data.token.symbol,
+                    maxAmountPressed: viewModel.maxPressed,
+                    switchPressed: viewModel.switchPressed,
+                    isMaxButtonVisible: viewModel.input.isEmpty
+                )
                 .padding(.top, 8)
             }
             
@@ -168,4 +125,9 @@ struct WormholeSendInputView_Previews: PreviewProvider {
         )
     }
 }
- 
+
+private extension Text {
+    func secondaryStyle() -> some View {
+        return self.foregroundColor(Color(Asset.Colors.mountain.color)).apply(style: .text4).lineLimit(1)
+    }
+}

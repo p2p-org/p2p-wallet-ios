@@ -31,11 +31,21 @@ public class CryptoFormatter: Formatter {
         string(for: amount.asCryptoAmount) ?? "N/A"
     }
 
-    public func string(amount: CryptoAmount) -> String {
-        string(for: amount) ?? "N/A"
+    public func string(amount: CryptoAmount, withCode: Bool = true) -> String {
+        (withCode ? string(for: amount) : stringValue(for: amount)) ?? "N/A"
     }
 
     override public func string(for obj: Any?) -> String? {
+        return formattedValue(for: obj, withSymbol: true)
+    }
+
+    // MARK: - Private
+
+    private func stringValue(for obj: Any?) -> String? {
+        return formattedValue(for: obj, withSymbol: false)
+    }
+
+    private func formattedValue(for obj: Any?, withSymbol: Bool) -> String? {
         let amount: CryptoAmount?
 
         if let obj = obj as? CryptoAmount {
@@ -64,6 +74,10 @@ public class CryptoFormatter: Formatter {
             formattedAmount = prefix + " \(formattedAmount)"
         }
 
-        return "\(formattedAmount) \(amount.symbol)"
+        if withSymbol {
+            return "\(formattedAmount) \(amount.symbol)"
+        } else {
+            return formattedAmount
+        }
     }
 }

@@ -14,8 +14,8 @@ public protocol CurrencyConvertible {
 
 /// The class for formatting currency.
 public class CurrencyFormatter: Formatter {
-    public func string(amount: CurrencyAmount, defaultValue: String = "N/A") -> String {
-        string(for: amount) ?? defaultValue
+    public func string(amount: CurrencyAmount, defaultValue: String = "N/A", withCode: Bool = true) -> String {
+        (withCode ? string(for: amount) : stringValue(for: amount)) ?? defaultValue
     }
 
     public func string(amount: CurrencyConvertible, defaultValue: String = "N/A") -> String {
@@ -23,6 +23,14 @@ public class CurrencyFormatter: Formatter {
     }
 
     override public func string(for obj: Any?) -> String? {
+        return formattedValue(for: obj, withSymbol: true)
+    }
+
+    private func stringValue(for obj: Any?) -> String? {
+        return formattedValue(for: obj, withSymbol: false)
+    }
+
+    private func formattedValue(for obj: Any?, withSymbol: Bool) -> String? {
         let amount: CurrencyAmount?
 
         if let obj = obj as? CurrencyConvertible {
@@ -36,11 +44,14 @@ public class CurrencyFormatter: Formatter {
         guard let amount else { return nil }
 
         let formatter = NumberFormatter()
+        formatter.roundingMode = .down
 
-        // Set currency mode
-        formatter.currencyCode = amount.currencyCode
-        formatter.numberStyle = .currency
-        formatter.locale = Locale(identifier: "en-US")
+        if withSymbol {
+            // Set currency mode
+            formatter.currencyCode = amount.currencyCode
+            formatter.numberStyle = .currency
+            formatter.locale = Locale(identifier: "en-US")
+        }
 
         // Fix prefix padding
         // formatter.negativePrefix = "\(formatter.negativePrefix!) "
@@ -50,6 +61,7 @@ public class CurrencyFormatter: Formatter {
         formatter.groupingSize = 3
         formatter.currencyDecimalSeparator = "."
         formatter.currencyGroupingSeparator = " "
+        formatter.maximumFractionDigits = 2
 
         let decimalAmount = Decimal(string: String(amount.value))
         let value: String? = formatter.string(for: decimalAmount)

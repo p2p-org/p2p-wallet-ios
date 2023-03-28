@@ -72,6 +72,11 @@ struct WormholeSendInputStateAdapter: Equatable {
         cryptoFormatter.string(amount: cryptoAmount)
     }
 
+    // Fiat symbol
+    var fiatString: String {
+        Defaults.fiat.code
+    }
+
     var amountInFiatString: String {
         guard
             let price = input?.solanaAccount.price,

@@ -7,6 +7,7 @@
 
 import BigDecimal
 import Foundation
+import BigInt
 
 /// Amount in fiat struct
 public struct CurrencyAmount: Hashable {
@@ -36,6 +37,15 @@ public struct CurrencyAmount: Hashable {
 
     /// Zero value in usd
     public static var zero: Self = .init(usd: 0)
+
+    public func toCryptoAmount(account: SolanaAccount) -> CryptoAmount {
+        var decimalValue: BigDecimal = 0
+        if let price = account.price?.value, price != 0 {
+            decimalValue = value / price
+        }
+        let uint64 = decimalValue * BigDecimal(floatLiteral: pow(10, Double(account.cryptoAmount.decimals)))
+        return CryptoAmount(amount: BigUInt(uint64), token: account.data.token)
+    }
 }
 
 public extension CurrencyAmount {

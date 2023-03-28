@@ -1,15 +1,50 @@
-import KeyAppUI
 import SwiftUI
+import KeyAppUI
+import Combine
 
 struct SendInputAmountView: View {
-    @ObservedObject private var viewModel: SendInputAmountViewModel
+
+    @Binding var amountText: String
+    @Binding var isFirstResponder: Bool
+    let amountTextColor: UIColor
+    let countAfterDecimalPoint: Int
+    let isDisabled: Bool
+    let isMaxButtonVisible: Bool
+    let mainTokenText: String
+    let secondaryAmountText: String
+    let secondaryCurrencyText: String
+    let isSwitchMainAmountTypeAvailable: Bool
+    let maxAmountPressed: PassthroughSubject<Void, Never>
+    let switchPressed: PassthroughSubject<Void, Never>
 
     @State private var switchAreaOpacity: Double = 1
 
-    private let mainColor = Asset.Colors.night.color
-
-    init(viewModel: SendInputAmountViewModel) {
-        self.viewModel = viewModel
+    init(
+        amountText: Binding<String>,
+        isFirstResponder: Binding<Bool>,
+        amountTextColor: UIColor,
+        countAfterDecimalPoint: Int,
+        mainTokenText: String,
+        secondaryAmountText: String,
+        secondaryCurrencyText: String,
+        maxAmountPressed: PassthroughSubject<Void, Never>,
+        switchPressed: PassthroughSubject<Void, Never>,
+        isDisabled: Bool = false,
+        isMaxButtonVisible: Bool = true,
+        isSwitchMainAmountTypeAvailable: Bool = true
+    ) {
+        _amountText = amountText
+        _isFirstResponder = isFirstResponder
+        self.amountTextColor = amountTextColor
+        self.countAfterDecimalPoint = countAfterDecimalPoint
+        self.isDisabled = isDisabled
+        self.isMaxButtonVisible = isMaxButtonVisible
+        self.mainTokenText = mainTokenText
+        self.secondaryAmountText = secondaryAmountText
+        self.secondaryCurrencyText = secondaryCurrencyText
+        self.isSwitchMainAmountTypeAvailable = isSwitchMainAmountTypeAvailable
+        self.maxAmountPressed = maxAmountPressed
+        self.switchPressed = switchPressed
     }
 
     var body: some View {
@@ -20,69 +55,65 @@ struct SendInputAmountView: View {
                         HStack(spacing: 16) {
                             ZStack(alignment: .leading) {
                                 SendInputAmountField(
-                                    text: $viewModel.amountText,
-                                    isFirstResponder: $viewModel.isFirstResponder,
-                                    textColor: viewModel.amountTextColor,
-                                    countAfterDecimalPoint: viewModel.countAfterDecimalPoint
+                                    text: $amountText,
+                                    isFirstResponder: $isFirstResponder,
+                                    textColor: amountTextColor,
+                                    countAfterDecimalPoint: countAfterDecimalPoint
                                 ) { textField in
                                     textField.font = Constants.inputFount
                                     textField.placeholder = "0"
-                                    textField.isEnabled = !viewModel.isDisabled
+                                    textField.isEnabled = !isDisabled
                                 }
                                 .accessibilityIdentifier("input-amount")
 
-                                if viewModel.isMaxButtonVisible {
+                                if isMaxButtonVisible {
                                     TextButtonView(
                                         title: L10n.max.uppercased(),
                                         style: .second,
                                         size: .small,
-                                        onPressed: viewModel.maxAmountPressed.send
+                                        onPressed: maxAmountPressed.send
                                     )
                                     .transition(.opacity.animation(.easeInOut))
                                     .cornerRadius(radius: 32, corners: .allCorners)
                                     .frame(width: 68)
-                                    .offset(x: viewModel.amountText.isEmpty
+                                    .offset(x: amountText.isEmpty
                                         ? 16.0
-                                        : textWidth(font: Constants.inputFount, text: viewModel.amountText)
+                                        : textWidth(font: Constants.inputFount, text: amountText)
                                     )
                                     .padding(.horizontal, 8)
                                     .accessibilityIdentifier("max-button")
                                 }
                             }
 
-                            Text(viewModel.mainTokenText)
-                                .foregroundColor(Color(mainColor))
+                            Text(mainTokenText)
+                                .foregroundColor(Color(Constants.mainColor))
                                 .font(uiFont: .systemFont(ofSize: UIFont.fontSize(of: .title2), weight: .bold))
                                 .opacity(switchAreaOpacity)
                                 .accessibilityIdentifier("current-currency")
                         }
                         HStack(spacing: 2) {
-                            Text(viewModel.secondaryAmountText)
-                                .foregroundColor(Color(Asset.Colors.mountain.color))
-                                .apply(style: .text4)
-                                .lineLimit(1)
-                            Text(viewModel.secondaryCurrencyText)
-                                .foregroundColor(Color(Asset.Colors.mountain.color))
-                                .apply(style: .text4)
-                                .lineLimit(1)
+                            Text(secondaryAmountText)
+                                .secondaryStyle()
+
+                            Text(secondaryCurrencyText)
+                                .secondaryStyle()
+
                             Spacer()
-                            if viewModel.isSwitchMainAmountTypeAvailable {
-                                Text(L10n.tapToSwitchTo(viewModel.secondaryCurrencyText))
-                                    .foregroundColor(Color(Asset.Colors.mountain.color))
-                                    .apply(style: .text4)
-                                    .lineLimit(1)
+                            if isSwitchMainAmountTypeAvailable {
+                                Text(L10n.tapToSwitchTo(secondaryCurrencyText))
+                                    .secondaryStyle()
                                     .opacity(switchAreaOpacity)
                                     .layoutPriority(1)
                             }
                         }
                     }
-                    if viewModel.isSwitchMainAmountTypeAvailable {
+                    if isSwitchMainAmountTypeAvailable {
                         Button(
-                            action: viewModel.switchPressed.send,
+                            action: switchPressed.send,
                             label: {
                                 Image(uiImage: UIImage.arrowUpDown)
                                     .renderingMode(.template)
-                                    .foregroundColor(Color(mainColor))
+                                    .foregroundColor(Color(Constants.mainColor))
                                     .frame(width: 16, height: 16)
                                     .opacity(switchAreaOpacity)
                             }
@@ -94,7 +125,7 @@ struct SendInputAmountView: View {
                 .background(RoundedRectangle(cornerRadius: 12))
                 .foregroundColor(Color(Asset.Colors.snow.color))
             }
-            if viewModel.isSwitchMainAmountTypeAvailable {
+            if isSwitchMainAmountTypeAvailable {
                 tapToSwitchHiddenButton
             }
         }
@@ -106,7 +137,7 @@ struct SendInputAmountView: View {
             withAnimation(.easeInOut(duration: 0.3)) {
                 self.switchAreaOpacity = 0.3
             }
-            self.viewModel.switchPressed.send()
+            self.switchPressed.send()
             withAnimation(.easeInOut(duration: 0.3)) {
                 self.switchAreaOpacity = 1
             }
@@ -128,7 +159,15 @@ struct SendInputAmountView_Previews: PreviewProvider {
         ZStack {
             Color(Asset.Colors.smoke.color)
             SendInputAmountView(
-                viewModel: SendInputAmountViewModel(initialToken: .init(token: .nativeSolana), allowSwitchingMainAmountType: false)
+                amountText: .constant(""),
+                isFirstResponder: .constant(true),
+                amountTextColor: .black,
+                countAfterDecimalPoint: 9,
+                mainTokenText: "SOL",
+                secondaryAmountText: "0",
+                secondaryCurrencyText: "USD",
+                maxAmountPressed: .init(),
+                switchPressed: .init()
             )
             .padding(.horizontal, 16)
         }
@@ -137,4 +176,13 @@ struct SendInputAmountView_Previews: PreviewProvider {
 
 private enum Constants {
     static let inputFount = UIFont.font(of: .title2, weight: .bold)
+    static let mainColor = Asset.Colors.night.color
+}
+
+private extension Text {
+    func secondaryStyle() -> some View {
+        return self.foregroundColor(Color(Asset.Colors.mountain.color))
+            .apply(style: .text4)
+            .lineLimit(1)
+    }
 }
