@@ -58,6 +58,15 @@ extension RemoteConfig {
 
 extension RemoteConfig {
     var tokenListURL: String? {
-        configValue(forKey: "solana_token_list_json").stringValue
+        let value = configValue(forKey: "solana_token_list_json").stringValue
+        
+        guard
+            let value,
+            !value.isEmpty
+        else {
+            return nil
+        }
+
+        return value
     }
 }
