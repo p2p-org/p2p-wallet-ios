@@ -99,15 +99,16 @@ class WalletsViewModel: BECollectionViewModel<Wallet> {
         state = .loading
         error = nil
 
-        task = Task {
+        task = Task { [weak self] in
+            guard let self else { return }
             do {
-                let newData = try await createRequest()
-                handleNewData(newData)
+                let newData = try await self.createRequest()
+                self.handleNewData(newData)
             } catch {
                 if error is CancellationError {
                     return
                 }
-                handleError(error)
+                self.handleError(error)
             }
         }
     }
@@ -118,7 +119,7 @@ class WalletsViewModel: BECollectionViewModel<Wallet> {
         else { throw SolanaError.unknown }
 
         // get balance/wallet
-        let (balance, wallets) = try await(
+        let (balance, splTokenWallets) = try await(
             solanaAPIClient.getBalance(account: account, commitment: "processed"),
             solanaAPIClient.getTokenWallets(
                 account: account,
@@ -127,28 +128,25 @@ class WalletsViewModel: BECollectionViewModel<Wallet> {
         )
 
         // sort and map on different thread
-        return await Task<[Wallet], Never> { [weak self] in
-            guard let self = self else { return [] }
-            var wallets = wallets
-
-            // add sol wallet on top
-            let solWallet = Wallet.nativeSolana(
-                pubkey: self.accountStorage.account?.publicKey.base58EncodedString,
-                lamport: balance
-            )
-            wallets.insert(solWallet, at: 0)
-
-            // update visibility
-            wallets = self.mapVisibility(wallets: wallets)
-
-            // map prices
-            wallets = self.mapPrices(wallets: wallets)
-
-            // sort
-            wallets.sort(by: Wallet.defaultSorter)
-
-            return wallets
-        }.value
+        var wallets = splTokenWallets
+        
+        // add sol wallet on top
+        let solWallet = Wallet.nativeSolana(
+            pubkey: self.accountStorage.account?.publicKey.base58EncodedString,
+            lamport: balance
+        )
+        wallets.append(solWallet)
+        
+        // update visibility
+        wallets = self.mapVisibility(wallets: wallets)
+        
+        // map prices
+        wallets = self.mapPrices(wallets: wallets)
+        
+        // sort
+        wallets.sort(by: Wallet.defaultSorter)
+        
+        return wallets
     }
 
     override func handleNewData(_ newData: [Wallet]) {
