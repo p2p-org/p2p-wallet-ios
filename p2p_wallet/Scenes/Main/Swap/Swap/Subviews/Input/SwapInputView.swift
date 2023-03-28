@@ -30,7 +30,7 @@ struct SwapInputView: View {
 
                 Spacer()
 
-                if let fiatAmount = viewModel.fiatAmount, !viewModel.isLoading {
+                if let fiatAmount = viewModel.fiatAmount, !viewModel.isLoading, fiatAmount > 0 {
                     Text("≈\(fiatAmount.toString(maximumFractionDigits: 2, roundingMode: .down)) \(Defaults.fiat.code)")
                         .subtitleStyle(color: Color(viewModel.fiatAmountTextColor))
                         .lineLimit(1)
