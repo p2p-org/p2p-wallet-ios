@@ -242,7 +242,7 @@ class SendCoordinator: Coordinator<SendResult> {
                 switch result {
                 case .normal:
                     self.result.send(.sentViaLink(link: link, transaction: transaction))
-                case .networkError:
+                case .error:
                     var viewControllers = self.rootViewController.viewControllers
                     viewControllers.remove(at: viewControllers.count - 2)
                     self.rootViewController.viewControllers = viewControllers
