@@ -57,7 +57,7 @@ class HomeViewModel: ObservableObject {
 
     func updateAddressIfNeeded() {
         if let name = nameStorage.getName(), !name.isEmpty {
-            address = "\(name).key"
+            address = name
         } else if let address = accountStorage.account?.publicKey.base58EncodedString.shortAddress {
             self.address = address
         }
