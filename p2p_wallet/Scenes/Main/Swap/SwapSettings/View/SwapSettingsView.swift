@@ -102,7 +102,7 @@ struct SwapSettingsView: View {
             }
 
             // Estimated fee
-            if viewModel.isLoadingOrRouteNotNil {
+            if viewModel.isLoadingOrRouteNotNil, viewModel.info.estimatedFees != nil {
                 HStack {
                     Text(L10n.estimatedFees)
                         .fontWeight(.semibold)

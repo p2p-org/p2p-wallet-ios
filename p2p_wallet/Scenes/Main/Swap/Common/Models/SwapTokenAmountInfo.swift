@@ -3,6 +3,6 @@ struct SwapTokenAmountInfo: Equatable {
     let token: String?
     
     var amountDescription: String? {
-        amount > 0 ? amount.tokenAmountFormattedString(symbol: token ?? ""): nil
+        amount.tokenAmountFormattedString(symbol: token ?? "")
     }
 }
