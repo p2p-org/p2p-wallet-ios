@@ -26,7 +26,7 @@ enum NewHistoryAction {
 
     case openBuy
     
-    case openSentViaLinkHistoryView(AnyPublisher<[SendViaLinkTransactionInfo], Never>)
+    case openSentViaLinkHistoryView
 }
 
 class HistoryViewModel: BaseViewModel, ObservableObject {

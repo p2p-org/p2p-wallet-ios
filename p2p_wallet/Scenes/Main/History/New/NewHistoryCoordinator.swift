@@ -15,16 +15,18 @@ import SwiftUI
 import Combine
 
 class NewHistoryCoordinator: SmartCoordinator<Void> {
+    var viewModel: HistoryViewModel!
+    
     override func build() -> UIViewController {
-        let vm = HistoryViewModel()
+        viewModel = HistoryViewModel()
 
-        vm.actionSubject
+        viewModel.actionSubject
             .sink { [weak self] action in
                 self?.openAction(action: action)
             }
             .store(in: &subscriptions)
 
-        let view = NewHistoryView(viewModel: vm, header: SwiftUI.EmptyView())
+        let view = NewHistoryView(viewModel: viewModel, header: SwiftUI.EmptyView())
         let vc = UIHostingControllerWithoutNavigation(rootView: view)
         vc.navigationIsHidden = false
         vc.title = L10n.history
@@ -80,8 +82,8 @@ class NewHistoryCoordinator: SmartCoordinator<Void> {
             self.openBuy()
         case .openReceive:
             self.openReceive()
-        case let .openSentViaLinkHistoryView(transactionsPublisher):
-            openSentViaLinkHistoryView(transactionsPublisher: transactionsPublisher)
+        case let .openSentViaLinkHistoryView:
+            openSentViaLinkHistoryView()
         }
     }
     
@@ -184,9 +186,10 @@ class NewHistoryCoordinator: SmartCoordinator<Void> {
             .store(in: &subscriptions)
     }
     
-    private func openSentViaLinkHistoryView(transactionsPublisher: AnyPublisher<[SendViaLinkTransactionInfo], Never>) {
+    private func openSentViaLinkHistoryView() {
         let coordinator = SentViaLinkHistoryCoordinator(
-            transactionsPublisher: transactionsPublisher,
+            transactionsPublisher: viewModel.$sendViaLinkTransactions
+                .eraseToAnyPublisher(),
             presentation: SmartCoordinatorPushPresentation(presentation.presentingViewController as! UINavigationController)
         )
         

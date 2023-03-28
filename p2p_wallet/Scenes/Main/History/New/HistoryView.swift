@@ -153,10 +153,7 @@ struct NewHistoryView<Header: View>: View {
             .contentShape(Rectangle())
             .onTapGesture {
                 viewModel.actionSubject.send(
-                    .openSentViaLinkHistoryView(
-                        viewModel.$sendViaLinkTransactions
-                            .eraseToAnyPublisher()
-                    )
+                    .openSentViaLinkHistoryView
                 )
             }
     }
