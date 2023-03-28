@@ -1281,3 +1281,4 @@ You can try again, but your new transaction will be subject to the current rates
 "You can’t swap between the same token" = "Vous ne pouvez pas échanger entre le même jeton";
 "Enter amount" = "Entrer le montant";
 "Enter greater value" = "Entrez une valeur supérieure";
+"Token rates are unavailable. Everything works as usual and all funds are safe." = "Les tarifs des jetons ne sont pas disponibles.  Tout fonctionne comme d'habitude et tous les fonds sont en sécurité.";

@@ -1,8 +1,8 @@
+import Combine
 import Foundation
 import Resolver
 import SolanaPricesAPIs
 import SolanaSwift
-import Combine
 
 typealias TokenPriceMap = [String: CurrentPrice]
 
@@ -40,6 +40,7 @@ class PricesService {
 
     @Injected private var storage: PricesStorage
     @Injected private var api: SolanaPricesAPI
+    @Injected private var notificationService: NotificationService
 
     // MARK: - Properties
 
@@ -49,6 +50,8 @@ class PricesService {
     private var timer: Timer?
     private lazy var currentPricesSubject = CurrentValueSubject<TokenPriceMap, Never>([:])
 
+    var fetchingTask: Task<Void, Swift.Error>?
+
     // MARK: - Initializer
 
     init() {
@@ -56,7 +59,7 @@ class PricesService {
         Task {
             // migration
             await migrate()
-            
+
             var initialValue = await storage.retrievePrices()
             if initialValue.values.isEmpty {
                 initialValue = try await getCurrentPrices()
@@ -73,20 +76,20 @@ class PricesService {
     }
 
     // MARK: - Helpers
-    
+
     private func migrate() async {
         // First migration to fix COPE token
         let migration1Key = "PricesService.migration1Key"
-        
+
         if UserDefaults.standard.bool(forKey: migration1Key) == false {
             // clear current cache
             await storage.savePrices([:])
-            
+
             // mark as migrated
             UserDefaults.standard.set(true, forKey: migration1Key)
         }
     }
-    
+
     private func reload() async throws {
         guard !watchList.isEmpty else { return }
         let currentPrice = try await getCurrentPrices(tokens: watchList, toFiat: Defaults.fiat)
@@ -139,11 +142,29 @@ extension PricesService: PricesServiceType {
     }
 
     func fetchPrices(tokens: [Token], toFiat: Fiat = Defaults.fiat) {
-        guard !tokens.isEmpty else { return }
-        Task { [weak self] in
-            guard let self else { return }
-            let currentPrice = try await self.getCurrentPrices(tokens: tokens, toFiat: toFiat)
-            self.currentPricesSubject.send(currentPrice)
+        guard
+            !tokens.isEmpty,
+            fetchingTask == nil
+        else { return }
+
+        fetchingTask = Task { [weak self] in
+            defer { fetchingTask = nil }
+
+            do {
+                guard let self else { return }
+                let currentPrice = try await self.getCurrentPrices(tokens: tokens, toFiat: toFiat)
+                self.currentPricesSubject.send(currentPrice)
+            } catch {
+                notificationService
+                    .showInAppNotification(
+                        .custom(
+                            "😢",
+                            L10n.TokenRatesAreUnavailable.everythingWorksAsUsualAndAllFundsAreSafe
+                        )
+                    )
+
+                throw error
+            }
         }
     }
 
@@ -154,7 +175,7 @@ extension PricesService: PricesServiceType {
 
     func fetchHistoricalPrice(for coinName: String, period: Period) async throws -> [PriceRecord] {
         do {
-            let prices = try await self.api.getHistoricalPrice(
+            let prices = try await api.getHistoricalPrice(
                 of: coinName,
                 fiat: Defaults.fiat.code,
                 period: period
@@ -164,8 +185,8 @@ extension PricesService: PricesServiceType {
         } catch {
             if Defaults.fiat.code.uppercased() != "USD" {
                 // retry with different fiat
-                async let pricesInUSD = self.api.getHistoricalPrice(of: coinName, fiat: "USD", period: period)
-                async let valueInUSD = self.api.getValueInUSD(fiat: Defaults.fiat.code)
+                async let pricesInUSD = api.getHistoricalPrice(of: coinName, fiat: "USD", period: period)
+                async let valueInUSD = api.getValueInUSD(fiat: Defaults.fiat.code)
 
                 guard let rate = try await valueInUSD else { return [] }
                 var records = try await pricesInUSD
