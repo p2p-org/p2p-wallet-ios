@@ -240,13 +240,14 @@ class SendCoordinator: Coordinator<SendResult> {
             .sink(receiveValue: { [weak self] result  in
                 guard let self = self else { return }
                 switch result {
-                case .normal:
+                case .success:
                     self.result.send(.sentViaLink(link: link, transaction: transaction))
-                case .error:
-                    var viewControllers = self.rootViewController.viewControllers
-                    viewControllers.remove(at: viewControllers.count - 2)
-                    self.rootViewController.viewControllers = viewControllers
-                    _ = self.rootViewController.popViewController(animated: true)
+                case .networkError:
+                    // pop to Send
+                    self.rootViewController.popViewController(animated: true)
+                case .otherError:
+                    // pop to error, creating, send (3)
+                    self.rootViewController.popToRootViewController(animated: true)
                 }
             })
             .store(in: &subscriptions)

@@ -45,9 +45,9 @@ final class SendCreateLinkCoordinator: Coordinator<SendCreateLinkCoordinator.Res
             .sink { [weak self] tx in
                 if let error = tx.status.error {
                     if (error as NSError).isNetworkConnectionError {
-                        self?.result.send(.error)
+                        self?.result.send(.networkError)
                     } else {
-                        self?.showErrorView()
+                        self?.showOtherErrorView()
                     }
                 } else {
                     self?.showSendLinkCreatedView()
@@ -74,7 +74,7 @@ final class SendCreateLinkCoordinator: Coordinator<SendCreateLinkCoordinator.Res
         
         viewModel.close
             .sink(receiveValue: { [unowned self] in
-                result.send(.normal)
+                result.send(.success)
             })
             .store(in: &subscriptions)
         viewModel.share
@@ -91,9 +91,9 @@ final class SendCreateLinkCoordinator: Coordinator<SendCreateLinkCoordinator.Res
         navigationController.present(av, animated: true)
     }
     
-    private func showErrorView() {
+    private func showOtherErrorView() {
         let view = SendCreateLinkErrorView { [unowned self] in
-            result.send(.error)
+            result.send(.otherError)
         }
         let vc = UIHostingControllerWithoutNavigation(rootView: view)
         navigationController.pushViewController(vc, animated: true)
@@ -104,7 +104,8 @@ final class SendCreateLinkCoordinator: Coordinator<SendCreateLinkCoordinator.Res
 
 extension SendCreateLinkCoordinator {
     enum Result {
-        case normal
-        case error
+        case success
+        case networkError
+        case otherError
     }
 }
