@@ -1,6 +1,7 @@
 import Foundation
 import SolanaSwift
 import Combine
+import Resolver
 
 final class SendCreateLinkCoordinator: Coordinator<SendCreateLinkCoordinator.Result> {
     // MARK: - Properties
@@ -10,8 +11,8 @@ final class SendCreateLinkCoordinator: Coordinator<SendCreateLinkCoordinator.Res
     let link: String
     let formatedAmount: String
     
-    var execution: () async throws -> TransactionID
     private let navigationController: UINavigationController
+    private let transaction: SendTransaction
     
     // MARK: - Initializer
 
@@ -19,41 +20,46 @@ final class SendCreateLinkCoordinator: Coordinator<SendCreateLinkCoordinator.Res
         link: String,
         formatedAmount: String,
         navigationController: UINavigationController,
-        execution: @escaping () async throws -> TransactionID
+        transaction: SendTransaction
     ) {
         self.link = link
         self.formatedAmount = formatedAmount
-        self.execution = execution
         self.navigationController = navigationController
+        self.transaction = transaction
+        
+        super.init()
+        bind()
+    }
+    
+    func bind() {
+        let transactionHandler = Resolver.resolve(TransactionHandlerType.self)
+        let index = transactionHandler.sendTransaction(transaction)
+        
+        transactionHandler.observeTransaction(transactionIndex: index)
+            .compactMap {$0}
+            .filter {
+                $0.status.error != nil || $0.status.isFinalized || ($0.status.numberOfConfirmations ?? 0) > 0
+            }
+            .prefix(1)
+            .receive(on: RunLoop.main)
+            .sink { [weak self] tx in
+                if tx.status.error != nil {
+                    self?.showErrorView()
+                } else {
+                    self?.showSendLinkCreatedView()
+                }
+            }
+            .store(in: &subscriptions)
     }
     
     // MARK: - Builder
 
     override func start() -> AnyPublisher<SendCreateLinkCoordinator.Result, Never> {
-        let view = SendCreateLinkView {
-            Task { [unowned self] in
-                do {
-                    let _ = try await self.execution()
-                    await MainActor.run { [weak self] in
-                        self?.showSendLinkCreatedView()
-                    }
-                } catch {
-                    await MainActor.run { [weak self] in
-                        self?.showErrorView()
-                    }
-                }
-            }
-        }
+        let view = SendCreateLinkView()
         let sendCreateLinkVC = UIHostingControllerWithoutNavigation(rootView: view)
         navigationController.pushViewController(sendCreateLinkVC, animated: true)
         
-        sendCreateLinkVC.deallocatedPublisher()
-            .sink(receiveValue: { [weak self] _ in
-                self?.result.send(completion: .finished)
-            })
-            .store(in: &subscriptions)
-        
-        return result.eraseToAnyPublisher()
+        return result.prefix(1).eraseToAnyPublisher()
     }
     
     // MARK: - Helper
