@@ -25,7 +25,12 @@ struct SentViaLinkHistoryView: View {
                 ForEach(sections) { section in
                     Section(header: sectionHeaderView(section: section)) {
                         ForEach(section.transactions) { transaction in
-                            transactionView(transaction: transaction)
+                            SentViaLinkHistoryTransactionView(
+                                transaction: transaction
+                            )
+                                .onTapGesture {
+                                    onSelectTransaction(transaction)
+                                }
                         }
                     }
                 }
@@ -48,38 +53,6 @@ struct SentViaLinkHistoryView: View {
             .padding(.vertical, 8)
             .padding(.horizontal, 16)
             .background(Color(Asset.Colors.smoke.color))
-    }
-
-    @ViewBuilder
-    private func transactionView(
-        transaction: SendViaLinkTransactionInfo
-    ) -> some View {
-        HStack(alignment: .center, spacing: 12) {
-            Image(uiImage: .sendViaLinkCircleCompleted)
-                .resizable()
-                .frame(width: 48, height: 48)
-            
-            Text(L10n.sentViaOneTimeLink)
-                .fontWeight(.semibold)
-                .apply(style: .text3)
-                .layoutPriority(1)
-            
-            Spacer(minLength: 0)
-            
-            Text(transaction.amount.tokenAmountFormattedString(
-                symbol: transaction.token.symbol,
-                maximumFractionDigits: Int(transaction.token.decimals)
-            ))
-                .fontWeight(.semibold)
-                .apply(style: .text3)
-                .multilineTextAlignment(.trailing)
-        }
-            .padding(.horizontal, 16)
-            .padding(.vertical, 12)
-            .contentShape(Rectangle())
-            .onTapGesture {
-                onSelectTransaction(transaction)
-            }
     }
     
     // MARK: - Helpers
