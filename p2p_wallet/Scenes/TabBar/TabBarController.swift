@@ -269,7 +269,7 @@ final class TabBarController: UITabBarController {
         viewModel.moveToSendViaLinkClaim
             .sink { seed in
                 guard !seed.isEmpty else { return }
-                DispatchQueue.main.asyncAfter(deadline: .now() + 1) { [weak self] in
+                DispatchQueue.main.asyncAfter(deadline: .now() + .milliseconds(300)) { [weak self] in
                     self?.showAlert(title: "Received sendViaLinkSeed", message: seed)
                 }
             }
