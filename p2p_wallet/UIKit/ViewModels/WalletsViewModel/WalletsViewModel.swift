@@ -185,7 +185,10 @@ class WalletsViewModel: BECollectionViewModel<Wallet> {
 
             let (solBalance, newData) = try await(
                 self.solanaAPIClient.getBalance(account: account, commitment: "processed"),
-                try await self.solanaAPIClient.getTokenWallets(account: account)
+                try await self.solanaAPIClient.getTokenWallets(
+                    account: account,
+                    tokensRepository: tokensRepository
+                )
             )
 
             var data = self.data
