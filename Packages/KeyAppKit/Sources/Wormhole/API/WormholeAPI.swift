@@ -27,7 +27,7 @@ public protocol WormholeAPI {
         recipient: String,
         mint: String?,
         amount: String
-    ) async throws -> [String]
+    ) async throws -> SendTransaction
     
     func getTransferFees(
         userWallet: String,

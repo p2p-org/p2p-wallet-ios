@@ -43,9 +43,6 @@ class WormholeClaimFeeViewModel: BaseViewModel, ObservableObject {
         ethereumTokenService: EthereumTokensRepository = Resolver.resolve(),
         solanaTokenService: SolanaTokensRepository = Resolver.resolve()
     ) {
-        let cryptoFormatter = CryptoFormatter()
-        let currencyFormatter = CurrencyFormatter()
-
         super.init()
 
         /// Listen to changing in bundle
@@ -53,16 +50,12 @@ class WormholeClaimFeeViewModel: BaseViewModel, ObservableObject {
             .$state
             .sinkAsync { [weak self] state in
                 guard let self = self else { return }
-                do {
-                    self.adapter = await .init(
-                        account: account,
-                        state: state,
-                        ethereumTokenService: ethereumTokenService,
-                        solanaTokenService: solanaTokenService
-                    )
-                } catch {
-                    self.adapter = nil
-                }
+                self.adapter = await .init(
+                    account: account,
+                    state: state,
+                    ethereumTokenService: ethereumTokenService,
+                    solanaTokenService: solanaTokenService
+                )
             }
             .store(in: &subscriptions)
     }

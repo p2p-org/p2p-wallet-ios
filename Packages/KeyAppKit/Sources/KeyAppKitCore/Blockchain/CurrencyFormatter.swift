@@ -13,7 +13,7 @@ public protocol CurrencyConvertible {
 }
 
 /// The class for formatting currency.
-public class CurrencyFormatter: Formatter {    
+public class CurrencyFormatter: Formatter {
     public let defaultValue: String
     public let hideSymbol: Bool
 
@@ -37,7 +37,7 @@ public class CurrencyFormatter: Formatter {
     }
 
     override public func string(for obj: Any?) -> String? {
-        formattedValue(for: obj)
+        formattedValue(for: obj) ?? defaultValue
     }
 
     private func formattedValue(for obj: Any?) -> String? {

@@ -60,9 +60,26 @@ class WormholeSendFeesViewModel: BaseViewModel, ObservableObject {
                     DispatchQueue.main.async { [weak self] in
                         self?.fees = [
                             .init(title: L10n.recipientSAddress, subtitle: adapter.recipientAddress, detail: ""),
-                            .init(title: L10n.recipientGets, subtitle: adapter.receive.crypto, detail: adapter.receive.fiat),
-                            .init(title: L10n.networkFee, subtitle: adapter.networkFee?.crypto, detail: adapter.networkFee?.fiat),
-                            .init(title: L10n.usingWormholeBridge, subtitle: adapter.bridgeFee?.crypto, detail: adapter.bridgeFee?.fiat),
+                            .init(
+                                title: L10n.recipientGets,
+                                subtitle: adapter.receive.crypto,
+                                detail: adapter.receive.fiat
+                            ),
+                            .init(
+                                title: L10n.networkFee,
+                                subtitle: adapter.networkFee?.crypto,
+                                detail: adapter.networkFee?.fiat
+                            ),
+                            .init(
+                                title: "Message Fee",
+                                subtitle: adapter.messageFee?.crypto,
+                                detail: adapter.messageFee?.fiat
+                            ),
+                            .init(
+                                title: L10n.usingWormholeBridge,
+                                subtitle: adapter.bridgeFee?.crypto,
+                                detail: adapter.bridgeFee?.fiat
+                            ),
                         ].compactMap { $0 }
                     }
                 }
