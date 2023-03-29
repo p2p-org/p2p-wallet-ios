@@ -145,3 +145,24 @@ extension TransactionHandler {
         return false
     }
 }
+
+// MARK: - Helpers
+
+extension SolanaSwift.APIClientError: CustomNSError {
+    public var errorUserInfo: [String : Any] {
+        func getDebugDescription() -> String {
+            switch self {
+            case .cantEncodeParams:
+                return "Can not decode params"
+            case .invalidAPIURL:
+                return "Invalid APIURL"
+            case .invalidResponse:
+                return "Invalid response"
+            case .responseError(let response):
+                return response.message ?? "\(response)"
+            }
+        }
+        
+        return [NSDebugDescriptionErrorKey: getDebugDescription()]
+    }
+}

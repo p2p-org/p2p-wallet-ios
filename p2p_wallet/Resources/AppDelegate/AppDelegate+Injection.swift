@@ -186,7 +186,7 @@ extension Resolver: ResolverRegistering {
             .scope(.application)
 
         // PricesService
-        register { UserDefaultsPricesStorage() }
+        register { InMemoryPricesStorage() }
             .implements(PricesStorage.self)
             .scope(.application)
 
@@ -250,6 +250,7 @@ extension Resolver: ResolverRegistering {
             cache: resolve()
         ) }
         .implements(SolanaTokensRepository.self)
+        .scope(.application)
 
         // QrCodeImageRender
         register { ReceiveToken.QrCodeImageRenderImpl() }

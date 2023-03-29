@@ -32,7 +32,7 @@ struct SwapFeeInfo: Codable, Equatable {
     }
     
     var amountInFiatDescription: String? {
-        amount == 0 && canBePaidByKeyApp ? L10n.free: "≈ " + (amountInFiat?.fiatAmountFormattedString() ?? "")
+        amount == 0 && canBePaidByKeyApp ? L10n.free: amountInFiat > 0 ? "≈ " + (amountInFiat?.fiatAmountFormattedString() ?? ""): nil
     }
     
     var amountInFiat: Double? {

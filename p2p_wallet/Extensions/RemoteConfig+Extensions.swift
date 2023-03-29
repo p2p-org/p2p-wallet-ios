@@ -34,7 +34,7 @@ extension RemoteConfig {
 
 extension RemoteConfig {
     var usernameDomain: String? {
-        configValue(forKey: "username_domain").stringValue
+        configValue(forKey: "username_domain").nonEmptyOrNilStringValue
     }
 }
 
@@ -58,6 +58,21 @@ extension RemoteConfig {
 
 extension RemoteConfig {
     var tokenListURL: String? {
-        configValue(forKey: "solana_token_list_json").stringValue
+        configValue(forKey: "solana_token_list_json").nonEmptyOrNilStringValue
+    }
+}
+
+// MARK: - Modifier
+
+private extension RemoteConfigValue {
+    var nonEmptyOrNilStringValue: String? {
+        guard
+            let stringValue,
+            !stringValue.isEmpty
+        else {
+            return nil
+        }
+        
+        return stringValue
     }
 }
