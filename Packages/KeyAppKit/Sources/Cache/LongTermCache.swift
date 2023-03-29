@@ -67,14 +67,30 @@ private extension LongTermCache {
 
 public extension LongTermCache {
     final class KeyTracker: NSObject, NSCacheDelegate {
+        /// Thread-safe 
+        private var _lock: UnsafeMutablePointer<os_unfair_lock>
+
         var keys = Set<Key>()
+
+        override public init() {
+            _lock = UnsafeMutablePointer<os_unfair_lock>.allocate(capacity: 1)
+            _lock.initialize(to: os_unfair_lock())
+
+            super.init()
+        }
+
+        deinit {
+            _lock.deallocate()
+        }
 
         public func cache(_: NSCache<AnyObject, AnyObject>, willEvictObject object: Any) {
             guard let entry = object as? Entry else {
                 return
             }
 
+            os_unfair_lock_lock(_lock)
             keys.remove(entry.key)
+            os_unfair_lock_unlock(_lock)
         }
     }
 
