@@ -19,6 +19,7 @@ struct AmountTextField: UIViewRepresentable {
     @Binding private var maxValue: Double?
     private let decimalSeparator: String
     private var configuration = { (_: AmountUITextField) in }
+    let moveCursorToTrailingWhenDidBeginEditing: Bool
 
     // MARK: - Init
     
@@ -29,6 +30,7 @@ struct AmountTextField: UIViewRepresentable {
         maxFractionDigits: Binding<Int>,
         maxValue: Binding<Double?> = .constant(nil),
         decimalSeparator: String = ".",
+        moveCursorToTrailingWhenDidBeginEditing: Bool = false,
         configuration: @escaping (AmountUITextField) -> Void = { _ in }
     ) {
         _value = value
@@ -36,6 +38,7 @@ struct AmountTextField: UIViewRepresentable {
         _textColor = textColor
         _maxFractionDigits = maxFractionDigits
         _maxValue = maxValue
+        self.moveCursorToTrailingWhenDidBeginEditing = moveCursorToTrailingWhenDidBeginEditing
         self.decimalSeparator = decimalSeparator
         self.configuration = configuration
     }
@@ -52,6 +55,7 @@ struct AmountTextField: UIViewRepresentable {
         textField.setContentCompressionResistancePriority(.defaultLow, for: .horizontal)
         textField.decimalSeparator = decimalSeparator
         textField.textColor = textColor
+        textField.moveCursorToTrailingWhenDidBeginEditing = moveCursorToTrailingWhenDidBeginEditing
         configuration(textField)
         return textField
     }
@@ -91,6 +95,7 @@ final class AmountUITextField: UITextField, UITextFieldDelegate {
     fileprivate var firstResponder: Binding<Bool>
     fileprivate var maxFractionDigits: Binding<Int>
     fileprivate var maxValue: Binding<Double?>
+    fileprivate var moveCursorToTrailingWhenDidBeginEditing: Bool = false
     
     // MARK: - Init
 
@@ -151,6 +156,15 @@ final class AmountUITextField: UITextField, UITextFieldDelegate {
     
     func textFieldDidBeginEditing(_: UITextField) {
         firstResponder.wrappedValue = true
+        
+        // Move cursor to trailing
+        if moveCursorToTrailingWhenDidBeginEditing {
+            DispatchQueue.main.async { [weak self] in
+                guard let self else { return }
+                let endPosition = self.endOfDocument
+                self.selectedTextRange = self.textRange(from: endPosition, to: endPosition)
+            }
+        }
     }
 
     func textFieldDidEndEditing(_: UITextField) {
