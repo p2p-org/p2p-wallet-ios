@@ -12,8 +12,12 @@ extension Array where Element == Wallet {
     var totalAmountInCurrentFiat: Double {
         reduce(0) { $0 + $1.amountInCurrentFiat }
     }
-    
+
+    var totalAmount: Double? {
+        reduce(0) { $0 + $1.amount }
+    }
+
     var isTotalBalanceEmpty: Bool {
-        totalAmountInCurrentFiat == 0
+        totalAmount == 0
     }
 }
