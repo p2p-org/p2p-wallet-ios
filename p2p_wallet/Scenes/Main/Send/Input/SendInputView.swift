@@ -211,7 +211,7 @@ struct SendInputView: View {
     #if !RELEASE
         var debugView: some View {
             Group {
-                if let link = viewModel.currentState.sendViaLinkSeed {
+                if viewModel.currentState.sendViaLinkSeed != nil {
                     Text("\(viewModel.getSendViaLinkURL() ?? "") (tap to copy)")
                         .apply(style: .label2)
                         .foregroundColor(.red)

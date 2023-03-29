@@ -118,25 +118,25 @@ struct RendableDetailPendingTransaction: RendableTransactionDetail {
             } else {
                 return .negative("-\(transaction.amountInFiat.fiatAmountFormattedString())")
             }
+
         case let transaction as SwapRawTransactionType:
-            let amountInFiat: Double = (transaction.fromAmount * priceService
-                .currentPrice(mint: transaction.sourceWallet.token.address)?.value)
-            return .unchanged("\(amountInFiat.fiatAmountFormattedString())")
-        case let transaction as WormholeClaimTransaction:
-            if let value = CurrencyFormatter().string(for: transaction.amountInFiat) {
-                return .positive("+\(value)")
-            } else {
-                return .unchanged("")
-            }
-        case let transaction as WormholeSendTransaction:
-            let value = CurrencyFormatter().string(amount: transaction.currencyAmount)
-            return .negative(value)
             if let price = priceService.currentPrice(mint: transaction.sourceWallet.token.address)?.value {
                 let amountInFiat: Double = transaction.fromAmount * price
                 return .unchanged("\(amountInFiat.fiatAmountFormattedString())")
             } else {
                 return .unchanged("")
             }
+
+        case let transaction as WormholeClaimTransaction:
+            if let value = CurrencyFormatter().string(for: transaction.amountInFiat) {
+                return .positive("+\(value)")
+            } else {
+                return .unchanged("")
+            }
+
+        case let transaction as WormholeSendTransaction:
+            let value = CurrencyFormatter().string(amount: transaction.currencyAmount)
+            return .negative(value)
 
         default:
             return .unchanged("")
@@ -151,8 +151,10 @@ struct RendableDetailPendingTransaction: RendableTransactionDetail {
             } else {
                 return "\(transaction.amount.tokenAmountFormattedString(symbol: transaction.walletToken.token.symbol))"
             }
+
         case let transaction as SwapRawTransactionType:
             return transaction.mainDescription
+
         case let transaction as WormholeClaimTransaction:
             guard let value = CryptoFormatter().string(for: transaction.amountInCrypto) else {
                 return ""

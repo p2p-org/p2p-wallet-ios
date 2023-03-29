@@ -10,13 +10,12 @@ import Send
 import SwiftUI
 
 struct RecipientCell: View {
-    
     @SwiftUI.Environment(\.isEnabled) var isEnabled: Bool
     let image: AnyView
     let title: String
     let subtitle: String?
     let trailingView: AnyView?
-    
+
     init(image: AnyView, title: String, subtitle: String? = nil, trailingView: AnyView? = nil) {
         self.image = image
         self.title = title
@@ -38,25 +37,25 @@ struct RecipientCell: View {
                 self.subtitle = RecipientFormatter.format(destination: recipient.address)
             }
         case .solanaAddress:
-             image = Image(uiImage: .newWalletCircle),
-             title = RecipientFormatter.format(destination: recipient.address),
-             self.subtitle = subtitle
+            image = Image(uiImage: .newWalletCircle).castToAnyView()
+            title = RecipientFormatter.format(destination: recipient.address)
+            self.subtitle = subtitle
 
         case .ethereumAddress:
-             image = Image(uiImage: .ethereumIcon),
-             title = RecipientFormatter.format(destination: recipient.address),
-             self.subtitle = nil
+            image = Image(uiImage: .ethereumIcon).castToAnyView()
+            title = RecipientFormatter.format(destination: recipient.address)
+            self.subtitle = nil
 
         case let .solanaTokenAddress(_, token):
-             image = CoinLogoImageViewRepresentable(size: 48, args: .token(token)),
-             title = RecipientFormatter.format(destination: recipient.address),
-             self.subtitle = subtitle ?? "\(token.symbol) \(L10n.tokenAccount)"
+            image = CoinLogoImageViewRepresentable(size: 48, args: .token(token)).castToAnyView()
+            title = RecipientFormatter.format(destination: recipient.address)
+            self.subtitle = subtitle ?? "\(token.symbol) \(L10n.tokenAccount)"
         default:
             image = Image(uiImage: .newWalletCircle).castToAnyView()
             title = RecipientFormatter.format(destination: recipient.address)
             self.subtitle = subtitle
         }
-        
+
         if let date = recipient.createdData {
             trailingView = Text(date.timeAgoDisplay())
                 .apply(style: .label1)

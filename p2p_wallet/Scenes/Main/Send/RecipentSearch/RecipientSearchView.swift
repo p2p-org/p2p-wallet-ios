@@ -19,6 +19,7 @@ struct RecipientSearchView: View {
             ProgressView()
         case .loaded:
             loadedView
+        case .error:
             ErrorView {
                 Task { await viewModel.load() }
             }

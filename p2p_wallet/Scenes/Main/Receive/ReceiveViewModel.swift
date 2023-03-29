@@ -79,7 +79,7 @@ class ReceiveViewModel: BaseViewModel, ObservableObject {
                         ListReceiveItem(
                             id: FieldId.username.rawValue,
                             title: L10n.myUsername,
-                            description: username.withNameServiceDomain(),
+                            description: username,
                             showTopCorners: false,
                             showBottomCorners: true
                         )
