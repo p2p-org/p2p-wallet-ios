@@ -86,7 +86,7 @@ private extension HomeViewModel {
                 guard let self else { return }
                 
                 // accumulate total amount
-                let isEmpty = data.isTotalBalanceEmpty
+                let isEmpty = data.isTotalAmountEmpty
                 // address
                 self.updateAddressIfNeeded()
                 
