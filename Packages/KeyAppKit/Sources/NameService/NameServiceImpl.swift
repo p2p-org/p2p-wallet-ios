@@ -17,12 +17,12 @@ public class NameServiceImpl: NameService {
         self.cache = cache
     }
 
-    public func getName(_ owner: String) async throws -> String? {
+    public func getName(_ owner: String, withTLD: Bool) async throws -> String? {
         if let result = cache.getName(for: owner) {
             return result.name
         }
 
-        let name = try await lookupName(owner: owner).last?.name
+        let name = try await lookupName(owner: owner, withTLD: withTLD).last?.name
         cache.save(name, for: owner)
         return name
     }
@@ -37,6 +37,7 @@ public class NameServiceImpl: NameService {
             }
             return result
         } catch let error as NameServiceError {
+            print("NameServiceError: \(error)")
             return []
         }
     }
@@ -45,6 +46,7 @@ public class NameServiceImpl: NameService {
         do {
             return try await getName(name)?.owner
         } catch let error as NameServiceError {
+            print("NameServiceError: \(error)")
             return nil
         }
     }
@@ -59,7 +61,7 @@ public class NameServiceImpl: NameService {
         urlRequest.setValue("application/json", forHTTPHeaderField: "Content-Type")
         urlRequest.httpBody = try JSONEncoder().encode(params)
         try Task.checkCancellation()
-        let (data, response) = try await URLSession.shared.data(from: urlRequest)
+        let (data, _) = try await URLSession.shared.data(from: urlRequest)
         try Task.checkCancellation()
         let stringResponse = String(data: data, encoding: .utf8)
         if let stringResponse = stringResponse, stringResponse.contains("insufficient funds for instruction") {
@@ -71,10 +73,12 @@ public class NameServiceImpl: NameService {
     public func create(name: String, publicKey: String, privateKey: Data) async throws -> CreateNameTransaction {
         let timestamp = Date()
         var serializedData = Data()
-        let serialized = try CreateNameRequestMessage(
+        
+        try CreateNameRequestMessage(
             owner: publicKey,
             timestamp: Int64(timestamp.timeIntervalSince1970)
-        ).serialize(to: &serializedData)
+        )
+            .serialize(to: &serializedData)
 
         let signature = try NaclSign.signDetached(message: serializedData, secretKey: privateKey)
         let signatureBase58 = Base58.encode(signature)
@@ -130,11 +134,11 @@ public class NameServiceImpl: NameService {
         return response.result ?? []
     }
 
-    private func lookupName(owner: String) async throws -> [NameInfo] {
+    private func lookupName(owner: String, withTLD: Bool) async throws -> [NameInfo] {
         let rpcRequest = KeyAppKitCore.JSONRPCRequest(
             id: UUID().uuidString,
             method: NameServiceMethod.lookupName.rawValue,
-            params: LookupNameRequestParams(owner: owner)
+            params: LookupNameRequestParams(owner: owner, withTLD: withTLD)
         )
         let urlRequest = try createURLRequest(with: rpcRequest)
         let response: KeyAppKitCore.JSONRPCResponse<[NameInfo], ErrorData> = try await request(request: urlRequest)

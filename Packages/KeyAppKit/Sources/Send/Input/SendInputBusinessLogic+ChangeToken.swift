@@ -21,32 +21,41 @@ extension SendInputBusinessLogic {
 
         do {
             // Update fee in SOL and source token
-            let fee = try await services.feeService.getFees(
-                from: token,
-                recipient: state.recipient,
-                recipientAdditionalInfo: state.recipientAdditionalInfo,
-                payingTokenMint: state.tokenFee.address,
-                feeRelayerContext: feeRelayerContext
-            ) ?? .zero
-
+            let fee: FeeAmount
+            if state.isSendingViaLink {
+                fee = .zero
+            } else {
+                fee = try await services.feeService.getFees(
+                    from: token,
+                    recipient: state.recipient,
+                    recipientAdditionalInfo: state.recipientAdditionalInfo,
+                    payingTokenMint: state.tokenFee.address,
+                    feeRelayerContext: feeRelayerContext
+                ) ?? .zero
+            }
+            
             var state = state.copy(
                 token: token,
                 fee: fee
             )
 
             // Auto select fee token
-            let feeInfo = await autoSelectTokenFee(
-                userWallets: state.userWalletEnvironments.wallets,
-                feeInSol: state.fee,
-                token: state.token,
-                services: services
-            )
-
-            state = state.copy(
-                tokenFee: feeInfo.token,
-                feeInToken: fee == .zero ? .zero : feeInfo.fee
-            )
-
+            if state.isSendingViaLink {
+                // do nothing as fee is free
+            } else {
+                let feeInfo = await autoSelectTokenFee(
+                    userWallets: state.userWalletEnvironments.wallets,
+                    feeInSol: state.fee,
+                    token: state.token,
+                    services: services
+                )
+                
+                state = state.copy(
+                    tokenFee: feeInfo.token,
+                    feeInToken: fee == .zero ? .zero : feeInfo.fee
+                )
+            }
+            
             state = await sendInputChangeAmountInToken(state: state, amount: state.amountInToken, services: services)
             state = await validateFee(state: state)
 
