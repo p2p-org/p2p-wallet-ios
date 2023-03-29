@@ -1304,3 +1304,4 @@ You can try again, but your new transaction will be subject to the current rates
 "Key App one-time transfer link" = "Ссылка для одноразового переноса ключа";
 "The one-time link is ready! The funds can be claimed" = "Одноразовая ссылка готова!  Средства могут быть востребованы";
 "If you want to get your money back just open link by yourself" = "Если вы хотите вернуть свои деньги, просто откройте ссылку самостоятельно";
+"Token rates are unavailable. Everything works as usual and all funds are safe." = "Курсы токенов недоступны.  Все работает как обычно и все средства в безопасности.";

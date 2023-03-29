@@ -61,6 +61,10 @@ struct SendTransactionStatusView: View {
                     .apply(style: .text2)
                     .foregroundColor(Color(Asset.Colors.mountain.color))
                     .padding(.bottom, 34)
+            } else {
+                Rectangle()
+                    .fill(Color.clear)
+                    .padding(.bottom, 34)
             }
         }
         .frame(maxWidth: .infinity)
@@ -117,8 +121,8 @@ struct SendTransactionStatusStatusView: View {
 
     init(viewModel: SendTransactionStatusViewModel, errorMessageTapAction: @escaping () -> Void) {
         self.viewModel = viewModel
-        self.currentAppearance = SendTransactionStatusViewAppearance(state: viewModel.state)
-        self.previousAppearance = nil
+        currentAppearance = SendTransactionStatusViewAppearance(state: viewModel.state)
+        previousAppearance = nil
         self.errorMessageTapAction = errorMessageTapAction
     }
 
@@ -188,7 +192,7 @@ struct SendTransactionStatusStatusView: View {
 
 private extension Text {
     func messageStyled() -> some View {
-        return self.apply(style: .text4)
+        apply(style: .text4)
             .foregroundColor(Color(Asset.Colors.night.color))
             .fixedSize(horizontal: false, vertical: true)
     }
