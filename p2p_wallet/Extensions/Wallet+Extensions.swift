@@ -13,11 +13,7 @@ extension Array where Element == Wallet {
         reduce(0) { $0 + $1.amountInCurrentFiat }
     }
 
-    var totalAmount: Double? {
-        reduce(0) { $0 + $1.amount }
-    }
-
-    var isTotalBalanceEmpty: Bool {
-        totalAmount == 0
+    var isTotalAmountEmpty: Bool {
+        contains(where: { $0.amount > 0 }) == false
     }
 }
