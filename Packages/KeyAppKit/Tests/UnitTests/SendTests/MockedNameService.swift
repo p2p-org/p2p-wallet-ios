@@ -6,7 +6,9 @@ import Foundation
 import NameService
 
 class MockedNameService: NameService {
-    func getName(_: String) async throws -> String? { nil }
+    func getName(_: String, withTLD _: Bool) async throws -> String? {
+        nil
+    }
 
     func getOwnerAddress(
         _: String

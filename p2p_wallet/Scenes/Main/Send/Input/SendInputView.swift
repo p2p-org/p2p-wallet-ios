@@ -19,11 +19,11 @@ struct SendInputView: View {
             ProgressView()
         case .loaded:
             loadedView
-        case .error(let error):
+        case let .error(error):
             VStack {
                 #if !RELEASE
-                Text(error)
-                    .foregroundColor(.red)
+                    Text(error)
+                        .foregroundColor(.red)
                 #endif
                 Text("\(L10n.somethingWentWrong). \(L10n.tapToTryAgain)?")
                     .onTapGesture {
@@ -44,10 +44,10 @@ struct SendInputView: View {
             ScrollView {
                 inputView
             }
-                .padding(16)
+            .padding(16)
         }
     }
-    
+
     var inputView: some View {
         VStack(spacing: 8) {
             if viewModel.currentState.sendViaLinkSeed != nil {
@@ -61,61 +61,10 @@ struct SendInputView: View {
                     .frame(minHeight: 16, maxHeight: 52)
             }
 
-                    Spacer()
-
-                    Button(action: viewModel.feeInfoPressed.send) {
-                        HStack(spacing: 4) {
-                            Text(viewModel.feeTitle)
-                                .apply(style: .text4)
-                                .foregroundColor(Color(Asset.Colors.sky.color))
-                                .onTapGesture(perform: viewModel.feeInfoPressed.send)
-                            if viewModel.isFeeLoading {
-                                CircularProgressIndicatorView(
-                                    backgroundColor: Asset.Colors.sky.color.withAlphaComponent(0.6),
-                                    foregroundColor: Asset.Colors.sky.color
-                                )
-                                .frame(width: 16, height: 16)
-                            } else {
-                                Button(action: viewModel.feeInfoPressed.send, label: {
-                                    Image(uiImage: UIImage.infoSend)
-                                        .resizable()
-                                        .frame(width: 16, height: 16)
-                                })
-                            }
-                        }
-                    }
-                    .allowsHitTesting(!viewModel.isFeeLoading && !viewModel.lock)
-                    .accessibilityIdentifier("fee-label")
-                }
-                .padding(.horizontal, 4)
-
-                SendInputTokenView(
-                    wallet: viewModel.sourceWallet,
-                    amountInFiat: viewModel.sourceWallet.amountInCurrentFiat,
-                    isChangeEnabled: viewModel.isTokenChoiceEnabled,
-                    changeAction: viewModel.changeTokenPressed.send
-                )
-                .allowsHitTesting(!viewModel.lock)
-                .accessibilityIdentifier("token-view")
-
-                switch viewModel.status {
-                case .initializing:
-                    inputSkeletonView
-                case .initializingFailed:
-                    initializationFailedView
-                case .ready:
-                    SendInputAmountWrapperView(viewModel: viewModel.inputAmountViewModel)
-                }
-
-                #if !RELEASE
-                FeeRelayerDebugView(
-                    viewModel: .init(
-                        feeInSOL: viewModel.currentState.fee,
-                        feeInToken: viewModel.currentState.feeInToken,
-                        payingFeeTokenDecimals: viewModel.currentState.tokenFee.decimals
-                    )
-                )
-                #endif
+            HStack(spacing: 4) {
+                Text(L10n.youWillSend)
+                    .apply(style: .text4)
+                    .foregroundColor(Color(Asset.Colors.mountain.color))
 
                 Spacer()
 
@@ -139,24 +88,20 @@ struct SendInputView: View {
                             })
                         }
                     }
-                    .cornerRadius(radius: 28, corners: .allCorners)
-                    .frame(height: TextButton.Size.large.height)
-                case .initializing, .ready:
-                    SliderActionButton(
-                        isSliderOn: $viewModel.isSliderOn,
-                        data: viewModel.actionButtonData,
-                        showFinished: viewModel.showFinished
-                    )
-                    .accessibilityIdentifier("send-slider")
                 }
                 .allowsHitTesting(!viewModel.isFeeLoading && !viewModel.lock)
                 .accessibilityIdentifier("fee-label")
             }
             .padding(.horizontal, 4)
 
-            SendInputTokenView(viewModel: viewModel.tokenViewModel)
-                .allowsHitTesting(!viewModel.lock)
-                .accessibilityIdentifier("token-view")
+            SendInputTokenView(
+                wallet: viewModel.sourceWallet,
+                amountInFiat: viewModel.sourceWallet.amountInCurrentFiat,
+                isChangeEnabled: viewModel.isTokenChoiceEnabled,
+                changeAction: viewModel.changeTokenPressed.send
+            )
+            .allowsHitTesting(!viewModel.lock)
+            .accessibilityIdentifier("token-view")
 
             switch viewModel.status {
             case .initializing:
@@ -164,33 +109,33 @@ struct SendInputView: View {
             case .initializingFailed:
                 initializationFailedView
             case .ready:
-                SendInputAmountView(viewModel: viewModel.inputAmountViewModel)
+                SendInputAmountWrapperView(viewModel: viewModel.inputAmountViewModel)
             }
 
             Spacer()
 
             sendButton
-            
+
             #if !RELEASE
-            HStack {
-                Toggle(isOn: $viewModel.isFakeSendTransaction) {
-                    Text("Fake Transaction")
-                }
-                if viewModel.isFakeSendTransaction {
-                    VStack {
-                        Toggle(isOn: $viewModel.isFakeSendTransactionError) {
-                            Text("With Error")
-                        }
-                        Toggle(isOn: $viewModel.isFakeSendTransactionNetworkError) {
-                            Text("With Network Error")
+                HStack {
+                    Toggle(isOn: $viewModel.isFakeSendTransaction) {
+                        Text("Fake Transaction")
+                    }
+                    if viewModel.isFakeSendTransaction {
+                        VStack {
+                            Toggle(isOn: $viewModel.isFakeSendTransactionError) {
+                                Text("With Error")
+                            }
+                            Toggle(isOn: $viewModel.isFakeSendTransactionNetworkError) {
+                                Text("With Network Error")
+                            }
                         }
                     }
-                }
-                
-                Spacer()
-            }
 
-            debugView
+                    Spacer()
+                }
+
+                debugView
             #endif
         }
     }
@@ -243,7 +188,7 @@ struct SendInputView: View {
         .background(RoundedRectangle(cornerRadius: 12).fill(Color(Asset.Colors.snow.color)))
         .frame(height: 90)
     }
-    
+
     @ViewBuilder
     var sendButton: some View {
         switch viewModel.status {
@@ -254,38 +199,42 @@ struct SendInputView: View {
             .cornerRadius(radius: 28, corners: .allCorners)
             .frame(height: TextButton.Size.large.height)
         case .initializing, .ready:
-            SliderActionButton(isSliderOn: $viewModel.isSliderOn, data: $viewModel.actionButtonData, showFinished: $viewModel.showFinished)
-                .accessibilityIdentifier("send-slider")
-        }
-    }
-    
-    #if !RELEASE
-    var debugView: some View {
-        Group {
-            if let link = viewModel.currentState.sendViaLinkSeed {
-                Text("\(viewModel.getSendViaLinkURL() ?? "") (tap to copy)")
-                    .apply(style: .label2)
-                    .foregroundColor(.red)
-                    .onTapGesture {
-                        UIPasteboard.general.string = viewModel.getSendViaLinkURL()
-                    }
-                Text("\(viewModel.currentState.recipient.address) (tap to copy)")
-                    .apply(style: .label2)
-                    .foregroundColor(.red)
-                    .onTapGesture {
-                        UIPasteboard.general.string = viewModel.currentState.recipient.address
-                    }
-            }
-            
-            FeeRelayerDebugView(
-                viewModel: .init(
-                    feeInSOL: viewModel.currentState.fee,
-                    feeInToken: viewModel.currentState.feeInToken,
-                    payingFeeTokenDecimals: viewModel.currentState.tokenFee.decimals
-                )
+            SliderActionButton(
+                isSliderOn: $viewModel.isSliderOn,
+                data: viewModel.actionButtonData,
+                showFinished: viewModel.showFinished
             )
+            .accessibilityIdentifier("send-slider")
         }
     }
+
+    #if !RELEASE
+        var debugView: some View {
+            Group {
+                if let link = viewModel.currentState.sendViaLinkSeed {
+                    Text("\(viewModel.getSendViaLinkURL() ?? "") (tap to copy)")
+                        .apply(style: .label2)
+                        .foregroundColor(.red)
+                        .onTapGesture {
+                            UIPasteboard.general.string = viewModel.getSendViaLinkURL()
+                        }
+                    Text("\(viewModel.currentState.recipient.address) (tap to copy)")
+                        .apply(style: .label2)
+                        .foregroundColor(.red)
+                        .onTapGesture {
+                            UIPasteboard.general.string = viewModel.currentState.recipient.address
+                        }
+                }
+
+                FeeRelayerDebugView(
+                    viewModel: .init(
+                        feeInSOL: viewModel.currentState.fee,
+                        feeInToken: viewModel.currentState.feeInToken,
+                        payingFeeTokenDecimals: viewModel.currentState.tokenFee.decimals
+                    )
+                )
+            }
+        }
     #endif
 }
 
