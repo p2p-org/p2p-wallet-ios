@@ -21,3 +21,19 @@ public protocol AnyToken {
     /// Decimal for token
     var decimals: UInt8 { get }
 }
+
+extension AnyToken {
+    var asSomeToken: SomeToken {
+        SomeToken(tokenPrimaryKey: tokenPrimaryKey, symbol: symbol, name: name, decimals: decimals)
+    }
+}
+
+public struct SomeToken: AnyToken, Hashable, Codable {
+    public let tokenPrimaryKey: String
+
+    public let symbol: String
+
+    public let name: String
+
+    public let decimals: UInt8
+}

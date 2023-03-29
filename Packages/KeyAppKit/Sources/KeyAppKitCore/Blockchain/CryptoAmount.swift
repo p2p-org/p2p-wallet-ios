@@ -11,23 +11,18 @@ import Foundation
 
 /// Token amount struct
 public struct CryptoAmount: Hashable {
+    /// Token metadata
+    public let token: SomeToken
+
     public let value: BigUInt
 
     public var amount: BigDecimal {
-        BigDecimal(integerValue: BigInt(value), scale: Int(decimals))
+        BigDecimal(integerValue: BigInt(value), scale: Int(token.decimals))
     }
-
-    public let symbol: String
-
-    public let decimals: UInt8
-
-    public let smartContract: String
 
     public init(amount: BigUInt, token: AnyToken) {
         value = amount
-        symbol = token.symbol
-        decimals = token.decimals
-        smartContract = token.tokenPrimaryKey
+        self.token = token.asSomeToken
     }
 
     public init(uint64 amount: UInt64, token: AnyToken) {
@@ -39,7 +34,7 @@ public struct CryptoAmount: Hashable {
 
     public init(bigUIntString amount: String, token: AnyToken) {
         self.init(
-            amount: BigUInt(stringLiteral: amount),
+            amount: BigUInt(amount, radix: 10) ?? 0,
             token: token
         )
     }
@@ -78,7 +73,7 @@ public struct CryptoAmount: Hashable {
         if zeroPaddingCount > 0 {
             zeroPaddingStr = .init(repeating: "0", count: zeroPaddingCount)
         } else if zeroPaddingCount < 0 {
-            floatingPart = String(floatingPart.prefix(-zeroPaddingCount))
+            floatingPart = String(floatingPart.prefix(Int(token.decimals)))
         }
 
         let number = integerPart + floatingPart + zeroPaddingStr
@@ -90,15 +85,15 @@ public struct CryptoAmount: Hashable {
     }
 
     public func toFiatAmount(price: TokenPrice) throws -> CurrencyAmount {
-        guard price.smartContract == smartContract else {
-            throw ConvertError.invalidPriceForToken(expected: symbol, actual: price.symbol)
+        guard price.token.tokenPrimaryKey == token.tokenPrimaryKey else {
+            throw ConvertError.invalidPriceForToken(expected: token.symbol, actual: price.token.symbol)
         }
 
         return .init(value: amount * (price.value ?? 0), currencyCode: price.currencyCode)
     }
 
     public func unsafeToFiatAmount(price: TokenPrice) -> CurrencyAmount {
-        guard price.smartContract == smartContract else {
+        guard price.token.tokenPrimaryKey == token.tokenPrimaryKey else {
             return .init(value: 0, currencyCode: price.currencyCode)
         }
 
@@ -108,7 +103,7 @@ public struct CryptoAmount: Hashable {
 
 extension CryptoAmount: Comparable {
     public static func < (lhs: CryptoAmount, rhs: CryptoAmount) -> Bool {
-        guard lhs.smartContract == rhs.smartContract else {
+        guard lhs.token.tokenPrimaryKey == rhs.token.tokenPrimaryKey else {
             return false
         }
 

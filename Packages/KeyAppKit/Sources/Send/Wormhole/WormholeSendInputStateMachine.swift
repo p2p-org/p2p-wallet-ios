@@ -43,6 +43,7 @@ public class WormholeSendInputStateMachine: StateMachine, ObservableObject {
     
     var currentTask: Task<Void, Never>?
     
+    @discardableResult
     public func accept(action: WormholeSendInputAction) async -> State {
         if let currentTask {
             if state.value.isCancable() {

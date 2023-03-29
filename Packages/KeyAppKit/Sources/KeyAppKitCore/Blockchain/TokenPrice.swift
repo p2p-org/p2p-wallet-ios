@@ -13,14 +13,11 @@ public struct TokenPrice: Hashable {
     /// ISO 4217 Currency code
     public let currencyCode: String
 
+    /// Token that keep the price
+    public let token: SomeToken
+
     /// Value of price
     public let value: BigDecimal?
-
-    public let symbol: String
-
-    public let decimals: UInt8
-
-    public let smartContract: String
 
     @available(*, deprecated, message: "Never use double for fiat.")
     public var doubleValue: Double {
@@ -31,10 +28,7 @@ public struct TokenPrice: Hashable {
     public init(currencyCode: String, value: BigDecimal?, token: AnyToken) {
         self.currencyCode = currencyCode
         self.value = value
-
-        symbol = token.symbol
-        decimals = token.decimals
-        smartContract = token.tokenPrimaryKey
+        self.token = token.asSomeToken
     }
 
     public init(currencyCode: String, value: Decimal?, token: AnyToken) {

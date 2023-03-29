@@ -9,16 +9,20 @@ import BigInt
 import Foundation
 
 /// Helper protocol for quickly converting to ``CryptoAmount``.
-public protocol CryptoAmountConverable {
+public protocol CryptoAmountConvertible {
     var asCryptoAmount: CryptoAmount { get }
 }
 
 /// A string-formatter for crypto.
 public class CryptoFormatter: Formatter {
-    let prefix: String
+    public let defaultValue: String
+    public let prefix: String
+    public let hideSymbol: Bool
 
-    public init(prefix: String = "") {
+    public init(defaultValue: String = "", prefix: String = "", hideSymbol: Bool = false) {
+        self.defaultValue = defaultValue
         self.prefix = prefix
+        self.hideSymbol = hideSymbol
         super.init()
     }
 
@@ -27,30 +31,26 @@ public class CryptoFormatter: Formatter {
         fatalError()
     }
 
-    public func string(amount: CryptoAmountConverable) -> String {
-        string(for: amount.asCryptoAmount) ?? "N/A"
+    public func string(amount: CryptoAmountConvertible) -> String {
+        formattedValue(for: amount.asCryptoAmount) ?? defaultValue
     }
 
-    public func string(amount: CryptoAmount, withCode: Bool = true) -> String {
-        (withCode ? string(for: amount) : stringValue(for: amount)) ?? "N/A"
+    public func string(amount: CryptoAmount) -> String {
+        formattedValue(for: amount) ?? defaultValue
     }
 
     override public func string(for obj: Any?) -> String? {
-        return formattedValue(for: obj, withSymbol: true)
+        formattedValue(for: obj)
     }
 
     // MARK: - Private
 
-    private func stringValue(for obj: Any?) -> String? {
-        return formattedValue(for: obj, withSymbol: false)
-    }
-
-    private func formattedValue(for obj: Any?, withSymbol: Bool) -> String? {
+    private func formattedValue(for obj: Any?) -> String? {
         let amount: CryptoAmount?
 
         if let obj = obj as? CryptoAmount {
             amount = obj
-        } else if let obj = obj as? CryptoAmountConverable {
+        } else if let obj = obj as? CryptoAmountConvertible {
             amount = obj.asCryptoAmount
         } else {
             amount = nil
@@ -63,7 +63,7 @@ public class CryptoFormatter: Formatter {
         formatter.numberStyle = .decimal
         formatter.decimalSeparator = "."
         formatter.groupingSeparator = " "
-        formatter.maximumFractionDigits = Int(amount.decimals)
+        formatter.maximumFractionDigits = Int(amount.token.decimals)
 
         let convertedValue = Decimal(string: String(amount.amount))
         guard var formattedAmount = formatter.string(for: convertedValue) else {
@@ -74,10 +74,10 @@ public class CryptoFormatter: Formatter {
             formattedAmount = prefix + " \(formattedAmount)"
         }
 
-        if withSymbol {
-            return "\(formattedAmount) \(amount.symbol)"
-        } else {
+        if hideSymbol {
             return formattedAmount
+        } else {
+            return "\(formattedAmount) \(amount.token.symbol)"
         }
     }
 }
