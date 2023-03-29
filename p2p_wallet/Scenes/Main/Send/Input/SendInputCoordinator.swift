@@ -2,6 +2,7 @@ import Combine
 import Send
 import SolanaSwift
 import SwiftUI
+import Resolver
 
 final class SendInputCoordinator: Coordinator<SendResult> {
     private let navigationController: UINavigationController
@@ -12,6 +13,8 @@ final class SendInputCoordinator: Coordinator<SendResult> {
     private let source: SendSource
     private let pushedWithoutRecipientSearchView: Bool
     private let allowSwitchingMainAmountType: Bool
+    
+    private let sendViaLinkSeed: String?
 
     init(
         recipient: Recipient,
@@ -20,7 +23,8 @@ final class SendInputCoordinator: Coordinator<SendResult> {
         navigationController: UINavigationController,
         source: SendSource,
         pushedWithoutRecipientSearchView: Bool = false,
-        allowSwitchingMainAmountType: Bool
+        allowSwitchingMainAmountType: Bool,
+        sendViaLinkSeed: String? = nil
     ) {
         self.recipient = recipient
         self.preChosenWallet = preChosenWallet
@@ -29,18 +33,20 @@ final class SendInputCoordinator: Coordinator<SendResult> {
         self.source = source
         self.pushedWithoutRecipientSearchView = pushedWithoutRecipientSearchView
         self.allowSwitchingMainAmountType = allowSwitchingMainAmountType
+        self.sendViaLinkSeed = sendViaLinkSeed
     }
 
     override func start() -> AnyPublisher<SendResult, Never> {
-        let viewModel = SendInputViewModel(recipient: recipient, preChosenWallet: preChosenWallet, preChosenAmount: preChosenAmount, source: source, allowSwitchingMainAmountType: allowSwitchingMainAmountType)
+        let viewModel = SendInputViewModel(recipient: recipient, preChosenWallet: preChosenWallet, preChosenAmount: preChosenAmount, source: source, allowSwitchingMainAmountType: allowSwitchingMainAmountType, sendViaLinkSeed: sendViaLinkSeed)
         let view = SendInputView(viewModel: viewModel)
         let controller = KeyboardAvoidingViewController(rootView: view, navigationBarVisibility: .visible)
 
         navigationController.pushViewController(controller, animated: true)
-        setTitle(to: controller)
+        setTitle(to: controller, isSendViaLink: sendViaLinkSeed != nil)
 
         controller.onClose = { [weak self] in
             self?.subject.send(.cancelled)
+            self?.subject.send(completion: .finished)
         }
 
         controller.viewWillAppearPublisher.sink { _ in
@@ -59,11 +65,20 @@ final class SendInputCoordinator: Coordinator<SendResult> {
             .store(in: &subscriptions)
 
         viewModel.openFeeInfo
-            .sink { [weak self] isFree in
-                if viewModel.currentState.amountInToken == 0, isFree {
-                    self?.openFreeTransactionsDetail(from: controller)
+            .sink { [weak self, weak viewModel] isFree in
+                guard let self, let viewModel else { return }
+                if viewModel.currentState.isSendingViaLink {
+                    self.openFreeTransactionsDetail(
+                        from: controller,
+                        isSendingViaLink: true
+                    )
+                } else if viewModel.currentState.amountInToken == 0, isFree {
+                    self.openFreeTransactionsDetail(
+                        from: controller,
+                        isSendingViaLink: false
+                    )
                 } else {
-                    self?.openFeeDetail(from: controller, viewModel: viewModel)
+                    self.openFeeDetail(from: controller, viewModel: viewModel)
                 }
             }
             .store(in: &subscriptions)
@@ -75,8 +90,20 @@ final class SendInputCoordinator: Coordinator<SendResult> {
             .store(in: &subscriptions)
 
         viewModel.transaction
-            .sink { [weak self] model in
-                self?.subject.send(.sent(model))
+            .sink { [weak self, viewModel] model in
+                if let seed = viewModel.stateMachine.currentState.sendViaLinkSeed {
+                    let sendViaLinkDataService = Resolver.resolve(SendViaLinkDataService.self)
+                    guard let link = try? sendViaLinkDataService
+                        .restoreURL(givenSeed: seed)
+                        .absoluteString
+                    else {
+                        return
+                    }
+                    self?.subject.send(.sentViaLink(link: link, transaction: model))
+                } else {
+                    self?.subject.send(.sent(model))
+                    self?.subject.send(completion: .finished)
+                }
             }
             .store(in: &subscriptions)
         
@@ -84,15 +111,19 @@ final class SendInputCoordinator: Coordinator<SendResult> {
             Task { await viewModel.load() }
         }
 
-        return subject.prefix(1).eraseToAnyPublisher()
+        return subject.eraseToAnyPublisher()
     }
 
-    private func setTitle(to vc: UIViewController) {
-        switch recipient.category {
-        case let .username(name, domain):
-            vc.title = RecipientFormatter.username(name: name, domain: domain)
-        default:
-            vc.title = RecipientFormatter.format(destination: recipient.address)
+    private func setTitle(to vc: UIViewController, isSendViaLink: Bool) {
+        if isSendViaLink {
+            vc.title = L10n.sendViaOneTimeLink
+        } else {
+            switch recipient.category {
+            case let .username(name, domain):
+                vc.title = RecipientFormatter.username(name: name, domain: domain)
+            default:
+                vc.title = RecipientFormatter.format(destination: recipient.address)
+            }
         }
 
         vc.navigationItem.largeTitleDisplayMode = .always
@@ -114,8 +145,14 @@ final class SendInputCoordinator: Coordinator<SendResult> {
         .store(in: &subscriptions)
     }
 
-    private func openFreeTransactionsDetail(from vc: UIViewController) {
-        coordinate(to: SendInputFreeTransactionsDetailCoordinator(parentController: vc))
+    private func openFreeTransactionsDetail(
+        from vc: UIViewController,
+        isSendingViaLink: Bool
+    ) {
+        coordinate(to: SendInputFreeTransactionsDetailCoordinator(
+            parentController: vc,
+            isFreeTransactionsLimited: !isSendingViaLink
+        ))
             .sink(receiveValue: {})
             .store(in: &subscriptions)
     }

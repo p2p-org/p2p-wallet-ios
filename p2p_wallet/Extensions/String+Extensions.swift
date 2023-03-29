@@ -219,3 +219,12 @@ extension String {
     }
 }
 
+extension String {
+    static var fakeTransactionSignaturePrefix: String {
+        "<FakeTransactionSignature>"
+    }
+    
+    static func fakeTransactionSignature(id: String) -> String {
+        fakeTransactionSignaturePrefix + "<\(id)>"
+    }
+}

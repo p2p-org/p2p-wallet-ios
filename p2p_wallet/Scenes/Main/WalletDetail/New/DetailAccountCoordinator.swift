@@ -11,6 +11,8 @@ import SolanaSwift
 import SwiftUI
 import UIKit
 import Wormhole
+import Combine
+import KeyAppUI
 
 enum DetailAccountCoordinatorArgs {
     case solanaAccount(SolanaAccountsService.Account)
@@ -121,6 +123,9 @@ class DetailAccountCoordinator: SmartCoordinator<DetailAccountCoordinatorResult>
 
         case let .openSwap(wallet, destination):
             self.openSwap(destination: destination)
+
+        case .openSentViaLinkHistoryView:
+            break
         }
     }
 
@@ -280,6 +285,12 @@ class DetailAccountCoordinator: SmartCoordinator<DetailAccountCoordinatorResult>
                     self.coordinate(to: SendTransactionStatusCoordinator(parentController: rootViewController, transaction: model))
                         .sink(receiveValue: {})
                         .store(in: &self.subscriptions)
+                case let .sentViaLink:
+                    rootViewController.popToViewController(currentVC, animated: true)
+
+//                    self.coordinate(to: SendTransactionStatusCoordinator(parentController: rootViewController, transaction: model))
+//                        .sink(receiveValue: {})
+//                        .store(in: &self.subscriptions)
                 case .cancelled:
                     break
                 }

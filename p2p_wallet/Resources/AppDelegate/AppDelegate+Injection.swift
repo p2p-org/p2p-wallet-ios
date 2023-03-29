@@ -81,6 +81,10 @@ extension Resolver: ResolverRegistering {
             .implements((ICloudStorageType & AccountStorageType & NameStorageType).self)
             .implements((ICloudStorageType & AccountStorageType & NameStorageType & PincodeStorageType).self)
             .scope(.application)
+        
+        register { SendViaLinkStorageImpl() }
+            .implements(SendViaLinkStorage.self)
+            .scope(.session)
 
         // API Gateway
         register { () -> APIGatewayClient in
@@ -312,6 +316,20 @@ extension Resolver: ResolverRegistering {
         register {
             SendHistoryService(provider: resolve(SendHistoryLocalProvider.self))
         }
+        .scope(.session)
+        
+        // SendViaLink
+        register {
+            SendViaLinkDataServiceImpl(
+                salt: .secretConfig("SEND_VIA_LINK_SALT")!,
+                passphrase: "",
+                network: .mainnetBeta,
+                derivablePath: .default,
+                host: "t.key.app",
+                solanaAPIClient: resolve()
+            )
+        }
+        .implements(SendViaLinkDataService.self)
         .scope(.session)
 
         // SolanaSocket

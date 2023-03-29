@@ -10,6 +10,7 @@ import KeyAppBusiness
 import Resolver
 import Send
 import SolanaSwift
+import FeeRelayerSwift
 
 enum LoadableState: Equatable {
     case notRequested
@@ -25,6 +26,22 @@ enum LoadableState: Equatable {
     }
 }
 
+/// State for SendViaLink feature
+struct SendViaLinkState: Equatable {
+    /// Indicate if the feature itself is disabled or not (via FT)
+    let isFeatureDisabled: Bool
+    /// Default limit for a day
+    let limitPerDay: Int
+    /// Number of links used today
+    let numberOfLinksUsedToday: Int
+    
+    /// Indicate if user can create link
+    var canCreateLink: Bool {
+        !isFeatureDisabled && (numberOfLinksUsedToday < limitPerDay)
+    }
+}
+
+@MainActor
 class RecipientSearchViewModel: ObservableObject {
     private let preChosenWallet: Wallet?
     private var subscriptions = Set<AnyCancellable>()
@@ -43,7 +60,11 @@ class RecipientSearchViewModel: ObservableObject {
     @Published var loadingState: LoadableState = .notRequested
     @Published var isFirstResponder: Bool = false
 
-    @Published var input: String = ""
+    @Published var input = "" {
+        didSet {
+            sendViaLinkVisible = input.isEmpty
+        }
+    }
     @Published var searchResult: RecipientSearchResult? = nil
     @Published var userWalletEnvironments: UserWalletEnvironments = .empty
 
@@ -51,6 +72,13 @@ class RecipientSearchViewModel: ObservableObject {
 
     @Published var recipientsHistoryStatus: SendHistoryService.Status = .ready
     @Published var recipientsHistory: [Recipient] = []
+    
+    @Published var sendViaLinkState = SendViaLinkState(
+        isFeatureDisabled: true,
+        limitPerDay: 30,
+        numberOfLinksUsedToday: 0
+    )
+    @Published var sendViaLinkVisible = true
 
     var autoSelectTheOnlyOneResultMode: AutoSelectTheOnlyOneResultMode?
     var fromQR: Bool = false
@@ -61,6 +89,9 @@ class RecipientSearchViewModel: ObservableObject {
 
         fileprivate let scanQRSubject: PassthroughSubject<Void, Never> = .init()
         var scanQRPublisher: AnyPublisher<Void, Never> { scanQRSubject.eraseToAnyPublisher() }
+        
+        fileprivate let sendViaLinkSubject: PassthroughSubject<Void, Never> = .init()
+        var sendViaLinkPublisher: AnyPublisher<Void, Never> { sendViaLinkSubject.eraseToAnyPublisher() }
     }
 
     let coordinator: Coordinator = .init()
@@ -122,7 +153,6 @@ class RecipientSearchViewModel: ObservableObject {
         logOpen()
     }
 
-    @MainActor
     func autoSelectTheOnlyOneResult(result: RecipientSearchResult, fromQR: Bool) {
         // Wait result and select first result
         switch result {
@@ -175,13 +205,12 @@ class RecipientSearchViewModel: ObservableObject {
                 {
                     try? await Task.sleep(nanoseconds: autoSelectTheOnlyOneResultMode.delay!)
                     guard !Task.isCancelled else { return }
-                    await autoSelectTheOnlyOneResult(result: result, fromQR: fromQR)
+                    autoSelectTheOnlyOneResult(result: result, fromQR: fromQR)
                 }
             }
         }
     }
 
-    @MainActor
     func past() {
         guard let text = clipboardManager.stringFromClipboard(), !text.isEmpty else { return }
         isFirstResponder = false
@@ -190,34 +219,64 @@ class RecipientSearchViewModel: ObservableObject {
         notificationService.showToast(title: "✅", text: L10n.pastedFromClipboard)
     }
 
-    @MainActor
     func qr() {
         isFirstResponder = false
         coordinator.scanQRSubject.send(())
     }
 
-    @MainActor
     func selectRecipient(_ recipient: Recipient, fromQR: Bool = false) {
         logRecipient(recipient: recipient, fromQR: fromQR)
         coordinator.selectRecipientSubject.send(recipient)
     }
 
-    @MainActor
     func notifyAddressRecognized(recipient: Recipient) {
         let text = L10n.theAddressIsRecognized("\(recipient.address.prefix(6))...\(recipient.address.suffix(6))")
         notificationService.showToast(title: "✅", text: text, haptic: false)
     }
 
-    @MainActor
     func load() async {
         loadingState = .loading
         do {
-            try await Resolver.resolve(SwapServiceType.self).reload()
+            let _ = try await(
+                Resolver.resolve(SwapServiceType.self).reload(),
+                checkIfSendViaLinkAvailable()
+            )
             loadingState = .loaded
             isFirstResponder = true
         } catch {
             loadingState = .error(error.readableDescription)
         }
+    }
+    
+    // MARK: - Send via link
+    
+    func checkIfSendViaLinkAvailable() async throws {
+        if available(.sendViaLinkEnabled) {
+            // get relay context
+            let usageStatus = try await Resolver.resolve(RelayContextManager.self)
+                .getCurrentContextOrUpdate()
+                .usageStatus
+            
+            // get limit per day and nummber of used
+            let limitPerDay = usageStatus.maxTokenAccountCreationCount
+            let usedToday = usageStatus.tokenAccountCreationCountUsed
+            
+            sendViaLinkState = SendViaLinkState(
+                isFeatureDisabled: false,
+                limitPerDay: limitPerDay,
+                numberOfLinksUsedToday: usedToday
+            )
+        } else {
+            sendViaLinkState = SendViaLinkState(
+                isFeatureDisabled: true,
+                limitPerDay: 0,
+                numberOfLinksUsedToday: 0
+            )
+        }
+    }
+    
+    func sendViaLink() {
+        coordinator.sendViaLinkSubject.send(())
     }
 }
 

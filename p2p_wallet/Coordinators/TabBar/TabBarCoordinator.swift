@@ -264,6 +264,8 @@ final class TabBarCoordinator: Coordinator<Void> {
                             navigationController?.popToRootViewController(animated: true)
                             self?.showTransaction(pendingTransaction: pending)
                             
+                        case .sentViaLink:
+                            navigationController?.popToRootViewController(animated: true)
                         case .cancelled:
                             break
                         }

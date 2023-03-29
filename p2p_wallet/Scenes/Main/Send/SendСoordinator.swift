@@ -13,6 +13,7 @@ import SwiftUI
 enum SendResult {
     case sent(SendTransaction)
     case wormhole(PendingTransaction)
+    case sentViaLink(link: String, transaction: SendTransaction)
     case cancelled
 }
 
@@ -24,6 +25,7 @@ class SendCoordinator: Coordinator<SendResult> {
     // MARK: - Dependencies
 
     @Injected var walletsRepository: WalletsRepository
+    @Injected private var sendViaLinkDataService: SendViaLinkDataService
 
     // MARK: - Properties
 
@@ -67,7 +69,7 @@ class SendCoordinator: Coordinator<SendResult> {
             if withTokens {
                 // normal flow with no preChosenRecipient
                 if let recipient = preChosenRecipient {
-                    return startFlowWithPreChosenRecipient(recipient)
+                    startFlowWithPreChosenRecipient(recipient)
                 } else {
                     startFlowWithNoPreChosenRecipient()
                 }
@@ -89,7 +91,7 @@ class SendCoordinator: Coordinator<SendResult> {
 
     private func startFlowWithPreChosenRecipient(
         _ recipient: Recipient
-    ) -> AnyPublisher<SendResult, Never> {
+    ) {
         coordinate(to: SendInputCoordinator(
             recipient: recipient,
             preChosenWallet: preChosenWallet,
@@ -99,6 +101,17 @@ class SendCoordinator: Coordinator<SendResult> {
             pushedWithoutRecipientSearchView: true,
             allowSwitchingMainAmountType: allowSwitchingMainAmountType
         ))
+        .sink { [weak self] result in
+            switch result {
+            case let .sent(transaction):
+                self?.result.send(.sent(transaction))
+            case .sentViaLink:
+                break
+            case .cancelled:
+                break
+            }
+        }
+        .store(in: &subscriptions)
     }
 
     private func startFlowWithNoPreChosenRecipient() {
@@ -122,6 +135,8 @@ class SendCoordinator: Coordinator<SendResult> {
                     self?.result.send(.sent(transaction))
                 case let .wormhole(transaction):
                     self?.result.send(.wormhole(transaction))
+                case .sentViaLink:
+                    break
                 case .cancelled:
                     break
                 }
@@ -152,7 +167,16 @@ class SendCoordinator: Coordinator<SendResult> {
             .sink(receiveValue: { [weak vm] result in
                 vm?.searchQR(query: result, autoSelectTheOnlyOneResultMode: .enabled(delay: 0))
             }).store(in: &subscriptions)
-
+        
+        vm.coordinator.sendViaLinkPublisher
+            .sinkAsync { [weak self] in
+                guard let self else { return }
+                self.rootViewController.view.showIndetermineHud()
+                try? await self.startSendViaLinkFlow()
+                self.rootViewController.view.hideHud()
+            }
+            .store(in: &subscriptions)
+        
         Task {
             await vm.load()
         }
@@ -175,6 +199,73 @@ class SendCoordinator: Coordinator<SendResult> {
         let coordinator = SendEmptyCoordinator(navigationController: rootViewController)
         coordinator.start()
             .sink(receiveValue: { [weak self] _ in self?.result.send(completion: .finished) })
+            .store(in: &subscriptions)
+    }
+    
+    private func startSendViaLinkFlow() async throws {
+        // create recipient
+        let url = sendViaLinkDataService.createURL()
+        let keypair = try await sendViaLinkDataService.generateKeyPair(url: url)
+        let seed = try sendViaLinkDataService.getSeedFromURL(url)
+        
+        let recipient = Recipient(
+            address: keypair.publicKey.base58EncodedString,
+            category: .solanaAddress,
+            attributes: [.funds]
+        )
+        
+        coordinate(to: SendInputCoordinator(
+            recipient: recipient,
+            preChosenWallet: preChosenWallet,
+            preChosenAmount: preChosenAmount,
+            navigationController: rootViewController,
+            source: .none,
+            allowSwitchingMainAmountType: true,
+            sendViaLinkSeed: seed
+        ))
+        .sink { [weak self] result in
+            switch result {
+            case let .sent(transaction):
+                self?.result.send(.sent(transaction))
+            case let .sentViaLink(link, transaction):
+                self?.startSendViaLinkCompletionFlow(
+                    link: link,
+                    formatedAmount: transaction.amount.tokenAmountFormattedString(symbol: transaction.walletToken.token.symbol),
+                    transaction: transaction
+                )
+            case .cancelled:
+                break
+            }
+        }
+        .store(in: &subscriptions)
+    }
+    
+    private func startSendViaLinkCompletionFlow(
+        link: String,
+        formatedAmount: String,
+        transaction: SendTransaction
+    ) {
+        let coordinator = SendCreateLinkCoordinator(
+            link: link,
+            formatedAmount: formatedAmount,
+            navigationController: rootViewController,
+            transaction: transaction
+        )
+        
+        coordinate(to: coordinator)
+            .sink(receiveValue: { [weak self] result  in
+                guard let self = self else { return }
+                switch result {
+                case .success:
+                    self.result.send(.sentViaLink(link: link, transaction: transaction))
+                case .networkError:
+                    // pop to Send
+                    self.rootViewController.popViewController(animated: true)
+                case .otherError:
+                    // pop to error, creating, send (3)
+                    self.rootViewController.popToRootViewController(animated: true)
+                }
+            })
             .store(in: &subscriptions)
     }
 }
