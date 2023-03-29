@@ -13,24 +13,34 @@ public protocol CurrencyConvertible {
 }
 
 /// The class for formatting currency.
-public class CurrencyFormatter: Formatter {
-    public func string(amount: CurrencyAmount, defaultValue: String = "N/A", withCode: Bool = true) -> String {
-        (withCode ? string(for: amount) : stringValue(for: amount)) ?? defaultValue
+public class CurrencyFormatter: Formatter {    
+    public let defaultValue: String
+    public let hideSymbol: Bool
+
+    public init(defaultValue: String = "", hideSymbol: Bool = false) {
+        self.defaultValue = defaultValue
+        self.hideSymbol = hideSymbol
+        super.init()
     }
 
-    public func string(amount: CurrencyConvertible, defaultValue: String = "N/A") -> String {
+    @available(*, unavailable)
+    required init?(coder _: NSCoder) {
+        fatalError("init(coder:) has not been implemented")
+    }
+
+    public func string(amount: CurrencyAmount) -> String {
+        string(for: amount) ?? defaultValue
+    }
+
+    public func string(amount: CurrencyConvertible) -> String {
         string(for: amount) ?? defaultValue
     }
 
     override public func string(for obj: Any?) -> String? {
-        return formattedValue(for: obj, withSymbol: true)
+        formattedValue(for: obj)
     }
 
-    private func stringValue(for obj: Any?) -> String? {
-        return formattedValue(for: obj, withSymbol: false)
-    }
-
-    private func formattedValue(for obj: Any?, withSymbol: Bool) -> String? {
+    private func formattedValue(for obj: Any?) -> String? {
         let amount: CurrencyAmount?
 
         if let obj = obj as? CurrencyConvertible {
@@ -46,16 +56,14 @@ public class CurrencyFormatter: Formatter {
         let formatter = NumberFormatter()
         formatter.roundingMode = .down
 
-        if withSymbol {
-            // Set currency mode
-            formatter.currencyCode = amount.currencyCode
-            formatter.numberStyle = .currency
-            formatter.locale = Locale(identifier: "en-US")
-        }
+        // Set currency mode
+        formatter.currencyCode = amount.currencyCode
+        formatter.numberStyle = .currency
+        formatter.locale = Locale(identifier: "en-US")
 
-        // Fix prefix padding
-        // formatter.negativePrefix = "\(formatter.negativePrefix!) "
-        // formatter.positivePrefix = "\(formatter.positivePrefix!) "
+        if hideSymbol {
+            formatter.currencySymbol = ""
+        }
 
         // Set style
         formatter.groupingSize = 3
