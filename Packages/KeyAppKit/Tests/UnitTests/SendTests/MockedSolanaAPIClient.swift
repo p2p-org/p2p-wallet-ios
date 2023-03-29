@@ -188,4 +188,12 @@ class MockedSolanaAPIClient: SolanaAPIClient {
     func getRecentPerformanceSamples(
         limit _: [UInt]
     ) async throws -> [PerfomanceSamples] { fatalError("getRecentPerformanceSamples(limit:) has not been implemented") }
+    
+    func getSlot() async throws -> UInt64 {
+        fatalError()
+    }
+    
+    func getAddressLookupTable(accountKey: SolanaSwift.PublicKey) async throws -> SolanaSwift.AddressLookupTableAccount? {
+        fatalError()
+    }
 }

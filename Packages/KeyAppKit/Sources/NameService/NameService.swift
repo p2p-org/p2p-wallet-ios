@@ -9,7 +9,7 @@ public protocol NameService {
     ///
     /// - Parameter owner: public key
     /// - Returns: user name
-    func getName(_ owner: String) async throws -> String?
+    func getName(_ owner: String, withTLD: Bool) async throws -> String?
 
     /// Resolve first matched public key by username.
     ///

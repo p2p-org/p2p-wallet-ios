@@ -119,6 +119,12 @@ public struct SendInputState: Equatable {
     ///
     /// Current state for free transactions
     public let feeRelayerContext: RelayContext?
+    
+    /// Send via link
+    public let sendViaLinkSeed: String?
+    public var isSendingViaLink: Bool {
+        sendViaLinkSeed != nil
+    }
 
     public init(
         status: Status,
@@ -131,7 +137,8 @@ public struct SendInputState: Equatable {
         fee: FeeAmount,
         tokenFee: Token,
         feeInToken: FeeAmount,
-        feeRelayerContext: RelayContext?
+        feeRelayerContext: RelayContext?,
+        sendViaLinkSeed: String?
     ) {
         self.status = status
         self.recipient = recipient
@@ -144,6 +151,7 @@ public struct SendInputState: Equatable {
         self.tokenFee = tokenFee
         self.feeInToken = feeInToken
         self.feeRelayerContext = feeRelayerContext
+        self.sendViaLinkSeed = sendViaLinkSeed
     }
 
     public static func zero(
@@ -153,7 +161,8 @@ public struct SendInputState: Equatable {
         token: Token,
         feeToken: Token,
         userWalletState: UserWalletEnvironments,
-        feeRelayerContext: RelayContext? = nil
+        feeRelayerContext: RelayContext? = nil,
+        sendViaLinkSeed: String?
     ) -> SendInputState {
         .init(
             status: status,
@@ -166,7 +175,8 @@ public struct SendInputState: Equatable {
             fee: .zero,
             tokenFee: feeToken,
             feeInToken: .zero,
-            feeRelayerContext: feeRelayerContext
+            feeRelayerContext: feeRelayerContext,
+            sendViaLinkSeed: sendViaLinkSeed
         )
     }
 
@@ -181,7 +191,8 @@ public struct SendInputState: Equatable {
         fee: FeeAmount? = nil,
         tokenFee: Token? = nil,
         feeInToken: FeeAmount? = nil,
-        feeRelayerContext: RelayContext? = nil
+        feeRelayerContext: RelayContext? = nil,
+        sendViaLinkSeed: String?? = nil
     ) -> SendInputState {
         .init(
             status: status ?? self.status,
@@ -194,7 +205,8 @@ public struct SendInputState: Equatable {
             fee: fee ?? self.fee,
             tokenFee: tokenFee ?? self.tokenFee,
             feeInToken: feeInToken ?? self.feeInToken,
-            feeRelayerContext: feeRelayerContext ?? self.feeRelayerContext
+            feeRelayerContext: feeRelayerContext ?? self.feeRelayerContext,
+            sendViaLinkSeed: sendViaLinkSeed ?? self.sendViaLinkSeed
         )
     }
 }
