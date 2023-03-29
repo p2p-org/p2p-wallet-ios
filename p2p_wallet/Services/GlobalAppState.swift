@@ -47,6 +47,7 @@ class GlobalAppState: ObservableObject {
     
     // TODO: Refactor!
     @Published var surveyID: String?
+    @Published var sendViaLinkSeed: String?
 
     private init() {
         if let forcedValue = Defaults.forcedNameServiceEndpoint {

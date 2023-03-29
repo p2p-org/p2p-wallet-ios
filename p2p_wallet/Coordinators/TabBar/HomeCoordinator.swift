@@ -140,6 +140,8 @@ final class HomeCoordinator: Coordinator<Void> {
                 case .wormhole(let trx):
                     self?.navigationController.popToRootViewController(animated: true)
                     self?.showTransaction(pendingTransaction: trx)
+                case .sentViaLink:
+                    self?.navigationController.popToRootViewController(animated: true)
                 case .cancelled:
                     break
                 }

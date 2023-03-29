@@ -37,4 +37,7 @@ public extension Feature {
 
     // Eth
     static let ethAddressEnabled = Feature(rawValue: "eth_address_enabled")
+    
+    // Send via link
+    static let sendViaLinkEnabled = Feature(rawValue: "send_via_link_enabled")
 }

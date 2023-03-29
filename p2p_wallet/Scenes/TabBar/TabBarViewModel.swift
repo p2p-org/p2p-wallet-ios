@@ -106,6 +106,31 @@ extension TabBarViewModel {
         .receive(on: DispatchQueue.main)
         .eraseToAnyPublisher()
     }
+    
+    var moveToSendViaLinkClaim: AnyPublisher<String, Never> {
+        Publishers.Merge(
+            authenticationHandler
+                .isLockedPublisher
+                .filter { value in
+                    GlobalAppState.shared.sendViaLinkSeed != nil && value == false
+                }
+                .map {_ in ()},
+            
+            viewDidLoad
+                .filter { [weak self] in
+                    self?.notificationService.showFromLaunch == true
+                }
+        )
+        .map { _ in () }
+        .map {
+            GlobalAppState.shared.sendViaLinkSeed ?? ""
+        }
+        .handleEvents(receiveOutput: { _ in
+            GlobalAppState.shared.sendViaLinkSeed = nil
+        })
+        .receive(on: DispatchQueue.main)
+        .eraseToAnyPublisher()
+    }
 
     var isLockedPublisher: AnyPublisher<Bool, Never> { authenticationHandler.isLockedPublisher }
 }

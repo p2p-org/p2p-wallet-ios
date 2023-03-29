@@ -120,6 +120,8 @@ extension WalletDetail {
                             self?.navigationController?.popToViewController(ofClass: Self.self, animated: true)
                             self?.showTransaction(pendingTransaction: pending)
 
+                        case .sentViaLink:
+                            self?.navigationController?.popToViewController(ofClass: Self.self, animated: true)
                         case .cancelled:
                             break
                         }

@@ -22,7 +22,10 @@ func setupDefaultFlags() {
             FeatureFlag(feature: .simulatedSocialError, enabled: false),
 
             // History
-            FeatureFlag(feature: .historyServiceEnabled, enabled: true)
+            FeatureFlag(feature: .historyServiceEnabled, enabled: true),
+            
+            // Send via link
+            FeatureFlag(feature: .sendViaLinkEnabled, enabled: false)
         ]
     )
 }
