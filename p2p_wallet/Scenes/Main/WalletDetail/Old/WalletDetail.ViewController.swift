@@ -115,6 +115,9 @@ extension WalletDetail {
                         case let .sent(model):
                             self?.navigationController?.popToViewController(ofClass: Self.self, animated: true)
                             self?.showSendTransactionStatus(model: model)
+                        case .sentViaLink:
+                            self?.navigationController?.popToViewController(ofClass: Self.self, animated: true)
+//                            self?.showSendTransactionStatus(model: model)
                         case .cancelled:
                             break
                         }

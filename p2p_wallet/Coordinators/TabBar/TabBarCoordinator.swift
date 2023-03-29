@@ -252,6 +252,9 @@ final class TabBarCoordinator: Coordinator<Void> {
                         case let .sent(model):
                             navigationController?.popToRootViewController(animated: true)
                             self?.routeToSendTransactionStatus(model: model)
+                        case .sentViaLink:
+                            navigationController?.popToRootViewController(animated: true)
+//                            self?.routeToSendTransactionStatus(model: model)
                         case .cancelled:
                             break
                         }

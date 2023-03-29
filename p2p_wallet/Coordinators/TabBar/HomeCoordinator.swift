@@ -130,6 +130,9 @@ final class HomeCoordinator: Coordinator<Void> {
                 case .sent(let model):
                     self?.navigationController.popToRootViewController(animated: true)
                     self?.showSendTransactionStatus(model: model)
+                case .sentViaLink:
+                    self?.navigationController.popToRootViewController(animated: true)
+//                    self?.showSendTransactionStatus(model: model)
                 case .cancelled:
                     break
                 }

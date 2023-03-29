@@ -24,8 +24,11 @@ class UIBottomSheetHostingController<Content: View>: UIHostingController<Content
     func calculateFittingHeightForPresentedView(targetWidth: CGFloat) -> CGFloat {
         var expectedHeight = view.fittingHeight(targetWidth: targetWidth)
         expectedHeight = heightModifier?(expectedHeight) ?? expectedHeight
-        // FIXME: - Unknown why there is extra 32 px
-        expectedHeight -= 32
+        // ignore safe area inset
+        let window = UIApplication.shared.windows.first
+        let bottomPadding = window?.safeAreaInsets.bottom ?? 0
+        expectedHeight -= bottomPadding
+        // return expected height
         return expectedHeight
     }
 }

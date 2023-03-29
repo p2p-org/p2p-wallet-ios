@@ -10,51 +10,59 @@ import Send
 import SwiftUI
 
 struct RecipientCell: View {
+    
     @SwiftUI.Environment(\.isEnabled) var isEnabled: Bool
-
-    let recipient: Recipient
+    let image: AnyView
+    let title: String
     let subtitle: String?
-
-    init(recipient: Recipient, subtitle: String? = nil) {
-        self.recipient = recipient
+    let trailingView: AnyView?
+    
+    init(image: AnyView, title: String, subtitle: String? = nil, trailingView: AnyView? = nil) {
+        self.image = image
+        self.title = title
         self.subtitle = subtitle
+        self.trailingView = trailingView
     }
 
-    var body: some View {
+    init(recipient: Recipient, subtitle: String? = nil) {
         switch recipient.category {
         case let .username(name, domain):
             switch domain {
             case "key":
-                cell(image: Image(uiImage: .appIconSmall), title: "@\(name).key")
+                image = Image(uiImage: .appIconSmall).castToAnyView()
+                title = "@\(name).key"
+                self.subtitle = subtitle
             default:
-                cell(
-                    image: Image(uiImage: .newWalletCircle),
-                    title: RecipientFormatter.username(name: name, domain: domain),
-                    subtitle: RecipientFormatter.format(destination: recipient.address)
-                )
+                image = Image(uiImage: .newWalletCircle).castToAnyView()
+                title = RecipientFormatter.username(name: name, domain: domain)
+                self.subtitle = RecipientFormatter.format(destination: recipient.address)
             }
         case .solanaAddress:
-            cell(
-                image: Image(uiImage: .newWalletCircle),
-                title: RecipientFormatter.format(destination: recipient.address),
-                subtitle: subtitle
-            )
+            image = Image(uiImage: .newWalletCircle).castToAnyView()
+            title = RecipientFormatter.format(destination: recipient.address)
+            self.subtitle = subtitle
         case let .solanaTokenAddress(_, token):
-            cell(
-                image: CoinLogoImageViewRepresentable(size: 48, token: token),
-                title: RecipientFormatter.format(destination: recipient.address),
-                subtitle: subtitle ?? "\(token.symbol) \(L10n.tokenAccount)"
-            )
+            image = CoinLogoImageViewRepresentable(size: 48, token: token).castToAnyView()
+            title = RecipientFormatter.format(destination: recipient.address)
+            self.subtitle = subtitle ?? "\(token.symbol) \(L10n.tokenAccount)"
         default:
-            cell(
-                image: Image(uiImage: .newWalletCircle),
-                title: RecipientFormatter.format(destination: recipient.address),
-                subtitle: subtitle
-            )
+            image = Image(uiImage: .newWalletCircle).castToAnyView()
+            title = RecipientFormatter.format(destination: recipient.address)
+            self.subtitle = subtitle
+        }
+        
+        if let date = recipient.createdData {
+            trailingView = Text(date.timeAgoDisplay())
+                .apply(style: .label1)
+                .foregroundColor(Color(Asset.Colors.mountain.color))
+                .accessibilityIdentifier("RecipientCell.createdDate")
+                .castToAnyView()
+        } else {
+            trailingView = nil
         }
     }
 
-    private func cell(image: some View, title: String, subtitle: String? = nil) -> some View {
+    var body: some View {
         HStack {
             image
                 .frame(width: 48, height: 48)
@@ -76,11 +84,8 @@ struct RecipientCell: View {
             }
 
             Spacer()
-            if let date = recipient.createdData {
-                Text(date.timeAgoDisplay())
-                    .apply(style: .label1)
-                    .foregroundColor(Color(Asset.Colors.mountain.color))
-                    .accessibilityIdentifier("RecipientCell.createdDate")
+            if let trailingView {
+                trailingView
             }
         }
     }

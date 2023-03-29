@@ -20,7 +20,7 @@ struct RecipientSearchView: View {
         case .loaded:
             loadedView
         case .error(_):
-            RecipientErrorView {
+            ErrorView {
                 Task { await viewModel.load() }
             }
         }
@@ -44,6 +44,11 @@ struct RecipientSearchView: View {
                     viewModel.qr()
                 }
                     .accessibilityIdentifier("RecipientSearchView.loadedView.RecipientSearchField")
+                
+                // Send via link
+                if !viewModel.sendViaLinkState.isFeatureDisabled, viewModel.sendViaLinkVisible {
+                    sendViaLinkView
+                }
 
                 // Result
                 if viewModel.isSearching {
@@ -124,8 +129,43 @@ struct RecipientSearchView: View {
             }
         }
     }
+    
+    // MARK: - View Builder
+    private var sendViaLinkView: some View {
+        Button {
+            viewModel.sendViaLink()
+        } label: {
+            VStack {
+                RecipientCell(
+                    image: Image(uiImage: viewModel.sendViaLinkState.canCreateLink ? .sendViaLinkCircle: .sendViaLinkCircleDisabled)
+                        .castToAnyView(),
+                    title: L10n.sendCryptoViaOneTimeLink,
+                    subtitle: viewModel.sendViaLinkState.canCreateLink ? L10n.youDonTNeedToKnowTheAddress: L10n.LimitIsOneTimeLinksPerDay.tryTomorrow(viewModel.sendViaLinkState.limitPerDay)
+                )
+                
+                #if !RELEASE
+                Group {
+                    Text("Links per day: \(viewModel.sendViaLinkState.limitPerDay)")
+                        .apply(style: .label2)
+                    Text("Links created today: \(viewModel.sendViaLinkState.numberOfLinksUsedToday)")
+                        .apply(style: .label2)
+                }
+                    .foregroundColor(.red)
+                #endif
+            }
+            
+        }
+        .disabled(!viewModel.sendViaLinkState.canCreateLink)
+        .padding(.horizontal, 16)
+        .padding(.vertical, 12)
+        .background(
+            Color(.white)
+                .cornerRadius(radius: 16, corners: .allCorners)
+        )
+        .padding(.top, 16)
+    }
 
-    var skeleton: some View {
+    private var skeleton: some View {
         HStack(spacing: 12) {
             Circle()
                 .frame(width: 48, height: 48)
@@ -161,7 +201,7 @@ struct RecipientSearchView: View {
         .cornerRadius(16)
     }
 
-    func tryLater(title: String) -> some View {
+    private func tryLater(title: String) -> some View {
         VStack(alignment: .center, spacing: 28) {
             Image(uiImage: Asset.Icons.warning.image)
                 .foregroundColor(Color(Asset.Colors.rose.color))
@@ -176,7 +216,7 @@ struct RecipientSearchView: View {
         .foregroundColor(Color(Asset.Colors.night.color))
     }
 
-    func disabledAndReason(_ recipient: Recipient, reason: String, subtitle: String? = nil) -> some View {
+    private func disabledAndReason(_ recipient: Recipient, reason: String, subtitle: String? = nil) -> some View {
         VStack(alignment: .leading, spacing: 32) {
             HStack {
                 Text(L10n.hereSWhatWeFound)
@@ -196,7 +236,7 @@ struct RecipientSearchView: View {
         }
     }
 
-    func history(_ recipients: [Recipient]) -> some View {
+    private func history(_ recipients: [Recipient]) -> some View {
         Group {
             if recipients.isEmpty {
                 emptyRecipientsView
@@ -239,7 +279,7 @@ struct RecipientSearchView: View {
         }
     }
 
-    var emptyRecipientsView: some View {
+    private var emptyRecipientsView: some View {
         VStack(spacing: 16) {
             switch viewModel.recipientsHistoryStatus {
             case .initializing:
@@ -285,7 +325,7 @@ struct RecipientSearchView: View {
         }.padding(.top, 48)
     }
 
-    func okView(_ recipients: [Recipient]) -> some View {
+    private func okView(_ recipients: [Recipient]) -> some View {
         VStack(alignment: .leading) {
             HStack {
                 Text(L10n.hereSWhatWeFound)
