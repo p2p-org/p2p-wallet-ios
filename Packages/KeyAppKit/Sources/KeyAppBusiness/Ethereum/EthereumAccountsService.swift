@@ -80,10 +80,6 @@ public final class EthereumAccountsService: NSObject, AccountsService, Observabl
                 }
             }
 
-        errorObservable
-            .handleAsyncValue($state)
-            .store(in: &subscriptions)
-
         Publishers
             .CombineLatest(accounts.$state, prices)
             .map { state, prices in
@@ -112,6 +108,10 @@ public final class EthereumAccountsService: NSObject, AccountsService, Observabl
             .autoconnect()
             .receive(on: DispatchQueue.main)
             .sink(receiveValue: { [weak self] _ in self?.accounts.fetch() })
+            .store(in: &subscriptions)
+        
+        errorObservable
+            .handleAsyncValue($state)
             .store(in: &subscriptions)
 
         // First fetch
@@ -156,12 +156,5 @@ public final class EthereumAccountsService: NSObject, AccountsService, Observabl
 extension EthereumAccountsService {
     enum Error: Swift.Error {
         case invalidEthereumAddress
-    }
-}
-
-extension BigUInt {
-    static func divide(_ lhs: BigUInt, _ rhs: BigUInt) -> Decimal {
-        let (quotient, remainder) = lhs.quotientAndRemainder(dividingBy: rhs)
-        return Decimal(string: String(quotient))! + Decimal(string: String(remainder))! / Decimal(string: String(rhs))!
     }
 }
