@@ -38,7 +38,7 @@ final class TabBarViewModel {
         // Name service
         Task {
             guard let account = accountStorage.account else { return }
-            let name: String = try await nameService.getName(account.publicKey.base58EncodedString) ?? ""
+            let name: String = try await nameService.getName(account.publicKey.base58EncodedString, withTLD: true) ?? ""
             nameStorage.save(name: name)
         }
 

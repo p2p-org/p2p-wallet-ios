@@ -1335,3 +1335,4 @@ You can try again, but your new transaction will be subject to the current rates
 "Key App one-time transfer link" = "Liên kết chuyển một lần của Key App";
 "The one-time link is ready! The funds can be claimed" = "Liên kết một lần đã sẵn sàng!  Các khoản tiền có thể được yêu cầu";
 "If you want to get your money back just open link by yourself" = "Nếu bạn muốn lấy lại tiền của mình, chỉ cần tự mở liên kết";
+"Token rates are unavailable. Everything works as usual and all funds are safe." = "Tỷ lệ mã thông báo không có sẵn.  Mọi thứ hoạt động như bình thường và tất cả các khoản tiền đều an toàn.";

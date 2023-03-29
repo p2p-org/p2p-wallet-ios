@@ -44,15 +44,9 @@ extension String {
         return prefix(numOfSymbolsRevealed) + "..." + suffix(numOfSymbolsRevealedInSuffix ?? numOfSymbolsRevealed)
     }
 
-    func withNameServiceDomain() -> String {
-        guard !hasSuffix(Self.nameServiceDomain) else {
-            return self
-        }
-        return self + Self.nameServiceDomain
-    }
 
     static var nameServiceDomain: String {
-        RemoteConfig.remoteConfig().usernameDomain ?? ""
+        RemoteConfig.remoteConfig().usernameDomain ?? "key"
     }
 
     static func secretConfig(_ key: String) -> String? {

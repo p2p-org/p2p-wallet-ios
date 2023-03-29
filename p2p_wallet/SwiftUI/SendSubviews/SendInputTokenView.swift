@@ -63,11 +63,12 @@ struct SendInputTokenView: View {
 
                 Spacer()
 
-                Text(amountInFiat.fiatAmountFormattedString(roundingMode: .down, customFormattForLessThan1E_2: true))
-                    .font(uiFont: .systemFont(ofSize: UIFont.fontSize(of: .text2), weight: .semibold))
-                    .foregroundColor(mainColor)
-                    .padding(EdgeInsets(top: 18, leading: 8, bottom: 18, trailing: 8))
-                    .skeleton(with: skeleton, size: .init(width: 70, height: 20))
+                if !viewModel.amountInCurrentFiat.isEmpty {
+                    Text(viewModel.amountInCurrentFiat)
+                        .font(uiFont: .systemFont(ofSize: UIFont.fontSize(of: .text2), weight: .semibold))
+                        .foregroundColor(mainColor)
+                        .padding(EdgeInsets(top: 18, leading: 8, bottom: 18, trailing: 8))
+                }
 
                 if isChangeEnabled {
                     Image(uiImage: Asset.MaterialIcon.expandMore.image)

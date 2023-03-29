@@ -64,9 +64,11 @@ class SendCoordinator: Coordinator<SendResult> {
 
     override func start() -> AnyPublisher<SendResult, Never> {
         if walletsRepository.state == .loaded {
-            let fiatAmount = walletsRepository.getWallets().reduce(0) { $0 + $1.amountInCurrentFiat }
-            let withTokens = fiatAmount > 0
-            if withTokens {
+            let hasToken = walletsRepository.getWallets().contains { wallet in
+                (wallet.lamports ?? 0) > 0
+            }
+            
+            if hasToken {
                 // normal flow with no preChosenRecipient
                 if let recipient = preChosenRecipient {
                     startFlowWithPreChosenRecipient(recipient)

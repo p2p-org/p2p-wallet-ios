@@ -111,7 +111,13 @@ struct RendableDetailPendingTransaction: RendableTransactionDetail {
     var amountInFiat: TransactionDetailChange {
         switch trx.rawTransaction {
         case let transaction as SendTransaction:
-            return .negative("-\(transaction.amountInFiat.fiatAmountFormattedString())")
+            if transaction.amountInFiat == 0.0 {
+                return .negative(
+                    "\(transaction.amount.tokenAmountFormattedString(symbol: transaction.walletToken.token.symbol))"
+                )
+            } else {
+                return .negative("-\(transaction.amountInFiat.fiatAmountFormattedString())")
+            }
         case let transaction as SwapRawTransactionType:
             let amountInFiat: Double = (transaction.fromAmount * priceService
                 .currentPrice(mint: transaction.sourceWallet.token.address)?.value)
@@ -125,6 +131,13 @@ struct RendableDetailPendingTransaction: RendableTransactionDetail {
         case let transaction as WormholeSendTransaction:
             let value = CurrencyFormatter().string(amount: transaction.currencyAmount)
             return .negative(value)
+            if let price = priceService.currentPrice(mint: transaction.sourceWallet.token.address)?.value {
+                let amountInFiat: Double = transaction.fromAmount * price
+                return .unchanged("\(amountInFiat.fiatAmountFormattedString())")
+            } else {
+                return .unchanged("")
+            }
+
         default:
             return .unchanged("")
         }
@@ -133,7 +146,11 @@ struct RendableDetailPendingTransaction: RendableTransactionDetail {
     var amountInToken: String {
         switch trx.rawTransaction {
         case let transaction as SendTransaction:
-            return "\(transaction.amount.tokenAmountFormattedString(symbol: transaction.walletToken.token.symbol))"
+            if transaction.amountInFiat == 0.0 {
+                return ""
+            } else {
+                return "\(transaction.amount.tokenAmountFormattedString(symbol: transaction.walletToken.token.symbol))"
+            }
         case let transaction as SwapRawTransactionType:
             return transaction.mainDescription
         case let transaction as WormholeClaimTransaction:
