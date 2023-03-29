@@ -28,6 +28,8 @@ final class SwapViewModel: BaseViewModel, ObservableObject {
     let submitTransaction = PassthroughSubject<(PendingTransaction, String), Never>()
     let viewAppeared = PassthroughSubject<Void, Never>()
     let viewDisappeared = PassthroughSubject<Void, Never>()
+    let becameActive = PassthroughSubject<Void, Never>()
+    let enteredBackground = PassthroughSubject<Void, Never>()
 
     // MARK: - Params
     var fromTokenInputViewModel: SwapInputViewModel
@@ -56,12 +58,14 @@ final class SwapViewModel: BaseViewModel, ObservableObject {
     private var timer: Timer?
     private let source: JupiterSwapSource
     private var wasMinToastShown = false // Special flag not to show toast again if state has not changed
+    private let openKeyboardOnStart: Bool
 
     init(
         stateMachine: JupiterSwapStateMachine,
         fromTokenInputViewModel: SwapInputViewModel,
         toTokenInputViewModel: SwapInputViewModel,
         source: JupiterSwapSource,
+        openKeyboardOnStart: Bool,
         preChosenWallet: Wallet? = nil
     ) {
         self.fromTokenInputViewModel = fromTokenInputViewModel
@@ -69,6 +73,7 @@ final class SwapViewModel: BaseViewModel, ObservableObject {
         self.stateMachine = stateMachine
         self.preChosenWallet = preChosenWallet
         self.source = source
+        self.openKeyboardOnStart = openKeyboardOnStart
         super.init()
         bind()
         bindActions()
@@ -306,6 +311,20 @@ private extension SwapViewModel {
             .sink { [weak self] in
                 guard let self, !self.continueUpdateOnDisappear else { return }
                 self.cancelUpdate()
+            }
+            .store(in: &subscriptions)
+
+        becameActive
+            .sink { [weak self] in
+                guard let self else { return }
+                DispatchQueue.main.async { self.fromTokenInputViewModel.isFirstResponder = true }
+            }
+            .store(in: &subscriptions)
+
+        enteredBackground
+            .sink { [weak self] in
+                guard let self else { return }
+                DispatchQueue.main.async { self.fromTokenInputViewModel.isFirstResponder = false }
             }
             .store(in: &subscriptions)
     }

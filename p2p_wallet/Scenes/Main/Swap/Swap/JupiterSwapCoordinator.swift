@@ -68,18 +68,15 @@ final class JupiterSwapCoordinator: Coordinator<Void> {
             fromTokenInputViewModel: fromTokenInputViewModel,
             toTokenInputViewModel: toTokenInputViewModel,
             source: params.source,
+            openKeyboardOnStart: params.openKeyboardOnStart,
             preChosenWallet: params.preChosenWallet
         )
         
         // view
         let view = SwapView(viewModel: viewModel)
-        let controller: UIViewController = view.asViewController(withoutUIKitNavBar: false)
+        let controller = view.asViewController(withoutUIKitNavBar: false) as! UIHostingControllerWithLifecycle<SwapView>
         controller.hidesBottomBarWhenPushed = params.hideTabBar
-//        if params.openKeyboardOnStart {
-//            controller = KeyboardAvoidingViewController(rootView: view)
-//        } else {
-//            controller = UIHostingController(rootView: view)
-//        }
+        bindIfNeeded(controller: controller, inputViewModel: fromTokenInputViewModel)
         navigationController.pushViewController(controller, animated: true)
         style(controller: controller)
 
@@ -232,6 +229,22 @@ final class JupiterSwapCoordinator: Coordinator<Void> {
                     }
                 }
             })
+            .store(in: &subscriptions)
+    }
+
+    private func bindIfNeeded(controller: UIHostingControllerWithLifecycle<SwapView>, inputViewModel: SwapInputViewModel) {
+        if params.openKeyboardOnStart {
+            controller.viewDidAppear
+                .sink { [weak inputViewModel] in
+                    inputViewModel?.isFirstResponder = true
+                }
+                .store(in: &subscriptions)
+        }
+
+        controller.viewWillDisappear
+            .sink { [weak inputViewModel] in
+                inputViewModel?.isFirstResponder = false
+            }
             .store(in: &subscriptions)
     }
 }

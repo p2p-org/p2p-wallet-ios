@@ -12,7 +12,7 @@ extension View {
     func asViewController(withoutUIKitNavBar: Bool = true) -> UIViewController {
         withoutUIKitNavBar
             ? UIHostingControllerWithoutNavigation(rootView: self)
-            : UIHostingController(rootView: self)
+            : UIHostingControllerWithLifecycle(rootView: self)
     }
 
     func uiView() -> UIView {

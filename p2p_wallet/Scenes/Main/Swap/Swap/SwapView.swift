@@ -46,6 +46,12 @@ struct SwapView: View {
         .onDisappear {
             viewModel.viewDisappeared.send(())
         }
+        .onReceive(NotificationCenter.default.publisher(for: UIApplication.didBecomeActiveNotification)) { _ in
+            viewModel.becameActive.send(())
+        }
+        .onReceive(NotificationCenter.default.publisher(for: UIApplication.didEnterBackgroundNotification)) { _ in
+            viewModel.enteredBackground.send(())
+        }
     }
 }
 
