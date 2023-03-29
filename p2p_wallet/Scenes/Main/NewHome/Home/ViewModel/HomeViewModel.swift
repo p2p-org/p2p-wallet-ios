@@ -57,7 +57,7 @@ class HomeViewModel: ObservableObject {
 
     func updateAddressIfNeeded() {
         if let name = nameStorage.getName(), !name.isEmpty {
-            address = "\(name).key"
+            address = name
         } else if let address = accountStorage.account?.publicKey.base58EncodedString.shortAddress {
             self.address = address
         }
@@ -86,8 +86,8 @@ private extension HomeViewModel {
                 
                 // accumulate total amount
                 let fiatAmount = data.totalAmountInCurrentFiat
-                let isEmpty = fiatAmount <= 0
-                
+                let arePriceRetrieved = data.compactMap({ $0.price }).count > 0
+                let isEmpty = fiatAmount <= 0 && arePriceRetrieved
                 // address
                 self.updateAddressIfNeeded()
                 

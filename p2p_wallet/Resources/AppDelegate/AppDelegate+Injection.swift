@@ -10,6 +10,7 @@ import CountriesAPI
 import FeeRelayerSwift
 import FirebaseRemoteConfig
 import History
+import Jupiter
 import Moonpay
 import NameService
 import Onboarding
@@ -25,9 +26,6 @@ import SolanaSwift
 import Solend
 import SwiftyUserDefaults
 import TransactionParser
-import Moonpay
-import Sell
-import Jupiter
 
 extension Resolver: ResolverRegistering {
     @MainActor public static func registerAllServices() {
@@ -47,7 +45,7 @@ extension Resolver: ResolverRegistering {
         // Application warmup manager
         register {
             WarmupManager(processes: [
-                RemoteConfigWarmupProcess()
+                RemoteConfigWarmupProcess(),
             ])
         }.scope(.application)
 
@@ -130,7 +128,7 @@ extension Resolver: ResolverRegistering {
             AnalyticsManagerImpl(providers: [
                 resolve(AmplitudeAnalyticsProvider.self),
                 resolve(AppsFlyerAnalyticsProvider.self),
-                resolve(FirebaseAnalyticsProvider.self)
+                resolve(FirebaseAnalyticsProvider.self),
             ])
         }
         .implements(AnalyticsManager.self)
@@ -155,8 +153,8 @@ extension Resolver: ResolverRegistering {
         .scope(.application)
 
         register { KeyAppHistoryProviderImpl(endpoint: GlobalAppState.shared.pushServiceEndpoint) }
-        .implements(KeyAppHistoryProvider.self)
-        .scope(.session)
+            .implements(KeyAppHistoryProvider.self)
+            .scope(.session)
 
         register { NotificationServiceImpl() }
             .implements(NotificationService.self)
@@ -171,19 +169,13 @@ extension Resolver: ResolverRegistering {
             .scope(.application)
 
         // PricesService
-        register { UserDefaultsPricesStorage() }
+        register { InMemoryPricesStorage() }
             .implements(PricesStorage.self)
             .scope(.application)
 
-        if !Defaults.isCoingeckoProviderDisabled {
-            register { CoinGeckoPricesAPI() }
-                .implements(SolanaPricesAPI.self)
-                .scope(.application)
-        } else {
-            register { CryptoComparePricesAPI(apikey: .secretConfig("CRYPTO_COMPARE_API_KEY")) }
-                .implements(SolanaPricesAPI.self)
-                .scope(.application)
-        }
+        register { CoinGeckoPricesAPI() }
+            .implements(SolanaPricesAPI.self)
+            .scope(.application)
 
         register { InMemoryTokensRepositoryCache() }
             .implements(SolanaTokensRepositoryCache.self)
@@ -238,6 +230,7 @@ extension Resolver: ResolverRegistering {
             cache: resolve()
         ) }
         .implements(SolanaTokensRepository.self)
+        .scope(.application)
 
         // DAppChannnel
         register { DAppChannel() }
@@ -513,13 +506,14 @@ extension Resolver: ResolverRegistering {
 
             return MoonpaySellActionService(
                 provider: resolve(),
-                refundWalletAddress: Resolver.resolve(UserWalletManager.self).wallet?.account.publicKey.base58EncodedString ?? "",
+                refundWalletAddress: Resolver.resolve(UserWalletManager.self).wallet?.account.publicKey
+                    .base58EncodedString ?? "",
                 endpoint: endpoint,
                 apiKey: apiKey
             )
         }
-            .implements((any SellActionService).self)
-            .scope(.session)
+        .implements((any SellActionService).self)
+        .scope(.session)
 
         register {
             JupiterTokensRepositoryImpl(
@@ -529,17 +523,18 @@ extension Resolver: ResolverRegistering {
         }
         .implements(JupiterTokensRepository.self)
         .scope(.session)
-        
+
         register {
             JupiterRestClientAPI(
                 host: GlobalAppState.shared.newSwapEndpoint,
-                tokensHost: GlobalAppState.shared.newSwapEndpoint == "https://quote-api.jup.ag" ? "https://cache.jup.ag": nil,
+                tokensHost: GlobalAppState.shared
+                    .newSwapEndpoint == "https://quote-api.jup.ag" ? "https://cache.jup.ag" : nil,
                 version: .v4
             )
         }
         .implements(JupiterAPI.self)
         .scope(.session)
-        
+
         register {
             JupiterTokensLocalProvider()
         }
@@ -550,8 +545,11 @@ extension Resolver: ResolverRegistering {
     /// Shared scope: share between screens
     private static func registerForSharedScope() {
         // BuyServices
-        register { Moonpay.Provider(api: Moonpay.API.fromEnvironment(), serverSideAPI: Moonpay.API.fromEnvironment(kind: .server)) }
-            .scope(.shared)
+        register {
+            Moonpay
+                .Provider(api: Moonpay.API.fromEnvironment(), serverSideAPI: Moonpay.API.fromEnvironment(kind: .server))
+        }
+        .scope(.shared)
 
         register { Buy.MoonpayBuyProcessingFactory() }
             .implements(BuyProcessingFactory.self)

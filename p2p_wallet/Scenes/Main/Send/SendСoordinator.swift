@@ -8,7 +8,6 @@ import Foundation
 import Resolver
 import Send
 import SolanaSwift
-import Send
 import SwiftUI
 
 enum SendResult {
@@ -22,7 +21,6 @@ enum SendSource: String {
 }
 
 class SendCoordinator: Coordinator<SendResult> {
-    
     // MARK: - Dependencies
 
     @Injected var walletsRepository: WalletsRepository
@@ -65,9 +63,11 @@ class SendCoordinator: Coordinator<SendResult> {
 
     override func start() -> AnyPublisher<SendResult, Never> {
         if walletsRepository.state == .loaded {
-            let fiatAmount = walletsRepository.getWallets().reduce(0) { $0 + $1.amountInCurrentFiat }
-            let withTokens = fiatAmount > 0
-            if withTokens {
+            let hasToken = walletsRepository.getWallets().contains { wallet in
+                (wallet.lamports ?? 0) > 0
+            }
+            
+            if hasToken {
                 // normal flow with no preChosenRecipient
                 if let recipient = preChosenRecipient {
                     startFlowWithPreChosenRecipient(recipient)
@@ -87,9 +87,9 @@ class SendCoordinator: Coordinator<SendResult> {
         // Back
         return result.prefix(1).eraseToAnyPublisher()
     }
-    
+
     // MARK: - Helpers
-    
+
     private func startFlowWithPreChosenRecipient(
         _ recipient: Recipient
     ) {
@@ -159,7 +159,6 @@ class SendCoordinator: Coordinator<SendResult> {
                 self.rootViewController.view.hideHud()
             }
             .store(in: &subscriptions)
-        
         
         Task {
             await vm.load()
