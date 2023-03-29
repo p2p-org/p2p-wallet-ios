@@ -55,7 +55,7 @@ struct SendInputAmountView: View {
                                 .opacity(switchAreaOpacity)
                                 .accessibilityIdentifier("current-currency")
                         }
-                        if viewModel.allowSwitch {
+                        if viewModel.showSecondaryAmounts {
                             HStack(spacing: 2) {
                                 Text(viewModel.secondaryAmountText)
                                     .foregroundColor(Color(Asset.Colors.mountain.color))
@@ -66,7 +66,7 @@ struct SendInputAmountView: View {
                                     .apply(style: .text4)
                                     .lineLimit(1)
                                 Spacer()
-                                if viewModel.isSwitchMainAmountTypeAvailable {
+                                if viewModel.isSwitchAvailable {
                                     Text(L10n.tapToSwitchTo(viewModel.secondaryCurrencyText))
                                         .foregroundColor(Color(Asset.Colors.mountain.color))
                                         .apply(style: .text4)
@@ -77,7 +77,7 @@ struct SendInputAmountView: View {
                             }
                         }
                     }
-                    if viewModel.isSwitchMainAmountTypeAvailable, viewModel.allowSwitch {
+                    if viewModel.isSwitchAvailable && viewModel.showSecondaryAmounts {
                         Button(
                             action: viewModel.switchPressed.send,
                             label: {
@@ -95,7 +95,7 @@ struct SendInputAmountView: View {
                 .background(RoundedRectangle(cornerRadius: 12))
                 .foregroundColor(Color(Asset.Colors.snow.color))
             }
-            if viewModel.isSwitchMainAmountTypeAvailable {
+            if viewModel.isSwitchAvailable && viewModel.showSecondaryAmounts {
                 tapToSwitchHiddenButton
             }
         }
