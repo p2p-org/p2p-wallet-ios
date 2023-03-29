@@ -1,6 +1,7 @@
 import Combine
 import KeyAppUI
 import SolanaSwift
+import Resolver
 
 final class SendInputAmountViewModel: BaseViewModel, ObservableObject {
     // MARK: - Nested type
@@ -37,7 +38,7 @@ final class SendInputAmountViewModel: BaseViewModel, ObservableObject {
     @Published var amountTextColor: UIColor = Asset.Colors.night.color
     @Published var mainTokenText = ""
     @Published var mainAmountType: EnteredAmountType = .fiat
-    @Published var isSwitchMainAmountTypeAvailable = true
+    @Published var isSwitchAvailable = true
     @Published var isMaxButtonVisible: Bool = true
 
     @Published var secondaryAmountText = ""
@@ -48,23 +49,20 @@ final class SendInputAmountViewModel: BaseViewModel, ObservableObject {
     @Published var amount: Amount?
     @Published var isError: Bool = false
     @Published var countAfterDecimalPoint: Int
-    @Published var allowSwitch: Bool = true
+    @Published var showSecondaryAmounts = true
 
     private let fiat: Fiat
     private var tokenChangedEvent = CurrentValueSubject<Wallet, Never>(.init(token: .nativeSolana))
+
+    // MARK: - Dependencies
+    private let pricesService: PricesServiceType
 
     init(initialToken: Wallet, allowSwitchingMainAmountType: Bool) {
         fiat = Defaults.fiat
         token = initialToken
         countAfterDecimalPoint = Constants.fiatDecimals
-        isSwitchMainAmountTypeAvailable = allowSwitchingMainAmountType
-
-        if initialToken.priceInCurrentFiat == nil {
-            mainAmountType = .token
-            allowSwitch = false
-        } else {
-            mainAmountType = Defaults.isTokenInputTypeChosen ? .token : .fiat
-        }
+        mainAmountType = Defaults.isTokenInputTypeChosen ? .token : .fiat
+        pricesService = Resolver.resolve(PricesServiceType.self)
 
         super.init()
 
@@ -108,9 +106,9 @@ final class SendInputAmountViewModel: BaseViewModel, ObservableObject {
 
                 if token.priceInCurrentFiat == nil {
                     self.mainAmountType = .token
-                    self.allowSwitch = false
+                    self.showSecondaryAmounts = false
                 } else {
-                    self.allowSwitch = true
+                    self.showSecondaryAmounts = true
                 }
 
                 self.updateCurrencyTitles()
@@ -165,6 +163,19 @@ final class SendInputAmountViewModel: BaseViewModel, ObservableObject {
                 case .token:
                     self.mainTokenText = currentWallet.token.symbol
                     self.secondaryCurrencyText = self.fiat.code
+                }
+            }
+            .store(in: &subscriptions)
+
+        pricesService.isPricesAvailablePublisher
+            .sink { [weak self] isAvailable in
+                guard let self else { return }
+                self.showSecondaryAmounts = isAvailable
+                if !isAvailable {
+                    self.mainAmountType = .token
+                    self.isSwitchAvailable = false
+                } else {
+                    self.isSwitchAvailable = allowSwitchingMainAmountType
                 }
             }
             .store(in: &subscriptions)
