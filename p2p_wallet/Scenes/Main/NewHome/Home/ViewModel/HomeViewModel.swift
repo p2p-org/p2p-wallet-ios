@@ -50,8 +50,18 @@ class HomeViewModel: ObservableObject {
     }
 
     func copyToClipboard() {
-        clipboardManager.copyToClipboard(walletsRepository.nativeWallet?.pubkey ?? "")
-        notificationsService.showToast(title: "🖤", text: L10n.addressWasCopiedToClipboard, haptic: true)
+        // get name and pubkey
+        let name = nameStorage.getName()
+        let hasName = name != nil
+        let pubkey = walletsRepository.nativeWallet?.pubkey
+        
+        // copy to clipboard
+        clipboardManager.copyToClipboard(name ?? pubkey ?? "")
+        
+        // notify user
+        notificationsService.showToast(title: "🖤", text: hasName ? L10n.nameCopiedToClipboard: L10n.addressWasCopiedToClipboard, haptic: true)
+        
+        // log
         analyticsManager.log(event: .mainCopyAddress)
     }
 
