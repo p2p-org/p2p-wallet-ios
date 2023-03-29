@@ -44,10 +44,12 @@ public class EthereumPriceService {
             case let .erc20(contract: address):
                 return address.hex(eip55: false)
             default:
-                return nil
+                return "0xc02aaa39b223fe8d0a0e5c4f27ead9083c756cc2"
             }
         }
         .compactMap { $0 }
+
+        guard !contractAddresses.isEmpty else { return [:] }
 
         let result = try await api.getSimpleTokenPrice(
             platform: "ethereum",

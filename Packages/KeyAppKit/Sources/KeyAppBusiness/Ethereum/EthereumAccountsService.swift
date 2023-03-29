@@ -13,10 +13,10 @@ import Web3
 
 public final class EthereumAccountsService: NSObject, AccountsService, ObservableObject {
     public typealias Account = EthereumAccount
-    
+
     private var subscriptions = [AnyCancellable]()
 
-    private let asyncValue: AsyncValue<[Account]>
+    private let accounts: AsyncValue<[Account]>
 
     @Published public var state: AsyncValueState<[Account]> = .init(value: [])
 
@@ -30,19 +30,19 @@ public final class EthereumAccountsService: NSObject, AccountsService, Observabl
     ) {
         let address = try? EthereumAddress(hex: address, eip55: false)
 
-        asyncValue = .init(initialItem: [], request: {
+        accounts = .init(initialItem: [], request: {
             guard let address else {
                 return (nil, Error.invalidEthereumAddress)
             }
 
             do {
                 // Fetch balance and token balances
-                let (balance, wallet) = try await (
+                let (balance, wallet) = try await(
                     web3.eth.getBalance(address: address, block: .latest),
                     web3.eth.getTokenBalances(address: address)
                 )
 
-                var nativeAccount = Account(
+                let nativeAccount = Account(
                     address: address.hex(eip55: false),
                     token: .init(),
                     balance: balance.quantity,
@@ -53,32 +53,11 @@ public final class EthereumAccountsService: NSObject, AccountsService, Observabl
                 let tokenBalances = wallet.tokenBalances
 
                 // Build token accounts
-                var resolvedTokenAccounts: [Account] = try await Self.resolveTokenAccounts(
+                let resolvedTokenAccounts: [Account] = try await Self.resolveTokenAccounts(
                     address: address.hex(eip55: false),
                     balances: tokenBalances,
                     repository: ethereumTokenRepository
                 )
-
-                do {
-                    // Fetch prices
-                    let (etherumPrice, tokenPrices) = try await (
-                        priceService.getEthereumPrice(fiat: fiat),
-                        priceService.getPrices(tokens: resolvedTokenAccounts.map(\.token), fiat: fiat)
-                    )
-
-                    // Set price to native token
-                    nativeAccount.price = etherumPrice
-
-                    // Set price to tokens.
-                    for index in resolvedTokenAccounts.indices {
-                        let token = resolvedTokenAccounts[index].token
-                        if let price = tokenPrices[token] {
-                            resolvedTokenAccounts[index].price = price
-                        }
-                    }
-                } catch {
-                    return ([nativeAccount] + resolvedTokenAccounts, error)
-                }
 
                 return ([nativeAccount] + resolvedTokenAccounts, nil)
             } catch {
@@ -88,12 +67,42 @@ public final class EthereumAccountsService: NSObject, AccountsService, Observabl
 
         super.init()
 
+        /// Updating price
+        let prices = accounts
+            .$state
+            .delay(for: 0.1, scheduler: RunLoop.main)
+            .asyncMap { state in
+                try? await errorObservable.run {
+                    try await priceService.getPrices(
+                        tokens: state.value.map(\.token),
+                        fiat: fiat
+                    )
+                }
+            }
+
         errorObservable
             .handleAsyncValue($state)
             .store(in: &subscriptions)
 
-        asyncValue
-            .$state
+        Publishers
+            .CombineLatest(accounts.$state, prices)
+            .map { state, prices in
+                guard let prices else { return state }
+
+                return state.apply { accounts in
+                    var newAccounts = accounts
+
+                    for index in newAccounts.indices {
+                        let token = newAccounts[index].token
+                        if let price = prices[token] {
+                            newAccounts[index]
+                                .price = .init(currencyCode: fiat.uppercased(), value: price.value, token: token)
+                        }
+                    }
+
+                    return newAccounts
+                }
+            }
             .weakAssign(to: \.state, on: self)
             .store(in: &subscriptions)
 
@@ -102,7 +111,7 @@ public final class EthereumAccountsService: NSObject, AccountsService, Observabl
             .publish(every: 30, on: .main, in: .default)
             .autoconnect()
             .receive(on: DispatchQueue.main)
-            .sink(receiveValue: { [weak self] _ in self?.asyncValue.fetch() })
+            .sink(receiveValue: { [weak self] _ in self?.accounts.fetch() })
             .store(in: &subscriptions)
 
         // First fetch
@@ -140,7 +149,7 @@ public final class EthereumAccountsService: NSObject, AccountsService, Observabl
 
     /// Fetch new data from blockchain.
     public func fetch() async throws {
-        try await asyncValue.fetch()?.value
+        try await accounts.fetch()?.value
     }
 }
 

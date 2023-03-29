@@ -11,15 +11,17 @@ import KeyAppKitCore
 import SolanaPricesAPIs
 import SolanaSwift
 
-/// This manager class monitors solana accounts and their changing real time by using socket and 10 seconds updating timer.
+/// This manager class monitors solana accounts and their changing real time by using socket and 10 seconds updating
+/// timer.
 ///
 /// It also calculates ``amountInFiat`` by integrating with ``NewPriceService``.
 public final class SolanaAccountsService: NSObject, AccountsService, ObservableObject {
     public typealias Account = SolanaAccount
-    
+
     var subscriptions = [AnyCancellable]()
 
-    let asyncValue: AsyncValue<[Account]>
+    let accounts: AsyncValue<[Account]>
+//    let prices: AsyncValue<>
 
     @Published public var state: AsyncValueState<[Account]> = .init(value: [])
 
@@ -33,7 +35,7 @@ public final class SolanaAccountsService: NSObject, AccountsService, ObservableO
         errorObservable: any ErrorObserver
     ) {
         // Setup async value
-        asyncValue = .init(initialItem: []) {
+        accounts = .init(initialItem: []) {
             guard let accountAddress = accountStorage.account?.publicKey.base58EncodedString else {
                 return (nil, Error.authorityError)
             }
@@ -42,7 +44,7 @@ public final class SolanaAccountsService: NSObject, AccountsService, ObservableO
 
             do {
                 // Updating native account balance and get spl tokens
-                let (balance, splAccounts) = try await (
+                let (balance, splAccounts) = try await(
                     // TODO: Check commitment value! Previously was ``recent``
                     solanaAPIClient.getBalance(account: accountAddress, commitment: "processed"),
                     solanaAPIClient.getTokenWallets(account: accountAddress, tokensRepository: tokensService)
@@ -57,12 +59,41 @@ public final class SolanaAccountsService: NSObject, AccountsService, ObservableO
 
                 newAccounts = [solanaAccount] + splAccounts.map { Account(data: $0, price: nil) }
 
-                do {
-                    // Updating balance
-                    let prices = try await priceService.getPrices(
-                        tokens: newAccounts.map(\.data.token),
+                return (newAccounts, nil)
+            } catch {
+                return (nil, error)
+            }
+        }
+
+        super.init()
+
+        /// Updating price
+        let prices = accounts
+            .$state
+            .filter { $0.status == .initializing || $0.status == .ready }
+            .delay(for: 0.1, scheduler: RunLoop.main)
+            .asyncMap { state in
+                try? await errorObservable.run {
+                    try await priceService.getPrices(
+                        tokens: state.value.map(\.data.token),
                         fiat: fiat
                     )
+                }
+            }
+
+        // Report error
+        errorObservable
+            .handleAsyncValue($state)
+            .store(in: &subscriptions)
+
+        // Emit data
+        Publishers
+            .CombineLatest(accounts.$state, prices)
+            .map { state, prices in
+                guard let prices else { return state }
+
+                return state.apply { accounts in
+                    var newAccounts = accounts
 
                     for index in newAccounts.indices {
                         let token = newAccounts[index].data.token
@@ -75,29 +106,14 @@ public final class SolanaAccountsService: NSObject, AccountsService, ObservableO
                                 value = nil
                             }
 
-                            newAccounts[index].price = .init(currencyCode: fiat.uppercased(), value: value, token: token)
+                            newAccounts[index]
+                                .price = .init(currencyCode: fiat.uppercased(), value: value, token: token)
                         }
                     }
-                } catch {
-                    return (newAccounts, error)
+
+                    return newAccounts
                 }
-
-                return (newAccounts, nil)
-            } catch {
-                return (nil, error)
             }
-        }
-
-        super.init()
-
-        // Report error
-        errorObservable
-            .handleAsyncValue($state)
-            .store(in: &subscriptions)
-
-        // Emit data
-        asyncValue
-            .$state
             .weakAssign(to: \.state, on: self)
             .store(in: &subscriptions)
 
@@ -106,7 +122,7 @@ public final class SolanaAccountsService: NSObject, AccountsService, ObservableO
             .publish(every: 10, on: .main, in: .default)
             .autoconnect()
             .receive(on: DispatchQueue.main)
-            .sink(receiveValue: { [weak self] _ in self?.asyncValue.fetch() })
+            .sink(receiveValue: { [weak self] _ in self?.accounts.fetch() })
             .store(in: &subscriptions)
 
         // Observe solana accounts
@@ -139,7 +155,7 @@ public final class SolanaAccountsService: NSObject, AccountsService, ObservableO
 
     /// Fetch new data from blockchain.
     public func fetch() async throws {
-        try await asyncValue.fetch()?.value
+        try await accounts.fetch()?.value
     }
 }
 
