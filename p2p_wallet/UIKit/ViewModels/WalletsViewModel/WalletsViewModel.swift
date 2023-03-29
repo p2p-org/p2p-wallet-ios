@@ -51,7 +51,10 @@ class WalletsViewModel: BECollectionViewModel<Wallet> {
         super.bind()
 
         // observe prices
-        pricesService.currentPricesPublisher
+        Publishers.CombineLatest(
+            pricesService.currentPricesPublisher,
+            pricesService.isPricesAvailablePublisher
+        )
             .receive(on: RunLoop.main)
             .sink(receiveValue: { [weak self] _ in
                 self?.updatePrices()
@@ -279,6 +282,14 @@ class WalletsViewModel: BECollectionViewModel<Wallet> {
     // MARK: - Mappers
 
     private func mapPrices(wallets: [Wallet]) -> [Wallet] {
+        guard pricesService.isPricesAvailable else {
+            var wallets = wallets
+            for i in 0 ..< wallets.count {
+                wallets[i].price = nil
+            }
+            return wallets
+        }
+        
         var wallets = wallets
         for i in 0 ..< wallets.count {
             wallets[i].price = pricesService.currentPrice(mint: wallets[i].token.address)
