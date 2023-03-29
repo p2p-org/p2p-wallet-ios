@@ -9,7 +9,7 @@ import Foundation
 import KeyAppKitCore
 
 public struct SendFees: Codable, Hashable {
-    public let arbiter: TokenAmount
+    public let arbiter: TokenAmount?
     public let networkFee: TokenAmount?
     public let messageAccountRent: TokenAmount?
     public let bridgeFee: TokenAmount?
@@ -24,7 +24,8 @@ public struct SendFees: Codable, Hashable {
 
 public extension SendFees {
     var totalInFiat: CurrencyAmount {
-        arbiter.asCurrencyAmount
+        CurrencyAmount.init(usd: 0)
+            + arbiter?.asCurrencyAmount
             + networkFee?.asCurrencyAmount
             + messageAccountRent?.asCurrencyAmount
             + bridgeFee?.asCurrencyAmount

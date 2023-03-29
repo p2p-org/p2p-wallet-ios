@@ -149,7 +149,6 @@ class WormholeSendInputViewModel: BaseViewModel, ObservableObject {
                         }
 
                     case .crypto:
-
                         if
                             let cryptoAmount = CryptoAmount(floatString: newAmount, token: account.data.token),
                             let price = account.price,
@@ -214,9 +213,8 @@ class WormholeSendInputViewModel: BaseViewModel, ObservableObject {
             }
             .store(in: &subscriptions)
 
-        Publishers
-            .CombineLatest($inputMode, $state)
-            .sink { [weak self] newMode, _ in
+        $inputMode
+            .sink { [weak self] newMode in
                 guard let self, let account = self.adapter.inputAccount else { return }
                 switch newMode {
                 case .crypto:
@@ -244,7 +242,8 @@ class WormholeSendInputViewModel: BaseViewModel, ObservableObject {
         guard
             case .ready = adapter.state,
             let input = adapter.input,
-            let output = adapter.output
+            let output = adapter.output,
+            let transaction = output.transactions
         else {
             return
         }
@@ -255,7 +254,8 @@ class WormholeSendInputViewModel: BaseViewModel, ObservableObject {
             account: input.solanaAccount,
             recipient: input.recipient,
             amount: input.amount,
-            fees: output.fees
+            fees: output.fees,
+            transaction: transaction
         )
 
         let transactionHandler: TransactionHandler = Resolver.resolve()

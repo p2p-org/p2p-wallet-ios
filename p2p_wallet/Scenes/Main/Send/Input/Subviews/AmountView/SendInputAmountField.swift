@@ -24,7 +24,7 @@ struct SendInputAmountField: UIViewRepresentable {
         return view
     }
 
-    func updateUIView(_ uiView: UITextField, context _: Context) {
+    func updateUIView(_ uiView: UITextField, context: Context) {
         if uiView.text != text {
             uiView.text = text
         }
@@ -35,6 +35,8 @@ struct SendInputAmountField: UIViewRepresentable {
         }
         configuration(uiView)
         uiView.textColor = textColor
+
+        context.coordinator.countAfterDecimalPoint = countAfterDecimalPoint
     }
 
     func makeCoordinator() -> Coordinator {
@@ -44,7 +46,7 @@ struct SendInputAmountField: UIViewRepresentable {
     class Coordinator: NSObject, UITextFieldDelegate {
         @Binding var text: String
         @Binding var isFirstResponder: Bool
-        let countAfterDecimalPoint: Int
+        var countAfterDecimalPoint: Int
 
         init(text: Binding<String>, isFirstResponder: Binding<Bool>, countAfterDecimalPoint: Int) {
             _text = text
@@ -93,7 +95,9 @@ struct SendInputAmountField: UIViewRepresentable {
             // if deleting to the end otherwise we need to format
             if updatedText.isEmpty { return true }
 
-            if updatedText.starts(with: "0") && !updatedText.starts(with: "0\(decimalSeparator)"), updatedText.count > 1 {
+            if updatedText.starts(with: "0") && !updatedText.starts(with: "0\(decimalSeparator)"),
+               updatedText.count > 1
+            {
                 // Not allow insert zeros before a number like 00004 or 00192
                 updatedText = updatedText.replacingOccurrences(of: "^0+", with: "", options: .regularExpression)
             }

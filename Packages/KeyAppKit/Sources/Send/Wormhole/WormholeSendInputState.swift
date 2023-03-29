@@ -57,7 +57,7 @@ public enum WormholeSendInputState: Equatable {
                     return .initializingFailure(input: input, error: .getTransactionsFailure)
                 }
                 
-                let transactions: [String]
+                let transactions: SendTransaction
                 do {
                     transactions = try await service.transferFromSolana(
                         feePayer: input.feePayer,
@@ -115,7 +115,7 @@ public enum WormholeSendInputState: Equatable {
                 }
                 
                 // Build transaction
-                let transactions: [String]
+                let transactions: SendTransaction
                 do {
                     transactions = try await service.transferFromSolana(
                         feePayer: input.feePayer,
@@ -127,7 +127,7 @@ public enum WormholeSendInputState: Equatable {
                 } catch {
                     return .error(
                         input: input,
-                        output: .init(transactions: [], fees: fees),
+                        output: .init(transactions: nil, fees: fees),
                         error: .getTransferTransactionsFailure
                     )
                 }
@@ -231,10 +231,10 @@ public struct WormholeSendInputBase: Equatable {
 }
 
 public struct WormholeSendOutputBase: Equatable {
-    public let transactions: [String]
+    public let transactions: SendTransaction?
     public let fees: SendFees
     
-    public init(transactions: [String], fees: SendFees) {
+    public init(transactions: SendTransaction?, fees: SendFees) {
         self.transactions = transactions
         self.fees = fees
     }

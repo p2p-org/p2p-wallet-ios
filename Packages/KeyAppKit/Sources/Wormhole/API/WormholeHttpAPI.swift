@@ -106,7 +106,7 @@ public class WormholeRPCAPI: WormholeAPI {
         recipient: String,
         mint: String?,
         amount: String
-    ) async throws -> [String] {
+    ) async throws -> SendTransaction {
         try await client.call(
             method: "transfer_from_solana",
             params: [
@@ -120,9 +120,12 @@ public class WormholeRPCAPI: WormholeAPI {
         )
     }
 
-    public func getTransferFees(userWallet: String, recipient: String, mint: String?,
-                                amount: String) async throws -> SendFees
-    {
+    public func getTransferFees(
+        userWallet: String,
+        recipient: String,
+        mint: String?,
+        amount: String
+    ) async throws -> SendFees {
         try await client.call(
             method: "get_solana_fees",
             params: [
