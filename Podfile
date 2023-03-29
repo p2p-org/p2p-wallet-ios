@@ -38,7 +38,7 @@ def key_app_kit
     end
   else
     $keyAppKitGit = 'https://github.com/p2p-org/key-app-kit-swift.git'
-    $keyAppKitBranch = 'master'
+    $keyAppKitBranch = 'feature/send-via-link'
     for $dependency in $dependencies do
       pod $dependency, :git => $keyAppKitGit, :branch => $keyAppKitBranch
     end
@@ -52,14 +52,14 @@ target 'p2p_wallet' do
   # development pods
   key_app_kit
   pod 'CocoaDebug', '1.7.2', :configurations => ['Debug', 'Test']
-  pod 'FeeRelayerSwift', :git => 'https://github.com/p2p-org/FeeRelayerSwift.git', :branch => 'master'
+  pod 'FeeRelayerSwift', :git => 'https://github.com/p2p-org/FeeRelayerSwift.git', :branch => 'feature/send-via-link'
   pod 'OrcaSwapSwift', :git => 'https://github.com/p2p-org/OrcaSwapSwift.git', :branch => 'main'
   pod 'RenVMSwift', :git => 'https://github.com/p2p-org/RenVMSwift.git', :branch => 'master'
   
   if $solanaSwiftPath
     pod "SolanaSwift", :path => $solanaSwiftPath
   else
-    pod 'SolanaSwift', :git => 'https://github.com/p2p-org/solana-swift.git', :branch => 'main'
+    pod 'SolanaSwift', :git => 'https://github.com/p2p-org/solana-swift.git', :branch => 'feature/send-via-link'
   end
 
   # tools
