@@ -23,7 +23,7 @@ public class SolanaPriceService {
 
     public init(api: SolanaPricesAPI, lifetime: TimeInterval = 60 * 15) {
         self.api = api
-        self.cache = LongTermCache(entryLifetime: lifetime, maximumEntryCount: 999)
+        cache = LongTermCache(entryLifetime: lifetime, maximumEntryCount: 999)
     }
 
     /// Get exchange rate for solana token.
@@ -45,15 +45,19 @@ public class SolanaPriceService {
     /// Batch request exchange rate for solana tokens
     // TODO: Optimize batch requesting
     public func getPrices(tokens: [Token], fiat: String) async throws -> [Token: CurrentPrice?] {
+        guard !tokens.isEmpty else {
+            return [:]
+        }
+
         if let cachedResult = getPricesFromCache(tokens: tokens, fiat: fiat) {
             return cachedResult
         } else {
             let prices = try await api.getCurrentPrices(coins: tokens, toFiat: fiat)
-            
+
             for token in tokens {
                 let currentPrice: CurrentPrice = (prices[token] ?? nil)
                     ?? CurrentPrice(value: 0.0)
-                
+
                 cache.insert(
                     currentPrice,
                     forKey: primaryKey(token.address, fiat)
