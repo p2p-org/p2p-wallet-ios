@@ -90,7 +90,8 @@ private extension SwapInputView {
             value: $viewModel.amount,
             isFirstResponder: $viewModel.isFirstResponder,
             textColor: $viewModel.amountTextColor,
-            maxFractionDigits: $viewModel.decimalLength
+            maxFractionDigits: $viewModel.decimalLength,
+            moveCursorToTrailingWhenDidBeginEditing: true
         ) { textField in
             textField.font = .font(of: .title1)
             textField.isEnabled = viewModel.isEditable
