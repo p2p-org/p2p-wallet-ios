@@ -9,6 +9,8 @@ typealias TokenPriceMap = [String: CurrentPrice]
 protocol PricesServiceType {
     // Publishers
     var currentPricesPublisher: AnyPublisher<TokenPriceMap, Never> { get }
+    var isPricesAvailablePublisher: AnyPublisher<Bool, Never> { get }
+    var isPricesAvailable: Bool { get }
 
     // Getters
     func getWatchList() -> [Token]
@@ -49,6 +51,7 @@ class PricesService {
     ]
     private var timer: Timer?
     private lazy var currentPricesSubject = CurrentValueSubject<TokenPriceMap, Never>([:])
+    private lazy var isPricesAvailableSubject = CurrentValueSubject<Bool, Never>(true)
 
     var fetchingTask: Task<Void, Swift.Error>?
 
@@ -118,6 +121,14 @@ extension PricesService: PricesServiceType {
     var currentPricesPublisher: AnyPublisher<TokenPriceMap, Never> {
         currentPricesSubject.eraseToAnyPublisher()
     }
+    
+    var isPricesAvailablePublisher: AnyPublisher<Bool, Never> {
+        isPricesAvailableSubject.eraseToAnyPublisher()
+    }
+    
+    var isPricesAvailable: Bool {
+        isPricesAvailableSubject.value
+    }
 
     func getWatchList() -> [Token] {
         watchList
@@ -151,6 +162,7 @@ extension PricesService: PricesServiceType {
                 let currentPrice = try await self.getCurrentPrices(tokens: tokens, toFiat: toFiat)
                 try Task.checkCancellation()
                 self.currentPricesSubject.send(currentPrice)
+                self.isPricesAvailableSubject.send(true)
             } catch {
                 guard Task.isNotCancelled else { return }
                 self.notificationService
@@ -160,6 +172,7 @@ extension PricesService: PricesServiceType {
                             L10n.TokenRatesAreUnavailable.everythingWorksAsUsualAndAllFundsAreSafe
                         )
                     )
+                self.isPricesAvailableSubject.send(false)
 
                 throw error
             }
