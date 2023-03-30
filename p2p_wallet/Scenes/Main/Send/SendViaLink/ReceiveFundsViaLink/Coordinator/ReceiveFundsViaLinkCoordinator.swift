@@ -27,13 +27,13 @@ final class ReceiveFundsViaLinkCoordinator: Coordinator<Void> {
     override func start() -> AnyPublisher<Void, Never> {
         let viewModel = ReceiveFundsViaLinkViewModel(url: url)
         let view = ReceiveFundsViaLinkView(viewModel: viewModel)
-        let viewController = view.asViewController()
-        viewController.view.layer.cornerRadius = 16
-        let transition = PanelTransition()
-        transition.containerHeight = 446
-        viewController.transitioningDelegate = transition
-        viewController.modalPresentationStyle = .custom
-        presentingViewController.present(viewController, animated: true)
+        
+        let viewController = UIBottomSheetHostingController(
+            rootView: view,
+            ignoresKeyboard: true
+        )
+        viewController.view.layer.cornerRadius = 20
+        presentingViewController.present(viewController, interactiveDismissalType: .standard)
         
         viewModel.close
             .sink(receiveValue: { [weak self] in
@@ -43,9 +43,8 @@ final class ReceiveFundsViaLinkCoordinator: Coordinator<Void> {
             .store(in: &subscriptions)
         viewModel.sizeChanged
             .sink(receiveValue: {
-                transition.containerHeight = $0
-                UIView.animate(withDuration: 0.25) {
-                    transition.presentationController?.containerViewDidLayoutSubviews()
+                DispatchQueue.main.async {
+                    viewController.updatePresentationLayout(animated: true)
                 }
             })
             .store(in: &subscriptions)
@@ -59,12 +58,6 @@ final class ReceiveFundsViaLinkCoordinator: Coordinator<Void> {
                 
                 errorView.modalPresentationStyle = .fullScreen
                 self?.presentingViewController.present(errorView, animated: true)
-            })
-            .store(in: &subscriptions)
-        transition.dimmClicked
-            .sink(receiveValue: { [weak self] in
-                viewController.dismiss(animated: true)
-                self?.resultSubject.send(())
             })
             .store(in: &subscriptions)
         

@@ -25,15 +25,20 @@ struct LinkWasClaimedView: View {
                     .font(uiFont: .font(of: .text4))
             }
             Spacer()
-            TextButtonView(
-                title: L10n.okay,
-                style: .primaryWhite,
-                size: .large,
-                onPressed: {
+            Button(
+                action: {
                     close()
+                },
+                label: {
+                    Text(L10n.okay)
+                        .foregroundColor(Color(Asset.Colors.snow.color))
+                        .font(uiFont: .font(of: .text2, weight: .semibold))
+                        .frame(height: 56)
+                        .frame(maxWidth: .infinity)
+                        .background(Color(Asset.Colors.night.color))
+                        .cornerRadius(12)
                 }
             )
-            .frame(height: 56)
         }
     }
 }

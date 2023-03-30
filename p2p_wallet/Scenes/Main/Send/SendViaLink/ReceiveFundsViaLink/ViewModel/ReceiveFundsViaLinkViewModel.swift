@@ -20,7 +20,7 @@ final class ReceiveFundsViaLinkViewModel: ObservableObject {
     
     // Subjects
     private let closeSubject = PassthroughSubject<Void, Never>()
-    private let sizeChangedSubject = PassthroughSubject<CGFloat, Never>()
+    private let sizeChangedSubject = PassthroughSubject<Void, Never>()
     private let linkWasClaimedSubject = PassthroughSubject<Void, Never>()
     
     // Properties
@@ -31,7 +31,7 @@ final class ReceiveFundsViaLinkViewModel: ObservableObject {
     // MARK: - To Coordinator
     
     var close: AnyPublisher<Void, Never> { closeSubject.eraseToAnyPublisher() }
-    var sizeChanged: AnyPublisher<CGFloat, Never> { sizeChangedSubject.eraseToAnyPublisher() }
+    var sizeChanged: AnyPublisher<Void, Never> { sizeChangedSubject.eraseToAnyPublisher() }
     var linkWasClaimed: AnyPublisher<Void, Never> { linkWasClaimedSubject.eraseToAnyPublisher() }
     
     // MARK: - To View
@@ -61,9 +61,9 @@ final class ReceiveFundsViaLinkViewModel: ObservableObject {
             let pubkey = try? PublicKey(string: walletsRepository.nativeWallet?.pubkey)
         else { return }
 
-        sizeChangedSubject.send(546)
         processingState = .loading(message: L10n.itUsuallyTakes520SecondsForATransactionToComplete)
         processingVisible = true
+        sizeChangedSubject.send()
         
         Task {
             do {
@@ -79,7 +79,7 @@ final class ReceiveFundsViaLinkViewModel: ObservableObject {
                 await MainActor.run { [weak self] in
                     self?.state = .confirmed(cryptoAmount: cryptoAmount)
                     self?.processingVisible = false
-                    self?.sizeChangedSubject.send(566)
+                    self?.sizeChangedSubject.send()
                 }
             } catch {
                 await MainActor.run { [weak self] in
@@ -138,12 +138,13 @@ final class ReceiveFundsViaLinkViewModel: ObservableObject {
                 await MainActor.run { [weak self] in
                     self?.state = .loaded(model: model)
                     self?.isReloading = false
+                    self?.sizeChangedSubject.send()
                 }
             } catch {
                 await MainActor.run { [weak self] in
                     self?.state = .failure
-                    self?.sizeChangedSubject.send(594)
                     self?.isReloading = false
+                    self?.sizeChangedSubject.send()
                 }
             }
         }
