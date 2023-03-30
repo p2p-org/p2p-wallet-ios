@@ -138,7 +138,12 @@ public class WormholeService {
 
         // Sign transactions
         bundle.signatures = try bundle.transactions.map { transaction -> EthereumSignature in
-            let rlpItem: RLPItem = try RLPDecoder().decode(transaction.hexToBytes())
+            var transactionBytes = transaction.hexToBytes()
+            if transactionBytes[0] == EthereumTransaction.TransactionType.eip1559.byte! {
+                transactionBytes.remove(at: 0)
+            }
+
+            let rlpItem: RLPItem = try RLPDecoder().decode(transactionBytes)
 
             let transaction = try EthereumTransaction(rlp: rlpItem)
             let signedTransaction = try ethereumKeypair.sign(transaction: transaction, chainID: 1)
@@ -162,5 +167,16 @@ public class WormholeService {
 public extension WormholeService {
     enum Error: Swift.Error {
         case invalidVSign
+    }
+}
+
+private extension EthereumTransaction.TransactionType {
+    var byte: UInt? {
+        switch self {
+        case .eip1559:
+            return 0x02
+        default:
+            return nil
+        }
     }
 }
