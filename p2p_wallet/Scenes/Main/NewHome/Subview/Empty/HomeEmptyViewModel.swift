@@ -25,35 +25,33 @@ final class HomeEmptyViewModel: BaseViewModel, ObservableObject {
     private var cancellable: AnyCancellable?
     private let navigation: PassthroughSubject<HomeNavigation, Never>
     
-    private var _popularCoins: [Token] = [.usdc, .nativeSolana, /*.renBTC, */.eth, .usdt]
-    var popularCoins: [PopularCoin] {
-        _popularCoins.map { token in
-            PopularCoin(
-                id: token.symbol,
-                title: title(for: token),
-                amount: pricesService.fiatAmount(mint: token.address),
-                actionTitle: ActionType.buy.description,
-                image: image(for: token)
-            )
-        }
-    }
-    
+    private var popularCoinsTokens: [Token] = [.usdc, .nativeSolana, /*.renBTC, */.eth, .usdt]
+    @Published var popularCoins = [PopularCoin]()
+
     // MARK: - Initializer
-    
+
     init(navigation: PassthroughSubject<HomeNavigation, Never>) {
         self.navigation = navigation
         super.init()
+        updateData()
+        bind()
     }
     
     // MARK: - Actions
 
     func reloadData() async {
         walletsRepository.reload()
-        
+
+        let tokensWithoutPrices = popularCoinsTokens.filter { pricesService.currentPrice(mint: $0.address) == nil }
+        if !tokensWithoutPrices.isEmpty {
+            pricesService.fetchPrices(tokens: tokensWithoutPrices, toFiat: Defaults.fiat)
+        }
+
         return await withCheckedContinuation { continuation in
             cancellable = walletsRepository.statePublisher
                 .sink(receiveValue: { [weak self] in
                     if $0 == .loaded || $0 == .error {
+                        self?.updateData()
                         continuation.resume()
                         self?.cancellable = nil
                     }
@@ -67,9 +65,31 @@ final class HomeEmptyViewModel: BaseViewModel, ObservableObject {
     }
     
     func buyTapped(index: Int) {
-        let coin = _popularCoins[index]
+        let coin = popularCoinsTokens[index]
         analyticsManager.log(event: .mainScreenBuyToken(tokenName: coin.symbol))
         navigation.send(.topUpCoin(coin))
+    }
+}
+
+private extension HomeEmptyViewModel {
+    private func updateData() {
+        popularCoins = popularCoinsTokens.map { token in
+            PopularCoin(
+                id: token.symbol,
+                title: title(for: token),
+                amount: pricesService.fiatAmount(mint: token.address),
+                actionTitle: ActionType.buy.description,
+                image: image(for: token)
+            )
+        }
+    }
+
+    private func bind() {
+        pricesService.currentPricesPublisher
+            .sink { [weak self] _ in
+                self?.updateData()
+            }
+            .store(in: &subscriptions)
     }
 }
 
@@ -79,14 +99,14 @@ extension HomeEmptyViewModel {
     class PopularCoin {
         let id: String
         let title: String
-        let amount: String
+        let amount: String?
         @Published var actionTitle: String
         let image: UIImage
 
         init(
             id: String,
             title: String,
-            amount: String,
+            amount: String?,
             actionTitle: String,
             image: UIImage
         ) {
@@ -144,7 +164,8 @@ extension HomeEmptyViewModel {
 }
 
 private extension PricesServiceType {
-    func fiatAmount(mint: String) -> String {
-        "\(Defaults.fiat.symbol) \((currentPrice(mint: mint)?.value ?? 0).toString(minimumFractionDigits: 2, maximumFractionDigits: 2))"
+    func fiatAmount(mint: String) -> String? {
+        guard let price = currentPrice(mint: mint)?.value else { return nil }
+        return "\(Defaults.fiat.symbol) \(price.toString(minimumFractionDigits: 2, maximumFractionDigits: 2))"
     }
 }

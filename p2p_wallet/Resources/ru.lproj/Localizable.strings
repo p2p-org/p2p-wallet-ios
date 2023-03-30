@@ -1329,5 +1329,16 @@ You can try again, but your new transaction will be subject to the current rates
 "Your one-time link is copied" = "Ваша одноразовая ссылка скопирована";
 "Key App one-time transfer link" = "Ссылка для одноразового переноса ключа";
 "The one-time link is ready! The funds can be claimed" = "Одноразовая ссылка готова!  Средства могут быть востребованы";
+"Receive funds via one-time link" = "Получите средства по одноразовой ссылке";
+"Confirm" = "Подтверждать";
 "If you want to get your money back just open link by yourself" = "Если вы хотите вернуть свои деньги, просто откройте ссылку самостоятельно";
+"The transaction was rejected after failed internet connection. Open your link again" = "Транзакция была отклонена из-за сбоя подключения к Интернету.  Откройте вашу ссылку еще раз";
+"The transaction was rejected by the Solana blockchain. Open your link again" = "Транзакция была отклонена блокчейном Solana.  Откройте вашу ссылку еще раз";
+"Spend them wisely" = "Тратьте их с умом";
+"This one-time link is already claimed" = "Эта одноразовая ссылка уже востребована";
 "Token rates are unavailable. Everything works as usual and all funds are safe." = "Курсы токенов недоступны.  Все работает как обычно и все средства в безопасности.";
+"You can't receive funds with it" = "Вы не можете получить средства с ним";
+"Failed to get data" = "Не удалось получить данные";
+"Refresh the page or check back later" = "Обновите страницу или зайдите позже";
+"Reload" = "Перезагрузить";
+"You’ve got" = "У тебя есть";

@@ -20,9 +20,7 @@ final class DeeplinkAppDelegateService: NSObject, AppDelegateService {
             let host = components.host,
             let path = components.path,
             let params = components.queryItems
-        else {
-            return false
-        }
+        else { return false }
 
         if
             Environment.current != .release,
