@@ -20,30 +20,26 @@ struct WormholeSendInputStateAdapter: Equatable {
 
     var input: WormholeSendInputBase? {
         switch state {
-        case let .initializing(input):
-            return input
         case let .ready(input, output, alert):
             return input
         case let .calculating(newInput):
             return newInput
         case let .error(input, output, error):
             return input
-        case .unauthorized, .initializingFailure:
+        case .initializingFailure:
             return nil
         }
     }
 
     var output: WormholeSendOutputBase? {
         switch state {
-        case let .initializing(input):
-            return nil
         case let .ready(input, output, alert):
             return output
         case let .calculating(newInput):
             return nil
         case let .error(input, output, error):
             return output
-        case .unauthorized, .initializingFailure:
+        case .initializingFailure:
             return nil
         }
     }
@@ -88,8 +84,6 @@ struct WormholeSendInputStateAdapter: Equatable {
 
     var fees: String {
         switch state {
-        case let .initializing(input):
-            return ""
         case let .ready(input, output, alert):
             return "Fees: \(currencyFormatter.string(amount: output.fees.totalInFiat))"
         case let .calculating(newInput):
@@ -100,22 +94,20 @@ struct WormholeSendInputStateAdapter: Equatable {
             } else {
                 return ""
             }
-        case .unauthorized, .initializingFailure:
+        case .initializingFailure:
             return ""
         }
     }
 
     var feesLoading: Bool {
         switch state {
-        case let .initializing(input):
-            return true
         case let .ready(input, output, alert):
             return false
         case let .calculating(newInput):
             return true
         case let .error(input, output, error):
             return false
-        case .unauthorized, .initializingFailure:
+        case .initializingFailure:
             return false
         }
     }
@@ -135,7 +127,7 @@ struct WormholeSendInputStateAdapter: Equatable {
             switch error {
             case .maxAmountReached:
                 return L10n.max(cryptoFormatter.string(amount: input.solanaAccount.cryptoAmount))
-            case .calculationFeeFailure:
+            case .calculationFeeFailure, .calculationFeePayerFailure:
                 return L10n.CannotCalculateFees.tryAgain
             case .getTransferTransactionsFailure:
                 return L10n.creatingTransactionFailed
@@ -158,7 +150,7 @@ struct WormholeSendInputStateAdapter: Equatable {
             switch error {
             case .maxAmountReached:
                 text = L10n.max(cryptoFormatter.string(amount: input.solanaAccount.cryptoAmount))
-            case .calculationFeeFailure:
+            case .calculationFeeFailure, .calculationFeePayerFailure:
                 text = L10n.CannotCalculateFees.tryAgain
             case .getTransferTransactionsFailure:
                 text = L10n.creatingTransactionFailed
