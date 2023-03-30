@@ -169,10 +169,8 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
                 // get seed
                 let possibleSeed = String(urlComponents.path.dropFirst())
                 
-                DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) {
-                    GlobalAppState.shared.sendViaLinkSeed = possibleSeed
-                    GlobalAppState.shared.sendViaLinkUrl = webpageURL
-                }
+                GlobalAppState.shared.sendViaLinkSeed = possibleSeed
+                GlobalAppState.shared.sendViaLinkUrl = webpageURL
                 return true
             }
         }

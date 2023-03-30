@@ -18,6 +18,7 @@ struct LinkWasClaimedView: View {
             VStack(spacing: 8) {
                 Image(uiImage: .sendViaLinkClaimed)
                 Text(L10n.thisOneTimeLinkIsAlreadyClaimed)
+                    .multilineTextAlignment(.center)
                     .foregroundColor(Color(Asset.Colors.night.color))
                     .font(uiFont: .font(of: .title1, weight: .semibold))
                 Text(L10n.youCanTReceiveFundsWithIt)
@@ -35,5 +36,7 @@ struct LinkWasClaimedView: View {
             )
             .frame(height: 56)
         }
+        .padding(.horizontal, 16)
+        .padding(.bottom, 32)
     }
 }
