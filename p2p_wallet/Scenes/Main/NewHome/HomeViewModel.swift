@@ -66,7 +66,7 @@ class HomeViewModel: ObservableObject {
 
     func updateAddressIfNeeded() {
         if let name = nameStorage.getName(), !name.isEmpty {
-            address = "\(name).key"
+            address = name
         } else if let address = accountStorage.account?.publicKey.base58EncodedString.shortAddress {
             self.address = address
         }
@@ -121,7 +121,7 @@ private extension HomeViewModel {
             .receive(on: RunLoop.main)
             .sink { [weak self] solanaState, ethereumState in
                 guard let self else { return }
-                
+
                 let solanaTotalBalance = solanaState.value.reduce(into: 0) { partialResult, account in
                     partialResult = partialResult + account.amountInFiatDouble
                 }
