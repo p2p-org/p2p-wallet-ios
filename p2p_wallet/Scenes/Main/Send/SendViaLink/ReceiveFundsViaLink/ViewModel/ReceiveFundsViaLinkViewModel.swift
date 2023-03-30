@@ -74,7 +74,7 @@ final class ReceiveFundsViaLinkViewModel: BaseViewModel, ObservableObject {
         processingVisible = true
         
         // Form raw transaction
-        let transaction = ClaimSentViaLinkTransaction {
+        let transaction = ClaimSentViaLinkTransaction(claimableTokenInfo: claimableToken) {
             try await claimSendViaLinkExecution(
                 claimableToken: claimableToken,
                 receiver: pubkey
