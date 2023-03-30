@@ -13,7 +13,7 @@ struct TokenCellViewItem: Hashable {
     init(wallet: Wallet) {
         token = wallet.token
         amount = wallet.amount
-        amountInCurrentFiat = wallet.amountInCurrentFiat
+        amountInCurrentFiat = wallet.priceInCurrentFiat == nil ? nil : wallet.amountInCurrentFiat
     }
 
     init(token: Token, amount: Double? = nil, fiat: Fiat? = nil) {
@@ -30,12 +30,18 @@ struct TokenCellViewItem: Hashable {
 
 struct TokenCellView: View {
     let item: TokenCellViewItem
+    let appearance: Appearance
+
+    init(item: TokenCellViewItem, appearance: Appearance = .main) {
+        self.item = item
+        self.appearance = appearance
+    }
 
     var body: some View {
         HStack(alignment: .center, spacing: 12) {
-            CoinLogoImageViewRepresentable(size: 50, token: item.token)
-                .frame(width: 50, height: 50)
-            VStack(alignment: .leading, spacing: 4) {
+            CoinLogoImageViewRepresentable(size: appearance.logoImageSize, token: item.token)
+                .frame(width: appearance.logoImageSize, height: appearance.logoImageSize)
+            VStack(alignment: .leading, spacing: appearance.textPadding) {
                 Text(item.token.name)
                     .font(uiFont: .font(of: .text2))
                     .foregroundColor(Color(Asset.Colors.night.color))
@@ -52,5 +58,15 @@ struct TokenCellView: View {
                     .foregroundColor(Color(Asset.Colors.night.color))
             }
         }.contentShape(Rectangle())
+    }
+}
+
+extension TokenCellView {
+    struct Appearance {
+        let logoImageSize: CGFloat
+        let textPadding: CGFloat
+
+        static let main = Appearance(logoImageSize: 50, textPadding: 4)
+        static let other = Appearance(logoImageSize: 48, textPadding: 6)
     }
 }

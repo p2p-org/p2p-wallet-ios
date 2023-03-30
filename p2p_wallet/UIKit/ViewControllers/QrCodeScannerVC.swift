@@ -103,17 +103,17 @@ class QrCodeScannerVC: BaseVC {
 
     override func viewDidAppear(_ animated: Bool) {
         super.viewDidAppear(animated)
-        captureSession?.startRunning()
+        startCapturing()
     }
 
     override func viewDidDisappear(_ animated: Bool) {
         super.viewDidDisappear(animated)
-        captureSession?.stopRunning()
+        stopCapturing()
     }
 
     func found(code: String) {
         if callback?(code) == true {
-            analyticsManager.log(event: AmplitudeEvent.scanQrSuccess)
+            analyticsManager.log(event: .scanQrSuccess)
             back()
             AudioServicesPlaySystemSound(SystemSoundID(kSystemSoundID_Vibrate))
         }
@@ -129,7 +129,7 @@ class QrCodeScannerVC: BaseVC {
     }
 
     @objc func closeButtonDidTouch() {
-        analyticsManager.log(event: AmplitudeEvent.scanQrClose)
+        analyticsManager.log(event: .scanQrClose)
         back()
     }
 
@@ -169,8 +169,20 @@ class QrCodeScannerVC: BaseVC {
     }
 
     override func back() {
-        captureSession?.stopRunning()
+        stopCapturing()
         super.back()
+    }
+
+    private func startCapturing() {
+        DispatchQueue.global(qos: .background).async {
+            self.captureSession?.startRunning()
+        }
+    }
+    
+    private func stopCapturing() {
+        DispatchQueue.global(qos: .background).async {
+            self.captureSession?.stopRunning()
+        }
     }
 }
 
@@ -183,6 +195,7 @@ extension QrCodeScannerVC: AVCaptureMetadataOutputObjectsDelegate {
         if let metadataObject = metadataObjects.first {
             guard let readableObject = metadataObject as? AVMetadataMachineReadableCodeObject else { return }
             guard let stringValue = readableObject.stringValue else { return }
+            stopCapturing()
             found(code: stringValue)
         }
     }
@@ -290,7 +303,7 @@ extension QrCodeScannerVC {
         previewLayer.videoGravity = .resizeAspectFill
 
         cameraContainerView.layer.addSublayer(previewLayer)
-        captureSession.startRunning()
+        startCapturing()
 
         // bring important subviews to front
         cameraContainerView.bringSubviewToFront(rangeImageView)

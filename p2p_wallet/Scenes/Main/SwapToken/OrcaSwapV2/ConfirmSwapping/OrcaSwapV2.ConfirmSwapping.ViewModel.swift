@@ -5,11 +5,11 @@
 //  Created by Chung Tran on 15/12/2021.
 //
 
-import AnalyticsManager
 import Foundation
 import Resolver
 import RxCocoa
 import SolanaSwift
+import AnalyticsManager
 
 extension OrcaSwapV2.ConfirmSwapping {
     final class ViewModel {
@@ -67,8 +67,8 @@ extension OrcaSwapV2.ConfirmSwapping.ViewModel: OrcaSwapV2ConfirmSwappingViewMod
         !Defaults.shouldShowConfirmAlertOnSwap
     }
 
-    func getPrice(symbol: String) -> Double? {
-        pricesService.currentPrice(for: symbol)?.value
+    func getPrice(mint: String) -> Double? {
+        pricesService.currentPrice(mint: mint)?.value
     }
 
     func closeBanner() {
@@ -77,7 +77,7 @@ extension OrcaSwapV2.ConfirmSwapping.ViewModel: OrcaSwapV2ConfirmSwappingViewMod
 
     func authenticateAndSwap() {
         swapViewModel.authenticateAndSwap()
-        analyticsManager.log(event: AmplitudeEvent.swapClickApproveButton)
+        analyticsManager.log(event: .swapClickApproveButton)
     }
 
     func showFeesInfo(_ info: PayingFee.Info) {

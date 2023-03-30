@@ -6,8 +6,8 @@
 //
 
 import Combine
-import SwiftUI
 import KeyAppUI
+import SwiftUI
 
 struct ActionsPanelView: View {
     private var actionsPublisher: AnyPublisher<[WalletActionType], Never>
@@ -46,11 +46,17 @@ struct ActionsPanelView: View {
 
     private var actionsView: some View {
         VStack(alignment: .center, spacing: 0) {
-            Text(balance)
-                .font(uiFont: .font(of: .largeTitle, weight: .bold))
-                .foregroundColor(Color(Asset.Colors.night.color))
-                .padding(.top, 24)
-                .padding(.bottom, usdAmount.isEmpty ? 32 : 12)
+            if !balance.isEmpty {
+                Text(balance)
+                    .font(uiFont: .font(of: .largeTitle, weight: .bold))
+                    .foregroundColor(Color(Asset.Colors.night.color))
+                    .padding(.top, 24)
+                    .padding(.bottom, usdAmount.isEmpty ? 32 : 12)
+            } else {
+                Rectangle()
+                    .fill(Color.clear)
+                    .padding(.top, 24)
+            }
             if !usdAmount.isEmpty {
                 Text(usdAmount)
                     .font(uiFont: .font(of: .text3))

@@ -6,8 +6,8 @@
 //
 
 import Foundation
-import RxSwift
 import SolanaSwift
+import Combine
 
 struct AccountsObservableEvent {
     let pubkey: String
@@ -17,7 +17,7 @@ struct AccountsObservableEvent {
 protocol AccountObservableService {
     var isConnected: Bool { get }
     func subscribeAccountNotification(account: String) async throws
-    func observeAllAccountsNotifications() -> Observable<AccountsObservableEvent>
+    var allAccountsNotificcationsPublisher: AnyPublisher<AccountsObservableEvent, Never> { get }
 }
 
 private struct AccountObservableSubscribes {
@@ -56,7 +56,7 @@ actor AccountObservableSubscribesManager {
 
 class AccountsObservableServiceImpl: AccountObservableService, SolanaSocketEventsDelegate {
     private var solanaSocket: SolanaSocket
-    private let publisher: PublishSubject<AccountsObservableEvent> = .init()
+    private let publisher: PassthroughSubject<AccountsObservableEvent, Never> = .init()
     private let subscribesManager: AccountObservableSubscribesManager = .init()
 
     init(solanaSocket: SolanaSocket) {
@@ -76,8 +76,8 @@ class AccountsObservableServiceImpl: AccountObservableService, SolanaSocketEvent
         await subscribesManager.accept(account: account, id: id)
     }
 
-    func observeAllAccountsNotifications() -> Observable<AccountsObservableEvent> {
-        publisher.asObservable()
+    var allAccountsNotificcationsPublisher: AnyPublisher<AccountsObservableEvent, Never> {
+        publisher.eraseToAnyPublisher()
     }
 
     func nativeAccountNotification(notification: SocketNativeAccountNotification) {
@@ -87,7 +87,7 @@ class AccountsObservableServiceImpl: AccountObservableService, SolanaSocketEvent
                 let lamport = notification.lamports
             else { return }
 
-            publisher.on(.next(.init(pubkey: pubkey, lamports: lamport)))
+            publisher.send(.init(pubkey: pubkey, lamports: lamport))
         }
     }
 
@@ -98,7 +98,7 @@ class AccountsObservableServiceImpl: AccountObservableService, SolanaSocketEvent
                 let lamport: Lamports = Lamports(notification.params?.result?.value.data?.parsed.info.tokenAmount.amount ?? "")
             else { return }
 
-            publisher.on(.next(.init(pubkey: pubkey, lamports: lamport)))
+            publisher.send(.init(pubkey: pubkey, lamports: lamport))
         }
     }
 

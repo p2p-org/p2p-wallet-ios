@@ -17,7 +17,7 @@ class BindingPhoneNumberDelegatedCoordinator: DelegatedCoordinator<BindingPhoneN
     override func buildViewController(for state: BindingPhoneNumberState) -> UIViewController? {
         switch state {
         case let .enterPhoneNumber(initialPhoneNumber, _, _, _):
-            analyticsManager.log(event: AmplitudeEvent.creationPhoneScreen)
+            analyticsManager.log(event: .creationPhoneScreen)
 
             let mv = EnterPhoneNumberViewModel(
                 phone: initialPhoneNumber,
@@ -68,10 +68,10 @@ class BindingPhoneNumberDelegatedCoordinator: DelegatedCoordinator<BindingPhoneN
                 vm?.isLoading = true
                 do {
                     try await stateMachine <- .enterOTP(opt: opt)
-                    self?.analyticsManager.log(event: AmplitudeEvent.createSmsValidation(result: true))
+                    self?.analyticsManager.log(event: .createSmsValidation(result: true))
                 } catch {
                     vm?.coordinatorIO.error.send(error)
-                    self?.analyticsManager.log(event: AmplitudeEvent.createSmsValidation(result: false))
+                    self?.analyticsManager.log(event: .createSmsValidation(result: false))
                 }
                 vm?.isLoading = false
             }.store(in: &subscriptions)

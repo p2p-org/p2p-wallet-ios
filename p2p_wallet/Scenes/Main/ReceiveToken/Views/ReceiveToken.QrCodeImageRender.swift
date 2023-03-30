@@ -4,14 +4,14 @@
 
 import BEPureLayout
 import Foundation
-import RxSwift
 import SolanaSwift
 
 protocol QrCodeImageRender {
-    func render(username: String?, address: String?, token: Token?, showTokenIcon: Bool) -> Single<UIImage>
+    func render(username: String?, address: String?, token: Token?, showTokenIcon: Bool) async throws -> UIImage
 }
 
 extension ReceiveToken {
+    @MainActor
     class QrCodeImageRenderImpl: QrCodeImageRender {
         private struct Theme {
             let backgroundColor: UIColor
@@ -31,18 +31,12 @@ extension ReceiveToken {
             logoColor: .white
         )
 
-        private func tokenIcon(urlString: String?) -> Single<UIImage?> {
-            .create { single in
-                if let urlString = urlString {
-                    let url = NSURL(string: urlString)! as URL
-                    if let imageData = NSData(contentsOf: url) {
-                        single(.success(UIImage(data: imageData as Data)))
-                    }
-                }
-
-                single(.success(nil))
-                return Disposables.create {}
-            }
+        private func tokenIcon(urlString: String?) async throws -> UIImage? {
+            guard let urlString, let url = URL(string: urlString)
+            else { return nil }
+            
+            let imageData = try await URLSession.shared.data(from: url).0
+            return UIImage(data: imageData)
         }
 
         private func qrCode(data: String) -> UIImage {
@@ -73,7 +67,7 @@ extension ReceiveToken {
                 if username != nil {
                     UILabel(textSize: 20, weight: .semibold, numberOfLines: 2, textAlignment: .center)
                         .setup { view in
-                            let text = NSMutableAttributedString(string: username!.withNameServiceDomain())
+                            let text = NSMutableAttributedString(string: username!)
                             text.addAttribute(
                                 .foregroundColor,
                                 value: UIColor.gray,
@@ -131,20 +125,18 @@ extension ReceiveToken {
         }
 
         func render(username: String?, address: String?, token: Token?,
-                    showTokenIcon: Bool) -> Single<UIImage>
+                    showTokenIcon: Bool) async throws -> UIImage
         {
             guard let address = address else {
-                return .just(UIImage())
+                return UIImage()
             }
 
             if !showTokenIcon {
-                return .just(renderAsView(username: username, address: address, tokenImage: nil).asImageInBackground())
+                return renderAsView(username: username, address: address, tokenImage: nil).asImageInBackground()
             }
 
-            return tokenIcon(urlString: token?.logoURI ?? Token.nativeSolana.logoURI)
-                .map { [unowned self] image in
-                    renderAsView(username: username, address: address, tokenImage: image).asImageInBackground()
-                }
+            let image = try await tokenIcon(urlString: token?.logoURI ?? Token.nativeSolana.logoURI)
+            return renderAsView(username: username, address: address, tokenImage: image).asImageInBackground()
         }
     }
 }

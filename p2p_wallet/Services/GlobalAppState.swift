@@ -33,6 +33,18 @@ class GlobalAppState: ObservableObject {
         }
     }
     
+    @Published var pushServiceEndpoint: String = Environment.current == .release || Environment.current == .test ?
+        String.secretConfig("NOTIFICATION_SERVICE_ENDPOINT_RELEASE")! :
+        String.secretConfig("NOTIFICATION_SERVICE_ENDPOINT")!
+    
+    // New swap endpoint
+    @Published var newSwapEndpoint: String {
+        didSet {
+            Defaults.forcedNewSwapEndpoint = newSwapEndpoint
+            ResolverScope.session.reset()
+        }
+    }
+    
     // TODO: Refactor!
     @Published var surveyID: String?
 
@@ -41,6 +53,12 @@ class GlobalAppState: ObservableObject {
             nameServiceEndpoint = forcedValue
         } else {
             nameServiceEndpoint = "https://\(String.secretConfig("NAME_SERVICE_ENDPOINT_NEW")!)"
+        }
+        
+        if let forcedValue = Defaults.forcedNewSwapEndpoint {
+            newSwapEndpoint = forcedValue
+        } else {
+            newSwapEndpoint = "https://swap.key.app"
         }
     }
 }

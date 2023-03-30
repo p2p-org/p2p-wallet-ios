@@ -4,12 +4,16 @@
 
 import AnalyticsManager
 import Foundation
-import RxSwift
+import Combine
 
 class SwapTransactionAnalytics {
-    let disposeBag = DisposeBag()
+    // MARK: - Properties
+    
+    var subscriptions = Set<AnyCancellable>()
     let analyticsManager: AnalyticsManager
     let transactionHandler: TransactionHandlerType
+
+    // MARK: - Initializer
 
     init(analyticsManager: AnalyticsManager, transactionHandler: TransactionHandlerType) {
         self.analyticsManager = analyticsManager
@@ -17,95 +21,83 @@ class SwapTransactionAnalytics {
 
         transactionHandler
             .onNewTransaction
-            .subscribe(onNext: { [weak self] trx, index in
-                if trx.rawTransaction.isSwap { self?.observer(index: index) }
+            .receive(on: DispatchQueue.main)
+            .filter {
+                $0.0.rawTransaction is SwapRawTransactionType
+            }
+            .sink(receiveValue: { [weak self] trx, index in
+                self?.observer(index: index)
             })
-            .disposed(by: disposeBag)
+            .store(in: &subscriptions)
     }
 
+    // MARK: - Methods
+
     func observer(index: TransactionHandler.TransactionIndex) {
-        Observable<PendingTransaction>.create { [unowned self] observer in
-            let localDisposable = transactionHandler.observeTransaction(transactionIndex: index)
-                .subscribe(onNext: { trx in
-                    guard let trx = trx else {
-                        observer.on(.completed)
-                        return
-                    }
-
-                    observer.on(.next(trx))
-                    switch trx.status {
-                    case .finalized, .error:
-                        observer.on(.completed)
-                    default:
-                        break
-                    }
-
-                })
-
-            return Disposables.create {
-                localDisposable.dispose()
-            }
-        }
-        .distinctUntilChanged(at: \.status.rawValue)
+        transactionHandler.observeTransaction(transactionIndex: index)
+        .compactMap { $0 }
         .withPrevious()
-        .subscribe(onNext: { prevTrx, trx in
-            guard let rawTrx = trx.rawTransaction as? ProcessTransaction.SwapTransaction else { return }
-
+        .sink(receiveValue: { [weak self] param in
+            let prevTrx = param.previous
+            let trx = param.current
+            guard let self else { return }
+            guard let rawTrx = trx.rawTransaction as? SwapRawTransactionType, !available(.jupiterSwapEnabled) else { return }
+            // WARNING: This swap analytics is only for old swap
             switch trx.status {
             case .sending:
                 self.analyticsManager.log(
-                    event: AmplitudeEvent.swapUserConfirmed(
+                    event: .swapUserConfirmed(
                         tokenA_Name: rawTrx.sourceWallet.token.symbol,
                         tokenB_Name: rawTrx.destinationWallet.token.symbol,
-                        swapSum: rawTrx.amount,
+                        swapSum: rawTrx.fromAmount,
                         swapMAX: rawTrx.metaInfo.swapMAX,
                         swapUSD: rawTrx.metaInfo.swapUSD,
                         priceSlippage: rawTrx.slippage,
-                        feesSource: rawTrx.payingWallet?.token.name ?? "Unknown"
+                        feesSource: rawTrx.payingFeeWallet?.token.name ?? "Unknown"
                     )
                 )
             case let .confirmed(confirmation):
                 if confirmation == 0 {
                     self.analyticsManager.log(
-                        event: AmplitudeEvent.swapStarted(
+                        event: .swapStarted(
                             tokenA_Name: rawTrx.sourceWallet.token.symbol,
                             tokenB_Name: rawTrx.destinationWallet.token.symbol,
-                            swapSum: rawTrx.amount,
+                            swapSum: rawTrx.fromAmount,
                             swapMAX: rawTrx.metaInfo.swapMAX,
                             swapUSD: rawTrx.metaInfo.swapUSD,
                             priceSlippage: rawTrx.slippage,
-                            feesSource: rawTrx.payingWallet?.token.name ?? "Unknown"
+                            feesSource: rawTrx.payingFeeWallet?.token.name ?? "Unknown"
                         )
                     )
                 } else if prevTrx?.status.numberOfConfirmations == 0 {
                     self.analyticsManager.log(
-                        event: AmplitudeEvent.swapApprovedByNetwork(
+                        event: .swapApprovedByNetwork(
                             tokenA_Name: rawTrx.sourceWallet.token.symbol,
                             tokenB_Name: rawTrx.destinationWallet.token.symbol,
-                            swapSum: rawTrx.amount,
+                            swapSum: rawTrx.fromAmount,
                             swapMAX: rawTrx.metaInfo.swapMAX,
                             swapUSD: rawTrx.metaInfo.swapUSD,
                             priceSlippage: rawTrx.slippage,
-                            feesSource: rawTrx.payingWallet?.token.name ?? "Unknown"
+                            feesSource: rawTrx.payingFeeWallet?.token.name ?? "Unknown"
                         )
                     )
                 }
             case .finalized:
                 self.analyticsManager.log(
-                    event: AmplitudeEvent.swapCompleted(
+                    event: .swapCompleted(
                         tokenA_Name: rawTrx.sourceWallet.token.symbol,
                         tokenB_Name: rawTrx.destinationWallet.token.symbol,
-                        swapSum: rawTrx.amount,
+                        swapSum: rawTrx.fromAmount,
                         swapMAX: rawTrx.metaInfo.swapMAX,
                         swapUSD: rawTrx.metaInfo.swapUSD,
                         priceSlippage: rawTrx.slippage,
-                        feesSource: rawTrx.payingWallet?.token.name ?? "Unknown"
+                        feesSource: rawTrx.payingFeeWallet?.token.name ?? "Unknown"
                     )
                 )
             default:
                 break
             }
         })
-        .disposed(by: disposeBag)
+        .store(in: &subscriptions)
     }
 }

@@ -21,7 +21,6 @@ final class SendInputViewModel: BaseViewModel, ObservableObject {
 
     // MARK: - Sub view models
 
-    let actionButtonViewModel: SendInputActionButtonViewModel
     let inputAmountViewModel: SendInputAmountViewModel
     let tokenViewModel: SendInputTokenViewModel
 
@@ -39,6 +38,13 @@ final class SendInputViewModel: BaseViewModel, ObservableObject {
 
     @Published var feeTitle = L10n.fees("")
     @Published var isFeeLoading: Bool = true
+    
+    @Published var loadingState: LoadableState = .loaded
+
+    // ActionButton
+    @Published var actionButtonData = SliderActionButtonData.zero
+    @Published var isSliderOn = false
+    @Published var showFinished = false
 
     let feeInfoPressed = PassthroughSubject<Void, Never>()
     let openFeeInfo = PassthroughSubject<Bool, Never>()
@@ -55,6 +61,7 @@ final class SendInputViewModel: BaseViewModel, ObservableObject {
 
     private let source: SendSource
     private var wasMaxWarningToastShown: Bool = false
+    private let preChosenAmount: Double?
 
     // MARK: - Dependencies
 
@@ -62,8 +69,9 @@ final class SendInputViewModel: BaseViewModel, ObservableObject {
     private let pricesService: PricesServiceType
     @Injected private var analyticsManager: AnalyticsManager
 
-    init(recipient: Recipient, preChosenWallet: Wallet?, source: SendSource) {
+    init(recipient: Recipient, preChosenWallet: Wallet?, preChosenAmount: Double?, source: SendSource, allowSwitchingMainAmountType: Bool) {
         self.source = source
+        self.preChosenAmount = preChosenAmount
         let repository = Resolver.resolve(WalletsRepository.self)
         walletsRepository = repository
         let wallets = repository.getWallets()
@@ -102,7 +110,7 @@ final class SendInputViewModel: BaseViewModel, ObservableObject {
         var exchangeRate = [String: CurrentPrice]()
         var tokens = Set<Token>()
         wallets.forEach {
-            exchangeRate[$0.token.symbol] = pricesService.currentPrice(for: $0.token.symbol)
+            exchangeRate[$0.token.symbol] = pricesService.currentPrice(mint: $0.token.address)
             tokens.insert($0.token)
         }
 
@@ -128,8 +136,7 @@ final class SendInputViewModel: BaseViewModel, ObservableObject {
             )
         )
 
-        inputAmountViewModel = SendInputAmountViewModel(initialToken: tokenInWallet)
-        actionButtonViewModel = SendInputActionButtonViewModel()
+        inputAmountViewModel = SendInputAmountViewModel(initialToken: tokenInWallet, allowSwitchingMainAmountType: allowSwitchingMainAmountType)
 
         tokenViewModel = SendInputTokenViewModel(initialToken: tokenInWallet)
 
@@ -158,6 +165,16 @@ final class SendInputViewModel: BaseViewModel, ObservableObject {
                     return try await relayContextManager.getCurrentContextOrUpdate()
                 }))
             
+            // disable adding amount if amount is pre-chosen
+            if let amount = preChosenAmount {
+                Task {
+                    inputAmountViewModel.mainAmountType = .token
+                    inputAmountViewModel.amountText = amount.toString()
+                    await MainActor.run {
+                        inputAmountViewModel.isDisabled = true
+                    }
+                }
+            }
 
             switch nextState.status {
             case .error(reason: .initializeFailed(_)):
@@ -170,7 +187,19 @@ final class SendInputViewModel: BaseViewModel, ObservableObject {
 
     func openKeyboard() {
         DispatchQueue.main.async {
+            guard !self.inputAmountViewModel.isFirstResponder else { return }
             self.inputAmountViewModel.isFirstResponder = true
+        }
+    }
+    
+    @MainActor
+    func load() async {
+        loadingState = .loading
+        do {
+            try await Resolver.resolve(SwapServiceType.self).reload()
+            loadingState = .loaded
+        } catch {
+            loadingState = .error(error.readableDescription)
         }
     }
 }
@@ -221,7 +250,7 @@ private extension SendInputViewModel {
                 guard let self = self else { return }
                 if isLoading {
                     self.feeTitle = L10n.fees("")
-                    self.actionButtonViewModel.actionButton = .init(isEnabled: false, title: L10n.calculatingTheFees)
+                    self.actionButtonData = SliderActionButtonData(isEnabled: false, title: L10n.calculatingTheFees)
                 } else {
                     self.updateInputAmountView()
                 }
@@ -263,7 +292,7 @@ private extension SendInputViewModel {
             }
             .store(in: &subscriptions)
 
-        actionButtonViewModel.$isSliderOn
+        $isSliderOn
             .sinkAsync(receiveValue: { [weak self] isSliderOn in
                 guard let self = self else { return }
                 if isSliderOn {
@@ -286,7 +315,7 @@ private extension SendInputViewModel {
         $status
             .sink { [weak self] value in
                 guard value == .ready else { return }
-                self?.openKeyboard()
+                DispatchQueue.main.asyncAfter(deadline: .now() + 0.5, execute: { self?.openKeyboard() })
             }
             .store(in: &subscriptions)
     }
@@ -296,55 +325,61 @@ private extension SendInputViewModel {
     func updateInputAmountView() {
         guard currentState.amountInToken != .zero else {
             inputAmountViewModel.isError = false
-            actionButtonViewModel.actionButton = .zero
+            actionButtonData = SliderActionButtonData.zero
             return
         }
         switch currentState.status {
         case let .error(.inputTooHigh(maxAmount)):
             inputAmountViewModel.isError = true
-            actionButtonViewModel.actionButton = .init(
+            actionButtonData = SliderActionButtonData(
                 isEnabled: false,
                 title: L10n.max(maxAmount.tokenAmountFormattedString(symbol: sourceWallet.token.symbol, roundingMode: .down))
             )
-            if currentState.token.isNativeSOL && currentState.amountInToken != currentState.maxAmountInputInToken {
-                if !wasMaxWarningToastShown {
-                    handleSuccess(text: L10n.weLeftAMinimumSOLBalanceToSaveTheAccountAddress)
-                    wasMaxWarningToastShown = true
-                }
-                inputAmountViewModel.isMaxButtonVisible = true
-            }
+            checkMaxButtonIfNeeded()
         case let .error(.inputTooLow(minAmount)):
             inputAmountViewModel.isError = true
-            actionButtonViewModel.actionButton = .init(
+            actionButtonData = SliderActionButtonData(
                 isEnabled: false,
                 title: L10n.min(minAmount.tokenAmountFormattedString(symbol: sourceWallet.token.symbol, roundingMode: .down))
             )
         case .error(reason: .insufficientAmountToCoverFee):
             inputAmountViewModel.isError = false
-            actionButtonViewModel.actionButton = .init(
+            actionButtonData = SliderActionButtonData(
                 isEnabled: false,
                 title: L10n.insufficientFundsToCoverFees
             )
         case .error(reason: .initializeFailed(_)):
             inputAmountViewModel.isError = false
-            actionButtonViewModel.actionButton = .init(
+            actionButtonData = SliderActionButtonData(
                 isEnabled: true,
                 title: L10n.tryAgain
             )
         case .error(reason: .insufficientFunds):
-            inputAmountViewModel.isError = false
-            actionButtonViewModel.actionButton = .init(
+            inputAmountViewModel.isError = true
+            actionButtonData = SliderActionButtonData(
                 isEnabled: false,
                 title: L10n.insufficientFunds
             )
-
+            checkMaxButtonIfNeeded()
         default:
             wasMaxWarningToastShown = false
             inputAmountViewModel.isError = false
-            actionButtonViewModel.actionButton = .init(
+            actionButtonData = SliderActionButtonData(
                 isEnabled: true,
                 title: "\(L10n.send) \(currentState.amountInToken.tokenAmountFormattedString(symbol: currentState.token.symbol, maximumFractionDigits: Int(currentState.token.decimals), roundingMode: .down))"
             )
+        }
+    }
+
+    func checkMaxButtonIfNeeded() {
+        guard currentState.token.isNativeSOL else { return }
+        let range = currentState.maxAmountInputInSOLWithLeftAmount..<currentState.maxAmountInputInToken
+        if range.contains(currentState.amountInToken) {
+            if !wasMaxWarningToastShown {
+                handleSuccess(text: L10n.weLeftAMinimumSOLBalanceToSaveTheAccountAddress)
+                wasMaxWarningToastShown = true
+            }
+            inputAmountViewModel.isMaxButtonVisible = true
         }
     }
 
@@ -406,7 +441,7 @@ private extension SendInputViewModel {
         logConfirmButtonClick()
 
         await MainActor.run {
-            self.actionButtonViewModel.showFinished = true
+            self.showFinished = true
         }
         
         try? await Task.sleep(nanoseconds: 500_000_000)
@@ -433,23 +468,23 @@ private extension SendInputViewModel {
 
 private extension SendInputViewModel {
     func logOpen() {
-        analyticsManager.log(event: AmplitudeEvent.sendnewInputScreen(source: source.rawValue))
+        analyticsManager.log(event: .sendnewInputScreen(source: source.rawValue))
     }
 
     func logEnjoyFeeTransaction() {
-        analyticsManager.log(event: AmplitudeEvent.sendnewFreeTransactionClick(source: source.rawValue))
+        analyticsManager.log(event: .sendnewFreeTransactionClick(source: source.rawValue))
     }
 
     func logChooseTokenClick() {
-        analyticsManager.log(event: AmplitudeEvent.sendnewTokenInputClick(source: source.rawValue))
+        analyticsManager.log(event: .sendnewTokenInputClick(source: source.rawValue))
     }
 
     func logFiatInputClick(isCrypto: Bool) {
-        analyticsManager.log(event: AmplitudeEvent.sendnewFiatInputClick(crypto: isCrypto, source: source.rawValue))
+        analyticsManager.log(event: .sendnewFiatInputClick(crypto: isCrypto, source: source.rawValue))
     }
 
     func logConfirmButtonClick() {
-        analyticsManager.log(event: AmplitudeEvent.sendnewConfirmButtonClick(
+        analyticsManager.log(event: .sendNewConfirmButtonClick(
             source: source.rawValue,
             token: currentState.token.symbol,
             max: inputAmountViewModel.wasMaxUsed,

@@ -38,6 +38,7 @@ struct DebugMenuView: View {
                 }
                 Section(header: Text("Application")) {
                     TextFieldRow(title: "Wallet:", content: $globalAppState.forcedWalletAddress)
+                    TextFieldRow(title: "Push:", content: $globalAppState.pushServiceEndpoint)
                     Toggle("Prefer direct swap", isOn: $globalAppState.preferDirectSwap)
                     Button {
                         Task {
@@ -98,6 +99,15 @@ struct DebugMenuView: View {
                         }
                     }
                 }
+                
+                Section(header: Text("New swap endpoint")) {
+                    Picker("URL", selection: $globalAppState.newSwapEndpoint) {
+                        Text("Unknown").tag(nil as String?)
+                        ForEach(viewModel.newSwapEndpoints, id: \.self) { endpoint in
+                            Text(endpoint).tag(endpoint as String?)
+                        }
+                    }
+                }
 
                 Section(header: Text("Mocked device share")) {
                     Toggle("Enabled", isOn: $onboardingConfig.isDeviceShareMocked)
@@ -124,6 +134,14 @@ struct DebugMenuView: View {
                         Button {
                             Resolver.resolve(OnboardingService.self).lastState = nil
                         } label: { Text("Delete") }
+                    }
+                }
+
+                Section(header: Text("Moonpay environment")) {
+                    Picker("Environment", selection: $viewModel.currentMoonpayEnvironment) {
+                        ForEach(viewModel.moonpayEnvironments, id: \.self) { environment in
+                            Text(environment.rawValue)
+                        }
                     }
                 }
             }

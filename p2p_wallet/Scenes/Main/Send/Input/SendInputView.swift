@@ -12,12 +12,38 @@ struct SendInputView: View {
     @ObservedObject var viewModel: SendInputViewModel
 
     var body: some View {
+        switch viewModel.loadingState {
+        case .notRequested:
+            Text("")
+        case .loading:
+            ProgressView()
+        case .loaded:
+            loadedView
+        case .error(let error):
+            VStack {
+                #if !RELEASE
+                Text(error)
+                    .foregroundColor(.red)
+                #endif
+                Text("\(L10n.somethingWentWrong). \(L10n.tapToTryAgain)?")
+                    .onTapGesture {
+                        Task {
+                            await viewModel.load()
+                        }
+                    }
+            }
+        }
+    }
+    
+    var loadedView: some View {
         ZStack(alignment: .top) {
             Color(Asset.Colors.smoke.color)
                 .edgesIgnoringSafeArea(.all)
                 .onTapGesture { self.viewModel.inputAmountViewModel.isFirstResponder = false }
 
             VStack(spacing: 8) {
+                Spacer()
+                    .frame(minHeight: 16, maxHeight: 52)
                 HStack(spacing: 4) {
                     Text(L10n.youWillSend)
                         .apply(style: .text4)
@@ -45,12 +71,15 @@ struct SendInputView: View {
                                 })
                             }
                         }
-                    }.allowsHitTesting(!viewModel.isFeeLoading && !viewModel.lock)
+                    }
+                    .allowsHitTesting(!viewModel.isFeeLoading && !viewModel.lock)
+                    .accessibilityIdentifier("fee-label")
                 }
                 .padding(.horizontal, 4)
 
                 SendInputTokenView(viewModel: viewModel.tokenViewModel)
                     .allowsHitTesting(!viewModel.lock)
+                    .accessibilityIdentifier("token-view")
 
                 switch viewModel.status {
                 case .initializing:
@@ -81,11 +110,11 @@ struct SendInputView: View {
                         .cornerRadius(radius: 28, corners: .allCorners)
                         .frame(height: TextButton.Size.large.height)
                 case .initializing, .ready:
-                    SendInputActionButtonView(viewModel: viewModel.actionButtonViewModel)
+                    SliderActionButton(isSliderOn: $viewModel.isSliderOn, data: $viewModel.actionButtonData, showFinished: $viewModel.showFinished)
+                        .accessibilityIdentifier("send-slider")
                 }
             }
             .padding(.horizontal, 16)
-            .padding(.top, 60)
             .padding(.bottom, 16)
         }
     }
@@ -150,7 +179,9 @@ struct SendInputView_Previews: PreviewProvider {
                     attributes: [.funds]
                 ),
                 preChosenWallet: nil,
-                source: .none
+                preChosenAmount: nil,
+                source: .none,
+                allowSwitchingMainAmountType: false
             )
         )
     }

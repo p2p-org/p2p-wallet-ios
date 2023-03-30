@@ -1,50 +1,34 @@
-//
-//  PricesService.swift
-//  p2p_wallet
-//
-//  Created by Chung Tran on 18/11/2021.
-//
-
+import Combine
 import Foundation
 import Resolver
-import RxCocoa
-import RxSwift
 import SolanaPricesAPIs
 import SolanaSwift
 
+typealias TokenPriceMap = [String: CurrentPrice]
+
 protocol PricesServiceType {
-    // Observables
-    var currentPricesDriver: Driver<Loadable<[String: CurrentPrice]>> { get }
+    // Publishers
+    var currentPricesPublisher: AnyPublisher<TokenPriceMap, Never> { get }
+    var isPricesAvailablePublisher: AnyPublisher<Bool, Never> { get }
+    var isPricesAvailable: Bool { get }
 
     // Getters
     func getWatchList() -> [Token]
-    func currentPrice(for coinName: String) -> CurrentPrice?
+    func currentPrice(mint: String) -> CurrentPrice?
 
     // Actions
     func clearCurrentPrices()
     func addToWatchList(_ tokens: [Token])
     func fetchPrices(tokens: [Token], toFiat: Fiat)
     func fetchAllTokensPriceInWatchList()
-    func fetchHistoricalPrice(for coinName: String, period: Period) -> Single<[PriceRecord]>
-    func getCurrentPrices(tokens: [Token]?, toFiat: Fiat) async throws -> [String: CurrentPrice]
+    func getCurrentPrices(tokens: [Token]?, toFiat: Fiat) async throws -> TokenPriceMap
     func startObserving()
     func stopObserving()
 }
 
-class PricesLoadableRelay: LoadableRelay<[String: CurrentPrice]> {
-    override func map(oldData: [String: CurrentPrice]?, newData: [String: CurrentPrice]) -> [String: CurrentPrice] {
-        guard var data = oldData else {
-            return newData
-        }
-
-        for key in newData.keys {
-            data[key] = newData[key]
-        }
-        return data
-    }
-}
-
 class PricesService {
+    // MARK: - Nested type
+
     enum Error: Swift.Error {
         case notFound
         case unknown
@@ -58,6 +42,7 @@ class PricesService {
 
     @Injected private var storage: PricesStorage
     @Injected private var api: SolanaPricesAPI
+    @Injected private var notificationService: NotificationService
 
     // MARK: - Properties
 
@@ -65,24 +50,27 @@ class PricesService {
         Token(.renBTC), Token(.nativeSolana), Token(.usdc), Token(.eth), Token(.usdt),
     ]
     private var timer: Timer?
-    private lazy var currentPricesSubject = PricesLoadableRelay(request: .just([:]))
+    private lazy var currentPricesSubject = CurrentValueSubject<TokenPriceMap, Never>([:])
+    private lazy var isPricesAvailableSubject = CurrentValueSubject<Bool, Never>(true)
+
+    var fetchingTask: Task<Void, Swift.Error>?
 
     // MARK: - Initializer
 
     init() {
-        // reload to get cached prices
-        currentPricesSubject.reload()
-
         // get current price
         Task {
+            // migration
+            await migrate()
+
             var initialValue = await storage.retrievePrices()
             if initialValue.values.isEmpty {
                 initialValue = try await getCurrentPrices()
             }
-            currentPricesSubject.accept(initialValue, state: .loaded)
+            currentPricesSubject.send(initialValue)
 
-            // change request
-            currentPricesSubject.request = getCurrentPricesRequest()
+            // reload
+            try await reload()
         }
     }
 
@@ -92,33 +80,37 @@ class PricesService {
 
     // MARK: - Helpers
 
-    private func getCurrentPricesRequest(
-        tokens: [Token]? = nil,
-        toFiat: Fiat = Defaults.fiat
-    ) -> Single<[String: CurrentPrice]> {
-        Single.async {
-            try await self.getCurrentPrices(tokens: tokens, toFiat: toFiat)
+    private func migrate() async {
+        // First migration to fix COPE token
+        let migration1Key = "PricesService.migration1Key"
+
+        if UserDefaults.standard.bool(forKey: migration1Key) == false {
+            // clear current cache
+            await storage.savePrices([:])
+
+            // mark as migrated
+            UserDefaults.standard.set(true, forKey: migration1Key)
         }
     }
 
-    func getCurrentPrices(tokens: [Token]? = nil, toFiat: Fiat = Defaults.fiat) async throws -> [String: CurrentPrice] {
-        let coins = (tokens ?? watchList).filter { !$0.symbol.contains("-") && !$0.symbol.contains("/") }
-            .map { token -> Token in
-                if token.symbol == "renBTC" {
-                    return Token(token, customSymbol: "BTC")
-                }
-                return token
-            }
+    private func reload() async throws {
+        guard !watchList.isEmpty else { return }
+        let currentPrice = try await getCurrentPrices(tokens: watchList, toFiat: Defaults.fiat)
+        currentPricesSubject.send(currentPrice)
+    }
+
+    func getCurrentPrices(tokens: [Token]? = nil, toFiat: Fiat = Defaults.fiat) async throws -> TokenPriceMap {
+        let coins: [Token] = (tokens ?? watchList)
+            .filter { !$0.symbol.contains("-") && !$0.symbol.contains("/") }
             .unique
         guard !coins.isEmpty else {
-            return [:]
+            return currentPricesSubject.value
         }
 
-        var newPrices = try await api.getCurrentPrices(coins: coins, toFiat: toFiat.code)
-        newPrices["renBTC"] = newPrices["BTC"]
-        var prices = currentPricesSubject.value ?? [:]
-        for newPrice in newPrices {
-            prices[newPrice.key] = newPrice.value
+        let newPrices = try await api.getCurrentPrices(coins: coins, toFiat: toFiat.code)
+        var prices = currentPricesSubject.value
+        for newPrice in newPrices where newPrice.value != nil {
+            prices[newPrice.key.address] = newPrice.value
         }
         await storage.savePrices(prices)
         return prices
@@ -126,20 +118,28 @@ class PricesService {
 }
 
 extension PricesService: PricesServiceType {
-    var currentPricesDriver: Driver<Loadable<[String: CurrentPrice]>> {
-        currentPricesSubject.asDriver()
+    var currentPricesPublisher: AnyPublisher<TokenPriceMap, Never> {
+        currentPricesSubject.eraseToAnyPublisher()
+    }
+    
+    var isPricesAvailablePublisher: AnyPublisher<Bool, Never> {
+        isPricesAvailableSubject.eraseToAnyPublisher()
+    }
+    
+    var isPricesAvailable: Bool {
+        isPricesAvailableSubject.value
     }
 
     func getWatchList() -> [Token] {
         watchList
     }
 
-    func currentPrice(for coinName: String) -> CurrentPrice? {
-        currentPricesSubject.value?[coinName.uppercased()]
+    func currentPrice(mint: String) -> CurrentPrice? {
+        currentPricesSubject.value[mint]
     }
 
     func clearCurrentPrices() {
-        currentPricesSubject.flush()
+        currentPricesSubject.send([:])
 
         Task {
             await storage.savePrices([:])
@@ -154,11 +154,29 @@ extension PricesService: PricesServiceType {
 
     func fetchPrices(tokens: [Token], toFiat: Fiat = Defaults.fiat) {
         guard !tokens.isEmpty else { return }
-        currentPricesSubject.request = getCurrentPricesRequest(
-            tokens: tokens,
-            toFiat: toFiat
-        )
-        currentPricesSubject.refresh()
+
+        fetchingTask?.cancel()
+        fetchingTask = Task { [weak self] in
+            guard let self else { return }
+            do {
+                let currentPrice = try await self.getCurrentPrices(tokens: tokens, toFiat: toFiat)
+                try Task.checkCancellation()
+                self.currentPricesSubject.send(currentPrice)
+                self.isPricesAvailableSubject.send(true)
+            } catch {
+                guard Task.isNotCancelled else { return }
+                self.notificationService
+                    .showInAppNotification(
+                        .custom(
+                            "😢",
+                            L10n.TokenRatesAreUnavailable.everythingWorksAsUsualAndAllFundsAreSafe
+                        )
+                    )
+                self.isPricesAvailableSubject.send(false)
+
+                throw error
+            }
+        }
     }
 
     func fetchAllTokensPriceInWatchList() {
@@ -166,34 +184,30 @@ extension PricesService: PricesServiceType {
         fetchPrices(tokens: watchList)
     }
 
-    func fetchHistoricalPrice(for coinName: String, period: Period) -> Single<[PriceRecord]> {
-        Single.async { [weak self] in
-            guard let self = self else { throw Error.unknown }
-            do {
-                let prices = try await self.api.getHistoricalPrice(
-                    of: coinName,
-                    fiat: Defaults.fiat.code,
-                    period: period
-                )
-                if prices.isEmpty { throw Error.notFound }
-                return prices
-            } catch {
-                if Defaults.fiat.code.uppercased() != "USD" {
-                    // retry with different fiat
-                    async let pricesInUSD = self.api.getHistoricalPrice(of: coinName, fiat: "USD", period: period)
-                    async let valueInUSD = self.api.getValueInUSD(fiat: Defaults.fiat.code)
+    func fetchHistoricalPrice(for coinName: String, period: Period) async throws -> [PriceRecord] {
+        do {
+            let prices = try await api.getHistoricalPrice(
+                of: coinName,
+                fiat: Defaults.fiat.code,
+                period: period
+            )
+            if prices.isEmpty { throw Error.notFound }
+            return prices
+        } catch {
+            if Defaults.fiat.code.uppercased() != "USD" {
+                // retry with different fiat
+                async let pricesInUSD = api.getHistoricalPrice(of: coinName, fiat: "USD", period: period)
+                async let valueInUSD = api.getValueInUSD(fiat: Defaults.fiat.code)
 
-                    guard let rate = try await valueInUSD else { return [] }
-                    var records = try await pricesInUSD
-                    for i in 0 ..< records.count {
-                        records[i] = records[i].converting(exchangeRate: rate)
-                    }
-                    return records
+                guard let rate = try await valueInUSD else { return [] }
+                var records = try await pricesInUSD
+                for i in 0 ..< records.count {
+                    records[i] = records[i].converting(exchangeRate: rate)
                 }
-                throw error
+                return records
             }
+            throw error
         }
-        .observe(on: MainScheduler.instance)
     }
 
     func startObserving() {

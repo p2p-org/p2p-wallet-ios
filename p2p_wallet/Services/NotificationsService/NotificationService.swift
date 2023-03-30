@@ -9,15 +9,14 @@ import AnalyticsManager
 import Foundation
 import KeyAppUI
 import Resolver
-import RxCocoa
-import RxSwift
 import UIKit
+import Combine
 
 protocol NotificationService {
     typealias DeviceTokenResponse = JsonRpcResponseDto<DeviceTokenResponseDto>
 
-    func sendRegisteredDeviceToken(_ deviceToken: Data) async
-    func deleteDeviceToken() async
+    func sendRegisteredDeviceToken(_ deviceToken: Data) async throws
+    func deleteDeviceToken() async throws
     func showInAppNotification(_ notification: InAppNotification)
     func showToast(title: String?, text: String?)
     func showToast(title: String?, text: String?, withAutoHidden: Bool)
@@ -25,6 +24,7 @@ protocol NotificationService {
     func showAlert(title: String, text: String)
     func hideToasts()
     func showDefaultErrorNotification()
+    func showConnectionErrorNotification()
     func wasAppLaunchedFromPush(launchOptions: [UIApplication.LaunchOptionsKey: Any]?)
     func didReceivePush(userInfo: [AnyHashable: Any])
     func notificationWasOpened()
@@ -32,7 +32,7 @@ protocol NotificationService {
     func registerForRemoteNotifications()
     func requestRemoteNotificationPermission()
 
-    var showNotification: Observable<NotificationType> { get }
+    var showNotification: AnyPublisher<NotificationType, Never> { get }
     var showFromLaunch: Bool { get }
 }
 
@@ -44,28 +44,14 @@ final class NotificationServiceImpl: NSObject, NotificationService {
     private let deviceTokenKey = "deviceToken"
     private let openAfterPushKey = "openAfterPushKey"
 
-    private let showNotificationRelay = PublishRelay<NotificationType>()
-    var showNotification: Observable<NotificationType> { showNotificationRelay.asObservable() }
+    private let showNotificationRelay = PassthroughSubject<NotificationType, Never>()
+    var showNotification: AnyPublisher<NotificationType, Never> { showNotificationRelay.receive(on: DispatchQueue.main).eraseToAnyPublisher() }
     var showFromLaunch: Bool { UserDefaults.standard.bool(forKey: openAfterPushKey) }
 
     override init() {
         super.init()
 
-        if !Defaults.wasFirstAttemptForSendingToken, Defaults.didSetEnableNotifications {
-            goFlowForUnregisteredUserWithToken()
-        }
-
         UNUserNotificationCenter.current().delegate = self
-        guard let deviceToken = UserDefaults.standard.data(forKey: deviceTokenKey) else { return }
-
-        Task.detached(priority: .background) { [unowned self] in
-            await sendRegisteredDeviceToken(deviceToken)
-        }
-    }
-
-    private func goFlowForUnregisteredUserWithToken() {
-        unregisterForRemoteNotifications()
-        registerForRemoteNotifications()
     }
 
     func unregisterForRemoteNotifications() {
@@ -84,48 +70,41 @@ final class NotificationServiceImpl: NSObject, NotificationService {
         UNUserNotificationCenter.current()
             .requestAuthorization(options: [.alert, .sound, .badge]) { [weak self] granted, _ in
                 Defaults.didSetEnableNotifications = granted
-                if granted {
-                    self?.analyticsManager.log(event: AmplitudeEvent.pushApprove)
-                }
+                self?.analyticsManager.log(parameter: .pushAllowed(granted))
             }
     }
 
-    func sendRegisteredDeviceToken(_ deviceToken: Data) async {
-        UserDefaults.standard.set(deviceToken, forKey: deviceTokenKey)
-        Defaults.wasFirstAttemptForSendingToken = true
-        Defaults.lastDeviceToken = deviceToken
-
+    func sendRegisteredDeviceToken(_ deviceToken: Data) async throws {
         guard let publicKey = accountStorage.account?.publicKey.base58EncodedString else { return }
         let token = deviceToken.formattedDeviceToken
+        
+        let result = try await notificationRepository.sendDeviceToken(model: .init(
+            deviceToken: token,
+            clientId: publicKey,
+            deviceInfo: .init(
+                osName: UIDevice.current.systemName,
+                osVersion: UIDevice.current.systemVersion,
+                deviceModel: UIDevice.current.model
+            )
+        ))
+        
+        print(result)
 
-        do {
-            _ = try await notificationRepository.sendDeviceToken(model: .init(
-                deviceToken: token,
-                clientId: publicKey,
-                deviceInfo: .init(
-                    osName: UIDevice.current.systemName,
-                    osVersion: UIDevice.current.systemVersion,
-                    deviceModel: UIDevice.current.model
-                )
-            ))
-            UserDefaults.standard.removeObject(forKey: deviceTokenKey)
-        } catch {
-            UserDefaults.standard.set(deviceToken, forKey: deviceTokenKey)
-        }
+        Defaults.lastDeviceToken = deviceToken
     }
 
-    func deleteDeviceToken() async {
+    func deleteDeviceToken() async throws {
         guard
             let token = Defaults.lastDeviceToken?.formattedDeviceToken,
             let publicKey = accountStorage.account?.publicKey.base58EncodedString
         else { return }
 
-        _ = try? await notificationRepository.removeDeviceToken(model: .init(
+        _ = try await notificationRepository.removeDeviceToken(model: .init(
             deviceToken: token,
             clientId: publicKey
         ))
-        
-        UserDefaults.standard.removeObject(forKey: deviceTokenKey)
+
+        Defaults.lastDeviceToken = nil
     }
 
     func showInAppNotification(_ notification: InAppNotification) {
@@ -173,17 +152,21 @@ final class NotificationServiceImpl: NSObject, NotificationService {
         }
     }
 
+    func showConnectionErrorNotification() {
+        showToast(title: "🥺", text: L10n.youHaveNoInternetConnection)
+    }
+
     func wasAppLaunchedFromPush(launchOptions: [UIApplication.LaunchOptionsKey: Any]?) {
         if launchOptions?[.remoteNotification] != nil {
-            analyticsManager.log(event: AmplitudeEvent.appOpened(sourceOpen: "Push"))
+            analyticsManager.log(event: .appOpened(sourceOpen: "Push"))
             UserDefaults.standard.set(true, forKey: openAfterPushKey)
         } else {
-            analyticsManager.log(event: AmplitudeEvent.appOpened(sourceOpen: "Direct"))
+            analyticsManager.log(event: .appOpened(sourceOpen: "Direct"))
         }
     }
 
     func didReceivePush(userInfo _: [AnyHashable: Any]) {
-        showNotificationRelay.accept(.history)
+        showNotificationRelay.send(.history)
     }
 
     func notificationWasOpened() {

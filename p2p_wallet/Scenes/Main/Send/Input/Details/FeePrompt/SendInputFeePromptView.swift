@@ -12,12 +12,9 @@ struct SendInputFeePromptView: View {
     }
 
     var body: some View {
-        ZStack {
-            Color(Asset.Colors.smoke.color)
-                .edgesIgnoringSafeArea(.all)
-
+        ColoredBackground {
             VStack(alignment: .center, spacing: 0) {
-                Image(uiImage: .sendFee)
+                Image(uiImage: .fee)
                     .resizable()
                     .aspectRatio(contentMode: .fit)
                     .frame(maxWidth: 300)
@@ -93,7 +90,8 @@ struct SendInputFeePromptView_Previews: PreviewProvider {
     static var previews: some View {
         SendInputFeePromptView(
             viewModel: SendInputFeePromptViewModel(
-                feeToken: .usdc,
+                feeToken: .init(token: .usdc),
+                feeInToken: .zero,
                 availableFeeTokens: []
             )
         )

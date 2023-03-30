@@ -47,6 +47,7 @@ extension DefaultsKeys {
     }
     var forcedFeeRelayerEndpoint: DefaultsKey<String?> { .init(#function, defaultValue: nil) }
     var forcedNameServiceEndpoint: DefaultsKey<String?> { .init(#function, defaultValue: nil) }
+    var forcedNewSwapEndpoint: DefaultsKey<String?> { .init(#function, defaultValue: nil) }
 
     var isCoingeckoProviderDisabled: DefaultsKey<Bool> { .init(#function, defaultValue: false) }
     var didBackupOffline: DefaultsKey<Bool> { .init(#function, defaultValue: false) }
@@ -56,7 +57,7 @@ extension DefaultsKeys {
     }
 
     var appearance: DefaultsKey<UIUserInterfaceStyle> { .init(#function, defaultValue: .unspecified) }
-    var slippage: DefaultsKey<Double> { .init(#function, defaultValue: 0.01) }
+    var slippage: DefaultsKey<Double> { .init(#function, defaultValue: 0.05) }
     var fiat: DefaultsKey<Fiat> { .init(#function, defaultValue: .usd) }
     var hiddenWalletPubkey: DefaultsKey<[String]> { .init(#function, defaultValue: []) }
     var unhiddenWalletPubkey: DefaultsKey<[String]> { .init(#function, defaultValue: []) }
@@ -87,6 +88,9 @@ extension DefaultsKeys {
     var isSolendTutorialShown: DefaultsKey<Bool> { .init(#function, defaultValue: false) }
     var isEarnBannerClosed: DefaultsKey<Bool> { .init(#function, defaultValue: false) }
 
+    // Send
+    var isTokenInputTypeChosen: DefaultsKey<Bool> { .init(#function, defaultValue: false) }
+
     var solanaNegativeStatusFrequency: DefaultsKey<String?> {
         .init(
             #function,
@@ -106,5 +110,38 @@ extension DefaultsKeys {
             #function,
             defaultValue: RemoteConfig.remoteConfig().solanaNegativeStatusTimeFrequency
         )
+    }
+
+    // Sell/RampOff
+    var isSellAvailable: DefaultsKey<Bool?> {
+        .init(#function, defaultValue: nil)
+    }
+
+    var isSellInfoPresented: DefaultsKey<Bool> { .init(#function, defaultValue: false) }
+
+    var moonpayEnvironment: DefaultsKey<DefaultsKeys.MoonpayEnvironment> {
+        DefaultsKey(#function, defaultValue: .production)
+    }
+
+    var moonpayInfoShouldHide: DefaultsKey<Bool> {
+        .init(#function, defaultValue: false)
+    }
+
+    // Jupiter Swap
+    var fromTokenAddress: DefaultsKey<String?> {
+        .init(#function, defaultValue: nil)
+    }
+
+    var toTokenAddress: DefaultsKey<String?> {
+        .init(#function, defaultValue: nil)
+    }
+}
+
+// MARK: - Moonpay Environment
+
+extension DefaultsKeys {
+    enum MoonpayEnvironment: String, DefaultsSerializable {
+        case production
+        case sandbox
     }
 }

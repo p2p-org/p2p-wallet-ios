@@ -8,6 +8,8 @@ import SolanaSwift
 import SwiftyUserDefaults
 import UIKit
 
+let MoonpayLicenseURL = "https://www.moonpay.com/legal/licenses"
+
 final class BuyViewModel: ObservableObject {
     var coordinatorIO = CoordinatorIO()
 
@@ -23,7 +25,7 @@ final class BuyViewModel: ObservableObject {
     @Published var isLoading = false
     @Published var areMethodsLoading = true
     @Published var isLeftFocus = false
-    @Published var isRightFocus = true
+    @Published var isRightFocus = false
     @Published var exchangeOutput: Buy.ExchangeOutput?
     @Published var navigationSlidingPercentage: CGFloat = 1
     @Published var targetSymbol: String?
@@ -56,7 +58,7 @@ final class BuyViewModel: ObservableObject {
     private var tokenPrices: [Fiat: [String: Double?]] = [:]
 
     // Defaults
-    private static let defaultMinAmount = Double(40)
+    private static let defaultMinAmount = Double(30)
     private static let defaultMaxAmount = Double(10000)
     private static let tokens: [Token] = [.usdc, .nativeSolana]
     private static let fiats: [Fiat] = available(.buyBankTransferEnabled) ? [.eur, .gbp, .usd] : [.usd]
@@ -84,7 +86,7 @@ final class BuyViewModel: ObservableObject {
                 let oldToken = self.token
                 self.token = token ?? self.token
                 if initTokenWasSelected {
-                    analyticsManager.log(event: AmplitudeEvent.buyCoinChanged(
+                    analyticsManager.log(event: .buyCoinChanged(
                         fromCoin: oldToken.symbol,
                         toCoin: self.token.symbol
                     ))
@@ -92,6 +94,7 @@ final class BuyViewModel: ObservableObject {
                 initTokenWasSelected = true
             }
             .store(in: &subscriptions)
+
         coordinatorIO.fiatSelected
             .sink { [unowned self] fiat in
                 let oldFiat = self.fiat
@@ -104,7 +107,7 @@ final class BuyViewModel: ObservableObject {
                     }
                 }
                 if initFiatWasSelected {
-                    analyticsManager.log(event: AmplitudeEvent.buyCurrencyChanged(
+                    analyticsManager.log(event: .buyCurrencyChanged(
                         fromCurrency: oldFiat.code,
                         toCurrency: self.fiat.code
                     ))
@@ -174,7 +177,8 @@ final class BuyViewModel: ObservableObject {
                     try await pricesService.getCurrentPrices(
                         tokens: BuyViewModel.tokens,
                         toFiat: fiat
-                    ).mapValues { $0.value }
+                    )
+                    .mapValues { $0.value }
             }
 
             let buyBankEnabled = available(.buyBankTransferEnabled)
@@ -230,7 +234,7 @@ final class BuyViewModel: ObservableObject {
     @MainActor func didSelectPayment(_ payment: PaymentTypeItem) {
         selectedPayment = payment.type
         setPaymentMethod(payment.type)
-        analyticsManager.log(event: AmplitudeEvent.buyChosenMethodPayment(type: payment.type.analyticName))
+        analyticsManager.log(event: .buyChosenMethodPayment(type: payment.type.analyticName))
     }
 
     // MARK: -
@@ -286,7 +290,7 @@ final class BuyViewModel: ObservableObject {
             tokens.map {
                 TokenCellViewItem(
                     token: $0,
-                    amount: tokenPrices[fiat]?[$0.symbol.uppercased()] ?? 0,
+                    amount: tokenPrices[fiat]?[token.address] ?? 0,
                     fiat: fiat
                 )
             }
@@ -319,7 +323,7 @@ final class BuyViewModel: ObservableObject {
                 typeBankTransfer = "sepa_bank_transfer"
             }
         }
-        analyticsManager.log(event: AmplitudeEvent.buyButtonPressed(
+        analyticsManager.log(event: .buyButtonPressed(
             sumCurrency: fiatAmount,
             sumCoin: tokenAmount,
             currency: from.name,
@@ -328,7 +332,12 @@ final class BuyViewModel: ObservableObject {
             bankTransfer: typeBankTransfer != nil,
             typeBankTransfer: typeBankTransfer
         ))
-        analyticsManager.log(event: AmplitudeEvent.moonpayWindowOpened)
+        analyticsManager.log(event: .moonpayWindowOpened)
+    }
+
+    func moonpayLicenseTap() {
+        let url = MoonpayLicenseURL
+        coordinatorIO.license.send(URL(string: url)!)
     }
 
     // MARK: -
@@ -347,64 +356,64 @@ final class BuyViewModel: ObservableObject {
             form,
             $selectedPayment.removeDuplicates()
         )
-            .debounce(for: .seconds(0.5), scheduler: DispatchQueue.main)
-            .map { form, paymentType -> (BuyCurrencyType, BuyCurrencyType, Double, PaymentType) in
-                let (fiat, token, fAmount, tAmount) = form
-                let from: BuyCurrencyType
-                let to: BuyCurrencyType
-                let amount: Double
-                if self.isEditingFiat {
-                    from = fiat
-                    to = token
-                    amount = fAmount
-                } else {
-                    from = token
-                    to = fiat
-                    amount = tAmount
-                }
-                let newPayment = (self.isGBPBankTransferEnabled && paymentType == .bank) ?
-                    PaymentType.gbpBank :
-                    paymentType
-                return (from, to, amount, newPayment)
+        .debounce(for: .seconds(0.5), scheduler: DispatchQueue.main)
+        .map { form, paymentType -> (BuyCurrencyType, BuyCurrencyType, Double, PaymentType) in
+            let (fiat, token, fAmount, tAmount) = form
+            let from: BuyCurrencyType
+            let to: BuyCurrencyType
+            let amount: Double
+            if self.isEditingFiat {
+                from = fiat
+                to = token
+                amount = fAmount
+            } else {
+                from = token
+                to = fiat
+                amount = tAmount
             }
-            .removeDuplicates(by: { aLeft, aRight in
-                let currencies = aLeft.0.isEqualTo(aRight.0) && aLeft.1.isEqualTo(aRight.1)
-                let amounts = aLeft.2 == aRight.2 && aLeft.3 == aRight.3
-                return currencies && amounts
-            }).handleEvents(receiveOutput: { [weak self] _ in
-                DispatchQueue.main.async {
-                    self?.isLoading = true
-                }
-            }).map { from, to, amount, paymentType -> AnyPublisher<Buy.ExchangeOutput?, Never> in
-                self.exchange(
-                    from: from,
-                    to: to,
-                    amount: amount,
-                    paymentType: paymentType
-                )
-                    .map(Optional.init)
-                    .replaceError(with: nil)
-                    .eraseToAnyPublisher()
+            let newPayment = (self.isGBPBankTransferEnabled && paymentType == .bank) ?
+                PaymentType.gbpBank :
+                paymentType
+            return (from, to, amount, newPayment)
+        }
+        .removeDuplicates(by: { aLeft, aRight in
+            let currencies = aLeft.0.isEqualTo(aRight.0) && aLeft.1.isEqualTo(aRight.1)
+            let amounts = aLeft.2 == aRight.2 && aLeft.3 == aRight.3
+            return currencies && amounts
+        }).handleEvents(receiveOutput: { [weak self] _ in
+            DispatchQueue.main.async {
+                self?.isLoading = true
             }
-            .subscribe(on: DispatchQueue.global())
-            .receive(on: DispatchQueue.main)
-            // Getting only last request
-            .switchToLatest()
-            .handleEvents(receiveOutput: { [weak self] output in
-                DispatchQueue.main.async {
-                    if output == nil {
-                        // removing calculated value on error
-                        if self?.isEditingFiat == true {
-                            self?.tokenAmount = "0".cryptoCurrencyFormat
-                        } else {
-                            self?.fiatAmount = "0".fiatFormat
-                        }
-                    }
-                    self?.isLoading = false
-                }
-            })
-            .compactMap { $0 }
+        }).map { from, to, amount, paymentType -> AnyPublisher<Buy.ExchangeOutput?, Never> in
+            self.exchange(
+                from: from,
+                to: to,
+                amount: amount,
+                paymentType: paymentType
+            )
+            .map(Optional.init)
+            .replaceError(with: nil)
             .eraseToAnyPublisher()
+        }
+        .subscribe(on: DispatchQueue.global())
+        .receive(on: DispatchQueue.main)
+        // Getting only last request
+        .switchToLatest()
+        .handleEvents(receiveOutput: { [weak self] output in
+            DispatchQueue.main.async {
+                if output == nil {
+                    // removing calculated value on error
+                    if self?.isEditingFiat == true {
+                        self?.tokenAmount = "0".cryptoCurrencyFormat
+                    } else {
+                        self?.fiatAmount = "0".fiatFormat
+                    }
+                }
+                self?.isLoading = false
+            }
+        })
+        .compactMap { $0 }
+        .eraseToAnyPublisher()
     }
 
     func exchange(
@@ -503,6 +512,7 @@ final class BuyViewModel: ObservableObject {
         var tokenSelected = CurrentValueSubject<Token?, Never>(nil)
         var fiatSelected = CurrentValueSubject<Fiat?, Never>(nil)
         var buy = PassthroughSubject<URL, Never>()
+        var license = PassthroughSubject<URL, Never>()
     }
 
     struct ButtonItem: Equatable {

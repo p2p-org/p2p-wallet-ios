@@ -107,7 +107,7 @@ private class RenVMFeeRelayerSolanaBlockchainClient: SolanaBlockchainClient {
            preparedTransaction.transaction.instructions[1].programId == "KeccakSecp256k11111111111111111111111111111"
         {
             do {
-                return try await relayService.topUpAndRelayTransaction(
+                return try await relayService.topUpIfNeededAndRelayTransaction(
                     preparedTransaction,
                     fee: nil,
                     config: .init(

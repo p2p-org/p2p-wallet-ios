@@ -20,27 +20,89 @@ enum SendSource: String {
 }
 
 class SendCoordinator: Coordinator<SendResult> {
+    // MARK: - Dependencies
+
+    @Injected var walletsRepository: WalletsRepository
+
+    // MARK: - Properties
+
     let rootViewController: UINavigationController
-    let preChosenWallet: Wallet?
     let hideTabBar: Bool
     let result = PassthroughSubject<SendResult, Never>()
 
     private let source: SendSource
+    let preChosenWallet: Wallet?
+    let preChosenRecipient: Recipient?
+    let preChosenAmount: Double?
+    let allowSwitchingMainAmountType: Bool
+
+    // MARK: - Initializer
 
     init(
         rootViewController: UINavigationController,
         preChosenWallet: Wallet?,
+        preChosenRecipient: Recipient? = nil,
+        preChosenAmount: Double? = nil,
         hideTabBar: Bool = false,
-        source: SendSource = .none
+        source: SendSource = .none,
+        allowSwitchingMainAmountType: Bool
     ) {
         self.rootViewController = rootViewController
         self.preChosenWallet = preChosenWallet
+        self.preChosenRecipient = preChosenRecipient
+        self.preChosenAmount = preChosenAmount
         self.hideTabBar = hideTabBar
         self.source = source
+        self.allowSwitchingMainAmountType = allowSwitchingMainAmountType
         super.init()
     }
 
+    // MARK: - Methods
+
     override func start() -> AnyPublisher<SendResult, Never> {
+        if walletsRepository.state == .loaded {
+            let hasToken = walletsRepository.getWallets().contains { wallet in
+                (wallet.lamports ?? 0) > 0
+            }
+            
+            if hasToken {
+                // normal flow with no preChosenRecipient
+                if let recipient = preChosenRecipient {
+                    return startFlowWithPreChosenRecipient(recipient)
+                } else {
+                    startFlowWithNoPreChosenRecipient()
+                }
+            } else {
+                showEmptyState()
+            }
+
+        } else {
+            // Show not ready
+            rootViewController.showAlert(title: L10n.TheDataIsBeingUpdated.pleaseTryAgainInAFewMinutes, message: nil)
+            result.send(completion: .finished)
+        }
+
+        // Back
+        return result.prefix(1).eraseToAnyPublisher()
+    }
+
+    // MARK: - Helpers
+
+    private func startFlowWithPreChosenRecipient(
+        _ recipient: Recipient
+    ) -> AnyPublisher<SendResult, Never> {
+        coordinate(to: SendInputCoordinator(
+            recipient: recipient,
+            preChosenWallet: preChosenWallet,
+            preChosenAmount: preChosenAmount,
+            navigationController: rootViewController,
+            source: source,
+            pushedWithoutRecipientSearchView: true,
+            allowSwitchingMainAmountType: allowSwitchingMainAmountType
+        ))
+    }
+
+    private func startFlowWithNoPreChosenRecipient() {
         // Setup view
         let vm = RecipientSearchViewModel(preChosenWallet: preChosenWallet, source: source)
         vm.coordinator.selectRecipientPublisher
@@ -48,8 +110,10 @@ class SendCoordinator: Coordinator<SendResult> {
                 self.coordinate(to: SendInputCoordinator(
                     recipient: $0,
                     preChosenWallet: preChosenWallet,
+                    preChosenAmount: preChosenAmount,
                     navigationController: rootViewController,
-                    source: source
+                    source: source,
+                    allowSwitchingMainAmountType: allowSwitchingMainAmountType
                 ))
             }
             .sink { [weak self] result in
@@ -71,13 +135,13 @@ class SendCoordinator: Coordinator<SendResult> {
             .sink(receiveValue: { [weak vm] result in
                 vm?.searchQR(query: result, autoSelectTheOnlyOneResultMode: .enabled(delay: 0))
             }).store(in: &subscriptions)
-        
+
         Task {
             await vm.load()
         }
 
         let view = RecipientSearchView(viewModel: vm)
-        let vc = KeyboardAvoidingViewController(rootView: view)
+        let vc = KeyboardAvoidingViewController(rootView: view, navigationBarVisibility: .visible)
         vc.navigationItem.largeTitleDisplayMode = .never
         vc.navigationItem.setTitle(L10n.chooseARecipient, subtitle: "Solana network")
         vc.hidesBottomBarWhenPushed = hideTabBar
@@ -88,22 +152,12 @@ class SendCoordinator: Coordinator<SendResult> {
         vc.onClose = { [weak self] in
             self?.result.send(.cancelled)
         }
-
-        // Back
-        return result.prefix(1).eraseToAnyPublisher()
     }
-}
 
-class CustomUIHostingController<Content: View>: UIHostingController<Content> {
-    override func viewWillLayoutSubviews() {
-        super.viewWillLayoutSubviews()
-
-        if #available(iOS 15.0, *) {
-            //  Workaround for an iOS 15 SwiftUI bug(?):
-            //  The intrinsicContentSize of UIView is not updated
-            //  when the internal SwiftUI view changes size.
-
-            view.invalidateIntrinsicContentSize()
-        }
+    private func showEmptyState() {
+        let coordinator = SendEmptyCoordinator(navigationController: rootViewController)
+        coordinator.start()
+            .sink(receiveValue: { [weak self] _ in self?.result.send(completion: .finished) })
+            .store(in: &subscriptions)
     }
 }

@@ -6,7 +6,6 @@
 //
 
 import Foundation
-import RxSwift
 import SolanaSwift
 import OrcaSwapSwift
 
@@ -56,7 +55,7 @@ protocol SwapServiceType {
         payingWallet: Wallet?,
         inputAmount: Double?,
         slippage: Double
-    ) async throws -> SwapFeeInfo
+    ) async throws -> _SwapFeeInfo
 
     /// Calculate fee for swapping
     func findPosibleDestinationMints(
@@ -75,7 +74,7 @@ enum SwapError: Error {
     case feeRelayIsNotReady
 }
 
-struct SwapFeeInfo {
+struct _SwapFeeInfo {
     /**
      Get all fees categories. For example: account creation fee, network fee, etc.
      */

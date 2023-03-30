@@ -6,7 +6,6 @@ import FeeRelayerSwift
 import Foundation
 import OrcaSwapSwift
 import Resolver
-import RxSwift
 import SolanaSwift
 
 /// Wrapper around OrcaSwapSwift and FeeRelayerSwift
@@ -50,7 +49,7 @@ class SwapServiceWithRelayImpl: SwapServiceType {
         payingWallet: Wallet?,
         inputAmount: Double?,
         slippage: Double
-    ) async throws -> SwapFeeInfo {
+    ) async throws -> _SwapFeeInfo {
         let bestPoolsPair = bestPoolsPair
         // Network fees
         let networkFees: [PayingFee]
@@ -76,7 +75,7 @@ class SwapServiceWithRelayImpl: SwapServiceType {
             slippage: slippage
         )
 
-        return SwapFeeInfo(fees: networkFees + liquidityProviderFees)
+        return _SwapFeeInfo(fees: networkFees + liquidityProviderFees)
     }
 
     func findPosibleDestinationMints(fromMint: String) throws -> [String] {
@@ -357,7 +356,7 @@ class SwapServiceWithRelayImpl: SwapServiceType {
             blockhash: latestBlockhash
         )
 
-        return try await relayService.topUpAndRelayTransaction(
+        return try await relayService.topUpIfNeededAndRelayTransactions(
             result.transactions,
             fee: payingFeeToken,
             config: .init(

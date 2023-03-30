@@ -4,14 +4,11 @@
 
 import KeyAppUI
 import Resolver
-import RxCocoa
-import RxSwift
 import SolanaSwift
 
 extension ReceiveToken {
     class QrCodeCard: BECompositionView {
         @Injected var qrImageRender: QrCodeImageRender
-        let disposeBag = DisposeBag()
 
         var username: String? {
             didSet {
@@ -90,28 +87,30 @@ extension ReceiveToken {
                     UIButton.text(text: L10n.copy, image: tinted(image: .copyIcon), tintColor: Asset.Colors.night.color)
                         .onTap { [unowned self] in self.onCopy?(pubKey) }
                     UIButton.text(text: L10n.share, image: tinted(image: .share2), tintColor: Asset.Colors.night.color)
-                        .onTap { [unowned self] in
-                            qrImageRender.render(
-                                username: username,
-                                address: pubKey,
-                                token: token,
-                                showTokenIcon: showCoinLogo
-                            ).subscribe(onSuccess: { [weak self] image in
-                                self?.onShare?(image)
-                            })
-                                .disposed(by: disposeBag)
+                        .onTap {
+                            Task { [weak self] in
+                                guard let self else { return }
+                                let image = try await self.qrImageRender.render(
+                                    username: self.username,
+                                    address: self.pubKey,
+                                    token: self.token,
+                                    showTokenIcon: self.showCoinLogo
+                                )
+                                self.onShare?(image)
+                            }
                         }
                     UIButton.text(text: L10n.save, image: tinted(image: .imageIcon), tintColor: Asset.Colors.night.color)
-                        .onTap { [unowned self] in
-                            qrImageRender.render(
-                                username: username,
-                                address: pubKey,
-                                token: token,
-                                showTokenIcon: showCoinLogo
-                            ).subscribe(onSuccess: { [weak self] image in
-                                self?.onSave?(image)
-                            })
-                                .disposed(by: disposeBag)
+                        .onTap {
+                            Task { [weak self] in
+                                guard let self else { return }
+                                let image = try await self.qrImageRender.render(
+                                    username: self.username,
+                                    address: self.pubKey,
+                                    token: self.token,
+                                    showTokenIcon: self.showCoinLogo
+                                )
+                                self.onSave?(image)
+                            }
                         }
                 }.padding(.init(x: 0, y: 4))
 
@@ -121,7 +120,7 @@ extension ReceiveToken {
         }
 
         private func updateUsername(_ username: String) {
-            let text = NSMutableAttributedString(string: username.withNameServiceDomain())
+            let text = NSMutableAttributedString(string: username)
             text.addAttribute(
                 .foregroundColor,
                 value: UIColor.gray,
@@ -165,11 +164,5 @@ extension ReceiveToken {
             onSave = callback
             return self
         }
-    }
-}
-
-extension Reactive where Base: ReceiveToken.QrCodeCard {
-    var pubKey: Binder<String?> {
-        Binder(base) { view, pubKey in view.pubKey = pubKey }
     }
 }

@@ -21,6 +21,8 @@ final class HttpClientImpl: HttpClient {
         if let body = endpoint.body {
             request.httpBody = body.data(using: .utf8)
         }
+        
+        print(request.cURL())
 
         let (data, response) = try await URLSession.shared.data(from: request)
         guard let response = response as? HTTPURLResponse else { throw ErrorModel.noResponse }

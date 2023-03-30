@@ -10,7 +10,6 @@ import Combine
 import Foundation
 import LocalAuthentication
 import Resolver
-import RxCombine
 import SolanaSwift
 
 final class SettingsViewModel: BaseViewModel, ObservableObject {
@@ -93,7 +92,7 @@ final class SettingsViewModel: BaseViewModel, ObservableObject {
                     localizedReason: L10n.identifyYourself
                 )
                 Defaults.isBiometryEnabled.toggle()
-                analyticsManager.log(event: AmplitudeEvent.settingsSecuritySelected(faceId: Defaults.isBiometryEnabled))
+                analyticsManager.log(event: .settingsSecuritySelected(faceId: Defaults.isBiometryEnabled))
                 isBiometryCheckGoing = false
             } catch {
                 if let authError = error as? LAError, authError.errorCode != kLAErrorUserCancel {
@@ -123,21 +122,21 @@ final class SettingsViewModel: BaseViewModel, ObservableObject {
     }
 
     func sendSignOutAnalytics() {
-        analyticsManager.log(event: AmplitudeEvent.signOut)
+        analyticsManager.log(event: .signOut)
     }
 
     func signOut() {
-        analyticsManager.log(event: AmplitudeEvent.signedOut)
+        analyticsManager.log(event: .signedOut)
         Task { try await userWalletManager.remove() }
     }
 
     private func toggleZeroBalancesVisibility() {
         Defaults.hideZeroBalances.toggle()
-        analyticsManager.log(event: AmplitudeEvent.settingsHideBalancesClick(hide: Defaults.hideZeroBalances))
+        analyticsManager.log(event: .settingsHideBalancesClick(hide: Defaults.hideZeroBalances))
     }
 
     func updateNameIfNeeded() {
-        name = storageName != nil ? storageName!.withNameServiceDomain() : L10n.notReserved
+        name = storageName != nil ? storageName! : L10n.notReserved
         if storageName == nil {
             isNameEnabled = available(.onboardingUsernameEnabled) && metadataService.metadata != nil
         } else {
