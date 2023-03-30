@@ -22,25 +22,41 @@ struct SendViaLinkClaimErrorView: View {
             Spacer()
             Image(uiImage: .sendViaLinkClaimError)
             VStack(spacing: 12) {
-                TextButtonView(
-                    title: L10n.reload,
-                    style: .primaryWhite,
-                    size: .large,
-                    isLoading: isLoading,
-                    onPressed: {
+                Button(
+                    action: {
                         reloadClicked()
+                    },
+                    label: {
+                        HStack(spacing: 8) {
+                            Text(L10n.reload)
+                                .foregroundColor(Color(Asset.Colors.snow.color))
+                                .font(uiFont: .font(of: .text2, weight: .semibold))
+                            if isLoading {
+                                CircularProgressIndicatorView(
+                                    backgroundColor: Asset.Colors.snow.color.withAlphaComponent(0.6),
+                                    foregroundColor: Asset.Colors.snow.color
+                                )
+                                .frame(width: 16, height: 16)
+                            }
+                        }
+                        .frame(height: 56)
+                        .frame(maxWidth: .infinity)
+                        .background(Color(Asset.Colors.night.color))
+                        .cornerRadius(12)
                     }
                 )
-                .frame(height: 56)
-                TextButtonView(
-                    title: L10n.cancel,
-                    style: .inverted,
-                    size: .large,
-                    onPressed: {
+                Button(
+                    action: {
                         cancelClicked()
+                    },
+                    label: {
+                        Text(L10n.cancel)
+                            .foregroundColor(Color(Asset.Colors.night.color))
+                            .font(uiFont: .font(of: .text2, weight: .semibold))
+                            .frame(height: 56)
+                            .frame(maxWidth: .infinity)
                     }
                 )
-                .frame(height: 56)
             }
         }
         .padding(.horizontal, 16)
