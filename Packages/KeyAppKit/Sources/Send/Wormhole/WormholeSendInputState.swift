@@ -13,34 +13,34 @@ import Wormhole
 
 public enum WormholeSendInputState: Equatable {
     public typealias Service = WormholeService
-    
+
     case unauthorized
-    
+
     case initializing(
         input: WormholeSendInputBase
     )
-    
+
     case initializingFailure(
         input: WormholeSendInputBase?,
         error: InitializingError
     )
-    
+
     case ready(
         input: WormholeSendInputBase,
         output: WormholeSendOutputBase,
         alert: WormholeSendInputAlert?
     )
-    
+
     case calculating(
         newInput: WormholeSendInputBase
     )
-    
+
     case error(
         input: WormholeSendInputBase,
         output: WormholeSendOutputBase?,
         error: WormholeSendInputError
     )
-    
+
     public func onAccept(action: WormholeSendInputAction, service: WormholeService) async -> Self {
         switch self {
         case let .initializing(input):
@@ -56,7 +56,7 @@ public enum WormholeSendInputState: Equatable {
                 } catch {
                     return .initializingFailure(input: input, error: .getTransactionsFailure)
                 }
-                
+
                 let transactions: SendTransaction
                 do {
                     transactions = try await service.transferFromSolana(
@@ -69,7 +69,7 @@ public enum WormholeSendInputState: Equatable {
                 } catch {
                     return .initializingFailure(input: input, error: .calculateFeeFailure)
                 }
-            
+
                 return .ready(
                     input: input,
                     output: .init(transactions: transactions, fees: fees),
@@ -78,12 +78,14 @@ public enum WormholeSendInputState: Equatable {
             default:
                 return self
             }
-            
+
         case let .ready(input, _, _):
             switch action {
             case let .updateInput(newInput):
                 var input = input
-                input.amount = CryptoAmount(floatString: newInput, token: input.solanaAccount.data.token) ?? CryptoAmount(token: input.solanaAccount.data.token)
+                input
+                    .amount = CryptoAmount(floatString: newInput, token: input.solanaAccount.data.token) ??
+                    CryptoAmount(token: input.solanaAccount.data.token)
                 return .calculating(newInput: input)
             case let .updateSolanaAccount(account):
                 var input = input
@@ -93,7 +95,7 @@ public enum WormholeSendInputState: Equatable {
             default:
                 return self
             }
-            
+
         case let .calculating(input):
             switch action {
             case .calculate:
@@ -101,7 +103,7 @@ public enum WormholeSendInputState: Equatable {
                 if input.amount > input.solanaAccount.cryptoAmount {
                     return .error(input: input, output: nil, error: .maxAmountReached)
                 }
-                
+
                 // Get fees
                 let fees: SendFees
                 do {
@@ -113,7 +115,7 @@ public enum WormholeSendInputState: Equatable {
                 } catch {
                     return .error(input: input, output: nil, error: .calculationFeeFailure)
                 }
-                
+
                 // Build transaction
                 let transactions: SendTransaction
                 do {
@@ -131,21 +133,34 @@ public enum WormholeSendInputState: Equatable {
                         error: .getTransferTransactionsFailure
                     )
                 }
-                
+
+                // Check fee is greater than sending amount
+                var alert: WormholeSendInputAlert?
+                if
+                    let price = input.solanaAccount.price,
+                    let inputAmountInFiat = try? input.amount.toFiatAmount(price: price)
+                {
+                    if inputAmountInFiat <= fees.totalInFiat {
+                        alert = .feeIsMoreThanInputAmount
+                    }
+                }
+
                 return .ready(
                     input: input,
                     output: .init(
                         transactions: transactions,
                         fees: fees
                     ),
-                    alert: nil
+                    alert: alert
                 )
-                
+
             case let .updateInput(newInput):
                 var input = input
-                input.amount = CryptoAmount(floatString: newInput, token: input.solanaAccount.data.token) ?? CryptoAmount(token: input.solanaAccount.data.token)
+                input
+                    .amount = CryptoAmount(floatString: newInput, token: input.solanaAccount.data.token) ??
+                    CryptoAmount(token: input.solanaAccount.data.token)
                 return .calculating(newInput: input)
-                
+
             case let .updateSolanaAccount(account):
                 var input = input
                 input.solanaAccount = account
@@ -154,12 +169,14 @@ public enum WormholeSendInputState: Equatable {
             default:
                 return self
             }
-            
+
         case let .error(input, _, _):
             switch action {
             case let .updateInput(newInput):
                 var input = input
-                input.amount = CryptoAmount(floatString: newInput, token: input.solanaAccount.data.token) ?? CryptoAmount(token: input.solanaAccount.data.token)
+                input
+                    .amount = CryptoAmount(floatString: newInput, token: input.solanaAccount.data.token) ??
+                    CryptoAmount(token: input.solanaAccount.data.token)
                 return .calculating(newInput: input)
             case let .updateSolanaAccount(account):
                 var input = input
@@ -178,7 +195,7 @@ public enum WormholeSendInputState: Equatable {
 }
 
 extension WormholeSendInputState: AutoTriggerState {
-    public func trigger(service: WormholeService) async -> WormholeSendInputAction? {
+    public func trigger(service _: WormholeService) async -> WormholeSendInputAction? {
         switch self {
         case .initializing:
             return .initialize
@@ -210,13 +227,13 @@ public enum WormholeSendInputAction {
 
 public struct WormholeSendInputBase: Equatable {
     public var solanaAccount: SolanaAccountsService.Account
-    
+
     public var amount: CryptoAmount
-    
+
     public let recipient: String
-    
+
     public let feePayer: String
-    
+
     public init(
         solanaAccount: SolanaAccountsService.Account,
         amount: CryptoAmount,
@@ -233,7 +250,7 @@ public struct WormholeSendInputBase: Equatable {
 public struct WormholeSendOutputBase: Equatable {
     public let transactions: SendTransaction?
     public let fees: SendFees
-    
+
     public init(transactions: SendTransaction?, fees: SendFees) {
         self.transactions = transactions
         self.fees = fees
@@ -242,13 +259,13 @@ public struct WormholeSendOutputBase: Equatable {
 
 public enum WormholeSendInputError: Equatable {
     case calculationFeeFailure
-    
+
     case getTransferTransactionsFailure
-    
+
     case insufficientInputAmount
 
     case maxAmountReached
-    
+
     case initializationFailure
 }
 

@@ -78,7 +78,7 @@ struct RendableListPendingTransactionItem: RendableListTransactionItem {
             {
                 return .single(url)
             } else {
-                return .single(url)
+                return .icon(.transactionSend)
             }
             
         case let transaction as ClaimSentViaLinkTransaction:
@@ -206,8 +206,6 @@ struct RendableListPendingTransactionItem: RendableListTransactionItem {
             } else {
                 return (.unchanged, "")
             }
-
-            return (.positive, "+\(transaction.toAmount.tokenAmountFormattedString(symbol: transaction.destinationWallet.token.symbol))")
 
         case let transaction as ClaimSentViaLinkTransaction:
             return (.positive, "+\(transaction.tokenAmount.tokenAmountFormattedString(symbol: transaction.token.symbol))")
