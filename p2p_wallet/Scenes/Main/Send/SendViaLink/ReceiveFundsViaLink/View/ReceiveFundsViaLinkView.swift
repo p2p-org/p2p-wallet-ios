@@ -72,7 +72,7 @@ struct ReceiveFundsViaLinkView: View {
                 .font(uiFont: .font(of: .text3))
             Spacer()
             VStack(spacing: 16) {
-                CoinLogoImageViewRepresentable(size: 66, token: token)
+                CoinLogoImageViewRepresentable(size: 66, args: .token(token))
                     .frame(width: 64, height: 64)
                     .cornerRadius(32)
                 Text(cryptoAmount)
