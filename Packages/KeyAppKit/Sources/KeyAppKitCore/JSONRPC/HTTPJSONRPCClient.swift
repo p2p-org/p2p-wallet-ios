@@ -73,6 +73,8 @@ public class HTTPJSONRPCCLient {
         
         request.httpBody = try JSONEncoder().encode(rpcBody)
         
+        print(request.cURL())
+        
         let (data, _) = try await urlSession.data(for: request)
         debugPrint(String(data: data, encoding: .utf8) as Any)
         

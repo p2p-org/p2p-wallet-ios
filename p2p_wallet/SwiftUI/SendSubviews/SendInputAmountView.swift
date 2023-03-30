@@ -97,6 +97,8 @@ struct SendInputAmountView: View {
 
                                 Text(secondaryCurrencyText)
                                     .secondaryStyle()
+                                
+                                Spacer()
 
                                 Text(L10n.tapToSwitchTo(secondaryCurrencyText))
                                     .secondaryStyle()

@@ -107,16 +107,38 @@ public class WormholeRPCAPI: WormholeAPI {
         mint: String?,
         amount: String
     ) async throws -> SendTransaction {
-        try await client.call(
+        /// Internal structure for params
+        struct Params: Codable {
+            let userWallet: String
+            let feePayer: String
+            let from: String
+            let recipient: String
+            let mint: String?
+            let amount: String
+            let needToUseRelay: Bool
+
+            enum CodingKeys: String, CodingKey {
+                case userWallet
+                case feePayer
+                case from
+                case recipient
+                case mint
+                case amount
+                case needToUseRelay = "need_to_use_relay"
+            }
+        }
+
+        return try await client.call(
             method: "transfer_from_solana",
-            params: [
-                "user_wallet": userWallet,
-                "feePayer": feePayer,
-                "from": from,
-                "recipient": recipient,
-                "mint": mint,
-                "amount": amount,
-            ]
+            params: Params(
+                userWallet: userWallet,
+                feePayer: feePayer,
+                from: from,
+                recipient: recipient,
+                mint: mint,
+                amount: amount,
+                needToUseRelay: true
+            )
         )
     }
 

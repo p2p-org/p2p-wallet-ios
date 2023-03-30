@@ -23,7 +23,7 @@ public struct EthereumAccount: Equatable {
 
     /// Convert balance into user-friendly format by using decimals.
     public var representedBalance: CryptoAmount {
-        return .init(
+        .init(
             amount: balance,
             token: token
         )
@@ -31,12 +31,11 @@ public struct EthereumAccount: Equatable {
 
     /// Balance in fiat
     public var balanceInFiat: CurrencyAmount? {
-        guard
-            let price,
-            let rate = price.value
-        else {
+        guard let price else {
             return nil
         }
+
+        let rate = price.value
 
         return .init(
             value: representedBalance.amount * rate,
