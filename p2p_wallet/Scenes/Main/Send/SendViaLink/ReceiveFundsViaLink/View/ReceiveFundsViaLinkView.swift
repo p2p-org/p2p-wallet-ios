@@ -165,6 +165,7 @@ struct ReceiveFundsViaLinkView: View {
                     .foregroundColor(Color(Asset.Colors.night.color))
                     .font(uiFont: .font(of: .largeTitle, weight: .bold))
                 Text(L10n.spendThemWisely)
+                    .multilineTextAlignment(.center)
                     .foregroundColor(Color(Asset.Colors.silver.color))
                     .font(uiFont: .font(of: .text1))
             }
