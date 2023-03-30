@@ -39,7 +39,9 @@ public struct CurrencyAmount: Hashable {
     public static var zero: Self = .init(usd: 0)
 
     public func toCryptoAmount(price: TokenPrice) -> CryptoAmount? {
-        guard let priceValue = price.value, priceValue > 0 else {
+        let priceValue = price.value
+        
+        guard priceValue > 0 else {
             return nil
         }
 

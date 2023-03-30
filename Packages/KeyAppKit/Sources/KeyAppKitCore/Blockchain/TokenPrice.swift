@@ -17,15 +17,14 @@ public struct TokenPrice: Hashable {
     public let token: SomeToken
 
     /// Value of price
-    public let value: BigDecimal?
+    public let value: BigDecimal
 
     @available(*, deprecated, message: "Never use double for fiat.")
     public var doubleValue: Double {
-        guard let value else { return 0.0 }
         return Double(value.description) ?? 0.0
     }
 
-    public init(currencyCode: String, value: BigDecimal?, token: AnyToken) {
+    public init(currencyCode: String, value: BigDecimal, token: AnyToken) {
         self.currencyCode = currencyCode
         self.value = value
         self.token = token.asSomeToken
