@@ -111,6 +111,23 @@ extension CryptoAmount: Comparable {
     }
 }
 
+public extension CryptoAmount {
+    /// Additional operation. Return left side if they are matching.
+    static func + (lhs: Self, rhs: Self) -> Self {
+        guard lhs.token == rhs.token else {
+            return lhs
+        }
+
+        return .init(amount: lhs.value + rhs.value, token: lhs.token)
+    }
+
+    /// Additonal operation. Return left side if they are matching.
+    // static func + (lhs: Self, rhs: Self?) -> Self {
+    //    guard let rhs else { return lhs }
+    //    return lhs + rhs
+    // }
+}
+
 extension BigUInt {
     static func toDecimal(_ value: BigUInt, exponent: Int) throws -> Decimal {
         guard let value = Decimal(string: String(value)) else {

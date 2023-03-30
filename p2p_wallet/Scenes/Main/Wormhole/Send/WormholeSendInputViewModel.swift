@@ -7,9 +7,11 @@
 
 import BigDecimal
 import Combine
+import FeeRelayerSwift
 import Foundation
 import KeyAppBusiness
 import KeyAppKitCore
+import OrcaSwapSwift
 import Resolver
 import Send
 import SolanaSwift
@@ -65,16 +67,21 @@ class WormholeSendInputViewModel: BaseViewModel, ObservableObject {
         recipient: Recipient,
         userWalletManager: UserWalletManager = Resolver.resolve(),
         wormholeService: WormholeService = Resolver.resolve(),
+        relayService: RelayService = Resolver.resolve(),
+        relayContextManager: RelayContextManager = Resolver.resolve(),
+        orcaSwap: OrcaSwapType = Resolver.resolve(),
         solanaAccountsService: SolanaAccountsService = Resolver.resolve()
     ) {
         self.recipient = recipient
         self.solanaAccountsService = solanaAccountsService
 
+        let services: WormholeSendInputState.Service = (wormholeService, relayService, relayContextManager, orcaSwap)
+
         // Ensure user wallet is available
         guard let wallet = userWalletManager.wallet else {
             let state: WormholeSendInputState = .unauthorized
             self.state = state
-            stateMachine = .init(initialState: state, services: wormholeService)
+            stateMachine = .init(initialState: state, services: services)
             super.init()
             return
         }
@@ -88,7 +95,7 @@ class WormholeSendInputViewModel: BaseViewModel, ObservableObject {
                 error: .missingArguments
             )
             self.state = state
-            stateMachine = .init(initialState: state, services: wormholeService)
+            stateMachine = .init(initialState: state, services: services)
             super.init()
             return
         }
@@ -98,19 +105,17 @@ class WormholeSendInputViewModel: BaseViewModel, ObservableObject {
         }
 
         // Setup state machine
-        let state: WormholeSendInputState = .initializing(
-            input: .init(
+        let state: WormholeSendInputState = .calculating(
+            newInput: .init(
                 solanaAccount: initialSolanaAccount,
-                amount: .init(amount: 0, token: initialSolanaAccount.data.token),
-                recipient: recipient.address,
-                feePayer: wallet.account.publicKey.base58EncodedString
+                availableAccounts: solanaAccountsService.state.value,
+                amount: .init(token: initialSolanaAccount.data.token),
+                recipient: recipient.address
             )
         )
+
         self.state = state
-        stateMachine = .init(
-            initialState: state,
-            services: wormholeService
-        )
+        stateMachine = .init(initialState: state, services: services)
 
         super.init()
 
