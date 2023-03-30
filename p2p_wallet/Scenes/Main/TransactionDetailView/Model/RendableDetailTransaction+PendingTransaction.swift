@@ -85,6 +85,15 @@ struct RendableDetailPendingTransaction: RendableTransactionDetail {
             }
 
             return .double(fromUrl, toUrl)
+        case let transaction as ClaimSentViaLinkTransaction:
+            if
+                let urlStr = transaction.token.logoURI,
+                let url = URL(string: urlStr)
+            {
+                return .single(url)
+            } else {
+                return .icon(.transactionReceive)
+            }
 
         default:
             return .icon(.planet)
@@ -108,6 +117,8 @@ struct RendableDetailPendingTransaction: RendableTransactionDetail {
             } else {
                 return .unchanged("")
             }
+        case let transaction as ClaimSentViaLinkTransaction:
+            return .positive("+\(transaction.amountInFiat?.fiatAmountFormattedString() ?? "")")
 
         default:
             return .unchanged("")
@@ -117,13 +128,11 @@ struct RendableDetailPendingTransaction: RendableTransactionDetail {
     var amountInToken: String {
         switch trx.rawTransaction {
         case let transaction as SendTransaction:
-            if transaction.amountInFiat == 0.0 {
-                return ""
-            } else {
-                return "\(transaction.amount.tokenAmountFormattedString(symbol: transaction.walletToken.token.symbol))"
-            }
+            return "\(transaction.amount.tokenAmountFormattedString(symbol: transaction.walletToken.token.symbol))"
         case let transaction as SwapRawTransactionType:
             return transaction.mainDescription
+        case let transaction as ClaimSentViaLinkTransaction:
+            return "\(transaction.tokenAmount.tokenAmountFormattedString(symbol: transaction.token.symbol))"
         default:
             return ""
         }
@@ -193,7 +202,16 @@ struct RendableDetailPendingTransaction: RendableTransactionDetail {
                     .append(.init(title: L10n.transactionFee,
                                   value: "\(formatedFeeAmount) (\(formattedFeeAmountInFiat))"))
             }
-
+        case let transaction as ClaimSentViaLinkTransaction:
+            result.append(
+                .init(
+                    title: L10n.receivedFrom,
+                    value: transaction.claimableTokenInfo.account,
+                    copyableValue: transaction.claimableTokenInfo.account
+                )
+            )
+            
+            result.append(.init(title: L10n.transactionFee, value: L10n.freePaidByKeyApp))
         default:
             break
         }

@@ -171,6 +171,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
                 
                 DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) {
                     GlobalAppState.shared.sendViaLinkSeed = possibleSeed
+                    GlobalAppState.shared.sendViaLinkUrl = webpageURL
                 }
                 return true
             }

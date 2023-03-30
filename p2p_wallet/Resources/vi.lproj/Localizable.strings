@@ -1309,4 +1309,15 @@ You can try again, but your new transaction will be subject to the current rates
 "Key App one-time transfer link" = "Liên kết chuyển một lần của Key App";
 "The one-time link is ready! The funds can be claimed" = "Liên kết một lần đã sẵn sàng!  Các khoản tiền có thể được yêu cầu";
 "If you want to get your money back just open link by yourself" = "Nếu bạn muốn lấy lại tiền của mình, chỉ cần tự mở liên kết";
+"Receive funds via one-time link" = "Nhận tiền qua liên kết một lần";
+"Confirm" = "Xác nhận";
+"The transaction was rejected after failed internet connection. Open your link again" = "Giao dịch đã bị từ chối sau khi kết nối internet không thành công.  Mở lại liên kết của bạn";
 "Token rates are unavailable. Everything works as usual and all funds are safe." = "Tỷ lệ mã thông báo không có sẵn.  Mọi thứ hoạt động như bình thường và tất cả các khoản tiền đều an toàn.";
+"The transaction was rejected by the Solana blockchain. Open your link again" = "Giao dịch đã bị blockchain Solana từ chối.  Mở lại liên kết của bạn";
+"Spend them wisely" = "Chi tiêu chúng một cách khôn ngoan";
+"This one-time link is already claimed" = "Liên kết một lần này đã được xác nhận quyền sở hữu";
+"You can't receive funds with it" = "Bạn không thể nhận tiền với nó";
+"Failed to get data" = "Không lấy được dữ liệu";
+"Refresh the page or check back later" = "Làm mới trang hoặc kiểm tra lại sau";
+"Reload" = "tải lại";
+"You’ve got" = "Bạn đã có";
