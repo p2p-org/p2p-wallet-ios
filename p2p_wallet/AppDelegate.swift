@@ -166,13 +166,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
             
             // send via link
             else if webpageURL.host == "t.key.app" {
-                // get seed
-                let possibleSeed = String(urlComponents.path.dropFirst())
-                
-                DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) {
-                    GlobalAppState.shared.sendViaLinkSeed = possibleSeed
-                    GlobalAppState.shared.sendViaLinkUrl = webpageURL
-                }
+                GlobalAppState.shared.sendViaLinkUrl = webpageURL
                 return true
             }
         }
