@@ -86,6 +86,15 @@ struct RendableDetailPendingTransaction: RendableTransactionDetail {
             }
 
             return .double(fromUrl, toUrl)
+        case let transaction as ClaimSentViaLinkTransaction:
+            if
+                let urlStr = transaction.token.logoURI,
+                let url = URL(string: urlStr)
+            {
+                return .single(url)
+            } else {
+                return .icon(.transactionReceive)
+            }
 
         case let transaction as WormholeClaimTransaction:
             guard let url = transaction.token.logo else {
@@ -126,6 +135,8 @@ struct RendableDetailPendingTransaction: RendableTransactionDetail {
             } else {
                 return .unchanged("")
             }
+        case let transaction as ClaimSentViaLinkTransaction:
+            return .positive("+\(transaction.amountInFiat?.fiatAmountFormattedString() ?? "")")
 
         case let transaction as WormholeClaimTransaction:
             if let value = CurrencyFormatter().string(for: transaction.amountInFiat) {
@@ -164,6 +175,13 @@ struct RendableDetailPendingTransaction: RendableTransactionDetail {
         case let transaction as WormholeSendTransaction:
             let value = CryptoFormatter().string(amount: transaction.amount)
             return "\(value)"
+
+        case let transaction as SwapRawTransactionType:
+            return transaction.mainDescription
+
+        case let transaction as ClaimSentViaLinkTransaction:
+            return "\(transaction.tokenAmount.tokenAmountFormattedString(symbol: transaction.token.symbol))"
+
         default:
             return ""
         }
@@ -251,6 +269,17 @@ struct RendableDetailPendingTransaction: RendableTransactionDetail {
             result.append(
                 .init(title: L10n.sendTo, value: RecipientFormatter.format(destination: transaction.recipient.address))
             )
+
+        case let transaction as ClaimSentViaLinkTransaction:
+            result.append(
+                .init(
+                    title: L10n.receivedFrom,
+                    value: transaction.claimableTokenInfo.account,
+                    copyableValue: transaction.claimableTokenInfo.account
+                )
+            )
+            
+            result.append(.init(title: L10n.transactionFee, value: L10n.freePaidByKeyApp))
 
         default:
             break

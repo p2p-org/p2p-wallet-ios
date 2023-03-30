@@ -7,6 +7,7 @@
 
 import Foundation
 import KeyAppKitCore
+import SolanaSwift
 
 struct RendableListPendingTransactionItem: RendableListTransactionItem {
     let trx: PendingTransaction
@@ -77,7 +78,17 @@ struct RendableListPendingTransactionItem: RendableListTransactionItem {
             {
                 return .single(url)
             } else {
-                return .icon(.transactionSend)
+                return .single(url)
+            }
+            
+        case let transaction as ClaimSentViaLinkTransaction:
+            if
+                let urlStr = transaction.token.logoURI,
+                let url = URL(string: urlStr)
+            {
+                return .single(url)
+            } else {
+                return .icon(.transactionReceive)
             }
         default:
             return .icon(.planet)
@@ -107,6 +118,11 @@ struct RendableListPendingTransactionItem: RendableListTransactionItem {
         case let transaction as WormholeSendTransaction:
             return "Wormhole"
 
+        case let transaction as ClaimSentViaLinkTransaction:
+            guard let pubkey = try? PublicKey(string: transaction.claimableTokenInfo.account)
+            else { return L10n.receive}
+            return L10n.receivedFrom + " " + pubkey.short()
+
         default:
             return L10n.unknown
         }
@@ -118,15 +134,23 @@ struct RendableListPendingTransactionItem: RendableListTransactionItem {
             switch trx.rawTransaction {
             case _ as SendTransaction:
                 return "\(L10n.send)"
+
             case _ as SwapRawTransactionType:
                 return "\(L10n.swap)"
+
             case let transaction as WormholeClaimTransaction:
                 return "Claim"
+
             case let transaction as WormholeSendTransaction:
                 return "Send"
+
+            case _ as ClaimSentViaLinkTransaction:
+                return "\(L10n.sendViaOneTimeLink)"
+
             default:
                 return "\(L10n.transactionFailed)"
             }
+
         default:
             switch trx.rawTransaction {
             case _ as SendTransaction:
@@ -135,12 +159,21 @@ struct RendableListPendingTransactionItem: RendableListTransactionItem {
                 } else {
                     return "\(L10n.send)"
                 }
+
             case _ as SwapRawTransactionType:
                 if trx.transactionId == nil {
                     return "\(L10n.swapping).."
                 } else {
                     return "\(L10n.swap)"
                 }
+
+            case _ as ClaimSentViaLinkTransaction:
+                if trx.transactionId == nil {
+                    return "\(L10n.processing).."
+                } else {
+                    return "\(L10n.proceed)"
+                }
+
             default:
                 if trx.transactionId == nil {
                     return "\(L10n.processing).."
@@ -174,6 +207,11 @@ struct RendableListPendingTransactionItem: RendableListTransactionItem {
                 return (.unchanged, "")
             }
 
+            return (.positive, "+\(transaction.toAmount.tokenAmountFormattedString(symbol: transaction.destinationWallet.token.symbol))")
+
+        case let transaction as ClaimSentViaLinkTransaction:
+            return (.positive, "+\(transaction.tokenAmount.tokenAmountFormattedString(symbol: transaction.token.symbol))")
+
         default:
             return (.unchanged, "")
         }
@@ -192,6 +230,9 @@ struct RendableListPendingTransactionItem: RendableListTransactionItem {
 
         case let transaction as WormholeClaimTransaction:
             return CryptoFormatter().string(for: transaction.amountInCrypto) ?? ""
+
+        case let transaction as ClaimSentViaLinkTransaction:
+            return ""
 
         default:
             return ""

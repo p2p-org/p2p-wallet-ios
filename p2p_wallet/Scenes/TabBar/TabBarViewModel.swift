@@ -107,14 +107,14 @@ extension TabBarViewModel {
         .eraseToAnyPublisher()
     }
     
-    var moveToSendViaLinkClaim: AnyPublisher<String, Never> {
+    var moveToSendViaLinkClaim: AnyPublisher<URL?, Never> {
         Publishers.Merge(
             authenticationHandler
                 .isLockedPublisher
                 .filter { value in
-                    GlobalAppState.shared.sendViaLinkSeed != nil && value == false
+                    GlobalAppState.shared.sendViaLinkUrl != nil && value == false
                 }
-                .map {_ in ()},
+                .map { _ in () },
             
             viewDidLoad
                 .filter { [weak self] in
@@ -122,11 +122,9 @@ extension TabBarViewModel {
                 }
         )
         .map { _ in () }
-        .map {
-            GlobalAppState.shared.sendViaLinkSeed ?? ""
-        }
+        .map { GlobalAppState.shared.sendViaLinkUrl }
         .handleEvents(receiveOutput: { _ in
-            GlobalAppState.shared.sendViaLinkSeed = nil
+            GlobalAppState.shared.sendViaLinkUrl = nil
         })
         .receive(on: DispatchQueue.main)
         .eraseToAnyPublisher()
