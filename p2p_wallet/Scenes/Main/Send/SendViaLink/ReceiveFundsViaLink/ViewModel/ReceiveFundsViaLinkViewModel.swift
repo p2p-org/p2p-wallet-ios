@@ -10,8 +10,9 @@ import Foundation
 import SolanaSwift
 import Send
 import Resolver
+import FeeRelayerSwift
 
-final class ReceiveFundsViaLinkViewModel: ObservableObject {
+final class ReceiveFundsViaLinkViewModel: BaseViewModel, ObservableObject {
     
     // Dependencies
     @Injected private var sendViaLinkDataService: SendViaLinkDataService
@@ -45,6 +46,7 @@ final class ReceiveFundsViaLinkViewModel: ObservableObject {
     
     init(url: URL) {
         self.url = url
+        super.init()
         loadTokenInfo()
     }
     
@@ -55,46 +57,61 @@ final class ReceiveFundsViaLinkViewModel: ObservableObject {
     }
     
     func confirmClicked() {
+        // Get needed params
         guard
             let claimableToken = claimableToken,
             let token = token,
             let pubkey = try? PublicKey(string: walletsRepository.nativeWallet?.pubkey)
         else { return }
+        
+        let cryptoAmount = claimableToken.lamports
+            .convertToBalance(decimals: claimableToken.decimals)
+            .tokenAmountFormattedString(symbol: token.symbol)
 
+        // Notify loading
         sizeChangedSubject.send(546)
         processingState = .loading(message: L10n.itUsuallyTakes520SecondsForATransactionToComplete)
         processingVisible = true
         
-        Task {
-            do {
-                _ = try await self.sendViaLinkDataService.claim(
-                    token: claimableToken,
-                    receiver: pubkey,
-                    feePayer: pubkey
-                )
-                let cryptoAmount = claimableToken.lamports
-                    .convertToBalance(decimals: claimableToken.decimals)
-                    .tokenAmountFormattedString(symbol: token.symbol)
-
-                await MainActor.run { [weak self] in
-                    self?.state = .confirmed(cryptoAmount: cryptoAmount)
-                    self?.processingVisible = false
-                    self?.sizeChangedSubject.send(566)
-                }
-            } catch {
-                await MainActor.run { [weak self] in
+        // Form raw transaction
+        let transaction = ClaimSentViaLinkTransaction {
+            try await claimSendViaLinkExecution(
+                claimableToken: claimableToken,
+                receiver: pubkey
+            )
+        }
+        
+        // Send it to transactionHandler
+        let transactionHandler = Resolver.resolve(TransactionHandlerType.self)
+        let transactionIndex = transactionHandler.sendTransaction(transaction)
+        
+        // Observe transaction and update status
+        transactionHandler.observeTransaction(transactionIndex: transactionIndex)
+            .compactMap {$0}
+            .filter {
+                $0.status.error != nil || $0.status.isFinalized || ($0.status.numberOfConfirmations ?? 0) > 0
+            }
+            .prefix(1)
+            .receive(on: RunLoop.main)
+            .sink { [weak self] tx in
+                guard let self else { return }
+                if let error = tx.status.error {
                     if (error as NSError).isNetworkConnectionError {
-                        self?.processingState = .error(message: NSAttributedString(
+                        self.processingState = .error(message: NSAttributedString(
                             string: L10n.TheTransactionWasRejectedAfterFailedInternetConnection.openYourLinkAgain
                         ))
                     } else {
-                        self?.processingState = .error(message: NSAttributedString(
+                        self.processingState = .error(message: NSAttributedString(
                             string: L10n.theTransactionWasRejectedByTheSolanaBlockchain
                         ))
                     }
+                } else {
+                    self.state = .confirmed(cryptoAmount: cryptoAmount)
+                    self.processingVisible = false
+                    self.sizeChangedSubject.send(566)
                 }
             }
-        }
+            .store(in: &subscriptions)
     }
     
     func reloadClicked() {
@@ -148,6 +165,61 @@ final class ReceiveFundsViaLinkViewModel: ObservableObject {
             }
         }
     }
+}
+
+// MARK: - Independent helpers
+
+func claimSendViaLinkExecution(
+    claimableToken: ClaimableTokenInfo,
+    receiver: PublicKey
+) async throws -> TransactionID {
+    // get services
+    let sendViaLinkDataService = Resolver.resolve(SendViaLinkDataService.self)
+    let contextManager = Resolver.resolve(RelayContextManager.self)
+    let solanaAPIClient = Resolver.resolve(SolanaAPIClient.self)
+    
+    let context = try await contextManager
+        .getCurrentContextOrUpdate()
+    
+    // prepare transaction, get recent blockchash
+    var (preparedTransaction, recentBlockhash) = try await(
+        sendViaLinkDataService.claim(
+            token: claimableToken,
+            receiver: receiver,
+            feePayer: context.feePayerAddress
+        ),
+        solanaAPIClient.getRecentBlockhash()
+    )
+    
+    preparedTransaction.transaction.recentBlockhash = recentBlockhash
+    
+    // get feePayer's signature
+    let feePayerSignature = try await Resolver.resolve(RelayService.self)
+        .signRelayTransaction(
+            preparedTransaction,
+            config: FeeRelayerConfiguration(
+                operationType: .sendViaLink, // TODO: - Received via link?
+                currency: claimableToken.mintAddress,
+                autoPayback: false
+            )
+        )
+    
+    // sign transaction by user
+    try preparedTransaction.transaction.sign(signers: [claimableToken.keypair])
+    
+    // add feePayer's signature
+    try preparedTransaction.transaction.addSignature(
+        .init(
+            signature: Data(Base58.decode(feePayerSignature)),
+            publicKey: context.feePayerAddress
+        )
+    )
+    
+    // serialize transaction
+    let serializedTransaction = try preparedTransaction.transaction.serialize().base64EncodedString()
+    
+    // send to solanaBlockchain
+    return try await solanaAPIClient.sendTransaction(transaction: serializedTransaction, configs: RequestConfiguration(encoding: "base64")!)
 }
 
 // MARK: - State
