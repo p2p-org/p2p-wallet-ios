@@ -151,11 +151,20 @@ final class ReceiveFundsViaLinkViewModel: BaseViewModel, ObservableObject {
 
                 let cryptoAmount = claimableToken.lamports
                     .convertToBalance(decimals: claimableToken.decimals)
-                    .tokenAmountFormattedString(symbol: token.symbol)
+                
+                if cryptoAmount == 0 {
+                    await MainActor.run { [weak self] in
+                        self?.linkWasClaimedSubject.send()
+                    }
+                    return
+                }
+                
+                let cryptoAmountStr = cryptoAmount.tokenAmountFormattedString(symbol: token.symbol)
+                
                 let model = Model(
                     date: Date().string(withFormat: "MMMM dd, yyyy @ HH:mm"), // TODO: - Add date after adding to sendViaLinkDataService
                     token: token,
-                    cryptoAmount: cryptoAmount
+                    cryptoAmount: cryptoAmountStr
                 )
                 self.claimableToken = claimableToken
                 self.token = token
