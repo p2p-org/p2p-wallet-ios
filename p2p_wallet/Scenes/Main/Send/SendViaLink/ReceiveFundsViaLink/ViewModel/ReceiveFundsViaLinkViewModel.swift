@@ -66,7 +66,6 @@ final class ReceiveFundsViaLinkViewModel: BaseViewModel, ObservableObject {
         
         let cryptoAmount = claimableToken.lamports
             .convertToBalance(decimals: claimableToken.decimals)
-            .tokenAmountFormattedString(symbol: token.symbol)
 
         // Notify loading
         sizeChangedSubject.send(546)
@@ -74,7 +73,12 @@ final class ReceiveFundsViaLinkViewModel: BaseViewModel, ObservableObject {
         processingVisible = true
         
         // Form raw transaction
-        let transaction = ClaimSentViaLinkTransaction(claimableTokenInfo: claimableToken) {
+        let transaction = ClaimSentViaLinkTransaction(
+            claimableTokenInfo: claimableToken,
+            token: token,
+            destinationWallet: Wallet(pubkey: claimableToken.account, token: token),
+            tokenAmount: cryptoAmount
+        ) {
             try await claimSendViaLinkExecution(
                 claimableToken: claimableToken,
                 receiver: pubkey
@@ -106,7 +110,10 @@ final class ReceiveFundsViaLinkViewModel: BaseViewModel, ObservableObject {
                         ))
                     }
                 } else {
-                    self.state = .confirmed(cryptoAmount: cryptoAmount)
+                    self.state = .confirmed(
+                        cryptoAmount: cryptoAmount
+                            .tokenAmountFormattedString(symbol: token.symbol)
+                    )
                     self.processingVisible = false
                     self.sizeChangedSubject.send(566)
                 }

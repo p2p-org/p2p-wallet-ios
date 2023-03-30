@@ -61,6 +61,16 @@ struct RendableListPendingTransactionItem: RendableListTransactionItem {
             }
             
             return .double(fromUrl, toUrl)
+            
+        case let transaction as ClaimSentViaLinkTransaction:
+            if
+                let urlStr = transaction.token.logoURI,
+                let url = URL(string: urlStr)
+            {
+                return .single(url)
+            } else {
+                return .icon(.transactionReceive)
+            }
         default:
             return .icon(.planet)
         }
@@ -82,6 +92,17 @@ struct RendableListPendingTransactionItem: RendableListTransactionItem {
             
         case let transaction as SwapRawTransactionType:
             return L10n.to(transaction.sourceWallet.token.symbol, transaction.destinationWallet.token.symbol)
+//        case let transaction as ClaimSentViaLinkTransaction:
+//            switch transaction.recipient.category {
+//            case let .username(name, domain):
+//                return L10n.to("\(name).\(domain)")
+//            case let .solanaTokenAddress(walletAddress, _):
+//                return L10n.to(RecipientFormatter.shortFormat(destination: walletAddress.base58EncodedString))
+//            case .solanaAddress:
+//                return L10n.to(RecipientFormatter.shortFormat(destination: transaction.recipient.address))
+//            default:
+//                return L10n.to
+//            }
         default:
             return L10n.unknown
         }
@@ -95,6 +116,8 @@ struct RendableListPendingTransactionItem: RendableListTransactionItem {
                 return "\(L10n.send)"
             case _ as SwapRawTransactionType:
                 return "\(L10n.swap)"
+            case _ as SwapRawTransactionType:
+                return "\(L10n.sendViaOneTimeLink)"
             default:
                 return "\(L10n.transactionFailed)"
             }
