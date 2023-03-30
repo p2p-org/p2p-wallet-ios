@@ -71,7 +71,6 @@ public final class SolanaAccountsService: NSObject, AccountsService, ObservableO
         let prices = accounts
             .$state
             .filter { $0.status == .initializing || $0.status == .ready }
-            .delay(for: 0.1, scheduler: RunLoop.main)
             .asyncMap { state in
                 try? await errorObservable.run {
                     try await priceService.getPrices(

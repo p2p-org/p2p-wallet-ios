@@ -5,14 +5,14 @@
 //  Created by Giang Long Tran on 19.02.2023.
 //
 
+import Combine
 import KeyAppBusiness
+import KeyAppUI
 import Sell
 import SolanaSwift
 import SwiftUI
 import UIKit
 import Wormhole
-import Combine
-import KeyAppUI
 
 enum DetailAccountCoordinatorArgs {
     case solanaAccount(SolanaAccountsService.Account)
@@ -35,7 +35,7 @@ class DetailAccountCoordinator: SmartCoordinator<DetailAccountCoordinatorResult>
         let detailAccountVM: DetailAccountViewModel
         let historyListVM: DetailHistoryViewModel
 
-        switch self.args {
+        switch args {
         case let .solanaAccount(account):
             detailAccountVM = .init(solanaAccount: account)
             historyListVM = .init(mint: account.data.token.address, account: account)
@@ -81,48 +81,48 @@ class DetailAccountCoordinator: SmartCoordinator<DetailAccountCoordinatorResult>
         case let .openParsedTransaction(trx):
             let coordinator = TransactionDetailCoordinator(
                 viewModel: .init(parsedTransaction: trx),
-                presentingViewController: self.presentation.presentingViewController
+                presentingViewController: presentation.presentingViewController
             )
 
-            self.coordinate(to: coordinator)
+            coordinate(to: coordinator)
                 .sink { result in
                     print(result)
                 }
-                .store(in: &self.subscriptions)
+                .store(in: &subscriptions)
 
         case let .openHistoryTransaction(trx):
             let coordinator = TransactionDetailCoordinator(
                 viewModel: .init(historyTransaction: trx),
-                presentingViewController: self.presentation.presentingViewController
+                presentingViewController: presentation.presentingViewController
             )
 
-            self.coordinate(to: coordinator)
+            coordinate(to: coordinator)
                 .sink { _ in }
-                .store(in: &self.subscriptions)
+                .store(in: &subscriptions)
 
         case let .openSellTransaction(trx):
-            self.openSell(trx)
+            openSell(trx)
 
         case let .openPendingTransaction(trx):
             let coordinator = TransactionDetailCoordinator(
                 viewModel: .init(pendingTransaction: trx),
-                presentingViewController: self.presentation.presentingViewController
+                presentingViewController: presentation.presentingViewController
             )
 
-            self.coordinate(to: coordinator)
+            coordinate(to: coordinator)
                 .sink { result in
                     print(result)
                 }
-                .store(in: &self.subscriptions)
+                .store(in: &subscriptions)
 
         case .openBuy:
-            self.openBuy()
+            openBuy()
 
         case .openReceive:
-            self.openReceive()
+            openReceive()
 
         case let .openSwap(wallet, destination):
-            self.openSwap(destination: destination)
+            openSwap(destination: destination)
 
         case .openSentViaLinkHistoryView:
             break
@@ -144,7 +144,7 @@ class DetailAccountCoordinator: SmartCoordinator<DetailAccountCoordinatorResult>
     }
 
     func openReceive() {
-        guard case let .solanaAccount(account) = self.args,
+        guard case let .solanaAccount(account) = args,
               let navigationController = presentation.presentingViewController as? UINavigationController
         else {
             return
@@ -164,14 +164,13 @@ class DetailAccountCoordinator: SmartCoordinator<DetailAccountCoordinatorResult>
             if let logoURL = URL(string: account.data.token.logoURI ?? "") {
                 icon = .url(logoURL)
             }
-            self.openReceive(item:
+            openReceive(item:
                 .init(
                     icon: icon,
                     name: account.data.name,
                     symbol: account.data.token.symbol,
                     availableNetwork: [.solana, .ethereum]
-                )
-            )
+                ))
         } else {
             let coordinator = ReceiveCoordinator(
                 network: .solana(
@@ -187,7 +186,7 @@ class DetailAccountCoordinator: SmartCoordinator<DetailAccountCoordinatorResult>
     private func openReceive(item: SupportedTokenItem) {
         // Coordinate to receive
         func _openReceive(network: ReceiveNetwork) {
-            self.coordinate(to: ReceiveCoordinator(network: network, presentation: self.presentation))
+            coordinate(to: ReceiveCoordinator(network: network, presentation: presentation))
                 .sink {}
                 .store(in: &subscriptions)
         }
@@ -204,8 +203,11 @@ class DetailAccountCoordinator: SmartCoordinator<DetailAccountCoordinatorResult>
             }
         } else {
             // Token supports many networks.
-            let coordinator = SupportedTokenNetworksCoordinator(supportedToken: item, viewController: self.presentation.presentingViewController)
-            self.coordinate(to: coordinator)
+            let coordinator = SupportedTokenNetworksCoordinator(
+                supportedToken: item,
+                viewController: presentation.presentingViewController
+            )
+            coordinate(to: coordinator)
                 .sink { selectedNetwork in
                     guard let selectedNetwork else { return }
                     switch selectedNetwork {
@@ -220,7 +222,7 @@ class DetailAccountCoordinator: SmartCoordinator<DetailAccountCoordinatorResult>
     }
 
     func openSwap(destination: Wallet? = nil) {
-        guard case let .solanaAccount(account) = self.args,
+        guard case let .solanaAccount(account) = args,
               let rootViewController = presentation.presentingViewController as? UINavigationController
         else { return }
         if available(.jupiterSwapEnabled) {
@@ -255,7 +257,7 @@ class DetailAccountCoordinator: SmartCoordinator<DetailAccountCoordinatorResult>
 
     func openSend() {
         guard
-            case let .solanaAccount(account) = self.args,
+            case let .solanaAccount(account) = args,
             let rootViewController = presentation.presentingViewController as? UINavigationController,
             let currentVC = rootViewController.viewControllers.last
         else { return }
@@ -272,19 +274,28 @@ class DetailAccountCoordinator: SmartCoordinator<DetailAccountCoordinatorResult>
                 guard let self = self else { return }
 
                 switch result {
-                case let .wormhole(pending):
+                case let .wormhole(trx):
                     rootViewController.popToViewController(currentVC, animated: true)
 
-                    self.coordinate(to: TransactionDetailCoordinator(viewModel: .init(pendingTransaction: pending), presentingViewController: rootViewController))
+                    self
+                        .coordinate(to: TransactionDetailCoordinator(
+                            viewModel: .init(submit: trx),
+                            presentingViewController: rootViewController
+                        ))
                         .sink(receiveValue: { _ in })
                         .store(in: &self.subscriptions)
 
                 case let .sent(model):
                     rootViewController.popToViewController(currentVC, animated: true)
 
-                    self.coordinate(to: SendTransactionStatusCoordinator(parentController: rootViewController, transaction: model))
+                    self
+                        .coordinate(to: SendTransactionStatusCoordinator(
+                            parentController: rootViewController,
+                            transaction: model
+                        ))
                         .sink(receiveValue: {})
                         .store(in: &self.subscriptions)
+
                 case let .sentViaLink:
                     rootViewController.popToViewController(currentVC, animated: true)
 
@@ -299,7 +310,7 @@ class DetailAccountCoordinator: SmartCoordinator<DetailAccountCoordinatorResult>
     }
 
     func openBuy() {
-        guard case let .solanaAccount(account) = self.args else { return }
+        guard case let .solanaAccount(account) = args else { return }
 
         let token: Token
         switch account.data.token.symbol {
@@ -314,7 +325,7 @@ class DetailAccountCoordinator: SmartCoordinator<DetailAccountCoordinatorResult>
         let coordinator = BuyCoordinator(
             context: .fromToken,
             defaultToken: token,
-            presentingViewController: self.presentation.presentingViewController,
+            presentingViewController: presentation.presentingViewController,
             shouldPush: false
         )
 

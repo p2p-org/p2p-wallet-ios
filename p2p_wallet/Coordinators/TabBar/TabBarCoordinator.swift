@@ -25,7 +25,7 @@ final class TabBarCoordinator: Coordinator<Void> {
     private unowned var window: UIWindow!
     private let tabBarController: TabBarController
     private let closeSubject = PassthroughSubject<Void, Never>()
-    
+
     private var emptySendCoordinator: SendEmptyCoordinator?
     private var sendCoordinator: SendCoordinator?
     private var sendStatusCoordinator: SendTransactionStatusCoordinator?
@@ -37,7 +37,7 @@ final class TabBarCoordinator: Coordinator<Void> {
     init(
         window: UIWindow,
         authenticateWhenAppears: Bool,
-        appEventHandler: AppEventHandlerType = Resolver.resolve()
+        appEventHandler _: AppEventHandlerType = Resolver.resolve()
     ) {
         self.window = window
         tabBarController = TabBarController(
@@ -48,9 +48,9 @@ final class TabBarCoordinator: Coordinator<Void> {
         listenToActionsButton()
         listenToWallet()
     }
-    
+
     // MARK: - Life cycle
-    
+
     /// Start coordinator
     override func start() -> AnyPublisher<Void, Never> {
         // set up tabs
@@ -69,14 +69,14 @@ final class TabBarCoordinator: Coordinator<Void> {
             ],
             animated: false
         )
-        
+
         // set up tab items
         tabBarController.setupTabs()
 
         // configure window
         window.rootViewController?.view.hideLoadingIndicatorView()
         window.animate(newRootViewController: tabBarController)
-        
+
         // re-register for push notification if not yet registered
         if Defaults.didSetEnableNotifications && Defaults.apnsDeviceToken == nil {
             UIApplication.shared.registerForRemoteNotifications()
@@ -92,12 +92,12 @@ final class TabBarCoordinator: Coordinator<Void> {
         // create first active tab Home
         let homeNavigation = UINavigationController()
         let homeCoordinator = HomeCoordinator(navigationController: homeNavigation, tabBarController: tabBarController)
-        
+
         // coordinate to homeCoordinator
         coordinate(to: homeCoordinator)
             .sink(receiveValue: {})
             .store(in: &subscriptions)
-        
+
         // navigate to Earn from homeCoordinator
         homeCoordinator.navigation
             .filter { $0 == .earn }
@@ -105,14 +105,14 @@ final class TabBarCoordinator: Coordinator<Void> {
                 tabBarController.changeItem(to: .invest)
             })
             .store(in: &subscriptions)
-        
+
         // scroll to top when home tab clicked twice
         tabBarController.homeTabClickedTwicely
             .sink(receiveValue: { [weak homeCoordinator] in
                 homeCoordinator?.scrollToTop()
             })
             .store(in: &subscriptions)
-        
+
         // solen tutorial clicked
         tabBarController.solendTutorialClicked
             .sink(receiveValue: { [weak self] in
@@ -127,11 +127,11 @@ final class TabBarCoordinator: Coordinator<Void> {
             .store(in: &subscriptions)
         return homeNavigation
     }
-    
+
     /// Set up Solend, history or feedback scene
     private func setUpSolendSwapOrHistory() -> (UIViewController, UIViewController) {
         let solendOrSwapNavigation = UINavigationController()
-        
+
         if available(.investSolendFeature) {
             let solendCoordinator = SolendCoordinator(navigationController: solendOrSwapNavigation)
             coordinate(to: solendCoordinator)
@@ -140,12 +140,12 @@ final class TabBarCoordinator: Coordinator<Void> {
         } else {
             routeToSwap(nc: solendOrSwapNavigation, hidesBottomBarWhenPushed: false, source: .tapMain)
         }
-        
+
         let historyNavigation = UINavigationController()
-        
+
         if available(.historyServiceEnabled) {
             historyNavigation.navigationBar.prefersLargeTitles = true
-            
+
             let historyCoordinator = NewHistoryCoordinator(
                 presentation: SmartCoordinatorPushPresentation(historyNavigation)
             )
@@ -163,7 +163,7 @@ final class TabBarCoordinator: Coordinator<Void> {
 
         return (solendOrSwapNavigation, historyNavigation)
     }
-    
+
     /// Set up Settings scene
     private func setUpSettings() -> UIViewController {
         let settingsNavigation = UINavigationController()
@@ -173,7 +173,7 @@ final class TabBarCoordinator: Coordinator<Void> {
             .store(in: &subscriptions)
         return settingsNavigation
     }
-    
+
     /// Listen to Actions Button
     private func listenToActionsButton() {
         tabBarController.middleButtonClicked
@@ -208,9 +208,9 @@ final class TabBarCoordinator: Coordinator<Void> {
             }
             .store(in: &subscriptions)
     }
-    
+
     // MARK: - Helpers
-    
+
     /// Navigate to SolendTutorial scene
     private func navigateToSolendTutorial() {
         var view = SolendTutorialView(viewModel: .init())
@@ -221,7 +221,7 @@ final class TabBarCoordinator: Coordinator<Void> {
         vc.modalPresentationStyle = .fullScreen
         tabBarController.present(vc, animated: true)
     }
-    
+
     /// Handle actions given by Actions button
     private func handleAction(_ action: ActionsView.Action) {
         guard
@@ -239,10 +239,14 @@ final class TabBarCoordinator: Coordinator<Void> {
                 .store(in: &subscriptions)
         case .receive:
             if available(.ethAddressEnabled) {
-                let coordinator = SupportedTokensCoordinator(presentation: SmartCoordinatorPushPresentation(navigationController))
+                let coordinator =
+                    SupportedTokensCoordinator(presentation: SmartCoordinatorPushPresentation(navigationController))
                 coordinate(to: coordinator).sink { _ in }.store(in: &subscriptions)
             } else {
-                let coordinator = ReceiveCoordinator(network: .solana(tokenSymbol: "SOL", tokenImage: .image(.solanaIcon)), presentation: SmartCoordinatorPushPresentation(navigationController))
+                let coordinator = ReceiveCoordinator(
+                    network: .solana(tokenSymbol: "SOL", tokenImage: .image(.solanaIcon)),
+                    presentation: SmartCoordinatorPushPresentation(navigationController)
+                )
                 coordinate(to: coordinator).sink { _ in }.store(in: &subscriptions)
             }
         case .swap:
@@ -252,18 +256,23 @@ final class TabBarCoordinator: Coordinator<Void> {
             let withTokens = fiatAmount > 0
             if withTokens {
                 analyticsManager.log(event: .sendViewed(lastScreen: "main_screen"))
-                sendCoordinator = SendCoordinator(rootViewController: navigationController, preChosenWallet: nil, hideTabBar: true, allowSwitchingMainAmountType: true)
+                sendCoordinator = SendCoordinator(
+                    rootViewController: navigationController,
+                    preChosenWallet: nil,
+                    hideTabBar: true,
+                    allowSwitchingMainAmountType: true
+                )
                 sendCoordinator?.start()
                     .sink { [weak self, weak navigationController] result in
                         switch result {
                         case let .sent(model):
                             navigationController?.popToRootViewController(animated: true)
                             self?.routeToSendTransactionStatus(model: model)
-                            
-                        case let .wormhole(pending):
+
+                        case let .wormhole(trx):
                             navigationController?.popToRootViewController(animated: true)
-                            self?.showTransaction(pendingTransaction: pending)
-                            
+                            self?.showTransaction(trx: trx)
+
                         case .sentViaLink:
                             navigationController?.popToRootViewController(animated: true)
                         case .cancelled:
@@ -298,20 +307,27 @@ final class TabBarCoordinator: Coordinator<Void> {
 
     private func routeToSendTransactionStatus(model: SendTransaction) {
         sendStatusCoordinator = SendTransactionStatusCoordinator(parentController: tabBarController, transaction: model)
-        
+
         sendStatusCoordinator?
             .start()
             .sink(receiveValue: {})
             .store(in: &subscriptions)
     }
-    
-    private func showTransaction(pendingTransaction: PendingTransaction) {
-        coordinate(to: TransactionDetailCoordinator(viewModel: .init(pendingTransaction: pendingTransaction), presentingViewController: tabBarController))
-            .sink(receiveValue: { _ in })
-            .store(in: &subscriptions)
+
+    private func showTransaction(trx: RawTransactionType) {
+        coordinate(to: TransactionDetailCoordinator(
+            viewModel: .init(submit: trx),
+            presentingViewController: tabBarController
+        ))
+        .sink(receiveValue: { _ in })
+        .store(in: &subscriptions)
     }
 
-    private func routeToSwap(nc: UINavigationController, hidesBottomBarWhenPushed: Bool = true, source: JupiterSwapSource) {
+    private func routeToSwap(
+        nc: UINavigationController,
+        hidesBottomBarWhenPushed: Bool = true,
+        source: JupiterSwapSource
+    ) {
         if available(.jupiterSwapEnabled) {
             let swapCoordinator = JupiterSwapCoordinator(
                 navigationController: nc,
@@ -332,7 +348,12 @@ final class TabBarCoordinator: Coordinator<Void> {
                 })
                 .store(in: &subscriptions)
         } else {
-            let swapCoordinator = SwapCoordinator(navigationController: nc, initialWallet: nil, destinationWallet: nil, hidesBottomBarWhenPushed: hidesBottomBarWhenPushed)
+            let swapCoordinator = SwapCoordinator(
+                navigationController: nc,
+                initialWallet: nil,
+                destinationWallet: nil,
+                hidesBottomBarWhenPushed: hidesBottomBarWhenPushed
+            )
             coordinate(to: swapCoordinator)
                 .sink(receiveValue: { _ in })
                 .store(in: &subscriptions)

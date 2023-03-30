@@ -11,7 +11,7 @@ import SolanaSwift
 import SwiftUI
 
 enum WormholeSendInputCoordinatorResult {
-    case transaction(PendingTransaction)
+    case transaction(WormholeSendTransaction)
 }
 
 class WormholeSendInputCoordinator: SmartCoordinator<WormholeSendInputCoordinatorResult> {
@@ -44,7 +44,8 @@ class WormholeSendInputCoordinator: SmartCoordinator<WormholeSendInputCoordinato
     }
 
     private func openFees(stateMachine: WormholeSendInputStateMachine) {
-        coordinate(to: WormholeSendFeesCoordinator(stateMachine: stateMachine, presentedVC: presentation.presentingViewController))
+        coordinate(to: WormholeSendFeesCoordinator(stateMachine: stateMachine,
+                                                   presentedVC: presentation.presentingViewController))
             .sink { _ in }
             .store(in: &subscriptions)
     }

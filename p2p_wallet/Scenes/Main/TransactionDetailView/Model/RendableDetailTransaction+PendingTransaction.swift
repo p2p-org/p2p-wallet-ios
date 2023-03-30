@@ -247,6 +247,11 @@ struct RendableDetailPendingTransaction: RendableTransactionDetail {
                     )
             }
 
+        case let transaction as WormholeSendTransaction:
+            result.append(
+                .init(title: L10n.sendTo, value: RecipientFormatter.format(destination: transaction.recipient.address))
+            )
+
         default:
             break
         }
@@ -260,6 +265,25 @@ struct RendableDetailPendingTransaction: RendableTransactionDetail {
             return [.share, .explorer]
         default:
             return []
+        }
+    }
+
+    var buttonTitle: String {
+        switch trx.rawTransaction {
+        case _ as SwapRawTransactionType:
+            switch status {
+            case let .error(_, error):
+                if let error, error.isSlippageError {
+                    return L10n.increaseSlippageAndTryAgain
+                } else {
+                    return L10n.tryAgain
+                }
+            default:
+                return L10n.done
+            }
+
+        default:
+            return L10n.done
         }
     }
 }
