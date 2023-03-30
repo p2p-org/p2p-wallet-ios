@@ -1,7 +1,9 @@
 import Foundation
 import SolanaSwift
+import Send
 
 struct ClaimSentViaLinkTransaction: RawTransactionType {
+    let claimableTokenInfo: ClaimableTokenInfo
     
     let payingFeeWallet: Wallet? = nil
     let feeAmount: FeeAmount = .zero
