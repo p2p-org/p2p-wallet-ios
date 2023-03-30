@@ -22,6 +22,7 @@ class HomeViewModel: ObservableObject {
     @Injected private var nameStorage: NameStorageType
     @Injected private var createNameService: CreateNameService
     @Injected private var walletsRepository: WalletsRepository
+    @Injected private var pricesService: PricesServiceType
 
     // MARK: - Published properties
 
@@ -85,9 +86,7 @@ private extension HomeViewModel {
                 guard let self else { return }
                 
                 // accumulate total amount
-                let fiatAmount = data.totalAmountInCurrentFiat
-                let arePriceRetrieved = data.compactMap({ $0.price }).count > 0
-                let isEmpty = fiatAmount <= 0 && arePriceRetrieved
+                let isEmpty = data.isTotalAmountEmpty
                 // address
                 self.updateAddressIfNeeded()
                 
@@ -101,7 +100,7 @@ private extension HomeViewModel {
                     
                     // log
                     self.analyticsManager.log(parameter: .userHasPositiveBalance(!isEmpty))
-                    self.analyticsManager.log(parameter: .userAggregateBalance(fiatAmount))
+                    self.analyticsManager.log(parameter: .userAggregateBalance(data.totalAmountInCurrentFiat))
                 }
             }
             .store(in: &subscriptions)
