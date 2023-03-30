@@ -60,23 +60,29 @@ final class ActionsCoordinator: Coordinator<ActionsCoordinator.Result> {
                     guard let pubkey = try? PublicKey(string: walletsRepository.nativeWallet?.pubkey) else { return }
                     let coordinator = ReceiveCoordinator(navigationController: navigationController, pubKey: pubkey)
                     coordinate(to: coordinator).sink { _ in }.store(in: &subscriptions)
-                    analyticsManager.log(event: AmplitudeEvent.actionButtonReceive)
-                    analyticsManager.log(event: AmplitudeEvent.mainScreenReceiveOpen)
-                    analyticsManager.log(event: AmplitudeEvent.receiveViewed(fromPage: "Main_Screen"))
+                    analyticsManager.log(event: .actionButtonReceive)
+                    analyticsManager.log(event: .mainScreenReceiveOpen)
+                    analyticsManager.log(event: .receiveViewed(fromPage: "Main_Screen"))
                 case .swap:
-                    analyticsManager.log(event: AmplitudeEvent.actionButtonSwap)
-                    analyticsManager.log(event: AmplitudeEvent.mainScreenSwapOpen)
-                    analyticsManager.log(event: AmplitudeEvent.swapViewed(lastScreen: "Main_Screen"))
+                    analyticsManager.log(event: .actionButtonSwap)
+                    analyticsManager.log(event: .mainScreenSwapOpen)
+                    analyticsManager.log(event: .swapViewed(lastScreen: "Main_Screen"))
                     viewController.dismiss(animated: true) {
                         subject.send(.action(type: .swap))
                     }
                 case .send:
-                    analyticsManager.log(event: AmplitudeEvent.actionButtonSend)
-                    analyticsManager.log(event: AmplitudeEvent.mainScreenSendOpen)
-                    analyticsManager.log(event: AmplitudeEvent.sendViewed(lastScreen: "Main_Screen"))
+                    analyticsManager.log(event: .actionButtonSend)
+                    analyticsManager.log(event: .mainScreenSendOpen)
+                    analyticsManager.log(event: .sendViewed(lastScreen: "Main_Screen"))
                     viewController.dismiss(animated: true) {
                         subject.send(.action(type: .send))
                     }
+                case .cashOut:
+                    viewController.dismiss(animated: true) {
+                        subject.send(.action(type: .cashOut))
+                    }
+
+                    analyticsManager.log(event: .sellClicked(source: "Action_Panel"))
                 }
             })
             .store(in: &subscriptions)

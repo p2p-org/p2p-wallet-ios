@@ -8,8 +8,6 @@ import SolanaSwift
 import SwiftyUserDefaults
 
 struct Buy {
-    typealias ProcessingService = BuyProcessingServiceType
-    typealias ExchangeService = BuyExchangeServiceType
     typealias Currency = BuyCurrencyType
 
     enum FiatCurrency: String, BuyCurrencyType, Equatable {

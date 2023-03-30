@@ -8,6 +8,7 @@ import Resolver
 import SolanaPricesAPIs
 import Solend
 import Sentry
+import SolanaSwift
 
 class InvestSolendBannerViewModel: ObservableObject {
     @Injected private var priceService: PricesServiceType
@@ -133,7 +134,11 @@ class InvestSolendBannerViewModel: ObservableObject {
         let rewards = SolendMath.reward(marketInfos: marketInfos, userDeposits: userDeposits)
         return rewards
             .map { [priceService] (reward: SolendMath.Reward) -> Double in
-                let price = priceService.currentPrice(for: reward.symbol)?.value ?? 0.0
+                guard let mint = Token.solendSupportedTokens
+                    .first(where: {$0.symbol == reward.symbol})?
+                    .address
+                else { return 0 }
+                let price = priceService.currentPrice(mint: mint)?.value ?? 0
                 return reward.rate * price
             }
             .reduce(0, +)
@@ -145,7 +150,12 @@ class InvestSolendBannerViewModel: ObservableObject {
                 (deposit.depositedAmount.double ?? 0, deposit.symbol)
             }
             .map { [priceService] (amount: Double, symbol: String) -> Double in
-                let currentPrice = priceService.currentPrice(for: symbol)?.value ?? 0
+                guard let mint = Token.solendSupportedTokens
+                    .first(where: {$0.symbol == symbol})?
+                    .address
+                else { return 0 }
+                
+                let currentPrice = priceService.currentPrice(mint: mint)?.value ?? 0
                 return currentPrice * amount
             }
             .reduce(0, +)

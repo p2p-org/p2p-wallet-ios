@@ -21,7 +21,10 @@ final class DebugMenuViewModel: BaseViewModel, ObservableObject {
     @Published var solanaEndpoints: [APIEndPoint]
     @Published var selectedEndpoint: APIEndPoint?
     @Published var feeRelayerEndpoints: [String]
+    @Published var moonpayEnvironments: [DefaultsKeys.MoonpayEnvironment] = [.production, .sandbox]
+    @Published var currentMoonpayEnvironment: DefaultsKeys.MoonpayEnvironment
     @Published var nameServiceEndpoints: [String]
+    @Published var newSwapEndpoints: [String]
 
     override init() {
         features = Menu.allCases
@@ -51,13 +54,27 @@ final class DebugMenuViewModel: BaseViewModel, ObservableObject {
             "https://\(String.secretConfig("NAME_SERVICE_ENDPOINT_NEW")!)",
             "https://\(String.secretConfig("NAME_SERVICE_STAGING_ENDPOINT")!)"
         ]
+        
+        newSwapEndpoints = [
+            "https://quote-api.jup.ag",
+            "https://swap.key.app"
+        ]
+
+        currentMoonpayEnvironment = Defaults.moonpayEnvironment
 
         super.init()
 
-        $selectedEndpoint.sink { endpoint in
-            guard let endpoint = endpoint else { return }
-            Defaults.apiEndPoint = endpoint
-        }.store(in: &subscriptions)
+        $selectedEndpoint
+            .sink { endpoint in
+                guard let endpoint = endpoint else { return }
+                Defaults.apiEndPoint = endpoint
+            }
+            .store(in: &subscriptions)
+        $currentMoonpayEnvironment
+            .sink { environment in
+                Defaults.moonpayEnvironment = environment
+            }
+            .store(in: &subscriptions)
     }
 
     func setFeature(_ feature: Feature, isOn: Bool) {
@@ -91,7 +108,6 @@ extension DebugMenuViewModel {
 extension DebugMenuViewModel {
     enum Menu: Int, CaseIterable {
         case solanaNegativeStatus
-        case newSettings
         case onboardingUsernameEnabled
         case onboardingUsernameButtonSkipEnabled
         
@@ -101,11 +117,12 @@ extension DebugMenuViewModel {
         case mockedApiGateway
         case mockedTKeyFacade
         case simulatedSocialError
+        case sell
+        case jupiterSwap
 
         var title: String {
             switch self {
             case .solanaNegativeStatus: return "Solana Negative Status"
-            case .newSettings: return "New Settings"
             case .onboardingUsernameEnabled: return "Onboarding Username"
             case .onboardingUsernameButtonSkipEnabled: return "Onboarding Username Skip Button"
             case .mockedApiGateway: return "[Onboarding] API Gateway Mock"
@@ -113,13 +130,14 @@ extension DebugMenuViewModel {
             case .simulatedSocialError: return "[Onboarding] Simulated Social Error"
             case .investSolend: return "Invest Solend"
             case .solendDisablePlaceholder: return "Solend Disable Placeholder"
+            case .sell: return "Sell (Off Ramp)"
+            case .jupiterSwap: return "Jupiter Swap"
             }
         }
 
         var feature: Feature {
             switch self {
             case .solanaNegativeStatus: return .solanaNegativeStatus
-            case .newSettings: return .settingsFeature
             case .onboardingUsernameEnabled: return .onboardingUsernameEnabled
             case .onboardingUsernameButtonSkipEnabled: return .onboardingUsernameButtonSkipEnabled
             case .mockedApiGateway: return .mockedApiGateway
@@ -127,6 +145,8 @@ extension DebugMenuViewModel {
             case .simulatedSocialError: return .simulatedSocialError
             case .investSolend: return .investSolendFeature
             case .solendDisablePlaceholder: return .solendDisablePlaceholder
+            case .sell: return .sellScenarioEnabled
+            case .jupiterSwap: return .jupiterSwapEnabled
             }
         }
     }

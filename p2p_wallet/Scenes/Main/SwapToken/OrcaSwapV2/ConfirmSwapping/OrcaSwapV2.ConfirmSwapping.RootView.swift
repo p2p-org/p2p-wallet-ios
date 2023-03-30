@@ -11,6 +11,7 @@ import RxCocoa
 import RxSwift
 import UIKit
 import KeyAppUI
+import SolanaSwift
 
 extension OrcaSwapV2.ConfirmSwapping {
     final class RootView: ScrollableVStackRootView {
@@ -266,6 +267,14 @@ extension OrcaSwapV2.ConfirmSwapping {
                     .drive(equityAmountLabel.rx.text)
                     .disposed(by: disposeBag)
             }
+        }
+    }
+}
+
+private extension Reactive where Base: CoinLogoImageView {
+    var wallet: Binder<Wallet?> {
+        Binder(base) { view, wallet in
+            view.setUp(wallet: wallet)
         }
     }
 }

@@ -8,6 +8,7 @@ import Combine
 import KeyAppUI
 import Resolver
 import UIKit
+import CombineCocoa
 
 extension ReceiveToken {
     final class ViewController: BaseViewController {
@@ -23,7 +24,7 @@ extension ReceiveToken {
             self.viewModel = viewModel
             super.init()
 
-            viewModel.navigation.drive(onNext: { [weak self] in self?.navigate(to: $0) }).disposed(by: disposeBag)
+            viewModel.navigationPublisher.sink(receiveValue: { [weak self] in self?.navigate(to: $0) }).store(in: &subscriptions)
 
             if isOpeningFromToken {
                 navigationItem.title = "\(L10n.receive) \(viewModel.tokenWallet?.token.name ?? "")"
@@ -39,7 +40,7 @@ extension ReceiveToken {
             }
             hidesBottomBarWhenPushed = true
 
-            analyticsManager.log(event: AmplitudeEvent.receiveStartScreen)
+            analyticsManager.log(event: .receiveStartScreen)
         }
 
         @objc func goBack() {
@@ -56,11 +57,11 @@ extension ReceiveToken {
                                 UIStackView(axis: .horizontal) {
                                     // Wallet Icon
                                     UIImageView(width: 44, height: 44)
-                                        .with(
-                                            .image,
-                                            drivenBy: viewModel.tokenTypeDriver.map { type in type.icon },
-                                            disposedBy: disposeBag
-                                        )
+                                        .setup { view in
+                                            viewModel.tokenTypePublisher.map { type in type.icon }
+                                                .assign(to: \.image, on: view)
+                                                .store(in: &subscriptions)
+                                        }
                                     // Text
                                     UIStackView(axis: .vertical, spacing: 4, alignment: .leading) {
                                         UILabel(
@@ -70,10 +71,10 @@ extension ReceiveToken {
                                         )
                                         UILabel(text: L10n.network("Solana"), textSize: 17, weight: .semibold)
                                             .setup { view in
-                                                viewModel.tokenTypeDriver
+                                                viewModel.tokenTypePublisher
                                                     .map { L10n.network($0.localizedName).onlyUppercaseFirst() }
-                                                    .drive(view.rx.text)
-                                                    .disposed(by: disposeBag)
+                                                    .assign(to: \.text, on: view)
+                                                    .store(in: &subscriptions)
                                             }
                                     }.padding(.init(x: 12, y: 0))
                                     if !viewModel.isDisabledRenBtc {
@@ -96,10 +97,10 @@ extension ReceiveToken {
                                     }
                                 }
                                 .setup { [weak viewModel] view in
-                                    viewModel?.tokenListAvailabilityDriver
+                                    viewModel?.tokenListAvailabilityPublisher
                                         .map { !$0 }
-                                        .drive(view.rx.isHidden)
-                                        .disposed(by: disposeBag)
+                                        .assign(to: \.isHidden, on: view)
+                                        .store(in: &subscriptions)
                                 }
                             }
                         }
@@ -109,22 +110,21 @@ extension ReceiveToken {
                         createQRHint()
                     }
                     .setup { view in
-                        viewModel.hasHintViewOnTopDriver
+                        viewModel.hasHintViewOnTopPublisher
                             .map { !$0 }
-                            .drive(view.rx.isHidden)
-                            .disposed(by: disposeBag)
+                            .assign(to: \.isHidden, on: view)
+                            .store(in: &subscriptions)
                     }
 
                     ReceiveSolanaView(viewModel: viewModel.receiveSolanaViewModel)
                         .setup { view in
-                            viewModel.tokenTypeDriver.map { token in token != .solana }.drive(view.rx.isHidden)
-                                .disposed(by: disposeBag)
+                            viewModel.tokenTypePublisher.map { token in token != .solana }.assign(to: \.isHidden, on: view).store(in: &subscriptions)
                         }
                     ReceiveBitcoinView(viewModel: viewModel.receiveBitcoinViewModel).setup { view in
-                        viewModel.tokenTypeDriver
+                        viewModel.tokenTypePublisher
                             .map { token in token != .btc }
-                            .drive(view.rx.isHidden)
-                            .disposed(by: disposeBag)
+                            .assign(to: \.isHidden, on: view)
+                            .store(in: &subscriptions)
                     }
 
                     UIStackView(axis: .vertical, spacing: 16, alignment: .fill) {
@@ -133,30 +133,32 @@ extension ReceiveToken {
                             openedText: L10n.hideDirectAndMintAddresses
                         )
                             .setup { view in
-                                viewModel.addressesInfoIsOpenedDriver
-                                    .drive(view.rx.isOpened)
-                                    .disposed(by: disposeBag)
-                                view.rx.tap
-                                    .bind(to: viewModel.showHideAddressesInfoButtonTapSubject)
-                                    .disposed(by: disposeBag)
+                                viewModel.addressesInfoIsOpenedPublisher
+                                    .assign(to: \.isOpened, on: view)
+                                    .store(in: &subscriptions)
+                                view.tapPublisher
+                                    .sink { [weak viewModel] _ in
+                                        viewModel?.showHideAddressesInfoButtonTapSubject.send()
+                                    }
+                                    .store(in: &subscriptions)
                             }
                         TokenAddressesView(viewModel: viewModel)
                             .setup { view in
-                                viewModel.addressesInfoIsOpenedDriver
-                                    .drive { [weak view] isOpened in
+                                viewModel.addressesInfoIsOpenedPublisher
+                                    .sink { [weak view] isOpened in
                                         UIView.animate(withDuration: 0.3) {
                                             view?.isHidden = !isOpened
                                         }
                                     }
-                                    .disposed(by: disposeBag)
+                                    .store(in: &subscriptions)
                             }
                             .padding(.init(only: .top, inset: 18))
                     }
                     .setup { view in
-                        viewModel.hasAddressesInfoDriver
+                        viewModel.hasAddressesInfoPublisher
                             .map { !$0 }
-                            .drive(view.rx.isHidden)
-                            .disposed(by: disposeBag)
+                            .assign(to: \.isHidden, on: view)
+                            .store(in: &subscriptions)
                     }
                 }
             }
@@ -186,7 +188,7 @@ extension ReceiveToken.ViewController {
             let vc = RenBTCReceivingStatuses.ViewController(viewModel: vm)
             show(UINavigationController(rootViewController: vc), sender: nil)
         case let .share(address, qrCode):
-            analyticsManager.log(event: AmplitudeEvent.QR_Share)
+            analyticsManager.log(event: .QR_Share)
             guard let qrCode = qrCode, let address = address else { return }
 
             let vc = UIActivityViewController(activityItems: [qrCode, address], applicationActivities: nil)
@@ -204,25 +206,14 @@ extension ReceiveToken.ViewController {
         case .showPhotoLibraryUnavailable:
             PhotoLibraryAlertPresenter().present(on: self)
         case .buy:
-            if available(.buyScenarioEnabled) {
-                buyCoordinator = BuyCoordinator(
-                    context: .fromRenBTC,
-                    presentingViewController: self,
-                    shouldPush: false
-                )
-                buyCoordinator?.start()
-                    .sink { _ in }
-                    .store(in: &subscriptions)
-            } else {
-                show(
-                    BuyTokenSelection.Scene(onTap: { [unowned self] crypto in
-                        let vm = BuyRoot.ViewModel()
-                        let vc = BuyRoot.ViewController(crypto: crypto, viewModel: vm)
-                        show(vc, sender: nil)
-                    }),
-                    sender: nil
-                )
-            }
+            buyCoordinator = BuyCoordinator(
+                context: .fromRenBTC,
+                presentingViewController: self,
+                shouldPush: false
+            )
+            buyCoordinator?.start()
+                .sink { _ in }
+                .store(in: &subscriptions)
         case .none:
             return
         }

@@ -123,11 +123,8 @@ class InvestSolendViewModel: ObservableObject {
                 self?.bannerError = nil
             }.store(in: &subscriptions)
 
-        let walletsStream: AnyPublisher<[Wallet]?, Never> = walletRepository
-            .dataObservable
-            .asPublisher()
-            .catch { _ in Just(nil) }
-            .eraseToAnyPublisher()
+        let walletsStream: AnyPublisher<[Wallet], Never> = walletRepository
+            .dataPublisher
         // Process data from data service
         dataService.availableAssets
             .combineLatest(

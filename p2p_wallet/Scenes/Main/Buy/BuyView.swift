@@ -3,7 +3,7 @@ import SkeletonUI
 import SolanaSwift
 import SwiftUI
 
-struct BuyView: View {
+struct BuyView: View, KeyboardVisibilityReadable {
     private let textLeadingPadding = 25.0
     private let cardLeadingPadding = 16.0
 
@@ -14,6 +14,7 @@ struct BuyView: View {
     @State var bottomOffset = CGFloat(110)
     @State var leftInputText: String = ""
     @State var rightInputText: String = ""
+    @State private var isKeyboardVisible = false
 
     init(viewModel: BuyViewModel) {
         self.viewModel = viewModel
@@ -28,30 +29,38 @@ struct BuyView: View {
                         .padding(.horizontal, 16)
                 }
 
-                VStack(alignment: .leading, spacing: 0) {
-                    HStack {
-                        Spacer()
-                        icon
-                            .padding(.top, 12)
-                        Spacer()
+                VStack(spacing: 16) {
+                    VStack(alignment: .leading, spacing: 0) {
+                        HStack {
+                            Spacer()
+                            icon
+                                .padding(.top, 12)
+                            Spacer()
+                        }
+                        input
+                            .padding(.top, 10)
+                            .padding(.bottom, 25)
+                            .onReceive(isKeyboardShown) { isKeyboardVisible in
+                                self.isKeyboardVisible = isKeyboardVisible
+                            }
+                        Divider()
+                            .frame(height: 1)
+                            .overlay(Color(Asset.Colors.snow.color))
+                        if viewModel.availableMethods.count > 1 || viewModel.areMethodsLoading {
+                            methods
+                                .padding(.top, 22)
+                        }
+                        
+                        total
+                            .padding(.top, 26)
                     }
-                    input
-                        .padding(.top, 10)
-                        .padding(.bottom, 25)
-                    Divider()
-                        .frame(height: 1)
-                        .overlay(Color(Asset.Colors.snow.color))
-                    if viewModel.availableMethods.count > 1 || viewModel.areMethodsLoading {
-                        methods
-                            .padding(.top, 22)
+                    .background(Color(Asset.Colors.rain.color))
+                    .cornerRadius(20)
+                    .padding([.leading, .trailing], 16)
+                    if !viewModel.isLeftFocus, !viewModel.isRightFocus {
+                        poweredBy
                     }
-
-                    total
-                        .padding(.top, 26)
                 }
-                .background(Color(Asset.Colors.rain.color))
-                .cornerRadius(20)
-                .padding([.leading, .trailing], 16)
                 .offset(y: min(20, 20 * UIScreen.main.bounds.height / 812))
             }.onAppear {
                 UIScrollView.appearance().keyboardDismissMode = .onDrag
@@ -62,12 +71,28 @@ struct BuyView: View {
             actionButtonView
         }
         .toolbar {
-            ToolbarItem(placement: .principal) { Text(L10n.buy).fontWeight(.semibold) }
+            ToolbarItem(placement: .principal) { Text(L10n.buyWithMoonpay).fontWeight(.semibold) }
         }
         .onAppear {
             withAnimation {
 //                viewModel.navigationSlidingPercentage = 0
                 bottomOffset = 0
+            }
+        }
+        .ignoresSafeArea(.keyboard, edges: isKeyboardVisible ? .top : .bottom)
+    }
+
+    var poweredBy: some View {
+        VStack(spacing: 4) {
+            Text(L10n.poweredBy + " Moonpay")
+                .apply(style: .label1)
+                .foregroundColor(Color(UIColor._9799Af))
+            Button {
+                viewModel.moonpayLicenseTap()
+            } label: {
+                Text(L10n.license)
+                    .apply(style: .label1)
+                    .foregroundColor(Color(Asset.Colors.night.color))
             }
         }
     }
@@ -117,7 +142,8 @@ struct BuyView: View {
                 case .right: viewModel.fiatSelectTapped()
                 case .none: return
                 }
-            }.padding(.horizontal, 16)
+            }
+            .padding(.horizontal, 16)
         }
     }
 
@@ -144,6 +170,7 @@ struct BuyView: View {
                                     }
                                 } label: {
                                     methodCard(item: item)
+                                        .accessibilityIdentifier("BuyView.methods" + (item.type == viewModel.selectedPayment ? "_selected" : item.type.rawValue))
                                         .foregroundColor(Color(Asset.Colors.night.color))
                                         .frame(width: 158)
                                 }.addBorder(
@@ -173,6 +200,7 @@ struct BuyView: View {
                 } label: {
                     Text("\(viewModel.total)")
                         .apply(style: .text3)
+                        .accessibilityIdentifier("BuyView.total")
                         .foregroundColor(Color(Asset.Colors.mountain.color))
                     Image(uiImage: Asset.MaterialIcon.chevronRight.image)
                         .foregroundColor(Color(Asset.Colors.mountain.color))
@@ -301,6 +329,7 @@ struct BuyView: View {
             viewModel?.buyButtonTapped()
         }
         .frame(height: 56)
+        .accessibilityIdentifier("BuyView.actionButtonView")
         .padding(EdgeInsets(top: 0, leading: 16, bottom: 12, trailing: 16))
         .disabled(!viewModel.buttonItem.enabled)
     }

@@ -16,7 +16,11 @@ class UserWalletManager: ObservableObject {
     @Injected private var solanaTracker: SolanaTracker
 
     /// Current selected wallet
-    @Published private(set) var wallet: UserWallet?
+    @Published private(set) var wallet: UserWallet? {
+        didSet {
+            notificationsService.registerForRemoteNotifications()
+        }
+    }
 
     /// Check if user logged in using web3 auth
     var isUserLoggedInUsingWeb3: Bool {
@@ -29,6 +33,12 @@ class UserWalletManager: ObservableObject {
         try await storage.reloadSolanaAccount()
 
         guard let account = storage.account else { return }
+        
+        let moonpayAccount = try await Account(
+            phrase: account.phrase,
+            network: .mainnetBeta,
+            derivablePath: DerivablePath(type: storage.derivablePath.type, walletIndex: 101, accountIndex: 0)
+        )
 
         wallet = .init(
             seedPhrase: account.phrase,
@@ -36,7 +46,8 @@ class UserWalletManager: ObservableObject {
             name: storage.getName(),
             deviceShare: nil,
             ethAddress: storage.ethAddress,
-            account: account
+            account: account,
+            moonpayExternalClientId: moonpayAccount.publicKey.base58EncodedString
         )
     }
 
@@ -73,7 +84,7 @@ class UserWalletManager: ObservableObject {
 
         // Notification service
         notificationsService.unregisterForRemoteNotifications()
-        Task.detached { [notificationsService] in await notificationsService.deleteDeviceToken() }
+        Task.detached { [notificationsService] in try await notificationsService.deleteDeviceToken() }
         Task.detached { try await Resolver.resolve(SendHistoryLocalProvider.self).save(nil) }
 
         // Storage
@@ -89,6 +100,11 @@ class UserWalletManager: ObservableObject {
         Defaults.forceCloseNameServiceBanner = false
         Defaults.shouldShowConfirmAlertOnSend = true
         Defaults.shouldShowConfirmAlertOnSwap = true
+        Defaults.moonpayInfoShouldHide = false
+        Defaults.isSellInfoPresented = false
+        Defaults.isTokenInputTypeChosen = false
+        Defaults.fromTokenAddress = nil
+        Defaults.toTokenAddress = nil
         
         walletSettings.reset()
 

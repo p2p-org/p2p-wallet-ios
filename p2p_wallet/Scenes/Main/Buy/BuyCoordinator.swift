@@ -58,9 +58,7 @@ final class BuyCoordinator: Coordinator<Void> {
             }
         }
 
-        analyticsManager
-            .log(event: AmplitudeEvent
-                .buyScreenOpened(lastScreen: context == .fromHome ? "Main_Screen" : "Token_Screen"))
+        analyticsManager.log(event: .buyScreenOpened(lastScreen: context == .fromHome ? "Main_Screen" : "Token_Screen"))
 
         viewController.onClose = {
             result.send()
@@ -141,8 +139,14 @@ final class BuyCoordinator: Coordinator<Void> {
             viewController.present(vc, animated: true)
 
             vc.onClose = { [weak self] in
-                self?.analyticsManager.log(event: AmplitudeEvent.moonpayWindowClosed)
+                self?.analyticsManager.log(event: .moonpayWindowClosed)
             }
+        }).store(in: &subscriptions)
+
+        viewModel.coordinatorIO.license.sink(receiveValue: { [weak self] url in
+            let vc = SFSafariViewController(url: url)
+            vc.modalPresentationStyle = .automatic
+            viewController.present(vc, animated: true)
         }).store(in: &subscriptions)
 
         return result.prefix(1).eraseToAnyPublisher()
@@ -181,6 +185,7 @@ extension BuyCoordinator {
         case fromToken
         case fromRenBTC
         case fromInvest
+        case fromHistory
 
         var screenName: String {
             switch self {
@@ -188,6 +193,7 @@ extension BuyCoordinator {
             case .fromToken: return "TokenScreen"
             case .fromRenBTC: return "RenBTCScreen"
             case .fromInvest: return "SolendScreen"
+            case .fromHistory: return "HistoryScreen"
             }
         }
     }

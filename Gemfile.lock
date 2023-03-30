@@ -37,7 +37,7 @@ GEM
     dotenv (2.8.1)
     emoji_regex (3.2.3)
     excon (0.93.1)
-    faraday (1.10.2)
+    faraday (1.10.3)
       faraday-em_http (~> 1.0)
       faraday-em_synchrony (~> 1.0)
       faraday-excon (~> 1.1)
@@ -107,7 +107,9 @@ GEM
       xcpretty-travis-formatter (>= 0.0.3)
     fastlane-plugin-browserstack (0.3.2)
       rest-client (~> 2.0, >= 2.0.2)
-    fastlane-plugin-firebase_app_distribution (0.3.7)
+    fastlane-plugin-firebase_app_distribution (0.5.0)
+    fastlane-plugin-sentry (1.15.0)
+      os (~> 1.1, >= 1.1.4)
     fastlane-plugin-slack_bot (1.3.0)
     fastlane-plugin-slack_upload (0.1.0)
       slack-ruby-client
@@ -163,7 +165,7 @@ GEM
     memoist (0.16.2)
     mime-types (3.4.1)
       mime-types-data (~> 3.2015)
-    mime-types-data (3.2022.0105)
+    mime-types-data (3.2023.0218.1)
     mini_magick (4.11.0)
     mini_mime (1.1.2)
     multi_json (1.15.0)
@@ -240,11 +242,13 @@ GEM
 
 PLATFORMS
   arm64-darwin-21
+  universal-darwin-22
 
 DEPENDENCIES
   fastlane
   fastlane-plugin-browserstack
   fastlane-plugin-firebase_app_distribution
+  fastlane-plugin-sentry
   fastlane-plugin-slack_bot
   fastlane-plugin-slack_upload
   xcode-install

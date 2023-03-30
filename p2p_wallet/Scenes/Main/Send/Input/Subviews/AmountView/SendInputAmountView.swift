@@ -27,7 +27,9 @@ struct SendInputAmountView: View {
                                 ) { textField in
                                     textField.font = Constants.inputFount
                                     textField.placeholder = "0"
+                                    textField.isEnabled = !viewModel.isDisabled
                                 }
+                                .accessibilityIdentifier("input-amount")
 
                                 if viewModel.isMaxButtonVisible {
                                     TextButtonView(
@@ -38,12 +40,12 @@ struct SendInputAmountView: View {
                                     )
                                     .transition(.opacity.animation(.easeInOut))
                                     .cornerRadius(radius: 32, corners: .allCorners)
-                                    .frame(width: 68)
+                                    .frame(width: 68, height: 28)
                                     .offset(x: viewModel.amountText.isEmpty
-                                            ? 16.0
-                                            : textWidth(font: Constants.inputFount, text: viewModel.amountText)
-                                    )
+                                        ? 16.0
+                                        : textWidth(font: Constants.inputFount, text: viewModel.amountText))
                                     .padding(.horizontal, 8)
+                                    .accessibilityIdentifier("max-button")
                                 }
                             }
 
@@ -51,58 +53,69 @@ struct SendInputAmountView: View {
                                 .foregroundColor(Color(mainColor))
                                 .font(uiFont: .systemFont(ofSize: UIFont.fontSize(of: .title2), weight: .bold))
                                 .opacity(switchAreaOpacity)
+                                .accessibilityIdentifier("current-currency")
                         }
-                        HStack(spacing: 2) {
-                            Text(viewModel.secondaryAmountText)
-                                .foregroundColor(Color(Asset.Colors.mountain.color))
-                                .apply(style: .text4)
-                                .lineLimit(1)
-                            Text(viewModel.secondaryCurrencyText)
-                                .foregroundColor(Color(Asset.Colors.mountain.color))
-                                .apply(style: .text4)
-                                .lineLimit(1)
-                            Spacer()
-                            Text(L10n.tapToSwitchTo(viewModel.secondaryCurrencyText))
-                                .foregroundColor(Color(Asset.Colors.mountain.color))
-                                .apply(style: .text4)
-                                .lineLimit(1)
-                                .opacity(switchAreaOpacity)
-                                .layoutPriority(1)
+                        if viewModel.showSecondaryAmounts {
+                            HStack(spacing: 2) {
+                                Text(viewModel.secondaryAmountText)
+                                    .foregroundColor(Color(Asset.Colors.mountain.color))
+                                    .apply(style: .text4)
+                                    .lineLimit(1)
+                                Text(viewModel.secondaryCurrencyText)
+                                    .foregroundColor(Color(Asset.Colors.mountain.color))
+                                    .apply(style: .text4)
+                                    .lineLimit(1)
+                                Spacer()
+                                if viewModel.isSwitchAvailable {
+                                    Text(L10n.tapToSwitchTo(viewModel.secondaryCurrencyText))
+                                        .foregroundColor(Color(Asset.Colors.mountain.color))
+                                        .apply(style: .text4)
+                                        .lineLimit(1)
+                                        .opacity(switchAreaOpacity)
+                                        .layoutPriority(1)
+                                }
+                            }
                         }
                     }
-                    Button(
-                        action: viewModel.switchPressed.send,
-                        label: {
-                            Image(uiImage: UIImage.arrowUpDown)
-                                .renderingMode(.template)
-                                .foregroundColor(Color(mainColor))
-                                .frame(width: 16, height: 16)
-                                .opacity(switchAreaOpacity)
-                        })
-                    .frame(width: 24, height: 24)
+                    if viewModel.isSwitchAvailable && viewModel.showSecondaryAmounts {
+                        Button(
+                            action: viewModel.switchPressed.send,
+                            label: {
+                                Image(uiImage: UIImage.arrowUpDown)
+                                    .renderingMode(.template)
+                                    .foregroundColor(Color(mainColor))
+                                    .frame(width: 16, height: 16)
+                                    .opacity(switchAreaOpacity)
+                            }
+                        )
+                        .frame(width: 24, height: 24)
+                    }
                 }
                 .padding(EdgeInsets(top: 21, leading: 24, bottom: 21, trailing: 12))
                 .background(RoundedRectangle(cornerRadius: 12))
                 .foregroundColor(Color(Asset.Colors.snow.color))
             }
-            tapToSwitchHiddenButton
+            if viewModel.isSwitchAvailable && viewModel.showSecondaryAmounts {
+                tapToSwitchHiddenButton
+            }
         }
         .frame(height: 90)
     }
 
     var tapToSwitchHiddenButton: some View {
         Button(action: {
-            withAnimation(.easeInOut(duration: 0.3), {
+            withAnimation(.easeInOut(duration: 0.3)) {
                 self.switchAreaOpacity = 0.3
-            })
+            }
             self.viewModel.switchPressed.send()
-            withAnimation(.easeInOut(duration: 0.3), {
+            withAnimation(.easeInOut(duration: 0.3)) {
                 self.switchAreaOpacity = 1
-            })
+            }
         }, label: {
-            VStack { }
+            VStack {}
                 .frame(width: 130, height: 90)
         })
+        .accessibilityIdentifier("switch-currency")
     }
 
     func textWidth(font: UIFont, text: String) -> CGFloat {
@@ -116,7 +129,10 @@ struct SendInputAmountView_Previews: PreviewProvider {
         ZStack {
             Color(Asset.Colors.smoke.color)
             SendInputAmountView(
-                viewModel: SendInputAmountViewModel(initialToken: .init(token: .nativeSolana))
+                viewModel: SendInputAmountViewModel(
+                    initialToken: .init(token: .nativeSolana),
+                    allowSwitchingMainAmountType: false
+                )
             )
             .padding(.horizontal, 16)
         }

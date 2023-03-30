@@ -19,6 +19,9 @@ FIREBASE_CLI_TOKEN = ENV["FIREBASE_CLI_TOKEN"]
 BROWSERSTACK_USERNAME = ENV["BROWSERSTACK_USERNAME"]
 BROWSERSTACK_ACCESS_KEY = ENV["BROWSERSTACK_ACCESS_KEY"]
 
+BROWSERSTACK_USERNAME_NEW = ENV["BROWSERSTACK_USERNAME_NEW"]
+BROWSERSTACK_ACCESS_KEY_NEW = ENV["BROWSERSTACK_ACCESS_KEY_NEW"]
+
 PROVISIONING_REPO = ENV["PROVISIONING_REPO"]
 IS_CI = ENV["IS_CI"] == "true"
 
@@ -117,7 +120,7 @@ def create_release_build(match_type, configuration)
   )
 end
 
-def upload_build(version, link, configuration)
+def upload_build(configuration, browserstack_username, browserstack_access_key, custom_id)
   # upload to firebase
   firebaseAppId = FIREBASE_APP_ID
   if configuration == "Test"
@@ -131,13 +134,23 @@ def upload_build(version, link, configuration)
   )
 
   # upload to browserstack
-  upload_to_browserstack_app_live(
-    browserstack_username: BROWSERSTACK_USERNAME,
-    browserstack_access_key: BROWSERSTACK_ACCESS_KEY
-  )
+  if custom_id.nil?
+    upload_to_browserstack_app_live(
+      browserstack_username: browserstack_username,
+      browserstack_access_key: browserstack_access_key
+    )
+  else
+    upload_to_browserstack_app_automate(
+      browserstack_username: browserstack_username,
+      browserstack_access_key: browserstack_access_key,
+      custom_id: custom_id
+    )
+  end
+  
+end 
 
+def notify(version, message)
   # upload to slack
-  message = "A build #{version} was uploaded for testing this feature. Link to issue: #{link}"
   slack_upload(
     slack_api_token: SLACK_API_TOKEN,
     title: "PWN-#{version}.ipa",
@@ -145,7 +158,7 @@ def upload_build(version, link, configuration)
     file_path: "./p2p_wallet.ipa",
     initial_comment: message
   )
-end 
+end
 
 def commit_changes
   version = get_version_number(target: "p2p_wallet")
@@ -161,11 +174,63 @@ def update_xcconfig
   sh("curl", "-o", config_url, ENV['XCCONFIG_URL'])
 end
 
+def upload_dsym_to_analytic_providers
+  sentry_upload_dsym(
+    auth_token: SENTRY_TOKEN,
+    org_slug: 'p2p-wallet',
+    project_slug: 'ios',
+  )
+end
+
+def upload_test(build_prefix, tag_prefix, browserstack_username, browserstack_access_key, custom_id)
+  # update xcconfig
+  update_xcconfig
+
+  # get number of builds released of this feature
+  number_of_released_builds = 0
+  build_number = number_of_released_builds + 1
+  current_build = build_prefix.to_s + "." + build_number.to_s # pwn-1234, released 1 build -> builds/feature_test/1234.2
+  while git_tag_exists(tag: "#{tag_prefix}/#{current_build}", remote: true)
+    build_number += 1
+    current_build = build_prefix.to_s + "." + build_number.to_s
+  end
+
+  # set build number
+  increment_build_number(
+    xcodeproj: "p2p_wallet.xcodeproj",
+    build_number: current_build,
+    skip_info_plist: true
+  )
+
+  # change app name
+  update_info_plist( # Change the Display Name of your app
+    plist_path: "./p2p_wallet/Info.plist",
+    display_name: "PW #{current_build}"
+  )
+
+  # create release build for this feature
+  create_release_build('ad-hoc', 'Test')
+
+  # upload dsym
+  upload_dsym_to_analytic_providers
+
+  # upload to firebase and browser stack
+  upload_build("Test", browserstack_username, browserstack_access_key, custom_id)
+
+  # delete temp keychain
+  delete_temp_keychain(TEMP_KEYCHAIN_USER)
+
+  # tag
+  tag_name = "#{tag_prefix}/#{current_build}"
+  add_git_tag(tag: tag_name)
+  push_git_tags(tag: tag_name)
+
+  # return version
+  return current_build
+end
+
 platform :ios do
   lane :feature_test do
-    # update xcconfig
-    update_xcconfig
-
     # get current branch name
     branch = git_branch.downcase
     puts "Current branch is #{branch}"
@@ -186,75 +251,29 @@ platform :ios do
       next
     end
 
-    # prepare for tagging
-    tag_prefix = "builds/feature_test"
-
-    # get number of builds released of this feature
-    number_of_released_builds = 0
-    build_number = number_of_released_builds + 1
-    current_build = feature_number.to_s + "." + build_number.to_s # pwn-1234, released 1 build -> builds/feature_test/1234.2
-    while git_tag_exists(tag: "#{tag_prefix}/#{current_build}", remote: true)
-      build_number += 1
-      current_build = feature_number.to_s + "." + build_number.to_s
-    end
-
-    puts "Set build number to #{current_build}"
-
-    # set build number
-    increment_build_number(
-      xcodeproj: "p2p_wallet.xcodeproj",
-      build_number: current_build,
-      skip_info_plist: true
+    # upload test build
+    version = upload_test(
+      feature_number, # build prefix
+      "builds/feature_test", # tag prefix
+      BROWSERSTACK_USERNAME,
+      BROWSERSTACK_ACCESS_KEY,
+      nil
     )
 
-    # change app name
-    update_info_plist( # Change the Display Name of your app
-      plist_path: "./p2p_wallet/Info.plist",
-      display_name: "PW #{current_build}"
-    )
-
-    # create release build for this feature
-    create_release_build('ad-hoc', 'Test')
-    upload_dsym_to_analytic_providers
-
-    # upload to firebase and browser stack
-    upload_build(
-      current_build,
-      "#{JIRA_BASE_URL}/browse/PWN-#{feature_number.to_s}",
-      "Test"
-    )
-
-    # delete temp keychain
-    delete_temp_keychain(TEMP_KEYCHAIN_USER)
-
-    # tag
-    tag_name = "#{tag_prefix}/#{current_build}"
-    add_git_tag(tag: tag_name)
-    push_git_tags(tag: tag_name)
+    # notify tester
+    message = "A build #{version} was uploaded for testing this feature. Link to issue: #{JIRA_BASE_URL}/browse/PWN-#{feature_number.to_s}"
+    notify(version, message)
 
     # output
     if IS_CI
       sh("echo BRANCH_NAME=#{branch} >> $GITHUB_ENV")
-      sh("echo BUILD_NUMBER=#{current_build} >> $GITHUB_ENV")
+      sh("echo BUILD_NUMBER=#{version} >> $GITHUB_ENV")
     end
-  end
-  
-  lane :upload_dsym_to_analytic_providers do
-    sentry_upload_dsym(
-      auth_token: SENTRY_TOKEN,
-      org_slug: 'p2p-wallet',
-      project_slug: 'ios',
-    )
   end
 
   lane :release do
     # update xcconfig
     update_xcconfig
-
-    # replace Test GoogleService-Info.plist by the Production one
-    gs_info_plist_dir = "../p2p_wallet/GoogleService-Info.plist"
-    sh("rm", gs_info_plist_dir)
-    sh("curl", "-o", gs_info_plist_dir, ENV['GOOGLE_SERVICE_INFO_PLIST_URL'])
 
     # get current branch name
     branch = git_branch.downcase
@@ -323,6 +342,13 @@ platform :ios do
       ipa: "./p2p_wallet.ipa"
     )
 
+    # upload to browserstack
+    upload_to_browserstack_app_automate(
+      browserstack_username: BROWSERSTACK_USERNAME_NEW,
+      browserstack_access_key: BROWSERSTACK_ACCESS_KEY_NEW,
+      custom_id: "KeyApp_rc.ipa"
+    )
+
     # post to slack
     full_version = "#{version} (#{build_number})"
     post_to_slack(
@@ -341,5 +367,34 @@ platform :ios do
     end
     add_git_tag(tag: tag)
     push_git_tags(tag: tag)
+  end
+
+  lane :daily_test do
+    # get current branch name
+    branch = git_branch.downcase
+    puts "Current branch is #{branch}"
+     
+    # check if branch is develop
+    if branch != "develop"
+      puts "The branch is not develop. Skipping..."
+      next
+    end
+
+    # get current date
+    time = Time.now.to_s
+    date = DateTime.parse(time).strftime("%y%m%d")
+
+    # upload test build
+    version = upload_test(
+      date, # build prefix
+      "builds/daily_test", # tag prefix
+      BROWSERSTACK_USERNAME_NEW,
+      BROWSERSTACK_ACCESS_KEY_NEW,
+      "KeyApp_dev.ipa"
+    )
+
+    # notify tester
+    message = "A daily build #{version} was uploaded."
+    notify(version, message)
   end
 end

@@ -13,7 +13,7 @@ struct SendEmptyView: View {
 
     var body: some View {
         ZStack {
-            Color(UIColor.f2F5Fa)
+            Color(Asset.Colors.smoke.color)
                 .ignoresSafeArea()
             VStack(alignment: .leading, spacing: 24) {
                 Spacer()
@@ -24,61 +24,43 @@ struct SendEmptyView: View {
                     .font(uiFont: .font(of: .title2, weight: .bold))
                     .frame(maxWidth: .infinity)
                     .padding(.bottom, 4)
+                    .accessibilityIdentifier("SendEmptyView.title")
                 VStack(alignment: .leading, spacing: 32) {
-                    rowView(
-                        image: .sendEmptyLighting,
-                        text: L10n.sendCryptoInTheSolanaNetworkInstantlyAndWithoutFees
+                    SendEmptyRowView(
+                        image: .lightningFilled,
+                        text: L10n.sendCryptoInTheSolanaNetworkInstantlyAndWithoutFees,
+                        textAccessibilityIdentifier: "SendEmptyView.desc1"
                     )
-                    rowView(
-                        image: .sendEmptyPerson,
-                        text: L10n.effortlesslySendTokensWithUsernamesInsteadOfLongAddresses
+                    SendEmptyRowView(
+                        image: .user,
+                        text: L10n.effortlesslySendTokensWithUsernamesInsteadOfLongAddresses,
+                        textAccessibilityIdentifier: "SendEmptyView.desc2"
                     )
                 }
                 .padding(.leading, 16)
                 .padding(.bottom, 20)
                 BottomActionContainer {
                     VStack(spacing: 12) {
-                        Button(
-                            action: {
-                                buyCrypto()
-                            },
-                            label: {
-                                Text(L10n.buyCrypto)
-                                    .foregroundColor(Color(Asset.Colors.night.color))
-                                    .font(uiFont: .font(of: .text3, weight: .semibold))
-                                    .frame(height: 56)
-                                    .frame(maxWidth: .infinity)
-                                    .background(Color(Asset.Colors.snow.color))
-                                    .cornerRadius(12)
-                            }
+                        TextButtonView(
+                            title: L10n.buyCrypto,
+                            style: .inverted,
+                            size: .large,
+                            onPressed: buyCrypto
                         )
-                        Button(
-                            action: {
-                                receive()
-                            },
-                            label: {
-                                Text(L10n.receive)
-                                    .foregroundColor(Color(Asset.Colors.lime.color))
-                                    .font(uiFont: .font(of: .text3, weight: .semibold))
-                                    .frame(height: 56)
-                                    .frame(maxWidth: .infinity)
-                                    .background(Color.clear)
-                            }
+                        .frame(height: 56)
+                        .accessibilityIdentifier("SendEmptyView.button1")
+                        TextButtonView(
+                            title: L10n.receive,
+                            style: .inverted,
+                            size: .large,
+                            onPressed: receive
                         )
+                        .frame(height: 56)
+                        .accessibilityIdentifier("SendEmptyView.button2")
                     }
                 }
             }
             .ignoresSafeArea(.all, edges: .bottom)
-        }
-    }
-
-    private func rowView(image: UIImage, text: String) -> some View {
-        HStack(spacing: 16) {
-            Image(uiImage: image)
-            Text(text)
-                .fixedSize(horizontal: false, vertical: true)
-                .foregroundColor(Color(Asset.Colors.night.color))
-                .font(uiFont: .font(of: .text3))
         }
     }
 }

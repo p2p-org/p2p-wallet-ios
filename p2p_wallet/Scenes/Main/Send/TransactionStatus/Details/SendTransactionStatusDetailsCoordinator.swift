@@ -1,12 +1,6 @@
 import Combine
 import SwiftUI
 
-struct SendTransactionStatusDetailsParameters {
-    let title: String
-    let description: String
-    let fee: String?
-}
-
 enum SendTransactionStatusDetailsCoordinatorResult {
     case close
 }

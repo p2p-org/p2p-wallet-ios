@@ -7,8 +7,7 @@
 
 import AnalyticsManager
 import Resolver
-import RxCocoa
-import RxSwift
+import Combine
 import SolanaSwift
 
 protocol ReceiveTokenSolanaViewModelType: BESceneModel {
@@ -30,7 +29,7 @@ extension ReceiveToken {
         @Injected private var clipboardManger: ClipboardManagerType
         @Injected private var notificationsService: NotificationService
         @Injected private var imageSaver: ImageSaverType
-        private let navigationSubject: PublishRelay<NavigatableScene?>
+        private let navigationSubject: PassthroughSubject<NavigatableScene?, Never>
 
         let pubkey: String
         let tokenWallet: Wallet?
@@ -39,7 +38,7 @@ extension ReceiveToken {
         init(
             solanaPubkey: String,
             solanaTokenWallet: Wallet? = nil,
-            navigationSubject: PublishRelay<NavigatableScene?>,
+            navigationSubject: PassthroughSubject<NavigatableScene?, Never>,
             hasExplorerButton: Bool
         ) {
             pubkey = solanaPubkey
@@ -55,18 +54,18 @@ extension ReceiveToken {
         var username: String? { nameStorage.getName() }
 
         func copyAction() {
-            analyticsManager.log(event: AmplitudeEvent.receiveAddressCopied)
+            analyticsManager.log(event: .receiveAddressCopied)
             clipboardManger.copyToClipboard(pubkey)
             notificationsService.showInAppNotification(.done(L10n.addressCopiedToClipboard))
         }
 
         func shareAction(image: UIImage) {
-            analyticsManager.log(event: AmplitudeEvent.receiveUsercardShared)
-            navigationSubject.accept(.share(address: pubkey, qrCode: image))
+            analyticsManager.log(event: .receiveUsercardShared)
+            navigationSubject.send(.share(address: pubkey, qrCode: image))
         }
 
         func saveAction(image: UIImage) {
-            analyticsManager.log(event: AmplitudeEvent.receiveQRSaved)
+            analyticsManager.log(event: .receiveQRSaved)
             imageSaver.save(image: image) { [weak self] result in
                 switch result {
                 case .success:
@@ -74,7 +73,7 @@ extension ReceiveToken {
                 case let .failure(error):
                     switch error {
                     case .noAccess:
-                        self?.navigationSubject.accept(.showPhotoLibraryUnavailable)
+                        self?.navigationSubject.send(.showPhotoLibraryUnavailable)
                     case .restrictedRightNow:
                         break
                     case let .unknown(error):
@@ -85,8 +84,8 @@ extension ReceiveToken {
         }
 
         func showSOLAddressInExplorer() {
-            analyticsManager.log(event: AmplitudeEvent.receiveViewingExplorer)
-            navigationSubject.accept(.showInExplorer(address: tokenWallet?.pubkey ?? pubkey))
+            analyticsManager.log(event: .receiveViewingExplorer)
+            navigationSubject.send(.showInExplorer(address: tokenWallet?.pubkey ?? pubkey))
         }
     }
 }

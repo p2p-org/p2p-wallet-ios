@@ -79,17 +79,18 @@ extension OrcaSwapV2 {
             }
 
             // update wallet after swapping
-            walletsRepository.dataObservable
+            walletsRepository.dataPublisher
+                .asObservable()
                 .skip(1)
                 .subscribe(onNext: { [weak self] wallets in
                     if self?.sourceWalletSubject.value?.pubkey != nil,
-                       let wallet = wallets?.first(where: { $0.pubkey == self?.sourceWalletSubject.value?.pubkey })
+                       let wallet = wallets.first(where: { $0.pubkey == self?.sourceWalletSubject.value?.pubkey })
                     {
                         self?.sourceWalletSubject.accept(wallet)
                     }
 
                     if self?.destinationWalletSubject.value?.pubkey != nil,
-                       let wallet = wallets?
+                       let wallet = wallets
                            .first(where: { $0.pubkey == self?.destinationWalletSubject.value?.pubkey })
                     {
                         self?.destinationWalletSubject.accept(wallet)
@@ -283,17 +284,17 @@ extension OrcaSwapV2 {
                     // show processing scene
                     self.navigationSubject.accept(
                         .processTransaction(
-                            ProcessTransaction.SwapTransaction(
+                            OrcaSwapTransaction(
                                 swapService: self.swapService,
                                 sourceWallet: sourceWallet,
                                 destinationWallet: destinationWallet,
-                                payingWallet: payingWallet,
+                                payingFeeWallet: payingWallet,
                                 authority: authority,
                                 poolsPair: bestPoolsPair,
-                                amount: inputAmount,
-                                estimatedAmount: estimatedAmount,
+                                fromAmount: inputAmount,
+                                toAmount: estimatedAmount,
                                 slippage: slippage,
-                                fees: fees,
+                                feeDetails: fees,
                                 metaInfo: .init(
                                     swapMAX: swapMAX,
                                     swapUSD: swapUSD

@@ -19,18 +19,17 @@ enum HomeNavigation: Equatable {
     case receive(publicKey: PublicKey)
     case send
     case swap
+    case cashOut
     case earn
-    case wallet(pubKey: String, tokenSymbol: String)
+    case wallet(Wallet)
     case actions([WalletActionType])
     // HomeEmpty
-    case topUp
     case topUpCoin(Token)
     // Error
     case error(show: Bool)
 }
 
 final class HomeCoordinator: Coordinator<Void> {
-    
     // MARK: - Dependencies
 
     @Injected private var analyticsManager: AnalyticsManager
@@ -38,15 +37,17 @@ final class HomeCoordinator: Coordinator<Void> {
     // MARK: - Properties
 
     private let navigationController: UINavigationController
+    private let tabBarController: TabBarController
     private let resultSubject = PassthroughSubject<Void, Never>()
-    
+
     var tokensViewModel: HomeWithTokensViewModel?
     let navigation = PassthroughSubject<HomeNavigation, Never>()
 
     // MARK: - Initializers
 
-    init(navigationController: UINavigationController) {
+    init(navigationController: UINavigationController, tabBarController: TabBarController) {
         self.navigationController = navigationController
+        self.tabBarController = tabBarController
     }
 
     // MARK: - Public actions
@@ -60,10 +61,10 @@ final class HomeCoordinator: Coordinator<Void> {
     override func start() -> AnyPublisher<Void, Never> {
         // Home with tokens
         tokensViewModel = HomeWithTokensViewModel(navigation: navigation)
-        
+
         // home with no token
         let emptyViewModel = HomeEmptyViewModel(navigation: navigation)
-        
+
         // home view
         let viewModel = HomeViewModel()
         let homeView = HomeView(
@@ -71,18 +72,14 @@ final class HomeCoordinator: Coordinator<Void> {
             viewModelWithTokens: tokensViewModel!,
             emptyViewModel: emptyViewModel
         ).asViewController() as! UIHostingControllerWithoutNavigation<HomeView>
-        
+
         // bind
-        homeView.viewWillAppear
-            .sink(receiveValue: { [unowned homeView] in
-                homeView.navigationIsHidden = true
-            })
-            .store(in: &subscriptions)
-        homeView.viewWillDisappear
-            .sink(receiveValue: { [unowned homeView] in
-                homeView.navigationIsHidden = false
-            })
-            .store(in: &subscriptions)
+        Publishers.Merge(
+            homeView.viewWillAppear.map { true },
+            homeView.viewWillDisappear.map { false }
+        )
+        .assign(to: \.navigationIsHidden, on: homeView)
+        .store(in: &subscriptions)
 
         // set view controller
         navigationController.setViewControllers([homeView], animated: false)
@@ -91,7 +88,7 @@ final class HomeCoordinator: Coordinator<Void> {
         navigationController.onClose = { [weak self] in
             self?.resultSubject.send(())
         }
-        
+
         // handle navigation
         navigation
             .flatMap { [unowned self] in
@@ -99,7 +96,7 @@ final class HomeCoordinator: Coordinator<Void> {
             }
             .sink(receiveValue: {})
             .store(in: &subscriptions)
-    
+
         // return publisher
         return resultSubject.prefix(1).eraseToAnyPublisher()
     }
@@ -109,18 +106,13 @@ final class HomeCoordinator: Coordinator<Void> {
     private func navigate(to scene: HomeNavigation, homeView: UIViewController) -> AnyPublisher<Void, Never> {
         switch scene {
         case .buy:
-            if available(.buyScenarioEnabled) {
-                return coordinate(to: BuyCoordinator(navigationController: navigationController, context: .fromHome))
-                    .map {_ in ()}
-                    .eraseToAnyPublisher()
-            } else {
-                return Just(presentBuyView())
-                    .eraseToAnyPublisher()
-            }
+            return coordinate(to: BuyCoordinator(navigationController: navigationController, context: .fromHome))
+                .map { _ in () }
+                .eraseToAnyPublisher()
         case .receive(let publicKey):
             let coordinator = ReceiveCoordinator(navigationController: navigationController, pubKey: publicKey)
-            analyticsManager.log(event: AmplitudeEvent.mainScreenReceiveOpen)
-            analyticsManager.log(event: AmplitudeEvent.receiveViewed(fromPage: "main_screen"))
+            analyticsManager.log(event: .mainScreenReceiveOpen)
+            analyticsManager.log(event: .receiveViewed(fromPage: "main_screen"))
             return coordinate(to: coordinator)
                 .eraseToAnyPublisher()
         case .send:
@@ -128,13 +120,14 @@ final class HomeCoordinator: Coordinator<Void> {
                 to: SendCoordinator(
                     rootViewController: navigationController,
                     preChosenWallet: nil,
-                    hideTabBar: true
+                    hideTabBar: true,
+                    allowSwitchingMainAmountType: true
                 )
             )
             .receive(on: RunLoop.main)
             .handleEvents(receiveOutput: { [weak self] result in
                 switch result {
-                case let .sent(model):
+                case .sent(let model):
                     self?.navigationController.popToRootViewController(animated: true)
                     self?.showSendTransactionStatus(model: model)
                 case .cancelled:
@@ -142,35 +135,29 @@ final class HomeCoordinator: Coordinator<Void> {
                 }
 //                tokensViewModel?.scrollToTop()
             })
-            .map {_ in ()}
+            .map { _ in () }
             .eraseToAnyPublisher()
-            
         case .swap:
-            analyticsManager.log(event: AmplitudeEvent.swapViewed(lastScreen: "main_screen"))
-            return coordinate(
-                to: SwapCoordinator(
-                    navigationController: navigationController,
-                    initialWallet: nil
+            analyticsManager.log(event: .swapViewed(lastScreen: "main_screen"))
+            if available(.jupiterSwapEnabled) {
+                return coordinate(
+                    to: JupiterSwapCoordinator(
+                        navigationController: navigationController,
+                        params: JupiterSwapParameters(
+                            dismissAfterCompletion: true,
+                            openKeyboardOnStart: true,
+                            source: .actionPanel
+                        )
+                    )
                 )
-            )
-            .receive(on: RunLoop.main)
-            .handleEvents(receiveOutput: { [weak tokensViewModel] result in
-                switch result {
-                case .cancel:
-                    break
-                case .done:
-                    tokensViewModel?.scrollToTop()
-                }
-            })
-            .map {_ in ()}
-            .eraseToAnyPublisher()
-        case .earn:
-            return Just(())
                 .eraseToAnyPublisher()
-        case .wallet(let pubKey, let tokenSymbol):
-            let model = WalletDetailCoordinator.Model(pubKey: pubKey, symbol: tokenSymbol)
-            let coordinator = WalletDetailCoordinator(navigationController: navigationController, model: model)
-            return coordinate(to: coordinator)
+            } else {
+                return coordinate(
+                    to: SwapCoordinator(
+                        navigationController: navigationController,
+                        initialWallet: nil
+                    )
+                )
                 .receive(on: RunLoop.main)
                 .handleEvents(receiveOutput: { [weak tokensViewModel] result in
                     switch result {
@@ -182,32 +169,99 @@ final class HomeCoordinator: Coordinator<Void> {
                 })
                 .map {_ in ()}
                 .eraseToAnyPublisher()
+            }
+        case .cashOut:
+            analyticsManager.log(event: .sellClicked(source: "Main"))
+            return coordinate(
+                to: SellCoordinator(navigationController: navigationController)
+            )
+            .receive(on: RunLoop.main)
+            .handleEvents(receiveOutput: { [weak self] result in
+                switch result {
+                case .completed:
+                    self?.tabBarController.changeItem(to: .history)
+                case .interupted:
+                    (self?.tabBarController.selectedViewController as? UINavigationController)?.popToRootViewController(animated: true)
+                    DispatchQueue.main.asyncAfter(deadline: .now() + 0.2) {
+                        self?.tabBarController.changeItem(to: .history)
+                    }
+                case .none:
+                    break
+                }
+            })
+            .map { _ in () }
+            .eraseToAnyPublisher()
+        case .earn:
+            return Just(())
+                .eraseToAnyPublisher()
+        case .wallet(let wallet):
+            if available(.historyServiceEnabled) {
+                analyticsManager.log(event: .mainScreenTokenDetailsOpen(tokenTicker: wallet.token.symbol))
+
+                return coordinate(
+                    to: DetailAccountCoordinator(
+                        args: .wallet(wallet),
+                        presentingViewController: navigationController
+                    )
+                )
+                .map { _ in () }
+                .eraseToAnyPublisher()
+            } else {
+                let model = WalletDetailCoordinator.Model(pubKey: wallet.pubkey ?? "", symbol: wallet.token.symbol)
+                let coordinator = WalletDetailCoordinator(navigationController: navigationController, model: model)
+                return coordinate(to: coordinator)
+                    .receive(on: RunLoop.main)
+                    .handleEvents(receiveOutput: { [weak tokensViewModel] result in
+                        switch result {
+                        case .cancel:
+                            break
+                        case .done:
+                            tokensViewModel?.scrollToTop()
+                        }
+                    })
+                    .map { _ in () }
+                    .eraseToAnyPublisher()
+            }
         case .actions:
             return Just(())
                 .eraseToAnyPublisher()
-        case .topUp:
-            return Just(!available(.buyScenarioEnabled) ? presentBuyView(): ())
-                .eraseToAnyPublisher()
         case .topUpCoin(let token):
-            guard [Token.nativeSolana, .usdc].contains(token) else {
-                return Just(()).eraseToAnyPublisher()
-            }
-            let coordinator: Coordinator<Void>
-            if available(.buyScenarioEnabled) {
-                coordinator = BuyCoordinator(
+            // SOL, USDC
+            if [Token.nativeSolana, .usdc].contains(token) {
+                let coordinator = BuyCoordinator(
                     navigationController: navigationController,
                     context: .fromHome,
                     defaultToken: token
                 )
-            } else {
-                coordinator = BuyPreparingCoordinator(
-                    navigationController: navigationController,
-                    strategy: .show,
-                    crypto: token == .usdc ? .usdc : token == .nativeSolana ? .sol : .eth
-                )
+                return self.coordinate(to: coordinator)
+                    .eraseToAnyPublisher()
             }
-            return self.coordinate(to: coordinator)
-                .eraseToAnyPublisher()
+            
+            // Other
+            var token = token
+            if token == .renBTC {
+                token = Token(.renBTC, customSymbol: "BTC")
+            }
+            return coordinate(
+                to: HomeBuyNotificationCoordinator(
+                    tokenFrom: .usdc, tokenTo: token, controller: navigationController
+                )
+            )
+            .flatMap { result -> AnyPublisher<Void, Never> in
+                switch result {
+                case .showBuy:
+                    return self.coordinate(
+                        to: BuyCoordinator(
+                            navigationController: self.navigationController,
+                            context: .fromHome,
+                            defaultToken: .usdc
+                        )
+                    )
+                default:
+                    return Just(()).eraseToAnyPublisher()
+                }
+            }
+            .eraseToAnyPublisher()
         case .error(let show):
             if show {
                 homeView.view.showConnectionErrorView(refreshAction: { [unowned homeView] in
@@ -220,25 +274,9 @@ final class HomeCoordinator: Coordinator<Void> {
         }
     }
 
-    private func presentBuyView() {
-        navigationController.present(
-            BuyTokenSelection.Scene(onTap: { [unowned self] in
-                let coordinator = BuyPreparingCoordinator(
-                    navigationController: navigationController,
-                    strategy: .show,
-                    crypto: $0
-                )
-                coordinate(to: coordinator)
-                    .sink(receiveValue: {})
-                    .store(in: &subscriptions)
-            }),
-            animated: true
-        )
-    }
-    
     private func showSendTransactionStatus(model: SendTransaction) {
         coordinate(to: SendTransactionStatusCoordinator(parentController: navigationController, transaction: model))
-            .sink(receiveValue: { })
+            .sink(receiveValue: {})
             .store(in: &subscriptions)
     }
 }

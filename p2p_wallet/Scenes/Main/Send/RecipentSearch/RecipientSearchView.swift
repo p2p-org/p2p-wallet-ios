@@ -10,7 +10,7 @@ import SwiftUI
 struct RecipientSearchView: View {
     @ObservedObject var viewModel: RecipientSearchViewModel
     @SwiftUI.Environment(\.scenePhase) var scenePhase
-    
+
     var body: some View {
         switch viewModel.loadingState {
         case .notRequested:
@@ -19,18 +19,9 @@ struct RecipientSearchView: View {
             ProgressView()
         case .loaded:
             loadedView
-        case .error(let error):
-            VStack {
-                #if !RELEASE
-                Text(error)
-                    .foregroundColor(.red)
-                #endif
-                Text("\(L10n.somethingWentWrong). \(L10n.tapToTryAgain)?")
-                    .onTapGesture {
-                        Task {
-                            await viewModel.load()
-                        }
-                    }
+        case .error(_):
+            RecipientErrorView {
+                Task { await viewModel.load() }
             }
         }
     }
@@ -52,10 +43,13 @@ struct RecipientSearchView: View {
                 } scan: {
                     viewModel.qr()
                 }
+                    .accessibilityIdentifier("RecipientSearchView.loadedView.RecipientSearchField")
 
                 // Result
                 if viewModel.isSearching {
-                    skeleton.padding(.top, 32)
+                    skeleton
+                        .padding(.top, 32)
+                        .accessibilityIdentifier("RecipientSearchView.loadedView.Skeleton")
                     Spacer()
                 } else {
                     if let result = viewModel.searchResult {
@@ -65,7 +59,8 @@ struct RecipientSearchView: View {
                                 // Ok case
                                 if recipients.isEmpty {
                                     // Not found
-                                    RecipientNotFoundView()
+                                    NotFoundView(text: L10n.AddressNotFound.tryAnotherOne)
+                                        .accessibilityIdentifier("RecipientSearchView.loadedView.SendNotFoundView")
                                         .padding(.top, 32)
                                 } else {
                                     // With result
@@ -84,10 +79,20 @@ struct RecipientSearchView: View {
                                     reason: L10n.accountCreationForThisAddressIsNotPossibleDueToInsufficientFunds
                                 )
                             case let .selfSendingError(recipient):
-                                disabledAndReason(
-                                    recipient,
-                                    reason: L10n.youCannotSendTokensToYourself
-                                )
+                                switch recipient.category {
+                                case let .solanaTokenAddress(_, token):
+                                    disabledAndReason(
+                                        recipient,
+                                        reason: L10n.youCannotSendTokensToYourself,
+                                        subtitle: L10n.yourAddress(token.symbol)
+                                    )
+                                default:
+                                    disabledAndReason(
+                                        recipient,
+                                        reason: L10n.youCannotSendTokensToYourself,
+                                        subtitle: L10n.yourAddress("").replacingOccurrences(of: "  ", with: " ") // Empty param creates 2 spaces
+                                    )
+                                }
                             case .nameServiceError:
                                 tryLater(title: L10n.solanaNameServiceDoesnTRespond)
                                     .padding(.top, 38)
@@ -162,14 +167,16 @@ struct RecipientSearchView: View {
                 .foregroundColor(Color(Asset.Colors.rose.color))
             Text(title)
                 .apply(style: .text3)
+                .accessibilityIdentifier("RecipientSearchView.tryLater.title")
             Text(L10n.weSuggestYouTryAgainLaterBecauseWeWillNotBeAbleToVerifyTheAddressIfYouContinue)
                 .apply(style: .text3)
                 .multilineTextAlignment(.center)
+                .accessibilityIdentifier("RecipientSearchView.tryLater.weSuggestYouTryAgainLaterBecauseWeWillNotBeAbleToVerifyTheAddressIfYouContinue")
         }
         .foregroundColor(Color(Asset.Colors.night.color))
     }
 
-    func disabledAndReason(_ recipient: Recipient, reason: String) -> some View {
+    func disabledAndReason(_ recipient: Recipient, reason: String, subtitle: String? = nil) -> some View {
         VStack(alignment: .leading, spacing: 32) {
             HStack {
                 Text(L10n.hereSWhatWeFound)
@@ -178,61 +185,21 @@ struct RecipientSearchView: View {
                 Spacer()
             }
 
-            RecipientCell(recipient: recipient)
+            RecipientCell(recipient: recipient, subtitle: subtitle)
                 .disabled(true)
+//                .accessibilityIdentifier("RecipientSearchView.disabledAndReason.RecipientCell")
 
             Text(reason)
                 .apply(style: .text4)
                 .foregroundColor(Color(Asset.Colors.rose.color))
+                .accessibilityIdentifier("RecipientSearchView.disabledAndReason.reason")
         }
     }
 
     func history(_ recipients: [Recipient]) -> some View {
         Group {
             if recipients.isEmpty {
-                switch viewModel.recipientsHistoryStatus {
-                case .initializing:
-                    VStack(spacing: 16) {
-                        Spinner()
-                            .frame(width: 28, height: 28)
-                        Text("Initializing transfer history")
-                            .apply(style: .text3)
-                        Spacer()
-                    }.padding(.top, 48)
-                default:
-                    VStack(spacing: 16) {
-                        Text(L10n.makeYourFirstTransaction)
-                            .fontWeight(.bold)
-                            .apply(style: .title2)
-                        Text(L10n.toContinuePasteOrScanTheAddressOrTypeAUsername)
-                            .apply(style: .text1)
-                            .multilineTextAlignment(.center)
-                        Spacer()
-                        HStack(spacing: 8) {
-                            TextButtonView(
-                                title: L10n.scanQR,
-                                style: .primary,
-                                size: .large,
-                                leading: Asset.Icons.qr.image
-                            ) {
-                                viewModel.qr()
-                            }
-                            .frame(height: TextButton.Size.large.height)
-                            .cornerRadius(28)
-
-                            TextButtonView(
-                                title: L10n.paste,
-                                style: .primary,
-                                size: .large,
-                                leading: Asset.Icons.past.image
-                            ) {
-                                viewModel.past()
-                            }
-                            .frame(height: TextButton.Size.large.height)
-                            .cornerRadius(28)
-                        }.padding(.bottom, 8)
-                    }.padding(.top, 48)
-                }
+                emptyRecipientsView
             } else {
                 ScrollView(showsIndicators: false) {
                     VStack(alignment: .leading) {
@@ -254,6 +221,7 @@ struct RecipientSearchView: View {
                                             Spacer()
                                         }
                                     }
+                                    .accessibilityIdentifier("RecipientSearchView.loadedView.\(recipient.address)")
                                 }
                             }
                         }
@@ -269,6 +237,52 @@ struct RecipientSearchView: View {
                 }
             }
         }
+    }
+
+    var emptyRecipientsView: some View {
+        VStack(spacing: 16) {
+            switch viewModel.recipientsHistoryStatus {
+            case .initializing:
+                Spinner()
+                    .frame(width: 28, height: 28)
+                Text("Initializing transfer history")
+                    .apply(style: .text3)
+                Spacer()
+            default:
+                Text(L10n.makeYourFirstTransaction)
+                    .fontWeight(.bold)
+                    .apply(style: .title2)
+                Text(L10n.toContinuePasteOrScanTheAddressOrTypeAUsername)
+                    .apply(style: .text1)
+                    .multilineTextAlignment(.center)
+                Spacer()
+                HStack(spacing: 8) {
+                    TextButtonView(
+                        title: L10n.scanQR,
+                        style: .primary,
+                        size: .large,
+                        leading: Asset.Icons.qr.image
+                    ) {
+                        viewModel.qr()
+                    }
+                    .frame(height: TextButton.Size.large.height)
+                    .cornerRadius(28)
+                    .accessibilityIdentifier("RecipientSearchView.loadedView.emptyRecipientsView.sqanQR")
+
+                    TextButtonView(
+                        title: L10n.paste,
+                        style: .primary,
+                        size: .large,
+                        leading: Asset.Icons.past.image
+                    ) {
+                        viewModel.past()
+                    }
+                    .frame(height: TextButton.Size.large.height)
+                    .cornerRadius(28)
+                    .accessibilityIdentifier("RecipientSearchView.loadedView.emptyRecipientsView.pasteButton")
+                }.padding(.bottom, 8)
+            }
+        }.padding(.top, 48)
     }
 
     func okView(_ recipients: [Recipient]) -> some View {
@@ -291,6 +305,7 @@ struct RecipientSearchView: View {
                                 Spacer()
                             }
                         }
+                            .accessibilityIdentifier("RecipientSearchView.okView.recipientCell")
 
                         if recipient.category == .solanaAddress && !recipient.attributes.contains(.funds) {
                             HStack {
@@ -329,6 +344,7 @@ struct RecipientSearchView: View {
                     }
                     .frame(height: TextButton.Size.large.height)
                     .cornerRadius(28)
+                    .accessibilityIdentifier("RecipientSearchView.okView.TextButtonView.recipient")
                 }
             }
         }

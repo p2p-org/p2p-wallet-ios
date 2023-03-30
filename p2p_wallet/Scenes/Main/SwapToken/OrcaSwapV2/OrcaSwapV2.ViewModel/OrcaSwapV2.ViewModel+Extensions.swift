@@ -140,8 +140,8 @@ extension OrcaSwapV2.ViewModel: OrcaSwapV2ViewModelType {
     }
     #endif
 
-    func getPrice(symbol: String) -> Double? {
-        pricesService.currentPrice(for: symbol)?.value
+    func getPrice(mint: String) -> Double? {
+        pricesService.currentPrice(mint: mint)?.value
     }
 
     // MARK: - Actions
@@ -167,7 +167,7 @@ extension OrcaSwapV2.ViewModel: OrcaSwapV2ViewModelType {
 
     func chooseSourceWallet() {
         isSelectingSourceWallet = true
-        analyticsManager.log(event: AmplitudeEvent.tokenListViewed(lastScreen: "Swap", tokenListLocation: "Token_A"))
+        analyticsManager.log(event: .tokenListViewed(lastScreen: "Swap", tokenListLocation: "Token_A"))
         navigationSubject.accept(.chooseSourceWallet(currentlySelectedWallet: sourceWalletSubject.value))
     }
 
@@ -179,7 +179,7 @@ extension OrcaSwapV2.ViewModel: OrcaSwapV2ViewModelType {
             destinationMints = validMints
         }
         isSelectingSourceWallet = false
-        analyticsManager.log(event: AmplitudeEvent.tokenListViewed(lastScreen: "Swap", tokenListLocation: "Token_B"))
+        analyticsManager.log(event: .tokenListViewed(lastScreen: "Swap", tokenListLocation: "Token_B"))
         navigationSubject.accept(.chooseDestinationWallet(
             currentlySelectedWallet: destinationWalletSubject.value,
             validMints: Set(destinationMints),
@@ -258,10 +258,10 @@ extension OrcaSwapV2.ViewModel: OrcaSwapV2ViewModelType {
 
     func walletDidSelect(_ wallet: Wallet) {
         if isSelectingSourceWallet {
-            analyticsManager.log(event: AmplitudeEvent.swapChangingTokenA(tokenA_Name: wallet.token.symbol))
+            analyticsManager.log(event: .swapChangingTokenA(tokenA_Name: wallet.token.symbol))
             sourceWalletSubject.accept(wallet)
         } else {
-            analyticsManager.log(event: AmplitudeEvent.swapChangingTokenB(tokenB_Name: wallet.token.symbol))
+            analyticsManager.log(event: .swapChangingTokenB(tokenB_Name: wallet.token.symbol))
             destinationWalletSubject.accept(wallet)
         }
     }

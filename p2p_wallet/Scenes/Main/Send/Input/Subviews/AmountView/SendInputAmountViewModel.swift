@@ -1,8 +1,11 @@
 import Combine
 import KeyAppUI
 import SolanaSwift
+import Resolver
 
 final class SendInputAmountViewModel: BaseViewModel, ObservableObject {
+    // MARK: - Nested type
+
     enum EnteredAmountType {
         case fiat
         case token
@@ -13,12 +16,19 @@ final class SendInputAmountViewModel: BaseViewModel, ObservableObject {
         let inToken: Double
     }
 
+    // MARK: - Actions
+
     let switchPressed = PassthroughSubject<Void, Never>()
     let maxAmountPressed = PassthroughSubject<Void, Never>()
     let changeAmount = PassthroughSubject<(amount: Amount, type: EnteredAmountType), Never>()
 
+    // MARK: - Properties
+
     // State
-    @Published var token: Wallet
+    @Published var token: Wallet {
+        didSet { tokenChangedEvent.send(token) }
+    }
+
     @Published var maxAmountToken: Double = 0
     var wasMaxUsed: Bool = false // Analytic param
 
@@ -28,22 +38,31 @@ final class SendInputAmountViewModel: BaseViewModel, ObservableObject {
     @Published var amountTextColor: UIColor = Asset.Colors.night.color
     @Published var mainTokenText = ""
     @Published var mainAmountType: EnteredAmountType = .fiat
+    @Published var isSwitchAvailable = true
     @Published var isMaxButtonVisible: Bool = true
 
     @Published var secondaryAmountText = ""
     @Published var secondaryCurrencyText = ""
 
     @Published var isFirstResponder: Bool = false
+    @Published var isDisabled = false
     @Published var amount: Amount?
     @Published var isError: Bool = false
     @Published var countAfterDecimalPoint: Int
+    @Published var showSecondaryAmounts = true
 
     private let fiat: Fiat
+    private var tokenChangedEvent = CurrentValueSubject<Wallet, Never>(.init(token: .nativeSolana))
 
-    init(initialToken: Wallet) {
+    // MARK: - Dependencies
+    private let pricesService: PricesServiceType
+
+    init(initialToken: Wallet, allowSwitchingMainAmountType: Bool) {
         fiat = Defaults.fiat
         token = initialToken
         countAfterDecimalPoint = Constants.fiatDecimals
+        mainAmountType = Defaults.isTokenInputTypeChosen ? .token : .fiat
+        pricesService = Resolver.resolve(PricesServiceType.self)
 
         super.init()
 
@@ -79,10 +98,22 @@ final class SendInputAmountViewModel: BaseViewModel, ObservableObject {
             }
             .store(in: &subscriptions)
 
-        $token
-            .sink { [weak self] value in
-                self?.updateCurrencyTitles(for: value)
-                self?.updateDecimalsPoint(for: value)
+        // Do not subscribe to token publisher directly as it emits the value before changing it (willSet instead of
+        // didSet)
+        tokenChangedEvent
+            .sink { [weak self] token in
+                guard let self = self else { return }
+
+                if token.priceInCurrentFiat == nil {
+                    self.mainAmountType = .token
+                    self.showSecondaryAmounts = false
+                } else {
+                    self.showSecondaryAmounts = true
+                }
+
+                self.updateCurrencyTitles()
+                self.updateDecimalsPoint()
+                self.validateDecimalsInAmount()
             }
             .store(in: &subscriptions)
 
@@ -111,6 +142,7 @@ final class SendInputAmountViewModel: BaseViewModel, ObservableObject {
                 case .fiat: self.mainAmountType = .token
                 case .token: self.mainAmountType = .fiat
                 }
+                self.saveInputTypeChoice()
                 if let oldAmount = self.amount {
                     // Toggle amount values because inputField is different type now
                     self.amount = Amount(inFiat: oldAmount.inToken, inToken: oldAmount.inFiat)
@@ -119,53 +151,98 @@ final class SendInputAmountViewModel: BaseViewModel, ObservableObject {
                 self.updateDecimalsPoint()
             }
             .store(in: &subscriptions)
+
+        $mainAmountType
+            .sink { [weak self] type in
+                guard let self else { return }
+                let currentWallet = self.token
+                switch type {
+                case .fiat:
+                    self.mainTokenText = self.fiat.code
+                    self.secondaryCurrencyText = currentWallet.token.symbol
+                case .token:
+                    self.mainTokenText = currentWallet.token.symbol
+                    self.secondaryCurrencyText = self.fiat.code
+                }
+            }
+            .store(in: &subscriptions)
+
+        pricesService.isPricesAvailablePublisher
+            .sink { [weak self] isAvailable in
+                guard let self else { return }
+                self.showSecondaryAmounts = isAvailable
+                if !isAvailable {
+                    self.mainAmountType = .token
+                    self.isSwitchAvailable = false
+                } else {
+                    self.isSwitchAvailable = allowSwitchingMainAmountType
+                }
+            }
+            .store(in: &subscriptions)
     }
 }
 
 private extension SendInputAmountViewModel {
-    func updateCurrencyTitles(for wallet: Wallet? = nil) {
-        let currentWallet = wallet ?? self.token
+    func updateCurrencyTitles() {
         switch mainAmountType {
         case .fiat:
-            self.mainTokenText = self.fiat.code
-            self.secondaryCurrencyText = currentWallet.token.symbol
-            self.maxAmountTextInCurrentType = (self.maxAmountToken * currentWallet.priceInCurrentFiat).formatFiatWithDown()
+            mainTokenText = fiat.code
+            secondaryCurrencyText = token.token.symbol
+            maxAmountTextInCurrentType = (maxAmountToken * token.priceInCurrentFiat).formatFiatWithDown()
         case .token:
-            self.mainTokenText = currentWallet.token.symbol
-            self.secondaryCurrencyText = self.fiat.code
-            self.maxAmountTextInCurrentType = self.maxAmountToken.formatTokenWithDown(decimals: currentWallet.decimals)
+            mainTokenText = token.token.symbol
+            secondaryCurrencyText = fiat.code
+            maxAmountTextInCurrentType = maxAmountToken.formatTokenWithDown(decimals: token.decimals)
         }
-        self.updateSecondaryAmount(for: currentWallet)
-        self.validateAmount()
+        updateSecondaryAmount()
+        validateAmount()
     }
 
-    func updateSecondaryAmount(for wallet: Wallet? = nil) {
-        let currentWallet = wallet ?? self.token
-        switch self.mainAmountType {
+    func updateSecondaryAmount() {
+        switch mainAmountType {
         case .token:
-            self.secondaryAmountText = (self.amount?.inToken * currentWallet.priceInCurrentFiat).formatFiatWithDown()
+            let fiatAmount = amount?.inToken * token.priceInCurrentFiat
+            let minCondition = fiatAmount > 0 && fiatAmount < Constants.minFiatDisplayAmount
+            secondaryAmountText = minCondition ? L10n
+                .lessThan(Constants.minFiatDisplayAmount.formatFiatWithDown()) : fiatAmount.formatFiatWithDown()
 
         case .fiat:
-            self.secondaryAmountText = (self.amount?.inFiat / currentWallet.priceInCurrentFiat).formatTokenWithDown(decimals: currentWallet.decimals)
+            secondaryAmountText = (amount?.inFiat / token.priceInCurrentFiat)
+                .formatTokenWithDown(decimals: token.decimals)
         }
     }
 
     func validateAmount() {
-        changeAmount.send((self.amount ?? .zero, mainAmountType))
+        changeAmount.send((amount ?? .zero, mainAmountType))
     }
 
-    func updateDecimalsPoint(for wallet: Wallet? = nil) {
-        let currentWallet = wallet ?? self.token
-        self.countAfterDecimalPoint = self.mainAmountType == .token ? currentWallet.decimals : Constants.fiatDecimals
+    func validateDecimalsInAmount() {
+        // Cut decimals in token input if its count is changed
+        switch mainAmountType {
+        case .token:
+            guard let amountInToken = amount?.inToken else { return }
+            amountText = amountInToken.formatTokenWithDown(decimals: token.decimals)
+        case .fiat:
+            break
+        }
+    }
+
+    func updateDecimalsPoint() {
+        countAfterDecimalPoint = mainAmountType == .token ? token.decimals : Constants.fiatDecimals
+    }
+
+    func saveInputTypeChoice() {
+        Defaults.isTokenInputTypeChosen = mainAmountType == .token
     }
 }
 
 private extension Wallet {
-    var decimals: Int { Int(self.token.decimals) }
+    var decimals: Int { Int(token.decimals) }
 }
 
 private enum Constants {
     static let fiatDecimals = 2
+    static let minFiatDisplayAmount = 0.01
 }
 
 private extension SendInputAmountViewModel.Amount {
@@ -174,10 +251,10 @@ private extension SendInputAmountViewModel.Amount {
 
 private extension Double {
     func formatFiatWithDown() -> String {
-        return self.toString(maximumFractionDigits: Constants.fiatDecimals, roundingMode: .down)
+        toString(maximumFractionDigits: Constants.fiatDecimals, roundingMode: .down)
     }
 
     func formatTokenWithDown(decimals: Int) -> String {
-        return self.toString(maximumFractionDigits: decimals, roundingMode: .down)
+        toString(maximumFractionDigits: decimals, roundingMode: .down)
     }
 }

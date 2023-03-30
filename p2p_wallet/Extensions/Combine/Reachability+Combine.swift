@@ -80,7 +80,7 @@ public extension Reachability {
         print(connection)
         switch connection {
         case .unavailable:
-            Resolver.resolve(NotificationService.self).showToast(title: "☕️", text: L10n.YouReOffline.keepCalm)
+            Resolver.resolve(NotificationService.self).showToast(title: "☕️", text: L10n.noInternetConnection)
             return false
         default:
             return true

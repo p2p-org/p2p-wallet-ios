@@ -7,10 +7,10 @@
 
 public extension Feature {
     static let coinGeckoPriceProvider = Feature(rawValue: "coinGeckoPriceProvider")
-    static let buyScenarioEnabled = Feature(rawValue: "keyapp_buy_scenario_enabled")
+    static let sellScenarioEnabled = Feature(rawValue: "keyapp_sell_scenario_enabled")
     static let buyBankTransferEnabled = Feature(rawValue: "buy_bank_transfer_enabled")
-    static let settingsFeature = Feature(rawValue: "settingsFeature")
     static let newOnboardingFlow = Feature(rawValue: "newOnboardingFlow")
+    static let jupiterSwapEnabled = Feature(rawValue: "keyapp_swap_jupiter_enabled")
 
     // Username
     static let onboardingUsernameEnabled = Feature(rawValue: "ios_onboarding_username_enabled")
@@ -31,4 +31,7 @@ public extension Feature {
 
     // Ren BTC
     static let receiveRenBtcEnabled = Feature(rawValue: "receive_ren_btc_enabled")
+    
+    // History
+    static let historyServiceEnabled = Feature(rawValue: "history_service_enabled")
 }

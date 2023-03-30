@@ -9,8 +9,6 @@ import FeeRelayerSwift
 import Foundation
 import OrcaSwapSwift
 import Resolver
-import RxConcurrency
-import RxSwift
 import SolanaSwift
 
 class RenBTCStatusService: RenBTCStatusServiceType {
@@ -120,7 +118,7 @@ class RenBTCStatusService: RenBTCStatusServiceType {
         )
 
         // relay transaction
-        _ = try await relayService.topUpAndRelayTransaction(
+        _ = try await relayService.topUpIfNeededAndRelayTransaction(
             preparedTransaction,
             fee: payingFeeToken,
             config: .init(

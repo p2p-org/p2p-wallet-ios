@@ -10,13 +10,13 @@ import SwiftUI
 
 struct PopularCoinView: View {
     let title: String
-    let subtitle: String
+    let subtitle: String?
     let actionTitle: String
     let image: UIImage
 
     init(
         title: String,
-        subtitle: String,
+        subtitle: String?,
         actionTitle: String,
         image: UIImage
     ) {
@@ -40,9 +40,11 @@ struct PopularCoinView: View {
                         Text(title)
                             .foregroundColor(Color(Asset.Colors.night.color))
                             .font(uiFont: .font(of: .text2))
-                        Text(subtitle)
-                            .foregroundColor(Color(Asset.Colors.mountain.color))
-                            .font(uiFont: .font(of: .label1))
+                        if let subtitle {
+                            Text(subtitle)
+                                .foregroundColor(Color(Asset.Colors.mountain.color))
+                                .font(uiFont: .font(of: .label1))
+                        }
                     }
                     .font(uiFont: .font(of: .text1, weight: .semibold))
                 }
