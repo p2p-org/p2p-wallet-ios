@@ -22,12 +22,6 @@ public enum WormholeSendInputState: Equatable {
         orcaSwap: OrcaSwapType
     )
 
-    case unauthorized
-
-    case initializing(
-        input: WormholeSendInputBase
-    )
-
     case initializingFailure(
         input: WormholeSendInputBase?,
         error: InitializingError
@@ -51,53 +45,6 @@ public enum WormholeSendInputState: Equatable {
 
     public func onAccept(action: WormholeSendInputAction, service: Service) async -> Self {
         switch self {
-        case let .initializing(input):
-            switch action {
-            case .initialize:
-                let fees: SendFees
-                do {
-                    fees = try await service.wormhole.getTransferFees(
-                        recipient: input.recipient,
-                        mint: input.solanaAccount.data.token.address,
-                        amount: String(input.amount.value)
-                    )
-                } catch {
-                    return .initializingFailure(input: input, error: .getTransactionsFailure)
-                }
-
-                let solanaFees: CryptoAmount = [fees.networkFee, fees.messageAccountRent, fees.bridgeFee]
-                    .compactMap { $0 }
-                    .map { tokenAmount in
-                        CryptoAmount(bigUIntString: tokenAmount.amount, token: SolanaToken.nativeSolana)
-                    }
-                    .reduce(CryptoAmount(token: SolanaToken.nativeSolana), +)
-
-                let transactions: SendTransaction
-                do {
-                    let feePayerAddress = try await service.relayContextManager.getCurrentContextOrUpdate()
-                        .feePayerAddress
-                        .base58EncodedString
-
-                    transactions = try await service.wormhole.transferFromSolana(
-                        feePayer: feePayerAddress,
-                        from: input.solanaAccount.data.pubkey ?? "",
-                        recipient: input.recipient,
-                        mint: input.solanaAccount.data.token.address,
-                        amount: String(input.amount.value)
-                    )
-                } catch {
-                    return .initializingFailure(input: input, error: .calculateFeePayerFailure)
-                }
-
-                return .ready(
-                    input: input,
-                    output: .init(feePayer: feePayerBestCandidate, transactions: transactions, fees: fees),
-                    alert: nil
-                )
-            default:
-                return self
-            }
-
         case let .ready(input, _, _):
             switch action {
             case let .updateInput(newInput):
@@ -135,35 +82,13 @@ public enum WormholeSendInputState: Equatable {
                     return .error(input: input, output: nil, error: .calculationFeeFailure)
                 }
 
-                // Build transaction
-                let transactions: SendTransaction
-                do {
-                    transactions = try await service.wormhole.transferFromSolana(
-                        feePayer: input.feePayer,
-                        from: input.solanaAccount.data.pubkey ?? "",
-                        recipient: input.recipient,
-                        mint: input.solanaAccount.data.token.address,
-                        amount: String(input.amount.value)
-                    )
-                } catch {
-                    return .error(
-                        input: input,
-                        output: .init(transactions: nil, fees: fees),
-                        error: .getTransferTransactionsFailure
-                    )
-                }
-
-                // Check fee is greater than sending amount
-                var alert: WormholeSendInputAlert?
-                if
-                    let price = input.solanaAccount.price,
-                    let inputAmountInFiat = try? input.amount.toFiatAmount(price: price)
-                {
-                    if inputAmountInFiat <= fees.totalInFiat {
-                        alert = .feeIsMoreThanInputAmount
+                let solanaFees: CryptoAmount = [fees.networkFee, fees.messageAccountRent, fees.bridgeFee]
+                    .compactMap { $0 }
+                    .map { tokenAmount in
+                        CryptoAmount(bigUIntString: tokenAmount.amount, token: SolanaToken.nativeSolana)
                     }
-                }
-                
+                    .reduce(CryptoAmount(token: SolanaToken.nativeSolana), +)
+
                 let feePayerCandidates: [SolanaAccount] = [
                     // Same account
                     input.availableAccounts.first(where: { account in
@@ -213,12 +138,54 @@ public enum WormholeSendInputState: Equatable {
                 }
 
                 guard let feePayerBestCandidate = feePayerBestCandidate ?? input.availableAccounts.nativeWallet else {
-                    return .initializingFailure(input: input, error: .calculateFeeFailure)
+                    return .error(
+                        input: input,
+                        output: .init(feePayer: nil, transactions: nil, fees: fees),
+                        error: .calculationFeePayerFailure
+                    )
+                }
+
+                // Build transaction
+                let transactions: SendTransaction
+                do {
+                    let feePayerAddress = try await service.relayContextManager.getCurrentContextOrUpdate()
+                        .feePayerAddress
+                        .base58EncodedString
+
+                    transactions = try await service.wormhole.transferFromSolana(
+                        feePayer: feePayerAddress,
+                        from: input.solanaAccount.data.pubkey ?? "",
+                        recipient: input.recipient,
+                        mint: input.solanaAccount.data.token.address,
+                        amount: String(input.amount.value)
+                    )
+                } catch {
+                    return .error(
+                        input: input,
+                        output: .init(
+                            feePayer: nil,
+                            transactions: nil,
+                            fees: fees
+                        ),
+                        error: .getTransferTransactionsFailure
+                    )
+                }
+
+                // Check fee is greater than sending amount
+                var alert: WormholeSendInputAlert?
+                if
+                    let price = input.solanaAccount.price,
+                    let inputAmountInFiat = try? input.amount.toFiatAmount(price: price)
+                {
+                    if inputAmountInFiat <= fees.totalInFiat {
+                        alert = .feeIsMoreThanInputAmount
+                    }
                 }
 
                 return .ready(
                     input: input,
                     output: .init(
+                        feePayer: feePayerBestCandidate,
                         transactions: transactions,
                         fees: fees
                     ),
@@ -268,8 +235,6 @@ public enum WormholeSendInputState: Equatable {
 extension WormholeSendInputState: AutoTriggerState {
     public func trigger(service _: Service) async -> WormholeSendInputAction? {
         switch self {
-        case .initializing:
-            return .initialize
         case .calculating:
             return .calculate
         default:
@@ -281,7 +246,7 @@ extension WormholeSendInputState: AutoTriggerState {
 extension WormholeSendInputState: CancableState {
     public func isCancable() -> Bool {
         switch self {
-        case .initializing, .initializingFailure, .ready, .unauthorized, .error:
+        case .initializingFailure, .ready, .error:
             return false
         case .calculating:
             return true
@@ -309,31 +274,19 @@ public struct WormholeSendInputBase: Equatable {
         solanaAccount: SolanaAccount,
         availableAccounts: [SolanaAccount],
         amount: CryptoAmount,
-        recipient: String,
-        feePayer: String
+        recipient: String
     ) {
         self.solanaAccount = solanaAccount
         self.availableAccounts = availableAccounts
         self.amount = amount
         self.recipient = recipient
-        self.feePayer = feePayer
-    }
-}
-
-public struct WormholeSendOutputBase: Equatable {
-    public let feePayer: SolanaAccount
-    public let transactions: SendTransaction?
-    public let fees: SendFees
-
-    public init(feePayer: SolanaAccount, transactions: SendTransaction?, fees: SendFees) {
-        self.feePayer = feePayer
-        self.transactions = transactions
-        self.fees = fees
     }
 }
 
 public enum WormholeSendInputError: Equatable {
     case calculationFeeFailure
+
+    case calculationFeePayerFailure
 
     case getTransferTransactionsFailure
 
@@ -344,10 +297,20 @@ public enum WormholeSendInputError: Equatable {
     case initializationFailure
 }
 
+public struct WormholeSendOutputBase: Equatable {
+    public let feePayer: SolanaAccount?
+    public let transactions: SendTransaction?
+    public let fees: SendFees
+
+    public init(feePayer: SolanaAccount?, transactions: SendTransaction?, fees: SendFees) {
+        self.feePayer = feePayer
+        self.transactions = transactions
+        self.fees = fees
+    }
+}
+
 public enum InitializingError: Error, Equatable {
-    case calculateFeeFailure
-    case calculateFeePayerFailure
-    case getTransactionsFailure
+    case unauthorized
     case missingArguments
 }
 

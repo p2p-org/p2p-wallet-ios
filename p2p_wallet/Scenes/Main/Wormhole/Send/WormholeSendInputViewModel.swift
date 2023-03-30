@@ -79,7 +79,7 @@ class WormholeSendInputViewModel: BaseViewModel, ObservableObject {
 
         // Ensure user wallet is available
         guard let wallet = userWalletManager.wallet else {
-            let state: WormholeSendInputState = .unauthorized
+            let state: WormholeSendInputState = .initializingFailure(input: nil, error: .unauthorized)
             self.state = state
             stateMachine = .init(initialState: state, services: services)
             super.init()
