@@ -6,20 +6,21 @@
 //
 
 import Foundation
+import KeyAppKitCore
 
 struct RendableListPendingTransactionItem: RendableListTransactionItem {
     let trx: PendingTransaction
-    
+
     let uuid: String = UUID().uuidString
-    
+
     var id: String {
         trx.transactionId ?? uuid
     }
-    
+
     var date: Date {
         trx.sentAt
     }
-    
+
     var status: RendableListTransactionItemStatus {
         if trx.transactionId != nil {
             return .success
@@ -32,7 +33,7 @@ struct RendableListPendingTransactionItem: RendableListTransactionItem {
             }
         }
     }
-    
+
     var icon: RendableListTransactionItemIcon {
         switch trx.rawTransaction {
         case let transaction as SendTransaction:
@@ -44,31 +45,31 @@ struct RendableListPendingTransactionItem: RendableListTransactionItem {
             } else {
                 return .icon(.transactionSend)
             }
-            
+
         case let transaction as SwapRawTransactionType:
             let fromUrlStr = transaction.sourceWallet.token.logoURI
             let toUrlStr = transaction.destinationWallet.token.logoURI
-            
+
             guard let fromUrlStr, let toUrlStr else {
                 return .icon(.buttonSwap)
             }
-            
+
             let fromUrl = URL(string: fromUrlStr)
             let toUrl = URL(string: toUrlStr)
-            
+
             guard let fromUrl, let toUrl else {
                 return .icon(.buttonSwap)
             }
-            
+
             return .double(fromUrl, toUrl)
-            
+
         case let transaction as WormholeClaimTransaction:
             guard let url = transaction.token.logo else {
                 return .icon(.planet)
             }
-            
+
             return .single(url)
-            
+
         case let transaction as WormholeSendTransaction:
             if
                 let urlStr = transaction.account.data.token.logoURI,
@@ -82,7 +83,7 @@ struct RendableListPendingTransactionItem: RendableListTransactionItem {
             return .icon(.planet)
         }
     }
-    
+
     var title: String {
         switch trx.rawTransaction {
         case let transaction as SendTransaction:
@@ -96,21 +97,21 @@ struct RendableListPendingTransactionItem: RendableListTransactionItem {
             default:
                 return L10n.to
             }
-            
+
         case let transaction as SwapRawTransactionType:
             return L10n.to(transaction.sourceWallet.token.symbol, transaction.destinationWallet.token.symbol)
-            
+
         case let transaction as WormholeClaimTransaction:
             return "Wormhole"
-            
+
         case let transaction as WormholeSendTransaction:
             return "Wormhole"
-            
+
         default:
             return L10n.unknown
         }
     }
-    
+
     var subtitle: String {
         switch trx.status {
         case .error:
@@ -149,28 +150,53 @@ struct RendableListPendingTransactionItem: RendableListTransactionItem {
             }
         }
     }
-    
+
     var detail: (RendableListTransactionItemChange, String) {
         switch trx.rawTransaction {
         case let transaction as SendTransaction:
             return (.negative, "-\(transaction.amountInFiat.fiatAmountFormattedString())")
+
         case let transaction as SwapRawTransactionType:
-            return (.positive, "+\(transaction.toAmount.tokenAmountFormattedString(symbol: transaction.destinationWallet.token.symbol))")
+            return (
+                .positive,
+                "+\(transaction.toAmount.tokenAmountFormattedString(symbol: transaction.destinationWallet.token.symbol))"
+            )
+
+        case let transaction as WormholeSendTransaction:
+            let amount = CurrencyFormatter().string(amount: transaction.currencyAmount)
+            return (.negative, "-\(amount)")
+
+        case let transaction as WormholeClaimTransaction:
+            if let currencyAmount = transaction.amountInFiat {
+                let amount = CurrencyFormatter().string(amount: currencyAmount)
+                return (.positive, "+\(amount)")
+            } else {
+                return (.unchanged, "")
+            }
+
         default:
             return (.unchanged, "")
         }
     }
-    
+
     var subdetail: String {
         switch trx.rawTransaction {
         case let transaction as SendTransaction:
             return "-\(transaction.amount.tokenAmountFormattedString(symbol: transaction.walletToken.token.symbol))"
+
         case let transaction as SwapRawTransactionType:
             return "-\(transaction.fromAmount.tokenAmountFormattedString(symbol: transaction.sourceWallet.token.symbol))"
+
+        case let transaction as WormholeSendTransaction:
+            return CryptoFormatter().string(for: transaction.amount) ?? ""
+
+        case let transaction as WormholeClaimTransaction:
+            return CryptoFormatter().string(for: transaction.amountInCrypto) ?? ""
+
         default:
             return ""
         }
     }
-    
+
     var onTap: (() -> Void)?
 }

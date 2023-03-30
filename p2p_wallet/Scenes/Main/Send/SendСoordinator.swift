@@ -12,7 +12,7 @@ import SwiftUI
 
 enum SendResult {
     case sent(SendTransaction)
-    case wormhole(PendingTransaction)
+    case wormhole(WormholeSendTransaction)
     case sentViaLink(link: String, transaction: SendTransaction)
     case cancelled
 }

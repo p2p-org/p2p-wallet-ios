@@ -29,6 +29,8 @@ protocol RendableTransactionDetail {
     var extra: [TransactionDetailExtraInfo] { get }
     
     var actions: [TransactionDetailAction] { get }
+    
+    var buttonTitle: String { get }
 }
 
 struct TransactionDetailExtraInfo {

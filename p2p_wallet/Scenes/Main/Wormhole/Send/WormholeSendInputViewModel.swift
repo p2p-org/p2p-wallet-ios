@@ -19,7 +19,7 @@ class WormholeSendInputViewModel: BaseViewModel, ObservableObject {
     enum Action {
         case openPickAccount
         case openFees
-        case send(PendingTransaction)
+        case send(WormholeSendTransaction)
     }
 
     enum InputMode {
@@ -37,9 +37,8 @@ class WormholeSendInputViewModel: BaseViewModel, ObservableObject {
 
     @Published var state: WormholeSendInputState
 
-    var adapter: WormholeSendInputStateAdapter {
-        .init(state: state)
-    }
+    /// Adapter for state
+    var adapter: WormholeSendInputStateAdapter { .init(state: state) }
 
     // Constants
     let recipient: Recipient
@@ -49,8 +48,9 @@ class WormholeSendInputViewModel: BaseViewModel, ObservableObject {
     @Published var countAfterDecimalPoint: Int = 8
     @Published var isFirstResponder: Bool = false
     @Published var inputMode: InputMode = .fiat
-    @Published var secondaryAmountString =
-        "" // It is needed to display valut with precision in case the max amount is set via fiat mode
+
+    // It is needed to display valut with precision in case the max amount is set via fiat mode
+    @Published var secondaryAmountString = ""
 
     // This flag is used to switch input publisher handler because we have already set amounts manually (due to fiat
     // inaccuracy)
@@ -91,6 +91,10 @@ class WormholeSendInputViewModel: BaseViewModel, ObservableObject {
             stateMachine = .init(initialState: state, services: wormholeService)
             super.init()
             return
+        }
+
+        if initialSolanaAccount.price == nil {
+            inputMode = .crypto
         }
 
         // Setup state machine
@@ -250,25 +254,24 @@ class WormholeSendInputViewModel: BaseViewModel, ObservableObject {
 
         showFinished = true
 
+        isFirstResponder = false
+        try? await Task.sleep(seconds: 0.5)
+
         let rawTransaction = WormholeSendTransaction(
             account: input.solanaAccount,
-            recipient: input.recipient,
+            recipient: recipient,
             amount: input.amount,
             fees: output.fees,
             transaction: transaction
         )
 
-        let transactionHandler: TransactionHandler = Resolver.resolve()
-        let index = transactionHandler.sendTransaction(rawTransaction)
-        let pendingTransaction = transactionHandler.getProcessingTransaction(index: index)
-
-        action.send(.send(pendingTransaction))
+        action.send(.send(rawTransaction))
     }
 }
 
 extension WormholeSendInputViewModel {
     static func resolveSupportedSolanaAccounts(
-        solanaAccountsService: SolanaAccountsService = Resolver.resolve()
+        solanaAccountsService: SolanaAccountsService
     ) -> [SolanaAccountsService.Account] {
         let supportedToken = SupportedToken.bridges.map(\.solAddress).compactMap { $0 }
 

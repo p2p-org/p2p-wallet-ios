@@ -108,7 +108,12 @@ extension WalletDetail {
                 )
                 buyCoordinator?.start().sink { _ in }.store(in: &subscriptions)
             case let .send(wallet):
-                coordinator = SendCoordinator(rootViewController: navigationController!, preChosenWallet: wallet, hideTabBar: true, allowSwitchingMainAmountType: true)
+                coordinator = SendCoordinator(
+                    rootViewController: navigationController!,
+                    preChosenWallet: wallet,
+                    hideTabBar: true,
+                    allowSwitchingMainAmountType: true
+                )
                 coordinator?.start()
                     .sink { [weak self] result in
                         switch result {
@@ -116,9 +121,9 @@ extension WalletDetail {
                             self?.navigationController?.popToViewController(ofClass: Self.self, animated: true)
                             self?.showSendTransactionStatus(model: model)
 
-                        case let .wormhole(pending):
+                        case let .wormhole(trx):
                             self?.navigationController?.popToViewController(ofClass: Self.self, animated: true)
-                            self?.showTransaction(pendingTransaction: pending)
+                            self?.showTransaction(trx: trx)
 
                         case .sentViaLink:
                             self?.navigationController?.popToViewController(ofClass: Self.self, animated: true)
@@ -144,7 +149,13 @@ extension WalletDetail {
                 if available(.jupiterSwapEnabled) {
                     jupiterSwapCoordinator = JupiterSwapCoordinator(
                         navigationController: navigationController!,
-                        params: JupiterSwapParameters(dismissAfterCompletion: true, openKeyboardOnStart: true, source: .tapToken, preChosenWallet: wallet, destinationWallet: destination)
+                        params: JupiterSwapParameters(
+                            dismissAfterCompletion: true,
+                            openKeyboardOnStart: true,
+                            source: .tapToken,
+                            preChosenWallet: wallet,
+                            destinationWallet: destination
+                        )
                     )
                     jupiterSwapCoordinator?.start().sink(receiveValue: { _ in }).store(in: &subscriptions)
                 } else {
@@ -160,15 +171,18 @@ extension WalletDetail {
 
         // MARK: - Actions
 
-        private func showTransaction(pendingTransaction: PendingTransaction) {
-            TransactionDetailCoordinator(viewModel: .init(pendingTransaction: pendingTransaction), presentingViewController: navigationController!)
+        private func showTransaction(trx: RawTransactionType) {
+            TransactionDetailCoordinator(viewModel: .init(submit: trx), presentingViewController: navigationController!)
                 .start()
                 .sink(receiveValue: { _ in })
                 .store(in: &subscriptions)
         }
 
         private func showSendTransactionStatus(model: SendTransaction) {
-            sendTransactionStatusCoordinator = SendTransactionStatusCoordinator(parentController: navigationController!, transaction: model)
+            sendTransactionStatusCoordinator = SendTransactionStatusCoordinator(
+                parentController: navigationController!,
+                transaction: model
+            )
 
             sendTransactionStatusCoordinator?
                 .start()

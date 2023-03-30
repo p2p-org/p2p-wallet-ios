@@ -13,7 +13,7 @@ import SwiftUI
 
 struct WormholeSendInputView: View {
     @ObservedObject var viewModel: WormholeSendInputViewModel
-    
+
     let inputFount = UIFont.font(of: .title2, weight: .bold)
     @State private var switchAreaOpacity: Double = 1
 
@@ -24,22 +24,22 @@ struct WormholeSendInputView: View {
                 Text(RecipientFormatter.format(destination: viewModel.recipient.address))
                     .fontWeight(.bold)
                     .apply(style: .largeTitle)
-                
+
                 Text("Would be completed on the Ethereum network")
                     .apply(style: .text3)
                     .foregroundColor(Color(Asset.Colors.mountain.color))
             }
             .padding(.bottom, 30)
-            
+
             VStack {
                 // Info
                 HStack {
                     Text(L10n.youWillSend)
                         .apply(style: .text4)
                         .foregroundColor(Color(Asset.Colors.mountain.color))
-                    
+
                     Spacer()
-                    
+
                     Button {
                         viewModel.action.send(.openFees)
                     } label: {
@@ -47,7 +47,7 @@ struct WormholeSendInputView: View {
                             Text(viewModel.adapter.fees)
                                 .apply(style: .text4)
                                 .foregroundColor(Color(Asset.Colors.sky.color))
-                            
+
                             if viewModel.adapter.feesLoading {
                                 CircularProgressIndicatorView(
                                     backgroundColor: Asset.Colors.sky.color.withAlphaComponent(0.6),
@@ -80,18 +80,21 @@ struct WormholeSendInputView: View {
                     isFirstResponder: $viewModel.isFirstResponder,
                     amountTextColor: viewModel.adapter.inputColor,
                     countAfterDecimalPoint: viewModel.countAfterDecimalPoint,
-                    mainTokenText: viewModel.inputMode == .crypto ? account.data.token.symbol : viewModel.adapter.fiatString,
+                    mainTokenText: viewModel.inputMode == .crypto ? account.data.token.symbol : viewModel.adapter
+                        .fiatString,
                     secondaryAmountText: viewModel.secondaryAmountString,
-                    secondaryCurrencyText: viewModel.inputMode == .crypto ? viewModel.adapter.fiatString: account.data.token.symbol,
+                    secondaryCurrencyText: viewModel.inputMode == .crypto ? viewModel.adapter.fiatString : account.data
+                        .token.symbol,
                     maxAmountPressed: viewModel.maxPressed,
                     switchPressed: viewModel.switchPressed,
-                    isMaxButtonVisible: viewModel.input.isEmpty
+                    isMaxButtonVisible: viewModel.input.isEmpty,
+                    isSwitchMainAmountTypeAvailable: !viewModel.adapter.disableSwitch
                 )
                 .padding(.top, 8)
             }
-            
+
             Spacer()
-            
+
             SliderActionButton(
                 isSliderOn: $viewModel.isSliderOn,
                 data: viewModel.adapter.sliderButton,
@@ -105,7 +108,7 @@ struct WormholeSendInputView: View {
                 .edgesIgnoringSafeArea(.all)
         )
     }
-    
+
     func textWidth(font: UIFont, text: String) -> CGFloat {
         let fontAttributes = [NSAttributedString.Key.font: font]
         return (text as NSString).size(withAttributes: fontAttributes).width
@@ -128,6 +131,6 @@ struct WormholeSendInputView_Previews: PreviewProvider {
 
 private extension Text {
     func secondaryStyle() -> some View {
-        return self.foregroundColor(Color(Asset.Colors.mountain.color)).apply(style: .text4).lineLimit(1)
+        foregroundColor(Color(Asset.Colors.mountain.color)).apply(style: .text4).lineLimit(1)
     }
 }

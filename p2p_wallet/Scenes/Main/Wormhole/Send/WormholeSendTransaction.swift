@@ -15,12 +15,9 @@ import SolanaSwift
 import Wormhole
 
 struct WormholeSendTransaction: RawTransactionType {
-    @Injected var solanaClient: SolanaAPIClient
-    @Injected var userWalletManager: UserWalletManager
-
     let account: SolanaAccountsService.Account
 
-    let recipient: String
+    let recipient: Recipient
 
     let amount: CryptoAmount
 
@@ -40,6 +37,12 @@ struct WormholeSendTransaction: RawTransactionType {
     var feeAmount: FeeAmount = .zero
 
     func createRequest() async throws -> String {
+        let solanaClient: SolanaAPIClient = Resolver.resolve()
+        let userWalletManager: UserWalletManager = Resolver.resolve()
+        let sendHistory: SendHistoryService = Resolver.resolve()
+
+        try? await sendHistory.insert(recipient)
+
         do {
             guard
                 let keypair = userWalletManager.wallet?.account,
@@ -49,10 +52,10 @@ struct WormholeSendTransaction: RawTransactionType {
             else {
                 throw Error.decodeTransactionError
             }
-            
+
             try versionedTransaction.sign(signers: [keypair])
             let encodedTrx = try versionedTransaction.serialize().base64EncodedString()
-            
+
             return try await solanaClient.sendTransaction(transaction: encodedTrx, configs: configs)
         } catch {
             print(error)

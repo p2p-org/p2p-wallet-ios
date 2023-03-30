@@ -111,7 +111,7 @@ final class HomeCoordinator: Coordinator<Void> {
             return coordinate(to: BuyCoordinator(navigationController: navigationController, context: .fromHome))
                 .map { _ in () }
                 .eraseToAnyPublisher()
-        case .receive(let publicKey):
+        case let .receive(publicKey):
             if available(.ethAddressEnabled) {
                 let coordinator = SupportedTokensCoordinator(
                     presentation: SmartCoordinatorPushPresentation(navigationController)
@@ -119,7 +119,10 @@ final class HomeCoordinator: Coordinator<Void> {
                 return coordinate(to: coordinator)
                     .eraseToAnyPublisher()
             } else {
-                let coordinator = ReceiveCoordinator(network: .solana(tokenSymbol: "SOL", tokenImage: .image(.solanaIcon)), presentation: SmartCoordinatorPushPresentation(navigationController))
+                let coordinator = ReceiveCoordinator(
+                    network: .solana(tokenSymbol: "SOL", tokenImage: .image(.solanaIcon)),
+                    presentation: SmartCoordinatorPushPresentation(navigationController)
+                )
                 return coordinate(to: coordinator).eraseToAnyPublisher()
             }
         case .send:
@@ -134,12 +137,12 @@ final class HomeCoordinator: Coordinator<Void> {
             .receive(on: RunLoop.main)
             .handleEvents(receiveOutput: { [weak self] result in
                 switch result {
-                case .sent(let model):
+                case let .sent(model):
                     self?.navigationController.popToRootViewController(animated: true)
                     self?.showSendTransactionStatus(model: model)
-                case .wormhole(let trx):
+                case let .wormhole(trx):
                     self?.navigationController.popToRootViewController(animated: true)
-                    self?.showTransaction(pendingTransaction: trx)
+                    self?.showTransaction(trx: trx)
                 case .sentViaLink:
                     self?.navigationController.popToRootViewController(animated: true)
                 case .cancelled:
@@ -148,14 +151,17 @@ final class HomeCoordinator: Coordinator<Void> {
             })
             .map { _ in () }
             .eraseToAnyPublisher()
-        case .claim(let account):
+        case let .claim(account):
             return coordinate(
-                to: WormholeClaimCoordinator(account: account, presentation: SmartCoordinatorPushPresentation(navigationController))
+                to: WormholeClaimCoordinator(
+                    account: account,
+                    presentation: SmartCoordinatorPushPresentation(navigationController)
+                )
             )
             .handleEvents(receiveOutput: { [weak self] result in
                 guard let self = self else { return }
                 switch result {
-                case .claiming(let pendingTrx):
+                case let .claiming(pendingTrx):
                     self.coordinate(
                         to: TransactionDetailCoordinator(
                             viewModel: .init(pendingTransaction: pendingTrx),
@@ -213,7 +219,8 @@ final class HomeCoordinator: Coordinator<Void> {
                 case .completed:
                     self?.tabBarController.changeItem(to: .history)
                 case .interupted:
-                    (self?.tabBarController.selectedViewController as? UINavigationController)?.popToRootViewController(animated: true)
+                    (self?.tabBarController.selectedViewController as? UINavigationController)?
+                        .popToRootViewController(animated: true)
                     DispatchQueue.main.asyncAfter(deadline: .now() + 0.2) {
                         self?.tabBarController.changeItem(to: .history)
                     }
@@ -226,7 +233,7 @@ final class HomeCoordinator: Coordinator<Void> {
         case .earn:
             return Just(())
                 .eraseToAnyPublisher()
-        case .solanaAccount(let solanaAccount):
+        case let .solanaAccount(solanaAccount):
             if available(.historyServiceEnabled) {
                 analyticsManager.log(event: .mainScreenTokenDetailsOpen(tokenTicker: solanaAccount.data.token.symbol))
 
@@ -239,7 +246,10 @@ final class HomeCoordinator: Coordinator<Void> {
                 .map { _ in () }
                 .eraseToAnyPublisher()
             } else {
-                let model = WalletDetailCoordinator.Model(pubKey: solanaAccount.data.pubkey ?? "", symbol: solanaAccount.data.token.symbol)
+                let model = WalletDetailCoordinator.Model(
+                    pubKey: solanaAccount.data.pubkey ?? "",
+                    symbol: solanaAccount.data.token.symbol
+                )
                 let coordinator = WalletDetailCoordinator(navigationController: navigationController, model: model)
                 return coordinate(to: coordinator)
                     .receive(on: RunLoop.main)
@@ -257,7 +267,7 @@ final class HomeCoordinator: Coordinator<Void> {
         case .actions:
             return Just(())
                 .eraseToAnyPublisher()
-        case .topUpCoin(let token):
+        case let .topUpCoin(token):
             // SOL, USDC
             if [Token.nativeSolana, .usdc].contains(token) {
                 let coordinator = BuyCoordinator(
@@ -294,7 +304,7 @@ final class HomeCoordinator: Coordinator<Void> {
                 }
             }
             .eraseToAnyPublisher()
-        case .error(let show):
+        case let .error(show):
             if show {
                 homeView.view.showConnectionErrorView(refreshAction: { [unowned homeView] in
                     homeView.view.hideConnectionErrorView()
@@ -306,10 +316,13 @@ final class HomeCoordinator: Coordinator<Void> {
         }
     }
 
-    private func showTransaction(pendingTransaction: PendingTransaction) {
-        coordinate(to: TransactionDetailCoordinator(viewModel: .init(pendingTransaction: pendingTransaction), presentingViewController: navigationController))
-            .sink(receiveValue: { _ in })
-            .store(in: &subscriptions)
+    private func showTransaction(trx: RawTransactionType) {
+        coordinate(to: TransactionDetailCoordinator(
+            viewModel: .init(submit: trx),
+            presentingViewController: navigationController
+        ))
+        .sink(receiveValue: { _ in })
+        .store(in: &subscriptions)
     }
 
     private func showSendTransactionStatus(model: SendTransaction) {

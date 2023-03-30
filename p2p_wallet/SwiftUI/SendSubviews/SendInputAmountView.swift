@@ -1,9 +1,8 @@
-import SwiftUI
-import KeyAppUI
 import Combine
+import KeyAppUI
+import SwiftUI
 
 struct SendInputAmountView: View {
-
     @Binding var amountText: String
     @Binding var isFirstResponder: Bool
     let amountTextColor: UIColor
@@ -75,11 +74,10 @@ struct SendInputAmountView: View {
                                     )
                                     .transition(.opacity.animation(.easeInOut))
                                     .cornerRadius(radius: 32, corners: .allCorners)
-                                    .frame(width: 68)
+                                    .frame(width: 68, height: 28)
                                     .offset(x: amountText.isEmpty
                                         ? 16.0
-                                        : textWidth(font: Constants.inputFount, text: amountText)
-                                    )
+                                        : textWidth(font: Constants.inputFount, text: amountText))
                                     .padding(.horizontal, 8)
                                     .accessibilityIdentifier("max-button")
                                 }
@@ -91,15 +89,15 @@ struct SendInputAmountView: View {
                                 .opacity(switchAreaOpacity)
                                 .accessibilityIdentifier("current-currency")
                         }
-                        HStack(spacing: 2) {
-                            Text(secondaryAmountText)
-                                .secondaryStyle()
 
-                            Text(secondaryCurrencyText)
-                                .secondaryStyle()
+                        if isSwitchMainAmountTypeAvailable {
+                            HStack(spacing: 2) {
+                                Text(secondaryAmountText)
+                                    .secondaryStyle()
 
-                            Spacer()
-                            if isSwitchMainAmountTypeAvailable {
+                                Text(secondaryCurrencyText)
+                                    .secondaryStyle()
+
                                 Text(L10n.tapToSwitchTo(secondaryCurrencyText))
                                     .secondaryStyle()
                                     .opacity(switchAreaOpacity)
@@ -181,7 +179,7 @@ private enum Constants {
 
 private extension Text {
     func secondaryStyle() -> some View {
-        return self.foregroundColor(Color(Asset.Colors.mountain.color))
+        foregroundColor(Color(Asset.Colors.mountain.color))
             .apply(style: .text4)
             .lineLimit(1)
     }

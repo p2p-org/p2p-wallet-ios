@@ -16,10 +16,12 @@ public protocol CurrencyConvertible {
 public class CurrencyFormatter: Formatter {
     public let defaultValue: String
     public let hideSymbol: Bool
+    public let lessText: String
 
-    public init(defaultValue: String = "", hideSymbol: Bool = false) {
+    public init(defaultValue: String = "", hideSymbol: Bool = false, lessText: String = "Less than") {
         self.defaultValue = defaultValue
         self.hideSymbol = hideSymbol
+        self.lessText = lessText
         super.init()
     }
 
@@ -73,6 +75,15 @@ public class CurrencyFormatter: Formatter {
 
         let decimalAmount = Decimal(string: String(amount.value))
         let value: String? = formatter.string(for: decimalAmount)
+
+        guard var value else {
+            return value
+        }
+
+        if !lessText.isEmpty, amount.value > 0.0, amount.value < 0.01 {
+            value = "\(lessText) \(value)"
+        }
+
         return value
     }
 }

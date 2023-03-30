@@ -175,7 +175,7 @@ struct DetailTransactionView: View {
                 viewModel.action.send(.close)
             },
             label: {
-                Text(viewModel.closeButtonTitle)
+                Text(viewModel.rendableTransaction.buttonTitle)
                     .font(uiFont: style.font(size: .large))
                     .foregroundColor(Color(style.foreground))
                     .frame(maxWidth: .infinity)

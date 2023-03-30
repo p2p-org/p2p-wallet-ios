@@ -49,7 +49,7 @@ struct WormholeSendInputStateAdapter: Equatable {
     }
 
     var inputAccount: SolanaAccountsService.Account? {
-        return input?.solanaAccount
+        input?.solanaAccount
     }
 
     var selectedToken: SolanaToken {
@@ -67,7 +67,7 @@ struct WormholeSendInputStateAdapter: Equatable {
 
         return input.amount
     }
-    
+
     var cryptoAmountString: String {
         cryptoFormatter.string(amount: cryptoAmount)
     }
@@ -178,5 +178,9 @@ struct WormholeSendInputStateAdapter: Equatable {
         default:
             return .init(isEnabled: false, title: L10n.calculatingTheFees)
         }
+    }
+
+    var disableSwitch: Bool {
+        input?.solanaAccount.price == nil
     }
 }

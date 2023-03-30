@@ -70,7 +70,7 @@ public final class EthereumAccountsService: NSObject, AccountsService, Observabl
         /// Updating price
         let prices = accounts
             .$state
-            .delay(for: 0.1, scheduler: RunLoop.main)
+            .filter { $0.status == .initializing || $0.status == .ready }
             .asyncMap { state in
                 try? await errorObservable.run {
                     try await priceService.getPrices(
@@ -109,7 +109,7 @@ public final class EthereumAccountsService: NSObject, AccountsService, Observabl
             .receive(on: DispatchQueue.main)
             .sink(receiveValue: { [weak self] _ in self?.accounts.fetch() })
             .store(in: &subscriptions)
-        
+
         errorObservable
             .handleAsyncValue($state)
             .store(in: &subscriptions)
