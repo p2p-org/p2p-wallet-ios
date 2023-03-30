@@ -117,6 +117,10 @@ class TransactionHandler: TransactionHandlerType {
                     {
                         return true
                     }
+                case let transaction as ClaimSentViaLinkTransaction:
+                    if transaction.destinationWallet.pubkey == account {
+                        return true
+                    }
                 default:
                     break
                 }

@@ -246,6 +246,17 @@ extension TransactionHandler {
 
                 return wallets
             }
+        case let transaction as ClaimSentViaLinkTransaction:
+            walletsRepository.batchUpdate { currentValue in
+                var wallets = currentValue
+                
+                // update sender
+                if let index = wallets.firstIndex(where: { $0.pubkey == transaction.destinationWallet.pubkey }) {
+                    wallets[index].increaseBalance(diffInLamports: transaction.claimableTokenInfo.lamports)
+                }
+                
+                return wallets
+            }
         default:
             break
         }
