@@ -18,7 +18,7 @@ struct DetailAccountView: View {
     }
 
     var header: some View {
-        VStack {
+        VStack(spacing: 0) {
             VStack(spacing: 12) {
                 Text(detailAccount.rendableAccountDetail.amountInToken)
                     .fontWeight(.bold)
@@ -37,7 +37,7 @@ struct DetailAccountView: View {
                     }
                 }
             }
-            .padding(.vertical, 32)
+            .padding(.top, 32)
         }
     }
 }
