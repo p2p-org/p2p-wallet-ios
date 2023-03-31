@@ -63,12 +63,12 @@ final class ReceiveFundsViaLinkViewModel: BaseViewModel, ObservableObject {
             let token = token,
             let pubkey = try? PublicKey(string: walletsRepository.nativeWallet?.pubkey)
         else { return }
-        
+
         let cryptoAmount = claimableToken.lamports
             .convertToBalance(decimals: claimableToken.decimals)
 
         // Notify loading
-        sizeChangedSubject.send(546)
+        sizeChangedSubject.send(522)
         processingState = .loading(message: L10n.itUsuallyTakes520SecondsForATransactionToComplete)
         processingVisible = true
         
@@ -84,11 +84,11 @@ final class ReceiveFundsViaLinkViewModel: BaseViewModel, ObservableObject {
                 receiver: pubkey
             )
         }
-        
+
         // Send it to transactionHandler
         let transactionHandler = Resolver.resolve(TransactionHandlerType.self)
         let transactionIndex = transactionHandler.sendTransaction(transaction)
-        
+
         // Observe transaction and update status
         transactionHandler.observeTransaction(transactionIndex: transactionIndex)
             .compactMap {$0}
@@ -151,26 +151,23 @@ final class ReceiveFundsViaLinkViewModel: BaseViewModel, ObservableObject {
 
                 let cryptoAmount = claimableToken.lamports
                     .convertToBalance(decimals: claimableToken.decimals)
-                
+
                 if cryptoAmount == 0 {
                     await MainActor.run { [weak self] in
                         self?.linkWasClaimedSubject.send()
                     }
                     return
                 }
-                
+
                 let cryptoAmountStr = cryptoAmount.tokenAmountFormattedString(symbol: token.symbol)
+                let model = Model(token: token, cryptoAmount: cryptoAmountStr)
                 
-                let model = Model(
-                    date: Date().string(withFormat: "MMMM dd, yyyy @ HH:mm"), // TODO: - Add date after adding to sendViaLinkDataService
-                    token: token,
-                    cryptoAmount: cryptoAmountStr
-                )
                 self.claimableToken = claimableToken
                 self.token = token
                 await MainActor.run { [weak self] in
                     self?.state = .loaded(model: model)
                     self?.isReloading = false
+                    self?.sizeChangedSubject.send(422)
                 }
             } catch {
                 await MainActor.run { [weak self] in
@@ -249,7 +246,6 @@ extension ReceiveFundsViaLinkViewModel {
     }
     
     struct Model {
-        let date: String
         let token: Token
         let cryptoAmount: String
     }
