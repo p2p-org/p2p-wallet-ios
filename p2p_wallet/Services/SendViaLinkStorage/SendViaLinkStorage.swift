@@ -3,6 +3,7 @@ import Resolver
 import SolanaSwift
 import SwiftyUserDefaults
 import Combine
+import KeychainSwift
 
 /// Storage that handle SendViaLinkTransactions
 protocol SendViaLinkStorage {
@@ -32,6 +33,9 @@ final class SendViaLinkStorageImpl: SendViaLinkStorage {
     private var subscription: DefaultsDisposable?
     private let transactionsSubject = CurrentValueSubject<[SendViaLinkTransactionInfo], Never>([])
     
+    private let userDefaultsToKeychainMigrationKey = "SendViaLinkStorageImpl.userDefaultsToKeychainMigrationKey"
+    private let sendViaLinkTransactionsKeychainKey = "SendViaLinkStorageImpl.sendViaLinkTransactionsKeychainKey"
+    
     // MARK: - Computed properties
     
     var userPubkey: String? {
@@ -40,6 +44,12 @@ final class SendViaLinkStorageImpl: SendViaLinkStorage {
     
     var transactionsPublisher: AnyPublisher<[SendViaLinkTransactionInfo], Never> {
         transactionsSubject.eraseToAnyPublisher()
+    }
+    
+    private var icloudKeychain: KeychainSwift {
+        let icloudKeychain = KeychainSwift()
+        icloudKeychain.synchronizable = true
+        return icloudKeychain
     }
     
     // MARK: - Initializer
@@ -53,6 +63,20 @@ final class SendViaLinkStorageImpl: SendViaLinkStorage {
             guard let newValue = self?.getTransactions()
             else { return }
             self?.transactionsSubject.send(newValue)
+        }
+        
+        // migration
+        migrate()
+    }
+    
+    // MARK: - Migration
+
+    private func migrate() {
+        // UserDefaults to Keychain
+        if !UserDefaults.standard.bool(forKey: userDefaultsToKeychainMigrationKey) {
+            let transactions = getTransactionsFromUserDefaults()
+            let result = save(transactions: transactions)
+            UserDefaults.standard.set(result, forKey: userDefaultsToKeychainMigrationKey)
         }
     }
     
@@ -88,6 +112,46 @@ final class SendViaLinkStorageImpl: SendViaLinkStorage {
     
     func getTransactions() -> [SendViaLinkTransactionInfo] {
         guard let userPubkey,
+              let data = icloudKeychain.getData(sendViaLinkTransactionsKeychainKey),
+              let dict = try? JSONDecoder().decode([String: [SendViaLinkTransactionInfo]].self, from: data)
+        else {
+            return []
+        }
+        return dict[userPubkey] ?? []
+    }
+    
+    // MARK: - Keychain
+
+    private func save(transactions: [SendViaLinkTransactionInfo]) -> Bool {
+        // assert user pubkey
+        guard let userPubkey else {
+            return false
+        }
+        
+        // assure that dictionary is alway non-optional
+        var newValue = [String: [SendViaLinkTransactionInfo]]()
+        if let data = icloudKeychain.getData(sendViaLinkTransactionsKeychainKey),
+           let dict = try? JSONDecoder().decode([String: [SendViaLinkTransactionInfo]].self, from: data)
+        {
+            newValue = dict
+        }
+        
+        // modify value
+        newValue[userPubkey] = transactions
+        
+        // encode to data
+        guard let data = try? JSONEncoder().encode(newValue) else {
+            return false
+        }
+        
+        // save to Keychain
+        return icloudKeychain.set(data, forKey: sendViaLinkTransactionsKeychainKey)
+    }
+    
+    // MARK: - UserDefaults (deprecated)
+
+    private func getTransactionsFromUserDefaults() -> [SendViaLinkTransactionInfo] {
+        guard let userPubkey,
               let data = Defaults.sendViaLinkTransactions,
               let dict = try? JSONDecoder().decode([String: [SendViaLinkTransactionInfo]].self, from: data)
         else {
@@ -96,7 +160,7 @@ final class SendViaLinkStorageImpl: SendViaLinkStorage {
         return dict[userPubkey] ?? []
     }
     
-    private func save(transactions: [SendViaLinkTransactionInfo]) -> Bool {
+    private func saveToUserDefaults(transactions: [SendViaLinkTransactionInfo]) -> Bool {
         // assert user pubkey
         guard let userPubkey else {
             return false
