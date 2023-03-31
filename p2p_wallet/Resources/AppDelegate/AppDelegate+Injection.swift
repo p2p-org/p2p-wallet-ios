@@ -356,7 +356,7 @@ extension Resolver: ResolverRegistering {
             .scope(.session)
 
         // FeeRelayer
-        register { FeeRelayerSwift.APIClient(baseUrlString: FeeRelayerEndpoint.baseUrl, version: 1) }
+        register { FeeRelayerSwift.APIClient(baseUrlString: "https://fee-relayer.keyapp.org", version: 1) }
             .implements(FeeRelayerAPIClient.self)
             .scope(.session)
 

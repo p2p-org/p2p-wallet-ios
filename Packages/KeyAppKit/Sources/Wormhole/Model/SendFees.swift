@@ -15,7 +15,7 @@ public struct SendFees: Codable, Hashable {
     public let bridgeFee: TokenAmount?
 
     enum CodingKeys: String, CodingKey {
-        case arbiter
+        case arbiter = "arbiter_fee"
         case networkFee = "network_fee"
         case messageAccountRent = "message_account_rent"
         case bridgeFee = "bridge_fee"
@@ -24,7 +24,7 @@ public struct SendFees: Codable, Hashable {
 
 public extension SendFees {
     var totalInFiat: CurrencyAmount {
-        CurrencyAmount.init(usd: 0)
+        CurrencyAmount(usd: 0)
             + arbiter?.asCurrencyAmount
             + networkFee?.asCurrencyAmount
             + messageAccountRent?.asCurrencyAmount

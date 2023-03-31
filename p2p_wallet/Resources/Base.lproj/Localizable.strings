@@ -1312,3 +1312,4 @@ You can try again, but your new transaction will be subject to the current rates
 "Refresh the page or check back later" = "Refresh the page or check back later";
 "Reload" = "Reload";
 "You’ve got" = "You’ve got";
+"The fee is more than the amount sent" = "The fee is more than the amount sent";

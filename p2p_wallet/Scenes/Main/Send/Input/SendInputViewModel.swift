@@ -508,9 +508,7 @@ private extension SendInputViewModel {
         try? await Task.sleep(nanoseconds: 500_000_000)
         
         let isSendingViaLink = stateMachine.currentState.isSendingViaLink
-        let isFakeSendTransaction = isFakeSendTransaction
-        let isFakeSendTransactionError = isFakeSendTransactionError
-        let isFakeSendTransactionNetworkError = isFakeSendTransactionNetworkError
+        
         let sendViaLinkSeed = stateMachine.currentState.sendViaLinkSeed
         let token = currentState.token
         let amountInFiat = currentState.amountInFiat
@@ -519,9 +517,9 @@ private extension SendInputViewModel {
             let transaction = SendTransaction(state: self.currentState) {
                 try await createTransactionExecution(
                     isSendingViaLink: isSendingViaLink,
-                    isFakeSendTransaction: isFakeSendTransaction,
-                    isFakeSendTransactionError: isFakeSendTransactionError,
-                    isFakeSendTransactionNetworkError: isFakeSendTransactionNetworkError,
+                    isFakeSendTransaction: false,
+                    isFakeSendTransactionError: false,
+                    isFakeSendTransactionNetworkError: false,
                     recipient: recipient,
                     sendViaLinkSeed: sendViaLinkSeed,
                     token: token,

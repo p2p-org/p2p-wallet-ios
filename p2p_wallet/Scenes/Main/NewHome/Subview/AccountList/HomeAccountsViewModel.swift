@@ -44,7 +44,12 @@ final class HomeAccountsViewModel: BaseViewModel, ObservableObject {
     var accounts: [any RendableAccount] {
         ethereumAccountsState.value
             .filter { account in
-                return available(.ethAddressEnabled) && account.onClaim != nil
+                if available(.ethAddressEnabled) {
+                    if account.isClaiming || account.onClaim != nil {
+                        return true
+                    }
+                }
+                return false
             }
             + solanaAccountsState.value.filter { rendableAccount in
                 Self.shouldInVisiableSection(rendableAccount: rendableAccount, hideZeroBalance: hideZeroBalance)
@@ -55,7 +60,12 @@ final class HomeAccountsViewModel: BaseViewModel, ObservableObject {
     var hiddenAccounts: [any RendableAccount] {
         ethereumAccountsState.value
             .filter { account in
-                return available(.ethAddressEnabled) && account.onClaim == nil
+                if available(.ethAddressEnabled) {
+                    if account.isClaiming || account.onClaim != nil {
+                        return false
+                    }
+                }
+                return true
             }
             + solanaAccountsState.value.filter { rendableAccount in
                 Self.shouldInIgnoreSection(rendableAccount: rendableAccount, hideZeroBalance: hideZeroBalance)
@@ -131,14 +141,16 @@ final class HomeAccountsViewModel: BaseViewModel, ObservableObject {
             }
             .map { accounts in
                 accounts.innerApply { account in
-                    let isClaiming = account.wormholeBundle?.status == .pending
+                    let isClaiming = account.wormholeBundle?.status == .pending || account.wormholeBundle?
+                        .status == .inProgress
 
                     let balanceInFiat = account.account.balanceInFiat ?? .init(
                         value: 0,
                         currencyCode: Defaults.fiat.rawValue
                     )
 
-                    let isClaimable = !(account.wormholeBundle?.status == .pending)
+                    let isClaimable = !(account.wormholeBundle?.status == .pending || account.wormholeBundle?
+                        .status == .inProgress)
                         && balanceInFiat >= CurrencyAmount(usd: 1)
 
                     return RendableEthereumAccount(

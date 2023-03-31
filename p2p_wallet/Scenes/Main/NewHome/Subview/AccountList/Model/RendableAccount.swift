@@ -40,7 +40,7 @@ enum AccountExtraAction {
 
 enum AccountDetail {
     case text(String)
-    case button(label: String, action: () -> Void)
+    case button(label: String, action: (() -> Void)?)
 }
 
 enum AccountIcon {

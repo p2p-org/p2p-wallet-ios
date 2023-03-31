@@ -71,7 +71,7 @@ class WormholeSendFeesViewModel: BaseViewModel, ObservableObject {
                                 detail: adapter.networkFee?.fiat
                             ),
                             .init(
-                                title: "Message Fee",
+                                title: "Message fee",
                                 subtitle: adapter.messageFee?.crypto,
                                 detail: adapter.messageFee?.fiat
                             ),
@@ -79,6 +79,11 @@ class WormholeSendFeesViewModel: BaseViewModel, ObservableObject {
                                 title: L10n.usingWormholeBridge,
                                 subtitle: adapter.bridgeFee?.crypto,
                                 detail: adapter.bridgeFee?.fiat
+                            ),
+                            .init(
+                                title: "Arbiter fee",
+                                subtitle: adapter.arbiterFee?.crypto,
+                                detail: adapter.arbiterFee?.fiat
                             ),
                         ].compactMap { $0 }
                     }

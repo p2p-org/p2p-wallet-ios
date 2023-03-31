@@ -47,7 +47,7 @@ public struct TokenAmount: Codable, Hashable {
         try container.encode(amount, forKey: .amount)
         try container.encode(usdAmount, forKey: .usdAmount)
         try container.encode(chain, forKey: .chain)
-        try container.encodeIfPresent(contract, forKey: .contract)
+        try container.encode(contract, forKey: .contract)
     }
 }
 

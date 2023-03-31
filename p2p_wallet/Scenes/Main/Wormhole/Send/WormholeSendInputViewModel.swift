@@ -70,7 +70,8 @@ class WormholeSendInputViewModel: BaseViewModel, ObservableObject {
         relayService: RelayService = Resolver.resolve(),
         relayContextManager: RelayContextManager = Resolver.resolve(),
         orcaSwap: OrcaSwapType = Resolver.resolve(),
-        solanaAccountsService: SolanaAccountsService = Resolver.resolve()
+        solanaAccountsService: SolanaAccountsService = Resolver.resolve(),
+        notificationService: NotificationService = Resolver.resolve()
     ) {
         self.recipient = recipient
         self.solanaAccountsService = solanaAccountsService
@@ -132,7 +133,7 @@ class WormholeSendInputViewModel: BaseViewModel, ObservableObject {
 
         $input
             .dropFirst()
-            .debounce(for: 0.2, scheduler: DispatchQueue.main)
+            .debounce(for: 0.5, scheduler: DispatchQueue.main)
             .sink { [weak self] input in
                 guard let self, let account = self.adapter.inputAccount, !self.wasMaxUsed else {
                     self?.wasMaxUsed = false
@@ -170,6 +171,27 @@ class WormholeSendInputViewModel: BaseViewModel, ObservableObject {
                     }
 
                     await self.stateMachine.accept(action: .updateInput(amount: newAmount))
+                }
+            }
+            .store(in: &subscriptions)
+
+        // Listen alert
+        stateMachine.state
+            .map { state -> WormholeSendInputAlert? in
+                switch state {
+                case let .ready(_, _, alert):
+                    return alert
+                default:
+                    return nil
+                }
+            }
+            .removeDuplicates()
+            .sink { alert in
+                switch alert {
+                case .feeIsMoreThanInputAmount:
+                    notificationService.showInAppNotification(.custom("🤔", L10n.theFeeIsMoreThanTheAmountSent))
+                default:
+                    return
                 }
             }
             .store(in: &subscriptions)
@@ -267,7 +289,8 @@ class WormholeSendInputViewModel: BaseViewModel, ObservableObject {
             recipient: recipient,
             amount: input.amount,
             fees: output.fees,
-            transaction: transaction
+            transaction: transaction,
+            payingFeeWallet: output.feePayer?.data
         )
 
         action.send(.send(rawTransaction))
