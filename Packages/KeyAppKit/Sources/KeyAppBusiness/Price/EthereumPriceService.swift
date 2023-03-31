@@ -39,12 +39,14 @@ public class EthereumPriceService {
 
     /// Get prices for erc-20 tokens.
     public func getPrices(tokens: [EthereumToken], fiat: String) async throws -> [EthereumToken: TokenPrice] {
+        let nativeETHOverride = "0xc02aaa39b223fe8d0a0e5c4f27ead9083c756cc2"
+
         let contractAddresses = tokens.map { token -> String? in
             switch token.contractType {
             case let .erc20(contract: address):
                 return address.hex(eip55: false)
             default:
-                return "0xc02aaa39b223fe8d0a0e5c4f27ead9083c756cc2"
+                return nativeETHOverride
             }
         }
         .compactMap { $0 }
@@ -63,8 +65,9 @@ public class EthereumPriceService {
                 case let .erc20(contract: address):
                     let value = result[address.hex(eip55: false)]?[fiat]
                     return (token, .init(currencyCode: fiat.uppercased(), value: value, token: token))
-                default:
-                    return (token, .init(currencyCode: fiat.uppercased(), value: Decimal(0.0), token: token))
+                case .native:
+                    let value = result[nativeETHOverride]?[fiat]
+                    return (token, .init(currencyCode: fiat.uppercased(), value: value, token: token))
                 }
             },
             uniquingKeysWith: { _, last in last }

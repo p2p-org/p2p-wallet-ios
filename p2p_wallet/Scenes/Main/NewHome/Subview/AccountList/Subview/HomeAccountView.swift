@@ -53,7 +53,7 @@ struct HomeAccountView: View {
             case let .button(text, action):
                 Button(
                     action: {
-                        action()
+                        action?()
                     },
                     label: {
                         Text(text)

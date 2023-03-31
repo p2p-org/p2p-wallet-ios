@@ -38,6 +38,7 @@ struct WormholeSendTransaction: RawTransactionType {
 
     func createRequest() async throws -> String {
         let solanaClient: SolanaAPIClient = Resolver.resolve()
+        let solanaHelper: SolanaBlockchainClient = Resolver.resolve()
         let userWalletManager: UserWalletManager = Resolver.resolve()
         let sendHistory: SendHistoryService = Resolver.resolve()
 
@@ -52,6 +53,39 @@ struct WormholeSendTransaction: RawTransactionType {
             else {
                 throw Error.decodeTransactionError
             }
+
+            let feeInSolanaNetwork: CryptoAmount = [fees.networkFee, fees.messageAccountRent, fees.bridgeFee]
+                .compactMap { $0 }
+                .map { tokenAmount in
+                    CryptoAmount(bigUIntString: tokenAmount.amount, token: SolanaToken.nativeSolana)
+                }
+                .reduce(CryptoAmount(token: SolanaToken.nativeSolana), +)
+
+            let userRelayAccount = try RelayProgram.getUserRelayAddress(
+                user: keypair.publicKey,
+                network: .mainnetBeta
+            )
+
+            let topUpTrx = Transaction(
+                instructions: [
+                    SystemProgram.transferInstruction(
+                        from: keypair.publicKey,
+                        to: userRelayAccount,
+                        lamports: try UInt64(feeInSolanaNetwork.value) + 10000
+                    ),
+                ],
+                feePayer: keypair.publicKey
+            )
+
+            let topUpID = try await solanaHelper
+                .sendTransaction(
+                    preparedTransaction: .init(
+                        transaction: topUpTrx, signers: [keypair],
+                        expectedFee: .zero
+                    )
+                )
+
+            try await solanaHelper.apiClient.waitForConfirmation(signature: topUpID, ignoreStatus: false)
 
             try versionedTransaction.sign(signers: [keypair])
             let encodedTrx = try versionedTransaction.serialize().base64EncodedString()

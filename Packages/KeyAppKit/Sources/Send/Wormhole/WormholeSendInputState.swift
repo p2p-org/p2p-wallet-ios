@@ -82,65 +82,33 @@ public enum WormholeSendInputState: Equatable {
                     return .error(input: input, output: nil, error: .calculationFeeFailure)
                 }
 
-                let solanaFees: CryptoAmount = [fees.networkFee, fees.messageAccountRent, fees.bridgeFee]
+                // Total fee in SOL
+                let feeInSolanaNetwork: CryptoAmount = [fees.networkFee, fees.messageAccountRent, fees.bridgeFee]
                     .compactMap { $0 }
                     .map { tokenAmount in
                         CryptoAmount(bigUIntString: tokenAmount.amount, token: SolanaToken.nativeSolana)
                     }
                     .reduce(CryptoAmount(token: SolanaToken.nativeSolana), +)
 
-                let feePayerCandidates: [SolanaAccount] = [
-                    // Same account
-                    input.availableAccounts.first(where: { account in
-                        account.data.token.address == input.solanaAccount.data.token.address
-                    }),
-
-                    // Account with high amount in fiat
-                    input.availableAccounts.sorted(by: { lhs, rhs in
-                        guard
-                            let lhsAmount = lhs.amountInFiat,
-                            let rhsAmount = rhs.amountInFiat
-                        else {
-                            return false
-                        }
-
-                        return lhsAmount > rhsAmount
-                    })
-                    .first,
-
-                    // Native account
-                    input.availableAccounts.nativeWallet,
-                ].compactMap { $0 }
-
-                var feePayerBestCandidate: SolanaAccount?
-                for feePayerCandidate in feePayerCandidates {
-                    if feePayerCandidate.data.isNativeSOL {
-                        if (input.amount + solanaFees) < feePayerCandidate.cryptoAmount {
-                            feePayerBestCandidate = feePayerCandidate
-                            break
-                        }
-                    } else {
-                        do {
-                            let feeInToken = try await service.relay.feeCalculator.calculateFeeInPayingToken(
-                                orcaSwap: service.orcaSwap,
-                                feeInSOL: .init(transaction: UInt64(solanaFees.value), accountBalances: 0),
-                                payingFeeTokenMint: PublicKey(string: feePayerCandidate.data.token.address)
-                            )
-
-                            if (feeInToken?.total ?? 0) < (feePayerCandidate.data.lamports ?? 0) {
-                                feePayerBestCandidate = feePayerCandidate
-                                break
-                            }
-                        } catch {
-                            continue
-                        }
-                    }
-                }
-
-                guard let feePayerBestCandidate = feePayerBestCandidate ?? input.availableAccounts.nativeWallet else {
+                // Select best wallet for paying fee.
+                let feePayerBestCandidate: SolanaAccount
+                do {
+                    feePayerBestCandidate = try await WormholeSendInputLogic.autoSelectFeePayer(
+                        fee: feeInSolanaNetwork,
+                        selectedAccount: input.solanaAccount,
+                        availableAccounts: input.availableAccounts,
+                        transferAmount: input.amount,
+                        feeCalculator: service.relay.feeCalculator,
+                        orcaSwap: service.orcaSwap
+                    )
+                } catch {
                     return .error(
                         input: input,
-                        output: .init(feePayer: nil, transactions: nil, fees: fees),
+                        output: .init(
+                            feePayer: nil,
+                            transactions: nil,
+                            fees: fees
+                        ),
                         error: .calculationFeePayerFailure
                     )
                 }
@@ -177,7 +145,7 @@ public enum WormholeSendInputState: Equatable {
                     let price = input.solanaAccount.price,
                     let inputAmountInFiat = try? input.amount.toFiatAmount(price: price)
                 {
-                    if inputAmountInFiat <= fees.totalInFiat {
+                    if input.amount.amount > 0, inputAmountInFiat <= fees.totalInFiat {
                         alert = .feeIsMoreThanInputAmount
                     }
                 }
@@ -194,9 +162,14 @@ public enum WormholeSendInputState: Equatable {
 
             case let .updateInput(newInput):
                 var input = input
-                input
-                    .amount = CryptoAmount(floatString: newInput, token: input.solanaAccount.data.token) ??
-                    CryptoAmount(token: input.solanaAccount.data.token)
+
+                input.amount = CryptoAmount(
+                    floatString: newInput,
+                    token: input.solanaAccount.data.token
+                ) ?? CryptoAmount(
+                    token: input.solanaAccount.data.token
+                )
+
                 return .calculating(newInput: input)
 
             case let .updateSolanaAccount(account):
@@ -204,8 +177,6 @@ public enum WormholeSendInputState: Equatable {
                 input.solanaAccount = account
                 input.amount = .init(amount: input.amount.value, token: account.data.token)
                 return .calculating(newInput: input)
-            default:
-                return self
             }
 
         case let .error(input, _, _):
@@ -223,10 +194,9 @@ public enum WormholeSendInputState: Equatable {
                 return .calculating(newInput: input)
             case .calculate:
                 return .calculating(newInput: input)
-            default:
-                return self
             }
-        default:
+
+        case let .initializingFailure(input, error):
             return self
         }
     }
@@ -252,68 +222,4 @@ extension WormholeSendInputState: CancableState {
             return true
         }
     }
-}
-
-public enum WormholeSendInputAction {
-    case initialize
-    case updateInput(amount: String)
-    case updateSolanaAccount(account: SolanaAccountsService.Account)
-    case calculate
-}
-
-public struct WormholeSendInputBase: Equatable {
-    public var solanaAccount: SolanaAccount
-
-    public var availableAccounts: [SolanaAccount]
-
-    public var amount: CryptoAmount
-
-    public let recipient: String
-
-    public init(
-        solanaAccount: SolanaAccount,
-        availableAccounts: [SolanaAccount],
-        amount: CryptoAmount,
-        recipient: String
-    ) {
-        self.solanaAccount = solanaAccount
-        self.availableAccounts = availableAccounts
-        self.amount = amount
-        self.recipient = recipient
-    }
-}
-
-public enum WormholeSendInputError: Equatable {
-    case calculationFeeFailure
-
-    case calculationFeePayerFailure
-
-    case getTransferTransactionsFailure
-
-    case insufficientInputAmount
-
-    case maxAmountReached
-
-    case initializationFailure
-}
-
-public struct WormholeSendOutputBase: Equatable {
-    public let feePayer: SolanaAccount?
-    public let transactions: SendTransaction?
-    public let fees: SendFees
-
-    public init(feePayer: SolanaAccount?, transactions: SendTransaction?, fees: SendFees) {
-        self.feePayer = feePayer
-        self.transactions = transactions
-        self.fees = fees
-    }
-}
-
-public enum InitializingError: Error, Equatable {
-    case unauthorized
-    case missingArguments
-}
-
-public enum WormholeSendInputAlert: Equatable {
-    case feeIsMoreThanInputAmount
 }

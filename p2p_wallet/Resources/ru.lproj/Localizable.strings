@@ -1342,3 +1342,4 @@ You can try again, but your new transaction will be subject to the current rates
 "Refresh the page or check back later" = "Обновите страницу или зайдите позже";
 "Reload" = "Перезагрузить";
 "You’ve got" = "У тебя есть";
+"The fee is more than the amount sent" = "Комиссия больше отправленной суммы";

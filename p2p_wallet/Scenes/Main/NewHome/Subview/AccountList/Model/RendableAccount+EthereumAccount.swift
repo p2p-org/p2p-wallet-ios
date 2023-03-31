@@ -44,7 +44,9 @@ struct RendableEthereumAccount: RendableAccount {
 
     var detail: AccountDetail {
         if let onClaim {
-            return .button(label: isClaiming ? L10n.claiming : L10n.claim, action: onClaim)
+            return .button(label: L10n.claim, action: onClaim)
+        } else if isClaiming {
+            return .button(label: L10n.claiming, action: nil)
         } else if let balanceInFiat = account.balanceInFiat {
             return .text(CurrencyFormatter().string(amount: balanceInFiat))
         } else {

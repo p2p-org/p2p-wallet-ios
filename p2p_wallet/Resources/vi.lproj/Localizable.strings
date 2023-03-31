@@ -1347,3 +1347,4 @@ You can try again, but your new transaction will be subject to the current rates
 "Refresh the page or check back later" = "Làm mới trang hoặc kiểm tra lại sau";
 "Reload" = "tải lại";
 "You’ve got" = "Bạn đã có";
+"The fee is more than the amount sent" = "Phí nhiều hơn số tiền gửi";
