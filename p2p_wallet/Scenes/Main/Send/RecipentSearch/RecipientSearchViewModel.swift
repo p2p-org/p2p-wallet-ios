@@ -275,6 +275,19 @@ class RecipientSearchViewModel: ObservableObject {
     func sendViaLink() {
         coordinator.sendViaLinkSubject.send(())
     }
+    
+    #if !RELEASE
+    func sendToTotallyNewAccount() {
+        let keypair = try! KeyPair()
+        selectRecipient(
+            .init(
+                address: keypair.publicKey.base58EncodedString,
+                category: .solanaAddress,
+                attributes: [.funds]
+            )
+        )
+    }
+    #endif
 }
 
 // MARK: - Analytics

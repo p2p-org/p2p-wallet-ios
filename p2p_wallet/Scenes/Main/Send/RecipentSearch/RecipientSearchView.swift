@@ -49,6 +49,18 @@ struct RecipientSearchView: View {
                 if !viewModel.sendViaLinkState.isFeatureDisabled, viewModel.sendViaLinkVisible {
                     sendViaLinkView
                 }
+                
+                #if !RELEASE
+                // Send to totally new account (for debugging)
+                Button {
+                    viewModel.sendToTotallyNewAccount()
+                } label: {
+                    Text("Tap to send to totally new account (asset will be lost)")
+                        .apply(style: .label2)
+                        .foregroundColor(.red)
+                        .fixedSize(horizontal: false, vertical: true)
+                }
+                #endif
 
                 // Result
                 if viewModel.isSearching {
