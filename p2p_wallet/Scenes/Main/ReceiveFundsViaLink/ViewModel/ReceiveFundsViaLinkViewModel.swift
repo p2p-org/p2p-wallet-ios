@@ -5,6 +5,7 @@
 //  Created by Ivan on 23.03.2023.
 //
 
+import AnalyticsManager
 import Combine
 import Foundation
 import SolanaSwift
@@ -23,6 +24,7 @@ final class ReceiveFundsViaLinkViewModel: BaseViewModel, ObservableObject {
     }
     
     // Dependencies
+    @Injected private var analyticsManager: AnalyticsManager
     @Injected private var sendViaLinkDataService: SendViaLinkDataService
     @Injected private var tokensRepository: SolanaTokensRepository
     @Injected private var walletsRepository: WalletsRepository
@@ -72,7 +74,12 @@ final class ReceiveFundsViaLinkViewModel: BaseViewModel, ObservableObject {
     
     // MARK: - From View
     
+    func onAppear() {
+        analyticsManager.log(event: .claimStartScreenOpen)
+    }
+    
     func closeClicked() {
+        analyticsManager.log(event: .claimClickClose)
         closeSubject.send()
     }
     
@@ -81,11 +88,19 @@ final class ReceiveFundsViaLinkViewModel: BaseViewModel, ObservableObject {
         guard
             let claimableToken = claimableToken,
             let token = token,
-            let pubkey = try? PublicKey(string: walletsRepository.nativeWallet?.pubkey)
+            let pubkeyStr = walletsRepository.nativeWallet?.pubkey,
+            let pubkey = try? PublicKey(string: pubkeyStr)
         else { return }
 
         let cryptoAmount = claimableToken.lamports
             .convertToBalance(decimals: claimableToken.decimals)
+
+analyticsManager.log(event: .claimClickConfirmed(
+            pubkey: pubkeyStr,
+            tokenName: token.symbol,
+            tokenValue: cryptoAmount,
+            fromAddress: claimableToken.account
+        ))
         
         #if !RELEASE
         let isFakeSendingTransaction = isFakeSendingTransaction
@@ -130,6 +145,7 @@ final class ReceiveFundsViaLinkViewModel: BaseViewModel, ObservableObject {
             .sink { [weak self] tx in
                 guard let self else { return }
                 if let error = tx.status.error {
+                    self.analyticsManager.log(event: .claimErrorDefaultReject)
                     if (error as NSError).isNetworkConnectionError {
                         self.processingState = .error(message: NSAttributedString(
                             string: L10n.TheTransactionWasRejectedAfterFailedInternetConnection.openYourLinkAgain
@@ -157,6 +173,11 @@ final class ReceiveFundsViaLinkViewModel: BaseViewModel, ObservableObject {
         DispatchQueue.main.asyncAfter(deadline: .now() + 2) {
             self.loadTokenInfo()
         }
+    }
+    
+    func gotItClicked() {
+        analyticsManager.log(event: .claimClickEnd)
+        closeSubject.send()
     }
     
     // MARK: - Private

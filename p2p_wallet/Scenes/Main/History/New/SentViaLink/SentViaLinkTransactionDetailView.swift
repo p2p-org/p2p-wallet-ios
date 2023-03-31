@@ -5,6 +5,7 @@
 //  Created by Chung Tran on 22/03/2023.
 //
 
+import AnalyticsManager
 import SwiftUI
 import Combine
 import KeyAppUI
@@ -14,6 +15,7 @@ import Send
 struct SentViaLinkTransactionDetailView: View {
     // MARK: - Dependencies
 
+    @Injected private var analyticsManager: AnalyticsManager
     @Injected private var notificationService: NotificationService
     @Injected private var sendViaLinkDataService: SendViaLinkDataService
     
@@ -121,6 +123,7 @@ struct SentViaLinkTransactionDetailView: View {
             Spacer()
             
             Button {
+                analyticsManager.log(event: .historySendClickCopyTransaction)
                 let pasteboard = UIPasteboard.general
                 pasteboard.string = link
                 notificationService.showInAppNotification(.done(L10n.yourOneTimeLinkIsCopied))
@@ -162,6 +165,7 @@ struct SentViaLinkTransactionDetailView: View {
     
     private var shareButton: some View {
         Button {
+            analyticsManager.log(event: .historySendClickShareTransaction)
             onShare()
         } label: {
             HStack {
