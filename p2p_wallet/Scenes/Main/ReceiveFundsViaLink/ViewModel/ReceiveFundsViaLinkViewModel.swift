@@ -160,7 +160,7 @@ final class ReceiveFundsViaLinkViewModel: BaseViewModel, ObservableObject {
                 }
 
                 let cryptoAmountStr = cryptoAmount.tokenAmountFormattedString(symbol: token.symbol)
-                let model = Model(token: .nativeSolana, cryptoAmount: "cryptoAmountStr")
+                let model = Model(token: token, cryptoAmount: cryptoAmountStr)
                 
                 self.claimableToken = claimableToken
                 self.token = token
