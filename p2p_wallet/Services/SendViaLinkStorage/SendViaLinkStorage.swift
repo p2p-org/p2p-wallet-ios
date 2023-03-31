@@ -28,6 +28,8 @@ final class SendViaLinkStorageImpl: SendViaLinkStorage {
     
     @Injected private var userWalletManager: UserWalletManager
     
+    private var localKeychain = KeychainSwift()
+    
     // MARK: - Properties
     
     private var subscription: DefaultsDisposable?
@@ -44,12 +46,6 @@ final class SendViaLinkStorageImpl: SendViaLinkStorage {
     
     var transactionsPublisher: AnyPublisher<[SendViaLinkTransactionInfo], Never> {
         transactionsSubject.eraseToAnyPublisher()
-    }
-    
-    private var icloudKeychain: KeychainSwift {
-        let icloudKeychain = KeychainSwift()
-        icloudKeychain.synchronizable = true
-        return icloudKeychain
     }
     
     // MARK: - Initializer
@@ -112,7 +108,7 @@ final class SendViaLinkStorageImpl: SendViaLinkStorage {
     
     func getTransactions() -> [SendViaLinkTransactionInfo] {
         guard let userPubkey,
-              let data = icloudKeychain.getData(sendViaLinkTransactionsKeychainKey),
+              let data = localKeychain.getData(sendViaLinkTransactionsKeychainKey),
               let dict = try? JSONDecoder().decode([String: [SendViaLinkTransactionInfo]].self, from: data)
         else {
             return []
@@ -130,7 +126,7 @@ final class SendViaLinkStorageImpl: SendViaLinkStorage {
         
         // assure that dictionary is alway non-optional
         var newValue = [String: [SendViaLinkTransactionInfo]]()
-        if let data = icloudKeychain.getData(sendViaLinkTransactionsKeychainKey),
+        if let data = localKeychain.getData(sendViaLinkTransactionsKeychainKey),
            let dict = try? JSONDecoder().decode([String: [SendViaLinkTransactionInfo]].self, from: data)
         {
             newValue = dict
@@ -145,7 +141,7 @@ final class SendViaLinkStorageImpl: SendViaLinkStorage {
         }
         
         // save to Keychain
-        return icloudKeychain.set(data, forKey: sendViaLinkTransactionsKeychainKey)
+        return localKeychain.set(data, forKey: sendViaLinkTransactionsKeychainKey)
     }
     
     // MARK: - UserDefaults (deprecated)
