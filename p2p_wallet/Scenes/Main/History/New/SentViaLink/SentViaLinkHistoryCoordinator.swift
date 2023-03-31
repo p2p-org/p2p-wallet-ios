@@ -36,9 +36,7 @@ final class SentViaLinkHistoryCoordinator: SmartCoordinator<Void> {
     private func openSendViaLinkTransactionDetail(transaction: SendViaLinkTransactionInfo) {
         guard let url = try? Resolver.resolve(SendViaLinkDataService.self)
             .restoreURL(givenSeed: transaction.seed)
-        else {
-            return
-        }
+        else { return }
         
         // get publisher
         let transactionPublisher = transactionsPublisher

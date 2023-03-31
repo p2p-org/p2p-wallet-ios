@@ -16,6 +16,9 @@ struct ReceiveFundsViaLinkView: View {
     
     var body: some View {
         content
+            .onAppear {
+                viewModel.onAppear()
+            }
     }
     
     @ViewBuilder
@@ -182,7 +185,7 @@ struct ReceiveFundsViaLinkView: View {
                 style: .primaryWhite,
                 size: .large,
                 onPressed: {
-                    viewModel.closeClicked()
+                    viewModel.gotItClicked()
                 }
             )
             .frame(height: 56)
