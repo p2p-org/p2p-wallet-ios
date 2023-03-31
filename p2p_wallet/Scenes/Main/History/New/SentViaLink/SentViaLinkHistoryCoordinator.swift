@@ -49,7 +49,7 @@ final class SentViaLinkHistoryCoordinator: SmartCoordinator<Void> {
         let view = SentViaLinkTransactionDetailView(
             transactionPublisher: transactionPublisher,
             onShare: { [weak self] in
-                self?.showShareView(link: url.absoluteString)
+                self?.showShareView(link: url.absoluteString, amount: transaction.amount, symbol: transaction.token.symbol)
             },
             onClose: { [weak self] in
                 self?.transactionDetailVC.dismiss(animated: true)
