@@ -369,6 +369,89 @@ platform :ios do
     push_git_tags(tag: tag)
   end
 
+  lane :release_direct_to_testflight do
+    # update xcconfig
+    update_xcconfig
+
+    # get current branch name
+    branch = git_branch.downcase
+    puts "Current branch is #{branch}"
+
+    # check if branch is a release branch
+    if !branch.start_with?("release/")
+      raise "The branch is not a release branch. Release branch format: release/<MARKETING_VERSION>"
+    end
+
+    # get release version
+    version = branch.split("release/").last
+    puts "Releasing version #{version}"
+
+    # check feature number
+    version_updated = false
+    if version != get_version_number(target: "p2p_wallet")
+      puts "The version number is not valid. Updating..."
+
+      # update project.yml
+      file_name = "project.yml"
+      text = File.read("../#{file_name}")
+      new_contents = text.gsub(/MARKETING_VERSION: .*/, "MARKETING_VERSION: #{version}")
+      File.open("../#{file_name}", "w") {|file| file.puts new_contents }
+
+      # commit and push
+      version_updated = true
+
+      # update xcodeproj file
+      increment_version_number(
+        version_number: version,
+        xcodeproj: "./p2p_wallet.xcodeproj"
+      )
+    end
+
+    # prepare for tagging
+    tag_prefix = "v"
+
+    # find available build number via tags
+    build_number = 1
+    tag = "#{tag_prefix}#{version}(#{build_number})"
+    while git_tag_exists(tag: tag, remote: true)
+      build_number += 1
+      tag = "#{tag_prefix}#{version}(#{build_number})"
+    end
+
+    # set build number
+    increment_build_number(
+      xcodeproj: "p2p_wallet.xcodeproj",
+      build_number: build_number,
+      skip_info_plist: true
+    )
+
+    # create release build
+    create_release_build('app-store', 'Release')
+    upload_dsym_to_analytic_providers
+
+    # upload to testflight
+    pilot(
+      apple_id: "#{DEVELOPER_APP_ID}",
+      app_identifier: "#{DEVELOPER_APP_IDENTIFIER}",
+      skip_waiting_for_build_processing: true,
+      skip_submission: true,
+      distribute_external: false,
+      notify_external_testers: false,
+      ipa: "./p2p_wallet.ipa"
+    )
+
+    # clean
+    delete_temp_keychain(TEMP_KEYCHAIN_USER)
+
+    # commit, tag and push
+    if version_updated
+      git_commit(path: "./project.yml", message: "release: bump version to #{version}")
+      push_to_git_remote()
+    end
+    add_git_tag(tag: tag)
+    push_git_tags(tag: tag)
+  end
+
   lane :daily_test do
     # get current branch name
     branch = git_branch.downcase
