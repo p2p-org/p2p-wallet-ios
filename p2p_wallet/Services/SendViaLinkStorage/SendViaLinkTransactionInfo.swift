@@ -16,6 +16,8 @@ struct SendViaLinkTransactionInfo: Codable, Identifiable {
         // if today
         if Calendar.current.isDateInToday(timestamp) {
             return L10n.today
+        } else if Calendar.current.isDateInYesterday(date) {
+            return L10n.yesterday
         }
         
         // if another day
