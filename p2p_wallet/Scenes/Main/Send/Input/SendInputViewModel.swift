@@ -265,6 +265,10 @@ private extension SendInputViewModel {
                 switch value.type {
                 case .token:
                     _ = await self.stateMachine.accept(action: .changeAmountInToken(value.amount.inToken))
+                    self.logAmountChanged(
+                        symbol: self.tokenViewModel.token.token.symbol,
+                        amount: value.amount.inToken
+                    )
                 case .fiat:
                     _ = await self.stateMachine.accept(action: .changeAmountInFiat(value.amount.inFiat))
                 }
@@ -275,6 +279,7 @@ private extension SendInputViewModel {
         $sourceWallet
             .sinkAsync(receiveValue: { [weak self] value in
                 await MainActor.run { [weak self] in self?.isFeeLoading = true }
+                self?.logTokenChosen(symbol: value.token.symbol)
                 _ = await self?.stateMachine.accept(action: .changeUserToken(value.token))
                 await MainActor.run { [weak self] in
                     self?.inputAmountViewModel.token = value
@@ -494,7 +499,7 @@ private extension SendInputViewModel {
         logConfirmButtonClick()
 
         await MainActor.run {
-            self.showFinished = true
+            showFinished = true
         }
         
         try? await Task.sleep(nanoseconds: 500_000_000)
@@ -507,23 +512,32 @@ private extension SendInputViewModel {
         let token = currentState.token
         let amountInFiat = currentState.amountInFiat
         
+        if isSendingViaLink {
+            logSendClickCreateLink(symbol: token.symbol, amount: amountInToken, pubkey: sourceWallet.pubkey ?? "")
+        }
+        
+        let transaction = SendTransaction(state: self.currentState) {
+            try await createTransactionExecution(
+                isSendingViaLink: isSendingViaLink,
+                isFakeSendTransaction: isFakeSendTransaction,
+                isFakeSendTransactionError: isFakeSendTransactionError,
+                isFakeSendTransactionNetworkError: isFakeSendTransactionNetworkError,
+                recipient: recipient,
+                sendViaLinkSeed: sendViaLinkSeed,
+                token: token,
+                amountInToken: amountInToken,
+                amountInFiat: amountInFiat,
+                sourceWallet: sourceWallet,
+                address: address,
+                feeWallet: feeWallet
+            )
+        }
+        
+        if isSendingViaLink {
+            logCreatingLinkProcess()
+        }
+        
         await MainActor.run {
-            let transaction = SendTransaction(state: self.currentState) {
-                try await createTransactionExecution(
-                    isSendingViaLink: isSendingViaLink,
-                    isFakeSendTransaction: isFakeSendTransaction,
-                    isFakeSendTransactionError: isFakeSendTransactionError,
-                    isFakeSendTransactionNetworkError: isFakeSendTransactionNetworkError,
-                    recipient: recipient,
-                    sendViaLinkSeed: sendViaLinkSeed,
-                    token: token,
-                    amountInToken: amountInToken,
-                    amountInFiat: amountInFiat,
-                    sourceWallet: sourceWallet,
-                    address: address,
-                    feeWallet: feeWallet
-                )
-            }
             self.transaction.send(transaction)
         }
     }
@@ -623,15 +637,33 @@ private extension SendInputViewModel {
     }
 
     func logEnjoyFeeTransaction() {
+        analyticsManager.log(event: .sendClickNotificationFreeTransactions)
         analyticsManager.log(event: .sendnewFreeTransactionClick(source: source.rawValue))
     }
 
     func logChooseTokenClick() {
         analyticsManager.log(event: .sendnewTokenInputClick(source: source.rawValue))
+        analyticsManager.log(event: .sendClickChangeToken(tokenName: tokenViewModel.token.token.symbol))
+    }
+    
+    func logTokenChosen(symbol: String) {
+        analyticsManager.log(event: .sendClickChangeTokenChosen(tokenName: symbol))
     }
 
     func logFiatInputClick(isCrypto: Bool) {
         analyticsManager.log(event: .sendnewFiatInputClick(crypto: isCrypto, source: source.rawValue))
+    }
+    
+    func logAmountChanged(symbol: String, amount: Double) {
+        analyticsManager.log(event: .sendClickChangeTokenValue(tokenName: symbol, tokenValue: amount))
+    }
+    
+    func logSendClickCreateLink(symbol: String, amount: Double, pubkey: String) {
+        analyticsManager.log(event: .sendClickCreateLink(tokenName: symbol, tokenValue: amount, pubkey: pubkey))
+    }
+    
+    func logCreatingLinkProcess() {
+        analyticsManager.log(event: .sendCreatingLinkProcess)
     }
 
     func logConfirmButtonClick() {

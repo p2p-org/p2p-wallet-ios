@@ -1,5 +1,7 @@
 import SwiftUI
 import KeyAppUI
+import AnalyticsManager
+import Resolver
 
 struct SendCreateLinkView: View {
 
@@ -34,6 +36,9 @@ struct SendCreateLinkView: View {
             .edgesIgnoringSafeArea(.top)
             .padding(.horizontal, 20)
             .padding(.bottom, animationSize.height / 2)
+        }
+        .onAppear {
+            Resolver.resolve(AnalyticsManager.self).log(event: .sendCreatingLinkProcessScreenOpen)
         }
     }
 }
