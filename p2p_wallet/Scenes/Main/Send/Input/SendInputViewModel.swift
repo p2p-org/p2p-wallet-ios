@@ -477,14 +477,13 @@ private extension SendInputViewModel {
     }
 
     func send() async {
-        guard
-            let sourceWallet = currentState.sourceWallet,
-            let feeWallet = currentState.feeWallet
+        guard let sourceWallet = currentState.sourceWallet
         else { return }
 
         let address: String
         let amountInToken = currentState.amountInToken
         let recipient = currentState.recipient
+        let feeWallet = currentState.feeWallet
 
         switch recipient.category {
         case let .solanaTokenAddress(walletAddress, _):
