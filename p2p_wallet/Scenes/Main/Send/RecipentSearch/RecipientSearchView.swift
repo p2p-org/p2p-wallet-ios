@@ -141,6 +141,7 @@ struct RecipientSearchView: View {
                         .castToAnyView(),
                     title: L10n.sendCryptoViaOneTimeLink,
                     subtitle: viewModel.sendViaLinkState.canCreateLink ? L10n.youDonTNeedToKnowTheAddress: L10n.LimitIsOneTimeLinksPerDay.tryTomorrow(viewModel.sendViaLinkState.limitPerDay)
+                    multilinesForSubtitle: true
                 )
                 
                 #if !RELEASE
