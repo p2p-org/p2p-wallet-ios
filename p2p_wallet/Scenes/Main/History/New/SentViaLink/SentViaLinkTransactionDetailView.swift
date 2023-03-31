@@ -148,7 +148,7 @@ struct SentViaLinkTransactionDetailView: View {
                 .theFundsCanBeClaimedByAnyoneWithALink
             )
                 .apply(style: .text4)
-                .frame(height: 70)
+                .fixedSize(horizontal: false, vertical: true)
             
             Spacer()
         }
