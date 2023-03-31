@@ -13,8 +13,6 @@ class WormholeClaimViewModel: BaseViewModel, ObservableObject {
 
     @Published var model: any WormholeClaimModel
     @Published var feeAmountInFiat: String = ""
-    @Published var buttonText: String = ""
-    @Published var buttonDisabled = false
 
     @Injected private var reachability: Reachability
 
@@ -78,16 +76,14 @@ class WormholeClaimViewModel: BaseViewModel, ObservableObject {
             .map(\.error)
             .compactMap { $0 }
             .sink { error in
-                if let error = error as? JSONRPCError<String>, error.code == 32007 {
+                if let error = error as? JSONRPCError<String>, error.code == -32007 {
                     notificationService.showInAppNotification(.error(L10n.theFeesAreBiggerThanTheTransactionAmount))
-                } else {
-                    notificationService.showInAppNotification(.error("\(error.localizedDescription)"))
                 }
-                self.feeAmountInFiat = L10n.valueIsUnavailable
+                DispatchQueue.main.async {
+                    self.feeAmountInFiat = L10n.valueIsUnavailable
+                }
             }
             .store(in: &subscriptions)
-
-        bundle.$state.map { !($0.status == .ready) }.weakAssign(to: \.buttonDisabled, on: self).store(in: &subscriptions)
 
         try? reachability.startNotifier()
         reachability.status.sink { [unowned self] _ in
