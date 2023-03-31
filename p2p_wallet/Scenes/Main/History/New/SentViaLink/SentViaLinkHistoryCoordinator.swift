@@ -74,8 +74,30 @@ final class SentViaLinkHistoryCoordinator: SmartCoordinator<Void> {
             .store(in: &subscriptions)
     }
     
-    private func showShareView(link: String) {
-        let av = UIActivityViewController(activityItems: [link], applicationActivities: nil)
+    private func showShareView(link: String, amount: Double, symbol: String) {
+        // get sender
+        let userWalletManager = Resolver.resolve(UserWalletManager.self)
+        let sender = userWalletManager.wallet?.name ?? userWalletManager.wallet?.account.publicKey.base58EncodedString
+        
+        // assertion
+        guard let sender,
+              let url = URL(string: link)
+        else { return }
+        
+        // form item to share
+        let shareItems: [Any] = [
+            SentViaLinkActivityItemSource(
+                sender: sender,
+                amount: amount,
+                symbol: symbol,
+                url: url
+            )
+        ]
+        
+        // create share sheet
+        let av = UIActivityViewController(activityItems: shareItems, applicationActivities: nil)
+        
+        // present share sheet
         transactionDetailVC.present(av, animated: true)
     }
 }
