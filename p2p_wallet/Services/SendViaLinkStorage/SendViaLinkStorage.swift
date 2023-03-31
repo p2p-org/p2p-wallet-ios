@@ -53,13 +53,6 @@ final class SendViaLinkStorageImpl: SendViaLinkStorage {
     init() {
         // retrieve transaction
         transactionsSubject.send(getTransactions())
-
-        // observe changes
-        subscription = Defaults.observe(\.sendViaLinkTransactions) { [weak self] transactions in
-            guard let newValue = self?.getTransactions()
-            else { return }
-            self?.transactionsSubject.send(newValue)
-        }
         
         // migration
         migrate()
@@ -91,6 +84,9 @@ final class SendViaLinkStorageImpl: SendViaLinkStorage {
         // append seed
         transactions.insert(transaction, at: 0)
         
+        // notify
+        transactionsSubject.send(transactions)
+        
         // save
         return save(transactions: transactions)
     }
@@ -101,6 +97,9 @@ final class SendViaLinkStorageImpl: SendViaLinkStorage {
         
         // remove seed
         transactions.removeAll(where: { $0.seed == seed })
+        
+        // notify
+        transactionsSubject.send(transactions)
         
         // save
         return save(transactions: transactions)
