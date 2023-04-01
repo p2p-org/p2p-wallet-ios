@@ -99,6 +99,10 @@ public struct CryptoAmount: Hashable {
 
         return .init(value: amount * (price.value ?? 0), currencyCode: price.currencyCode)
     }
+
+    public func with(amount: BigUInt) -> Self {
+        .init(amount: amount, token: token)
+    }
 }
 
 extension CryptoAmount: Comparable {
@@ -119,6 +123,14 @@ public extension CryptoAmount {
         }
 
         return .init(amount: lhs.value + rhs.value, token: lhs.token)
+    }
+
+    static func - (lhs: Self, rhs: Self) -> Self {
+        guard lhs.token == rhs.token else {
+            return lhs
+        }
+
+        return .init(amount: lhs.value - rhs.value, token: lhs.token)
     }
 
     /// Additonal operation. Return left side if they are matching.

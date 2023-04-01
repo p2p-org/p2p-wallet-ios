@@ -79,7 +79,7 @@ class WormholeSendInputViewModel: BaseViewModel, ObservableObject {
         let services: WormholeSendInputState.Service = (wormholeService, relayService, relayContextManager, orcaSwap)
 
         // Ensure user wallet is available
-        guard let wallet = userWalletManager.wallet else {
+        guard userWalletManager.wallet != nil else {
             let state: WormholeSendInputState = .initializingFailure(input: nil, error: .unauthorized)
             self.state = state
             stateMachine = .init(initialState: state, services: services)
@@ -89,7 +89,7 @@ class WormholeSendInputViewModel: BaseViewModel, ObservableObject {
 
         let availableBridgeAccounts = Self.resolveSupportedSolanaAccounts(solanaAccountsService: solanaAccountsService)
 
-        // Ensure at lease one avaiable wallet for bridging.
+        // Ensure at lease one available wallet for bridging.
         guard let initialSolanaAccount = availableBridgeAccounts.first else {
             let state: WormholeSendInputState = .initializingFailure(
                 input: nil,

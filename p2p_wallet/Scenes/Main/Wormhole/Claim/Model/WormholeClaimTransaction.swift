@@ -29,16 +29,16 @@ struct WormholeClaimTransaction: RawTransactionType {
 
     var mainDescription: String = "Claim"
 
-    var networkFees: (total: SolanaSwift.Lamports, token: SolanaSwift.Token)? = nil
+    var networkFees: (total: SolanaSwift.Lamports, token: SolanaSwift.Token)?
 
-    var payingFeeWallet: SolanaSwift.Wallet? = nil
+    var payingFeeWallet: SolanaSwift.Wallet?
 
     var feeAmount: SolanaSwift.FeeAmount = .zero
 
     func createRequest() async throws -> String {
         do {
-            try await wormholeService.simulateBundle(bundle: bundle)
-            
+            try await wormholeService.sendBundle(bundle: bundle)
+
             return UUID().uuidString
         } catch {
             print(error)

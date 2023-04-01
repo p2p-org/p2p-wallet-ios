@@ -16,7 +16,7 @@ struct WormholeSendInputStateAdapter: Equatable {
     let cryptoFormatter: CryptoFormatter = .init()
     let currencyFormatter: CurrencyFormatter = .init()
 
-    var state: WormholeSendInputState
+    let state: WormholeSendInputState
 
     var input: WormholeSendInputBase? {
         switch state {

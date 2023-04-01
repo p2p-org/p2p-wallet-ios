@@ -9,9 +9,16 @@ import Foundation
 import KeyAppKitCore
 
 public struct SendFees: Codable, Hashable {
+    /// Process fee in Ethereum network.
     public let arbiter: TokenAmount?
+    
+    /// Network fee in Solana network.
     public let networkFee: TokenAmount?
+    
+    /// Account creation fee in Solana network.
     public let messageAccountRent: TokenAmount?
+    
+    /// Bridge fee in Solana network.
     public let bridgeFee: TokenAmount?
 
     enum CodingKeys: String, CodingKey {
@@ -23,6 +30,7 @@ public struct SendFees: Codable, Hashable {
 }
 
 public extension SendFees {
+    /// Total amount in fiat.
     var totalInFiat: CurrencyAmount {
         CurrencyAmount(usd: 0)
             + arbiter?.asCurrencyAmount

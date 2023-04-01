@@ -257,7 +257,7 @@ struct RendableDetailPendingTransaction: RendableTransactionDetail {
                 )
             }
 
-            // net work fee
+            // network fee
             else if let payingFeeWallet = transaction.payingFeeWallet {
                 let feeAmount: Double = fees.total.convertToBalance(decimals: payingFeeWallet.token.decimals)
                 let formatedFeeAmount: String = feeAmount
@@ -298,8 +298,8 @@ struct RendableDetailPendingTransaction: RendableTransactionDetail {
                 // Reduce into single amount in crypto and fiat.
                 let summarizedFees: [(CryptoAmount, CurrencyAmount)] = compactFees.mapValues { fees in
                     guard
-                        let initialCryptoAmount = fees.first?.asCryptoAmount,
-                        let initialCurrencyAmount = fees.first?.asCurrencyAmount
+                        let initialCryptoAmount = fees.first?.asCryptoAmount.with(amount: 0),
+                        let initialCurrencyAmount = fees.first?.asCurrencyAmount.with(amount: 0)
                     else {
                         return nil
                     }
@@ -343,6 +343,56 @@ struct RendableDetailPendingTransaction: RendableTransactionDetail {
                             text: RecipientFormatter.format(destination: transaction.recipient.address)
                         ),
                     ]
+                )
+            )
+
+            // Collect all fees.
+            let allFees: [Wormhole.TokenAmount] = [
+                transaction.fees.arbiter,
+                transaction.fees.networkFee,
+                transaction.fees.bridgeFee,
+                transaction.fees.messageAccountRent,
+            ].compactMap { $0 }
+
+            // Split into group token.
+            let compactFees = Dictionary(grouping: allFees) { fee in fee.token }
+
+            // Reduce into single amount in crypto and fiat.
+            let summarizedFees: [(CryptoAmount, CurrencyAmount)] = compactFees
+                .mapValues { fees -> (CryptoAmount, CurrencyAmount)? in
+                    guard
+                        let initialCryptoAmount = fees.first?.asCryptoAmount.with(amount: 0),
+                        let initialCurrencyAmount = fees.first?.asCurrencyAmount.with(amount: 0)
+                    else {
+                        return nil
+                    }
+
+                    let cryptoAmount = fees.map(\.asCryptoAmount).reduce(initialCryptoAmount, +)
+                    let fiatAmount = fees.map(\.asCurrencyAmount).reduce(initialCurrencyAmount,+)
+
+                    return (cryptoAmount, fiatAmount)
+                }
+                .values
+                .compactMap { $0 }
+
+            let cryptoFormatter = CryptoFormatter()
+            let currencyFormatter = CurrencyFormatter()
+
+            let formattedSummarizedFees: [TransactionDetailExtraInfo.Value] = summarizedFees
+                .map { cryptoAmount, currencyAmount in
+                    let formattedCryptoAmount = cryptoFormatter.string(for: cryptoAmount)
+                    let formattedCurrencyFormatter = currencyFormatter.string(for: currencyAmount)
+
+                    return TransactionDetailExtraInfo.Value(
+                        text: formattedCryptoAmount ?? "",
+                        secondaryText: formattedCurrencyFormatter ?? ""
+                    )
+                }
+
+            result.append(
+                .init(
+                    title: L10n.transferFee,
+                    values: formattedSummarizedFees
                 )
             )
 

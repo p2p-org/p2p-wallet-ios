@@ -41,53 +41,50 @@ class WormholeSendFeesViewModel: BaseViewModel, ObservableObject {
 
     init(
         stateMachine: WormholeSendInputStateMachine,
-        ethereumTokensRepository: EthereumTokensRepository = Resolver.resolve(),
-        solanaTokensRepository: SolanaTokensService = Resolver.resolve()
+        ethereumTokensRepository _: EthereumTokensRepository = Resolver.resolve(),
+        solanaTokensRepository _: SolanaTokensService = Resolver.resolve()
     ) {
         super.init()
 
         stateMachine
             .state
+            .receive(on: RunLoop.main)
             .sink { [weak self] state in
+                let adapter = WormholeSendFeesAdapter(state: state)
 
-                Task {
-                    let adapter = await WormholeSendFeesAdapter(
-                        adapter: WormholeSendInputStateAdapter(state: state),
-                        ethereumTokensRepository: ethereumTokensRepository,
-                        solanaTokensRepository: solanaTokensRepository
-                    )
-
-                    DispatchQueue.main.async { [weak self] in
-                        self?.fees = [
-                            .init(title: L10n.recipientSAddress, subtitle: adapter.recipientAddress, detail: ""),
-                            .init(
-                                title: L10n.recipientGets,
-                                subtitle: adapter.receive.crypto,
-                                detail: adapter.receive.fiat
-                            ),
-                            .init(
-                                title: L10n.networkFee,
-                                subtitle: adapter.networkFee?.crypto,
-                                detail: adapter.networkFee?.fiat
-                            ),
-                            .init(
-                                title: "Message fee",
-                                subtitle: adapter.messageFee?.crypto,
-                                detail: adapter.messageFee?.fiat
-                            ),
-                            .init(
-                                title: L10n.usingWormholeBridge,
-                                subtitle: adapter.bridgeFee?.crypto,
-                                detail: adapter.bridgeFee?.fiat
-                            ),
-                            .init(
-                                title: "Arbiter fee",
-                                subtitle: adapter.arbiterFee?.crypto,
-                                detail: adapter.arbiterFee?.fiat
-                            ),
-                        ].compactMap { $0 }
-                    }
-                }
+                self?.fees = [
+                    .init(title: L10n.recipientSAddress, subtitle: adapter.recipientAddress, detail: ""),
+                    .init(
+                        title: L10n.recipientGets,
+                        subtitle: adapter.receive.crypto,
+                        detail: adapter.receive.fiat
+                    ),
+                    .init(
+                        title: L10n.networkFee,
+                        subtitle: adapter.networkFee?.crypto,
+                        detail: adapter.networkFee?.fiat
+                    ),
+                    .init(
+                        title: "Message fee",
+                        subtitle: adapter.messageFee?.crypto,
+                        detail: adapter.messageFee?.fiat
+                    ),
+                    .init(
+                        title: L10n.usingWormholeBridge,
+                        subtitle: adapter.bridgeFee?.crypto,
+                        detail: adapter.bridgeFee?.fiat
+                    ),
+                    .init(
+                        title: "Arbiter fee",
+                        subtitle: adapter.arbiterFee?.crypto,
+                        detail: adapter.arbiterFee?.fiat
+                    ),
+                    .init(
+                        title: L10n.total,
+                        subtitle: adapter.total?.crypto,
+                        detail: adapter.total?.fiat
+                    ),
+                ].compactMap { $0 }
             }
             .store(in: &subscriptions)
     }
