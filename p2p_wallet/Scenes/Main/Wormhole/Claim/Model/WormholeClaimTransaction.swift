@@ -37,7 +37,7 @@ struct WormholeClaimTransaction: RawTransactionType {
 
     func createRequest() async throws -> String {
         do {
-            try await wormholeService.sendBundle(bundle: bundle)
+            try await wormholeService.simulateBundle(bundle: bundle)
             
             return UUID().uuidString
         } catch {

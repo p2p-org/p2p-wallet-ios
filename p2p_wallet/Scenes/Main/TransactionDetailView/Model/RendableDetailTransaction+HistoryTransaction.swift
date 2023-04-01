@@ -154,7 +154,9 @@ struct RendableDetailHistoryTransaction: RendableTransactionDetail {
             result.append(
                 .init(
                     title: L10n.sendTo,
-                    value: data.account.name ?? RecipientFormatter.format(destination: data.account.address),
+                    values: [
+                        .init(text: data.account.name ?? RecipientFormatter.format(destination: data.account.address)),
+                    ],
                     copyableValue: data.account.name ?? data.account.address
                 )
             )
@@ -162,37 +164,73 @@ struct RendableDetailHistoryTransaction: RendableTransactionDetail {
             result.append(
                 .init(
                     title: L10n.receivedFrom,
-                    value: data.account.name ?? RecipientFormatter.format(destination: data.account.address),
+                    values: [
+                        .init(text: data.account.name ?? RecipientFormatter.format(destination: data.account.address)),
+                    ],
                     copyableValue: data.account.name ?? data.account.address
                 )
             )
         case .burn:
-            result
-                .append(.init(title: L10n.burnSignature, value: RecipientFormatter.signature(signature: trx.signature)))
+            result.append(
+                .init(
+                    title: L10n.burnSignature,
+                    values: [.init(text: RecipientFormatter.signature(signature: trx.signature))]
+                )
+            )
         case .mint:
-            result
-                .append(.init(title: L10n.mintSignature, value: RecipientFormatter.signature(signature: trx.signature)))
+            result.append(
+                .init(
+                    title: L10n.mintSignature,
+                    values: [.init(text: RecipientFormatter.signature(signature: trx.signature))]
+                )
+            )
         case .stake:
-            result
-                .append(.init(title: L10n.stakeSignature,
-                              value: RecipientFormatter.signature(signature: trx.signature)))
+            result.append(
+                .init(
+                    title: L10n.stakeSignature,
+                    values: [.init(text: RecipientFormatter.signature(signature: trx.signature))]
+                )
+            )
         case .unstake:
-            result
-                .append(.init(title: L10n.unstakeSignature,
-                              value: RecipientFormatter.signature(signature: trx.signature)))
+            result.append(
+                .init(
+                    title: L10n.unstakeSignature,
+                    values: [.init(text: RecipientFormatter.signature(signature: trx.signature))]
+                )
+            )
         case .swap:
             break
+
         default:
-            result.append(.init(title: L10n.signature, value: RecipientFormatter.signature(signature: trx.signature)))
+            result.append(
+                .init(
+                    title: L10n.signature,
+                    values: [.init(text: RecipientFormatter.signature(signature: trx.signature))]
+                )
+            )
         }
 
         if trx.fees.allSatisfy({ fee in Constants.feeRelayerAccounts.contains(fee.payer) }) {
-            result.append(.init(title: L10n.transactionFee, value: L10n.freePaidByKeyApp))
+            result.append(
+                .init(
+                    title: L10n.transactionFee,
+                    values: [.init(text: L10n.freePaidByKeyApp)]
+                )
+            )
         } else {
-            let feeDetail = trx.fees.map { fee in
-                "\(fee.amount.tokenAmount.tokenAmountFormattedString(symbol: fee.token.symbol)) (\(fee.amount.usdAmount.fiatAmountFormattedString()))"
-            }.joined(separator: "\n")
-            result.append(.init(title: L10n.transactionFee, value: feeDetail))
+            let values: [TransactionDetailExtraInfo.Value] = trx.fees.map { fee in
+                .init(
+                    text: fee.amount.tokenAmount.tokenAmountFormattedString(symbol: fee.token.symbol),
+                    secondaryText: fee.amount.usdAmount.fiatAmountFormattedString()
+                )
+            }
+
+            result.append(
+                .init(
+                    title: L10n.transactionFee,
+                    values: values
+                )
+            )
         }
         return result
     }
