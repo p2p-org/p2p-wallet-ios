@@ -45,7 +45,7 @@ public struct EthereumToken: Hashable {
 
 public extension EthereumToken {
     /// Ethereum token contract standards.
-    enum ContractType: Hashable {
+    public enum ContractType: Hashable {
         /// Native token
         case native
 
