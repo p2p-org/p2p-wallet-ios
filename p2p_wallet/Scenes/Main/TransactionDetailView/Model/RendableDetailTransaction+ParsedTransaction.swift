@@ -92,28 +92,35 @@ struct RendableDetailParsedTransaction: RendableTransactionDetail {
 
         if let info = trx.info as? TransferInfo {
             result.append(
-                .init(title: L10n.sendTo, value: RecipientFormatter.format(destination: info.destination?.pubkey ?? ""))
+                .init(
+                    title: L10n.sendTo,
+                    values: [.init(text: RecipientFormatter.format(destination: info.destination?.pubkey ?? ""))]
+                )
             )
         } else if let info = trx.info as? CloseAccountInfo {
             result.append(
                 .init(
                     title: "Account closed",
-                    value: RecipientFormatter.format(destination: info.closedWallet?.pubkey ?? "")
+                    values: [.init(text: RecipientFormatter.format(destination: info.closedWallet?.pubkey ?? ""))]
                 )
             )
         } else if let info = trx.info as? CreateAccountInfo {
             result.append(
                 .init(
                     title: "Account created",
-                    value: RecipientFormatter.format(destination: info.newWallet?.pubkey ?? "")
+                    values: [.init(text: RecipientFormatter.format(destination: info.newWallet?.pubkey ?? ""))]
                 )
             )
         }
 
         let feeAmountFormatted: Double = trx.fee?.total.convertToBalance(decimals: Token.nativeSolana.decimals) ?? 0.0
         result
-            .append(.init(title: L10n.transactionFee,
-                          value: trx.paidByP2POrg ? L10n.freePaidByKeyApp : "\(feeAmountFormatted) SOL"))
+            .append(
+                .init(
+                    title: L10n.transactionFee,
+                    values: [.init(text: trx.paidByP2POrg ? L10n.freePaidByKeyApp : "\(feeAmountFormatted) SOL")]
+                )
+            )
 
         return result
     }
