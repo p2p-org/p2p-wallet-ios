@@ -19,19 +19,22 @@ class WormholeClaimFeeViewModel: BaseViewModel, ObservableObject {
 
     let closeAction: PassthroughSubject<Void, Never> = .init()
 
-    @Published var adapter: WormholeClaimFeeAdapter? = nil
+    @Published var adapter: AsyncValueState<WormholeClaimFeeAdapter?> = .init(value: nil)
 
     init(
         receive: Amount,
-        networkFee: Amount?,
+        networkFee: Amount,
         accountCreationFee: Amount?,
-        wormholeBridgeAndTrxFee: Amount?
+        wormholeBridgeAndTrxFee: Amount
     ) {
         adapter = .init(
-            receive: receive,
-            networkFee: networkFee,
-            accountCreationFee: accountCreationFee,
-            wormholeBridgeAndTrxFee: wormholeBridgeAndTrxFee
+            status: .ready,
+            value: .init(
+                receive: receive,
+                networkFee: networkFee,
+                accountCreationFee: accountCreationFee,
+                wormholeBridgeAndTrxFee: wormholeBridgeAndTrxFee
+            )
         )
 
         super.init()
@@ -40,58 +43,24 @@ class WormholeClaimFeeViewModel: BaseViewModel, ObservableObject {
     init(
         account: EthereumAccount,
         bundle: AsyncValue<WormholeBundle?>,
-        ethereumTokenService: EthereumTokensRepository = Resolver.resolve(),
-        solanaTokenService: SolanaTokensRepository = Resolver.resolve()
+        ethereumTokenService _: EthereumTokensRepository = Resolver.resolve(),
+        solanaTokenService _: SolanaTokensRepository = Resolver.resolve()
     ) {
         super.init()
 
         /// Listen to changing in bundle
         bundle
             .$state
-            .sinkAsync { [weak self] state in
-                guard let self = self else { return }
-                self.adapter = await .init(
-                    account: account,
-                    state: state,
-                    ethereumTokenService: ethereumTokenService,
-                    solanaTokenService: solanaTokenService
-                )
+            .map { state in
+                state.apply { bundle in
+                    WormholeClaimFeeAdapter(account: account, bundle: bundle)
+                }
             }
+            .weakAssign(to: \.adapter, on: self)
             .store(in: &subscriptions)
     }
 
     func close() {
         closeAction.send()
-    }
-}
-
-extension WormholeClaimViewModel {
-    enum ResolveError: Swift.Error {
-        case canNotResolveToken
-    }
-
-    static func resolveCrytoAmount(
-        amount: String,
-        feeToken: Wormhole.WormholeToken,
-        solanaTokenRepository: TokensRepository = Resolver.resolve(),
-        ethereumTokenRepository: EthereumTokensRepository = Resolver.resolve()
-    ) async throws -> CryptoAmount {
-        switch feeToken {
-        case let .solana(address):
-            let tokens = try await solanaTokenRepository.getTokensList()
-            let token: Token? = tokens.first { $0.address == address }
-            guard let token else {
-                throw WormholeClaimViewModel.ResolveError.canNotResolveToken
-            }
-
-            return CryptoAmount(bigUIntString: amount, token: token)
-        case let .ethereum(address):
-            if let address {
-                let token = try await ethereumTokenRepository.resolve(address: address)
-                return CryptoAmount(bigUIntString: amount, token: token)
-            } else {
-                return CryptoAmount(bigUIntString: amount, token: EthereumToken())
-            }
-        }
     }
 }
