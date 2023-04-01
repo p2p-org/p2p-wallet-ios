@@ -20,6 +20,7 @@ class WormholeSendFeesCoordinator: SmartCoordinator<Void> {
         let vm = WormholeSendFeesViewModel(stateMachine: stateMachine)
         let view = WormholeSendFeesView(viewModel: vm)
         let vc = UIBottomSheetHostingController(rootView: view)
+        vc.view.layer.cornerRadius = 20
 
         vm.objectWillChange
             .sink { [weak vc] _ in

@@ -8,6 +8,7 @@
 import Foundation
 import KeyAppBusiness
 import KeyAppKitCore
+import Send
 import Wormhole
 
 struct WormholeSendFeesAdapter: Equatable {
@@ -22,8 +23,74 @@ struct WormholeSendFeesAdapter: Equatable {
         adapter.input?.recipient ?? ""
     }
 
+    /// Actually receive amount for user B.
+    var receiveAmount: (CryptoAmount, CurrencyAmount?)? {
+        if
+            let input = adapter.input,
+            let output = adapter.output
+        {
+            if let arbiterFee = output.fees.arbiter {
+                let cryptoFee = arbiterFee.asCryptoAmount
+                let currencyFee = arbiterFee.asCurrencyAmount
+
+                // Fee is greater than input. We return zero values.
+                if input.amount < cryptoFee {
+                    return (CryptoAmount(token: input.amount.token), CurrencyAmount(usd: 0))
+                }
+
+                let actuallyReceiveCryptoAmount: CryptoAmount = input.amount - cryptoFee
+                let actuallyReceiveCurrencyAmount: CurrencyAmount?
+
+                // Check fiat is available
+                if
+                    let price = input.solanaAccount.price,
+                    let transferAmountInFiat = try? input.amount.toFiatAmount(price: price)
+                {
+                    actuallyReceiveCurrencyAmount = transferAmountInFiat - arbiterFee.asCurrencyAmount
+                } else {
+                    actuallyReceiveCurrencyAmount = nil
+                }
+
+                return (
+                    actuallyReceiveCryptoAmount,
+                    actuallyReceiveCurrencyAmount
+                )
+            } else {
+                // Arbiter fee is not available
+                if let price = input.solanaAccount.price {
+                    return (input.amount, try? input.amount.toFiatAmount(price: price))
+                } else {
+                    return (input.amount, nil)
+                }
+            }
+        } else {
+            // Nothing is available
+            return nil
+        }
+    }
+
+    /// Actually formatted receive amount for user B.
     var receive: Output {
-        .init(crypto: adapter.cryptoAmountString, fiat: adapter.amountInFiatString)
+        if let receiveAmount {
+            let cryptoFormatter = CryptoFormatter()
+            let currencyFormatter = CurrencyFormatter()
+
+            if let currencyAmount = receiveAmount.1 {
+                // Fiat is available
+                return .init(
+                    crypto: cryptoFormatter.string(amount: receiveAmount.0),
+                    fiat: currencyFormatter.string(amount: currencyAmount)
+                )
+            } else {
+                // Fiat isn't available
+                return .init(
+                    crypto: cryptoFormatter.string(amount: receiveAmount.0),
+                    fiat: ""
+                )
+            }
+        } else {
+            return .init(crypto: "", fiat: "")
+        }
     }
 
     let networkFee: Output?
@@ -36,88 +103,62 @@ struct WormholeSendFeesAdapter: Equatable {
 
     let total: Output?
 
-    init(
-        adapter: WormholeSendInputStateAdapter,
-        ethereumTokensRepository: EthereumTokensRepository,
-        solanaTokensRepository: SolanaTokensService
-    ) async {
-        self.adapter = adapter
+    init(state: WormholeSendInputState) {
+        adapter = .init(state: state)
 
-        networkFee = await Self.resolve(
-            fee: adapter.output?.fees.networkFee,
-            ethereumTokensRepository: ethereumTokensRepository,
-            solanaTokensRepository: solanaTokensRepository
-        )
+        networkFee = Self.resolve(amount: adapter.output?.fees.networkFee)
+        bridgeFee = Self.resolve(amount: adapter.output?.fees.bridgeFee)
+        arbiterFee = Self.resolve(amount: adapter.output?.fees.arbiter)
+        messageFee = Self.resolve(amount: adapter.output?.fees.messageAccountRent)
 
-        bridgeFee = await Self.resolve(
-            fee: adapter.output?.fees.bridgeFee,
-            ethereumTokensRepository: ethereumTokensRepository,
-            solanaTokensRepository: solanaTokensRepository
-        )
-
-        arbiterFee = await Self.resolve(
-            fee: adapter.output?.fees.arbiter,
-            ethereumTokensRepository: ethereumTokensRepository,
-            solanaTokensRepository: solanaTokensRepository
-        )
-
-        messageFee = await Self.resolve(
-            fee: adapter.output?.fees.messageAccountRent,
-            ethereumTokensRepository: ethereumTokensRepository,
-            solanaTokensRepository: solanaTokensRepository
-        )
+        guard let output = adapter.output else {
+            total = nil
+            return
+        }
 
         let fees = [
-            adapter.output?.fees.networkFee,
-            adapter.output?.fees.bridgeFee,
-            adapter.output?.fees.arbiter,
-            adapter.output?.fees.messageAccountRent,
+            output.fees.networkFee,
+            output.fees.bridgeFee,
+            output.fees.arbiter,
+            output.fees.messageAccountRent,
         ]
             .compactMap { $0 }
 
-        var feesByToken = Dictionary(grouping: fees, by: \.token)
-        
-        total = nil
-    }
-    
-    private static func resolve(
-        fee: Wormhole.TokenAmount?,
-        ethereumTokensRepository: EthereumTokensRepository,
-        solanaTokensRepository: SolanaTokensService
-    ) async -> Output? {
-        if let fee {
-            let token: AnyToken?
-
-            switch fee.token {
-            case let .ethereum(contract):
-                if let contract {
-                    token = try? await ethereumTokensRepository.resolve(address: contract)
-                } else {
-                    token = EthereumToken()
-                }
-            case let .solana(mint):
-                if let mint {
-                    let list = try? await solanaTokensRepository.getTokensList()
-                    token = list?.first { $0.address == mint }
-                } else {
-                    token = SolanaToken.nativeSolana
-                }
-            }
-
-            if let token = token {
-                return Self.extract(tokenAmount: fee, token: token)
-            } else {
+        /// Calculate total fee in crypto
+        let feesByToken = Dictionary(grouping: fees, by: \.token)
+        let totalCryptoFee: String = feesByToken.values.map { tokenAmounts -> String? in
+            guard let initialCryptoAmount = tokenAmounts.first?.asCryptoAmount.with(amount: 0) else {
                 return nil
             }
+
+            let cryptoFormatter = CryptoFormatter()
+            let totalCryptoAmount = tokenAmounts.map(\.asCryptoAmount).reduce(initialCryptoAmount, +)
+            return cryptoFormatter.string(amount: totalCryptoAmount)
+        }
+        .compactMap { $0 }
+        .joined(separator: "\n")
+
+        // Calculate total fee in currency
+        let currencyFormatter = CurrencyFormatter()
+        let totalCurrencyFee = currencyFormatter.string(amount: output.fees.totalInFiat)
+
+        total = .init(
+            crypto: totalCryptoFee,
+            fiat: totalCurrencyFee
+        )
+    }
+
+    private static func resolve(amount: Wormhole.TokenAmount?) -> Output? {
+        let cryptoFormatter = CryptoFormatter()
+        let currencyFormatter = CurrencyFormatter()
+
+        if let amount {
+            return .init(
+                crypto: cryptoFormatter.string(amount: amount),
+                fiat: currencyFormatter.string(amount: amount)
+            )
         } else {
             return nil
         }
-    }
-
-    private static func extract(tokenAmount: Wormhole.TokenAmount, token: AnyToken) -> Output {
-        .init(
-            crypto: CryptoFormatter().string(amount: .init(bigUIntString: tokenAmount.amount, token: token)),
-            fiat: CurrencyFormatter().string(amount: tokenAmount)
-        )
     }
 }
