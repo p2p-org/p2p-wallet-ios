@@ -68,6 +68,20 @@ struct ReceiveFundsViaLinkView: View {
             Text(cryptoAmount)
                 .foregroundColor(Color(Asset.Colors.night.color))
                 .font(uiFont: .font(of: .largeTitle, weight: .bold))
+            #if !RELEASE
+            HStack {
+                Toggle(isOn: $viewModel.isFakeSendingTransaction) {
+                    Text("Fake transaction")
+                }
+                if viewModel.isFakeSendingTransaction {
+                    Picker("Error Type", selection: $viewModel.fakeTransactionErrorType) {
+                        ForEach(ReceiveFundsViaLinkViewModel.FakeTransactionErrorType.allCases) { flavor in
+                            Text(flavor.rawValue.capitalized)
+                        }
+                    }
+                }
+            }
+            #endif
         }
     }
     

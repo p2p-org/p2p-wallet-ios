@@ -13,6 +13,13 @@ import Resolver
 import FeeRelayerSwift
 
 final class ReceiveFundsViaLinkViewModel: BaseViewModel, ObservableObject {
+    // MARK: - Nested type
+
+    enum FakeTransactionErrorType: String, CaseIterable, Identifiable {
+        case networkError
+        case otherError
+        var id: Self { self }
+    }
     
     // Dependencies
     @Injected private var sendViaLinkDataService: SendViaLinkDataService
@@ -42,6 +49,20 @@ final class ReceiveFundsViaLinkViewModel: BaseViewModel, ObservableObject {
     @Published var processingVisible = false
     @Published var isReloading = false
     
+    // Debugging
+    #if !RELEASE
+    @Published var isFakeSendingTransaction: Bool = false {
+        didSet {
+            if isFakeSendingTransaction == false {
+                fakeTransactionErrorType = nil
+            } else if fakeTransactionErrorType == nil {
+                fakeTransactionErrorType = .otherError
+            }
+        }
+    }
+    @Published var fakeTransactionErrorType: FakeTransactionErrorType?
+    #endif
+    
     // MARK: - Init
     
     init(url: URL) {
@@ -66,6 +87,14 @@ final class ReceiveFundsViaLinkViewModel: BaseViewModel, ObservableObject {
 
         let cryptoAmount = claimableToken.lamports
             .convertToBalance(decimals: claimableToken.decimals)
+        
+        #if !RELEASE
+        let isFakeSendingTransaction = isFakeSendingTransaction
+        let fakeTransactionErrorType = fakeTransactionErrorType
+        #else
+        let isFakeSendingTransaction = false
+        let fakeTransactionErrorType = nil
+        #endif
 
         // Notify loading
         sizeChangedSubject.send(522)
@@ -81,7 +110,9 @@ final class ReceiveFundsViaLinkViewModel: BaseViewModel, ObservableObject {
         ) {
             try await claimSendViaLinkExecution(
                 claimableToken: claimableToken,
-                receiver: pubkey
+                receiver: pubkey,
+                isFakeTransaction: isFakeSendingTransaction,
+                fakeTransactionErrorType: fakeTransactionErrorType
             )
         }
 
@@ -184,8 +215,28 @@ final class ReceiveFundsViaLinkViewModel: BaseViewModel, ObservableObject {
 
 func claimSendViaLinkExecution(
     claimableToken: ClaimableTokenInfo,
-    receiver: PublicKey
+    receiver: PublicKey,
+    isFakeTransaction: Bool,
+    fakeTransactionErrorType: ReceiveFundsViaLinkViewModel.FakeTransactionErrorType?
 ) async throws -> TransactionID {
+    // fake transaction for debugging
+    if isFakeTransaction {
+        // fake delay api call 1s
+        try await Task.sleep(nanoseconds: 1_000_000)
+        
+        // simulate error if needed
+        if let fakeTransactionErrorType {
+            switch fakeTransactionErrorType {
+            case .otherError:
+                throw SolanaError.unknown
+            case .networkError:
+                throw NSError(domain: "Network error", code: NSURLErrorNetworkConnectionLost)
+            }
+        }
+        
+        return .fakeTransactionSignature(id: UUID().uuidString)
+    }
+    
     // get services
     let sendViaLinkDataService = Resolver.resolve(SendViaLinkDataService.self)
     let contextManager = Resolver.resolve(RelayContextManager.self)
