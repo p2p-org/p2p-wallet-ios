@@ -16,6 +16,7 @@ final class ReceiveFundsViaLinkViewModel: BaseViewModel, ObservableObject {
     // MARK: - Nested type
 
     enum FakeTransactionErrorType: String, CaseIterable, Identifiable {
+        case noError
         case networkError
         case otherError
         var id: Self { self }
@@ -53,14 +54,12 @@ final class ReceiveFundsViaLinkViewModel: BaseViewModel, ObservableObject {
     #if !RELEASE
     @Published var isFakeSendingTransaction: Bool = false {
         didSet {
-            if isFakeSendingTransaction == false {
-                fakeTransactionErrorType = nil
-            } else if fakeTransactionErrorType == nil {
-                fakeTransactionErrorType = .otherError
+            if isFakeSendingTransaction {
+                fakeTransactionErrorType = .noError
             }
         }
     }
-    @Published var fakeTransactionErrorType: FakeTransactionErrorType?
+    @Published var fakeTransactionErrorType: FakeTransactionErrorType = .noError
     #endif
     
     // MARK: - Init
@@ -217,7 +216,7 @@ func claimSendViaLinkExecution(
     claimableToken: ClaimableTokenInfo,
     receiver: PublicKey,
     isFakeTransaction: Bool,
-    fakeTransactionErrorType: ReceiveFundsViaLinkViewModel.FakeTransactionErrorType?
+    fakeTransactionErrorType: ReceiveFundsViaLinkViewModel.FakeTransactionErrorType
 ) async throws -> TransactionID {
     // fake transaction for debugging
     if isFakeTransaction {
@@ -225,13 +224,13 @@ func claimSendViaLinkExecution(
         try await Task.sleep(nanoseconds: 1_000_000)
         
         // simulate error if needed
-        if let fakeTransactionErrorType {
-            switch fakeTransactionErrorType {
-            case .otherError:
-                throw SolanaError.unknown
-            case .networkError:
-                throw NSError(domain: "Network error", code: NSURLErrorNetworkConnectionLost)
-            }
+        switch fakeTransactionErrorType {
+        case .noError:
+            break
+        case .otherError:
+            throw SolanaError.unknown
+        case .networkError:
+            throw NSError(domain: "Network error", code: NSURLErrorNetworkConnectionLost)
         }
         
         return .fakeTransactionSignature(id: UUID().uuidString)
