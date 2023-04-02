@@ -6,7 +6,7 @@ import Combine
 import KeychainSwift
 
 /// Storage that handle SendViaLinkTransactions
-protocol SendViaLinkStorage {
+protocol SendViaLinkStorage: Actor {
     
     /// Save transaction to storage
     @discardableResult
@@ -20,10 +20,10 @@ protocol SendViaLinkStorage {
     func getTransactions() -> [SendViaLinkTransactionInfo]
     
     /// Transaction publisher to handle transaction
-    var transactionsPublisher: AnyPublisher<[SendViaLinkTransactionInfo], Never> { get }
+    nonisolated var transactionsPublisher: AnyPublisher<[SendViaLinkTransactionInfo], Never> { get }
 }
 
-final class SendViaLinkStorageImpl: SendViaLinkStorage {
+actor SendViaLinkStorageImpl: SendViaLinkStorage {
     // MARK: - Dependencies
     
     @Injected private var userWalletManager: UserWalletManager
@@ -33,7 +33,7 @@ final class SendViaLinkStorageImpl: SendViaLinkStorage {
     // MARK: - Properties
     
     private var subscription: DefaultsDisposable?
-    private let transactionsSubject = CurrentValueSubject<[SendViaLinkTransactionInfo], Never>([])
+    nonisolated private let transactionsSubject = CurrentValueSubject<[SendViaLinkTransactionInfo], Never>([])
     
     private let userDefaultsToKeychainMigrationKey = "SendViaLinkStorageImpl.userDefaultsToKeychainMigrationKey"
     private let sendViaLinkTransactionsKeychainKey = "SendViaLinkStorageImpl.sendViaLinkTransactionsKeychainKey"
@@ -44,18 +44,20 @@ final class SendViaLinkStorageImpl: SendViaLinkStorage {
         userWalletManager.wallet?.account.publicKey.base58EncodedString
     }
     
-    var transactionsPublisher: AnyPublisher<[SendViaLinkTransactionInfo], Never> {
+    nonisolated var transactionsPublisher: AnyPublisher<[SendViaLinkTransactionInfo], Never> {
         transactionsSubject.eraseToAnyPublisher()
     }
     
     // MARK: - Initializer
 
     init() {
-        // retrieve transaction
-        transactionsSubject.send(getTransactions())
-        
-        // migration
-        migrate()
+        Task {
+            // migration
+            await migrate()
+            
+            // retrieve transaction
+            transactionsSubject.send(await getTransactions())
+        }
     }
     
     // MARK: - Migration
