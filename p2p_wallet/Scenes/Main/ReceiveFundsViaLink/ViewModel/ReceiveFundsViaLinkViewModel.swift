@@ -221,7 +221,7 @@ func claimSendViaLinkExecution(
     // fake transaction for debugging
     if isFakeTransaction {
         // fake delay api call 1s
-        try await Task.sleep(nanoseconds: 1_000_000)
+        try await Task.sleep(nanoseconds: 1_000_000_000)
         
         // simulate error if needed
         switch fakeTransactionErrorType {
