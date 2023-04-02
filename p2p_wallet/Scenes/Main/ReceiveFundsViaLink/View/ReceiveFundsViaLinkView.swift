@@ -68,35 +68,39 @@ struct ReceiveFundsViaLinkView: View {
             Text(cryptoAmount)
                 .foregroundColor(Color(Asset.Colors.night.color))
                 .font(uiFont: .font(of: .largeTitle, weight: .bold))
-            #if !RELEASE
-            HStack {
-                Toggle(isOn: $viewModel.isFakeSendingTransaction) {
-                    Text("Fake transaction")
-                }
-                if viewModel.isFakeSendingTransaction {
-                    Picker("Error Type", selection: $viewModel.fakeTransactionErrorType) {
-                        ForEach(ReceiveFundsViaLinkViewModel.FakeTransactionErrorType.allCases) { errorType in
-                            Text(errorType.rawValue.capitalized).tag(errorType)
-                        }
-                    }
-                }
-            }
-            #endif
         }
     }
     
     @ViewBuilder
     private var bottomPart: some View {
         if !viewModel.processingVisible {
-            TextButtonView(
-                title: L10n.confirm,
-                style: .primaryWhite,
-                size: .large,
-                onPressed: {
-                    viewModel.confirmClicked()
+            HStack {
+                TextButtonView(
+                    title: L10n.confirm,
+                    style: .primaryWhite,
+                    size: .large,
+                    onPressed: {
+                        viewModel.confirmClicked()
+                    }
+                )
+                .frame(height: 56)
+                
+                #if !RELEASE
+                Toggle(isOn: $viewModel.isFakeSendingTransaction) {
+                    Text("Fake")
                 }
-            )
-            .frame(height: 56)
+                .fixedSize(horizontal: true, vertical: false)
+                
+                if viewModel.isFakeSendingTransaction {
+                    Picker("Error Type", selection: $viewModel.fakeTransactionErrorType) {
+                        ForEach(ReceiveFundsViaLinkViewModel.FakeTransactionErrorType.allCases) { errorType in
+                            Text(errorType.rawValue.capitalized).tag(errorType)
+                        }
+                    }
+                    .fixedSize(horizontal: true, vertical: false)
+                }
+                #endif
+            }
         } else {
             VStack(spacing: 24) {
                 statusView
