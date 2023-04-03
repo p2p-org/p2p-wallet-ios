@@ -129,7 +129,7 @@ class WormholeSendInputViewModel: BaseViewModel, ObservableObject {
 
         // Update state machine
         let cryptoInputFormatter = CryptoFormatter(hideSymbol: true)
-        let currencyInputFormatter = CurrencyFormatter(hideSymbol: true)
+        let currencyInputFormatter = CurrencyFormatter(hideSymbol: true, lessText: "")
 
         $input
             .dropFirst()
@@ -209,6 +209,7 @@ class WormholeSendInputViewModel: BaseViewModel, ObservableObject {
             .store(in: &subscriptions)
 
         maxPressed
+            .receive(on: RunLoop.main)
             .sink { [weak self] _ in
                 guard let self, let account = self.adapter.inputAccount else { return }
 
@@ -309,6 +310,15 @@ extension WormholeSendInputViewModel {
 
         if let nativeWallet = solanaAccountsService.state.value.nativeWallet {
             availableBridgeAccounts.append(nativeWallet)
+        }
+
+        availableBridgeAccounts.sort { lhs, rhs in
+            // First pick ETH
+            if lhs.data.token.symbol == "WETH" {
+                return true
+            }
+
+            return lhs.data.token.symbol.localizedCompare(rhs.data.token.symbol) == .orderedAscending
         }
 
         return availableBridgeAccounts

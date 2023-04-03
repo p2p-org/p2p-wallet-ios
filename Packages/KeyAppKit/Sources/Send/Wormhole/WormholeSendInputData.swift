@@ -32,12 +32,20 @@ public struct WormholeSendInputBase: Equatable {
 }
 
 public struct WormholeSendOutputBase: Equatable {
-    public let feePayer: SolanaAccount?
     public let transactions: SendTransaction?
     public let fees: SendFees
 
-    public init(feePayer: SolanaAccount?, transactions: SendTransaction?, fees: SendFees) {
+    public let feePayer: SolanaAccount?
+    public let feePayerAmount: CryptoAmount?
+
+    public init(
+        feePayer: SolanaAccount?,
+        feePayerAmount: CryptoAmount?,
+        transactions: SendTransaction?,
+        fees: SendFees
+    ) {
         self.feePayer = feePayer
+        self.feePayerAmount = feePayerAmount
         self.transactions = transactions
         self.fees = fees
     }

@@ -6,13 +6,13 @@
 //
 
 import Combine
-import SwiftUI
 import KeyAppUI
 import SkeletonUI
+import SwiftUI
 
 struct SwapSettingsView: View {
     @ObservedObject var viewModel: SwapSettingsViewModel
-    
+
     var body: some View {
         ColoredBackground {
             VStack(spacing: 4) {
@@ -21,7 +21,7 @@ struct SwapSettingsView: View {
             }
         }
     }
-    
+
     var exchangeRate: some View {
         Text(viewModel.info.exchangeRateInfo)
             .apply(style: .label1)
@@ -33,25 +33,25 @@ struct SwapSettingsView: View {
             .frame(maxWidth: .infinity, alignment: .center)
             .frame(height: 16)
     }
-    
+
     var list: some View {
         List {
             Section {
                 firstSectionRows
             }
-            
+
             Section {
                 commonRow(
                     title: L10n.minimumReceived,
                     subtitle: (
                         viewModel.info.minimumReceived ??
-                        SwapTokenAmountInfo(amount: 0, token: "")
+                            SwapTokenAmountInfo(amount: 0, token: "")
                     )
-                        .amountDescription,
+                    .amountDescription,
                     identifier: .minimumReceived
                 )
             }
-            
+
             Section(header: Text(L10n.slippage)) {
                 SlippageSettingsView(slippage: viewModel.selectedSlippage) { selectedSlippage in
                     viewModel.selectedSlippage = selectedSlippage
@@ -62,7 +62,7 @@ struct SwapSettingsView: View {
         .listStyle(InsetGroupedListStyle())
         .scrollDismissesKeyboard()
     }
-    
+
     // MARK: - First section
 
     private var firstSectionRows: some View {
@@ -71,7 +71,7 @@ struct SwapSettingsView: View {
             if viewModel.isLoadingOrRouteNotNil {
                 routeView
             }
-            
+
             // Network fee
             feeRow(
                 title: L10n.networkFee,
@@ -90,12 +90,10 @@ struct SwapSettingsView: View {
 
             // Liquidity fee
             if viewModel.isLoadingOrRouteNotNil {
-                if let liquidityFee = viewModel.info.liquidityFee,
-                   !liquidityFee.isEmpty
-                {
+                if !viewModel.info.liquidityFee.isEmpty {
                     feeRow(
                         title: L10n.liquidityFee,
-                        fees: liquidityFee,
+                        fees: viewModel.info.liquidityFee,
                         identifier: .liquidityFee
                     )
                 }
@@ -120,7 +118,7 @@ struct SwapSettingsView: View {
             }
         }
     }
-    
+
     private var routeView: some View {
         commonRow(
             title: L10n.swappingThrough,
@@ -129,8 +127,8 @@ struct SwapSettingsView: View {
             trailingView: Image(uiImage: .nextArrow)
                 .resizable()
                 .frame(width: 7.41, height: 12)
-                .padding(.vertical, (20-12)/2)
-                .padding(.horizontal, (20-7.41)/2)
+                .padding(.vertical, (20 - 12) / 2)
+                .padding(.horizontal, (20 - 7.41) / 2)
                 .castToAnyView(),
             identifier: .route
         )
@@ -139,7 +137,7 @@ struct SwapSettingsView: View {
             viewModel.rowClicked(identifier: .route)
         }
     }
-    
+
     private func feeRow(
         title: String,
         fee: SwapFeeInfo?,
@@ -148,12 +146,13 @@ struct SwapSettingsView: View {
         commonRow(
             title: title,
             subtitle: fee?.amountDescription,
-            subtitleColor: fee?.shouldHighlightAmountDescription == true ? Asset.Colors.mint.color: Asset.Colors.mountain.color,
+            subtitleColor: fee?.shouldHighlightAmountDescription == true ? Asset.Colors.mint.color : Asset.Colors
+                .mountain.color,
             trailingSubtitle: fee?.amountInFiatDescription,
             identifier: identifier
         )
     }
-    
+
     private func feeRow(
         title: String,
         fees: [SwapFeeInfo],
@@ -163,11 +162,11 @@ struct SwapSettingsView: View {
         return commonRow(
             title: title,
             subtitle: fees.compactMap(\.amountDescription).joined(separator: ", "),
-            trailingSubtitle: fiatAmount > 0 ? "≈ " + fiatAmount.fiatAmountFormattedString(): nil,
+            trailingSubtitle: fiatAmount > 0 ? "≈ " + fiatAmount.fiatAmountFormattedString() : nil,
             identifier: identifier
         )
     }
-    
+
     private func commonRow(
         title: String,
         subtitle: String?,
@@ -189,15 +188,15 @@ struct SwapSettingsView: View {
                     .foregroundColor(Color(subtitleColor))
                     .skeleton(with: viewModel.isLoading, size: .init(width: 100, height: 12))
             }
-            
+
             Spacer()
-            
+
             Text(trailingSubtitle)
                 .apply(style: .label1)
                 .foregroundColor(Color(Asset.Colors.mountain.color))
                 .layoutPriority(1)
                 .skeleton(with: viewModel.isLoading, size: .init(width: 52, height: 16))
-            
+
             trailingView
                 .onTapGesture {
                     guard let identifier else { return }
@@ -211,7 +210,7 @@ struct SwapSettingsView: View {
     }
 }
 
-//struct SwapSettingsView_Previews: PreviewProvider {
+// struct SwapSettingsView_Previews: PreviewProvider {
 //    static let viewModel = SwapSettingsViewModel(
 //        status: .loading,
 //        slippage: 0.5,
@@ -292,7 +291,7 @@ struct SwapSettingsView: View {
 //            }
 //        }
 //    }
-//}
+// }
 
 // MARK: - Row idenfifier
 

@@ -75,6 +75,11 @@ class WormholeSendFeesViewModel: BaseViewModel, ObservableObject {
                         detail: adapter.bridgeFee?.fiat
                     ),
                     .init(
+                        title: "Total converted fees",
+                        subtitle: adapter.feePayerAmount?.crypto,
+                        detail: adapter.feePayerAmount?.fiat
+                    ),
+                    .init(
                         title: "Arbiter fee",
                         subtitle: adapter.arbiterFee?.crypto,
                         detail: adapter.arbiterFee?.fiat

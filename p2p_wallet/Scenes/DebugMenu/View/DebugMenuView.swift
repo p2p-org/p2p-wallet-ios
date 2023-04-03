@@ -11,7 +11,7 @@ import SwiftUI
 
 struct DebugMenuView: View {
     @ObservedObject private var viewModel: DebugMenuViewModel
-    
+
     @ObservedObject private var globalAppState = GlobalAppState.shared
     @ObservedObject private var feeRelayerConfig = FeeRelayConfig.shared
     @ObservedObject private var onboardingConfig = OnboardingConfig.shared
@@ -26,14 +26,10 @@ struct DebugMenuView: View {
                 Toggle("Network Logger", isOn: $viewModel.networkLoggerVisible)
                 Section(header: Text("Feature Toggles")) {
                     ForEach(0 ..< viewModel.features.count, id: \.self) { index in
-                        if let feature = viewModel.features[index].feature {
-                            Toggle(viewModel.features[index].title, isOn: $viewModel.features[index].isOn)
-                                .valueChanged(value: viewModel.features[index].isOn) { newValue in
-                                    viewModel.setFeature(feature, isOn: newValue)
-                                }
-                        } else {
-                            Text(viewModel.features[index].title)
-                        }
+                        Toggle(viewModel.features[index].title, isOn: $viewModel.features[index].isOn)
+                            .valueChanged(value: viewModel.features[index].isOn) { newValue in
+                                viewModel.setFeature(viewModel.features[index].feature, isOn: newValue)
+                            }
                     }
                 }
                 Section(header: Text("Application")) {
@@ -45,12 +41,12 @@ struct DebugMenuView: View {
                             #if DEBUG
                                 showDebugger(false)
                             #endif
-                            
+
                             ResolverScope.session.reset()
                             try await Resolver.resolve(UserWalletManager.self).refresh()
-                            
-                           // let app: AppEventHandlerType = Resolver.resolve()
-                           // app.delegate?.refresh()
+
+                            // let app: AppEventHandlerType = Resolver.resolve()
+                            // app.delegate?.refresh()
                         }
                     } label: { Text("Apply") }
                 }
@@ -59,9 +55,9 @@ struct DebugMenuView: View {
                     Toggle("Disable free transaction", isOn: $feeRelayerConfig.disableFeeTransaction)
                         .valueChanged(value: feeRelayerConfig.disableFeeTransaction) { _ in
                             #if DEBUG
-                            showDebugger(false)
+                                showDebugger(false)
                             #endif
-                            
+
                             let app: AppEventHandlerType = Resolver.resolve()
                             app.delegate?.refresh()
                         }
@@ -90,7 +86,7 @@ struct DebugMenuView: View {
                         }
                     }
                 }
-                
+
                 Section(header: Text("Name service")) {
                     Picker("URL", selection: $globalAppState.nameServiceEndpoint) {
                         Text("Unknown").tag(nil as String?)
@@ -99,7 +95,7 @@ struct DebugMenuView: View {
                         }
                     }
                 }
-                
+
                 Section(header: Text("New swap endpoint")) {
                     Picker("URL", selection: $globalAppState.newSwapEndpoint) {
                         Text("Unknown").tag(nil as String?)

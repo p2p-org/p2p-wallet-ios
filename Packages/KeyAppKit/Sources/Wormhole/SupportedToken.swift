@@ -36,7 +36,7 @@ public enum SupportedToken {
     }
 
     public static let bridges: [WormholeBridge] = [
-        .init(name: "SOL", coingekoID: "solana", ethAddress: "So11111111111111111111111111111111111111112", solAddress: "0xD31a59c85aE9D8edEFeC411D448f90841571b89c", receiveFromAddress: nil),
+        .init(name: "SOL", coingekoID: "solana", ethAddress: "0xD31a59c85aE9D8edEFeC411D448f90841571b89c", solAddress: "So11111111111111111111111111111111111111112", receiveFromAddress: nil),
         .init(name: "ETH", coingekoID: "ethereum", ethAddress: nil, solAddress: "7vfCXTUXx5WJV5JADk17DUJ4ksgau7utNKj4b963voxs", receiveFromAddress: "2FPyTwcZLUg1MDrwsyoP4D6s1tM7hAkHYRjkNb5w6Pxk"),
         .init(name: "USDC", coingekoID: "usd-coin", ethAddress: "0xa0b86991c6218b36c1d19d4a2e9eb0ce3606eb48", solAddress: "A9mUU4qviSctJVPJdBJWkb28deg915LYJKrzQ19ji3FM", receiveFromAddress: "EPjFWdd5AufqSSqeM2qN1xzybapC8G4wEGGkZwyTDt1v"),
         .init(name: "USDT", coingekoID: "tether", ethAddress: "0xdac17f958d2ee523a2206206994597c13d831ec7", solAddress: "Dn4noZ5jgGfkntzcQSUZ8czkreiZ1ForXYoV2H8Dm7S1", receiveFromAddress: "Es9vMFrzaCERmJfrF4H2FYD4KCoNkY11McCe8BenwNYB"),

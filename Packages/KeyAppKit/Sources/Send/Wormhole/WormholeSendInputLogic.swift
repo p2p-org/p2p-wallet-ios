@@ -19,7 +19,7 @@ enum WormholeSendInputLogic {
         transferAmount: CryptoAmount,
         feeCalculator: RelayFeeCalculator,
         orcaSwap: OrcaSwapType
-    ) async throws -> SolanaAccount {
+    ) async throws -> (account: SolanaAccount, feeAmount: CryptoAmount) {
         // Build all possible candidates for paying fee
         let feePayerCandidates: [SolanaAccount] = [
             // Same account
@@ -45,12 +45,14 @@ enum WormholeSendInputLogic {
         ].compactMap { $0 }
 
         var feePayerBestCandidate: SolanaAccount?
+        var feeAmountForBestCandidate: CryptoAmount?
 
         // Try find best candidate.
         for feePayerCandidate in feePayerCandidates {
             if feePayerCandidate.data.isNativeSOL {
                 if (transferAmount + fee) < feePayerCandidate.cryptoAmount {
                     feePayerBestCandidate = feePayerCandidate
+                    feeAmountForBestCandidate = fee
                     break
                 }
             } else {
@@ -63,6 +65,10 @@ enum WormholeSendInputLogic {
 
                     if (feeInToken?.total ?? 0) < (feePayerCandidate.data.lamports ?? 0) {
                         feePayerBestCandidate = feePayerCandidate
+                        feeAmountForBestCandidate = CryptoAmount(
+                            uint64: feeInToken?.total ?? 0,
+                            token: feePayerCandidate.data.token
+                        )
                         break
                     }
                 } catch {
@@ -71,10 +77,13 @@ enum WormholeSendInputLogic {
             }
         }
 
-        guard let feePayerBestCandidate = feePayerBestCandidate ?? availableAccounts.nativeWallet else {
+        if
+            let feePayerBestCandidate,
+            let feeAmountForBestCandidate
+        {
+            return (feePayerBestCandidate, feeAmountForBestCandidate)
+        } else {
             throw WormholeSendInputError.calculationFeePayerFailure
         }
-
-        return feePayerBestCandidate
     }
 }
