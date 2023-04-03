@@ -92,20 +92,23 @@ public enum WormholeSendInputState: Equatable {
 
                 // Select best wallet for paying fee.
                 let feePayerBestCandidate: SolanaAccount
+                let feeAmountForBestCandidate: CryptoAmount
                 do {
-                    feePayerBestCandidate = try await WormholeSendInputLogic.autoSelectFeePayer(
-                        fee: feeInSolanaNetwork,
-                        selectedAccount: input.solanaAccount,
-                        availableAccounts: input.availableAccounts,
-                        transferAmount: input.amount,
-                        feeCalculator: service.relay.feeCalculator,
-                        orcaSwap: service.orcaSwap
-                    )
+                    (feePayerBestCandidate, feeAmountForBestCandidate) = try await WormholeSendInputLogic
+                        .autoSelectFeePayer(
+                            fee: feeInSolanaNetwork,
+                            selectedAccount: input.solanaAccount,
+                            availableAccounts: input.availableAccounts,
+                            transferAmount: input.amount,
+                            feeCalculator: service.relay.feeCalculator,
+                            orcaSwap: service.orcaSwap
+                        )
                 } catch {
                     return .error(
                         input: input,
                         output: .init(
                             feePayer: nil,
+                            feePayerAmount: nil,
                             transactions: nil,
                             fees: fees
                         ),
@@ -132,6 +135,7 @@ public enum WormholeSendInputState: Equatable {
                         input: input,
                         output: .init(
                             feePayer: nil,
+                            feePayerAmount: nil,
                             transactions: nil,
                             fees: fees
                         ),
@@ -154,6 +158,7 @@ public enum WormholeSendInputState: Equatable {
                     input: input,
                     output: .init(
                         feePayer: feePayerBestCandidate,
+                        feePayerAmount: feeAmountForBestCandidate,
                         transactions: transactions,
                         fees: fees
                     ),

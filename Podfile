@@ -29,7 +29,7 @@ target 'p2p_wallet' do
 
   pod 'Resolver', '1.5.0'
   pod 'JazziconSwift', :git => 'https://github.com/p2p-org/JazziconSwift.git', :branch => 'master'
-  pod 'Kingfisher', '~> 7.3.2'
+  pod 'Kingfisher', '~> 7.6.2'
   pod 'PhoneNumberKit', '3.3.4'
   pod 'SkeletonUI', :git => 'https://github.com/p2p-org/SkeletonUI.git', :branch => 'master'
   pod 'Introspect', '0.1.4'

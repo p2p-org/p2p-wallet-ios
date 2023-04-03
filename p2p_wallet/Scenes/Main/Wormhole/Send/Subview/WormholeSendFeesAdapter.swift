@@ -46,7 +46,7 @@ struct WormholeSendFeesAdapter: Equatable {
                     let price = input.solanaAccount.price,
                     let transferAmountInFiat = try? input.amount.toFiatAmount(price: price)
                 {
-                    actuallyReceiveCurrencyAmount = transferAmountInFiat - arbiterFee.asCurrencyAmount
+                    actuallyReceiveCurrencyAmount = transferAmountInFiat - currencyFee
                 } else {
                     actuallyReceiveCurrencyAmount = nil
                 }
@@ -102,6 +102,34 @@ struct WormholeSendFeesAdapter: Equatable {
     let messageFee: Output?
 
     let total: Output?
+
+    var feePayerAmount: Output? {
+        if
+            let output = adapter.output,
+            let feePayer = output.feePayer,
+            let feePayerAmount = output.feePayerAmount
+        {
+            let cryptoFormatter = CryptoFormatter()
+            let currencyFormatter = CurrencyFormatter()
+
+            if
+                let price = feePayer.price,
+                let currencyAmount = try? feePayerAmount.toFiatAmount(price: price)
+            {
+                return .init(
+                    crypto: cryptoFormatter.string(amount: feePayerAmount),
+                    fiat: currencyFormatter.string(amount: currencyAmount)
+                )
+            } else {
+                return .init(
+                    crypto: cryptoFormatter.string(amount: feePayerAmount),
+                    fiat: ""
+                )
+            }
+        }
+
+        return nil
+    }
 
     init(state: WormholeSendInputState) {
         adapter = .init(state: state)

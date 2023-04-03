@@ -102,7 +102,7 @@ public class WormholeService {
 
         return try await api.transferFromSolana(
             userWallet: solanaKeyPair.publicKey.base58EncodedString,
-            feePayer: solanaKeyPair.publicKey.base58EncodedString,
+            feePayer: feePayer,
             from: from,
             recipient: recipient,
             mint: mint,

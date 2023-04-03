@@ -41,6 +41,8 @@ struct WormholeSendTransaction: RawTransactionType {
         let solanaHelper: SolanaBlockchainClient = Resolver.resolve()
         let userWalletManager: UserWalletManager = Resolver.resolve()
         let sendHistory: SendHistoryService = Resolver.resolve()
+        let relayService: RelayService = Resolver.resolve()
+        let contextManager: RelayContextManager = Resolver.resolve()
 
         try? await sendHistory.insert(recipient)
 
@@ -54,41 +56,44 @@ struct WormholeSendTransaction: RawTransactionType {
                 throw Error.decodeTransactionError
             }
 
-            let feeInSolanaNetwork: CryptoAmount = [fees.networkFee, fees.messageAccountRent, fees.bridgeFee]
+            let transactionFee: CryptoAmount = [fees.networkFee, fees.bridgeFee]
                 .compactMap { $0 }
-                .map { tokenAmount in
-                    CryptoAmount(bigUIntString: tokenAmount.amount, token: SolanaToken.nativeSolana)
-                }
+                .map(\.asCryptoAmount)
                 .reduce(CryptoAmount(token: SolanaToken.nativeSolana), +)
 
-            let userRelayAccount = try RelayProgram.getUserRelayAddress(
-                user: keypair.publicKey,
-                network: .mainnetBeta
+            let accountCreationFee = fees.messageAccountRent?
+                .asCryptoAmount ?? CryptoAmount(token: SolanaToken.nativeSolana)
+
+            let topUpResult = try await relayService.topUp(
+                amount: .init(
+                    transaction: UInt64(transactionFee.value),
+                    accountBalances: UInt64(accountCreationFee.value)
+                ),
+                payingFeeToken: .init(
+                    address: try PublicKey(string: payingFeeWallet?.pubkey),
+                    mint: PublicKey(string: payingFeeWallet?.token.address)
+                ),
+                relayContext: contextManager.getCurrentContextOrUpdate()
             )
 
-            let topUpTrx = Transaction(
-                instructions: [
-                    SystemProgram.transferInstruction(
-                        from: keypair.publicKey,
-                        to: userRelayAccount,
-                        lamports: try UInt64(feeInSolanaNetwork.value) + 10000
-                    ),
-                ],
-                feePayer: keypair.publicKey
-            )
-
-            let topUpID = try await solanaHelper
-                .sendTransaction(
-                    preparedTransaction: .init(
-                        transaction: topUpTrx, signers: [keypair],
-                        expectedFee: .zero
-                    )
-                )
-
-            try await solanaHelper.apiClient.waitForConfirmation(signature: topUpID, ignoreStatus: false)
+            if let topUpResult {
+                for topUp in topUpResult {
+                    try await solanaClient.waitForConfirmation(signature: topUp, ignoreStatus: false)
+                }
+            }
 
             try versionedTransaction.sign(signers: [keypair])
-            let encodedTrx = try versionedTransaction.serialize().base64EncodedString()
+
+            let fullySignedTransaction = try await relayService.signTransaction(
+                transactions: [versionedTransaction],
+                config: .init(operationType: .other)
+            ).first
+
+            guard let fullySignedTransaction else {
+                throw Error.relaySigningFailure
+            }
+
+            let encodedTrx = try fullySignedTransaction.serialize().base64EncodedString()
 
             return try await solanaClient.sendTransaction(transaction: encodedTrx, configs: configs)
         } catch {
@@ -99,5 +104,6 @@ struct WormholeSendTransaction: RawTransactionType {
 
     enum Error: String, Swift.Error {
         case decodeTransactionError
+        case relaySigningFailure
     }
 }
