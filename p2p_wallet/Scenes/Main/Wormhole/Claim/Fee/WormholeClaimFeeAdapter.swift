@@ -35,7 +35,7 @@ struct WormholeClaimFeeAdapter {
         self.wormholeBridgeAndTrxFee = wormholeBridgeAndTrxFee
     }
 
-    init(account: EthereumAccount, bundle: WormholeBundle?) {
+    init(account _: EthereumAccount, bundle: WormholeBundle?) {
         guard let bundle else {
             receive = ("", "", false)
             networkFee = ("", "", false)
@@ -49,7 +49,7 @@ struct WormholeClaimFeeAdapter {
 
         receive = (
             cryptoFormatter.string(amount: bundle.resultAmount),
-            currencyFormatter.string(for: account.balanceInFiat) ?? "",
+            currencyFormatter.string(for: bundle.resultAmount) ?? "",
             false
         )
 
