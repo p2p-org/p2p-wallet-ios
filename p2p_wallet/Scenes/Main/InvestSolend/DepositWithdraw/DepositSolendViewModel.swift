@@ -166,7 +166,7 @@ class DepositSolendViewModel: ObservableObject {
                 }
             })
             .receive(on: RunLoop.main)
-            .assign(to: \.invest, on: self)
+            .assign(to: \.invest, onWeak: self)
             .store(in: &subscriptions)
 
         symbolSelected.combineLatest(dataService.deposits)
@@ -200,7 +200,7 @@ class DepositSolendViewModel: ObservableObject {
                 }
             }
             .receive(on: RunLoop.main)
-            .assign(to: \.market, on: self)
+            .assign(to: \.market, onWeak: self)
             .store(in: &subscriptions)
 
         symbolSelected.send(invest.asset.symbol)
@@ -211,7 +211,7 @@ class DepositSolendViewModel: ObservableObject {
     private func bind() {
         $inputToken
             .map { [weak self] in self?.maxAmount() >= Double($0) && Double($0) > 0 }
-            .assign(to: \.isButtonEnabled, on: self)
+            .assign(to: \.isButtonEnabled, onWeak: self)
             .store(in: &subscriptions)
 
         $inputFiat
@@ -225,7 +225,7 @@ class DepositSolendViewModel: ObservableObject {
                     return "0"
                 }
             }
-            .assign(to: \.inputToken, on: self)
+            .assign(to: \.inputToken, onWeak: self)
             .store(in: &subscriptions)
 
         $inputToken

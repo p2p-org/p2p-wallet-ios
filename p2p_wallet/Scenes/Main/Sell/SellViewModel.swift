@@ -191,7 +191,7 @@ class SellViewModel: BaseViewModel, ObservableObject {
                 guard let baseAmount else {return nil}
                 return (baseAmount * exchangeRate.value).rounded(decimals: decimals)
             }
-            .assign(to: \.quoteAmount, on: self)
+            .assign(to: \.quoteAmount, onWeak: self)
             .store(in: &subscriptions)
 
         // fill base amount base on quote amount
@@ -203,7 +203,7 @@ class SellViewModel: BaseViewModel, ObservableObject {
                 guard let quoteAmount, let exchangeRate = exchangeRate.value, exchangeRate != 0 else { return nil }
                 return (quoteAmount / exchangeRate).rounded(decimals: decimals)
             }
-            .assign(to: \.baseAmount, on: self)
+            .assign(to: \.baseAmount, onWeak: self)
             .store(in: &subscriptions)
 
         // update prices on base amount change
@@ -233,7 +233,7 @@ class SellViewModel: BaseViewModel, ObservableObject {
         // bind status publisher to status property
         dataService.statusPublisher
             .receive(on: RunLoop.main)
-            .assign(to: \.status, on: self)
+            .assign(to: \.status, onWeak: self)
             .store(in: &subscriptions)
 
         // bind dataService.data to viewModel's data

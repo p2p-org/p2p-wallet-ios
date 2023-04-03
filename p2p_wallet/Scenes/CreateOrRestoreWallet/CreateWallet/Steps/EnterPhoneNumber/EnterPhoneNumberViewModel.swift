@@ -190,12 +190,12 @@ final class EnterPhoneNumberViewModel: BaseOTPViewModel {
                 }
                 .eraseToAnyPublisher()
         )
-            .assign(to: \.phone, on: self)
+            .assign(to: \.phone, onWeak: self)
             .store(in: &cancellable)
 
         $selectedCountry
             .compactMap(\.emoji)
-            .assign(to: \.flag, on: self)
+            .assign(to: \.flag, onWeak: self)
             .store(in: &cancellable)
 
         $selectedCountry
@@ -205,7 +205,7 @@ final class EnterPhoneNumberViewModel: BaseOTPViewModel {
                     .starts(with: self.clearedPhoneString(phone: $0))
             }
             .compactMap { $0 }
-            .assign(to: \.phone, on: self)
+            .assign(to: \.phone, onWeak: self)
             .store(in: &cancellable)
 
         $phone.removeDuplicates()
@@ -220,13 +220,13 @@ final class EnterPhoneNumberViewModel: BaseOTPViewModel {
                 )
                 return !phones.isEmpty
             }
-            .assign(to: \.isButtonEnabled, on: self)
+            .assign(to: \.isButtonEnabled, onWeak: self)
             .store(in: &cancellable)
 
         coordinatorIO.countrySelected
             .eraseToAnyPublisher()
             .compactMap { $0 }
-            .assign(to: \.selectedCountry, on: self)
+            .assign(to: \.selectedCountry, onWeak: self)
             .store(in: &cancellable)
     }
 

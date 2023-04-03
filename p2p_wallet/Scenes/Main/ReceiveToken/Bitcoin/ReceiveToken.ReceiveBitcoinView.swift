@@ -33,7 +33,7 @@ extension ReceiveToken {
                         self.viewModel.saveAction(image: image)
                     }.setup { card in
                         viewModel.gatewayAddressPublisher
-                            .assign(to: \.pubKey, on: card)
+                            .assign(to: \.pubKey, onWeak: card)
                             .store(in: &subscriptions)
                     }
 
@@ -56,7 +56,7 @@ extension ReceiveToken {
                                     )
                                     .asMarkdown()
                                 }
-                                .assign(to: \.attributedText, on: label)
+                                .assign(to: \.attributedText, onWeak: label)
                                 .store(in: &subscriptions)
                         }
                     ReceiveToken
@@ -64,7 +64,7 @@ extension ReceiveToken {
                         .setup { view in
                             guard let textLabel = view.viewWithTag(1) as? UILabel else { return }
                             viewModel.timeRemainsPublisher
-                                .assign(to: \.attributedText, on: textLabel)
+                                .assign(to: \.attributedText, onWeak: textLabel)
                                 .store(in: &subscriptions)
                         }
                 }
@@ -107,7 +107,7 @@ extension ReceiveToken {
                         UILabel(text: "\(L10n.theLastOne) 0m ago", textSize: 13, textColor: .secondaryLabel)
                             .setup { view in
                                 viewModel.lastTrxDatePublisher
-                                    .assign(to: \.text, on: view)
+                                    .assign(to: \.text, onWeak: view)
                                     .store(in: &subscriptions)
                             }
                     }
@@ -115,7 +115,7 @@ extension ReceiveToken {
                     UILabel(text: "0")
                         .setup { view in
                             viewModel.txsCountPublisher
-                                .assign(to: \.text, on: view)
+                                .assign(to: \.text, onWeak: view)
                                 .store(in: &subscriptions)
                         }
                         .padding(.init(only: .right, inset: 8))
@@ -124,14 +124,14 @@ extension ReceiveToken {
                         .setup { view in
                             viewModel.processingTransactionsPublisher
                                 .map(\.isEmpty)
-                                .assign(to: \.isHidden, on: view)
+                                .assign(to: \.isHidden, onWeak: view)
                                 .store(in: &subscriptions)
                         }
                 }.padding(.init(x: 18, y: 14))
             }
             .setup { view in
                 viewModel.showReceivingStatusesEnablePublisher
-                    .assign(to: \.isUserInteractionEnabled, on: view)
+                    .assign(to: \.isUserInteractionEnabled, onWeak: view)
                     .store(in: &subscriptions)
             }
             .onTap { [unowned self] in viewModel.showReceivingStatuses() }

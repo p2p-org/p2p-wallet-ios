@@ -140,7 +140,7 @@ final class EnterSMSCodeViewModel: BaseOTPViewModel {
                 self?.rawCode = Self.prepareRawCode(code: aCode)
             })
             .map { Self.format(code: $0) }
-            .assign(to: \.code, on: self)
+            .assign(to: \.code, onWeak: self)
             .store(in: &cancellable)
     }
 

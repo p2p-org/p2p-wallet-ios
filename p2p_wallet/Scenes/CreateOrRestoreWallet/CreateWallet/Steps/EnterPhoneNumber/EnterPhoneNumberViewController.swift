@@ -99,19 +99,20 @@ final class EnterPhoneNumberViewController: BaseOTPViewController {
 
         if let phone = phoneInputRef.view {
             viewModel.$phone
-                .assign(to: \.text, on: phone)
+                .assign(to: \.text, onWeak: phone)
                 .store(in: &store)
 
             phone.textField?
-                .textPublisher.assign(to: \.phone, on: viewModel)
+                .textPublisher
+                .assign(to: \.phone, onWeak: viewModel)
                 .store(in: &store)
 
             viewModel.$flag
-                .assign(to: \.countryEmoji, on: phone)
+                .assign(to: \.countryEmoji, onWeak: phone)
                 .store(in: &store)
 
             viewModel.$phonePlaceholder
-                .assign(to: \.constantPlaceholder, on: phone)
+                .assign(to: \.constantPlaceholder, onWeak: phone)
                 .store(in: &store)
 
             viewModel.$inputError.sink { error in
