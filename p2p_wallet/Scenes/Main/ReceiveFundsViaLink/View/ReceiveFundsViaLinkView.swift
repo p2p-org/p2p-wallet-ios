@@ -63,7 +63,6 @@ struct ReceiveFundsViaLinkView: View {
    private func topPart(token: Token, cryptoAmount: String) -> some View {
         VStack(spacing: 16) {
             CoinLogoImageViewRepresentable(size: 66, args: .token(token))
-            CoinLogoImageViewRepresentable(size: 66, token: token)
                 .frame(width: 64, height: 64)
                 .cornerRadius(32)
             Text(cryptoAmount)
