@@ -12,7 +12,7 @@ struct SwapView: View {
                 .onTapGesture { UIApplication.shared.endEditing() }
                 .ignoresSafeArea()
 
-            switch viewModel.initializingState {
+            switch viewModel.viewState {
             case .loading, .success:
                 VStack {
                     ScrollViewReader { value in

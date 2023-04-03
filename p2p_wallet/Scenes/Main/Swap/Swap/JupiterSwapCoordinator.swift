@@ -114,7 +114,7 @@ final class JupiterSwapCoordinator: Coordinator<Void> {
         swapSettingBarButton = UIBarButtonItem(image: .receipt, style: .plain, target: self, action: #selector(receiptButtonPressed))
         
         // show rightBarButtonItem only on successful loading
-        viewModel.$initializingState
+        viewModel.$viewState
             .map { state -> Bool in
                 switch state {
                 case .loading, .failed:
