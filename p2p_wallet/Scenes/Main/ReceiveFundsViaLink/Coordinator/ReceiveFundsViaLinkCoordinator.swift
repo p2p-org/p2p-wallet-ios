@@ -49,24 +49,26 @@ final class ReceiveFundsViaLinkCoordinator: Coordinator<Void> {
                 }
             })
             .store(in: &subscriptions)
-        viewModel.linkWasClaimed
-            .sink(receiveValue: { [weak self] in
+        viewModel.linkError
+            .sink(receiveValue: { [weak self] model in
                 guard let self = self else { return }
                 
-                viewController.dismiss(animated: true)
-                
-                let errorView = LinkWasClaimedView {
-                    self.presentingViewController.dismiss(animated: true)
-                }.asViewController()
-                
-                errorView.deallocatedPublisher()
-                    .sink(receiveValue: { [weak self] in
-                        self?.resultSubject.send(())
-                    })
-                    .store(in: &self.subscriptions)
-                
-                errorView.modalPresentationStyle = .fullScreen
-                self.presentingViewController.present(errorView, animated: true)
+                viewController.dismiss(animated: true) { [weak self] in
+                    guard let self = self else { return }
+                    
+                    let errorView = LinkErrorView(model: model) {
+                        self.presentingViewController.dismiss(animated: true)
+                    }.asViewController()
+                    
+                    errorView.deallocatedPublisher()
+                        .sink(receiveValue: { [weak self] in
+                            self?.resultSubject.send(())
+                        })
+                        .store(in: &self.subscriptions)
+                    
+                    errorView.modalPresentationStyle = .fullScreen
+                    self.presentingViewController.present(errorView, animated: true)
+                }
             })
             .store(in: &subscriptions)
         transition.dimmClicked
