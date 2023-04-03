@@ -172,6 +172,11 @@ final class ReceiveFundsViaLinkViewModel: BaseViewModel, ObservableObject {
 
                 let cryptoAmount = claimableToken.lamports
                     .convertToBalance(decimals: claimableToken.decimals)
+                
+                if cryptoAmount == 0 {
+                    showLinkWasClaimedError()
+                    return
+                }
 
                 let cryptoAmountStr = cryptoAmount.tokenAmountFormattedString(symbol: token.symbol)
                 let model = Model(token: token, cryptoAmount: cryptoAmountStr)
@@ -191,11 +196,7 @@ final class ReceiveFundsViaLinkViewModel: BaseViewModel, ObservableObject {
                     }
                     switch error {
                     case .claimableAssetNotFound:
-                        showFullLinkError(
-                            title: L10n.thisOneTimeLinkIsAlreadyClaimed,
-                            subtitle: L10n.youCanTReceiveFundsWithIt,
-                            image: .sendViaLinkClaimed
-                        )
+                        showLinkWasClaimedError()
                     case .invalidSeed, .invalidURL:
                         showFullLinkError(
                             title: L10n.thisLinkIsBroken,
@@ -218,6 +219,14 @@ final class ReceiveFundsViaLinkViewModel: BaseViewModel, ObservableObject {
         state = .failure
         sizeChangedSubject.send(594)
         isReloading = false
+    }
+    
+    private func showLinkWasClaimedError() {
+        showFullLinkError(
+            title: L10n.thisOneTimeLinkIsAlreadyClaimed,
+            subtitle: L10n.youCanTReceiveFundsWithIt,
+            image: .sendViaLinkClaimed
+        )
     }
 }
 
