@@ -120,9 +120,7 @@ struct ReceiveFundsViaLinkView: View {
     private var statusView: some View {
         TransactionProcessView(
             state: $viewModel.processingState,
-            errorMessageTapAction: {
-                viewModel.statusErrorClicked()
-            }
+            errorMessageTapAction: {}
         )
     }
     
