@@ -72,7 +72,7 @@ private extension HomeViewModel {
             .filter { $0 == .loaded }
             .prefix(1)
             .map { _ in true}
-            .assign(to: \.isInitialized, onWeak: self)
+            .assignWeak(to: \.isInitialized, on: self)
             .store(in: &subscriptions)
 
         // state, address, error, log

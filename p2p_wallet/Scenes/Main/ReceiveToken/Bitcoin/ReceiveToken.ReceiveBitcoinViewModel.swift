@@ -102,12 +102,12 @@ extension ReceiveToken {
             // listen to lockAndMintService
             lockAndMintService.statePublisher
                 .receive(on: RunLoop.main)
-                .assign(to: \.state, onWeak: self)
+                .assignWeak(to: \.state, on: self)
                 .store(in: &subscriptions)
             
             lockAndMintService.processingTxsPublisher
                 .receive(on: RunLoop.main)
-                .assign(to: \.processingTransactions, onWeak: self)
+                .assignWeak(to: \.processingTransactions, on: self)
                 .store(in: &subscriptions)
         }
 

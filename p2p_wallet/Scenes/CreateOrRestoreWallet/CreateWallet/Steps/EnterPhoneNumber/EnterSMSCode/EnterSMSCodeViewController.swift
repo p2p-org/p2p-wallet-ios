@@ -121,11 +121,11 @@ final class EnterSMSCodeViewController: BaseOTPViewController {
 
         if let textField = smsInputRef.view?.textField {
             viewModel.$code.map { Optional($0) }
-                .assign(to: \.text, onWeak: textField)
+                .assignWeak(to: \.text, on: textField)
                 .store(in: &store)
 
             textField.textPublisher.map { $0 ?? "" }
-                .assign(to: \.code, onWeak: viewModel)
+                .assignWeak(to: \.code, on: viewModel)
                 .store(in: &store)
         }
 

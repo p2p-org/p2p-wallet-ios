@@ -123,13 +123,13 @@ class RecipientSearchViewModel: ObservableObject {
 
         sendHistoryService.statusPublisher
             .receive(on: RunLoop.main)
-            .assign(to: \.recipientsHistoryStatus, onWeak: self)
+            .assignWeak(to: \.recipientsHistoryStatus, on: self)
             .store(in: &subscriptions)
 
         sendHistoryService.recipientsPublisher
             .receive(on: RunLoop.main)
             .map { Array($0.prefix(10)) }
-            .assign(to: \.recipientsHistory, onWeak: self)
+            .assignWeak(to: \.recipientsHistory, on: self)
             .store(in: &subscriptions)
 
         $input

@@ -166,7 +166,7 @@ final class BuyViewModel: ObservableObject {
                 return ButtonItem(title: title, icon: icon, enabled: enabled)
             }
             .removeDuplicates()
-            .assign(to: \.buttonItem, onWeak: self)
+            .assignWeak(to: \.buttonItem, on: self)
             .store(in: &subscriptions)
 
         areMethodsLoading = true

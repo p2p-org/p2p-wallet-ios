@@ -103,7 +103,7 @@ final class BuyCoordinator: Coordinator<Void> {
                 return nil
             }
         }
-        .assign(to: \.value, onWeak: viewModel.coordinatorIO.tokenSelected)
+        .assignWeak(to: \.value, on: viewModel.coordinatorIO.tokenSelected)
         .store(in: &subscriptions)
 
         viewModel.coordinatorIO.showFiatSelect.flatMap { [unowned self] fiats in
@@ -124,7 +124,7 @@ final class BuyCoordinator: Coordinator<Void> {
                 return nil
             }
         }
-        .assign(to: \.value, onWeak: viewModel.coordinatorIO.fiatSelected)
+        .assignWeak(to: \.value, on: viewModel.coordinatorIO.fiatSelected)
         .store(in: &subscriptions)
 
         vcPresentedPercentage.eraseToAnyPublisher()
