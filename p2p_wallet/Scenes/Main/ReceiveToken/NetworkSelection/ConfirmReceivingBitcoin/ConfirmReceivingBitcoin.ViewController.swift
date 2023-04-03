@@ -50,7 +50,7 @@ extension ConfirmReceivingBitcoin {
 //                    .setup { label in
 //                        viewModel.accountStatusPublisher
 //                            .map { $0 != .payingWalletAvailable }
-//                            .assign(to: \.isHidden, onWeak: label)
+//                            .assignWeak(to: \.isHidden, on: label)
 //                            .store(in: &subscriptions)
 //                    }
 
@@ -60,7 +60,7 @@ extension ConfirmReceivingBitcoin {
 //                        view.autoSetDimension(.height, toSize: 14)
 //                        viewModel.accountStatusPublisher
 //                            .map { $0 != .topUpRequired && $0 != .freeCreationAvailable }
-//                            .assign(to: \.isHidden, onWeak: view)
+//                            .assignWeak(to: \.isHidden, on: view)
 //                            .store(in: &subscriptions)
 //                    }
 
@@ -91,7 +91,7 @@ extension ConfirmReceivingBitcoin {
                         .setup { view in
                             viewModel.accountStatusPublisher
                                 .map { $0 != .freeCreationAvailable }
-                                .assign(to: \.isHidden, onWeak: view)
+                                .assignWeak(to: \.isHidden, on: view)
                                 .store(in: &subscriptions)
                         }
 
@@ -99,7 +99,7 @@ extension ConfirmReceivingBitcoin {
                         .setup { view in
                             viewModel.accountStatusPublisher
                                 .map { $0 != .topUpRequired }
-                                .assign(to: \.isHidden, onWeak: view)
+                                .assignWeak(to: \.isHidden, on: view)
                                 .store(in: &subscriptions)
                         }
 
@@ -107,7 +107,7 @@ extension ConfirmReceivingBitcoin {
                         .setup { view in
                             viewModel.accountStatusPublisher
                                 .map { $0 != .topUpRequired }
-                                .assign(to: \.isHidden, onWeak: view)
+                                .assignWeak(to: \.isHidden, on: view)
                                 .store(in: &subscriptions)
                         }
 
@@ -115,7 +115,7 @@ extension ConfirmReceivingBitcoin {
                         .setup { view in
                             viewModel.accountStatusPublisher
                                 .map { $0 != .payingWalletAvailable }
-                                .assign(to: \.isHidden, onWeak: view)
+                                .assignWeak(to: \.isHidden, on: view)
                                 .store(in: &subscriptions)
                         }
                 }
@@ -129,7 +129,7 @@ extension ConfirmReceivingBitcoin {
                     .setup { view in
                         viewModel.accountStatusPublisher
                             .map { $0 != .freeCreationAvailable }
-                            .assign(to: \.isHidden, onWeak: view)
+                            .assignWeak(to: \.isHidden, on: view)
                             .store(in: &subscriptions)
                     }
 
@@ -137,7 +137,7 @@ extension ConfirmReceivingBitcoin {
                     .setup { view in
                         viewModel.accountStatusPublisher
                             .map { $0 != .topUpRequired }
-                            .assign(to: \.isHidden, onWeak: view)
+                            .assignWeak(to: \.isHidden, on: view)
                             .store(in: &subscriptions)
                     }
 
@@ -145,7 +145,7 @@ extension ConfirmReceivingBitcoin {
                     .setup { view in
                         viewModel.accountStatusPublisher
                             .map { $0 != .payingWalletAvailable }
-                            .assign(to: \.isHidden, onWeak: view)
+                            .assignWeak(to: \.isHidden, on: view)
                             .store(in: &subscriptions)
                     }
             }

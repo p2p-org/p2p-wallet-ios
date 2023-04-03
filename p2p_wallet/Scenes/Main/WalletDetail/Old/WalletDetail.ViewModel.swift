@@ -68,7 +68,7 @@ extension WalletDetail {
                 .receive(on: DispatchQueue.main)
                 .map { [weak self] in $0.first(where: { $0.pubkey == self?.pubkey }) }
                 .filter { $0 != nil }
-                .assign(to: \.wallet, onWeak: self)
+                .assignWeak(to: \.wallet, on: self)
                 .store(in: &subscriptions)
 
             $wallet
@@ -106,7 +106,7 @@ extension WalletDetail {
                     }
                     return actions
                 }
-                .assign(to: \.walletActionsSubject, onWeak: self)
+                .assignWeak(to: \.walletActionsSubject, on: self)
                 .store(in: &subscriptions)
         }
 

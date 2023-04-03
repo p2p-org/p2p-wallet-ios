@@ -115,7 +115,7 @@ extension NewDerivableAccounts {
             viewModel.selectedDerivablePathPublisher
                 .map(\.title)
                 .map { Optional($0) }
-                .assign(to: \.text, onWeak: derivationPathLabel)
+                .assignWeak(to: \.text, on: derivationPathLabel)
                 .store(in: &subscriptions)
 
             viewModel.selectedDerivablePathPublisher

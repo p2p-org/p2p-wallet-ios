@@ -47,13 +47,13 @@ extension ConfirmReceivingBitcoin.ViewController {
                                                 color: .textBlack
                                             )
                                     }
-                                    .assign(to: \.attributedText, onWeak: label)
+                                    .assignWeak(to: \.attributedText, on: label)
                                     .store(in: &subscriptions)
                             }
                         UILabel(text: "0.509 USDC", textSize: 17, weight: .semibold)
                             .setup { label in
                                 viewModel.feeInTextPublisher
-                                    .assign(to: \.text, onWeak: label)
+                                    .assignWeak(to: \.text, on: label)
                                     .store(in: &subscriptions)
                             }
                     }
@@ -95,7 +95,7 @@ extension ConfirmReceivingBitcoin.ViewController {
                         }
                         return L10n.payAndContinue(fee.toString(maximumFractionDigits: 9) + " " + wallet.token.symbol)
                     }
-                    .assign(to: \.title, onWeak: button)
+                    .assignWeak(to: \.title, on: button)
                     .store(in: &subscriptions)
             }
             .onPressed { [unowned self] _ in

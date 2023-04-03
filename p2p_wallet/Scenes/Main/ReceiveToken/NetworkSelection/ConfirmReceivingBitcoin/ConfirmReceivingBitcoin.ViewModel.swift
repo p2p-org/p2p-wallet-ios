@@ -135,7 +135,7 @@ extension ConfirmReceivingBitcoin {
                           let price = self?.pricesService.currentPrice(mint: mint)?.value else { return nil }
                     return fee * price
                 }
-                .assign(to: \.feeInFiat, onWeak: self)
+                .assignWeak(to: \.feeInFiat, on: self)
                 .store(in: &subscriptions)
         }
         
