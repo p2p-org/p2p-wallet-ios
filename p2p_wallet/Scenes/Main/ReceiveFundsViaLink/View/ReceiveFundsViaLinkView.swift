@@ -36,8 +36,6 @@ struct ReceiveFundsViaLinkView: View {
             .sheetHeader(title: L10n.receiveFundsViaOneTimeLink, withSeparator: false, bottomPadding: 4)
         case let .confirmed(cryptoAmount):
             youReceivedToken(cryptoAmount: cryptoAmount)
-                .padding(.horizontal, 16)
-                .padding(.bottom, 32)
                 .sheetHeader(title: nil, withSeparator: false)
         case .failure:
             SendViaLinkClaimErrorView(
@@ -158,34 +156,50 @@ struct ReceiveFundsViaLinkView: View {
     }
     
     private func youReceivedToken(cryptoAmount: String) -> some View {
-        VStack(spacing: 32) {
-            Spacer()
-            ZStack {
-                Circle()
-                    .fill(Color(Asset.Colors.rain.color))
-                    .frame(width: 128, height: 128)
-                Text("💰")
-                    .font(.system(size: 64))
-            }
-            VStack(spacing: 8) {
-                Text("\(L10n.youVeGot) \(cryptoAmount)")
-                    .foregroundColor(Color(Asset.Colors.night.color))
-                    .font(uiFont: .font(of: .largeTitle, weight: .bold))
-                Text(L10n.spendThemWisely)
-                    .multilineTextAlignment(.center)
-                    .foregroundColor(Color(Asset.Colors.silver.color))
-                    .font(uiFont: .font(of: .text1))
-            }
-            Spacer()
-            TextButtonView(
-                title: "\(L10n.gotIt) 👍",
-                style: .primaryWhite,
-                size: .large,
-                onPressed: {
-                    viewModel.closeClicked()
+        ZStack {
+            VStack(spacing: 32) {
+                Spacer()
+                ZStack {
+                    Circle()
+                        .fill(Color(Asset.Colors.rain.color))
+                        .frame(width: 128, height: 128)
+                    Text("💰")
+                        .font(.system(size: 64))
                 }
+                VStack(spacing: 8) {
+                    Text("\(L10n.youVeGot) \(cryptoAmount)!")
+                        .multilineTextAlignment(.center)
+                        .foregroundColor(Color(Asset.Colors.night.color))
+                        .font(uiFont: .font(of: .largeTitle, weight: .bold))
+                    Text(L10n.spendThemWisely)
+                        .foregroundColor(Color(Asset.Colors.silver.color))
+                        .font(uiFont: .font(of: .text1))
+                }
+                Spacer()
+                Button(
+                    action: {
+                        viewModel.closeClicked()
+                    },
+                    label: {
+                        Text("\(L10n.gotIt) 👍")
+                            .foregroundColor(Color(Asset.Colors.lime.color))
+                            .font(uiFont: .font(of: .text2, weight: .semibold))
+                            .frame(height: 56)
+                            .frame(maxWidth: .infinity)
+                            .background(Color(Asset.Colors.night.color))
+                            .cornerRadius(12)
+                    }
+                )
+                .padding(.horizontal, 16)
+                .padding(.bottom, 32)
+            }
+            LottieView(
+                lottieFile: "ApplauseAnimation",
+                loopMode: .playOnce,
+                contentMode: .scaleAspectFill
             )
-            .frame(height: 56)
+            .allowsHitTesting(false)
+            .ignoresSafeArea(.all)
         }
     }
 }
