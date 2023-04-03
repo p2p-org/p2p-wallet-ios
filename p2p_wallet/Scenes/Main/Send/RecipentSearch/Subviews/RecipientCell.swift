@@ -15,15 +15,27 @@ struct RecipientCell: View {
     let title: String
     let subtitle: String?
     let trailingView: AnyView?
-
-    init(image: AnyView, title: String, subtitle: String? = nil, trailingView: AnyView? = nil) {
+    let multilinesForSubtitle: Bool
+    
+    init(
+        image: AnyView,
+        title: String,
+        subtitle: String? = nil,
+        trailingView: AnyView? = nil,
+        multilinesForSubtitle: Bool = false
+    ) {
         self.image = image
         self.title = title
         self.subtitle = subtitle
         self.trailingView = trailingView
+        self.multilinesForSubtitle = multilinesForSubtitle
     }
 
-    init(recipient: Recipient, subtitle: String? = nil) {
+    init(
+        recipient: Recipient,
+        subtitle: String? = nil,
+        multilinesForSubtitle: Bool = false
+    ) {
         switch recipient.category {
         case let .username(name, domain):
             switch domain {
@@ -65,6 +77,7 @@ struct RecipientCell: View {
         } else {
             trailingView = nil
         }
+        self.multilinesForSubtitle = multilinesForSubtitle
     }
 
     var body: some View {
@@ -84,7 +97,15 @@ struct RecipientCell: View {
                     Text(subtitle)
                         .foregroundColor(Color(Asset.Colors.mountain.color))
                         .apply(style: .label1)
-                        .lineLimit(1)
+                        .if(multilinesForSubtitle) {
+                            $0
+                                .fixedSize(horizontal: false, vertical: true)
+                                .multilineTextAlignment(.leading)
+                        }
+                        .if(!multilinesForSubtitle) {
+                            $0
+                                .lineLimit(1)
+                        }
                         .accessibilityIdentifier("RecipientCell.subtitle")
                 }
             }
