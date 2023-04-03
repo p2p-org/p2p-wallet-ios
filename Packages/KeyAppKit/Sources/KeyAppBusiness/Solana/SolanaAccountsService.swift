@@ -107,6 +107,10 @@ public final class SolanaAccountsService: NSObject, AccountsService, ObservableO
 
                             newAccounts[index]
                                 .price = .init(currencyCode: fiat.uppercased(), value: value, token: token)
+
+                            newAccounts[index]
+                                .data
+                                .price = price
                         }
                     }
 
