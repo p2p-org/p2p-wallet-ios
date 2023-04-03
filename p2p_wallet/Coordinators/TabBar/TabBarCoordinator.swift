@@ -22,6 +22,7 @@ final class TabBarCoordinator: Coordinator<Void> {
 
     // MARK: - Properties
     private unowned var window: UIWindow!
+    private let tabBarViewModel: TabBarViewModel
     private let tabBarController: TabBarController
     private let closeSubject = PassthroughSubject<Void, Never>()
     
@@ -39,8 +40,9 @@ final class TabBarCoordinator: Coordinator<Void> {
         appEventHandler: AppEventHandlerType = Resolver.resolve()
     ) {
         self.window = window
+        tabBarViewModel = TabBarViewModel()
         tabBarController = TabBarController(
-            viewModel: TabBarViewModel(),
+            viewModel: tabBarViewModel,
             authenticateWhenAppears: authenticateWhenAppears
         )
         super.init()
@@ -80,8 +82,29 @@ final class TabBarCoordinator: Coordinator<Void> {
         if Defaults.didSetEnableNotifications && Defaults.apnsDeviceToken == nil {
             UIApplication.shared.registerForRemoteNotifications()
         }
+        
+        bind()
 
         return closeSubject.prefix(1).eraseToAnyPublisher()
+    }
+    
+    private func bind() {
+        tabBarViewModel.moveToSendViaLinkClaim
+            .sink { [weak self] url in
+                guard let self = self, let url = url else { return }
+                
+                let claimCoordinator = ReceiveFundsViaLinkCoordinator(
+                    presentingViewController: self.tabBarController,
+                    url: url
+                )
+                DispatchQueue.main.asyncAfter(deadline: .now() + .milliseconds(300)) { [weak self] in
+                    guard let self = self else { return }
+                    self.coordinate(to: claimCoordinator)
+                        .sink(receiveValue: { })
+                        .store(in: &self.subscriptions)
+                }
+            }
+            .store(in: &subscriptions)
     }
 
     // MARK: - Helpers
@@ -252,6 +275,9 @@ final class TabBarCoordinator: Coordinator<Void> {
                         case let .sent(model):
                             navigationController?.popToRootViewController(animated: true)
                             self?.routeToSendTransactionStatus(model: model)
+                        case .sentViaLink:
+                            navigationController?.popToRootViewController(animated: true)
+//                            self?.routeToSendTransactionStatus(model: model)
                         case .cancelled:
                             break
                         }

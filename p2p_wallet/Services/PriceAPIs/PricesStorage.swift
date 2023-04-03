@@ -13,6 +13,18 @@ protocol PricesStorage {
     func savePrices(_ prices: TokenPriceMap) async
 }
 
+actor InMemoryPricesStorage: PricesStorage {
+    var prices: TokenPriceMap = [:]
+
+    func retrievePrices() async -> TokenPriceMap {
+        prices
+    }
+
+    func savePrices(_ prices: TokenPriceMap) async {
+        self.prices = prices
+    }
+}
+
 actor UserDefaultsPricesStorage: PricesStorage {
     func retrievePrices() -> TokenPriceMap {
         var prices: TokenPriceMap = [:]

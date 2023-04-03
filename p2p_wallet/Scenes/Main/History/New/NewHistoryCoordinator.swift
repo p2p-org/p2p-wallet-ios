@@ -12,31 +12,34 @@ import Sell
 import Send
 import SolanaSwift
 import SwiftUI
+import Combine
 
 class NewHistoryCoordinator: SmartCoordinator<Void> {
+    var viewModel: HistoryViewModel!
+    
     override func build() -> UIViewController {
-        let vm = HistoryViewModel()
+        viewModel = HistoryViewModel()
 
-        vm.actionSubject
+        viewModel.actionSubject
             .sink { [weak self] action in
-                self?.openDetailTransaction(action: action)
+                self?.openAction(action: action)
             }
             .store(in: &subscriptions)
 
-        let view = NewHistoryView(viewModel: vm, header: SwiftUI.EmptyView())
+        let view = NewHistoryView(viewModel: viewModel, header: SwiftUI.EmptyView())
         let vc = UIHostingControllerWithoutNavigation(rootView: view)
         vc.navigationIsHidden = false
         vc.title = L10n.history
         vc.view.backgroundColor = Asset.Colors.smoke.color
 
         vc.viewDidAppear.sink {
-            vc.navigationItem.largeTitleDisplayMode = .always
+            vc.navigationItem.largeTitleDisplayMode = .never
         }.store(in: &subscriptions)
 
         return vc
     }
 
-    private func openDetailTransaction(action: NewHistoryAction) {
+    private func openAction(action: NewHistoryAction) {
         switch action {
         case let .openParsedTransaction(trx):
             let coordinator = TransactionDetailCoordinator(
@@ -79,6 +82,8 @@ class NewHistoryCoordinator: SmartCoordinator<Void> {
             self.openBuy()
         case .openReceive:
             self.openReceive()
+        case let .openSentViaLinkHistoryView:
+            openSentViaLinkHistoryView()
         }
     }
     
@@ -158,7 +163,7 @@ class NewHistoryCoordinator: SmartCoordinator<Void> {
         .store(in: &subscriptions)
     }
 
-    func openReceive() {
+    private func openReceive() {
         let userWalletManager: UserWalletManager = Resolver.resolve()
         guard let account = userWalletManager.wallet?.account else { return }
 
@@ -168,7 +173,7 @@ class NewHistoryCoordinator: SmartCoordinator<Void> {
         presentation.presentingViewController.present(navigation, animated: true)
     }
 
-    func openBuy() {
+    private func openBuy() {
         let coordinator = BuyCoordinator(
             context: .fromToken,
             defaultToken: .nativeSolana,
@@ -176,6 +181,16 @@ class NewHistoryCoordinator: SmartCoordinator<Void> {
             shouldPush: false
         )
 
+        coordinate(to: coordinator)
+            .sink { _ in }
+            .store(in: &subscriptions)
+    }
+    
+    private func openSentViaLinkHistoryView() {
+        let coordinator = SentViaLinkHistoryCoordinator(
+            presentation: SmartCoordinatorPushPresentation(presentation.presentingViewController as! UINavigationController)
+        )
+        
         coordinate(to: coordinator)
             .sink { _ in }
             .store(in: &subscriptions)

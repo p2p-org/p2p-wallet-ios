@@ -111,6 +111,12 @@ extension DefaultsKeys {
             defaultValue: RemoteConfig.remoteConfig().solanaNegativeStatusTimeFrequency
         )
     }
+    
+    #if !RELEASE
+    var isFakeSendTransaction: DefaultsKey<Bool> { .init(#function, defaultValue: false) }
+    var isFakeSendTransactionError: DefaultsKey<Bool> { .init(#function, defaultValue: false) }
+    var isFakeSendTransactionNetworkError: DefaultsKey<Bool> { .init(#function, defaultValue: false) }
+    #endif
 
     // Sell/RampOff
     var isSellAvailable: DefaultsKey<Bool?> {
@@ -133,6 +139,11 @@ extension DefaultsKeys {
     }
 
     var toTokenAddress: DefaultsKey<String?> {
+        .init(#function, defaultValue: nil)
+    }
+    
+    // Send via link: seeds mapped by user publickeys
+    var sendViaLinkTransactions: DefaultsKey<Data?> {
         .init(#function, defaultValue: nil)
     }
 }

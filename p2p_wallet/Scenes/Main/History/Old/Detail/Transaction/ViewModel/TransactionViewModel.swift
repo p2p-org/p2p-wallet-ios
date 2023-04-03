@@ -246,7 +246,7 @@ private extension ParsedTransaction {
             }
             guard let address = address else { return nil }
             do {
-                return try await nameService.getName(address)?.withNameServiceDomain()
+                return try await nameService.getName(address, withTLD: true)
             } catch {
                 return nil
             }
