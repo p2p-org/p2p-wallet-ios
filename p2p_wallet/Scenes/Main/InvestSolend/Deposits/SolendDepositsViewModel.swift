@@ -68,7 +68,7 @@ class SolendDepositsViewModel: ObservableObject {
                 }
             }
             .receive(on: RunLoop.main)
-            .assign(to: \.deposits, on: self)
+            .assign(to: \.deposits, onWeak: self)
             .store(in: &subscriptions)
     }
 

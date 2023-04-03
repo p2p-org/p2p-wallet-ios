@@ -39,7 +39,7 @@ extension RenBTCReceivingStatuses {
         func bind() {
             receiveBitcoinViewModel.processingTransactionsPublisher
                 .map {$0.reversed()}
-                .assign(to: \.data, on: self)
+                .assign(to: \.data, onWeak: self)
                 .store(in: &subscriptions)
         }
         
