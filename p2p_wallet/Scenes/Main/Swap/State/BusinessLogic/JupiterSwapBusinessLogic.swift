@@ -32,6 +32,8 @@ enum JupiterSwapBusinessLogic {
             return state.route?.id != route.id
         case .changeSlippageBps(let slippageBps):
             return state.slippageBps != slippageBps
+        case .retry:
+            return true
         }
     }
     
@@ -115,6 +117,19 @@ enum JupiterSwapBusinessLogic {
                 $0.routes = []
                 $0.amountTo = nil
                 $0.slippageBps = slippageBps
+            }
+        case .retry(.gettingRoute):
+            return state.modified {
+                $0.status = .loadingAmountTo
+                $0.route = nil
+                $0.swapTransaction = nil
+                $0.routes = []
+                $0.amountTo = nil
+            }
+        case .retry(.createTransaction):
+            return state.modified {
+                $0.status = .creatingSwapTransaction
+                $0.swapTransaction = nil
             }
         }
     }
@@ -222,6 +237,20 @@ enum JupiterSwapBusinessLogic {
             }
             
             return state
+            
+        case let .retry(action):
+            switch action {
+            case .createTransaction:
+                // mark as creating swap transaction
+                return state.modified {
+                    $0.status = .creatingSwapTransaction
+                }
+            case .gettingRoute:
+                return await JupiterSwapBusinessLogic.recalculateRouteAndMarkAsCreatingTransaction(
+                    state: state,
+                    services: services
+                )
+            }
         }
     }
     
@@ -261,7 +290,7 @@ enum JupiterSwapBusinessLogic {
         }
         catch let error {
             if (error as NSError).isNetworkConnectionError {
-                return state.error(.networkConnectionError)
+                return state.error(.networkConnectionError(.createTransaction))
             }
             return state.error(.createTransactionFailed)
         }
