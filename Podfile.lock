@@ -163,7 +163,7 @@ PODS:
     - BEPureLayout
     - SkeletonView (~> 1.7)
   - KeychainSwift (19.0.0)
-  - Kingfisher (7.3.2)
+  - Kingfisher (7.6.2)
   - ListPlaceholder (1.5)
   - LoggerSwift (1.0.2)
   - Lokalise (0.10.2)
@@ -284,7 +284,7 @@ DEPENDENCIES:
   - KeyAppKitLogger (from `https://github.com/p2p-org/key-app-kit-swift.git`, branch `master`)
   - "KeyAppUI (from `git@github.com:p2p-org/KeyAppUI.git`, branch `main`)"
   - KeychainSwift (= 19.0.0)
-  - Kingfisher (~> 7.3.2)
+  - Kingfisher (~> 7.6.1)
   - ListPlaceholder (from `https://github.com/p2p-org/ListPlaceholder.git`, branch `custom_gradient_color`)
   - Lokalise (~> 0.10.0)
   - lottie-ios (~> 3.5.0)
@@ -614,7 +614,7 @@ SPEC CHECKSUMS:
   KeyAppKitLogger: 1db675b452a0faa4bd0097f5c88fcc635ed67205
   KeyAppUI: c1c83d207c55d53c9a438a752fb8f4e68f857a0e
   KeychainSwift: a06190cf933ad46b1e0abc3d77d29c06331715c7
-  Kingfisher: 0086ad83719761ba9b2cdaf6ef4d5b4878cbae23
+  Kingfisher: 6c5449c6450c5239166510ba04afe374a98afc4f
   ListPlaceholder: 2d7950014852ee5613d636cf14fd1bb93419e330
   LoggerSwift: df24fc6290d4a9ccd3b5d87a2301504cd9f49b3d
   Lokalise: 252c397887dfd9983331abffa90ab60cdb004e19
@@ -658,6 +658,6 @@ SPEC CHECKSUMS:
   TransactionParser: 9b258a245bbe4c8c97d20d3dd219ee470ba6f2f0
   TweetNacl: 3abf4d1d2082b0114e7a67410e300892448951e6
 
-PODFILE CHECKSUM: be1acd2825c966bcf1f29bb3187744180d848af5
+PODFILE CHECKSUM: 957758290800212b19de81eb25b64cb85453c755
 
 COCOAPODS: 1.11.3
