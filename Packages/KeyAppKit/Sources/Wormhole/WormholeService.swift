@@ -63,7 +63,7 @@ public class WormholeService {
                 recipient: solanaKeyPair.publicKey.base58EncodedString,
                 token: token,
                 amount: String(account.balance),
-                slippage: 5
+                slippage: 25
             )
 
             return bundle
