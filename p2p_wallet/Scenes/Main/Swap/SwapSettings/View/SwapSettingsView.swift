@@ -90,12 +90,11 @@ struct SwapSettingsView: View {
 
             // Liquidity fee
             if viewModel.isLoadingOrRouteNotNil {
-                if let liquidityFee = viewModel.info.liquidityFee,
-                   !liquidityFee.isEmpty
+                if !viewModel.info.liquidityFee.isEmpty
                 {
                     feeRow(
                         title: L10n.liquidityFee,
-                        fees: liquidityFee,
+                        fees: viewModel.info.liquidityFee,
                         identifier: .liquidityFee
                     )
                 }
