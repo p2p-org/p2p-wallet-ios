@@ -1,22 +1,25 @@
 import Combine
-import KeyAppBusiness
 import Resolver
 import SolanaSwift
 import Wormhole
+import KeyAppKitCore
+import KeyAppBusiness
 
 final class ChooseWormholeTokenService: ChooseItemService {
+    
     let otherTokensTitle = L10n.otherTokens
 
-    @Injected private var accountsService: SolanaAccountsService
+    var state: AnyPublisher<AsyncValueState<[ChooseItemListSection]>, Never> {
+        statePublisher.eraseToAnyPublisher()
+    }
 
-    func fetchItems() async throws -> [ChooseItemListSection] {
-        // TODO: Add possibility to handle accountsService.state publisher and update ChooseItemService accordingly
-        let wallets = accountsService.state.value
-            .filter {
-                SupportedToken.bridges.map(\.solAddress).contains($0.data.mintAddress)
-            }
-            .map(\.data)
-        return [ChooseItemListSection(items: wallets)]
+    private let statePublisher: CurrentValueSubject<AsyncValueState<[ChooseItemListSection]>, Never>
+    @Injected private var accountsService: SolanaAccountsService
+    private var subscriptions = [AnyCancellable]()
+
+    init() {
+        statePublisher = CurrentValueSubject<AsyncValueState<[ChooseItemListSection]>, Never>(AsyncValueState(value: []))
+        bind()
     }
 
     func sort(items: [ChooseItemListSection]) -> [ChooseItemListSection] {
@@ -30,5 +33,24 @@ final class ChooseWormholeTokenService: ChooseItemService {
 
     func sortFiltered(by _: String, items: [ChooseItemListSection]) -> [ChooseItemListSection] {
         sort(items: items)
+    }
+}
+
+private extension ChooseWormholeTokenService {
+    func bind() {
+        accountsService.$state
+            .map({ state in
+                state.apply { accounts in
+                    [ChooseItemListSection(
+                        items: accounts
+                            .filter { SupportedToken.bridges.map(\.solAddress).contains($0.data.mintAddress) }
+                            .map(\.data))
+                    ]
+                }
+            })
+            .sink { [weak self] state in
+                self?.statePublisher.send(state)
+            }
+            .store(in: &subscriptions)
     }
 }

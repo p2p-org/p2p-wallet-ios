@@ -25,25 +25,42 @@ final class ChooseItemViewModel: BaseViewModel, ObservableObject {
         self.chosenToken = chosenToken
         self.service = service
         super.init()
+        bind()
+    }
+}
 
-        self.isLoading = true
-        Task {
-            do {
-                let data = try await service.fetchItems()
-                let dataWithoutChosen = data.map { section in
-                    ChooseItemListSection(
-                        items: section.items.filter { $0.id != chosenToken.id }
-                    )
+private extension ChooseItemViewModel {
+    func bind() {
+        service.state
+            .sink { [weak self] state in
+                guard let self = self else { return }
+                switch state.status {
+                case .ready:
+                    if self.isLoading {
+                        // Show skeleton only once, after that only seamless updates
+                        self.isLoading = false
+                    }
+
+                    _ = state.apply { data in
+                        let dataWithoutChosen = data.map { section in
+                            ChooseItemListSection(
+                                items: section.items.filter { $0.id != self.chosenToken.id }
+                            )
+                        }
+                        self.allItems = self.service.sort(items: dataWithoutChosen)
+                        self.sections = self.allItems
+                    }
+
+                default:
+                    break
                 }
-                self.allItems = self.service.sort(items: dataWithoutChosen)
-                self.sections = self.allItems
-            }
-            catch {
-                self.notifications.showDefaultErrorNotification()
-            }
-            self.isLoading = false
-        }
 
+                if state.hasError {
+                    self.notifications.showDefaultErrorNotification()
+                }
+            }
+            .store(in: &subscriptions)
+        
         $searchText
             .debounce(for: .seconds(0.5), scheduler: DispatchQueue.main)
             .sinkAsync(receiveValue: { [weak self] value in
