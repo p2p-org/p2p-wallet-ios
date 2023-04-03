@@ -206,7 +206,7 @@ struct RendableDetailPendingTransaction: RendableTransactionDetail {
             result.append(
                 .init(
                     title: L10n.receivedFrom,
-                    value: transaction.claimableTokenInfo.account,
+                    value: RecipientFormatter.format(destination: transaction.claimableTokenInfo.account),
                     copyableValue: transaction.claimableTokenInfo.account
                 )
             )
