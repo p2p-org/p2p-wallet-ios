@@ -276,7 +276,7 @@ final class TabBarController: UITabBarController {
         // blurEffectView
         viewModel.authenticationStatusPublisher
             .map { $0 == nil }
-            .assign(to: \.isHidden, on: blurEffectView)
+            .assignWeak(to: \.isHidden, on: blurEffectView)
             .store(in: &subscriptions)
     }
 }

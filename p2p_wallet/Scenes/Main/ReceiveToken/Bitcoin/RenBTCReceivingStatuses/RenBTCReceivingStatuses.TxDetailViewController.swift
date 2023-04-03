@@ -76,7 +76,7 @@ extension RenBTCReceivingStatuses {
                     guard let value = tx?.value else { return L10n.receivingStatus }
                     return L10n.receivingRenBTC(value.toString(maximumFractionDigits: 10))
                 }
-                .assign(to: \.title, on: self)
+                .assignWeak(to: \.title, on: self)
                 .store(in: &subscriptions)
         }
     }
