@@ -23,7 +23,7 @@ struct ActionsView: View {
     var isSellAvailable: Bool {
         available(.sellScenarioEnabled) &&
         sellDataService.isAvailable &&
-        !walletsRepository.getWallets().isTotalBalanceEmpty
+        !walletsRepository.getWallets().isTotalAmountEmpty
     }
 
     var body: some View {

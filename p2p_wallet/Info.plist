@@ -6,6 +6,10 @@
 	<string>$(AMPLITUDE_API_KEY)</string>
 	<key>LOKALISE_PROJECT_ID</key>
 	<string>$(LOKALISE_PROJECT_ID)</string>
+	<key>SEND_VIA_LINK_SALT</key>
+	<string>$(SEND_VIA_LINK_SALT)</string>
+	<key>SEND_VIA_LINK_MEMO_PREFIX</key>
+	<string>$(SEND_VIA_LINK_MEMO_PREFIX)</string>
 	<key>LOKALISE_TOKEN</key>
 	<string>$(LOKALISE_TOKEN)</string>
 	<key>AMPLITUDE_API_KEY_FEATURE</key>
@@ -95,6 +99,7 @@
 	<false/>
 	<key>IntercomUniversalLinkDomains</key>
 	<array>
+		<string>t.key.app</string>
 		<string>key.app</string>
 	</array>
 	<key>LSRequiresIPhoneOS</key>

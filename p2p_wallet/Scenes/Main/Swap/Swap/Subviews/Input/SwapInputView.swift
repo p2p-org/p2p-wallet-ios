@@ -30,7 +30,7 @@ struct SwapInputView: View {
 
                 Spacer()
 
-                if let fiatAmount = viewModel.fiatAmount, !viewModel.isLoading {
+                if let fiatAmount = viewModel.fiatAmount, !viewModel.isLoading, fiatAmount > 0 {
                     Text("≈\(fiatAmount.toString(maximumFractionDigits: 2, roundingMode: .down)) \(Defaults.fiat.code)")
                         .subtitleStyle(color: Color(viewModel.fiatAmountTextColor))
                         .lineLimit(1)
@@ -86,16 +86,18 @@ private extension SwapInputView {
     }
 
     var amountField: some View {
-        DecimalTextField(value: $viewModel.amount, isFirstResponder: $viewModel.isFirstResponder, textColor: $viewModel.amountTextColor) { textField in
+        AmountTextField(
+            value: $viewModel.amount,
+            isFirstResponder: $viewModel.isFirstResponder,
+            textColor: $viewModel.amountTextColor,
+            maxFractionDigits: $viewModel.decimalLength,
+            moveCursorToTrailingWhenDidBeginEditing: true
+        ) { textField in
             textField.font = .font(of: .title1)
-            textField.keyboardType = .decimalPad
             textField.isEnabled = viewModel.isEditable
             textField.placeholder = "0"
-            textField.maximumFractionDigits = Int(viewModel.token.token.decimals)
-            textField.decimalSeparator = "."
             textField.adjustsFontSizeToFitWidth = true
             textField.textAlignment = .right
-            textField.max = viewModel.token.token.maxAmount
         }
         .frame(maxWidth: .infinity)
         .accessibilityIdentifier("SwapInputView.\(viewModel.accessibilityIdentifierTokenPrefix)Input")
