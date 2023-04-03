@@ -1301,7 +1301,7 @@ You can try again, but your new transaction will be subject to the current rates
 "Key App one-time transfer link" = "Key App one-time transfer link";
 "The one-time link is ready! The funds can be claimed" = "The one-time link is ready! The funds can be claimed";
 "If you want to get your money back just open link by yourself" = "If you want to get your money back just open link by yourself";
-"Receive funds via one-time\nlink" = "Receive funds via one-time\nlink";
+"Receive funds\nvia one-time link" = "Receive funds\nvia one-time link";
 "Confirm" = "Confirm";
 "The transaction was rejected after failed internet connection. Open your link again" = "The transaction was rejected after failed internet connection. Open your link again";
 "Spend them wisely" = "Spend them wisely";
