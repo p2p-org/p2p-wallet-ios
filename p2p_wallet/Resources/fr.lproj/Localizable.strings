@@ -1345,3 +1345,4 @@ You can try again, but your new transaction will be subject to the current rates
 "Reload" = "Recharger";
 "You’ve got" = "Tu as";
 "The fee is more than the amount sent" = "Les frais sont supérieurs au montant envoyé";
+"Would be completed on the Ethereum network" = "Serait complété sur le réseau Ethereum";
