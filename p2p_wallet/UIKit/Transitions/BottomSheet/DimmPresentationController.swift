@@ -8,7 +8,7 @@
 import Combine
 import UIKit
 
-class DimmPresentationController: PresentationController {
+final class DimmPresentationController: PresentationController {
     private let subject = PassthroughSubject<Void, Never>()
     var dimmClicked: AnyPublisher<Void, Never> { subject.eraseToAnyPublisher() }
 
