@@ -15,14 +15,14 @@ final class DeeplinkAppDelegateService: NSObject, AppDelegateService {
         guard
             let components = NSURLComponents(url: url, resolvingAgainstBaseURL: true),
             let host = components.host,
-            let path = components.path,
-            let params = components.queryItems
+            let path = components.path
         else { return false }
-
+        
         if
             Environment.current != .release,
             host == "onboarding",
             path == "/seedPhrase",
+            let params = components.queryItems,
             let seedPhrase: String = params.first(where: { $0.name == "value" })?.value,
             let pincode: String = params.first(where: { $0.name == "pincode" })?.value
         {
@@ -40,6 +40,18 @@ final class DeeplinkAppDelegateService: NSObject, AppDelegateService {
                 try await Task.sleep(nanoseconds: 1_000_000_000)
                 authService.authenticate(presentationStyle: nil)
             }
+        }
+        
+        else if host == "t" {
+            let seed = String(path.dropFirst())
+            var urlComponent = URLComponents()
+            urlComponent.scheme = "https"
+            urlComponent.host = "t.key.app"
+            urlComponent.path = "/\(seed)"
+            guard let url = urlComponent.url else {
+                return false
+            }
+            GlobalAppState.shared.sendViaLinkUrl = url
             return true
         }
 
