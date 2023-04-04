@@ -404,7 +404,7 @@ platform :ios do
     # register new device
     devices = {}
 
-    objects.map do |obj|
+    JSON.parse(NEW_DEVICES_JSON_STRING).map do |obj|
       devices[obj[:name]] = obj[:id]
     end
 
