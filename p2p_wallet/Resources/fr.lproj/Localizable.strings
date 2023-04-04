@@ -1320,3 +1320,4 @@ You can try again, but your new transaction will be subject to the current rates
 "You’ve got" = "Tu as";
 "%@ sent you %@ via Key App. Follow the link to claim your funds: %@" = "%@ vous a envoyé %@ via Key App.  Suivez le lien pour réclamer vos fonds : %@";
 "From %@" = "De %@";
+"This link is broken" = "Ce lien est rompu";
