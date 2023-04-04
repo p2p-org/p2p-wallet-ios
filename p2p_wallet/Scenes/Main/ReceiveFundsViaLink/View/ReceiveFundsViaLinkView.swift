@@ -16,6 +16,9 @@ struct ReceiveFundsViaLinkView: View {
     
     var body: some View {
         content
+            .onAppear {
+                viewModel.onAppear()
+            }
     }
     
     @ViewBuilder
@@ -176,7 +179,7 @@ struct ReceiveFundsViaLinkView: View {
                 Spacer()
                 Button(
                     action: {
-                        viewModel.closeClicked()
+                        viewModel.gotItClicked()
                     },
                     label: {
                         Text("\(L10n.gotIt) 👍")

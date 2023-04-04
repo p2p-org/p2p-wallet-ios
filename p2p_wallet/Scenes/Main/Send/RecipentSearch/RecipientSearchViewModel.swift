@@ -273,6 +273,7 @@ class RecipientSearchViewModel: ObservableObject {
     }
     
     func sendViaLink() {
+        analyticsManager.log(event: .sendClickStartCreateLink)
         coordinator.sendViaLinkSubject.send(())
     }
     
