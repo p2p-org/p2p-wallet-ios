@@ -30,7 +30,7 @@ final class ReceiveFundsViaLinkViewModel: BaseViewModel, ObservableObject {
     // Subjects
     private let closeSubject = PassthroughSubject<Void, Never>()
     private let sizeChangedSubject = PassthroughSubject<CGFloat, Never>()
-    private let linkWasClaimedSubject = PassthroughSubject<Void, Never>()
+    private let linkErrorSubject = PassthroughSubject<LinkErrorView.Model, Never>()
     
     // Properties
     private let url: URL
@@ -41,7 +41,7 @@ final class ReceiveFundsViaLinkViewModel: BaseViewModel, ObservableObject {
     
     var close: AnyPublisher<Void, Never> { closeSubject.eraseToAnyPublisher() }
     var sizeChanged: AnyPublisher<CGFloat, Never> { sizeChangedSubject.eraseToAnyPublisher() }
-    var linkWasClaimed: AnyPublisher<Void, Never> { linkWasClaimedSubject.eraseToAnyPublisher() }
+    var linkError: AnyPublisher<LinkErrorView.Model, Never> { linkErrorSubject.eraseToAnyPublisher() }
     
     // MARK: - To View
     
@@ -159,15 +159,6 @@ final class ReceiveFundsViaLinkViewModel: BaseViewModel, ObservableObject {
         }
     }
     
-    func statusErrorClicked() {
-        guard let claimableToken = claimableToken else { return }
-        let cryptoAmount = claimableToken.lamports.convertToBalance(decimals: claimableToken.decimals)
-        
-        if cryptoAmount == 0 {
-            linkWasClaimedSubject.send()
-        }
-    }
-    
     // MARK: - Private
     
     private func loadTokenInfo() {
@@ -181,11 +172,9 @@ final class ReceiveFundsViaLinkViewModel: BaseViewModel, ObservableObject {
 
                 let cryptoAmount = claimableToken.lamports
                     .convertToBalance(decimals: claimableToken.decimals)
-
+                
                 if cryptoAmount == 0 {
-                    await MainActor.run { [weak self] in
-                        self?.linkWasClaimedSubject.send()
-                    }
+                    showLinkWasClaimedError()
                     return
                 }
 
@@ -194,19 +183,50 @@ final class ReceiveFundsViaLinkViewModel: BaseViewModel, ObservableObject {
                 
                 self.claimableToken = claimableToken
                 self.token = token
-                await MainActor.run { [weak self] in
-                    self?.state = .loaded(model: model)
-                    self?.isReloading = false
-                    self?.sizeChangedSubject.send(422)
+                await MainActor.run {
+                    state = .loaded(model: model)
+                    isReloading = false
+                    sizeChangedSubject.send(422)
                 }
             } catch {
-                await MainActor.run { [weak self] in
-                    self?.state = .failure
-                    self?.sizeChangedSubject.send(594)
-                    self?.isReloading = false
+                await MainActor.run {
+                    guard let error = error as? SendViaLinkDataServiceError else {
+                        showFailedToGetDataError()
+                        return
+                    }
+                    switch error {
+                    case .claimableAssetNotFound:
+                        showLinkWasClaimedError()
+                    case .invalidSeed, .invalidURL:
+                        showFullLinkError(
+                            title: L10n.thisLinkIsBroken,
+                            subtitle: L10n.youCanTReceiveFundsWithIt,
+                            image: .womanNotFound
+                        )
+                    case .lastTransactionNotFound:
+                        showFailedToGetDataError()
+                    }
                 }
             }
         }
+    }
+    
+    private func showFullLinkError(title: String, subtitle: String, image: UIImage) {
+        linkErrorSubject.send(LinkErrorView.Model(title: title, subtitle: subtitle, image: image))
+    }
+    
+    private func showFailedToGetDataError() {
+        state = .failure
+        sizeChangedSubject.send(594)
+        isReloading = false
+    }
+    
+    private func showLinkWasClaimedError() {
+        showFullLinkError(
+            title: L10n.thisOneTimeLinkIsAlreadyClaimed,
+            subtitle: L10n.youCanTReceiveFundsWithIt,
+            image: .sendViaLinkClaimed
+        )
     }
 }
 
