@@ -49,10 +49,13 @@ final class ReceiveFundsViaLinkCoordinator: Coordinator<Void> {
                 }
             })
             .store(in: &subscriptions)
+        
+        var errorPresented = false
         viewModel.linkError
             .sink(receiveValue: { [weak self] model in
                 guard let self = self else { return }
                 
+                errorPresented = true
                 viewController.dismiss(animated: true) { [weak self] in
                     guard let self = self else { return }
                     
@@ -72,9 +75,15 @@ final class ReceiveFundsViaLinkCoordinator: Coordinator<Void> {
             })
             .store(in: &subscriptions)
         transition.dimmClicked
-            .sink(receiveValue: { [weak self] in
+            .sink(receiveValue: {
                 viewController.dismiss(animated: true)
-                self?.resultSubject.send(())
+            })
+            .store(in: &subscriptions)
+        transition.dismissed
+            .sink(receiveValue: { [weak self] in
+                if !errorPresented {
+                    self?.resultSubject.send(())
+                }
             })
             .store(in: &subscriptions)
         
