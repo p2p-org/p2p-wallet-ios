@@ -33,7 +33,7 @@ private extension ChooseItemViewModel {
     func bind() {
         service.state
             .sink { [weak self] state in
-                guard let self = self else { return }
+                guard let self else { return }
                 switch state.status {
                 case .ready:
                     if self.isLoading {
@@ -48,7 +48,10 @@ private extension ChooseItemViewModel {
                             )
                         }
                         self.allItems = self.service.sort(items: dataWithoutChosen)
-                        self.sections = self.allItems
+                        
+                        if !self.isSearchGoing {
+                            self.sections = self.allItems
+                        }
                     }
 
                 default:
