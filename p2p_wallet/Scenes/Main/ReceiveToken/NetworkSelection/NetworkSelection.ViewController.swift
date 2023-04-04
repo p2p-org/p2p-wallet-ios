@@ -35,7 +35,7 @@ extension ReceiveToken {
                         ).setup { [unowned self] view in
                             self.viewModel.tokenTypePublisher
                                 .map { type -> Bool in type == .solana }
-                                .assign(to: \.isSelected, on: view)
+                                .assignWeak(to: \.isSelected, on: view)
                                 .store(in: &subscriptions)
                         }.onTap { [unowned self] in
                             self.viewModel.switchToken(.solana)
@@ -53,7 +53,7 @@ extension ReceiveToken {
                         ).setup { [unowned self] view in
                             self.viewModel.tokenTypePublisher
                                 .map { type -> Bool in type == .btc }
-                                .assign(to: \.isSelected, on: view)
+                                .assignWeak(to: \.isSelected, on: view)
                                 .store(in: &subscriptions)
                         }.onTap { [unowned self] in
                             if self.viewModel.isRenBtcCreated() {
