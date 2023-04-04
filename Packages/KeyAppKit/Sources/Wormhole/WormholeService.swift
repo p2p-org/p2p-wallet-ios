@@ -31,7 +31,7 @@ public class WormholeService {
         self.solanaKeyPair = solanaKeyPair
         self.errorObservable = errorObservable
 
-        self.wormholeClaimMonitoreService = .init(
+        wormholeClaimMonitoreService = .init(
             ethereumKeypair: ethereumKeypair,
             api: api,
             errorObserver: errorObservable
@@ -94,7 +94,8 @@ public class WormholeService {
         from: String,
         recipient: String,
         mint: String?,
-        amount: String
+        amount: String,
+        needToUseRelay: Bool
     ) async throws -> SendTransaction {
         guard let solanaKeyPair else {
             throw ServiceError.authorizationError
@@ -106,7 +107,8 @@ public class WormholeService {
             from: from,
             recipient: recipient,
             mint: mint,
-            amount: amount
+            amount: amount,
+            needToUseRelay: needToUseRelay
         )
     }
 

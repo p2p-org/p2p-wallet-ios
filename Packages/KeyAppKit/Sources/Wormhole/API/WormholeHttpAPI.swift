@@ -105,7 +105,8 @@ public class WormholeRPCAPI: WormholeAPI {
         from: String,
         recipient: String,
         mint: String?,
-        amount: String
+        amount: String,
+        needToUseRelay: Bool
     ) async throws -> SendTransaction {
         /// Internal structure for params
         struct Params: Codable {
@@ -137,7 +138,7 @@ public class WormholeRPCAPI: WormholeAPI {
                 recipient: recipient,
                 mint: mint,
                 amount: amount,
-                needToUseRelay: true
+                needToUseRelay: needToUseRelay
             )
         )
     }

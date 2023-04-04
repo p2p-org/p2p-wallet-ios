@@ -49,7 +49,7 @@ class WormholeSendInputViewModel: BaseViewModel, ObservableObject {
     @Published var input: String = ""
     @Published var countAfterDecimalPoint: Int = 8
     @Published var isFirstResponder: Bool = false
-    @Published var inputMode: InputMode = .fiat
+    @Published var inputMode: InputMode = .crypto
 
     // It is needed to display valut with precision in case the max amount is set via fiat mode
     @Published var secondaryAmountString = ""

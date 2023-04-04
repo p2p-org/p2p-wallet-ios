@@ -19,6 +19,11 @@ public enum WormholeSendInputError: Error, Equatable {
     case maxAmountReached
 
     case initializationFailure
+    
+    /// Expected fee in SOL
+    case invalidBaseFeeToken
+    
+    case missingRelayContext
 }
 
 public enum InitializingError: Error, Equatable {
