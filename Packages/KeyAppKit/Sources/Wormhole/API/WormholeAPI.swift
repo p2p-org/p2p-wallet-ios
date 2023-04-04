@@ -8,13 +8,20 @@
 import Foundation
 
 public protocol WormholeAPI {
-    func getEthereumBundle(userWallet: String, recipient: String, token: String?, amount: String, slippage: UInt8) async throws -> WormholeBundle
+    func getEthereumBundle(
+        userWallet: String,
+        recipient: String,
+        token: String?,
+        amount: String,
+        slippage: UInt8
+    ) async throws -> WormholeBundle
 
     func sendEthereumBundle(bundle: WormholeBundle) async throws
 
     func simulateEthereumBundle(bundle: WormholeBundle) async throws
 
-    func getEthereumFees(userWallet: String, recipient: String, token: String?, amount: String) async throws -> ClaimFees
+    func getEthereumFees(userWallet: String, recipient: String, token: String?, amount: String) async throws
+        -> ClaimFees
 
     func listEthereumBundles(userWallet: String) async throws -> [WormholeBundleStatus]
 
@@ -26,9 +33,10 @@ public protocol WormholeAPI {
         from: String,
         recipient: String,
         mint: String?,
-        amount: String
+        amount: String,
+        needToUseRelay: Bool
     ) async throws -> SendTransaction
-    
+
     func getTransferFees(
         userWallet: String,
         recipient: String,
