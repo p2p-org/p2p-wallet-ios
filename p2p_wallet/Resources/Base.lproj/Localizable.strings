@@ -1313,3 +1313,4 @@ You can try again, but your new transaction will be subject to the current rates
 "Reload" = "Reload";
 "You’ve got" = "You’ve got";
 "The fee is more than the amount sent" = "The fee is more than the amount sent";
+"Would be completed on the Ethereum network" = "Would be completed on the Ethereum network";

@@ -13,7 +13,7 @@ final class ChooseWormholeTokenService: ChooseItemService {
         // TODO: Add possibility to handle accountsService.state publisher and update ChooseItemService accordingly
         let wallets = accountsService.state.value
             .filter {
-                SupportedToken.bridges.map(\.solAddress).contains($0.data.mintAddress)
+                SupportedToken.bridges.map(\.solAddress).contains($0.data.mintAddress) && $0.cryptoAmount.value > 0
             }
             .map(\.data)
         return [ChooseItemListSection(items: wallets)]

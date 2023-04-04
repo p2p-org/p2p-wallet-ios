@@ -51,7 +51,7 @@ class WormholeSendInputViewModel: BaseViewModel, ObservableObject {
     @Published var isFirstResponder: Bool = false
     @Published var inputMode: InputMode = .fiat
 
-    // It is needed to display valut with precision in case the max amount is set via fiat mode
+    // It is needed to display value with precision in case the max amount is set via fiat mode
     @Published var secondaryAmountString = ""
 
     // This flag is used to switch input publisher handler because we have already set amounts manually (due to fiat
@@ -71,7 +71,8 @@ class WormholeSendInputViewModel: BaseViewModel, ObservableObject {
         relayContextManager: RelayContextManager = Resolver.resolve(),
         orcaSwap: OrcaSwapType = Resolver.resolve(),
         solanaAccountsService: SolanaAccountsService = Resolver.resolve(),
-        notificationService: NotificationService = Resolver.resolve()
+        notificationService: NotificationService = Resolver.resolve(),
+        preChosenWallet: Wallet? = nil
     ) {
         self.recipient = recipient
         self.solanaAccountsService = solanaAccountsService
@@ -88,9 +89,10 @@ class WormholeSendInputViewModel: BaseViewModel, ObservableObject {
         }
 
         let availableBridgeAccounts = Self.resolveSupportedSolanaAccounts(solanaAccountsService: solanaAccountsService)
+        let chosenAccount = availableBridgeAccounts.first(where: { $0.data.mintAddress == preChosenWallet?.mintAddress })
 
         // Ensure at lease one available wallet for bridging.
-        guard let initialSolanaAccount = availableBridgeAccounts.first else {
+        guard let initialSolanaAccount = chosenAccount ?? availableBridgeAccounts.first else {
             let state: WormholeSendInputState = .initializingFailure(
                 input: nil,
                 error: .missingArguments
@@ -312,13 +314,20 @@ extension WormholeSendInputViewModel {
             availableBridgeAccounts.append(nativeWallet)
         }
 
-        availableBridgeAccounts.sort { lhs, rhs in
-            // First pick ETH
-            if lhs.data.token.symbol == "WETH" {
-                return true
-            }
+        // Only accounts with non-zero balance
+        availableBridgeAccounts = availableBridgeAccounts.filter({ $0.cryptoAmount.value > 0 })
 
-            return lhs.data.token.symbol.localizedCompare(rhs.data.token.symbol) == .orderedAscending
+        availableBridgeAccounts
+            .sort { lhs, rhs in
+                // First pick USDCET
+                if lhs.data.token.symbol == Token.usdcet.symbol {
+                    return true
+                }
+                return (lhs.amountInFiat?.value ?? 0) > (rhs.amountInFiat?.value ?? 0)
+            }
+        
+        if availableBridgeAccounts.isEmpty {
+            availableBridgeAccounts.append(.init(data: Wallet(token: Token.usdcet)))
         }
 
         return availableBridgeAccounts
