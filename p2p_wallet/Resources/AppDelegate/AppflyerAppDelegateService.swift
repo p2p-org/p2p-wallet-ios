@@ -13,7 +13,9 @@ final class AppflyerAppDelegateService: NSObject, AppDelegateService {
     func application(_ application: UIApplication, didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey : Any]? = nil) -> Bool {
         
         // Set isDebug to true to see AppsFlyer debug logs
+        #if DEBUG
         AppsFlyerLib.shared().isDebug = true
+        #endif
         
         // Set app id
         let appsFlyerAppId: String
