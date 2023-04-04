@@ -166,23 +166,6 @@ struct ReceiveFundsViaLinkView: View {
                         .frame(width: 128, height: 128)
                     Text("💰")
                         .font(.system(size: 64))
-            }
-            VStack(spacing: 8) {
-                Text("\(L10n.youVeGot) \(cryptoAmount)")
-                    .foregroundColor(Color(Asset.Colors.night.color))
-                    .font(uiFont: .font(of: .largeTitle, weight: .bold))
-                Text(L10n.spendThemWisely)
-                    .multilineTextAlignment(.center)
-                    .foregroundColor(Color(Asset.Colors.silver.color))
-                    .font(uiFont: .font(of: .text1))
-            }
-            Spacer()
-            TextButtonView(
-                title: "\(L10n.gotIt) 👍",
-                style: .primaryWhite,
-                size: .large,
-                onPressed: {
-                    viewModel.gotItClicked()
                 }
                 VStack(spacing: 8) {
                     Text("\(L10n.youVeGot) \(cryptoAmount)!")
@@ -196,7 +179,7 @@ struct ReceiveFundsViaLinkView: View {
                 Spacer()
                 Button(
                     action: {
-                        viewModel.closeClicked()
+                        viewModel.gotItClicked()
                     },
                     label: {
                         Text("\(L10n.gotIt) 👍")

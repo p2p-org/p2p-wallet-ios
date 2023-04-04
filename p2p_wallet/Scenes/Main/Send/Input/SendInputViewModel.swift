@@ -533,10 +533,6 @@ private extension SendInputViewModel {
             )
         }
         
-        if isSendingViaLink {
-            logCreatingLinkProcess()
-        }
-        
         await MainActor.run {
             self.transaction.send(transaction)
         }
@@ -660,10 +656,6 @@ private extension SendInputViewModel {
     
     func logSendClickCreateLink(symbol: String, amount: Double, pubkey: String) {
         analyticsManager.log(event: .sendClickCreateLink(tokenName: symbol, tokenValue: amount, pubkey: pubkey))
-    }
-    
-    func logCreatingLinkProcess() {
-        analyticsManager.log(event: .sendCreatingLinkProcess)
     }
 
     func logConfirmButtonClick() {

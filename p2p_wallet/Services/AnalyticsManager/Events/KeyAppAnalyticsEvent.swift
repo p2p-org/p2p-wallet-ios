@@ -140,8 +140,6 @@ enum KeyAppAnalyticsEvent: AnalyticsEvent {
     case sendClickChangeTokenChosen(tokenName: String)
     case sendClickChangeTokenValue(tokenName: String, tokenValue: Double)
     case sendClickCreateLink(tokenName: String, tokenValue: Double, pubkey: String)
-    case sendCreatingLinkProcess
-    case sendCreatingLinkProcessScreenOpen
     case sendCreatingLinkEndScreenOpen(tokenName: String, tokenValue: Double, pubkey: String)
     case sendClickShareLink
     case sendClickCopyLink
@@ -374,7 +372,6 @@ enum KeyAppAnalyticsEvent: AnalyticsEvent {
     
     case claimStartScreenOpen
     case claimClickConfirmed(pubkey: String, tokenName: String, tokenValue: Double, fromAddress: String)
-    case claimClickHide
     case claimClickClose
     case claimClickEnd
     case claimErrorAlreadyClaimed
