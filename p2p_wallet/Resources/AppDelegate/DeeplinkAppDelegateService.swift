@@ -31,6 +31,7 @@ final class DeeplinkAppDelegateService: NSObject, AppDelegateService {
                 return false
             }
             GlobalAppState.shared.sendViaLinkUrl = url
+            return true
         }
 
 //        if
