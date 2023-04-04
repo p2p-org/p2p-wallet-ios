@@ -46,8 +46,7 @@ final class TabBarCoordinator: Coordinator<Void> {
             authenticateWhenAppears: authenticateWhenAppears
         )
         super.init()
-        listenToActionsButton()
-        listenToWallet()
+        bind()
     }
     
     // MARK: - Life cycle
@@ -82,8 +81,6 @@ final class TabBarCoordinator: Coordinator<Void> {
         if Defaults.didSetEnableNotifications && Defaults.apnsDeviceToken == nil {
             UIApplication.shared.registerForRemoteNotifications()
         }
-        
-        bind()
 
         return closeSubject.prefix(1).eraseToAnyPublisher()
     }
@@ -91,20 +88,22 @@ final class TabBarCoordinator: Coordinator<Void> {
     private func bind() {
         tabBarViewModel.moveToSendViaLinkClaim
             .sink { [weak self] url in
-                guard let self = self, let url = url else { return }
+                guard let self = self else { return }
                 
-                let claimCoordinator = ReceiveFundsViaLinkCoordinator(
-                    presentingViewController: self.tabBarController,
-                    url: url
-                )
-                DispatchQueue.main.asyncAfter(deadline: .now() + .milliseconds(300)) { [weak self] in
-                    guard let self = self else { return }
+                UIApplication.dismissCustomPresentedViewController() {
+                    let claimCoordinator = ReceiveFundsViaLinkCoordinator(
+                        presentingViewController: self.tabBarController,
+                        url: url
+                    )
                     self.coordinate(to: claimCoordinator)
-                        .sink(receiveValue: { })
+                        .sink(receiveValue: {})
                         .store(in: &self.subscriptions)
                 }
             }
             .store(in: &subscriptions)
+        
+        listenToActionsButton()
+        listenToWallet()
     }
 
     // MARK: - Helpers
