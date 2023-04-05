@@ -96,13 +96,6 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
 
         UIViewController.swizzleViewDidDisappear()
         UIViewController.swizzleViewDidAppear()
-        
-        
-        DispatchQueue.main.asyncAfter(deadline: .now() + 13) {
-            self.application(application, didReceiveRemoteNotification: [:]) { _ in
-                
-            }
-        }
 
         return proxyAppDelegate.application(application, didFinishLaunchingWithOptions: launchOptions)
     }
