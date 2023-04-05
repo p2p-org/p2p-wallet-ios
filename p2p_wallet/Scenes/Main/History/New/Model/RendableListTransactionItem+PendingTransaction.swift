@@ -94,7 +94,7 @@ struct RendableListPendingTransactionItem: RendableListTransactionItem {
         case let transaction as SwapRawTransactionType:
             return L10n.to(transaction.sourceWallet.token.symbol, transaction.destinationWallet.token.symbol)
         case let transaction as ClaimSentViaLinkTransaction:
-            return L10n.from(RecipientFormatter.shortFormat(destination: transaction.claimableTokenInfo.account))
+            return L10n.from(RecipientFormatter.shortFormat(destination: transaction.claimableTokenInfo.keypair.publicKey.base58EncodedString))
         default:
             return L10n.unknown
         }
