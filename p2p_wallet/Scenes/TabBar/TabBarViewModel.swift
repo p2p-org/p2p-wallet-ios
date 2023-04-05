@@ -33,6 +33,7 @@ final class TabBarViewModel {
     let viewDidLoad = PassthroughSubject<Void, Never>()
     
     private let authenticatedSubject = PassthroughSubject<Bool, Never>()
+    private let becomeActiveSubject = PassthroughSubject<Void, Never>()
     private var cancellables = Set<AnyCancellable>()
 
     init() {
@@ -56,6 +57,8 @@ final class TabBarViewModel {
 
         // Notification
         notificationService.requestRemoteNotificationPermission()
+        
+        listenDidBecomeActiveForDeeplinks()
     }
 
     deinit {
@@ -69,6 +72,19 @@ final class TabBarViewModel {
             self.authenticatedSubject.send(presentationStyle == nil)
         }
         authenticationHandler.authenticate(presentationStyle: presentationStyle)
+    }
+    
+    private func listenDidBecomeActiveForDeeplinks() {
+        DispatchQueue.main.asyncAfter(deadline: .now() + 0.1) {
+            self.becomeActiveSubject.send()
+        }
+        
+        NotificationCenter.default
+            .publisher(for: UIApplication.didBecomeActiveNotification)
+            .sink(receiveValue: { [weak self] _ in
+                self?.becomeActiveSubject.send()
+            })
+            .store(in: &cancellables)
     }
 }
 
@@ -128,9 +144,7 @@ extension TabBarViewModel {
                 .eraseToAnyPublisher()
                 .filter { $0 }
                 .map { _ in () },
-            NotificationCenter.default
-                .publisher(for: UIApplication.didBecomeActiveNotification)
-                .map { _ in () }
+            becomeActiveSubject
         )
         .compactMap { _ in GlobalAppState.shared.sendViaLinkUrl }
         .handleEvents(receiveOutput: { _ in
