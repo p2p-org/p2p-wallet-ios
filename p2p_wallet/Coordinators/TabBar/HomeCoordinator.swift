@@ -78,7 +78,7 @@ final class HomeCoordinator: Coordinator<Void> {
             homeView.viewWillAppear.map { true },
             homeView.viewWillDisappear.map { false }
         )
-        .assign(to: \.navigationIsHidden, on: homeView)
+        .assignWeak(to: \.navigationIsHidden, on: homeView)
         .store(in: &subscriptions)
 
         // set view controller

@@ -93,7 +93,7 @@ extension RenBTCReceivingStatuses {
             super.bind()
             viewModel.receiveBitcoinViewModel.processingTransactionsPublisher
                 .map { txs in L10n.statusesReceived(txs.count) }
-                .assign(to: \.title, on: self)
+                .assignWeak(to: \.title, on: self)
                 .store(in: &subscriptions)
         }
     }

@@ -94,10 +94,7 @@ struct RendableListPendingTransactionItem: RendableListTransactionItem {
         case let transaction as SwapRawTransactionType:
             return L10n.to(transaction.sourceWallet.token.symbol, transaction.destinationWallet.token.symbol)
         case let transaction as ClaimSentViaLinkTransaction:
-            guard let pubkey = try? PublicKey(string: transaction.claimableTokenInfo.account)
-            else { return L10n.receive}
-            
-            return L10n.receivedFrom + " " + pubkey.short()
+            return L10n.from(RecipientFormatter.shortFormat(destination: transaction.claimableTokenInfo.keypair.publicKey.base58EncodedString))
         default:
             return L10n.unknown
         }
@@ -132,9 +129,9 @@ struct RendableListPendingTransactionItem: RendableListTransactionItem {
                 }
             case _ as ClaimSentViaLinkTransaction:
                 if trx.transactionId == nil {
-                    return "\(L10n.processing).."
+                    return "\(L10n.processing)"
                 } else {
-                    return "\(L10n.proceed)"
+                    return "\(L10n.processing)"
                 }
             default:
                 if trx.transactionId == nil {
@@ -153,7 +150,10 @@ struct RendableListPendingTransactionItem: RendableListTransactionItem {
         case let transaction as SwapRawTransactionType:
             return (.positive, "+\(transaction.toAmount.tokenAmountFormattedString(symbol: transaction.destinationWallet.token.symbol))")
         case let transaction as ClaimSentViaLinkTransaction:
-            return (.positive, "+\(transaction.tokenAmount.tokenAmountFormattedString(symbol: transaction.token.symbol))")
+            guard let amountInFiat = transaction.amountInFiat else {
+                return (.unchanged, "")
+            }
+            return (.positive, "+\(amountInFiat.fiatAmountFormattedString())")
         default:
             return (.unchanged, "")
         }
@@ -166,7 +166,7 @@ struct RendableListPendingTransactionItem: RendableListTransactionItem {
         case let transaction as SwapRawTransactionType:
             return "-\(transaction.fromAmount.tokenAmountFormattedString(symbol: transaction.sourceWallet.token.symbol))"
         case let transaction as ClaimSentViaLinkTransaction:
-            return ""
+            return "+\(transaction.tokenAmount.tokenAmountFormattedString(symbol: transaction.token.symbol))"
         default:
             return ""
         }

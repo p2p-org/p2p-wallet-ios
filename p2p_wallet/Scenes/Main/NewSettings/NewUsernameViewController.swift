@@ -29,7 +29,7 @@ class NewUsernameViewController: p2p_wallet.BaseViewController {
                     showCoinLogo: false
                 )
                     .onCopy { [weak self] _ in
-                        guard let self, let username = self.storage.getName() else { return }
+                        guard let self = self, let username = self.storage.getName() else { return }
                         self.clipboardManager.copyToClipboard(username)
                         self.notificationsService.showInAppNotification(.done(L10n.copiedToClipboard))
                     }.onShare { [weak self] image in
@@ -43,7 +43,7 @@ class NewUsernameViewController: p2p_wallet.BaseViewController {
                             case let .failure(error):
                                 switch error {
                                 case .noAccess:
-                                    guard let self else { return }
+                                    guard let self = self else { return }
                                     PhotoLibraryAlertPresenter().present(on: self)
                                 case .restrictedRightNow:
                                     break
