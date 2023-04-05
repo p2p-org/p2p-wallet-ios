@@ -11,7 +11,7 @@ import SolanaSwift
 import SwiftUI
 
 enum WormholeSendInputCoordinatorResult {
-    case transaction(WormholeSendTransaction)
+    case transaction(WormholeSendUserAction)
 }
 
 class WormholeSendInputCoordinator: SmartCoordinator<WormholeSendInputCoordinatorResult> {
