@@ -16,6 +16,9 @@ struct ReceiveFundsViaLinkView: View {
     
     var body: some View {
         content
+            .onAppear {
+                viewModel.onAppear()
+            }
     }
     
     @ViewBuilder
@@ -36,8 +39,6 @@ struct ReceiveFundsViaLinkView: View {
             .sheetHeader(title: L10n.receiveFundsViaOneTimeLink, withSeparator: false, bottomPadding: 4)
         case let .confirmed(cryptoAmount):
             youReceivedToken(cryptoAmount: cryptoAmount)
-                .padding(.horizontal, 16)
-                .padding(.bottom, 32)
                 .sheetHeader(title: nil, withSeparator: false)
         case .failure:
             SendViaLinkClaimErrorView(
@@ -74,15 +75,33 @@ struct ReceiveFundsViaLinkView: View {
     @ViewBuilder
     private var bottomPart: some View {
         if !viewModel.processingVisible {
-            TextButtonView(
-                title: L10n.confirm,
-                style: .primaryWhite,
-                size: .large,
-                onPressed: {
-                    viewModel.confirmClicked()
+            HStack {
+                TextButtonView(
+                    title: L10n.confirm,
+                    style: .primaryWhite,
+                    size: .large,
+                    onPressed: {
+                        viewModel.confirmClicked()
+                    }
+                )
+                .frame(height: 56)
+                
+                #if !RELEASE
+                Toggle(isOn: $viewModel.isFakeSendingTransaction) {
+                    Text("Fake")
                 }
-            )
-            .frame(height: 56)
+                .fixedSize(horizontal: true, vertical: false)
+                
+                if viewModel.isFakeSendingTransaction {
+                    Picker("Error Type", selection: $viewModel.fakeTransactionErrorType) {
+                        ForEach(ReceiveFundsViaLinkViewModel.FakeTransactionErrorType.allCases) { errorType in
+                            Text(errorType.rawValue.capitalized).tag(errorType)
+                        }
+                    }
+                    .fixedSize(horizontal: true, vertical: false)
+                }
+                #endif
+            }
         } else {
             VStack(spacing: 24) {
                 statusView
@@ -102,9 +121,7 @@ struct ReceiveFundsViaLinkView: View {
     private var statusView: some View {
         TransactionProcessView(
             state: $viewModel.processingState,
-            errorMessageTapAction: {
-                viewModel.statusErrorClicked()
-            }
+            errorMessageTapAction: {}
         )
     }
     
@@ -140,34 +157,50 @@ struct ReceiveFundsViaLinkView: View {
     }
     
     private func youReceivedToken(cryptoAmount: String) -> some View {
-        VStack(spacing: 32) {
-            Spacer()
-            ZStack {
-                Circle()
-                    .fill(Color(Asset.Colors.rain.color))
-                    .frame(width: 128, height: 128)
-                Text("💰")
-                    .font(.system(size: 64))
-            }
-            VStack(spacing: 8) {
-                Text("\(L10n.youVeGot) \(cryptoAmount)")
-                    .foregroundColor(Color(Asset.Colors.night.color))
-                    .font(uiFont: .font(of: .largeTitle, weight: .bold))
-                Text(L10n.spendThemWisely)
-                    .multilineTextAlignment(.center)
-                    .foregroundColor(Color(Asset.Colors.silver.color))
-                    .font(uiFont: .font(of: .text1))
-            }
-            Spacer()
-            TextButtonView(
-                title: "\(L10n.gotIt) 👍",
-                style: .primaryWhite,
-                size: .large,
-                onPressed: {
-                    viewModel.closeClicked()
+        ZStack {
+            VStack(spacing: 32) {
+                Spacer()
+                ZStack {
+                    Circle()
+                        .fill(Color(Asset.Colors.rain.color))
+                        .frame(width: 128, height: 128)
+                    Text("💰")
+                        .font(.system(size: 64))
                 }
+                VStack(spacing: 8) {
+                    Text("\(L10n.youVeGot) \(cryptoAmount)!")
+                        .multilineTextAlignment(.center)
+                        .foregroundColor(Color(Asset.Colors.night.color))
+                        .font(uiFont: .font(of: .largeTitle, weight: .bold))
+                    Text(L10n.spendThemWisely)
+                        .foregroundColor(Color(Asset.Colors.silver.color))
+                        .font(uiFont: .font(of: .text1))
+                }
+                Spacer()
+                Button(
+                    action: {
+                        viewModel.gotItClicked()
+                    },
+                    label: {
+                        Text("\(L10n.gotIt) 👍")
+                            .foregroundColor(Color(Asset.Colors.lime.color))
+                            .font(uiFont: .font(of: .text2, weight: .semibold))
+                            .frame(height: 56)
+                            .frame(maxWidth: .infinity)
+                            .background(Color(Asset.Colors.night.color))
+                            .cornerRadius(12)
+                    }
+                )
+                .padding(.horizontal, 16)
+                .padding(.bottom, 32)
+            }
+            LottieView(
+                lottieFile: "ApplauseAnimation",
+                loopMode: .playOnce,
+                contentMode: .scaleAspectFill
             )
-            .frame(height: 56)
+            .allowsHitTesting(false)
+            .ignoresSafeArea(.all)
         }
     }
 }

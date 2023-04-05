@@ -267,6 +267,7 @@ final class TabBarCoordinator: Coordinator<Void> {
             let fiatAmount = walletsRepository.getWallets().reduce(0) { $0 + $1.amountInCurrentFiat }
             let withTokens = fiatAmount > 0
             if withTokens {
+                analyticsManager.log(event: .sendStartScreenOpen(lastScreen: "Tap_Main"))
                 analyticsManager.log(event: .sendViewed(lastScreen: "main_screen"))
                 sendCoordinator = SendCoordinator(rootViewController: navigationController, preChosenWallet: nil, hideTabBar: true, allowSwitchingMainAmountType: true)
                 sendCoordinator?.start()

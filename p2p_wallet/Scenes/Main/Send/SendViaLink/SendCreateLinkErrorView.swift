@@ -5,11 +5,17 @@
 //  Created by Chung Tran on 02/03/2023.
 //
 
+import AnalyticsManager
 import SwiftUI
 import KeyAppUI
+import Resolver
 
 struct SendCreateLinkErrorView: View {
+    
+    @Injected private var analyticsManager: AnalyticsManager
+    
     let onGoBack: () -> Void
+    
     var body: some View {
         VStack {
             Spacer()
@@ -31,14 +37,17 @@ struct SendCreateLinkErrorView: View {
                     onGoBack()
                 }
             )
-                .frame(height: TextButton.Size.large.height)
-                .padding(.bottom, 32)
+            .frame(height: TextButton.Size.large.height)
+            .padding(.bottom, 32)
         }
-            .padding(.horizontal, 20)
-            .background(
-                Color(Asset.Colors.snow.color)
-                    .edgesIgnoringSafeArea(.top)
-            )
+        .padding(.horizontal, 20)
+        .background(
+            Color(Asset.Colors.snow.color)
+                .edgesIgnoringSafeArea(.top)
+        )
+        .onAppear {
+            analyticsManager.log(event: .sendClickDefaultError)
+        }
     }
 }
 
