@@ -1,7 +1,6 @@
 import Foundation
 import Resolver
 import SolanaSwift
-import SwiftyUserDefaults
 import Combine
 import KeychainSwift
 
