@@ -111,6 +111,12 @@ class HistoryViewModel: BaseViewModel, ObservableObject {
         self.showSendViaLinkTransaction = false
         super.init()
 
+        NotificationCenter.default.addObserver(forName: HistoryAppdelegateService.shouldUpdateHistory.name, object: nil, queue: nil) { [weak self] _ in
+            Task {
+                try await self?.reload()
+            }
+        }
+
         history
             .$state
             .receive(on: DispatchQueue.global(qos: .background))

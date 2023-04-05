@@ -159,7 +159,8 @@ class RecipientSearchViewModel: ObservableObject {
         case let .ok(recipients) where recipients.count == 1:
             guard
                 let recipient: Recipient = recipients.first,
-                recipient.attributes.contains(.funds)
+                (recipient.attributes.contains(.funds) ||
+                 recipient.category == .ethereumAddress)
             else { return }
 
             selectRecipient(recipient, fromQR: fromQR)
