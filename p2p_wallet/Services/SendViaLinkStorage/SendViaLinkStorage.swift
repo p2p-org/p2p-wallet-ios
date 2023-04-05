@@ -32,12 +32,10 @@ actor SendViaLinkStorageImpl: SendViaLinkStorage {
     
     // MARK: - Properties
     
-    private var subscription: DefaultsDisposable?
     nonisolated private let transactionsSubject = CurrentValueSubject<[SendViaLinkTransactionInfo], Never>([])
     
-    private let userDefaultsToKeychainMigrationKey = "SendViaLinkStorageImpl.userDefaultsToKeychainMigrationKey"
     private let sendViaLinkTransactionsKeychainKey = "SendViaLinkStorageImpl.sendViaLinkTransactionsKeychainKey"
-    
+
     // MARK: - Computed properties
     
     var userPubkey: String? {
@@ -52,22 +50,8 @@ actor SendViaLinkStorageImpl: SendViaLinkStorage {
 
     init() {
         Task {
-            // migration
-            await migrate()
-            
             // retrieve transaction
             transactionsSubject.send(await getTransactions())
-        }
-    }
-    
-    // MARK: - Migration
-
-    private func migrate() {
-        // UserDefaults to Keychain
-        if !UserDefaults.standard.bool(forKey: userDefaultsToKeychainMigrationKey) {
-            let transactions = getTransactionsFromUserDefaults()
-            let result = save(transactions: transactions)
-            UserDefaults.standard.set(result, forKey: userDefaultsToKeychainMigrationKey)
         }
     }
     
@@ -143,44 +127,5 @@ actor SendViaLinkStorageImpl: SendViaLinkStorage {
         
         // save to Keychain
         return localKeychain.set(data, forKey: sendViaLinkTransactionsKeychainKey)
-    }
-    
-    // MARK: - UserDefaults (deprecated)
-
-    private func getTransactionsFromUserDefaults() -> [SendViaLinkTransactionInfo] {
-        guard let userPubkey,
-              let data = Defaults.sendViaLinkTransactions,
-              let dict = try? JSONDecoder().decode([String: [SendViaLinkTransactionInfo]].self, from: data)
-        else {
-            return []
-        }
-        return dict[userPubkey] ?? []
-    }
-    
-    private func saveToUserDefaults(transactions: [SendViaLinkTransactionInfo]) -> Bool {
-        // assert user pubkey
-        guard let userPubkey else {
-            return false
-        }
-        
-        // assure that dictionary is alway non-optional
-        var newValue = [String: [SendViaLinkTransactionInfo]]()
-        if let data = Defaults.sendViaLinkTransactions,
-           let dict = try? JSONDecoder().decode([String: [SendViaLinkTransactionInfo]].self, from: data)
-        {
-            newValue = dict
-        }
-        
-        // modify value
-        newValue[userPubkey] = transactions
-        
-        // encode to data
-        guard let data = try? JSONEncoder().encode(newValue) else {
-            return false
-        }
-        
-        // save to UserDefaults
-        Defaults.sendViaLinkTransactions = data
-        return true
     }
 }
