@@ -50,8 +50,8 @@ final class DetailHistoryViewModel: HistoryViewModel {
         Wormhole.SupportedToken.bridges.filter { ["USDC", "USDT"].contains($0.name) }
             .map(\.receiveFromAddress)
             .compactMap { $0 }
-        if available(.ethAddressEnabled) &&
-            (account?.data.isNativeSOL == true || supportedBridgeTokens.contains(account?.data.token.address ?? "")) {
+        if available(.ethAddressEnabled),
+            supportedBridgeTokens.contains(account?.data.token.address ?? "") {
             newData.insert(bannerSection, at: 0)
         }
         return .init(

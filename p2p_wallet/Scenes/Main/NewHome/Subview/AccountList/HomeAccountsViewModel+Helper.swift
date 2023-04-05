@@ -43,6 +43,14 @@ extension HomeAccountsViewModel {
         }
     }
 
+    static func shouldInVisiableSection(ethereumAcount: RendableEthereumAccount) -> Bool {
+        (ethereumAcount.account.balanceInFiat?.value ?? 0) >= 2
+    }
+
+    static func shouldInIgnoreSection(ethereumAcount: RendableEthereumAccount) -> Bool {
+        (ethereumAcount.account.balanceInFiat?.value ?? 0) > 0
+    }
+
     static var defaultSolanaAccountsSorter: (SolanaAccountsService.Account, SolanaAccountsService.Account) -> Bool {
         { lhs, rhs in
             // prefers non-liquidity token than liquidity tokens
