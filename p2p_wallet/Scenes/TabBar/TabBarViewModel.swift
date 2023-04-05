@@ -31,6 +31,9 @@ final class TabBarViewModel {
 
     // Input
     let viewDidLoad = PassthroughSubject<Void, Never>()
+    
+    private let authenticatedSubject = PassthroughSubject<Bool, Never>()
+    private var cancellables = Set<AnyCancellable>()
 
     init() {
         if #available(iOS 15.0, *) {
@@ -62,6 +65,9 @@ final class TabBarViewModel {
     }
 
     func authenticate(presentationStyle: AuthenticationPresentationStyle?) {
+        DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) {
+            self.authenticatedSubject.send(presentationStyle == nil)
+        }
         authenticationHandler.authenticate(presentationStyle: presentationStyle)
     }
 }
@@ -117,14 +123,21 @@ extension TabBarViewModel {
     }
     
     var moveToSendViaLinkClaim: AnyPublisher<URL, Never> {
-        authenticationHandler.isLockedForDeeplinks
-            .filter { !$0 }
-            .compactMap { _ in GlobalAppState.shared.sendViaLinkUrl }
-            .handleEvents(receiveOutput: { _ in
-                GlobalAppState.shared.sendViaLinkUrl = nil
-            })
-            .receive(on: DispatchQueue.main)
-            .eraseToAnyPublisher()
+        Publishers.CombineLatest(
+            authenticatedSubject
+                .eraseToAnyPublisher()
+                .filter { $0 }
+                .map { _ in () },
+            NotificationCenter.default
+                .publisher(for: UIApplication.didBecomeActiveNotification)
+                .map { _ in () }
+        )
+        .compactMap { _ in GlobalAppState.shared.sendViaLinkUrl }
+        .handleEvents(receiveOutput: { _ in
+            GlobalAppState.shared.sendViaLinkUrl = nil
+        })
+        .receive(on: DispatchQueue.main)
+        .eraseToAnyPublisher()
     }
 
     var isLockedPublisher: AnyPublisher<Bool, Never> { authenticationHandler.isLockedPublisher }
