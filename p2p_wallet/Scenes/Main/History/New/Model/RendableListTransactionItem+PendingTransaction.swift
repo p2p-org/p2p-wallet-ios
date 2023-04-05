@@ -131,7 +131,7 @@ struct RendableListPendingTransactionItem: RendableListTransactionItem {
                 if trx.transactionId == nil {
                     return "\(L10n.processing)"
                 } else {
-                    return "\(L10n.receive)"
+                    return "\(L10n.processing)"
                 }
             default:
                 if trx.transactionId == nil {
