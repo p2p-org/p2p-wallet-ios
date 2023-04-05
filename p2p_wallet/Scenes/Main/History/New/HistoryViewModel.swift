@@ -129,7 +129,6 @@ class HistoryViewModel: BaseViewModel, ObservableObject {
         self.actionSubject = actionSubject
         self.sellDataService = sellDataService
 
-
         // Setup list adaptor
         let sequence = repository
             .getAll(account: userWalletManager.wallet?.account, mint: nil)
