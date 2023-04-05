@@ -8,9 +8,10 @@
 import Foundation
 import KeyAppKitCore
 import SwiftUI
+import Wormhole
 
 enum WormholeClaimCoordinatorResult {
-    case claiming(PendingTransaction)
+    case claiming(WormholeClaimUserAction)
 }
 
 class WormholeClaimCoordinator: SmartCoordinator<WormholeClaimCoordinatorResult> {
@@ -31,8 +32,8 @@ class WormholeClaimCoordinator: SmartCoordinator<WormholeClaimCoordinatorResult>
                     self.coordinate(to: WormholeClaimFeeCoordinator(
                         account: self.account,
                         bundle: bundle,
-                        presentation: SmartCoordinatorPresentPresentation(from: self.presentation))
-                    )
+                        presentation: SmartCoordinatorPresentPresentation(from: self.presentation)
+                    ))
                     .sink { _ in }
                     .store(in: &self.subscriptions)
                 case let .claiming(trx):

@@ -67,9 +67,12 @@ public class WormholeRPCAPI: WormholeAPI {
         )
     }
 
-    public func getEthereumFees(userWallet: String, recipient: String, token: String?,
-                                amount: String) async throws -> ClaimFees
-    {
+    public func getEthereumFees(
+        userWallet: String,
+        recipient: String,
+        token: String?,
+        amount: String
+    ) async throws -> ClaimFees {
         try await client.call(
             method: "get_ethereum_fees",
             params: [

@@ -154,13 +154,19 @@ public enum WormholeSendInputState: Equatable {
                 let transactions: SendTransaction
                 do {
                     let feePayerAddress = relayContext.feePayerAddress.base58EncodedString
-                    let needToUseRelay: Bool = !feePayerBestCandidate.data.isNativeSOL
+                    
+                    // Not (Native sol and networkFee > 0)
+                    let needToUseRelay: Bool = !(feePayerBestCandidate.data.isNativeSOL
+                        && (fees.networkFee?.asCryptoAmount.value ?? 0) > 0)
+
+                    let mint: String? = input.solanaAccount.data.token.isNative ? nil : input.solanaAccount.data.token
+                        .address
 
                     transactions = try await service.wormhole.transferFromSolana(
                         feePayer: feePayerAddress,
                         from: input.solanaAccount.data.pubkey ?? "",
                         recipient: input.recipient,
-                        mint: input.solanaAccount.data.token.address,
+                        mint: mint,
                         amount: String(input.amount.value),
                         needToUseRelay: needToUseRelay
                     )

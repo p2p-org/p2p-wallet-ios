@@ -10,7 +10,7 @@ import BigInt
 import Foundation
 
 /// Token amount struct
-public struct CryptoAmount: Hashable {
+public struct CryptoAmount: Hashable, Codable, Equatable {
     /// Token metadata
     public let token: SomeToken
 

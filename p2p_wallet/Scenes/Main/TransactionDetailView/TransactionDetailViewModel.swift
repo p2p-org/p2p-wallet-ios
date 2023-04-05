@@ -8,6 +8,7 @@
 import Combine
 import Foundation
 import History
+import KeyAppBusiness
 import Resolver
 import SolanaSwift
 import TransactionParser
@@ -73,6 +74,23 @@ class TransactionDetailViewModel: BaseViewModel, ObservableObject {
             .sink { trx in
                 guard let trx = trx else { return }
                 self.rendableTransaction = RendableDetailPendingTransaction(trx: trx, priceService: priceService)
+            }
+            .store(in: &subscriptions)
+    }
+
+    init(userAction: UserAction) {
+        let userActionService: UserActionService = Resolver.resolve()
+
+        style = .active
+        rendableTransaction = RendableGeneralUserActionTransaction.resolve(userAction: userAction)
+
+        super.init()
+
+        userActionService
+            .observer(id: userAction.id)
+            .receive(on: RunLoop.main)
+            .sink { userAction in
+                self.rendableTransaction = RendableGeneralUserActionTransaction.resolve(userAction: userAction)
             }
             .store(in: &subscriptions)
     }
