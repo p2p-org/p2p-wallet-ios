@@ -8,7 +8,7 @@ on:
     - cron: "0 0 * * 1-5" # At 00:00 on every day-of-week from Monday through Friday.
 
 concurrency:
-  group: daily-build-${{ github.event.pull_request.number || github.ref }}
+  group: daily-build
   cancel-in-progress: true
 
 jobs:
