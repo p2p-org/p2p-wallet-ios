@@ -614,15 +614,17 @@ private func saveSendViaLinkTransaction(
     amountInToken: Double,
     amountInFiat: Double
 ) {
-    Resolver.resolve(SendViaLinkStorage.self).save(
-        transaction: .init(
-            amount: amountInToken,
-            amountInFiat: amountInFiat,
-            token: token,
-            seed: seed,
-            timestamp: Date()
+    Task {
+        await Resolver.resolve(SendViaLinkStorage.self).save(
+            transaction: .init(
+                amount: amountInToken,
+                amountInFiat: amountInFiat,
+                token: token,
+                seed: seed,
+                timestamp: Date()
+            )
         )
-    )
+    }
 }
 
 // MARK: - Analytics
