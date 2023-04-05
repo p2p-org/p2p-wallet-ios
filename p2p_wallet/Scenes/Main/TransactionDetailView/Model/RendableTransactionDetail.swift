@@ -13,42 +13,66 @@ import TransactionParser
 
 protocol RendableTransactionDetail {
     var status: TransactionDetailStatus { get }
-    
+
     var title: String { get }
-    
+
     var subtitle: String { get }
-    
+
     var signature: String? { get }
-    
+
     var icon: TransactionDetailIcon { get }
-    
+
     var amountInFiat: TransactionDetailChange { get }
-    
+
     var amountInToken: String { get }
-    
+
     var extra: [TransactionDetailExtraInfo] { get }
-    
+
     var actions: [TransactionDetailAction] { get }
-    
+
     var buttonTitle: String { get }
 }
 
 struct TransactionDetailExtraInfo {
+    struct Value: Identifiable {
+        let text: String
+        let secondaryText: String?
+
+        static let defaultSecondaryTextFormatter = { (x: String) -> String in "(\(x))" }
+
+        init(
+            text: String,
+            secondaryText: String? = nil,
+            secondaryFormatter: (String) -> String = defaultSecondaryTextFormatter
+        ) {
+            self.text = text
+
+            if let secondaryText {
+                self.secondaryText = secondaryFormatter(secondaryText)
+            } else {
+                self.secondaryText = nil
+            }
+        }
+
+        var id: String { text + secondaryText }
+    }
+
     let title: String
-    let value: String
     
+    let values: [Value]
+
     let copyableValue: String?
-    
-    init(title: String, value: String, copyableValue: String? = nil) {
+
+    init(title: String, values: [Value], copyableValue: String? = nil) {
         self.title = title
-        self.value = value
+        self.values = values
         self.copyableValue = copyableValue
     }
 }
 
 enum TransactionDetailAction: Int, Identifiable {
-    var id: Int { self.rawValue }
-    
+    var id: Int { rawValue }
+
     case share
     case explorer
 }
@@ -63,7 +87,7 @@ enum TransactionDetailChange {
     case positive(String)
     case negative(String)
     case unchanged(String)
-    
+
     var value: String {
         switch self {
         case let .positive(value): return value

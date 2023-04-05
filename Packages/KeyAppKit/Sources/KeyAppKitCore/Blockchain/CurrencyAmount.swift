@@ -10,7 +10,7 @@ import BigInt
 import Foundation
 
 /// Amount in fiat struct
-public struct CurrencyAmount: Hashable {
+public struct CurrencyAmount: Hashable, Codable {
     /// Value
     public let value: BigDecimal
 
@@ -40,13 +40,17 @@ public struct CurrencyAmount: Hashable {
 
     public func toCryptoAmount(price: TokenPrice) -> CryptoAmount? {
         let priceValue = price.value
-        
+
         guard priceValue > 0 else {
             return nil
         }
 
         let decimalValue: BigDecimal = value / priceValue
         return CryptoAmount(floatString: String(decimalValue), token: price.token)
+    }
+
+    public func with(amount: BigDecimal) -> Self {
+        .init(value: amount, currencyCode: currencyCode)
     }
 }
 
@@ -64,6 +68,14 @@ public extension CurrencyAmount {
     static func + (lhs: Self, rhs: Self?) -> Self {
         guard let rhs else { return lhs }
         return lhs + rhs
+    }
+
+    static func - (lhs: Self, rhs: Self) -> Self {
+        guard lhs.currencyCode == rhs.currencyCode else {
+            return lhs
+        }
+
+        return .init(value: lhs.value - rhs.value, currencyCode: lhs.currencyCode)
     }
 }
 

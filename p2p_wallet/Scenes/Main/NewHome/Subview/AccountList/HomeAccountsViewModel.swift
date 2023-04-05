@@ -77,7 +77,8 @@ final class HomeAccountsViewModel: BaseViewModel, ObservableObject {
     init(
         solanaAccountsService: SolanaAccountsService = Resolver.resolve(),
         ethereumAccountsService: EthereumAccountsService = Resolver.resolve(),
-        wormholeService: WormholeService = Resolver.resolve(),
+        wormholeService _: WormholeService = Resolver.resolve(),
+        userActionService: UserActionService = Resolver.resolve(),
         favouriteAccountsStore: FavouriteAccountsDataSource = Resolver.resolve(),
         solanaTracker _: SolanaTracker = Resolver.resolve(),
         notificationService _: NotificationService = Resolver.resolve(),
@@ -127,31 +128,34 @@ final class HomeAccountsViewModel: BaseViewModel, ObservableObject {
                     }
                 }
             }
-            .combineLatest(wormholeService.wormholeClaimMonitoreService.$bundles)
-            .map { accounts, bundles in
+            .combineLatest(
+                userActionService.$actions.map { userActions in
+                    userActions.compactMap {
+                        $0 as? WormholeClaimUserAction
+                    }
+                }
+            )
+            .map { accounts, userActions in
                 // Aggregate accounts with bundle status
                 AsyncValueState(
-                    status: AsynValueStatus.combine([accounts.status, bundles.status]),
+                    status: accounts.status,
                     value: EthereumAccountsDataSource.aggregate(
                         accounts: accounts.value,
-                        wormholeBundlesStatus: bundles.value
+                        claimUserActions: userActions
                     ),
-                    error: accounts.error ?? bundles.error
+                    error: accounts.error
                 )
             }
             .map { accounts in
                 accounts.innerApply { account in
-                    let isClaiming = account.wormholeBundle?.status == .pending || account.wormholeBundle?
-                        .status == .inProgress
+                    let isClaiming = account.isClaiming
 
                     let balanceInFiat = account.account.balanceInFiat ?? .init(
                         value: 0,
                         currencyCode: Defaults.fiat.rawValue
                     )
 
-                    let isClaimable = !(account.wormholeBundle?.status == .pending || account.wormholeBundle?
-                        .status == .inProgress)
-                        && balanceInFiat >= CurrencyAmount(usd: 1)
+                    let isClaimable = !account.isClaiming && balanceInFiat >= CurrencyAmount(usd: 1)
 
                     return RendableEthereumAccount(
                         account: account.account,
@@ -165,16 +169,6 @@ final class HomeAccountsViewModel: BaseViewModel, ObservableObject {
             }
             .receive(on: RunLoop.main)
             .weakAssign(to: \.ethereumAccountsState, on: self)
-            .store(in: &subscriptions)
-
-        ethereumAccountsService
-            .$state
-            .map(\.status)
-            .filter { $0 == .fetching }
-            .removeDuplicates()
-            .sink { _ in
-                wormholeService.wormholeClaimMonitoreService.refresh()
-            }
             .store(in: &subscriptions)
 
         // Solana accounts

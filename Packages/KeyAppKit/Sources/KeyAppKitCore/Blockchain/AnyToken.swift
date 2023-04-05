@@ -36,4 +36,11 @@ public struct SomeToken: AnyToken, Hashable, Codable {
     public let name: String
 
     public let decimals: UInt8
+
+    public init(tokenPrimaryKey: String, symbol: String, name: String, decimals: UInt8) {
+        self.tokenPrimaryKey = tokenPrimaryKey
+        self.symbol = symbol
+        self.name = name
+        self.decimals = decimals
+    }
 }

@@ -28,7 +28,6 @@ struct ReceiveFundsViaLinkView: View {
                 .sheetHeader(title: L10n.receiveFundsViaOneTimeLink, withSeparator: false, bottomPadding: 4)
         case let .loaded(model):
             confirmView(
-                date: model.date,
                 token: model.token,
                 cryptoAmount: model.cryptoAmount
             )
@@ -54,31 +53,21 @@ struct ReceiveFundsViaLinkView: View {
         }
     }
     
-    private func confirmView(
-        date: String,
-        token: Token,
-        cryptoAmount: String
-    ) -> some View {
+    private func confirmView(token: Token, cryptoAmount: String) -> some View {
         VStack(spacing: 52) {
-            topPart(date: date, token: token, cryptoAmount: cryptoAmount)
+            topPart(token: token, cryptoAmount: cryptoAmount)
             bottomPart
         }
     }
     
-    private func topPart(date: String, token: Token, cryptoAmount: String) -> some View {
-        VStack {
-            Text(date)
-                .foregroundColor(Color(Asset.Colors.mountain.color))
-                .font(uiFont: .font(of: .text3))
-            Spacer()
-            VStack(spacing: 16) {
-                CoinLogoImageViewRepresentable(size: 66, args: .token(token))
-                    .frame(width: 64, height: 64)
-                    .cornerRadius(32)
-                Text(cryptoAmount)
-                    .foregroundColor(Color(Asset.Colors.night.color))
-                    .font(uiFont: .font(of: .largeTitle, weight: .bold))
-            }
+   private func topPart(token: Token, cryptoAmount: String) -> some View {
+        VStack(spacing: 16) {
+            CoinLogoImageViewRepresentable(size: 66, args: .token(token))
+                .frame(width: 64, height: 64)
+                .cornerRadius(32)
+            Text(cryptoAmount)
+                .foregroundColor(Color(Asset.Colors.night.color))
+                .font(uiFont: .font(of: .largeTitle, weight: .bold))
         }
     }
     

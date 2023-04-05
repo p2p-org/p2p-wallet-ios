@@ -90,6 +90,16 @@ class DetailAccountCoordinator: SmartCoordinator<DetailAccountCoordinatorResult>
                 }
                 .store(in: &subscriptions)
 
+        case let .openUserAction(userAction):
+            let coordinator = TransactionDetailCoordinator(
+                viewModel: .init(userAction: userAction),
+                presentingViewController: presentation.presentingViewController
+            )
+
+            coordinate(to: coordinator)
+                .sink { _ in }
+                .store(in: &subscriptions)
+
         case let .openHistoryTransaction(trx):
             let coordinator = TransactionDetailCoordinator(
                 viewModel: .init(historyTransaction: trx),
@@ -279,7 +289,7 @@ class DetailAccountCoordinator: SmartCoordinator<DetailAccountCoordinatorResult>
 
                     self
                         .coordinate(to: TransactionDetailCoordinator(
-                            viewModel: .init(submit: trx),
+                            viewModel: .init(userAction: trx),
                             presentingViewController: rootViewController
                         ))
                         .sink(receiveValue: { _ in })

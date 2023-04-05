@@ -46,39 +46,39 @@ struct WormholeClaimFee: View {
             .padding(.top, 20)
 
             VStack(spacing: 24) {
-                if let receive = viewModel.adapter?.receive {
+                if let value = viewModel.adapter.value {
                     WormholeFeeView(
                         title: "You will get",
-                        subtitle: receive.crypto,
-                        detail: receive.fiat,
-                        isFree: receive.isFree
+                        subtitle: value.receive.crypto,
+                        detail: value.receive.fiat,
+                        isFree: value.receive.isFree,
+                        isLoading: viewModel.adapter.isFetching
                     )
-                }
 
-                if let networkFee = viewModel.adapter?.networkFee {
                     WormholeFeeView(
                         title: "Network Fee",
-                        subtitle: networkFee.crypto,
-                        detail: networkFee.fiat,
-                        isFree: networkFee.isFree
+                        subtitle: value.networkFee.crypto,
+                        detail: value.networkFee.fiat,
+                        isFree: value.networkFee.isFree,
+                        isLoading: viewModel.adapter.isFetching
                     )
-                }
 
-                if let accountsFee = viewModel.adapter?.accountCreationFee {
-                    WormholeFeeView(
-                        title: "Account creation Fee",
-                        subtitle: accountsFee.crypto,
-                        detail: accountsFee.fiat,
-                        isFree: accountsFee.isFree
-                    )
-                }
+                    if let accountsFee = value.accountCreationFee {
+                        WormholeFeeView(
+                            title: "Account creation Fee",
+                            subtitle: accountsFee.crypto,
+                            detail: accountsFee.fiat,
+                            isFree: accountsFee.isFree,
+                            isLoading: viewModel.adapter.isFetching
+                        )
+                    }
 
-                if let wormholeBridgeAndTrxFee = viewModel.adapter?.wormholeBridgeAndTrxFee {
                     WormholeFeeView(
                         title: "Wormhole Bridge and Transaction Fee",
-                        subtitle: wormholeBridgeAndTrxFee.crypto,
-                        detail: wormholeBridgeAndTrxFee.fiat,
-                        isFree: wormholeBridgeAndTrxFee.isFree
+                        subtitle: value.wormholeBridgeAndTrxFee.crypto,
+                        detail: value.wormholeBridgeAndTrxFee.fiat,
+                        isFree: value.wormholeBridgeAndTrxFee.isFree,
+                        isLoading: viewModel.adapter.isFetching
                     )
                 }
             }
@@ -116,20 +116,24 @@ private struct WormholeFeeView: View {
     let subtitle: String
     let detail: String
     let isFree: Bool
+    let isLoading: Bool
 
     var body: some View {
         HStack {
             VStack(alignment: .leading, spacing: 4) {
                 Text(title)
                     .apply(style: .text3)
+                    .skeleton(with: isLoading, size: .init(width: 100, height: 16))
                 Text(subtitle)
                     .apply(style: .label1)
                     .foregroundColor(Color(isFree ? Asset.Colors.mint.color : Asset.Colors.mountain.color))
+                    .skeleton(with: isLoading, size: .init(width: 200, height: 16))
             }
             Spacer()
             Text(detail)
                 .apply(style: .label1)
                 .foregroundColor(Color(Asset.Colors.mountain.color))
+                .skeleton(with: isLoading, size: .init(width: 100, height: 16))
         }
     }
 }

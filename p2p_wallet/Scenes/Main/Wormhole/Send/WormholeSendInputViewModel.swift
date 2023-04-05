@@ -21,7 +21,7 @@ class WormholeSendInputViewModel: BaseViewModel, ObservableObject {
     enum Action {
         case openPickAccount
         case openFees
-        case send(WormholeSendTransaction)
+        case send(WormholeSendUserAction)
     }
 
     enum InputMode {
@@ -49,7 +49,7 @@ class WormholeSendInputViewModel: BaseViewModel, ObservableObject {
     @Published var input: String = ""
     @Published var countAfterDecimalPoint: Int = 8
     @Published var isFirstResponder: Bool = false
-    @Published var inputMode: InputMode = .fiat
+    @Published var inputMode: InputMode = .crypto
 
     // It is needed to display valut with precision in case the max amount is set via fiat mode
     @Published var secondaryAmountString = ""
@@ -79,7 +79,7 @@ class WormholeSendInputViewModel: BaseViewModel, ObservableObject {
         let services: WormholeSendInputState.Service = (wormholeService, relayService, relayContextManager, orcaSwap)
 
         // Ensure user wallet is available
-        guard let wallet = userWalletManager.wallet else {
+        guard userWalletManager.wallet != nil else {
             let state: WormholeSendInputState = .initializingFailure(input: nil, error: .unauthorized)
             self.state = state
             stateMachine = .init(initialState: state, services: services)
@@ -89,7 +89,7 @@ class WormholeSendInputViewModel: BaseViewModel, ObservableObject {
 
         let availableBridgeAccounts = Self.resolveSupportedSolanaAccounts(solanaAccountsService: solanaAccountsService)
 
-        // Ensure at lease one avaiable wallet for bridging.
+        // Ensure at lease one available wallet for bridging.
         guard let initialSolanaAccount = availableBridgeAccounts.first else {
             let state: WormholeSendInputState = .initializingFailure(
                 input: nil,
@@ -129,7 +129,7 @@ class WormholeSendInputViewModel: BaseViewModel, ObservableObject {
 
         // Update state machine
         let cryptoInputFormatter = CryptoFormatter(hideSymbol: true)
-        let currencyInputFormatter = CurrencyFormatter(hideSymbol: true)
+        let currencyInputFormatter = CurrencyFormatter(hideSymbol: true, lessText: "")
 
         $input
             .dropFirst()
@@ -209,6 +209,7 @@ class WormholeSendInputViewModel: BaseViewModel, ObservableObject {
             .store(in: &subscriptions)
 
         maxPressed
+            .receive(on: RunLoop.main)
             .sink { [weak self] _ in
                 guard let self, let account = self.adapter.inputAccount else { return }
 
@@ -274,7 +275,9 @@ class WormholeSendInputViewModel: BaseViewModel, ObservableObject {
             case .ready = adapter.state,
             let input = adapter.input,
             let output = adapter.output,
-            let transaction = output.transactions
+            let transaction = output.transactions,
+            let relayContext = Resolver.resolve(RelayContextManager.self).currentContext,
+            let transactions = output.transactions
         else {
             return
         }
@@ -284,16 +287,28 @@ class WormholeSendInputViewModel: BaseViewModel, ObservableObject {
         isFirstResponder = false
         try? await Task.sleep(seconds: 0.5)
 
-        let rawTransaction = WormholeSendTransaction(
-            account: input.solanaAccount,
-            recipient: recipient,
+        let userActionService: UserActionService = Resolver.resolve()
+
+        if let userAction = try? WormholeSendUserAction(
+            sourceToken: input.solanaAccount.data.token,
+            price: input.solanaAccount.price,
+            recipient: input.recipient,
             amount: input.amount,
             fees: output.fees,
-            transaction: transaction,
-            payingFeeWallet: output.feePayer?.data
-        )
+            payingFeeTokenAccount: .init(
+                address: PublicKey(string: output.feePayer?.data.pubkey),
+                mint: PublicKey(string: output.feePayer?.data.token.address)
+            ),
+            totalFeesViaRelay: output.feePayerAmount,
+            transaction: transactions,
+            relayContext: relayContext
+        ) {
+            userActionService.execute(action: userAction)
 
-        action.send(.send(rawTransaction))
+            action.send(.send(userAction))
+        } else {
+            return
+        }
     }
 }
 
@@ -309,6 +324,15 @@ extension WormholeSendInputViewModel {
 
         if let nativeWallet = solanaAccountsService.state.value.nativeWallet {
             availableBridgeAccounts.append(nativeWallet)
+        }
+
+        availableBridgeAccounts.sort { lhs, rhs in
+            // First pick ETH
+            if lhs.data.token.symbol == "WETH" {
+                return true
+            }
+
+            return lhs.data.token.symbol.localizedCompare(rhs.data.token.symbol) == .orderedAscending
         }
 
         return availableBridgeAccounts

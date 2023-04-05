@@ -5,6 +5,7 @@
 //  Created by Giang Long Tran on 31.03.2023.
 //
 
+import BigInt
 import FeeRelayerSwift
 import Foundation
 import KeyAppKitCore
@@ -12,14 +13,23 @@ import OrcaSwapSwift
 import SolanaSwift
 
 enum WormholeSendInputLogic {
+    /// Find an account, that will convert the fees. Max input amount also be returned.
     static func autoSelectFeePayer(
         fee: CryptoAmount,
         selectedAccount: SolanaAccount,
         availableAccounts: [SolanaAccount],
         transferAmount: CryptoAmount,
         feeCalculator: RelayFeeCalculator,
-        orcaSwap: OrcaSwapType
-    ) async throws -> SolanaAccount {
+        orcaSwap: OrcaSwapType,
+        minSOLBalance: CryptoAmount
+    ) async throws -> (account: SolanaAccount, feeAmount: CryptoAmount) {
+        guard
+            fee.token.symbol == "SOL",
+            minSOLBalance.token.symbol == "SOL"
+        else {
+            throw WormholeSendInputError.invalidBaseFeeToken
+        }
+
         // Build all possible candidates for paying fee
         let feePayerCandidates: [SolanaAccount] = [
             // Same account
@@ -27,33 +37,64 @@ enum WormholeSendInputLogic {
                 account.data.token.address == selectedAccount.data.token.address
             }),
 
-            // Account with high amount in fiat
-            availableAccounts.sorted(by: { lhs, rhs in
-                guard
-                    let lhsAmount = lhs.amountInFiat,
-                    let rhsAmount = rhs.amountInFiat
-                else {
-                    return false
-                }
-
-                return lhsAmount > rhsAmount
-            })
-            .first,
-
             // Native account
             availableAccounts.nativeWallet,
+
+            // Account with high amount in fiat
+            availableAccounts
+                .filter { account in
+                    // Exclude first two cases
+                    account.data.token.address != selectedAccount.data.token.address || !account.data.isNativeSOL
+                }
+                .sorted(by: { lhs, rhs in
+                    guard
+                        let lhsAmount = lhs.amountInFiat,
+                        let rhsAmount = rhs.amountInFiat
+                    else {
+                        return false
+                    }
+
+                    return lhsAmount > rhsAmount
+                })
+                .first,
         ].compactMap { $0 }
 
         var feePayerBestCandidate: SolanaAccount?
+        var feeAmountForBestCandidate: CryptoAmount?
 
         // Try find best candidate.
         for feePayerCandidate in feePayerCandidates {
             if feePayerCandidate.data.isNativeSOL {
-                if (transferAmount + fee) < feePayerCandidate.cryptoAmount {
-                    feePayerBestCandidate = feePayerCandidate
-                    break
+                // Fee payer candidate is SOL
+                
+                if selectedAccount.data.isNativeSOL {
+                    // Fee payer candidate and selected account is same.
+
+                    if (transferAmount + fee) == feePayerCandidate.cryptoAmount {
+                        // Solana account will be zero
+                        feePayerBestCandidate = feePayerCandidate
+                        feeAmountForBestCandidate = fee
+
+                        break
+                    } else if (transferAmount + fee + minSOLBalance) <= feePayerCandidate.cryptoAmount {
+                        // Solana account will be greater or equal than min sol balance.
+                        feePayerBestCandidate = feePayerCandidate
+                        feeAmountForBestCandidate = fee
+
+                        break
+                    }
+                } else {
+                    // Selected account is a SPL token.
+
+                    if fee <= feePayerCandidate.cryptoAmount {
+                        feePayerBestCandidate = feePayerCandidate
+                        feeAmountForBestCandidate = fee
+                    }
                 }
+
             } else {
+                // Fee payer candidate is SPL token
+                
                 do {
                     let feeInToken = try await feeCalculator.calculateFeeInPayingToken(
                         orcaSwap: orcaSwap,
@@ -63,6 +104,11 @@ enum WormholeSendInputLogic {
 
                     if (feeInToken?.total ?? 0) < (feePayerCandidate.data.lamports ?? 0) {
                         feePayerBestCandidate = feePayerCandidate
+                        feeAmountForBestCandidate = CryptoAmount(
+                            uint64: feeInToken?.total ?? 0,
+                            token: feePayerCandidate.data.token
+                        )
+
                         break
                     }
                 } catch {
@@ -71,10 +117,13 @@ enum WormholeSendInputLogic {
             }
         }
 
-        guard let feePayerBestCandidate = feePayerBestCandidate ?? availableAccounts.nativeWallet else {
+        if
+            let feePayerBestCandidate,
+            let feeAmountForBestCandidate
+        {
+            return (feePayerBestCandidate, feeAmountForBestCandidate)
+        } else {
             throw WormholeSendInputError.calculationFeePayerFailure
         }
-
-        return feePayerBestCandidate
     }
 }

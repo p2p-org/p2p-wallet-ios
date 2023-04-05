@@ -164,7 +164,7 @@ class InvestSolendViewModel: ObservableObject {
                 }
             }
             .receive(on: RunLoop.main)
-            .assign(to: \.loading, on: self)
+            .assignWeak(to: \.loading, on: self)
             .store(in: &subscriptions)
 
         Task { try await update() }

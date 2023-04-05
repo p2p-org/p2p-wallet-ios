@@ -70,6 +70,10 @@ public enum WormholeSendInputState: Equatable {
                     return .error(input: input, output: nil, error: .maxAmountReached)
                 }
 
+                guard let relayContext = service.relayContextManager.currentContext else {
+                    return .error(input: input, output: nil, error: .missingRelayContext)
+                }
+
                 // Get fees
                 let fees: SendFees
                 do {
@@ -92,48 +96,89 @@ public enum WormholeSendInputState: Equatable {
 
                 // Select best wallet for paying fee.
                 let feePayerBestCandidate: SolanaAccount
+                let feeAmountForBestCandidate: CryptoAmount
                 do {
-                    feePayerBestCandidate = try await WormholeSendInputLogic.autoSelectFeePayer(
-                        fee: feeInSolanaNetwork,
-                        selectedAccount: input.solanaAccount,
-                        availableAccounts: input.availableAccounts,
-                        transferAmount: input.amount,
-                        feeCalculator: service.relay.feeCalculator,
-                        orcaSwap: service.orcaSwap
-                    )
+                    (feePayerBestCandidate, feeAmountForBestCandidate) = try await WormholeSendInputLogic
+                        .autoSelectFeePayer(
+                            fee: feeInSolanaNetwork,
+                            selectedAccount: input.solanaAccount,
+                            availableAccounts: input.availableAccounts,
+                            transferAmount: input.amount,
+                            feeCalculator: service.relay.feeCalculator,
+                            orcaSwap: service.orcaSwap,
+                            minSOLBalance: CryptoAmount(
+                                uint64: relayContext.minimumRelayAccountBalance,
+                                token: SolanaToken.nativeSolana
+                            )
+                        )
                 } catch {
                     return .error(
                         input: input,
                         output: .init(
                             feePayer: nil,
+                            feePayerAmount: nil,
                             transactions: nil,
-                            fees: fees
+                            fees: fees,
+                            relayContext: relayContext
                         ),
                         error: .calculationFeePayerFailure
                     )
                 }
 
+                // Check
+                let insufficientState = WormholeSendInputState.error(
+                    input: input,
+                    output: .init(
+                        feePayer: feePayerBestCandidate,
+                        feePayerAmount: feeAmountForBestCandidate,
+                        transactions: nil,
+                        fees: fees,
+                        relayContext: relayContext
+                    ),
+                    error: .insufficientInputAmount
+                )
+
+                if feePayerBestCandidate.data.token.address == input.solanaAccount.data.token.address {
+                    // Fee payer is equal to selected account
+                    if input.amount + feeAmountForBestCandidate > input.solanaAccount.cryptoAmount {
+                        return insufficientState
+                    }
+                } else {
+                    // Fee payer isn't equal to selected account
+                    if feeAmountForBestCandidate > feePayerBestCandidate.cryptoAmount {
+                        return insufficientState
+                    }
+                }
+
                 // Build transaction
                 let transactions: SendTransaction
                 do {
-                    let feePayerAddress = try await service.relayContextManager.getCurrentContextOrUpdate()
-                        .feePayerAddress
-                        .base58EncodedString
+                    let feePayerAddress = relayContext.feePayerAddress.base58EncodedString
+                    
+                    // Not (Native sol and networkFee > 0)
+                    let needToUseRelay: Bool = !(feePayerBestCandidate.data.isNativeSOL
+                        && (fees.networkFee?.asCryptoAmount.value ?? 0) > 0)
+
+                    let mint: String? = input.solanaAccount.data.token.isNative ? nil : input.solanaAccount.data.token
+                        .address
 
                     transactions = try await service.wormhole.transferFromSolana(
                         feePayer: feePayerAddress,
                         from: input.solanaAccount.data.pubkey ?? "",
                         recipient: input.recipient,
-                        mint: input.solanaAccount.data.token.address,
-                        amount: String(input.amount.value)
+                        mint: mint,
+                        amount: String(input.amount.value),
+                        needToUseRelay: needToUseRelay
                     )
                 } catch {
                     return .error(
                         input: input,
                         output: .init(
                             feePayer: nil,
+                            feePayerAmount: nil,
                             transactions: nil,
-                            fees: fees
+                            fees: fees,
+                            relayContext: relayContext
                         ),
                         error: .getTransferTransactionsFailure
                     )
@@ -154,8 +199,10 @@ public enum WormholeSendInputState: Equatable {
                     input: input,
                     output: .init(
                         feePayer: feePayerBestCandidate,
+                        feePayerAmount: feeAmountForBestCandidate,
                         transactions: transactions,
-                        fees: fees
+                        fees: fees,
+                        relayContext: relayContext
                     ),
                     alert: alert
                 )

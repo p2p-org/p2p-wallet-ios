@@ -26,9 +26,6 @@ packages:
     OrcaSwapSwift:
         url: https://github.com/p2p-org/OrcaSwapSwift.git
         branch: main
-    FeeRelayerSwift:
-        url: https://github.com/p2p-org/FeeRelayerSwift.git
-        branch: master
     KeyAppKit:
         path: ./Packages/KeyAppKit
     BECollectionView:
@@ -257,7 +254,6 @@ targets:
             - package: KeyAppKit
               product: Jupiter
 
-            - package: FeeRelayerSwift
             - package: SolanaSwift
             - package: OrcaSwapSwift
             - package: Web3

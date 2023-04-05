@@ -30,7 +30,7 @@ final class FeeRelayerDebugViewModel: BaseViewModel, ObservableObject {
                 guard let self else { return "" }
                 return self.getCalculationDebugText(relayContext: $0)
             }
-            .assign(to: \.calculationDebugText, on: self)
+            .assignWeak(to: \.calculationDebugText, on: self)
             .store(in: &subscriptions)
     }
     
