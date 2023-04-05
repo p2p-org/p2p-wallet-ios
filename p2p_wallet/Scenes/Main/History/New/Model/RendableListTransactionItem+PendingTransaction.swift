@@ -129,9 +129,9 @@ struct RendableListPendingTransactionItem: RendableListTransactionItem {
                 }
             case _ as ClaimSentViaLinkTransaction:
                 if trx.transactionId == nil {
-                    return "\(L10n.processing).."
+                    return "\(L10n.processing)"
                 } else {
-                    return "\(L10n.proceed)"
+                    return "\(L10n.receive)"
                 }
             default:
                 if trx.transactionId == nil {
