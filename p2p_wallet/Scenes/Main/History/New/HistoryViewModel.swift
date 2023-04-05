@@ -1,10 +1,3 @@
-//
-//  NewHistoryViewModel.swift
-//  p2p_wallet
-//
-//  Created by Giang Long Tran on 01.02.2023.
-//
-
 import Combine
 import Foundation
 import History
@@ -111,12 +104,6 @@ class HistoryViewModel: BaseViewModel, ObservableObject {
         self.showSendViaLinkTransaction = false
         super.init()
 
-        NotificationCenter.default.addObserver(forName: HistoryAppdelegateService.shouldUpdateHistory.name, object: nil, queue: nil) { [weak self] _ in
-            Task {
-                try await self?.reload()
-            }
-        }
-
         history
             .$state
             .receive(on: DispatchQueue.global(qos: .background))
@@ -204,7 +191,11 @@ class HistoryViewModel: BaseViewModel, ObservableObject {
         
         bind()
     }
-    
+
+    deinit {
+       NotificationCenter.default.removeObserver(self)
+    }
+
     // MARK: - View Output
 
     func reload() async throws {
@@ -230,6 +221,12 @@ class HistoryViewModel: BaseViewModel, ObservableObject {
                 self?.sendViaLinkTransactions = transactionInfos
             }
             .store(in: &subscriptions)
+
+        NotificationCenter.default.addObserver(forName: HistoryAppdelegateService.shouldUpdateHistory.name, object: nil, queue: nil) { [weak self] _ in
+            Task {
+                try await self?.reload()
+            }
+        }
     }
 
     func buildOutput(
