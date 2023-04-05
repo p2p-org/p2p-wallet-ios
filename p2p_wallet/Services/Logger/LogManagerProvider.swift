@@ -3,6 +3,7 @@ import Foundation
 import KeyAppKitLogger
 import Sentry
 import SolanaSwift
+import LoggerSwift
 
 class SentryLogger: LogManagerLogger {
     private var queue = DispatchQueue(label: "SentryLogger", qos: .utility)
@@ -109,29 +110,31 @@ class LoggerSwiftLogger: LogManagerLogger {
 
     func log(event: String, logLevel: LogLevel, data: String?) {
         queue.async { [unowned self] in
-            KeyAppKitLogger.Logger.log(
-                event: self.loglevel(logLevel),
+            LoggerSwift.Logger.log(
+                event: mapEventLogLeverToLoggerSwiftEvent(logLevel),
                 message: event + " " + (data ?? "")
             )
         }
     }
-
-    // MARK: -
-
-    private func loglevel(_ logLevel: LogLevel) -> String {
-        switch logLevel {
+    
+    private func mapEventLogLeverToLoggerSwiftEvent(
+        _ event: LogLevel
+    ) -> LoggerSwift.LoggerEvent {
+        switch event {
         case .info:
-            return KeyAppKitLoggerLogLevel.info.rawValue
+            return .info
         case .error:
-            return KeyAppKitLoggerLogLevel.error.rawValue
-        case .request, .response:
-            return KeyAppKitLoggerLogLevel.info.rawValue
+            return .error
+        case .request:
+            return .request
+        case .response:
+            return .response
         case .event:
-            return KeyAppKitLoggerLogLevel.info.rawValue
+            return .event
         case .warning:
-            return KeyAppKitLoggerLogLevel.warning.rawValue
+            return .warning
         case .debug:
-            return KeyAppKitLoggerLogLevel.debug.rawValue
+            return .debug
         }
     }
 }
