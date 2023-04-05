@@ -54,4 +54,17 @@ extension UIApplication {
     class func rootViewController() -> UIViewController? {
         UIApplication.shared.keyWindow?.rootViewController
     }
+    
+    class func dismissCustomPresentedViewController(completion: (() -> Void)? = nil) {
+        guard let topmostVC = topmostViewController() else {
+            completion?()
+            return
+        }
+        if topmostVC.presentationController is DimmPresentationController ||
+            topmostVC.navigationController?.presentationController is DimmPresentationController {
+            topmostVC.dismiss(animated: true, completion: completion)
+        } else {
+            completion?()
+        }
+    }
 }
