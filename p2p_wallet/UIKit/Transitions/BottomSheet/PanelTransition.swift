@@ -8,7 +8,7 @@
 import Combine
 import UIKit
 
-class PanelTransition: NSObject, UIViewControllerTransitioningDelegate {
+final class PanelTransition: NSObject, UIViewControllerTransitioningDelegate {
     private var cancellables = Set<AnyCancellable>()
     
     // Subjects
