@@ -1319,3 +1319,4 @@ You can try again, but your new transaction will be subject to the current rates
 "%@ sent you %@ via Key App. Follow the link to claim your funds: %@" = "%@ отправил вам %@ через приложение Key.  Перейдите по ссылке, чтобы получить свои средства: %@";
 "From %@" = "Из %@";
 "This link is broken" = "Эта ссылка не работает";
+"You have reached the daily limit of sending free links per day. Try tomorrow" = "Вы достигли дневного лимита отправки бесплатных ссылок в день.  Попробуйте завтра";

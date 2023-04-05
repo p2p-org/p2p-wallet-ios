@@ -30,13 +30,11 @@ struct SendViaLinkState: Equatable {
     /// Indicate if the feature itself is disabled or not (via FT)
     let isFeatureDisabled: Bool
     /// Default limit for a day
-    let limitPerDay: Int
-    /// Number of links used today
-    let numberOfLinksUsedToday: Int
+    let reachedLimit: Bool
     
     /// Indicate if user can create link
     var canCreateLink: Bool {
-        !isFeatureDisabled && (numberOfLinksUsedToday < limitPerDay)
+        !isFeatureDisabled && !reachedLimit
     }
 }
 
@@ -74,8 +72,7 @@ class RecipientSearchViewModel: ObservableObject {
     
     @Published var sendViaLinkState = SendViaLinkState(
         isFeatureDisabled: true,
-        limitPerDay: 30,
-        numberOfLinksUsedToday: 0
+        reachedLimit: false
     )
     @Published var sendViaLinkVisible = true
 
@@ -254,20 +251,14 @@ class RecipientSearchViewModel: ObservableObject {
                 .getCurrentContextOrUpdate()
                 .usageStatus
             
-            // get limit per day and nummber of used
-            let limitPerDay = usageStatus.maxTokenAccountCreationCount
-            let usedToday = usageStatus.tokenAccountCreationCountUsed
-            
             sendViaLinkState = SendViaLinkState(
                 isFeatureDisabled: false,
-                limitPerDay: limitPerDay,
-                numberOfLinksUsedToday: usedToday
+                reachedLimit: usageStatus.reachedLimitLinkCreation
             )
         } else {
             sendViaLinkState = SendViaLinkState(
                 isFeatureDisabled: true,
-                limitPerDay: 0,
-                numberOfLinksUsedToday: 0
+                reachedLimit: false
             )
         }
     }
