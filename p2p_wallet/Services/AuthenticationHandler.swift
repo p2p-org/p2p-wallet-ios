@@ -15,7 +15,6 @@ protocol AuthenticationHandlerType {
     func pauseAuthentication(_ isPaused: Bool)
     var authenticationStatusPublisher: AnyPublisher<AuthenticationPresentationStyle?, Never> { get }
     var isLockedPublisher: AnyPublisher<Bool, Never> { get }
-    var isLockedForDeeplinks: AnyPublisher<Bool, Never> { get }
 }
 
 final class AuthenticationHandler: AuthenticationHandlerType {
@@ -31,7 +30,6 @@ final class AuthenticationHandler: AuthenticationHandlerType {
 
     private let authenticationStatusSubject = CurrentValueSubject<AuthenticationPresentationStyle?, Never>(nil)
     private let isLockedSubject = CurrentValueSubject<Bool, Never>(false)
-    private let isLockedForDeeplinksSubject = PassthroughSubject<Bool, Never>()
 
     init() {
         bind()
@@ -69,7 +67,6 @@ final class AuthenticationHandler: AuthenticationHandlerType {
                 if self?.authenticationStatusSubject.value == nil {
                     self?.lastAuthenticationTimeStamp = Int(Date().timeIntervalSince1970)
                     self?.isLockedSubject.send(true)
-                    self?.isLockedForDeeplinksSubject.send(true)
                 }
             })
             .store(in: &subscriptions)
@@ -85,7 +82,6 @@ final class AuthenticationHandler: AuthenticationHandlerType {
                 }
 
                 self.isLockedSubject.send(false)
-                self.isLockedForDeeplinksSubject.send(false)
             })
             .store(in: &subscriptions)
     }
@@ -128,10 +124,6 @@ final class AuthenticationHandler: AuthenticationHandlerType {
 
     var isLockedPublisher: AnyPublisher<Bool, Never> {
         isLockedSubject.receive(on: DispatchQueue.main).eraseToAnyPublisher()
-    }
-    
-    var isLockedForDeeplinks: AnyPublisher<Bool, Never> {
-        isLockedForDeeplinksSubject.eraseToAnyPublisher()
     }
 
     // MARK: - Helpers
