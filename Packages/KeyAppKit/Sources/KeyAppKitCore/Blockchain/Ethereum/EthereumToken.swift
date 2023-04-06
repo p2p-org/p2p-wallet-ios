@@ -9,7 +9,7 @@ import Foundation
 import Web3
 
 /// Ethereum token structure
-public struct EthereumToken: Hashable {
+public struct EthereumToken: Hashable, Codable {
     /// Token name
     public let name: String
 
@@ -45,7 +45,7 @@ public struct EthereumToken: Hashable {
 
 public extension EthereumToken {
     /// Ethereum token contract standards.
-    public enum ContractType: Hashable {
+    public enum ContractType: Hashable, Codable {
         /// Native token
         case native
 

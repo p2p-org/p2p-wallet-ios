@@ -8,6 +8,7 @@
 import AnalyticsManager
 import Combine
 import Foundation
+import KeyAppBusiness
 import Resolver
 import Sell
 import SolanaSwift
@@ -83,17 +84,17 @@ final class TabBarCoordinator: Coordinator<Void> {
         if Defaults.didSetEnableNotifications && Defaults.apnsDeviceToken == nil {
             UIApplication.shared.registerForRemoteNotifications()
         }
-        
+
         bind()
 
         return closeSubject.prefix(1).eraseToAnyPublisher()
     }
-    
+
     private func bind() {
         tabBarViewModel.moveToSendViaLinkClaim
             .sink { [weak self] url in
                 guard let self = self, let url = url else { return }
-                
+
                 let claimCoordinator = ReceiveFundsViaLinkCoordinator(
                     presentingViewController: self.tabBarController,
                     url: url
@@ -101,7 +102,7 @@ final class TabBarCoordinator: Coordinator<Void> {
                 DispatchQueue.main.asyncAfter(deadline: .now() + .milliseconds(300)) { [weak self] in
                     guard let self = self else { return }
                     self.coordinate(to: claimCoordinator)
-                        .sink(receiveValue: { })
+                        .sink(receiveValue: {})
                         .store(in: &self.subscriptions)
                 }
             }
@@ -292,9 +293,9 @@ final class TabBarCoordinator: Coordinator<Void> {
                             navigationController?.popToRootViewController(animated: true)
                             self?.routeToSendTransactionStatus(model: model)
 
-                        case let .wormhole(trx):
+                        case let .wormhole(userAction):
                             navigationController?.popToRootViewController(animated: true)
-                            self?.showTransaction(trx: trx)
+                            self?.showUserAction(userAction: userAction)
 
                         case .sentViaLink:
                             navigationController?.popToRootViewController(animated: true)
@@ -340,6 +341,15 @@ final class TabBarCoordinator: Coordinator<Void> {
     private func showTransaction(trx: RawTransactionType) {
         coordinate(to: TransactionDetailCoordinator(
             viewModel: .init(submit: trx),
+            presentingViewController: tabBarController
+        ))
+        .sink(receiveValue: { _ in })
+        .store(in: &subscriptions)
+    }
+
+    private func showUserAction(userAction: UserAction) {
+        coordinate(to: TransactionDetailCoordinator(
+            viewModel: .init(userAction: userAction),
             presentingViewController: tabBarController
         ))
         .sink(receiveValue: { _ in })

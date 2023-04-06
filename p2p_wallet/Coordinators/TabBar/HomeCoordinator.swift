@@ -8,6 +8,7 @@
 import AnalyticsManager
 import Combine
 import Foundation
+import KeyAppBusiness
 import KeyAppKitCore
 import Resolver
 import SolanaSwift
@@ -80,7 +81,7 @@ final class HomeCoordinator: Coordinator<Void> {
             homeView.viewWillAppear.map { true },
             homeView.viewWillDisappear.map { false }
         )
-        .assign(to: \.navigationIsHidden, on: homeView)
+        .assignWeak(to: \.navigationIsHidden, on: homeView)
         .store(in: &subscriptions)
 
         // set view controller
@@ -142,7 +143,7 @@ final class HomeCoordinator: Coordinator<Void> {
                     self?.showSendTransactionStatus(model: model)
                 case let .wormhole(trx):
                     self?.navigationController.popToRootViewController(animated: true)
-                    self?.showTransaction(trx: trx)
+                    self?.showUserAction(userAction: trx)
                 case .sentViaLink:
                     self?.navigationController.popToRootViewController(animated: true)
                 case .cancelled:
@@ -164,7 +165,7 @@ final class HomeCoordinator: Coordinator<Void> {
                 case let .claiming(pendingTrx):
                     self.coordinate(
                         to: TransactionDetailCoordinator(
-                            viewModel: .init(pendingTransaction: pendingTrx),
+                            viewModel: .init(userAction: pendingTrx),
                             presentingViewController: self.navigationController
                         )
                     )
@@ -319,6 +320,15 @@ final class HomeCoordinator: Coordinator<Void> {
     private func showTransaction(trx: RawTransactionType) {
         coordinate(to: TransactionDetailCoordinator(
             viewModel: .init(submit: trx),
+            presentingViewController: navigationController
+        ))
+        .sink(receiveValue: { _ in })
+        .store(in: &subscriptions)
+    }
+
+    private func showUserAction(userAction: UserAction) {
+        coordinate(to: TransactionDetailCoordinator(
+            viewModel: .init(userAction: userAction),
             presentingViewController: navigationController
         ))
         .sink(receiveValue: { _ in })

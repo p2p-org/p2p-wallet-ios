@@ -63,23 +63,6 @@ struct RendableListPendingTransactionItem: RendableListTransactionItem {
             }
 
             return .double(fromUrl, toUrl)
-
-        case let transaction as WormholeClaimTransaction:
-            guard let url = transaction.token.logo else {
-                return .icon(.planet)
-            }
-
-            return .single(url)
-
-        case let transaction as WormholeSendTransaction:
-            if
-                let urlStr = transaction.account.data.token.logoURI,
-                let url = URL(string: urlStr)
-            {
-                return .single(url)
-            } else {
-                return .icon(.transactionSend)
-            }
             
         case let transaction as ClaimSentViaLinkTransaction:
             if
@@ -112,12 +95,6 @@ struct RendableListPendingTransactionItem: RendableListTransactionItem {
         case let transaction as SwapRawTransactionType:
             return L10n.to(transaction.sourceWallet.token.symbol, transaction.destinationWallet.token.symbol)
 
-        case let transaction as WormholeClaimTransaction:
-            return "Wormhole"
-
-        case let transaction as WormholeSendTransaction:
-            return "Wormhole"
-
         case let transaction as ClaimSentViaLinkTransaction:
             guard let pubkey = try? PublicKey(string: transaction.claimableTokenInfo.account)
             else { return L10n.receive}
@@ -137,12 +114,6 @@ struct RendableListPendingTransactionItem: RendableListTransactionItem {
 
             case _ as SwapRawTransactionType:
                 return "\(L10n.swap)"
-
-            case let transaction as WormholeClaimTransaction:
-                return "Claim"
-
-            case let transaction as WormholeSendTransaction:
-                return "Send"
 
             case _ as ClaimSentViaLinkTransaction:
                 return "\(L10n.sendViaOneTimeLink)"
@@ -195,18 +166,6 @@ struct RendableListPendingTransactionItem: RendableListTransactionItem {
                 "+\(transaction.toAmount.tokenAmountFormattedString(symbol: transaction.destinationWallet.token.symbol))"
             )
 
-        case let transaction as WormholeSendTransaction:
-            let amount = CurrencyFormatter().string(amount: transaction.currencyAmount)
-            return (.negative, "-\(amount)")
-
-        case let transaction as WormholeClaimTransaction:
-            if let currencyAmount = transaction.amountInFiat {
-                let amount = CurrencyFormatter().string(amount: currencyAmount)
-                return (.positive, "+\(amount)")
-            } else {
-                return (.unchanged, "")
-            }
-
         case let transaction as ClaimSentViaLinkTransaction:
             return (.positive, "+\(transaction.tokenAmount.tokenAmountFormattedString(symbol: transaction.token.symbol))")
 
@@ -222,12 +181,6 @@ struct RendableListPendingTransactionItem: RendableListTransactionItem {
 
         case let transaction as SwapRawTransactionType:
             return "-\(transaction.fromAmount.tokenAmountFormattedString(symbol: transaction.sourceWallet.token.symbol))"
-
-        case let transaction as WormholeSendTransaction:
-            return CryptoFormatter().string(for: transaction.amount) ?? ""
-
-        case let transaction as WormholeClaimTransaction:
-            return CryptoFormatter().string(for: transaction.amountInCrypto) ?? ""
 
         case let transaction as ClaimSentViaLinkTransaction:
             return ""
