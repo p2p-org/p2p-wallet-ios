@@ -59,7 +59,7 @@ extension ReceiveToken {
                                     UIImageView(width: 44, height: 44)
                                         .setup { view in
                                             viewModel.tokenTypePublisher.map { type in type.icon }
-                                                .assign(to: \.image, on: view)
+                                                .assignWeak(to: \.image, on: view)
                                                 .store(in: &subscriptions)
                                         }
                                     // Text
@@ -73,7 +73,7 @@ extension ReceiveToken {
                                             .setup { view in
                                                 viewModel.tokenTypePublisher
                                                     .map { L10n.network($0.localizedName).onlyUppercaseFirst() }
-                                                    .assign(to: \.text, on: view)
+                                                    .assignWeak(to: \.text, on: view)
                                                     .store(in: &subscriptions)
                                             }
                                     }.padding(.init(x: 12, y: 0))
@@ -96,7 +96,7 @@ extension ReceiveToken {
                                 .setup { [weak viewModel] view in
                                     viewModel?.tokenListAvailabilityPublisher
                                         .map { !$0 }
-                                        .assign(to: \.isHidden, on: view)
+                                        .assignWeak(to: \.isHidden, on: view)
                                         .store(in: &subscriptions)
                                 }
                             }
@@ -109,13 +109,16 @@ extension ReceiveToken {
                     .setup { view in
                         viewModel.hasHintViewOnTopPublisher
                             .map { !$0 }
-                            .assign(to: \.isHidden, on: view)
+                            .assignWeak(to: \.isHidden, on: view)
                             .store(in: &subscriptions)
                     }
 
                     ReceiveSolanaView(viewModel: viewModel.receiveSolanaViewModel)
                         .setup { view in
-                            viewModel.tokenTypePublisher.map { token in token != .solana }.assign(to: \.isHidden, on: view).store(in: &subscriptions)
+                            viewModel.tokenTypePublisher
+                                .map { token in token != .solana }
+                                .assignWeak(to: \.isHidden, on: view)
+                                .store(in: &subscriptions)
                         }
 
                     UIStackView(axis: .vertical, spacing: 16, alignment: .fill) {
@@ -125,7 +128,7 @@ extension ReceiveToken {
                         )
                             .setup { view in
                                 viewModel.addressesInfoIsOpenedPublisher
-                                    .assign(to: \.isOpened, on: view)
+                                    .assignWeak(to: \.isOpened, on: view)
                                     .store(in: &subscriptions)
                                 view.tapPublisher
                                     .sink { [weak viewModel] _ in
@@ -148,7 +151,7 @@ extension ReceiveToken {
                     .setup { view in
                         viewModel.hasAddressesInfoPublisher
                             .map { !$0 }
-                            .assign(to: \.isHidden, on: view)
+                            .assignWeak(to: \.isHidden, on: view)
                             .store(in: &subscriptions)
                     }
                 }

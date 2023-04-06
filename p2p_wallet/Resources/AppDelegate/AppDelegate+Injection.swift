@@ -81,7 +81,7 @@ extension Resolver: ResolverRegistering {
             .implements((ICloudStorageType & AccountStorageType & NameStorageType).self)
             .implements((ICloudStorageType & AccountStorageType & NameStorageType & PincodeStorageType).self)
             .scope(.application)
-        
+
         register { SendViaLinkStorageImpl() }
             .implements(SendViaLinkStorage.self)
             .scope(.session)
@@ -321,7 +321,7 @@ extension Resolver: ResolverRegistering {
             SendHistoryService(provider: resolve(SendHistoryLocalProvider.self))
         }
         .scope(.session)
-        
+
         // SendViaLink
         register {
             SendViaLinkDataServiceImpl(
@@ -359,6 +359,35 @@ extension Resolver: ResolverRegistering {
         register { FeeRelayerSwift.APIClient(baseUrlString: "https://fee-relayer.keyapp.org", version: 1) }
             .implements(FeeRelayerAPIClient.self)
             .scope(.session)
+
+        // UserActionService
+        register { UserActionPersistentStorageWithUserDefault(errorObserver: resolve()) }
+            .implements(UserActionPersistentStorage.self)
+            .scope(.application)
+
+        register {
+            let userWalletManager: UserWalletManager = resolve()
+
+            return UserActionService(
+                consumers: [
+                    WormholeSendUserActionConsumer(
+                        signer: { userWalletManager.wallet?.account },
+                        solanaClient: resolve(),
+                        relayService: resolve(),
+                        errorObserver: resolve(),
+                        persistence: resolve()
+                    ),
+                    WormholeClaimUserActionConsumer(
+                        signer: { userWalletManager.wallet?.ethereumKeypair },
+                        wormholeAPI: resolve(),
+                        ethereumTokenRepository: resolve(),
+                        errorObserver: resolve(),
+                        persistence: resolve()
+                    ),
+                ]
+            )
+        }
+        .scope(.session)
 
         register { RelayServiceImpl(
             contextManager: resolve(),

@@ -58,6 +58,7 @@ struct TransactionDetailExtraInfo {
     }
 
     let title: String
+    
     let values: [Value]
 
     let copyableValue: String?

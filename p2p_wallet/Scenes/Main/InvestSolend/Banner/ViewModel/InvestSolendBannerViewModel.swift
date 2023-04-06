@@ -51,7 +51,7 @@ class InvestSolendBannerViewModel: ObservableObject {
             }
             .receive(on: RunLoop.main)
             .removeDuplicates()
-            .assign(to: \.state, on: self)
+            .assignWeak(to: \.state, on: self)
             .store(in: &cancellables)
     }
 

@@ -21,22 +21,22 @@ class WormholeClaimViewModel: BaseViewModel, ObservableObject {
 
     init(model: WormholeClaimMockModel) {
         self.model = model
-        self.bundle = .init(just: nil)
+        bundle = .init(just: nil)
 
         super.init()
     }
 
     init(
         account: EthereumAccount,
-        ethereumAccountsService: EthereumAccountsService = Resolver.resolve(),
+        ethereumAccountsService _: EthereumAccountsService = Resolver.resolve(),
         wormholeAPI: WormholeService = Resolver.resolve(),
         notificationService: NotificationService = Resolver.resolve()
     ) {
-        self.model = WormholeClaimEthereumModel(account: account, bundle: .init(value: nil))
-        self.bundle = .init(initialItem: nil) {
+        model = WormholeClaimEthereumModel(account: account, bundle: .init(value: nil))
+        bundle = .init(initialItem: nil) {
             // Request to get bundle
             do {
-                return try await (wormholeAPI.getBundle(account: account), nil)
+                return try await(wormholeAPI.getBundle(account: account), nil)
             } catch {
                 return (nil, error)
             }
@@ -94,19 +94,17 @@ class WormholeClaimViewModel: BaseViewModel, ObservableObject {
                     return
                 }
 
-                let rawTransaction = WormholeClaimTransaction(
-                    wormholeService: Resolver.resolve(),
+                let userActionService: UserActionService = Resolver.resolve()
+
+                let userAction = WormholeClaimUserAction(
                     token: model.account.token,
-                    amountInCrypto: model.account.representedBalance,
-                    amountInFiat: model.account.balanceInFiat,
+                    amountInCrypto: bundle.resultAmount.asCryptoAmount,
+                    amountInFiat: bundle.resultAmount.asCurrencyAmount,
                     bundle: bundle
                 )
 
-                let transactionHandler: TransactionHandler = Resolver.resolve()
-                let index = transactionHandler.sendTransaction(rawTransaction)
-                let pendingTransaction = transactionHandler.getProcessingTransaction(index: index)
-
-                action.send(.claiming(pendingTransaction))
+                userActionService.execute(action: userAction)
+                action.send(.claiming(userAction))
             }
         }
     }
@@ -115,7 +113,7 @@ class WormholeClaimViewModel: BaseViewModel, ObservableObject {
 extension WormholeClaimViewModel {
     enum Action {
         case openFee(AsyncValue<WormholeBundle?>)
-        case claiming(PendingTransaction)
+        case claiming(WormholeClaimUserAction)
     }
 
     enum Error: Swift.Error {
