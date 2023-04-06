@@ -98,7 +98,7 @@ extension ProcessTransaction.ViewModel: ProcessTransactionViewModelType {
 
     func sendAndObserveTransaction() {
         // send transaction and get observation index
-        let index = transactionHandler.sendTransaction(rawTransaction)
+        let index = transactionHandler.sendTransaction(rawTransaction, errorHandler: nil)
         observingTransactionIndexSubject.accept(index)
 
         // send and catch error

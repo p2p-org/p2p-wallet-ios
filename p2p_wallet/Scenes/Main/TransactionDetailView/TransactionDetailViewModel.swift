@@ -80,7 +80,7 @@ class TransactionDetailViewModel: BaseViewModel, ObservableObject {
     convenience init(submit rawTransaction: RawTransactionType) {
         let pendingService: TransactionHandlerType = Resolver.resolve()
 
-        let idx = pendingService.sendTransaction(rawTransaction)
+        let idx = pendingService.sendTransaction(rawTransaction, errorHandler: nil)
         let pendingTransaction = pendingService.getProcessingTransaction(index: idx)
 
         self.init(pendingTransaction: pendingTransaction)

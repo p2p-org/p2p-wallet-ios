@@ -407,7 +407,7 @@ private extension SwapViewModel {
             })
         
         let transactionIndex = transactionHandler.sendTransaction(
-            swapTransaction
+            swapTransaction, errorHandler: nil
         )
         
         let pendingTransaction = PendingTransaction(

@@ -172,6 +172,12 @@ final class HomeAccountsViewModel: BaseViewModel, ObservableObject {
             }
             .store(in: &subscriptions)
 
+        wormholeService.wormholeClaimMonitoreService.$bundles.sink { vala in
+            if vala.hasError {
+//                self?.notificationService.showInAppNotification(.error(L10n.ThereWasAProblemWithClaiming.pleaseTryAgain))
+            }
+        }.store(in: &subscriptions)
+
         // Solana accounts
         solanaAccountsService.$state
             .map { (state: AsyncValueState<[SolanaAccountsService.Account]>) -> String in
