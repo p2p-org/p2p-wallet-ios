@@ -33,17 +33,21 @@ final class ActionsCoordinator: Coordinator<ActionsCoordinator.Result> {
         navigationController.transitioningDelegate = transition
         navigationController.modalPresentationStyle = .custom
         self.viewController.present(navigationController, animated: true)
-
+        
         let subject = PassthroughSubject<ActionsCoordinator.Result, Never>()
+        
+        transition.dismissed
+            .sink(receiveValue: {
+                DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) {
+                    subject.send(.cancel)
+                }
+            })
+            .store(in: &subscriptions)
         transition.dimmClicked
             .sink(receiveValue: {
                 viewController.dismiss(animated: true)
             })
             .store(in: &subscriptions)
-
-        navigationController.onClose = {
-            subject.send(.cancel)
-        }
         view.cancel
             .sink(receiveValue: {
                 viewController.dismiss(animated: true)
@@ -59,7 +63,9 @@ final class ActionsCoordinator: Coordinator<ActionsCoordinator.Result> {
                 case .receive:
                     guard let pubkey = try? PublicKey(string: walletsRepository.nativeWallet?.pubkey) else { return }
                     let coordinator = ReceiveCoordinator(navigationController: navigationController, pubKey: pubkey)
-                    coordinate(to: coordinator).sink { _ in }.store(in: &subscriptions)
+                    coordinate(to: coordinator)
+                        .sink { _ in }
+                        .store(in: &subscriptions)
                     analyticsManager.log(event: .actionButtonReceive)
                     analyticsManager.log(event: .mainScreenReceiveOpen)
                     analyticsManager.log(event: .receiveViewed(fromPage: "Main_Screen"))
@@ -88,7 +94,7 @@ final class ActionsCoordinator: Coordinator<ActionsCoordinator.Result> {
             })
             .store(in: &subscriptions)
 
-        return subject.eraseToAnyPublisher()
+        return subject.prefix(1).eraseToAnyPublisher()
     }
 }
 
