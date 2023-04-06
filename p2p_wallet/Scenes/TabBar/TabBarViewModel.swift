@@ -32,7 +32,6 @@ final class TabBarViewModel {
     // Input
     let viewDidLoad = PassthroughSubject<Void, Never>()
     
-    private let authenticatedSubject = PassthroughSubject<Bool, Never>()
     private let becomeActiveSubject = PassthroughSubject<Void, Never>()
     private var cancellables = Set<AnyCancellable>()
 
@@ -68,9 +67,6 @@ final class TabBarViewModel {
     }
 
     func authenticate(presentationStyle: AuthenticationPresentationStyle?) {
-        DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) {
-            self.authenticatedSubject.send(presentationStyle == nil)
-        }
         authenticationHandler.authenticate(presentationStyle: presentationStyle)
     }
     
@@ -140,12 +136,11 @@ extension TabBarViewModel {
     
     var moveToSendViaLinkClaim: AnyPublisher<URL, Never> {
         Publishers.CombineLatest(
-            authenticatedSubject
-                .eraseToAnyPublisher()
-                .filter { $0 }
-                .map { _ in () },
+            authenticationStatusPublisher,
             becomeActiveSubject
         )
+        .debounce(for: .milliseconds(900), scheduler: RunLoop.main)
+        .filter { $0.0 == nil }
         .compactMap { _ in GlobalAppState.shared.sendViaLinkUrl }
         .handleEvents(receiveOutput: { _ in
             GlobalAppState.shared.sendViaLinkUrl = nil

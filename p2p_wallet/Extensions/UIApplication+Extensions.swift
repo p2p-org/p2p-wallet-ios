@@ -61,7 +61,9 @@ extension UIApplication {
             return
         }
         if topmostVC.presentationController is DimmPresentationController ||
-            topmostVC.navigationController?.presentationController is DimmPresentationController {
+            topmostVC.navigationController?.presentationController is DimmPresentationController ||
+            topmostVC.presentationController is ModalPresentationController
+        {
             topmostVC.dismiss(animated: true, completion: completion)
         } else {
             completion?()
