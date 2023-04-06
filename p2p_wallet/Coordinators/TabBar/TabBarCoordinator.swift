@@ -92,7 +92,7 @@ final class TabBarCoordinator: Coordinator<Void> {
                 
                 UIApplication.dismissCustomPresentedViewController() {
                     let claimCoordinator = ReceiveFundsViaLinkCoordinator(
-                        presentingViewController: self.tabBarController,
+                        presentingViewController: UIApplication.topmostViewController() ?? self.tabBarController,
                         url: url
                     )
                     self.coordinate(to: claimCoordinator)
