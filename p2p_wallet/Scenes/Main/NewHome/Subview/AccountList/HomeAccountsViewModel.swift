@@ -46,7 +46,7 @@ final class HomeAccountsViewModel: BaseViewModel, ObservableObject {
             .filter { account in
                 if available(.ethAddressEnabled) {
                     if account.isClaiming || account.onClaim != nil {
-                        return true
+                        return Self.shouldInVisiableSection(ethereumAcount: account)
                     }
                 }
                 return false
@@ -60,12 +60,10 @@ final class HomeAccountsViewModel: BaseViewModel, ObservableObject {
     var hiddenAccounts: [any RendableAccount] {
         ethereumAccountsState.value
             .filter { account in
-                if available(.ethAddressEnabled) {
-                    if account.isClaiming || account.onClaim != nil {
-                        return false
-                    }
+                if available(.ethAddressEnabled), (account.isClaiming || account.onClaim != nil) {
+                    return false
                 }
-                return true
+                return Self.shouldInIgnoreSection(ethereumAcount: account)
             }
             + solanaAccountsState.value.filter { rendableAccount in
                 Self.shouldInIgnoreSection(rendableAccount: rendableAccount, hideZeroBalance: hideZeroBalance)
