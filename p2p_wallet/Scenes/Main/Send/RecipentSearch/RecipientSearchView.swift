@@ -376,7 +376,8 @@ struct RecipientSearchView: View {
             if
                 recipients.count == 1,
                 let recipient: Recipient = recipients.first,
-                !recipient.attributes.contains(.funds)
+                !recipient.attributes.contains(.funds),
+                recipient.category != .ethereumAddress
             {
                 VStack {
                     Spacer()
