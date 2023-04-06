@@ -26,10 +26,7 @@ final class TabBarCoordinator: Coordinator<Void> {
     private let tabBarController: TabBarController
     private let closeSubject = PassthroughSubject<Void, Never>()
     
-    private var emptySendCoordinator: SendEmptyCoordinator?
-    private var sendCoordinator: SendCoordinator?
     private var sendStatusCoordinator: SendTransactionStatusCoordinator?
-    private var sellCoordinator: SellCoordinator?
     private var jupiterSwapTabCoordinator: JupiterSwapCoordinator?
 
     // MARK: - Initializer
@@ -206,7 +203,7 @@ final class TabBarCoordinator: Coordinator<Void> {
                 analyticsManager.log(event: .actionButtonClick(isSellEnabled: sellDataService.isAvailable))
             })
             // coordinate to ActionsCoordinator
-            .flatMap { [unowned self] in
+            .flatMap { [unowned self, unowned tabBarController] in
                 coordinate(to: ActionsCoordinator(viewController: tabBarController))
             }
             .sink(receiveValue: { [weak self] result in
@@ -268,43 +265,45 @@ final class TabBarCoordinator: Coordinator<Void> {
             if withTokens {
                 analyticsManager.log(event: .sendStartScreenOpen(lastScreen: "Tap_Main"))
                 analyticsManager.log(event: .sendViewed(lastScreen: "main_screen"))
-                sendCoordinator = SendCoordinator(rootViewController: navigationController, preChosenWallet: nil, hideTabBar: true, allowSwitchingMainAmountType: true)
-                sendCoordinator?.start()
-                    .sink { [weak self, weak navigationController] result in
+                let sendCoordinator = SendCoordinator(
+                    rootViewController: navigationController,
+                    preChosenWallet: nil,
+                    hideTabBar: true,
+                    allowSwitchingMainAmountType: true
+                )
+                coordinate(to: sendCoordinator)
+                    .sink(receiveValue: { [weak self] result in
                         switch result {
                         case let .sent(model):
-                            navigationController?.popToRootViewController(animated: true)
+                            navigationController.popToRootViewController(animated: true)
                             self?.routeToSendTransactionStatus(model: model)
                         case .sentViaLink:
-                            navigationController?.popToRootViewController(animated: true)
-//                            self?.routeToSendTransactionStatus(model: model)
+                            navigationController.popToRootViewController(animated: true)
                         case .cancelled:
                             break
                         }
-                    }
+                    })
                     .store(in: &subscriptions)
             } else {
-                emptySendCoordinator = SendEmptyCoordinator(navigationController: navigationController)
-                emptySendCoordinator?.start()
-                    .sink(receiveValue: { [weak self] _ in
-                        self?.emptySendCoordinator = nil
-                    })
+                let emptySendCoordinator = SendEmptyCoordinator(navigationController: navigationController)
+                coordinate(to: emptySendCoordinator)
+                    .sink(receiveValue: {})
                     .store(in: &subscriptions)
             }
         case .cashOut:
-            if available(.sellScenarioEnabled) {
-                sellCoordinator = SellCoordinator(navigationController: navigationController)
-                sellCoordinator?.start()
-                    .sink { [weak self] result in
-                        switch result {
-                        case .completed, .interupted:
-                            self?.tabBarController.changeItem(to: .history)
-                        case .none:
-                            break
-                        }
+            guard available(.sellScenarioEnabled) else { return }
+            
+            let sellCoordinator = SellCoordinator(navigationController: navigationController)
+            coordinate(to: sellCoordinator)
+                .sink(receiveValue: { [weak self] result in
+                    switch result {
+                    case .completed, .interupted:
+                        self?.tabBarController.changeItem(to: .history)
+                    case .none:
+                        break
                     }
-                    .store(in: &subscriptions)
-            }
+                })
+                .store(in: &subscriptions)
         }
     }
 
