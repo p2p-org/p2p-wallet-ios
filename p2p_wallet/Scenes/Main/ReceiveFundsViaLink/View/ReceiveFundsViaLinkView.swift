@@ -40,8 +40,11 @@ struct ReceiveFundsViaLinkView: View {
         case let .confirmed(cryptoAmount):
             youReceivedToken(cryptoAmount: cryptoAmount)
                 .sheetHeader(title: nil, withSeparator: false)
-        case .failure:
+        case let .failure(title, subtitle, image):
             SendViaLinkClaimErrorView(
+                title: title,
+                subtitle: subtitle,
+                image: image,
                 isLoading: $viewModel.isReloading,
                 reloadClicked: {
                     viewModel.reloadClicked()

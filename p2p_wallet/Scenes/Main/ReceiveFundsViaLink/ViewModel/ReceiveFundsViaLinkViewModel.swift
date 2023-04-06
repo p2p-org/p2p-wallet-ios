@@ -91,11 +91,11 @@ final class ReceiveFundsViaLinkViewModel: BaseViewModel, ObservableObject {
             let pubkeyStr = walletsRepository.nativeWallet?.pubkey,
             let pubkey = try? PublicKey(string: pubkeyStr)
         else { return }
-
+        
         let cryptoAmount = claimableToken.lamports
             .convertToBalance(decimals: claimableToken.decimals)
-
-analyticsManager.log(event: .claimClickConfirmed(
+        
+        analyticsManager.log(event: .claimClickConfirmed(
             pubkey: pubkeyStr,
             tokenName: token.symbol,
             tokenValue: cryptoAmount,
@@ -170,9 +170,7 @@ analyticsManager.log(event: .claimClickConfirmed(
     func reloadClicked() {
         guard !isReloading else { return }
         isReloading = true
-        DispatchQueue.main.asyncAfter(deadline: .now() + 2) {
-            self.loadTokenInfo()
-        }
+        loadTokenInfo()
     }
     
     func gotItClicked() {
@@ -212,7 +210,7 @@ analyticsManager.log(event: .claimClickConfirmed(
             } catch {
                 await MainActor.run {
                     guard let error = error as? SendViaLinkDataServiceError else {
-                        showFailedToGetDataError()
+                        showError(error)
                         return
                     }
                     switch error {
@@ -225,7 +223,7 @@ analyticsManager.log(event: .claimClickConfirmed(
                             image: .womanNotFound
                         )
                     case .lastTransactionNotFound:
-                        showFailedToGetDataError()
+                        showError(error)
                     }
                 }
             }
@@ -236,10 +234,27 @@ analyticsManager.log(event: .claimClickConfirmed(
         linkErrorSubject.send(LinkErrorView.Model(title: title, subtitle: subtitle, image: image))
     }
     
-    private func showFailedToGetDataError() {
-        state = .failure
-        sizeChangedSubject.send(594)
+    private func showError(_ error: Error) {
+        if (error as NSError).isNetworkConnectionError {
+            showConnectionError()
+        } else {
+            state = .failure(
+                title: L10n.failedToGetData,
+                subtitle: L10n.refreshThePageOrCheckBackLater,
+                image: .sendViaLinkClaimError
+            )
+            sizeChangedSubject.send(594)
+        }
         isReloading = false
+    }
+    
+    private func showConnectionError() {
+        state = .failure(
+            title: L10n.youHaveNoInternetConnection,
+            subtitle: nil,
+            image: .connectionErrorCat
+        )
+        sizeChangedSubject.send(534)
     }
     
     private func showLinkWasClaimedError() {
@@ -333,7 +348,7 @@ extension ReceiveFundsViaLinkViewModel {
         case pending
         case loaded(model: Model)
         case confirmed(cryptoAmount: String)
-        case failure
+        case failure(title: String, subtitle: String?, image: UIImage)
     }
     
     struct Model {
