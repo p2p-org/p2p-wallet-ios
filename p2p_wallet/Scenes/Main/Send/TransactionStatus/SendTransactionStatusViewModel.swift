@@ -53,7 +53,7 @@ final class SendTransactionStatusViewModel: BaseViewModel, ObservableObject {
         ]
 
         super.init()
-        let transactionIndex = transactionHandler.sendTransaction(transaction)
+        let transactionIndex = transactionHandler.sendTransaction(transaction, errorHandler: nil)
         transactionHandler.observeTransaction(transactionIndex: transactionIndex)
             .receive(on: DispatchQueue.main)
             .sink(receiveValue: { [weak self] pendingTransaction in

@@ -15,6 +15,7 @@ class WormholeClaimViewModel: BaseViewModel, ObservableObject {
     @Published var feeAmountInFiat: String = ""
 
     @Injected private var reachability: Reachability
+    @Injected private var notificationService: NotificationService
 
     init(model: WormholeClaimMockModel) {
         self.model = model
@@ -26,8 +27,7 @@ class WormholeClaimViewModel: BaseViewModel, ObservableObject {
     init(
         account: EthereumAccount,
         ethereumAccountsService: EthereumAccountsService = Resolver.resolve(),
-        wormholeAPI: WormholeService = Resolver.resolve(),
-        notificationService: NotificationService = Resolver.resolve()
+        wormholeAPI: WormholeService = Resolver.resolve()
     ) {
         self.model = WormholeClaimEthereumModel(account: account, bundle: .init(value: nil))
         self.bundle = .init(initialItem: nil) {
@@ -75,19 +75,19 @@ class WormholeClaimViewModel: BaseViewModel, ObservableObject {
         bundle.$state
             .map(\.error)
             .compactMap { $0 }
-            .sink { error in
+            .sink { [weak self] error in
                 if let error = error as? JSONRPCError<String>, error.code == -32007 {
-                    notificationService.showInAppNotification(.error(L10n.theFeesAreBiggerThanTheTransactionAmount))
+                    self?.notificationService.showInAppNotification(.error(L10n.theFeesAreBiggerThanTheTransactionAmount))
                 }
                 DispatchQueue.main.async {
-                    self.feeAmountInFiat = L10n.valueIsUnavailable
+                    self?.feeAmountInFiat = L10n.valueIsUnavailable
                 }
             }
             .store(in: &subscriptions)
 
         try? reachability.startNotifier()
-        reachability.status.sink { [unowned self] _ in
-            _ = self.reachability.check()
+        reachability.status.sink { [weak self] _ in
+            _ = self?.reachability.check()
         }.store(in: &subscriptions)
     }
 
@@ -110,7 +110,13 @@ class WormholeClaimViewModel: BaseViewModel, ObservableObject {
                 )
 
                 let transactionHandler: TransactionHandler = Resolver.resolve()
-                let index = transactionHandler.sendTransaction(rawTransaction)
+                let index = transactionHandler.sendTransaction(rawTransaction) { error in
+                    if let error = error as? JSONRPCError<String> {
+                        DispatchQueue.main.async {
+                            self.notificationService.showInAppNotification(.error(L10n.ThereWasAProblemWithClaiming.pleaseTryAgain))
+                        }
+                    }
+                }
                 let pendingTransaction = transactionHandler.getProcessingTransaction(index: index)
 
                 action.send(.claiming(pendingTransaction))

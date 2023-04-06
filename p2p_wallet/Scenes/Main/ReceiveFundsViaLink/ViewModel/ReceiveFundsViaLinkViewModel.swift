@@ -87,7 +87,7 @@ final class ReceiveFundsViaLinkViewModel: BaseViewModel, ObservableObject {
 
         // Send it to transactionHandler
         let transactionHandler = Resolver.resolve(TransactionHandlerType.self)
-        let transactionIndex = transactionHandler.sendTransaction(transaction)
+        let transactionIndex = transactionHandler.sendTransaction(transaction, errorHandler: nil)
 
         // Observe transaction and update status
         transactionHandler.observeTransaction(transactionIndex: transactionIndex)

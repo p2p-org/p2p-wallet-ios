@@ -44,8 +44,9 @@ class NewUsernameViewController: p2p_wallet.BaseViewController {
                             case let .failure(error):
                                 switch error {
                                 case .noAccess:
-                                    guard let self = self else { return }
-                                    PhotoLibraryAlertPresenter().present(on: self)
+                                    if let self = self {
+                                        PhotoLibraryAlertPresenter().present(on: self)
+                                    }
                                 case .restrictedRightNow:
                                     break
                                 case let .unknown(error):

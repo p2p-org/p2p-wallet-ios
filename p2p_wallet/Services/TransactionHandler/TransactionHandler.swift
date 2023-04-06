@@ -16,7 +16,11 @@ import TransactionParser
 
 protocol TransactionHandlerType {
     typealias TransactionIndex = Int
-    func sendTransaction(_ processingTransaction: RawTransactionType) -> TransactionIndex
+    /**
+     * @param processingTransaction - raw transaction
+     * @param errorHandler - custom handler that is used to recatch error
+     */
+    func sendTransaction(_ processingTransaction: RawTransactionType, errorHandler: ((Error) -> Void)?) -> TransactionIndex
     func observeTransaction(transactionIndex: TransactionIndex) -> AnyPublisher<PendingTransaction?, Never>
     func areSomeTransactionsInProgress() -> Bool
 
@@ -52,7 +56,8 @@ class TransactionHandler: TransactionHandlerType {
     }
 
     func sendTransaction(
-        _ processingTransaction: RawTransactionType
+        _ processingTransaction: RawTransactionType,
+        errorHandler: ((Error) -> Void)? = nil
     ) -> TransactionIndex {
         // get index to return
         let txIndex = transactionsSubject.value.count
@@ -73,8 +78,32 @@ class TransactionHandler: TransactionHandlerType {
         onNewTransactionSubject.send((trx, txIndex))
 
         // process
-        sendAndObserve(index: txIndex, processingTransaction: processingTransaction)
+        Task {
+            do {
+                try await sendAndObserve(index: txIndex, processingTransaction: processingTransaction)
+            } catch {
+                if let errorHandler {
+                    errorHandler(error)
+                } else {
+                    // Update status
+                    if (error as NSError).isNetworkConnectionError {
+                        self.notificationsService.showConnectionErrorNotification()
+                    } else {
+                        self.notificationsService.showDefaultErrorNotification()
+                    }
+                }
 
+                // Report error
+                errorObserver.handleError(error)
+
+                // mark transaction as failured
+                _ = await updateTransactionAtIndex(txIndex) { currentValue in
+                    var info = currentValue
+                    info.status = .error(error)
+                    return info
+                }
+            }
+        }
         return txIndex
     }
 
