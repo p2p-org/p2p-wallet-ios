@@ -5,6 +5,7 @@
 //  Created by Ivan on 23.03.2023.
 //
 
+import AnalyticsManager
 import Combine
 import Foundation
 import SolanaSwift
@@ -15,6 +16,7 @@ import FeeRelayerSwift
 final class ReceiveFundsViaLinkViewModel: BaseViewModel, ObservableObject {
     
     // Dependencies
+    @Injected private var analyticsManager: AnalyticsManager
     @Injected private var sendViaLinkDataService: SendViaLinkDataService
     @Injected private var tokensRepository: SolanaTokensRepository
     @Injected private var walletsRepository: WalletsRepository
@@ -22,7 +24,7 @@ final class ReceiveFundsViaLinkViewModel: BaseViewModel, ObservableObject {
     // Subjects
     private let closeSubject = PassthroughSubject<Void, Never>()
     private let sizeChangedSubject = PassthroughSubject<CGFloat, Never>()
-    private let linkWasClaimedSubject = PassthroughSubject<Void, Never>()
+    private let linkErrorSubject = PassthroughSubject<LinkErrorView.Model, Never>()
     
     // Properties
     private let url: URL
@@ -33,7 +35,7 @@ final class ReceiveFundsViaLinkViewModel: BaseViewModel, ObservableObject {
     
     var close: AnyPublisher<Void, Never> { closeSubject.eraseToAnyPublisher() }
     var sizeChanged: AnyPublisher<CGFloat, Never> { sizeChangedSubject.eraseToAnyPublisher() }
-    var linkWasClaimed: AnyPublisher<Void, Never> { linkWasClaimedSubject.eraseToAnyPublisher() }
+    var linkError: AnyPublisher<LinkErrorView.Model, Never> { linkErrorSubject.eraseToAnyPublisher() }
     
     // MARK: - To View
     
@@ -41,6 +43,18 @@ final class ReceiveFundsViaLinkViewModel: BaseViewModel, ObservableObject {
     @Published var processingState: TransactionProcessView.Status = .loading(message: "")
     @Published var processingVisible = false
     @Published var isReloading = false
+    
+    // Debugging
+    #if !RELEASE
+    @Published var isFakeSendingTransaction: Bool = false {
+        didSet {
+            if isFakeSendingTransaction {
+                fakeTransactionErrorType = .noError
+            }
+        }
+    }
+    @Published var fakeTransactionErrorType: ClaimSentViaLinkTransaction.FakeTransactionErrorType = .noError
+    #endif
     
     // MARK: - Init
     
@@ -52,7 +66,12 @@ final class ReceiveFundsViaLinkViewModel: BaseViewModel, ObservableObject {
     
     // MARK: - From View
     
+    func onAppear() {
+        analyticsManager.log(event: .claimStartScreenOpen)
+    }
+    
     func closeClicked() {
+        analyticsManager.log(event: .claimClickClose)
         closeSubject.send()
     }
     
@@ -60,11 +79,28 @@ final class ReceiveFundsViaLinkViewModel: BaseViewModel, ObservableObject {
         // Get needed params
         guard
             let claimableToken = claimableToken,
-            let token = token
+            let token = token,
+            let pubkeyStr = walletsRepository.nativeWallet?.pubkey,
+            let pubkey = try? PublicKey(string: pubkeyStr)
         else { return }
-
+        
         let cryptoAmount = claimableToken.lamports
             .convertToBalance(decimals: claimableToken.decimals)
+        
+        analyticsManager.log(event: .claimClickConfirmed(
+            pubkey: pubkeyStr,
+            tokenName: token.symbol,
+            tokenValue: cryptoAmount,
+            fromAddress: claimableToken.account
+        ))
+        
+        #if !RELEASE
+        let isFakeSendingTransaction = isFakeSendingTransaction
+        let fakeTransactionErrorType = fakeTransactionErrorType
+        #else
+        let isFakeSendingTransaction = false
+        let fakeTransactionErrorType = ClaimSentViaLinkTransaction.FakeTransactionErrorType.noError
+        #endif
 
         // Notify loading
         sizeChangedSubject.send(522)
@@ -76,7 +112,9 @@ final class ReceiveFundsViaLinkViewModel: BaseViewModel, ObservableObject {
             claimableTokenInfo: claimableToken,
             token: token,
             destinationWallet: Wallet(pubkey: claimableToken.account, token: token),
-            tokenAmount: cryptoAmount
+            tokenAmount: cryptoAmount,
+            isFakeTransaction: isFakeSendingTransaction,
+            fakeTransactionErrorType: fakeTransactionErrorType
         )
 
         // Send it to transactionHandler
@@ -92,6 +130,7 @@ final class ReceiveFundsViaLinkViewModel: BaseViewModel, ObservableObject {
             .sink { [weak self] tx in
                 guard let self else { return }
                 if let error = tx.status.error {
+                    self.analyticsManager.log(event: .claimErrorDefaultReject)
                     if (error as NSError).isNetworkConnectionError {
                         self.processingState = .error(message: NSAttributedString(
                             string: L10n.TheTransactionWasRejectedAfterFailedInternetConnection.openYourLinkAgain
@@ -116,18 +155,12 @@ final class ReceiveFundsViaLinkViewModel: BaseViewModel, ObservableObject {
     func reloadClicked() {
         guard !isReloading else { return }
         isReloading = true
-        DispatchQueue.main.asyncAfter(deadline: .now() + 2) {
-            self.loadTokenInfo()
-        }
+        loadTokenInfo()
     }
     
-    func statusErrorClicked() {
-        guard let claimableToken = claimableToken else { return }
-        let cryptoAmount = claimableToken.lamports.convertToBalance(decimals: claimableToken.decimals)
-        
-        if cryptoAmount == 0 {
-            linkWasClaimedSubject.send()
-        }
+    func gotItClicked() {
+        analyticsManager.log(event: .claimClickEnd)
+        closeSubject.send()
     }
     
     // MARK: - Private
@@ -137,17 +170,23 @@ final class ReceiveFundsViaLinkViewModel: BaseViewModel, ObservableObject {
             do {
                 let claimableToken = try await self.sendViaLinkDataService.getClaimableTokenInfo(url: self.url)
                 let token = try await self.tokensRepository.getTokensList(useCache: true)
-                    .first { $0.address == claimableToken.mintAddress }
+                    .first {
+                        // Native SOL token
+                        if claimableToken.mintAddress == PublicKey.wrappedSOLMint.base58EncodedString {
+                            return $0.isNativeSOL
+                        }
+                        
+                        // Other tokens
+                        return $0.address == claimableToken.mintAddress
+                    }
 
                 guard let token = token else { return }
 
                 let cryptoAmount = claimableToken.lamports
                     .convertToBalance(decimals: claimableToken.decimals)
-
+                
                 if cryptoAmount == 0 {
-                    await MainActor.run { [weak self] in
-                        self?.linkWasClaimedSubject.send()
-                    }
+                    showLinkWasClaimedError()
                     return
                 }
 
@@ -156,19 +195,67 @@ final class ReceiveFundsViaLinkViewModel: BaseViewModel, ObservableObject {
                 
                 self.claimableToken = claimableToken
                 self.token = token
-                await MainActor.run { [weak self] in
-                    self?.state = .loaded(model: model)
-                    self?.isReloading = false
-                    self?.sizeChangedSubject.send(422)
+                await MainActor.run {
+                    state = .loaded(model: model)
+                    isReloading = false
+                    sizeChangedSubject.send(422)
                 }
             } catch {
-                await MainActor.run { [weak self] in
-                    self?.state = .failure
-                    self?.sizeChangedSubject.send(594)
-                    self?.isReloading = false
+                await MainActor.run {
+                    guard let error = error as? SendViaLinkDataServiceError else {
+                        showError(error)
+                        return
+                    }
+                    switch error {
+                    case .claimableAssetNotFound:
+                        showLinkWasClaimedError()
+                    case .invalidSeed, .invalidURL:
+                        showFullLinkError(
+                            title: L10n.thisLinkIsBroken,
+                            subtitle: L10n.youCanTReceiveFundsWithIt,
+                            image: .womanNotFound
+                        )
+                    case .lastTransactionNotFound:
+                        showError(error)
+                    }
                 }
             }
         }
+    }
+    
+    private func showFullLinkError(title: String, subtitle: String, image: UIImage) {
+        linkErrorSubject.send(LinkErrorView.Model(title: title, subtitle: subtitle, image: image))
+    }
+    
+    private func showError(_ error: Error) {
+        if (error as NSError).isNetworkConnectionError {
+            showConnectionError()
+        } else {
+            state = .failure(
+                title: L10n.failedToGetData,
+                subtitle: L10n.refreshThePageOrCheckBackLater,
+                image: .sendViaLinkClaimError
+            )
+            sizeChangedSubject.send(594)
+        }
+        isReloading = false
+    }
+    
+    private func showConnectionError() {
+        state = .failure(
+            title: L10n.youHaveNoInternetConnection,
+            subtitle: nil,
+            image: .connectionErrorCat
+        )
+        sizeChangedSubject.send(534)
+    }
+    
+    private func showLinkWasClaimedError() {
+        showFullLinkError(
+            title: L10n.thisOneTimeLinkIsAlreadyClaimed,
+            subtitle: L10n.youCanTReceiveFundsWithIt,
+            image: .sendViaLinkClaimed
+        )
     }
 }
 
@@ -179,7 +266,7 @@ extension ReceiveFundsViaLinkViewModel {
         case pending
         case loaded(model: Model)
         case confirmed(cryptoAmount: String)
-        case failure
+        case failure(title: String, subtitle: String?, image: UIImage)
     }
     
     struct Model {

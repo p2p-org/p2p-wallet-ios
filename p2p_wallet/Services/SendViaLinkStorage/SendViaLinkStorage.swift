@@ -1,11 +1,11 @@
 import Foundation
 import Resolver
 import SolanaSwift
-import SwiftyUserDefaults
 import Combine
+import KeychainSwift
 
 /// Storage that handle SendViaLinkTransactions
-protocol SendViaLinkStorage {
+protocol SendViaLinkStorage: Actor {
     
     /// Save transaction to storage
     @discardableResult
@@ -19,40 +19,38 @@ protocol SendViaLinkStorage {
     func getTransactions() -> [SendViaLinkTransactionInfo]
     
     /// Transaction publisher to handle transaction
-    var transactionsPublisher: AnyPublisher<[SendViaLinkTransactionInfo], Never> { get }
+    nonisolated var transactionsPublisher: AnyPublisher<[SendViaLinkTransactionInfo], Never> { get }
 }
 
-final class SendViaLinkStorageImpl: SendViaLinkStorage {
+actor SendViaLinkStorageImpl: SendViaLinkStorage {
     // MARK: - Dependencies
     
     @Injected private var userWalletManager: UserWalletManager
     
+    private var localKeychain = KeychainSwift()
+    
     // MARK: - Properties
     
-    private var subscription: DefaultsDisposable?
-    private let transactionsSubject = CurrentValueSubject<[SendViaLinkTransactionInfo], Never>([])
+    nonisolated private let transactionsSubject = CurrentValueSubject<[SendViaLinkTransactionInfo], Never>([])
     
+    private let sendViaLinkTransactionsKeychainKey = "SendViaLinkStorageImpl.sendViaLinkTransactionsKeychainKey"
+
     // MARK: - Computed properties
     
     var userPubkey: String? {
         userWalletManager.wallet?.account.publicKey.base58EncodedString
     }
     
-    var transactionsPublisher: AnyPublisher<[SendViaLinkTransactionInfo], Never> {
+    nonisolated var transactionsPublisher: AnyPublisher<[SendViaLinkTransactionInfo], Never> {
         transactionsSubject.eraseToAnyPublisher()
     }
     
     // MARK: - Initializer
 
     init() {
-        // retrieve transaction
-        transactionsSubject.send(getTransactions())
-
-        // observe changes
-        subscription = Defaults.observe(\.sendViaLinkTransactions) { [weak self] transactions in
-            guard let newValue = self?.getTransactions()
-            else { return }
-            self?.transactionsSubject.send(newValue)
+        Task {
+            // retrieve transaction
+            transactionsSubject.send(await getTransactions())
         }
     }
     
@@ -71,6 +69,9 @@ final class SendViaLinkStorageImpl: SendViaLinkStorage {
         // append seed
         transactions.insert(transaction, at: 0)
         
+        // notify
+        transactionsSubject.send(transactions)
+        
         // save
         return save(transactions: transactions)
     }
@@ -82,13 +83,16 @@ final class SendViaLinkStorageImpl: SendViaLinkStorage {
         // remove seed
         transactions.removeAll(where: { $0.seed == seed })
         
+        // notify
+        transactionsSubject.send(transactions)
+        
         // save
         return save(transactions: transactions)
     }
     
     func getTransactions() -> [SendViaLinkTransactionInfo] {
         guard let userPubkey,
-              let data = Defaults.sendViaLinkTransactions,
+              let data = localKeychain.getData(sendViaLinkTransactionsKeychainKey),
               let dict = try? JSONDecoder().decode([String: [SendViaLinkTransactionInfo]].self, from: data)
         else {
             return []
@@ -96,6 +100,8 @@ final class SendViaLinkStorageImpl: SendViaLinkStorage {
         return dict[userPubkey] ?? []
     }
     
+    // MARK: - Keychain
+
     private func save(transactions: [SendViaLinkTransactionInfo]) -> Bool {
         // assert user pubkey
         guard let userPubkey else {
@@ -104,7 +110,7 @@ final class SendViaLinkStorageImpl: SendViaLinkStorage {
         
         // assure that dictionary is alway non-optional
         var newValue = [String: [SendViaLinkTransactionInfo]]()
-        if let data = Defaults.sendViaLinkTransactions,
+        if let data = localKeychain.getData(sendViaLinkTransactionsKeychainKey),
            let dict = try? JSONDecoder().decode([String: [SendViaLinkTransactionInfo]].self, from: data)
         {
             newValue = dict
@@ -118,8 +124,7 @@ final class SendViaLinkStorageImpl: SendViaLinkStorage {
             return false
         }
         
-        // save to UserDefaults
-        Defaults.sendViaLinkTransactions = data
-        return true
+        // save to Keychain
+        return localKeychain.set(data, forKey: sendViaLinkTransactionsKeychainKey)
     }
 }
