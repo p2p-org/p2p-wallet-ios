@@ -15,7 +15,6 @@ final class SendLinkCreatedViewModel {
     // Dependencies
     @Injected private var notificationService: NotificationService
     @Injected private var analyticsManager: AnalyticsManager
-    @Injected private var walletsRepository: WalletsRepository
     
     // Subjects
     private let closeSubject = PassthroughSubject<Void, Never>()
@@ -28,15 +27,18 @@ final class SendLinkCreatedViewModel {
     
     let link: String
     let formatedAmount: String
+    private let pubKey: String
     
     // MARK: - Init
     
     init(
         link: String,
-        formatedAmount: String
+        formatedAmount: String,
+        pubKey: String
     ) {
         self.link = link
         self.formatedAmount = formatedAmount
+        self.pubKey = pubKey
     }
     
     // MARK: - View Output
@@ -68,16 +70,15 @@ final class SendLinkCreatedViewModel {
 private extension SendLinkCreatedViewModel {
     func logCreatingLinkEndScreenOpen() {
         guard
-            let tokenName = formatedAmount.split(separator: " ").first,
-            let tokenValue = formatedAmount.split(separator: " ").last,
-            let tokenValue = Double(tokenValue),
-            let pubkey = walletsRepository.nativeWallet?.pubkey
+            let tokenName = formatedAmount.split(separator: " ").last,
+            let tokenValue = formatedAmount.split(separator: " ").first,
+            let tokenValue = Double(tokenValue)
         else { return }
         
         analyticsManager.log(event: .sendCreatingLinkEndScreenOpen(
             tokenName: String(tokenName),
             tokenValue: tokenValue,
-            pubkey: pubkey
+            pubkey: pubKey
         ))
     }
     
