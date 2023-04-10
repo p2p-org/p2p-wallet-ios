@@ -185,7 +185,15 @@ final class ReceiveFundsViaLinkViewModel: BaseViewModel, ObservableObject {
             do {
                 let claimableToken = try await self.sendViaLinkDataService.getClaimableTokenInfo(url: self.url)
                 let token = try await self.tokensRepository.getTokensList(useCache: true)
-                    .first { $0.address == claimableToken.mintAddress }
+                    .first {
+                        // Native SOL token
+                        if claimableToken.mintAddress == PublicKey.wrappedSOLMint.base58EncodedString {
+                            return $0.isNativeSOL
+                        }
+                        
+                        // Other tokens
+                        return $0.address == claimableToken.mintAddress
+                    }
 
                 guard let token = token else { return }
 
