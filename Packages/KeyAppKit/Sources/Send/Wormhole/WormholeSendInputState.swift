@@ -66,7 +66,7 @@ public enum WormholeSendInputState: Equatable {
             switch action {
             case .calculate:
                 // Check input amount and account amount
-                if input.solanaAccount.cryptoAmount.value <= 0 {
+                if input.solanaAccount.cryptoAmount.value == 0 {
                     return .error(input: input, output: nil, error: .insufficientInputAmount)
                 }
                 if input.amount > input.solanaAccount.cryptoAmount {
