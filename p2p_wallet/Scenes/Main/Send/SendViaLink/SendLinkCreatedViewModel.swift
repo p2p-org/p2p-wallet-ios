@@ -5,6 +5,7 @@
 //  Created by Ivan on 27.03.2023.
 //
 
+import AnalyticsManager
 import Foundation
 import Resolver
 import Combine
@@ -13,6 +14,8 @@ final class SendLinkCreatedViewModel {
     
     // Dependencies
     @Injected private var notificationService: NotificationService
+    @Injected private var analyticsManager: AnalyticsManager
+    @Injected private var walletsRepository: WalletsRepository
     
     // Subjects
     private let closeSubject = PassthroughSubject<Void, Never>()
@@ -39,6 +42,8 @@ final class SendLinkCreatedViewModel {
     // MARK: - View Output
     
     func copyClicked() {
+        logCopyLink()
+        
         let pasteboard = UIPasteboard.general
         pasteboard.string = link
         notificationService.showInAppNotification(.done(L10n.yourOneTimeLinkIsCopied))
@@ -49,6 +54,38 @@ final class SendLinkCreatedViewModel {
     }
     
     func shareClicked() {
+        logShareLink()
         shareSubject.send()
+    }
+    
+    func onAppear() {
+        logCreatingLinkEndScreenOpen()
+    }
+}
+
+// MARK: - Analytics
+
+private extension SendLinkCreatedViewModel {
+    func logCreatingLinkEndScreenOpen() {
+        guard
+            let tokenName = formatedAmount.split(separator: " ").first,
+            let tokenValue = formatedAmount.split(separator: " ").last,
+            let tokenValue = Double(tokenValue),
+            let pubkey = walletsRepository.nativeWallet?.pubkey
+        else { return }
+        
+        analyticsManager.log(event: .sendCreatingLinkEndScreenOpen(
+            tokenName: String(tokenName),
+            tokenValue: tokenValue,
+            pubkey: pubkey
+        ))
+    }
+    
+    func logShareLink() {
+        analyticsManager.log(event: .sendClickShareLink)
+    }
+    
+    func logCopyLink() {
+        analyticsManager.log(event: .sendClickCopyLink)
     }
 }

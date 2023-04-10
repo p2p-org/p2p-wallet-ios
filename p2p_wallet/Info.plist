@@ -99,7 +99,6 @@
 	<false/>
 	<key>IntercomUniversalLinkDomains</key>
 	<array>
-		<string>t.key.app</string>
 		<string>key.app</string>
 	</array>
 	<key>LSRequiresIPhoneOS</key>
