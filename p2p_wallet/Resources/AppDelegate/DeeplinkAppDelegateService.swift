@@ -15,53 +15,17 @@ final class DeeplinkAppDelegateService: NSObject, AppDelegateService {
         AppsFlyerLib.shared().appInviteOneLinkID = "sHgH"
         return true
     }
-    
-    // MARK: - URIScheme
 
     func application(_ app: UIApplication, open url: URL, options: [UIApplication.OpenURLOptionsKey: Any] = [:]) -> Bool {
-        guard
-            let components = NSURLComponents(url: url, resolvingAgainstBaseURL: true),
-            let host = components.host,
-            let path = components.path
-        else { return false }
-        
-        if
-            Environment.current != .release,
-            host == "onboarding",
-            path == "/seedPhrase",
-            let params = components.queryItems,
-            let seedPhrase: String = params.first(where: { $0.name == "value" })?.value,
-            let pincode: String = params.first(where: { $0.name == "pincode" })?.value
-        {
-            let userWalletManager: UserWalletManager = Resolver.resolve()
-            let appEventHandler: AppEventHandlerType = Resolver.resolve()
-            let pincodeStorageService: PincodeStorageType = Resolver.resolve()
-            let authService: AuthenticationHandlerType = Resolver.resolve()
-            Task {
-                appEventHandler.delegate?.disablePincodeOnFirstAppear()
-                pincodeStorageService.save(pincode)
-                Defaults.isBiometryEnabled = false
-
-                try await userWalletManager.add(seedPhrase: seedPhrase.components(separatedBy: "-"), derivablePath: .default, name: nil, deviceShare: nil, ethAddress: nil)
-
-                try await Task.sleep(nanoseconds: 1_000_000_000)
-                authService.authenticate(presentationStyle: nil)
-            }
-        }
-        
-        else if host == "t" {
-            let seed = String(path.dropFirst())
-            GlobalAppState.shared.sendViaLinkUrl = urlFromSeed(seed)
-            return true
-        }
-
+        // DELEGATE ALL URISCHEME HANDLER TO APPSFLYER IN `didResolveDeepLink`
+        // DON'T HANDLE IT DIRECTLY HERE
         AppsFlyerLib.shared().handleOpen(url, options: options)
         return true
     }
     
-    // MARK: - Universal links
-    
     func application(_ application: UIApplication, continue userActivity: NSUserActivity, restorationHandler: @escaping ([UIUserActivityRestoring]?) -> Void) -> Bool {
+        // DELEGATE ALL UNIVERSAL LINK HANDLER TO APPSFLYER IN `didResolveDeepLink`
+        // DON'T HANDLE IT DIRECTLY HERE
         AppsFlyerLib.shared().continue(userActivity, restorationHandler: nil)
         return true
     }
@@ -91,28 +55,30 @@ extension DeeplinkAppDelegateService: DeepLinkDelegate {
         let deepLinkStr = deepLinkObj.toString()
         NSLog("[AFSDK] DeepLink data is: \(deepLinkStr)")
         
-        // handle link
+        // handle non-appflyer link
         if let urlStringOptional = deepLinkObj.clickEvent["link"] as? Optional<String>,
            let urlString = urlStringOptional,
-           let urlComponents = URLComponents(string: urlString)
+           let urlComponents = URLComponents(string: urlString),
+           let scheme = urlComponents.scheme
         {
-            // Intercom survey
-            if urlComponents.path == "/intercom",
-               let queryItem = urlComponents.queryItems?.first(where: { $0.name == "intercom_survey_id" }),
-               let value = queryItem.value
-            {
-                DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) {
-                    GlobalAppState.shared.surveyID = value
-                }
+            // Universal link
+            switch scheme {
+            case "https":
+                // Universal link
+                handleCustomUniversalLinks(urlComponents: urlComponents)
+            case let scheme where externalURLSchemes().contains(scheme):
+                // URI Scheme
+                handleCustomURIScheme(urlComponents: urlComponents)
+            default:
+                // Unsupported
+                break
             }
             
-            // send via link
-            else if urlComponents.host == "t.key.app" {
-                GlobalAppState.shared.sendViaLinkUrl = urlComponents.url
-            }
+            // return
             return
         }
         
+        // handle appflyer link
         if( deepLinkObj.isDeferred == true) {
             NSLog("[AFSDK] This is a deferred deep link")
         }
@@ -122,6 +88,58 @@ extension DeeplinkAppDelegateService: DeepLinkDelegate {
         
         seed = deepLinkObj.deeplinkValue
         GlobalAppState.shared.sendViaLinkUrl = urlFromSeed(seed)
+    }
+    
+    private func handleCustomUniversalLinks(urlComponents: URLComponents) {
+        // Intercom survey
+        if urlComponents.path == "/intercom",
+           let queryItem = urlComponents.queryItems?.first(where: { $0.name == "intercom_survey_id" }),
+           let value = queryItem.value
+        {
+            DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) {
+                GlobalAppState.shared.surveyID = value
+            }
+        }
+        
+        // send via link
+        else if urlComponents.host == "t.key.app" {
+            GlobalAppState.shared.sendViaLinkUrl = urlComponents.url
+        }
+    }
+    
+    private func handleCustomURIScheme(urlComponents components: URLComponents) {
+        let host = components.host
+        let path = components.path
+        
+        if
+            Environment.current != .release,
+            host == "onboarding",
+            path == "/seedPhrase",
+            let params = components.queryItems,
+            let seedPhrase: String = params.first(where: { $0.name == "value" })?.value,
+            let pincode: String = params.first(where: { $0.name == "pincode" })?.value
+        {
+            let userWalletManager: UserWalletManager = Resolver.resolve()
+            let appEventHandler: AppEventHandlerType = Resolver.resolve()
+            let pincodeStorageService: PincodeStorageType = Resolver.resolve()
+            let authService: AuthenticationHandlerType = Resolver.resolve()
+            Task {
+                appEventHandler.delegate?.disablePincodeOnFirstAppear()
+                pincodeStorageService.save(pincode)
+                Defaults.isBiometryEnabled = false
+                
+                try await userWalletManager.add(seedPhrase: seedPhrase.components(separatedBy: "-"), derivablePath: .default, name: nil, deviceShare: nil, ethAddress: nil)
+                
+                try await Task.sleep(nanoseconds: 1_000_000_000)
+                authService.authenticate(presentationStyle: nil)
+            }
+        }
+        
+        else if host == "t" {
+            let seed = String(path.dropFirst())
+            GlobalAppState.shared.sendViaLinkUrl = urlFromSeed(seed)
+            return
+        }
     }
 }
 
@@ -134,4 +152,14 @@ private func urlFromSeed(_ seed: String?) -> URL? {
     urlComponent.host = "t.key.app"
     urlComponent.path = "/\(seed)"
     return urlComponent.url
+}
+
+private func externalURLSchemes() -> [String] {
+    guard let urlTypes = Bundle.main.infoDictionary?["CFBundleURLTypes"] as? [AnyObject],
+          let urlSchemes = (urlTypes as? [[String: AnyObject]])?
+            .compactMap({$0["CFBundleURLSchemes"] as? [String]})
+            .reduce([], +)
+    else { return [] }
+    print(urlSchemes)
+    return urlSchemes
 }
