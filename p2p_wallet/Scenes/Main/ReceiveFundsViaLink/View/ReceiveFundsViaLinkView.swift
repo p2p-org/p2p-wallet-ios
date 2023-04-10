@@ -16,9 +16,6 @@ struct ReceiveFundsViaLinkView: View {
     
     var body: some View {
         content
-            .onAppear {
-                viewModel.onAppear()
-            }
     }
     
     @ViewBuilder
