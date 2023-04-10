@@ -6,16 +6,6 @@ final class AppsFlyerAnalyticsProvider: NSObject, AnalyticsProvider {
     var providerId: AnalyticsProviderId {
         KeyAppAnalyticsProviderId.appsFlyer.rawValue
     }
-    
-    override init() {
-        #if DEBUG
-            AppsFlyerLib.shared().isDebug = true
-        #endif
-
-        super.init()
-
-        AppsFlyerLib.shared().deepLinkDelegate = self
-    }
 
     func logEvent(_ event: AnalyticsEvent) {
         guard let eventName = event.name else { return }
@@ -38,10 +28,4 @@ final class AppsFlyerAnalyticsProvider: NSObject, AnalyticsProvider {
     }
     
     func logParameter(_ parameter: AnalyticsParameter) {}
-}
-
-// MARK: - DeepLinkDelegate
-
-extension AppsFlyerAnalyticsProvider: DeepLinkDelegate {
-    func didResolveDeepLink(_: DeepLinkResult) {}
 }
