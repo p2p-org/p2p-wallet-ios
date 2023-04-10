@@ -81,7 +81,8 @@ class HistoryViewModel: BaseViewModel, ObservableObject {
         provider: KeyAppHistoryProvider = Resolver.resolve(),
         userWalletManager: UserWalletManager = Resolver.resolve(),
         tokensRepository: TokensRepository = Resolver.resolve(),
-        mint: String
+        mint: String,
+        pendingTransactionService: TransactionHandlerType = Resolver.resolve()
     ) {
         // Init services and repositories
         let repository = HistoryRepository(provider: provider)
@@ -107,13 +108,21 @@ class HistoryViewModel: BaseViewModel, ObservableObject {
         
         self.showSendViaLinkTransaction = false
         super.init()
+        
+        // Listen pending transactions
+        let pendingTransactions = pendingTransaction(
+            pendingTransactionService: pendingTransactionService,
+            actionSubject: actionSubject,
+            mint: mint
+        )
 
         history
             .$state
+            .combineLatest(pendingTransactions)
             .receive(on: DispatchQueue.global(qos: .background))
-            .map { self.buildOutput(history: $0) }
+            .map { [weak self] in self?.buildOutput(history: $0, pendings: $1) ?? .init() }
             .receive(on: RunLoop.main)
-            .sink { self.output = $0 }
+            .sink { [weak self] in self?.output = $0 }
             .store(in: &subscriptions)
         
         bind()
@@ -161,25 +170,10 @@ class HistoryViewModel: BaseViewModel, ObservableObject {
             }
 
         // Listen pending transactions
-        
-        // Using this code if need to listen pending transactions
-        let pendings = pendingTransactionService.observePendingTransactions()
-            .map { transactions in
-                transactions
-                    .filter { pendingTransation in
-                        switch pendingTransation.rawTransaction {
-                        case let trx as SendTransaction where trx.isSendingViaLink:
-                            return false
-                        default:
-                            return true
-                        }
-                    }
-                    .map { [weak actionSubject] trx in
-                        RendableListPendingTransactionItem(trx: trx) {
-                            actionSubject?.send(.openPendingTransaction(trx))
-                        }
-                    }
-            }
+        let pendingTransactions = pendingTransaction(
+            pendingTransactionService: pendingTransactionService,
+            actionSubject: actionSubject
+        )
 
         self.showSendViaLinkTransaction = true
         super.init()
@@ -187,7 +181,7 @@ class HistoryViewModel: BaseViewModel, ObservableObject {
         // Build output
         history
             .$state
-            .combineLatest(sells, pendings)
+            .combineLatest(sells, pendingTransactions)
             .map(buildOutput)
             .receive(on: RunLoop.main)
             .sink { self.output = $0 }
@@ -278,4 +272,47 @@ class HistoryViewModel: BaseViewModel, ObservableObject {
             error: history.error
         )
     }
+}
+
+// MARK: - Independent Helpers
+
+private func pendingTransaction(
+    pendingTransactionService: TransactionHandlerType,
+    actionSubject: PassthroughSubject<NewHistoryAction, Never>,
+    mint: String? = nil // mint == nil mean all transaction
+) -> AnyPublisher<[RendableListPendingTransactionItem], Never> {
+    pendingTransactionService.observePendingTransactions()
+        .map { transactions in
+            transactions
+                .filter { pendingTransation in
+                    // filter by transaction type
+                    switch pendingTransation.rawTransaction {
+                    case let trx as SendTransaction where trx.isSendingViaLink:
+                        return false
+                    default:
+                        return true
+                    }
+                }
+                .filter { pendingTransaction in
+                    // filter by mint
+                    guard let mint else { return true }
+                    switch pendingTransaction.rawTransaction {
+                    case let transaction as SendTransaction:
+                        return transaction.walletToken.mintAddress == mint
+                    case let transaction as SwapRawTransactionType:
+                        return transaction.sourceWallet.mintAddress == mint ||
+                            transaction.destinationWallet.mintAddress == mint
+                    case let transaction as ClaimSentViaLinkTransaction:
+                        return transaction.claimableTokenInfo.mintAddress == mint
+                    default:
+                        return false
+                    }
+                }
+                .map { [weak actionSubject] trx in
+                    RendableListPendingTransactionItem(trx: trx) {
+                        actionSubject?.send(.openPendingTransaction(trx))
+                    }
+                }
+        }
+        .eraseToAnyPublisher()
 }
