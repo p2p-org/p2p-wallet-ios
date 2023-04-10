@@ -10,17 +10,22 @@ import KeyAppUI
 
 struct SendViaLinkClaimErrorView: View {
     
+    let title: String
+    let subtitle: String?
+    let image: UIImage
     @Binding var isLoading: Bool
     let reloadClicked: () -> Void
     let cancelClicked: () -> Void
     
     var body: some View {
         VStack(spacing: 39) {
-            Text(L10n.refreshThePageOrCheckBackLater)
-                .foregroundColor(Color(Asset.Colors.mountain.color))
-                .font(uiFont: .font(of: .text3))
+            if let subtitle {
+                Text(subtitle)
+                    .foregroundColor(Color(Asset.Colors.mountain.color))
+                    .font(uiFont: .font(of: .text3))
+            }
             Spacer()
-            Image(uiImage: .sendViaLinkClaimError)
+            Image(uiImage: image)
             VStack(spacing: 12) {
                 TextButtonView(
                     title: L10n.reload,
@@ -44,6 +49,6 @@ struct SendViaLinkClaimErrorView: View {
             }
         }
         .padding(.horizontal, 16)
-        .sheetHeader(title: L10n.failedToGetData, withSeparator: false, bottomPadding: 4)
+        .sheetHeader(title: title, withSeparator: false, bottomPadding: 4)
     }
 }

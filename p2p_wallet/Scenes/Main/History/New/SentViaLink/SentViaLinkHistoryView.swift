@@ -1,6 +1,8 @@
+import AnalyticsManager
 import SwiftUI
 import Combine
 import KeyAppUI
+import Resolver
 
 struct SentViaLinkHistoryView: View {
     // MARK: - Nested type
@@ -28,9 +30,10 @@ struct SentViaLinkHistoryView: View {
                             SentViaLinkHistoryTransactionView(
                                 transaction: transaction
                             )
-                                .onTapGesture {
-                                    onSelectTransaction(transaction)
-                                }
+                            .onTapGesture {
+                                Resolver.resolve(AnalyticsManager.self).log(event: .historySendClickTransaction)
+                                onSelectTransaction(transaction)
+                            }
                         }
                     }
                 }
