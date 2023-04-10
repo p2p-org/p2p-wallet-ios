@@ -69,7 +69,11 @@ final class SendCreateLinkCoordinator: Coordinator<SendCreateLinkCoordinator.Res
     // MARK: - Helper
 
     private func showSendLinkCreatedView() {
-        let viewModel = SendLinkCreatedViewModel(link: link, formatedAmount: formatedAmount)
+        let viewModel = SendLinkCreatedViewModel(
+            link: link,
+            formatedAmount: formatedAmount,
+            pubKey: self.transaction.walletToken.pubkey ?? ""
+        )
         let sendLinkCreatedVC = SendLinkCreatedView(viewModel: viewModel).asViewController()
         
         viewModel.close

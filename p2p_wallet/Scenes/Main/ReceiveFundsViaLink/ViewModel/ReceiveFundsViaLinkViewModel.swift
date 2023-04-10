@@ -74,12 +74,7 @@ final class ReceiveFundsViaLinkViewModel: BaseViewModel, ObservableObject {
     
     // MARK: - From View
     
-    func onAppear() {
-        analyticsManager.log(event: .claimStartScreenOpen)
-    }
-    
     func closeClicked() {
-        analyticsManager.log(event: .claimClickClose)
         closeSubject.send()
     }
     
@@ -96,7 +91,7 @@ final class ReceiveFundsViaLinkViewModel: BaseViewModel, ObservableObject {
             .convertToBalance(decimals: claimableToken.decimals)
         
         analyticsManager.log(event: .claimClickConfirmed(
-            pubkey: pubkeyStr,
+            pubkey: claimableToken.keypair.publicKey.base58EncodedString,
             tokenName: token.symbol,
             tokenValue: cryptoAmount,
             fromAddress: claimableToken.account
@@ -162,6 +157,7 @@ final class ReceiveFundsViaLinkViewModel: BaseViewModel, ObservableObject {
                     )
                     self.processingVisible = false
                     self.sizeChangedSubject.send(566)
+                    self.analyticsManager.log(event: .claimEndScreenOpen)
                 }
             }
             .store(in: &subscriptions)
@@ -210,6 +206,7 @@ final class ReceiveFundsViaLinkViewModel: BaseViewModel, ObservableObject {
                 
                 self.claimableToken = claimableToken
                 self.token = token
+                self.analyticsManager.log(event: .claimStartScreenOpen)
                 await MainActor.run {
                     state = .loaded(model: model)
                     isReloading = false
@@ -266,6 +263,7 @@ final class ReceiveFundsViaLinkViewModel: BaseViewModel, ObservableObject {
     }
     
     private func showLinkWasClaimedError() {
+        analyticsManager.log(event: .claimErrorAlreadyClaimed)
         showFullLinkError(
             title: L10n.thisOneTimeLinkIsAlreadyClaimed,
             subtitle: L10n.youCanTReceiveFundsWithIt,

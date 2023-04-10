@@ -79,7 +79,6 @@ final class ActionsCoordinator: Coordinator<ActionsCoordinator.Result> {
                 case .send:
                     analyticsManager.log(event: .actionButtonSend)
                     analyticsManager.log(event: .mainScreenSendOpen)
-                    analyticsManager.log(event: .sendStartScreenOpen(lastScreen: "Action_Panel"))
                     analyticsManager.log(event: .sendViewed(lastScreen: "Main_Screen"))
                     viewController.dismiss(animated: true) {
                         subject.send(.action(type: .send))
