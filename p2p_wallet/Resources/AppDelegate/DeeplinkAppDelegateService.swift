@@ -7,8 +7,15 @@
 
 import Foundation
 import Resolver
+import AppsFlyerLib
 
 final class DeeplinkAppDelegateService: NSObject, AppDelegateService {
+    func application(_ application: UIApplication, didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey : Any]? = nil) -> Bool {
+        AppsFlyerLib.shared().deepLinkDelegate = self
+        AppsFlyerLib.shared().appInviteOneLinkID = "sHgH"
+        return true
+    }
+    
     // MARK: - URIScheme
 
     func application(_ app: UIApplication, open url: URL, options: [UIApplication.OpenURLOptionsKey: Any] = [:]) -> Bool {
@@ -44,26 +51,49 @@ final class DeeplinkAppDelegateService: NSObject, AppDelegateService {
         
         else if host == "t" {
             let seed = String(path.dropFirst())
-            var urlComponent = URLComponents()
-            urlComponent.scheme = "https"
-            urlComponent.host = "t.key.app"
-            urlComponent.path = "/\(seed)"
-            guard let url = urlComponent.url else {
-                return false
-            }
-            GlobalAppState.shared.sendViaLinkUrl = url
+            GlobalAppState.shared.sendViaLinkUrl = urlFromSeed(seed)
             return true
         }
 
-        return false
+        AppsFlyerLib.shared().handleOpen(url, options: options)
+        return true
     }
     
     // MARK: - Universal links
     
     func application(_ application: UIApplication, continue userActivity: NSUserActivity, restorationHandler: @escaping ([UIUserActivityRestoring]?) -> Void) -> Bool {
-        if
-            let webpageURL = userActivity.webpageURL,
-            let urlComponents = URLComponents(url: webpageURL, resolvingAgainstBaseURL: true)
+        AppsFlyerLib.shared().continue(userActivity, restorationHandler: nil)
+        return true
+    }
+}
+
+// MARK: - AppFlyer's DeepLinkDelegate
+extension DeeplinkAppDelegateService: DeepLinkDelegate {
+    func didResolveDeepLink(_ result: DeepLinkResult) {
+        // get seed
+        var seed: String?
+        switch result.status {
+        case .notFound:
+            NSLog("[AFSDK] Deep link not found")
+            return
+        case .failure:
+            print("Error %@", result.error!)
+            return
+        case .found:
+            NSLog("[AFSDK] Deep link found")
+        }
+        
+        guard let deepLinkObj = result.deepLink else {
+            NSLog("[AFSDK] Could not extract deep link object")
+            return
+        }
+        
+        let deepLinkStr = deepLinkObj.toString()
+        NSLog("[AFSDK] DeepLink data is: \(deepLinkStr)")
+        
+        // handle link
+        if let urlString = deepLinkObj.clickEvent["link"] as? String,
+           let urlComponents = URLComponents(string: urlString)
         {
             // Intercom survey
             if urlComponents.path == "/intercom",
@@ -73,16 +103,34 @@ final class DeeplinkAppDelegateService: NSObject, AppDelegateService {
                 DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) {
                     GlobalAppState.shared.surveyID = value
                 }
-                return true
             }
             
             // send via link
-            else if webpageURL.host == "t.key.app" {
-                GlobalAppState.shared.sendViaLinkUrl = webpageURL
-                return true
+            else if urlComponents.host == "t.key.app" {
+                GlobalAppState.shared.sendViaLinkUrl = urlComponents.url
             }
+            return
         }
         
-        return false
+        if( deepLinkObj.isDeferred == true) {
+            NSLog("[AFSDK] This is a deferred deep link")
+        }
+        else {
+            NSLog("[AFSDK] This is a direct deep link")
+        }
+        
+        seed = deepLinkObj.deeplinkValue
+        GlobalAppState.shared.sendViaLinkUrl = urlFromSeed(seed)
     }
+}
+
+// MARK: - Helpers
+
+private func urlFromSeed(_ seed: String?) -> URL? {
+    guard let seed else { return nil }
+    var urlComponent = URLComponents()
+    urlComponent.scheme = "https"
+    urlComponent.host = "t.key.app"
+    urlComponent.path = "/\(seed)"
+    return urlComponent.url
 }
