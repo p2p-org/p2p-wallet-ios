@@ -107,7 +107,7 @@ final class ReceiveFundsViaLinkViewModel: BaseViewModel, ObservableObject {
         let fakeTransactionErrorType = fakeTransactionErrorType
         #else
         let isFakeSendingTransaction = false
-        let fakeTransactionErrorType = nil
+        let fakeTransactionErrorType = FakeTransactionErrorType.noError
         #endif
 
         // Notify loading
