@@ -60,8 +60,7 @@ final class ReceiveFundsViaLinkViewModel: BaseViewModel, ObservableObject {
         // Get needed params
         guard
             let claimableToken = claimableToken,
-            let token = token,
-            let pubkey = try? PublicKey(string: walletsRepository.nativeWallet?.pubkey)
+            let token = token
         else { return }
 
         let cryptoAmount = claimableToken.lamports
@@ -78,12 +77,7 @@ final class ReceiveFundsViaLinkViewModel: BaseViewModel, ObservableObject {
             token: token,
             destinationWallet: Wallet(pubkey: claimableToken.account, token: token),
             tokenAmount: cryptoAmount
-        ) {
-            try await claimSendViaLinkExecution(
-                claimableToken: claimableToken,
-                receiver: pubkey
-            )
-        }
+        )
 
         // Send it to transactionHandler
         let transactionHandler = Resolver.resolve(TransactionHandlerType.self)
@@ -92,9 +86,7 @@ final class ReceiveFundsViaLinkViewModel: BaseViewModel, ObservableObject {
         // Observe transaction and update status
         transactionHandler.observeTransaction(transactionIndex: transactionIndex)
             .compactMap {$0}
-            .filter {
-                $0.status.error != nil || $0.status.isFinalized || ($0.status.numberOfConfirmations ?? 0) > 0
-            }
+            .filter { $0.isConfirmedOrError }
             .prefix(1)
             .receive(on: RunLoop.main)
             .sink { [weak self] tx in
@@ -160,7 +152,7 @@ final class ReceiveFundsViaLinkViewModel: BaseViewModel, ObservableObject {
                 }
 
                 let cryptoAmountStr = cryptoAmount.tokenAmountFormattedString(symbol: token.symbol)
-                let model = Model(token: .nativeSolana, cryptoAmount: "cryptoAmountStr")
+                let model = Model(token: token, cryptoAmount: cryptoAmountStr)
                 
                 self.claimableToken = claimableToken
                 self.token = token
@@ -178,61 +170,6 @@ final class ReceiveFundsViaLinkViewModel: BaseViewModel, ObservableObject {
             }
         }
     }
-}
-
-// MARK: - Independent helpers
-
-func claimSendViaLinkExecution(
-    claimableToken: ClaimableTokenInfo,
-    receiver: PublicKey
-) async throws -> TransactionID {
-    // get services
-    let sendViaLinkDataService = Resolver.resolve(SendViaLinkDataService.self)
-    let contextManager = Resolver.resolve(RelayContextManager.self)
-    let solanaAPIClient = Resolver.resolve(SolanaAPIClient.self)
-    
-    let context = try await contextManager
-        .getCurrentContextOrUpdate()
-    
-    // prepare transaction, get recent blockchash
-    var (preparedTransaction, recentBlockhash) = try await(
-        sendViaLinkDataService.claim(
-            token: claimableToken,
-            receiver: receiver,
-            feePayer: context.feePayerAddress
-        ),
-        solanaAPIClient.getRecentBlockhash()
-    )
-    
-    preparedTransaction.transaction.recentBlockhash = recentBlockhash
-    
-    // get feePayer's signature
-    let feePayerSignature = try await Resolver.resolve(RelayService.self)
-        .signRelayTransaction(
-            preparedTransaction,
-            config: FeeRelayerConfiguration(
-                operationType: .sendViaLink, // TODO: - Received via link?
-                currency: claimableToken.mintAddress,
-                autoPayback: false
-            )
-        )
-    
-    // sign transaction by user
-    try preparedTransaction.transaction.sign(signers: [claimableToken.keypair])
-    
-    // add feePayer's signature
-    try preparedTransaction.transaction.addSignature(
-        .init(
-            signature: Data(Base58.decode(feePayerSignature)),
-            publicKey: context.feePayerAddress
-        )
-    )
-    
-    // serialize transaction
-    let serializedTransaction = try preparedTransaction.transaction.serialize().base64EncodedString()
-    
-    // send to solanaBlockchain
-    return try await solanaAPIClient.sendTransaction(transaction: serializedTransaction, configs: RequestConfiguration(encoding: "base64")!)
 }
 
 // MARK: - State
