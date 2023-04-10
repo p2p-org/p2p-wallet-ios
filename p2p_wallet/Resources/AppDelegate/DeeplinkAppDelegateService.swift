@@ -92,7 +92,8 @@ extension DeeplinkAppDelegateService: DeepLinkDelegate {
         NSLog("[AFSDK] DeepLink data is: \(deepLinkStr)")
         
         // handle link
-        if let urlString = deepLinkObj.clickEvent["link"] as? String,
+        if let urlStringOptional = deepLinkObj.clickEvent["link"] as? Optional<String>,
+           let urlString = urlStringOptional,
            let urlComponents = URLComponents(string: urlString)
         {
             // Intercom survey
