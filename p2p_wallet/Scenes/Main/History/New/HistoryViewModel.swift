@@ -81,8 +81,8 @@ class HistoryViewModel: BaseViewModel, ObservableObject {
         provider: KeyAppHistoryProvider = Resolver.resolve(),
         userWalletManager: UserWalletManager = Resolver.resolve(),
         tokensRepository: TokensRepository = Resolver.resolve(),
-        mint: String,
-        pendingTransactionService: TransactionHandlerType = Resolver.resolve()
+        pendingTransactionService: TransactionHandlerType = Resolver.resolve(),
+        mint: String
     ) {
         // Init services and repositories
         let repository = HistoryRepository(provider: provider)
