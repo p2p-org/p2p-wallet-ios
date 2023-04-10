@@ -49,6 +49,18 @@ struct RecipientSearchView: View {
                 if !viewModel.sendViaLinkState.isFeatureDisabled, viewModel.sendViaLinkVisible {
                     sendViaLinkView
                 }
+                
+                #if !RELEASE
+                // Send to totally new account (for debugging)
+                Button {
+                    viewModel.sendToTotallyNewAccount()
+                } label: {
+                    Text("Tap to send to totally new account (asset will be lost)")
+                        .apply(style: .label2)
+                        .foregroundColor(.red)
+                        .fixedSize(horizontal: false, vertical: true)
+                }
+                #endif
 
                 // Result
                 if viewModel.isSearching {
@@ -140,19 +152,9 @@ struct RecipientSearchView: View {
                     image: Image(uiImage: viewModel.sendViaLinkState.canCreateLink ? .sendViaLinkCircle: .sendViaLinkCircleDisabled)
                         .castToAnyView(),
                     title: L10n.sendCryptoViaOneTimeLink,
-                    subtitle: viewModel.sendViaLinkState.canCreateLink ? L10n.youDonTNeedToKnowTheAddress: L10n.LimitIsOneTimeLinksPerDay.tryTomorrow(viewModel.sendViaLinkState.limitPerDay),
+                    subtitle: viewModel.sendViaLinkState.canCreateLink ? L10n.youDonTNeedToKnowTheAddress: L10n.YouHaveReachedTheDailyLimitOfSendingFreeLinksPerDay.tryTomorrow,
                     multilinesForSubtitle: true
                 )
-                
-                #if !RELEASE
-                Group {
-                    Text("Links per day: \(viewModel.sendViaLinkState.limitPerDay)")
-                        .apply(style: .label2)
-                    Text("Links created today: \(viewModel.sendViaLinkState.numberOfLinksUsedToday)")
-                        .apply(style: .label2)
-                }
-                    .foregroundColor(.red)
-                #endif
             }
             
         }

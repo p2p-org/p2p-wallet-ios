@@ -5,6 +5,7 @@
 //  Created by Giang Long Tran on 01.02.2023.
 //
 
+import AnalyticsManager
 import Combine
 import Foundation
 import History
@@ -30,7 +31,9 @@ enum NewHistoryAction {
 }
 
 class HistoryViewModel: BaseViewModel, ObservableObject {
-    // Subjects
+
+    // MARK: - Subjects
+
     let actionSubject: PassthroughSubject<NewHistoryAction, Never>
 
     let history: AsyncList<any RendableListTransactionItem>
@@ -57,9 +60,11 @@ class HistoryViewModel: BaseViewModel, ObservableObject {
     /// Feature toggle
     let showSendViaLinkTransaction: Bool
 
-    // Dependency
+    // MARK: - Dependency
+
     private var sellDataService: (any SellDataService)?
     @Injected private var sendViaLinkStorage: SendViaLinkStorage
+    @Injected private var analyticsManager: AnalyticsManager
 
     // MARK: - Init
 
@@ -195,6 +200,13 @@ class HistoryViewModel: BaseViewModel, ObservableObject {
     }
 
     // MARK: - View Output
+    
+    func onAppear() {
+        let withSentViaLink = showSendViaLinkTransaction && !sendViaLinkTransactions.isEmpty
+        analyticsManager.log(event: .historyOpened(sentViaLink: withSentViaLink))
+        
+        fetch()
+    }
 
     func reload() async throws {
         history.reset()
@@ -207,6 +219,11 @@ class HistoryViewModel: BaseViewModel, ObservableObject {
         Task {
             await sellDataService?.update()
         }
+    }
+
+    func sentViaLinkClicked() {
+        analyticsManager.log(event: .historyClickBlockSendViaLink)
+        actionSubject.send(.openSentViaLinkHistoryView)
     }
 
     // MARK: - Helpers
