@@ -19,6 +19,7 @@ final class SwapViewModel: BaseViewModel, ObservableObject {
     @Injected private var transactionHandler: TransactionHandler
     @Injected private var analyticsManager: AnalyticsManager
     @Injected private var userWalletManager: UserWalletManager
+    @Injected private var walletsRepository: WalletsRepository
 
     // MARK: - Actions
     let switchTokens = PassthroughSubject<Void, Never>()
@@ -26,8 +27,7 @@ final class SwapViewModel: BaseViewModel, ObservableObject {
     let changeFromToken = PassthroughSubject<SwapToken, Never>()
     let changeToToken = PassthroughSubject<SwapToken, Never>()
     let submitTransaction = PassthroughSubject<(PendingTransaction, String), Never>()
-    let viewAppeared = PassthroughSubject<Void, Never>()
-    let viewDisappeared = PassthroughSubject<Void, Never>()
+    let isViewAppeared = PassthroughSubject<Bool, Never>()
 
     // MARK: - Params
     var fromTokenInputViewModel: SwapInputViewModel
@@ -184,18 +184,21 @@ private extension SwapViewModel {
                 self.log(amountFrom: updatedState.amountFrom, from: updatedState.status)
             }
             .store(in: &subscriptions)
-        
-        // update user wallets only when initializingState is success
-        Resolver.resolve(WalletsRepository.self)
-            .dataPublisher
-            .filter { [weak self] _ in self?.initializingState == .success }
-            .removeDuplicates()
-            .sinkAsync { [weak self] userWallets in
-                await self?.stateMachine.accept(
-                    action: .updateUserWallets(userWallets: userWallets)
-                )
-            }
-            .store(in: &subscriptions)
+
+        Publishers.CombineLatest(
+            walletsRepository.dataPublisher.removeDuplicates(),
+            isViewAppeared.eraseToAnyPublisher().removeDuplicates()
+        )
+        .filter { [weak self] userWallets, isViewAppeared in
+            // update user wallets only when initializingState is success and view is appeared
+            self?.initializingState == .success && isViewAppeared
+        }
+        .sinkAsync { [weak self] userWallets, isViewAppeared in
+            await self?.stateMachine.accept(
+                action: .updateUserWallets(userWallets: userWallets)
+            )
+        }
+        .store(in: &subscriptions)
 
         // update fromToken only when initializingState is success
         changeFromToken
@@ -268,6 +271,7 @@ private extension SwapViewModel {
 
     func bindActions() {
         switchTokens
+            .filter { [weak self] _ in self?.initializingState == .success }
             .sinkAsync(receiveValue: { [weak self] _ in
                 guard let self else { return }
                 // cache the current amountTo
@@ -297,18 +301,16 @@ private extension SwapViewModel {
             }
             .store(in: &subscriptions)
 
-        viewAppeared
-            .sink { [weak self] in
-                guard let self, self.initializingState == .success else { return }
-                self.scheduleUpdate()
-                self.continueUpdateOnDisappear = false //  Reset value
-            }
-            .store(in: &subscriptions)
-
-        viewDisappeared
-            .sink { [weak self] in
-                guard let self, !self.continueUpdateOnDisappear else { return }
-                self.cancelUpdate()
+        isViewAppeared
+            .filter { [weak self] _ in self?.initializingState == .success }
+            .sink { [weak self] isAppeared in
+                guard let self else { return }
+                if isAppeared {
+                    self.scheduleUpdate()
+                    self.continueUpdateOnDisappear = false //  Reset value
+                } else if !self.continueUpdateOnDisappear {
+                    self.cancelUpdate()
+                }
             }
             .store(in: &subscriptions)
     }
