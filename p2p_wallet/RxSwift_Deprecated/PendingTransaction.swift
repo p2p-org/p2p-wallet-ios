@@ -162,7 +162,7 @@ extension PendingTransaction {
                 authority: nil,
                 destinationAuthority: nil,
                 rawAmount: transaction.tokenAmount,
-                account: transaction.claimableTokenInfo.account
+                account: transaction.claimableTokenInfo.keypair.publicKey.base58EncodedString
             )
             amountInFiat = transaction.amountInFiat
             fee = transaction.feeAmount

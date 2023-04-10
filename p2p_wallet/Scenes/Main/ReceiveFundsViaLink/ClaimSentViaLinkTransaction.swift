@@ -5,6 +5,17 @@ import Resolver
 import FeeRelayerSwift
 
 struct ClaimSentViaLinkTransaction: RawTransactionType {
+    // MARK: - Nested type
+    
+    enum FakeTransactionErrorType: String, CaseIterable, Identifiable {
+        case noError
+        case networkError
+        case otherError
+        var id: Self { self }
+    }
+    
+    // MARK: - Properties
+
     let claimableTokenInfo: ClaimableTokenInfo
     let token: Token
     let destinationWallet: Wallet
@@ -12,6 +23,8 @@ struct ClaimSentViaLinkTransaction: RawTransactionType {
     
     let payingFeeWallet: Wallet? = nil
     let feeAmount: FeeAmount = .zero
+    let isFakeTransaction: Bool
+    let fakeTransactionErrorType: FakeTransactionErrorType
     
     var mainDescription: String {
         "Claim-sent-via-link"
@@ -22,6 +35,24 @@ struct ClaimSentViaLinkTransaction: RawTransactionType {
     }
     
     func createRequest() async throws -> String {
+        // fake transaction for debugging
+        if isFakeTransaction {
+            // fake delay api call 1s
+            try await Task.sleep(nanoseconds: 1_000_000_000)
+            
+            // simulate error if needed
+            switch fakeTransactionErrorType {
+            case .noError:
+                break
+            case .otherError:
+                throw SolanaError.unknown
+            case .networkError:
+                throw NSError(domain: "Network error", code: NSURLErrorNetworkConnectionLost)
+            }
+            
+            return .fakeTransactionSignature(id: UUID().uuidString)
+        }
+        
         // get receiver
         guard let receiver = Resolver.resolve(UserWalletManager.self).wallet?.account.publicKey
         else {
@@ -33,8 +64,9 @@ struct ClaimSentViaLinkTransaction: RawTransactionType {
         let contextManager = Resolver.resolve(RelayContextManager.self)
         let solanaAPIClient = Resolver.resolve(SolanaAPIClient.self)
         
-        let context = try await contextManager
-            .getCurrentContextOrUpdate()
+        guard let context = contextManager.currentContext else {
+            throw FeeRelayerError.relayInfoMissing
+        }
         
         // prepare transaction, get recent blockchash
         var (preparedTransaction, recentBlockhash) = try await(
