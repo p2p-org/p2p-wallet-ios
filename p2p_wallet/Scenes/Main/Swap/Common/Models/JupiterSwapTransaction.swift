@@ -1,4 +1,5 @@
 import SolanaSwift
+import Jupiter
 
 struct JupiterSwapTransaction: SwapRawTransactionType {
     let authority: String?
@@ -11,6 +12,11 @@ struct JupiterSwapTransaction: SwapRawTransactionType {
     
     var payingFeeWallet: SolanaSwift.Wallet?
     var feeAmount: SolanaSwift.FeeAmount
+    let route: Route
+    let account: KeyPair
+    let swapTransaction: String?
+    let services: JupiterSwapServices
+    
     
     var mainDescription: String {
         [
@@ -19,9 +25,12 @@ struct JupiterSwapTransaction: SwapRawTransactionType {
         ].joined(separator: " → ")
     }
 
-    let execution: () async throws -> TransactionID
-
     func createRequest() async throws -> String {
-        try await execution()
+        try await JupiterSwapBusinessLogic.sendToBlockchain(
+            account: account,
+            swapTransaction: swapTransaction,
+            route: route,
+            services: services
+        )
     }
 }
