@@ -188,9 +188,10 @@ final class SendInputViewModel: BaseViewModel, ObservableObject {
 
     func initialize() {
         Task { [weak self] in
-            self?.status = .initializing
+            guard let self else { return }
+            self.status = .initializing
 
-            let nextState = await stateMachine
+            let nextState = await self.stateMachine
                 .accept(action: .initialize(.init {
                     // get current context
                     let relayContextManager = Resolver.resolve(RelayContextManager.self)
@@ -198,21 +199,23 @@ final class SendInputViewModel: BaseViewModel, ObservableObject {
                 }))
             
             // disable adding amount if amount is pre-chosen
-            if let amount = preChosenAmount {
-                Task {
-                    inputAmountViewModel.mainAmountType = .token
-                    inputAmountViewModel.amountText = amount.toString()
-                    await MainActor.run {
-                        inputAmountViewModel.isDisabled = true
+            if let amount = self.preChosenAmount {
+                Task { [weak self] in
+                    guard let self else { return }
+                    self.inputAmountViewModel.mainAmountType = .token
+                    self.inputAmountViewModel.amountText = amount.toString()
+                    await MainActor.run { [weak self] in
+                        guard let self else { return }
+                        self.inputAmountViewModel.isDisabled = true
                     }
                 }
             }
 
             switch nextState.status {
             case .error(reason: .initializeFailed(_)):
-                self?.status = .initializingFailed
+                self.status = .initializingFailed
             default:
-                self?.status = .ready
+                self.status = .ready
             }
         }
     }
@@ -505,9 +508,15 @@ private extension SendInputViewModel {
         try? await Task.sleep(nanoseconds: 500_000_000)
         
         let isSendingViaLink = stateMachine.currentState.isSendingViaLink
+        #if !RELEASE
         let isFakeSendTransaction = isFakeSendTransaction
         let isFakeSendTransactionError = isFakeSendTransactionError
         let isFakeSendTransactionNetworkError = isFakeSendTransactionNetworkError
+        #else
+        let isFakeSendTransaction = false
+        let isFakeSendTransactionError = false
+        let isFakeSendTransactionNetworkError = false
+        #endif
         let sendViaLinkSeed = stateMachine.currentState.sendViaLinkSeed
         let token = currentState.token
         let amountInFiat = currentState.amountInFiat
