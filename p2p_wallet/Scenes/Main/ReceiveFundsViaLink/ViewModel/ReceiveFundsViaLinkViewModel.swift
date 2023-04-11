@@ -161,7 +161,7 @@ final class ReceiveFundsViaLinkViewModel: BaseViewModel, ObservableObject {
                             .tokenAmountFormattedString(symbol: token.symbol)
                     )
                     self.processingVisible = false
-                    self.sizeChangedSubject.send(566)
+                    self.sizeChangedSubject.send(662)
                 }
             }
             .store(in: &subscriptions)
