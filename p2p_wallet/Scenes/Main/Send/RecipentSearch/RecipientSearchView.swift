@@ -298,6 +298,7 @@ struct RecipientSearchView: View {
                 Text(L10n.toContinuePasteOrScanTheAddressOrTypeAUsername)
                     .apply(style: .text1)
                     .multilineTextAlignment(.center)
+                    .fixedSize(horizontal: false, vertical: true)
                 Spacer()
                 HStack(spacing: 8) {
                     TextButtonView(
