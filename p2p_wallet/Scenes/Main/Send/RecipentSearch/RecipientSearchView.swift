@@ -152,7 +152,7 @@ struct RecipientSearchView: View {
                     image: Image(uiImage: viewModel.sendViaLinkState.canCreateLink ? .sendViaLinkCircle: .sendViaLinkCircleDisabled)
                         .castToAnyView(),
                     title: L10n.sendCryptoViaOneTimeLink,
-                    subtitle: viewModel.sendViaLinkState.canCreateLink ? L10n.youDonTNeedToKnowTheAddress: L10n.YouHaveReachedTheDailyLimitOfSendingFreeLinksPerDay.tryTomorrow,
+                    subtitle: viewModel.sendViaLinkState.canCreateLink ? L10n.youDonTNeedToKnowTheAddress: L10n.YouHaveReachedTheDailyLimitOfSendingFreeLinks.tryTomorrow,
                     multilinesForSubtitle: true
                 )
             }
