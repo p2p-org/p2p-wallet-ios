@@ -9,7 +9,7 @@ import Foundation
 import Web3
 
 /// Ethereum token structure
-public struct EthereumToken: Hashable, Codable {
+public struct EthereumToken: Hashable, Codable, Equatable {
     /// Token name
     public let name: String
 
@@ -27,11 +27,11 @@ public struct EthereumToken: Hashable, Codable {
 
     /// Native token
     public init() {
-        self.name = "Ethereum"
-        self.symbol = "ETH"
-        self.decimals = 18
-        self.logo = URL(string: "https://assets.coingecko.com/coins/images/279/large/ethereum.png?1595348880")
-        self.contractType = .native
+        name = "Ethereum"
+        symbol = "ETH"
+        decimals = 18
+        logo = URL(string: "https://assets.coingecko.com/coins/images/279/large/ethereum.png?1595348880")
+        contractType = .native
     }
 
     public init(name: String, symbol: String, decimals: UInt8, logo: URL?, contractType: ContractType) {
@@ -41,11 +41,15 @@ public struct EthereumToken: Hashable, Codable {
         self.logo = logo
         self.contractType = contractType
     }
+
+    public static func == (lhs: Self, rhs: Self) -> Bool {
+        lhs.contractType == rhs.contractType
+    }
 }
 
 public extension EthereumToken {
     /// Ethereum token contract standards.
-    public enum ContractType: Hashable, Codable {
+    enum ContractType: Hashable, Codable, Equatable {
         /// Native token
         case native
 

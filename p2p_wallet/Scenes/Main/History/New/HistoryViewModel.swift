@@ -17,7 +17,7 @@ enum NewHistoryAction {
 
     case openPendingTransaction(PendingTransaction)
 
-    case openUserAction(UserAction)
+    case openUserAction(any UserAction)
 
     case openReceive
 

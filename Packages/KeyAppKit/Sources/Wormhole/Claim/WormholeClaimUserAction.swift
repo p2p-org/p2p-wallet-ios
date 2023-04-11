@@ -10,10 +10,6 @@ import KeyAppBusiness
 import KeyAppKitCore
 
 public struct WormholeClaimUserAction: UserAction {
-    public var trackingKey: Set<String> {
-        Set([id, bundle.bundleID].compactMap { $0 })
-    }
-
     public var id: String
 
     public var status: UserActionStatus
@@ -31,7 +27,7 @@ public struct WormholeClaimUserAction: UserAction {
     /// Amount in fiat
     public let amountInFiat: CurrencyAmount?
 
-    public enum BundleValue: Codable {
+    public enum BundleValue: Codable, Equatable {
         case bundle(WormholeBundle)
         case bundleStatus(WormholeBundleStatus)
     }

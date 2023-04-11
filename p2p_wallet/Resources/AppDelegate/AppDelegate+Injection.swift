@@ -371,14 +371,17 @@ extension Resolver: ResolverRegistering {
             return UserActionService(
                 consumers: [
                     WormholeSendUserActionConsumer(
-                        signer: { userWalletManager.wallet?.account },
+                        address: userWalletManager.wallet?.account.publicKey.base58EncodedString,
+                        signer: userWalletManager.wallet?.account,
                         solanaClient: resolve(),
+                        wormholeAPI: resolve(),
                         relayService: resolve(),
                         errorObserver: resolve(),
                         persistence: resolve()
                     ),
                     WormholeClaimUserActionConsumer(
-                        signer: { userWalletManager.wallet?.ethereumKeypair },
+                        address: userWalletManager.wallet?.ethereumKeypair.publicKey,
+                        signer: userWalletManager.wallet?.ethereumKeypair,
                         wormholeAPI: resolve(),
                         ethereumTokenRepository: resolve(),
                         errorObserver: resolve(),
