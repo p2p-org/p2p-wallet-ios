@@ -152,7 +152,7 @@ final class ReceiveFundsViaLinkViewModel: BaseViewModel, ObservableObject {
                         ))
                     } else {
                         self.processingState = .error(message: NSAttributedString(
-                            string: L10n.theTransactionWasRejectedByTheSolanaBlockchain + ". " L10n.openYourLinkAgain
+                            string: L10n.theTransactionWasRejectedByTheSolanaBlockchain + ". " + L10n.openYourLinkAgain
                         ))
                     }
                 } else {
