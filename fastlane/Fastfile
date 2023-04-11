@@ -37,7 +37,7 @@ SENTRY_TOKEN = ENV["SENTRY_TOKEN"]
 
 NEW_DEVICES_JSON_STRING = ENV["NEW_DEVICES_JSON_STRING"]
 
-UPLOAD_TO_BROWSER_STACK = ENV["UPLOAD_TO_BROWSER_STACK"]
+IS_RELEASE_CANDIDATE = ENV["IS_RELEASE_CANDIDATE"]
 
 def delete_temp_keychain(name)
   delete_keychain(
@@ -347,7 +347,7 @@ platform :ios do
     )
 
     # upload to browserstack
-    if UPLOAD_TO_BROWSER_STACK
+    if IS_RELEASE_CANDIDATE
       upload_to_browserstack_app_automate(
         browserstack_username: BROWSERSTACK_USERNAME_NEW,
         browserstack_access_key: BROWSERSTACK_ACCESS_KEY_NEW,
