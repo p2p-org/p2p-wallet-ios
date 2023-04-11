@@ -56,9 +56,15 @@ final class DeeplinkAppDelegateService: NSObject, AppDelegateService {
     // MARK: - Helpers
 
     private func handleCustomUniversalLinks(urlComponents: URLComponents) {
+        // Universal link must start with https
+        guard urlComponents.scheme == "https" else {
+            return
+        }
+        
         // Intercom survey
         // https://key.app/intercom?intercom_survey_id=133423424
-        if urlComponents.path == "/intercom",
+        if urlComponents.host == "key.app",
+           urlComponents.path == "/intercom",
            let queryItem = urlComponents.queryItems?.first(where: { $0.name == "intercom_survey_id" }),
            let value = queryItem.value
         {
@@ -77,16 +83,17 @@ final class DeeplinkAppDelegateService: NSObject, AppDelegateService {
     private func handleCustomURIScheme(urlComponents components: URLComponents) {
         let host = components.host
         let path = components.path
+        let scheme = components.scheme
         
         // Login to test with urischeme
         // keyapptest://onboarding/seedPhrase?value=seed-phrase-separated-by-hyphens&pincode=222222
-        if
-            Environment.current != .release,
-            host == "onboarding",
-            path == "/seedPhrase",
-            let params = components.queryItems,
-            let seedPhrase: String = params.first(where: { $0.name == "value" })?.value,
-            let pincode: String = params.first(where: { $0.name == "pincode" })?.value
+        if scheme == "keyapptest",
+           Environment.current != .release,
+           host == "onboarding",
+           path == "/seedPhrase",
+           let params = components.queryItems,
+           let seedPhrase: String = params.first(where: { $0.name == "value" })?.value,
+           let pincode: String = params.first(where: { $0.name == "pincode" })?.value
         {
             let userWalletManager: UserWalletManager = Resolver.resolve()
             let appEventHandler: AppEventHandlerType = Resolver.resolve()
@@ -106,7 +113,7 @@ final class DeeplinkAppDelegateService: NSObject, AppDelegateService {
         
         // Send via link
         // keyapp://t/<seed>
-        else if host == "t" {
+        else if scheme == "keyapp", host == "t" {
             let seed = String(path.dropFirst())
             GlobalAppState.shared.sendViaLinkUrl = urlFromSeed(seed)
         }
@@ -141,6 +148,16 @@ extension DeeplinkAppDelegateService: DeepLinkDelegate {
         }
         else {
             NSLog("[AFSDK] This is a direct deep link")
+        }
+        
+        // disable
+        guard let urlStringOptional = deepLinkObj.clickEvent["link"] as? Optional<String>,
+              let urlString = urlStringOptional,
+              let urlComponents = URLComponents(string: urlString),
+              let host = urlComponents.host,
+              host == "keyapp.onelink.me"
+        else {
+            return
         }
         
         seed = deepLinkObj.deeplinkValue
