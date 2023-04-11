@@ -1289,5 +1289,5 @@ You can try again, but your new transaction will be subject to the current rates
 "%@ sent you %@ via Key App. Follow the link to claim your funds: %@" = "%@ sent you %@ via Key App. Follow the link to claim your funds: %@";
 "From %@" = "From %@";
 "This link is broken" = "This link is broken";
-"You have reached the daily limit of sending free links per day. Try tomorrow" = "You have reached the daily limit of sending free links per day. Try tomorrow";
 "Open your link again" = "Open your link again";
+"You have reached the daily limit of sending free links. Try tomorrow" = "You have reached the daily limit of sending free links. Try tomorrow";
