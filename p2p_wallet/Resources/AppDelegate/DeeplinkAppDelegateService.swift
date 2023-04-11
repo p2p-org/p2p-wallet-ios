@@ -12,86 +12,52 @@ import AppsFlyerLib
 final class DeeplinkAppDelegateService: NSObject, AppDelegateService {
     func application(_ application: UIApplication, didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey : Any]? = nil) -> Bool {
         AppsFlyerLib.shared().deepLinkDelegate = self
-        AppsFlyerLib.shared().appInviteOneLinkID = "sHgH"
+//        AppsFlyerLib.shared().appInviteOneLinkID = "sHgH"
         return true
     }
 
     func application(_ app: UIApplication, open url: URL, options: [UIApplication.OpenURLOptionsKey: Any] = [:]) -> Bool {
-        // DELEGATE ALL URISCHEME HANDLER TO APPSFLYER IN `didResolveDeepLink`
-        // DON'T HANDLE IT DIRECTLY HERE
-        AppsFlyerLib.shared().handleOpen(url, options: options)
+        // Handler by Appflyer?
+//            AppsFlyerLib.shared().handleOpen(url, options: options)
+//            return true
+        
+        // Handler natively
+        guard let components = URLComponents(url: url, resolvingAgainstBaseURL: true)
+        else { return false }
+        
+        handleCustomURIScheme(urlComponents: components)
         return true
     }
     
     func application(_ application: UIApplication, continue userActivity: NSUserActivity, restorationHandler: @escaping ([UIUserActivityRestoring]?) -> Void) -> Bool {
-        // DELEGATE ALL UNIVERSAL LINK HANDLER TO APPSFLYER IN `didResolveDeepLink`
-        // DON'T HANDLE IT DIRECTLY HERE
-        AppsFlyerLib.shared().continue(userActivity, restorationHandler: nil)
-        return true
-    }
-}
-
-// MARK: - AppFlyer's DeepLinkDelegate
-extension DeeplinkAppDelegateService: DeepLinkDelegate {
-    func didResolveDeepLink(_ result: DeepLinkResult) {
-        // get seed
-        var seed: String?
-        switch result.status {
-        case .notFound:
-            NSLog("[AFSDK] Deep link not found")
-            return
-        case .failure:
-            print("Error %@", result.error!)
-            return
-        case .found:
-            NSLog("[AFSDK] Deep link found")
-        }
-        
-        guard let deepLinkObj = result.deepLink else {
-            NSLog("[AFSDK] Could not extract deep link object")
-            return
-        }
-        
-        let deepLinkStr = deepLinkObj.toString()
-        NSLog("[AFSDK] DeepLink data is: \(deepLinkStr)")
-        
-        // handle non-appflyer link
-        if let urlStringOptional = deepLinkObj.clickEvent["link"] as? Optional<String>,
-           let urlString = urlStringOptional,
-           let urlComponents = URLComponents(string: urlString),
-           let scheme = urlComponents.scheme
-        {
-            // Universal link
-            switch scheme {
-            case "https":
-                // Universal link
-                handleCustomUniversalLinks(urlComponents: urlComponents)
-            case let scheme where externalURLSchemes().contains(scheme):
-                // URI Scheme
-                handleCustomURIScheme(urlComponents: urlComponents)
-            default:
-                // Unsupported
-                break
-            }
-            
-            // return
-            return
-        }
-        
-        // handle appflyer link
-        if( deepLinkObj.isDeferred == true) {
-            NSLog("[AFSDK] This is a deferred deep link")
-        }
+        // get url components
+        guard
+            let webpageURL = userActivity.webpageURL,
+            let urlComponents = URLComponents(url: webpageURL, resolvingAgainstBaseURL: true)
         else {
-            NSLog("[AFSDK] This is a direct deep link")
+            return false
         }
         
-        seed = deepLinkObj.deeplinkValue
-        GlobalAppState.shared.sendViaLinkUrl = urlFromSeed(seed)
+        // handle appflyer deeplinks
+        // https://keyapp.onelink.me/rRAL/transfer?deep_link_value=<seed>
+        if urlComponents.url?.absoluteString.hasPrefix("https://keyapp.onelink.me/rRAL/transfer") == true {
+            // Delegate work to AppsFlyerLib
+            AppsFlyerLib.shared().continue(userActivity, restorationHandler: nil)
+            return true
+        }
+        
+        // handle natively
+        else {
+            handleCustomUniversalLinks(urlComponents: urlComponents)
+            return true
+        }
     }
     
+    // MARK: - Helpers
+
     private func handleCustomUniversalLinks(urlComponents: URLComponents) {
         // Intercom survey
+        // https://key.app/intercom?intercom_survey_id=133423424
         if urlComponents.path == "/intercom",
            let queryItem = urlComponents.queryItems?.first(where: { $0.name == "intercom_survey_id" }),
            let value = queryItem.value
@@ -101,7 +67,8 @@ extension DeeplinkAppDelegateService: DeepLinkDelegate {
             }
         }
         
-        // send via link
+        // Send via link
+        // https://t.key.app/<seed>
         else if urlComponents.host == "t.key.app" {
             GlobalAppState.shared.sendViaLinkUrl = urlComponents.url
         }
@@ -111,6 +78,8 @@ extension DeeplinkAppDelegateService: DeepLinkDelegate {
         let host = components.host
         let path = components.path
         
+        // Login to test with urischeme
+        // keyapptest://onboarding/seedPhrase?value=seed-phrase-separated-by-hyphens&pincode=222222
         if
             Environment.current != .release,
             host == "onboarding",
@@ -135,11 +104,47 @@ extension DeeplinkAppDelegateService: DeepLinkDelegate {
             }
         }
         
+        // Send via link
+        // keyapp://t/<seed>
         else if host == "t" {
             let seed = String(path.dropFirst())
             GlobalAppState.shared.sendViaLinkUrl = urlFromSeed(seed)
+        }
+    }
+}
+
+// MARK: - AppFlyer's DeepLinkDelegate
+
+extension DeeplinkAppDelegateService: DeepLinkDelegate {
+    func didResolveDeepLink(_ result: DeepLinkResult) {
+        // get seed
+        var seed: String?
+        switch result.status {
+        case .notFound:
+            NSLog("[AFSDK] Deep link not found")
+            return
+        case .failure:
+            print("Error %@", result.error!)
+            return
+        case .found:
+            NSLog("[AFSDK] Deep link found")
+        }
+        
+        guard let deepLinkObj = result.deepLink else {
+            NSLog("[AFSDK] Could not extract deep link object")
             return
         }
+        
+        // handle appflyer link
+        if( deepLinkObj.isDeferred == true) {
+            NSLog("[AFSDK] This is a deferred deep link")
+        }
+        else {
+            NSLog("[AFSDK] This is a direct deep link")
+        }
+        
+        seed = deepLinkObj.deeplinkValue
+        GlobalAppState.shared.sendViaLinkUrl = urlFromSeed(seed)
     }
 }
 
@@ -154,12 +159,12 @@ private func urlFromSeed(_ seed: String?) -> URL? {
     return urlComponent.url
 }
 
-private func externalURLSchemes() -> [String] {
-    guard let urlTypes = Bundle.main.infoDictionary?["CFBundleURLTypes"] as? [AnyObject],
-          let urlSchemes = (urlTypes as? [[String: AnyObject]])?
-            .compactMap({$0["CFBundleURLSchemes"] as? [String]})
-            .reduce([], +)
-    else { return [] }
-    print(urlSchemes)
-    return urlSchemes
-}
+//private func externalURLSchemes() -> [String] {
+//    guard let urlTypes = Bundle.main.infoDictionary?["CFBundleURLTypes"] as? [AnyObject],
+//          let urlSchemes = (urlTypes as? [[String: AnyObject]])?
+//            .compactMap({$0["CFBundleURLSchemes"] as? [String]})
+//            .reduce([], +)
+//    else { return [] }
+//    print(urlSchemes)
+//    return urlSchemes
+//}
