@@ -347,7 +347,7 @@ final class TabBarCoordinator: Coordinator<Void> {
         .store(in: &subscriptions)
     }
 
-    private func showUserAction(userAction: UserAction) {
+    private func showUserAction(userAction: any UserAction) {
         coordinate(to: TransactionDetailCoordinator(
             viewModel: .init(userAction: userAction),
             presentingViewController: tabBarController

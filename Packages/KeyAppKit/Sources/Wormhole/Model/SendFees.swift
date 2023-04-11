@@ -8,7 +8,9 @@
 import Foundation
 import KeyAppKitCore
 
-public struct SendFees: Codable, Hashable {
+public struct SendFees: Codable, Hashable, Equatable {
+    public let resultAmount: TokenAmount?
+    
     /// Process fee in Ethereum network.
     public let arbiter: TokenAmount?
     
@@ -22,6 +24,7 @@ public struct SendFees: Codable, Hashable {
     public let bridgeFee: TokenAmount?
 
     enum CodingKeys: String, CodingKey {
+        case resultAmount = "result_amount"
         case arbiter = "arbiter_fee"
         case networkFee = "network_fee"
         case messageAccountRent = "message_account_rent"

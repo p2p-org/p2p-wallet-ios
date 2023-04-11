@@ -14,7 +14,7 @@ import SolanaSwift
 import Wormhole
 
 struct RendableListUserActionTransactionItem: RendableListTransactionItem {
-    let userAction: UserAction
+    let userAction: any UserAction
 
     var onTap: (() -> Void)?
 

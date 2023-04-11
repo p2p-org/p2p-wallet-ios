@@ -11,7 +11,7 @@ import KeyAppKitCore
 import Web3
 
 /// A data structure for handling bridging ethereum network to solana network.
-public struct WormholeBundle: Codable, Hashable {
+public struct WormholeBundle: Codable, Hashable, Equatable {
     public let bundleId: String
 
     public let userWallet: String

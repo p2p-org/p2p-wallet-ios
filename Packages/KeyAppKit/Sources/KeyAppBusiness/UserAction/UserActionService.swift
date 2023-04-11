@@ -44,7 +44,7 @@ public class UserActionService {
         accessQueue.async(flags: .barrier) { [weak self] in
             guard let self else { return }
 
-            let idx = self.actions.firstIndex { !$0.trackingKey.intersection(action.trackingKey).isEmpty }
+            let idx = self.actions.firstIndex { $0.id == action.id }
             if let idx {
                 self.actions[idx] = action
             } else {
@@ -62,6 +62,7 @@ public class UserActionService {
                 return action
             }
             .compactMap { $0 }
+            .removeDuplicates()
             .eraseToAnyPublisher()
     }
 

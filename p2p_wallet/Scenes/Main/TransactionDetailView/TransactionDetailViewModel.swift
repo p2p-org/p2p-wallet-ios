@@ -78,7 +78,7 @@ class TransactionDetailViewModel: BaseViewModel, ObservableObject {
             .store(in: &subscriptions)
     }
 
-    init(userAction: UserAction) {
+    init(userAction: any UserAction) {
         let userActionService: UserActionService = Resolver.resolve()
 
         style = .active
