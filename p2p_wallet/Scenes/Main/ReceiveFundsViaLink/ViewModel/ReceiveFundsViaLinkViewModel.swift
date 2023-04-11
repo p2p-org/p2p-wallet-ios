@@ -152,7 +152,7 @@ final class ReceiveFundsViaLinkViewModel: BaseViewModel, ObservableObject {
                         ))
                     } else {
                         self.processingState = .error(message: NSAttributedString(
-                            string: L10n.theTransactionWasRejectedByTheSolanaBlockchain
+                            string: L10n.theTransactionWasRejectedByTheSolanaBlockchain + ". " + L10n.openYourLinkAgain
                         ))
                     }
                 } else {
@@ -161,7 +161,7 @@ final class ReceiveFundsViaLinkViewModel: BaseViewModel, ObservableObject {
                             .tokenAmountFormattedString(symbol: token.symbol)
                     )
                     self.processingVisible = false
-                    self.sizeChangedSubject.send(566)
+                    self.sizeChangedSubject.send(662)
                 }
             }
             .store(in: &subscriptions)
@@ -184,18 +184,19 @@ final class ReceiveFundsViaLinkViewModel: BaseViewModel, ObservableObject {
         Task {
             do {
                 let claimableToken = try await self.sendViaLinkDataService.getClaimableTokenInfo(url: self.url)
-                let token = try await self.tokensRepository.getTokensList(useCache: true)
-                    .first {
-                        // Native SOL token
-                        if claimableToken.mintAddress == PublicKey.wrappedSOLMint.base58EncodedString {
-                            return $0.isNativeSOL
-                        }
-                        
-                        // Other tokens
-                        return $0.address == claimableToken.mintAddress
-                    }
-
-                guard let token = token else { return }
+                
+                // Native solana token
+                let token: Token
+                if claimableToken.mintAddress == PublicKey.wrappedSOLMint.base58EncodedString {
+                    token = .nativeSolana
+                }
+                
+                // Other spl tokens
+                else {
+                    token = try await self.tokensRepository.getTokensList(useCache: true)
+                        .first { $0.address == claimableToken.mintAddress } ??
+                        .unsupported(mint: claimableToken.mintAddress, decimals: claimableToken.decimals)
+                }
 
                 let cryptoAmount = claimableToken.lamports
                     .convertToBalance(decimals: claimableToken.decimals)
