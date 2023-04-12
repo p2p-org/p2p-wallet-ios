@@ -53,6 +53,9 @@ struct SupportedTokenNetworksView: View {
                 .ignoresSafeArea()
                 .cornerRadius(radius: 16, corners: [.topLeft, .topRight])
         )
+        .onAppear {
+            analyticsManager.log(event: .receiveNetworkScreenOpen)
+        }
     }
 
     func network(icon: UIImage, title: String, onTap: @escaping () -> Void) -> some View {
