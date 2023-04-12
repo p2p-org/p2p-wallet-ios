@@ -26,7 +26,7 @@ struct WormholeSendInputView: View {
                     .fontWeight(.bold)
                     .apply(style: .largeTitle)
 
-                Text("Would be completed on the Ethereum network")
+                Text(L10n.wouldBeCompletedOnTheEthereumNetwork)
                     .apply(style: .text3)
                     .foregroundColor(Color(Asset.Colors.mountain.color))
             }
@@ -65,6 +65,7 @@ struct WormholeSendInputView: View {
                 }
                 .padding(.horizontal, 8)
 
+                // Account view
                 SendInputTokenView(
                     wallet: viewModel.adapter.inputAccount?.data ?? Wallet(token: .eth),
                     amountInFiat: viewModel.adapter.inputAccount?.amountInFiatDouble ?? 0.0,
@@ -76,6 +77,7 @@ struct WormholeSendInputView: View {
             }
 
             if let account = viewModel.adapter.inputAccount {
+                // Amount view
                 SendInputAmountView(
                     amountText: $viewModel.input,
                     isFirstResponder: $viewModel.isFirstResponder,
