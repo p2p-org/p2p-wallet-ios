@@ -25,7 +25,7 @@ final class ChooseWormholeTokenService: ChooseItemService {
     func sort(items: [ChooseItemListSection]) -> [ChooseItemListSection] {
         let newItems = items.map { section in
             guard let wallets = section.items as? [Wallet] else { return section }
-            return ChooseItemListSection(items: wallets.sorted())
+            return ChooseItemListSection(items: wallets.sorted(preferOrderSymbols: [Token.usdcet.symbol]))
         }
         let isEmpty = newItems.flatMap(\.items).isEmpty
         return isEmpty ? [] : newItems
@@ -43,7 +43,10 @@ private extension ChooseWormholeTokenService {
                 state.apply { accounts in
                     [ChooseItemListSection(
                         items: accounts
-                            .filter { SupportedToken.bridges.map(\.solAddress).contains($0.data.mintAddress) }
+                            .filter {
+                                SupportedToken.bridges.map(\.solAddress).contains($0.data.mintAddress)
+                                && ($0.data.lamports ?? 0) > 0
+                            }
                             .map(\.data))
                     ]
                 }
