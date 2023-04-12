@@ -27,18 +27,18 @@ final class SendLinkCreatedViewModel {
     
     let link: String
     let formatedAmount: String
-    private let pubKey: String
+    private let intermediateAccountPubKey: String
     
     // MARK: - Init
     
     init(
         link: String,
         formatedAmount: String,
-        pubKey: String
+        intermediateAccountPubKey: String
     ) {
         self.link = link
         self.formatedAmount = formatedAmount
-        self.pubKey = pubKey
+        self.intermediateAccountPubKey = intermediateAccountPubKey
     }
     
     // MARK: - View Output
@@ -78,7 +78,7 @@ private extension SendLinkCreatedViewModel {
         analyticsManager.log(event: .sendCreatingLinkEndScreenOpen(
             tokenName: String(tokenName),
             tokenValue: tokenValue,
-            pubkey: pubKey
+            pubkey: intermediateAccountPubKey
         ))
     }
     
