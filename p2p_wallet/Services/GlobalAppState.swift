@@ -62,4 +62,6 @@ class GlobalAppState: ObservableObject {
             newSwapEndpoint = "https://swap.key.app"
         }
     }
+    
+    @Published var bridgeEndpoint: String = "https://bridge-service.key.app"
 }

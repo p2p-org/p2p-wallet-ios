@@ -8,6 +8,7 @@
 import BEPureLayout
 import Combine
 import Foundation
+import KeyAppBusiness
 import KeyAppUI
 import Resolver
 import SolanaSwift
@@ -121,9 +122,9 @@ extension WalletDetail {
                             self?.navigationController?.popToViewController(ofClass: Self.self, animated: true)
                             self?.showSendTransactionStatus(model: model)
 
-                        case let .wormhole(trx):
+                        case let .wormhole(userAction):
                             self?.navigationController?.popToViewController(ofClass: Self.self, animated: true)
-                            self?.showTransaction(trx: trx)
+                            self?.showUserAction(userAction: userAction)
 
                         case .sentViaLink:
                             self?.navigationController?.popToViewController(ofClass: Self.self, animated: true)
@@ -172,10 +173,23 @@ extension WalletDetail {
         // MARK: - Actions
 
         private func showTransaction(trx: RawTransactionType) {
-            TransactionDetailCoordinator(viewModel: .init(submit: trx), presentingViewController: navigationController!)
-                .start()
-                .sink(receiveValue: { _ in })
-                .store(in: &subscriptions)
+            TransactionDetailCoordinator(
+                viewModel: .init(submit: trx),
+                presentingViewController: navigationController!
+            )
+            .start()
+            .sink(receiveValue: { _ in })
+            .store(in: &subscriptions)
+        }
+
+        func showUserAction(userAction: any UserAction) {
+            TransactionDetailCoordinator(
+                viewModel: .init(userAction: userAction),
+                presentingViewController: navigationController!
+            )
+            .start()
+            .sink(receiveValue: { _ in })
+            .store(in: &subscriptions)
         }
 
         private func showSendTransactionStatus(model: SendTransaction) {

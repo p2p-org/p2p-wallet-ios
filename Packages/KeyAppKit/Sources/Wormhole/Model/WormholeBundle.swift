@@ -7,29 +7,31 @@
 
 import BigInt
 import Foundation
+import KeyAppKitCore
+import Web3
 
 /// A data structure for handling bridging ethereum network to solana network.
-public struct WormholeBundle: Codable, Hashable {
+public struct WormholeBundle: Codable, Hashable, Equatable {
     public let bundleId: String
-    
+
     public let userWallet: String
-    
+
     public let recipient: String
-    
+
     public let resultAmount: TokenAmount
-    
+
     public let compensationDeclineReason: CompensationDeclineReason?
-    
+
     public let expiresAt: Int
-    
+
     public var expiresAtDate: Date {
-        Date(timeIntervalSince1970: TimeInterval(self.expiresAt))
+        Date(timeIntervalSince1970: TimeInterval(expiresAt))
     }
-    
+
     public let transactions: [String]
-    
+
     public var signatures: [EthereumSignature]?
-    
+
     public let fees: ClaimFees
 
     public enum CodingKeys: String, CodingKey {
@@ -42,6 +44,40 @@ public struct WormholeBundle: Codable, Hashable {
         case transactions
         case signatures
         case fees
+    }
+}
+
+public extension WormholeBundle {
+    mutating func signBundle(with keyPair: EthereumKeyPair) throws {
+        // Sign transactions
+        signatures = try transactions.map { transaction -> EthereumSignature in
+            var transactionBytes = transaction.hexToBytes()
+            if transactionBytes[0] == EthereumTransaction.TransactionType.eip1559.byte! {
+                transactionBytes.remove(at: 0)
+            }
+
+            let rlpItem: RLPItem = try RLPDecoder().decode(transactionBytes)
+
+            let transaction = try EthereumTransaction(rlp: rlpItem)
+            let signedTransaction = try keyPair.sign(transaction: transaction, chainID: 1)
+
+            return EthereumSignature(
+                r: signedTransaction.r.hex(),
+                s: signedTransaction.s.hex(),
+                v: try UInt64(signedTransaction.v.quantity)
+            )
+        }
+    }
+}
+
+private extension EthereumTransaction.TransactionType {
+    var byte: UInt? {
+        switch self {
+        case .eip1559:
+            return 0x02
+        default:
+            return nil
+        }
     }
 }
 

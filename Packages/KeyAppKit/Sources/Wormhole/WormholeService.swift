@@ -16,8 +16,6 @@ public class WormholeService {
     private let ethereumKeypair: EthereumKeyPair?
     private let solanaKeyPair: KeyPair?
 
-    public let wormholeClaimMonitoreService: WormholeClaimMonitoreService
-
     let errorObservable: ErrorObserver
 
     public init(
@@ -30,14 +28,6 @@ public class WormholeService {
         self.ethereumKeypair = ethereumKeypair
         self.solanaKeyPair = solanaKeyPair
         self.errorObservable = errorObservable
-
-        self.wormholeClaimMonitoreService = .init(
-            ethereumKeypair: ethereumKeypair,
-            api: api,
-            errorObserver: errorObservable
-        )
-
-        wormholeClaimMonitoreService.refresh()
     }
 
     /// Method for get claiming bundle.
@@ -70,31 +60,13 @@ public class WormholeService {
         }
     }
 
-    public func simulateBundle(bundle: WormholeBundle) async throws {
-        try await errorObservable.run {
-            let signedBundle = try signBundle(bundle: bundle)
-            try await api.simulateEthereumBundle(bundle: signedBundle)
-
-            wormholeClaimMonitoreService.add(bundle: bundle)
-        }
-    }
-
-    /// Submit bundle for starting claim.
-    public func sendBundle(bundle: WormholeBundle) async throws {
-        try await errorObservable.run {
-            let signedBundle = try signBundle(bundle: bundle)
-            try await api.sendEthereumBundle(bundle: signedBundle)
-
-            wormholeClaimMonitoreService.add(bundle: bundle)
-        }
-    }
-
     public func transferFromSolana(
         feePayer: String,
         from: String,
         recipient: String,
         mint: String?,
-        amount: String
+        amount: String,
+        needToUseRelay: Bool
     ) async throws -> SendTransaction {
         guard let solanaKeyPair else {
             throw ServiceError.authorizationError
@@ -106,7 +78,8 @@ public class WormholeService {
             from: from,
             recipient: recipient,
             mint: mint,
-            amount: amount
+            amount: amount,
+            needToUseRelay: needToUseRelay
         )
     }
 
@@ -125,42 +98,6 @@ public class WormholeService {
             mint: mint,
             amount: amount
         )
-    }
-
-    /// Sign transaction
-    internal func signBundle(bundle: WormholeBundle) throws -> WormholeBundle {
-        guard let ethereumKeypair else {
-            throw ServiceError.authorizationError
-        }
-
-        // Mutable bundle
-        var bundle = bundle
-
-        // Sign transactions
-        bundle.signatures = try bundle.transactions.map { transaction -> EthereumSignature in
-            var transactionBytes = transaction.hexToBytes()
-            if transactionBytes[0] == EthereumTransaction.TransactionType.eip1559.byte! {
-                transactionBytes.remove(at: 0)
-            }
-
-            let rlpItem: RLPItem = try RLPDecoder().decode(transactionBytes)
-
-            let transaction = try EthereumTransaction(rlp: rlpItem)
-            let signedTransaction = try ethereumKeypair.sign(transaction: transaction, chainID: 1)
-
-            print(signedTransaction.verifySignature())
-            print(try signedTransaction.rawTransaction().hex())
-
-            let signature = EthereumSignature(
-                r: signedTransaction.r.hex(),
-                s: signedTransaction.s.hex(),
-                v: try UInt64(signedTransaction.v.quantity)
-            )
-
-            return signature
-        }
-
-        return bundle
     }
 }
 

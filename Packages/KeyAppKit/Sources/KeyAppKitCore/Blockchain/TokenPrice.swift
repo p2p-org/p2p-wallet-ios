@@ -9,7 +9,7 @@ import BigDecimal
 import Foundation
 
 // A structure for handling token price
-public struct TokenPrice: Hashable {
+public struct TokenPrice: Hashable, Codable {
     /// ISO 4217 Currency code
     public let currencyCode: String
 
@@ -19,9 +19,9 @@ public struct TokenPrice: Hashable {
     /// Value of price
     public let value: BigDecimal
 
-    @available(*, deprecated, message: "Never use double for fiat.")
+    @available(*, deprecated, message: "Never use double for store fiat.")
     public var doubleValue: Double {
-        return Double(value.description) ?? 0.0
+        Double(value.description) ?? 0.0
     }
 
     public init(currencyCode: String, value: BigDecimal, token: AnyToken) {

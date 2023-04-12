@@ -294,6 +294,7 @@ let package = Package(
                 .product(name: "SolanaSwift", package: "solana-swift"),
                 .product(name: "WalletCore", package: "wallet-core"),
                 .product(name: "SwiftProtobuf", package: "wallet-core"),
+                .product(name: "FeeRelayerSwift", package: "FeeRelayerSwift"),
             ]
         ),
         .testTarget(

@@ -41,10 +41,10 @@ struct SwapView: View {
             }
         }
         .onAppear {
-            viewModel.viewAppeared.send(())
+            viewModel.isViewAppeared.send(true)
         }
         .onDisappear {
-            viewModel.viewDisappeared.send(())
+            viewModel.isViewAppeared.send(false)
         }
     }
 }

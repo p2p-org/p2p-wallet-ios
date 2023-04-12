@@ -21,7 +21,7 @@ class WormholeSendInputViewModel: BaseViewModel, ObservableObject {
     enum Action {
         case openPickAccount
         case openFees
-        case send(WormholeSendTransaction)
+        case send(WormholeSendUserAction)
     }
 
     enum InputMode {
@@ -49,7 +49,7 @@ class WormholeSendInputViewModel: BaseViewModel, ObservableObject {
     @Published var input: String = ""
     @Published var countAfterDecimalPoint: Int = 8
     @Published var isFirstResponder: Bool = false
-    @Published var inputMode: InputMode = .fiat
+    @Published var inputMode: InputMode = .crypto
 
     // It is needed to display value with precision in case the max amount is set via fiat mode
     @Published var secondaryAmountString = ""
@@ -277,7 +277,9 @@ class WormholeSendInputViewModel: BaseViewModel, ObservableObject {
             case .ready = adapter.state,
             let input = adapter.input,
             let output = adapter.output,
-            let transaction = output.transactions
+            let transaction = output.transactions,
+            let relayContext = Resolver.resolve(RelayContextManager.self).currentContext,
+            let transactions = output.transactions
         else {
             return
         }
@@ -287,16 +289,28 @@ class WormholeSendInputViewModel: BaseViewModel, ObservableObject {
         isFirstResponder = false
         try? await Task.sleep(seconds: 0.5)
 
-        let rawTransaction = WormholeSendTransaction(
-            account: input.solanaAccount,
-            recipient: recipient,
+        let userActionService: UserActionService = Resolver.resolve()
+
+        if let userAction = try? WormholeSendUserAction(
+            sourceToken: input.solanaAccount.data.token,
+            price: input.solanaAccount.price,
+            recipient: input.recipient,
             amount: input.amount,
             fees: output.fees,
-            transaction: transaction,
-            payingFeeWallet: output.feePayer?.data
-        )
+            payingFeeTokenAccount: .init(
+                address: PublicKey(string: output.feePayer?.data.pubkey),
+                mint: PublicKey(string: output.feePayer?.data.token.address)
+            ),
+            totalFeesViaRelay: output.feePayerAmount,
+            transaction: transactions,
+            relayContext: relayContext
+        ) {
+            userActionService.execute(action: userAction)
 
-        action.send(.send(rawTransaction))
+            action.send(.send(userAction))
+        } else {
+            return
+        }
     }
 }
 
