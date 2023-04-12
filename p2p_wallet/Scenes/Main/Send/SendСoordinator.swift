@@ -18,7 +18,7 @@ enum SendResult {
 }
 
 enum SendSource: String {
-    case sell, none
+    case sell, none, bridge
 }
 
 class SendCoordinator: Coordinator<SendResult> {

@@ -1,10 +1,4 @@
-//
-//  WormholeClaimFeeViewModel.swift
-//  p2p_wallet
-//
-//  Created by Giang Long Tran on 14.03.2023.
-//
-
+import AnalyticsManager
 import BigInt
 import Combine
 import Foundation
@@ -20,13 +14,20 @@ class WormholeClaimFeeViewModel: BaseViewModel, ObservableObject {
     let closeAction: PassthroughSubject<Void, Never> = .init()
 
     @Published var adapter: AsyncValueState<WormholeClaimFeeAdapter?> = .init(value: nil)
+    @Injected private var analyticsManager: AnalyticsManager
+    
+    override init() {
+        super.init()
+        self.analyticsManager.log(event: .claimBridgesFeeClick)
+    }
 
-    init(
+    convenience init(
         receive: Amount,
         networkFee: Amount,
         accountCreationFee: Amount?,
         wormholeBridgeAndTrxFee: Amount
     ) {
+        self.init()
         adapter = .init(
             status: .ready,
             value: .init(
@@ -36,17 +37,15 @@ class WormholeClaimFeeViewModel: BaseViewModel, ObservableObject {
                 wormholeBridgeAndTrxFee: wormholeBridgeAndTrxFee
             )
         )
-
-        super.init()
     }
 
-    init(
+    convenience init(
         account: EthereumAccount,
         bundle: AsyncValue<WormholeBundle?>,
         ethereumTokenService _: EthereumTokensRepository = Resolver.resolve(),
         solanaTokenService _: SolanaTokensRepository = Resolver.resolve()
     ) {
-        super.init()
+        self.init()
 
         /// Listen to changing in bundle
         bundle
