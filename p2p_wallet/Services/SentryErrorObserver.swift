@@ -13,7 +13,7 @@ class SentryErrorObserver: ErrorObserver {
     func handleError(_ error: Error) {
         // Debug print
         #if DEBUG
-        debugPrint(error)
+        debugPrint("Sentry manual handling: ", error)
         #endif
         
         // Forward to sentry

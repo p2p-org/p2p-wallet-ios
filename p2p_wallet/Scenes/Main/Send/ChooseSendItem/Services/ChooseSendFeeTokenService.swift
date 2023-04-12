@@ -1,16 +1,21 @@
 import SolanaSwift
+import Combine
+import KeyAppKitCore
 
 final class ChooseSendFeeTokenService: ChooseItemService {
 
     let otherTokensTitle = L10n.otherTokens
 
-    private let tokens: [Wallet]
-    init(tokens: [Wallet]) {
-        self.tokens = tokens
+    var state: AnyPublisher<AsyncValueState<[ChooseItemListSection]>, Never> {
+        statePublisher.eraseToAnyPublisher()
     }
 
-    func fetchItems() async throws -> [ChooseItemListSection] {
-        [ChooseItemListSection(items: tokens)]
+    private let statePublisher: CurrentValueSubject<AsyncValueState<[ChooseItemListSection]>, Never>
+
+    init(tokens: [Wallet]) {
+        statePublisher = CurrentValueSubject<AsyncValueState<[ChooseItemListSection]>, Never>(
+            AsyncValueState(status: .ready, value: [ChooseItemListSection(items: tokens)])
+        )
     }
 
     func sort(items: [ChooseItemListSection]) -> [ChooseItemListSection] {

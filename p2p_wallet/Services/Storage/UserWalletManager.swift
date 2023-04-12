@@ -3,6 +3,7 @@
 // found in the LICENSE file.
 
 import Combine
+import KeyAppBusiness
 import KeyAppKitCore
 import Onboarding
 import Resolver
@@ -92,9 +93,13 @@ class UserWalletManager: ObservableObject {
             let ethAddress = available(.ethAddressEnabled) ? self.wallet?.ethAddress : nil
             try await notificationsService.deleteDeviceToken(ethAddress: ethAddress)
         }
-        Task.detached { try await Resolver.resolve(SendHistoryLocalProvider.self).save(nil) }
+        Task.detached {
+            try await Resolver.resolve(SendHistoryLocalProvider.self).save(nil)
+        }
 
         // Storage
+        UserDefaults.standard.removeObject(forKey: "UserActionPersistentStorageWithUserDefault")
+
         storage.clearAccount()
         Defaults.walletName = [:]
         Defaults.didSetEnableBiometry = false

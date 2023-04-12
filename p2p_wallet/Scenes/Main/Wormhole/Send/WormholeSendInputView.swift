@@ -8,7 +8,8 @@
 import KeyAppKitCore
 import KeyAppUI
 import Kingfisher
-import SolanaSwift // TODO: check if I am needed later when wallet is sent to SendInputTokenView
+import Resolver
+import SolanaSwift
 import SwiftUI
 
 struct WormholeSendInputView: View {
@@ -96,6 +97,21 @@ struct WormholeSendInputView: View {
             }
 
             Spacer()
+
+            #if DEBUG
+                Button {
+                    let clipboard: ClipboardManager = Resolver.resolve()
+                    if let transaction = viewModel.adapter.output?.transactions {
+                        do {
+                            clipboard.copyToClipboard(transaction.transaction)
+                        } catch {
+                            print(error)
+                        }
+                    }
+                } label: {
+                    Text("Tap me to copy transaction 😇")
+                }
+            #endif
 
             SliderActionButton(
                 isSliderOn: $viewModel.isSliderOn,

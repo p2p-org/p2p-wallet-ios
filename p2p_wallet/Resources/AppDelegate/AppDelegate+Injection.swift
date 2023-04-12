@@ -81,7 +81,7 @@ extension Resolver: ResolverRegistering {
             .implements((ICloudStorageType & AccountStorageType & NameStorageType).self)
             .implements((ICloudStorageType & AccountStorageType & NameStorageType & PincodeStorageType).self)
             .scope(.application)
-        
+
         register { SendViaLinkStorageImpl() }
             .implements(SendViaLinkStorage.self)
             .scope(.session)
@@ -121,12 +121,9 @@ extension Resolver: ResolverRegistering {
         register { EthereumPriceService(api: resolve()) }
             .scope(.application)
 
-        register { WormholeRPCAPI(endpoint: "https://bridge-service.keyapp.org") }
+        register { WormholeRPCAPI(endpoint: GlobalAppState.shared.bridgeEndpoint) }
             .implements(WormholeAPI.self)
             .scope(.application)
-//        register { WormholeRPCAPI(endpoint: "https://bridge-service.keyapp.org") }
-//            .implements(WormholeAPI.self)
-//            .scope(.application)
 
         // AnalyticsManager
         register {
@@ -321,7 +318,7 @@ extension Resolver: ResolverRegistering {
             SendHistoryService(provider: resolve(SendHistoryLocalProvider.self))
         }
         .scope(.session)
-        
+
         // SendViaLink
         register {
             SendViaLinkDataServiceImpl(
@@ -359,6 +356,38 @@ extension Resolver: ResolverRegistering {
         register { FeeRelayerSwift.APIClient(baseUrlString: "https://fee-relayer.keyapp.org", version: 1) }
             .implements(FeeRelayerAPIClient.self)
             .scope(.session)
+
+        // UserActionService
+        register { UserActionPersistentStorageWithUserDefault(errorObserver: resolve()) }
+            .implements(UserActionPersistentStorage.self)
+            .scope(.application)
+
+        register {
+            let userWalletManager: UserWalletManager = resolve()
+
+            return UserActionService(
+                consumers: [
+                    WormholeSendUserActionConsumer(
+                        address: userWalletManager.wallet?.account.publicKey.base58EncodedString,
+                        signer: userWalletManager.wallet?.account,
+                        solanaClient: resolve(),
+                        wormholeAPI: resolve(),
+                        relayService: resolve(),
+                        errorObserver: resolve(),
+                        persistence: resolve()
+                    ),
+                    WormholeClaimUserActionConsumer(
+                        address: userWalletManager.wallet?.ethereumKeypair.publicKey,
+                        signer: userWalletManager.wallet?.ethereumKeypair,
+                        wormholeAPI: resolve(),
+                        ethereumTokenRepository: resolve(),
+                        errorObserver: resolve(),
+                        persistence: resolve()
+                    ),
+                ]
+            )
+        }
+        .scope(.session)
 
         register { RelayServiceImpl(
             contextManager: resolve(),

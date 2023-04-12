@@ -6,6 +6,7 @@
 //
 
 import Foundation
+import KeyAppBusiness
 import KeyAppKitCore
 import Web3
 import Wormhole
@@ -13,35 +14,44 @@ import Wormhole
 class EthereumAccountsDataSource: ObservableObject {
     struct Account {
         let account: EthereumAccount
-        let wormholeBundle: WormholeBundleStatus?
+        let isClaiming: Bool
     }
 
     // This function aggregates Ethereum accounts with their corresponding Wormhole bundle status
     static func aggregate(
         accounts: [EthereumAccount],
-        wormholeBundlesStatus: [WormholeBundleStatus]
+        claimUserActions: [WormholeClaimUserAction]
     ) -> [Account] {
         accounts.map { account in
             // Get the corresponding Wormhole bundle status for this Ethereum account
-            let bundleStatus: WormholeBundleStatus? = wormholeBundlesStatus.first { bundle in
-                switch (account.token.contractType, bundle.resultAmount.token) {
-                case let (.native, .ethereum(contract)):
-                    // If the account is for the native token, check if the bundle token is nil
-                    return contract == nil
-
-                case let (.erc20(accountContract), .ethereum(bundleContract)):
-                    // If the account is for an ERC-20 token, check if the bundle token matches
-                    return accountContract == (try? EthereumAddress(hex: bundleContract ?? "", eip55: false))
-
-                default:
-                    // Other cases
-                    return false
+            let bundleStatus: WormholeClaimUserAction? = claimUserActions
+                .filter {
+                    switch $0.status {
+                    case .pending, .processing:
+                        return true
+                    default:
+                        return false
+                    }
                 }
-            }
+                .first { userAction in
+                    switch (account.token.contractType, userAction.token.contractType) {
+                    case (.native, .native):
+                        // If the account is for the native token, check if the bundle token is nil
+                        return true
+
+                    case let (.erc20(lhsContract), .erc20(rhsContract)):
+                        // Check matching erc-20 tokens
+                        return lhsContract == rhsContract
+
+                    default:
+                        // Other cases
+                        return false
+                    }
+                }
 
             return Account(
                 account: account,
-                wormholeBundle: bundleStatus
+                isClaiming: bundleStatus != nil
             )
         }
     }

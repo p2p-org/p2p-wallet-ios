@@ -67,9 +67,12 @@ public class WormholeRPCAPI: WormholeAPI {
         )
     }
 
-    public func getEthereumFees(userWallet: String, recipient: String, token: String?,
-                                amount: String) async throws -> ClaimFees
-    {
+    public func getEthereumFees(
+        userWallet: String,
+        recipient: String,
+        token: String?,
+        amount: String
+    ) async throws -> ClaimFees {
         try await client.call(
             method: "get_ethereum_fees",
             params: [
@@ -105,7 +108,8 @@ public class WormholeRPCAPI: WormholeAPI {
         from: String,
         recipient: String,
         mint: String?,
-        amount: String
+        amount: String,
+        needToUseRelay: Bool
     ) async throws -> SendTransaction {
         /// Internal structure for params
         struct Params: Codable {
@@ -137,7 +141,7 @@ public class WormholeRPCAPI: WormholeAPI {
                 recipient: recipient,
                 mint: mint,
                 amount: amount,
-                needToUseRelay: true
+                needToUseRelay: needToUseRelay
             )
         )
     }
@@ -156,6 +160,20 @@ public class WormholeRPCAPI: WormholeAPI {
                 "mint": mint,
                 "amount": amount,
             ]
+        )
+    }
+
+    public func listSolanaStatuses(userWallet: String) async throws -> [WormholeSendStatus] {
+        try await client.call(
+            method: "list_solana_statuses",
+            params: ["user_wallet": userWallet]
+        )
+    }
+
+    public func getSolanaTransferStatus(message: String) async throws -> WormholeSendStatus? {
+        try await client.call(
+            method: "get_solana_transfer_status",
+            params: [message: message]
         )
     }
 }

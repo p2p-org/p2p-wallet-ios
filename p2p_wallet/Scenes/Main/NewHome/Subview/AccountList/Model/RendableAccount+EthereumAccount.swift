@@ -43,6 +43,8 @@ struct RendableEthereumAccount: RendableAccount {
     }
 
     var detail: AccountDetail {
+        
+        
         if let onClaim {
             return .button(label: L10n.claim, action: onClaim)
         } else if isClaiming {

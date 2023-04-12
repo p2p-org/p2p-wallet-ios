@@ -8,7 +8,7 @@
 import Foundation
 import KeyAppKitCore
 
-public struct ClaimFees: Codable, Hashable {
+public struct ClaimFees: Codable, Hashable, Equatable {
     public let gas: TokenAmount
 
     public let arbiter: TokenAmount
