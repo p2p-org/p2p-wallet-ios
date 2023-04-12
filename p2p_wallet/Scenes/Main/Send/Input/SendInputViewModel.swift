@@ -281,7 +281,7 @@ private extension SendInputViewModel {
                 case .token:
                     _ = await self.stateMachine.accept(action: .changeAmountInToken(value.amount.inToken))
                     self.logAmountChanged(
-                        symbol: currentState.token.symbol,
+                        symbol: self.currentState.token.symbol,
                         amount: value.amount.inToken
                     )
                 case .fiat:
