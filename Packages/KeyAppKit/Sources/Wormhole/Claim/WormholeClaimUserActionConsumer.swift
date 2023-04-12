@@ -82,21 +82,29 @@ public class WormholeClaimUserActionConsumer: UserActionConsumer {
 
     public func start() {
         Task {
-            // Restore
-            try? await database.restore(from: self.persistence, table: Self.table)
-
-            // Revalidate old bundle.
-            for userAction in await database.values() {
-                switch userAction.status {
-                case .pending, .processing:
-                    break
+            // Restore and filter some actions.
+            try? await database.restore(from: self.persistence, table: Self.table) { _, userAction in
+                switch userAction.internalState {
+                case .pending:
+                    // Never restore pending user action
+                    return false
+                case .processing:
+                    // Remove if user action is live longer then 3 hours
+                    if Date().timeIntervalSince(userAction.updatedDate) > 60 * 60 * 3 {
+                        return false
+                    }
                 case .ready, .error:
                     // Remove if user action is live longer then 3 minutes
                     if Date().timeIntervalSince(userAction.updatedDate) > 60 * 3 {
-                        await database.remove(key: userAction.bundleID)
+                        return false
                     }
                 }
+
+                // Otherwise restore user action
+                return true
             }
+            
+            manuallyCheck(userActions: await database.values())
 
             // Update bundle periodic
             updateNewBundleTimer = Timer.scheduledTimer(withTimeInterval: 30, repeats: true) { [weak self] _ in
@@ -112,50 +120,18 @@ public class WormholeClaimUserActionConsumer: UserActionConsumer {
         updateNewBundleTimer?.invalidate()
     }
 
-    public func fetchNewBundle() {
-        Task { [weak self] in
-            do {
-                guard let address = self?.address else { return }
-
-                let bundles: [WormholeBundleStatus]? = try await self?
-                    .wormholeAPI
-                    .listEthereumBundles(userWallet: address)
-
-                guard let bundles else { return }
-
-                for bundle in bundles {
-                    self?.handleEvent(event: .trackNewBundle(bundle))
-                }
-            } catch {
-                self?.errorObserver.handleError(error)
-            }
-        }
-    }
-
     public func handleEvent(event: Event) {
         switch event {
-        case let .trackNewBundle(bundleStatus):
+        case let .track(bundleStatus):
             Task { [weak self] in
                 if var userAction = await self?.database.get(for: bundleStatus.bundleId) {
-                    // Update processing to ready or error.
-                    switch userAction.status {
-                    case .processing:
-                        switch bundleStatus.status {
-                        case .completed:
-                            userAction.status = .ready
-                        case .failed, .expired, .canceled:
-                            userAction.status = .error(Error.claimingFinishesWithError)
-                        default:
-                            return
-                        }
-                    default:
-                        return
-                    }
-                    
+                    // Client side updating state
+                    userAction.moveToNextStatus(nextStatus: bundleStatus.status)
+
                     // Update record
                     await self?.database.set(for: userAction.bundleID, userAction)
                 } else {
-                    // Only track new pending claimings
+                    // Track new pending claimings that wasn't initialed by user's device.
                     switch bundleStatus.status {
                     case .pending, .inProgress:
                         break
@@ -185,14 +161,14 @@ public class WormholeClaimUserActionConsumer: UserActionConsumer {
         case let .claimFailure(bundleID: bundleID, reason: reason):
             Task { [weak self] in
                 guard var bundle = await self?.database.get(for: bundleID) else { return }
-                bundle.status = .error(reason)
+                bundle.internalState = .error(reason)
                 await self?.database.set(for: bundleID, bundle)
             }
 
         case let .claimInProgress(bundleID: bundleID):
             Task { [weak self] in
                 guard var bundle = await self?.database.get(for: bundleID) else { return }
-                bundle.status = .pending
+                bundle.internalState = .processing
                 await self?.database.set(for: bundleID, bundle)
             }
         }
@@ -211,9 +187,14 @@ public class WormholeClaimUserActionConsumer: UserActionConsumer {
                 return
             }
 
-            // Expect bundle for sending
-            guard case var .bundle(rawBundle) = action.bundle else {
-                self?.handleEvent(event: .claimFailure(bundleID: action.bundleID, reason: .signingFailure))
+            guard case var .pending(rawBundle) = action.internalState else {
+                let error = Error.claimFailure
+                self?.handleEvent(
+                    event: .claimFailure(
+                        bundleID: action.bundleID, reason: error
+                    )
+                )
+
                 return
             }
 

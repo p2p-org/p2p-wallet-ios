@@ -52,11 +52,15 @@ public extension SynchronizedDatabase {
             }
     }
 
-    func restore(from userActionPersistentStorage: UserActionPersistentStorage, table: String) async throws {
+    func restore(
+        from userActionPersistentStorage: UserActionPersistentStorage,
+        table: String,
+        filter: (Key, Value) -> Bool = { _, _ in true }
+    ) async throws {
         let data = userActionPersistentStorage.restore(table: table)
         guard let data else { return }
         let restoredData = try JSONDecoder().decode([Key: Value].self, from: data)
 
-        self.data = restoredData
+        self.data = restoredData.filter(filter)
     }
 }

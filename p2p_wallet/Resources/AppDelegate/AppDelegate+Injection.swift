@@ -124,7 +124,7 @@ extension Resolver: ResolverRegistering {
         register { WormholeRPCAPI(endpoint: "https://bridge-service.keyapp.org") }
             .implements(WormholeAPI.self)
             .scope(.application)
-//        register { WormholeRPCAPI(endpoint: "https://bridge-service.keyapp.org") }
+//        register { WormholeRPCAPI(endpoint: "https://bridge-service.key.app") }
 //            .implements(WormholeAPI.self)
 //            .scope(.application)
 

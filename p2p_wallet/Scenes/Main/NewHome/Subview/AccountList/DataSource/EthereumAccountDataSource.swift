@@ -34,14 +34,14 @@ class EthereumAccountsDataSource: ObservableObject {
                     }
                 }
                 .first { userAction in
-                    switch (account.token.contractType, userAction.bundle.resultAmount.token) {
-                    case let (.native, .ethereum(contract)):
+                    switch (account.token.contractType, userAction.token.contractType) {
+                    case (.native, .native):
                         // If the account is for the native token, check if the bundle token is nil
-                        return contract == nil
+                        return true
 
-                    case let (.erc20(accountContract), .ethereum(bundleContract)):
-                        // If the account is for an ERC-20 token, check if the bundle token matches
-                        return accountContract == (try? EthereumAddress(hex: bundleContract ?? "", eip55: false))
+                    case let (.erc20(lhsContract), .erc20(rhsContract)):
+                        // Check matching erc-20 tokens
+                        return lhsContract == rhsContract
 
                     default:
                         // Other cases
