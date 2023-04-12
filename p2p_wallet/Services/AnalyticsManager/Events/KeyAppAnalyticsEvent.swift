@@ -150,7 +150,7 @@ enum KeyAppAnalyticsEvent: AnalyticsEvent {
     case sendnewBuyClickButton(source: String)
     case sendnewReceiveClickButton(source: String)
     case sendnewInputScreen(source: String)
-    case sendnewTokenInputClick(source: String, sendFlow: String)
+    case sendnewTokenInputClick(tokenName: String, source: String, sendFlow: String)
     case sendnewFreeTransactionClick(source: String, sendFlow: String)
     case sendnewFiatInputClick(crypto: Bool, source: String)
 
