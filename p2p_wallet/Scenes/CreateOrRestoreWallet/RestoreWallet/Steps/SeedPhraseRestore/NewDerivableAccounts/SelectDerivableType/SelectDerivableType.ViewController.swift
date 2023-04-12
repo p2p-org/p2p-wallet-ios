@@ -2,13 +2,13 @@ import Foundation
 import KeyAppUI
 import SolanaSwift
 
-extension NewDerivablePaths {
-    typealias Callback = (DerivablePath) -> Void
+extension SelectDerivableType {
+    typealias Callback = (DerivablePath.DerivableType) -> Void
 
     class ViewController: WLBottomSheet {
         // MARK: - Properties
 
-        private let initPath: DerivablePath
+        private let initType: DerivablePath.DerivableType
         private let onSelect: Callback?
 
         override var margin: UIEdgeInsets {
@@ -17,8 +17,8 @@ extension NewDerivablePaths {
 
         // MARK: - Initializers
 
-        init(currentPath: DerivablePath, onSelect: Callback?) {
-            initPath = currentPath
+        init(currentType: DerivablePath.DerivableType, onSelect: Callback?) {
+            initType = currentType
             self.onSelect = onSelect
             super.init()
             modalPresentationStyle = .custom
@@ -49,7 +49,7 @@ extension NewDerivablePaths {
                         .map { DerivablePath(type: $0, walletIndex: 0, accountIndex: 0) }
                         .enumerated()
                         .map { index, path -> UIView in
-                            let selected = path == initPath
+                            let selected = path.type == initType
 
                             return UIStackView(axis: .vertical, alignment: .fill, distribution: .fill) {
                                 UIStackView(axis: .horizontal, alignment: .center) {
@@ -78,7 +78,7 @@ extension NewDerivablePaths {
 
             guard let tag = gesture.view?.tag else { return }
             let pathType = DerivablePath.DerivableType.allCases[tag]
-            onSelect?(.init(type: pathType, walletIndex: 0, accountIndex: 0))
+            onSelect?(pathType)
         }
     }
 }
