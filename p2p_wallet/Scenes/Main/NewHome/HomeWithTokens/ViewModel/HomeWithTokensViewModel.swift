@@ -9,14 +9,14 @@ import AnalyticsManager
 import Combine
 import Foundation
 import Resolver
-import SolanaSwift
-import UIKit
-import SwiftyUserDefaults
 import Sell
+import SolanaSwift
+import SwiftyUserDefaults
+import UIKit
 
 final class HomeWithTokensViewModel: BaseViewModel, ObservableObject {
     // MARK: - Dependencies
-    
+
     private let walletsRepository: WalletsRepository
     @Injected private var pricesService: PricesServiceType
     @Injected private var solanaTracker: SolanaTracker
@@ -48,21 +48,27 @@ final class HomeWithTokensViewModel: BaseViewModel, ObservableObject {
 
         balance = walletsRepository.dataPublisher
             .map { data in
-                let equityValue = data.reduce(0) { $0 + $1.amountInCurrentFiat }
-                return "\(Defaults.fiat.symbol) \(equityValue.toString(maximumFractionDigits: 2))"
+                if data.allSatisfy({ wallet in wallet.priceInCurrentFiat == nil }) {
+                    // Hide balance
+                    return ""
+                } else {
+                    // Display balance
+                    let equityValue = data.reduce(0) { $0 + $1.amountInCurrentFiat }
+                    return "\(Defaults.fiat.symbol) \(equityValue.toString(maximumFractionDigits: 2))"
+                }
             }
             .debounce(for: .seconds(0.1), scheduler: RunLoop.main)
             .eraseToAnyPublisher()
         self.walletsRepository = walletsRepository
-        
+
         super.init()
-        
+
         if sellDataService.isAvailable {
             actions = [.buy, .receive, .send, .cashOut]
         } else {
             actions = [.buy, .receive, .send]
         }
-        
+
         walletsRepository.dataPublisher
             .debounce(for: .seconds(0.1), scheduler: RunLoop.main)
             .sink(receiveValue: { [weak self] wallets in
@@ -101,7 +107,7 @@ final class HomeWithTokensViewModel: BaseViewModel, ObservableObject {
     func refresh() async {
         // reload
         walletsRepository.refresh()
-        
+
         print(walletsRepository.state)
         // wait for .loaded or .error event
         _ = try? await walletsRepository.statePublisher
@@ -156,7 +162,7 @@ final class HomeWithTokensViewModel: BaseViewModel, ObservableObject {
 
 extension Wallet: Identifiable {
     public var id: String {
-        return name + pubkey
+        name + pubkey
     }
 }
 

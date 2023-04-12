@@ -118,11 +118,11 @@ extension TransactionDetail {
             }
 
             Task {
-                async let fromName: String? = fromAddress != nil ? nameService.getName(fromAddress!) : nil
-                async let toName: String? = toAddress != nil ? nameService.getName(toAddress!) : nil
+                async let fromName: String? = fromAddress != nil ? nameService.getName(fromAddress!, withTLD: true) : nil
+                async let toName: String? = toAddress != nil ? nameService.getName(toAddress!, withTLD: true) : nil
 
-                await senderNameSubject.accept(try? fromName?.withNameServiceDomain())
-                await receiverNameSubject.accept(try? toName?.withNameServiceDomain())
+                await senderNameSubject.accept(try? fromName)
+                await receiverNameSubject.accept(try? toName)
             }
         }
     }

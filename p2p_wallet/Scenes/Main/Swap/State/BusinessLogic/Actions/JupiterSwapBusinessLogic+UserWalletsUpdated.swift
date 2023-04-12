@@ -21,30 +21,21 @@ extension JupiterSwapBusinessLogic {
             }
             return SwapToken(token: swapToken.token, userWallet: nil)
         }
-        
-        // update from Token
-        let fromUserWallet: Wallet = userWallets
+
+        var fromToken: SwapToken?
+        // update from Token only if it is from userWallets
+        if let fromUserWallet = userWallets
             .first(where: {
                 $0.pubkey == state.fromToken.userWallet?.pubkey &&
                 $0.mintAddress == state.fromToken.address
-            })
-            ??
-            userWallets.first(where: {
-                $0.mintAddress == PublicKey.usdcMint.base58EncodedString
-            })
-            ??
-            userWallets.first(where: {
-                $0.isNativeSOL
-            })
-            ??
-            .nativeSolana(pubkey: nil, lamport: nil)
-        
-        let fromToken = SwapToken(
-            token: fromUserWallet.token,
-            userWallet: fromUserWallet
-        )
-        
-        // update toToken
+            }) {
+            fromToken = SwapToken(
+                token: fromUserWallet.token,
+                userWallet: fromUserWallet
+            )
+        }
+
+        // update toToken only if it is from userWallets
         var toToken: SwapToken?
         if let toUserWallet: Wallet = userWallets
             .first(where: {
@@ -56,16 +47,12 @@ extension JupiterSwapBusinessLogic {
                 token: toUserWallet.token,
                 userWallet: toUserWallet
             )
-        } else if let chosenToToken = autoChooseToToken(for: fromToken, from: state.swapTokens) {
-            toToken = chosenToToken
-        } else {
-            toToken = nil
         }
-        
-        // if from and to token stay unchanged, update only the token with new balance, not the route
+
+        // if from and to token stay unchanged, update only the tokens with new balance, not the route
         return state.modified {
             $0.swapTokens = swapTokens
-            $0.fromToken = fromToken
+            $0.fromToken = fromToken ?? state.fromToken
             $0.toToken = toToken ?? state.toToken
         }
     }

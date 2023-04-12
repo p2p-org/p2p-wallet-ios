@@ -57,7 +57,8 @@ final class DebugMenuViewModel: BaseViewModel, ObservableObject {
         
         newSwapEndpoints = [
             "https://quote-api.jup.ag",
-            "https://swap.key.app"
+            "https://swap.key.app",
+            "https://swap.keyapp.org"
         ]
 
         currentMoonpayEnvironment = Defaults.moonpayEnvironment
@@ -118,6 +119,7 @@ extension DebugMenuViewModel {
         case mockedTKeyFacade
         case simulatedSocialError
         case sell
+        case sendViaLink
         case jupiterSwap
 
         var title: String {
@@ -131,6 +133,7 @@ extension DebugMenuViewModel {
             case .investSolend: return "Invest Solend"
             case .solendDisablePlaceholder: return "Solend Disable Placeholder"
             case .sell: return "Sell (Off Ramp)"
+            case .sendViaLink: return "Send via link"
             case .jupiterSwap: return "Jupiter Swap"
             }
         }
@@ -146,6 +149,7 @@ extension DebugMenuViewModel {
             case .investSolend: return .investSolendFeature
             case .solendDisablePlaceholder: return .solendDisablePlaceholder
             case .sell: return .sellScenarioEnabled
+            case .sendViaLink: return .sendViaLinkEnabled
             case .jupiterSwap: return .jupiterSwapEnabled
             }
         }

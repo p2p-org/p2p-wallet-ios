@@ -92,7 +92,7 @@ extension ReceiveToken {
 
         private func bind() {
             viewModel.addressesHintIsHiddenPublisher
-                .assign(to: \.isHidden, on: fullTapAndHoldView)
+                .assignWeak(to: \.isHidden, on: fullTapAndHoldView)
                 .store(in: &subscriptions)
         }
 

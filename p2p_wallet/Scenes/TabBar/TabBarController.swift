@@ -100,9 +100,7 @@ final class TabBarController: UITabBarController {
 
         // authenticate if needed
         if authenticateWhenAppears {
-            #if !DEBUG
             viewModel.authenticate(presentationStyle: .login())
-            #endif
         }
 
         // add blur EffectView for authentication scene
@@ -276,7 +274,7 @@ final class TabBarController: UITabBarController {
         // blurEffectView
         viewModel.authenticationStatusPublisher
             .map { $0 == nil }
-            .assign(to: \.isHidden, on: blurEffectView)
+            .assignWeak(to: \.isHidden, on: blurEffectView)
             .store(in: &subscriptions)
     }
 }
@@ -293,6 +291,7 @@ extension TabBarController: UITabBarControllerDelegate {
         }
 
         customTabBar.updateSelectedViewPositionIfNeeded()
+        
         if TabItem(rawValue: selectedIndex) == .invest {
             if !available(.investSolendFeature) {
                 if available(.jupiterSwapEnabled) {
@@ -304,9 +303,7 @@ extension TabBarController: UITabBarControllerDelegate {
                 solendTutorialSubject.send()
                 return false
             }
-        }
-
-        if TabItem(rawValue: selectedIndex) == .wallet,
+        } else if TabItem(rawValue: selectedIndex) == .wallet,
            (viewController as! UINavigationController).viewControllers.count == 1,
            self.selectedIndex == selectedIndex
         {

@@ -7,9 +7,9 @@ PODS:
   - AppAuth/Core (1.6.0)
   - AppAuth/ExternalUserAgent (1.6.0):
     - AppAuth/Core
-  - AppsFlyerFramework (6.10.0):
-    - AppsFlyerFramework/Main (= 6.10.0)
-  - AppsFlyerFramework/Main (6.10.0)
+  - AppsFlyerFramework (6.10.1):
+    - AppsFlyerFramework/Main (= 6.10.1)
+  - AppsFlyerFramework/Main (6.10.1)
   - BECollectionView (1.0.0):
     - BECollectionView_Core
     - RxCocoa (~> 6.5.0)
@@ -163,7 +163,7 @@ PODS:
     - BEPureLayout
     - SkeletonView (~> 1.7)
   - KeychainSwift (19.0.0)
-  - Kingfisher (7.3.2)
+  - Kingfisher (7.6.2)
   - ListPlaceholder (1.5)
   - LoggerSwift (1.0.2)
   - Lokalise (0.10.2)
@@ -248,7 +248,7 @@ PODS:
     - SolanaSwift
   - SwiftFormat/CLI (0.49.6)
   - SwiftGen (6.6.2)
-  - SwiftLint (0.50.3)
+  - SwiftLint (0.51.0)
   - SwiftNotificationCenter (1.0.4)
   - SwiftyUserDefaults (5.3.0)
   - Task_retrying (2.0.0)
@@ -284,7 +284,7 @@ DEPENDENCIES:
   - KeyAppKitLogger (from `https://github.com/p2p-org/key-app-kit-swift.git`, branch `master`)
   - "KeyAppUI (from `git@github.com:p2p-org/KeyAppUI.git`, branch `main`)"
   - KeychainSwift (= 19.0.0)
-  - Kingfisher (~> 7.3.2)
+  - Kingfisher (~> 7.6.1)
   - ListPlaceholder (from `https://github.com/p2p-org/ListPlaceholder.git`, branch `custom_gradient_color`)
   - Lokalise (~> 0.10.0)
   - lottie-ios (~> 3.5.0)
@@ -473,7 +473,7 @@ EXTERNAL SOURCES:
 
 CHECKOUT OPTIONS:
   AnalyticsManager:
-    :commit: f4059c29e405c3275e4f342146e98e536f735a9d
+    :commit: 3e12f123578e5336d2da8ccd35d8f1b28db7ec0d
     :git: https://github.com/p2p-org/key-app-kit-swift.git
   BECollectionView:
     :commit: 7badd35cd036735b9c6867e273b59430311f53e7
@@ -488,34 +488,34 @@ CHECKOUT OPTIONS:
     :commit: 9b4ab977660c8554d23a2d9b83b6ac6c6058b3b7
     :git: https://github.com/p2p-org/BEPureLayout.git
   Cache:
-    :commit: f4059c29e405c3275e4f342146e98e536f735a9d
+    :commit: 3e12f123578e5336d2da8ccd35d8f1b28db7ec0d
     :git: https://github.com/p2p-org/key-app-kit-swift.git
   CountriesAPI:
-    :commit: f4059c29e405c3275e4f342146e98e536f735a9d
+    :commit: 3e12f123578e5336d2da8ccd35d8f1b28db7ec0d
     :git: https://github.com/p2p-org/key-app-kit-swift.git
   Down:
     :commit: eee1d66d7ef71b892e72c8bc8d84fcdfeaab1918
     :git: https://github.com/p2p-org/Down.git
   FeeRelayerSwift:
-    :commit: 5504937ac88f5648443af3857b001794f85ecbf8
+    :commit: e7bffb588e2afb457ba2fd121f5dbabb699cd17f
     :git: https://github.com/p2p-org/FeeRelayerSwift.git
   History:
-    :commit: f4059c29e405c3275e4f342146e98e536f735a9d
+    :commit: 3e12f123578e5336d2da8ccd35d8f1b28db7ec0d
     :git: https://github.com/p2p-org/key-app-kit-swift.git
   JazziconSwift:
     :commit: f9c9f898402db4e62d482f4c90670652c221fa12
     :git: https://github.com/p2p-org/JazziconSwift.git
   JSBridge:
-    :commit: f4059c29e405c3275e4f342146e98e536f735a9d
+    :commit: 3e12f123578e5336d2da8ccd35d8f1b28db7ec0d
     :git: https://github.com/p2p-org/key-app-kit-swift.git
   Jupiter:
-    :commit: f4059c29e405c3275e4f342146e98e536f735a9d
+    :commit: 3e12f123578e5336d2da8ccd35d8f1b28db7ec0d
     :git: https://github.com/p2p-org/key-app-kit-swift.git
   KeyAppKitCore:
-    :commit: f4059c29e405c3275e4f342146e98e536f735a9d
+    :commit: 3e12f123578e5336d2da8ccd35d8f1b28db7ec0d
     :git: https://github.com/p2p-org/key-app-kit-swift.git
   KeyAppKitLogger:
-    :commit: f4059c29e405c3275e4f342146e98e536f735a9d
+    :commit: 3e12f123578e5336d2da8ccd35d8f1b28db7ec0d
     :git: https://github.com/p2p-org/key-app-kit-swift.git
   KeyAppUI:
     :commit: 96679bc3564f7f07ad049bef984768724cf081eb
@@ -524,19 +524,19 @@ CHECKOUT OPTIONS:
     :commit: 78dd312eb762d66a54c87cd6dd8045140da28c4b
     :git: https://github.com/p2p-org/ListPlaceholder.git
   Moonpay:
-    :commit: f4059c29e405c3275e4f342146e98e536f735a9d
+    :commit: 3e12f123578e5336d2da8ccd35d8f1b28db7ec0d
     :git: https://github.com/p2p-org/key-app-kit-swift.git
   NameService:
-    :commit: f4059c29e405c3275e4f342146e98e536f735a9d
+    :commit: 3e12f123578e5336d2da8ccd35d8f1b28db7ec0d
     :git: https://github.com/p2p-org/key-app-kit-swift.git
   Onboarding:
-    :commit: f4059c29e405c3275e4f342146e98e536f735a9d
+    :commit: 3e12f123578e5336d2da8ccd35d8f1b28db7ec0d
     :git: https://github.com/p2p-org/key-app-kit-swift.git
   OrcaSwapSwift:
     :commit: 39218f52a58e3481cbb32df64b95f2e6d0875ee7
     :git: https://github.com/p2p-org/OrcaSwapSwift.git
   P2PSwift:
-    :commit: f4059c29e405c3275e4f342146e98e536f735a9d
+    :commit: 3e12f123578e5336d2da8ccd35d8f1b28db7ec0d
     :git: https://github.com/p2p-org/key-app-kit-swift.git
   RenVMSwift:
     :commit: 874d46ff203f31453762f5ce2ebd48f7567ba49b
@@ -545,10 +545,10 @@ CHECKOUT OPTIONS:
     :commit: dadb16c54bd42ca83c08f3d80f61fbfca93a585c
     :git: https://github.com/TrGiLong/RxConcurrency.git
   Sell:
-    :commit: f4059c29e405c3275e4f342146e98e536f735a9d
+    :commit: 3e12f123578e5336d2da8ccd35d8f1b28db7ec0d
     :git: https://github.com/p2p-org/key-app-kit-swift.git
   Send:
-    :commit: f4059c29e405c3275e4f342146e98e536f735a9d
+    :commit: 3e12f123578e5336d2da8ccd35d8f1b28db7ec0d
     :git: https://github.com/p2p-org/key-app-kit-swift.git
   Sentry:
     :git: https://github.com/getsentry/sentry-cocoa.git
@@ -557,26 +557,26 @@ CHECKOUT OPTIONS:
     :commit: 98225dbb0459477dfeac063e1c7d0750102325d1
     :git: https://github.com/p2p-org/SkeletonUI.git
   SolanaPricesAPIs:
-    :commit: f4059c29e405c3275e4f342146e98e536f735a9d
+    :commit: 3e12f123578e5336d2da8ccd35d8f1b28db7ec0d
     :git: https://github.com/p2p-org/key-app-kit-swift.git
   SolanaSwift:
-    :commit: c8bead282faabbd68cfb90e2bae0da461c2f7635
+    :commit: b4001710daafa52c0d93ec7a61c463281dec45e0
     :git: https://github.com/p2p-org/solana-swift.git
   Solend:
-    :commit: f4059c29e405c3275e4f342146e98e536f735a9d
+    :commit: 3e12f123578e5336d2da8ccd35d8f1b28db7ec0d
     :git: https://github.com/p2p-org/key-app-kit-swift.git
   Task_retrying:
     :commit: 208f1e8dfa93022a7d39ab5b334d5f43a934d4b1
     :git: https://github.com/bigearsenal/task-retrying-swift.git
   TransactionParser:
-    :commit: f4059c29e405c3275e4f342146e98e536f735a9d
+    :commit: 3e12f123578e5336d2da8ccd35d8f1b28db7ec0d
     :git: https://github.com/p2p-org/key-app-kit-swift.git
 
 SPEC CHECKSUMS:
   Amplitude: c25a44ad72b84e684fcf67c478c1fb5c95e286a3
   AnalyticsManager: 7b708ebc326865ae7807ec17acdd02e0da545e7b
   AppAuth: 8fca6b5563a5baef2c04bee27538025e4ceb2add
-  AppsFlyerFramework: dc8599db42e1669388287d47a1f0e6b8aa35639e
+  AppsFlyerFramework: 88a6eed37ad52bcee4ad74232efa8e22809d06c9
   BECollectionView: 43168463a4e95065f7856ac8d148e3eb1e77b808
   BECollectionView_Combine: f2f203853b4dfe83b5fd97998d6787857b641a12
   BECollectionView_Core: 439e92310adb5a8deab08cc7af508cc31ed6a4f6
@@ -614,7 +614,7 @@ SPEC CHECKSUMS:
   KeyAppKitLogger: 1db675b452a0faa4bd0097f5c88fcc635ed67205
   KeyAppUI: c1c83d207c55d53c9a438a752fb8f4e68f857a0e
   KeychainSwift: a06190cf933ad46b1e0abc3d77d29c06331715c7
-  Kingfisher: 0086ad83719761ba9b2cdaf6ef4d5b4878cbae23
+  Kingfisher: 6c5449c6450c5239166510ba04afe374a98afc4f
   ListPlaceholder: 2d7950014852ee5613d636cf14fd1bb93419e330
   LoggerSwift: df24fc6290d4a9ccd3b5d87a2301504cd9f49b3d
   Lokalise: 252c397887dfd9983331abffa90ab60cdb004e19
@@ -651,13 +651,13 @@ SPEC CHECKSUMS:
   Solend: c1ea93f70694b61758a182e5b26a8799ad7376cd
   SwiftFormat: e40542bcf76fdaa006d0dc26a9ca8278ca028d76
   SwiftGen: 1366a7f71aeef49954ca5a63ba4bef6b0f24138c
-  SwiftLint: 77f7cb2b9bb81ab4a12fcc86448ba3f11afa50c6
+  SwiftLint: 1b7561918a19e23bfed960e40759086e70f4dba5
   SwiftNotificationCenter: 760386da2ce03d3594cb5e96d1e22ec80b44b46f
   SwiftyUserDefaults: 63f80248cf5bfb3458825d9a78f2eb7e1293a040
   Task_retrying: e7de6ee0c52218fbc3f34491ba84d62d43b2e0f8
   TransactionParser: 9b258a245bbe4c8c97d20d3dd219ee470ba6f2f0
   TweetNacl: 3abf4d1d2082b0114e7a67410e300892448951e6
 
-PODFILE CHECKSUM: be1acd2825c966bcf1f29bb3187744180d848af5
+PODFILE CHECKSUM: 957758290800212b19de81eb25b64cb85453c755
 
 COCOAPODS: 1.11.3
