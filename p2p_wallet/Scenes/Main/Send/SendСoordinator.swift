@@ -21,7 +21,7 @@ enum SendSource: String {
     case sell, none
 }
 
-class SendCoordinator: Coordinator<SendResult> {
+final class SendCoordinator: Coordinator<SendResult> {
     // MARK: - Dependencies
 
     @Injected var walletsRepository: WalletsRepository

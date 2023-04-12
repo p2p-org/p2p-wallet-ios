@@ -81,7 +81,6 @@ extension JupiterSwapBusinessLogic {
         } else if (error as NSError).domain.contains("The value \"NaN\" cannot be converted to a number") {
             return state.error(.minimumAmount)
         }
-        debugPrint("---error: ", error.readableDescription)
         return state.error(.routeIsNotFound)
     }
 
