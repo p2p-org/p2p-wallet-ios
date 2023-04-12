@@ -14,7 +14,7 @@ import SolanaSwift
 protocol NewDerivableAccountsListViewModelType: BECollectionViewModelType {
     func cancelRequest()
     func reload()
-    func setDerivablePath(_ derivablePath: DerivablePath)
+    func setDerivableType(_ derivableType: DerivablePath.DerivableType)
 }
 
 extension NewDerivableAccounts {
@@ -27,7 +27,7 @@ extension NewDerivableAccounts {
         // MARK: - Properties
 
         private let phrases: [String]
-        var derivablePath: DerivablePath?
+        var derivableType: DerivablePath.DerivableType?
 
         fileprivate let cache = Cache()
 
@@ -53,18 +53,18 @@ extension NewDerivableAccounts {
 
         private func createDerivableAccounts() async throws -> [DerivableAccount] {
             let phrases = self.phrases
-            guard let path = derivablePath else {
+            guard let derivableType else {
                 throw SolanaError.unknown
             }
-            return try await withThrowingTaskGroup(of: (Int, SolanaSwift.Account).self) { group in
+            return try await withThrowingTaskGroup(of: (Int, KeyPair).self) { group in
                 var accounts = [(Int, DerivableAccount)]()
 
                 for i in 0 ..< 5 {
                     group.addTask(priority: .userInitiated) {
-                        (i, try await SolanaSwift.Account(
+                        (i, try await KeyPair(
                             phrase: phrases,
                             network: Defaults.apiEndPoint.network,
-                            derivablePath: .init(type: path.type, walletIndex: i)
+                            derivablePath: .init(type: derivableType, walletIndex: i)
                         ))
                     }
                 }
@@ -72,10 +72,11 @@ extension NewDerivableAccounts {
                 for try await(index, account) in group {
                     accounts.append(
                         (index, .init(
+                            derivablePath: .init(type: derivableType, walletIndex: index),
                             info: account,
                             amount: await self.cache.balanceCache[account.publicKey.base58EncodedString],
                             price: await self.cache.solPriceCache,
-                            isBlured: index > 2
+                            isBlured: false
                         ))
                     )
                 }
@@ -150,7 +151,7 @@ extension NewDerivableAccounts.ListViewModel: NewDerivableAccountsListViewModelT
         task?.cancel()
     }
 
-    func setDerivablePath(_ derivablePath: DerivablePath) {
-        self.derivablePath = derivablePath
+    func setDerivableType(_ derivableType: DerivablePath.DerivableType) {
+        self.derivableType = derivableType
     }
 }

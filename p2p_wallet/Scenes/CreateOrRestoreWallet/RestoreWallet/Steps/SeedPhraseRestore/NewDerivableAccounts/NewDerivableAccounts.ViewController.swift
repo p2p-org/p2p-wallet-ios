@@ -22,7 +22,7 @@ extension NewDerivableAccounts {
                 UIStackView(axis: .horizontal, spacing: 10, alignment: .center, distribution: .fill) {
                     UIStackView(axis: .vertical, spacing: 4, alignment: .leading) {
                         UILabel(text: L10n.derivationPath, textSize: 16, weight: .regular)
-                        derivationPathLabel
+                        derivablePathLabel
                     }
                     UIImageView(
                         width: 20,
@@ -34,7 +34,7 @@ extension NewDerivableAccounts {
                     }
                     .padding(.init(only: .right, inset: 3))
                 }.padding(.init(x: 29, y: 14))
-            }.onTap(self, action: #selector(chooseDerivationPath))
+            }.onTap(self, action: #selector(navigateToSelectDerivableType))
 
             UIView.greyBannerView {
                 UILabel(
@@ -45,7 +45,7 @@ extension NewDerivableAccounts {
             }
         }
 
-        private lazy var derivationPathLabel = UILabel(textSize: 13, weight: .regular, textColor: .h8e8e93)
+        private lazy var derivablePathLabel = UILabel(textSize: 13, weight: .regular, textColor: .h8e8e93)
         private lazy var accountsCollectionView: BEStaticSectionsCollectionView = {
             let collectionView = BEStaticSectionsCollectionView(
                 sections: [
@@ -59,7 +59,6 @@ extension NewDerivableAccounts {
                     ),
                 ]
             )
-            collectionView.isUserInteractionEnabled = false
             collectionView.collectionView.contentInset.modify(dTop: 15, dBottom: 15)
             return collectionView
         }()
@@ -89,20 +88,11 @@ extension NewDerivableAccounts {
             accountsCollectionView.autoPinEdge(.top, to: .bottom, of: headerView, withOffset: 16)
             accountsCollectionView.autoPinEdge(toSuperviewSafeArea: .leading)
             accountsCollectionView.autoPinEdge(toSuperviewSafeArea: .trailing)
-
-            let button = TextButton(
-                title: L10n.continue,
-                style: .primary,
-                size: .large,
-                trailing: Asset.MaterialIcon.arrowForward.image
-            ).onPressed { _ in self.restore() }
-            view.addSubview(button)
-            continueButton = button
-
-            button.autoPinEdge(.top, to: .bottom, of: accountsCollectionView, withOffset: 16)
-            button.autoPinEdge(toSuperviewEdge: .leading, withInset: 20)
-            button.autoPinEdge(toSuperviewEdge: .trailing, withInset: 20)
-            button.autoPinEdge(toSuperviewEdge: .bottom, withInset: 44)
+            accountsCollectionView.autoPinEdge(toSuperviewEdge: .bottom)
+            
+            accountsCollectionView.contentInset.modify(dBottom: 44)
+            
+            accountsCollectionView.delegate = self
         }
 
         override func bind() {
@@ -115,29 +105,25 @@ extension NewDerivableAccounts {
             viewModel.selectedDerivablePathPublisher
                 .map(\.title)
                 .map { Optional($0) }
-                .assignWeak(to: \.text, on: derivationPathLabel)
+                .assignWeak(to: \.text, on: derivablePathLabel)
                 .store(in: &subscriptions)
 
-            viewModel.selectedDerivablePathPublisher
+            viewModel.loadingPublisher
                 .removeDuplicates()
-                .sink { [weak self] path in
-                    self?.viewModel.accountsListViewModel.cancelRequest()
-                    self?.viewModel.accountsListViewModel.setDerivablePath(path)
-                    self?.viewModel.accountsListViewModel.reload()
+                .sink { [weak self] loading in
+                    self?.continueButton?.isLoading = loading
                 }
                 .store(in: &subscriptions)
-
-            viewModel.loadingPublisher.removeDuplicates().sink { loading in
-                self.continueButton?.isLoading = loading
-            }.store(in: &subscriptions)
         }
 
         private func navigate(to scene: NavigatableScene?) {
             switch scene {
-            case .selectDerivationPath:
-                let vc = NewDerivablePaths
-                    .ViewController(currentPath: viewModel.getCurrentSelectedDerivablePath()) { [weak self] path in
-                        self?.derivablePathsVC(didSelectPath: path)
+            case .selectDerivableType:
+                let vc = SelectDerivableType
+                    .ViewController(
+                        currentType: viewModel.getCurrentSelectedDerivablePath().type
+                    ) { [weak self] type in
+                        self?.selectDerivableTypeVC(didSelectType: type)
                     }
                 present(vc, animated: true)
             default:
@@ -145,17 +131,13 @@ extension NewDerivableAccounts {
             }
         }
 
-        func derivablePathsVC(didSelectPath path: DerivablePath) {
-            viewModel.selectDerivationPath(path)
-            analyticsManager.log(event: .recoveryDerivableAccountsPathSelected(path: path.rawValue))
+        func selectDerivableTypeVC(didSelectType derivableType: DerivablePath.DerivableType) {
+            viewModel.selectDerivableType(derivableType)
+            analyticsManager.log(event: .recoveryDerivableAccountsPathSelected(path: DerivablePath(type: derivableType, walletIndex: 0).rawValue))
         }
 
-        @objc func chooseDerivationPath() {
-            viewModel.chooseDerivationPath()
-        }
-
-        @objc func restore() {
-            viewModel.restoreAccount()
+        @objc func navigateToSelectDerivableType() {
+            viewModel.navigateToSelectDerivableType()
         }
 
         @objc func onBack() {
@@ -178,5 +160,12 @@ extension NewDerivableAccounts {
 
             navigationItem.setLeftBarButtonItems([spacing, backButton], animated: false)
         }
+    }
+}
+
+extension NewDerivableAccounts.ViewController: BECollectionViewDelegate {
+    func beCollectionView(collectionView: BECollectionViewBase, didSelect item: AnyHashable) {
+        guard let item = item as? DerivableAccount else { return }
+        viewModel.selectDerivablePath(item.derivablePath)
     }
 }
