@@ -1353,3 +1353,6 @@ You can try again, but your new transaction will be subject to the current rates
 "From %@" = "Từ %@";
 "This link is broken" = "Liên kết này bị hỏng";
 "You have reached the daily limit of sending free links per day. Try tomorrow" = "Bạn đã đạt đến giới hạn hàng ngày gửi liên kết miễn phí mỗi ngày.  Hãy thử vào ngày mai";
+"The fees are bigger than the transaction amount" = "Các khoản phí lớn hơn số tiền giao dịch";
+"There was a problem with claiming. Please try again" = "Đã xảy ra sự cố khi xác nhận quyền sở hữu.  Vui lòng thử lại";
+"There was a problem with sending. Please try again" = "Đã xảy ra sự cố khi gửi.  Vui lòng thử lại";

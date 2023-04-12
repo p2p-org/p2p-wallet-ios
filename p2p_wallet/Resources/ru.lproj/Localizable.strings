@@ -1348,3 +1348,6 @@ You can try again, but your new transaction will be subject to the current rates
 "From %@" = "Из %@";
 "This link is broken" = "Эта ссылка не работает";
 "You have reached the daily limit of sending free links per day. Try tomorrow" = "Вы достигли дневного лимита отправки бесплатных ссылок в день.  Попробуйте завтра";
+"The fees are bigger than the transaction amount" = "Комиссия больше, чем сумма транзакции";
+"There was a problem with claiming. Please try again" = "Возникла проблема с претензией.  Пожалуйста, попробуйте еще раз";
+"There was a problem with sending. Please try again" = "Возникла проблема с отправкой.  Пожалуйста, попробуйте еще раз";
