@@ -1349,3 +1349,7 @@ You can try again, but your new transaction will be subject to the current rates
 "You’ve got" = "Bạn đã có";
 "The fee is more than the amount sent" = "Phí nhiều hơn số tiền gửi";
 "Would be completed on the Ethereum network" = "Sẽ được hoàn thành trên mạng Ethereum";
+"%@ sent you %@ via Key App. Follow the link to claim your funds: %@" = "%@ đã gửi cho bạn %@ qua Key App. Theo liên kết để nhận: %@";
+"From %@" = "Từ %@";
+"This link is broken" = "Liên kết này bị hỏng";
+"You have reached the daily limit of sending free links per day. Try tomorrow" = "Bạn đã đạt đến giới hạn hàng ngày gửi liên kết miễn phí mỗi ngày.  Hãy thử vào ngày mai";

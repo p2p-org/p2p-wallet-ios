@@ -35,6 +35,10 @@ GIT_CHANGELOG = ENV["GIT_CHANGELOG"]
 
 SENTRY_TOKEN = ENV["SENTRY_TOKEN"]
 
+NEW_DEVICES_JSON_STRING = ENV["NEW_DEVICES_JSON_STRING"]
+
+IS_RELEASE_CANDIDATE = ENV["IS_RELEASE_CANDIDATE"]
+
 def delete_temp_keychain(name)
   delete_keychain(
     name: name
@@ -343,11 +347,13 @@ platform :ios do
     )
 
     # upload to browserstack
-    upload_to_browserstack_app_automate(
-      browserstack_username: BROWSERSTACK_USERNAME_NEW,
-      browserstack_access_key: BROWSERSTACK_ACCESS_KEY_NEW,
-      custom_id: "KeyApp_rc.ipa"
-    )
+    if IS_RELEASE_CANDIDATE
+      upload_to_browserstack_app_automate(
+        browserstack_username: BROWSERSTACK_USERNAME_NEW,
+        browserstack_access_key: BROWSERSTACK_ACCESS_KEY_NEW,
+        custom_id: "KeyApp_rc.ipa"
+      )
+    end
 
     # post to slack
     full_version = "#{version} (#{build_number})"
@@ -396,5 +402,32 @@ platform :ios do
     # notify tester
     message = "A daily build #{version} was uploaded."
     notify(version, message)
+  end
+
+  lane :add_devices do
+    # register new device
+    devices = {}
+
+    JSON.parse(NEW_DEVICES_JSON_STRING).map do |obj|
+      devices[obj[:name]] = obj[:id]
+    end
+
+    # register devices
+    register_devices(
+      devices: devices
+    )
+
+    # match
+    match(
+      type: "adhoc",
+      git_url: PROVISIONING_REPO,
+      app_identifier: "#{appIdentifier}",
+      git_basic_authorization: Base64.strict_encode64(GIT_AUTHORIZATION),
+      readonly: false,
+      keychain_name: TEMP_KEYCHAIN_USER,
+      keychain_password: TEMP_KEYCHAIN_PASSWORD,
+      api_key: api_key, 
+      force_for_new_devices: true
+    )
   end
 end
