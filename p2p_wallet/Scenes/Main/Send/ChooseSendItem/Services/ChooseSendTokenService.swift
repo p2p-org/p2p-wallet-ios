@@ -1,24 +1,17 @@
 import SolanaSwift
 import Resolver
-import Combine
-import KeyAppKitCore
-import KeyAppBusiness
 
 final class ChooseSendTokenService: ChooseItemService {
 
     let otherTokensTitle = L10n.otherTokens
 
-    var state: AnyPublisher<AsyncValueState<[ChooseItemListSection]>, Never> {
-        statePublisher.eraseToAnyPublisher()
-    }
+    @Injected private var walletsRepository: WalletsRepository
 
-    private let statePublisher: CurrentValueSubject<AsyncValueState<[ChooseItemListSection]>, Never>
-    @Injected private var accountsService: SolanaAccountsService
-    private var subscriptions = [AnyCancellable]()
-
-    init() {
-        statePublisher = CurrentValueSubject<AsyncValueState<[ChooseItemListSection]>, Never>(AsyncValueState(value: []))
-        bind()
+    func fetchItems() async throws -> [ChooseItemListSection] {
+        let wallets = walletsRepository.getWallets().filter { wallet in
+            (wallet.lamports ?? 0) > 0 && !wallet.isNFTToken
+        }
+        return [ChooseItemListSection(items: wallets)]
     }
 
     func sort(items: [ChooseItemListSection]) -> [ChooseItemListSection] {
@@ -35,21 +28,4 @@ final class ChooseSendTokenService: ChooseItemService {
     }
 }
 
-private extension ChooseSendTokenService {
-    func bind() {
-        accountsService.$state
-            .map({ state in
-                state.apply { accounts in
-                    [ChooseItemListSection(
-                        items: accounts
-                            .filter { ($0.data.lamports ?? 0) > 0 && !$0.data.isNFTToken }
-                            .map(\.data))
-                    ]
-                }
-            })
-            .sink { [weak self] state in
-                self?.statePublisher.send(state)
-            }
-            .store(in: &subscriptions)
-    }
-}
+
