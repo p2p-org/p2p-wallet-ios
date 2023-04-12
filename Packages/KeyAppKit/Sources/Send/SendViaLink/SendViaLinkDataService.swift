@@ -68,7 +68,7 @@ public final class SendViaLinkDataServiceImpl: SendViaLinkDataService {
     // MARK: - Constants
 
     /// Supported character for generating seed
-    private let supportedCharacters = #"!$'()*+,-.0123456789@ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz~"#
+    private let supportedCharacters = #"ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789_~-"#
     private let scheme = "https"
     private let seedLength = 16
     
@@ -115,9 +115,7 @@ public final class SendViaLinkDataServiceImpl: SendViaLinkDataService {
         givenSeed seed: String
     ) throws -> URL {
         // validate givenSeed
-        if !isSeedValid(seed: seed) {
-            throw SendViaLinkDataServiceError.invalidSeed
-        }
+        try checkSeedValidation(seed: seed)
         
         // generate url
         var urlComponent = URLComponents()
@@ -147,9 +145,7 @@ public final class SendViaLinkDataServiceImpl: SendViaLinkDataService {
         let seed = String(components.path.dropFirst()) // drop "/"
         
         // assert if seed is valid
-        guard isSeedValid(seed: seed) else {
-            throw SendViaLinkDataServiceError.invalidSeed
-        }
+        try checkSeedValidation(seed: seed)
         
         // return the seed
         return seed
@@ -180,21 +176,10 @@ public final class SendViaLinkDataServiceImpl: SendViaLinkDataService {
         // Generate keypair from seed
         let keypair = try await generateKeyPair(url: url)
         
-        // Get last transaction and parse to define the amount and token's mint address if possible
-        do {
-            let claimableTokenInfo = try await getClaimableTokenInfoFromHistory(
-                keypair: keypair
-            )
-            return claimableTokenInfo
-        }
-        
-        // If history is'nt available, check
-        catch SendViaLinkDataServiceError.lastTransactionNotFound {
-            let claimableTokenInfo = try await getClaimableTokenInfoFromBalance(
-                keypair: keypair
-            )
-            return claimableTokenInfo
-        }
+        let claimableTokenInfo = try await getClaimableTokenInfoFromBalance(
+            keypair: keypair
+        )
+        return claimableTokenInfo
     }
     
     /// Claim token
@@ -229,105 +214,110 @@ public final class SendViaLinkDataServiceImpl: SendViaLinkDataService {
         }
     }
     
-    // MARK: - Helpers
+    // MARK: - Seed validation
 
-    private func isSeedValid(seed: String) -> Bool {
-        seed.count == seedLength && seed.allSatisfy({ supportedCharacters.contains($0) })
+    func checkSeedValidation(seed: String) throws {
+        if seed.count == seedLength && seed.allSatisfy({ supportedCharacters.contains($0) }) {
+            return
+        }
+        throw SendViaLinkDataServiceError.invalidSeed
     }
     
     // MARK: - Get ClaimableToken from history
 
-    private func getClaimableTokenInfoFromHistory(
-        keypair: KeyPair
-    ) async throws -> ClaimableTokenInfo {
-        let pubkey = keypair.publicKey.base58EncodedString
-        
-        // get signatures
-        let signature = try await solanaAPIClient.getSignaturesForAddress(
-            address: pubkey,
-            configs: RequestConfiguration(commitment: "recent")
-        )
-            .first?
-            .signature
-        
-        guard let signature else {
-            throw SendViaLinkDataServiceError.lastTransactionNotFound
-        }
-        
-        // get last transaction
-        let lastTransaction = try await solanaAPIClient.getTransaction(
-            signature: signature,
-            commitment: "recent"
-        )
-        
-        guard let lastTransaction else {
-            throw SendViaLinkDataServiceError.lastTransactionNotFound
-        }
-        
-        // parse transaction
-        return try parseSendViaLinkTransaction(
-            transactionInfo: lastTransaction,
-            keypair: keypair
-        )
-    }
-    
-    private func parseSendViaLinkTransaction(
-        transactionInfo: TransactionInfo,
-        keypair: KeyPair
-    ) throws -> ClaimableTokenInfo {
-        var instructions = transactionInfo.instructionsData()
-        
-        // Assert intructionsCount to be greater than 2
-        guard instructions.count >= 2, instructions.count <= 3 else {
-            throw SendViaLinkDataServiceError.lastTransactionNotFound
-        }
-        
-        // Check memo instruction
-        let memoInstruction = instructions.removeLast()
-        guard memoInstruction.instruction.programId == MemoProgram.id.base58EncodedString
-            // TODO: - Check memo data
-        else {
-            throw SendViaLinkDataServiceError.lastTransactionNotFound
-        }
-        
-        // get last transfer instruction
-        let instruction = instructions.last!
-        
-        // Native SOL
-        if instruction.instruction.programId == SystemProgram.id.base58EncodedString,
-           instruction.innerInstruction?.index == 2, // SystemProgram.Index.transfer
-           let lamports = instruction.instruction.parsed?.info.lamports,
-           let account = instruction.instruction.parsed?.info.destination
-        {
-            return ClaimableTokenInfo(
-                lamports: lamports,
-                mintAddress: Token.nativeSolana.address,
-                decimals: Token.nativeSolana.decimals,
-                account: account,
-                keypair: keypair
-            )
-        }
-        
-        // SPL token
-        else if instruction.instruction.programId == TokenProgram.id.base58EncodedString,
-                instruction.innerInstruction?.index == 2, // SystemProgram.Index.transfer
-                let tokenAmount = instruction.instruction.parsed?.info.tokenAmount?.amount,
-                let lamports = Lamports(tokenAmount),
-                let mint = instruction.instruction.parsed?.info.mint,
-                let decimals = instruction.instruction.parsed?.info.tokenAmount?.decimals,
-                let account = instruction.instruction.parsed?.info.destination
-        {
-            return ClaimableTokenInfo(
-                lamports: lamports,
-                mintAddress: mint,
-                decimals: decimals,
-                account: account,
-                keypair: keypair
-            )
-        }
-        
-        throw SendViaLinkDataServiceError.lastTransactionNotFound
-    }
+//    private func getClaimableTokenInfoFromHistory(
+//        keypair: KeyPair
+//    ) async throws -> ClaimableTokenInfo {
+//        let pubkey = keypair.publicKey.base58EncodedString
+//        
+//        // get signatures
+//        let signature = try await solanaAPIClient.getSignaturesForAddress(
+//            address: pubkey,
+//            configs: RequestConfiguration(commitment: "confirmed")
+//        )
+//            .first?
+//            .signature
+//        
+//        guard let signature else {
+//            throw SendViaLinkDataServiceError.lastTransactionNotFound
+//        }
+//        
+//        // get last transaction
+//        let lastTransaction = try await solanaAPIClient.getTransaction(
+//            signature: signature,
+//            commitment: "confirmed"
+//        )
+//        
+//        guard let lastTransaction else {
+//            throw SendViaLinkDataServiceError.lastTransactionNotFound
+//        }
+//        
+//        // parse transaction
+//        return try parseSendViaLinkTransaction(
+//            transactionInfo: lastTransaction,
+//            keypair: keypair
+//        )
+//    }
+//    
+//    private func parseSendViaLinkTransaction(
+//        transactionInfo: TransactionInfo,
+//        keypair: KeyPair
+//    ) throws -> ClaimableTokenInfo {
+//        var instructions = transactionInfo.transaction.message.instructions
+//        
+//        // Assert intructionsCount to be greater than 2
+//        guard instructions.count >= 2, instructions.count <= 3 else {
+//            throw SendViaLinkDataServiceError.lastTransactionNotFound
+//        }
+//        
+//        // Check memo instruction
+//        let memoInstruction = instructions.removeLast()
+//        guard memoInstruction.programId == MemoProgram.id.base58EncodedString
+//            // TODO: - Check memo data
+//        else {
+//            throw SendViaLinkDataServiceError.lastTransactionNotFound
+//        }
+//        
+//        // get last transfer instruction
+//        let instruction = instructions.last!
+//        
+//        // Native SOL
+//        if instruction.programId == SystemProgram.id.base58EncodedString,
+//           instruction.parsed?.type == "transfer", // SystemProgram.Index.transfer
+//           let lamports = instruction.parsed?.info.lamports,
+//           let account = instruction.parsed?.info.destination,
+//           lamports > 0
+//        {
+//            return ClaimableTokenInfo(
+//                lamports: lamports,
+//                mintAddress: Token.nativeSolana.address,
+//                decimals: Token.nativeSolana.decimals,
+//                account: account,
+//                keypair: keypair
+//            )
+//        }
+//        
+//        // SPL token
+//        else if instruction.programId == TokenProgram.id.base58EncodedString,
+//                instruction.parsed?.type == "transfer" || instruction.parsed?.type == "transferChecked",
+//                let tokenAmount = instruction.parsed?.info.tokenAmount?.amount,
+//                let lamports = Lamports(tokenAmount),
+//                let mint = instruction.parsed?.info.mint,
+//                let decimals = instruction.parsed?.info.tokenAmount?.decimals,
+//                let account = instruction.parsed?.info.destination,
+//                lamports > 0
+//        {
+//            return ClaimableTokenInfo(
+//                lamports: lamports,
+//                mintAddress: mint,
+//                decimals: decimals,
+//                account: account,
+//                keypair: keypair
+//            )
+//        }
+//        
+//        throw SendViaLinkDataServiceError.lastTransactionNotFound
+//    }
     
     // MARK: - Get ClaimableToken from balance
 
@@ -369,12 +359,14 @@ public final class SendViaLinkDataServiceImpl: SendViaLinkDataService {
             commitment: "recent"
         )
         
-        guard let decimals = tokenAccountBalance.decimals else {
+        guard let decimals = tokenAccountBalance.decimals,
+              let amount = UInt64(tokenAccountBalance.amount)
+        else {
             throw SendViaLinkDataServiceError.claimableAssetNotFound
         }
             
         return ClaimableTokenInfo(
-            lamports: tokenAccount.account.lamports,
+            lamports: amount,
             mintAddress: tokenAccount.account.data.mint.base58EncodedString,
             decimals: decimals,
             account: tokenAccount.pubkey,
@@ -429,5 +421,19 @@ public final class SendViaLinkDataServiceImpl: SendViaLinkDataService {
         )
         
         return preparedTransaction.preparedTransaction
+    }
+}
+
+// MARK: - Helpers
+
+private extension NSError {
+    var isNetworkConnectionError: Bool {
+        self.code == NSURLErrorNetworkConnectionLost || self.code == NSURLErrorNotConnectedToInternet || self.code == NSURLErrorDataNotAllowed
+    }
+}
+
+private extension Error {
+    var isNetworkConnectionError: Bool {
+        (self as NSError).isNetworkConnectionError
     }
 }

@@ -140,8 +140,8 @@ public class CoinGeckoPricesAPI: SolanaPricesAPI {
         var symbol: String
         var name: String
         var current_price: Double
-        var price_change_24h: Double
-        var price_change_percentage_24h: Double
+        var price_change_24h: Double?
+        var price_change_percentage_24h: Double?
     }
     
     enum HistoryResponsePriceData: Decodable {

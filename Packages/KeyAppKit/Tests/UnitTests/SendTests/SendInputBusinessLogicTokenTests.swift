@@ -15,7 +15,6 @@ class SendInputBusinessLogicTokenTests: XCTestCase {
             .nativeSolana(pubkey: "5bYReP8iw5UuLVS5wmnXfEfrYCKdiQ1FFAZQao8JqY7V", lamport: 30_000_000),
             .init(pubkey: "7cRd5jTqByhQVVEDdhzoANiD98JV2MW27b64tKLiRDaC", lamports: 1_000_000, supply: 0, token: .usdt),
         ],
-        ethereumAccount: nil,
         exchangeRate: ["SOL": .init(value: 12.5), "USDT": .init(value: 1.1)],
         tokens: [.nativeSolana]
     )
@@ -37,7 +36,11 @@ class SendInputBusinessLogicTokenTests: XCTestCase {
                 maxUsage: 100,
                 currentUsage: currentUsage,
                 maxAmount: 1_000_000,
-                amountUsed: 0
+                amountUsed: 0,
+                maxTokenAccountCreationAmount: 10000000,
+                maxTokenAccountCreationCount: 30,
+                //                tokenAccountCreationAmountUsed: 0,
+                tokenAccountCreationCountUsed: 0
             )
         )
     }
@@ -69,7 +72,8 @@ class SendInputBusinessLogicTokenTests: XCTestCase {
             ),
             token: .nativeSolana,
             feeToken: .nativeSolana,
-            userWalletState: defaultUserWalletState
+            userWalletState: defaultUserWalletState,
+            sendViaLinkSeed: nil
         )
 
         let nextState = await SendInputBusinessLogic.sendInputBusinessLogic(
@@ -81,7 +85,7 @@ class SendInputBusinessLogicTokenTests: XCTestCase {
         XCTAssertEqual(nextState.fee.transaction, 5000)
         XCTAssertEqual(nextState.amountInToken, 0.0)
         XCTAssertEqual(nextState.amountInFiat, 0.0)
-        XCTAssertEqual(nextState.status, .error(reason: .inputTooLow(0.00089088)))
+        XCTAssertEqual(nextState.status, .ready)
     }
 
     func testChangingToken() async throws {
@@ -117,7 +121,8 @@ class SendInputBusinessLogicTokenTests: XCTestCase {
             token: .nativeSolana,
             feeToken: .nativeSolana,
             userWalletState: defaultUserWalletState,
-            feeRelayerContext: feeContext()
+            feeRelayerContext: feeContext(),
+            sendViaLinkSeed: nil
         )
 
         var nextState = await SendInputBusinessLogic.sendInputBusinessLogic(
@@ -201,7 +206,8 @@ class SendInputBusinessLogicTokenTests: XCTestCase {
             ),
             token: .nativeSolana,
             feeToken: .nativeSolana,
-            userWalletState: defaultUserWalletState
+            userWalletState: defaultUserWalletState,
+            sendViaLinkSeed: nil
         )
 
         var nextState = await SendInputBusinessLogic.sendInputBusinessLogic(
