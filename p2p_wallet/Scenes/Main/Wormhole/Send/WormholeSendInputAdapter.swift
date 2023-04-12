@@ -138,6 +138,8 @@ struct WormholeSendInputStateAdapter: Equatable {
                 text = L10n.insufficientFunds
             case .invalidBaseFeeToken, .missingRelayContext:
                 text = L10n.internalError
+            case .feeIsMoreThanInputAmount:
+                text = L10n.theFeeIsMoreThanTheAmountSent
             }
 
             return .init(isEnabled: false, title: text)

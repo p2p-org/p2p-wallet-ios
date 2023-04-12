@@ -101,15 +101,9 @@ struct WormholeSendInputView: View {
             #if DEBUG
                 Button {
                     let clipboard: ClipboardManager = Resolver.resolve()
-                    if let transaction = viewModel.adapter.output?.transactions {
-                        do {
-                            clipboard.copyToClipboard(transaction.transaction)
-                        } catch {
-                            print(error)
-                        }
-                    }
+                    clipboard.copyToClipboard(String(reflecting: viewModel.state))
                 } label: {
-                    Text("Tap me to copy transaction 😇")
+                    Text("Tap me to copy debug 😇")
                 }
             #endif
 

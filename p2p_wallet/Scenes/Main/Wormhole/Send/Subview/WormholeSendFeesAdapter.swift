@@ -29,39 +29,10 @@ struct WormholeSendFeesAdapter: Equatable {
             let input = adapter.input,
             let output = adapter.output
         {
-            if let arbiterFee = output.fees.arbiter {
-                let cryptoFee = arbiterFee.asCryptoAmount
-                let currencyFee = arbiterFee.asCurrencyAmount
-
-                // Fee is greater than input. We return zero values.
-                if input.amount < cryptoFee {
-                    return (CryptoAmount(token: input.amount.token), CurrencyAmount(usd: 0))
-                }
-
-                let actuallyReceiveCryptoAmount: CryptoAmount = input.amount - cryptoFee
-                let actuallyReceiveCurrencyAmount: CurrencyAmount?
-
-                // Check fiat is available
-                if
-                    let price = input.solanaAccount.price,
-                    let transferAmountInFiat = try? input.amount.toFiatAmount(price: price)
-                {
-                    actuallyReceiveCurrencyAmount = transferAmountInFiat - currencyFee
-                } else {
-                    actuallyReceiveCurrencyAmount = nil
-                }
-
-                return (
-                    actuallyReceiveCryptoAmount,
-                    actuallyReceiveCurrencyAmount
-                )
+            if let cryptoAmount = output.fees.resultAmount?.asCryptoAmount {
+                return (cryptoAmount, output.fees.resultAmount?.asCurrencyAmount)
             } else {
-                // Arbiter fee is not available
-                if let price = input.solanaAccount.price {
-                    return (input.amount, try? input.amount.toFiatAmount(price: price))
-                } else {
-                    return (input.amount, nil)
-                }
+                return (CryptoAmount(token: input.amount.token), CurrencyAmount(usd: 0))
             }
         } else {
             // Nothing is available

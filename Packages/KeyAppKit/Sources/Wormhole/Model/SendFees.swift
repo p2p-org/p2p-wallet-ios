@@ -9,6 +9,7 @@ import Foundation
 import KeyAppKitCore
 
 public struct SendFees: Codable, Hashable, Equatable {
+    /// Receive amount for user B. Nil when fees are greater than sending amount.
     public let resultAmount: TokenAmount?
     
     /// Process fee in Ethereum network.
