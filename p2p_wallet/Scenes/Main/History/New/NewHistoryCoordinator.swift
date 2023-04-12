@@ -41,6 +41,9 @@ class NewHistoryCoordinator: SmartCoordinator<Void> {
 
     private func openAction(action: NewHistoryAction) {
         switch action {
+        case let .openSwap(from, to):
+            openSwap(wallet: from, destination: to)
+
         case let .openParsedTransaction(trx):
             let coordinator = TransactionDetailCoordinator(
                 viewModel: .init(parsedTransaction: trx),
@@ -82,7 +85,7 @@ class NewHistoryCoordinator: SmartCoordinator<Void> {
             openBuy()
 
         case .openReceive:
-            self.openReceive()
+            openReceive()
 
         case .openSentViaLinkHistoryView:
             openSentViaLinkHistoryView()
@@ -219,7 +222,7 @@ class NewHistoryCoordinator: SmartCoordinator<Void> {
         let coordinator = SentViaLinkHistoryCoordinator(presentation: SmartCoordinatorPushPresentation(
             presentation.presentingViewController as! UINavigationController
         ))
-        
+
         coordinate(to: coordinator)
             .sink { _ in }
             .store(in: &subscriptions)

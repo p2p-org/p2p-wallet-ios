@@ -292,7 +292,7 @@ final class TabBarCoordinator: Coordinator<Void> {
                             self?.routeToSendTransactionStatus(model: model)
 
                         case let .wormhole(userAction):
-                            navigationController?.popToRootViewController(animated: true)
+                            navigationController.popToRootViewController(animated: true)
                             self?.showUserAction(userAction: userAction)
 
                         case .sentViaLink:

@@ -17,9 +17,6 @@ packages:
 #    Cache:
 #        url: https://github.com/hyperoslo/Cache.git
 #        from: 6.0.0
-    Web3:
-        url: https://github.com/Boilertalk/Web3.swift.git
-        from: 0.8.1
     SolanaSwift:
         url: https://github.com/p2p-org/solana-swift.git
         branch: main
@@ -256,7 +253,6 @@ targets:
 
             - package: SolanaSwift
             - package: OrcaSwapSwift
-            - package: Web3
 
             - package: KeyAppUI
             - package: BEPureLayout
