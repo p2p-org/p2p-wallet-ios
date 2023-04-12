@@ -1,5 +1,6 @@
 import KeyAppUI
 import SwiftUI
+import SolanaSwift
 
 struct SendInputAmountView: View {
     @ObservedObject private var viewModel: SendInputAmountViewModel
@@ -126,12 +127,10 @@ struct SendInputAmountView: View {
 
 struct SendInputAmountView_Previews: PreviewProvider {
     static var previews: some View {
-        ZStack {
-            Color(Asset.Colors.smoke.color)
+        ColoredBackground {
             SendInputAmountView(
                 viewModel: SendInputAmountViewModel(
-                    initialToken: .init(token: .nativeSolana),
-                    allowSwitchingMainAmountType: false
+                    initialToken: Wallet(token: .nativeSolana)
                 )
             )
             .padding(.horizontal, 16)

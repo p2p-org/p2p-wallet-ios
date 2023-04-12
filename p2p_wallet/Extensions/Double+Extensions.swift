@@ -83,7 +83,7 @@ extension Double {
         showMinus: Bool = true,
         groupingSeparator: String? = nil,
         autoSetMaximumFractionDigits: Bool = false,
-        roundingMode: NumberFormatter.RoundingMode? = nil
+        roundingMode: NumberFormatter.RoundingMode = .down
     ) -> String {
         let formatter = NumberFormatter()
         formatter.groupingSize = 3
@@ -113,9 +113,7 @@ extension Double {
             }
         }
 
-        if let roundingMode = roundingMode {
-            formatter.roundingMode = roundingMode
-        }
+        formatter.roundingMode = roundingMode
 
         let number = showMinus ? self : abs(self)
         return formatter.string(from: number as NSNumber) ?? "0"
@@ -145,7 +143,7 @@ extension Double {
     func fiatAmountFormattedString(
         maximumFractionDigits: Int = 2,
         currency: Fiat = Defaults.fiat,
-        roundingMode: NumberFormatter.RoundingMode? = nil,
+        roundingMode: NumberFormatter.RoundingMode = .down,
         customFormattForLessThan1E_2: Bool = false
     ) -> String {
         // amount < 0.01
@@ -173,12 +171,16 @@ extension Double {
     func tokenAmountFormattedString(
         symbol: String,
         maximumFractionDigits: Int = 9,
-        roundingMode: NumberFormatter.RoundingMode? = nil
+        roundingMode: NumberFormatter.RoundingMode = .down
     ) -> String {
-        "\(toString(maximumFractionDigits: maximumFractionDigits)) \(symbol)"
+        "\(toString(maximumFractionDigits: maximumFractionDigits, roundingMode: roundingMode)) \(symbol)"
     }
 
-    func formattedFiat(maximumFractionDigits: Int = 2, currency: Fiat = .usd, roundingMode: NumberFormatter.RoundingMode? = nil) -> String {
+    func formattedFiat(
+        maximumFractionDigits: Int = 2,
+        currency: Fiat = .usd,
+        roundingMode: NumberFormatter.RoundingMode = .down
+    ) -> String {
         return "\(toString(maximumFractionDigits: maximumFractionDigits, roundingMode: roundingMode)) \(currency.code)"
     }
 
