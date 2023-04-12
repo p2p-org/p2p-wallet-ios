@@ -1317,3 +1317,6 @@ You can try again, but your new transaction will be subject to the current rates
 "From %@" = "From %@";
 "This link is broken" = "This link is broken";
 "You have reached the daily limit of sending free links per day. Try tomorrow" = "You have reached the daily limit of sending free links per day. Try tomorrow";
+"The fees are bigger than the transaction amount" = "The fees are bigger than the transaction amount";
+"There was a problem with claiming. Please try again" = "There was a problem with claiming. Please try again";
+"There was a problem with sending. Please try again" = "There was a problem with sending. Please try again";

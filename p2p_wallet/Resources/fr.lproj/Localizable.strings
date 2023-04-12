@@ -1350,3 +1350,6 @@ You can try again, but your new transaction will be subject to the current rates
 "From %@" = "De %@";
 "This link is broken" = "Ce lien est rompu";
 "You have reached the daily limit of sending free links per day. Try tomorrow" = "Vous avez atteint la limite quotidienne d'envoi de liens gratuits par jour.  Essayez demain";
+"The fees are bigger than the transaction amount" = "Les frais sont supérieurs au montant de la transaction";
+"There was a problem with claiming. Please try again" = "Il y a eu un problème avec la réclamation.  Veuillez réessayer";
+"There was a problem with sending. Please try again" = "Il y a eu un problème avec l'envoi.  Veuillez réessayer";
