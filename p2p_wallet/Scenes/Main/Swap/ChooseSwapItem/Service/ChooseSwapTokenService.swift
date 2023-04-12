@@ -1,25 +1,16 @@
 import Resolver
-import Combine
-import KeyAppKitCore
-import KeyAppBusiness
 
 final class ChooseSwapTokenService: ChooseItemService {
 
     let otherTokensTitle = L10n.allTokens
-    var state: AnyPublisher<AsyncValueState<[ChooseItemListSection]>, Never> {
-        statePublisher.eraseToAnyPublisher()
-    }
 
-    private let statePublisher: CurrentValueSubject<AsyncValueState<[ChooseItemListSection]>, Never>
-    private let swapTokens: CurrentValueSubject<[SwapToken], Never>
+    private let swapTokens: [SwapToken]
     private let fromToken: Bool
+
     private let preferTokens: [String]
 
-    @Injected private var accountsService: SolanaAccountsService
-    private var subscriptions = [AnyCancellable]()
-
     init(swapTokens: [SwapToken], fromToken: Bool) {
-        self.swapTokens = CurrentValueSubject(swapTokens)
+        self.swapTokens = swapTokens
         self.fromToken = fromToken
 
         if fromToken {
@@ -27,10 +18,28 @@ final class ChooseSwapTokenService: ChooseItemService {
         } else {
             preferTokens = SwapToken.preferTokens
         }
+    }
 
-        statePublisher = CurrentValueSubject<AsyncValueState<[ChooseItemListSection]>, Never>(AsyncValueState(status: .ready, value: []))
-
-        bind()
+    func fetchItems() async throws -> [ChooseItemListSection] {
+        var firstSection = [SwapToken]()
+        var secondSection = [SwapToken]()
+        if fromToken {
+            firstSection = swapTokens.filter { $0.userWallet != nil }
+            secondSection = swapTokens.filter { $0.userWallet == nil }
+        } else {
+            let preferTokens = Set(self.preferTokens)
+            swapTokens.forEach {
+                if preferTokens.contains($0.token.symbol) {
+                    firstSection.append($0)
+                } else {
+                    secondSection.append($0)
+                }
+            }
+        }
+        return [
+            ChooseItemListSection(items: firstSection),
+            ChooseItemListSection(items: secondSection)
+        ]
     }
 
     func sort(items: [ChooseItemListSection]) -> [ChooseItemListSection] {
@@ -62,54 +71,8 @@ final class ChooseSwapTokenService: ChooseItemService {
         }
         return validateEmpty(sections: sections)
     }
-}
 
-private extension ChooseSwapTokenService {
-    func bind() {
-        swapTokens
-            .sink { [weak self] tokens in
-                guard let self else { return }
-                var firstSection = [SwapToken]()
-                var secondSection = [SwapToken]()
-                if self.fromToken {
-                    firstSection = tokens.filter { $0.userWallet != nil }
-                    secondSection = tokens.filter { $0.userWallet == nil }
-                } else {
-                    let preferTokens = Set(self.preferTokens)
-                    tokens.forEach {
-                        if preferTokens.contains($0.token.symbol) {
-                            firstSection.append($0)
-                        } else {
-                            secondSection.append($0)
-                        }
-                    }
-                }
-
-                self.statePublisher.send(
-                    AsyncValueState(status: .ready, value: [
-                        ChooseItemListSection(items: firstSection),
-                        ChooseItemListSection(items: secondSection)
-                    ])
-                )
-            }
-            .store(in: &subscriptions)
-
-        Publishers.CombineLatest(accountsService.$state.eraseToAnyPublisher(), swapTokens.eraseToAnyPublisher())
-            .map({ ($0.0.value, $0.1) })
-            .sink { [weak self] accounts, swapTokens in
-                guard let self else { return }
-                let newSwapTokens = swapTokens.map { swapToken in
-                    if let account = accounts.first(where: { $0.data.mintAddress == swapToken.address }) {
-                        return SwapToken(token: swapToken.token, userWallet: account.data)
-                    }
-                    return SwapToken(token: swapToken.token, userWallet: nil)
-                }
-                self.swapTokens.send(newSwapTokens)
-            }
-            .store(in: &subscriptions)
-    }
-
-    func validateEmpty(sections: [ChooseItemListSection]) -> [ChooseItemListSection] {
+    private func validateEmpty(sections: [ChooseItemListSection]) -> [ChooseItemListSection] {
         let isEmpty = sections.flatMap { $0.items }.isEmpty
         return isEmpty ? [] : sections
     }
