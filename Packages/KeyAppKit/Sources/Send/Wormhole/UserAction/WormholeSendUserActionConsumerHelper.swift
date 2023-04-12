@@ -6,23 +6,23 @@
 //
 
 import Foundation
-import KeyAppBusiness
 import KeyAppKitCore
+import Wormhole
 
-public extension WormholeClaimUserActionConsumer {
-    func fetchNewBundle() {
+public extension WormholeSendUserActionConsumer {
+    func monitor() {
         Task { [weak self] in
             do {
                 guard let address = self?.address else { return }
 
-                let bundles: [WormholeBundleStatus]? = try await self?
+                let sendStatuses: [WormholeSendStatus]? = try await self?
                     .wormholeAPI
-                    .listEthereumBundles(userWallet: address)
+                    .listSolanaStatuses(userWallet: address)
 
-                guard let bundles else { return }
+                guard let sendStatuses else { return }
 
-                for bundle in bundles {
-                    self?.handleEvent(event: .track(bundle))
+                for sendStatus in sendStatuses {
+                    self?.handleEvent(event: .track(sendStatus))
                 }
             } catch {
                 self?.errorObserver.handleError(error)
@@ -34,13 +34,13 @@ public extension WormholeClaimUserActionConsumer {
         Task { [weak self] in
             for userAction in userActions {
                 // Filter only processing
-                guard userAction.internalState == .processing else { continue }
+                guard userAction.status == .processing else { continue }
 
                 // Check
                 do {
                     let bundleStatus = try await self?
                         .wormholeAPI
-                        .getEthereumBundleStatus(bundleID: userAction.bundleID)
+                        .getSolanaTransferStatus(message: userAction.message)
 
                     guard let bundleStatus else {
                         continue
@@ -48,7 +48,7 @@ public extension WormholeClaimUserActionConsumer {
 
                     self?.handleEvent(event: .track(bundleStatus))
                 } catch is JSONRPCError<String> {
-                    self?.handleEvent(event: .claimFailure(bundleID: userAction.bundleID, reason: Error.claimFailure))
+                    self?.handleEvent(event: .sendFailure(message: userAction.message, error: Error.sendingFailure))
                 } catch {
                     continue
                 }

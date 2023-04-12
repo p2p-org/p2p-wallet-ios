@@ -78,20 +78,24 @@ public class WormholeSendUserActionConsumer: UserActionConsumer {
 
     public func start() {
         Task {
-            // Restore
-            try? await database.restore(from: self.persistence, table: Self.table)
-
-            // Revalidate old bundle.
-            for userAction in await database.values() {
+            // Restore and filter
+            try? await database.restore(from: self.persistence, table: Self.table) { _, userAction in
                 switch userAction.status {
-                case .pending, .processing:
-                    break
+                case .pending:
+                    return false
+                case .processing:
+                    // Remove if user action is live longer then 3 hours
+                    if Date().timeIntervalSince(userAction.updatedDate) > 60 * 60 * 3 {
+                        return false
+                    }
                 case .ready, .error:
                     // Remove if user action is live longer then 3 minutes
                     if Date().timeIntervalSince(userAction.updatedDate) > 60 * 3 {
-                        await database.remove(key: userAction.message)
+                        return false
                     }
                 }
+
+                return true
             }
 
             // Update bundle periodic
@@ -106,26 +110,6 @@ public class WormholeSendUserActionConsumer: UserActionConsumer {
 
     deinit {
         monitoringTimer?.invalidate()
-    }
-
-    public func monitor() {
-        Task { [weak self] in
-            do {
-                guard let address = self?.address else { return }
-
-                let sendStatuses: [WormholeSendStatus]? = try await self?
-                    .wormholeAPI
-                    .listSolanaStatuses(userWallet: address)
-
-                guard let sendStatuses else { return }
-
-                for sendStatus in sendStatuses {
-                    self?.handleEvent(event: .track(sendStatus))
-                }
-            } catch {
-                self?.errorObserver.handleError(error)
-            }
-        }
     }
 
     public func handleEvent(event: Event) {
