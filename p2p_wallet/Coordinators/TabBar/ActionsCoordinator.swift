@@ -32,17 +32,21 @@ final class ActionsCoordinator: Coordinator<ActionsCoordinator.Result> {
         navigationController.transitioningDelegate = transition
         navigationController.modalPresentationStyle = .custom
         self.viewController.present(navigationController, animated: true)
-
+        
         let subject = PassthroughSubject<ActionsCoordinator.Result, Never>()
+        
+        transition.dismissed
+            .sink(receiveValue: {
+                DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) {
+                    subject.send(.cancel)
+                }
+            })
+            .store(in: &subscriptions)
         transition.dimmClicked
             .sink(receiveValue: {
                 viewController.dismiss(animated: true)
             })
             .store(in: &subscriptions)
-
-        navigationController.onClose = {
-            subject.send(.cancel)
-        }
         view.cancel
             .sink(receiveValue: {
                 viewController.dismiss(animated: true)
@@ -73,6 +77,7 @@ final class ActionsCoordinator: Coordinator<ActionsCoordinator.Result> {
                 case .send:
                     analyticsManager.log(event: .actionButtonSend)
                     analyticsManager.log(event: .mainScreenSendOpen)
+                    analyticsManager.log(event: .sendStartScreenOpen(lastScreen: "Action_Panel"))
                     analyticsManager.log(event: .sendViewed(lastScreen: "Main_Screen"))
                     viewController.dismiss(animated: true) {
                         subject.send(.action(type: .send))
@@ -87,7 +92,7 @@ final class ActionsCoordinator: Coordinator<ActionsCoordinator.Result> {
             })
             .store(in: &subscriptions)
 
-        return subject.eraseToAnyPublisher()
+        return subject.prefix(1).eraseToAnyPublisher()
     }
 }
 
