@@ -162,4 +162,18 @@ public class WormholeRPCAPI: WormholeAPI {
             ]
         )
     }
+
+    public func listSolanaStatuses(userWallet: String) async throws -> [WormholeSendStatus] {
+        try await client.call(
+            method: "list_solana_statuses",
+            params: ["user_wallet": userWallet]
+        )
+    }
+
+    public func getSolanaTransferStatus(message: String) async throws -> WormholeSendStatus? {
+        try await client.call(
+            method: "get_solana_transfer_status",
+            params: [message: message]
+        )
+    }
 }

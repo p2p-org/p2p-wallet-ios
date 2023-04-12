@@ -55,7 +55,7 @@ struct RendableWormholeClaimUserActionDetail: RendableTransactionDetail {
     }
 
     var amountInFiat: TransactionDetailChange {
-        if let value = CurrencyFormatter().string(for: userAction.bundle.resultAmount) {
+        if let value = CurrencyFormatter().string(for: userAction.amountInFiat) {
             return .positive("+\(value)")
         } else {
             return .unchanged("")
@@ -63,7 +63,7 @@ struct RendableWormholeClaimUserActionDetail: RendableTransactionDetail {
     }
 
     var amountInToken: String {
-        guard let value = CryptoFormatter().string(for: userAction.bundle.resultAmount) else {
+        guard let value = CryptoFormatter().string(for: userAction.amountInCrypto) else {
             return ""
         }
         return "\(value)"
@@ -72,7 +72,7 @@ struct RendableWormholeClaimUserActionDetail: RendableTransactionDetail {
     var extra: [TransactionDetailExtraInfo] {
         var result: [TransactionDetailExtraInfo] = []
 
-        if userAction.bundle.compensationDeclineReason == nil {
+        if userAction.compensationDeclineReason == nil {
             result.append(
                 .init(
                     title: L10n.transactionFee,
@@ -82,9 +82,9 @@ struct RendableWormholeClaimUserActionDetail: RendableTransactionDetail {
         } else {
             // Collect all fees.
             let allFees: [Wormhole.TokenAmount] = [
-                userAction.bundle.fees?.createAccount,
-                userAction.bundle.fees?.arbiter,
-                userAction.bundle.fees?.gas,
+                userAction.fees.createAccount,
+                userAction.fees.arbiter,
+                userAction.fees.gas,
             ].compactMap { $0 }
 
             // Split into group token.

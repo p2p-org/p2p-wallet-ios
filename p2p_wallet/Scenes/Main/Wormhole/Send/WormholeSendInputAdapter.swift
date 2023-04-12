@@ -121,30 +121,6 @@ struct WormholeSendInputStateAdapter: Equatable {
         }
     }
 
-    private var buttonTitle: String {
-        switch state {
-        case let .error(input, output, error):
-            switch error {
-            case .maxAmountReached:
-                return L10n.max(cryptoFormatter.string(amount: input.solanaAccount.cryptoAmount))
-            case .calculationFeeFailure, .calculationFeePayerFailure:
-                return L10n.CannotCalculateFees.tryAgain
-            case .getTransferTransactionsFailure:
-                return L10n.creatingTransactionFailed
-            case .initializationFailure:
-                return L10n.initializingError
-            case .insufficientInputAmount:
-                return L10n.insufficientFunds
-            case .invalidBaseFeeToken, .missingRelayContext:
-                return L10n.internalError
-            }
-        case let .ready(input, _, _):
-            return "\(L10n.send) \(cryptoFormatter.string(amount: input.amount))"
-        default:
-            return L10n.calculatingTheFees
-        }
-    }
-
     var sliderButton: SliderActionButtonData {
         switch state {
         case let .error(input, output, error):

@@ -13,7 +13,7 @@ import Send
 import Wormhole
 
 struct RendableGeneralUserActionTransaction {
-    static func resolve(userAction: UserAction) -> RendableTransactionDetail {
+    static func resolve(userAction: any UserAction) -> RendableTransactionDetail {
         switch userAction {
         case let userAction as WormholeSendUserAction:
             return RendableWormholeSendUserActionDetail(userAction: userAction)
@@ -26,7 +26,7 @@ struct RendableGeneralUserActionTransaction {
 }
 
 struct RendableAbstractUserActionTransaction: RendableTransactionDetail {
-    let userAction: UserAction
+    let userAction: any UserAction
 
     var status: TransactionDetailStatus {
         switch userAction.status {

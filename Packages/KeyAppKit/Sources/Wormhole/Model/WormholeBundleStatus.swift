@@ -7,13 +7,13 @@
 
 import Foundation
 
-public struct WormholeBundleStatus: Codable, Hashable {
+public struct WormholeBundleStatus: Codable, Hashable, Equatable {
     public let bundleId: String
     public let userWallet: String
     public let recipient: String
     public let resultAmount: TokenAmount
-    public let fees: ClaimFees?
-    public let status: Status
+    public let fees: ClaimFees
+    public let status: WormholeStatus
 
     enum CodingKeys: String, CodingKey {
         case bundleId = "bundle_id"
@@ -22,14 +22,5 @@ public struct WormholeBundleStatus: Codable, Hashable {
         case resultAmount = "result_amount"
         case fees
         case status
-    }
-
-    public enum Status: String, Codable, Hashable {
-        case failed
-        case pending
-        case expired
-        case canceled
-        case inProgress = "in_progress"
-        case completed
     }
 }

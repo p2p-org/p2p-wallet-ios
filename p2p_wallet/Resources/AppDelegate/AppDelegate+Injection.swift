@@ -121,12 +121,9 @@ extension Resolver: ResolverRegistering {
         register { EthereumPriceService(api: resolve()) }
             .scope(.application)
 
-        register { WormholeRPCAPI(endpoint: "https://bridge-service.keyapp.org") }
+        register { WormholeRPCAPI(endpoint: GlobalAppState.shared.bridgeEndpoint) }
             .implements(WormholeAPI.self)
             .scope(.application)
-//        register { WormholeRPCAPI(endpoint: "https://bridge-service.keyapp.org") }
-//            .implements(WormholeAPI.self)
-//            .scope(.application)
 
         // AnalyticsManager
         register {
@@ -356,7 +353,7 @@ extension Resolver: ResolverRegistering {
             .scope(.session)
 
         // FeeRelayer
-        register { FeeRelayerSwift.APIClient(baseUrlString: "https://fee-relayer.keyapp.org", version: 1) }
+        register { FeeRelayerSwift.APIClient(baseUrlString: FeeRelayerEndpoint.baseUrl, version: 1) }
             .implements(FeeRelayerAPIClient.self)
             .scope(.session)
 
@@ -371,14 +368,17 @@ extension Resolver: ResolverRegistering {
             return UserActionService(
                 consumers: [
                     WormholeSendUserActionConsumer(
-                        signer: { userWalletManager.wallet?.account },
+                        address: userWalletManager.wallet?.account.publicKey.base58EncodedString,
+                        signer: userWalletManager.wallet?.account,
                         solanaClient: resolve(),
+                        wormholeAPI: resolve(),
                         relayService: resolve(),
                         errorObserver: resolve(),
                         persistence: resolve()
                     ),
                     WormholeClaimUserActionConsumer(
-                        signer: { userWalletManager.wallet?.ethereumKeypair },
+                        address: userWalletManager.wallet?.ethereumKeypair.publicKey,
+                        signer: userWalletManager.wallet?.ethereumKeypair,
                         wormholeAPI: resolve(),
                         ethereumTokenRepository: resolve(),
                         errorObserver: resolve(),

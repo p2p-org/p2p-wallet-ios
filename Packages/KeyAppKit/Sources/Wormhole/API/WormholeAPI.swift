@@ -43,4 +43,9 @@ public protocol WormholeAPI {
         mint: String?,
         amount: String
     ) async throws -> SendFees
+    
+    func listSolanaStatuses(userWallet: String) async throws -> [WormholeSendStatus]
+    
+    func getSolanaTransferStatus(message: String) async throws -> WormholeSendStatus?
 }
+
