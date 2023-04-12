@@ -210,11 +210,13 @@ final class JupiterSwapCoordinator: Coordinator<Void> {
             stateMachine: viewModel.stateMachine
         )
         viewModel.logSettingsClick()
+        viewModel.fromTokenInputViewModel.isFirstResponder = false
 
         // coordinate
         coordinate(to: settingsCoordinator)
             .prefix(1)
             .sink(receiveValue: { [weak viewModel] result in
+                viewModel?.fromTokenInputViewModel.isFirstResponder = true
                 switch result {
                 case let .selectedSlippageBps(slippageBps):
                     Task { [weak viewModel] in
