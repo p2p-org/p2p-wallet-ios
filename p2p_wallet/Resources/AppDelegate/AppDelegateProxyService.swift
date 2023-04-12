@@ -13,8 +13,8 @@ final class AppDelegateProxyService: NSObject, UIApplicationDelegate {
 
     override init() {
         var services: [AppDelegateService] = [
-            DeeplinkAppDelegateService(),
-            HistoryAppdelegateService()
+            AppflyerAppDelegateService(),
+            DeeplinkAppDelegateService()
         ]
         #if !RELEASE
             services.append(contentsOf: [

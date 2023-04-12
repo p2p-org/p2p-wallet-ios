@@ -85,7 +85,10 @@ struct SendLinkCreatedView: View {
                 .padding(.bottom, 32)
         }
         .padding(.horizontal, 20)
-            .background(Color(Asset.Colors.smoke.color).edgesIgnoringSafeArea(.vertical))
+        .background(Color(Asset.Colors.smoke.color).edgesIgnoringSafeArea(.vertical))
+        .onAppear {
+            viewModel.onAppear()
+        }
     }
 }
 
