@@ -1316,4 +1316,10 @@
 "From %@" = "De %@";
 "This link is broken" = "Ce lien est rompu";
 "You have reached the daily limit of sending free links per day. Try tomorrow" = "Vous avez atteint la limite quotidienne d'envoi de liens gratuits par jour.  Essayez demain";
+"Change the region manually" = "Changer la région manuellement";
+"Unfortunately, you can not buy in %@, but you can still use other Key App features" = "Malheureusement, vous ne pouvez pas acheter en %@, mais vous pouvez toujours utiliser d'autres fonctionnalités de l'application clé";
 "Open your link again" = "Ouvrez à nouveau votre lien";
+"Select your country" = "Sélectionnez votre pays";
+"Chosen country" = "Pays choisi";
+"All countries" = "Tous les pays";
+"Sorry, we don't know that country " = "Désolé, nous ne connaissons pas ce pays";

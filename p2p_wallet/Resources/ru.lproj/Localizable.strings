@@ -1314,4 +1314,10 @@
 "From %@" = "Из %@";
 "This link is broken" = "Эта ссылка не работает";
 "You have reached the daily limit of sending free links per day. Try tomorrow" = "Вы достигли дневного лимита отправки бесплатных ссылок в день.  Попробуйте завтра";
+"Change the region manually" = "Сменить регион вручную";
+"Unfortunately, you can not buy in %@, but you can still use other Key App features" = "К сожалению, вы не можете покупать в %@, но вы можете использовать другие ключевые функции приложения.";
 "Open your link again" = "Откройте вашу ссылку еще раз";
+"Select your country" = "Выберите вашу страну";
+"Chosen country" = "Выбранная страна";
+"All countries" = "Все страны";
+"Sorry, we don't know that country " = "Извините, мы не знаем эту страну";
