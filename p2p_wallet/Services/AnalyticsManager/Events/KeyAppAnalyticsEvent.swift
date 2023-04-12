@@ -1,10 +1,3 @@
-//
-//  KeyAppAnalyticsEvent.swift
-//  p2p_wallet
-//
-//  Created by Ivan on 13.09.2022.
-//
-
 import AnalyticsManager
 import Foundation
 
@@ -104,6 +97,12 @@ enum KeyAppAnalyticsEvent: AnalyticsEvent {
     case receiveQRSaved
     case receiveViewingExplorer
     case receiveStartScreen
+    case receiveTokenClick(tokenName: String)
+    case receiveNetworkScreenOpen
+    case receiveNetworkClickButton(network: String)
+    case receiveCopyAddressClickButton(network: String)
+    case receiveCopyLongAddressClick(network: String)
+    case receiveCopyAddressUsername
     case actionButtonReceive
 
     // MARK: - Send
@@ -133,6 +132,16 @@ enum KeyAppAnalyticsEvent: AnalyticsEvent {
         fee: Bool,
         fiatInput: Bool
     )
+    // Bridges
+    case sendBridgesScreenOpen
+    case sendBridgesConfirmButtonClick(
+        tokenName: String,
+        tokenValue: Double,
+        valueFiat: Double,
+        fee: Double
+    )
+    case sendClickChangeTokenChosen(source: String)
+    case sendClickChangeTokenValue(source: String)
 
     // MARK: - Send new
 
@@ -352,4 +361,12 @@ enum KeyAppAnalyticsEvent: AnalyticsEvent {
     // MARK: - History
     case historyOpened
     case historySendClicked(status: String)
+
+    // MARK: - Claim
+
+    case claimAvailable(claim: Bool)
+    case claimBridgesButtonClick
+    case claimBridgesScreenOpen(from: String) // main, push
+    case claimBridgesFeeClick
+    case claimBridgesClickConfirmed(tokenName: String, tokenValue: Double, valueFiat: Double, free: Bool)
 }

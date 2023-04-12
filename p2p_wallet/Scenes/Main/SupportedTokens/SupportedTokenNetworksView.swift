@@ -1,14 +1,11 @@
-//
-//  SupportedTokenNetworksView.swift
-//  p2p_wallet
-//
-//  Created by Giang Long Tran on 09.03.2023.
-//
-
 import KeyAppUI
 import SwiftUI
+import AnalyticsManager
+import Resolver
 
 struct SupportedTokenNetworksView: View {
+    @Injected private var analyticsManager: AnalyticsManager
+    
     let item: SupportedTokenItem
     let onTap: (SupportedTokenItemNetwork?) -> Void
 
@@ -31,10 +28,12 @@ struct SupportedTokenNetworksView: View {
                     case .solana:
                         self.network(icon: .solanaIcon, title: "Solana") {
                             onTap(.solana)
+                            analyticsManager.log(event: .receiveNetworkClickButton(network: network.analyticsName()))
                         }
                     case .ethereum:
                         self.network(icon: .ethereumIcon, title: "Ethereum") {
                             onTap(.ethereum)
+                            analyticsManager.log(event: .receiveNetworkClickButton(network: network.analyticsName()))
                         }
                     }
                 }
@@ -90,5 +89,16 @@ struct SupportedTokenNetworksView_Previews: PreviewProvider {
                 availableNetwork: [.ethereum, .solana]
             )
         ) { _ in }
+    }
+}
+
+extension SupportedTokenItemNetwork {
+    func analyticsName() -> String {
+        switch self {
+        case .ethereum:
+            return "Ethereum"
+        case .solana:
+            return "Solana"
+        }
     }
 }
