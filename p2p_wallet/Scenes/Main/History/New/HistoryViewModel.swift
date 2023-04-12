@@ -121,6 +121,7 @@ class HistoryViewModel: BaseViewModel, ObservableObject {
             .store(in: &subscriptions)
 
         bind()
+        fetch()
     }
 
     init(
@@ -215,6 +216,7 @@ class HistoryViewModel: BaseViewModel, ObservableObject {
             .store(in: &subscriptions)
 
         bind()
+        fetch()
     }
 
     deinit {
