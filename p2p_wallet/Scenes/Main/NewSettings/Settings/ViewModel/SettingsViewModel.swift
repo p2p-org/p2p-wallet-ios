@@ -136,7 +136,7 @@ final class SettingsViewModel: BaseViewModel, ObservableObject {
     }
 
     func updateNameIfNeeded() {
-        name = storageName != nil ? storageName!.withNameServiceDomain() : L10n.notReserved
+        name = storageName != nil ? storageName! : L10n.notReserved
         if storageName == nil {
             isNameEnabled = available(.onboardingUsernameEnabled) && metadataService.metadata != nil
         } else {

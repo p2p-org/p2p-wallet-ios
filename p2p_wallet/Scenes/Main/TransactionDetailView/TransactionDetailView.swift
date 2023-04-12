@@ -11,14 +11,14 @@ import SwiftUI
 
 struct DetailTransactionView: View {
     @ObservedObject var viewModel: TransactionDetailViewModel
-    
+
     var body: some View {
         VStack {
             RoundedRectangle(cornerRadius: 2, style: .circular)
                 .fill(Color(Asset.Colors.rain.color))
                 .frame(width: 31, height: 4)
                 .padding(.top, 6)
-                
+
             title
                 .padding(.top, 16)
                 .padding(.bottom, 20)
@@ -33,7 +33,7 @@ struct DetailTransactionView: View {
         }
         .navigationBarHidden(true)
     }
-    
+
     private var title: some View {
         VStack(spacing: 4) {
             Text(viewModel.rendableTransaction.title)
@@ -47,12 +47,12 @@ struct DetailTransactionView: View {
             }
         }
     }
-    
+
     private var amountInFiatColor: Color {
         if case .error = viewModel.rendableTransaction.status {
             return Color(Asset.Colors.rose.color)
         }
-        
+
         switch viewModel.rendableTransaction.amountInFiat {
         case .positive:
             return Color(Asset.Colors.mint.color)
@@ -60,7 +60,7 @@ struct DetailTransactionView: View {
             return Color(Asset.Colors.night.color)
         }
     }
-    
+
     private var headerView: some View {
         VStack(alignment: .center, spacing: 0) {
             TransactionDetailIconView(icon: viewModel.rendableTransaction.icon)
@@ -79,7 +79,7 @@ struct DetailTransactionView: View {
                     .foregroundColor(Color(Asset.Colors.mountain.color))
                     .padding(.top, viewModel.rendableTransaction.amountInFiat.value.isEmpty ? 16 : 0)
             }
-            
+
             if !viewModel.rendableTransaction.actions.isEmpty {
                 HStack(spacing: 32) {
                     ForEach(viewModel.rendableTransaction.actions) { action in
@@ -107,7 +107,7 @@ struct DetailTransactionView: View {
         .frame(maxWidth: .infinity)
         .background(Color(Asset.Colors.smoke.color))
     }
-    
+
     var info: some View {
         VStack(spacing: 10) {
             ForEach(viewModel.rendableTransaction.extra, id: \.title) { infoItem in
@@ -119,7 +119,7 @@ struct DetailTransactionView: View {
                     Button {
                         let clipboardManager: ClipboardManager = Resolver.resolve()
                         clipboardManager.copyToClipboard(infoItem.copyableValue ?? "")
-                        
+
                         let notification: NotificationService = Resolver.resolve()
                         notification.showInAppNotification(.done(L10n.theAddressWasCopiedToClipboard))
                     } label: {
@@ -169,7 +169,7 @@ struct DetailTransactionView: View {
                 return .second
             }
         }
-        
+
         return Button(
             action: {
                 viewModel.action.send(.close)

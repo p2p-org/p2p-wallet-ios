@@ -9,6 +9,8 @@ import Sell
 import SolanaSwift
 import SwiftUI
 import UIKit
+import Combine
+import KeyAppUI
 
 enum DetailAccountCoordinatorArgs {
     case wallet(Wallet)
@@ -116,6 +118,8 @@ class DetailAccountCoordinator: SmartCoordinator<DetailAccountCoordinatorResult>
 
         case .openReceive:
             self.openReceive()
+        case .openSentViaLinkHistoryView:
+            break
         }
     }
 
@@ -206,6 +210,12 @@ class DetailAccountCoordinator: SmartCoordinator<DetailAccountCoordinatorResult>
                     self.coordinate(to: SendTransactionStatusCoordinator(parentController: rootViewController, transaction: model))
                         .sink(receiveValue: {})
                         .store(in: &self.subscriptions)
+                case let .sentViaLink:
+                    rootViewController.popToViewController(currentVC, animated: true)
+
+//                    self.coordinate(to: SendTransactionStatusCoordinator(parentController: rootViewController, transaction: model))
+//                        .sink(receiveValue: {})
+//                        .store(in: &self.subscriptions)
                 case .cancelled:
                     break
                 }

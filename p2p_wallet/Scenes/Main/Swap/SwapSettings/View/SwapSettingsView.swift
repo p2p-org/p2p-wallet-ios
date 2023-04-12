@@ -90,19 +90,18 @@ struct SwapSettingsView: View {
 
             // Liquidity fee
             if viewModel.isLoadingOrRouteNotNil {
-                if let liquidityFee = viewModel.info.liquidityFee,
-                   !liquidityFee.isEmpty
+                if !viewModel.info.liquidityFee.isEmpty
                 {
                     feeRow(
                         title: L10n.liquidityFee,
-                        fees: liquidityFee,
+                        fees: viewModel.info.liquidityFee,
                         identifier: .liquidityFee
                     )
                 }
             }
 
             // Estimated fee
-            if viewModel.isLoadingOrRouteNotNil {
+            if viewModel.isLoadingOrRouteNotNil, viewModel.info.estimatedFees != nil {
                 HStack {
                     Text(L10n.estimatedFees)
                         .fontWeight(.semibold)
@@ -159,10 +158,11 @@ struct SwapSettingsView: View {
         fees: [SwapFeeInfo],
         identifier: RowIdentifier?
     ) -> some View {
-        commonRow(
+        let fiatAmount = fees.compactMap(\.amountInFiat).reduce(0.0, +)
+        return commonRow(
             title: title,
             subtitle: fees.compactMap(\.amountDescription).joined(separator: ", "),
-            trailingSubtitle: "≈ " + fees.compactMap(\.amountInFiat).reduce(0.0, +).fiatAmountFormattedString(),
+            trailingSubtitle: fiatAmount > 0 ? "≈ " + fiatAmount.fiatAmountFormattedString(): nil,
             identifier: identifier
         )
     }

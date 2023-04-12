@@ -148,6 +148,20 @@ extension PendingTransaction {
             amountInFiat = transaction.fromAmount * pricesService.currentPrice(mint: transaction.sourceWallet.token.address)?
                 .value
             fee = transaction.feeAmount
+        case let transaction as ClaimSentViaLinkTransaction:
+            value = TransferInfo(
+                source: Wallet(
+                    pubkey: transaction.claimableTokenInfo.account,
+                    token: transaction.token
+                ) ,
+                destination: transaction.destinationWallet,
+                authority: nil,
+                destinationAuthority: nil,
+                rawAmount: transaction.tokenAmount,
+                account: transaction.claimableTokenInfo.keypair.publicKey.base58EncodedString
+            )
+            amountInFiat = transaction.amountInFiat
+            fee = transaction.feeAmount
         default:
             return nil
         }

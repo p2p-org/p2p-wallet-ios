@@ -120,7 +120,7 @@ extension ReceiveToken {
         }
 
         private func updateUsername(_ username: String) {
-            let text = NSMutableAttributedString(string: username.withNameServiceDomain())
+            let text = NSMutableAttributedString(string: username)
             text.addAttribute(
                 .foregroundColor,
                 value: UIColor.gray,

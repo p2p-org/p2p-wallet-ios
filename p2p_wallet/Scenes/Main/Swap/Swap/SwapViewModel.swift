@@ -435,11 +435,9 @@ private extension SwapViewModel {
                 services: stateMachine.services
             )
             
-            debugPrint("---transactionId: ", transactionId)
             isSliderOn = false
             return transactionId
         } catch let error as SolanaSwift.APIClientError {
-            debugPrint("---errorSendingTransaction: ", error)
             switch error {
             case .responseError(let detail):
                 #if !RELEASE
@@ -452,7 +450,6 @@ private extension SwapViewModel {
             logTransaction(error: error)
             throw error
         } catch {
-            debugPrint("---errorSendingTransaction: ", error)
             isSliderOn = false
             logTransaction(error: error)
             throw error

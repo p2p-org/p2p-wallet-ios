@@ -105,12 +105,15 @@ extension NewDerivableAccounts {
             viewModel.selectedDerivablePathPublisher
                 .map(\.title)
                 .map { Optional($0) }
-                .assign(to: \.text, on: derivablePathLabel)
+                .assignWeak(to: \.text, on: derivablePathLabel)
                 .store(in: &subscriptions)
 
-            viewModel.loadingPublisher.removeDuplicates().sink { loading in
-                self.continueButton?.isLoading = loading
-            }.store(in: &subscriptions)
+            viewModel.loadingPublisher
+                .removeDuplicates()
+                .sink { [weak self] loading in
+                    self?.continueButton?.isLoading = loading
+                }
+                .store(in: &subscriptions)
         }
 
         private func navigate(to scene: NavigatableScene?) {

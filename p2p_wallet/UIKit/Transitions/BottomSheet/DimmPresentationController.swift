@@ -8,12 +8,12 @@
 import Combine
 import UIKit
 
-class DimmPresentationController: PresentationController {
+final class DimmPresentationController: PresentationController {
     private let subject = PassthroughSubject<Void, Never>()
     var dimmClicked: AnyPublisher<Void, Never> { subject.eraseToAnyPublisher() }
 
     override var frameOfPresentedViewInContainerView: CGRect {
-        let bounds = containerView!.bounds
+        let bounds = containerView?.bounds ?? .zero
         return CGRect(
             x: 0,
             y: bounds.height - containerHeight,
@@ -40,7 +40,7 @@ class DimmPresentationController: PresentationController {
     override func containerViewDidLayoutSubviews() {
         super.containerViewDidLayoutSubviews()
 
-        dimmView.frame = containerView!.frame
+        dimmView.frame = containerView?.frame ?? .zero
     }
 
     override func presentationTransitionDidEnd(_ completed: Bool) {

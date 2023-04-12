@@ -34,4 +34,7 @@ public extension Feature {
     
     // History
     static let historyServiceEnabled = Feature(rawValue: "history_service_enabled")
+    
+    // Send via link
+    static let sendViaLinkEnabled = Feature(rawValue: "send_via_link_enabled")
 }

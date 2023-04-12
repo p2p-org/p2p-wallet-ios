@@ -5,6 +5,7 @@
 //  Created by Giang Long Tran on 01.02.2023.
 //
 
+import AnalyticsManager
 import Combine
 import Foundation
 import History
@@ -25,22 +26,41 @@ enum NewHistoryAction {
     case openReceive
 
     case openBuy
+    
+    case openSentViaLinkHistoryView
 }
 
 class HistoryViewModel: BaseViewModel, ObservableObject {
+    
+    // Dependencies
+    @Injected private var analyticsManager: AnalyticsManager
+    
     // Subjects
-
     let actionSubject: PassthroughSubject<NewHistoryAction, Never>
 
     let history: AsyncList<any RendableListTransactionItem>
 
-    // State
+    // MARK: - View Input
 
-    @Published var output: ListState<HistorySection> = .init()
+    @Published var output = ListState<HistorySection>()
+    @Published var sendViaLinkTransactions = [SendViaLinkTransactionInfo]() {
+        didSet {
+            if sendViaLinkTransactions.count == 1 {
+                linkTransactionsTitle = "1 \(L10n.transaction.lowercased())"
+            } else {
+                linkTransactionsTitle = L10n.transactions(sendViaLinkTransactions.count)
+            }
+        }
+    }
+    @Published var linkTransactionsTitle = ""
+    
+    let showSendViaLinkTransaction: Bool
     
     // Dependency
-
     private var sellDataService: (any SellDataService)?
+    @Injected private var sendViaLinkStorage: SendViaLinkStorage
+    
+    // MARK: - Init
 
     init(mock: [any RendableListTransactionItem]) {
         // Init service
@@ -50,6 +70,7 @@ class HistoryViewModel: BaseViewModel, ObservableObject {
         // Build history
         history = .init(sequence: mock.async.eraseToAnyAsyncSequence())
 
+        self.showSendViaLinkTransaction = false
         super.init()
 
         history
@@ -88,6 +109,7 @@ class HistoryViewModel: BaseViewModel, ObservableObject {
 
         history = .init(sequence: sequence, id: \.id)
         
+        self.showSendViaLinkTransaction = false
         super.init()
 
         history
@@ -97,6 +119,9 @@ class HistoryViewModel: BaseViewModel, ObservableObject {
             .receive(on: RunLoop.main)
             .sink { self.output = $0 }
             .store(in: &subscriptions)
+        
+        bind()
+        fetch()
     }
 
     init(
@@ -145,13 +170,23 @@ class HistoryViewModel: BaseViewModel, ObservableObject {
         // Using this code if need to listen pending transactions
         let pendings = pendingTransactionService.observePendingTransactions()
             .map { transactions in
-                transactions.map { [weak actionSubject] trx in
-                    RendableListPendingTransactionItem(trx: trx) {
-                        actionSubject?.send(.openPendingTransaction(trx))
+                transactions
+                    .filter { pendingTransation in
+                        switch pendingTransation.rawTransaction {
+                        case let trx as SendTransaction where trx.isSendingViaLink:
+                            return false
+                        default:
+                            return true
+                        }
                     }
-                }
+                    .map { [weak actionSubject] trx in
+                        RendableListPendingTransactionItem(trx: trx) {
+                            actionSubject?.send(.openPendingTransaction(trx))
+                        }
+                    }
             }
 
+        self.showSendViaLinkTransaction = true
         super.init()
 
         // Build output
@@ -162,6 +197,18 @@ class HistoryViewModel: BaseViewModel, ObservableObject {
             .receive(on: RunLoop.main)
             .sink { self.output = $0 }
             .store(in: &subscriptions)
+        
+        bind()
+        fetch()
+    }
+    
+    // MARK: - View Output
+    
+    func onAppear() {
+        let withSentViaLink = showSendViaLinkTransaction && !sendViaLinkTransactions.isEmpty
+        analyticsManager.log(event: .historyOpened(sentViaLink: withSentViaLink))
+        
+        fetch()
     }
 
     func reload() async throws {
@@ -175,6 +222,23 @@ class HistoryViewModel: BaseViewModel, ObservableObject {
         Task {
             await sellDataService?.update()
         }
+    }
+    
+    func sentViaLinkClicked() {
+        analyticsManager.log(event: .historyClickBlockSendViaLink)
+        actionSubject.send(.openSentViaLinkHistoryView)
+    }
+    
+    // MARK: - Helpers
+
+    private func bind() {
+        // send via link
+        sendViaLinkStorage.transactionsPublisher
+            .receive(on: RunLoop.main)
+            .sink { [weak self] transactionInfos in
+                self?.sendViaLinkTransactions = transactionInfos
+            }
+            .store(in: &subscriptions)
     }
 
     private func buildOutput(

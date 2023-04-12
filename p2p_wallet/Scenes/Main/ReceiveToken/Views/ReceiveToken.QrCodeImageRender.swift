@@ -67,7 +67,7 @@ extension ReceiveToken {
                 if username != nil {
                     UILabel(textSize: 20, weight: .semibold, numberOfLines: 2, textAlignment: .center)
                         .setup { view in
-                            let text = NSMutableAttributedString(string: username!.withNameServiceDomain())
+                            let text = NSMutableAttributedString(string: username!)
                             text.addAttribute(
                                 .foregroundColor,
                                 value: UIColor.gray,
