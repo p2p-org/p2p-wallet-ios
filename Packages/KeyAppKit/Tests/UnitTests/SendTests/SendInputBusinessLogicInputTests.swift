@@ -33,7 +33,11 @@ class SendInputBusinessLogicInputTests: XCTestCase {
                 maxUsage: 100,
                 currentUsage: currentUsage,
                 maxAmount: 1_000_000,
-                amountUsed: 0
+                amountUsed: 0,
+                maxTokenAccountCreationAmount: 10000000,
+                maxTokenAccountCreationCount: 30,
+                //                tokenAccountCreationAmountUsed: 0,
+                tokenAccountCreationCountUsed: 0
             )
         )
     }
@@ -174,7 +178,8 @@ class SendInputBusinessLogicInputTests: XCTestCase {
 
         let nextState = await SendInputBusinessLogic.sendInputBusinessLogic(
             state: initialState,
-            action: .changeAmountInFiat(initialState.maxAmountInputInFiat),
+//            action: .changeAmountInFiat(initialState.maxAmountInputInFiat),
+            action: .changeAmountInFiat(1000), // ??
             services: services
         )
 
@@ -209,6 +214,6 @@ class SendInputBusinessLogicInputTests: XCTestCase {
 
         XCTAssertEqual(nextState.amountInToken, 0.04)
         XCTAssertEqual(nextState.amountInFiat, 0.5)
-        XCTAssertEqual(nextState.status, .error(reason: .inputTooHigh))
+        XCTAssertEqual(nextState.status, .error(reason: .inputTooHigh(0)))
     }
 }

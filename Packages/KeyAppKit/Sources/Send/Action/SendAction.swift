@@ -103,40 +103,42 @@ public class SendActionServiceImpl: SendActionService {
                         autoPayback: false
                     )
                 )
+                
+                // get feePayerPubkey and user account
+                guard let feePayerPubKey = contextManager.currentContext?.feePayerAddress,
+                      let account
+                else {
+                    throw SolanaError.unauthorized
+                }
+                
+                // sign transaction by user
+                try preparedTransaction.transaction.sign(signers: [account])
+                
+                // add feePayer's signature
+                try preparedTransaction.transaction.addSignature(
+                    .init(
+                        signature: Data(Base58.decode(feePayerSignature)),
+                        publicKey: feePayerPubKey
+                    )
+                )
+                
+                // serialize transaction
+                let serializedTransaction = try preparedTransaction.transaction.serialize().base64EncodedString()
+                
+                // send to solanaBlockchain
+                return try await solanaAPIClient.sendTransaction(transaction: serializedTransaction, configs: RequestConfiguration(encoding: "base64")!)
+                
             } else {
-                feePayerSignature = try await relayService.topUpIfNeededAndSignRelayTransactions(
+                // FIXME: - SignRelayTransaction return different transaction, fall back to relay_transaction
+                return try await relayService.topUpIfNeededAndRelayTransaction(
                     preparedTransaction,
                     fee: payingFeeToken,
                     config: FeeRelayerConfiguration(
-                        operationType: operationType,
+                        operationType: .transfer,
                         currency: currency
                     )
                 )
             }
-            
-            // get feePayerPubkey and user account
-            guard let feePayerPubKey = contextManager.currentContext?.feePayerAddress,
-                  let account
-            else {
-                throw SolanaError.unauthorized
-            }
-            
-            // sign transaction by user
-            try preparedTransaction.transaction.sign(signers: [account])
-            
-            // add feePayer's signature
-            try preparedTransaction.transaction.addSignature(
-                .init(
-                    signature: Data(Base58.decode(feePayerSignature)),
-                    publicKey: feePayerPubKey
-                )
-            )
-            
-            // serialize transaction
-            let serializedTransaction = try preparedTransaction.transaction.serialize().base64EncodedString()
-            
-            // send to solanaBlockchain
-            return try await solanaAPIClient.sendTransaction(transaction: serializedTransaction, configs: RequestConfiguration(encoding: "base64")!)
         } else {
             return try await blockchainClient.sendTransaction(preparedTransaction: preparedTransaction)
         }
