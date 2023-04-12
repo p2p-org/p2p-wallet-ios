@@ -1343,6 +1343,7 @@ You can try again, but your new transaction will be subject to the current rates
 "Reload" = "Перезагрузить";
 "You’ve got" = "У тебя есть";
 "The fee is more than the amount sent" = "Комиссия больше отправленной суммы";
+"Would be completed on the Ethereum network" = "Будет завершено в сети Ethereum";
 "%@ sent you %@ via Key App. Follow the link to claim your funds: %@" = "%@ отправил вам %@ через приложение Key.  Перейдите по ссылке, чтобы получить свои средства: %@";
 "From %@" = "Из %@";
 "This link is broken" = "Эта ссылка не работает";

@@ -1345,6 +1345,7 @@ You can try again, but your new transaction will be subject to the current rates
 "Reload" = "Recharger";
 "You’ve got" = "Tu as";
 "The fee is more than the amount sent" = "Les frais sont supérieurs au montant envoyé";
+"Would be completed on the Ethereum network" = "Serait complété sur le réseau Ethereum";
 "%@ sent you %@ via Key App. Follow the link to claim your funds: %@" = "%@ vous a envoyé %@ via Key App.  Suivez le lien pour réclamer vos fonds : %@";
 "From %@" = "De %@";
 "This link is broken" = "Ce lien est rompu";
