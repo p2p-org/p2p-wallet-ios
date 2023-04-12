@@ -1,3 +1,4 @@
+import AnalyticsManager
 import Combine
 import Foundation
 import History
@@ -17,7 +18,7 @@ enum NewHistoryAction {
 
     case openPendingTransaction(PendingTransaction)
 
-    case openUserAction(UserAction)
+    case openUserAction(any UserAction)
 
     case openReceive
 
@@ -29,6 +30,10 @@ enum NewHistoryAction {
 }
 
 class HistoryViewModel: BaseViewModel, ObservableObject {
+    
+    // Dependencies
+    @Injected private var analyticsManager: AnalyticsManager
+    
     // Subjects
     let actionSubject: PassthroughSubject<NewHistoryAction, Never>
 
@@ -116,6 +121,7 @@ class HistoryViewModel: BaseViewModel, ObservableObject {
             .store(in: &subscriptions)
 
         bind()
+        fetch()
     }
 
     init(
@@ -210,6 +216,7 @@ class HistoryViewModel: BaseViewModel, ObservableObject {
             .store(in: &subscriptions)
 
         bind()
+        fetch()
     }
 
     deinit {
@@ -217,6 +224,13 @@ class HistoryViewModel: BaseViewModel, ObservableObject {
     }
 
     // MARK: - View Output
+    
+    func onAppear() {
+        let withSentViaLink = showSendViaLinkTransaction && !sendViaLinkTransactions.isEmpty
+        analyticsManager.log(event: .historyOpened(sentViaLink: withSentViaLink))
+        
+        fetch()
+    }
 
     func reload() async throws {
         history.reset()
@@ -230,7 +244,12 @@ class HistoryViewModel: BaseViewModel, ObservableObject {
             await sellDataService?.update()
         }
     }
-
+    
+    func sentViaLinkClicked() {
+        analyticsManager.log(event: .historyClickBlockSendViaLink)
+        actionSubject.send(.openSentViaLinkHistoryView)
+    }
+    
     // MARK: - Helpers
 
     private func bind() {

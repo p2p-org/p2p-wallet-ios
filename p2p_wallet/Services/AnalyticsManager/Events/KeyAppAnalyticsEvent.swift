@@ -142,6 +142,17 @@ enum KeyAppAnalyticsEvent: AnalyticsEvent {
     )
     case sendClickChangeTokenChosen(source: String)
     case sendClickChangeTokenValue(source: String)
+    case sendStartScreenOpen(lastScreen: String)
+    case sendClickStartCreateLink
+    case sendClickNotificationFreeTransactions
+    case sendClickChangeToken(tokenName: String)
+    case sendClickChangeTokenChosen(tokenName: String)
+    case sendClickChangeTokenValue(tokenName: String, tokenValue: Double)
+    case sendClickCreateLink(tokenName: String, tokenValue: Double, pubkey: String)
+    case sendCreatingLinkEndScreenOpen(tokenName: String, tokenValue: Double, pubkey: String)
+    case sendClickShareLink
+    case sendClickCopyLink
+    case sendClickDefaultError
 
     // MARK: - Send new
 
@@ -359,7 +370,7 @@ enum KeyAppAnalyticsEvent: AnalyticsEvent {
     case sellMoonpay
     
     // MARK: - History
-    case historyOpened
+    case historyOpened(sentViaLink: Bool)
     case historySendClicked(status: String)
 
     // MARK: - Claim
@@ -369,4 +380,17 @@ enum KeyAppAnalyticsEvent: AnalyticsEvent {
     case claimBridgesScreenOpen(from: String) // main, push
     case claimBridgesFeeClick
     case claimBridgesClickConfirmed(tokenName: String, tokenValue: Double, valueFiat: Double, free: Bool)
+    case historyClickBlockSendViaLink
+    case historySendClickTransaction
+    case historySendClickCopyTransaction
+    case historySendClickShareTransaction
+    
+    // MARK: - Claim
+    
+    case claimStartScreenOpen
+    case claimClickConfirmed(pubkey: String, tokenName: String, tokenValue: Double, fromAddress: String)
+    case claimClickClose
+    case claimClickEnd
+    case claimErrorAlreadyClaimed
+    case claimErrorDefaultReject
 }

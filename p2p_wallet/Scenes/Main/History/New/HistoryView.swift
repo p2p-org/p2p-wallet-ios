@@ -8,8 +8,6 @@
 import History
 import KeyAppUI
 import SwiftUI
-import Resolver
-import AnalyticsManager
 
 struct NewHistoryView<Header: View>: View {
     @ObservedObject var viewModel: HistoryViewModel
@@ -88,11 +86,7 @@ struct NewHistoryView<Header: View>: View {
         .customRefreshable { try? await viewModel.reload() }
         .background(Color(Asset.Colors.smoke.color))
         .onAppear {
-            let analytic: AnalyticsManager = Resolver.resolve()
-            analytic.log(event: KeyAppAnalyticsEvent.historyOpened)
-            print("History opened")
-            
-            viewModel.fetch()
+            viewModel.onAppear()
         }
     }
 
@@ -192,12 +186,10 @@ struct NewHistoryView<Header: View>: View {
                 .foregroundColor(Color(Asset.Colors.rain.color))
                 .padding(.leading, 20)
         }
-            .contentShape(Rectangle())
-            .onTapGesture {
-                viewModel.actionSubject.send(
-                    .openSentViaLinkHistoryView
-                )
-            }
+        .contentShape(Rectangle())
+        .onTapGesture {
+            viewModel.sentViaLinkClicked()
+        }
     }
 }
 

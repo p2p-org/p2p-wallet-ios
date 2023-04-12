@@ -10,7 +10,7 @@ import BigInt
 import Foundation
 
 /// Amount in fiat struct
-public struct CurrencyAmount: Hashable, Codable {
+public struct CurrencyAmount: Hashable, Codable, Equatable {
     /// Value
     public let value: BigDecimal
 

@@ -21,7 +21,7 @@ enum SendSource: String {
     case sell, none, bridge
 }
 
-class SendCoordinator: Coordinator<SendResult> {
+final class SendCoordinator: Coordinator<SendResult> {
     // MARK: - Dependencies
 
     @Injected var walletsRepository: WalletsRepository
@@ -151,7 +151,11 @@ class SendCoordinator: Coordinator<SendResult> {
             .filter { $0.category == .ethereumAddress }
             .flatMap { [unowned self] in
                 self.coordinate(
-                    to: WormholeSendInputCoordinator(recipient: $0, from: rootViewController)
+                    to: WormholeSendInputCoordinator(
+                        recipient: $0,
+                        from: rootViewController,
+                        preChosenWallet: preChosenWallet
+                    )
                 )
             }
             .sink { [weak self] result in

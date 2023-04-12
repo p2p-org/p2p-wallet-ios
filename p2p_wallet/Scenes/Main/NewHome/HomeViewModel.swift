@@ -12,7 +12,9 @@ import KeyAppBusiness
 import KeyAppKitCore
 import Resolver
 import Sell
+import Send
 import SolanaSwift
+import Wormhole
 
 @MainActor
 class HomeViewModel: ObservableObject {
@@ -97,6 +99,43 @@ private extension HomeViewModel {
                 }
                 .store(in: &subscriptions)
         }
+
+        // Monitor user action
+        let userActionService: UserActionService = Resolver.resolve()
+        userActionService
+            .$actions
+            .withPrevious()
+            .sink { [weak self] prev, next in
+                for updatedUserAction in next {
+                    if let oldUserAction = prev?.first(where: { $0.id == updatedUserAction.id }) {
+                        // Status if different
+                        guard oldUserAction.status != updatedUserAction.status else { continue }
+
+                        // Claiming
+                        if case .error = updatedUserAction.status {
+                            if updatedUserAction is WormholeClaimUserAction {
+                                self?.notificationsService
+                                    .showInAppNotification(.error(L10n.ThereWasAProblemWithClaiming.pleaseTryAgain))
+                            }
+                        }
+
+                        // Sending
+                        if case .error = updatedUserAction.status {
+                            switch updatedUserAction {
+                            case is WormholeClaimUserAction:
+                                self?.notificationsService
+                                    .showInAppNotification(.error(L10n.ThereWasAProblemWithClaiming.pleaseTryAgain))
+                            case is WormholeSendUserAction:
+                                self?.notificationsService
+                                    .showInAppNotification(.error(L10n.ThereWasAProblemWithSending.pleaseTryAgain))
+                            default:
+                                break
+                            }
+                        }
+                    }
+                }
+            }
+            .store(in: &subscriptions)
 
         // Check if accounts managers was initialized.
         let solanaInitialization = solanaAccountsService

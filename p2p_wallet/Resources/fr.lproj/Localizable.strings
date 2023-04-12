@@ -1345,3 +1345,11 @@ You can try again, but your new transaction will be subject to the current rates
 "Reload" = "Recharger";
 "You’ve got" = "Tu as";
 "The fee is more than the amount sent" = "Les frais sont supérieurs au montant envoyé";
+"Would be completed on the Ethereum network" = "Serait complété sur le réseau Ethereum";
+"%@ sent you %@ via Key App. Follow the link to claim your funds: %@" = "%@ vous a envoyé %@ via Key App.  Suivez le lien pour réclamer vos fonds : %@";
+"From %@" = "De %@";
+"This link is broken" = "Ce lien est rompu";
+"You have reached the daily limit of sending free links per day. Try tomorrow" = "Vous avez atteint la limite quotidienne d'envoi de liens gratuits par jour.  Essayez demain";
+"The fees are bigger than the transaction amount" = "Les frais sont supérieurs au montant de la transaction";
+"There was a problem with claiming. Please try again" = "Il y a eu un problème avec la réclamation.  Veuillez réessayer";
+"There was a problem with sending. Please try again" = "Il y a eu un problème avec l'envoi.  Veuillez réessayer";

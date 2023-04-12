@@ -182,7 +182,7 @@ extension WalletDetail {
             .store(in: &subscriptions)
         }
 
-        func showUserAction(userAction: UserAction) {
+        func showUserAction(userAction: any UserAction) {
             TransactionDetailCoordinator(
                 viewModel: .init(userAction: userAction),
                 presentingViewController: navigationController!

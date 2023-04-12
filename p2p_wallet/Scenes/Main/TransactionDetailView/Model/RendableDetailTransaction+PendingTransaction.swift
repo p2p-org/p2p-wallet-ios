@@ -17,7 +17,7 @@ struct RendableDetailPendingTransaction: RendableTransactionDetail {
     let priceService: PricesService
 
     var status: TransactionDetailStatus {
-        if trx.transactionId != nil {
+        if trx.transactionId != nil, !(trx.rawTransaction is ClaimSentViaLinkTransaction) {
             return .succeed(message: L10n.theTransactionHasBeenSuccessfullyCompleted)
         }
 
@@ -37,7 +37,7 @@ struct RendableDetailPendingTransaction: RendableTransactionDetail {
     }
 
     var title: String {
-        if trx.transactionId != nil {
+        if trx.transactionId != nil, !(trx.rawTransaction is ClaimSentViaLinkTransaction) {
             return L10n.transactionSucceeded
         }
 
@@ -52,7 +52,15 @@ struct RendableDetailPendingTransaction: RendableTransactionDetail {
     }
 
     var subtitle: String {
-        trx.sentAt.string(withFormat: "MMMM dd, yyyy @ HH:mm", locale: Locale.base)
+        if trx.rawTransaction is ClaimSentViaLinkTransaction {
+            switch trx.status {
+            case .error, .finalized:
+                break
+            default:
+                return L10n.pending.capitalized
+            }
+        }
+        return trx.sentAt.string(withFormat: "MMMM dd, yyyy @ HH:mm", locale: Locale.base)
     }
 
     var signature: String? {
@@ -276,142 +284,26 @@ struct RendableDetailPendingTransaction: RendableTransactionDetail {
                     )
             }
 
-//        case let transaction as WormholeClaimTransaction:
-//            if transaction.bundle.compensationDeclineReason == nil {
-//                result.append(
-//                    .init(
-//                        title: L10n.transactionFee,
-//                        values: [.init(text: L10n.freePaidByKeyApp)]
-//                    )
-//                )
-//            } else {
-//                // Collect all fees.
-//                let allFees: [Wormhole.TokenAmount] = [
-//                    transaction.bundle.fees.createAccount,
-//                    transaction.bundle.fees.arbiter,
-//                    transaction.bundle.fees.gas,
-//                ].compactMap { $0 }
-//
-//                // Split into group token.
-//                let compactFees = Dictionary(grouping: allFees) { fee in fee.token }
-//
-//                // Reduce into single amount in crypto and fiat.
-//                let summarizedFees: [(CryptoAmount, CurrencyAmount)] = compactFees.mapValues { fees in
-//                    guard
-//                        let initialCryptoAmount = fees.first?.asCryptoAmount.with(amount: 0),
-//                        let initialCurrencyAmount = fees.first?.asCurrencyAmount.with(amount: 0)
-//                    else {
-//                        return nil
-//                    }
-//
-//                    let cryptoAmount = fees.map(\.asCryptoAmount).reduce(initialCryptoAmount, +)
-//                    let fiatAmount = fees.map(\.asCurrencyAmount).reduce(initialCurrencyAmount,+)
-//
-//                    return (cryptoAmount, fiatAmount)
-//                }
-//                .values
-//                .compactMap { $0 }
-//
-//                let cryptoFormatter = CryptoFormatter()
-//                let currencyFormatter = CurrencyFormatter()
-//
-//                let formattedSummarizedFees: [TransactionDetailExtraInfo.Value] = summarizedFees
-//                    .map { cryptoAmount, currencyAmount in
-//                        let formattedCryptoAmount = cryptoFormatter.string(for: cryptoAmount)
-//                        let formattedCurrencyFormatter = currencyFormatter.string(for: currencyAmount)
-//
-//                        return TransactionDetailExtraInfo.Value(
-//                            text: formattedCryptoAmount ?? "",
-//                            secondaryText: formattedCurrencyFormatter ?? ""
-//                        )
-//                    }
-//
-//                result.append(
-//                    .init(
-//                        title: L10n.transferFee,
-//                        values: formattedSummarizedFees
-//                    )
-//                )
-//            }
-//
-//        case let transaction as WormholeSendTransaction:
-//            result.append(
-//                .init(
-//                    title: L10n.sendTo,
-//                    values: [
-//                        .init(
-//                            text: RecipientFormatter.format(destination: transaction.recipient.address)
-//                        ),
-//                    ]
-//                )
-//            )
-//
-//            // Collect all fees.
-//            let allFees: [Wormhole.TokenAmount] = [
-//                transaction.fees.arbiter,
-//                transaction.fees.networkFee,
-//                transaction.fees.bridgeFee,
-//                transaction.fees.messageAccountRent,
-//            ].compactMap { $0 }
-//
-//            // Split into group token.
-//            let compactFees = Dictionary(grouping: allFees) { fee in fee.token }
-//
-//            // Reduce into single amount in crypto and fiat.
-//            let summarizedFees: [(CryptoAmount, CurrencyAmount)] = compactFees
-//                .mapValues { fees -> (CryptoAmount, CurrencyAmount)? in
-//                    guard
-//                        let initialCryptoAmount = fees.first?.asCryptoAmount.with(amount: 0),
-//                        let initialCurrencyAmount = fees.first?.asCurrencyAmount.with(amount: 0)
-//                    else {
-//                        return nil
-//                    }
-//
-//                    let cryptoAmount = fees.map(\.asCryptoAmount).reduce(initialCryptoAmount, +)
-//                    let fiatAmount = fees.map(\.asCurrencyAmount).reduce(initialCurrencyAmount,+)
-//
-//                    return (cryptoAmount, fiatAmount)
-//                }
-//                .values
-//                .compactMap { $0 }
-//
-//            let cryptoFormatter = CryptoFormatter()
-//            let currencyFormatter = CurrencyFormatter()
-//
-//            let formattedSummarizedFees: [TransactionDetailExtraInfo.Value] = summarizedFees
-//                .map { cryptoAmount, currencyAmount in
-//                    let formattedCryptoAmount = cryptoFormatter.string(for: cryptoAmount)
-//                    let formattedCurrencyFormatter = currencyFormatter.string(for: currencyAmount)
-//
-//                    return TransactionDetailExtraInfo.Value(
-//                        text: formattedCryptoAmount ?? "",
-//                        secondaryText: formattedCurrencyFormatter ?? ""
-//                    )
-//                }
-//
-//            result.append(
-//                .init(
-//                    title: L10n.transferFee,
-//                    values: formattedSummarizedFees
-//                )
-//            )
-
         case let transaction as ClaimSentViaLinkTransaction:
+            let title: String
+            switch trx.status {
+            case .error, .finalized:
+                title = L10n.receivedFrom
+            default:
+                title = L10n.from
+            }
             result.append(
                 .init(
-                    title: L10n.receivedFrom,
-                    values: [.init(text: transaction.claimableTokenInfo.account)],
+                    title: title,
+                    values: [
+                        .init(text: RecipientFormatter
+                            .format(destination: transaction.claimableTokenInfo.keypair.publicKey
+                                .base58EncodedString)),
+                    ],
                     copyableValue: transaction.claimableTokenInfo.account
                 )
             )
-
-            result.append(
-                .init(
-                    title: L10n.transactionFee,
-                    values: [.init(text: L10n.freePaidByKeyApp)]
-                )
-            )
-
+            result.append(.init(title: L10n.transactionFee, values: [.init(text: L10n.freePaidByKeyApp)]))
         default:
             break
         }

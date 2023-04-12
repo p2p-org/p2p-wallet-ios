@@ -3,6 +3,7 @@ import Combine
 import Foundation
 import KeyAppBusiness
 import KeyAppKitCore
+import Reachability
 import Resolver
 import Wormhole
 
@@ -15,6 +16,9 @@ class WormholeClaimViewModel: BaseViewModel, ObservableObject {
 
     @Published var model: any WormholeClaimModel
 
+    @Injected private var reachability: Reachability
+    @Injected private var notificationService: NotificationService
+
     init(model: WormholeClaimMockModel) {
         self.model = model
         bundle = .init(just: nil)
@@ -25,8 +29,7 @@ class WormholeClaimViewModel: BaseViewModel, ObservableObject {
     init(
         account: EthereumAccount,
         ethereumAccountsService _: EthereumAccountsService = Resolver.resolve(),
-        wormholeAPI: WormholeService = Resolver.resolve(),
-        notificationService: NotificationService = Resolver.resolve()
+        wormholeAPI: WormholeService = Resolver.resolve()
     ) {
         model = WormholeClaimEthereumModel(account: account, bundle: .init(value: nil))
         bundle = .init(initialItem: nil) {
@@ -74,10 +77,18 @@ class WormholeClaimViewModel: BaseViewModel, ObservableObject {
         bundle.$state
             .map(\.error)
             .compactMap { $0 }
-            .sink { error in
-                notificationService.showInAppNotification(.error("\(error.localizedDescription)"))
+            .sink { [weak self] error in
+                if let error = error as? JSONRPCError<String>, error.code == -32007 {
+                    self?.notificationService
+                        .showInAppNotification(.error(L10n.theFeesAreBiggerThanTheTransactionAmount))
+                }
             }
             .store(in: &subscriptions)
+
+        try? reachability.startNotifier()
+        reachability.status.sink { [weak self] _ in
+            _ = self?.reachability.check()
+        }.store(in: &subscriptions)
     }
 
     func claim() {
@@ -94,8 +105,6 @@ class WormholeClaimViewModel: BaseViewModel, ObservableObject {
 
                 let userAction = WormholeClaimUserAction(
                     token: model.account.token,
-                    amountInCrypto: bundle.resultAmount.asCryptoAmount,
-                    amountInFiat: bundle.resultAmount.asCurrencyAmount,
                     bundle: bundle
                 )
 

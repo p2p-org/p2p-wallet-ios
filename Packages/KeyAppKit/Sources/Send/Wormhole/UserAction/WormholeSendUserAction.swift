@@ -12,11 +12,10 @@ import KeyAppKitCore
 import Wormhole
 
 public struct WormholeSendUserAction: UserAction {
-    public var id: String
+    public var id: String { message }
 
-    public var trackingKey: Set<String> {
-        Set([id, transaction.message].compactMap { $0 })
-    }
+    // Send ID
+    public var message: String
 
     public var status: UserActionStatus
 
@@ -62,7 +61,7 @@ public struct WormholeSendUserAction: UserAction {
         transaction: SendTransaction,
         relayContext: RelayContext
     ) {
-        id = UUID().uuidString
+        message = transaction.message
         status = .pending
         createdDate = Date()
         updatedDate = createdDate
@@ -77,6 +76,34 @@ public struct WormholeSendUserAction: UserAction {
         self.transaction = transaction
         self.relayContext = relayContext
     }
+
+//    public init(sendStatus: WormholeSendStatus, solanaTokensService: SolanaTokensService) async {
+//        message = sendStatus.message
+//
+//        switch sendStatus.status {
+//        case .failed, .expired, .canceled:
+//            status = .error(WormholeSendUserActionError.sendingFailure)
+//        case .pending, .inProgress:
+//            status = .processing
+//        case .completed:
+//            status = .ready
+//        }
+//
+//        createdDate = Date()
+//        updatedDate = createdDate
+//
+//        sendStatus.amount.token
+//        
+//        sourceToken = sendStatus
+//        price = price
+//        recipient = recipient
+//        amount = amount
+//        fees = fees
+//        payingFeeTokenAccount = payingFeeTokenAccount
+//        totalFeesViaRelay = totalFeesViaRelay
+//        transaction = transaction
+//        relayContext = relayContext
+//    }
 }
 
 public extension WormholeSendUserAction {
