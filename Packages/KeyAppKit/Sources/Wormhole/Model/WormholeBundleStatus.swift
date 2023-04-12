@@ -12,7 +12,7 @@ public struct WormholeBundleStatus: Codable, Hashable, Equatable {
     public let userWallet: String
     public let recipient: String
     public let resultAmount: TokenAmount
-    public let fees: ClaimFees?
+    public let fees: ClaimFees
     public let status: WormholeStatus
 
     enum CodingKeys: String, CodingKey {

@@ -9,7 +9,7 @@ import Foundation
 import KeyAppBusiness
 
 public enum WormholeClaimUserActionEvent: UserActionEvent {
-    case trackNewBundle(WormholeBundleStatus)
+    case track(WormholeBundleStatus)
 
     case claimFailure(bundleID: String, reason: UserActionError)
     case claimInProgress(bundleID: String)

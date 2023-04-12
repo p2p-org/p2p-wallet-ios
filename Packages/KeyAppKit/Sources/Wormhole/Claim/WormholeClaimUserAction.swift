@@ -10,9 +10,31 @@ import KeyAppBusiness
 import KeyAppKitCore
 
 public struct WormholeClaimUserAction: UserAction {
-    public var id: String
+    public enum InternalState: Codable, Equatable {
+        case pending(WormholeBundle)
+        case processing
+        case ready
+        case error(UserActionError)
+    }
 
-    public var status: UserActionStatus
+    public var id: String { bundleID }
+
+    public let bundleID: String
+
+    public var status: UserActionStatus {
+        switch internalState {
+        case .pending:
+            return .pending
+        case .processing:
+            return .processing
+        case .ready:
+            return .ready
+        case let .error(error):
+            return .error(error)
+        }
+    }
+
+    public var internalState: InternalState
 
     public let createdDate: Date
 
@@ -27,50 +49,43 @@ public struct WormholeClaimUserAction: UserAction {
     /// Amount in fiat
     public let amountInFiat: CurrencyAmount?
 
-    public enum BundleValue: Codable, Equatable {
-        case bundle(WormholeBundle)
-        case bundleStatus(WormholeBundleStatus)
-    }
-
-    /// Wormhole bundle
-    public var bundle: BundleValue
+    /// Claim fees information
+    public let fees: ClaimFees
+    
+    public let compensationDeclineReason: CompensationDeclineReason?
 
     public init(
         token: EthereumToken,
-        amountInCrypto: CryptoAmount,
-        amountInFiat: CurrencyAmount?,
         bundle: WormholeBundle
     ) {
-        id = UUID().uuidString
-        status = .pending
+        bundleID = bundle.bundleId
+        internalState = .pending(bundle)
+
         createdDate = Date()
         updatedDate = createdDate
 
         self.token = token
-        self.amountInCrypto = amountInCrypto
-        self.amountInFiat = amountInFiat
-        self.bundle = .bundle(bundle)
+        amountInCrypto = bundle.resultAmount.asCryptoAmount
+        amountInFiat = bundle.resultAmount.asCurrencyAmount
+        fees = bundle.fees
+        compensationDeclineReason = bundle.compensationDeclineReason
     }
 
+    /// Extract user action from ``BundleStatus``. 
+    /// Method is not ready for usage due missing compensationDeclineReason from backend.
     public init(
         bundleStatus: WormholeBundleStatus,
         token: EthereumToken
     ) {
-        id = UUID().uuidString
+        bundleID = bundleStatus.bundleId
 
         switch bundleStatus.status {
-        case .failed:
-            status = .error(.init(domain: "WormholeClaimUserActionConsumer", code: 3, reason: "Claim failure"))
-        case .pending:
-            status = .pending
-        case .expired:
-            status = .error(.init(domain: "WormholeClaimUserActionConsumer", code: 3, reason: "Claim is expired"))
-        case .canceled:
-            status = .error(.init(domain: "WormholeClaimUserActionConsumer", code: 3, reason: "Claim was canceled"))
-        case .inProgress:
-            status = .processing
+        case .failed, .expired, .canceled:
+            internalState = .error(WormholeClaimUserActionError.claimFailure)
+        case .pending, .inProgress:
+            internalState = .processing
         case .completed:
-            status = .ready 
+            internalState = .ready
         }
 
         createdDate = Date()
@@ -79,55 +94,25 @@ public struct WormholeClaimUserAction: UserAction {
         self.token = token
         amountInCrypto = bundleStatus.resultAmount.asCryptoAmount
         amountInFiat = bundleStatus.resultAmount.asCurrencyAmount
-        bundle = .bundleStatus(bundleStatus)
-    }
-}
-
-extension WormholeClaimUserAction {
-    var bundleID: String {
-        switch bundle {
-        case let .bundle(bundle):
-            return bundle.bundleId
-        case let .bundleStatus(bundleStatus):
-            return bundleStatus.bundleId
-        }
-    }
-}
-
-public extension WormholeClaimUserAction.BundleValue {
-    var bundleID: String {
-        switch self {
-        case let .bundle(bundle):
-            return bundle.bundleId
-        case let .bundleStatus(bundleStatus):
-            return bundleStatus.bundleId
-        }
+        fees = bundleStatus.fees
+        compensationDeclineReason = nil
     }
 
-    var resultAmount: TokenAmount {
-        switch self {
-        case let .bundle(bundle):
-            return bundle.resultAmount
-        case let .bundleStatus(bundleStatus):
-            return bundleStatus.resultAmount
-        }
-    }
-
-    var compensationDeclineReason: CompensationDeclineReason? {
-        switch self {
-        case let .bundle(bundle):
-            return bundle.compensationDeclineReason
-        case .bundleStatus:
-            return nil
-        }
-    }
-
-    var fees: ClaimFees? {
-        switch self {
-        case let .bundle(bundle):
-            return bundle.fees
-        case let .bundleStatus(bundleStatus):
-            return bundleStatus.fees
+    /// Client side moving to next status.
+    /// Only move from processing to ready or error internal state.
+    public mutating func moveToNextStatus(nextStatus: WormholeStatus) {
+        switch internalState {
+        case .processing:
+            switch nextStatus {
+            case .completed:
+                internalState = .ready
+            case .pending, .inProgress:
+                return
+            case .failed, .expired, .canceled:
+                internalState = .error(WormholeClaimUserActionError.claimFailure)
+            }
+        default:
+            return
         }
     }
 }

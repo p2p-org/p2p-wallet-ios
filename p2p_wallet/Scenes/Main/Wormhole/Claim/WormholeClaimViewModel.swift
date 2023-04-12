@@ -98,8 +98,6 @@ class WormholeClaimViewModel: BaseViewModel, ObservableObject {
 
                 let userAction = WormholeClaimUserAction(
                     token: model.account.token,
-                    amountInCrypto: bundle.resultAmount.asCryptoAmount,
-                    amountInFiat: bundle.resultAmount.asCurrencyAmount,
                     bundle: bundle
                 )
 

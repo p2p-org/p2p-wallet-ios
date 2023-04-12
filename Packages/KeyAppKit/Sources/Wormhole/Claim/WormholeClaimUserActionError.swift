@@ -23,9 +23,9 @@ public enum WormholeClaimUserActionError {
         reason: "Sending Ethereum bundle returns with error"
     )
     
-    public static let claimingFinishesWithError = UserActionError(
+    public static let claimFailure = UserActionError(
         domain: "WormholeClaimUserActionConsumer",
         code: 3,
-        reason: "Claiming finishes with error"
+        reason: "Claiming is failed"
     )
 }
