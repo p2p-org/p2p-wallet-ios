@@ -8,10 +8,14 @@
 import Combine
 import UIKit
 
-class PanelTransition: NSObject, UIViewControllerTransitioningDelegate {
+final class PanelTransition: NSObject, UIViewControllerTransitioningDelegate {
     private var cancellables = Set<AnyCancellable>()
+    
+    // Subjects
     private let subject = PassthroughSubject<Void, Never>()
+    private let dismissedSubject = PassthroughSubject<Void, Never>()
     var dimmClicked: AnyPublisher<Void, Never> { subject.eraseToAnyPublisher() }
+    var dismissed: AnyPublisher<Void, Never> { dismissedSubject.eraseToAnyPublisher() }
     
     var presentationController: DimmPresentationController?
 
@@ -38,6 +42,11 @@ class PanelTransition: NSObject, UIViewControllerTransitioningDelegate {
         presentationController.dimmClicked
             .sink(receiveValue: { [weak self] in
                 self?.subject.send()
+            })
+            .store(in: &cancellables)
+        presentationController.dismissed
+            .sink(receiveValue: { [weak self] in
+                self?.dismissedSubject.send()
             })
             .store(in: &cancellables)
         
