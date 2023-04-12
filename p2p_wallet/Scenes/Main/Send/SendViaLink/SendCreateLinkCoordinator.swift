@@ -13,6 +13,7 @@ final class SendCreateLinkCoordinator: Coordinator<SendCreateLinkCoordinator.Res
     
     private let navigationController: UINavigationController
     private let transaction: SendTransaction
+    private let intermediatePubKey: String
     
     // MARK: - Initializer
 
@@ -20,12 +21,14 @@ final class SendCreateLinkCoordinator: Coordinator<SendCreateLinkCoordinator.Res
         link: String,
         formatedAmount: String,
         navigationController: UINavigationController,
-        transaction: SendTransaction
+        transaction: SendTransaction,
+        intermediatePubKey: String
     ) {
         self.link = link
         self.formatedAmount = formatedAmount
         self.navigationController = navigationController
         self.transaction = transaction
+        self.intermediatePubKey = intermediatePubKey
         
         super.init()
         bind()
@@ -72,7 +75,7 @@ final class SendCreateLinkCoordinator: Coordinator<SendCreateLinkCoordinator.Res
         let viewModel = SendLinkCreatedViewModel(
             link: link,
             formatedAmount: formatedAmount,
-            pubKey: self.transaction.walletToken.pubkey ?? ""
+            intermediateAccountPubKey: intermediatePubKey
         )
         let sendLinkCreatedVC = SendLinkCreatedView(viewModel: viewModel).asViewController()
         

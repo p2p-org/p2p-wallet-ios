@@ -98,7 +98,7 @@ struct SendLinkCreatedView_Previews: PreviewProvider {
             viewModel: SendLinkCreatedViewModel(
                 link: "test.com/Ro8Andswf",
                 formatedAmount: "7.12 SOL",
-                pubKey: ""
+                intermediateAccountPubKey: ""
             )
         )
     }

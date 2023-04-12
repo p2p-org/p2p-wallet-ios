@@ -263,16 +263,20 @@ private extension SendInputViewModel {
             .store(in: &subscriptions)
 
         inputAmountViewModel.changeAmount
+            .debounce(for: 0.1, scheduler: DispatchQueue.main)
             .sinkAsync(receiveValue: { [weak self] value in
                 guard let self = self else { return }
                 switch value.type {
                 case .token:
+                    if self.status != .initializing {
+                        debugPrint("---Send_Click_Change_Token_Value")
+                        self.logAmountChanged(
+                            symbol: self.tokenViewModel.token.token.symbol,
+                            amount: value.amount.inToken,
+                            isSendingViaLink: self.currentState.isSendingViaLink
+                        )
+                    }
                     _ = await self.stateMachine.accept(action: .changeAmountInToken(value.amount.inToken))
-                    self.logAmountChanged(
-                        symbol: self.tokenViewModel.token.token.symbol,
-                        amount: value.amount.inToken,
-                        isSendingViaLink: self.currentState.isSendingViaLink
-                    )
                 case .fiat:
                     _ = await self.stateMachine.accept(action: .changeAmountInFiat(value.amount.inFiat))
                 }
@@ -284,10 +288,13 @@ private extension SendInputViewModel {
             .sinkAsync(receiveValue: { [weak self] value in
                 guard let self else { return }
                 await MainActor.run { [weak self] in self?.isFeeLoading = true }
-                self.logTokenChosen(
-                    symbol: value.token.symbol,
-                    isSendingViaLink: self.currentState.isSendingViaLink
-                )
+                if self.status != .initializing {
+                    debugPrint("---Send_Click_Change_Token_Chosen")
+                    self.logTokenChosen(
+                        symbol: value.token.symbol,
+                        isSendingViaLink: self.currentState.isSendingViaLink
+                    )
+                }
                 _ = await self.stateMachine.accept(action: .changeUserToken(value.token))
                 await MainActor.run { [weak self] in
                     self?.inputAmountViewModel.token = value
@@ -358,7 +365,10 @@ private extension SendInputViewModel {
         tokenViewModel.changeTokenPressed
             .sink { [weak self] in
                 guard let self else { return }
-                self.logChooseTokenClick(isSendingViaLink: self.currentState.isSendingViaLink)
+                self.logChooseTokenClick(
+                    tokenName: self.currentState.token.symbol,
+                    isSendingViaLink: self.currentState.isSendingViaLink
+                )
             }
             .store(in: &subscriptions)
 
@@ -658,8 +668,9 @@ private extension SendInputViewModel {
         ))
     }
 
-    func logChooseTokenClick(isSendingViaLink: Bool) {
+    func logChooseTokenClick(tokenName: String, isSendingViaLink: Bool) {
         analyticsManager.log(event: .sendnewTokenInputClick(
+            tokenName: tokenName,
             source: source.rawValue,
             sendFlow: isSendingViaLink ? "Send_Via_Link" : "Send"
         ))
