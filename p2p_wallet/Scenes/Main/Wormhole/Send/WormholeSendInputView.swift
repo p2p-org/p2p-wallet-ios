@@ -55,7 +55,7 @@ struct WormholeSendInputView: View {
                                     foregroundColor: Asset.Colors.sky.color
                                 )
                                 .frame(width: 16, height: 16)
-                            } else {
+                            } else if !viewModel.adapter.fees.isEmpty {
                                 Image(uiImage: UIImage.infoSend)
                                     .resizable()
                                     .frame(width: 16, height: 16)
