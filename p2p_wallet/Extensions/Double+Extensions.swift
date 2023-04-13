@@ -83,7 +83,7 @@ extension Double {
         showMinus: Bool = true,
         groupingSeparator: String? = nil,
         autoSetMaximumFractionDigits: Bool = false,
-        roundingMode: NumberFormatter.RoundingMode = .down
+        roundingMode: NumberFormatter.RoundingMode? = .down
     ) -> String {
         let formatter = NumberFormatter()
         formatter.groupingSize = 3
@@ -113,7 +113,9 @@ extension Double {
             }
         }
 
-        formatter.roundingMode = roundingMode
+        if let roundingMode = roundingMode {
+            formatter.roundingMode = roundingMode
+        }
 
         let number = showMinus ? self : abs(self)
         return formatter.string(from: number as NSNumber) ?? "0"
