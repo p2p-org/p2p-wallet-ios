@@ -37,9 +37,7 @@ final class SendCreateLinkCoordinator: Coordinator<SendCreateLinkCoordinator.Res
         
         transactionHandler.observeTransaction(transactionIndex: index)
             .compactMap {$0}
-            .filter {
-                $0.status.error != nil || $0.status.isFinalized || ($0.status.numberOfConfirmations ?? 0) > 0
-            }
+            .filter { $0.isConfirmedOrError }
             .prefix(1)
             .receive(on: RunLoop.main)
             .sink { [weak self] tx in
