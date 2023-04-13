@@ -2,7 +2,7 @@ import Foundation
 
 public enum SupportedToken {
     public enum ERC20: String, CaseIterable {
-        case sol = "0xD31a59c85aE9D8edEFeC411D448f90841571b89c"
+        case sol = "0xd31a59c85ae9d8edefec411d448f90841571b89c"
         case usdc = "0xa0b86991c6218b36c1d19d4a2e9eb0ce3606eb48"
         case usdt = "0xdac17f958d2ee523a2206206994597c13d831ec7"
         case ust = "0xa693b19d2931d498c5b318df961919bb4aee87a5"

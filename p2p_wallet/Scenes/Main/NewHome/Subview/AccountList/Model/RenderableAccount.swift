@@ -1,13 +1,6 @@
-//
-//  RendableAccount.swift
-//  p2p_wallet
-//
-//  Created by Giang Long Tran on 03.03.2023.
-//
-
 import Foundation
 
-protocol RendableAccount: Identifiable where ID == String {
+protocol RenderableAccount: Identifiable where ID == String {
     var id: String { get }
 
     var icon: AccountIcon { get }
@@ -25,6 +18,12 @@ protocol RendableAccount: Identifiable where ID == String {
     var tags: AccountTags { get }
 
     var onTap: (() -> Void)? { get }
+}
+
+protocol ClaimableRenderableAccount: RenderableAccount {
+    var isClaiming: Bool { get }
+
+    var onClaim: (() -> Void)? { get }
 }
 
 struct AccountTags: OptionSet {
@@ -49,7 +48,7 @@ enum AccountIcon {
     case random(seed: String)
 }
 
-extension RendableAccount {
+extension RenderableAccount {
     var isInIgnoreList: Bool {
         tags.contains(.ignore)
     }

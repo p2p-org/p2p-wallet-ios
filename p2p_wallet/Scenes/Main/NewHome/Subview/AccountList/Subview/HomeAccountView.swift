@@ -10,7 +10,7 @@ import SwiftUI
 
 struct HomeAccountView: View {
     let iconSize: CGFloat = 50
-    let rendable: any RendableAccount
+    let rendable: any RenderableAccount
 
     var body: some View {
         HStack(alignment: .center, spacing: 12) {

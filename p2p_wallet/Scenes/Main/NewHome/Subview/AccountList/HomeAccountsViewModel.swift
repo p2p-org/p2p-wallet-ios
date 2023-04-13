@@ -38,10 +38,10 @@ final class HomeAccountsViewModel: BaseViewModel, ObservableObject {
 
     /// Solana accounts.
     @Published private(set) var solanaAccountsState: AsyncValueState<[RendableSolanaAccount]> = .init(value: [])
-    @Published private(set) var ethereumAccountsState: AsyncValueState<[RendableEthereumAccount]> = .init(value: [])
+    @Published private(set) var ethereumAccountsState: AsyncValueState<[any ClaimableRenderableAccount]> = .init(value: [])
 
     /// Primary list accounts.
-    var accounts: [any RendableAccount] {
+    var accounts: [any RenderableAccount] {
         ethereumAccountsState.value
             .filter { account in
                 if available(.ethAddressEnabled) {
@@ -57,7 +57,7 @@ final class HomeAccountsViewModel: BaseViewModel, ObservableObject {
     }
 
     /// Secondary list accounts. Will be hidded normally and need to be manually action from user to show in view.
-    var hiddenAccounts: [any RendableAccount] {
+    var hiddenAccounts: [any RenderableAccount] {
         ethereumAccountsState.value
             .filter { account in
                 if available(.ethAddressEnabled), (account.isClaiming || account.onClaim != nil) {
@@ -154,12 +154,10 @@ final class HomeAccountsViewModel: BaseViewModel, ObservableObject {
                     )
 
                     let isClaimable = !account.isClaiming && balanceInFiat >= CurrencyAmount(usd: 1)
-
-                    return RendableEthereumAccount(
-                        account: account.account,
+                    return RenderableAccountFactory.account(
+                        with: account.account,
                         isClaiming: isClaiming,
-                        onTap: nil,
-                        onClaim: isClaimable ? {
+                        onClain: isClaimable ? {
                             navigation.send(.claim(account.account))
                         } : nil
                     )

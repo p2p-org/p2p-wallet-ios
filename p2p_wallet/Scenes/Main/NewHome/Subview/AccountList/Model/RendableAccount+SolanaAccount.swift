@@ -1,14 +1,7 @@
-//
-//  RendableAccount+SolanaAccount.swift
-//  p2p_wallet
-//
-//  Created by Giang Long Tran on 04.03.2023.
-//
-
 import Foundation
 import KeyAppBusiness
 
-struct RendableSolanaAccount: RendableAccount {
+struct RendableSolanaAccount: RenderableAccount {
     let account: SolanaAccountsService.Account
     
     var id: String {

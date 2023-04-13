@@ -7,7 +7,7 @@
 
 import Foundation
 
-struct RendableMockAccount: RendableAccount {
+struct RendableMockAccount: RenderableAccount {
     var id: String
     
     var icon: AccountIcon

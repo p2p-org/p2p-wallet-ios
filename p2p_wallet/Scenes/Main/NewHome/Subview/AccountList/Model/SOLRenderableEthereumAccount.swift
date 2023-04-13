@@ -1,15 +1,10 @@
-//
-//  RendableAccount+EthereumAccount.swift
-//  p2p_wallet
-//
-//  Created by Giang Long Tran on 11.03.2023.
-//
-
 import Foundation
 import KeyAppBusiness
 import KeyAppKitCore
+import SolanaSwift
+import Wormhole
 
-struct RenderableEthereumAccount: RenderableAccount, ClaimableRenderableAccount {
+struct SOLRenderableEthereumAccount: RenderableAccount, ClaimableRenderableAccount {
     let account: EthereumAccount
 
     var id: String {
@@ -22,11 +17,10 @@ struct RenderableEthereumAccount: RenderableAccount, ClaimableRenderableAccount 
     }
 
     var icon: AccountIcon {
-        if let url = account.token.logo {
-            return .url(url)
-        } else {
+        guard let url = URL(string: Token.nativeSolana.logoURI ?? "") else {
             return .image(.imageOutlineIcon)
         }
+        return .url(url)
     }
 
     var wrapped: Bool {
@@ -34,11 +28,11 @@ struct RenderableEthereumAccount: RenderableAccount, ClaimableRenderableAccount 
     }
 
     var title: String {
-        account.token.name
+        Token.nativeSolana.name
     }
 
     var subtitle: String {
-        CryptoFormatter().string(for: account.representedBalance)
+        CryptoFormatter().string(for: account.representedBalance, maxDigits: account.token.contractType == .native ? 8 : nil)
             ?? "0 \(account.token.symbol)"
     }
 
