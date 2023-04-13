@@ -28,13 +28,6 @@ final class AppflyerAppDelegateService: NSObject, AppDelegateService {
         AppsFlyerLib.shared().appleAppID = appsFlyerAppId
         AppsFlyerLib.shared().waitForATTUserAuthorization(timeoutInterval: 60)
         
-        // delegate
-//        AppsFlyerLib.shared().delegate = self
-        AppsFlyerLib.shared().deepLinkDelegate = self
-        
-        // TODO: - Set the OneLink template id for share invite links
-//        AppsFlyerLib.shared().appInviteOneLinkID = "H5hv"
-        
         return true
     }
     
@@ -96,10 +89,4 @@ final class AppflyerAppDelegateService: NSObject, AppDelegateService {
             }
         }
     }
-}
-
-// MARK: - Delegate
-
-extension AppflyerAppDelegateService: DeepLinkDelegate {
-    func didResolveDeepLink(_: DeepLinkResult) {}
 }
