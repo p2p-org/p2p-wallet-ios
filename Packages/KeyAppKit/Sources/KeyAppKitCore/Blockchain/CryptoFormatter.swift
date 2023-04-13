@@ -43,9 +43,13 @@ public class CryptoFormatter: Formatter {
         formattedValue(for: obj)
     }
 
+    public func string(for obj: Any?, maxDigits: Int? = nil) -> String? {
+        formattedValue(for: obj, maxDigits: maxDigits)
+    }
+
     // MARK: - Private
 
-    private func formattedValue(for obj: Any?) -> String? {
+    private func formattedValue(for obj: Any?, maxDigits: Int? = nil) -> String? {
         let amount: CryptoAmount?
 
         if let obj = obj as? CryptoAmount {
@@ -63,7 +67,11 @@ public class CryptoFormatter: Formatter {
         formatter.numberStyle = .decimal
         formatter.decimalSeparator = "."
         formatter.groupingSeparator = " "
-        formatter.maximumFractionDigits = Int(amount.token.decimals)
+        if let maxDigits {
+            formatter.maximumFractionDigits = maxDigits
+        } else {
+            formatter.maximumFractionDigits = Int(amount.token.decimals)
+        }
 
         let convertedValue = Decimal(string: String(amount.amount))
         guard var formattedAmount = formatter.string(for: convertedValue) else {

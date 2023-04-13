@@ -38,7 +38,7 @@ final class HomeAccountsViewModel: BaseViewModel, ObservableObject {
 
     /// Solana accounts.
     @Published private(set) var solanaAccountsState: AsyncValueState<[RendableSolanaAccount]> = .init(value: [])
-    @Published private(set) var ethereumAccountsState: AsyncValueState<[RendableEthereumAccount]> = .init(value: [])
+    @Published private(set) var ethereumAccountsState: AsyncValueState<[RenderableEthereumAccount]> = .init(value: [])
 
     /// Primary list accounts.
     var accounts: [any RendableAccount] {
@@ -155,7 +155,7 @@ final class HomeAccountsViewModel: BaseViewModel, ObservableObject {
 
                     let isClaimable = !account.isClaiming && balanceInFiat >= CurrencyAmount(usd: 1)
 
-                    return RendableEthereumAccount(
+                    return RenderableEthereumAccount(
                         account: account.account,
                         isClaiming: isClaiming,
                         onTap: nil,

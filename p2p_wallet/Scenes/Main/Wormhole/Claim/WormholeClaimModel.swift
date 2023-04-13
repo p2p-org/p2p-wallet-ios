@@ -51,7 +51,7 @@ struct WormholeClaimEthereumModel: WormholeClaimModel {
     }
 
     var title: String {
-        CryptoFormatter().string(for: account.representedBalance)
+        CryptoFormatter().string(for: account.representedBalance, maxDigits: account.token.contractType == .native ? 8 : nil)
             ?? "0 \(account.token.symbol)"
     }
 
