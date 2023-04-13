@@ -97,7 +97,7 @@ struct ReceiveFundsViaLinkView: View {
                 
                 if viewModel.isFakeSendingTransaction {
                     Picker("Error Type", selection: $viewModel.fakeTransactionErrorType) {
-                        ForEach(ReceiveFundsViaLinkViewModel.FakeTransactionErrorType.allCases) { errorType in
+                        ForEach(ClaimSentViaLinkTransaction.FakeTransactionErrorType.allCases) { errorType in
                             Text(errorType.rawValue.capitalized).tag(errorType)
                         }
                     }
