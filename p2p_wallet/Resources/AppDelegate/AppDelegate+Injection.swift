@@ -327,7 +327,6 @@ extension Resolver: ResolverRegistering {
                 network: .mainnetBeta,
                 derivablePath: .default,
                 host: "t.key.app",
-                memoPrefix: .secretConfig("SEND_VIA_LINK_MEMO_PREFIX")!,
                 solanaAPIClient: resolve()
             )
         }
