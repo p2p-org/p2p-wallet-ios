@@ -600,7 +600,7 @@ private func createTransactionExecution(
         amount: amountInToken,
         feeWallet: feeWallet,
         ignoreTopUp: isSendingViaLink,
-        memo: isSendingViaLink ? .secretConfig("SEND_VIA_LINK_MEMO_PREFIX")!: nil,
+        memo: isSendingViaLink ? .secretConfig("SEND_VIA_LINK_MEMO_PREFIX")! + "-send": nil,
         operationType: isSendingViaLink ? .sendViaLink: .transfer
     )
     

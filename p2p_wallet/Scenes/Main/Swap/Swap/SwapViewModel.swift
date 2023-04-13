@@ -443,7 +443,7 @@ private extension SwapViewModel {
                     }
                     
                     // log error
-                    logTransaction(error: error)
+                    self.logTransaction(error: error)
                 } else {
                     debugPrint("---transactionId: ", tx.transactionId ?? "")
                 }
