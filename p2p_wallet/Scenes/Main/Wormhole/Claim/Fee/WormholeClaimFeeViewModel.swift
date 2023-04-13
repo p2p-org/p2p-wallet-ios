@@ -55,7 +55,7 @@ class WormholeClaimFeeViewModel: BaseViewModel, ObservableObject {
                     WormholeClaimFeeAdapter(account: account, bundle: bundle)
                 }
             }
-            .weakAssign(to: \.adapter, on: self)
+            .weakAssign(to: \WormholeClaimFeeViewModel.adapter, on: self)
             .store(in: &subscriptions)
     }
 
