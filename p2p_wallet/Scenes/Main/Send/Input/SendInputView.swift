@@ -41,10 +41,18 @@ struct SendInputView: View {
                 .edgesIgnoringSafeArea(.all)
                 .onTapGesture { self.viewModel.inputAmountViewModel.isFirstResponder = false }
 
-            ScrollView {
-                inputView
+            VStack {
+                ScrollView {
+                    inputView
+                }
+                    .padding(16)
+                
+                Spacer()
+                
+                sendButton
+                    .padding(.horizontal, 16)
+                    .padding(.bottom, 8)
             }
-                .padding(16)
         }
     }
     
@@ -106,10 +114,6 @@ struct SendInputView: View {
             case .ready:
                 SendInputAmountView(viewModel: viewModel.inputAmountViewModel)
             }
-
-            Spacer()
-
-            sendButton
             
             #if !RELEASE
             HStack {
