@@ -14,14 +14,6 @@ import Resolver
 import FeeRelayerSwift
 
 final class ReceiveFundsViaLinkViewModel: BaseViewModel, ObservableObject {
-    // MARK: - Nested type
-
-    enum FakeTransactionErrorType: String, CaseIterable, Identifiable {
-        case noError
-        case networkError
-        case otherError
-        var id: Self { self }
-    }
     
     // Dependencies
     @Injected private var analyticsManager: AnalyticsManager
@@ -61,7 +53,7 @@ final class ReceiveFundsViaLinkViewModel: BaseViewModel, ObservableObject {
             }
         }
     }
-    @Published var fakeTransactionErrorType: FakeTransactionErrorType = .noError
+    @Published var fakeTransactionErrorType: ClaimSentViaLinkTransaction.FakeTransactionErrorType = .noError
     #endif
     
     // MARK: - Init
@@ -107,7 +99,7 @@ final class ReceiveFundsViaLinkViewModel: BaseViewModel, ObservableObject {
         let fakeTransactionErrorType = fakeTransactionErrorType
         #else
         let isFakeSendingTransaction = false
-        let fakeTransactionErrorType = FakeTransactionErrorType.noError
+        let fakeTransactionErrorType = ClaimSentViaLinkTransaction.FakeTransactionErrorType.noError
         #endif
 
         // Notify loading
@@ -120,15 +112,10 @@ final class ReceiveFundsViaLinkViewModel: BaseViewModel, ObservableObject {
             claimableTokenInfo: claimableToken,
             token: token,
             destinationWallet: Wallet(pubkey: claimableToken.account, token: token),
-            tokenAmount: cryptoAmount
-        ) {
-            try await claimSendViaLinkExecution(
-                claimableToken: claimableToken,
-                receiver: pubkey,
-                isFakeTransaction: isFakeSendingTransaction,
-                fakeTransactionErrorType: fakeTransactionErrorType
-            )
-        }
+            tokenAmount: cryptoAmount,
+            isFakeTransaction: isFakeSendingTransaction,
+            fakeTransactionErrorType: fakeTransactionErrorType
+        )
 
         // Send it to transactionHandler
         let transactionHandler = Resolver.resolve(TransactionHandlerType.self)
@@ -137,9 +124,7 @@ final class ReceiveFundsViaLinkViewModel: BaseViewModel, ObservableObject {
         // Observe transaction and update status
         transactionHandler.observeTransaction(transactionIndex: transactionIndex)
             .compactMap {$0}
-            .filter {
-                $0.status.error != nil || $0.status.isFinalized || ($0.status.numberOfConfirmations ?? 0) > 0
-            }
+            .filter { $0.isConfirmedOrError }
             .prefix(1)
             .receive(on: RunLoop.main)
             .sink { [weak self] tx in
@@ -273,81 +258,6 @@ final class ReceiveFundsViaLinkViewModel: BaseViewModel, ObservableObject {
             image: .sendViaLinkClaimed
         )
     }
-}
-
-// MARK: - Independent helpers
-
-func claimSendViaLinkExecution(
-    claimableToken: ClaimableTokenInfo,
-    receiver: PublicKey,
-    isFakeTransaction: Bool,
-    fakeTransactionErrorType: ReceiveFundsViaLinkViewModel.FakeTransactionErrorType
-) async throws -> TransactionID {
-    // fake transaction for debugging
-    if isFakeTransaction {
-        // fake delay api call 1s
-        try await Task.sleep(nanoseconds: 1_000_000_000)
-        
-        // simulate error if needed
-        switch fakeTransactionErrorType {
-        case .noError:
-            break
-        case .otherError:
-            throw SolanaError.unknown
-        case .networkError:
-            throw NSError(domain: "Network error", code: NSURLErrorNetworkConnectionLost)
-        }
-        
-        return .fakeTransactionSignature(id: UUID().uuidString)
-    }
-    
-    // get services
-    let sendViaLinkDataService = Resolver.resolve(SendViaLinkDataService.self)
-    let contextManager = Resolver.resolve(RelayContextManager.self)
-    let solanaAPIClient = Resolver.resolve(SolanaAPIClient.self)
-    
-    let context = try await contextManager
-        .getCurrentContextOrUpdate()
-    
-    // prepare transaction, get recent blockchash
-    var (preparedTransaction, recentBlockhash) = try await(
-        sendViaLinkDataService.claim(
-            token: claimableToken,
-            receiver: receiver,
-            feePayer: context.feePayerAddress
-        ),
-        solanaAPIClient.getRecentBlockhash()
-    )
-    
-    preparedTransaction.transaction.recentBlockhash = recentBlockhash
-    
-    // get feePayer's signature
-    let feePayerSignature = try await Resolver.resolve(RelayService.self)
-        .signRelayTransaction(
-            preparedTransaction,
-            config: FeeRelayerConfiguration(
-                operationType: .sendViaLink, // TODO: - Received via link?
-                currency: claimableToken.mintAddress,
-                autoPayback: false
-            )
-        )
-    
-    // sign transaction by user
-    try preparedTransaction.transaction.sign(signers: [claimableToken.keypair])
-    
-    // add feePayer's signature
-    try preparedTransaction.transaction.addSignature(
-        .init(
-            signature: Data(Base58.decode(feePayerSignature)),
-            publicKey: context.feePayerAddress
-        )
-    )
-    
-    // serialize transaction
-    let serializedTransaction = try preparedTransaction.transaction.serialize().base64EncodedString()
-    
-    // send to solanaBlockchain
-    return try await solanaAPIClient.sendTransaction(transaction: serializedTransaction, configs: RequestConfiguration(encoding: "base64")!)
 }
 
 // MARK: - State
