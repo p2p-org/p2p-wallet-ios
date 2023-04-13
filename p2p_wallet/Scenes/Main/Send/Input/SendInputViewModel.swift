@@ -632,8 +632,8 @@ private func createTransactionExecution(
         amount: amountInToken,
         feeWallet: feeWallet,
         ignoreTopUp: isSendingViaLink,
-        memo: isSendingViaLink ? .secretConfig("SEND_VIA_LINK_MEMO_PREFIX")! : nil,
-        operationType: isSendingViaLink ? .sendViaLink : .transfer
+        memo: isSendingViaLink ? .secretConfig("SEND_VIA_LINK_MEMO_PREFIX")! + "-send": nil,
+        operationType: isSendingViaLink ? .sendViaLink: .transfer
     )
 
     // save to storage
