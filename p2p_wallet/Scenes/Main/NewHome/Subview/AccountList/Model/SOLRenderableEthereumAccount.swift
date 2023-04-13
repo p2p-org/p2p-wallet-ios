@@ -32,7 +32,7 @@ struct SOLRenderableEthereumAccount: RenderableAccount, ClaimableRenderableAccou
     }
 
     var subtitle: String {
-        CryptoFormatter().string(for: account.representedBalance, maxDigits: account.token.contractType == .native ? 8 : nil)
+        CryptoFormatter().string(for: account.representedBalance)
             ?? "0 \(account.token.symbol)"
     }
 
