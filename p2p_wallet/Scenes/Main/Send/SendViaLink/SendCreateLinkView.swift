@@ -21,7 +21,7 @@ struct SendCreateLinkView: View {
                     .apply(style: .largeTitle)
                     .foregroundColor(mainColor)
                     .transition(.opacity.animation(.linear))
-                    .padding(.bottom, 16)
+                    .padding(.bottom, 76)
 
                 IndeterminateProgressBar(indicatorColor: mainColor)
                     .frame(width: 113)
