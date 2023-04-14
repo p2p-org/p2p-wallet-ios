@@ -31,7 +31,7 @@ struct RenderableEthereumAccount: RendableAccount {
     }
 
     var subtitle: String {
-        CryptoFormatterFactory.formatter(with: account.representedBalance.token)
+        CryptoFormatterFactory.formatter(with: account.representedBalance.token, style: .short)
             .string(for: account.representedBalance)
             ?? "0 \(account.token.symbol)"
     }
