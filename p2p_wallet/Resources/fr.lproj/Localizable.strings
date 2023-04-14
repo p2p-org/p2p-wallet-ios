@@ -1295,14 +1295,11 @@
 "The transaction was rejected after failed internet connection. Open your link again" = "La transaction a été rejetée après l'échec de la connexion Internet.  Ouvrez à nouveau votre lien";
 "Token rates are unavailable. Everything works as usual and all funds are safe." = "Les tarifs des jetons ne sont pas disponibles.  Tout fonctionne comme d'habitude et tous les fonds sont en sécurité.";
 "The transaction was rejected by the Solana blockchain. Open your link again" = "La transaction a été rejetée par la blockchain Solana.  Ouvrez à nouveau votre lien";
-"Spend them wisely" = "Dépensez-les judicieusement";
-"This one-time link is already claimed" = "Ce lien unique est déjà revendiqué";
 "You can't receive funds with it" = "Vous ne pouvez pas recevoir de fonds avec";
 "Failed to get data" = "Échec de l'obtention des données";
 "Refresh the page or check back later" = "Actualisez la page ou revenez plus tard";
 "Reload" = "Recharger";
 "You’ve got" = "Tu as";
-"%@ sent you %@ via Key App. Follow the link to claim your funds: %@" = "%@ vous a envoyé %@ via Key App.  Suivez le lien pour réclamer vos fonds : %@";
 "From %@" = "De %@";
 "This link is broken" = "Ce lien est rompu";
 "You have reached the daily limit of sending free links per day. Try tomorrow" = "Vous avez atteint la limite quotidienne d'envoi de liens gratuits par jour.  Essayez demain";
@@ -1314,3 +1311,9 @@
 "Copied" = "Copié";
 "Share your link to send money" = "Partagez votre lien pour envoyer de l'argent";
 "Create link" = "Créer un lien";
+"Receive money" = "Recevoir de l'argent";
+"The transaction will be completed in a few seconds" = "La transaction sera complétée en quelques secondes";
+"Hey, I've sent you %@ %@! Get it here: %@" = "Hé, je vous ai envoyé %@ %@ !  Obtenez-le ici : %@";
+"The link is already claimed" = "Le lien est déjà revendiqué";
+"You can’t receive money with it" = "Vous ne pouvez pas recevoir d'argent avec";
+"The transaction was rejected. Open your link again." = "La transaction a été rejetée.  Ouvrez à nouveau votre lien.";

@@ -25,7 +25,7 @@ class SentViaLinkActivityItemSource: NSObject, UIActivityItemSource {
     }
     
     func activityViewController(_ activityViewController: UIActivityViewController, itemForActivityType activityType: UIActivity.ActivityType?) -> Any? {
-        L10n.SentYouViaKeyApp.followTheLinkToClaimYourFunds(sender, amount.tokenAmountFormattedString(symbol: symbol), url.absoluteString)
+        L10n.heyIVeSentYouGetItHere(sender, amount.tokenAmountFormattedString(symbol: symbol), url.absoluteString)
     }
     
     func activityViewController(_ activityViewController: UIActivityViewController, subjectForActivityType activityType: UIActivity.ActivityType?) -> String {
