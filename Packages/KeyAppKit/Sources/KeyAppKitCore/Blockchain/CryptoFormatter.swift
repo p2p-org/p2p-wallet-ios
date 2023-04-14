@@ -66,17 +66,18 @@ public class CryptoFormatter: Formatter {
         guard let amount else { return nil }
 
         // Apply rule for token
-        var token: AnyToken = amount.token
+        var config: CryptoFormatterRule.Config = .init()
         for rule in rules {
-            token = rule.apply(token)
+            config = rule.apply(amount.token)
         }
 
         let formatter = NumberFormatter()
+
         formatter.groupingSize = 3
         formatter.numberStyle = .decimal
         formatter.decimalSeparator = "."
         formatter.groupingSeparator = " "
-        formatter.maximumFractionDigits = Int(token.maxFractionDigit)
+        formatter.maximumFractionDigits = config.maximumFractionDigits ?? Int(amount.token.decimals)
 
         let convertedValue = Decimal(string: String(amount.amount))
         guard var formattedAmount = formatter.string(for: convertedValue) else {
@@ -90,26 +91,24 @@ public class CryptoFormatter: Formatter {
         if hideSymbol {
             return formattedAmount
         } else {
-            return "\(formattedAmount) \(token.symbol)"
+            return "\(formattedAmount) \(amount.token.symbol)"
         }
     }
 }
 
 public struct CryptoFormatterRule {
-    let apply: (AnyToken) -> AnyToken
+    public struct Config {
+        public var maximumFractionDigits: Int?
+    }
+
+    let apply: (AnyToken) -> Config
 
     /// Override max fraction digit for native ethereum.
     public static let nativeEthereumMaxDigit: Self = .init { token in
         if token.tokenPrimaryKey == "native-ethereum" && token.decimals == 18 {
-            return SomeToken(
-                tokenPrimaryKey: token.tokenPrimaryKey,
-                symbol: token.symbol,
-                name: token.name,
-                decimals: token.decimals,
-                maxFractionDigit: 8
-            )
+            return Config(maximumFractionDigits: 8)
         }
 
-        return token
+        return Config()
     }
 }
