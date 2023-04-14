@@ -741,9 +741,7 @@
 "Incorrect PIN, try again (%@ attempt left)" = "Code PIN incorrect, réessayez (%@ tentative restante)";
 "Forgot your PIN?" = "Vous avez oublié votre NIP ?";
 "Reset it" = "Réinitialisez-le";
-"You have %@ attempts left to type the correct PIN.
-Reset the PIN or wait for %@." = "Il vous reste %@ tentatives pour saisir le code PIN correct.
- Réinitialisez le code PIN ou attendez %@.";
+"You have %@ attempts left to type the correct PIN.\nReset the PIN or wait for %@." = "Il vous reste %@ tentatives pour saisir le code PIN correct.\nRéinitialisez le code PIN ou attendez %@.";
 "You have successfully set your PIN" = "Vous avez réussi à définir votre code PIN";
 "If you have no backup, you may never be able to access this account." = "Si vous n'avez pas de sauvegarde, vous ne pourrez peut-être jamais accéder à ce compte.";
 "Resetting your PIN" = "Réinitialiser votre code PIN";
@@ -1182,11 +1180,7 @@ Reset the PIN or wait for %@." = "Il vous reste %@ tentatives pour saisir le cod
 "Continue transaction" = "Continuer la transaction";
 "Interrupt" = "Couper la parole";
 "Your bank account via Moonpay" = "Votre compte bancaire via Moonpay";
-"You didn't finish your cash out transaction. After 7 days your transaction has been automatically declined. 
-
-You can try again, but your new transaction will be subject to the current rates." = "Vous n'avez pas terminé votre transaction de retrait.  Après 7 jours, votre transaction a été automatiquement refusée.
-
- Vous pouvez réessayer, mais votre nouvelle transaction sera soumise aux tarifs en vigueur.";
+"You didn't finish your cash out transaction. After 7 days your transaction has been automatically declined.\n\nYou can try again, but your new transaction will be subject to the current rates." = "Vous n'avez pas terminé votre transaction de retrait.  Après 7 jours, votre transaction a été automatiquement refusée.\n\nVous pouvez réessayer, mais votre nouvelle transaction sera soumise aux tarifs en vigueur.";
 "Will be sent to" = "Sera envoyé à";
 "You need to send %@ SOL" = "Vous devez envoyer %@ SOL";
 "Funds were sent" = "Les fonds ont été envoyés";

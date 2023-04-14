@@ -736,9 +736,7 @@
 "Incorrect PIN, try again (%@ attempt left)" = "Incorrect PIN, try again (%@ attempt left)";
 "Forgot your PIN?" = "Forgot your PIN?";
 "Reset it" = "Reset it";
-"You have %@ attempts left to type the correct PIN.
-Reset the PIN or wait for %@." = "You have %@ attempts left to type the correct PIN.
-Reset the PIN or wait for %@.";
+"You have %@ attempts left to type the correct PIN.\nReset the PIN or wait for %@." = "You have %@ attempts left to type the correct PIN.\nReset the PIN or wait for %@.";
 "You have successfully set your PIN" = "You have successfully set your PIN";
 "If you have no backup, you may never be able to access this account." = "If you have no backup, you may never be able to access this account.";
 "Resetting your PIN" = "Resetting your PIN";
@@ -1154,11 +1152,7 @@ Reset the PIN or wait for %@.";
 "Continue transaction" = "Continue transaction";
 "Interrupt" = "Interrupt";
 "Your bank account via Moonpay" = "Your bank account via Moonpay";
-"You didn't finish your cash out transaction. After 7 days your transaction has been automatically declined. 
-
-You can try again, but your new transaction will be subject to the current rates." = "You didn't finish your cash out transaction. After 7 days your transaction has been automatically declined. 
-
-You can try again, but your new transaction will be subject to the current rates.";
+"You didn't finish your cash out transaction. After 7 days your transaction has been automatically declined.\n\nYou can try again, but your new transaction will be subject to the current rates." = "You didn't finish your cash out transaction. After 7 days your transaction has been automatically declined.\n\nYou can try again, but your new transaction will be subject to the current rates.";
 "Will be sent to" = "Will be sent to";
 "You need to send %@ SOL" = "You need to send %@ SOL";
 "Funds were sent" = "Funds were sent";
