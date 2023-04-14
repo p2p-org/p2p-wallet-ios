@@ -4,7 +4,7 @@ import SolanaSwift
 
 extension RecipientSearchServiceImpl {
     /// Search by name
-    func searchByName(_ input: String, env: UserWalletEnvironments) async -> RecipientSearchResult {
+    func searchByName(_ input: String, config: RecipientSearchConfig) async -> RecipientSearchResult {
         do {
             let orders: [String: Int] = ["key": 2, "sol": 1, "": 0]
             let records: [NameRecord] = try await nameService.getOwners(input.lowercased())
@@ -26,7 +26,7 @@ extension RecipientSearchServiceImpl {
                     }
                 }
                 .filter { (recipient: Recipient) -> Bool in
-                    !env.wallets.contains { (wallet: Wallet) in wallet.pubkey == recipient.address }
+                    !config.wallets.contains { (wallet: Wallet) in wallet.pubkey == recipient.address }
                 }
                 .sorted { (lhs: Recipient, rhs: Recipient) in
                     switch (lhs.category, rhs.category) {
