@@ -109,6 +109,6 @@ public final class ETHCryptoFormatter: CryptoFormatter {
     }
 
     public override func string(for obj: Any?) -> String? {
-        super.string(for: obj, maxDigits: style == .short ? 8 : 18)
+        super.string(for: obj, maxDigits: style == .short ? 8 : nil)
     }
 }
