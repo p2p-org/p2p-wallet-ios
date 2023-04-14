@@ -1,12 +1,7 @@
-//
-//  WormholeClaimCoordinator.swift
-//  p2p_wallet
-//
-//  Created by Giang Long Tran on 11.03.2023.
-//
-
+import AnalyticsManager
 import Foundation
 import KeyAppKitCore
+import Resolver
 import SwiftUI
 import Wormhole
 
@@ -15,11 +10,15 @@ enum WormholeClaimCoordinatorResult {
 }
 
 class WormholeClaimCoordinator: SmartCoordinator<WormholeClaimCoordinatorResult> {
+    @Injected private var analyticsManager: AnalyticsManager
+
     let account: EthereumAccount
 
     init(account: EthereumAccount, presentation: SmartCoordinatorPresentation) {
         self.account = account
         super.init(presentation: presentation)
+        
+        analyticsManager.log(event: .claimBridgesScreenOpen(from: "main"))
     }
 
     override func build() -> UIViewController {

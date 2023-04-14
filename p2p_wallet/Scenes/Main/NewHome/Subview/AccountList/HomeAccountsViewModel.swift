@@ -1,10 +1,3 @@
-//
-//  HomeWithTokensViewModel.swift
-//  p2p_wallet
-//
-//  Created by Ivan on 05.08.2022.
-//
-
 import AnalyticsManager
 import Combine
 import Foundation
@@ -161,6 +154,7 @@ final class HomeAccountsViewModel: BaseViewModel, ObservableObject {
                         onTap: nil,
                         onClaim: isClaimable ? {
                             navigation.send(.claim(account.account))
+                            self.analyticsManager.log(event: .claimBridgesButtonClick)
                         } : nil
                     )
                 }
@@ -224,6 +218,8 @@ final class HomeAccountsViewModel: BaseViewModel, ObservableObject {
             .receive(on: RunLoop.main)
             .weakAssign(to: \.solanaAccountsState, on: self)
             .store(in: &subscriptions)
+
+        analyticsManager.log(event: .claimAvailable(claim: available(.ethAddressEnabled)))
     }
 
     func refresh() async throws {
