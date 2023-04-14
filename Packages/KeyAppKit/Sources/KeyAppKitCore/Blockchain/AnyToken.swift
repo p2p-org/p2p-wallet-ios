@@ -22,7 +22,7 @@ public protocol AnyToken {
     var decimals: UInt8 { get }
 }
 
-extension AnyToken {
+public extension AnyToken {
     var asSomeToken: SomeToken {
         SomeToken(tokenPrimaryKey: tokenPrimaryKey, symbol: symbol, name: name, decimals: decimals)
     }
@@ -37,7 +37,12 @@ public struct SomeToken: AnyToken, Hashable, Codable {
 
     public let decimals: UInt8
 
-    public init(tokenPrimaryKey: String, symbol: String, name: String, decimals: UInt8) {
+    public init(
+        tokenPrimaryKey: String,
+        symbol: String,
+        name: String,
+        decimals: UInt8
+    ) {
         self.tokenPrimaryKey = tokenPrimaryKey
         self.symbol = symbol
         self.name = name

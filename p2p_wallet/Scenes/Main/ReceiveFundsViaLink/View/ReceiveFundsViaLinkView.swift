@@ -97,7 +97,7 @@ struct ReceiveFundsViaLinkView: View {
                 
                 if viewModel.isFakeSendingTransaction {
                     Picker("Error Type", selection: $viewModel.fakeTransactionErrorType) {
-                        ForEach(ReceiveFundsViaLinkViewModel.FakeTransactionErrorType.allCases) { errorType in
+                        ForEach(ClaimSentViaLinkTransaction.FakeTransactionErrorType.allCases) { errorType in
                             Text(errorType.rawValue.capitalized).tag(errorType)
                         }
                     }
@@ -163,13 +163,7 @@ struct ReceiveFundsViaLinkView: View {
         ZStack {
             VStack(spacing: 32) {
                 Spacer()
-                ZStack {
-                    Circle()
-                        .fill(Color(Asset.Colors.rain.color))
-                        .frame(width: 128, height: 128)
-                    Text("💰")
-                        .font(.system(size: 64))
-                }
+                Image(uiImage: .accountCreationFeeHand)
                 VStack(spacing: 8) {
                     Text("\(L10n.youVeGot) \(cryptoAmount)!")
                         .multilineTextAlignment(.center)

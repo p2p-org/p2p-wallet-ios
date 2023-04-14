@@ -88,7 +88,8 @@ class WormholeSendInputViewModel: BaseViewModel, ObservableObject {
         }
 
         let availableBridgeAccounts = Self.resolveSupportedSolanaAccounts(solanaAccountsService: solanaAccountsService)
-        let chosenAccount = availableBridgeAccounts.first(where: { $0.data.mintAddress == preChosenWallet?.mintAddress })
+        let chosenAccount = availableBridgeAccounts
+            .first(where: { $0.data.mintAddress == preChosenWallet?.mintAddress })
 
         // Ensure at lease one available wallet for bridging.
         guard let initialSolanaAccount = chosenAccount ?? availableBridgeAccounts.first else {
@@ -132,11 +133,13 @@ class WormholeSendInputViewModel: BaseViewModel, ObservableObject {
         let cryptoInputFormatter = CryptoFormatter(hideSymbol: true)
         let currencyInputFormatter = CurrencyFormatter(hideSymbol: true, lessText: "")
 
-        $input
+        Publishers
+            .CombineLatest($input, $inputMode)
             .dropFirst()
             .debounce(for: 0.5, scheduler: DispatchQueue.main)
-            .sink { [weak self] input in
-                self?.analyticsManager.log(event: .sendClickChangeTokenValue(source: "Bridge"))
+            .sink { [weak self] input, inputMode in
+              self?.analyticsManager.log(event: .sendClickChangeTokenValue(source: "Bridge"))
+
                 guard let self, let account = self.adapter.inputAccount, !self.wasMaxUsed else {
                     self?.wasMaxUsed = false
                     return
@@ -145,7 +148,7 @@ class WormholeSendInputViewModel: BaseViewModel, ObservableObject {
                     let input = input.replacingOccurrences(of: " ", with: "")
                     var newAmount = input
 
-                    switch self.inputMode {
+                    switch inputMode {
                     case .fiat:
                         let fiatAmount: CurrencyAmount = .init(usdStr: input)
 
@@ -343,7 +346,7 @@ extension WormholeSendInputViewModel {
         }
 
         // Only accounts with non-zero balance
-        availableBridgeAccounts = availableBridgeAccounts.filter({ $0.cryptoAmount.value > 0 })
+        availableBridgeAccounts = availableBridgeAccounts.filter { $0.cryptoAmount.value > 0 }
 
         availableBridgeAccounts
             .sort { lhs, rhs in
@@ -353,7 +356,7 @@ extension WormholeSendInputViewModel {
                 }
                 return (lhs.amountInFiat?.value ?? 0) > (rhs.amountInFiat?.value ?? 0)
             }
-        
+
         if availableBridgeAccounts.isEmpty {
             availableBridgeAccounts.append(.init(data: Wallet(token: Token.usdcet)))
         }

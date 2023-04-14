@@ -53,7 +53,7 @@ final class HomeAccountsViewModel: BaseViewModel, ObservableObject {
     var hiddenAccounts: [any RendableAccount] {
         ethereumAccountsState.value
             .filter { account in
-                if available(.ethAddressEnabled), (account.isClaiming || account.onClaim != nil) {
+                if available(.ethAddressEnabled) {
                     return false
                 }
                 return Self.shouldInIgnoreSection(ethereumAcount: account)
