@@ -543,7 +543,7 @@
 "Proceed without a username?" = "Tiếp tục mà không có tên người dùng?";
 "Anytime you want, you can easily reserve a username by going to the settings" = "Bất cứ lúc nào bạn muốn, bạn có thể dễ dàng đặt trước tên người dùng bằng cách đi tới phần cài đặt";
 "Proceed" = "Tiếp tục";
-"Proceed & don’t show again" = "Tiếp tục và không hiển thị lại" ;
+"Proceed & don’t show again" = "Tiếp tục và không hiển thị lại";
 "Welcome back, %@" = "Chào mừng bạn trở lại, %@";
 "To recover your wallet enter your security key's 12 or 24 words separated by single spaces in the correct order" = "Để khôi phục ví của bạn, hãy nhập 12 hoặc 24 từ của khóa bảo mật được phân tách bằng dấu cách đơn theo đúng thứ tự";
 "Enter your security key" = "Nhập khóa bảo mật của bạn";
