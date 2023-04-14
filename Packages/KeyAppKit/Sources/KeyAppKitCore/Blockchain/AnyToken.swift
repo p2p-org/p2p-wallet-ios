@@ -20,16 +20,12 @@ public protocol AnyToken {
 
     /// Decimal for token
     var decimals: UInt8 { get }
-
-    var maxFractionDigit: UInt8 { get }
 }
 
 public extension AnyToken {
     var asSomeToken: SomeToken {
         SomeToken(tokenPrimaryKey: tokenPrimaryKey, symbol: symbol, name: name, decimals: decimals)
     }
-
-    var maxFractionDigit: UInt8 { decimals }
 }
 
 public struct SomeToken: AnyToken, Hashable, Codable {
@@ -41,20 +37,15 @@ public struct SomeToken: AnyToken, Hashable, Codable {
 
     public let decimals: UInt8
 
-    /// Max displaying fraction digit
-    public let maxFractionDigit: UInt8
-
     public init(
         tokenPrimaryKey: String,
         symbol: String,
         name: String,
-        decimals: UInt8,
-        maxFractionDigit: UInt8? = nil
+        decimals: UInt8
     ) {
         self.tokenPrimaryKey = tokenPrimaryKey
         self.symbol = symbol
         self.name = name
         self.decimals = decimals
-        self.maxFractionDigit = maxFractionDigit ?? decimals
     }
 }
