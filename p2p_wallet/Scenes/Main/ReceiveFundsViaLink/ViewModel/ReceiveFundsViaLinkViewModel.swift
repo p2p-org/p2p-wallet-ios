@@ -104,7 +104,7 @@ final class ReceiveFundsViaLinkViewModel: BaseViewModel, ObservableObject {
 
         // Notify loading
         sizeChangedSubject.send(522)
-        processingState = .loading(message: L10n.itUsuallyTakes520SecondsForATransactionToComplete)
+        processingState = .loading(message: L10n.theTransactionWillBeCompletedInAFewSeconds)
         processingVisible = true
         
         // Form raw transaction
@@ -137,7 +137,7 @@ final class ReceiveFundsViaLinkViewModel: BaseViewModel, ObservableObject {
                         ))
                     } else {
                         self.processingState = .error(message: NSAttributedString(
-                            string: L10n.theTransactionWasRejectedByTheSolanaBlockchain + ". " + L10n.openYourLinkAgain
+                            string: L10n.TheTransactionWasRejected.openYourLinkAgain
                         ))
                     }
                 } else {
@@ -213,7 +213,7 @@ final class ReceiveFundsViaLinkViewModel: BaseViewModel, ObservableObject {
                     case .invalidSeed, .invalidURL:
                         showFullLinkError(
                             title: L10n.thisLinkIsBroken,
-                            subtitle: L10n.youCanTReceiveFundsWithIt,
+                            subtitle: L10n.youCanTReceiveMoneyWithIt,
                             image: .womanNotFound
                         )
                     case .lastTransactionNotFound:
@@ -234,7 +234,7 @@ final class ReceiveFundsViaLinkViewModel: BaseViewModel, ObservableObject {
         } else {
             state = .failure(
                 title: L10n.failedToGetData,
-                subtitle: L10n.refreshThePageOrCheckBackLater,
+                subtitle: nil,
                 image: .sendViaLinkClaimError
             )
             sizeChangedSubject.send(594)
@@ -253,8 +253,8 @@ final class ReceiveFundsViaLinkViewModel: BaseViewModel, ObservableObject {
     
     private func showLinkWasClaimedError() {
         showFullLinkError(
-            title: L10n.thisOneTimeLinkIsAlreadyClaimed,
-            subtitle: L10n.youCanTReceiveFundsWithIt,
+            title: L10n.theLinkIsAlreadyClaimed,
+            subtitle: L10n.youCanTReceiveMoneyWithIt,
             image: .sendViaLinkClaimed
         )
     }

@@ -1298,14 +1298,11 @@
 "The transaction was rejected after failed internet connection. Open your link again" = "Giao dịch đã bị từ chối sau khi kết nối internet không thành công.  Mở lại liên kết của bạn";
 "Token rates are unavailable. Everything works as usual and all funds are safe." = "Tỷ lệ mã thông báo không có sẵn.  Mọi thứ hoạt động như bình thường và tất cả các khoản tiền đều an toàn.";
 "The transaction was rejected by the Solana blockchain. Open your link again" = "Giao dịch đã bị blockchain Solana từ chối.  Mở lại liên kết của bạn";
-"Spend them wisely" = "Chi tiêu chúng một cách khôn ngoan";
-"This one-time link is already claimed" = "Liên kết một lần này đã được xác nhận quyền sở hữu";
 "You can't receive funds with it" = "Bạn không thể nhận tiền với nó";
 "Failed to get data" = "Không lấy được dữ liệu";
 "Refresh the page or check back later" = "Làm mới trang hoặc kiểm tra lại sau";
 "Reload" = "tải lại";
 "You’ve got" = "Bạn đã có";
-"%@ sent you %@ via Key App. Follow the link to claim your funds: %@" = "%@ đã gửi cho bạn %@ qua Key App. Theo liên kết để nhận: %@";
 "From %@" = "Từ %@";
 "This link is broken" = "Liên kết này bị hỏng";
 "You have reached the daily limit of sending free links per day. Try tomorrow" = "Bạn đã đạt đến giới hạn hàng ngày gửi liên kết miễn phí mỗi ngày.  Hãy thử vào ngày mai";
@@ -1317,3 +1314,9 @@
 "Copied" = "Đã sao chép";
 "Share your link to send money" = "Chia sẻ liên kết của bạn để gửi tiền";
 "Create link" = "Tạo đường link";
+"Receive money" = "Nhận tiền";
+"The transaction will be completed in a few seconds" = "Giao dịch sẽ được hoàn thành sau vài giây";
+"Hey, I've sent you %@ %@! Get it here: %@" = "Này, tôi đã gửi cho bạn %@ %@!  Lấy nó ở đây: %@";
+"The link is already claimed" = "Liên kết đã được xác nhận quyền sở hữu";
+"You can’t receive money with it" = "Bạn không thể nhận tiền với nó";
+"The transaction was rejected. Open your link again." = "Giao dịch đã bị từ chối.  Mở lại liên kết của bạn.";
