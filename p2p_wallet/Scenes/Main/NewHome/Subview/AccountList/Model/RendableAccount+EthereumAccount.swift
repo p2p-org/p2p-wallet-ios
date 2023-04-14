@@ -31,7 +31,8 @@ struct RenderableEthereumAccount: RendableAccount {
     }
 
     var subtitle: String {
-        CryptoFormatter().string(for: account.representedBalance, maxDigits: account.token.contractType == .native ? 8 : nil)
+        CryptoFormatterFactory.formatter(with: account.representedBalance.token)
+            .string(for: account.representedBalance)
             ?? "0 \(account.token.symbol)"
     }
 

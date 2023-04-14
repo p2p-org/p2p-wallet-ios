@@ -1,10 +1,3 @@
-//
-//  File.swift
-//
-//
-//  Created by Giang Long Tran on 11.03.2023.
-//
-
 import BigInt
 import Foundation
 
@@ -13,7 +6,23 @@ public protocol CryptoAmountConvertible {
     var asCryptoAmount: CryptoAmount { get }
 }
 
-/// A string-formatter for crypto.
+public enum CryptoFormatterStyle {
+    /// Short representation of crypto numbers, e.g. limited fraction digits
+    case short
+    case long
+}
+
+public class CryptoFormatterFactory {
+    public static func formatter(with token: SomeToken, style: CryptoFormatterStyle = .long) -> CryptoFormatter {
+        if token.tokenPrimaryKey == "native-ethereum" && token.decimals == 18 {
+            return ETHCryptoFormatter(style: style)
+        } else {
+            return CryptoFormatter()
+        }
+    }
+}
+
+/// A general string-formatter for crypto
 public class CryptoFormatter: Formatter {
     public let defaultValue: String
     public let prefix: String
@@ -87,5 +96,19 @@ public class CryptoFormatter: Formatter {
         } else {
             return "\(formattedAmount) \(amount.token.symbol)"
         }
+    }
+}
+
+/// Crypto formatter for ETH-like tokens
+public final class ETHCryptoFormatter: CryptoFormatter {
+    let style: CryptoFormatterStyle
+
+    init(style: CryptoFormatterStyle) {
+        self.style = style
+        super.init()
+    }
+
+    public override func string(for obj: Any?) -> String? {
+        super.string(for: obj, maxDigits: style == .short ? 8 : 18)
     }
 }
