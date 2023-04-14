@@ -18,11 +18,18 @@ public class CryptoFormatter: Formatter {
     public let defaultValue: String
     public let prefix: String
     public let hideSymbol: Bool
+    public let rules: [CryptoFormatterRule]
 
-    public init(defaultValue: String = "", prefix: String = "", hideSymbol: Bool = false) {
+    public init(
+        defaultValue: String = "",
+        prefix: String = "",
+        hideSymbol: Bool = false,
+        rules: [CryptoFormatterRule] = []
+    ) {
         self.defaultValue = defaultValue
         self.prefix = prefix
         self.hideSymbol = hideSymbol
+        self.rules = rules
         super.init()
     }
 
@@ -58,12 +65,18 @@ public class CryptoFormatter: Formatter {
 
         guard let amount else { return nil }
 
+        // Apply rule for token
+        var token: AnyToken = amount.token
+        for rule in rules {
+            token = rule.apply(token)
+        }
+
         let formatter = NumberFormatter()
         formatter.groupingSize = 3
         formatter.numberStyle = .decimal
         formatter.decimalSeparator = "."
         formatter.groupingSeparator = " "
-        formatter.maximumFractionDigits = Int(amount.token.decimals)
+        formatter.maximumFractionDigits = Int(token.maxFractionDigit)
 
         let convertedValue = Decimal(string: String(amount.amount))
         guard var formattedAmount = formatter.string(for: convertedValue) else {
@@ -77,7 +90,26 @@ public class CryptoFormatter: Formatter {
         if hideSymbol {
             return formattedAmount
         } else {
-            return "\(formattedAmount) \(amount.token.symbol)"
+            return "\(formattedAmount) \(token.symbol)"
         }
+    }
+}
+
+public struct CryptoFormatterRule {
+    let apply: (AnyToken) -> AnyToken
+
+    /// Override max fraction digit for native ethereum.
+    public static let nativeEthereumMaxDigit: Self = .init { token in
+        if token.tokenPrimaryKey == "native-ethereum" && token.decimals == 18 {
+            return SomeToken(
+                tokenPrimaryKey: token.tokenPrimaryKey,
+                symbol: token.symbol,
+                name: token.name,
+                decimals: token.decimals,
+                maxFractionDigit: 8
+            )
+        }
+
+        return token
     }
 }

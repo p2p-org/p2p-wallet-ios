@@ -225,7 +225,7 @@ public class WormholeSendUserActionConsumer: UserActionConsumer {
 
                 // Submit transaction
                 let encodedTrx = try versionedTransaction.serialize().base64EncodedString()
-                // _ = try await self?.solanaClient.sendTransaction(transaction: encodedTrx, configs: configs)
+                 _ = try await self?.solanaClient.sendTransaction(transaction: encodedTrx, configs: configs)
             } catch {
                 self?.errorObserver.handleError(error)
 
