@@ -149,7 +149,7 @@ extension Double {
         customFormattForLessThan1E_2: Bool = false
     ) -> String {
         // amount < 0.01
-        if customFormattForLessThan1E_2 && self < 0.01 {
+        if customFormattForLessThan1E_2 && self > 0 && self < 0.01 {
             if currency == .usd {
                 return "< \(currency.symbol) 0.01"
             } else {
