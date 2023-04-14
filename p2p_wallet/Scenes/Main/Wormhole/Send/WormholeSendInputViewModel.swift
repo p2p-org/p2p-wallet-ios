@@ -260,7 +260,7 @@ class WormholeSendInputViewModel: BaseViewModel, ObservableObject {
                 case .fiat:
                     self.countAfterDecimalPoint = 2
                 }
-                self?.analyticsManager.log(event: .sendClickChangeTokenChosen(source: "Bridge"))
+                self.analyticsManager.log(event: .sendClickChangeTokenChosen(source: "Bridge"))
             }
             .store(in: &subscriptions)
 
