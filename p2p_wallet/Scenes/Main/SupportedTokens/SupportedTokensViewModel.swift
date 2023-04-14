@@ -1,16 +1,10 @@
-//
-//  SupportedTokensViewModel.swift
-//  p2p_wallet
-//
-//  Created by Giang Long Tran on 07.03.2023.
-//
-
 import Combine
 import Foundation
 import KeyAppBusiness
 import Resolver
 import SolanaSwift
 import Wormhole
+import AnalyticsManager
 
 enum SupportedTokensAction {
     case receive(SupportedTokenItem)
@@ -18,6 +12,8 @@ enum SupportedTokensAction {
 
 class SupportedTokensViewModel: BaseViewModel, ObservableObject {
     let actionSubject: PassthroughSubject<SupportedTokensAction, Never> = .init()
+    
+    @Injected private var analyticsManager: AnalyticsManager
 
     /// Solana tokens
     @Published private var solana: Set<SupportedTokenItem> = []
@@ -74,10 +70,13 @@ class SupportedTokensViewModel: BaseViewModel, ObservableObject {
             .receive(on: RunLoop.main)
             .weakAssign(to: \.tokens, on: self)
             .store(in: &subscriptions)
+        
+        analyticsManager.log(event: .receiveStartScreen)
     }
 
     func onTap(_ item: SupportedTokenItem) {
         actionSubject.send(.receive(item))
+        analyticsManager.log(event: .receiveTokenClick(tokenName: item.symbol))
     }
 }
 
