@@ -21,10 +21,11 @@ public enum RecipientSearchResult: Equatable {
     /// Condition: input is recipient's token account address and user's token balance = 0 (include renBTC)
     case missingUserToken(recipient: Recipient)
 
-    /// Condition: input recipient's wallet address without funds and user doesn't have token to pay creation account fee.
+    /// Condition: input recipient's wallet address without funds and user doesn't have token to pay creation account
+    /// fee.
     case insufficientUserFunds(recipient: Recipient)
 }
 
 public protocol RecipientSearchService: AnyObject {
-    func search(input: String, env: UserWalletEnvironments, preChosenToken: Token?) async -> RecipientSearchResult
+    func search(input: String, config: RecipientSearchConfig, preChosenToken: Token?) async -> RecipientSearchResult
 }

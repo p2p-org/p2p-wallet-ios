@@ -1356,3 +1356,4 @@ You can try again, but your new transaction will be subject to the current rates
 "The fees are bigger than the transaction amount" = "Các khoản phí lớn hơn số tiền giao dịch";
 "There was a problem with claiming. Please try again" = "Đã xảy ra sự cố khi xác nhận quyền sở hữu.  Vui lòng thử lại";
 "There was a problem with sending. Please try again" = "Đã xảy ra sự cố khi gửi.  Vui lòng thử lại";
+"Open your link again" = "Mở lại liên kết của bạn";

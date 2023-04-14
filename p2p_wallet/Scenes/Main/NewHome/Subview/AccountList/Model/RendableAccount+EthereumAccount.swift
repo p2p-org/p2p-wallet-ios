@@ -38,13 +38,11 @@ struct RendableEthereumAccount: RendableAccount {
     }
 
     var subtitle: String {
-        CryptoFormatter().string(for: account.representedBalance)
-            ?? "0 \(account.token.symbol)"
+        CryptoFormatter(rules: [.nativeEthereumMaxDigit])
+            .string(amount: account.representedBalance)
     }
 
     var detail: AccountDetail {
-        
-        
         if let onClaim {
             return .button(label: L10n.claim, action: onClaim)
         } else if isClaiming {

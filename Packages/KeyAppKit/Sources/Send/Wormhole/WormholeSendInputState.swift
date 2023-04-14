@@ -90,7 +90,7 @@ public enum WormholeSendInputState: Equatable {
                 }
 
                 // Total fee in SOL
-                let feeInSolanaNetwork: CryptoAmount = [fees.networkFee, fees.messageAccountRent, fees.bridgeFee]
+                let feeInSolanaNetwork: CryptoAmount = [fees.networkFee, fees.bridgeFee]
                     .compactMap { $0 }
                     .map { tokenAmount in
                         CryptoAmount(bigUIntString: tokenAmount.amount, token: SolanaToken.nativeSolana)
@@ -104,6 +104,8 @@ public enum WormholeSendInputState: Equatable {
                     (feePayerBestCandidate, feeAmountForBestCandidate) = try await WormholeSendInputLogic
                         .autoSelectFeePayer(
                             fee: feeInSolanaNetwork,
+                            accountCreationFee: fees.messageAccountRent?
+                                .asCryptoAmount ?? .init(token: SolanaToken.nativeSolana),
                             selectedAccount: input.solanaAccount,
                             availableAccounts: input.availableAccounts,
                             transferAmount: input.amount,
@@ -112,7 +114,8 @@ public enum WormholeSendInputState: Equatable {
                             minSOLBalance: CryptoAmount(
                                 uint64: relayContext.minimumRelayAccountBalance,
                                 token: SolanaToken.nativeSolana
-                            )
+                            ),
+                            relayContext: relayContext
                         )
                 } catch {
                     return .error(
@@ -153,14 +156,29 @@ public enum WormholeSendInputState: Equatable {
                     }
                 }
 
+                // Check fee is greater than sending amount
+                var alert: WormholeSendInputAlert?
+                if fees.resultAmount == nil {
+                    return .error(
+                        input: input,
+                        output: .init(
+                            feePayer: feePayerBestCandidate,
+                            feePayerAmount: feeAmountForBestCandidate,
+                            transactions: nil,
+                            fees: fees,
+                            relayContext: relayContext
+                        ),
+                        error: .feeIsMoreThanInputAmount
+                    )
+                }
+
                 // Build transaction
                 let transactions: SendTransaction
                 do {
                     let feePayerAddress = relayContext.feePayerAddress.base58EncodedString
-                    
+
                     // Not (Native sol and networkFee > 0)
-                    let needToUseRelay: Bool = !(feePayerBestCandidate.data.isNativeSOL
-                        && (fees.networkFee?.asCryptoAmount.value ?? 0) > 0)
+                    let needToUseRelay: Bool = !feePayerBestCandidate.data.isNativeSOL
 
                     let mint: String? = input.solanaAccount.data.token.isNative ? nil : input.solanaAccount.data.token
                         .address
@@ -185,17 +203,6 @@ public enum WormholeSendInputState: Equatable {
                         ),
                         error: .getTransferTransactionsFailure
                     )
-                }
-
-                // Check fee is greater than sending amount
-                var alert: WormholeSendInputAlert?
-                if
-                    let price = input.solanaAccount.price,
-                    let inputAmountInFiat = try? input.amount.toFiatAmount(price: price)
-                {
-                    if input.amount.amount > 0, inputAmountInFiat <= fees.totalInFiat {
-                        alert = .feeIsMoreThanInputAmount
-                    }
                 }
 
                 return .ready(

@@ -18,11 +18,18 @@ public class CryptoFormatter: Formatter {
     public let defaultValue: String
     public let prefix: String
     public let hideSymbol: Bool
+    public let rules: [CryptoFormatterRule]
 
-    public init(defaultValue: String = "", prefix: String = "", hideSymbol: Bool = false) {
+    public init(
+        defaultValue: String = "",
+        prefix: String = "",
+        hideSymbol: Bool = false,
+        rules: [CryptoFormatterRule] = []
+    ) {
         self.defaultValue = defaultValue
         self.prefix = prefix
         self.hideSymbol = hideSymbol
+        self.rules = rules
         super.init()
     }
 
@@ -58,12 +65,19 @@ public class CryptoFormatter: Formatter {
 
         guard let amount else { return nil }
 
+        // Apply rule for token
+        var config: CryptoFormatterRule.Config = .init()
+        for rule in rules {
+            config = rule.apply(amount.token)
+        }
+
         let formatter = NumberFormatter()
+
         formatter.groupingSize = 3
         formatter.numberStyle = .decimal
         formatter.decimalSeparator = "."
         formatter.groupingSeparator = " "
-        formatter.maximumFractionDigits = Int(amount.token.decimals)
+        formatter.maximumFractionDigits = config.maximumFractionDigits ?? Int(amount.token.decimals)
 
         let convertedValue = Decimal(string: String(amount.amount))
         guard var formattedAmount = formatter.string(for: convertedValue) else {
@@ -79,5 +93,22 @@ public class CryptoFormatter: Formatter {
         } else {
             return "\(formattedAmount) \(amount.token.symbol)"
         }
+    }
+}
+
+public struct CryptoFormatterRule {
+    public struct Config {
+        public var maximumFractionDigits: Int?
+    }
+
+    let apply: (AnyToken) -> Config
+
+    /// Override max fraction digit for native ethereum.
+    public static let nativeEthereumMaxDigit: Self = .init { token in
+        if token.tokenPrimaryKey == "native-ethereum" && token.decimals == 18 {
+            return Config(maximumFractionDigits: 8)
+        }
+
+        return Config()
     }
 }
