@@ -23,7 +23,7 @@ class HistoryRepository: Repository {
         fatalError()
     }
 
-    func getAll(account: Account?, mint: String?) -> AnyAsyncSequence<Element> {
+    func getAll(account: KeyPair?, mint: String?) -> AnyAsyncSequence<Element> {
         let secretKey = account?.secretKey ?? Data()
         let pubKey = account?.publicKey.base58EncodedString ?? ""
 
