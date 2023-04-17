@@ -1,10 +1,4 @@
 PODS:
-  - AppAuth (1.6.0):
-    - AppAuth/Core (= 1.6.0)
-    - AppAuth/ExternalUserAgent (= 1.6.0)
-  - AppAuth/Core (1.6.0)
-  - AppAuth/ExternalUserAgent (1.6.0):
-    - AppAuth/Core
   - AppsFlyerFramework (6.9.2):
     - AppsFlyerFramework/Main (= 6.9.2)
   - AppsFlyerFramework/Main (6.9.2)
@@ -90,10 +84,6 @@ PODS:
     - GoogleUtilities/Environment (~> 7.7)
     - nanopb (< 2.30910.0, >= 2.30908.0)
     - PromisesObjC (< 3.0, >= 1.2)
-  - GoogleSignIn (6.2.4):
-    - AppAuth (~> 1.5)
-    - GTMAppAuth (~> 1.3)
-    - GTMSessionFetcher/Core (< 3.0, >= 1.1)
   - GoogleUtilities/AppDelegateSwizzler (7.11.0):
     - GoogleUtilities/Environment
     - GoogleUtilities/Logger
@@ -113,10 +103,6 @@ PODS:
     - GoogleUtilities/Logger
   - GoogleUtilities/UserDefaults (7.11.0):
     - GoogleUtilities/Logger
-  - GTMAppAuth (1.3.1):
-    - AppAuth/Core (~> 1.6)
-    - GTMSessionFetcher/Core (< 3.0, >= 1.5)
-  - GTMSessionFetcher/Core (2.3.0)
   - JazziconSwift (1.1.0)
   - ListPlaceholder (1.5)
   - nanopb (2.30909.0):
@@ -140,7 +126,6 @@ DEPENDENCIES:
   - Firebase/Analytics
   - Firebase/Crashlytics
   - Firebase/RemoteConfig
-  - GoogleSignIn (~> 6.2.4)
   - JazziconSwift (from `https://github.com/p2p-org/JazziconSwift.git`, branch `master`)
   - ListPlaceholder (from `https://github.com/p2p-org/ListPlaceholder.git`, branch `custom_gradient_color`)
   - Periphery
@@ -152,7 +137,6 @@ DEPENDENCIES:
 
 SPEC REPOS:
   trunk:
-    - AppAuth
     - AppsFlyerFramework
     - CocoaDebug
     - Firebase
@@ -165,10 +149,7 @@ SPEC REPOS:
     - FirebaseRemoteConfig
     - GoogleAppMeasurement
     - GoogleDataTransport
-    - GoogleSignIn
     - GoogleUtilities
-    - GTMAppAuth
-    - GTMSessionFetcher
     - nanopb
     - Periphery
     - PromisesObjC
@@ -200,7 +181,6 @@ CHECKOUT OPTIONS:
     :tag: 7.31.5
 
 SPEC CHECKSUMS:
-  AppAuth: 8fca6b5563a5baef2c04bee27538025e4ceb2add
   AppsFlyerFramework: 75e2e46970e520c88b0456dc6fae98c51b36163a
   CocoaDebug: 61cf93ada6ce8f3407507dc01f9b874d91ac1d5c
   Firebase: ba3501b5142a57747eac74d27c96d2b313bdec90
@@ -213,10 +193,7 @@ SPEC CHECKSUMS:
   FirebaseRemoteConfig: bf23f54161ebad4fb4acb1ac44ad7783a784f3ab
   GoogleAppMeasurement: 173fa22ce7d62c29332568e853b39b2525a0e584
   GoogleDataTransport: ea169759df570f4e37bdee1623ec32a7e64e67c4
-  GoogleSignIn: 5651ce3a61e56ca864160e79b484cd9ed3f49b7a
   GoogleUtilities: c2bdc4cf2ce786c4d2e6b3bcfd599a25ca78f06f
-  GTMAppAuth: 0ff230db599948a9ad7470ca667337803b3fc4dd
-  GTMSessionFetcher: 3a63d75eecd6aa32c2fc79f578064e1214dfdec2
   JazziconSwift: d1d6f81e5e460b94b2cd0a898dab66178aeab070
   ListPlaceholder: 2d7950014852ee5613d636cf14fd1bb93419e330
   nanopb: b552cce312b6c8484180ef47159bc0f65a1f0431
@@ -228,6 +205,6 @@ SPEC CHECKSUMS:
   SwiftLint: 77f7cb2b9bb81ab4a12fcc86448ba3f11afa50c6
   SwiftNotificationCenter: 760386da2ce03d3594cb5e96d1e22ec80b44b46f
 
-PODFILE CHECKSUM: e28e70bef3b500f9f876272516ad8e5866f93d21
+PODFILE CHECKSUM: c3a114b7ec073c884d3bac7451742ddd9d35afb7
 
 COCOAPODS: 1.11.3

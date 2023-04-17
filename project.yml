@@ -85,6 +85,9 @@ packages:
     lottie-spm:
         url: https://github.com/airbnb/lottie-spm.git
         exactVersion: 4.1.3
+    GoogleSignIn:
+        url: https://github.com/google/GoogleSignIn-iOS
+        from: 6.2.4
 
 
 options:
@@ -318,6 +321,15 @@ targets:
             - package: Introspect
             - package: lottie-spm
               product: Lottie
+
+            - package: GoogleSignIn
+              product: GoogleSignIn
+            - package: GoogleSignIn
+              product: AppAuth
+            - package: GoogleSignIn
+              product: GTMAppAuth
+            - package: GoogleSignIn
+              product: GTMSessionFetcher
 
             - framework: Frameworks/keyapp.xcframework
               embed: false

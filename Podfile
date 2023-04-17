@@ -28,7 +28,6 @@ target 'p2p_wallet' do
   pod 'Firebase/RemoteConfig'
 
   pod 'SwiftNotificationCenter'
-  pod 'GoogleSignIn', '~> 6.2.4'
 
   # Sentry
   pod 'Sentry', :git => 'https://github.com/getsentry/sentry-cocoa.git', :tag => '7.31.5'
