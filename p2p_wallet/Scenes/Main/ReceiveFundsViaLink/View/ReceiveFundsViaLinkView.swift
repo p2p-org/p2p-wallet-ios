@@ -28,7 +28,7 @@ struct ReceiveFundsViaLinkView: View {
             skeleton
                 .padding(.horizontal, 16)
                 .padding(.bottom, 32)
-                .sheetHeader(title: L10n.receiveFundsViaOneTimeLink, withSeparator: false, bottomPadding: 4)
+                .sheetHeader(title: L10n.receiveMoney, withSeparator: false, bottomPadding: 4)
         case let .loaded(model):
             confirmView(
                 token: model.token,
@@ -36,7 +36,7 @@ struct ReceiveFundsViaLinkView: View {
             )
             .padding(.horizontal, 16)
             .padding(.bottom, 32)
-            .sheetHeader(title: L10n.receiveFundsViaOneTimeLink, withSeparator: false, bottomPadding: 4)
+            .sheetHeader(title: L10n.receiveMoney, withSeparator: false, bottomPadding: 4)
         case let .confirmed(cryptoAmount):
             youReceivedToken(cryptoAmount: cryptoAmount)
                 .sheetHeader(title: nil, withSeparator: false)
@@ -169,9 +169,6 @@ struct ReceiveFundsViaLinkView: View {
                         .multilineTextAlignment(.center)
                         .foregroundColor(Color(Asset.Colors.night.color))
                         .font(uiFont: .font(of: .largeTitle, weight: .bold))
-                    Text(L10n.spendThemWisely)
-                        .foregroundColor(Color(Asset.Colors.silver.color))
-                        .font(uiFont: .font(of: .text1))
                 }
                 Spacer()
                 Button(
