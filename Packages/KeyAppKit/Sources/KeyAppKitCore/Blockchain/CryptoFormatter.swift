@@ -67,12 +67,6 @@ public class CryptoFormatter: Formatter {
 
         guard let amount else { return nil }
 
-        // Apply rule for token
-        var config: CryptoFormatterRule.Config = .init()
-        for rule in rules {
-            config = rule.apply(amount.token)
-        }
-
         let formatter = NumberFormatter()
 
         formatter.groupingSize = 3
