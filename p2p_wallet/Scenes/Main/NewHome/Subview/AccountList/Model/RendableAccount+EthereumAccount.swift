@@ -1,15 +1,8 @@
-//
-//  RendableAccount+EthereumAccount.swift
-//  p2p_wallet
-//
-//  Created by Giang Long Tran on 11.03.2023.
-//
-
 import Foundation
 import KeyAppBusiness
 import KeyAppKitCore
 
-struct RendableEthereumAccount: RendableAccount {
+struct RenderableEthereumAccount: RendableAccount {
     let account: EthereumAccount
 
     var id: String {
@@ -38,8 +31,9 @@ struct RendableEthereumAccount: RendableAccount {
     }
 
     var subtitle: String {
-        CryptoFormatter(rules: [.nativeEthereumMaxDigit])
-            .string(amount: account.representedBalance)
+        CryptoFormatterFactory.formatter(with: account.representedBalance.token, style: .short)
+            .string(for: account.representedBalance)
+            ?? "0 \(account.token.symbol)"
     }
 
     var detail: AccountDetail {
