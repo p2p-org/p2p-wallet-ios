@@ -25,7 +25,7 @@ class KeychainStorage: StorageType {
 
     // MARK: - Properties
 
-    var _account: SolanaSwift.Account?
+    var _account: KeyPair?
 
     // MARK: - Services
 
