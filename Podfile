@@ -22,15 +22,7 @@ target 'p2p_wallet' do
   # Kits
   pod 'JazziconSwift', :git => 'https://github.com/p2p-org/JazziconSwift.git', :branch => 'master'
 
-  # Firebase
-  pod 'Firebase/Analytics'
-  pod 'Firebase/Crashlytics'
-  pod 'Firebase/RemoteConfig'
-
   pod 'SwiftNotificationCenter'
-
-  # Sentry
-  pod 'Sentry', :git => 'https://github.com/getsentry/sentry-cocoa.git', :tag => '7.31.5'
 end
 
 post_install do |installer|
