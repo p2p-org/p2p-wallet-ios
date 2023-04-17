@@ -860,7 +860,6 @@
 "Copied to the clipboard" = "Скопировано в буфер обмена";
 "Change my PIN" = "Изменить мой PIN-код";
 "Change PIN" = "Изменить PIN-код";
-"Forget you PIN?" = "Забыли PIN-код?";
 "If you forget your PIN, you can log out and create a new one when you log in again." = "Если вы забыли свой PIN-код, вы можете выйти из системы и создать новый при повторном входе в систему.";
 "Your seed phrase must never be shared." = "Ваша сид-фраза никогда не должна быть разглашена.";
 "Keep it private, even from us" = "Держите это в секрете, даже от нас";
