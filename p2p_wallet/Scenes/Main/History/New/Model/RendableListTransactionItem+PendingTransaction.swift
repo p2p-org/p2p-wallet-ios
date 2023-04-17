@@ -113,8 +113,7 @@ struct RendableListPendingTransactionItem: RendableListTransactionItem {
                 return "\(L10n.swap)"
 
             case _ as ClaimSentViaLinkTransaction:
-                return "\(L10n.sendViaOneTimeLink)"
-
+                return "\(L10n.sendViaLink)"
             default:
                 return "\(L10n.transactionFailed)"
             }

@@ -28,7 +28,7 @@ struct SendViaLinkClaimErrorView: View {
             Image(uiImage: image)
             VStack(spacing: 12) {
                 TextButtonView(
-                    title: L10n.reload,
+                    title: L10n.tryAgain,
                     style: .primaryWhite,
                     size: .large,
                     isLoading: isLoading,
