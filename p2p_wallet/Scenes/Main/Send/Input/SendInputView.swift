@@ -59,7 +59,7 @@ struct SendInputView: View {
     var inputView: some View {
         VStack(spacing: 8) {
             if viewModel.currentState.sendViaLinkSeed != nil {
-                Text(L10n.anyoneWhoGetsThisOneTimeLinkCanClaimTheFunds)
+                Text(L10n.anyoneWhoGetsThisOneTimeLinkCanClaimMoney)
                     .apply(style: .text3)
                     .foregroundColor(Color(Asset.Colors.mountain.color))
                     .frame(maxWidth: .infinity, alignment: .leading)
