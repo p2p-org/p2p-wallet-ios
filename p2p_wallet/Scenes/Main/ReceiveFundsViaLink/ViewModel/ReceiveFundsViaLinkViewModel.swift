@@ -72,12 +72,7 @@ final class ReceiveFundsViaLinkViewModel: BaseViewModel, ObservableObject {
     
     func confirmClicked() {
         // Get needed params
-        guard
-            let claimableToken = claimableToken,
-            let token = token,
-            let pubkeyStr = walletsRepository.nativeWallet?.pubkey,
-            let pubkey = try? PublicKey(string: pubkeyStr)
-        else { return }
+        guard let claimableToken = claimableToken, let token = token else { return }
         
         let cryptoAmount = claimableToken.lamports
             .convertToBalance(decimals: claimableToken.decimals)
@@ -85,8 +80,7 @@ final class ReceiveFundsViaLinkViewModel: BaseViewModel, ObservableObject {
         analyticsManager.log(event: .claimClickConfirmed(
             pubkey: claimableToken.keypair.publicKey.base58EncodedString,
             tokenName: token.symbol,
-            tokenValue: cryptoAmount,
-            fromAddress: claimableToken.account
+            tokenValue: cryptoAmount
         ))
         
         #if !RELEASE

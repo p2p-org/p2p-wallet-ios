@@ -369,7 +369,7 @@ enum KeyAppAnalyticsEvent: AnalyticsEvent {
     // MARK: - Claim
     
     case claimStartScreenOpen
-    case claimClickConfirmed(pubkey: String, tokenName: String, tokenValue: Double, fromAddress: String)
+    case claimClickConfirmed(pubkey: String, tokenName: String, tokenValue: Double)
     case claimClickHide
     case claimEndScreenOpen
     case claimClickEnd
