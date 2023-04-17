@@ -62,7 +62,7 @@ struct SendInputView: View {
                 Text(L10n.anyoneWhoGetsThisOneTimeLinkCanClaimMoney)
                     .apply(style: .text3)
                     .foregroundColor(Color(Asset.Colors.mountain.color))
-                    .frame(maxWidth: .infinity, alignment: .leading)
+                    .fixedSize(horizontal: false, vertical: true)
                     .padding(.bottom, 16)
             } else {
                 Spacer()
