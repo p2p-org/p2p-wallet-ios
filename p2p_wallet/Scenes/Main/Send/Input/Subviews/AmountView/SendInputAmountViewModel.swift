@@ -21,6 +21,9 @@ final class SendInputAmountViewModel: BaseViewModel, ObservableObject {
     let switchPressed = PassthroughSubject<Void, Never>()
     let maxAmountPressed = PassthroughSubject<Void, Never>()
     let changeAmount = PassthroughSubject<(amount: Amount, type: EnteredAmountType), Never>()
+    
+    // It's a fact of exactly changing amount
+    let tokenAmountChanged = PassthroughSubject<Amount?, Never>()
 
     // MARK: - Properties
 
@@ -52,6 +55,7 @@ final class SendInputAmountViewModel: BaseViewModel, ObservableObject {
     @Published var showSecondaryAmounts = true
 
     private let fiat: Fiat
+    private var currentText: String?
     private var tokenChangedEvent = CurrentValueSubject<Wallet, Never>(.init(token: .nativeSolana))
 
     // MARK: - Dependencies
@@ -92,9 +96,13 @@ final class SendInputAmountViewModel: BaseViewModel, ObservableObject {
                 } else {
                     self.amount = nil
                 }
+                if self.currentText != text, self.mainAmountType == .token {
+                    self.tokenAmountChanged.send(self.amount)
+                }
                 self.updateSecondaryAmount()
                 self.validateAmount()
                 self.isMaxButtonVisible = text.isEmpty
+                self.currentText = text
             }
             .store(in: &subscriptions)
 

@@ -262,20 +262,22 @@ private extension SendInputViewModel {
             }
             .store(in: &subscriptions)
 
+        inputAmountViewModel.tokenAmountChanged
+            .sink(receiveValue: { [weak self] value in
+                guard let self, self.status != .initializing else { return }
+                self.logAmountChanged(
+                    symbol: self.tokenViewModel.token.token.symbol,
+                    amount: value?.inToken ?? 0,
+                    isSendingViaLink: self.currentState.isSendingViaLink
+                )
+            })
+            .store(in: &subscriptions)
         inputAmountViewModel.changeAmount
             .debounce(for: 0.1, scheduler: DispatchQueue.main)
             .sinkAsync(receiveValue: { [weak self] value in
                 guard let self = self else { return }
                 switch value.type {
                 case .token:
-                    if self.status != .initializing {
-                        debugPrint("---Send_Click_Change_Token_Value")
-                        self.logAmountChanged(
-                            symbol: self.tokenViewModel.token.token.symbol,
-                            amount: value.amount.inToken,
-                            isSendingViaLink: self.currentState.isSendingViaLink
-                        )
-                    }
                     _ = await self.stateMachine.accept(action: .changeAmountInToken(value.amount.inToken))
                 case .fiat:
                     _ = await self.stateMachine.accept(action: .changeAmountInFiat(value.amount.inFiat))
