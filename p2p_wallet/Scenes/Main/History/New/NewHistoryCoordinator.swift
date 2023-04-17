@@ -14,7 +14,7 @@ import SolanaSwift
 import SwiftUI
 import Combine
 
-class NewHistoryCoordinator: SmartCoordinator<Void> {
+class NewHistoryCoordinator: OldSmartCoordinator<Void> {
     var viewModel: HistoryViewModel!
     
     override func build() -> UIViewController {
@@ -129,7 +129,7 @@ class NewHistoryCoordinator: SmartCoordinator<Void> {
 
     private func openSell(_ transaction: SellDataServiceTransaction) {
         guard let navigationController = presentation.presentingViewController as? UINavigationController else {
-            print(SmartCoordinatorError.unsupportedPresentingViewController)
+            print(OldSmartCoordinatorError.unsupportedPresentingViewController)
             return
         }
 
@@ -143,7 +143,7 @@ class NewHistoryCoordinator: SmartCoordinator<Void> {
 
     private func openSend(_ transaction: SellDataServiceTransaction) {
         guard let viewController = presentation.presentingViewController as? UINavigationController else {
-            print(SmartCoordinatorError.unsupportedPresentingViewController)
+            print(OldSmartCoordinatorError.unsupportedPresentingViewController)
             return
         }
 
@@ -187,7 +187,7 @@ class NewHistoryCoordinator: SmartCoordinator<Void> {
     }
     
     private func openSentViaLinkHistoryView() {
-        let coordinator = SentViaLinkHistoryCoordinator(presentation: SmartCoordinatorPushPresentation(
+        let coordinator = SentViaLinkHistoryCoordinator(presentation: OldSmartCoordinatorPushPresentation(
             presentation.presentingViewController as! UINavigationController
         ))
         

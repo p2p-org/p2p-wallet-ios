@@ -8,7 +8,7 @@ import Resolver
 import Send
 import Sell
 
-class HistoryCoordinator: SmartCoordinator<Void> {
+class HistoryCoordinator: OldSmartCoordinator<Void> {
     override func build() -> UIViewController {
         let scene = History.Scene()
 
@@ -69,7 +69,7 @@ class HistoryCoordinator: SmartCoordinator<Void> {
 
     private func openSell(_ transaction: SellDataServiceTransaction) {
         guard let navigationController = presentation.presentingViewController as? UINavigationController else {
-            print(SmartCoordinatorError.unsupportedPresentingViewController)
+            print(OldSmartCoordinatorError.unsupportedPresentingViewController)
             return
         }
 
@@ -83,7 +83,7 @@ class HistoryCoordinator: SmartCoordinator<Void> {
 
     private func openSend(_ transaction: SellDataServiceTransaction) {
         guard let viewController = presentation.presentingViewController as? UINavigationController else {
-            print(SmartCoordinatorError.unsupportedPresentingViewController)
+            print(OldSmartCoordinatorError.unsupportedPresentingViewController)
             return
         }
 

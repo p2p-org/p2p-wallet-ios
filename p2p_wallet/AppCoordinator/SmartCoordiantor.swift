@@ -6,20 +6,20 @@ import Combine
 import Foundation
 import UIKit
 
-enum SmartCoordinatorError {
+enum OldSmartCoordinatorError {
     case unsupportedPresentingViewController
 }
 
-protocol SmartCoordinatorPresentation {
+protocol OldSmartCoordinatorPresentation {
     var presentingViewController: UIViewController { get }
 
     func run(presentedViewController: UIViewController)
 }
 
-class SmartCoordinatorPresentPresentation: SmartCoordinatorPresentation {
+class OldSmartCoordinatorPresentPresentation: OldSmartCoordinatorPresentation {
     var presentingViewController: UIViewController
     
-    init(from currentPresentation: SmartCoordinatorPresentation) {
+    init(from currentPresentation: OldSmartCoordinatorPresentation) {
         presentingViewController = currentPresentation.presentingViewController
     }
 
@@ -29,7 +29,7 @@ class SmartCoordinatorPresentPresentation: SmartCoordinatorPresentation {
     
     func run(presentedViewController: UIViewController) {
         guard let presentingViewController = presentingViewController as? UINavigationController else {
-            print(SmartCoordinatorError.unsupportedPresentingViewController)
+            print(OldSmartCoordinatorError.unsupportedPresentingViewController)
             return
         }
 
@@ -41,10 +41,10 @@ class SmartCoordinatorPresentPresentation: SmartCoordinatorPresentation {
     }
 }
 
-class SmartCoordinatorPushPresentation: SmartCoordinatorPresentation {
+class OldSmartCoordinatorPushPresentation: OldSmartCoordinatorPresentation {
     var presentingViewController: UIViewController
 
-    init(from currentPresentation: SmartCoordinatorPresentation) {
+    init(from currentPresentation: OldSmartCoordinatorPresentation) {
         presentingViewController = currentPresentation.presentingViewController
     }
 
@@ -54,7 +54,7 @@ class SmartCoordinatorPushPresentation: SmartCoordinatorPresentation {
 
     func run(presentedViewController: UIViewController) {
         guard let presentingViewController = presentingViewController as? UINavigationController else {
-            print(SmartCoordinatorError.unsupportedPresentingViewController)
+            print(OldSmartCoordinatorError.unsupportedPresentingViewController)
             return
         }
 
@@ -62,14 +62,14 @@ class SmartCoordinatorPushPresentation: SmartCoordinatorPresentation {
     }
 }
 
-class SmartCoordinatorBottomSheetPresentation: SmartCoordinatorPresentation {
+class OldSmartCoordinatorBottomSheetPresentation: OldSmartCoordinatorPresentation {
     var presentingViewController: UIViewController
 
     private var subscriptions = [AnyCancellable]()
     private let transition: PanelTransition = .init()
     private let height: CGFloat
 
-    init(from currentPresentation: SmartCoordinatorPresentation, height: CGFloat) {
+    init(from currentPresentation: OldSmartCoordinatorPresentation, height: CGFloat) {
         presentingViewController = currentPresentation.presentingViewController
         self.height = height
     }
@@ -95,12 +95,12 @@ class SmartCoordinatorBottomSheetPresentation: SmartCoordinatorPresentation {
     }
 }
 
-class SmartCoordinator<T>: Coordinator<T> {
-    let presentation: SmartCoordinatorPresentation
+class OldSmartCoordinator<T>: Coordinator<T> {
+    let presentation: OldSmartCoordinatorPresentation
 
     let result = PassthroughSubject<T, Never>()
 
-    init(presentation: SmartCoordinatorPresentation) {
+    init(presentation: OldSmartCoordinatorPresentation) {
         self.presentation = presentation
         super.init()
     }

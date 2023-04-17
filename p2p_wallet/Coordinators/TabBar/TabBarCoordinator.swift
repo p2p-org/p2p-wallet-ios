@@ -165,14 +165,14 @@ final class TabBarCoordinator: Coordinator<Void> {
             historyNavigation.navigationBar.prefersLargeTitles = true
             
             let historyCoordinator = NewHistoryCoordinator(
-                presentation: SmartCoordinatorPushPresentation(historyNavigation)
+                presentation: OldSmartCoordinatorPushPresentation(historyNavigation)
             )
             coordinate(to: historyCoordinator)
                 .sink(receiveValue: { _ in })
                 .store(in: &subscriptions)
         } else {
             let historyCoordinator = HistoryCoordinator(
-                presentation: SmartCoordinatorPushPresentation(historyNavigation)
+                presentation: OldSmartCoordinatorPushPresentation(historyNavigation)
             )
             coordinate(to: historyCoordinator)
                 .sink(receiveValue: { _ in })

@@ -10,12 +10,12 @@ import History
 import SafariServices
 import TransactionParser
 
-class TransactionDetailCoordinator: SmartCoordinator<TransactionDetailStatus> {
+class TransactionDetailCoordinator: OldSmartCoordinator<TransactionDetailStatus> {
     let viewModel: TransactionDetailViewModel
 
     init(viewModel: TransactionDetailViewModel, presentingViewController: UIViewController) {
         self.viewModel = viewModel
-        super.init(presentation: SmartCoordinatorPresentPresentation(presentingViewController))
+        super.init(presentation: OldSmartCoordinatorPresentPresentation(presentingViewController))
     }
 
     override func build() -> UIViewController {

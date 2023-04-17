@@ -21,12 +21,12 @@ enum DetailAccountCoordinatorResult {
     case done
 }
 
-class DetailAccountCoordinator: SmartCoordinator<DetailAccountCoordinatorResult> {
+class DetailAccountCoordinator: OldSmartCoordinator<DetailAccountCoordinatorResult> {
     let args: DetailAccountCoordinatorArgs
 
     init(args: DetailAccountCoordinatorArgs, presentingViewController: UINavigationController) {
         self.args = args
-        super.init(presentation: SmartCoordinatorPushPresentation(presentingViewController))
+        super.init(presentation: OldSmartCoordinatorPushPresentation(presentingViewController))
     }
 
     override func build() -> UIViewController {
@@ -125,7 +125,7 @@ class DetailAccountCoordinator: SmartCoordinator<DetailAccountCoordinatorResult>
 
     private func openSell(_ transaction: SellDataServiceTransaction) {
         guard let navigationController = presentation.presentingViewController as? UINavigationController else {
-            print(SmartCoordinatorError.unsupportedPresentingViewController)
+            print(OldSmartCoordinatorError.unsupportedPresentingViewController)
             return
         }
 

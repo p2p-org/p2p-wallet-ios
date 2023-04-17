@@ -4,7 +4,7 @@ import Combine
 import Resolver
 import Send
 
-final class SentViaLinkHistoryCoordinator: SmartCoordinator<Void> {
+final class SentViaLinkHistoryCoordinator: OldSmartCoordinator<Void> {
     // MARK: - Properties
 
     private var transactionDetailVC: CustomPresentableViewController!
