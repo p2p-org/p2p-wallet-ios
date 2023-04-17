@@ -51,8 +51,9 @@ struct WormholeClaimEthereumModel: WormholeClaimModel {
     }
 
     var title: String {
-        CryptoFormatter(rules: [.nativeEthereumMaxDigit])
-            .string(amount: account.representedBalance)
+        CryptoFormatterFactory.formatter(with: account.representedBalance.token, style: .short)
+            .string(for: account.representedBalance)
+            ?? "0 \(account.token.symbol)"
     }
 
     var subtitle: String {

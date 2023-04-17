@@ -43,11 +43,11 @@ extension HomeAccountsViewModel {
         }
     }
 
-    static func shouldInVisiableSection(ethereumAcount: RendableEthereumAccount) -> Bool {
+    static func shouldInVisiableSection(ethereumAcount: RenderableEthereumAccount) -> Bool {
         (ethereumAcount.account.balanceInFiat?.value ?? 0) >= 1
     }
 
-    static func shouldInIgnoreSection(ethereumAcount: RendableEthereumAccount) -> Bool {
+    static func shouldInIgnoreSection(ethereumAcount: RenderableEthereumAccount) -> Bool {
         (ethereumAcount.account.balanceInFiat?.value ?? 0) > 0
     }
 

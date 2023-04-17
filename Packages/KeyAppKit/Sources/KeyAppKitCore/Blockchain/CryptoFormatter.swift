@@ -1,35 +1,37 @@
-//
-//  File.swift
-//
-//
-//  Created by Giang Long Tran on 11.03.2023.
-//
-
 import BigInt
 import Foundation
 
-/// Helper protocol for quickly converting to ``CryptoAmount``.
-public protocol CryptoAmountConvertible {
-    var asCryptoAmount: CryptoAmount { get }
+/// Factory class for automatically creating formatter.
+public enum CryptoFormatterFactory {
+    public static func formatter(with token: SomeToken, style: CryptoFormatterStyle = .long) -> CryptoFormatter {
+        if token.tokenPrimaryKey == "native-ethereum" && token.decimals == 18 {
+            return ETHCryptoFormatter(style: style)
+        } else {
+            return CryptoFormatter()
+        }
+    }
 }
 
-/// A string-formatter for crypto.
+/// A general string-formatter for crypto
 public class CryptoFormatter: Formatter {
+    /// Default string in case when parsing in not possible.
     public let defaultValue: String
+    
+    /// Appended prefix of output
     public let prefix: String
+    
+    /// Hide symbol in output
     public let hideSymbol: Bool
-    public let rules: [CryptoFormatterRule]
+    
+    /// Max number of digit.
+    public let maxDigits: Int?
 
-    public init(
-        defaultValue: String = "",
-        prefix: String = "",
-        hideSymbol: Bool = false,
-        rules: [CryptoFormatterRule] = []
-    ) {
+    public init(defaultValue: String = "", prefix: String = "", hideSymbol: Bool = false, maxDigits: Int? = nil) {
         self.defaultValue = defaultValue
         self.prefix = prefix
         self.hideSymbol = hideSymbol
-        self.rules = rules
+        self.maxDigits = maxDigits
+
         super.init()
     }
 
@@ -77,7 +79,11 @@ public class CryptoFormatter: Formatter {
         formatter.numberStyle = .decimal
         formatter.decimalSeparator = "."
         formatter.groupingSeparator = " "
-        formatter.maximumFractionDigits = config.maximumFractionDigits ?? Int(amount.token.decimals)
+        if let maxDigits {
+            formatter.maximumFractionDigits = maxDigits
+        } else {
+            formatter.maximumFractionDigits = Int(amount.token.decimals)
+        }
 
         let convertedValue = Decimal(string: String(amount.amount))
         guard var formattedAmount = formatter.string(for: convertedValue) else {
@@ -96,19 +102,36 @@ public class CryptoFormatter: Formatter {
     }
 }
 
-public struct CryptoFormatterRule {
-    public struct Config {
-        public var maximumFractionDigits: Int?
-    }
+/// Representation of crypto numbers
+public enum CryptoFormatterStyle {
+    /// Short representation of crypto numbers, e.g. limited fraction digits
+    case short
 
-    let apply: (AnyToken) -> Config
+    /// Full representation of crypto numbers
+    case long
+}
 
-    /// Override max fraction digit for native ethereum.
-    public static let nativeEthereumMaxDigit: Self = .init { token in
-        if token.tokenPrimaryKey == "native-ethereum" && token.decimals == 18 {
-            return Config(maximumFractionDigits: 8)
+/// Crypto formatter for ETH-like tokens
+public final class ETHCryptoFormatter: CryptoFormatter {
+    let style: CryptoFormatterStyle
+
+    init(style: CryptoFormatterStyle) {
+        self.style = style
+
+        switch style {
+        case .long:
+            super.init()
+        case .short:
+            super.init(maxDigits: 8)
         }
-
-        return Config()
     }
+
+    override public func string(for obj: Any?) -> String? {
+        super.string(for: obj)
+    }
+}
+
+/// Helper protocol for quickly converting to ``CryptoAmount``.
+public protocol CryptoAmountConvertible {
+    var asCryptoAmount: CryptoAmount { get }
 }
