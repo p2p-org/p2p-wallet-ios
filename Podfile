@@ -15,25 +15,12 @@ target 'p2p_wallet' do
   pod 'SwiftLint'
   pod 'Periphery'
   pod 'SwiftFormat/CLI', '0.49.6'
-  pod 'ReachabilitySwift', '~> 5.0.0'
-  pod 'Task_retrying', :git => 'https://github.com/bigearsenal/task-retrying-swift.git', :branch => 'master'
 
   # Deprecating: BECollectionView_Combine - will be removed soon
   pod 'ListPlaceholder', :git => 'https://github.com/p2p-org/ListPlaceholder.git', :branch => 'custom_gradient_color'
 
   # Kits
-  pod 'KeychainSwift', '19.0.0'
-  pod 'SwiftyUserDefaults', '5.3.0'
-  pod 'Intercom', '12.4.3'
-  pod 'Down', :git => 'https://github.com/p2p-org/Down.git'
-
-  pod 'Resolver', '1.5.0'
   pod 'JazziconSwift', :git => 'https://github.com/p2p-org/JazziconSwift.git', :branch => 'master'
-  pod 'Kingfisher', '~> 7.6.2'
-  pod 'PhoneNumberKit', '3.3.4'
-  pod 'SkeletonUI', :git => 'https://github.com/p2p-org/SkeletonUI.git', :branch => 'master'
-  pod 'Introspect', '0.1.4'
-  pod 'lottie-ios', '~> 3.5.0'
 
   # Firebase
   pod 'Firebase/Analytics'
