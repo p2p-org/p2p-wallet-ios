@@ -31,9 +31,6 @@ target 'p2p_wallet' do
 
   # Sentry
   pod 'Sentry', :git => 'https://github.com/getsentry/sentry-cocoa.git', :tag => '7.31.5'
-  
-  # AppsFlyer
-  pod 'AppsFlyerFramework'
 end
 
 post_install do |installer|

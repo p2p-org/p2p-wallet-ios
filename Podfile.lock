@@ -1,7 +1,4 @@
 PODS:
-  - AppsFlyerFramework (6.9.2):
-    - AppsFlyerFramework/Main (= 6.9.2)
-  - AppsFlyerFramework/Main (6.9.2)
   - CocoaDebug (1.7.2)
   - Firebase/Analytics (10.4.0):
     - Firebase/Core
@@ -121,7 +118,6 @@ PODS:
   - SwiftNotificationCenter (1.0.4)
 
 DEPENDENCIES:
-  - AppsFlyerFramework
   - CocoaDebug (= 1.7.2)
   - Firebase/Analytics
   - Firebase/Crashlytics
@@ -137,7 +133,6 @@ DEPENDENCIES:
 
 SPEC REPOS:
   trunk:
-    - AppsFlyerFramework
     - CocoaDebug
     - Firebase
     - FirebaseABTesting
@@ -181,7 +176,6 @@ CHECKOUT OPTIONS:
     :tag: 7.31.5
 
 SPEC CHECKSUMS:
-  AppsFlyerFramework: 75e2e46970e520c88b0456dc6fae98c51b36163a
   CocoaDebug: 61cf93ada6ce8f3407507dc01f9b874d91ac1d5c
   Firebase: ba3501b5142a57747eac74d27c96d2b313bdec90
   FirebaseABTesting: ae3b32fe26e761fd54c68e37a632a0097b599c87
@@ -205,6 +199,6 @@ SPEC CHECKSUMS:
   SwiftLint: 77f7cb2b9bb81ab4a12fcc86448ba3f11afa50c6
   SwiftNotificationCenter: 760386da2ce03d3594cb5e96d1e22ec80b44b46f
 
-PODFILE CHECKSUM: c3a114b7ec073c884d3bac7451742ddd9d35afb7
+PODFILE CHECKSUM: 0bcbb45e4cd88e04315927d6a3d1f46551c4baca
 
 COCOAPODS: 1.11.3

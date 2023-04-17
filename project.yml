@@ -88,6 +88,9 @@ packages:
     GoogleSignIn:
         url: https://github.com/google/GoogleSignIn-iOS
         from: 6.2.4
+    AppsFlyerLib:
+        url: https://github.com/AppsFlyerSDK/AppsFlyerFramework
+        exactVersion: 6.9.2
 
 
 options:
@@ -330,6 +333,8 @@ targets:
               product: GTMAppAuth
             - package: GoogleSignIn
               product: GTMSessionFetcher
+
+            - package: AppsFlyerLib
 
             - framework: Frameworks/keyapp.xcframework
               embed: false
