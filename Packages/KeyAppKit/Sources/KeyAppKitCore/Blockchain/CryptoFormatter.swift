@@ -1,18 +1,8 @@
 import BigInt
 import Foundation
 
-/// Helper protocol for quickly converting to ``CryptoAmount``.
-public protocol CryptoAmountConvertible {
-    var asCryptoAmount: CryptoAmount { get }
-}
-
-public enum CryptoFormatterStyle {
-    /// Short representation of crypto numbers, e.g. limited fraction digits
-    case short
-    case long
-}
-
-public class CryptoFormatterFactory {
+/// Factory class for automatically creating formatter.
+public enum CryptoFormatterFactory {
     public static func formatter(with token: SomeToken, style: CryptoFormatterStyle = .long) -> CryptoFormatter {
         if token.tokenPrimaryKey == "native-ethereum" && token.decimals == 18 {
             return ETHCryptoFormatter(style: style)
@@ -24,14 +14,24 @@ public class CryptoFormatterFactory {
 
 /// A general string-formatter for crypto
 public class CryptoFormatter: Formatter {
+    /// Default string in case when parsing in not possible.
     public let defaultValue: String
+    
+    /// Appended prefix of output
     public let prefix: String
+    
+    /// Hide symbol in output
     public let hideSymbol: Bool
+    
+    /// Max number of digit.
+    public let maxDigits: Int?
 
-    public init(defaultValue: String = "", prefix: String = "", hideSymbol: Bool = false) {
+    public init(defaultValue: String = "", prefix: String = "", hideSymbol: Bool = false, maxDigits: Int? = nil) {
         self.defaultValue = defaultValue
         self.prefix = prefix
         self.hideSymbol = hideSymbol
+        self.maxDigits = maxDigits
+
         super.init()
     }
 
@@ -52,13 +52,9 @@ public class CryptoFormatter: Formatter {
         formattedValue(for: obj)
     }
 
-    public func string(for obj: Any?, maxDigits: Int? = nil) -> String? {
-        formattedValue(for: obj, maxDigits: maxDigits)
-    }
-
     // MARK: - Private
 
-    private func formattedValue(for obj: Any?, maxDigits: Int? = nil) -> String? {
+    private func formattedValue(for obj: Any?) -> String? {
         let amount: CryptoAmount?
 
         if let obj = obj as? CryptoAmount {
@@ -99,16 +95,36 @@ public class CryptoFormatter: Formatter {
     }
 }
 
+/// Representation of crypto numbers
+public enum CryptoFormatterStyle {
+    /// Short representation of crypto numbers, e.g. limited fraction digits
+    case short
+
+    /// Full representation of crypto numbers
+    case long
+}
+
 /// Crypto formatter for ETH-like tokens
 public final class ETHCryptoFormatter: CryptoFormatter {
     let style: CryptoFormatterStyle
 
     init(style: CryptoFormatterStyle) {
         self.style = style
-        super.init()
+
+        switch style {
+        case .long:
+            super.init()
+        case .short:
+            super.init(maxDigits: 8)
+        }
     }
 
-    public override func string(for obj: Any?) -> String? {
-        super.string(for: obj, maxDigits: style == .short ? 8 : nil)
+    override public func string(for obj: Any?) -> String? {
+        super.string(for: obj)
     }
+}
+
+/// Helper protocol for quickly converting to ``CryptoAmount``.
+public protocol CryptoAmountConvertible {
+    var asCryptoAmount: CryptoAmount { get }
 }
