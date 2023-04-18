@@ -40,6 +40,9 @@ final class SendInputViewModel: BaseViewModel, ObservableObject {
     @Published var isFeeLoading: Bool = true
     
     @Published var loadingState: LoadableState = .loaded
+    
+    @Published var showSecondaryAmounts = true
+    @Published var isSwitchAvailable = true
 
     // ActionButton
     @Published var actionButtonData = SliderActionButtonData.zero
@@ -387,7 +390,9 @@ private extension SendInputViewModel {
         $status
             .sink { [weak self] value in
                 guard value == .ready else { return }
-                DispatchQueue.main.asyncAfter(deadline: .now() + 0.5, execute: { self?.openKeyboard() })
+                DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) { [weak self] in
+                    self?.openKeyboard()
+                }
             }
             .store(in: &subscriptions)
 
@@ -399,11 +404,14 @@ private extension SendInputViewModel {
             guard let self else { return }
             if !isPriceAvailable || currentWallet.price == nil {
                 self.turnOffInputSwitch()
-            } else if let amount = currentWallet.amount, currentWallet.isUsdcOrUsdt && abs(amount - currentWallet.amountInCurrentFiat) < 0.01 {
+            } else if
+                let amount = currentWallet.amount,
+                currentWallet.isUsdcOrUsdt && abs(amount - currentWallet.amountInCurrentFiat) <= 0.02 {
+                
                 self.turnOffInputSwitch()
             } else {
-                self.inputAmountViewModel.isSwitchAvailable = self.allowSwitchingMainAmountType
-                self.inputAmountViewModel.showSecondaryAmounts = true
+                self.isSwitchAvailable = self.allowSwitchingMainAmountType
+                self.showSecondaryAmounts = true
             }
         }
         .store(in: &subscriptions)
@@ -413,8 +421,8 @@ private extension SendInputViewModel {
 private extension SendInputViewModel {
     func turnOffInputSwitch() {
         inputAmountViewModel.mainAmountType = .token
-        inputAmountViewModel.isSwitchAvailable = false
-        inputAmountViewModel.showSecondaryAmounts = false
+        isSwitchAvailable = false
+        showSecondaryAmounts = false
     }
 
     func updateInputAmountView() {
@@ -428,14 +436,22 @@ private extension SendInputViewModel {
             inputAmountViewModel.isError = true
             actionButtonData = SliderActionButtonData(
                 isEnabled: false,
-                title: L10n.max(maxAmount.tokenAmountFormattedString(symbol: sourceWallet.token.symbol, maximumFractionDigits: Int(sourceWallet.token.decimals)))
+                title: L10n.max(maxAmount.tokenAmountFormattedString(
+                    symbol: sourceWallet.token.symbol,
+                    maximumFractionDigits: Int(sourceWallet.token.decimals),
+                    roundingMode: .down
+                ))
             )
             checkMaxButtonIfNeeded()
         case let .error(.inputTooLow(minAmount)):
             inputAmountViewModel.isError = true
             actionButtonData = SliderActionButtonData(
                 isEnabled: false,
-                title: L10n.min(minAmount.tokenAmountFormattedString(symbol: sourceWallet.token.symbol, maximumFractionDigits: Int(sourceWallet.token.decimals)))
+                title: L10n.min(minAmount.tokenAmountFormattedString(
+                    symbol: sourceWallet.token.symbol,
+                    maximumFractionDigits: Int(sourceWallet.token.decimals),
+                    roundingMode: .down
+                ))
             )
         case .error(reason: .insufficientAmountToCoverFee):
             inputAmountViewModel.isError = false
@@ -460,10 +476,13 @@ private extension SendInputViewModel {
             wasMaxWarningToastShown = false
             inputAmountViewModel.isError = false
             if !currentState.isSendingViaLink {
-                actionButtonData = SliderActionButtonData(
-                    isEnabled: true,
-                    title: "\(L10n.send) \(currentState.amountInToken.tokenAmountFormattedString(symbol: currentState.token.symbol, maximumFractionDigits: Int(currentState.token.decimals)))"
+                var title = L10n.send
+                title += currentState.amountInToken.tokenAmountFormattedString(
+                    symbol: currentState.token.symbol,
+                    maximumFractionDigits: Int(currentState.token.decimals),
+                    roundingMode: .down
                 )
+                actionButtonData = SliderActionButtonData(isEnabled: true, title: title)
             } else {
                 actionButtonData = SliderActionButtonData(
                     isEnabled: true,
