@@ -83,7 +83,7 @@ extension Double {
         showMinus: Bool = true,
         groupingSeparator: String? = nil,
         autoSetMaximumFractionDigits: Bool = false,
-        roundingMode: NumberFormatter.RoundingMode? = .down
+        roundingMode: NumberFormatter.RoundingMode? = nil
     ) -> String {
         let formatter = NumberFormatter()
         formatter.groupingSize = 3
@@ -145,7 +145,7 @@ extension Double {
     func fiatAmountFormattedString(
         maximumFractionDigits: Int = 2,
         currency: Fiat = Defaults.fiat,
-        roundingMode: NumberFormatter.RoundingMode = .down,
+        roundingMode: NumberFormatter.RoundingMode? = nil,
         customFormattForLessThan1E_2: Bool = false
     ) -> String {
         // amount < 0.01
@@ -173,7 +173,7 @@ extension Double {
     func tokenAmountFormattedString(
         symbol: String,
         maximumFractionDigits: Int = 9,
-        roundingMode: NumberFormatter.RoundingMode = .down
+        roundingMode: NumberFormatter.RoundingMode? = nil
     ) -> String {
         "\(toString(maximumFractionDigits: maximumFractionDigits, roundingMode: roundingMode)) \(symbol)"
     }
@@ -181,7 +181,7 @@ extension Double {
     func formattedFiat(
         maximumFractionDigits: Int = 2,
         currency: Fiat = .usd,
-        roundingMode: NumberFormatter.RoundingMode = .down
+        roundingMode: NumberFormatter.RoundingMode? = nil
     ) -> String {
         return "\(toString(maximumFractionDigits: maximumFractionDigits, roundingMode: roundingMode)) \(currency.code)"
     }
