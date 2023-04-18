@@ -5,11 +5,16 @@
 //  Created by Ivan on 28.03.2023.
 //
 
+import AnalyticsManager
 import Combine
 import Foundation
 import UIKit
+import Resolver
 
 final class ReceiveFundsViaLinkCoordinator: Coordinator<Void> {
+    
+    // Dependencies
+    @Injected private var analyticsManager: AnalyticsManager
     
     // Subjects
     private let resultSubject = PassthroughSubject<Void, Never>()
@@ -82,6 +87,7 @@ final class ReceiveFundsViaLinkCoordinator: Coordinator<Void> {
         transition.dismissed
             .sink(receiveValue: { [weak self] in
                 if !errorPresented {
+                    self?.analyticsManager.log(event: .claimClickHide)
                     self?.resultSubject.send(())
                 }
             })
