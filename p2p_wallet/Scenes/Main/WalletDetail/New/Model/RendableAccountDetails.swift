@@ -1,5 +1,5 @@
 //
-//  RendableAccountDetail.swift
+//  RendableAccountDetails.swift
 //  p2p_wallet
 //
 //  Created by Giang Long Tran on 19.02.2023.
@@ -9,24 +9,24 @@ import Foundation
 import SolanaSwift
 import KeyAppBusiness
 
-protocol RendableAccountDetail {
+protocol RendableAccountDetails {
     var title: String { get }
 
     var amountInToken: String { get }
     var amountInFiat: String { get }
 
-    var actions: [RendableAccountDetailAction] { get }
-    var onAction: (RendableAccountDetailAction) -> Void { get }
+    var actions: [RendableAccountDetailsAction] { get }
+    var onAction: (RendableAccountDetailsAction) -> Void { get }
 }
 
-enum RendableAccountDetailAction: Identifiable {
+enum RendableAccountDetailsAction: Identifiable {
     case buy
     case receive(ReceiveParam)
     case send
     case swap(Wallet?)
 }
 
-extension RendableAccountDetailAction {
+extension RendableAccountDetailsAction {
     enum ReceiveParam {
         case wallet(Wallet)
         case solanaAccount(SolanaAccountsService.Account)
