@@ -22,6 +22,11 @@ target 'p2p_wallet' do
   # Kits
   pod 'JazziconSwift', :git => 'https://github.com/p2p-org/JazziconSwift.git', :branch => 'master'
 
+  # Firebase
+  pod 'Firebase/Analytics'
+  pod 'Firebase/Crashlytics'
+  pod 'Firebase/RemoteConfig'
+
   pod 'SwiftNotificationCenter'
 end
 

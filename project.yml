@@ -91,9 +91,6 @@ packages:
     AppsFlyerLib:
         url: https://github.com/AppsFlyerSDK/AppsFlyerFramework
         exactVersion: 6.9.2
-    Firebase:
-        url: https://github.com/firebase/firebase-ios-sdk
-        from: 10.4.0
     Sentry:
         url: https://github.com/getsentry/sentry-cocoa
         exactVersion: 7.31.5
@@ -342,12 +339,6 @@ targets:
 
             - package: AppsFlyerLib
 
-            - package: Firebase
-              product: FirebaseAnalytics
-            - package: Firebase
-              product: FirebaseCrashlytics
-            - package: Firebase
-              product: FirebaseRemoteConfig
 
             - package: Sentry
 
