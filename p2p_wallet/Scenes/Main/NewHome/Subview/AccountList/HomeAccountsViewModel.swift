@@ -223,6 +223,7 @@ final class HomeAccountsViewModel: BaseViewModel, ObservableObject {
     }
 
     func refresh() async throws {
+        // FIXME: - Replace later with `AggregateAccountService`
         // use throwing task group to make solanaAccountService.fetch() and ethereumAccountService.fetch() run parallelly
         // and support another chains later
         try await withThrowingTaskGroup(of: Void.self) { group in
