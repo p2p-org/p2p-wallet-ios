@@ -1,5 +1,5 @@
 //
-//  AccountDetailCoordiantor.swift
+//  AccountDetailsCoordiantor.swift
 //  p2p_wallet
 //
 //  Created by Giang Long Tran on 19.02.2023.
@@ -14,26 +14,26 @@ import SwiftUI
 import UIKit
 import Wormhole
 
-enum AccountDetailCoordinatorArgs {
+enum AccountDetailsCoordinatorArgs {
     case solanaAccount(SolanaAccountsService.Account)
 }
 
-enum AccountDetailCoordinatorResult {
+enum AccountDetailsCoordinatorResult {
     case cancel
     case done
 }
 
-class AccountDetailCoordinator: SmartCoordinator<AccountDetailCoordinatorResult> {
-    let args: AccountDetailCoordinatorArgs
+class AccountDetailsCoordinator: SmartCoordinator<AccountDetailsCoordinatorResult> {
+    let args: AccountDetailsCoordinatorArgs
 
-    init(args: AccountDetailCoordinatorArgs, presentingViewController: UINavigationController) {
+    init(args: AccountDetailsCoordinatorArgs, presentingViewController: UINavigationController) {
         self.args = args
         super.init(presentation: SmartCoordinatorPushPresentation(presentingViewController))
     }
 
     override func build() -> UIViewController {
-        let detailAccountVM: AccountDetailViewModel
-        let historyListVM: AccountDetailHistoryViewModel
+        let detailAccountVM: AccountDetailsViewModel
+        let historyListVM: AccountDetailsHistoryViewModel
 
         switch args {
         case let .solanaAccount(account):
@@ -63,7 +63,7 @@ class AccountDetailCoordinator: SmartCoordinator<AccountDetailCoordinatorResult>
         }
         .store(in: &subscriptions)
 
-        let view = AccountDetailView(
+        let view = AccountDetailsView(
             detailAccount: detailAccountVM,
             historyList: historyListVM
         )
@@ -71,7 +71,7 @@ class AccountDetailCoordinator: SmartCoordinator<AccountDetailCoordinatorResult>
         let vc = UIHostingController(rootView: view)
         vc.navigationItem.largeTitleDisplayMode = .never
         vc.onClose = { [weak self] in self?.result.send(.cancel) }
-        vc.title = detailAccountVM.rendableAccountDetail.title
+        vc.title = detailAccountVM.rendableAccountDetails.title
 
         return vc
     }

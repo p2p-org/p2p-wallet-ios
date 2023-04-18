@@ -1,5 +1,5 @@
 //
-//  AccountDetailViewModel.swift
+//  AccountDetailsViewModel.swift
 //  p2p_wallet
 //
 //  Created by Giang Long Tran on 19.02.2023.
@@ -11,20 +11,20 @@ import KeyAppBusiness
 import Resolver
 import SolanaSwift
 
-enum AccountDetailAction {
+enum AccountDetailsAction {
     case openBuy
     case openReceive
     case openSend
     case openSwap(Wallet?)
 }
 
-class AccountDetailViewModel: BaseViewModel, ObservableObject {
-    @Published var rendableAccountDetail: RendableAccountDetail
+class AccountDetailsViewModel: BaseViewModel, ObservableObject {
+    @Published var rendableAccountDetails: RendableAccountDetails
 
-    let actionSubject: PassthroughSubject<AccountDetailAction, Never>
+    let actionSubject: PassthroughSubject<AccountDetailsAction, Never>
 
-    init(rendableAccountDetail: RendableAccountDetail) {
-        self.rendableAccountDetail = rendableAccountDetail
+    init(rendableAccountDetails: RendableAccountDetails) {
+        self.rendableAccountDetails = rendableAccountDetails
         actionSubject = .init()
     }
 
@@ -35,11 +35,11 @@ class AccountDetailViewModel: BaseViewModel, ObservableObject {
         jupiterTokensRepository: JupiterTokensRepository = Resolver.resolve()
     ) {
         // Init action subject
-        let actionSubject = PassthroughSubject<AccountDetailAction, Never>()
+        let actionSubject = PassthroughSubject<AccountDetailsAction, Never>()
         self.actionSubject = actionSubject
 
         // Handle action
-        let onAction = { [weak actionSubject] (action: RendableAccountDetailAction) in
+        let onAction = { [weak actionSubject] (action: RendableAccountDetailsAction) in
             switch action {
             case .buy:
                 actionSubject?.send(.openBuy)
@@ -54,7 +54,7 @@ class AccountDetailViewModel: BaseViewModel, ObservableObject {
 
         // Render solana wallet (account)
         let isSwapAvailableDefault = available(.jupiterSwapEnabled) ? false : true
-        rendableAccountDetail = RendableNewSolanaAccountDetail(account: solanaAccount, isSwapAvailable: isSwapAvailableDefault, onAction: onAction)
+        rendableAccountDetails = RendableNewSolanaAccountDetails(account: solanaAccount, isSwapAvailable: isSwapAvailableDefault, onAction: onAction)
 
         super.init()
 
@@ -65,20 +65,20 @@ class AccountDetailViewModel: BaseViewModel, ObservableObject {
             .map { $0.value.first(where: { $0.data.pubkey == solanaAccount.data.pubkey }) }
             .compactMap { $0 }
             .map {
-                RendableNewSolanaAccountDetail(
+                RendableNewSolanaAccountDetails(
                     account: $0,
                     isSwapAvailable: isSwapAvailableDefault,
                     onAction: onAction
                 )
             }
-            .sink { [weak self] rendableAccountDetail in
-                self?.rendableAccountDetail = rendableAccountDetail
+            .sink { [weak self] rendableAccountDetails in
+                self?.rendableAccountDetails = rendableAccountDetails
             }
             .store(in: &subscriptions)
     }
 }
 
-extension AccountDetailViewModel {
+extension AccountDetailsViewModel {
     /// Check swap action is available for this account (wallet).
     static func isSwapAvailableFor(wallet: Wallet, for status: JupiterDataStatus) -> Bool {
         if available(.jupiterSwapEnabled) {
