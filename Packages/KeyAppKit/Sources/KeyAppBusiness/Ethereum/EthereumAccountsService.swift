@@ -11,16 +11,16 @@ import KeyAppKitCore
 import SolanaPricesAPIs
 import Web3
 
-public final class EthereumAccountsService: NSObject, AccountsService, ObservableObject {
-    public typealias Account = EthereumAccount
+final class EthereumAccountsService: NSObject, AccountsService, ObservableObject {
+    typealias Account = EthereumAccount
 
     private var subscriptions = [AnyCancellable]()
 
     private let accounts: AsyncValue<[Account]>
 
-    @Published public var state: AsyncValueState<[Account]> = .init(value: [])
+    @Published var state: AsyncValueState<[Account]> = .init(value: [])
 
-    public init(
+    init(
         address: String,
         web3: Web3,
         ethereumTokenRepository: EthereumTokensRepository,
@@ -32,7 +32,7 @@ public final class EthereumAccountsService: NSObject, AccountsService, Observabl
 
         accounts = .init(initialItem: [], request: {
             guard let address else {
-                return (nil, Error.invalidEthereumAddress)
+                return (nil, EthereumAccountsServiceError.invalidEthereumAddress)
             }
 
             do {
@@ -121,7 +121,7 @@ public final class EthereumAccountsService: NSObject, AccountsService, Observabl
     }
 
     /// Method resolve ethereum erc-20 token accounts.
-    internal static func resolveTokenAccounts(
+    static func resolveTokenAccounts(
         address: String,
         balances: [EthereumTokenBalances.Balance],
         repository: EthereumTokensRepository
@@ -148,13 +148,7 @@ public final class EthereumAccountsService: NSObject, AccountsService, Observabl
     }
 
     /// Fetch new data from blockchain.
-    public func fetch() async throws {
+    func fetch() async throws {
         try await accounts.fetch()?.value
-    }
-}
-
-extension EthereumAccountsService {
-    enum Error: Swift.Error {
-        case invalidEthereumAddress
     }
 }

@@ -15,17 +15,17 @@ import SolanaSwift
 /// timer.
 ///
 /// It also calculates ``amountInFiat`` by integrating with ``NewPriceService``.
-public final class SolanaAccountsService: NSObject, AccountsService, ObservableObject {
-    public typealias Account = SolanaAccount
+final class SolanaAccountsService: NSObject, AccountsService, ObservableObject {
+    typealias Account = SolanaAccount
 
-    var subscriptions = [AnyCancellable]()
+    private var subscriptions = [AnyCancellable]()
 
-    let accounts: AsyncValue<[Account]>
+    private let accounts: AsyncValue<[Account]>
 //    let prices: AsyncValue<>
 
-    @Published public var state: AsyncValueState<[Account]> = .init(value: [])
+    @Published var state: AsyncValueState<[Account]> = .init(value: [])
 
-    public init(
+    init(
         accountStorage: SolanaAccountStorage,
         solanaAPIClient: SolanaAPIClient,
         tokensService: SolanaTokensRepository,
@@ -37,7 +37,7 @@ public final class SolanaAccountsService: NSObject, AccountsService, ObservableO
         // Setup async value
         accounts = .init(initialItem: []) {
             guard let accountAddress = accountStorage.account?.publicKey.base58EncodedString else {
-                return (nil, Error.authorityError)
+                return (nil, SolanaAccountsServiceError.authorityError)
             }
 
             var newAccounts: [Account] = []
@@ -157,12 +157,12 @@ public final class SolanaAccountsService: NSObject, AccountsService, ObservableO
     }
 
     /// Fetch new data from blockchain.
-    public func fetch() async throws {
+    func fetch() async throws {
         try await accounts.fetch()?.value
     }
 }
 
-public extension Array where Element == SolanaAccountsService.Account {
+public extension Array where Element == SolanaAccount {
     /// Helper method for quickly extraction native account.
     var nativeWallet: Element? {
         first(where: { $0.data.isNativeSOL })
@@ -174,11 +174,5 @@ public extension Array where Element == SolanaAccountsService.Account {
 
     var isTotalBalanceEmpty: Bool {
         totalAmountInCurrentFiat == 0
-    }
-}
-
-public extension SolanaAccountsService {
-    enum Error: Swift.Error {
-        case authorityError
     }
 }
