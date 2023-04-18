@@ -1,10 +1,4 @@
-//
-//  WormholeClaimViewModel.swift
-//  p2p_wallet
-//
-//  Created by Giang Long Tran on 11.03.2023.
-//
-
+import AnalyticsManager
 import Combine
 import Foundation
 import KeyAppBusiness
@@ -14,6 +8,8 @@ import Resolver
 import Wormhole
 
 class WormholeClaimViewModel: BaseViewModel, ObservableObject {
+    @Injected private var analyticsManager: AnalyticsManager
+
     let action: PassthroughSubject<Action, Never> = .init()
 
     let bundle: AsyncValue<WormholeBundle?>
@@ -114,6 +110,12 @@ class WormholeClaimViewModel: BaseViewModel, ObservableObject {
 
                 userActionService.execute(action: userAction)
                 action.send(.claiming(userAction))
+                analyticsManager.log(event: .claimBridgesClickConfirmed(
+                    tokenName: model.account.token.symbol,
+                    tokenValue: bundle.resultAmount.asCryptoAmount.amount.description.double ?? 0,
+                    valueFiat: bundle.resultAmount.asCurrencyAmount.value.description.double ?? 0,
+                    free: bundle.resultAmount.asCurrencyAmount.value.description.double ?? 0 >= 50
+                ))
             }
         }
     }

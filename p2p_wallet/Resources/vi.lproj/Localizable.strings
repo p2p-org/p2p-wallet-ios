@@ -543,7 +543,7 @@
 "Proceed without a username?" = "Tiếp tục mà không có tên người dùng?";
 "Anytime you want, you can easily reserve a username by going to the settings" = "Bất cứ lúc nào bạn muốn, bạn có thể dễ dàng đặt trước tên người dùng bằng cách đi tới phần cài đặt";
 "Proceed" = "Tiếp tục";
-"Proceed & don’t show again" = "Tiếp tục và không hiển thị lại" ;
+"Proceed & don’t show again" = "Tiếp tục và không hiển thị lại";
 "Welcome back, %@" = "Chào mừng bạn trở lại, %@";
 "To recover your wallet enter your security key's 12 or 24 words separated by single spaces in the correct order" = "Để khôi phục ví của bạn, hãy nhập 12 hoặc 24 từ của khóa bảo mật được phân tách bằng dấu cách đơn theo đúng thứ tự";
 "Enter your security key" = "Nhập khóa bảo mật của bạn";
@@ -745,9 +745,7 @@
 "Incorrect PIN, try again (%@ attempt left)" = "Mã PIN không chính xác, hãy thử lại (còn lại %@ lần thử)";
 "Forgot your PIN?" = "Quên mã PIN của bạn?";
 "Reset it" = "Đặt lại nó";
-"You have %@ attempts left to type the correct PIN.
-Reset the PIN or wait for %@." = "Bạn còn %@ lần thử để nhập mã PIN chính xác.
- Đặt lại mã PIN hoặc đợi %@.";
+"You have %@ attempts left to type the correct PIN.\nReset the PIN or wait for %@." = "Bạn còn %@ lần thử để nhập mã PIN chính xác.\nĐặt lại mã PIN hoặc đợi %@.";
 "You have successfully set your PIN" = "Bạn đã đặt thành công mã PIN của mình";
 "If you have no backup, you may never be able to access this account." = "Nếu bạn không có bản sao lưu, bạn có thể không bao giờ truy cập được vào tài khoản này.";
 "Resetting your PIN" = "Đặt lại mã PIN của bạn";
@@ -865,7 +863,6 @@ Reset the PIN or wait for %@." = "Bạn còn %@ lần thử để nhập mã PIN
 "Copied to the clipboard" = "Đã sao chép vào khay nhớ tạm";
 "Change my PIN" = "Thay đổi mã PIN của tôi";
 "Change PIN" = "Thay đổi pin";
-"Forget you PIN?" = "Quên mã PIN của bạn?";
 "If you forget your PIN, you can log out and create a new one when you log in again." = "Nếu bạn quên mã PIN, bạn có thể đăng xuất và tạo mã mới khi đăng nhập lại.";
 "Your seed phrase must never be shared." = "Cụm từ hạt giống của bạn không bao giờ được chia sẻ.";
 "Keep it private, even from us" = "Giữ nó ở chế độ riêng tư, ngay cả với chúng tôi";
@@ -1185,11 +1182,7 @@ Reset the PIN or wait for %@." = "Bạn còn %@ lần thử để nhập mã PIN
 "Continue transaction" = "Tiếp tục giao dịch";
 "Interrupt" = "Ngắt";
 "Your bank account via Moonpay" = "Tài khoản ngân hàng của bạn qua Moonpay";
-"You didn't finish your cash out transaction. After 7 days your transaction has been automatically declined. 
-
-You can try again, but your new transaction will be subject to the current rates." = "Bạn chưa hoàn thành giao dịch rút tiền của mình.  Sau 7 ngày, giao dịch của bạn đã tự động bị từ chối.
-
- Bạn có thể thử lại, nhưng giao dịch mới của bạn sẽ phải tuân theo tỷ giá hiện tại.";
+"You didn't finish your cash out transaction. After 7 days your transaction has been automatically declined.\n\nYou can try again, but your new transaction will be subject to the current rates." = "Bạn chưa hoàn thành giao dịch rút tiền của mình.  Sau 7 ngày, giao dịch của bạn đã tự động bị từ chối.\n\nBạn có thể thử lại, nhưng giao dịch mới của bạn sẽ phải tuân theo tỷ giá hiện tại.";
 "Will be sent to" = "Sẽ được gửi đến";
 "You need to send %@ SOL" = "Bạn cần gửi %@SOL";
 "Funds were sent" = "Tiền đã được gửi";
@@ -1279,17 +1272,11 @@ You can try again, but your new transaction will be subject to the current rates
 "You will get" = "Bạn sẽ nhận được";
 "Claiming..." = "Khiếu nại...";
 "Send crypto via link" = "Gửi tiền điện tử qua liên kết";
-"You don’t need to know the address" = "Bạn không cần biết địa chỉ";
 "Sending via link" = "Gửi qua liên kết";
-"Anyone who gets this link can claim the funds" = "Bất kỳ ai nhận được liên kết này đều có thể yêu cầu tiền";
 "Creating your link" = "Tạo liên kết của bạn";
-"This will take up to %@ seconds" = "Quá trình này sẽ mất tối đa %@ giây";
 "The link is ready!\nReceiver will be able to claim funds" = "Liên kết đã sẵn sàng!\nNgười nhận sẽ có thể yêu cầu tiền";
 "Send via link" = "Gửi qua liên kết";
 "The link works only 1 time for any users.\nIf you log in yourself, the funds will be returned to your account" = "Liên kết chỉ hoạt động 1 lần cho bất kỳ người dùng nào.\nNếu bạn tự đăng nhập, tiền sẽ được trả lại vào tài khoản của bạn";
-"Send via one-time link" = "Gửi qua liên kết một lần";
-"Send crypto via one-time link" = "Gửi tiền điện tử qua liên kết một lần";
-"Anyone who gets this one-time link can claim the funds" = "Bất kỳ ai nhận được liên kết một lần này đều có thể yêu cầu tiền";
 "The price is higher because of your trade size. Consider splitting your transaction into multiple swaps." = "Giá cao hơn vì quy mô giao dịch của bạn.  Cân nhắc chia giao dịch của bạn thành nhiều giao dịch hoán đổi.";
 "The slippage could be" = "Sự trượt giá có thể là";
 "Swapping Through" = "Hoán đổi thông qua";
@@ -1329,19 +1316,13 @@ You can try again, but your new transaction will be subject to the current rates
 "Unique one-time link works once only" = "Liên kết một lần duy nhất chỉ hoạt động một lần";
 "The one-time link can be used to send funds to anyone without needing an address. The funds can be claimed by anyone with a link." = "Liên kết một lần có thể được sử dụng để gửi tiền cho bất kỳ ai mà không cần địa chỉ.  Tiền có thể được yêu cầu bởi bất kỳ ai có liên kết.";
 "Enter greater value" = "Nhập giá trị lớn hơn";
-"Create a one-time link" = "Tạo liên kết một lần";
 "Limit is %@ one-time links per day. Try tomorrow" = "Giới hạn là %@ liên kết một lần mỗi ngày.  Hãy thử vào ngày mai";
-"Your one-time link is copied" = "Liên kết một lần của bạn được sao chép";
 "Key App one-time transfer link" = "Liên kết chuyển một lần của Key App";
-"The one-time link is ready! The funds can be claimed" = "Liên kết một lần đã sẵn sàng!  Các khoản tiền có thể được yêu cầu";
-"If you want to get your money back just open link by yourself" = "Nếu bạn muốn lấy lại tiền của mình, chỉ cần tự mở liên kết";
 "Receive funds via one-time link" = "Nhận tiền qua liên kết một lần";
 "Confirm" = "Xác nhận";
 "The transaction was rejected after failed internet connection. Open your link again" = "Giao dịch đã bị từ chối sau khi kết nối internet không thành công.  Mở lại liên kết của bạn";
 "Token rates are unavailable. Everything works as usual and all funds are safe." = "Tỷ lệ mã thông báo không có sẵn.  Mọi thứ hoạt động như bình thường và tất cả các khoản tiền đều an toàn.";
 "The transaction was rejected by the Solana blockchain. Open your link again" = "Giao dịch đã bị blockchain Solana từ chối.  Mở lại liên kết của bạn";
-"Spend them wisely" = "Chi tiêu chúng một cách khôn ngoan";
-"This one-time link is already claimed" = "Liên kết một lần này đã được xác nhận quyền sở hữu";
 "You can't receive funds with it" = "Bạn không thể nhận tiền với nó";
 "Failed to get data" = "Không lấy được dữ liệu";
 "Refresh the page or check back later" = "Làm mới trang hoặc kiểm tra lại sau";
@@ -1356,3 +1337,17 @@ You can try again, but your new transaction will be subject to the current rates
 "The fees are bigger than the transaction amount" = "Các khoản phí lớn hơn số tiền giao dịch";
 "There was a problem with claiming. Please try again" = "Đã xảy ra sự cố khi xác nhận quyền sở hữu.  Vui lòng thử lại";
 "There was a problem with sending. Please try again" = "Đã xảy ra sự cố khi gửi.  Vui lòng thử lại";
+"Open your link again" = "Mở lại liên kết của bạn";
+"Send money via link" = "Gửi tiền qua liên kết";
+"Without account details" = "Không cần thông tin về tài khoản";
+"Anyone who gets this one-time link can claim money" = "Bất kỳ ai nhận được liên kết một lần này đều có thể yêu cầu tiền";
+"If you want to get your money back just open the link by yourself" = "Nếu bạn muốn lấy lại tiền của mình, chỉ cần tự mình mở liên kết";
+"Copied" = "Đã sao chép";
+"Share your link to send money" = "Chia sẻ liên kết của bạn để gửi tiền";
+"Create link" = "Tạo đường link";
+"Receive money" = "Nhận tiền";
+"The transaction will be completed in a few seconds" = "Giao dịch sẽ được hoàn thành sau vài giây";
+"Hey, I've sent you %@ %@! Get it here: %@" = "Này, tôi đã gửi cho bạn %@ %@!  Lấy nó ở đây: %@";
+"The link is already claimed" = "Liên kết đã được xác nhận quyền sở hữu";
+"You can’t receive money with it" = "Bạn không thể nhận tiền với nó";
+"The transaction was rejected. Open your link again." = "Giao dịch đã bị từ chối.  Mở lại liên kết của bạn.";

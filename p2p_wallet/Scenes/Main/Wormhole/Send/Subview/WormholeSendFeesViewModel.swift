@@ -1,10 +1,4 @@
-//
-//  WormholeSendFeesViewModel.swift
-//  p2p_wallet
-//
-//  Created by Giang Long Tran on 24.03.2023.
-//
-
+import AnalyticsManager
 import Foundation
 import KeyAppBusiness
 import KeyAppKitCore
@@ -32,6 +26,9 @@ struct WormholeSendFees: Identifiable {
 }
 
 class WormholeSendFeesViewModel: BaseViewModel, ObservableObject {
+
+    @Injected private var analyticsManager: AnalyticsManager
+
     @Published var loading: Bool = false
     @Published var fees: [WormholeSendFees] = []
 
@@ -92,5 +89,7 @@ class WormholeSendFeesViewModel: BaseViewModel, ObservableObject {
                 ].compactMap { $0 }
             }
             .store(in: &subscriptions)
+        
+        analyticsManager.log(event: .sendnewFreeTransactionClick(source: "Bridge"))
     }
 }

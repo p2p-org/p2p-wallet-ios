@@ -46,7 +46,7 @@ final class SendLinkCreatedViewModel {
         
         let pasteboard = UIPasteboard.general
         pasteboard.string = link
-        notificationService.showInAppNotification(.done(L10n.yourOneTimeLinkIsCopied))
+        notificationService.showInAppNotification(.done(L10n.copied))
     }
     
     func closeClicked() {

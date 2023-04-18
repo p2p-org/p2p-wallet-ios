@@ -436,7 +436,7 @@ private extension SendInputViewModel {
             } else {
                 actionButtonData = SliderActionButtonData(
                     isEnabled: true,
-                    title: L10n.createAOneTimeLink
+                    title: L10n.createLink
                 )
             }
         }
@@ -461,7 +461,7 @@ private extension SendInputViewModel {
     func updateFeeTitle() {
         // if send via link, just return enjoyFreeTransactions
         if currentState.isSendingViaLink {
-            feeTitle = L10n.enjoyFreeTransactions
+            feeTitle = L10n.fees(0)
         }
 
         // otherwise show fees in conditions
@@ -632,8 +632,8 @@ private func createTransactionExecution(
         amount: amountInToken,
         feeWallet: feeWallet,
         ignoreTopUp: isSendingViaLink,
-        memo: isSendingViaLink ? .secretConfig("SEND_VIA_LINK_MEMO_PREFIX")! : nil,
-        operationType: isSendingViaLink ? .sendViaLink : .transfer
+        memo: isSendingViaLink ? .secretConfig("SEND_VIA_LINK_MEMO_PREFIX")! + "-send": nil,
+        operationType: isSendingViaLink ? .sendViaLink: .transfer
     )
 
     // save to storage

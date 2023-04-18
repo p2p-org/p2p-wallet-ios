@@ -1,10 +1,3 @@
-//
-//  SupportedTokenNetworksCoordinator.swift
-//  p2p_wallet
-//
-//  Created by Giang Long Tran on 09.03.2023.
-//
-
 import Foundation
 import KeyAppUI
 import SwiftUI

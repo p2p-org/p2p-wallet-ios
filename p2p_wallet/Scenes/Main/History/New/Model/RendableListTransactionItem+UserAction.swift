@@ -114,10 +114,10 @@ struct RendableListUserActionTransactionItem: RendableListTransactionItem {
     var subdetail: String {
         switch userAction {
         case let transaction as WormholeSendUserAction:
-            return CryptoFormatter().string(for: transaction.amount) ?? ""
+            return CryptoFormatter().string(amount: transaction.amount)
 
         case let transaction as WormholeClaimUserAction:
-            return CryptoFormatter().string(for: transaction.amountInCrypto) ?? ""
+            return CryptoFormatter().string(amount: transaction.amountInCrypto)
 
         default:
             return ""

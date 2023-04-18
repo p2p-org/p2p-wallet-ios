@@ -90,7 +90,7 @@ public enum WormholeSendInputState: Equatable {
                 }
 
                 // Total fee in SOL
-                let feeInSolanaNetwork: CryptoAmount = [fees.networkFee, fees.messageAccountRent, fees.bridgeFee]
+                let feeInSolanaNetwork: CryptoAmount = [fees.networkFee, fees.bridgeFee]
                     .compactMap { $0 }
                     .map { tokenAmount in
                         CryptoAmount(bigUIntString: tokenAmount.amount, token: SolanaToken.nativeSolana)
@@ -104,6 +104,8 @@ public enum WormholeSendInputState: Equatable {
                     (feePayerBestCandidate, feeAmountForBestCandidate) = try await WormholeSendInputLogic
                         .autoSelectFeePayer(
                             fee: feeInSolanaNetwork,
+                            accountCreationFee: fees.messageAccountRent?
+                                .asCryptoAmount ?? .init(token: SolanaToken.nativeSolana),
                             selectedAccount: input.solanaAccount,
                             availableAccounts: input.availableAccounts,
                             transferAmount: input.amount,
@@ -112,7 +114,8 @@ public enum WormholeSendInputState: Equatable {
                             minSOLBalance: CryptoAmount(
                                 uint64: relayContext.minimumRelayAccountBalance,
                                 token: SolanaToken.nativeSolana
-                            )
+                            ),
+                            relayContext: relayContext
                         )
                 } catch {
                     return .error(

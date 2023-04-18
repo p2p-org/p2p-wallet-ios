@@ -6,7 +6,7 @@ import Foundation
 import SolanaSwift
 
 extension KeychainStorage: AccountStorageType {
-    public var account: SolanaSwift.Account? {
+    public var account: KeyPair? {
         _account
     }
 
@@ -28,13 +28,13 @@ extension KeychainStorage: AccountStorageType {
         guard let phrases = localKeychain.get(phrasesKey)?.components(separatedBy: " ") else { return }
         
         if GlobalAppState.shared.forcedWalletAddress.isEmpty {
-            _account = try await SolanaSwift.Account(
+            _account = try await KeyPair(
                 phrase: phrases,
                 network: Defaults.apiEndPoint.network,
                 derivablePath: derivablePath
             )
         } else {
-            _account = SolanaSwift.Account(
+            _account = KeyPair(
                 phrase: [],
                 publicKey: try .init(string: GlobalAppState.shared.forcedWalletAddress),
                 secretKey: Data()
@@ -69,7 +69,7 @@ extension KeychainStorage: AccountStorageType {
         _account = nil
     }
 
-    public func save(_: SolanaSwift.Account) throws { fatalError("Method has not been implemented") }
+    public func save(_: KeyPair) throws { fatalError("Method has not been implemented") }
 
     func clearAccount() {
         removeCurrentAccount()

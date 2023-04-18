@@ -20,7 +20,7 @@ public class RecipientSearchServiceImpl: RecipientSearchService {
 
     public func search(
         input: String,
-        env: UserWalletEnvironments,
+        config: RecipientSearchConfig,
         preChosenToken: Token?
     ) async -> RecipientSearchResult {
         // Assertion
@@ -29,9 +29,9 @@ public class RecipientSearchServiceImpl: RecipientSearchService {
         }
 
         // Validate ethereum address.
-        if EthereumAddressValidation.validate(input) {
+        if config.ethereumSearch, EthereumAddressValidation.validate(input) {
             // Check self-sending
-            if env.ethereumAccount == input.lowercased() {
+            if config.ethereumAccount == input.lowercased() {
                 return .selfSendingError(
                     recipient: .init(address: input, category: .ethereumAddress, attributes: [])
                 )
@@ -39,16 +39,16 @@ public class RecipientSearchServiceImpl: RecipientSearchService {
 
             // Ok
             return .ok([
-                .init(address: input, category: .ethereumAddress, attributes: [])
+                .init(address: input, category: .ethereumAddress, attributes: []),
             ])
         }
 
         // Search by solana address
         if !input.contains(" "), let address = try? PublicKey(string: input), !address.bytes.isEmpty {
-            return await searchBySolanaAddress(address, env: env, preChosenToken: preChosenToken)
+            return await searchBySolanaAddress(address, config: config, preChosenToken: preChosenToken)
         }
 
         // Search by name
-        return await searchByName(input, env: env)
+        return await searchByName(input, config: config)
     }
 }

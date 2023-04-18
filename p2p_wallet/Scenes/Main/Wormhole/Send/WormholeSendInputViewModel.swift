@@ -1,10 +1,4 @@
-//
-//  WormholeSendInputView.swift
-//  p2p_wallet
-//
-//  Created by Giang Long Tran on 22.03.2023.
-//
-
+import AnalyticsManager
 import BigDecimal
 import Combine
 import FeeRelayerSwift
@@ -18,6 +12,9 @@ import SolanaSwift
 import Wormhole
 
 class WormholeSendInputViewModel: BaseViewModel, ObservableObject {
+
+    @Injected private var analyticsManager: AnalyticsManager
+
     enum Action {
         case openPickAccount
         case openFees
@@ -63,6 +60,8 @@ class WormholeSendInputViewModel: BaseViewModel, ObservableObject {
     @Published var isSliderOn = false
     @Published var showFinished = false
 
+    let changeTokenPressed = PassthroughSubject<Void, Never>()
+
     init(
         recipient: Recipient,
         userWalletManager: UserWalletManager = Resolver.resolve(),
@@ -89,7 +88,8 @@ class WormholeSendInputViewModel: BaseViewModel, ObservableObject {
         }
 
         let availableBridgeAccounts = Self.resolveSupportedSolanaAccounts(solanaAccountsService: solanaAccountsService)
-        let chosenAccount = availableBridgeAccounts.first(where: { $0.data.mintAddress == preChosenWallet?.mintAddress })
+        let chosenAccount = availableBridgeAccounts
+            .first(where: { $0.data.mintAddress == preChosenWallet?.mintAddress })
 
         // Ensure at lease one available wallet for bridging.
         guard let initialSolanaAccount = chosenAccount ?? availableBridgeAccounts.first else {
@@ -133,10 +133,13 @@ class WormholeSendInputViewModel: BaseViewModel, ObservableObject {
         let cryptoInputFormatter = CryptoFormatter(hideSymbol: true)
         let currencyInputFormatter = CurrencyFormatter(hideSymbol: true, lessText: "")
 
-        $input
+        Publishers
+            .CombineLatest($input, $inputMode)
             .dropFirst()
             .debounce(for: 0.5, scheduler: DispatchQueue.main)
-            .sink { [weak self] input in
+            .sink { [weak self] input, inputMode in
+              self?.analyticsManager.log(event: .sendClickChangeTokenValue(source: "Bridge"))
+
                 guard let self, let account = self.adapter.inputAccount, !self.wasMaxUsed else {
                     self?.wasMaxUsed = false
                     return
@@ -145,7 +148,7 @@ class WormholeSendInputViewModel: BaseViewModel, ObservableObject {
                     let input = input.replacingOccurrences(of: " ", with: "")
                     var newAmount = input
 
-                    switch self.inputMode {
+                    switch inputMode {
                     case .fiat:
                         let fiatAmount: CurrencyAmount = .init(usdStr: input)
 
@@ -198,6 +201,7 @@ class WormholeSendInputViewModel: BaseViewModel, ObservableObject {
             }
             .store(in: &subscriptions)
 
+        #warning("REFACTOR: Can be removed?")
         stateMachine.state
             .sink { state in
                 debugPrint("SendInputState", state)
@@ -256,8 +260,15 @@ class WormholeSendInputViewModel: BaseViewModel, ObservableObject {
                 case .fiat:
                     self.countAfterDecimalPoint = 2
                 }
+                self.analyticsManager.log(event: .sendClickChangeTokenChosen(source: "Bridge"))
             }
             .store(in: &subscriptions)
+
+        changeTokenPressed
+            .sink { [weak self] in self?.logChooseTokenClick() }
+            .store(in: &subscriptions)
+
+        analyticsManager.log(event: .sendBridgesScreenOpen)
     }
 
     func selectSolanaAccount(wallet: Wallet) {
@@ -308,6 +319,12 @@ class WormholeSendInputViewModel: BaseViewModel, ObservableObject {
             userActionService.execute(action: userAction)
 
             action.send(.send(userAction))
+            analyticsManager.log(event: .sendBridgesConfirmButtonClick(
+                tokenName: input.solanaAccount.data.token.symbol,
+                tokenValue: input.amount.value.description.double ?? 0,
+                valueFiat: input.solanaAccount.price != nil ? (try? input.amount.toFiatAmount(price: input.solanaAccount.price!).value.description.double) ?? 0 : 0.0,
+                fee: output.feePayerAmount?.amount.description.double ?? 0
+            ))
         } else {
             return
         }
@@ -329,7 +346,7 @@ extension WormholeSendInputViewModel {
         }
 
         // Only accounts with non-zero balance
-        availableBridgeAccounts = availableBridgeAccounts.filter({ $0.cryptoAmount.value > 0 })
+        availableBridgeAccounts = availableBridgeAccounts.filter { $0.cryptoAmount.value > 0 }
 
         availableBridgeAccounts
             .sort { lhs, rhs in
@@ -339,11 +356,17 @@ extension WormholeSendInputViewModel {
                 }
                 return (lhs.amountInFiat?.value ?? 0) > (rhs.amountInFiat?.value ?? 0)
             }
-        
+
         if availableBridgeAccounts.isEmpty {
             availableBridgeAccounts.append(.init(data: Wallet(token: Token.usdcet)))
         }
 
         return availableBridgeAccounts
+    }
+}
+
+extension WormholeSendInputViewModel {
+    func logChooseTokenClick() {
+        analyticsManager.log(event: .sendnewTokenInputClick(source: "Bridge"))
     }
 }

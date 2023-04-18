@@ -63,9 +63,7 @@ struct RendableWormholeClaimUserActionDetail: RendableTransactionDetail {
     }
 
     var amountInToken: String {
-        guard let value = CryptoFormatter().string(for: userAction.amountInCrypto) else {
-            return ""
-        }
+        let value = CryptoFormatter().string(amount: userAction.amountInCrypto)
         return "\(value)"
     }
 

@@ -32,7 +32,7 @@ struct ForgetPinView: View {
                 SwiftUI.EmptyView()
                     .frame(width: 24)
                 Spacer()
-                Text(L10n.forgetYouPIN)
+                Text(L10n.forgotYourPIN)
                     .fontWeight(.semibold)
                     .apply(style: .title3)
                     .padding(.top, 8)

@@ -43,7 +43,7 @@ public enum SupportedToken {
         .init(name: "UST", coingekoID: "terrausd", ethAddress: "0xa693b19d2931d498c5b318df961919bb4aee87a5", solAddress: "9vMJfxuKxXBoEa7rM12mYLMwTacLMLDJqHozw96WQL8i", receiveFromAddress: nil),
         .init(name: "CRV", coingekoID: "curve-dao-token", ethAddress: "0xd533a949740bb3306d119cc777fa900ba034cd52", solAddress: "7gjNiPun3AzEazTZoFEjZgcBMeuaXdpjHq2raZTmTrfs", receiveFromAddress: nil),
         .init(name: "LUNA", coingekoID: "terra-luna", ethAddress: "0xbd31ea8212119f94a611fa969881cba3ea06fa3d", solAddress: "F6v4wfAdJB8D8p77bMXZgYt8TDKsYxLYxH5AFhUkYx9W", receiveFromAddress: nil),
-        .init(name: "BNB", coingekoID: "binancecoin", ethAddress: "0x418d75f65a02b3d53b2418fb8e1fe493759c7605", solAddress: "F6v4wfAdJB8D8p77bMXZgYt8TDKsYxLYxH5AFhUkYx9W", receiveFromAddress: nil),
+        .init(name: "BNB", coingekoID: "binancecoin", ethAddress: "0x418d75f65a02b3d53b2418fb8e1fe493759c7605", solAddress: "9gP2kCy3wA1ctvYWQk75guqXuHfrEomqydHLtcTCqiLa", receiveFromAddress: nil),
         .init(name: "Matic", coingekoID: "matic-network", ethAddress: "0x7d1afa7b718fb893db30a3abc0cfc608aacfebb0", solAddress: "C7NNPWuZCNjZBfW5p6JvGsR8pUdsRpEdP1ZAhnoDwj7h", receiveFromAddress: nil),
         .init(name: "AVAX", coingekoID: "avalanche-2", ethAddress: "0x85f138bfee4ef8e540890cfb48f620571d67eda3", solAddress: "KgV1GvrHQmRBY8sHQQeUKwTm2r2h8t4C8qt12Cw1HVE", receiveFromAddress: nil),
     ]
