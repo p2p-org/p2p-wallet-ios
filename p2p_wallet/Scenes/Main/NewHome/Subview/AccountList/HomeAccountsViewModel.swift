@@ -227,19 +227,21 @@ final class HomeAccountsViewModel: BaseViewModel, ObservableObject {
         // and support another chains later
         try await withThrowingTaskGroup(of: Void.self) { group in
             // solana
-            group.addTask {
-                try await solanaAccountsService.fetch()
+            group.addTask { [weak self] in
+                guard let self else { return }
+                try await self.solanaAccountsService.fetch()
             }
             
             // ethereum
             if available(.ethAddressEnabled) {
-                group.addTask {
-                    try await ethereumAccountsService.fetch()
+                group.addTask { [weak self] in
+                    guard let self else { return }
+                    try await self.ethereumAccountsService.fetch()
                 }
             }
             
             // another chains goes here
-            
+            for try await _ in group {}
         }
     }
 
