@@ -75,6 +75,7 @@ public class CryptoFormatter: Formatter {
         formatter.groupingSeparator = " "
         if let maxDigits {
             formatter.maximumFractionDigits = maxDigits
+            formatter.roundingMode = .down
         } else {
             formatter.maximumFractionDigits = Int(amount.token.decimals)
         }
