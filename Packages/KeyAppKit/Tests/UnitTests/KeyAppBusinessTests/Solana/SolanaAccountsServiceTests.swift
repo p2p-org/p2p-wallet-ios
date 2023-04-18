@@ -6,12 +6,12 @@ import KeyAppKitCore
 import SolanaPricesAPIs
 import SolanaSwift
 
-final class SolanaAccountsServiceTests: XCTestCase {
+final class AccountsServiceTests: XCTestCase {
     // Ensure 10 seconds updating
     func testMonitoringByTimer() async throws {
         let solanaAPIClient = MockSolanaAPIClient()
 
-        let service = SolanaAccountsService(
+        let service = SolanaAccountsProvider(
             accountStorage: MockAccountStorage(),
             solanaAPIClient: solanaAPIClient,
             tokensService: MockSolanaTokensRepository(),
@@ -40,7 +40,7 @@ final class SolanaAccountsServiceTests: XCTestCase {
         let solanaAPIClient = MockSolanaAPIClient()
         let observableService = MockSolanaAccountsObservableService()
 
-        let service = SolanaAccountsService(
+        let service = SolanaAccountsProvider(
             accountStorage: accountStorage,
             solanaAPIClient: solanaAPIClient,
             tokensService: MockSolanaTokensRepository(),

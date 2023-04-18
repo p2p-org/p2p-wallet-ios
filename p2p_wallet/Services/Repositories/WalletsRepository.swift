@@ -5,6 +5,7 @@
 //  Created by Chung Tran on 23/03/2021.
 //
 
+import BECollectionView_Core
 import Combine
 import Foundation
 import KeyAppBusiness
@@ -12,7 +13,7 @@ import KeyAppKitCore
 import Resolver
 import SolanaSwift
 
-@available(*, deprecated, message: "Use SolanaAccountsService")
+@available(*, deprecated, message: "Use AccountsService")
 protocol WalletsRepository {
     var nativeWallet: Wallet? { get }
 
@@ -30,21 +31,21 @@ protocol WalletsRepository {
     var state: BEFetcherState { get }
 }
 
-@available(*, deprecated, message: "Use SolanaAccountsService")
+@available(*, deprecated, message: "Use AccountsService")
 class WalletsRepositoryImpl: NSObject, WalletsRepository {
     private var subscriptions = [AnyCancellable]()
-    private let solanaAccountsService: SolanaAccountsService
+    private let accountsService: AccountsService
 
     init(
-        solanaAccountsService: SolanaAccountsService = Resolver.resolve(),
+        accountsService: AccountsService = Resolver.resolve(),
         pricesService: PricesService = Resolver.resolve()
     ) {
-        self.solanaAccountsService = solanaAccountsService
+        self.accountsService = accountsService
 
         super.init()
 
-        solanaAccountsService
-            .$state
+        accountsService
+            .solanaAccountsStatePublisher
             .sink { state in
                 // Updating old prices service
                 let tokens = state.value.map(\.data.token)
@@ -54,11 +55,11 @@ class WalletsRepositoryImpl: NSObject, WalletsRepository {
     }
 
     var nativeWallet: SolanaSwift.Wallet? {
-        solanaAccountsService.state.value.nativeWallet?.data
+        accountsService.solanaAccountsState.value.nativeWallet?.data
     }
 
     func getWallets() -> [SolanaSwift.Wallet] {
-        solanaAccountsService.state.value.map(\.data)
+        accountsService.solanaAccountsState.value.map(\.data)
     }
 
     static func stateMapping(status: AsynValueStatus, error: Swift.Error?) -> BEFetcherState {
@@ -77,8 +78,8 @@ class WalletsRepositoryImpl: NSObject, WalletsRepository {
     }
 
     var statePublisher: AnyPublisher<BEFetcherState, Never> {
-        solanaAccountsService
-            .$state
+        accountsService
+            .solanaAccountsStatePublisher
             .map { state in
                 Self.stateMapping(status: state.status, error: state.error)
             }
@@ -87,11 +88,15 @@ class WalletsRepositoryImpl: NSObject, WalletsRepository {
     }
 
     var state: BEFetcherState {
-        Self.stateMapping(status: solanaAccountsService.state.status, error: solanaAccountsService.state.error)
+        Self.stateMapping(
+            status: accountsService.solanaAccountsState.status,
+            error: accountsService.solanaAccountsState.error
+        )
     }
 
     var dataDidChange: AnyPublisher<Void, Never> {
-        solanaAccountsService.$state
+        accountsService
+            .solanaAccountsStatePublisher
             .map(\.value)
             .removeDuplicates()
             .map { _ in () }
@@ -99,20 +104,21 @@ class WalletsRepositoryImpl: NSObject, WalletsRepository {
     }
 
     var dataPublisher: AnyPublisher<[SolanaSwift.Wallet], Never> {
-        solanaAccountsService.$state
+        accountsService
+            .solanaAccountsStatePublisher
             .map { state in state.value.map(\.data) }
             .eraseToAnyPublisher()
     }
 
     func getError() -> Swift.Error? {
-        solanaAccountsService.state.error
+        accountsService.solanaAccountsState.error
     }
 
     func reload() {
-        Task { try await solanaAccountsService.fetch() }
+        Task { try await accountsService.reloadSolanaAccounts() }
     }
 
     func refresh() {
-        Task { try await solanaAccountsService.fetch() }
+        Task { try await accountsService.reloadSolanaAccounts() }
     }
 }

@@ -15,8 +15,7 @@ final class HomeAccountsViewModel: BaseViewModel, ObservableObject {
 
     // MARK: - Dependencies
 
-    private let solanaAccountsService: SolanaAccountsService
-    private let ethereumAccountsService: EthereumAccountsService
+    private let accountsService: AccountsService
 
     @Injected private var analyticsManager: AnalyticsManager
 
@@ -66,8 +65,7 @@ final class HomeAccountsViewModel: BaseViewModel, ObservableObject {
     // MARK: - Initializer
 
     init(
-        solanaAccountsService: SolanaAccountsService = Resolver.resolve(),
-        ethereumAccountsService: EthereumAccountsService = Resolver.resolve(),
+        accountsService: AccountsService = Resolver.resolve(),
         wormholeService _: WormholeService = Resolver.resolve(),
         userActionService: UserActionService = Resolver.resolve(),
         favouriteAccountsStore: FavouriteAccountsDataSource = Resolver.resolve(),
@@ -77,8 +75,7 @@ final class HomeAccountsViewModel: BaseViewModel, ObservableObject {
         navigation: PassthroughSubject<HomeNavigation, Never>
     ) {
         self.navigation = navigation
-        self.solanaAccountsService = solanaAccountsService
-        self.ethereumAccountsService = ethereumAccountsService
+        self.accountsService = accountsService
 
         if sellDataService.isAvailable {
             actions = [.buy, .receive, .send, .cashOut]
@@ -95,7 +92,7 @@ final class HomeAccountsViewModel: BaseViewModel, ObservableObject {
 
         // Listen changing accounts from accounts manager
         // Ethereum accounts
-        ethereumAccountsService.$state
+        accountsService.ethereumAccountsStatePublisher
             .map { state in
                 state.apply { accounts in
                     // Filter accounts by supported Wormhole
@@ -164,8 +161,8 @@ final class HomeAccountsViewModel: BaseViewModel, ObservableObject {
             .store(in: &subscriptions)
 
         // Solana accounts
-        solanaAccountsService.$state
-            .map { (state: AsyncValueState<[SolanaAccountsService.Account]>) -> String in
+        accountsService.solanaAccountsStatePublisher
+            .map { (state: AsyncValueState<[SolanaAccount]>) -> String in
                 let equityValue: Double = state.value.reduce(0) { $0 + $1.amountInFiatDouble }
                 return "\(Defaults.fiat.symbol) \(equityValue.toString(maximumFractionDigits: 2))"
             }
@@ -173,7 +170,7 @@ final class HomeAccountsViewModel: BaseViewModel, ObservableObject {
             .weakAssign(to: \.balance, on: self)
             .store(in: &subscriptions)
 
-        solanaAccountsService.$state
+        accountsService.solanaAccountsStatePublisher
             .map { state in
                 // Filter NFT
                 state.apply { accounts in
@@ -223,16 +220,13 @@ final class HomeAccountsViewModel: BaseViewModel, ObservableObject {
     }
 
     func refresh() async throws {
-        _ = try await solanaAccountsService.fetch()
-        if available(.ethAddressEnabled) {
-            _ = try await ethereumAccountsService.fetch()
-        }
+        _ = try await accountsService.fetch()
     }
 
     func actionClicked(_ action: WalletActionType) {
         switch action {
         case .receive:
-            guard let pubkey = try? PublicKey(string: solanaAccountsService.state.value.nativeWallet?.data.pubkey)
+            guard let pubkey = try? PublicKey(string: accountsService.solanaAccountsState.value.nativeWallet?.data.pubkey)
             else { return }
             navigation.send(.receive(publicKey: pubkey))
         case .buy:

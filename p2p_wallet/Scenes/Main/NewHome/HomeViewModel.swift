@@ -20,8 +20,7 @@ import Wormhole
 class HomeViewModel: ObservableObject {
     // MARK: - Dependencies
 
-    @Injected private var solanaAccountsService: SolanaAccountsService
-    @Injected private var ethereumAccountsService: EthereumAccountsService
+    @Injected private var accountsService: AccountsService
 
     @Injected private var analyticsManager: AnalyticsManager
     @Injected private var clipboardManager: ClipboardManagerType
@@ -56,12 +55,12 @@ class HomeViewModel: ObservableObject {
 
     func reload() {
         Task {
-            try await solanaAccountsService.fetch()
+            try await accountsService.fetch()
         }
     }
 
     func copyToClipboard() {
-        clipboardManager.copyToClipboard(solanaAccountsService.state.value.nativeWallet?.data.pubkey ?? "")
+        clipboardManager.copyToClipboard(accountsService.solanaAccountsState.value.nativeWallet?.data.pubkey ?? "")
         notificationsService.showToast(title: "🖤", text: L10n.addressWasCopiedToClipboard, haptic: true)
         analyticsManager.log(event: .mainCopyAddress)
     }
@@ -138,12 +137,12 @@ private extension HomeViewModel {
             .store(in: &subscriptions)
 
         // Check if accounts managers was initialized.
-        let solanaInitialization = solanaAccountsService
-            .$state
+        let solanaInitialization = accountsService
+            .solanaAccountsStatePublisher
             .map { $0.status != .initializing }
 
-        let ethereumInitialization = ethereumAccountsService
-            .$state
+        let ethereumInitialization = accountsService
+            .ethereumAccountsStatePublisher
             .map { $0.status != .initializing }
 
         // Merge two services.
@@ -156,7 +155,10 @@ private extension HomeViewModel {
         // state, address, error, log
 
         Publishers
-            .CombineLatest(solanaAccountsService.$state, ethereumAccountsService.$state)
+            .CombineLatest(
+                accountsService.solanaAccountsStatePublisher,
+                accountsService.ethereumAccountsStatePublisher
+            )
             .receive(on: RunLoop.main)
             .sink { [weak self] solanaState, ethereumState in
                 guard let self else { return }

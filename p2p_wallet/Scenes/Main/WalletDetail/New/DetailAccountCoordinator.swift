@@ -6,7 +6,7 @@
 //
 
 import Combine
-import KeyAppBusiness
+import KeyAppKitCore
 import KeyAppUI
 import Sell
 import SolanaSwift
@@ -15,7 +15,7 @@ import UIKit
 import Wormhole
 
 enum DetailAccountCoordinatorArgs {
-    case solanaAccount(SolanaAccountsService.Account)
+    case solanaAccount(SolanaAccount)
 }
 
 enum DetailAccountCoordinatorResult {

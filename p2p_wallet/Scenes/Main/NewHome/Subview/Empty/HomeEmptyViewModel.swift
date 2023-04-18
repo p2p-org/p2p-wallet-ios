@@ -19,7 +19,7 @@ final class HomeEmptyViewModel: BaseViewModel, ObservableObject {
     @Injected private var analyticsManager: AnalyticsManager
     @Injected private var walletsRepository: WalletsRepository
     @Injected private var pricesService: PricesServiceType
-    @Injected private var solanaAccountsService: SolanaAccountsService
+    @Injected private var accountsService: AccountsService
     
     // MARK: - Properties
     private var cancellable: AnyCancellable?
@@ -60,7 +60,7 @@ final class HomeEmptyViewModel: BaseViewModel, ObservableObject {
     }
 
     func receiveClicked() {
-        guard let pubkey = try? PublicKey(string: solanaAccountsService.state.value.nativeWallet?.data.pubkey) else { return }
+        guard let pubkey = try? PublicKey(string: accountsService.solanaAccountsState.value.nativeWallet?.data.pubkey) else { return }
         navigation.send(.receive(publicKey: pubkey))
     }
     

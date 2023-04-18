@@ -10,11 +10,11 @@ final class DetailHistoryViewModel: HistoryViewModel {
 
     @Injected private var helpLauncher: HelpCenterLauncher
 
-    let account: SolanaAccountsService.Account?
+    let account: SolanaAccount?
 
     init(
         mint: String,
-        account: SolanaAccountsService.Account? = nil
+        account: SolanaAccount? = nil
     ) {
         self.account = account
         super.init(mint: mint)

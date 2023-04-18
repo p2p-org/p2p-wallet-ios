@@ -441,29 +441,29 @@ extension Resolver: ResolverRegistering {
             .scope(.session)
 
         register {
-            SolanaAccountsService(
-                accountStorage: resolve(),
-                solanaAPIClient: resolve(),
-                tokensService: resolve(),
-                priceService: resolve(),
-                accountObservableService: resolve(),
-                fiat: Defaults.fiat.rawValue,
-                errorObservable: resolve()
+            AccountsServiceImpl(
+                solana: .init(
+                    fiat: Defaults.fiat.rawValue,
+                    accountStorage: resolve(),
+                    apiClient: resolve(),
+                    tokensService: resolve(),
+                    priceService: resolve(),
+                    accountObservableService: resolve(),
+                    errorObservable: resolve()
+                ),
+                ethereum: .init(
+                    address: resolve(UserWalletManager.self).wallet?.ethereumKeypair.address ?? "",
+                    web3: resolve(),
+                    ethereumTokenRepository: resolve(),
+                    priceService: resolve(),
+                    fiat: Defaults.fiat.rawValue,
+                    errorObservable: resolve()
+                ),
+                isEthAddressAvailable: available(.ethAddressEnabled)
             )
         }
-        .scope(.session)
-
-        register {
-            EthereumAccountsService(
-                address: resolve(UserWalletManager.self).wallet?.ethereumKeypair.address ?? "",
-                web3: resolve(),
-                ethereumTokenRepository: resolve(),
-                priceService: resolve(),
-                fiat: Defaults.fiat.rawValue,
-                errorObservable: resolve()
-            )
-        }
-        .scope(.session)
+            .implements(AccountsService.self)
+            .scope(.session)
 
         register { FavouriteAccountsDataSource() }
             .scope(.session)

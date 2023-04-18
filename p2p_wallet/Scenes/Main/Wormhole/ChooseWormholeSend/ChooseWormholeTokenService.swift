@@ -14,7 +14,7 @@ final class ChooseWormholeTokenService: ChooseItemService {
     }
 
     private let statePublisher: CurrentValueSubject<AsyncValueState<[ChooseItemListSection]>, Never>
-    @Injected private var accountsService: SolanaAccountsService
+    @Injected private var accountsService: AccountsService
     private var subscriptions = [AnyCancellable]()
 
     init() {
@@ -38,7 +38,7 @@ final class ChooseWormholeTokenService: ChooseItemService {
 
 private extension ChooseWormholeTokenService {
     func bind() {
-        accountsService.$state
+        accountsService.solanaAccountsStatePublisher
             .map({ state in
                 state.apply { accounts in
                     [ChooseItemListSection(

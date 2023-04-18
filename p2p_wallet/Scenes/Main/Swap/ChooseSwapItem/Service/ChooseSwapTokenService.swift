@@ -15,7 +15,7 @@ final class ChooseSwapTokenService: ChooseItemService {
     private let fromToken: Bool
     private let preferTokens: [String]
 
-    @Injected private var accountsService: SolanaAccountsService
+    @Injected private var accountsService: AccountsService
     private var subscriptions = [AnyCancellable]()
 
     init(swapTokens: [SwapToken], fromToken: Bool) {
@@ -94,7 +94,10 @@ private extension ChooseSwapTokenService {
             }
             .store(in: &subscriptions)
 
-        Publishers.CombineLatest(accountsService.$state.eraseToAnyPublisher(), swapTokens.eraseToAnyPublisher())
+        Publishers.CombineLatest(
+            accountsService.solanaAccountsStatePublisher,
+            swapTokens.eraseToAnyPublisher()
+        )
             .map({ ($0.0.value, $0.1) })
             .sink { [weak self] accounts, swapTokens in
                 guard let self else { return }

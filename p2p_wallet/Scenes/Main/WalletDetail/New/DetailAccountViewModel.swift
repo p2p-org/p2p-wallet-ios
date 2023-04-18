@@ -7,6 +7,7 @@
 
 import Combine
 import Foundation
+import KeyAppKitCore
 import KeyAppBusiness
 import Resolver
 import SolanaSwift
@@ -30,8 +31,8 @@ class DetailAccountViewModel: BaseViewModel, ObservableObject {
 
     /// Render solana account and dynamically update it.
     init(
-        solanaAccountsManager: SolanaAccountsService = Resolver.resolve(),
-        solanaAccount: SolanaAccountsService.Account,
+        accountsService: AccountsService = Resolver.resolve(),
+        solanaAccount: SolanaAccount,
         jupiterTokensRepository: JupiterTokensRepository = Resolver.resolve()
     ) {
         // Init action subject
@@ -59,8 +60,8 @@ class DetailAccountViewModel: BaseViewModel, ObservableObject {
         super.init()
 
         // Dynamic updating wallet and render it
-        solanaAccountsManager
-            .$state
+        accountsService
+            .solanaAccountsStatePublisher
             .receive(on: RunLoop.main)
             .map { $0.value.first(where: { $0.data.pubkey == solanaAccount.data.pubkey }) }
             .compactMap { $0 }

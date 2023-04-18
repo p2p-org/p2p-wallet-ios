@@ -6,10 +6,10 @@
 //
 
 import Foundation
-import KeyAppBusiness
+import KeyAppKitCore
 
 struct RendableSolanaAccount: RendableAccount {
-    let account: SolanaAccountsService.Account
+    let account: SolanaAccount
     
     var id: String {
         account.id

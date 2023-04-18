@@ -28,7 +28,6 @@ class WormholeClaimViewModel: BaseViewModel, ObservableObject {
 
     init(
         account: EthereumAccount,
-        ethereumAccountsService _: EthereumAccountsService = Resolver.resolve(),
         wormholeAPI: WormholeService = Resolver.resolve()
     ) {
         model = WormholeClaimEthereumModel(account: account, bundle: .init(value: nil))

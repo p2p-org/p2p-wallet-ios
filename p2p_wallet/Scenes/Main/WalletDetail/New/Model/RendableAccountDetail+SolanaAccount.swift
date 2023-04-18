@@ -6,10 +6,10 @@
 //
 
 import Foundation
-import KeyAppBusiness
+import KeyAppKitCore
 
 struct RendableNewSolanaAccountDetail: RendableAccountDetail {
-    let account: SolanaAccountsService.Account
+    let account: SolanaAccount
     
     let isSwapAvailable: Bool
 

@@ -44,7 +44,7 @@ struct WormholeSendInputStateAdapter: Equatable {
         }
     }
 
-    var inputAccount: SolanaAccountsService.Account? {
+    var inputAccount: SolanaAccount? {
         input?.solanaAccount
     }
 

@@ -30,7 +30,7 @@ class WormholeSendInputViewModel: BaseViewModel, ObservableObject {
     let switchPressed = PassthroughSubject<Void, Never>()
     let maxPressed = PassthroughSubject<Void, Never>()
 
-    let solanaAccountsService: SolanaAccountsService
+    let accountsService: AccountsService
 
     let stateMachine: WormholeSendInputStateMachine
 
@@ -69,12 +69,12 @@ class WormholeSendInputViewModel: BaseViewModel, ObservableObject {
         relayService: RelayService = Resolver.resolve(),
         relayContextManager: RelayContextManager = Resolver.resolve(),
         orcaSwap: OrcaSwapType = Resolver.resolve(),
-        solanaAccountsService: SolanaAccountsService = Resolver.resolve(),
+        accountsService: AccountsService = Resolver.resolve(),
         notificationService: NotificationService = Resolver.resolve(),
         preChosenWallet: Wallet? = nil
     ) {
         self.recipient = recipient
-        self.solanaAccountsService = solanaAccountsService
+        self.accountsService = accountsService
 
         let services: WormholeSendInputState.Service = (wormholeService, relayService, relayContextManager, orcaSwap)
 
@@ -87,7 +87,7 @@ class WormholeSendInputViewModel: BaseViewModel, ObservableObject {
             return
         }
 
-        let availableBridgeAccounts = Self.resolveSupportedSolanaAccounts(solanaAccountsService: solanaAccountsService)
+        let availableBridgeAccounts = Self.resolveSupportedSolanaAccounts(accountsService: accountsService)
         let chosenAccount = availableBridgeAccounts
             .first(where: { $0.data.mintAddress == preChosenWallet?.mintAddress })
 
@@ -111,7 +111,7 @@ class WormholeSendInputViewModel: BaseViewModel, ObservableObject {
         let state: WormholeSendInputState = .calculating(
             newInput: .init(
                 solanaAccount: initialSolanaAccount,
-                availableAccounts: solanaAccountsService.state.value,
+                availableAccounts: accountsService.solanaAccountsState.value,
                 amount: .init(token: initialSolanaAccount.data.token),
                 recipient: recipient.address
             )
@@ -272,7 +272,7 @@ class WormholeSendInputViewModel: BaseViewModel, ObservableObject {
     }
 
     func selectSolanaAccount(wallet: Wallet) {
-        let accounts = Self.resolveSupportedSolanaAccounts(solanaAccountsService: solanaAccountsService)
+        let accounts = Self.resolveSupportedSolanaAccounts(accountsService: accountsService)
 
         let selectedAccount = accounts.first { account in
             account.data.mintAddress == wallet.mintAddress
@@ -333,15 +333,15 @@ class WormholeSendInputViewModel: BaseViewModel, ObservableObject {
 
 extension WormholeSendInputViewModel {
     static func resolveSupportedSolanaAccounts(
-        solanaAccountsService: SolanaAccountsService
-    ) -> [SolanaAccountsService.Account] {
+        accountsService: AccountsService
+    ) -> [SolanaAccount] {
         let supportedToken = SupportedToken.bridges.map(\.solAddress).compactMap { $0 }
 
-        var availableBridgeAccounts = solanaAccountsService.state.value.filter { account in
+        var availableBridgeAccounts = accountsService.solanaAccountsState.value.filter { account in
             supportedToken.contains(account.data.token.address)
         }
 
-        if let nativeWallet = solanaAccountsService.state.value.nativeWallet {
+        if let nativeWallet = accountsService.solanaAccountsState.value.nativeWallet {
             availableBridgeAccounts.append(nativeWallet)
         }
 

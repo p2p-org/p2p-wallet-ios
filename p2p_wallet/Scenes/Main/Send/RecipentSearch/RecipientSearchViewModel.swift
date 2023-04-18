@@ -47,7 +47,7 @@ class RecipientSearchViewModel: ObservableObject {
     private let source: SendSource
 
     @Injected private var clipboardManager: ClipboardManagerType
-    @Injected private var solanaAccountsService: SolanaAccountsService
+    @Injected private var accountsService: AccountsService
     @Injected private var tokensRepository: TokensRepository
     @Injected private var notificationService: NotificationService
     @Injected private var analyticsManager: AnalyticsManager
@@ -121,7 +121,7 @@ class RecipientSearchViewModel: ObservableObject {
         }
 
         config = .init(
-            wallets: solanaAccountsService.state.value.map(\.data),
+            wallets: accountsService.solanaAccountsState.value.map(\.data),
             ethereumAccount: userWalletManager.wallet?.ethereumKeypair.address,
             tokens: [:],
             ethereumSearch: ethereumSearch

@@ -8,6 +8,7 @@
 import Foundation
 import SolanaSwift
 import KeyAppBusiness
+import KeyAppKitCore
 
 extension Wallet {
     var isNFTToken: Bool {
@@ -51,7 +52,7 @@ extension HomeAccountsViewModel {
         (ethereumAcount.account.balanceInFiat?.value ?? 0) > 0
     }
 
-    static var defaultSolanaAccountsSorter: (SolanaAccountsService.Account, SolanaAccountsService.Account) -> Bool {
+    static var defaultSolanaAccountsSorter: (SolanaAccount, SolanaAccount) -> Bool {
         { lhs, rhs in
             // prefers non-liquidity token than liquidity tokens
             if lhs.data.token.isLiquidity != rhs.data.token.isLiquidity {

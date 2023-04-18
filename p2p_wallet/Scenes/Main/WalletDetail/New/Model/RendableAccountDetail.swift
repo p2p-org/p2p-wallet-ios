@@ -8,6 +8,7 @@
 import Foundation
 import SolanaSwift
 import KeyAppBusiness
+import KeyAppKitCore
 
 protocol RendableAccountDetail {
     var title: String { get }
@@ -29,7 +30,7 @@ enum RendableAccountDetailAction: Identifiable {
 extension RendableAccountDetailAction {
     enum ReceiveParam {
         case wallet(Wallet)
-        case solanaAccount(SolanaAccountsService.Account)
+        case solanaAccount(SolanaAccount)
         case none
     }
 
