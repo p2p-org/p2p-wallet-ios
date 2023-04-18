@@ -1,5 +1,5 @@
 //
-//  DetailAccountView.swift
+//  AccountDetailView.swift
 //  p2p_wallet
 //
 //  Created by Giang Long Tran on 19.02.2023.
@@ -8,8 +8,8 @@
 import KeyAppUI
 import SwiftUI
 
-struct DetailAccountView: View {
-    @ObservedObject var detailAccount: DetailAccountViewModel
+struct AccountDetailView: View {
+    @ObservedObject var detailAccount: AccountDetailViewModel
     @ObservedObject var historyList: HistoryViewModel
 
     var body: some View {
@@ -42,14 +42,14 @@ struct DetailAccountView: View {
     }
 }
 
-struct DetailAccountView_Previews: PreviewProvider {
+struct AccountDetailView_Previews: PreviewProvider {
     static var previews: some View {
         let historyList = HistoryViewModel(
             mock: [MockedRendableListTransactionItem.send()]
         )
         historyList.fetch()
 
-        return DetailAccountView(
+        return AccountDetailView(
             detailAccount: .init(
                 rendableAccountDetail: MockRendableAccountDetail(
                     title: "USDC",

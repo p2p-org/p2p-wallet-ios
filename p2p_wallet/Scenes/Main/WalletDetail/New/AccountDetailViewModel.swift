@@ -1,5 +1,5 @@
 //
-//  DetailAccountViewModel.swift
+//  AccountDetailViewModel.swift
 //  p2p_wallet
 //
 //  Created by Giang Long Tran on 19.02.2023.
@@ -11,17 +11,17 @@ import KeyAppBusiness
 import Resolver
 import SolanaSwift
 
-enum DetailAccountAction {
+enum AccountDetailAction {
     case openBuy
     case openReceive
     case openSend
     case openSwap(Wallet?)
 }
 
-class DetailAccountViewModel: BaseViewModel, ObservableObject {
+class AccountDetailViewModel: BaseViewModel, ObservableObject {
     @Published var rendableAccountDetail: RendableAccountDetail
 
-    let actionSubject: PassthroughSubject<DetailAccountAction, Never>
+    let actionSubject: PassthroughSubject<AccountDetailAction, Never>
 
     init(rendableAccountDetail: RendableAccountDetail) {
         self.rendableAccountDetail = rendableAccountDetail
@@ -35,7 +35,7 @@ class DetailAccountViewModel: BaseViewModel, ObservableObject {
         jupiterTokensRepository: JupiterTokensRepository = Resolver.resolve()
     ) {
         // Init action subject
-        let actionSubject = PassthroughSubject<DetailAccountAction, Never>()
+        let actionSubject = PassthroughSubject<AccountDetailAction, Never>()
         self.actionSubject = actionSubject
 
         // Handle action
@@ -78,7 +78,7 @@ class DetailAccountViewModel: BaseViewModel, ObservableObject {
     }
 }
 
-extension DetailAccountViewModel {
+extension AccountDetailViewModel {
     /// Check swap action is available for this account (wallet).
     static func isSwapAvailableFor(wallet: Wallet, for status: JupiterDataStatus) -> Bool {
         if available(.jupiterSwapEnabled) {
