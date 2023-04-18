@@ -147,10 +147,11 @@ final class HomeAccountsViewModel: BaseViewModel, ObservableObject {
                     )
 
                     let isClaimable = !account.isClaiming && balanceInFiat >= CurrencyAmount(usd: 1)
-                    return RenderableAccountFactory.account(
-                        with: account.account,
+                    return RenderableEthereumAccount(
+                        account: account.account,
                         isClaiming: isClaiming,
-                        onClain: isClaimable ? {
+                        onTap: nil,
+                        onClaim: isClaimable ? {
                             navigation.send(.claim(account.account))
                         } : nil
                     )
