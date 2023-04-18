@@ -63,7 +63,7 @@ class DepositSolendViewModel: ObservableObject {
     @Published var depositFee: SolendFeePaying?
     @Published var inputLamport: UInt64 = 0
     @Published var isButtonEnabled: Bool = false
-    @Published var buttonText: String = L10n.enterTheAmount
+    @Published var buttonText: String = L10n.enterAmount
     @Published var hasError = false
     @Published var feeText = ""
     @Published var maxText = "Use all"
