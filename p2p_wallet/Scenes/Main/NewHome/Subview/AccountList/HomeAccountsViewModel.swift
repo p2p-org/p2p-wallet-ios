@@ -223,9 +223,23 @@ final class HomeAccountsViewModel: BaseViewModel, ObservableObject {
     }
 
     func refresh() async throws {
-        _ = try await solanaAccountsService.fetch()
-        if available(.ethAddressEnabled) {
-            _ = try await ethereumAccountsService.fetch()
+        // use throwing task group to make solanaAccountService.fetch() and ethereumAccountService.fetch() run parallelly
+        // and support another chains later
+        try await withThrowingTaskGroup(of: Void.self) { group in
+            // solana
+            group.addTask {
+                try await solanaAccountsService.fetch()
+            }
+            
+            // ethereum
+            if available(.ethAddressEnabled) {
+                group.addTask {
+                    try await ethereumAccountsService.fetch()
+                }
+            }
+            
+            // another chains goes here
+            
         }
     }
 
