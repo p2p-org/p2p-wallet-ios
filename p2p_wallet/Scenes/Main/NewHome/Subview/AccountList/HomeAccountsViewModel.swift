@@ -241,6 +241,8 @@ final class HomeAccountsViewModel: BaseViewModel, ObservableObject {
             }
             
             // another chains goes here
+            
+            // await values
             for try await _ in group {}
         }
     }
