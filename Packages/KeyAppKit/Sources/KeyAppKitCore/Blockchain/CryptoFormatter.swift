@@ -1,28 +1,37 @@
-//
-//  File.swift
-//
-//
-//  Created by Giang Long Tran on 11.03.2023.
-//
-
 import BigInt
 import Foundation
 
-/// Helper protocol for quickly converting to ``CryptoAmount``.
-public protocol CryptoAmountConvertible {
-    var asCryptoAmount: CryptoAmount { get }
+/// Factory class for automatically creating formatter.
+public enum CryptoFormatterFactory {
+    public static func formatter(with token: SomeToken, style: CryptoFormatterStyle = .long) -> CryptoFormatter {
+        if token.tokenPrimaryKey == "native-ethereum" && token.decimals == 18 {
+            return ETHCryptoFormatter(style: style)
+        } else {
+            return CryptoFormatter()
+        }
+    }
 }
 
-/// A string-formatter for crypto.
+/// A general string-formatter for crypto
 public class CryptoFormatter: Formatter {
+    /// Default string in case when parsing in not possible.
     public let defaultValue: String
+    
+    /// Appended prefix of output
     public let prefix: String
+    
+    /// Hide symbol in output
     public let hideSymbol: Bool
+    
+    /// Max number of digit.
+    public let maxDigits: Int?
 
-    public init(defaultValue: String = "", prefix: String = "", hideSymbol: Bool = false) {
+    public init(defaultValue: String = "", prefix: String = "", hideSymbol: Bool = false, maxDigits: Int? = nil) {
         self.defaultValue = defaultValue
         self.prefix = prefix
         self.hideSymbol = hideSymbol
+        self.maxDigits = maxDigits
+
         super.init()
     }
 
@@ -59,11 +68,17 @@ public class CryptoFormatter: Formatter {
         guard let amount else { return nil }
 
         let formatter = NumberFormatter()
+
         formatter.groupingSize = 3
         formatter.numberStyle = .decimal
         formatter.decimalSeparator = "."
         formatter.groupingSeparator = " "
-        formatter.maximumFractionDigits = Int(amount.token.decimals)
+        if let maxDigits {
+            formatter.maximumFractionDigits = maxDigits
+            formatter.roundingMode = .down
+        } else {
+            formatter.maximumFractionDigits = Int(amount.token.decimals)
+        }
 
         let convertedValue = Decimal(string: String(amount.amount))
         guard var formattedAmount = formatter.string(for: convertedValue) else {
@@ -80,4 +95,38 @@ public class CryptoFormatter: Formatter {
             return "\(formattedAmount) \(amount.token.symbol)"
         }
     }
+}
+
+/// Representation of crypto numbers
+public enum CryptoFormatterStyle {
+    /// Short representation of crypto numbers, e.g. limited fraction digits
+    case short
+
+    /// Full representation of crypto numbers
+    case long
+}
+
+/// Crypto formatter for ETH-like tokens
+public final class ETHCryptoFormatter: CryptoFormatter {
+    let style: CryptoFormatterStyle
+
+    init(style: CryptoFormatterStyle) {
+        self.style = style
+
+        switch style {
+        case .long:
+            super.init()
+        case .short:
+            super.init(maxDigits: 8)
+        }
+    }
+
+    override public func string(for obj: Any?) -> String? {
+        super.string(for: obj)
+    }
+}
+
+/// Helper protocol for quickly converting to ``CryptoAmount``.
+public protocol CryptoAmountConvertible {
+    var asCryptoAmount: CryptoAmount { get }
 }

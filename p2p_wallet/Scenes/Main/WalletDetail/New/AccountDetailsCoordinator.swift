@@ -1,5 +1,5 @@
 //
-//  DetailAccountCoordiantor.swift
+//  AccountDetailsCoordiantor.swift
 //  p2p_wallet
 //
 //  Created by Giang Long Tran on 19.02.2023.
@@ -14,26 +14,26 @@ import SwiftUI
 import UIKit
 import Wormhole
 
-enum DetailAccountCoordinatorArgs {
+enum AccountDetailsCoordinatorArgs {
     case solanaAccount(SolanaAccountsService.Account)
 }
 
-enum DetailAccountCoordinatorResult {
+enum AccountDetailsCoordinatorResult {
     case cancel
     case done
 }
 
-class DetailAccountCoordinator: SmartCoordinator<DetailAccountCoordinatorResult> {
-    let args: DetailAccountCoordinatorArgs
+class AccountDetailsCoordinator: SmartCoordinator<AccountDetailsCoordinatorResult> {
+    let args: AccountDetailsCoordinatorArgs
 
-    init(args: DetailAccountCoordinatorArgs, presentingViewController: UINavigationController) {
+    init(args: AccountDetailsCoordinatorArgs, presentingViewController: UINavigationController) {
         self.args = args
         super.init(presentation: SmartCoordinatorPushPresentation(presentingViewController))
     }
 
     override func build() -> UIViewController {
-        let detailAccountVM: DetailAccountViewModel
-        let historyListVM: DetailHistoryViewModel
+        let detailAccountVM: AccountDetailsViewModel
+        let historyListVM: AccountDetailsHistoryViewModel
 
         switch args {
         case let .solanaAccount(account):
@@ -63,7 +63,7 @@ class DetailAccountCoordinator: SmartCoordinator<DetailAccountCoordinatorResult>
         }
         .store(in: &subscriptions)
 
-        let view = DetailAccountView(
+        let view = AccountDetailsView(
             detailAccount: detailAccountVM,
             historyList: historyListVM
         )
@@ -71,7 +71,7 @@ class DetailAccountCoordinator: SmartCoordinator<DetailAccountCoordinatorResult>
         let vc = UIHostingController(rootView: view)
         vc.navigationItem.largeTitleDisplayMode = .never
         vc.onClose = { [weak self] in self?.result.send(.cancel) }
-        vc.title = detailAccountVM.rendableAccountDetail.title
+        vc.title = detailAccountVM.rendableAccountDetails.title
 
         return vc
     }
@@ -305,8 +305,7 @@ class DetailAccountCoordinator: SmartCoordinator<DetailAccountCoordinatorResult>
                         ))
                         .sink(receiveValue: {})
                         .store(in: &self.subscriptions)
-
-                case let .sentViaLink:
+                case .sentViaLink:
                     rootViewController.popToViewController(currentVC, animated: true)
 
 //                    self.coordinate(to: SendTransactionStatusCoordinator(parentController: rootViewController, transaction: model))

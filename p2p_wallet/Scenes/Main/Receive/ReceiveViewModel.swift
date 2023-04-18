@@ -2,6 +2,7 @@ import Combine
 import CoreImage.CIFilterBuiltins
 import Foundation
 import Resolver
+import AnalyticsManager
 
 enum ReceiveNetwork {
     enum Image {
@@ -29,6 +30,7 @@ class ReceiveViewModel: BaseViewModel, ObservableObject {
 
     @Injected private var clipboardManager: ClipboardManagerType
     @Injected private var notificationsService: NotificationService
+    @Injected private var analyticsManager: AnalyticsManager
 
     init(
         network: ReceiveNetwork,
@@ -137,10 +139,13 @@ class ReceiveViewModel: BaseViewModel, ObservableObject {
             switch FieldId(rawValue: row.id) {
             case .username:
                 message = L10n.yourUsernameWasCopied
+                analyticsManager.log(event: .receiveCopyAddressUsername)
             case .solana:
                 message = L10n.yourSolanaAddressWasCopied
+                analyticsManager.log(event: .receiveCopyLongAddressClick(network: network.analyticsName()))
             case .eth:
                 message = L10n.yourEthereumAddressWasCopied
+                analyticsManager.log(event: .receiveCopyLongAddressClick(network: network.analyticsName()))
             case .none:
                 message = ""
             }
@@ -158,6 +163,7 @@ class ReceiveViewModel: BaseViewModel, ObservableObject {
         }
         clipboardManager.copyToClipboard(address)
         sendNotification(text: message)
+        analyticsManager.log(event: .receiveCopyAddressClickButton(network: network.analyticsName()))
     }
 
     // MARK: - Notification
@@ -195,5 +201,17 @@ extension ReceiveViewModel {
         case eth
         case solana
         case username
+    }
+}
+
+// Analytics manager extension
+extension ReceiveNetwork {
+    func analyticsName() -> String {
+        switch self {
+        case .ethereum:
+            return "Ethereum"
+        case .solana:
+            return "Solana"
+        }
     }
 }

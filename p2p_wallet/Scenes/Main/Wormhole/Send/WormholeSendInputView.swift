@@ -73,6 +73,7 @@ struct WormholeSendInputView: View {
                     skeleton: viewModel.adapter.inputAccountSkeleton
                 ) {
                     viewModel.action.send(.openPickAccount)
+                    viewModel.changeTokenPressed.send()
                 }
             }
 

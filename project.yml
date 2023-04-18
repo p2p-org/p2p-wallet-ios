@@ -52,6 +52,49 @@ packages:
     RxCombine:
         url: https://github.com/CombineCommunity/RxCombine.git
         from: 2.0.1
+    ReachabilitySwift:
+        url: https://github.com/ashleymills/Reachability.swift.git
+        from: 5.0.0
+    KeychainSwift:
+        url: https://github.com/evgenyneu/keychain-swift.git
+        exactVersion: 19.0.0
+    SwiftyUserDefaults:
+        url: https://github.com/sunshinejr/SwiftyUserDefaults.git
+        exactVersion: 5.3.0
+    Intercom:
+        url: https://github.com/intercom/intercom-ios.git
+        exactVersion: 12.4.3
+    Down:
+        url: https://github.com/p2p-org/Down.git
+        branch: master
+    Resolver:
+        url: https://github.com/hmlongco/Resolver.git
+        exactVersion: 1.5.0
+    Kingfisher:
+        url: https://github.com/onevcat/Kingfisher.git
+        from: 7.6.2
+    PhoneNumberKit:
+        url: https://github.com/marmelroy/PhoneNumberKit.git
+        exactVersion: 3.3.4
+    SkeletonUI:
+        url: https://github.com/p2p-org/SkeletonUI.git
+        branch: master
+    Introspect:
+        url: https://github.com/siteline/SwiftUI-Introspect.git
+        exactVersion: 0.1.4
+    lottie-spm:
+        url: https://github.com/airbnb/lottie-spm.git
+        exactVersion: 4.1.3
+    GoogleSignIn:
+        url: https://github.com/google/GoogleSignIn-iOS
+        from: 6.2.4
+    AppsFlyerLib:
+        url: https://github.com/AppsFlyerSDK/AppsFlyerFramework
+        exactVersion: 6.9.2
+    Sentry:
+        url: https://github.com/getsentry/sentry-cocoa
+        exactVersion: 7.31.5
+
 
 options:
     deploymentTarget:
@@ -73,7 +116,7 @@ configFiles:
 
 settings:
     base:
-        MARKETING_VERSION: 2.5
+        MARKETING_VERSION: 2.5.1
     configs:
         Debug:
             VALIDATE_PRODUCT: false
@@ -270,6 +313,34 @@ targets:
               product: BECollectionView_Core
             - package: BECollectionView
               product: BECollectionView_Combine
+
+            - package: ReachabilitySwift
+              product: Reachability
+            - package: KeychainSwift
+            - package: SwiftyUserDefaults
+            - package: Intercom
+            - package: Down
+            - package: Resolver
+            - package: Kingfisher
+            - package: PhoneNumberKit
+            - package: SkeletonUI
+            - package: Introspect
+            - package: lottie-spm
+              product: Lottie
+
+            - package: GoogleSignIn
+              product: GoogleSignIn
+            - package: GoogleSignIn
+              product: AppAuth
+            - package: GoogleSignIn
+              product: GTMAppAuth
+            - package: GoogleSignIn
+              product: GTMSessionFetcher
+
+            - package: AppsFlyerLib
+
+
+            - package: Sentry
 
             - framework: Frameworks/keyapp.xcframework
               embed: false

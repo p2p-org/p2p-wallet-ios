@@ -10,7 +10,7 @@ import SolanaSwift
 
 struct DerivableAccount: Hashable {
     let derivablePath: DerivablePath
-    let info: SolanaSwift.Account
+    let info: KeyPair
     var amount: Double?
     var price: Double?
 

@@ -33,7 +33,8 @@ struct RenderableEthereumAccount: RenderableAccount, ClaimableRenderableAccount 
     }
 
     var subtitle: String {
-        CryptoFormatter().string(for: (account.wormholeNativeCounterpart() ?? account).representedBalance)
+        CryptoFormatterFactory.formatter(with: (account.wormholeNativeCounterpart() ?? account).representedBalance.token, style: .short)
+            .string(for: account.representedBalance)
             ?? "0 \(account.token.symbol)"
     }
 
