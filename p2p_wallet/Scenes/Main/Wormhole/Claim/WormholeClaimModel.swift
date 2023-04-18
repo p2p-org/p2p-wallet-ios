@@ -40,11 +40,11 @@ struct WormholeClaimEthereumModel: WormholeClaimModel {
     let bundle: AsyncValueState<WormholeBundle?>
 
     var icon: URL? {
-        account.token.logo
+        (account.wormholeNativeCounterpart() ?? account).token.logo
     }
 
     var title: String {
-        CryptoFormatter().string(for: account.representedBalance)
+        CryptoFormatter().string(for: (account.wormholeNativeCounterpart() ?? account).representedBalance)
             ?? "0 \(account.token.symbol)"
     }
 

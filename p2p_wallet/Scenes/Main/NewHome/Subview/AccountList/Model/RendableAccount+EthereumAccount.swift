@@ -1,13 +1,8 @@
-//
-//  RendableAccount+EthereumAccount.swift
-//  p2p_wallet
-//
-//  Created by Giang Long Tran on 11.03.2023.
-//
-
 import Foundation
 import KeyAppBusiness
 import KeyAppKitCore
+import SolanaSwift
+import Wormhole
 
 struct RenderableEthereumAccount: RenderableAccount, ClaimableRenderableAccount {
     let account: EthereumAccount
@@ -22,7 +17,7 @@ struct RenderableEthereumAccount: RenderableAccount, ClaimableRenderableAccount 
     }
 
     var icon: AccountIcon {
-        if let url = account.token.logo {
+        if let url = (account.wormholeNativeCounterpart() ?? account).token.logo {
             return .url(url)
         } else {
             return .image(.imageOutlineIcon)
@@ -34,11 +29,11 @@ struct RenderableEthereumAccount: RenderableAccount, ClaimableRenderableAccount 
     }
 
     var title: String {
-        account.token.name
+        (account.wormholeNativeCounterpart() ?? account).token.name
     }
 
     var subtitle: String {
-        CryptoFormatter().string(for: account.representedBalance)
+        CryptoFormatter().string(for: (account.wormholeNativeCounterpart() ?? account).representedBalance)
             ?? "0 \(account.token.symbol)"
     }
 
@@ -67,4 +62,39 @@ struct RenderableEthereumAccount: RenderableAccount, ClaimableRenderableAccount 
     let onTap: (() -> Void)?
 
     let onClaim: (() -> Void)?
+}
+
+extension EthereumAccount {
+    func wormholeNativeCounterpart() -> EthereumAccount? {
+        if case let .erc20(contract) = self.token.contractType {
+            if Wormhole.SupportedToken.ERC20(rawValue: contract.hex(eip55: false)) == .sol {
+                return EthereumAccount(
+                    address: self.address,
+                    token: .init(
+                        name: Token.nativeSolana.name,
+                        symbol: Token.nativeSolana.symbol,
+                        decimals: self.token.decimals,
+                        logo: URL(string: Token.nativeSolana.logoURI ?? ""),
+                        contractType: self.token.contractType
+                    ),
+                    balance: self.balance,
+                    price: self.price
+                )
+            } else if Wormhole.SupportedToken.ERC20(rawValue: contract.hex(eip55: false)) == .bnb {
+                return EthereumAccount(
+                    address: self.address,
+                    token: .init(
+                        name: "BNB",
+                        symbol: "BNB",
+                        decimals: self.token.decimals,
+                        logo: URL(string: "https://assets.coingecko.com/coins/images/825/large/bnb-icon2_2x.png?1644979850")!,
+                        contractType: self.token.contractType
+                    ),
+                    balance: self.balance,
+                    price: self.price
+                )
+            }
+        }
+        return nil
+    }
 }
