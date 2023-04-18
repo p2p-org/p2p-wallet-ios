@@ -15,15 +15,13 @@ import SolanaSwift
 /// timer.
 ///
 /// It also calculates ``amountInFiat`` by integrating with ``NewPriceService``.
-final class SolanaAccountsService: NSObject, AccountsService, ObservableObject {
-    typealias Account = SolanaAccount
-
+final class SolanaAccountsProvider: NSObject, AccountsProvider, ObservableObject {
     private var subscriptions = [AnyCancellable]()
 
-    private let accounts: AsyncValue<[Account]>
+    private let accounts: AsyncValue<[SolanaAccount]>
 //    let prices: AsyncValue<>
 
-    @Published var state: AsyncValueState<[Account]> = .init(value: [])
+    @Published var state: AsyncValueState<[SolanaAccount]> = .init(value: [])
 
     init(
         accountStorage: SolanaAccountStorage,
@@ -37,10 +35,10 @@ final class SolanaAccountsService: NSObject, AccountsService, ObservableObject {
         // Setup async value
         accounts = .init(initialItem: []) {
             guard let accountAddress = accountStorage.account?.publicKey.base58EncodedString else {
-                return (nil, SolanaAccountsServiceError.authorityError)
+                return (nil, SolanaAccountsProviderError.authorityError)
             }
 
-            var newAccounts: [Account] = []
+            var newAccounts: [SolanaAccount] = []
 
             do {
                 // Updating native account balance and get spl tokens
@@ -50,14 +48,14 @@ final class SolanaAccountsService: NSObject, AccountsService, ObservableObject {
                     solanaAPIClient.getTokenWallets(account: accountAddress, tokensRepository: tokensService)
                 )
 
-                let solanaAccount = Account(
+                let solanaAccount = SolanaAccount(
                     data: Wallet.nativeSolana(
                         pubkey: accountAddress,
                         lamport: balance
                     )
                 )
 
-                newAccounts = [solanaAccount] + splAccounts.map { Account(data: $0, price: nil) }
+                newAccounts = [solanaAccount] + splAccounts.map { SolanaAccount(data: $0, price: nil) }
 
                 return (newAccounts, nil)
             } catch {

@@ -1,5 +1,5 @@
 import Foundation
 
-enum EthereumAccountsServiceError: Error {
+enum EthereumAccountsProviderError: Error {
     case invalidEthereumAddress
 }

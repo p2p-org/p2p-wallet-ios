@@ -9,9 +9,8 @@ import Combine
 import Foundation
 import KeyAppKitCore
 
-/// Accounts service
-/// This protocol observes account changing in network.
-public protocol AccountsService<Account>: AnyObject {
+/// Protocol for provider that provides some kind of accounts.
+public protocol AccountsProvider: AnyObject {
     associatedtype Account
 
     /// Accounts state

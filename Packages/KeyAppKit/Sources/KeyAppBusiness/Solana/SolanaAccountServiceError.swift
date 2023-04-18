@@ -7,6 +7,6 @@
 
 import Foundation
 
-public enum SolanaAccountsServiceError: Error {
+public enum SolanaAccountsProviderError: Error {
     case authorityError
 }

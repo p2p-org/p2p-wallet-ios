@@ -11,14 +11,16 @@ import KeyAppKitCore
 import SolanaPricesAPIs
 import Web3
 
-final class EthereumAccountsService: NSObject, AccountsService, ObservableObject {
-    typealias Account = EthereumAccount
+/// Provider for providing account from Ethereum network
+final class EthereumAccountsProvider: NSObject, AccountsProvider, ObservableObject
+{
+    // MARK: - Properties
 
     private var subscriptions = [AnyCancellable]()
 
-    private let accounts: AsyncValue<[Account]>
+    private let accounts: AsyncValue<[EthereumAccount]>
 
-    @Published var state: AsyncValueState<[Account]> = .init(value: [])
+    @Published var state: AsyncValueState<[EthereumAccount]> = .init(value: [])
 
     init(
         address: String,
@@ -32,7 +34,7 @@ final class EthereumAccountsService: NSObject, AccountsService, ObservableObject
 
         accounts = .init(initialItem: [], request: {
             guard let address else {
-                return (nil, EthereumAccountsServiceError.invalidEthereumAddress)
+                return (nil, EthereumAccountsProviderError.invalidEthereumAddress)
             }
 
             do {
@@ -125,7 +127,7 @@ final class EthereumAccountsService: NSObject, AccountsService, ObservableObject
         address: String,
         balances: [EthereumTokenBalances.Balance],
         repository: EthereumTokensRepository
-    ) async throws -> [Account] {
+    ) async throws -> [EthereumAccount] {
         try await withThrowingTaskGroup(of: (EthereumTokenBalances.Balance, EthereumToken).self) { group in
             for balance in balances {
                 group.addTask {
