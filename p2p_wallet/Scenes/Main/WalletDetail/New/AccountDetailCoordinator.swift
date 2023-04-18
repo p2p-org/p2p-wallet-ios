@@ -1,5 +1,5 @@
 //
-//  DetailAccountCoordiantor.swift
+//  AccountDetailCoordiantor.swift
 //  p2p_wallet
 //
 //  Created by Giang Long Tran on 19.02.2023.
@@ -14,26 +14,26 @@ import SwiftUI
 import UIKit
 import Wormhole
 
-enum DetailAccountCoordinatorArgs {
+enum AccountDetailCoordinatorArgs {
     case solanaAccount(SolanaAccountsService.Account)
 }
 
-enum DetailAccountCoordinatorResult {
+enum AccountDetailCoordinatorResult {
     case cancel
     case done
 }
 
-class DetailAccountCoordinator: SmartCoordinator<DetailAccountCoordinatorResult> {
-    let args: DetailAccountCoordinatorArgs
+class AccountDetailCoordinator: SmartCoordinator<AccountDetailCoordinatorResult> {
+    let args: AccountDetailCoordinatorArgs
 
-    init(args: DetailAccountCoordinatorArgs, presentingViewController: UINavigationController) {
+    init(args: AccountDetailCoordinatorArgs, presentingViewController: UINavigationController) {
         self.args = args
         super.init(presentation: SmartCoordinatorPushPresentation(presentingViewController))
     }
 
     override func build() -> UIViewController {
-        let detailAccountVM: DetailAccountViewModel
-        let historyListVM: DetailHistoryViewModel
+        let detailAccountVM: AccountDetailViewModel
+        let historyListVM: AccountDetailHistoryViewModel
 
         switch args {
         case let .solanaAccount(account):
@@ -63,7 +63,7 @@ class DetailAccountCoordinator: SmartCoordinator<DetailAccountCoordinatorResult>
         }
         .store(in: &subscriptions)
 
-        let view = DetailAccountView(
+        let view = AccountDetailView(
             detailAccount: detailAccountVM,
             historyList: historyListVM
         )
