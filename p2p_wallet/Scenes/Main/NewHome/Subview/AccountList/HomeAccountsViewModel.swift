@@ -1,10 +1,3 @@
-//
-//  HomeWithTokensViewModel.swift
-//  p2p_wallet
-//
-//  Created by Ivan on 05.08.2022.
-//
-
 import AnalyticsManager
 import Combine
 import Foundation
@@ -37,7 +30,7 @@ final class HomeAccountsViewModel: BaseViewModel, ObservableObject {
     @Published private(set) var hideZeroBalance: Bool = Defaults.hideZeroBalances
 
     /// Solana accounts.
-    @Published private(set) var solanaAccountsState: AsyncValueState<[RendableSolanaAccount]> = .init(value: [])
+    @Published private(set) var solanaAccountsState: AsyncValueState<[RenderableSolanaAccount]> = .init(value: [])
     @Published private(set) var ethereumAccountsState: AsyncValueState<[any ClaimableRenderableAccount]> = .init(value: [])
 
     /// Primary list accounts.
@@ -200,7 +193,7 @@ final class HomeAccountsViewModel: BaseViewModel, ObservableObject {
                         tags.insert(.ignore)
                     }
 
-                    return RendableSolanaAccount(
+                    return RenderableSolanaAccount(
                         account: account,
                         extraAction: .visiable(
                             action: { [weak favouriteAccountsStore] in

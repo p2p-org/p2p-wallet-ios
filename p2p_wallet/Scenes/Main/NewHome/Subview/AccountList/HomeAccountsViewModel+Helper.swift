@@ -1,10 +1,3 @@
-//
-//  HomeAccountsViewModel+Helper.swift
-//  p2p_wallet
-//
-//  Created by Giang Long Tran on 05.03.2023.
-//
-
 import Foundation
 import SolanaSwift
 import KeyAppBusiness
@@ -23,7 +16,7 @@ extension Wallet: Identifiable {
 }
 
 extension HomeAccountsViewModel {
-    static func shouldInIgnoreSection(rendableAccount: RendableSolanaAccount, hideZeroBalance: Bool) -> Bool {
+    static func shouldInIgnoreSection(rendableAccount: RenderableSolanaAccount, hideZeroBalance: Bool) -> Bool {
         if rendableAccount.isInIgnoreList {
             return true
         } else if hideZeroBalance, rendableAccount.account.data.lamports == 0 {
@@ -33,7 +26,7 @@ extension HomeAccountsViewModel {
         }
     }
 
-    static func shouldInVisiableSection(rendableAccount: RendableSolanaAccount, hideZeroBalance: Bool) -> Bool {
+    static func shouldInVisiableSection(rendableAccount: RenderableSolanaAccount, hideZeroBalance: Bool) -> Bool {
         if rendableAccount.tags.contains(.favourite) {
             return true
         } else if hideZeroBalance, rendableAccount.account.data.lamports == 0 {

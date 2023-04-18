@@ -1,7 +1,7 @@
 import Foundation
 import KeyAppBusiness
 
-struct RendableSolanaAccount: RenderableAccount {
+struct RenderableSolanaAccount: RenderableAccount {
     let account: SolanaAccountsService.Account
     
     var id: String {

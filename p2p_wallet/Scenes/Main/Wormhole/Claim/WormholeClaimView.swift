@@ -1,10 +1,3 @@
-//
-//  WormholeClaimReceiving.swift
-//  p2p_wallet
-//
-//  Created by Giang Long Tran on 06.03.2023.
-//
-
 import KeyAppUI
 import Kingfisher
 import SolanaSwift
