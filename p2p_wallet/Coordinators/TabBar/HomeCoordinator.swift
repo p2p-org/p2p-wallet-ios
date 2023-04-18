@@ -239,7 +239,7 @@ final class HomeCoordinator: Coordinator<Void> {
                 analyticsManager.log(event: .mainScreenTokenDetailsOpen(tokenTicker: solanaAccount.data.token.symbol))
 
                 return coordinate(
-                    to: AccountDetailCoordinator(
+                    to: AccountDetailsCoordinator(
                         args: .solanaAccount(solanaAccount),
                         presentingViewController: navigationController
                     )
