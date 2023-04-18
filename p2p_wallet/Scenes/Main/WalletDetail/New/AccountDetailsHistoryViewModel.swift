@@ -6,7 +6,7 @@ import Resolver
 import SolanaSwift
 import Wormhole
 
-final class DetailHistoryViewModel: HistoryViewModel {
+final class AccountDetailsHistoryViewModel: HistoryViewModel {
 
     @Injected private var helpLauncher: HelpCenterLauncher
 
