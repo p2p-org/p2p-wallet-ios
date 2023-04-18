@@ -41,7 +41,6 @@ final class SendInputAmountViewModel: BaseViewModel, ObservableObject {
     @Published var amountTextColor: UIColor = Asset.Colors.night.color
     @Published var mainTokenText = ""
     @Published var mainAmountType: EnteredAmountType = .fiat
-    @Published var isSwitchAvailable = true
     @Published var isMaxButtonVisible: Bool = true
 
     @Published var secondaryAmountText = ""
@@ -52,7 +51,6 @@ final class SendInputAmountViewModel: BaseViewModel, ObservableObject {
     @Published var amount: Amount?
     @Published var isError: Bool = false
     @Published var countAfterDecimalPoint: Int
-    @Published var showSecondaryAmounts = true
 
     private let fiat: Fiat
     private var currentText: String?
