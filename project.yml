@@ -14,17 +14,25 @@ name: p2p_wallet
 
 # 3. Remove these comment when done
 packages:
-#    Cache:
-#        url: https://github.com/hyperoslo/Cache.git
-#        from: 6.0.0
+    # local
+    AnalyticsManager:
+        path: ./Packages/AnalyticsManager
+    Onboarding:
+        path: ./Packages/Onboarding
+    KeyAppKit:
+        path: ./Packages/KeyAppKit
+    JSBridge:
+        path: ./Packages/JSBridge
+    History:
+        path: ./Packages/History
+
+    # remote
     SolanaSwift:
         url: https://github.com/p2p-org/solana-swift.git
         branch: main
     OrcaSwapSwift:
         url: https://github.com/p2p-org/OrcaSwapSwift.git
         branch: main
-    KeyAppKit:
-        path: ./Packages/KeyAppKit
     BECollectionView:
         url: https://github.com/bigearsenal/BECollectionView.git
         branch: master
@@ -261,6 +269,11 @@ targets:
                     ASSETCATALOG_COMPILER_APPICON_NAME: AppIcon
 
         dependencies:
+            - package: AnalyticsManager
+            - package: Onboarding
+            - package: JSBridge
+            - package: History
+
             - package: KeyAppKit
               product: KeyAppKitLogger
             - package: KeyAppKit
@@ -268,21 +281,13 @@ targets:
             - package: KeyAppKit
               product: NameService
             - package: KeyAppKit
-              product: AnalyticsManager
-            - package: KeyAppKit
               product: SolanaPricesAPIs
             - package: KeyAppKit
-              product: JSBridge
-            - package: KeyAppKit
               product: CountriesAPI
-            - package: KeyAppKit
-              product: Onboarding
             - package: KeyAppKit
               product: Solend
             - package: KeyAppKit
               product: Send
-            - package: KeyAppKit
-              product: History
             - package: KeyAppKit
               product: Sell
             - package: KeyAppKit
