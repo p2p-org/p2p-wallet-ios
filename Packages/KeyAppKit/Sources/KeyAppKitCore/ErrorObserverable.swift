@@ -34,8 +34,9 @@ public extension ErrorObserver {
     }
 
     /// Helper method to handle error in ``AsyncValueState``
-    func handleAsyncValue<T>(_ publisher: some Publisher<AsyncValueState<T>, Never>) -> AnyCancellable {
-        publisher
+    func handleAsyncValue<T>(_ asyncValue: AsyncValue<T>) -> AnyCancellable {
+        asyncValue
+            .statePublisher
             .map(\.error)
             .compactMap { $0 }
             .sink { error in handleError(error) }

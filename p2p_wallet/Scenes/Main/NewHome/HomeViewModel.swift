@@ -137,11 +137,11 @@ private extension HomeViewModel {
 
         // Check if accounts managers was initialized.
         let solanaInitialization = solanaAccountsService
-            .$state
+            .statePublisher
             .map { $0.status != .initializing }
 
         let ethereumInitialization = ethereumAccountsService
-            .$state
+            .statePublisher
             .map { $0.status != .initializing }
 
         // Merge two services.
@@ -154,7 +154,7 @@ private extension HomeViewModel {
         // state, address, error, log
 
         Publishers
-            .CombineLatest(solanaAccountsService.$state, ethereumAccountsService.$state)
+            .CombineLatest(solanaAccountsService.statePublisher, ethereumAccountsService.statePublisher)
             .receive(on: RunLoop.main)
             .sink { [weak self] solanaState, ethereumState in
                 guard let self else { return }

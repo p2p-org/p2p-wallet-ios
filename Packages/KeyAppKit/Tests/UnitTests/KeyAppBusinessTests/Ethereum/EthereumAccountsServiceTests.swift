@@ -28,7 +28,7 @@ final class EthereumAccountsServiceTests: XCTestCase {
         }
         let priceService = EthereumPriceService(api: CoinGeckoPricesAPI(pricesNetworkManager: pricesNetworkManager))
 
-        let service = EthereumAccountsService(
+        let service = EthereumAccountsServiceImpl(
             address: "0x5Eaa9C2000a76DA450E9d1dAF44bb532337586EC",
             web3: web3,
             ethereumTokenRepository: EthereumTokensRepository(web3: web3),
