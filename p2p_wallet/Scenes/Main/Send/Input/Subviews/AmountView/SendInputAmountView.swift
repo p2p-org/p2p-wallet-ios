@@ -3,23 +3,13 @@ import SwiftUI
 import SolanaSwift
 
 struct SendInputAmountView: View {
-    @ObservedObject private var viewModel: SendInputAmountViewModel
-    private var showSecondaryAmounts: Bool
-    private var isSwitchAvailable: Bool
+    @ObservedObject var viewModel: SendInputAmountViewModel
+    let showSecondaryAmounts: Bool
+    let isSwitchAvailable: Bool
 
     @State private var switchAreaOpacity: Double = 1
 
     private let mainColor = Asset.Colors.night.color
-
-    init(
-        viewModel: SendInputAmountViewModel,
-        showSecondaryAmounts: Bool,
-        isSwitchAvailable: Bool
-    ) {
-        self.viewModel = viewModel
-        self.showSecondaryAmounts = showSecondaryAmounts
-        self.isSwitchAvailable = isSwitchAvailable
-    }
 
     var body: some View {
         ZStack(alignment: .trailing) {
