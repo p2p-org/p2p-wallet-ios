@@ -13,6 +13,7 @@ let package = Package(
 
     ],
     products: [
+        .library(name: "KeyAppKitCore", targets: ["KeyAppKitCore"]),
         .library(name: "Cache", targets: ["Cache"]),
 
         .library(
