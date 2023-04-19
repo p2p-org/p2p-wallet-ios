@@ -211,7 +211,7 @@ class WormholeSendInputViewModel: BaseViewModel, ObservableObject {
         stateMachine.state
             .removeDuplicates()
             .receive(on: RunLoop.main)
-            .weakAssign(to: \.state, on: self)
+            .assignWeak(to: \.state, on: self)
             .store(in: &subscriptions)
 
         maxPressed
