@@ -11,7 +11,7 @@ import XCTest
 
 class SendInputBusinessLogicInputTests: XCTestCase {
     let defaultUserWalletState: UserWalletEnvironments = .init(
-        wallets: [.nativeSolana(pubkey: "8JmwhqewSppZ2sDNqGZoKu3bWh8wUKZP8mdbP4M1XQx1", lamport: 30_000_000)],
+        wallets: [.nativeSolana(pubkey: "8JmwhqewSppZ2sDNqGZoKu3bWh8wUKZP8mdbP4M1XQx1", lamport: 30_000_000)], ethereumAccount: "",
         exchangeRate: ["SOL": .init(value: 12.5)],
         tokens: [.nativeSolana]
     )
@@ -34,10 +34,7 @@ class SendInputBusinessLogicInputTests: XCTestCase {
                 currentUsage: currentUsage,
                 maxAmount: 1_000_000,
                 amountUsed: 0,
-                maxTokenAccountCreationAmount: 10000000,
-                maxTokenAccountCreationCount: 30,
-                //                tokenAccountCreationAmountUsed: 0,
-                tokenAccountCreationCountUsed: 0
+                reachedLimitLinkCreation: false
             )
         )
     }

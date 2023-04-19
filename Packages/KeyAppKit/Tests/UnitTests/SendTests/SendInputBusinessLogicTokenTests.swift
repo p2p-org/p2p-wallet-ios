@@ -14,7 +14,7 @@ class SendInputBusinessLogicTokenTests: XCTestCase {
         wallets: [
             .nativeSolana(pubkey: "5bYReP8iw5UuLVS5wmnXfEfrYCKdiQ1FFAZQao8JqY7V", lamport: 30_000_000),
             .init(pubkey: "7cRd5jTqByhQVVEDdhzoANiD98JV2MW27b64tKLiRDaC", lamports: 1_000_000, supply: 0, token: .usdt),
-        ],
+        ], ethereumAccount: "",
         exchangeRate: ["SOL": .init(value: 12.5), "USDT": .init(value: 1.1)],
         tokens: [.nativeSolana]
     )
@@ -37,10 +37,7 @@ class SendInputBusinessLogicTokenTests: XCTestCase {
                 currentUsage: currentUsage,
                 maxAmount: 1_000_000,
                 amountUsed: 0,
-                maxTokenAccountCreationAmount: 10000000,
-                maxTokenAccountCreationCount: 30,
-                //                tokenAccountCreationAmountUsed: 0,
-                tokenAccountCreationCountUsed: 0
+                reachedLimitLinkCreation: false
             )
         )
     }

@@ -28,13 +28,14 @@ final class EthereumAccountsServiceTests: XCTestCase {
         }
         let priceService = EthereumPriceService(api: CoinGeckoPricesAPI(pricesNetworkManager: pricesNetworkManager))
 
-        let service = EthereumAccountsServiceImpl(
+        let service = EthereumAccountsService(
             address: "0x5Eaa9C2000a76DA450E9d1dAF44bb532337586EC",
             web3: web3,
             ethereumTokenRepository: EthereumTokensRepository(web3: web3),
             priceService: priceService,
             fiat: "usd",
-            errorObservable: MockErrorObservable()
+            errorObservable: MockErrorObservable(),
+            enable: true
         )
 
         // After 1 second

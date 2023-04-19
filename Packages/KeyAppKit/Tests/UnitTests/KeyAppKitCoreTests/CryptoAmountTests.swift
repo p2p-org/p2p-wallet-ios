@@ -18,7 +18,7 @@ final class CryptoAmountTests: XCTestCase {
         let amount = CryptoAmount(floatString: amountInput, token: token)
 
         XCTAssertEqual(amount?.value, 10_550_000_000_000_000_000)
-        XCTAssertEqual(amount?.decimals, token.decimals)
+        XCTAssertEqual(amount?.token.decimals, token.decimals)
         XCTAssertEqual(amount?.amount, 10.55)
     }
 
@@ -36,7 +36,7 @@ final class CryptoAmountTests: XCTestCase {
         let amount = CryptoAmount(floatString: amountInput, token: token)
 
         XCTAssertEqual(amount?.value, 10_123_456_789_123_456_789)
-        XCTAssertEqual(amount?.decimals, token.decimals)
+        XCTAssertEqual(amount?.token.decimals, token.decimals)
         XCTAssertEqual(amount?.amount, try! BigDecimal(fromString: "10.123456789123456789"))
     }
 
@@ -46,7 +46,7 @@ final class CryptoAmountTests: XCTestCase {
         let amount = CryptoAmount(floatString: amountInput, token: token)
 
         XCTAssertEqual(amount?.value, 10_123_456_789_123_456_789)
-        XCTAssertEqual(amount?.decimals, token.decimals)
+        XCTAssertEqual(amount?.token.decimals, token.decimals)
         XCTAssertEqual(amount?.amount, try! BigDecimal(fromString: "10.123456789123456789"))
     }
 
@@ -56,7 +56,7 @@ final class CryptoAmountTests: XCTestCase {
         let amount = CryptoAmount(floatString: amountInput, token: token)
 
         XCTAssertEqual(amount?.value, BigUInt(stringLiteral: "123456789123456789000000000000000000"))
-        XCTAssertEqual(amount?.decimals, token.decimals)
+        XCTAssertEqual(amount?.token.decimals, token.decimals)
         XCTAssertEqual(amount?.amount, try! BigDecimal(fromString: "123456789123456789"))
     }
 
@@ -79,7 +79,7 @@ final class CryptoAmountTests: XCTestCase {
                 stringLiteral: "123456789123456789000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000"
             )
         )
-        XCTAssertEqual(amount?.decimals, token.decimals)
-        XCTAssertEqual(amount?.amount, 0)
+        XCTAssertEqual(amount?.token.decimals, token.decimals)
+        XCTAssertEqual(amount?.amount, try! BigDecimal(fromString: "123456789123456789.000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000"))
     }
 }
