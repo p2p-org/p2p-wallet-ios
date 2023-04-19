@@ -453,14 +453,15 @@ extension Resolver: ResolverRegistering {
         }
         .scope(.session)
 
-        register {
+        register { () -> EthereumAccountsService in
             EthereumAccountsService(
                 address: resolve(UserWalletManager.self).wallet?.ethereumKeypair.address ?? "",
                 web3: resolve(),
                 ethereumTokenRepository: resolve(),
                 priceService: resolve(),
                 fiat: Defaults.fiat.rawValue,
-                errorObservable: resolve()
+                errorObservable: resolve(),
+                enable: available(.ethAddressEnabled)
             )
         }
         .scope(.session)

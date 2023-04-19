@@ -15,15 +15,18 @@ import SolanaSwift
 /// timer.
 ///
 /// It also calculates ``amountInFiat`` by integrating with ``NewPriceService``.
-public final class SolanaAccountsService: NSObject, AccountsService, ObservableObject {
+public final class SolanaAccountsService: NSObject, AccountsService {
     public typealias Account = SolanaAccount
 
     var subscriptions = [AnyCancellable]()
 
     let accounts: AsyncValue<[Account]>
-//    let prices: AsyncValue<>
 
-    @Published public var state: AsyncValueState<[Account]> = .init(value: [])
+    let _state: CurrentValueSubject<AsyncValueState<[Account]>, Never> = .init(.init(value: []))
+
+    public var statePublisher: AnyPublisher<AsyncValueState<[Account]>, Never> { _state.eraseToAnyPublisher() }
+
+    public var state: AsyncValueState<[Account]> { _state.value }
 
     public init(
         accountStorage: SolanaAccountStorage,
@@ -69,7 +72,7 @@ public final class SolanaAccountsService: NSObject, AccountsService, ObservableO
 
         /// Updating price
         let prices = accounts
-            .$state
+            .statePublisher
             .filter { $0.status == .initializing || $0.status == .ready }
             .asyncMap { state in
                 try? await errorObservable.run {
@@ -82,12 +85,12 @@ public final class SolanaAccountsService: NSObject, AccountsService, ObservableO
 
         // Report error
         errorObservable
-            .handleAsyncValue($state)
+            .handleAsyncValue(accounts)
             .store(in: &subscriptions)
 
         // Emit data
         Publishers
-            .CombineLatest(accounts.$state, prices)
+            .CombineLatest(accounts.statePublisher, prices)
             .map { state, prices in
                 guard let prices else { return state }
 
@@ -117,7 +120,9 @@ public final class SolanaAccountsService: NSObject, AccountsService, ObservableO
                     return newAccounts
                 }
             }
-            .weakAssign(to: \.state, on: self)
+            .sink { [weak _state] state in
+                _state?.send(state)
+            }
             .store(in: &subscriptions)
 
         // Update every 10 seconds accounts and balance
@@ -129,7 +134,7 @@ public final class SolanaAccountsService: NSObject, AccountsService, ObservableO
             .store(in: &subscriptions)
 
         // Observe solana accounts
-        $state
+        statePublisher
             .sink { state in
                 for account in state.value {
                     guard let pubkey = account.data.pubkey else { continue }
