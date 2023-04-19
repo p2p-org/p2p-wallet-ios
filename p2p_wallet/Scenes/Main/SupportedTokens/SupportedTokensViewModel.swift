@@ -68,7 +68,7 @@ class SupportedTokensViewModel: BaseViewModel, ObservableObject {
             .map(SupportedTokensBusinnes.filterByKeyword)
             .map { [weak self] in $0.sorted { SupportedTokensBusinnes.sortToken(lhs: $0, rhs: $1, filter: self?.filter ?? "") } }
             .receive(on: RunLoop.main)
-            .weakAssign(to: \.tokens, on: self)
+            .assignWeak(to: \.tokens, on: self)
             .store(in: &subscriptions)
         
         analyticsManager.log(event: .receiveStartScreen)

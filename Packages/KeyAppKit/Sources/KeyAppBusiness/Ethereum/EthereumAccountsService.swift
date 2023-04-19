@@ -99,7 +99,7 @@ public final class EthereumAccountsService: NSObject, AccountsService, Observabl
                     return newAccounts
                 }
             }
-            .weakAssign(to: \.state, on: self)
+            .assignWeak(to: \.state, on: self)
             .store(in: &subscriptions)
 
         // Update every 30 seconds accounts and balance

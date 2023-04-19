@@ -117,7 +117,7 @@ public final class SolanaAccountsService: NSObject, AccountsService, ObservableO
                     return newAccounts
                 }
             }
-            .weakAssign(to: \.state, on: self)
+            .assignWeak(to: \.state, on: self)
             .store(in: &subscriptions)
 
         // Update every 10 seconds accounts and balance
