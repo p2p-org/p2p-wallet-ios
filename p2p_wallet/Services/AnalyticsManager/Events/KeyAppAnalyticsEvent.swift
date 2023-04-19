@@ -144,15 +144,14 @@ enum KeyAppAnalyticsEvent: AnalyticsEvent {
     case sendClickChangeTokenValue(source: String)
     case sendStartScreenOpen(lastScreen: String)
     case sendClickStartCreateLink
-    case sendClickNotificationFreeTransactions
-    case sendClickChangeToken(tokenName: String)
-    case sendClickChangeTokenChosen(tokenName: String)
-    case sendClickChangeTokenValue(tokenName: String, tokenValue: Double)
+    case sendClickChangeTokenChosen(tokenName: String, sendFlow: String)
+    case sendClickChangeTokenValue(tokenName: String, tokenValue: Double, sendFlow: String)
     case sendClickCreateLink(tokenName: String, tokenValue: Double, pubkey: String)
     case sendCreatingLinkEndScreenOpen(tokenName: String, tokenValue: Double, pubkey: String)
     case sendClickShareLink
     case sendClickCopyLink
     case sendClickDefaultError
+    case sendCreatingLinkProcessScreenOpen
 
     // MARK: - Send new
 
@@ -161,8 +160,8 @@ enum KeyAppAnalyticsEvent: AnalyticsEvent {
     case sendnewBuyClickButton(source: String)
     case sendnewReceiveClickButton(source: String)
     case sendnewInputScreen(source: String)
-    case sendnewTokenInputClick(source: String)
-    case sendnewFreeTransactionClick(source: String)
+    case sendnewTokenInputClick(tokenName: String, source: String, sendFlow: String)
+    case sendnewFreeTransactionClick(source: String, sendFlow: String)
     case sendnewFiatInputClick(crypto: Bool, source: String)
 
     // MARK: - Swap
@@ -388,8 +387,9 @@ enum KeyAppAnalyticsEvent: AnalyticsEvent {
     // MARK: - Claim
     
     case claimStartScreenOpen
-    case claimClickConfirmed(pubkey: String, tokenName: String, tokenValue: Double, fromAddress: String)
-    case claimClickClose
+    case claimClickConfirmed(pubkey: String, tokenName: String, tokenValue: Double)
+    case claimClickHide
+    case claimEndScreenOpen
     case claimClickEnd
     case claimErrorAlreadyClaimed
     case claimErrorDefaultReject

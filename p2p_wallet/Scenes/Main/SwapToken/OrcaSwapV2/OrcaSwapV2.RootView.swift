@@ -144,7 +144,7 @@ extension OrcaSwapV2 {
             case .couldNotCalculatingFees:
                 text = L10n.couldNotCalculatingFees
             case .inputAmountIsEmpty:
-                text = L10n.enterTheAmount
+                text = L10n.enterAmount
             case .inputAmountIsNotValid:
                 text = L10n.inputAmountIsNotValid
             case .insufficientFunds:
