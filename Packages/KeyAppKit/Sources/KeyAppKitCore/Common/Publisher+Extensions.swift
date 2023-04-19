@@ -8,7 +8,7 @@
 import Combine
 
 extension Publisher where Failure == Never {
-    public func weakAssign<T: AnyObject>(
+    public func assignWeak<T: AnyObject>(
         to keyPath: ReferenceWritableKeyPath<T, Output>,
         on object: T
     ) -> AnyCancellable {

@@ -148,7 +148,7 @@ private extension HomeViewModel {
         Publishers
             .CombineLatest(solanaInitialization, ethereumInitialization)
             .map { $0 && $1 }
-            .weakAssign(to: \.isInitialized, on: self)
+            .assignWeak(to: \.isInitialized, on: self)
             .store(in: &subscriptions)
 
         // state, address, error, log

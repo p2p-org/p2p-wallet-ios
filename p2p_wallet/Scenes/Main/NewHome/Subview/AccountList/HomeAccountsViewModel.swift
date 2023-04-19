@@ -111,7 +111,7 @@ final class HomeAccountsViewModel: BaseViewModel, ObservableObject {
                 return "\(Defaults.fiat.symbol) \(equityValue.toString(maximumFractionDigits: 2))"
             }
             .receive(on: RunLoop.main)
-            .weakAssign(to: \.balance, on: self)
+            .assignWeak(to: \.balance, on: self)
             .store(in: &subscriptions)
 
         analyticsManager.log(event: .claimAvailable(claim: available(.ethAddressEnabled)))
