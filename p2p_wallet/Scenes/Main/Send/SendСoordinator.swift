@@ -238,9 +238,9 @@ final class SendCoordinator: Coordinator<SendResult> {
             case let .sentViaLink(link, transaction):
                 self?.startSendViaLinkCompletionFlow(
                     link: link,
-                    formatedAmount: transaction.amount
-                        .tokenAmountFormattedString(symbol: transaction.walletToken.token.symbol),
-                    transaction: transaction
+                    formatedAmount: transaction.amount.tokenAmountFormattedString(symbol: transaction.walletToken.token.symbol),
+                    transaction: transaction,
+                    intermediatePubKey: keypair.publicKey.base58EncodedString
                 )
             case let .wormhole(trx):
                 self?.result.send(.wormhole(trx))
@@ -254,13 +254,15 @@ final class SendCoordinator: Coordinator<SendResult> {
     private func startSendViaLinkCompletionFlow(
         link: String,
         formatedAmount: String,
-        transaction: SendTransaction
+        transaction: SendTransaction,
+        intermediatePubKey: String
     ) {
         let coordinator = SendCreateLinkCoordinator(
             link: link,
             formatedAmount: formatedAmount,
             navigationController: rootViewController,
-            transaction: transaction
+            transaction: transaction,
+            intermediatePubKey: intermediatePubKey
         )
 
         coordinate(to: coordinator)

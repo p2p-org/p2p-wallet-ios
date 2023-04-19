@@ -63,7 +63,7 @@ class DepositSolendViewModel: ObservableObject {
     @Published var depositFee: SolendFeePaying?
     @Published var inputLamport: UInt64 = 0
     @Published var isButtonEnabled: Bool = false
-    @Published var buttonText: String = L10n.enterTheAmount
+    @Published var buttonText: String = L10n.enterAmount
     @Published var hasError = false
     @Published var feeText = ""
     @Published var maxText = "Use all"
@@ -109,7 +109,7 @@ class DepositSolendViewModel: ObservableObject {
     }
 
     var amountTitle: String {
-        strategy == .deposit ? L10n.enterTheAmount : L10n.youWillWithdraw
+        strategy == .deposit ? L10n.enterAmount : L10n.youWillWithdraw
     }
 
     var useMaxTitle: String {
@@ -248,7 +248,7 @@ class DepositSolendViewModel: ObservableObject {
 
                 self.hasError = false
                 self.isUsingMax = false
-                self.buttonText = L10n.enterTheAmount
+                self.buttonText = L10n.enterAmount
                 if maxAmount < inputLamport.convertToBalance(decimals: self.invest.asset.decimals) {
                     self
                         .buttonText =

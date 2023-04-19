@@ -424,7 +424,6 @@
 "Some parameters are missing" = "Some parameters are missing";
 "Exchange rate is not valid" = "Exchange rate is not valid";
 "SELECT" = "SELECT";
-"Enter the amount" = "Enter the amount";
 "Don’t go over the available funds" = "Don’t go over the available funds";
 "Error fetching market %@" = "Error fetching market %@";
 "Tap to try again" = "Tap to try again";
@@ -1300,6 +1299,12 @@
 "There was a problem with claiming. Please try again" = "There was a problem with claiming. Please try again";
 "There was a problem with sending. Please try again" = "There was a problem with sending. Please try again";
 "Open your link again" = "Open your link again";
+"Change the region manually" = "Change the region manually";
+"Unfortunately, you can not buy in %@, but you can still use other Key App features" = "Unfortunately, you can not buy in %@, but you can still use other Key App features";
+"Select your country" = "Select your country";
+"Chosen country" = "Chosen country";
+"All countries" = "All countries";
+"Sorry, we don't know that country" = "Sorry, we don't know that country";
 "You have reached the daily limit of sending free links. Try tomorrow" = "You have reached the daily limit of sending free links. Try tomorrow";
 "Send money via link" = "Send money via link";
 "Without account details" = "Without account details";
