@@ -281,6 +281,7 @@ final class BuyViewModel: ObservableObject {
                 subButtonTitle: L10n.changeTheRegionManually
             )
             state = .buyNotAllowed(model: model)
+            analyticsManager.log(event: .buyBlockedScreenOpen)
         }
         self.flag = flag
         self.countryTitle = title
@@ -297,6 +298,15 @@ final class BuyViewModel: ObservableObject {
             flag: flag,
             title: countryTitle ?? ""
         ))
+        analyticsManager.log(event: .buyBlockedRegionClick)
+    }
+    
+    func flagClicked() {
+        coordinatorIO.chooseCountry.send(SelectCountryViewModel.Model(
+            flag: flag,
+            title: countryTitle ?? ""
+        ))
+        analyticsManager.log(event: .buyChangeCountryClick)
     }
     
     // MARK: -
