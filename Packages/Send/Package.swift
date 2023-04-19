@@ -11,6 +11,15 @@ let package = Package(
             name: "Send",
             targets: ["Send"]),
     ],
+    dependencies: [
+        .package(url: "https://github.com/p2p-org/solana-swift", branch: "main"),
+        .package(url: "https://github.com/p2p-org/FeeRelayerSwift", branch: "feature/simple-topup-and-sign"),
+        .package(path: "../NameService"),
+        .package(path: "../SolanaPricesAPIs"),
+        .package(path: "../TransactionParser"),
+        .package(path: "../History"),
+        .package(path: "../Wormhole"),
+    ],
     targets: [
         // Targets are the basic building blocks of a package, defining a module or a test suite.
         // Targets can depend on other targets in this package and products from dependencies.
