@@ -41,17 +41,25 @@ struct SendInputView: View {
                 .edgesIgnoringSafeArea(.all)
                 .onTapGesture { self.viewModel.inputAmountViewModel.isFirstResponder = false }
 
-            ScrollView {
-                inputView
+            VStack {
+                ScrollView {
+                    inputView
+                }
+                    .padding(16)
+                
+                Spacer()
+                
+                sendButton
+                    .padding(.horizontal, 16)
+                    .padding(.bottom, 8)
             }
-                .padding(16)
         }
     }
     
     var inputView: some View {
         VStack(spacing: 8) {
             if viewModel.currentState.sendViaLinkSeed != nil {
-                Text(L10n.anyoneWhoGetsThisOneTimeLinkCanClaimTheFunds)
+                Text(L10n.anyoneWhoGetsThisOneTimeLinkCanClaimMoney)
                     .apply(style: .text3)
                     .foregroundColor(Color(Asset.Colors.mountain.color))
                     .frame(maxWidth: .infinity, alignment: .leading)
@@ -106,10 +114,6 @@ struct SendInputView: View {
             case .ready:
                 SendInputAmountView(viewModel: viewModel.inputAmountViewModel)
             }
-
-            Spacer()
-
-            sendButton
             
             #if !RELEASE
             HStack {

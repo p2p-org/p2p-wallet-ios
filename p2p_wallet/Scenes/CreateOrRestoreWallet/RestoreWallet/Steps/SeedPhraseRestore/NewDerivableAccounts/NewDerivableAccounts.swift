@@ -9,6 +9,6 @@ import Foundation
 
 enum NewDerivableAccounts {
     enum NavigatableScene {
-        case selectDerivationPath
+        case selectDerivableType
     }
 }

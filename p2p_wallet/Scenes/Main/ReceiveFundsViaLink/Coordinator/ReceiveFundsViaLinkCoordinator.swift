@@ -5,11 +5,16 @@
 //  Created by Ivan on 28.03.2023.
 //
 
+import AnalyticsManager
 import Combine
 import Foundation
 import UIKit
+import Resolver
 
 final class ReceiveFundsViaLinkCoordinator: Coordinator<Void> {
+    
+    // Dependencies
+    @Injected private var analyticsManager: AnalyticsManager
     
     // Subjects
     private let resultSubject = PassthroughSubject<Void, Never>()
@@ -49,30 +54,42 @@ final class ReceiveFundsViaLinkCoordinator: Coordinator<Void> {
                 }
             })
             .store(in: &subscriptions)
-        viewModel.linkWasClaimed
-            .sink(receiveValue: { [weak self] in
+        
+        var errorPresented = false
+        viewModel.linkError
+            .sink(receiveValue: { [weak self] model in
                 guard let self = self else { return }
                 
-                viewController.dismiss(animated: true)
-                
-                let errorView = LinkWasClaimedView {
-                    self.presentingViewController.dismiss(animated: true)
-                }.asViewController()
-                
-                errorView.deallocatedPublisher()
-                    .sink(receiveValue: { [weak self] in
-                        self?.resultSubject.send(())
-                    })
-                    .store(in: &self.subscriptions)
-                
-                errorView.modalPresentationStyle = .fullScreen
-                self.presentingViewController.present(errorView, animated: true)
+                errorPresented = true
+                viewController.dismiss(animated: true) { [weak self] in
+                    guard let self = self else { return }
+                    
+                    let errorView = LinkErrorView(model: model) {
+                        self.presentingViewController.dismiss(animated: true)
+                    }.asViewController()
+                    
+                    errorView.deallocatedPublisher()
+                        .sink(receiveValue: { [weak self] in
+                            self?.resultSubject.send(())
+                        })
+                        .store(in: &self.subscriptions)
+                    
+                    errorView.modalPresentationStyle = .fullScreen
+                    self.presentingViewController.present(errorView, animated: true)
+                }
             })
             .store(in: &subscriptions)
         transition.dimmClicked
-            .sink(receiveValue: { [weak self] in
+            .sink(receiveValue: {
                 viewController.dismiss(animated: true)
-                self?.resultSubject.send(())
+            })
+            .store(in: &subscriptions)
+        transition.dismissed
+            .sink(receiveValue: { [weak self] in
+                if !errorPresented {
+                    self?.analyticsManager.log(event: .claimClickHide)
+                    self?.resultSubject.send(())
+                }
             })
             .store(in: &subscriptions)
         

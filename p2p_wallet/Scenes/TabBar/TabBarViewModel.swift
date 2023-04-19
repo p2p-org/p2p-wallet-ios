@@ -31,6 +31,9 @@ final class TabBarViewModel {
 
     // Input
     let viewDidLoad = PassthroughSubject<Void, Never>()
+    
+    private let becomeActiveSubject = PassthroughSubject<Void, Never>()
+    private var cancellables = Set<AnyCancellable>()
 
     init() {
         if #available(iOS 15.0, *) {
@@ -53,6 +56,8 @@ final class TabBarViewModel {
 
         // Notification
         notificationService.requestRemoteNotificationPermission()
+        
+        listenDidBecomeActiveForDeeplinks()
     }
 
     deinit {
@@ -63,6 +68,19 @@ final class TabBarViewModel {
 
     func authenticate(presentationStyle: AuthenticationPresentationStyle?) {
         authenticationHandler.authenticate(presentationStyle: presentationStyle)
+    }
+    
+    private func listenDidBecomeActiveForDeeplinks() {
+        DispatchQueue.main.asyncAfter(deadline: .now() + 0.1) {
+            self.becomeActiveSubject.send()
+        }
+        
+        NotificationCenter.default
+            .publisher(for: UIApplication.didBecomeActiveNotification)
+            .sink(receiveValue: { [weak self] _ in
+                self?.becomeActiveSubject.send()
+            })
+            .store(in: &cancellables)
     }
 }
 
@@ -116,22 +134,14 @@ extension TabBarViewModel {
         .eraseToAnyPublisher()
     }
     
-    var moveToSendViaLinkClaim: AnyPublisher<URL?, Never> {
-        Publishers.Merge(
-            authenticationHandler
-                .isLockedPublisher
-                .filter { value in
-                    GlobalAppState.shared.sendViaLinkUrl != nil && value == false
-                }
-                .map { _ in () },
-            
-            viewDidLoad
-                .filter { [weak self] in
-                    self?.notificationService.showFromLaunch == true
-                }
+    var moveToSendViaLinkClaim: AnyPublisher<URL, Never> {
+        Publishers.CombineLatest(
+            authenticationStatusPublisher,
+            becomeActiveSubject
         )
-        .map { _ in () }
-        .map { GlobalAppState.shared.sendViaLinkUrl }
+        .debounce(for: .milliseconds(900), scheduler: RunLoop.main)
+        .filter { $0.0 == nil }
+        .compactMap { _ in GlobalAppState.shared.sendViaLinkUrl }
         .handleEvents(receiveOutput: { _ in
             GlobalAppState.shared.sendViaLinkUrl = nil
         })
