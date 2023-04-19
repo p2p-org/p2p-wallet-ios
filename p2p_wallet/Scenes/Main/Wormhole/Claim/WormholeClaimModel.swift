@@ -44,7 +44,8 @@ struct WormholeClaimEthereumModel: WormholeClaimModel {
     }
 
     var title: String {
-        CryptoFormatterFactory.formatter(with: (account.wormholeNativeCounterpart() ?? account).representedBalance).token, style: .short)
+        let token = ((account.wormholeNativeCounterpart() ?? account).representedBalance).token
+        return CryptoFormatterFactory.formatter(with: token, style: .short)
             .string(for: account.representedBalance)
             ?? "0 \(account.token.symbol)"
     }

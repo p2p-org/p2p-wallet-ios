@@ -20,16 +20,16 @@ protocol Aggregator<Input, Output> {
 struct HomeAccountsAggregator: Aggregator {
     func transform(
         input: (
-            solanaAccounts: [RendableSolanaAccount],
+            solanaAccounts: [RenderableSolanaAccount],
             ethereumAccounts: [RenderableEthereumAccount]
         )
     )
-    -> (primary: [any RendableAccount], secondary: [any RendableAccount]) {
+    -> (primary: [any RenderableAccount], secondary: [any RenderableAccount]) {
         let (solanaAccounts, ethereumAccounts) = input
 
-        let mergedAccounts: [any RendableAccount] = ethereumAccounts + solanaAccounts
+        let mergedAccounts: [any RenderableAccount] = ethereumAccounts + solanaAccounts
 
-        func primaryFilter(account: any RendableAccount) -> Bool {
+        func primaryFilter(account: any RenderableAccount) -> Bool {
             if account.tags.contains(.favourite) {
                 return true
             }

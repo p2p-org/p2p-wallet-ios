@@ -4,7 +4,7 @@ import KeyAppKitCore
 import SolanaSwift
 import Wormhole
 
-struct RenderableEthereumAccount: RenderableAccount, ClaimableRenderableAccount {
+struct RenderableEthereumAccount: RenderableAccount {
     let account: EthereumAccount
 
     let status: Status

@@ -108,7 +108,7 @@ struct HomeAccountsView: View {
         }
     }
 
-    private func tokenCell(rendableAccount: any RendableAccount, isVisiable: Bool) -> some View {
+    private func tokenCell(rendableAccount: any RenderableAccount, isVisiable: Bool) -> some View {
         HomeAccountView(rendable: rendableAccount) {
             viewModel.invoke(for: rendableAccount, event: .tap)
         } onButtonTap: {
