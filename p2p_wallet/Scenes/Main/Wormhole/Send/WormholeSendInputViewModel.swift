@@ -12,7 +12,6 @@ import SolanaSwift
 import Wormhole
 
 class WormholeSendInputViewModel: BaseViewModel, ObservableObject {
-
     @Injected private var analyticsManager: AnalyticsManager
 
     enum Action {
@@ -138,7 +137,7 @@ class WormholeSendInputViewModel: BaseViewModel, ObservableObject {
             .dropFirst()
             .debounce(for: 0.5, scheduler: DispatchQueue.main)
             .sink { [weak self] input, inputMode in
-              self?.analyticsManager.log(event: .sendClickChangeTokenValue(source: "Bridge"))
+                self?.analyticsManager.log(event: .sendClickChangeTokenValue(source: "Bridge"))
 
                 guard let self, let account = self.adapter.inputAccount, !self.wasMaxUsed else {
                     self?.wasMaxUsed = false
@@ -198,13 +197,6 @@ class WormholeSendInputViewModel: BaseViewModel, ObservableObject {
                 default:
                     return
                 }
-            }
-            .store(in: &subscriptions)
-
-        #warning("REFACTOR: Can be removed?")
-        stateMachine.state
-            .sink { state in
-                debugPrint("SendInputState", state)
             }
             .store(in: &subscriptions)
 
@@ -322,7 +314,10 @@ class WormholeSendInputViewModel: BaseViewModel, ObservableObject {
             analyticsManager.log(event: .sendBridgesConfirmButtonClick(
                 tokenName: input.solanaAccount.data.token.symbol,
                 tokenValue: input.amount.value.description.double ?? 0,
-                valueFiat: input.solanaAccount.price != nil ? (try? input.amount.toFiatAmount(price: input.solanaAccount.price!).value.description.double) ?? 0 : 0.0,
+                valueFiat: input.solanaAccount
+                    .price != nil ?
+                    (try? input.amount.toFiatAmount(price: input.solanaAccount.price!).value.description.double) ?? 0 :
+                    0.0,
                 fee: output.feePayerAmount?.amount.description.double ?? 0
             ))
         } else {
@@ -367,6 +362,6 @@ extension WormholeSendInputViewModel {
 
 extension WormholeSendInputViewModel {
     func logChooseTokenClick() {
-        analyticsManager.log(event: .sendnewTokenInputClick(source: "Bridge"))
+        // analyticsManager.log(event: .sendnewTokenInputClick(tokenName: adapter.input ,source: "Bridge", sendFlow: "Wormhole"))
     }
 }

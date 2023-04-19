@@ -79,6 +79,7 @@ public final class SendViaLinkDataServiceImpl: SendViaLinkDataService {
     private let network: Network
     private let derivablePath: DerivablePath
     private let host: String
+    private let memoPrefix: String
     private let solanaAPIClient: SolanaAPIClient
     
     // MARK: - Initializer
@@ -89,6 +90,7 @@ public final class SendViaLinkDataServiceImpl: SendViaLinkDataService {
         network: Network,
         derivablePath: DerivablePath,
         host: String,
+        memoPrefix: String,
         solanaAPIClient: SolanaAPIClient
     ) {
         self.salt = salt
@@ -96,6 +98,7 @@ public final class SendViaLinkDataServiceImpl: SendViaLinkDataService {
         self.network = network
         self.derivablePath = derivablePath
         self.host = host
+        self.memoPrefix = memoPrefix
         self.solanaAPIClient = solanaAPIClient
     }
     
@@ -190,18 +193,23 @@ public final class SendViaLinkDataServiceImpl: SendViaLinkDataService {
         receiver: PublicKey,
         feePayer: PublicKey
     ) async throws -> PreparedTransaction {
+        // form memo
+        let memo = memoPrefix + "-claim"
+        
         // native sol
         if token.mintAddress == Token.nativeSolana.address {
             return try await claimNativeSOLToken(
                 keypair: token.keypair,
                 receiver: receiver,
                 lamports: token.lamports,
-                feePayer: feePayer
+                feePayer: feePayer,
+                memo: memo
             )
         }
         
         // spl token
         else {
+            let mre = try await solanaAPIClient.getMinimumBalanceForRentExemption(span: AccountInfo.BUFFER_LENGTH)
             return try await claimSPLToken(
                 keypair: token.keypair,
                 receiver: receiver,
@@ -209,7 +217,9 @@ public final class SendViaLinkDataServiceImpl: SendViaLinkDataService {
                 decimals: token.decimals,
                 fromTokenAccount: token.account,
                 lamports: token.lamports,
-                feePayer: feePayer
+                feePayer: feePayer,
+                minRentExemption: mre,
+                memo: memo
             )
         }
     }
@@ -380,21 +390,35 @@ public final class SendViaLinkDataServiceImpl: SendViaLinkDataService {
         keypair: KeyPair,
         receiver: PublicKey,
         lamports: Lamports,
-        feePayer: PublicKey?
+        feePayer: PublicKey,
+        memo: String
     ) async throws -> PreparedTransaction {
-        // get blockchain client
-        let blockchainClient = BlockchainClient(apiClient: solanaAPIClient)
+        // form instructions
+        var instructions = [TransactionInstruction]()
         
-        // prepair sending native sol
-        let preparedTransaction = try await blockchainClient.prepareSendingNativeSOL(
-            from: keypair,
-            to: receiver.base58EncodedString,
-            amount: lamports,
-            feePayer: feePayer
+        // transfer
+        instructions.append(
+            SystemProgram.transferInstruction(
+                from: keypair.publicKey,
+                to: receiver,
+                lamports: lamports
+            )
         )
         
-        // return prepared transaction
-        return preparedTransaction
+        //  memo
+        instructions.append(
+            try MemoProgram.createMemoInstruction(
+                memo: memo
+            )
+        )
+        
+        // prepare transaction
+        return try await BlockchainClient(apiClient: solanaAPIClient)
+            .prepareTransaction(
+                instructions: instructions,
+                signers: [keypair],
+                feePayer: feePayer
+            )
     }
     
     private func claimSPLToken(
@@ -404,23 +428,79 @@ public final class SendViaLinkDataServiceImpl: SendViaLinkDataService {
         decimals: Decimals,
         fromTokenAccount: String,
         lamports: Lamports,
-        feePayer: PublicKey?
+        feePayer: PublicKey,
+        minRentExemption: Lamports,
+        memo: String
     ) async throws -> PreparedTransaction {
-        // get blockchain client
-        let blockchainClient = BlockchainClient(apiClient: solanaAPIClient)
+        // convert String to PublicKey
+        let mintAddress = try PublicKey(string: mintAddress)
+        let fromTokenAccount = try PublicKey(string: fromTokenAccount)
         
-        // prepare sending spl token
-        let preparedTransaction = try await blockchainClient.prepareSendingSPLTokens(
-            account: keypair,
-            mintAddress: mintAddress,
-            decimals: decimals,
-            from: fromTokenAccount,
-            to: receiver.base58EncodedString,
-            amount: lamports,
-            feePayer: feePayer
+        // get associated token address
+        let splDestination = try await solanaAPIClient.findSPLTokenDestinationAddress(
+            mintAddress: mintAddress.base58EncodedString,
+            destinationAddress: receiver.base58EncodedString
         )
         
-        return preparedTransaction.preparedTransaction
+        // form instruction
+        var instructions = [TransactionInstruction]()
+        
+        // create associated token address
+        var accountsCreationFee: UInt64 = 0
+        if splDestination.isUnregisteredAsocciatedToken {
+            instructions.append(
+                try AssociatedTokenProgram
+                    .createAssociatedTokenAccountInstruction(
+                        mint: mintAddress,
+                        owner: receiver,
+                        payer: feePayer
+                    )
+            )
+            accountsCreationFee += minRentExemption
+        }
+        
+        // transfer instruction
+        instructions.append(
+            TokenProgram.transferInstruction(
+                source: fromTokenAccount,
+                destination: splDestination.destination,
+                owner: keypair.publicKey,
+                amount: lamports
+            )
+        )
+        
+        // close spl token account instruction and get SOL back
+        instructions.append(
+            TokenProgram.closeAccountInstruction(
+                account: fromTokenAccount,
+                destination: keypair.publicKey,
+                owner: keypair.publicKey
+            )
+        )
+        
+        // return sol back to fee payer
+        instructions.append(
+            SystemProgram.transferInstruction(
+                from: keypair.publicKey,
+                to: feePayer,
+                lamports: minRentExemption
+            )
+        )
+        
+        // memo
+        instructions.append(
+            try MemoProgram.createMemoInstruction(
+                memo: memo
+            )
+        )
+        
+        // prepare transaction
+        return try await BlockchainClient(apiClient: solanaAPIClient)
+            .prepareTransaction(
+                instructions: instructions,
+                signers: [keypair],
+                feePayer: feePayer
+            )
     }
 }
 
