@@ -49,37 +49,13 @@ class HomeViewModel: ObservableObject {
         bind()
 
         // reload
-        reload()
+        Task { await reload() }
     }
 
     // MARK: - Methods
 
-    func reload() {
-        Task {
-            // FIXME: - Replace later with `AggregateAccountService`
-            // use throwing task group to make solanaAccountService.fetch() and ethereumAccountService.fetch() run parallelly
-            // and support another chains later
-            try await withThrowingTaskGroup(of: Void.self) { group in
-                // solana
-                group.addTask { [weak self] in
-                    guard let self else { return }
-                    try await self.solanaAccountsService.fetch()
-                }
-                
-                // ethereum
-                if available(.ethAddressEnabled) {
-                    group.addTask { [weak self] in
-                        guard let self else { return }
-                        try await self.ethereumAccountsService.fetch()
-                    }
-                }
-                
-                // another chains goes here
-                
-                // await values
-                for try await _ in group {}
-            }
-        }
+    func reload() async {
+        await HomeAccountsSynchronisationService().refresh()
     }
 
     func copyToClipboard() {
