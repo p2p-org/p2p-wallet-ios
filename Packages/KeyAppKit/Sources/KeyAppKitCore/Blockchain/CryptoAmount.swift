@@ -89,7 +89,7 @@ public struct CryptoAmount: Hashable, Codable, Equatable {
             throw ConvertError.invalidPriceForToken(expected: token.symbol, actual: price.token.symbol)
         }
 
-        return .init(value: amount * (price.value ?? 0), currencyCode: price.currencyCode)
+        return .init(value: amount * price.value, currencyCode: price.currencyCode)
     }
 
     public func unsafeToFiatAmount(price: TokenPrice) -> CurrencyAmount {
@@ -97,7 +97,7 @@ public struct CryptoAmount: Hashable, Codable, Equatable {
             return .init(value: 0, currencyCode: price.currencyCode)
         }
 
-        return .init(value: amount * (price.value ?? 0), currencyCode: price.currencyCode)
+        return .init(value: amount * price.value, currencyCode: price.currencyCode)
     }
 
     public func with(amount: BigUInt) -> Self {

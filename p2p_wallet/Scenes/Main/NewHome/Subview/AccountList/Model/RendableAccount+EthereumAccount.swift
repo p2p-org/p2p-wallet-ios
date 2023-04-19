@@ -7,6 +7,8 @@ import Wormhole
 struct RenderableEthereumAccount: RenderableAccount, ClaimableRenderableAccount {
     let account: EthereumAccount
 
+    let status: Status
+
     var id: String {
         switch account.token.contractType {
         case .native:
@@ -39,14 +41,17 @@ struct RenderableEthereumAccount: RenderableAccount, ClaimableRenderableAccount 
     }
 
     var detail: AccountDetail {
-        if let onClaim {
-            return .button(label: L10n.claim, action: onClaim)
-        } else if isClaiming {
-            return .button(label: L10n.claiming, action: nil)
-        } else if let balanceInFiat = account.balanceInFiat {
-            return .text(CurrencyFormatter().string(amount: balanceInFiat))
-        } else {
-            return .text("")
+        switch status {
+        case .readyToClaim:
+            return .button(label: L10n.claim, enabled: true)
+        case .isClamming:
+            return .button(label: L10n.claiming, enabled: false)
+        case .balanceToLow:
+            if let balanceInFiat = account.balanceInFiat {
+                return .text(CurrencyFormatter().string(amount: balanceInFiat))
+            } else {
+                return .text("")
+            }
         }
     }
 
@@ -55,14 +60,22 @@ struct RenderableEthereumAccount: RenderableAccount, ClaimableRenderableAccount 
     }
 
     var tags: AccountTags {
-        []
+        var tags: AccountTags = []
+
+        if status == .balanceToLow {
+            tags.insert(.ignore)
+        }
+
+        return tags
     }
+}
 
-    let isClaiming: Bool
-
-    let onTap: (() -> Void)?
-
-    let onClaim: (() -> Void)?
+extension RenderableEthereumAccount {
+    enum Status: Equatable {
+        case readyToClaim
+        case isClamming
+        case balanceToLow
+    }
 }
 
 extension EthereumAccount {

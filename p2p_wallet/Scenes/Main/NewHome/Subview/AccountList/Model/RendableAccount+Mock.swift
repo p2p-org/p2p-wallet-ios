@@ -23,6 +23,4 @@ struct RendableMockAccount: RenderableAccount {
     var extraAction: AccountExtraAction?
     
     var tags: AccountTags
-    
-    var onTap: (() -> Void)?
 }

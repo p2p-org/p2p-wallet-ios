@@ -45,6 +45,4 @@ struct RenderableSolanaAccount: RenderableAccount {
     let extraAction: AccountExtraAction?
     
     let tags: AccountTags
-    
-    let onTap: (() -> Void)?
 }

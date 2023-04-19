@@ -13,12 +13,12 @@ import SwiftUI
 
 struct HomeAccountsView: View {
     @ObservedObject var viewModel: HomeAccountsViewModel
-    
+
     @State var isHiddenSectionDisabled: Bool = true
     @State var currentUserInteractionCellID: String?
     @State var scrollAnimationIsEnded = true
     @State var isEarnBannerClosed = Defaults.isEarnBannerClosed
-    
+
     var body: some View {
         ScrollViewReader { reader in
             ScrollView {
@@ -50,7 +50,7 @@ struct HomeAccountsView: View {
             }
         }
     }
-    
+
     private var header: some View {
         ActionsPanelView(
             actions: viewModel.actions,
@@ -108,20 +108,31 @@ struct HomeAccountsView: View {
         }
     }
 
-    private func tokenCell(rendableAccount: any RenderableAccount, isVisiable: Bool) -> some View {
-        HomeAccountView(rendable: rendableAccount)
-            .do { view in
-                switch rendableAccount.extraAction {
-                case let .visiable(action):
-                    return AnyView(view.swipeActions(isVisible: isVisiable, currentUserInteractionCellID: $currentUserInteractionCellID, action: action))
-                case .none:
-                    return AnyView(view)
-                }
+    private func tokenCell(rendableAccount: any RendableAccount, isVisiable: Bool) -> some View {
+        HomeAccountView(rendable: rendableAccount) {
+            viewModel.invoke(for: rendableAccount, event: .tap)
+        } onButtonTap: {
+            viewModel.invoke(for: rendableAccount, event: .extraButtonTap)
+        }
+        .do { view in
+            switch rendableAccount.extraAction {
+            case .visiable:
+                return AnyView(
+                    view.swipeActions(
+                        isVisible: isVisiable,
+                        currentUserInteractionCellID: $currentUserInteractionCellID
+                    ) {
+                        viewModel.invoke(for: rendableAccount, event: .visibleToggle)
+                    }
+                )
+            case .none:
+                return AnyView(view)
             }
-            .frame(height: 72)
-            .padding(.horizontal, 16)
+        }
+        .frame(height: 72)
+        .padding(.horizontal, 16)
     }
-    
+
     @ViewBuilder
     private func wrappedList<Content: View>(
         itemsCount: Int,
@@ -179,13 +190,13 @@ private extension View {
             )
         }
     }
-    
+
     func hideView(isVisible: Bool) -> AnyView {
         Image(uiImage: isVisible ? .eyeHide : .eyeShow)
             .animation(.default)
             .castToAnyView()
     }
-    
+
     @ViewBuilder
     func topPadding() -> some View {
         if #available(iOS 15, *) {
