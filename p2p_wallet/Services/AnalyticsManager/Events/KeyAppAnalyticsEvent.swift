@@ -295,6 +295,12 @@ enum KeyAppAnalyticsEvent: AnalyticsEvent {
         bankTransfer: Bool,
         typeBankTransfer: String?
     )
+    case buyBlockedScreenOpen
+    case buyBlockedRegionClick
+    case regionBuyScreenOpen
+    case regionBuySearchClick
+    case regionBuyResultClick(country: String)
+    case buyChangeCountryClick
 
     // General
     case appOpened(sourceOpen: String)
