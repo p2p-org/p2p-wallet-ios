@@ -54,4 +54,33 @@ extension Moonpay {
         public var gbp: Bool = false
         public var eur: Bool = false
     }
+    
+    public struct MoonpayCountry: Decodable {
+        public let code: String
+        public let name: String
+        public let isBuyAllowed: Bool
+        public let isSellAllowed: Bool
+        public let isNftAllowed: Bool
+        public let isAllowed: Bool
+        public let states: [State]?
+        
+        enum CodingKeys: String, CodingKey {
+            case code = "alpha2"
+            case name
+            case isBuyAllowed
+            case isSellAllowed
+            case isNftAllowed
+            case isAllowed
+            case states
+        }
+        
+        public struct State: Decodable {
+            public let code: String
+            public let name: String
+            public let isBuyAllowed: Bool
+            public let isSellAllowed: Bool
+            public let isNftAllowed: Bool
+            public let isAllowed: Bool
+        }
+    }
 }

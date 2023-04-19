@@ -278,7 +278,7 @@ private extension SendInputViewModel {
             .sink(receiveValue: { [weak self] value in
                 guard let self, self.status != .initializing else { return }
                 self.logAmountChanged(
-                    symbol: self.tokenViewModel.token.token.symbol,
+                    symbol: self.currentState.token.symbol,
                     amount: value?.inToken ?? 0,
                     isSendingViaLink: self.currentState.isSendingViaLink
                 )
@@ -293,7 +293,8 @@ private extension SendInputViewModel {
                     _ = await self.stateMachine.accept(action: .changeAmountInToken(value.amount.inToken))
                     self.logAmountChanged(
                         symbol: self.currentState.token.symbol,
-                        amount: value.amount.inToken
+                        amount: value.amount.inToken,
+                        isSendingViaLink: self.currentState.isSendingViaLink
                     )
                 case .fiat:
                     _ = await self.stateMachine.accept(action: .changeAmountInFiat(value.amount.inFiat))
@@ -382,7 +383,13 @@ private extension SendInputViewModel {
             .store(in: &subscriptions)
 
         changeTokenPressed
-            .sink { [weak self] in self?.logChooseTokenClick() }
+            .sink { [weak self] in
+                guard let self = self else { return }
+                self.logChooseTokenClick(
+                    tokenName: self.currentState.token.symbol,
+                    isSendingViaLink: self.currentState.isSendingViaLink
+                )
+            }
             .store(in: &subscriptions)
 
         inputAmountViewModel.$mainAmountType
@@ -650,8 +657,8 @@ private func createTransactionExecution(
         amount: amountInToken,
         feeWallet: feeWallet,
         ignoreTopUp: isSendingViaLink,
-        memo: isSendingViaLink ? .secretConfig("SEND_VIA_LINK_MEMO_PREFIX")! + "-send": nil,
-        operationType: isSendingViaLink ? .sendViaLink: .transfer
+        memo: isSendingViaLink ? .secretConfig("SEND_VIA_LINK_MEMO_PREFIX")! + "-send" : nil,
+        operationType: isSendingViaLink ? .sendViaLink : .transfer
     )
 
     // save to storage
@@ -707,7 +714,7 @@ private extension SendInputViewModel {
             sendFlow: isSendingViaLink ? "Send_Via_Link" : "Send"
         ))
     }
-    
+
     func logTokenChosen(symbol: String, isSendingViaLink: Bool) {
         analyticsManager.log(event: .sendClickChangeTokenChosen(
             tokenName: symbol,
@@ -718,7 +725,7 @@ private extension SendInputViewModel {
     func logFiatInputClick(isCrypto: Bool) {
         analyticsManager.log(event: .sendnewFiatInputClick(crypto: isCrypto, source: source.rawValue))
     }
-    
+
     func logAmountChanged(symbol: String, amount: Double, isSendingViaLink: Bool) {
         analyticsManager.log(event: .sendClickChangeTokenValue(
             tokenName: symbol,

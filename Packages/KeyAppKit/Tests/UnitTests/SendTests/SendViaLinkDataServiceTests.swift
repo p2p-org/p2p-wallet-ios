@@ -24,6 +24,7 @@ class SendViaLinkDataServiceImplTests: XCTestCase {
             network: .mainnetBeta,
             derivablePath: .default,
             host: host,
+            memoPrefix: "test",
             solanaAPIClient: solanaAPIClient
         )
     }

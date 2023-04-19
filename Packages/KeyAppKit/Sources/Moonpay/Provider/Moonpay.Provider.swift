@@ -188,6 +188,14 @@ extension Moonpay {
             let (data, _) = try await URLSession.shared.data(from: urlRequest)
             return try JSONDecoder().decode(IpAddressResponse.self, from: data)
         }
+        
+        public func getCountries() async throws -> [MoonpayCountry] {
+            var components = URLComponents(string: api.endpoint + "v3/countries")!
+            var urlRequest = URLRequest(url: components.url!)
+            urlRequest.httpMethod = "GET"
+            let (data, _) = try await URLSession.shared.data(from: urlRequest)
+            return try JSONDecoder().decode([MoonpayCountry].self, from: data)
+        }
     }
 }
 
@@ -245,13 +253,14 @@ extension Moonpay.Provider {
 
 extension Moonpay.Provider {
     public struct IpAddressResponse: Codable {
-        public var alpha2: String
-        public var alpha3: String
-        public var state: String
-        public var ipAddress: String
-        public var isAllowed: Bool
-        public var isBuyAllowed: Bool
-        public var isSellAllowed: Bool
+        public let alpha2: String
+        public let alpha3: String
+        public let country: String
+        public let state: String
+        public let ipAddress: String
+        public let isAllowed: Bool
+        public let isBuyAllowed: Bool
+        public let isSellAllowed: Bool
     }
 }
 
