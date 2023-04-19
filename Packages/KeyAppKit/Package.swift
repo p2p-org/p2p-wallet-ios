@@ -25,11 +25,6 @@ let package = Package(
             targets: ["TransactionParser"]
         ),
 
-        .library(
-            name: "NameService",
-            targets: ["NameService"]
-        ),
-
         // Price service for wallet
         .library(
             name: "SolanaPricesAPIs",
@@ -107,24 +102,6 @@ let package = Package(
             dependencies: ["TransactionParser"],
             path: "Tests/UnitTests/TransactionParserUnitTests",
             resources: [.process("./Resource")]
-        ),
-
-        // Name Service
-        .target(
-            name: "NameService",
-            dependencies: [
-                "KeyAppKitLogger",
-                "KeyAppKitCore",
-                .product(name: "SolanaSwift", package: "solana-swift"),
-            ]
-        ),
-        .testTarget(
-            name: "NameServiceIntegrationTests",
-            dependencies: [
-                "NameService",
-                .product(name: "SolanaSwift", package: "solana-swift"),
-            ],
-            path: "Tests/IntegrationTests/NameServiceIntegrationTests"
         ),
 
         // PricesService

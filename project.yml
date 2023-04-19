@@ -27,6 +27,8 @@ packages:
         path: ./Packages/History
     Send:
         path: ./Packages/Send
+    NameService:
+        path: ./Packages/NameService
 
     # remote
     SolanaSwift:
@@ -276,13 +278,12 @@ targets:
             - package: JSBridge
             - package: History
             - package: Send
+            - package: NameService
 
             - package: KeyAppKit
               product: KeyAppKitLogger
             - package: KeyAppKit
               product: TransactionParser
-            - package: KeyAppKit
-              product: NameService
             - package: KeyAppKit
               product: SolanaPricesAPIs
             - package: KeyAppKit
