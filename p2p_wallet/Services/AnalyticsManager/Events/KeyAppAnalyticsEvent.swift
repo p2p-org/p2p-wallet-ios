@@ -133,6 +133,15 @@ enum KeyAppAnalyticsEvent: AnalyticsEvent {
         fee: Bool,
         fiatInput: Bool
     )
+    case sendClickStartCreateLink
+    case sendClickChangeTokenChosen(tokenName: String, sendFlow: String)
+    case sendClickChangeTokenValue(tokenName: String, tokenValue: Double, sendFlow: String)
+    case sendClickCreateLink(tokenName: String, tokenValue: Double, pubkey: String)
+    case sendCreatingLinkEndScreenOpen(tokenName: String, tokenValue: Double, pubkey: String)
+    case sendClickShareLink
+    case sendClickCopyLink
+    case sendClickDefaultError
+    case sendCreatingLinkProcessScreenOpen
 
     // MARK: - Send new
 
@@ -141,8 +150,8 @@ enum KeyAppAnalyticsEvent: AnalyticsEvent {
     case sendnewBuyClickButton(source: String)
     case sendnewReceiveClickButton(source: String)
     case sendnewInputScreen(source: String)
-    case sendnewTokenInputClick(source: String)
-    case sendnewFreeTransactionClick(source: String)
+    case sendnewTokenInputClick(tokenName: String, source: String, sendFlow: String)
+    case sendnewFreeTransactionClick(source: String, sendFlow: String)
     case sendnewFiatInputClick(crypto: Bool, source: String)
 
     // MARK: - Swap
@@ -350,6 +359,20 @@ enum KeyAppAnalyticsEvent: AnalyticsEvent {
     case sellMoonpay
     
     // MARK: - History
-    case historyOpened
+    case historyOpened(sentViaLink: Bool)
     case historySendClicked(status: String)
+    case historyClickBlockSendViaLink
+    case historySendClickTransaction
+    case historySendClickCopyTransaction
+    case historySendClickShareTransaction
+    
+    // MARK: - Claim
+    
+    case claimStartScreenOpen
+    case claimClickConfirmed(pubkey: String, tokenName: String, tokenValue: Double)
+    case claimClickHide
+    case claimEndScreenOpen
+    case claimClickEnd
+    case claimErrorAlreadyClaimed
+    case claimErrorDefaultReject
 }

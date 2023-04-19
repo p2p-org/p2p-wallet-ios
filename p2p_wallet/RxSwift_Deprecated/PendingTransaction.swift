@@ -91,6 +91,10 @@ struct PendingTransaction {
     let rawTransaction: RawTransactionType
     var status: TransactionStatus
     var slot: UInt64 = 0
+    
+    var isConfirmedOrError: Bool {
+        status.error != nil || status.isFinalized || (status.numberOfConfirmations ?? 0) > 0
+    }
 }
 
 extension PendingTransaction {
@@ -158,7 +162,7 @@ extension PendingTransaction {
                 authority: nil,
                 destinationAuthority: nil,
                 rawAmount: transaction.tokenAmount,
-                account: transaction.claimableTokenInfo.account
+                account: transaction.claimableTokenInfo.keypair.publicKey.base58EncodedString
             )
             amountInFiat = transaction.amountInFiat
             fee = transaction.feeAmount

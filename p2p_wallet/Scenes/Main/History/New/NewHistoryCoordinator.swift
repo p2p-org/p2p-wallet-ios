@@ -82,7 +82,7 @@ class NewHistoryCoordinator: SmartCoordinator<Void> {
             self.openBuy()
         case .openReceive:
             self.openReceive()
-        case let .openSentViaLinkHistoryView:
+        case .openSentViaLinkHistoryView:
             openSentViaLinkHistoryView()
         }
     }
@@ -187,9 +187,9 @@ class NewHistoryCoordinator: SmartCoordinator<Void> {
     }
     
     private func openSentViaLinkHistoryView() {
-        let coordinator = SentViaLinkHistoryCoordinator(
-            presentation: SmartCoordinatorPushPresentation(presentation.presentingViewController as! UINavigationController)
-        )
+        let coordinator = SentViaLinkHistoryCoordinator(presentation: SmartCoordinatorPushPresentation(
+            presentation.presentingViewController as! UINavigationController
+        ))
         
         coordinate(to: coordinator)
             .sink { _ in }

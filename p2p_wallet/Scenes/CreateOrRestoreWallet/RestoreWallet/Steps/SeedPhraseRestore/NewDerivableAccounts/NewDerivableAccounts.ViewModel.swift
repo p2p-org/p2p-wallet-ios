@@ -15,9 +15,9 @@ protocol NewDrivableAccountsViewModelType {
     var selectedDerivablePathPublisher: AnyPublisher<DerivablePath, Never> { get }
 
     func getCurrentSelectedDerivablePath() -> DerivablePath
-    func chooseDerivationPath()
-    func selectDerivationPath(_ path: DerivablePath)
-    func restoreAccount()
+    func navigateToSelectDerivableType()
+    func selectDerivablePath(_ path: DerivablePath)
+    func selectDerivableType(_ type: DerivablePath.DerivableType)
     func onBack()
 }
 
@@ -48,6 +48,9 @@ extension NewDerivableAccounts {
         init(phrases: [String]) {
             self.phrases = phrases
             accountsListViewModel = ListViewModel(phrases: phrases)
+            
+            super.init()
+            selectDerivableType(selectedDerivablePath.type)
         }
 
         struct CoordinatorIO {
@@ -78,19 +81,29 @@ extension NewDerivableAccounts.ViewModel: NewDrivableAccountsViewModelType {
         selectedDerivablePath
     }
 
-    func chooseDerivationPath() {
-        navigatableScene = .selectDerivationPath
+    func navigateToSelectDerivableType() {
+        navigatableScene = .selectDerivableType
+    }
+    
+    func selectDerivablePath(_ path: DerivablePath) {
+        selectedDerivablePath = path
+        restoreAccount()
     }
 
-    func selectDerivationPath(_ path: DerivablePath) {
-        selectedDerivablePath = path
+    func selectDerivableType(_ type: DerivablePath.DerivableType) {
+        selectedDerivablePath = DerivablePath(type: type, walletIndex: selectedDerivablePath.walletIndex, accountIndex: selectedDerivablePath.accountIndex)
+        accountsListViewModel.cancelRequest()
+        accountsListViewModel.setDerivableType(type)
+        accountsListViewModel.reload()
     }
 
     func onBack() {
         coordinatorIO.back.send()
     }
 
-    func restoreAccount() {
+    // MARK: - Helpers
+
+    private func restoreAccount() {
         // cancel any requests
         accountsListViewModel.cancelRequest()
 

@@ -7,4 +7,4 @@
 
 import Foundation
 
-enum NewDerivablePaths {}
+enum SelectDerivableType {}

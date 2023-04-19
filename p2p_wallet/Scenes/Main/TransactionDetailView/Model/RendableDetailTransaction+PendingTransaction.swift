@@ -15,7 +15,7 @@ struct RendableDetailPendingTransaction: RendableTransactionDetail {
     let priceService: PricesService
 
     var status: TransactionDetailStatus {
-        if trx.transactionId != nil {
+        if trx.transactionId != nil, !(trx.rawTransaction is ClaimSentViaLinkTransaction) {
             return .succeed(message: L10n.theTransactionHasBeenSuccessfullyCompleted)
         }
 
@@ -30,12 +30,12 @@ struct RendableDetailPendingTransaction: RendableTransactionDetail {
         case .finalized:
             return .succeed(message: L10n.theTransactionHasBeenSuccessfullyCompleted)
         default:
-            return .loading(message: L10n.itUsuallyTakes520SecondsForATransactionToComplete)
+            return .loading(message: L10n.theTransactionWillBeCompletedInAFewSeconds)
         }
     }
 
     var title: String {
-        if trx.transactionId != nil {
+        if trx.transactionId != nil, !(trx.rawTransaction is ClaimSentViaLinkTransaction) {
             return L10n.transactionSucceeded
         }
 
@@ -50,7 +50,15 @@ struct RendableDetailPendingTransaction: RendableTransactionDetail {
     }
 
     var subtitle: String {
-        trx.sentAt.string(withFormat: "MMMM dd, yyyy @ HH:mm", locale: Locale.base)
+        if trx.rawTransaction is ClaimSentViaLinkTransaction {
+            switch trx.status {
+            case .error, .finalized:
+                break
+            default:
+                return L10n.pending.capitalized
+            }
+        }
+        return trx.sentAt.string(withFormat: "MMMM dd, yyyy @ HH:mm", locale: Locale.base)
     }
 
     var signature: String? {
@@ -203,14 +211,20 @@ struct RendableDetailPendingTransaction: RendableTransactionDetail {
                                   value: "\(formatedFeeAmount) (\(formattedFeeAmountInFiat))"))
             }
         case let transaction as ClaimSentViaLinkTransaction:
+            let title: String
+            switch trx.status {
+            case .error, .finalized:
+                title = L10n.receivedFrom
+            default:
+                title = L10n.from
+            }
             result.append(
                 .init(
-                    title: L10n.receivedFrom,
-                    value: transaction.claimableTokenInfo.account,
+                    title: title,
+                    value: RecipientFormatter.format(destination: transaction.claimableTokenInfo.keypair.publicKey.base58EncodedString),
                     copyableValue: transaction.claimableTokenInfo.account
                 )
             )
-            
             result.append(.init(title: L10n.transactionFee, value: L10n.freePaidByKeyApp))
         default:
             break

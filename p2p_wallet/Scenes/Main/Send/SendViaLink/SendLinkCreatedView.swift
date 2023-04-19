@@ -31,7 +31,7 @@ struct SendLinkCreatedView: View {
             Spacer()
             
             // Header
-            Text(L10n.theOneTimeLinkIsReadyTheFundsCanBeClaimed)
+            Text(L10n.shareYourLinkToSendMoney)
                 .apply(style: .largeTitle)
                 .multilineTextAlignment(.center)
                 .foregroundColor(Color(Asset.Colors.night.color))
@@ -64,7 +64,7 @@ struct SendLinkCreatedView: View {
                 .padding(.bottom, 28)
             
             // Subtitle
-            Text(L10n.ifYouWantToGetYourMoneyBackJustOpenLinkByYourself)
+            Text(L10n.ifYouWantToGetYourMoneyBackJustOpenTheLinkByYourself)
                 .apply(style: .text3)
                 .multilineTextAlignment(.center)
                 .foregroundColor(Color(Asset.Colors.mountain.color))
@@ -85,7 +85,10 @@ struct SendLinkCreatedView: View {
                 .padding(.bottom, 32)
         }
         .padding(.horizontal, 20)
-            .background(Color(Asset.Colors.smoke.color).edgesIgnoringSafeArea(.vertical))
+        .background(Color(Asset.Colors.smoke.color).edgesIgnoringSafeArea(.vertical))
+        .onAppear {
+            viewModel.onAppear()
+        }
     }
 }
 
@@ -94,7 +97,8 @@ struct SendLinkCreatedView_Previews: PreviewProvider {
         SendLinkCreatedView(
             viewModel: SendLinkCreatedViewModel(
                 link: "test.com/Ro8Andswf",
-                formatedAmount: "7.12 SOL"
+                formatedAmount: "7.12 SOL",
+                intermediateAccountPubKey: ""
             )
         )
     }

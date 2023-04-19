@@ -210,7 +210,7 @@ class DetailAccountCoordinator: SmartCoordinator<DetailAccountCoordinatorResult>
                     self.coordinate(to: SendTransactionStatusCoordinator(parentController: rootViewController, transaction: model))
                         .sink(receiveValue: {})
                         .store(in: &self.subscriptions)
-                case let .sentViaLink:
+                case .sentViaLink:
                     rootViewController.popToViewController(currentVC, animated: true)
 
 //                    self.coordinate(to: SendTransactionStatusCoordinator(parentController: rootViewController, transaction: model))
