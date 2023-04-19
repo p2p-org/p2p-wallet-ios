@@ -11,14 +11,18 @@ import KeyAppKitCore
 import SolanaPricesAPIs
 import Web3
 
-public final class EthereumAccountsService: NSObject, AccountsService, ObservableObject {
+public final class EthereumAccountsService: NSObject, AccountsService {
     public typealias Account = EthereumAccount
 
-    private var subscriptions = [AnyCancellable]()
+    var subscriptions = [AnyCancellable]()
 
-    private let accounts: AsyncValue<[Account]>
+    let accounts: AsyncValue<[Account]>
 
-    @Published public var state: AsyncValueState<[Account]> = .init(value: [])
+    let stateSubject: CurrentValueSubject<AsyncValueState<[Account]>, Never> = .init(.init(value: []))
+
+    public var statePublisher: AnyPublisher<AsyncValueState<[Account]>, Never> { stateSubject.eraseToAnyPublisher() }
+
+    public var state: AsyncValueState<[Account]> { stateSubject.value }
 
     public init(
         address: String,
@@ -26,13 +30,19 @@ public final class EthereumAccountsService: NSObject, AccountsService, Observabl
         ethereumTokenRepository: EthereumTokensRepository,
         priceService: EthereumPriceService,
         fiat: String,
-        errorObservable: any ErrorObserver
+        errorObservable: any ErrorObserver,
+        enable: Bool
     ) {
         let address = try? EthereumAddress(hex: address, eip55: false)
 
         accounts = .init(initialItem: [], request: {
             guard let address else {
                 return (nil, Error.invalidEthereumAddress)
+            }
+
+            // Service is disabled
+            if !enable {
+                return ([], nil)
             }
 
             do {
@@ -69,7 +79,7 @@ public final class EthereumAccountsService: NSObject, AccountsService, Observabl
 
         /// Updating price
         let prices = accounts
-            .$state
+            .statePublisher
             .filter { $0.status == .initializing || $0.status == .ready }
             .asyncMap { state in
                 try? await errorObservable.run {
@@ -81,7 +91,10 @@ public final class EthereumAccountsService: NSObject, AccountsService, Observabl
             }
 
         Publishers
-            .CombineLatest(accounts.$state, prices)
+            .CombineLatest(
+                accounts.statePublisher,
+                prices
+            )
             .map { state, prices in
                 guard let prices else { return state }
 
@@ -99,7 +112,9 @@ public final class EthereumAccountsService: NSObject, AccountsService, Observabl
                     return newAccounts
                 }
             }
-            .assignWeak(to: \.state, on: self)
+            .sink(receiveValue: { [weak stateSubject] state in
+                stateSubject?.send(state)
+            })
             .store(in: &subscriptions)
 
         // Update every 30 seconds accounts and balance
@@ -111,7 +126,7 @@ public final class EthereumAccountsService: NSObject, AccountsService, Observabl
             .store(in: &subscriptions)
 
         errorObservable
-            .handleAsyncValue($state)
+            .handleAsyncValue(accounts)
             .store(in: &subscriptions)
 
         // First fetch

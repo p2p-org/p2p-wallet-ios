@@ -45,7 +45,7 @@ class WalletsRepositoryImpl: NSObject, WalletsRepository {
         super.init()
 
         solanaAccountsService
-            .$state
+            .statePublisher
             .sink { state in
                 // Updating old prices service
                 let tokens = state.value.map(\.data.token)
@@ -79,7 +79,7 @@ class WalletsRepositoryImpl: NSObject, WalletsRepository {
 
     var statePublisher: AnyPublisher<BEFetcherState, Never> {
         solanaAccountsService
-            .$state
+            .statePublisher
             .map { state in
                 Self.stateMapping(status: state.status, error: state.error)
             }
@@ -92,7 +92,8 @@ class WalletsRepositoryImpl: NSObject, WalletsRepository {
     }
 
     var dataDidChange: AnyPublisher<Void, Never> {
-        solanaAccountsService.$state
+        solanaAccountsService
+            .statePublisher
             .map(\.value)
             .removeDuplicates()
             .map { _ in () }
@@ -100,7 +101,8 @@ class WalletsRepositoryImpl: NSObject, WalletsRepository {
     }
 
     var dataPublisher: AnyPublisher<[SolanaSwift.Wallet], Never> {
-        solanaAccountsService.$state
+        solanaAccountsService
+            .statePublisher
             .map { state in state.value.map(\.data) }
             .eraseToAnyPublisher()
     }

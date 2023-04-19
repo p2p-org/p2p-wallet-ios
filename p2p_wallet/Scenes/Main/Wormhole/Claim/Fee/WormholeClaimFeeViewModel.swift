@@ -49,7 +49,7 @@ class WormholeClaimFeeViewModel: BaseViewModel, ObservableObject {
 
         /// Listen to changing in bundle
         bundle
-            .$state
+            .statePublisher
             .map { state in
                 state.apply { bundle in
                     WormholeClaimFeeAdapter(account: account, bundle: bundle)

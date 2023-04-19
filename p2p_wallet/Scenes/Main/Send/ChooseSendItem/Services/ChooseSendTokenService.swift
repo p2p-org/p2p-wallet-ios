@@ -37,7 +37,8 @@ final class ChooseSendTokenService: ChooseItemService {
 
 private extension ChooseSendTokenService {
     func bind() {
-        accountsService.$state
+        accountsService
+            .statePublisher
             .map({ state in
                 state.apply { accounts in
                     [ChooseItemListSection(
