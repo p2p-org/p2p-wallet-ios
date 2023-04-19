@@ -94,7 +94,7 @@ private extension ChooseSwapTokenService {
             }
             .store(in: &subscriptions)
 
-        Publishers.CombineLatest(accountsService.$state.eraseToAnyPublisher(), swapTokens.eraseToAnyPublisher())
+        Publishers.CombineLatest(accountsService.statePublisher, swapTokens.eraseToAnyPublisher())
             .map({ ($0.0.value, $0.1) })
             .sink { [weak self] accounts, swapTokens in
                 guard let self else { return }

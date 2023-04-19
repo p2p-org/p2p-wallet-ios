@@ -49,7 +49,8 @@ class WormholeClaimViewModel: BaseViewModel, ObservableObject {
         // Listen changing in bundle value
         bundle.listen(target: self, in: &subscriptions)
 
-        bundle.$state
+        bundle
+            .statePublisher
             .receive(on: RunLoop.main)
             .sink { [weak self] state in
                 self?.model = WormholeClaimEthereumModel(account: account, bundle: state)
@@ -57,7 +58,8 @@ class WormholeClaimViewModel: BaseViewModel, ObservableObject {
             .store(in: &subscriptions)
 
         // Update timer
-        bundle.$state
+        bundle
+            .statePublisher
             .map(\.value?.expiresAtDate)
             .compactMap { $0 }
             .receive(on: RunLoop.main)
@@ -74,7 +76,8 @@ class WormholeClaimViewModel: BaseViewModel, ObservableObject {
             .store(in: &subscriptions)
 
         // Notify user an error
-        bundle.$state
+        bundle
+            .statePublisher
             .map(\.error)
             .compactMap { $0 }
             .sink { [weak self] error in

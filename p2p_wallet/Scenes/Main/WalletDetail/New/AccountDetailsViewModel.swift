@@ -60,7 +60,7 @@ class AccountDetailsViewModel: BaseViewModel, ObservableObject {
 
         // Dynamic updating wallet and render it
         solanaAccountsManager
-            .$state
+            .statePublisher
             .receive(on: RunLoop.main)
             .map { $0.value.first(where: { $0.data.pubkey == solanaAccount.data.pubkey }) }
             .compactMap { $0 }

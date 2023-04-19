@@ -1,12 +1,11 @@
 import Combine
+import KeyAppBusiness
+import KeyAppKitCore
 import Resolver
 import SolanaSwift
 import Wormhole
-import KeyAppKitCore
-import KeyAppBusiness
 
 final class ChooseWormholeTokenService: ChooseItemService {
-    
     let otherTokensTitle = L10n.otherTokens
 
     var state: AnyPublisher<AsyncValueState<[ChooseItemListSection]>, Never> {
@@ -18,7 +17,8 @@ final class ChooseWormholeTokenService: ChooseItemService {
     private var subscriptions = [AnyCancellable]()
 
     init() {
-        statePublisher = CurrentValueSubject<AsyncValueState<[ChooseItemListSection]>, Never>(AsyncValueState(value: []))
+        statePublisher = CurrentValueSubject<AsyncValueState<[ChooseItemListSection]>,
+            Never>(AsyncValueState(value: []))
         bind()
     }
 
@@ -38,19 +38,20 @@ final class ChooseWormholeTokenService: ChooseItemService {
 
 private extension ChooseWormholeTokenService {
     func bind() {
-        accountsService.$state
-            .map({ state in
+        accountsService
+            .statePublisher
+            .map { state in
                 state.apply { accounts in
                     [ChooseItemListSection(
                         items: accounts
                             .filter {
                                 SupportedToken.bridges.map(\.solAddress).contains($0.data.mintAddress)
-                                && ($0.data.lamports ?? 0) > 0
+                                    && ($0.data.lamports ?? 0) > 0
                             }
-                            .map(\.data))
-                    ]
+                            .map(\.data)
+                    )]
                 }
-            })
+            }
             .sink { [weak self] state in
                 self?.statePublisher.send(state)
             }

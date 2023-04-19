@@ -69,7 +69,7 @@ final class HomeAccountsViewModel: BaseViewModel, ObservableObject {
         let ethereumAggregator = HomeEthereumAccountsAggregator()
         let ethereumAccountsPublisher = Publishers
             .CombineLatest(
-                ethereumAccountsService.$state,
+                ethereumAccountsService.statePublisher,
                 userActionService.$actions.map { userActions in
                     userActions.compactMap { $0 as? WormholeClaimUserAction }
                 }
@@ -82,7 +82,7 @@ final class HomeAccountsViewModel: BaseViewModel, ObservableObject {
         let solanaAggregator = HomeSolanaAccountsAggregator()
         let solanaAccountsPublisher = Publishers
             .CombineLatest4(
-                solanaAccountsService.$state,
+                solanaAccountsService.statePublisher,
                 favouriteAccountsStore.$favourites,
                 favouriteAccountsStore.$ignores,
                 $hideZeroBalance
@@ -105,7 +105,7 @@ final class HomeAccountsViewModel: BaseViewModel, ObservableObject {
             .store(in: &subscriptions)
 
         // Balance
-        solanaAccountsService.$state
+        solanaAccountsService.statePublisher
             .map { (state: AsyncValueState<[SolanaAccountsService.Account]>) -> String in
                 let equityValue: Double = state.value.reduce(0) { $0 + $1.amountInFiatDouble }
                 return "\(Defaults.fiat.symbol) \(equityValue.toString(maximumFractionDigits: 2))"
