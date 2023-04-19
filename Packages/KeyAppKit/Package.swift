@@ -48,12 +48,6 @@ let package = Package(
             targets: ["Solend"]
         ),
 
-        // Send
-        .library(
-            name: "Send",
-            targets: ["Send"]
-        ),
-
         // Sell
         .library(
             name: "Sell",
@@ -188,25 +182,6 @@ let package = Package(
         //     name: "p2p",
         //     path: "Frameworks/p2p.xcframework"
         // ),
-
-        .target(
-            name: "Send",
-            dependencies: [
-                .product(name: "SolanaSwift", package: "solana-swift"),
-                .product(name: "FeeRelayerSwift", package: "FeeRelayerSwift"),
-                "NameService",
-                "SolanaPricesAPIs",
-                "TransactionParser",
-                "History",
-                "Wormhole",
-            ]
-        ),
-
-        .testTarget(
-            name: "SendTest",
-            dependencies: ["Send"],
-            path: "Tests/UnitTests/SendTests"
-        ),
 
         // Sell
         .target(

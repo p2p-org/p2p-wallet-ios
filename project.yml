@@ -25,6 +25,8 @@ packages:
         path: ./Packages/JSBridge
     History:
         path: ./Packages/History
+    Send:
+        path: ./Packages/Send
 
     # remote
     SolanaSwift:
@@ -273,6 +275,7 @@ targets:
             - package: Onboarding
             - package: JSBridge
             - package: History
+            - package: Send
 
             - package: KeyAppKit
               product: KeyAppKitLogger
@@ -286,8 +289,6 @@ targets:
               product: CountriesAPI
             - package: KeyAppKit
               product: Solend
-            - package: KeyAppKit
-              product: Send
             - package: KeyAppKit
               product: Sell
             - package: KeyAppKit
