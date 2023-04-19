@@ -14,15 +14,15 @@ import Web3
 public final class EthereumAccountsService: NSObject, AccountsService {
     public typealias Account = EthereumAccount
 
-    private var subscriptions = [AnyCancellable]()
+    var subscriptions = [AnyCancellable]()
 
-    private let accounts: AsyncValue<[Account]>
+    let accounts: AsyncValue<[Account]>
 
-    private let _state: CurrentValueSubject<AsyncValueState<[Account]>, Never> = .init(.init(value: []))
+    let stateSubject: CurrentValueSubject<AsyncValueState<[Account]>, Never> = .init(.init(value: []))
 
-    public var statePublisher: AnyPublisher<AsyncValueState<[Account]>, Never> { _state.eraseToAnyPublisher() }
+    public var statePublisher: AnyPublisher<AsyncValueState<[Account]>, Never> { stateSubject.eraseToAnyPublisher() }
 
-    public var state: AsyncValueState<[Account]> { _state.value }
+    public var state: AsyncValueState<[Account]> { stateSubject.value }
 
     public init(
         address: String,
@@ -112,8 +112,8 @@ public final class EthereumAccountsService: NSObject, AccountsService {
                     return newAccounts
                 }
             }
-            .sink(receiveValue: { [weak _state] state in
-                _state?.send(state)
+            .sink(receiveValue: { [weak stateSubject] state in
+                stateSubject?.send(state)
             })
             .store(in: &subscriptions)
 

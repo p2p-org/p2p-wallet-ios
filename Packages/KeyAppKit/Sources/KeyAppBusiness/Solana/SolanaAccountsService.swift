@@ -22,11 +22,11 @@ public final class SolanaAccountsService: NSObject, AccountsService {
 
     let accounts: AsyncValue<[Account]>
 
-    let _state: CurrentValueSubject<AsyncValueState<[Account]>, Never> = .init(.init(value: []))
+    let stateSubject: CurrentValueSubject<AsyncValueState<[Account]>, Never> = .init(.init(value: []))
 
-    public var statePublisher: AnyPublisher<AsyncValueState<[Account]>, Never> { _state.eraseToAnyPublisher() }
+    public var statePublisher: AnyPublisher<AsyncValueState<[Account]>, Never> { stateSubject.eraseToAnyPublisher() }
 
-    public var state: AsyncValueState<[Account]> { _state.value }
+    public var state: AsyncValueState<[Account]> { stateSubject.value }
 
     public init(
         accountStorage: SolanaAccountStorage,
@@ -120,8 +120,8 @@ public final class SolanaAccountsService: NSObject, AccountsService {
                     return newAccounts
                 }
             }
-            .sink { [weak _state] state in
-                _state?.send(state)
+            .sink { [weak stateSubject] state in
+                stateSubject?.send(state)
             }
             .store(in: &subscriptions)
 
