@@ -23,7 +23,7 @@ class FavouriteAccountsDataSource: ObservableObject {
     }
 
     init() {
-        favourites = Defaults.hiddenWalletPubkey
+        favourites = Defaults.unhiddenWalletPubkey
         ignores = Defaults.hiddenWalletPubkey
     }
 
