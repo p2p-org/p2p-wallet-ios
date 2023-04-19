@@ -16,8 +16,21 @@ protocol RenderableAccount: Identifiable where ID == String {
     var extraAction: AccountExtraAction? { get }
 
     var tags: AccountTags { get }
+}
 
-    var onTap: (() -> Void)? { get }
+extension RendableAccount {
+    var isInIgnoreList: Bool {
+        tags.contains(.ignore)
+    }
+
+    var onTapEnable: Bool {
+        switch detail {
+        case .button:
+            return false
+        default:
+            return true
+        }
+    }
 }
 
 protocol ClaimableRenderableAccount: RenderableAccount {
@@ -29,27 +42,24 @@ protocol ClaimableRenderableAccount: RenderableAccount {
 struct AccountTags: OptionSet {
     let rawValue: Int
 
+    /// Should be in favourite list. (Always display on top section)
     static let favourite = AccountTags(rawValue: 1 << 0)
+
+    /// Should be in ignore list. (Second section)
     static let ignore = AccountTags(rawValue: 1 << 1)
 }
 
 enum AccountExtraAction {
-    case visiable(action: () -> Void)
+    case visiable
 }
 
 enum AccountDetail {
     case text(String)
-    case button(label: String, action: (() -> Void)?)
+    case button(label: String, enabled: Bool)
 }
 
 enum AccountIcon {
     case image(UIImage)
     case url(URL)
     case random(seed: String)
-}
-
-extension RenderableAccount {
-    var isInIgnoreList: Bool {
-        tags.contains(.ignore)
-    }
 }
