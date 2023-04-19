@@ -1,8 +1,8 @@
+import AnalyticsManager
 import Combine
 import CoreImage.CIFilterBuiltins
 import Foundation
 import Resolver
-import AnalyticsManager
 
 enum ReceiveNetwork {
     enum Image {
@@ -34,15 +34,16 @@ class ReceiveViewModel: BaseViewModel, ObservableObject {
 
     init(
         network: ReceiveNetwork,
-        userWalletManager: UserWalletManager = Resolver.resolve()
+        userWalletManager: UserWalletManager = Resolver.resolve(),
+        nameStorage: NameStorageType = Resolver.resolve()
     ) {
         /// Assign network type
         self.network = network
 
         /// Extract user wallet from manager.
         guard let userWallet = userWalletManager.wallet else {
-            self.address = ""
-            self.qrImage = UIImage()
+            address = ""
+            qrImage = UIImage()
             super.init()
 
             return
@@ -50,15 +51,15 @@ class ReceiveViewModel: BaseViewModel, ObservableObject {
 
         switch network {
         case let .solana(_, icon):
-            self.address = userWallet.account.publicKey.base58EncodedString
-            self.qrImage = ReceiveViewModel.generateQRCode(from: address) ?? UIImage()
+            address = userWallet.account.publicKey.base58EncodedString
+            qrImage = ReceiveViewModel.generateQRCode(from: address) ?? UIImage()
 
             // Set token icon
             switch icon {
             case let .image(image):
-                self.qrCenterImage = image
+                qrCenterImage = image
             case let .url(url):
-                self.qrCenterImageURL = url
+                qrCenterImageURL = url
             case .none:
                 break
             }
@@ -72,7 +73,7 @@ class ReceiveViewModel: BaseViewModel, ObservableObject {
                         description: address,
                         showTopCorners: true,
                         showBottomCorners: username == nil
-                    )
+                    ),
                 ]
 
                 if let username = username {
@@ -84,29 +85,29 @@ class ReceiveViewModel: BaseViewModel, ObservableObject {
                             description: username,
                             showTopCorners: false,
                             showBottomCorners: true
-                        )
+                        ),
                     ]
                 }
 
                 return items
             }
-            self.items = solanaNetwork(address: address, username: userWallet.name)
+            items = solanaNetwork(address: address, username: nameStorage.getName())
 
         case let .ethereum(tokenSymbol, icon):
-            self.address = userWallet.ethereumKeypair.address
-            self.qrImage = ReceiveViewModel.generateQRCode(from: address) ?? UIImage()
+            address = userWallet.ethereumKeypair.address
+            qrImage = ReceiveViewModel.generateQRCode(from: address) ?? UIImage()
 
             // Set token icon
             switch icon {
             case let .image(image):
-                self.qrCenterImage = image
+                qrCenterImage = image
             case let .url(url):
-                self.qrCenterImageURL = url
+                qrCenterImageURL = url
             case .none:
                 break
             }
 
-            self.items = [
+            items = [
                 ListReceiveItem(
                     id: FieldId.eth.rawValue,
                     title: L10n.myEthereumAddress,
@@ -120,10 +121,10 @@ class ReceiveViewModel: BaseViewModel, ObservableObject {
                 InstructionsReceiveCellItem(
                     instructions: [
                         ("1", L10n.sendToYourEthereumAddress(tokenSymbol)),
-                        ("2", L10n.weBridgeItToSolanaWithWormhole)
+                        ("2", L10n.weBridgeItToSolanaWithWormhole),
                     ],
                     tip: L10n.youOnlyNeedToSignATransactionWithKeyApp
-                )
+                ),
             ]
         }
 
@@ -171,7 +172,7 @@ class ReceiveViewModel: BaseViewModel, ObservableObject {
     private var shouldShowNotification = true
     private func sendNotification(text: String) {
         notificationTimer?.invalidate()
-        notificationTimer = Timer.scheduledTimer(withTimeInterval: 1, repeats: false, block: { [weak self] (timer) in
+        notificationTimer = Timer.scheduledTimer(withTimeInterval: 1, repeats: false, block: { [weak self] _ in
             self?.shouldShowNotification = true
         })
         if shouldShowNotification {
