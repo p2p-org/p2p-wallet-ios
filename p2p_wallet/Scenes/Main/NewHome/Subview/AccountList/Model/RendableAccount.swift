@@ -23,34 +23,44 @@ protocol RendableAccount: Identifiable where ID == String {
     var extraAction: AccountExtraAction? { get }
 
     var tags: AccountTags { get }
-
-    var onTap: (() -> Void)? { get }
-}
-
-struct AccountTags: OptionSet {
-    let rawValue: Int
-
-    static let favourite = AccountTags(rawValue: 1 << 0)
-    static let ignore = AccountTags(rawValue: 1 << 1)
-}
-
-enum AccountExtraAction {
-    case visiable(action: () -> Void)
-}
-
-enum AccountDetail {
-    case text(String)
-    case button(label: String, action: (() -> Void)?)
-}
-
-enum AccountIcon {
-    case image(UIImage)
-    case url(URL)
-    case random(seed: String)
 }
 
 extension RendableAccount {
     var isInIgnoreList: Bool {
         tags.contains(.ignore)
     }
+
+    var onTapEnable: Bool {
+        switch detail {
+        case .button:
+            return false
+        default:
+            return true
+        }
+    }
+}
+
+struct AccountTags: OptionSet {
+    let rawValue: Int
+
+    /// Should be in favourite list. (Always display on top section)
+    static let favourite = AccountTags(rawValue: 1 << 0)
+
+    /// Should be in ignore list. (Second section)
+    static let ignore = AccountTags(rawValue: 1 << 1)
+}
+
+enum AccountExtraAction {
+    case visiable
+}
+
+enum AccountDetail {
+    case text(String)
+    case button(label: String, enabled: Bool)
+}
+
+enum AccountIcon {
+    case image(UIImage)
+    case url(URL)
+    case random(seed: String)
 }

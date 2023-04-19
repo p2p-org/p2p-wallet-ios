@@ -12,6 +12,9 @@ struct HomeAccountView: View {
     let iconSize: CGFloat = 50
     let rendable: any RendableAccount
 
+    let onTap: (() -> Void)?
+    let onButtonTap: (() -> Void)?
+
     var body: some View {
         HStack(alignment: .center, spacing: 12) {
             switch rendable.icon {
@@ -50,31 +53,31 @@ struct HomeAccountView: View {
                 Text(text)
                     .font(uiFont: .font(of: .text3, weight: .semibold))
                     .foregroundColor(Color(Asset.Colors.night.color))
-            case let .button(text, action):
+            case let .button(text, enabled):
                 Button(
-                    action: {
-                        action?()
-                    },
+                    action: { onButtonTap?() },
                     label: {
                         Text(text)
                             .padding(.horizontal, 12)
                             .font(uiFont: TextButton.Style.second.font(size: .small))
                             .foregroundColor(Color(
-                                action == nil ? TextButton.Style.primaryWhite.disabledForegroundColor! : TextButton
-                                    .Style.primaryWhite.foreground
+                                enabled ? TextButton.Style.primaryWhite.foreground
+                                    : TextButton.Style.primaryWhite.disabledForegroundColor!
                             ))
                             .frame(height: TextButton.Size.small.height)
-                            .background(Color(action == nil ? TextButton.Style.primaryWhite
-                                    .disabledBackgroundColor! : TextButton.Style.primaryWhite.backgroundColor))
+                            .background(Color(
+                                enabled ? TextButton.Style.primaryWhite.backgroundColor
+                                    : TextButton.Style.primaryWhite.disabledBackgroundColor!
+                            ))
                             .cornerRadius(12)
                     }
-                ).disabled(action == nil)
+                ).disabled(!enabled)
             }
         }
         .contentShape(Rectangle())
-        .if(rendable.onTap != nil) { view in
+        .if(rendable.onTapEnable) { view in
             view.onTapGesture {
-                rendable.onTap?()
+                onTap?()
             }
         }
     }
@@ -90,9 +93,9 @@ struct HomeAccountView_Previews: PreviewProvider {
                 title: "Solana",
                 subtitle: "0.1747 SOL",
                 detail: .text("$ 3.67"),
-                extraAction: .visiable(action: {}),
+                extraAction: .visiable,
                 tags: []
             )
-        )
+        ) {} onButtonTap: {}
     }
 }
