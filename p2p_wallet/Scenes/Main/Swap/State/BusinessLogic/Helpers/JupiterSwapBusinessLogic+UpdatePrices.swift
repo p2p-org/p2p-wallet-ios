@@ -32,15 +32,7 @@ extension JupiterSwapBusinessLogic {
             .reduce([String: Double]()) { combined, element in
                 guard let value = element.value?.value else { return combined }
                 var combined = combined
-                if element.key.address == Token.usdc.address || element.key.address == Token.usdt.address {
-                    if abs(value - 1.0) < 0.01 {
-                        combined[element.key.address] = 1.0
-                    } else {
-                        combined[element.key.address] = value
-                    }
-                } else {
-                    combined[element.key.address] = value
-                }
+                combined[element.key.address] = value
                 return combined
             }
         
