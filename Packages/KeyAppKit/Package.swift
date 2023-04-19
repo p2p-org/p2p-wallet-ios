@@ -29,34 +29,16 @@ let package = Package(
             targets: ["NameService"]
         ),
 
-        // Analytics manager for wallet
-        .library(
-            name: "AnalyticsManager",
-            targets: ["AnalyticsManager"]
-        ),
-
         // Price service for wallet
         .library(
             name: "SolanaPricesAPIs",
             targets: ["SolanaPricesAPIs"]
         ),
 
-        // JSBridge
-        .library(
-            name: "JSBridge",
-            targets: ["JSBridge"]
-        ),
-
         // Countries
         .library(
             name: "CountriesAPI",
             targets: ["CountriesAPI"]
-        ),
-
-        // Tkey
-        .library(
-            name: "Onboarding",
-            targets: ["Onboarding"]
         ),
 
         // Solend
@@ -69,12 +51,6 @@ let package = Package(
         .library(
             name: "Send",
             targets: ["Send"]
-        ),
-
-        // History
-        .library(
-            name: "History",
-            targets: ["History"]
         ),
 
         // Sell
@@ -114,7 +90,7 @@ let package = Package(
         .package(url: "https://github.com/trustwallet/wallet-core", branch: "master"),
         .package(url: "https://github.com/attaswift/BigInt.git", from: "5.3.0"),
         .package(url: "https://github.com/p2p-org/BigDecimal.git", branch: "main"),
-        .package(url: "https://github.com/bigearsenal/LoggerSwift.git", branch: "master"),
+        .package(url: "https://github.com/bigearsenal/LoggerSwift.git", branch: "master")
     ],
     targets: [
         // Cache
@@ -156,17 +132,6 @@ let package = Package(
             path: "Tests/IntegrationTests/NameServiceIntegrationTests"
         ),
 
-        // AnalyticsManager
-        .target(
-            name: "AnalyticsManager",
-            dependencies: []
-        ),
-        .testTarget(
-            name: "AnalyticsManagerUnitTests",
-            dependencies: ["AnalyticsManager"],
-            path: "Tests/UnitTests/AnalyticsManagerUnitTests"
-        ),
-
         // PricesService
         .target(
             name: "SolanaPricesAPIs",
@@ -178,12 +143,6 @@ let package = Package(
             path: "Tests/UnitTests/SolanaPricesAPIsUnitTests"
             //      resources: [.process("./Resource")]
         ),
-
-        // JSBridge
-        .target(
-            name: "JSBridge"
-        ),
-        .testTarget(name: "JSBridgeTests", dependencies: ["JSBridge"]),
 
         // Countries
         .target(
@@ -198,22 +157,6 @@ let package = Package(
             path: "Tests/UnitTests/CountriesAPIUnitTests"
             //      resources: [.process("./Resource")]
         ),
-
-        // TKey
-        .target(
-            name: "Onboarding",
-            dependencies: [
-                "JSBridge",
-                .product(name: "SolanaSwift", package: "solana-swift"),
-                .product(name: "CryptoSwift", package: "CryptoSwift"),
-                "AnalyticsManager",
-                "KeyAppKitCore",
-            ],
-            resources: [
-                .process("Resource/index.html"),
-            ]
-        ),
-        .testTarget(name: "OnboardingTests", dependencies: ["Onboarding"]),
 
         // Solend
         .target(
@@ -262,15 +205,6 @@ let package = Package(
             name: "SendTest",
             dependencies: ["Send"],
             path: "Tests/UnitTests/SendTests"
-        ),
-
-        // History
-        .target(
-            name: "History",
-            dependencies: [
-                "Onboarding",
-                .product(name: "SolanaSwift", package: "solana-swift"),
-            ]
         ),
 
         // Sell
