@@ -29,6 +29,8 @@ packages:
         path: ./Packages/Send
     NameService:
         path: ./Packages/NameService
+    SolanaPricesAPIs:
+        path: ./Packages/SolanaPricesAPIs
 
     # remote
     SolanaSwift:
@@ -279,13 +281,12 @@ targets:
             - package: History
             - package: Send
             - package: NameService
+            - package: SolanaPricesAPIs
 
             - package: KeyAppKit
               product: KeyAppKitLogger
             - package: KeyAppKit
               product: TransactionParser
-            - package: KeyAppKit
-              product: SolanaPricesAPIs
             - package: KeyAppKit
               product: CountriesAPI
             - package: KeyAppKit
