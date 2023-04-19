@@ -18,7 +18,7 @@ protocol RenderableAccount: Identifiable where ID == String {
     var tags: AccountTags { get }
 }
 
-extension RendableAccount {
+extension RenderableAccount {
     var isInIgnoreList: Bool {
         tags.contains(.ignore)
     }
@@ -31,12 +31,6 @@ extension RendableAccount {
             return true
         }
     }
-}
-
-protocol ClaimableRenderableAccount: RenderableAccount {
-    var isClaiming: Bool { get }
-
-    var onClaim: (() -> Void)? { get }
 }
 
 struct AccountTags: OptionSet {

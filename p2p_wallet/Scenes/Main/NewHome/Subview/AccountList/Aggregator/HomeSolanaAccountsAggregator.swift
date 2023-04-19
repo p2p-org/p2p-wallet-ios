@@ -21,7 +21,7 @@ struct HomeSolanaAccountsAggregator: Aggregator {
             ignores: [String],
             hideZeroBalance: Bool
         )
-    ) -> [RendableSolanaAccount] {
+    ) -> [RenderableSolanaAccount] {
         let (accounts, favourites, ignores, hideZeroBalance) = input
 
         return accounts
@@ -38,7 +38,7 @@ struct HomeSolanaAccountsAggregator: Aggregator {
                     tags.insert(.ignore)
                 }
 
-                return RendableSolanaAccount(
+                return RenderableSolanaAccount(
                     account: account,
                     extraAction: .visiable,
                     tags: tags

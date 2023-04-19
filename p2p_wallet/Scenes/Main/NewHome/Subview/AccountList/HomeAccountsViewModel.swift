@@ -32,10 +32,10 @@ final class HomeAccountsViewModel: BaseViewModel, ObservableObject {
     @Published private(set) var hideZeroBalance: Bool = Defaults.hideZeroBalances
 
     /// Primary list accounts.
-    @Published var accounts: [any RendableAccount] = []
+    @Published var accounts: [any RenderableAccount] = []
 
     /// Secondary list accounts. Will be normally hidded and need to be manually action from user to show in view.
-    var hiddenAccounts: [any RendableAccount] = []
+    var hiddenAccounts: [any RenderableAccount] = []
 
     // MARK: - Initializer
 
@@ -121,9 +121,9 @@ final class HomeAccountsViewModel: BaseViewModel, ObservableObject {
         await HomeAccountsSynchronisationService().refresh()
     }
 
-    func invoke(for account: any RendableAccount, event: Event) {
+    func invoke(for account: any RenderableAccount, event: Event) {
         switch account {
-        case let renderableAccount as RendableSolanaAccount:
+        case let renderableAccount as RenderableSolanaAccount:
             switch event {
             case .tap:
                 navigation.send(.solanaAccount(renderableAccount.account))
