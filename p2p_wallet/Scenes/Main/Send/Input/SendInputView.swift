@@ -114,8 +114,8 @@ struct SendInputView: View {
             case .ready:
                 SendInputAmountView(
                     viewModel: viewModel.inputAmountViewModel,
-                    showSecondaryAmounts: $viewModel.showSecondaryAmounts,
-                    isSwitchAvailable: $viewModel.isSwitchAvailable
+                    showSecondaryAmounts: viewModel.showSecondaryAmounts,
+                    isSwitchAvailable: viewModel.isSwitchAvailable
                 )
             }
             

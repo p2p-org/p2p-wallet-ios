@@ -4,8 +4,8 @@ import SolanaSwift
 
 struct SendInputAmountView: View {
     @ObservedObject private var viewModel: SendInputAmountViewModel
-    @Binding private var showSecondaryAmounts: Bool
-    @Binding private var isSwitchAvailable: Bool
+    private var showSecondaryAmounts: Bool
+    private var isSwitchAvailable: Bool
 
     @State private var switchAreaOpacity: Double = 1
 
@@ -13,12 +13,12 @@ struct SendInputAmountView: View {
 
     init(
         viewModel: SendInputAmountViewModel,
-        showSecondaryAmounts: Binding<Bool>,
-        isSwitchAvailable: Binding<Bool>
+        showSecondaryAmounts: Bool,
+        isSwitchAvailable: Bool
     ) {
         self.viewModel = viewModel
-        _showSecondaryAmounts = showSecondaryAmounts
-        _isSwitchAvailable = isSwitchAvailable
+        self.showSecondaryAmounts = showSecondaryAmounts
+        self.isSwitchAvailable = isSwitchAvailable
     }
 
     var body: some View {
@@ -140,8 +140,8 @@ struct SendInputAmountView_Previews: PreviewProvider {
                 viewModel: SendInputAmountViewModel(
                     initialToken: Wallet(token: .nativeSolana)
                 ),
-                showSecondaryAmounts: .constant(true),
-                isSwitchAvailable: .constant(true)
+                showSecondaryAmounts: true,
+                isSwitchAvailable: true
             )
             .padding(.horizontal, 16)
         }
