@@ -10,14 +10,7 @@ import KeyAppKitCore
 import Web3
 import Wormhole
 
-protocol Aggregator<Input, Output> {
-    associatedtype Input
-    associatedtype Output
-
-    func transform(input: Input) -> Output
-}
-
-struct HomeAccountsAggregator: Aggregator {
+struct HomeAccountsAggregator: DataAggregator {
     func transform(
         input: (
             solanaAccounts: [RenderableSolanaAccount],

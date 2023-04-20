@@ -23,8 +23,8 @@ class WormholeClaimFeeCoordinator: SmartCoordinator<Void> {
     }
 
     override func build() -> UIViewController {
-        let vm = WormholeClaimFeeViewModel(account: account, bundle: bundle)
-        let view = WormholeClaimFee(viewModel: vm)
+        let vm = WormholeClaimFeeViewModel(bundle: bundle)
+        let view = WormholeClaimFeeView(viewModel: vm)
         let vc = UIBottomSheetHostingController(rootView: view)
         vc.view.layer.cornerRadius = 20
 

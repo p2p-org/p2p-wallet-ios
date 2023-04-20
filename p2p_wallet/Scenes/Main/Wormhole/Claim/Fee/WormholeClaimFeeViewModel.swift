@@ -11,14 +11,15 @@ import Wormhole
 class WormholeClaimFeeViewModel: BaseViewModel, ObservableObject {
     typealias Amount = (crypto: String, fiat: String, isFree: Bool)
 
+    @Injected private var analyticsManager: AnalyticsManager
+
     let closeAction: PassthroughSubject<Void, Never> = .init()
 
-    @Published var adapter: AsyncValueState<WormholeClaimFeeAdapter?> = .init(value: nil)
-    @Injected private var analyticsManager: AnalyticsManager
-    
+    @Published var fee: AsyncValueState<WormholeClaimFee?> = .init(value: nil)
+
     override init() {
         super.init()
-        self.analyticsManager.log(event: .claimBridgesFeeClick)
+        analyticsManager.log(event: .claimBridgesFeeClick)
     }
 
     convenience init(
@@ -28,7 +29,7 @@ class WormholeClaimFeeViewModel: BaseViewModel, ObservableObject {
         wormholeBridgeAndTrxFee: Amount
     ) {
         self.init()
-        adapter = .init(
+        fee = .init(
             status: .ready,
             value: .init(
                 receive: receive,
@@ -39,23 +40,20 @@ class WormholeClaimFeeViewModel: BaseViewModel, ObservableObject {
         )
     }
 
-    convenience init(
-        account: EthereumAccount,
-        bundle: AsyncValue<WormholeBundle?>,
-        ethereumTokenService _: EthereumTokensRepository = Resolver.resolve(),
-        solanaTokenService _: SolanaTokensRepository = Resolver.resolve()
-    ) {
+    convenience init(bundle: AsyncValue<WormholeBundle?>) {
         self.init()
+
+        let aggregator = WormholeClaimFeeAggregator()
 
         /// Listen to changing in bundle
         bundle
             .statePublisher
             .map { state in
                 state.apply { bundle in
-                    WormholeClaimFeeAdapter(account: account, bundle: bundle)
+                    aggregator.transform(input: bundle)
                 }
             }
-            .assignWeak(to: \WormholeClaimFeeViewModel.adapter, on: self)
+            .assignWeak(to: \WormholeClaimFeeViewModel.fee, on: self)
             .store(in: &subscriptions)
     }
 
