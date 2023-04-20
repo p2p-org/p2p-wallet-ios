@@ -11,8 +11,9 @@ import SolanaSwift
 extension JupiterSwapBusinessLogic {
     static func updateUserWallets(
         state: JupiterSwapState,
-        userWallets: [Wallet]
-    ) async throws -> JupiterSwapState {
+        userWallets: [Wallet],
+        services: JupiterSwapServices
+    ) -> JupiterSwapState {
         // map updated user wallet to swapTokens
         let swapTokens = state.swapTokens.map { swapToken in
             if let userWallet = userWallets.first(where: { $0.mintAddress == swapToken.address }) {
@@ -20,31 +21,22 @@ extension JupiterSwapBusinessLogic {
             }
             return SwapToken(token: swapToken.token, userWallet: nil)
         }
-        
-        // update from Token
-        let fromUserWallet: Wallet = userWallets
+
+        var fromToken: SwapToken?
+        // update from Token only if it is from userWallets
+        if let fromUserWallet = userWallets
             .first(where: {
                 $0.pubkey == state.fromToken.userWallet?.pubkey &&
                 $0.mintAddress == state.fromToken.address
-            })
-            ??
-            userWallets.first(where: {
-                $0.mintAddress == PublicKey.usdcMint.base58EncodedString
-            })
-            ??
-            userWallets.first(where: {
-                $0.isNativeSOL
-            })
-            ??
-            .nativeSolana(pubkey: nil, lamport: nil)
-        
-        let fromToken = SwapToken(
-            token: fromUserWallet.token,
-            userWallet: fromUserWallet
-        )
-        
-        // update toToken
-        var toToken: SwapToken
+            }) {
+            fromToken = SwapToken(
+                token: fromUserWallet.token,
+                userWallet: fromUserWallet
+            )
+        }
+
+        // update toToken only if it is from userWallets
+        var toToken: SwapToken?
         if let toUserWallet: Wallet = userWallets
             .first(where: {
                 $0.pubkey == state.toToken.userWallet?.pubkey &&
@@ -55,13 +47,13 @@ extension JupiterSwapBusinessLogic {
                 token: toUserWallet.token,
                 userWallet: toUserWallet
             )
-        } else if let chosenToToken = autoChooseToToken(for: fromToken, from: state.swapTokens) {
-            toToken = chosenToToken
-        } else {
-            return state.copy(status: .error(reason: .unknown), swapTokens: swapTokens, fromToken: fromToken)
         }
-        
-        // return state
-        return state.copy(swapTokens: swapTokens, fromToken: fromToken, toToken: toToken)
+
+        // if from and to token stay unchanged, update only the tokens with new balance, not the route
+        return state.modified {
+            $0.swapTokens = swapTokens
+            $0.fromToken = fromToken ?? state.fromToken
+            $0.toToken = toToken ?? state.toToken
+        }
     }
 }

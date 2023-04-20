@@ -45,6 +45,30 @@ final class SendInputViewModel: BaseViewModel, ObservableObject {
     @Published var actionButtonData = SliderActionButtonData.zero
     @Published var isSliderOn = false
     @Published var showFinished = false
+    
+    #if !RELEASE
+    @Published var isFakeSendTransaction: Bool = Defaults.isFakeSendTransaction {
+        didSet {
+            Defaults.isFakeSendTransaction = isFakeSendTransaction
+        }
+    }
+    @Published var isFakeSendTransactionError: Bool = Defaults.isFakeSendTransactionError {
+        didSet {
+            Defaults.isFakeSendTransactionError = isFakeSendTransactionError
+            if isFakeSendTransactionError {
+                isFakeSendTransactionNetworkError = false
+            }
+        }
+    }
+    @Published var isFakeSendTransactionNetworkError: Bool = Defaults.isFakeSendTransactionNetworkError {
+        didSet {
+            Defaults.isFakeSendTransactionNetworkError = isFakeSendTransactionNetworkError
+            if isFakeSendTransactionNetworkError {
+                isFakeSendTransactionError = false
+            }
+        }
+    }
+    #endif
 
     let feeInfoPressed = PassthroughSubject<Void, Never>()
     let openFeeInfo = PassthroughSubject<Bool, Never>()
@@ -69,7 +93,14 @@ final class SendInputViewModel: BaseViewModel, ObservableObject {
     private let pricesService: PricesServiceType
     @Injected private var analyticsManager: AnalyticsManager
 
-    init(recipient: Recipient, preChosenWallet: Wallet?, preChosenAmount: Double?, source: SendSource, allowSwitchingMainAmountType: Bool) {
+    init(
+        recipient: Recipient,
+        preChosenWallet: Wallet?,
+        preChosenAmount: Double?,
+        source: SendSource,
+        allowSwitchingMainAmountType: Bool,
+        sendViaLinkSeed: String?
+    ) {
         self.source = source
         self.preChosenAmount = preChosenAmount
         let repository = Resolver.resolve(WalletsRepository.self)
@@ -120,7 +151,8 @@ final class SendInputViewModel: BaseViewModel, ObservableObject {
             recipient: recipient,
             token: tokenInWallet.token,
             feeToken: feeTokenInWallet.token,
-            userWalletState: env
+            userWalletState: env,
+            sendViaLinkSeed: sendViaLinkSeed
         )
 
         stateMachine = .init(
@@ -156,9 +188,10 @@ final class SendInputViewModel: BaseViewModel, ObservableObject {
 
     func initialize() {
         Task { [weak self] in
-            self?.status = .initializing
+            guard let self else { return }
+            self.status = .initializing
 
-            let nextState = await stateMachine
+            let nextState = await self.stateMachine
                 .accept(action: .initialize(.init {
                     // get current context
                     let relayContextManager = Resolver.resolve(RelayContextManager.self)
@@ -166,21 +199,23 @@ final class SendInputViewModel: BaseViewModel, ObservableObject {
                 }))
             
             // disable adding amount if amount is pre-chosen
-            if let amount = preChosenAmount {
-                Task {
-                    inputAmountViewModel.mainAmountType = .token
-                    inputAmountViewModel.amountText = amount.toString()
-                    await MainActor.run {
-                        inputAmountViewModel.isDisabled = true
+            if let amount = self.preChosenAmount {
+                Task { [weak self] in
+                    guard let self else { return }
+                    self.inputAmountViewModel.mainAmountType = .token
+                    self.inputAmountViewModel.amountText = amount.toString()
+                    await MainActor.run { [weak self] in
+                        guard let self else { return }
+                        self.inputAmountViewModel.isDisabled = true
                     }
                 }
             }
 
             switch nextState.status {
             case .error(reason: .initializeFailed(_)):
-                self?.status = .initializingFailed
+                self.status = .initializingFailed
             default:
-                self?.status = .ready
+                self.status = .ready
             }
         }
     }
@@ -202,6 +237,13 @@ final class SendInputViewModel: BaseViewModel, ObservableObject {
             loadingState = .error(error.readableDescription)
         }
     }
+    
+    func getSendViaLinkURL() -> String? {
+        guard let seed = currentState.sendViaLinkSeed else { return nil }
+        return try? Resolver.resolve(SendViaLinkDataService.self)
+            .restoreURL(givenSeed: seed)
+            .absoluteString
+    }
 }
 
 private extension SendInputViewModel {
@@ -220,7 +262,18 @@ private extension SendInputViewModel {
             }
             .store(in: &subscriptions)
 
+        inputAmountViewModel.tokenAmountChanged
+            .sink(receiveValue: { [weak self] value in
+                guard let self, self.status != .initializing else { return }
+                self.logAmountChanged(
+                    symbol: self.tokenViewModel.token.token.symbol,
+                    amount: value?.inToken ?? 0,
+                    isSendingViaLink: self.currentState.isSendingViaLink
+                )
+            })
+            .store(in: &subscriptions)
         inputAmountViewModel.changeAmount
+            .debounce(for: 0.1, scheduler: DispatchQueue.main)
             .sinkAsync(receiveValue: { [weak self] value in
                 guard let self = self else { return }
                 switch value.type {
@@ -235,8 +288,16 @@ private extension SendInputViewModel {
 
         $sourceWallet
             .sinkAsync(receiveValue: { [weak self] value in
+                guard let self else { return }
                 await MainActor.run { [weak self] in self?.isFeeLoading = true }
-                _ = await self?.stateMachine.accept(action: .changeUserToken(value.token))
+                if self.status != .initializing {
+                    debugPrint("---Send_Click_Change_Token_Chosen")
+                    self.logTokenChosen(
+                        symbol: value.token.symbol,
+                        isSendingViaLink: self.currentState.isSendingViaLink
+                    )
+                }
+                _ = await self.stateMachine.accept(action: .changeUserToken(value.token))
                 await MainActor.run { [weak self] in
                     self?.inputAmountViewModel.token = value
                     self?.tokenViewModel.token = value
@@ -264,7 +325,7 @@ private extension SendInputViewModel {
                 if self.currentState.fee == .zero,
                    self.feeTitle.elementsEqual(L10n.enjoyFreeTransactions)
                 {
-                    self.logEnjoyFeeTransaction()
+                    self.logEnjoyFeeTransaction(isSendingViaLink: self.currentState.isSendingViaLink)
                 }
             }
             .store(in: &subscriptions)
@@ -297,12 +358,20 @@ private extension SendInputViewModel {
                 guard let self = self else { return }
                 if isSliderOn {
                     await self.send()
+                    self.isSliderOn = false
+                    self.showFinished = false
                 }
             })
             .store(in: &subscriptions)
 
         tokenViewModel.changeTokenPressed
-            .sink { [weak self] in self?.logChooseTokenClick() }
+            .sink { [weak self] in
+                guard let self else { return }
+                self.logChooseTokenClick(
+                    tokenName: self.currentState.token.symbol,
+                    isSendingViaLink: self.currentState.isSendingViaLink
+                )
+            }
             .store(in: &subscriptions)
 
         inputAmountViewModel.$mainAmountType
@@ -364,10 +433,17 @@ private extension SendInputViewModel {
         default:
             wasMaxWarningToastShown = false
             inputAmountViewModel.isError = false
-            actionButtonData = SliderActionButtonData(
-                isEnabled: true,
-                title: "\(L10n.send) \(currentState.amountInToken.tokenAmountFormattedString(symbol: currentState.token.symbol, maximumFractionDigits: Int(currentState.token.decimals), roundingMode: .down))"
-            )
+            if !currentState.isSendingViaLink {
+                actionButtonData = SliderActionButtonData(
+                    isEnabled: true,
+                    title: "\(L10n.send) \(currentState.amountInToken.tokenAmountFormattedString(symbol: currentState.token.symbol, maximumFractionDigits: Int(currentState.token.decimals), roundingMode: .down))"
+                )
+            } else {
+                actionButtonData = SliderActionButtonData(
+                    isEnabled: true,
+                    title: L10n.createLink
+                )
+            }
         }
     }
 
@@ -388,7 +464,13 @@ private extension SendInputViewModel {
     }
 
     func updateFeeTitle() {
-        if currentState.fee == .zero, currentState.amountInToken == 0, currentState.amountInFiat == 0 {
+        // if send via link, just return enjoyFreeTransactions
+        if currentState.isSendingViaLink {
+            feeTitle = L10n.fees(0)
+        }
+        
+        // otherwise show fees in conditions
+        else if currentState.fee == .zero, currentState.amountInToken == 0, currentState.amountInFiat == 0 {
             feeTitle = L10n.enjoyFreeTransactions
         } else if currentState.fee == .zero {
             feeTitle = L10n.fees(0)
@@ -423,14 +505,13 @@ private extension SendInputViewModel {
     }
 
     func send() async {
-        guard
-            let sourceWallet = currentState.sourceWallet,
-            let feeWallet = currentState.feeWallet
+        guard let sourceWallet = currentState.sourceWallet
         else { return }
 
         let address: String
         let amountInToken = currentState.amountInToken
         let recipient = currentState.recipient
+        let feeWallet = currentState.feeWallet
 
         switch recipient.category {
         case let .solanaTokenAddress(walletAddress, _):
@@ -441,26 +522,137 @@ private extension SendInputViewModel {
         logConfirmButtonClick()
 
         await MainActor.run {
-            self.showFinished = true
+            showFinished = true
         }
         
         try? await Task.sleep(nanoseconds: 500_000_000)
         
+        let isSendingViaLink = stateMachine.currentState.isSendingViaLink
+        #if !RELEASE
+        let isFakeSendTransaction = isFakeSendTransaction
+        let isFakeSendTransactionError = isFakeSendTransactionError
+        let isFakeSendTransactionNetworkError = isFakeSendTransactionNetworkError
+        #else
+        let isFakeSendTransaction = false
+        let isFakeSendTransactionError = false
+        let isFakeSendTransactionNetworkError = false
+        #endif
+        let sendViaLinkSeed = stateMachine.currentState.sendViaLinkSeed
+        let token = currentState.token
+        let amountInFiat = currentState.amountInFiat
+        
+        if isSendingViaLink {
+            logSendClickCreateLink(symbol: token.symbol, amount: amountInToken, pubkey: sourceWallet.pubkey ?? "")
+        }
+        
+        let transaction = SendTransaction(state: self.currentState) {
+            try await createTransactionExecution(
+                isSendingViaLink: isSendingViaLink,
+                isFakeSendTransaction: isFakeSendTransaction,
+                isFakeSendTransactionError: isFakeSendTransactionError,
+                isFakeSendTransactionNetworkError: isFakeSendTransactionNetworkError,
+                recipient: recipient,
+                sendViaLinkSeed: sendViaLinkSeed,
+                token: token,
+                amountInToken: amountInToken,
+                amountInFiat: amountInFiat,
+                sourceWallet: sourceWallet,
+                address: address,
+                feeWallet: feeWallet
+            )
+        }
+        
         await MainActor.run {
-            let transaction = SendTransaction(state: self.currentState) {
-                try? await Resolver.resolve(SendHistoryService.self).insert(recipient)
-
-                let trx = try await Resolver.resolve(SendActionService.self).send(
-                    from: sourceWallet,
-                    receiver: address,
-                    amount: amountInToken,
-                    feeWallet: feeWallet
-                )
-
-                return trx
-            }
             self.transaction.send(transaction)
         }
+    }
+}
+
+// MARK: - Independent helper to avoid retain cycle, refactor later
+
+private func createTransactionExecution(
+    isSendingViaLink: Bool,
+    isFakeSendTransaction: Bool,
+    isFakeSendTransactionError: Bool,
+    isFakeSendTransactionNetworkError: Bool,
+    recipient: Recipient,
+    sendViaLinkSeed: String?,
+    token: Token,
+    amountInToken: Double,
+    amountInFiat: Double,
+    sourceWallet: Wallet,
+    address: String,
+    feeWallet: Wallet?
+) async throws -> TransactionID {
+    // save recipient except send via link
+    if !isSendingViaLink {
+        try? await Resolver.resolve(SendHistoryService.self).insert(recipient)
+    }
+    
+    // Fake transaction for testing
+    #if !RELEASE
+    if isFakeSendTransaction {
+        try await Task.sleep(nanoseconds: 2_000_000_000)
+        if isFakeSendTransactionError {
+            throw SolanaError.unknown
+        }
+        if isFakeSendTransactionNetworkError {
+            throw NSError(domain: "Network error", code: NSURLErrorNetworkConnectionLost)
+        }
+        // save to storage
+        if isSendingViaLink, let sendViaLinkSeed {
+            saveSendViaLinkTransaction(
+                seed: sendViaLinkSeed,
+                token: token,
+                amountInToken: amountInToken,
+                amountInFiat: amountInFiat
+            )
+        }
+        
+        return .fakeTransactionSignature(id: UUID().uuidString)
+    }
+    #endif
+    
+    // Real transaction
+    let trx = try await Resolver.resolve(SendActionService.self).send(
+        from: sourceWallet,
+        receiver: address,
+        amount: amountInToken,
+        feeWallet: feeWallet,
+        ignoreTopUp: isSendingViaLink,
+        memo: isSendingViaLink ? .secretConfig("SEND_VIA_LINK_MEMO_PREFIX")! + "-send": nil,
+        operationType: isSendingViaLink ? .sendViaLink: .transfer
+    )
+    
+    // save to storage
+    if isSendingViaLink, let sendViaLinkSeed {
+        saveSendViaLinkTransaction(
+            seed: sendViaLinkSeed,
+            token: token,
+            amountInToken: amountInToken,
+            amountInFiat: amountInFiat
+        )
+    }
+    
+    return trx
+}
+
+private func saveSendViaLinkTransaction(
+    seed: String,
+    token: Token,
+    amountInToken: Double,
+    amountInFiat: Double
+) {
+    Task {
+        await Resolver.resolve(SendViaLinkStorage.self).save(
+            transaction: .init(
+                amount: amountInToken,
+                amountInFiat: amountInFiat,
+                token: token,
+                seed: seed,
+                timestamp: Date()
+            )
+        )
     }
 }
 
@@ -471,16 +663,42 @@ private extension SendInputViewModel {
         analyticsManager.log(event: .sendnewInputScreen(source: source.rawValue))
     }
 
-    func logEnjoyFeeTransaction() {
-        analyticsManager.log(event: .sendnewFreeTransactionClick(source: source.rawValue))
+    func logEnjoyFeeTransaction(isSendingViaLink: Bool) {
+        analyticsManager.log(event: .sendnewFreeTransactionClick(
+            source: source.rawValue,
+            sendFlow: isSendingViaLink ? "Send_Via_Link" : "Send"
+        ))
     }
 
-    func logChooseTokenClick() {
-        analyticsManager.log(event: .sendnewTokenInputClick(source: source.rawValue))
+    func logChooseTokenClick(tokenName: String, isSendingViaLink: Bool) {
+        analyticsManager.log(event: .sendnewTokenInputClick(
+            tokenName: tokenName,
+            source: source.rawValue,
+            sendFlow: isSendingViaLink ? "Send_Via_Link" : "Send"
+        ))
+    }
+    
+    func logTokenChosen(symbol: String, isSendingViaLink: Bool) {
+        analyticsManager.log(event: .sendClickChangeTokenChosen(
+            tokenName: symbol,
+            sendFlow: isSendingViaLink ? "Send_Via_Link" : "Send"
+        ))
     }
 
     func logFiatInputClick(isCrypto: Bool) {
         analyticsManager.log(event: .sendnewFiatInputClick(crypto: isCrypto, source: source.rawValue))
+    }
+    
+    func logAmountChanged(symbol: String, amount: Double, isSendingViaLink: Bool) {
+        analyticsManager.log(event: .sendClickChangeTokenValue(
+            tokenName: symbol,
+            tokenValue: amount,
+            sendFlow: isSendingViaLink ? "Send_Via_Link" : "Send"
+        ))
+    }
+    
+    func logSendClickCreateLink(symbol: String, amount: Double, pubkey: String) {
+        analyticsManager.log(event: .sendClickCreateLink(tokenName: symbol, tokenValue: amount, pubkey: pubkey))
     }
 
     func logConfirmButtonClick() {

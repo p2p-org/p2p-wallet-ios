@@ -30,7 +30,7 @@ final class JupiterTokensLocalProvider: JupiterTokensProvider {
     func getCachedData() -> JupiterTokensCache? {
         guard let data = try? Data(contentsOf: cacheFile) else { return nil }
         let cachedData = (try? JSONDecoder().decode(JupiterTokensCache.self, from: data))
-        if cachedData?.created.timeIntervalSince(Date()) < 86400 {
+        if let createdDate = cachedData?.created, Date().timeIntervalSince(createdDate) < 86400 {
             return cachedData
         } else {
             clear()

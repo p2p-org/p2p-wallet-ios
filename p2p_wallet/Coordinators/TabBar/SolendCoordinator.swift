@@ -129,7 +129,7 @@ final class SolendCoordinator: Coordinator<Void> {
         coordinate(
             to: JupiterSwapCoordinator(
                 navigationController: navigationController,
-                params: JupiterSwapParameters(dismissAfterCompletion: true, openKeyboardOnStart: true)
+                params: JupiterSwapParameters(dismissAfterCompletion: true, openKeyboardOnStart: true, source: .solend)
             )
         )
             .sink { [unowned self] _ in

@@ -56,6 +56,7 @@ private extension ChooseItemView {
     private var emptyView: some View {
         Group {
             NotFoundView(text: L10n.TokenNotFound.tryAnotherOne)
+                .accessibility(identifier: "ChooseItemView.NotFoundView")
                 .padding(.top, 30)
             Spacer()
         }
@@ -102,7 +103,7 @@ private extension ChooseItemView {
             }
             spacer(height: 28)
         }
-        .background(Color(Asset.Colors.smoke.color))
+        .modifier(ListBackgroundModifier(separatorColor: Asset.Colors.smoke.color))
         .environment(\.defaultMinListRowHeight, 12)
         .scrollDismissesKeyboard()
     }

@@ -22,7 +22,7 @@ extension TransactionHandler {
 //                self.notificationsService.showInAppNotification(.done(L10n.transactionHasBeenSent))
 
                 // update status
-                await updateTransactionAtIndex(index) { _ in
+                _ = await updateTransactionAtIndex(index) { _ in
                     .init(
                         trxIndex: index,
                         transactionId: transactionID,
@@ -44,7 +44,7 @@ extension TransactionHandler {
                 SentrySDK.capture(error: error)
 
                 // mark transaction as failured
-                await updateTransactionAtIndex(index) { currentValue in
+                _ = await updateTransactionAtIndex(index) { currentValue in
                     var info = currentValue
                     info.status = .error(error)
                     return info
@@ -59,7 +59,34 @@ extension TransactionHandler {
     private func observe(index: TransactionIndex, transactionId: String) {
         Task { [weak self] in
             guard let self else { return }
+            // for debuging
+            if transactionId.hasPrefix(.fakeTransactionSignaturePrefix) {
+                // mark as confirmed
+                await self.updateTransactionAtIndex(index) { currentValue in
+                    var value = currentValue
+                    value.status = .confirmed(3)
+                    return value
+                }
+                
+                // wait for 2 secs
+                try await Task.sleep(nanoseconds: 2_000_000_000)
+                
+                // mark as finalized
+                await MainActor.run { [weak self] in
+                    self?.notificationsService.showInAppNotification(.done(L10n.transactionHasBeenConfirmed))
+                }
+                await self.updateTransactionAtIndex(index) { currentValue in
+                    var value = currentValue
+                    value.status = .finalized
+                    return value
+                }
+                return
+            }
+            
+            // for production
+            var statuses: [TransactionStatus] = []
             for try await status in self.apiClient.observeSignatureStatus(signature: transactionId) {
+                statuses.append(status)
                 let txStatus: PendingTransaction.TransactionStatus
                 var slot: UInt64?
                 switch status {
@@ -70,20 +97,30 @@ extension TransactionHandler {
                     txStatus = .confirmed(Int(numberOfConfirmations))
                 case .finalized:
                     txStatus = .finalized
-                    await MainActor.run { [weak self] in
-                        self?.notificationsService.showInAppNotification(.done(L10n.transactionHasBeenConfirmed))
-                    }
                 case .error(let error):
                     print(error ?? "")
                     txStatus = .error(SolanaError.other(error ?? ""))
                 }
 
-                await self.updateTransactionAtIndex(index) { currentValue in
+                _ = await self.updateTransactionAtIndex(index) { currentValue in
                     var value = currentValue
                     value.status = txStatus
                     if let slot {
                         value.slot = slot
                     }
+                    return value
+                }
+            }
+            
+            // TODO: - Transaction was sent successfuly but we could not retrieve the status.
+            // Mark as finalized anyway or throw an error?
+            if statuses.isEmpty {
+                await MainActor.run { [weak self] in
+                    self?.notificationsService.showInAppNotification(.done(L10n.transactionHasBeenConfirmed))
+                }
+                await self.updateTransactionAtIndex(index) { currentValue in
+                    var value = currentValue
+                    value.status = .finalized
                     return value
                 }
             }
@@ -105,7 +142,7 @@ extension TransactionHandler {
                let numberOfConfirmations = newValue.status.numberOfConfirmations,
                numberOfConfirmations > 0
             {
-                // manually update balances if socket is not connected
+                // manually update balances
                 updateRepository(with: newValue.rawTransaction)
 
                 // mark as written
@@ -124,8 +161,6 @@ extension TransactionHandler {
     @MainActor private func updateRepository(with rawTransaction: RawTransactionType) {
         switch rawTransaction {
         case let transaction as SendTransaction:
-            guard !socket.isConnected else { return }
-
             walletsRepository.batchUpdate { currentValue in
                 var wallets = currentValue
 
@@ -148,8 +183,6 @@ extension TransactionHandler {
                 return wallets
             }
         case let transaction as CloseTransaction:
-            guard !socket.isConnected else { return }
-
             walletsRepository.batchUpdate { currentValue in
                 var wallets = currentValue
                 var reimbursedAmount = transaction.reimbursedAmount
@@ -175,9 +208,8 @@ extension TransactionHandler {
             walletsRepository.batchUpdate { currentValue in
                 var wallets = currentValue
 
-                // update source wallet if socket is not connected
-                if !socket.isConnected,
-                   let index = wallets.firstIndex(where: { $0.pubkey == transaction.sourceWallet.pubkey })
+                // update source wallet
+                if let index = wallets.firstIndex(where: { $0.pubkey == transaction.sourceWallet.pubkey })
                 {
                     wallets[index]
                         .decreaseBalance(diffInLamports: transaction.fromAmount
@@ -186,15 +218,12 @@ extension TransactionHandler {
 
                 // update destination wallet if exists
                 if let index = wallets.firstIndex(where: { $0.pubkey == transaction.destinationWallet.pubkey }) {
-                    // update only if socket is not connected
-                    if !socket.isConnected {
-                        wallets[index]
-                            .increaseBalance(diffInLamports: transaction.toAmount
-                                .toLamport(decimals: transaction.destinationWallet.token.decimals))
-                    }
+                    wallets[index]
+                        .increaseBalance(diffInLamports: transaction.toAmount
+                            .toLamport(decimals: transaction.destinationWallet.token.decimals))
                 }
 
-                // add destination wallet if not exists, event when socket is connected, because socket doesn't handle new wallet
+                // add destination wallet if not exists
                 else if let publicKey = try? PublicKey.associatedTokenAddress(
                     walletAddress: try PublicKey(string: transaction.authority),
                     tokenMintAddress: try PublicKey(string: transaction.destinationWallet.mintAddress)
@@ -207,7 +236,7 @@ extension TransactionHandler {
                 }
 
                 // update paying wallet
-                if !socket.isConnected, let payingFeeWallet = transaction.payingFeeWallet {
+                if let payingFeeWallet = transaction.payingFeeWallet {
                     let fee = transaction.feeAmount
                     
                     if let index = wallets.firstIndex(where: { $0.pubkey == payingFeeWallet.pubkey }) {
@@ -217,8 +246,40 @@ extension TransactionHandler {
 
                 return wallets
             }
+        case let transaction as ClaimSentViaLinkTransaction:
+            walletsRepository.batchUpdate { currentValue in
+                var wallets = currentValue
+                
+                // update sender
+                if let index = wallets.firstIndex(where: { $0.pubkey == transaction.destinationWallet.pubkey }) {
+                    wallets[index].increaseBalance(diffInLamports: transaction.claimableTokenInfo.lamports)
+                }
+                
+                return wallets
+            }
         default:
             break
         }
+    }
+}
+
+// MARK: - Helpers
+
+extension SolanaSwift.APIClientError: CustomNSError {
+    public var errorUserInfo: [String : Any] {
+        func getDebugDescription() -> String {
+            switch self {
+            case .cantEncodeParams:
+                return "Can not decode params"
+            case .invalidAPIURL:
+                return "Invalid APIURL"
+            case .invalidResponse:
+                return "Invalid response"
+            case .responseError(let response):
+                return response.message ?? "\(response)"
+            }
+        }
+        
+        return [NSDebugDescriptionErrorKey: getDebugDescription()]
     }
 }

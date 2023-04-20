@@ -5,8 +5,6 @@
 //  Created by Chung Tran on 10/22/20.
 //
 
-import AppsFlyerLib
-import AppTrackingTransparency
 @_exported import BEPureLayout
 import FeeRelayerSwift
 import Firebase
@@ -69,17 +67,6 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         }
         #endif
 
-        // AppsFlyer
-        let appsFlyerAppId: String
-        #if !RELEASE
-        appsFlyerAppId = String.secretConfig("APPSFLYER_APP_ID_FEATURE")!
-        #else
-        appsFlyerAppId = String.secretConfig("APPSFLYER_APP_ID")!
-        #endif
-        AppsFlyerLib.shared().appsFlyerDevKey = String.secretConfig("APPSFLYER_DEV_KEY")!
-        AppsFlyerLib.shared().appleAppID = appsFlyerAppId
-        AppsFlyerLib.shared().waitForATTUserAuthorization(timeoutInterval: 60)
-
         Lokalise.shared.setProjectID(
             String.secretConfig("LOKALISE_PROJECT_ID")!,
             token: String.secretConfig("LOKALISE_TOKEN")!
@@ -107,7 +94,6 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         Task.detached(priority: .background) { [unowned self] in
             try await notificationService.sendRegisteredDeviceToken(deviceToken)
         }
-        AppsFlyerLib.shared().registerUninstall(deviceToken)
         Intercom.setDeviceToken(deviceToken) { error in
             guard let error else { return }
             print("Intercom.setDeviceToken error: ", error)
@@ -138,8 +124,6 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
             return true
         }
 
-        AppsFlyerLib.shared().handleOpen(url, options: options)
-
         return proxyAppDelegate.application(application, open: url, options: options)
     }
 
@@ -148,25 +132,6 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         continue userActivity: NSUserActivity,
         restorationHandler: @escaping ([UIUserActivityRestoring]?) -> Void
     ) -> Bool {
-        // Handle intercom deeplink
-        if
-            let webpageURL = userActivity.webpageURL,
-            let urlComponents = URLComponents(url: webpageURL, resolvingAgainstBaseURL: true)
-        {
-            if urlComponents.path == "/intercom" {
-                if
-                    let queryItem = urlComponents.queryItems?.first(where: { $0.name == "intercom_survey_id" }),
-                    let value = queryItem.value
-                {
-                    DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) {
-                        GlobalAppState.shared.surveyID = value
-                    }
-                    return true
-                }
-            }
-        }
-
-        AppsFlyerLib.shared().continue(userActivity, restorationHandler: nil)
         return proxyAppDelegate.application(application, continue: userActivity, restorationHandler: restorationHandler)
     }
 
@@ -184,46 +149,6 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
     }
 
     func applicationDidBecomeActive(_ application: UIApplication) {
-        AppsFlyerLib.shared().start(completionHandler: { dictionary, error in
-            if error != nil {
-                print(error ?? "")
-                return
-            } else {
-                print(dictionary ?? "")
-                return
-            }
-        })
-        if #available(iOS 14, *) {
-            ATTrackingManager.requestTrackingAuthorization { status in
-                switch status {
-                case .denied:
-                    DefaultLogManager.shared.log(
-                        event: "AppsFlyerLib ATTrackingManager AuthorizationSatus is denied",
-                        logLevel: .info
-                    )
-                case .notDetermined:
-                    DefaultLogManager.shared.log(
-                        event: "AppsFlyerLib ATTrackingManager AuthorizationSatus is notDetermined",
-                        logLevel: .debug
-                    )
-                case .restricted:
-                    DefaultLogManager.shared.log(
-                        event: "AppsFlyerLib ATTrackingManager AuthorizationSatus is restricted",
-                        logLevel: .info
-                    )
-                case .authorized:
-                    DefaultLogManager.shared.log(
-                        event: "AppsFlyerLib ATTrackingManager AuthorizationSatus is authorized",
-                        logLevel: .debug
-                    )
-                @unknown default:
-                    DefaultLogManager.shared.log(
-                        event: "AppsFlyerLib ATTrackingManager Invalid authorization status",
-                        logLevel: .error
-                    )
-                }
-            }
-        }
         proxyAppDelegate.applicationDidBecomeActive(application)
     }
 

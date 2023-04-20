@@ -22,6 +22,7 @@ class HomeViewModel: ObservableObject {
     @Injected private var nameStorage: NameStorageType
     @Injected private var createNameService: CreateNameService
     @Injected private var walletsRepository: WalletsRepository
+    @Injected private var pricesService: PricesServiceType
 
     // MARK: - Published properties
 
@@ -50,14 +51,24 @@ class HomeViewModel: ObservableObject {
     }
 
     func copyToClipboard() {
-        clipboardManager.copyToClipboard(walletsRepository.nativeWallet?.pubkey ?? "")
-        notificationsService.showToast(title: "🖤", text: L10n.addressWasCopiedToClipboard, haptic: true)
+        // get name and pubkey
+        let name = nameStorage.getName()
+        let hasName = name != nil
+        let pubkey = walletsRepository.nativeWallet?.pubkey
+        
+        // copy to clipboard
+        clipboardManager.copyToClipboard(name ?? pubkey ?? "")
+        
+        // notify user
+        notificationsService.showToast(title: "🖤", text: hasName ? L10n.nameCopiedToClipboard: L10n.addressWasCopiedToClipboard, haptic: true)
+        
+        // log
         analyticsManager.log(event: .mainCopyAddress)
     }
 
     func updateAddressIfNeeded() {
         if let name = nameStorage.getName(), !name.isEmpty {
-            address = "\(name).key"
+            address = name
         } else if let address = accountStorage.account?.publicKey.base58EncodedString.shortAddress {
             self.address = address
         }
@@ -71,7 +82,7 @@ private extension HomeViewModel {
             .filter { $0 == .loaded }
             .prefix(1)
             .map { _ in true}
-            .assign(to: \.isInitialized, on: self)
+            .assignWeak(to: \.isInitialized, on: self)
             .store(in: &subscriptions)
 
         // state, address, error, log
@@ -85,9 +96,7 @@ private extension HomeViewModel {
                 guard let self else { return }
                 
                 // accumulate total amount
-                let fiatAmount = data.totalAmountInCurrentFiat
-                let isEmpty = fiatAmount <= 0
-                
+                let isEmpty = data.isTotalAmountEmpty
                 // address
                 self.updateAddressIfNeeded()
                 
@@ -101,7 +110,7 @@ private extension HomeViewModel {
                     
                     // log
                     self.analyticsManager.log(parameter: .userHasPositiveBalance(!isEmpty))
-                    self.analyticsManager.log(parameter: .userAggregateBalance(fiatAmount))
+                    self.analyticsManager.log(parameter: .userAggregateBalance(data.totalAmountInCurrentFiat))
                 }
             }
             .store(in: &subscriptions)

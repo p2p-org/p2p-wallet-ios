@@ -25,12 +25,11 @@ final class TabBarViewModel {
     @Injected private var nameService: NameService
     @Injected private var nameStorage: NameStorageType
 
-    private let transactionAnalytics = [
-        Resolver.resolve(SwapTransactionAnalytics.self),
-    ]
-
     // Input
     let viewDidLoad = PassthroughSubject<Void, Never>()
+    
+    private let becomeActiveSubject = PassthroughSubject<Void, Never>()
+    private var cancellables = Set<AnyCancellable>()
 
     init() {
         if #available(iOS 15.0, *) {
@@ -47,12 +46,14 @@ final class TabBarViewModel {
         // Name service
         Task {
             guard let account = accountStorage.account else { return }
-            let name: String = try await nameService.getName(account.publicKey.base58EncodedString) ?? ""
+            let name: String = try await nameService.getName(account.publicKey.base58EncodedString, withTLD: true) ?? ""
             nameStorage.save(name: name)
         }
 
         // Notification
         notificationService.requestRemoteNotificationPermission()
+        
+        listenDidBecomeActiveForDeeplinks()
     }
 
     deinit {
@@ -63,6 +64,19 @@ final class TabBarViewModel {
 
     func authenticate(presentationStyle: AuthenticationPresentationStyle?) {
         authenticationHandler.authenticate(presentationStyle: presentationStyle)
+    }
+    
+    private func listenDidBecomeActiveForDeeplinks() {
+        DispatchQueue.main.asyncAfter(deadline: .now() + 0.1) {
+            self.becomeActiveSubject.send()
+        }
+        
+        NotificationCenter.default
+            .publisher(for: UIApplication.didBecomeActiveNotification)
+            .sink(receiveValue: { [weak self] _ in
+                self?.becomeActiveSubject.send()
+            })
+            .store(in: &cancellables)
     }
 }
 
@@ -111,6 +125,21 @@ extension TabBarViewModel {
         }
         .handleEvents(receiveOutput: { _ in
             GlobalAppState.shared.surveyID = nil
+        })
+        .receive(on: DispatchQueue.main)
+        .eraseToAnyPublisher()
+    }
+    
+    var moveToSendViaLinkClaim: AnyPublisher<URL, Never> {
+        Publishers.CombineLatest(
+            authenticationStatusPublisher,
+            becomeActiveSubject
+        )
+        .debounce(for: .milliseconds(900), scheduler: RunLoop.main)
+        .filter { $0.0 == nil }
+        .compactMap { _ in GlobalAppState.shared.sendViaLinkUrl }
+        .handleEvents(receiveOutput: { _ in
+            GlobalAppState.shared.sendViaLinkUrl = nil
         })
         .receive(on: DispatchQueue.main)
         .eraseToAnyPublisher()

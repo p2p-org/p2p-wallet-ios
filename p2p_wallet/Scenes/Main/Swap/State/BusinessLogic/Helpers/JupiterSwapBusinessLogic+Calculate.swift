@@ -1,43 +1,74 @@
 import Jupiter
 import SolanaSwift
+import Resolver
+import SolanaPricesAPIs
 
 extension JupiterSwapBusinessLogic {
-    static func calculateAmounts(state: JupiterSwapState, services: JupiterSwapServices) async -> JupiterSwapState {
+    static func calculateRoute(
+        state: JupiterSwapState,
+        services: JupiterSwapServices
+    ) async -> JupiterSwapState {
+        // get current from amount
+        guard let amountFrom = state.amountFrom, amountFrom > 0
+        else {
+            return state.modified {
+                $0.status = .ready
+            }
+        }
+        
+        // assert from token is not equal to toToken
         guard state.fromToken.address != state.toToken.address else {
-            return state.copy(status: .error(reason: .equalSwapTokens))
+            return state.error(.equalSwapTokens)
         }
 
-        guard state.amountFrom > 0 else {
-            return state.copy(status: .ready, amountFrom: 0, amountFromFiat: 0, amountTo: 0, route: nil)
-        }
-
-        let amountFromLamports = state.amountFrom.toLamport(decimals: state.fromToken.token.decimals)
+        // get lamport
+        let amountFromLamports = amountFrom
+            .toLamport(decimals: state.fromToken.token.decimals)
 
         do {
+            // call api to get routes and amount
             let data = try await services.jupiterClient.quote(
                 inputMint: state.fromToken.address,
                 outputMint: state.toToken.address,
                 amount: String(amountFromLamports),
                 swapMode: nil,
-                slippageBps: state.slippage,
+                slippageBps: state.slippageBps,
                 feeBps: nil,
                 onlyDirectRoutes: nil,
-                userPublicKey: nil,
+                userPublicKey: state.account?.publicKey.base58EncodedString,
                 enforceSingleTx: nil
             )
-
-            guard let route = data.data.first, let toAmountLamports = Lamports(route.outAmount) else {
-                return state.copy(status: .error(reason: .routeIsNotFound))
+            
+            // routes
+            let routes = data.data
+            
+            // if pre chosen route is stil available, choose it
+            // if not choose the first one
+            guard let route = (data.data?.first { $0.id == state.route?.id } ?? data.data?.first) else {
+                let status: JupiterSwapState.Status
+                if let errorMessage = data.message,
+                    errorMessage.contains("The value \"NaN\" cannot be converted to a number") {
+                    status = .error(reason: .minimumAmount)
+                } else {
+                    status = .error(reason: .routeIsNotFound)
+                }
+                return state.modified {
+                    $0.status = status
+                    $0.routes = routes ?? []
+                    $0.route = nil
+                }
             }
 
-            let amountTo = toAmountLamports.convertToBalance(decimals: state.toToken.token.decimals)
-            let newPriceInfo = SwapPriceInfo(
-                fromPrice: state.priceInfo.fromPrice,
-                toPrice: state.priceInfo.toPrice,
-                relation: Double(state.amountFrom/amountTo)
+            return await validateAmounts(
+                state: state.modified {
+                    $0.status = .ready
+                    $0.route = route
+                    $0.routes = routes ?? []
+                    $0.amountTo = UInt64(route.outAmount)?
+                        .convertToBalance(decimals: state.toToken.token.decimals)
+                },
+                services: services
             )
-
-            return await validateAmounts(state: state.copy(status: .ready, amountTo: amountTo, priceInfo: newPriceInfo, route: route), services: services)
         }
         catch let error {
             return handle(error: error, for: state)
@@ -46,12 +77,14 @@ extension JupiterSwapBusinessLogic {
 
     private static func handle(error: Error, for state: JupiterSwapState) -> JupiterSwapState {
         if (error as NSError).isNetworkConnectionError {
-            return state.copy(status: .error(reason: .networkConnectionError))
+            return state.error(.networkConnectionError)
+        } else if (error as NSError).domain.contains("The value \"NaN\" cannot be converted to a number") {
+            return state.error(.minimumAmount)
         }
-        return state.copy(status: .error(reason: .routeIsNotFound))
+        return state.error(.routeIsNotFound)
     }
 
-    private static func validateAmounts(state: JupiterSwapState, services: JupiterSwapServices) async -> JupiterSwapState {
+    static func validateAmounts(state: JupiterSwapState, services: JupiterSwapServices) async -> JupiterSwapState {
         let status: JupiterSwapState.Status
 
         if let balance = state.fromToken.userWallet?.amount {
@@ -66,14 +99,17 @@ extension JupiterSwapBusinessLogic {
             status = .error(reason: .notEnoughFromToken)
         }
 
-        return state.copy(status: status)
+        return state.modified { $0.status = status }
     }
 
     private static func validateNativeSOL(balance: Double, state: JupiterSwapState, services: JupiterSwapServices) async -> JupiterSwapState.Status {
+        guard let amountFrom = state.amountFrom else {
+            return .error(reason: .routeIsNotFound)
+        }
         do {
             let decimals = state.fromToken.token.decimals
             let minBalance = try await services.relayContextManager.getCurrentContextOrUpdate().minimumRelayAccountBalance
-            let remains = (balance - state.amountFrom).toLamport(decimals: decimals)
+            let remains = (balance - amountFrom).toLamport(decimals: decimals)
             if remains > 0 && remains < minBalance {
                 let maximumInput = (balance.toLamport(decimals: decimals) - minBalance).convertToBalance(decimals: decimals)
                 return .error(reason: .inputTooHigh(maximumInput))

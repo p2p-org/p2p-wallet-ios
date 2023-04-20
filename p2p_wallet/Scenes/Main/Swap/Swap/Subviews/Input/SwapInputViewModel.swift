@@ -1,6 +1,7 @@
 import Combine
 import Resolver
 import KeyAppUI
+import AnalyticsManager
 
 final class SwapInputViewModel: BaseViewModel, ObservableObject {
 
@@ -18,16 +19,25 @@ final class SwapInputViewModel: BaseViewModel, ObservableObject {
     @Published var tokenSymbol = ""
     @Published var isLoading = false
     @Published var isAmountLoading = false
-    @Published var fiatAmount: String?
-    @Published var token: SwapToken
+    @Published var fiatAmount: Double?
+    @Published var token: SwapToken {
+        didSet {
+            decimalLength = Int(token.token.decimals)
+        }
+    }
+    @Published var fiatAmountTextColor = Asset.Colors.silver.color
+    @Published var decimalLength: Int
     let accessibilityIdentifierTokenPrefix: String
 
     private let stateMachine: JupiterSwapStateMachine
     private let isFromToken: Bool
     private var openKeyboardOnStart: Bool
     private var currentState: JupiterSwapState { stateMachine.currentState }
+    private var skipLogAmount = false
 
+    // MARK: - Dependencies
     @Injected private var notificationService: NotificationService
+    @Injected private var analyticsManager: AnalyticsManager
 
     init(stateMachine: JupiterSwapStateMachine, isFromToken: Bool, openKeyboardOnStart: Bool) {
         self.isFromToken = isFromToken
@@ -37,13 +47,16 @@ final class SwapInputViewModel: BaseViewModel, ObservableObject {
         self.isFirstResponder = false
         self.isEditable = isFromToken
         self.token = stateMachine.currentState.fromToken
+        decimalLength = Int(stateMachine.currentState.fromToken.token.decimals)
 
         accessibilityIdentifierTokenPrefix = isFromToken ? "from" : "to"
         super.init()
 
         allButtonPressed
             .sink { [unowned self] _ in
+                self.skipLogAmount = true // Do not log amount change as it has its own event - logAllClick
                 self.amount = self.balance
+                self.logAllClick()
             }
             .store(in: &subscriptions)
 
@@ -61,12 +74,15 @@ final class SwapInputViewModel: BaseViewModel, ObservableObject {
             .store(in: &subscriptions)
 
         $amount
-            .debounce(for: 0.3, scheduler: DispatchQueue.main)
+            .debounce(for: 0.4, scheduler: DispatchQueue.main)
             .sinkAsync { [weak self] value in
                 guard let self, self.isStateReady(status: self.currentState.status) else { return }
+                self.logChange(amount: value)
                 self.isAmountLoading = true && !self.isFromToken
                 if self.isFromToken {
-                    let _ = await self.stateMachine.accept(action: .changeAmountFrom(value ?? 0))
+                    await self.stateMachine.accept(
+                        action: .changeAmountFrom(value ?? 0)
+                    )
                 }
                 self.isAmountLoading = false && !self.isFromToken
             }
@@ -93,6 +109,12 @@ final class SwapInputViewModel: BaseViewModel, ObservableObject {
                 self.notificationService.showToast(title: "🤖", text: L10n.youCanEnterYouPayFieldOnly)
             }
             .store(in: &subscriptions)
+
+        changeTokenPressed
+            .sink { [weak self] in
+                self?.logChangeTokenClick()
+            }
+            .store(in: &subscriptions)
     }
 }
 
@@ -115,7 +137,21 @@ private extension SwapInputViewModel {
 
     func updateAmountTo(state: JupiterSwapState) {
         guard state.status != .loadingAmountTo else { return }
-        amount = state.amountTo
+        if amount != state.amountTo {
+            amount = state.amountTo
+        }
+
+        switch state.priceImpact {
+        case .high:
+            fiatAmount = state.amountToFiat
+            fiatAmountTextColor = Asset.Colors.rose.color
+        case .medium:
+            fiatAmount = state.amountToFiat
+            fiatAmountTextColor = Asset.Colors.sun.color
+        default:
+            fiatAmount = nil
+            fiatAmountTextColor = .clear
+        }
     }
 
     func updateAmountFrom(state: JupiterSwapState) {
@@ -125,11 +161,7 @@ private extension SwapInputViewModel {
         default:
             amountTextColor = Asset.Colors.night.color
         }
-
-        fiatAmount = [
-            state.amountFromFiat.toString(maximumFractionDigits: 2, roundingMode: .down),
-            Defaults.fiat.code
-        ].joined(separator: " ")
+        fiatAmount = state.amountFromFiat
     }
 
     func isStateReady(status: JupiterSwapState.Status) -> Bool {
@@ -142,6 +174,36 @@ private extension SwapInputViewModel {
         if openKeyboardOnStart, !isFirstResponder, isEditable {
             isFirstResponder = true
             openKeyboardOnStart = false
+        }
+    }
+}
+
+// MARK: - Analytics
+private extension SwapInputViewModel {
+    func logAllClick() {
+        analyticsManager.log(event: .swapChangingValueTokenAAll(tokenAName: token.token.symbol, tokenAValue: balance ?? 0))
+    }
+
+    func logChangeTokenClick() {
+        if isFromToken {
+            analyticsManager.log(event: .swapChangingTokenAClick(tokenAName: token.token.symbol))
+        } else {
+            analyticsManager.log(event: .swapChangingTokenBClick(tokenBName: token.token.symbol))
+        }
+    }
+
+    func logChange(amount: Double?) {
+        guard let amount else { return }
+
+        guard !skipLogAmount else {
+            skipLogAmount = false
+            return
+        }
+
+        if isFromToken {
+            analyticsManager.log(event: .swapChangingValueTokenA(tokenAName: token.token.symbol, tokenAValue: amount))
+        } else {
+            analyticsManager.log(event: .swapChangingValueTokenB(tokenBName: token.token.symbol, tokenBValue: amount))
         }
     }
 }

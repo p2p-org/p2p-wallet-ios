@@ -6,67 +6,119 @@
 //
 
 import Combine
+import Resolver
+import AnalyticsManager
+import Jupiter
 
-private extension Double {
-    static let minSlippage: Double = 0.01
-    static let maximumSlippage: Double = 50
+protocol SwapSettingsViewModelIO: AnyObject {
+    var rowTapped: AnyPublisher<SwapSettingsView.RowIdentifier, Never> { get }
 }
 
-final class SwapSettingsViewModel: ObservableObject {
-    @Published var selectedIndex: Int = 0 {
-        didSet {
-            if selectedIndex != slippages.count - 1 {
-                slippage = ""
-            }
-            if slippageWasSetUp {
-                customSelected = selectedIndex == slippages.count - 1
-            }
-        }
-    }
-    @Published var slippage = "" {
-        didSet {
-            failureSlippage = !slippage.isEmpty && (formattedSlippage < .minSlippage || formattedSlippage > .maximumSlippage)
-        }
-    }
-    @Published var customSelected: Bool
-    @Published var failureSlippage = false
+final class SwapSettingsViewModel: BaseViewModel, ObservableObject {
     
-    let slippages: [Double?] = [
-        0.1,
-        0.5,
-        1,
-        nil
-    ]
+    // MARK: - Dependencies
 
-    private var formattedSlippage: Double? {
-        var slippageWithoutComma = slippage.replacingOccurrences(of: ",", with: ".")
-        if slippageWithoutComma.last == "." {
-            slippageWithoutComma.removeLast()
+    @Injected private var analyticsManager: AnalyticsManager
+    
+    // MARK: - Published properties
+
+    @Published var currentState: JupiterSwapState
+    var selectedSlippage: Double? {
+        didSet {
+            guard let selectedSlippage else { return }
+            self.log(slippage: selectedSlippage)
         }
-        return Double(slippageWithoutComma)
     }
     
-    var finalSlippage: Double? {
-        slippages[selectedIndex] ?? formattedSlippage
+
+    // MARK: - Properties
+
+    private let stateMachine: JupiterSwapStateMachine
+    private let rowTappedSubject = PassthroughSubject<SwapSettingsView.RowIdentifier, Never>()
+    
+    var info: JupiterSwapStateInfo {
+        currentState.info
     }
     
-    private var slippageWasSetUp = false
+    var isLoading: Bool {
+        currentState.isSettingsLoading
+    }
     
-    init(slippage: Double) {
-        customSelected = false
-        setUpSlippage(slippage)
+    var isLoadingOrRouteNotNil: Bool {
+        isLoading || (currentState.route != nil)
+    }
+    
+    // MARK: - Initializer
+    
+    init(stateMachine: JupiterSwapStateMachine) {
+        // capture state machine
+        self.stateMachine = stateMachine
+        // copy current state
+        self.currentState = stateMachine.currentState
+        // copy selected slippage
+        self.selectedSlippage = (Double(stateMachine.currentState.slippageBps) / 100)
+            .rounded(decimals: 2)
+        
+        super.init()
+        bind()
     }
 
-    private func setUpSlippage(_ slippage: Double) {
-        if let index = slippages.firstIndex(of: slippage) {
-            selectedIndex = index
+    private func bind() {
+        stateMachine.statePublisher
+            .receive(on: DispatchQueue.main)
+            .sink { [weak self] state in
+                guard let self else { return }
+                // map state to current state, replace by current context
+                self.currentState = state
+            }
+            .store(in: &subscriptions)
+    }
+
+    // MARK: - Actions
+    
+    func rowClicked(identifier: SwapSettingsView.RowIdentifier) {
+        rowTappedSubject.send(identifier)
+        log(fee: identifier)
+    }
+}
+
+// MARK: - SwapSettingsViewModelIO
+
+extension SwapSettingsViewModel: SwapSettingsViewModelIO {
+    var rowTapped: AnyPublisher<SwapSettingsView.RowIdentifier, Never> {
+        rowTappedSubject.eraseToAnyPublisher()
+    }
+}
+
+// MARK: - Analytics
+
+extension SwapSettingsViewModel {
+    func log(routeInfo: SwapSettingsRouteInfo) {
+        analyticsManager.log(event: .swapSettingsSwappingThroughChoice(variant: routeInfo.name))
+    }
+
+    func log(slippage: Double) {
+        let slippage = slippage.rounded(decimals: 2)
+        let isCustom = ![JupiterSwapSlippage.min, JupiterSwapSlippage.avg, JupiterSwapSlippage.max].contains(slippage)
+        if isCustom {
+            analyticsManager.log(event: .swapSettingsSlippageCustom(slippageLevelPercent: slippage))
         } else {
-            selectedIndex = slippages.count - 1
-            let formattedSlippage = (String(format: "%.2f", slippage))
-                .replacingOccurrences(of: ",", with: Locale.current.decimalSeparator ?? ".")
-                .replacingOccurrences(of: ".", with: Locale.current.decimalSeparator ?? ".")
-            self.slippage = formattedSlippage
+            analyticsManager.log(event: .swapSettingsSlippage(slippageLevelPercent: slippage))
         }
-        slippageWasSetUp = true
+    }
+
+    private func log(fee: SwapSettingsView.RowIdentifier) {
+        switch fee {
+        case .route:
+            analyticsManager.log(event: .swapSettingsFeeClick(feeName: "Swapping_Through"))
+        case .networkFee:
+            analyticsManager.log(event: .swapSettingsFeeClick(feeName: "Network_Fee"))
+        case .accountCreationFee:
+            analyticsManager.log(event: .swapSettingsFeeClick(feeName: "Sol_Account_Creation"))
+        case .liquidityFee:
+            analyticsManager.log(event: .swapSettingsFeeClick(feeName: "Liquidity_Fee"))
+        default:
+            break
+        }
     }
 }

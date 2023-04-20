@@ -3,11 +3,6 @@ import Combine
 import SolanaSwift
 import Resolver
 
-struct JupiterTokensData {
-    let tokens: [SwapToken]
-    let userWallets: [Wallet]
-}
-
 protocol JupiterTokensRepository {
     var status: AnyPublisher<JupiterDataStatus, Never> { get }
 
@@ -17,7 +12,7 @@ protocol JupiterTokensRepository {
 enum JupiterDataStatus {
     case initial
     case loading
-    case ready(swapTokens: [SwapToken], routeMap: RouteMap)
+    case ready(jupiterTokens: [Token], routeMap: RouteMap)
     case failed
 }
 
@@ -27,12 +22,18 @@ final class JupiterTokensRepositoryImpl: JupiterTokensRepository {
         statusSubject.eraseToAnyPublisher()
     }
     // MARK: - Dependencies
+
     private let jupiterClient: JupiterAPI
     private let localProvider: JupiterTokensProvider
     @Injected private var walletsRepository: WalletsRepository
+    @Injected private var tokensRepositoryCache: SolanaTokensRepositoryCache
 
     // MARK: - Private params
+
     private var statusSubject = CurrentValueSubject<JupiterDataStatus, Never>(.initial)
+    private var task: Task<Void, Never>?
+    
+    let loadingPeriodInMinutes: Int = 60 * 24 // 1 days
 
     init(provider: JupiterTokensProvider, jupiterClient: JupiterAPI) {
         self.localProvider = provider
@@ -40,28 +41,72 @@ final class JupiterTokensRepositoryImpl: JupiterTokensRepository {
     }
 
     func load() async {
+        // cancel previous task
+        task?.cancel()
+        task = nil
+        
+        // assign task
+        task = Task { [weak self] in
+            await self?.fetch()
+        }
+        
+        await task?.value
+    }
+    
+    private func fetch() async {
         statusSubject.send(.loading)
         do {
-            let jupiterTokens: [Token]
+            var jupiterTokens: [Token]
             let routeMap: RouteMap
-            if let cachedData = localProvider.getCachedData() {
+            
+            try Task.checkCancellation()
+            
+            // get the date component
+            var dayComponent = DateComponents()
+            dayComponent.minute = loadingPeriodInMinutes
+            
+            // get cachedData if it is not expired
+            if let cachedData = localProvider.getCachedData(),
+               let dateToExpired = Calendar.current.date(byAdding: dayComponent, to: cachedData.created),
+               Date() < dateToExpired
+            {
                 jupiterTokens = cachedData.tokens
                 routeMap = cachedData.routeMap
-            } else {
-                jupiterTokens = try await jupiterClient.getTokens()
-                routeMap = try await jupiterClient.routeMap()
+            }
+            
+            // retrive to get data
+            else {
+                // clear expired data
+                localProvider.clear()
+                
+                // get new data
+                (jupiterTokens, routeMap) = try await(
+                    jupiterClient.getTokens(),
+                    jupiterClient.routeMap()
+                )
+                
+                // save new data
                 try localProvider.save(tokens: jupiterTokens, routeMap: routeMap)
             }
             
-            let wallets = walletsRepository.getWallets()
-            let swapTokens = jupiterTokens.map { jupiterToken in
-                if let userWallet = wallets.first(where: { $0.mintAddress == jupiterToken.address }) {
-                    return SwapToken(token: jupiterToken, userWallet: userWallet)
+            // get solana cached token list
+            let solanaTokens = await tokensRepositoryCache.getTokens() ?? []
+            
+            // map solanaTokens to jupiter token
+            jupiterTokens = jupiterTokens.map { jupiterToken in
+                if let token = solanaTokens.first(where: {$0.address == jupiterToken.address}) {
+                    return token
                 }
-                return SwapToken(token: jupiterToken, userWallet: nil)
+                return jupiterToken
             }
-            statusSubject.send(.ready(swapTokens: swapTokens, routeMap: routeMap))
+            
+            // return status ready
+            try Task.checkCancellation()
+            statusSubject.send(.ready(jupiterTokens: jupiterTokens, routeMap: routeMap))
         } catch {
+            guard !(error is CancellationError) else {
+                return
+            }
             statusSubject.send(.failed)
         }
     }

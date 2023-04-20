@@ -47,6 +47,7 @@ extension DefaultsKeys {
     }
     var forcedFeeRelayerEndpoint: DefaultsKey<String?> { .init(#function, defaultValue: nil) }
     var forcedNameServiceEndpoint: DefaultsKey<String?> { .init(#function, defaultValue: nil) }
+    var forcedNewSwapEndpoint: DefaultsKey<String?> { .init(#function, defaultValue: nil) }
 
     var isCoingeckoProviderDisabled: DefaultsKey<Bool> { .init(#function, defaultValue: false) }
     var didBackupOffline: DefaultsKey<Bool> { .init(#function, defaultValue: false) }
@@ -56,7 +57,7 @@ extension DefaultsKeys {
     }
 
     var appearance: DefaultsKey<UIUserInterfaceStyle> { .init(#function, defaultValue: .unspecified) }
-    var slippage: DefaultsKey<Double> { .init(#function, defaultValue: 0.01) }
+    var slippage: DefaultsKey<Double> { .init(#function, defaultValue: 0.05) }
     var fiat: DefaultsKey<Fiat> { .init(#function, defaultValue: .usd) }
     var hiddenWalletPubkey: DefaultsKey<[String]> { .init(#function, defaultValue: []) }
     var unhiddenWalletPubkey: DefaultsKey<[String]> { .init(#function, defaultValue: []) }
@@ -110,6 +111,12 @@ extension DefaultsKeys {
             defaultValue: RemoteConfig.remoteConfig().solanaNegativeStatusTimeFrequency
         )
     }
+    
+    #if !RELEASE
+    var isFakeSendTransaction: DefaultsKey<Bool> { .init(#function, defaultValue: false) }
+    var isFakeSendTransactionError: DefaultsKey<Bool> { .init(#function, defaultValue: false) }
+    var isFakeSendTransactionNetworkError: DefaultsKey<Bool> { .init(#function, defaultValue: false) }
+    #endif
 
     // Sell/RampOff
     var isSellAvailable: DefaultsKey<Bool?> {
@@ -132,6 +139,11 @@ extension DefaultsKeys {
     }
 
     var toTokenAddress: DefaultsKey<String?> {
+        .init(#function, defaultValue: nil)
+    }
+    
+    // Send via link: seeds mapped by user publickeys
+    var sendViaLinkTransactions: DefaultsKey<Data?> {
         .init(#function, defaultValue: nil)
     }
 }
