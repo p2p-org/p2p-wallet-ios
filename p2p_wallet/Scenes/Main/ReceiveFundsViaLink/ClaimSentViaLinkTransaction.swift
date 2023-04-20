@@ -61,19 +61,19 @@ struct ClaimSentViaLinkTransaction: RawTransactionType {
         
         // get services
         let sendViaLinkDataService = Resolver.resolve(SendViaLinkDataService.self)
-        let contextManager = Resolver.resolve(RelayContextManager.self)
+        let feeRelayerAPIClient = Resolver.resolve(FeeRelayerAPIClient.self)
         let solanaAPIClient = Resolver.resolve(SolanaAPIClient.self)
         
-        guard let context = contextManager.currentContext else {
-            throw FeeRelayerError.relayInfoMissing
-        }
+        let feePayerAddress = try PublicKey(
+            string: try await feeRelayerAPIClient.getFeePayerPubkey()
+        )
         
         // prepare transaction, get recent blockchash
         var (preparedTransaction, recentBlockhash) = try await(
             sendViaLinkDataService.claim(
                 token: claimableTokenInfo,
                 receiver: receiver,
-                feePayer: context.feePayerAddress
+                feePayer: feePayerAddress
             ),
             solanaAPIClient.getRecentBlockhash()
         )
@@ -98,7 +98,7 @@ struct ClaimSentViaLinkTransaction: RawTransactionType {
         try preparedTransaction.transaction.addSignature(
             .init(
                 signature: Data(Base58.decode(feePayerSignature)),
-                publicKey: context.feePayerAddress
+                publicKey: feePayerAddress
             )
         )
         
