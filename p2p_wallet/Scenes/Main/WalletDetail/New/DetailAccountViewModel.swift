@@ -52,7 +52,7 @@ class DetailAccountViewModel: BaseViewModel, ObservableObject {
         }
 
         // Render solana wallet (account)
-        rendableAccountDetail = RendableSolanaAccountDetail(wallet: wallet, isSwapAvailable: true, onAction: onAction)
+        rendableAccountDetail = RendableSolanaAccountDetail(wallet: wallet, isSwapAvailable: false, onAction: onAction)
 
         super.init()
 
