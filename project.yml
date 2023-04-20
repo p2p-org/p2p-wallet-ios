@@ -26,7 +26,7 @@ packages:
     KeyAppKit:
         path: ./Packages/KeyAppKit
     BECollectionView:
-        url: https://github.com/bigearsenal/BECollectionView.git
+        url: https://github.com/p2p-org/BECollectionView.git
         branch: master
     BEPureLayout:
         url: https://github.com/p2p-org/BEPureLayout.git
@@ -40,18 +40,6 @@ packages:
     Lokalise:
         url: https://github.com/lokalise/lokalise-ios-framework.git
         from: 0.10.2
-    RxAppState:
-        url: https://github.com/pixeldock/RxAppState
-        from: 1.7.1
-    RxConcurrency:
-        url: https://github.com/TrGiLong/RxConcurrency.git
-        from: 0.1.1
-    RxGesture:
-        url: https://github.com/RxSwiftCommunity/RxGesture.git
-        from: 4.0.4
-    RxCombine:
-        url: https://github.com/CombineCommunity/RxCombine.git
-        from: 2.0.1
     ReachabilitySwift:
         url: https://github.com/ashleymills/Reachability.swift.git
         from: 5.0.0
@@ -94,6 +82,9 @@ packages:
     Sentry:
         url: https://github.com/getsentry/sentry-cocoa
         exactVersion: 7.31.5
+    Task_retrying:
+        url: https://github.com/bigearsenal/task-retrying-swift.git
+        branch: master
 
 
 options:
@@ -302,13 +293,6 @@ targets:
 
             - package: Amplitude
             - package: Lokalise
-            - package: RxAppState
-            - package: RxConcurrency
-            - package: RxGesture
-            - package: RxCombine
-
-            - package: BECollectionView
-              product: BECollectionView
             - package: BECollectionView
               product: BECollectionView_Core
             - package: BECollectionView
@@ -341,6 +325,8 @@ targets:
 
 
             - package: Sentry
+
+            - package: Task_retrying
 
             - framework: Frameworks/keyapp.xcframework
               embed: false

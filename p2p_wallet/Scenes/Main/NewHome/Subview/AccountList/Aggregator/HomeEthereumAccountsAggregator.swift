@@ -11,7 +11,7 @@ import Web3
 import Wormhole
 
 /// Aggregating ``EthereumAccount`` into ``RendableAccount``.
-struct HomeEthereumAccountsAggregator: Aggregator {
+struct HomeEthereumAccountsAggregator: DataAggregator {
     func transform(
         input: ([EthereumAccount], [WormholeClaimUserAction])
     ) -> [RenderableEthereumAccount] {
@@ -32,18 +32,28 @@ struct HomeEthereumAccountsAggregator: Aggregator {
 
                 if claiming == nil {
                     // Extract balance from account
-                    let balanceInFiat = account.balanceInFiat ?? .init(
-                        value: 0,
-                        currencyCode: Defaults.fiat.rawValue
-                    )
+                    let balanceInFiat = account.balanceInFiat
 
-                    if balanceInFiat >= CurrencyAmount(usd: 1) {
-                        // Balance is greater than $1, user can claim.
-                        status = .readyToClaim
+                    if let balanceInFiat {
+                        // Compare using fiat.
+                        if balanceInFiat >= CurrencyAmount(usd: 1) {
+                            // Balance is greater than $1, user can claim.
+                            status = .readyToClaim
+                        } else {
+                            // Balance is to low.
+                            status = .balanceToLow
+                        }
                     } else {
-                        // Balance is to low.
-                        status = .balanceToLow
+                        // Compare using crypto amount.
+                        if account.balance > 0 {
+                            // Balance is not zero
+                            status = .readyToClaim
+                        } else {
+                            // Balance is to low.
+                            status = .balanceToLow
+                        }
                     }
+
                 } else {
                     // Claiming is running.
                     status = .isClamming
@@ -62,7 +72,7 @@ struct HomeEthereumAccountsAggregator: Aggregator {
 /// Mapping ethereum account with current claim user action.
 ///
 /// Only action in pending or processing will be mapped.
-private struct EthereumAccountsBindWithClaims: Aggregator {
+private struct EthereumAccountsBindWithClaims: DataAggregator {
     func transform(
         input: (EthereumAccount, [WormholeClaimUserAction])
     ) -> (EthereumAccount, WormholeClaimUserAction?) {
@@ -99,7 +109,7 @@ private struct EthereumAccountsBindWithClaims: Aggregator {
 }
 
 /// Filter ethereum accounts with supported erc-20 token list.
-private struct EthereumAccountsWithWormholeAggregator: Aggregator {
+private struct EthereumAccountsWithWormholeAggregator: DataAggregator {
     func transform(input: [EthereumAccount]) -> [EthereumAccount] {
         input
             .filter { account in

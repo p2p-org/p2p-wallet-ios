@@ -137,7 +137,7 @@ class WormholeSendInputViewModel: BaseViewModel, ObservableObject {
             .dropFirst()
             .debounce(for: 0.5, scheduler: DispatchQueue.main)
             .sink { [weak self] input, inputMode in
-                self?.analyticsManager.log(event: .sendClickChangeTokenValue(source: "Bridge"))
+                self?.analyticsManager.log(event: .sendClickChangeTokenValue(source: SendSource.none.rawValue, sendFlow: "Bridge"))
 
                 guard let self, let account = self.adapter.inputAccount, !self.wasMaxUsed else {
                     self?.wasMaxUsed = false
@@ -252,7 +252,6 @@ class WormholeSendInputViewModel: BaseViewModel, ObservableObject {
                 case .fiat:
                     self.countAfterDecimalPoint = 2
                 }
-                self.analyticsManager.log(event: .sendClickChangeTokenChosen(source: "Bridge"))
             }
             .store(in: &subscriptions)
 
@@ -273,6 +272,7 @@ class WormholeSendInputViewModel: BaseViewModel, ObservableObject {
         guard let selectedAccount else { return }
 
         Task { _ = await stateMachine.accept(action: .updateSolanaAccount(account: selectedAccount)) }
+        self.analyticsManager.log(event: .sendClickChangeTokenChosen(source: SendSource.none.rawValue, sendFlow: "Bridge"))
     }
 
     func send() async {
@@ -280,7 +280,6 @@ class WormholeSendInputViewModel: BaseViewModel, ObservableObject {
             case .ready = adapter.state,
             let input = adapter.input,
             let output = adapter.output,
-            let transaction = output.transactions,
             let relayContext = Resolver.resolve(RelayContextManager.self).currentContext,
             let transactions = output.transactions
         else {
@@ -313,10 +312,10 @@ class WormholeSendInputViewModel: BaseViewModel, ObservableObject {
             action.send(.send(userAction))
             analyticsManager.log(event: .sendBridgesConfirmButtonClick(
                 tokenName: input.solanaAccount.data.token.symbol,
-                tokenValue: input.amount.value.description.double ?? 0,
+                tokenValue: Double(input.amount.amount.description) ?? 0,
                 valueFiat: input.solanaAccount
                     .price != nil ?
-                    (try? input.amount.toFiatAmount(price: input.solanaAccount.price!).value.description.double) ?? 0 :
+                (try? input.amount.toFiatAmount(price: input.solanaAccount.price!).value.description.double) ?? 0 :
                     0.0,
                 fee: output.feePayerAmount?.amount.description.double ?? 0
             ))
@@ -362,6 +361,6 @@ extension WormholeSendInputViewModel {
 
 extension WormholeSendInputViewModel {
     func logChooseTokenClick() {
-        // analyticsManager.log(event: .sendnewTokenInputClick(tokenName: adapter.input ,source: "Bridge", sendFlow: "Wormhole"))
+         analyticsManager.log(event: .sendnewTokenInputClick(tokenName: "", source: SendSource.none.rawValue, sendFlow: "Bridge"))
     }
 }

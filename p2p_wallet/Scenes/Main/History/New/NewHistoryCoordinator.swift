@@ -193,11 +193,17 @@ class NewHistoryCoordinator: SmartCoordinator<Void> {
         guard let navigationController = presentation.presentingViewController as? UINavigationController else {
             return
         }
-        let coordinator = SwapCoordinator(
+        
+        let coordinator = JupiterSwapCoordinator(
             navigationController: navigationController,
-            initialWallet: wallet,
-            destinationWallet: destination,
-            hidesBottomBarWhenPushed: true
+            params: .init(
+                dismissAfterCompletion: true,
+                openKeyboardOnStart: true,
+                source: .tapToken,
+                preChosenWallet: wallet,
+                destinationWallet: destination,
+                hideTabBar: true
+            )
         )
 
         coordinate(to: coordinator)

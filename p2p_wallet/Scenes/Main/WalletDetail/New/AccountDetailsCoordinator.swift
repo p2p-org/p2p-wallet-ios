@@ -235,34 +235,23 @@ class AccountDetailsCoordinator: SmartCoordinator<AccountDetailsCoordinatorResul
         guard case let .solanaAccount(account) = args,
               let rootViewController = presentation.presentingViewController as? UINavigationController
         else { return }
-        if available(.jupiterSwapEnabled) {
-            coordinate(
-                to: JupiterSwapCoordinator(
-                    navigationController: rootViewController,
-                    params: .init(
-                        dismissAfterCompletion: true,
-                        openKeyboardOnStart: true,
-                        source: .tapToken,
-                        preChosenWallet: account.data,
-                        destinationWallet: destination,
-                        hideTabBar: true
-                    )
+        coordinate(
+            to: JupiterSwapCoordinator(
+                navigationController: rootViewController,
+                params: .init(
+                    dismissAfterCompletion: true,
+                    openKeyboardOnStart: true,
+                    source: .tapToken,
+                    preChosenWallet: account.data,
+                    destinationWallet: destination,
+                    hideTabBar: true
                 )
             )
-            .sink { [weak rootViewController] _ in
-                rootViewController?.popToRootViewController(animated: true)
-            }
-            .store(in: &subscriptions)
-        } else {
-            let vm = OrcaSwapV2.ViewModel(initialWallet: account.data, destinationWallet: destination)
-            let vc = OrcaSwapV2.ViewController(viewModel: vm)
-
-            vc.doneHandler = { [weak self, weak rootViewController] in
-                rootViewController?.popToRootViewController(animated: true)
-                self?.result.send(.done)
-            }
-            rootViewController.pushViewController(vc, animated: true)
+        )
+        .sink { [weak rootViewController] _ in
+            rootViewController?.popToRootViewController(animated: true)
         }
+        .store(in: &subscriptions)
     }
 
     func openSend() {

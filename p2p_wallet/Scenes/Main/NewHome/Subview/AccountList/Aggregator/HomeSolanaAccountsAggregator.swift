@@ -10,7 +10,7 @@ import KeyAppKitCore
 import SolanaSwift
 
 /// Aggregating ``SolanaAccount`` into ``RendableAccount``.
-struct HomeSolanaAccountsAggregator: Aggregator {
+struct HomeSolanaAccountsAggregator: DataAggregator {
     /// Transformation
     /// - Parameter input: Solana accounts, addresses of favourite and ignores, should be zero balance account hidden.
     /// - Returns: Renderable accounts.

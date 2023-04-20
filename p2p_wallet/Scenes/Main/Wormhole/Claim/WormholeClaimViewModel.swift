@@ -9,15 +9,14 @@ import Wormhole
 
 class WormholeClaimViewModel: BaseViewModel, ObservableObject {
     @Injected private var analyticsManager: AnalyticsManager
+    @Injected private var reachability: Reachability
+    @Injected private var notificationService: NotificationService
 
     let action: PassthroughSubject<Action, Never> = .init()
 
-    let bundle: AsyncValue<WormholeBundle?>
+    private let bundle: AsyncValue<WormholeBundle?>
 
     @Published var model: any WormholeClaimModel
-
-    @Injected private var reachability: Reachability
-    @Injected private var notificationService: NotificationService
 
     init(model: WormholeClaimMockModel) {
         self.model = model
@@ -42,12 +41,6 @@ class WormholeClaimViewModel: BaseViewModel, ObservableObject {
         }
 
         super.init()
-
-        // Start fetch bundle
-        bundle.fetch()
-
-        // Listen changing in bundle value
-        bundle.listen(target: self, in: &subscriptions)
 
         bundle
             .statePublisher
@@ -88,12 +81,22 @@ class WormholeClaimViewModel: BaseViewModel, ObservableObject {
             }
             .store(in: &subscriptions)
 
+        // Network setup
         try? reachability.startNotifier()
         reachability.status.sink { [weak self] _ in
             _ = self?.reachability.check()
         }.store(in: &subscriptions)
+
+        // Start fetch bundle
+        bundle.fetch()
     }
 
+    /// Open fee view.
+    func openFees() {
+        action.send(.openFee(bundle))
+    }
+
+    /// Start claiming.
     func claim() {
         if let model = model as? WormholeClaimEthereumModel {
             if bundle.state.hasError {
@@ -104,6 +107,7 @@ class WormholeClaimViewModel: BaseViewModel, ObservableObject {
                     return
                 }
 
+                // Setup
                 let userActionService: UserActionService = Resolver.resolve()
 
                 let userAction = WormholeClaimUserAction(
@@ -111,8 +115,11 @@ class WormholeClaimViewModel: BaseViewModel, ObservableObject {
                     bundle: bundle
                 )
 
+                // Execute and emit action.
                 userActionService.execute(action: userAction)
                 action.send(.claiming(userAction))
+
+                // Log
                 analyticsManager.log(event: .claimBridgesClickConfirmed(
                     tokenName: model.account.token.symbol,
                     tokenValue: bundle.resultAmount.asCryptoAmount.amount.description.double ?? 0,
