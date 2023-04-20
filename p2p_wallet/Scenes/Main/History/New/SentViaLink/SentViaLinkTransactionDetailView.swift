@@ -126,7 +126,7 @@ struct SentViaLinkTransactionDetailView: View {
                 analyticsManager.log(event: .historySendClickCopyTransaction)
                 let pasteboard = UIPasteboard.general
                 pasteboard.string = link
-                notificationService.showInAppNotification(.done(L10n.yourOneTimeLinkIsCopied))
+                notificationService.showInAppNotification(.done(L10n.copied))
             } label: {
                 Image(uiImage: .copyFill)
                     .resizable()

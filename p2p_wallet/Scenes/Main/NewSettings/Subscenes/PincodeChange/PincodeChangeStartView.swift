@@ -40,6 +40,7 @@ struct PincodeChangeStartView: View {
                         style: .white,
                         isOn: $isOn
                     )
+                        .accessibilityIdentifier("PincodeChangeStartView.ExplainLayoutView.SliderButtonView")
                         .onChange(of: isOn, perform: { newValue in
                             if newValue {
                                 startChanging?()

@@ -156,33 +156,22 @@ class DetailAccountCoordinator: SmartCoordinator<DetailAccountCoordinatorResult>
         guard case let .wallet(wallet) = self.args,
               let rootViewController = presentation.presentingViewController as? UINavigationController
         else { return }
-        if available(.jupiterSwapEnabled) {
-            coordinate(
-                to: JupiterSwapCoordinator(
-                    navigationController: rootViewController,
-                    params: .init(
-                        dismissAfterCompletion: true,
-                        openKeyboardOnStart: true,
-                        source: .tapToken,
-                        preChosenWallet: wallet,
-                        hideTabBar: true
-                    )
+        coordinate(
+            to: JupiterSwapCoordinator(
+                navigationController: rootViewController,
+                params: .init(
+                    dismissAfterCompletion: true,
+                    openKeyboardOnStart: true,
+                    source: .tapToken,
+                    preChosenWallet: wallet,
+                    hideTabBar: true
                 )
             )
+        )
             .sink { [weak rootViewController] _ in
                 rootViewController?.popToRootViewController(animated: true)
             }
             .store(in: &subscriptions)
-        } else {
-            let vm = OrcaSwapV2.ViewModel(initialWallet: wallet)
-            let vc = OrcaSwapV2.ViewController(viewModel: vm)
-            
-            vc.doneHandler = { [weak self, weak rootViewController] in
-                rootViewController?.popToRootViewController(animated: true)
-                self?.result.send(.done)
-            }
-            rootViewController.pushViewController(vc, animated: true)
-        }
     }
 
     func openSend() {
@@ -210,7 +199,7 @@ class DetailAccountCoordinator: SmartCoordinator<DetailAccountCoordinatorResult>
                     self.coordinate(to: SendTransactionStatusCoordinator(parentController: rootViewController, transaction: model))
                         .sink(receiveValue: {})
                         .store(in: &self.subscriptions)
-                case let .sentViaLink:
+                case .sentViaLink:
                     rootViewController.popToViewController(currentVC, animated: true)
 
 //                    self.coordinate(to: SendTransactionStatusCoordinator(parentController: rootViewController, transaction: model))
