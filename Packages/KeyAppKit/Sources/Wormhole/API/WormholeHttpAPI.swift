@@ -108,8 +108,7 @@ public class WormholeRPCAPI: WormholeAPI {
         from: String,
         recipient: String,
         mint: String?,
-        amount: String,
-        needToUseRelay: Bool
+        amount: String
     ) async throws -> SendTransaction {
         /// Internal structure for params
         struct Params: Codable {
@@ -119,7 +118,6 @@ public class WormholeRPCAPI: WormholeAPI {
             let recipient: String
             let mint: String?
             let amount: String
-            let needToUseRelay: Bool
 
             enum CodingKeys: String, CodingKey {
                 case userWallet
@@ -128,7 +126,6 @@ public class WormholeRPCAPI: WormholeAPI {
                 case recipient
                 case mint
                 case amount
-                case needToUseRelay = "need_to_use_relay"
             }
         }
 
@@ -140,8 +137,7 @@ public class WormholeRPCAPI: WormholeAPI {
                 from: from,
                 recipient: recipient,
                 mint: mint,
-                amount: amount,
-                needToUseRelay: needToUseRelay
+                amount: amount
             )
         )
     }

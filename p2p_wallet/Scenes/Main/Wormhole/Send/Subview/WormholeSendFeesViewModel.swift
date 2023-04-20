@@ -14,7 +14,9 @@ struct WormholeSendFees: Identifiable {
 
     let detail: String
 
-    init?(title: String, subtitle: String?, detail: String?) {
+    let isFree: Bool
+
+    init?(title: String, subtitle: String?, detail: String?, isFree: Bool = false) {
         guard let subtitle else {
             return nil
         }
@@ -22,11 +24,11 @@ struct WormholeSendFees: Identifiable {
         self.title = title
         self.subtitle = subtitle
         self.detail = detail ?? ""
+        self.isFree = isFree
     }
 }
 
 class WormholeSendFeesViewModel: BaseViewModel, ObservableObject {
-
     @Injected private var analyticsManager: AnalyticsManager
 
     @Published var loading: Bool = false
@@ -58,38 +60,19 @@ class WormholeSendFeesViewModel: BaseViewModel, ObservableObject {
                     ),
                     .init(
                         title: L10n.networkFee,
-                        subtitle: adapter.networkFee?.crypto,
-                        detail: adapter.networkFee?.fiat
-                    ),
-                    .init(
-                        title: "Message fee",
-                        subtitle: adapter.messageFee?.crypto,
-                        detail: adapter.messageFee?.fiat
-                    ),
-                    .init(
-                        title: L10n.usingWormholeBridge,
-                        subtitle: adapter.bridgeFee?.crypto,
-                        detail: adapter.bridgeFee?.fiat
-                    ),
-                    .init(
-                        title: "Total converted fees",
-                        subtitle: adapter.feePayerAmount?.crypto,
-                        detail: adapter.feePayerAmount?.fiat
+                        subtitle: L10n.paidByKeyApp,
+                        detail: L10n.free,
+                        isFree: true
                     ),
                     .init(
                         title: "Arbiter fee",
                         subtitle: adapter.arbiterFee?.crypto,
                         detail: adapter.arbiterFee?.fiat
                     ),
-                    .init(
-                        title: L10n.total,
-                        subtitle: adapter.total?.crypto,
-                        detail: adapter.total?.fiat
-                    ),
                 ].compactMap { $0 }
             }
             .store(in: &subscriptions)
-        
+
         analyticsManager.log(event: .sendnewFreeTransactionClick(source: SendSource.none.rawValue, sendFlow: "Bridge"))
     }
 }
