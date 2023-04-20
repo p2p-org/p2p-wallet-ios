@@ -32,18 +32,28 @@ struct HomeEthereumAccountsAggregator: DataAggregator {
 
                 if claiming == nil {
                     // Extract balance from account
-                    let balanceInFiat = account.balanceInFiat ?? .init(
-                        value: 0,
-                        currencyCode: Defaults.fiat.rawValue
-                    )
+                    let balanceInFiat = account.balanceInFiat
 
-                    if balanceInFiat >= CurrencyAmount(usd: 1) {
-                        // Balance is greater than $1, user can claim.
-                        status = .readyToClaim
+                    if let balanceInFiat {
+                        // Compare using fiat.
+                        if balanceInFiat >= CurrencyAmount(usd: 1) {
+                            // Balance is greater than $1, user can claim.
+                            status = .readyToClaim
+                        } else {
+                            // Balance is to low.
+                            status = .balanceToLow
+                        }
                     } else {
-                        // Balance is to low.
-                        status = .balanceToLow
+                        // Compare using crypto amount.
+                        if account.balance > 0 {
+                            // Balance is not zero
+                            status = .readyToClaim
+                        } else {
+                            // Balance is to low.
+                            status = .balanceToLow
+                        }
                     }
+
                 } else {
                     // Claiming is running.
                     status = .isClamming
