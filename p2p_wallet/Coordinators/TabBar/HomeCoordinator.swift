@@ -177,38 +177,17 @@ final class HomeCoordinator: Coordinator<Void> {
             .eraseToAnyPublisher()
         case .swap:
             analyticsManager.log(event: .swapViewed(lastScreen: "main_screen"))
-            if available(.jupiterSwapEnabled) {
-                return coordinate(
-                    to: JupiterSwapCoordinator(
-                        navigationController: navigationController,
-                        params: JupiterSwapParameters(
-                            dismissAfterCompletion: true,
-                            openKeyboardOnStart: true,
-                            source: .actionPanel
-                        )
+            return coordinate(
+                to: JupiterSwapCoordinator(
+                    navigationController: navigationController,
+                    params: JupiterSwapParameters(
+                        dismissAfterCompletion: true,
+                        openKeyboardOnStart: true,
+                        source: .actionPanel
                     )
                 )
-                .eraseToAnyPublisher()
-            } else {
-                return coordinate(
-                    to: SwapCoordinator(
-                        navigationController: navigationController,
-                        initialWallet: nil,
-                        destinationWallet: nil
-                    )
-                )
-                .receive(on: RunLoop.main)
-                .handleEvents(receiveOutput: { [weak tokensViewModel] result in
-                    switch result {
-                    case .cancel:
-                        break
-                    case .done:
-                        tokensViewModel?.scrollToTop()
-                    }
-                })
-                .map { _ in () }
-                .eraseToAnyPublisher()
-            }
+            )
+            .eraseToAnyPublisher()
         case .cashOut:
             analyticsManager.log(event: .sellClicked(source: "Main"))
             return coordinate(
@@ -234,37 +213,18 @@ final class HomeCoordinator: Coordinator<Void> {
         case .earn:
             return Just(())
                 .eraseToAnyPublisher()
-        case let .solanaAccount(solanaAccount):
-            if available(.historyServiceEnabled) {
-                analyticsManager.log(event: .mainScreenTokenDetailsOpen(tokenTicker: solanaAccount.data.token.symbol))
 
-                return coordinate(
-                    to: AccountDetailsCoordinator(
-                        args: .solanaAccount(solanaAccount),
-                        presentingViewController: navigationController
-                    )
+        case let .solanaAccount(solanaAccount):
+            analyticsManager.log(event: .mainScreenTokenDetailsOpen(tokenTicker: solanaAccount.data.token.symbol))
+            
+            return coordinate(
+                to: AccountDetailsCoordinator(
+                    args: .solanaAccount(solanaAccount),
+                    presentingViewController: navigationController
                 )
-                .map { _ in () }
-                .eraseToAnyPublisher()
-            } else {
-                let model = WalletDetailCoordinator.Model(
-                    pubKey: solanaAccount.data.pubkey ?? "",
-                    symbol: solanaAccount.data.token.symbol
-                )
-                let coordinator = WalletDetailCoordinator(navigationController: navigationController, model: model)
-                return coordinate(to: coordinator)
-                    .receive(on: RunLoop.main)
-                    .handleEvents(receiveOutput: { [weak tokensViewModel] result in
-                        switch result {
-                        case .cancel:
-                            break
-                        case .done:
-                            tokensViewModel?.scrollToTop()
-                        }
-                    })
-                    .map { _ in () }
-                    .eraseToAnyPublisher()
-            }
+            )
+            .map { _ in () }
+            .eraseToAnyPublisher()
         case .actions:
             return Just(())
                 .eraseToAnyPublisher()

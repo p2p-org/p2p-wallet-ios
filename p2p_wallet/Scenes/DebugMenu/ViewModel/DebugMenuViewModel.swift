@@ -121,7 +121,6 @@ extension DebugMenuViewModel {
         case sell
         case ethAddressEnabled
         case sendViaLink
-        case jupiterSwap
 
         var title: String {
             switch self {
@@ -136,7 +135,6 @@ extension DebugMenuViewModel {
             case .sell: return "Sell (Off Ramp)"
             case .ethAddressEnabled: return "Eth Address Enabled"
             case .sendViaLink: return "Send via link"
-            case .jupiterSwap: return "Jupiter Swap"
             }
         }
 
@@ -153,7 +151,6 @@ extension DebugMenuViewModel {
             case .sell: return .sellScenarioEnabled
             case .ethAddressEnabled: return .ethAddressEnabled
             case .sendViaLink: return .sendViaLinkEnabled
-            case .jupiterSwap: return .jupiterSwapEnabled
             }
         }
     }
