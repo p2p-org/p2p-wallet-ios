@@ -13,34 +13,34 @@ jobs:
     runs-on: macos-12
 
     steps:
-      - name: Check out repository
-        uses: actions/checkout@v3
-        with:
-          submodules: recursive
-          token: ${{ secrets.SUBMODULES_ACCESS_TOKEN }}
+      # - name: Check out repository
+      #   uses: actions/checkout@v3
+      #   with:
+      #     submodules: recursive
+      #     token: ${{ secrets.SUBMODULES_ACCESS_TOKEN }}
 
-      - name: Grant access to KeyAppUI
-        uses: webfactory/ssh-agent@v0.5.4
-        with:
-          ssh-private-key: ${{ secrets.KEY_APP_UI_GIT_SSH }}
+      # - name: Grant access to KeyAppUI
+      #   uses: webfactory/ssh-agent@v0.5.4
+      #   with:
+      #     ssh-private-key: ${{ secrets.KEY_APP_UI_GIT_SSH }}
 
-      - name: Copy secret files
-        run: |
-          curl -o ./p2p_wallet/Config.xcconfig ${{ secrets.XCCONFIG_URL }}
-        shell: bash
+      # - name: Copy secret files
+      #   run: |
+      #     curl -o ./p2p_wallet/Config.xcconfig ${{ secrets.XCCONFIG_URL }}
+      #   shell: bash
 
-      - name: Install project
-        run: |
-          chmod u+x Scripts/remove_cocoa_debug.rb && Scripts/remove_cocoa_debug.rb
-          rm -rf p2p_wallet/Scenes/DebugMenu
-          chmod u+x Scripts/install.sh && Scripts/install.sh
-        shell: bash
+      # - name: Install project
+      #   run: |
+      #     chmod u+x Scripts/remove_cocoa_debug.rb && Scripts/remove_cocoa_debug.rb
+      #     rm -rf p2p_wallet/Scenes/DebugMenu
+      #     chmod u+x Scripts/install.sh && Scripts/install.sh
+      #   shell: bash
 
-      - name: Fix missing Transporter.app
-        run: |
-          export FASTLANE_ITUNES_TRANSPORTER_USE_SHELL_SCRIPT=1
-          export FASTLANE_ITUNES_TRANSPORTER_PATH=/Applications/Transporter.app/Contents/itms
-          export FASTLANE_APPLE_APPLICATION_SPECIFIC_PASSWORD=${{ secrets.FASTLANE_APPLE_APPLICATION_SPECIFIC_PASSWORD }}
+      # - name: Fix missing Transporter.app
+      #   run: |
+      #     export FASTLANE_ITUNES_TRANSPORTER_USE_SHELL_SCRIPT=1
+      #     export FASTLANE_ITUNES_TRANSPORTER_PATH=/Applications/Transporter.app/Contents/itms
+      #     export FASTLANE_APPLE_APPLICATION_SPECIFIC_PASSWORD=${{ secrets.FASTLANE_APPLE_APPLICATION_SPECIFIC_PASSWORD }}
 
       - name: Upload to test
         uses: maierj/fastlane-action@v2.2.0
