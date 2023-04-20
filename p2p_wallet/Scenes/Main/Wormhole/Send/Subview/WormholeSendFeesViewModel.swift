@@ -12,9 +12,11 @@ struct WormholeSendFees: Identifiable {
 
     let subtitle: String
 
+    let subtitleHighlighted: Bool
+
     let detail: String
 
-    init?(title: String, subtitle: String?, detail: String?) {
+    init?(title: String, subtitle: String?, subtitleHighlighted: Bool = false, detail: String?) {
         guard let subtitle else {
             return nil
         }
@@ -22,6 +24,7 @@ struct WormholeSendFees: Identifiable {
         self.title = title
         self.subtitle = subtitle
         self.detail = detail ?? ""
+        self.subtitleHighlighted = subtitleHighlighted
     }
 }
 
@@ -59,32 +62,13 @@ class WormholeSendFeesViewModel: BaseViewModel, ObservableObject {
                     .init(
                         title: L10n.networkFee,
                         subtitle: adapter.networkFee?.crypto,
-                        detail: adapter.networkFee?.fiat
-                    ),
-                    .init(
-                        title: "Message fee",
-                        subtitle: adapter.messageFee?.crypto,
-                        detail: adapter.messageFee?.fiat
+                        subtitleHighlighted: true,
+                        detail: Double(adapter.networkFee?.fiat ?? "") == 0 ? L10n.paidByKeyApp : adapter.networkFee?.fiat
                     ),
                     .init(
                         title: L10n.usingWormholeBridge,
                         subtitle: adapter.bridgeFee?.crypto,
                         detail: adapter.bridgeFee?.fiat
-                    ),
-                    .init(
-                        title: "Total converted fees",
-                        subtitle: adapter.feePayerAmount?.crypto,
-                        detail: adapter.feePayerAmount?.fiat
-                    ),
-                    .init(
-                        title: "Arbiter fee",
-                        subtitle: adapter.arbiterFee?.crypto,
-                        detail: adapter.arbiterFee?.fiat
-                    ),
-                    .init(
-                        title: L10n.total,
-                        subtitle: adapter.total?.crypto,
-                        detail: adapter.total?.fiat
                     ),
                 ].compactMap { $0 }
             }

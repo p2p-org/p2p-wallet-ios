@@ -30,7 +30,12 @@ struct WormholeSendFeesView: View {
                     HStack {
                         Text(fee.subtitle)
                             .apply(style: .label1)
-                            .foregroundColor(Color(Asset.Colors.mountain.color))
+                            .if(fee.subtitleHighlighted) { view in
+                                view.foregroundColor(Color(Asset.Colors.mint.color))
+                            }
+                            .if(!fee.subtitleHighlighted) { view in
+                                view.foregroundColor(Color(Asset.Colors.mountain.color))
+                            }
                         Spacer()
                         Text(fee.detail)
                             .apply(style: .label1)
