@@ -51,7 +51,7 @@ public struct WormholeClaimUserAction: UserAction {
 
     /// Claim fees information
     public let fees: ClaimFees
-    
+
     public let compensationDeclineReason: CompensationDeclineReason?
 
     public init(
@@ -71,7 +71,7 @@ public struct WormholeClaimUserAction: UserAction {
         compensationDeclineReason = bundle.compensationDeclineReason
     }
 
-    /// Extract user action from ``BundleStatus``. 
+    /// Extract user action from ``BundleStatus``.
     /// Method is not ready for usage due missing compensationDeclineReason from backend.
     public init(
         bundleStatus: WormholeBundleStatus,
@@ -95,7 +95,7 @@ public struct WormholeClaimUserAction: UserAction {
         amountInCrypto = bundleStatus.resultAmount.asCryptoAmount
         amountInFiat = bundleStatus.resultAmount.asCurrencyAmount
         fees = bundleStatus.fees
-        compensationDeclineReason = nil
+        compensationDeclineReason = bundleStatus.compensationDeclineReason
     }
 
     /// Client side moving to next status.

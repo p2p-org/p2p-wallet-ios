@@ -14,6 +14,7 @@ public struct WormholeBundleStatus: Codable, Hashable, Equatable {
     public let resultAmount: TokenAmount
     public let fees: ClaimFees
     public let status: WormholeStatus
+    public let compensationDeclineReason: CompensationDeclineReason?
 
     enum CodingKeys: String, CodingKey {
         case bundleId = "bundle_id"
@@ -22,5 +23,6 @@ public struct WormholeBundleStatus: Codable, Hashable, Equatable {
         case resultAmount = "result_amount"
         case fees
         case status
+        case compensationDeclineReason = "compensation_decline_reason"
     }
 }

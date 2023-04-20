@@ -74,34 +74,6 @@ struct WormholeSendFeesAdapter: Equatable {
 
     let total: Output?
 
-    var feePayerAmount: Output? {
-        if
-            let output = adapter.output,
-            let feePayer = output.feePayer,
-            let feePayerAmount = output.feePayerAmount
-        {
-            let cryptoFormatter = CryptoFormatter()
-            let currencyFormatter = CurrencyFormatter()
-
-            if
-                let price = feePayer.price,
-                let currencyAmount = try? feePayerAmount.toFiatAmount(price: price)
-            {
-                return .init(
-                    crypto: cryptoFormatter.string(amount: feePayerAmount),
-                    fiat: currencyFormatter.string(amount: currencyAmount)
-                )
-            } else {
-                return .init(
-                    crypto: cryptoFormatter.string(amount: feePayerAmount),
-                    fiat: ""
-                )
-            }
-        }
-
-        return nil
-    }
-
     init(state: WormholeSendInputState) {
         adapter = .init(state: state)
 
@@ -109,42 +81,7 @@ struct WormholeSendFeesAdapter: Equatable {
         bridgeFee = Self.resolve(amount: adapter.output?.fees.bridgeFee)
         arbiterFee = Self.resolve(amount: adapter.output?.fees.arbiter)
         messageFee = Self.resolve(amount: adapter.output?.fees.messageAccountRent)
-
-        guard let output = adapter.output else {
-            total = nil
-            return
-        }
-
-        let fees = [
-            output.fees.networkFee,
-            output.fees.bridgeFee,
-            output.fees.arbiter,
-            output.fees.messageAccountRent,
-        ]
-            .compactMap { $0 }
-
-        /// Calculate total fee in crypto
-        let feesByToken = Dictionary(grouping: fees, by: \.token)
-        let totalCryptoFee: String = feesByToken.values.map { tokenAmounts -> String? in
-            guard let initialCryptoAmount = tokenAmounts.first?.asCryptoAmount.with(amount: 0) else {
-                return nil
-            }
-
-            let cryptoFormatter = CryptoFormatter()
-            let totalCryptoAmount = tokenAmounts.map(\.asCryptoAmount).reduce(initialCryptoAmount, +)
-            return cryptoFormatter.string(amount: totalCryptoAmount)
-        }
-        .compactMap { $0 }
-        .joined(separator: "\n")
-
-        // Calculate total fee in currency
-        let currencyFormatter = CurrencyFormatter()
-        let totalCurrencyFee = currencyFormatter.string(amount: output.fees.totalInFiat)
-
-        total = .init(
-            crypto: totalCryptoFee,
-            fiat: totalCurrencyFee
-        )
+        total = nil
     }
 
     private static func resolve(amount: Wormhole.TokenAmount?) -> Output? {

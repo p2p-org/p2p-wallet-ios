@@ -162,34 +162,6 @@ public class WormholeSendUserActionConsumer: UserActionConsumer {
             let accountCreationFee = action.fees.messageAccountRent?
                 .asCryptoAmount ?? CryptoAmount(token: SolanaToken.nativeSolana)
 
-            do {
-                /// Top up user relay account.
-                let topUpTransactions = try await self?.relayService.topUp(
-                    amount: .init(
-                        transaction: UInt64(transactionFee.value),
-                        accountBalances: UInt64(accountCreationFee.value)
-                    ),
-                    payingFeeToken: action.payingFeeTokenAccount,
-                    relayContext: action.relayContext
-                )
-
-                /// Waiting confirmation on top up
-                if let topUpTransactions {
-                    for topUpTransaction in topUpTransactions {
-                        try await self?.solanaClient.waitForConfirmation(
-                            signature: topUpTransaction,
-                            ignoreStatus: false
-                        )
-                    }
-                }
-            } catch {
-                self?.errorObserver.handleError(error)
-
-                let error = WormholeSendUserActionError.topUpFailure
-                self?.handleEvent(event: .sendFailure(message: action.message, error: error))
-                return
-            }
-
             /// Preparing transaction
             guard
                 let data = Data(base64Encoded: action.transaction.transaction, options: .ignoreUnknownCharacters),
