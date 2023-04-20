@@ -116,7 +116,15 @@ class PricesService {
     private func adjust(newPrices: [Token: CurrentPrice?]) -> TokenPriceMap {
         var prices = currentPricesSubject.value
         for newPrice in newPrices where newPrice.value != nil {
-            prices[newPrice.key.address] = newPrice.value
+            if newPrice.key.address == Token.usdc.address || newPrice.key.address == Token.usdt.address {
+                if let price = newPrice.value, let value = price.value, abs(value - 1.0) <= 0.02 {
+                    prices[newPrice.key.address] = CurrentPrice(value: 1.0, change24h: price.change24h)
+                } else {
+                    prices[newPrice.key.address] = newPrice.value
+                }
+            } else {
+                prices[newPrice.key.address] = newPrice.value
+            }
         }
         return prices
     }

@@ -476,7 +476,7 @@ private extension SendInputViewModel {
             wasMaxWarningToastShown = false
             inputAmountViewModel.isError = false
             if !currentState.isSendingViaLink {
-                var title = L10n.send
+                var title = L10n.send + " "
                 title += currentState.amountInToken.tokenAmountFormattedString(
                     symbol: currentState.token.symbol,
                     maximumFractionDigits: Int(currentState.token.decimals),
