@@ -120,7 +120,6 @@ extension DebugMenuViewModel {
         case simulatedSocialError
         case sell
         case sendViaLink
-        case jupiterSwap
 
         var title: String {
             switch self {
@@ -134,7 +133,6 @@ extension DebugMenuViewModel {
             case .solendDisablePlaceholder: return "Solend Disable Placeholder"
             case .sell: return "Sell (Off Ramp)"
             case .sendViaLink: return "Send via link"
-            case .jupiterSwap: return "Jupiter Swap"
             }
         }
 
@@ -150,7 +148,6 @@ extension DebugMenuViewModel {
             case .solendDisablePlaceholder: return .solendDisablePlaceholder
             case .sell: return .sellScenarioEnabled
             case .sendViaLink: return .sendViaLinkEnabled
-            case .jupiterSwap: return .jupiterSwapEnabled
             }
         }
     }

@@ -25,10 +25,6 @@ final class TabBarViewModel {
     @Injected private var nameService: NameService
     @Injected private var nameStorage: NameStorageType
 
-    private let transactionAnalytics = [
-        Resolver.resolve(SwapTransactionAnalytics.self),
-    ]
-
     // Input
     let viewDidLoad = PassthroughSubject<Void, Never>()
     
