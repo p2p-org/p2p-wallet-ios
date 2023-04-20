@@ -10,7 +10,7 @@ import KeyAppUI
 import SwiftUI
 import Wormhole
 
-struct WormholeClaimFee: View {
+struct WormholeClaimFeeView: View {
     @ObservedObject var viewModel: WormholeClaimFeeViewModel
 
     var body: some View {
@@ -46,13 +46,13 @@ struct WormholeClaimFee: View {
             .padding(.top, 20)
 
             VStack(spacing: 24) {
-                if let value = viewModel.adapter.value {
+                if let value = viewModel.fee.value {
                     WormholeFeeView(
                         title: "You will get",
                         subtitle: value.receive.crypto,
                         detail: value.receive.fiat,
                         isFree: value.receive.isFree,
-                        isLoading: viewModel.adapter.isFetching
+                        isLoading: viewModel.fee.isFetching
                     )
 
                     WormholeFeeView(
@@ -60,7 +60,7 @@ struct WormholeClaimFee: View {
                         subtitle: value.networkFee.crypto,
                         detail: value.networkFee.fiat,
                         isFree: value.networkFee.isFree,
-                        isLoading: viewModel.adapter.isFetching
+                        isLoading: viewModel.fee.isFetching
                     )
 
                     if let accountsFee = value.accountCreationFee {
@@ -69,7 +69,7 @@ struct WormholeClaimFee: View {
                             subtitle: accountsFee.crypto,
                             detail: accountsFee.fiat,
                             isFree: accountsFee.isFree,
-                            isLoading: viewModel.adapter.isFetching
+                            isLoading: viewModel.fee.isFetching
                         )
                     }
 
@@ -78,7 +78,7 @@ struct WormholeClaimFee: View {
                         subtitle: value.wormholeBridgeAndTrxFee.crypto,
                         detail: value.wormholeBridgeAndTrxFee.fiat,
                         isFree: value.wormholeBridgeAndTrxFee.isFree,
-                        isLoading: viewModel.adapter.isFetching
+                        isLoading: viewModel.fee.isFetching
                     )
                 }
             }
@@ -140,7 +140,7 @@ private struct WormholeFeeView: View {
 
 struct WormholeClaimFee_Previews: PreviewProvider {
     static var previews: some View {
-        WormholeClaimFee(
+        WormholeClaimFeeView(
             viewModel: .init(
                 receive: ("0.999717252 ETH", "~ $1,215.75", false),
                 networkFee: ("Paid by Key App", "Free", true),

@@ -66,13 +66,13 @@ struct WormholeClaimView: View {
                 // Amount
                 Text(viewModel.model.fees)
                     .skeleton(
-                        with: viewModel.bundle.state.isFetching,
+                        with: viewModel.model.isLoading,
                         size: .init(width: 100, height: 24)
                     )
 
                 // Button
                 Button {
-                    viewModel.action.send(.openFee(viewModel.bundle))
+                    viewModel.openFees()
                 } label: {
                     Image(uiImage: .info)
                         .resizable()
@@ -117,9 +117,9 @@ struct WormholeClaimView_Previews: PreviewProvider {
                     claimButtonTitle: "Claim 0.999717252 ETH",
                     claimButtonEnable: true,
                     fees: "$76.23",
-                    feesButtonEnable: true
+                    feesButtonEnable: true,
+                    isLoading: false
                 )
-            )
-        )
+            ))
     }
 }

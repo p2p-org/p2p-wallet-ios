@@ -11,7 +11,7 @@ import Web3
 import Wormhole
 
 /// Aggregating ``EthereumAccount`` into ``RendableAccount``.
-struct HomeEthereumAccountsAggregator: Aggregator {
+struct HomeEthereumAccountsAggregator: DataAggregator {
     func transform(
         input: ([EthereumAccount], [WormholeClaimUserAction])
     ) -> [RenderableEthereumAccount] {
@@ -62,7 +62,7 @@ struct HomeEthereumAccountsAggregator: Aggregator {
 /// Mapping ethereum account with current claim user action.
 ///
 /// Only action in pending or processing will be mapped.
-private struct EthereumAccountsBindWithClaims: Aggregator {
+private struct EthereumAccountsBindWithClaims: DataAggregator {
     func transform(
         input: (EthereumAccount, [WormholeClaimUserAction])
     ) -> (EthereumAccount, WormholeClaimUserAction?) {
@@ -99,7 +99,7 @@ private struct EthereumAccountsBindWithClaims: Aggregator {
 }
 
 /// Filter ethereum accounts with supported erc-20 token list.
-private struct EthereumAccountsWithWormholeAggregator: Aggregator {
+private struct EthereumAccountsWithWormholeAggregator: DataAggregator {
     func transform(input: [EthereumAccount]) -> [EthereumAccount] {
         input
             .filter { account in
