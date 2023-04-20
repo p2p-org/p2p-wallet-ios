@@ -1,10 +1,3 @@
-//
-//  ListRowReceiveCellView.swift
-//  p2p_wallet
-//
-//  Created by Giang Long Tran on 07.03.2023.
-//
-
 import KeyAppUI
 import SwiftUI
 
@@ -13,22 +6,26 @@ struct ListReceiveItemView: View {
     var item: ListReceiveItem
 
     var body: some View {
-        VStack(alignment: .leading, spacing: 4) {
+        VStack(alignment: .center, spacing: 4) {
             Text(item.title)
                 .foregroundColor(Color(Asset.Colors.night.color))
                 .fontWeight(.semibold)
-                .apply(style: .text2)
-                .multilineTextAlignment(.leading)
-                .frame(maxWidth: .infinity, alignment: .leading)
+                .apply(style: .text3)
+                .multilineTextAlignment(.center)
+                .frame(maxWidth: .infinity, alignment: .center)
             Text(item.description)
                 .foregroundColor(Color(Asset.Colors.mountain.color))
-                .apply(style: .text4)
-                .multilineTextAlignment(.leading)
-                .frame(alignment: .leading)
+                .apply(style: .label1)
+                .frame(maxWidth: 200)
+                .multilineTextAlignment(.center)
+                .frame(alignment: .center)
         }
         .padding(.horizontal, 20)
         .padding(.top, item.showTopCorners ? 16 : 8)
         .padding(.bottom, item.showBottomCorners ? 16 : 8)
+        .if(!item.isShort, transform: { view in
+            view.frame(minHeight: 88)
+        })
         .background(Color(Asset.Colors.snow.color))
         .cornerRadius(radius: item.showTopCorners ? 16 : 0, corners: .topLeft)
         .cornerRadius(radius: item.showTopCorners ? 16 : 0, corners: .topRight)
@@ -44,7 +41,8 @@ struct ListReceiveItemView_Previews: PreviewProvider {
             title: "2",
             description: "0x9b7e823BC5578bcBeA74ba04F003167c590Aea0d",
             showTopCorners: true,
-            showBottomCorners: true)
+            showBottomCorners: true,
+            isShort: false)
         )
     }
 }
