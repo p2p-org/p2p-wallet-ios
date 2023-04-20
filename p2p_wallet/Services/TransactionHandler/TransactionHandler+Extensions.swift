@@ -41,7 +41,16 @@ extension TransactionHandler {
                 } else {
                     self.notificationsService.showDefaultErrorNotification()
                 }
-                SentrySDK.capture(error: error)
+                
+                // capture sentry error
+                if let error = error as? CustomNSError {
+                    SentrySDK.capture(error: error)
+                }
+                // else
+                else {
+                    SentrySDK.capture(error: SentryUndefinedError(error: error))
+                }
+                
 
                 // mark transaction as failured
                 _ = await updateTransactionAtIndex(index) { currentValue in
