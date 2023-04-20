@@ -319,10 +319,6 @@ extension Resolver: ResolverRegistering {
             .implements(TransactionHandlerType.self)
             .scope(.session)
 
-        // SwapTransactionAnalytics
-        register { SwapTransactionAnalytics(analyticsManager: resolve(), transactionHandler: resolve()) }
-            .scope(.session)
-
         // FeeRelayer
         register { FeeRelayerSwift.APIClient(baseUrlString: FeeRelayerEndpoint.baseUrl, version: 1) }
             .implements(FeeRelayerAPIClient.self)
