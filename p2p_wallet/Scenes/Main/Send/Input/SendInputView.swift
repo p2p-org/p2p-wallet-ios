@@ -122,8 +122,6 @@ struct SendInputView: View {
 
             Spacer()
 
-            sendButton
-
             #if !RELEASE
                 HStack {
                     Toggle(isOn: $viewModel.isFakeSendTransaction) {
