@@ -294,11 +294,7 @@ extension TabBarController: UITabBarControllerDelegate {
         
         if TabItem(rawValue: selectedIndex) == .invest {
             if !available(.investSolendFeature) {
-                if available(.jupiterSwapEnabled) {
-                    jupiterSwapClickedSubject.send()
-                } else {
-                    analyticsManager.log(event: .mainSwap(isSellEnabled: sellDataService.isAvailable))
-                }
+                jupiterSwapClickedSubject.send()
             } else if !Defaults.isSolendTutorialShown, available(.solendDisablePlaceholder) {
                 solendTutorialSubject.send()
                 return false

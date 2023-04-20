@@ -118,13 +118,13 @@ PODS:
     - nanopb/encode (= 2.30909.0)
   - nanopb/decode (2.30909.0)
   - nanopb/encode (2.30909.0)
-  - Periphery (2.12.0)
+  - Periphery (2.12.3)
   - PromisesObjC (2.2.0)
   - PromisesSwift (2.2.0):
     - PromisesObjC (= 2.2.0)
   - SwiftFormat/CLI (0.49.6)
   - SwiftGen (6.6.2)
-  - SwiftLint (0.50.3)
+  - SwiftLint (0.51.0)
   - SwiftNotificationCenter (1.0.4)
 
 DEPENDENCIES:
@@ -199,14 +199,14 @@ SPEC CHECKSUMS:
   JazziconSwift: d1d6f81e5e460b94b2cd0a898dab66178aeab070
   ListPlaceholder: 2d7950014852ee5613d636cf14fd1bb93419e330
   nanopb: b552cce312b6c8484180ef47159bc0f65a1f0431
-  Periphery: 5c554376fdaa3c8eaded190dda7eb1728280f328
+  Periphery: aba292cd17e5bbb0a35d15f8c8e98df9580aacef
   PromisesObjC: 09985d6d70fbe7878040aa746d78236e6946d2ef
   PromisesSwift: cf9eb58666a43bbe007302226e510b16c1e10959
   SwiftFormat: e40542bcf76fdaa006d0dc26a9ca8278ca028d76
   SwiftGen: 1366a7f71aeef49954ca5a63ba4bef6b0f24138c
-  SwiftLint: 77f7cb2b9bb81ab4a12fcc86448ba3f11afa50c6
+  SwiftLint: 1b7561918a19e23bfed960e40759086e70f4dba5
   SwiftNotificationCenter: 760386da2ce03d3594cb5e96d1e22ec80b44b46f
 
 PODFILE CHECKSUM: 451c1409888c90581ef8a8735d133176ade730b6
 
-COCOAPODS: 1.11.3
+COCOAPODS: 1.12.1

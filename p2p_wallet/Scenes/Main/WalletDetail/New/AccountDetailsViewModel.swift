@@ -53,21 +53,23 @@ class AccountDetailsViewModel: BaseViewModel, ObservableObject {
         }
 
         // Render solana wallet (account)
-        let isSwapAvailableDefault = available(.jupiterSwapEnabled) ? false : true
-        rendableAccountDetails = RendableNewSolanaAccountDetails(account: solanaAccount, isSwapAvailable: isSwapAvailableDefault, onAction: onAction)
+        rendableAccountDetails = RendableNewSolanaAccountDetails(account: solanaAccount, isSwapAvailable: false, onAction: onAction)
 
         super.init()
 
         // Dynamic updating wallet and render it
-        solanaAccountsManager
+        let solanaAccountPublisher = solanaAccountsManager
             .statePublisher
             .receive(on: RunLoop.main)
-            .map { $0.value.first(where: { $0.data.pubkey == solanaAccount.data.pubkey }) }
-            .compactMap { $0 }
-            .map {
+            .compactMap { $0.value.first(where: { $0.data.pubkey == solanaAccount.data.pubkey }) }
+        
+        let jupiterDataStatusPublisher = jupiterTokensRepository.status
+        
+        Publishers.CombineLatest(solanaAccountPublisher, jupiterDataStatusPublisher)
+            .map { account, status in
                 RendableNewSolanaAccountDetails(
-                    account: $0,
-                    isSwapAvailable: isSwapAvailableDefault,
+                    account: account,
+                    isSwapAvailable: Self.isSwapAvailableFor(wallet: account.data, for: status),
                     onAction: onAction
                 )
             }
@@ -81,15 +83,11 @@ class AccountDetailsViewModel: BaseViewModel, ObservableObject {
 extension AccountDetailsViewModel {
     /// Check swap action is available for this account (wallet).
     static func isSwapAvailableFor(wallet: Wallet, for status: JupiterDataStatus) -> Bool {
-        if available(.jupiterSwapEnabled) {
-            switch status {
-            case .ready(let swapTokens, _) where swapTokens.contains(where: { $0.address == wallet.mintAddress }):
-                return true
-            default:
-                return false
-            }
-        } else {
+        switch status {
+        case .ready(let swapTokens, _) where swapTokens.contains(where: { $0.address == wallet.mintAddress }):
             return true
+        default:
+            return false
         }
     }
 }

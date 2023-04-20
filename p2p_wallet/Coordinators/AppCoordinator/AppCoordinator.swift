@@ -129,9 +129,7 @@ final class AppCoordinator: Coordinator<Void> {
         Task.detached {
             try await Resolver.resolve(WalletMetadataService.self).update()
             try await Resolver.resolve(OrcaSwapType.self).load()
-            if available(.jupiterSwapEnabled) {
-                await Resolver.resolve(JupiterTokensRepository.self).load()
-            }
+            await Resolver.resolve(JupiterTokensRepository.self).load()
         }
         
         Task {
