@@ -9,23 +9,33 @@ import BigInt
 import FeeRelayerSwift
 import Foundation
 import KeyAppKitCore
+import SolanaSwift
 import Wormhole
 
 public struct WormholeSendInputBase: Equatable {
+    /// The authorizated user's key pair.
+    public let keyPair: KeyPair
+
+    /// Selected account for transfer.
     public var solanaAccount: SolanaAccount
 
+    /// All available accounts that user owns.
     public var availableAccounts: [SolanaAccount]
 
+    /// Transfer amount
     public var amount: CryptoAmount
 
+    /// Recipient ethereum address.
     public let recipient: String
 
     public init(
+        keyPair: KeyPair,
         solanaAccount: SolanaAccount,
         availableAccounts: [SolanaAccount],
         amount: CryptoAmount,
         recipient: String
     ) {
+        self.keyPair = keyPair
         self.solanaAccount = solanaAccount
         self.availableAccounts = availableAccounts
         self.amount = amount
@@ -36,69 +46,29 @@ public struct WormholeSendInputBase: Equatable {
 public struct WormholeSendOutputBase: Equatable {
     public let transactions: SendTransaction?
     public let fees: SendFees
-
-    public let feePayer: SolanaAccount?
-    public let feePayerAmount: CryptoAmount?
     public let relayContext: RelayContext
 
     public init(
-        feePayer: SolanaAccount?,
-        feePayerAmount: CryptoAmount?,
         transactions: SendTransaction?,
         fees: SendFees,
         relayContext: RelayContext
     ) {
-        self.feePayer = feePayer
-        self.feePayerAmount = feePayerAmount
         self.transactions = transactions
         self.fees = fees
         self.relayContext = relayContext
     }
 
     public func calculateMaxInput(input: WormholeSendInputBase) -> CryptoAmount? {
-        guard let feePayer, let feePayerAmount else {
-            return nil
+        if input.solanaAccount.data.token.isNative {
+            // Transfer SOL
+            let minAmount = CryptoAmount(
+                uint64: relayContext.minimumRelayAccountBalance,
+                token: SolanaToken.nativeSolana
+            )
+
+            return input.solanaAccount.cryptoAmount - minAmount
+        } else {
+            return input.solanaAccount.cryptoAmount
         }
-
-        return input.solanaAccount.cryptoAmount
-
-//        let minSOLBalance = CryptoAmount(
-//            uint64: relayContext.minimumRelayAccountBalance,
-//            token: SolanaToken.nativeSolana
-//        )
-//
-//        if input.solanaAccount.data.isNativeSOL {
-//            // Sending SOL
-//
-//            if feePayer.data.isNativeSOL {
-//                // Paying fee in SOL
-//
-//                if input.availableAccounts.count == 1, input.availableAccounts.first?.data.isNativeSOL ?? false {
-//                    // User only has SOL
-//                    return input.amount - feePayerAmount
-//                } else {
-//                    // User has others tokens.
-//                    return input.amount
-//                }
-//            } else {
-//                // Paying fee in SPL
-//                return input.amount
-//            }
-//
-//        } else {
-//            if input.solanaAccount.data.token.address == feePayer.data.token.address {
-//                if input.availableAccounts.count == 1 {
-//                    // User only has one token.
-//                    return input.amount - feePayerAmount
-//                } else {
-//                    // User has others tokens.
-//                    return input.amount
-//                }
-//            } else {
-//                return input.amount
-//            }
-//
-//            // Sending SPL Token
-//        }
     }
 }

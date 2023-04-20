@@ -38,9 +38,15 @@ extension TransactionHandler {
                 } else {
                     self.notificationsService.showDefaultErrorNotification()
                 }
-
-                // Report error
-                errorObserver.handleError(error)
+   
+                // capture sentry error
+                if let error = error as? CustomNSError {
+                    SentrySDK.capture(error: error)
+                }
+                // else
+                else {
+                    SentrySDK.capture(error: SentryUndefinedError(error: error))
+                }
 
                 // mark transaction as failured
                 _ = await updateTransactionAtIndex(index) { currentValue in
@@ -143,26 +149,5 @@ extension TransactionHandler {
         }
 
         return false
-    }
-}
-
-// MARK: - Helpers
-
-extension SolanaSwift.APIClientError: CustomNSError {
-    public var errorUserInfo: [String : Any] {
-        func getDebugDescription() -> String {
-            switch self {
-            case .cantEncodeParams:
-                return "Can not decode params"
-            case .invalidAPIURL:
-                return "Invalid APIURL"
-            case .invalidResponse:
-                return "Invalid response"
-            case .responseError(let response):
-                return response.message ?? "\(response)"
-            }
-        }
-        
-        return [NSDebugDescriptionErrorKey: getDebugDescription()]
     }
 }

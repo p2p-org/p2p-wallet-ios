@@ -34,12 +34,6 @@ public struct WormholeSendUserAction: UserAction {
     /// Fees
     public let fees: SendFees
 
-    /// Paying account
-    public let payingFeeTokenAccount: FeeRelayerSwift.TokenAccount
-
-    /// Total fees when using relay service
-    public let totalFeesViaRelay: CryptoAmount?
-
     /// Solana transaction
     public let transaction: SendTransaction
 
@@ -56,8 +50,6 @@ public struct WormholeSendUserAction: UserAction {
         recipient: String,
         amount: CryptoAmount,
         fees: SendFees,
-        payingFeeTokenAccount: FeeRelayerSwift.TokenAccount,
-        totalFeesViaRelay: CryptoAmount?,
         transaction: SendTransaction,
         relayContext: RelayContext
     ) {
@@ -71,8 +63,6 @@ public struct WormholeSendUserAction: UserAction {
         self.recipient = recipient
         self.amount = amount
         self.fees = fees
-        self.payingFeeTokenAccount = payingFeeTokenAccount
-        self.totalFeesViaRelay = totalFeesViaRelay
         self.transaction = transaction
         self.relayContext = relayContext
     }
