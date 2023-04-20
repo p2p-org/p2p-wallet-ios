@@ -27,6 +27,7 @@ struct SendInputFeePromptView: View {
                     .multilineTextAlignment(.center)
                     .foregroundColor(Color(mainColor))
                     .padding(.horizontal, 32)
+                    .accessibilityIdentifier("SendInputFeePromptView.title")
 
                 Text(viewModel.description)
                     .apply(style: .text1)
@@ -34,6 +35,7 @@ struct SendInputFeePromptView: View {
                     .foregroundColor(Color(mainColor))
                     .padding(.top, 16)
                     .padding(.horizontal, 16)
+                    .accessibilityIdentifier("SendInputFeePromptView.description")
 
                 Spacer()
 
@@ -62,6 +64,7 @@ struct SendInputFeePromptView: View {
                     size: .large,
                     onPressed: viewModel.close.send
                 )
+                .accessibility(identifier: "SendInputFeePromptView.multipleTokenActions.top")
                 .frame(height: 56)
 
                 TextButtonView(
@@ -70,6 +73,7 @@ struct SendInputFeePromptView: View {
                     size: .large,
                     onPressed: viewModel.chooseToken.send
                 )
+                .accessibility(identifier: "SendInputFeePromptView.multipleTokenActions.bottom")
                 .frame(height: 56)
             }
         }
@@ -82,6 +86,7 @@ struct SendInputFeePromptView: View {
             size: .large,
             onPressed: viewModel.close.send
         )
+        .accessibility(identifier: "SendInputFeePromptView.singleTokenAction")
         .frame(height: 56)
     }
 }

@@ -369,7 +369,8 @@ private extension SwapViewModel {
               let account = currentState.account,
               let sourceWallet = currentState.fromToken.userWallet,
               let amountFrom = currentState.amountFrom,
-              let amountTo = currentState.amountTo
+              let amountTo = currentState.amountTo,
+              let route = currentState.route
         else {
             return
         }
@@ -397,16 +398,18 @@ private extension SwapViewModel {
             ),
             payingFeeWallet: nil, // FIXME: - PayingFeeWallet
             feeAmount: .zero, // FIXME: - feeAmount
-            execution: { [unowned self] in
-                let transactionId = try await self.createSwapExecution(account: account)
-                self.logSwapApprove(signature: transactionId)
-                return transactionId
-            })
+            route: route,
+            account: account,
+            swapTransaction: currentState.swapTransaction,
+            services: stateMachine.services
+        )
         
+        // delegate work to transaction handler
         let transactionIndex = transactionHandler.sendTransaction(
             swapTransaction
         )
         
+        // return pending transaction
         let pendingTransaction = PendingTransaction(
             trxIndex: transactionIndex,
             sentAt: Date(),
@@ -417,43 +420,38 @@ private extension SwapViewModel {
             pendingTransaction,
             formattedSlippage
         ))
-    }
-
-    private func createSwapExecution(account: KeyPair) async throws -> String {
-        do {
-            // get route
-            guard let route = currentState.route
-            else {
-                throw JupiterError.invalidResponse
+        
+        // Observe transaction and update status
+        transactionHandler.observeTransaction(transactionIndex: transactionIndex)
+            .compactMap {$0}
+            .filter { $0.isConfirmedOrError }
+            .prefix(1)
+            .receive(on: RunLoop.main)
+            .sink { [weak self] tx in
+                guard let self else { return }
+                
+                // error state
+                if let error = tx.status.error {
+                    debugPrint("---errorSendingTransaction: ", error)
+                    switch error {
+                    case SolanaSwift.APIClientError.responseError(let detail):
+                        #if !RELEASE
+                        self.errorLogs = detail.data?.logs
+                        #endif
+                    default:
+                        break
+                    }
+                    
+                    // log error
+                    self.logTransaction(error: error)
+                } else {
+                    debugPrint("---transactionId: ", tx.transactionId ?? "")
+                }
+                
+                // release slider
+                self.isSliderOn = false
             }
-            
-            // send to blockchain
-            let transactionId = try await JupiterSwapBusinessLogic.sendToBlockchain(
-                account: account,
-                swapTransaction: currentState.swapTransaction,
-                route: route,
-                services: stateMachine.services
-            )
-            
-            isSliderOn = false
-            return transactionId
-        } catch let error as SolanaSwift.APIClientError {
-            switch error {
-            case .responseError(let detail):
-                #if !RELEASE
-                errorLogs = detail.data?.logs
-                #endif
-            default:
-                break
-            }
-            isSliderOn = false
-            logTransaction(error: error)
-            throw error
-        } catch {
-            isSliderOn = false
-            logTransaction(error: error)
-            throw error
-        }
+            .store(in: &subscriptions)
     }
 }
 

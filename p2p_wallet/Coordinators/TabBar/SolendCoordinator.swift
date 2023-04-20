@@ -126,30 +126,16 @@ final class SolendCoordinator: Coordinator<Void> {
     }
 
     private func showTrade() {
-        if available(.jupiterSwapEnabled) {
-            coordinate(
-                to: JupiterSwapCoordinator(
-                    navigationController: navigationController,
-                    params: JupiterSwapParameters(dismissAfterCompletion: true, openKeyboardOnStart: true, source: .solend)
-                )
+        coordinate(
+            to: JupiterSwapCoordinator(
+                navigationController: navigationController,
+                params: JupiterSwapParameters(dismissAfterCompletion: true, openKeyboardOnStart: true, source: .solend)
             )
-                .sink { [unowned self] _ in
-                    navigationController.dismiss(animated: true)
-                }
-                .store(in: &subscriptions)
-        } else {
-            let vm = OrcaSwapV2.ViewModel(initialWallet: nil)
-            let vc = OrcaSwapV2.ViewController(viewModel: vm)
-            
-            vc.doneHandler = { [unowned self] in
-                navigationController.popToRootViewController(animated: true)
-//                return continuation.resume(with: .success(true))
+        )
+            .sink { [unowned self] _ in
+                navigationController.dismiss(animated: true)
             }
-            vc.onClose = {
-//                continuation.resume(with: .success(false))
-            }
-            navigationController.show(vc, sender: nil)
-        }
+            .store(in: &subscriptions)
     }
 
     private func showAboutSolend(depositVC: UIViewController) {

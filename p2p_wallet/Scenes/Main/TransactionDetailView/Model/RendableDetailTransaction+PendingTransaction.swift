@@ -30,7 +30,7 @@ struct RendableDetailPendingTransaction: RendableTransactionDetail {
         case .finalized:
             return .succeed(message: L10n.theTransactionHasBeenSuccessfullyCompleted)
         default:
-            return .loading(message: L10n.itUsuallyTakes520SecondsForATransactionToComplete)
+            return .loading(message: L10n.theTransactionWillBeCompletedInAFewSeconds)
         }
     }
 

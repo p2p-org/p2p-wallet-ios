@@ -10,9 +10,6 @@ PODS:
   - AppsFlyerFramework (6.10.1):
     - AppsFlyerFramework/Main (= 6.10.1)
   - AppsFlyerFramework/Main (6.10.1)
-  - BECollectionView (1.0.0):
-    - BECollectionView_Core
-    - RxCocoa (~> 6.5.0)
   - BECollectionView_Combine (1.0.0):
     - BECollectionView_Core
     - CombineCocoa (~> 0.4.0)
@@ -202,23 +199,6 @@ PODS:
   - RenVMSwift (3.0.0):
     - SolanaSwift (~> 3)
   - Resolver (1.5.0)
-  - RxAppState (1.7.1):
-    - RxCocoa (~> 6.2)
-    - RxSwift (~> 6.2)
-  - RxCocoa (6.5.0):
-    - RxRelay (= 6.5.0)
-    - RxSwift (= 6.5.0)
-  - RxCombine (2.0.1):
-    - RxRelay (~> 6)
-    - RxSwift (~> 6)
-  - RxConcurrency (0.1.1):
-    - RxSwift (~> 6.5.0)
-  - RxGesture (4.0.4):
-    - RxCocoa (~> 6.0)
-    - RxSwift (~> 6.0)
-  - RxRelay (6.5.0):
-    - RxSwift (= 6.5.0)
-  - RxSwift (6.5.0)
   - secp256k1.swift (0.1.4)
   - Sell (1.0.0):
     - Moonpay
@@ -261,7 +241,6 @@ DEPENDENCIES:
   - Amplitude (~> 8.3.0)
   - AnalyticsManager (from `https://github.com/p2p-org/key-app-kit-swift.git`, branch `master`)
   - AppsFlyerFramework
-  - BECollectionView (from `https://github.com/bigearsenal/BECollectionView.git`, branch `master`)
   - BECollectionView_Combine (from `https://github.com/bigearsenal/BECollectionView.git`, branch `master`)
   - BECollectionView_Core (from `https://github.com/bigearsenal/BECollectionView.git`, branch `master`)
   - BEPureLayout (from `https://github.com/p2p-org/BEPureLayout.git`, branch `master`)
@@ -298,10 +277,6 @@ DEPENDENCIES:
   - ReachabilitySwift (~> 5.0.0)
   - RenVMSwift (from `https://github.com/p2p-org/RenVMSwift.git`, branch `master`)
   - Resolver (= 1.5.0)
-  - RxAppState (= 1.7.1)
-  - RxCombine (= 2.0.1)
-  - RxConcurrency (from `https://github.com/TrGiLong/RxConcurrency.git`, branch `main`)
-  - RxGesture (= 4.0.4)
   - Sell (from `https://github.com/p2p-org/key-app-kit-swift.git`, branch `master`)
   - Send (from `https://github.com/p2p-org/key-app-kit-swift.git`, branch `master`)
   - Sentry (from `https://github.com/getsentry/sentry-cocoa.git`, tag `7.31.5`)
@@ -356,12 +331,6 @@ SPEC REPOS:
     - PureLayout
     - ReachabilitySwift
     - Resolver
-    - RxAppState
-    - RxCocoa
-    - RxCombine
-    - RxGesture
-    - RxRelay
-    - RxSwift
     - secp256k1.swift
     - SkeletonView
     - SwiftFormat
@@ -375,9 +344,6 @@ EXTERNAL SOURCES:
   AnalyticsManager:
     :branch: master
     :git: https://github.com/p2p-org/key-app-kit-swift.git
-  BECollectionView:
-    :branch: master
-    :git: https://github.com/bigearsenal/BECollectionView.git
   BECollectionView_Combine:
     :branch: master
     :git: https://github.com/bigearsenal/BECollectionView.git
@@ -440,9 +406,6 @@ EXTERNAL SOURCES:
   RenVMSwift:
     :branch: master
     :git: https://github.com/p2p-org/RenVMSwift.git
-  RxConcurrency:
-    :branch: main
-    :git: https://github.com/TrGiLong/RxConcurrency.git
   Sell:
     :branch: master
     :git: https://github.com/p2p-org/key-app-kit-swift.git
@@ -473,11 +436,8 @@ EXTERNAL SOURCES:
 
 CHECKOUT OPTIONS:
   AnalyticsManager:
-    :commit: 3e12f123578e5336d2da8ccd35d8f1b28db7ec0d
+    :commit: eee146a9e45a0d5def5b2aec9c96ec6fee8172d9
     :git: https://github.com/p2p-org/key-app-kit-swift.git
-  BECollectionView:
-    :commit: 7badd35cd036735b9c6867e273b59430311f53e7
-    :git: https://github.com/bigearsenal/BECollectionView.git
   BECollectionView_Combine:
     :commit: 7badd35cd036735b9c6867e273b59430311f53e7
     :git: https://github.com/bigearsenal/BECollectionView.git
@@ -488,10 +448,10 @@ CHECKOUT OPTIONS:
     :commit: 9b4ab977660c8554d23a2d9b83b6ac6c6058b3b7
     :git: https://github.com/p2p-org/BEPureLayout.git
   Cache:
-    :commit: 3e12f123578e5336d2da8ccd35d8f1b28db7ec0d
+    :commit: eee146a9e45a0d5def5b2aec9c96ec6fee8172d9
     :git: https://github.com/p2p-org/key-app-kit-swift.git
   CountriesAPI:
-    :commit: 3e12f123578e5336d2da8ccd35d8f1b28db7ec0d
+    :commit: eee146a9e45a0d5def5b2aec9c96ec6fee8172d9
     :git: https://github.com/p2p-org/key-app-kit-swift.git
   Down:
     :commit: eee1d66d7ef71b892e72c8bc8d84fcdfeaab1918
@@ -500,22 +460,22 @@ CHECKOUT OPTIONS:
     :commit: e7bffb588e2afb457ba2fd121f5dbabb699cd17f
     :git: https://github.com/p2p-org/FeeRelayerSwift.git
   History:
-    :commit: 3e12f123578e5336d2da8ccd35d8f1b28db7ec0d
+    :commit: eee146a9e45a0d5def5b2aec9c96ec6fee8172d9
     :git: https://github.com/p2p-org/key-app-kit-swift.git
   JazziconSwift:
     :commit: f9c9f898402db4e62d482f4c90670652c221fa12
     :git: https://github.com/p2p-org/JazziconSwift.git
   JSBridge:
-    :commit: 3e12f123578e5336d2da8ccd35d8f1b28db7ec0d
+    :commit: eee146a9e45a0d5def5b2aec9c96ec6fee8172d9
     :git: https://github.com/p2p-org/key-app-kit-swift.git
   Jupiter:
-    :commit: 3e12f123578e5336d2da8ccd35d8f1b28db7ec0d
+    :commit: eee146a9e45a0d5def5b2aec9c96ec6fee8172d9
     :git: https://github.com/p2p-org/key-app-kit-swift.git
   KeyAppKitCore:
-    :commit: 3e12f123578e5336d2da8ccd35d8f1b28db7ec0d
+    :commit: eee146a9e45a0d5def5b2aec9c96ec6fee8172d9
     :git: https://github.com/p2p-org/key-app-kit-swift.git
   KeyAppKitLogger:
-    :commit: 3e12f123578e5336d2da8ccd35d8f1b28db7ec0d
+    :commit: eee146a9e45a0d5def5b2aec9c96ec6fee8172d9
     :git: https://github.com/p2p-org/key-app-kit-swift.git
   KeyAppUI:
     :commit: 96679bc3564f7f07ad049bef984768724cf081eb
@@ -524,31 +484,28 @@ CHECKOUT OPTIONS:
     :commit: 78dd312eb762d66a54c87cd6dd8045140da28c4b
     :git: https://github.com/p2p-org/ListPlaceholder.git
   Moonpay:
-    :commit: 3e12f123578e5336d2da8ccd35d8f1b28db7ec0d
+    :commit: eee146a9e45a0d5def5b2aec9c96ec6fee8172d9
     :git: https://github.com/p2p-org/key-app-kit-swift.git
   NameService:
-    :commit: 3e12f123578e5336d2da8ccd35d8f1b28db7ec0d
+    :commit: eee146a9e45a0d5def5b2aec9c96ec6fee8172d9
     :git: https://github.com/p2p-org/key-app-kit-swift.git
   Onboarding:
-    :commit: 3e12f123578e5336d2da8ccd35d8f1b28db7ec0d
+    :commit: eee146a9e45a0d5def5b2aec9c96ec6fee8172d9
     :git: https://github.com/p2p-org/key-app-kit-swift.git
   OrcaSwapSwift:
     :commit: 39218f52a58e3481cbb32df64b95f2e6d0875ee7
     :git: https://github.com/p2p-org/OrcaSwapSwift.git
   P2PSwift:
-    :commit: 3e12f123578e5336d2da8ccd35d8f1b28db7ec0d
+    :commit: eee146a9e45a0d5def5b2aec9c96ec6fee8172d9
     :git: https://github.com/p2p-org/key-app-kit-swift.git
   RenVMSwift:
     :commit: 874d46ff203f31453762f5ce2ebd48f7567ba49b
     :git: https://github.com/p2p-org/RenVMSwift.git
-  RxConcurrency:
-    :commit: dadb16c54bd42ca83c08f3d80f61fbfca93a585c
-    :git: https://github.com/TrGiLong/RxConcurrency.git
   Sell:
-    :commit: 3e12f123578e5336d2da8ccd35d8f1b28db7ec0d
+    :commit: eee146a9e45a0d5def5b2aec9c96ec6fee8172d9
     :git: https://github.com/p2p-org/key-app-kit-swift.git
   Send:
-    :commit: 3e12f123578e5336d2da8ccd35d8f1b28db7ec0d
+    :commit: eee146a9e45a0d5def5b2aec9c96ec6fee8172d9
     :git: https://github.com/p2p-org/key-app-kit-swift.git
   Sentry:
     :git: https://github.com/getsentry/sentry-cocoa.git
@@ -557,19 +514,19 @@ CHECKOUT OPTIONS:
     :commit: 98225dbb0459477dfeac063e1c7d0750102325d1
     :git: https://github.com/p2p-org/SkeletonUI.git
   SolanaPricesAPIs:
-    :commit: 3e12f123578e5336d2da8ccd35d8f1b28db7ec0d
+    :commit: eee146a9e45a0d5def5b2aec9c96ec6fee8172d9
     :git: https://github.com/p2p-org/key-app-kit-swift.git
   SolanaSwift:
     :commit: b4001710daafa52c0d93ec7a61c463281dec45e0
     :git: https://github.com/p2p-org/solana-swift.git
   Solend:
-    :commit: 3e12f123578e5336d2da8ccd35d8f1b28db7ec0d
+    :commit: eee146a9e45a0d5def5b2aec9c96ec6fee8172d9
     :git: https://github.com/p2p-org/key-app-kit-swift.git
   Task_retrying:
     :commit: 208f1e8dfa93022a7d39ab5b334d5f43a934d4b1
     :git: https://github.com/bigearsenal/task-retrying-swift.git
   TransactionParser:
-    :commit: 3e12f123578e5336d2da8ccd35d8f1b28db7ec0d
+    :commit: eee146a9e45a0d5def5b2aec9c96ec6fee8172d9
     :git: https://github.com/p2p-org/key-app-kit-swift.git
 
 SPEC CHECKSUMS:
@@ -577,7 +534,6 @@ SPEC CHECKSUMS:
   AnalyticsManager: 7b708ebc326865ae7807ec17acdd02e0da545e7b
   AppAuth: 8fca6b5563a5baef2c04bee27538025e4ceb2add
   AppsFlyerFramework: 88a6eed37ad52bcee4ad74232efa8e22809d06c9
-  BECollectionView: 43168463a4e95065f7856ac8d148e3eb1e77b808
   BECollectionView_Combine: f2f203853b4dfe83b5fd97998d6787857b641a12
   BECollectionView_Core: 439e92310adb5a8deab08cc7af508cc31ed6a4f6
   BEPureLayout: 970e31aa4fccf0f72ef2229b4e831ccdea33f026
@@ -633,13 +589,6 @@ SPEC CHECKSUMS:
   ReachabilitySwift: 985039c6f7b23a1da463388634119492ff86c825
   RenVMSwift: 793eaa001b3cf245c8389aa739090fb9949aa81b
   Resolver: 68984624572763018fd8ec7b8e3e8df0e3b6bba5
-  RxAppState: 9c34f951d4ff8b9034f84016fe766202365bceb2
-  RxCocoa: 94f817b71c07517321eb4f9ad299112ca8af743b
-  RxCombine: 74cd98f7bb1d908eff3758d13651917fc296adb3
-  RxConcurrency: fde98edd4056a8f13ff293689a25a17563e3e843
-  RxGesture: f3efb47ed2d26a8082f7b660d4a59970e275a7f8
-  RxRelay: 1de1523e604c72b6c68feadedd1af3b1b4d0ecbd
-  RxSwift: 5710a9e6b17f3c3d6e40d6e559b9fa1e813b2ef8
   secp256k1.swift: a7e7a214f6db6ce5db32cc6b2b45e5c4dd633634
   Sell: 8348f46c2161074cc0c8e6265e3c96cba8d6ee60
   Send: 5f161ff30ebc14270da6d81ab699a5bceb4ffbfd
@@ -658,6 +607,6 @@ SPEC CHECKSUMS:
   TransactionParser: 9b258a245bbe4c8c97d20d3dd219ee470ba6f2f0
   TweetNacl: 3abf4d1d2082b0114e7a67410e300892448951e6
 
-PODFILE CHECKSUM: 957758290800212b19de81eb25b64cb85453c755
+PODFILE CHECKSUM: 4eebf24c0d73f3e496f16947785ead5637cfe691
 
-COCOAPODS: 1.11.3
+COCOAPODS: 1.12.1

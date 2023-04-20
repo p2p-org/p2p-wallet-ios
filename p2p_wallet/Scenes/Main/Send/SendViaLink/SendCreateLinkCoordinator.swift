@@ -13,6 +13,7 @@ final class SendCreateLinkCoordinator: Coordinator<SendCreateLinkCoordinator.Res
     
     private let navigationController: UINavigationController
     private let transaction: SendTransaction
+    private let intermediatePubKey: String
     
     // MARK: - Initializer
 
@@ -20,12 +21,14 @@ final class SendCreateLinkCoordinator: Coordinator<SendCreateLinkCoordinator.Res
         link: String,
         formatedAmount: String,
         navigationController: UINavigationController,
-        transaction: SendTransaction
+        transaction: SendTransaction,
+        intermediatePubKey: String
     ) {
         self.link = link
         self.formatedAmount = formatedAmount
         self.navigationController = navigationController
         self.transaction = transaction
+        self.intermediatePubKey = intermediatePubKey
         
         super.init()
         bind()
@@ -37,9 +40,7 @@ final class SendCreateLinkCoordinator: Coordinator<SendCreateLinkCoordinator.Res
         
         transactionHandler.observeTransaction(transactionIndex: index)
             .compactMap {$0}
-            .filter {
-                $0.status.error != nil || $0.status.isFinalized || ($0.status.numberOfConfirmations ?? 0) > 0
-            }
+            .filter { $0.isConfirmedOrError }
             .prefix(1)
             .receive(on: RunLoop.main)
             .sink { [weak self] tx in
@@ -69,7 +70,11 @@ final class SendCreateLinkCoordinator: Coordinator<SendCreateLinkCoordinator.Res
     // MARK: - Helper
 
     private func showSendLinkCreatedView() {
-        let viewModel = SendLinkCreatedViewModel(link: link, formatedAmount: formatedAmount)
+        let viewModel = SendLinkCreatedViewModel(
+            link: link,
+            formatedAmount: formatedAmount,
+            intermediateAccountPubKey: intermediatePubKey
+        )
         let sendLinkCreatedVC = SendLinkCreatedView(viewModel: viewModel).asViewController()
         
         viewModel.close
