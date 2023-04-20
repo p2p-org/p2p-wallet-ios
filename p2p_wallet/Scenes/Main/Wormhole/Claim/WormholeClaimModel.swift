@@ -17,6 +17,8 @@ protocol WormholeClaimModel {
     var fees: String { get }
 
     var feesButtonEnable: Bool { get }
+    
+    var isLoading: Bool { get }
 }
 
 struct WormholeClaimMockModel: WormholeClaimModel {
@@ -33,6 +35,8 @@ struct WormholeClaimMockModel: WormholeClaimModel {
     var fees: String
 
     var feesButtonEnable: Bool
+    
+    var isLoading: Bool
 }
 
 struct WormholeClaimEthereumModel: WormholeClaimModel {
@@ -105,5 +109,9 @@ struct WormholeClaimEthereumModel: WormholeClaimModel {
 
     var feesButtonEnable: Bool {
         bundle.value?.fees != nil
+    }
+    
+    var isLoading: Bool {
+        bundle.isFetching
     }
 }

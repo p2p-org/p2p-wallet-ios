@@ -20,10 +20,6 @@ func setupDefaultFlags() {
             FeatureFlag(feature: .mockedTKeyFacade, enabled: false),
             FeatureFlag(feature: .mockedDeviceShare, enabled: false),
             FeatureFlag(feature: .simulatedSocialError, enabled: false),
-
-            // History
-            FeatureFlag(feature: .historyServiceEnabled, enabled: true),
-            
             // Send via link
             FeatureFlag(feature: .sendViaLinkEnabled, enabled: false)
         ]

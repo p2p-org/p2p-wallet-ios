@@ -20,7 +20,7 @@ public struct CurrencyAmount: Hashable, Codable, Equatable {
     /// Initialise amount in specific ``currencyCode``
     public init(value: BigDecimal, currencyCode: String) {
         self.value = value
-        self.currencyCode = currencyCode
+        self.currencyCode = currencyCode.uppercased()
     }
 
     /// USD amount

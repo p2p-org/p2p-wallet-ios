@@ -12,7 +12,7 @@ import Resolver
 import SolanaSwift
 import Wormhole
 
-struct WormholeClaimFeeAdapter {
+struct WormholeClaimFee {
     typealias Amount = (crypto: String, fiat: String, isFree: Bool)
 
     let receive: Amount
@@ -23,36 +23,38 @@ struct WormholeClaimFeeAdapter {
 
     let wormholeBridgeAndTrxFee: Amount
 
-    init(
-        receive: Amount,
-        networkFee: Amount,
-        accountCreationFee: Amount?,
-        wormholeBridgeAndTrxFee: Amount
-    ) {
-        self.receive = receive
-        self.networkFee = networkFee
-        self.accountCreationFee = accountCreationFee
-        self.wormholeBridgeAndTrxFee = wormholeBridgeAndTrxFee
-    }
+    static let emptyAmount: Amount = ("", "", false)
 
-    init(account _: EthereumAccount, bundle: WormholeBundle?) {
+    static let empty: Self = .init(
+        receive: Self.emptyAmount,
+        networkFee: Self.emptyAmount,
+        accountCreationFee: nil,
+        wormholeBridgeAndTrxFee: Self.emptyAmount
+    )
+}
+
+class WormholeClaimFeeAggregator: DataAggregator {
+    func transform(input bundle: WormholeBundle?) -> WormholeClaimFee {
         guard let bundle else {
-            receive = ("", "", false)
-            networkFee = ("", "", false)
-            accountCreationFee = nil
-            wormholeBridgeAndTrxFee = ("", "", false)
-            return
+            return .empty
         }
 
+        // Setup formatter
         let cryptoFormatter = CryptoFormatter()
         let currencyFormatter = CurrencyFormatter()
 
-        receive = (
+        // Extract amount that user B will receive.
+        let receive: WormholeClaimFee.Amount = (
             cryptoFormatter.string(amount: bundle.resultAmount),
             currencyFormatter.string(for: bundle.resultAmount) ?? "",
             false
         )
 
+        let networkFee: WormholeClaimFee.Amount
+        let accountCreationFee: WormholeClaimFee.Amount?
+        let wormholeBridgeAndTrxFee: WormholeClaimFee.Amount
+
+        // Aggregating data
         if bundle.compensationDeclineReason == nil {
             networkFee = (L10n.paidByKeyApp, L10n.free, true)
             accountCreationFee = (L10n.paidByKeyApp, L10n.free, true)
@@ -83,5 +85,12 @@ struct WormholeClaimFeeAdapter {
                 false
             )
         }
+
+        return .init(
+            receive: receive,
+            networkFee: networkFee,
+            accountCreationFee: accountCreationFee,
+            wormholeBridgeAndTrxFee: wormholeBridgeAndTrxFee
+        )
     }
 }

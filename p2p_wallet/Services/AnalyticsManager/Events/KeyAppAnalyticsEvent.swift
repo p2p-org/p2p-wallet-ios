@@ -140,8 +140,9 @@ enum KeyAppAnalyticsEvent: AnalyticsEvent {
         valueFiat: Double,
         fee: Double
     )
-    case sendClickChangeTokenChosen(source: String)
+    case sendClickChangeTokenChosen(source: String, sendFlow: String)
     case sendClickChangeTokenValue(source: String)
+    case sendClickChangeTokenValue(source: String, sendFlow: String)
     case sendStartScreenOpen(lastScreen: String)
     case sendClickStartCreateLink
     case sendClickChangeTokenChosen(tokenName: String, sendFlow: String)
