@@ -19,14 +19,24 @@ class TransactionDetailCoordinator: SmartCoordinator<TransactionDetailStatus> {
     }
 
     override func build() -> UIViewController {
-        let vc = BottomSheetController(rootView: DetailTransactionView(viewModel: viewModel))
+        // create bottomsheet
+        let vc = UIBottomSheetHostingController(
+            rootView: DetailTransactionView(viewModel: viewModel),
+            ignoresKeyboard: true
+        )
+        vc.view.layer.cornerRadius = 20
+        vc.onClose = { [weak self] in
+            // Handle result if no action is chosen and sheet is closed by click on gray area
+            self?.handleResult()
+        }
 
-        viewModel.action.sink { [weak self] action in
+        // observe action
+        viewModel.action.sink { [weak self, weak vc] action in
             guard let self = self else { return }
 
             switch action {
             case .close:
-                vc.dismiss(animated: true)
+                vc?.dismiss(animated: true)
                 self.handleResult()
             case let .share(url):
                 self.presentation.presentingViewController.dismiss(animated: true) {
@@ -52,6 +62,15 @@ class TransactionDetailCoordinator: SmartCoordinator<TransactionDetailStatus> {
             }
 
         }.store(in: &subscriptions)
+        
+        // observe data to change bottomsheet's height
+        viewModel.$rendableTransaction
+            .sink { _ in
+                DispatchQueue.main.async { [weak vc] in
+                    vc?.updatePresentationLayout(animated: true)
+                }
+            }
+            .store(in: &subscriptions)
 
         return vc
     }

@@ -1,8 +1,9 @@
 import Combine
 import Resolver
 import Jupiter
-import SolanaPricesAPIs
 import SolanaSwift
+import AnalyticsManager
+import Task_retrying
 
 final class SwapViewModel: BaseViewModel, ObservableObject {
 
@@ -14,56 +15,60 @@ final class SwapViewModel: BaseViewModel, ObservableObject {
 
     // MARK: - Dependencies
     @Injected private var swapWalletsRepository: JupiterTokensRepository
-    @Injected private var pricesAPI: SolanaPricesAPI
     @Injected private var notificationService: NotificationService
-    @Injected private var userWalletManager: UserWalletManager
     @Injected private var transactionHandler: TransactionHandler
+    @Injected private var analyticsManager: AnalyticsManager
+    @Injected private var userWalletManager: UserWalletManager
 
     // MARK: - Actions
     let switchTokens = PassthroughSubject<Void, Never>()
     let tryAgain = PassthroughSubject<Void, Never>()
     let changeFromToken = PassthroughSubject<SwapToken, Never>()
     let changeToToken = PassthroughSubject<SwapToken, Never>()
-    let submitTransaction = PassthroughSubject<PendingTransaction, Never>()
+    let submitTransaction = PassthroughSubject<(PendingTransaction, String), Never>()
+    let viewAppeared = PassthroughSubject<Void, Never>()
+    let viewDisappeared = PassthroughSubject<Void, Never>()
 
     // MARK: - Params
-    @Published var header: String = ""
+    var fromTokenInputViewModel: SwapInputViewModel
+    var toTokenInputViewModel: SwapInputViewModel
+    
     @Published var initializingState: InitializingState = .loading
     @Published var arePricesLoading: Bool = false
-
-    @Published var priceInfo = SwapPriceInfo(fromPrice: 0, toPrice: 0)
-    private var priceInfoTask: Task<Void, Never>?
 
     @Published var actionButtonData = SliderActionButtonData.zero
     @Published var isSliderOn = false {
         didSet {
-            sendToken()
+            swapToken()
         }
     }
     @Published var showFinished = false
-    
+
     #if !RELEASE
-    @Published var swapTransaction: String?
     @Published var errorLogs: [String]?
     #endif
 
     let stateMachine: JupiterSwapStateMachine
     var currentState: JupiterSwapState { stateMachine.currentState }
-    
+    var continueUpdateOnDisappear = false // Special flag for update if view is disappeared
+
     private let preChosenWallet: Wallet?
     private var timer: Timer?
+    private let source: JupiterSwapSource
+    private var wasMinToastShown = false // Special flag not to show toast again if state has not changed
 
-    init(preChosenWallet: Wallet? = nil) {
-        stateMachine = JupiterSwapStateMachine(
-            initialState: .zero(status: .requiredInitialize),
-            services: JupiterSwapServices(
-                jupiterClient: JupiterRestClientAPI(version: .v4),
-                pricesAPI: Resolver.resolve(),
-                solanaAPIClient: Resolver.resolve(),
-                relayContextManager: Resolver.resolve()
-            )
-        )
+    init(
+        stateMachine: JupiterSwapStateMachine,
+        fromTokenInputViewModel: SwapInputViewModel,
+        toTokenInputViewModel: SwapInputViewModel,
+        source: JupiterSwapSource,
+        preChosenWallet: Wallet? = nil
+    ) {
+        self.fromTokenInputViewModel = fromTokenInputViewModel
+        self.toTokenInputViewModel = toTokenInputViewModel
+        self.stateMachine = stateMachine
         self.preChosenWallet = preChosenWallet
+        self.source = source
         super.init()
         bind()
         bindActions()
@@ -72,43 +77,62 @@ final class SwapViewModel: BaseViewModel, ObservableObject {
     deinit {
         timer?.invalidate()
     }
-    
+
     func update() async {
-        let _ = await stateMachine.accept(action: .update)
+        await stateMachine.accept(
+            action: .update
+        )
     }
-    
+
+    func reset() {
+        // This function resets inputs and logs after a successful swap
+        fromTokenInputViewModel.amount = .zero
+        isSliderOn = false
+        showFinished = false
+        cancelUpdate()
+        #if !RELEASE
+        errorLogs?.removeAll()
+        #endif
+    }
+
     #if !RELEASE
     func copyAndClearLogs() {
-        var text = #"{"swapTransaction": "\#(swapTransaction ?? "")""#
-        if let route = stateMachine.currentState.route?.jsonString {
-            text += #", "route": \#(route)"#
-            text += #", "routeInSymbols": "\#(getRouteInSymbols()?.joined(separator: " -> ") ?? "")""#
-        }
-        text += #", "amountFrom": "\#(stateMachine.currentState.amountFrom)""#
-        text += #", "amountTo": "\#(stateMachine.currentState.amountTo)""#
-        
-        if let interTokens = getRouteInSymbols() {
-            text += #", "tokens": ["#
-            for (index, interToken) in interTokens.enumerated() {
-                if index > 0 {
-                    text += ", "
-                }
+        let tokens = (getRouteInSymbols() ?? [])
+            .compactMap { symbol -> SwapLogsInfo.TokenInfo? in
+                guard let token = stateMachine.currentState.swapTokens
+                    .first(where: {$0.token.symbol == symbol})
+                else { return nil }
                 
-                let token = stateMachine.currentState.swapTokens.first(where: {$0.token.symbol == interToken})
-                
-                text += #"{"pubkey": "\#(token?.userWallet?.pubkey ?? "null")", "balance": "\#(token?.userWallet?.amount ?? 0)", "symbol": "\#(token?.token.symbol ?? "")", "mint": "\#(token?.token.address ?? "")"}"#
+                return .init(
+                    pubkey: token.userWallet?.pubkey,
+                    balance: token.userWallet?.amount,
+                    symbol: token.token.symbol,
+                    mint: token.token.address
+                )
             }
-            text += #"]"#
-        }
         
-        if let errorLogs = errorLogs?.map({"\"\($0)\""}).joined(separator: ",") {
-            text += #", "errorLogs": [\#(errorLogs)]"#
-        }
+        let logsInfo = SwapLogsInfo(
+            swapTransaction: currentState.swapTransaction,
+            route: stateMachine.currentState.route,
+            routeInSymbols: getRouteInSymbols()?.joined(separator: " -> "),
+            amountFrom: stateMachine.currentState.amountFrom,
+            amountTo: stateMachine.currentState.amountTo,
+            tokens: tokens,
+            errorLogs: errorLogs,
+            fees: .init(
+                networkFee: stateMachine.currentState.networkFee,
+                accountCreationFee: stateMachine.currentState.accountCreationFee,
+                liquidityFee: stateMachine.currentState.liquidityFee
+            ),
+            prices: stateMachine.currentState.tokensPriceMap
+                .filter { (key, _) in
+                    currentState.fromToken.token.address.contains(key) ||
+                        currentState.toToken.token.address.contains(key)
+                }
+        )
         
-        text += "}"
-        UIPasteboard.general.string = text
+        UIPasteboard.general.string = logsInfo.jsonString
         errorLogs = nil
-        swapTransaction = nil
         notificationService.showToast(title: "✅", text: "Logs copied to clipboard")
     }
     
@@ -117,73 +141,103 @@ final class SwapViewModel: BaseViewModel, ObservableObject {
         return stateMachine.currentState.route?.toSymbols(tokensList: tokensList)
     }
     #endif
+
+    func scheduleUpdate() {
+        cancelUpdate()
+        timer = .scheduledTimer(withTimeInterval: 20, repeats: true) { [weak self] _ in
+            Task {
+                await self?.update()
+            }
+        }
+    }
 }
 
 private extension SwapViewModel {
     func bind() {
-        Resolver.resolve(WalletsRepository.self)
-            .dataPublisher
-            .removeDuplicates()
-            .sinkAsync { [weak self] userWallets in
-                let _ = await self?.stateMachine.accept(action: .updateUserWallets(userWallets: userWallets))
-            }
-            .store(in: &subscriptions)
-        
+        // swap wallets status
         swapWalletsRepository.status
+            .receive(on: DispatchQueue.main)
             .sinkAsync { [weak self] dataStatus in
                 guard let self else { return }
                 switch dataStatus {
                 case .loading, .initial:
                     self.initializingState = .loading
-                case let .ready(swapTokens, routeMap):
-                    await self.initialize(swapTokens: swapTokens, routeMap: routeMap)
+                case let .ready(jupiterTokens, routeMap):
+                    await self.initialize(jupiterTokens: jupiterTokens, routeMap: routeMap)
                 case .failed:
                     self.initializingState = .failed
                 }
                 
             }
             .store(in: &subscriptions)
+        
+        // listen to state of the stateMachine
+        stateMachine.statePublisher
+            .receive(on: RunLoop.main)
+            .sinkAsync { [weak self] updatedState in
+                guard let self else { return }
+                self.handle(state: updatedState)
+                self.updateActionButton(for: updatedState)
+                self.log(amountFrom: updatedState.amountFrom, from: updatedState.status)
+            }
+            .store(in: &subscriptions)
+        
+        // update user wallets only when initializingState is success
+        Resolver.resolve(WalletsRepository.self)
+            .dataPublisher
+            .filter { [weak self] _ in self?.initializingState == .success }
+            .removeDuplicates()
+            .sinkAsync { [weak self] userWallets in
+                await self?.stateMachine.accept(
+                    action: .updateUserWallets(userWallets: userWallets)
+                )
+            }
+            .store(in: &subscriptions)
 
+        // update fromToken only when initializingState is success
         changeFromToken
+            .filter { [weak self] _ in self?.initializingState == .success }
             .sinkAsync { [weak self] token in
-                let _ = await self?.stateMachine.accept(action: .changeFromToken(token))
+                guard let self else { return }
+                self.logChangeToken(isFrom: true, token: token)
+                await self.stateMachine.accept(
+                    action: .changeFromToken(token)
+                )
+                self.fromTokenInputViewModel.amount = nil // Reset previously set amount with new from token
                 Defaults.fromTokenAddress = token.address
             }
             .store(in: &subscriptions)
 
+        // update toToken only when initializingState is success
         changeToToken
+            .filter { [weak self] _ in self?.initializingState == .success }
             .sinkAsync { [ weak self] token in
-                let _ = await self?.stateMachine.accept(action: .changeToToken(token))
-                Defaults.toTokenAddress = token.address
-            }
-            .store(in: &subscriptions)
-
-        stateMachine.statePublisher
-            .sinkAsync { [weak self] updatedState in
                 guard let self else { return }
-                self.handle(state: updatedState)
-                self.updateHeader(priceInfo: updatedState.priceInfo, fromToken: updatedState.fromToken.token, toToken: updatedState.toToken.token)
-                self.updateActionButton(for: updatedState)
+                self.logChangeToken(isFrom: false, token: token)
+                let newState = await self.stateMachine.accept(
+                    action: .changeToToken(token)
+                )
+                Defaults.toTokenAddress = token.address
+                self.log(priceImpact: newState.priceImpact, value: newState.route?.priceImpactPct)
             }
             .store(in: &subscriptions)
     }
 
-    func initialize(swapTokens: [SwapToken], routeMap: RouteMap) async {
-        var prechosenFromToken: SwapToken?
-        var prechosenToToken: SwapToken?
-        if let fromTokenAddress = self.preChosenWallet?.mintAddress ?? Defaults.fromTokenAddress {
-            prechosenFromToken = swapTokens.first(where: { $0.address == fromTokenAddress })
+    func initialize(jupiterTokens: [Token], routeMap: RouteMap) async {
+        let newState = await self.stateMachine
+            .accept(
+                action: .initialize(
+                    account: userWalletManager.wallet?.account,
+                    jupiterTokens: jupiterTokens,
+                    routeMap: routeMap,
+                    preChosenFromTokenMintAddress: preChosenWallet?.mintAddress ?? Defaults.fromTokenAddress,
+                    preChosenToTokenMintAddress: Defaults.toTokenAddress
+                )
+            )
+        if source != .tapMain {
+            // Tap main has own logic of calling this method. See 'logStartFromMain'
+            logStart(from: newState.fromToken, to: newState.toToken)
         }
-        if let toTokenAddress = Defaults.toTokenAddress {
-            prechosenToToken = swapTokens.first(where: { $0.address == toTokenAddress })
-        }
-        let _ = await self.stateMachine
-            .accept(action: .initialize(
-                swapTokens: swapTokens,
-                routeMap: routeMap,
-                fromToken: prechosenFromToken,
-                toToken: prechosenToToken
-            ))
     }
 
     func handle(state: JupiterSwapState) {
@@ -200,14 +254,11 @@ private extension SwapViewModel {
         switch state.status {
         case .requiredInitialize, .initializing, .loadingTokenTo, .loadingAmountTo, .switching:
             arePricesLoading = true
+        case .creatingSwapTransaction:
+            arePricesLoading = false
         case .ready:
             arePricesLoading = false
-            guard state.amountFrom > 0 else { return }
-            actionButtonData = SliderActionButtonData(
-                isEnabled: true,
-                title: L10n.swap(state.fromToken.token.symbol, state.toToken.token.symbol)
-            )
-        default:
+        case .error:
             arePricesLoading = false
         }
     }
@@ -216,76 +267,110 @@ private extension SwapViewModel {
         switchTokens
             .sinkAsync(receiveValue: { [weak self] _ in
                 guard let self else { return }
-                let _ = await self.stateMachine.accept(
-                    action: .changeBothTokens(from: self.currentState.toToken, to: self.currentState.fromToken)
+                // cache the current amountTo
+                let newAmountFrom = self.currentState.amountTo
+                
+                // switch from and to token
+                let newState = await self.stateMachine.accept(
+                    action: .switchFromAndToTokens
                 )
+                
+                // change amountFrom into newAmountFrom
+                // the changeAmountFrom action will be kicked
+                await MainActor.run { [weak self] in
+                    guard let self else { return }
+                    self.fromTokenInputViewModel.amount = newAmountFrom
+                }
+                
+                // log
+                self.logSwitch(from: newState.fromToken, to: newState.toToken)
             })
             .store(in: &subscriptions)
 
         tryAgain
             .sinkAsync { [weak self] _ in
                 guard let self else { return }
-                if self.currentState.swapTokens.isEmpty {
-                    await self.swapWalletsRepository.load()
-                } else {
-                    await self.initialize(swapTokens: self.currentState.swapTokens, routeMap: self.currentState.routeMap)
-                }
+                await self.swapWalletsRepository.load()
             }
             .store(in: &subscriptions)
-    }
 
-    func scheduleUpdate() {
-        cancelUpdate()
-        timer = .scheduledTimer(withTimeInterval: 20, repeats: true) { [weak self] _ in
-            Task {
-                await self?.update()
+        viewAppeared
+            .sink { [weak self] in
+                guard let self, self.initializingState == .success else { return }
+                self.scheduleUpdate()
+                self.continueUpdateOnDisappear = false //  Reset value
             }
-        }
+            .store(in: &subscriptions)
+
+        viewDisappeared
+            .sink { [weak self] in
+                guard let self, !self.continueUpdateOnDisappear else { return }
+                self.cancelUpdate()
+            }
+            .store(in: &subscriptions)
     }
 
     func cancelUpdate() {
         timer?.invalidate()
     }
 
-    func updateHeader(priceInfo: SwapPriceInfo, fromToken: Token, toToken: Token) {
-        if priceInfo.relation != 0 {
-            let onetoToken = 1.tokenAmountFormattedString(symbol: toToken.symbol, maximumFractionDigits: Int(toToken.decimals), roundingMode: .down)
-            let amountFromToken = priceInfo.relation.tokenAmountFormattedString(symbol: fromToken.symbol, maximumFractionDigits: Int(fromToken.decimals), roundingMode: .down)
-            header = [onetoToken, amountFromToken].joined(separator: " ≈ ")
-        } else {
-            header = ""
-        }
-    }
-
     func updateActionButton(for state: JupiterSwapState) {
+        // assert that amount > 0
+        guard let amount = state.amountFrom, amount > 0 else {
+            actionButtonData = SliderActionButtonData.zero
+            return
+        }
+        
+        // observe status
         switch state.status {
         case .ready:
-            if state.amountFrom == 0 {
-                actionButtonData = SliderActionButtonData(isEnabled: false, title: L10n.enterTheAmount)
+            if state.swapTransaction != nil {
+                actionButtonData = SliderActionButtonData(
+                    isEnabled: true,
+                    title: L10n.swap(state.fromToken.token.symbol, state.toToken.token.symbol)
+                )
             }
-        case .requiredInitialize, .loadingTokenTo, .loadingAmountTo, .switching, .initializing:
+        case .requiredInitialize, .loadingTokenTo, .loadingAmountTo, .switching, .initializing, .creatingSwapTransaction:
             actionButtonData = SliderActionButtonData(isEnabled: false, title: L10n.counting)
         case .error(.notEnoughFromToken):
             actionButtonData = SliderActionButtonData(isEnabled: false, title: L10n.notEnough(state.fromToken.token.symbol))
         case .error(.equalSwapTokens):
-            actionButtonData = SliderActionButtonData(isEnabled: false, title: L10n.youCanTSwapSameToken)
+            actionButtonData = SliderActionButtonData(isEnabled: false, title: L10n.youCanTSwapBetweenTheSameToken)
         case .error(.networkConnectionError):
             notificationService.showConnectionErrorNotification()
-            actionButtonData = SliderActionButtonData(isEnabled: false, title: L10n.swapOfTheseTokensIsnTPossible)
+            actionButtonData = SliderActionButtonData(isEnabled: false, title: L10n.noInternetConnection)
         case .error(.inputTooHigh(let max)):
             actionButtonData = SliderActionButtonData(isEnabled: false, title: L10n.max(max.toString(maximumFractionDigits: Int(state.fromToken.token.decimals))))
-            if state.fromToken.address == Token.nativeSolana.address {
+            if state.fromToken.address == Token.nativeSolana.address, !wasMinToastShown {
                 notificationService.showToast(title: "✅", text: L10n.weLeftAMinimumSOLBalanceToSaveTheAccountAddress)
+                wasMinToastShown = true
             }
+        case .error(.createTransactionFailed):
+            actionButtonData = SliderActionButtonData(isEnabled: false, title: L10n.creatingTransactionFailed)
+        case .error(.routeIsNotFound):
+            actionButtonData = SliderActionButtonData(isEnabled: false, title: L10n.noSwapOptionsForTheseTokens)
+        case .error(.minimumAmount):
+            actionButtonData = SliderActionButtonData(isEnabled: false, title: L10n.enterGreaterValue)
         default:
-            actionButtonData = SliderActionButtonData(isEnabled: false, title: L10n.swapOfTheseTokensIsnTPossible)
+            actionButtonData = SliderActionButtonData(isEnabled: false, title: L10n.somethingWentWrong)
+        }
+
+        guard wasMinToastShown else { return }
+        switch state.status {
+        case .error(.inputTooHigh), .loadingAmountTo:
+            break
+        default:
+            wasMinToastShown = false
         }
     }
 
-    private func sendToken() {
+    private func swapToken() {
         guard isSliderOn,
-              let account = userWalletManager.wallet?.account,
-              let sourceWallet = currentState.fromToken.userWallet
+              let account = currentState.account,
+              let sourceWallet = currentState.fromToken.userWallet,
+              let amountFrom = currentState.amountFrom,
+              let amountTo = currentState.amountTo,
+              let route = currentState.route
         else {
             return
         }
@@ -294,7 +379,6 @@ private extension SwapViewModel {
         cancelUpdate()
         
         #if !RELEASE
-        swapTransaction = nil
         errorLogs = nil
         #endif
         
@@ -303,85 +387,157 @@ private extension SwapViewModel {
         
         let swapTransaction = JupiterSwapTransaction(
             authority: account.publicKey.base58EncodedString,
-            amountFrom: currentState.amountFrom,
-            amountTo: currentState.amountTo,
             sourceWallet: sourceWallet,
             destinationWallet: destinationWallet,
-            fromAmount: currentState.amountFrom,
-            toAmount: currentState.amountTo,
-            slippage: 0.01, // FIXME: - actual slippage,
+            fromAmount: amountFrom,
+            toAmount: amountTo,
+            slippage: Double(stateMachine.currentState.slippageBps) / 100,
             metaInfo: SwapMetaInfo(
                 swapMAX: false, // FIXME: - Swap max or not
                 swapUSD: 0 // FIXME:
             ),
             payingFeeWallet: nil, // FIXME: - PayingFeeWallet
             feeAmount: .zero, // FIXME: - feeAmount
-            execution: { [unowned self] in
-                try await createSwapExecution(account: account, sourceWallet: sourceWallet)
-            })
+            route: route,
+            account: account,
+            swapTransaction: currentState.swapTransaction,
+            services: stateMachine.services
+        )
         
+        // delegate work to transaction handler
         let transactionIndex = transactionHandler.sendTransaction(
             swapTransaction
         )
         
+        // return pending transaction
         let pendingTransaction = PendingTransaction(
             trxIndex: transactionIndex,
             sentAt: Date(),
             rawTransaction: swapTransaction,
             status: .sending
         )
-        submitTransaction.send(pendingTransaction)
-    }
-    
-    private func createSwapExecution(account: Account, sourceWallet: Wallet) async throws -> String {
-        // assertion
-        guard let route = stateMachine.currentState.route
-        else { throw JupiterError.invalidResponse }
+        submitTransaction.send((
+            pendingTransaction,
+            formattedSlippage
+        ))
         
-        do {
-            let jupiterClient = stateMachine.services.jupiterClient
-            
-            let swapTransaction = try await jupiterClient.swap(
-                route: route,
-                userPublicKey: account.publicKey.base58EncodedString,
-                wrapUnwrapSol: true,
-                feeAccount: nil,
-                asLegacyTransaction: nil,
-                computeUnitPriceMicroLamports: nil,
-                destinationWallet: nil
-            )
-            
-            self.swapTransaction = swapTransaction
-            
-            guard let swapTransaction,
-                  let base64Data = Data(base64Encoded: swapTransaction, options: .ignoreUnknownCharacters),
-                  let versionedTransaction = try? VersionedTransaction.deserialize(data: base64Data)
-            else {
-                throw JupiterError.invalidResponse
+        // Observe transaction and update status
+        transactionHandler.observeTransaction(transactionIndex: transactionIndex)
+            .compactMap {$0}
+            .filter { $0.isConfirmedOrError }
+            .prefix(1)
+            .receive(on: RunLoop.main)
+            .sink { [weak self] tx in
+                guard let self else { return }
+                
+                // error state
+                if let error = tx.status.error {
+                    debugPrint("---errorSendingTransaction: ", error)
+                    switch error {
+                    case SolanaSwift.APIClientError.responseError(let detail):
+                        #if !RELEASE
+                        self.errorLogs = detail.data?.logs
+                        #endif
+                    default:
+                        break
+                    }
+                    
+                    // log error
+                    self.logTransaction(error: error)
+                } else {
+                    debugPrint("---transactionId: ", tx.transactionId ?? "")
+                }
+                
+                // release slider
+                self.isSliderOn = false
             }
-            
-            let transactionId = try await JupiterSwapBusinessLogic.sendToBlockchain(
-                account: account,
-                versionedTransaction: versionedTransaction,
-                solanaAPIClient: stateMachine.services.solanaAPIClient
-            )
-            debugPrint("---transactionId: ", transactionId)
-            isSliderOn = false
-            return transactionId
-        } catch let error as SolanaSwift.APIClientError {
-            debugPrint("---errorSendingTransaction: ", error)
-            switch error {
-            case .responseError(let detail):
-                errorLogs = detail.data?.logs
-            default:
-                break
-            }
-            isSliderOn = false
-            throw error
-        } catch {
-            debugPrint("---errorSendingTransaction: ", error)
-            isSliderOn = false
-            throw error
+            .store(in: &subscriptions)
+    }
+}
+
+private extension SwapViewModel {
+    var formattedSlippage: String {
+        let slippage = Double(stateMachine.currentState.slippageBps) / 100
+        var slippageString = String(format: "%.2f", slippage)
+        while slippageString.last == "0" {
+            slippageString.removeLast()
+        }
+        return slippageString + "%"
+    }
+}
+
+// MARK: - Analytics
+extension SwapViewModel {
+    func logSettingsClick() {
+        analyticsManager.log(event: .swapSettingsClick)
+    }
+
+    func logReturnFromChangeToken(isFrom: Bool) {
+        analyticsManager.log(event: isFrom ? .swapReturnFromChangingTokenA : .swapReturnFromChangingTokenB)
+    }
+
+    func logTransactionProgressOpened() {
+        analyticsManager.log(event: .swapTransactionProgressScreen)
+    }
+
+    func logTransactionProgressDone() {
+        analyticsManager.log(event: .swapTransactionProgressScreenDone)
+    }
+
+    func logTransaction(error: Error?) {
+        if let error, error.isSlippageError {
+            analyticsManager.log(event: .swapErrorSlippage)
+        } else {
+            analyticsManager.log(event: .swapErrorDefault(isBlockchainRelated: error?.isSolanaBlockchainRelatedError ?? false))
+        }
+    }
+
+    func logStartFromMain() {
+        logStart(from: currentState.fromToken, to: currentState.toToken)
+    }
+
+    private func logSwapApprove(signature: String) {
+        guard let amountFrom = currentState.amountFrom else { return }
+        analyticsManager.log(event: .swapClickApproveButtonNew(tokenA: currentState.fromToken.token.symbol, tokenB: currentState.toToken.token.symbol, swapSum: amountFrom, swapUSD: currentState.amountFromFiat, signature: signature))
+    }
+
+    private func log(amountFrom: Double?, from status: JupiterSwapState.Status) {
+        guard amountFrom > 0 else { return }
+        // Do not log anything if amountFrom is not set
+        switch status {
+        case .error(.notEnoughFromToken):
+            analyticsManager.log(event: .swapErrorTokenAInsufficientAmount)
+        case .error(.routeIsNotFound):
+            analyticsManager.log(event: .swapErrorTokenPairNotExist)
+        default:
+            break
+        }
+    }
+
+    private func logStart(from: SwapToken, to: SwapToken) {
+        analyticsManager.log(event: .swapStartScreenNew(lastScreen: source.rawValue, from: from.token.symbol, to: to.token.symbol))
+    }
+
+    private func logSwitch(from: SwapToken, to: SwapToken) {
+        analyticsManager.log(event: .swapSwitchTokens(tokenAName: from.token.symbol, tokenBName: to.token.symbol))
+    }
+
+    private func log(priceImpact: JupiterSwapState.SwapPriceImpact?, value: Decimal?) {
+        guard let priceImpact, let value else { return }
+        switch priceImpact {
+        case .medium:
+            analyticsManager.log(event: .swapPriceImpactLow(priceImpact: value))
+        case .high:
+            analyticsManager.log(event: .swapPriceImpactHigh(priceImpact: value))
+        }
+    }
+
+    private func logChangeToken(isFrom: Bool, token: SwapToken) {
+        let amount = token.userWallet?.amount ?? 0
+        if isFrom {
+            analyticsManager.log(event: .swapChangingTokenA(tokenAName: token.token.symbol, tokenAValue: amount))
+        } else {
+            analyticsManager.log(event: .swapChangingTokenB(tokenBName: token.token.symbol, tokenBValue: amount))
         }
     }
 }

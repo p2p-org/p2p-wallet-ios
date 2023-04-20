@@ -29,6 +29,8 @@ final class TabBarController: UITabBarController {
     var homeTabClickedTwicely: AnyPublisher<Void, Never> { homeTabClickedTwicelySubject.eraseToAnyPublisher() }
     private let solendTutorialSubject = PassthroughSubject<Void, Never>()
     var solendTutorialClicked: AnyPublisher<Void, Never> { solendTutorialSubject.eraseToAnyPublisher() }
+    private let jupiterSwapClickedSubject = PassthroughSubject<Void, Never>()
+    var jupiterSwapClicked: AnyPublisher<Void, Never> { jupiterSwapClickedSubject.eraseToAnyPublisher() }
 
     // MARK: - Properties
 
@@ -117,19 +119,35 @@ final class TabBarController: UITabBarController {
     }
 
     // MARK: - Authentications
+    
+    private var lockWindow: UIWindow?
+    
+    private func setUpLockWindow() {
+        lockWindow = UIWindow(frame: UIScreen.main.bounds)
+        let lockVC = BaseVC()
+        let lockView = LockView()
+        lockVC.view.addSubview(lockView)
+        lockView.autoPinEdgesToSuperviewEdges()
+        lockWindow?.rootViewController = lockVC
+    }
 
     private func showLockView() {
-        UIApplication.shared.kWindow?.endEditing(true)
-        let lockView = LockView()
-        UIApplication.shared.windows.last?.addSubview(lockView)
-        lockView.autoPinEdgesToSuperviewEdges()
+        setUpLockWindow()
+        lockWindow?.makeKeyAndVisible()
         solanaTracker.stopTracking()
+    }
+    
+    private func removeLockWindow() {
+        lockWindow?.rootViewController?.view.removeFromSuperview()
+        lockWindow?.rootViewController = nil
+        lockWindow?.isHidden = true
+        lockWindow?.windowScene = nil
     }
 
     private func hideLockView() {
-        for view in UIApplication.shared.windows.last?.subviews ?? [] where view is LockView {
-            view.removeFromSuperview()
-        }
+        guard lockWindow != nil else { return }
+        UIApplication.shared.windows.first?.makeKeyAndVisible()
+        removeLockWindow()
     }
 
     private func handleAuthenticationStatus(_ authStyle: AuthenticationPresentationStyle?) {
@@ -148,7 +166,7 @@ final class TabBarController: UITabBarController {
         )
         localAuthVC = PincodeViewController(viewModel: pincodeViewModel)
         if authStyle.options.contains(.fullscreen) {
-            localAuthVC?.modalPresentationStyle = .fullScreen
+            localAuthVC?.modalPresentationStyle = .custom
         }
 
         var authSuccess = false
@@ -176,6 +194,7 @@ final class TabBarController: UITabBarController {
     }
 
     private func presentLocalAuth() {
+        hideLockView()
         let keyWindow = UIApplication.shared.windows.filter(\.isKeyWindow).first
         let topController = keyWindow?.rootViewController?.findLastPresentedViewController()
         if topController is UIAlertController {
@@ -255,7 +274,7 @@ final class TabBarController: UITabBarController {
         // blurEffectView
         viewModel.authenticationStatusPublisher
             .map { $0 == nil }
-            .assign(to: \.isHidden, on: blurEffectView)
+            .assignWeak(to: \.isHidden, on: blurEffectView)
             .store(in: &subscriptions)
     }
 }
@@ -272,17 +291,15 @@ extension TabBarController: UITabBarControllerDelegate {
         }
 
         customTabBar.updateSelectedViewPositionIfNeeded()
+        
         if TabItem(rawValue: selectedIndex) == .invest {
             if !available(.investSolendFeature) {
-                analyticsManager.log(event: .mainSwap(isSellEnabled: sellDataService.isAvailable))
-            }
-            if available(.investSolendFeature), !Defaults.isSolendTutorialShown, available(.solendDisablePlaceholder) {
+                jupiterSwapClickedSubject.send()
+            } else if !Defaults.isSolendTutorialShown, available(.solendDisablePlaceholder) {
                 solendTutorialSubject.send()
                 return false
             }
-        }
-
-        if TabItem(rawValue: selectedIndex) == .wallet,
+        } else if TabItem(rawValue: selectedIndex) == .wallet,
            (viewController as! UINavigationController).viewControllers.count == 1,
            self.selectedIndex == selectedIndex
         {

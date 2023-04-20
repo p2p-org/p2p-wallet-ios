@@ -44,15 +44,9 @@ extension String {
         return prefix(numOfSymbolsRevealed) + "..." + suffix(numOfSymbolsRevealedInSuffix ?? numOfSymbolsRevealed)
     }
 
-    func withNameServiceDomain() -> String {
-        guard !hasSuffix(Self.nameServiceDomain) else {
-            return self
-        }
-        return self + Self.nameServiceDomain
-    }
 
     static var nameServiceDomain: String {
-        RemoteConfig.remoteConfig().usernameDomain ?? ""
+        RemoteConfig.remoteConfig().usernameDomain ?? "key"
     }
 
     static func secretConfig(_ key: String) -> String? {
@@ -219,3 +213,25 @@ extension String {
     }
 }
 
+extension String {
+    static var fakeTransactionSignaturePrefix: String {
+        "<FakeTransactionSignature>"
+    }
+    
+    static func fakeTransactionSignature(id: String) -> String {
+        fakeTransactionSignaturePrefix + "<\(id)>"
+    }
+}
+
+// MARK: - Flag
+
+extension String {
+    var asFlag: String? {
+        let base : UInt32 = 127397
+        var s = ""
+        unicodeScalars.forEach {
+            s.unicodeScalars.append(UnicodeScalar(base + $0.value)!)
+        }
+        return String(s)
+    }
+}

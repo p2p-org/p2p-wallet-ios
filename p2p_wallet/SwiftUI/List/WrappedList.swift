@@ -18,7 +18,7 @@ struct WrappedList<Content: View>: View {
             .listStyle(.plain)
         } else {
             ScrollView {
-                LazyVStack(spacing: 0) {
+                LazyVStack(alignment: .leading, spacing: 0) {
                     content()
                 }
             }

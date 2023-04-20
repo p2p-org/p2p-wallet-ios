@@ -1,9 +1,8 @@
 import SolanaSwift
+import Jupiter
 
 struct JupiterSwapTransaction: SwapRawTransactionType {
     let authority: String?
-    let amountFrom: Double
-    let amountTo: Double
     let sourceWallet: Wallet
     let destinationWallet: Wallet
     let fromAmount: Double
@@ -13,17 +12,25 @@ struct JupiterSwapTransaction: SwapRawTransactionType {
     
     var payingFeeWallet: SolanaSwift.Wallet?
     var feeAmount: SolanaSwift.FeeAmount
+    let route: Route
+    let account: KeyPair
+    let swapTransaction: String?
+    let services: JupiterSwapServices
+    
     
     var mainDescription: String {
         [
-            amountFrom.tokenAmountFormattedString(symbol: sourceWallet.token.symbol, maximumFractionDigits: Int(sourceWallet.token.decimals)),
-            amountTo.tokenAmountFormattedString(symbol: destinationWallet.token.symbol, maximumFractionDigits: Int(destinationWallet.token.decimals))
+            fromAmount.tokenAmountFormattedString(symbol: sourceWallet.token.symbol, maximumFractionDigits: Int(sourceWallet.token.decimals)),
+            toAmount.tokenAmountFormattedString(symbol: destinationWallet.token.symbol, maximumFractionDigits: Int(destinationWallet.token.decimals))
         ].joined(separator: " → ")
     }
 
-    let execution: () async throws -> TransactionID
-
     func createRequest() async throws -> String {
-        try await execution()
+        try await JupiterSwapBusinessLogic.sendToBlockchain(
+            account: account,
+            swapTransaction: swapTransaction,
+            route: route,
+            services: services
+        )
     }
 }

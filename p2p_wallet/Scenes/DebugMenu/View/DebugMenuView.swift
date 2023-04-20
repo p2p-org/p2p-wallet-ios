@@ -26,14 +26,10 @@ struct DebugMenuView: View {
                 Toggle("Network Logger", isOn: $viewModel.networkLoggerVisible)
                 Section(header: Text("Feature Toggles")) {
                     ForEach(0 ..< viewModel.features.count, id: \.self) { index in
-                        if let feature = viewModel.features[index].feature {
-                            Toggle(viewModel.features[index].title, isOn: $viewModel.features[index].isOn)
-                                .valueChanged(value: viewModel.features[index].isOn) { newValue in
-                                    viewModel.setFeature(feature, isOn: newValue)
-                                }
-                        } else {
-                            Text(viewModel.features[index].title)
-                        }
+                        Toggle(viewModel.features[index].title, isOn: $viewModel.features[index].isOn)
+                            .valueChanged(value: viewModel.features[index].isOn) { newValue in
+                                viewModel.setFeature(viewModel.features[index].feature, isOn: newValue)
+                            }
                     }
                 }
                 Section(header: Text("Application")) {
@@ -95,6 +91,15 @@ struct DebugMenuView: View {
                     Picker("URL", selection: $globalAppState.nameServiceEndpoint) {
                         Text("Unknown").tag(nil as String?)
                         ForEach(viewModel.nameServiceEndpoints, id: \.self) { endpoint in
+                            Text(endpoint).tag(endpoint as String?)
+                        }
+                    }
+                }
+                
+                Section(header: Text("New swap endpoint")) {
+                    Picker("URL", selection: $globalAppState.newSwapEndpoint) {
+                        Text("Unknown").tag(nil as String?)
+                        ForEach(viewModel.newSwapEndpoints, id: \.self) { endpoint in
                             Text(endpoint).tag(endpoint as String?)
                         }
                     }

@@ -34,7 +34,7 @@ class UserWalletManager: ObservableObject {
 
         guard let account = storage.account else { return }
         
-        let moonpayAccount = try await Account(
+        let moonpayAccount = try await KeyPair(
             phrase: account.phrase,
             network: .mainnetBeta,
             derivablePath: DerivablePath(type: storage.derivablePath.type, walletIndex: 101, accountIndex: 0)
@@ -103,6 +103,8 @@ class UserWalletManager: ObservableObject {
         Defaults.moonpayInfoShouldHide = false
         Defaults.isSellInfoPresented = false
         Defaults.isTokenInputTypeChosen = false
+        Defaults.fromTokenAddress = nil
+        Defaults.toTokenAddress = nil
         
         walletSettings.reset()
 

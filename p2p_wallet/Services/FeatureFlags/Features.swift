@@ -30,4 +30,7 @@ public extension Feature {
 
     // Ren BTC
     static let receiveRenBtcEnabled = Feature(rawValue: "receive_ren_btc_enabled")
+    
+    // Send via link
+    static let sendViaLinkEnabled = Feature(rawValue: "send_via_link_enabled")
 }

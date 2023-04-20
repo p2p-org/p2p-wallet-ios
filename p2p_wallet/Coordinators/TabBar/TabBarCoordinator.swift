@@ -22,13 +22,12 @@ final class TabBarCoordinator: Coordinator<Void> {
 
     // MARK: - Properties
     private unowned var window: UIWindow!
+    private let tabBarViewModel: TabBarViewModel
     private let tabBarController: TabBarController
     private let closeSubject = PassthroughSubject<Void, Never>()
     
-    private var emptySendCoordinator: SendEmptyCoordinator?
-    private var sendCoordinator: SendCoordinator?
     private var sendStatusCoordinator: SendTransactionStatusCoordinator?
-    private var sellCoordinator: SellCoordinator?
+    private var jupiterSwapTabCoordinator: JupiterSwapCoordinator?
 
     // MARK: - Initializer
 
@@ -38,13 +37,13 @@ final class TabBarCoordinator: Coordinator<Void> {
         appEventHandler: AppEventHandlerType = Resolver.resolve()
     ) {
         self.window = window
+        tabBarViewModel = TabBarViewModel()
         tabBarController = TabBarController(
-            viewModel: TabBarViewModel(),
+            viewModel: tabBarViewModel,
             authenticateWhenAppears: authenticateWhenAppears
         )
         super.init()
-        listenToActionsButton()
-        listenToWallet()
+        bind()
     }
     
     // MARK: - Life cycle
@@ -82,6 +81,27 @@ final class TabBarCoordinator: Coordinator<Void> {
 
         return closeSubject.prefix(1).eraseToAnyPublisher()
     }
+    
+    private func bind() {
+        tabBarViewModel.moveToSendViaLinkClaim
+            .sink { [weak self] url in
+                guard let self = self else { return }
+                
+                UIApplication.dismissCustomPresentedViewController() {
+                    let claimCoordinator = ReceiveFundsViaLinkCoordinator(
+                        presentingViewController: UIApplication.topmostViewController() ?? self.tabBarController,
+                        url: url
+                    )
+                    self.coordinate(to: claimCoordinator)
+                        .sink(receiveValue: {})
+                        .store(in: &self.subscriptions)
+                }
+            }
+            .store(in: &subscriptions)
+        
+        listenToActionsButton()
+        listenToWallet()
+    }
 
     // MARK: - Helpers
 
@@ -117,6 +137,12 @@ final class TabBarCoordinator: Coordinator<Void> {
                 self?.navigateToSolendTutorial()
             })
             .store(in: &subscriptions)
+
+        tabBarController.jupiterSwapClicked
+            .sink { [weak self] in
+                self?.jupiterSwapTabCoordinator?.logOpenFromTab()
+            }
+            .store(in: &subscriptions)
         return homeNavigation
     }
     
@@ -130,7 +156,7 @@ final class TabBarCoordinator: Coordinator<Void> {
                 .sink(receiveValue: { _ in })
                 .store(in: &subscriptions)
         } else {
-            routeToSwap(nc: solendOrSwapNavigation, hidesBottomBarWhenPushed: false)
+            routeToSwap(nc: solendOrSwapNavigation, hidesBottomBarWhenPushed: false, source: .tapMain)
         }
         
         let historyNavigation = UINavigationController()
@@ -168,7 +194,7 @@ final class TabBarCoordinator: Coordinator<Void> {
                 analyticsManager.log(event: .actionButtonClick(isSellEnabled: sellDataService.isAvailable))
             })
             // coordinate to ActionsCoordinator
-            .flatMap { [unowned self] in
+            .flatMap { [unowned self, unowned tabBarController] in
                 coordinate(to: ActionsCoordinator(viewController: tabBarController))
             }
             .sink(receiveValue: { [weak self] result in
@@ -223,46 +249,51 @@ final class TabBarCoordinator: Coordinator<Void> {
         case .receive:
             break
         case .swap:
-            routeToSwap(nc: navigationController)
+            routeToSwap(nc: navigationController, source: .actionPanel)
         case .send:
             let fiatAmount = walletsRepository.getWallets().reduce(0) { $0 + $1.amountInCurrentFiat }
             let withTokens = fiatAmount > 0
             if withTokens {
                 analyticsManager.log(event: .sendViewed(lastScreen: "main_screen"))
-                sendCoordinator = SendCoordinator(rootViewController: navigationController, preChosenWallet: nil, hideTabBar: true, allowSwitchingMainAmountType: true)
-                sendCoordinator?.start()
-                    .sink { [weak self, weak navigationController] result in
+                let sendCoordinator = SendCoordinator(
+                    rootViewController: navigationController,
+                    preChosenWallet: nil,
+                    hideTabBar: true,
+                    allowSwitchingMainAmountType: true
+                )
+                coordinate(to: sendCoordinator)
+                    .sink(receiveValue: { [weak self] result in
                         switch result {
                         case let .sent(model):
-                            navigationController?.popToRootViewController(animated: true)
+                            navigationController.popToRootViewController(animated: true)
                             self?.routeToSendTransactionStatus(model: model)
+                        case .sentViaLink:
+                            navigationController.popToRootViewController(animated: true)
                         case .cancelled:
                             break
                         }
-                    }
+                    })
                     .store(in: &subscriptions)
             } else {
-                emptySendCoordinator = SendEmptyCoordinator(navigationController: navigationController)
-                emptySendCoordinator?.start()
-                    .sink(receiveValue: { [weak self] _ in
-                        self?.emptySendCoordinator = nil
-                    })
+                let emptySendCoordinator = SendEmptyCoordinator(navigationController: navigationController)
+                coordinate(to: emptySendCoordinator)
+                    .sink(receiveValue: {})
                     .store(in: &subscriptions)
             }
         case .cashOut:
-            if available(.sellScenarioEnabled) {
-                sellCoordinator = SellCoordinator(navigationController: navigationController)
-                sellCoordinator?.start()
-                    .sink { [weak self] result in
-                        switch result {
-                        case .completed, .interupted:
-                            self?.tabBarController.changeItem(to: .history)
-                        case .none:
-                            break
-                        }
+            guard available(.sellScenarioEnabled) else { return }
+            
+            let sellCoordinator = SellCoordinator(navigationController: navigationController)
+            coordinate(to: sellCoordinator)
+                .sink(receiveValue: { [weak self] result in
+                    switch result {
+                    case .completed, .interupted:
+                        self?.tabBarController.changeItem(to: .history)
+                    case .none:
+                        break
                     }
-                    .store(in: &subscriptions)
-            }
+                })
+                .store(in: &subscriptions)
         }
     }
 
@@ -275,13 +306,24 @@ final class TabBarCoordinator: Coordinator<Void> {
             .store(in: &subscriptions)
     }
 
-    private func routeToSwap(nc: UINavigationController, hidesBottomBarWhenPushed: Bool = true) {
+    private func routeToSwap(nc: UINavigationController, hidesBottomBarWhenPushed: Bool = true, source: JupiterSwapSource) {
         let swapCoordinator = JupiterSwapCoordinator(
             navigationController: nc,
-            params: JupiterSwapParameters(dismissAfterCompletion: false, openKeyboardOnStart: false)
+            params: JupiterSwapParameters(
+                dismissAfterCompletion: source != .tapMain,
+                openKeyboardOnStart: source != .tapMain,
+                source: source,
+                hideTabBar: hidesBottomBarWhenPushed
+            )
         )
+        if source == .tapMain {
+            jupiterSwapTabCoordinator = swapCoordinator
+        }
         coordinate(to: swapCoordinator)
-            .sink(receiveValue: { _ in })
+            .sink(receiveValue: { [weak self] _ in
+                guard self?.tabBarController.selectedIndex != TabItem.wallet.rawValue else { return }
+                self?.tabBarController.changeItem(to: .wallet)
+            })
             .store(in: &subscriptions)
     }
 }

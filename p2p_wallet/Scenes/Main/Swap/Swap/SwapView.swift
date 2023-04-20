@@ -3,8 +3,6 @@ import SwiftUI
 
 struct SwapView: View {
     @ObservedObject var viewModel: SwapViewModel
-    @ObservedObject var fromViewModel: SwapInputViewModel
-    @ObservedObject var toViewModel: SwapInputViewModel
 
     @State private var animatedFinish: Bool = false
 
@@ -17,11 +15,16 @@ struct SwapView: View {
             switch viewModel.initializingState {
             case .loading, .success:
                 VStack {
-                    ScrollView {
-                        contentView
+                    ScrollViewReader { value in
+                        ScrollView {
+                            contentView
+                        }
+                        .onChange(of: viewModel.currentState.priceImpact, perform: { priceImpact in
+                            guard priceImpact != nil else { return }
+                            value.scrollTo("\(SwapPriceImpactView.self)")
+                        })
+                        .scrollDismissesKeyboard()
                     }
-                    .scrollDismissesKeyboard()
-
                     Spacer()
 
                     SliderActionButton(
@@ -37,13 +40,20 @@ struct SwapView: View {
                 errorView
             }
         }
+        .onAppear {
+            viewModel.viewAppeared.send(())
+        }
+        .onDisappear {
+            viewModel.viewDisappeared.send(())
+        }
     }
 }
 
 private extension SwapView {
     var contentView: some View {
         VStack(spacing: .zero) {
-            Text(viewModel.header)
+            // Header
+            Text(viewModel.currentState.exchangeRateInfo)
                 .apply(style: .label1)
                 .padding(.top, 4)
                 .foregroundColor(Color(Asset.Colors.night.color))
@@ -53,34 +63,51 @@ private extension SwapView {
                 }
                 .frame(height: 16)
 
+            // Inputs
             ZStack {
                 VStack(spacing: 8) {
-                    SwapInputView(viewModel: fromViewModel)
-                    SwapInputView(viewModel: toViewModel)
+                    SwapInputView(viewModel: viewModel.fromTokenInputViewModel)
+                    SwapInputView(viewModel: viewModel.toTokenInputViewModel)
                 }
                 SwapSwitchButton(action: viewModel.switchTokens)
             }
             .padding(.top, 36)
 
             #if !RELEASE
+            // Route (for debugging)
             Text("Route: " + (viewModel.getRouteInSymbols()?.joined(separator: " -> ") ?? ""))
+                .apply(style: .label2)
+                .foregroundColor(.red)
+            
+            // Slippage (for debugging)
+            Text("Slippage: \(Double(viewModel.stateMachine.currentState.slippageBps) / 100)%")
                 .apply(style: .label2)
                 .foregroundColor(.red)
             #endif
 
+            // Disclaimer
             Text(L10n.keyAppDoesnTMakeAnyProfitFromSwap💚)
                 .apply(style: .label1)
                 .foregroundColor(Color(Asset.Colors.mountain.color))
                 .padding(.top, 16)
                 .accessibilityIdentifier("SwapView.profitInfoLabel")
 
+            // Price impact
+            if let priceImpact = viewModel.currentState.priceImpact {
+                SwapPriceImpactView(priceImpact: priceImpact)
+                    .padding(.top, 23)
+                    .accessibilityIdentifier("SwapView.priceImpactView")
+                    .id("\(SwapPriceImpactView.self)")
+            }
+
             Spacer()
 
             #if !RELEASE
+            // Logs (for debugging)
             VStack(alignment: .leading, spacing: 10) {
                 Text("Logs (tap to copy and clear):")
                     .apply(style: .label2)
-                if let swapTransaction = viewModel.swapTransaction {
+                if let swapTransaction = viewModel.currentState.swapTransaction {
                     Text("Transaction:")
                         .apply(style: .label2)
                     Text(swapTransaction)
@@ -98,11 +125,10 @@ private extension SwapView {
                     }
                 }
             }
-                .foregroundColor(.red)
-                .onTapGesture {
-                    viewModel.copyAndClearLogs()
-                }
-            
+            .foregroundColor(.red)
+            .onTapGesture {
+                viewModel.copyAndClearLogs()
+            }
             #endif
         }
         .onTapGesture { UIApplication.shared.endEditing() }

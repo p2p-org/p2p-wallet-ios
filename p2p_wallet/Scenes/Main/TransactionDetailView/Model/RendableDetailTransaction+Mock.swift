@@ -57,7 +57,7 @@ struct MockedRendableDetailTransaction: RendableTransactionDetail {
     
     static func sending() -> Self {
         .init(
-            status: .loading(message: L10n.itUsuallyTakes520SecondsForATransactionToComplete),
+            status: .loading(message: L10n.theTransactionWillBeCompletedInAFewSeconds),
             title: "Transaction submitted",
             subtitle: "August 22, 2022 @ 08:08",
             signature: "2PmjWNqQUd9AedT1nnFBdhRdw5JXkNTajBFZ6RmfpPorTMKcxBXkAPER2RmMLnuSS9RKsA1kynhCc8d6LjFQamLs",
@@ -77,7 +77,7 @@ struct MockedRendableDetailTransaction: RendableTransactionDetail {
     
     static func failedSend() -> Self {
         .init(
-            status: .error(message: NSAttributedString(string: L10n.theTransactionWasRejectedByTheSolanaBlockchain)),
+            status: .error(message: NSAttributedString(string: L10n.theTransactionWasRejectedByTheSolanaBlockchain), error: nil),
             title: "Transaction failed",
             subtitle: "August 22, 2022 @ 08:08",
             signature: "2PmjWNqQUd9AedT1nnFBdhRdw5JXkNTajBFZ6RmfpPorTMKcxBXkAPER2RmMLnuSS9RKsA1kynhCc8d6LjFQamLs",

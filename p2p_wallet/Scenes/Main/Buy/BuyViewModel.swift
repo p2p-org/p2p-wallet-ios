@@ -7,14 +7,24 @@ import Resolver
 import SolanaSwift
 import SwiftyUserDefaults
 import UIKit
+import Moonpay
 
 let MoonpayLicenseURL = "https://www.moonpay.com/legal/licenses"
 
+private extension String {
+    static let neutralFlag = "🏳️‍🌈"
+}
+
 final class BuyViewModel: ObservableObject {
+    
+    typealias IpInfo = Moonpay.Provider.IpAddressResponse
+    
     var coordinatorIO = CoordinatorIO()
 
-    // MARK: -
+    // MARK: - To View
 
+    @Published var state: State = .usual
+    @Published var flag = String.neutralFlag
     @Published var availableMethods = [PaymentTypeItem]()
     @Published var token: Token
     @Published var fiat: Fiat = .usd
@@ -44,6 +54,7 @@ final class BuyViewModel: ObservableObject {
     private var isEditingFiat: Bool { !isLeftFocus }
 
     // Dependencies
+    @Injected private var moonpayProvider: Moonpay.Provider
     @Injected var exchangeService: BuyExchangeService
     @Injected var walletsRepository: WalletsRepository
     @Injected private var analyticsManager: AnalyticsManager
@@ -54,6 +65,7 @@ final class BuyViewModel: ObservableObject {
     var lastMethod: PaymentType = .bank
     @SwiftyUserDefault(keyPath: \.buyMinPrices, options: .cached)
     var buyMinPrices: [String: [String: Double]]
+    private var countryTitle: String?
 
     private var tokenPrices: [Fiat: [String: Double?]] = [:]
 
@@ -63,8 +75,13 @@ final class BuyViewModel: ObservableObject {
     private static let tokens: [Token] = [.usdc, .nativeSolana]
     private static let fiats: [Fiat] = available(.buyBankTransferEnabled) ? [.eur, .gbp, .usd] : [.usd]
     private static let defaultToken = Token.usdc
+    
+    // MARK: - Init
 
-    init(defaultToken: Token? = nil, targetSymbol: String? = nil) {
+    init(
+        defaultToken: Token? = nil,
+        targetSymbol: String? = nil
+    ) {
         self.targetSymbol = targetSymbol
 
         if let defaultToken = defaultToken {
@@ -166,7 +183,7 @@ final class BuyViewModel: ObservableObject {
                 return ButtonItem(title: title, icon: icon, enabled: enabled)
             }
             .removeDuplicates()
-            .assign(to: \.buttonItem, on: self)
+            .assignWeak(to: \.buttonItem, on: self)
             .store(in: &subscriptions)
 
         areMethodsLoading = true
@@ -229,15 +246,66 @@ final class BuyViewModel: ObservableObject {
                 self.areMethodsLoading = false
             }
         }
+        
+        getBuyAvailability()
     }
+    
+    private func getBuyAvailability() {
+        Task {
+            let ipInfo = try await moonpayProvider.ipAddresses()
+            await MainActor.run {
+                setNewCountryInfo(
+                    flag: ipInfo.alpha2.asFlag ?? .neutralFlag,
+                    title: ipInfo.countryTitle,
+                    isBuyAllowed: ipInfo.isBuyAllowed
+                )
+            }
+        }
+    }
+    
+    private func setNewCountryInfo(flag: String, title: String, isBuyAllowed: Bool) {
+        guard !title.isEmpty else {
+            state = .usual
+            self.flag = .neutralFlag
+            return
+        }
+        
+        if isBuyAllowed {
+            state = .usual
+        } else {
+            let model = ChangeCountryErrorView.ChangeCountryModel(
+                image: .connectionErrorCat,
+                title: L10n.sorry,
+                subtitle: L10n.unfortunatelyYouCanNotBuyInButYouCanStillUseOtherKeyAppFeatures(title),
+                buttonTitle: L10n.goBack,
+                subButtonTitle: L10n.changeTheRegionManually
+            )
+            state = .buyNotAllowed(model: model)
+        }
+        self.flag = flag
+        self.countryTitle = title
+    }
+    
+    // MARK: - From View
+    
+    func goBackClicked() {
+        coordinatorIO.close.send()
+    }
+    
+    func changeTheRegionClicked() {
+        coordinatorIO.chooseCountry.send(SelectCountryViewModel.Model(
+            flag: flag,
+            title: countryTitle ?? ""
+        ))
+    }
+    
+    // MARK: -
 
     @MainActor func didSelectPayment(_ payment: PaymentTypeItem) {
         selectedPayment = payment.type
         setPaymentMethod(payment.type)
         analyticsManager.log(event: .buyChosenMethodPayment(type: payment.type.analyticName))
     }
-
-    // MARK: -
 
     @MainActor private func setPaymentMethod(_ payment: PaymentType) {
         guard availablePaymentTypes().contains(payment) else {
@@ -496,28 +564,53 @@ final class BuyViewModel: ObservableObject {
             return true
         }
     }
+    
+    func countrySelected(_ country: SelectCountryViewModel.Model, buyAllowed: Bool) {
+        setNewCountryInfo(flag: country.flag, title: country.title, isBuyAllowed: buyAllowed)
+    }
 
     struct CoordinatorIO {
-        // Input
-        var showDetail = PassthroughSubject<(
+        
+        // To Coordinator
+        let showDetail = PassthroughSubject<(
             Buy.ExchangeOutput,
             exchangeRate: Double,
             fiat: Fiat,
             token: Token
         ), Never>()
-        var showTokenSelect = PassthroughSubject<[TokenCellViewItem], Never>()
-        var showFiatSelect = PassthroughSubject<[Fiat], Never>()
-        var navigationSlidingPercentage = PassthroughSubject<CGFloat, Never>()
-        // Output
-        var tokenSelected = CurrentValueSubject<Token?, Never>(nil)
-        var fiatSelected = CurrentValueSubject<Fiat?, Never>(nil)
-        var buy = PassthroughSubject<URL, Never>()
-        var license = PassthroughSubject<URL, Never>()
+        let showTokenSelect = PassthroughSubject<[TokenCellViewItem], Never>()
+        let showFiatSelect = PassthroughSubject<[Fiat], Never>()
+        let navigationSlidingPercentage = PassthroughSubject<CGFloat, Never>()
+        let chooseCountry = PassthroughSubject<SelectCountryViewModel.Model, Never>()
+        
+        // From Coordinator
+        let tokenSelected = CurrentValueSubject<Token?, Never>(nil)
+        let fiatSelected = CurrentValueSubject<Fiat?, Never>(nil)
+        let buy = PassthroughSubject<URL, Never>()
+        let license = PassthroughSubject<URL, Never>()
+        let close = PassthroughSubject<Void, Never>()
     }
 
     struct ButtonItem: Equatable {
         var title: String
         var icon: UIImage?
         var enabled: Bool
+    }
+}
+
+// MARK: - State
+
+extension BuyViewModel {
+    enum State {
+        case usual
+        case buyNotAllowed(model: ChangeCountryErrorView.ChangeCountryModel)
+    }
+}
+
+// MARK: - Country Title
+
+extension Moonpay.Provider.IpAddressResponse {
+    var countryTitle: String {
+        country + (alpha2 == "US" ? " (\(state))" : "")
     }
 }

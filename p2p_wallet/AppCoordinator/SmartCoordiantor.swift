@@ -33,7 +33,11 @@ class SmartCoordinatorPresentPresentation: SmartCoordinatorPresentation {
             return
         }
 
-        presentingViewController.present(presentedViewController, animated: true)
+        if let presentedViewController = presentedViewController as? CustomPresentableViewController {
+            presentingViewController.present(presentedViewController, interactiveDismissalType: .standard)
+        } else {
+            presentingViewController.present(presentedViewController, animated: true)
+        }
     }
 }
 
@@ -94,7 +98,7 @@ class SmartCoordinatorBottomSheetPresentation: SmartCoordinatorPresentation {
 class SmartCoordinator<T>: Coordinator<T> {
     let presentation: SmartCoordinatorPresentation
 
-    let result: PassthroughSubject<T, Never> = .init()
+    let result = PassthroughSubject<T, Never>()
 
     init(presentation: SmartCoordinatorPresentation) {
         self.presentation = presentation
@@ -104,8 +108,10 @@ class SmartCoordinator<T>: Coordinator<T> {
     override final func start() -> Combine.AnyPublisher<T, Never> {
         let vc: UIViewController = build()
 
-        vc.onClose = { [weak self] in
-            self?.result.send(completion: .finished)
+        if vc.onClose == nil {
+            vc.onClose = { [weak self] in
+                self?.result.send(completion: .finished)
+            }
         }
 
         presentation.run(presentedViewController: vc)

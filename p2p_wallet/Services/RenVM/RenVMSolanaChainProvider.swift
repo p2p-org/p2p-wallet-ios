@@ -47,7 +47,7 @@ private class RenVMFeeRelayerSolanaBlockchainClient: SolanaBlockchainClient {
     
     func prepareTransaction(
         instructions: [SolanaSwift.TransactionInstruction],
-        signers: [SolanaSwift.Account],
+        signers: [KeyPair],
         feePayer: SolanaSwift.PublicKey,
         feeCalculator: SolanaSwift.FeeCalculator?
     ) async throws -> SolanaSwift.PreparedTransaction {

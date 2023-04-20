@@ -40,11 +40,10 @@ struct SendInputAmountView: View {
                                     )
                                     .transition(.opacity.animation(.easeInOut))
                                     .cornerRadius(radius: 32, corners: .allCorners)
-                                    .frame(width: 68)
+                                    .frame(width: 68, height: 28)
                                     .offset(x: viewModel.amountText.isEmpty
-                                            ? 16.0
-                                            : textWidth(font: Constants.inputFount, text: viewModel.amountText)
-                                    )
+                                        ? 16.0
+                                        : textWidth(font: Constants.inputFount, text: viewModel.amountText))
                                     .padding(.horizontal, 8)
                                     .accessibilityIdentifier("max-button")
                                 }
@@ -56,27 +55,29 @@ struct SendInputAmountView: View {
                                 .opacity(switchAreaOpacity)
                                 .accessibilityIdentifier("current-currency")
                         }
-                        HStack(spacing: 2) {
-                            Text(viewModel.secondaryAmountText)
-                                .foregroundColor(Color(Asset.Colors.mountain.color))
-                                .apply(style: .text4)
-                                .lineLimit(1)
-                            Text(viewModel.secondaryCurrencyText)
-                                .foregroundColor(Color(Asset.Colors.mountain.color))
-                                .apply(style: .text4)
-                                .lineLimit(1)
-                            Spacer()
-                            if viewModel.isSwitchMainAmountTypeAvailable {
-                                Text(L10n.tapToSwitchTo(viewModel.secondaryCurrencyText))
+                        if viewModel.showSecondaryAmounts {
+                            HStack(spacing: 2) {
+                                Text(viewModel.secondaryAmountText)
                                     .foregroundColor(Color(Asset.Colors.mountain.color))
                                     .apply(style: .text4)
                                     .lineLimit(1)
-                                    .opacity(switchAreaOpacity)
-                                    .layoutPriority(1)
+                                Text(viewModel.secondaryCurrencyText)
+                                    .foregroundColor(Color(Asset.Colors.mountain.color))
+                                    .apply(style: .text4)
+                                    .lineLimit(1)
+                                Spacer()
+                                if viewModel.isSwitchAvailable {
+                                    Text(L10n.tapToSwitchTo(viewModel.secondaryCurrencyText))
+                                        .foregroundColor(Color(Asset.Colors.mountain.color))
+                                        .apply(style: .text4)
+                                        .lineLimit(1)
+                                        .opacity(switchAreaOpacity)
+                                        .layoutPriority(1)
+                                }
                             }
                         }
                     }
-                    if viewModel.isSwitchMainAmountTypeAvailable {
+                    if viewModel.isSwitchAvailable && viewModel.showSecondaryAmounts {
                         Button(
                             action: viewModel.switchPressed.send,
                             label: {
@@ -85,7 +86,8 @@ struct SendInputAmountView: View {
                                     .foregroundColor(Color(mainColor))
                                     .frame(width: 16, height: 16)
                                     .opacity(switchAreaOpacity)
-                            })
+                            }
+                        )
                         .frame(width: 24, height: 24)
                     }
                 }
@@ -93,7 +95,7 @@ struct SendInputAmountView: View {
                 .background(RoundedRectangle(cornerRadius: 12))
                 .foregroundColor(Color(Asset.Colors.snow.color))
             }
-            if viewModel.isSwitchMainAmountTypeAvailable {
+            if viewModel.isSwitchAvailable && viewModel.showSecondaryAmounts {
                 tapToSwitchHiddenButton
             }
         }
@@ -102,15 +104,15 @@ struct SendInputAmountView: View {
 
     var tapToSwitchHiddenButton: some View {
         Button(action: {
-            withAnimation(.easeInOut(duration: 0.3), {
+            withAnimation(.easeInOut(duration: 0.3)) {
                 self.switchAreaOpacity = 0.3
-            })
+            }
             self.viewModel.switchPressed.send()
-            withAnimation(.easeInOut(duration: 0.3), {
+            withAnimation(.easeInOut(duration: 0.3)) {
                 self.switchAreaOpacity = 1
-            })
+            }
         }, label: {
-            VStack { }
+            VStack {}
                 .frame(width: 130, height: 90)
         })
         .accessibilityIdentifier("switch-currency")
@@ -127,7 +129,10 @@ struct SendInputAmountView_Previews: PreviewProvider {
         ZStack {
             Color(Asset.Colors.smoke.color)
             SendInputAmountView(
-                viewModel: SendInputAmountViewModel(initialToken: .init(token: .nativeSolana), allowSwitchingMainAmountType: false)
+                viewModel: SendInputAmountViewModel(
+                    initialToken: .init(token: .nativeSolana),
+                    allowSwitchingMainAmountType: false
+                )
             )
             .padding(.horizontal, 16)
         }

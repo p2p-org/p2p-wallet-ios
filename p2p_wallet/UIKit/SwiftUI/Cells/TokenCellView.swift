@@ -13,7 +13,7 @@ struct TokenCellViewItem: Hashable {
     init(wallet: Wallet) {
         token = wallet.token
         amount = wallet.amount
-        amountInCurrentFiat = wallet.amountInCurrentFiat
+        amountInCurrentFiat = wallet.priceInCurrentFiat == nil ? nil : wallet.amountInCurrentFiat
     }
 
     init(token: Token, amount: Double? = nil, fiat: Fiat? = nil) {
@@ -41,14 +41,17 @@ struct TokenCellView: View {
         HStack(alignment: .center, spacing: 12) {
             CoinLogoImageViewRepresentable(size: appearance.logoImageSize, token: item.token)
                 .frame(width: appearance.logoImageSize, height: appearance.logoImageSize)
+                .accessibility(identifier: "TokenCellView.CoinLogoImageView")
             VStack(alignment: .leading, spacing: appearance.textPadding) {
                 Text(item.token.name)
                     .font(uiFont: .font(of: .text2))
                     .foregroundColor(Color(Asset.Colors.night.color))
+                    .accessibility(identifier: "TokenCellView.item.token.name")
                 if item.amount != nil {
                     Text(item.amount!.tokenAmountFormattedString(symbol: item.token.symbol))
                         .font(uiFont: .font(of: .label1))
                         .foregroundColor(Color(Asset.Colors.mountain.color))
+                        .accessibility(identifier: "TokenCellView.item.amount")
                 }
             }
             Spacer()
@@ -56,6 +59,7 @@ struct TokenCellView: View {
                 Text(item.amountInCurrentFiat!.fiatAmountFormattedString(customFormattForLessThan1E_2: true))
                     .font(uiFont: .font(of: .text3, weight: .semibold))
                     .foregroundColor(Color(Asset.Colors.night.color))
+                    .accessibility(identifier: "TokenCellView.item.amountInCurrentFiat")
             }
         }.contentShape(Rectangle())
     }

@@ -4,9 +4,10 @@ import SwiftUI
 import KeyAppUI
 
 final class ChooseSwapTokenCoordinator: Coordinator<SwapToken?> {
-    private var subject = PassthroughSubject<SwapToken?, Never>()
+    private let subject = PassthroughSubject<SwapToken?, Never>()
     private let chosenWallet: SwapToken
     private let navigationController: UINavigationController
+    private let fromToken: Bool
     private let tokens: [SwapToken]
     private let title: String
 
@@ -14,21 +15,27 @@ final class ChooseSwapTokenCoordinator: Coordinator<SwapToken?> {
         chosenWallet: SwapToken,
         tokens: [SwapToken],
         navigationController: UINavigationController,
+        fromToken: Bool,
         title: String? = nil
     ) {
         self.chosenWallet = chosenWallet
         self.tokens = tokens
         self.navigationController = navigationController
-        self.title = title ?? L10n.theTokenYouPay
+        self.fromToken = fromToken
+        self.title = title ?? L10n.tokenYouPay
     }
 
     override func start() -> AnyPublisher<SwapToken?, Never> {
         let viewModel = ChooseItemViewModel(
-            service: ChooseSwapTokenService(swapTokens: tokens),
+            service: ChooseSwapTokenService(swapTokens: tokens, fromToken: fromToken),
             chosenToken: chosenWallet
         )
-        let view = ChooseItemView<ChooseSwapTokenItemView>(viewModel: viewModel) { model in
-            ChooseSwapTokenItemView(token: model.item as! SwapToken, isChosen: model.isChosen)
+        let view = ChooseItemView<ChooseSwapTokenItemView>(viewModel: viewModel) { [unowned self] model in
+            ChooseSwapTokenItemView(
+                token: model.item as! SwapToken,
+                chosen: model.isChosen,
+                fromToken: fromToken
+            )
         }
         let controller = KeyboardAvoidingViewController(rootView: view, ignoresKeyboard: true)
         controller.title = title

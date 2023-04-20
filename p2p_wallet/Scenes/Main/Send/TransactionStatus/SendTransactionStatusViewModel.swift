@@ -26,8 +26,17 @@ final class SendTransactionStatusViewModel: BaseViewModel, ObservableObject {
 
     init(transaction: SendTransaction) {
         token = transaction.walletToken.token
-        transactionFiatAmount = "-\(transaction.amountInFiat.fiatAmountFormattedString(roundingMode: .down, customFormattForLessThan1E_2: true))"
-        transactionCryptoAmount = transaction.amount.tokenAmountFormattedString(symbol: transaction.walletToken.token.symbol)
+
+        if transaction.amountInFiat == 0.0 {
+            transactionFiatAmount = transaction.amount
+                .tokenAmountFormattedString(symbol: transaction.walletToken.token.symbol)
+            transactionCryptoAmount = ""
+        } else {
+            transactionFiatAmount =
+                "-\(transaction.amountInFiat.fiatAmountFormattedString(roundingMode: .down, customFormattForLessThan1E_2: true))"
+            transactionCryptoAmount = transaction.amount
+                .tokenAmountFormattedString(symbol: transaction.walletToken.token.symbol)
+        }
 
         let feeToken = transaction.payingFeeWallet?.token
         let feeAmount: String? = transaction.feeAmount == .zero ? nil : transaction.feeAmount.total
@@ -49,7 +58,10 @@ final class SendTransactionStatusViewModel: BaseViewModel, ObservableObject {
             .receive(on: DispatchQueue.main)
             .sink(receiveValue: { [weak self] pendingTransaction in
                 guard let self = self else { return }
-                self.subtitle = pendingTransaction?.sentAt.string(withFormat: "MMMM dd, yyyy @ HH:mm", locale: Locale.base) ?? ""
+                self.subtitle = pendingTransaction?.sentAt.string(
+                    withFormat: "MMMM dd, yyyy @ HH:mm",
+                    locale: Locale.base
+                ) ?? ""
                 switch pendingTransaction?.status {
                 case .sending:
                     break
@@ -65,9 +77,14 @@ final class SendTransactionStatusViewModel: BaseViewModel, ObservableObject {
         errorMessageTap
             .sink { [weak self] in
                 guard let self = self else { return }
-                var params = SendTransactionStatusDetailsParameters(title: L10n.somethingWentWrong, description: L10n.unknownError)
+                var params = SendTransactionStatusDetailsParameters(
+                    title: L10n.somethingWentWrong,
+                    description: L10n.unknownError
+                )
 
-                guard let parsedTransaction = self.currentTransaction, let error = parsedTransaction.status.getError() else {
+                guard let parsedTransaction = self.currentTransaction,
+                      let error = parsedTransaction.status.getError()
+                else {
                     self.openDetails.send(params)
                     return
                 }
@@ -94,7 +111,8 @@ final class SendTransactionStatusViewModel: BaseViewModel, ObservableObject {
                         params = .init(
                             title: L10n.thisTransactionHasAlreadyBeenProcessed,
                             description: L10n.TheBankHasSeenThisTransactionBefore
-                                .thisCanOccurUnderNormalOperationWhenAUDPPacketIsDuplicatedAsAUserErrorFromAClientNotUpdatingItsOrAsADoubleSpendAttack(parsedTransaction.blockhash ?? "")
+                                .thisCanOccurUnderNormalOperationWhenAUDPPacketIsDuplicatedAsAUserErrorFromAClientNotUpdatingItsOrAsADoubleSpendAttack(parsedTransaction
+                                    .blockhash ?? "")
                         )
                     case let .other(message):
                         params = .init(title: L10n.somethingWentWrong, description: message)

@@ -2,6 +2,7 @@ import Jupiter
 import SolanaSwift
 
 extension JupiterSwapBusinessLogic {
+    /// Auto choose token logic
     static func autoChoose(swapTokens: [SwapToken]) -> (fromToken: SwapToken, toToken: SwapToken)? {
         let usdc = swapTokens.first(where: { $0.address == SolanaSwift.Token.usdc.address })
         let solana = swapTokens.first(where: { $0.address == SolanaSwift.Token.nativeSolana.address })

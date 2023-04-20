@@ -28,12 +28,14 @@ final class ChooseItemViewModel: BaseViewModel, ObservableObject {
         self.service = service
         super.init()
 
+        self.isLoading = true
         Task {
-            self.isLoading = true
             do {
                 let data = try await service.fetchItems()
                 let dataWithoutChosen = data.map { section in
-                    ChooseItemListSection(items: section.items.filter({ $0.id != chosenToken.id }))
+                    ChooseItemListSection(
+                        items: section.items.filter { $0.id != chosenToken.id }
+                    )
                 }
                 self.allItems = self.service.sort(items: dataWithoutChosen)
                 self.sections = self.allItems
@@ -53,8 +55,13 @@ final class ChooseItemViewModel: BaseViewModel, ObservableObject {
                     self.sections = self.allItems
                 } else {
                     // Do not split up sections if there is a keyword
-                    let searchedItems = self.allItems.flatMap({ $0.items }).filter({ $0.matches(keyword: value.lowercased()) })
-                    self.sections = self.service.sort(items: [ChooseItemListSection(items: searchedItems)])
+                    let searchedItems = self.allItems
+                        .flatMap { $0.items }
+                        .filter { $0.matches(keyword: value.lowercased()) }
+                    self.sections = self.service.sortFiltered(
+                        by: value.lowercased(),
+                        items: [ChooseItemListSection(items: searchedItems)]
+                    )
                 }
             })
             .store(in: &subscriptions)
