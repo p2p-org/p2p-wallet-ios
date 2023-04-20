@@ -30,7 +30,10 @@ struct WormholeSendFeesView: View {
                     HStack {
                         Text(fee.subtitle)
                             .apply(style: .label1)
-                            .foregroundColor(Color(Asset.Colors.mountain.color))
+                            .foregroundColor(
+                                fee.isFree ? Color(Asset.Colors.mint.color)
+                                    : Color(Asset.Colors.mountain.color)
+                            )
                         Spacer()
                         Text(fee.detail)
                             .apply(style: .label1)
@@ -53,9 +56,9 @@ struct WormholeSendFeesView_Previews: PreviewProvider {
         ),
         .init(title: "Network Fees", subtitle: "0.003 WETH", detail: "$ 3.31"),
         .init(title: "Using Wormhole bridge", subtitle: "0.0005 SOL", detail: "$ 0.05"),
-        .init(title: "Total", subtitle: "0.0005 SOL\n0.009 ETH", detail: "$ 0.05")
+        .init(title: "Total", subtitle: "0.0005 SOL\n0.009 ETH", detail: "$ 0.05"),
     ].compactMap { $0 }
-    
+
     static var previews: some View {
         WormholeSendFeesView(
             viewModel: .init(fees: fees)

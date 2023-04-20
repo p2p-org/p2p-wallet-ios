@@ -65,8 +65,7 @@ public class WormholeService {
         from: String,
         recipient: String,
         mint: String?,
-        amount: String,
-        needToUseRelay: Bool
+        amount: String
     ) async throws -> SendTransaction {
         guard let solanaKeyPair else {
             throw ServiceError.authorizationError
@@ -78,8 +77,7 @@ public class WormholeService {
             from: from,
             recipient: recipient,
             mint: mint,
-            amount: amount,
-            needToUseRelay: needToUseRelay
+            amount: amount
         )
     }
 
