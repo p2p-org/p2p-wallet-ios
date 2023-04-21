@@ -179,7 +179,7 @@ class ReceiveViewModel: BaseViewModel, ObservableObject {
             self?.shouldShowNotification = true
         })
         if shouldShowNotification {
-            notificationsService.showInAppNotification(.init(emoji: "✅", message: text))
+            notificationsService.showToast(title: "✅", text: text, haptic: true)
             shouldShowNotification = false
         }
     }

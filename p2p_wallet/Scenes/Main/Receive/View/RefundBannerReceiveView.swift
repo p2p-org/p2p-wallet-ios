@@ -15,6 +15,7 @@ struct RefundBannerReceiveView: View {
             Image(uiImage: .gift)
         }
         .padding(.horizontal, 20)
+        .padding(.vertical, 4)
         .background(Color(UIColor.cdf6cd))
         .cornerRadius(radius: 16, corners: .allCorners)
     }
