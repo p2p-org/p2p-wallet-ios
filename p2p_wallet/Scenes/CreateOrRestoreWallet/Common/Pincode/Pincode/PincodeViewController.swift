@@ -72,7 +72,7 @@ final class PincodeViewController: BaseViewController {
     func forgetPinView() -> UIView {
         UIButton(
             height: 24,
-            label: L10n.forgotYourPIN,
+            label: L10n.iForgotPIN,
             labelFont: UIFont.font(of: .text1),
             textColor: Asset.Colors.sky.color
         ).onTap {
