@@ -35,7 +35,6 @@ struct InstructionsReceiveView: View {
                         .apply(style: .text3)
                         .multilineTextAlignment(.leading)
                         .padding(.bottom, instruction.0 == item.instructions.last?.0 ? 0 : 10)
-//                    Spacer()
                 }
             }
             HStack(alignment: .top, spacing: InstructionsReceiveView.textHorizontalSpacing) {
