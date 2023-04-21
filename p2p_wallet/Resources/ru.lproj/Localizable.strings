@@ -1319,3 +1319,4 @@
 "The link is already claimed" = "Ссылка уже востребована";
 "You can’t receive money with it" = "Вы не можете получить деньги с ним";
 "The transaction was rejected. Open your link again." = "Транзакция была отклонена.  Откройте вашу ссылку еще раз.";
+"The fee is more than the defined slippage %@ due to one-time account creation fee by Solana blockchain" = "Комиссия превышает установленное проскальзывание %@ из-за единовременной комиссии за создание учетной записи в блокчейне Solana.";
