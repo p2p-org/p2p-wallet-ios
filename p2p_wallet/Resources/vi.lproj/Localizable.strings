@@ -1324,3 +1324,4 @@
 "You can’t receive money with it" = "Bạn không thể nhận tiền với nó";
 "Sorry, we don't know that country " = "Xin lỗi, chúng tôi không biết quốc gia đó";
 "The transaction was rejected. Open your link again." = "Giao dịch đã bị từ chối.  Mở lại liên kết của bạn.";
+"The fee is more than the defined slippage %@ due to one-time account creation fee by Solana blockchain" = "Phí cao hơn trượt giá được xác định %@ do phí tạo tài khoản một lần bằng chuỗi khối Solana";

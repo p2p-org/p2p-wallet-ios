@@ -86,16 +86,16 @@ private extension SwapView {
             #endif
 
             // Disclaimer
-            Text(L10n.keyAppDoesnTMakeAnyProfitFromSwap💚)
+            Text(L10n.keyAppDoesnTMakeAnyProfitFromThisSwap💚)
                 .apply(style: .label1)
                 .foregroundColor(Color(Asset.Colors.mountain.color))
                 .padding(.top, 16)
                 .accessibilityIdentifier("SwapView.profitInfoLabel")
 
-            // Price impact
-            if let priceImpact = viewModel.currentState.priceImpact {
-                SwapPriceImpactView(priceImpact: priceImpact)
-                    .padding(.top, 23)
+            // Warning message
+            if let warningState = viewModel.warningState {
+                SwapPriceImpactView(model: warningState)
+                    .padding(.top, 33)
                     .accessibilityIdentifier("SwapView.priceImpactView")
                     .id("\(SwapPriceImpactView.self)")
             }
