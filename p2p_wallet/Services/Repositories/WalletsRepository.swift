@@ -5,7 +5,7 @@
 //  Created by Chung Tran on 23/03/2021.
 //
 
-import BECollectionView_Combine
+import BECollectionView_Core
 import Combine
 import Foundation
 import KeyAppBusiness
