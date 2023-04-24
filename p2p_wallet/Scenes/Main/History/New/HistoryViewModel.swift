@@ -26,23 +26,24 @@ enum NewHistoryAction {
     case openReceive
 
     case openBuy
-    
+
     case openSentViaLinkHistoryView
 }
 
 class HistoryViewModel: BaseViewModel, ObservableObject {
-    
-    // Dependencies
-    @Injected private var analyticsManager: AnalyticsManager
-    
-    // Subjects
+
+    // MARK: - Subjects
+
     let actionSubject: PassthroughSubject<NewHistoryAction, Never>
 
     let history: AsyncList<any RendableListTransactionItem>
 
     // MARK: - View Input
 
+    /// General output list. (Normally from history items)
     @Published var output = ListState<HistorySection>()
+
+    /// Send via link section.
     @Published var sendViaLinkTransactions = [SendViaLinkTransactionInfo]() {
         didSet {
             if sendViaLinkTransactions.count == 1 {
@@ -52,14 +53,19 @@ class HistoryViewModel: BaseViewModel, ObservableObject {
             }
         }
     }
+
+    /// Send via link title
     @Published var linkTransactionsTitle = ""
-    
+
+    /// Feature toggle
     let showSendViaLinkTransaction: Bool
-    
-    // Dependency
+
+    // MARK: - Dependency
+
     private var sellDataService: (any SellDataService)?
     @Injected private var sendViaLinkStorage: SendViaLinkStorage
-    
+    @Injected private var analyticsManager: AnalyticsManager
+
     // MARK: - Init
 
     init(mock: [any RendableListTransactionItem]) {
@@ -70,7 +76,7 @@ class HistoryViewModel: BaseViewModel, ObservableObject {
         // Build history
         history = .init(sequence: mock.async.eraseToAnyAsyncSequence())
 
-        self.showSendViaLinkTransaction = false
+        showSendViaLinkTransaction = false
         super.init()
 
         history
@@ -85,6 +91,7 @@ class HistoryViewModel: BaseViewModel, ObservableObject {
         provider: KeyAppHistoryProvider = Resolver.resolve(),
         userWalletManager: UserWalletManager = Resolver.resolve(),
         tokensRepository: TokensRepository = Resolver.resolve(),
+        pendingTransactionService: TransactionHandlerType = Resolver.resolve(),
         mint: String
     ) {
         // Init services and repositories
@@ -108,18 +115,26 @@ class HistoryViewModel: BaseViewModel, ObservableObject {
             .eraseToAnyAsyncSequence()
 
         history = .init(sequence: sequence, id: \.id)
-        
-        self.showSendViaLinkTransaction = false
+
+        showSendViaLinkTransaction = false
         super.init()
+
+        // Listen pending transactions
+        let pendingTransactions = HistoryViewModelAggregator.pendingTransaction(
+            pendingTransactionService: pendingTransactionService,
+            actionSubject: actionSubject,
+            mint: mint
+        )
 
         history
             .$state
+            .combineLatest(pendingTransactions)
             .receive(on: DispatchQueue.global(qos: .background))
-            .map { self.buildOutput(history: $0) }
+            .map { [weak self] in self?.buildOutput(history: $0, pendings: $1) ?? .init() }
             .receive(on: RunLoop.main)
-            .sink { self.output = $0 }
+            .sink { [weak self] in self?.output = $0 }
             .store(in: &subscriptions)
-        
+
         bind()
         fetch()
     }
@@ -137,7 +152,6 @@ class HistoryViewModel: BaseViewModel, ObservableObject {
         let actionSubject: PassthroughSubject<NewHistoryAction, Never> = .init()
         self.actionSubject = actionSubject
         self.sellDataService = sellDataService
-
 
         // Setup list adaptor
         let sequence = repository
@@ -166,42 +180,27 @@ class HistoryViewModel: BaseViewModel, ObservableObject {
             }
 
         // Listen pending transactions
-        
-        // Using this code if need to listen pending transactions
-        let pendings = pendingTransactionService.observePendingTransactions()
-            .map { transactions in
-                transactions
-                    .filter { pendingTransation in
-                        switch pendingTransation.rawTransaction {
-                        case let trx as SendTransaction where trx.isSendingViaLink:
-                            return false
-                        default:
-                            return true
-                        }
-                    }
-                    .map { [weak actionSubject] trx in
-                        RendableListPendingTransactionItem(trx: trx) {
-                            actionSubject?.send(.openPendingTransaction(trx))
-                        }
-                    }
-            }
+        let pendingTransactions = HistoryViewModelAggregator.pendingTransaction(
+            pendingTransactionService: pendingTransactionService,
+            actionSubject: actionSubject
+        )
 
-        self.showSendViaLinkTransaction = true
+        showSendViaLinkTransaction = true
         super.init()
 
         // Build output
         history
             .$state
-            .combineLatest(sells, pendings)
+            .combineLatest(sells, pendingTransactions)
             .map(buildOutput)
             .receive(on: RunLoop.main)
             .sink { self.output = $0 }
             .store(in: &subscriptions)
-        
+
         bind()
         fetch()
     }
-    
+
     // MARK: - View Output
     
     func onAppear() {
@@ -223,12 +222,12 @@ class HistoryViewModel: BaseViewModel, ObservableObject {
             await sellDataService?.update()
         }
     }
-    
+
     func sentViaLinkClicked() {
         analyticsManager.log(event: .historyClickBlockSendViaLink)
         actionSubject.send(.openSentViaLinkHistoryView)
     }
-    
+
     // MARK: - Helpers
 
     private func bind() {
@@ -247,7 +246,8 @@ class HistoryViewModel: BaseViewModel, ObservableObject {
         pendings: [any RendableListTransactionItem] = []
     ) -> ListState<HistorySection> {
         // Phase 1: Merge pending transaction with history transaction
-        let rendableTransactions: [any RendableListTransactionItem] = ListBuilder.merge(primary: history.data, secondary: pendings, by: \.id)
+        let rendableTransactions: [any RendableListTransactionItem] = ListBuilder
+            .merge(primary: history.data, secondary: pendings, by: \.id)
 
         // Phase 2: Split transactions by date
         var sections: [HistorySection] = ListBuilder.aggregate(list: rendableTransactions, by: \.date) { title, items in
@@ -271,7 +271,9 @@ class HistoryViewModel: BaseViewModel, ObservableObject {
             }
 
             if history.error != nil {
-                insertedItems = [.button(id: UUID().uuidString, title: L10n.tryAgain, action: { [weak self] in self?.fetch() })]
+                insertedItems = [.button(id: UUID().uuidString, title: L10n.tryAgain, action: { [weak self] in
+                    self?.fetch()
+                })]
             }
 
             sections.append(
@@ -285,7 +287,7 @@ class HistoryViewModel: BaseViewModel, ObservableObject {
         // Phase 5: Or replace with skeletons in first load
         if history.status == .fetching && sections.isEmpty {
             sections = [
-                .init(title: "", items: .generatePlaceholder(n: 7))
+                .init(title: "", items: .generatePlaceholder(n: 7)),
             ]
         }
 
