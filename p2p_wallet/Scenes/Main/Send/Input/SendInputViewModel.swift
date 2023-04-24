@@ -406,7 +406,7 @@ private extension SendInputViewModel {
                 self.turnOffInputSwitch()
             } else if
                 let amount = currentWallet.amount,
-                currentWallet.isUsdcOrUsdt && abs(amount - currentWallet.amountInCurrentFiat) <= 0.02 {
+                currentWallet.isUsdcOrUsdt && abs(amount - currentWallet.amountInCurrentFiat) <= 0.021 {
                 
                 self.turnOffInputSwitch()
             } else {
