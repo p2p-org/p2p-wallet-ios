@@ -49,7 +49,7 @@ final class AccountDetailsHistoryViewModel: HistoryViewModel {
                             account.data.token.symbol,
                             supportedWormholeToken.name
                         ),
-                        buttonTitle: "\(L10n.swap.capitalized) \(account.data.token.symbol) → \(supportedWormholeToken.name)",
+                        buttonTitle: "\(L10n.swap.capitalized) \(account.data.token.symbol) → \(supportedWormholeToken.symbol)",
                         action: { [weak self] in
                             self?.actionSubject
                                 .send(.openSwap(self?.account.data, Wallet(token: supportedWormholeToken)))
