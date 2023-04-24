@@ -6,7 +6,7 @@
 //
 
 import Foundation
-import ListPlaceholder
+//import ListPlaceholder
 
 class BaseCollectionViewCell: UICollectionViewCell {
     var padding: UIEdgeInsets { .init(all: 20) }
@@ -29,11 +29,12 @@ class BaseCollectionViewCell: UICollectionViewCell {
     }
 
     func showLoading() {
-        stackView.hideLoader()
-        stackView.showLoader(customGradientColor: .defaultLoaderGradientColors)
+        // ListPlaceholder is removed, as ChoosePhoneCode and NewDerivableAccounts (last BECollectionView_Combine(s)) do not require loading
+//        stackView.hideLoader()
+//        stackView.showLoader(customGradientColor: .defaultLoaderGradientColors)
     }
 
     func hideLoading() {
-        stackView.hideLoader()
+//        stackView.hideLoader()
     }
 }
