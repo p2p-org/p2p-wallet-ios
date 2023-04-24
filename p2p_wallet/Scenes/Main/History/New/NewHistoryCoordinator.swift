@@ -180,13 +180,19 @@ class NewHistoryCoordinator: SmartCoordinator<Void> {
     }
 
     private func openReceive() {
-        let userWalletManager: UserWalletManager = Resolver.resolve()
-        guard let account = userWalletManager.wallet?.account else { return }
-
-        let vm = ReceiveToken.SceneModel(solanaPubkey: account.publicKey)
-        let vc = ReceiveToken.ViewController(viewModel: vm, isOpeningFromToken: true)
-        let navigation = UINavigationController(rootViewController: vc)
-        presentation.presentingViewController.present(navigation, animated: true)
+        guard let nc = presentation.presentingViewController as? UINavigationController
+        else {
+            return
+        }
+        
+        let coordinator = ReceiveCoordinator(
+            network: .solana(tokenSymbol: "SOL", tokenImage: .image(.solanaIcon)),
+            presentation: SmartCoordinatorPushPresentation(nc)
+        )
+        
+        coordinate(to: coordinator)
+            .sink { _ in }
+            .store(in: &subscriptions)
     }
 
     func openSwap(wallet: Wallet?, destination: Wallet? = nil) {
