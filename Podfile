@@ -11,15 +11,10 @@ target 'p2p_wallet' do
   pod 'CocoaDebug', '1.7.2', :configurations => ['Debug', 'Test']
 
   # tools
-  pod 'SwiftGen', '~> 6.0'
-  pod 'SwiftLint'
-  pod 'Periphery'
-  pod 'SwiftFormat/CLI', '0.49.6'
-
-  # Firebase
-  pod 'Firebase/Analytics'
-  pod 'Firebase/Crashlytics'
-  pod 'Firebase/RemoteConfig'
+  pod 'SwiftGen', '~> 6.0', :configurations => ['Debug', 'Test']
+  pod 'SwiftLint', :configurations => ['Debug', 'Test']
+  pod 'Periphery', :configurations => ['Debug', 'Test']
+  pod 'SwiftFormat/CLI', '0.49.6', :configurations => ['Debug', 'Test']
 end
 
 post_install do |installer|
