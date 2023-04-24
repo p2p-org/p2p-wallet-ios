@@ -144,7 +144,7 @@ enum SupportedTokensBusinnes {
         [
             SupportedTokenItem(
                 icon: .url(URL(string: "https://assets.coingecko.com/coins/images/4128/large/solana.png?1640133422")!),
-                name: "Solana", symbol: "SOL", availableNetwork: [.ethereum, .solana]
+                name: "Solana", symbol: "SOL", availableNetwork: Set(SupportedTokensBusinnes.solanaAvailableNetworks)
             ),
             SupportedTokenItem(
                 icon: .url(URL(string: "https://assets.coingecko.com/coins/images/279/large/ethereum.png?1595348880")!),
@@ -175,5 +175,12 @@ enum SupportedTokensBusinnes {
                 name: "Curve DAO Token", symbol: "CRV", availableNetwork: [.ethereum, .solana]
             )
         ]
+    }
+
+    static var solanaAvailableNetworks: [SupportedTokenItemNetwork] {
+        if available(.solanaEthAddressEnabled) {
+            return [.ethereum, .solana]
+        }
+        return [.solana]
     }
 }
