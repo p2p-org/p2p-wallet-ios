@@ -1,4 +1,4 @@
-// swift-tools-version:5.5
+// swift-tools-version:5.7
 // The swift-tools-version declares the minimum version of Swift required to build this package.
 
 import PackageDescription
@@ -115,15 +115,16 @@ let package = Package(
         .package(url: "https://github.com/attaswift/BigInt.git", from: "5.3.0"),
         .package(url: "https://github.com/p2p-org/BigDecimal.git", branch: "main"),
         .package(url: "https://github.com/bigearsenal/LoggerSwift.git", branch: "master"),
-        .package(
-            url: "https://github.com/apple/swift-protobuf.git",
-            "1.19.0" ..< "2.0.0"
-        ),
     ],
     targets: [
         .binaryTarget(
             name: "WalletCore",
             path: "Frameworks/WalletCore.xcframework.zip"
+        ),
+
+        .binaryTarget(
+            name: "XCSwiftProtobuf",
+            path: "Frameworks/SwiftProtobuf.xcframework.zip"
         ),
 
         // Cache
@@ -341,8 +342,8 @@ let package = Package(
             name: "KeyAppKitCore",
             dependencies: [
                 "WalletCore",
+                "XCSwiftProtobuf",
                 .product(name: "SolanaSwift", package: "solana-swift"),
-                .product(name: "SwiftProtobuf", package: "swift-protobuf"),
                 .product(name: "BigInt", package: "BigInt"),
                 .product(name: "Web3", package: "Web3.swift"),
                 .product(name: "Web3ContractABI", package: "Web3.swift"),
