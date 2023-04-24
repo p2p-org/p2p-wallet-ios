@@ -253,7 +253,7 @@ extension Resolver: ResolverRegistering {
         .scope(.application)
 
         // QrCodeImageRender
-        register { ReceiveToken.QrCodeImageRenderImpl() }
+        register { QrCodeImageRenderImpl() }
             .implements(QrCodeImageRender.self)
 
         // Navigation provider
