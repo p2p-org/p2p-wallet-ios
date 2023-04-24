@@ -64,7 +64,11 @@ struct SendInputFeePromptView: View {
                     size: .large,
                     onPressed: viewModel.close.send
                 )
+<<<<<<< Updated upstream
                 .accessibility(identifier: "SendInputFeePromptView.multipleTokenActions.top")
+=======
+                .accessibility(identifier: "SendInputFeePromptView.multipleTokenActions.BottomActionContainer.TextButtonView.continue")
+>>>>>>> Stashed changes
                 .frame(height: 56)
 
                 TextButtonView(
@@ -73,7 +77,11 @@ struct SendInputFeePromptView: View {
                     size: .large,
                     onPressed: viewModel.chooseToken.send
                 )
+<<<<<<< Updated upstream
                 .accessibility(identifier: "SendInputFeePromptView.multipleTokenActions.bottom")
+=======
+                "SendInputFeePromptView.multipleTokenActions.BottomActionContainer.TextButtonView.switch")
+>>>>>>> Stashed changes
                 .frame(height: 56)
             }
         }
