@@ -20,8 +20,6 @@ target 'p2p_wallet' do
   pod 'Firebase/Analytics'
   pod 'Firebase/Crashlytics'
   pod 'Firebase/RemoteConfig'
-
-  pod 'SwiftNotificationCenter'
 end
 
 post_install do |installer|
