@@ -91,25 +91,6 @@ extension UIView {
             .padding(contentInset, backgroundColor: .f5fcf7, cornerRadius: 12, borderColor: .h34c759)
     }
 
-    /// Floating panel
-    static func floatingPanel(
-        contentInset: UIEdgeInsets = .init(all: 18),
-        cornerRadius: CGFloat = 12,
-        axis: NSLayoutConstraint.Axis = .vertical,
-        spacing: CGFloat = 8,
-        alignment: UIStackView.Alignment = .fill,
-        distribution: UIStackView.Distribution = .fill,
-        @BEStackViewBuilder builder: () -> [BEStackViewElement]
-    ) -> UIView {
-        let panel = WLFloatingPanelView(cornerRadius: cornerRadius, contentInset: contentInset)
-        panel.stackView.axis = axis
-        panel.stackView.spacing = spacing
-        panel.stackView.alignment = alignment
-        panel.stackView.distribution = distribution
-        panel.stackView.addArrangedSubviews(builder: builder)
-        return panel
-    }
-
     static func squareRoundedCornerIcon(
         backgroundColor: UIColor = .grayPanel,
         imageSize: CGFloat = 24,
