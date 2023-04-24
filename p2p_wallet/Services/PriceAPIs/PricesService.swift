@@ -117,7 +117,7 @@ class PricesService {
         var prices = currentPricesSubject.value
         for newPrice in newPrices where newPrice.value != nil {
             if newPrice.key.address == Token.usdc.address || newPrice.key.address == Token.usdt.address {
-                if let price = newPrice.value, let value = price.value, abs(value - 1.0) <= 0.02 {
+                if let price = newPrice.value, let value = price.value, abs(value - 1.0) <= 0.021 {
                     prices[newPrice.key.address] = CurrentPrice(value: 1.0, change24h: price.change24h)
                 } else {
                     prices[newPrice.key.address] = newPrice.value
