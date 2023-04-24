@@ -110,7 +110,13 @@ class RecipientSearchViewModel: ObservableObject {
         let ethereumSearch: Bool
         if let preChosenWallet {
             // Check token is support wormhole
-            if Wormhole.SupportedToken.bridges.map(\.solAddress).contains(preChosenWallet.token.address) {
+            if Wormhole.SupportedToken.bridges.filter({ bridge in
+                // Filter ETH Sol if FT is off
+                if bridge.coingekoID == "solana" {
+                    return available(.solanaEthAddressEnabled)
+                }
+                return true
+            }).map(\.solAddress).contains(preChosenWallet.token.address) {
                 ethereumSearch = true
             } else {
                 ethereumSearch = false
