@@ -8,7 +8,7 @@
 import Foundation
 import SolanaSwift
 
-struct DerivableAccount: Hashable {
+struct DerivableAccount: Hashable, Identifiable {
     let derivablePath: DerivablePath
     let info: KeyPair
     var amount: Double?
@@ -16,4 +16,8 @@ struct DerivableAccount: Hashable {
 
     // additional
     var isBlured: Bool?
+    
+    var id: String {
+        "\(info.publicKey.base58EncodedString) \(derivablePath.rawValue)"
+    }
 }
