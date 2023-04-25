@@ -1358,3 +1358,4 @@
 "The transaction was rejected. Open your link again." = "Giao dịch đã bị từ chối.  Mở lại liên kết của bạn.";
 "Wormhole Bridge is currently unable. Please try again later" = "Cầu Wormhole hiện không thể.  Vui lòng thử lại sau";
 "Add funds" = "Thêm các quỹ";
+"Wormhole Bridge is currently unable.\nPlease try again later" = "Cầu Wormhole hiện không hoạt động.\nVui lòng thử lại sau";
