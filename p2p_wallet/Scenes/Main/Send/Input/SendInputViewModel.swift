@@ -94,8 +94,6 @@ final class SendInputViewModel: BaseViewModel, ObservableObject {
 
     // MARK: - Dependencies
 
-    private let walletsRepository: WalletsRepository
-    private let pricesService: PricesServiceType
     @Injected private var analyticsManager: AnalyticsManager
 
     init(
@@ -109,11 +107,9 @@ final class SendInputViewModel: BaseViewModel, ObservableObject {
         self.source = source
         self.preChosenAmount = preChosenAmount
         let repository = Resolver.resolve(WalletsRepository.self)
-        walletsRepository = repository
         let wallets = repository.getWallets()
 
         let pricesService = Resolver.resolve(PricesService.self)
-        self.pricesService = pricesService
 
         // Setup source token
         let tokenInWallet: Wallet

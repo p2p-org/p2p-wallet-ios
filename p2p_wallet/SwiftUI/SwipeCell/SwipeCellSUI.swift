@@ -8,7 +8,7 @@
 import Foundation
 import SwiftUI
 
-public struct SwipeCellModifier: ViewModifier {
+struct SwipeCellModifier: ViewModifier {
     var id: String
     var cellWidth: CGFloat = UIScreen.main.bounds.width
     var leadingSideGroup: [SwipeCellActionItem] = []
@@ -22,7 +22,7 @@ public struct SwipeCellModifier: ViewModifier {
     @State private var hapticFeedbackOccurred: Bool = false
     @State private var openSideLock: SwipeGroupSide?
 
-    public func body(content: Content) -> some View {
+    func body(content: Content) -> some View {
         ZStack {
             if self.leadingSideGroup.isEmpty == false && self.offsetX != 0 {
                 self.swipeToRevealArea(swipeItemGroup: self.leadingSideGroup, side: .leading)
@@ -282,7 +282,7 @@ public struct SwipeCellModifier: ViewModifier {
     }
 }
 
-public extension View {
+extension View {
     /// swipe cell modifier
     /// - Parameters:
     ///   - id: the string id of this cell. The default value is a uuid string. If you want to set the currentUserInteractionCellID yourself, e.g. for tap to close functionality, you need to override this id value with your own cell id.
@@ -311,7 +311,7 @@ public extension View {
     }
 }
 
-public extension View {
+extension View {
     func castToAnyView() -> AnyView {
         AnyView(self)
     }

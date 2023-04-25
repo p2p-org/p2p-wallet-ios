@@ -8,7 +8,7 @@ import Foundation
 import Onboarding
 import Resolver
 
-class SocialSignInTryAgainViewModel: NSObject, ViewModelType {
+class SocialSignInTryAgainViewModel: NSObject {
     struct Input {
         let onTryAgain: PassthroughSubject<Void, Never> = .init()
         let onStartScreen: PassthroughSubject<Void, Never> = .init()
