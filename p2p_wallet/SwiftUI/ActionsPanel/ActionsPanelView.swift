@@ -9,47 +9,6 @@ import Combine
 import KeyAppUI
 import SwiftUI
 
-struct ActionsPanelBridgeView: View {
-    let actionsPublisher: AnyPublisher<[WalletActionType], Never>
-    let balancePublisher: AnyPublisher<String, Never>
-    let usdAmountPublisher: AnyPublisher<String, Never>
-    let action: (WalletActionType) -> Void
-
-    @State private var actions = [WalletActionType]()
-    @State private var balance = ""
-    @State private var usdAmount = ""
-
-    init(
-        actionsPublisher: AnyPublisher<[WalletActionType], Never>,
-        balancePublisher: AnyPublisher<String, Never>,
-        usdAmountPublisher: AnyPublisher<String, Never>? = nil,
-        action: @escaping (WalletActionType) -> Void
-    ) {
-        self.actionsPublisher = actionsPublisher
-        self.balancePublisher = balancePublisher
-        self.usdAmountPublisher = usdAmountPublisher ?? Empty().eraseToAnyPublisher()
-        self.action = action
-    }
-
-    var body: some View {
-        ActionsPanelView(
-            actions: actions,
-            balance: balance,
-            usdAmount: usdAmount,
-            action: action
-        )
-        .onReceive(balancePublisher) { balance in
-            self.balance = balance
-        }
-        .onReceive(usdAmountPublisher) { usdAmount in
-            self.usdAmount = usdAmount
-        }
-        .onReceive(actionsPublisher) { actions in
-            self.actions = actions
-        }
-    }
-}
-
 struct ActionsPanelView: View {
     let actions: [WalletActionType]
     let balance: String

@@ -20,7 +20,6 @@ enum AccountDetailsCoordinatorArgs {
 
 enum AccountDetailsCoordinatorResult {
     case cancel
-    case done
 }
 
 class AccountDetailsCoordinator: SmartCoordinator<AccountDetailsCoordinatorResult> {
@@ -131,7 +130,7 @@ class AccountDetailsCoordinator: SmartCoordinator<AccountDetailsCoordinatorResul
         case .openReceive:
             openReceive()
 
-        case let .openSwap(wallet, destination):
+        case let .openSwap(_, destination):
             openSwap(destination: destination)
 
         case .openSentViaLinkHistoryView:
