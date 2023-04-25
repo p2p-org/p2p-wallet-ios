@@ -6,12 +6,15 @@ import SwiftUI
 
 final class ReceiveCoordinator: SmartCoordinator<Void> {
     private let network: ReceiveNetwork
+    private var wrapIntoNavigation: Bool = false
 
     init(
         network: ReceiveNetwork,
-        presentation: SmartCoordinatorPresentation
+        presentation: SmartCoordinatorPresentation,
+        wrapIntoNavigation: Bool = false
     ) {
         self.network = network
+        self.wrapIntoNavigation = wrapIntoNavigation
         super.init(presentation: presentation)
     }
     
@@ -36,6 +39,6 @@ final class ReceiveCoordinator: SmartCoordinator<Void> {
 
         viewController.hidesBottomBarWhenPushed = true
 
-        return viewController
+        return wrapIntoNavigation ? UINavigationController(rootViewController: viewController) : viewController
     }
 }

@@ -49,7 +49,9 @@ class WormholeClaimCoordinator: SmartCoordinator<WormholeClaimCoordinatorResult>
                                     return ReceiveNetwork.Image.url(url)
                                 }()
                             ),
-                            presentation: SmartCoordinatorPresentPresentation(from: self.presentation))
+                            presentation: SmartCoordinatorPresentPresentation(from: self.presentation),
+                            wrapIntoNavigation: true
+                        )
                     )
                     .sink { _ in }
                     .store(in: &self.subscriptions)
