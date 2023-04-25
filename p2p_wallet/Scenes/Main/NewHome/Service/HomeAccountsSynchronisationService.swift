@@ -8,12 +8,17 @@
 import Foundation
 import KeyAppBusiness
 import Resolver
+import Wormhole
 
 class HomeAccountsSynchronisationService {
     @Injected var solanaAccountsService: SolanaAccountsService
     @Injected var ethereumAccountsService: EthereumAccountsService
+    @Injected var userActionService: UserActionService
 
     func refresh() async {
+        // Update wormhole
+        userActionService.handle(event: WormholeClaimUserActionEvent.refresh)
+
         do {
             try await withThrowingTaskGroup(of: Void.self) { group in
                 // solana

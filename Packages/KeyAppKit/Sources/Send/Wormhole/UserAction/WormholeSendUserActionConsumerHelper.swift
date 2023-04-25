@@ -22,7 +22,7 @@ public extension WormholeSendUserActionConsumer {
                 guard let sendStatuses else { return }
 
                 for sendStatus in sendStatuses {
-                    self?.handleEvent(event: .track(sendStatus))
+                    self?.handleInternalEvent(event: .track(sendStatus))
                 }
             } catch {
                 self?.errorObserver.handleError(error)
@@ -46,9 +46,9 @@ public extension WormholeSendUserActionConsumer {
                         continue
                     }
 
-                    self?.handleEvent(event: .track(bundleStatus))
+                    self?.handleInternalEvent(event: .track(bundleStatus))
                 } catch is JSONRPCError<String> {
-                    self?.handleEvent(event: .sendFailure(message: userAction.message, error: Error.sendingFailure))
+                    self?.handleInternalEvent(event: .sendFailure(message: userAction.message, error: Error.sendingFailure))
                 } catch {
                     continue
                 }
