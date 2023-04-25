@@ -17,9 +17,7 @@ import UIKit
 final class TabBarController: UITabBarController {
     // MARK: - Dependencies
 
-    @Injected private var analyticsManager: AnalyticsManager
     @Injected private var helpLauncher: HelpCenterLauncher
-    @Injected private var sellDataService: any SellDataService
     @Injected private var solanaTracker: SolanaTracker
 
     // MARK: - Publishers

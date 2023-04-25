@@ -17,38 +17,4 @@ extension Wallet {
     var mintAddress: String {
         token.address
     }
-
-    @available(*, deprecated)
-    mutating func updateBalance(diff: Double) {
-        guard diff != 0 else { return }
-
-        let currentBalance = lamports ?? 0
-        let reduction = abs(diff).toLamport(decimals: token.decimals)
-
-        if diff > 0 {
-            lamports = currentBalance + reduction
-        } else {
-            if currentBalance >= reduction {
-                lamports = currentBalance - reduction
-            } else {
-                lamports = 0
-            }
-        }
-    }
-
-    @available(*, deprecated)
-    mutating func increaseBalance(diffInLamports: Lamports) {
-        let currentBalance = lamports ?? 0
-        lamports = currentBalance + diffInLamports
-    }
-
-    @available(*, deprecated)
-    mutating func decreaseBalance(diffInLamports: Lamports) {
-        let currentBalance = lamports ?? 0
-        if currentBalance >= diffInLamports {
-            lamports = currentBalance - diffInLamports
-        } else {
-            lamports = 0
-        }
-    }
 }

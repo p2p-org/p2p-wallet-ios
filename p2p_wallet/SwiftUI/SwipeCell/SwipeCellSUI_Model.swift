@@ -8,7 +8,7 @@
 import Foundation
 import SwiftUI
 
-public enum SwipeGroupSide {
+enum SwipeGroupSide {
     case leading, trailing
 
     var sideFactor: CGFloat {
@@ -22,17 +22,17 @@ public enum SwipeGroupSide {
     }
 }
 
-public struct SwipeCellActionItem: Identifiable {
-    public var id: String
-    public var buttonView: () -> AnyView
-    public var swipeOutButtonView: (() -> AnyView)?
-    public var buttonWidth: CGFloat
-    public var backgroundColor: Color
-    public var swipeOutAction: Bool
-    public var swipeOutHapticFeedbackType: UINotificationFeedbackGenerator.FeedbackType?
-    public var swipeOutIsDestructive: Bool
-    // public var swipeOutButtonViewScaleFactor: CGFloat
-    public var actionCallback: () -> Void
+struct SwipeCellActionItem: Identifiable {
+    var id: String
+    var buttonView: () -> AnyView
+    var swipeOutButtonView: (() -> AnyView)?
+    var buttonWidth: CGFloat
+    var backgroundColor: Color
+    var swipeOutAction: Bool
+    var swipeOutHapticFeedbackType: UINotificationFeedbackGenerator.FeedbackType?
+    var swipeOutIsDestructive: Bool
+    // var swipeOutButtonViewScaleFactor: CGFloat
+    var actionCallback: () -> Void
 
     /**
      Initializer
@@ -45,7 +45,7 @@ public struct SwipeCellActionItem: Identifiable {
      - Parameter swipeOutHapticFeedbackType: If a swipeOutAction is activated, a haptic feedback will occur after the swipe out threshold is passed. Default is nil.
      - Parameter swipeOutIsDestructive: A Boolean that determines if the swipe out is destructive. If true, the content cell view will be "move out of sight" once the swipe out is triggered.
      */
-    public init(
+    init(
         id: String = UUID().uuidString,
         buttonView: @escaping () -> AnyView,
         swipeOutButtonView: (() -> AnyView)? = nil,
@@ -69,18 +69,18 @@ public struct SwipeCellActionItem: Identifiable {
 }
 
 /// Swipe Cell Settings
-public struct SwipeCellSettings {
+struct SwipeCellSettings {
     /// initializer
-    public init(openTriggerValue: CGFloat = 60, swipeOutTriggerRatio: CGFloat = 0.7, addWidthMargin: CGFloat = 5) {
+    init(openTriggerValue: CGFloat = 60, swipeOutTriggerRatio: CGFloat = 0.7, addWidthMargin: CGFloat = 5) {
         self.openTriggerValue = openTriggerValue
         self.swipeOutTriggerRatio = swipeOutTriggerRatio
         self.addWidthMargin = addWidthMargin
     }
 
     /// minimum horizontal translation value necessary to open the side menu
-    public var openTriggerValue: CGFloat
+    var openTriggerValue: CGFloat
     /// the ratio of the total cell width that triggers a swipe out action (provided one action has swipe out activated)
-    public var swipeOutTriggerRatio: CGFloat = 0.7
+    var swipeOutTriggerRatio: CGFloat = 0.7
     /// An additional value to add to the open menu width. This is useful if the cell has rounded corners.
-    public var addWidthMargin: CGFloat = 5
+    var addWidthMargin: CGFloat = 5
 }

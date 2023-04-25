@@ -14,28 +14,6 @@ extension UIApplication {
         UIApplication.shared.windows.first { $0.isKeyWindow }
     }
 
-    func rootViewController() -> UIViewController? {
-        kWindow?.rootViewController
-    }
-
-    func showIndetermineHud() {
-        kWindow?.showIndetermineHud()
-    }
-
-    func hideHud() {
-        kWindow?.hideHud()
-    }
-
-    func openAppSettings() {
-        if let bundleIdentifier = Bundle.main.bundleIdentifier,
-           let appSettings = URL(string: UIApplication.openSettingsURLString + bundleIdentifier)
-        {
-            if canOpenURL(appSettings) {
-                open(appSettings)
-            }
-        }
-    }
-
     class func topmostViewController(controller: UIViewController? = rootViewController()) -> UIViewController? {
         if let navigationController = controller as? UINavigationController {
             return topmostViewController(controller: navigationController.visibleViewController)
