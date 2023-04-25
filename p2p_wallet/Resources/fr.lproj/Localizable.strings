@@ -1353,6 +1353,5 @@
 "The link is already claimed" = "Le lien est déjà revendiqué";
 "You can’t receive money with it" = "Vous ne pouvez pas recevoir d'argent avec";
 "The transaction was rejected. Open your link again." = "La transaction a été rejetée.  Ouvrez à nouveau votre lien.";
-"Wormhole Bridge is currently unable. Please try again later" = "Wormhole Bridge est actuellement incapable.  Veuillez réessayer plus tard";
 "Add funds" = "Ajouter des fonds";
 "Wormhole Bridge is currently unable.\nPlease try again later" = "Wormhole Bridge est actuellement incapable.\nVeuillez réessayer plus tard";
