@@ -39,5 +39,6 @@ struct ChoosePhoneCodeItemView: View {
             
         }
         .padding(14)
+        .background(Color(Asset.Colors.snow.color))
     }
 }

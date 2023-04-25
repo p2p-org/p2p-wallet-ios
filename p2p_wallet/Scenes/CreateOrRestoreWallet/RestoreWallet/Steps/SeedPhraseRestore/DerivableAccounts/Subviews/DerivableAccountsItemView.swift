@@ -45,5 +45,6 @@ struct DerivableAccountsItemView: View {
                     .foregroundColor(Color(Asset.Colors.mountain.color))
             }
         }
+        .background(Color(Asset.Colors.snow.color))
     }
 }
