@@ -19,7 +19,7 @@ struct ModalView<Content: View>: View {
 
 class BottomSheetController<Content: View>: UIHostingController<ModalView<Content>> {
 
-    @MainActor public init(title: String? = nil, showHandler: Bool = true, rootView: Content) {
+    @MainActor init(title: String? = nil, showHandler: Bool = true, rootView: Content) {
         super.init(rootView: ModalView { rootView })
     }
 
