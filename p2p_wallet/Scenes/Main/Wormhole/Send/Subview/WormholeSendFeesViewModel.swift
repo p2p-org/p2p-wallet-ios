@@ -12,8 +12,6 @@ struct WormholeSendFees: Identifiable {
 
     let subtitle: String
 
-    let subtitleHighlighted: Bool
-
     let detail: String
 
     let isFree: Bool
@@ -26,7 +24,7 @@ struct WormholeSendFees: Identifiable {
         self.title = title
         self.subtitle = subtitle
         self.detail = detail ?? ""
-        self.subtitleHighlighted = subtitleHighlighted
+        self.isFree = isFree
     }
 }
 
@@ -67,7 +65,7 @@ class WormholeSendFeesViewModel: BaseViewModel, ObservableObject {
                         isFree: true
                     ),
                     .init(
-                        title: "Arbiter fee",
+                        title: L10n.usingWormholeBridge,
                         subtitle: adapter.arbiterFee?.crypto,
                         detail: adapter.arbiterFee?.fiat
                     ),
