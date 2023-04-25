@@ -9,17 +9,6 @@ import Foundation
 import LocalAuthentication
 
 extension LABiometryType {
-    var icon: UIImage? {
-        switch self {
-        case .touchID:
-            return .touchId
-        case .faceID:
-            return .faceId
-        default:
-            return nil
-        }
-    }
-
     var stringValue: String {
         switch self {
         case .touchID:
