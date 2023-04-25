@@ -29,7 +29,6 @@ extension JupiterSwapBusinessLogic {
                     return try await _sendToBlockchain(
                         account: account,
                         swapTransaction: swapTransaction,
-                        route: route,
                         services: services
                     )
                 }
@@ -53,7 +52,6 @@ extension JupiterSwapBusinessLogic {
                     return try await _sendToBlockchain(
                         account: account,
                         swapTransaction: swapTransaction,
-                        route: route,
                         services: services
                     )
                 }
@@ -64,7 +62,6 @@ extension JupiterSwapBusinessLogic {
     private static func _sendToBlockchain(
         account: KeyPair,
         swapTransaction: String,
-        route: Route,
         services: JupiterSwapServices
     ) async throws -> String {
         // get versioned transaction

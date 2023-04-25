@@ -7,7 +7,7 @@
 
 import Foundation
 
-public enum Fiat: String, CaseIterable, Hashable, Equatable {
+enum Fiat: String, CaseIterable, Hashable, Equatable {
     case usd
     case eur
     case cny

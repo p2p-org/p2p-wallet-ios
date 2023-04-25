@@ -2,12 +2,12 @@
 import KeyAppUI
 import SwiftUI
 
-public struct ErrorView: View {
-    public let title: String?
-    public let subtitle: String
-    public let onTryAgain: (() -> Void)?
+struct ErrorView: View {
+    let title: String?
+    let subtitle: String
+    let onTryAgain: (() -> Void)?
     
-    public init(
+    init(
         title: String? = nil,
         subtitle: String? = nil,
         onTryAgain: (() -> Void)? = nil
@@ -17,7 +17,7 @@ public struct ErrorView: View {
         self.onTryAgain = onTryAgain
     }
     
-    public var body: some View {
+    var body: some View {
         VStack(spacing: 0) {
             Image(uiImage: .catFail)
                 .padding(.top, 24)

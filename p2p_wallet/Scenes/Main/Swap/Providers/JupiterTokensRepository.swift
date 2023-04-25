@@ -25,7 +25,6 @@ final class JupiterTokensRepositoryImpl: JupiterTokensRepository {
 
     private let jupiterClient: JupiterAPI
     private let localProvider: JupiterTokensProvider
-    @Injected private var walletsRepository: WalletsRepository
     @Injected private var tokensRepositoryCache: SolanaTokensRepositoryCache
 
     // MARK: - Private params

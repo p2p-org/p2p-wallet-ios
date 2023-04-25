@@ -18,11 +18,11 @@ import Foundation
 ///         1            |        nil         |         1
 ///         1            |         0          |         0
 ///         1            |         1          |         1
-public final class MergingFlagsFetcher: FetchesFeatureFlags {
+final class MergingFlagsFetcher: FetchesFeatureFlags {
     private let primaryFetcher: FetchesFeatureFlags
     private let secondaryFetcher: FetchesFeatureFlags
 
-    public init(
+    init(
         primaryFetcher: FetchesFeatureFlags,
         secondaryFetcher: FetchesFeatureFlags
     ) {
@@ -30,7 +30,7 @@ public final class MergingFlagsFetcher: FetchesFeatureFlags {
         self.secondaryFetcher = secondaryFetcher
     }
 
-    public func fetchFeatureFlags(_ completion: @escaping ([FeatureFlag]) -> Void) {
+    func fetchFeatureFlags(_ completion: @escaping ([FeatureFlag]) -> Void) {
         var primaryFlags = [FeatureFlag]()
         var secondaryFlags = [FeatureFlag]()
         let group = DispatchGroup()
