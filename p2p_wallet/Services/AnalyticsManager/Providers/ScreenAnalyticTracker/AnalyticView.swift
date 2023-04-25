@@ -1,5 +1,5 @@
 import Foundation
 
-public protocol AnalyticView {
+protocol AnalyticView {
     var analyticId: String { get }
 }

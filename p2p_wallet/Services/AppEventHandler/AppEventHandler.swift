@@ -15,17 +15,10 @@ protocol AppEventHandlerType {
 }
 
 final class AppEventHandler: AppEventHandlerType {
-    // MARK: - Dependencies
-
-    private let storage: AccountStorageType & PincodeStorageType & NameStorageType = Resolver.resolve()
-    private let notificationsService: NotificationService = Resolver.resolve()
 
     // MARK: - Properties
 
     weak var delegate: AppEventHandlerDelegate?
-
-    @available(*, deprecated, message: "Will be removed")
-    private var resolvedName: String?
 
     init() {
         disableDevnetTestnetIfDebug()
