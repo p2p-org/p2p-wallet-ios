@@ -143,11 +143,18 @@ struct WormholeSendInputStateAdapter: Equatable {
             }
 
             return .init(isEnabled: false, title: text)
-        case let .ready(input, _, _):
+        case let .ready(input, output, _):
             if input.amount.value == 0 {
                 return .init(isEnabled: false, title: L10n.insufficientFunds)
             } else {
-                return .init(isEnabled: true, title: "\(L10n.send) \(cryptoFormatter.string(amount: input.amount))")
+                guard let resultAmount = output.fees.resultAmount else {
+                    return .init(isEnabled: false, title: L10n.internalError)
+                }
+                
+                return .init(
+                    isEnabled: true,
+                    title: "\(L10n.send) \(cryptoFormatter.string(amount: resultAmount))"
+                )
             }
         default:
             return .init(isEnabled: false, title: L10n.calculatingTheFees)
