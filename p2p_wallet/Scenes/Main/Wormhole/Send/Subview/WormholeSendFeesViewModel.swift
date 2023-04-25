@@ -1,4 +1,5 @@
 import AnalyticsManager
+import Combine
 import Foundation
 import KeyAppBusiness
 import KeyAppKitCore
@@ -33,6 +34,8 @@ class WormholeSendFeesViewModel: BaseViewModel, ObservableObject {
 
     @Published var loading: Bool = false
     @Published var fees: [WormholeSendFees] = []
+
+    public var close = PassthroughSubject<Void, Never>()
 
     init(fees: [WormholeSendFees]) {
         self.fees = fees
