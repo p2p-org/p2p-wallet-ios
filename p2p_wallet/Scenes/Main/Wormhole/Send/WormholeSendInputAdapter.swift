@@ -135,7 +135,11 @@ struct WormholeSendInputStateAdapter: Equatable {
             case .initializationFailure:
                 text = L10n.initializingError
             case .insufficientInputAmount:
-                text = L10n.insufficientFunds
+                if input.amount.value == 0 {
+                    text = L10n.enterAmount
+                } else {
+                    text = L10n.insufficientFunds
+                }
             case .invalidBaseFeeToken, .missingRelayContext:
                 text = L10n.internalError
             case .feeIsMoreThanInputAmount:
@@ -150,7 +154,7 @@ struct WormholeSendInputStateAdapter: Equatable {
                 guard let resultAmount = output.fees.resultAmount else {
                     return .init(isEnabled: false, title: L10n.internalError)
                 }
-                
+
                 return .init(
                     isEnabled: true,
                     title: "\(L10n.send) \(cryptoFormatter.string(amount: resultAmount))"
