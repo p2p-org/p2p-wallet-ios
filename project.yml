@@ -216,7 +216,7 @@ targets:
                     echo "Swiftgen is disabled in Release mode"
                     exit 0
                   fi
-                  "/opt/homebrew/bin/swiftgen config run --config ${PWD}/swiftgen.yml"
+                  /opt/homebrew/bin/swiftgen config run --config ${PWD}/swiftgen.yml
             name: "[SCRIPT] Swiftgen Run"
         postBuildScripts:
           - script: |
