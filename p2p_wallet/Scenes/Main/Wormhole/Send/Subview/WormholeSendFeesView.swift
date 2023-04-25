@@ -17,7 +17,7 @@ struct WormholeSendFeesView: View {
             HandleBarView()
                 .padding(.vertical, 6)
 
-            Text(L10n.transactionDetail)
+            Text(L10n.transactionDetails)
                 .fontWeight(.semibold)
                 .apply(style: .text1)
                 .padding(.bottom, 20)
@@ -43,6 +43,21 @@ struct WormholeSendFeesView: View {
                 .frame(height: 64)
             }
             .padding(.horizontal, 16)
+
+            Button(action: {
+                    viewModel.close.send()
+                }, label: {
+                    Text(L10n.okay)
+                        .font(uiFont: .font(of: .text2, weight: .semibold))
+                        .foregroundColor(Color(Asset.Colors.night.color))
+                        .frame(maxWidth: .infinity)
+                        .frame(height: 56)
+                        .background(Color(Asset.Colors.rain.color))
+                        .cornerRadius(12)
+                }
+            )
+            .padding(.horizontal, 16)
+            .padding(.top, 16)
         }
     }
 }
