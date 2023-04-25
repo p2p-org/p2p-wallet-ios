@@ -11,7 +11,6 @@
 "i already have a wallet" = "tôi đã có ví";
 "Terms and conditions" = "Các điều khoản và điều kiện";
 "Cancel" = "Huỷ bỏ";
-"Accept" = "Chấp nhận";
 "Congratulations!" = "Xin chúc mừng!";
 "Backup" = "Sao lưu";
 "error" = "lỗi";
@@ -49,11 +48,9 @@
 "Savings" = "Tiết kiệm";
 "Make your crypto working on you" = "Cách để ví điện tử của bạn hoạt động theo ý muốn của bạn";
 "Explore  DeFi" = "Khám phá DeFi";
-"Activities" = "Hoạt động";
 "Scan QR Code" = "Quét mã QR";
 "Receive token" = "Nhận token";
 "Send coins" = "Gửi tiền";
-"amount" = "số lượng";
 "Wallet address" = "Địa chỉ ví";
 "Send Now" = "Gửi ngay";
 "Something went wrong!\nPlease try again later" = "Đã xảy ra lỗi!\nVui lòng thử lại sau";
@@ -69,7 +66,6 @@
 "Copy to clipboard" = "Sao chép vào clipboard";
 "I have saved these words in a safe place" = "Tôi đã lưu những từ này ở một nơi an toàn";
 "Max" = "Tối đa";
-"Amount is not valid" = "Số tiền không hợp lệ";
 "Insufficient funds" = "Không đủ tiền";
 "The address is not valid" = "Địa chỉ không hợp lệ";
 "Sending token..." = "Đang gửi token...";
@@ -107,7 +103,6 @@
 "Go back to wallet" = "Quay lại ví";
 "Send tokens" = "Gửi tokens";
 "Receive tokens" = "Nhận tokens";
-"Add wallet" = "Thêm ví";
 "Confirmed" = "Đã xác nhận";
 "Loading" = "Đang tải";
 "Creating" = "Đang tạo";
@@ -124,7 +119,6 @@
 "month" = "tháng";
 "year" = "năm";
 "all" = "tất cả";
-"Address copied!" = "Đã sao chép địa chỉ!";
 "Profile" = "Hồ sơ";
 "Network" = "Mạng";
 "Security" = "Bảo mật";
@@ -157,12 +151,9 @@
 "Simple finance for everyone" = "Quản lý tài chính đơn giản cho mọi người";
 "Decline" = "Từ chối";
 "Wallet name" = "Tên ví";
-"24 hours" = "24 giờ";
 "Send to your wallet" = "Gửi đến ví của bạn";
-"All deposits are stored 100% non-custodiallity with keys held on this device" = "Tất cả các khoản tiền gửi được lưu trữ 100%% không giám sát với các chìa khóa được giữ trên thiết bị này";
 "Home" = "Trang chủ";
 "Friends" = "Bạn bè";
-"All my products" = "Tất cả các sản phẩm của tôi";
 "Payments" = "Thanh toán";
 "Exchange" = "Đổi";
 "Total balance" = "Tổng số dư";
@@ -171,10 +162,7 @@
 "My balances" = "Số dư của tôi";
 "Available" = "Khả dụng";
 "will cost" = "sẽ phải trả";
-"All my tokens" = "Tất cả tokens của tôi";
 "Search token" = "Tìm kiếm token";
-"Add token" = "Thêm token";
-"Adding token to your wallet" = "Thêm token vào ví của bạn";
 "We couldn’t add a token to your wallet.\nCheck your internet connection and try again." = "Chúng tôi không thể thêm token vào ví của bạn.\nHãy kiểm tra kết nối Internet của bạn và thử lại.";
 "Date" = "Ngày";
 "Value" = "Giá trị";
@@ -210,11 +198,6 @@
 "Select wallet" = "Chọn ví";
 "Send to" = "Gửi đến";
 "wallet_rename" = " ";
-"1h" = "1h";
-"4h" = "4h";
-"1d" = "1d";
-"1w" = "1w";
-"1m" = "1m";
 "Unauthorized" = "Không có quyền truy cập";
 "Not Found" = "Không tìm thấy";
 "Invalid request" = "Yêu cầu không hợp lệ";
@@ -232,7 +215,6 @@
 "The wallet address is not valid, it must be a %@ wallet address" = "Địa chỉ ví không hợp lệ, nó phải là địa chỉ ví %@";
 "Invalid account info" = "Thông tin tài khoản không hợp lệ";
 "Write down or duplicate these words in the correct order and keep them in a safe place.\nCopy them manually or backup to iCloud" = "Viết ra hoặc sao chép những từ này theo đúng thứ tự và giữ chúng ở nơi an toàn.\nSao chép chúng theo cách thủ công hoặc sao lưu vào iCloud";
-"Allow notifications" = "Cho phép thông báo";
 "You can not send tokens to yourself" = "Bạn không thể gửi tokens cho chính mình";
 "or your SOL account's address" = "hoặc địa chỉ tài khoản SOL của bạn";
 "no signer found" = "không tìm thấy tài khoản xác thực";
@@ -249,7 +231,6 @@
 "Non-native account can only be closed if its balance is zero" = "Tài khoản không phải gốc chỉ có thể bị đóng nếu số dư của nó bằng 0";
 "Your tokens" = "Tokens của bạn";
 "All tokens" = "Tất cả tokens";
-"Activity" = "Hoạt động";
 "Sending" = "Đang gửi";
 "Transaction processing" = "Xử lý giao dịch";
 "Success" = "Thành công";
@@ -266,8 +247,6 @@
 "Your public %@ address" = "Địa chỉ %@ công khai của bạn";
 "Select token" = "Chọn token";
 "To see %@ wallet address, you must add this token to your token list" = "Để xem địa chỉ ví %@, bạn phải thêm token này vào danh sách token của bạn";
-"Add token to see wallet address" = "Thêm token để xem địa chỉ ví";
-"%@ mint address" = "Địa chỉ mint %@";
 "Token's mint address is not valid" = "Địa chỉ mint của token không hợp lệ";
 "Powered by Project Serum" = "Được cung cấp bởi Project Serum";
 "PIN-code changed!" = "Mã PIN đã thay đổi!";
@@ -282,8 +261,6 @@
 "Create account" = "Tạo Tài khoản";
 "Close account" = "Đóng Tài khoản";
 "%@ to %@" = "%@ đến %@";
-"%@ Closed" = "%@ Đã đóng";
-"%@ Created" = "Tạo token %@";
 "To %@" = "Đến %@";
 "From token %@" = "Từ %@";
 "Completed" = "Đã hoàn thành";
@@ -321,7 +298,6 @@
 "Vietnamese Dong" = "Việt nam Đồng";
 "French Franc" = "Franc Pháp";
 "British pound sterling" = "Đồng bảng Anh";
-"Are you sure you want to delete this token account? This will permanently disable token transfers to this address and remove it from your wallet." = "Bạn có chắc chắn muốn xóa tài khoản token này không? Việc chuyển token đến địa chỉ này sẽ bị huỷ bỏ vĩnh viễn và tài khoản token sẽ bị xóa khỏi ví của bạn.";
 "Powered by" = "Được cung cấp bởi";
 "Connection problem" = "Lỗi kết nối";
 "Your connection to the Internet has been interrupted." = "Kết nối của bạn với Internet đã bị gián đoạn.";
@@ -347,7 +323,6 @@
 "I'm sure, It's correct" = "Tôi chắc chắn, nó chính xác";
 "Checking address' validity" = "Kiểm tra tính hợp lệ của địa chỉ";
 "Error checking address' validity. Are you sure it's correct?" = "Lỗi khi kiểm tra tính hợp lệ của địa chỉ. Bạn có chắc là nó chính xác?";
-"Address copied to clipboard!" = "Đã sao chép địa chỉ!";
 "Liquidity provider fee" = "Phí nhà cung cấp thanh khoản";
 "Currency changed" = "Loại tiền tệ đã thay đổi";
 "Network changed" = "Mạng đã thay đổi";
@@ -396,7 +371,6 @@
 "Incorrect account's owner" = "Chủ sở hữu tài khoản không chính xác";
 "Unsupported recipient's address" = "Địa chỉ người nhận không được hỗ trợ";
 "Fee calculator not found" = "Không tìm thấy máy tính phí";
-"Amount is too small" = "Số tiền quá nhỏ";
 "Not enough balance" = "Không đủ số dư";
 "Not enough token balance" = "Không đủ số dư token";
 "Decimals mismatch" = "Số thập phân không khớp";
@@ -404,7 +378,6 @@
 "Not enough output amount" = "Không đủ số lượng đầu ra";
 "expected" = "kì vọng";
 "minimum" = "tối thiểu";
-"actual" = "nhận về";
 "found" = "tìm thấy";
 "Current price" = "Giá hiện tại";
 "Max price slippage" = "Mức trượt giá tối đa";
@@ -447,7 +420,6 @@
 "This address accepts %@. You may lose assets by sending another coin." = "Địa chỉ này %@. Bạn có thể mất tài sản khi gửi một token khác.";
 "only Bitcoin" = "chỉ chấp nhận Bitcoin";
 "Minimum transaction amount of %@" = "Số tiền giao dịch tối thiểu là %@";
-"%@ is the remaining time to safely send the assets." = "%@ là thời gian còn lại để gửi tài sản một cách an toàn.";
 "Received %@ renBTC" = "Đã nhận %@ renBTC";
 "Receiving %@ renBTC: Pending" = "Nhận %@ renBTC: Đang chờ xử lý";
 "Solana Associated Token Account Required. This will require you to sign a transaction and spend some SOL." = "Yêu cầu tài khoản token liên kết Solana. Điều này sẽ yêu cầu bạn ký một giao dịch và trả một ít SOL.";
@@ -461,7 +433,6 @@
 "Free" = "Miễn phí";
 "Destination network" = "Chuyển tới mạng";
 "Receive at least: %@ %@" = "Nhận ít nhất: %@ %@";
-"Are you sure that this %@ address is valid?" = "Bạn có chắc rằng địa chỉ %@ này hợp lệ không?";
 "Input amount is too small, minimum amount for swapping is %@" = "Số tiền quá nhỏ, số tiền tối thiểu để hoán đổi là %@";
 "Calculating minimum transaction amount…" = "Đang tính số tiền giao dịch tối thiểu…";
 "Enter the recipient's address" = "Nhập địa chỉ của người nhận";
@@ -485,11 +456,8 @@
 "Terms of Use" = "Điều khoản sử dụng";
 "Privacy Policy" = "Chính sách bảo mật";
 "Checking name’s availability" = "Kiểm tra tính khả dụng của tên";
-"%@ is available" = "%@ hợp lệ";
 "name" = "tên";
-"%@ isn’t available" = "%@ không khả dụng";
 "Could not check name’s availability. Please check your internet connection!" = "Không thể kiểm tra tính khả dụng của tên. Xin vui lòng kiểm tra kết nối Internet của bạn!";
-"Any token can be received using username regardless of whether it is in your wallet's list" = "Bất kỳ token nào cũng có thể được nhận bằng tên người dùng bất kể nó có trong danh sách ví của bạn hay không";
 "Not yet reserved" = "Chưa được đặt trước";
 "Your username" = "Tên người dùng của bạn";
 "Your username allows you to receive any token within the Solana network even if it is not included in your wallet list." = "Tên người dùng của bạn cho phép bạn nhận bất kỳ token nào trong mạng Solana ngay cả khi nó không có trong danh sách ví của bạn.";
@@ -523,7 +491,6 @@
 "Security key can't be saved into icloud. Please try again." = "Không thể lưu khóa bảo mật vào icloud. Vui lòng thử lại.";
 "Combined tokens value" = "Tổng giá trị các tokens";
 "The future of non-custodial banking: the easy way to buy, sell and hold cryptos" = "Tương lai của ngân hàng không giám sát: cách dễ dàng để mua, bán và nắm giữ tiền điện tử";
-"All the ways to buy" = "Tất cả các cách để mua";
 "Buy Cryptos with Credit Card, Fiat or Apple Pay" = "Mua tiền điện tử bằng thẻ tín dụng, Fiat hoặc Apple Pay";
 "Nobody can access your private keys. Your data is fully safe" = "Không ai có thể truy cập các khóa riêng tư của bạn.\nDữ liệu của bạn hoàn toàn an toàn";
 "No hidden costs" = "Không có chi phí ẩn";
@@ -540,7 +507,6 @@
 "Renew" = "Thay mới";
 "The following words are the security key that you must keep in a safe place, written in the correct sequence.\nIf lost, no one can restore it.\nKeep it private, even from us" = "Các từ sau đây là khóa bảo mật mà bạn phải giữ ở nơi an toàn, được viết theo đúng trình tự.\n\n Nếu bị mất, không ai có thể khôi phục lại. \n Giữ bí mật, kể cả với chúng tôi";
 "Proceed without a username?" = "Tiếp tục mà không có tên người dùng?";
-"Anytime you want, you can easily reserve a username by going to the settings" = "Bất cứ lúc nào bạn muốn, bạn có thể dễ dàng đặt trước tên người dùng bằng cách đi tới phần cài đặt";
 "Proceed" = "Tiếp tục";
 "Proceed & don’t show again" = "Tiếp tục và không hiển thị lại";
 "Welcome back, %@" = "Chào mừng bạn trở lại, %@";
@@ -564,18 +530,12 @@
 "Confirm your wallet PIN" = "Xác nhận mã PIN cho ví của bạn";
 "Choose your wallet" = "Chọn ví của bạn";
 "PIN doesn’t match. Try again" = "Mã PIN không khớp. Thử lại";
-"Allow push notifications so you don’t miss any important updates on your account." = "Bật push notifications để bạn không bỏ lỡ bất kỳ cập nhật quan trọng nào trên tài khoản của mình.";
 "New staking option available" = "Có sẵn tùy chọn đặt cược mới";
 "Get up to 8%% APY on staking USDC" = "Nhận tới 8%% APY khi đặt cọc USDC";
 "just now" = "vừa mới";
-"%@m ago" = "%@ phút trước";
-"%@ successfully sent" = "Đã gửi thành công %@";
-"%@h ago" = "%@ giờ trước";
 "Received %@" = "Đã nhận %@";
-"%@ → %@ swapped successfully" = "%@ → %@ được hoán đổi thành công";
 "Let’s stay in touch" = "Hãy giữ liên lạc";
 "Don’t Allow" = "Không cho phép";
-"Allow" = "Cho phép";
 "Updating prices" = "Cập nhật giá";
 "Prices updated" = "Giá đã cập nhật";
 "Error when updating prices" = "Lỗi khi cập nhật giá";
@@ -604,7 +564,6 @@
 "Caution: this address has no funds" = "Thận trọng: địa chỉ này không có tiền";
 "There is an error occurred, please try again" = "Đã xảy ra lỗi, vui lòng thử lại";
 "Send %@ %@" = "Gửi %@ %@";
-"%@ Network" = "Mạng %@";
 "Choose the network" = "Chọn mạng";
 "Choose the recipient to proceed" = "Chọn người nhận để tiếp tục";
 "Review and confirm" = "Xem lại & xác nhận";
@@ -612,7 +571,6 @@
 "Be sure all details are correct before confirming the transaction. Once confirmed, it cannot be reversed." = "Hãy chắc chắn rằng tất cả các chi tiết là chính xác trước khi xác nhận giao dịch. Sau khi xác nhận, nó không thể được đảo ngược.";
 "Recipient’s\naddress" = "Địa chỉ\nngười nhận";
 "Total" = "Toàn bộ";
-"1 %@ Price" = "1 %@ Giá";
 "Pay swap fees with" = "Thanh toán phí hoán đổi với";
 "Total fee" = "Tổng phí";
 "Showing my address for" = "Hiển thị địa chỉ của tôi cho";
@@ -620,7 +578,6 @@
 "Enter username" = "Điền tên đăng nhập";
 "Change the token?" = "Thay đổi token?";
 "If the token is changed to %@, the address field must be filled in with a %@." = "Nếu đổi token thành %@, địa chỉ phải được điền bằng %@.";
-"%@-compatible address" = "một địa chỉ tương thích với %@";
 "Discard" = "Bỏ qua";
 "Change" = "Thay đổi";
 "username or address" = "tên người dùng / địa chỉ";
@@ -645,7 +602,6 @@
 "Swap %@ → %@" = "Hoán đổi %@ → %@";
 "Custom" = "Tuỳ chỉnh";
 "Custom slippage" = "Slippage tùy chỉnh";
-"A slippage is the difference between the expected price and the actual price at which a trade is executed" = "Trượt giá là sự khác biệt giữa giá dự kiến ​​và giá thực tế mà giao dịch được thực hiện";
 "Slippage can occur at any time, but it is most prevalent during periods of %@" = "Sự trượt giá có thể xảy ra bất cứ lúc nào, nhưng nó phổ biến nhất trong khoảng thời gian của %@";
 "Transactions that exceed 20% slippage tolerance may be %@" = "Các giao dịch vượt quá khả năng chịu trượt 20%% có thể là %@";
 "Slippage tolerance %@" = "Khả năng chịu trượt %@";
@@ -658,9 +614,7 @@
 "Make another transaction" = "Thực hiện một giao dịch khác";
 "Show swap details" = "Hiển thị chi tiết hoán đổi";
 "Tap to view in explorer" = "Nhấn để xem trong explorer";
-"%@ is successfully sent" = "%@ được gửi thành công";
 "The swap is being processed" = "Giao dịch hoán đổi đang được xử lý";
-"%@ is successfully swapped to %@" = "%@ được hoán đổi thành công thành %@";
 "Statuses received" = "Các trạng thái đã nhận";
 "Statuses received (%@)" = "Các trạng thái đã nhận (%@)";
 "The last one: " = "Cái cuối cùng:";
@@ -674,7 +628,6 @@
 "App version" = "Phiên bản ứng dụng";
 "Confirm transactions" = "Xác nhận giao dịch";
 "Pay fees with" = "Thanh toán phí bằng";
-"App icon" = "Biểu tượng ứng dụng";
 "Hide direct and mint addresses" = "Ẩn địa chỉ trực tiếp và địa chỉ cơ sở";
 "Show direct and mint addresses" = "Hiển thị địa chỉ trực tiếp và địa chỉ đúc tiền";
 "Tap and hold to copy" = "Nhấn và giữ để sao chép";
@@ -720,7 +673,6 @@
 "Turn on notifications" = "Bật thông báo";
 "Pay the %@ fee with" = "Thanh toán phí %@ bằng";
 "The transaction has been rejected" = "Giao dịch đã bị từ chối";
-"%@ was sent successfully" = "%@ đã được gửi thành công";
 "The price slippage was set at %@" = "Mức trượt giá được đặt ở %@";
 "Minimum purchase of %@ required." = "Yêu cầu mua tối thiểu %@.";
 "Choose a token for buying" = "Chọn một mã thông báo để mua";
@@ -737,7 +689,6 @@
 "Make another swap" = "Thực hiện hoán đổi khác";
 "Sent" = "Gởi";
 "Spent" = "Dành ra";
-"%@ Account Creation" = "Tạo tài khoản %@";
 "Deposit" = "Đặt cọc";
 "This value is calculated by subtracting the transaction fee from your balance." = "Giá trị này được tính bằng cách trừ phí giao dịch vào số dư của bạn.";
 "The maximum value is calculated by subtracting the transaction fee from your balance." = "Giá trị tối đa được tính bằng cách trừ phí giao dịch vào số dư của bạn.";
@@ -766,11 +717,9 @@
 "USDC" = "USDC";
 "Transaction detail" = "Chi tiết giao dịch";
 "After first transaction you will be able to view it here" = "Sau giao dịch đầu tiên, bạn sẽ có thể xem nó ở đây";
-"After first transaction you will\nbe able to view it here" = "Sau giao dịch đầu tiên, bạn sẽ \n có thể xem nó ở đây";
 "Sorry :(" = "Xin lỗi :(";
 "We couldn't upload the history.\nTry again later" = "Chúng tôi không thể tải lịch sử lên. \n Hãy thử lại sau";
 "Sorry" = "Xin lỗi";
-"A **%@** to receive bitcoins over the Bitcoin network" = "Một **%@** để nhận bitcoin qua mạng Bitcoin";
 "renBTC account is required" = "tài khoản renBTC là bắt buộc";
 "Your wallet list does not contain a renBTC account, and to create one **%@**." = "Danh sách ví của bạn không chứa tài khoản renBTC và để tạo một tài khoản **%@**.";
 "you need to make a transaction" = "bạn cần thực hiện một giao dịch";
@@ -878,7 +827,6 @@
 "By continuing, you agree to Key App’s" = "Bằng cách tiếp tục, bạn đồng ý với Key App’s";
 "Key App’s" = "Key App’s";
 "Incorrect PIN. Try again" = "Mã PIN không chính xác.  Thử lại";
-"After 2 more incorrect PINs we’ll log out current account for your safety" = "Sau 2 mã PIN sai nữa, chúng tôi sẽ đăng xuất tài khoản hiện tại để đảm bảo an toàn cho bạn";
 "You were signed out" = "Bạn đã đăng xuất";
 "Afrer 5 incorrect app PIN codes" = "Sau 5 mã PIN ứng dụng không chính xác";
 "SMS will not be delivered. Please try with social login" = "SMS sẽ không được gửi.  Vui lòng thử với đăng nhập xã hội";
@@ -1092,7 +1040,6 @@
 "Don't use the same pin for multiple accounts." = "Không sử dụng cùng một mã pin cho nhiều tài khoản.";
 "Wallet recovery" = "Khôi phục ví";
 "Error: %@" = "Lỗi: %@";
-"Amount is too small, expected %@, got %@" = "Số tiền quá nhỏ, dự kiến ​​%@, đã nhận %@";
 "The transaction has been confirmed in Solana network, but you have to track it also on Bitcoin network" = "Giao dịch đã được xác nhận trong mạng Solana, nhưng bạn cũng phải theo dõi nó trên mạng Bitcoin";
 "Recipient gets" = "Người nhận được";
 "Recipient’s address" = "Địa chỉ người nhận";
@@ -1230,7 +1177,6 @@
 "Received from" = "Nhận được tư";
 "There was a problem with the swap, your funds were refunded" = "Đã xảy ra sự cố với giao dịch hoán đổi, tiền của bạn đã được hoàn trả";
 "Swap details" = "chi tiết hoán đổi";
-"%@ signature" = "%@ chữ ký";
 "Your history will appear here.\nTo get started you can:" = "Lịch sử của bạn sẽ xuất hiện ở đây.\nĐể bắt đầu, bạn có thể:";
 "Oops! Something happened." = "Ối!  Một cái gì đó đã xảy ra.";
 "Stake" = "Cổ phần";

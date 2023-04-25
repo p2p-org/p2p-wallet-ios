@@ -11,7 +11,6 @@
 "i already have a wallet" = "j'ai déjà eu un portefeuille";
 "Terms and conditions" = "Termes et conditions";
 "Cancel" = "Annuler";
-"Accept" = "J'accepte";
 "Congratulations!" = "Toutes nos félicitations!";
 "Backup" = "Sauvegarde";
 "error" = "Erreur";
@@ -49,11 +48,9 @@
 "Savings" = "Des économies";
 "Make your crypto working on you" = "Faites travailler votre crypto sur vous";
 "Explore DeFi" = "Explorez DeFi";
-"Activities" = "Activités";
 "Scan QR Code" = "Scanner le code QR";
 "Receive token" = "Recevoir un jeton";
 "Send coins" = "Envoyer des pièces";
-"amount" = "montant";
 "Wallet address" = "Adresse du portefeuille";
 "Send Now" = "Envoyer maintenant";
 "Something went wrong!\nPlease try again later" = "Une erreur s'est produite!\nVeuillez réessayer plus tard";
@@ -69,7 +66,6 @@
 "Copy to clipboard" = "Copier dans le presse-papier";
 "I have saved these words in a safe place" = "J'ai gardé ces mots dans un endroit sûr";
 "Max" = "Max";
-"Amount is not valid" = "Le montant n'est pas valide";
 "Insufficient funds" = "Fonds insuffisants";
 "The address is not valid" = "L'adresse n'est pas valide";
 "Sending token..." = "Envoi du jeton ...";
@@ -107,7 +103,6 @@
 "Go back to wallet" = "Revenir au portefeuille";
 "Send tokens" = "Envoyer des jetons";
 "Receive tokens" = "Recevoir des jetons";
-"Add wallet" = "Ajouter un portefeuille";
 "Confirmed" = "Confirmé";
 "Loading" = "Chargement";
 "Creating" = "Création";
@@ -124,7 +119,6 @@
 "month" = "mois";
 "year" = "an";
 "all" = "tout";
-"Address copied!" = "Adresse copiée!";
 "Profile" = "Profil";
 "Network" = "Réseau";
 "Security" = "Sécurité";
@@ -157,12 +151,9 @@
 "Simple finance for everyone" = "Des finances simples pour tous";
 "Decline" = "Déclin";
 "Wallet name" = "Nom du portefeuille";
-"24 hours" = "24 heures";
 "Send to your wallet" = "Envoyez à votre portefeuille";
-"All deposits are stored 100% non-custodiallity with keys held on this device" = "Tous les dépôts sont stockés à 100%% non-dépositaire avec des clés détenues sur cet appareil";
 "Home" = "Accueil";
 "Friends" = "copains";
-"All my products" = "Tous mes produits";
 "Payments" = "Paiements";
 "Exchange" = "Échange";
 "Total balance" = "Solde total";
@@ -171,10 +162,7 @@
 "My balances" = "Mes soldes";
 "Available" = "Disponible";
 "will cost" = "coûtera";
-"All my tokens" = "Tous mes jetons";
 "Search token" = "Jeton de recherche";
-"Add token" = "Ajouter un jeton";
-"Adding token to your wallet" = "Ajouter un jeton à votre portefeuille";
 "We couldn’t add a token to your wallet.\nCheck your internet connection and try again." = "Nous n'avons pas pu ajouter de jeton à votre portefeuille.\nVérifiez votre connexion Internet et réessayez.";
 "Date" = "Date";
 "Value" = "Valeur";
@@ -210,11 +198,6 @@
 "Select wallet" = "Sélectionnez le portefeuille";
 "Send to" = "Envoyer à";
 "wallet_rename" = " ";
-"1h" = "1h";
-"4h" = "4h";
-"1d" = "1d";
-"1w" = "1w";
-"1m" = "1m";
 "Unauthorized" = "Non autorisé";
 "Not Found" = "Pas trouvé";
 "Invalid request" = "Requête invalide";
@@ -232,7 +215,6 @@
 "The wallet address is not valid, it must be a %@ wallet address" = "L'adresse du portefeuille n'est pas valide, il doit s'agir d'une adresse de portefeuille %@";
 "Invalid account info" = "Informations de compte non valides";
 "Write down or duplicate these words in the correct order and keep them in a safe place.\nCopy them manually or backup to iCloud" = "Notez ou dupliquez ces mots dans le bon ordre et conservez-les en lieu sûr.\nCopiez-les manuellement ou sauvegardez-les sur iCloud";
-"Allow notifications" = "Autoriser les notifications";
 "You can not send tokens to yourself" = "Vous ne pouvez pas vous envoyer de jetons";
 "or your SOL account's address" = "ou l'adresse de votre compte SOL";
 "no signer found" = "aucun signataire trouvé";
@@ -249,7 +231,6 @@
 "Non-native account can only be closed if its balance is zero" = "Un compte non natif ne peut être fermé que si son solde est nul";
 "Your tokens" = "Vos jetons";
 "All tokens" = "Tous les jetons";
-"Activity" = "Activité";
 "Sending" = "Envoi en cours";
 "Transaction processing" = "Transaction en cours";
 "Success" = "Succès";
@@ -266,8 +247,6 @@
 "Your public %@ address" = "Votre adresse %@ publique";
 "Select token" = "Sélectionnez le jeton";
 "To see %@ wallet address, you must add this token to your token list" = "Pour voir l'adresse du portefeuille %@, vous devez ajouter ce jeton à votre liste de jetons";
-"Add token to see wallet address" = "Ajouter un jeton pour voir l'adresse du portefeuille";
-"%@ mint address" = "%@ adresse mint";
 "Token's mint address is not valid" = "L'adresse d'atelier du jeton n'est pas valide";
 "Powered by Project Serum" = "Propulsé par Project Serum";
 "PIN-code changed!" = "Code PIN changé!";
@@ -282,8 +261,6 @@
 "Create account" = "Créer un Compte";
 "Close account" = "Fermer le Compte";
 "%@ to %@" = "%@ à %@";
-"%@ Closed" = "%@ Fermé";
-"%@ Created" = "%@ Créé";
 "To %@" = "À %@";
 "From token %@" = "De %@";
 "Completed" = "Complété";
@@ -321,7 +298,6 @@
 "Vietnamese Dong" = "Dong vietnamien";
 "French Franc" = "Franc français";
 "British pound sterling" = "Livre sterling britannique";
-"Are you sure you want to delete this token account? This will permanently disable token transfers to this address and remove it from your wallet." = "Voulez-vous vraiment supprimer ce compte de jeton? Cela désactivera définitivement les transferts de jetons vers cette adresse et le supprimera de votre portefeuille.";
 "Powered by" = "Alimenté par";
 "Connection problem" = "Problème de connection";
 "Your connection to the Internet has been interrupted." = "Votre connexion à Internet a été interrompue.";
@@ -347,7 +323,6 @@
 "I'm sure, It's correct" = "Je suis sûr, c'est correct";
 "Checking address' validity" = "Vérification de la validité de l'adresse";
 "Error checking address' validity. Are you sure it's correct?" = "Erreur lors de la vérification de la validité de l'adresse. Êtes-vous sûr que c'est correct?";
-"Address copied to clipboard!" = "Adresse copiée dans le presse-papiers !";
 "Liquidity provider fee" = "Commission du fournisseur de liquidité";
 "Currency changed" = "La devise a changé";
 "Network changed" = "Réseau modifié";
@@ -396,7 +371,6 @@
 "Incorrect account's owner" = "Propriétaire du compte incorrect";
 "Unsupported recipient's address" = "Adresse du destinataire non prise en charge";
 "Fee calculator not found" = "Calculateur de frais introuvable";
-"Amount is too small" = "Le montant est trop petit";
 "Not enough balance" = "Pas assez d'équilibre";
 "Not enough token balance" = "Pas assez de solde de jetons";
 "Decimals mismatch" = "Non-concordance des décimales";
@@ -404,7 +378,6 @@
 "Not enough output amount" = "Quantité de sortie insuffisante";
 "expected" = "attendu";
 "minimum" = "le minimum";
-"actual" = "réel";
 "found" = "trouvé";
 "Current price" = "Prix ​​actuel";
 "Max price slippage" = "Glissement de prix max";
@@ -447,7 +420,6 @@
 "This address accepts %@. You may lose assets by sending another coin." = "Cette adresse accepte %@. Vous pouvez perdre des actifs en envoyant une autre pièce.";
 "only Bitcoin" = "seulement Bitcoin";
 "Minimum transaction amount of %@" = "Montant minimum de la transaction de %@";
-"%@ is the remaining time to safely send the assets." = "%@ est le temps restant pour envoyer les actifs en toute sécurité.";
 "Received %@ renBTC" = "Reçu %@ renBTC";
 "Receiving %@ renBTC: Pending" = "Réception de %@ renBTC : en attente";
 "Solana Associated Token Account Required. This will require you to sign a transaction and spend some SOL." = "Compte Token associé Solana requis. Cela vous obligera à signer une transaction et à dépenser du SOL.";
@@ -461,7 +433,6 @@
 "Free" = "Libérer";
 "Destination network" = "Réseau de destination";
 "Receive at least: %@ %@" = "Recevoir au moins : %@ %@";
-"Are you sure that this %@ address is valid?" = "Êtes-vous sûr que cette adresse %@ est valide ?";
 "Input amount is too small, minimum amount for swapping is %@" = "Le montant saisi est trop petit, le montant minimum pour l'échange est %@";
 "Calculating minimum transaction amount…" = "Calcul du montant minimum de la transaction…";
 "Enter the recipient's address" = "Entrez l'adresse du destinataire";
@@ -485,11 +456,8 @@
 "Terms of Use" = "Conditions d'utilisation";
 "Privacy Policy" = "Politique de confidentialité";
 "Checking name’s availability" = "Vérification de la disponibilité du nom";
-"%@ is available" = "%@ est disponible";
 "name" = "nom";
-"%@ isn’t available" = "%@ n'est pas disponible";
 "Could not check name’s availability. Please check your internet connection!" = "Impossible de vérifier la disponibilité du nom. S'il vous plait, vérifiez votre connexion internet!";
-"Any token can be received using username regardless of whether it is in your wallet's list" = "N'importe quel jeton peut être reçu en utilisant le nom d'utilisateur, qu'il soit ou non dans votre liste de portefeuilles";
 "Not yet reserved" = "Pas encore réservé";
 "Your username" = "Votre nom d'utilisateur";
 "Your username allows you to receive any token within the Solana network even if it is not included in your wallet list." = "Votre nom d'utilisateur vous permet de recevoir n'importe quel jeton au sein du réseau Solana même s'il n'est pas inclus dans votre liste de portefeuille.";
@@ -523,7 +491,6 @@
 "Security key can't be saved into icloud. Please try again." = "La clé de sécurité ne peut pas être enregistrée dans icloud. Veuillez réessayer.";
 "Combined tokens value" = "Valeur des jetons combinés";
 "The future of non-custodial banking: the easy way to buy, sell and hold cryptos" = "L'avenir de la banque non dépositaire : le moyen facile d'acheter, de vendre et de conserver des cryptos";
-"All the ways to buy" = "Toutes les façons d'acheter";
 "Buy Cryptos with Credit Card, Fiat or Apple Pay" = "Achetez des cryptos avec carte de crédit, Fiat ou Apple Pay";
 "Nobody can access your private keys. Your data is fully safe" = "Personne ne peut accéder à vos clés privées.\nVos données sont entièrement sécurisées";
 "No hidden costs" = "Pas de frais cachés";
@@ -540,7 +507,6 @@
 "Renew" = "Renouveler";
 "The following words are the security key that you must keep in a safe place, written in the correct sequence.\nIf lost, no one can restore it.\nKeep it private, even from us" = "Les mots suivants sont une clé de sécurité que vous devez conserver dans un endroit sûr, écrite dans le bon ordre.\n\nEn cas de perte, personne ne peut la restaurer.\nGardez-la privée, même de notre part";
 "Proceed without a username?" = "Continuer sans nom d'utilisateur ?";
-"Anytime you want, you can easily reserve a username by going to the settings" = "À tout moment, vous pouvez facilement réserver un nom d'utilisateur en allant dans les paramètres";
 "Proceed" = "Procéder";
 "Proceed & don’t show again" = "Continuer et ne plus afficher";
 "Welcome back, %@" = "Bon retour, %@";
@@ -564,18 +530,12 @@
 "Confirm your wallet PIN" = "Confirmez le code PIN de votre portefeuille";
 "Choose your wallet" = "Choisissez votre portefeuille";
 "PIN doesn’t match. Try again" = "Le code PIN ne correspond pas. Réessayer";
-"Allow push notifications so you don’t miss any important updates on your account." = "Autorisez les notifications push pour ne manquer aucune mise à jour importante de votre compte.";
 "New staking option available" = "Nouvelle option de jalonnement disponible";
 "Get up to 8%% APY on staking USDC" = "Obtenez jusqu'à 8%% APY sur le jalonnement USDC";
 "just now" = "juste maintenant";
-"%@m ago" = "il y a %@m";
-"%@ successfully sent" = "%@ envoyé avec succès";
-"%@h ago" = "il y a %@h";
 "Received %@" = "Reçu %@";
-"%@ → %@ swapped successfully" = "%@ → %@ échangé avec succès";
 "Let’s stay in touch" = "Restons en contact";
 "Don’t Allow" = "Ne pas autoriser";
-"Allow" = "Permettre";
 "Updating prices" = "Mise à jour des prix";
 "Prices updated" = "Prix ​​mis à jour";
 "Error when updating prices" = "Erreur lors de la mise à jour des prix";
@@ -604,7 +564,6 @@
 "Caution: this address has no funds" = "Attention : cette adresse n'a pas de fonds";
 "There is an error occurred, please try again" = "Une erreur s'est produite, veuillez réessayer";
 "Send %@ %@" = "Envoyer %@ %@";
-"%@ Network" = "%@ Réseau";
 "Choose the network" = "Choisissez le réseau";
 "Choose the recipient to proceed" = "Choisissez le destinataire pour continuer";
 "Review and confirm" = "Examiner & confirmer";
@@ -612,7 +571,6 @@
 "Be sure all details are correct before confirming the transaction. Once confirmed, it cannot be reversed." = "Assurez-vous que tous les détails sont corrects avant de confirmer la transaction. Une fois confirmé, il ne peut pas être inversé.";
 "Recipient’s\naddress" = "Adresse\ndu destinataire";
 "Total" = "Le total";
-"1 %@ Price" = "1 %@ Prix";
 "Pay swap fees with" = "Payez les frais de swap avec";
 "Total fee" = "Montant total";
 "Showing my address for" = "Affichage de mon adresse pour";
@@ -620,7 +578,6 @@
 "Enter username" = "Saisissez votre nom d'utilisateur";
 "Change the token?" = "Changer le jeton ?";
 "If the token is changed to %@, the address field must be filled in with a %@." = "Si le jeton est changé en %@, le champ d'adresse doit être rempli avec un %@.";
-"%@-compatible address" = "Adresse compatible %@";
 "Discard" = "Jeter";
 "Change" = "Changer";
 "username or address" = "nom d'utilisateur / adresse";
@@ -645,7 +602,6 @@
 "Swap %@ → %@" = "Échanger %@ → %@";
 "Custom" = "Personnalisé";
 "Custom slippage" = "Glissement personnalisé";
-"A slippage is the difference between the expected price and the actual price at which a trade is executed" = "Un Glissement est une différence entre le prix attendu et le prix réel auquel une transaction est exécutée";
 "Slippage can occur at any time, but it is most prevalent during periods of %@" = "Le glissement peut se produire à tout moment, mais il est plus fréquent pendant les périodes de %@";
 "Transactions that exceed 20% slippage tolerance may be %@" = "Les transactions qui dépassent 20%% de tolérance de glissement peuvent être %@";
 "Slippage tolerance %@" = "Tolérance de glissement %@";
@@ -658,9 +614,7 @@
 "Make another transaction" = "Faire une autre opération";
 "Show swap details" = "Afficher les détails de l'échange";
 "Tap to view in explorer" = "Appuyez pour afficher dans l'explorateur";
-"%@ is successfully sent" = "%@ est envoyé avec succès";
 "The swap is being processed" = "L'échange est en cours de traitement";
-"%@ is successfully swapped to %@" = "%@ est remplacé avec succès par %@";
 "Statuses received" = "Statuts reçus";
 "Statuses received (%@)" = "Statuts reçus (%@)";
 "The last one: " = "Le dernier:";
@@ -674,7 +628,6 @@
 "App version" = "Version de l'application";
 "Confirm transactions" = "Confirmer les transactions";
 "Pay fees with" = "Payer les frais avec";
-"App icon" = "Icône de l'application";
 "Hide direct and mint addresses" = "Masquer les adresses directes et menthe";
 "Show direct and mint addresses" = "Afficher les adresses directes et menthe";
 "Tap and hold to copy" = "Appuyez et maintenez pour copier";
@@ -716,7 +669,6 @@
 "Turn on notifications" = "Activer les notifications";
 "Pay the %@ fee with" = "Payez les frais %@ avec";
 "The transaction has been rejected" = "La transaction a été rejetée";
-"%@ was sent successfully" = "%@ a été envoyé avec succès";
 "The price slippage was set at %@" = "Le glissement de prix a été fixé à %@";
 "Minimum purchase of %@ required." = "Achat minimum de %@ requis.";
 "Choose a token for buying" = "Choisissez un jeton pour acheter";
@@ -733,7 +685,6 @@
 "Make another swap" = "Faire un autre échange";
 "Sent" = "Envoyé";
 "Spent" = "Dépensé";
-"%@ Account Creation" = "%@ Création de compte";
 "Deposit" = "Verser";
 "This value is calculated by subtracting the transaction fee from your balance." = "Cette valeur est calculée en soustrayant les frais de transaction de votre solde.";
 "The maximum value is calculated by subtracting the transaction fee from your balance." = "La valeur maximale est calculée en soustrayant les frais de transaction de votre solde.";
@@ -762,11 +713,9 @@
 "USDC" = "USDC";
 "Transaction detail" = "Détail de la transaction";
 "After first transaction you will be able to view it here" = "Après la première transaction, vous pourrez le voir ici";
-"After first transaction you will\nbe able to view it here" = "Après la première transaction, vous\npouvez la voir ici";
 "Sorry :(" = "Désolé :(";
 "We couldn't upload the history.\nTry again later" = "Nous n'avons pas pu télécharger l'historique.\nRéessayez plus tard";
 "Sorry" = "Désolé";
-"A **%@** to receive bitcoins over the Bitcoin network" = "Un **%@** pour recevoir des bitcoins sur le réseau Bitcoin";
 "renBTC account is required" = "Un compte renBTC est requis";
 "Your wallet list does not contain a renBTC account, and to create one **%@**." = "Votre liste de portefeuille ne contient pas de compte renBTC, et pour en créer un **%@**.";
 "you need to make a transaction" = "vous devez effectuer une transaction";
@@ -875,7 +824,6 @@
 "By continuing, you agree to Key App’s" = "En continuant, vous acceptez les conditions d'utilisation de Key App";
 "Key App’s" = "Key App’s";
 "Incorrect PIN. Try again" = "NIP incorrect.  Réessayer";
-"After 2 more incorrect PINs we’ll log out current account for your safety" = "Après 2 autres codes PIN incorrects, nous déconnecterons le compte actuel pour votre sécurité";
 "You were signed out" = "Vous avez été déconnecté";
 "Afrer 5 incorrect app PIN codes" = "Après 5 codes PIN d'application incorrects";
 "SMS will not be delivered. Please try with social login" = "Les SMS ne seront pas délivrés.  Veuillez essayer avec une connexion sociale";
@@ -1089,7 +1037,6 @@
 "Don't use the same pin for multiple accounts." = "N'utilisez pas le même code PIN pour plusieurs comptes.";
 "Wallet recovery" = "Récupération de portefeuille";
 "Error: %@" = "Erreur : %@";
-"Amount is too small, expected %@, got %@" = "Le montant est trop petit, attendu %@, obtenu %@";
 "The transaction has been confirmed in Solana network, but you have to track it also on Bitcoin network" = "La transaction a été confirmée sur le réseau Solana, mais vous devez également la suivre sur le réseau Bitcoin";
 "Recipient gets" = "Le destinataire obtient";
 "Recipient’s address" = "Adresse du destinataire";
@@ -1227,7 +1174,6 @@
 "Received from" = "Reçu de";
 "Swap details" = "Détails de l'échange";
 "There was a problem with the swap, your funds were refunded" = "Il y a eu un problème avec le swap, vos fonds ont été remboursés";
-"%@ signature" = "signature %@";
 "Your history will appear here.\nTo get started you can:" = "Votre historique apparaîtra ici.\nPour commencer, vous pouvez :";
 "Oops! Something happened." = "Oops!  Quelque chose est arrivé.";
 "Stake" = "Miser";

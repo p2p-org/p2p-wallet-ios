@@ -15,25 +15,6 @@ struct PayingFee {
         case orderCreationFee
         case transactionFee
         case depositWillBeReturned
-
-        var headerString: String {
-            switch self {
-            case .liquidityProviderFee:
-                return L10n.liquidityProviderFee
-            case let .accountCreationFee(token: token):
-                if let token = token {
-                    return L10n.accountCreation(token)
-                } else {
-                    return L10n.accountCreationFee
-                }
-            case .orderCreationFee:
-                return L10n.serumOrderCreationPaidOncePerPair
-            case .transactionFee:
-                return L10n.networkFee
-            case .depositWillBeReturned:
-                return L10n.depositWillBeReturned
-            }
-        }
     }
 
     let type: FeeType

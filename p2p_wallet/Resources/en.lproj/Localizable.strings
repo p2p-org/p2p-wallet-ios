@@ -10,7 +10,6 @@
 "create new wallet" = "create new wallet";
 "Terms and conditions" = "Terms and conditions";
 "Cancel" = "Cancel";
-"Accept" = "Accept";
 "Congratulations!" = "Congratulations!";
 "Backup" = "Backup";
 "error" = "error";
@@ -48,11 +47,9 @@
 "Savings" = "Savings";
 "Make your crypto working on you" = "Make your crypto working on you";
 "Explore DeFi" = "Explore DeFi";
-"Activities" = "Activities";
 "Scan QR Code" = "Scan QR Code";
 "Receive token" = "Receive token";
 "Send coins" = "Send coins";
-"amount" = "amount";
 "Wallet address" = "Wallet address";
 "Send Now" = "Send Now";
 "Something went wrong!\nPlease try again later" = "Something went wrong!\nPlease try again later";
@@ -68,7 +65,6 @@
 "Copy to clipboard" = "Copy to clipboard";
 "I have saved these words in a safe place" = "I have saved these words in a safe place";
 "Max" = "Max";
-"Amount is not valid" = "Amount is not valid";
 "Insufficient funds" = "Insufficient funds";
 "The address is not valid" = "The address is not valid";
 "Sending token..." = "Sending token...";
@@ -106,7 +102,6 @@
 "Go back to wallet" = "Go back to wallet";
 "Send tokens" = "Send tokens";
 "Receive tokens" = "Receive tokens";
-"Add wallet" = "Add wallet";
 "Confirmed" = "Confirmed";
 "Loading" = "Loading";
 "Creating" = "Creating";
@@ -123,7 +118,6 @@
 "month" = "month";
 "year" = "year";
 "all" = "all";
-"Address copied!" = "Address copied!";
 "Profile" = "Profile";
 "Network" = "Network";
 "Security" = "Security";
@@ -155,12 +149,9 @@
 "Simple finance for everyone" = "Simple finance for everyone";
 "Decline" = "Decline";
 "Wallet name" = "Wallet name";
-"24 hours" = "24 hours";
 "Send to your wallet" = "Send to your wallet";
-"All deposits are stored 100% non-custodiallity with keys held on this device" = "All deposits are stored 100%% non-custodiallity with keys held on this device";
 "Home" = "Home";
 "Friends" = "Friends";
-"All my products" = "All my products";
 "Payments" = "Payments";
 "Exchange" = "Exchange";
 "Total balance" = "Total balance";
@@ -169,10 +160,7 @@
 "My balances" = "My balances";
 "Available" = "Available";
 "will cost" = "will cost";
-"All my tokens" = "All my tokens";
 "Search token" = "Search token";
-"Add token" = "Add token";
-"Adding token to your wallet" = "Adding token to your wallet";
 "We couldn’t add a token to your wallet.\nCheck your internet connection and try again." = "We couldn’t add a token to your wallet.\nCheck your internet connection and try again.";
 "Date" = "Date";
 "Value" = "Value";
@@ -208,11 +196,6 @@
 "Select wallet" = "Select wallet";
 "Send to" = "Send to";
 "wallet_rename" = "wallet";
-"1h" = "1h";
-"4h" = "4h";
-"1d" = "1d";
-"1w" = "1w";
-"1m" = "1m";
 "Unauthorized" = "Unauthorized";
 "Not Found" = "Not Found";
 "Invalid request" = "Invalid request";
@@ -230,7 +213,6 @@
 "The wallet address is not valid, it must be a %@ wallet address" = "The wallet address is not valid, it must be a %@ wallet address";
 "Invalid account info" = "Invalid account info";
 "Write down or duplicate these words in the correct order and keep them in a safe place.\nCopy them manually or backup to iCloud" = "Write down or duplicate these words in the correct order and keep them in a safe place.\nCopy them manually or backup to iCloud";
-"Allow notifications" = "Allow notifications";
 "You can not send tokens to yourself" = "You can not send tokens to yourself";
 "or your SOL account's address" = "or your SOL account's address";
 "no signer found" = "no signer found";
@@ -247,7 +229,6 @@
 "Non-native account can only be closed if its balance is zero" = "Non-native account can only be closed if its balance is zero";
 "Your tokens" = "Your tokens";
 "All tokens" = "All tokens";
-"Activity" = "Activity";
 "Sending" = "Sending";
 "Transaction processing" = "Transaction processing";
 "Success" = "Success";
@@ -264,8 +245,6 @@
 "Your public %@ address" = "Your public %@ address";
 "Select token" = "Select token";
 "To see %@ wallet address, you must add this token to your token list" = "To see %@ wallet address, you must add this token to your token list";
-"Add token to see wallet address" = "Add token to see wallet address";
-"%@ mint address" = "%@ mint address";
 "Token's mint address is not valid" = "Token's mint address is not valid";
 "Powered by Project Serum" = "Powered by Project Serum";
 "PIN-code changed!" = "PIN-code changed!";
@@ -280,8 +259,6 @@
 "Create account" = "Create Account";
 "Close account" = "Close Account";
 "%@ to %@" = "%@ to %@";
-"%@ Closed" = "%@ Closed";
-"%@ Created" = "%@ Created";
 "To %@" = "To %@";
 "From token %@" = "From %@";
 "Completed" = "Completed";
@@ -319,7 +296,6 @@
 "Vietnamese Dong" = "Vietnamese Dong";
 "French Franc" = "French Franc";
 "British pound sterling" = "British pound sterling";
-"Are you sure you want to delete this token account? This will permanently disable token transfers to this address and remove it from your wallet." = "Are you sure you want to delete this token account? This will permanently disable token transfers to this address and remove it from your wallet.";
 "Powered by" = "Powered by";
 "Connection problem" = "Connection problem";
 "Your connection to the Internet has been interrupted." = "Your connection to the Internet has been interrupted.";
@@ -345,7 +321,6 @@
 "I'm sure, It's correct" = "I'm sure, It's correct";
 "Checking address' validity" = "Checking address' validity";
 "Error checking address' validity. Are you sure it's correct?" = "Error checking address' validity. Are you sure it's correct?";
-"Address copied to clipboard!" = "Address copied to clipboard!";
 "Liquidity provider fee" = "Liquidity provider fee";
 "Currency changed" = "Currency changed";
 "Network changed" = "Network changed";
@@ -394,7 +369,6 @@
 "Incorrect account's owner" = "Incorrect account's owner";
 "Unsupported recipient's address" = "Unsupported recipient's address";
 "Fee calculator not found" = "Fee calculator not found";
-"Amount is too small" = "Amount is too small";
 "Not enough balance" = "Not enough balance";
 "Not enough token balance" = "Not enough token balance";
 "Decimals mismatch" = "Decimals mismatch";
@@ -402,7 +376,6 @@
 "Not enough output amount" = "Not enough output amount";
 "expected" = "expected";
 "minimum" = "minimum";
-"actual" = "actual";
 "found" = "found";
 "Current price" = "Current price";
 "Max price slippage" = "Max price slippage";
@@ -445,7 +418,6 @@
 "This address accepts %@. You may lose assets by sending another coin." = "This address accepts %@. You may lose assets by sending another coin.";
 "only Bitcoin" = "only Bitcoin";
 "Minimum transaction amount of %@" = "Minimum transaction amount of **%@**.";
-"%@ is the remaining time to safely send the assets." = "**%@** is the remaining time to safely send the assets.";
 "Received %@ renBTC" = "Received %@ renBTC";
 "Receiving %@ renBTC: Pending" = "Receiving %@ renBTC: Pending";
 "Solana Associated Token Account Required. This will require you to sign a transaction and spend some SOL." = "Solana Associated Token Account Required. This will require you to sign a transaction and spend some SOL.";
@@ -459,7 +431,6 @@
 "Free" = "Free";
 "Destination network" = "Destination network";
 "Receive at least: %@ %@" = "Receive at least: %@ %@";
-"Are you sure that this %@ address is valid?" = "Are you sure that this %@ address is valid?";
 "Input amount is too small, minimum amount for swapping is %@" = "Input amount is too small, minimum amount for swapping is %@";
 "Calculating minimum transaction amount…" = "Calculating minimum transaction amount…";
 "Enter the recipient's address" = "Enter the recipient's address";
@@ -482,11 +453,8 @@
 "Terms of Use" = "Terms of Use";
 "Privacy Policy" = "Privacy Policy";
 "Checking name’s availability" = "Checking name’s availability";
-"%@ is available" = "%@ is available";
 "name" = "name";
-"%@ isn’t available" = "%@ isn’t available";
 "Could not check name’s availability. Please check your internet connection!" = "Could not check name’s availability. Please check your internet connection!";
-"Any token can be received using username regardless of whether it is in your wallet's list" = "Any token can be received using username regardless of whether it is in your wallet's list";
 "Not yet reserved" = "Not yet reserved";
 "Your username" = "Your username";
 "Your username allows you to receive any token within the Solana network even if it is not included in your wallet token list." = "Your username allows you to receive any token within the Solana network even if it is not included in your wallet token list.";
@@ -520,7 +488,6 @@
 "Security key can't be saved into icloud. Please try again." = "Security key can't be saved into icloud. Please try again.";
 "Combined tokens value" = "Combined tokens value";
 "The future of non-custodial banking: the easy way to buy, sell and hold cryptos" = "The future of non-custodial banking: the easy way to buy, sell and hold cryptos";
-"All the ways to buy" = "All the ways to buy";
 "Buy Cryptos with Credit Card, Fiat or Apple Pay" = "Buy Cryptos with Credit Card, Fiat or Apple Pay";
 "Nobody can access your private keys. Your data is fully safe" = "Nobody can access your private keys.\nYour data is fully safe";
 "No hidden costs" = "No hidden costs";
@@ -537,7 +504,6 @@
 "Renew" = "Renew";
 "The following words are the security key that you must keep in a safe place, written in the correct sequence.\nIf lost, no one can restore it.\nKeep it private, even from us" = "The following words are the security key that you must keep in a safe place, written in the correct sequence.\n\nIf lost, no one can restore it.\nKeep it private, even from us";
 "Proceed without a username?" = "Proceed without a username?";
-"Anytime you want, you can easily reserve a username by going to the settings" = "Anytime you want, you can easily reserve a username by going to the settings";
 "Proceed" = "Proceed";
 "Proceed & don’t show again" = "Proceed & don’t show again";
 "Welcome back, %@" = "Welcome back, %@";
@@ -561,18 +527,12 @@
 "Confirm your wallet PIN" = "Confirm your wallet PIN";
 "Choose your wallet" = "Choose your wallet";
 "PIN doesn’t match. Try again" = "PIN doesn’t match. Try again";
-"Allow push notifications so you don’t miss any important updates on your account." = "Allow push notifications so you don’t miss any important updates on your account.";
 "New staking option available" = "New staking option available";
 "Get up to 8%% APY on staking USDC" = "Get up to 8%% APY on staking USDC";
 "just now" = "just now";
-"%@m ago" = "%@m ago";
-"%@ successfully sent" = "%@ successfully sent";
-"%@h ago" = "%@h ago";
 "Received %@" = "Received %@";
-"%@ → %@ swapped successfully" = "%@ → %@ swapped successfully";
 "Let’s stay in touch" = "Let’s stay in touch";
 "Don’t Allow" = "Don’t Allow";
-"Allow" = "Allow";
 "Updating prices" = "Updating prices";
 "Prices updated" = "Prices updated";
 "Error when updating prices" = "Error when updating prices";
@@ -601,14 +561,12 @@
 "Caution: this address has no funds" = "Caution: this address has no funds";
 "There is an error occurred, please try again" = "There is an error occurred, please try again";
 "Send %@ %@" = "Send %@ %@";
-"%@ Network" = "%@ Network";
 "Choose the network" = "Choose the network";
 "Choose the recipient to proceed" = "Choose the recipient to proceed";
 "Review and confirm" = "Review & confirm";
 "Confirm sending %@" = "Confirm sending %@";
 "Be sure all details are correct before confirming the transaction. Once confirmed, it cannot be reversed." = "Be sure all details are correct before confirming the transaction. Once confirmed, it cannot be reversed.";
 "Total" = "Total";
-"1 %@ Price" = "1 %@ Price";
 "Pay swap fees with" = "Pay swap fees with";
 "Total fee" = "Total fee";
 "Showing my address for" = "Showing my address for";
@@ -616,7 +574,6 @@
 "Enter username" = "Enter username";
 "Change the token?" = "Change the token?";
 "If the token is changed to %@, the address field must be filled in with a %@." = "If the token is changed to %@, the address field must be filled in with a %@.";
-"%@-compatible address" = "%@-compatible address";
 "Discard" = "Discard";
 "Change" = "Change";
 "username or address" = "username or address";
@@ -641,7 +598,6 @@
 "Swap %@ → %@" = "Swap %@ → %@";
 "Custom" = "Custom";
 "Custom slippage" = "Custom slippage";
-"A slippage is the difference between the expected price and the actual price at which a trade is executed" = "A slippage is the difference between the expected price and the actual price at which a trade is executed";
 "Slippage can occur at any time, but it is most prevalent during periods of %@" = "Slippage can occur at any time, but it is most prevalent during periods of %@";
 "Transactions that exceed 20% slippage tolerance may be %@" = "Transactions that exceed 20%% slippage tolerance may be %@";
 "Slippage tolerance %@" = "Slippage tolerance %@";
@@ -654,9 +610,7 @@
 "Make another transaction" = "Make another transaction";
 "Show swap details" = "Show swap details";
 "Tap to view in explorer" = "Tap to view in explorer";
-"%@ is successfully sent" = "%@ is successfully sent";
 "The swap is being processed" = "The swap is being processed";
-"%@ is successfully swapped to %@" = "%@ is successfully swapped to %@";
 "Statuses received" = "Statuses received";
 "Statuses received (%@)" = "Statuses received (%@)";
 "The last one: " = "The last one:";
@@ -670,7 +624,6 @@
 "App version" = "App version";
 "Confirm transactions" = "Confirm transactions";
 "Pay fees with" = "Pay fees with";
-"App icon" = "App icon";
 "Hide direct and mint addresses" = "Hide direct and mint addresses";
 "Show direct and mint addresses" = "Show direct and mint addresses";
 "Tap and hold to copy" = "Tap and hold to copy";
@@ -711,7 +664,6 @@
 "Turn on notifications" = "Turn on notifications";
 "Pay the %@ fee with" = "Pay the %@ fee with";
 "The transaction has been rejected" = "The transaction has been rejected";
-"%@ was sent successfully" = "%@ was sent successfully";
 "The price slippage was set at %@" = "The price slippage was set at %@";
 "Minimum purchase of %@ required." = "Minimum purchase of %@ required.";
 "Choose a token for buying" = "Choose a token for buying";
@@ -728,7 +680,6 @@
 "Make another swap" = "Make another swap";
 "Sent" = "Sent";
 "Spent" = "Spent";
-"%@ Account Creation" = "%@ Account Creation";
 "Deposit" = "Deposit";
 "This value is calculated by subtracting the transaction fee from your balance." = "This value is calculated by subtracting the transaction fee from your balance.";
 "The maximum value is calculated by subtracting the transaction fee from your balance." = "The maximum value is calculated by subtracting the transaction fee from your balance.";
@@ -754,10 +705,8 @@
 "renBTC" = "renBTC";
 "USDC" = "USDC";
 "Transaction detail" = "Transaction detail";
-"After first transaction you will\nbe able to view it here" = "After first transaction you will\nbe able to view it here";
 "We couldn't upload the history.\nTry again later" = "We couldn't upload the history.\nTry again later";
 "Sorry" = "Sorry";
-"A **%@** to receive bitcoins over the Bitcoin network" = "A **%@** to receive bitcoins over the Bitcoin network";
 "renBTC account is required" = "renBTC account is required";
 "Your wallet list does not contain a renBTC account, and to create one **%@**" = "Your wallet list does not contain a renBTC account, and to create one **%@**.";
 "you need to make a transaction" = "you need to make a transaction";
@@ -866,7 +815,6 @@
 "By continuing, you agree to Key App’s" = "By continuing, you agree to Key App’s";
 "Key App’s" = "Key App’s";
 "Incorrect PIN. Try again" = "Incorrect PIN. Try again";
-"After 2 more incorrect PINs we’ll log out current account for your safety" = "After 2 more incorrect PINs we’ll log out current account for your safety";
 "You were signed out" = "You were signed out";
 "SMS will not be delivered. Please try with social login" = "SMS will not be delivered. Please try with social login";
 "SMS will not be delivered. Please check your phone settings" = "SMS will not be delivered. Please check your phone settings";
@@ -1061,7 +1009,6 @@
 "Don't use the same pin for multiple accounts." = "Don't use the same pin for multiple accounts.";
 "Wallet recovery" = "Wallet recovery";
 "Error: %@" = "Error: %@";
-"Amount is too small, expected %@, got %@" = "Amount is too small, expected %@, got %@";
 "The transaction has been confirmed in Solana network, but you have to track it also on Bitcoin network" = "The transaction has been confirmed in Solana network, but you have to track it also on Bitcoin network";
 "Recipient gets" = "Recipient gets";
 "Recipient’s address" = "Recipient’s address";
@@ -1198,7 +1145,6 @@
 "Received from" = "Received from";
 "Swap details" = "Swap details";
 "There was a problem with the swap, your funds were refunded" = "There was a problem with the swap, your funds were refunded";
-"%@ signature" = "%@ signature";
 "Your history will appear here.\nTo get started you can:" = "Your history will appear here.\nTo get started you can:";
 "Oops! Something happened." = "Oops! Something happened.";
 "Stake" = "Stake";
