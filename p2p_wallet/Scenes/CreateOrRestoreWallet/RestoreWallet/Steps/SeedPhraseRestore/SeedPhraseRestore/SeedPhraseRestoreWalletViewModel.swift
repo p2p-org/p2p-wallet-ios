@@ -9,7 +9,6 @@ final class SeedPhraseRestoreWalletViewModel: BaseViewModel, ObservableObject {
 
     @Injected private var notificationService: NotificationService
     @Injected private var clipboardManager: ClipboardManagerType
-    @Injected private var analyticsManager: AnalyticsManager
 
     // MARK: - Output
 

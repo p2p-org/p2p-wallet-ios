@@ -7,13 +7,6 @@
 
 import Foundation
 
-// MARK: - Constants
-
-extension Double {
-    /// Maximum slippage value allowed
-    static var maxSlippage: Self { 0.5 }
-}
-
 // MARK: - Optional operations
 
 extension Optional where Wrapped == Double {

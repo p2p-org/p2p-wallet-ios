@@ -20,7 +20,7 @@ struct OverflowScrollView<Content>: View where Content : View {
         self.content = scrollView.content
     }
 
-    public var body: some View {
+    var body: some View {
         GeometryReader { geometry in
             ScrollView(axes, showsIndicators: showsIndicator) {
                 content

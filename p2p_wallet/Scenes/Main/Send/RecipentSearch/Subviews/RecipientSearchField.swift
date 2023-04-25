@@ -80,63 +80,6 @@ struct RecipientSearchField: View {
     }
 }
 
-private struct RecipientTextField: UIViewRepresentable {
-    @Binding private var isFirstResponder: Bool
-    @Binding private var text: String
-
-    init(text: Binding<String>, isFirstResponder: Binding<Bool>) {
-        _text = text
-        _isFirstResponder = isFirstResponder
-    }
-
-    func makeUIView(context: Context) -> UITextField {
-        let view = UITextField()
-        view.addTarget(
-            context.coordinator,
-            action: #selector(context.coordinator.textViewDidChange),
-            for: .editingChanged
-        )
-        return view
-    }
-
-    func updateUIView(_ uiView: UITextField, context _: Context) {
-        if uiView.text != text {
-            uiView.text = text
-        }
-        if uiView.isFirstResponder, !isFirstResponder {
-            DispatchQueue.main.async { uiView.resignFirstResponder() }
-        } else if !uiView.isFirstResponder, isFirstResponder {
-            DispatchQueue.main.async { uiView.becomeFirstResponder() }
-        }
-    }
-
-    func makeCoordinator() -> Coordinator {
-        Coordinator($text, isFirstResponder: $isFirstResponder)
-    }
-
-    class Coordinator: NSObject, UITextFieldDelegate {
-        var text: Binding<String>
-        var isFirstResponder: Binding<Bool>
-
-        init(_ text: Binding<String>, isFirstResponder: Binding<Bool>) {
-            self.text = text
-            self.isFirstResponder = isFirstResponder
-        }
-
-        @objc func textViewDidChange(_ textField: UITextField) {
-            text.wrappedValue = textField.text ?? ""
-        }
-
-        func textFieldDidBeginEditing(_: UITextField) {
-            isFirstResponder.wrappedValue = true
-        }
-
-        func textFieldDidEndEditing(_: UITextField) {
-            isFirstResponder.wrappedValue = false
-        }
-    }
-}
-
 struct RecipientSearchField_Previews: PreviewProvider {
     static var previews: some View {
         RecipientSearchField(
