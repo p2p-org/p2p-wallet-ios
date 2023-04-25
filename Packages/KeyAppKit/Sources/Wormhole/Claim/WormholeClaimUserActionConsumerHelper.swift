@@ -11,9 +11,15 @@ import KeyAppKitCore
 
 public extension WormholeClaimUserActionConsumer {
     func fetchNewBundle() {
-        Task { [weak self] in
+        guard let address = address else { return }
+        guard fetchNewBundleTask == nil else { return }
+
+        fetchNewBundleTask = Task { [weak self] in
             do {
-                guard let address = self?.address else { return }
+                // Clean after running
+                defer {
+                    self?.fetchNewBundleTask = nil
+                }
 
                 let bundles: [WormholeBundleStatus]? = try await self?
                     .wormholeAPI
@@ -22,7 +28,7 @@ public extension WormholeClaimUserActionConsumer {
                 guard let bundles else { return }
 
                 for bundle in bundles {
-                    self?.handleEvent(event: .track(bundle))
+                    self?.handleInternalEvent(event: .track(bundle))
                 }
             } catch {
                 self?.errorObserver.handleError(error)
@@ -46,9 +52,11 @@ public extension WormholeClaimUserActionConsumer {
                         continue
                     }
 
-                    self?.handleEvent(event: .track(bundleStatus))
+                    self?.handleInternalEvent(event: .track(bundleStatus))
                 } catch is JSONRPCError<String> {
-                    self?.handleEvent(event: .claimFailure(bundleID: userAction.bundleID, reason: Error.claimFailure))
+                    self?
+                        .handleInternalEvent(event: .claimFailure(bundleID: userAction.bundleID,
+                                                                  reason: Error.claimFailure))
                 } catch {
                     continue
                 }
