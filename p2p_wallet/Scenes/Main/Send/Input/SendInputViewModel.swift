@@ -38,10 +38,7 @@ final class SendInputViewModel: BaseViewModel, ObservableObject {
 
     @Published var feeTitle = L10n.fees("")
     @Published var isFeeLoading: Bool = true
-
     @Published var loadingState: LoadableState = .loaded
-    
-    @Published var showSecondaryAmounts = true
 
     // ActionButton
     @Published var actionButtonData = SliderActionButtonData.zero
@@ -151,7 +148,7 @@ final class SendInputViewModel: BaseViewModel, ObservableObject {
         var exchangeRate = [String: CurrentPrice]()
         var tokens = Set<Token>()
         wallets.forEach {
-            exchangeRate[$0.token.symbol] = pricesService.currentPrice(mint: $0.token.address)
+            exchangeRate[$0.token.symbol] = $0.price
             tokens.insert($0.token)
         }
 
@@ -286,6 +283,7 @@ private extension SendInputViewModel {
                 )
             })
             .store(in: &subscriptions)
+
         inputAmountViewModel.changeAmount
             .debounce(for: 0.1, scheduler: DispatchQueue.main)
             .sinkAsync(receiveValue: { [weak self] value in
@@ -418,12 +416,11 @@ private extension SendInputViewModel {
                 self.turnOffInputSwitch()
             } else if
                 let amount = currentWallet.amount,
-                currentWallet.isUsdcOrUsdt && abs(amount - currentWallet.amountInCurrentFiat) <= 0.021 {
-                
+                currentWallet.isUsdcOrUsdt && abs(amount - currentWallet.amountInCurrentFiat) <= 0.021
+            {
                 self.turnOffInputSwitch()
             } else {
                 self.inputAmountViewModel.isSwitchAvailable = self.allowSwitchingMainAmountType
-                self.showSecondaryAmounts = true
             }
         }
         .store(in: &subscriptions)
@@ -434,7 +431,6 @@ private extension SendInputViewModel {
     func turnOffInputSwitch() {
         inputAmountViewModel.mainAmountType = .token
         inputAmountViewModel.isSwitchAvailable = false
-        showSecondaryAmounts = false
     }
 
     func updateInputAmountView() {
