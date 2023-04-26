@@ -6,6 +6,7 @@
 //
 
 import Foundation
+import SolanaSwift
 
 struct RendableListPendingTransactionItem: RendableListTransactionItem {
     let trx: PendingTransaction
@@ -61,6 +62,16 @@ struct RendableListPendingTransactionItem: RendableListTransactionItem {
             }
             
             return .double(fromUrl, toUrl)
+            
+        case let transaction as ClaimSentViaLinkTransaction:
+            if
+                let urlStr = transaction.token.logoURI,
+                let url = URL(string: urlStr)
+            {
+                return .single(url)
+            } else {
+                return .icon(.transactionReceive)
+            }
         default:
             return .icon(.planet)
         }
@@ -82,6 +93,8 @@ struct RendableListPendingTransactionItem: RendableListTransactionItem {
             
         case let transaction as SwapRawTransactionType:
             return L10n.to(transaction.sourceWallet.token.symbol, transaction.destinationWallet.token.symbol)
+        case let transaction as ClaimSentViaLinkTransaction:
+            return L10n.from(RecipientFormatter.shortFormat(destination: transaction.claimableTokenInfo.keypair.publicKey.base58EncodedString))
         default:
             return L10n.unknown
         }
@@ -95,6 +108,8 @@ struct RendableListPendingTransactionItem: RendableListTransactionItem {
                 return "\(L10n.send)"
             case _ as SwapRawTransactionType:
                 return "\(L10n.swap)"
+            case _ as ClaimSentViaLinkTransaction:
+                return "\(L10n.sendViaLink)"
             default:
                 return "\(L10n.transactionFailed)"
             }
@@ -112,6 +127,12 @@ struct RendableListPendingTransactionItem: RendableListTransactionItem {
                 } else {
                     return "\(L10n.swap)"
                 }
+            case _ as ClaimSentViaLinkTransaction:
+                if trx.transactionId == nil {
+                    return "\(L10n.processing)"
+                } else {
+                    return "\(L10n.processing)"
+                }
             default:
                 if trx.transactionId == nil {
                     return "\(L10n.processing).."
@@ -128,6 +149,11 @@ struct RendableListPendingTransactionItem: RendableListTransactionItem {
             return (.negative, "-\(transaction.amountInFiat.fiatAmountFormattedString())")
         case let transaction as SwapRawTransactionType:
             return (.positive, "+\(transaction.toAmount.tokenAmountFormattedString(symbol: transaction.destinationWallet.token.symbol))")
+        case let transaction as ClaimSentViaLinkTransaction:
+            guard let amountInFiat = transaction.amountInFiat else {
+                return (.unchanged, "")
+            }
+            return (.positive, "+\(amountInFiat.fiatAmountFormattedString())")
         default:
             return (.unchanged, "")
         }
@@ -139,6 +165,8 @@ struct RendableListPendingTransactionItem: RendableListTransactionItem {
             return "-\(transaction.amount.tokenAmountFormattedString(symbol: transaction.walletToken.token.symbol))"
         case let transaction as SwapRawTransactionType:
             return "-\(transaction.fromAmount.tokenAmountFormattedString(symbol: transaction.sourceWallet.token.symbol))"
+        case let transaction as ClaimSentViaLinkTransaction:
+            return "+\(transaction.tokenAmount.tokenAmountFormattedString(symbol: transaction.token.symbol))"
         default:
             return ""
         }

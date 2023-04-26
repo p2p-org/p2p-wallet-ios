@@ -51,8 +51,18 @@ class HomeViewModel: ObservableObject {
     }
 
     func copyToClipboard() {
-        clipboardManager.copyToClipboard(walletsRepository.nativeWallet?.pubkey ?? "")
-        notificationsService.showToast(title: "🖤", text: L10n.addressWasCopiedToClipboard, haptic: true)
+        // get name and pubkey
+        let name = nameStorage.getName()
+        let hasName = name != nil
+        let pubkey = walletsRepository.nativeWallet?.pubkey
+        
+        // copy to clipboard
+        clipboardManager.copyToClipboard(name ?? pubkey ?? "")
+        
+        // notify user
+        notificationsService.showToast(title: "🖤", text: hasName ? L10n.nameCopiedToClipboard: L10n.addressWasCopiedToClipboard, haptic: true)
+        
+        // log
         analyticsManager.log(event: .mainCopyAddress)
     }
 
@@ -72,7 +82,7 @@ private extension HomeViewModel {
             .filter { $0 == .loaded }
             .prefix(1)
             .map { _ in true}
-            .assign(to: \.isInitialized, on: self)
+            .assignWeak(to: \.isInitialized, on: self)
             .store(in: &subscriptions)
 
         // state, address, error, log

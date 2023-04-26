@@ -1,5 +1,12 @@
 name: Release application
-on: workflow_dispatch
+on:
+  workflow_dispatch:
+    inputs:
+      is_release_candidate:
+        type: boolean
+        description: Release candidate
+        required: true
+        default: false
 jobs:
   deploy:
     name: Deploying to Testflight
@@ -40,6 +47,7 @@ jobs:
         with:
           lane: release
         env:
+          IS_RELEASE_CANDIDATE: '${{ inputs.is_release_candidate }}'
           DEVELOPER_APP_IDENTIFIER: '${{ secrets.DEVELOPER_APP_IDENTIFIER }}'
           APP_STORE_CONNECT_TEAM_ID: '${{ secrets.APP_STORE_CONNECT_TEAM_ID }}'
           DEVELOPER_PORTAL_TEAM_ID: '${{ secrets.DEVELOPER_PORTAL_TEAM_ID }}'

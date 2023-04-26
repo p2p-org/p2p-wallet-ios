@@ -41,7 +41,16 @@ extension TransactionHandler {
                 } else {
                     self.notificationsService.showDefaultErrorNotification()
                 }
-                SentrySDK.capture(error: error)
+                
+                // capture sentry error
+                if let error = error as? CustomNSError {
+                    SentrySDK.capture(error: error)
+                }
+                // else
+                else {
+                    SentrySDK.capture(error: SentryUndefinedError(error: error))
+                }
+                
 
                 // mark transaction as failured
                 _ = await updateTransactionAtIndex(index) { currentValue in
@@ -59,7 +68,34 @@ extension TransactionHandler {
     private func observe(index: TransactionIndex, transactionId: String) {
         Task { [weak self] in
             guard let self else { return }
+            // for debuging
+            if transactionId.hasPrefix(.fakeTransactionSignaturePrefix) {
+                // mark as confirmed
+                await self.updateTransactionAtIndex(index) { currentValue in
+                    var value = currentValue
+                    value.status = .confirmed(3)
+                    return value
+                }
+                
+                // wait for 2 secs
+                try await Task.sleep(nanoseconds: 2_000_000_000)
+                
+                // mark as finalized
+                await MainActor.run { [weak self] in
+                    self?.notificationsService.showInAppNotification(.done(L10n.transactionHasBeenConfirmed))
+                }
+                await self.updateTransactionAtIndex(index) { currentValue in
+                    var value = currentValue
+                    value.status = .finalized
+                    return value
+                }
+                return
+            }
+            
+            // for production
+            var statuses: [TransactionStatus] = []
             for try await status in self.apiClient.observeSignatureStatus(signature: transactionId) {
+                statuses.append(status)
                 let txStatus: PendingTransaction.TransactionStatus
                 var slot: UInt64?
                 switch status {
@@ -81,6 +117,19 @@ extension TransactionHandler {
                     if let slot {
                         value.slot = slot
                     }
+                    return value
+                }
+            }
+            
+            // TODO: - Transaction was sent successfuly but we could not retrieve the status.
+            // Mark as finalized anyway or throw an error?
+            if statuses.isEmpty {
+                await MainActor.run { [weak self] in
+                    self?.notificationsService.showInAppNotification(.done(L10n.transactionHasBeenConfirmed))
+                }
+                await self.updateTransactionAtIndex(index) { currentValue in
+                    var value = currentValue
+                    value.status = .finalized
                     return value
                 }
             }
@@ -206,29 +255,19 @@ extension TransactionHandler {
 
                 return wallets
             }
+        case let transaction as ClaimSentViaLinkTransaction:
+            walletsRepository.batchUpdate { currentValue in
+                var wallets = currentValue
+                
+                // update sender
+                if let index = wallets.firstIndex(where: { $0.pubkey == transaction.destinationWallet.pubkey }) {
+                    wallets[index].increaseBalance(diffInLamports: transaction.claimableTokenInfo.lamports)
+                }
+                
+                return wallets
+            }
         default:
             break
         }
-    }
-}
-
-// MARK: - Helpers
-
-extension SolanaSwift.APIClientError: CustomNSError {
-    public var errorUserInfo: [String : Any] {
-        func getDebugDescription() -> String {
-            switch self {
-            case .cantEncodeParams:
-                return "Can not decode params"
-            case .invalidAPIURL:
-                return "Invalid APIURL"
-            case .invalidResponse:
-                return "Invalid response"
-            case .responseError(let response):
-                return response.message ?? "\(response)"
-            }
-        }
-        
-        return [NSDebugDescriptionErrorKey: getDebugDescription()]
     }
 }

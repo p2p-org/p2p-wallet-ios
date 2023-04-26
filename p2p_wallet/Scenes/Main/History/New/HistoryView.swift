@@ -8,17 +8,21 @@
 import History
 import KeyAppUI
 import SwiftUI
-import Resolver
-import AnalyticsManager
 
 struct NewHistoryView<Header: View>: View {
     @ObservedObject var viewModel: HistoryViewModel
 
     let header: Header
-
+    
     var body: some View {
         ScrollView {
             header
+            
+            // Send via link
+            if viewModel.showSendViaLinkTransaction && !viewModel.sendViaLinkTransactions.isEmpty
+            {
+                sendViaLinkView
+            }
 
             // Display error or empty state
             if
@@ -98,11 +102,51 @@ struct NewHistoryView<Header: View>: View {
         .customRefreshable { try? await viewModel.reload() }
         .background(Color(Asset.Colors.smoke.color))
         .onAppear {
-            let analytic: AnalyticsManager = Resolver.resolve()
-            analytic.log(event: KeyAppAnalyticsEvent.historyOpened)
-            print("History opened")
+            viewModel.onAppear()
+        }
+    }
+    
+    // MARK: - View builder
+    
+    @ViewBuilder
+    var sendViaLinkView: some View {
+        VStack {
+            HStack(alignment: .center, spacing: 12) {
+                Image(uiImage: .sendViaLinkPlain)
+                    .resizable()
+                    .frame(width: 24, height: 24)
+                    .foregroundColor(Color(Asset.Colors.night.color))
+                
+                VStack(alignment: .leading, spacing: 4) {
+                    Text(L10n.sentViaOneTimeLink)
+                        .fontWeight(.semibold)
+                        .apply(style: .text3)
+                    
+                    Text(viewModel.linkTransactionsTitle)
+                        .apply(style: .label1)
+                        .foregroundColor(Color(Asset.Colors.mountain.color))
+                }
+                
+                Spacer()
+                
+                Image(uiImage: .nextArrow)
+                    .resizable()
+                    .frame(width: 7.41, height: 12)
+                    .padding(.vertical, (24-12)/2)
+                    .padding(.horizontal, (24-7.41)/2)
+                    .foregroundColor(Color(Asset.Colors.mountain.color))
+            }
+            .padding(.init(top: 12, leading: 16, bottom: 11, trailing: 16))
             
-            viewModel.fetch()
+            // Divider
+            Divider()
+                .frame(height: 1)
+                .foregroundColor(Color(Asset.Colors.rain.color))
+                .padding(.leading, 20)
+        }
+        .contentShape(Rectangle())
+        .onTapGesture {
+            viewModel.sentViaLinkClicked()
         }
     }
 }

@@ -8,14 +8,24 @@
 import Combine
 import UIKit
 
-class PanelTransition: NSObject, UIViewControllerTransitioningDelegate {
+final class PanelTransition: NSObject, UIViewControllerTransitioningDelegate {
     private var cancellables = Set<AnyCancellable>()
+    
+    // Subjects
     private let subject = PassthroughSubject<Void, Never>()
+    private let dismissedSubject = PassthroughSubject<Void, Never>()
     var dimmClicked: AnyPublisher<Void, Never> { subject.eraseToAnyPublisher() }
+    var dismissed: AnyPublisher<Void, Never> { dismissedSubject.eraseToAnyPublisher() }
+    
+    var presentationController: DimmPresentationController?
 
     private let driver = TransitionDriver()
 
-    var containerHeight: CGFloat = 0
+    var containerHeight: CGFloat = 0 {
+        didSet {
+            presentationController?.containerHeight = containerHeight
+        }
+    }
 
     func presentationController(
         forPresented presented: UIViewController,
@@ -34,6 +44,13 @@ class PanelTransition: NSObject, UIViewControllerTransitioningDelegate {
                 self?.subject.send()
             })
             .store(in: &cancellables)
+        presentationController.dismissed
+            .sink(receiveValue: { [weak self] in
+                self?.dismissedSubject.send()
+            })
+            .store(in: &cancellables)
+        
+        self.presentationController = presentationController
 
         return presentationController
     }

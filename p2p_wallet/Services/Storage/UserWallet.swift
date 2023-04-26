@@ -12,7 +12,7 @@ struct UserWallet: Identifiable, Hashable, Equatable {
     let name: String?
 
     /// Solana account
-    let account: Account
+    let account: KeyPair
 
     // TKey part
     let deviceShare: String?
@@ -25,7 +25,7 @@ struct UserWallet: Identifiable, Hashable, Equatable {
         name: String?,
         deviceShare: String?,
         ethAddress: String?,
-        account: Account,
+        account: KeyPair,
         moonpayExternalClientId: String?
     ) {
         self.seedPhrase = seedPhrase
