@@ -36,4 +36,6 @@ public extension Feature {
     
     // Send via link
     static let sendViaLinkEnabled = Feature(rawValue: "send_via_link_enabled")
+
+    static let solanaEthAddressEnabled = Feature(rawValue: "solana_eth_address_enabled")
 }
