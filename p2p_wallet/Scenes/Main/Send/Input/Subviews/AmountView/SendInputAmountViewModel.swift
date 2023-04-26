@@ -51,6 +51,7 @@ final class SendInputAmountViewModel: BaseViewModel, ObservableObject {
     @Published var amount: Amount?
     @Published var isError: Bool = false
     @Published var countAfterDecimalPoint: Int
+    @Published var isSwitchAvailable: Bool = true
 
     private let fiat: Fiat
     private var currentText: String?

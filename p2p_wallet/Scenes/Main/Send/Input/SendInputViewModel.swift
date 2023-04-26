@@ -42,7 +42,6 @@ final class SendInputViewModel: BaseViewModel, ObservableObject {
     @Published var loadingState: LoadableState = .loaded
     
     @Published var showSecondaryAmounts = true
-    @Published var isSwitchAvailable = true
 
     // ActionButton
     @Published var actionButtonData = SliderActionButtonData.zero
@@ -185,10 +184,7 @@ final class SendInputViewModel: BaseViewModel, ObservableObject {
             )
         )
 
-        inputAmountViewModel = SendInputAmountViewModel(
-            initialToken: tokenInWallet,
-            allowSwitchingMainAmountType: allowSwitchingMainAmountType
-        )
+        inputAmountViewModel = SendInputAmountViewModel(initialToken: tokenInWallet)
 
         let preChoosenWalletAvailable = preChosenWallet != nil
         let recipientIsDirectSPLTokenAddress = recipient.category.isDirectSPLTokenAddress
@@ -426,7 +422,7 @@ private extension SendInputViewModel {
                 
                 self.turnOffInputSwitch()
             } else {
-                self.isSwitchAvailable = self.allowSwitchingMainAmountType
+                self.inputAmountViewModel.isSwitchAvailable = self.allowSwitchingMainAmountType
                 self.showSecondaryAmounts = true
             }
         }
@@ -437,7 +433,7 @@ private extension SendInputViewModel {
 private extension SendInputViewModel {
     func turnOffInputSwitch() {
         inputAmountViewModel.mainAmountType = .token
-        isSwitchAvailable = false
+        inputAmountViewModel.isSwitchAvailable = false
         showSecondaryAmounts = false
     }
 
