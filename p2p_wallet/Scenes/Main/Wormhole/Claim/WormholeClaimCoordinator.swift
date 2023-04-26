@@ -37,6 +37,24 @@ class WormholeClaimCoordinator: SmartCoordinator<WormholeClaimCoordinatorResult>
                     .store(in: &self.subscriptions)
                 case let .claiming(trx):
                     self.pop(.claiming(trx))
+                case .openReceive:
+                    self.coordinate(
+                        to: ReceiveCoordinator(
+                            network: .ethereum(
+                                tokenSymbol: self.account.token.symbol,
+                                tokenImage: {
+                                    guard let url = self.account.token.logo else {
+                                        return ReceiveNetwork.Image.image(.imageOutlineIcon)
+                                    }
+                                    return ReceiveNetwork.Image.url(url)
+                                }()
+                            ),
+                            presentation: SmartCoordinatorPresentPresentation(from: self.presentation),
+                            wrapIntoNavigation: true
+                        )
+                    )
+                    .sink { _ in }
+                    .store(in: &self.subscriptions)
                 }
             }
             .store(in: &subscriptions)
