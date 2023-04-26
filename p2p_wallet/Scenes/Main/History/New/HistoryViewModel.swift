@@ -1,14 +1,9 @@
-//
-//  NewHistoryViewModel.swift
-//  p2p_wallet
-//
-//  Created by Giang Long Tran on 01.02.2023.
-//
-
 import AnalyticsManager
 import Combine
 import Foundation
 import History
+import KeyAppBusiness
+import KeyAppKitCore
 import Resolver
 import Sell
 import SolanaSwift
@@ -23,9 +18,13 @@ enum NewHistoryAction {
 
     case openPendingTransaction(PendingTransaction)
 
+    case openUserAction(any UserAction)
+
     case openReceive
 
     case openBuy
+
+    case openSwap(Wallet?, Wallet?)
 
     case openSentViaLinkHistoryView
 }
@@ -144,7 +143,8 @@ class HistoryViewModel: BaseViewModel, ObservableObject {
         userWalletManager: UserWalletManager = Resolver.resolve(),
         tokensRepository: TokensRepository = Resolver.resolve(),
         sellDataService: any SellDataService = Resolver.resolve(),
-        pendingTransactionService: TransactionHandlerType = Resolver.resolve()
+        pendingTransactionService: TransactionHandlerType = Resolver.resolve(),
+        userActionService: UserActionService = Resolver.resolve()
     ) {
         // Init services and repositories
         let repository = HistoryRepository(provider: provider)
@@ -180,10 +180,27 @@ class HistoryViewModel: BaseViewModel, ObservableObject {
             }
 
         // Listen pending transactions
-        let pendingTransactions = HistoryViewModelAggregator.pendingTransaction(
+        let pendings = HistoryViewModelAggregator.pendingTransaction(
             pendingTransactionService: pendingTransactionService,
             actionSubject: actionSubject
         )
+
+        let userActions = userActionService
+            .$actions
+            .map { userActions -> [any RendableListTransactionItem] in
+                userActions
+                    .map { userAction in
+                        RendableListUserActionTransactionItem(userAction: userAction) { [weak actionSubject] in
+                            actionSubject?.send(.openUserAction(userAction))
+                        }
+                    }
+            }
+
+        let mergedPendings = Publishers
+            .CombineLatest(userActions, pendings)
+            .map { lhs, rhs in
+                lhs + rhs
+            }
 
         showSendViaLinkTransaction = true
         super.init()
@@ -191,7 +208,7 @@ class HistoryViewModel: BaseViewModel, ObservableObject {
         // Build output
         history
             .$state
-            .combineLatest(sells, pendingTransactions)
+            .combineLatest(sells, mergedPendings)
             .map(buildOutput)
             .receive(on: RunLoop.main)
             .sink { self.output = $0 }
@@ -199,6 +216,10 @@ class HistoryViewModel: BaseViewModel, ObservableObject {
 
         bind()
         fetch()
+    }
+
+    deinit {
+       NotificationCenter.default.removeObserver(self)
     }
 
     // MARK: - View Output
@@ -238,9 +259,15 @@ class HistoryViewModel: BaseViewModel, ObservableObject {
                 self?.sendViaLinkTransactions = transactionInfos
             }
             .store(in: &subscriptions)
+
+        NotificationCenter.default.addObserver(forName: HistoryAppdelegateService.shouldUpdateHistory.name, object: nil, queue: nil) { [weak self] _ in
+            Task {
+                try await self?.reload()
+            }
+        }
     }
 
-    private func buildOutput(
+    func buildOutput(
         history: ListState<any RendableListTransactionItem>,
         sells: [any RendableListOfframItem] = [],
         pendings: [any RendableListTransactionItem] = []

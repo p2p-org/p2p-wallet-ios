@@ -94,9 +94,7 @@ enum JupiterSwapBusinessLogic {
                 $0.amountTo = nil
             }
         case .updateUserWallets:
-            return state.modified {
-                $0.status = .switching
-            }
+            return nil
         case .updateTokensPriceMap:
             return nil
         case let .chooseRoute(route):
@@ -173,29 +171,8 @@ enum JupiterSwapBusinessLogic {
                 services: services
             )
         case let .updateUserWallets(userWallets):
-            // get old data
-            let oldFromToken = state.fromToken
-            let oldToToken = state.toToken
-            
             // get new state
-            let state = updateUserWallets(state: state, userWallets: userWallets, services: services)
-            
-            // if fromToken and toToken weren't changed
-            if oldFromToken.address == state.fromToken.address && oldToToken.address == state.toToken.address {
-                // return the current state with status ready
-                return state.modified {
-                    $0.status = .ready
-                }
-            }
-            
-            // otherwise
-            else {
-                // recalculate the route and mark status as creatingTransaction
-                return await recalculateRouteAndMarkAsCreatingTransaction(
-                    state: state,
-                    services: services
-                )
-            }
+            return updateUserWallets(state: state, userWallets: userWallets, services: services)
         case let .updateTokensPriceMap(tokensPriceMap):
             // update tokens price
             return state.modified {

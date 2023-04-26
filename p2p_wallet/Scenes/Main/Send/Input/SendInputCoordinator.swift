@@ -57,7 +57,7 @@ final class SendInputCoordinator: Coordinator<SendResult> {
             }
         }.store(in: &subscriptions)
 
-        viewModel.tokenViewModel.changeTokenPressed
+        viewModel.changeTokenPressed
             .sink { [weak self] in
                 controller.hideKeyboard()
                 self?.openChooseWalletToken(from: controller, viewModel: viewModel)

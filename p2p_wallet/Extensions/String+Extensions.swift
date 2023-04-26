@@ -232,6 +232,7 @@ extension String {
         unicodeScalars.forEach {
             s.unicodeScalars.append(UnicodeScalar(base + $0.value)!)
         }
-        return String(s)
+        
+        return String.init(stringLiteral: s)
     }
 }

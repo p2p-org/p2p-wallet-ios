@@ -1,24 +1,30 @@
 import SolanaSwift
 import Resolver
+import Combine
+import KeyAppKitCore
+import KeyAppBusiness
 
 final class ChooseSendTokenService: ChooseItemService {
 
-    var chosenTokenTitle: String = L10n.chosenToken
-    var otherTokensTitle: String = L10n.otherTokens
+    let otherTokensTitle = L10n.otherTokens
 
-    @Injected private var walletsRepository: WalletsRepository
+    var state: AnyPublisher<AsyncValueState<[ChooseItemListSection]>, Never> {
+        statePublisher.eraseToAnyPublisher()
+    }
 
-    func fetchItems() async throws -> [ChooseItemListSection] {
-        let wallets = walletsRepository.getWallets().filter { wallet in
-            (wallet.lamports ?? 0) > 0 && !wallet.isNFTToken
-        }
-        return [ChooseItemListSection(items: wallets)]
+    private let statePublisher: CurrentValueSubject<AsyncValueState<[ChooseItemListSection]>, Never>
+    @Injected private var accountsService: SolanaAccountsService
+    private var subscriptions = [AnyCancellable]()
+
+    init() {
+        statePublisher = CurrentValueSubject<AsyncValueState<[ChooseItemListSection]>, Never>(AsyncValueState(value: []))
+        bind()
     }
 
     func sort(items: [ChooseItemListSection]) -> [ChooseItemListSection] {
         let newItems = items.map { section in
             guard let wallets = section.items as? [Wallet] else { return section }
-            return ChooseItemListSection(items: wallets.sorted())
+            return ChooseItemListSection(items: wallets.sorted(preferOrderSymbols: [Token.usdc.symbol, Token.usdt.symbol]))
         }
         let isEmpty = newItems.flatMap({ $0.items }).isEmpty
         return isEmpty ? [] : newItems
@@ -29,4 +35,22 @@ final class ChooseSendTokenService: ChooseItemService {
     }
 }
 
-
+private extension ChooseSendTokenService {
+    func bind() {
+        accountsService
+            .statePublisher
+            .map({ state in
+                state.apply { accounts in
+                    [ChooseItemListSection(
+                        items: accounts
+                            .filter { ($0.data.lamports ?? 0) > 0 && !$0.data.isNFTToken }
+                            .map(\.data))
+                    ]
+                }
+            })
+            .sink { [weak self] state in
+                self?.statePublisher.send(state)
+            }
+            .store(in: &subscriptions)
+    }
+}

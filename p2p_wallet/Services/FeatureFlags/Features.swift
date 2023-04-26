@@ -31,6 +31,11 @@ public extension Feature {
     // Ren BTC
     static let receiveRenBtcEnabled = Feature(rawValue: "receive_ren_btc_enabled")
     
+    // Eth
+    static let ethAddressEnabled = Feature(rawValue: "eth_address_enabled")
+    
     // Send via link
     static let sendViaLinkEnabled = Feature(rawValue: "send_via_link_enabled")
+
+    static let solanaEthAddressEnabled = Feature(rawValue: "solana_eth_address_enabled")
 }
