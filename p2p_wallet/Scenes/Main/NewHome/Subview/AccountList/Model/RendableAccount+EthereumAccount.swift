@@ -62,7 +62,11 @@ struct RenderableEthereumAccount: RenderableAccount {
         var tags: AccountTags = []
 
         if status == .balanceToLow {
-            tags.insert(.ignore)
+            if account.balance == 0 {
+                tags.insert(.hidden)
+            } else {
+                tags.insert(.ignore)
+            }
         }
 
         return tags
