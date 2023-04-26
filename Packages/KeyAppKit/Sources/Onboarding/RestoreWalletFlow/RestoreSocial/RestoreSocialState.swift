@@ -45,12 +45,6 @@ public indirect enum RestoreSocialState: Codable, State, Equatable {
     case notFoundDevice(data: RestoreSocialData, deviceShare: String, customResult: APIGatewayRestoreWalletResult?)
     case notFoundCustom(result: APIGatewayRestoreWalletResult, email: String)
     case notFoundSocial(data: RestoreSocialData, deviceShare: String, customResult: APIGatewayRestoreWalletResult?)
-    case expiredSocialTryAgain(
-        result: APIGatewayRestoreWalletResult,
-        provider: SocialProvider,
-        email: String,
-        deviceShare: String?
-    )
     case finish(RestoreSocialResult)
 
     public static var initialState: RestoreSocialState = .signIn(deviceShare: "", customResult: nil)
@@ -146,9 +140,6 @@ public indirect enum RestoreSocialState: Codable, State, Equatable {
             default:
                 throw StateMachineError.invalidEvent
             }
-
-        case let .expiredSocialTryAgain(result, socialProvider, _, deviceShare):
-            throw StateMachineError.invalidEvent
 
         case .finish:
             throw StateMachineError.invalidEvent
@@ -260,10 +251,8 @@ extension RestoreSocialState: Step, Continuable {
             return 4
         case .notFoundSocial:
             return 5
-        case .expiredSocialTryAgain:
-            return 6
         case .finish:
-            return 7
+            return 6
         }
     }
 }

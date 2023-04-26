@@ -16,7 +16,6 @@ public enum RestoreCustomResult: Codable, Equatable {
     )
     case requireSocialCustom(result: APIGatewayRestoreWalletResult)
     case requireSocialDevice(provider: SocialProvider, result: APIGatewayRestoreWalletResult?)
-    case expiredSocialTryAgain(result: APIGatewayRestoreWalletResult, provider: SocialProvider, email: String)
     case start
     case breakProcess
 }
@@ -55,7 +54,6 @@ public enum RestoreCustomState: Codable, State, Equatable {
     case noMatch
     case notFoundDevice(result: APIGatewayRestoreWalletResult)
     case tryAnother(wrongNumber: String, trySocial: Bool)
-    case expiredSocialTryAgain(result: APIGatewayRestoreWalletResult, social: RestoreSocialData)
     case broken(code: Int)
     case block(until: Date, social: RestoreSocialData?, reason: PhoneFlowBlockReason)
     case finish(result: RestoreCustomResult)
@@ -153,9 +151,7 @@ public enum RestoreCustomState: Codable, State, Equatable {
                                 )
                             )
                         } catch {
-                            if let social = social {
-                                return .expiredSocialTryAgain(result: result, social: social)
-                            } else if provider.deviceShare != nil, (error as? TKeyFacadeError)?.code == 1009 {
+                            if provider.deviceShare != nil, (error as? TKeyFacadeError)?.code == 1009 {
                                 return .notFoundDevice(result: result)
                             } else {
                                 return .noMatch
@@ -265,16 +261,6 @@ public enum RestoreCustomState: Codable, State, Equatable {
                     solPrivateKey: nil,
                     social: nil
                 )
-            default:
-                throw StateMachineError.invalidEvent
-            }
-
-        case let .expiredSocialTryAgain(result, social):
-            switch event {
-            case let .requireSocial(provider):
-                return .finish(result: .expiredSocialTryAgain(result: result, provider: provider, email: social.email))
-            case .start:
-                return .finish(result: .start)
             default:
                 throw StateMachineError.invalidEvent
             }
@@ -412,10 +398,8 @@ extension RestoreCustomState: Step, Continuable {
             return 8
         case .block:
             return 9
-        case .expiredSocialTryAgain:
-            return 10
         case .finish:
-            return 11
+            return 10
         }
     }
 }

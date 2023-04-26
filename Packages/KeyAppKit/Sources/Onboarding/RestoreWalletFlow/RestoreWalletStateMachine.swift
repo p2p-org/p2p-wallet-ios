@@ -197,28 +197,6 @@ public enum RestoreWalletState: Codable, State, Equatable {
                         )
                     case .start:
                         return .finished(.breakProcess)
-                    case let .expiredSocialTryAgain(result, socialProvider, email):
-                        let event = RestoreSocialEvent.signInCustom(socialProvider: socialProvider)
-                        let innerState = RestoreSocialState.expiredSocialTryAgain(
-                            result: result,
-                            provider: socialProvider,
-                            email: email,
-                            deviceShare: provider.deviceShare
-                        )
-                        let nextInnerState = try await innerState <- (
-                            event,
-                            .init(
-                                option: .custom,
-                                tKeyFacade: provider.tKeyFacade,
-                                authService: provider.authService
-                            )
-                        )
-
-                        if case let .finish(result) = nextInnerState {
-                            return try await handleRestoreSocial(result: result)
-                        } else {
-                            return .restoreSocial(nextInnerState, option: .custom)
-                        }
                     case .breakProcess:
                         return .restore
                     }
@@ -446,13 +424,6 @@ extension RestoreWalletState: Step, Continuable {
             return 6 * 100 + RestoreSocialState.social(result: result).step
         case let .restoreSocial(.notFoundCustom(result, email), option: _):
             return 6 * 100 + RestoreSocialState.notFoundCustom(result: result, email: email).step
-        case let .restoreSocial(.expiredSocialTryAgain(result, provider, email, deviceShare), option: _):
-            return 6 * 100 + RestoreSocialState.expiredSocialTryAgain(
-                result: result,
-                provider: provider,
-                email: email,
-                deviceShare: deviceShare
-            ).step
         case let .restoreSocial(.finish(finishResult), option: _):
             return 6 * 100 + RestoreSocialState.finish(finishResult).step
         case let .restoreSocial(.notFoundDevice(data, deviceShare, customResult), .custom):
