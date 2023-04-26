@@ -30,7 +30,8 @@ final class ChooseSwapTokenCoordinator: Coordinator<SwapToken?> {
             service: ChooseSwapTokenService(swapTokens: tokens, fromToken: fromToken),
             chosenToken: chosenWallet
         )
-        let view = ChooseItemView<ChooseSwapTokenItemView>(viewModel: viewModel) { [unowned self] model in
+        let fromToken = fromToken
+        let view = ChooseItemView<ChooseSwapTokenItemView>(viewModel: viewModel) { model in
             ChooseSwapTokenItemView(
                 token: model.item as! SwapToken,
                 chosen: model.isChosen,
