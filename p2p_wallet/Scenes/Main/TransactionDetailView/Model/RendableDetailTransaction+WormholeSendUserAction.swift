@@ -20,7 +20,7 @@ struct RendableWormholeSendUserActionDetail: RendableTransactionDetail {
     var status: TransactionDetailStatus {
         switch userAction.status {
         case .pending, .processing:
-            return .loading(message: L10n.itUsuallyTakes520SecondsForATransactionToComplete)
+            return .loading(message: L10n.itUsuallyTakes1520MinutesForATransactionToComplete)
         case .ready:
             return .succeed(message: L10n.theTransactionHasBeenSuccessfullyCompleted)
         case let .error(error):

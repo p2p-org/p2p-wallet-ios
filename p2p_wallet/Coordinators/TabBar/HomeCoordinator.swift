@@ -155,7 +155,7 @@ final class HomeCoordinator: Coordinator<Void> {
         case let .claim(account):
             return coordinate(
                 to: WormholeClaimCoordinator(
-                    account: account.wormholeNativeCounterpart() ?? account,
+                    account: account,
                     presentation: SmartCoordinatorPushPresentation(navigationController)
                 )
             )

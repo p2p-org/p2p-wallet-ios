@@ -13,10 +13,13 @@ import Web3
 /// The repository for fetching token metadata and cache for later usage.
 public final class EthereumTokensRepository {
     /// Provider
-    internal let web3: Web3
+    let web3: Web3
 
-    /// In memory cache
-    internal let cache: Cache<EthereumAddress, EthereumToken> = .init()
+    /// In memory cache to quickly return token. Token metadata doesn't change frequently.
+    let cache: Cache<EthereumAddress, EthereumToken> = .init()
+
+    /// Some tokens contains low quality image and bad name. This class apply some changes to token metadata.
+    let dataCorrection: EthereumTokenDataCorrection = .init()
 
     public init(web3: Web3) {
         self.web3 = web3
@@ -32,7 +35,9 @@ public final class EthereumTokensRepository {
 
         let metadata: EthereumTokenMetadata = try await web3.eth.getTokenMetadata(address: ethereumAddress)
 
-        let token = EthereumToken(address: ethereumAddress, metadata: metadata)
+        var token = EthereumToken(address: ethereumAddress, metadata: metadata)
+        token = dataCorrection.correct(token: token)
+        
         await cache.insert(token, forKey: ethereumAddress)
 
         return token
