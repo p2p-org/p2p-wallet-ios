@@ -27,6 +27,7 @@ struct RecipientSearchField: View {
                     textField.returnKeyType = .done
                     textField.keyboardType = .asciiCapable
                     textField.textContentType = .oneTimeCode
+                    textField.clearButtonMode = .never
                 }
                 .frame(height: 24)
                 .padding(.vertical, 12)

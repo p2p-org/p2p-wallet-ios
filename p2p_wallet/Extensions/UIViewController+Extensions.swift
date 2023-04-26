@@ -80,10 +80,6 @@ extension UIViewController {
         }
     }
 
-    func showErrorView(title: String? = nil, description: String? = nil, retryAction: (() -> Void)?) {
-        view.showErrorView(title: title, description: description, onRetry: retryAction)
-    }
-
     func showWebsite(url: String) {
         if let url = URL(string: url) {
             let config = SFSafariViewController.Configuration()

@@ -12,9 +12,9 @@ import SolanaSwift
 
 struct RendableDetailHistoryTransaction: RendableTransactionDetail {
     let trx: HistoryTransaction
-    
+
     let allTokens: Set<SolanaSwift.Token>
-    
+
     var status: TransactionDetailStatus {
         switch trx.status {
         case .success:
@@ -27,7 +27,7 @@ struct RendableDetailHistoryTransaction: RendableTransactionDetail {
             }
         }
     }
-    
+
     var title: String {
         switch trx.status {
         case .success:
@@ -36,15 +36,15 @@ struct RendableDetailHistoryTransaction: RendableTransactionDetail {
             return L10n.transactionFailed
         }
     }
-    
+
     var subtitle: String {
         trx.date.string(withFormat: "MMMM dd, yyyy @ HH:mm", locale: Locale.base)
     }
-    
+
     var signature: String? {
         trx.signature
     }
-    
+
     var icon: TransactionDetailIcon {
         switch trx.info {
         case let .send(data):
@@ -53,12 +53,15 @@ struct RendableDetailHistoryTransaction: RendableTransactionDetail {
             return icon(mint: data.token.mint, url: data.token.logoUrl, defaultIcon: .transactionReceive)
         case let .swap(data):
             guard
-                let fromIcon = resolveTokenIconURL(mint: data.from.token.mint, fallbackImageURL: data.from.token.logoUrl),
+                let fromIcon = resolveTokenIconURL(
+                    mint: data.from.token.mint,
+                    fallbackImageURL: data.from.token.logoUrl
+                ),
                 let toIcon = resolveTokenIconURL(mint: data.to.token.mint, fallbackImageURL: data.to.token.logoUrl)
             else {
                 return .icon(.buttonSwap)
             }
-                
+
             return .double(fromIcon, toIcon)
         case let .createAccount(data):
             return icon(mint: data.token.mint, url: data.token.logoUrl, defaultIcon: .buyWallet)
@@ -76,7 +79,7 @@ struct RendableDetailHistoryTransaction: RendableTransactionDetail {
             return .icon(.planet)
         }
     }
-    
+
     var amountInFiat: TransactionDetailChange {
         switch trx.info {
         case let .send(data):
@@ -86,7 +89,7 @@ struct RendableDetailHistoryTransaction: RendableTransactionDetail {
         case let .swap(data):
             return .unchanged("\(data.to.amount.usdAmount.fiatAmountFormattedString())")
         case let .burn(data):
-            return .negative("\(data.amount.usdAmount.fiatAmountFormattedString())")
+            return .negative("-\((-data.amount.usdAmount).fiatAmountFormattedString())")
         case let .mint(data):
             return .positive("+\(data.amount.usdAmount.fiatAmountFormattedString())")
         case let .stake(data):
@@ -111,7 +114,7 @@ struct RendableDetailHistoryTransaction: RendableTransactionDetail {
             return .unchanged("")
         }
     }
-    
+
     var amountInToken: String {
         switch trx.info {
         case let .send(data):
@@ -142,16 +145,18 @@ struct RendableDetailHistoryTransaction: RendableTransactionDetail {
             return ""
         }
     }
-    
+
     var extra: [TransactionDetailExtraInfo] {
         var result: [TransactionDetailExtraInfo] = []
-        
+
         switch trx.info {
         case let .send(data):
             result.append(
                 .init(
                     title: L10n.sendTo,
-                    value: data.account.name ?? RecipientFormatter.format(destination: data.account.address),
+                    values: [
+                        .init(text: data.account.name ?? RecipientFormatter.format(destination: data.account.address)),
+                    ],
                     copyableValue: data.account.name ?? data.account.address
                 )
             )
@@ -159,37 +164,79 @@ struct RendableDetailHistoryTransaction: RendableTransactionDetail {
             result.append(
                 .init(
                     title: L10n.receivedFrom,
-                    value: data.account.name ?? RecipientFormatter.format(destination: data.account.address),
+                    values: [
+                        .init(text: data.account.name ?? RecipientFormatter.format(destination: data.account.address)),
+                    ],
                     copyableValue: data.account.name ?? data.account.address
                 )
             )
         case .burn:
-            result.append(.init(title: L10n.burnSignature, value: RecipientFormatter.signature(signature: trx.signature)))
+            result.append(
+                .init(
+                    title: L10n.burnSignature,
+                    values: [.init(text: RecipientFormatter.signature(signature: trx.signature))]
+                )
+            )
         case .mint:
-            result.append(.init(title: L10n.mintSignature, value: RecipientFormatter.signature(signature: trx.signature)))
+            result.append(
+                .init(
+                    title: L10n.mintSignature,
+                    values: [.init(text: RecipientFormatter.signature(signature: trx.signature))]
+                )
+            )
         case .stake:
-            result.append(.init(title: L10n.stakeSignature, value: RecipientFormatter.signature(signature: trx.signature)))
+            result.append(
+                .init(
+                    title: L10n.stakeSignature,
+                    values: [.init(text: RecipientFormatter.signature(signature: trx.signature))]
+                )
+            )
         case .unstake:
-            result.append(.init(title: L10n.unstakeSignature, value: RecipientFormatter.signature(signature: trx.signature)))
+            result.append(
+                .init(
+                    title: L10n.unstakeSignature,
+                    values: [.init(text: RecipientFormatter.signature(signature: trx.signature))]
+                )
+            )
         case .swap:
             break
+
         default:
-            result.append(.init(title: L10n.signature, value: RecipientFormatter.signature(signature: trx.signature)))
+            result.append(
+                .init(
+                    title: L10n.signature,
+                    values: [.init(text: RecipientFormatter.signature(signature: trx.signature))]
+                )
+            )
         }
-        
+
         if trx.fees.allSatisfy({ fee in Constants.feeRelayerAccounts.contains(fee.payer) }) {
-            result.append(.init(title: L10n.transactionFee, value: L10n.freePaidByKeyApp))
+            result.append(
+                .init(
+                    title: L10n.transactionFee,
+                    values: [.init(text: L10n.freePaidByKeyApp)]
+                )
+            )
         } else {
-            let feeDetail = trx.fees.map { fee in
-                "\(fee.amount.tokenAmount.tokenAmountFormattedString(symbol: fee.token.symbol)) (\(fee.amount.usdAmount.fiatAmountFormattedString()))"
-            }.joined(separator: "\n")
-            result.append(.init(title: L10n.transactionFee, value: feeDetail))
+            let values: [TransactionDetailExtraInfo.Value] = trx.fees.map { fee in
+                .init(
+                    text: fee.amount.tokenAmount.tokenAmountFormattedString(symbol: fee.token.symbol),
+                    secondaryText: fee.amount.usdAmount.fiatAmountFormattedString()
+                )
+            }
+
+            result.append(
+                .init(
+                    title: L10n.transactionFee,
+                    values: values
+                )
+            )
         }
         return result
     }
-    
+
     var actions: [TransactionDetailAction] = [.share, .explorer]
-    
+
     /// Resolve token icon url
     private func resolveTokenIconURL(mint: String?, fallbackImageURL: URL?) -> URL? {
         if
@@ -201,15 +248,34 @@ struct RendableDetailHistoryTransaction: RendableTransactionDetail {
         } else if let fallbackImageURL {
             return fallbackImageURL
         }
-        
+
         return nil
     }
-    
+
     private func icon(mint: String?, url: URL?, defaultIcon: UIImage) -> TransactionDetailIcon {
         if let url = resolveTokenIconURL(mint: mint, fallbackImageURL: url) {
             return .single(url)
         } else {
             return .icon(defaultIcon)
+        }
+    }
+
+    var buttonTitle: String {
+        switch trx.info {
+        case .swap:
+            switch status {
+            case let .error(_, error):
+                if let error, error.isSlippageError {
+                    return L10n.increaseSlippageAndTryAgain
+                } else {
+                    return L10n.tryAgain
+                }
+            default:
+                return L10n.done
+            }
+
+        default:
+            return L10n.done
         }
     }
 }

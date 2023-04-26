@@ -6,6 +6,7 @@
 //
 
 import Combine
+import SolanaSwift
 import UIKit
 
 final class SolendTopUpForContinueCoordinator: Coordinator<SolendTopUpForContinueCoordinator.Result> {
@@ -50,13 +51,13 @@ final class SolendTopUpForContinueCoordinator: Coordinator<SolendTopUpForContinu
             })
             .store(in: &subscriptions)
         viewModel.receive
-            .flatMap { [unowned self] in
+            .flatMap { [unowned self] _ in
                 coordinate(to: ReceiveCoordinator(
-                    navigationController: navigationController,
-                    pubKey: $0
+                    network: .solana(tokenSymbol: "SOL", tokenImage: .image(.solanaIcon)),
+                    navigationController: navigationController
                 ))
             }
-            .sink(receiveValue: { })
+            .sink(receiveValue: {})
             .store(in: &subscriptions)
 
         viewModel.swap

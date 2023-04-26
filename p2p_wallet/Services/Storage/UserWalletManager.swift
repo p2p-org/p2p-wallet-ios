@@ -3,8 +3,9 @@
 // found in the LICENSE file.
 
 import Combine
+import KeyAppBusiness
+import KeyAppKitCore
 import Onboarding
-import RenVMSwift
 import Resolver
 import SolanaSwift
 
@@ -32,13 +33,16 @@ class UserWalletManager: ObservableObject {
     func refresh() async throws {
         try await storage.reloadSolanaAccount()
 
+        // Legacy code
         guard let account = storage.account else { return }
-        
+
         let moonpayAccount = try await KeyPair(
             phrase: account.phrase,
             network: .mainnetBeta,
             derivablePath: DerivablePath(type: storage.derivablePath.type, walletIndex: 101, accountIndex: 0)
         )
+
+        let ethereumKeyPair = try EthereumKeyPair(phrase: account.phrase.joined(separator: " "))
 
         wallet = .init(
             seedPhrase: account.phrase,
@@ -47,7 +51,8 @@ class UserWalletManager: ObservableObject {
             deviceShare: nil,
             ethAddress: storage.ethAddress,
             account: account,
-            moonpayExternalClientId: moonpayAccount.publicKey.base58EncodedString
+            moonpayExternalClientId: moonpayAccount.publicKey.base58EncodedString,
+            ethereumKeypair: ethereumKeyPair
         )
     }
 
@@ -64,17 +69,18 @@ class UserWalletManager: ObservableObject {
         try storage.save(walletIndex: derivablePath.walletIndex)
         storage.save(name: name ?? "")
         try storage.save(ethAddress: ethAddress ?? "")
-        
+
         // Services
         try await Resolver.resolve(SendHistoryLocalProvider.self).save(nil)
 
         // Save device share
+        print(deviceShare)
         if let deviceShare = deviceShare, ethAddress != nil {
             try storage.save(deviceShare: deviceShare)
         }
-        
+
         try await refresh()
-        
+
         notificationsService.registerForRemoteNotifications()
     }
 
@@ -84,19 +90,22 @@ class UserWalletManager: ObservableObject {
 
         // Notification service
         notificationsService.unregisterForRemoteNotifications()
-        Task.detached { [notificationsService] in try await notificationsService.deleteDeviceToken() }
-        Task.detached { try await Resolver.resolve(SendHistoryLocalProvider.self).save(nil) }
+        Task.detached { [notificationsService] in
+            let ethAddress = available(.ethAddressEnabled) ? self.wallet?.ethAddress : nil
+            try await notificationsService.deleteDeviceToken(ethAddress: ethAddress)
+        }
+        Task.detached {
+            try await Resolver.resolve(SendHistoryLocalProvider.self).save(nil)
+        }
 
         // Storage
+        UserDefaults.standard.removeObject(forKey: "UserActionPersistentStorageWithUserDefault")
+
         storage.clearAccount()
         Defaults.walletName = [:]
         Defaults.didSetEnableBiometry = false
         Defaults.didSetEnableNotifications = false
         Defaults.didBackupOffline = false
-        UserDefaults.standard.removeObject(forKey: LockAndMint.keyForSession)
-        UserDefaults.standard.removeObject(forKey: LockAndMint.keyForGatewayAddress)
-        UserDefaults.standard.removeObject(forKey: LockAndMint.keyForProcessingTransactions)
-        UserDefaults.standard.removeObject(forKey: BurnAndRelease.keyForSubmitedBurnTransaction)
         Defaults.forceCloseNameServiceBanner = false
         Defaults.shouldShowConfirmAlertOnSend = true
         Defaults.shouldShowConfirmAlertOnSwap = true
@@ -105,7 +114,7 @@ class UserWalletManager: ObservableObject {
         Defaults.isTokenInputTypeChosen = false
         Defaults.fromTokenAddress = nil
         Defaults.toTokenAddress = nil
-        
+
         walletSettings.reset()
 
         // Reset wallet

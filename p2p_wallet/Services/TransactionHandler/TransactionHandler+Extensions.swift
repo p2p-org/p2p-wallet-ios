@@ -18,9 +18,6 @@ extension TransactionHandler {
         Task {
             do {
                 let transactionID = try await processingTransaction.createRequest()
-                // show notification
-//                self.notificationsService.showInAppNotification(.done(L10n.transactionHasBeenSent))
-
                 // update status
                 _ = await updateTransactionAtIndex(index) { _ in
                     .init(
@@ -32,16 +29,16 @@ extension TransactionHandler {
                     )
                 }
 
-                // observe confirmations
+                // Observe confirmations
                 observe(index: index, transactionId: transactionID)
             } catch {
-                // update status
+                // Update status
                 if (error as NSError).isNetworkConnectionError {
                     self.notificationsService.showConnectionErrorNotification()
                 } else {
                     self.notificationsService.showDefaultErrorNotification()
                 }
-                
+   
                 // capture sentry error
                 if let error = error as? CustomNSError {
                     SentrySDK.capture(error: error)
@@ -50,7 +47,6 @@ extension TransactionHandler {
                 else {
                     SentrySDK.capture(error: SentryUndefinedError(error: error))
                 }
-                
 
                 // mark transaction as failured
                 _ = await updateTransactionAtIndex(index) { currentValue in
@@ -146,128 +142,12 @@ extension TransactionHandler {
         if let currentValue = value[safe: index] {
             var newValue = update(currentValue)
 
-            // write to repository if the transaction is not yet written and there is at least 1 confirmation
-            if !newValue.writtenToRepository,
-               let numberOfConfirmations = newValue.status.numberOfConfirmations,
-               numberOfConfirmations > 0
-            {
-                // manually update balances
-                updateRepository(with: newValue.rawTransaction)
-
-                // mark as written
-                newValue.writtenToRepository = true
-            }
-
-            // update
+           // update
             value[index] = newValue
             transactionsSubject.send(value)
             return true
         }
 
         return false
-    }
-
-    @MainActor private func updateRepository(with rawTransaction: RawTransactionType) {
-        switch rawTransaction {
-        case let transaction as SendTransaction:
-            walletsRepository.batchUpdate { currentValue in
-                var wallets = currentValue
-
-                // update sender
-                if let index = wallets.firstIndex(where: { $0.pubkey == transaction.walletToken.pubkey }) {
-                    wallets[index].decreaseBalance(diffInLamports: transaction.amount.toLamport(decimals: transaction.walletToken.token.decimals))
-                }
-
-                // update receiver if user send to different wallet of THIS account
-                if let index = wallets.firstIndex(where: { $0.pubkey == transaction.recipient.address }) {
-                    wallets[index].increaseBalance(diffInLamports: transaction.amount.toLamport(decimals: wallets[index].token.decimals))
-                }
-
-                // update paying wallet
-                if let index = wallets.firstIndex(where: { $0.pubkey == transaction.payingFeeWallet?.pubkey }) {
-                    let feeInToken = transaction.feeAmount
-                    wallets[index].decreaseBalance(diffInLamports: feeInToken.total)
-                }
-
-                return wallets
-            }
-        case let transaction as CloseTransaction:
-            walletsRepository.batchUpdate { currentValue in
-                var wallets = currentValue
-                var reimbursedAmount = transaction.reimbursedAmount
-
-                // remove closed wallet
-                let wallet = transaction.closingWallet
-                wallets.removeAll(where: { $0.pubkey == wallet.pubkey })
-
-                // if closing non-native Solana wallet, then convert its balances and send it to native Solana wallet
-                if wallet.token.symbol == "SOL", !wallet.token.isNative {
-                    reimbursedAmount += (wallet.lamports ?? 0)
-                }
-
-                // update native wallet
-                if let index = wallets.firstIndex(where: { $0.isNativeSOL }) {
-                    wallets[index].increaseBalance(diffInLamports: reimbursedAmount)
-                }
-
-                return wallets
-            }
-
-        case let transaction as SwapRawTransactionType:
-            walletsRepository.batchUpdate { currentValue in
-                var wallets = currentValue
-
-                // update source wallet
-                if let index = wallets.firstIndex(where: { $0.pubkey == transaction.sourceWallet.pubkey })
-                {
-                    wallets[index]
-                        .decreaseBalance(diffInLamports: transaction.fromAmount
-                            .toLamport(decimals: transaction.sourceWallet.token.decimals))
-                }
-
-                // update destination wallet if exists
-                if let index = wallets.firstIndex(where: { $0.pubkey == transaction.destinationWallet.pubkey }) {
-                    wallets[index]
-                        .increaseBalance(diffInLamports: transaction.toAmount
-                            .toLamport(decimals: transaction.destinationWallet.token.decimals))
-                }
-
-                // add destination wallet if not exists
-                else if let publicKey = try? PublicKey.associatedTokenAddress(
-                    walletAddress: try PublicKey(string: transaction.authority),
-                    tokenMintAddress: try PublicKey(string: transaction.destinationWallet.mintAddress)
-                ) {
-                    var destinationWallet = transaction.destinationWallet
-                    destinationWallet.pubkey = publicKey.base58EncodedString
-                    destinationWallet.lamports = transaction.toAmount
-                        .toLamport(decimals: destinationWallet.token.decimals)
-                    wallets.append(destinationWallet)
-                }
-
-                // update paying wallet
-                if let payingFeeWallet = transaction.payingFeeWallet {
-                    let fee = transaction.feeAmount
-                    
-                    if let index = wallets.firstIndex(where: { $0.pubkey == payingFeeWallet.pubkey }) {
-                        wallets[index].decreaseBalance(diffInLamports: fee.total)
-                    }
-                }
-
-                return wallets
-            }
-        case let transaction as ClaimSentViaLinkTransaction:
-            walletsRepository.batchUpdate { currentValue in
-                var wallets = currentValue
-                
-                // update sender
-                if let index = wallets.firstIndex(where: { $0.pubkey == transaction.destinationWallet.pubkey }) {
-                    wallets[index].increaseBalance(diffInLamports: transaction.claimableTokenInfo.lamports)
-                }
-                
-                return wallets
-            }
-        default:
-            break
-        }
     }
 }

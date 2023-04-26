@@ -1,9 +1,8 @@
 import KeyAppUI
-import SwiftUI
 import SolanaSwift
+import SwiftUI
 
 struct ChooseSwapTokenItemView: View {
-
     private let token: SwapToken
     private let subtitle: String
     private let chosen: Bool
@@ -30,10 +29,10 @@ struct ChooseSwapTokenItemView: View {
         HStack(alignment: .center, spacing: 12) {
             CoinLogoImageViewRepresentable(
                 size: 48,
-                token: token.token
+                args: .token(token.token)
             )
             .frame(width: 48, height: 48)
-            .cornerRadius(radius: 48/2, corners: .allCorners)
+            .cornerRadius(radius: 48 / 2, corners: .allCorners)
 
             VStack(alignment: .leading, spacing: 4) {
                 Text(token.token.name)

@@ -61,7 +61,7 @@ struct PincodeVerifyView: View {
                 forgetPinCode?()
             }
             label: {
-                Text(L10n.forgotYourPIN)
+                Text(L10n.iForgotPIN)
                     .apply(style: .text1)
                     .foregroundColor(Color(Asset.Colors.sky.color))
                     .padding(.top, 24)

@@ -1,5 +1,5 @@
-import SwiftUI
 import KeyAppUI
+import SwiftUI
 
 struct SliderActionButtonData {
     let isEnabled: Bool
@@ -8,21 +8,21 @@ struct SliderActionButtonData {
 }
 
 struct SliderActionButton: View {
-
-    @Binding var isSliderOn: Bool
-    @Binding var data: SliderActionButtonData
-    @Binding var showFinished: Bool
-
     @State private var animatedFinish: Bool = false
+    
+    @Binding var isSliderOn: Bool
+    
+    let data: SliderActionButtonData
+    let showFinished: Bool
 
     init(
         isSliderOn: Binding<Bool>,
-        data: Binding<SliderActionButtonData>,
-        showFinished: Binding<Bool>
+        data: SliderActionButtonData,
+        showFinished: Bool
     ) {
         _isSliderOn = isSliderOn
-        _data = data
-        _showFinished = showFinished
+        self.data = data
+        self.showFinished = showFinished
     }
 
     var body: some View {
@@ -44,13 +44,12 @@ struct SliderActionButton: View {
                         image: .arrowRight,
                         style: .solidBlack,
                         isOn: Binding(get: {
-                            self.isSliderOn 
+                            self.isSliderOn
                         }, set: { val in
                             withAnimation { self.isSliderOn = val }
                         })
                     )
-                }
-                else {
+                } else {
                     TextButtonView(title: data.title, style: .primary, size: .large)
                         .disabled(true)
                         .cornerRadius(radius: 32, corners: .allCorners)
@@ -70,4 +69,3 @@ struct SliderActionButton: View {
         })
     }
 }
-

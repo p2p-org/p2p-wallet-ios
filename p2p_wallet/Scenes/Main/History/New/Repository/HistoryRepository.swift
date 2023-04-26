@@ -9,6 +9,7 @@ import Foundation
 import History
 import Resolver
 import SolanaSwift
+import KeyAppKitCore
 
 class HistoryRepository: Repository {
     typealias Element = HistoryTransaction
