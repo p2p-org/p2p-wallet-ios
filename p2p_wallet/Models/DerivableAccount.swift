@@ -16,8 +16,8 @@ struct DerivableAccount: Hashable, Identifiable {
 
     // additional
     var isBlured: Bool?
-    
+
     var id: String {
-        "\(info.publicKey.base58EncodedString) \(derivablePath.rawValue)"
+        info.publicKey.base58EncodedString
     }
 }
