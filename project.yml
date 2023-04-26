@@ -85,6 +85,9 @@ packages:
     Task_retrying:
         url: https://github.com/bigearsenal/task-retrying-swift.git
         branch: master
+    JazziconSwift:
+        url: https://github.com/p2p-org/JazziconSwift.git
+        branch: master
 
 
 options:
@@ -327,6 +330,8 @@ targets:
             - package: Sentry
 
             - package: Task_retrying
+
+            - package: JazziconSwift
 
             - framework: Frameworks/keyapp.xcframework
               embed: false

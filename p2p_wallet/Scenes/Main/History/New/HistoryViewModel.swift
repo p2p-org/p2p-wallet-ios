@@ -30,18 +30,19 @@ enum NewHistoryAction {
 }
 
 class HistoryViewModel: BaseViewModel, ObservableObject {
-    
-    // Dependencies
-    @Injected private var analyticsManager: AnalyticsManager
-    
-    // Subjects
+
+    // MARK: - Subjects
+
     let actionSubject: PassthroughSubject<NewHistoryAction, Never>
 
     let history: AsyncList<any RendableListTransactionItem>
 
     // MARK: - View Input
 
+    /// General output list. (Normally from history items)
     @Published var output = ListState<HistorySection>()
+
+    /// Send via link section.
     @Published var sendViaLinkTransactions = [SendViaLinkTransactionInfo]() {
         didSet {
             if sendViaLinkTransactions.count == 1 {
@@ -52,13 +53,17 @@ class HistoryViewModel: BaseViewModel, ObservableObject {
         }
     }
 
+    /// Send via link title
     @Published var linkTransactionsTitle = ""
 
+    /// Feature toggle
     let showSendViaLinkTransaction: Bool
 
-    // Dependency
+    // MARK: - Dependency
+
     private var sellDataService: (any SellDataService)?
     @Injected private var sendViaLinkStorage: SendViaLinkStorage
+    @Injected private var analyticsManager: AnalyticsManager
 
     // MARK: - Init
 
@@ -85,6 +90,7 @@ class HistoryViewModel: BaseViewModel, ObservableObject {
         provider: KeyAppHistoryProvider = Resolver.resolve(),
         userWalletManager: UserWalletManager = Resolver.resolve(),
         tokensRepository: TokensRepository = Resolver.resolve(),
+        pendingTransactionService: TransactionHandlerType = Resolver.resolve(),
         mint: String
     ) {
         // Init services and repositories
@@ -112,12 +118,20 @@ class HistoryViewModel: BaseViewModel, ObservableObject {
         showSendViaLinkTransaction = false
         super.init()
 
+        // Listen pending transactions
+        let pendingTransactions = HistoryViewModelAggregator.pendingTransaction(
+            pendingTransactionService: pendingTransactionService,
+            actionSubject: actionSubject,
+            mint: mint
+        )
+
         history
             .$state
+            .combineLatest(pendingTransactions)
             .receive(on: DispatchQueue.global(qos: .background))
-            .map { self.buildOutput(history: $0) }
+            .map { [weak self] in self?.buildOutput(history: $0, pendings: $1) ?? .init() }
             .receive(on: RunLoop.main)
-            .sink { self.output = $0 }
+            .sink { [weak self] in self?.output = $0 }
             .store(in: &subscriptions)
 
         bind()
@@ -166,25 +180,10 @@ class HistoryViewModel: BaseViewModel, ObservableObject {
             }
 
         // Listen pending transactions
-
-        // Using this code if need to listen pending transactions
-        let pendings = pendingTransactionService.observePendingTransactions()
-            .map { transactions -> [any RendableListTransactionItem] in
-                transactions
-                    .filter { pendingTransation in
-                        switch pendingTransation.rawTransaction {
-                        case let trx as SendTransaction where trx.isSendingViaLink:
-                            return false
-                        default:
-                            return true
-                        }
-                    }
-                    .map { [weak actionSubject] trx in
-                        RendableListPendingTransactionItem(trx: trx) {
-                            actionSubject?.send(.openPendingTransaction(trx))
-                        }
-                    }
-            }
+        let pendings = HistoryViewModelAggregator.pendingTransaction(
+            pendingTransactionService: pendingTransactionService,
+            actionSubject: actionSubject
+        )
 
         let userActions = userActionService
             .$actions
@@ -244,12 +243,12 @@ class HistoryViewModel: BaseViewModel, ObservableObject {
             await sellDataService?.update()
         }
     }
-    
+
     func sentViaLinkClicked() {
         analyticsManager.log(event: .historyClickBlockSendViaLink)
         actionSubject.send(.openSentViaLinkHistoryView)
     }
-    
+
     // MARK: - Helpers
 
     private func bind() {

@@ -25,5 +25,5 @@ public protocol UserActionConsumer {
     func process(action: any UserAction)
 
     /// Handle event.
-    func handleEvent(event: Event)
+    func handle(event: any UserActionEvent)
 }
