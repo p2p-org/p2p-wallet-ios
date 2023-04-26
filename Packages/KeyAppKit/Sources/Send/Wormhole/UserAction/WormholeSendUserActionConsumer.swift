@@ -112,7 +112,12 @@ public class WormholeSendUserActionConsumer: UserActionConsumer {
         monitoringTimer?.invalidate()
     }
 
-    public func handleEvent(event: Event) {
+    public func handle(event: any UserActionEvent) {
+        guard let event = event as? Event else { return }
+        handleInternalEvent(event: event)
+    }
+
+    func handleInternalEvent(event: Event) {
         switch event {
         case let .track(sendStatus):
             Task { [weak self] in
@@ -170,7 +175,7 @@ public class WormholeSendUserActionConsumer: UserActionConsumer {
                 let signer = self?.signer
             else {
                 let error = WormholeSendUserActionError.preparingTransactionFailure
-                self?.handleEvent(event: .sendFailure(message: action.message, error: error))
+                self?.handleInternalEvent(event: .sendFailure(message: action.message, error: error))
                 return
             }
 
@@ -188,7 +193,7 @@ public class WormholeSendUserActionConsumer: UserActionConsumer {
 
                     guard let fullySignedTransaction else {
                         let error = WormholeSendUserActionError.feeRelaySignFailure
-                        self?.handleEvent(event: .sendFailure(message: action.message, error: error))
+                        self?.handleInternalEvent(event: .sendFailure(message: action.message, error: error))
                         return
                     }
 
@@ -197,12 +202,12 @@ public class WormholeSendUserActionConsumer: UserActionConsumer {
 
                 // Submit transaction
                 let encodedTrx = try versionedTransaction.serialize().base64EncodedString()
-                 _ = try await self?.solanaClient.sendTransaction(transaction: encodedTrx, configs: configs)
+                _ = try await self?.solanaClient.sendTransaction(transaction: encodedTrx, configs: configs)
             } catch {
                 self?.errorObserver.handleError(error)
 
                 let error = WormholeSendUserActionError.submittingToBlockchainFailure
-                self?.handleEvent(event: .sendFailure(message: action.message, error: error))
+                self?.handleInternalEvent(event: .sendFailure(message: action.message, error: error))
             }
         }
     }
