@@ -1,5 +1,5 @@
 # Install xcodegen
-brew install xcodegen
+brew install xcodegen swiftgen swiftlint swiftformat periphery
 
 # Run xcodegen (pod install will be called right after to get swiftgen)
 xcodegen
