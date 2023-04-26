@@ -1,23 +1,27 @@
 import SolanaSwift
+import Combine
+import KeyAppKitCore
 
 final class ChooseSendFeeTokenService: ChooseItemService {
 
-    var chosenTokenTitle: String = L10n.chosenToken
-    var otherTokensTitle: String = L10n.otherTokens
+    let otherTokensTitle = L10n.otherTokens
 
-    private let tokens: [Wallet]
-    init(tokens: [Wallet]) {
-        self.tokens = tokens
+    var state: AnyPublisher<AsyncValueState<[ChooseItemListSection]>, Never> {
+        statePublisher.eraseToAnyPublisher()
     }
 
-    func fetchItems() async throws -> [ChooseItemListSection] {
-        [ChooseItemListSection(items: tokens)]
+    private let statePublisher: CurrentValueSubject<AsyncValueState<[ChooseItemListSection]>, Never>
+
+    init(tokens: [Wallet]) {
+        statePublisher = CurrentValueSubject<AsyncValueState<[ChooseItemListSection]>, Never>(
+            AsyncValueState(status: .ready, value: [ChooseItemListSection(items: tokens)])
+        )
     }
 
     func sort(items: [ChooseItemListSection]) -> [ChooseItemListSection] {
         let newItems = items.map { section in
             guard let wallets = section.items as? [Wallet] else { return section }
-            return ChooseItemListSection(items: wallets.sorted())
+            return ChooseItemListSection(items: wallets.sorted(preferOrderSymbols: [Token.usdc.symbol, Token.usdt.symbol]))
         }
         let isEmpty = newItems.flatMap({ $0.items }).isEmpty
         return isEmpty ? [] : newItems

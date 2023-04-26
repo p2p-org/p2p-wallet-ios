@@ -1,0 +1,519 @@
+import Foundation
+import SolanaSwift
+
+/// Info of claimable token
+public struct ClaimableTokenInfo {
+    public let lamports: Lamports
+    public let mintAddress: String
+    public let decimals: Decimals
+    public let account: String
+    public let keypair: KeyPair
+}
+
+/// Error type for SendViaLinkDataService
+public enum SendViaLinkDataServiceError: Error {
+    case invalidURL
+    case invalidSeed
+    case lastTransactionNotFound
+    case claimableAssetNotFound
+}
+
+/// Service that provide needed data for SendViaLink
+public protocol SendViaLinkDataService {
+    /// Create new URL
+    /// - Returns: URL to be sent
+    func createURL() -> URL
+    
+    /// Restore URL from givenSeed
+    /// - Parameter givenSeed: the seed given by user
+    /// - Returns: URL to be sent
+    func restoreURL(
+        givenSeed: String
+    ) throws -> URL
+    
+    /// Get seed from current link
+    /// - Parameter link: link to get seed
+    /// - Returns: seed
+    func getSeedFromURL(
+        _ url: URL
+    ) throws -> String
+    
+    /// Generate Solana `KeyPair` from given URL.
+    /// - Parameter url: claimable url
+    /// - Returns: KeyPair for temporary account
+    func generateKeyPair(
+        url: URL
+    ) async throws -> KeyPair
+    
+    /// Get info of claimable token
+    /// - Parameter url: given url
+    /// - Returns: ClaimableToken's info
+    func getClaimableTokenInfo(
+        url: URL
+    ) async throws -> ClaimableTokenInfo
+    
+    /// Claim token
+    /// - Parameter token: token to be claimed
+    /// - Returns: Serialized transaction
+    func claim(
+        token: ClaimableTokenInfo,
+        receiver: PublicKey,
+        feePayer: PublicKey
+    ) async throws -> PreparedTransaction
+}
+
+/// Default implementation for `SendViaLinkDataService`
+public final class SendViaLinkDataServiceImpl: SendViaLinkDataService {
+    
+    // MARK: - Constants
+
+    /// Supported character for generating seed
+    private let supportedCharacters = #"ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789_~-"#
+    private let scheme = "https"
+    private let seedLength = 16
+    
+    // MARK: - Properties
+
+    private let salt: String
+    private let passphrase: String
+    private let network: Network
+    private let derivablePath: DerivablePath
+    private let host: String
+    private let memoPrefix: String
+    private let solanaAPIClient: SolanaAPIClient
+    
+    // MARK: - Initializer
+
+    public init(
+        salt: String,
+        passphrase: String,
+        network: Network,
+        derivablePath: DerivablePath,
+        host: String,
+        memoPrefix: String,
+        solanaAPIClient: SolanaAPIClient
+    ) {
+        self.salt = salt
+        self.passphrase = passphrase
+        self.network = network
+        self.derivablePath = derivablePath
+        self.host = host
+        self.memoPrefix = memoPrefix
+        self.solanaAPIClient = solanaAPIClient
+    }
+    
+    // MARK: - Methods
+
+    /// Create new URL
+    /// - Returns: URL to be sent
+    public func createURL() -> URL {
+        let newSeed = String((0..<seedLength).map{ _ in supportedCharacters.randomElement()! })
+        return try! restoreURL(givenSeed: newSeed)
+    }
+    
+    /// Restore URL from givenSeed
+    /// - Parameter givenSeed: the seed given by user
+    /// - Returns: URL to be sent
+    public func restoreURL(
+        givenSeed seed: String
+    ) throws -> URL {
+        // validate givenSeed
+        try checkSeedValidation(seed: seed)
+        
+        // generate url
+        var urlComponent = URLComponents()
+        urlComponent.scheme = scheme
+        urlComponent.host = host
+        urlComponent.path = "/\(seed)"
+        guard let url = urlComponent.url else {
+            throw SendViaLinkDataServiceError.invalidSeed
+        }
+        return url
+    }
+    
+    /// Get seed from current link
+    /// - Parameter link: link to get seed
+    /// - Returns: seed
+    public func getSeedFromURL(
+        _ url: URL
+    ) throws -> String {
+        guard let components = URLComponents(url: url, resolvingAgainstBaseURL: true),
+              components.scheme == scheme,
+              components.host == host
+        else {
+            throw SendViaLinkDataServiceError.invalidURL
+        }
+        
+        // get seed
+        let seed = String(components.path.dropFirst()) // drop "/"
+        
+        // assert if seed is valid
+        try checkSeedValidation(seed: seed)
+        
+        // return the seed
+        return seed
+    }
+    
+    /// Generate Solana `KeyPair` from given URL.
+    /// - Parameter url: claimable url
+    /// - Returns: KeyPair for temporary account
+    public func generateKeyPair(
+        url: URL
+    ) async throws -> KeyPair {
+        let seed = try getSeedFromURL(url)
+        return try await KeyPair(
+            seed: seed,
+            salt: salt,
+            passphrase: passphrase,
+            network: .mainnetBeta,
+            derivablePath: .default
+        )
+    }
+    
+    /// Get info of claimable token
+    /// - Parameter url: given url
+    /// - Returns: ClaimableToken's info
+    public func getClaimableTokenInfo(
+        url: URL
+    ) async throws -> ClaimableTokenInfo {
+        // Generate keypair from seed
+        let keypair = try await generateKeyPair(url: url)
+        
+        let claimableTokenInfo = try await getClaimableTokenInfoFromBalance(
+            keypair: keypair
+        )
+        return claimableTokenInfo
+    }
+    
+    /// Claim token
+    /// - Parameter token: token to be claimed
+    /// - Returns: Serialized transaction
+    public func claim(
+        token: ClaimableTokenInfo,
+        receiver: PublicKey,
+        feePayer: PublicKey
+    ) async throws -> PreparedTransaction {
+        // form memo
+        let memo = memoPrefix + "-claim"
+        
+        // native sol
+        if token.mintAddress == Token.nativeSolana.address {
+            return try await claimNativeSOLToken(
+                keypair: token.keypair,
+                receiver: receiver,
+                lamports: token.lamports,
+                feePayer: feePayer,
+                memo: memo
+            )
+        }
+        
+        // spl token
+        else {
+            let mre = try await solanaAPIClient.getMinimumBalanceForRentExemption(span: AccountInfo.BUFFER_LENGTH)
+            return try await claimSPLToken(
+                keypair: token.keypair,
+                receiver: receiver,
+                mintAddress: token.mintAddress,
+                decimals: token.decimals,
+                fromTokenAccount: token.account,
+                lamports: token.lamports,
+                feePayer: feePayer,
+                minRentExemption: mre,
+                memo: memo
+            )
+        }
+    }
+    
+    // MARK: - Seed validation
+
+    func checkSeedValidation(seed: String) throws {
+        if seed.count == seedLength && seed.allSatisfy({ supportedCharacters.contains($0) }) {
+            return
+        }
+        throw SendViaLinkDataServiceError.invalidSeed
+    }
+    
+    // MARK: - Get ClaimableToken from history
+
+//    private func getClaimableTokenInfoFromHistory(
+//        keypair: KeyPair
+//    ) async throws -> ClaimableTokenInfo {
+//        let pubkey = keypair.publicKey.base58EncodedString
+//        
+//        // get signatures
+//        let signature = try await solanaAPIClient.getSignaturesForAddress(
+//            address: pubkey,
+//            configs: RequestConfiguration(commitment: "confirmed")
+//        )
+//            .first?
+//            .signature
+//        
+//        guard let signature else {
+//            throw SendViaLinkDataServiceError.lastTransactionNotFound
+//        }
+//        
+//        // get last transaction
+//        let lastTransaction = try await solanaAPIClient.getTransaction(
+//            signature: signature,
+//            commitment: "confirmed"
+//        )
+//        
+//        guard let lastTransaction else {
+//            throw SendViaLinkDataServiceError.lastTransactionNotFound
+//        }
+//        
+//        // parse transaction
+//        return try parseSendViaLinkTransaction(
+//            transactionInfo: lastTransaction,
+//            keypair: keypair
+//        )
+//    }
+//    
+//    private func parseSendViaLinkTransaction(
+//        transactionInfo: TransactionInfo,
+//        keypair: KeyPair
+//    ) throws -> ClaimableTokenInfo {
+//        var instructions = transactionInfo.transaction.message.instructions
+//        
+//        // Assert intructionsCount to be greater than 2
+//        guard instructions.count >= 2, instructions.count <= 3 else {
+//            throw SendViaLinkDataServiceError.lastTransactionNotFound
+//        }
+//        
+//        // Check memo instruction
+//        let memoInstruction = instructions.removeLast()
+//        guard memoInstruction.programId == MemoProgram.id.base58EncodedString
+//            // TODO: - Check memo data
+//        else {
+//            throw SendViaLinkDataServiceError.lastTransactionNotFound
+//        }
+//        
+//        // get last transfer instruction
+//        let instruction = instructions.last!
+//        
+//        // Native SOL
+//        if instruction.programId == SystemProgram.id.base58EncodedString,
+//           instruction.parsed?.type == "transfer", // SystemProgram.Index.transfer
+//           let lamports = instruction.parsed?.info.lamports,
+//           let account = instruction.parsed?.info.destination,
+//           lamports > 0
+//        {
+//            return ClaimableTokenInfo(
+//                lamports: lamports,
+//                mintAddress: Token.nativeSolana.address,
+//                decimals: Token.nativeSolana.decimals,
+//                account: account,
+//                keypair: keypair
+//            )
+//        }
+//        
+//        // SPL token
+//        else if instruction.programId == TokenProgram.id.base58EncodedString,
+//                instruction.parsed?.type == "transfer" || instruction.parsed?.type == "transferChecked",
+//                let tokenAmount = instruction.parsed?.info.tokenAmount?.amount,
+//                let lamports = Lamports(tokenAmount),
+//                let mint = instruction.parsed?.info.mint,
+//                let decimals = instruction.parsed?.info.tokenAmount?.decimals,
+//                let account = instruction.parsed?.info.destination,
+//                lamports > 0
+//        {
+//            return ClaimableTokenInfo(
+//                lamports: lamports,
+//                mintAddress: mint,
+//                decimals: decimals,
+//                account: account,
+//                keypair: keypair
+//            )
+//        }
+//        
+//        throw SendViaLinkDataServiceError.lastTransactionNotFound
+//    }
+    
+    // MARK: - Get ClaimableToken from balance
+
+    private func getClaimableTokenInfoFromBalance(
+        keypair: KeyPair
+    ) async throws -> ClaimableTokenInfo {
+        // 1. Get balance
+        let solBalance = try await solanaAPIClient.getBalance(
+            account: keypair.publicKey.base58EncodedString,
+            commitment: "recent"
+        )
+        
+        if solBalance > 0 {
+            return ClaimableTokenInfo(
+                lamports: solBalance,
+                mintAddress: Token.nativeSolana.address,
+                decimals: Token.nativeSolana.decimals,
+                account: keypair.publicKey.base58EncodedString,
+                keypair: keypair
+            )
+        }
+        
+        // 2. Get token accounts by owner
+        let tokenAccounts = try await solanaAPIClient.getTokenAccountsByOwner(
+            pubkey: keypair.publicKey.base58EncodedString,
+            params: .init(
+                mint: nil,
+                programId: TokenProgram.id.base58EncodedString
+            ),
+            configs: .init(encoding: "base64")
+        )
+        guard let tokenAccount = tokenAccounts.first(where: { $0.account.lamports > 0 })
+        else {
+            throw SendViaLinkDataServiceError.claimableAssetNotFound
+        }
+        
+        let tokenAccountBalance = try await solanaAPIClient.getTokenAccountBalance(
+            pubkey: tokenAccount.pubkey,
+            commitment: "recent"
+        )
+        
+        guard let decimals = tokenAccountBalance.decimals,
+              let amount = UInt64(tokenAccountBalance.amount)
+        else {
+            throw SendViaLinkDataServiceError.claimableAssetNotFound
+        }
+            
+        return ClaimableTokenInfo(
+            lamports: amount,
+            mintAddress: tokenAccount.account.data.mint.base58EncodedString,
+            decimals: decimals,
+            account: tokenAccount.pubkey,
+            keypair: keypair
+        )
+    }
+    
+    // MARK: - Claiming
+
+    private func claimNativeSOLToken(
+        keypair: KeyPair,
+        receiver: PublicKey,
+        lamports: Lamports,
+        feePayer: PublicKey,
+        memo: String
+    ) async throws -> PreparedTransaction {
+        // form instructions
+        var instructions = [TransactionInstruction]()
+        
+        // transfer
+        instructions.append(
+            SystemProgram.transferInstruction(
+                from: keypair.publicKey,
+                to: receiver,
+                lamports: lamports
+            )
+        )
+        
+        //  memo
+        instructions.append(
+            try MemoProgram.createMemoInstruction(
+                memo: memo
+            )
+        )
+        
+        // prepare transaction
+        return try await BlockchainClient(apiClient: solanaAPIClient)
+            .prepareTransaction(
+                instructions: instructions,
+                signers: [keypair],
+                feePayer: feePayer
+            )
+    }
+    
+    private func claimSPLToken(
+        keypair: KeyPair,
+        receiver: PublicKey,
+        mintAddress: String,
+        decimals: Decimals,
+        fromTokenAccount: String,
+        lamports: Lamports,
+        feePayer: PublicKey,
+        minRentExemption: Lamports,
+        memo: String
+    ) async throws -> PreparedTransaction {
+        // convert String to PublicKey
+        let mintAddress = try PublicKey(string: mintAddress)
+        let fromTokenAccount = try PublicKey(string: fromTokenAccount)
+        
+        // get associated token address
+        let splDestination = try await solanaAPIClient.findSPLTokenDestinationAddress(
+            mintAddress: mintAddress.base58EncodedString,
+            destinationAddress: receiver.base58EncodedString
+        )
+        
+        // form instruction
+        var instructions = [TransactionInstruction]()
+        
+        // create associated token address
+        var accountsCreationFee: UInt64 = 0
+        if splDestination.isUnregisteredAsocciatedToken {
+            instructions.append(
+                try AssociatedTokenProgram
+                    .createAssociatedTokenAccountInstruction(
+                        mint: mintAddress,
+                        owner: receiver,
+                        payer: feePayer
+                    )
+            )
+            accountsCreationFee += minRentExemption
+        }
+        
+        // transfer instruction
+        instructions.append(
+            TokenProgram.transferInstruction(
+                source: fromTokenAccount,
+                destination: splDestination.destination,
+                owner: keypair.publicKey,
+                amount: lamports
+            )
+        )
+        
+        // close spl token account instruction and get SOL back
+        instructions.append(
+            TokenProgram.closeAccountInstruction(
+                account: fromTokenAccount,
+                destination: keypair.publicKey,
+                owner: keypair.publicKey
+            )
+        )
+        
+        // return sol back to fee payer
+        instructions.append(
+            SystemProgram.transferInstruction(
+                from: keypair.publicKey,
+                to: feePayer,
+                lamports: minRentExemption
+            )
+        )
+        
+        // memo
+        instructions.append(
+            try MemoProgram.createMemoInstruction(
+                memo: memo
+            )
+        )
+        
+        // prepare transaction
+        return try await BlockchainClient(apiClient: solanaAPIClient)
+            .prepareTransaction(
+                instructions: instructions,
+                signers: [keypair],
+                feePayer: feePayer
+            )
+    }
+}
+
+// MARK: - Helpers
+
+private extension NSError {
+    var isNetworkConnectionError: Bool {
+        self.code == NSURLErrorNetworkConnectionLost || self.code == NSURLErrorNotConnectedToInternet || self.code == NSURLErrorDataNotAllowed
+    }
+}
+
+private extension Error {
+    var isNetworkConnectionError: Bool {
+        (self as NSError).isNetworkConnectionError
+    }
+}
