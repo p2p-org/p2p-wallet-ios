@@ -138,9 +138,6 @@ class WormholeSendInputViewModel: BaseViewModel, ObservableObject {
             .dropFirst()
             .debounce(for: 0.5, scheduler: DispatchQueue.main)
             .sink { [weak self] input, inputMode in
-                self?.analyticsManager
-                    .log(event: .sendClickChangeTokenValue(source: SendSource.none.rawValue, sendFlow: "Bridge"))
-
                 guard let self, let account = self.adapter.inputAccount, !self.wasMaxUsed else {
                     self?.wasMaxUsed = false
                     return
@@ -178,6 +175,8 @@ class WormholeSendInputViewModel: BaseViewModel, ObservableObject {
 
                     await self.stateMachine.accept(action: .updateInput(amount: newAmount))
                 }
+                self.analyticsManager
+                    .log(event: .sendClickChangeTokenValue(source: SendSource.none.rawValue, sendFlow: "Bridge"))
             }
             .store(in: &subscriptions)
 
@@ -326,7 +325,7 @@ extension WormholeSendInputViewModel {
     static func resolveSupportedSolanaAccounts(
         solanaAccountsService: SolanaAccountsService
     ) -> [SolanaAccountsService.Account] {
-        let supportedToken = SupportedToken.bridges.map(\.solAddress).compactMap { $0 }
+        let supportedToken = WormholeSupportedTokens.bridges.map(\.solAddress).compactMap { $0 }
 
         var availableBridgeAccounts = solanaAccountsService.state.value.filter { account in
             supportedToken.contains(account.data.token.address)

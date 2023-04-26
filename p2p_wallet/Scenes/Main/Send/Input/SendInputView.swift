@@ -120,10 +120,6 @@ struct SendInputView: View {
                 SendInputAmountWrapperView(viewModel: viewModel.inputAmountViewModel)
             }
 
-            Spacer()
-
-            sendButton
-
             #if !RELEASE
                 HStack {
                     Toggle(isOn: $viewModel.isFakeSendTransaction) {
@@ -211,11 +207,10 @@ struct SendInputView: View {
                 isSliderOn: $viewModel.isSliderOn,
                 data: viewModel.actionButtonData,
                 showFinished: viewModel.showFinished
-            )
-            .accessibilityIdentifier("send-slider")
+           ) .accessibilityIdentifier("send-slider")
         }
     }
-
+    
     #if !RELEASE
         var debugView: some View {
             Group {

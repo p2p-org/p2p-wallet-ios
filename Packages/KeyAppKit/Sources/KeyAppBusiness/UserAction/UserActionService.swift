@@ -39,6 +39,12 @@ public class UserActionService {
         }
     }
 
+    public func handle(event: any UserActionEvent) {
+        for consumer in consumers {
+            consumer.handle(event: event)
+        }
+    }
+
     /// Internal method for updating action. The consumer will emits value and pass to this method.
     func update(action: any UserAction) {
         accessQueue.async(flags: .barrier) { [weak self] in

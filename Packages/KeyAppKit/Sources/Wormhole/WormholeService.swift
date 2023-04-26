@@ -32,7 +32,7 @@ public class WormholeService {
 
     /// Method for get claiming bundle.
     public func getBundle(account: EthereumAccount) async throws -> WormholeBundle {
-        try await errorObservable.run {
+        do {
             guard let ethereumKeypair, let solanaKeyPair else {
                 throw ServiceError.authorizationError
             }
@@ -57,6 +57,9 @@ public class WormholeService {
             )
 
             return bundle
+        } catch {
+            errorObservable.handleError(error)
+            throw error
         }
     }
 

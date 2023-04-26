@@ -34,27 +34,4 @@ extension ParsedTransaction {
 
         return L10n.transaction
     }
-
-    var icon: UIImage {
-        switch info {
-        case is CreateAccountInfo:
-            return .transactionCreateAccount
-        case is CloseAccountInfo:
-            return .transactionCloseAccount
-        case let transaction as TransferInfo:
-            switch transaction.transferType {
-            case .send:
-                return .transactionSend
-            case .receive:
-                return .transactionReceive
-            default:
-                break
-            }
-        case is SwapInfo:
-            return .transactionSwap
-        default:
-            break
-        }
-        return .transactionUndefined
-    }
 }
