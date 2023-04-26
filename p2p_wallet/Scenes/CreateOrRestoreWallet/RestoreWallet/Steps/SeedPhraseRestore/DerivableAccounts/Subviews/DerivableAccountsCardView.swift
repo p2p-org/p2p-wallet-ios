@@ -27,6 +27,7 @@ struct DerivableAccountsCardView: View {
         }
         .padding(.vertical, 12)
         .padding(.horizontal, 28)
+        .background(Color(Asset.Colors.snow.color))
         .addBorder(Color(Asset.Colors.rain.color), cornerRadius: 16)
         .shadow(color: .black.opacity(0.05), radius: 8 / UIScreen.main.scale)
     }
