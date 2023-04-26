@@ -109,6 +109,7 @@ extension DebugMenuViewModel {
         case sell
         case ethAddressEnabled
         case sendViaLink
+        case solanaEthAddressEnabled
 
         var title: String {
             switch self {
@@ -123,6 +124,7 @@ extension DebugMenuViewModel {
             case .sell: return "Sell (Off Ramp)"
             case .ethAddressEnabled: return "Eth Address Enabled"
             case .sendViaLink: return "Send via link"
+            case .solanaEthAddressEnabled: return "solana ETH address enabled"
             }
         }
 
@@ -139,6 +141,7 @@ extension DebugMenuViewModel {
             case .sell: return .sellScenarioEnabled
             case .ethAddressEnabled: return .ethAddressEnabled
             case .sendViaLink: return .sendViaLinkEnabled
+            case .solanaEthAddressEnabled: return .solanaEthAddressEnabled
             }
         }
     }

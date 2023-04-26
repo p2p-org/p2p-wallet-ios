@@ -325,7 +325,7 @@ extension WormholeSendInputViewModel {
     static func resolveSupportedSolanaAccounts(
         solanaAccountsService: SolanaAccountsService
     ) -> [SolanaAccountsService.Account] {
-        let supportedToken = SupportedToken.bridges.map(\.solAddress).compactMap { $0 }
+        let supportedToken = WormholeSupportedTokens.bridges.map(\.solAddress).compactMap { $0 }
 
         var availableBridgeAccounts = solanaAccountsService.state.value.filter { account in
             supportedToken.contains(account.data.token.address)

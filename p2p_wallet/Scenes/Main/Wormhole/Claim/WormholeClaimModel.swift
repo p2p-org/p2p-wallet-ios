@@ -13,6 +13,10 @@ protocol WormholeClaimModel {
     var claimButtonTitle: String { get }
 
     var claimButtonEnable: Bool { get }
+    
+    var isOpenFeesVisible: Bool { get }
+
+    var shouldShowBanner: Bool { get }
 
     var fees: String { get }
 
@@ -31,6 +35,10 @@ struct WormholeClaimMockModel: WormholeClaimModel {
     var claimButtonTitle: String
 
     var claimButtonEnable: Bool
+
+    var isOpenFeesVisible: Bool
+
+    var shouldShowBanner: Bool
 
     var fees: String
 
@@ -64,6 +72,10 @@ struct WormholeClaimEthereumModel: WormholeClaimModel {
     }
 
     var claimButtonTitle: String {
+        guard !isNotEnoughAmount else {
+            return L10n.addFunds
+        }
+
         let resultAmount = bundle.value?.resultAmount
 
         if let resultAmount = resultAmount {
@@ -85,12 +97,26 @@ struct WormholeClaimEthereumModel: WormholeClaimModel {
     }
 
     var claimButtonEnable: Bool {
+        if isNotEnoughAmount {
+            return true
+        }
         switch bundle.status {
         case .fetching, .initializing:
             return false
         case .ready:
             return true
         }
+    }
+
+    var isOpenFeesVisible: Bool {
+        !bundle.hasError
+    }
+
+    var shouldShowBanner: Bool {
+        if let error = bundle.error as? JSONRPCError<String> {
+            return error.code == -32007
+        }
+        return false
     }
 
     var fees: String {
@@ -113,5 +139,12 @@ struct WormholeClaimEthereumModel: WormholeClaimModel {
     
     var isLoading: Bool {
         bundle.isFetching
+    }
+
+    private var isNotEnoughAmount: Bool {
+        if let error = bundle.error as? JSONRPCError<String>, error.code == -32007 {
+            return true
+        }
+        return false
     }
 }

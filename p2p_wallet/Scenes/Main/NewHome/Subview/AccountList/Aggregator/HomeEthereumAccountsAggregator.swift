@@ -120,7 +120,7 @@ private struct EthereumAccountsWithWormholeAggregator: DataAggregator {
                     return true
                 case let .erc20(contract):
                     // Check erc-20 tokens
-                    return Wormhole.SupportedToken.bridges.contains { bridge in
+                    return WormholeSupportedTokens.bridges.contains { bridge in
                         if let bridgeTokenAddress = bridge.ethAddress {
                             // Supported bridge token is erc-20
                             return (try? EthereumAddress(hex: bridgeTokenAddress, eip55: false)) == contract

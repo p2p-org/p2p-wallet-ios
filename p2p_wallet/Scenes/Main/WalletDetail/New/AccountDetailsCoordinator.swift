@@ -167,7 +167,7 @@ class AccountDetailsCoordinator: SmartCoordinator<AccountDetailsCoordinatorResul
             .map(\.receiveFromAddress)
             .compactMap { $0 }
 
-        if available(.ethAddressEnabled) &&
+        if available(.ethAddressEnabled) && available(.solanaEthAddressEnabled) &&
             (account.data.isNativeSOL || supportedBridgeTokens.contains(account.data.token.address))
         {
             var icon: SupportedTokenItemIcon = .image(UIImage.imageOutlineIcon)
