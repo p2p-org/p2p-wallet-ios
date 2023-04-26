@@ -119,6 +119,25 @@ struct SendInputView: View {
             case .ready:
                 SendInputAmountWrapperView(viewModel: viewModel.inputAmountViewModel)
             }
+            
+            #if !RELEASE
+            HStack {
+                Toggle(isOn: $viewModel.isFakeSendTransaction) {
+                    Text("Fake Transaction")
+                }
+                if viewModel.isFakeSendTransaction {
+                    VStack {
+                        Toggle(isOn: $viewModel.isFakeSendTransactionError) {
+                            Text("With Error")
+                        }
+                        Toggle(isOn: $viewModel.isFakeSendTransactionNetworkError) {
+                            Text("With Network Error")
+                        }
+                    }
+                }
+                
+                Spacer()
+            }
 
             Spacer()
 
@@ -211,6 +230,34 @@ struct SendInputView: View {
                 isSliderOn: $viewModel.isSliderOn,
                 data: viewModel.actionButtonData,
                 showFinished: viewModel.showFinished
+           ) .accessibilityIdentifier("send-slider")
+        }
+    }
+    
+    #if !RELEASE
+    var debugView: some View {
+        Group {
+            if viewModel.currentState.sendViaLinkSeed != nil {
+                Text("\(viewModel.getSendViaLinkURL() ?? "") (tap to copy)")
+                    .apply(style: .label2)
+                    .foregroundColor(.red)
+                    .onTapGesture {
+                        UIPasteboard.general.string = viewModel.getSendViaLinkURL()
+                    }
+                Text("\(viewModel.currentState.recipient.address) (tap to copy)")
+                    .apply(style: .label2)
+                    .foregroundColor(.red)
+                    .onTapGesture {
+                        UIPasteboard.general.string = viewModel.currentState.recipient.address
+                    }
+            }
+            
+            FeeRelayerDebugView(
+                viewModel: .init(
+                    feeInSOL: viewModel.currentState.fee,
+                    feeInToken: viewModel.currentState.feeInToken,
+                    payingFeeTokenDecimals: viewModel.currentState.tokenFee.decimals
+                )
             )
             .accessibilityIdentifier("send-slider")
         }
