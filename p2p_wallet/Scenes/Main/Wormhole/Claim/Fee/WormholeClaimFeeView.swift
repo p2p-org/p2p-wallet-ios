@@ -1,10 +1,3 @@
-//
-//  WormholeClaimFee.swift
-//  p2p_wallet
-//
-//  Created by Giang Long Tran on 06.03.2023.
-//
-
 import KeyAppKitCore
 import KeyAppUI
 import SwiftUI
@@ -30,7 +23,7 @@ struct WormholeClaimFeeView: View {
                             .frame(width: 15, height: 21.5)
                     )
                 VStack(alignment: .leading, spacing: 2) {
-                    Text(L10n.enjoyFreeTransactions)
+                    Text(L10n.howToClaimForFree)
                         .fontWeight(.semibold)
                         .apply(style: .text1)
                     Text(L10n.AllTransactionsOverAreFree.keyAppWillCoverAllFeesForYou("$50"))
