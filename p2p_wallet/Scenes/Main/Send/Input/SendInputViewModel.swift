@@ -40,6 +40,9 @@ final class SendInputViewModel: BaseViewModel, ObservableObject {
     @Published var isFeeLoading: Bool = true
 
     @Published var loadingState: LoadableState = .loaded
+    
+    @Published var showSecondaryAmounts = true
+    @Published var isSwitchAvailable = true
 
     // ActionButton
     @Published var actionButtonData = SliderActionButtonData.zero
@@ -91,6 +94,7 @@ final class SendInputViewModel: BaseViewModel, ObservableObject {
     private let source: SendSource
     private var wasMaxWarningToastShown: Bool = false
     private let preChosenAmount: Double?
+    private let allowSwitchingMainAmountType: Bool
 
     // MARK: - Dependencies
 
@@ -108,6 +112,8 @@ final class SendInputViewModel: BaseViewModel, ObservableObject {
     ) {
         self.source = source
         self.preChosenAmount = preChosenAmount
+        self.allowSwitchingMainAmountType = allowSwitchingMainAmountType
+
         let repository = Resolver.resolve(WalletsRepository.self)
         walletsRepository = repository
         let wallets = repository.getWallets()
@@ -405,10 +411,36 @@ private extension SendInputViewModel {
                 DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) { self?.openKeyboard() }
             }
             .store(in: &subscriptions)
+
+        Publishers.CombineLatest(
+            pricesService.isPricesAvailablePublisher,
+            $sourceWallet.eraseToAnyPublisher()
+        )
+        .sink { [weak self] isPriceAvailable, currentWallet in
+            guard let self else { return }
+            if !isPriceAvailable || currentWallet.price == nil {
+                self.turnOffInputSwitch()
+            } else if
+                let amount = currentWallet.amount,
+                currentWallet.isUsdcOrUsdt && abs(amount - currentWallet.amountInCurrentFiat) <= 0.021 {
+                
+                self.turnOffInputSwitch()
+            } else {
+                self.isSwitchAvailable = self.allowSwitchingMainAmountType
+                self.showSecondaryAmounts = true
+            }
+        }
+        .store(in: &subscriptions)
     }
 }
 
 private extension SendInputViewModel {
+    func turnOffInputSwitch() {
+        inputAmountViewModel.mainAmountType = .token
+        isSwitchAvailable = false
+        showSecondaryAmounts = false
+    }
+
     func updateInputAmountView() {
         guard currentState.amountInToken != .zero else {
             inputAmountViewModel.isError = false
@@ -420,16 +452,22 @@ private extension SendInputViewModel {
             inputAmountViewModel.isError = true
             actionButtonData = SliderActionButtonData(
                 isEnabled: false,
-                title: L10n
-                    .max(maxAmount.tokenAmountFormattedString(symbol: sourceWallet.token.symbol, roundingMode: .down))
+                title: L10n.max(maxAmount.tokenAmountFormattedString(
+                    symbol: sourceWallet.token.symbol,
+                    maximumFractionDigits: Int(sourceWallet.token.decimals),
+                    roundingMode: .down
+                ))
             )
             checkMaxButtonIfNeeded()
         case let .error(.inputTooLow(minAmount)):
             inputAmountViewModel.isError = true
             actionButtonData = SliderActionButtonData(
                 isEnabled: false,
-                title: L10n
-                    .min(minAmount.tokenAmountFormattedString(symbol: sourceWallet.token.symbol, roundingMode: .down))
+                title: L10n.min(minAmount.tokenAmountFormattedString(
+                    symbol: sourceWallet.token.symbol,
+                    maximumFractionDigits: Int(sourceWallet.token.decimals),
+                    roundingMode: .down
+                ))
             )
         case .error(reason: .insufficientAmountToCoverFee):
             inputAmountViewModel.isError = false
@@ -454,10 +492,13 @@ private extension SendInputViewModel {
             wasMaxWarningToastShown = false
             inputAmountViewModel.isError = false
             if !currentState.isSendingViaLink {
-                actionButtonData = SliderActionButtonData(
-                    isEnabled: true,
-                    title: "\(L10n.send) \(currentState.amountInToken.tokenAmountFormattedString(symbol: currentState.token.symbol, maximumFractionDigits: Int(currentState.token.decimals), roundingMode: .down))"
+                var title = L10n.send + " "
+                title += currentState.amountInToken.tokenAmountFormattedString(
+                    symbol: currentState.token.symbol,
+                    maximumFractionDigits: Int(currentState.token.decimals),
+                    roundingMode: .down
                 )
+                actionButtonData = SliderActionButtonData(isEnabled: true, title: title)
             } else {
                 actionButtonData = SliderActionButtonData(
                     isEnabled: true,
@@ -754,5 +795,9 @@ private extension SendInputViewModel {
 private extension Wallet {
     var isSendable: Bool {
         lamports ?? 0 > 0 && !isNFTToken
+    }
+
+    var isUsdcOrUsdt: Bool {
+        [Token.usdc.address, Token.usdt.address].contains(mintAddress)
     }
 }

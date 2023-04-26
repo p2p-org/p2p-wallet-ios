@@ -1,6 +1,7 @@
 import Combine
 import KeyAppUI
 import SwiftUI
+import SolanaSwift
 
 struct SendInputAmountView: View {
     @Binding var amountText: String
@@ -156,8 +157,7 @@ struct SendInputAmountView: View {
 
 struct SendInputAmountView_Previews: PreviewProvider {
     static var previews: some View {
-        ZStack {
-            Color(Asset.Colors.smoke.color)
+        ColoredBackground {
             SendInputAmountView(
                 amountText: .constant(""),
                 isFirstResponder: .constant(true),
