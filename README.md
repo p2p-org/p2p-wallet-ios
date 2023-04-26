@@ -24,10 +24,6 @@ Key App wallet on Solana blockchain
 ```shell
 git clone git@github.com:p2p-org/p2p-wallet-ios.git && cd p2p-wallet-ios
 ```
-- Get submodules
-```shell
-git submodule update --init --recursive
-```
 - Set git hooks (Optional)
 ```shell
 git config core.hooksPath .githooks

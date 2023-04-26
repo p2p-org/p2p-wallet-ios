@@ -153,9 +153,9 @@ aggregateTargets:
     Detect unused code:
         buildScripts:
         - name: SwiftGen
-          script: ${PWD}/Pods/SwiftGen/bin/swiftgen config run --config ${PWD}/swiftgen.yml
+          script: /opt/homebrew/bin/swiftgen config run --config ${PWD}/swiftgen.yml
         - name: Periphery
-          script: ${PWD}/Pods/Periphery/periphery scan --workspace p2p_wallet.xcworkspace --format xcode
+          script: /opt/homebrew/bin/periphery scan --format xcode
 
 targets:
     p2p_wallet:
@@ -216,7 +216,7 @@ targets:
                     echo "Swiftgen is disabled in Release mode"
                     exit 0
                   fi
-                  "$PODS_ROOT/SwiftGen/bin/swiftgen"
+                  /opt/homebrew/bin/swiftgen config run --config ${PWD}/swiftgen.yml
             name: "[SCRIPT] Swiftgen Run"
         postBuildScripts:
           - script: |
