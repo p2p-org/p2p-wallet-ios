@@ -119,30 +119,6 @@ struct SendInputView: View {
             case .ready:
                 SendInputAmountWrapperView(viewModel: viewModel.inputAmountViewModel)
             }
-            
-            #if !RELEASE
-            HStack {
-                Toggle(isOn: $viewModel.isFakeSendTransaction) {
-                    Text("Fake Transaction")
-                }
-                if viewModel.isFakeSendTransaction {
-                    VStack {
-                        Toggle(isOn: $viewModel.isFakeSendTransactionError) {
-                            Text("With Error")
-                        }
-                        Toggle(isOn: $viewModel.isFakeSendTransactionNetworkError) {
-                            Text("With Network Error")
-                        }
-                    }
-                }
-                
-                Spacer()
-            }
-            #endif
-
-            Spacer()
-
-            sendButton
 
             #if !RELEASE
                 HStack {
