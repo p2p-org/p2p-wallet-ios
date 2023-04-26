@@ -138,10 +138,14 @@ class WormholeSendInputViewModel: BaseViewModel, ObservableObject {
             .dropFirst()
             .debounce(for: 0.5, scheduler: DispatchQueue.main)
             .sink { [weak self] input, inputMode in
-                guard let self, let account = self.adapter.inputAccount, !self.wasMaxUsed else {
-                    self?.wasMaxUsed = false
+                guard let self, let account = self.adapter.inputAccount else {
                     return
                 }
+
+                if !self.wasMaxUsed {
+                    self.wasMaxUsed = false
+                }
+
                 Task {
                     let input = input.replacingOccurrences(of: " ", with: "")
                     var newAmount = input
@@ -149,6 +153,23 @@ class WormholeSendInputViewModel: BaseViewModel, ObservableObject {
                     switch inputMode {
                     case .fiat:
                         let fiatAmount: CurrencyAmount = .init(usdStr: input)
+
+                        // If input in fiat equals to account balance in fiat. We set max amount in token due
+                        // conversation losing.
+                        if let inputAccount = self.adapter.inputAccount {
+                            if let accountBalanceInFiat = inputAccount.amountInFiat {
+                                let accountBalanceInFiatStr = currencyInputFormatter
+                                    .string(amount: accountBalanceInFiat)
+
+                                if accountBalanceInFiatStr == input {
+                                    newAmount = cryptoInputFormatter.string(amount: inputAccount.cryptoAmount)
+                                    self.secondaryAmountString = cryptoInputFormatter
+                                        .string(amount: inputAccount.cryptoAmount)
+
+                                    break
+                                }
+                            }
+                        }
 
                         if
                             let price = account.price,
