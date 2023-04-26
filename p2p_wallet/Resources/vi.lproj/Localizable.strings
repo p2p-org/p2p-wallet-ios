@@ -1356,6 +1356,8 @@
 "You can’t receive money with it" = "Bạn không thể nhận tiền với nó";
 "Sorry, we don't know that country " = "Xin lỗi, chúng tôi không biết quốc gia đó";
 "The transaction was rejected. Open your link again." = "Giao dịch đã bị từ chối.  Mở lại liên kết của bạn.";
+"Add funds" = "Thêm các quỹ";
+"Wormhole Bridge is currently unable.\nPlease try again later" = "Cầu Wormhole hiện không hoạt động.\nVui lòng thử lại sau";
 "It usually takes 15-20 minutes for a transaction to complete" = "Thường mất 15-20 phút để hoàn tất giao dịch";
 "How to claim for free" = "Làm thế nào để yêu cầu miễn phí";
 "I forgot PIN" = "tôi quên mã PIN";

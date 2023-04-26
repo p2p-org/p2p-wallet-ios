@@ -23,6 +23,10 @@ class WormholeSendFeesCoordinator: SmartCoordinator<Void> {
             }
             .store(in: &subscriptions)
 
+        vm.close.sink { [weak vc] in
+            vc?.dismiss(animated: true)
+        }.store(in: &subscriptions)
+
         return vc
     }
 }

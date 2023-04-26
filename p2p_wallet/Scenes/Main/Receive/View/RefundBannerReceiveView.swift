@@ -1,10 +1,3 @@
-//
-//  RefundBannerReceiveCellView.swift
-//  p2p_wallet
-//
-//  Created by Giang Long Tran on 07.03.2023.
-//
-
 import Foundation
 import KeyAppUI
 import SwiftUI
@@ -16,13 +9,13 @@ struct RefundBannerReceiveView: View {
         HStack {
             Text(item.text)
                 .foregroundColor(Color(Asset.Colors.night.color))
-                .fontWeight(.semibold)
-                .apply(style: .text2)
+                .apply(style: .text3)
                 .multilineTextAlignment(.leading)
             Spacer()
-            Image(uiImage: .receiveBills)
+            Image(uiImage: .gift)
         }
         .padding(.horizontal, 20)
+        .padding(.vertical, 4)
         .background(Color(UIColor.cdf6cd))
         .cornerRadius(radius: 16, corners: .allCorners)
     }

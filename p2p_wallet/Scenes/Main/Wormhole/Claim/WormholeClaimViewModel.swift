@@ -77,6 +77,8 @@ class WormholeClaimViewModel: BaseViewModel, ObservableObject {
                 if let error = error as? JSONRPCError<String>, error.code == -32007 {
                     self?.notificationService
                         .showInAppNotification(.error(L10n.theFeesAreBiggerThanTheTransactionAmount))
+                } else {
+                    self?.notificationService.showToast(title: nil, text: L10n.WormholeBridgeIsCurrentlyUnable.pleaseTryAgainLater, haptic: false)
                 }
             }
             .store(in: &subscriptions)
@@ -100,6 +102,10 @@ class WormholeClaimViewModel: BaseViewModel, ObservableObject {
     func claim() {
         if let model = model as? WormholeClaimEthereumModel {
             if bundle.state.hasError {
+                if let error = bundle.state.error as? JSONRPCError<String>, error.code == -32007 {
+                    action.send(.openReceive)
+                    return
+                }
                 bundle.fetch()
             } else {
                 guard let bundle = bundle.state.value else {
@@ -135,6 +141,7 @@ extension WormholeClaimViewModel {
     enum Action {
         case openFee(AsyncValue<WormholeBundle?>)
         case claiming(WormholeClaimUserAction)
+        case openReceive
     }
 
     enum Error: Swift.Error {

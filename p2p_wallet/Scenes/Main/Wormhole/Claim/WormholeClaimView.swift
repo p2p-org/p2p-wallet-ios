@@ -71,15 +71,17 @@ struct WormholeClaimView: View {
                     )
 
                 // Button
-                Button {
-                    viewModel.openFees()
-                } label: {
-                    Image(uiImage: .info)
-                        .resizable()
-                        .foregroundColor(Color(Asset.Colors.mountain.color))
-                        .frame(width: 20, height: 20)
+                if viewModel.model.isOpenFeesVisible {
+                    Button {
+                        viewModel.openFees()
+                    } label: {
+                        Image(uiImage: .info)
+                            .resizable()
+                            .foregroundColor(Color(Asset.Colors.mountain.color))
+                            .frame(width: 20, height: 20)
+                    }
+                    .disabled(!viewModel.model.claimButtonEnable)
                 }
-                .disabled(!viewModel.model.claimButtonEnable)
             }
             .padding(.horizontal, 16)
             .padding(.vertical, 14)
@@ -88,6 +90,11 @@ struct WormholeClaimView: View {
                     .fill(Color(Asset.Colors.snow.color))
             )
             .padding(.top, 32)
+
+            if viewModel.model.shouldShowBanner {
+                RefundBannerReceiveView(item: .init(text: L10n.weRefundBridgingCostsForAnyTransactionsOver50))
+                    .padding(.top, 16)
+            }
 
             Spacer()
 
@@ -116,6 +123,8 @@ struct WormholeClaimView_Previews: PreviewProvider {
                     subtitle: "~ $1 219.87",
                     claimButtonTitle: "Claim 0.999717252 ETH",
                     claimButtonEnable: true,
+                    isOpenFeesVisible: true,
+                    shouldShowBanner: true,
                     fees: "$76.23",
                     feesButtonEnable: true,
                     isLoading: false
