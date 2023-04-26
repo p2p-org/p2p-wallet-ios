@@ -138,6 +138,7 @@ struct SendInputView: View {
                 
                 Spacer()
             }
+            #endif
 
             Spacer()
 
@@ -234,35 +235,6 @@ struct SendInputView: View {
         }
     }
     
-    #if !RELEASE
-    var debugView: some View {
-        Group {
-            if viewModel.currentState.sendViaLinkSeed != nil {
-                Text("\(viewModel.getSendViaLinkURL() ?? "") (tap to copy)")
-                    .apply(style: .label2)
-                    .foregroundColor(.red)
-                    .onTapGesture {
-                        UIPasteboard.general.string = viewModel.getSendViaLinkURL()
-                    }
-                Text("\(viewModel.currentState.recipient.address) (tap to copy)")
-                    .apply(style: .label2)
-                    .foregroundColor(.red)
-                    .onTapGesture {
-                        UIPasteboard.general.string = viewModel.currentState.recipient.address
-                    }
-            }
-            
-            FeeRelayerDebugView(
-                viewModel: .init(
-                    feeInSOL: viewModel.currentState.fee,
-                    feeInToken: viewModel.currentState.feeInToken,
-                    payingFeeTokenDecimals: viewModel.currentState.tokenFee.decimals
-                )
-            )
-            .accessibilityIdentifier("send-slider")
-        }
-    }
-
     #if !RELEASE
         var debugView: some View {
             Group {
