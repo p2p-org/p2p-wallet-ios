@@ -72,7 +72,8 @@ class ReceiveViewModel: BaseViewModel, ObservableObject {
                         title: L10n.mySolanaAddress,
                         description: address,
                         showTopCorners: true,
-                        showBottomCorners: username == nil
+                        showBottomCorners: username == nil,
+                        isShort: false
                     ),
                 ]
 
@@ -84,7 +85,8 @@ class ReceiveViewModel: BaseViewModel, ObservableObject {
                             title: L10n.myUsername,
                             description: username,
                             showTopCorners: false,
-                            showBottomCorners: true
+                            showBottomCorners: true,
+                            isShort: false
                         ),
                     ]
                 }
@@ -113,7 +115,8 @@ class ReceiveViewModel: BaseViewModel, ObservableObject {
                     title: L10n.myEthereumAddress,
                     description: address,
                     showTopCorners: true,
-                    showBottomCorners: true
+                    showBottomCorners: true,
+                    isShort: true
                 ),
                 SpacerReceiveItem(),
                 RefundBannerReceiveItem(text: L10n.weRefundBridgingCostsForAnyTransactionsOver50),
@@ -176,7 +179,7 @@ class ReceiveViewModel: BaseViewModel, ObservableObject {
             self?.shouldShowNotification = true
         })
         if shouldShowNotification {
-            notificationsService.showInAppNotification(.init(emoji: "✅", message: text))
+            notificationsService.showToast(title: "✅", text: text, haptic: true)
             shouldShowNotification = false
         }
     }
