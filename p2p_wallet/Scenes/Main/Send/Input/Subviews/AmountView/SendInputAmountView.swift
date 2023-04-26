@@ -1,16 +1,15 @@
 import KeyAppUI
 import SwiftUI
+import SolanaSwift
 
 struct SendInputAmountView: View {
-    @ObservedObject private var viewModel: SendInputAmountViewModel
+    @ObservedObject var viewModel: SendInputAmountViewModel
+    let showSecondaryAmounts: Bool
+    let isSwitchAvailable: Bool
 
     @State private var switchAreaOpacity: Double = 1
 
     private let mainColor = Asset.Colors.night.color
-
-    init(viewModel: SendInputAmountViewModel) {
-        self.viewModel = viewModel
-    }
 
     var body: some View {
         ZStack(alignment: .trailing) {
@@ -55,7 +54,7 @@ struct SendInputAmountView: View {
                                 .opacity(switchAreaOpacity)
                                 .accessibilityIdentifier("current-currency")
                         }
-                        if viewModel.showSecondaryAmounts {
+                        if showSecondaryAmounts {
                             HStack(spacing: 2) {
                                 Text(viewModel.secondaryAmountText)
                                     .foregroundColor(Color(Asset.Colors.mountain.color))
@@ -66,7 +65,7 @@ struct SendInputAmountView: View {
                                     .apply(style: .text4)
                                     .lineLimit(1)
                                 Spacer()
-                                if viewModel.isSwitchAvailable {
+                                if isSwitchAvailable {
                                     Text(L10n.tapToSwitchTo(viewModel.secondaryCurrencyText))
                                         .foregroundColor(Color(Asset.Colors.mountain.color))
                                         .apply(style: .text4)
@@ -77,7 +76,7 @@ struct SendInputAmountView: View {
                             }
                         }
                     }
-                    if viewModel.isSwitchAvailable && viewModel.showSecondaryAmounts {
+                    if isSwitchAvailable && showSecondaryAmounts {
                         Button(
                             action: viewModel.switchPressed.send,
                             label: {
@@ -95,7 +94,7 @@ struct SendInputAmountView: View {
                 .background(RoundedRectangle(cornerRadius: 12))
                 .foregroundColor(Color(Asset.Colors.snow.color))
             }
-            if viewModel.isSwitchAvailable && viewModel.showSecondaryAmounts {
+            if isSwitchAvailable && showSecondaryAmounts {
                 tapToSwitchHiddenButton
             }
         }
@@ -126,13 +125,13 @@ struct SendInputAmountView: View {
 
 struct SendInputAmountView_Previews: PreviewProvider {
     static var previews: some View {
-        ZStack {
-            Color(Asset.Colors.smoke.color)
+        ColoredBackground {
             SendInputAmountView(
                 viewModel: SendInputAmountViewModel(
-                    initialToken: .init(token: .nativeSolana),
-                    allowSwitchingMainAmountType: false
-                )
+                    initialToken: Wallet(token: .nativeSolana)
+                ),
+                showSecondaryAmounts: true,
+                isSwitchAvailable: true
             )
             .padding(.horizontal, 16)
         }
