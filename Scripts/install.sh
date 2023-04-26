@@ -1,5 +1,8 @@
-# Install xcodegen
-brew install xcodegen swiftgen swiftlint swiftformat periphery
+# Install xcodegen, swiftgen, swiftlint, swiftformat
+brew install xcodegen swiftgen swiftlint swiftformat
+
+# Install periphery
+brew install peripheryapp/periphery/periphery
 
 # Run xcodegen
 xcodegen
