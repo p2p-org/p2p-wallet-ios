@@ -110,7 +110,7 @@ configFiles:
 
 settings:
     base:
-        MARKETING_VERSION: 2.5.1
+        MARKETING_VERSION: 2.6
     configs:
         Debug:
             VALIDATE_PRODUCT: false
