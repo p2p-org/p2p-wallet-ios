@@ -5,6 +5,7 @@ import Resolver
 import SafariServices
 import SolanaSwift
 import SwiftUI
+import Moonpay
 
 final class BuyCoordinator: Coordinator<Void> {
     private var navigationController: UINavigationController!
@@ -103,7 +104,7 @@ final class BuyCoordinator: Coordinator<Void> {
                 return nil
             }
         }
-        .assign(to: \.value, on: viewModel.coordinatorIO.tokenSelected)
+        .assignWeak(to: \.value, on: viewModel.coordinatorIO.tokenSelected)
         .store(in: &subscriptions)
 
         viewModel.coordinatorIO.showFiatSelect.flatMap { [unowned self] fiats in
@@ -124,7 +125,7 @@ final class BuyCoordinator: Coordinator<Void> {
                 return nil
             }
         }
-        .assign(to: \.value, on: viewModel.coordinatorIO.fiatSelected)
+        .assignWeak(to: \.value, on: viewModel.coordinatorIO.fiatSelected)
         .store(in: &subscriptions)
 
         vcPresentedPercentage.eraseToAnyPublisher()
@@ -143,12 +144,41 @@ final class BuyCoordinator: Coordinator<Void> {
             }
         }).store(in: &subscriptions)
 
-        viewModel.coordinatorIO.license.sink(receiveValue: { [weak self] url in
-            let vc = SFSafariViewController(url: url)
-            vc.modalPresentationStyle = .automatic
-            viewController.present(vc, animated: true)
-        }).store(in: &subscriptions)
-
+        viewModel.coordinatorIO.license
+            .sink(receiveValue: { url in
+                let vc = SFSafariViewController(url: url)
+                vc.modalPresentationStyle = .automatic
+                viewController.present(vc, animated: true)
+            })
+            .store(in: &subscriptions)
+        viewModel.coordinatorIO.close
+            .sink(receiveValue: { [unowned self] in
+                navigationController.popViewController(animated: true)
+            })
+            .store(in: &subscriptions)
+        viewModel.coordinatorIO.chooseCountry
+            .sink(receiveValue: { [weak self] selectedCountry in
+                guard let self else { return }
+                
+                let selectCountryViewModel = SelectCountryViewModel(selectedCountry: selectedCountry)
+                let selectCountryViewController = SelectCountryView(viewModel: selectCountryViewModel)
+                    .asViewController(withoutUIKitNavBar: false)
+                viewController.navigationController?.pushViewController(selectCountryViewController, animated: true)
+                
+                selectCountryViewModel.selectCountry
+                    .sink(receiveValue: { item in
+                        viewModel.countrySelected(item.0, buyAllowed: item.buyAllowed)
+                        viewController.navigationController?.popViewController(animated: true)
+                    })
+                    .store(in: &self.subscriptions)
+                selectCountryViewModel.currentSelected
+                    .sink(receiveValue: {
+                        viewController.navigationController?.popViewController(animated: true)
+                    })
+                    .store(in: &self.subscriptions)
+            })
+            .store(in: &subscriptions)
+        
         return result.prefix(1).eraseToAnyPublisher()
     }
 

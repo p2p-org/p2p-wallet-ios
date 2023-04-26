@@ -2,6 +2,7 @@ import SwiftUI
 import KeyAppUI
 
 struct SendInputFreeTransactionsDetailView: View {
+    let isFreeTransactionsLimited: Bool
 
     let actionButtonPressed: () -> Void
 
@@ -27,14 +28,19 @@ struct SendInputFreeTransactionsDetailView: View {
                     Text("\(L10n.enjoyFreeTransactions)!")
                         .font(uiFont: .font(of: .text1, weight: .bold))
                         .foregroundColor(Color(Asset.Colors.night.color))
-                    Text(L10n.onTheSolanaNetworkTheFirst100TransactionsInADayArePaidByKeyApp)
+                    Text(
+                        isFreeTransactionsLimited ?
+                        L10n.onTheSolanaNetworkTheFirst100TransactionsInADayArePaidByKeyApp
+                        :
+                        L10n.withKeyAppAllTransactionsYouMakeOnTheSolanaNetworkAreFree
+                    )
                         .apply(style: .label1)
                         .foregroundColor(Color(Asset.Colors.night.color))
                 }
             }
 
             TextButtonView(
-                title: "\(L10n.awesome) 👍",
+                title: "\(isFreeTransactionsLimited ? L10n.awesome: L10n.gotIt) 👍",
                 style: .primaryWhite,
                 size: .large,
                 onPressed: actionButtonPressed
@@ -48,6 +54,9 @@ struct SendInputFreeTransactionsDetailView: View {
 
 struct SendInputFreeTransactionsDetailView_Previews: PreviewProvider {
     static var previews: some View {
-        SendInputFreeTransactionsDetailView(actionButtonPressed: {})
+        SendInputFreeTransactionsDetailView(
+            isFreeTransactionsLimited: true,
+            actionButtonPressed: {}
+        )
     }
 }

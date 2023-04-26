@@ -6,14 +6,18 @@ final class SendInputFreeTransactionsDetailCoordinator: Coordinator<Void> {
     private var feeController: UIViewController?
 
     private let parentController: UIViewController
+    private let isFreeTransactionsLimited: Bool
     private var subject = PassthroughSubject<Void, Never>()
 
-    init(parentController: UIViewController) {
+    init(parentController: UIViewController, isFreeTransactionsLimited: Bool) {
         self.parentController = parentController
+        self.isFreeTransactionsLimited = isFreeTransactionsLimited
     }
 
     override func start() -> AnyPublisher<Void, Never> {
-        let view = SendInputFreeTransactionsDetailView { [weak self] in
+        let view = SendInputFreeTransactionsDetailView(
+            isFreeTransactionsLimited: isFreeTransactionsLimited
+        ) { [weak self] in
             self?.feeController?.dismiss(animated: true)
             self?.subject.send(completion: .finished)
         }

@@ -213,3 +213,25 @@ extension String {
     }
 }
 
+extension String {
+    static var fakeTransactionSignaturePrefix: String {
+        "<FakeTransactionSignature>"
+    }
+    
+    static func fakeTransactionSignature(id: String) -> String {
+        fakeTransactionSignaturePrefix + "<\(id)>"
+    }
+}
+
+// MARK: - Flag
+
+extension String {
+    var asFlag: String? {
+        let base : UInt32 = 127397
+        var s = ""
+        unicodeScalars.forEach {
+            s.unicodeScalars.append(UnicodeScalar(base + $0.value)!)
+        }
+        return String(s)
+    }
+}

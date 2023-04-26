@@ -74,7 +74,7 @@ class RenBTCStatusService: RenBTCStatusServiceType {
 
         let feeCalculator: FeeCalculator?
         let payingFeeToken: FeeRelayerSwift.TokenAccount?
-        let signers: [Account]
+        let signers: [KeyPair]
 
         // CASE 1: User is paying for renBTC creation
         if let address = address,

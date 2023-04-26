@@ -70,13 +70,6 @@ target 'p2p_wallet' do
   pod 'ReachabilitySwift', '~> 5.0.0'
   pod 'Task_retrying', :git => 'https://github.com/bigearsenal/task-retrying-swift.git', :branch => 'master'
 
-  # Deprecating: will be removed after NewSwap, NewHistory
-  pod 'RxAppState', '1.7.1'
-  pod 'RxCombine', '2.0.1'
-  pod 'RxGesture', '4.0.4'
-  pod 'RxConcurrency', :git => 'https://github.com/TrGiLong/RxConcurrency.git', :branch => 'main'
-  pod 'BECollectionView', :git => 'https://github.com/bigearsenal/BECollectionView.git', :branch => 'master'
-
   # Deprecating: BECollectionView_Combine - will be removed soon
   pod 'ListPlaceholder', :git => 'https://github.com/p2p-org/ListPlaceholder.git', :branch => 'custom_gradient_color'
   pod 'BEPureLayout', :git => 'https://github.com/p2p-org/BEPureLayout.git', :branch => 'master'
@@ -98,7 +91,7 @@ target 'p2p_wallet' do
 
   pod 'Resolver', '1.5.0'
   pod 'JazziconSwift', :git => 'https://github.com/p2p-org/JazziconSwift.git', :branch => 'master'
-  pod 'Kingfisher', '~> 7.3.2'
+  pod 'Kingfisher', '~> 7.6.1'
   pod 'PhoneNumberKit', '3.3.4'
   pod 'SkeletonUI', :git => 'https://github.com/p2p-org/SkeletonUI.git', :branch => 'master'
   pod 'Introspect', '0.1.4'

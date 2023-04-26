@@ -6,8 +6,14 @@
 //
 
 import UIKit
+import Combine
 
 class PresentationController: UIPresentationController {
+    
+    // Subjects
+    private let dismissedSubject = PassthroughSubject<Void, Never>()
+    var dismissed: AnyPublisher<Void, Never> { dismissedSubject.eraseToAnyPublisher() }
+    
     override var shouldPresentInFullscreen: Bool { false }
 
     override var frameOfPresentedViewInContainerView: CGRect {
@@ -37,6 +43,13 @@ class PresentationController: UIPresentationController {
         super.presentationTransitionDidEnd(completed)
         if completed {
             driver.direction = .dismiss
+        }
+    }
+    
+    override func dismissalTransitionDidEnd(_ completed: Bool) {
+        super.dismissalTransitionDidEnd(completed)
+        if completed {
+            dismissedSubject.send()
         }
     }
 }

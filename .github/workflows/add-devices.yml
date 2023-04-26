@@ -1,0 +1,36 @@
+name: Add devices to Firebase's future build
+
+on:
+  workflow_call:
+    inputs:
+      devices_json_string:
+        required: true
+        type: string
+        description: '[{"name": "Alex iPhone 16", "id": "u892378-34787-324778"}]'
+
+jobs:
+  add_devices_to_future_build:
+    name: Add devices to Firebase'future build
+    runs-on: macos-12
+    steps:
+      - name: Check out current branch
+        uses: actions/checkout@v3
+        with:
+          ref: ${{ inputs.branch != '' && inputs.branch || github.event.pull_request.head.ref }}
+          submodules: recursive
+          token: ${{ secrets.SUBMODULES_ACCESS_TOKEN }}
+
+      - name: Add devices
+        uses: maierj/fastlane-action@v2.2.0
+        with:
+          lane: 'add_devices'
+        env:
+          NEW_DEVICES_JSON_STRING: '${{ inputs.devices_json_string}}'
+          PROVISIONING_REPO: '${{ secrets.PROVISIONING_REPO }}'
+          DEVELOPER_APP_IDENTIFIER: '${{ secrets.DEVELOPER_APP_IDENTIFIER }}'
+          GIT_AUTHORIZATION: '${{ secrets.GIT_AUTHORIZATION }}'
+          TEMP_KEYCHAIN_USER: '${{ secrets.TEMP_KEYCHAIN_USER }}'
+          TEMP_KEYCHAIN_PASSWORD: '${{ secrets.TEMP_KEYCHAIN_PASSWORD }}'
+          APPLE_KEY_ID: '${{ secrets.APPLE_KEY_ID }}'
+          APPLE_ISSUER_ID: '${{ secrets.APPLE_ISSUER_ID }}'
+          APPLE_KEY_CONTENT: '${{ secrets.APPLE_KEY_CONTENT }}'

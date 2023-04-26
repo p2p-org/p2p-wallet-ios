@@ -9,6 +9,7 @@ import History
 import Resolver
 import Send
 import SolanaSwift
+import FeeRelayerSwift
 
 enum LoadableState: Equatable {
     case notRequested
@@ -24,6 +25,20 @@ enum LoadableState: Equatable {
     }
 }
 
+/// State for SendViaLink feature
+struct SendViaLinkState: Equatable {
+    /// Indicate if the feature itself is disabled or not (via FT)
+    let isFeatureDisabled: Bool
+    /// Default limit for a day
+    let reachedLimit: Bool
+    
+    /// Indicate if user can create link
+    var canCreateLink: Bool {
+        !isFeatureDisabled && !reachedLimit
+    }
+}
+
+@MainActor
 class RecipientSearchViewModel: ObservableObject {
     private let preChosenWallet: Wallet?
     private var subscriptions = Set<AnyCancellable>()
@@ -42,7 +57,11 @@ class RecipientSearchViewModel: ObservableObject {
     @Published var loadingState: LoadableState = .notRequested
     @Published var isFirstResponder: Bool = false
 
-    @Published var input: String = ""
+    @Published var input = "" {
+        didSet {
+            sendViaLinkVisible = input.isEmpty
+        }
+    }
     @Published var searchResult: RecipientSearchResult? = nil
     @Published var userWalletEnvironments: UserWalletEnvironments = .empty
 
@@ -50,6 +69,12 @@ class RecipientSearchViewModel: ObservableObject {
 
     @Published var recipientsHistoryStatus: SendHistoryService.Status = .ready
     @Published var recipientsHistory: [Recipient] = []
+    
+    @Published var sendViaLinkState = SendViaLinkState(
+        isFeatureDisabled: true,
+        reachedLimit: false
+    )
+    @Published var sendViaLinkVisible = true
 
     var autoSelectTheOnlyOneResultMode: AutoSelectTheOnlyOneResultMode?
     var fromQR: Bool = false
@@ -60,6 +85,9 @@ class RecipientSearchViewModel: ObservableObject {
 
         fileprivate let scanQRSubject: PassthroughSubject<Void, Never> = .init()
         var scanQRPublisher: AnyPublisher<Void, Never> { scanQRSubject.eraseToAnyPublisher() }
+        
+        fileprivate let sendViaLinkSubject: PassthroughSubject<Void, Never> = .init()
+        var sendViaLinkPublisher: AnyPublisher<Void, Never> { sendViaLinkSubject.eraseToAnyPublisher() }
     }
 
     let coordinator: Coordinator = .init()
@@ -92,13 +120,13 @@ class RecipientSearchViewModel: ObservableObject {
 
         sendHistoryService.statusPublisher
             .receive(on: RunLoop.main)
-            .assign(to: \.recipientsHistoryStatus, on: self)
+            .assignWeak(to: \.recipientsHistoryStatus, on: self)
             .store(in: &subscriptions)
 
         sendHistoryService.recipientsPublisher
             .receive(on: RunLoop.main)
             .map { Array($0.prefix(10)) }
-            .assign(to: \.recipientsHistory, on: self)
+            .assignWeak(to: \.recipientsHistory, on: self)
             .store(in: &subscriptions)
 
         $input
@@ -119,7 +147,6 @@ class RecipientSearchViewModel: ObservableObject {
         logOpen()
     }
 
-    @MainActor
     func autoSelectTheOnlyOneResult(result: RecipientSearchResult, fromQR: Bool) {
         // Wait result and select first result
         switch result {
@@ -172,13 +199,12 @@ class RecipientSearchViewModel: ObservableObject {
                 {
                     try? await Task.sleep(nanoseconds: autoSelectTheOnlyOneResultMode.delay!)
                     guard !Task.isCancelled else { return }
-                    await autoSelectTheOnlyOneResult(result: result, fromQR: fromQR)
+                    autoSelectTheOnlyOneResult(result: result, fromQR: fromQR)
                 }
             }
         }
     }
 
-    @MainActor
     func past() {
         guard let text = clipboardManager.stringFromClipboard(), !text.isEmpty else { return }
         isFirstResponder = false
@@ -187,35 +213,73 @@ class RecipientSearchViewModel: ObservableObject {
         notificationService.showToast(title: "✅", text: L10n.pastedFromClipboard)
     }
 
-    @MainActor
     func qr() {
         isFirstResponder = false
         coordinator.scanQRSubject.send(())
     }
 
-    @MainActor
     func selectRecipient(_ recipient: Recipient, fromQR: Bool = false) {
         logRecipient(recipient: recipient, fromQR: fromQR)
         coordinator.selectRecipientSubject.send(recipient)
     }
 
-    @MainActor
     func notifyAddressRecognized(recipient: Recipient) {
         let text = L10n.theAddressIsRecognized("\(recipient.address.prefix(6))...\(recipient.address.suffix(6))")
         notificationService.showToast(title: "✅", text: text, haptic: false)
     }
 
-    @MainActor
     func load() async {
         loadingState = .loading
         do {
-            try await Resolver.resolve(SwapServiceType.self).reload()
+            let _ = try await(
+                Resolver.resolve(SwapServiceType.self).reload(),
+                checkIfSendViaLinkAvailable()
+            )
             loadingState = .loaded
             isFirstResponder = true
         } catch {
             loadingState = .error(error.readableDescription)
         }
     }
+    
+    // MARK: - Send via link
+    
+    func checkIfSendViaLinkAvailable() async throws {
+        if available(.sendViaLinkEnabled) {
+            // get relay context
+            let usageStatus = try await Resolver.resolve(RelayContextManager.self)
+                .getCurrentContextOrUpdate()
+                .usageStatus
+            
+            sendViaLinkState = SendViaLinkState(
+                isFeatureDisabled: false,
+                reachedLimit: usageStatus.reachedLimitLinkCreation
+            )
+        } else {
+            sendViaLinkState = SendViaLinkState(
+                isFeatureDisabled: true,
+                reachedLimit: false
+            )
+        }
+    }
+    
+    func sendViaLink() {
+        analyticsManager.log(event: .sendClickStartCreateLink)
+        coordinator.sendViaLinkSubject.send(())
+    }
+    
+    #if !RELEASE
+    func sendToTotallyNewAccount() {
+        let keypair = try! KeyPair()
+        selectRecipient(
+            .init(
+                address: keypair.publicKey.base58EncodedString,
+                category: .solanaAddress,
+                attributes: [.funds]
+            )
+        )
+    }
+    #endif
 }
 
 // MARK: - Analytics

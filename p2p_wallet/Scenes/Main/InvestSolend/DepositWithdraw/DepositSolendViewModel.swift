@@ -63,7 +63,7 @@ class DepositSolendViewModel: ObservableObject {
     @Published var depositFee: SolendFeePaying?
     @Published var inputLamport: UInt64 = 0
     @Published var isButtonEnabled: Bool = false
-    @Published var buttonText: String = L10n.enterTheAmount
+    @Published var buttonText: String = L10n.enterAmount
     @Published var hasError = false
     @Published var feeText = ""
     @Published var maxText = "Use all"
@@ -109,7 +109,7 @@ class DepositSolendViewModel: ObservableObject {
     }
 
     var amountTitle: String {
-        strategy == .deposit ? L10n.enterTheAmount : L10n.youWillWithdraw
+        strategy == .deposit ? L10n.enterAmount : L10n.youWillWithdraw
     }
 
     var useMaxTitle: String {
@@ -166,7 +166,7 @@ class DepositSolendViewModel: ObservableObject {
                 }
             })
             .receive(on: RunLoop.main)
-            .assign(to: \.invest, on: self)
+            .assignWeak(to: \.invest, on: self)
             .store(in: &subscriptions)
 
         symbolSelected.combineLatest(dataService.deposits)
@@ -200,7 +200,7 @@ class DepositSolendViewModel: ObservableObject {
                 }
             }
             .receive(on: RunLoop.main)
-            .assign(to: \.market, on: self)
+            .assignWeak(to: \.market, on: self)
             .store(in: &subscriptions)
 
         symbolSelected.send(invest.asset.symbol)
@@ -211,7 +211,7 @@ class DepositSolendViewModel: ObservableObject {
     private func bind() {
         $inputToken
             .map { [weak self] in self?.maxAmount() >= Double($0) && Double($0) > 0 }
-            .assign(to: \.isButtonEnabled, on: self)
+            .assignWeak(to: \.isButtonEnabled, on: self)
             .store(in: &subscriptions)
 
         $inputFiat
@@ -225,7 +225,7 @@ class DepositSolendViewModel: ObservableObject {
                     return "0"
                 }
             }
-            .assign(to: \.inputToken, on: self)
+            .assignWeak(to: \.inputToken, on: self)
             .store(in: &subscriptions)
 
         $inputToken
@@ -248,7 +248,7 @@ class DepositSolendViewModel: ObservableObject {
 
                 self.hasError = false
                 self.isUsingMax = false
-                self.buttonText = L10n.enterTheAmount
+                self.buttonText = L10n.enterAmount
                 if maxAmount < inputLamport.convertToBalance(decimals: self.invest.asset.decimals) {
                     self
                         .buttonText =
