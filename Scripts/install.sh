@@ -1,11 +1,11 @@
 # Install xcodegen
 brew install xcodegen swiftgen swiftlint swiftformat periphery
 
-# Run xcodegen (pod install will be called right after to get swiftgen)
+# Run xcodegen
 xcodegen
 
 # Run swiftgen for the first time
-Pods/swiftgen/bin/swiftgen config run --config swiftgen.yml
+/opt/homebrew/bin/swiftgen config run --config swiftgen.yml
 
 # Re-run xcodegen to remove build error (file missing before swiftgen)
 xcodegen
