@@ -151,11 +151,17 @@ struct RendableDetailHistoryTransaction: RendableTransactionDetail {
 
         switch trx.info {
         case let .send(data):
+            let value: String
+            if let name = data.account.name {
+                value = "@\(name)"
+            } else {
+                value = RecipientFormatter.shortFormat(destination: data.account.address)
+            }
             result.append(
                 .init(
                     title: L10n.sendTo,
                     values: [
-                        .init(text: data.account.name ?? RecipientFormatter.format(destination: data.account.address)),
+                        .init(text: value),
                     ],
                     copyableValue: data.account.name ?? data.account.address
                 )
