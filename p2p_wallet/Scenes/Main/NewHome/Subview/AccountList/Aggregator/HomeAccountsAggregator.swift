@@ -20,7 +20,7 @@ struct HomeAccountsAggregator: DataAggregator {
     -> (primary: [any RenderableAccount], secondary: [any RenderableAccount]) {
         let (solanaAccounts, ethereumAccounts) = input
 
-        let mergedAccounts: [any RenderableAccount] = ethereumAccounts + solanaAccounts
+        var mergedAccounts: [any RenderableAccount] = ethereumAccounts + solanaAccounts
 
         // Filter hidden accounts
         mergedAccounts = mergedAccounts.filter { account in
