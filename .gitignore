@@ -83,3 +83,4 @@ fastlane/test_output
 # Project files
 p2p_wallet.xcodeproj/
 p2p_wallet.xcworkspace/
+Packages/KeyAppKit/.swiftpm/xcode/xcshareddata/xcschemes

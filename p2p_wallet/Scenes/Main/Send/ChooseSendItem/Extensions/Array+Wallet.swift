@@ -1,13 +1,16 @@
 import SolanaSwift
 
 extension Array where Element == Wallet {
-    func sorted() -> Self {
-        let preferOrder: [String: Int] = ["USDC": 1, "USDT": 2]
-        return self
+    func sorted(preferOrderSymbols: [String] = []) -> Self {
+        self
             .sorted { (lhs: Wallet, rhs: Wallet) -> Bool in
-                if preferOrder[lhs.token.symbol] != nil || preferOrder[rhs.token.symbol] != nil {
-                    return (preferOrder[lhs.token.symbol] ?? 3) < (preferOrder[rhs.token.symbol] ?? 3)
+                if preferOrderSymbols.contains(lhs.token.symbol) || preferOrderSymbols.contains(rhs.token.symbol) {
+                    // Check if prefered tokens exists
+                    let lhsIndex = preferOrderSymbols.firstIndex(where: { $0 == lhs.token.symbol }) ?? preferOrderSymbols.count
+                    let rhsIndex = preferOrderSymbols.firstIndex(where: { $0 == rhs.token.symbol }) ?? preferOrderSymbols.count
+                    return lhsIndex < rhsIndex
                 } else {
+                    // Otherwise sort by fiat amount
                     return lhs.amountInCurrentFiat > rhs.amountInCurrentFiat
                 }
             }

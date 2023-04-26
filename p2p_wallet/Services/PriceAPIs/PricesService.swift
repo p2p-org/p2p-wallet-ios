@@ -6,6 +6,7 @@ import SolanaSwift
 
 typealias TokenPriceMap = [String: CurrentPrice]
 
+@available(*, deprecated, message: "Migrate to PriceService")
 protocol PricesServiceType {
     // Publishers
     var currentPricesPublisher: AnyPublisher<TokenPriceMap, Never> { get }

@@ -23,6 +23,7 @@ enum NewHistoryItem: Identifiable, Equatable {
     case rendableOffram(any RendableListOfframItem)
     
     case button(id: String, title: String, action: () -> Void)
+    case swapBanner(id: String, text: String, buttonTitle: String, action: () -> Void, helpAction: () -> Void)
     case placeHolder(id: String)
     case fetch(id: String)
 
@@ -32,15 +33,11 @@ enum NewHistoryItem: Identifiable, Equatable {
             return item.id
         case let .rendableOffram(item):
             return item.id
-        case let .button(id, _, _):
-            return id
-        case let .placeHolder(id):
-            return id
-        case let .fetch(id):
+        case let .button(id, _, _), let .placeHolder(id), let .fetch(id), let .swapBanner(id, _, _, _, _):
             return id
         }
     }
-    
+
     var date: Date {
         switch self {
         case let .rendableTransaction(item):
