@@ -90,8 +90,19 @@ public enum WormholeSendInputState: Equatable {
                     return .error(input: input, output: nil, error: .calculationFeeFailure)
                 }
 
-                // Ensure receive amount exists
+                var alert: WormholeSendInputAlert?
+
                 if fees.resultAmount == nil {
+                    let error: WormholeSendInputError
+
+                    if input.amount.value > 0 {
+                        // Fee is greater than sending amount
+                        error = .feeIsMoreThanInputAmount
+                    } else {
+                        // No input amount
+                        error = .insufficientInputAmount
+                    }
+
                     return .error(
                         input: input,
                         output: .init(
@@ -99,12 +110,9 @@ public enum WormholeSendInputState: Equatable {
                             fees: fees,
                             relayContext: relayContext
                         ),
-                        error: .insufficientInputAmount
+                        error: error
                     )
                 }
-
-                // Check fee is greater than sending amount
-                var alert: WormholeSendInputAlert?
 
                 // Build transaction
                 let transactions: SendTransaction

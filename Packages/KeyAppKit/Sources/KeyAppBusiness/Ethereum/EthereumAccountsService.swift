@@ -82,11 +82,14 @@ public final class EthereumAccountsService: NSObject, AccountsService {
             .statePublisher
             .filter { $0.status == .initializing || $0.status == .ready }
             .asyncMap { state in
-                try? await errorObservable.run {
-                    try await priceService.getPrices(
+                do {
+                    return try await priceService.getPrices(
                         tokens: state.value.map(\.token),
                         fiat: fiat
                     )
+                } catch {
+                    errorObservable.handleError(error)
+                    return [:]
                 }
             }
 
@@ -96,8 +99,6 @@ public final class EthereumAccountsService: NSObject, AccountsService {
                 prices
             )
             .map { state, prices in
-                guard let prices else { return state }
-
                 return state.apply { accounts in
                     var newAccounts = accounts
 
