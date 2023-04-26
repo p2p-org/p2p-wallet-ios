@@ -45,7 +45,7 @@ private extension ChooseWormholeTokenService {
                     [ChooseItemListSection(
                         items: accounts
                             .filter {
-                                SupportedToken.bridges.map(\.solAddress).contains($0.data.mintAddress)
+                                WormholeSupportedTokens.bridges.map(\.solAddress).contains($0.data.mintAddress)
                                     && ($0.data.lamports ?? 0) > 0
                             }
                             .map(\.data)

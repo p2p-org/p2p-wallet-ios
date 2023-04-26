@@ -16,12 +16,6 @@ target 'p2p_wallet' do
   pod 'Periphery'
   pod 'SwiftFormat/CLI', '0.49.6'
 
-  # Deprecating: BECollectionView_Combine - will be removed soon
-  pod 'ListPlaceholder', :git => 'https://github.com/p2p-org/ListPlaceholder.git', :branch => 'custom_gradient_color'
-
-  # Kits
-  pod 'JazziconSwift', :git => 'https://github.com/p2p-org/JazziconSwift.git', :branch => 'master'
-
   # Firebase
   pod 'Firebase/Analytics'
   pod 'Firebase/Crashlytics'

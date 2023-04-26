@@ -57,6 +57,9 @@ public class WormholeClaimUserActionConsumer: UserActionConsumer {
 
     /// Peridoc timer
     var updateNewBundleTimer: Timer?
+    
+    // Only one task is allowed
+    var fetchNewBundleTask: Task<Void, Swift.Error>?
 
     var subscriptions: [AnyCancellable] = []
 
@@ -103,7 +106,7 @@ public class WormholeClaimUserActionConsumer: UserActionConsumer {
                 // Otherwise restore user action
                 return true
             }
-            
+
             manuallyCheck(userActions: await database.values())
 
             // Update bundle periodic
@@ -120,8 +123,16 @@ public class WormholeClaimUserActionConsumer: UserActionConsumer {
         updateNewBundleTimer?.invalidate()
     }
 
-    public func handleEvent(event: Event) {
+    public func handle(event: any UserActionEvent) {
+        guard let event = event as? Event else { return }
+        handleInternalEvent(event: event)
+    }
+
+    func handleInternalEvent(event: Event) {
         switch event {
+        case .refresh:
+            fetchNewBundle()
+
         case let .track(bundleStatus):
             Task { [weak self] in
                 if var userAction = await self?.database.get(for: bundleStatus.bundleId) {
@@ -183,13 +194,13 @@ public class WormholeClaimUserActionConsumer: UserActionConsumer {
 
             // Prepare signing process
             guard let keyPair = self?.signer else {
-                self?.handleEvent(event: .claimFailure(bundleID: action.bundleID, reason: .signingFailure))
+                self?.handleInternalEvent(event: .claimFailure(bundleID: action.bundleID, reason: .signingFailure))
                 return
             }
 
             guard case var .pending(rawBundle) = action.internalState else {
                 let error = Error.claimFailure
-                self?.handleEvent(
+                self?.handleInternalEvent(
                     event: .claimFailure(
                         bundleID: action.bundleID, reason: error
                     )
@@ -202,20 +213,20 @@ public class WormholeClaimUserActionConsumer: UserActionConsumer {
             do {
                 try rawBundle.signBundle(with: keyPair)
             } catch {
-                self?.handleEvent(event: .claimFailure(bundleID: action.bundleID, reason: .signingFailure))
+                self?.handleInternalEvent(event: .claimFailure(bundleID: action.bundleID, reason: .signingFailure))
             }
 
             // Send transaction
             do {
                 try await self?.wormholeAPI.sendEthereumBundle(bundle: rawBundle)
-                self?.handleEvent(event: .claimInProgress(bundleID: action.bundleID))
+                self?.handleInternalEvent(event: .claimInProgress(bundleID: action.bundleID))
             } catch {
                 self?.errorObserver.handleError(error)
 
                 let error = Error.submitError
 
                 self?.errorObserver.handleError(error)
-                self?.handleEvent(event: .claimFailure(bundleID: action.bundleID, reason: error))
+                self?.handleInternalEvent(event: .claimFailure(bundleID: action.bundleID, reason: error))
             }
         }
     }
