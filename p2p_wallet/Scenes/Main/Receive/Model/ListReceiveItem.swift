@@ -1,10 +1,3 @@
-//
-//  ListRowReceiveCellView.swift
-//  p2p_wallet
-//
-//  Created by Giang Long Tran on 07.03.2023.
-//
-
 import Foundation
 import SwiftUI
 
@@ -14,6 +7,7 @@ struct ListReceiveItem {
     var description: String
     var showTopCorners: Bool
     var showBottomCorners: Bool
+    var isShort: Bool
 }
 
 extension ListReceiveItem: ReceiveRendableItem {

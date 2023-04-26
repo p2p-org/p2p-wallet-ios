@@ -1320,4 +1320,8 @@
 "The link is already claimed" = "The link is already claimed";
 "You can’t receive money with it" = "You can’t receive money with it";
 "The transaction was rejected. Open your link again." = "The transaction was rejected. Open your link again.";
+"Add funds" = "Add funds";
+"Wormhole Bridge is currently unable.\nPlease try again later" = "Wormhole Bridge is currently unable.\nPlease try again later";
 "It usually takes 15-20 minutes for a transaction to complete" = "It usually takes 15-20 minutes for a transaction to complete";
+"How to claim for free" = "How to claim for free";
+"I forgot PIN" = "I forgot PIN";
