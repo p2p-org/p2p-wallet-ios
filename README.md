@@ -77,10 +77,6 @@ chmod u+x Scripts/install.sh && Scripts/install.sh
 
 <img width="673" alt="image" src="https://user-images.githubusercontent.com/6975538/172043669-84883ac3-a35f-4ce4-b576-3a25564bed30.png">
 
-6. Change "Run automation" to "swiftgen config run --config ${PROJECT_DIR}/swiftgen.yml"
-
-<img width="682" alt="image" src="https://user-images.githubusercontent.com/6975538/172043833-ebb5b808-3b11-4e2a-a46e-727503b61e03.png">
-
 ## CI/CD
 
 - `Swiftgen` for automatically generating strings, assets.
