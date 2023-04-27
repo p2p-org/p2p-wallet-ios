@@ -8,26 +8,31 @@ import SolanaSwift
 import WebKit
 
 public class TKeyMockupFacade: TKeyFacade {
+    private let ethAddress = "0x0000000000000000000000000000000000000001"
+
     public init() {}
 
     public func initialize() async throws {}
 
     public func obtainTorusKey(tokenID: TokenID) async throws -> TorusKey {
-        .init(tokenID: tokenID, value: "")
+        .init(tokenID: tokenID, value: "torus_key")
     }
 
     public func signUp(torusKey _: TorusKey, privateInput: String) async throws -> SignUpResult {
         .init(
             privateSOL: privateInput,
-            reconstructedETH: "someEthPublicKey",
-            deviceShare: "someDeviceShare",
-            customShare: "someCustomShare",
-            metaData: "someMetadata"
+            reconstructedETH: ethAddress,
+            deviceShare: "deviceShare",
+            customShare: "customShare",
+            metaData: "encryptedSeedPhrase"
         )
     }
 
     public func signIn(torusKey _: TorusKey, deviceShare _: String) async throws -> SignInResult {
-        .init(privateSOL: Mnemonic().phrase.joined(separator: " "), reconstructedETH: "someEthPublicKey")
+        .init(
+            privateSOL: Mnemonic().phrase.joined(separator: " "),
+            reconstructedETH: ethAddress
+        )
     }
 
     public func signIn(
@@ -35,7 +40,10 @@ public class TKeyMockupFacade: TKeyFacade {
         customShare _: String,
         encryptedMnemonic _: String
     ) async throws -> SignInResult {
-        .init(privateSOL: Mnemonic().phrase.joined(separator: " "), reconstructedETH: "someEthPublicKey")
+        .init(
+            privateSOL: Mnemonic().phrase.joined(separator: " "),
+            reconstructedETH: ethAddress
+        )
     }
 
     public func signIn(
@@ -43,6 +51,9 @@ public class TKeyMockupFacade: TKeyFacade {
         customShare _: String,
         encryptedMnemonic _: String
     ) async throws -> SignInResult {
-        .init(privateSOL: Mnemonic().phrase.joined(separator: " "), reconstructedETH: "someEthPublicKey")
+        .init(
+            privateSOL: Mnemonic().phrase.joined(separator: " "),
+            reconstructedETH: ethAddress
+        )
     }
 }
