@@ -263,9 +263,7 @@ final class TabBarCoordinator: Coordinator<Void> {
         case .swap:
             routeToSwap(nc: navigationController, source: .actionPanel)
         case .send:
-            let fiatAmount = walletsRepository.getWallets().reduce(0) { $0 + $1.amountInCurrentFiat }
-            let withTokens = fiatAmount > 0
-            if withTokens {
+            if walletsRepository.getWallets().count > 0 {
                 analyticsManager.log(event: .sendViewed(lastScreen: "main_screen"))
                 let sendCoordinator = SendCoordinator(
                     rootViewController: navigationController,
