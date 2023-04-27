@@ -19,7 +19,7 @@ on:
 jobs:
   upload_build_for_testing:
     name: Manually upload build for testing
-    runs-on: ${{ (inputs.with_high_priority && fromJSON('[ "self-hosted", "macOS" ]')) || 'macos-latest' }} 
+    runs-on: ${{ (inputs.with_high_priority && fromJSON('[ "self-hosted", "macOS" ]')) || 'macos-13' }} 
     steps:
       - name: Cleanup build folder
         run: |
