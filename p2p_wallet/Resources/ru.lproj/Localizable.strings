@@ -834,7 +834,6 @@
 "You request OTP too often. Try later." = "Вы слишком часто запрашиваете OTP.  Попробуй позже.";
 "Sorry, we don't know such a country" = "Извините, мы не знаем такой страны";
 "Well, well" = "Так так";
-"Repeat social auth" = "Повторить социальную авторизацию";
 "We can’t SMS you" = "Мы не можем отправить вам SMS";
 "Use an another phone" = "Используйте другой телефон";
 "Try with another account or use an another phone number" = "Попробуйте с другой учетной записью или используйте другой номер телефона";
