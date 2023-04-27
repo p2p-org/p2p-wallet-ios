@@ -115,6 +115,8 @@ public struct SendInputState: Equatable {
     /// Amount fee in Token (Converted from amount fee in SOL)
     public let feeInToken: FeeAmount
 
+    public let minAmount: UInt64
+
     /// Fee relayer context
     ///
     /// Current state for free transactions
@@ -138,6 +140,7 @@ public struct SendInputState: Equatable {
         tokenFee: Token,
         feeInToken: FeeAmount,
         feeRelayerContext: RelayContext?,
+        minAmount: UInt64
         sendViaLinkSeed: String?
     ) {
         self.status = status
@@ -151,6 +154,7 @@ public struct SendInputState: Equatable {
         self.tokenFee = tokenFee
         self.feeInToken = feeInToken
         self.feeRelayerContext = feeRelayerContext
+        self.minAmount = minAmount
         self.sendViaLinkSeed = sendViaLinkSeed
     }
 
@@ -176,6 +180,7 @@ public struct SendInputState: Equatable {
             tokenFee: feeToken,
             feeInToken: .zero,
             feeRelayerContext: feeRelayerContext,
+            minAmount: .zero
             sendViaLinkSeed: sendViaLinkSeed
         )
     }
@@ -192,9 +197,10 @@ public struct SendInputState: Equatable {
         tokenFee: Token? = nil,
         feeInToken: FeeAmount? = nil,
         feeRelayerContext: RelayContext? = nil,
+        minAmount: UInt64? = nil,
         sendViaLinkSeed: String?? = nil
     ) -> SendInputState {
-        .init(
+        return .init(
             status: status ?? self.status,
             recipient: recipient ?? self.recipient,
             recipientAdditionalInfo: recipientAdditionalInfo ?? self.recipientAdditionalInfo,
@@ -206,6 +212,7 @@ public struct SendInputState: Equatable {
             tokenFee: tokenFee ?? self.tokenFee,
             feeInToken: feeInToken ?? self.feeInToken,
             feeRelayerContext: feeRelayerContext ?? self.feeRelayerContext,
+            minAmount: minAmount ?? self.minAmount
             sendViaLinkSeed: sendViaLinkSeed ?? self.sendViaLinkSeed
         )
     }
