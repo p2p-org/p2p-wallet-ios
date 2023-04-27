@@ -13,9 +13,16 @@ struct SupportedTokensView: View {
 
     var body: some View {
         VStack(spacing: 0) {
-            SearchField(
-                searchText: $viewModel.filter,
-                isSearchFieldFocused: $viewModel.isSearchFieldFocused
+            HStack {
+                Image(uiImage: UIImage.buttonSearch)
+                    .foregroundColor(Color(Asset.Colors.mountain.color))
+                TextField(L10n.search, text: $viewModel.filter)
+            }
+            .padding(.vertical, 7)
+            .padding(.horizontal, 8)
+            .background(
+                RoundedRectangle(cornerRadius: 10)
+                    .fill(Color(UIColor(red: 0.463, green: 0.463, blue: 0.502, alpha: 0.12)))
             )
             .padding(.horizontal, 16)
 
@@ -51,6 +58,9 @@ struct SupportedTokensView: View {
                     list
                 }
             }
+        }
+        .onAppear {
+            UITextField.appearance().clearButtonMode = .whileEditing
         }
         .background(
             Color(Asset.Colors.smoke.color)
