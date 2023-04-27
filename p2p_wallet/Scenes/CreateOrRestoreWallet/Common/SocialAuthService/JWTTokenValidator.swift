@@ -1,7 +1,6 @@
 import Foundation
 
 struct JWTTokenIDModel: Codable {
-    let iat: Date
     let email: String
 }
 
