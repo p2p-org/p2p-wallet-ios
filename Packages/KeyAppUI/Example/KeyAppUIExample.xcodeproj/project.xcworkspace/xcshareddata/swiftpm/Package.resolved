@@ -1,0 +1,52 @@
+{
+  "object": {
+    "pins": [
+      {
+        "package": "BEPureLayout",
+        "repositoryURL": "https://github.com/p2p-org/BEPureLayout.git",
+        "state": {
+          "branch": "master",
+          "revision": "f00ffab3fc02a36774593ab222b77ee8cbdc872a",
+          "version": null
+        }
+      },
+      {
+        "package": "PureLayout",
+        "repositoryURL": "https://github.com/PureLayout/PureLayout.git",
+        "state": {
+          "branch": null,
+          "revision": "3bcbfe370f85b81254de4d6b9df3dd4a70d4ca89",
+          "version": "3.1.8"
+        }
+      },
+      {
+        "package": "SkeletonView",
+        "repositoryURL": "https://github.com/Juanpe/SkeletonView.git",
+        "state": {
+          "branch": "main",
+          "revision": "00394e0b9f1626680b817f3d24daba68adbe378d",
+          "version": null
+        }
+      },
+      {
+        "package": "swift-algorithms",
+        "repositoryURL": "https://github.com/apple/swift-algorithms.git",
+        "state": {
+          "branch": null,
+          "revision": "b14b7f4c528c942f121c8b860b9410b2bf57825e",
+          "version": "1.0.0"
+        }
+      },
+      {
+        "package": "swift-numerics",
+        "repositoryURL": "https://github.com/apple/swift-numerics",
+        "state": {
+          "branch": null,
+          "revision": "0a5bc04095a675662cf24757cc0640aa2204253b",
+          "version": "1.0.2"
+        }
+      }
+    ]
+  },
+  "version": 1
+}
