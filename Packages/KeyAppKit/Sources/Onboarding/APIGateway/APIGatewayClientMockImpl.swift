@@ -98,11 +98,11 @@ public class APIGatewayClientImplMock: APIGatewayClient {
         }
 
         return .init(
-            solanaPublicKey: "SomeSolPublicKey",
-            ethereumId: "SomeEthereumID",
-            encryptedShare: "SomeCustomeShare",
-            encryptedPayload: "SomePayload",
-            encryptedMetaData: "SomeMetadata"
+            solanaPublicKey: "solanaPublicKey",
+            ethereumId: "0x0000000000000000000000000000000000000001",
+            encryptedShare: "customShare",
+            encryptedPayload: "payload",
+            encryptedMetaData: "encryptedMetadata"
         )
     }
 }
