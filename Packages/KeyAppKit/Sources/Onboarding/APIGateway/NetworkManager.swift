@@ -19,6 +19,17 @@ public struct URLSessionMock: NetworkManager {
     }
 }
 
+public struct URLSessionInterceptor: NetworkManager {
+    let interceptor: (URLRequest) -> Void
+    
+    public init(interceptor: @escaping (URLRequest) -> ()) { self.interceptor = interceptor }
+    
+    public func requestData(request: URLRequest) async throws -> Data {
+        interceptor(request)
+        return Data()
+    }
+}
+
 extension URLSession: NetworkManager {
     public func requestData(request: URLRequest) async throws -> Data {
         let (data, _): (Data, URLResponse)
