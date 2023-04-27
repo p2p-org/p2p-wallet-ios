@@ -26,6 +26,7 @@ class SupportedTokensViewModel: BaseViewModel, ObservableObject {
 
     /// Filter keyword
     @Published var filter: String = ""
+    @Published var isSearchFieldFocused: Bool = false
 
     init(mock: [SupportedTokenItem]) {
         tokens = mock
