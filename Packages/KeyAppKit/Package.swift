@@ -59,6 +59,11 @@ let package = Package(
             targets: ["Onboarding"]
         ),
 
+        .executable(
+            name: "APIGatewayClientCLI",
+            targets: ["APIGatewayClientCLI"]
+        ),
+
         // Solend
         .library(
             name: "Solend",
@@ -115,6 +120,7 @@ let package = Package(
         .package(url: "https://github.com/attaswift/BigInt.git", from: "5.3.0"),
         .package(url: "https://github.com/p2p-org/BigDecimal.git", branch: "main"),
         .package(url: "https://github.com/bigearsenal/LoggerSwift.git", branch: "master"),
+        .package(url: "https://github.com/apple/swift-argument-parser", from: "1.1.4")
     ],
     targets: [
         // Cache
@@ -213,6 +219,14 @@ let package = Package(
                 .process("Resource/index.html"),
             ]
         ),
+        .executableTarget(
+            name: "APIGatewayClientCLI",
+            dependencies: [
+                "Onboarding",
+                .product(name: "ArgumentParser", package: "swift-argument-parser"),
+            ]
+        ),
+
         .testTarget(name: "OnboardingTests", dependencies: ["Onboarding"]),
 
         // Solend
