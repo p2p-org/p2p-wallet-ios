@@ -47,7 +47,7 @@ final class AccountDetailsHistoryViewModel: HistoryViewModel {
                         text: L10n.toMakeATransferToYouHaveToSwapTo(
                             "ETH",
                             account.data.token.symbol,
-                            supportedWormholeToken.name
+                            supportedWormholeToken.symbol
                         ),
                         buttonTitle: "\(L10n.swap.capitalized) \(account.data.token.symbol) → \(supportedWormholeToken.symbol)",
                         action: { [weak self] in
