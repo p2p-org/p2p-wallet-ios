@@ -21,6 +21,11 @@ jobs:
     name: Manually upload build for testing
     runs-on: ${{ (inputs.with_high_priority && fromJSON('[ "self-hosted", "macOS" ]')) || 'macos-13' }} 
     steps:
+
+      - uses: maxim-lobanov/setup-xcode@v1
+        with:
+          xcode-version: '14.3'
+
       - name: Cleanup build folder
         run: |
           ls -la ./
