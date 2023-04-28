@@ -46,11 +46,6 @@ jobs:
         run: |
           echo "GIT_CHANGES=$(git log --oneline -n 15)" >> $GITHUB_ENV
 
-      - name: Grant access to KeyAppUI
-        uses: webfactory/ssh-agent@v0.5.4
-        with:
-          ssh-private-key: ${{ secrets.KEY_APP_UI_GIT_SSH }}
-
       - name: Copy xcconfig file
         run: |
           curl -o ./p2p_wallet/Config.xcconfig ${{ secrets.XCCONFIG_URL }}
