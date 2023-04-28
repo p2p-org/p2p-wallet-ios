@@ -374,7 +374,7 @@ extension Resolver: ResolverRegistering {
                         persistence: resolve()
                     ),
                     WormholeClaimUserActionConsumer(
-                        address: userWalletManager.wallet?.ethereumKeypair.publicKey,
+                        address: userWalletManager.wallet?.ethereumKeypair.address,
                         signer: userWalletManager.wallet?.ethereumKeypair,
                         wormholeAPI: resolve(),
                         ethereumTokenRepository: resolve(),
