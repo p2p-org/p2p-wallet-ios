@@ -10,7 +10,7 @@ on:
 jobs:
   deploy:
     name: Deploying to Testflight
-    runs-on: macos-12
+    runs-on: macos-13
 
     steps:
 
