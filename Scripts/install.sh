@@ -15,11 +15,11 @@ if [[ ! $(uname -m) == 'arm64' ]]; then
 	sudo mkdir -p /opt/homebrew/bin
 
 	# Create symbolic links
-	ln -s /usr/local/bin/xcodegen /opt/homebrew/bin/xcodegen
-	ln -s /usr/local/bin/swiftgen /opt/homebrew/bin/swiftgen
-	ln -s /usr/local/bin/swiftlint /opt/homebrew/bin/swiftlint
-	ln -s /usr/local/bin/swiftformat /opt/homebrew/bin/swiftformat
-	ln -s /usr/local/bin/periphery /opt/homebrew/bin/periphery
+	sudo ln -s /usr/local/bin/xcodegen /opt/homebrew/bin/xcodegen
+	sudo ln -s /usr/local/bin/swiftgen /opt/homebrew/bin/swiftgen
+	sudo ln -s /usr/local/bin/swiftlint /opt/homebrew/bin/swiftlint
+	sudo ln -s /usr/local/bin/swiftformat /opt/homebrew/bin/swiftformat
+	sudo ln -s /usr/local/bin/periphery /opt/homebrew/bin/periphery
 fi
 
 # Run xcodegen
