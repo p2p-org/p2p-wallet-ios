@@ -12,7 +12,7 @@ if [[ ! $(uname -m) == 'arm64' ]]; then
 	echo "Create a symbolic link from /usr/local/bin to /opt/homebrew/bin"
 
 	# create /opt/homebrew/bin if not exists
-	mkdir -p /opt/homebrew/bin
+	sudo mkdir -p /opt/homebrew/bin
 
 	# Create symbolic links
 	ln -s /usr/local/bin/xcodegen /opt/homebrew/bin/xcodegen
