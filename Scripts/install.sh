@@ -1,8 +1,37 @@
-# Install xcodegen, swiftgen, swiftlint, swiftformat
-brew install xcodegen swiftgen swiftlint swiftformat
+# install xcodegen if needed
+if ! command -v xcodegen &> /dev/null
+then
+	echo "Installing xcodegen..."
+    brew install xcodegen
+fi
 
-# Install periphery
-brew install peripheryapp/periphery/periphery
+# install swiftgen if needed
+if ! command -v swiftgen &> /dev/null
+then
+	echo "Installing swiftgen..."
+    brew install swiftgen
+fi
+
+# install swiftlint if needed
+if ! command -v swiftlint &> /dev/null
+then
+	echo "Installing swiftlint..."
+    brew install swiftlint
+fi
+
+# install swiftformat if needed
+if ! command -v swiftformat &> /dev/null
+then
+	echo "Installing swiftformat..."
+    brew install swiftformat
+fi
+
+# install periphery if needed
+if ! command -v periphery &> /dev/null
+then
+	echo "Installing periphery..."
+    brew install peripheryapp/periphery/periphery
+fi
 
 # Resolve homebrew installation folder for non-m1 mac (ci)
 # For non-m1, homebrew tools would be located in /usr/local/bin
