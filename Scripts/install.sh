@@ -9,7 +9,7 @@ brew install peripheryapp/periphery/periphery
 # So we create symbolic links from /usr/local/bin to /opt/homebrew/bin for each tool
 if [[ ! $(uname -m) == 'arm64' ]]; then
 	# log
-	echo "Create a symbolic link from /usr/local/bin to /opt/homebrew/bin"
+	echo "Create symbolic links for xcodegen, swiftgen, swiftlint, swiftformat and periphery from /usr/local/bin to /opt/homebrew/bin for non-M1 mac"
 
 	# create /opt/homebrew/bin if not exists
 	sudo mkdir -p /opt/homebrew/bin
