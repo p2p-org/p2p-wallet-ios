@@ -123,8 +123,6 @@ XCCONFIG_URL=""
 
 ```
 
-## Code style
-
 ## UI Templates
 
 - Copy template `MVVM-C.xctemplate` that is located under `Templates` folder to  `~/Library/Developer/Xcode/Templates/`
@@ -194,6 +192,8 @@ if available(.settingsFeature) {
     )
 }
 ```
+
+## Code style
 
 The basis of the style of writing code is the configured Swiftlint in the project. The specific practices we follow are listed below.
 Protocols
