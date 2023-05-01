@@ -215,3 +215,301 @@ if available(.settingsFeature) {
     )
 }
 ```
+
+The basis of the style of writing code is the configured Swiftlint in the project. The specific practices we follow are listed below.
+Protocols
+Interfaces used for abstractions are named without prefixes and postfixes, for example: BuyService, SellService.
+If it is known in advance that only classes will conform to the protocol, you need to add the keyword AnyObject:
+
+✅
+```
+protocol SomeProtocol: AnyObject {}
+```
+
+⛔️
+```
+protocol SomeProtocol {}
+```
+
+
+Class structure
+We try to avoid inheritance. For all classes from which inheritance is not planned, the final keyword must be explicitly specified. This speeds up the dispatching of calls in runtime and makes life easier for the compiler.:
+final public class SomeView: UIView {}
+
+
+Dependencies and properties are always written at the top of the class, indicated by a comment without indentation after:
+✅
+```
+final class SomeClass {
+
+    // Dependencies
+    private let buyService: BuyService
+    private let sellService: SellService
+
+    // Private properties
+    private var amount: Double?
+}
+```
+
+⛔️
+```
+final class SomeClass {
+
+    // Dependencies
+
+    private let buyService: BuyService
+    private let sellService: SellService
+
+    // Private properties
+
+    private var amount: Double?
+}
+```
+
+All other elements are indicated with // MARK: - indented after:
+✅
+```
+final class SomeClass {
+
+    // MARK: - Init
+
+    public init() {...}
+
+    // MARK: - BuyService
+
+    func buyCrypto(_ crypto: Crypto) {…}
+}
+```
+
+⛔️
+```
+final class SomeClass {
+
+    // MARK: - Init
+    public init() {...}
+
+    // MARK: - BuyService
+    func buyCrypto(_ crypto: Crypto) {…}
+}
+```
+
+If a large number of private functions are typed, then you should not dump them all in one pile, you need to break them into logically connected blocks.
+✅ Division within the class:
+```
+final class SomeClass {
+
+    // MARK: - Notifications
+
+    private func startToObserveNotifications() {...}
+    private func stopToObserveNotifications() {...}
+    private func didReceiveNotification() {...}
+
+    // MARK: - Actions
+
+    @objc private func didTapClose() {...}
+}
+```
+
+✅ Takeaway in extensions:
+```
+final class SomeClass {
+    ...
+}
+
+// MARK: - Notifications
+
+extension SomeClass {
+    private func startToObserveNotifications() {...}
+    private func stopToObserveNotifications() {...}
+    private func didReceiveNotification() {...}
+}
+
+// MARK: - Actions
+
+extension SomeClass {
+   @objc private func didTapClose() {...}
+}
+```
+
+⛔️
+```
+final class SomeClass {
+
+    // MARK: - Private
+
+    func startToObserveNotifications() {...}
+    @objc func didTapClose() {...}
+    func stopToObserveNotifications() {...}
+    func didReceiveNotification() {...}
+}
+```
+
+There should be no line break before the closing brackets:
+✅
+```
+struct Foo {
+    func bar() {
+        ...
+    }
+}
+```
+
+⛔️
+```
+struct Foo {
+    func bar() {
+        ...
+    }
+
+}
+```
+
+Switch statement
+For enumwe don't use default in switch. When changing the enum during assembly, all the places where it is used will be immediately visible:
+✅
+```
+enum SomeEnum {
+    case first
+    case second
+    case third
+    case fourth
+}
+
+switch enum {
+    case .first: // do something
+    case .second: // do something
+    case .third, .fourth: break
+}
+```
+
+⛔️
+```
+enum SomeEnum {
+    case first
+    case second
+    case third
+    case fourth
+}
+
+switch enum {
+    case .first: // do something
+    case .second: // do something
+    default: break
+}
+```
+
+Redundant code
+In the .map functions .filter .reduce etc. omit the parentheses:
+✅
+```
+array.map { $0 }
+array.filter { $0 % 2 == 0 }
+```
+
+⛔️
+```
+array.map({ $0 })
+array.filter({ $0 % 2 == 0 })
+```
+
+For the returned parameters in closure, we omit the parentheses:
+✅
+```
+let handler: SomeHandler = { [weak self] action, indexPath in
+    self?.didTrigger(action, onItemAt: indexPath)
+}
+```
+
+⛔️
+```
+let handler: SomeHandler = { [weak self] (action, indexPath) in
+    self?.didTrigger(action, onItemAt: indexPath)
+}
+```
+
+TODO comments
+In TODO, we specify the version in which the fix is planned, your nickname and a link to the task in JIRA.
+```
+// TODO: 2.7 vasya.pupkin later take out the logic in BuyService https://jira..../task
+```
+
+Constants
+Local constants
+All constants should be at the very top of the file, right after the imports.
+If the constants are of the same type, combine them into an extension:
+```
+private extension CGFloat {
+    static let horizontalPadding: CGFloat = 5
+    static let verticalPadding: CGFloat = 5
+}
+
+// Using
+collectionViewFlowLayout.minimumInteritemSpacing = .minimumInteritemSpacing
+collectionViewFlowLayout.minimumLineSpacing = .minimumLineSpacing
+```
+
+If constants of different types are combined into enum:
+```
+private enum Constants {
+    static let boxCornerRadius: CGFloat = 5
+    static let boxInitSize = CGSize(width: 60, height: 40)
+    static let boxSize = CGSize(width: 60, height: 40)
+    static let boxInitCornerRadius: CGFloat = 5
+}
+```
+
+Naming
+We use direct naming, not the reverse.
+✅
+```
+let limitsController: UIViewController
+```
+
+⛔️
+```
+let controllerLimits: UIViewController
+```
+
+We are getting old to avoid duplication of information in function names.
+✅
+```
+func didSelectCell(at indexPath: IndexPath)
+```
+
+⛔️
+```
+func didSelectCellAtIndexPath(_ indexPath: IndexPath)
+```
+
+Recommendations
+If the protocol requires an implementation and does not contain set properties, then it is better to use extension:
+```
+protocol SomeProtocol {
+  func foo()
+}
+```
+
+✅
+```
+final class SomeClass {
+    ...
+}
+
+// MARK: - SomeProtocol
+
+extension SomeClass: SomeProtocol {
+
+   func foo() {}
+}
+```
+
+⛔️
+```
+final class SomeClass: SomeProtocol {
+    ...
+
+    // MARK: - SomeProtocol
+
+    func foo() {}
+}
+```
