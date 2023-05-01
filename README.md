@@ -213,8 +213,10 @@ protocol SomeProtocol {}
 
 Class structure
 We try to avoid inheritance. For all classes from which inheritance is not planned, the final keyword must be explicitly specified. This speeds up the dispatching of calls in runtime and makes life easier for the compiler.:
-final public class SomeView: UIView {}
 
+```
+final public class SomeView: UIView {}
+```
 
 Dependencies and properties are always written at the top of the class, indicated by a comment without indentation after:
 
