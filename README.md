@@ -125,27 +125,6 @@ XCCONFIG_URL=""
 
 ## Code style
 
-- Space indent: 4
-- NSAttributedString 
-Example:
-```swift
-label.attributedText = 
-   NSMutableAttributedString()
-      .text(
-          "0.00203928 SOL",
-          size: 15,
-          color: .textBlack
-      )
-      .text(
-          " (~$0.93)",
-          size: 15,
-          color: .textSecondary
-      )
-```
-Result
-<img width="113" alt="image" src="https://user-images.githubusercontent.com/6975538/160050828-f1231cbb-070b-4dba-bb83-c4a284cf3d2d.png">
-
-
 ## UI Templates
 
 - Copy template `MVVM-C.xctemplate` that is located under `Templates` folder to  `~/Library/Developer/Xcode/Templates/`
