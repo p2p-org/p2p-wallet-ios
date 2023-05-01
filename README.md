@@ -217,6 +217,7 @@ final public class SomeView: UIView {}
 
 
 Dependencies and properties are always written at the top of the class, indicated by a comment without indentation after:
+
 ✅
 ```
 final class SomeClass {
@@ -246,6 +247,7 @@ final class SomeClass {
 ```
 
 All other elements are indicated with // MARK: - indented after:
+
 ✅
 ```
 final class SomeClass {
@@ -273,6 +275,7 @@ final class SomeClass {
 ```
 
 If a large number of private functions are typed, then you should not dump them all in one pile, you need to break them into logically connected blocks.
+
 ✅ Division within the class:
 ```
 final class SomeClass {
@@ -324,6 +327,7 @@ final class SomeClass {
 ```
 
 There should be no line break before the closing brackets:
+
 ✅
 ```
 struct Foo {
@@ -345,6 +349,7 @@ struct Foo {
 
 Switch statement
 For enumwe don't use default in switch. When changing the enum during assembly, all the places where it is used will be immediately visible:
+
 ✅
 ```
 enum SomeEnum {
@@ -379,6 +384,7 @@ switch enum {
 
 Redundant code
 In the .map functions .filter .reduce etc. omit the parentheses:
+
 ✅
 ```
 array.map { $0 }
@@ -392,6 +398,7 @@ array.filter({ $0 % 2 == 0 })
 ```
 
 For the returned parameters in closure, we omit the parentheses:
+
 ✅
 ```
 let handler: SomeHandler = { [weak self] action, indexPath in
@@ -408,6 +415,7 @@ let handler: SomeHandler = { [weak self] (action, indexPath) in
 
 TODO comments
 In TODO, we specify the version in which the fix is planned, your nickname and a link to the task in JIRA.
+
 ```
 // TODO: 2.7 vasya.pupkin later take out the logic in BuyService https://jira..../task
 ```
@@ -416,6 +424,7 @@ Constants
 Local constants
 All constants should be at the very top of the file, right after the imports.
 If the constants are of the same type, combine them into an extension:
+
 ```
 private extension CGFloat {
     static let horizontalPadding: CGFloat = 5
@@ -423,11 +432,13 @@ private extension CGFloat {
 }
 
 // Using
-collectionViewFlowLayout.minimumInteritemSpacing = .minimumInteritemSpacing
-collectionViewFlowLayout.minimumLineSpacing = .minimumLineSpacing
+SomeView {...}
+.padding(.horizontal, .horizontalPadding)
+.padding(.vertical, .verticalPadding)
 ```
 
 If constants of different types are combined into enum:
+
 ```
 private enum Constants {
     static let boxCornerRadius: CGFloat = 5
@@ -439,6 +450,7 @@ private enum Constants {
 
 Naming
 We use direct naming, not the reverse.
+
 ✅
 ```
 let limitsController: UIViewController
@@ -450,6 +462,7 @@ let controllerLimits: UIViewController
 ```
 
 We are getting old to avoid duplication of information in function names.
+
 ✅
 ```
 func didSelectCell(at indexPath: IndexPath)
@@ -462,6 +475,7 @@ func didSelectCellAtIndexPath(_ indexPath: IndexPath)
 
 Recommendations
 If the protocol requires an implementation and does not contain set properties, then it is better to use extension:
+
 ```
 protocol SomeProtocol {
   func foo()
