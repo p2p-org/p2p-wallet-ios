@@ -198,15 +198,42 @@ if available(.settingsFeature) {
 The basis of the style of writing code is the configured Swiftlint in the project. The specific practices we follow are listed below.
 
 ### Protocols
-Interfaces used for abstractions are named without prefixes and postfixes, for example: BuyService, SellService.
+Interfaces used for abstractions are named without prefixes and postfixes:
+
+🟢
+```
+protocol BuyService {}
+```
+
+🔴
+```
+protocol BuyServiceProtocol {}
+```
+
+
+For implementation or mocks we append `Impl`, `Mock` or other key words in the ending:
+
+🟢
+```
+final class BuyServiceImpl: BuyService {}
+final class BuyServiceMock: BuyService {}
+```
+
+🔴
+```
+final class ImplOfBuyService: BuyService {}
+final class BuyMockService: BuyService {}
+```
+
+
 If it is known in advance that only classes will conform to the protocol, you need to add the keyword AnyObject:
 
-✅
+🟢
 ```
 protocol SomeProtocol: AnyObject {}
 ```
 
-⛔️
+🔴
 ```
 protocol SomeProtocol {}
 ```
@@ -216,13 +243,13 @@ protocol SomeProtocol {}
 We try to avoid inheritance. For all classes from which inheritance is not planned, the final keyword must be explicitly specified. This speeds up the dispatching of calls in runtime and makes life easier for the compiler.:
 
 ```
-final public class SomeView: UIView {}
+final class BuyView: UIView {}
 ```
 
 
 Dependencies and properties are always written at the top of the class, indicated by a comment without indentation after:
 
-✅
+🟢
 ```
 final class SomeClass {
 
@@ -235,7 +262,7 @@ final class SomeClass {
 }
 ```
 
-⛔️
+🔴
 ```
 final class SomeClass {
 
@@ -253,7 +280,7 @@ final class SomeClass {
 
 All other elements are indicated with // MARK: - indented after:
 
-✅
+🟢
 ```
 final class SomeClass {
 
@@ -267,7 +294,7 @@ final class SomeClass {
 }
 ```
 
-⛔️
+🔴
 ```
 final class SomeClass {
 
@@ -282,15 +309,15 @@ final class SomeClass {
 
 If a large number of private functions are typed, then you should not dump them all in one pile, you need to break them into logically connected blocks.
 
-✅ Division within the class:
+🟢 Division within the class:
 ```
 final class SomeClass {
 
-    // MARK: - Notifications
+    // MARK: - Listeners
 
-    private func startToObserveNotifications() {...}
-    private func stopToObserveNotifications() {...}
-    private func didReceiveNotification() {...}
+    private func addListeners() {...}
+    private func removeListeners() {...}
+    private func removeListener(_ listener: Listener) {...}
 
     // MARK: - Actions
 
@@ -299,18 +326,18 @@ final class SomeClass {
 ```
 
 
-✅ Takeaway in extensions:
+🟢 Takeaway in extensions:
 ```
 final class SomeClass {
     ...
 }
 
-// MARK: - Notifications
+// MARK: - Listeners
 
 extension SomeClass {
-    private func startToObserveNotifications() {...}
-    private func stopToObserveNotifications() {...}
-    private func didReceiveNotification() {...}
+    private func addListeners() {...}
+    private func removeListeners() {...}
+    private func removeListener(_ listener: Listener) {...}
 }
 
 // MARK: - Actions
@@ -320,35 +347,35 @@ extension SomeClass {
 }
 ```
 
-⛔️
+🔴
 ```
 final class SomeClass {
 
     // MARK: - Private
 
-    func startToObserveNotifications() {...}
+    func addListeners() {...}
     @objc func didTapClose() {...}
-    func stopToObserveNotifications() {...}
-    func didReceiveNotification() {...}
+    func removeListeners() {...}
+    func removeListener(_ listener: Listener) {...}
 }
 ```
 
 
 There should be no line break before the closing brackets:
 
-✅
+🟢
 ```
-struct Foo {
-    func bar() {
+struct SomeStruct {
+    func listen() {
         ...
     }
 }
 ```
 
-⛔️
+🔴
 ```
-struct Foo {
-    func bar() {
+struct SomeStruct {
+    func listen() {
         ...
     }
 
@@ -359,34 +386,34 @@ struct Foo {
 ### Switch statement
 For enumwe don't use default in switch. When changing the enum during assembly, all the places where it is used will be immediately visible:
 
-✅
+🟢
 ```
 enum SomeEnum {
-    case first
-    case second
-    case third
-    case fourth
+    case one
+    case two
+    case three
+    case four
 }
 
 switch enum {
-    case .first: // do something
-    case .second: // do something
-    case .third, .fourth: break
+    case .one: // do something
+    case .two: // do something
+    case .three, .four: break
 }
 ```
 
-⛔️
+🔴
 ```
 enum SomeEnum {
-    case first
-    case second
-    case third
-    case fourth
+    case one
+    case two
+    case three
+    case four
 }
 
 switch enum {
-    case .first: // do something
-    case .second: // do something
+    case .one: // do something
+    case .two: // do something
     default: break
 }
 ```
@@ -395,29 +422,29 @@ switch enum {
 ### Redundant code
 In the .map functions .filter .reduce etc. omit the parentheses:
 
-✅
+🟢
 ```
-array.map { $0 }
-array.filter { $0 % 2 == 0 }
+dict.map { $0 }
+dict.filter { $0 % 2 == 0 }
 ```
 
-⛔️
+🔴
 ```
-array.map({ $0 })
-array.filter({ $0 % 2 == 0 })
+dict.map({ $0 })
+dict.filter({ $0 % 2 == 0 })
 ```
 
 
 For the returned parameters in closure, we omit the parentheses:
 
-✅
+🟢
 ```
 let handler: SomeHandler = { [weak self] action, indexPath in
     self?.didTrigger(action, onItemAt: indexPath)
 }
 ```
 
-⛔️
+🔴
 ```
 let handler: SomeHandler = { [weak self] (action, indexPath) in
     self?.didTrigger(action, onItemAt: indexPath)
@@ -446,8 +473,8 @@ private extension CGFloat {
 
 // Using
 SomeView {...}
-.padding(.horizontal, .horizontalPadding)
-.padding(.vertical, .verticalPadding)
+   .padding(.horizontal, .horizontalPadding)
+   .padding(.vertical, .verticalPadding)
 ```
 
 
@@ -466,12 +493,12 @@ private enum Constants {
 ### Naming
 We use direct naming, not the reverse.
 
-✅
+🟢
 ```
 let limitsController: UIViewController
 ```
 
-⛔️
+🔴
 ```
 let controllerLimits: UIViewController
 ```
@@ -479,12 +506,12 @@ let controllerLimits: UIViewController
 
 We are getting old to avoid duplication of information in function names.
 
-✅
+🟢
 ```
 func didSelectCell(at indexPath: IndexPath)
 ```
 
-⛔️
+🔴
 ```
 func didSelectCellAtIndexPath(_ indexPath: IndexPath)
 ```
@@ -494,32 +521,32 @@ func didSelectCellAtIndexPath(_ indexPath: IndexPath)
 If the protocol requires an implementation and does not contain set properties, then it is better to use extension:
 
 ```
-protocol SomeProtocol {
-  func foo()
+protocol BuyService {
+  func buy()
 }
 ```
 
-✅
+🟢
 ```
-final class SomeClass {
+final class BuyServiceImpl {
     ...
 }
 
-// MARK: - SomeProtocol
+// MARK: - BuyService
 
-extension SomeClass: SomeProtocol {
+extension BuyServiceImpl: BuyService {
 
-   func foo() {}
+   func buy() {}
 }
 ```
 
-⛔️
+🔴
 ```
-final class SomeClass: SomeProtocol {
+final class BuyServiceImpl: BuyService {
     ...
 
-    // MARK: - SomeProtocol
+    // MARK: - BuyService
 
-    func foo() {}
+    func buy() {}
 }
 ```
