@@ -197,7 +197,7 @@ if available(.settingsFeature) {
 
 The basis of the style of writing code is the configured Swiftlint in the project. The specific practices we follow are listed below.
 
-# Protocols
+### Protocols
 Interfaces used for abstractions are named without prefixes and postfixes, for example: BuyService, SellService.
 If it is known in advance that only classes will conform to the protocol, you need to add the keyword AnyObject:
 
