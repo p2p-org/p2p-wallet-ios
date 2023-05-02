@@ -212,7 +212,7 @@ protocol SomeProtocol {}
 ```
 
 
-# Class structure
+### Class structure
 We try to avoid inheritance. For all classes from which inheritance is not planned, the final keyword must be explicitly specified. This speeds up the dispatching of calls in runtime and makes life easier for the compiler.:
 
 ```
@@ -356,7 +356,7 @@ struct Foo {
 ```
 
 
-# Switch statement
+### Switch statement
 For enumwe don't use default in switch. When changing the enum during assembly, all the places where it is used will be immediately visible:
 
 ✅
@@ -392,7 +392,7 @@ switch enum {
 ```
 
 
-# Redundant code
+### Redundant code
 In the .map functions .filter .reduce etc. omit the parentheses:
 
 ✅
@@ -425,7 +425,7 @@ let handler: SomeHandler = { [weak self] (action, indexPath) in
 ```
 
 
-# TODO comments
+### TODO comments
 In TODO, we specify the version in which the fix is planned, your nickname and a link to the task in JIRA.
 
 ```
@@ -433,8 +433,8 @@ In TODO, we specify the version in which the fix is planned, your nickname and a
 ```
 
 
-# Constants
-# Local constants
+### Constants
+### Local constants
 All constants should be at the very top of the file, right after the imports.
 If the constants are of the same type, combine them into an extension:
 
@@ -463,7 +463,7 @@ private enum Constants {
 ```
 
 
-# Naming
+### Naming
 We use direct naming, not the reverse.
 
 ✅
@@ -490,7 +490,7 @@ func didSelectCellAtIndexPath(_ indexPath: IndexPath)
 ```
 
 
-# Recommendations
+### Recommendations
 If the protocol requires an implementation and does not contain set properties, then it is better to use extension:
 
 ```
