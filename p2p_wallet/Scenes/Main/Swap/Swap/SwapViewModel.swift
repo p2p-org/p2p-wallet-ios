@@ -371,6 +371,15 @@ private extension SwapViewModel {
     }
     
     func updateWarningMessage(for state: JupiterSwapState) {
+        switch state.status {
+        case .ready, .requiredInitialize, .loadingTokenTo, .loadingAmountTo,
+                .switching, .initializing, .creatingSwapTransaction:
+            break
+        case .error:
+            warningState = nil
+            return
+        }
+        
         let slippage = Double(state.slippageBps) / 100
         if let route = state.route,
            let totalFeeAndDeposits = route.fees?.totalFeeAndDeposits,
