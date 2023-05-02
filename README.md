@@ -275,7 +275,7 @@ final class SomeClass {
     public init() {...}
 
     // MARK: - BuyService
-    func buyCrypto(_ crypto: Crypto) {…}
+    func buyCrypto(_ crypto: Crypto) {...}
 }
 ```
 
