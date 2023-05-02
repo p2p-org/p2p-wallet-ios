@@ -263,7 +263,7 @@ final class SomeClass {
 
     // MARK: - BuyService
 
-    func buyCrypto(_ crypto: Crypto) {…}
+    func buyCrypto(_ crypto: Crypto) {...}
 }
 ```
 
