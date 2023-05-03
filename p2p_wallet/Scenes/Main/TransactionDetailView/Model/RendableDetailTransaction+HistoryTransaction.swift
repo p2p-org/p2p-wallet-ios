@@ -10,7 +10,7 @@ import Foundation
 import History
 import SolanaSwift
 
-struct RendableDetailHistoryTransaction: RendableTransactionDetail {
+struct RendableDetailHistoryTransaction: RenderableTransactionDetail {
     let trx: HistoryTransaction
 
     let allTokens: Set<SolanaSwift.Token>

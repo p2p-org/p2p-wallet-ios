@@ -1,10 +1,3 @@
-//
-//  HistoryViewModelAggregator.swift
-//  p2p_wallet
-//
-//  Created by Giang Long Tran on 10.04.2023.
-//
-
 import Foundation
 import Combine
 

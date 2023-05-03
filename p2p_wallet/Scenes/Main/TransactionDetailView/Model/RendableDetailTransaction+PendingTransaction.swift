@@ -11,7 +11,7 @@ import KeyAppKitCore
 import SolanaPricesAPIs
 import Wormhole
 
-struct RendableDetailPendingTransaction: RendableTransactionDetail {
+struct RendableDetailPendingTransaction: RenderableTransactionDetail {
     let trx: PendingTransaction
 
     let priceService: PricesService

@@ -12,7 +12,7 @@ import KeyAppKitCore
 import Send
 import Wormhole
 
-struct RendableWormholeSendUserActionDetail: RendableTransactionDetail {
+struct RendableWormholeSendUserActionDetail: RenderableTransactionDetail {
     let userAction: WormholeSendUserAction
 
     var signature: String? { userAction.id }

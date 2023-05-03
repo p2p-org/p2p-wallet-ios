@@ -1,17 +1,10 @@
-//
-//  DetailTransactionModel.swift
-//  p2p_wallet
-//
-//  Created by Giang Long Tran on 03.02.2023.
-//
-
 import Combine
 import Foundation
 import History
 import SolanaSwift
 import TransactionParser
 
-protocol RendableTransactionDetail {
+protocol RenderableTransactionDetail {
     var status: TransactionDetailStatus { get }
 
     var title: String { get }
