@@ -82,17 +82,13 @@ private extension CreateUsernameView {
     }
 
     var actionButton: some View {
-        TextButtonView(
+        NewTextButton(
             title: viewModel.actionText,
             style: viewModel.parameters.buttonStyle,
-            size: .large,
-            isLoading: viewModel.isLoading,
-            onPressed: {}
-        )
-        .onTapGesture {
+            isLoading: viewModel.isLoading
+        )  {
             viewModel.createUsername.send()
         }
-        .frame(height: 56)
         .disabled(viewModel.status != .available)
         .addBorder(
             viewModel.status != .available ? Color(Asset.Colors.snow.color).opacity(0.6) : .clear,

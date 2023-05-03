@@ -65,10 +65,9 @@ struct SolendTutorialView: View {
     // MARK: - ViewBuilders
 
     private var bottomActionsView: some View {
-        TextButtonView(
+        NewTextButton(
             title: viewModel.isLastPage ? L10n.continue : L10n.next.uppercaseFirst,
-            style: .primary,
-            size: .large
+            style: .primary
         ) { [weak viewModel] in
             if viewModel?.isLastPage == true {
                 markAsReadAndDismiss()
@@ -78,8 +77,6 @@ struct SolendTutorialView: View {
                 }
             }
         }
-        .frame(height: 56)
-        .frame(maxWidth: .infinity)
         .padding(.horizontal, 20)
         .padding(.top, 20)
         .padding(.bottom, max(safeAreaInsets.bottom, 20))

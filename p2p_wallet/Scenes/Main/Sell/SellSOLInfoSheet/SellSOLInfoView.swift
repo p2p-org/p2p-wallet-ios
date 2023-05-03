@@ -26,13 +26,11 @@ struct SellSOLInfoView: View {
                 .multilineTextAlignment(.center)
                 .foregroundColor(Color(Asset.Colors.night.color))
                 .padding(.top, 21)
-            TextButtonView(
+            NewTextButton(
                 title: L10n.gotIt,
                 style: .primaryWhite,
-                size: .large,
-                onPressed: actionButtonPressed
+                action: actionButtonPressed
             )
-            .frame(height: TextButton.Size.large.height)
             .padding(.top, 48)
             .padding(.bottom, 12)
         }

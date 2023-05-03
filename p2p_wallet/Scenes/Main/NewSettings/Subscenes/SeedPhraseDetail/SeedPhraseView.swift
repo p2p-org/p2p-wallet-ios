@@ -24,13 +24,13 @@ struct SeedPhraseView: View {
 
                     Spacer()
 
-                    TextButtonView(
+                    NewTextButton(
                         title: !hidden ? L10n.hide : L10n.show,
-                        style: .second,
                         size: .small,
+                        style: .second,
                         trailing: !hidden ? .eyeHiddenTokensHide : .eyeHiddenTokens
                     ) { hidden = !hidden }
-                        .frame(maxWidth: 100, maxHeight: TextButton.Size.small.height)
+                        .frame(maxWidth: 100)
                 }
                 .padding(.top, 8)
                 .padding(.bottom, 8)

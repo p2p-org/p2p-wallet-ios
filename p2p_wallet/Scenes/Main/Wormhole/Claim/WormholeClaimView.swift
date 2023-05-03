@@ -99,11 +99,10 @@ struct WormholeClaimView: View {
             Spacer()
 
             // Button
-            TextButtonView(title: viewModel.model.claimButtonTitle, style: .primaryWhite, size: .large) {
+            NewTextButton(title: viewModel.model.claimButtonTitle, style: .primaryWhite) {
                 viewModel.claim()
             }
             .disabled(!viewModel.model.claimButtonEnable)
-            .frame(height: TextButton.Size.large.height)
         }
         .padding(.horizontal, 16)
         .background(

@@ -25,29 +25,21 @@ extension ContinueView {
     private var bottomActionsView: some View {
         BottomActionContainer {
             VStack(spacing: .zero) {
-                TextButtonView(title: L10n.continue, style: .inverted, size: .large, onPressed: { [weak viewModel] in
+                NewTextButton(
+                    title: L10n.continue,
+                    style: .inverted
+                ) { [weak viewModel] in
                     viewModel?.continueDidTap.send()
-                }).styled()
+                }
 
-                TextButtonView(
+                NewTextButton(
                     title: L10n.startingScreen,
-                    style: .ghostLime,
-                    size: .large,
-                    onPressed: { [weak viewModel] in
-                        viewModel?.startDidTap.send()
-                    }
-                )
-                    .styled()
-                    .padding(.top, 12)
+                    style: .ghostLime
+                ) { [weak viewModel] in
+                    viewModel?.startDidTap.send()
+                }
+                .padding(.top, 12)
             }
         }
-    }
-}
-
-// MARK: - Style Helpers
-
-private extension TextButtonView {
-    func styled() -> some View {
-        frame(height: 56).frame(maxWidth: .infinity)
     }
 }

@@ -6,6 +6,7 @@
 //
 
 import SwiftUI
+import KeyAppUI
 
 struct EarnBannerView: View {
     var showEarnScene: () -> Void
@@ -42,10 +43,10 @@ struct EarnBannerView: View {
 
                 Spacer(minLength: 32)
 
-                TextButtonView(
+                NewTextButton(
                     title: L10n.earn,
-                    style: .third,
-                    size: .medium
+                    size: .medium,
+                    style: .third
                 ) {
                     showEarnScene()
                 }

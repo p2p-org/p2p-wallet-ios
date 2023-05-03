@@ -35,8 +35,7 @@ struct SendTransactionStatusDetailsView: View {
                 .padding(.top, 16)
             }
             .padding(.horizontal, 24)
-            TextButtonView(title: L10n.close, style: .primaryWhite, size: .large, onPressed: viewModel.close.send)
-                .frame(height: TextButton.Size.large.height)
+            NewTextButton(title: L10n.close, style: .primaryWhite, action: viewModel.close.send)
                 .padding(.horizontal, 24)
                 .padding(.top, 16)
                 .background(

@@ -23,13 +23,11 @@ struct SeedPhraseRestoreWalletView: View {
                 Spacer()
             }
 
-            TextButtonView(
+            NewTextButton(
                 title: viewModel.canContinue ? L10n.continue : L10n.fill12Or24Words,
                 style: .primary,
-                size: .large,
                 trailing: viewModel.canContinue ? Asset.MaterialIcon.arrowForward.image : nil
             ) { [weak viewModel] in viewModel?.continueButtonTapped() }
-                .frame(height: 56)
                 .disabled(!viewModel.canContinue)
                 .padding(EdgeInsets(top: 0, leading: 16, bottom: 12, trailing: 16))
         }

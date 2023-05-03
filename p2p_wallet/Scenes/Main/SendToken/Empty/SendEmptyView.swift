@@ -41,21 +41,17 @@ struct SendEmptyView: View {
                 .padding(.bottom, 20)
                 BottomActionContainer {
                     VStack(spacing: 12) {
-                        TextButtonView(
+                        NewTextButton(
                             title: L10n.buyCrypto,
                             style: .inverted,
-                            size: .large,
-                            onPressed: buyCrypto
+                            action: buyCrypto
                         )
-                        .frame(height: 56)
                         .accessibilityIdentifier("SendEmptyView.button1")
-                        TextButtonView(
+                        NewTextButton(
                             title: L10n.receive,
                             style: .inverted,
-                            size: .large,
-                            onPressed: receive
+                            action: receive
                         )
-                        .frame(height: 56)
                         .accessibilityIdentifier("SendEmptyView.button2")
                     }
                 }

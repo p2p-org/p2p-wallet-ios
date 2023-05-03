@@ -52,7 +52,7 @@ struct ForgetPinView: View {
                 .padding(.vertical, 24)
 
             // Logout button
-            TextButtonView(title: L10n.logOut, style: .second, size: .large, isLoading: isLoading) {
+            NewTextButton(title: L10n.logOut, style: .second, isLoading: isLoading) {
                 if let onLogout = onLogout {
                     onLogout()
                 } else {
@@ -64,7 +64,6 @@ struct ForgetPinView: View {
                     }
                 }
             }
-            .frame(height: TextButton.Size.large.height)
             .padding(.horizontal, 24)
             .padding(.vertical, 16)
         }

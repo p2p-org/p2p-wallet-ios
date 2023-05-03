@@ -197,11 +197,10 @@ struct SendInputView: View {
     var sendButton: some View {
         switch viewModel.status {
         case .initializingFailed:
-            TextButtonView(title: L10n.tryAgain, style: .primary, size: .large) {
+            NewTextButton(title: L10n.tryAgain, style: .primary) {
                 viewModel.initialize()
             }
             .cornerRadius(radius: 28, corners: .allCorners)
-            .frame(height: TextButton.Size.large.height)
         case .initializing, .ready:
             SliderActionButton(
                 isSliderOn: $viewModel.isSliderOn,

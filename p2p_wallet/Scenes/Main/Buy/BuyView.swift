@@ -366,15 +366,13 @@ struct BuyView: View, KeyboardVisibilityReadable {
     }
 
     private var actionButtonView: some View {
-        TextButtonView(
+        NewTextButton(
             title: viewModel.buttonItem.title,
             style: .primaryWhite,
-            size: .large,
             trailing: viewModel.buttonItem.icon?.withTintColor(Asset.Colors.rain.color)
         ) { [weak viewModel] in
             viewModel?.buyButtonTapped()
         }
-        .frame(height: 56)
         .accessibilityIdentifier("BuyView.actionButtonView")
         .padding(EdgeInsets(top: 0, leading: 16, bottom: 12, trailing: 16))
         .disabled(!viewModel.buttonItem.enabled)

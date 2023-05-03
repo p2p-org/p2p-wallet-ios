@@ -47,13 +47,11 @@ struct SeedPhraseDetailView: View {
                         )
                             .frame(height: 56)
                     } else {
-                        TextButtonView(
+                        NewTextButton(
                             title: L10n.copy,
                             style: .third,
-                            size: .large,
                             trailing: Asset.Icons.copyFilled.image
                         ) { viewModel.copy() }
-                            .frame(height: TextButton.Size.large.height)
                     }
                 }
             }

@@ -39,13 +39,11 @@ struct SendInputFreeTransactionsDetailView: View {
                 }
             }
 
-            TextButtonView(
+            NewTextButton(
                 title: "\(isFreeTransactionsLimited ? L10n.awesome: L10n.gotIt) 👍",
                 style: .primaryWhite,
-                size: .large,
-                onPressed: actionButtonPressed
+                action: actionButtonPressed
             )
-            .frame(height: TextButton.Size.large.height)
         }
         .padding(.horizontal, 16)
         .sheetHeader(title: nil, withSeparator: false)

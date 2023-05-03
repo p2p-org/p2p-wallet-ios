@@ -304,27 +304,23 @@ struct RecipientSearchView: View {
                     }
                     Spacer()
                     HStack(spacing: 8) {
-                        TextButtonView(
+                        NewTextButton(
                             title: L10n.scanQR,
                             style: .primary,
-                            size: .large,
                             leading: Asset.Icons.qr.image
                         ) {
                             viewModel.qr()
                         }
-                        .frame(height: TextButton.Size.large.height)
                         .cornerRadius(28)
                         .accessibilityIdentifier("RecipientSearchView.loadedView.emptyRecipientsView.sqanQR")
                         
-                        TextButtonView(
+                        NewTextButton(
                             title: L10n.paste,
                             style: .primary,
-                            size: .large,
                             leading: Asset.Icons.past.image
                         ) {
                             viewModel.past()
                         }
-                        .frame(height: TextButton.Size.large.height)
                         .cornerRadius(28)
                         .accessibilityIdentifier("RecipientSearchView.loadedView.emptyRecipientsView.pasteButton")
                     }.padding(.bottom, 8)
@@ -389,10 +385,9 @@ struct RecipientSearchView: View {
             {
                 VStack {
                     Spacer()
-                    TextButtonView(title: L10n.continueAnyway, style: .primary, size: .large) {
+                    NewTextButton(title: L10n.continueAnyway, style: .primary) {
                         viewModel.selectRecipient(recipient)
                     }
-                    .frame(height: TextButton.Size.large.height)
                     .cornerRadius(28)
                     .accessibilityIdentifier("RecipientSearchView.okView.TextButtonView.recipient")
                 }

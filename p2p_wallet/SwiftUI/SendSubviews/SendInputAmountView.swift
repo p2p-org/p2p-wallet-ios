@@ -67,11 +67,11 @@ struct SendInputAmountView: View {
                                 .accessibilityIdentifier("input-amount")
 
                                 if isMaxButtonVisible {
-                                    TextButtonView(
+                                    NewTextButton(
                                         title: L10n.max.uppercased(),
-                                        style: .second,
                                         size: .small,
-                                        onPressed: maxAmountPressed.send
+                                        style: .second,
+                                        action: maxAmountPressed.send
                                     )
                                     .transition(.opacity.animation(.easeInOut))
                                     .cornerRadius(radius: 32, corners: .allCorners)

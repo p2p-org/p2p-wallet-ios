@@ -30,30 +30,24 @@ struct SocialSignInView: View {
     var actions: some View {
         BottomActionContainer {
             VStack(spacing: .zero) {
-                TextButtonView(
+                NewTextButton(
                     title: viewModel.appleButtonTitle,
                     style: .inverted,
-                    size: .large,
-                    leading: .appleLogo,
                     isLoading: viewModel.loading == .appleButton,
-                    onPressed: { [weak viewModel] in
-                        guard viewModel?.loading == nil else { return }
-                        viewModel?.onSignInTap(.apple)
-                    }
-                )
-                    .frame(height: TextButton.Size.large.height)
-                TextButtonView(
+                    leading: .appleLogo
+                ) { [weak viewModel] in
+                    guard viewModel?.loading == nil else { return }
+                    viewModel?.onSignInTap(.apple)
+                }
+
+                NewTextButton(
                     title: viewModel.googleButtonTitle,
                     style: .inverted,
-                    size: .large,
-                    leading: .google,
                     isLoading: viewModel.loading == .googleButton,
-                    onPressed: { [weak viewModel] in
+                    leading: .google) { [weak viewModel] in
                         guard viewModel?.loading == nil else { return }
                         viewModel?.onSignInTap(.google)
                     }
-                )
-                    .frame(height: TextButton.Size.large.height)
                     .padding(.top, 12)
             }
         }

@@ -82,16 +82,14 @@ struct SendLinkCreatedView: View {
             Spacer()
             
             // Button
-            TextButtonView(
+            NewTextButton(
                 title: L10n.share,
                 style: .primaryWhite,
-                size: .large,
-                onPressed: {
+                action: {
                     viewModel.shareClicked()
                 }
             )
-                .frame(height: TextButton.Size.large.height)
-                .padding(.bottom, 32)
+            .padding(.bottom, 32)
         }
         .padding(.horizontal, 20)
         .background(Color(Asset.Colors.smoke.color).edgesIgnoringSafeArea(.vertical))

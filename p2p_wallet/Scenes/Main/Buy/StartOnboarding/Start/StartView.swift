@@ -51,19 +51,16 @@ extension StartView {
         BottomActionContainer {
             VStack(spacing: .zero) {
                 // Create a wallet
-                TextButtonView(
+                NewTextButton(
                     title: L10n.createANewWallet,
                     style: .inverted,
-                    size: .large,
                     trailing: Asset.MaterialIcon.arrowForward.image
                 ) { [weak viewModel] in viewModel?.createWalletDidTap.send() }
-                    .styled()
 
                 // Restore a wallet
-                TextButtonView(title: L10n.iAlreadyHaveAWallet, style: .ghostLime, size: .large) { [weak viewModel] in
+                NewTextButton(title: L10n.iAlreadyHaveAWallet, style: .ghostLime) { [weak viewModel] in
                     viewModel?.restoreWalletDidTap.send()
                 }
-                .styled()
                 .padding(.top, 12)
 
                 OnboardingTermsAndPolicyButton(
@@ -77,15 +74,6 @@ extension StartView {
                 ).padding(.top, 24)
             }
         }
-    }
-}
-
-// MARK: - Style Helpers
-
-private extension TextButtonView {
-    func styled() -> some View {
-        frame(height: 56)
-            .frame(maxWidth: .infinity)
     }
 }
 

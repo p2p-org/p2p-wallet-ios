@@ -50,8 +50,7 @@ struct SliderActionButton: View {
                         })
                     )
                 } else {
-                    TextButtonView(title: data.title, style: .primary, size: .large)
-                        .disabled(true)
+                    NewTextButton(title: data.title, style: .primary, isEnabled: false, action: { })
                         .cornerRadius(radius: 32, corners: .allCorners)
                 }
             }

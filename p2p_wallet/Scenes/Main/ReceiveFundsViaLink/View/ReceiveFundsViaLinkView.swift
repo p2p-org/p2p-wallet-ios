@@ -76,15 +76,13 @@ struct ReceiveFundsViaLinkView: View {
     private var bottomPart: some View {
         if !viewModel.processingVisible {
             HStack {
-                TextButtonView(
+                NewTextButton(
                     title: L10n.confirm,
                     style: .primaryWhite,
-                    size: .large,
-                    onPressed: {
+                    action: {
                         viewModel.confirmClicked()
                     }
                 )
-                .frame(height: 56)
                 
                 #if !RELEASE
                 Toggle(isOn: $viewModel.isFakeSendingTransaction) {
@@ -105,15 +103,13 @@ struct ReceiveFundsViaLinkView: View {
         } else {
             VStack(spacing: 24) {
                 statusView
-                TextButtonView(
+                NewTextButton(
                     title: L10n.close,
                     style: .primaryWhite,
-                    size: .large,
-                    onPressed: {
+                    action: {
                         viewModel.closeClicked()
                     }
                 )
-                .frame(height: 56)
             }
         }
     }

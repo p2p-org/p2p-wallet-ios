@@ -40,10 +40,9 @@ struct SupportedTokenNetworksView: View {
             }
             .padding(.horizontal, 16)
 
-            TextButtonView(title: L10n.close, style: .second, size: .large) {
+            NewTextButton(title: L10n.close, style: .second) {
                 onTap(nil)
             }
-            .frame(height: TextButton.Size.large.height)
             .padding(.top, 16)
             .padding(.horizontal, 16)
             .padding(.bottom, 30)

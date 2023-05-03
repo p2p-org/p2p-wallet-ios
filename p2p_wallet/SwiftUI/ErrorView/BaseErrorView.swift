@@ -31,14 +31,12 @@ struct BaseErrorView: View {
                 }
             }
             Spacer()
-            TextButtonView(
+            NewTextButton(
                 title: actionTitle,
                 style: .primaryWhite,
-                size: .large,
-                onPressed: action
+                action: action
             )
             .accessibilityIdentifier("BaseErrorView.actionButton")
-            .frame(height: TextButton.Size.large.height)
             .padding(.bottom, 32)
             .padding(.horizontal, appearance.actionButtonHorizontalOffset)
         }

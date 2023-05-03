@@ -13,10 +13,8 @@ struct HistoryEmptyView: View {
             Text(L10n.YourHistoryWillAppearHere.toGetStartedYouCan)
                 .apply(style: .text1)
                 .multilineTextAlignment(.center)
-            TextButtonView(title: L10n.buyCrypto, style: .primary, size: .large, onPressed: primaryAction)
-                .frame(height: TextButton.Size.large.height)
-            TextButtonView(title: L10n.receive, style: .second, size: .large, onPressed: secondaryAction)
-                .frame(height: TextButton.Size.large.height)
+            NewTextButton(title: L10n.buyCrypto, style: .primary, action: primaryAction)
+            NewTextButton(title: L10n.receive, style: .second, action: secondaryAction)
             Spacer()
         }
         .padding(.horizontal, 16)

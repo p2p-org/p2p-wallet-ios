@@ -305,10 +305,9 @@ private extension RestoreCustomDelegatedCoordinator {
                 self?.openHelp()
             }, help: nil,
             customActions: {
-                TextButtonView(title: L10n.useAnAnotherPhone, style: .inverted,
-                               size: .large) { [stateMachine] in
+                NewTextButton(title: L10n.useAnAnotherPhone, style: .inverted) { [stateMachine] in
                     Task { _ = try await stateMachine <- .enterPhone }
-                }.frame(height: TextButton.Size.large.height).frame(maxWidth: .infinity)
+                }
             })
             return UIHostingController(rootView: view)
         }

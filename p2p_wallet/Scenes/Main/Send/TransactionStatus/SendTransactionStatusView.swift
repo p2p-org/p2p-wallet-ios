@@ -97,13 +97,11 @@ struct SendTransactionStatusView: View {
     }
 
     var button: some View {
-        TextButtonView(
+        NewTextButton(
             title: viewModel.closeButtonTitle,
             style: .primaryWhite,
-            size: .large,
-            onPressed: viewModel.close.send
+            action: viewModel.close.send
         )
-        .frame(height: 56)
     }
 }
 
