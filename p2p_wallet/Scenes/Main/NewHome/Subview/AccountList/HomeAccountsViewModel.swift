@@ -145,7 +145,7 @@ final class HomeAccountsViewModel: BaseViewModel, ObservableObject {
         case let renderableAccount as RenderableEthereumAccount:
             switch event {
             case .extraButtonTap:
-                navigation.send(.claim(renderableAccount.account))
+                navigation.send(.claim(renderableAccount.account, renderableAccount.userAction as? WormholeClaimUserAction))
             default:
                 break
             }
