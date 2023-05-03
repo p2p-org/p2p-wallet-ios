@@ -27,25 +27,21 @@ struct SendViaLinkClaimErrorView: View {
             Spacer()
             Image(uiImage: image)
             VStack(spacing: 12) {
-                TextButtonView(
+                NewTextButton(
                     title: L10n.tryAgain,
                     style: .primaryWhite,
-                    size: .large,
                     isLoading: isLoading,
-                    onPressed: {
+                    action: {
                         reloadClicked()
                     }
                 )
-                .frame(height: 56)
-                TextButtonView(
+                NewTextButton(
                     title: L10n.cancel,
                     style: .inverted,
-                    size: .large,
-                    onPressed: {
+                    action: {
                         cancelClicked()
                     }
                 )
-                .frame(height: 56)
             }
         }
         .padding(.horizontal, 16)

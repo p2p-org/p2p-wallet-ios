@@ -47,32 +47,28 @@ struct OnboardingBrokenScreen<CustomActions: View>: View {
                     customActions
 
                     if let help = help {
-                        TextButtonView(
+                        NewTextButton(
                             title: L10n.support,
                             style: .inverted,
-                            size: .large,
-                            leading: Asset.MaterialIcon.newReleasesOutlined.image,
-                            onPressed: { help() }
-                        )
-                            .frame(height: TextButton.Size.large.height)
+                            leading: Asset.MaterialIcon.newReleasesOutlined.image
+                        ) {
+                            help()
+                        }
                     }
 
                     if let back = back {
-                        TextButtonView(
+                        NewTextButton(
                             title: L10n.startingScreen,
-                            style: .ghostLime,
-                            size: .large,
-                            onPressed: {
-                                Task {
-                                    guard loading == false else { return }
-                                    loading = true
-                                    defer { loading = false }
+                            style: .ghostLime
+                        ) {
+                            Task {
+                                guard loading == false else { return }
+                                loading = true
+                                defer { loading = false }
 
-                                    try await back()
-                                }
+                                try await back()
                             }
-                        )
-                            .frame(height: TextButton.Size.large.height)
+                        }
                     }
                 }
             }

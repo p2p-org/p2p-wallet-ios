@@ -29,15 +29,13 @@ struct SendCreateLinkErrorView: View {
             Spacer()
             
             // Button
-            TextButtonView(
+            NewTextButton(
                 title: L10n.goBack,
                 style: .primaryWhite,
-                size: .large,
-                onPressed: {
+                action: {
                     onGoBack()
                 }
             )
-            .frame(height: TextButton.Size.large.height)
             .padding(.bottom, 32)
         }
         .padding(.horizontal, 20)

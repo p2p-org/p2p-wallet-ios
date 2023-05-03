@@ -51,7 +51,7 @@ struct OnboardingBlockScreen: View {
 
             BottomActionContainer {
                 VStack {
-                    TextButtonView(title: L10n.startingScreen, style: .outlineWhite, size: .large) {
+                    NewTextButton(title: L10n.startingScreen, style: .outlineWhite) {
                         Task {
                             guard loading == false else { return }
                             loading = true
@@ -59,7 +59,6 @@ struct OnboardingBlockScreen: View {
                             do { try await onHome() }
                         }
                     }
-                    .frame(height: TextButton.Size.large.height)
 
                     OnboardingTermsAndPolicyButton(
                         termsPressed: onTermsOfService,

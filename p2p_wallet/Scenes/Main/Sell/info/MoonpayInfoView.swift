@@ -91,13 +91,11 @@ struct MoonpayInfoView: View {
 
             Spacer()
 
-            TextButtonView(
+            NewTextButton(
                 title: L10n.letSGo + "!",
                 style: .primaryWhite,
-                size: .large,
-                onPressed: { actionButtonPressed?(isChecked) }
+                action: { actionButtonPressed?(isChecked) }
             )
-            .frame(height: TextButton.Size.large.height)
             .padding(.bottom, 30)
             .padding(.horizontal, 16)
         }

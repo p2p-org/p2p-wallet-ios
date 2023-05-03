@@ -21,16 +21,13 @@ struct ReceiveView: View {
                 }
                 .scrollOnlyOnOverflow()
                 Spacer()
-                TextButtonView(
+                NewTextButton(
                     title: L10n.copyAddress,
                     style: .primaryWhite,
-                    size: .large,
-                    trailing: UIImage.transactionsCopy.withTintColor(Asset.Colors.snow.color),
-                    onPressed: {
-                        viewModel.buttonTapped()
-                    }
-                )
-                .frame(height: TextButton.Size.large.height)
+                    trailing: UIImage.transactionsCopy.withTintColor(Asset.Colors.snow.color)
+                ) {
+                    viewModel.buttonTapped()
+                }
                 .padding(.bottom, 36)
                 .padding(.horizontal, 16)
             }

@@ -58,36 +58,30 @@ struct SendInputFeePromptView: View {
     var multipleTokenActions: some View {
         BottomActionContainer {
             VStack(spacing: 12) {
-                TextButtonView(
+                NewTextButton(
                     title: viewModel.continueTitle,
                     style: .inverted,
-                    size: .large,
-                    onPressed: viewModel.close.send
+                    action: viewModel.close.send
                 )
                 .accessibility(identifier: "SendInputFeePromptView.multipleTokenActions.top")
-                .frame(height: 56)
 
-                TextButtonView(
+                NewTextButton(
                     title: L10n.switchToAnotherToken,
                     style: .ghostLime,
-                    size: .large,
-                    onPressed: viewModel.chooseToken.send
+                    action: viewModel.chooseToken.send
                 )
                 .accessibility(identifier: "SendInputFeePromptView.multipleTokenActions.bottom")
-                .frame(height: 56)
             }
         }
     }
 
     var singleTokenAction: some View {
-        TextButtonView(
+        NewTextButton(
             title: L10n.ok.uppercased(),
             style: .primaryWhite,
-            size: .large,
-            onPressed: viewModel.close.send
+            action: viewModel.close.send
         )
         .accessibility(identifier: "SendInputFeePromptView.singleTokenAction")
-        .frame(height: 56)
     }
 }
 

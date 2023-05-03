@@ -109,13 +109,11 @@ struct NewHistoryView<Header: View>: View {
                 case .placeHolder:
                     HistoryListSkeletonView()
                 case let .button(_, title, action):
-                    TextButtonView(
+                    NewTextButton(
                         title: title,
                         style: .second,
-                        size: .large,
-                        onPressed: action
+                        action: action
                     )
-                    .frame(height: TextButton.Size.large.height)
                     .padding(.all, 16)
                 case let .swapBanner(_, text, button, action, helpAction):
                     VStack(spacing: 16) {
@@ -130,13 +128,11 @@ struct NewHistoryView<Header: View>: View {
                                 Image(uiImage: UIImage.questionNavBar)
                             }
                         }
-                        TextButtonView(
+                        NewTextButton(
                             title: button,
                             style: .inverted,
-                            size: .large,
-                            onPressed: action
+                            action: action
                         )
-                        .frame(height: TextButton.Size.large.height)
                     }
                 case .fetch:
                     Rectangle()

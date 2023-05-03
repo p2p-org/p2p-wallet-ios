@@ -16,8 +16,7 @@ struct DeleteRequestSuccessView: View {
             Image(uiImage: .catFail)
             Text(L10n.deletingYourAccountWillTakeUpTo30Days)
                 .padding(.vertical, 20)
-            TextButtonView(title: L10n.done, style: .second, size: .large) { onDone?() }
-                .frame(height: TextButton.Size.large.height)
+            NewTextButton(title: L10n.done, style: .second) { onDone?() }
                 .padding(.horizontal, 24)
         }
         .sheetHeader(title: L10n.yourRemovalRequestHasBeenAccepted, withSeparator: false)

@@ -28,24 +28,20 @@ struct SocialSignInAccountHasBeenUsedView: View {
 
             BottomActionContainer {
                 VStack {
-                    TextButtonView(
+                    NewTextButton(
                         title: L10n.useAnotherAccount,
                         style: .inverted,
-                        size: .large,
-                        leading: .google,
-                        isLoading: viewModel.loading
+                        isLoading: viewModel.loading,
+                        leading: .google
                     ) { [weak viewModel] in viewModel?.userAnotherAccount() }
-                        .frame(height: TextButton.Size.large.height)
                         .disabled(viewModel.loading)
 
                     // Restore button
-                    TextButtonView(
+                    NewTextButton(
                         title: L10n.continueRestoringThisWallet,
-                        style: .ghostLime,
-                        size: .large
+                        style: .ghostLime
                     ) { [weak viewModel] in viewModel?.switchToRestore() }
                         .disabled(viewModel.loading)
-                        .frame(height: TextButton.Size.large.height)
                         .padding(.top, 12)
                 }
             }

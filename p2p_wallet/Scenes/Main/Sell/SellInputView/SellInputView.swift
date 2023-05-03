@@ -206,16 +206,14 @@ struct SellInputView: View {
     }
 
     var sellButton: some View {
-        TextButtonView(
+        NewTextButton(
             title:  viewModel.inputError != nil ? viewModel.inputError!.recomendation : L10n.cashOut,
-            style: .primaryWhite,
-            size: .large
+            style: .primaryWhite
         ) { [weak viewModel] in
             UIApplication.shared.keyWindow?.endEditing(true)
             viewModel?.sell()
         }
         .disabled(viewModel.inputError != nil)
-        .frame(height: 56)
         .padding(EdgeInsets(top: 0, leading: 16, bottom: 12, trailing: 16))
     }
 

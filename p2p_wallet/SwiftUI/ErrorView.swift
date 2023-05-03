@@ -34,10 +34,9 @@ public struct ErrorView: View {
                 .padding(.bottom, 24)
 
             if let onTryAgain {
-                TextButtonView(title: L10n.tryAgain, style: .second, size: .large) {
+                NewTextButton(title: L10n.tryAgain, style: .second) {
                     onTryAgain()
                 }
-                .frame(height: TextButton.Size.large.height)
                 .padding(.horizontal, 16)
                 .padding(.bottom, 24)
             }

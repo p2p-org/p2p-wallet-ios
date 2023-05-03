@@ -44,16 +44,14 @@ extension ChooseRestoreOptionView {
                         restoreButton(style: .outlineWhite, content: button)
                     }
                     if viewModel.isStartAvailable {
-                        TextButtonView(
+                        NewTextButton(
                             title: L10n.startingScreen,
-                            style: .outlineWhite,
-                            size: .large,
-                            onPressed: { [weak viewModel] in
-                                guard viewModel?.isLoading == nil else { return }
-                                viewModel?.openStart.send()
-                            }
+                            style: .outlineWhite
                         )
-                            .styled()
+                        { [weak viewModel] in
+                            guard viewModel?.isLoading == nil else { return }
+                            viewModel?.openStart.send()
+                        }
                     }
                 }
             }
@@ -66,18 +64,15 @@ private extension ChooseRestoreOptionView {
         style: TextButton.Style,
         content: ChooseRestoreOptionButton
     ) -> some View {
-        TextButtonView(
+        NewTextButton(
             title: content.title,
             style: style,
-            size: .large,
-            leading: content.icon,
             isLoading: viewModel.isLoading == content.option,
-            onPressed: { [weak viewModel] in
-                guard viewModel?.isLoading == nil else { return }
-                viewModel?.optionDidTap.send(content.option)
-            }
-        )
-            .styled()
+            leading: content.icon
+        ) { [weak viewModel] in
+            guard viewModel?.isLoading == nil else { return }
+            viewModel?.optionDidTap.send(content.option)
+        }
     }
 }
 
@@ -89,12 +84,5 @@ private extension Text {
             .font(.system(size: UIFont.fontSize(of: font)))
             .lineLimit(.none)
             .multilineTextAlignment(.center)
-    }
-}
-
-private extension TextButtonView {
-    func styled() -> some View {
-        frame(height: 56)
-            .frame(maxWidth: .infinity)
     }
 }

@@ -28,14 +28,12 @@ struct SolendPlaceholderView: View {
                         }
                         .padding(.horizontal, 10)
                         Button {} label: {
-                            TextButtonView(
+                            NewTextButton(
                                 title: L10n.comingSoon + "...",
-                                style: .third,
-                                size: .large
+                                style: .third
                             ) { }
                                 .disabled(true)
                         }
-                        .frame(height: 56)
                         .padding(.bottom, 24)
                     }
                         .padding(.horizontal, 24)
