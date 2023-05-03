@@ -8,13 +8,19 @@ enum RecipientFormatter {
     private static let maxAddressLength = 6
 
     static func format(destination: String) -> String {
+        var prefixCount = maxAddressLength
+
+        if destination.hasPrefix("0x") {
+            prefixCount += 2
+        }
+
         if destination.count < maxAddressLength || destination.contains("@") {
             return destination
         } else {
-            return "\(destination.prefix(maxAddressLength))...\(destination.suffix(maxAddressLength))"
+            return "\(destination.prefix(prefixCount))...\(destination.suffix(maxAddressLength))"
         }
     }
-    
+
     static func shortFormat(destination: String) -> String {
         if destination.count < maxAddressLength || destination.contains("@") {
             return destination
@@ -22,13 +28,13 @@ enum RecipientFormatter {
             return "....\(destination.suffix(4))"
         }
     }
-    
+
     static func shortSignature(signature: String) -> String {
-        return "...\(signature.suffix(4))"
+        "...\(signature.suffix(4))"
     }
-    
+
     static func signature(signature: String) -> String {
-        return "\(signature.prefix(4))...\(signature.suffix(4))"
+        "\(signature.prefix(4))...\(signature.suffix(4))"
     }
 
     static func username(name: String, domain: String) -> String {
