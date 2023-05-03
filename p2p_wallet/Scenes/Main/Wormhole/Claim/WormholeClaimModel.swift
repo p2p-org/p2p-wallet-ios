@@ -138,7 +138,6 @@ struct WormholeClaimEthereumModel: WormholeClaimModel {
     }
 
     var getAmount: String? {
-        return "$1.22"
         guard let resultAmount = bundle.value?.resultAmount else {
             return nil
         }
