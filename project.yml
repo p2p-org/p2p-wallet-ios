@@ -19,7 +19,7 @@ packages:
 #        from: 6.0.0
     SolanaSwift:
         url: https://github.com/p2p-org/solana-swift.git
-        branch: main
+        branch: bugfix/PWN-8275
     OrcaSwapSwift:
         url: https://github.com/p2p-org/OrcaSwapSwift.git
         branch: main
