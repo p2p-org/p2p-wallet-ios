@@ -11,12 +11,6 @@ import SolanaSwift
 import SwiftyUserDefaults
 
 final class DebugMenuViewModel: BaseViewModel, ObservableObject {
-    @Published var networkLoggerVisible = isShown {
-        didSet {
-            updateNetworkLoggerState()
-        }
-    }
-
     @Published var features: [FeatureItem]
     @Published var solanaEndpoints: [APIEndPoint]
     @Published var selectedEndpoint: APIEndPoint?
@@ -89,12 +83,6 @@ final class DebugMenuViewModel: BaseViewModel, ObservableObject {
                 )
             )
         )
-    }
-
-    private func updateNetworkLoggerState() {
-        #if !RELEASE
-            showDebugger(networkLoggerVisible)
-        #endif
     }
 }
 
