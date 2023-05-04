@@ -57,8 +57,8 @@ extension RemoteConfig {
 // MARK: - Token list parser
 
 extension RemoteConfig {
-    var tokenListURL: String? {
-        configValue(forKey: "solana_token_list_json").nonEmptyOrNilStringValue
+    var tokenListURL: String {
+        "https://raw.githubusercontent.com/p2p-org/solana-token-list/main/src/tokens/solana.tokenlist.json"
     }
 }
 

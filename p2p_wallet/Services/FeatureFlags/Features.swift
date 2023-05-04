@@ -6,10 +6,8 @@
 //
 
 public extension Feature {
-    static let coinGeckoPriceProvider = Feature(rawValue: "coinGeckoPriceProvider")
     static let sellScenarioEnabled = Feature(rawValue: "keyapp_sell_scenario_enabled")
     static let buyBankTransferEnabled = Feature(rawValue: "buy_bank_transfer_enabled")
-    static let newOnboardingFlow = Feature(rawValue: "newOnboardingFlow")
 
     // Username
     static let onboardingUsernameEnabled = Feature(rawValue: "ios_onboarding_username_enabled")
@@ -27,9 +25,6 @@ public extension Feature {
 
     // Solana tracking
     static let solanaNegativeStatus = Feature(rawValue: "solana_negative_status_enabled")
-
-    // Ren BTC
-    static let receiveRenBtcEnabled = Feature(rawValue: "receive_ren_btc_enabled")
     
     // Eth
     static let ethAddressEnabled = Feature(rawValue: "eth_address_enabled")
