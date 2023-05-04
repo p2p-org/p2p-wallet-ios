@@ -1,10 +1,14 @@
 import CountriesAPI
 import Foundation
 
-struct SelectableCountry: Hashable {
+struct SelectableCountry: Hashable, Identifiable {
     let value: Country
-    var isSelected: Bool = false
-    var isEmpty: Bool = false
+    var isSelected = false
+    var isEmpty = false
+
+    var id: String {
+        "\(value.dialCode) \(value.code)"
+    }
 }
 
 extension Array where Element == SelectableCountry {

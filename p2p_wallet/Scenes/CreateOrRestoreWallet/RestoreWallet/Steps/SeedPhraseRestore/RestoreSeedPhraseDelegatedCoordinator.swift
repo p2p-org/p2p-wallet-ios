@@ -46,16 +46,26 @@ private extension RestoreSeedPhraseDelegatedCoordinator {
     }
 
     func chooseDerivationPathViewController(phrase: [String]) -> UIViewController {
-        let viewModel = NewDerivableAccounts.ViewModel(phrases: phrase)
+        let viewModel = DerivableAccountsViewModel(phrases: phrase)
+        let view = DerivableAccountsView(viewModel: viewModel)
+        let viewController = view.asViewController(withoutUIKitNavBar: false)
 
-        viewModel.coordinatorIO.didSucceed.sinkAsync { [stateMachine] phrase, path in
+        viewModel.didSucceed.sinkAsync { [stateMachine] phrase, path in
             _ = try await stateMachine <- .restoreWithSeed(phrase: phrase, path: path)
         }.store(in: &subscriptions)
 
-        viewModel.coordinatorIO.back.sinkAsync { [stateMachine] _ in
+        viewModel.back.sinkAsync { [stateMachine] _ in
             _ = try await stateMachine <- .back
         }.store(in: &subscriptions)
 
-        return NewDerivableAccounts.ViewController(viewModel: viewModel)
+        viewModel.selectDerivableType.sink { [weak viewModel, weak viewController] derivablePath in
+            let vc = SelectDerivableType.ViewController(currentType: derivablePath.type) { derivableType in
+                viewModel?.select(derivableType: derivableType)
+                viewModel?.logSelection(derivableType: derivableType)
+            }
+            viewController?.present(vc, animated: true)
+        }.store(in: &subscriptions)
+
+        return viewController
     }
 }
