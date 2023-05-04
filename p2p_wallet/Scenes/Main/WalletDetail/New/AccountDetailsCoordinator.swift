@@ -160,20 +160,39 @@ class AccountDetailsCoordinator: SmartCoordinator<AccountDetailsCoordinatorResul
             return
         }
 
-        let supportedBridgeTokens = Wormhole.SupportedToken.bridges
+        var supportedBridgeTokens: [String] = Wormhole.SupportedToken.bridges
+            .filter { $0.name != "SOL" }
             .map(\.solAddress)
             .compactMap { $0 } +
             Wormhole.SupportedToken.bridges
             .map(\.receiveFromAddress)
             .compactMap { $0 }
+        
+        if account.data.token.isNative {
+            if available(.ethAddressEnabled) && available(.solanaEthAddressEnabled) {
+                var icon: SupportedTokenItemIcon = .image(UIImage.imageOutlineIcon)
+                if let logoURL = URL(string: account.data.token.logoURI ?? "") {
+                    icon = .url(logoURL)
+                }
+                
+                openReceive(item:
+                    .init(
+                        icon: icon,
+                        name: account.data.name,
+                        symbol: account.data.token.symbol,
+                        availableNetwork: [.solana, .ethereum]
+                    ))
 
-        if available(.ethAddressEnabled) && available(.solanaEthAddressEnabled) &&
-            (account.data.isNativeSOL || supportedBridgeTokens.contains(account.data.token.address))
-        {
+                return
+            }
+        }
+
+        if available(.ethAddressEnabled) && supportedBridgeTokens.contains(account.data.token.address) {
             var icon: SupportedTokenItemIcon = .image(UIImage.imageOutlineIcon)
             if let logoURL = URL(string: account.data.token.logoURI ?? "") {
                 icon = .url(logoURL)
             }
+            
             openReceive(item:
                 .init(
                     icon: icon,
@@ -181,16 +200,18 @@ class AccountDetailsCoordinator: SmartCoordinator<AccountDetailsCoordinatorResul
                     symbol: account.data.token.symbol,
                     availableNetwork: [.solana, .ethereum]
                 ))
-        } else {
-            let coordinator = ReceiveCoordinator(
-                network: .solana(
-                    tokenSymbol: account.data.token.symbol,
-                    tokenImage: .init(token: account.data.token)
-                ),
-                presentation: SmartCoordinatorPushPresentation(navigationController)
-            )
-            coordinator.start().sink { _ in }.store(in: &subscriptions)
+            
+            return
         }
+        
+        let coordinator = ReceiveCoordinator(
+            network: .solana(
+                tokenSymbol: account.data.token.symbol,
+                tokenImage: .init(token: account.data.token)
+            ),
+            presentation: SmartCoordinatorPushPresentation(navigationController)
+        )
+        coordinator.start().sink { _ in }.store(in: &subscriptions)
     }
 
     private func openReceive(item: SupportedTokenItem) {
