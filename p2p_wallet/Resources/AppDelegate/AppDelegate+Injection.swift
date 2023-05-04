@@ -244,9 +244,9 @@ extension Resolver: ResolverRegistering {
 
         register { TokensRepository(
             endpoint: Defaults.apiEndPoint,
-            tokenListParser: .init(url: RemoteConfig.remoteConfig()
-                .tokenListURL ??
-                "https://raw.githubusercontent.com/p2p-org/solana-token-list/main/src/tokens/solana.tokenlist.json"),
+            tokenListParser: .init(
+                url: "https://raw.githubusercontent.com/p2p-org/solana-token-list/main/src/tokens/solana.tokenlist.json"
+            ),
             cache: resolve()
         ) }
         .implements(SolanaTokensRepository.self)

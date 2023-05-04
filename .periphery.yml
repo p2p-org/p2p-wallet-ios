@@ -3,4 +3,4 @@ schemes:
 - p2p_wallet
 targets:
 - p2p_wallet
-workspace: p2p_wallet.xcworkspace
+project: p2p_wallet.xcodeproj
