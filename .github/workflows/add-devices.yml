@@ -13,12 +13,6 @@ jobs:
     name: Add devices to Firebase'future build
     runs-on: macos-12
     steps:
-      - name: Check out current branch
-        uses: actions/checkout@v3
-        with:
-          ref: ${{ inputs.branch != '' && inputs.branch || github.event.pull_request.head.ref }}
-          submodules: recursive
-          token: ${{ secrets.SUBMODULES_ACCESS_TOKEN }}
 
       - name: Add devices
         uses: maierj/fastlane-action@v2.2.0
