@@ -61,7 +61,7 @@ struct WormholeClaimView: View {
                 // Fee
                 HStack(alignment: .center) {
                     // Title
-                    Text(L10n.fee)
+                    Text(L10n.fees)
                         .apply(style: .text3)
                     Spacer()
 
