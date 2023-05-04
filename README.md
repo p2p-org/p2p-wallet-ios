@@ -402,7 +402,7 @@ struct SomeStruct {
 
 
 ### Switch statement
-For enumwe don't use default in switch. When changing the enum during assembly, all the places where it is used will be immediately visible:
+For enum we don't use default in switch. When changing the enum during assembly, all the places where it is used will be immediately visible:
 
 🟢
 ```
