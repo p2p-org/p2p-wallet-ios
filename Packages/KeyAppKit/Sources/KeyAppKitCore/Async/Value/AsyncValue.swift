@@ -166,7 +166,7 @@ public class AsyncValue<T> {
 
         return currentTask
     }
-
+    
     public func listen<Target: ObservableObject>(target: Target, in storage: inout [AnyCancellable])
         where Target.ObjectWillChangePublisher == ObservableObjectPublisher
     {
@@ -175,11 +175,5 @@ public class AsyncValue<T> {
             .sink { [weak target] _ in
                 target?.objectWillChange.send()
             }.store(in: &storage)
-    }
-
-    func update(_ adjust: (inout AsyncValueState<T>) -> Void) {
-        var state = state
-        adjust(&state)
-        stateSubject.send(state)
     }
 }
