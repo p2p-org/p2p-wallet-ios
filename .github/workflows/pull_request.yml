@@ -12,10 +12,6 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-      - name: Dump GitHub context
-        env:
-          GITHUB_CONTEXT: ${{ toJson(github) }}
-        run: echo "$GITHUB_CONTEXT"
 
       - name: Login to JIRA
         uses: atlassian/gajira-login@master
@@ -43,7 +39,7 @@ jobs:
         if: ${{ steps.find_issue.outputs.issue && github.event.action == 'opened' }}
         uses: tzkhan/pr-update-action@v2
         with:
-          repo-token: "${{ secrets.SUBMODULES_ACCESS_TOKEN }}"
+          repo-token: "${{ secrets.GITHUB_TOKEN }}"
           head-branch-regex: 'pwn-\d+'
           title-template: '[${{ steps.find_issue.outputs.issue }}] '
           body-template: |
