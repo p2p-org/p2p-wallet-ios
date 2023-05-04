@@ -72,6 +72,7 @@ public class CurrencyFormatter: Formatter {
         formatter.currencyDecimalSeparator = "."
         formatter.currencyGroupingSeparator = " "
         formatter.maximumFractionDigits = 2
+        formatter.minimumFractionDigits = 0
 
         let decimalAmount = Decimal(string: String(amount.value))
         let value: String? = formatter.string(for: decimalAmount)
