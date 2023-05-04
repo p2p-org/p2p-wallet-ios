@@ -80,17 +80,8 @@ struct WormholeClaimEthereumModel: WormholeClaimModel {
             return L10n.addFunds
         }
 
-        let resultAmount = bundle.value?.resultAmount
-
-        if let resultAmount = resultAmount {
-            let cryptoFormatter = CryptoFormatter()
-
-            let cryptoAmount = CryptoAmount(
-                bigUIntString: resultAmount.amount,
-                token: account.token
-            )
-
-            return L10n.claim(cryptoFormatter.string(amount: cryptoAmount))
+        if bundle.value?.resultAmount != nil {
+            return L10n.claim
         } else {
             if bundle.error != nil {
                 return L10n.claim
