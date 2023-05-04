@@ -108,7 +108,7 @@ struct WormholeClaimEthereumModel: WormholeClaimModel {
     }
 
     var shouldShowBanner: Bool {
-        isNotEnoughAmount
+        bundle.hasError ? isNotEnoughAmount : !isLoading
     }
 
     var fees: String {
