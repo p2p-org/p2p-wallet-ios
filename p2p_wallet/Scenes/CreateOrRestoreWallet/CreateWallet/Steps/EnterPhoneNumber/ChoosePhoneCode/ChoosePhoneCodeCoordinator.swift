@@ -26,12 +26,19 @@ final class ChoosePhoneCodeCoordinator: Coordinator<Country?> {
             selectedDialCode: selectedDialCode,
             selectedCountryCode: selectedCountryCode
         )
-        let vc = ChoosePhoneCodeViewController(viewModel: vm)
+        let view = ChoosePhoneCodeView(viewModel: vm)
+        let vc = view.asViewController(withoutUIKitNavBar: false)
         vc.isModalInPresentation = true
         let nc = UINavigationController(rootViewController: vc)
         nc.navigationBar.isTranslucent = false
         nc.view.backgroundColor = vc.view.backgroundColor
         presentingViewController.present(nc, animated: true)
+
+        vm.didClose
+            .sink { [weak nc] _ in
+                nc?.dismiss(animated: true)
+            }
+            .store(in: &subscriptions)
 
         return vm.didClose.withLatestFrom(vm.$data)
             .map { $0.first(where: { $0.isSelected })?.value }
