@@ -8,16 +8,17 @@ import OrcaSwapSwift
 import Resolver
 import SolanaSwift
 import Solend
+import KeyAppBusiness
 
 class DefaultSolendDepositFeePayingStrategy: SolendFeePayingStrategy {
     let orca: OrcaSwap
     let actionService: SolendActionService
-    let wallets: WalletsRepository
+    let solanaAccountsService: SolanaAccountsService
 
-    init(orca: OrcaSwap, actionService: SolendActionService, wallets: WalletsRepository) {
+    init(orca: OrcaSwap, actionService: SolendActionService, solanaAccountsService: SolanaAccountsService) {
         self.orca = orca
         self.actionService = actionService
-        self.wallets = wallets
+        self.solanaAccountsService = solanaAccountsService
     }
 
     func calculate(amount: Lamports, symbol: String, mintAddress: String) async throws -> SolendFeePaying {
@@ -33,7 +34,7 @@ class DefaultSolendDepositFeePayingStrategy: SolendFeePayingStrategy {
             payingFeeTokenMint: try PublicKey(string: mintAddress)
         )
 
-        guard let nativeAccount = wallets.nativeWallet else {
+        guard let nativeAccount = solanaAccountsService.getWallets().first(where: {$0.isNativeSOL}) else {
             throw SolendFeePayingStrategyError.invalidNativeWallet
         }
 
@@ -48,7 +49,7 @@ class DefaultSolendDepositFeePayingStrategy: SolendFeePayingStrategy {
         )
 
         guard
-            let userSplAccount: Wallet = wallets.getWallets().first(where: { $0.token.address == mintAddress }),
+            let userSplAccount: Wallet = solanaAccountsService.getWallets().first(where: { $0.token.address == mintAddress }),
             let feeInToken = feeInToken
         else {
             return nativeTokenStrategy

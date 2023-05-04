@@ -7,6 +7,7 @@ import Resolver
 import KeyAppUI
 import SolanaSwift
 import Sell
+import KeyAppBusiness
 
 enum SellViewModelInputError: Error, Equatable {
     case amountIsTooSmall(minBaseAmount: Double?, baseCurrencyCode: String)
@@ -29,7 +30,7 @@ class SellViewModel: BaseViewModel, ObservableObject {
 
     // MARK: - Dependencies
 
-    @Injected private var walletRepository: WalletsRepository
+    @Injected private var solanaAccountsService: SolanaAccountsService
     @Injected private var dataService: any SellDataService
     @Injected private var actionService: any SellActionService
     @Injected private var analyticsManager: AnalyticsManager
@@ -131,7 +132,7 @@ class SellViewModel: BaseViewModel, ObservableObject {
     }
 
     func sellAll() {
-        baseAmount = walletRepository.nativeWallet?.amount?.rounded(decimals: decimals, roundingMode: .down) ?? 0
+        baseAmount = solanaAccountsService.getWallets().first(where: {$0.isNativeSOL})?.amount?.rounded(decimals: decimals, roundingMode: .down) ?? 0
         
         // temporary solution when isEnterQuoteAmount, the quote amount will not be updated when baseAmount changed
         // so we have to release this value
@@ -278,7 +279,7 @@ class SellViewModel: BaseViewModel, ObservableObject {
 
         // observe native wallet's changes
         checkIfMoreBaseCurrencyNeeded()
-        walletRepository.dataDidChange
+        solanaAccountsService.dataDidChange
             .sink(receiveValue: { [weak self] val in
                 self?.checkIfMoreBaseCurrencyNeeded()
             })
@@ -329,7 +330,7 @@ class SellViewModel: BaseViewModel, ObservableObject {
     // MARK: - Helpers
 
     private func checkIfMoreBaseCurrencyNeeded() {
-        maxBaseAmount = walletRepository.nativeWallet?.amount?.rounded(decimals: decimals, roundingMode: .down)
+        maxBaseAmount = solanaAccountsService.getWallets().first(where: {$0.isNativeSOL})?.amount?.rounded(decimals: decimals, roundingMode: .down)
         if maxBaseAmount < minBaseAmount {
             isMoreBaseCurrencyNeeded = true
         }

@@ -8,6 +8,7 @@
 import Foundation
 import NameService
 import Resolver
+import KeyAppBusiness
 
 class NameServiceUserDefaultCache: NameServiceCacheType {
     @Injected private var nameStorage: NameStorageType
@@ -25,9 +26,9 @@ class NameServiceUserDefaultCache: NameServiceCacheType {
     }
 
     func getName(for owner: String) -> NameServiceSearchResult? {
-        let walletsRepository: WalletsRepository = Resolver.resolve()
+        let solanaAccountsService = Resolver.resolve(SolanaAccountsService.self)
         
-        if walletsRepository.getWallets().contains(where: { $0.pubkey == owner }),
+        if solanaAccountsService.getWallets().contains(where: { $0.pubkey == owner }),
            let name = nameStorage.getName()
         {
             return .registered(name)

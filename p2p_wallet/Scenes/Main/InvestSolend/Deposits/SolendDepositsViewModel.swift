@@ -3,6 +3,7 @@ import Foundation
 import Resolver
 import SolanaSwift
 import Solend
+import KeyAppBusiness
 
 @MainActor
 class SolendDepositsViewModel: ObservableObject {
@@ -11,7 +12,7 @@ class SolendDepositsViewModel: ObservableObject {
     // MARK: - Services
 
     @Injected private var priceService: PricesService
-    @Injected private var walletRepository: WalletsRepository
+    @Injected private var solanaAccountsService: SolanaAccountsService
     private let dataService: SolendDataService
     
     // MARK: - State

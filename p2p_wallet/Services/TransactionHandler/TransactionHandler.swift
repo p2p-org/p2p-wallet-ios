@@ -38,7 +38,7 @@ class TransactionHandler: TransactionHandlerType {
     @Injected var notificationsService: NotificationService
     @Injected var analyticsManager: AnalyticsManager
     @Injected var apiClient: SolanaAPIClient
-    @Injected var walletsRepository: WalletsRepository
+    @Injected var solanaAccountsService: SolanaAccountsService
     @Injected var pricesService: PricesServiceType
     @Injected var socket: SolanaAccountsObservableService
     @Injected var errorObserver: ErrorObserver
@@ -131,14 +131,14 @@ class TransactionHandler: TransactionHandlerType {
                 return false
             }
             .compactMap { pt -> ParsedTransaction? in
-                pt.parse(pricesService: pricesService, authority: walletsRepository.nativeWallet?.pubkey)
+                pt.parse(pricesService: pricesService, authority: solanaAccountsService.getWallets().first(where: {$0.isNativeSOL})?.pubkey)
             }
     }
 
     func getProcessingTransaction() -> [ParsedTransaction] {
         transactionsSubject.value
             .compactMap { pt -> ParsedTransaction? in
-                pt.parse(pricesService: pricesService, authority: walletsRepository.nativeWallet?.pubkey)
+                pt.parse(pricesService: pricesService, authority: solanaAccountsService.getWallets().first(where: {$0.isNativeSOL})?.pubkey)
             }
     }
 

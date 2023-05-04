@@ -17,7 +17,7 @@ final class TabBarCoordinator: Coordinator<Void> {
     // MARK: - Dependencies
 
     @Injected private var userWalletManager: UserWalletManager
-    @Injected private var walletsRepository: WalletsRepository
+    @Injected private var solanaAccountsService: SolanaAccountsService
     @Injected private var analyticsManager: AnalyticsManager
     @Injected private var sellDataService: any SellDataService
 
@@ -263,7 +263,7 @@ final class TabBarCoordinator: Coordinator<Void> {
         case .swap:
             routeToSwap(nc: navigationController, source: .actionPanel)
         case .send:
-            if walletsRepository.getWallets().count > 0 {
+            if solanaAccountsService.getWallets().count > 0 {
                 analyticsManager.log(event: .sendViewed(lastScreen: "main_screen"))
                 let sendCoordinator = SendCoordinator(
                     rootViewController: navigationController,

@@ -7,6 +7,7 @@ import FeeRelayerSwift
 import Resolver
 import SolanaSwift
 import Solend
+import KeyAppBusiness
 
 typealias DepositOffer = (
     asset: SolendConfigAsset,
@@ -32,7 +33,7 @@ class InvestSolendViewModel: ObservableObject {
     @Injected private var notificationService: NotificationService
     let dataService: SolendDataService
     let actionService: SolendActionService
-    let walletRepository: WalletsRepository
+    let solanaAccountsService: SolanaAccountsService
 
     private var subscriptions = Set<AnyCancellable>()
 
@@ -68,11 +69,11 @@ class InvestSolendViewModel: ObservableObject {
     init(
         dataService: SolendDataService = Resolver.resolve(),
         actionService: SolendActionService = Resolver.resolve(),
-        walletRepository: WalletsRepository = Resolver.resolve()
+        solanaAccountsService: SolanaAccountsService = Resolver.resolve()
     ) {
         self.dataService = dataService
         self.actionService = actionService
-        self.walletRepository = walletRepository
+        self.solanaAccountsService = solanaAccountsService
 
         // Updating data service depends on action service
         actionService.currentAction
@@ -89,7 +90,7 @@ class InvestSolendViewModel: ObservableObject {
                     try await dataService.update()
                 }
                 Task.detached {
-                    Resolver.resolve(WalletsRepository.self).reload()
+                    try await Resolver.resolve(SolanaAccountsService.self).fetch()
                 }
             }
             .store(in: &subscriptions)
@@ -123,7 +124,7 @@ class InvestSolendViewModel: ObservableObject {
                 self?.bannerError = nil
             }.store(in: &subscriptions)
 
-        let walletsStream: AnyPublisher<[Wallet], Never> = walletRepository
+        let walletsStream: AnyPublisher<[Wallet], Never> = solanaAccountsService
             .dataPublisher
         // Process data from data service
         dataService.availableAssets
@@ -229,10 +230,10 @@ class InvestSolendViewModel: ObservableObject {
             return
         }
 
-        let wallets: WalletsRepository = Resolver.resolve()
+        let solanaAccountsService = Resolver.resolve(SolanaAccountsService.self)
 
         // Get user token account
-        let tokenAccount: Wallet? = wallets
+        let tokenAccount: Wallet? = solanaAccountsService
             .getWallets()
             .first(where: { (wallet: Wallet) -> Bool in asset.mintAddress == wallet.mintAddress })
 
@@ -241,7 +242,7 @@ class InvestSolendViewModel: ObservableObject {
             depositSubject.send(asset)
         } else {
             // Check user has another token to deposit
-            let hasAnotherToken: Bool = wallets.getWallets().first(where: { ($0.lamports ?? 0) > 0 }) != nil
+            let hasAnotherToken: Bool = solanaAccountsService.getWallets().first(where: { ($0.lamports ?? 0) > 0 }) != nil
             topUpForContinueSubject.send(.init(
                 asset: asset,
                 strategy: hasAnotherToken ? .withoutOnlyTokenForDeposit : .withoutAnyTokens

@@ -4,6 +4,7 @@ import Jupiter
 import SolanaSwift
 import AnalyticsManager
 import Task_retrying
+import KeyAppBusiness
 
 final class SwapViewModel: BaseViewModel, ObservableObject {
 
@@ -19,7 +20,7 @@ final class SwapViewModel: BaseViewModel, ObservableObject {
     @Injected private var transactionHandler: TransactionHandler
     @Injected private var analyticsManager: AnalyticsManager
     @Injected private var userWalletManager: UserWalletManager
-    @Injected private var walletsRepository: WalletsRepository
+    @Injected private var solanaAccountsService: SolanaAccountsService
 
     // MARK: - Actions
     let switchTokens = PassthroughSubject<Void, Never>()
@@ -186,7 +187,7 @@ private extension SwapViewModel {
             .store(in: &subscriptions)
 
         Publishers.CombineLatest(
-            walletsRepository.dataPublisher.removeDuplicates(),
+            solanaAccountsService.dataPublisher.removeDuplicates(),
             isViewAppeared.eraseToAnyPublisher().removeDuplicates()
         )
         .filter { [weak self] userWallets, isViewAppeared in
