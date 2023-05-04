@@ -63,10 +63,10 @@ struct RendableListUserActionTransactionItem: RendableListTransactionItem {
     var title: String {
         switch userAction {
         case let transaction as WormholeClaimUserAction:
-            return "Ethereum Network"
+            return "Ethereum network"
 
         case let transaction as WormholeSendUserAction:
-            return "Ethereum Network"
+            return "Ethereum network"
 
         default:
             return "Unknown"
@@ -76,10 +76,10 @@ struct RendableListUserActionTransactionItem: RendableListTransactionItem {
     var subtitle: String {
         switch userAction {
         case let transaction as WormholeClaimUserAction:
-            return "Claiming"
+            return "Claiming.."
 
         case let transaction as WormholeSendUserAction:
-            return "Sending"
+            return "Sending.."
 
         default:
             return "Unknown"
