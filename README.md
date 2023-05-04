@@ -197,6 +197,24 @@ if available(.settingsFeature) {
 
 The basis of the style of writing code is the configured Swiftlint in the project. The specific practices we follow are listed below.
 
+### Calls from View to ViewModel
+Name ViewModel functions as action from View:
+
+🟢
+```
+.onTapGesture {
+    viewModel.buttonTapped()
+}
+```
+
+🔴
+```
+.onTapGesture {
+    viewModel.sendToken()
+}
+```
+
+
 ### Protocols
 Interfaces used for abstractions are named without prefixes and postfixes:
 
