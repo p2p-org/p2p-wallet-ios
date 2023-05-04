@@ -63,9 +63,9 @@ class WormholeSendFeesViewModel: BaseViewModel, ObservableObject {
                     ),
                     .init(
                         title: L10n.networkFee,
-                        subtitle: CurrencyFormatter().string(for: 0),
+                        subtitle: L10n.paidByKeyApp,
                         detail: CurrencyFormatter().string(for: 0),
-                        isFree: false
+                        isFree: true
                     ),
                     .init(
                         title: L10n.usingWormholeBridge,
