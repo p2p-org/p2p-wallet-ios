@@ -36,12 +36,12 @@ public struct JSONRPCError<U: Codable>: Codable, LocalizedError {
 }
 
 public struct JSONRPCRequest<T: Codable>: Codable {
-    public let id: String
+    public let id: String?
     public let jsonrpc: String
     public let method: String
     public let params: T
 
-    public init(id: String, jsonrpc: String = "2.0", method: String, params: T) {
+    public init(id: String?, jsonrpc: String = "2.0", method: String, params: T) {
         self.id = id
         self.jsonrpc = jsonrpc
         self.method = method
