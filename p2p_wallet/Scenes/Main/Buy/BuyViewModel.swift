@@ -73,7 +73,7 @@ final class BuyViewModel: ObservableObject {
     private static let defaultMinAmount = Double(30)
     private static let defaultMaxAmount = Double(10000)
     private static let tokens: [Token] = [.usdc, .nativeSolana]
-    private static let fiats: [Fiat] = available(.buyBankTransferEnabled) ? [.eur, .gbp, .usd] : [.usd]
+    private static let fiats: [Fiat] = [.eur, .gbp, .usd]
     private static let defaultToken = Token.usdc
     
     // MARK: - Init
@@ -198,10 +198,9 @@ final class BuyViewModel: ObservableObject {
                     .mapValues { $0.value }
             }
 
-            let buyBankEnabled = available(.buyBankTransferEnabled)
-            let banks = buyBankEnabled ? try await exchangeService.isBankTransferEnabled() : (gbp: false, eur: false)
-            self.isBankTransferEnabled = banks.eur && buyBankEnabled
-            self.isGBPBankTransferEnabled = banks.gbp && buyBankEnabled
+            let banks = try await exchangeService.isBankTransferEnabled()
+            self.isBankTransferEnabled = banks.eur
+            self.isGBPBankTransferEnabled = banks.gbp
             await self.setPaymentMethod(self.lastMethod)
 
             // Buy min price is used to cache min price values. Doesnt need to implemet it at the moment
@@ -540,10 +539,7 @@ final class BuyViewModel: ObservableObject {
     }
 
     func availableFiat(payment _: PaymentType) -> [Fiat] {
-        if isBankTransferEnabled || isGBPBankTransferEnabled || available(.buyBankTransferEnabled) {
-            return BuyViewModel.fiats
-        }
-        return [.usd]
+        BuyViewModel.fiats
         // Uncomment in future
 //        switch payment {
 //        case .card:
