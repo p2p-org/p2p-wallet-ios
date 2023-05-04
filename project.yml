@@ -25,9 +25,6 @@ packages:
         branch: main
     KeyAppKit:
         path: ./Packages/KeyAppKit
-    BECollectionView:
-        url: https://github.com/p2p-org/BECollectionView.git
-        branch: master
     BEPureLayout:
         url: https://github.com/p2p-org/BEPureLayout.git
         branch: master
@@ -296,10 +293,6 @@ targets:
 
             - package: Amplitude
             - package: Lokalise
-            - package: BECollectionView
-              product: BECollectionView_Core
-            - package: BECollectionView
-              product: BECollectionView_Combine
 
             - package: ReachabilitySwift
               product: Reachability
