@@ -125,7 +125,7 @@ struct WormholeClaimEthereumModel: WormholeClaimModel {
             return L10n.paidByKeyApp
         }
 
-        return CurrencyFormatter().string(amount: bundle.fees.totalInFiat)
+        return "~ " + CurrencyFormatter().string(amount: bundle.fees.totalInFiat)
     }
 
     var getAmount: String? {
