@@ -2,6 +2,7 @@ import Jupiter
 import Combine
 import SolanaSwift
 import Resolver
+import KeyAppBusiness
 
 protocol JupiterTokensRepository {
     var status: AnyPublisher<JupiterDataStatus, Never> { get }
@@ -25,7 +26,7 @@ final class JupiterTokensRepositoryImpl: JupiterTokensRepository {
 
     private let jupiterClient: JupiterAPI
     private let localProvider: JupiterTokensProvider
-    @Injected private var walletsRepository: WalletsRepository
+    @Injected private var solanaAccountsService: SolanaAccountsService
     @Injected private var tokensRepositoryCache: SolanaTokensRepositoryCache
 
     // MARK: - Private params

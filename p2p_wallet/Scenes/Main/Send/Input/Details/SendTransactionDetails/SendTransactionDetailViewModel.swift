@@ -11,6 +11,7 @@ import Resolver
 import Send
 import SolanaSwift
 import SwiftUI
+import KeyAppBusiness
 
 final class SendTransactionDetailViewModel: BaseViewModel, ObservableObject {
     let cancelSubject = PassthroughSubject<Void, Never>()
@@ -19,12 +20,12 @@ final class SendTransactionDetailViewModel: BaseViewModel, ObservableObject {
 
     private let stateMachine: SendInputStateMachine
     @Injected private var pricesService: PricesServiceType
-    @Injected private var walletsRepository: WalletsRepository
+    @Injected private var solanaAccountsService: SolanaAccountsService
     @Injected private var notificationsService: NotificationService
     @Injected private var clipboardManager: ClipboardManagerType
 
     private lazy var feeWalletsService: SendChooseFeeService = SendChooseFeeServiceImpl(
-        wallets: walletsRepository.getWallets(),
+        wallets: solanaAccountsService.getWallets(),
         feeRelayer: Resolver.resolve(),
         orcaSwap: Resolver.resolve()
     )

@@ -2,6 +2,7 @@ import Jupiter
 import SolanaSwift
 import Resolver
 import Combine
+import KeyAppBusiness
 
 extension JupiterSwapBusinessLogic {
     static func initializeAction(
@@ -51,12 +52,12 @@ extension JupiterSwapBusinessLogic {
         _ jupiterTokens: [Token]
     ) async -> [SwapToken] {
         // wait for wallets repository to be loaded and get wallets
-        let walletsRepository = Resolver.resolve(WalletsRepository.self)
+        let solanaAccountsService = Resolver.resolve(SolanaAccountsService.self)
         
         // This function will never throw an error (Publisher of ErrorType == Never)
         let wallets = (try? await Publishers.CombineLatest(
-            walletsRepository.statePublisher,
-            walletsRepository.dataPublisher
+            solanaAccountsService.fetcherStatePublisher,
+            solanaAccountsService.dataPublisher
         )
             .filter { (state, _) in
                   state == .loaded

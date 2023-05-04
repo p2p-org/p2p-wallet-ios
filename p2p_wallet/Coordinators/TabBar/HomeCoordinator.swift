@@ -269,7 +269,9 @@ final class HomeCoordinator: Coordinator<Void> {
             if show {
                 homeView.view.showConnectionErrorView(refreshAction: { [unowned homeView] in
                     homeView.view.hideConnectionErrorView()
-                    Resolver.resolve(WalletsRepository.self).reload()
+                    Task {
+                        try await Resolver.resolve(SolanaAccountsService.self).fetch()
+                    }
                 })
             }
             return Just(())

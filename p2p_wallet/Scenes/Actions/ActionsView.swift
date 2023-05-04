@@ -11,10 +11,11 @@ import SwiftUI
 import SwiftyUserDefaults
 import Sell
 import Resolver
+import KeyAppBusiness
 
 struct ActionsView: View {
     @Injected private var sellDataService: any SellDataService
-    @Injected private var walletsRepository: WalletsRepository
+    @Injected private var solanaAccountsService: SolanaAccountsService
     
     private let actionSubject = PassthroughSubject<Action, Never>()
     var action: AnyPublisher<Action, Never> { actionSubject.eraseToAnyPublisher() }
@@ -23,7 +24,7 @@ struct ActionsView: View {
     var isSellAvailable: Bool {
         available(.sellScenarioEnabled) &&
         sellDataService.isAvailable &&
-        !walletsRepository.getWallets().isTotalAmountEmpty
+        !solanaAccountsService.getWallets().isTotalAmountEmpty
     }
 
     var body: some View {

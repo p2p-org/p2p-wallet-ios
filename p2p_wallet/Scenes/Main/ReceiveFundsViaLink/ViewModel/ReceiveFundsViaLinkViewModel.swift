@@ -12,6 +12,7 @@ import SolanaSwift
 import Send
 import Resolver
 import FeeRelayerSwift
+import KeyAppBusiness
 
 final class ReceiveFundsViaLinkViewModel: BaseViewModel, ObservableObject {
     
@@ -19,7 +20,7 @@ final class ReceiveFundsViaLinkViewModel: BaseViewModel, ObservableObject {
     @Injected private var analyticsManager: AnalyticsManager
     @Injected private var sendViaLinkDataService: SendViaLinkDataService
     @Injected private var tokensRepository: SolanaTokensRepository
-    @Injected private var walletsRepository: WalletsRepository
+    @Injected private var solanaAccountsService: SolanaAccountsService
     
     // Subjects
     private let closeSubject = PassthroughSubject<Void, Never>()

@@ -8,6 +8,7 @@ import SolanaSwift
 import SwiftyUserDefaults
 import UIKit
 import Moonpay
+import KeyAppBusiness
 
 let MoonpayLicenseURL = "https://www.moonpay.com/legal/licenses"
 
@@ -56,7 +57,7 @@ final class BuyViewModel: ObservableObject {
     // Dependencies
     @Injected private var moonpayProvider: Moonpay.Provider
     @Injected var exchangeService: BuyExchangeService
-    @Injected var walletsRepository: WalletsRepository
+    @Injected var solanaAccountsService: SolanaAccountsService
     @Injected private var analyticsManager: AnalyticsManager
     @Injected private var pricesService: PricesServiceType
 
@@ -530,7 +531,7 @@ final class BuyViewModel: ObservableObject {
         // HACK
         let paymentMethod = isGBPBankTransferEnabled ? "gbp_bank" : selectedPayment.rawValue
         let provider = try factory.create(
-            walletRepository: walletsRepository,
+            solanaAccountsService: solanaAccountsService,
             fromCurrency: from,
             amount: amount,
             toCurrency: to,

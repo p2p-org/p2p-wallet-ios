@@ -94,7 +94,7 @@ final class SendInputViewModel: BaseViewModel, ObservableObject {
 
     // MARK: - Dependencies
 
-    private let walletsRepository: WalletsRepository
+    private let solanaAccountsService: SolanaAccountsService
     private let pricesService: PricesServiceType
     @Injected private var analyticsManager: AnalyticsManager
 
@@ -110,9 +110,9 @@ final class SendInputViewModel: BaseViewModel, ObservableObject {
         self.preChosenAmount = preChosenAmount
         self.allowSwitchingMainAmountType = allowSwitchingMainAmountType
 
-        let repository = Resolver.resolve(WalletsRepository.self)
-        walletsRepository = repository
-        let wallets = repository.getWallets()
+        let solanaAccountsService = Resolver.resolve(SolanaAccountsService.self)
+        self.solanaAccountsService = solanaAccountsService
+        let wallets = solanaAccountsService.getWallets()
 
         let pricesService = Resolver.resolve(PricesService.self)
         self.pricesService = pricesService

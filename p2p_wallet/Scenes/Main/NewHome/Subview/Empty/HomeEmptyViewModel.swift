@@ -17,9 +17,8 @@ final class HomeEmptyViewModel: BaseViewModel, ObservableObject {
     // MARK: - Dependencies
 
     @Injected private var analyticsManager: AnalyticsManager
-    @Injected private var walletsRepository: WalletsRepository
-    @Injected private var pricesService: PricesServiceType
     @Injected private var solanaAccountsService: SolanaAccountsService
+    @Injected private var pricesService: PricesServiceType
     
     // MARK: - Properties
     private var cancellable: AnyCancellable?
@@ -40,7 +39,7 @@ final class HomeEmptyViewModel: BaseViewModel, ObservableObject {
     // MARK: - Actions
 
     func reloadData() async {
-        walletsRepository.reload()
+        solanaAccountsService.reload()
 
         let tokensWithoutPrices = popularCoinsTokens.filter { pricesService.currentPrice(mint: $0.address) == nil }
         if !tokensWithoutPrices.isEmpty {
@@ -48,7 +47,7 @@ final class HomeEmptyViewModel: BaseViewModel, ObservableObject {
         }
 
         return await withCheckedContinuation { continuation in
-            cancellable = walletsRepository.statePublisher
+            cancellable = solanaAccountsService.fetcherStatePublisher
                 .sink(receiveValue: { [weak self] in
                     if $0 == .loaded || $0 == .error {
                         self?.updateData()

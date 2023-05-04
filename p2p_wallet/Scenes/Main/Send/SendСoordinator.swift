@@ -9,6 +9,7 @@ import Resolver
 import Send
 import SolanaSwift
 import SwiftUI
+import KeyAppBusiness
 
 enum SendResult {
     case sent(SendTransaction)
@@ -24,7 +25,7 @@ enum SendSource: String {
 final class SendCoordinator: Coordinator<SendResult> {
     // MARK: - Dependencies
 
-    @Injected var walletsRepository: WalletsRepository
+    @Injected var solanaAccountsService: SolanaAccountsService
     @Injected private var sendViaLinkDataService: SendViaLinkDataService
 
     // MARK: - Properties
@@ -63,8 +64,8 @@ final class SendCoordinator: Coordinator<SendResult> {
     // MARK: - Methods
 
     override func start() -> AnyPublisher<SendResult, Never> {
-        if walletsRepository.state == .loaded {
-            let hasToken = walletsRepository.getWallets().contains { wallet in
+        if solanaAccountsService.fetcherState == .loaded {
+            let hasToken = solanaAccountsService.getWallets().contains { wallet in
                 (wallet.lamports ?? 0) > 0
             }
 

@@ -11,9 +11,10 @@ import Foundation
 import Resolver
 import SolanaSwift
 import UIKit
+import KeyAppBusiness
 
 final class SendEmptyCoordinator: Coordinator<Void> {
-    @Injected private var walletsRepository: WalletsRepository
+    @Injected private var solanaAccountsService: SolanaAccountsService
     @Injected private var analyticsManager: AnalyticsManager
 
     private let navigationController: UINavigationController
