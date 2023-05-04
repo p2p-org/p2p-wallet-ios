@@ -15,9 +15,9 @@ jobs:
     steps:
       - name: Check out repository
         uses: actions/checkout@v3
-        with:
-          submodules: recursive
-          token: ${{ secrets.SUBMODULES_ACCESS_TOKEN }}
+        # with:
+        #   submodules: recursive
+        #   token: ${{ secrets.GITHUB_TOKEN }}
 
       - name: Copy secret files
         run: |
