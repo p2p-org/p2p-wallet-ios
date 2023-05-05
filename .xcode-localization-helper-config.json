@@ -1,0 +1,6 @@
+{
+  "automation": {
+    "script": "/opt/homebrew/bin/swiftgen config run --config ${PROJECT_DIR}/swiftgen.yml",
+    "pathType": "absolute"
+  }
+}
