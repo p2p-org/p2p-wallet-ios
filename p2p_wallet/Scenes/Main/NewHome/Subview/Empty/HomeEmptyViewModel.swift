@@ -39,7 +39,10 @@ final class HomeEmptyViewModel: BaseViewModel, ObservableObject {
     // MARK: - Actions
 
     func reloadData() async {
-        solanaAccountsService.reload()
+        // TODO: - Refactor later
+        Task {
+            await HomeAccountsSynchronisationService().refresh()
+        }
 
         let tokensWithoutPrices = popularCoinsTokens.filter { pricesService.currentPrice(mint: $0.address) == nil }
         if !tokensWithoutPrices.isEmpty {

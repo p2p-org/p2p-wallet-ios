@@ -22,3 +22,11 @@ public protocol AccountsService<Account>: AnyObject {
     /// Update accounts state
     func fetch() async throws
 }
+
+/// Handy extension for `AccountsService`
+extension AccountsService {
+    /// Get current loaded accounts
+    public var loadedAccounts: [Account] {
+        state.value
+    }
+}

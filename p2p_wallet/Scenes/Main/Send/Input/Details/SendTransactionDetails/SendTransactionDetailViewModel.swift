@@ -25,7 +25,7 @@ final class SendTransactionDetailViewModel: BaseViewModel, ObservableObject {
     @Injected private var clipboardManager: ClipboardManagerType
 
     private lazy var feeWalletsService: SendChooseFeeService = SendChooseFeeServiceImpl(
-        wallets: solanaAccountsService.getWallets(),
+        wallets: solanaAccountsService.loadedAccounts.map(\.data),
         feeRelayer: Resolver.resolve(),
         orcaSwap: Resolver.resolve()
     )

@@ -132,7 +132,7 @@ class SellViewModel: BaseViewModel, ObservableObject {
     }
 
     func sellAll() {
-        baseAmount = solanaAccountsService.getWallets().first(where: {$0.isNativeSOL})?.amount?.rounded(decimals: decimals, roundingMode: .down) ?? 0
+        baseAmount = solanaAccountsService.loadedAccounts.first(where: {$0.isNativeSOL})?.amount?.rounded(decimals: decimals, roundingMode: .down) ?? 0
         
         // temporary solution when isEnterQuoteAmount, the quote amount will not be updated when baseAmount changed
         // so we have to release this value
@@ -330,7 +330,7 @@ class SellViewModel: BaseViewModel, ObservableObject {
     // MARK: - Helpers
 
     private func checkIfMoreBaseCurrencyNeeded() {
-        maxBaseAmount = solanaAccountsService.getWallets().first(where: {$0.isNativeSOL})?.amount?.rounded(decimals: decimals, roundingMode: .down)
+        maxBaseAmount = solanaAccountsService.loadedAccounts.first(where: {$0.isNativeSOL})?.amount?.rounded(decimals: decimals, roundingMode: .down)
         if maxBaseAmount < minBaseAmount {
             isMoreBaseCurrencyNeeded = true
         }

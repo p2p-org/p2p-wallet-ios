@@ -17,6 +17,36 @@ public struct SolanaAccount: Identifiable, Equatable {
 
     /// Data field
     public var data: Wallet
+    
+    /// Is native solana account
+    public var isNativeSOL: Bool {
+        data.isNativeSOL
+    }
+    
+    /// Token
+    public var token: Token {
+        data.token
+    }
+    
+    /// Pubkey
+    public var pubkey: String? {
+        data.pubkey
+    }
+    
+    /// Mint address
+    public var mintAddress: String {
+        data.token.address
+    }
+    
+    /// Lamports
+    public var lamports: Lamports? {
+        data.lamports
+    }
+    
+    /// Amount
+    public var amount: Double? {
+        lamports?.convertToBalance(decimals: token.decimals)
+    }
 
     /// The fetched price at current moment of time.
     public var price: TokenPrice?

@@ -131,14 +131,14 @@ class TransactionHandler: TransactionHandlerType {
                 return false
             }
             .compactMap { pt -> ParsedTransaction? in
-                pt.parse(pricesService: pricesService, authority: solanaAccountsService.getWallets().first(where: {$0.isNativeSOL})?.pubkey)
+                pt.parse(pricesService: pricesService, authority: solanaAccountsService.loadedAccounts.first(where: {$0.isNativeSOL})?.pubkey)
             }
     }
 
     func getProcessingTransaction() -> [ParsedTransaction] {
         transactionsSubject.value
             .compactMap { pt -> ParsedTransaction? in
-                pt.parse(pricesService: pricesService, authority: solanaAccountsService.getWallets().first(where: {$0.isNativeSOL})?.pubkey)
+                pt.parse(pricesService: pricesService, authority: solanaAccountsService.loadedAccounts.first(where: {$0.isNativeSOL})?.pubkey)
             }
     }
 

@@ -234,15 +234,16 @@ class InvestSolendViewModel: ObservableObject {
 
         // Get user token account
         let tokenAccount: Wallet? = solanaAccountsService
-            .getWallets()
-            .first(where: { (wallet: Wallet) -> Bool in asset.mintAddress == wallet.mintAddress })
+            .loadedAccounts
+            .first(where: { asset.mintAddress == $0.mintAddress })?
+            .data
 
         if (tokenAccount?.amount ?? 0) > 0 {
             // User has this token for deposit
             depositSubject.send(asset)
         } else {
             // Check user has another token to deposit
-            let hasAnotherToken: Bool = solanaAccountsService.getWallets().first(where: { ($0.lamports ?? 0) > 0 }) != nil
+            let hasAnotherToken: Bool = solanaAccountsService.loadedAccounts.first(where: { ($0.lamports ?? 0) > 0 }) != nil
             topUpForContinueSubject.send(.init(
                 asset: asset,
                 strategy: hasAnotherToken ? .withoutOnlyTokenForDeposit : .withoutAnyTokens

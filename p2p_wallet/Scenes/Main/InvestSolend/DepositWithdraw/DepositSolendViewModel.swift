@@ -121,7 +121,7 @@ class DepositSolendViewModel: ObservableObject {
 
     /// Balance for selected Token
     private var currentWallet: Wallet? {
-        solanaAccountsService.getWallets().filter { $0.token.address == self.invest.asset.mintAddress }.first
+        solanaAccountsService.loadedAccounts.first(where: { $0.mintAddress == self.invest.asset.mintAddress })?.data
     }
 
     /// Rate for selected pair Token -> Fiat
@@ -463,7 +463,7 @@ class DepositSolendViewModel: ObservableObject {
     }
 
     private func availableDepositModels() -> [TokenToDepositView.Model] {
-        let wallets = solanaAccountsService.getWallets()
+        let wallets = solanaAccountsService.loadedAccounts.map(\.data)
         return market.compactMap { asset, market, _ in
             let wallet = wallets
                 .first { wallet in

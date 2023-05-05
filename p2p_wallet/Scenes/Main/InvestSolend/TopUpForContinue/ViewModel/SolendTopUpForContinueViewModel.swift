@@ -74,7 +74,7 @@ class SolendTopUpForContinueViewModel: ObservableObject {
         let solanaAccountsService: SolanaAccountsService = Resolver.resolve()
         
         if withoutAnyTokens {
-            guard let key = try? PublicKey(string: solanaAccountsService.getWallets().first(where: { $0.isNativeSOL })?.pubkey) else { return }
+            guard let key = try? PublicKey(string: solanaAccountsService.loadedAccounts.first(where: { $0.isNativeSOL })?.pubkey) else { return }
             receiveSubject.send(key)
         } else {
             swapSubject.send()
