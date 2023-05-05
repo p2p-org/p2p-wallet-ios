@@ -9,12 +9,16 @@ import Foundation
 import KeyAppKitCore
 
 public struct ClaimFees: Codable, Hashable, Equatable {
+    // Gas in SOL
     public let gas: TokenAmount
 
+    // Gas in same token that we user claims
     public let gasInToken: TokenAmount?
 
+    // Gas in ethereum network
     public let arbiter: TokenAmount
 
+    // In same token that we user claims
     public let createAccount: TokenAmount?
 
     enum CodingKeys: String, CodingKey {

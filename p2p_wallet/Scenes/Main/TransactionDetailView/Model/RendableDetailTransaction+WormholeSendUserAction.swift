@@ -94,7 +94,7 @@ struct RendableWormholeSendUserActionDetail: RenderableTransactionDetail {
                     values: [
                         .init(
                             text: cryptoFormatter.string(amount: arbiterFee),
-                            secondaryText: cryptoFormatter.string(amount: arbiterFee)
+                            secondaryText: currencyFormatter.string(amount: arbiterFee)
                         ),
                     ]
                 )
