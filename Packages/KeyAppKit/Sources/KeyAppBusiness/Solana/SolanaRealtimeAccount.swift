@@ -1,12 +1,8 @@
-//
-//  File.swift
-//
-//
-//  Created by Giang Long Tran on 27.04.2023.
-//
+// Copyright 2022 P2P Validator Authors. All rights reserved.
+// Use of this source code is governed by a MIT-style license that can be
+// found in the LICENSE file.
 
 import Combine
-import Foundation
 import KeyAppKitCore
 
 /// The service state.
@@ -20,7 +16,7 @@ enum SolanaRealtimeAccountState {
     /// Service operates normally.
     case running
 
-    /// Service stop working with reason.
+    /// Service stop working with a reason.
     case stop(reason: Error)
 }
 

@@ -9,6 +9,8 @@ import Combine
 import FirebaseRemoteConfig
 import SolanaSwift
 import SwiftyUserDefaults
+import KeyAppBusiness
+import Resolver
 
 final class DebugMenuViewModel: BaseViewModel, ObservableObject {
     @Published var features: [FeatureItem]
@@ -19,6 +21,10 @@ final class DebugMenuViewModel: BaseViewModel, ObservableObject {
     @Published var currentMoonpayEnvironment: DefaultsKeys.MoonpayEnvironment
     @Published var nameServiceEndpoints: [String]
     @Published var newSwapEndpoints: [String]
+    @Published var latestSocketUpdate: String = ""
+    @Published var socketState: String = ""
+
+    @Injected private var accountsService: SolanaAccountsService
 
     override init() {
         features = Menu.allCases
@@ -69,6 +75,16 @@ final class DebugMenuViewModel: BaseViewModel, ObservableObject {
             .sink { environment in
                 Defaults.moonpayEnvironment = environment
             }
+            .store(in: &subscriptions)
+
+        socketState = accountsService.realtimeService?.state.rawString ?? "Not initialised"
+        accountsService
+            .realtimeService?
+            .update
+            .receive(on: DispatchQueue.main)
+            .sink(receiveValue: { [weak self] account in
+                self?.latestSocketUpdate = "Update for \(account.data.token.name). Balance: \(account.data.amount?.tokenAmountFormattedString(symbol: account.data.token.symbol, maximumFractionDigits: Int(account.data.token.decimals)) ?? "")"
+            })
             .store(in: &subscriptions)
     }
 
@@ -149,4 +165,19 @@ extension DebugMenuViewModel {
 
 extension APIEndPoint: Identifiable {
     public var id: String { address }
+}
+
+private extension RealtimeSolanaAccountState {
+    var rawString: String {
+        switch self {
+        case .initialising:
+            return "Initialising 🛠️"
+        case .connecting:
+            return "Connecting 🌐"
+        case .running:
+            return "Running ✅"
+        case .stop(let error):
+            return "Stopped ❌ with error :\(error?.localizedDescription ?? "")"
+        }
+    }
 }
