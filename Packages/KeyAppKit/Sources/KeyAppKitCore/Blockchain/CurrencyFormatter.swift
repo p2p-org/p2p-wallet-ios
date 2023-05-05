@@ -1,10 +1,3 @@
-//
-//  File.swift
-//
-//
-//  Created by Giang Long Tran on 11.03.2023.
-//
-
 import Foundation
 
 /// Helper protocol for quickly converting to ``CurrencyAmount``.
@@ -16,12 +9,10 @@ public protocol CurrencyConvertible {
 public class CurrencyFormatter: Formatter {
     public let defaultValue: String
     public let hideSymbol: Bool
-    public let lessText: String
 
-    public init(defaultValue: String = "", hideSymbol: Bool = false, lessText: String = "Less than") {
+    public init(defaultValue: String = "", hideSymbol: Bool = false) {
         self.defaultValue = defaultValue
         self.hideSymbol = hideSymbol
-        self.lessText = lessText
         super.init()
     }
 
@@ -81,8 +72,8 @@ public class CurrencyFormatter: Formatter {
             return value
         }
 
-        if !lessText.isEmpty, amount.value > 0.0, amount.value < 0.01 {
-            value = "\(lessText) \(value)"
+        if amount.value > 0.0, amount.value < 0.01 {
+            value = "< \(formatter.string(for: 0.01) ?? "")"
         }
 
         return value
