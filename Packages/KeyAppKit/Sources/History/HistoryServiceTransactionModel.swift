@@ -34,20 +34,20 @@ public struct HistoryTransaction: Identifiable, Codable {
     public init(from decoder: Decoder) throws {
         let container = try decoder.container(keyedBy: CodingKeys.self)
 
-        self.signature = try container.decode(String.self, forKey: .signature)
+        signature = try container.decode(String.self, forKey: .signature)
 
         // Custom decoding date
         let dateStr = try container.decode(String.self, forKey: .date)
-        self.date = HistoryTransaction.dateFormatter.date(from: dateStr) ?? Date()
+        date = HistoryTransaction.dateFormatter.date(from: dateStr) ?? Date()
 
-        self.status = try container.decode(HistoryTransaction.Status.self, forKey: .status)
-        self.fees = (try? container.decode([Fee].self, forKey: .fees)) ?? []
-        self.error = try container.decodeIfPresent(Error.self, forKey: .error)
+        status = try container.decode(HistoryTransaction.Status.self, forKey: .status)
+        fees = (try? container.decode([Fee].self, forKey: .fees)) ?? []
+        error = try container.decodeIfPresent(Error.self, forKey: .error)
 
         // Make compatible for old version
         guard let type: Kind = try? container.decode(HistoryTransaction.Kind.self, forKey: .type) else {
             self.type = .unknown
-            self.info = nil
+            info = nil
             return
         }
 
@@ -57,28 +57,32 @@ public struct HistoryTransaction: Identifiable, Codable {
         do {
             switch type {
             case .send:
-                self.info = .send(try container.decode(Transfer.self, forKey: .info))
+                info = .send(try container.decode(Transfer.self, forKey: .info))
             case .receive:
-                self.info = .receive(try container.decode(Transfer.self, forKey: .info))
+                info = .receive(try container.decode(Transfer.self, forKey: .info))
             case .swap:
-                self.info = .swap(try container.decode(Swap.self, forKey: .info))
+                info = .swap(try container.decode(Swap.self, forKey: .info))
             case .stake:
-                self.info = .stake(try container.decode(Transfer.self, forKey: .info))
+                info = .stake(try container.decode(Transfer.self, forKey: .info))
             case .unstake:
-                self.info = .unstake(try container.decode(Transfer.self, forKey: .info))
+                info = .unstake(try container.decode(Transfer.self, forKey: .info))
             case .createAccount:
-                self.info = .createAccount(try container.decode(TokenAmount.self, forKey: .info))
+                info = .createAccount(try container.decode(TokenAmount.self, forKey: .info))
             case .closeAccount:
-                self.info = .closeAccount(try container.decode(TokenAmount.self, forKey: .info))
+                info = .closeAccount(try container.decode(TokenAmount.self, forKey: .info))
             case .mint:
-                self.info = .mint(try container.decode(TokenAmount.self, forKey: .info))
+                info = .mint(try container.decode(TokenAmount.self, forKey: .info))
             case .burn:
-                self.info = .burn(try container.decode(TokenAmount.self, forKey: .info))
+                info = .burn(try container.decode(TokenAmount.self, forKey: .info))
+            case .wormholeSend:
+                info = .wormholeSend(try container.decode(WormholeSend.self, forKey: .info))
+            case .wormholeReceive:
+                info = .wormholeReceive(try container.decode(WormholeReceive.self, forKey: .info))
             case .unknown:
-                self.info = .unknown(try container.decode(TokenAmount.self, forKey: .info))
+                info = .unknown(try container.decode(TokenAmount.self, forKey: .info))
             }
         } catch {
-            self.info = nil
+            info = nil
         }
     }
 
@@ -107,6 +111,8 @@ public extension HistoryTransaction {
         case closeAccount = "close_account"
         case burn
         case mint
+        case wormholeSend = "wormhole_send"
+        case wormholeReceive = "wormhole_receive"
         case unknown
     }
 
@@ -131,6 +137,8 @@ public extension HistoryTransaction {
         case closeAccount(TokenAmount?)
         case burn(TokenAmount)
         case mint(TokenAmount)
+        case wormholeSend(WormholeSend)
+        case wormholeReceive(WormholeReceive)
         case unknown(TokenAmount)
     }
 
@@ -151,6 +159,30 @@ public extension HistoryTransaction {
             case to
             case transitive
             case swapPrograms = "swap_programs"
+        }
+    }
+
+    struct WormholeSend: Codable {
+        public let to: NamedAccount
+        public let bridgeServiceKey: String
+        public let tokenAmount: TokenAmount
+
+        enum CodingKeys: String, CodingKey {
+            case to
+            case bridgeServiceKey = "bridge_service_key"
+            case tokenAmount = "token_amount"
+        }
+    }
+
+    struct WormholeReceive: Codable {
+        public let to: NamedAccount?
+        public let bridgeServiceKey: String
+        public let tokenAmount: TokenAmount
+
+        enum CodingKeys: String, CodingKey {
+            case to
+            case bridgeServiceKey = "bridge_service_key"
+            case tokenAmount = "token_amount"
         }
     }
 
@@ -191,13 +223,13 @@ public extension HistoryTransaction {
 
         public init(from decoder: Decoder) throws {
             let container = try decoder.container(keyedBy: CodingKeys.self)
-            self.symbol = try container.decode(String.self, forKey: .symbol)
-            self.name = try container.decode(String.self, forKey: .name)
-            self.mint = try container.decode(String.self, forKey: .mint)
-            self.logoUrl = try? container.decodeIfPresent(URL.self, forKey: .logoUrl)
-            self.usdRate = Double(try container.decodeIfPresent(String.self, forKey: .usdRate) ?? "") ?? 0.0
-            self.coingeckoId = try container.decodeIfPresent(String.self, forKey: .coingeckoId)
-            self.decimals = try container.decode(UInt8.self, forKey: .decimals)
+            symbol = try container.decode(String.self, forKey: .symbol)
+            name = try container.decode(String.self, forKey: .name)
+            mint = try container.decode(String.self, forKey: .mint)
+            logoUrl = try? container.decodeIfPresent(URL.self, forKey: .logoUrl)
+            usdRate = Double(try container.decodeIfPresent(String.self, forKey: .usdRate) ?? "") ?? 0.0
+            coingeckoId = try container.decodeIfPresent(String.self, forKey: .coingeckoId)
+            decimals = try container.decode(UInt8.self, forKey: .decimals)
         }
     }
 
@@ -207,8 +239,22 @@ public extension HistoryTransaction {
     }
 
     struct Amount: Codable {
-        public let tokenAmount: Double
-        public let usdAmount: Double
+        public let tokenAmount: Decimal
+
+        public let usdAmount: Decimal?
+
+        @available(*, deprecated, message: "Migrate to decimal")
+        public var tokenAmountDouble: Double {
+            NSDecimalNumber(decimal: tokenAmount).doubleValue
+        }
+
+        @available(*, deprecated, message: "Migrate to decimal")
+        public var usdAmountDouble: Double? {
+            if let usdAmount {
+                return NSDecimalNumber(decimal: usdAmount).doubleValue
+            }
+            return nil
+        }
 
         enum CodingKeys: String, CodingKey {
             case tokenAmount = "amount"
@@ -217,8 +263,14 @@ public extension HistoryTransaction {
 
         public init(from decoder: Decoder) throws {
             let container = try decoder.container(keyedBy: CodingKeys.self)
-            self.tokenAmount = Double(try container.decode(String.self, forKey: .tokenAmount)) ?? 0.0
-            self.usdAmount = Double(try container.decodeIfPresent(String.self, forKey: .usdAmount) ?? "") ?? 0.0
+            let tokenAmountStr = try container.decode(String.self, forKey: .tokenAmount)
+            tokenAmount = Decimal(string: tokenAmountStr) ?? 0
+            
+            if let usdAmountStr = try container.decodeIfPresent(String.self, forKey: .usdAmount) {
+                usdAmount = Decimal(string: usdAmountStr)
+            } else {
+                usdAmount = nil
+            }
         }
     }
 

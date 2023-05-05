@@ -23,7 +23,6 @@ struct DebugMenuView: View {
     var body: some View {
         NavigationView {
             List {
-                Toggle("Network Logger", isOn: $viewModel.networkLoggerVisible)
                 Section(header: Text("Feature Toggles")) {
                     ForEach(0 ..< viewModel.features.count, id: \.self) { index in
                         Toggle(viewModel.features[index].title, isOn: $viewModel.features[index].isOn)
@@ -33,6 +32,7 @@ struct DebugMenuView: View {
                     }
                 }
                 Section(header: Text("Application")) {
+                    Toggle("Network Logger", isOn: $viewModel.networkLoggerVisible)
                     TextFieldRow(title: "Wallet:", content: $globalAppState.forcedWalletAddress)
                     TextFieldRow(title: "Push:", content: $globalAppState.pushServiceEndpoint)
                     TextFieldRow(title: "Bridge:", content: $globalAppState.bridgeEndpoint)
@@ -50,6 +50,10 @@ struct DebugMenuView: View {
                             // app.delegate?.refresh()
                         }
                     } label: { Text("Apply") }
+                }
+
+                Section(header: Text("Modules")) {
+                    NavigationLink("History") { HistoryDebugView() }
                 }
 
                 Section(header: Text("Fee relayer")) {

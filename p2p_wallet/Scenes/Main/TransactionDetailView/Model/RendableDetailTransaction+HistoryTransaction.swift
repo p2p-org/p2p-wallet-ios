@@ -49,8 +49,10 @@ struct RendableDetailHistoryTransaction: RenderableTransactionDetail {
         switch trx.info {
         case let .send(data):
             return icon(mint: data.token.mint, url: data.token.logoUrl, defaultIcon: .transactionSend)
+
         case let .receive(data):
             return icon(mint: data.token.mint, url: data.token.logoUrl, defaultIcon: .transactionReceive)
+
         case let .swap(data):
             guard
                 let fromIcon = resolveTokenIconURL(
@@ -63,18 +65,31 @@ struct RendableDetailHistoryTransaction: RenderableTransactionDetail {
             }
 
             return .double(fromIcon, toIcon)
+
         case let .createAccount(data):
             return icon(mint: data.token.mint, url: data.token.logoUrl, defaultIcon: .buyWallet)
+
         case let .closeAccount(data):
             return icon(mint: data?.token.mint, url: data?.token.logoUrl, defaultIcon: .transactionCloseAccount)
+
         case let .mint(data):
             return icon(mint: data.token.mint, url: data.token.logoUrl, defaultIcon: .planet)
+
         case let .burn(data):
             return icon(mint: data.token.mint, url: data.token.logoUrl, defaultIcon: .planet)
+
         case let .stake(data):
             return icon(mint: data.token.mint, url: data.token.logoUrl, defaultIcon: .planet)
+
         case let .unstake(data):
             return icon(mint: data.token.mint, url: data.token.logoUrl, defaultIcon: .planet)
+
+        case let .wormholeSend(data):
+            return icon(mint: data.tokenAmount.token.mint, url: data.tokenAmount.token.logoUrl, defaultIcon: .planet)
+
+        case let .wormholeReceive(data):
+            return icon(mint: data.tokenAmount.token.mint, url: data.tokenAmount.token.logoUrl, defaultIcon: .planet)
+
         case .unknown, .none:
             return .icon(.planet)
         }
@@ -83,33 +98,85 @@ struct RendableDetailHistoryTransaction: RenderableTransactionDetail {
     var amountInFiat: TransactionDetailChange {
         switch trx.info {
         case let .send(data):
-            return .negative("-\(data.amount.usdAmount.fiatAmountFormattedString())")
+            guard let usdAmount = data.amount.usdAmountDouble else {
+                return .unchanged("")
+            }
+            return .negative("-\(usdAmount.fiatAmountFormattedString())")
+
         case let .receive(data):
-            return .positive("+\(data.amount.usdAmount.fiatAmountFormattedString())")
+            guard let usdAmount = data.amount.usdAmountDouble else {
+                return .unchanged("")
+            }
+            return .positive("+\(usdAmount.fiatAmountFormattedString())")
+
         case let .swap(data):
-            return .unchanged("\(data.to.amount.usdAmount.fiatAmountFormattedString())")
+            guard let usdAmount = data.to.amount.usdAmountDouble else {
+                return .unchanged("")
+            }
+            return .unchanged("\(usdAmount.fiatAmountFormattedString())")
+
         case let .burn(data):
-            return .negative("-\((-data.amount.usdAmount).fiatAmountFormattedString())")
+            guard let usdAmount = data.amount.usdAmountDouble else {
+                return .unchanged("")
+            }
+            return .negative("-\((-usdAmount).fiatAmountFormattedString())")
+
         case let .mint(data):
-            return .positive("+\(data.amount.usdAmount.fiatAmountFormattedString())")
+            guard let usdAmount = data.amount.usdAmountDouble else {
+                return .unchanged("")
+            }
+            return .positive("+\(usdAmount.fiatAmountFormattedString())")
+
         case let .stake(data):
-            return .negative("-\(data.amount.usdAmount.fiatAmountFormattedString())")
+            guard let usdAmount = data.amount.usdAmountDouble else {
+                return .unchanged("")
+            }
+            return .negative("-\(usdAmount.fiatAmountFormattedString())")
+
         case let .unstake(data):
-            return .positive("+\(data.amount.usdAmount.fiatAmountFormattedString())")
+            guard let usdAmount = data.amount.usdAmountDouble else {
+                return .unchanged("")
+            }
+            return .positive("+\(usdAmount.fiatAmountFormattedString())")
+
         case let .createAccount(data):
-            return .positive("+\(data.amount.usdAmount.fiatAmountFormattedString())")
+            guard let usdAmount = data.amount.usdAmountDouble else {
+                return .unchanged("")
+            }
+            return .positive("+\(usdAmount.fiatAmountFormattedString())")
+
         case let .closeAccount(data):
             if let data {
-                return .negative("-\(data.amount.usdAmount.fiatAmountFormattedString())")
+                guard let usdAmount = data.amount.usdAmountDouble else {
+                    return .unchanged("")
+                }
+                return .negative("-\(usdAmount.fiatAmountFormattedString())")
             } else {
                 return .unchanged("")
             }
+
         case let .unknown(data):
-            if data.amount.usdAmount >= 0 {
-                return .positive("+\(data.amount.usdAmount.fiatAmountFormattedString())")
-            } else {
-                return .negative("\(data.amount.usdAmount.fiatAmountFormattedString())")
+            guard let usdAmount = data.amount.usdAmountDouble else {
+                return .unchanged("")
             }
+            if usdAmount >= 0 {
+                return .positive("+\(usdAmount.fiatAmountFormattedString())")
+            } else {
+                return .negative("\(usdAmount.fiatAmountFormattedString())")
+            }
+
+        case let .wormholeSend(data):
+            guard let usdAmount = data.tokenAmount.amount.usdAmountDouble else {
+                return .unchanged("")
+            }
+            return .negative("-\(usdAmount.fiatAmountFormattedString())")
+
+        case let .wormholeReceive(data):
+            guard let usdAmount = data.tokenAmount.amount.usdAmountDouble else {
+                return .unchanged("")
+            }
+            return .positive("+\(usdAmount.fiatAmountFormattedString())")
+
         case .none:
             return .unchanged("")
         }
@@ -118,29 +185,45 @@ struct RendableDetailHistoryTransaction: RenderableTransactionDetail {
     var amountInToken: String {
         switch trx.info {
         case let .send(data):
-            return "\(data.amount.tokenAmount.tokenAmountFormattedString(symbol: data.token.symbol))"
+            return "\(data.amount.tokenAmountDouble.tokenAmountFormattedString(symbol: data.token.symbol))"
+
         case let .receive(data):
-            return "\(data.amount.tokenAmount.tokenAmountFormattedString(symbol: data.token.symbol))"
+            return "\(data.amount.tokenAmountDouble.tokenAmountFormattedString(symbol: data.token.symbol))"
+
         case let .swap(data):
-            return "\((-data.from.amount.tokenAmount).tokenAmountFormattedString(symbol: data.from.token.symbol)) → \(data.to.amount.tokenAmount.tokenAmountFormattedString(symbol: data.to.token.symbol))"
+            return "\((-data.from.amount.tokenAmountDouble).tokenAmountFormattedString(symbol: data.from.token.symbol)) → \(data.to.amount.tokenAmountDouble.tokenAmountFormattedString(symbol: data.to.token.symbol))"
+
         case let .burn(data):
-            return "\((-data.amount.tokenAmount).tokenAmountFormattedString(symbol: data.token.symbol))"
+            return "\((-data.amount.tokenAmountDouble).tokenAmountFormattedString(symbol: data.token.symbol))"
+
         case let .mint(data):
-            return "\(data.amount.tokenAmount.tokenAmountFormattedString(symbol: data.token.symbol))"
+            return "\(data.amount.tokenAmountDouble.tokenAmountFormattedString(symbol: data.token.symbol))"
+
         case let .stake(data):
-            return "\(data.amount.tokenAmount.tokenAmountFormattedString(symbol: data.token.symbol))"
+            return "\(data.amount.tokenAmountDouble.tokenAmountFormattedString(symbol: data.token.symbol))"
+
         case let .unstake(data):
-            return "\(data.amount.tokenAmount.tokenAmountFormattedString(symbol: data.token.symbol))"
+            return "\(data.amount.tokenAmountDouble.tokenAmountFormattedString(symbol: data.token.symbol))"
+
         case let .createAccount(data):
-            return "\(data.amount.tokenAmount.tokenAmountFormattedString(symbol: data.token.symbol))"
+            return "\(data.amount.tokenAmountDouble.tokenAmountFormattedString(symbol: data.token.symbol))"
+
         case let .closeAccount(data):
             if let data {
-                return "\(data.amount.tokenAmount.tokenAmountFormattedString(symbol: data.token.symbol))"
+                return "\(data.amount.tokenAmountDouble.tokenAmountFormattedString(symbol: data.token.symbol))"
             } else {
                 return ""
             }
+
+        case let .wormholeSend(data):
+            return "-\(data.tokenAmount.amount.tokenAmountDouble.tokenAmountFormattedString(symbol: data.tokenAmount.token.symbol))"
+
+        case let .wormholeReceive(data):
+            return "+\(data.tokenAmount.amount.tokenAmountDouble.tokenAmountFormattedString(symbol: data.tokenAmount.token.symbol))"
+
         case let .unknown(data):
-            return "\(data.amount.tokenAmount.tokenAmountFormattedString(symbol: data.token.symbol))"
+            return "\(data.amount.tokenAmountDouble.tokenAmountFormattedString(symbol: data.token.symbol))"
+
         case .none:
             return ""
         }
@@ -220,8 +303,8 @@ struct RendableDetailHistoryTransaction: RenderableTransactionDetail {
         } else {
             let values: [TransactionDetailExtraInfo.Value] = trx.fees.map { fee in
                 .init(
-                    text: fee.amount.tokenAmount.tokenAmountFormattedString(symbol: fee.token.symbol),
-                    secondaryText: fee.amount.usdAmount.fiatAmountFormattedString()
+                    text: fee.amount.tokenAmountDouble.tokenAmountFormattedString(symbol: fee.token.symbol),
+                    secondaryText: fee.amount.usdAmountDouble?.fiatAmountFormattedString()
                 )
             }
 
