@@ -20,13 +20,6 @@ enum BEFetcherState {
 }
 
 extension SolanaAccountsService {
-    func reload() {
-        Task { try await fetch() }
-    }
-    
-    func getWallets() -> [SolanaSwift.Wallet] {
-        state.value.map(\.data)
-    }
     
     var dataDidChange: AnyPublisher<Void, Never> {
         statePublisher

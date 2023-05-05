@@ -76,7 +76,7 @@ final class SellPendingCoordinator: Coordinator<SellPendingCoordinatorResult> {
                 coordinate(to:
                     SendCoordinator(
                         rootViewController: navigationController,
-                        preChosenWallet: solanaAccountsService.getWallets().first(where: { $0.isNativeSOL }),
+                        preChosenWallet: solanaAccountsService.loadedAccounts.first(where: { $0.isNativeSOL })?.data,
                         preChosenRecipient: Recipient(
                             address: transaction.depositWallet,
                             category: .solanaAddress,

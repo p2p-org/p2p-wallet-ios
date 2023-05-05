@@ -24,7 +24,7 @@ struct ActionsView: View {
     var isSellAvailable: Bool {
         available(.sellScenarioEnabled) &&
         sellDataService.isAvailable &&
-        !solanaAccountsService.getWallets().isTotalAmountEmpty
+        !solanaAccountsService.loadedAccounts.isTotalBalanceEmpty
     }
 
     var body: some View {

@@ -28,7 +28,7 @@ class NameServiceUserDefaultCache: NameServiceCacheType {
     func getName(for owner: String) -> NameServiceSearchResult? {
         let solanaAccountsService = Resolver.resolve(SolanaAccountsService.self)
         
-        if solanaAccountsService.getWallets().contains(where: { $0.pubkey == owner }),
+        if solanaAccountsService.loadedAccounts.contains(where: { $0.pubkey == owner }),
            let name = nameStorage.getName()
         {
             return .registered(name)

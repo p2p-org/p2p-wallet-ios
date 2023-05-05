@@ -42,7 +42,7 @@ extension Buy {
                     .secretConfig("MOONPAY_PRODUCTION_API_KEY")! :
                     .secretConfig("MOONPAY_STAGING_API_KEY")!,
                 currencyCode: crypto.moonpayCode,
-                walletAddress: solanaAccountsService.getWallets().first(where: {$0.isNativeSOL})?.pubkey,
+                walletAddress: solanaAccountsService.loadedAccounts.first(where: {$0.isNativeSOL})?.pubkey,
                 baseCurrencyCode: currency.moonpayCode,
                 baseCurrencyAmount: initialAmount
             )
@@ -70,7 +70,7 @@ extension Buy {
                     .secretConfig("MOONPAY_PRODUCTION_API_KEY")! :
                     .secretConfig("MOONPAY_STAGING_API_KEY")!,
                 currencyCode: to.moonpayCode,
-                walletAddress: solanaAccountsService.getWallets().first(where: {$0.isNativeSOL})?.pubkey,
+                walletAddress: solanaAccountsService.loadedAccounts.first(where: {$0.isNativeSOL})?.pubkey,
                 baseCurrencyCode: from.moonpayCode,
                 baseCurrencyAmount: amount,
                 paymentMethod: paymentMethod == "card" ? .creditDebitCard :

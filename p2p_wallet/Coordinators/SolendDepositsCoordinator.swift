@@ -54,8 +54,9 @@ final class SolendDepositsCoordinator: Coordinator<Void> {
             let solanaAccountsService = Resolver.resolve(SolanaAccountsService.self)
 
             let tokenAccount: Wallet? = solanaAccountsService
-                .getWallets()
-                .first(where: { (wallet: Wallet) -> Bool in asset.mintAddress == wallet.mintAddress })
+                .loadedAccounts
+                .first(where: { asset.mintAddress == $0.mintAddress })?
+                .data
 
             if (tokenAccount?.amount ?? 0) > 0 {
                 // User has a token
@@ -73,7 +74,7 @@ final class SolendDepositsCoordinator: Coordinator<Void> {
                     .store(in: &subscriptions)
             } else {
                 // User doesn't have a token
-                let hasAnotherToken: Bool = solanaAccountsService.getWallets().first(where: { ($0.lamports ?? 0) > 0 }) != nil
+                let hasAnotherToken: Bool = solanaAccountsService.loadedAccounts.first(where: { ($0.lamports ?? 0) > 0 }) != nil
                 let coordinator = SolendTopUpForContinueCoordinator(
                     navigationController: controller,
                     model: .init(

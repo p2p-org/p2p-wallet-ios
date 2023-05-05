@@ -34,7 +34,7 @@ class DefaultSolendWithdrawFeePayingStrategy: SolendFeePayingStrategy {
             payingFeeTokenMint: try PublicKey(string: mintAddress)
         )
 
-        guard let nativeAccount = solanaAccountsService.getWallets().first(where: {$0.isNativeSOL}) else {
+        guard let nativeAccount = solanaAccountsService.loadedAccounts.first(where: {$0.isNativeSOL}) else {
             throw SolendFeePayingStrategyError.invalidNativeWallet
         }
 
@@ -49,7 +49,7 @@ class DefaultSolendWithdrawFeePayingStrategy: SolendFeePayingStrategy {
         )
 
         guard
-            let userSplAccount: Wallet = solanaAccountsService.getWallets().first(where: { $0.token.address == mintAddress }),
+            let userSplAccount: Wallet = solanaAccountsService.loadedAccounts.first(where: { $0.mintAddress == mintAddress })?.data,
             let feeInToken = feeInToken
         else {
             return nativeFeePaying
