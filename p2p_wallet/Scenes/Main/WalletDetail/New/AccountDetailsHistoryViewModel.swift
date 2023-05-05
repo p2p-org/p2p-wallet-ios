@@ -22,9 +22,9 @@ final class AccountDetailsHistoryViewModel: HistoryViewModel {
     override func buildOutput(
         history: ListState<any RendableListTransactionItem>,
         sells: [any RendableListOfframItem] = [],
-        pendings: [any RendableListTransactionItem] = []
+        others: [any RendableListTransactionItem] = []
     ) -> ListState<HistorySection> {
-        var state = super.buildOutput(history: history, sells: sells, pendings: pendings)
+        var state = super.buildOutput(history: history, sells: sells, others: others)
 
         // Check send to wormhole if feature flag is active.
         guard available(.ethAddressEnabled) else {

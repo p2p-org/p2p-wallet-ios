@@ -30,7 +30,6 @@ enum NewHistoryAction {
 }
 
 class HistoryViewModel: BaseViewModel, ObservableObject {
-
     // MARK: - Subjects
 
     let actionSubject: PassthroughSubject<NewHistoryAction, Never>
@@ -129,7 +128,7 @@ class HistoryViewModel: BaseViewModel, ObservableObject {
             .$state
             .combineLatest(pendingTransactions)
             .receive(on: DispatchQueue.global(qos: .background))
-            .map { [weak self] in self?.buildOutput(history: $0, pendings: $1) ?? .init() }
+            .map { [weak self] in self?.buildOutput(history: $0, others: $1) ?? .init() }
             .receive(on: RunLoop.main)
             .sink { [weak self] in self?.output = $0 }
             .store(in: &subscriptions)
@@ -197,9 +196,13 @@ class HistoryViewModel: BaseViewModel, ObservableObject {
             }
 
         let mergedPendings = Publishers
-            .CombineLatest(userActions, pendings)
-            .map { lhs, rhs in
-                lhs + rhs
+            .CombineLatest3(
+                userActions,
+                pendings,
+                HistoryDebug.shared.$mockItems
+            )
+            .map { actions, pendings, mock in
+                actions + pendings + mock
             }
 
         showSendViaLinkTransaction = true
@@ -219,15 +222,21 @@ class HistoryViewModel: BaseViewModel, ObservableObject {
     }
 
     deinit {
-       NotificationCenter.default.removeObserver(self)
+        NotificationCenter.default.removeObserver(self)
+    }
+    
+    func onTap(item: any RendableListTransactionItem) {
+        if let item = item as? RendableListHistoryTransactionItem {
+            actionSubject.send(.openHistoryTransaction(item.trx))
+        }
     }
 
     // MARK: - View Output
-    
+
     func onAppear() {
         let withSentViaLink = showSendViaLinkTransaction && !sendViaLinkTransactions.isEmpty
         analyticsManager.log(event: .historyOpened(sentViaLink: withSentViaLink))
-        
+
         fetch()
     }
 
@@ -260,7 +269,11 @@ class HistoryViewModel: BaseViewModel, ObservableObject {
             }
             .store(in: &subscriptions)
 
-        NotificationCenter.default.addObserver(forName: HistoryAppdelegateService.shouldUpdateHistory.name, object: nil, queue: nil) { [weak self] _ in
+        NotificationCenter.default.addObserver(
+            forName: HistoryAppdelegateService.shouldUpdateHistory.name,
+            object: nil,
+            queue: nil
+        ) { [weak self] _ in
             Task {
                 try await self?.reload()
             }
@@ -270,11 +283,11 @@ class HistoryViewModel: BaseViewModel, ObservableObject {
     func buildOutput(
         history: ListState<any RendableListTransactionItem>,
         sells: [any RendableListOfframItem] = [],
-        pendings: [any RendableListTransactionItem] = []
+        others: [any RendableListTransactionItem] = []
     ) -> ListState<HistorySection> {
         // Phase 1: Merge pending transaction with history transaction
         let rendableTransactions: [any RendableListTransactionItem] = ListBuilder
-            .merge(primary: history.data, secondary: pendings, by: \.id)
+            .merge(primary: history.data, secondary: others, by: \.id)
 
         // Phase 2: Split transactions by date
         var sections: [HistorySection] = ListBuilder.aggregate(list: rendableTransactions, by: \.date) { title, items in

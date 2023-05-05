@@ -100,7 +100,11 @@ struct NewHistoryView<Header: View>: View {
                 switch item {
                 case let .rendableTransaction(item):
                     HistoryItemView(item: item) {
-                        item.onTap?()
+                        if let onTap = item.onTap {
+                            onTap()
+                        } else {
+                            viewModel.onTap(item: item)
+                        }
                     }
                 case let .rendableOffram(item):
                     HistoryOfframItemView(item: item) {
