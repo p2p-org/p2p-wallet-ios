@@ -75,7 +75,7 @@ struct RenderableWormholeClaimUserActionDetail: RenderableTransactionDetail {
             let allFees: [Wormhole.TokenAmount] = [
                 userAction.fees.createAccount,
                 userAction.fees.arbiter,
-                userAction.fees.gas,
+                userAction.fees.gasInToken,
             ].compactMap { $0 }
 
             // Split into group token.
