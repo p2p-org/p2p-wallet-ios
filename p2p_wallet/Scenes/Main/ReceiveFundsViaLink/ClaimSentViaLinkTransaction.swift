@@ -31,7 +31,8 @@ struct ClaimSentViaLinkTransaction: RawTransactionType {
     }
     
     var amountInFiat: Double? {
-        Resolver.resolve(PricesServiceType.self).currentPrice(mint: token.address)?.value * tokenAmount
+        guard let value = Resolver.resolve(PricesServiceType.self).currentPrice(mint: token.address)?.value else { return nil }
+        return value * tokenAmount
     }
     
     func createRequest() async throws -> String {
