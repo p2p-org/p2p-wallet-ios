@@ -38,7 +38,13 @@ public enum WormholeSendUserActionError {
     
     public static let sendingFailure = UserActionError(
         domain: domain,
-        code: 4,
+        code: 5,
         reason: "Crosschain sending failure"
+    )
+    
+    public static let parseError = UserActionError(
+        domain: domain,
+        code: 6,
+        reason: "Parse error"
     )
 }

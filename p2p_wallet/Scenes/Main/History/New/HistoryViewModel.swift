@@ -224,10 +224,19 @@ class HistoryViewModel: BaseViewModel, ObservableObject {
     deinit {
         NotificationCenter.default.removeObserver(self)
     }
-    
+
     func onTap(item: any RendableListTransactionItem) {
-        if let item = item as? RendableListHistoryTransactionItem {
+        switch item {
+        case let item as RendableListHistoryTransactionItem:
             actionSubject.send(.openHistoryTransaction(item.trx))
+        case let item as RendableListPendingTransactionItem:
+            actionSubject.send(.openPendingTransaction(item.trx))
+        case let item as RendableListUserActionTransactionItem:
+            actionSubject.send(.openUserAction(item.userAction))
+        case let item as SellRendableListOfframItem:
+            actionSubject.send(.openSellTransaction(item.trx))
+        default:
+            break
         }
     }
 

@@ -164,7 +164,10 @@ public extension HistoryTransaction {
 
     struct WormholeSend: Codable {
         public let to: NamedAccount
+        
+        // Bundle id
         public let bridgeServiceKey: String
+        
         public let tokenAmount: TokenAmount
 
         enum CodingKeys: String, CodingKey {
@@ -176,7 +179,10 @@ public extension HistoryTransaction {
 
     struct WormholeReceive: Codable {
         public let to: NamedAccount?
+        
+        // Claim key
         public let bridgeServiceKey: String
+        
         public let tokenAmount: TokenAmount
 
         enum CodingKeys: String, CodingKey {
