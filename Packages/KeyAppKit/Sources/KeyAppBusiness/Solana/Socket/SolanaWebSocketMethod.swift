@@ -1,9 +1,6 @@
-//
-//  File.swift
-//
-//
-//  Created by Giang Long Tran on 04.05.2023.
-//
+// Copyright 2022 P2P Validator Authors. All rights reserved.
+// Use of this source code is governed by a MIT-style license that can be
+// found in the LICENSE file.
 
 import Foundation
 import KeyAppKitCore
@@ -12,7 +9,7 @@ import SolanaSwift
 /// Class for generating rpc request to socket.
 ///
 /// Full methods list: https://docs.solana.com/api/websocket
-class SolanaWebSocketMethods {
+final class SolanaWebSocketMethods {
     func accountSubscribe(
         account: String,
         commitment: Commitment = "finalized",
