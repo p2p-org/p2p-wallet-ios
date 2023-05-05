@@ -219,7 +219,7 @@ class HistoryViewModel: BaseViewModel, ObservableObject {
     }
 
     deinit {
-       NotificationCenter.default.removeObserver(self)
+        NotificationCenter.default.removeObserver(self)
     }
 
     // MARK: - View Output
