@@ -19,7 +19,7 @@ struct LottieView: UIViewRepresentable {
     func makeUIView(context: Context) -> some UIView {
         let view = UIView(frame: .zero)
  
-        animationView.animation = Animation.named(lottieFile)
+        animationView.animation = LottieAnimation.named(lottieFile)
         animationView.contentMode = contentMode
         animationView.loopMode = loopMode
         animationView.play { _ in completion?() }

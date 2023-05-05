@@ -29,8 +29,8 @@ struct SwapView: View {
 
                     SliderActionButton(
                         isSliderOn: $viewModel.isSliderOn,
-                        data: $viewModel.actionButtonData,
-                        showFinished: $viewModel.showFinished
+                        data: viewModel.actionButtonData,
+                        showFinished: viewModel.showFinished
                     )
                     .accessibilityIdentifier("SwapView.sliderButton")
                     .padding(.bottom, 36)
@@ -41,10 +41,10 @@ struct SwapView: View {
             }
         }
         .onAppear {
-            viewModel.viewAppeared.send(())
+            viewModel.isViewAppeared.send(true)
         }
         .onDisappear {
-            viewModel.viewDisappeared.send(())
+            viewModel.isViewAppeared.send(false)
         }
     }
 }

@@ -11,13 +11,14 @@ import FeeRelayerSwift
 import FirebaseRemoteConfig
 import History
 import Jupiter
+import KeyAppBusiness
+import KeyAppKitCore
 import Moonpay
 import NameService
 import Onboarding
 import OrcaSwapSwift
 import P2PSwift
 import Reachability
-import RenVMSwift
 import Resolver
 import Sell
 import Send
@@ -26,6 +27,8 @@ import SolanaSwift
 import Solend
 import SwiftyUserDefaults
 import TransactionParser
+import Web3
+import Wormhole
 
 extension Resolver: ResolverRegistering {
     @MainActor public static func registerAllServices() {
@@ -42,6 +45,9 @@ extension Resolver: ResolverRegistering {
 
     /// Application scope: Lifetime app's services
     @MainActor private static func registerForApplicationScope() {
+        register { SentryErrorObserver() }
+            .implements(ErrorObserver.self)
+
         // Application warmup manager
         register {
             WarmupManager(processes: [
@@ -75,7 +81,7 @@ extension Resolver: ResolverRegistering {
             .implements((ICloudStorageType & AccountStorageType & NameStorageType).self)
             .implements((ICloudStorageType & AccountStorageType & NameStorageType & PincodeStorageType).self)
             .scope(.application)
-        
+
         register { SendViaLinkStorageImpl() }
             .implements(SendViaLinkStorage.self)
             .scope(.session)
@@ -107,6 +113,17 @@ extension Resolver: ResolverRegistering {
             )
         }
         .scope(.application)
+
+        // Prices
+        register { SolanaPriceService(api: resolve()) }
+            .scope(.application)
+
+        register { EthereumPriceService(api: resolve()) }
+            .scope(.application)
+
+        register { WormholeRPCAPI(endpoint: GlobalAppState.shared.bridgeEndpoint) }
+            .implements(WormholeAPI.self)
+            .scope(.application)
 
         // AnalyticsManager
         register {
@@ -184,6 +201,9 @@ extension Resolver: ResolverRegistering {
         register { CreateNameServiceImpl() }
             .implements(CreateNameService.self)
             .scope(.application)
+
+        register { EthereumTokensRepository(web3: resolve()) }
+            .scope(.application)
     }
 
     /// Graph scope: Recreate and reuse dependencies
@@ -224,20 +244,16 @@ extension Resolver: ResolverRegistering {
 
         register { TokensRepository(
             endpoint: Defaults.apiEndPoint,
-            tokenListParser: .init(url: RemoteConfig.remoteConfig()
-                .tokenListURL ??
-                "https://raw.githubusercontent.com/p2p-org/solana-token-list/main/src/tokens/solana.tokenlist.json"),
+            tokenListParser: .init(
+                url: "https://raw.githubusercontent.com/p2p-org/solana-token-list/main/src/tokens/solana.tokenlist.json"
+            ),
             cache: resolve()
         ) }
         .implements(SolanaTokensRepository.self)
         .scope(.application)
 
-        // DAppChannnel
-        register { DAppChannel() }
-            .implements(DAppChannelType.self)
-
         // QrCodeImageRender
-        register { ReceiveToken.QrCodeImageRenderImpl() }
+        register { QrCodeImageRenderImpl() }
             .implements(QrCodeImageRender.self)
 
         // Navigation provider
@@ -252,10 +268,24 @@ extension Resolver: ResolverRegistering {
 
         register { JWTTokenValidatorImpl() }
             .implements(JWTTokenValidator.self)
+
+        register { Web3(rpcURL: "https://eth-mainnet.g.alchemy.com/v2/a3NxxBPY4WUcsXnivRq-ikYKXFB67oXm") }
     }
 
     /// Session scope: Live when user is authenticated
     @MainActor private static func registerForSessionScope() {
+        register {
+            let userWalletsManager: UserWalletManager = resolve()
+
+            return WormholeService(
+                api: resolve(),
+                ethereumKeypair: userWalletsManager.wallet?.ethereumKeypair,
+                solanaKeyPair: userWalletsManager.wallet?.account,
+                errorObservable: resolve()
+            )
+        }
+        .scope(.session)
+
         // AuthenticationHandler
         register { AuthenticationHandler() }
             .implements(AuthenticationHandlerType.self)
@@ -288,7 +318,7 @@ extension Resolver: ResolverRegistering {
             SendHistoryService(provider: resolve(SendHistoryLocalProvider.self))
         }
         .scope(.session)
-        
+
         // SendViaLink
         register {
             SendViaLinkDataServiceImpl(
@@ -310,8 +340,8 @@ extension Resolver: ResolverRegistering {
             .scope(.session)
 
         // AccountObservableService
-        register { AccountsObservableServiceImpl(solanaSocket: resolve()) }
-            .implements(AccountObservableService.self)
+        register { SolananAccountsObservableServiceImpl(solanaSocket: resolve()) }
+            .implements(SolanaAccountsObservableService.self)
             .scope(.session)
 
         // TransactionHandler (new)
@@ -319,14 +349,42 @@ extension Resolver: ResolverRegistering {
             .implements(TransactionHandlerType.self)
             .scope(.session)
 
-        // SwapTransactionAnalytics
-        register { SwapTransactionAnalytics(analyticsManager: resolve(), transactionHandler: resolve()) }
-            .scope(.session)
-
         // FeeRelayer
         register { FeeRelayerSwift.APIClient(baseUrlString: FeeRelayerEndpoint.baseUrl, version: 1) }
             .implements(FeeRelayerAPIClient.self)
             .scope(.session)
+
+        // UserActionService
+        register { UserActionPersistentStorageWithUserDefault(errorObserver: resolve()) }
+            .implements(UserActionPersistentStorage.self)
+            .scope(.application)
+
+        register {
+            let userWalletManager: UserWalletManager = resolve()
+
+            return UserActionService(
+                consumers: [
+                    WormholeSendUserActionConsumer(
+                        address: userWalletManager.wallet?.account.publicKey.base58EncodedString,
+                        signer: userWalletManager.wallet?.account,
+                        solanaClient: resolve(),
+                        wormholeAPI: resolve(),
+                        relayService: resolve(),
+                        errorObserver: resolve(),
+                        persistence: resolve()
+                    ),
+                    WormholeClaimUserActionConsumer(
+                        address: userWalletManager.wallet?.ethereumKeypair.address,
+                        signer: userWalletManager.wallet?.ethereumKeypair,
+                        wormholeAPI: resolve(),
+                        ethereumTokenRepository: resolve(),
+                        errorObserver: resolve(),
+                        persistence: resolve()
+                    ),
+                ]
+            )
+        }
+        .scope(.session)
 
         register { RelayServiceImpl(
             contextManager: resolve(),
@@ -375,8 +433,37 @@ extension Resolver: ResolverRegistering {
             .scope(.session)
 
         // WalletsViewModel
-        register { WalletsViewModel() }
+        register { WalletsRepositoryImpl() }
             .implements(WalletsRepository.self)
+            .scope(.session)
+
+        register {
+            SolanaAccountsService(
+                accountStorage: resolve(),
+                solanaAPIClient: resolve(),
+                tokensService: resolve(),
+                priceService: resolve(),
+                accountObservableService: resolve(),
+                fiat: Defaults.fiat.rawValue,
+                errorObservable: resolve()
+            )
+        }
+        .scope(.session)
+
+        register { () -> EthereumAccountsService in
+            EthereumAccountsService(
+                address: resolve(UserWalletManager.self).wallet?.ethereumKeypair.address ?? "",
+                web3: resolve(),
+                ethereumTokenRepository: resolve(),
+                priceService: resolve(),
+                fiat: Defaults.fiat.rawValue,
+                errorObservable: resolve(),
+                enable: available(.ethAddressEnabled)
+            )
+        }
+        .scope(.session)
+
+        register { FavouriteAccountsDataSource() }
             .scope(.session)
 
         // SwapService
@@ -401,59 +488,6 @@ extension Resolver: ResolverRegistering {
         }
         .implements(OrcaSwapType.self)
         .scope(.session)
-
-        // RenVMSwift
-        register { RenVMSwift.RpcClient(network: Defaults.apiEndPoint.network == .mainnetBeta ? .mainnet : .testnet) }
-            .implements(RenVMRpcClientType.self)
-            .scope(.session)
-
-        register { RenVMSolanaChainProvider() }
-            .implements(RenVMSwift.ChainProvider.self)
-
-        register {
-            UserDefaultsBurnAndReleasePersistentStore(
-                userDefaultKeyForSubmitedBurnTransactions: BurnAndRelease.keyForSubmitedBurnTransaction
-            )
-        }
-        .implements(BurnAndReleasePersistentStore.self)
-
-        register {
-            BurnAndReleaseServiceImpl(
-                rpcClient: resolve(),
-                chainProvider: resolve(),
-                destinationChain: .bitcoin,
-                persistentStore: resolve(),
-                version: "1"
-            )
-        }
-        .implements(BurnAndReleaseService.self)
-
-        register {
-            UserDefaultLockAndMintServicePersistentStore(
-                userDefaultKeyForSession: LockAndMint.keyForSession,
-                userDefaultKeyForGatewayAddress: LockAndMint.keyForGatewayAddress,
-                userDefaultKeyForProcessingTransactions: LockAndMint.keyForProcessingTransactions,
-                showLog: true
-            )
-        }
-        .implements(LockAndMintServicePersistentStore.self)
-
-        register {
-            LockAndMintServiceImpl(
-                persistentStore: resolve(),
-                chainProvider: resolve(),
-                rpcClient: resolve(),
-                mintToken: .bitcoin,
-                showLog: true
-            )
-        }
-        .implements(LockAndMintService.self)
-        .scope(.session)
-
-        // RenBTCStatusService
-        register { RenBTCStatusService() }
-            .implements(RenBTCStatusServiceType.self)
-            .scope(.session)
 
         // HttpClient
         register { HttpClientImpl() }
