@@ -33,6 +33,10 @@ public struct WormholeBundle: Codable, Hashable, Equatable {
     public var signatures: [EthereumSignature]?
 
     public let fees: ClaimFees
+    
+    public let created: Date
+    
+    public let modified: Date
 
     public enum CodingKeys: String, CodingKey {
         case bundleId = "bundle_id"
@@ -44,6 +48,8 @@ public struct WormholeBundle: Codable, Hashable, Equatable {
         case transactions
         case signatures
         case fees
+        case created
+        case modified
     }
 }
 

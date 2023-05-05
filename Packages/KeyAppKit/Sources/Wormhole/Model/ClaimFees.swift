@@ -11,6 +11,8 @@ import KeyAppKitCore
 public struct ClaimFees: Codable, Hashable, Equatable {
     public let gas: TokenAmount
 
+    public let gasInToken: TokenAmount?
+
     public let arbiter: TokenAmount
 
     public let createAccount: TokenAmount?
@@ -19,10 +21,11 @@ public struct ClaimFees: Codable, Hashable, Equatable {
         case gas
         case arbiter
         case createAccount = "create_account"
+        case gasInToken = "gas_in_token"
     }
 
     public var totalInFiat: CurrencyAmount {
-        return gas.asCurrencyAmount
+        gas.asCurrencyAmount
             + arbiter.asCurrencyAmount
             + createAccount?.asCurrencyAmount
     }
