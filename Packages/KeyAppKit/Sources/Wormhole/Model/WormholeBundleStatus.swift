@@ -16,6 +16,8 @@ public struct WormholeBundleStatus: Codable, Hashable, Equatable {
     public let status: WormholeStatus
     public let compensationDeclineReason: CompensationDeclineReason?
     public let claimKey: String
+    public let created: Date
+    public let modified: Date
 
     /// Solana transaction signature
     public let signature: String
@@ -30,5 +32,7 @@ public struct WormholeBundleStatus: Codable, Hashable, Equatable {
         case compensationDeclineReason = "compensation_decline_reason"
         case claimKey = "claim_key"
         case signature
+        case created
+        case modified
     }
 }
