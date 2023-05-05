@@ -15,10 +15,12 @@ public struct WormholeBundleStatus: Codable, Hashable, Equatable {
     public let fees: ClaimFees
     public let status: WormholeStatus
     public let compensationDeclineReason: CompensationDeclineReason?
-    public let claimKey: String
     public let created: Date
     public let modified: Date
 
+    // Bridge service key
+    public let claimKey: String
+    
     /// Solana transaction signature
     public let signature: String
 

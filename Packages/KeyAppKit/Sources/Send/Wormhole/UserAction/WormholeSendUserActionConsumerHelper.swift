@@ -40,7 +40,7 @@ public extension WormholeSendUserActionConsumer {
                 do {
                     let bundleStatus = try await self?
                         .wormholeAPI
-                        .getSolanaTransferStatus(message: userAction.message)
+                        .getSolanaTransferStatus(message: userAction.id)
 
                     guard let bundleStatus else {
                         continue
@@ -48,7 +48,7 @@ public extension WormholeSendUserActionConsumer {
 
                     self?.handleInternalEvent(event: .track(bundleStatus))
                 } catch is JSONRPCError<String> {
-                    self?.handleInternalEvent(event: .sendFailure(message: userAction.message, error: Error.sendingFailure))
+                    self?.handleInternalEvent(event: .sendFailure(message: userAction.id, error: Error.sendingFailure))
                 } catch {
                     continue
                 }

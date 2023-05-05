@@ -122,7 +122,7 @@ public class WormholeSendUserActionConsumer: UserActionConsumer {
         case let .track(sendStatus):
             Task { [weak self] in
                 // Only update record
-                if var userAction = await self?.database.get(for: sendStatus.message) {
+                if var userAction = await self?.database.get(for: sendStatus.id) {
                     switch userAction.status {
                     case .processing:
                         switch sendStatus.status {
@@ -137,7 +137,7 @@ public class WormholeSendUserActionConsumer: UserActionConsumer {
                         return
                     }
 
-                    await self?.database.set(for: userAction.message, userAction)
+                    await self?.database.set(for: userAction.id, userAction)
                 }
             }
 
@@ -155,27 +155,18 @@ public class WormholeSendUserActionConsumer: UserActionConsumer {
         guard let action = action as? Action else { return }
 
         Task { [weak self] in
-            await self?.database.set(for: action.message, action)
-
-            /// Network fee in Solana network.
-            let transactionFee: CryptoAmount = [action.fees.networkFee, action.fees.bridgeFee]
-                .compactMap { $0 }
-                .map(\.asCryptoAmount)
-                .reduce(CryptoAmount(token: SolanaToken.nativeSolana), +)
-
-            /// Account creation fee in Solana network.
-            let accountCreationFee = action.fees.messageAccountRent?
-                .asCryptoAmount ?? CryptoAmount(token: SolanaToken.nativeSolana)
+            await self?.database.set(for: action.id, action)
 
             /// Preparing transaction
             guard
-                let data = Data(base64Encoded: action.transaction.transaction, options: .ignoreUnknownCharacters),
+                let transaction = action.transaction?.transaction,
+                let data = Data(base64Encoded: transaction, options: .ignoreUnknownCharacters),
                 var versionedTransaction = try? VersionedTransaction.deserialize(data: data),
                 let configs = RequestConfiguration(encoding: "base64"),
                 let signer = self?.signer
             else {
                 let error = WormholeSendUserActionError.preparingTransactionFailure
-                self?.handleInternalEvent(event: .sendFailure(message: action.message, error: error))
+                self?.handleInternalEvent(event: .sendFailure(message: action.id, error: error))
                 return
             }
 
@@ -185,20 +176,18 @@ public class WormholeSendUserActionConsumer: UserActionConsumer {
 
                 // Relay service sign transacion
                 // TODO: extract first n required signers for safety.
-                if versionedTransaction.message.value.staticAccountKeys.contains(action.relayContext.feePayerAddress) {
-                    let fullySignedTransaction = try await self?.relayService.signTransaction(
-                        transactions: [versionedTransaction],
-                        config: .init(operationType: .other)
-                    ).first
+                let fullySignedTransaction = try await self?.relayService.signTransaction(
+                    transactions: [versionedTransaction],
+                    config: .init(operationType: .other)
+                ).first
 
-                    guard let fullySignedTransaction else {
-                        let error = WormholeSendUserActionError.feeRelaySignFailure
-                        self?.handleInternalEvent(event: .sendFailure(message: action.message, error: error))
-                        return
-                    }
-
-                    versionedTransaction = fullySignedTransaction
+                guard let fullySignedTransaction else {
+                    let error = WormholeSendUserActionError.feeRelaySignFailure
+                    self?.handleInternalEvent(event: .sendFailure(message: action.id, error: error))
+                    return
                 }
+
+                versionedTransaction = fullySignedTransaction
 
                 // Submit transaction
                 let encodedTrx = try versionedTransaction.serialize().base64EncodedString()
@@ -207,7 +196,7 @@ public class WormholeSendUserActionConsumer: UserActionConsumer {
                 self?.errorObserver.handleError(error)
 
                 let error = WormholeSendUserActionError.submittingToBlockchainFailure
-                self?.handleInternalEvent(event: .sendFailure(message: action.message, error: error))
+                self?.handleInternalEvent(event: .sendFailure(message: action.id, error: error))
             }
         }
     }

@@ -318,12 +318,11 @@ class WormholeSendInputViewModel: BaseViewModel, ObservableObject {
         // Initialise user action
         let userAction = WormholeSendUserAction(
             sourceToken: input.solanaAccount.data.token,
-            price: input.solanaAccount.price,
             recipient: input.recipient,
             amount: input.amount,
+            currencyAmount: try? input.amount.toFiatAmountIfPresent(price: input.solanaAccount.price),
             fees: output.fees,
-            transaction: transactions,
-            relayContext: relayContext
+            transaction: transactions
         )
 
         // Execute user action
