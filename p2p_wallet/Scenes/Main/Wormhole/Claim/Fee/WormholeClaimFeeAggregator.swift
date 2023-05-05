@@ -17,7 +17,7 @@ struct WormholeClaimFee {
 
     let receive: Amount
 
-    let networkFee: Amount
+    let networkFee: Amount?
 
     let accountCreationFee: Amount?
 
@@ -50,7 +50,7 @@ class WormholeClaimFeeAggregator: DataAggregator {
             false
         )
 
-        let networkFee: WormholeClaimFee.Amount
+        let networkFee: WormholeClaimFee.Amount?
         let accountCreationFee: WormholeClaimFee.Amount?
         let wormholeBridgeAndTrxFee: WormholeClaimFee.Amount
 
@@ -61,11 +61,15 @@ class WormholeClaimFeeAggregator: DataAggregator {
             wormholeBridgeAndTrxFee = (L10n.paidByKeyApp, L10n.free, true)
         } else {
             // Network fee
-            networkFee = (
-                cryptoFormatter.string(amount: bundle.fees.gas),
-                currencyFormatter.string(amount: bundle.fees.gas),
-                false
-            )
+            if let gasInToken = bundle.fees.gasInToken {
+                networkFee = (
+                    cryptoFormatter.string(amount: gasInToken),
+                    currencyFormatter.string(amount: gasInToken),
+                    false
+                )
+            } else {
+                networkFee = nil
+            }
 
             // Create accounts fee
             if let createAccount = bundle.fees.createAccount {
