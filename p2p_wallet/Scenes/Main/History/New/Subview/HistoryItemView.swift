@@ -38,22 +38,13 @@ struct HistoryItemView: View {
         } label: {
             HStack {
                 HistoryIconView(icon: item.icon)
-                VStack(spacing: 4) {
-                    HStack(spacing: 5) {
-                        Text(item.title)
-                            .foregroundColor(Color(Asset.Colors.night.color))
-                            .fontWeight(.semibold)
-                            .apply(style: .text2)
-                            .lineLimit(2)
-                            .multilineTextAlignment(.leading)
-                        Spacer()
-                        Text(item.detail.1)
-                            .fontWeight(.semibold)
-                            .apply(style: .text2)
-                            .foregroundColor(detailColor)
-                            .lineLimit(2)
-                            .multilineTextAlignment(.trailing)
-                    }
+                VStack(alignment: .leading, spacing: 4) {
+                    Text(item.title)
+                        .foregroundColor(Color(Asset.Colors.night.color))
+                        .fontWeight(.semibold)
+                        .apply(style: .text2)
+                        .lineLimit(2)
+                        .multilineTextAlignment(.leading)
 
                     HStack(spacing: 4) {
                         switch item.status {
@@ -75,11 +66,24 @@ struct HistoryItemView: View {
                         Text(item.subtitle)
                             .foregroundColor(Color(Asset.Colors.mountain.color))
                             .apply(style: .label1)
-                        Spacer()
-                        Text(item.subdetail)
-                            .foregroundColor(Color(Asset.Colors.mountain.color))
-                            .apply(style: .label1)
                     }
+                }
+
+                Spacer()
+
+                VStack(alignment: .trailing, spacing: 4) {
+                    if !item.detail.1.isEmpty {
+                        Text(item.detail.1)
+                            .fontWeight(.semibold)
+                            .apply(style: .text2)
+                            .foregroundColor(detailColor)
+                            .lineLimit(2)
+                            .multilineTextAlignment(.trailing)
+                    }
+
+                    Text(item.subdetail)
+                        .foregroundColor(Color(Asset.Colors.mountain.color))
+                        .apply(style: .label1)
                 }
             }
             .padding(.horizontal, 16)

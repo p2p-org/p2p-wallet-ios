@@ -45,7 +45,7 @@ struct SendTransactionStatusView: View {
         VStack(alignment: .center, spacing: 0) {
             CoinLogoImageViewRepresentable(
                 size: 66,
-                token: viewModel.token
+                args: .token(viewModel.token)
             )
             .frame(width: 66, height: 66)
             .cornerRadius(radius: 66 / 2, corners: .allCorners)

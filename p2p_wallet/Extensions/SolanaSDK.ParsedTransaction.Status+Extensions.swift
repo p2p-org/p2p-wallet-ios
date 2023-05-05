@@ -22,15 +22,4 @@ extension ParsedTransaction.Status {
             return L10n.error.uppercaseFirst
         }
     }
-
-    var indicatorColor: UIColor {
-        switch self {
-        case .requesting, .processing:
-            return .alertOrange
-        case .confirmed:
-            return .greenConfirmed
-        case .error:
-            return .alert
-        }
-    }
 }

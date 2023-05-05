@@ -5,6 +5,7 @@
 //  Created by Giang Long Tran on 31.01.2023.
 //
 
+import Combine
 import Foundation
 import KeyAppUI
 import Resolver
@@ -12,11 +13,10 @@ import Sell
 import Send
 import SolanaSwift
 import SwiftUI
-import Combine
 
 class NewHistoryCoordinator: SmartCoordinator<Void> {
     var viewModel: HistoryViewModel!
-    
+
     override func build() -> UIViewController {
         viewModel = HistoryViewModel()
 
@@ -41,52 +41,69 @@ class NewHistoryCoordinator: SmartCoordinator<Void> {
 
     private func openAction(action: NewHistoryAction) {
         switch action {
+        case let .openSwap(from, to):
+            openSwap(wallet: from, destination: to)
+
         case let .openParsedTransaction(trx):
             let coordinator = TransactionDetailCoordinator(
                 viewModel: .init(parsedTransaction: trx),
-                presentingViewController: self.presentation.presentingViewController
+                presentingViewController: presentation.presentingViewController
             )
 
-            self.coordinate(to: coordinator)
+            coordinate(to: coordinator)
                 .sink { result in
                     print(result)
                 }
-                .store(in: &self.subscriptions)
+                .store(in: &subscriptions)
 
         case let .openHistoryTransaction(trx):
             let coordinator = TransactionDetailCoordinator(
                 viewModel: .init(historyTransaction: trx),
-                presentingViewController: self.presentation.presentingViewController
+                presentingViewController: presentation.presentingViewController
             )
 
-            self.coordinate(to: coordinator)
+            coordinate(to: coordinator)
                 .sink { _ in }
-                .store(in: &self.subscriptions)
+                .store(in: &subscriptions)
 
         case let .openSellTransaction(trx):
-            self.openSellTransactionDetail(trx)
+            openSellTransactionDetail(trx)
 
         case let .openPendingTransaction(trx):
             let coordinator = TransactionDetailCoordinator(
                 viewModel: .init(pendingTransaction: trx),
-                presentingViewController: self.presentation.presentingViewController
+                presentingViewController: presentation.presentingViewController
             )
 
-            self.coordinate(to: coordinator)
+            coordinate(to: coordinator)
                 .sink { result in
                     print(result)
                 }
-                .store(in: &self.subscriptions)
+                .store(in: &subscriptions)
 
         case .openBuy:
-            self.openBuy()
+            openBuy()
+
         case .openReceive:
-            self.openReceive()
+            openReceive()
+
         case .openSentViaLinkHistoryView:
             openSentViaLinkHistoryView()
+
+        case let .openUserAction(userAction):
+            let coordinator = TransactionDetailCoordinator(
+                viewModel: .init(userAction: userAction),
+                presentingViewController: presentation.presentingViewController
+            )
+
+            coordinate(to: coordinator)
+                .sink { result in
+                    print(result)
+                }
+                .store(in: &subscriptions)
         }
     }
-    
+
     private func openSellTransactionDetail(_ transaction: SellDataServiceTransaction) {
         let strategy: SellTransactionDetailsViewModel.Strategy
         switch transaction.status {
@@ -107,24 +124,23 @@ class NewHistoryCoordinator: SmartCoordinator<Void> {
                 transaction: transaction,
                 fiat: .usd,
                 date: transaction.createdAt ?? Date()
-            )
-        )
-        .sink { [weak self] result in
-            guard let self else { return }
-            switch result {
-            case .send:
-                self.presentation.presentingViewController.presentedViewController?.dismiss(animated: true) {
-                    self.openSend(transaction)
+            ))
+            .sink { [weak self] result in
+                guard let self else { return }
+                switch result {
+                case .send:
+                    self.presentation.presentingViewController.presentedViewController?.dismiss(animated: true) {
+                        self.openSend(transaction)
+                    }
+                case .tryAgain:
+                    self.presentation.presentingViewController.presentedViewController?.dismiss(animated: true) {
+                        self.openSell(transaction)
+                    }
+                default:
+                    break
                 }
-            case .tryAgain:
-                self.presentation.presentingViewController.presentedViewController?.dismiss(animated: true) {
-                    self.openSell(transaction)
-                }
-            default:
-                break
             }
-        }
-        .store(in: &subscriptions)
+            .store(in: &subscriptions)
     }
 
     private func openSell(_ transaction: SellDataServiceTransaction) {
@@ -164,20 +180,48 @@ class NewHistoryCoordinator: SmartCoordinator<Void> {
     }
 
     private func openReceive() {
-        let userWalletManager: UserWalletManager = Resolver.resolve()
-        guard let account = userWalletManager.wallet?.account else { return }
-
-        let vm = ReceiveToken.SceneModel(solanaPubkey: account.publicKey)
-        let vc = ReceiveToken.ViewController(viewModel: vm, isOpeningFromToken: true)
-        let navigation = UINavigationController(rootViewController: vc)
-        presentation.presentingViewController.present(navigation, animated: true)
+        guard let nc = presentation.presentingViewController as? UINavigationController
+        else {
+            return
+        }
+        
+        let coordinator = ReceiveCoordinator(
+            network: .solana(tokenSymbol: "SOL", tokenImage: .image(.solanaIcon)),
+            presentation: SmartCoordinatorPushPresentation(nc)
+        )
+        
+        coordinate(to: coordinator)
+            .sink { _ in }
+            .store(in: &subscriptions)
     }
 
-    private func openBuy() {
+    func openSwap(wallet: Wallet?, destination: Wallet? = nil) {
+        guard let navigationController = presentation.presentingViewController as? UINavigationController else {
+            return
+        }
+        
+        let coordinator = JupiterSwapCoordinator(
+            navigationController: navigationController,
+            params: .init(
+                dismissAfterCompletion: true,
+                openKeyboardOnStart: true,
+                source: .tapToken,
+                preChosenWallet: wallet,
+                destinationWallet: destination,
+                hideTabBar: true
+            )
+        )
+
+        coordinate(to: coordinator)
+            .sink { _ in }
+            .store(in: &subscriptions)
+    }
+
+    func openBuy() {
         let coordinator = BuyCoordinator(
             context: .fromToken,
             defaultToken: .nativeSolana,
-            presentingViewController: self.presentation.presentingViewController,
+            presentingViewController: presentation.presentingViewController,
             shouldPush: false
         )
 
@@ -185,14 +229,16 @@ class NewHistoryCoordinator: SmartCoordinator<Void> {
             .sink { _ in }
             .store(in: &subscriptions)
     }
-    
+
     private func openSentViaLinkHistoryView() {
         let coordinator = SentViaLinkHistoryCoordinator(presentation: SmartCoordinatorPushPresentation(
             presentation.presentingViewController as! UINavigationController
         ))
-        
+
         coordinate(to: coordinator)
             .sink { _ in }
             .store(in: &subscriptions)
     }
+
+    func openUserAction() {}
 }

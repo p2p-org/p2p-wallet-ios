@@ -54,14 +54,6 @@ extension RemoteConfig {
     }
 }
 
-// MARK: - Token list parser
-
-extension RemoteConfig {
-    var tokenListURL: String? {
-        configValue(forKey: "solana_token_list_json").nonEmptyOrNilStringValue
-    }
-}
-
 // MARK: - Modifier
 
 private extension RemoteConfigValue {

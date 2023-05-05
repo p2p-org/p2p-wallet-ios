@@ -5,27 +5,28 @@
 //  Created by Ivan on 16.11.2022.
 //
 
+import AnalyticsManager
 import Combine
 import Foundation
-import SolanaSwift
+import KeyAppBusiness
 import Resolver
-import AnalyticsManager
 import Sell
+import SolanaSwift
 
 final class TabBarCoordinator: Coordinator<Void> {
-    
     // MARK: - Dependencies
+
     @Injected private var userWalletManager: UserWalletManager
     @Injected private var walletsRepository: WalletsRepository
     @Injected private var analyticsManager: AnalyticsManager
     @Injected private var sellDataService: any SellDataService
 
     // MARK: - Properties
+
     private unowned var window: UIWindow!
     private let tabBarViewModel: TabBarViewModel
     private let tabBarController: TabBarController
     private let closeSubject = PassthroughSubject<Void, Never>()
-    
     private var sendStatusCoordinator: SendTransactionStatusCoordinator?
     private var jupiterSwapTabCoordinator: JupiterSwapCoordinator?
 
@@ -34,7 +35,7 @@ final class TabBarCoordinator: Coordinator<Void> {
     init(
         window: UIWindow,
         authenticateWhenAppears: Bool,
-        appEventHandler: AppEventHandlerType = Resolver.resolve()
+        appEventHandler _: AppEventHandlerType = Resolver.resolve()
     ) {
         self.window = window
         tabBarViewModel = TabBarViewModel()
@@ -45,9 +46,9 @@ final class TabBarCoordinator: Coordinator<Void> {
         super.init()
         bind()
     }
-    
+
     // MARK: - Life cycle
-    
+
     /// Start coordinator
     override func start() -> AnyPublisher<Void, Never> {
         // set up tabs
@@ -66,22 +67,24 @@ final class TabBarCoordinator: Coordinator<Void> {
             ],
             animated: false
         )
-        
+
         // set up tab items
         tabBarController.setupTabs()
 
         // configure window
         window.rootViewController?.view.hideLoadingIndicatorView()
         window.animate(newRootViewController: tabBarController)
-        
+
         // re-register for push notification if not yet registered
         if Defaults.didSetEnableNotifications && Defaults.apnsDeviceToken == nil {
             UIApplication.shared.registerForRemoteNotifications()
         }
 
+        bind()
+
         return closeSubject.prefix(1).eraseToAnyPublisher()
     }
-    
+
     private func bind() {
         tabBarViewModel.moveToSendViaLinkClaim
             .sink { [weak self] url in
@@ -110,27 +113,27 @@ final class TabBarCoordinator: Coordinator<Void> {
         // create first active tab Home
         let homeNavigation = UINavigationController()
         let homeCoordinator = HomeCoordinator(navigationController: homeNavigation, tabBarController: tabBarController)
-        
+
         // coordinate to homeCoordinator
         coordinate(to: homeCoordinator)
             .sink(receiveValue: {})
             .store(in: &subscriptions)
-        
+
         // navigate to Earn from homeCoordinator
         homeCoordinator.navigation
-            .filter {$0 == .earn}
+            .filter { $0 == .earn }
             .sink(receiveValue: { [unowned self] _ in
                 tabBarController.changeItem(to: .invest)
             })
             .store(in: &subscriptions)
-        
+
         // scroll to top when home tab clicked twice
         tabBarController.homeTabClickedTwicely
             .sink(receiveValue: { [weak homeCoordinator] in
                 homeCoordinator?.scrollToTop()
             })
             .store(in: &subscriptions)
-        
+
         // solen tutorial clicked
         tabBarController.solendTutorialClicked
             .sink(receiveValue: { [weak self] in
@@ -145,11 +148,11 @@ final class TabBarCoordinator: Coordinator<Void> {
             .store(in: &subscriptions)
         return homeNavigation
     }
-    
+
     /// Set up Solend, history or feedback scene
     private func setUpSolendSwapOrHistory() -> (UIViewController, UIViewController) {
         let solendOrSwapNavigation = UINavigationController()
-        
+
         if available(.investSolendFeature) {
             let solendCoordinator = SolendCoordinator(navigationController: solendOrSwapNavigation)
             coordinate(to: solendCoordinator)
@@ -158,30 +161,20 @@ final class TabBarCoordinator: Coordinator<Void> {
         } else {
             routeToSwap(nc: solendOrSwapNavigation, hidesBottomBarWhenPushed: false, source: .tapMain)
         }
-        
+
         let historyNavigation = UINavigationController()
+        historyNavigation.navigationBar.prefersLargeTitles = true
         
-        if available(.historyServiceEnabled) {
-            historyNavigation.navigationBar.prefersLargeTitles = true
-            
-            let historyCoordinator = NewHistoryCoordinator(
-                presentation: SmartCoordinatorPushPresentation(historyNavigation)
-            )
-            coordinate(to: historyCoordinator)
-                .sink(receiveValue: { _ in })
-                .store(in: &subscriptions)
-        } else {
-            let historyCoordinator = HistoryCoordinator(
-                presentation: SmartCoordinatorPushPresentation(historyNavigation)
-            )
-            coordinate(to: historyCoordinator)
-                .sink(receiveValue: { _ in })
-                .store(in: &subscriptions)
-        }
+        let historyCoordinator = NewHistoryCoordinator(
+            presentation: SmartCoordinatorPushPresentation(historyNavigation)
+        )
+        coordinate(to: historyCoordinator)
+            .sink(receiveValue: { _ in })
+            .store(in: &subscriptions)
 
         return (solendOrSwapNavigation, historyNavigation)
     }
-    
+
     /// Set up Settings scene
     private func setUpSettings() -> UIViewController {
         let settingsNavigation = UINavigationController()
@@ -191,7 +184,7 @@ final class TabBarCoordinator: Coordinator<Void> {
             .store(in: &subscriptions)
         return settingsNavigation
     }
-    
+
     /// Listen to Actions Button
     private func listenToActionsButton() {
         tabBarController.middleButtonClicked
@@ -226,9 +219,9 @@ final class TabBarCoordinator: Coordinator<Void> {
             }
             .store(in: &subscriptions)
     }
-    
+
     // MARK: - Helpers
-    
+
     /// Navigate to SolendTutorial scene
     private func navigateToSolendTutorial() {
         var view = SolendTutorialView(viewModel: .init())
@@ -239,7 +232,7 @@ final class TabBarCoordinator: Coordinator<Void> {
         vc.modalPresentationStyle = .fullScreen
         tabBarController.present(vc, animated: true)
     }
-    
+
     /// Handle actions given by Actions button
     private func handleAction(_ action: ActionsView.Action) {
         guard
@@ -256,13 +249,21 @@ final class TabBarCoordinator: Coordinator<Void> {
                 .sink(receiveValue: {})
                 .store(in: &subscriptions)
         case .receive:
-            break
+            if available(.ethAddressEnabled) {
+                let coordinator =
+                    SupportedTokensCoordinator(presentation: SmartCoordinatorPushPresentation(navigationController))
+                coordinate(to: coordinator).sink { _ in }.store(in: &subscriptions)
+            } else {
+                let coordinator = ReceiveCoordinator(
+                    network: .solana(tokenSymbol: "SOL", tokenImage: .image(.solanaIcon)),
+                    presentation: SmartCoordinatorPushPresentation(navigationController)
+                )
+                coordinate(to: coordinator).sink { _ in }.store(in: &subscriptions)
+            }
         case .swap:
             routeToSwap(nc: navigationController, source: .actionPanel)
         case .send:
-            let fiatAmount = walletsRepository.getWallets().reduce(0) { $0 + $1.amountInCurrentFiat }
-            let withTokens = fiatAmount > 0
-            if withTokens {
+            if walletsRepository.getWallets().count > 0 {
                 analyticsManager.log(event: .sendViewed(lastScreen: "main_screen"))
                 let sendCoordinator = SendCoordinator(
                     rootViewController: navigationController,
@@ -276,8 +277,14 @@ final class TabBarCoordinator: Coordinator<Void> {
                         case let .sent(model):
                             navigationController.popToRootViewController(animated: true)
                             self?.routeToSendTransactionStatus(model: model)
+
+                        case let .wormhole(userAction):
+                            navigationController.popToRootViewController(animated: true)
+                            self?.showUserAction(userAction: userAction)
+
                         case .sentViaLink:
                             navigationController.popToRootViewController(animated: true)
+
                         case .cancelled:
                             break
                         }
@@ -308,38 +315,53 @@ final class TabBarCoordinator: Coordinator<Void> {
 
     private func routeToSendTransactionStatus(model: SendTransaction) {
         sendStatusCoordinator = SendTransactionStatusCoordinator(parentController: tabBarController, transaction: model)
-        
+
         sendStatusCoordinator?
             .start()
-            .sink(receiveValue: { })
+            .sink(receiveValue: {})
             .store(in: &subscriptions)
     }
 
-    private func routeToSwap(nc: UINavigationController, hidesBottomBarWhenPushed: Bool = true, source: JupiterSwapSource) {
-        if available(.jupiterSwapEnabled) {
-            let swapCoordinator = JupiterSwapCoordinator(
-                navigationController: nc,
-                params: JupiterSwapParameters(
-                    dismissAfterCompletion: source != .tapMain,
-                    openKeyboardOnStart: source != .tapMain,
-                    source: source,
-                    hideTabBar: hidesBottomBarWhenPushed
-                )
+    private func showTransaction(trx: RawTransactionType) {
+        coordinate(to: TransactionDetailCoordinator(
+            viewModel: .init(submit: trx),
+            presentingViewController: tabBarController
+        ))
+        .sink(receiveValue: { _ in })
+        .store(in: &subscriptions)
+    }
+
+    private func showUserAction(userAction: any UserAction) {
+        coordinate(to: TransactionDetailCoordinator(
+            viewModel: .init(userAction: userAction),
+            presentingViewController: tabBarController
+        ))
+        .sink(receiveValue: { _ in })
+        .store(in: &subscriptions)
+    }
+
+    private func routeToSwap(
+        nc: UINavigationController,
+        hidesBottomBarWhenPushed: Bool = true,
+        source: JupiterSwapSource
+    ) {
+        let swapCoordinator = JupiterSwapCoordinator(
+            navigationController: nc,
+            params: JupiterSwapParameters(
+                dismissAfterCompletion: source != .tapMain,
+                openKeyboardOnStart: source != .tapMain,
+                source: source,
+                hideTabBar: hidesBottomBarWhenPushed
             )
-            if source == .tapMain {
-                jupiterSwapTabCoordinator = swapCoordinator
-            }
-            coordinate(to: swapCoordinator)
-                .sink(receiveValue: { [weak self] _ in
-                    guard self?.tabBarController.selectedIndex != TabItem.wallet.rawValue else { return }
-                    self?.tabBarController.changeItem(to: .wallet)
-                })
-                .store(in: &subscriptions)
-        } else {
-            let swapCoordinator = SwapCoordinator(navigationController: nc, initialWallet: nil, hidesBottomBarWhenPushed: hidesBottomBarWhenPushed)
-            coordinate(to: swapCoordinator)
-                .sink(receiveValue: { _ in })
-                .store(in: &subscriptions)
+        )
+        if source == .tapMain {
+            jupiterSwapTabCoordinator = swapCoordinator
         }
+        coordinate(to: swapCoordinator)
+            .sink(receiveValue: { [weak self] _ in
+                guard self?.tabBarController.selectedIndex != TabItem.wallet.rawValue else { return }
+                self?.tabBarController.changeItem(to: .wallet)
+            })
+            .store(in: &subscriptions)
     }
 }

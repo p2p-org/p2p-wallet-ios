@@ -11,10 +11,10 @@ class LoggerSwiftLogger: LogManagerLogger {
 
     func log(event: String, logLevel: LogLevel, data: String?) {
         queue.async { [unowned self] in
-            LoggerSwift.Logger.log(
-                event: mapEventLogLeverToLoggerSwiftEvent(logLevel),
-                message: event + " " + (data ?? "")
-            )
+//            LoggerSwift.Logger.log(
+//                event: mapEventLogLeverToLoggerSwiftEvent(logLevel),
+//                message: event + " " + (data ?? "")
+//            )
         }
     }
     

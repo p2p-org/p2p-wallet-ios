@@ -17,11 +17,6 @@ final class AppDelegateProxyService: NSObject, UIApplicationDelegate {
             DeeplinkAppDelegateService(),
             HistoryAppdelegateService()
         ]
-        #if !RELEASE
-            services.append(contentsOf: [
-                DebugAppDelegateService(),
-            ])
-        #endif
         serviceAppDelegates = services.compactMap { $0 }
     }
 
