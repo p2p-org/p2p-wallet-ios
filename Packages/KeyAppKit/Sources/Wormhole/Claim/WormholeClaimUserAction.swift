@@ -88,8 +88,8 @@ public struct WormholeClaimUserAction: UserAction {
             internalState = .ready
         }
 
-        createdDate = Date()
-        updatedDate = createdDate
+        createdDate = bundleStatus.created
+        updatedDate = bundleStatus.modified
 
         self.token = token
         amountInCrypto = bundleStatus.resultAmount.asCryptoAmount

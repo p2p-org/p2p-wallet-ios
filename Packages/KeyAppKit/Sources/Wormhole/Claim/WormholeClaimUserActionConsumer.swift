@@ -143,13 +143,6 @@ public class WormholeClaimUserActionConsumer: UserActionConsumer {
                     await self?.database.set(for: userAction.bundleID, userAction)
                 } else {
                     // Track new pending claimings that wasn't initialed by user's device.
-                    switch bundleStatus.status {
-                    case .pending, .inProgress:
-                        break
-                    default:
-                        return
-                    }
-
                     guard let ethereumTokenRepository = self?.ethereumTokenRepository else { return }
 
                     // Convert to Ethereum token.
