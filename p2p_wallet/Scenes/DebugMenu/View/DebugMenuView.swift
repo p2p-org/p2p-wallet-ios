@@ -23,7 +23,6 @@ struct DebugMenuView: View {
     var body: some View {
         NavigationView {
             List {
-                Toggle("Network Logger", isOn: $viewModel.networkLoggerVisible)
                 Section(header: Text("Feature Toggles")) {
                     ForEach(0 ..< viewModel.features.count, id: \.self) { index in
                         Toggle(viewModel.features[index].title, isOn: $viewModel.features[index].isOn)
@@ -39,10 +38,6 @@ struct DebugMenuView: View {
                     Toggle("Prefer direct swap", isOn: $globalAppState.preferDirectSwap)
                     Button {
                         Task {
-                            #if DEBUG
-                                showDebugger(false)
-                            #endif
-
                             ResolverScope.session.reset()
                             try await Resolver.resolve(UserWalletManager.self).refresh()
 
@@ -55,10 +50,6 @@ struct DebugMenuView: View {
                 Section(header: Text("Fee relayer")) {
                     Toggle("Disable free transaction", isOn: $feeRelayerConfig.disableFeeTransaction)
                         .valueChanged(value: feeRelayerConfig.disableFeeTransaction) { _ in
-                            #if DEBUG
-                                showDebugger(false)
-                            #endif
-
                             let app: AppEventHandlerType = Resolver.resolve()
                             app.delegate?.refresh()
                         }

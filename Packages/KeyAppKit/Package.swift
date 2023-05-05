@@ -1,4 +1,4 @@
-// swift-tools-version:5.5
+// swift-tools-version:5.7
 // The swift-tools-version declares the minimum version of Swift required to build this package.
 
 import PackageDescription
@@ -111,12 +111,22 @@ let package = Package(
         .package(url: "https://github.com/p2p-org/FeeRelayerSwift", branch: "master"),
         .package(url: "https://github.com/krzyzanowskim/CryptoSwift.git", .upToNextMajor(from: "1.6.0")),
         .package(url: "https://github.com/Boilertalk/Web3.swift.git", from: "0.6.0"),
-        .package(url: "https://github.com/trustwallet/wallet-core", branch: "master"),
+        // .package(url: "https://github.com/trustwallet/wallet-core", branch: "master"),
         .package(url: "https://github.com/attaswift/BigInt.git", from: "5.3.0"),
         .package(url: "https://github.com/p2p-org/BigDecimal.git", branch: "main"),
         .package(url: "https://github.com/bigearsenal/LoggerSwift.git", branch: "master"),
     ],
     targets: [
+        .binaryTarget(
+            name: "WalletCore",
+            path: "Frameworks/WalletCore.xcframework.zip"
+        ),
+
+        .binaryTarget(
+            name: "XCSwiftProtobuf",
+            path: "Frameworks/SwiftProtobuf.xcframework.zip"
+        ),
+
         // Cache
         .target(name: "Cache"),
 
@@ -293,8 +303,6 @@ let package = Package(
                 .product(name: "Web3", package: "Web3.swift"),
                 .product(name: "Web3ContractABI", package: "Web3.swift"),
                 .product(name: "SolanaSwift", package: "solana-swift"),
-                .product(name: "WalletCore", package: "wallet-core"),
-                .product(name: "SwiftProtobuf", package: "wallet-core"),
                 .product(name: "FeeRelayerSwift", package: "FeeRelayerSwift"),
             ]
         ),
@@ -317,11 +325,10 @@ let package = Package(
                 "KeyAppKitCore",
                 "Cache",
                 "SolanaPricesAPIs",
+                "WalletCore",
                 .product(name: "SolanaSwift", package: "solana-swift"),
                 .product(name: "Web3", package: "Web3.swift"),
                 .product(name: "Web3ContractABI", package: "Web3.swift"),
-                .product(name: "WalletCore", package: "wallet-core"),
-                .product(name: "SwiftProtobuf", package: "wallet-core"),
             ]
         ),
         .testTarget(
@@ -334,13 +341,14 @@ let package = Package(
         .target(
             name: "KeyAppKitCore",
             dependencies: [
+                "WalletCore",
+                "XCSwiftProtobuf",
                 .product(name: "SolanaSwift", package: "solana-swift"),
                 .product(name: "BigInt", package: "BigInt"),
                 .product(name: "Web3", package: "Web3.swift"),
                 .product(name: "Web3ContractABI", package: "Web3.swift"),
-                .product(name: "WalletCore", package: "wallet-core"),
                 .product(name: "BigDecimal", package: "BigDecimal"),
-                .product(name: "LoggerSwift", package: "LoggerSwift")
+                .product(name: "LoggerSwift", package: "LoggerSwift"),
             ]
         ),
 

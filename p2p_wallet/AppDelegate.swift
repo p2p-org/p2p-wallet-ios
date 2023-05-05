@@ -15,7 +15,6 @@ import Lokalise
 import Resolver
 import Sentry
 import SolanaSwift
-import SwiftNotificationCenter
 @_exported import SwiftyUserDefaults
 import UIKit
 
