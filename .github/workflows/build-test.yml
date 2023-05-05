@@ -51,15 +51,15 @@ jobs:
           curl -o ./p2p_wallet/Config.xcconfig ${{ secrets.XCCONFIG_URL }}
         shell: bash
 
-      - name: Ensure DerivedData folder
-        run: mkdir -p /Users/runner/Library/Developer/Xcode/DerivedData
+      - name: Ensure Cache folder
+        run: mkdir -p /Users/runner/Library/Caches/org.swift.swiftpm/
 
       - uses: actions/cache@v3
         with:
-          path: /Users/runner/Library/Developer/Xcode/DerivedData/**/SourcePackages/checkouts
-          key: ${{ runner.os }}-spm-${{ hashFiles('**/Package.resolved') }}
+          path: /Users/runner/Library/Caches/org.swift.swiftpm/
+          key: ${{ runner.os }}-spmc-${{ hashFiles('**/Package.resolved') }}
           restore-keys: |
-            ${{ runner.os }}-spm-
+            ${{ runner.os }}-spmc-
 
       - name: Install project
         run: |
