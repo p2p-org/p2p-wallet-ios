@@ -32,6 +32,7 @@ final class ChooseItemViewModel: BaseViewModel, ObservableObject {
 private extension ChooseItemViewModel {
     func bind() {
         service.state
+            .receive(on: DispatchQueue.main)
             .sink { [weak self] state in
                 guard let self else { return }
                 switch state.status {
