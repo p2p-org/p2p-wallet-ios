@@ -5,6 +5,7 @@ import UIKit
 import Send
 import Resolver
 import Sell
+import KeyAppBusiness
 
 enum SellPendingCoordinatorResult {
     case transactionRemoved
@@ -15,9 +16,8 @@ enum SellPendingCoordinatorResult {
 
 final class SellPendingCoordinator: Coordinator<SellPendingCoordinatorResult> {
     
-    // MARK: - Dependencies
-
-    @Injected private var walletsRepository: WalletsRepository
+    // Dependencies
+    @Injected private var accountsService: SolanaAccountsService
     
     // MARK: - Properties
     
@@ -75,7 +75,7 @@ final class SellPendingCoordinator: Coordinator<SellPendingCoordinatorResult> {
                 coordinate(to:
                     SendCoordinator(
                         rootViewController: navigationController,
-                        preChosenWallet: walletsRepository.nativeWallet,
+                        preChosenWallet: accountsService.nativeWallet,
                         preChosenRecipient: Recipient(
                             address: transaction.depositWallet,
                             category: .solanaAddress,

@@ -14,10 +14,10 @@ import Sell
 import SolanaSwift
 
 final class TabBarCoordinator: Coordinator<Void> {
-    // MARK: - Dependencies
-
+    
+    // Dependencies
     @Injected private var userWalletManager: UserWalletManager
-    @Injected private var walletsRepository: WalletsRepository
+    @Injected private var accountsService: SolanaAccountsService
     @Injected private var analyticsManager: AnalyticsManager
     @Injected private var sellDataService: any SellDataService
 
@@ -90,7 +90,7 @@ final class TabBarCoordinator: Coordinator<Void> {
             .sink { [weak self] url in
                 guard let self = self else { return }
                 
-                UIApplication.dismissCustomPresentedViewController() {
+                UIApplication.dismissCustomPresentedViewController {
                     let claimCoordinator = ReceiveFundsViaLinkCoordinator(
                         presentingViewController: UIApplication.topmostViewController() ?? self.tabBarController,
                         url: url
@@ -263,7 +263,7 @@ final class TabBarCoordinator: Coordinator<Void> {
         case .swap:
             routeToSwap(nc: navigationController, source: .actionPanel)
         case .send:
-            if walletsRepository.getWallets().count > 0 {
+            if accountsService.state.value.map(\.data).count > 0 {
                 analyticsManager.log(event: .sendViewed(lastScreen: "main_screen"))
                 let sendCoordinator = SendCoordinator(
                     rootViewController: navigationController,

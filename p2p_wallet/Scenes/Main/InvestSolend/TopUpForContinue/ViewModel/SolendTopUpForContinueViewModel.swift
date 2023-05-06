@@ -10,6 +10,7 @@ import Foundation
 import Resolver
 import SolanaSwift
 import Solend
+import KeyAppBusiness
 
 class SolendTopUpForContinueViewModel: ObservableObject {
     private var subscriptions = Set<AnyCancellable>()
@@ -70,7 +71,7 @@ class SolendTopUpForContinueViewModel: ObservableObject {
     }
 
     func swapOrReceiveClicked() {
-        let walletsRepository: WalletsRepository = Resolver.resolve()
+        let walletsRepository: SolanaAccountsService = Resolver.resolve()
         
         if withoutAnyTokens {
             guard let key = try? PublicKey(string: walletsRepository.nativeWallet?.pubkey) else { return }

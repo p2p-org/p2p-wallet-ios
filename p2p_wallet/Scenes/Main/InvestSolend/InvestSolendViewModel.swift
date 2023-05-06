@@ -26,9 +26,9 @@ enum InvestSolendError {
 }
 
 @MainActor
-class InvestSolendViewModel: ObservableObject {
-    // MARK: - Services
-
+final class InvestSolendViewModel: ObservableObject {
+    
+    // Dependencies
     @Injected private var notificationService: NotificationService
     let dataService: SolendDataService
     let actionService: SolendActionService

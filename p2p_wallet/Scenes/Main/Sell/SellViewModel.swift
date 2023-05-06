@@ -25,10 +25,9 @@ enum SellViewModelInputError: Error, Equatable {
 private let decimals = 2
 
 @MainActor
-class SellViewModel: BaseViewModel, ObservableObject {
+final class SellViewModel: BaseViewModel, ObservableObject {
 
-    // MARK: - Dependencies
-
+    // Dependencies
     @Injected private var walletRepository: WalletsRepository
     @Injected private var dataService: any SellDataService
     @Injected private var actionService: any SellActionService

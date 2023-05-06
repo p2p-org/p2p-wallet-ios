@@ -157,16 +157,6 @@ public class WormholeSendUserActionConsumer: UserActionConsumer {
         Task { [weak self] in
             await self?.database.set(for: action.message, action)
 
-            /// Network fee in Solana network.
-            let transactionFee: CryptoAmount = [action.fees.networkFee, action.fees.bridgeFee]
-                .compactMap { $0 }
-                .map(\.asCryptoAmount)
-                .reduce(CryptoAmount(token: SolanaToken.nativeSolana), +)
-
-            /// Account creation fee in Solana network.
-            let accountCreationFee = action.fees.messageAccountRent?
-                .asCryptoAmount ?? CryptoAmount(token: SolanaToken.nativeSolana)
-
             /// Preparing transaction
             guard
                 let data = Data(base64Encoded: action.transaction.transaction, options: .ignoreUnknownCharacters),

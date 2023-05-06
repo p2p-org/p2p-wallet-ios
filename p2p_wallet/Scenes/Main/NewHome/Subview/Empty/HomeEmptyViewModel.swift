@@ -18,7 +18,7 @@ final class HomeEmptyViewModel: BaseViewModel, ObservableObject {
 
     @Injected private var analyticsManager: AnalyticsManager
     @Injected private var walletsRepository: WalletsRepository
-    @Injected private var pricesService: PricesServiceType
+    @Injected private var pricesService: PricesService
     @Injected private var solanaAccountsService: SolanaAccountsService
     
     // MARK: - Properties
@@ -60,7 +60,7 @@ final class HomeEmptyViewModel: BaseViewModel, ObservableObject {
     }
 
     func receiveClicked() {
-        guard let pubkey = try? PublicKey(string: solanaAccountsService.state.value.nativeWallet?.data.pubkey) else { return }
+        guard let pubkey = try? PublicKey(string: solanaAccountsService.state.value.nativeAccount?.data.pubkey) else { return }
         navigation.send(.receive(publicKey: pubkey))
     }
     
@@ -163,7 +163,7 @@ extension HomeEmptyViewModel {
     }
 }
 
-private extension PricesServiceType {
+private extension PricesService {
     func fiatAmount(mint: String) -> String? {
         guard let price = currentPrice(mint: mint)?.value else { return nil }
         return "\(Defaults.fiat.symbol) \(price.toString(minimumFractionDigits: 2, maximumFractionDigits: 2))"

@@ -140,7 +140,7 @@ extension TransactionHandler {
         var value = transactionsSubject.value
 
         if let currentValue = value[safe: index] {
-            var newValue = update(currentValue)
+            let newValue = update(currentValue)
 
            // update
             value[index] = newValue

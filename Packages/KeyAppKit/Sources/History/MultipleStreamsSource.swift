@@ -3,6 +3,7 @@
 //
 
 import Foundation
+import SolanaSwift
 
 /// The class that merges many sources into one and represents as single stream of sequential transactions.
 ///

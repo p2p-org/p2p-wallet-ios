@@ -48,7 +48,7 @@ public extension EthereumTransaction {
                 let toBytes = array[3].bytes,
                 let value = array[4].bigUInt,
                 let data = array[5].bytes,
-                let chainID = array[6].uint
+                array[6].uint != nil
             else {
                 throw EthereumSignedTransaction.Error.rlpItemInvalid
             }

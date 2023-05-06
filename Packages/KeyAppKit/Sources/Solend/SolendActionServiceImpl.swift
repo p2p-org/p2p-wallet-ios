@@ -20,11 +20,9 @@ public class SolendActionServiceImpl: SolendActionService {
     private let relayService: RelayService
     private let relayContextManager: RelayContextManager
 
-    private var owner: Account {
+    private var owner: KeyPair {
         get throws {
-            guard let account = userAccountStorage.account else {
-                throw SolanaError.unauthorized
-            }
+            guard let account = userAccountStorage.account else { throw SolanaError.unauthorized }
             return account
         }
     }

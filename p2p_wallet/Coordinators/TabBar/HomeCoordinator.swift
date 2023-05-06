@@ -112,7 +112,7 @@ final class HomeCoordinator: Coordinator<Void> {
             return coordinate(to: BuyCoordinator(navigationController: navigationController, context: .fromHome))
                 .map { _ in () }
                 .eraseToAnyPublisher()
-        case let .receive(publicKey):
+        case .receive:
             if available(.ethAddressEnabled) {
                 let coordinator = SupportedTokensCoordinator(
                     presentation: SmartCoordinatorPushPresentation(navigationController)

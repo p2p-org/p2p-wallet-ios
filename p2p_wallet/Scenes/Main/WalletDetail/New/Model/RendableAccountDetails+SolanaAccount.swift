@@ -22,13 +22,11 @@ struct RendableNewSolanaAccountDetails: RendableAccountDetails {
     }
 
     var amountInFiat: String {
-        account.amountInFiatDouble.fiatAmountFormattedString()
+        Double(account.amountInFiat?.value.description ?? "")?.fiatAmountFormattedString() ?? ""
     }
 
     var actions: [RendableAccountDetailsAction] {
-        var walletActions: [RendableAccountDetailsAction]
         if account.data.isNativeSOL || account.data.token.symbol == "USDC" {
-            walletActions = [.buy, .receive(.solanaAccount(account)), .send, .swap(account.data)]
             return [.buy, .receive(.solanaAccount(account)), .send, .swap(account.data)]
         } else {
             return [.receive(.solanaAccount(account)), .send, .swap(account.data)]

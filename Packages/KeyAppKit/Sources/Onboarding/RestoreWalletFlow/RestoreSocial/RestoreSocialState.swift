@@ -70,7 +70,7 @@ public indirect enum RestoreSocialState: Codable, State, Equatable {
                 throw StateMachineError.invalidEvent
             }
 
-        case let .signInProgress(tokenID, email, deviceShare, customResult, backState):
+        case let .signInProgress(_, _, _, _, backState):
             switch event {
             case let .signInTorus(tokenID, email, deviceShare, customResult):
                 if let deviceShare = deviceShare {
@@ -110,7 +110,7 @@ public indirect enum RestoreSocialState: Codable, State, Equatable {
                 throw StateMachineError.invalidEvent
             }
 
-        case let .notFoundCustom(result, email):
+        case let .notFoundCustom(result, _):
             switch event {
             case let .signInCustom(socialProvider):
                 let (value, email) = try await provider.authService.auth(type: socialProvider)
@@ -147,7 +147,7 @@ public indirect enum RestoreSocialState: Codable, State, Equatable {
                 throw StateMachineError.invalidEvent
             }
 
-        case let .expiredSocialTryAgain(result, socialProvider, _, deviceShare):
+        case .expiredSocialTryAgain:
             throw StateMachineError.invalidEvent
 
         case .finish:

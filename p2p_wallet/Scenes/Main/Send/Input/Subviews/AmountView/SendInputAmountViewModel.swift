@@ -58,14 +58,14 @@ final class SendInputAmountViewModel: BaseViewModel, ObservableObject {
     private var tokenChangedEvent = CurrentValueSubject<Wallet, Never>(.init(token: .nativeSolana))
 
     // MARK: - Dependencies
-    private let pricesService: PricesServiceType
+    private let pricesService: PricesService
 
     init(initialToken: Wallet) {
         fiat = Defaults.fiat
         token = initialToken
         countAfterDecimalPoint = Constants.fiatDecimals
         mainAmountType = Defaults.isTokenInputTypeChosen ? .token : .fiat
-        pricesService = Resolver.resolve(PricesServiceType.self)
+        pricesService = Resolver.resolve(PricesService.self)
 
         super.init()
 

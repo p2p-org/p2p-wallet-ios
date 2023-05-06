@@ -11,7 +11,7 @@ import Sentry
 import SolanaSwift
 
 class InvestSolendBannerViewModel: ObservableObject {
-    @Injected private var priceService: PricesServiceType
+    @Injected private var priceService: PricesService
 
     @Published var state: InvestSolendBannerState = .pending
 

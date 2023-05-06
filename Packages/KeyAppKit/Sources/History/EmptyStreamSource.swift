@@ -3,6 +3,7 @@
 //
 
 import Foundation
+import SolanaSwift
 
 public class EmptyStreamSource: HistoryStreamSource {
     public init() {}

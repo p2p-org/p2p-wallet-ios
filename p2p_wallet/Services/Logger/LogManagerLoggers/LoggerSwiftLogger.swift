@@ -10,7 +10,7 @@ class LoggerSwiftLogger: LogManagerLogger {
     var supportedLogLevels: [LogLevel] = [.error, .info, .request, .response, .event, .warning, .debug]
 
     func log(event: String, logLevel: LogLevel, data: String?) {
-        queue.async { [unowned self] in
+        queue.async {
 //            LoggerSwift.Logger.log(
 //                event: mapEventLogLeverToLoggerSwiftEvent(logLevel),
 //                message: event + " " + (data ?? "")

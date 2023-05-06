@@ -1,4 +1,6 @@
+import Foundation
 import Combine
+import KeyAppBusiness
 import Resolver
 import Jupiter
 import SolanaSwift
@@ -13,15 +15,17 @@ final class SwapViewModel: BaseViewModel, ObservableObject {
         case success
     }
 
-    // MARK: - Dependencies
+    // Dependencies
     @Injected private var swapWalletsRepository: JupiterTokensRepository
     @Injected private var notificationService: NotificationService
     @Injected private var transactionHandler: TransactionHandler
     @Injected private var analyticsManager: AnalyticsManager
     @Injected private var userWalletManager: UserWalletManager
-    @Injected private var walletsRepository: WalletsRepository
+    @Injected private var accountsService: SolanaAccountsService
+    @Injected private var clipboardManager: ClipboardManagerType
 
     // MARK: - Actions
+    
     let switchTokens = PassthroughSubject<Void, Never>()
     let tryAgain = PassthroughSubject<Void, Never>()
     let changeFromToken = PassthroughSubject<SwapToken, Never>()
@@ -30,8 +34,11 @@ final class SwapViewModel: BaseViewModel, ObservableObject {
     let isViewAppeared = PassthroughSubject<Bool, Never>()
 
     // MARK: - Params
+    
     var fromTokenInputViewModel: SwapInputViewModel
     var toTokenInputViewModel: SwapInputViewModel
+    
+    // MARK: - To View
     
     @Published var initializingState: InitializingState = .loading
     @Published var arePricesLoading: Bool = false
@@ -57,6 +64,8 @@ final class SwapViewModel: BaseViewModel, ObservableObject {
     private var timer: Timer?
     private let source: JupiterSwapSource
     private var wasMinToastShown = false // Special flag not to show toast again if state has not changed
+    
+    // MARK: - Init
 
     init(
         stateMachine: JupiterSwapStateMachine,
@@ -134,7 +143,7 @@ final class SwapViewModel: BaseViewModel, ObservableObject {
                 }
         )
         
-        UIPasteboard.general.string = logsInfo.jsonString
+        clipboardManager.copyToClipboard(logsInfo.jsonString ?? "")
         errorLogs = nil
         notificationService.showToast(title: "✅", text: "Logs copied to clipboard")
     }
@@ -186,16 +195,17 @@ private extension SwapViewModel {
             .store(in: &subscriptions)
 
         Publishers.CombineLatest(
-            walletsRepository.dataPublisher.removeDuplicates(),
+            accountsService.statePublisher,
             isViewAppeared.eraseToAnyPublisher().removeDuplicates()
         )
-        .filter { [weak self] userWallets, isViewAppeared in
+        .map { ($0.0.value, $0.1) }
+        .filter { [weak self] _, isViewAppeared in
             // update user wallets only when initializingState is success and view is appeared
             self?.initializingState == .success && isViewAppeared
         }
-        .sinkAsync { [weak self] userWallets, isViewAppeared in
+        .sinkAsync { [weak self] accounts, _ in
             await self?.stateMachine.accept(
-                action: .updateUserWallets(userWallets: userWallets)
+                action: .updateUserWallets(userWallets: accounts.map { $0.data })
             )
         }
         .store(in: &subscriptions)
@@ -463,12 +473,14 @@ private extension SwapViewModel {
         let formatter = NumberFormatter()
         formatter.maximumFractionDigits = 2
         formatter.minimumFractionDigits = 0
-        let slippageString = formatter.string(from: NSNumber(floatLiteral: slippage)) ?? String(format: "%.2f", slippage)
+        let number = slippage as NSNumber
+        let slippageString = formatter.string(from: number) ?? String(format: "%.2f", slippage)
         return slippageString + "%"
     }
 }
 
 // MARK: - Analytics
+
 extension SwapViewModel {
     func logSettingsClick() {
         analyticsManager.log(event: .swapSettingsClick)

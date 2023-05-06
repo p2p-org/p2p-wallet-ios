@@ -48,7 +48,7 @@ struct RendableAbstractUserActionTransaction: RendableTransactionDetail {
             return L10n.transactionSubmitted
         case .ready:
             return L10n.transactionSucceeded
-        case let .error(error):
+        case .error:
             return L10n.transactionFailed
         }
     }

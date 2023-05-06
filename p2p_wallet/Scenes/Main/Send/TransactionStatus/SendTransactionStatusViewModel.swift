@@ -7,7 +7,7 @@ import TransactionParser
 
 final class SendTransactionStatusViewModel: BaseViewModel, ObservableObject {
     @Injected private var transactionHandler: TransactionHandler
-    @Injected private var priceService: PricesServiceType
+    @Injected private var priceService: PricesService
 
     let close = PassthroughSubject<Void, Never>()
     let errorMessageTap = PassthroughSubject<Void, Never>()

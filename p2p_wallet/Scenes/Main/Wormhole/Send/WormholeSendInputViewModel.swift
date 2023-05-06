@@ -58,6 +58,10 @@ class WormholeSendInputViewModel: BaseViewModel, ObservableObject {
     @Published var actionButtonData = SliderActionButtonData.zero
     @Published var isSliderOn = false
     @Published var showFinished = false
+    
+    var inputAccountFiatAmount: Double {
+        Double(adapter.inputAccount?.amountInFiat?.value.description ?? "") ?? 0.0
+    }
 
     let changeTokenPressed = PassthroughSubject<Void, Never>()
 
@@ -352,7 +356,7 @@ extension WormholeSendInputViewModel {
             supportedToken.contains(account.data.token.address)
         }
 
-        if let nativeWallet = solanaAccountsService.state.value.nativeWallet {
+        if let nativeWallet = solanaAccountsService.state.value.nativeAccount {
             availableBridgeAccounts.append(nativeWallet)
         }
 
