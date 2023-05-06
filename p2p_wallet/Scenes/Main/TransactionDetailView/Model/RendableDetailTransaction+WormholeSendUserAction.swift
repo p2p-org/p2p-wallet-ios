@@ -37,7 +37,7 @@ struct RendableWormholeSendUserActionDetail: RendableTransactionDetail {
             return L10n.transactionSubmitted
         case .ready:
             return L10n.transactionSucceeded
-        case let .error(error):
+        case .error:
             return L10n.transactionFailed
         }
     }
@@ -85,7 +85,6 @@ struct RendableWormholeSendUserActionDetail: RendableTransactionDetail {
         )
 
         let cryptoFormatter = CryptoFormatter()
-        let currencyFormatter = CurrencyFormatter()
 
         if let arbiterFee = userAction.fees.arbiter {
             result.append(

@@ -52,14 +52,14 @@ public enum RestoreICloudState: Codable, State, Equatable {
                 }
                 return .chooseWallet(accounts: accounts)
 
-            case let .restoreRawWallet(name, phrase, derivablePath):
+            case let .restoreRawWallet(_, phrase, derivablePath):
                 return .finish(result: .successful(phrase: phrase, derivablePath: derivablePath))
 
             default:
                 throw StateMachineError.invalidEvent
             }
 
-        case let .chooseWallet(accounts):
+        case .chooseWallet:
             switch event {
             case let .restoreWallet(icloudAccount):
                 return .finish(result: .successful(
@@ -71,13 +71,13 @@ public enum RestoreICloudState: Codable, State, Equatable {
             default:
                 throw StateMachineError.invalidEvent
             }
-        case let .finish(result):
+        case .finish:
             throw StateMachineError.invalidEvent
         }
     }
 
-    private func account(from icloudAccount: ICloudAccount) async throws -> Account {
-        let account = try await Account(
+    private func account(from icloudAccount: ICloudAccount) async throws -> KeyPair {
+        let account = try await KeyPair(
             phrase: icloudAccount.phrase.components(separatedBy: " "),
             network: .mainnetBeta,
             derivablePath: icloudAccount.derivablePath

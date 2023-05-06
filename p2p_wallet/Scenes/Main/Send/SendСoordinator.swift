@@ -22,8 +22,8 @@ enum SendSource: String {
 }
 
 final class SendCoordinator: Coordinator<SendResult> {
-    // MARK: - Dependencies
-
+    
+    // Dependencies
     @Injected var walletsRepository: WalletsRepository
     @Injected private var sendViaLinkDataService: SendViaLinkDataService
 

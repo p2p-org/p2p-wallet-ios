@@ -201,10 +201,11 @@ class RecipientSearchViewModel: ObservableObject {
         } else {
             isSearching = true
             searchTask = Task { [weak self] in
+                guard let self else { return }
                 let result = await recipientSearchService.search(
                     input: currentSearchTerm,
-                    config: config,
-                    preChosenToken: preChosenWallet?.token
+                    config: self.config,
+                    preChosenToken: self.preChosenWallet?.token
                 )
 
                 guard !Task.isCancelled else { return }
@@ -218,7 +219,7 @@ class RecipientSearchViewModel: ObservableObject {
                 {
                     try? await Task.sleep(nanoseconds: autoSelectTheOnlyOneResultMode.delay!)
                     guard !Task.isCancelled else { return }
-                    autoSelectTheOnlyOneResult(result: result, fromQR: fromQR)
+                    self.autoSelectTheOnlyOneResult(result: result, fromQR: fromQR)
                 }
             }
         }

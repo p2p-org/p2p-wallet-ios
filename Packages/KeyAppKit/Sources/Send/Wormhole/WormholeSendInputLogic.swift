@@ -40,7 +40,7 @@ enum WormholeSendInputLogic {
             }),
 
             // Native account
-            availableAccounts.nativeWallet,
+            availableAccounts.nativeAccount,
         ].compactMap { $0 }
 
         // Account with high amount in fiat

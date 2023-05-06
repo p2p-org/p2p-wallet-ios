@@ -74,7 +74,6 @@ class UserWalletManager: ObservableObject {
         try await Resolver.resolve(SendHistoryLocalProvider.self).save(nil)
 
         // Save device share
-        print(deviceShare)
         if let deviceShare = deviceShare, ethAddress != nil {
             try storage.save(deviceShare: deviceShare)
         }

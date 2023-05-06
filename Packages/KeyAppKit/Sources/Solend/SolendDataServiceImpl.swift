@@ -16,10 +16,10 @@ private struct SolendDataCache: Codable {
     let lastUpdate: Date?
 }
 
-public class SolendDataServiceImpl: SolendDataService {
-    // Variables
+public final class SolendDataServiceImpl: SolendDataService {
+
     private let solend: Solend
-    private var owner: Account
+    private var owner: KeyPair
     private var lendingMark: String
     private let cache: SolendCache
 
@@ -83,7 +83,7 @@ public class SolendDataServiceImpl: SolendDataService {
         }
     }
 
-    public init(solend: Solend, owner: Account, lendingMark: String, cache: SolendCache? = nil) {
+    public init(solend: Solend, owner: KeyPair, lendingMark: String, cache: SolendCache? = nil) {
         self.solend = solend
         self.owner = owner
         self.lendingMark = lendingMark

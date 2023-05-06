@@ -14,7 +14,7 @@ import SolanaSwift
 final class TabBarViewModel {
     // Dependencies
     @Injected private var socket: Socket
-    @Injected private var pricesService: PricesServiceType
+    @Injected private var pricesService: PricesService
     @Injected private var authenticationHandler: AuthenticationHandlerType
     @Injected private var notificationService: NotificationService
 

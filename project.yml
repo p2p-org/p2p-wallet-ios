@@ -168,6 +168,9 @@ targets:
         - path: README.MD
         preBuildScripts:
           - script: |
+                  sh Scripts/swiftlint.sh
+            name: "[SCRIPT] Swiftlint"
+          - script: |
                   # Name of the resource we're selectively copying
                   GOOGLESERVICE_INFO_PLIST=GoogleService-Info.plist
 

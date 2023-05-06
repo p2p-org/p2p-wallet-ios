@@ -13,18 +13,18 @@ import Send
 import Wormhole
 
 struct WormholeSendInputStateAdapter: Equatable {
-    let cryptoFormatter: CryptoFormatter = .init()
-    let currencyFormatter: CurrencyFormatter = .init()
+    let cryptoFormatter = CryptoFormatter()
+    let currencyFormatter = CurrencyFormatter()
 
     let state: WormholeSendInputState
 
     var input: WormholeSendInputBase? {
         switch state {
-        case let .ready(input, output, alert):
+        case let .ready(input, _, _):
             return input
         case let .calculating(newInput):
             return newInput
-        case let .error(input, output, error):
+        case let .error(input, _, _):
             return input
         case .initializingFailure:
             return nil
@@ -33,11 +33,11 @@ struct WormholeSendInputStateAdapter: Equatable {
 
     var output: WormholeSendOutputBase? {
         switch state {
-        case let .ready(input, output, alert):
+        case let .ready(_, output, _):
             return output
-        case let .calculating(newInput):
+        case .calculating:
             return nil
-        case let .error(input, output, error):
+        case let .error(_, output, _):
             return output
         case .initializingFailure:
             return nil
@@ -84,11 +84,11 @@ struct WormholeSendInputStateAdapter: Equatable {
 
     var fees: String {
         switch state {
-        case let .ready(input, output, alert):
+        case let .ready(_, output, _):
             return "Fees: \(currencyFormatter.string(amount: output.fees.totalInFiat))"
-        case let .calculating(newInput):
+        case .calculating:
             return ""
-        case let .error(input, output, error):
+        case let .error(_, output, _):
             if let output {
                 return "Fees: \(currencyFormatter.string(amount: output.fees.totalInFiat))"
             } else {
@@ -101,11 +101,11 @@ struct WormholeSendInputStateAdapter: Equatable {
 
     var feesLoading: Bool {
         switch state {
-        case let .ready(input, output, alert):
+        case .ready:
             return false
-        case let .calculating(newInput):
+        case .calculating:
             return true
-        case let .error(input, output, error):
+        case .error:
             return false
         case .initializingFailure:
             return false
@@ -114,7 +114,7 @@ struct WormholeSendInputStateAdapter: Equatable {
 
     var inputColor: UIColor {
         switch state {
-        case let .error(input, output, error) where error == .maxAmountReached:
+        case let .error(_, _, error) where error == .maxAmountReached:
             return Asset.Colors.rose.color
         default:
             return Asset.Colors.night.color
@@ -123,7 +123,7 @@ struct WormholeSendInputStateAdapter: Equatable {
 
     var sliderButton: SliderActionButtonData {
         switch state {
-        case let .error(input, output, error):
+        case let .error(input, _, error):
             let text: String
             switch error {
             case .maxAmountReached:

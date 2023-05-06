@@ -21,11 +21,10 @@ final class JupiterTokensRepositoryImpl: JupiterTokensRepository {
     var status: AnyPublisher<JupiterDataStatus, Never> {
         statusSubject.eraseToAnyPublisher()
     }
-    // MARK: - Dependencies
-
+    
+    // Dependencies
     private let jupiterClient: JupiterAPI
     private let localProvider: JupiterTokensProvider
-    @Injected private var walletsRepository: WalletsRepository
     @Injected private var tokensRepositoryCache: SolanaTokensRepositoryCache
 
     // MARK: - Private params

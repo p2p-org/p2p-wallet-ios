@@ -32,14 +32,14 @@ protocol TransactionHandlerType {
     var onNewTransaction: AnyPublisher<(trx: PendingTransaction, index: Int), Never> { get }
 }
 
-class TransactionHandler: TransactionHandlerType {
-    // MARK: - Dependencies
-
+final class TransactionHandler: TransactionHandlerType {
+    
+    // Dependencies
     @Injected var notificationsService: NotificationService
     @Injected var analyticsManager: AnalyticsManager
     @Injected var apiClient: SolanaAPIClient
-    @Injected var walletsRepository: WalletsRepository
-    @Injected var pricesService: PricesServiceType
+    @Injected var accountsService: SolanaAccountsService
+    @Injected var pricesService: PricesService
     @Injected var socket: SolanaAccountsObservableService
     @Injected var errorObserver: ErrorObserver
 
@@ -131,14 +131,14 @@ class TransactionHandler: TransactionHandlerType {
                 return false
             }
             .compactMap { pt -> ParsedTransaction? in
-                pt.parse(pricesService: pricesService, authority: walletsRepository.nativeWallet?.pubkey)
+                pt.parse(pricesService: pricesService, authority: accountsService.nativeWallet?.pubkey)
             }
     }
 
     func getProcessingTransaction() -> [ParsedTransaction] {
         transactionsSubject.value
             .compactMap { pt -> ParsedTransaction? in
-                pt.parse(pricesService: pricesService, authority: walletsRepository.nativeWallet?.pubkey)
+                pt.parse(pricesService: pricesService, authority: accountsService.nativeWallet?.pubkey)
             }
     }
 

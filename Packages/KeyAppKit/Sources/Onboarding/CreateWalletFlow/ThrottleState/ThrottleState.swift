@@ -67,8 +67,6 @@ enum ThrottleState: Codable, State, Equatable {
                 } else {
                     throw ThrottleError.overheating(until: until)
                 }
-            default:
-                throw StateMachineError.invalidEvent
             }
         }
     }

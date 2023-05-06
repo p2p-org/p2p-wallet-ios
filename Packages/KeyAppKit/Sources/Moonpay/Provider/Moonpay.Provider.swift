@@ -190,7 +190,7 @@ extension Moonpay {
         }
         
         public func getCountries() async throws -> [MoonpayCountry] {
-            var components = URLComponents(string: api.endpoint + "v3/countries")!
+            let components = URLComponents(string: api.endpoint + "v3/countries")!
             var urlRequest = URLRequest(url: components.url!)
             urlRequest.httpMethod = "GET"
             let (data, _) = try await URLSession.shared.data(from: urlRequest)

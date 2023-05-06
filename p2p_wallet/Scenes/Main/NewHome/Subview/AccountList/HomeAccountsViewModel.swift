@@ -158,7 +158,7 @@ final class HomeAccountsViewModel: BaseViewModel, ObservableObject {
     func actionClicked(_ action: WalletActionType) {
         switch action {
         case .receive:
-            guard let pubkey = try? PublicKey(string: solanaAccountsService.state.value.nativeWallet?.data.pubkey)
+            guard let pubkey = try? PublicKey(string: solanaAccountsService.state.value.nativeAccount?.data.pubkey)
             else { return }
             navigation.send(.receive(publicKey: pubkey))
         case .buy:

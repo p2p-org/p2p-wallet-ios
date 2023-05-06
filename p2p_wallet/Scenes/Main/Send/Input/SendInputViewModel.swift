@@ -13,6 +13,8 @@ import Send
 import SolanaPricesAPIs
 import SolanaSwift
 
+// swiftlint:disable file_length
+
 final class SendInputViewModel: BaseViewModel, ObservableObject {
     enum Status {
         case initializing
@@ -92,10 +94,8 @@ final class SendInputViewModel: BaseViewModel, ObservableObject {
     private let preChosenAmount: Double?
     private let allowSwitchingMainAmountType: Bool
 
-    // MARK: - Dependencies
-
-    private let walletsRepository: WalletsRepository
-    private let pricesService: PricesServiceType
+    // Dependencies
+    private let pricesService: PricesService
     @Injected private var analyticsManager: AnalyticsManager
 
     init(
@@ -110,9 +110,8 @@ final class SendInputViewModel: BaseViewModel, ObservableObject {
         self.preChosenAmount = preChosenAmount
         self.allowSwitchingMainAmountType = allowSwitchingMainAmountType
 
-        let repository = Resolver.resolve(WalletsRepository.self)
-        walletsRepository = repository
-        let wallets = repository.getWallets()
+        let accountsService = Resolver.resolve(SolanaAccountsService.self)
+        let wallets = accountsService.wallets
 
         let pricesService = Resolver.resolve(PricesService.self)
         self.pricesService = pricesService
@@ -223,7 +222,7 @@ final class SendInputViewModel: BaseViewModel, ObservableObject {
             }
 
             switch nextState.status {
-            case .error(reason: .initializeFailed(_)):
+            case .error(reason: .initializeFailed):
                 self.status = .initializingFailed
             default:
                 self.status = .ready
@@ -264,7 +263,7 @@ private extension SendInputViewModel {
             .sink { [weak self] value in
                 guard let self = self else { return }
                 switch value.status {
-                case .error(reason: .networkConnectionError(_)):
+                case .error(reason: .networkConnectionError):
                     self.handleConnectionError()
                 default:
                     self.inputAmountViewModel.maxAmountToken = value.maxAmountInputInToken
@@ -466,7 +465,7 @@ private extension SendInputViewModel {
                 isEnabled: false,
                 title: L10n.insufficientFundsToCoverFees
             )
-        case .error(reason: .initializeFailed(_)):
+        case .error(reason: .initializeFailed):
             inputAmountViewModel.isError = false
             actionButtonData = SliderActionButtonData(
                 isEnabled: true,
@@ -540,14 +539,6 @@ private extension SendInputViewModel {
         handleError(text: L10n.youHaveNoInternetConnection)
     }
 
-    func handleInitializingError() {
-        handleError(text: L10n.initializingError)
-    }
-
-    func handleUnknownError() {
-        handleError(text: L10n.somethingWentWrong)
-    }
-
     func handleError(text: String) {
         snackbar.send(SnackBar(title: "🥺", text: text, buttonTitle: L10n.hide, buttonAction: { SnackBar.hide() }))
     }
@@ -598,7 +589,7 @@ private extension SendInputViewModel {
             logSendClickCreateLink(symbol: token.symbol, amount: amountInToken, pubkey: sourceWallet.pubkey ?? "")
         }
 
-        let transaction = SendTransaction(state: currentState) {
+        _ = SendTransaction(state: currentState) {
             try await createTransactionExecution(
                 isSendingViaLink: isSendingViaLink,
                 isFakeSendTransaction: isFakeSendTransaction,

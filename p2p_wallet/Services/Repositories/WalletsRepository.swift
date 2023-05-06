@@ -61,7 +61,7 @@ class WalletsRepositoryImpl: NSObject, WalletsRepository {
     }
 
     var nativeWallet: SolanaSwift.Wallet? {
-        solanaAccountsService.state.value.nativeWallet?.data
+        solanaAccountsService.state.value.nativeAccount?.data
     }
 
     func getWallets() -> [SolanaSwift.Wallet] {

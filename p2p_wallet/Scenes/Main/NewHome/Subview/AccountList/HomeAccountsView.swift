@@ -31,11 +31,7 @@ struct HomeAccountsView: View {
                 }
             }
             .customRefreshable {
-                do {
-                    try await viewModel.refresh()
-                } catch {
-                    error.capture()
-                }
+                await viewModel.refresh()
             }
             .onReceive(viewModel.$scrollOnTheTop) { _ in
                 DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) {

@@ -8,10 +8,8 @@ import Solend
 class SolendDepositsViewModel: ObservableObject {
     private var subscriptions = Set<AnyCancellable>()
 
-    // MARK: - Services
-
+    // Dependencies
     @Injected private var priceService: PricesService
-    @Injected private var walletRepository: WalletsRepository
     private let dataService: SolendDataService
     
     // MARK: - State

@@ -11,6 +11,7 @@ import SolanaSwift
 import Solend
 import SwiftUI
 import UIKit
+import KeyAppBusiness
 
 final class SolendDepositsCoordinator: Coordinator<Void> {
     private let controller: UINavigationController
@@ -50,11 +51,11 @@ final class SolendDepositsCoordinator: Coordinator<Void> {
                 return
             }
 
-            let wallets: WalletsRepository = Resolver.resolve()
+            let accountsService: SolanaAccountsService = Resolver.resolve()
 
-            let tokenAccount: Wallet? = wallets
-                .getWallets()
-                .first(where: { (wallet: Wallet) -> Bool in asset.mintAddress == wallet.mintAddress })
+            let tokenAccount: Wallet? = accountsService
+                .wallets
+                .first { (wallet: Wallet) -> Bool in asset.mintAddress == wallet.mintAddress }
 
             if (tokenAccount?.amount ?? 0) > 0 {
                 // User has a token
@@ -72,7 +73,7 @@ final class SolendDepositsCoordinator: Coordinator<Void> {
                     .store(in: &subscriptions)
             } else {
                 // User doesn't have a token
-                let hasAnotherToken: Bool = wallets.getWallets().first(where: { ($0.lamports ?? 0) > 0 }) != nil
+                let hasAnotherToken: Bool = accountsService.wallets.first { ($0.lamports ?? 0) > 0 } != nil
                 let coordinator = SolendTopUpForContinueCoordinator(
                     navigationController: controller,
                     model: .init(

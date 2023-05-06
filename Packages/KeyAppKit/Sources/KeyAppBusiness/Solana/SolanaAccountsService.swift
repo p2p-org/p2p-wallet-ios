@@ -27,6 +27,12 @@ public final class SolanaAccountsService: NSObject, AccountsService {
     public var statePublisher: AnyPublisher<AsyncValueState<[Account]>, Never> { stateSubject.eraseToAnyPublisher() }
 
     public var state: AsyncValueState<[Account]> { stateSubject.value }
+    
+    public var wallets: [Wallet] {
+        state.value.map(\.data)
+    }
+    
+    public var nativeWallet: Wallet? { accounts.state.value.nativeAccount?.data }
 
     public init(
         accountStorage: SolanaAccountStorage,
@@ -170,8 +176,8 @@ public final class SolanaAccountsService: NSObject, AccountsService {
 
 public extension Array where Element == SolanaAccountsService.Account {
     /// Helper method for quickly extraction native account.
-    var nativeWallet: Element? {
-        first(where: { $0.data.isNativeSOL })
+    var nativeAccount: Element? {
+        first { $0.data.isNativeSOL }
     }
 
     var totalAmountInCurrentFiat: Double {

@@ -13,8 +13,9 @@ import Sell
 import Send
 import SolanaSwift
 import SwiftUI
+import KeyAppBusiness
 
-class NewHistoryCoordinator: SmartCoordinator<Void> {
+final class NewHistoryCoordinator: SmartCoordinator<Void> {
     var viewModel: HistoryViewModel!
 
     override func build() -> UIViewController {
@@ -163,10 +164,10 @@ class NewHistoryCoordinator: SmartCoordinator<Void> {
             return
         }
 
-        let walletsRepository = Resolver.resolve(WalletsRepository.self)
+        let accountsService = Resolver.resolve(SolanaAccountsService.self)
         coordinate(to: SendCoordinator(
             rootViewController: viewController,
-            preChosenWallet: walletsRepository.nativeWallet,
+            preChosenWallet: accountsService.nativeWallet,
             preChosenRecipient: Recipient(
                 address: transaction.depositWallet,
                 category: .solanaAddress,

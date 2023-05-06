@@ -68,7 +68,7 @@ struct WormholeSendInputView: View {
                 // Account view
                 SendInputTokenView(
                     wallet: viewModel.adapter.inputAccount?.data ?? Wallet(token: .eth),
-                    amountInFiat: viewModel.adapter.inputAccount?.amountInFiatDouble ?? 0.0,
+                    amountInFiat: viewModel.inputAccountFiatAmount,
                     isChangeEnabled: true,
                     skeleton: viewModel.adapter.inputAccountSkeleton
                 ) {

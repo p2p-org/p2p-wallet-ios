@@ -46,7 +46,7 @@ public enum RestoreSeedState: Codable, State, Equatable {
                 throw StateMachineError.invalidEvent
             }
 
-        case let .chooseDerivationPath(phrase):
+        case .chooseDerivationPath:
             switch event {
             case let .restoreWithSeed(phrase, path):
                 return .finish(result: .successful(phrase: phrase, path: path))

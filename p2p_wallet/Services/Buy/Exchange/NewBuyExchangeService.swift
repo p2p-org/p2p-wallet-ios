@@ -24,7 +24,7 @@ struct MoonpayExchange: BuyExchangeService {
             fatalError()
         }
 
-        let baseAmount = input.currency is Buy.Currency ? input.amount : nil
+        let baseAmount = input.amount
         let quoteAmount = input.currency is Buy.CryptoCurrency ? input.amount : nil
 
         do {

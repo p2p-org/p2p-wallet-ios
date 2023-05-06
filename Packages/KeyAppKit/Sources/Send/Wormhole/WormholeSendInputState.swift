@@ -90,8 +90,6 @@ public enum WormholeSendInputState: Equatable {
                     return .error(input: input, output: nil, error: .calculationFeeFailure)
                 }
 
-                var alert: WormholeSendInputAlert?
-
                 if fees.resultAmount == nil {
                     let error: WormholeSendInputError
 
@@ -148,7 +146,7 @@ public enum WormholeSendInputState: Equatable {
                         fees: fees,
                         relayContext: relayContext
                     ),
-                    alert: alert
+                    alert: nil
                 )
 
             case let .updateInput(newInput):
@@ -187,7 +185,7 @@ public enum WormholeSendInputState: Equatable {
                 return .calculating(newInput: input)
             }
 
-        case let .initializingFailure(input, error):
+        case .initializingFailure:
             return self
         }
     }
