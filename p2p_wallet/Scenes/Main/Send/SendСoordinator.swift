@@ -36,7 +36,7 @@ final class SendCoordinator: Coordinator<SendResult> {
     let result = PassthroughSubject<SendResult, Never>()
 
     private let source: SendSource
-    let preChosenWallet: SolanaAccount?
+    let preChosenAccount: SolanaAccount?
     let preChosenRecipient: Recipient?
     let preChosenAmount: Double?
     let allowSwitchingMainAmountType: Bool
@@ -45,7 +45,7 @@ final class SendCoordinator: Coordinator<SendResult> {
 
     init(
         rootViewController: UINavigationController,
-        preChosenWallet: SolanaAccount?,
+        preChosenAccount: SolanaAccount?,
         preChosenRecipient: Recipient? = nil,
         preChosenAmount: Double? = nil,
         hideTabBar: Bool = false,
@@ -53,7 +53,7 @@ final class SendCoordinator: Coordinator<SendResult> {
         allowSwitchingMainAmountType: Bool
     ) {
         self.rootViewController = rootViewController
-        self.preChosenWallet = preChosenWallet
+        self.preChosenAccount = preChosenAccount
         self.preChosenRecipient = preChosenRecipient
         self.preChosenAmount = preChosenAmount
         self.hideTabBar = hideTabBar
@@ -98,7 +98,7 @@ final class SendCoordinator: Coordinator<SendResult> {
     ) {
         coordinate(to: SendInputCoordinator(
             recipient: recipient,
-            preChosenWallet: preChosenWallet,
+            preChosenAccount: preChosenAccount,
             preChosenAmount: preChosenAmount,
             navigationController: rootViewController,
             source: source,
@@ -122,13 +122,13 @@ final class SendCoordinator: Coordinator<SendResult> {
 
     private func startFlowWithNoPreChosenRecipient() {
         // Setup view
-        let vm = RecipientSearchViewModel(preChosenWallet: preChosenWallet, source: source)
+        let vm = RecipientSearchViewModel(preChosenAccount: preChosenAccount, source: source)
         vm.coordinator.selectRecipientPublisher
             .filter { $0.category != .ethereumAddress }
             .flatMap { [unowned self] in
                 self.coordinate(to: SendInputCoordinator(
                     recipient: $0,
-                    preChosenWallet: preChosenWallet,
+                    preChosenAccount: preChosenAccount,
                     preChosenAmount: preChosenAmount,
                     navigationController: rootViewController,
                     source: source,
@@ -156,7 +156,7 @@ final class SendCoordinator: Coordinator<SendResult> {
                     to: WormholeSendInputCoordinator(
                         recipient: $0,
                         from: rootViewController,
-                        preChosenWallet: preChosenWallet
+                        preChosenAccount: preChosenAccount
                     )
                 )
             }
@@ -226,7 +226,7 @@ final class SendCoordinator: Coordinator<SendResult> {
 
         coordinate(to: SendInputCoordinator(
             recipient: recipient,
-            preChosenWallet: preChosenWallet,
+            preChosenAccount: preChosenAccount,
             preChosenAmount: preChosenAmount,
             navigationController: rootViewController,
             source: .none,

@@ -25,7 +25,7 @@ protocol SendViaLinkStorage: Actor {
 actor SendViaLinkStorageImpl: SendViaLinkStorage {
     // MARK: - Dependencies
     
-    @Injected private var userWalletManager: UserWalletManager
+    @Injected private var userAccountManager: UserAccountManager
     
     private var localKeychain = KeychainSwift()
     
@@ -38,7 +38,7 @@ actor SendViaLinkStorageImpl: SendViaLinkStorage {
     // MARK: - Computed properties
     
     var userPubkey: String? {
-        userWalletManager.wallet?.account.publicKey.base58EncodedString
+        userAccountManager.account?.solanaKeypair.publicKey.base58EncodedString
     }
     
     nonisolated var transactionsPublisher: AnyPublisher<[SendViaLinkTransactionInfo], Never> {

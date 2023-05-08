@@ -16,7 +16,7 @@ final class SettingsViewModel: BaseViewModel, ObservableObject {
     @Injected private var nameStorage: NameStorageType
     @Injected private var solanaStorage: SolanaAccountStorage
     @Injected private var analyticsManager: AnalyticsManager
-    @Injected private var userWalletManager: UserWalletManager
+    @Injected private var userAccountManager: UserAccountManager
     @Injected private var authenticationHandler: AuthenticationHandlerType
     @Injected private var metadataService: WalletMetadataService
     @Injected private var createNameService: CreateNameService
@@ -127,7 +127,7 @@ final class SettingsViewModel: BaseViewModel, ObservableObject {
 
     func signOut() {
         analyticsManager.log(event: .signedOut)
-        Task { try await userWalletManager.remove() }
+        Task { try await userAccountManager.remove() }
     }
 
     private func toggleZeroBalancesVisibility() {

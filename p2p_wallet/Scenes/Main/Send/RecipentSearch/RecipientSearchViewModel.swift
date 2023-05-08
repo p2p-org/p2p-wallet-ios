@@ -43,7 +43,7 @@ struct SendViaLinkState: Equatable {
 
 @MainActor
 class RecipientSearchViewModel: ObservableObject {
-    private let preChosenWallet: SolanaAccount?
+    private let preChosenAccount: SolanaAccount?
     private var subscriptions = Set<AnyCancellable>()
     private let source: SendSource
 
@@ -97,22 +97,22 @@ class RecipientSearchViewModel: ObservableObject {
     let coordinator: Coordinator = .init()
 
     init(
-        preChosenWallet: SolanaAccount?,
+        preChosenAccount: SolanaAccount?,
         source: SendSource,
         recipientSearchService: RecipientSearchService = Resolver.resolve(),
         sendHistoryService: SendHistoryService = Resolver.resolve(),
-        userWalletManager: UserWalletManager = Resolver.resolve()
+        userAccountManager: UserAccountManager = Resolver.resolve()
     ) {
         self.recipientSearchService = recipientSearchService
-        self.preChosenWallet = preChosenWallet
+        self.preChosenAccount = preChosenAccount
         self.sendHistoryService = sendHistoryService
         self.source = source
 
         let ethereumSearch: Bool
-        if let preChosenWallet {
+        if let preChosenAccount {
             // Check token is support wormhole
             if WormholeSupportedTokens.bridges
-                .map(\.solAddress).contains(preChosenWallet.token.address) {
+                .map(\.solAddress).contains(preChosenAccount.token.address) {
                 ethereumSearch = true
             } else {
                 ethereumSearch = false
@@ -124,7 +124,7 @@ class RecipientSearchViewModel: ObservableObject {
 
         config = .init(
             wallets: solanaAccountsService.state.value,
-            ethereumAccount: userWalletManager.wallet?.ethereumKeypair.address,
+            ethereumAccount: userAccountManager.account?.ethereumKeypair.address,
             tokens: [:],
             ethereumSearch: ethereumSearch
         )
@@ -205,7 +205,7 @@ class RecipientSearchViewModel: ObservableObject {
                 let result = await recipientSearchService.search(
                     input: currentSearchTerm,
                     config: config,
-                    preChosenToken: preChosenWallet?.token
+                    preChosenToken: preChosenAccount?.token
                 )
 
                 guard !Task.isCancelled else { return }

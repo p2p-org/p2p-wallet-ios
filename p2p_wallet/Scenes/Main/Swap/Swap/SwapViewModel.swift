@@ -20,7 +20,7 @@ final class SwapViewModel: BaseViewModel, ObservableObject {
     @Injected private var notificationService: NotificationService
     @Injected private var transactionHandler: TransactionHandler
     @Injected private var analyticsManager: AnalyticsManager
-    @Injected private var userWalletManager: UserWalletManager
+    @Injected private var userAccountManager: UserAccountManager
     @Injected private var solanaAccountsService: SolanaAccountsService
 
     // MARK: - Actions
@@ -54,7 +54,7 @@ final class SwapViewModel: BaseViewModel, ObservableObject {
     var currentState: JupiterSwapState { stateMachine.currentState }
     var continueUpdateOnDisappear = false // Special flag for update if view is disappeared
 
-    private let preChosenWallet: SolanaAccount?
+    private let preChosenAccount: SolanaAccount?
     private let destinationAccount: SolanaAccount?
     private var timer: Timer?
     private let source: JupiterSwapSource
@@ -65,13 +65,13 @@ final class SwapViewModel: BaseViewModel, ObservableObject {
         fromTokenInputViewModel: SwapInputViewModel,
         toTokenInputViewModel: SwapInputViewModel,
         source: JupiterSwapSource,
-        preChosenWallet: SolanaAccount? = nil,
+        preChosenAccount: SolanaAccount? = nil,
         destinationAccount: SolanaAccount? = nil
     ) {
         self.fromTokenInputViewModel = fromTokenInputViewModel
         self.toTokenInputViewModel = toTokenInputViewModel
         self.stateMachine = stateMachine
-        self.preChosenWallet = preChosenWallet
+        self.preChosenAccount = preChosenAccount
         self.destinationAccount = destinationAccount
         self.source = source
         super.init()
@@ -235,10 +235,10 @@ private extension SwapViewModel {
         let newState = await self.stateMachine
             .accept(
                 action: .initialize(
-                    account: userWalletManager.wallet?.account,
+                    account: userAccountManager.account?.solanaKeypair,
                     jupiterTokens: jupiterTokens,
                     routeMap: routeMap,
-                    preChosenFromTokenMintAddress: preChosenWallet?.mintAddress ?? Defaults.fromTokenAddress,
+                    preChosenFromTokenMintAddress: preChosenAccount?.mintAddress ?? Defaults.fromTokenAddress,
                     preChosenToTokenMintAddress: destinationAccount?.mintAddress ?? Defaults.toTokenAddress
                 )
             )

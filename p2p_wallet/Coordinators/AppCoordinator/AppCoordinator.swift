@@ -25,7 +25,7 @@ final class AppCoordinator: Coordinator<Void> {
     let notificationsService: NotificationService = Resolver.resolve()
 
     @Injected var notificationService: NotificationService
-    @Injected var userWalletManager: UserWalletManager
+    @Injected var userAccountManager: UserAccountManager
     @Injected var createNameService: CreateNameService
     @Injected private var amplitudeAnalyticsProvider: AmplitudeAnalyticsProvider
 
@@ -36,7 +36,7 @@ final class AppCoordinator: Coordinator<Void> {
 
     var reloadEvent = PassthroughSubject<Void, Never>()
 
-    private var walletCreated: Bool = false
+    private var userAccountCreated: Bool = false
 
     // MARK: - Initializers
 
@@ -58,19 +58,19 @@ final class AppCoordinator: Coordinator<Void> {
 
         // open splash and wait for data
         openSplash { [unowned self] in
-            userWalletManager
-                .$wallet
+            userAccountManager
+                .$account
                 .combineLatest(
                     reloadEvent
                         .map { _ in }
                         .prepend(())
                 )
                 .receive(on: RunLoop.main)
-                .sink { [unowned self] wallet, _ in
-                    if let wallet {
-                        amplitudeAnalyticsProvider.setUserId(wallet.account.publicKey.base58EncodedString)
-                        if walletCreated, available(.onboardingUsernameEnabled) {
-                            walletCreated = false
+                .sink { [unowned self] userAccount, _ in
+                    if let userAccount {
+                        amplitudeAnalyticsProvider.setUserId(userAccount.solanaKeypair.publicKey.base58EncodedString)
+                        if userAccountCreated, available(.onboardingUsernameEnabled) {
+                            userAccountCreated = false
                             navigateToCreateUsername()
                         } else {
                             navigateToMain()
@@ -103,7 +103,7 @@ final class AppCoordinator: Coordinator<Void> {
         // warmup
         Task {
             await Resolver.resolve(WarmupManager.self).start()
-            try await userWalletManager.refresh()
+            try await userAccountManager.refresh()
 
             // if let splashVC = window?.rootViewController as? SplashViewController {
             //     splashVC.stop(completionHandler: completionHandler)
@@ -162,17 +162,17 @@ final class AppCoordinator: Coordinator<Void> {
             .sinkAsync(receiveValue: { [unowned self] result in
                 GlobalAppState.shared.shouldPlayAnimationOnHome = true
                 showAuthenticationOnMainOnAppear = false
-                let userWalletManager: UserWalletManager = Resolver.resolve()
+                let userAccountManager: UserAccountManager = Resolver.resolve()
                 switch result {
                 case let .created(data):
-                    walletCreated = true
+                    userAccountCreated = true
 
                     analyticsManager.log(event: .setupOpen(fromPage: "create_wallet"))
                     analyticsManager.log(event: .createConfirmPin(result: true))
 
                     saveSecurity(data: data.security)
                     // Setup user wallet
-                    try await userWalletManager.add(
+                    try await userAccountManager.add(
                         seedPhrase: data.wallet.seedPhrase.components(separatedBy: " "),
                         derivablePath: data.wallet.derivablePath,
                         name: nil,
@@ -192,7 +192,7 @@ final class AppCoordinator: Coordinator<Void> {
 
                     saveSecurity(data: data.security)
                     // Setup user wallet
-                    try await userWalletManager.add(
+                    try await userAccountManager.add(
                         seedPhrase: data.wallet.seedPhrase.components(separatedBy: " "),
                         derivablePath: data.wallet.derivablePath,
                         name: nil,

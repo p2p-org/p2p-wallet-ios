@@ -5,12 +5,12 @@
 import Foundation
 import Combine
 
-protocol WalletSettingsProvider {
+protocol AccountSettingsProvider {
     func write<T: Codable>(key: String, value: T?)
     func read<T: Codable>(key: String) -> T?
 }
 
-struct WalletSettingsUserDefaultsProvider: WalletSettingsProvider {
+struct AccountSettingsUserDefaultsProvider: AccountSettingsProvider {
     func write<T: Codable>(key: String, value: T?) {
         if let value = value {
             UserDefaults.standard.set(value, forKey: key)
@@ -24,14 +24,14 @@ struct WalletSettingsUserDefaultsProvider: WalletSettingsProvider {
     }
 }
 
-class WalletSettings: ObservableObject {
-    let provider: WalletSettingsProvider
+class AccountSettings: ObservableObject {
+    let provider: AccountSettingsProvider
 
     @Published var deleteWeb3AuthRequest: Date? {
         didSet { provider.write(key: "deleteWeb3AuthRequest", value: deleteWeb3AuthRequest) }
     }
 
-    init(provider: WalletSettingsProvider) {
+    init(provider: AccountSettingsProvider) {
         self.provider = provider
 
         self.deleteWeb3AuthRequest = provider.read(key: "deleteWeb3AuthRequest")

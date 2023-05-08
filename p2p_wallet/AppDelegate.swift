@@ -91,8 +91,8 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         didRegisterForRemoteNotificationsWithDeviceToken deviceToken: Data
     ) {
         Task.detached(priority: .background) { [unowned self] in
-            let userWalletManager: UserWalletManager = Resolver.resolve()
-            let ethAddress = available(.ethAddressEnabled) ? userWalletManager.wallet?.ethAddress : nil
+            let userAccountManager: UserAccountManager = Resolver.resolve()
+            let ethAddress = available(.ethAddressEnabled) ? userAccountManager.account?.ethAddress : nil
             try await notificationService.sendRegisteredDeviceToken(deviceToken, ethAddress: ethAddress)
         }
         Intercom.setDeviceToken(deviceToken) { error in

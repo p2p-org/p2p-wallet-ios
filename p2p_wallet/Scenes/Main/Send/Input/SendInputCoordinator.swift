@@ -8,7 +8,7 @@ import KeyAppKitCore
 final class SendInputCoordinator: Coordinator<SendResult> {
     private let navigationController: UINavigationController
     private let recipient: Recipient
-    private let preChosenWallet: SolanaAccount?
+    private let preChosenAccount: SolanaAccount?
     private let preChosenAmount: Double?
     private var subject = PassthroughSubject<SendResult, Never>()
     private let source: SendSource
@@ -19,7 +19,7 @@ final class SendInputCoordinator: Coordinator<SendResult> {
 
     init(
         recipient: Recipient,
-        preChosenWallet: SolanaAccount?,
+        preChosenAccount: SolanaAccount?,
         preChosenAmount: Double?,
         navigationController: UINavigationController,
         source: SendSource,
@@ -28,7 +28,7 @@ final class SendInputCoordinator: Coordinator<SendResult> {
         sendViaLinkSeed: String? = nil
     ) {
         self.recipient = recipient
-        self.preChosenWallet = preChosenWallet
+        self.preChosenAccount = preChosenAccount
         self.preChosenAmount = preChosenAmount
         self.navigationController = navigationController
         self.source = source
@@ -38,7 +38,7 @@ final class SendInputCoordinator: Coordinator<SendResult> {
     }
 
     override func start() -> AnyPublisher<SendResult, Never> {
-        let viewModel = SendInputViewModel(recipient: recipient, preChosenWallet: preChosenWallet, preChosenAmount: preChosenAmount, source: source, allowSwitchingMainAmountType: allowSwitchingMainAmountType, sendViaLinkSeed: sendViaLinkSeed)
+        let viewModel = SendInputViewModel(recipient: recipient, preChosenAccount: preChosenAccount, preChosenAmount: preChosenAmount, source: source, allowSwitchingMainAmountType: allowSwitchingMainAmountType, sendViaLinkSeed: sendViaLinkSeed)
         let view = SendInputView(viewModel: viewModel)
         let controller = KeyboardAvoidingViewController(rootView: view, navigationBarVisibility: .visible)
 

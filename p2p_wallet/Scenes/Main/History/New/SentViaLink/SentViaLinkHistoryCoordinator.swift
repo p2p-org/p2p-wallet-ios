@@ -78,8 +78,8 @@ final class SentViaLinkHistoryCoordinator: SmartCoordinator<Void> {
     
     private func showShareView(link: String, amount: Double, symbol: String) {
         // get sender
-        let userWalletManager = Resolver.resolve(UserWalletManager.self)
-        let sender = userWalletManager.wallet?.name ?? userWalletManager.wallet?.account.publicKey.base58EncodedString
+        let userAccountManager = Resolver.resolve(UserAccountManager.self)
+        let sender = userAccountManager.account?.name ?? userAccountManager.account?.solanaKeypair.publicKey.base58EncodedString
         
         // assertion
         guard let sender,

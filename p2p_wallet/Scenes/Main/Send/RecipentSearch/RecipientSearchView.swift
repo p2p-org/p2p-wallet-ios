@@ -440,7 +440,7 @@ struct RecipientSearchView_Previews: PreviewProvider {
         NavigationView {
             RecipientSearchView(
                 viewModel: .init(
-                    preChosenWallet: nil,
+                    preChosenAccount: nil,
                     source: .none,
                     recipientSearchService: RecipientSearchServiceMock(result: okNoFundCase),
                     sendHistoryService: SendHistoryService(provider: SendHistoryLocalProvider())

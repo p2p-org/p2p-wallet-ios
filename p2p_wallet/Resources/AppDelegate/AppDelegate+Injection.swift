@@ -56,7 +56,7 @@ extension Resolver: ResolverRegistering {
         }.scope(.application)
 
         register {
-            WalletSettings(provider: WalletSettingsUserDefaultsProvider())
+            AccountSettings(provider: AccountSettingsUserDefaultsProvider())
         }.scope(.application)
 
         // AppEventHandler
@@ -100,7 +100,7 @@ extension Resolver: ResolverRegistering {
         }
 
         // WalletManager
-        register { UserWalletManager() }
+        register { UserAccountManager() }
             .scope(.application)
 
         // WalletMetadata
@@ -275,12 +275,12 @@ extension Resolver: ResolverRegistering {
     /// Session scope: Live when user is authenticated
     @MainActor private static func registerForSessionScope() {
         register {
-            let userWalletsManager: UserWalletManager = resolve()
+            let userAccountManager: UserAccountManager = resolve()
 
             return WormholeService(
                 api: resolve(),
-                ethereumKeypair: userWalletsManager.wallet?.ethereumKeypair,
-                solanaKeyPair: userWalletsManager.wallet?.account,
+                ethereumKeypair: userAccountManager.account?.ethereumKeypair,
+                solanaKeyPair: userAccountManager.account?.solanaKeypair,
                 errorObservable: resolve()
             )
         }
@@ -360,13 +360,13 @@ extension Resolver: ResolverRegistering {
             .scope(.application)
 
         register {
-            let userWalletManager: UserWalletManager = resolve()
+            let userAccountManager: UserAccountManager = resolve()
 
             return UserActionService(
                 consumers: [
                     WormholeSendUserActionConsumer(
-                        address: userWalletManager.wallet?.account.publicKey.base58EncodedString,
-                        signer: userWalletManager.wallet?.account,
+                        address: userAccountManager.account?.solanaKeypair.publicKey.base58EncodedString,
+                        signer: userAccountManager.account?.solanaKeypair,
                         solanaClient: resolve(),
                         wormholeAPI: resolve(),
                         relayService: resolve(),
@@ -374,8 +374,8 @@ extension Resolver: ResolverRegistering {
                         persistence: resolve()
                     ),
                     WormholeClaimUserActionConsumer(
-                        address: userWalletManager.wallet?.ethereumKeypair.address,
-                        signer: userWalletManager.wallet?.ethereumKeypair,
+                        address: userAccountManager.account?.ethereumKeypair.address,
+                        signer: userAccountManager.account?.ethereumKeypair,
                         wormholeAPI: resolve(),
                         ethereumTokenRepository: resolve(),
                         errorObserver: resolve(),
@@ -447,7 +447,7 @@ extension Resolver: ResolverRegistering {
 
         register { () -> EthereumAccountsService in
             EthereumAccountsService(
-                address: resolve(UserWalletManager.self).wallet?.ethereumKeypair.address ?? "",
+                address: resolve(UserAccountManager.self).account?.ethereumKeypair.address ?? "",
                 web3: resolve(),
                 ethereumTokenRepository: resolve(),
                 priceService: resolve(),
@@ -513,7 +513,7 @@ extension Resolver: ResolverRegistering {
 
         register {
             MoonpaySellDataService(
-                userId: Resolver.resolve(UserWalletManager.self).wallet?.moonpayExternalClientId ?? "",
+                userId: Resolver.resolve(UserAccountManager.self).account?.moonpayExternalClientId ?? "",
                 provider: resolve(),
                 priceProvider: resolve(),
                 sellTransactionsRepository: resolve()
@@ -536,7 +536,7 @@ extension Resolver: ResolverRegistering {
 
             return MoonpaySellActionService(
                 provider: resolve(),
-                refundWalletAddress: Resolver.resolve(UserWalletManager.self).wallet?.account.publicKey
+                refundWalletAddress: Resolver.resolve(UserAccountManager.self).account?.solanaKeypair.publicKey
                     .base58EncodedString ?? "",
                 endpoint: endpoint,
                 apiKey: apiKey

@@ -11,7 +11,7 @@ import Resolver
 
 struct DeleteMyAccountView: View {
     @State var slider: Bool = false
-    @ObservedObject var walletSettings: WalletSettings = Resolver.resolve()
+    @ObservedObject var walletSettings: AccountSettings = Resolver.resolve()
 
     var didRequestDelete: (() -> Void)?
 

@@ -63,22 +63,22 @@ class WormholeSendInputViewModel: BaseViewModel, ObservableObject {
 
     init(
         recipient: Recipient,
-        userWalletManager: UserWalletManager = Resolver.resolve(),
+        userAccountManager: UserAccountManager = Resolver.resolve(),
         wormholeAPI: WormholeAPI = Resolver.resolve(),
         relayService: RelayService = Resolver.resolve(),
         relayContextManager: RelayContextManager = Resolver.resolve(),
         orcaSwap: OrcaSwapType = Resolver.resolve(),
         solanaAccountsService: SolanaAccountsService = Resolver.resolve(),
         notificationService: NotificationService = Resolver.resolve(),
-        preChosenWallet: SolanaAccount? = nil
+        preChosenAccount: SolanaAccount? = nil
     ) {
         self.recipient = recipient
         self.solanaAccountsService = solanaAccountsService
 
         let services: WormholeSendInputState.Service = (wormholeAPI, relayService, relayContextManager, orcaSwap)
 
-        // Ensure user wallet is available
-        guard let wallet = userWalletManager.wallet else {
+        // Ensure user userAccount is available
+        guard let userAccount = userAccountManager.account else {
             let state: WormholeSendInputState = .initializingFailure(input: nil, error: .unauthorized)
             self.state = state
             stateMachine = .init(initialState: state, services: services)
@@ -88,7 +88,7 @@ class WormholeSendInputViewModel: BaseViewModel, ObservableObject {
 
         let availableBridgeAccounts = Self.resolveSupportedSolanaAccounts(solanaAccountsService: solanaAccountsService)
         let chosenAccount = availableBridgeAccounts
-            .first(where: { $0.mintAddress == preChosenWallet?.mintAddress })
+            .first(where: { $0.mintAddress == preChosenAccount?.mintAddress })
 
         // Ensure at lease one available wallet for bridging.
         guard let initialSolanaAccount = chosenAccount ?? availableBridgeAccounts.first else {
@@ -109,7 +109,7 @@ class WormholeSendInputViewModel: BaseViewModel, ObservableObject {
         // Setup state machine
         let state: WormholeSendInputState = .calculating(
             newInput: .init(
-                keyPair: wallet.account,
+                keyPair: userAccount.solanaKeypair,
                 solanaAccount: initialSolanaAccount,
                 availableAccounts: solanaAccountsService.state.value,
                 amount: .init(token: initialSolanaAccount.token),

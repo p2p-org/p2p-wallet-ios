@@ -17,7 +17,7 @@ final class PincodeViewModel: BaseViewModel, ObservableObject {
     @Injected private var biometricsAuthProvider: BiometricsAuthProvider
     @Injected private var authenticationHandler: AuthenticationHandlerType
     @Injected private var pincodeService: PincodeService
-    @Injected private var userWalletManager: UserWalletManager
+    @Injected private var userAccountManager: UserAccountManager
     @Injected private var notificationService: NotificationService
 
     // MARK: - Properties
@@ -115,7 +115,7 @@ final class PincodeViewModel: BaseViewModel, ObservableObject {
     }
 
     func logout() {
-        Task { try await self.userWalletManager.remove() }
+        Task { try await self.userAccountManager.remove() }
     }
 }
 
