@@ -12,6 +12,6 @@ public typealias SolanaToken = Token
 
 extension SolanaToken: AnyToken {
     public var tokenPrimaryKey: String {
-        return isNative ? "native-solana" : "spl-\(address)"
+        return isNative ? "native" : address
     }
 }

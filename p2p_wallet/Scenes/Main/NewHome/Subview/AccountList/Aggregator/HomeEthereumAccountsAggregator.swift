@@ -1,10 +1,3 @@
-//
-//  HomeAggregator.swift
-//  p2p_wallet
-//
-//  Created by Giang Long Tran on 18.04.2023.
-//
-
 import Foundation
 import KeyAppKitCore
 import Web3
@@ -61,7 +54,8 @@ struct HomeEthereumAccountsAggregator: DataAggregator {
 
                 return RenderableEthereumAccount(
                     account: account,
-                    status: status
+                    status: status,
+                    userAction: claiming
                 )
             }
 

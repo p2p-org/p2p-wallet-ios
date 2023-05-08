@@ -58,6 +58,8 @@ public enum WormholeSendInputState: Equatable {
                 input.solanaAccount = account
                 input.amount = .init(amount: input.amount.value, token: account.data.token)
                 return .calculating(newInput: input)
+            case let .calculate:
+                return .calculating(newInput: input)
             default:
                 return self
             }

@@ -57,34 +57,70 @@ struct WormholeClaimView: View {
                     .padding(.top, 4)
             }
 
-            // Fee
-            HStack(alignment: .center) {
-                // Title
-                Text(L10n.fee)
-                Spacer()
+            VStack(alignment: .leading, spacing: 0) {
+                // Fee
+                HStack(alignment: .center) {
+                    // Title
+                    Text(L10n.fees)
+                        .apply(style: .text3)
+                    Spacer()
 
-                // Amount
-                Text(viewModel.model.fees)
-                    .skeleton(
-                        with: viewModel.model.isLoading,
-                        size: .init(width: 100, height: 24)
-                    )
-
-                // Button
-                if viewModel.model.isOpenFeesVisible {
-                    Button {
-                        viewModel.openFees()
-                    } label: {
-                        Image(uiImage: .info)
-                            .resizable()
+                    if viewModel.model.isOpenFeesVisible {
+                        // Amount
+                        Text(viewModel.model.fees)
+                            .apply(style: .label1)
                             .foregroundColor(Color(Asset.Colors.mountain.color))
-                            .frame(width: 20, height: 20)
+                            .skeleton(
+                                with: viewModel.model.isLoading,
+                                size: .init(width: 100, height: 24)
+                            )
+                        // Button
+                        Button {
+                            viewModel.openFees()
+                        } label: {
+                            Image(uiImage: .info)
+                                .resizable()
+                                .foregroundColor(Color(Asset.Colors.mountain.color))
+                                .frame(width: 20, height: 20)
+                        }
+                        .disabled(!viewModel.model.claimButtonEnable)
+                    } else {
+                        // Amount
+                        Text(viewModel.model.fees)
+                            .apply(style: .text3)
+                            .skeleton(
+                                with: viewModel.model.isLoading,
+                                size: .init(width: 100, height: 24)
+                            )
                     }
-                    .disabled(!viewModel.model.claimButtonEnable)
+                }
+                .padding(.vertical, 14)
+                .padding(.horizontal, 16)
+
+                if viewModel.model.getAmount != nil {
+                    Divider()
+                        .padding(.leading, 20)
+                    HStack(alignment: .center) {
+                        Text(L10n.youWillGet)
+                            .apply(style: .text3)
+                        Spacer()
+
+                        // Amount
+                        Text(viewModel.model.getAmount ?? "")
+                            .fontWeight(.semibold)
+                            .apply(style: .text3)
+                            .skeleton(
+                                with: viewModel.model.isLoading,
+                                size: .init(width: 100, height: 24)
+                            )
+                            .if(viewModel.model.isLoading) { view in
+                                view.padding(.trailing, 25)
+                            }
+                    }
+                    .padding(.vertical, 14)
+                    .padding(.horizontal, 16)
                 }
             }
-            .padding(.horizontal, 16)
-            .padding(.vertical, 14)
             .background(
                 RoundedRectangle(cornerRadius: 12)
                     .fill(Color(Asset.Colors.snow.color))
@@ -92,8 +128,12 @@ struct WormholeClaimView: View {
             .padding(.top, 32)
 
             if viewModel.model.shouldShowBanner {
-                RefundBannerReceiveView(item: .init(text: L10n.weRefundBridgingCostsForAnyTransactionsOver50))
+                if let freeFeeLimit = viewModel.freeFeeLimit.value {
+                    RefundBannerReceiveView(
+                        item: .init(text: L10n.weRefundBridgingCostsForAnyTransactionsOver(freeFeeLimit))
+                    )
                     .padding(.top, 16)
+                }
             }
 
             Spacer()

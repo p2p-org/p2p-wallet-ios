@@ -61,6 +61,8 @@ class WormholeSendInputViewModel: BaseViewModel, ObservableObject {
 
     let changeTokenPressed = PassthroughSubject<Void, Never>()
 
+    var updateTask: DispatchWorkItem?
+
     init(
         recipient: Recipient,
         userWalletManager: UserWalletManager = Resolver.resolve(),
@@ -228,6 +230,18 @@ class WormholeSendInputViewModel: BaseViewModel, ObservableObject {
             .assignWeak(to: \.state, on: self)
             .store(in: &subscriptions)
 
+        stateMachine.state
+            .sink { [weak self] _ in
+                self?.updateTask?.cancel()
+                let newUpdateTask = DispatchWorkItem {
+                    Task { await self?.stateMachine.accept(action: .calculate) }
+                }
+
+                self?.updateTask = newUpdateTask
+                DispatchQueue.main.asyncAfter(deadline: .now() + 30, execute: newUpdateTask)
+            }
+            .store(in: &subscriptions)
+
         maxPressed
             .receive(on: RunLoop.main)
             .sink { [weak self] _ in
@@ -318,12 +332,11 @@ class WormholeSendInputViewModel: BaseViewModel, ObservableObject {
         // Initialise user action
         let userAction = WormholeSendUserAction(
             sourceToken: input.solanaAccount.data.token,
-            price: input.solanaAccount.price,
             recipient: input.recipient,
             amount: input.amount,
+            currencyAmount: try? input.amount.toFiatAmountIfPresent(price: input.solanaAccount.price),
             fees: output.fees,
-            transaction: transactions,
-            relayContext: relayContext
+            transaction: transactions
         )
 
         // Execute user action
@@ -349,11 +362,11 @@ extension WormholeSendInputViewModel {
         let supportedToken = WormholeSupportedTokens.bridges.map(\.solAddress).compactMap { $0 }
 
         var availableBridgeAccounts = solanaAccountsService.state.value.filter { account in
-            supportedToken.contains(account.data.token.address)
-        }
-
-        if let nativeWallet = solanaAccountsService.state.value.nativeWallet {
-            availableBridgeAccounts.append(nativeWallet)
+            if account.data.isNativeSOL {
+                return false
+            } else {
+                return supportedToken.contains(account.data.token.address)
+            }
         }
 
         // Only accounts with non-zero balance

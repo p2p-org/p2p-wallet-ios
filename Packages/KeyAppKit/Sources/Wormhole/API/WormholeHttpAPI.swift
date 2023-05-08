@@ -172,4 +172,11 @@ public class WormholeRPCAPI: WormholeAPI {
             params: [message: message]
         )
     }
+
+    public func getEthereumFreeFeeLimit() async throws -> String {
+        try await client.call(
+            method: "get_ethereum_free_fee_limit",
+            params: ["Void": ""]
+        )
+    }
 }

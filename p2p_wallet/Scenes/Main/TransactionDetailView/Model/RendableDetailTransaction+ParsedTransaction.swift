@@ -10,7 +10,7 @@ import Foundation
 import SolanaSwift
 import TransactionParser
 
-struct RendableDetailParsedTransaction: RendableTransactionDetail {
+struct RendableDetailParsedTransaction: RenderableTransactionDetail {
     let trx: ParsedTransaction
 
     var status: TransactionDetailStatus {
