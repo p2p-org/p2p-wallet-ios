@@ -15,21 +15,33 @@ public struct SendFees: Codable, Hashable, Equatable {
     /// Process fee in Ethereum network.
     public let arbiter: TokenAmount?
     
-    /// Network fee in Solana network.
+    /// Network fee in Solana network (SOL).
     public let networkFee: TokenAmount?
     
-    /// Account creation fee in Solana network.
+    /// Network fee in Solana network (in same result amount token).
+    public let networkFeeInToken: TokenAmount?
+    
+    /// Account creation fee in Solana network (SOL).
     public let messageAccountRent: TokenAmount?
     
-    /// Bridge fee in Solana network.
+    /// Account creation fee in Solana network (in same result amount token).
+    public let messageAccountRentInToken: TokenAmount?
+    
+    /// Bridge fee in Solana network (SOL).
     public let bridgeFee: TokenAmount?
+    
+    /// Bridge fee in Solana network (in same result amount token).
+    public let bridgeFeeInToken: TokenAmount?
 
     enum CodingKeys: String, CodingKey {
         case resultAmount = "result_amount"
         case arbiter = "arbiter_fee"
         case networkFee = "network_fee"
+        case networkFeeInToken = "network_fee_in_token"
         case messageAccountRent = "message_account_rent"
+        case messageAccountRentInToken = "message_account_rent_in_token"
         case bridgeFee = "bridge_fee"
+        case bridgeFeeInToken = "bridge_fee_in_token"
     }
 }
 

@@ -6,8 +6,8 @@ import Wormhole
 
 struct RenderableEthereumAccount: RenderableAccount {
     let account: EthereumAccount
-
     let status: Status
+    let userAction: (any UserAction)?
 
     var id: String {
         switch account.token.contractType {

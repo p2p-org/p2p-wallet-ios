@@ -21,6 +21,8 @@ public struct WormholeClaimUserAction: UserAction {
 
     public let bundleID: String
 
+    public let claimKey: String?
+
     public var status: UserActionStatus {
         switch internalState {
         case .pending:
@@ -69,6 +71,7 @@ public struct WormholeClaimUserAction: UserAction {
         amountInFiat = bundle.resultAmount.asCurrencyAmount
         fees = bundle.fees
         compensationDeclineReason = bundle.compensationDeclineReason
+        claimKey = nil
     }
 
     /// Extract user action from ``BundleStatus``.
@@ -88,14 +91,15 @@ public struct WormholeClaimUserAction: UserAction {
             internalState = .ready
         }
 
-        createdDate = Date()
-        updatedDate = createdDate
+        createdDate = bundleStatus.created
+        updatedDate = bundleStatus.modified
 
         self.token = token
         amountInCrypto = bundleStatus.resultAmount.asCryptoAmount
         amountInFiat = bundleStatus.resultAmount.asCurrencyAmount
         fees = bundleStatus.fees
         compensationDeclineReason = bundleStatus.compensationDeclineReason
+        claimKey = bundleStatus.claimKey
     }
 
     /// Client side moving to next status.

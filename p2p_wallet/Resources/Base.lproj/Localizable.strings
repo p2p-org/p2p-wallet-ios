@@ -1326,3 +1326,5 @@
 "How to claim for free" = "How to claim for free";
 "I forgot PIN" = "I forgot PIN";
 "More than the received amount" = "More than the received amount";
+"Fees" = "Fees";
+"We refund bridging costs for any transactions over %@" = "We refund bridging costs for any transactions over %@";

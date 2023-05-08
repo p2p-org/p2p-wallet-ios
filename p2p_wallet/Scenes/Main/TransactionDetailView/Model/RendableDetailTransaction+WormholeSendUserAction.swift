@@ -12,7 +12,7 @@ import KeyAppKitCore
 import Send
 import Wormhole
 
-struct RendableWormholeSendUserActionDetail: RendableTransactionDetail {
+struct RendableWormholeSendUserActionDetail: RenderableTransactionDetail {
     let userAction: WormholeSendUserAction
 
     var signature: String? { userAction.id }
@@ -94,7 +94,7 @@ struct RendableWormholeSendUserActionDetail: RendableTransactionDetail {
                     values: [
                         .init(
                             text: cryptoFormatter.string(amount: arbiterFee),
-                            secondaryText: cryptoFormatter.string(amount: arbiterFee)
+                            secondaryText: currencyFormatter.string(amount: arbiterFee)
                         ),
                     ]
                 )

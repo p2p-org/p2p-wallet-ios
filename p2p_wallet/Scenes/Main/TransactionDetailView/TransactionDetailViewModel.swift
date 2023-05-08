@@ -1,10 +1,3 @@
-//
-//  DetailTransactionViewModel.swift
-//  p2p_wallet
-//
-//  Created by Giang Long Tran on 03.02.2023.
-//
-
 import Combine
 import Foundation
 import History
@@ -26,7 +19,7 @@ enum TransactionDetailViewModelOutput {
 
 class TransactionDetailViewModel: BaseViewModel, ObservableObject {
     @Injected private var transactionHandler: TransactionHandler
-    @Published var rendableTransaction: any RendableTransactionDetail
+    @Published var rendableTransaction: any RenderableTransactionDetail
 
     let style: TransactionDetailStyle
 
@@ -34,7 +27,7 @@ class TransactionDetailViewModel: BaseViewModel, ObservableObject {
 
     var statusContext: String?
 
-    init(rendableDetailTransaction: any RendableTransactionDetail, style: TransactionDetailStyle = .active) {
+    init(rendableDetailTransaction: any RenderableTransactionDetail, style: TransactionDetailStyle = .active) {
         self.style = style
         rendableTransaction = rendableDetailTransaction
     }

@@ -32,6 +32,7 @@ struct DebugMenuView: View {
                     }
                 }
                 Section(header: Text("Application")) {
+                    Toggle("Network Logger", isOn: $viewModel.networkLoggerVisible)
                     TextFieldRow(title: "Wallet:", content: $globalAppState.forcedWalletAddress)
                     TextFieldRow(title: "Push:", content: $globalAppState.pushServiceEndpoint)
                     TextFieldRow(title: "Bridge:", content: $globalAppState.bridgeEndpoint)
@@ -45,6 +46,10 @@ struct DebugMenuView: View {
                             // app.delegate?.refresh()
                         }
                     } label: { Text("Apply") }
+                }
+
+                Section(header: Text("Modules")) {
+                    NavigationLink("History") { HistoryDebugView() }
                 }
 
                 Section(header: Text("Fee relayer")) {

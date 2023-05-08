@@ -48,13 +48,15 @@ struct WormholeClaimFeeView: View {
                         isLoading: viewModel.fee.isFetching
                     )
 
-                    WormholeFeeView(
-                        title: "Network Fee",
-                        subtitle: value.networkFee.crypto,
-                        detail: value.networkFee.fiat,
-                        isFree: value.networkFee.isFree,
-                        isLoading: viewModel.fee.isFetching
-                    )
+                    if let networkFee = value.networkFee {
+                        WormholeFeeView(
+                            title: "Network Fee",
+                            subtitle: networkFee.crypto,
+                            detail: networkFee.fiat,
+                            isFree: networkFee.isFree,
+                            isLoading: viewModel.fee.isFetching
+                        )
+                    }
 
                     if let accountsFee = value.accountCreationFee {
                         WormholeFeeView(
