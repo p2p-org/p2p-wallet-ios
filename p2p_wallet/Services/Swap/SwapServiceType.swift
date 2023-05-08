@@ -8,6 +8,7 @@
 import Foundation
 import SolanaSwift
 import OrcaSwapSwift
+import KeyAppKitCore
 
 ///  This protocol describes an interface for swapping service.
 ///  In general you have to call `load` method first to prepare a service.

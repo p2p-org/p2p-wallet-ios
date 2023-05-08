@@ -3,6 +3,7 @@ import SwiftUI
 import KeyAppUI
 import SolanaSwift
 import Resolver
+import KeyAppKitCore
 
 enum JupiterSwapSource: String {
     case actionPanel = "Action_Panel", tapMain = "Tap_Main", tapToken = "Tap_Token", solend = "Solend"

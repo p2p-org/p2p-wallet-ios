@@ -10,6 +10,7 @@ import Foundation
 import KeyAppBusiness
 import Resolver
 import SolanaSwift
+import KeyAppKitCore
 
 enum AccountDetailsAction {
     case openBuy

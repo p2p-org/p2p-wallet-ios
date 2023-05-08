@@ -1,6 +1,7 @@
 import Jupiter
 import FeeRelayerSwift
 import SolanaSwift
+import KeyAppKitCore
 
 struct JupiterSwapState: Equatable {
     // MARK: - Nested type

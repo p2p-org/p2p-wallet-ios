@@ -357,7 +357,7 @@
         "repositoryURL": "https://github.com/p2p-org/solana-swift.git",
         "state": {
           "branch": "feature/deprecated-wallet",
-          "revision": "decd0436e0cc3268628cfa6bcba5e15d312de010",
+          "revision": "feff0da204ab65e0b0b02d813d0a803e85cd1982",
           "version": null
         }
       },

@@ -6,7 +6,7 @@
 //
 
 import Foundation
-import SolanaSwift
+import KeyAppKitCore
 
 extension Array where Element == Wallet {
     var totalAmountInCurrentFiat: Double {

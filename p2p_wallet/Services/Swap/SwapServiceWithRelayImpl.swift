@@ -7,6 +7,7 @@ import Foundation
 import OrcaSwapSwift
 import Resolver
 import SolanaSwift
+import KeyAppKitCore
 
 /// Wrapper around OrcaSwapSwift and FeeRelayerSwift
 class SwapServiceWithRelayImpl: SwapServiceType {

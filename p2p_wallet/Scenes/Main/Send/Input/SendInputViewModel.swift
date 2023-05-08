@@ -12,6 +12,7 @@ import Resolver
 import Send
 import SolanaPricesAPIs
 import SolanaSwift
+import KeyAppKitCore
 
 final class SendInputViewModel: BaseViewModel, ObservableObject {
     enum Status {

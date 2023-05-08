@@ -12,6 +12,7 @@ import Solend
 import SwiftUI
 import UIKit
 import KeyAppBusiness
+import KeyAppKitCore
 
 final class SolendDepositsCoordinator: Coordinator<Void> {
     private let controller: UINavigationController

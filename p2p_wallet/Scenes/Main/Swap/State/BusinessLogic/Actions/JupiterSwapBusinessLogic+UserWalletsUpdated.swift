@@ -7,6 +7,7 @@
 
 import Foundation
 import SolanaSwift
+import KeyAppKitCore
 
 extension JupiterSwapBusinessLogic {
     static func updateUserWallets(

@@ -8,6 +8,7 @@
 import KeyAppUI
 import SolanaSwift
 import SwiftUI
+import KeyAppKitCore
 
 struct TokenCellViewItem: Hashable {
     init(wallet: Wallet) {

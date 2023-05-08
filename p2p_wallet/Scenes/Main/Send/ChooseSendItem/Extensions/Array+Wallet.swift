@@ -1,4 +1,4 @@
-import SolanaSwift
+import KeyAppKitCore
 
 extension Array where Element == Wallet {
     func sorted(preferOrderSymbols: [String] = []) -> Self {

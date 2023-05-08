@@ -9,6 +9,7 @@ import Foundation
 import JazziconSwift
 import SolanaSwift
 import UIKit
+import KeyAppKitCore
 
 class CoinLogoImageView: BEView {
     static var cachedJazziconSeeds = [String: UInt32]()

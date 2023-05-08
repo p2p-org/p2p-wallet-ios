@@ -8,6 +8,7 @@
 import Foundation
 import SolanaSwift
 import KeyAppBusiness
+import KeyAppKitCore
 
 protocol RendableAccountDetails {
     var title: String { get }

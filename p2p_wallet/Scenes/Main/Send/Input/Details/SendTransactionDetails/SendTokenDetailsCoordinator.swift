@@ -2,6 +2,7 @@ import Combine
 import Send
 import SolanaSwift
 import SwiftUI
+import KeyAppKitCore
 
 enum SendTransactionDetailsCoordinatorResult {
     case redirectToFeePrompt(availableTokens: [Wallet])

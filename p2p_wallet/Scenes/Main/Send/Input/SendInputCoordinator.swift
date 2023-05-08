@@ -3,6 +3,7 @@ import Send
 import SolanaSwift
 import SwiftUI
 import Resolver
+import KeyAppKitCore
 
 final class SendInputCoordinator: Coordinator<SendResult> {
     private let navigationController: UINavigationController

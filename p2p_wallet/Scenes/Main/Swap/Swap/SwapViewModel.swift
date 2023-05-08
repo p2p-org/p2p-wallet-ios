@@ -5,6 +5,7 @@ import SolanaSwift
 import AnalyticsManager
 import Task_retrying
 import KeyAppBusiness
+import KeyAppKitCore
 
 final class SwapViewModel: BaseViewModel, ObservableObject {
 

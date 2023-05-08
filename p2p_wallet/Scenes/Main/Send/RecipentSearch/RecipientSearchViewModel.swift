@@ -12,6 +12,7 @@ import Resolver
 import Send
 import SolanaSwift
 import Wormhole
+import KeyAppKitCore
 
 enum LoadableState: Equatable {
     case notRequested

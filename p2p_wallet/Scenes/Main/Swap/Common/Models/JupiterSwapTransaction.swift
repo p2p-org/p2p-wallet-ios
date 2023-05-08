@@ -1,5 +1,6 @@
 import SolanaSwift
 import Jupiter
+import KeyAppKitCore
 
 struct JupiterSwapTransaction: SwapRawTransactionType {
     let authority: String?
@@ -10,7 +11,7 @@ struct JupiterSwapTransaction: SwapRawTransactionType {
     let slippage: Double
     let metaInfo: SwapMetaInfo
     
-    var payingFeeWallet: SolanaSwift.Wallet?
+    var payingFeeWallet: Wallet?
     var feeAmount: SolanaSwift.FeeAmount
     let route: Route
     let account: KeyPair

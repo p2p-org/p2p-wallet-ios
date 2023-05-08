@@ -1,6 +1,7 @@
 import Combine
 import Resolver
 import SolanaSwift
+import KeyAppKitCore
 
 final class SendInputFeePromptViewModel: BaseViewModel, ObservableObject {
 
