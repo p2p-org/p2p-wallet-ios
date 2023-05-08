@@ -128,8 +128,12 @@ struct WormholeClaimView: View {
             .padding(.top, 32)
 
             if viewModel.model.shouldShowBanner {
-                RefundBannerReceiveView(item: .init(text: L10n.weRefundBridgingCostsForAnyTransactionsOver50))
+                if let freeFeeLimit = viewModel.freeFeeLimit.value {
+                    RefundBannerReceiveView(
+                        item: .init(text: L10n.weRefundBridgingCostsForAnyTransactionsOver(freeFeeLimit))
+                    )
                     .padding(.top, 16)
+                }
             }
 
             Spacer()
