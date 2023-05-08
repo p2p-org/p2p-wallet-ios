@@ -34,7 +34,7 @@ class HistoryViewModel: BaseViewModel, ObservableObject {
 
     let actionSubject: PassthroughSubject<NewHistoryAction, Never>
 
-    let history: AsyncList<any RendableListTransactionItem>
+    let history: AsyncList<RendableListHistoryTransactionItem>
 
     // MARK: - View Input
 
@@ -72,17 +72,17 @@ class HistoryViewModel: BaseViewModel, ObservableObject {
         self.actionSubject = actionSubject
 
         // Build history
-        history = .init(sequence: mock.async.eraseToAnyAsyncSequence())
+        history = .init(sequence: [].async.eraseToAnyAsyncSequence())
 
         showSendViaLinkTransaction = false
         super.init()
 
-        history
-            .$state
-            .map { self.buildOutput(history: $0) }
-            .receive(on: RunLoop.main)
-            .sink { self.output = $0 }
-            .store(in: &subscriptions)
+        output = .init(
+            status: .ready,
+            data: [.init(title: "Today", items: mock.map { .rendableTransaction($0) })],
+            fetchable: false,
+            error: nil
+        )
     }
 
     init(
@@ -101,7 +101,7 @@ class HistoryViewModel: BaseViewModel, ObservableObject {
         // Setup list adaptor
         let sequence = repository
             .getAll(account: userWalletManager.wallet?.account, mint: mint)
-            .map { trx -> any RendableListTransactionItem in
+            .map { trx -> RendableListHistoryTransactionItem in
                 await RendableListHistoryTransactionItem(
                     trx: trx,
                     allTokens: try tokensRepository.getTokensList(useCache: true),
@@ -155,7 +155,7 @@ class HistoryViewModel: BaseViewModel, ObservableObject {
         // Setup list adaptor
         let sequence = repository
             .getAll(account: userWalletManager.wallet?.account, mint: nil)
-            .map { trx -> any RendableListTransactionItem in
+            .map { trx -> RendableListHistoryTransactionItem in
                 await RendableListHistoryTransactionItem(
                     trx: trx,
                     allTokens: try tokensRepository.getTokensList(useCache: true),
@@ -225,21 +225,6 @@ class HistoryViewModel: BaseViewModel, ObservableObject {
         NotificationCenter.default.removeObserver(self)
     }
 
-    func onTap(item: any RendableListTransactionItem) {
-        switch item {
-        case let item as RendableListHistoryTransactionItem:
-            actionSubject.send(.openHistoryTransaction(item.trx))
-        case let item as RendableListPendingTransactionItem:
-            actionSubject.send(.openPendingTransaction(item.trx))
-        case let item as RendableListUserActionTransactionItem:
-            actionSubject.send(.openUserAction(item.userAction))
-        case let item as SellRendableListOfframItem:
-            actionSubject.send(.openSellTransaction(item.trx))
-        default:
-            break
-        }
-    }
-
     // MARK: - View Output
 
     func onAppear() {
@@ -290,7 +275,7 @@ class HistoryViewModel: BaseViewModel, ObservableObject {
     }
 
     func buildOutput(
-        history: ListState<any RendableListTransactionItem>,
+        history: ListState<RendableListHistoryTransactionItem>,
         sells: [any RendableListOfframItem] = [],
         others: [any RendableListTransactionItem] = []
     ) -> ListState<HistorySection> {
