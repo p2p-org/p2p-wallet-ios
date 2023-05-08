@@ -92,7 +92,7 @@ struct HomeSolanaAccountsAggregator: DataAggregator {
             }
 
             // then name
-            return lhs.data.name < rhs.data.name
+            return lhs.data.token.name < rhs.data.token.name
         }
     }
 }
