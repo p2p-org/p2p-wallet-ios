@@ -18,7 +18,7 @@ extension RecipientSearchServiceImpl {
 
             // Check self-sending
             if let wallet: SolanaAccount = config.wallets
-                .first(where: { (wallet: SolanaAccount) in wallet.pubkey == addressBase58 })
+                .first(where: { $0.pubkey == addressBase58 })
             {
                 return .selfSendingError(recipient: .init(
                     address: addressBase58,

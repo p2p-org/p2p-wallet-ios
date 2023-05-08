@@ -110,7 +110,7 @@ public class P2POrcaSwapWrapperParseStrategy: TransactionParseStrategy {
     }
 
     func parseToken(_ transactionInfo: TransactionInfo,
-                    for address: String) async throws -> (wallet: SolanaAccount, amount: Double)?
+                    for address: String) async throws -> (solanaAccount: SolanaAccount, amount: Double)?
     {
         guard let addressIndex = transactionInfo.transaction.message.accountKeys
             .firstIndex(where: { $0.publicKey.base58EncodedString == address }) else { return nil }

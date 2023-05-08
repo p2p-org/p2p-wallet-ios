@@ -5,14 +5,14 @@ import KeyAppKitCore
 
 struct SendInputTokenView: View {
     let mainColor = Color(Asset.Colors.night.color)
-    let wallet: SolanaAccount
+    let solanaAccount: SolanaAccount
     let amountInFiat: Double // It is separated from the wallet due to new SolanaAccount structures
     let changeAction: () -> Void
     let isChangeEnabled: Bool
     let skeleton: Bool
 
-    init(wallet: SolanaAccount, amountInFiat: Double, isChangeEnabled: Bool, skeleton: Bool = false, changeAction: @escaping () -> Void) {
-        self.wallet = wallet
+    init(solanaAccount: SolanaAccount, amountInFiat: Double, isChangeEnabled: Bool, skeleton: Bool = false, changeAction: @escaping () -> Void) {
+        self.solanaAccount = solanaAccount
         self.amountInFiat = amountInFiat
         self.changeAction = changeAction
         self.isChangeEnabled = isChangeEnabled
@@ -22,14 +22,14 @@ struct SendInputTokenView: View {
     var body: some View {
         Button(action: changeAction) {
             HStack(spacing: 0) {
-                CoinLogoImageViewRepresentable(size: 48, args: .token(wallet.token))
+                CoinLogoImageViewRepresentable(size: 48, args: .token(solanaAccount.token))
                     .skeleton(with: skeleton)
                     .frame(width: 48, height: 48)
                     .cornerRadius(radius: 48 / 2, corners: .allCorners)
                     .padding(.vertical, 4)
 
                 VStack(alignment: .leading, spacing: 6) {
-                    Text(wallet.token.name)
+                    Text(solanaAccount.token.name)
                         .lineLimit(1)
                         .foregroundColor(mainColor)
                         .font(uiFont: .systemFont(ofSize: UIFont.fontSize(of: .text2), weight: .semibold))
@@ -43,7 +43,7 @@ struct SendInputTokenView: View {
                             .foregroundColor(Color(Asset.Colors.mountain.color))
                             .frame(width: 16, height: 16)
 
-                        Text(wallet.amount?.toString(maximumFractionDigits: Int(wallet.token.decimals), roundingMode: .down) ?? "")
+                        Text(solanaAccount.amount?.toString(maximumFractionDigits: Int(solanaAccount.token.decimals), roundingMode: .down) ?? "")
                             .foregroundColor(Color(Asset.Colors.mountain.color))
                             .apply(style: .text4)
                             .lineLimit(1)
@@ -51,7 +51,7 @@ struct SendInputTokenView: View {
                         Spacer()
                             .frame(width: 2)
 
-                        Text(wallet.token.symbol)
+                        Text(solanaAccount.token.symbol)
                             .foregroundColor(Color(Asset.Colors.mountain.color))
                             .apply(style: .text4)
                             .lineLimit(1)
@@ -88,7 +88,7 @@ struct SendInputTokenView_Previews: PreviewProvider {
     static var previews: some View {
         ZStack {
             Color(Asset.Colors.rain.color)
-            SendInputTokenView(wallet: SolanaAccount(token: .nativeSolana), amountInFiat: 1.0, isChangeEnabled: true, changeAction: {})
+            SendInputTokenView(solanaAccount: SolanaAccount(token: .nativeSolana), amountInFiat: 1.0, isChangeEnabled: true, changeAction: {})
                 .padding(.horizontal, 16)
         }
     }

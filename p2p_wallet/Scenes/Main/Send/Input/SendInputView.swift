@@ -103,7 +103,7 @@ struct SendInputView: View {
             .padding(.horizontal, 4)
 
             SendInputTokenView(
-                wallet: viewModel.sourceWallet,
+                solanaAccount: viewModel.sourceWallet,
                 amountInFiat: viewModel.sourceWallet._amountInCurrentFiat,
                 isChangeEnabled: viewModel.isTokenChoiceEnabled,
                 changeAction: viewModel.changeTokenPressed.send

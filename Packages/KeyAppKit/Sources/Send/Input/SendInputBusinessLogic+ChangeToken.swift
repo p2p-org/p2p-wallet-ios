@@ -70,7 +70,7 @@ extension SendInputBusinessLogic {
     static func validateFee(state: SendInputState) async -> SendInputState {
         guard state.fee != .zero else { return state }
         guard let wallet: SolanaAccount = state.userWalletEnvironments.wallets
-            .first(where: { (wallet: SolanaAccount) in wallet.token.address == state.tokenFee.address })
+            .first(where: { $0.token.address == state.tokenFee.address })
         else {
             return state.copy(status: .error(reason: .insufficientAmountToCoverFee))
         }

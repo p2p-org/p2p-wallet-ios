@@ -29,7 +29,7 @@ final class ChooseSendItemCoordinator: Coordinator<SolanaAccount?> {
             chosenToken: chosenWallet
         )
         let view = ChooseItemView<TokenCellView>(viewModel: viewModel) { model in
-            TokenCellView(item: .init(wallet: model.item as! SolanaAccount), appearance: .other)
+            TokenCellView(item: .init(solanaAccount: model.item as! SolanaAccount), appearance: .other)
         }
         let controller = KeyboardAvoidingViewController(rootView: view, ignoresKeyboard: true)
         navigationController.setViewControllers([controller], animated: false)
@@ -43,20 +43,20 @@ final class ChooseSendItemCoordinator: Coordinator<SolanaAccount?> {
         }
 
         viewModel.chooseTokenSubject
-            .sink { [weak self] value in self?.close(wallet: value as? SolanaAccount) }
+            .sink { [weak self] value in self?.close(solanaAccount: value as? SolanaAccount) }
             .store(in: &subscriptions)
 
         return subject.eraseToAnyPublisher()
     }
 
-    private func close(wallet: SolanaAccount?) {
+    private func close(solanaAccount: SolanaAccount?) {
         navigationController.dismiss(animated: true)
-        subject.send(wallet)
+        subject.send(solanaAccount)
         subject.send(completion: .finished)
     }
 
     @objc private func closeButtonTapped() {
-        self.close(wallet: nil)
+        self.close(solanaAccount: nil)
     }
 
     private func configureTitle(strategy: ChooseWalletTokenStrategy, vc: UIViewController) {
