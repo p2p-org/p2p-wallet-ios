@@ -123,6 +123,9 @@ struct WormholeClaimEthereumModel: WormholeClaimModel {
         let bundle = bundle.value
 
         guard let bundle else {
+            if isNotEnoughAmount {
+                  return L10n.moreThanTheReceivedAmount
+            }
             return L10n.isUnavailable(L10n.value)
         }
 
