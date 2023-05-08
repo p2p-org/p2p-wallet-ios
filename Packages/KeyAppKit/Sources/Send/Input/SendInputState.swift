@@ -240,7 +240,7 @@ public extension SendInputState {
         return Double(maxAmountInToken) / pow(10, Double(token.decimals))
     }
 
-    var sourceWallet: SolanaAccount? {
+    var sourceAccount: SolanaAccount? {
         userWalletEnvironments.wallets.first { $0.token.address == token.address }
     }
 

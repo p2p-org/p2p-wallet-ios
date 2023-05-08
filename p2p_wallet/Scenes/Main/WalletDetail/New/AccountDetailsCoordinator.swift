@@ -265,7 +265,7 @@ class AccountDetailsCoordinator: SmartCoordinator<AccountDetailsCoordinatorResul
                     openKeyboardOnStart: true,
                     source: .tapToken,
                     preChosenWallet: account,
-                    destinationWallet: destination,
+                    destinationAccount: destination,
                     hideTabBar: true
                 )
             )

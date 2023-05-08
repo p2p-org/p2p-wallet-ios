@@ -55,7 +55,7 @@ final class SwapViewModel: BaseViewModel, ObservableObject {
     var continueUpdateOnDisappear = false // Special flag for update if view is disappeared
 
     private let preChosenWallet: SolanaAccount?
-    private let destinationWallet: SolanaAccount?
+    private let destinationAccount: SolanaAccount?
     private var timer: Timer?
     private let source: JupiterSwapSource
     private var wasMinToastShown = false // Special flag not to show toast again if state has not changed
@@ -66,13 +66,13 @@ final class SwapViewModel: BaseViewModel, ObservableObject {
         toTokenInputViewModel: SwapInputViewModel,
         source: JupiterSwapSource,
         preChosenWallet: SolanaAccount? = nil,
-        destinationWallet: SolanaAccount? = nil
+        destinationAccount: SolanaAccount? = nil
     ) {
         self.fromTokenInputViewModel = fromTokenInputViewModel
         self.toTokenInputViewModel = toTokenInputViewModel
         self.stateMachine = stateMachine
         self.preChosenWallet = preChosenWallet
-        self.destinationWallet = destinationWallet
+        self.destinationAccount = destinationAccount
         self.source = source
         super.init()
         bind()
@@ -239,7 +239,7 @@ private extension SwapViewModel {
                     jupiterTokens: jupiterTokens,
                     routeMap: routeMap,
                     preChosenFromTokenMintAddress: preChosenWallet?.mintAddress ?? Defaults.fromTokenAddress,
-                    preChosenToTokenMintAddress: destinationWallet?.mintAddress ?? Defaults.toTokenAddress
+                    preChosenToTokenMintAddress: destinationAccount?.mintAddress ?? Defaults.toTokenAddress
                 )
             )
         if source != .tapMain {
@@ -374,7 +374,7 @@ private extension SwapViewModel {
     private func swapToken() {
         guard isSliderOn,
               let account = currentState.account,
-              let sourceWallet = currentState.fromToken.userWallet,
+              let sourceAccount = currentState.fromToken.userWallet,
               let amountFrom = currentState.amountFrom,
               let amountTo = currentState.amountTo,
               let route = currentState.route
@@ -390,12 +390,12 @@ private extension SwapViewModel {
         #endif
         
         // form transaction
-        let destinationWallet = currentState.toToken.userWallet ?? SolanaAccount(pubkey: nil, token: currentState.toToken.token)
+        let destinationAccount = currentState.toToken.userWallet ?? SolanaAccount(pubkey: nil, token: currentState.toToken.token)
         
         let swapTransaction = JupiterSwapTransaction(
             authority: account.publicKey.base58EncodedString,
-            sourceWallet: sourceWallet,
-            destinationWallet: destinationWallet,
+            sourceAccount: sourceAccount,
+            destinationAccount: destinationAccount,
             fromAmount: amountFrom,
             toAmount: amountTo,
             slippage: Double(stateMachine.currentState.slippageBps) / 100,

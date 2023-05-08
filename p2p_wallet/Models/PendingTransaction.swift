@@ -133,24 +133,24 @@ extension PendingTransaction {
             amountInFiat = transaction.amountInFiat
             fee = transaction.feeAmount
         case let transaction as SwapRawTransactionType:
-            var destinationWallet = transaction.destinationWallet
+            var destinationAccount = transaction.destinationAccount
             if let authority = try? PublicKey(string: authority),
-               let mintAddress = try? PublicKey(string: destinationWallet.mintAddress)
+               let mintAddress = try? PublicKey(string: destinationAccount.mintAddress)
             {
-                destinationWallet.pubkey = try? PublicKey.associatedTokenAddress(
+                destinationAccount.pubkey = try? PublicKey.associatedTokenAddress(
                     walletAddress: authority,
                     tokenMintAddress: mintAddress
                 ).base58EncodedString
             }
 
             value = SwapInfo(
-                source: transaction.sourceWallet,
+                source: transaction.sourceAccount,
                 sourceAmount: transaction.fromAmount,
-                destination: destinationWallet,
+                destination: destinationAccount,
                 destinationAmount: transaction.toAmount,
                 accountSymbol: nil
             )
-            amountInFiat = transaction.fromAmount * pricesService.currentPrice(mint: transaction.sourceWallet.token.address)?
+            amountInFiat = transaction.fromAmount * pricesService.currentPrice(mint: transaction.sourceAccount.token.address)?
                 .value
             fee = transaction.feeAmount
         case let transaction as ClaimSentViaLinkTransaction:
@@ -159,7 +159,7 @@ extension PendingTransaction {
                     pubkey: transaction.claimableTokenInfo.account,
                     token: transaction.token
                 ) ,
-                destination: transaction.destinationWallet,
+                destination: transaction.destinationAccount,
                 authority: nil,
                 destinationAuthority: nil,
                 rawAmount: transaction.tokenAmount,

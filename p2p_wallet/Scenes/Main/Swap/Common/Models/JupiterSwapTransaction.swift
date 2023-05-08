@@ -4,8 +4,8 @@ import KeyAppKitCore
 
 struct JupiterSwapTransaction: SwapRawTransactionType {
     let authority: String?
-    let sourceWallet: SolanaAccount
-    let destinationWallet: SolanaAccount
+    let sourceAccount: SolanaAccount
+    let destinationAccount: SolanaAccount
     let fromAmount: Double
     let toAmount: Double
     let slippage: Double
@@ -21,8 +21,8 @@ struct JupiterSwapTransaction: SwapRawTransactionType {
     
     var mainDescription: String {
         [
-            fromAmount.tokenAmountFormattedString(symbol: sourceWallet.token.symbol, maximumFractionDigits: Int(sourceWallet.token.decimals)),
-            toAmount.tokenAmountFormattedString(symbol: destinationWallet.token.symbol, maximumFractionDigits: Int(destinationWallet.token.decimals))
+            fromAmount.tokenAmountFormattedString(symbol: sourceAccount.token.symbol, maximumFractionDigits: Int(sourceAccount.token.decimals)),
+            toAmount.tokenAmountFormattedString(symbol: destinationAccount.token.symbol, maximumFractionDigits: Int(destinationAccount.token.decimals))
         ].joined(separator: " → ")
     }
 

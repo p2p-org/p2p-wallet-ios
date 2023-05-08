@@ -80,8 +80,8 @@ struct RendableDetailPendingTransaction: RendableTransactionDetail {
             }
 
         case let transaction as SwapRawTransactionType:
-            let fromUrlStr = transaction.sourceWallet.token.logoURI
-            let toUrlStr = transaction.destinationWallet.token.logoURI
+            let fromUrlStr = transaction.sourceAccount.token.logoURI
+            let toUrlStr = transaction.destinationAccount.token.logoURI
 
             guard let fromUrlStr, let toUrlStr else {
                 return .icon(.buttonSwap)
@@ -138,7 +138,7 @@ struct RendableDetailPendingTransaction: RendableTransactionDetail {
             }
 
         case let transaction as SwapRawTransactionType:
-            if let price = priceService.currentPrice(mint: transaction.sourceWallet.token.address)?.value {
+            if let price = priceService.currentPrice(mint: transaction.sourceAccount.token.address)?.value {
                 let amountInFiat: Double = transaction.fromAmount * price
                 return .unchanged("\(amountInFiat.fiatAmountFormattedString())")
             } else {

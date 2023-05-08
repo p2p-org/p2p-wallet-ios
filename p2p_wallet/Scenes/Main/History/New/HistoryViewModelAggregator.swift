@@ -41,8 +41,8 @@ enum HistoryViewModelAggregator {
                         case let transaction as SendTransaction:
                             return transaction.walletToken.mintAddress == mint
                         case let transaction as SwapRawTransactionType:
-                            return transaction.sourceWallet.mintAddress == mint ||
-                                transaction.destinationWallet.mintAddress == mint
+                            return transaction.sourceAccount.mintAddress == mint ||
+                                transaction.destinationAccount.mintAddress == mint
                         case let transaction as ClaimSentViaLinkTransaction:
                             return transaction.claimableTokenInfo.mintAddress == mint
                         default:

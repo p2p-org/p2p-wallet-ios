@@ -57,9 +57,9 @@ public class P2POrcaSwapWrapperParseStrategy: TransactionParseStrategy {
         let swapInstruction = transactionInfo.transaction.message.instructions[swapInstructionIndex]
         guard
             var sourceAddress: String = swapInstruction.accounts?[3],
-            var (sourceWallet, sourceChange) = try await parseToken(transactionInfo, for: sourceAddress),
+            var (sourceAccount, sourceChange) = try await parseToken(transactionInfo, for: sourceAddress),
             var destinationAddress: String = swapInstruction.accounts?[5],
-            var (destinationWallet, destinationChange) = try await parseToken(transactionInfo, for: destinationAddress)
+            var (destinationAccount, destinationChange) = try await parseToken(transactionInfo, for: destinationAddress)
         else { return nil }
 
         let totalInstructions = transactionInfo.transaction.message.instructions.count
@@ -76,7 +76,7 @@ public class P2POrcaSwapWrapperParseStrategy: TransactionParseStrategy {
                         for: sourceAddress
                     ) else { return nil }
 
-                    sourceWallet = newSourceWallet
+                    sourceAccount = newSourceWallet
                     sourceChange = newSourceChange
                 }
             }
@@ -94,16 +94,16 @@ public class P2POrcaSwapWrapperParseStrategy: TransactionParseStrategy {
                         for: destinationAddress
                     ) else { return nil }
 
-                    destinationWallet = newDestinationWallet
+                    destinationAccount = newDestinationWallet
                     destinationChange = newDestinationChange
                 }
             }
         }
 
         return SwapInfo(
-            source: sourceWallet,
+            source: sourceAccount,
             sourceAmount: sourceChange,
-            destination: destinationWallet,
+            destination: destinationAccount,
             destinationAmount: destinationChange,
             accountSymbol: config.symbolView
         )
