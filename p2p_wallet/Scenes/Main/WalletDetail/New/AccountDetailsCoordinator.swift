@@ -179,7 +179,7 @@ class AccountDetailsCoordinator: SmartCoordinator<AccountDetailsCoordinatorResul
                 openReceive(item:
                     .init(
                         icon: icon,
-                        name: account.data.name,
+                        name: account.data.token.name,
                         symbol: account.data.token.symbol,
                         availableNetwork: [.solana, .ethereum]
                     ))
@@ -197,7 +197,7 @@ class AccountDetailsCoordinator: SmartCoordinator<AccountDetailsCoordinatorResul
             openReceive(item:
                 .init(
                     icon: icon,
-                    name: account.data.name,
+                    name: account.data.token.name,
                     symbol: account.data.token.symbol,
                     availableNetwork: [.solana, .ethereum]
                 ))

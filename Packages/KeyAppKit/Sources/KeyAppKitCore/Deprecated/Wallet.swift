@@ -27,15 +27,11 @@ public struct Wallet: Identifiable, Hashable {
     }
     
     public var id: String {
-        name ?? token.address
+        pubkey ?? token.address
     }
     
     public var isNativeSOL: Bool {
         token.isNativeSOL
-    }
-    
-    public var name: String {
-        token.symbol
     }
     
     public var mintAddress: String {
