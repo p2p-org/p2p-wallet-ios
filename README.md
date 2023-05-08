@@ -24,10 +24,6 @@ Key App wallet on Solana blockchain
 ```shell
 git clone git@github.com:p2p-org/p2p-wallet-ios.git && cd p2p-wallet-ios
 ```
-- Get submodules
-```shell
-git submodule update --init --recursive
-```
 - Set git hooks (Optional)
 ```shell
 git config core.hooksPath .githooks
@@ -80,10 +76,6 @@ chmod u+x Scripts/install.sh && Scripts/install.sh
 5. Click open project.
 
 <img width="673" alt="image" src="https://user-images.githubusercontent.com/6975538/172043669-84883ac3-a35f-4ce4-b576-3a25564bed30.png">
-
-6. Change "Run automation" to "Pods/swiftgen/bin/swiftgen config run --config swiftgen.yml"
-
-<img width="682" alt="image" src="https://user-images.githubusercontent.com/6975538/172043833-ebb5b808-3b11-4e2a-a46e-727503b61e03.png">
 
 ## CI/CD
 

@@ -145,7 +145,10 @@ struct RendableDetailPendingTransaction: RenderableTransactionDetail {
                 return .unchanged("")
             }
         case let transaction as ClaimSentViaLinkTransaction:
-            return .positive("+\(transaction.amountInFiat?.fiatAmountFormattedString() ?? "")")
+            if let amountInFiat = transaction.amountInFiat?.fiatAmountFormattedString() {
+                return .positive("+\(amountInFiat)")
+            }
+            return .unchanged("")
 
 //        case let transaction as WormholeClaimTransaction:
 //            if let value = CurrencyFormatter().string(for: transaction.bundle.resultAmount) {
