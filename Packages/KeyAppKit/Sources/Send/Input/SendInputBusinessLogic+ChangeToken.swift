@@ -45,7 +45,7 @@ extension SendInputBusinessLogic {
                 // do nothing as fee is free
             } else {
                 let feeInfo = await autoSelectTokenFee(
-                    userWallets: state.userWalletEnvironments.wallets,
+                    userWallets: state.userWalletEnvironments.solanaTokenAccounts,
                     feeInSol: state.fee,
                     token: state.token,
                     services: services
@@ -69,7 +69,7 @@ extension SendInputBusinessLogic {
 
     static func validateFee(state: SendInputState) async -> SendInputState {
         guard state.fee != .zero else { return state }
-        guard let wallet: SolanaAccount = state.userWalletEnvironments.wallets
+        guard let wallet: SolanaAccount = state.userWalletEnvironments.solanaTokenAccounts
             .first(where: { $0.token.address == state.tokenFee.address })
         else {
             return state.copy(status: .error(reason: .insufficientAmountToCoverFee))

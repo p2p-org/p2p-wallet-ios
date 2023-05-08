@@ -113,7 +113,7 @@ final class SendInputViewModel: BaseViewModel, ObservableObject {
 
         let solanaAccountsService = Resolver.resolve(SolanaAccountsService.self)
         self.solanaAccountsService = solanaAccountsService
-        let wallets = solanaAccountsService.loadedAccounts
+        let solanaAccounts = solanaAccountsService.loadedAccounts
 
         let pricesService = Resolver.resolve(PricesService.self)
         self.pricesService = pricesService
@@ -122,14 +122,14 @@ final class SendInputViewModel: BaseViewModel, ObservableObject {
         let tokenInWallet: SolanaAccount
         switch recipient.category {
         case let .solanaTokenAddress(_, token):
-            tokenInWallet = wallets
+            tokenInWallet = solanaAccounts
                 .first(where: { $0.token.address == token.address }) ?? SolanaAccount(token: Token.nativeSolana)
         default:
             if let preChosenAccount = preChosenAccount {
                 tokenInWallet = preChosenAccount
             } else {
                 let preferOrder: [String: Int] = ["USDC": 1, "USDT": 2]
-                let sortedWallets = wallets
+                let sortedWallets = solanaAccounts
                     .filter(\.isSendable)
                     .sorted { (lhs: SolanaAccount, rhs: SolanaAccount) -> Bool in
                         if preferOrder[lhs.token.symbol] != nil || preferOrder[rhs.token.symbol] != nil {
@@ -143,18 +143,18 @@ final class SendInputViewModel: BaseViewModel, ObservableObject {
         }
         sourceAccount = tokenInWallet
 
-        let feeTokenInWallet = wallets
+        let feeTokenInWallet = solanaAccounts
             .first(where: { $0.token.address == Token.usdc.address }) ?? SolanaAccount(token: Token.usdc)
 
         var exchangeRate = [String: CurrentPrice]()
         var tokens = Set<Token>()
-        wallets.forEach {
+        solanaAccounts.forEach {
             exchangeRate[$0.token.symbol] = $0._price
             tokens.insert($0.token)
         }
 
         let env = UserWalletEnvironments(
-            wallets: wallets,
+            solanaTokenAccounts: solanaAccounts,
             ethereumAccount: nil,
             exchangeRate: exchangeRate,
             tokens: tokens
@@ -186,7 +186,7 @@ final class SendInputViewModel: BaseViewModel, ObservableObject {
 
         let preChosenAccountAvailable = preChosenAccount != nil
         let recipientIsDirectSPLTokenAddress = recipient.category.isDirectSPLTokenAddress
-        let thereIsOnlyOneOrNoneWallets = wallets.filter(\.isSendable).count <= 1
+        let thereIsOnlyOneOrNoneWallets = solanaAccounts.filter(\.isSendable).count <= 1
         let shouldDisableChosingToken = preChosenAccountAvailable || recipientIsDirectSPLTokenAddress ||
             thereIsOnlyOneOrNoneWallets
         isTokenChoiceEnabled = !shouldDisableChosingToken

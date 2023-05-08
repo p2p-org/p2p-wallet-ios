@@ -117,16 +117,16 @@ extension RecipientSearchServiceImpl {
     // MARK: - Helpers
 
     func checkBalanceForCreateAccount(env: UserWalletEnvironments) async throws -> Bool {
-        let wallets = env.wallets
+        let solanaAccounts = env.solanaTokenAccounts
 
-        if wallets.contains(where: { !$0.token.isNativeSOL }) {
+        if solanaAccounts.contains(where: { !$0.token.isNativeSOL }) {
             // User has spl account
             if try await checkBalanceForCreateSPLAccount(env: env) {
                 return true
             }
         }
 
-        if wallets.contains(where: \.token.isNativeSOL) {
+        if solanaAccounts.contains(where: \.token.isNativeSOL) {
             // User has only SOL
             if try await checkBalanceForCreateNativeAccount(env: env) {
                 return true
@@ -137,14 +137,14 @@ extension RecipientSearchServiceImpl {
     }
 
     func checkBalanceForCreateNativeAccount(env: UserWalletEnvironments) async throws -> Bool {
-        let wallets = env.wallets
+        let solanaAccounts = env.solanaTokenAccounts
 
-        for wallet in wallets {
+        for solanaAccount in solanaAccounts {
             try Task.checkCancellation()
 
             guard
-                let balance = wallet.lamports,
-                let mint = try? PublicKey(string: wallet.token.address)
+                let balance = solanaAccount.lamports,
+                let mint = try? PublicKey(string: solanaAccount.token.address)
             else { continue }
 
             let result = try await swapService.calculateFeeInPayingToken(
@@ -162,14 +162,14 @@ extension RecipientSearchServiceImpl {
     }
 
     func checkBalanceForCreateSPLAccount(env: UserWalletEnvironments) async throws -> Bool {
-        let wallets = env.wallets
+        let solanaAccounts = env.solanaTokenAccounts
 
-        for wallet in wallets {
+        for solanaAccount in solanaAccounts {
             try Task.checkCancellation()
 
             guard
-                let balance = wallet.lamports,
-                let mint = try? PublicKey(string: wallet.token.address)
+                let balance = solanaAccount.lamports,
+                let mint = try? PublicKey(string: solanaAccount.token.address)
             else { continue }
 
             let result = try await swapService.calculateFeeInPayingToken(

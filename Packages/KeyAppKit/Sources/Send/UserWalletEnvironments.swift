@@ -8,7 +8,7 @@ import SolanaSwift
 import KeyAppKitCore
 
 public struct UserWalletEnvironments: Equatable {
-    let wallets: [SolanaAccount]
+    let solanaTokenAccounts: [SolanaAccount]
     let ethereumAccount: String?
 
     let exchangeRate: [String: CurrentPrice]
@@ -18,14 +18,14 @@ public struct UserWalletEnvironments: Equatable {
     let rentExemptionAmountForSPLAccount: Lamports
 
     public init(
-        wallets: [SolanaAccount],
+        solanaTokenAccounts: [SolanaAccount],
         ethereumAccount: String?,
         exchangeRate: [String: CurrentPrice],
         tokens: Set<Token>,
         rentExemptionAmountForWalletAccount: Lamports = 890_880,
         rentExemptionAmountForSPLAccount: Lamports = 2_039_280
     ) {
-        self.wallets = wallets
+        self.solanaTokenAccounts = solanaTokenAccounts
         self.ethereumAccount = ethereumAccount
         self.exchangeRate = exchangeRate
         self.tokens = tokens
@@ -34,12 +34,12 @@ public struct UserWalletEnvironments: Equatable {
     }
 
     public static var empty: Self {
-        .init(wallets: [], ethereumAccount: nil, exchangeRate: [:], tokens: [])
+        .init(solanaTokenAccounts: [], ethereumAccount: nil, exchangeRate: [:], tokens: [])
     }
 
     public func copy(tokens: Set<Token>? = nil) -> Self {
         .init(
-            wallets: wallets,
+            solanaTokenAccounts: solanaTokenAccounts,
             ethereumAccount: ethereumAccount,
             exchangeRate: exchangeRate,
             tokens: tokens ?? self.tokens,
