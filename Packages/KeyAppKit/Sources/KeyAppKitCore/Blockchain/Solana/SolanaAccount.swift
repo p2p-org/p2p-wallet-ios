@@ -51,9 +51,8 @@ public struct SolanaAccount: Identifiable, Equatable {
     /// The fetched price at current moment of time.
     public var price: TokenPrice?
 
-    public init(data: Wallet, price: TokenPrice? = nil) {
+    public init(data: Wallet) {
         self.data = data
-        self.price = price
     }
 
     public var cryptoAmount: CryptoAmount {

@@ -60,7 +60,7 @@ public final class SolanaAccountsService: NSObject, AccountsService {
                     )
                 )
 
-                newAccounts = [solanaAccount] + splAccounts.map { Account(data: $0, price: nil) }
+                newAccounts = [solanaAccount] + splAccounts.map { Account(data: $0) }
 
                 return (newAccounts, nil)
             } catch {
