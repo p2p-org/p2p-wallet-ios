@@ -116,7 +116,6 @@ public final class SolanaAccountsService: NSObject, AccountsService {
         realtimeService?
             .update
             .sink { [weak self] account in
-                print("SolanaAccountsService", account)
                 guard let self else { return }
 
                 var state = self.realtimeStream.value

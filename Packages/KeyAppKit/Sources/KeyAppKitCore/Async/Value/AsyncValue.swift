@@ -166,7 +166,7 @@ public class AsyncValue<T> {
 
         return currentTask
     }
-    
+
     public func listen<Target: ObservableObject>(target: Target, in storage: inout [AnyCancellable])
         where Target.ObjectWillChangePublisher == ObservableObjectPublisher
     {

@@ -132,6 +132,11 @@ struct DebugMenuView: View {
                         }
                     }
                 }
+
+                Section(header: Text("Socket status")) {
+                    Text("Latest status: \(viewModel.latestSocketUpdate)")
+                    Text("Current state: \(viewModel.socketState)")
+                }
             }
             .navigationBarTitle("Debug Menu", displayMode: .inline)
         }
