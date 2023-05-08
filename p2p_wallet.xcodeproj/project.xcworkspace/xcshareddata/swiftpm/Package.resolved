@@ -258,7 +258,7 @@
         "repositoryURL": "https://github.com/p2p-org/OrcaSwapSwift.git",
         "state": {
           "branch": "main",
-          "revision": "39218f52a58e3481cbb32df64b95f2e6d0875ee7",
+          "revision": "b90a6ca2c61168d36a36d4249d70ef6915b25a6b",
           "version": null
         }
       },
@@ -357,7 +357,7 @@
         "repositoryURL": "https://github.com/p2p-org/solana-swift.git",
         "state": {
           "branch": "feature/deprecated-wallet",
-          "revision": "b1e79a0f09cce51908ed00cc40ce81d39bd749cf",
+          "revision": "decd0436e0cc3268628cfa6bcba5e15d312de010",
           "version": null
         }
       },
