@@ -113,7 +113,7 @@ final class SendInputViewModel: BaseViewModel, ObservableObject {
 
         let solanaAccountsService = Resolver.resolve(SolanaAccountsService.self)
         self.solanaAccountsService = solanaAccountsService
-        let wallets = solanaAccountsService.loadedAccounts.map(\.data)
+        let wallets = solanaAccountsService.loadedAccounts
 
         let pricesService = Resolver.resolve(PricesService.self)
         self.pricesService = pricesService

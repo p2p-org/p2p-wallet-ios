@@ -45,7 +45,7 @@ class AccountDetailsViewModel: BaseViewModel, ObservableObject {
             case .buy:
                 actionSubject?.send(.openBuy)
             case .swap:
-                actionSubject?.send(.openSwap(solanaAccount.data))
+                actionSubject?.send(.openSwap(solanaAccount))
             case .send:
                 actionSubject?.send(.openSend)
             case .receive:
@@ -62,7 +62,7 @@ class AccountDetailsViewModel: BaseViewModel, ObservableObject {
         let solanaAccountPublisher = solanaAccountsManager
             .statePublisher
             .receive(on: RunLoop.main)
-            .compactMap { $0.value.first(where: { $0.data.pubkey == solanaAccount.data.pubkey }) }
+            .compactMap { $0.value.first(where: { $0.pubkey == solanaAccount.pubkey }) }
         
         let jupiterDataStatusPublisher = jupiterTokensRepository.status
         
@@ -70,7 +70,7 @@ class AccountDetailsViewModel: BaseViewModel, ObservableObject {
             .map { account, status in
                 RendableNewSolanaAccountDetails(
                     account: account,
-                    isSwapAvailable: Self.isSwapAvailableFor(wallet: account.data, for: status),
+                    isSwapAvailable: Self.isSwapAvailableFor(wallet: account, for: status),
                     onAction: onAction
                 )
             }

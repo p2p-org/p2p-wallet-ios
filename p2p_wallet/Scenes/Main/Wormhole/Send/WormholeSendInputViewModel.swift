@@ -88,7 +88,7 @@ class WormholeSendInputViewModel: BaseViewModel, ObservableObject {
 
         let availableBridgeAccounts = Self.resolveSupportedSolanaAccounts(solanaAccountsService: solanaAccountsService)
         let chosenAccount = availableBridgeAccounts
-            .first(where: { $0.data.mintAddress == preChosenWallet?.mintAddress })
+            .first(where: { $0.mintAddress == preChosenWallet?.mintAddress })
 
         // Ensure at lease one available wallet for bridging.
         guard let initialSolanaAccount = chosenAccount ?? availableBridgeAccounts.first else {
@@ -112,7 +112,7 @@ class WormholeSendInputViewModel: BaseViewModel, ObservableObject {
                 keyPair: wallet.account,
                 solanaAccount: initialSolanaAccount,
                 availableAccounts: solanaAccountsService.state.value,
-                amount: .init(token: initialSolanaAccount.data.token),
+                amount: .init(token: initialSolanaAccount.token),
                 recipient: recipient.address
             )
         )
@@ -184,7 +184,7 @@ class WormholeSendInputViewModel: BaseViewModel, ObservableObject {
 
                     case .crypto:
                         if
-                            let cryptoAmount = CryptoAmount(floatString: newAmount, token: account.data.token),
+                            let cryptoAmount = CryptoAmount(floatString: newAmount, token: account.token),
                             let price = account.price,
                             let fiatAmount = try? cryptoAmount.toFiatAmount(price: price)
                         {
@@ -270,7 +270,7 @@ class WormholeSendInputViewModel: BaseViewModel, ObservableObject {
                 guard let self, let account = self.adapter.inputAccount else { return }
                 switch newMode {
                 case .crypto:
-                    self.countAfterDecimalPoint = Int(account.data.token.decimals)
+                    self.countAfterDecimalPoint = Int(account.token.decimals)
                 case .fiat:
                     self.countAfterDecimalPoint = 2
                 }
@@ -288,7 +288,7 @@ class WormholeSendInputViewModel: BaseViewModel, ObservableObject {
         let accounts = Self.resolveSupportedSolanaAccounts(solanaAccountsService: solanaAccountsService)
 
         let selectedAccount = accounts.first { account in
-            account.data.mintAddress == wallet.mintAddress
+            account.mintAddress == wallet.mintAddress
         }
 
         guard let selectedAccount else { return }
@@ -317,7 +317,7 @@ class WormholeSendInputViewModel: BaseViewModel, ObservableObject {
 
         // Initialise user action
         let userAction = WormholeSendUserAction(
-            sourceToken: input.solanaAccount.data.token,
+            sourceToken: input.solanaAccount.token,
             price: input.solanaAccount.price,
             recipient: input.recipient,
             amount: input.amount,
@@ -331,7 +331,7 @@ class WormholeSendInputViewModel: BaseViewModel, ObservableObject {
 
         action.send(.send(userAction))
         analyticsManager.log(event: .sendBridgesConfirmButtonClick(
-            tokenName: input.solanaAccount.data.token.symbol,
+            tokenName: input.solanaAccount.token.symbol,
             tokenValue: Double(input.amount.amount.description) ?? 0,
             valueFiat: input.solanaAccount
                 .price != nil ?
@@ -349,7 +349,7 @@ extension WormholeSendInputViewModel {
         let supportedToken = WormholeSupportedTokens.bridges.map(\.solAddress).compactMap { $0 }
 
         var availableBridgeAccounts = solanaAccountsService.state.value.filter { account in
-            supportedToken.contains(account.data.token.address)
+            supportedToken.contains(account.token.address)
         }
 
         if let nativeWallet = solanaAccountsService.state.value.nativeWallet {
@@ -362,14 +362,14 @@ extension WormholeSendInputViewModel {
         availableBridgeAccounts
             .sort { lhs, rhs in
                 // First pick USDCET
-                if lhs.data.token.symbol == Token.usdcet.symbol {
+                if lhs.token.symbol == Token.usdcet.symbol {
                     return true
                 }
                 return (lhs.amountInFiat?.value ?? 0) > (rhs.amountInFiat?.value ?? 0)
             }
 
         if availableBridgeAccounts.isEmpty {
-            availableBridgeAccounts.append(.init(data: Wallet(token: Token.usdcet)))
+            availableBridgeAccounts.append(SolanaAccount(token: Token.usdcet))
         }
 
         return availableBridgeAccounts

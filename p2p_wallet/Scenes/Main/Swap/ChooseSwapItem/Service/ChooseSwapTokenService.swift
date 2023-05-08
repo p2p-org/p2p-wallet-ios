@@ -99,8 +99,8 @@ private extension ChooseSwapTokenService {
             .sink { [weak self] accounts, swapTokens in
                 guard let self else { return }
                 let newSwapTokens = swapTokens.map { swapToken in
-                    if let account = accounts.first(where: { $0.data.mintAddress == swapToken.address }) {
-                        return SwapToken(token: swapToken.token, userWallet: account.data)
+                    if let account = accounts.first(where: { $0.mintAddress == swapToken.address }) {
+                        return SwapToken(token: swapToken.token, userWallet: account)
                     }
                     return SwapToken(token: swapToken.token, userWallet: nil)
                 }

@@ -128,7 +128,7 @@ final class HomeAccountsViewModel: BaseViewModel, ObservableObject {
             case .tap:
                 navigation.send(.solanaAccount(renderableAccount.account))
             case .visibleToggle:
-                guard let pubkey = renderableAccount.account.data.pubkey else { return }
+                guard let pubkey = renderableAccount.account.pubkey else { return }
                 let tags = renderableAccount.tags
 
                 if tags.contains(.ignore) {
@@ -158,7 +158,7 @@ final class HomeAccountsViewModel: BaseViewModel, ObservableObject {
     func actionClicked(_ action: WalletActionType) {
         switch action {
         case .receive:
-            guard let pubkey = try? PublicKey(string: solanaAccountsService.state.value.nativeWallet?.data.pubkey)
+            guard let pubkey = try? PublicKey(string: solanaAccountsService.state.value.nativeWallet?.pubkey)
             else { return }
             navigation.send(.receive(publicKey: pubkey))
         case .buy:

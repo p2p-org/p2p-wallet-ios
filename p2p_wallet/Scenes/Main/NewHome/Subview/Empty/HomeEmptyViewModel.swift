@@ -62,7 +62,7 @@ final class HomeEmptyViewModel: BaseViewModel, ObservableObject {
     }
 
     func receiveClicked() {
-        guard let pubkey = try? PublicKey(string: solanaAccountsService.state.value.nativeWallet?.data.pubkey) else { return }
+        guard let pubkey = try? PublicKey(string: solanaAccountsService.state.value.nativeWallet?.pubkey) else { return }
         navigation.send(.receive(publicKey: pubkey))
     }
     

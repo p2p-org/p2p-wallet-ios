@@ -10,26 +10,26 @@ struct RenderableSolanaAccount: RenderableAccount {
     
     var icon: AccountIcon {
         if
-            let logoURI = account.data.token.logoURI,
+            let logoURI = account.token.logoURI,
             let url = URL(string: logoURI)
         {
             return .url(url)
         } else {
-            return .random(seed: account.data.token.address)
+            return .random(seed: account.token.address)
         }
     }
     
     var wrapped: Bool {
-        account.data.token.wrappedBy != nil
+        account.token.wrappedBy != nil
     }
     
     var title: String {
-        return account.data.token.name
+        return account.token.name
     }
     
     var subtitle: String {
-        if let amount = account.data.amount {
-            return amount.tokenAmountFormattedString(symbol: account.data.token.symbol)
+        if let amount = account.amount {
+            return amount.tokenAmountFormattedString(symbol: account.token.symbol)
         }
         return ""
     }

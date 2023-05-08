@@ -39,7 +39,7 @@ class AccountDetailsCoordinator: SmartCoordinator<AccountDetailsCoordinatorResul
         switch args {
         case let .solanaAccount(account):
             detailAccountVM = .init(solanaAccount: account)
-            historyListVM = .init(mint: account.data.token.address, account: account)
+            historyListVM = .init(mint: account.token.address, account: account)
         }
 
         historyListVM.actionSubject
@@ -169,18 +169,18 @@ class AccountDetailsCoordinator: SmartCoordinator<AccountDetailsCoordinatorResul
             .map(\.receiveFromAddress)
             .compactMap { $0 }
         
-        if account.data.token.isNative {
+        if account.token.isNative {
             if available(.ethAddressEnabled) && available(.solanaEthAddressEnabled) {
                 var icon: SupportedTokenItemIcon = .image(UIImage.imageOutlineIcon)
-                if let logoURL = URL(string: account.data.token.logoURI ?? "") {
+                if let logoURL = URL(string: account.token.logoURI ?? "") {
                     icon = .url(logoURL)
                 }
                 
                 openReceive(item:
                     .init(
                         icon: icon,
-                        name: account.data.token.name,
-                        symbol: account.data.token.symbol,
+                        name: account.token.name,
+                        symbol: account.token.symbol,
                         availableNetwork: [.solana, .ethereum]
                     ))
 
@@ -188,17 +188,17 @@ class AccountDetailsCoordinator: SmartCoordinator<AccountDetailsCoordinatorResul
             }
         }
 
-        if available(.ethAddressEnabled) && supportedBridgeTokens.contains(account.data.token.address) {
+        if available(.ethAddressEnabled) && supportedBridgeTokens.contains(account.token.address) {
             var icon: SupportedTokenItemIcon = .image(UIImage.imageOutlineIcon)
-            if let logoURL = URL(string: account.data.token.logoURI ?? "") {
+            if let logoURL = URL(string: account.token.logoURI ?? "") {
                 icon = .url(logoURL)
             }
             
             openReceive(item:
                 .init(
                     icon: icon,
-                    name: account.data.token.name,
-                    symbol: account.data.token.symbol,
+                    name: account.token.name,
+                    symbol: account.token.symbol,
                     availableNetwork: [.solana, .ethereum]
                 ))
             
@@ -207,8 +207,8 @@ class AccountDetailsCoordinator: SmartCoordinator<AccountDetailsCoordinatorResul
         
         let coordinator = ReceiveCoordinator(
             network: .solana(
-                tokenSymbol: account.data.token.symbol,
-                tokenImage: .init(token: account.data.token)
+                tokenSymbol: account.token.symbol,
+                tokenImage: .init(token: account.token)
             ),
             presentation: SmartCoordinatorPushPresentation(navigationController)
         )
@@ -264,7 +264,7 @@ class AccountDetailsCoordinator: SmartCoordinator<AccountDetailsCoordinatorResul
                     dismissAfterCompletion: true,
                     openKeyboardOnStart: true,
                     source: .tapToken,
-                    preChosenWallet: account.data,
+                    preChosenWallet: account,
                     destinationWallet: destination,
                     hideTabBar: true
                 )
@@ -285,7 +285,7 @@ class AccountDetailsCoordinator: SmartCoordinator<AccountDetailsCoordinatorResul
 
         let coordinator = SendCoordinator(
             rootViewController: rootViewController,
-            preChosenWallet: account.data,
+            preChosenWallet: account,
             hideTabBar: true,
             allowSwitchingMainAmountType: true
         )
@@ -333,7 +333,7 @@ class AccountDetailsCoordinator: SmartCoordinator<AccountDetailsCoordinatorResul
         guard case let .solanaAccount(account) = args else { return }
 
         let token: Token
-        switch account.data.token.symbol {
+        switch account.token.symbol {
         case "SOL":
             token = .nativeSolana
         case "USDC":

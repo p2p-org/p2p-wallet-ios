@@ -59,7 +59,7 @@ class HomeViewModel: ObservableObject {
     }
 
     func copyToClipboard() {
-        clipboardManager.copyToClipboard(solanaAccountsService.state.value.nativeWallet?.data.pubkey ?? "")
+        clipboardManager.copyToClipboard(solanaAccountsService.state.value.nativeWallet?.pubkey ?? "")
         notificationsService.showToast(title: "🖤", text: L10n.addressWasCopiedToClipboard, haptic: true)
         analyticsManager.log(event: .mainCopyAddress)
     }
@@ -164,7 +164,7 @@ private extension HomeViewModel {
                 }
 
                 let hasAnyTokenWithPositiveBalance =
-                    solanaState.value.contains(where: { account in (account.data.lamports ?? 0) > 0 }) ||
+                    solanaState.value.contains(where: { account in (account.lamports ?? 0) > 0 }) ||
                     ethereumState.value.contains(where: { account in account.balance > 0 })
 
                 // TODO: Bad place

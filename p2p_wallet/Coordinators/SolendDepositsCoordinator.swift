@@ -54,10 +54,9 @@ final class SolendDepositsCoordinator: Coordinator<Void> {
 
             let solanaAccountsService = Resolver.resolve(SolanaAccountsService.self)
 
-            let tokenAccount: Wallet? = solanaAccountsService
+            let tokenAccount: SolanaAccount? = solanaAccountsService
                 .loadedAccounts
-                .first(where: { asset.mintAddress == $0.mintAddress })?
-                .data
+                .first(where: { asset.mintAddress == $0.mintAddress })
 
             if (tokenAccount?.amount ?? 0) > 0 {
                 // User has a token
