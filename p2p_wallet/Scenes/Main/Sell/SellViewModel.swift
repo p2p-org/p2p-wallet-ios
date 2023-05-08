@@ -279,8 +279,10 @@ class SellViewModel: BaseViewModel, ObservableObject {
 
         // observe native wallet's changes
         checkIfMoreBaseCurrencyNeeded()
-        solanaAccountsService.dataDidChange
-            .sink(receiveValue: { [weak self] val in
+        solanaAccountsService.statePublisher
+            .map(\.value)
+            .removeDuplicates()
+            .sink(receiveValue: { [weak self] _ in
                 self?.checkIfMoreBaseCurrencyNeeded()
             })
             .store(in: &subscriptions)

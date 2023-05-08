@@ -57,7 +57,7 @@ extension JupiterSwapBusinessLogic {
         // This function will never throw an error (Publisher of ErrorType == Never)
         let wallets = (try? await Publishers.CombineLatest(
             solanaAccountsService.fetcherStatePublisher,
-            solanaAccountsService.dataPublisher
+            solanaAccountsService.accountsPublisher
         )
             .filter { (state, _) in
                   state == .loaded

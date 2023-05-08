@@ -187,7 +187,7 @@ private extension SwapViewModel {
             .store(in: &subscriptions)
 
         Publishers.CombineLatest(
-            solanaAccountsService.dataPublisher.removeDuplicates(),
+            solanaAccountsService.accountsPublisher.removeDuplicates(),
             isViewAppeared.eraseToAnyPublisher().removeDuplicates()
         )
         .filter { [weak self] userWallets, isViewAppeared in

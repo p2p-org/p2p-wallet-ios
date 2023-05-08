@@ -21,15 +21,7 @@ enum BEFetcherState {
 
 extension SolanaAccountsService {
     
-    var dataDidChange: AnyPublisher<Void, Never> {
-        statePublisher
-            .map(\.value)
-            .removeDuplicates()
-            .map { _ in () }
-            .eraseToAnyPublisher()
-    }
-    
-    var dataPublisher: AnyPublisher<[SolanaSwift.Wallet], Never> {
+    var accountsPublisher: AnyPublisher<[SolanaSwift.Wallet], Never> {
         statePublisher
             .map { state in state.value.map(\.data) }
             .eraseToAnyPublisher()
