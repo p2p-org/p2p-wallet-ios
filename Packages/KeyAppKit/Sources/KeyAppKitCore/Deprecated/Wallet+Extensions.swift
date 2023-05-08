@@ -1,7 +1,5 @@
 import Foundation
 import SolanaPricesAPIs
-import SolanaSwift
-import KeyAppKitCore
 
 public struct SolanaWalletUserInfo: Hashable {
     public var price: CurrentPrice?
