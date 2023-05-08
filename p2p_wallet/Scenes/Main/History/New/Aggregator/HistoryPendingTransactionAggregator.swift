@@ -5,6 +5,7 @@
 //  Created by Giang Long Tran on 05.05.2023.
 //
 
+import Combine
 import Foundation
 import KeyAppKitCore
 
@@ -12,10 +13,11 @@ class HistoryPendingTransactionAggregator: DataAggregator {
     func transform(
         input: (
             pendings: [PendingTransaction],
-            mint: String?
+            mint: String?,
+            action: PassthroughSubject<NewHistoryAction, Never>
         )
     ) -> [any RendableListTransactionItem] {
-        let (pendings, mint) = input
+        let (pendings, mint, action) = input
 
         return pendings
             .filter { pendingTransation in
@@ -43,7 +45,9 @@ class HistoryPendingTransactionAggregator: DataAggregator {
                 }
             }
             .map { trx in
-                RendableListPendingTransactionItem(trx: trx)
+                RendableListPendingTransactionItem(trx: trx) { [weak action] in
+                    action?.send(.openPendingTransaction(trx))
+                }
             }
     }
 }

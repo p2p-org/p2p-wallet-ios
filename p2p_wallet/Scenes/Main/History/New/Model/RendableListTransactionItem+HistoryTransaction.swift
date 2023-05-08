@@ -161,6 +161,7 @@ struct RendableListHistoryTransactionItem: RendableListTransactionItem {
                 .positive,
                 "+\(data.to.amount.tokenAmountDouble.tokenAmountFormattedString(symbol: data.to.token.symbol))"
             )
+            
         case let .burn(data):
             guard let usdAmount = data.amount.usdAmountDouble else {
                 return (.unchanged, "")

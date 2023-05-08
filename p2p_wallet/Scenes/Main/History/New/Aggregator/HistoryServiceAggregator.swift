@@ -5,6 +5,7 @@
 //  Created by Giang Long Tran on 05.05.2023.
 //
 
+import Combine
 import Foundation
 import History
 import KeyAppBusiness
@@ -16,45 +17,29 @@ class HistoryServiceAggregator: DataAggregator {
     func transform(
         input: (
             history: [HistoryTransaction],
-            actions: [any UserAction],
-            tokens: Set<SolanaToken>
+            tokens: Set<SolanaToken>,
+            action: PassthroughSubject<NewHistoryAction, Never>
         )
-    ) -> [any RendableListTransactionItem] {
-        let (history, actions, tokens) = input
+    ) -> [RendableListHistoryTransactionItem] {
+        let (history, tokens, action) = input
 
-        let claimActions = actions
-            .compactMap { $0 as? WormholeClaimUserAction }
-            .map(\.claimKey)
-
-        let sendActions = actions
-            .compactMap { $0 as? WormholeSendUserAction }
-            .map(\.id)
-
-        var items = history
+        let items = history
             .filter { trx -> Bool in
                 switch trx.info {
-                case let .wormholeReceive(data):
-                    return claimActions.contains(data.bridgeServiceKey) == false
-                case let .wormholeSend(data):
-                    return sendActions.contains(data.bridgeServiceKey) == false
+                case .wormholeReceive, .wormholeSend:
+                    // Handle bridge receive and send and another aggregator.
+                    return false
                 default:
+                    // Others history transaction will be handed here.
                     return true
                 }
             }
-            .map { trx -> any RendableListTransactionItem in
-                RendableListHistoryTransactionItem(trx: trx, allTokens: tokens)
+            .map { trx -> RendableListHistoryTransactionItem in
+                RendableListHistoryTransactionItem(trx: trx, allTokens: tokens) { [weak action] in
+                    action?.send(.openHistoryTransaction(trx))
+                }
             }
-        
+
         return items
     }
-
-//    /// Aggregate claim transaction
-//    /// - Parameters:
-//    ///   - trx: claim transaction from history service
-//    ///   - info: receive info
-//    ///   - actions: all claim user actions
-//    func aggregateClaimTransaction(trx: HistoryTransaction, info: WormholeReceive, actions: [WormholeClaimUserAction])
-//    -> HistoryTransaction? {
-//
-//    }
 }

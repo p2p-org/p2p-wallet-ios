@@ -70,34 +70,10 @@ public class WormholeSendUserActionConsumer: UserActionConsumer {
         self.relayService = relayService
         self.errorObserver = errorObserver
         self.persistence = persistence
-
-        database
-            .link(to: persistence, in: Self.table)
-            .store(in: &subscriptions)
     }
 
     public func start() {
         Task {
-            // Restore and filter
-            try? await database.restore(from: self.persistence, table: Self.table) { _, userAction in
-                switch userAction.status {
-                case .pending:
-                    return false
-                case .processing:
-                    // Remove if user action is live longer then 3 hours
-                    if Date().timeIntervalSince(userAction.updatedDate) > 60 * 60 * 3 {
-                        return false
-                    }
-                case .ready, .error:
-                    // Remove if user action is live longer then 3 minutes
-                    if Date().timeIntervalSince(userAction.updatedDate) > 60 * 3 {
-                        return false
-                    }
-                }
-
-                return true
-            }
-
             // Update bundle periodic
             monitoringTimer = Timer.scheduledTimer(withTimeInterval: 30, repeats: true) { [weak self] _ in
                 self?.monitor()
