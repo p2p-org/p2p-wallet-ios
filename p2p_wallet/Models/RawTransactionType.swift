@@ -1,6 +1,7 @@
 import Foundation
 import SolanaSwift
 import OrcaSwapSwift
+import KeyAppKitCore
 
 protocol RawTransactionType {
     func createRequest() async throws -> String
@@ -81,9 +82,9 @@ struct OrcaSwapTransaction: SwapRawTransactionType {
 }
 
 struct CloseTransaction: RawTransactionType {
-    var payingFeeWallet: SolanaSwift.Wallet?
+    var payingFeeWallet: Wallet?
     
-    var feeAmount: SolanaSwift.FeeAmount
+    var feeAmount: FeeAmount
     
     let closingWallet: Wallet
     let reimbursedAmount: UInt64

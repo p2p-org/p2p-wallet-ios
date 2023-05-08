@@ -8,6 +8,7 @@
 import Foundation
 import SolanaPricesAPIs
 import SolanaSwift
+import KeyAppKitCore
 
 extension Wallet {
     var name: String {

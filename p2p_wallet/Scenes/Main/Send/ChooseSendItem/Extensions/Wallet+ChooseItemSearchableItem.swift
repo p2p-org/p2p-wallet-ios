@@ -1,4 +1,4 @@
-import SolanaSwift
+import KeyAppKitCore
 
 extension Wallet: ChooseItemSearchableItem {
     func matches(keyword: String) -> Bool {

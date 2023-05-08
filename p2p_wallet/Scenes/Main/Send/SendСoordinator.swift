@@ -10,6 +10,7 @@ import Send
 import SolanaSwift
 import SwiftUI
 import KeyAppBusiness
+import KeyAppKitCore
 
 enum SendResult {
     case sent(SendTransaction)

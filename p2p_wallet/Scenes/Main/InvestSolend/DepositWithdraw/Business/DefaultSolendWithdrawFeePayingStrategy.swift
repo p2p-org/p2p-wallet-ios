@@ -9,6 +9,7 @@ import Resolver
 import SolanaSwift
 import Solend
 import KeyAppBusiness
+import KeyAppKitCore
 
 class DefaultSolendDepositFeePayingStrategy: SolendFeePayingStrategy {
     let orca: OrcaSwap

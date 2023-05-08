@@ -1,5 +1,6 @@
 import SolanaSwift
 import Jupiter
+import KeyAppKitCore
 
 struct SwapToken: Equatable {
     let token: Token

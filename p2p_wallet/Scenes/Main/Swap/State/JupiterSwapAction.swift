@@ -1,5 +1,6 @@
 import Jupiter
 import SolanaSwift
+import KeyAppKitCore
 
 enum JupiterSwapAction: Equatable {
     case initialize(

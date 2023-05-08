@@ -13,6 +13,7 @@ import Send
 import Resolver
 import FeeRelayerSwift
 import KeyAppBusiness
+import KeyAppKitCore
 
 final class ReceiveFundsViaLinkViewModel: BaseViewModel, ObservableObject {
     

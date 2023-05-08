@@ -8,6 +8,7 @@
 import Foundation
 import SolanaSwift
 import TransactionParser
+import KeyAppKitCore
 
 struct PendingTransaction {
     enum TransactionStatus {

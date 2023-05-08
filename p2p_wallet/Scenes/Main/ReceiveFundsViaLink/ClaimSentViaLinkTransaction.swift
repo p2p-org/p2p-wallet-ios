@@ -3,6 +3,7 @@ import SolanaSwift
 import Send
 import Resolver
 import FeeRelayerSwift
+import KeyAppKitCore
 
 struct ClaimSentViaLinkTransaction: RawTransactionType {
     // MARK: - Nested type

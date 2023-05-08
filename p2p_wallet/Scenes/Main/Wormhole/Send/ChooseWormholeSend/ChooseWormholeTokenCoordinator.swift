@@ -2,6 +2,7 @@ import Combine
 import SolanaSwift
 import SwiftUI
 import KeyAppUI
+import KeyAppKitCore
 
 final class ChooseWormholeTokenCoordinator: Coordinator<Wallet?> {
     private let subject = PassthroughSubject<Wallet?, Never>()

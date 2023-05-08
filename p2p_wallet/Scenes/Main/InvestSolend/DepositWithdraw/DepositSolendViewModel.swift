@@ -7,6 +7,7 @@ import SolanaSwift
 import Solend
 import Sentry
 import KeyAppBusiness
+import KeyAppKitCore
 
 enum DepositSolendViewModelError {
     case invalidFeePayer

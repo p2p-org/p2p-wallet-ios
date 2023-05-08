@@ -14,6 +14,7 @@ import Send
 import SolanaSwift
 import SwiftUI
 import KeyAppBusiness
+import KeyAppKitCore
 
 class NewHistoryCoordinator: SmartCoordinator<Void> {
     var viewModel: HistoryViewModel!

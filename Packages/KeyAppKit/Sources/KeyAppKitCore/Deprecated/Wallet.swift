@@ -2,7 +2,7 @@ import Foundation
 import SolanaSwift
 
 @available(*, deprecated, message: "Move it to your app business instead")
-public struct Wallet: Hashable {
+public struct Wallet: Identifiable, Hashable {
     // MARK: - Properties
     
     public var pubkey: String?
@@ -28,6 +28,10 @@ public struct Wallet: Hashable {
     
     public var amount: Double? {
         lamports?.convertToBalance(decimals: token.decimals)
+    }
+    
+    public var id: String {
+        pubkey ?? token.address
     }
     
     // MARK: - Fabric methods

@@ -13,6 +13,7 @@ import SolanaSwift
 import SwiftUI
 import UIKit
 import Wormhole
+import KeyAppKitCore
 
 enum AccountDetailsCoordinatorArgs {
     case solanaAccount(SolanaAccountsService.Account)

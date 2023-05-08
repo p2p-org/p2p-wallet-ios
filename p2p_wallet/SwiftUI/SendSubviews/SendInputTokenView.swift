@@ -1,6 +1,7 @@
 import KeyAppUI
 import SolanaSwift
 import SwiftUI
+import KeyAppKitCore
 
 struct SendInputTokenView: View {
     let mainColor = Color(Asset.Colors.night.color)

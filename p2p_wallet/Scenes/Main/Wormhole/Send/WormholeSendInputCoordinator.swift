@@ -9,6 +9,7 @@ import Foundation
 import Send
 import SolanaSwift
 import SwiftUI
+import KeyAppKitCore
 
 enum WormholeSendInputCoordinatorResult {
     case transaction(WormholeSendUserAction)

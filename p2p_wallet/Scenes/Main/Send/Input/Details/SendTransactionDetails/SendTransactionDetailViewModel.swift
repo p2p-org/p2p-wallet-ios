@@ -12,6 +12,7 @@ import Send
 import SolanaSwift
 import SwiftUI
 import KeyAppBusiness
+import KeyAppKitCore
 
 final class SendTransactionDetailViewModel: BaseViewModel, ObservableObject {
     let cancelSubject = PassthroughSubject<Void, Never>()

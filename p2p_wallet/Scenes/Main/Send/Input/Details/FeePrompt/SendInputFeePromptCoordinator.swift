@@ -1,6 +1,7 @@
 import Combine
 import SwiftUI
 import SolanaSwift
+import KeyAppKitCore
 
 final class SendInputFeePromptCoordinator: Coordinator<Wallet?> {
     private let parentController: UIViewController

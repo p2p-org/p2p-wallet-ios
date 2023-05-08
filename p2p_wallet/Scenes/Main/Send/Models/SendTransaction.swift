@@ -1,5 +1,6 @@
 import Send
 import SolanaSwift
+import KeyAppKitCore
 
 struct SendTransaction: RawTransactionType {
     let walletToken: Wallet
