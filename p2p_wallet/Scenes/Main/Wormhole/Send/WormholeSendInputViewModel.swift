@@ -348,11 +348,11 @@ extension WormholeSendInputViewModel {
         let supportedToken = WormholeSupportedTokens.bridges.map(\.solAddress).compactMap { $0 }
 
         var availableBridgeAccounts = solanaAccountsService.state.value.filter { account in
-            supportedToken.contains(account.data.token.address)
-        }
-
-        if let nativeWallet = solanaAccountsService.state.value.nativeWallet {
-            availableBridgeAccounts.append(nativeWallet)
+            if account.data.isNativeSOL {
+                return false
+            } else {
+                return supportedToken.contains(account.data.token.address)
+            }
         }
 
         // Only accounts with non-zero balance

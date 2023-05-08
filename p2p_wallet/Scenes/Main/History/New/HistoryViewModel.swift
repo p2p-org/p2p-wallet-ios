@@ -34,7 +34,9 @@ class HistoryViewModel: BaseViewModel, ObservableObject {
 
     let actionSubject: PassthroughSubject<NewHistoryAction, Never>
 
-    let history: AsyncList<RendableListHistoryTransactionItem>
+    let history: AsyncList<HistoryTransaction>
+
+    @Published var tokens: Set<SolanaToken> = []
 
     // MARK: - View Input
 
@@ -90,6 +92,7 @@ class HistoryViewModel: BaseViewModel, ObservableObject {
         userWalletManager: UserWalletManager = Resolver.resolve(),
         tokensRepository: TokensRepository = Resolver.resolve(),
         pendingTransactionService: TransactionHandlerType = Resolver.resolve(),
+        userActionService: UserActionService = Resolver.resolve(),
         mint: String
     ) {
         // Init services and repositories
@@ -101,17 +104,7 @@ class HistoryViewModel: BaseViewModel, ObservableObject {
         // Setup list adaptor
         let sequence = repository
             .getAll(account: userWalletManager.wallet?.account, mint: mint)
-            .map { trx -> RendableListHistoryTransactionItem in
-                await RendableListHistoryTransactionItem(
-                    trx: trx,
-                    allTokens: try tokensRepository.getTokensList(useCache: true),
-                    onTap: { [weak actionSubject] in
-                        actionSubject?.send(.openHistoryTransaction(trx))
-                    }
-                )
-            }
             .eraseToAnyAsyncSequence()
-
         history = .init(sequence: sequence, id: \.id)
 
         showSendViaLinkTransaction = false
@@ -124,14 +117,39 @@ class HistoryViewModel: BaseViewModel, ObservableObject {
             mint: mint
         )
 
-        history
-            .$state
-            .combineLatest(pendingTransactions)
-            .receive(on: DispatchQueue.global(qos: .background))
-            .map { [weak self] in self?.buildOutput(history: $0, others: $1) ?? .init() }
+        // Build output
+        let aggregator = HistoryAggregator()
+        Publishers
+            .CombineLatest3(
+                history.$state,
+                pendingTransactionService.observePendingTransactions(),
+                userActionService.$actions
+            )
+            .combineLatest(HistoryDebug.shared.$mockItems, $tokens)
+            .map { firstStream, mocks, tokens in
+                let (history, pendings, userActions) = firstStream
+
+                return aggregator.transform(
+                    input: .init(
+                        mocks: mocks,
+                        userActions: userActions,
+                        pendings: pendings,
+                        sells: [],
+                        history: history,
+                        mintAddress: nil,
+                        tokens: tokens,
+                        action: actionSubject,
+                        fetch: self.fetch
+                    )
+                )
+            }
             .receive(on: RunLoop.main)
-            .sink { [weak self] in self?.output = $0 }
+            .sink { self.output = $0 }
             .store(in: &subscriptions)
+
+        Task {
+            tokens = try await tokensRepository.getTokensList(useCache: true)
+        }
 
         bind()
         fetch()
@@ -151,71 +169,50 @@ class HistoryViewModel: BaseViewModel, ObservableObject {
         let actionSubject: PassthroughSubject<NewHistoryAction, Never> = .init()
         self.actionSubject = actionSubject
         self.sellDataService = sellDataService
+        showSendViaLinkTransaction = true
 
         // Setup list adaptor
         let sequence = repository
             .getAll(account: userWalletManager.wallet?.account, mint: nil)
-            .map { trx -> RendableListHistoryTransactionItem in
-                await RendableListHistoryTransactionItem(
-                    trx: trx,
-                    allTokens: try tokensRepository.getTokensList(useCache: true),
-                    onTap: { [weak actionSubject] in
-                        actionSubject?.send(.openHistoryTransaction(trx))
-                    }
-                )
-            }
             .eraseToAnyAsyncSequence()
-
         history = .init(sequence: sequence, id: \.id)
 
-        // Listen sell service
-        let sells = sellDataService.transactionsPublisher
-            .map { transactions in
-                transactions.map { trx in
-                    SellRendableListOfframItem(trx: trx) { [weak actionSubject] in
-                        actionSubject?.send(.openSellTransaction(trx))
-                    }
-                }
-            }
-
-        // Listen pending transactions
-        let pendings = HistoryViewModelAggregator.pendingTransaction(
-            pendingTransactionService: pendingTransactionService,
-            actionSubject: actionSubject
-        )
-
-        let userActions = userActionService
-            .$actions
-            .map { userActions -> [any RendableListTransactionItem] in
-                userActions
-                    .map { userAction in
-                        RendableListUserActionTransactionItem(userAction: userAction) { [weak actionSubject] in
-                            actionSubject?.send(.openUserAction(userAction))
-                        }
-                    }
-            }
-
-        let mergedPendings = Publishers
-            .CombineLatest3(
-                userActions,
-                pendings,
-                HistoryDebug.shared.$mockItems
-            )
-            .map { actions, pendings, mock in
-                actions + pendings + mock
-            }
-
-        showSendViaLinkTransaction = true
         super.init()
 
         // Build output
-        history
-            .$state
-            .combineLatest(sells, mergedPendings)
-            .map(buildOutput)
+        let aggregator = HistoryAggregator()
+        Publishers
+            .CombineLatest4(
+                history.$state,
+                pendingTransactionService.observePendingTransactions(),
+                userActionService.$actions,
+                sellDataService.transactionsPublisher
+            )
+            .combineLatest(HistoryDebug.shared.$mockItems, $tokens)
+            .map { firstStream, mocks, tokens in
+                let (history, pendings, userActions, sells) = firstStream
+
+                return aggregator.transform(
+                    input: .init(
+                        mocks: mocks,
+                        userActions: userActions,
+                        pendings: pendings,
+                        sells: sells,
+                        history: history,
+                        mintAddress: nil,
+                        tokens: tokens,
+                        action: actionSubject,
+                        fetch: self.fetch
+                    )
+                )
+            }
             .receive(on: RunLoop.main)
             .sink { self.output = $0 }
             .store(in: &subscriptions)
+
+        Task {
+            tokens = try await tokensRepository.getTokensList(useCache: true)
+        }
 
         bind()
         fetch()
