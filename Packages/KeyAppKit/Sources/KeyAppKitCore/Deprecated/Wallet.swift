@@ -11,10 +11,6 @@ public struct Wallet: Identifiable, Hashable {
     public var userInfo: AnyHashable?
     public let supply: UInt64?
     
-    public var isNativeSOL: Bool {
-        token.isNativeSOL
-    }
-    
     // MARK: - Initializer
     
     public init(pubkey: String? = nil, lamports: UInt64? = nil, supply: UInt64? = nil, token: Token) {
@@ -31,7 +27,28 @@ public struct Wallet: Identifiable, Hashable {
     }
     
     public var id: String {
-        pubkey ?? token.address
+        name ?? token.address
+    }
+    
+    public var isNativeSOL: Bool {
+        token.isNativeSOL
+    }
+    
+    public var name: String {
+        token.symbol
+    }
+    
+    public var mintAddress: String {
+        token.address
+    }
+    
+    // Hide NFT TODO: $0.token.supply == 1 is also a condition for NFT but skipped atm
+    public var isNFTToken: Bool {
+        token.decimals == 0
+    }
+    
+    public var decimals: Int {
+        Int(token.decimals)
     }
     
     // MARK: - Fabric methods
