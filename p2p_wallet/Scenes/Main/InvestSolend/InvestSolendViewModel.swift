@@ -236,8 +236,7 @@ class InvestSolendViewModel: ObservableObject {
         // Get user token account
         let tokenAccount: Wallet? = solanaAccountsService
             .loadedAccounts
-            .first(where: { asset.mintAddress == $0.mintAddress })?
-            .data
+            .first(where: { asset.mintAddress == $0.mintAddress })
 
         if (tokenAccount?.amount ?? 0) > 0 {
             // User has this token for deposit

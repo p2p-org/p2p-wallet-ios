@@ -53,14 +53,12 @@ public final class SolanaAccountsService: NSObject, AccountsService {
                     solanaAPIClient.getTokenWallets(account: accountAddress, tokensRepository: tokensService)
                 )
 
-                let solanaAccount = Account(
-                    data: Wallet.nativeSolana(
-                        pubkey: accountAddress,
-                        lamport: balance
-                    )
+                let solanaAccount = SolanaAccount.nativeSolana(
+                    pubkey: accountAddress,
+                    lamport: balance
                 )
 
-                newAccounts = [solanaAccount] + splAccounts.map { Account(data: $0) }
+                newAccounts = [solanaAccount] + splAccounts
 
                 return (newAccounts, nil)
             } catch {
@@ -77,7 +75,7 @@ public final class SolanaAccountsService: NSObject, AccountsService {
             .asyncMap { state in
                 do {
                     return try await priceService.getPrices(
-                        tokens: state.value.map(\.data.token),
+                        tokens: state.value.map(\.token),
                         fiat: fiat
                     )
                 } catch {
@@ -99,7 +97,7 @@ public final class SolanaAccountsService: NSObject, AccountsService {
                     var newAccounts = accounts
 
                     for index in newAccounts.indices {
-                        let token = newAccounts[index].data.token
+                        let token = newAccounts[index].token
                         if let price = prices[token] {
                             // Convert to token
                             let value: Decimal?
@@ -113,7 +111,6 @@ public final class SolanaAccountsService: NSObject, AccountsService {
                                 .price = .init(currencyCode: fiat.uppercased(), value: value, token: token)
 
                             newAccounts[index]
-                                .data
                                 ._price = price
                         }
                     }
@@ -138,7 +135,7 @@ public final class SolanaAccountsService: NSObject, AccountsService {
         statePublisher
             .sink { state in
                 for account in state.value {
-                    guard let pubkey = account.data.pubkey else { continue }
+                    guard let pubkey = account.pubkey else { continue }
                     Task {
                         try await accountObservableService.subscribeAccountNotification(account: pubkey)
                     }
@@ -171,7 +168,7 @@ public final class SolanaAccountsService: NSObject, AccountsService {
 public extension Array where Element == SolanaAccountsService.Account {
     /// Helper method for quickly extraction native account.
     var nativeWallet: Element? {
-        first(where: { $0.data.isNativeSOL })
+        first(where: { $0.isNativeSOL })
     }
 
     var totalAmountInCurrentFiat: Double {

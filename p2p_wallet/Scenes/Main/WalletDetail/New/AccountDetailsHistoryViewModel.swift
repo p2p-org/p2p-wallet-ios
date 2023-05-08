@@ -37,7 +37,7 @@ final class AccountDetailsHistoryViewModel: HistoryViewModel {
             SolanaToken.usdt.address: Wormhole.SupportedToken.usdt,
         ]
 
-        if let supportedWormholeToken = supportedTokens[account.data.token.address] {
+        if let supportedWormholeToken = supportedTokens[account.token.address] {
             // Create banner to notify user.
             let bannerSection = HistorySection(
                 title: "",
@@ -46,13 +46,13 @@ final class AccountDetailsHistoryViewModel: HistoryViewModel {
                         id: UUID().uuidString,
                         text: L10n.toMakeATransferToYouHaveToSwapTo(
                             "ETH",
-                            account.data.token.symbol,
+                            account.token.symbol,
                             supportedWormholeToken.symbol
                         ),
-                        buttonTitle: "\(L10n.swap.capitalized) \(account.data.token.symbol) → \(supportedWormholeToken.symbol)",
+                        buttonTitle: "\(L10n.swap.capitalized) \(account.token.symbol) → \(supportedWormholeToken.symbol)",
                         action: { [weak self] in
                             self?.actionSubject
-                                .send(.openSwap(self?.account.data, Wallet(token: supportedWormholeToken)))
+                                .send(.openSwap(self?.account, SolanaAccount(token: supportedWormholeToken)))
                         },
                         helpAction: { [weak self] in
                             self?.helpLauncher.launch()

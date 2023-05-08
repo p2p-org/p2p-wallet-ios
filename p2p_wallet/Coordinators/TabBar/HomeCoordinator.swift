@@ -215,7 +215,7 @@ final class HomeCoordinator: Coordinator<Void> {
                 .eraseToAnyPublisher()
 
         case let .solanaAccount(solanaAccount):
-            analyticsManager.log(event: .mainScreenTokenDetailsOpen(tokenTicker: solanaAccount.data.token.symbol))
+            analyticsManager.log(event: .mainScreenTokenDetailsOpen(tokenTicker: solanaAccount.token.symbol))
             
             return coordinate(
                 to: AccountDetailsCoordinator(

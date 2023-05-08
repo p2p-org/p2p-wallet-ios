@@ -74,7 +74,7 @@ extension JupiterSwapBusinessLogic {
             
             // if userWallet found
             if let userWallet = solanaAccounts.first(where: { $0.mintAddress == jupiterToken.address }) {
-                return SwapToken(token: userWallet.token, userWallet: userWallet.data)
+                return SwapToken(token: userWallet.token, userWallet: userWallet)
             }
             
             // otherwise return jupiter token with no userWallet

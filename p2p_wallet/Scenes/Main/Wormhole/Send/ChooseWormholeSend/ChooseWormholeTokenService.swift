@@ -42,14 +42,15 @@ private extension ChooseWormholeTokenService {
             .statePublisher
             .map { state in
                 state.apply { accounts in
-                    [ChooseItemListSection(
-                        items: accounts
-                            .filter {
-                                WormholeSupportedTokens.bridges.map(\.solAddress).contains($0.data.mintAddress)
-                                    && ($0.data.lamports ?? 0) > 0
-                            }
-                            .map(\.data)
-                    )]
+                    [
+                        ChooseItemListSection(
+                            items: accounts
+                                .filter {
+                                    WormholeSupportedTokens.bridges.map(\.solAddress).contains($0.mintAddress)
+                                        && ($0.lamports ?? 0) > 0
+                                }
+                        )
+                    ]
                 }
             }
             .sink { [weak self] state in

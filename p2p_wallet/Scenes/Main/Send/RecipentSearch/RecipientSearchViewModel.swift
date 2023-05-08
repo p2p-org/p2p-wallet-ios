@@ -123,7 +123,7 @@ class RecipientSearchViewModel: ObservableObject {
         }
 
         config = .init(
-            wallets: solanaAccountsService.state.value.map(\.data),
+            wallets: solanaAccountsService.state.value,
             ethereumAccount: userWalletManager.wallet?.ethereumKeypair.address,
             tokens: [:],
             ethereumSearch: ethereumSearch

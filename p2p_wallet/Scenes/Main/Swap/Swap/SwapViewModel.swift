@@ -197,7 +197,7 @@ private extension SwapViewModel {
         }
         .sinkAsync { [weak self] userWallets, isViewAppeared in
             await self?.stateMachine.accept(
-                action: .updateUserWallets(userWallets: userWallets.map(\.data))
+                action: .updateUserWallets(userWallets: userWallets)
             )
         }
         .store(in: &subscriptions)

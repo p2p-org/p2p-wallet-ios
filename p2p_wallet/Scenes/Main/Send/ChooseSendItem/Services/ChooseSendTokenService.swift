@@ -41,10 +41,11 @@ private extension ChooseSendTokenService {
             .statePublisher
             .map({ state in
                 state.apply { accounts in
-                    [ChooseItemListSection(
-                        items: accounts
-                            .filter { ($0.data.lamports ?? 0) > 0 && !$0.data.isNFTToken }
-                            .map(\.data))
+                    [
+                        ChooseItemListSection(
+                            items: accounts
+                                .filter { ($0.lamports ?? 0) > 0 && !$0.isNFTToken }
+                        )
                     ]
                 }
             })
