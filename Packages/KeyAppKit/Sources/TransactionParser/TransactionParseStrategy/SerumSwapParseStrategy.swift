@@ -107,22 +107,22 @@ public class SerumSwapParseStrategy: TransactionParseStrategy {
     let sourceToken = try await tokensRepository.getTokenWithMint(mints[0])
     let destinationToken = try await tokensRepository.getTokenWithMint(mints[1])
 
-    let sourceWallet = SolanaAccount(
+    let sourceAccount = SolanaAccount(
       pubkey: fromAddress,
       lamports: 0, // post token balance?
       token: sourceToken
     )
 
-    let destinationWallet = SolanaAccount(
+    let destinationAccount = SolanaAccount(
       pubkey: toAddress,
       lamports: 0, // post token balances
       token: destinationToken
     )
 
     return SwapInfo(
-      source: sourceWallet,
+      source: sourceAccount,
       sourceAmount: fromAmount?.convertToBalance(decimals: sourceToken.decimals),
-      destination: destinationWallet,
+      destination: destinationAccount,
       destinationAmount: toAmount?.convertToBalance(decimals: destinationToken.decimals),
       accountSymbol: configuration.symbolView
     )

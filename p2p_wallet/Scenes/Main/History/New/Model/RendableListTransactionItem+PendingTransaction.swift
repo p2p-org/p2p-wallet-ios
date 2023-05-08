@@ -48,8 +48,8 @@ struct RendableListPendingTransactionItem: RendableListTransactionItem {
             }
 
         case let transaction as SwapRawTransactionType:
-            let fromUrlStr = transaction.sourceWallet.token.logoURI
-            let toUrlStr = transaction.destinationWallet.token.logoURI
+            let fromUrlStr = transaction.sourceAccount.token.logoURI
+            let toUrlStr = transaction.destinationAccount.token.logoURI
 
             guard let fromUrlStr, let toUrlStr else {
                 return .icon(.buttonSwap)
@@ -93,7 +93,7 @@ struct RendableListPendingTransactionItem: RendableListTransactionItem {
             }
 
         case let transaction as SwapRawTransactionType:
-            return L10n.to(transaction.sourceWallet.token.symbol, transaction.destinationWallet.token.symbol)
+            return L10n.to(transaction.sourceAccount.token.symbol, transaction.destinationAccount.token.symbol)
 
         case let transaction as ClaimSentViaLinkTransaction:
             return L10n.from(RecipientFormatter.shortFormat(destination: transaction.claimableTokenInfo.keypair.publicKey.base58EncodedString))
@@ -159,7 +159,7 @@ struct RendableListPendingTransactionItem: RendableListTransactionItem {
         case let transaction as SwapRawTransactionType:
             return (
                 .positive,
-                "+\(transaction.toAmount.tokenAmountFormattedString(symbol: transaction.destinationWallet.token.symbol))"
+                "+\(transaction.toAmount.tokenAmountFormattedString(symbol: transaction.destinationAccount.token.symbol))"
             )
 
         case let transaction as ClaimSentViaLinkTransaction:
@@ -178,7 +178,7 @@ struct RendableListPendingTransactionItem: RendableListTransactionItem {
             return "-\(transaction.amount.tokenAmountFormattedString(symbol: transaction.walletToken.token.symbol))"
 
         case let transaction as SwapRawTransactionType:
-            return "-\(transaction.fromAmount.tokenAmountFormattedString(symbol: transaction.sourceWallet.token.symbol))"
+            return "-\(transaction.fromAmount.tokenAmountFormattedString(symbol: transaction.sourceAccount.token.symbol))"
 
         case let transaction as ClaimSentViaLinkTransaction:
             return "+\(transaction.tokenAmount.tokenAmountFormattedString(symbol: transaction.token.symbol))"

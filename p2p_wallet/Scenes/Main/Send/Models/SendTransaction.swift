@@ -24,7 +24,7 @@ struct SendTransaction: RawTransactionType {
     }
 
     init(state: SendInputState, execution: @escaping () async throws -> TransactionID) {
-        walletToken = state.sourceWallet!
+        walletToken = state.sourceAccount!
         recipient = state.recipient
         amount = state.amountInToken
 //        fees = [

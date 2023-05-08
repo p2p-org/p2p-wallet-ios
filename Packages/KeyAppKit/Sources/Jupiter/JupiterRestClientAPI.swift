@@ -72,7 +72,7 @@ public class JupiterRestClientAPI: JupiterAPI {
         feeAccount: String?,
         asLegacyTransaction: Bool?,
         computeUnitPriceMicroLamports: Int?,
-        destinationWallet: String?
+        destinationAccount: String?
     ) async throws -> String? {
         struct PostData: Codable {
             let route: Route
@@ -81,7 +81,7 @@ public class JupiterRestClientAPI: JupiterAPI {
             let feeAccount: String?
             let asLegacyTransaction: Bool?
             let computeUnitPriceMicroLamports: Int?
-            let destinationWallet: String?
+            let destinationAccount: String?
         }
 
         struct ResponseData: Codable {
@@ -99,7 +99,7 @@ public class JupiterRestClientAPI: JupiterAPI {
             feeAccount: feeAccount,
             asLegacyTransaction: asLegacyTransaction,
             computeUnitPriceMicroLamports: computeUnitPriceMicroLamports,
-            destinationWallet: destinationWallet
+            destinationAccount: destinationAccount
         ))
 
         print(request.cURL())

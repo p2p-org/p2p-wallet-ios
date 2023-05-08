@@ -134,12 +134,12 @@ final class SendInputCoordinator: Coordinator<SendResult> {
     private func openChooseWalletToken(from vc: UIViewController, viewModel: SendInputViewModel) {
         coordinate(to: ChooseSendItemCoordinator(
             strategy: .sendToken,
-            chosenWallet: viewModel.sourceWallet,
+            chosenWallet: viewModel.sourceAccount,
             parentController: vc
         ))
-        .sink { walletToken in
-            if let walletToken = walletToken {
-                viewModel.sourceWallet = walletToken
+        .sink { account in
+            if let account {
+                viewModel.sourceAccount = account
             }
             viewModel.openKeyboard()
         }

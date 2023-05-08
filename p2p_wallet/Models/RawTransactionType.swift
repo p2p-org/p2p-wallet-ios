@@ -17,8 +17,8 @@ struct SwapMetaInfo {
 
 protocol SwapRawTransactionType: RawTransactionType {
     var authority: String? { get }
-    var sourceWallet: SolanaAccount { get }
-    var destinationWallet: SolanaAccount { get }
+    var sourceAccount: SolanaAccount { get }
+    var destinationAccount: SolanaAccount { get }
     var fromAmount: Double { get }
     var toAmount: Double { get }
     var slippage: Double { get }
@@ -28,8 +28,8 @@ protocol SwapRawTransactionType: RawTransactionType {
 struct OrcaSwapTransaction: SwapRawTransactionType {
     
     let swapService: SwapServiceType
-    let sourceWallet: SolanaAccount
-    let destinationWallet: SolanaAccount
+    let sourceAccount: SolanaAccount
+    let destinationAccount: SolanaAccount
     let payingFeeWallet: SolanaAccount?
     let authority: String?
     let poolsPair: PoolsPair
@@ -45,7 +45,7 @@ struct OrcaSwapTransaction: SwapRawTransactionType {
     }
 
     var mainDescription: String {
-        "\(fromAmount.tokenAmountFormattedString(symbol: sourceWallet.token.symbol)) → \(toAmount.tokenAmountFormattedString(symbol: destinationWallet.token.symbol))"
+        "\(fromAmount.tokenAmountFormattedString(symbol: sourceAccount.token.symbol)) → \(toAmount.tokenAmountFormattedString(symbol: destinationAccount.token.symbol))"
     }
 
     func createRequest() async throws -> String {
@@ -67,14 +67,14 @@ struct OrcaSwapTransaction: SwapRawTransactionType {
         }
 
         return try await swapService.swap(
-            sourceAddress: sourceWallet.pubkey!,
-            sourceTokenMint: sourceWallet.mintAddress,
-            destinationAddress: destinationWallet.pubkey,
-            destinationTokenMint: destinationWallet.mintAddress,
+            sourceAddress: sourceAccount.pubkey!,
+            sourceTokenMint: sourceAccount.mintAddress,
+            destinationAddress: destinationAccount.pubkey,
+            destinationTokenMint: destinationAccount.mintAddress,
             payingTokenAddress: payingFeeWallet?.pubkey,
             payingTokenMint: payingFeeWallet?.mintAddress,
             poolsPair: poolsPair,
-            amount: fromAmount.toLamport(decimals: sourceWallet.token.decimals),
+            amount: fromAmount.toLamport(decimals: sourceAccount.token.decimals),
             slippage: slippage
         )
             .last ?? ""

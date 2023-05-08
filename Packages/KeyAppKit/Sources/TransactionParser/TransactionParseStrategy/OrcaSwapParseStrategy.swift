@@ -75,7 +75,7 @@ public class OrcaSwapParseStrategy: TransactionParseStrategy {
     guard let destinationInfo: ParsedInstruction.Parsed.Info = destination.parsed?.info else { return nil }
 
     // Get accounts info
-    let (sourceAccount, destinationAccount): (BufferInfo<AccountInfo>?, BufferInfo<AccountInfo>?) = try await(
+    let (sourceAccountInfo, destinationAccountInfo): (BufferInfo<AccountInfo>?, BufferInfo<AccountInfo>?) = try await(
       apiClient
         .getAccountInfo(account: sourceInfo.source, or: sourceInfo.destination),
       apiClient
@@ -86,19 +86,19 @@ public class OrcaSwapParseStrategy: TransactionParseStrategy {
 
     // Get tokens info
     let (sourceToken, destinationToken): (Token, Token) = try await(
-      tokensRepository.getTokenWithMint(sourceAccount?.data.mint.base58EncodedString),
-      tokensRepository.getTokenWithMint(destinationAccount?.data.mint.base58EncodedString)
+      tokensRepository.getTokenWithMint(sourceAccountInfo?.data.mint.base58EncodedString),
+      tokensRepository.getTokenWithMint(destinationAccountInfo?.data.mint.base58EncodedString)
     )
 
-    let sourceWallet = SolanaAccount(
+    let sourceAccount = SolanaAccount(
       pubkey: try? PublicKey(string: sourceInfo.source).base58EncodedString,
-      lamports: sourceAccount?.lamports,
+      lamports: sourceAccountInfo?.lamports,
       token: sourceToken
     )
 
-    let destinationWallet = SolanaAccount(
+    let destinationAccount = SolanaAccount(
       pubkey: try? PublicKey(string: destinationInfo.destination).base58EncodedString,
-      lamports: destinationAccount?.lamports,
+      lamports: destinationAccountInfo?.lamports,
       token: destinationToken
     )
 
@@ -106,11 +106,11 @@ public class OrcaSwapParseStrategy: TransactionParseStrategy {
     let destinationAmountLamports = Lamports(destinationInfo.amount ?? "0")
 
     return SwapInfo(
-      source: sourceWallet,
-      sourceAmount: sourceAmountLamports?.convertToBalance(decimals: sourceWallet.token.decimals),
-      destination: destinationWallet,
+      source: sourceAccount,
+      sourceAmount: sourceAmountLamports?.convertToBalance(decimals: sourceAccount.token.decimals),
+      destination: destinationAccount,
       destinationAmount: destinationAmountLamports?
-        .convertToBalance(decimals: destinationWallet.token.decimals),
+        .convertToBalance(decimals: destinationAccount.token.decimals),
       accountSymbol: configuration.symbolView
     )
   }
@@ -135,22 +135,22 @@ public class OrcaSwapParseStrategy: TransactionParseStrategy {
     let sourceToken = try await tokensRepository.getTokenWithMint(sourceMint)
     let destinationToken = try await tokensRepository.getTokenWithMint(destinationMint)
 
-    let sourceWallet = SolanaAccount(
+    let sourceAccount = SolanaAccount(
       pubkey: approveInstruction.parsed?.info.source,
       lamports: Lamports(postTokenBalances.first?.uiTokenAmount.amount ?? "0"),
       token: sourceToken
     )
 
-    let destinationWallet = SolanaAccount(
+    let destinationAccount = SolanaAccount(
       pubkey: destinationToken.symbol == "SOL" ? approveInstruction.parsed?.info.owner : nil,
       lamports: Lamports(postTokenBalances.last?.uiTokenAmount.amount ?? "0"),
       token: destinationToken
     )
 
     return SwapInfo(
-      source: sourceWallet,
-      sourceAmount: Lamports(sourceAmountString)?.convertToBalance(decimals: sourceWallet.token.decimals),
-      destination: destinationWallet,
+      source: sourceAccount,
+      sourceAmount: Lamports(sourceAmountString)?.convertToBalance(decimals: sourceAccount.token.decimals),
+      destination: destinationAccount,
       destinationAmount: nil,
       accountSymbol: accountSymbol
     )

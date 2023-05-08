@@ -115,14 +115,14 @@ class TransactionHandler: TransactionHandlerType {
                         return true
                     }
                 case let transaction as SwapRawTransactionType: // OrcaSwap, JupiterSwap
-                    if transaction.sourceWallet.pubkey == account ||
-                        transaction.destinationWallet.pubkey == account ||
+                    if transaction.sourceAccount.pubkey == account ||
+                        transaction.destinationAccount.pubkey == account ||
                         transaction.authority == account
                     {
                         return true
                     }
                 case let transaction as ClaimSentViaLinkTransaction:
-                    if transaction.destinationWallet.pubkey == account {
+                    if transaction.destinationAccount.pubkey == account {
                         return true
                     }
                 default:

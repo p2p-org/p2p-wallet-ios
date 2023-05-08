@@ -19,7 +19,7 @@ struct ClaimSentViaLinkTransaction: RawTransactionType {
 
     let claimableTokenInfo: ClaimableTokenInfo
     let token: Token
-    let destinationWallet: SolanaAccount
+    let destinationAccount: SolanaAccount
     let tokenAmount: Double
     
     let payingFeeWallet: SolanaAccount? = nil

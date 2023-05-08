@@ -32,7 +32,7 @@ public protocol JupiterAPI {
         feeAccount: String?,
         asLegacyTransaction: Bool?,
         computeUnitPriceMicroLamports: Int?,
-        destinationWallet: String?
+        destinationAccount: String?
     ) async throws -> String?
     
     func routeMap() async throws -> RouteMap
@@ -53,7 +53,7 @@ extension JupiterAPI {
             feeAccount: feeAccount,
             asLegacyTransaction: nil,
             computeUnitPriceMicroLamports: computeUnitPriceMicroLamports,
-            destinationWallet: nil
+            destinationAccount: nil
         )
     }
 }

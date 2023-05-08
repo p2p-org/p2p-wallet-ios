@@ -35,7 +35,7 @@ final class SendInputViewModel: BaseViewModel, ObservableObject {
         }
     }
 
-    @Published var sourceWallet: SolanaAccount
+    @Published var sourceAccount: SolanaAccount
 
     @Published var feeTitle = L10n.fees("")
     @Published var isFeeLoading: Bool = true
@@ -141,7 +141,7 @@ final class SendInputViewModel: BaseViewModel, ObservableObject {
                 tokenInWallet = sortedWallets.first ?? SolanaAccount(token: Token.nativeSolana)
             }
         }
-        sourceWallet = tokenInWallet
+        sourceAccount = tokenInWallet
 
         let feeTokenInWallet = wallets
             .first(where: { $0.token.address == Token.usdc.address }) ?? SolanaAccount(token: Token.usdc)
@@ -304,7 +304,7 @@ private extension SendInputViewModel {
             })
             .store(in: &subscriptions)
 
-        $sourceWallet
+        $sourceAccount
             .sinkAsync(receiveValue: { [weak self] value in
                 guard let self else { return }
                 await MainActor.run { [weak self] in self?.isFeeLoading = true }
@@ -351,12 +351,12 @@ private extension SendInputViewModel {
             .sink { [weak self] _ in
                 guard let self = self else { return }
                 let text: String
-                if self.currentState.feeWallet?.mintAddress == self.sourceWallet.mintAddress && self.currentState
+                if self.currentState.feeWallet?.mintAddress == self.sourceAccount.mintAddress && self.currentState
                     .fee != .zero
                 {
                     text = L10n.calculatedBySubtractingTheAccountCreationFeeFromYourBalance
                 } else {
-                    text = L10n.usingTheMaximumAmount(self.sourceWallet.token.symbol)
+                    text = L10n.usingTheMaximumAmount(self.sourceAccount.token.symbol)
                 }
                 self.handleSuccess(text: text)
                 self.vibrate()
@@ -409,7 +409,7 @@ private extension SendInputViewModel {
 
         Publishers.CombineLatest(
             pricesService.isPricesAvailablePublisher,
-            $sourceWallet.eraseToAnyPublisher()
+            $sourceAccount.eraseToAnyPublisher()
         )
         .sink { [weak self] isPriceAvailable, currentWallet in
             guard let self else { return }
@@ -446,8 +446,8 @@ private extension SendInputViewModel {
             actionButtonData = SliderActionButtonData(
                 isEnabled: false,
                 title: L10n.max(maxAmount.tokenAmountFormattedString(
-                    symbol: sourceWallet.token.symbol,
-                    maximumFractionDigits: Int(sourceWallet.token.decimals),
+                    symbol: sourceAccount.token.symbol,
+                    maximumFractionDigits: Int(sourceAccount.token.decimals),
                     roundingMode: .down
                 ))
             )
@@ -457,8 +457,8 @@ private extension SendInputViewModel {
             actionButtonData = SliderActionButtonData(
                 isEnabled: false,
                 title: L10n.min(minAmount.tokenAmountFormattedString(
-                    symbol: sourceWallet.token.symbol,
-                    maximumFractionDigits: Int(sourceWallet.token.decimals),
+                    symbol: sourceAccount.token.symbol,
+                    maximumFractionDigits: Int(sourceAccount.token.decimals),
                     roundingMode: .down
                 ))
             )
@@ -559,7 +559,7 @@ private extension SendInputViewModel {
     }
 
     func send() async {
-        guard let sourceWallet = currentState.sourceWallet
+        guard let sourceAccount = currentState.sourceAccount
         else { return }
 
         let address: String
@@ -597,7 +597,7 @@ private extension SendInputViewModel {
         let amountInFiat = currentState.amountInFiat
 
         if isSendingViaLink {
-            logSendClickCreateLink(symbol: token.symbol, amount: amountInToken, pubkey: sourceWallet.pubkey ?? "")
+            logSendClickCreateLink(symbol: token.symbol, amount: amountInToken, pubkey: sourceAccount.pubkey ?? "")
         }
 
         let transaction = SendTransaction(state: currentState) {
@@ -611,7 +611,7 @@ private extension SendInputViewModel {
                 token: token,
                 amountInToken: amountInToken,
                 amountInFiat: amountInFiat,
-                sourceWallet: sourceWallet,
+                sourceAccount: sourceAccount,
                 address: address,
                 feeWallet: feeWallet
             )
@@ -629,7 +629,7 @@ private extension SendInputViewModel {
                     token: token,
                     amountInToken: amountInToken,
                     amountInFiat: amountInFiat,
-                    sourceWallet: sourceWallet,
+                    sourceAccount: sourceAccount,
                     address: address,
                     feeWallet: feeWallet
                 )
@@ -651,7 +651,7 @@ private func createTransactionExecution(
     token: Token,
     amountInToken: Double,
     amountInFiat: Double,
-    sourceWallet: SolanaAccount,
+    sourceAccount: SolanaAccount,
     address: String,
     feeWallet: SolanaAccount?
 ) async throws -> TransactionID {
@@ -686,7 +686,7 @@ private func createTransactionExecution(
 
     // Real transaction
     let trx = try await Resolver.resolve(SendActionService.self).send(
-        from: sourceWallet,
+        from: sourceAccount,
         receiver: address,
         amount: amountInToken,
         feeWallet: feeWallet,

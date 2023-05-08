@@ -209,7 +209,7 @@ class NewHistoryCoordinator: SmartCoordinator<Void> {
                 openKeyboardOnStart: true,
                 source: .tapToken,
                 preChosenWallet: solanaAccount,
-                destinationWallet: destination,
+                destinationAccount: destination,
                 hideTabBar: true
             )
         )
