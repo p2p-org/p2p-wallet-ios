@@ -20,7 +20,7 @@ final class AccountDetailsHistoryViewModel: HistoryViewModel {
     }
 
     override func buildOutput(
-        history: ListState<any RendableListTransactionItem>,
+        history: ListState<RendableListHistoryTransactionItem>,
         sells: [any RendableListOfframItem] = [],
         others: [any RendableListTransactionItem] = []
     ) -> ListState<HistorySection> {

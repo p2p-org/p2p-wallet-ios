@@ -13,14 +13,13 @@ struct NewHistoryView<Header: View>: View {
     @ObservedObject var viewModel: HistoryViewModel
 
     let header: Header
-    
+
     var body: some View {
         ScrollView {
             header
-            
+
             // Send via link
-            if viewModel.showSendViaLinkTransaction && !viewModel.sendViaLinkTransactions.isEmpty
-            {
+            if viewModel.showSendViaLinkTransaction && !viewModel.sendViaLinkTransactions.isEmpty {
                 sendViaLinkView
             }
 
@@ -59,25 +58,25 @@ struct NewHistoryView<Header: View>: View {
 
                     ForEach(section.items, id: \.id) { (item: NewHistoryItem) in
                         listItem(item: item)
-                        .padding(.top, section.items.first == item ? 4 : 0)
-                        .padding(.bottom, section.items.last == item ? 4 : 0)
-                        .if(shouldAddSwapBannerDecorations(item: item)) { view in
-                            view
-                                .padding(.all, 16)
-                                .background(
-                                    Image(uiImage: UIImage.swapBannerBackground)
-                                        .resizable()
-                                )
-                        }
-                        .if(!shouldAddSwapBannerDecorations(item: item)) { view in
-                            view
-                                .background(Color(Asset.Colors.snow.color))
-                                .roundedList(
-                                    radius: 16,
-                                    isFirst: section.items.first == item,
-                                    isLast: section.items.last == item
-                                )
-                        }
+                            .padding(.top, section.items.first == item ? 4 : 0)
+                            .padding(.bottom, section.items.last == item ? 4 : 0)
+                            .if(shouldAddSwapBannerDecorations(item: item)) { view in
+                                view
+                                    .padding(.all, 16)
+                                    .background(
+                                        Image(uiImage: UIImage.swapBannerBackground)
+                                            .resizable()
+                                    )
+                            }
+                            .if(!shouldAddSwapBannerDecorations(item: item)) { view in
+                                view
+                                    .background(Color(Asset.Colors.snow.color))
+                                    .roundedList(
+                                        radius: 16,
+                                        isFirst: section.items.first == item,
+                                        isLast: section.items.last == item
+                                    )
+                            }
                     }
                 }.padding(.horizontal, 16)
             }
@@ -91,7 +90,7 @@ struct NewHistoryView<Header: View>: View {
     }
 
     private func shouldAddSwapBannerDecorations(item: NewHistoryItem) -> Bool {
-        if case .swapBanner(_, _, _, _, _) = item { return true } else { return  false }
+        if case .swapBanner = item { return true } else { return false }
     }
 
     private func listItem(item: NewHistoryItem) -> AnyView {
@@ -100,11 +99,7 @@ struct NewHistoryView<Header: View>: View {
                 switch item {
                 case let .rendableTransaction(item):
                     HistoryItemView(item: item) {
-                        if let onTap = item.onTap {
-                            onTap()
-                        } else {
-                            viewModel.onTap(item: item)
-                        }
+                        item.onTap?()
                     }
                 case let .rendableOffram(item):
                     HistoryOfframItemView(item: item) {
@@ -153,7 +148,7 @@ struct NewHistoryView<Header: View>: View {
     }
 
     // MARK: - View builder
-    
+
     @ViewBuilder
     var sendViaLinkView: some View {
         VStack {
@@ -162,28 +157,28 @@ struct NewHistoryView<Header: View>: View {
                     .resizable()
                     .frame(width: 24, height: 24)
                     .foregroundColor(Color(Asset.Colors.night.color))
-                
+
                 VStack(alignment: .leading, spacing: 4) {
                     Text(L10n.sentViaOneTimeLink)
                         .fontWeight(.semibold)
                         .apply(style: .text3)
-                    
+
                     Text(viewModel.linkTransactionsTitle)
                         .apply(style: .label1)
                         .foregroundColor(Color(Asset.Colors.mountain.color))
                 }
-                
+
                 Spacer()
-                
+
                 Image(uiImage: .nextArrow)
                     .resizable()
                     .frame(width: 7.41, height: 12)
-                    .padding(.vertical, (24-12)/2)
-                    .padding(.horizontal, (24-7.41)/2)
+                    .padding(.vertical, (24 - 12) / 2)
+                    .padding(.horizontal, (24 - 7.41) / 2)
                     .foregroundColor(Color(Asset.Colors.mountain.color))
             }
             .padding(.init(top: 12, leading: 16, bottom: 11, trailing: 16))
-            
+
             // Divider
             Divider()
                 .frame(height: 1)
@@ -215,11 +210,10 @@ private extension View {
 
         if isFirst || isLast {
             return AnyView(
-                self
-                    .cornerRadius(
-                        radius: radius,
-                        corners: corner
-                    )
+                cornerRadius(
+                    radius: radius,
+                    corners: corner
+                )
             )
         } else {
             return AnyView(self)
