@@ -50,9 +50,9 @@ final class HomeEmptyViewModel: BaseViewModel, ObservableObject {
         }
 
         return await withCheckedContinuation { continuation in
-            cancellable = solanaAccountsService.fetcherStatePublisher
+            cancellable = solanaAccountsService.statePublisher
                 .sink(receiveValue: { [weak self] in
-                    if $0 == .loaded || $0 == .error {
+                    if $0.status == .ready || $0.error != nil {
                         self?.updateData()
                         continuation.resume()
                         self?.cancellable = nil

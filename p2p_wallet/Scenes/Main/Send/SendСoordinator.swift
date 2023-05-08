@@ -64,7 +64,7 @@ final class SendCoordinator: Coordinator<SendResult> {
     // MARK: - Methods
 
     override func start() -> AnyPublisher<SendResult, Never> {
-        if solanaAccountsService.fetcherState == .loaded {
+        if solanaAccountsService.state.status == .ready {
             let hasToken = solanaAccountsService.loadedAccounts.contains { wallet in
                 (wallet.lamports ?? 0) > 0
             }
