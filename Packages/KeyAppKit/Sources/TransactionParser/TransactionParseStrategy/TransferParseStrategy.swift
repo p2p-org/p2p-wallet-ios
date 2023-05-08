@@ -4,6 +4,7 @@
 
 import Foundation
 import SolanaSwift
+import KeyAppKitCore
 
 /// A strategy for parsing transfer transactions.
 public class TransferParseStrategy: TransactionParseStrategy {

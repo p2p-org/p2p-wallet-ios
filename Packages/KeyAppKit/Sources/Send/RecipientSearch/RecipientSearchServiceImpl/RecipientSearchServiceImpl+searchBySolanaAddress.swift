@@ -1,5 +1,6 @@
 import Foundation
 import SolanaSwift
+import KeyAppKitCore
 
 extension RecipientSearchServiceImpl {
     /// Search by solana address

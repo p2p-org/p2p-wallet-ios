@@ -1,6 +1,7 @@
 import SolanaSwift
 import OrcaSwapSwift
 import FeeRelayerSwift
+import KeyAppKitCore
 
 public protocol SendChooseFeeService {
     func getAvailableWalletsToPayFee(feeInSOL: FeeAmount) async throws -> [Wallet]

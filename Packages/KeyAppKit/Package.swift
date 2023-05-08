@@ -138,6 +138,7 @@ let package = Package(
             name: "TransactionParser",
             dependencies: [
                 "Cache",
+                "KeyAppKitCore",
                 .product(name: "SolanaSwift", package: "solana-swift"),
             ]
         ),

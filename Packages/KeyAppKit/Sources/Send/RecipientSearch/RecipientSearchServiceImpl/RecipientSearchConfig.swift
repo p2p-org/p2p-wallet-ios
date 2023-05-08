@@ -7,6 +7,7 @@
 
 import Foundation
 import SolanaSwift
+import KeyAppKitCore
 
 public struct RecipientSearchConfig {
     public var wallets: [Wallet]

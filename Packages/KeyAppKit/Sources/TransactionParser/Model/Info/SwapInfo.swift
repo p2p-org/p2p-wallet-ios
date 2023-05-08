@@ -4,6 +4,7 @@
 
 import Foundation
 import SolanaSwift
+import KeyAppKitCore
 
 @available(* , deprecated, renamed: "SwapInfo")
 public typealias SwapTransaction = SwapInfo

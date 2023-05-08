@@ -5,6 +5,7 @@
 import FeeRelayerSwift
 import Foundation
 import SolanaSwift
+import KeyAppKitCore
 
 public enum Amount: Equatable {
     case fiat(value: Double, currency: String)

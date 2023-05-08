@@ -5,6 +5,7 @@
 import Foundation
 import SolanaPricesAPIs
 import SolanaSwift
+import KeyAppKitCore
 
 public struct UserWalletEnvironments: Equatable {
     let wallets: [Wallet]
