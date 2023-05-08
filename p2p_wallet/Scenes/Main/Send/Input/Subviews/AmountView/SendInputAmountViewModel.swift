@@ -223,10 +223,6 @@ private extension SendInputAmountViewModel {
     }
 }
 
-private extension Wallet {
-    var decimals: Int { Int(token.decimals) }
-}
-
 private enum Constants {
     static let fiatDecimals = 2
     static let minFiatDisplayAmount = 0.01
