@@ -29,4 +29,11 @@ extension AccountsService {
     public var loadedAccounts: [Account] {
         state.value
     }
+    
+    /// Publisher that emit only loaded accounts
+    public var accountsPublisher: AnyPublisher<[Account], Never> {
+        statePublisher
+            .map { $0.value }
+            .eraseToAnyPublisher()
+    }
 }

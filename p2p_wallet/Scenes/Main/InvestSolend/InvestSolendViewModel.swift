@@ -8,12 +8,13 @@ import Resolver
 import SolanaSwift
 import Solend
 import KeyAppBusiness
+import KeyAppKitCore
 
 typealias DepositOffer = (
     asset: SolendConfigAsset,
     market: SolendMarketInfo?,
     userDeposit: SolendUserDeposit?,
-    wallet: Wallet?
+    solanaAccount: SolanaAccount?
 )
 
 typealias Invest = (
@@ -124,23 +125,23 @@ class InvestSolendViewModel: ObservableObject {
                 self?.bannerError = nil
             }.store(in: &subscriptions)
 
-        let walletsStream: AnyPublisher<[Wallet], Never> = solanaAccountsService
+        let solanaAccountsStream = solanaAccountsService
             .accountsPublisher
         // Process data from data service
         dataService.availableAssets
             .combineLatest(
                 dataService.marketInfo,
                 dataService.deposits,
-                walletsStream
+                solanaAccountsStream
             )
-            .map {(assets: [SolendConfigAsset]?, marketInfo: [SolendMarketInfo]?, userDeposits: [SolendUserDeposit]?, wallets: [Wallet]?) -> [DepositOffer] in
+            .map {(assets: [SolendConfigAsset]?, marketInfo: [SolendMarketInfo]?, userDeposits: [SolendUserDeposit]?, solanaAccounts: [SolanaAccount]?) -> [DepositOffer] in
                 guard let assets = assets else { return [] }
                 return assets.map { asset -> DepositOffer in
                     (
                         asset: asset,
                         market: marketInfo?.first(where: { $0.symbol == asset.symbol }),
                         userDeposit: userDeposits?.first(where: { $0.symbol == asset.symbol }),
-                        wallet: wallets?.first(where: { $0.token.symbol == asset.symbol })
+                        solanaAccount: solanaAccounts?.first(where: { $0.token.symbol == asset.symbol })
                     )
                 }.sorted { (v1: DepositOffer, v2: DepositOffer) -> Bool in
                     let apy1: Double = .init(v1.market?.supplyInterest ?? "") ?? 0
