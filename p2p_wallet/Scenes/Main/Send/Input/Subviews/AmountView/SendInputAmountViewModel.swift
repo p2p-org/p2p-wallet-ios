@@ -75,7 +75,7 @@ final class SendInputAmountViewModel: BaseViewModel, ObservableObject {
                 self.amountText = self.maxAmountTextInCurrentType
                 self.wasMaxUsed = true
                 // Manual update of amount due to inaccurate fiat round
-                self.amount = Amount(inFiat: maxAmountToken * token.priceInCurrentFiat, inToken: maxAmountToken)
+                self.amount = Amount(inFiat: maxAmountToken * token._priceInCurrentFiat, inToken: maxAmountToken)
                 self.updateSecondaryAmount()
                 self.validateAmount()
             }
@@ -89,9 +89,9 @@ final class SendInputAmountViewModel: BaseViewModel, ObservableObject {
                 if let newAmount = newAmount {
                     switch self.mainAmountType {
                     case .token:
-                        self.amount = Amount(inFiat: newAmount * self.token.priceInCurrentFiat, inToken: newAmount)
+                        self.amount = Amount(inFiat: newAmount * self.token._priceInCurrentFiat, inToken: newAmount)
                     case .fiat:
-                        self.amount = Amount(inFiat: newAmount, inToken: newAmount / self.token.priceInCurrentFiat)
+                        self.amount = Amount(inFiat: newAmount, inToken: newAmount / self.token._priceInCurrentFiat)
                     }
                 } else {
                     self.amount = nil
@@ -124,7 +124,7 @@ final class SendInputAmountViewModel: BaseViewModel, ObservableObject {
                 case .token:
                     self.maxAmountTextInCurrentType = value.formatTokenWithDown(decimals: self.token.decimals)
                 case .fiat:
-                    self.maxAmountTextInCurrentType = (value * self.token.priceInCurrentFiat).formatFiatWithDown()
+                    self.maxAmountTextInCurrentType = (value * self.token._priceInCurrentFiat).formatFiatWithDown()
                 }
             }
             .store(in: &subscriptions)
@@ -175,7 +175,7 @@ private extension SendInputAmountViewModel {
         case .fiat:
             mainTokenText = fiat.code
             secondaryCurrencyText = token.token.symbol
-            maxAmountTextInCurrentType = (maxAmountToken * token.priceInCurrentFiat).formatFiatWithDown()
+            maxAmountTextInCurrentType = (maxAmountToken * token._priceInCurrentFiat).formatFiatWithDown()
         case .token:
             mainTokenText = token.token.symbol
             secondaryCurrencyText = fiat.code
@@ -188,13 +188,13 @@ private extension SendInputAmountViewModel {
     func updateSecondaryAmount() {
         switch mainAmountType {
         case .token:
-            let fiatAmount = amount?.inToken * token.priceInCurrentFiat
+            let fiatAmount = amount?.inToken * token._priceInCurrentFiat
             let minCondition = fiatAmount > 0 && fiatAmount < Constants.minFiatDisplayAmount
             secondaryAmountText = minCondition ? L10n
                 .lessThan(Constants.minFiatDisplayAmount.formatFiatWithDown()) : fiatAmount.formatFiatWithDown()
 
         case .fiat:
-            secondaryAmountText = (amount?.inFiat / token.priceInCurrentFiat)
+            secondaryAmountText = (amount?.inFiat / token._priceInCurrentFiat)
                 .formatTokenWithDown(decimals: token.decimals)
         }
     }

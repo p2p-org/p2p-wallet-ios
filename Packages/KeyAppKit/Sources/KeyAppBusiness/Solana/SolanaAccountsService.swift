@@ -114,7 +114,7 @@ public final class SolanaAccountsService: NSObject, AccountsService {
 
                             newAccounts[index]
                                 .data
-                                .price = price
+                                ._price = price
                         }
                     }
 

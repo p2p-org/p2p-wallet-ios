@@ -104,7 +104,7 @@ struct SendInputView: View {
 
             SendInputTokenView(
                 wallet: viewModel.sourceWallet,
-                amountInFiat: viewModel.sourceWallet.amountInCurrentFiat,
+                amountInFiat: viewModel.sourceWallet._amountInCurrentFiat,
                 isChangeEnabled: viewModel.isTokenChoiceEnabled,
                 changeAction: viewModel.changeTokenPressed.send
             )

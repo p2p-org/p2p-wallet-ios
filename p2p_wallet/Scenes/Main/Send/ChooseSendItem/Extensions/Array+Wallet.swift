@@ -11,7 +11,7 @@ extension Array where Element == Wallet {
                     return lhsIndex < rhsIndex
                 } else {
                     // Otherwise sort by fiat amount
-                    return lhs.amountInCurrentFiat > rhs.amountInCurrentFiat
+                    return lhs._amountInCurrentFiat > rhs._amountInCurrentFiat
                 }
             }
     }

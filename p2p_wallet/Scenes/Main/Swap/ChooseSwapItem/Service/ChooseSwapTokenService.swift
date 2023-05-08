@@ -129,7 +129,7 @@ private extension Array where Element == SwapToken {
             } else if sortByName {
                 return lhs.token.name < rhs.token.name
             } else if let lhsWallet = lhs.userWallet, let rhsWallet = rhs.userWallet {
-                return lhsWallet.amountInCurrentFiat > rhsWallet.amountInCurrentFiat
+                return lhsWallet._amountInCurrentFiat > rhsWallet._amountInCurrentFiat
             } else if lhs.userWallet != nil || rhs.userWallet != nil {
                 return false
             } else {
