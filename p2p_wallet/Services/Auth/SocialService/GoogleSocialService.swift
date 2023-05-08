@@ -6,7 +6,6 @@
 //
 
 import GoogleSignIn
-import SwiftNotificationCenter
 import UIKit
 
 final class GoogleSocialService: NSObject, SocialService {

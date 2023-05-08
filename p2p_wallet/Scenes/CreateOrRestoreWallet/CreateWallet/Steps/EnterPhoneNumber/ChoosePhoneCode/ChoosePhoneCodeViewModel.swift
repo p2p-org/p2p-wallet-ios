@@ -1,15 +1,11 @@
-import BECollectionView_Combine
 import Combine
 import CountriesAPI
-import Foundation
 import PhoneNumberKit
 
-final class ChoosePhoneCodeViewModel: BECollectionViewModel<SelectableCountry> {
-    // MARK: - Dependencies
+final class ChoosePhoneCodeViewModel: BaseViewModel, ObservableObject {
 
     // MARK: - Properties
 
-    private var subscriptions = [AnyCancellable]()
     private var cachedResult = [SelectableCountry]()
     private var initialDialCode: String?
     private var initialCountryCode: String?
@@ -17,6 +13,8 @@ final class ChoosePhoneCodeViewModel: BECollectionViewModel<SelectableCountry> {
     @Published var selectedDialCode: String?
     @Published var selectedCountryCode: String?
     @Published var keyword = ""
+    @Published var isSearchFieldFocused = false
+    @Published var data = [SelectableCountry]()
     let didClose = PassthroughSubject<Void, Never>()
 
     // MARK: - Initializers
@@ -25,12 +23,37 @@ final class ChoosePhoneCodeViewModel: BECollectionViewModel<SelectableCountry> {
         initialDialCode = selectedDialCode
         initialCountryCode = selectedCountryCode
         super.init()
+        Task {
+            self.data = try await createRequest()
+        }
+        bind()
+    }
+
+    // MARK: - Methods
+    func select(country: SelectableCountry) {
+        guard !country.isSelected, !country.isEmpty else { return }
+        selectedDialCode = country.value.dialCode
+        selectedCountryCode = country.value.code
+        var countries = data
+        for i in 0 ..< countries.count {
+            if countries[i].value.dialCode == country.value.dialCode,
+               countries[i].value.code == country.value.code
+            {
+                countries[i].isSelected = true
+            } else {
+                countries[i].isSelected = false
+            }
+        }
+        data = countries
+    }
+
+    private func bind() {
         $keyword
             .sink { [weak self] keyword in
                 guard let self = self else { return }
                 if keyword.isEmpty {
                     let cachedResult = self.cachedResult
-                    self.overrideData(by: self.placeInitialIfNeeded(countries: cachedResult))
+                    self.data = self.placeInitialIfNeeded(countries: cachedResult)
                     return
                 }
                 var newData = self.cachedResult.filteredAndSorted(byKeyword: keyword)
@@ -39,7 +62,7 @@ final class ChoosePhoneCodeViewModel: BECollectionViewModel<SelectableCountry> {
                 } else {
                     newData = self.placeInitialIfNeeded(countries: newData)
                 }
-                self.overrideData(by: newData)
+                self.data = newData
             }
             .store(in: &subscriptions)
 
@@ -64,9 +87,7 @@ final class ChoosePhoneCodeViewModel: BECollectionViewModel<SelectableCountry> {
         .store(in: &subscriptions)
     }
 
-    // MARK: - Methods
-
-    override func createRequest() async throws -> [SelectableCountry] {
+    private func createRequest() async throws -> [SelectableCountry] {
         let selectedDialCode = selectedDialCode ?? initialDialCode
         let selectedCountryCode = selectedCountryCode ?? initialCountryCode
         cachedResult = try await CountriesAPIImpl().fetchCountries()
