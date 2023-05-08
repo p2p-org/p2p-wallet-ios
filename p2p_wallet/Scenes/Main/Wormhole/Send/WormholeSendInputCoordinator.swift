@@ -17,18 +17,18 @@ enum WormholeSendInputCoordinatorResult {
 
 final class WormholeSendInputCoordinator: SmartCoordinator<WormholeSendInputCoordinatorResult> {
     private let recipient: Recipient
-    private let preChosenWallet: SolanaAccount?
+    private let preChosenAccount: SolanaAccount?
 
-    init(recipient: Recipient, from: UINavigationController, preChosenWallet: SolanaAccount? = nil) {
+    init(recipient: Recipient, from: UINavigationController, preChosenAccount: SolanaAccount? = nil) {
         self.recipient = recipient
-        self.preChosenWallet = preChosenWallet
+        self.preChosenAccount = preChosenAccount
         super.init(presentation: SmartCoordinatorPushPresentation(from))
     }
 
     override func build() -> UIViewController {
         let viewModel = WormholeSendInputViewModel(
             recipient: recipient,
-            preChosenWallet: preChosenWallet
+            preChosenAccount: preChosenAccount
         )
         let view = WormholeSendInputView(viewModel: viewModel)
         let vc = UIHostingController(rootView: view)

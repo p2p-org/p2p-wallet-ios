@@ -101,7 +101,7 @@ final class SendInputViewModel: BaseViewModel, ObservableObject {
 
     init(
         recipient: Recipient,
-        preChosenWallet: SolanaAccount?,
+        preChosenAccount: SolanaAccount?,
         preChosenAmount: Double?,
         source: SendSource,
         allowSwitchingMainAmountType: Bool,
@@ -125,8 +125,8 @@ final class SendInputViewModel: BaseViewModel, ObservableObject {
             tokenInWallet = wallets
                 .first(where: { $0.token.address == token.address }) ?? SolanaAccount(token: Token.nativeSolana)
         default:
-            if let preChosenWallet = preChosenWallet {
-                tokenInWallet = preChosenWallet
+            if let preChosenAccount = preChosenAccount {
+                tokenInWallet = preChosenAccount
             } else {
                 let preferOrder: [String: Int] = ["USDC": 1, "USDT": 2]
                 let sortedWallets = wallets
@@ -184,10 +184,10 @@ final class SendInputViewModel: BaseViewModel, ObservableObject {
 
         inputAmountViewModel = SendInputAmountViewModel(initialToken: tokenInWallet)
 
-        let preChoosenWalletAvailable = preChosenWallet != nil
+        let preChosenAccountAvailable = preChosenAccount != nil
         let recipientIsDirectSPLTokenAddress = recipient.category.isDirectSPLTokenAddress
         let thereIsOnlyOneOrNoneWallets = wallets.filter(\.isSendable).count <= 1
-        let shouldDisableChosingToken = preChoosenWalletAvailable || recipientIsDirectSPLTokenAddress ||
+        let shouldDisableChosingToken = preChosenAccountAvailable || recipientIsDirectSPLTokenAddress ||
             thereIsOnlyOneOrNoneWallets
         isTokenChoiceEnabled = !shouldDisableChosingToken
 

@@ -46,7 +46,7 @@ class LocalWalletMetadataProvider: WalletMetadataProvider {
 
 class RemoteWalletMetadataProvider: WalletMetadataProvider {
     @Injected private var apiGatewayClient: APIGatewayClient
-    @Injected private var userWalletManager: UserWalletManager
+    @Injected private var userAccountManager: UserAccountManager
 
     func save(metadata _: WalletMetaData?) async throws {
         throw WalletMetadataProviderError.invalidAction
@@ -54,14 +54,14 @@ class RemoteWalletMetadataProvider: WalletMetadataProvider {
 
     func load() async throws -> WalletMetaData? {
         guard
-            let wallet = userWalletManager.wallet,
-            let ethAddress = wallet.ethAddress,
-            let seedPhrase = wallet.seedPhrase
+            let account = userAccountManager.account,
+            let ethAddress = account.ethAddress,
+            let seedPhrase = account.seedPhrase
         else { return nil }
 
         let encryptedMetadata = try await apiGatewayClient.getMetadata(
             ethAddress: ethAddress,
-            solanaPrivateKey: Base58.encode(wallet.account.secretKey),
+            solanaPrivateKey: Base58.encode(account.solanaKeypair.secretKey),
             timestampDevice: Date()
         )
 

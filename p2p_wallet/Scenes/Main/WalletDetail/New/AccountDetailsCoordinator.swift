@@ -264,7 +264,7 @@ class AccountDetailsCoordinator: SmartCoordinator<AccountDetailsCoordinatorResul
                     dismissAfterCompletion: true,
                     openKeyboardOnStart: true,
                     source: .tapToken,
-                    preChosenWallet: account,
+                    preChosenAccount: account,
                     destinationAccount: destination,
                     hideTabBar: true
                 )
@@ -285,7 +285,7 @@ class AccountDetailsCoordinator: SmartCoordinator<AccountDetailsCoordinatorResul
 
         let coordinator = SendCoordinator(
             rootViewController: rootViewController,
-            preChosenWallet: account,
+            preChosenAccount: account,
             hideTabBar: true,
             allowSwitchingMainAmountType: true
         )

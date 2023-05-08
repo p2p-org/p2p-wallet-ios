@@ -11,7 +11,7 @@ struct RecoveryKitView: View {
     @SwiftUI.Environment(\.safeAreaInsets) private var safeAreaInsets: EdgeInsets
 
     @ObservedObject var viewModel: RecoveryKitViewModel
-    @ObservedObject var walletSettings: WalletSettings = Resolver.resolve()
+    @ObservedObject var walletSettings: AccountSettings = Resolver.resolve()
 
     var body: some View {
         ScrollView {

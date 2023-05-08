@@ -250,7 +250,7 @@ struct SendInputView_Previews: PreviewProvider {
                     category: .solanaAddress,
                     attributes: [.funds]
                 ),
-                preChosenWallet: nil,
+                preChosenAccount: nil,
                 preChosenAmount: nil,
                 source: .none,
                 allowSwitchingMainAmountType: false,

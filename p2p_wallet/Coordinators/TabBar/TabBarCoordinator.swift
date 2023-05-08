@@ -16,7 +16,7 @@ import SolanaSwift
 final class TabBarCoordinator: Coordinator<Void> {
     // MARK: - Dependencies
 
-    @Injected private var userWalletManager: UserWalletManager
+    @Injected private var userAccountManager: UserAccountManager
     @Injected private var solanaAccountsService: SolanaAccountsService
     @Injected private var analyticsManager: AnalyticsManager
     @Injected private var sellDataService: any SellDataService
@@ -211,7 +211,7 @@ final class TabBarCoordinator: Coordinator<Void> {
     }
 
     private func listenToWallet() {
-        userWalletManager.$wallet
+        userAccountManager.$account
             .sink { [weak self] wallet in
                 if wallet == nil {
                     self?.closeSubject.send()
@@ -267,7 +267,7 @@ final class TabBarCoordinator: Coordinator<Void> {
                 analyticsManager.log(event: .sendViewed(lastScreen: "main_screen"))
                 let sendCoordinator = SendCoordinator(
                     rootViewController: navigationController,
-                    preChosenWallet: nil,
+                    preChosenAccount: nil,
                     hideTabBar: true,
                     allowSwitchingMainAmountType: true
                 )

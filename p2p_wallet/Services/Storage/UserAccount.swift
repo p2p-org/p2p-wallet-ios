@@ -7,7 +7,7 @@ import KeyAppKitCore
 import Resolver
 import SolanaSwift
 
-struct UserWallet: Identifiable, Hashable, Equatable {
+struct UserAccount: Identifiable, Hashable, Equatable {
     /// Seed phrase for current wallet. Other keypairs is normally will be extracted by this seed phrase.
     let seedPhrase: [String]?
 
@@ -18,7 +18,7 @@ struct UserWallet: Identifiable, Hashable, Equatable {
     let name: String?
 
     /// Solana account
-    let account: KeyPair
+    let solanaKeypair: KeyPair
 
     /// Torus device share
     let deviceShare: String?
@@ -39,7 +39,7 @@ struct UserWallet: Identifiable, Hashable, Equatable {
         name: String?,
         deviceShare: String?,
         ethAddress: String?,
-        account: KeyPair,
+        solanaKeypair: KeyPair,
         moonpayExternalClientId: String?,
         ethereumKeypair: EthereumKeyPair
     ) {
@@ -49,12 +49,12 @@ struct UserWallet: Identifiable, Hashable, Equatable {
         self.deviceShare = deviceShare
         self.ethAddress = ethAddress
 
-        self.account = account
+        self.solanaKeypair = solanaKeypair
         self.moonpayExternalClientId = moonpayExternalClientId
         self.ethereumKeypair = ethereumKeypair
     }
 
     var id: String {
-        account.publicKey.base58EncodedString
+        solanaKeypair.publicKey.base58EncodedString
     }
 }

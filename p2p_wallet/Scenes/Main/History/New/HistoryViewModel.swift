@@ -88,7 +88,7 @@ class HistoryViewModel: BaseViewModel, ObservableObject {
 
     init(
         provider: KeyAppHistoryProvider = Resolver.resolve(),
-        userWalletManager: UserWalletManager = Resolver.resolve(),
+        userAccountManager: UserAccountManager = Resolver.resolve(),
         tokensRepository: TokensRepository = Resolver.resolve(),
         pendingTransactionService: TransactionHandlerType = Resolver.resolve(),
         mint: String
@@ -101,7 +101,7 @@ class HistoryViewModel: BaseViewModel, ObservableObject {
 
         // Setup list adaptor
         let sequence = repository
-            .getAll(account: userWalletManager.wallet?.account, mint: mint)
+            .getAll(account: userAccountManager.account?.solanaKeypair, mint: mint)
             .map { trx -> any RendableListTransactionItem in
                 await RendableListHistoryTransactionItem(
                     trx: trx,
@@ -140,7 +140,7 @@ class HistoryViewModel: BaseViewModel, ObservableObject {
 
     init(
         provider: KeyAppHistoryProvider = Resolver.resolve(),
-        userWalletManager: UserWalletManager = Resolver.resolve(),
+        userAccountManager: UserAccountManager = Resolver.resolve(),
         tokensRepository: TokensRepository = Resolver.resolve(),
         sellDataService: any SellDataService = Resolver.resolve(),
         pendingTransactionService: TransactionHandlerType = Resolver.resolve(),
@@ -155,7 +155,7 @@ class HistoryViewModel: BaseViewModel, ObservableObject {
 
         // Setup list adaptor
         let sequence = repository
-            .getAll(account: userWalletManager.wallet?.account, mint: nil)
+            .getAll(account: userAccountManager.account?.solanaKeypair, mint: nil)
             .map { trx -> any RendableListTransactionItem in
                 await RendableListHistoryTransactionItem(
                     trx: trx,

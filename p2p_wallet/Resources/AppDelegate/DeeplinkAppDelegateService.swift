@@ -95,7 +95,7 @@ final class DeeplinkAppDelegateService: NSObject, AppDelegateService {
            let seedPhrase: String = params.first(where: { $0.name == "value" })?.value,
            let pincode: String = params.first(where: { $0.name == "pincode" })?.value
         {
-            let userWalletManager: UserWalletManager = Resolver.resolve()
+            let userAccountManager: UserAccountManager = Resolver.resolve()
             let appEventHandler: AppEventHandlerType = Resolver.resolve()
             let pincodeStorageService: PincodeStorageType = Resolver.resolve()
             let authService: AuthenticationHandlerType = Resolver.resolve()
@@ -104,7 +104,7 @@ final class DeeplinkAppDelegateService: NSObject, AppDelegateService {
                 pincodeStorageService.save(pincode)
                 Defaults.isBiometryEnabled = false
                 
-                try await userWalletManager.add(seedPhrase: seedPhrase.components(separatedBy: "-"), derivablePath: .default, name: nil, deviceShare: nil, ethAddress: nil)
+                try await userAccountManager.add(seedPhrase: seedPhrase.components(separatedBy: "-"), derivablePath: .default, name: nil, deviceShare: nil, ethAddress: nil)
                 
                 try await Task.sleep(nanoseconds: 1_000_000_000)
                 authService.authenticate(presentationStyle: nil)

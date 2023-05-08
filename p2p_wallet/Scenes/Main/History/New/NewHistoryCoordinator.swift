@@ -168,7 +168,7 @@ class NewHistoryCoordinator: SmartCoordinator<Void> {
         let solanaAccountsService = Resolver.resolve(SolanaAccountsService.self)
         coordinate(to: SendCoordinator(
             rootViewController: viewController,
-            preChosenWallet: solanaAccountsService.loadedAccounts.first(where: { $0.isNativeSOL }),
+            preChosenAccount: solanaAccountsService.loadedAccounts.first(where: { $0.isNativeSOL }),
             preChosenRecipient: Recipient(
                 address: transaction.depositWallet,
                 category: .solanaAddress,
@@ -208,7 +208,7 @@ class NewHistoryCoordinator: SmartCoordinator<Void> {
                 dismissAfterCompletion: true,
                 openKeyboardOnStart: true,
                 source: .tapToken,
-                preChosenWallet: solanaAccount,
+                preChosenAccount: solanaAccount,
                 destinationAccount: destination,
                 hideTabBar: true
             )

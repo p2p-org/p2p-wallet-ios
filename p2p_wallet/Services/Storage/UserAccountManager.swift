@@ -10,14 +10,14 @@ import Resolver
 import SolanaSwift
 
 /// Centralized class for managing user accounts
-class UserWalletManager: ObservableObject {
+class UserAccountManager: ObservableObject {
     @Injected private var storage: KeychainStorage
-    @Injected private var walletSettings: WalletSettings
+    @Injected private var accountSettings: AccountSettings
     @Injected private var notificationsService: NotificationService
     @Injected private var solanaTracker: SolanaTracker
 
     /// Current selected wallet
-    @Published private(set) var wallet: UserWallet? {
+    @Published private(set) var account: UserAccount? {
         didSet {
             notificationsService.registerForRemoteNotifications()
         }
@@ -25,7 +25,7 @@ class UserWalletManager: ObservableObject {
 
     /// Check if user logged in using web3 auth
     var isUserLoggedInUsingWeb3: Bool {
-        wallet?.ethAddress != nil
+        account?.ethAddress != nil
     }
 
     init() {}
@@ -44,13 +44,13 @@ class UserWalletManager: ObservableObject {
 
         let ethereumKeyPair = try EthereumKeyPair(phrase: account.phrase.joined(separator: " "))
 
-        wallet = .init(
+        self.account = .init(
             seedPhrase: account.phrase,
             derivablePath: storage.derivablePath,
             name: storage.getName(),
             deviceShare: nil,
             ethAddress: storage.ethAddress,
-            account: account,
+            solanaKeypair: account,
             moonpayExternalClientId: moonpayAccount.publicKey.base58EncodedString,
             ethereumKeypair: ethereumKeyPair
         )
@@ -91,7 +91,7 @@ class UserWalletManager: ObservableObject {
         // Notification service
         notificationsService.unregisterForRemoteNotifications()
         Task.detached { [notificationsService] in
-            let ethAddress = available(.ethAddressEnabled) ? self.wallet?.ethAddress : nil
+            let ethAddress = available(.ethAddressEnabled) ? self.account?.ethAddress : nil
             try await notificationsService.deleteDeviceToken(ethAddress: ethAddress)
         }
         Task.detached {
@@ -115,10 +115,10 @@ class UserWalletManager: ObservableObject {
         Defaults.fromTokenAddress = nil
         Defaults.toTokenAddress = nil
 
-        walletSettings.reset()
+        accountSettings.reset()
 
         // Reset wallet
-        wallet = nil
+        account = nil
         solanaTracker.stopTracking()
     }
 }

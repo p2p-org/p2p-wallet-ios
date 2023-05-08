@@ -34,14 +34,14 @@ class ReceiveViewModel: BaseViewModel, ObservableObject {
 
     init(
         network: ReceiveNetwork,
-        userWalletManager: UserWalletManager = Resolver.resolve(),
+        userAccountManager: UserAccountManager = Resolver.resolve(),
         nameStorage: NameStorageType = Resolver.resolve()
     ) {
         /// Assign network type
         self.network = network
 
         /// Extract user wallet from manager.
-        guard let userWallet = userWalletManager.wallet else {
+        guard let userAccount = userAccountManager.account else {
             address = ""
             qrImage = UIImage()
             super.init()
@@ -51,7 +51,7 @@ class ReceiveViewModel: BaseViewModel, ObservableObject {
 
         switch network {
         case let .solana(_, icon):
-            address = userWallet.account.publicKey.base58EncodedString
+            address = userAccount.solanaKeypair.publicKey.base58EncodedString
             qrImage = ReceiveViewModel.generateQRCode(from: address) ?? UIImage()
 
             // Set token icon
@@ -96,7 +96,7 @@ class ReceiveViewModel: BaseViewModel, ObservableObject {
             items = solanaNetwork(address: address, username: nameStorage.getName())
 
         case let .ethereum(tokenSymbol, icon):
-            address = userWallet.ethereumKeypair.address
+            address = userAccount.ethereumKeypair.address
             qrImage = ReceiveViewModel.generateQRCode(from: address) ?? UIImage()
 
             // Set token icon

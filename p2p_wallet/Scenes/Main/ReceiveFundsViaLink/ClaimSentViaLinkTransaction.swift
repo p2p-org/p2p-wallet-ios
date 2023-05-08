@@ -56,7 +56,7 @@ struct ClaimSentViaLinkTransaction: RawTransactionType {
         }
         
         // get receiver
-        guard let receiver = Resolver.resolve(UserWalletManager.self).wallet?.account.publicKey
+        guard let receiver = Resolver.resolve(UserAccountManager.self).account?.solanaKeypair.publicKey
         else {
             throw SolanaError.unauthorized
         }

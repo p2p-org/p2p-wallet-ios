@@ -18,7 +18,7 @@ struct RecoveryKitTKeyData {
 
 final class RecoveryKitViewModel: ObservableObject {
     private let analyticsManager: AnalyticsManager
-    private let userWalletManager: UserWalletManager
+    private let userAccountManager: UserAccountManager
     private let walletMetadataService: WalletMetadataService
 
     @Published var walletMetadata: WalletMetaData?
@@ -34,19 +34,19 @@ final class RecoveryKitViewModel: ObservableObject {
     var coordinator = Coordinator()
 
     init(
-        userWalletManager: UserWalletManager = Resolver.resolve(),
+        userAccountManager: UserAccountManager = Resolver.resolve(),
         walletMetadataService: WalletMetadataService = Resolver.resolve(),
         analyticsManager: AnalyticsManager = Resolver.resolve()
     ) {
         self.walletMetadataService = walletMetadataService
         self.analyticsManager = analyticsManager
-        self.userWalletManager = userWalletManager
+        self.userAccountManager = userAccountManager
         
         walletMetadataService.$metadata
-            .sink { [weak self, weak userWalletManager] metadata in
+            .sink { [weak self, weak userAccountManager] metadata in
                 if let metadata {
                     self?.walletMetadata = metadata
-                } else if userWalletManager?.wallet?.ethAddress != nil {
+                } else if userAccountManager?.account?.ethAddress != nil {
                     self?.walletMetadata = .init(
                         deviceName: L10n.notAvailableForNow,
                         email: L10n.notAvailableForNow,

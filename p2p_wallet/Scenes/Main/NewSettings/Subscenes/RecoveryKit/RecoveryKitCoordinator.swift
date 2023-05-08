@@ -11,7 +11,7 @@ import Resolver
 final class RecoveryKitCoordinator: Coordinator<Void> {
     @Injected private var analyticsManager: AnalyticsManager
     @Injected private var authenticationHandler: AuthenticationHandlerType
-    @Injected private var walletSettings: WalletSettings
+    @Injected private var walletSettings: AccountSettings
     
     private let navigationController: UINavigationController
     private let transition = PanelTransition()

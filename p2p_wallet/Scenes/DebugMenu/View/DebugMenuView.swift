@@ -39,7 +39,7 @@ struct DebugMenuView: View {
                     Button {
                         Task {
                             ResolverScope.session.reset()
-                            try await Resolver.resolve(UserWalletManager.self).refresh()
+                            try await Resolver.resolve(UserAccountManager.self).refresh()
 
                             // let app: AppEventHandlerType = Resolver.resolve()
                             // app.delegate?.refresh()
