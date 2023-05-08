@@ -214,7 +214,7 @@ public struct SendInputState: Equatable {
 
 public extension SendInputState {
     var maxAmountInputInToken: Double {
-        var balance: Lamports = userWalletEnvironments.wallets.first(where: { $0.token.address == token.address })?
+        var balance: Lamports = userWalletEnvironments.solanaTokenAccounts.first(where: { $0.token.address == token.address })?
             .lamports ?? 0
 
         if token.address == tokenFee.address {
@@ -241,10 +241,10 @@ public extension SendInputState {
     }
 
     var sourceAccount: SolanaAccount? {
-        userWalletEnvironments.wallets.first { $0.token.address == token.address }
+        userWalletEnvironments.solanaTokenAccounts.first { $0.token.address == token.address }
     }
 
     var feeWallet: SolanaAccount? {
-        userWalletEnvironments.wallets.first { $0.token.address == tokenFee.address }
+        userWalletEnvironments.solanaTokenAccounts.first { $0.token.address == tokenFee.address }
     }
 }
