@@ -240,14 +240,14 @@ public extension SendInputState {
         return Double(maxAmountInToken) / pow(10, Double(token.decimals))
     }
 
-    var sourceWallet: Wallet? {
-        userWalletEnvironments.wallets.first { (wallet: Wallet) -> Bool in
+    var sourceWallet: SolanaAccount? {
+        userWalletEnvironments.wallets.first { (wallet: SolanaAccount) -> Bool in
             wallet.token.address == token.address
         }
     }
 
-    var feeWallet: Wallet? {
-        userWalletEnvironments.wallets.first { (wallet: Wallet) -> Bool in
+    var feeWallet: SolanaAccount? {
+        userWalletEnvironments.wallets.first { (wallet: SolanaAccount) -> Bool in
             wallet.token.address == tokenFee.address
         }
     }

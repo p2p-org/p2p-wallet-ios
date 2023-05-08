@@ -124,7 +124,7 @@ extension PendingTransaction {
         case let transaction as SendTransaction:
             value = TransferInfo(
                 source: transaction.walletToken,
-                destination: Wallet(pubkey: transaction.recipient.address, lamports: 0, token: transaction.walletToken.token),
+                destination: SolanaAccount(pubkey: transaction.recipient.address, lamports: 0, token: transaction.walletToken.token),
                 authority: authority,
                 destinationAuthority: nil,
                 rawAmount: transaction.amount,
@@ -155,7 +155,7 @@ extension PendingTransaction {
             fee = transaction.feeAmount
         case let transaction as ClaimSentViaLinkTransaction:
             value = TransferInfo(
-                source: Wallet(
+                source: SolanaAccount(
                     pubkey: transaction.claimableTokenInfo.account,
                     token: transaction.token
                 ) ,

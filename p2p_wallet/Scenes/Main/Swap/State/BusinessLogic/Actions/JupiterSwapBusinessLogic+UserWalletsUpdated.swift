@@ -12,7 +12,7 @@ import KeyAppKitCore
 extension JupiterSwapBusinessLogic {
     static func updateUserWallets(
         state: JupiterSwapState,
-        userWallets: [Wallet],
+        userWallets: [SolanaAccount],
         services: JupiterSwapServices
     ) -> JupiterSwapState {
         // map updated user wallet to swapTokens
@@ -38,7 +38,7 @@ extension JupiterSwapBusinessLogic {
 
         // update toToken only if it is from userWallets
         var toToken: SwapToken?
-        if let toUserWallet: Wallet = userWallets
+        if let toUserWallet: SolanaAccount = userWallets
             .first(where: {
                 $0.pubkey == state.toToken.userWallet?.pubkey &&
                 $0.mintAddress == state.toToken.address

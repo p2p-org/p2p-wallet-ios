@@ -12,17 +12,17 @@ import XCTest
 class RecipientSearchUsernameTests: XCTestCase {
     let defaultInitialWalletEnvs: UserWalletEnvironments = .init(
         wallets: [
-            Wallet(
+            SolanaAccount(
                 pubkey: "GGjRx5zJrtCKfXuhDbEkEnaT2uQ7NxbUm8pn224cRh21",
                 lamports: 5_000_000,
                 token: .nativeSolana
             ),
-            Wallet(
+            SolanaAccount(
                 pubkey: "GGjRx5zJrtCKfXuhDbEkEnaT2uQ7NxbUm8pn224cRh22",
                 lamports: 5_000_000,
                 token: .usdc
             ),
-            Wallet(
+            SolanaAccount(
                 pubkey: "GGjRx5zJrtCKfXuhDbEkEnaT2uQ7NxbUm8pn224cRh23",
                 lamports: 5_000_000,
                 token: .usdt

@@ -11,7 +11,7 @@ import SwiftUI
 import KeyAppKitCore
 
 struct TokenCellViewItem: Hashable {
-    init(wallet: Wallet) {
+    init(wallet: SolanaAccount) {
         token = wallet.token
         amount = wallet.amount
         amountInCurrentFiat = wallet._priceInCurrentFiat == nil ? nil : wallet._amountInCurrentFiat

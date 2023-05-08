@@ -3,21 +3,21 @@ import SwiftUI
 import SolanaSwift
 import KeyAppKitCore
 
-final class SendInputFeePromptCoordinator: Coordinator<Wallet?> {
+final class SendInputFeePromptCoordinator: Coordinator<SolanaAccount?> {
     private let parentController: UIViewController
-    private let feeToken: Wallet
+    private let feeToken: SolanaAccount
     private let feeInToken: FeeAmount
-    private let availableFeeTokens: [Wallet]
-    private var subject = PassthroughSubject<Wallet?, Never>()
+    private let availableFeeTokens: [SolanaAccount]
+    private var subject = PassthroughSubject<SolanaAccount?, Never>()
 
-    init(parentController: UIViewController, feeToken: Wallet, feeInToken: FeeAmount, availableFeeTokens: [Wallet]) {
+    init(parentController: UIViewController, feeToken: SolanaAccount, feeInToken: FeeAmount, availableFeeTokens: [SolanaAccount]) {
         self.parentController = parentController
         self.feeToken = feeToken
         self.feeInToken = feeInToken
         self.availableFeeTokens = availableFeeTokens
     }
 
-    override func start() -> AnyPublisher<Wallet?, Never> {
+    override func start() -> AnyPublisher<SolanaAccount?, Never> {
         let viewModel = SendInputFeePromptViewModel(feeToken: feeToken, feeInToken: feeInToken, availableFeeTokens: availableFeeTokens)
         let view = SendInputFeePromptView(viewModel: viewModel)
         let controller = UIHostingController(rootView: view)

@@ -36,7 +36,7 @@ final class SendCoordinator: Coordinator<SendResult> {
     let result = PassthroughSubject<SendResult, Never>()
 
     private let source: SendSource
-    let preChosenWallet: Wallet?
+    let preChosenWallet: SolanaAccount?
     let preChosenRecipient: Recipient?
     let preChosenAmount: Double?
     let allowSwitchingMainAmountType: Bool
@@ -45,7 +45,7 @@ final class SendCoordinator: Coordinator<SendResult> {
 
     init(
         rootViewController: UINavigationController,
-        preChosenWallet: Wallet?,
+        preChosenWallet: SolanaAccount?,
         preChosenRecipient: Recipient? = nil,
         preChosenAmount: Double? = nil,
         hideTabBar: Bool = false,

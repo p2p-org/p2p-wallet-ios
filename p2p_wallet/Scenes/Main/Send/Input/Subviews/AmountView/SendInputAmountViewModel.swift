@@ -29,7 +29,7 @@ final class SendInputAmountViewModel: BaseViewModel, ObservableObject {
     // MARK: - Properties
 
     // State
-    @Published var token: Wallet {
+    @Published var token: SolanaAccount {
         didSet { tokenChangedEvent.send(token) }
     }
 
@@ -56,12 +56,12 @@ final class SendInputAmountViewModel: BaseViewModel, ObservableObject {
 
     private let fiat: Fiat
     private var currentText: String?
-    private var tokenChangedEvent = CurrentValueSubject<Wallet, Never>(.init(token: .nativeSolana))
+    private var tokenChangedEvent = CurrentValueSubject<SolanaAccount, Never>(.init(token: .nativeSolana))
 
     // MARK: - Dependencies
     private let pricesService: PricesServiceType
 
-    init(initialToken: Wallet) {
+    init(initialToken: SolanaAccount) {
         fiat = Defaults.fiat
         token = initialToken
         countAfterDecimalPoint = Constants.fiatDecimals

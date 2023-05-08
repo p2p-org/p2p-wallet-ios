@@ -6,10 +6,10 @@ import KeyAppKitCore
 
 public protocol SendActionService {
     func send(
-        from wallet: Wallet,
+        from wallet: SolanaAccount,
         receiver: String,
         amount: Double,
-        feeWallet: Wallet?,
+        feeWallet: SolanaAccount?,
         ignoreTopUp: Bool,
         memo: String?,
         operationType: StatsInfo.OperationType
@@ -39,10 +39,10 @@ public class SendActionServiceImpl: SendActionService {
     }
 
     public func send(
-        from wallet: Wallet,
+        from wallet: SolanaAccount,
         receiver: String,
         amount: Double,
-        feeWallet: Wallet?,
+        feeWallet: SolanaAccount?,
         ignoreTopUp: Bool,
         memo: String?,
         operationType: StatsInfo.OperationType
@@ -71,10 +71,10 @@ public class SendActionServiceImpl: SendActionService {
     }
 
     func sendToSolanaBCViaRelayMethod(
-        from wallet: Wallet,
+        from wallet: SolanaAccount,
         receiver: String,
         amount: Lamports,
-        feeWallet: Wallet?,
+        feeWallet: SolanaAccount?,
         ignoreTopUp: Bool = false,
         memo: String?,
         operationType: StatsInfo.OperationType
@@ -146,7 +146,7 @@ public class SendActionServiceImpl: SendActionService {
     }
 
     private func prepareForSendingToSolanaNetworkViaRelayMethod(
-        from wallet: Wallet,
+        from wallet: SolanaAccount,
         receiver: String,
         amount: Double,
         payingFeeToken: FeeRelayerSwift.TokenAccount?,
@@ -218,7 +218,7 @@ public class SendActionServiceImpl: SendActionService {
             context.usageStatus.isFreeTransactionFeeAvailable(transactionFee: expectedTransactionFee) == false
     }
 
-    private func getPayingFeeToken(feeWallet: Wallet?) throws -> FeeRelayerSwift.TokenAccount? {
+    private func getPayingFeeToken(feeWallet: SolanaAccount?) throws -> FeeRelayerSwift.TokenAccount? {
         if let feeWallet = feeWallet {
             guard
                 let addressString = feeWallet.pubkey,

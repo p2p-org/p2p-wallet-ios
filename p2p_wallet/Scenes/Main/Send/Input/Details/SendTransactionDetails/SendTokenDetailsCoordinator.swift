@@ -5,7 +5,7 @@ import SwiftUI
 import KeyAppKitCore
 
 enum SendTransactionDetailsCoordinatorResult {
-    case redirectToFeePrompt(availableTokens: [Wallet])
+    case redirectToFeePrompt(availableTokens: [SolanaAccount])
 }
 
 final class SendTransactionDetailsCoordinator: Coordinator<SendTransactionDetailsCoordinatorResult> {

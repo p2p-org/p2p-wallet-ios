@@ -16,7 +16,7 @@ enum AccountDetailsAction {
     case openBuy
     case openReceive
     case openSend
-    case openSwap(Wallet?)
+    case openSwap(SolanaAccount?)
 }
 
 class AccountDetailsViewModel: BaseViewModel, ObservableObject {
@@ -83,7 +83,7 @@ class AccountDetailsViewModel: BaseViewModel, ObservableObject {
 
 extension AccountDetailsViewModel {
     /// Check swap action is available for this account (wallet).
-    static func isSwapAvailableFor(wallet: Wallet, for status: JupiterDataStatus) -> Bool {
+    static func isSwapAvailableFor(wallet: SolanaAccount, for status: JupiterDataStatus) -> Bool {
         switch status {
         case .ready(let swapTokens, _) where swapTokens.contains(where: { $0.address == wallet.mintAddress }):
             return true

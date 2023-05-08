@@ -8,7 +8,7 @@
 import Foundation
 import KeyAppKitCore
 
-extension Array where Element == Wallet {
+extension Array where Element == SolanaAccount {
     var totalAmountInCurrentFiat: Double {
         reduce(0) { $0 + $1._amountInCurrentFiat }
     }

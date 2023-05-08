@@ -3,12 +3,12 @@ import SolanaSwift
 import KeyAppKitCore
 
 struct SendTransaction: RawTransactionType {
-    let walletToken: Wallet
+    let walletToken: SolanaAccount
     let recipient: Recipient
     let amount: Double
     let amountInFiat: Double
     
-    var payingFeeWallet: Wallet?
+    var payingFeeWallet: SolanaAccount?
     var feeAmount: FeeAmount
     var sendViaLinkSeed: String?
 

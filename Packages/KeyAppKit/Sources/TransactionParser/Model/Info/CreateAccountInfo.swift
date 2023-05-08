@@ -15,9 +15,9 @@ public struct CreateAccountInfo: Hashable {
   public let fee: Double?
 
   /// The created wallet.
-  public let newWallet: Wallet?
+  public let newWallet: SolanaAccount?
 
-  public init(fee: Double?, newWallet: Wallet?) {
+  public init(fee: Double?, newWallet: SolanaAccount?) {
     self.fee = fee
     self.newWallet = newWallet
   }

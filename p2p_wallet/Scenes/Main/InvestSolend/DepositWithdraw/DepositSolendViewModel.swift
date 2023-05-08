@@ -121,7 +121,7 @@ class DepositSolendViewModel: ObservableObject {
     var detailItem = CurrentValueSubject<SolendTransactionDetailsView.Model?, Never>(nil)
 
     /// Balance for selected Token
-    private var currentWallet: Wallet? {
+    private var currentWallet: SolanaAccount? {
         solanaAccountsService.loadedAccounts.first(where: { $0.mintAddress == self.invest.asset.mintAddress })
     }
 
