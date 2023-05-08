@@ -10,7 +10,7 @@ import KeyAppKitCore
 
 extension Array where Element == Wallet {
     var totalAmountInCurrentFiat: Double {
-        reduce(0) { $0 + $1.amountInCurrentFiat }
+        reduce(0) { $0 + $1._amountInCurrentFiat }
     }
 
     var isTotalAmountEmpty: Bool {

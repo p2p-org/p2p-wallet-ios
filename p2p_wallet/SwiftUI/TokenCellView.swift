@@ -14,7 +14,7 @@ struct TokenCellViewItem: Hashable {
     init(wallet: Wallet) {
         token = wallet.token
         amount = wallet.amount
-        amountInCurrentFiat = wallet.priceInCurrentFiat == nil ? nil : wallet.amountInCurrentFiat
+        amountInCurrentFiat = wallet._priceInCurrentFiat == nil ? nil : wallet._amountInCurrentFiat
     }
 
     init(token: Token, amount: Double? = nil, fiat: Fiat? = nil) {

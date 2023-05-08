@@ -50,7 +50,7 @@ struct ChooseSwapTokenItemView: View {
 
     @ViewBuilder private var rightView: some View {
         if fromToken {
-            if let amountInCurrentFiat = token.userWallet?.amountInCurrentFiat {
+            if let amountInCurrentFiat = token.userWallet?._amountInCurrentFiat {
                 Text(amountInCurrentFiat.fiatAmountFormattedString(customFormattForLessThan1E_2: true))
                     .font(uiFont: .font(of: .text3, weight: .semibold))
                     .foregroundColor(Color(Asset.Colors.night.color))

@@ -16,7 +16,7 @@ extension JupiterSwapBusinessLogic {
         } else if let solanaWallet = solana?.userWallet, let usdc, let solana, solanaWallet.amount > 0 {
             return (solana, usdc)
         } else if let solana {
-            let userWallet = userWallets.sorted(by: { $0.amountInCurrentFiat > $1.amountInCurrentFiat }).first
+            let userWallet = userWallets.sorted(by: { $0._amountInCurrentFiat > $1._amountInCurrentFiat }).first
             let swapToken = swapTokens.first(where: { $0.address == userWallet?.mintAddress })
             if let swapToken {
                 return (swapToken, solana)

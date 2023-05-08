@@ -8,7 +8,7 @@ public struct SolanaWalletUserInfo: Hashable {
 /// Legacy code. Wallet struct doesn't have price field. We added it by using ``userInfo``.
 public extension Wallet {
     @available(*, deprecated)
-    var price: CurrentPrice? {
+    var _price: CurrentPrice? {
         get {
             getParsedUserInfo().price
         }
@@ -20,17 +20,17 @@ public extension Wallet {
     }
 
     @available(*, deprecated)
-    var priceInCurrentFiat: Double? {
-        price?.value
+    var _priceInCurrentFiat: Double? {
+        _price?.value
     }
 
     @available(*, deprecated)
-    var amountInCurrentFiat: Double {
-        (amount ?? 0.0) * (priceInCurrentFiat ?? 0.0)
+    var _amountInCurrentFiat: Double {
+        (amount ?? 0.0) * (_priceInCurrentFiat ?? 0.0)
     }
 
     @available(*, deprecated)
-    func getParsedUserInfo() -> SolanaWalletUserInfo {
+    private func getParsedUserInfo() -> SolanaWalletUserInfo {
         userInfo as? SolanaWalletUserInfo ?? SolanaWalletUserInfo()
     }
 }

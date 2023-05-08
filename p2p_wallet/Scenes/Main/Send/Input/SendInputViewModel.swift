@@ -135,7 +135,7 @@ final class SendInputViewModel: BaseViewModel, ObservableObject {
                         if preferOrder[lhs.token.symbol] != nil || preferOrder[rhs.token.symbol] != nil {
                             return (preferOrder[lhs.token.symbol] ?? 3) < (preferOrder[rhs.token.symbol] ?? 3)
                         } else {
-                            return lhs.amountInCurrentFiat > rhs.amountInCurrentFiat
+                            return lhs._amountInCurrentFiat > rhs._amountInCurrentFiat
                         }
                     }
                 tokenInWallet = sortedWallets.first ?? Wallet(token: Token.nativeSolana)
@@ -149,7 +149,7 @@ final class SendInputViewModel: BaseViewModel, ObservableObject {
         var exchangeRate = [String: CurrentPrice]()
         var tokens = Set<Token>()
         wallets.forEach {
-            exchangeRate[$0.token.symbol] = $0.price
+            exchangeRate[$0.token.symbol] = $0._price
             tokens.insert($0.token)
         }
 
@@ -413,11 +413,11 @@ private extension SendInputViewModel {
         )
         .sink { [weak self] isPriceAvailable, currentWallet in
             guard let self else { return }
-            if !isPriceAvailable || currentWallet.price == nil {
+            if !isPriceAvailable || currentWallet._price == nil {
                 self.turnOffInputSwitch()
             } else if
                 let amount = currentWallet.amount,
-                currentWallet.isUsdcOrUsdt && abs(amount - currentWallet.amountInCurrentFiat) <= 0.021
+                currentWallet.isUsdcOrUsdt && abs(amount - currentWallet._amountInCurrentFiat) <= 0.021
             {
                 self.turnOffInputSwitch()
             } else {
