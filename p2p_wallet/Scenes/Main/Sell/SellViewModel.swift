@@ -11,13 +11,16 @@ import Sell
 enum SellViewModelInputError: Error, Equatable {
     case amountIsTooSmall(minBaseAmount: Double?, baseCurrencyCode: String)
     case exceedsProviderLimit(maxBaseProviderAmount: Double?, baseCurrencyCode: String)
-    
+    case notEnought(currency: String)
+
     var recomendation: String {
         switch self {
         case .amountIsTooSmall(let minBaseAmount, let baseCurrencyCode):
             return L10n.theMinimumAmountIs(minBaseAmount?.toString() ?? "2", baseCurrencyCode)
         case .exceedsProviderLimit(let maxBaseProviderAmount, let baseCurrencyCode):
             return L10n.theMaximumAmountIs(maxBaseProviderAmount?.toString() ?? "1000", baseCurrencyCode)
+        case .notEnought(let currency):
+            return L10n.notEnough(currency)
         }
     }
 }
@@ -132,7 +135,6 @@ class SellViewModel: BaseViewModel, ObservableObject {
 
     func sellAll() {
         baseAmount = walletRepository.nativeWallet?.amount?.rounded(decimals: decimals, roundingMode: .down) ?? 0
-        
         // temporary solution when isEnterQuoteAmount, the quote amount will not be updated when baseAmount changed
         // so we have to release this value
         if isEnteringQuoteAmount {
@@ -347,7 +349,7 @@ class SellViewModel: BaseViewModel, ObservableObject {
                 baseCurrencyCode: baseCurrencyCode
             )
         } else if amount > (maxBaseAmount ?? 0) {
-            inputError = .amountIsTooSmall(minBaseAmount: minBaseAmount, baseCurrencyCode: baseCurrencyCode)
+            inputError = .notEnought(currency: baseCurrencyCode)
         }
     }
 
