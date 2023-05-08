@@ -51,19 +51,19 @@ extension JupiterSwapBusinessLogic {
     private static func getSwapTokens(
         _ jupiterTokens: [Token]
     ) async -> [SwapToken] {
-        // wait for wallets repository to be loaded and get wallets
+        // wait for solanaAccounts service to be loaded and get solanaAccounts
         let solanaAccountsService = Resolver.resolve(SolanaAccountsService.self)
         
         // This function will never throw an error (Publisher of ErrorType == Never)
-        let wallets = (try? await Publishers.CombineLatest(
+        let solanaAccounts = (try? await Publishers.CombineLatest(
             solanaAccountsService.statePublisher,
             solanaAccountsService.accountsPublisher
         )
             .filter { (state, _) in
                 state.status == .ready
             }
-            .map { _, wallets in
-                return wallets
+            .map { _, solanaAccounts in
+                solanaAccounts
             }
             .eraseToAnyPublisher()
             .async()) ?? []
@@ -73,8 +73,8 @@ extension JupiterSwapBusinessLogic {
             .map { jupiterToken in
             
             // if userWallet found
-            if let userWallet = wallets.first(where: { $0.mintAddress == jupiterToken.address }) {
-                return SwapToken(token: userWallet.token, userWallet: userWallet)
+            if let userWallet = solanaAccounts.first(where: { $0.mintAddress == jupiterToken.address }) {
+                return SwapToken(token: userWallet.token, userWallet: userWallet.data)
             }
             
             // otherwise return jupiter token with no userWallet

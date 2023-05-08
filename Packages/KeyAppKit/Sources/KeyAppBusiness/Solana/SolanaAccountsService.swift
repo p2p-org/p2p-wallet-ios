@@ -25,12 +25,6 @@ public final class SolanaAccountsService: NSObject, AccountsService {
     let stateSubject: CurrentValueSubject<AsyncValueState<[Account]>, Never> = .init(.init(value: []))
 
     public var statePublisher: AnyPublisher<AsyncValueState<[Account]>, Never> { stateSubject.eraseToAnyPublisher() }
-    
-    public var accountsPublisher: AnyPublisher<[SolanaSwift.Wallet], Never> {
-        statePublisher
-            .map { state in state.value.map(\.data) }
-            .eraseToAnyPublisher()
-    }
 
     public var state: AsyncValueState<[Account]> { stateSubject.value }
 

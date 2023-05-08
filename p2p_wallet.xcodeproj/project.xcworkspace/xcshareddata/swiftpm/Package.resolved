@@ -354,10 +354,10 @@
       },
       {
         "package": "SolanaSwift",
-        "repositoryURL": "https://github.com/p2p-org/solana-swift",
+        "repositoryURL": "https://github.com/p2p-org/solana-swift.git",
         "state": {
-          "branch": "main",
-          "revision": "1dac30cb8359ac69ada62c397aae373f2b3addaf",
+          "branch": "feature/deprecated-wallet",
+          "revision": "b1e79a0f09cce51908ed00cc40ce81d39bd749cf",
           "version": null
         }
       },
