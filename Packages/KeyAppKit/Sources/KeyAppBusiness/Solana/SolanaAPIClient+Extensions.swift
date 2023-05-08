@@ -14,7 +14,7 @@ extension SolanaAPIClient {
         account: String,
         tokensRepository: SolanaTokensRepository? = nil,
         commitment: Commitment? = nil
-    ) async throws -> [Wallet] {
+    ) async throws -> [SolanaAccount] {
         async let accounts = try await getTokenAccountsByOwner(
             pubkey: account,
             params: .init(
@@ -28,7 +28,7 @@ extension SolanaAPIClient {
         )
         let tokensRepository = tokensRepository ?? TokensRepository(endpoint: endpoint)
         async let tokens = try await tokensRepository.getTokensList()
-        var knownWallets = [Wallet]()
+        var knownWallets = [SolanaAccount]()
         var unknownAccounts = [(String, AccountInfo)]()
         let (list, supportedTokens) = (try await accounts, try await tokens)
         
@@ -40,7 +40,7 @@ extension SolanaAPIClient {
             // known token
             if let token = supportedTokens.first(where: { $0.address == mintAddress }) {
                 knownWallets.append(
-                    Wallet(
+                    SolanaAccount(
                         pubkey: pubkey,
                         lamports: accountInfo.lamports,
                         token: token
@@ -53,9 +53,9 @@ extension SolanaAPIClient {
         }
         let mintDatas = try await getMultipleMintDatas(mintAddresses: unknownAccounts.map(\.1.mint.base58EncodedString))
         guard mintDatas.count == unknownAccounts.count else { throw SolanaError.unknown }
-        let wallets: [Wallet] = mintDatas.compactMap { address, mint in
+        let wallets: [SolanaAccount] = mintDatas.compactMap { address, mint in
             if let unknownAccount = unknownAccounts.first(where: { $0.1.mint.base58EncodedString == address }) {
-                return Wallet(
+                return SolanaAccount(
                     pubkey: unknownAccount.0,
                     lamports: unknownAccount.1.lamports,
                     supply: mint.supply,

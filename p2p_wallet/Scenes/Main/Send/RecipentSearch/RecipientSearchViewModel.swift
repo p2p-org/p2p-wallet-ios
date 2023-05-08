@@ -43,7 +43,7 @@ struct SendViaLinkState: Equatable {
 
 @MainActor
 class RecipientSearchViewModel: ObservableObject {
-    private let preChosenWallet: Wallet?
+    private let preChosenWallet: SolanaAccount?
     private var subscriptions = Set<AnyCancellable>()
     private let source: SendSource
 
@@ -97,7 +97,7 @@ class RecipientSearchViewModel: ObservableObject {
     let coordinator: Coordinator = .init()
 
     init(
-        preChosenWallet: Wallet?,
+        preChosenWallet: SolanaAccount?,
         source: SendSource,
         recipientSearchService: RecipientSearchService = Resolver.resolve(),
         sendHistoryService: SendHistoryService = Resolver.resolve(),

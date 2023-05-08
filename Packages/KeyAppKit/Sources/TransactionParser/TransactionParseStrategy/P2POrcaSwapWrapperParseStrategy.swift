@@ -110,7 +110,7 @@ public class P2POrcaSwapWrapperParseStrategy: TransactionParseStrategy {
     }
 
     func parseToken(_ transactionInfo: TransactionInfo,
-                    for address: String) async throws -> (wallet: Wallet, amount: Double)?
+                    for address: String) async throws -> (wallet: SolanaAccount, amount: Double)?
     {
         guard let addressIndex = transactionInfo.transaction.message.accountKeys
             .firstIndex(where: { $0.publicKey.base58EncodedString == address }) else { return nil }
@@ -141,7 +141,7 @@ public class P2POrcaSwapWrapperParseStrategy: TransactionParseStrategy {
 
         let sourceToken: Token = try await tokensRepository.getTokenWithMint(mintAddress)
 
-        let wallet = Wallet(
+        let wallet = SolanaAccount(
             pubkey: try? PublicKey(string: address).base58EncodedString,
             lamports: preWalletBalance,
             token: sourceToken

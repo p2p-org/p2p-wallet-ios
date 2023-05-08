@@ -90,7 +90,7 @@ struct JupiterSwapState: Equatable {
     // MARK: - Computed properties
     
     /// All the wallets that user owns
-    var userWallets: [Wallet] {
+    var userWallets: [SolanaAccount] {
         swapTokens.compactMap(\.userWallet)
     }
     

@@ -40,7 +40,7 @@ public class CreationAccountParseStrategy: TransactionParseStrategy {
 
         if let program = extractProgram(instructions, with: "spl-associated-token-account") {
             let token = try await tokensRepository.getTokenWithMint(program.parsed?.info.mint)
-            return CreateAccountInfo(fee: nil, newWallet: Wallet(pubkey: program.parsed?.info.account, token: token))
+            return CreateAccountInfo(fee: nil, newWallet: SolanaAccount(pubkey: program.parsed?.info.account, token: token))
         } else {
             let info = instructions[0].parsed?.info
             let initializeAccountInfo = instructions.last?.parsed?.info
@@ -49,7 +49,7 @@ public class CreationAccountParseStrategy: TransactionParseStrategy {
             let token = try await tokensRepository.getTokenWithMint(initializeAccountInfo?.mint)
             return CreateAccountInfo(
                 fee: fee,
-                newWallet: Wallet(
+                newWallet: SolanaAccount(
                     pubkey: info?.newAccount,
                     lamports: nil,
                     token: token

@@ -17,8 +17,8 @@ extension RecipientSearchServiceImpl {
             var attributes: Recipient.Attribute = []
 
             // Check self-sending
-            if let wallet: Wallet = config.wallets
-                .first(where: { (wallet: Wallet) in wallet.pubkey == addressBase58 })
+            if let wallet: SolanaAccount = config.wallets
+                .first(where: { (wallet: SolanaAccount) in wallet.pubkey == addressBase58 })
             {
                 return .selfSendingError(recipient: .init(
                     address: addressBase58,

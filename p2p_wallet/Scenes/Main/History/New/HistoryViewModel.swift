@@ -24,7 +24,7 @@ enum NewHistoryAction {
 
     case openBuy
 
-    case openSwap(Wallet?, Wallet?)
+    case openSwap(SolanaAccount?, SolanaAccount?)
 
     case openSentViaLinkHistoryView
 }

@@ -50,7 +50,7 @@ class DefaultSolendDepositFeePayingStrategy: SolendFeePayingStrategy {
         )
 
         guard
-            let userSplAccount: Wallet = solanaAccountsService.loadedAccounts.first(where: { $0.mintAddress == mintAddress }),
+            let userSplAccount: SolanaAccount = solanaAccountsService.loadedAccounts.first(where: { $0.mintAddress == mintAddress }),
             let feeInToken = feeInToken
         else {
             return nativeTokenStrategy

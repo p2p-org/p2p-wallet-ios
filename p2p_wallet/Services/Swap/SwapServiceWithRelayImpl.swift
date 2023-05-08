@@ -47,7 +47,7 @@ class SwapServiceWithRelayImpl: SwapServiceType {
         destinationAddress: String?,
         destinationToken: Token,
         bestPoolsPair: PoolsPair?,
-        payingWallet: Wallet?,
+        payingWallet: SolanaAccount?,
         inputAmount: Double?,
         slippage: Double
     ) async throws -> _SwapFeeInfo {
@@ -179,7 +179,7 @@ class SwapServiceWithRelayImpl: SwapServiceType {
         sourceMint: String,
         destinationAddress: String?,
         destinationToken: Token,
-        payingWallet: Wallet
+        payingWallet: SolanaAccount
     ) async throws -> [PayingFee] {
         let context = try await relayContextManager.getCurrentContextOrUpdate()
         

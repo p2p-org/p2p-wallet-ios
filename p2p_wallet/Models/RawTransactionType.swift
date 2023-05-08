@@ -6,7 +6,7 @@ import KeyAppKitCore
 protocol RawTransactionType {
     func createRequest() async throws -> String
     var mainDescription: String { get }
-    var payingFeeWallet: Wallet? { get }
+    var payingFeeWallet: SolanaAccount? { get }
     var feeAmount: FeeAmount { get }
 }
 
@@ -17,8 +17,8 @@ struct SwapMetaInfo {
 
 protocol SwapRawTransactionType: RawTransactionType {
     var authority: String? { get }
-    var sourceWallet: Wallet { get }
-    var destinationWallet: Wallet { get }
+    var sourceWallet: SolanaAccount { get }
+    var destinationWallet: SolanaAccount { get }
     var fromAmount: Double { get }
     var toAmount: Double { get }
     var slippage: Double { get }
@@ -28,9 +28,9 @@ protocol SwapRawTransactionType: RawTransactionType {
 struct OrcaSwapTransaction: SwapRawTransactionType {
     
     let swapService: SwapServiceType
-    let sourceWallet: Wallet
-    let destinationWallet: Wallet
-    let payingFeeWallet: Wallet?
+    let sourceWallet: SolanaAccount
+    let destinationWallet: SolanaAccount
+    let payingFeeWallet: SolanaAccount?
     let authority: String?
     let poolsPair: PoolsPair
     let fromAmount: Double
@@ -82,11 +82,11 @@ struct OrcaSwapTransaction: SwapRawTransactionType {
 }
 
 struct CloseTransaction: RawTransactionType {
-    var payingFeeWallet: Wallet?
+    var payingFeeWallet: SolanaAccount?
     
     var feeAmount: FeeAmount
     
-    let closingWallet: Wallet
+    let closingWallet: SolanaAccount
     let reimbursedAmount: UInt64
 
     var mainDescription: String {

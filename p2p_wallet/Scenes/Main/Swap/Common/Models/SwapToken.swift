@@ -4,7 +4,7 @@ import KeyAppKitCore
 
 struct SwapToken: Equatable {
     let token: Token
-    let userWallet: Wallet?
+    let userWallet: SolanaAccount?
 
     var address: String { token.address }
 }

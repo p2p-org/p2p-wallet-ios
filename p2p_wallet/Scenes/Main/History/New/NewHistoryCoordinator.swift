@@ -197,7 +197,7 @@ class NewHistoryCoordinator: SmartCoordinator<Void> {
             .store(in: &subscriptions)
     }
 
-    func openSwap(wallet: Wallet?, destination: Wallet? = nil) {
+    func openSwap(wallet: SolanaAccount?, destination: SolanaAccount? = nil) {
         guard let navigationController = presentation.presentingViewController as? UINavigationController else {
             return
         }

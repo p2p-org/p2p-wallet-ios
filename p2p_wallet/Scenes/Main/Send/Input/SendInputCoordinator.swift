@@ -8,7 +8,7 @@ import KeyAppKitCore
 final class SendInputCoordinator: Coordinator<SendResult> {
     private let navigationController: UINavigationController
     private let recipient: Recipient
-    private let preChosenWallet: Wallet?
+    private let preChosenWallet: SolanaAccount?
     private let preChosenAmount: Double?
     private var subject = PassthroughSubject<SendResult, Never>()
     private let source: SendSource
@@ -19,7 +19,7 @@ final class SendInputCoordinator: Coordinator<SendResult> {
 
     init(
         recipient: Recipient,
-        preChosenWallet: Wallet?,
+        preChosenWallet: SolanaAccount?,
         preChosenAmount: Double?,
         navigationController: UINavigationController,
         source: SendSource,
@@ -158,7 +158,7 @@ final class SendInputCoordinator: Coordinator<SendResult> {
             .store(in: &subscriptions)
     }
 
-    private func openFeePropmt(from vc: UIViewController, viewModel: SendInputViewModel, feeWallets: [Wallet]) {
+    private func openFeePropmt(from vc: UIViewController, viewModel: SendInputViewModel, feeWallets: [SolanaAccount]) {
         guard let feeToken = viewModel.currentState.feeWallet else { return }
         coordinate(to: SendInputFeePromptCoordinator(
             parentController: vc,

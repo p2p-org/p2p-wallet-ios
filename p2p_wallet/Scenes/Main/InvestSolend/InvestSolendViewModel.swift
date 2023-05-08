@@ -234,7 +234,7 @@ class InvestSolendViewModel: ObservableObject {
         let solanaAccountsService = Resolver.resolve(SolanaAccountsService.self)
 
         // Get user token account
-        let tokenAccount: Wallet? = solanaAccountsService
+        let tokenAccount: SolanaAccount? = solanaAccountsService
             .loadedAccounts
             .first(where: { asset.mintAddress == $0.mintAddress })
 

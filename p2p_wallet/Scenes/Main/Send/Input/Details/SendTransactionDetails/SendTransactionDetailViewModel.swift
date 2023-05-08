@@ -16,7 +16,7 @@ import KeyAppKitCore
 
 final class SendTransactionDetailViewModel: BaseViewModel, ObservableObject {
     let cancelSubject = PassthroughSubject<Void, Never>()
-    let feePrompt = PassthroughSubject<[Wallet], Never>()
+    let feePrompt = PassthroughSubject<[SolanaAccount], Never>()
     let longTapped = PassthroughSubject<CellModel, Never>()
 
     private let stateMachine: SendInputStateMachine
@@ -129,7 +129,7 @@ final class SendTransactionDetailViewModel: BaseViewModel, ObservableObject {
 
     private func extractAccountCreationFeeCellModel(
         state: SendInputState, isLoading: Bool,
-        feeTokens: [Wallet]?
+        feeTokens: [SolanaAccount]?
     ) -> CellModel? {
         guard state.fee.accountBalances > 0
         else {

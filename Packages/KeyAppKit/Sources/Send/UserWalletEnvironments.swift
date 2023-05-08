@@ -8,7 +8,7 @@ import SolanaSwift
 import KeyAppKitCore
 
 public struct UserWalletEnvironments: Equatable {
-    let wallets: [Wallet]
+    let wallets: [SolanaAccount]
     let ethereumAccount: String?
 
     let exchangeRate: [String: CurrentPrice]
@@ -18,7 +18,7 @@ public struct UserWalletEnvironments: Equatable {
     let rentExemptionAmountForSPLAccount: Lamports
 
     public init(
-        wallets: [Wallet],
+        wallets: [SolanaAccount],
         ethereumAccount: String?,
         exchangeRate: [String: CurrentPrice],
         tokens: Set<Token>,

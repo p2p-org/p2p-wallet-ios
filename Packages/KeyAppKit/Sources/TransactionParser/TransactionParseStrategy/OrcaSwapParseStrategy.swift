@@ -90,13 +90,13 @@ public class OrcaSwapParseStrategy: TransactionParseStrategy {
       tokensRepository.getTokenWithMint(destinationAccount?.data.mint.base58EncodedString)
     )
 
-    let sourceWallet = Wallet(
+    let sourceWallet = SolanaAccount(
       pubkey: try? PublicKey(string: sourceInfo.source).base58EncodedString,
       lamports: sourceAccount?.lamports,
       token: sourceToken
     )
 
-    let destinationWallet = Wallet(
+    let destinationWallet = SolanaAccount(
       pubkey: try? PublicKey(string: destinationInfo.destination).base58EncodedString,
       lamports: destinationAccount?.lamports,
       token: destinationToken
@@ -135,13 +135,13 @@ public class OrcaSwapParseStrategy: TransactionParseStrategy {
     let sourceToken = try await tokensRepository.getTokenWithMint(sourceMint)
     let destinationToken = try await tokensRepository.getTokenWithMint(destinationMint)
 
-    let sourceWallet = Wallet(
+    let sourceWallet = SolanaAccount(
       pubkey: approveInstruction.parsed?.info.source,
       lamports: Lamports(postTokenBalances.first?.uiTokenAmount.amount ?? "0"),
       token: sourceToken
     )
 
-    let destinationWallet = Wallet(
+    let destinationWallet = SolanaAccount(
       pubkey: destinationToken.symbol == "SOL" ? approveInstruction.parsed?.info.owner : nil,
       lamports: Lamports(postTokenBalances.last?.uiTokenAmount.amount ?? "0"),
       token: destinationToken

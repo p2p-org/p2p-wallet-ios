@@ -42,7 +42,7 @@ public class CloseAccountParseStrategy: TransactionParseStrategy {
 
     return CloseAccountInfo(
       reimbursedAmount: reimbursedAmount,
-      closedWallet: Wallet(
+      closedWallet: SolanaAccount(
         pubkey: closedTokenPubkey,
         lamports: nil,
         token: token

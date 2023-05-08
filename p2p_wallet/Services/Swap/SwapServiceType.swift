@@ -53,7 +53,7 @@ protocol SwapServiceType {
         destinationAddress: String?,
         destinationToken: Token,
         bestPoolsPair: PoolsPair?,
-        payingWallet: Wallet?,
+        payingWallet: SolanaAccount?,
         inputAmount: Double?,
         slippage: Double
     ) async throws -> _SwapFeeInfo

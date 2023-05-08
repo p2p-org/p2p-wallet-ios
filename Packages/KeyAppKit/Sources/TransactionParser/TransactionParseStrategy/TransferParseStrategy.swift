@@ -55,8 +55,8 @@ public class TransferParseStrategy: TransactionParseStrategy {
       UInt64(transferInstruction?.parsed?.info.amount ?? transferInstruction?.parsed?.info.tokenAmount?
         .amount ?? "0")
 
-    let source = Wallet.nativeSolana(pubkey: sourcePubkey, lamport: nil)
-    let destination = Wallet.nativeSolana(pubkey: destinationPubkey, lamport: nil)
+    let source = SolanaAccount.nativeSolana(pubkey: sourcePubkey, lamport: nil)
+    let destination = SolanaAccount.nativeSolana(pubkey: destinationPubkey, lamport: nil)
 
     return TransferInfo(
       source: source,
@@ -122,8 +122,8 @@ public class TransferParseStrategy: TransactionParseStrategy {
       }
 
       let token = try await tokensRepository.getTokenWithMint(tokenBalance.mint)
-      let source = Wallet(pubkey: sourcePubkey, lamports: nil, token: token)
-      let destination = Wallet(pubkey: destinationPubkey, lamports: nil, token: token)
+      let source = SolanaAccount(pubkey: sourcePubkey, lamports: nil, token: token)
+      let destination = SolanaAccount(pubkey: destinationPubkey, lamports: nil, token: token)
       transferInfo = TransferInfo(
         source: source,
         destination: destination,
@@ -137,8 +137,8 @@ public class TransferParseStrategy: TransactionParseStrategy {
       let accountInfo: BufferInfo<AccountInfo>? = try await apiClient
         .getAccountInfo(account: sourcePubkey, or: destinationPubkey)
       let token = try await tokensRepository.getTokenWithMint(accountInfo?.data.mint.base58EncodedString)
-      let source = Wallet(pubkey: sourcePubkey, lamports: nil, token: token)
-      let destination = Wallet(pubkey: destinationPubkey, lamports: nil, token: token)
+      let source = SolanaAccount(pubkey: sourcePubkey, lamports: nil, token: token)
+      let destination = SolanaAccount(pubkey: destinationPubkey, lamports: nil, token: token)
 
       transferInfo = TransferInfo(
         source: source,

@@ -70,7 +70,7 @@ class WormholeSendInputViewModel: BaseViewModel, ObservableObject {
         orcaSwap: OrcaSwapType = Resolver.resolve(),
         solanaAccountsService: SolanaAccountsService = Resolver.resolve(),
         notificationService: NotificationService = Resolver.resolve(),
-        preChosenWallet: Wallet? = nil
+        preChosenWallet: SolanaAccount? = nil
     ) {
         self.recipient = recipient
         self.solanaAccountsService = solanaAccountsService
@@ -284,7 +284,7 @@ class WormholeSendInputViewModel: BaseViewModel, ObservableObject {
         analyticsManager.log(event: .sendBridgesScreenOpen)
     }
 
-    func selectSolanaAccount(wallet: Wallet) {
+    func selectSolanaAccount(wallet: SolanaAccount) {
         let accounts = Self.resolveSupportedSolanaAccounts(solanaAccountsService: solanaAccountsService)
 
         let selectedAccount = accounts.first { account in

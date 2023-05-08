@@ -1,6 +1,6 @@
 import KeyAppKitCore
 
-extension Wallet: ChooseItemSearchableItem {
+extension SolanaAccount: ChooseItemSearchableItem {
     func matches(keyword: String) -> Bool {
         token.symbol.lowercased().hasPrefix(keyword.lowercased()) ||
             token.symbol.lowercased().contains(keyword.lowercased()) ||

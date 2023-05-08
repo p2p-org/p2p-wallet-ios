@@ -253,7 +253,7 @@ class AccountDetailsCoordinator: SmartCoordinator<AccountDetailsCoordinatorResul
         }
     }
 
-    func openSwap(destination: Wallet? = nil) {
+    func openSwap(destination: SolanaAccount? = nil) {
         guard case let .solanaAccount(account) = args,
               let rootViewController = presentation.presentingViewController as? UINavigationController
         else { return }

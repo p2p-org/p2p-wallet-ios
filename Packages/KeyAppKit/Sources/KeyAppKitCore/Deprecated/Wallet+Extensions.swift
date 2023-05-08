@@ -6,7 +6,7 @@ public struct SolanaWalletUserInfo: Hashable {
 }
 
 /// Legacy code. Wallet struct doesn't have price field. We added it by using ``userInfo``.
-public extension Wallet {
+public extension SolanaAccount {
     @available(*, deprecated)
     var _price: CurrentPrice? {
         get {

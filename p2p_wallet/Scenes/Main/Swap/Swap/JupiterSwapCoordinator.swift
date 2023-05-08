@@ -10,14 +10,14 @@ enum JupiterSwapSource: String {
 }
 
 struct JupiterSwapParameters {
-    let preChosenWallet: Wallet?
-    let destinationWallet: Wallet?
+    let preChosenWallet: SolanaAccount?
+    let destinationWallet: SolanaAccount?
     let dismissAfterCompletion: Bool
     let openKeyboardOnStart: Bool
     let hideTabBar: Bool
     let source: JupiterSwapSource // This param's necessary for the analytic. It doesn't do any logic
 
-    init(dismissAfterCompletion: Bool, openKeyboardOnStart: Bool, source: JupiterSwapSource, preChosenWallet: Wallet? = nil, destinationWallet: Wallet? = nil, hideTabBar: Bool = false) {
+    init(dismissAfterCompletion: Bool, openKeyboardOnStart: Bool, source: JupiterSwapSource, preChosenWallet: SolanaAccount? = nil, destinationWallet: SolanaAccount? = nil, hideTabBar: Bool = false) {
         self.preChosenWallet = preChosenWallet
         self.destinationWallet = destinationWallet
         self.dismissAfterCompletion = dismissAfterCompletion

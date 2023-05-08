@@ -54,8 +54,8 @@ final class SwapViewModel: BaseViewModel, ObservableObject {
     var currentState: JupiterSwapState { stateMachine.currentState }
     var continueUpdateOnDisappear = false // Special flag for update if view is disappeared
 
-    private let preChosenWallet: Wallet?
-    private let destinationWallet: Wallet?
+    private let preChosenWallet: SolanaAccount?
+    private let destinationWallet: SolanaAccount?
     private var timer: Timer?
     private let source: JupiterSwapSource
     private var wasMinToastShown = false // Special flag not to show toast again if state has not changed
@@ -65,8 +65,8 @@ final class SwapViewModel: BaseViewModel, ObservableObject {
         fromTokenInputViewModel: SwapInputViewModel,
         toTokenInputViewModel: SwapInputViewModel,
         source: JupiterSwapSource,
-        preChosenWallet: Wallet? = nil,
-        destinationWallet: Wallet? = nil
+        preChosenWallet: SolanaAccount? = nil,
+        destinationWallet: SolanaAccount? = nil
     ) {
         self.fromTokenInputViewModel = fromTokenInputViewModel
         self.toTokenInputViewModel = toTokenInputViewModel
@@ -390,7 +390,7 @@ private extension SwapViewModel {
         #endif
         
         // form transaction
-        let destinationWallet = currentState.toToken.userWallet ?? Wallet(pubkey: nil, token: currentState.toToken.token)
+        let destinationWallet = currentState.toToken.userWallet ?? SolanaAccount(pubkey: nil, token: currentState.toToken.token)
         
         let swapTransaction = JupiterSwapTransaction(
             authority: account.publicKey.base58EncodedString,

@@ -35,7 +35,7 @@ final class SendInputViewModel: BaseViewModel, ObservableObject {
         }
     }
 
-    @Published var sourceWallet: Wallet
+    @Published var sourceWallet: SolanaAccount
 
     @Published var feeTitle = L10n.fees("")
     @Published var isFeeLoading: Bool = true
@@ -77,7 +77,7 @@ final class SendInputViewModel: BaseViewModel, ObservableObject {
     let changeTokenPressed = PassthroughSubject<Void, Never>()
     let feeInfoPressed = PassthroughSubject<Void, Never>()
     let openFeeInfo = PassthroughSubject<Bool, Never>()
-    let changeFeeToken = PassthroughSubject<Wallet, Never>()
+    let changeFeeToken = PassthroughSubject<SolanaAccount, Never>()
 
     let snackbar = PassthroughSubject<SnackBar, Never>()
     let transaction = PassthroughSubject<SendTransaction, Never>()
@@ -101,7 +101,7 @@ final class SendInputViewModel: BaseViewModel, ObservableObject {
 
     init(
         recipient: Recipient,
-        preChosenWallet: Wallet?,
+        preChosenWallet: SolanaAccount?,
         preChosenAmount: Double?,
         source: SendSource,
         allowSwitchingMainAmountType: Bool,
@@ -119,11 +119,11 @@ final class SendInputViewModel: BaseViewModel, ObservableObject {
         self.pricesService = pricesService
 
         // Setup source token
-        let tokenInWallet: Wallet
+        let tokenInWallet: SolanaAccount
         switch recipient.category {
         case let .solanaTokenAddress(_, token):
             tokenInWallet = wallets
-                .first(where: { $0.token.address == token.address }) ?? Wallet(token: Token.nativeSolana)
+                .first(where: { $0.token.address == token.address }) ?? SolanaAccount(token: Token.nativeSolana)
         default:
             if let preChosenWallet = preChosenWallet {
                 tokenInWallet = preChosenWallet
@@ -131,20 +131,20 @@ final class SendInputViewModel: BaseViewModel, ObservableObject {
                 let preferOrder: [String: Int] = ["USDC": 1, "USDT": 2]
                 let sortedWallets = wallets
                     .filter(\.isSendable)
-                    .sorted { (lhs: Wallet, rhs: Wallet) -> Bool in
+                    .sorted { (lhs: SolanaAccount, rhs: SolanaAccount) -> Bool in
                         if preferOrder[lhs.token.symbol] != nil || preferOrder[rhs.token.symbol] != nil {
                             return (preferOrder[lhs.token.symbol] ?? 3) < (preferOrder[rhs.token.symbol] ?? 3)
                         } else {
                             return lhs._amountInCurrentFiat > rhs._amountInCurrentFiat
                         }
                     }
-                tokenInWallet = sortedWallets.first ?? Wallet(token: Token.nativeSolana)
+                tokenInWallet = sortedWallets.first ?? SolanaAccount(token: Token.nativeSolana)
             }
         }
         sourceWallet = tokenInWallet
 
         let feeTokenInWallet = wallets
-            .first(where: { $0.token.address == Token.usdc.address }) ?? Wallet(token: Token.usdc)
+            .first(where: { $0.token.address == Token.usdc.address }) ?? SolanaAccount(token: Token.usdc)
 
         var exchangeRate = [String: CurrentPrice]()
         var tokens = Set<Token>()
@@ -651,9 +651,9 @@ private func createTransactionExecution(
     token: Token,
     amountInToken: Double,
     amountInFiat: Double,
-    sourceWallet: Wallet,
+    sourceWallet: SolanaAccount,
     address: String,
-    feeWallet: Wallet?
+    feeWallet: SolanaAccount?
 ) async throws -> TransactionID {
     // save recipient except send via link
     if !isSendingViaLink {

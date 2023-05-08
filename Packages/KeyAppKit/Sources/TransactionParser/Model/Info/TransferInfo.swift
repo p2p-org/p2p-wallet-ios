@@ -17,10 +17,10 @@ public struct TransferInfo: Hashable {
   }
 
   /// The source account address.
-  public let source: Wallet?
+  public let source: SolanaAccount?
 
   /// The destination account address.
-  public let destination: Wallet?
+  public let destination: SolanaAccount?
 
   public let authority: String?
 
@@ -35,8 +35,8 @@ public struct TransferInfo: Hashable {
   public let account: String?
 
   public init(
-    source: Wallet?,
-    destination: Wallet?,
+    source: SolanaAccount?,
+    destination: SolanaAccount?,
     authority: String?,
     destinationAuthority: String?,
     rawAmount: Double?,
