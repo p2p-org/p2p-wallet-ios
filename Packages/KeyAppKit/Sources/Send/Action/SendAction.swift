@@ -2,6 +2,7 @@ import SolanaSwift
 import Foundation
 import FeeRelayerSwift
 import SolanaSwift
+import KeyAppKitCore
 
 public protocol SendActionService {
     func send(

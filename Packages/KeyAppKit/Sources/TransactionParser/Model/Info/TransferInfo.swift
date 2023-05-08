@@ -4,6 +4,7 @@
 
 import Foundation
 import SolanaSwift
+import KeyAppKitCore
 
 @available(*, deprecated, renamed: "TransferInfo")
 public typealias TransferTransaction = TransferInfo

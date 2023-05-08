@@ -5,6 +5,7 @@
 import FeeRelayerSwift
 import Foundation
 import SolanaSwift
+import KeyAppKitCore
 
 extension SendInputBusinessLogic {
     static func changeToken(

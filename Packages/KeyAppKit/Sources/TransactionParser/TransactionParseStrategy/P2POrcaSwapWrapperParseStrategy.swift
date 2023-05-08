@@ -4,6 +4,7 @@
 
 import Foundation
 import SolanaSwift
+import KeyAppKitCore
 
 /// A strategy for orca swap transactions.
 public class P2POrcaSwapWrapperParseStrategy: TransactionParseStrategy {

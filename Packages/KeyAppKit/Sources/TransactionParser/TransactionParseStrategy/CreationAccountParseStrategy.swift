@@ -4,6 +4,7 @@
 
 import Foundation
 import SolanaSwift
+import KeyAppKitCore
 
 /// The strategy for parsing creation account transactions.
 public class CreationAccountParseStrategy: TransactionParseStrategy {
