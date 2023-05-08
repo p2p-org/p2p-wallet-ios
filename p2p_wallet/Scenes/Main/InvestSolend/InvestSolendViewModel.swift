@@ -125,7 +125,7 @@ class InvestSolendViewModel: ObservableObject {
             }.store(in: &subscriptions)
 
         let walletsStream: AnyPublisher<[Wallet], Never> = solanaAccountsService
-            .dataPublisher
+            .accountsPublisher
         // Process data from data service
         dataService.availableAssets
             .combineLatest(
