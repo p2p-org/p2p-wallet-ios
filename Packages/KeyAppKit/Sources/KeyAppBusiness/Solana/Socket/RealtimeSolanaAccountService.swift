@@ -1,9 +1,6 @@
-//
-//  File.swift
-//
-//
-//  Created by Giang Long Tran on 03.05.2023.
-//
+// Copyright 2022 P2P Validator Authors. All rights reserved.
+// Use of this source code is governed by a MIT-style license that can be
+// found in the LICENSE file.
 
 import Combine
 import Foundation
@@ -43,8 +40,8 @@ public protocol RealtimeSolanaAccountService {
     func connect()
 }
 
-class RealtimeSolanaAccountServiceImpl: RealtimeSolanaAccountService {
-    var owner: String
+final class RealtimeSolanaAccountServiceImpl: RealtimeSolanaAccountService {
+    let owner: String
 
     let apiClient: SolanaAPIClient
     let tokensService: SolanaTokensRepository
@@ -60,7 +57,7 @@ class RealtimeSolanaAccountServiceImpl: RealtimeSolanaAccountService {
 
     let eventLoopGroup = MultiThreadedEventLoopGroup(numberOfThreads: 2)
 
-    let solanaWebSocketMethod: SolanaWebSocketMethods = .init()
+    let solanaWebSocketMethod = SolanaWebSocketMethods()
 
     init(
         owner: String,
@@ -85,8 +82,6 @@ class RealtimeSolanaAccountServiceImpl: RealtimeSolanaAccountService {
     /// Start web socket
     func connect() {
         _ = ws?.close()
-
-        print("RealtimeSolanaAccountService", apiClient.endpoint.socketUrl)
 
         _ = WebSocket.connect(
             to: apiClient.endpoint.socketUrl,
@@ -116,7 +111,6 @@ class RealtimeSolanaAccountServiceImpl: RealtimeSolanaAccountService {
             let decoder = JSONDecoder()
             ws.onText { _, dataStr in
                 // Quick workaround
-                print("RealtimeSolanaAccountService Response", dataStr)
                 guard dataStr.contains("accountNotification") || dataStr.contains("programNotification") else { return }
 
                 do {
@@ -136,7 +130,6 @@ class RealtimeSolanaAccountServiceImpl: RealtimeSolanaAccountService {
                         }
                     }
                 } catch {
-                    print("RealtimeSolanaAccountService Response", error)
                     errorObserver.handleError(error)
                 }
             }
@@ -149,7 +142,6 @@ class RealtimeSolanaAccountServiceImpl: RealtimeSolanaAccountService {
         _ prevState: RealtimeSolanaAccountState,
         _ nextState: RealtimeSolanaAccountState
     ) {
-        print("RealtimeSolanaAccountService", nextState)
         state = nextState
 
         switch nextState {
@@ -213,9 +205,6 @@ class RealtimeSolanaAccountServiceImpl: RealtimeSolanaAccountService {
             let nativeAccountChangeRequest = try JSONSerialization.data(withJSONObject: nativeAccountChange)
             let splAccountChangeRequest = try JSONSerialization.data(withJSONObject: splAccountChange)
 
-            print("RealtimeSolanaAccountService", String(data: nativeAccountChangeRequest, encoding: .utf8))
-            print("RealtimeSolanaAccountService", String(data: splAccountChangeRequest, encoding: .utf8))
-
             ws.send(nativeAccountChangeRequest.bytes)
             ws.send(splAccountChangeRequest.bytes)
 
@@ -264,7 +253,6 @@ class RealtimeSolanaAccountServiceImpl: RealtimeSolanaAccountService {
     func receiveNotification(notification: SolanaNotification<SolanaProgramChange>) {
         let value = notification.result.value
 
-        let account = value.account
         let dataStr = value.account.data.first
 
         if let dataStr, !dataStr.isEmpty {
@@ -300,7 +288,6 @@ class RealtimeSolanaAccountServiceImpl: RealtimeSolanaAccountService {
                     }
 
                 } catch {
-                    print("RealtimeSolanaAccountService", error)
                     errorObserver.handleError(error)
                 }
             }
