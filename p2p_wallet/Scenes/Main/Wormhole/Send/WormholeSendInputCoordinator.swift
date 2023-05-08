@@ -63,7 +63,7 @@ final class WormholeSendInputCoordinator: SmartCoordinator<WormholeSendInputCoor
         ))
         .sink { walletToken in
             if let walletToken = walletToken {
-                viewModel.selectSolanaAccount(wallet: walletToken)
+                viewModel.selectSolanaAccount(solanaAccount: walletToken)
             }
         }
         .store(in: &subscriptions)

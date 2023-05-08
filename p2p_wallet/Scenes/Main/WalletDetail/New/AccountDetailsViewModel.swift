@@ -70,7 +70,7 @@ class AccountDetailsViewModel: BaseViewModel, ObservableObject {
             .map { account, status in
                 RendableNewSolanaAccountDetails(
                     account: account,
-                    isSwapAvailable: Self.isSwapAvailableFor(wallet: account, for: status),
+                    isSwapAvailable: Self.isSwapAvailableFor(solanaAccount: account, for: status),
                     onAction: onAction
                 )
             }
@@ -83,9 +83,9 @@ class AccountDetailsViewModel: BaseViewModel, ObservableObject {
 
 extension AccountDetailsViewModel {
     /// Check swap action is available for this account (wallet).
-    static func isSwapAvailableFor(wallet: SolanaAccount, for status: JupiterDataStatus) -> Bool {
+    static func isSwapAvailableFor(solanaAccount: SolanaAccount, for status: JupiterDataStatus) -> Bool {
         switch status {
-        case .ready(let swapTokens, _) where swapTokens.contains(where: { $0.address == wallet.mintAddress }):
+        case .ready(let swapTokens, _) where swapTokens.contains(where: { $0.address == solanaAccount.mintAddress }):
             return true
         default:
             return false

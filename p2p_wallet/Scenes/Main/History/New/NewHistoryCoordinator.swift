@@ -44,7 +44,7 @@ class NewHistoryCoordinator: SmartCoordinator<Void> {
     private func openAction(action: NewHistoryAction) {
         switch action {
         case let .openSwap(from, to):
-            openSwap(wallet: from, destination: to)
+            openSwap(solanaAccount: from, destination: to)
 
         case let .openParsedTransaction(trx):
             let coordinator = TransactionDetailCoordinator(
@@ -197,7 +197,7 @@ class NewHistoryCoordinator: SmartCoordinator<Void> {
             .store(in: &subscriptions)
     }
 
-    func openSwap(wallet: SolanaAccount?, destination: SolanaAccount? = nil) {
+    func openSwap(solanaAccount: SolanaAccount?, destination: SolanaAccount? = nil) {
         guard let navigationController = presentation.presentingViewController as? UINavigationController else {
             return
         }
@@ -208,7 +208,7 @@ class NewHistoryCoordinator: SmartCoordinator<Void> {
                 dismissAfterCompletion: true,
                 openKeyboardOnStart: true,
                 source: .tapToken,
-                preChosenWallet: wallet,
+                preChosenWallet: solanaAccount,
                 destinationWallet: destination,
                 hideTabBar: true
             )

@@ -241,14 +241,10 @@ public extension SendInputState {
     }
 
     var sourceWallet: SolanaAccount? {
-        userWalletEnvironments.wallets.first { (wallet: SolanaAccount) -> Bool in
-            wallet.token.address == token.address
-        }
+        userWalletEnvironments.wallets.first { $0.token.address == token.address }
     }
 
     var feeWallet: SolanaAccount? {
-        userWalletEnvironments.wallets.first { (wallet: SolanaAccount) -> Bool in
-            wallet.token.address == tokenFee.address
-        }
+        userWalletEnvironments.wallets.first { $0.token.address == tokenFee.address }
     }
 }

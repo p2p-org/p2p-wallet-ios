@@ -284,11 +284,11 @@ class WormholeSendInputViewModel: BaseViewModel, ObservableObject {
         analyticsManager.log(event: .sendBridgesScreenOpen)
     }
 
-    func selectSolanaAccount(wallet: SolanaAccount) {
+    func selectSolanaAccount(solanaAccount: SolanaAccount) {
         let accounts = Self.resolveSupportedSolanaAccounts(solanaAccountsService: solanaAccountsService)
 
         let selectedAccount = accounts.first { account in
-            account.mintAddress == wallet.mintAddress
+            account.mintAddress == solanaAccount.mintAddress
         }
 
         guard let selectedAccount else { return }
