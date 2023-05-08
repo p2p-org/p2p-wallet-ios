@@ -107,7 +107,7 @@ let package = Package(
         ),
     ],
     dependencies: [
-        .package(url: "https://github.com/p2p-org/solana-swift", branch: "main"),
+        .package(url: "https://github.com/p2p-org/solana-swift", branch: "feature/deprecated-wallet"),
         .package(url: "https://github.com/p2p-org/FeeRelayerSwift", branch: "master"),
         .package(url: "https://github.com/krzyzanowskim/CryptoSwift.git", .upToNextMajor(from: "1.6.0")),
         .package(url: "https://github.com/Boilertalk/Web3.swift.git", from: "0.6.0"),
