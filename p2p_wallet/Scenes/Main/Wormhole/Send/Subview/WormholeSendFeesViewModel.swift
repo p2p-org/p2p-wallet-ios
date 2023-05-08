@@ -62,12 +62,6 @@ class WormholeSendFeesViewModel: BaseViewModel, ObservableObject {
                         detail: adapter.receive.fiat
                     ),
                     .init(
-                        title: L10n.networkFee,
-                        subtitle: L10n.paidByKeyApp,
-                        detail: "$0.00",
-                        isFree: true
-                    ),
-                    .init(
                         title: L10n.usingWormholeBridge,
                         subtitle: adapter.arbiterFee?.crypto,
                         detail: adapter.arbiterFee?.fiat
