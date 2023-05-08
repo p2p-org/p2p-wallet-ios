@@ -61,6 +61,8 @@ class WormholeSendInputViewModel: BaseViewModel, ObservableObject {
 
     let changeTokenPressed = PassthroughSubject<Void, Never>()
 
+    var updateTask: DispatchWorkItem?
+
     init(
         recipient: Recipient,
         userWalletManager: UserWalletManager = Resolver.resolve(),
@@ -226,6 +228,18 @@ class WormholeSendInputViewModel: BaseViewModel, ObservableObject {
             .removeDuplicates()
             .receive(on: RunLoop.main)
             .assignWeak(to: \.state, on: self)
+            .store(in: &subscriptions)
+
+        stateMachine.state
+            .sink { [weak self] _ in
+                self?.updateTask?.cancel()
+                let newUpdateTask = DispatchWorkItem {
+                    Task { await self?.stateMachine.accept(action: .calculate) }
+                }
+
+                self?.updateTask = newUpdateTask
+                DispatchQueue.main.asyncAfter(deadline: .now() + 30, execute: newUpdateTask)
+            }
             .store(in: &subscriptions)
 
         maxPressed

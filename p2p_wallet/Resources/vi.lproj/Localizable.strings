@@ -1363,3 +1363,4 @@
 "I forgot PIN" = "tôi quên mã PIN";
 "More than the sent amount" = "Nhiều hơn số tiền đã gửi";
 "Fees" = "lệ phí";
+"We refund bridging costs for any transactions over %@" = "Chúng tôi hoàn trả chi phí bắc cầu cho bất kỳ giao dịch nào qua %@";

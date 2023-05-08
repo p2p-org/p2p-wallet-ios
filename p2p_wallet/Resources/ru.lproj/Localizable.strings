@@ -1358,3 +1358,4 @@
 "I forgot PIN" = "я забыл пин-код";
 "More than the sent amount" = "Больше отправленной суммы";
 "Fees" = "Сборы";
+"We refund bridging costs for any transactions over %@" = "Мы возмещаем промежуточные расходы для любых транзакций свыше %@";

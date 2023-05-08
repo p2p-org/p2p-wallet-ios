@@ -4,7 +4,7 @@ import SolanaSwift
 import Web3
 
 public class WormholeService {
-    let api: WormholeAPI
+    public let api: WormholeAPI
 
     private let ethereumKeypair: EthereumKeyPair?
     private let solanaKeyPair: KeyPair?
