@@ -1362,3 +1362,5 @@
 "I forgot PIN" = "J'ai oublié le NIP";"More than the sent amount" = "Plus que le montant envoyé";
 "Fees" = "Frais";
 "We refund bridging costs for any transactions over %@" = "Nous remboursons les frais de transition pour toute transaction supérieure à %@";
+"Total amount" = "Montant total";
+"Check available funds" = "Vérifier les fonds disponibles";

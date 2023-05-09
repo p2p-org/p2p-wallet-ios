@@ -84,18 +84,31 @@ struct WormholeSendInputStateAdapter: Equatable {
 
     var fees: String {
         switch state {
-        case let .ready(input, output, alert):
-            return "Fees: \(currencyFormatter.string(amount: output.fees.totalInFiat))"
-        case let .calculating(newInput):
-            return ""
-        case let .error(input, output, error):
+        case let .ready(_, output, _):
+            return "≈\(currencyFormatter.string(amount: output.fees.totalInFiat))"
+        case let .error(_, output, _):
             if let output {
-                return "Fees: \(currencyFormatter.string(amount: output.fees.totalInFiat))"
+                return "≈\(currencyFormatter.string(amount: output.fees.totalInFiat))"
             } else {
                 return ""
             }
-        case .initializingFailure:
+        case .initializingFailure, .calculating:
             return ""
+        }
+    }
+
+    var isFeeGTAverage: Bool {
+        switch state {
+        case let .ready(_, output, _):
+            return (output.fees.arbiter?.asCurrencyAmount.value ?? 0) > 30
+        case let .error(_, output, _):
+            if let output {
+                return (output.fees.arbiter?.asCurrencyAmount.value ?? 0) > 30
+            } else {
+                return false
+            }
+        case .initializingFailure, .calculating:
+            return false
         }
     }
 
@@ -138,7 +151,7 @@ struct WormholeSendInputStateAdapter: Equatable {
                 if input.amount.value == 0 {
                     text = L10n.enterAmount
                 } else {
-                    text = L10n.insufficientFunds
+                    text = L10n.checkAvailableFunds
                 }
             case .invalidBaseFeeToken, .missingRelayContext:
                 text = L10n.internalError
@@ -147,18 +160,11 @@ struct WormholeSendInputStateAdapter: Equatable {
             }
 
             return .init(isEnabled: false, title: text)
-        case let .ready(input, output, _):
+        case let .ready(input, _, _):
             if input.amount.value == 0 {
-                return .init(isEnabled: false, title: L10n.insufficientFunds)
+                return .init(isEnabled: false, title: L10n.enterAmount)
             } else {
-                guard let resultAmount = output.fees.resultAmount else {
-                    return .init(isEnabled: false, title: L10n.internalError)
-                }
-
-                return .init(
-                    isEnabled: true,
-                    title: "\(L10n.send) \(cryptoFormatter.string(amount: resultAmount))"
-                )
+                return .init(isEnabled: true, title: L10n.send)
             }
         default:
             return .init(isEnabled: false, title: L10n.calculatingTheFees)
@@ -167,5 +173,49 @@ struct WormholeSendInputStateAdapter: Equatable {
 
     var disableSwitch: Bool {
         input?.solanaAccount.price == nil
+    }
+
+    var totalCryptoAmount: String {
+        if let input {
+            let arbiterFee = output?.fees.arbiter?.asCryptoAmount ?? input.amount.with(amount: 0)
+            return cryptoFormatter.string(amount: input.amount + arbiterFee)
+        } else {
+            return "N/A"
+        }
+    }
+
+    var totalCurrencyAmount: String {
+        if let input {
+            if let price = input.solanaAccount.price {
+                let arbiterFee = output?.fees.arbiter?.asCurrencyAmount ?? .zero
+                let inputAmountInFiat = try? input.amount.toFiatAmount(price: price)
+                if let inputAmountInFiat {
+                    return currencyFormatter.string(amount: inputAmountInFiat + arbiterFee)
+                } else {
+                    return "N/A"
+                }
+            } else {
+                let arbiterFee = output?.fees.arbiter?.asCryptoAmount ?? input.amount.with(amount: 0)
+                return cryptoFormatter.string(amount: input.amount + arbiterFee)
+            }
+        } else {
+            return "N/A"
+        }
+    }
+
+    var maxCurrencyAmount: CryptoAmount? {
+        if let input, let output, let arbiterFee = output.fees.arbiter {
+            return input.solanaAccount.cryptoAmount - arbiterFee.asCryptoAmount
+        } else {
+            return nil
+        }
+    }
+
+    var maxFiatAmount: CurrencyAmount? {
+        if let maxCurrencyAmount {
+            return try? maxCurrencyAmount.toFiatAmountIfPresent(price: input?.solanaAccount.price)
+        } else {
+            return nil
+        }
     }
 }

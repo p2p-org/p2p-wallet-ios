@@ -34,6 +34,8 @@ public class WormholeSendUserActionConsumer: UserActionConsumer {
 
     let relayService: RelayService
 
+    let solanaTokenService: SolanaTokensService
+
     let errorObserver: ErrorObserver
 
     public let persistence: UserActionPersistentStorage
@@ -60,6 +62,7 @@ public class WormholeSendUserActionConsumer: UserActionConsumer {
         solanaClient: SolanaAPIClient,
         wormholeAPI: WormholeAPI,
         relayService: RelayService,
+        solanaTokenService: SolanaTokensService,
         errorObserver: ErrorObserver,
         persistence: UserActionPersistentStorage
     ) {
@@ -68,20 +71,19 @@ public class WormholeSendUserActionConsumer: UserActionConsumer {
         self.solanaClient = solanaClient
         self.wormholeAPI = wormholeAPI
         self.relayService = relayService
+        self.solanaTokenService = solanaTokenService
         self.errorObserver = errorObserver
         self.persistence = persistence
     }
 
     public func start() {
-        Task {
-            // Update bundle periodic
-            monitoringTimer = Timer.scheduledTimer(withTimeInterval: 30, repeats: true) { [weak self] _ in
-                self?.monitor()
-            }
-
-            // First fetch
-            monitor()
+        // Update bundle periodic
+        monitoringTimer = Timer.scheduledTimer(withTimeInterval: 30, repeats: true) { [weak self] _ in
+            self?.monitor()
         }
+
+        // First fetch
+        monitor()
     }
 
     deinit {
@@ -97,23 +99,15 @@ public class WormholeSendUserActionConsumer: UserActionConsumer {
         switch event {
         case let .track(sendStatus):
             Task { [weak self] in
-                // Only update record
-                if var userAction = await self?.database.get(for: sendStatus.id) {
-                    switch userAction.status {
-                    case .processing:
-                        switch sendStatus.status {
-                        case .pending, .inProgress:
-                            return
-                        case .completed:
-                            userAction.status = .ready
-                        case .canceled, .expired, .failed:
-                            userAction.status = .error(Error.sendingFailure)
-                        }
-                    default:
-                        return
-                    }
+                guard let self = self else { return }
 
-                    await self?.database.set(for: userAction.id, userAction)
+                let userAction = try? await WormholeSendUserAction(
+                    sendStatus: sendStatus,
+                    solanaTokensService: self.solanaTokenService
+                )
+
+                if let userAction {
+                    await self.database.set(for: userAction.id, userAction)
                 }
             }
 
