@@ -57,7 +57,7 @@ jobs:
       - uses: actions/cache@v3
         with:
           path: /Users/runner/Library/Developer/Xcode/DerivedData/**/SourcePackages/checkouts
-          key: ${{ runner.os }}-spm-${{ hashFiles('**/Package.resolved') }}
+          key: ${{ runner.os }}-spm-${{ hashFiles('p2p_wallet.xcodeproj/project.xcworkspace/xcshareddata/swiftpm/Package.resolved') }}
           restore-keys: |
             ${{ runner.os }}-spm-
 
