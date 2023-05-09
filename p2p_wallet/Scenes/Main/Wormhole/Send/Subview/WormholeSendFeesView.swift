@@ -45,19 +45,20 @@ struct WormholeSendFeesView: View {
             .padding(.horizontal, 16)
 
             Button(action: {
-                    viewModel.close.send()
-                }, label: {
-                    Text(L10n.okay)
-                        .font(uiFont: .font(of: .text2, weight: .semibold))
-                        .foregroundColor(Color(Asset.Colors.night.color))
-                        .frame(maxWidth: .infinity)
-                        .frame(height: 56)
-                        .background(Color(Asset.Colors.rain.color))
-                        .cornerRadius(12)
-                }
-            )
+                viewModel.close.send()
+            }, label: {
+                Text(L10n.okay)
+                    .font(uiFont: .font(of: .text2, weight: .semibold))
+                    .foregroundColor(Color(Asset.Colors.night.color))
+                    .frame(maxWidth: .infinity)
+                    .frame(height: 56)
+                    .background(Color(Asset.Colors.rain.color))
+                    .cornerRadius(12)
+            })
             .padding(.horizontal, 16)
             .padding(.top, 16)
+
+            Spacer()
         }
     }
 }

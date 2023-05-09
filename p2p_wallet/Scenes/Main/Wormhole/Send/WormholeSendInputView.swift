@@ -74,26 +74,27 @@ struct WormholeSendInputView: View {
                         HStack(spacing: 4) {
                             Text(L10n.fee.uppercased())
                                 .apply(style: .caps)
-                                .foregroundColor(viewModel.adapter.isFeeGTAverage ? Color(Asset.Colors.rose.color) : Color(Asset.Colors.mountain.color))
+                                .foregroundColor(viewModel.adapter
+                                    .isFeeGTAverage ? Color(Asset.Colors.rose.color) :
+                                    Color(Asset.Colors.mountain.color))
 
-                            if viewModel.adapter.feesLoading {
-                                CircularProgressIndicatorView(
-                                    backgroundColor: Asset.Colors.mountain.color.withAlphaComponent(0.6),
-                                    foregroundColor: Asset.Colors.mountain.color
-                                )
+                            Image(uiImage: UIImage.warningIcon)
+                                .resizable()
+                                .foregroundColor(viewModel.adapter
+                                    .isFeeGTAverage ? Color(Asset.Colors.rose.color) :
+                                    Color(Asset.Colors.mountain.color))
                                 .frame(width: 16, height: 16)
-                            } else if !viewModel.adapter.fees.isEmpty {
-                                Image(uiImage: UIImage.warningIcon)
-                                    .resizable()
-                                    .if(viewModel.adapter.isFeeGTAverage) { view in
-                                        view.foregroundColor(Color(Asset.Colors.rose.color))
-                                    }
-                                    .frame(width: 16, height: 16)
-                            }
                             Spacer()
-                            Text(viewModel.adapter.fees)
-                                .apply(style: .text4)
-                                .foregroundColor(viewModel.adapter.isFeeGTAverage ? Color(Asset.Colors.rose.color) : Color(Asset.Colors.mountain.color))
+                            if viewModel.adapter.feesLoading {
+                                CircularProgressIndicatorView()
+                                    .frame(width: 14, height: 14)
+                            } else {
+                                Text(viewModel.adapter.fees)
+                                    .apply(style: .text4)
+                                    .foregroundColor(viewModel.adapter
+                                        .isFeeGTAverage ? Color(Asset.Colors.rose.color) :
+                                        Color(Asset.Colors.mountain.color))
+                            }
                         }
                     }
                 }
@@ -102,9 +103,15 @@ struct WormholeSendInputView: View {
                         .apply(style: .caps)
                         .foregroundColor(Color(Asset.Colors.night.color))
                     Spacer()
-                    Text(viewModel.totalAmount)
+                    if !viewModel.adapter.feesLoading {
+                        Text(
+                            viewModel.inputMode == .fiat ?
+                                viewModel.adapter.totalCurrencyAmount
+                                : viewModel.adapter.totalCryptoAmount
+                        )
                         .apply(style: .text4)
                         .foregroundColor(Color(Asset.Colors.night.color))
+                    }
                 }
             }
             .padding(.top, 12)
