@@ -1363,3 +1363,4 @@
 "Fees" = "Frais";
 "We refund bridging costs for any transactions over %@" = "Nous remboursons les frais de transition pour toute transaction supérieure à %@";
 "Total amount" = "Montant total";
+"Check available funds" = "Vérifier les fonds disponibles";

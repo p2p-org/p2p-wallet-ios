@@ -43,7 +43,6 @@ class WormholeSendInputViewModel: BaseViewModel, ObservableObject {
 
     // Input
     @Published var input: String = ""
-    @Published var totalAmount: String = ""
     @Published var countAfterDecimalPoint: Int = 8
     @Published var isFirstResponder: Bool = false
     @Published var inputMode: InputMode = .crypto
@@ -182,7 +181,7 @@ class WormholeSendInputViewModel: BaseViewModel, ObservableObject {
                             self.secondaryAmountString = cryptoInputFormatter.string(amount: cryptoAmount)
                         } else {
                             newAmount = ""
-                            self.secondaryAmountString = ""
+                            self.secondaryAmountString = "0"
                         }
 
                     case .crypto:
@@ -193,7 +192,7 @@ class WormholeSendInputViewModel: BaseViewModel, ObservableObject {
                         {
                             self.secondaryAmountString = currencyInputFormatter.string(amount: fiatAmount)
                         } else {
-                            self.secondaryAmountString = ""
+                            self.secondaryAmountString = "0"
                         }
                     }
 
@@ -248,26 +247,31 @@ class WormholeSendInputViewModel: BaseViewModel, ObservableObject {
             .sink { [weak self] _ in
                 guard let self, let account = self.adapter.inputAccount else { return }
 
+                // TODO: Move to state machine
+
                 let maxAvailableAmount: String
                 let secondaryAmount: String
 
                 switch self.inputMode {
                 case .fiat:
-                    let totalFees = self.adapter.output?.fees.totalInFiat ?? CurrencyAmount(usd: 0)
-                    let total = max(CurrencyAmount(usd: 0), (account.amountInFiat ?? CurrencyAmount(usd: 0)) - totalFees)
-                    maxAvailableAmount = currencyInputFormatter.string(amount: total)
-                    secondaryAmount = cryptoInputFormatter.string(amount: account.cryptoAmount)
-                    self.totalAmount = currencyInputFormatter.string(amount: account.amountInFiat ?? CurrencyAmount(usd: 0))
-                case .crypto:
-                    guard let totalFees = self.adapter.output?.fees.totalInCrypto else {
+                    guard
+                        let maxCryptoAmount = self.adapter.maxCurrencyAmount,
+                        let maxCurrencyAmount = self.adapter.maxFiatAmount
+                    else {
                         return
                     }
-                    let total = totalFees > account.cryptoAmount ? account.cryptoAmount : account.cryptoAmount - totalFees
-                    maxAvailableAmount = cryptoInputFormatter.string(amount: total)
+
+                    maxAvailableAmount = currencyInputFormatter.string(amount: maxCurrencyAmount)
+                    secondaryAmount = cryptoInputFormatter.string(amount: maxCryptoAmount)
+                case .crypto:
+                    guard let maxAmount = self.adapter.maxCurrencyAmount else {
+                        return
+                    }
+
+                    maxAvailableAmount = cryptoInputFormatter.string(amount: maxAmount)
                     secondaryAmount = currencyInputFormatter.string(
-                        amount: account.amountInFiat ?? CurrencyAmount(usd: 0)
+                        amount: self.adapter.maxFiatAmount ?? CurrencyAmount(usd: 0)
                     )
-                    self.totalAmount = cryptoInputFormatter.string(amount: account.cryptoAmount)
                 }
 
                 self.wasMaxUsed = true
