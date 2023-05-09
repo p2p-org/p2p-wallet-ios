@@ -42,7 +42,7 @@ jobs:
       - name: Install project
         run: |
           rm -rf p2p_wallet/Scenes/DebugMenu
-          chmod u+x Scripts/install.sh && Scripts/install.sh
+          IS_CI=true chmod u+x Scripts/install.sh && Scripts/install.sh
         shell: bash
 
       - name: Fix missing Transporter.app

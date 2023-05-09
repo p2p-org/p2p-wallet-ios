@@ -51,6 +51,9 @@ if [[ ! $(uname -m) == 'arm64' ]]; then
 	sudo ln -s /usr/local/bin/periphery /opt/homebrew/bin/periphery
 fi
 
+# Export env variable
+export IS_CI="$IS_CI"
+
 # Run xcodegen
 xcodegen
 
@@ -60,5 +63,7 @@ xcodegen
 # Re-run xcodegen to remove build error (file missing before swiftgen)
 xcodegen
 
-# Open project
-xed .
+# Open project when IS_CI == false
+if ! [ "$IS_CI" = true ]; then
+	xed .
+fi
