@@ -1,5 +1,6 @@
 import SolanaSwift
 import Jupiter
+import Resolver
 
 struct JupiterSwapTransaction: SwapRawTransactionType {
     let authority: String?
@@ -34,28 +35,57 @@ struct JupiterSwapTransaction: SwapRawTransactionType {
                 services: services
             )
         } catch {
-            sendLog(error)
+            // Send error log
+            let content: String
+            switch error {
+            case let error as APIClientError:
+                content = error.content
+            default:
+                content = "\(error)"
+            }
+            
+            JupiterSwapBusinessLogic.sendErrorLog(
+                .init(
+                    title: "Swap failed",
+                    message: .init(
+                        tokenA: .init(name: sourceWallet.token.name, mint: sourceWallet.token.address, sendAmount: fromAmount.toString()),
+                        tokenB: .init(name: destinationWallet.token.name, mint: destinationWallet.token.address, expectedAmount: toAmount.toString()),
+                        route: route.jsonString ?? "",
+                        userPubkey: Resolver.resolve(UserWalletManager.self)
+                            .wallet?.account.publicKey
+                            .base58EncodedString ?? "",
+                        slippage: slippage.toString(),
+                        feeRelayerTransaction: swapTransaction ?? "",
+                        platform: "iOS",
+                        appVersion: AppInfo.appVersionDetail,
+                        timestamp: "\(Date().timeIntervalSince1970)",
+                        blockchainError: content
+                    )
+                )
+            )
             throw error
         }
     }
-    
-    
 }
 
-// MARK: - Helpers
+// MARK: - Helper
 
-private func sendLog(_ error: Error) {
-    switch error {
-    case let error as APIClientError:
-        switch error {
-        case let .responseError(response) where
-            response.message == "Transaction simulation failed: Blockhash not found" ||
-            response.message?.hasSuffix("custom program error: 0x1786") == true:
-            return true
-        default:
-            return false
+private extension APIClientError {
+    var content: String {
+        switch self {
+        case .cantEncodeParams:
+            return "cantEncodeParams"
+        case .invalidAPIURL:
+            return "invalidAPIURL"
+        case .invalidResponse:
+            return "emptyResponse"
+        case .responseError(let responseError):
+            guard let data = try? JSONEncoder().encode(responseError),
+                  let string = String(data: data, encoding: .utf8)
+            else {
+                return "unknownResponseError"
+            }
+            return string
         }
-    default:
-        return
     }
 }
