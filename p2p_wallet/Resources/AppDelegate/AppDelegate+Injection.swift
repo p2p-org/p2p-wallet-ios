@@ -252,6 +252,16 @@ extension Resolver: ResolverRegistering {
 
         register { JWTTokenValidatorImpl() }
             .implements(JWTTokenValidator.self)
+        
+        // SwapErrorLogger
+        register {
+            SwapErrorLoggerImpl(
+                endpoint: URL(
+                    string: .secretConfig("SWAP_ERROR_LOGGER_ENDPOINT")!
+                )!
+            )
+        }
+            .implements(SwapErrorLogger.self)
     }
 
     /// Session scope: Live when user is authenticated
