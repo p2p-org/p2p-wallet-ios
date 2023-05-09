@@ -51,12 +51,9 @@ jobs:
           curl -o ./p2p_wallet/Config.xcconfig ${{ secrets.XCCONFIG_URL }}
         shell: bash
 
-      - name: Ensure DerivedData folder
-        run: mkdir -p /Users/runner/Library/Developer/Xcode/DerivedData
-
       - uses: actions/cache@v3
         with:
-          path: /Users/runner/Library/Developer/Xcode/DerivedData/**/SourcePackages/checkouts
+          path: SourcePackages
           key: ${{ runner.os }}-spm-${{ hashFiles('p2p_wallet.xcodeproj/project.xcworkspace/xcshareddata/swiftpm/Package.resolved') }}
           restore-keys: |
             ${{ runner.os }}-spm-
