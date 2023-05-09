@@ -25,12 +25,11 @@ packages:
         branch: main
     KeyAppKit:
         path: ./Packages/KeyAppKit
+    KeyAppUI:
+        path: ./Packages/KeyAppUI
     BEPureLayout:
         url: https://github.com/p2p-org/BEPureLayout.git
         branch: master
-    KeyAppUI:
-        url: https://github.com/p2p-org/KeyAppUI.git
-        branch: main
     Amplitude:
         url: https://github.com/amplitude/Amplitude-iOS.git
         from: 8.15.0

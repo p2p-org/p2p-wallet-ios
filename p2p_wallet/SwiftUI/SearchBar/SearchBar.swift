@@ -11,8 +11,7 @@ import KeyAppUI
 struct SearchBar: View {
     let placeholder: String
     @Binding var text: String
- 
-    @State private var isEditing = false
+    @Binding var isSearching: Bool
     
     var body: some View {
         HStack {
@@ -28,7 +27,7 @@ struct SearchBar: View {
                             .frame(minWidth: 0, maxWidth: .infinity, alignment: .leading)
                             .padding(.leading, 8)
                         
-                        if isEditing {
+                        if isSearching {
                             Button(
                                 action: {
                                     text = ""
@@ -44,12 +43,12 @@ struct SearchBar: View {
                 )
                 .padding(.horizontal, 10)
                 .onTapGesture {
-                    isEditing = true
+                    isSearching = true
                 }
-            if isEditing {
+            if isSearching {
                 Button(
                     action: {
-                        isEditing = false
+                        isSearching = false
                         UIApplication.shared.endEditing()
                         text = ""
                     },
