@@ -370,6 +370,7 @@ extension Resolver: ResolverRegistering {
                         solanaClient: resolve(),
                         wormholeAPI: resolve(),
                         relayService: resolve(),
+                        solanaTokenService: resolve(),
                         errorObserver: resolve(),
                         persistence: resolve()
                     ),
