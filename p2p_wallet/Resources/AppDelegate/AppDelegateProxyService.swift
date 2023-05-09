@@ -14,7 +14,8 @@ final class AppDelegateProxyService: NSObject, UIApplicationDelegate {
     override init() {
         var services: [AppDelegateService] = [
             AppflyerAppDelegateService(),
-            DeeplinkAppDelegateService()
+            DeeplinkAppDelegateService(),
+            HistoryAppdelegateService()
         ]
         serviceAppDelegates = services.compactMap { $0 }
     }
