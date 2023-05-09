@@ -59,17 +59,25 @@ struct JupiterSwapTransaction: SwapRawTransactionType {
                 .init(
                     title: title,
                     message: .init(
-                        tokenA: .init(name: sourceWallet.token.name, mint: sourceWallet.token.address, sendAmount: fromAmount.toString()),
-                        tokenB: .init(name: destinationWallet.token.name, mint: destinationWallet.token.address, expectedAmount: toAmount.toString()),
+                        tokenA: .init(
+                            name: sourceWallet.token.name,
+                            mint: sourceWallet.token.address,
+                            sendAmount: fromAmount.toString(maximumFractionDigits: 9)
+                        ),
+                        tokenB: .init(
+                            name: destinationWallet.token.name,
+                            mint: destinationWallet.token.address,
+                            expectedAmount: toAmount.toString(maximumFractionDigits: 9)
+                        ),
                         route: route.jsonString ?? "",
                         userPubkey: Resolver.resolve(UserWalletManager.self)
                             .wallet?.account.publicKey
                             .base58EncodedString ?? "",
                         slippage: slippage.toString(),
                         feeRelayerTransaction: swapTransaction ?? "",
-                        platform: "iOS",
+                        platform: "iOS \(await UIDevice.current.systemVersion)",
                         appVersion: AppInfo.appVersionDetail,
-                        timestamp: "\(Date().timeIntervalSince1970)",
+                        timestamp: "\(Int64(Date().timeIntervalSince1970 * 1000))",
                         blockchainError: content
                     )
                 )
@@ -85,7 +93,8 @@ private extension APIClientError {
     var titleTag: String {
         let titleTag: String
         switch self {
-        case .responseError(let response) where response.message?.contains("Slippage tolerance exceeded") == true :
+        case .responseError(let response) where response.data?.logs?
+                .contains(where: { $0.contains("Slippage tolerance exceeded") }) == true :
             titleTag = "low_slippage"
         default:
             titleTag = "blockchain"
