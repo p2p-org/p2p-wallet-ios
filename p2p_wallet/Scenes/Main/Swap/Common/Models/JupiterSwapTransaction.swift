@@ -26,11 +26,36 @@ struct JupiterSwapTransaction: SwapRawTransactionType {
     }
 
     func createRequest() async throws -> String {
-        try await JupiterSwapBusinessLogic.sendToBlockchain(
-            account: account,
-            swapTransaction: swapTransaction,
-            route: route,
-            services: services
-        )
+        do {
+            return try await JupiterSwapBusinessLogic.sendToBlockchain(
+                account: account,
+                swapTransaction: swapTransaction,
+                route: route,
+                services: services
+            )
+        } catch {
+            sendLog(error)
+            throw error
+        }
+    }
+    
+    
+}
+
+// MARK: - Helpers
+
+private func sendLog(_ error: Error) {
+    switch error {
+    case let error as APIClientError:
+        switch error {
+        case let .responseError(response) where
+            response.message == "Transaction simulation failed: Blockhash not found" ||
+            response.message?.hasSuffix("custom program error: 0x1786") == true:
+            return true
+        default:
+            return false
+        }
+    default:
+        return
     }
 }
