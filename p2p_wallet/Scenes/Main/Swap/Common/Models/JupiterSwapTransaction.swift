@@ -36,6 +36,17 @@ struct JupiterSwapTransaction: SwapRawTransactionType {
             )
         } catch {
             // Send error log
+            
+            let titleTag: String
+            switch error {
+            case let error as APIClientError:
+                titleTag = error.titleTag
+            default:
+                titleTag = "unknown"
+            }
+            
+            let title = "Swap iOS Alarm (#\(titleTag))"
+            
             let content: String
             switch error {
             case let error as APIClientError:
@@ -46,7 +57,7 @@ struct JupiterSwapTransaction: SwapRawTransactionType {
             
             JupiterSwapBusinessLogic.sendErrorLog(
                 .init(
-                    title: "Swap failed",
+                    title: title,
                     message: .init(
                         tokenA: .init(name: sourceWallet.token.name, mint: sourceWallet.token.address, sendAmount: fromAmount.toString()),
                         tokenB: .init(name: destinationWallet.token.name, mint: destinationWallet.token.address, expectedAmount: toAmount.toString()),
@@ -71,6 +82,17 @@ struct JupiterSwapTransaction: SwapRawTransactionType {
 // MARK: - Helper
 
 private extension APIClientError {
+    var titleTag: String {
+        let titleTag: String
+        switch self {
+        case .responseError(let response) where response.message?.contains("Slippage tolerance exceeded") == true :
+            titleTag = "low_slippage"
+        default:
+            titleTag = "blockchain"
+        }
+        return titleTag
+    }
+    
     var content: String {
         switch self {
         case .cantEncodeParams:
