@@ -63,7 +63,7 @@ jobs:
 
       - name: Install project
         run: |
-          chmod u+x Scripts/install.sh && Scripts/install.sh
+          IS_CI=true chmod u+x Scripts/install.sh && Scripts/install.sh
         shell: bash
 
       - name: Upload to test

@@ -216,7 +216,12 @@ targets:
             name: "[SCRIPT] Swiftgen Run"
         postBuildScripts:
           - script: |
-                  if [ "${CONFIGURATION}" != "Debug" ]; then
+                  if [ "${IS_CI}" = true ]; 
+                  then
+                      # For ci
+                      SourcePackages/checkouts/firebase-ios-sdk/Crashlytics/run
+                  else
+                      # For local device
                       ${BUILD_DIR%Build/*}SourcePackages/checkouts/firebase-ios-sdk/Crashlytics/run
                   fi
             name: "[SCRIPT] Crashlytics Run"
