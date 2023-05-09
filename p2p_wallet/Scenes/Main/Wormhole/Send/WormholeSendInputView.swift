@@ -33,38 +33,6 @@ struct WormholeSendInputView: View {
             .padding(.bottom, 30)
 
             VStack {
-                // Info
-                HStack {
-                    Text(L10n.youWillSend)
-                        .apply(style: .text4)
-                        .foregroundColor(Color(Asset.Colors.mountain.color))
-
-                    Spacer()
-
-                    Button {
-                        viewModel.action.send(.openFees)
-                    } label: {
-                        HStack(spacing: 4) {
-                            Text(viewModel.adapter.fees)
-                                .apply(style: .text4)
-                                .foregroundColor(Color(Asset.Colors.sky.color))
-
-                            if viewModel.adapter.feesLoading {
-                                CircularProgressIndicatorView(
-                                    backgroundColor: Asset.Colors.sky.color.withAlphaComponent(0.6),
-                                    foregroundColor: Asset.Colors.sky.color
-                                )
-                                .frame(width: 16, height: 16)
-                            } else if !viewModel.adapter.fees.isEmpty {
-                                Image(uiImage: UIImage.infoSend)
-                                    .resizable()
-                                    .frame(width: 16, height: 16)
-                            }
-                        }
-                    }
-                }
-                .padding(.horizontal, 8)
-
                 // Account view
                 SendInputTokenView(
                     wallet: viewModel.adapter.inputAccount?.data ?? Wallet(token: .eth),
@@ -96,6 +64,51 @@ struct WormholeSendInputView: View {
                 )
                 .padding(.top, 8)
             }
+
+            /// Fee
+            VStack(spacing: 8) {
+                HStack {
+                    Button {
+                        viewModel.action.send(.openFees)
+                    } label: {
+                        HStack(spacing: 4) {
+                            Text(L10n.fee.uppercased())
+                                .apply(style: .caps)
+                                .foregroundColor(viewModel.adapter.isFeeGTAverage ? Color(Asset.Colors.rose.color) : Color(Asset.Colors.mountain.color))
+
+                            if viewModel.adapter.feesLoading {
+                                CircularProgressIndicatorView(
+                                    backgroundColor: Asset.Colors.mountain.color.withAlphaComponent(0.6),
+                                    foregroundColor: Asset.Colors.mountain.color
+                                )
+                                .frame(width: 16, height: 16)
+                            } else if !viewModel.adapter.fees.isEmpty {
+                                Image(uiImage: UIImage.warningIcon)
+                                    .resizable()
+                                    .if(viewModel.adapter.isFeeGTAverage) { view in
+                                        view.foregroundColor(Color(Asset.Colors.rose.color))
+                                    }
+                                    .frame(width: 16, height: 16)
+                            }
+                            Spacer()
+                            Text(viewModel.adapter.fees)
+                                .apply(style: .text4)
+                                .foregroundColor(viewModel.adapter.isFeeGTAverage ? Color(Asset.Colors.rose.color) : Color(Asset.Colors.mountain.color))
+                        }
+                    }
+                }
+                HStack {
+                    Text(L10n.totalAmount.uppercased())
+                        .apply(style: .caps)
+                        .foregroundColor(Color(Asset.Colors.night.color))
+                    Spacer()
+                    Text(viewModel.totalAmount)
+                        .apply(style: .text4)
+                        .foregroundColor(Color(Asset.Colors.night.color))
+                }
+            }
+            .padding(.top, 12)
+            .padding(.horizontal, 16)
 
             Spacer()
 

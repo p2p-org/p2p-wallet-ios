@@ -84,18 +84,31 @@ struct WormholeSendInputStateAdapter: Equatable {
 
     var fees: String {
         switch state {
-        case let .ready(input, output, alert):
-            return "Fees: \(currencyFormatter.string(amount: output.fees.totalInFiat))"
-        case let .calculating(newInput):
-            return ""
-        case let .error(input, output, error):
+        case let .ready(_, output, _):
+            return "≈\(currencyFormatter.string(amount: output.fees.totalInFiat))"
+        case let .error(_, output, _):
             if let output {
-                return "Fees: \(currencyFormatter.string(amount: output.fees.totalInFiat))"
+                return "≈\(currencyFormatter.string(amount: output.fees.totalInFiat))"
             } else {
                 return ""
             }
-        case .initializingFailure:
+        case .initializingFailure, .calculating(_):
             return ""
+        }
+    }
+
+    var isFeeGTAverage: Bool {
+        switch state {
+        case let .ready(_, output, _):
+            return output.fees.totalInFiat.value > 40
+        case let .error(_, output, _):
+            if let output {
+                return output.fees.totalInFiat.value > 40
+            } else {
+                return false
+            }
+        case .initializingFailure, .calculating(_):
+            return false
         }
     }
 

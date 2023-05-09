@@ -32,7 +32,7 @@ struct DebugMenuView: View {
                     }
                 }
                 Section(header: Text("Application")) {
-                    Toggle("Network Logger", isOn: $viewModel.networkLoggerVisible)
+//                    Toggle("Network Logger", isOn: $viewModel.networkLoggerVisible)
                     TextFieldRow(title: "Wallet:", content: $globalAppState.forcedWalletAddress)
                     TextFieldRow(title: "Push:", content: $globalAppState.pushServiceEndpoint)
                     TextFieldRow(title: "Bridge:", content: $globalAppState.bridgeEndpoint)

@@ -43,6 +43,7 @@ class WormholeSendInputViewModel: BaseViewModel, ObservableObject {
 
     // Input
     @Published var input: String = ""
+    @Published var totalAmount: String = ""
     @Published var countAfterDecimalPoint: Int = 8
     @Published var isFirstResponder: Bool = false
     @Published var inputMode: InputMode = .crypto
@@ -252,15 +253,21 @@ class WormholeSendInputViewModel: BaseViewModel, ObservableObject {
 
                 switch self.inputMode {
                 case .fiat:
-                    maxAvailableAmount = currencyInputFormatter.string(
-                        amount: account.amountInFiat ?? CurrencyAmount(usd: 0)
-                    )
+                    let totalFees = self.adapter.output?.fees.totalInFiat ?? CurrencyAmount(usd: 0)
+                    let total = max(CurrencyAmount(usd: 0), (account.amountInFiat ?? CurrencyAmount(usd: 0)) - totalFees)
+                    maxAvailableAmount = currencyInputFormatter.string(amount: total)
                     secondaryAmount = cryptoInputFormatter.string(amount: account.cryptoAmount)
+                    self.totalAmount = currencyInputFormatter.string(amount: account.amountInFiat ?? CurrencyAmount(usd: 0))
                 case .crypto:
-                    maxAvailableAmount = cryptoInputFormatter.string(amount: account.cryptoAmount)
+                    guard let totalFees = self.adapter.output?.fees.totalInCrypto else {
+                        return
+                    }
+                    let total = totalFees > account.cryptoAmount ? account.cryptoAmount : account.cryptoAmount - totalFees
+                    maxAvailableAmount = cryptoInputFormatter.string(amount: total)
                     secondaryAmount = currencyInputFormatter.string(
                         amount: account.amountInFiat ?? CurrencyAmount(usd: 0)
                     )
+                    self.totalAmount = cryptoInputFormatter.string(amount: account.cryptoAmount)
                 }
 
                 self.wasMaxUsed = true
