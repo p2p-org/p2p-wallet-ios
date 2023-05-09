@@ -78,6 +78,8 @@ public struct HistoryTransaction: Identifiable, Codable {
                 info = .wormholeSend(try container.decode(WormholeSend.self, forKey: .info))
             case .wormholeReceive:
                 info = .wormholeReceive(try container.decode(WormholeReceive.self, forKey: .info))
+            case .createAccountIdempotent:
+                info = .createAccountIdempotent
             case .unknown:
                 info = .unknown(try container.decode(TokenAmount.self, forKey: .info))
             }
@@ -113,6 +115,7 @@ public extension HistoryTransaction {
         case mint
         case wormholeSend = "wormhole_send"
         case wormholeReceive = "wormhole_receive"
+        case createAccountIdempotent = "create_account_idempotent"
         case unknown
     }
 
@@ -139,6 +142,7 @@ public extension HistoryTransaction {
         case mint(TokenAmount)
         case wormholeSend(WormholeSend)
         case wormholeReceive(WormholeReceive)
+        case createAccountIdempotent
         case unknown(TokenAmount)
     }
 
@@ -164,10 +168,10 @@ public extension HistoryTransaction {
 
     struct WormholeSend: Codable {
         public let to: NamedAccount
-        
+
         // Bundle id
         public let bridgeServiceKey: String
-        
+
         public let tokenAmount: TokenAmount
 
         enum CodingKeys: String, CodingKey {
@@ -179,10 +183,10 @@ public extension HistoryTransaction {
 
     struct WormholeReceive: Codable {
         public let to: NamedAccount?
-        
+
         // Claim key
         public let bridgeServiceKey: String
-        
+
         public let tokenAmount: TokenAmount
 
         enum CodingKeys: String, CodingKey {
@@ -271,7 +275,7 @@ public extension HistoryTransaction {
             let container = try decoder.container(keyedBy: CodingKeys.self)
             let tokenAmountStr = try container.decode(String.self, forKey: .tokenAmount)
             tokenAmount = Decimal(string: tokenAmountStr) ?? 0
-            
+
             if let usdAmountStr = try container.decodeIfPresent(String.self, forKey: .usdAmount) {
                 usdAmount = Decimal(string: usdAmountStr)
             } else {

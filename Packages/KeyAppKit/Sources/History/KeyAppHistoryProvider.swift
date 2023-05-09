@@ -37,8 +37,6 @@ public class KeyAppHistoryProviderImpl: KeyAppHistoryProvider {
         // Request
         let responseData = try await networkManager.requestData(request: request)
         
-        print(String(data: responseData, encoding: .utf8))
-
         let decoder = JSONDecoder()
         decoder.keyDecodingStrategy = .convertFromSnakeCase
         let response = try JSONDecoder().decode(KeyAppKitCore.JSONRPCResponse<HistoryTransactionResult, String>.self, from: responseData)
