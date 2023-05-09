@@ -10,7 +10,7 @@ import Foundation
 public class HTTPJSONRPCCLient {
     static let decoder: JSONDecoder = {
         let decoder = JSONDecoder()
-        decoder.dateDecodingStrategy = .millisecondsSince1970
+        decoder.dateDecodingStrategy = .secondsSince1970
         return decoder
     }()
 

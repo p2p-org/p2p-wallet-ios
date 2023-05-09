@@ -34,7 +34,7 @@ class HistoryBridgeSendAggregator: DataAggregator {
 
         let userActionSends = userActions.compactMap { $0 as? WormholeSendUserAction }
         let historySends = history.filter {
-            if case .wormholeReceive = $0.info {
+            if case .wormholeSend = $0.info {
                 return true
             } else {
                 return false
@@ -43,7 +43,7 @@ class HistoryBridgeSendAggregator: DataAggregator {
 
         // Build items from history.
         for historyItem in historySends {
-            if case let .wormholeReceive(data) = historyItem.info {
+            if case let .wormholeSend(data) = historyItem.info {
                 let send = userActionSends.first { $0.id == data.bridgeServiceKey }
 
                 if let send {
