@@ -80,15 +80,13 @@ public class WormholeClaimUserActionConsumer: UserActionConsumer {
     }
 
     public func start() {
-        Task {
-            // Update bundle periodic
-            updateNewBundleTimer = Timer.scheduledTimer(withTimeInterval: 30, repeats: true) { [weak self] _ in
-                self?.fetchNewBundle()
-            }
-
-            // First fetch
-            fetchNewBundle()
+        // Update bundle periodic
+        updateNewBundleTimer = Timer.scheduledTimer(withTimeInterval: 30, repeats: true) { [weak self] _ in
+            self?.fetchNewBundle()
         }
+
+        // First fetch
+        fetchNewBundle()
     }
 
     deinit {
