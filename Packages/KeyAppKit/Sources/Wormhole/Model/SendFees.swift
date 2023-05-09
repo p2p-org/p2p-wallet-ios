@@ -54,4 +54,15 @@ public extension SendFees {
             + messageAccountRent?.asCurrencyAmount
             + bridgeFee?.asCurrencyAmount
     }
+
+    /// Total in Crypto
+    var totalInCrypto: CryptoAmount? {
+        guard let arbiter, let networkFeeInToken, let messageAccountRentInToken, let bridgeFeeInToken else {
+            return nil
+        }
+        return arbiter.asCryptoAmount
+            + networkFeeInToken.asCryptoAmount
+            + messageAccountRentInToken.asCryptoAmount
+            + bridgeFeeInToken.asCryptoAmount
+    }
 }

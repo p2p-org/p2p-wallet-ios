@@ -1359,3 +1359,5 @@
 "More than the received amount" = "Больше полученной суммы";
 "Fees" = "Сборы";
 "We refund bridging costs for any transactions over %@" = "Мы возмещаем промежуточные расходы для любых транзакций свыше %@";
+"Total amount" = "Общая сумма";
+"Check available funds" = "Проверить доступные средства";

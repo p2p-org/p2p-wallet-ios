@@ -89,6 +89,9 @@ struct RendableDetailHistoryTransaction: RenderableTransactionDetail {
 
         case let .wormholeReceive(data):
             return icon(mint: data.tokenAmount.token.mint, url: data.tokenAmount.token.logoUrl, defaultIcon: .planet)
+            
+        case .createAccountIdempotent:
+            return .icon(.planet)
 
         case .unknown, .none:
             return .icon(.planet)
@@ -176,6 +179,9 @@ struct RendableDetailHistoryTransaction: RenderableTransactionDetail {
                 return .unchanged("")
             }
             return .positive("+\(usdAmount.fiatAmountFormattedString())")
+            
+        case .createAccountIdempotent:
+            return .unchanged("")
 
         case .none:
             return .unchanged("")
@@ -223,6 +229,9 @@ struct RendableDetailHistoryTransaction: RenderableTransactionDetail {
 
         case let .unknown(data):
             return "\(data.amount.tokenAmountDouble.tokenAmountFormattedString(symbol: data.token.symbol))"
+            
+        case .createAccountIdempotent:
+            return ""
 
         case .none:
             return ""

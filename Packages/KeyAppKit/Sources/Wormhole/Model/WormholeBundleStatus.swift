@@ -19,10 +19,10 @@ public struct WormholeBundleStatus: Codable, Hashable, Equatable {
     public let modified: Date
 
     // Bridge service key
-    public let claimKey: String
+    public let claimKey: String?
     
     /// Solana transaction signature
-    public let signature: String
+    public let signature: String?
 
     enum CodingKeys: String, CodingKey {
         case bundleId = "bundle_id"

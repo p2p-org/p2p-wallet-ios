@@ -181,7 +181,7 @@ class WormholeSendInputViewModel: BaseViewModel, ObservableObject {
                             self.secondaryAmountString = cryptoInputFormatter.string(amount: cryptoAmount)
                         } else {
                             newAmount = ""
-                            self.secondaryAmountString = ""
+                            self.secondaryAmountString = "0"
                         }
 
                     case .crypto:
@@ -192,7 +192,7 @@ class WormholeSendInputViewModel: BaseViewModel, ObservableObject {
                         {
                             self.secondaryAmountString = currencyInputFormatter.string(amount: fiatAmount)
                         } else {
-                            self.secondaryAmountString = ""
+                            self.secondaryAmountString = "0"
                         }
                     }
 
@@ -247,19 +247,30 @@ class WormholeSendInputViewModel: BaseViewModel, ObservableObject {
             .sink { [weak self] _ in
                 guard let self, let account = self.adapter.inputAccount else { return }
 
+                // TODO: Move to state machine
+
                 let maxAvailableAmount: String
                 let secondaryAmount: String
 
                 switch self.inputMode {
                 case .fiat:
-                    maxAvailableAmount = currencyInputFormatter.string(
-                        amount: account.amountInFiat ?? CurrencyAmount(usd: 0)
-                    )
-                    secondaryAmount = cryptoInputFormatter.string(amount: account.cryptoAmount)
+                    guard
+                        let maxCryptoAmount = self.adapter.maxCurrencyAmount,
+                        let maxCurrencyAmount = self.adapter.maxFiatAmount
+                    else {
+                        return
+                    }
+
+                    maxAvailableAmount = currencyInputFormatter.string(amount: maxCurrencyAmount)
+                    secondaryAmount = cryptoInputFormatter.string(amount: maxCryptoAmount)
                 case .crypto:
-                    maxAvailableAmount = cryptoInputFormatter.string(amount: account.cryptoAmount)
+                    guard let maxAmount = self.adapter.maxCurrencyAmount else {
+                        return
+                    }
+
+                    maxAvailableAmount = cryptoInputFormatter.string(amount: maxAmount)
                     secondaryAmount = currencyInputFormatter.string(
-                        amount: account.amountInFiat ?? CurrencyAmount(usd: 0)
+                        amount: self.adapter.maxFiatAmount ?? CurrencyAmount(usd: 0)
                     )
                 }
 

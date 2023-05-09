@@ -1327,3 +1327,5 @@
 "More than the received amount" = "More than the received amount";
 "Fees" = "Fees";
 "We refund bridging costs for any transactions over %@" = "We refund bridging costs for any transactions over %@";
+"Total amount" = "Total amount";
+"Check available funds" = "Check available funds";

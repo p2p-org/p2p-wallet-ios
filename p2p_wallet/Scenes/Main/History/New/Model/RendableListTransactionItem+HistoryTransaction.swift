@@ -44,10 +44,10 @@ struct RendableListHistoryTransactionItem: RendableListTransactionItem {
         switch trx.info {
         case let .send(data):
             return icon(mint: data.token.mint, url: data.token.logoUrl, defaultIcon: .transactionSend)
-            
+
         case let .receive(data):
             return icon(mint: data.token.mint, url: data.token.logoUrl, defaultIcon: .transactionReceive)
-            
+
         case let .swap(data):
             guard
                 let fromIcon = resolveTokenIconURL(
@@ -60,31 +60,34 @@ struct RendableListHistoryTransactionItem: RendableListTransactionItem {
             }
 
             return .double(fromIcon, toIcon)
-            
+
         case let .createAccount(data):
             return icon(mint: data.token.mint, url: data.token.logoUrl, defaultIcon: .buyWallet)
-            
+
         case let .closeAccount(data):
             return icon(mint: data?.token.mint, url: data?.token.logoUrl, defaultIcon: .transactionCloseAccount)
-            
+
         case let .mint(data):
             return icon(mint: data.token.mint, url: data.token.logoUrl, defaultIcon: .planet)
-            
+
         case let .burn(data):
             return icon(mint: data.token.mint, url: data.token.logoUrl, defaultIcon: .planet)
-            
+
         case let .stake(data):
             return icon(mint: data.token.mint, url: data.token.logoUrl, defaultIcon: .planet)
-            
+
         case let .unstake(data):
             return icon(mint: data.token.mint, url: data.token.logoUrl, defaultIcon: .planet)
-            
+
         case let .wormholeSend(data):
             return icon(mint: data.tokenAmount.token.mint, url: data.tokenAmount.token.logoUrl, defaultIcon: .planet)
-            
+
         case let .wormholeReceive(data):
             return icon(mint: data.tokenAmount.token.mint, url: data.tokenAmount.token.logoUrl, defaultIcon: .planet)
-            
+
+        case .createAccountIdempotent:
+            return .icon(.planet)
+
         case .unknown, .none:
             return .icon(.planet)
         }
@@ -116,6 +119,8 @@ struct RendableListHistoryTransactionItem: RendableListTransactionItem {
             return "Ethereum network"
         case .wormholeReceive:
             return "Ethereum network"
+        case .createAccountIdempotent:
+            return L10n.unknown
         case .unknown, .none:
             return L10n.unknown
         }
@@ -137,6 +142,8 @@ struct RendableListHistoryTransactionItem: RendableListTransactionItem {
             return "Send"
         case .wormholeReceive:
             return "Claim"
+        case .createAccountIdempotent:
+            return ""
         default:
             return "\(L10n.signature): \(RecipientFormatter.shortSignature(signature: trx.signature))"
         }
@@ -161,7 +168,7 @@ struct RendableListHistoryTransactionItem: RendableListTransactionItem {
                 .positive,
                 "+\(data.to.amount.tokenAmountDouble.tokenAmountFormattedString(symbol: data.to.token.symbol))"
             )
-            
+
         case let .burn(data):
             guard let usdAmount = data.amount.usdAmountDouble else {
                 return (.unchanged, "")
@@ -226,6 +233,9 @@ struct RendableListHistoryTransactionItem: RendableListTransactionItem {
             }
             return (.positive, "+\(usdAmount.fiatAmountFormattedString())")
 
+        case .createAccountIdempotent:
+            return (.unchanged, "")
+
         case .none:
             return (.unchanged, "")
         }
@@ -275,6 +285,9 @@ struct RendableListHistoryTransactionItem: RendableListTransactionItem {
 
         case let .wormholeReceive(data):
             return "+\(data.tokenAmount.amount.tokenAmountDouble.tokenAmountFormattedString(symbol: data.tokenAmount.token.symbol))"
+
+        case .createAccountIdempotent:
+            return ""
 
         case .none:
             return ""
