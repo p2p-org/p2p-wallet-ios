@@ -63,10 +63,10 @@ struct RendableListUserActionTransactionItem: RendableListTransactionItem {
     var title: String {
         switch userAction {
         case let transaction as WormholeClaimUserAction:
-            return "Ethereum network"
+            return "\(L10n.from.uppercaseFirst) Ethereum"
 
         case let transaction as WormholeSendUserAction:
-            return "Ethereum network"
+            return "\(L10n.to.uppercaseFirst) Ethereum"
 
         default:
             return "Unknown"
