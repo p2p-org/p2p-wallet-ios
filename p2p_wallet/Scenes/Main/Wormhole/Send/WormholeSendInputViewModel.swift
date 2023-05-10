@@ -46,6 +46,7 @@ class WormholeSendInputViewModel: BaseViewModel, ObservableObject {
     @Published var countAfterDecimalPoint: Int = 8
     @Published var isFirstResponder: Bool = false
     @Published var inputMode: InputMode = .crypto
+    @Published var isMaxButtonVisible = false
 
     // It is needed to display value with precision in case the max amount is set via fiat mode
     @Published var secondaryAmountString = ""
@@ -245,7 +246,7 @@ class WormholeSendInputViewModel: BaseViewModel, ObservableObject {
         maxPressed
             .receive(on: RunLoop.main)
             .sink { [weak self] _ in
-                guard let self, let account = self.adapter.inputAccount else { return }
+                guard let self else { return }
 
                 // TODO: Move to state machine
 
@@ -301,6 +302,17 @@ class WormholeSendInputViewModel: BaseViewModel, ObservableObject {
                 }
             }
             .store(in: &subscriptions)
+
+        Publishers.CombineLatest(
+            $input.eraseToAnyPublisher(),
+            $state.eraseToAnyPublisher()
+        )
+        .receive(on: DispatchQueue.main)
+        .map { [weak self] input, _ in
+            input.isEmpty && self?.adapter.maxCurrencyAmount != nil
+        }
+        .assignWeak(to: \.isMaxButtonVisible, on: self)
+        .store(in: &subscriptions)
 
         changeTokenPressed
             .sink { [weak self] in self?.logChooseTokenClick() }
