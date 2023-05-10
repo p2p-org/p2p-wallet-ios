@@ -205,6 +205,9 @@ struct WormholeSendInputStateAdapter: Equatable {
 
     var maxCurrencyAmount: CryptoAmount? {
         if let input, let output, let arbiterFee = output.fees.arbiter {
+            guard input.solanaAccount.cryptoAmount > arbiterFee.asCryptoAmount else {
+                return nil
+            }
             return input.solanaAccount.cryptoAmount - arbiterFee.asCryptoAmount
         } else {
             return nil
