@@ -59,7 +59,7 @@ struct WormholeSendInputView: View {
                         .token.symbol,
                     maxAmountPressed: viewModel.maxPressed,
                     switchPressed: viewModel.switchPressed,
-                    isMaxButtonVisible: viewModel.input.isEmpty,
+                    isMaxButtonVisible: viewModel.isMaxButtonVisible,
                     isSwitchMainAmountTypeAvailable: !viewModel.adapter.disableSwitch
                 )
                 .padding(.top, 8)
