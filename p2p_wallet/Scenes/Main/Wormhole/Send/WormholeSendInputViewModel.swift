@@ -327,7 +327,6 @@ class WormholeSendInputViewModel: BaseViewModel, ObservableObject {
             case .ready = adapter.state,
             let input = adapter.input,
             let output = adapter.output,
-            let relayContext = Resolver.resolve(RelayContextManager.self).currentContext,
             let transactions = output.transactions
         else {
             return

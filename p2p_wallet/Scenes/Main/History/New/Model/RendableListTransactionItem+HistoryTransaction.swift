@@ -85,7 +85,7 @@ struct RendableListHistoryTransactionItem: RendableListTransactionItem {
         case let .wormholeReceive(data):
             return icon(mint: data.tokenAmount.token.mint, url: data.tokenAmount.token.logoUrl, defaultIcon: .planet)
 
-        case .createAccountIdempotent:
+        case .tryCreateAccount:
             return .icon(.planet)
 
         case .unknown, .none:
@@ -119,7 +119,7 @@ struct RendableListHistoryTransactionItem: RendableListTransactionItem {
             return "Ethereum network"
         case .wormholeReceive:
             return "Ethereum network"
-        case .createAccountIdempotent:
+        case .tryCreateAccount:
             return L10n.unknown
         case .unknown, .none:
             return L10n.unknown
@@ -142,7 +142,7 @@ struct RendableListHistoryTransactionItem: RendableListTransactionItem {
             return "Send"
         case .wormholeReceive:
             return "Claim"
-        case .createAccountIdempotent:
+        case .tryCreateAccount:
             return ""
         default:
             return "\(L10n.signature): \(RecipientFormatter.shortSignature(signature: trx.signature))"
@@ -233,7 +233,7 @@ struct RendableListHistoryTransactionItem: RendableListTransactionItem {
             }
             return (.positive, "+\(usdAmount.fiatAmountFormattedString())")
 
-        case .createAccountIdempotent:
+        case .tryCreateAccount:
             return (.unchanged, "")
 
         case .none:
@@ -286,7 +286,7 @@ struct RendableListHistoryTransactionItem: RendableListTransactionItem {
         case let .wormholeReceive(data):
             return "+\(data.tokenAmount.amount.tokenAmountDouble.tokenAmountFormattedString(symbol: data.tokenAmount.token.symbol))"
 
-        case .createAccountIdempotent:
+        case .tryCreateAccount:
             return ""
 
         case .none:
