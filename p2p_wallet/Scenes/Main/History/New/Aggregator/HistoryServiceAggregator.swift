@@ -26,7 +26,7 @@ class HistoryServiceAggregator: DataAggregator {
         let items = history
             .filter { trx -> Bool in
                 switch trx.info {
-                case .wormholeReceive, .wormholeSend, .createAccountIdempotent:
+                case .wormholeReceive, .wormholeSend, .tryCreateAccount:
                     // Handle bridge receive and send and another aggregator.
                     return false
                 default:
