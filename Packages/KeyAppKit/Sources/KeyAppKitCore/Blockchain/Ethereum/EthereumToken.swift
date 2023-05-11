@@ -60,4 +60,8 @@ extension EthereumToken: AnyToken {
             return contract.hex(eip55: false)
         }
     }
+
+    public var network: TokenNetwork {
+        .ethereum
+    }
 }
