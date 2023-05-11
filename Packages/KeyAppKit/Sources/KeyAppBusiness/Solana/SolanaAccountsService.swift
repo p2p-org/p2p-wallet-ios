@@ -45,12 +45,22 @@ public final class SolanaAccountsService: NSObject, AccountsService {
 
     // MARK: - Init
 
+    /// The service that return current user's accounts state and dynamically observe changing.
+    /// - Parameters:
+    ///   - accountStorage: Solana account storage that will return current user's wallet
+    ///   - solanaAPIClient: Solana API Client
+    ///   - tokensService: Token service to extract more information
+    ///   - priceService: Map account with current price
+    ///   - fiat: Fiat
+    ///   - proxyConfiguration: Proxy configuration for socket
+    ///   - errorObservable: Error observable service
     public init(
         accountStorage: SolanaAccountStorage,
         solanaAPIClient: SolanaAPIClient,
         tokensService: SolanaTokensRepository,
         priceService: SolanaPriceService,
         fiat: String,
+        proxyConfiguration: ProxyConfiguration?,
         errorObservable: any ErrorObserver
     ) {
         // Setup async value
@@ -102,6 +112,7 @@ public final class SolanaAccountsService: NSObject, AccountsService {
                 owner: owner,
                 apiClient: solanaAPIClient,
                 tokensService: tokensService,
+                proxyConfiguration: proxyConfiguration,
                 errorObserver: errorObservable
             )
 
