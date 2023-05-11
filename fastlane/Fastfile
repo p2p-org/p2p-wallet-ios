@@ -125,7 +125,7 @@ def create_release_build(match_type, configuration)
         }
       },
       cloned_source_packages_path: "SourcePackages", # the difference
-      # skip_package_dependencies_resolution: SPM_CACHE_HIT, # the difference
+      skip_package_dependencies_resolution: SPM_CACHE_HIT, # the difference
       disable_package_automatic_updates: SPM_CACHE_HIT, # the difference
     )
   else
