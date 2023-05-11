@@ -26,7 +26,7 @@ final class SwapSettingsViewModel: BaseViewModel, ObservableObject {
     var selectedSlippage: Double? {
         didSet {
             guard let selectedSlippage else { return }
-            self.log(slippage: selectedSlippage)
+            log(slippage: selectedSlippage)
         }
     }
     
