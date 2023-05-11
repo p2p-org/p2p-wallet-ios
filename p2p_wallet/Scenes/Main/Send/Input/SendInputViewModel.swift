@@ -309,7 +309,6 @@ private extension SendInputViewModel {
                 guard let self else { return }
                 await MainActor.run { [weak self] in self?.isFeeLoading = true }
                 if self.status != .initializing {
-                    debugPrint("---Send_Click_Change_Token_Chosen")
                     self.logTokenChosen(
                         symbol: value.token.symbol,
                         isSendingViaLink: self.currentState.isSendingViaLink
