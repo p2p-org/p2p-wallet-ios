@@ -32,6 +32,10 @@ jobs:
           curl -o ./p2p_wallet/Config.xcconfig ${{ secrets.XCCONFIG_URL }}
         shell: bash
 
+      - uses: ruby/setup-ruby@v1
+        with:
+          bundler-cache: true # runs 'bundle install' and caches installed gems automatically
+
       - name: Change SourcePackages directory
         run: |
           mkdir -p SourcePackages/checkouts
@@ -39,6 +43,7 @@ jobs:
         shell: bash
 
       - uses: actions/cache@v3
+        id: spm-cache
         with:
           path: SourcePackages/checkouts
           key: ${{ runner.os }}-spm-${{ hashFiles('p2p_wallet.xcodeproj/project.xcworkspace/xcshareddata/swiftpm/Package.resolved') }}
@@ -92,3 +97,4 @@ jobs:
           SENTRY_TOKEN: '${{ secrets.SENTRY_TOKEN }}'
           BROWSERSTACK_USERNAME_NEW: '${{ secrets.BROWSERSTACK_USERNAME_NEW }}'
           BROWSERSTACK_ACCESS_KEY_NEW: '${{ secrets.BROWSERSTACK_ACCESS_KEY_NEW }}'
+          SPM_CACHE_HIT: '${{ steps.spm-cache.outputs.cache-hit }}'

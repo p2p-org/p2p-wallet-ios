@@ -39,6 +39,8 @@ NEW_DEVICES_JSON_STRING = ENV["NEW_DEVICES_JSON_STRING"]
 
 IS_RELEASE_CANDIDATE = ENV["IS_RELEASE_CANDIDATE"] == 'true'
 
+SPM_CACHE_HIT = ENV["SPM_CACHE_HIT"] == 'true'
+
 def delete_temp_keychain(name)
   delete_keychain(
     name: name
@@ -113,7 +115,6 @@ def create_release_build(match_type, configuration)
   if IS_CI
     gym(
       scheme: 'p2p_wallet',
-      cloned_source_packages_path: "SourcePackages", # the difference
       configuration: configuration,
       export_method: match_type,
       export_xcargs: '-allowProvisioningUpdates',
@@ -122,7 +123,10 @@ def create_release_build(match_type, configuration)
         provisioningProfiles: {
           appId => profileSpecifier
         }
-      }
+      },
+      cloned_source_packages_path: "SourcePackages", # the difference
+      skip_package_dependencies_resolution: SPM_CACHE_HIT, # the difference
+      disable_package_automatic_updates: SPM_CACHE_HIT, # the difference
     )
   else
     gym(
