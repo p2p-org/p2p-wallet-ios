@@ -30,7 +30,7 @@ final class ChooseSendItemCoordinator: Coordinator<Wallet?> {
         let view = ChooseItemView<TokenCellView>(viewModel: viewModel) { model in
             TokenCellView(item: .init(wallet: model.item as! Wallet), appearance: .other)
         }
-        let controller = KeyboardAvoidingViewController(rootView: view, ignoresKeyboard: true)
+        let controller = view.asViewController(withoutUIKitNavBar: false, ignoresKeybaord: true)
         navigationController.setViewControllers([controller], animated: false)
         configureTitle(strategy: strategy, vc: controller)
         controller.navigationItem.rightBarButtonItem = UIBarButtonItem(image: Asset.MaterialIcon.close.image, style: .plain, target: self, action: #selector(closeButtonTapped))
