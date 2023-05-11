@@ -338,7 +338,7 @@ private extension SwapViewModel {
         case .requiredInitialize, .loadingTokenTo, .loadingAmountTo, .switching, .initializing, .creatingSwapTransaction:
             actionButtonData = SliderActionButtonData(isEnabled: false, title: L10n.counting)
         case .error(.notEnoughFromToken):
-            actionButtonData = SliderActionButtonData(isEnabled: false, title: L10n.notEnough(state.fromToken.token.symbol))
+            actionButtonData = SliderActionButtonData(isEnabled: true, title: L10n.notEnough(state.fromToken.token.symbol))
         case .error(.equalSwapTokens):
             actionButtonData = SliderActionButtonData(isEnabled: false, title: L10n.youCanTSwapBetweenTheSameToken)
         case .error(.networkConnectionError):
@@ -437,7 +437,6 @@ private extension SwapViewModel {
                 
                 // error state
                 if let error = tx.status.error {
-                    debugPrint("---errorSendingTransaction: ", error)
                     switch error {
                     case SolanaSwift.APIClientError.responseError(let detail):
                         #if !RELEASE
@@ -449,8 +448,6 @@ private extension SwapViewModel {
                     
                     // log error
                     self.logTransaction(error: error)
-                } else {
-                    debugPrint("---transactionId: ", tx.transactionId ?? "")
                 }
                 
                 // release slider
@@ -463,10 +460,10 @@ private extension SwapViewModel {
 private extension SwapViewModel {
     var formattedSlippage: String {
         let slippage = Double(stateMachine.currentState.slippageBps) / 100
-        var slippageString = String(format: "%.2f", slippage)
-        while slippageString.last == "0" {
-            slippageString.removeLast()
-        }
+        let formatter = NumberFormatter()
+        formatter.maximumFractionDigits = 2
+        formatter.minimumFractionDigits = 0
+        let slippageString = formatter.string(from: NSNumber(floatLiteral: slippage)) ?? String(format: "%.2f", slippage)
         return slippageString + "%"
     }
 }
