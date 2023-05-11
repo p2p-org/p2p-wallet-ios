@@ -15,7 +15,7 @@ Key App wallet on Solana blockchain
 ## Requirements
 
 - iOS 14.0+
-- Xcode 12
+- Xcode 14.3
 - SwiftFormat
 
 ## Installation
