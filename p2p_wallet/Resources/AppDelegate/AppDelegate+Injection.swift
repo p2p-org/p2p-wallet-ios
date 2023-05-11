@@ -244,9 +244,9 @@ extension Resolver: ResolverRegistering {
 
         register { TokensRepository(
             endpoint: Defaults.apiEndPoint,
-            tokenListParser: .init(url: RemoteConfig.remoteConfig()
-                .tokenListURL ??
-                "https://raw.githubusercontent.com/p2p-org/solana-token-list/main/src/tokens/solana.tokenlist.json"),
+            tokenListParser: .init(
+                url: "https://raw.githubusercontent.com/p2p-org/solana-token-list/main/src/tokens/solana.tokenlist.json"
+            ),
             cache: resolve()
         ) }
         .implements(SolanaTokensRepository.self)
@@ -270,6 +270,16 @@ extension Resolver: ResolverRegistering {
             .implements(JWTTokenValidator.self)
 
         register { Web3(rpcURL: "https://eth-mainnet.g.alchemy.com/v2/a3NxxBPY4WUcsXnivRq-ikYKXFB67oXm") }
+        
+        // SwapErrorLogger
+        register {
+            SwapErrorLoggerImpl(
+                endpoint: URL(
+                    string: .secretConfig("SWAP_ERROR_LOGGER_ENDPOINT")!
+                )!
+            )
+        }
+            .implements(SwapErrorLogger.self)
     }
 
     /// Session scope: Live when user is authenticated
