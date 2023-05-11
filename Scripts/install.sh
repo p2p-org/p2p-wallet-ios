@@ -51,9 +51,6 @@ if [[ ! $(uname -m) == 'arm64' ]]; then
 	sudo ln -s /usr/local/bin/periphery /opt/homebrew/bin/periphery
 fi
 
-# Export env variable
-export IS_CI="$IS_CI"
-
 # Run xcodegen
 xcodegen
 
