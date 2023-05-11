@@ -16,6 +16,7 @@ class WormholeClaimFeeViewModel: BaseViewModel, ObservableObject {
     let closeAction: PassthroughSubject<Void, Never> = .init()
 
     @Published var fee: AsyncValueState<WormholeClaimFee?> = .init(value: nil)
+    @Published var freeFeeLimit: AsyncValueState<String?> = .init(status: .fetching, value: nil)
 
     override init() {
         super.init()
@@ -38,6 +39,17 @@ class WormholeClaimFeeViewModel: BaseViewModel, ObservableObject {
                 wormholeBridgeAndTrxFee: wormholeBridgeAndTrxFee
             )
         )
+
+        let freeFeeLimit = AsyncValue<String?>(initialItem: nil) {
+            let value = try await wormholeAPI.api.getEthereumFreeFeeLimit()
+            return "$ \(value)"
+        }
+
+        freeFeeLimit.fetch()
+        freeFeeLimit
+            .statePublisher
+            .assignWeak(to: \.freeFeeLimit, on: self)
+            .store(in: &subscriptions)
     }
 
     convenience init(bundle: AsyncValue<WormholeBundle?>) {

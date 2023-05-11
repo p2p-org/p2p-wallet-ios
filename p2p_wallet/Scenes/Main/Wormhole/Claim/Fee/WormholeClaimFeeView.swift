@@ -26,11 +26,14 @@ struct WormholeClaimFeeView: View {
                     Text(L10n.howToClaimForFree)
                         .fontWeight(.semibold)
                         .apply(style: .text1)
-                    Text(L10n.AllTransactionsOverAreFree.keyAppWillCoverAllFeesForYou("$50"))
-                        .apply(style: .text4)
-                        .multilineTextAlignment(.leading)
-                        .lineLimit(5)
-                        .fixedSize(horizontal: false, vertical: true)
+
+                    if let freeFeeLimit = viewModel.freeFeeLimit.value {
+                        Text(L10n.AllTransactionsOverAreFree.keyAppWillCoverAllFeesForYou(freeFeeLimit))
+                            .apply(style: .text4)
+                            .multilineTextAlignment(.leading)
+                            .lineLimit(5)
+                            .fixedSize(horizontal: false, vertical: true)
+                    }
                 }
             }
             .padding(.all, 16)
