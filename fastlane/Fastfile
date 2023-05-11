@@ -113,10 +113,6 @@ def create_release_build(match_type, configuration)
   )
 
   if IS_CI
-
-    # remove GIT_DIR
-    ENV['GIT_DIR'] = nil
-
     gym(
       scheme: 'p2p_wallet',
       configuration: configuration,
