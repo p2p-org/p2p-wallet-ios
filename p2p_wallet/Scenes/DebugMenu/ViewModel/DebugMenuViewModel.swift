@@ -7,10 +7,10 @@
 
 import Combine
 import FirebaseRemoteConfig
-import SolanaSwift
-import SwiftyUserDefaults
 import KeyAppBusiness
 import Resolver
+import SolanaSwift
+import SwiftyUserDefaults
 
 final class DebugMenuViewModel: BaseViewModel, ObservableObject {
     @Published var features: [FeatureItem]
@@ -21,8 +21,6 @@ final class DebugMenuViewModel: BaseViewModel, ObservableObject {
     @Published var currentMoonpayEnvironment: DefaultsKeys.MoonpayEnvironment
     @Published var nameServiceEndpoints: [String]
     @Published var newSwapEndpoints: [String]
-    @Published var latestSocketUpdate: String = ""
-    @Published var socketState: String = ""
 
     @Injected private var accountsService: SolanaAccountsService
 
@@ -47,18 +45,18 @@ final class DebugMenuViewModel: BaseViewModel, ObservableObject {
 
         feeRelayerEndpoints = [
             "https://\(String.secretConfig("FEE_RELAYER_STAGING_ENDPOINT")!)",
-            "https://\(String.secretConfig("FEE_RELAYER_ENDPOINT")!)"
+            "https://\(String.secretConfig("FEE_RELAYER_ENDPOINT")!)",
         ]
-        
+
         nameServiceEndpoints = [
             "https://\(String.secretConfig("NAME_SERVICE_ENDPOINT_NEW")!)",
-            "https://\(String.secretConfig("NAME_SERVICE_STAGING_ENDPOINT")!)"
+            "https://\(String.secretConfig("NAME_SERVICE_STAGING_ENDPOINT")!)",
         ]
-        
+
         newSwapEndpoints = [
             "https://quote-api.jup.ag",
             "https://swap.key.app",
-            "https://swap.keyapp.org"
+            "https://swap.keyapp.org",
         ]
 
         currentMoonpayEnvironment = Defaults.moonpayEnvironment
@@ -75,16 +73,6 @@ final class DebugMenuViewModel: BaseViewModel, ObservableObject {
             .sink { environment in
                 Defaults.moonpayEnvironment = environment
             }
-            .store(in: &subscriptions)
-
-        socketState = accountsService.realtimeService?.state.rawString ?? "Not initialised"
-        accountsService
-            .realtimeService?
-            .update
-            .receive(on: DispatchQueue.main)
-            .sink(receiveValue: { [weak self] account in
-                self?.latestSocketUpdate = "Update for \(account.data.token.name). Balance: \(account.data.amount?.tokenAmountFormattedString(symbol: account.data.token.symbol, maximumFractionDigits: Int(account.data.token.decimals)) ?? "")"
-            })
             .store(in: &subscriptions)
     }
 
@@ -115,7 +103,7 @@ extension DebugMenuViewModel {
         case solanaNegativeStatus
         case onboardingUsernameEnabled
         case onboardingUsernameButtonSkipEnabled
-        
+
         case investSolend
         case solendDisablePlaceholder
 
@@ -176,7 +164,7 @@ private extension RealtimeSolanaAccountState {
             return "Connecting 🌐"
         case .running:
             return "Running ✅"
-        case .stop(let error):
+        case let .stop(error):
             return "Stopped ❌ with error :\(error?.localizedDescription ?? "")"
         }
     }

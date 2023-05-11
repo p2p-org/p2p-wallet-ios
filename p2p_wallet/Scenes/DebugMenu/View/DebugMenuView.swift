@@ -23,6 +23,10 @@ struct DebugMenuView: View {
     var body: some View {
         NavigationView {
             List {
+                Section(header: Text("Modules")) {
+                    NavigationLink("Socket", destination: SocketDebugView())
+                }
+
                 Section(header: Text("Feature Toggles")) {
                     ForEach(0 ..< viewModel.features.count, id: \.self) { index in
                         Toggle(viewModel.features[index].title, isOn: $viewModel.features[index].isOn)
@@ -31,6 +35,7 @@ struct DebugMenuView: View {
                             }
                     }
                 }
+
                 Section(header: Text("Application")) {
                     TextFieldRow(title: "Wallet:", content: $globalAppState.forcedWalletAddress)
                     TextFieldRow(title: "Push:", content: $globalAppState.pushServiceEndpoint)
@@ -131,11 +136,6 @@ struct DebugMenuView: View {
                             Text(environment.rawValue)
                         }
                     }
-                }
-
-                Section(header: Text("Socket status")) {
-                    Text("Latest status: \(viewModel.latestSocketUpdate)")
-                    Text("Current state: \(viewModel.socketState)")
                 }
             }
             .navigationBarTitle("Debug Menu", displayMode: .inline)

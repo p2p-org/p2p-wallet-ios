@@ -15,6 +15,15 @@ public enum RealtimeSolanaAccountState: Equatable {
     case running
     case stop(error: Error?)
 
+    public var rawString: String {
+        switch self {
+        case .initialising: return "Initialising"
+        case .connecting: return "Connecting"
+        case .running: return "Running"
+        case .stop: return "Stop"
+        }
+    }
+
     public static func == (lhs: RealtimeSolanaAccountState, rhs: RealtimeSolanaAccountState) -> Bool {
         switch (lhs, rhs) {
         case (.initialising, initialising):
@@ -35,8 +44,11 @@ public protocol RealtimeSolanaAccountService {
     var owner: String { get }
 
     var update: AnyPublisher<SolanaAccount, Never> { get }
-    var state: RealtimeSolanaAccountState { get }
 
+    var state: RealtimeSolanaAccountState { get }
+    var statePublisher: AnyPublisher<RealtimeSolanaAccountState, Never> { get }
+
+    func reconnect(with proxy: ProxyConfiguration?)
     func connect()
 }
 
@@ -45,6 +57,7 @@ final class RealtimeSolanaAccountServiceImpl: RealtimeSolanaAccountService {
 
     let apiClient: SolanaAPIClient
     let tokensService: SolanaTokensRepository
+    var proxyConfiguration: ProxyConfiguration?
     let errorObserver: ErrorObserver
 
     var accountsSubject: PassthroughSubject<SolanaAccount, Never> = .init()
@@ -53,7 +66,11 @@ final class RealtimeSolanaAccountServiceImpl: RealtimeSolanaAccountService {
         accountsSubject.eraseToAnyPublisher()
     }
 
-    var state: RealtimeSolanaAccountState = .initialising
+    var stateSubject: CurrentValueSubject<RealtimeSolanaAccountState, Never> = .init(.initialising)
+
+    var statePublisher: AnyPublisher<RealtimeSolanaAccountState, Never> { stateSubject.eraseToAnyPublisher() }
+
+    var state: RealtimeSolanaAccountState { stateSubject.value }
 
     let eventLoopGroup = MultiThreadedEventLoopGroup(numberOfThreads: 2)
 
@@ -63,11 +80,13 @@ final class RealtimeSolanaAccountServiceImpl: RealtimeSolanaAccountService {
         owner: String,
         apiClient: SolanaAPIClient,
         tokensService: SolanaTokensRepository,
+        proxyConfiguration: ProxyConfiguration?,
         errorObserver: ErrorObserver
     ) {
         self.owner = owner
         self.apiClient = apiClient
         self.tokensService = tokensService
+        self.proxyConfiguration = proxyConfiguration
         self.errorObserver = errorObserver
     }
 
@@ -76,15 +95,28 @@ final class RealtimeSolanaAccountServiceImpl: RealtimeSolanaAccountService {
         _ = ws?.close()
     }
 
+    func reconnect(with proxy: ProxyConfiguration?) {
+        _ = ws?.close()
+
+        proxyConfiguration = proxy
+        connect()
+    }
+
     /// Websocket event loop
     var ws: WebSocket?
 
     /// Start web socket
     func connect() {
+        if let ws, ws.isClosed == false {
+            return
+        }
+
         _ = ws?.close()
 
-        _ = WebSocket.connect(
+        let connecting = WebSocket.connect(
             to: apiClient.endpoint.socketUrl,
+            proxy: proxyConfiguration?.address,
+            proxyPort: proxyConfiguration?.port,
             on: eventLoopGroup
         ) { [weak self, errorObserver] ws in
             self?.ws = ws
@@ -134,15 +166,25 @@ final class RealtimeSolanaAccountServiceImpl: RealtimeSolanaAccountService {
                 }
             }
         }
+
+        connecting.whenComplete { [weak self] result in
+            switch result {
+            case .success:
+                return
+            case let .failure(error):
+                guard let self else { return }
+                self.acceptState(nil, self.state, .stop(error: error))
+            }
+        }
     }
 
     /// Accept new state that service emit from base on ws.
     func acceptState(
-        _ ws: WebSocket,
+        _ ws: WebSocket?,
         _ prevState: RealtimeSolanaAccountState,
         _ nextState: RealtimeSolanaAccountState
     ) {
-        state = nextState
+        stateSubject.send(nextState)
 
         switch nextState {
         case .initialising:
@@ -156,6 +198,7 @@ final class RealtimeSolanaAccountServiceImpl: RealtimeSolanaAccountService {
                 getLatestAccountsState()
             }
 
+            guard let ws else { return }
             let error = subscribeEvents(ws: ws)
             if let error {
                 acceptState(ws, .running, .stop(error: error))

@@ -434,6 +434,7 @@ extension Resolver: ResolverRegistering {
                 tokensService: resolve(),
                 priceService: resolve(),
                 fiat: Defaults.fiat.rawValue,
+                proxyConfiguration: nil,
                 errorObservable: resolve()
             )
         }
