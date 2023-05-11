@@ -74,8 +74,6 @@ class RemoteConfigWarmupProcess: WarmupProcess {
             }
         #endif
 
-        Defaults.isCoingeckoProviderDisabled = !RemoteConfig.remoteConfig()
-            .configValue(forKey: Feature.coinGeckoPriceProvider.rawValue).boolValue
     }
 
     private func changeEndpointIfNeeded(currentEndpoints: [APIEndPoint]) {

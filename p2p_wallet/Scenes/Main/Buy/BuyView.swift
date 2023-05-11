@@ -35,7 +35,7 @@ struct BuyView: View, KeyboardVisibilityReadable {
                     Spacer()
                     Button(
                         action: {
-                            viewModel.changeTheRegionClicked()
+                            viewModel.flagClicked()
                         },
                         label: {
                             HStack(spacing: 10) {
