@@ -270,6 +270,16 @@ extension Resolver: ResolverRegistering {
             .implements(JWTTokenValidator.self)
 
         register { Web3(rpcURL: "https://eth-mainnet.g.alchemy.com/v2/a3NxxBPY4WUcsXnivRq-ikYKXFB67oXm") }
+        
+        // SwapErrorLogger
+        register {
+            SwapErrorLoggerImpl(
+                endpoint: URL(
+                    string: .secretConfig("SWAP_ERROR_LOGGER_ENDPOINT")!
+                )!
+            )
+        }
+            .implements(SwapErrorLogger.self)
     }
 
     /// Session scope: Live when user is authenticated
