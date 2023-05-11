@@ -51,9 +51,8 @@ final class SettingsViewModel: BaseViewModel, ObservableObject {
     @Published var name: String = ""
     @Published var isNameEnabled: Bool = true
 
-    private var appVersion: String { Bundle.main.infoDictionary?["CFBundleShortVersionString"] as? String ?? "" }
     var appInfo: String {
-        "\(appVersion)\(Environment.current != .release ? ("(" + Bundle.main.buildVersionNumber + ")" + " " + Environment.current.description) : "")"
+        AppInfo.appVersionDetail
     }
 
     override init() {
@@ -165,20 +164,5 @@ extension SettingsViewModel {
         case recoveryKit
         case yourPin
         case network
-    }
-}
-
-// MARK: - Environment Description
-
-private extension Environment {
-    var description: String {
-        switch self {
-        case .debug:
-            return "Debug"
-        case .test:
-            return "Test"
-        case .release:
-            return "Release"
-        }
     }
 }

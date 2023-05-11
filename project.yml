@@ -208,11 +208,9 @@ targets:
             name: "[SCRIPT] Setup Firebase Environment GoogleService-Info.plist"
 
           - script: |
-                  if [ "${CONFIGURATION}" = "Release" ]; then
-                    echo "Swiftgen is disabled in Release mode"
-                    exit 0
+                  if [ "${CONFIGURATION}" == "Debug" ]; then
+                    /opt/homebrew/bin/swiftgen config run --config ${PWD}/swiftgen.yml
                   fi
-                  /opt/homebrew/bin/swiftgen config run --config ${PWD}/swiftgen.yml
             name: "[SCRIPT] Swiftgen Run"
         postBuildScripts:
           - script: |
