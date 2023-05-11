@@ -10,9 +10,10 @@ struct WormholeClaimView: View {
         VStack(spacing: 0) {
             // Title
             Text(L10n.confirmClaimingTheTokens)
-                .fontWeight(.medium)
+                .fontWeight(.bold)
                 .apply(style: .title2)
-                .padding(.top, 16)
+                .multilineTextAlignment(.center)
+                .padding(.top, 40)
 
             // Logo
 
@@ -45,7 +46,7 @@ struct WormholeClaimView: View {
             // Amount in crypto
             Text(viewModel.model.title)
                 .fontWeight(.bold)
-                .apply(style: .largeTitle)
+                .apply(style: .title1)
                 .multilineTextAlignment(.center)
                 .padding(.top, 16)
 
