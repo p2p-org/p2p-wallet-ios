@@ -19,7 +19,10 @@ enum TransactionDetailViewModelOutput {
 
 class TransactionDetailViewModel: BaseViewModel, ObservableObject {
     @Injected private var transactionHandler: TransactionHandler
+
     @Published var rendableTransaction: any RenderableTransactionDetail
+
+    @Published var forceHidingStatus: Bool = false
 
     let style: TransactionDetailStyle
 
@@ -78,6 +81,14 @@ class TransactionDetailViewModel: BaseViewModel, ObservableObject {
         rendableTransaction = RendableGeneralUserActionTransaction.resolve(userAction: userAction)
 
         super.init()
+
+        // Hide status in case transaction is ready
+        switch rendableTransaction.status {
+        case .succeed:
+            forceHidingStatus = true
+        default:
+            forceHidingStatus = false
+        }
 
         userActionService
             .observer(id: userAction.id)
