@@ -20,7 +20,7 @@ struct ChooseItemView<Content: View>: View {
                 // Search field
                 SearchField(
                     searchText: $viewModel.searchText,
-                    isSearchFieldFocused: $viewModel.isSearchFieldFocused
+                    isFocused: $viewModel.isSearchFieldFocused
                 )
                 .padding(.horizontal, 16)
                 .padding(.top, 16)
@@ -35,6 +35,12 @@ struct ChooseItemView<Content: View>: View {
                 }
             }
             .ignoresSafeArea(.keyboard)
+            .onAppear {
+                viewModel.isSearchFieldFocused = true
+            }
+            .onDisappear {
+                viewModel.isSearchFieldFocused = false
+            }
         }
     }
 

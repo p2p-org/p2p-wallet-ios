@@ -78,11 +78,6 @@ final class JupiterSwapCoordinator: Coordinator<Void> {
         let view = SwapView(viewModel: viewModel)
         let controller: UIViewController = view.asViewController(withoutUIKitNavBar: false)
         controller.hidesBottomBarWhenPushed = params.hideTabBar
-//        if params.openKeyboardOnStart {
-//            controller = KeyboardAvoidingViewController(rootView: view)
-//        } else {
-//            controller = UIHostingController(rootView: view)
-//        }
         navigationController.pushViewController(controller, animated: true)
         style(controller: controller)
 
