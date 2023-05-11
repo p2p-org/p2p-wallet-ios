@@ -1266,7 +1266,7 @@
 "Choose network" = "Choisissez le réseau";
 "Claim" = "Réclamation";
 "You will get" = "Tu auras";
-"Claiming..." = "Affirmant...";
+"Claiming" = "Affirmant";
 "Send crypto via link" = "Envoyer la crypto via un lien";
 "Sending via link" = "Envoi par lien";
 "Creating your link" = "Création de votre lien";
