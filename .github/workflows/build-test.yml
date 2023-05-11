@@ -57,12 +57,13 @@ jobs:
 
       - name: Change SourcePackages directory
         run: |
+          mkdir -p SourcePackages/checkouts
           sed -i '' 's/\${BUILD_DIR%Build\/\*}SourcePackages/\${PWD}\/SourcePackages/g' project.yml
         shell: bash
 
       - uses: actions/cache@v3
         with:
-          path: SourcePackages
+          path: SourcePackages/checkouts
           key: ${{ runner.os }}-spm-${{ hashFiles('p2p_wallet.xcodeproj/project.xcworkspace/xcshareddata/swiftpm/Package.resolved') }}
           restore-keys: |
             ${{ runner.os }}-spm-
