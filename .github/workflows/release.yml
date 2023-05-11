@@ -34,8 +34,7 @@ jobs:
 
       - name: Change SourcePackages directory
         run: |
-          brew install gnu-sed
-          gsed -i 's/\${BUILD_DIR%Build\/\*}SourcePackages/\${PWD}\/SourcePackages/g' project.yml
+          sed -i '' 's/\${BUILD_DIR%Build\/\*}SourcePackages/\${PWD}\/SourcePackages/g' project.yml
         shell: bash
 
       - uses: actions/cache@v3
