@@ -11,7 +11,10 @@ jobs:
   deploy:
     name: Deploying to Testflight
     runs-on: macos-13
-
+    env:
+      # Override fastlane tooling variables
+      FASTLANE_XCODEBUILD_SETTINGS_TIMEOUT: 180
+      FASTLANE_XCODEBUILD_SETTINGS_RETRIES: 10
     steps:
 
       - uses: maxim-lobanov/setup-xcode@v1

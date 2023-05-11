@@ -20,6 +20,10 @@ jobs:
   upload_build_for_testing:
     name: Manually upload build for testing
     runs-on: ${{ (inputs.with_high_priority && fromJSON('[ "self-hosted", "macOS" ]')) || 'macos-13' }} 
+    env:
+      # Override fastlane tooling variables
+      FASTLANE_XCODEBUILD_SETTINGS_TIMEOUT: 180
+      FASTLANE_XCODEBUILD_SETTINGS_RETRIES: 10
     steps:
 
       - uses: maxim-lobanov/setup-xcode@v1
