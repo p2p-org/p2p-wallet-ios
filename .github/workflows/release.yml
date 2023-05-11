@@ -32,6 +32,11 @@ jobs:
           curl -o ./p2p_wallet/Config.xcconfig ${{ secrets.XCCONFIG_URL }}
         shell: bash
 
+      - name: Change SourcePackages directory
+        run: |
+          gsed -i 's/\${BUILD_DIR%Build\/\*}SourcePackages/SourcePackages/g' project.yml
+        shell: bash
+
       - uses: actions/cache@v3
         with:
           path: SourcePackages
