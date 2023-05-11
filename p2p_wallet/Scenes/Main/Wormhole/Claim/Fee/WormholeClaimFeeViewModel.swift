@@ -40,8 +40,9 @@ class WormholeClaimFeeViewModel: BaseViewModel, ObservableObject {
             )
         )
 
+        let wormholeAPI: WormholeAPI = Resolver.resolve()
         let freeFeeLimit = AsyncValue<String?>(initialItem: nil) {
-            let value = try await wormholeAPI.api.getEthereumFreeFeeLimit()
+            let value = try await wormholeAPI.getEthereumFreeFeeLimit()
             return "$ \(value)"
         }
 
