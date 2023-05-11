@@ -57,6 +57,7 @@ jobs:
 
       - name: Change SourcePackages directory
         run: |
+          brew install gnu-sed
           gsed -i 's/\${BUILD_DIR%Build\/\*}SourcePackages/SourcePackages/g' project.yml
         shell: bash
 
