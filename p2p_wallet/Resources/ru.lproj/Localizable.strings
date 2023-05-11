@@ -1264,7 +1264,7 @@
 "Choose network" = "Выберите сеть";
 "Claim" = "Требовать";
 "You will get" = "Ты получишь";
-"Claiming..." = "Заявка...";
+"Claiming" = "Заявка";
 "Send crypto via link" = "Отправить криптовалюту по ссылке";
 "Sending via link" = "Отправка по ссылке";
 "Creating your link" = "Создание вашей ссылки";
