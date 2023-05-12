@@ -51,7 +51,11 @@ final class ChooseItemViewModel: BaseViewModel, ObservableObject {
                     self.notifications.showDefaultErrorNotification()
                 }
             }
-            self.isLoading = false
+            
+            await MainActor.run { [weak self] in
+                guard let self else { return }
+                self.isLoading = false
+            }
         }
 
         $searchText
