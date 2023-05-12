@@ -1,10 +1,3 @@
-//
-//  WormholeSendFeesView.swift
-//  p2p_wallet
-//
-//  Created by Giang Long Tran on 24.03.2023.
-//
-
 import KeyAppUI
 import Send
 import SwiftUI
@@ -59,6 +52,9 @@ struct WormholeSendFeesView: View {
             .padding(.top, 16)
 
             Spacer()
+        }
+        .onReceive(NotificationCenter.default.publisher(for: UIApplication.didBecomeActiveNotification)) { (_) in
+            UIApplication.shared.keyWindow?.endEditing(true)
         }
     }
 }
