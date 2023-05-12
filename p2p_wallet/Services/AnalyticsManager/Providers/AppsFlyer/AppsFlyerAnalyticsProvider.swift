@@ -28,4 +28,6 @@ final class AppsFlyerAnalyticsProvider: NSObject, AnalyticsProvider {
     }
     
     func logParameter(_ parameter: AnalyticsParameter) {}
+    
+    func setUser(_ user: AnalyticsProviderUser?) {}
 }

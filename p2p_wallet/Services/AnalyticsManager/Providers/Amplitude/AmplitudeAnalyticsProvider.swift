@@ -31,4 +31,9 @@ final class AmplitudeAnalyticsProvider: AnalyticsProvider {
         else { return }
         Amplitude.instance().identify(identify)
     }
+    
+    func setUser(_ user: AnalyticsProviderUser?) {
+        guard let id = user?.id else { return }
+        Amplitude.instance().setUserId(id)
+    }
 }

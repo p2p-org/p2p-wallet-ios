@@ -18,4 +18,5 @@ final class FirebaseAnalyticsProvider: AnalyticsProvider {
     }
     
     func logParameter(_ parameter: AnalyticsParameter) {}
+    func setUser(_ user: AnalyticsProviderUser?) {}
 }

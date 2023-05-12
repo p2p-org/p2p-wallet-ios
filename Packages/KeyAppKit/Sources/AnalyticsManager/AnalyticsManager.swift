@@ -10,6 +10,7 @@ import Foundation
 public protocol AnalyticsManager {
     func log(event: AnalyticsEvent)
     func log(parameter: AnalyticsParameter)
+    func setUser(_ user: AnalyticsProviderUser?)
 }
 
 public class AnalyticsManagerImpl: AnalyticsManager {
@@ -38,6 +39,12 @@ public class AnalyticsManagerImpl: AnalyticsManager {
             
             // log event to provider
             provider.logParameter(parameter)
+        }
+    }
+    
+    public func setUser(_ user: AnalyticsProviderUser?) {
+        providers.forEach { provider in
+            provider.setUser(user)
         }
     }
 }

@@ -27,7 +27,6 @@ final class AppCoordinator: Coordinator<Void> {
     @Injected var notificationService: NotificationService
     @Injected var userWalletManager: UserWalletManager
     @Injected var createNameService: CreateNameService
-    @Injected private var amplitudeAnalyticsProvider: AmplitudeAnalyticsProvider
 
     // MARK: - Properties
 
@@ -68,7 +67,16 @@ final class AppCoordinator: Coordinator<Void> {
                 .receive(on: RunLoop.main)
                 .sink { [unowned self] wallet, _ in
                     if let wallet {
-                        amplitudeAnalyticsProvider.setUserId(wallet.account.publicKey.base58EncodedString)
+                        // user info for analytics provider
+                        let user = AnalyticsProviderUser(
+                            id: wallet.account.publicKey.base58EncodedString,
+                            name: wallet.name
+                        )
+                        
+                        // identify user
+                        analyticsManager.setUser(user)
+                        
+                        // navigate user
                         if walletCreated, available(.onboardingUsernameEnabled) {
                             walletCreated = false
                             navigateToCreateUsername()
@@ -76,7 +84,7 @@ final class AppCoordinator: Coordinator<Void> {
                             navigateToMain()
                         }
                     } else {
-                        amplitudeAnalyticsProvider.setUserId(nil)
+                        analyticsManager.setUser(nil)
                         navigateToOnboardingFlow()
                     }
                 }
