@@ -37,11 +37,19 @@ final class ChooseItemViewModel: BaseViewModel, ObservableObject {
                         items: section.items.filter { $0.id != chosenToken.id }
                     )
                 }
-                self.allItems = self.service.sort(items: dataWithoutChosen)
-                self.sections = self.allItems
+                
+                await MainActor.run { [weak self] in
+                    guard let self else { return }
+                    self.allItems = self.service.sort(items: dataWithoutChosen)
+                    self.sections = self.allItems
+                }
+                
             }
             catch {
-                self.notifications.showDefaultErrorNotification()
+                await MainActor.run { [weak self] in
+                    guard let self else { return }
+                    self.notifications.showDefaultErrorNotification()
+                }
             }
             self.isLoading = false
         }
