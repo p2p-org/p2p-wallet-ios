@@ -20,6 +20,19 @@ class WormholeClaimFeeViewModel: BaseViewModel, ObservableObject {
 
     override init() {
         super.init()
+
+        let wormholeAPI: WormholeAPI = Resolver.resolve()
+        let freeFeeLimit = AsyncValue<String?>(initialItem: nil) {
+            let value = try await wormholeAPI.getEthereumFreeFeeLimit()
+            return "$ \(value)"
+        }
+
+        freeFeeLimit.fetch()
+        freeFeeLimit
+            .statePublisher
+            .assignWeak(to: \.freeFeeLimit, on: self)
+            .store(in: &subscriptions)
+        
         analyticsManager.log(event: .claimBridgesFeeClick)
     }
 
@@ -39,18 +52,6 @@ class WormholeClaimFeeViewModel: BaseViewModel, ObservableObject {
                 wormholeBridgeAndTrxFee: wormholeBridgeAndTrxFee
             )
         )
-
-        let wormholeAPI: WormholeAPI = Resolver.resolve()
-        let freeFeeLimit = AsyncValue<String?>(initialItem: nil) {
-            let value = try await wormholeAPI.getEthereumFreeFeeLimit()
-            return "$ \(value)"
-        }
-
-        freeFeeLimit.fetch()
-        freeFeeLimit
-            .statePublisher
-            .assignWeak(to: \.freeFeeLimit, on: self)
-            .store(in: &subscriptions)
     }
 
     convenience init(bundle: AsyncValue<WormholeBundle?>) {
