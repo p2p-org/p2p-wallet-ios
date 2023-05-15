@@ -27,6 +27,15 @@ struct PendingTransaction {
             }
         }
         
+        var isSent: Bool {
+            switch self {
+            case .sending:
+                return false
+            default:
+                return true
+            }
+        }
+        
         var isFinalized: Bool {
             switch self {
             case .finalized:
