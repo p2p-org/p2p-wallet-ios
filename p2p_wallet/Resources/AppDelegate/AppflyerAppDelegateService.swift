@@ -57,35 +57,34 @@ final class AppflyerAppDelegateService: NSObject, AppDelegateService {
                 return
             }
         })
-        if #available(iOS 14, *) {
-            ATTrackingManager.requestTrackingAuthorization { status in
-                switch status {
-                case .denied:
-                    DefaultLogManager.shared.log(
-                        event: "AppsFlyerLib ATTrackingManager AuthorizationSatus is denied",
-                        logLevel: .info
-                    )
-                case .notDetermined:
-                    DefaultLogManager.shared.log(
-                        event: "AppsFlyerLib ATTrackingManager AuthorizationSatus is notDetermined",
-                        logLevel: .debug
-                    )
-                case .restricted:
-                    DefaultLogManager.shared.log(
-                        event: "AppsFlyerLib ATTrackingManager AuthorizationSatus is restricted",
-                        logLevel: .info
-                    )
-                case .authorized:
-                    DefaultLogManager.shared.log(
-                        event: "AppsFlyerLib ATTrackingManager AuthorizationSatus is authorized",
-                        logLevel: .debug
-                    )
-                @unknown default:
-                    DefaultLogManager.shared.log(
-                        event: "AppsFlyerLib ATTrackingManager Invalid authorization status",
-                        logLevel: .error
-                    )
-                }
+        
+        ATTrackingManager.requestTrackingAuthorization { status in
+            switch status {
+            case .denied:
+                DefaultLogManager.shared.log(
+                    event: "AppsFlyerLib ATTrackingManager AuthorizationSatus is denied",
+                    logLevel: .info
+                )
+            case .notDetermined:
+                DefaultLogManager.shared.log(
+                    event: "AppsFlyerLib ATTrackingManager AuthorizationSatus is notDetermined",
+                    logLevel: .debug
+                )
+            case .restricted:
+                DefaultLogManager.shared.log(
+                    event: "AppsFlyerLib ATTrackingManager AuthorizationSatus is restricted",
+                    logLevel: .info
+                )
+            case .authorized:
+                DefaultLogManager.shared.log(
+                    event: "AppsFlyerLib ATTrackingManager AuthorizationSatus is authorized",
+                    logLevel: .debug
+                )
+            @unknown default:
+                DefaultLogManager.shared.log(
+                    event: "AppsFlyerLib ATTrackingManager Invalid authorization status",
+                    logLevel: .error
+                )
             }
         }
     }

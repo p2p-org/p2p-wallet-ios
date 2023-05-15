@@ -12,7 +12,7 @@ import FeeRelayerSwift
 struct SentryUndefinedError: Error, CustomNSError {
     let error: Swift.Error
     public var errorUserInfo: [String : Any] {
-        let message = "\(error)"
+        let message = "\(String(reflecting: error))"
         return [NSDebugDescriptionErrorKey: message ]
     }
 }
