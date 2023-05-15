@@ -74,7 +74,7 @@ final class SwapInputViewModel: BaseViewModel, ObservableObject {
             .store(in: &subscriptions)
 
         $amount
-            .debounce(for: 0.4, scheduler: DispatchQueue.main)
+            .debounce(for: isFromToken ? 0.4 : 0.0, scheduler: DispatchQueue.main)
             .sinkAsync { [weak self] value in
                 guard let self, self.isStateReady(status: self.currentState.status) else { return }
                 self.logChange(amount: value)
@@ -129,6 +129,8 @@ private extension SwapInputViewModel {
             isLoading = isFromToken ? false : true
         case .switching:
             isLoading = true
+        case .creatingSwapTransaction:
+            isAmountLoading = (available(.swapTransactionSimulationEnabled) && !isFromToken) ? true : false
         default:
             isLoading = false
             isAmountLoading = false
@@ -136,7 +138,14 @@ private extension SwapInputViewModel {
     }
 
     func updateAmountTo(state: JupiterSwapState) {
+        // Do not update amount if it is in progress
         guard state.status != .loadingAmountTo else { return }
+
+        // If simulation is on, we should not allow amount update while transaction is created
+        if available(.swapTransactionSimulationEnabled) && state.status == .creatingSwapTransaction {
+            return
+        }
+
         if amount != state.amountTo {
             amount = state.amountTo
         }
@@ -203,7 +212,11 @@ private extension SwapInputViewModel {
         if isFromToken {
             analyticsManager.log(event: .swapChangingValueTokenA(tokenAName: token.token.symbol, tokenAValue: amount))
         } else {
-            analyticsManager.log(event: .swapChangingValueTokenB(tokenBName: token.token.symbol, tokenBValue: amount))
+            analyticsManager.log(event: .swapChangingValueTokenB(
+                tokenBName: token.token.symbol,
+                tokenBValue: amount,
+                transactionSimulation: available(.swapTransactionSimulationEnabled))
+            )
         }
     }
 }
