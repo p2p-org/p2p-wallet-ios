@@ -406,7 +406,10 @@ private extension SwapViewModel {
             route: route,
             account: account,
             swapTransaction: currentState.swapTransaction,
-            services: stateMachine.services
+            services: stateMachine.services,
+            analyticHandler: { [weak self] signature in
+                self?.logSwapApprove(signature: signature)
+            }
         )
         
         // delegate work to transaction handler
