@@ -220,8 +220,9 @@ enum JupiterSwapBusinessLogic {
                 return state.error(.createTransactionFailed)
             }
 
-            var availableRoutes = state.routes
-            if let index = availableRoutes.firstIndex(where: { $0.id == route.id }), index == 0 {
+            if available(.swapTransactionSimulationEnabled), state.routes.firstIndex(where: { $0.id == route.id }) == 0 {
+
+                var availableRoutes = state.routes
                 var swapTransaction: String?
                 var failedRoutes = [Route]()
                 for availableRoute in availableRoutes {

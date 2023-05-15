@@ -262,7 +262,8 @@ private extension SwapViewModel {
         case .requiredInitialize, .initializing, .loadingTokenTo, .loadingAmountTo, .switching:
             arePricesLoading = true
         case .creatingSwapTransaction:
-            arePricesLoading = false
+            // We need to show loading if simulation is happening
+            arePricesLoading = available(.swapTransactionSimulationEnabled)
         case .ready:
             arePricesLoading = false
         case .error:
