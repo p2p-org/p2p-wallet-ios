@@ -22,12 +22,6 @@ extension SolanaError: LocalizedError {
                 message = reason.localized()
             }
             return message
-        case let .invalidResponse(responseError):
-            var string = L10n.responseError
-            if let description = responseError.message {
-                string = description.localized()
-            }
-            return string
         case let .transactionError(transactionError, _):
             return transactionError.snakeCaseEncoded
         // TODO: Check
@@ -49,6 +43,25 @@ extension SolanaError: LocalizedError {
             return L10n.error
         default:
             return L10n.error
+        }
+    }
+}
+
+extension SolanaSwift.APIClientError: LocalizedError {
+    public var errorDescription: String? {
+        switch self {
+        case .cantEncodeParams:
+            return L10n.error
+        case .invalidAPIURL:
+            return L10n.invalidURL
+        case .invalidResponse:
+            return L10n.responseError
+        case .responseError(let responseError):
+            var string = L10n.responseError
+            if let description = responseError.message {
+                string = description.localized()
+            }
+            return string
         }
     }
 }

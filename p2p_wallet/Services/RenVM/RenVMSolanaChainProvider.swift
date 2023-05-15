@@ -115,12 +115,12 @@ private class RenVMFeeRelayerSolanaBlockchainClient: SolanaBlockchainClient {
                         currency: PublicKey.renBTCMint.base58EncodedString
                     )
                 )
-            } catch SolanaError.invalidResponse(let response) {
+            } catch SolanaSwift.APIClientError.responseError(let response) {
                 // FIXME: - temporarily fix by converting HTTPClientError to SolanaError
                 if response.data?.logs?.contains(where: \.isAlreadyInUseLog) == true {
                     throw RenVMError("Already in use")
                 }
-                throw SolanaError.invalidResponse(response)
+                throw SolanaSwift.APIClientError.responseError(response)
             }
         }
         
@@ -130,7 +130,7 @@ private class RenVMFeeRelayerSolanaBlockchainClient: SolanaBlockchainClient {
         {
             do {
                 return try await blockchainClient.sendTransaction(preparedTransaction: preparedTransaction)
-            } catch SolanaError.invalidResponse(let response) where response.data?.logs != nil {
+            } catch SolanaSwift.APIClientError.responseError(let response) where response.data?.logs != nil {
                 print(response)
                 let logs = response.data!.logs!
                 
@@ -143,7 +143,7 @@ private class RenVMFeeRelayerSolanaBlockchainClient: SolanaBlockchainClient {
                     return try await sendTransaction(preparedTransaction: preparedTransaction) // retry
                 }
                 // re throw other error
-                throw SolanaError.invalidResponse(response)
+                throw SolanaSwift.APIClientError.responseError(response)
             } catch APIClientError.responseError(let response) where response.message == "Transaction simulation failed: Attempt to debit an account but found no record of a prior credit." {
                 try await Task.sleep(nanoseconds: 3_000_000) // skip for 3s
                 return try await sendTransaction(preparedTransaction: preparedTransaction)

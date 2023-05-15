@@ -457,7 +457,7 @@ CHECKOUT OPTIONS:
     :commit: eee1d66d7ef71b892e72c8bc8d84fcdfeaab1918
     :git: https://github.com/p2p-org/Down.git
   FeeRelayerSwift:
-    :commit: e7bffb588e2afb457ba2fd121f5dbabb699cd17f
+    :commit: 5e60c88c26f18f8d89345a31d1474f1cbe3b60b6
     :git: https://github.com/p2p-org/FeeRelayerSwift.git
   History:
     :commit: eee146a9e45a0d5def5b2aec9c96ec6fee8172d9
@@ -493,7 +493,7 @@ CHECKOUT OPTIONS:
     :commit: eee146a9e45a0d5def5b2aec9c96ec6fee8172d9
     :git: https://github.com/p2p-org/key-app-kit-swift.git
   OrcaSwapSwift:
-    :commit: 39218f52a58e3481cbb32df64b95f2e6d0875ee7
+    :commit: c15012e45f18cc8e553efaa1d24e34a57c99d274
     :git: https://github.com/p2p-org/OrcaSwapSwift.git
   P2PSwift:
     :commit: eee146a9e45a0d5def5b2aec9c96ec6fee8172d9
@@ -517,7 +517,7 @@ CHECKOUT OPTIONS:
     :commit: eee146a9e45a0d5def5b2aec9c96ec6fee8172d9
     :git: https://github.com/p2p-org/key-app-kit-swift.git
   SolanaSwift:
-    :commit: bf3cee884bbca90defc9792a5267a8c6b0b1e0f6
+    :commit: 46a62174dde22ec4cfd8e909ae12c037912f2395
     :git: https://github.com/p2p-org/solana-swift.git
   Solend:
     :commit: eee146a9e45a0d5def5b2aec9c96ec6fee8172d9
