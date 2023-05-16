@@ -82,6 +82,8 @@ final class SwapViewModel: BaseViewModel, ObservableObject {
     }
 
     func update() async {
+        guard stateMachine.currentState.swapTransaction != nil else { return }
+        // Update only if swap transaction is created
         await stateMachine.accept(
             action: .update
         )
@@ -253,7 +255,6 @@ private extension SwapViewModel {
         case .error(.initializationFailed):
             initializingState = .failed
         default:
-            scheduleUpdate()
             initializingState = .success
         }
 
