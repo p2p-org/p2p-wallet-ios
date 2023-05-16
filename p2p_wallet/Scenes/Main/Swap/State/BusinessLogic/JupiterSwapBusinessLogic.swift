@@ -195,7 +195,8 @@ enum JupiterSwapBusinessLogic {
             // ready for creating transaction
             if state.status == .ready {
                 return state.modified {
-                    $0.status = .creatingSwapTransaction
+                    // Simulation is always off if route is chosen by user
+                    $0.status = .creatingSwapTransaction(isSimulationOn: false)
                 }
             }
             
@@ -208,7 +209,7 @@ enum JupiterSwapBusinessLogic {
         services: JupiterSwapServices
     ) async -> JupiterSwapState {
         do {
-            guard state.status == .creatingSwapTransaction else {
+            guard case let .creatingSwapTransaction(isSimulationOn) = state.status else {
                 return state
             }
 
@@ -220,8 +221,7 @@ enum JupiterSwapBusinessLogic {
                 return state.error(.createTransactionFailed)
             }
 
-            if available(.swapTransactionSimulationEnabled),
-                state.routes.firstIndex(where: { $0.id == route.id }) == 0 {
+            if isSimulationOn {
 
                 var availableRoutes = state.routes
                 var swapTransaction: String?
@@ -354,7 +354,7 @@ enum JupiterSwapBusinessLogic {
         
         // mark as creating swap transaction
         return state.modified {
-            $0.status = .creatingSwapTransaction
+            $0.status = .creatingSwapTransaction(isSimulationOn: available(.swapTransactionSimulationEnabled))
         }
     }
 }
