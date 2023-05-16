@@ -220,28 +220,31 @@ enum JupiterSwapBusinessLogic {
                 return state.error(.createTransactionFailed)
             }
 
-            if available(.swapTransactionSimulationEnabled), state.routes.firstIndex(where: { $0.id == route.id }) == 0 {
+            if available(.swapTransactionSimulationEnabled),
+                state.routes.firstIndex(where: { $0.id == route.id }) == 0 {
 
                 var availableRoutes = state.routes
                 var swapTransaction: String?
-                var failedRoutes = [Route]()
-                for availableRoute in availableRoutes {
-                    // Try create and simulate transaction to see if it works correctly
-                    swapTransaction = try await createAndSimulateTransaction(for: availableRoute, account: account, services: services)
 
-                    if swapTransaction == nil {
-                        failedRoutes.append(availableRoute)
-                    } else {
-                        route = availableRoute
-                        // We found the best route and do not need to create transaction anymore
+                var bestRouteIndex = 0
+                for i in 0..<availableRoutes.count {
+                    // Try create and simulate transaction to see if it works correctly
+                    swapTransaction = try await createAndSimulateTransaction(
+                        for: availableRoutes[i],
+                        account: account,
+                        services: services
+                    )
+                    
+                    if swapTransaction != nil {
+                        route = availableRoutes[i]
+                        bestRouteIndex = i
+                        // We found the best route and do not need to create and simulate transaction anymore
                         break
                     }
                 }
 
                 // Remove failed routes from the state
-                failedRoutes.forEach { failedRoute in
-                    availableRoutes.removeAll(where: { $0.id == failedRoute.id })
-                }
+                availableRoutes.removeFirst(bestRouteIndex)
 
                 if let swapTransaction {
                     return state.modified {
