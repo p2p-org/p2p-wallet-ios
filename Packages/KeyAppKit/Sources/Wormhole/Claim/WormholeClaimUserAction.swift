@@ -53,6 +53,7 @@ public struct WormholeClaimUserAction: UserAction {
     public let fees: ClaimFees
 
     public let compensationDeclineReason: CompensationDeclineReason?
+    public let bundle: WormholeBundle?
 
     public init(
         token: EthereumToken,
@@ -69,6 +70,7 @@ public struct WormholeClaimUserAction: UserAction {
         amountInFiat = bundle.resultAmount.asCurrencyAmount
         fees = bundle.fees
         compensationDeclineReason = bundle.compensationDeclineReason
+        self.bundle = bundle
     }
 
     /// Extract user action from ``BundleStatus``.
@@ -96,6 +98,7 @@ public struct WormholeClaimUserAction: UserAction {
         amountInFiat = bundleStatus.resultAmount.asCurrencyAmount
         fees = bundleStatus.fees
         compensationDeclineReason = bundleStatus.compensationDeclineReason
+        self.bundle = nil
     }
 
     /// Client side moving to next status.

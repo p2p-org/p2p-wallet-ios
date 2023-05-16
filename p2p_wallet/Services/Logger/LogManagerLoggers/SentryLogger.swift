@@ -31,6 +31,8 @@ class SentryLogger: LogManagerLogger {
             return SentryLevel.info
         case .error:
             return SentryLevel.fatal
+        case .alert:
+            return SentryLevel.fatal
         case .request, .response:
             return SentryLevel.info
         case .event:
