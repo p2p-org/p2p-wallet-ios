@@ -114,6 +114,7 @@ final class JupiterSwapCoordinator: Coordinator<Void> {
     
     func style(controller: UIViewController) {
         controller.title = L10n.swap
+        controller.navigationItem.largeTitleDisplayMode = .never
         swapSettingBarButton = UIBarButtonItem(image: .receipt, style: .plain, target: self, action: #selector(receiptButtonPressed))
         
         // show rightBarButtonItem only on successful loading

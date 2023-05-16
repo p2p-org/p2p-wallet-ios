@@ -65,6 +65,8 @@ public final class SliderButton: BEView {
     private let imageControl: UIView = UIView()
 
     private let theme: SliderButtonAppearance
+    private let softFeedback = UIImpactFeedbackGenerator(style: .soft)
+    private let heavyFeedback = UIImpactFeedbackGenerator(style: .heavy)
 
     // MARK: - Init
 
@@ -195,6 +197,7 @@ public final class SliderButton: BEView {
 
         switch sender.state {
         case .began:
+            vibrate(with: softFeedback)
             initialPoint = imageControl.frame.origin
 
         case .changed:
@@ -209,6 +212,7 @@ public final class SliderButton: BEView {
             }
 
         case .ended, .cancelled:
+            vibrate(with: softFeedback)
             if isOn && controlX >= 0 {
                 animateGradientAndControl(moveToLeft: false)
             }
@@ -317,11 +321,11 @@ public final class SliderButton: BEView {
 
     // Update isOn value if control position was changed from left to right or right to left
     private func updateIfNeeded() {
+        vibrate(with: heavyFeedback)
         let isLeft = imageControl.layer.position == Constants.position
         guard isOn == isLeft else { return }
         isOn = !isLeft
         onChanged?(!isLeft)
-        vibrate()
     }
 
     // MARK: - Gradient layer
@@ -348,11 +352,10 @@ public final class SliderButton: BEView {
             gradientLayer.backgroundColor = Asset.Colors.lime.color.cgColor
         }
         gradientLayer.cornerRadius = size.height / 2
-
     }
 
-    private func vibrate() {
-        UIImpactFeedbackGenerator(style: .light).impactOccurred()
+    private func vibrate(with generator: UIImpactFeedbackGenerator) {
+        generator.impactOccurred()
     }
 }
 
