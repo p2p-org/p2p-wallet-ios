@@ -1,15 +1,9 @@
-//
-//  File.swift
-//
-//
-//  Created by Giang Long Tran on 05.04.2023.
-//
-
 import Combine
 import FeeRelayerSwift
 import Foundation
 import KeyAppBusiness
 import KeyAppKitCore
+import KeyAppKitLogger
 import SolanaSwift
 
 public class WormholeClaimUserActionConsumer: UserActionConsumer {
@@ -214,6 +208,8 @@ public class WormholeClaimUserActionConsumer: UserActionConsumer {
                 try rawBundle.signBundle(with: keyPair)
             } catch {
                 self?.handleInternalEvent(event: .claimFailure(bundleID: action.bundleID, reason: .signingFailure))
+
+                self?.logAlert(for: action.token, pubKey: action.bundle?.userWallet ?? "", amount: "1", error: error)
             }
 
             // Send transaction
@@ -229,5 +225,27 @@ public class WormholeClaimUserActionConsumer: UserActionConsumer {
                 self?.handleInternalEvent(event: .claimFailure(bundleID: action.bundleID, reason: error))
             }
         }
+    }
+
+    private func logAlert(for aToken: EthereumToken, pubKey: String, amount: String, error: Swift.Error) {
+        let token: ClaimAlertLoggerErrorMessage.Token = .init(
+            name: aToken.name,
+            solanaMint: nil,
+            ethMint: aToken.tokenPrimaryKey,
+            claimAmount: amount
+        )
+        let claimMessageError = ClaimAlertLoggerErrorMessage(
+            tokenToClaim: token,
+            userPubkey: pubKey,
+            userEthPubkey: address ?? "",
+            platform: "iOS",// "iOS \(UIDevice.current.systemVersion)",
+            appVersion: "",//AppInfo.appVersionDetail,
+            timestamp: "\(Int64(Date().timeIntervalSince1970 * 1000))",
+            simulationError: nil,
+            bridgeSeviceError: error.readableDescription,
+            feeRelayerError: nil,
+            blockchainError: nil
+        )
+        KeyAppKitLogger.Logger.log(event: "Wormhole Claim iOS Alarm", message: claimMessageError.jsonString, logLevel: KeyAppKitLoggerLogLevel.error)
     }
 }

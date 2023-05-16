@@ -11,6 +11,7 @@ class WormholeClaimViewModel: BaseViewModel, ObservableObject {
     @Injected private var analyticsManager: AnalyticsManager
     @Injected private var reachability: Reachability
     @Injected private var notificationService: NotificationService
+    @Injected private var accountStorage: AccountStorageType
 
     let action: PassthroughSubject<Action, Never> = .init()
 
@@ -135,6 +136,38 @@ class WormholeClaimViewModel: BaseViewModel, ObservableObject {
             }
         }
     }
+
+//    private func logAlert(for account: EthereumAccount, error: Swift.Error) {
+//        let token: ClaimAlertLoggerErrorMessage.Token = .init(
+//            name: account.token.name,
+//            solanaMint: nil,
+//            ethMint: account.token.tokenPrimaryKey,
+//            claimAmount: bundle.state.value?.resultAmount.asCryptoAmount.amount.description.double?.description
+//        )
+//
+//        DefaultLogManager.shared.log(
+//            event: "Wormhole Claim iOS Alarm",
+//            logLevel: .alert,
+//            data: AlertLoggerError(
+//                title: "Wormhole Claim iOS Alarm",
+//                message:
+//                    ClaimAlertLoggerErrorMessage(
+//                        tokenToClaim: token,
+//                        userPubkey: accountStorage.account?.publicKey.base58EncodedString ?? "",
+//                        userEthPubkey: ethModel?.account.address ?? "",
+//                        platform: "iOS \(UIDevice.current.systemVersion)",
+//                        appVersion: AppInfo.appVersionDetail,
+//                        timestamp: "\(Int64(Date().timeIntervalSince1970 * 1000))",
+//                        simulationError: nil,
+//                        bridgeSeviceError: error.readableDescription,
+//                        feeRelayerError: nil,
+//                        blockchainError: nil
+//                    )
+//              )
+//        )
+//    }
+
+//    var ethModel: WormholeClaimEthereumModel? { model as? WormholeClaimEthereumModel }
 }
 
 extension WormholeClaimViewModel {
