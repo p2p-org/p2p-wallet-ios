@@ -2,6 +2,51 @@
   "object": {
     "pins": [
       {
+        "package": "abseil",
+        "repositoryURL": "https://github.com/google/abseil-cpp-binary.git",
+        "state": {
+          "branch": null,
+          "revision": "a5f16ba68913840ee5df91b8dc06f5cc063579de",
+          "version": "1.2021110200.0"
+        }
+      },
+      {
+        "package": "Amplitude",
+        "repositoryURL": "https://github.com/amplitude/Amplitude-iOS.git",
+        "state": {
+          "branch": null,
+          "revision": "e818b182f5c3d5ce5035deab90bca108175b3561",
+          "version": "8.16.0"
+        }
+      },
+      {
+        "package": "analytics-connector-ios",
+        "repositoryURL": "https://github.com/amplitude/analytics-connector-ios.git",
+        "state": {
+          "branch": null,
+          "revision": "d3d682a26ca6f4947ece2c2e627971bb41b940fa",
+          "version": "1.0.1"
+        }
+      },
+      {
+        "package": "AppAuth",
+        "repositoryURL": "https://github.com/openid/AppAuth-iOS.git",
+        "state": {
+          "branch": null,
+          "revision": "71cde449f13d453227e687458144bde372d30fc7",
+          "version": "1.6.2"
+        }
+      },
+      {
+        "package": "AppsFlyerLib",
+        "repositoryURL": "https://github.com/AppsFlyerSDK/AppsFlyerFramework",
+        "state": {
+          "branch": null,
+          "revision": "aabfaf81d95e21f711850e87c60b9ef70b2bc6c4",
+          "version": "6.9.2"
+        }
+      },
+      {
         "package": "BEPureLayout",
         "repositoryURL": "https://github.com/p2p-org/BEPureLayout.git",
         "state": {
@@ -35,6 +80,15 @@
           "branch": null,
           "revision": "eee9ad754926c40a0f7e73f152357d37b119b7fa",
           "version": "1.7.1"
+        }
+        "package": "Down",
+      },
+      {
+        "repositoryURL": "https://github.com/p2p-org/Down.git",
+        "state": {
+          "branch": "master",
+          "revision": "eee1d66d7ef71b892e72c8bc8d84fcdfeaab1918",
+          "version": null
         }
       },
       {
@@ -191,12 +245,21 @@
         }
       },
       {
+        "package": "nanopb",
+        "repositoryURL": "https://github.com/firebase/nanopb.git",
+        "state": {
+          "branch": null,
+          "revision": "819d0a2173aff699fb8c364b6fb906f7cdb1a692",
+          "version": "2.30909.0"
+        }
+      },
+      {
         "package": "OrcaSwapSwift",
         "repositoryURL": "https://github.com/p2p-org/OrcaSwapSwift.git",
         "state": {
-          "branch": null,
+          "branch": "main",
           "revision": "c15012e45f18cc8e553efaa1d24e34a57c99d274",
-          "version": "3.0.1"
+          "version": null
         }
       },
       {
@@ -236,6 +299,24 @@
         }
       },
       {
+        "package": "Reachability",
+        "repositoryURL": "https://github.com/ashleymills/Reachability.swift.git",
+        "state": {
+          "branch": null,
+          "revision": "c01bbdf2d633cf049ae1ed1a68a2020a8bda32e2",
+          "version": "5.1.0"
+        }
+      },
+      {
+        "package": "Resolver",
+        "repositoryURL": "https://github.com/hmlongco/Resolver.git",
+        "state": {
+          "branch": null,
+          "revision": "97de0b0320036607564af4a60025b48f8d041221",
+          "version": "1.5.0"
+        }
+      },
+      {
         "package": "secp256k1",
         "repositoryURL": "https://github.com/Boilertalk/secp256k1.swift.git",
         "state": {
@@ -251,6 +332,15 @@
           "branch": null,
           "revision": "cf43eac1aa12017868c257ad3854ad87a5de0758",
           "version": "7.31.5"
+        }
+      },
+      {
+        "package": "SkeletonUI",
+        "repositoryURL": "https://github.com/p2p-org/SkeletonUI.git",
+        "state": {
+          "branch": "master",
+          "revision": "98225dbb0459477dfeac063e1c7d0750102325d1",
+          "version": null
         }
       },
       {
@@ -369,6 +459,7 @@
           "revision": "cef5b3f6f11781dd4591bdd1dd0a3d22bd609334",
           "version": "1.11.0"
         }
+        "package": "Introspect",
       },
       {
         "package": "Introspect",
@@ -380,12 +471,21 @@
         }
       },
       {
+        "package": "SwiftyUserDefaults",
+        "repositoryURL": "https://github.com/sunshinejr/SwiftyUserDefaults.git",
+        "state": {
+          "branch": null,
+          "revision": "f66bcd04088582c8fbb5cb8554d577e303bae396",
+          "version": "5.3.0"
+        }
+      },
+      {
         "package": "Task_retrying",
         "repositoryURL": "https://github.com/bigearsenal/task-retrying-swift.git",
         "state": {
-          "branch": null,
+          "branch": "master",
           "revision": "208f1e8dfa93022a7d39ab5b334d5f43a934d4b1",
-          "version": "2.0.0"
+          "version": null
         }
       },
       {
