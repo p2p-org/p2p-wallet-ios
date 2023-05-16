@@ -74,13 +74,15 @@ struct WormholeClaimFeeView: View {
                         )
                     }
 
-                    WormholeFeeView(
-                        title: "Wormhole Bridge and Transaction Fee",
-                        subtitle: value.wormholeBridgeAndTrxFee.crypto,
-                        detail: value.wormholeBridgeAndTrxFee.fiat,
-                        isFree: value.wormholeBridgeAndTrxFee.isFree,
-                        isLoading: viewModel.fee.isFetching
-                    )
+                    if let bridgeAndTrxFee = value.wormholeBridgeAndTrxFee {
+                        WormholeFeeView(
+                            title: "Wormhole Bridge and Transaction Fee",
+                            subtitle: bridgeAndTrxFee.crypto,
+                            detail: bridgeAndTrxFee.fiat,
+                            isFree: bridgeAndTrxFee.isFree,
+                            isLoading: viewModel.fee.isFetching
+                        )
+                    }
                 }
             }
             .padding(.top, 16)
