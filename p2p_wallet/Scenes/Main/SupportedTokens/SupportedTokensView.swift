@@ -59,9 +59,6 @@ struct SupportedTokensView: View {
                 }
             }
         }
-        .onAppear {
-            UITextField.appearance().clearButtonMode = .whileEditing
-        }
         .background(
             Color(Asset.Colors.smoke.color)
                 .ignoresSafeArea()
