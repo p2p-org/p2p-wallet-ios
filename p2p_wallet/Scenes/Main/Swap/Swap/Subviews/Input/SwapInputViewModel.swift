@@ -129,8 +129,8 @@ private extension SwapInputViewModel {
             isLoading = isFromToken ? false : true
         case .switching:
             isLoading = true
-        case .creatingSwapTransaction:
-            isAmountLoading = (available(.swapTransactionSimulationEnabled) && !isFromToken) ? true : false
+        case let .creatingSwapTransaction(isSimulationOn):
+            isAmountLoading = !isFromToken && isSimulationOn
         default:
             isLoading = false
             isAmountLoading = false
@@ -142,7 +142,7 @@ private extension SwapInputViewModel {
         guard state.status != .loadingAmountTo else { return }
 
         // If simulation is on, we should not allow amount update while transaction is created
-        if available(.swapTransactionSimulationEnabled) && state.status == .creatingSwapTransaction {
+        if case let .creatingSwapTransaction(isSimulationOn) = state.status, isSimulationOn {
             return
         }
 
@@ -215,7 +215,7 @@ private extension SwapInputViewModel {
             analyticsManager.log(event: .swapChangingValueTokenB(
                 tokenBName: token.token.symbol,
                 tokenBValue: amount,
-                transactionSimulation: available(.swapTransactionSimulationEnabled))
+                transactionSimulation: available(.swapTransactionSimulationEnabled)) // We need to send FT value
             )
         }
     }
