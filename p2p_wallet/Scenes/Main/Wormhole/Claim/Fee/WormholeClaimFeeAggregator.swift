@@ -21,7 +21,7 @@ struct WormholeClaimFee {
 
     let accountCreationFee: Amount?
 
-    let wormholeBridgeAndTrxFee: Amount
+    let wormholeBridgeAndTrxFee: Amount?
 
     static let emptyAmount: Amount = ("", "", false)
 
@@ -52,7 +52,7 @@ class WormholeClaimFeeAggregator: DataAggregator {
 
         let networkFee: WormholeClaimFee.Amount?
         let accountCreationFee: WormholeClaimFee.Amount?
-        let wormholeBridgeAndTrxFee: WormholeClaimFee.Amount
+        let wormholeBridgeAndTrxFee: WormholeClaimFee.Amount?
 
         // Aggregating data
         if bundle.compensationDeclineReason == nil {
@@ -83,11 +83,15 @@ class WormholeClaimFeeAggregator: DataAggregator {
             }
 
             // Network fee
-            wormholeBridgeAndTrxFee = (
-                cryptoFormatter.string(amount: bundle.fees.arbiter),
-                currencyFormatter.string(amount: bundle.fees.arbiter),
-                false
-            )
+            if let arbiter = bundle.fees.arbiter {
+                wormholeBridgeAndTrxFee = (
+                    cryptoFormatter.string(amount: arbiter),
+                    currencyFormatter.string(amount: arbiter),
+                    false
+                )
+            } else {
+                wormholeBridgeAndTrxFee = nil
+            }
         }
 
         return .init(

@@ -16,7 +16,7 @@ public struct ClaimFees: Codable, Hashable, Equatable {
     public let gasInToken: TokenAmount?
 
     // Gas in ethereum network
-    public let arbiter: TokenAmount
+    public let arbiter: TokenAmount?
 
     // In same token that we user claims
     public let createAccount: TokenAmount?
@@ -30,7 +30,7 @@ public struct ClaimFees: Codable, Hashable, Equatable {
 
     public var totalInFiat: CurrencyAmount {
         gas.asCurrencyAmount
-            + arbiter.asCurrencyAmount
+            + arbiter?.asCurrencyAmount
             + createAccount?.asCurrencyAmount
     }
 }
