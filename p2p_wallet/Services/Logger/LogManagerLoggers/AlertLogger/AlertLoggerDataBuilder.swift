@@ -3,7 +3,7 @@ import Resolver
 import SolanaSwift
 
 enum AlertLoggerDataBuilder {
-    struct AlertLoggerDataBuilder {
+    struct AlertLoggerData {
         let platform: String
         let userPubkey: String
         let blockchainError: String?
@@ -14,7 +14,7 @@ enum AlertLoggerDataBuilder {
     
     static func buildLoggerData(
         error: Error
-    ) async -> AlertLoggerDataBuilder {
+    ) async -> AlertLoggerData {
         let platform = "iOS \(await UIDevice.current.systemVersion)"
         let userPubkey = Resolver.resolve(UserWalletManager.self).wallet?.account.publicKey.base58EncodedString ?? ""
         
