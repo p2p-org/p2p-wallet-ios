@@ -12,7 +12,7 @@ import FeeRelayerSwift
 struct SentryUndefinedError: Error, CustomNSError {
     let error: Swift.Error
     public var errorUserInfo: [String : Any] {
-        let message = "\(error)"
+        let message = "\(String(reflecting: error))"
         return [NSDebugDescriptionErrorKey: message ]
     }
 }
@@ -58,8 +58,6 @@ extension SolanaError: CustomNSError {
                 return message ?? "\(self)"
             case .invalidRequest(reason: let reason):
                 return reason ?? "\(self)"
-            case .invalidResponse(let response):
-                return response.jsonString ?? "\(self)"
             case .transactionError(_, logs: let logs):
                 return logs.jsonString ?? "\(self)"
             case .socket(_):
