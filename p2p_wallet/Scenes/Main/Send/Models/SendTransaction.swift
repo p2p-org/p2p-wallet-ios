@@ -105,7 +105,7 @@ struct SendTransaction: RawTransactionType {
             var feeRelayerError: String?
             switch error {
             case let error as APIClientError:
-                blockchainError = error.content
+                blockchainError = error.blockchainErrorDescription
             default:
                 feeRelayerError = "\(error)"
             }

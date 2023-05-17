@@ -50,7 +50,7 @@ struct JupiterSwapTransaction: SwapRawTransactionType {
             let content: String
             switch error {
             case let error as APIClientError:
-                content = error.content
+                content = error.blockchainErrorDescription
             default:
                 content = "\(error)"
             }
