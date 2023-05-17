@@ -7,6 +7,7 @@
 
 import Foundation
 import Resolver
+import KeyAppNetworking
 
 protocol NotificationRepository {
     typealias DeviceTokenResponse = JsonRpcResponseDto<DeviceTokenResponseDto>
@@ -16,7 +17,7 @@ protocol NotificationRepository {
 }
 
 final class NotificationRepositoryImpl: NotificationRepository {
-    @Injected private var httpClient: HttpClient
+    @Injected private var httpClient: IHttpClient
 
     func sendDeviceToken(model: DeviceTokenDto) async throws -> DeviceTokenResponse {
         do {

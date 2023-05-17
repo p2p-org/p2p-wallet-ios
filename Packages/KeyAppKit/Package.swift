@@ -28,6 +28,11 @@ let package = Package(
             name: "NameService",
             targets: ["NameService"]
         ),
+        
+        .library(
+            name: "KeyAppNetworking",
+            targets: ["KeyAppNetworking"]
+        ),
 
         // Analytics manager for wallet
         .library(
@@ -166,6 +171,8 @@ let package = Package(
             ],
             path: "Tests/IntegrationTests/NameServiceIntegrationTests"
         ),
+        
+        .target(name: "KeyAppNetworking"),
 
         // AnalyticsManager
         .target(
