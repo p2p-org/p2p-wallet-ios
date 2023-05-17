@@ -98,40 +98,27 @@ struct SendTransaction: RawTransactionType {
             return trx
         } catch {
             // send alert
-            let platform = "iOS \(await UIDevice.current.systemVersion)"
-            let userPubkey = Resolver.resolve(UserWalletManager.self).wallet?.account.publicKey.base58EncodedString ?? ""
-            
-            var blockchainError: String?
-            var feeRelayerError: String?
-            switch error {
-            case let error as APIClientError:
-                blockchainError = error.blockchainErrorDescription
-            default:
-                feeRelayerError = "\(error)"
-            }
-            
-            let appVersion = AppInfo.appVersionDetail
-            let timestamp = "\(Int64(Date().timeIntervalSince1970 * 1000))"
+            let data = await AlertLoggerDataBuilder.buildLoggerData(error: error)
             
             if isSendingViaLink {
                 sendViaLinkAlert(
                     error: error,
-                    userPubkey: userPubkey,
-                    platform: platform,
-                    blockchainError: blockchainError,
-                    feeRelayerError: feeRelayerError,
-                    appVersion: appVersion,
-                    timestamp: timestamp
+                    userPubkey: data.userPubkey,
+                    platform: data.platform,
+                    blockchainError: data.blockchainError,
+                    feeRelayerError: data.feeRelayerError,
+                    appVersion: data.appVersion,
+                    timestamp: data.timestamp
                 )
             } else {
                 sendAlert(
                     error: error,
-                    userPubkey: userPubkey,
-                    platform: platform,
-                    blockchainError: blockchainError,
-                    feeRelayerError: feeRelayerError,
-                    appVersion: appVersion,
-                    timestamp: timestamp
+                    userPubkey: data.userPubkey,
+                    platform: data.platform,
+                    blockchainError: data.blockchainError,
+                    feeRelayerError: data.feeRelayerError,
+                    appVersion: data.appVersion,
+                    timestamp: data.timestamp
                 )
             }
             
