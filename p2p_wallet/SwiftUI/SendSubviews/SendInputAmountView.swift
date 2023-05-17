@@ -1,7 +1,7 @@
 import Combine
 import KeyAppUI
-import SwiftUI
 import SolanaSwift
+import SwiftUI
 
 struct SendInputAmountView: View {
     @Binding var amountText: String
@@ -63,6 +63,7 @@ struct SendInputAmountView: View {
                                     textField.font = Constants.inputFount
                                     textField.placeholder = "0"
                                     textField.isEnabled = !isDisabled
+                                    textField.clearButtonMode = .never
                                 }
                                 .accessibilityIdentifier("input-amount")
 
@@ -98,7 +99,7 @@ struct SendInputAmountView: View {
 
                                 Text(secondaryCurrencyText)
                                     .secondaryStyle()
-                                
+
                                 Spacer()
 
                                 Text(L10n.tapToSwitchTo(secondaryCurrencyText))
