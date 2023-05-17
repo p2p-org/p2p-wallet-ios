@@ -6,12 +6,19 @@
 //
 import Foundation
 
-protocol HttpClient {
+public protocol IHttpClient {
     func sendRequest<T: Decodable>(endpoint: Endpoint, responseModel: T.Type) async throws -> T
 }
 
-final class HttpClientImpl: HttpClient {
-    func sendRequest<T: Decodable>(endpoint: Endpoint, responseModel: T.Type) async throws -> T {
+public final class HttpClient: IHttpClient {
+    
+    // MARK: - Init
+    
+    public init() {}
+    
+    // MARK: - HttpClient
+    
+    public func sendRequest<T: Decodable>(endpoint: Endpoint, responseModel: T.Type) async throws -> T {
         guard let url = URL(string: endpoint.baseURL + endpoint.path) else { throw ErrorModel.invalidURL }
 
         var request = URLRequest(url: url)
@@ -21,8 +28,6 @@ final class HttpClientImpl: HttpClient {
         if let body = endpoint.body {
             request.httpBody = body.data(using: .utf8)
         }
-        
-        print(request.cURL())
 
         let (data, response) = try await URLSession.shared.data(from: request)
         guard let response = response as? HTTPURLResponse else { throw ErrorModel.noResponse }
@@ -32,7 +37,7 @@ final class HttpClientImpl: HttpClient {
             decoder.keyDecodingStrategy = .convertFromSnakeCase
             guard let decodedResponse = try? decoder.decode(responseModel, from: data) else {
                 if let decodedErrorResponse = try? decoder.decode(JsonRpcResponseErrorDto.self, from: data) {
-                    throw decodedErrorResponse.error
+                    throw decodedErrorResponse.error ?? ErrorModel.decode
                 }
                 throw ErrorModel.decode
             }
