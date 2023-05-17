@@ -112,20 +112,7 @@ struct ClaimSentViaLinkTransaction: RawTransactionType {
             return try await solanaAPIClient.sendTransaction(transaction: serializedTransaction, configs: RequestConfiguration(encoding: "base64")!)
         } catch {
             // Prepare params
-            let platform = "iOS \(await UIDevice.current.systemVersion)"
-            let userPubkey = Resolver.resolve(UserWalletManager.self).wallet?.account.publicKey.base58EncodedString ?? ""
-            
-            var blockchainError: String?
-            var feeRelayerError: String?
-            switch error {
-            case let error as APIClientError:
-                blockchainError = error.blockchainErrorDescription
-            default:
-                feeRelayerError = "\(error)"
-            }
-            
-            let appVersion = AppInfo.appVersionDetail
-            let timestamp = "\(Int64(Date().timeIntervalSince1970 * 1000))"
+            let data = await AlertLoggerDataBuilder.buildLoggerData(error: error)
             
             // alert
             DefaultLogManager.shared.log(
@@ -137,13 +124,13 @@ struct ClaimSentViaLinkTransaction: RawTransactionType {
                         claimAmount: tokenAmount.toString(maximumFractionDigits: 9),
                         currency: token.symbol
                     ),
-                    userPubkey: userPubkey,
-                    platform: platform,
-                    appVersion: appVersion,
-                    timestamp: timestamp,
+                    userPubkey: data.userPubkey,
+                    platform: data.platform,
+                    appVersion: data.appVersion,
+                    timestamp: data.timestamp,
                     simulationError: nil,
-                    feeRelayerError: feeRelayerError,
-                    blockchainError: blockchainError
+                    feeRelayerError: data.feeRelayerError,
+                    blockchainError: data.blockchainError
                 )
                     .jsonString,
                 logLevel: .alert
