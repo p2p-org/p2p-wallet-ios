@@ -63,7 +63,6 @@ class WormholeClaimCoordinator: SmartCoordinator<WormholeClaimCoordinatorResult>
 
         let vc = UIHostingController(rootView: view)
         vc.navigationItem.largeTitleDisplayMode = .never
-        vc.title = L10n.claim(account.token.symbol)
         vc.hidesBottomBarWhenPushed = true
 
         return vc

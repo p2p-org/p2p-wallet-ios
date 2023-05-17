@@ -108,8 +108,8 @@ struct WormholeClaimView: View {
 
                         // Amount
                         Text(viewModel.model.getAmount ?? "")
-                            .fontWeight(.semibold)
-                            .apply(style: .text3)
+                            .apply(style: .label1)
+                            .foregroundColor(Color(Asset.Colors.mountain.color))
                             .skeleton(
                                 with: viewModel.model.isLoading,
                                 size: .init(width: 100, height: 24)

@@ -40,7 +40,8 @@ class WormholeClaimFeeViewModel: BaseViewModel, ObservableObject {
         receive: Amount,
         networkFee: Amount,
         accountCreationFee: Amount?,
-        wormholeBridgeAndTrxFee: Amount
+        wormholeBridgeAndTrxFee: Amount,
+        total: Amount
     ) {
         self.init()
         fee = .init(
@@ -49,7 +50,8 @@ class WormholeClaimFeeViewModel: BaseViewModel, ObservableObject {
                 receive: receive,
                 networkFee: networkFee,
                 accountCreationFee: accountCreationFee,
-                wormholeBridgeAndTrxFee: wormholeBridgeAndTrxFee
+                wormholeBridgeAndTrxFee: wormholeBridgeAndTrxFee,
+                total: total
             )
         )
     }

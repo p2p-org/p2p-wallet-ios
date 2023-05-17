@@ -1330,3 +1330,4 @@
 "We refund bridging costs for any transactions over %@" = "We refund bridging costs for any transactions over %@";
 "Total amount" = "Total amount";
 "Check available funds" = "Check available funds";
+"To send %@ to Ethereum network you have to swap it to %@" = "To send %@ to Ethereum network you have to swap it to %@";

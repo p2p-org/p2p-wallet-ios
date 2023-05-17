@@ -23,13 +23,16 @@ struct WormholeClaimFee {
 
     let wormholeBridgeAndTrxFee: Amount?
 
+    let total: Amount?
+
     static let emptyAmount: Amount = ("", "", false)
 
     static let empty: Self = .init(
         receive: Self.emptyAmount,
         networkFee: Self.emptyAmount,
         accountCreationFee: nil,
-        wormholeBridgeAndTrxFee: Self.emptyAmount
+        wormholeBridgeAndTrxFee: Self.emptyAmount,
+        total: nil
     )
 }
 
@@ -53,12 +56,18 @@ class WormholeClaimFeeAggregator: DataAggregator {
         let networkFee: WormholeClaimFee.Amount?
         let accountCreationFee: WormholeClaimFee.Amount?
         let wormholeBridgeAndTrxFee: WormholeClaimFee.Amount?
+        let total: WormholeClaimFee.Amount?
 
         // Aggregating data
         if bundle.compensationDeclineReason == nil {
             networkFee = (L10n.paidByKeyApp, L10n.free, true)
             accountCreationFee = (L10n.paidByKeyApp, L10n.free, true)
             wormholeBridgeAndTrxFee = (L10n.paidByKeyApp, L10n.free, true)
+            total = (
+                cryptoFormatter.string(amount: bundle.resultAmount),
+                currencyFormatter.string(amount: bundle.resultAmount),
+                false
+            )
         } else {
             // Network fee
             if let gasInToken = bundle.fees.gasInToken {
@@ -92,13 +101,37 @@ class WormholeClaimFeeAggregator: DataAggregator {
             } else {
                 wormholeBridgeAndTrxFee = nil
             }
+
+            // Total
+            let totalInCrypto = [
+                bundle.fees.gasInToken?.asCryptoAmount,
+                bundle.fees.arbiter?.asCryptoAmount,
+                bundle.fees.createAccount?.asCryptoAmount,
+            ]
+                .compactMap { $0 }
+                .reduce(bundle.resultAmount.asCryptoAmount, +)
+
+            let totalInFiat = [
+                bundle.fees.gasInToken?.asCurrencyAmount,
+                bundle.fees.arbiter?.asCurrencyAmount,
+                bundle.fees.createAccount?.asCurrencyAmount,
+            ]
+                .compactMap { $0 }
+                .reduce(bundle.resultAmount.asCurrencyAmount, +)
+
+            total = (
+                cryptoFormatter.string(amount: totalInCrypto),
+                currencyFormatter.string(amount: totalInFiat),
+                false
+            )
         }
 
         return .init(
             receive: receive,
             networkFee: networkFee,
             accountCreationFee: accountCreationFee,
-            wormholeBridgeAndTrxFee: wormholeBridgeAndTrxFee
+            wormholeBridgeAndTrxFee: wormholeBridgeAndTrxFee,
+            total: total
         )
     }
 }

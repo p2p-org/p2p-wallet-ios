@@ -66,6 +66,11 @@ class WormholeSendFeesViewModel: BaseViewModel, ObservableObject {
                         subtitle: adapter.arbiterFee?.crypto,
                         detail: adapter.arbiterFee?.fiat
                     ),
+                    .init(
+                        title: L10n.total,
+                        subtitle: adapter.total?.crypto,
+                        detail: adapter.total?.fiat
+                    ),
                 ].compactMap { $0 }
             }
             .store(in: &subscriptions)

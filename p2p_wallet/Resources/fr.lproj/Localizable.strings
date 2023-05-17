@@ -1364,3 +1364,4 @@
 "We refund bridging costs for any transactions over %@" = "Nous remboursons les frais de transition pour toute transaction supérieure à %@";
 "Total amount" = "Montant total";
 "Check available funds" = "Vérifier les fonds disponibles";
+"To send %@ to Ethereum network you have to swap it to %@" = "Pour envoyer %@ au réseau Ethereum, vous devez le remplacer par %@";

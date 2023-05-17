@@ -72,7 +72,7 @@ struct WormholeClaimEthereumModel: WormholeClaimModel {
         }
 
         let formattedValue = CurrencyFormatter().string(amount: currencyAmount)
-        return "~ \(formattedValue)"
+        return "≈ \(formattedValue)"
     }
 
     var claimButtonTitle: String {
@@ -134,12 +134,13 @@ struct WormholeClaimEthereumModel: WormholeClaimModel {
         }
 
         let cryptoFormatter = CryptoFormatter()
-
-        let cryptoAmount = CryptoAmount(
-            bigUIntString: resultAmount.amount,
-            token: account.token
-        )
-        return cryptoFormatter.string(amount: cryptoAmount)
+        let currencyFormatter = CurrencyFormatter()
+        
+        let formattedCryptoAmount = cryptoFormatter.string(amount: resultAmount)
+        let formattedCurrencyAmount = currencyFormatter.string(amount: resultAmount)
+        
+        return "\(formattedCryptoAmount) (≈ \(formattedCurrencyAmount))"
+        
     }
 
     var feesButtonEnable: Bool {
