@@ -203,14 +203,18 @@ struct SendTransactionStatusView_Previews: PreviewProvider {
         SendTransactionStatusView(
             viewModel: SendTransactionStatusViewModel(
                 transaction: .init(
-                    state: .zero(
-                        recipient: .init(address: "", category: .solanaAddress, attributes: .funds),
-                        token: .nativeSolana,
-                        feeToken: .nativeSolana,
-                        userWalletState: .empty,
-                        sendViaLinkSeed: nil
-                    )
-                ) { "0123abc" }
+                    isFakeSendTransaction: false,
+                    isFakeSendTransactionError: false,
+                    isFakeSendTransactionNetworkError: false,
+                    recipient: .init(address: "", category: .solanaAddress, attributes: .funds),
+                    sendViaLinkSeed: nil,
+                    amount: 0.01,
+                    amountInFiat: 0.01,
+                    walletToken: .nativeSolana(pubkey: "adfasdf", lamport: 200000000),
+                    address: "adfasdf",
+                    payingFeeWallet: .nativeSolana(pubkey: "adfasdf", lamport: 200000000),
+                    feeAmount: .init(transaction: 10000, accountBalances: 2039280)
+                )
             )
         )
     }
