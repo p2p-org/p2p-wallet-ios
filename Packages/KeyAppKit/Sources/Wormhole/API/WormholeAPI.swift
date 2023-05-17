@@ -12,8 +12,7 @@ public protocol WormholeAPI {
         userWallet: String,
         recipient: String,
         token: String?,
-        amount: String,
-        slippage: UInt8
+        amount: String
     ) async throws -> WormholeBundle
 
     func sendEthereumBundle(bundle: WormholeBundle) async throws

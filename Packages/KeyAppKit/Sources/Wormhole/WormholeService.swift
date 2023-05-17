@@ -45,8 +45,7 @@ public class WormholeService {
                 userWallet: ethereumKeypair.address,
                 recipient: solanaKeyPair.publicKey.base58EncodedString,
                 token: token,
-                amount: String(account.balance),
-                slippage: 25
+                amount: String(account.balance)
             )
 
             return bundle
