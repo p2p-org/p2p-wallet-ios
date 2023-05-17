@@ -39,6 +39,7 @@ class DefaultLogManager: LogManager {
     func log(event: String, logLevel: LogLevel, data: String? = nil, shouldLogEvent: (() -> Bool)? = nil) {
         guard shouldLogEvent?() ?? true else { return }
         providers.forEach { provider in
+            guard provider.supportedLogLevels.contains(logLevel) else { return }
             queue.async {
                 provider.log(event: event, logLevel: logLevel, data: self.dataFilter.map(string: data ?? ""))
             }
@@ -70,7 +71,7 @@ extension DefaultLogManager: SolanaSwiftLogger, FeeRelayerSwiftLogger, KeyAppKit
         case .event:
             newLogLevel = .event
         case .alert:
-            newLogLevel = .error
+            newLogLevel = .alert
         }
         
         self.providers.forEach { logger in
