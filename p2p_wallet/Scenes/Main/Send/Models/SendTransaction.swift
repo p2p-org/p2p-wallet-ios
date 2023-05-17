@@ -1,49 +1,115 @@
 import Send
 import SolanaSwift
+import Resolver
 
 struct SendTransaction: RawTransactionType {
-    let walletToken: Wallet
+    // MARK: - Properties
+
+    let isFakeSendTransaction: Bool
+    let isFakeSendTransactionError: Bool
+    let isFakeSendTransactionNetworkError: Bool
     let recipient: Recipient
+    let sendViaLinkSeed: String?
     let amount: Double
     let amountInFiat: Double
+    let walletToken: Wallet
+    let address: String
+    let payingFeeWallet: Wallet?
+    let feeAmount: FeeAmount
     
-    var payingFeeWallet: Wallet?
-    var feeAmount: FeeAmount
-    var sendViaLinkSeed: String?
+    // MARK: - Computed properties
 
-    let execution: () async throws -> TransactionID
+    var isSendingViaLink: Bool {
+        sendViaLinkSeed != nil
+    }
+    
+    var token: Token {
+        walletToken.token
+    }
 
     var mainDescription: String {
         var username: String?
         if case let .username(name, domain) = recipient.category {
             username = [name, domain].joined(separator: ".")
         }
-        return amount.toString(maximumFractionDigits: 9) + " " + walletToken.token
+        return amount.toString(maximumFractionDigits: 9) + " " + token
             .symbol + " → " + (username ?? recipient.address.truncatingMiddle(numOfSymbolsRevealed: 4))
     }
 
-    init(state: SendInputState, execution: @escaping () async throws -> TransactionID) {
-        walletToken = state.sourceWallet!
-        recipient = state.recipient
-        amount = state.amountInToken
-//        fees = [
-//            .init(type: .transactionFee, lamports: state.feeInToken.transaction, token: state.tokenFee),
-//            .init(type: .accountCreationFee(), lamports: state.feeInToken.accountBalances, token: state.tokenFee)
-//        ]
-        amountInFiat = state.amountInFiat
-        payingFeeWallet = state.feeWallet
-        feeAmount = state.feeInToken
-        sendViaLinkSeed = state.sendViaLinkSeed
-        self.execution = execution
-    }
+    // MARK: - Methods
 
     func createRequest() async throws -> String {
-        try await execution()
+        // save recipient except send via link
+        if !isSendingViaLink {
+            try? await Resolver.resolve(SendHistoryService.self).insert(recipient)
+        }
+        
+        // Fake transaction for testing
+        #if !RELEASE
+        if isFakeSendTransaction {
+            try await Task.sleep(nanoseconds: 2_000_000_000)
+            if isFakeSendTransactionError {
+                throw SolanaError.unknown
+            }
+            if isFakeSendTransactionNetworkError {
+                throw NSError(domain: "Network error", code: NSURLErrorNetworkConnectionLost)
+            }
+            // save to storage
+            if isSendingViaLink, let sendViaLinkSeed {
+                saveSendViaLinkTransaction(
+                    seed: sendViaLinkSeed,
+                    token: token,
+                    amountInToken: amount,
+                    amountInFiat: amountInFiat
+                )
+            }
+            
+            return .fakeTransactionSignature(id: UUID().uuidString)
+        }
+        #endif
+        
+        // Real transaction
+        let trx = try await Resolver.resolve(SendActionService.self).send(
+            from: walletToken,
+            receiver: address,
+            amount: amount,
+            feeWallet: payingFeeWallet,
+            ignoreTopUp: isSendingViaLink,
+            memo: isSendingViaLink ? .secretConfig("SEND_VIA_LINK_MEMO_PREFIX")! + "-send" : nil,
+            operationType: isSendingViaLink ? .sendViaLink : .transfer
+        )
+        
+        // save to storage
+        if isSendingViaLink, let sendViaLinkSeed {
+            saveSendViaLinkTransaction(
+                seed: sendViaLinkSeed,
+                token: token,
+                amountInToken: amount,
+                amountInFiat: amountInFiat
+            )
+        }
+        
+        return trx
     }
-    
-    // MARK: - Getters
+}
 
-    var isSendingViaLink: Bool {
-        sendViaLinkSeed != nil
+// MARK: - Helpers
+
+private func saveSendViaLinkTransaction(
+    seed: String,
+    token: Token,
+    amountInToken: Double,
+    amountInFiat: Double
+) {
+    Task {
+        await Resolver.resolve(SendViaLinkStorage.self).save(
+            transaction: .init(
+                amount: amountInToken,
+                amountInFiat: amountInFiat,
+                token: token,
+                seed: seed,
+                timestamp: Date()
+            )
+        )
     }
 }
