@@ -55,32 +55,33 @@ struct JupiterSwapTransaction: SwapRawTransactionType {
                 content = "\(error)"
             }
             
-            JupiterSwapBusinessLogic.sendErrorLog(
-                .init(
-                    title: title,
-                    message: .init(
-                        tokenA: .init(
-                            name: sourceWallet.token.name,
-                            mint: sourceWallet.token.address,
-                            sendAmount: fromAmount.toString(maximumFractionDigits: 9)
-                        ),
-                        tokenB: .init(
-                            name: destinationWallet.token.name,
-                            mint: destinationWallet.token.address,
-                            expectedAmount: toAmount.toString(maximumFractionDigits: 9)
-                        ),
-                        route: route.jsonString ?? "",
-                        userPubkey: Resolver.resolve(UserWalletManager.self)
-                            .wallet?.account.publicKey
-                            .base58EncodedString ?? "",
-                        slippage: slippage.toString(),
-                        feeRelayerTransaction: swapTransaction ?? "",
-                        platform: "iOS \(await UIDevice.current.systemVersion)",
-                        appVersion: AppInfo.appVersionDetail,
-                        timestamp: "\(Int64(Date().timeIntervalSince1970 * 1000))",
-                        blockchainError: content
-                    )
-                )
+            let message = SwapAlertLoggerMessage(
+                tokenA: .init(
+                    name: sourceWallet.token.name,
+                    mint: sourceWallet.token.address,
+                    sendAmount: fromAmount.toString(maximumFractionDigits: 9)
+                ),
+                tokenB: .init(
+                    name: destinationWallet.token.name,
+                    mint: destinationWallet.token.address,
+                    expectedAmount: toAmount.toString(maximumFractionDigits: 9)
+                ),
+                route: route.jsonString ?? "",
+                userPubkey: Resolver.resolve(UserWalletManager.self)
+                    .wallet?.account.publicKey
+                    .base58EncodedString ?? "",
+                slippage: slippage.toString(),
+                feeRelayerTransaction: swapTransaction ?? "",
+                platform: "iOS \(await UIDevice.current.systemVersion)",
+                appVersion: AppInfo.appVersionDetail,
+                timestamp: "\(Int64(Date().timeIntervalSince1970 * 1000))",
+                blockchainError: content
+            )
+            
+            DefaultLogManager.shared.log(
+                event: title,
+                data: message.jsonString,
+                logLevel: .alert
             )
             throw error
         }
