@@ -9,8 +9,10 @@ import Foundation
 import KeyAppKitCore
 
 public struct SendFees: Codable, Hashable, Equatable {
+    public let recipientGetsAmount: TokenAmount?
+    
     /// Receive amount for user B. Nil when fees are greater than sending amount.
-    public let resultAmount: TokenAmount?
+    public let totalAmount: TokenAmount?
     
     /// Process fee in Ethereum network.
     public let arbiter: TokenAmount?
@@ -34,7 +36,8 @@ public struct SendFees: Codable, Hashable, Equatable {
     public let bridgeFeeInToken: TokenAmount?
 
     enum CodingKeys: String, CodingKey {
-        case resultAmount = "result_amount"
+        case recipientGetsAmount = "recipient_gets_amount"
+        case totalAmount = "total_amount"
         case arbiter = "arbiter_fee"
         case networkFee = "network_fee"
         case networkFeeInToken = "network_fee_in_token"

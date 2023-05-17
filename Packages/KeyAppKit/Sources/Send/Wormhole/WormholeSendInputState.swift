@@ -93,9 +93,9 @@ public enum WormholeSendInputState: Equatable {
                 }
 
                 var alert: WormholeSendInputAlert?
-                let arbiterFee = fees.arbiter?.asCryptoAmount ?? input.amount.with(amount: 0)
+                let resultAmount = fees.totalAmount?.asCryptoAmount ?? input.amount.with(amount: 0)
 
-                if (input.amount + arbiterFee) > input.solanaAccount.cryptoAmount {
+                if resultAmount > input.solanaAccount.cryptoAmount {
                     return .error(
                         input: input,
                         output: .init(
@@ -120,7 +120,7 @@ public enum WormholeSendInputState: Equatable {
                         from: input.solanaAccount.data.pubkey ?? "",
                         recipient: input.recipient,
                         mint: mint,
-                        amount: String((input.amount + arbiterFee).value)
+                        amount: String(input.amount.value)
                     )
                 } catch {
                     return .error(
