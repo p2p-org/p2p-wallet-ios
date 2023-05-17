@@ -25,8 +25,14 @@ struct WormholeSendFeesAdapter: Equatable {
 
     /// Actually receive amount for user B.
     var receiveAmount: (CryptoAmount, CurrencyAmount?)? {
-        if let input = adapter.input {
-            return (input.amount, try? input.amount.toFiatAmountIfPresent(price: input.solanaAccount.price))
+        if let resultAmount = adapter.output?.fees.recipientGetsAmount {
+            
+            // Ignore 0 case
+            if resultAmount.asCryptoAmount.value == 0 {
+                return nil
+            }
+
+            return (resultAmount.asCryptoAmount, resultAmount.asCurrencyAmount)
         } else {
             // Nothing is available
             return nil
@@ -34,7 +40,7 @@ struct WormholeSendFeesAdapter: Equatable {
     }
 
     /// Actually formatted receive amount for user B.
-    var receive: Output {
+    var receive: Output? {
         if let receiveAmount {
             let cryptoFormatter = CryptoFormatter()
             let currencyFormatter = CurrencyFormatter()
@@ -53,7 +59,7 @@ struct WormholeSendFeesAdapter: Equatable {
                 )
             }
         } else {
-            return .init(crypto: "", fiat: "")
+            return nil
         }
     }
 

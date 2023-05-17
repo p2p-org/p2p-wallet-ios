@@ -58,8 +58,8 @@ class WormholeSendFeesViewModel: BaseViewModel, ObservableObject {
                     .init(title: L10n.recipientSAddress, subtitle: adapter.recipientAddress, detail: ""),
                     .init(
                         title: L10n.recipientGets,
-                        subtitle: adapter.receive.crypto,
-                        detail: adapter.receive.fiat
+                        subtitle: adapter.receive?.crypto,
+                        detail: adapter.receive?.fiat
                     ),
                     .init(
                         title: L10n.usingWormholeBridge,
