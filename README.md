@@ -220,7 +220,7 @@ Interfaces used for abstractions are named without prefixes and postfixes:
 
 🟢
 ```
-protocol BuyService {}
+protocol IBuyService {}
 ```
 
 🔴
@@ -229,17 +229,17 @@ protocol BuyServiceProtocol {}
 ```
 
 
-For implementation or mocks we append `Impl`, `Mock` or other key words in the ending:
+For implementation we use natural name, for mocks append `Mock` or other key words in the ending:
 
 🟢
 ```
-final class BuyServiceImpl: BuyService {}
+final class BuyService: BuyService {}
 final class BuyServiceMock: BuyService {}
 ```
 
 🔴
 ```
-final class ImplOfBuyService: BuyService {}
+final class BuyServiceImpl: BuyService {}
 final class BuyMockService: BuyService {}
 ```
 
