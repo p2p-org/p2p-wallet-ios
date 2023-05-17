@@ -8,7 +8,7 @@ import LoggerSwift
 class SentryLogger: LogManagerLogger {
     private var queue = DispatchQueue(label: "SentryLogger", qos: .utility)
     
-    var supportedLogLevels: [LogLevel] = [.error]
+    var supportedLogLevels: [LogLevel] = [.error, .alert]
     
     func log(event: String, logLevel: LogLevel, data: String?) {
         guard supportedLogLevels.contains(logLevel) else { return }

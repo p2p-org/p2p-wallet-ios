@@ -194,6 +194,7 @@ public class WormholeClaimUserActionConsumer: UserActionConsumer {
 
             guard case var .pending(rawBundle) = action.internalState else {
                 let error = Error.claimFailure
+                self?.errorObserver.handleError(error, userInfo: [WormholeClaimUserActionError.UserInfoKey.action.rawValue: action])
                 self?.handleInternalEvent(
                     event: .claimFailure(
                         bundleID: action.bundleID, reason: error
@@ -207,9 +208,8 @@ public class WormholeClaimUserActionConsumer: UserActionConsumer {
             do {
                 try rawBundle.signBundle(with: keyPair)
             } catch {
+                self?.errorObserver.handleError(Error.claimFailure, userInfo: [WormholeClaimUserActionError.UserInfoKey.action.rawValue: action])
                 self?.handleInternalEvent(event: .claimFailure(bundleID: action.bundleID, reason: .signingFailure))
-
-                self?.logAlert(for: action.token, pubKey: action.bundle?.userWallet ?? "", amount: "1", error: error)
             }
 
             // Send transaction
@@ -217,35 +217,13 @@ public class WormholeClaimUserActionConsumer: UserActionConsumer {
                 try await self?.wormholeAPI.sendEthereumBundle(bundle: rawBundle)
                 self?.handleInternalEvent(event: .claimInProgress(bundleID: action.bundleID))
             } catch {
-                self?.errorObserver.handleError(error)
+                self?.errorObserver.handleError(error, userInfo: [WormholeClaimUserActionError.UserInfoKey.action.rawValue: action])
 
                 let error = Error.submitError
 
-                self?.errorObserver.handleError(error)
+                self?.errorObserver.handleError(error, userInfo: [WormholeClaimUserActionError.UserInfoKey.action.rawValue: action])
                 self?.handleInternalEvent(event: .claimFailure(bundleID: action.bundleID, reason: error))
             }
         }
-    }
-
-    private func logAlert(for aToken: EthereumToken, pubKey: String, amount: String, error: Swift.Error) {
-        let token: ClaimAlertLoggerErrorMessage.Token = .init(
-            name: aToken.name,
-            solanaMint: nil,
-            ethMint: aToken.tokenPrimaryKey,
-            claimAmount: amount
-        )
-        let claimMessageError = ClaimAlertLoggerErrorMessage(
-            tokenToClaim: token,
-            userPubkey: pubKey,
-            userEthPubkey: address ?? "",
-            platform: "iOS",// "iOS \(UIDevice.current.systemVersion)",
-            appVersion: "",//AppInfo.appVersionDetail,
-            timestamp: "\(Int64(Date().timeIntervalSince1970 * 1000))",
-            simulationError: nil,
-            bridgeSeviceError: error.readableDescription,
-            feeRelayerError: nil,
-            blockchainError: nil
-        )
-        KeyAppKitLogger.Logger.log(event: "Wormhole Claim iOS Alarm", message: claimMessageError.jsonString, logLevel: KeyAppKitLoggerLogLevel.error)
     }
 }

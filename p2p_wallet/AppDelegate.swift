@@ -79,9 +79,6 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
 
         UIViewController.swizzleViewDidDisappear()
         UIViewController.swizzleViewDidAppear()
-        
-        
-        DefaultLogManager.shared.log(event: "TestEvent", logLevel: .event, data: "6Tyktf6mEqUMEKm2ZpLn3srEwk9zsT5jiE54EgPgToikMFYww1LGFUXgwgr6hvc9CikpaNaBH2vmkmqN3Usrxpd")
 
         return proxyAppDelegate.application(application, didFinishLaunchingWithOptions: launchOptions)
     }

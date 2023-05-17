@@ -72,9 +72,11 @@ class WormholeClaimViewModel: BaseViewModel, ObservableObject {
         // Notify user an error
         bundle
             .statePublisher
+            .debounce(for: 0.01, scheduler: DispatchQueue.main)
             .map(\.error)
             .compactMap { $0 }
             .sink { [weak self] error in
+                self?.logAlert(for: account, error: error)
                 if let error = error as? JSONRPCError<String>, error.code == -32007 {
                     self?.notificationService
                         .showInAppNotification(.error(L10n.theFeesAreBiggerThanTheTransactionAmount))
@@ -137,37 +139,31 @@ class WormholeClaimViewModel: BaseViewModel, ObservableObject {
         }
     }
 
-//    private func logAlert(for account: EthereumAccount, error: Swift.Error) {
-//        let token: ClaimAlertLoggerErrorMessage.Token = .init(
-//            name: account.token.name,
-//            solanaMint: nil,
-//            ethMint: account.token.tokenPrimaryKey,
-//            claimAmount: bundle.state.value?.resultAmount.asCryptoAmount.amount.description.double?.description
-//        )
-//
-//        DefaultLogManager.shared.log(
-//            event: "Wormhole Claim iOS Alarm",
-//            logLevel: .alert,
-//            data: AlertLoggerError(
-//                title: "Wormhole Claim iOS Alarm",
-//                message:
-//                    ClaimAlertLoggerErrorMessage(
-//                        tokenToClaim: token,
-//                        userPubkey: accountStorage.account?.publicKey.base58EncodedString ?? "",
-//                        userEthPubkey: ethModel?.account.address ?? "",
-//                        platform: "iOS \(UIDevice.current.systemVersion)",
-//                        appVersion: AppInfo.appVersionDetail,
-//                        timestamp: "\(Int64(Date().timeIntervalSince1970 * 1000))",
-//                        simulationError: nil,
-//                        bridgeSeviceError: error.readableDescription,
-//                        feeRelayerError: nil,
-//                        blockchainError: nil
-//                    )
-//              )
-//        )
-//    }
+    private func logAlert(for account: EthereumAccount, error: Swift.Error) {
+        let token: ClaimAlertLoggerErrorMessage.Token = .init(
+            name: account.token.name,
+            solanaMint: SupportedToken.ERC20(rawValue: account.token.erc20Address ?? "")?.solanaMintAddress ?? "",
+            ethMint: account.token.tokenPrimaryKey,
+            claimAmount: ethModel == nil ? "0" : CryptoAmount(amount: ethModel!.account.balance, token: account.token).amount.description
+        )
 
-//    var ethModel: WormholeClaimEthereumModel? { model as? WormholeClaimEthereumModel }
+        DefaultLogManager.shared.log(
+            event: "Wormhole Claim iOS Alarm",
+            logLevel: .alert,
+            data:
+                ClaimAlertLoggerErrorMessage(
+                    tokenToClaim: token,
+                    userPubkey: accountStorage.account?.publicKey.base58EncodedString ?? "",
+                    userEthPubkey: ethModel?.account.address ?? "",
+                    simulationError: nil,
+                    bridgeSeviceError: error.readableDescription,
+                    feeRelayerError: nil,
+                    blockchainError: nil
+                )
+        )
+    }
+
+    var ethModel: WormholeClaimEthereumModel? { model as? WormholeClaimEthereumModel }
 }
 
 extension WormholeClaimViewModel {
