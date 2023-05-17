@@ -29,6 +29,7 @@ import SwiftyUserDefaults
 import TransactionParser
 import Web3
 import Wormhole
+import KeyAppNetworking
 
 extension Resolver: ResolverRegistering {
     @MainActor public static func registerAllServices() {
@@ -481,8 +482,8 @@ extension Resolver: ResolverRegistering {
         .scope(.session)
 
         // HttpClient
-        register { HttpClientImpl() }
-            .implements(HttpClient.self)
+        register { HttpClient() }
+            .implements(IHttpClient.self)
             .scope(.session)
 
         // Auth

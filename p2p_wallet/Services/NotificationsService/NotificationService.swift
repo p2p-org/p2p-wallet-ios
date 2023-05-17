@@ -11,6 +11,7 @@ import KeyAppUI
 import Resolver
 import UIKit
 import Combine
+import KeyAppNetworking
 
 protocol NotificationService {
     typealias DeviceTokenResponse = JsonRpcResponseDto<DeviceTokenResponseDto>
