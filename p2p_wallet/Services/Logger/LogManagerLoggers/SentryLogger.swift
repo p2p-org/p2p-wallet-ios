@@ -11,6 +11,7 @@ class SentryLogger: LogManagerLogger {
     var supportedLogLevels: [LogLevel] = [.error]
     
     func log(event: String, logLevel: LogLevel, data: String?) {
+        guard supportedLogLevels.contains(logLevel) else { return }
         queue.sync {
             let sentryEvent = Event(level: sentryLevel(logLevel: logLevel))
             sentryEvent.message = SentryMessage(formatted: event)
