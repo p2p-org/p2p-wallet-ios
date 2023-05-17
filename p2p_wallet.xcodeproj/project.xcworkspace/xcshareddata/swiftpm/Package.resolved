@@ -96,7 +96,7 @@
         "repositoryURL": "https://github.com/p2p-org/FeeRelayerSwift",
         "state": {
           "branch": "master",
-          "revision": "af20c8511fef0df65a405590d7bdd254df0cb95f",
+          "revision": "5e60c88c26f18f8d89345a31d1474f1cbe3b60b6",
           "version": null
         }
       },
@@ -258,7 +258,7 @@
         "repositoryURL": "https://github.com/p2p-org/OrcaSwapSwift.git",
         "state": {
           "branch": "main",
-          "revision": "b90a6ca2c61168d36a36d4249d70ef6915b25a6b",
+          "revision": "c15012e45f18cc8e553efaa1d24e34a57c99d274",
           "version": null
         }
       },
@@ -357,7 +357,7 @@
         "repositoryURL": "https://github.com/p2p-org/solana-swift.git",
         "state": {
           "branch": "main",
-          "revision": "bf3cee884bbca90defc9792a5267a8c6b0b1e0f6",
+          "revision": "46a62174dde22ec4cfd8e909ae12c037912f2395",
           "version": null
         }
       },

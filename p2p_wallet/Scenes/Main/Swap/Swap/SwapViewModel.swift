@@ -82,6 +82,8 @@ final class SwapViewModel: BaseViewModel, ObservableObject {
     }
 
     func update() async {
+        guard stateMachine.currentState.swapTransaction != nil else { return }
+        // Update only if swap transaction is created
         await stateMachine.accept(
             action: .update
         )
@@ -253,7 +255,6 @@ private extension SwapViewModel {
         case .error(.initializationFailed):
             initializingState = .failed
         default:
-            scheduleUpdate()
             initializingState = .success
         }
 
@@ -338,7 +339,7 @@ private extension SwapViewModel {
         case .requiredInitialize, .loadingTokenTo, .loadingAmountTo, .switching, .initializing, .creatingSwapTransaction:
             actionButtonData = SliderActionButtonData(isEnabled: false, title: L10n.counting)
         case .error(.notEnoughFromToken):
-            actionButtonData = SliderActionButtonData(isEnabled: true, title: L10n.notEnough(state.fromToken.token.symbol))
+            actionButtonData = SliderActionButtonData(isEnabled: false, title: L10n.notEnough(state.fromToken.token.symbol))
         case .error(.equalSwapTokens):
             actionButtonData = SliderActionButtonData(isEnabled: false, title: L10n.youCanTSwapBetweenTheSameToken)
         case .error(.networkConnectionError):
