@@ -16,6 +16,7 @@ struct SendTransaction: RawTransactionType {
     let address: String
     let payingFeeWallet: Wallet?
     let feeAmount: FeeAmount
+    let currency: String
     
     // MARK: - Computed properties
 
@@ -69,27 +70,73 @@ struct SendTransaction: RawTransactionType {
         #endif
         
         // Real transaction
-        let trx = try await Resolver.resolve(SendActionService.self).send(
-            from: walletToken,
-            receiver: address,
-            amount: amount,
-            feeWallet: payingFeeWallet,
-            ignoreTopUp: isSendingViaLink,
-            memo: isSendingViaLink ? .secretConfig("SEND_VIA_LINK_MEMO_PREFIX")! + "-send" : nil,
-            operationType: isSendingViaLink ? .sendViaLink : .transfer
-        )
-        
-        // save to storage
-        if isSendingViaLink, let sendViaLinkSeed {
-            saveSendViaLinkTransaction(
-                seed: sendViaLinkSeed,
-                token: token,
-                amountInToken: amount,
-                amountInFiat: amountInFiat
+        do {
+            let trx = try await Resolver.resolve(SendActionService.self).send(
+                from: walletToken,
+                receiver: address,
+                amount: amount,
+                feeWallet: payingFeeWallet,
+                ignoreTopUp: isSendingViaLink,
+                memo: isSendingViaLink ? .secretConfig("SEND_VIA_LINK_MEMO_PREFIX")! + "-send" : nil,
+                operationType: isSendingViaLink ? .sendViaLink : .transfer
             )
+            
+            // save to storage
+            if isSendingViaLink, let sendViaLinkSeed {
+                saveSendViaLinkTransaction(
+                    seed: sendViaLinkSeed,
+                    token: token,
+                    amountInToken: amount,
+                    amountInFiat: amountInFiat
+                )
+            }
+            
+            return trx
+        } catch {
+            // send alert
+            if isSendingViaLink {
+                await sendViaLinkAlert(error: error)
+            }
+            
+            // rethrow error
+            throw error
+        }
+    }
+    
+    // MARK: - Helpers
+
+    private func sendViaLinkAlert(error: Swift.Error) async {
+        let userPubkey = Resolver.resolve(UserWalletManager.self).wallet?.account.publicKey.base58EncodedString
+        
+        var blockchainError: String?
+        var feeRelayerError: String?
+        switch error {
+        case let error as APIClientError:
+            blockchainError = error.content
+        default:
+            feeRelayerError = "\(error)"
         }
         
-        return trx
+        DefaultLogManager.shared.log(
+            event: "Link Create iOS Alarm",
+            data: SendViaLinkAlertLoggerMessage(
+                tokenToSend: .init(
+                    name: walletToken.name,
+                    mint: walletToken.mintAddress,
+                    sendAmount: amount.toString(maximumFractionDigits: 9),
+                    currency: currency
+                ),
+                userPubkey: userPubkey ?? "",
+                platform: "iOS \(await UIDevice.current.systemVersion)",
+                appVersion: AppInfo.appVersionDetail,
+                timestamp: "\(Int64(Date().timeIntervalSince1970 * 1000))",
+                simulationError: nil,
+                feeRelayerError: feeRelayerError,
+                blockchainError: blockchainError
+            )
+            .jsonString,
+            logLevel: .alert
+        )
     }
 }
 

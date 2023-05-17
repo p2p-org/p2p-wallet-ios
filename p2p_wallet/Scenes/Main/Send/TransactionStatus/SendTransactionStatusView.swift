@@ -213,7 +213,8 @@ struct SendTransactionStatusView_Previews: PreviewProvider {
                     walletToken: .nativeSolana(pubkey: "adfasdf", lamport: 200000000),
                     address: "adfasdf",
                     payingFeeWallet: .nativeSolana(pubkey: "adfasdf", lamport: 200000000),
-                    feeAmount: .init(transaction: 10000, accountBalances: 2039280)
+                    feeAmount: .init(transaction: 10000, accountBalances: 2039280),
+                    currency: "USD"
                 )
             )
         )
