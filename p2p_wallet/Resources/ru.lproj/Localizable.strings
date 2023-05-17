@@ -1361,3 +1361,4 @@
 "We refund bridging costs for any transactions over %@" = "Мы возмещаем промежуточные расходы для любых транзакций свыше %@";
 "Total amount" = "Общая сумма";
 "Check available funds" = "Проверить доступные средства";
+"To send %@ to Ethereum network you have to swap it to %@" = "Чтобы отправить %@ в сеть Ethereum, вы должны поменять его на %@";

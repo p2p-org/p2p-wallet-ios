@@ -26,7 +26,6 @@ struct WormholeSendFeesAdapter: Equatable {
     /// Actually receive amount for user B.
     var receiveAmount: (CryptoAmount, CurrencyAmount?)? {
         if let resultAmount = adapter.output?.fees.recipientGetsAmount {
-            
             // Ignore 0 case
             if resultAmount.asCryptoAmount.value == 0 {
                 return nil
@@ -80,7 +79,7 @@ struct WormholeSendFeesAdapter: Equatable {
         bridgeFee = Self.resolve(amount: adapter.output?.fees.bridgeFee)
         arbiterFee = Self.resolve(amount: adapter.output?.fees.arbiter)
         messageFee = Self.resolve(amount: adapter.output?.fees.messageAccountRent)
-        total = nil
+        total = Self.resolve(amount: adapter.output?.fees.totalAmount)
     }
 
     private static func resolve(amount: Wormhole.TokenAmount?) -> Output? {

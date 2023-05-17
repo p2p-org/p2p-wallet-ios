@@ -60,23 +60,12 @@ struct NewHistoryView<Header: View>: View {
                         listItem(item: item)
                             .padding(.top, section.items.first == item ? 4 : 0)
                             .padding(.bottom, section.items.last == item ? 4 : 0)
-                            .if(shouldAddSwapBannerDecorations(item: item)) { view in
-                                view
-                                    .padding(.all, 16)
-                                    .background(
-                                        Image(uiImage: UIImage.swapBannerBackground)
-                                            .resizable()
-                                    )
-                            }
-                            .if(!shouldAddSwapBannerDecorations(item: item)) { view in
-                                view
-                                    .background(Color(Asset.Colors.snow.color))
-                                    .roundedList(
-                                        radius: 16,
-                                        isFirst: section.items.first == item,
-                                        isLast: section.items.last == item
-                                    )
-                            }
+                            .background(Color(Asset.Colors.snow.color))
+                            .roundedList(
+                                radius: 16,
+                                isFirst: section.items.first == item,
+                                isLast: section.items.last == item
+                            )
                     }
                 }.padding(.horizontal, 16)
             }
@@ -87,10 +76,6 @@ struct NewHistoryView<Header: View>: View {
         .onAppear {
             viewModel.onAppear()
         }
-    }
-
-    private func shouldAddSwapBannerDecorations(item: NewHistoryItem) -> Bool {
-        if case .swapBanner = item { return true } else { return false }
     }
 
     private func listItem(item: NewHistoryItem) -> AnyView {
@@ -116,27 +101,6 @@ struct NewHistoryView<Header: View>: View {
                     )
                     .frame(height: TextButton.Size.large.height)
                     .padding(.all, 16)
-                case let .swapBanner(_, text, button, action, helpAction):
-                    VStack(spacing: 16) {
-                        HStack(alignment: .top, spacing: 8) {
-                            Text(text)
-                                .apply(style: .text1)
-                                .foregroundColor(Color(Asset.Colors.night.color))
-                            Spacer()
-                            Button {
-                                helpAction()
-                            } label: {
-                                Image(uiImage: UIImage.questionNavBar)
-                            }
-                        }
-                        TextButtonView(
-                            title: button,
-                            style: .inverted,
-                            size: .large,
-                            onPressed: action
-                        )
-                        .frame(height: TextButton.Size.large.height)
-                    }
                 case .fetch:
                     Rectangle()
                         .fill(.clear)

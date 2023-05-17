@@ -27,7 +27,7 @@ public struct ClaimFees: Codable, Hashable, Equatable {
         case createAccount = "create_account"
         case gasInToken = "gas_in_token"
     }
-
+    
     public var totalInFiat: CurrencyAmount {
         gas.asCurrencyAmount
             + arbiter?.asCurrencyAmount

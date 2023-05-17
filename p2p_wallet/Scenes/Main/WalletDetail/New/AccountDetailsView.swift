@@ -38,6 +38,12 @@ struct AccountDetailsView: View {
                 }
             }
             .padding(.top, 32)
+
+            if let banner = detailAccount.banner {
+                SwapEthBanner(text: banner.title, action: banner.action, help: banner.helpAction)
+                    .padding(.all, 16)
+                    .padding(.top, 16)
+            }
         }
     }
 }
