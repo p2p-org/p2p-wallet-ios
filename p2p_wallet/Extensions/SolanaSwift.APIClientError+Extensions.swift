@@ -2,7 +2,7 @@ import Foundation
 import SolanaSwift
 
 extension APIClientError {
-    var content: String {
+    var blockchainErrorDescription: String {
         switch self {
         case .cantEncodeParams:
             return "cantEncodeParams"
