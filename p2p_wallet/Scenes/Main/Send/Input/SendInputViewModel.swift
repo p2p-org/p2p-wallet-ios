@@ -610,7 +610,8 @@ private extension SendInputViewModel {
                 walletToken: sourceWallet,
                 address: address,
                 payingFeeWallet: feeWallet,
-                feeAmount: currentState.feeInToken
+                feeAmount: currentState.feeInToken,
+                currency: inputAmountViewModel.mainAmountType == .fiat ? Defaults.fiat.symbol: sourceWallet.token.symbol
             )
             self.transaction.send(transaction)
         }
