@@ -47,6 +47,7 @@ final class CreateWalletCoordinator: Coordinator<CreateWalletResult> {
                     try await viewModel?.onboardingStateMachine.accept(event: .socialSignInEvent(event))
                 } catch {
                     Self.log(error: error)
+                    throw error
                 }
             }
         )
@@ -57,6 +58,7 @@ final class CreateWalletCoordinator: Coordinator<CreateWalletResult> {
                     try await viewModel?.onboardingStateMachine.accept(event: .bindingPhoneNumberEvent(event))
                 } catch {
                     Self.log(error: error)
+                    throw error
                 }
             }
         )
@@ -67,6 +69,7 @@ final class CreateWalletCoordinator: Coordinator<CreateWalletResult> {
                     try await viewModel?.onboardingStateMachine.accept(event: .securitySetup(event))
                 } catch {
                     Self.log(error: error)
+                    throw error
                 }
             }
         )
