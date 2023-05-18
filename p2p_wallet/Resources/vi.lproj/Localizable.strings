@@ -1359,5 +1359,8 @@
 "Add funds" = "Thêm các quỹ";
 "Wormhole Bridge is currently unable.\nPlease try again later" = "Cầu Wormhole hiện không hoạt động.\nVui lòng thử lại sau";
 "It usually takes 15-20 minutes for a transaction to complete" = "Thường mất 15-20 phút để hoàn tất giao dịch";
+"The fee is more than the defined slippage %@ due to one-time account creation fee by Solana blockchain" = "Phí cao hơn trượt giá được xác định %@ do phí tạo tài khoản một lần bằng chuỗi khối Solana";
 "How to claim for free" = "Làm thế nào để yêu cầu miễn phí";
 "I forgot PIN" = "tôi quên mã PIN";
+"It usually takes few seconds for a transaction to complete" = "Thường mất vài giây để hoàn tất giao dịch";
+"Username was copied to clipboard" = "Tên người dùng đã được sao chép vào khay nhớ tạm";
