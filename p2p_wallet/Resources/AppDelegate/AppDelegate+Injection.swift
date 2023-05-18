@@ -344,16 +344,6 @@ extension Resolver: ResolverRegistering {
         .implements(SendViaLinkDataService.self)
         .scope(.session)
 
-        // SolanaSocket
-        register { Socket(url: URL(string: Defaults.apiEndPoint.socketUrl)!) }
-            .implements(SolanaSocket.self)
-            .scope(.session)
-
-        // AccountObservableService
-        register { SolananAccountsObservableServiceImpl(solanaSocket: resolve()) }
-            .implements(SolanaAccountsObservableService.self)
-            .scope(.session)
-
         // TransactionHandler (new)
         register { TransactionHandler() }
             .implements(TransactionHandlerType.self)
@@ -453,8 +443,8 @@ extension Resolver: ResolverRegistering {
                 solanaAPIClient: resolve(),
                 tokensService: resolve(),
                 priceService: resolve(),
-                accountObservableService: resolve(),
                 fiat: Defaults.fiat.rawValue,
+                proxyConfiguration: nil,
                 errorObservable: resolve()
             )
         }
