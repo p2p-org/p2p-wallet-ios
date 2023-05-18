@@ -7,6 +7,8 @@
 
 import Combine
 import FirebaseRemoteConfig
+import KeyAppBusiness
+import Resolver
 import SolanaSwift
 import SwiftyUserDefaults
 
@@ -19,6 +21,8 @@ final class DebugMenuViewModel: BaseViewModel, ObservableObject {
     @Published var currentMoonpayEnvironment: DefaultsKeys.MoonpayEnvironment
     @Published var nameServiceEndpoints: [String]
     @Published var newSwapEndpoints: [String]
+
+    @Injected private var accountsService: SolanaAccountsService
 
     override init() {
         features = Menu.allCases
@@ -41,18 +45,18 @@ final class DebugMenuViewModel: BaseViewModel, ObservableObject {
 
         feeRelayerEndpoints = [
             "https://\(String.secretConfig("FEE_RELAYER_STAGING_ENDPOINT")!)",
-            "https://\(String.secretConfig("FEE_RELAYER_ENDPOINT")!)"
+            "https://\(String.secretConfig("FEE_RELAYER_ENDPOINT")!)",
         ]
-        
+
         nameServiceEndpoints = [
             "https://\(String.secretConfig("NAME_SERVICE_ENDPOINT_NEW")!)",
-            "https://\(String.secretConfig("NAME_SERVICE_STAGING_ENDPOINT")!)"
+            "https://\(String.secretConfig("NAME_SERVICE_STAGING_ENDPOINT")!)",
         ]
-        
+
         newSwapEndpoints = [
             "https://quote-api.jup.ag",
             "https://swap.key.app",
-            "https://swap.keyapp.org"
+            "https://swap.keyapp.org",
         ]
 
         currentMoonpayEnvironment = Defaults.moonpayEnvironment
@@ -99,7 +103,7 @@ extension DebugMenuViewModel {
         case solanaNegativeStatus
         case onboardingUsernameEnabled
         case onboardingUsernameButtonSkipEnabled
-        
+
         case investSolend
         case solendDisablePlaceholder
 
@@ -110,6 +114,7 @@ extension DebugMenuViewModel {
         case ethAddressEnabled
         case sendViaLink
         case solanaEthAddressEnabled
+        case swapTransactionSimulation
 
         var title: String {
             switch self {
@@ -125,6 +130,7 @@ extension DebugMenuViewModel {
             case .ethAddressEnabled: return "Eth Address Enabled"
             case .sendViaLink: return "Send via link"
             case .solanaEthAddressEnabled: return "solana ETH address enabled"
+            case .swapTransactionSimulation: return "Swap transaction simulation"
             }
         }
 
@@ -142,6 +148,7 @@ extension DebugMenuViewModel {
             case .ethAddressEnabled: return .ethAddressEnabled
             case .sendViaLink: return .sendViaLinkEnabled
             case .solanaEthAddressEnabled: return .solanaEthAddressEnabled
+            case .swapTransactionSimulation: return .swapTransactionSimulationEnabled
             }
         }
     }
@@ -149,4 +156,19 @@ extension DebugMenuViewModel {
 
 extension APIEndPoint: Identifiable {
     public var id: String { address }
+}
+
+private extension RealtimeSolanaAccountState {
+    var rawString: String {
+        switch self {
+        case .initialising:
+            return "Initialising 🛠️"
+        case .connecting:
+            return "Connecting 🌐"
+        case .running:
+            return "Running ✅"
+        case let .stop(error):
+            return "Stopped ❌ with error :\(error?.localizedDescription ?? "")"
+        }
+    }
 }

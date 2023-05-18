@@ -96,7 +96,7 @@
         "repositoryURL": "https://github.com/p2p-org/FeeRelayerSwift",
         "state": {
           "branch": "master",
-          "revision": "5e60c88c26f18f8d89345a31d1474f1cbe3b60b6",
+          "revision": "fdbc1a8c0ab13037e01e5493a2beccb84281acb5",
           "version": null
         }
       },
@@ -357,7 +357,7 @@
         "repositoryURL": "https://github.com/p2p-org/solana-swift.git",
         "state": {
           "branch": "main",
-          "revision": "46a62174dde22ec4cfd8e909ae12c037912f2395",
+          "revision": "5a0feeb88f5607a936ba15a574ac6d911e377456",
           "version": null
         }
       },
@@ -510,8 +510,8 @@
         "repositoryURL": "https://github.com/vapor/websocket-kit",
         "state": {
           "branch": null,
-          "revision": "2166cbe932b29b6419f9cd751e8b27c647e1238e",
-          "version": "2.8.0"
+          "revision": "17c0afbf24f4e288e183bc34317dc97b5cd084bd",
+          "version": "2.9.0"
         }
       }
     ]
