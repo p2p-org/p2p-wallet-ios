@@ -26,11 +26,11 @@ extension JupiterSwapBusinessLogic {
         return nil
     }
 
-    static func autoChooseToToken(for fromToken: SwapToken, from swapTokens: [SwapToken]) -> SwapToken? {
+    static func autoChooseToToken(for preChosenFromToken: SwapToken, from swapTokens: [SwapToken]) -> SwapToken? {
         let usdc = swapTokens.first(where: { $0.address == SolanaSwift.Token.usdc.address })
         let solana = swapTokens.first(where: { $0.address == SolanaSwift.Token.nativeSolana.address })
 
-        if let solana, fromToken.address == usdc?.address {
+        if let solana, preChosenFromToken.address == usdc?.address {
             return solana
         } else if let usdc {
             return usdc
