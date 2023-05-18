@@ -6,10 +6,9 @@
 //
 
 import Foundation
-import Sentry
 
 extension Error {
     func capture() {
-        SentrySDK.capture(error: self)
+        DefaultLogManager.shared.log(error: self)
     }
 }
