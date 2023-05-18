@@ -37,11 +37,6 @@ private extension ChooseItemViewModel {
                 guard let self else { return }
                 switch state.status {
                 case .ready:
-                    if self.isLoading {
-                        // Show skeleton only once, after that only seamless updates
-                        self.isLoading = false
-                    }
-
                     _ = state.apply { data in
                         let dataWithoutChosen = data.map { section in
                             ChooseItemListSection(
@@ -53,6 +48,11 @@ private extension ChooseItemViewModel {
                         if !self.isSearchGoing {
                             self.sections = self.allItems
                         }
+                    }
+
+                    if self.isLoading {
+                        // Show skeleton only once, after that only seamless updates
+                        self.isLoading = false
                     }
 
                 default:
