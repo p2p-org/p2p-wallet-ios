@@ -45,7 +45,7 @@ extension Resolver: ResolverRegistering {
 
     /// Application scope: Lifetime app's services
     @MainActor private static func registerForApplicationScope() {
-        register { SentryErrorObserver() }
+        register { DefaultLogManager.shared }
             .implements(ErrorObserver.self)
 
         // Application warmup manager
