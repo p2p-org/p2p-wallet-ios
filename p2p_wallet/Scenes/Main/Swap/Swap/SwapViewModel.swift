@@ -267,8 +267,9 @@ private extension SwapViewModel {
         switch state.status {
         case .requiredInitialize, .initializing, .loadingTokenTo, .loadingAmountTo, .switching:
             arePricesLoading = true
-        case .creatingSwapTransaction:
-            arePricesLoading = false
+        case let .creatingSwapTransaction(isSumalationEnabled):
+            // We need to show loading if simulation is happening
+            arePricesLoading = isSumalationEnabled
         case .ready:
             arePricesLoading = false
         case .error:

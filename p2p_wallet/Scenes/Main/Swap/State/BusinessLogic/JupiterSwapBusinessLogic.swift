@@ -1,4 +1,5 @@
 import Jupiter
+import SolanaSwift
 
 enum JupiterSwapBusinessLogic {
     static func shouldPerformAction(
@@ -194,7 +195,8 @@ enum JupiterSwapBusinessLogic {
             // ready for creating transaction
             if state.status == .ready {
                 return state.modified {
-                    $0.status = .creatingSwapTransaction
+                    // Simulation is always off if route is chosen by user
+                    $0.status = .creatingSwapTransaction(isSimulationOn: false)
                 }
             }
             
@@ -207,11 +209,11 @@ enum JupiterSwapBusinessLogic {
         services: JupiterSwapServices
     ) async -> JupiterSwapState {
         do {
-            guard state.status == .creatingSwapTransaction else {
+            guard case let .creatingSwapTransaction(isSimulationOn) = state.status else {
                 return state
             }
-            
-            guard let route = state.route else {
+
+            guard var route = state.route else {
                 return state.error(.routeIsNotFound)
             }
 
@@ -219,21 +221,54 @@ enum JupiterSwapBusinessLogic {
                 return state.error(.createTransactionFailed)
             }
 
-            let swapTransaction = try await services.jupiterClient.swap(
-                route: route,
-                userPublicKey: account.publicKey.base58EncodedString,
-                wrapUnwrapSol: true,
-                feeAccount: nil,
-                computeUnitPriceMicroLamports: nil
-            )
-            
-            guard let swapTransaction else {
-                throw JupiterError.invalidResponse
-            }
+            if isSimulationOn {
 
-            return state.modified {
-                $0.status = .ready
-                $0.swapTransaction = swapTransaction
+                var availableRoutes = state.routes
+                var swapTransaction: String?
+
+                var bestRouteIndex = 0
+                for i in 0..<availableRoutes.count {
+                    // Try create and simulate transaction to see if it works correctly
+                    swapTransaction = try await createAndSimulateTransaction(
+                        for: availableRoutes[i],
+                        account: account,
+                        services: services
+                    )
+                    
+                    if swapTransaction != nil {
+                        route = availableRoutes[i]
+                        bestRouteIndex = i
+                        // We found the best route and do not need to create and simulate transaction anymore
+                        break
+                    }
+                }
+
+                // Remove failed routes from the state
+                availableRoutes.removeFirst(bestRouteIndex)
+
+                if let swapTransaction {
+                    return state.modified {
+                        $0.route = route
+                        $0.routes = availableRoutes // Replace routes only with available ones
+                        $0.status = .ready
+                        $0.swapTransaction = swapTransaction
+                    }
+                } else {
+                    // If there is no swapTransaction, then the state is "routeIsNotFound"
+                    return state.modified {
+                        $0.route = nil
+                        $0.routes = []
+                        $0.status = .error(reason: .routeIsNotFound)
+                        $0.swapTransaction = nil
+                    }
+                }
+            } else {
+                // If route is chosen by user and is not the best one, just try create transaction without simulation
+                let swapTransaction = try await createTransaction(for: route, account: account, services: services)
+                return state.modified {
+                    $0.status = .ready
+                    $0.swapTransaction = swapTransaction
+                }
             }
         }
         catch let error {
@@ -243,7 +278,63 @@ enum JupiterSwapBusinessLogic {
             return state.error(.createTransactionFailed)
         }
     }
-    
+
+    // MARK: - Private
+
+    private static func createTransaction(
+        for route: Route,
+        account: KeyPair,
+        services: JupiterSwapServices
+    ) async throws -> String {
+        let swapTransaction = try await services.jupiterClient.swap(
+            route: route,
+            userPublicKey: account.publicKey.base58EncodedString,
+            wrapUnwrapSol: true,
+            feeAccount: nil,
+            computeUnitPriceMicroLamports: nil
+        )
+
+        guard let swapTransaction else {
+            throw JupiterError.invalidResponse
+        }
+
+        return swapTransaction
+    }
+
+    private static func createAndSimulateTransaction(
+        for route: Route,
+        account: KeyPair,
+        services: JupiterSwapServices
+    ) async throws -> String? {
+        do {
+            let swapTransaction = try await services.jupiterClient.swap(
+                route: route,
+                userPublicKey: account.publicKey.base58EncodedString,
+                wrapUnwrapSol: true,
+                feeAccount: nil,
+                computeUnitPriceMicroLamports: nil
+            )
+
+            guard let swapTransaction else { return nil }
+
+            let simulation = try await services.solanaAPIClient.simulateTransaction(
+                transaction: swapTransaction,
+                configs: RequestConfiguration(encoding: "base64")!
+            )
+
+            if simulation.err == nil {
+                return swapTransaction
+            } else {
+                return nil
+            }
+        } catch let error {
+            if (error as NSError).isNetworkConnectionError {
+                throw error
+            }
+            return nil // If simulation or transaction fails, then we skip this route and return nil
+        }
+    }
+
     // MARK: - Helpers
 
     private static func recalculateRouteAndMarkAsCreatingTransaction(
@@ -263,7 +354,7 @@ enum JupiterSwapBusinessLogic {
         
         // mark as creating swap transaction
         return state.modified {
-            $0.status = .creatingSwapTransaction
+            $0.status = .creatingSwapTransaction(isSimulationOn: available(.swapTransactionSimulationEnabled))
         }
     }
 }
