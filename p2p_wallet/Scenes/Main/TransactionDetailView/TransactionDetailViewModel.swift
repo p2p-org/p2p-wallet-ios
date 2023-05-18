@@ -1,10 +1,3 @@
-//
-//  DetailTransactionViewModel.swift
-//  p2p_wallet
-//
-//  Created by Giang Long Tran on 03.02.2023.
-//
-
 import Combine
 import Foundation
 import History
@@ -26,7 +19,10 @@ enum TransactionDetailViewModelOutput {
 
 class TransactionDetailViewModel: BaseViewModel, ObservableObject {
     @Injected private var transactionHandler: TransactionHandler
-    @Published var rendableTransaction: any RendableTransactionDetail
+
+    @Published var rendableTransaction: any RenderableTransactionDetail
+
+    @Published var forceHidingStatus: Bool = false
 
     let style: TransactionDetailStyle
 
@@ -34,7 +30,7 @@ class TransactionDetailViewModel: BaseViewModel, ObservableObject {
 
     var statusContext: String?
 
-    init(rendableDetailTransaction: any RendableTransactionDetail, style: TransactionDetailStyle = .active) {
+    init(rendableDetailTransaction: any RenderableTransactionDetail, style: TransactionDetailStyle = .active) {
         self.style = style
         rendableTransaction = rendableDetailTransaction
     }
@@ -85,6 +81,14 @@ class TransactionDetailViewModel: BaseViewModel, ObservableObject {
         rendableTransaction = RendableGeneralUserActionTransaction.resolve(userAction: userAction)
 
         super.init()
+
+        // Hide status in case transaction is ready
+        switch rendableTransaction.status {
+        case .succeed:
+            forceHidingStatus = true
+        default:
+            forceHidingStatus = false
+        }
 
         userActionService
             .observer(id: userAction.id)

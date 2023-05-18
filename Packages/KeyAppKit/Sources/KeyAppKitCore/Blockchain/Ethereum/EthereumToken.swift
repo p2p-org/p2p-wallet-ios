@@ -55,9 +55,13 @@ extension EthereumToken: AnyToken {
     public var tokenPrimaryKey: String {
         switch contractType {
         case .native:
-            return "native-ethereum"
+            return "native"
         case let .erc20(contract):
-            return "erc-20-\(contract.hex(eip55: false))"
+            return contract.hex(eip55: false)
         }
+    }
+
+    public var network: TokenNetwork {
+        .ethereum
     }
 }

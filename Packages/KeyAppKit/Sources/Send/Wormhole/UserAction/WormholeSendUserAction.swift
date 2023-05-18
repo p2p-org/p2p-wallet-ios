@@ -12,33 +12,27 @@ import KeyAppKitCore
 import Wormhole
 
 public struct WormholeSendUserAction: UserAction {
-    public var id: String { message }
-
-    // Send ID
-    public var message: String
+    public var id: String
 
     public var status: UserActionStatus
 
     /// Source token that will be taken and transferred to recipient.
     public let sourceToken: SolanaToken
 
-    /// Fixed token price at submitted moment.
-    public let price: TokenPrice?
-
     /// Recipient in Ethereum network
     public let recipient: String
 
-    /// Transfer amount
+    /// Transfer amount in crypto
     public let amount: CryptoAmount
+
+    /// Transfer amount in fiat
+    public let currencyAmount: CurrencyAmount?
 
     /// Fees
     public let fees: SendFees
 
     /// Solana transaction
-    public let transaction: SendTransaction
-
-    /// Relay context
-    public let relayContext: RelayContext
+    public let transaction: SendTransaction?
 
     public let createdDate: Date
 
@@ -46,63 +40,68 @@ public struct WormholeSendUserAction: UserAction {
 
     public init(
         sourceToken: SolanaToken,
-        price: TokenPrice?,
         recipient: String,
         amount: CryptoAmount,
+        currencyAmount: CurrencyAmount?,
         fees: SendFees,
-        transaction: SendTransaction,
-        relayContext: RelayContext
+        transaction: SendTransaction
     ) {
-        message = transaction.message
+        id = transaction.message
         status = .pending
         createdDate = Date()
         updatedDate = createdDate
 
         self.sourceToken = sourceToken
-        self.price = price
         self.recipient = recipient
         self.amount = amount
+        self.currencyAmount = currencyAmount
         self.fees = fees
         self.transaction = transaction
-        self.relayContext = relayContext
     }
 
-//    public init(sendStatus: WormholeSendStatus, solanaTokensService: SolanaTokensService) async {
-//        message = sendStatus.message
-//
-//        switch sendStatus.status {
-//        case .failed, .expired, .canceled:
-//            status = .error(WormholeSendUserActionError.sendingFailure)
-//        case .pending, .inProgress:
-//            status = .processing
-//        case .completed:
-//            status = .ready
-//        }
-//
-//        createdDate = Date()
-//        updatedDate = createdDate
-//
-//        sendStatus.amount.token
-//        
-//        sourceToken = sendStatus
-//        price = price
-//        recipient = recipient
-//        amount = amount
-//        fees = fees
-//        payingFeeTokenAccount = payingFeeTokenAccount
-//        totalFeesViaRelay = totalFeesViaRelay
-//        transaction = transaction
-//        relayContext = relayContext
-//    }
-}
+    public init(sendStatus: WormholeSendStatus, solanaTokensService: SolanaTokensService) async throws {
+        id = sendStatus.id
 
-public extension WormholeSendUserAction {
-    /// Transferred amount in fiat.
-    var currencyAmount: CurrencyAmount? {
-        guard let price = price else {
-            return nil
+        switch sendStatus.status {
+        case .failed, .expired, .canceled:
+            status = .error(WormholeSendUserActionError.sendingFailure)
+        case .pending, .inProgress:
+            status = .processing
+        case .completed:
+            status = .ready
         }
 
-        return try? amount.toFiatAmount(price: price)
+        createdDate = sendStatus.created
+        updatedDate = sendStatus.modified
+
+        // Extract sending token
+        let tokens = try await solanaTokensService.getTokensList()
+        let token: SolanaToken
+
+        switch sendStatus.amount.token {
+        case .ethereum:
+            throw WormholeSendUserActionError.parseError
+        case let .solana(mint):
+            if let mint {
+                let matchedToken = tokens.first { token in
+                    token.address == mint
+                }
+
+                guard let matchedToken else {
+                    throw WormholeSendUserActionError.parseError
+                }
+
+                token = matchedToken
+            } else {
+                token = .nativeSolana
+            }
+        }
+
+        sourceToken = token
+        recipient = sendStatus.recipient
+        amount = sendStatus.amount.asCryptoAmount
+        currencyAmount = sendStatus.amount.asCurrencyAmount
+        fees = sendStatus.fees
+        transaction = nil
     }
 }

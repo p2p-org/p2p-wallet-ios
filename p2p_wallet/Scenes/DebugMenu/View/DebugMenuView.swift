@@ -47,6 +47,10 @@ struct DebugMenuView: View {
                     } label: { Text("Apply") }
                 }
 
+                Section(header: Text("Modules")) {
+                    NavigationLink("History") { HistoryDebugView() }
+                }
+
                 Section(header: Text("Fee relayer")) {
                     Toggle("Disable free transaction", isOn: $feeRelayerConfig.disableFeeTransaction)
                         .valueChanged(value: feeRelayerConfig.disableFeeTransaction) { _ in

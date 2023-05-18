@@ -1269,7 +1269,7 @@
 "Choose network" = "Chọn mạng";
 "Claim" = "Khẳng định";
 "You will get" = "Bạn sẽ nhận được";
-"Claiming..." = "Khiếu nại...";
+"Claiming" = "Khiếu nại";
 "Send crypto via link" = "Gửi tiền điện tử qua liên kết";
 "Sending via link" = "Gửi qua liên kết";
 "Creating your link" = "Tạo liên kết của bạn";
@@ -1361,3 +1361,9 @@
 "It usually takes 15-20 minutes for a transaction to complete" = "Thường mất 15-20 phút để hoàn tất giao dịch";
 "How to claim for free" = "Làm thế nào để yêu cầu miễn phí";
 "I forgot PIN" = "tôi quên mã PIN";
+"More than the received amount" = "Nhiều hơn số tiền nhận được";
+"Fees" = "lệ phí";
+"We refund bridging costs for any transactions over %@" = "Chúng tôi hoàn trả chi phí bắc cầu cho bất kỳ giao dịch nào qua %@";
+"Total amount" = "Tổng cộng";
+"Check available funds" = "Kiểm tra số tiền khả dụng";
+"To send %@ to Ethereum network you have to swap it to %@" = "Để gửi %@ đến mạng Ethereum, bạn phải hoán đổi nó thành %@";

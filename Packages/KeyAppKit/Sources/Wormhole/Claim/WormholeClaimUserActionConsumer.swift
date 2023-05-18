@@ -57,7 +57,7 @@ public class WormholeClaimUserActionConsumer: UserActionConsumer {
 
     /// Peridoc timer
     var updateNewBundleTimer: Timer?
-    
+
     // Only one task is allowed
     var fetchNewBundleTask: Task<Void, Swift.Error>?
 
@@ -77,46 +77,16 @@ public class WormholeClaimUserActionConsumer: UserActionConsumer {
         self.ethereumTokenRepository = ethereumTokenRepository
         self.errorObserver = errorObserver
         self.persistence = persistence
-
-        database
-            .link(to: persistence, in: Self.table)
-            .store(in: &subscriptions)
     }
 
     public func start() {
-        Task {
-            // Restore and filter some actions.
-            try? await database.restore(from: self.persistence, table: Self.table) { _, userAction in
-                switch userAction.internalState {
-                case .pending:
-                    // Never restore pending user action
-                    return false
-                case .processing:
-                    // Remove if user action is live longer then 3 hours
-                    if Date().timeIntervalSince(userAction.updatedDate) > 60 * 60 * 3 {
-                        return false
-                    }
-                case .ready, .error:
-                    // Remove if user action is live longer then 3 minutes
-                    if Date().timeIntervalSince(userAction.updatedDate) > 60 * 3 {
-                        return false
-                    }
-                }
-
-                // Otherwise restore user action
-                return true
-            }
-
-            manuallyCheck(userActions: await database.values())
-
-            // Update bundle periodic
-            updateNewBundleTimer = Timer.scheduledTimer(withTimeInterval: 30, repeats: true) { [weak self] _ in
-                self?.fetchNewBundle()
-            }
-
-            // First fetch
-            fetchNewBundle()
+        // Update bundle periodic
+        updateNewBundleTimer = Timer.scheduledTimer(withTimeInterval: 30, repeats: true) { [weak self] _ in
+            self?.fetchNewBundle()
         }
+
+        // First fetch
+        fetchNewBundle()
     }
 
     deinit {
@@ -135,38 +105,23 @@ public class WormholeClaimUserActionConsumer: UserActionConsumer {
 
         case let .track(bundleStatus):
             Task { [weak self] in
-                if var userAction = await self?.database.get(for: bundleStatus.bundleId) {
-                    // Client side updating state
-                    userAction.moveToNextStatus(nextStatus: bundleStatus.status)
+                // Track new state
+                guard let ethereumTokenRepository = self?.ethereumTokenRepository else { return }
 
-                    // Update record
-                    await self?.database.set(for: userAction.bundleID, userAction)
-                } else {
-                    // Track new pending claimings that wasn't initialed by user's device.
-                    switch bundleStatus.status {
-                    case .pending, .inProgress:
-                        break
-                    default:
-                        return
-                    }
+                // Convert to Ethereum token.
+                let token = try? await WormholeClaimUserActionHelper.extractEthereumToken(
+                    tokenAmount: bundleStatus.resultAmount,
+                    tokenRepository: ethereumTokenRepository
+                )
 
-                    guard let ethereumTokenRepository = self?.ethereumTokenRepository else { return }
-
-                    // Convert to Ethereum token.
-                    let token = try? await WormholeClaimUserActionHelper.extractEthereumToken(
-                        tokenAmount: bundleStatus.resultAmount,
-                        tokenRepository: ethereumTokenRepository
-                    )
-
-                    // Ensure token is handleable by client.
-                    guard let token else {
-                        self?.errorObserver.handleError(Error.invalidToken)
-                        return
-                    }
-
-                    let newTrackableUserAction = Action(bundleStatus: bundleStatus, token: token)
-                    await self?.database.set(for: newTrackableUserAction.bundleID, newTrackableUserAction)
+                // Ensure token is handleable by client.
+                guard let token else {
+                    self?.errorObserver.handleError(Error.invalidToken)
+                    return
                 }
+
+                let newStateUserAction = Action(bundleStatus: bundleStatus, token: token)
+                await self?.database.set(for: newStateUserAction.bundleID, newStateUserAction)
             }
 
         case let .claimFailure(bundleID: bundleID, reason: reason):

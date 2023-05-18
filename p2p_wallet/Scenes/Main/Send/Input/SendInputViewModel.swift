@@ -598,30 +598,13 @@ private extension SendInputViewModel {
             logSendClickCreateLink(symbol: token.symbol, amount: amountInToken, pubkey: sourceWallet.pubkey ?? "")
         }
 
-        let transaction = SendTransaction(state: currentState) {
-            try await createTransactionExecution(
-                isSendingViaLink: isSendingViaLink,
-                isFakeSendTransaction: isFakeSendTransaction,
-                isFakeSendTransactionError: isFakeSendTransactionError,
-                isFakeSendTransactionNetworkError: isFakeSendTransactionNetworkError,
-                recipient: recipient,
-                sendViaLinkSeed: sendViaLinkSeed,
-                token: token,
-                amountInToken: amountInToken,
-                amountInFiat: amountInFiat,
-                sourceWallet: sourceWallet,
-                address: address,
-                feeWallet: feeWallet
-            )
-        }
-
         await MainActor.run {
-            let transaction = SendTransaction(state: self.currentState) {
+            let transaction = SendTransaction(state: currentState) {
                 try await createTransactionExecution(
                     isSendingViaLink: isSendingViaLink,
-                    isFakeSendTransaction: false,
-                    isFakeSendTransactionError: false,
-                    isFakeSendTransactionNetworkError: false,
+                    isFakeSendTransaction: isFakeSendTransaction,
+                    isFakeSendTransactionError: isFakeSendTransactionError,
+                    isFakeSendTransactionNetworkError: isFakeSendTransactionNetworkError,
                     recipient: recipient,
                     sendViaLinkSeed: sendViaLinkSeed,
                     token: token,

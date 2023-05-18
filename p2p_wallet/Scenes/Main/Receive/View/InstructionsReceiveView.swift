@@ -24,7 +24,7 @@ struct InstructionsReceiveView: View {
                                     .stroke(Color(Asset.Colors.silver.color), lineWidth: 1.5)
                             )
                             Color(Asset.Colors.silver.color)
-                                .frame(width: 1)
+                                .frame(width: 1, height: 18)
                                 .padding(.bottom, 2)
                                 .if(instruction.0 == item.instructions.last?.0) { view in
                                     view.opacity(0)
@@ -35,6 +35,8 @@ struct InstructionsReceiveView: View {
                         .apply(style: .text3)
                         .multilineTextAlignment(.leading)
                         .padding(.bottom, instruction.0 == item.instructions.last?.0 ? 0 : 10)
+                    
+                    Spacer()
                 }
             }
             HStack(alignment: .top, spacing: InstructionsReceiveView.textHorizontalSpacing) {
@@ -46,8 +48,9 @@ struct InstructionsReceiveView: View {
                     .apply(style: .text4)
                     .foregroundColor(Color(Asset.Colors.mountain.color))
                     .multilineTextAlignment(.leading)
+                    .padding(.bottom, 16)
+                
             }
-            Spacer()
         }
         .padding(.top, 24)
         .padding(.horizontal, 15)
