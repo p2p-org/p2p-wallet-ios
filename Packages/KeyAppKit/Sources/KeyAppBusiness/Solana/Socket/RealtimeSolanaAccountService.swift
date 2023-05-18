@@ -32,8 +32,8 @@ public enum RealtimeSolanaAccountState: Equatable {
             return true
         case (.running, running):
             return true
-        case let (.stop(lhsError), stop(rhsError)):
-            return (lhsError as? NSError) == (rhsError as? NSError)
+        case (.stop, stop):
+            return true
         default:
             return false
         }
