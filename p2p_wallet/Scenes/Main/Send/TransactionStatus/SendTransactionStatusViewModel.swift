@@ -89,7 +89,7 @@ final class SendTransactionStatusViewModel: BaseViewModel, ObservableObject {
                     return
                 }
 
-                if let error = error as? FeeRelayerError, error == .topUpSuccessButTransactionThrows {
+                if let error = error as? FeeRelayerError, error.message == "Topping up is successfull, but the transaction failed" {
                     params = .init(title: L10n.somethingWentWrong, description: L10n.unknownError, fee: feeAmount)
                 } else if let error = error as? SolanaError {
                     switch error {

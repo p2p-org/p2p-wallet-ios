@@ -96,7 +96,7 @@
         "repositoryURL": "https://github.com/p2p-org/FeeRelayerSwift",
         "state": {
           "branch": "master",
-          "revision": "5e60c88c26f18f8d89345a31d1474f1cbe3b60b6",
+          "revision": "fdbc1a8c0ab13037e01e5493a2beccb84281acb5",
           "version": null
         }
       },
@@ -357,7 +357,7 @@
         "repositoryURL": "https://github.com/p2p-org/solana-swift.git",
         "state": {
           "branch": "main",
-          "revision": "46a62174dde22ec4cfd8e909ae12c037912f2395",
+          "revision": "fcf4b389a3b3f1e0968748385b92203e24dd1fc2",
           "version": null
         }
       },
