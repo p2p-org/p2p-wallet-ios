@@ -51,7 +51,7 @@ class DefaultLogManager: LogManager {
     }
     
     func log(error: Error) {
-        // capture sentry error
+        // capture error
         if let error = error as? CustomNSError {
             log(event: "Error", logLevel: .error, data: error.errorUserInfo[NSDebugDescriptionErrorKey] as? String)
         }
