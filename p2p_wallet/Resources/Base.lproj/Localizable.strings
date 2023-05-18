@@ -1187,7 +1187,7 @@
 "The data is being updated. Please try again in a few minutes." = "The data is being updated. Please try again in a few minutes.";
 "Buy or receive to continue" = "Buy or receive to continue";
 "Less than %@" = "Less than %@";
-"Key App doesn’t make any profit from swap 💚" = "Key App doesn’t make any profit from swap 💚";
+"Key App doesn’t make any profit from this swap 💚" = "Key App doesn’t make any profit from this swap 💚";
 "You receive" = "You receive";
 "Counting..." = "Counting...";
 "You can enter “You pay” field only" = "You can enter “You pay” field only";
@@ -1322,6 +1322,7 @@
 "Add funds" = "Add funds";
 "Wormhole Bridge is currently unable.\nPlease try again later" = "Wormhole Bridge is currently unable.\nPlease try again later";
 "It usually takes 15-20 minutes for a transaction to complete" = "It usually takes 15-20 minutes for a transaction to complete";
+"The fee is more than the defined slippage %@ due to one-time account creation fee by Solana blockchain" = "The fee is more than the defined slippage %@ due to one-time account creation fee by Solana blockchain";
 "How to claim for free" = "How to claim for free";
 "I forgot PIN" = "I forgot PIN";
 "It usually takes few seconds for a transaction to complete" = "It usually takes few seconds for a transaction to complete";
