@@ -1,10 +1,3 @@
-//
-//  File.swift
-//
-//
-//  Created by Giang Long Tran on 05.04.2023.
-//
-
 import Combine
 import FeeRelayerSwift
 import Foundation
@@ -175,6 +168,7 @@ public class WormholeSendUserActionConsumer: UserActionConsumer {
                 let signer = self?.signer
             else {
                 let error = WormholeSendUserActionError.preparingTransactionFailure
+                self?.errorObserver.handleError(error, userInfo: [WormholeClaimUserActionError.UserInfoKey.action.rawValue: action])
                 self?.handleInternalEvent(event: .sendFailure(message: action.message, error: error))
                 return
             }
@@ -186,7 +180,6 @@ public class WormholeSendUserActionConsumer: UserActionConsumer {
                 // Relay service sign transacion
                 // TODO: extract first n required signers for safety.
                 if versionedTransaction.message.value.staticAccountKeys.contains(action.relayContext.feePayerAddress) {
-                    // fee_relayer_error HERE
                     let fullySignedTransaction = try await self?.relayService.signTransaction(
                         transactions: [versionedTransaction],
                         config: .init(operationType: .other)
@@ -194,6 +187,7 @@ public class WormholeSendUserActionConsumer: UserActionConsumer {
 
                     guard let fullySignedTransaction else {
                         let error = WormholeSendUserActionError.feeRelaySignFailure
+                        self?.errorObserver.handleError(error, userInfo: [WormholeClaimUserActionError.UserInfoKey.action.rawValue: action])
                         self?.handleInternalEvent(event: .sendFailure(message: action.message, error: error))
                         return
                     }
@@ -205,9 +199,7 @@ public class WormholeSendUserActionConsumer: UserActionConsumer {
                 let encodedTrx = try versionedTransaction.serialize().base64EncodedString()
                 _ = try await self?.solanaClient.sendTransaction(transaction: encodedTrx, configs: configs)
             } catch {
-                self?.errorObserver.handleError(error)
-                // simulation error HERE
-                // blockchain_error HERE
+                self?.errorObserver.handleError(error, userInfo: [WormholeClaimUserActionError.UserInfoKey.action.rawValue: action])
                 let error = WormholeSendUserActionError.submittingToBlockchainFailure
                 self?.handleInternalEvent(event: .sendFailure(message: action.message, error: error))
             }

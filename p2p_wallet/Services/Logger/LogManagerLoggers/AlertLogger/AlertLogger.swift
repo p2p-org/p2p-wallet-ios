@@ -2,7 +2,7 @@ import Foundation
 
 final class AlertLogger: LogManagerLogger {
     var supportedLogLevels: [LogLevel] = [.alert]
-    
+
     private let url = URL(string: .secretConfig("SWAP_ERROR_LOGGER_ENDPOINT")!)!
 
     func log(event: String, logLevel: LogLevel, data: String?) {
