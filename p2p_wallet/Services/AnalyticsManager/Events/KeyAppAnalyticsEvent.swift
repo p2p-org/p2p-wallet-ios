@@ -1,10 +1,3 @@
-//
-//  KeyAppAnalyticsEvent.swift
-//  p2p_wallet
-//
-//  Created by Ivan on 13.09.2022.
-//
-
 import AnalyticsManager
 import Foundation
 
@@ -104,6 +97,12 @@ enum KeyAppAnalyticsEvent: AnalyticsEvent {
     case receiveQRSaved
     case receiveViewingExplorer
     case receiveStartScreen
+    case receiveTokenClick(tokenName: String)
+    case receiveNetworkScreenOpen
+    case receiveNetworkClickButton(network: String)
+    case receiveCopyAddressClickButton(network: String)
+    case receiveCopyLongAddressClick(network: String)
+    case receiveCopyAddressUsername
     case actionButtonReceive
 
     // MARK: - Send
@@ -133,6 +132,27 @@ enum KeyAppAnalyticsEvent: AnalyticsEvent {
         fee: Bool,
         fiatInput: Bool
     )
+    // Bridges
+    case sendBridgesScreenOpen
+    case sendBridgesConfirmButtonClick(
+        tokenName: String,
+        tokenValue: Double,
+        valueFiat: Double,
+        fee: Double
+    )
+    case sendClickChangeTokenChosen(source: String, sendFlow: String)
+    case sendClickChangeTokenValue(source: String)
+    case sendClickChangeTokenValue(source: String, sendFlow: String)
+    case sendStartScreenOpen(lastScreen: String)
+    case sendClickStartCreateLink
+    case sendClickChangeTokenChosen(tokenName: String, sendFlow: String)
+    case sendClickChangeTokenValue(tokenName: String, tokenValue: Double, sendFlow: String)
+    case sendClickCreateLink(tokenName: String, tokenValue: Double, pubkey: String)
+    case sendCreatingLinkEndScreenOpen(tokenName: String, tokenValue: Double, pubkey: String)
+    case sendClickShareLink
+    case sendClickCopyLink
+    case sendClickDefaultError
+    case sendCreatingLinkProcessScreenOpen
 
     // MARK: - Send new
 
@@ -141,8 +161,8 @@ enum KeyAppAnalyticsEvent: AnalyticsEvent {
     case sendnewBuyClickButton(source: String)
     case sendnewReceiveClickButton(source: String)
     case sendnewInputScreen(source: String)
-    case sendnewTokenInputClick(source: String)
-    case sendnewFreeTransactionClick(source: String)
+    case sendnewTokenInputClick(tokenName: String, source: String, sendFlow: String)
+    case sendnewFreeTransactionClick(source: String, sendFlow: String)
     case sendnewFiatInputClick(crypto: Bool, source: String)
 
     // MARK: - Swap
@@ -219,7 +239,7 @@ enum KeyAppAnalyticsEvent: AnalyticsEvent {
     case swapChangingTokenB(tokenBName: String, tokenBValue: Double)
     case swapReturnFromChangingTokenB
     case swapChangingValueTokenA(tokenAName: String, tokenAValue: Double)
-    case swapChangingValueTokenB(tokenBName: String, tokenBValue: Double)
+    case swapChangingValueTokenB(tokenBName: String, tokenBValue: Double, transactionSimulation: Bool)
     case swapChangingValueTokenAAll(tokenAName: String, tokenAValue: Double)
     case swapSwitchTokens(tokenAName: String, tokenBName: String)
     case swapPriceImpactLow(priceImpact: Decimal)
@@ -286,6 +306,12 @@ enum KeyAppAnalyticsEvent: AnalyticsEvent {
         bankTransfer: Bool,
         typeBankTransfer: String?
     )
+    case buyBlockedScreenOpen
+    case buyBlockedRegionClick
+    case regionBuyScreenOpen
+    case regionBuySearchClick
+    case regionBuyResultClick(country: String)
+    case buyChangeCountryClick
 
     // General
     case appOpened(sourceOpen: String)
@@ -350,6 +376,28 @@ enum KeyAppAnalyticsEvent: AnalyticsEvent {
     case sellMoonpay
     
     // MARK: - History
-    case historyOpened
+    case historyOpened(sentViaLink: Bool)
     case historySendClicked(status: String)
+
+    // MARK: - Claim
+
+    case claimAvailable(claim: Bool)
+    case claimBridgesButtonClick
+    case claimBridgesScreenOpen(from: String) // main, push
+    case claimBridgesFeeClick
+    case claimBridgesClickConfirmed(tokenName: String, tokenValue: Double, valueFiat: Double, free: Bool)
+    case historyClickBlockSendViaLink
+    case historySendClickTransaction
+    case historySendClickCopyTransaction
+    case historySendClickShareTransaction
+    
+    // MARK: - Claim
+    
+    case claimStartScreenOpen
+    case claimClickConfirmed(pubkey: String, tokenName: String, tokenValue: Double)
+    case claimClickHide
+    case claimEndScreenOpen
+    case claimClickEnd
+    case claimErrorAlreadyClaimed
+    case claimErrorDefaultReject
 }

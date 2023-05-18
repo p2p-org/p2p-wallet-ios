@@ -10,13 +10,15 @@ enum JupiterSwapSource: String {
 
 struct JupiterSwapParameters {
     let preChosenWallet: Wallet?
+    let destinationWallet: Wallet?
     let dismissAfterCompletion: Bool
     let openKeyboardOnStart: Bool
     let hideTabBar: Bool
     let source: JupiterSwapSource // This param's necessary for the analytic. It doesn't do any logic
 
-    init(dismissAfterCompletion: Bool, openKeyboardOnStart: Bool, source: JupiterSwapSource, preChosenWallet: Wallet? = nil, hideTabBar: Bool = false) {
+    init(dismissAfterCompletion: Bool, openKeyboardOnStart: Bool, source: JupiterSwapSource, preChosenWallet: Wallet? = nil, destinationWallet: Wallet? = nil, hideTabBar: Bool = false) {
         self.preChosenWallet = preChosenWallet
+        self.destinationWallet = destinationWallet
         self.dismissAfterCompletion = dismissAfterCompletion
         self.openKeyboardOnStart = openKeyboardOnStart
         self.source = source
@@ -68,7 +70,8 @@ final class JupiterSwapCoordinator: Coordinator<Void> {
             fromTokenInputViewModel: fromTokenInputViewModel,
             toTokenInputViewModel: toTokenInputViewModel,
             source: params.source,
-            preChosenWallet: params.preChosenWallet
+            preChosenWallet: params.preChosenWallet,
+            destinationWallet: params.destinationWallet
         )
         
         // view
@@ -111,6 +114,7 @@ final class JupiterSwapCoordinator: Coordinator<Void> {
     
     func style(controller: UIViewController) {
         controller.title = L10n.swap
+        controller.navigationItem.largeTitleDisplayMode = .never
         swapSettingBarButton = UIBarButtonItem(image: .receipt, style: .plain, target: self, action: #selector(receiptButtonPressed))
         
         // show rightBarButtonItem only on successful loading
@@ -207,11 +211,13 @@ final class JupiterSwapCoordinator: Coordinator<Void> {
             stateMachine: viewModel.stateMachine
         )
         viewModel.logSettingsClick()
+        viewModel.fromTokenInputViewModel.isFirstResponder = false
 
         // coordinate
         coordinate(to: settingsCoordinator)
             .prefix(1)
             .sink(receiveValue: { [weak viewModel] result in
+                viewModel?.fromTokenInputViewModel.isFirstResponder = true
                 switch result {
                 case let .selectedSlippageBps(slippageBps):
                     Task { [weak viewModel] in
@@ -220,11 +226,10 @@ final class JupiterSwapCoordinator: Coordinator<Void> {
                         )
                     }
                 case let .selectedRoute(routeInfo):
-                    guard let route = (viewModel?.currentState.routes.first { $0.id == routeInfo.id }),
-                          route.id != viewModel?.currentState.route?.id
-                    else {
-                        return
-                    }
+                    guard
+                        let route = (viewModel?.currentState.routes.first { $0.id == routeInfo.id }),
+                        route.id != viewModel?.currentState.route?.id
+                    else { return }
                     Task { [weak viewModel] in
                         await viewModel?.stateMachine.accept(
                             action: .chooseRoute(route)

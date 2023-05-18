@@ -8,6 +8,7 @@
 import Combine
 import Foundation
 import History
+import KeyAppBusiness
 import Resolver
 import SolanaSwift
 import TransactionParser
@@ -25,48 +26,36 @@ enum TransactionDetailViewModelOutput {
 
 class TransactionDetailViewModel: BaseViewModel, ObservableObject {
     @Injected private var transactionHandler: TransactionHandler
-    @Published var rendableTransaction: any RendableTransactionDetail {
-        didSet {
-            switch rendableTransaction.status {
-            case let .error(_, error):
-                if let error, error.isSlippageError {
-                    closeButtonTitle = L10n.increaseSlippageAndTryAgain
-                } else {
-                    closeButtonTitle = L10n.tryAgain
-                }
-            default:
-                break
-            }
-        }
-    }
-
-    @Published var closeButtonTitle: String = L10n.done
+    @Published var rendableTransaction: any RendableTransactionDetail
 
     let style: TransactionDetailStyle
 
     let action = PassthroughSubject<TransactionDetailViewModelOutput, Never>()
-    
+
     var statusContext: String?
 
     init(rendableDetailTransaction: any RendableTransactionDetail, style: TransactionDetailStyle = .active) {
         self.style = style
-        self.rendableTransaction = rendableDetailTransaction
+        rendableTransaction = rendableDetailTransaction
     }
 
     init(parsedTransaction: ParsedTransaction) {
-        self.style = .passive
-        self.rendableTransaction = RendableDetailParsedTransaction(trx: parsedTransaction)
+        style = .passive
+        rendableTransaction = RendableDetailParsedTransaction(trx: parsedTransaction)
     }
 
     init(historyTransaction: HistoryTransaction) {
-        self.style = .passive
-        self.rendableTransaction = RendableDetailHistoryTransaction(trx: historyTransaction, allTokens: [])
+        style = .passive
+        rendableTransaction = RendableDetailHistoryTransaction(trx: historyTransaction, allTokens: [])
 
         super.init()
 
         Task {
             let tokenRepository: TokensRepository = Resolver.resolve()
-            self.rendableTransaction = try await RendableDetailHistoryTransaction(trx: historyTransaction, allTokens: tokenRepository.getTokensList(useCache: true))
+            self.rendableTransaction = try await RendableDetailHistoryTransaction(
+                trx: historyTransaction,
+                allTokens: tokenRepository.getTokensList(useCache: true)
+            )
         }
     }
 
@@ -74,12 +63,12 @@ class TransactionDetailViewModel: BaseViewModel, ObservableObject {
         let pendingService: TransactionHandlerType = Resolver.resolve()
         let priceService: PricesService = Resolver.resolve()
 
-        self.style = .active
+        style = .active
         self.statusContext = statusContext
-        self.rendableTransaction = RendableDetailPendingTransaction(trx: pendingTransaction, priceService: priceService)
+        rendableTransaction = RendableDetailPendingTransaction(trx: pendingTransaction, priceService: priceService)
 
         super.init()
-        
+
         pendingService
             .observeTransaction(transactionIndex: pendingTransaction.trxIndex)
             .sink { trx in
@@ -89,13 +78,41 @@ class TransactionDetailViewModel: BaseViewModel, ObservableObject {
             .store(in: &subscriptions)
     }
 
+    init(userAction: any UserAction) {
+        let userActionService: UserActionService = Resolver.resolve()
+
+        style = .active
+        rendableTransaction = RendableGeneralUserActionTransaction.resolve(userAction: userAction)
+
+        super.init()
+
+        userActionService
+            .observer(id: userAction.id)
+            .receive(on: RunLoop.main)
+            .sink { userAction in
+                self.rendableTransaction = RendableGeneralUserActionTransaction.resolve(userAction: userAction)
+            }
+            .store(in: &subscriptions)
+    }
+
+    convenience init(submit rawTransaction: RawTransactionType) {
+        let pendingService: TransactionHandlerType = Resolver.resolve()
+
+        let idx = pendingService.sendTransaction(rawTransaction)
+        let pendingTransaction = pendingService.getProcessingTransaction(index: idx)
+
+        self.init(pendingTransaction: pendingTransaction)
+    }
+
     func share() {
-        guard let url = URL(string: "https://explorer.solana.com/tx/\(rendableTransaction.signature ?? "")") else { return }
+        guard let url = URL(string: "https://explorer.solana.com/tx/\(rendableTransaction.signature ?? "")")
+        else { return }
         action.send(.share(url))
     }
 
     func explore() {
-        guard let url = URL(string: "https://explorer.solana.com/tx/\(rendableTransaction.signature ?? "")") else { return }
+        guard let url = URL(string: "https://explorer.solana.com/tx/\(rendableTransaction.signature ?? "")")
+        else { return }
         action.send(.open(url))
     }
 }

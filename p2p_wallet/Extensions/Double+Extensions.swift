@@ -149,7 +149,7 @@ extension Double {
         customFormattForLessThan1E_2: Bool = false
     ) -> String {
         // amount < 0.01
-        if customFormattForLessThan1E_2 && self < 0.01 {
+        if customFormattForLessThan1E_2 && self > 0 && self < 0.01 {
             if currency == .usd {
                 return "< \(currency.symbol) 0.01"
             } else {
@@ -175,10 +175,14 @@ extension Double {
         maximumFractionDigits: Int = 9,
         roundingMode: NumberFormatter.RoundingMode? = nil
     ) -> String {
-        "\(toString(maximumFractionDigits: maximumFractionDigits)) \(symbol)"
+        "\(toString(maximumFractionDigits: maximumFractionDigits, roundingMode: roundingMode)) \(symbol)"
     }
 
-    func formattedFiat(maximumFractionDigits: Int = 2, currency: Fiat = .usd, roundingMode: NumberFormatter.RoundingMode? = nil) -> String {
+    func formattedFiat(
+        maximumFractionDigits: Int = 2,
+        currency: Fiat = .usd,
+        roundingMode: NumberFormatter.RoundingMode? = nil
+    ) -> String {
         return "\(toString(maximumFractionDigits: maximumFractionDigits, roundingMode: roundingMode)) \(currency.code)"
     }
 

@@ -115,7 +115,7 @@ class QrCodeScannerVC: BaseVC {
         if callback?(code) == true {
             analyticsManager.log(event: .scanQrSuccess)
             back()
-            AudioServicesPlaySystemSound(SystemSoundID(kSystemSoundID_Vibrate))
+            try? AudioServicesPlaySystemSound(SystemSoundID(kSystemSoundID_Vibrate))
         }
         debugPrint(code)
     }

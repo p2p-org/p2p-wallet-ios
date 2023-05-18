@@ -1,8 +1,16 @@
 name: Daily build test
 on:
   workflow_dispatch:
-  schedule:
-    - cron: "0 0 * * 1-5" # At 00:00 on every day-of-week from Monday through Friday.
+  push:
+    branches:
+      - 'develop'
+  # schedule:
+  #   - cron: "0 0 * * 1-5" # At 00:00 on every day-of-week from Monday through Friday.
+
+concurrency:
+  group: daily-build
+  cancel-in-progress: true
+
 jobs:
   update-daily-test-build-from-develop:
     uses: ./.github/workflows/build-test.yml

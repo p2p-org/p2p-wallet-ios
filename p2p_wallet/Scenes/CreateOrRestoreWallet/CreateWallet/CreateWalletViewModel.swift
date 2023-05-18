@@ -2,11 +2,11 @@
 // Use of this source code is governed by a MIT-style license that can be
 // found in the LICENSE file.
 
-import Amplitude
 import Combine
 import Foundation
 import Onboarding
 import Resolver
+import Amplitude
 
 final class CreateWalletViewModel: BaseViewModel, ObservableObject {
     let onboardingStateMachine: CreateWalletStateMachine
@@ -23,7 +23,8 @@ final class CreateWalletViewModel: BaseViewModel, ObservableObject {
                 authService: AuthServiceBridge(),
                 apiGatewayClient: Resolver.resolve(),
                 tKeyFacade: provider.createTKeyFacade(),
-                deviceName: AMPDeviceInfo().model
+//                deviceName: AMPDeviceInfo().model
+                deviceName: ""
             )
         )
 

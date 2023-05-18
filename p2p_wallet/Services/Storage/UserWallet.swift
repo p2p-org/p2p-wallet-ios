@@ -3,21 +3,35 @@
 // found in the LICENSE file.
 
 import Combine
+import KeyAppKitCore
 import Resolver
 import SolanaSwift
 
 struct UserWallet: Identifiable, Hashable, Equatable {
+    /// Seed phrase for current wallet. Other keypairs is normally will be extracted by this seed phrase.
     let seedPhrase: [String]?
+
+    /// The derivable path for current wallet.
     let derivablePath: DerivablePath?
+
+    /// Username
     let name: String?
 
     /// Solana account
-    let account: Account
+    let account: KeyPair
 
-    // TKey part
+    /// Torus device share
     let deviceShare: String?
+
+    /// Torus ethereum address
     let ethAddress: String?
+
+    /// Moonpay external client id for identifyting user's moonpay buy & sell transactions.
     let moonpayExternalClientId: String?
+
+    /// Default ethereum wallet keypair.
+    /// The value was derived from the seed phrase.
+    let ethereumKeypair: EthereumKeyPair
 
     init(
         seedPhrase: [String]?,
@@ -25,8 +39,9 @@ struct UserWallet: Identifiable, Hashable, Equatable {
         name: String?,
         deviceShare: String?,
         ethAddress: String?,
-        account: Account,
-        moonpayExternalClientId: String?
+        account: KeyPair,
+        moonpayExternalClientId: String?,
+        ethereumKeypair: EthereumKeyPair
     ) {
         self.seedPhrase = seedPhrase
         self.derivablePath = derivablePath
@@ -36,28 +51,10 @@ struct UserWallet: Identifiable, Hashable, Equatable {
 
         self.account = account
         self.moonpayExternalClientId = moonpayExternalClientId
+        self.ethereumKeypair = ethereumKeypair
     }
 
     var id: String {
         account.publicKey.base58EncodedString
-    }
-
-    func hash(into hasher: inout Hasher) {
-        hasher.combine(seedPhrase)
-        hasher.combine(derivablePath)
-        hasher.combine(name)
-        hasher.combine(account)
-        hasher.combine(deviceShare)
-        hasher.combine(ethAddress)
-    }
-
-    static func == (lhs: UserWallet, rhs: UserWallet) -> Bool {
-        if lhs.seedPhrase != rhs.seedPhrase { return false }
-        if lhs.derivablePath != rhs.derivablePath { return false }
-        if lhs.name != rhs.name { return false }
-        if lhs.account != rhs.account { return false }
-        if lhs.deviceShare != rhs.deviceShare { return false }
-        if lhs.ethAddress != rhs.ethAddress { return false }
-        return true
     }
 }

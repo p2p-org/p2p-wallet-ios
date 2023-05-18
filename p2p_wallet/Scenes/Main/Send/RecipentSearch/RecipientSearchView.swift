@@ -19,7 +19,7 @@ struct RecipientSearchView: View {
             ProgressView()
         case .loaded:
             loadedView
-        case .error(_):
+        case .error:
             ErrorView {
                 Task { await viewModel.load() }
             }
@@ -43,12 +43,24 @@ struct RecipientSearchView: View {
                 } scan: {
                     viewModel.qr()
                 }
-                    .accessibilityIdentifier("RecipientSearchView.loadedView.RecipientSearchField")
+                .accessibilityIdentifier("RecipientSearchView.loadedView.RecipientSearchField")
                 
                 // Send via link
                 if !viewModel.sendViaLinkState.isFeatureDisabled, viewModel.sendViaLinkVisible {
                     sendViaLinkView
                 }
+                
+                #if !RELEASE
+                // Send to totally new account (for debugging)
+                Button {
+                    viewModel.sendToTotallyNewAccount()
+                } label: {
+                    Text("Tap to send to totally new account (asset will be lost)")
+                        .apply(style: .label2)
+                        .foregroundColor(.red)
+                        .fixedSize(horizontal: false, vertical: true)
+                }
+                #endif
 
                 // Result
                 if viewModel.isSearching {
@@ -139,19 +151,10 @@ struct RecipientSearchView: View {
                 RecipientCell(
                     image: Image(uiImage: viewModel.sendViaLinkState.canCreateLink ? .sendViaLinkCircle: .sendViaLinkCircleDisabled)
                         .castToAnyView(),
-                    title: L10n.sendCryptoViaOneTimeLink,
-                    subtitle: viewModel.sendViaLinkState.canCreateLink ? L10n.youDonTNeedToKnowTheAddress: L10n.LimitIsOneTimeLinksPerDay.tryTomorrow(viewModel.sendViaLinkState.limitPerDay)
+                    title: L10n.sendMoneyViaLink,
+                    subtitle: viewModel.sendViaLinkState.canCreateLink ? L10n.withoutAccountDetails: L10n.YouHaveReachedTheDailyLimitOfSendingFreeLinks.tryTomorrow,
+                    multilinesForSubtitle: true
                 )
-                
-                #if !RELEASE
-                Group {
-                    Text("Links per day: \(viewModel.sendViaLinkState.limitPerDay)")
-                        .apply(style: .label2)
-                    Text("Links created today: \(viewModel.sendViaLinkState.numberOfLinksUsedToday)")
-                        .apply(style: .label2)
-                }
-                    .foregroundColor(.red)
-                #endif
             }
             
         }
@@ -289,40 +292,46 @@ struct RecipientSearchView: View {
                     .apply(style: .text3)
                 Spacer()
             default:
-                Text(L10n.makeYourFirstTransaction)
-                    .fontWeight(.bold)
-                    .apply(style: .title2)
-                Text(L10n.toContinuePasteOrScanTheAddressOrTypeAUsername)
-                    .apply(style: .text1)
-                    .multilineTextAlignment(.center)
-                Spacer()
-                HStack(spacing: 8) {
-                    TextButtonView(
-                        title: L10n.scanQR,
-                        style: .primary,
-                        size: .large,
-                        leading: Asset.Icons.qr.image
-                    ) {
-                        viewModel.qr()
+                VStack(spacing: 0) {
+                    VStack(spacing: 16) {
+                        Text(L10n.makeYourFirstTransaction)
+                            .fontWeight(.bold)
+                            .apply(style: .title2)
+                        Text(L10n.toContinuePasteOrScanTheAddressOrTypeAUsername)
+                            .apply(style: .text1)
+                            .multilineTextAlignment(.center)
+                            .fixedSize(horizontal: false, vertical: true)
                     }
-                    .frame(height: TextButton.Size.large.height)
-                    .cornerRadius(28)
-                    .accessibilityIdentifier("RecipientSearchView.loadedView.emptyRecipientsView.sqanQR")
-
-                    TextButtonView(
-                        title: L10n.paste,
-                        style: .primary,
-                        size: .large,
-                        leading: Asset.Icons.past.image
-                    ) {
-                        viewModel.past()
-                    }
-                    .frame(height: TextButton.Size.large.height)
-                    .cornerRadius(28)
-                    .accessibilityIdentifier("RecipientSearchView.loadedView.emptyRecipientsView.pasteButton")
-                }.padding(.bottom, 8)
+                    Spacer()
+                    HStack(spacing: 8) {
+                        TextButtonView(
+                            title: L10n.scanQR,
+                            style: .primary,
+                            size: .large,
+                            leading: Asset.Icons.qr.image
+                        ) {
+                            viewModel.qr()
+                        }
+                        .frame(height: TextButton.Size.large.height)
+                        .cornerRadius(28)
+                        .accessibilityIdentifier("RecipientSearchView.loadedView.emptyRecipientsView.sqanQR")
+                        
+                        TextButtonView(
+                            title: L10n.paste,
+                            style: .primary,
+                            size: .large,
+                            leading: Asset.Icons.past.image
+                        ) {
+                            viewModel.past()
+                        }
+                        .frame(height: TextButton.Size.large.height)
+                        .cornerRadius(28)
+                        .accessibilityIdentifier("RecipientSearchView.loadedView.emptyRecipientsView.pasteButton")
+                    }.padding(.bottom, 8)
+                }
             }
-        }.padding(.top, 48)
+        }
+        .padding(.top, 48)
     }
 
     private func okView(_ recipients: [Recipient]) -> some View {
@@ -345,7 +354,7 @@ struct RecipientSearchView: View {
                                 Spacer()
                             }
                         }
-                            .accessibilityIdentifier("RecipientSearchView.okView.recipientCell")
+                        .accessibilityIdentifier("RecipientSearchView.okView.recipientCell")
 
                         if recipient.category == .solanaAddress && !recipient.attributes.contains(.funds) {
                             HStack {
@@ -375,7 +384,8 @@ struct RecipientSearchView: View {
             if
                 recipients.count == 1,
                 let recipient: Recipient = recipients.first,
-                !recipient.attributes.contains(.funds)
+                !recipient.attributes.contains(.funds),
+                recipient.category != .ethereumAddress
             {
                 VStack {
                     Spacer()
@@ -430,12 +440,10 @@ struct RecipientSearchView_Previews: PreviewProvider {
         NavigationView {
             RecipientSearchView(
                 viewModel: .init(
-                    recipientSearchService: RecipientSearchServiceMock(
-                        result: okNoFundCase
-                    ),
-                    sendHistoryService: SendHistoryService(provider: SendHistoryLocalProvider()),
                     preChosenWallet: nil,
-                    source: .none
+                    source: .none,
+                    recipientSearchService: RecipientSearchServiceMock(result: okNoFundCase),
+                    sendHistoryService: SendHistoryService(provider: SendHistoryLocalProvider())
                 )
             )
         }

@@ -15,6 +15,7 @@ import SolanaSwift
 import UIKit
 import OrcaSwapSwift
 import Sell
+import Sentry
 
 final class AppCoordinator: Coordinator<Void> {
     // MARK: - Dependencies
@@ -27,7 +28,6 @@ final class AppCoordinator: Coordinator<Void> {
     @Injected var notificationService: NotificationService
     @Injected var userWalletManager: UserWalletManager
     @Injected var createNameService: CreateNameService
-    @Injected private var amplitudeAnalyticsProvider: AmplitudeAnalyticsProvider
 
     // MARK: - Properties
 
@@ -68,7 +68,7 @@ final class AppCoordinator: Coordinator<Void> {
                 .receive(on: RunLoop.main)
                 .sink { [unowned self] wallet, _ in
                     if let wallet {
-                        amplitudeAnalyticsProvider.setUserId(wallet.account.publicKey.base58EncodedString)
+                        sendUserIdentifierToAnalyticsProviders(wallet)
                         if walletCreated, available(.onboardingUsernameEnabled) {
                             walletCreated = false
                             navigateToCreateUsername()
@@ -76,7 +76,7 @@ final class AppCoordinator: Coordinator<Void> {
                             navigateToMain()
                         }
                     } else {
-                        amplitudeAnalyticsProvider.setUserId(nil)
+                        sendUserIdentifierToAnalyticsProviders(nil)
                         navigateToOnboardingFlow()
                     }
                 }
@@ -129,9 +129,7 @@ final class AppCoordinator: Coordinator<Void> {
         Task.detached {
             try await Resolver.resolve(WalletMetadataService.self).update()
             try await Resolver.resolve(OrcaSwapType.self).load()
-            if available(.jupiterSwapEnabled) {
-                await Resolver.resolve(JupiterTokensRepository.self).load()
-            }
+            await Resolver.resolve(JupiterTokensRepository.self).load()
         }
         
         Task {
@@ -217,6 +215,23 @@ final class AppCoordinator: Coordinator<Void> {
     }
 
     // MARK: - Helper
+    
+    private func sendUserIdentifierToAnalyticsProviders(_ wallet: UserWallet?) {
+        // Amplitude
+        let amplitudeAnalyticsProvider: AmplitudeAnalyticsProvider = Resolver.resolve()
+        amplitudeAnalyticsProvider.setUserId(wallet?.account.publicKey.base58EncodedString)
+        
+        // Sentry
+        if let wallet {
+            var sentryUser = Sentry.User(
+                userId: wallet.account.publicKey.base58EncodedString
+            )
+            sentryUser.username = wallet.name
+            SentrySDK.setUser(sentryUser)
+        } else {
+            SentrySDK.setUser(nil)
+        }
+    }
 
     private func saveSecurity(data: SecurityData) {
         Resolver.resolve(PincodeStorageType.self).save(data.pincode)

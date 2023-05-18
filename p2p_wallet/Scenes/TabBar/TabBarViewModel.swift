@@ -5,19 +5,16 @@
 //  Created by Ivan on 20.11.2022.
 //
 
+import Combine
 import Foundation
 import NameService
-import RenVMSwift
 import Resolver
 import SolanaSwift
-import Combine
 
 final class TabBarViewModel {
     // Dependencies
     @Injected private var socket: Socket
     @Injected private var pricesService: PricesServiceType
-    @Injected private var lockAndMint: LockAndMintService
-    @Injected private var burnAndRelease: BurnAndReleaseService
     @Injected private var authenticationHandler: AuthenticationHandlerType
     @Injected private var notificationService: NotificationService
 
@@ -25,24 +22,17 @@ final class TabBarViewModel {
     @Injected private var nameService: NameService
     @Injected private var nameStorage: NameStorageType
 
-    private let transactionAnalytics = [
-        Resolver.resolve(SwapTransactionAnalytics.self),
-    ]
-
     // Input
     let viewDidLoad = PassthroughSubject<Void, Never>()
+    
+    private let becomeActiveSubject = PassthroughSubject<Void, Never>()
+    private var cancellables = Set<AnyCancellable>()
 
     init() {
         if #available(iOS 15.0, *) {
             socket.connect()
         }
         pricesService.startObserving()
-        burnAndRelease.resume()
-
-        // RenBTC service
-        Task {
-            try await lockAndMint.resume()
-        }
 
         // Name service
         Task {
@@ -53,6 +43,8 @@ final class TabBarViewModel {
 
         // Notification
         notificationService.requestRemoteNotificationPermission()
+        
+        listenDidBecomeActiveForDeeplinks()
     }
 
     deinit {
@@ -63,6 +55,19 @@ final class TabBarViewModel {
 
     func authenticate(presentationStyle: AuthenticationPresentationStyle?) {
         authenticationHandler.authenticate(presentationStyle: presentationStyle)
+    }
+    
+    private func listenDidBecomeActiveForDeeplinks() {
+        DispatchQueue.main.asyncAfter(deadline: .now() + 0.1) {
+            self.becomeActiveSubject.send()
+        }
+        
+        NotificationCenter.default
+            .publisher(for: UIApplication.didBecomeActiveNotification)
+            .sink(receiveValue: { [weak self] _ in
+                self?.becomeActiveSubject.send()
+            })
+            .store(in: &cancellables)
     }
 }
 
@@ -98,7 +103,7 @@ extension TabBarViewModel {
                 .filter { value in
                     GlobalAppState.shared.surveyID != nil && value == false
                 }
-                .map {_ in ()},
+                .map { _ in () },
 
             viewDidLoad
                 .filter { [weak self] in
@@ -116,22 +121,14 @@ extension TabBarViewModel {
         .eraseToAnyPublisher()
     }
     
-    var moveToSendViaLinkClaim: AnyPublisher<URL?, Never> {
-        Publishers.Merge(
-            authenticationHandler
-                .isLockedPublisher
-                .filter { value in
-                    GlobalAppState.shared.sendViaLinkUrl != nil && value == false
-                }
-                .map { _ in () },
-            
-            viewDidLoad
-                .filter { [weak self] in
-                    self?.notificationService.showFromLaunch == true
-                }
+    var moveToSendViaLinkClaim: AnyPublisher<URL, Never> {
+        Publishers.CombineLatest(
+            authenticationStatusPublisher,
+            becomeActiveSubject
         )
-        .map { _ in () }
-        .map { GlobalAppState.shared.sendViaLinkUrl }
+        .debounce(for: .milliseconds(900), scheduler: RunLoop.main)
+        .filter { $0.0 == nil }
+        .compactMap { _ in GlobalAppState.shared.sendViaLinkUrl }
         .handleEvents(receiveOutput: { _ in
             GlobalAppState.shared.sendViaLinkUrl = nil
         })

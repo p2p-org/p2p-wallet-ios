@@ -95,3 +95,15 @@ final class RecoveryKitCoordinator: Coordinator<Void> {
         self.navigationController.present(navigationController, animated: true)
     }
 }
+
+private final class KeyAppHostingController<Content: View>: UIHostingController<Content> {
+    override func viewDidLoad() {
+        super.viewDidLoad()
+        navigationController?.navigationBar.topItem?.backButtonDisplayMode = .minimal
+    }
+    
+    override func viewWillLayoutSubviews() {
+        super.viewWillLayoutSubviews()
+        navigationController?.navigationBar.topItem?.backButtonDisplayMode = .minimal
+    }
+}

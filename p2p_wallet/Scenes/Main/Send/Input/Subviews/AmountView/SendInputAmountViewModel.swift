@@ -21,6 +21,9 @@ final class SendInputAmountViewModel: BaseViewModel, ObservableObject {
     let switchPressed = PassthroughSubject<Void, Never>()
     let maxAmountPressed = PassthroughSubject<Void, Never>()
     let changeAmount = PassthroughSubject<(amount: Amount, type: EnteredAmountType), Never>()
+    
+    // It's a fact of exactly changing amount
+    let tokenAmountChanged = PassthroughSubject<Amount?, Never>()
 
     // MARK: - Properties
 
@@ -38,7 +41,6 @@ final class SendInputAmountViewModel: BaseViewModel, ObservableObject {
     @Published var amountTextColor: UIColor = Asset.Colors.night.color
     @Published var mainTokenText = ""
     @Published var mainAmountType: EnteredAmountType = .fiat
-    @Published var isSwitchAvailable = true
     @Published var isMaxButtonVisible: Bool = true
 
     @Published var secondaryAmountText = ""
@@ -49,15 +51,16 @@ final class SendInputAmountViewModel: BaseViewModel, ObservableObject {
     @Published var amount: Amount?
     @Published var isError: Bool = false
     @Published var countAfterDecimalPoint: Int
-    @Published var showSecondaryAmounts = true
+    @Published var isSwitchAvailable: Bool = true
 
     private let fiat: Fiat
+    private var currentText: String?
     private var tokenChangedEvent = CurrentValueSubject<Wallet, Never>(.init(token: .nativeSolana))
 
     // MARK: - Dependencies
     private let pricesService: PricesServiceType
 
-    init(initialToken: Wallet, allowSwitchingMainAmountType: Bool) {
+    init(initialToken: Wallet) {
         fiat = Defaults.fiat
         token = initialToken
         countAfterDecimalPoint = Constants.fiatDecimals
@@ -92,9 +95,13 @@ final class SendInputAmountViewModel: BaseViewModel, ObservableObject {
                 } else {
                     self.amount = nil
                 }
+                if self.currentText != text, self.mainAmountType == .token {
+                    self.tokenAmountChanged.send(self.amount)
+                }
                 self.updateSecondaryAmount()
                 self.validateAmount()
                 self.isMaxButtonVisible = text.isEmpty
+                self.currentText = text
             }
             .store(in: &subscriptions)
 
@@ -103,14 +110,6 @@ final class SendInputAmountViewModel: BaseViewModel, ObservableObject {
         tokenChangedEvent
             .sink { [weak self] token in
                 guard let self = self else { return }
-
-                if token.priceInCurrentFiat == nil {
-                    self.mainAmountType = .token
-                    self.showSecondaryAmounts = false
-                } else {
-                    self.showSecondaryAmounts = true
-                }
-
                 self.updateCurrencyTitles()
                 self.updateDecimalsPoint()
                 self.validateDecimalsInAmount()
@@ -163,19 +162,6 @@ final class SendInputAmountViewModel: BaseViewModel, ObservableObject {
                 case .token:
                     self.mainTokenText = currentWallet.token.symbol
                     self.secondaryCurrencyText = self.fiat.code
-                }
-            }
-            .store(in: &subscriptions)
-
-        pricesService.isPricesAvailablePublisher
-            .sink { [weak self] isAvailable in
-                guard let self else { return }
-                self.showSecondaryAmounts = isAvailable
-                if !isAvailable {
-                    self.mainAmountType = .token
-                    self.isSwitchAvailable = false
-                } else {
-                    self.isSwitchAvailable = allowSwitchingMainAmountType
                 }
             }
             .store(in: &subscriptions)

@@ -222,3 +222,17 @@ extension String {
         fakeTransactionSignaturePrefix + "<\(id)>"
     }
 }
+
+// MARK: - Flag
+
+extension String {
+    var asFlag: String? {
+        let base : UInt32 = 127397
+        var s = ""
+        unicodeScalars.forEach {
+            s.unicodeScalars.append(UnicodeScalar(base + $0.value)!)
+        }
+        
+        return String.init(stringLiteral: s)
+    }
+}
