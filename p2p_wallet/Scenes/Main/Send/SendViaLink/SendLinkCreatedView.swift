@@ -8,6 +8,12 @@
 import SwiftUI
 import KeyAppUI
 
+private extension String {
+    static let accessibilityTitleLabel = "SendLinkCreatedView.titleLabel"
+    static let accessibilityCopyButton = "SendLinkCreatedView.copyButton"
+    static let accessibilitySubtitleLabel = "SendLinkCreatedView.subtitleLabel"
+}
+
 struct SendLinkCreatedView: View {
     
     let viewModel: SendLinkCreatedViewModel
@@ -31,11 +37,12 @@ struct SendLinkCreatedView: View {
             Spacer()
             
             // Header
-            Text(L10n.theOneTimeLinkIsReadyTheFundsCanBeClaimed)
+            Text(L10n.shareYourLinkToSendMoney)
                 .apply(style: .largeTitle)
                 .multilineTextAlignment(.center)
                 .foregroundColor(Color(Asset.Colors.night.color))
                 .padding(.bottom, 24)
+                .accessibilityIdentifier(.accessibilityTitleLabel)
             
             // Recipient
             RecipientCell(
@@ -53,22 +60,24 @@ struct SendLinkCreatedView: View {
                             .frame(width: 24, height: 24)
                     }
                 )
+                .accessibilityIdentifier(.accessibilityCopyButton)
                 .castToAnyView()
             )
-                .padding(.horizontal, 16)
-                .padding(.vertical, 12)
-                .background(
-                    RoundedRectangle(cornerRadius: 16)
-                        .foregroundColor(Color(Asset.Colors.snow.color))
-                )
-                .padding(.bottom, 28)
+            .padding(.horizontal, 16)
+            .padding(.vertical, 12)
+            .background(
+                RoundedRectangle(cornerRadius: 16)
+                    .foregroundColor(Color(Asset.Colors.snow.color))
+            )
+            .padding(.bottom, 28)
             
             // Subtitle
-            Text(L10n.ifYouWantToGetYourMoneyBackJustOpenLinkByYourself)
+            Text(L10n.ifYouWantToGetYourMoneyBackJustOpenTheLinkByYourself)
                 .apply(style: .text3)
                 .multilineTextAlignment(.center)
                 .foregroundColor(Color(Asset.Colors.mountain.color))
                 .padding(.horizontal, 16)
+                .accessibilityIdentifier(.accessibilitySubtitleLabel)
             
             Spacer()
             
@@ -85,7 +94,10 @@ struct SendLinkCreatedView: View {
                 .padding(.bottom, 32)
         }
         .padding(.horizontal, 20)
-            .background(Color(Asset.Colors.smoke.color).edgesIgnoringSafeArea(.vertical))
+        .background(Color(Asset.Colors.smoke.color).edgesIgnoringSafeArea(.vertical))
+        .onAppear {
+            viewModel.onAppear()
+        }
     }
 }
 
@@ -94,7 +106,8 @@ struct SendLinkCreatedView_Previews: PreviewProvider {
         SendLinkCreatedView(
             viewModel: SendLinkCreatedViewModel(
                 link: "test.com/Ro8Andswf",
-                formatedAmount: "7.12 SOL"
+                formatedAmount: "7.12 SOL",
+                intermediateAccountPubKey: ""
             )
         )
     }

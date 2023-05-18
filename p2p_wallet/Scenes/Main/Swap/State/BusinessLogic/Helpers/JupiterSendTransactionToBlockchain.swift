@@ -7,6 +7,7 @@
 
 import Jupiter
 import SolanaSwift
+import WalletCore
 import Task_retrying
 
 extension JupiterSwapBusinessLogic {

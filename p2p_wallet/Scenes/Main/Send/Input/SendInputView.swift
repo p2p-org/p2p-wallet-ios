@@ -19,11 +19,11 @@ struct SendInputView: View {
             ProgressView()
         case .loaded:
             loadedView
-        case .error(let error):
+        case let .error(error):
             VStack {
                 #if !RELEASE
-                Text(error)
-                    .foregroundColor(.red)
+                    Text(error)
+                        .foregroundColor(.red)
                 #endif
                 Text("\(L10n.somethingWentWrong). \(L10n.tapToTryAgain)?")
                     .onTapGesture {
@@ -34,24 +34,32 @@ struct SendInputView: View {
             }
         }
     }
-    
+
     var loadedView: some View {
         ZStack(alignment: .top) {
             Color(Asset.Colors.smoke.color)
                 .edgesIgnoringSafeArea(.all)
                 .onTapGesture { self.viewModel.inputAmountViewModel.isFirstResponder = false }
 
-            ScrollView {
-                inputView
+            VStack {
+                ScrollView {
+                    inputView
+                }
+                    .padding(16)
+                
+                Spacer()
+                
+                sendButton
+                    .padding(.horizontal, 16)
+                    .padding(.bottom, 8)
             }
-                .padding(16)
         }
     }
-    
+
     var inputView: some View {
         VStack(spacing: 8) {
             if viewModel.currentState.sendViaLinkSeed != nil {
-                Text(L10n.anyoneWhoGetsThisOneTimeLinkCanClaimTheFunds)
+                Text(L10n.anyoneWhoGetsThisOneTimeLinkCanClaimMoney)
                     .apply(style: .text3)
                     .foregroundColor(Color(Asset.Colors.mountain.color))
                     .frame(maxWidth: .infinity, alignment: .leading)
@@ -94,9 +102,14 @@ struct SendInputView: View {
             }
             .padding(.horizontal, 4)
 
-            SendInputTokenView(viewModel: viewModel.tokenViewModel)
-                .allowsHitTesting(!viewModel.lock)
-                .accessibilityIdentifier("token-view")
+            SendInputTokenView(
+                wallet: viewModel.sourceWallet,
+                amountInFiat: viewModel.sourceWallet.amountInCurrentFiat,
+                isChangeEnabled: viewModel.isTokenChoiceEnabled,
+                changeAction: viewModel.changeTokenPressed.send
+            )
+            .allowsHitTesting(!viewModel.lock)
+            .accessibilityIdentifier("token-view")
 
             switch viewModel.status {
             case .initializing:
@@ -104,33 +117,29 @@ struct SendInputView: View {
             case .initializingFailed:
                 initializationFailedView
             case .ready:
-                SendInputAmountView(viewModel: viewModel.inputAmountViewModel)
+                SendInputAmountWrapperView(viewModel: viewModel.inputAmountViewModel)
             }
 
-            Spacer()
-
-            sendButton
-            
             #if !RELEASE
-            HStack {
-                Toggle(isOn: $viewModel.isFakeSendTransaction) {
-                    Text("Fake Transaction")
-                }
-                if viewModel.isFakeSendTransaction {
-                    VStack {
-                        Toggle(isOn: $viewModel.isFakeSendTransactionError) {
-                            Text("With Error")
-                        }
-                        Toggle(isOn: $viewModel.isFakeSendTransactionNetworkError) {
-                            Text("With Network Error")
+                HStack {
+                    Toggle(isOn: $viewModel.isFakeSendTransaction) {
+                        Text("Fake Transaction")
+                    }
+                    if viewModel.isFakeSendTransaction {
+                        VStack {
+                            Toggle(isOn: $viewModel.isFakeSendTransactionError) {
+                                Text("With Error")
+                            }
+                            Toggle(isOn: $viewModel.isFakeSendTransactionNetworkError) {
+                                Text("With Network Error")
+                            }
                         }
                     }
-                }
-                
-                Spacer()
-            }
 
-            debugView
+                    Spacer()
+                }
+
+                debugView
             #endif
         }
     }
@@ -183,7 +192,7 @@ struct SendInputView: View {
         .background(RoundedRectangle(cornerRadius: 12).fill(Color(Asset.Colors.snow.color)))
         .frame(height: 90)
     }
-    
+
     @ViewBuilder
     var sendButton: some View {
         switch viewModel.status {
@@ -194,38 +203,41 @@ struct SendInputView: View {
             .cornerRadius(radius: 28, corners: .allCorners)
             .frame(height: TextButton.Size.large.height)
         case .initializing, .ready:
-            SliderActionButton(isSliderOn: $viewModel.isSliderOn, data: $viewModel.actionButtonData, showFinished: $viewModel.showFinished)
-                .accessibilityIdentifier("send-slider")
+            SliderActionButton(
+                isSliderOn: $viewModel.isSliderOn,
+                data: viewModel.actionButtonData,
+                showFinished: viewModel.showFinished
+           ) .accessibilityIdentifier("send-slider")
         }
     }
     
     #if !RELEASE
-    var debugView: some View {
-        Group {
-            if let link = viewModel.currentState.sendViaLinkSeed {
-                Text("\(viewModel.getSendViaLinkURL() ?? "") (tap to copy)")
-                    .apply(style: .label2)
-                    .foregroundColor(.red)
-                    .onTapGesture {
-                        UIPasteboard.general.string = viewModel.getSendViaLinkURL()
-                    }
-                Text("\(viewModel.currentState.recipient.address) (tap to copy)")
-                    .apply(style: .label2)
-                    .foregroundColor(.red)
-                    .onTapGesture {
-                        UIPasteboard.general.string = viewModel.currentState.recipient.address
-                    }
-            }
-            
-            FeeRelayerDebugView(
-                viewModel: .init(
-                    feeInSOL: viewModel.currentState.fee,
-                    feeInToken: viewModel.currentState.feeInToken,
-                    payingFeeTokenDecimals: viewModel.currentState.tokenFee.decimals
+        var debugView: some View {
+            Group {
+                if viewModel.currentState.sendViaLinkSeed != nil {
+                    Text("\(viewModel.getSendViaLinkURL() ?? "") (tap to copy)")
+                        .apply(style: .label2)
+                        .foregroundColor(.red)
+                        .onTapGesture {
+                            UIPasteboard.general.string = viewModel.getSendViaLinkURL()
+                        }
+                    Text("\(viewModel.currentState.recipient.address) (tap to copy)")
+                        .apply(style: .label2)
+                        .foregroundColor(.red)
+                        .onTapGesture {
+                            UIPasteboard.general.string = viewModel.currentState.recipient.address
+                        }
+                }
+
+                FeeRelayerDebugView(
+                    viewModel: .init(
+                        feeInSOL: viewModel.currentState.fee,
+                        feeInToken: viewModel.currentState.feeInToken,
+                        payingFeeTokenDecimals: viewModel.currentState.tokenFee.decimals
+                    )
                 )
-            )
+            }
         }
-    }
     #endif
 }
 

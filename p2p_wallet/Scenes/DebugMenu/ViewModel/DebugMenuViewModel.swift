@@ -11,12 +11,6 @@ import SolanaSwift
 import SwiftyUserDefaults
 
 final class DebugMenuViewModel: BaseViewModel, ObservableObject {
-    @Published var networkLoggerVisible = isShown {
-        didSet {
-            updateNetworkLoggerState()
-        }
-    }
-
     @Published var features: [FeatureItem]
     @Published var solanaEndpoints: [APIEndPoint]
     @Published var selectedEndpoint: APIEndPoint?
@@ -90,12 +84,6 @@ final class DebugMenuViewModel: BaseViewModel, ObservableObject {
             )
         )
     }
-
-    private func updateNetworkLoggerState() {
-        #if !RELEASE
-            showDebugger(networkLoggerVisible)
-        #endif
-    }
 }
 
 extension DebugMenuViewModel {
@@ -119,8 +107,10 @@ extension DebugMenuViewModel {
         case mockedTKeyFacade
         case simulatedSocialError
         case sell
+        case ethAddressEnabled
         case sendViaLink
-        case jupiterSwap
+        case solanaEthAddressEnabled
+        case swapTransactionSimulation
 
         var title: String {
             switch self {
@@ -133,8 +123,10 @@ extension DebugMenuViewModel {
             case .investSolend: return "Invest Solend"
             case .solendDisablePlaceholder: return "Solend Disable Placeholder"
             case .sell: return "Sell (Off Ramp)"
+            case .ethAddressEnabled: return "Eth Address Enabled"
             case .sendViaLink: return "Send via link"
-            case .jupiterSwap: return "Jupiter Swap"
+            case .solanaEthAddressEnabled: return "solana ETH address enabled"
+            case .swapTransactionSimulation: return "Swap transaction simulation"
             }
         }
 
@@ -149,8 +141,10 @@ extension DebugMenuViewModel {
             case .investSolend: return .investSolendFeature
             case .solendDisablePlaceholder: return .solendDisablePlaceholder
             case .sell: return .sellScenarioEnabled
+            case .ethAddressEnabled: return .ethAddressEnabled
             case .sendViaLink: return .sendViaLinkEnabled
-            case .jupiterSwap: return .jupiterSwapEnabled
+            case .solanaEthAddressEnabled: return .solanaEthAddressEnabled
+            case .swapTransactionSimulation: return .swapTransactionSimulationEnabled
             }
         }
     }

@@ -40,7 +40,7 @@ final class SolendTransactionDetailsCoordinator: Coordinator<Void> {
         viewController.modalPresentationStyle = .custom
         controller.present(viewController, animated: true)
 
-        model.assign(to: \.model, on: viewModel).store(in: &subscriptions)
+        model.assignWeak(to: \.model, on: viewModel).store(in: &subscriptions)
 
         view.close
             .sink(receiveValue: {

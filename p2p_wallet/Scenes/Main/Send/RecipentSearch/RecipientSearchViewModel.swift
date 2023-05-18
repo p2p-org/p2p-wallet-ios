@@ -4,12 +4,14 @@
 
 import AnalyticsManager
 import Combine
+import FeeRelayerSwift
 import Foundation
 import History
+import KeyAppBusiness
 import Resolver
 import Send
 import SolanaSwift
-import FeeRelayerSwift
+import Wormhole
 
 enum LoadableState: Equatable {
     case notRequested
@@ -30,13 +32,11 @@ struct SendViaLinkState: Equatable {
     /// Indicate if the feature itself is disabled or not (via FT)
     let isFeatureDisabled: Bool
     /// Default limit for a day
-    let limitPerDay: Int
-    /// Number of links used today
-    let numberOfLinksUsedToday: Int
-    
+    let reachedLimit: Bool
+
     /// Indicate if user can create link
     var canCreateLink: Bool {
-        !isFeatureDisabled && (numberOfLinksUsedToday < limitPerDay)
+        !isFeatureDisabled && !reachedLimit
     }
 }
 
@@ -47,7 +47,7 @@ class RecipientSearchViewModel: ObservableObject {
     private let source: SendSource
 
     @Injected private var clipboardManager: ClipboardManagerType
-    @Injected private var walletsRepository: WalletsRepository
+    @Injected private var solanaAccountsService: SolanaAccountsService
     @Injected private var tokensRepository: TokensRepository
     @Injected private var notificationService: NotificationService
     @Injected private var analyticsManager: AnalyticsManager
@@ -55,7 +55,7 @@ class RecipientSearchViewModel: ObservableObject {
     private let sendHistoryService: SendHistoryService
     private let recipientSearchService: RecipientSearchService
     private var searchTask: Task<Void, Never>?
-    
+
     @Published var loadingState: LoadableState = .notRequested
     @Published var isFirstResponder: Bool = false
 
@@ -64,18 +64,18 @@ class RecipientSearchViewModel: ObservableObject {
             sendViaLinkVisible = input.isEmpty
         }
     }
+
     @Published var searchResult: RecipientSearchResult? = nil
-    @Published var userWalletEnvironments: UserWalletEnvironments = .empty
+    @Published var config: RecipientSearchConfig = .init()
 
     @Published var isSearching = false
 
     @Published var recipientsHistoryStatus: SendHistoryService.Status = .ready
     @Published var recipientsHistory: [Recipient] = []
-    
+
     @Published var sendViaLinkState = SendViaLinkState(
         isFeatureDisabled: true,
-        limitPerDay: 30,
-        numberOfLinksUsedToday: 0
+        reachedLimit: false
     )
     @Published var sendViaLinkVisible = true
 
@@ -88,7 +88,7 @@ class RecipientSearchViewModel: ObservableObject {
 
         fileprivate let scanQRSubject: PassthroughSubject<Void, Never> = .init()
         var scanQRPublisher: AnyPublisher<Void, Never> { scanQRSubject.eraseToAnyPublisher() }
-        
+
         fileprivate let sendViaLinkSubject: PassthroughSubject<Void, Never> = .init()
         var sendViaLinkPublisher: AnyPublisher<Void, Never> { sendViaLinkSubject.eraseToAnyPublisher() }
     }
@@ -96,45 +96,60 @@ class RecipientSearchViewModel: ObservableObject {
     let coordinator: Coordinator = .init()
 
     init(
+        preChosenWallet: Wallet?,
+        source: SendSource,
         recipientSearchService: RecipientSearchService = Resolver.resolve(),
         sendHistoryService: SendHistoryService = Resolver.resolve(),
-        preChosenWallet: Wallet?,
-        source: SendSource
+        userWalletManager: UserWalletManager = Resolver.resolve()
     ) {
         self.recipientSearchService = recipientSearchService
         self.preChosenWallet = preChosenWallet
         self.sendHistoryService = sendHistoryService
         self.source = source
 
-        userWalletEnvironments = .init(
-            wallets: walletsRepository.getWallets(),
-            exchangeRate: [:],
-            tokens: []
+        let ethereumSearch: Bool
+        if let preChosenWallet {
+            // Check token is support wormhole
+            if WormholeSupportedTokens.bridges
+                .map(\.solAddress).contains(preChosenWallet.token.address) {
+                ethereumSearch = true
+            } else {
+                ethereumSearch = false
+            }
+        } else {
+            // No pre chosen, search all
+            ethereumSearch = true
+        }
+
+        config = .init(
+            wallets: solanaAccountsService.state.value.map(\.data),
+            ethereumAccount: userWalletManager.wallet?.ethereumKeypair.address,
+            tokens: [:],
+            ethereumSearch: ethereumSearch
         )
 
         Task {
             let tokens = try await tokensRepository.getTokensList()
             await MainActor.run { [weak self] in
-                self?.userWalletEnvironments = userWalletEnvironments.copy(
-                    tokens: tokens
-                )
+                guard let self = self else { return }
+                self.config.tokens = Dictionary(tokens.map { ($0.address, $0) }, uniquingKeysWith: { lhs, _ in lhs })
             }
         }
 
         sendHistoryService.statusPublisher
             .receive(on: RunLoop.main)
-            .assign(to: \.recipientsHistoryStatus, on: self)
+            .assignWeak(to: \.recipientsHistoryStatus, on: self)
             .store(in: &subscriptions)
 
         sendHistoryService.recipientsPublisher
             .receive(on: RunLoop.main)
             .map { Array($0.prefix(10)) }
-            .assign(to: \.recipientsHistory, on: self)
+            .assignWeak(to: \.recipientsHistory, on: self)
             .store(in: &subscriptions)
 
         $input
             .removeDuplicates()
-            .combineLatest($userWalletEnvironments)
+            .combineLatest($config)
             .debounce(for: 0.2, scheduler: DispatchQueue.main)
             .sink { [weak self] (query: String, _) in
                 guard let self = self else { return }
@@ -156,7 +171,8 @@ class RecipientSearchViewModel: ObservableObject {
         case let .ok(recipients) where recipients.count == 1:
             guard
                 let recipient: Recipient = recipients.first,
-                recipient.attributes.contains(.funds)
+                recipient.attributes.contains(.funds) ||
+                recipient.category == .ethereumAddress
             else { return }
 
             selectRecipient(recipient, fromQR: fromQR)
@@ -187,7 +203,7 @@ class RecipientSearchViewModel: ObservableObject {
             searchTask = Task { [weak self] in
                 let result = await recipientSearchService.search(
                     input: currentSearchTerm,
-                    env: userWalletEnvironments,
+                    config: config,
                     preChosenToken: preChosenWallet?.token
                 )
 
@@ -244,37 +260,45 @@ class RecipientSearchViewModel: ObservableObject {
             loadingState = .error(error.readableDescription)
         }
     }
-    
+
     // MARK: - Send via link
-    
+
     func checkIfSendViaLinkAvailable() async throws {
         if available(.sendViaLinkEnabled) {
             // get relay context
             let usageStatus = try await Resolver.resolve(RelayContextManager.self)
                 .getCurrentContextOrUpdate()
                 .usageStatus
-            
-            // get limit per day and nummber of used
-            let limitPerDay = usageStatus.maxTokenAccountCreationCount
-            let usedToday = usageStatus.tokenAccountCreationCountUsed
-            
+
             sendViaLinkState = SendViaLinkState(
                 isFeatureDisabled: false,
-                limitPerDay: limitPerDay,
-                numberOfLinksUsedToday: usedToday
+                reachedLimit: usageStatus.reachedLimitLinkCreation
             )
         } else {
             sendViaLinkState = SendViaLinkState(
                 isFeatureDisabled: true,
-                limitPerDay: 0,
-                numberOfLinksUsedToday: 0
+                reachedLimit: false
             )
         }
     }
-    
+
     func sendViaLink() {
+        analyticsManager.log(event: .sendClickStartCreateLink)
         coordinator.sendViaLinkSubject.send(())
     }
+
+    #if !RELEASE
+        func sendToTotallyNewAccount() {
+            let keypair = try! KeyPair()
+            selectRecipient(
+                .init(
+                    address: keypair.publicKey.base58EncodedString,
+                    category: .solanaAddress,
+                    attributes: [.funds]
+                )
+            )
+        }
+    #endif
 }
 
 // MARK: - Analytics

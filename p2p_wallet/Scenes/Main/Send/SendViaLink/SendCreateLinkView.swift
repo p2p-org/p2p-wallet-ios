@@ -1,5 +1,7 @@
+import AnalyticsManager
 import SwiftUI
 import KeyAppUI
+import Resolver
 
 struct SendCreateLinkView: View {
 
@@ -21,12 +23,7 @@ struct SendCreateLinkView: View {
                     .apply(style: .largeTitle)
                     .foregroundColor(mainColor)
                     .transition(.opacity.animation(.linear))
-                    .padding(.bottom, 16)
-                
-                Text(L10n.thisWillTakeUpToSeconds(5))
-                    .apply(style: .text2)
-                    .foregroundColor(subColor)
-                    .padding(.bottom, 60)
+                    .padding(.bottom, 76)
 
                 IndeterminateProgressBar(indicatorColor: mainColor)
                     .frame(width: 113)
@@ -34,6 +31,9 @@ struct SendCreateLinkView: View {
             .edgesIgnoringSafeArea(.top)
             .padding(.horizontal, 20)
             .padding(.bottom, animationSize.height / 2)
+        }
+        .onAppear {
+            Resolver.resolve(AnalyticsManager.self).log(event: .sendCreatingLinkProcessScreenOpen)
         }
     }
 }

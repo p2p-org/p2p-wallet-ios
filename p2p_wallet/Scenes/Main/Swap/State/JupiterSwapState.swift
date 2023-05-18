@@ -5,8 +5,8 @@ import SolanaSwift
 struct JupiterSwapState: Equatable {
     // MARK: - Nested type
     
-    enum RetryAction {
-        case createTransaction
+    enum RetryAction: Equatable {
+        case createTransaction(isSimulationOn: Bool)
         case gettingRoute
     }
 
@@ -31,7 +31,7 @@ struct JupiterSwapState: Equatable {
         case loadingAmountTo
         case loadingTokenTo
         case switching
-        case creatingSwapTransaction
+        case creatingSwapTransaction(isSimulationOn: Bool)
         case ready
         case error(reason: ErrorReason)
         

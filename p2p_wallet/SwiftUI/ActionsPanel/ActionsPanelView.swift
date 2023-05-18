@@ -9,11 +9,11 @@ import Combine
 import KeyAppUI
 import SwiftUI
 
-struct ActionsPanelView: View {
-    private var actionsPublisher: AnyPublisher<[WalletActionType], Never>
-    private var balancePublisher: AnyPublisher<String, Never>
-    private var usdAmountPublisher: AnyPublisher<String, Never>
-    private var action: (WalletActionType) -> Void
+struct ActionsPanelBridgeView: View {
+    let actionsPublisher: AnyPublisher<[WalletActionType], Never>
+    let balancePublisher: AnyPublisher<String, Never>
+    let usdAmountPublisher: AnyPublisher<String, Never>
+    let action: (WalletActionType) -> Void
 
     @State private var actions = [WalletActionType]()
     @State private var balance = ""
@@ -32,19 +32,31 @@ struct ActionsPanelView: View {
     }
 
     var body: some View {
-        actionsView
-            .onReceive(balancePublisher) { balance in
-                self.balance = balance
-            }
-            .onReceive(usdAmountPublisher) { usdAmount in
-                self.usdAmount = usdAmount
-            }
-            .onReceive(actionsPublisher) { actions in
-                self.actions = actions
-            }
+        ActionsPanelView(
+            actions: actions,
+            balance: balance,
+            usdAmount: usdAmount,
+            action: action
+        )
+        .onReceive(balancePublisher) { balance in
+            self.balance = balance
+        }
+        .onReceive(usdAmountPublisher) { usdAmount in
+            self.usdAmount = usdAmount
+        }
+        .onReceive(actionsPublisher) { actions in
+            self.actions = actions
+        }
     }
+}
 
-    private var actionsView: some View {
+struct ActionsPanelView: View {
+    let actions: [WalletActionType]
+    let balance: String
+    let usdAmount: String
+    let action: (WalletActionType) -> Void
+
+    var body: some View {
         VStack(alignment: .center, spacing: 0) {
             if !balance.isEmpty {
                 Text(balance)
@@ -91,6 +103,5 @@ struct ActionsPanelView: View {
                 .frame(width: 56, height: 68)
             }
         )
-//        .buttonStyle(PlainButtonStyle()) // prevent getting called on tapping cell
     }
 }

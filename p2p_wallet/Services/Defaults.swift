@@ -8,7 +8,6 @@
 import FirebaseRemoteConfig
 import Foundation
 import Onboarding
-import RenVMSwift
 import SolanaSwift
 import SwiftyUserDefaults
 
@@ -49,7 +48,6 @@ extension DefaultsKeys {
     var forcedNameServiceEndpoint: DefaultsKey<String?> { .init(#function, defaultValue: nil) }
     var forcedNewSwapEndpoint: DefaultsKey<String?> { .init(#function, defaultValue: nil) }
 
-    var isCoingeckoProviderDisabled: DefaultsKey<Bool> { .init(#function, defaultValue: false) }
     var didBackupOffline: DefaultsKey<Bool> { .init(#function, defaultValue: false) }
     var walletName: DefaultsKey<[String: String]> { .init(#function, defaultValue: [:]) }
     var localizedLanguage: DefaultsKey<LocalizedLanguage> {

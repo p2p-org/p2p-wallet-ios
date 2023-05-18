@@ -7,7 +7,7 @@ struct BuyView: View, KeyboardVisibilityReadable {
     private let textLeadingPadding = 25.0
     private let cardLeadingPadding = 16.0
 
-    // MARK: -
+    // MARK: - States
 
     @ObservedObject var viewModel: BuyViewModel
     /// Bottom button view offset
@@ -15,12 +15,61 @@ struct BuyView: View, KeyboardVisibilityReadable {
     @State var leftInputText: String = ""
     @State var rightInputText: String = ""
     @State private var isKeyboardVisible = false
+    
+    // MARK: - Init
 
     init(viewModel: BuyViewModel) {
         self.viewModel = viewModel
     }
+    
+    // MARK: - Views
 
     var body: some View {
+        content.toolbar {
+            ToolbarItem(placement: .principal) {
+                HStack {
+                    Spacer()
+                    Spacer()
+                    Text(L10n.buyWithMoonpay)
+                        .fontWeight(.semibold)
+                    Spacer()
+                    Button(
+                        action: {
+                            viewModel.flagClicked()
+                        },
+                        label: {
+                            HStack(spacing: 10) {
+                                Text(viewModel.flag)
+                                    .font(uiFont: .font(of: .title1, weight: .bold))
+                                Image(uiImage: .chevronDown)
+                                    .foregroundColor(Color(Asset.Colors.mountain.color))
+                            }
+                        }
+                    )
+                }
+            }
+        }
+    }
+    
+    @ViewBuilder
+    private var content: some View {
+        switch viewModel.state {
+        case .usual:
+            basicContent
+        case let .buyNotAllowed(model):
+            ChangeCountryErrorView(
+                model: model,
+                buttonAction: {
+                    viewModel.goBackClicked()
+                },
+                subButtonAction: {
+                    viewModel.changeTheRegionClicked()
+                }
+            )
+        }
+    }
+    
+    private var basicContent: some View {
         VStack(spacing: 0) {
             ScrollView {
                 // Tutorial
@@ -69,9 +118,6 @@ struct BuyView: View, KeyboardVisibilityReadable {
             }
             Spacer()
             actionButtonView
-        }
-        .toolbar {
-            ToolbarItem(placement: .principal) { Text(L10n.buyWithMoonpay).fontWeight(.semibold) }
         }
         .onAppear {
             withAnimation {

@@ -1,8 +1,10 @@
-protocol ChooseItemService {
-    var chosenTokenTitle: String { get }
-    var otherTokensTitle: String { get }
+import Combine
+import KeyAppKitCore
 
-    func fetchItems() async throws -> [ChooseItemListSection]
+protocol ChooseItemService {
+    var otherTokensTitle: String { get }
+    var state: AnyPublisher<AsyncValueState<[ChooseItemListSection]>, Never> { get }
+
     func sort(items: [ChooseItemListSection]) -> [ChooseItemListSection]
     func sortFiltered(by keyword: String, items: [ChooseItemListSection]) -> [ChooseItemListSection]
 }

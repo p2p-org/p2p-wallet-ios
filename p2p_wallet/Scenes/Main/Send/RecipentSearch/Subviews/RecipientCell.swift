@@ -10,21 +10,32 @@ import Send
 import SwiftUI
 
 struct RecipientCell: View {
-    
     @SwiftUI.Environment(\.isEnabled) var isEnabled: Bool
     let image: AnyView
     let title: String
     let subtitle: String?
     let trailingView: AnyView?
+    let multilinesForSubtitle: Bool
     
-    init(image: AnyView, title: String, subtitle: String? = nil, trailingView: AnyView? = nil) {
+    init(
+        image: AnyView,
+        title: String,
+        subtitle: String? = nil,
+        trailingView: AnyView? = nil,
+        multilinesForSubtitle: Bool = false
+    ) {
         self.image = image
         self.title = title
         self.subtitle = subtitle
         self.trailingView = trailingView
+        self.multilinesForSubtitle = multilinesForSubtitle
     }
 
-    init(recipient: Recipient, subtitle: String? = nil) {
+    init(
+        recipient: Recipient,
+        subtitle: String? = nil,
+        multilinesForSubtitle: Bool = false
+    ) {
         switch recipient.category {
         case let .username(name, domain):
             switch domain {
@@ -41,8 +52,14 @@ struct RecipientCell: View {
             image = Image(uiImage: .newWalletCircle).castToAnyView()
             title = RecipientFormatter.format(destination: recipient.address)
             self.subtitle = subtitle
+
+        case .ethereumAddress:
+            image = Image(uiImage: .ethereumIcon).castToAnyView()
+            title = RecipientFormatter.format(destination: recipient.address)
+            self.subtitle = nil
+
         case let .solanaTokenAddress(_, token):
-            image = CoinLogoImageViewRepresentable(size: 48, token: token).castToAnyView()
+            image = CoinLogoImageViewRepresentable(size: 48, args: .token(token)).castToAnyView()
             title = RecipientFormatter.format(destination: recipient.address)
             self.subtitle = subtitle ?? "\(token.symbol) \(L10n.tokenAccount)"
         default:
@@ -50,7 +67,7 @@ struct RecipientCell: View {
             title = RecipientFormatter.format(destination: recipient.address)
             self.subtitle = subtitle
         }
-        
+
         if let date = recipient.createdData {
             trailingView = Text(date.timeAgoDisplay())
                 .apply(style: .label1)
@@ -60,11 +77,13 @@ struct RecipientCell: View {
         } else {
             trailingView = nil
         }
+        self.multilinesForSubtitle = multilinesForSubtitle
     }
 
     var body: some View {
         HStack {
             image
+                .clipShape(Circle())
                 .frame(width: 48, height: 48)
             VStack(alignment: .leading, spacing: 6) {
                 Text(title)
@@ -78,7 +97,15 @@ struct RecipientCell: View {
                     Text(subtitle)
                         .foregroundColor(Color(Asset.Colors.mountain.color))
                         .apply(style: .label1)
-                        .lineLimit(1)
+                        .if(multilinesForSubtitle) {
+                            $0
+                                .fixedSize(horizontal: false, vertical: true)
+                                .multilineTextAlignment(.leading)
+                        }
+                        .if(!multilinesForSubtitle) {
+                            $0
+                                .lineLimit(1)
+                        }
                         .accessibilityIdentifier("RecipientCell.subtitle")
                 }
             }

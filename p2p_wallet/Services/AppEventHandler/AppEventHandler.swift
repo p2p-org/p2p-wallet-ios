@@ -7,7 +7,6 @@
 
 import Foundation
 import LocalAuthentication
-import RenVMSwift
 import Resolver
 import SolanaSwift
 

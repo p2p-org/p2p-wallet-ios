@@ -6,11 +6,7 @@
 //
 
 public extension Feature {
-    static let coinGeckoPriceProvider = Feature(rawValue: "coinGeckoPriceProvider")
     static let sellScenarioEnabled = Feature(rawValue: "keyapp_sell_scenario_enabled")
-    static let buyBankTransferEnabled = Feature(rawValue: "buy_bank_transfer_enabled")
-    static let newOnboardingFlow = Feature(rawValue: "newOnboardingFlow")
-    static let jupiterSwapEnabled = Feature(rawValue: "keyapp_swap_jupiter_enabled")
 
     // Username
     static let onboardingUsernameEnabled = Feature(rawValue: "ios_onboarding_username_enabled")
@@ -22,19 +18,21 @@ public extension Feature {
     static let mockedDeviceShare = Feature(rawValue: "mockedDeviceShare")
     static let simulatedSocialError = Feature(rawValue: "simulatedSocialError")
     
+    // Swap
+    static let swapTransactionSimulationEnabled = Feature(rawValue: "swap_transaction_simulation_enabled")
+    
     // Solend
     static let investSolendFeature = Feature(rawValue: "keyapp_invest_solend_enabled")
     static let solendDisablePlaceholder = Feature(rawValue: "ios_solend_disable_placeholder")
 
     // Solana tracking
     static let solanaNegativeStatus = Feature(rawValue: "solana_negative_status_enabled")
-
-    // Ren BTC
-    static let receiveRenBtcEnabled = Feature(rawValue: "receive_ren_btc_enabled")
     
-    // History
-    static let historyServiceEnabled = Feature(rawValue: "history_service_enabled")
+    // Eth
+    static let ethAddressEnabled = Feature(rawValue: "eth_address_enabled")
     
     // Send via link
     static let sendViaLinkEnabled = Feature(rawValue: "send_via_link_enabled")
+
+    static let solanaEthAddressEnabled = Feature(rawValue: "solana_eth_address_enabled")
 }
