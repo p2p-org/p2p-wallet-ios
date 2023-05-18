@@ -424,7 +424,11 @@ private extension SwapViewModel {
         #if !RELEASE
         errorLogs = nil
         #endif
-        
+
+        if let swapTransaction = currentState.swapTransaction {
+            logSwapApprove(signature: swapTransaction)
+        }
+
         // form transaction
         let destinationWallet = currentState.toToken.userWallet ?? Wallet(pubkey: nil, token: currentState.toToken.token)
         
