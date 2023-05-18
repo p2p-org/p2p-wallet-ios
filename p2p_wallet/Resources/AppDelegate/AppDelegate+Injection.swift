@@ -123,7 +123,7 @@ extension Resolver: ResolverRegistering {
 
         register { WormholeRPCAPI(endpoint: GlobalAppState.shared.bridgeEndpoint) }
             .implements(WormholeAPI.self)
-            .scope(.application)
+            .scope(.session)
 
         // AnalyticsManager
         register {
@@ -270,7 +270,7 @@ extension Resolver: ResolverRegistering {
             .implements(JWTTokenValidator.self)
 
         register { Web3(rpcURL: "https://eth-mainnet.g.alchemy.com/v2/a3NxxBPY4WUcsXnivRq-ikYKXFB67oXm") }
-        
+
         // SwapErrorLogger
         register {
             SwapErrorLoggerImpl(
@@ -279,7 +279,7 @@ extension Resolver: ResolverRegistering {
                 )!
             )
         }
-            .implements(SwapErrorLogger.self)
+        .implements(SwapErrorLogger.self)
     }
 
     /// Session scope: Live when user is authenticated
