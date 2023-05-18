@@ -60,7 +60,7 @@ class HomeViewModel: ObservableObject {
 
     func copyToClipboard() {
         clipboardManager.copyToClipboard(nameStorage.getName() ?? solanaAccountsService.state.value.nativeWallet?.data.pubkey ?? "")
-        notificationsService.showToast(title: "🖤", text: L10n.addressWasCopiedToClipboard, haptic: true)
+        notificationsService.showToast(title: "🖤", text: L10n.usernameWasCopiedToClipboard, haptic: true)
         analyticsManager.log(event: .mainCopyAddress)
     }
 
