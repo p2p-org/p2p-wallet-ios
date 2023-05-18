@@ -277,15 +277,6 @@ final class HomeCoordinator: Coordinator<Void> {
         }
     }
 
-    private func showTransaction(trx: RawTransactionType) {
-        coordinate(to: TransactionDetailCoordinator(
-            viewModel: .init(submit: trx),
-            presentingViewController: navigationController
-        ))
-        .sink(receiveValue: { _ in })
-        .store(in: &subscriptions)
-    }
-
     private func showUserAction(userAction: any UserAction) {
         coordinate(to: TransactionDetailCoordinator(
             viewModel: .init(userAction: userAction),

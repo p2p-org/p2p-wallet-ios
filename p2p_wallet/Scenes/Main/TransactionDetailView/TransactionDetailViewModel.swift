@@ -95,15 +95,6 @@ class TransactionDetailViewModel: BaseViewModel, ObservableObject {
             .store(in: &subscriptions)
     }
 
-    convenience init(submit rawTransaction: RawTransactionType) {
-        let pendingService: TransactionHandlerType = Resolver.resolve()
-
-        let idx = pendingService.sendTransaction(rawTransaction)
-        let pendingTransaction = pendingService.getProcessingTransaction(index: idx)
-
-        self.init(pendingTransaction: pendingTransaction)
-    }
-
     func share() {
         guard let url = URL(string: "https://explorer.solana.com/tx/\(rendableTransaction.signature ?? "")")
         else { return }

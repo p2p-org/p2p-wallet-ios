@@ -29,9 +29,11 @@ final class SwapViewModel: BaseViewModel, ObservableObject {
     let submitTransaction = PassthroughSubject<(PendingTransaction, String), Never>()
     let isViewAppeared = PassthroughSubject<Bool, Never>()
 
-    // MARK: - Params
+    // TODO: - Refactor, ViewModel shouldn't keep subViewModels
     var fromTokenInputViewModel: SwapInputViewModel
     var toTokenInputViewModel: SwapInputViewModel
+    
+    // MARK: - To View
     
     @Published var initializingState: InitializingState = .loading
     @Published var arePricesLoading: Bool = false
@@ -43,6 +45,7 @@ final class SwapViewModel: BaseViewModel, ObservableObject {
         }
     }
     @Published var showFinished = false
+    @Published var warningState: SwapPriceImpactView.Model?
 
     #if !RELEASE
     @Published var errorLogs: [String]?
@@ -57,6 +60,8 @@ final class SwapViewModel: BaseViewModel, ObservableObject {
     private var timer: Timer?
     private let source: JupiterSwapSource
     private var wasMinToastShown = false // Special flag not to show toast again if state has not changed
+    
+    // MARK: - Init
 
     init(
         stateMachine: JupiterSwapStateMachine,
@@ -183,6 +188,7 @@ private extension SwapViewModel {
                 guard let self else { return }
                 self.handle(state: updatedState)
                 self.updateActionButton(for: updatedState)
+                self.updateWarningMessage(for: updatedState)
                 self.log(amountFrom: updatedState.amountFrom, from: updatedState.status)
             }
             .store(in: &subscriptions)
@@ -261,8 +267,9 @@ private extension SwapViewModel {
         switch state.status {
         case .requiredInitialize, .initializing, .loadingTokenTo, .loadingAmountTo, .switching:
             arePricesLoading = true
-        case .creatingSwapTransaction:
-            arePricesLoading = false
+        case let .creatingSwapTransaction(isSumalationEnabled):
+            // We need to show loading if simulation is happening
+            arePricesLoading = isSumalationEnabled
         case .ready:
             arePricesLoading = false
         case .error:
@@ -369,8 +376,39 @@ private extension SwapViewModel {
             wasMinToastShown = false
         }
     }
+    
+    func updateWarningMessage(for state: JupiterSwapState) {
+        switch state.status {
+        case .ready, .requiredInitialize, .loadingTokenTo, .loadingAmountTo,
+                .switching, .initializing, .creatingSwapTransaction:
+            break
+        case .error:
+            warningState = nil
+            return
+        }
+        
+        let slippage = Double(state.slippageBps) / 100
+        if let priceImpact = state.priceImpact {
+            let warningMessage = L10n
+                .ThePriceIsHigherBecauseOfYourTradeSize
+                .considerSplittingYourTransactionIntoMultipleSwaps
+            warningState = SwapPriceImpactView.Model(title: warningMessage, impact: priceImpact)
+        } else if let route = state.route,
+                  let keyAppFee = Double(route.keyapp?.fee ?? ""),
+                  let outAmount = Double(route.outAmount),
+                  (keyAppFee / (outAmount + keyAppFee)) > slippage {
+            
+            let warningMessage = L10n
+                .theFeeIsMoreThanTheDefinedSlippageDueToOneTimeAccountCreationFeeBySolanaBlockchain(
+                    "\(slippage.toString().replacingOccurrences(of: ".",with: ","))%"
+                )
+            warningState = SwapPriceImpactView.Model(title: warningMessage, impact: .medium)
+        } else {
+            warningState = nil
+        }
+    }
 
-    private func swapToken() {
+    func swapToken() {
         guard isSliderOn,
               let account = currentState.account,
               let sourceWallet = currentState.fromToken.userWallet,
@@ -387,7 +425,11 @@ private extension SwapViewModel {
         #if !RELEASE
         errorLogs = nil
         #endif
-        
+
+        if let swapTransaction = currentState.swapTransaction {
+            logSwapApprove(signature: swapTransaction)
+        }
+
         // form transaction
         let destinationWallet = currentState.toToken.userWallet ?? Wallet(pubkey: nil, token: currentState.toToken.token)
         
