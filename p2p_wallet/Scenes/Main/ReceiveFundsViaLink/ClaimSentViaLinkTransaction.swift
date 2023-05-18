@@ -117,6 +117,7 @@ struct ClaimSentViaLinkTransaction: RawTransactionType {
             // alert
             DefaultLogManager.shared.log(
                 event: "Link Claim iOS Alarm",
+                logLevel: .alert,
                 data: ClaimSentViaLinkAlertLoggerMessage(
                     tokenToClaim: .init(
                         name: token.name,
@@ -132,8 +133,6 @@ struct ClaimSentViaLinkTransaction: RawTransactionType {
                     feeRelayerError: data.feeRelayerError,
                     blockchainError: data.blockchainError
                 )
-                    .jsonString,
-                logLevel: .alert
             )
             
             // rethrow error
