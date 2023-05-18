@@ -9,14 +9,6 @@ import Foundation
 import SolanaSwift
 import FeeRelayerSwift
 
-struct SentryUndefinedError: Error, CustomNSError {
-    let error: Swift.Error
-    public var errorUserInfo: [String : Any] {
-        let message = "\(String(reflecting: error))"
-        return [NSDebugDescriptionErrorKey: message ]
-    }
-}
-
 extension FeeRelayerSwift.FeeRelayerError: CustomNSError {
     public var errorUserInfo: [String : Any] {
         struct LoggingError: Encodable {
