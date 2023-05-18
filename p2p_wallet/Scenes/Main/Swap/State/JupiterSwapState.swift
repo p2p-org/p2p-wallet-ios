@@ -5,9 +5,14 @@ import SolanaSwift
 struct JupiterSwapState: Equatable {
     // MARK: - Nested type
     
+    enum RetryAction: Equatable {
+        case createTransaction(isSimulationOn: Bool)
+        case gettingRoute
+    }
+
     enum ErrorReason: Equatable {
         case initializationFailed
-        case networkConnectionError
+        case networkConnectionError(RetryAction)
 
         case notEnoughFromToken
         case inputTooHigh(Double)

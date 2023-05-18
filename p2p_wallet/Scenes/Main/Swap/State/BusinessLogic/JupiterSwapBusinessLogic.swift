@@ -33,6 +33,8 @@ enum JupiterSwapBusinessLogic {
             return state.route?.id != route.id
         case .changeSlippageBps(let slippageBps):
             return state.slippageBps != slippageBps
+        case .retry:
+            return true
         }
     }
     
@@ -114,6 +116,19 @@ enum JupiterSwapBusinessLogic {
                 $0.routes = []
                 $0.amountTo = nil
                 $0.slippageBps = slippageBps
+            }
+        case .retry(.gettingRoute):
+            return state.modified {
+                $0.status = .loadingAmountTo
+                $0.route = nil
+                $0.swapTransaction = nil
+                $0.routes = []
+                $0.amountTo = nil
+            }
+        case let .retry(.createTransaction(isSimulationOn)):
+            return state.modified {
+                $0.status = .creatingSwapTransaction(isSimulationOn: isSimulationOn)
+                $0.swapTransaction = nil
             }
         }
     }
@@ -201,6 +216,20 @@ enum JupiterSwapBusinessLogic {
             }
             
             return state
+            
+        case let .retry(action):
+            switch action {
+            case let .createTransaction(isSimulationOn):
+                // mark as creating swap transaction
+                return state.modified {
+                    $0.status = .creatingSwapTransaction(isSimulationOn: isSimulationOn)
+                }
+            case .gettingRoute:
+                return await JupiterSwapBusinessLogic.recalculateRouteAndMarkAsCreatingTransaction(
+                    state: state,
+                    services: services
+                )
+            }
         }
     }
     
@@ -208,11 +237,11 @@ enum JupiterSwapBusinessLogic {
         state: JupiterSwapState,
         services: JupiterSwapServices
     ) async -> JupiterSwapState {
-        do {
-            guard case let .creatingSwapTransaction(isSimulationOn) = state.status else {
-                return state
-            }
+        guard case let .creatingSwapTransaction(isSimulationOn) = state.status else {
+            return state
+        }
 
+        do {
             guard var route = state.route else {
                 return state.error(.routeIsNotFound)
             }
@@ -273,7 +302,7 @@ enum JupiterSwapBusinessLogic {
         }
         catch let error {
             if (error as NSError).isNetworkConnectionError {
-                return state.error(.networkConnectionError)
+                return state.error(.networkConnectionError(.createTransaction(isSimulationOn: isSimulationOn)))
             }
             return state.error(.createTransactionFailed)
         }

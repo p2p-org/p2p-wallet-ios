@@ -109,7 +109,13 @@ struct ClaimSentViaLinkTransaction: RawTransactionType {
             let serializedTransaction = try preparedTransaction.transaction.serialize().base64EncodedString()
             
             // send to solanaBlockchain
-            return try await solanaAPIClient.sendTransaction(transaction: serializedTransaction, configs: RequestConfiguration(encoding: "base64")!)
+            return try await solanaAPIClient.sendTransaction(
+                transaction: serializedTransaction,
+                configs: RequestConfiguration(
+                    encoding: "base64",
+                    preflightCommitment: "confirmed"
+                )!
+            )
         } catch {
             // Prepare params
             let data = await AlertLoggerDataBuilder.buildLoggerData(error: error)
