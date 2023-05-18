@@ -142,6 +142,7 @@ struct SendTransaction: RawTransactionType {
     ) {
         DefaultLogManager.shared.log(
             event: "Link Create iOS Alarm",
+            logLevel: .alert,
             data: SendViaLinkAlertLoggerMessage(
                 tokenToSend: .init(
                     name: walletToken.name,
@@ -157,8 +158,6 @@ struct SendTransaction: RawTransactionType {
                 feeRelayerError: feeRelayerError,
                 blockchainError: blockchainError
             )
-            .jsonString,
-            logLevel: .alert
         )
     }
     
@@ -195,6 +194,7 @@ struct SendTransaction: RawTransactionType {
         
         DefaultLogManager.shared.log(
             event: "Send iOS Alarm",
+            logLevel: .alert,
             data: SendAlertLoggerMessage(
                 tokenToSend: .init(
                     name: walletToken.name,
@@ -227,8 +227,6 @@ struct SendTransaction: RawTransactionType {
                 feeRelayerError: feeRelayerError,
                 blockchainError: blockchainError
             )
-            .jsonString,
-            logLevel: .alert
         )
     }
 }

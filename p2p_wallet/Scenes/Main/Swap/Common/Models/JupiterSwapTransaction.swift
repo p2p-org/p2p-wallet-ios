@@ -51,6 +51,7 @@ struct JupiterSwapTransaction: SwapRawTransactionType {
             
             DefaultLogManager.shared.log(
                 event: title,
+                logLevel: .alert,
                 data: SwapAlertLoggerMessage(
                     tokenA: .init(
                         name: sourceWallet.token.name,
@@ -71,8 +72,6 @@ struct JupiterSwapTransaction: SwapRawTransactionType {
                     timestamp: data.timestamp,
                     blockchainError: data.blockchainError ?? data.feeRelayerError ?? ""
                 )
-                    .jsonString,
-                logLevel: .alert
             )
             throw error
         }
