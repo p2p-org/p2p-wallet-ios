@@ -42,8 +42,8 @@ extension KeyAppAnalyticsEvent {
             return ["Token_B_Name": tokenBName]
         case let .swapChangingValueTokenA(tokenAName, tokenAValue):
             return ["Token_A_Name": tokenAName, "Token_A_Value": tokenAValue]
-        case let .swapChangingValueTokenB(tokenBName, tokenBValue):
-            return ["Token_B_Name": tokenBName, "Token_B_Value": tokenBValue]
+        case let .swapChangingValueTokenB(tokenBName, tokenBValue, transactionSimulation):
+            return ["Token_B_Name": tokenBName, "Token_B_Value": tokenBValue, "Transaction_Simulation": transactionSimulation]
         case let .swapChangingValueTokenAAll(tokenAName, tokenAValue):
             return ["Token_A_Name": tokenAName, "Token_A_Value": tokenAValue]
         case let .swapSwitchTokens(tokenAName, tokenBName):

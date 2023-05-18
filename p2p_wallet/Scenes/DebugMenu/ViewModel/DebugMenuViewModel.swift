@@ -110,6 +110,7 @@ extension DebugMenuViewModel {
         case ethAddressEnabled
         case sendViaLink
         case solanaEthAddressEnabled
+        case swapTransactionSimulation
 
         var title: String {
             switch self {
@@ -125,6 +126,7 @@ extension DebugMenuViewModel {
             case .ethAddressEnabled: return "Eth Address Enabled"
             case .sendViaLink: return "Send via link"
             case .solanaEthAddressEnabled: return "solana ETH address enabled"
+            case .swapTransactionSimulation: return "Swap transaction simulation"
             }
         }
 
@@ -142,6 +144,7 @@ extension DebugMenuViewModel {
             case .ethAddressEnabled: return .ethAddressEnabled
             case .sendViaLink: return .sendViaLinkEnabled
             case .solanaEthAddressEnabled: return .solanaEthAddressEnabled
+            case .swapTransactionSimulation: return .swapTransactionSimulationEnabled
             }
         }
     }
