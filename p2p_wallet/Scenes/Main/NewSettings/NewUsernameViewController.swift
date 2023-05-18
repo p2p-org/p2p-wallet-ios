@@ -32,8 +32,8 @@ class NewUsernameViewController: p2p_wallet.BaseViewController {
                 )
                     .onCopy { [weak self] _ in
                         guard let self = self else { return }
-                        guard let username = self.storage.getName() else { return }
-                        self.clipboardManager.copyToClipboard(username)
+                        guard let publicKey = self.storage.account?.publicKey.base58EncodedString else { return }
+                        self.clipboardManager.copyToClipboard(publicKey)
                         self.notificationsService.showInAppNotification(.done(L10n.copiedToClipboard))
                     }.onShare { [weak self] image in
                         let vc = UIActivityViewController(activityItems: [image], applicationActivities: nil)
