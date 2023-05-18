@@ -111,15 +111,17 @@ struct SendTransaction: RawTransactionType {
                     timestamp: data.timestamp
                 )
             } else {
-                sendAlert(
-                    error: error,
-                    userPubkey: data.userPubkey,
-                    platform: data.platform,
-                    blockchainError: data.blockchainError,
-                    feeRelayerError: data.feeRelayerError,
-                    appVersion: data.appVersion,
-                    timestamp: data.timestamp
-                )
+                Task.detached {
+                    await sendAlert(
+                        error: error,
+                        userPubkey: data.userPubkey,
+                        platform: data.platform,
+                        blockchainError: data.blockchainError,
+                        feeRelayerError: data.feeRelayerError,
+                        appVersion: data.appVersion,
+                        timestamp: data.timestamp
+                    )
+                }
             }
             
             // rethrow error
@@ -140,6 +142,7 @@ struct SendTransaction: RawTransactionType {
     ) {
         DefaultLogManager.shared.log(
             event: "Link Create iOS Alarm",
+            logLevel: .alert,
             data: SendViaLinkAlertLoggerMessage(
                 tokenToSend: .init(
                     name: walletToken.name,
@@ -155,8 +158,6 @@ struct SendTransaction: RawTransactionType {
                 feeRelayerError: feeRelayerError,
                 blockchainError: blockchainError
             )
-            .jsonString,
-            logLevel: .alert
         )
     }
     
@@ -168,10 +169,10 @@ struct SendTransaction: RawTransactionType {
         feeRelayerError: String?,
         appVersion: String,
         timestamp: String
-    ) {
+    ) async {
         
-        let relayAccountStatus = Resolver.resolve(RelayContextManager.self)
-            .currentContext?
+        let relayAccountStatus = try? await Resolver.resolve(RelayContextManager.self)
+            .getCurrentContextOrUpdate()
             .relayAccountStatus
         
         let relayAccountState: SendAlertLoggerRelayAccountState?
@@ -193,6 +194,7 @@ struct SendTransaction: RawTransactionType {
         
         DefaultLogManager.shared.log(
             event: "Send iOS Alarm",
+            logLevel: .alert,
             data: SendAlertLoggerMessage(
                 tokenToSend: .init(
                     name: walletToken.name,
@@ -225,8 +227,6 @@ struct SendTransaction: RawTransactionType {
                 feeRelayerError: feeRelayerError,
                 blockchainError: blockchainError
             )
-            .jsonString,
-            logLevel: .alert
         )
     }
 }

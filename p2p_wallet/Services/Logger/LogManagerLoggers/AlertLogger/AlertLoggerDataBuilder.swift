@@ -1,6 +1,7 @@
 import Foundation
 import Resolver
 import SolanaSwift
+import FeeRelayerSwift
 
 enum AlertLoggerDataBuilder {
     struct AlertLoggerData {
@@ -23,6 +24,15 @@ enum AlertLoggerDataBuilder {
         switch error {
         case let error as APIClientError:
             blockchainError = error.blockchainErrorDescription
+        case let error as FeeRelayerError where error.message == "Topping up is successfull, but the transaction failed":
+            feeRelayerError = APIClientError.responseError(
+                .init(
+                    code: error.code,
+                    message: error.message,
+                    data: .init(logs: error.data?.data?.array)
+                )
+            )
+                .blockchainErrorDescription
         default:
             feeRelayerError = "\(error)"
         }
