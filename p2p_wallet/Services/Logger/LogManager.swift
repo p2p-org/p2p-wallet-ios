@@ -1,7 +1,12 @@
 import Foundation
+import Send
+import Wormhole
+import KeyAppBusiness
 import SolanaSwift
 import FeeRelayerSwift
 import KeyAppKitLogger
+import KeyAppKitCore
+import Resolver
 
 enum LogLevel: String {
     case info
@@ -62,7 +67,7 @@ class DefaultLogManager: LogManager {
     }
 }
 
-extension DefaultLogManager: SolanaSwiftLogger, FeeRelayerSwiftLogger, KeyAppKitLoggerType {
+extension DefaultLogManager: SolanaSwiftLogger, FeeRelayerSwiftLogger, KeyAppKitLoggerType, KeyAppKitCore.ErrorObserver {
 
     func log(event: String, data: String?, logLevel: LogLevel) {
         var newLogLevel: LogLevel = .info
@@ -136,56 +141,59 @@ extension DefaultLogManager: SolanaSwiftLogger, FeeRelayerSwiftLogger, KeyAppKit
         }
         log(event: event, data: data, logLevel: newLogLevel)
     }
-}
 
-protocol SensitiveDataFilterRule {
-    func map(_ string: String) -> String
-}
+    func handleError(_ error: Error) {
+        handleError(error, userInfo: nil)
+    }
 
-protocol SensitiveDataFilter {
-    var rules: [SensitiveDataFilterRule] { get }
-    func map(string: String) -> String
-    func map(data: [AnyHashable: AnyHashable]) -> [AnyHashable: AnyHashable]
-}
+    func handleError(_ error: Error, userInfo: [String : Any]?) {
+        guard let error = error as? UserActionError else {
+            return
+        }
 
-struct PrivateKeySensitiveDataFilterRule: SensitiveDataFilterRule {
-    let placeholder = "<SensitiveDataFilter>"
-    let regs = ["[1-9A-HJ-NP-Za-km-z]{87}", "0x[a-fA-F0-9]{64}"]
-
-    func map(_ string: String) -> String {
-        var str = string
-        regs.forEach { reg in
-            guard let regex = try? NSRegularExpression(pattern: reg, options: NSRegularExpression.Options.caseInsensitive) else {
-                return
+        Task {
+            let data = await AlertLoggerDataBuilder.buildLoggerData(error: error)
+            let accountStorage: UserWalletManager = Resolver.resolve()
+            // Claim
+            if error.domain == WormholeClaimUserActionError.domain, let action = userInfo?[WormholeClaimUserActionError.UserInfoKey.action.rawValue] as? WormholeClaimUserAction {
+                
+                let message = ClaimAlertLoggerErrorMessage(
+                    tokenToClaim: .init(
+                        name: action.token.name,
+                        solanaMint: SupportedToken.ERC20(rawValue: action.token.erc20Address ?? "")?.solanaMintAddress ?? "",
+                        ethMint: action.token.tokenPrimaryKey,
+                        claimAmount: CryptoFormatter().string(amount: action.amountInCrypto)
+                    ),
+                    userPubkey: data.userPubkey,
+                    userEthPubkey: accountStorage.wallet?.ethAddress ?? "",
+                    simulationError: error == WormholeClaimUserActionError.submitError ? error.localizedDescription : nil,
+                    bridgeSeviceError: error != WormholeClaimUserActionError.submitError ? error.localizedDescription : nil,
+                    blockchainError: nil
+                )
+                self.log(event: "Wormhole Claim iOS Alarm", logLevel: .alert, data: message)
+            } else if error.domain == WormholeSendUserActionError.domain, let action = userInfo?[WormholeClaimUserActionError.UserInfoKey.action.rawValue] as? WormholeSendUserAction {
+                let simulationError: String? = {
+                    if error != WormholeSendUserActionError.feeRelaySignFailure && error != WormholeSendUserActionError.submittingToBlockchainFailure {
+                        return error.readableDescription
+                    }
+                    return nil
+                }()
+                let message = SendWormholeAlertLoggerErrorMessage(
+                    tokenToSend: .init(
+                        name: action.sourceToken.name,
+                        mint: action.sourceToken.tokenPrimaryKey,
+                        sendAmount: CryptoFormatter().string(amount: action.amount)
+                    ),
+                    arbiterFeeAmount: action.fees.arbiter?.amount ?? "",
+                    userPubkey: data.userPubkey,
+                    recipientEthPubkey: action.recipient,
+                    simulationError: simulationError,
+                    feeRelayerError: error == WormholeSendUserActionError.feeRelaySignFailure ? error.readableDescription : nil,
+                    blockchainError: error == WormholeSendUserActionError.submittingToBlockchainFailure ? error.readableDescription : nil
+                )
+                self.log(event: "Wormhole Send iOS Alarm", logLevel: .alert, data: message)
             }
-            let range = NSMakeRange(0, string.count)
-            let modString = regex.stringByReplacingMatches(
-                in: string, options: [], range: range, withTemplate: placeholder
-            )
-            str = modString
         }
-        return str
-    }
-}
-
-class DefaultSensitiveDataFilter: SensitiveDataFilter {
-    var rules: [SensitiveDataFilterRule] = [PrivateKeySensitiveDataFilterRule()]
-
-    func map(string: String) -> String {
-        var ret = string
-        rules.forEach { rule in
-            ret = rule.map(ret)
-        }
-        return ret
     }
 
-    func map(data: [AnyHashable: AnyHashable]) -> [AnyHashable: AnyHashable] {
-        var newData = data
-        data.keys.forEach { key in
-            if let value = data[key] as? String {
-                newData[key] = self.map(string: value)
-            }
-        }
-        return newData
-    }
 }
