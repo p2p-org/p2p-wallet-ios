@@ -110,7 +110,7 @@ class WormholeClaimViewModel: BaseViewModel, ObservableObject {
                 bundle.fetch()
             } else {
                 guard let bundle = bundle.state.value else {
-                    Error.missingBundle.capture()
+                    Resolver.resolve(ErrorObserver.self).handleError(Error.missingBundle)
                     return
                 }
 

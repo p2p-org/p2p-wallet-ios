@@ -10,6 +10,7 @@ import KeyAppUI
 import Resolver
 import SolanaSwift
 import SwiftUI
+import KeyAppKitCore
 
 struct HomeAccountsView: View {
     @ObservedObject var viewModel: HomeAccountsViewModel
@@ -32,9 +33,9 @@ struct HomeAccountsView: View {
             }
             .customRefreshable {
                 do {
-                    try await viewModel.refresh()
+                    await viewModel.refresh()
                 } catch {
-                    error.capture()
+                    Resolver.resolve(ErrorObserver.self).handleError(error)
                 }
             }
             .onReceive(viewModel.$scrollOnTheTop) { _ in
