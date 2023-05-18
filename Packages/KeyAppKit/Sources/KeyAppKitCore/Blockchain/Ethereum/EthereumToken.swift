@@ -60,4 +60,12 @@ extension EthereumToken: AnyToken {
             return "erc-20-\(contract.hex(eip55: false))"
         }
     }
+    public var erc20Address: String? {
+        switch contractType {
+        case .native:
+            return nil
+        case let .erc20(contract):
+            return contract.hex(eip55: false)
+        }
+    }
 }
