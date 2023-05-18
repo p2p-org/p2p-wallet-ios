@@ -1084,7 +1084,6 @@
 "Solana Name Service doesn't respond." = "Solana Name Service doesn't respond.";
 "We suggest you try again later because we will not be able to verify the address if you continue." = "We suggest you try again later because we will not be able to verify the address if you continue.";
 "Account creation for this address is not possible due to insufficient funds." = "Account creation for this address is not possible due to insufficient funds.";
-"It usually takes 5-20 seconds for a transaction to complete" = "It usually takes 5-20 seconds for a transaction to complete";
 "Tap for details" = "Tap for details";
 "The transaction has been successfully completed 🤟" = "The transaction has been successfully completed 🤟";
 "Recently used" = "Recently used";
@@ -1325,3 +1324,4 @@
 "It usually takes 15-20 minutes for a transaction to complete" = "It usually takes 15-20 minutes for a transaction to complete";
 "How to claim for free" = "How to claim for free";
 "I forgot PIN" = "I forgot PIN";
+"It usually takes few seconds for a transaction to complete" = "It usually takes few seconds for a transaction to complete";
