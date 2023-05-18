@@ -7,7 +7,6 @@
 
 import Foundation
 import KeyAppKitCore
-import Sentry
 
 class SentryErrorObserver: ErrorObserver {
     func handleError(_ error: Error) {
@@ -17,6 +16,6 @@ class SentryErrorObserver: ErrorObserver {
         #endif
         
         // Forward to sentry
-        SentrySDK.capture(error: error)
+        DefaultLogManager.shared.log(error: error)
     }
 }
