@@ -1357,3 +1357,4 @@
 "The fee is more than the defined slippage %@ due to one-time account creation fee by Solana blockchain" = "Комиссия превышает установленное проскальзывание %@ из-за единовременной комиссии за создание учетной записи в блокчейне Solana.";
 "How to claim for free" = "Как запросить бесплатно";
 "I forgot PIN" = "я забыл пин-код";
+"It usually takes few seconds for a transaction to complete" = "Обычно для завершения транзакции требуется несколько секунд";

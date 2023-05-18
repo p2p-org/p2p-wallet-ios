@@ -96,7 +96,7 @@
         "repositoryURL": "https://github.com/p2p-org/FeeRelayerSwift",
         "state": {
           "branch": "master",
-          "revision": "af20c8511fef0df65a405590d7bdd254df0cb95f",
+          "revision": "5e60c88c26f18f8d89345a31d1474f1cbe3b60b6",
           "version": null
         }
       },
@@ -258,7 +258,7 @@
         "repositoryURL": "https://github.com/p2p-org/OrcaSwapSwift.git",
         "state": {
           "branch": "main",
-          "revision": "b90a6ca2c61168d36a36d4249d70ef6915b25a6b",
+          "revision": "c15012e45f18cc8e553efaa1d24e34a57c99d274",
           "version": null
         }
       },
@@ -357,7 +357,7 @@
         "repositoryURL": "https://github.com/p2p-org/solana-swift.git",
         "state": {
           "branch": "main",
-          "revision": "1dac30cb8359ac69ada62c397aae373f2b3addaf",
+          "revision": "46a62174dde22ec4cfd8e909ae12c037912f2395",
           "version": null
         }
       },
@@ -402,8 +402,8 @@
         "repositoryURL": "https://github.com/apple/swift-nio.git",
         "state": {
           "branch": null,
-          "revision": "546eaa261ec5028b9cc5c7fa883fba9dd5881a3b",
-          "version": "2.52.0"
+          "revision": "2d8e6ca36fe3e8ed74b0883f593757a45463c34d",
+          "version": "2.53.0"
         }
       },
       {
