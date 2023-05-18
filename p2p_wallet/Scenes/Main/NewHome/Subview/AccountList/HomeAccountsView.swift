@@ -10,7 +10,6 @@ import KeyAppUI
 import Resolver
 import SolanaSwift
 import SwiftUI
-import KeyAppKitCore
 
 struct HomeAccountsView: View {
     @ObservedObject var viewModel: HomeAccountsViewModel
@@ -35,7 +34,7 @@ struct HomeAccountsView: View {
                 do {
                     await viewModel.refresh()
                 } catch {
-                    Resolver.resolve(ErrorObserver.self).handleError(error)
+                    DefaultLogManager.shared.log(error: error)
                 }
             }
             .onReceive(viewModel.$scrollOnTheTop) { _ in
