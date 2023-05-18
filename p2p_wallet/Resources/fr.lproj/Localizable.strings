@@ -1359,3 +1359,4 @@
 "The fee is more than the defined slippage %@ due to one-time account creation fee by Solana blockchain" = "Les frais sont supérieurs au glissement défini %@ en raison des frais uniques de création de compte par la blockchain Solana";
 "How to claim for free" = "Comment réclamer gratuitement";
 "I forgot PIN" = "J'ai oublié le NIP";
+"It usually takes few seconds for a transaction to complete" = "Il faut généralement quelques secondes pour qu'une transaction se termine";

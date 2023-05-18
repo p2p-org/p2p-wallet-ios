@@ -87,6 +87,8 @@ final class SwapViewModel: BaseViewModel, ObservableObject {
     }
 
     func update() async {
+        guard stateMachine.currentState.swapTransaction != nil else { return }
+        // Update only if swap transaction is created
         await stateMachine.accept(
             action: .update
         )
@@ -259,7 +261,6 @@ private extension SwapViewModel {
         case .error(.initializationFailed):
             initializingState = .failed
         default:
-            scheduleUpdate()
             initializingState = .success
         }
 
@@ -474,7 +475,6 @@ private extension SwapViewModel {
                 
                 // error state
                 if let error = tx.status.error {
-                    debugPrint("---errorSendingTransaction: ", error)
                     switch error {
                     case SolanaSwift.APIClientError.responseError(let detail):
                         #if !RELEASE
@@ -486,8 +486,6 @@ private extension SwapViewModel {
                     
                     // log error
                     self.logTransaction(error: error)
-                } else {
-                    debugPrint("---transactionId: ", tx.transactionId ?? "")
                 }
                 
                 // release slider
@@ -500,10 +498,10 @@ private extension SwapViewModel {
 private extension SwapViewModel {
     var formattedSlippage: String {
         let slippage = Double(stateMachine.currentState.slippageBps) / 100
-        var slippageString = String(format: "%.2f", slippage)
-        while slippageString.last == "0" {
-            slippageString.removeLast()
-        }
+        let formatter = NumberFormatter()
+        formatter.maximumFractionDigits = 2
+        formatter.minimumFractionDigits = 0
+        let slippageString = formatter.string(from: NSNumber(floatLiteral: slippage)) ?? String(format: "%.2f", slippage)
         return slippageString + "%"
     }
 }

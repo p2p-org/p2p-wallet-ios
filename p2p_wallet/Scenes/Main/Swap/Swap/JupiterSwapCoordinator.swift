@@ -114,6 +114,7 @@ final class JupiterSwapCoordinator: Coordinator<Void> {
     
     func style(controller: UIViewController) {
         controller.title = L10n.swap
+        controller.navigationItem.largeTitleDisplayMode = .never
         swapSettingBarButton = UIBarButtonItem(image: .receipt, style: .plain, target: self, action: #selector(receiptButtonPressed))
         
         // show rightBarButtonItem only on successful loading
@@ -225,11 +226,10 @@ final class JupiterSwapCoordinator: Coordinator<Void> {
                         )
                     }
                 case let .selectedRoute(routeInfo):
-                    guard let route = (viewModel?.currentState.routes.first { $0.id == routeInfo.id }),
-                          route.id != viewModel?.currentState.route?.id
-                    else {
-                        return
-                    }
+                    guard
+                        let route = (viewModel?.currentState.routes.first { $0.id == routeInfo.id }),
+                        route.id != viewModel?.currentState.route?.id
+                    else { return }
                     Task { [weak viewModel] in
                         await viewModel?.stateMachine.accept(
                             action: .chooseRoute(route)
