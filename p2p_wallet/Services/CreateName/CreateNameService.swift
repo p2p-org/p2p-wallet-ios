@@ -45,6 +45,14 @@ final class CreateNameServiceImpl: CreateNameService {
                 createNameResultSubject.send(true)
             } catch {
                 createNameResultSubject.send(false)
+                DefaultLogManager.shared.log(
+                    event: "Name Create iOS Alarm",
+                    logLevel: .alert,
+                    data: CreateNameAlertLoggerErrorMessage(
+                        name: username,
+                        error: error.readableDescription
+                    )
+                )
             }
         }
     }
