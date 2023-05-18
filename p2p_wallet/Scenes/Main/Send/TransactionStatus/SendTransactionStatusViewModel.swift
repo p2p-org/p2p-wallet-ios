@@ -19,7 +19,7 @@ final class SendTransactionStatusViewModel: BaseViewModel, ObservableObject {
     @Published var transactionFiatAmount: String
     @Published var transactionCryptoAmount: String
     @Published var info = [(title: String, detail: String)]()
-    @Published var state: State = .loading(message: L10n.itUsuallyTakes520SecondsForATransactionToComplete)
+    @Published var state: State = .loading(message: L10n.itUsuallyTakesFewSecondsForATransactionToComplete)
     @Published var closeButtonTitle: String = L10n.done
 
     private var currentTransaction: ParsedTransaction?

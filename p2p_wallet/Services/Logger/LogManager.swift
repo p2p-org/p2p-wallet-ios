@@ -49,6 +49,17 @@ class DefaultLogManager: LogManager {
     func log(event: String, logLevel: LogLevel, data: (any Encodable)?) {
         log(event: event, logLevel: logLevel, data: data?.jsonString, shouldLogEvent: nil)
     }
+    
+    func log(error: Error) {
+        // capture error
+        if let error = error as? CustomNSError {
+            log(event: "Error", logLevel: .error, data: error.errorUserInfo[NSDebugDescriptionErrorKey] as? String)
+        }
+        // else
+        else {
+            log(event: "Error", logLevel: .error, data: String(reflecting: error))
+        }
+    }
 }
 
 extension DefaultLogManager: SolanaSwiftLogger, FeeRelayerSwiftLogger, KeyAppKitLoggerType {
