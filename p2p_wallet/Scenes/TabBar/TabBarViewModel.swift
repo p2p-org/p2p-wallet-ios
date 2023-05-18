@@ -13,7 +13,6 @@ import SolanaSwift
 
 final class TabBarViewModel {
     // Dependencies
-    @Injected private var socket: Socket
     @Injected private var pricesService: PricesServiceType
     @Injected private var authenticationHandler: AuthenticationHandlerType
     @Injected private var notificationService: NotificationService
@@ -29,9 +28,6 @@ final class TabBarViewModel {
     private var cancellables = Set<AnyCancellable>()
 
     init() {
-        if #available(iOS 15.0, *) {
-            socket.connect()
-        }
         pricesService.startObserving()
 
         // Name service
@@ -48,7 +44,6 @@ final class TabBarViewModel {
     }
 
     deinit {
-        socket.disconnect()
         pricesService.stopObserving()
         debugPrint("\(String(describing: self)) deinited")
     }
