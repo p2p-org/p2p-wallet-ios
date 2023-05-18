@@ -18,6 +18,9 @@ public extension Feature {
     static let mockedDeviceShare = Feature(rawValue: "mockedDeviceShare")
     static let simulatedSocialError = Feature(rawValue: "simulatedSocialError")
     
+    // Swap
+    static let swapTransactionSimulationEnabled = Feature(rawValue: "swap_transaction_simulation_enabled")
+    
     // Solend
     static let investSolendFeature = Feature(rawValue: "keyapp_invest_solend_enabled")
     static let solendDisablePlaceholder = Feature(rawValue: "ios_solend_disable_placeholder")
