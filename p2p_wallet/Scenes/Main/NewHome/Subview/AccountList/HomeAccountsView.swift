@@ -32,9 +32,9 @@ struct HomeAccountsView: View {
             }
             .customRefreshable {
                 do {
-                    try await viewModel.refresh()
+                    await viewModel.refresh()
                 } catch {
-                    error.capture()
+                    DefaultLogManager.shared.log(error: error)
                 }
             }
             .onReceive(viewModel.$scrollOnTheTop) { _ in
