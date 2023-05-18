@@ -1354,5 +1354,8 @@
 "Add funds" = "Добавить средства";
 "Wormhole Bridge is currently unable.\nPlease try again later" = "Мост червоточины в настоящее время недоступен.\nПожалуйста, повторите попытку позже.";
 "It usually takes 15-20 minutes for a transaction to complete" = "Обычно транзакция занимает 15-20 минут.";
+"The fee is more than the defined slippage %@ due to one-time account creation fee by Solana blockchain" = "Комиссия превышает установленное проскальзывание %@ из-за единовременной комиссии за создание учетной записи в блокчейне Solana.";
 "How to claim for free" = "Как запросить бесплатно";
 "I forgot PIN" = "я забыл пин-код";
+"It usually takes few seconds for a transaction to complete" = "Обычно для завершения транзакции требуется несколько секунд";
+"Username was copied to clipboard" = "Имя пользователя было скопировано в буфер обмена";
