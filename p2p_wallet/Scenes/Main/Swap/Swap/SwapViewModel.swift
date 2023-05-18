@@ -7,7 +7,7 @@ import Task_retrying
 
 final class SwapViewModel: BaseViewModel, ObservableObject {
 
-    enum InitializingState {
+    enum ViewState {
         case loading
         case failed
         case success
@@ -32,10 +32,9 @@ final class SwapViewModel: BaseViewModel, ObservableObject {
     // TODO: - Refactor, ViewModel shouldn't keep subViewModels
     var fromTokenInputViewModel: SwapInputViewModel
     var toTokenInputViewModel: SwapInputViewModel
-    
+
     // MARK: - To View
-    
-    @Published var initializingState: InitializingState = .loading
+    @Published var viewState: ViewState = .loading
     @Published var arePricesLoading: Bool = false
 
     @Published var actionButtonData = SliderActionButtonData.zero
@@ -171,11 +170,11 @@ private extension SwapViewModel {
                 guard let self else { return }
                 switch dataStatus {
                 case .loading, .initial:
-                    self.initializingState = .loading
+                    self.viewState = .loading
                 case let .ready(jupiterTokens, routeMap):
                     await self.initialize(jupiterTokens: jupiterTokens, routeMap: routeMap)
                 case .failed:
-                    self.initializingState = .failed
+                    self.viewState = .failed
                 }
                 
             }
@@ -199,7 +198,7 @@ private extension SwapViewModel {
         )
         .filter { [weak self] userWallets, isViewAppeared in
             // update user wallets only when initializingState is success and view is appeared
-            self?.initializingState == .success && isViewAppeared
+            self?.viewState == .success && isViewAppeared
         }
         .sinkAsync { [weak self] userWallets, isViewAppeared in
             await self?.stateMachine.accept(
@@ -208,9 +207,9 @@ private extension SwapViewModel {
         }
         .store(in: &subscriptions)
 
-        // update fromToken only when initializingState is success
+        // update fromToken only when viewState is success
         changeFromToken
-            .filter { [weak self] _ in self?.initializingState == .success }
+            .filter { [weak self] _ in self?.viewState == .success }
             .sinkAsync { [weak self] token in
                 guard let self else { return }
                 self.logChangeToken(isFrom: true, token: token)
@@ -222,9 +221,9 @@ private extension SwapViewModel {
             }
             .store(in: &subscriptions)
 
-        // update toToken only when initializingState is success
+        // update toToken only when viewState is success
         changeToToken
-            .filter { [weak self] _ in self?.initializingState == .success }
+            .filter { [weak self] _ in self?.viewState == .success }
             .sinkAsync { [ weak self] token in
                 guard let self else { return }
                 self.logChangeToken(isFrom: false, token: token)
@@ -257,11 +256,11 @@ private extension SwapViewModel {
     func handle(state: JupiterSwapState) {
         switch state.status {
         case .requiredInitialize, .initializing:
-            self.initializingState = .loading
-        case .error(.initializationFailed):
-            initializingState = .failed
+            self.viewState = .loading
+        case .error(.initializationFailed), .error(reason: .networkConnectionError):
+            viewState = .failed
         default:
-            initializingState = .success
+            viewState = .success
         }
 
         switch state.status {
@@ -279,7 +278,7 @@ private extension SwapViewModel {
 
     func bindActions() {
         switchTokens
-            .filter { [weak self] _ in self?.initializingState == .success }
+            .filter { [weak self] _ in self?.viewState == .success }
             .sinkAsync(receiveValue: { [weak self] _ in
                 guard let self else { return }
                 // cache the current amountTo
@@ -305,12 +304,19 @@ private extension SwapViewModel {
         tryAgain
             .sinkAsync { [weak self] _ in
                 guard let self else { return }
-                await self.swapWalletsRepository.load()
+                switch self.currentState.status {
+                case .error(reason: .initializationFailed):
+                    await self.swapWalletsRepository.load()
+                case .error(reason: .networkConnectionError(let action)):
+                    await self.stateMachine.accept(action: .retry(action))
+                default:
+                    break
+                }
             }
             .store(in: &subscriptions)
 
         isViewAppeared
-            .filter { [weak self] _ in self?.initializingState == .success }
+            .filter { [weak self] _ in self?.viewState == .success }
             .sink { [weak self] isAppeared in
                 guard let self else { return }
                 if isAppeared {
@@ -349,9 +355,6 @@ private extension SwapViewModel {
             actionButtonData = SliderActionButtonData(isEnabled: false, title: L10n.notEnough(state.fromToken.token.symbol))
         case .error(.equalSwapTokens):
             actionButtonData = SliderActionButtonData(isEnabled: false, title: L10n.youCanTSwapBetweenTheSameToken)
-        case .error(.networkConnectionError):
-            notificationService.showConnectionErrorNotification()
-            actionButtonData = SliderActionButtonData(isEnabled: false, title: L10n.noInternetConnection)
         case .error(.inputTooHigh(let max)):
             actionButtonData = SliderActionButtonData(isEnabled: false, title: L10n.max(max.toString(maximumFractionDigits: Int(state.fromToken.token.decimals))))
             if state.fromToken.address == Token.nativeSolana.address, !wasMinToastShown {
