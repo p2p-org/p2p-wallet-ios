@@ -1,16 +1,16 @@
 import Foundation
 
-public struct ClaimAlertLoggerErrorMessage: Codable {
-    public var tokenToClaim: Token
-    public var userPubkey: String
-    public var userEthPubkey: String
-    public var platform: String = "iOS \(UIDevice.current.systemVersion)"
-    public var appVersion: String = AppInfo.appVersionDetail
-    public var timestamp: String = "\(Int64(Date().timeIntervalSince1970 * 1000))"
-    public var simulationError: String?
-    public var bridgeSeviceError: String?
-    public var feeRelayerError: String?
-    public var blockchainError: String?
+struct ClaimAlertLoggerErrorMessage: Codable {
+    var tokenToClaim: Token
+    var userPubkey: String
+    var userEthPubkey: String
+    var platform: String = "iOS \(UIDevice.current.systemVersion)"
+    var appVersion: String = AppInfo.appVersionDetail
+    var timestamp: String = "\(Int64(Date().timeIntervalSince1970 * 1000))"
+    var simulationError: String?
+    var bridgeSeviceError: String?
+    var feeRelayerError: String?
+    var blockchainError: String?
 
     enum CodingKeys: String, CodingKey {
         case tokenToClaim = "token_to_claim"
@@ -26,11 +26,11 @@ public struct ClaimAlertLoggerErrorMessage: Codable {
     }
 }
 
-public extension ClaimAlertLoggerErrorMessage {
+extension ClaimAlertLoggerErrorMessage {
     // MARK: - Token
     struct Token: Codable {
-        public let name, solanaMint, ethMint: String
-        public let claimAmount: String
+        let name, solanaMint, ethMint: String
+        let claimAmount: String
 
         enum CodingKeys: String, CodingKey {
             case name
