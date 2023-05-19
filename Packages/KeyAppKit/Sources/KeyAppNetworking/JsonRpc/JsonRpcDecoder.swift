@@ -17,6 +17,8 @@ public struct JsonRpcDecoder {
     }
 }
 
+// MARK: - HTTPResponseDecoder
+
 extension JsonRpcDecoder: HTTPResponseDecoder {
     /// Decode data and response to needed type
     /// - Parameters:
@@ -31,7 +33,7 @@ extension JsonRpcDecoder: HTTPResponseDecoder {
         case 200 ... 299:
             // try to decode response
             do {
-                return try jsonDecoder.decode(JsonRpcResponseDto<T>.self, from: data).result
+                return try jsonDecoder.decode(T.self, from: data)
             } catch {
                 throw decodeRpcError(from: data) ?? error
             }

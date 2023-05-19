@@ -28,6 +28,8 @@ public struct JSONResponseDecoder {
     }
 }
 
+// MARK: - HTTPResponseDecoder
+
 extension JSONResponseDecoder: HTTPResponseDecoder {
     /// Decode data and response to needed type
     /// - Parameters:
