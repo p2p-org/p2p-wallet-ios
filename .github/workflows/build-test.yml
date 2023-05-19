@@ -42,7 +42,6 @@ jobs:
           # token: ${{ secrets.GITHUB_TOKEN }}
 
       - name: Select XCode Version
-        if: ${{ inputs.with_high_priority == false }}
         run: sudo xcode-select --switch /Applications/Xcode_${{ env.XCODE_VERSION }}.app
 
       - name: Get last changes
