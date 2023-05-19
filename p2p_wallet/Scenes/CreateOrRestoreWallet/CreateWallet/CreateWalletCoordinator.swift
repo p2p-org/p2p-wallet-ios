@@ -170,10 +170,16 @@ final class CreateWalletCoordinator: Coordinator<CreateWalletResult> {
     }
 
     private static func log(error: Error) {
-        DefaultLogManager.shared.log(
-            event: "Web3 Registration iOS Alarm",
-            logLevel: .alert,
-            data: CreateWalletAlertLoggerErrorMessage(error: error.readableDescription)
-        )
+        Task {
+            let data = await AlertLoggerDataBuilder.buildLoggerData(error: error)
+            DefaultLogManager.shared.log(
+                event: "Web3 Registration iOS Alarm",
+                logLevel: .alert,
+                data: CreateWalletAlertLoggerErrorMessage(
+                    error: error.readableDescription,
+                    userPubKey: data.userPubkey
+                )
+            )
+        }
     }
 }

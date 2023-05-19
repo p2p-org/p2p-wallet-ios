@@ -45,12 +45,14 @@ final class CreateNameServiceImpl: CreateNameService {
                 createNameResultSubject.send(true)
             } catch {
                 createNameResultSubject.send(false)
+                let data = await AlertLoggerDataBuilder.buildLoggerData(error: error)
                 DefaultLogManager.shared.log(
                     event: "Name Create iOS Alarm",
                     logLevel: .alert,
                     data: CreateNameAlertLoggerErrorMessage(
                         name: username,
-                        error: error.readableDescription
+                        error: error.readableDescription,
+                        userPubKey: data.userPubkey
                     )
                 )
             }
