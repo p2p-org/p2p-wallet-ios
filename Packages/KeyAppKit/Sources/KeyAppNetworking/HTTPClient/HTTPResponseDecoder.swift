@@ -12,7 +12,7 @@ public protocol HTTPResponseDecoder {
 }
 
 /// ResponseDecoder for JSON type
-public class JSONResponseDecoder {
+public struct JSONResponseDecoder {
     
     // MARK: - Properties
     
