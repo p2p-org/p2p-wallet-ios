@@ -38,6 +38,8 @@ public class HTTPClient {
     }
 }
 
+// MARK: - IHTTPClient
+
 extension HTTPClient: IHTTPClient {
     /// Send request to specific endpoint
     /// - Parameters:
