@@ -63,5 +63,12 @@ extension EthereumToken: AnyToken {
 
     public var network: TokenNetwork {
         .ethereum
+    public var erc20Address: String? {
+        switch contractType {
+        case .native:
+            return nil
+        case let .erc20(contract):
+            return contract.hex(eip55: false)
+        }
     }
 }

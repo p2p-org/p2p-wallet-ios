@@ -6,7 +6,6 @@
 //
 
 import Foundation
-import Sentry
 import SolanaSwift
 
 extension TransactionHandler {
@@ -37,15 +36,6 @@ extension TransactionHandler {
                     self.notificationsService.showConnectionErrorNotification()
                 } else {
                     self.notificationsService.showDefaultErrorNotification()
-                }
-   
-                // capture sentry error
-                if let error = error as? CustomNSError {
-                    SentrySDK.capture(error: error)
-                }
-                // else
-                else {
-                    SentrySDK.capture(error: SentryUndefinedError(error: error))
                 }
 
                 // mark transaction as failured
