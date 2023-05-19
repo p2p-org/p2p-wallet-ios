@@ -29,7 +29,7 @@ struct HomeEthereumAccountsAggregator: DataAggregator {
 
                     if let balanceInFiat {
                         // Compare using fiat.
-                        if balanceInFiat >= CurrencyAmount(usd: 1) {
+                        if balanceInFiat >= CurrencyAmount(usd: 5) {
                             // Balance is greater than $1, user can claim.
                             status = .readyToClaim
                         } else {
