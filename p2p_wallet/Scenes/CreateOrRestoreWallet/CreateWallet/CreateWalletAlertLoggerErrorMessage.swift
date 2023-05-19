@@ -1,6 +1,6 @@
 import Foundation
 
-public struct CreateWalletAlertLoggerErrorMessage: Codable {
+struct CreateWalletAlertLoggerErrorMessage: Codable {
     let error: String
 
     enum CodingKeys: String, CodingKey {

@@ -1,6 +1,6 @@
 import Foundation
 
-public struct CreateNameAlertLoggerErrorMessage: Codable {
+struct CreateNameAlertLoggerErrorMessage: Codable {
     let name: String
     let error: String
 
