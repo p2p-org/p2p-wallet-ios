@@ -1362,5 +1362,6 @@
 "The fee is more than the defined slippage %@ due to one-time account creation fee by Solana blockchain" = "Phí cao hơn trượt giá được xác định %@ do phí tạo tài khoản một lần bằng chuỗi khối Solana";
 "How to claim for free" = "Làm thế nào để yêu cầu miễn phí";
 "I forgot PIN" = "tôi quên mã PIN";
+"Not enought %@" = "Chưa đủ %@";
 "It usually takes few seconds for a transaction to complete" = "Thường mất vài giây để hoàn tất giao dịch";
 "Username was copied to clipboard" = "Tên người dùng đã được sao chép vào khay nhớ tạm";
