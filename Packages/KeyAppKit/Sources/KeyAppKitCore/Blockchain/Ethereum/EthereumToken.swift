@@ -63,6 +63,8 @@ extension EthereumToken: AnyToken {
 
     public var network: TokenNetwork {
         .ethereum
+    }
+
     public var erc20Address: String? {
         switch contractType {
         case .native:
