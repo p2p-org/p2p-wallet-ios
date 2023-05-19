@@ -99,8 +99,21 @@ public struct WormholeSendUserAction: UserAction {
 
         sourceToken = token
         recipient = sendStatus.recipient
-        amount = sendStatus.amount.asCryptoAmount
-        currencyAmount = sendStatus.amount.asCurrencyAmount
+
+        if let arbiterFee = sendStatus.fees.arbiter {
+            if sendStatus.amount.asCryptoAmount >= arbiterFee.asCryptoAmount {
+                amount = sendStatus.amount.asCryptoAmount - arbiterFee.asCryptoAmount
+                currencyAmount = sendStatus.amount.asCurrencyAmount - arbiterFee.asCurrencyAmount
+            } else {
+                amount = sendStatus.amount.asCryptoAmount
+                currencyAmount = sendStatus.amount.asCurrencyAmount
+            }
+        } else {
+            amount = sendStatus.amount.asCryptoAmount
+            currencyAmount = sendStatus.amount.asCurrencyAmount
+        }
+
+        
         fees = sendStatus.fees
         transaction = nil
     }
