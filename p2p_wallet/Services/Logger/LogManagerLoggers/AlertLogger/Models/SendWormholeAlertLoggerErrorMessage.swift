@@ -1,14 +1,14 @@
 import Foundation
 
-public struct SendWormholeAlertLoggerErrorMessage: Codable {
-    public let tokenToSend: Token
-    public let arbiterFeeAmount, userPubkey, recipientEthPubkey: String
-    public var platform: String = "iOS \(UIDevice.current.systemVersion)"
-    public var appVersion: String = AppInfo.appVersionDetail
-    public var timestamp: String = "\(Int64(Date().timeIntervalSince1970 * 1000))"
-    public let simulationError: String?
-    public let feeRelayerError: String?
-    public let blockchainError: String?
+struct SendWormholeAlertLoggerErrorMessage: Codable {
+    let tokenToSend: Token
+    let arbiterFeeAmount, userPubkey, recipientEthPubkey: String
+    var platform: String = "iOS \(UIDevice.current.systemVersion)"
+    var appVersion: String = AppInfo.appVersionDetail
+    var timestamp: String = "\(Int64(Date().timeIntervalSince1970 * 1000))"
+    let simulationError: String?
+    let feeRelayerError: String?
+    let blockchainError: String?
 
     enum CodingKeys: String, CodingKey {
         case tokenToSend = "token_to_send"
@@ -24,9 +24,9 @@ public struct SendWormholeAlertLoggerErrorMessage: Codable {
     }
 }
 
-public extension SendWormholeAlertLoggerErrorMessage {
+extension SendWormholeAlertLoggerErrorMessage {
     struct Token: Codable {
-        public let name, mint, sendAmount: String
+        let name, mint, sendAmount: String
 
         enum CodingKeys: String, CodingKey {
             case name, mint

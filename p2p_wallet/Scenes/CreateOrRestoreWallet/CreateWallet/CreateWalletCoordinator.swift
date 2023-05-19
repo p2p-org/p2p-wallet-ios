@@ -43,19 +43,34 @@ final class CreateWalletCoordinator: Coordinator<CreateWalletResult> {
 
         socialSignInDelegatedCoordinator = .init(
             stateMachine: .init { [weak viewModel] event in
-                try await viewModel?.onboardingStateMachine.accept(event: .socialSignInEvent(event))
+                do {
+                    try await viewModel?.onboardingStateMachine.accept(event: .socialSignInEvent(event))
+                } catch {
+                    Self.log(error: error)
+                    throw error
+                }
             }
         )
 
         bindingPhoneNumberDelegatedCoordinator = .init(
             stateMachine: .init { [weak viewModel] event in
-                try await viewModel?.onboardingStateMachine.accept(event: .bindingPhoneNumberEvent(event))
+                do {
+                    try await viewModel?.onboardingStateMachine.accept(event: .bindingPhoneNumberEvent(event))
+                } catch {
+                    Self.log(error: error)
+                    throw error
+                }
             }
         )
 
         securitySetupDelegatedCoordinator = .init(
             stateMachine: .init { [weak viewModel] event in
-                try await viewModel?.onboardingStateMachine.accept(event: .securitySetup(event))
+                do {
+                    try await viewModel?.onboardingStateMachine.accept(event: .securitySetup(event))
+                } catch {
+                    Self.log(error: error)
+                    throw error
+                }
             }
         )
 
@@ -152,5 +167,19 @@ final class CreateWalletCoordinator: Coordinator<CreateWalletResult> {
             title: "🎉",
             text: L10n.yourWalletHasBeenCreatedJustAFewMomentsToStartACryptoAdventure
         ).show(in: navigationController.view)
+    }
+
+    private static func log(error: Error) {
+        Task {
+            let data = await AlertLoggerDataBuilder.buildLoggerData(error: error)
+            DefaultLogManager.shared.log(
+                event: "Web3 Registration iOS Alarm",
+                logLevel: .alert,
+                data: CreateWalletAlertLoggerErrorMessage(
+                    error: error.readableDescription,
+                    userPubKey: data.userPubkey
+                )
+            )
+        }
     }
 }
