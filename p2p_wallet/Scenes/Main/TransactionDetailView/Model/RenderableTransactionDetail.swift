@@ -24,6 +24,8 @@ protocol RenderableTransactionDetail {
     var actions: [TransactionDetailAction] { get }
 
     var buttonTitle: String { get }
+    
+    var url: String? { get }
 }
 
 struct TransactionDetailExtraInfo {
@@ -55,6 +57,8 @@ struct TransactionDetailExtraInfo {
     let values: [Value]
 
     let copyableValue: String?
+    
+    let url: String? = nil
 
     init(title: String, values: [Value], copyableValue: String? = nil) {
         self.title = title

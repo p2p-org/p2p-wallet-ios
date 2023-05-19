@@ -130,4 +130,8 @@ struct RendableDetailParsedTransaction: RenderableTransactionDetail {
     var buttonTitle: String {
         L10n.done
     }
+
+    var url: String? {
+        "https://explorer.solana.com/tx/\(signature ?? "")"
+    }
 }

@@ -20,6 +20,7 @@ struct MockedRendableDetailTransaction: RenderableTransactionDetail {
     var extra: [TransactionDetailExtraInfo]
     var actions: [TransactionDetailAction]
     var buttonTitle: String
+    var url: String?
 
     init(
         status: TransactionDetailStatus,

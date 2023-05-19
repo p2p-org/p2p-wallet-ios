@@ -90,13 +90,15 @@ class TransactionDetailViewModel: BaseViewModel, ObservableObject {
             forceHidingStatus = false
         }
 
-        userActionService
-            .observer(id: userAction.id)
-            .receive(on: RunLoop.main)
-            .sink { userAction in
-                self.rendableTransaction = RendableGeneralUserActionTransaction.resolve(userAction: userAction)
-            }
-            .store(in: &subscriptions)
+        if userAction.status != .ready {
+            userActionService
+                .observer(id: userAction.id)
+                .receive(on: RunLoop.main)
+                .sink { userAction in
+                    self.rendableTransaction = RendableGeneralUserActionTransaction.resolve(userAction: userAction)
+                }
+                .store(in: &subscriptions)
+        }
     }
 
     convenience init(submit rawTransaction: RawTransactionType) {
@@ -109,13 +111,13 @@ class TransactionDetailViewModel: BaseViewModel, ObservableObject {
     }
 
     func share() {
-        guard let url = URL(string: "https://explorer.solana.com/tx/\(rendableTransaction.signature ?? "")")
+        guard let url = URL(string: rendableTransaction.url ?? "")
         else { return }
         action.send(.share(url))
     }
 
     func explore() {
-        guard let url = URL(string: "https://explorer.solana.com/tx/\(rendableTransaction.signature ?? "")")
+        guard let url = URL(string: rendableTransaction.url ?? "")
         else { return }
         action.send(.open(url))
     }

@@ -341,6 +341,10 @@ struct RendableDetailPendingTransaction: RenderableTransactionDetail {
             return L10n.done
         }
     }
+    
+    var url: String? {
+        "https://explorer.solana.com/tx/\(signature ?? "")"
+    }
 }
 
 extension Error {

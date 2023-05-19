@@ -89,7 +89,7 @@ struct RendableDetailHistoryTransaction: RenderableTransactionDetail {
 
         case let .wormholeReceive(data):
             return icon(mint: data.tokenAmount.token.mint, url: data.tokenAmount.token.logoUrl, defaultIcon: .planet)
-            
+
         case .tryCreateAccount:
             return .icon(.planet)
 
@@ -179,7 +179,7 @@ struct RendableDetailHistoryTransaction: RenderableTransactionDetail {
                 return .unchanged("")
             }
             return .positive("+\(usdAmount.fiatAmountFormattedString())")
-            
+
         case .tryCreateAccount:
             return .unchanged("")
 
@@ -229,7 +229,7 @@ struct RendableDetailHistoryTransaction: RenderableTransactionDetail {
 
         case let .unknown(data):
             return "\(data.amount.tokenAmountDouble.tokenAmountFormattedString(symbol: data.token.symbol))"
-            
+
         case .tryCreateAccount:
             return ""
 
@@ -369,6 +369,10 @@ struct RendableDetailHistoryTransaction: RenderableTransactionDetail {
         default:
             return L10n.done
         }
+    }
+
+    var url: String? {
+        "https://explorer.solana.com/tx/\(signature ?? "")"
     }
 }
 
