@@ -1,10 +1,3 @@
-//
-//  URLSession+Extensions.swift
-//  p2p_wallet
-//
-//  Created by Ivan on 28.04.2022.
-//
-
 import Foundation
 
 @available(iOS, deprecated: 15.0, message: "This extension is no longer necessary. Use API built into SDK")

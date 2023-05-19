@@ -10,14 +10,23 @@ import Resolver
 import KeyAppNetworking
 
 protocol NotificationRepository {
-    typealias DeviceTokenResponse = JsonRpcResponseDto<DeviceTokenResponseDto>
+    typealias DeviceTokenResponse = JSONRPCResponseDto<DeviceTokenResponseDto>
 
     func sendDeviceToken(model: DeviceTokenDto) async throws -> DeviceTokenResponse
     func removeDeviceToken(model: DeleteDeviceTokenDto) async throws -> DeviceTokenResponse
 }
 
 final class NotificationRepositoryImpl: NotificationRepository {
-    @Injected private var httpClient: IHttpClient
+    private let httpClient: HTTPClient
+    
+    init() {
+        let jsonDecoder = JSONDecoder()
+        jsonDecoder.keyDecodingStrategy = .convertFromSnakeCase
+
+        self.httpClient = .init(
+            decoder: JSONRPCDecoder(jsonDecoder: jsonDecoder)
+        )
+    }
 
     func sendDeviceToken(model: DeviceTokenDto) async throws -> DeviceTokenResponse {
         do {
@@ -28,18 +37,15 @@ final class NotificationRepositoryImpl: NotificationRepository {
                 )),
                 responseModel: DeviceTokenResponse.self
             )
-        } catch let error as JsonRpcError {
-            if error.code == -32001 {
-                return .init(
-                    id: "",
-                    result: .init(
-                        deviceToken: model.deviceToken,
-                        timestamp: String(Date().timeIntervalSince1970),
-                        clientId: model.clientId
-                    )
+        } catch let error as JsonRpcError where error.code == -32001 {
+            return .init(
+                id: "",
+                result: .init(
+                    deviceToken: model.deviceToken,
+                    timestamp: String(Date().timeIntervalSince1970),
+                    clientId: model.clientId
                 )
-            }
-            throw error
+            )
         } catch {
             throw error
         }
