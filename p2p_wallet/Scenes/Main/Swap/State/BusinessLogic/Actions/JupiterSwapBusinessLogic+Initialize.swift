@@ -27,6 +27,7 @@ extension JupiterSwapBusinessLogic {
         
         // auto choose toToken
         let toToken = getToToken(
+            preChosenFromTokenMintAddress: preChosenFromTokenMintAddress,
             preChosenToTokenMintAddress: preChosenToTokenMintAddress,
             swapTokens: swapTokens,
             fromToken: fromToken
@@ -109,21 +110,27 @@ extension JupiterSwapBusinessLogic {
     }
     
     private static func getToToken(
+        preChosenFromTokenMintAddress: String?,
         preChosenToTokenMintAddress: String?,
         swapTokens: [SwapToken],
         fromToken: SwapToken
     ) -> SwapToken {
-        // map preChosenToken
-        let preChosenToToken: SwapToken?
-        if let toTokenAddress = preChosenToTokenMintAddress {
-            preChosenToToken = swapTokens.first(where: { $0.address == toTokenAddress })
-        } else {
-            preChosenToToken = nil
+
+        // 1. Search for preChosen toToken if it exists
+        if
+            let address = preChosenToTokenMintAddress,
+            let toToken = swapTokens.first(where: { $0.address == address }) {
+            return toToken
         }
-        
-        // auto choose fromToken
-        return preChosenToToken ??
-            autoChooseToToken(for: fromToken, from: swapTokens) ??
-            SwapToken(token: .nativeSolana, userWallet: nil)
+
+        // 2. Search for toToken if fromToken is preChosen
+        if
+            preChosenFromTokenMintAddress != nil,
+            let toToken =  autoChooseToToken(for: fromToken, from: swapTokens) {
+            return toToken
+        }
+
+        // 3. Auto choose toToken if none is preset
+        return  autoChoose(swapTokens: swapTokens)?.toToken ?? SwapToken.nativeSolana
     }
 }

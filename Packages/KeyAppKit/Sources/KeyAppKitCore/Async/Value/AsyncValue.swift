@@ -176,10 +176,4 @@ public class AsyncValue<T> {
                 target?.objectWillChange.send()
             }.store(in: &storage)
     }
-
-    func update(_ adjust: (inout AsyncValueState<T>) -> Void) {
-        var state = state
-        adjust(&state)
-        stateSubject.send(state)
-    }
 }
