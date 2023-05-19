@@ -6,7 +6,7 @@
 
 import Foundation
 
-public struct JsonRpcResponseDto<T: Decodable>: Decodable {
+public struct JSONRPCResponseDto<T: Decodable>: Decodable {
     let id: String?
     let result: T
     
