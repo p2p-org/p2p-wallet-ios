@@ -3,6 +3,7 @@ import KeyAppUI
 import SwiftUI
 import UIKit
 
+@available(*, deprecated, message: "Use NewTextButton instead")
 struct TextButtonView: UIViewRepresentable {
     private let title: String
     private let style: TextButton.Style
