@@ -599,112 +599,22 @@ private extension SendInputViewModel {
         }
 
         await MainActor.run {
-            let transaction = SendTransaction(state: currentState) {
-                try await createTransactionExecution(
-                    isSendingViaLink: isSendingViaLink,
-                    isFakeSendTransaction: isFakeSendTransaction,
-                    isFakeSendTransactionError: isFakeSendTransactionError,
-                    isFakeSendTransactionNetworkError: isFakeSendTransactionNetworkError,
-                    recipient: recipient,
-                    sendViaLinkSeed: sendViaLinkSeed,
-                    token: token,
-                    amountInToken: amountInToken,
-                    amountInFiat: amountInFiat,
-                    sourceWallet: sourceWallet,
-                    address: address,
-                    feeWallet: feeWallet
-                )
-            }
-            self.transaction.send(transaction)
-        }
-    }
-}
-
-// MARK: - Independent helper to avoid retain cycle, refactor later
-
-private func createTransactionExecution(
-    isSendingViaLink: Bool,
-    isFakeSendTransaction: Bool,
-    isFakeSendTransactionError: Bool,
-    isFakeSendTransactionNetworkError: Bool,
-    recipient: Recipient,
-    sendViaLinkSeed: String?,
-    token: Token,
-    amountInToken: Double,
-    amountInFiat: Double,
-    sourceWallet: Wallet,
-    address: String,
-    feeWallet: Wallet?
-) async throws -> TransactionID {
-    // save recipient except send via link
-    if !isSendingViaLink {
-        try? await Resolver.resolve(SendHistoryService.self).insert(recipient)
-    }
-
-    // Fake transaction for testing
-    #if !RELEASE
-        if isFakeSendTransaction {
-            try await Task.sleep(nanoseconds: 2_000_000_000)
-            if isFakeSendTransactionError {
-                throw SolanaError.unknown
-            }
-            if isFakeSendTransactionNetworkError {
-                throw NSError(domain: "Network error", code: NSURLErrorNetworkConnectionLost)
-            }
-            // save to storage
-            if isSendingViaLink, let sendViaLinkSeed {
-                saveSendViaLinkTransaction(
-                    seed: sendViaLinkSeed,
-                    token: token,
-                    amountInToken: amountInToken,
-                    amountInFiat: amountInFiat
-                )
-            }
-
-            return .fakeTransactionSignature(id: UUID().uuidString)
-        }
-    #endif
-
-    // Real transaction
-    let trx = try await Resolver.resolve(SendActionService.self).send(
-        from: sourceWallet,
-        receiver: address,
-        amount: amountInToken,
-        feeWallet: feeWallet,
-        ignoreTopUp: isSendingViaLink,
-        memo: isSendingViaLink ? .secretConfig("SEND_VIA_LINK_MEMO_PREFIX")! + "-send" : nil,
-        operationType: isSendingViaLink ? .sendViaLink : .transfer
-    )
-
-    // save to storage
-    if isSendingViaLink, let sendViaLinkSeed {
-        saveSendViaLinkTransaction(
-            seed: sendViaLinkSeed,
-            token: token,
-            amountInToken: amountInToken,
-            amountInFiat: amountInFiat
-        )
-    }
-
-    return trx
-}
-
-private func saveSendViaLinkTransaction(
-    seed: String,
-    token: Token,
-    amountInToken: Double,
-    amountInFiat: Double
-) {
-    Task {
-        await Resolver.resolve(SendViaLinkStorage.self).save(
-            transaction: .init(
+            let transaction = SendTransaction(
+                isFakeSendTransaction: isFakeSendTransaction,
+                isFakeSendTransactionError: isFakeSendTransactionError,
+                isFakeSendTransactionNetworkError: isFakeSendTransactionNetworkError,
+                recipient: recipient,
+                sendViaLinkSeed: sendViaLinkSeed,
                 amount: amountInToken,
                 amountInFiat: amountInFiat,
-                token: token,
-                seed: seed,
-                timestamp: Date()
+                walletToken: sourceWallet,
+                address: address,
+                payingFeeWallet: feeWallet,
+                feeAmount: currentState.feeInToken,
+                currency: inputAmountViewModel.mainAmountType == .fiat ? Defaults.fiat.symbol: sourceWallet.token.symbol
             )
-        )
+            self.transaction.send(transaction)
+        }
     }
 }
 
