@@ -23,7 +23,7 @@ public class JSONResponseDecoder {
     
     /// `JSONResponseDecoder` initializer
     /// - Parameter jsonDecoder: Default native `JSONDecoder`
-    public init(jsonDecoder: JSONDecoder = .init()) {
+    public init(jsonDecoder: JSONDecoder = JSONDecoder()) {
         self.jsonDecoder = jsonDecoder
     }
 }
