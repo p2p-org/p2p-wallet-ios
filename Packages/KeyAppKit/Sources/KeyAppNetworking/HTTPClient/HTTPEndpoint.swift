@@ -7,10 +7,10 @@
 
 import Foundation
 
-public protocol Endpoint {
+public protocol HTTPEndpoint {
     var baseURL: String { get }
     var path: String { get }
-    var method: RequestMethod { get }
+    var method: HTTPMethod { get }
     var header: [String: String] { get }
     var body: String? { get }
 }

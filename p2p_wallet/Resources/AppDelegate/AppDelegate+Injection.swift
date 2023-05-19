@@ -500,11 +500,6 @@ extension Resolver: ResolverRegistering {
         .implements(OrcaSwapType.self)
         .scope(.session)
 
-        // HttpClient
-        register { HttpClient() }
-            .implements(IHttpClient.self)
-            .scope(.session)
-
         // Auth
         register { AuthServiceImpl() }
             .implements(AuthService.self)
