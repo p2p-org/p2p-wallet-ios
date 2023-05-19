@@ -8,17 +8,30 @@ public struct JsonRpcDecoder: HTTPResponseDecoder {
     }
     
     public func decode<T: Decodable>(_ type: T.Type, data: Data, httpURLResponse response: HTTPURLResponse) throws -> T {
-        let decodedResponse = try jsonDecoder.decode(JsonRpcResponseDto<T>.self, from: data)
         
-        if let error = decodedResponse.error {
-            throw error
-        }
-        
+        // Check status code
         switch response.statusCode {
-        case 200 ... 299 where decodedResponse.result != nil:
-            return decodedResponse.result!
+        case 200 ... 299:
+            // try to decode response
+            do {
+                return try jsonDecoder.decode(JsonRpcResponseDto<T>.self, from: data).result
+            } catch {
+                if let rpcError = decodeRpcError(from: data) {
+                    throw rpcError
+                }
+                throw error
+            }
         default:
+            if let rpcError = decodeRpcError(from: data) {
+                throw rpcError
+            }
             throw HTTPClientError.invalidResponse(response, data)
         }
+    }
+    
+    // MARK: - Helpers
+
+    private func decodeRpcError(from data: Data) -> JsonRpcError? {
+        try? jsonDecoder.decode(JsonRpcResponseErrorDto.self, from: data).error
     }
 }

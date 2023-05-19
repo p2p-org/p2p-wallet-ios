@@ -8,20 +8,22 @@ import Foundation
 
 public struct JsonRpcResponseDto<T: Decodable>: Decodable {
     let id: String?
-    let result: T?
-    let error: JsonRpcError?
+    let result: T
     
     public init(
         id: String,
-        result: T?,
-        error: JsonRpcError? = nil
+        result: T
     ) {
         self.id = id
         self.result = result
-        self.error = error
     }
 }
 
+public struct JsonRpcResponseErrorDto: Decodable {
+    public let id: String?
+    public let error: JsonRpcError?
+}
+
 public struct JsonRpcError: Decodable, Error {
-    public let code: Int
+    public let code: Int?
 }

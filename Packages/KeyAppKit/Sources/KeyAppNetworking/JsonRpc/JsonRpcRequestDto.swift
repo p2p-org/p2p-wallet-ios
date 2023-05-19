@@ -26,7 +26,6 @@ public struct JsonRpcRequestDto<T: Encodable>: Encodable {
     }
 }
 
-
 public extension JsonRpcRequestDto where T == String { /*T == String, or what ever confirmed to Encodable to fix ambiguous type*/
     init(
         jsonrpc: String = "2.0",
