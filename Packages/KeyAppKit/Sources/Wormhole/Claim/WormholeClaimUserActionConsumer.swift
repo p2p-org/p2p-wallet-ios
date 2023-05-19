@@ -1,15 +1,9 @@
-//
-//  File.swift
-//
-//
-//  Created by Giang Long Tran on 05.04.2023.
-//
-
 import Combine
 import FeeRelayerSwift
 import Foundation
 import KeyAppBusiness
 import KeyAppKitCore
+import KeyAppKitLogger
 import SolanaSwift
 
 public class WormholeClaimUserActionConsumer: UserActionConsumer {
@@ -155,6 +149,7 @@ public class WormholeClaimUserActionConsumer: UserActionConsumer {
 
             guard case var .pending(rawBundle) = action.internalState else {
                 let error = Error.claimFailure
+                self?.errorObserver.handleError(error, userInfo: [WormholeClaimUserActionError.UserInfoKey.action.rawValue: action])
                 self?.handleInternalEvent(
                     event: .claimFailure(
                         bundleID: action.bundleID, reason: error
@@ -168,6 +163,7 @@ public class WormholeClaimUserActionConsumer: UserActionConsumer {
             do {
                 try rawBundle.signBundle(with: keyPair)
             } catch {
+                self?.errorObserver.handleError(Error.claimFailure, userInfo: [WormholeClaimUserActionError.UserInfoKey.action.rawValue: action])
                 self?.handleInternalEvent(event: .claimFailure(bundleID: action.bundleID, reason: .signingFailure))
             }
 
@@ -176,11 +172,11 @@ public class WormholeClaimUserActionConsumer: UserActionConsumer {
                 try await self?.wormholeAPI.sendEthereumBundle(bundle: rawBundle)
                 self?.handleInternalEvent(event: .claimInProgress(bundleID: action.bundleID))
             } catch {
-                self?.errorObserver.handleError(error)
+                self?.errorObserver.handleError(error, userInfo: [WormholeClaimUserActionError.UserInfoKey.action.rawValue: action])
 
                 let error = Error.submitError
 
-                self?.errorObserver.handleError(error)
+                self?.errorObserver.handleError(error, userInfo: [WormholeClaimUserActionError.UserInfoKey.action.rawValue: action])
                 self?.handleInternalEvent(event: .claimFailure(bundleID: action.bundleID, reason: error))
             }
         }
