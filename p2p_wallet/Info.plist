@@ -81,6 +81,8 @@
 	<string>$(CURRENT_PROJECT_VERSION)</string>
 	<key>CRYPTO_COMPARE_API_KEY</key>
 	<string>$(CRYPTO_COMPARE_API_KEY)</string>
+	<key>ETH_RPC</key>
+	<string>$(ETH_RPC)</string>
 	<key>FEE_RELAYER_ENDPOINT</key>
 	<string>$(FEE_RELAYER_ENDPOINT)</string>
 	<key>FEE_RELAYER_STAGING_ENDPOINT</key>
