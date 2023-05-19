@@ -1324,5 +1324,6 @@
 "The fee is more than the defined slippage %@ due to one-time account creation fee by Solana blockchain" = "The fee is more than the defined slippage %@ due to one-time account creation fee by Solana blockchain";
 "How to claim for free" = "How to claim for free";
 "I forgot PIN" = "I forgot PIN";
+"Not enought %@" = "Not enought %@";
 "It usually takes few seconds for a transaction to complete" = "It usually takes few seconds for a transaction to complete";
 "Username was copied to clipboard" = "Username was copied to clipboard";
