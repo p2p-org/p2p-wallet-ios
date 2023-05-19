@@ -14,7 +14,7 @@ public struct JsonRpcResponseDto<T: Decodable>: Decodable {
     public init(
         id: String,
         result: T?,
-        error: JsonRpcError?
+        error: JsonRpcError? = nil
     ) {
         self.id = id
         self.result = result
