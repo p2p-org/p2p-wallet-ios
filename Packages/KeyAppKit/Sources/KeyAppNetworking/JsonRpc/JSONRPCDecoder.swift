@@ -7,17 +7,18 @@ public struct JSONRPCDecoder: HTTPResponseDecoder {
         self.jsonDecoder = jsonDecoder
     }
     
-    public func decode<T: Decodable>(_ type: T.Type, from data: Data) throws -> T {
+    public func decode<T: Decodable>(_ type: T.Type, data: Data, httpURLResponse response: HTTPURLResponse) throws -> T {
         let decodedResponse = try jsonDecoder.decode(JsonRpcResponseDto<T>.self, from: data)
         
         if let error = decodedResponse.error {
             throw error
         }
         
-        if let result = decodedResponse.result {
-            return result
+        switch response.statusCode {
+        case 200 ... 299 where decodedResponse.result != nil:
+            return decodedResponse.result!
+        default:
+            throw HTTPClientError.invalidResponse(response, data)
         }
-        
-        throw HTTPClientError.invalidResponse(nil, data)
     }
 }

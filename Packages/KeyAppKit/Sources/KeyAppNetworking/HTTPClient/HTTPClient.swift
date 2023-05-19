@@ -30,7 +30,7 @@ public class HTTPClient: IHTTPClient {
     /// - Parameter decoder: Decoder for response
     public init(
         urlSession: URLSession = .shared,
-        decoder: HTTPResponseDecoder = JSONDecoder()
+        decoder: HTTPResponseDecoder = JSONResponseDecoder()
     ) {
         self.urlSession = urlSession
         self.decoder = decoder
@@ -74,11 +74,6 @@ public class HTTPClient: IHTTPClient {
         }
         
         // Decode response
-        switch response.statusCode {
-        case 200 ... 299:
-            return try decoder.decode(responseModel, from: data)
-        default:
-            throw HTTPClientError.invalidResponse(response, data)
-        }
+        return try decoder.decode(responseModel, data: data, httpURLResponse: response)
     }
 }
