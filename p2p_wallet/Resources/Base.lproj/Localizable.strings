@@ -1331,4 +1331,6 @@
 "Total amount" = "Total amount";
 "Check available funds" = "Check available funds";
 "To send %@ to Ethereum network you have to swap it to %@" = "To send %@ to Ethereum network you have to swap it to %@";
+"Not enought %@" = "Not enought %@";
 "It usually takes few seconds for a transaction to complete" = "It usually takes few seconds for a transaction to complete";
+"Username was copied to clipboard" = "Username was copied to clipboard";

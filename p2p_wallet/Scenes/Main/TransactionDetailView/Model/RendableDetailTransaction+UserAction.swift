@@ -77,4 +77,8 @@ struct RendableAbstractUserActionTransaction: RenderableTransactionDetail {
     var buttonTitle: String {
         L10n.done
     }
+    
+    var url: String? {
+        nil
+    }
 }

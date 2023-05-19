@@ -32,7 +32,7 @@ class HistoryBridgeSendAggregator: DataAggregator {
         var items: [RendableListUserActionTransactionItem] = []
         var handedBridgeServiceKeys: [String] = []
 
-        let userActionSends = userActions.compactMap { $0 as? WormholeSendUserAction }
+        var userActionSends = userActions.compactMap { $0 as? WormholeSendUserAction }
         let historySends = history.filter {
             if case .wormholeSend = $0.info {
                 return true
@@ -41,12 +41,19 @@ class HistoryBridgeSendAggregator: DataAggregator {
             }
         }
 
+        if let mint {
+            userActionSends = userActionSends.filter { action in
+                action.sourceToken.address == mint
+            }
+        }
+
         // Build items from history.
         for historyItem in historySends {
             if case let .wormholeSend(data) = historyItem.info {
                 let send = userActionSends.first { $0.id == data.bridgeServiceKey }
 
-                if let send {
+                if var send {
+                    send.solanaTransaction = historyItem.signature
                     let item = RendableListUserActionTransactionItem(userAction: send) { [weak action] in
                         action?.send(.openUserAction(send))
                     }

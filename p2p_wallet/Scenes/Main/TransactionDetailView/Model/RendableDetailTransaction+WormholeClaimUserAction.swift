@@ -62,6 +62,14 @@ struct RenderableWormholeClaimUserActionDetail: RenderableTransactionDetail {
 
     var extra: [TransactionDetailExtraInfo] {
         var result: [TransactionDetailExtraInfo] = []
+        
+        result.append(
+            .init(
+                title: L10n.receive, values: [
+                    .init(text: "Wormhole Bridge")
+            ])
+        )
+        
 
         if userAction.compensationDeclineReason == nil {
             result.append(
@@ -124,10 +132,30 @@ struct RenderableWormholeClaimUserActionDetail: RenderableTransactionDetail {
     }
 
     var actions: [TransactionDetailAction] {
-        []
+        switch status {
+        case .succeed:
+            if userAction.solanaTransaction != nil {
+                return [
+                    .share,
+                    .explorer,
+                ]
+            } else {
+                return []
+            }
+        default:
+            return []
+        }
     }
 
     var buttonTitle: String {
         L10n.done
+    }
+
+    var url: String? {
+        if let solanaTransaction = userAction.solanaTransaction {
+            return "https://explorer.solana.com/tx/\(solanaTransaction)"
+        } else {
+            return nil
+        }
     }
 }

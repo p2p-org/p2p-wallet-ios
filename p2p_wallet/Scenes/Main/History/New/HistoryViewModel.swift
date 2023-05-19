@@ -136,7 +136,7 @@ class HistoryViewModel: BaseViewModel, ObservableObject {
                         pendings: pendings,
                         sells: [],
                         history: history,
-                        mintAddress: nil,
+                        mintAddress: mint,
                         tokens: tokens,
                         action: actionSubject,
                         fetch: self.fetch
