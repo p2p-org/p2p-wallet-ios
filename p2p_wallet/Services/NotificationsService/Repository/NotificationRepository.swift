@@ -24,7 +24,7 @@ final class NotificationRepositoryImpl: NotificationRepository {
         jsonDecoder.keyDecodingStrategy = .convertFromSnakeCase
 
         self.httpClient = .init(
-            decoder: JSONRPCDecoder(jsonDecoder: jsonDecoder)
+            decoder: JsonRpcDecoder(jsonDecoder: jsonDecoder)
         )
     }
 

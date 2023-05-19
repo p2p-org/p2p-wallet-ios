@@ -1,6 +1,6 @@
 import Foundation
 
-public struct JSONRPCDecoder: HTTPResponseDecoder {
+public struct JsonRpcDecoder: HTTPResponseDecoder {
     private let jsonDecoder: JSONDecoder
     
     public init(jsonDecoder: JSONDecoder) {
