@@ -37,6 +37,8 @@ public struct WormholeSendUserAction: UserAction {
     public let createdDate: Date
 
     public var updatedDate: Date
+    
+    public var solanaTransaction: String?
 
     public init(
         sourceToken: SolanaToken,

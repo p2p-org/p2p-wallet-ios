@@ -29,14 +29,10 @@ class HistoryBridgeClaimAggregator: DataAggregator {
     ) -> [any RendableListTransactionItem] {
         let (history, userActions, mint, action) = input
 
-        if let mint {
-            return []
-        }
-
         var items: [RendableListUserActionTransactionItem] = []
         var handedBridgeServiceKeys: [String] = []
 
-        let userActionClaims = userActions.compactMap { $0 as? WormholeClaimUserAction }
+        var userActionClaims = userActions.compactMap { $0 as? WormholeClaimUserAction }
         let historyClaims = history.filter {
             if case .wormholeReceive = $0.info {
                 return true
@@ -45,12 +41,29 @@ class HistoryBridgeClaimAggregator: DataAggregator {
             }
         }
 
+        if let mint {
+            userActionClaims = userActionClaims.filter { action in
+                let bridge = SupportedToken.bridges.first { $0.solAddress == mint }
+                if let bridge {
+                    switch action.token.contractType {
+                    case .native:
+                        return bridge.ethAddress == nil
+                    case let .erc20(contract: address):
+                        return bridge.ethAddress == address.hex(eip55: false)
+                    }
+                } else {
+                    return false
+                }
+            }
+        }
+
         // Build items from history.
         for historyItem in historyClaims {
             if case let .wormholeReceive(data) = historyItem.info {
-                let claim = userActionClaims.first { $0.claimKey == data.bridgeServiceKey }
+                var claim = userActionClaims.first { $0.claimKey == data.bridgeServiceKey }
 
-                if let claim {
+                if var claim {
+                    claim.solanaTransaction = historyItem.signature
                     let item = RendableListUserActionTransactionItem(userAction: claim) { [weak action] in
                         action?.send(.openUserAction(claim))
                     }

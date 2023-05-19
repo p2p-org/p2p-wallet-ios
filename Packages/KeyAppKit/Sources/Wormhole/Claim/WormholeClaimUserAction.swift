@@ -55,6 +55,8 @@ public struct WormholeClaimUserAction: UserAction {
     public let fees: ClaimFees
 
     public let compensationDeclineReason: CompensationDeclineReason?
+    
+    public var solanaTransaction: String?
 
     public init(
         token: EthereumToken,
