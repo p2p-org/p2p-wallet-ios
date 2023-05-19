@@ -1,10 +1,3 @@
-//
-//  AccountDetailsViewModel.swift
-//  p2p_wallet
-//
-//  Created by Giang Long Tran on 19.02.2023.
-//
-
 import Combine
 import Foundation
 import KeyAppBusiness
@@ -19,19 +12,11 @@ enum AccountDetailsAction {
     case openSend
     case openSwap(Wallet?)
     case openSwapWithDestination(Wallet?, Wallet?)
-
-    case swapEthHelp
-}
-
-struct Banner {
-    let title: String
-    let action: () -> Void
-    let helpAction: () -> Void
 }
 
 class AccountDetailsViewModel: BaseViewModel, ObservableObject {
     @Published var rendableAccountDetails: RendableAccountDetails
-    @Published var banner: Banner?
+    @Published var banner: BannerItem?
 
     let actionSubject: PassthroughSubject<AccountDetailsAction, Never>
 
@@ -102,7 +87,7 @@ class AccountDetailsViewModel: BaseViewModel, ObservableObject {
                 SolanaToken.usdt.address: Wormhole.SupportedToken.usdt,
             ]
 
-            if let supportedWormholeToken = supportedTokens[solanaAccount.data.token.address] {
+            if let supportedWormholeToken = supportedTokens[solanaAccount.data.token.address], !Defaults.ethBannerShouldHide {
                 banner = .init(
                     title: L10n.toSendToEthereumNetworkYouHaveToSwapItTo(
                         solanaAccount.data.token.symbol,
@@ -116,9 +101,9 @@ class AccountDetailsViewModel: BaseViewModel, ObservableObject {
                                     Wallet(token: supportedWormholeToken)
                                 )
                             )
-                    },
-                    helpAction: { [weak actionSubject] in
-                        actionSubject?.send(.swapEthHelp)
+                    }, close: { [weak self] in
+                        Defaults.ethBannerShouldHide = true
+                        self?.banner = nil
                     }
                 )
             }
@@ -135,5 +120,13 @@ extension AccountDetailsViewModel {
         default:
             return false
         }
+    }
+}
+
+extension AccountDetailsViewModel {
+    struct BannerItem {
+        let title: String
+        let action: () -> Void
+        let close: () -> Void
     }
 }
