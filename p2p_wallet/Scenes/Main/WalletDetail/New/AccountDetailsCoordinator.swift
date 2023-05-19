@@ -61,8 +61,6 @@ class AccountDetailsCoordinator: SmartCoordinator<AccountDetailsCoordinatorResul
                 self.openSend()
             case .openSwap:
                 self.openSwap()
-            case .swapEthHelp:
-                helpLauncher.launch()
             case let .openSwapWithDestination(source, recipient):
                 self.openSwap(destination: recipient)
             }
