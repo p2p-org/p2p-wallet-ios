@@ -1366,4 +1366,6 @@
 "Total amount" = "Montant total";
 "Check available funds" = "Vérifier les fonds disponibles";
 "To send %@ to Ethereum network you have to swap it to %@" = "Pour envoyer %@ au réseau Ethereum, vous devez le remplacer par %@";
+"Not enought %@" = "Pas assez %@";
 "It usually takes few seconds for a transaction to complete" = "Il faut généralement quelques secondes pour qu'une transaction se termine";
+"Username was copied to clipboard" = "Le nom d'utilisateur a été copié dans le presse-papiers";

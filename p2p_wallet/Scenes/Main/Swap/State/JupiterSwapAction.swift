@@ -23,7 +23,9 @@ enum JupiterSwapAction: Equatable {
     
     case chooseRoute(Route)
     case changeSlippageBps(Int)
-    
+
+    case retry(JupiterSwapState.RetryAction)
+
     // MARK: - Helper
 
     var description: String {
@@ -48,6 +50,8 @@ enum JupiterSwapAction: Equatable {
             return "chooseRoute(\(route.id))"
         case .changeSlippageBps(let int):
             return "changeSlippageBps(\(int))"
+        case .retry(let action):
+            return "action\(action)"
         }
     }
 }

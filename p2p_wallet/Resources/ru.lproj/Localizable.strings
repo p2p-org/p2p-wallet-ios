@@ -1363,4 +1363,6 @@
 "Total amount" = "Общая сумма";
 "Check available funds" = "Проверить доступные средства";
 "To send %@ to Ethereum network you have to swap it to %@" = "Чтобы отправить %@ в сеть Ethereum, вы должны поменять его на %@";
+"Not enought %@" = "Недостаточно %@";
 "It usually takes few seconds for a transaction to complete" = "Обычно для завершения транзакции требуется несколько секунд";
+"Username was copied to clipboard" = "Имя пользователя было скопировано в буфер обмена";

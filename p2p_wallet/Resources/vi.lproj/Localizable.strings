@@ -1368,4 +1368,6 @@
 "Total amount" = "Tổng cộng";
 "Check available funds" = "Kiểm tra số tiền khả dụng";
 "To send %@ to Ethereum network you have to swap it to %@" = "Để gửi %@ đến mạng Ethereum, bạn phải hoán đổi nó thành %@";
+"Not enought %@" = "Chưa đủ %@";
 "It usually takes few seconds for a transaction to complete" = "Thường mất vài giây để hoàn tất giao dịch";
+"Username was copied to clipboard" = "Tên người dùng đã được sao chép vào khay nhớ tạm";
