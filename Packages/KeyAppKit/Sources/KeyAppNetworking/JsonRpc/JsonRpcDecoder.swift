@@ -1,7 +1,7 @@
 import Foundation
 
 /// ResponseDecoder for JsonRpc type
-public struct JsonRpcDecoder: HTTPResponseDecoder {
+public struct JsonRpcDecoder {
 
     // MARK: - Properties
 
@@ -12,10 +12,12 @@ public struct JsonRpcDecoder: HTTPResponseDecoder {
     
     /// `JsonRpcDecoder` initializer
     /// - Parameter jsonDecoder: Default native `JSONDecoder`
-    public init(jsonDecoder: JSONDecoder) {
+    public init(jsonDecoder: JSONDecoder = .init()) {
         self.jsonDecoder = jsonDecoder
     }
-    
+}
+
+extension JsonRpcDecoder: HTTPResponseDecoder {
     /// Decode data and response to needed type
     /// - Parameters:
     ///   - type: object type to be decoded to

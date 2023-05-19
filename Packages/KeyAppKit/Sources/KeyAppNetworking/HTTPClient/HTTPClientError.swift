@@ -1,13 +1,9 @@
-//
-//  ErrorModel.swift
-//  p2p_wallet
-//
-//  Created by Ivan on 28.04.2022.
-//
-
 import Foundation
 
+/// Custom HTTPClientError
 public enum HTTPClientError: Error {
+    /// Something went wrong when constructing URL
     case invalidURL(String)
+    /// Invalid response from endpoint
     case invalidResponse(HTTPURLResponse?, Data)
 }
