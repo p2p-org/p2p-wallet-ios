@@ -9,8 +9,8 @@ import Foundation
 import KeyAppNetworking
 
 enum NotifierEndpoint {
-    case addDevice(dto: JsonRpcRequestDto<DeviceTokenDto>)
-    case deleteDevice(dto: JsonRpcRequestDto<DeleteDeviceTokenDto>)
+    case addDevice(dto: JSONRPCRequestDto<DeviceTokenDto>)
+    case deleteDevice(dto: JSONRPCRequestDto<DeleteDeviceTokenDto>)
 }
 
 // MARK: - Endpoint

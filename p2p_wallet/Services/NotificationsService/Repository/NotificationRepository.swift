@@ -10,7 +10,7 @@ import Resolver
 import KeyAppNetworking
 
 protocol NotificationRepository {
-    typealias DeviceTokenResponse = JsonRpcResponseDto<DeviceTokenResponseDto>
+    typealias DeviceTokenResponse = JSONRPCResponseDto<DeviceTokenResponseDto>
 
     func sendDeviceToken(model: DeviceTokenDto) async throws -> DeviceTokenResponse
     func removeDeviceToken(model: DeleteDeviceTokenDto) async throws -> DeviceTokenResponse
@@ -24,7 +24,7 @@ final class NotificationRepositoryImpl: NotificationRepository {
         jsonDecoder.keyDecodingStrategy = .convertFromSnakeCase
 
         self.httpClient = .init(
-            decoder: JsonRpcDecoder(jsonDecoder: jsonDecoder)
+            decoder: JSONRPCDecoder(jsonDecoder: jsonDecoder)
         )
     }
 

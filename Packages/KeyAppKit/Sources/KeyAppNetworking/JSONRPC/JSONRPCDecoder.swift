@@ -1,7 +1,7 @@
 import Foundation
 
 /// ResponseDecoder for JsonRpc type
-public struct JsonRpcDecoder {
+public struct JSONRPCDecoder {
 
     // MARK: - Properties
 
@@ -19,7 +19,7 @@ public struct JsonRpcDecoder {
 
 // MARK: - HTTPResponseDecoder
 
-extension JsonRpcDecoder: HTTPResponseDecoder {
+extension JSONRPCDecoder: HTTPResponseDecoder {
     /// Decode data and response to needed type
     /// - Parameters:
     ///   - type: object type to be decoded to
