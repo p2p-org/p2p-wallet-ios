@@ -11,6 +11,7 @@ class WormholeClaimViewModel: BaseViewModel, ObservableObject {
     @Injected private var analyticsManager: AnalyticsManager
     @Injected private var reachability: Reachability
     @Injected private var notificationService: NotificationService
+    @Injected private var accountStorage: AccountStorageType
 
     let action: PassthroughSubject<Action, Never> = .init()
 
@@ -71,9 +72,11 @@ class WormholeClaimViewModel: BaseViewModel, ObservableObject {
         // Notify user an error
         bundle
             .statePublisher
+            .debounce(for: 0.01, scheduler: DispatchQueue.main)
             .map(\.error)
             .compactMap { $0 }
             .sink { [weak self] error in
+                self?.logAlert(for: account, error: error)
                 if let error = error as? JSONRPCError<String>, error.code == -32007 {
                     self?.notificationService
                         .showInAppNotification(.error(L10n.theFeesAreBiggerThanTheTransactionAmount))
@@ -109,7 +112,7 @@ class WormholeClaimViewModel: BaseViewModel, ObservableObject {
                 bundle.fetch()
             } else {
                 guard let bundle = bundle.state.value else {
-                    Error.missingBundle.capture()
+                    DefaultLogManager.shared.log(error: Error.missingBundle)
                     return
                 }
 
@@ -135,6 +138,32 @@ class WormholeClaimViewModel: BaseViewModel, ObservableObject {
             }
         }
     }
+
+    private func logAlert(for account: EthereumAccount, error: Swift.Error) {
+        let token: ClaimAlertLoggerErrorMessage.Token = .init(
+            name: account.token.name,
+            solanaMint: SupportedToken.ERC20(rawValue: account.token.erc20Address ?? "")?.solanaMintAddress ?? "",
+            ethMint: account.token.tokenPrimaryKey,
+            claimAmount: ethModel == nil ? "0" : CryptoAmount(amount: ethModel!.account.balance, token: account.token).amount.description
+        )
+
+        DefaultLogManager.shared.log(
+            event: "Wormhole Claim iOS Alarm",
+            logLevel: .alert,
+            data:
+                ClaimAlertLoggerErrorMessage(
+                    tokenToClaim: token,
+                    userPubkey: accountStorage.account?.publicKey.base58EncodedString ?? "",
+                    userEthPubkey: ethModel?.account.address ?? "",
+                    simulationError: nil,
+                    bridgeSeviceError: error.readableDescription,
+                    feeRelayerError: nil,
+                    blockchainError: nil
+                )
+        )
+    }
+
+    var ethModel: WormholeClaimEthereumModel? { model as? WormholeClaimEthereumModel }
 }
 
 extension WormholeClaimViewModel {

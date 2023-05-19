@@ -36,66 +36,9 @@ class LoggerSwiftLogger: LogManagerLogger {
             return .warning
         case .debug:
             return .debug
+        case .alert:
+            return .error
         }
     }
 }
 
-extension LoggerSwiftLogger: SolanaSwiftLogger {
-    func log(event: String, data: String?, logLevel: SolanaSwiftLoggerLogLevel) {
-        var newLogLevel: LogLevel = .info
-        switch logLevel {
-        case .info:
-            newLogLevel = .info
-        case .error:
-            newLogLevel = .error
-        case .warning:
-            newLogLevel = .warning
-        case .debug:
-            newLogLevel = .debug
-        }
-
-        guard supportedLogLevels.contains(newLogLevel) else { return }
-
-        log(event: event, logLevel: newLogLevel, data: data)
-    }
-}
-
-extension LoggerSwiftLogger: FeeRelayerSwiftLogger {
-    func log(event: String, data: String?, logLevel: FeeRelayerSwiftLoggerLogLevel) {
-        var newLogLevel: LogLevel = .info
-        switch logLevel {
-        case .info:
-            newLogLevel = .info
-        case .error:
-            newLogLevel = .error
-        case .warning:
-            newLogLevel = .warning
-        case .debug:
-            newLogLevel = .debug
-        }
-
-        guard supportedLogLevels.contains(newLogLevel) else { return }
-
-        log(event: event, logLevel: newLogLevel, data: data)
-    }
-}
-
-extension LoggerSwiftLogger: KeyAppKitLoggerType {
-    func log(event: String, data: String?, logLevel: KeyAppKitLoggerLogLevel) {
-        var newLogLevel: LogLevel = .info
-        switch logLevel {
-        case .info:
-            newLogLevel = .info
-        case .error:
-            newLogLevel = .error
-        case .warning:
-            newLogLevel = .warning
-        case .debug:
-            newLogLevel = .debug
-        }
-
-        guard supportedLogLevels.contains(newLogLevel) else { return }
-
-        log(event: event, logLevel: newLogLevel, data: data)
-    }
-}

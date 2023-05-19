@@ -322,15 +322,6 @@ final class TabBarCoordinator: Coordinator<Void> {
             .store(in: &subscriptions)
     }
 
-    private func showTransaction(trx: RawTransactionType) {
-        coordinate(to: TransactionDetailCoordinator(
-            viewModel: .init(submit: trx),
-            presentingViewController: tabBarController
-        ))
-        .sink(receiveValue: { _ in })
-        .store(in: &subscriptions)
-    }
-
     private func showUserAction(userAction: any UserAction) {
         coordinate(to: TransactionDetailCoordinator(
             viewModel: .init(userAction: userAction),
