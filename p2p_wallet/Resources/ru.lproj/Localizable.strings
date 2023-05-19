@@ -1366,3 +1366,4 @@
 "Not enought %@" = "Недостаточно %@";
 "It usually takes few seconds for a transaction to complete" = "Обычно для завершения транзакции требуется несколько секунд";
 "Username was copied to clipboard" = "Имя пользователя было скопировано в буфер обмена";
+"Transaction fees" = "Операционные издержки";
