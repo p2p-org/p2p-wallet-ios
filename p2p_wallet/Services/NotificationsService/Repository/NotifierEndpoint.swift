@@ -15,7 +15,7 @@ enum NotifierEndpoint {
 
 // MARK: - Endpoint
 
-extension NotifierEndpoint: Endpoint {
+extension NotifierEndpoint: HTTPEndpoint {
     var baseURL: String {
         GlobalAppState.shared.pushServiceEndpoint
     }
@@ -32,7 +32,7 @@ extension NotifierEndpoint: Endpoint {
         ""
     }
 
-    var method: RequestMethod {
+    var method: HTTPMethod {
         .post
     }
 

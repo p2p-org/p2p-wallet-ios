@@ -17,7 +17,16 @@ protocol NotificationRepository {
 }
 
 final class NotificationRepositoryImpl: NotificationRepository {
-    @Injected private var httpClient: IHttpClient
+    private let httpClient: HTTPClient
+    
+    init() {
+        let jsonDecoder = JSONDecoder()
+        jsonDecoder.keyDecodingStrategy = .convertFromSnakeCase
+
+        self.httpClient = .init(
+            decoder: JSONRPCDecoder(jsonDecoder: jsonDecoder)
+        )
+    }
 
     func sendDeviceToken(model: DeviceTokenDto) async throws -> DeviceTokenResponse {
         do {
