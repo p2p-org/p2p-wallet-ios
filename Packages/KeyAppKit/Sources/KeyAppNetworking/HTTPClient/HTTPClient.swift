@@ -13,7 +13,8 @@ public protocol IHTTPClient {
     ) async throws -> T
 }
 
-public class HTTPClient: IHTTPClient {
+/// Default implementation for `IHTTPClient`
+public class HTTPClient {
 
     // MARK: - Properties
     
@@ -35,9 +36,9 @@ public class HTTPClient: IHTTPClient {
         self.urlSession = urlSession
         self.decoder = decoder
     }
-    
-    // MARK: - HttpClient
-    
+}
+
+extension HTTPClient: IHTTPClient {
     /// Send request to specific endpoint
     /// - Parameters:
     ///   - endpoint: endpoint to send request to
@@ -52,16 +53,16 @@ public class HTTPClient: IHTTPClient {
         guard let url = URL(string: urlString) else {
             throw HTTPClientError.invalidURL(urlString)
         }
-
+        
         // Form request
         var request = URLRequest(url: url)
         request.httpMethod = endpoint.method.rawValue
         request.allHTTPHeaderFields = endpoint.header
-
+        
         if let body = endpoint.body {
             request.httpBody = body.data(using: .utf8)
         }
-
+        
         // Retrieve data
         let (data, response) = try await urlSession.data(from: request)
         

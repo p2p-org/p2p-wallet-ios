@@ -12,7 +12,7 @@ public protocol HTTPResponseDecoder {
 }
 
 /// ResponseDecoder for JSON type
-public class JSONResponseDecoder: HTTPResponseDecoder {
+public class JSONResponseDecoder {
     
     // MARK: - Properties
     
@@ -26,9 +26,9 @@ public class JSONResponseDecoder: HTTPResponseDecoder {
     public init(jsonDecoder: JSONDecoder = .init()) {
         self.jsonDecoder = jsonDecoder
     }
-    
-    // MARK: - Methods
+}
 
+extension JSONResponseDecoder: HTTPResponseDecoder {
     /// Decode data and response to needed type
     /// - Parameters:
     ///   - type: object type to be decoded to

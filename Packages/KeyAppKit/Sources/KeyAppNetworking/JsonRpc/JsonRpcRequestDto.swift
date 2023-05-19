@@ -27,6 +27,7 @@ public struct JsonRpcRequestDto<T: Encodable>: Encodable {
 }
 
 public extension JsonRpcRequestDto where T == String { /*T == String, or what ever confirmed to Encodable to fix ambiguous type*/
+    /// Non-params initializer
     init(
         jsonrpc: String = "2.0",
         id: String = UUID().uuidString,
