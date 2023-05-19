@@ -45,7 +45,7 @@ extension JSONRPCDecoder: HTTPResponseDecoder {
     // MARK: - Helpers
     
     /// Custom error return from rpc endpoint
-    private func decodeRpcError(from data: Data) -> JsonRpcError? {
-        try? jsonDecoder.decode(JsonRpcResponseErrorDto.self, from: data).error
+    private func decodeRpcError(from data: Data) -> JSONRPCError? {
+        try? jsonDecoder.decode(JSONRPCResponseErrorDto.self, from: data).error
     }
 }

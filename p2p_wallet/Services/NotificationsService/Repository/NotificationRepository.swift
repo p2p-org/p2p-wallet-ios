@@ -37,7 +37,7 @@ final class NotificationRepositoryImpl: NotificationRepository {
                 )),
                 responseModel: DeviceTokenResponse.self
             )
-        } catch let error as JsonRpcError where error.code == -32001 {
+        } catch let error as JSONRPCError where error.code == -32001 {
             return .init(
                 id: "",
                 result: .init(

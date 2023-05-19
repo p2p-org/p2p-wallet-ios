@@ -19,11 +19,11 @@ public struct JSONRPCResponseDto<T: Decodable>: Decodable {
     }
 }
 
-public struct JsonRpcResponseErrorDto: Decodable {
+public struct JSONRPCResponseErrorDto: Decodable {
     public let id: String?
-    public let error: JsonRpcError?
+    public let error: JSONRPCError?
 }
 
-public struct JsonRpcError: Decodable, Error {
+public struct JSONRPCError: Decodable, Error {
     public let code: Int?
 }
