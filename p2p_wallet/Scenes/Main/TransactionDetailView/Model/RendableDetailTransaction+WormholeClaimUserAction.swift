@@ -62,6 +62,14 @@ struct RenderableWormholeClaimUserActionDetail: RenderableTransactionDetail {
 
     var extra: [TransactionDetailExtraInfo] {
         var result: [TransactionDetailExtraInfo] = []
+        
+        result.append(
+            .init(
+                title: L10n.receive, values: [
+                    .init(text: "Wormhole Bridge")
+            ])
+        )
+        
 
         if userAction.compensationDeclineReason == nil {
             result.append(
@@ -112,13 +120,6 @@ struct RenderableWormholeClaimUserActionDetail: RenderableTransactionDetail {
                     )
                 }
 
-            result.append(
-                .init(
-                    title: L10n.receive, values: [
-                        .init(text: "Wormhole Bridge")
-                ])
-            )
-            
             result.append(
                 .init(
                     title: L10n.transferFee,
