@@ -96,7 +96,7 @@
         "repositoryURL": "https://github.com/p2p-org/FeeRelayerSwift",
         "state": {
           "branch": "master",
-          "revision": "af20c8511fef0df65a405590d7bdd254df0cb95f",
+          "revision": "fdbc1a8c0ab13037e01e5493a2beccb84281acb5",
           "version": null
         }
       },
@@ -258,7 +258,7 @@
         "repositoryURL": "https://github.com/p2p-org/OrcaSwapSwift.git",
         "state": {
           "branch": "main",
-          "revision": "39218f52a58e3481cbb32df64b95f2e6d0875ee7",
+          "revision": "c15012e45f18cc8e553efaa1d24e34a57c99d274",
           "version": null
         }
       },
@@ -267,8 +267,8 @@
         "repositoryURL": "https://github.com/marmelroy/PhoneNumberKit.git",
         "state": {
           "branch": null,
-          "revision": "fc8b12831c166e7851c341c2ac5a120c8716304a",
-          "version": "3.3.4"
+          "revision": "6edd6e38a30aec087cb97f7377edf876c29a427e",
+          "version": "3.5.9"
         }
       },
       {
@@ -354,10 +354,10 @@
       },
       {
         "package": "SolanaSwift",
-        "repositoryURL": "https://github.com/p2p-org/solana-swift",
+        "repositoryURL": "https://github.com/p2p-org/solana-swift.git",
         "state": {
           "branch": "main",
-          "revision": "1dac30cb8359ac69ada62c397aae373f2b3addaf",
+          "revision": "5a0feeb88f5607a936ba15a574ac6d911e377456",
           "version": null
         }
       },
@@ -402,8 +402,8 @@
         "repositoryURL": "https://github.com/apple/swift-nio.git",
         "state": {
           "branch": null,
-          "revision": "546eaa261ec5028b9cc5c7fa883fba9dd5881a3b",
-          "version": "2.52.0"
+          "revision": "2d8e6ca36fe3e8ed74b0883f593757a45463c34d",
+          "version": "2.53.0"
         }
       },
       {
@@ -510,8 +510,8 @@
         "repositoryURL": "https://github.com/vapor/websocket-kit",
         "state": {
           "branch": null,
-          "revision": "2166cbe932b29b6419f9cd751e8b27c647e1238e",
-          "version": "2.8.0"
+          "revision": "17c0afbf24f4e288e183bc34317dc97b5cd084bd",
+          "version": "2.9.0"
         }
       }
     ]

@@ -1356,5 +1356,9 @@
 "Add funds" = "Ajouter des fonds";
 "Wormhole Bridge is currently unable.\nPlease try again later" = "Wormhole Bridge est actuellement incapable.\nVeuillez réessayer plus tard";
 "It usually takes 15-20 minutes for a transaction to complete" = "Il faut généralement 15 à 20 minutes pour qu'une transaction soit effectuée";
+"The fee is more than the defined slippage %@ due to one-time account creation fee by Solana blockchain" = "Les frais sont supérieurs au glissement défini %@ en raison des frais uniques de création de compte par la blockchain Solana";
 "How to claim for free" = "Comment réclamer gratuitement";
-"I forgot PIN" = "J'ai oublié le NIP";"Not enought %@" = "Pas assez %@";
+"I forgot PIN" = "J'ai oublié le NIP";
+"Not enought %@" = "Pas assez %@";
+"It usually takes few seconds for a transaction to complete" = "Il faut généralement quelques secondes pour qu'une transaction se termine";
+"Username was copied to clipboard" = "Le nom d'utilisateur a été copié dans le presse-papiers";
