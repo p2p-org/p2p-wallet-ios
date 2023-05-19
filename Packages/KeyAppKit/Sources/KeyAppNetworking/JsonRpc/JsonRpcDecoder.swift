@@ -1,12 +1,27 @@
 import Foundation
 
+/// ResponseDecoder for JsonRpc type
 public struct JsonRpcDecoder: HTTPResponseDecoder {
+
+    // MARK: - Properties
+
+    /// Default native `JSONDecoder`
     private let jsonDecoder: JSONDecoder
+
+    // MARK: - Initializer
     
+    /// `JsonRpcDecoder` initializer
+    /// - Parameter jsonDecoder: Default native `JSONDecoder`
     public init(jsonDecoder: JSONDecoder) {
         self.jsonDecoder = jsonDecoder
     }
     
+    /// Decode data and response to needed type
+    /// - Parameters:
+    ///   - type: object type to be decoded to
+    ///   - data: data to decode
+    ///   - response: httpURLResponse from network
+    /// - Returns: object of predefined type
     public func decode<T: Decodable>(_ type: T.Type, data: Data, httpURLResponse response: HTTPURLResponse) throws -> T {
         
         // Check status code
@@ -16,21 +31,16 @@ public struct JsonRpcDecoder: HTTPResponseDecoder {
             do {
                 return try jsonDecoder.decode(JsonRpcResponseDto<T>.self, from: data).result
             } catch {
-                if let rpcError = decodeRpcError(from: data) {
-                    throw rpcError
-                }
-                throw error
+                throw decodeRpcError(from: data) ?? error
             }
         default:
-            if let rpcError = decodeRpcError(from: data) {
-                throw rpcError
-            }
-            throw HTTPClientError.invalidResponse(response, data)
+            throw decodeRpcError(from: data) ?? HTTPClientError.invalidResponse(response, data)
         }
     }
     
     // MARK: - Helpers
-
+    
+    /// Custom error return from rpc endpoint
     private func decodeRpcError(from data: Data) -> JsonRpcError? {
         try? jsonDecoder.decode(JsonRpcResponseErrorDto.self, from: data).error
     }
