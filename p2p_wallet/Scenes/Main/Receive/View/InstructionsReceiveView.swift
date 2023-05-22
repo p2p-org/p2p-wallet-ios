@@ -16,7 +16,7 @@ struct InstructionsReceiveView: View {
             }
             if let tip = item.tip {
                 HStack(alignment: .top, spacing: InstructionsReceiveView.textHorizontalSpacing) {
-                    // Hiddenp2p_wallet/Resources/vi.lproj/Localizable.strings element, to save space
+                    // Hidden element, to save space
                     Text("0")
                         .frame(
                             width: InstructionsReceiveView.numberSize,
