@@ -123,10 +123,17 @@ class ReceiveViewModel: BaseViewModel, ObservableObject {
                 SpacerReceiveItem(),
                 InstructionsReceiveCellItem(
                     instructions: [
-                        ("1", L10n.sendToYourEthereumAddress(tokenSymbol)),
-                        ("2", L10n.weBridgeItToSolanaWithWormhole),
+                        ("1", (
+                            L10n.sendToYourEthereumAddress(tokenSymbol),
+                            L10n.isTheMinimumAmountToReceiveFromTheEthereumNetwork("$5")
+                              )),
+                        ("2", (
+                            L10n.weBridgeItToSolanaWithWormhole,
+                            L10n.youOnlyNeedToSignATransactionWithKeyApp
+                            )
+                        ),
                     ],
-                    tip: L10n.youOnlyNeedToSignATransactionWithKeyApp
+                    tip: nil
                 ),
             ]
         }

@@ -1372,3 +1372,4 @@
 "It usually takes few seconds for a transaction to complete" = "Thường mất vài giây để hoàn tất giao dịch";
 "Username was copied to clipboard" = "Tên người dùng đã được sao chép vào khay nhớ tạm";
 "Transaction fees" = "Phí giao dịch";
+"%@ is the minimum amount to receive from the Ethereum Network" = "%@ là số tiền tối thiểu để nhận được từ Mạng Ethereum";
