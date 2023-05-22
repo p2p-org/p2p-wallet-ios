@@ -6,18 +6,33 @@
 //
 
 import Foundation
+import KeyAppNetworking
 
 enum NotifierEndpoint {
-    case addDevice(dto: JsonRpcRequestDto<DeviceTokenDto>)
-    case deleteDevice(dto: JsonRpcRequestDto<DeleteDeviceTokenDto>)
+    case addDevice(dto: JSONRPCRequestDto<DeviceTokenDto>)
+    case deleteDevice(dto: JSONRPCRequestDto<DeleteDeviceTokenDto>)
 }
 
-extension NotifierEndpoint: Endpoint {
+// MARK: - Endpoint
+
+extension NotifierEndpoint: HTTPEndpoint {
+    var baseURL: String {
+        GlobalAppState.shared.pushServiceEndpoint
+    }
+    
+    var header: [String: String] {
+        [
+            "Content-Type": "application/json",
+            "Accept": "application/json",
+            "CHANNEL_ID": "P2PWALLET_MOBILE",
+        ]
+    }
+    
     var path: String {
         ""
     }
 
-    var method: RequestMethod {
+    var method: HTTPMethod {
         .post
     }
 

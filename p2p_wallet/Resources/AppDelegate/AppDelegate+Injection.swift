@@ -29,6 +29,7 @@ import SwiftyUserDefaults
 import TransactionParser
 import Web3
 import Wormhole
+import KeyAppNetworking
 
 extension Resolver: ResolverRegistering {
     @MainActor public static func registerAllServices() {
@@ -479,11 +480,6 @@ extension Resolver: ResolverRegistering {
         }
         .implements(OrcaSwapType.self)
         .scope(.session)
-
-        // HttpClient
-        register { HttpClientImpl() }
-            .implements(HttpClient.self)
-            .scope(.session)
 
         // Auth
         register { AuthServiceImpl() }
