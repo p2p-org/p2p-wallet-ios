@@ -27,7 +27,6 @@ final class SwapViewModel: BaseViewModel, ObservableObject {
     let changeFromToken = PassthroughSubject<SwapToken, Never>()
     let changeToToken = PassthroughSubject<SwapToken, Never>()
     let submitTransaction = PassthroughSubject<(PendingTransaction, String), Never>()
-    let isViewAppeared = PassthroughSubject<Bool, Never>()
 
     // TODO: - Refactor, ViewModel shouldn't keep subViewModels
     var fromTokenInputViewModel: SwapInputViewModel
@@ -45,6 +44,7 @@ final class SwapViewModel: BaseViewModel, ObservableObject {
     }
     @Published var showFinished = false
     @Published var warningState: SwapPriceImpactView.Model?
+    @Published var isViewAppeared = false
 
     #if !RELEASE
     @Published var errorLogs: [String]?
@@ -192,20 +192,17 @@ private extension SwapViewModel {
             }
             .store(in: &subscriptions)
 
-        Publishers.CombineLatest(
-            walletsRepository.dataPublisher.removeDuplicates(),
-            isViewAppeared.eraseToAnyPublisher().removeDuplicates()
-        )
-        .filter { [weak self] userWallets, isViewAppeared in
-            // update user wallets only when initializingState is success and view is appeared
-            self?.viewState == .success && isViewAppeared
-        }
-        .sinkAsync { [weak self] userWallets, isViewAppeared in
-            await self?.stateMachine.accept(
-                action: .updateUserWallets(userWallets: userWallets)
-            )
-        }
-        .store(in: &subscriptions)
+        walletsRepository.dataPublisher.removeDuplicates()
+            .filter { [weak self] _ in
+                // update user wallets only when initializingState is success and view is appeared
+                self?.viewState == .success && self?.isViewAppeared == true
+            }
+            .sinkAsync { [weak self] userWallets in
+                await self?.stateMachine.accept(
+                    action: .updateUserWallets(userWallets: userWallets)
+                )
+            }
+            .store(in: &subscriptions)
 
         // update fromToken only when viewState is success
         changeFromToken
@@ -315,7 +312,7 @@ private extension SwapViewModel {
             }
             .store(in: &subscriptions)
 
-        isViewAppeared
+        $isViewAppeared
             .filter { [weak self] _ in self?.viewState == .success }
             .sink { [weak self] isAppeared in
                 guard let self else { return }
