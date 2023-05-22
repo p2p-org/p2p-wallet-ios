@@ -11,7 +11,7 @@ import KeyAppKitCore
 import SolanaPricesAPIs
 import Wormhole
 
-struct RendableDetailPendingTransaction: RendableTransactionDetail {
+struct RendableDetailPendingTransaction: RenderableTransactionDetail {
     let trx: PendingTransaction
 
     let priceService: PricesService
@@ -340,6 +340,10 @@ struct RendableDetailPendingTransaction: RendableTransactionDetail {
         default:
             return L10n.done
         }
+    }
+    
+    var url: String? {
+        "https://explorer.solana.com/tx/\(signature ?? "")"
     }
 }
 
