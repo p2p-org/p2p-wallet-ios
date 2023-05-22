@@ -23,17 +23,18 @@ struct InstructionsReceiveView: View {
                             height: InstructionsReceiveView.numberSize
                         )
                         .opacity(0)
-                    
+
                     Text(tip)
                         .apply(style: .text4)
                         .foregroundColor(Color(Asset.Colors.mountain.color))
                         .multilineTextAlignment(.leading)
                         .padding(.bottom, 16)
                 }
+                .padding(.top, 10)
             }
             Spacer()
         }
-        .padding(.top, 24)
+        .padding(.vertical, 24)
         .padding(.horizontal, 15)
         .background(Color(Asset.Colors.snow.color))
         .cornerRadius(radius: 16, corners: .allCorners)
@@ -74,7 +75,7 @@ struct InstructionsReceiveView: View {
                     .apply(style: .text4)
                     .multilineTextAlignment(.leading)
             }
-            .padding(.bottom, instruction.0 == item.instructions.last?.0 ? 0 : 10)
+            .padding(.bottom, instruction.0 == item.instructions.last?.0 ? 0 : 24)
         }
     }
 
