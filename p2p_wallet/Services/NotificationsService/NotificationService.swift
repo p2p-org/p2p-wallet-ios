@@ -14,7 +14,7 @@ import Combine
 import KeyAppNetworking
 
 protocol NotificationService {
-    typealias DeviceTokenResponse = JsonRpcResponseDto<DeviceTokenResponseDto>
+    typealias DeviceTokenResponse = JSONRPCResponseDto<DeviceTokenResponseDto>
 
     func sendRegisteredDeviceToken(_ deviceToken: Data, ethAddress: String?) async throws
     func deleteDeviceToken(ethAddress: String?) async throws
