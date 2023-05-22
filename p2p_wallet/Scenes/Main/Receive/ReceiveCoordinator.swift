@@ -36,7 +36,7 @@ final class ReceiveCoordinator: SmartCoordinator<Void> {
         case let .ethereum(symbol, _):
             viewController.navigationItem.title = L10n.receiveOn(symbol, "Ethereum")
         }
-
+        viewController.navigationItem.largeTitleDisplayMode = .never
         viewController.hidesBottomBarWhenPushed = true
 
         return wrapIntoNavigation ? UINavigationController(rootViewController: viewController) : viewController

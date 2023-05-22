@@ -123,7 +123,7 @@ extension Resolver: ResolverRegistering {
 
         register { WormholeRPCAPI(endpoint: GlobalAppState.shared.bridgeEndpoint) }
             .implements(WormholeAPI.self)
-            .scope(.application)
+            .scope(.session)
 
         // AnalyticsManager
         register {
@@ -269,7 +269,7 @@ extension Resolver: ResolverRegistering {
         register { JWTTokenValidatorImpl() }
             .implements(JWTTokenValidator.self)
 
-        register { Web3(rpcURL: "https://eth-mainnet.g.alchemy.com/v2/a3NxxBPY4WUcsXnivRq-ikYKXFB67oXm") }
+        register { Web3(rpcURL: String.secretConfig("ETH_RPC")!) }
     }
 
     /// Session scope: Live when user is authenticated
@@ -360,6 +360,7 @@ extension Resolver: ResolverRegistering {
                         solanaClient: resolve(),
                         wormholeAPI: resolve(),
                         relayService: resolve(),
+                        solanaTokenService: resolve(),
                         errorObserver: resolve(),
                         persistence: resolve()
                     ),

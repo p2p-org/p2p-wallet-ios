@@ -1216,7 +1216,7 @@
 "License" = "License";
 "Cashout with Moonpay" = "Cashout with Moonpay";
 "The address was copied to clipboard" = "The address was copied to clipboard";
-"Confirm claiming the tokens " = "Confirm claiming the tokens";
+"Confirm claiming the tokens " = "Confirm claiming\nthe tokens";
 "Claim %@" = "Claim %@";
 "With Key App, the first transaction is free. Also all the transactions above $300 are free" = "With Key App, the first transaction is free. Also all the transactions above $300 are free";
 "My Solana address" = "My Solana address";
@@ -1236,7 +1236,7 @@
 "Choose network" = "Choose network";
 "Claim" = "Claim";
 "You will get" = "You will get";
-"Claiming..." = "Claiming...";
+"Claiming" = "Claiming";
 "Send crypto via link" = "Send crypto via link";
 "Sending via link" = "Sending via link";
 "Creating your link" = "Creating your link";
@@ -1324,6 +1324,13 @@
 "The fee is more than the defined slippage %@ due to one-time account creation fee by Solana blockchain" = "The fee is more than the defined slippage %@ due to one-time account creation fee by Solana blockchain";
 "How to claim for free" = "How to claim for free";
 "I forgot PIN" = "I forgot PIN";
+"More than the received amount" = "More than the received amount";
+"Fees" = "Fees";
+"We refund bridging costs for any transactions over %@" = "We refund bridging costs for any transactions over %@";
+"Total amount" = "Total amount";
+"Check available funds" = "Check available funds";
+"To send %@ to Ethereum network you have to swap it to %@" = "To send %@ to Ethereum network you have to swap it to %@";
 "Not enought %@" = "Not enought %@";
 "It usually takes few seconds for a transaction to complete" = "It usually takes few seconds for a transaction to complete";
 "Username was copied to clipboard" = "Username was copied to clipboard";
+"Transaction fees" = "Transaction fees";
