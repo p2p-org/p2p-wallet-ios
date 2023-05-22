@@ -31,7 +31,15 @@ protocol LogManager {
 }
 
 class DefaultLogManager: LogManager {
-    static let shared = DefaultLogManager()
+
+    static let shared: DefaultLogManager = {
+        let manager = DefaultLogManager()
+        SolanaSwift.Logger.setLoggers([manager])
+        FeeRelayerSwift.Logger.setLoggers([manager])
+        KeyAppKitLogger.Logger.setLoggers([manager])
+        return manager
+    }()
+
     let dataFilter = DefaultSensitiveDataFilter()
 
     private(set) var providers: [LogManagerLogger] = []
