@@ -7,7 +7,7 @@ public protocol IHTTPClient {
     ///   - endpoint: endpoint to send request to
     ///   - responseModel: result type of model
     /// - Returns: specific result of `responseModel` type
-    func sendRequest<T: Decodable>(
+    func request<T: Decodable>(
         endpoint: HTTPEndpoint,
         responseModel: T.Type
     ) async throws -> T
@@ -46,7 +46,7 @@ extension HTTPClient: IHTTPClient {
     ///   - endpoint: endpoint to send request to
     ///   - responseModel: result type of model
     /// - Returns: specific result of `responseModel` type
-    public func sendRequest<T: Decodable>(
+    public func request<T: Decodable>(
         endpoint: HTTPEndpoint,
         responseModel: T.Type
     ) async throws -> T {
