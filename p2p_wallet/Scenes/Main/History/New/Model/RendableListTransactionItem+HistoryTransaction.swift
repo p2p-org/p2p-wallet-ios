@@ -96,7 +96,12 @@ struct RendableListHistoryTransactionItem: RendableListTransactionItem {
     var title: String {
         switch trx.info {
         case let .send(data):
-            let target: String = data.account.name ?? RecipientFormatter.shortFormat(destination: data.account.address)
+            let target: String
+            if let name = data.account.name {
+                target = "@\(name)"
+            } else {
+                target = RecipientFormatter.shortFormat(destination: data.account.address)
+            }
             return L10n.to(target)
         case let .receive(data):
             let source: String = data.account.name ?? RecipientFormatter.shortFormat(destination: data.account.address)
