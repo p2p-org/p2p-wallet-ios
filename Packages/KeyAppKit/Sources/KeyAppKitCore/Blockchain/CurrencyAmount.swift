@@ -99,3 +99,11 @@ extension CurrencyAmount: Comparable {
         return lhs.value == rhs.value
     }
 }
+
+func max(x: CurrencyAmount, y: CurrencyAmount) -> CurrencyAmount {
+    x > y ? x : y
+}
+
+func min(x: CurrencyAmount, y: CurrencyAmount) -> CurrencyAmount {
+    x < y ? y : x
+}

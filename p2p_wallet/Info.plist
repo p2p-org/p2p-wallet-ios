@@ -4,20 +4,8 @@
 <dict>
 	<key>AMPLITUDE_API_KEY</key>
 	<string>$(AMPLITUDE_API_KEY)</string>
-	<key>LOKALISE_PROJECT_ID</key>
-	<string>$(LOKALISE_PROJECT_ID)</string>
-	<key>SEND_VIA_LINK_SALT</key>
-	<string>$(SEND_VIA_LINK_SALT)</string>
-	<key>SEND_VIA_LINK_MEMO_PREFIX</key>
-	<string>$(SEND_VIA_LINK_MEMO_PREFIX)</string>
-	<key>SWAP_ERROR_LOGGER_ENDPOINT</key>
-	<string>$(SWAP_ERROR_LOGGER_ENDPOINT)</string>
-	<key>LOKALISE_TOKEN</key>
-	<string>$(LOKALISE_TOKEN)</string>
 	<key>AMPLITUDE_API_KEY_FEATURE</key>
 	<string>$(AMPLITUDE_API_KEY_FEATURE)</string>
-	<key>NSAdvertisingAttributionReportEndpoint</key>
-	<string>https://appsflyer-skadnetwork.com/</string>
 	<key>API_GATEWAY_DEV</key>
 	<string>$(API_GATEWAY_DEV)</string>
 	<key>API_GATEWAY_PROD</key>
@@ -28,6 +16,10 @@
 	<string>$(APPSFLYER_APP_ID_FEATURE)</string>
 	<key>APPSFLYER_DEV_KEY</key>
 	<string>$(APPSFLYER_DEV_KEY)</string>
+	<key>BRIDGE_DEV</key>
+	<string>$(BRIDGE_DEV)</string>
+	<key>BRIDGE_PROD</key>
+	<string>$(BRIDGE_PROD)</string>
 	<key>CFBundleDevelopmentRegion</key>
 	<string>$(DEVELOPMENT_LANGUAGE)</string>
 	<key>CFBundleExecutable</key>
@@ -89,6 +81,8 @@
 	<string>$(CURRENT_PROJECT_VERSION)</string>
 	<key>CRYPTO_COMPARE_API_KEY</key>
 	<string>$(CRYPTO_COMPARE_API_KEY)</string>
+	<key>ETH_RPC</key>
+	<string>$(ETH_RPC)</string>
 	<key>FEE_RELAYER_ENDPOINT</key>
 	<string>$(FEE_RELAYER_ENDPOINT)</string>
 	<key>FEE_RELAYER_STAGING_ENDPOINT</key>
@@ -103,22 +97,32 @@
 	<array>
 		<string>key.app</string>
 	</array>
+	<key>LOKALISE_PROJECT_ID</key>
+	<string>$(LOKALISE_PROJECT_ID)</string>
+	<key>LOKALISE_TOKEN</key>
+	<string>$(LOKALISE_TOKEN)</string>
 	<key>LSRequiresIPhoneOS</key>
 	<true/>
 	<key>MOONPAY_PRODUCTION_API_KEY</key>
 	<string>$(MOONPAY_PRODUCTION_API_KEY)</string>
-	<key>MOONPAY_STAGING_SELL_ENDPOINT</key>
-	<string>$(MOONPAY_STAGING_SELL_ENDPOINT)</string>
-	<key>MOONPAY_STAGING_API_KEY</key>
-	<string>$(MOONPAY_STAGING_API_KEY)</string>
 	<key>MOONPAY_PRODUCTION_SELL_ENDPOINT</key>
 	<string>$(MOONPAY_PRODUCTION_SELL_ENDPOINT)</string>
+	<key>MOONPAY_STAGING_API_KEY</key>
+	<string>$(MOONPAY_STAGING_API_KEY)</string>
+	<key>MOONPAY_STAGING_SELL_ENDPOINT</key>
+	<string>$(MOONPAY_STAGING_SELL_ENDPOINT)</string>
 	<key>NAME_SERVICE_ENDPOINT</key>
 	<string>$(NAME_SERVICE_ENDPOINT)</string>
 	<key>NAME_SERVICE_ENDPOINT_NEW</key>
 	<string>$(NAME_SERVICE_ENDPOINT_NEW)</string>
 	<key>NAME_SERVICE_STAGING_ENDPOINT</key>
 	<string>$(NAME_SERVICE_STAGING_ENDPOINT)</string>
+	<key>NOTIFICATION_SERVICE_ENDPOINT</key>
+	<string>$(NOTIFICATION_SERVICE_ENDPOINT)</string>
+	<key>NOTIFICATION_SERVICE_ENDPOINT_RELEASE</key>
+	<string>$(NOTIFICATION_SERVICE_ENDPOINT_RELEASE)</string>
+	<key>NSAdvertisingAttributionReportEndpoint</key>
+	<string>https://appsflyer-skadnetwork.com/</string>
 	<key>NSCameraUsageDescription</key>
 	<string>This is required for the app to read wallet addresses from QR codes.</string>
 	<key>NSFaceIDUsageDescription</key>
@@ -133,8 +137,14 @@
 	<string>Your data will be used only to measure advertising efficiency</string>
 	<key>RPCPOOL_API_KEY</key>
 	<string>$(RPCPOOL_API_KEY)</string>
+	<key>SEND_VIA_LINK_MEMO_PREFIX</key>
+	<string>$(SEND_VIA_LINK_MEMO_PREFIX)</string>
+	<key>SEND_VIA_LINK_SALT</key>
+	<string>$(SEND_VIA_LINK_SALT)</string>
 	<key>SENTRY_DSN</key>
 	<string>$(SENTRY_DSN)</string>
+	<key>SWAP_ERROR_LOGGER_ENDPOINT</key>
+	<string>$(SWAP_ERROR_LOGGER_ENDPOINT)</string>
 	<key>TEST_ACCOUNT_SEED_PHRASE</key>
 	<string>$(TEST_ACCOUNT_SEED_PHRASE)</string>
 	<key>TORUS_APPLE_VERIFIER_DEV</key>
@@ -163,10 +173,6 @@
 	<string>$(TRANSAK_PRODUCTION_API_KEY)</string>
 	<key>TRANSAK_STAGING_API_KEY</key>
 	<string>$(TRANSAK_STAGING_API_KEY)</string>
-	<key>NOTIFICATION_SERVICE_ENDPOINT_RELEASE</key>
-	<string>$(NOTIFICATION_SERVICE_ENDPOINT_RELEASE)</string>
-	<key>NOTIFICATION_SERVICE_ENDPOINT</key>
-	<string>$(NOTIFICATION_SERVICE_ENDPOINT)</string>
 	<key>UIApplicationSupportsIndirectInputEvents</key>
 	<true/>
 	<key>UIBackgroundModes</key>

@@ -20,8 +20,7 @@ public class WormholeRPCAPI: WormholeAPI {
         userWallet: String,
         recipient: String,
         token: String?,
-        amount: String,
-        slippage: UInt8
+        amount: String
     ) async throws -> WormholeBundle {
         /// Internal structure for params
         struct Params: Codable {
@@ -29,14 +28,12 @@ public class WormholeRPCAPI: WormholeAPI {
             let recipient: String
             let token: String?
             let amount: String
-            let slippage: UInt8
 
             enum CodingKeys: String, CodingKey {
                 case userWallet = "user_wallet"
                 case recipient
                 case token
                 case amount
-                case slippage
             }
         }
 
@@ -47,8 +44,7 @@ public class WormholeRPCAPI: WormholeAPI {
                 userWallet: userWallet,
                 recipient: recipient,
                 token: token,
-                amount: amount,
-                slippage: slippage
+                amount: amount
             )
         )
     }
@@ -170,6 +166,13 @@ public class WormholeRPCAPI: WormholeAPI {
         try await client.call(
             method: "get_solana_transfer_status",
             params: [message: message]
+        )
+    }
+
+    public func getEthereumFreeFeeLimit() async throws -> String {
+        try await client.call(
+            method: "get_ethereum_free_fee_limit",
+            params: ["Void": ""]
         )
     }
 }

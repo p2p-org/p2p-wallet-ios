@@ -63,26 +63,19 @@ final class SendCoordinator: Coordinator<SendResult> {
     // MARK: - Methods
 
     override func start() -> AnyPublisher<SendResult, Never> {
-        if walletsRepository.state == .loaded {
-            let hasToken = walletsRepository.getWallets().contains { wallet in
-                (wallet.lamports ?? 0) > 0
-            }
+        let hasToken = walletsRepository.getWallets().contains { wallet in
+            (wallet.lamports ?? 0) > 0
+        }
 
-            if hasToken {
-                // normal flow with no preChosenRecipient
-                if let recipient = preChosenRecipient {
-                    startFlowWithPreChosenRecipient(recipient)
-                } else {
-                    startFlowWithNoPreChosenRecipient()
-                }
+        if hasToken {
+            // normal flow with no preChosenRecipient
+            if let recipient = preChosenRecipient {
+                startFlowWithPreChosenRecipient(recipient)
             } else {
-                showEmptyState()
+                startFlowWithNoPreChosenRecipient()
             }
-
         } else {
-            // Show not ready
-            rootViewController.showAlert(title: L10n.TheDataIsBeingUpdated.pleaseTryAgainInAFewMinutes, message: nil)
-            result.send(completion: .finished)
+            showEmptyState()
         }
 
         // Back

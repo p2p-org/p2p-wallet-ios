@@ -18,6 +18,7 @@ class WormholeClaimViewModel: BaseViewModel, ObservableObject {
     private let bundle: AsyncValue<WormholeBundle?>
 
     @Published var model: any WormholeClaimModel
+    @Published var freeFeeLimit: AsyncValueState<String?> = .init(status: .fetching, value: nil)
 
     init(model: WormholeClaimMockModel) {
         self.model = model
@@ -42,6 +43,17 @@ class WormholeClaimViewModel: BaseViewModel, ObservableObject {
         }
 
         super.init()
+
+        let freeFeeLimit = AsyncValue<String?>(initialItem: nil) {
+            let value = try await wormholeAPI.api.getEthereumFreeFeeLimit()
+            return "$ \(value)"
+        }
+
+        freeFeeLimit.fetch()
+        freeFeeLimit
+            .statePublisher
+            .assignWeak(to: \.freeFeeLimit, on: self)
+            .store(in: &subscriptions)
 
         bundle
             .statePublisher
@@ -81,7 +93,11 @@ class WormholeClaimViewModel: BaseViewModel, ObservableObject {
                     self?.notificationService
                         .showInAppNotification(.error(L10n.theFeesAreBiggerThanTheTransactionAmount))
                 } else {
-                    self?.notificationService.showToast(title: nil, text: L10n.WormholeBridgeIsCurrentlyUnable.pleaseTryAgainLater, haptic: false)
+                    self?.notificationService.showToast(
+                        title: nil,
+                        text: L10n.WormholeBridgeIsCurrentlyUnable.pleaseTryAgainLater,
+                        haptic: false
+                    )
                 }
             }
             .store(in: &subscriptions)

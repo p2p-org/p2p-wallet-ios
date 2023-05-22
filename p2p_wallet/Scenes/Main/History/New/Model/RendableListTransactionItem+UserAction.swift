@@ -63,25 +63,37 @@ struct RendableListUserActionTransactionItem: RendableListTransactionItem {
     var title: String {
         switch userAction {
         case let transaction as WormholeClaimUserAction:
-            return "Wormhole"
+            return "\(L10n.from.uppercaseFirst) Ethereum"
 
         case let transaction as WormholeSendUserAction:
-            return "Wormhole"
+            return "\(L10n.to.uppercaseFirst) Ethereum"
 
         default:
             return "Unknown"
         }
-
-        return "Unknown"
     }
 
     var subtitle: String {
         switch userAction {
-        case let transaction as WormholeClaimUserAction:
-            return "Claim"
+        case is WormholeClaimUserAction:
+            switch status {
+            case .success:
+                return L10n.receive
+            case .pending:
+                return L10n.claiming
+            case .failed:
+                return L10n.receive
+            }
 
-        case let transaction as WormholeSendUserAction:
-            return "Send"
+        case is WormholeSendUserAction:
+            switch status {
+            case .success:
+                return L10n.send
+            case .pending:
+                return L10n.sending
+            case .failed:
+                return L10n.send
+            }
 
         default:
             return "Unknown"

@@ -144,6 +144,10 @@ extension DefaultsKeys {
     var sendViaLinkTransactions: DefaultsKey<Data?> {
         .init(#function, defaultValue: nil)
     }
+
+    var ethBannerShouldHide: DefaultsKey<Bool> {
+        .init(#function, defaultValue: false)
+    }
 }
 
 // MARK: - Moonpay Environment
