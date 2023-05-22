@@ -1,10 +1,3 @@
-//
-//  HomeAccountView.swift
-//  p2p_wallet
-//
-//  Created by Giang Long Tran on 04.03.2023.
-//
-
 import KeyAppUI
 import SwiftUI
 
@@ -71,7 +64,7 @@ struct HomeAccountView: View {
                             ))
                             .cornerRadius(12)
                     }
-                ).disabled(!enabled)
+                )
             }
         }
         .contentShape(Rectangle())

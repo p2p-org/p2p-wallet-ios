@@ -8,6 +8,7 @@
 import Combine
 import KeyAppBusiness
 import KeyAppUI
+import Resolver
 import Sell
 import SolanaSwift
 import SwiftUI
@@ -24,6 +25,7 @@ enum AccountDetailsCoordinatorResult {
 }
 
 class AccountDetailsCoordinator: SmartCoordinator<AccountDetailsCoordinatorResult> {
+    @Injected private var helpLauncher: HelpCenterLauncher
     let args: AccountDetailsCoordinatorArgs
 
     init(args: AccountDetailsCoordinatorArgs, presentingViewController: UINavigationController) {
@@ -59,6 +61,8 @@ class AccountDetailsCoordinator: SmartCoordinator<AccountDetailsCoordinatorResul
                 self.openSend()
             case .openSwap:
                 self.openSwap()
+            case let .openSwapWithDestination(source, recipient):
+                self.openSwap(destination: recipient)
             }
         }
         .store(in: &subscriptions)
@@ -167,14 +171,14 @@ class AccountDetailsCoordinator: SmartCoordinator<AccountDetailsCoordinatorResul
             Wormhole.SupportedToken.bridges
             .map(\.receiveFromAddress)
             .compactMap { $0 }
-        
+
         if account.data.token.isNative {
             if available(.ethAddressEnabled) && available(.solanaEthAddressEnabled) {
                 var icon: SupportedTokenItemIcon = .image(UIImage.imageOutlineIcon)
                 if let logoURL = URL(string: account.data.token.logoURI ?? "") {
                     icon = .url(logoURL)
                 }
-                
+
                 openReceive(item:
                     .init(
                         icon: icon,
@@ -192,7 +196,7 @@ class AccountDetailsCoordinator: SmartCoordinator<AccountDetailsCoordinatorResul
             if let logoURL = URL(string: account.data.token.logoURI ?? "") {
                 icon = .url(logoURL)
             }
-            
+
             openReceive(item:
                 .init(
                     icon: icon,
@@ -200,10 +204,10 @@ class AccountDetailsCoordinator: SmartCoordinator<AccountDetailsCoordinatorResul
                     symbol: account.data.token.symbol,
                     availableNetwork: [.solana, .ethereum]
                 ))
-            
+
             return
         }
-        
+
         let coordinator = ReceiveCoordinator(
             network: .solana(
                 tokenSymbol: account.data.token.symbol,

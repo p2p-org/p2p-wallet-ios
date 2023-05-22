@@ -6,15 +6,12 @@
 //
 
 @_exported import BEPureLayout
-import FeeRelayerSwift
 import Firebase
 import Intercom
-import KeyAppKitLogger
 import KeyAppUI
 import Lokalise
 import Resolver
 import Sentry
-import SolanaSwift
 @_exported import SwiftyUserDefaults
 import UIKit
 
@@ -156,14 +153,11 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
     func setupLoggers() {
         var loggers: [LogManagerLogger] = [
             SentryLogger(),
+            AlertLogger()
         ]
         if Environment.current == .debug {
             loggers.append(LoggerSwiftLogger())
         }
-
-        SolanaSwift.Logger.setLoggers(loggers as! [SolanaSwiftLogger])
-        FeeRelayerSwift.Logger.setLoggers(loggers as! [FeeRelayerSwiftLogger])
-        KeyAppKitLogger.Logger.setLoggers(loggers as! [KeyAppKitLoggerType])
         DefaultLogManager.shared.setProviders(loggers)
     }
 

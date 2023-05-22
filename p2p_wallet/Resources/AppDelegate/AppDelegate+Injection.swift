@@ -45,7 +45,7 @@ extension Resolver: ResolverRegistering {
 
     /// Application scope: Lifetime app's services
     @MainActor private static func registerForApplicationScope() {
-        register { SentryErrorObserver() }
+        register { DefaultLogManager.shared }
             .implements(ErrorObserver.self)
 
         // Application warmup manager
@@ -123,7 +123,7 @@ extension Resolver: ResolverRegistering {
 
         register { WormholeRPCAPI(endpoint: GlobalAppState.shared.bridgeEndpoint) }
             .implements(WormholeAPI.self)
-            .scope(.application)
+            .scope(.session)
 
         // AnalyticsManager
         register {
@@ -269,17 +269,7 @@ extension Resolver: ResolverRegistering {
         register { JWTTokenValidatorImpl() }
             .implements(JWTTokenValidator.self)
 
-        register { Web3(rpcURL: "https://eth-mainnet.g.alchemy.com/v2/a3NxxBPY4WUcsXnivRq-ikYKXFB67oXm") }
-        
-        // SwapErrorLogger
-        register {
-            SwapErrorLoggerImpl(
-                endpoint: URL(
-                    string: .secretConfig("SWAP_ERROR_LOGGER_ENDPOINT")!
-                )!
-            )
-        }
-            .implements(SwapErrorLogger.self)
+        register { Web3(rpcURL: String.secretConfig("ETH_RPC")!) }
     }
 
     /// Session scope: Live when user is authenticated
@@ -370,6 +360,7 @@ extension Resolver: ResolverRegistering {
                         solanaClient: resolve(),
                         wormholeAPI: resolve(),
                         relayService: resolve(),
+                        solanaTokenService: resolve(),
                         errorObserver: resolve(),
                         persistence: resolve()
                     ),

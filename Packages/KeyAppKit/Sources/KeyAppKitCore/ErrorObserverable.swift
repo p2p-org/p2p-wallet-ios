@@ -12,6 +12,7 @@ import Foundation
 public protocol ErrorObserver {
     /// Report error
     func handleError(_ error: Error)
+    func handleError(_ error: Error, userInfo: [String: Any]?)
 }
 
 public extension ErrorObserver {

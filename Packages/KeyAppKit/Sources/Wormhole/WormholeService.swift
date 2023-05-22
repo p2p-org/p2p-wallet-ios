@@ -1,17 +1,10 @@
-//
-//  File.swift
-//
-//
-//  Created by Giang Long Tran on 07.03.2023.
-//
-
 import Foundation
 import KeyAppKitCore
 import SolanaSwift
 import Web3
 
 public class WormholeService {
-    let api: WormholeAPI
+    public let api: WormholeAPI
 
     private let ethereumKeypair: EthereumKeyPair?
     private let solanaKeyPair: KeyPair?
@@ -52,8 +45,7 @@ public class WormholeService {
                 userWallet: ethereumKeypair.address,
                 recipient: solanaKeyPair.publicKey.base58EncodedString,
                 token: token,
-                amount: String(account.balance),
-                slippage: 25
+                amount: String(account.balance)
             )
 
             return bundle

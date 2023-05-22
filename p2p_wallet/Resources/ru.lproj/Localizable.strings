@@ -1264,7 +1264,7 @@
 "Choose network" = "Выберите сеть";
 "Claim" = "Требовать";
 "You will get" = "Ты получишь";
-"Claiming..." = "Заявка...";
+"Claiming" = "Заявка";
 "Send crypto via link" = "Отправить криптовалюту по ссылке";
 "Sending via link" = "Отправка по ссылке";
 "Creating your link" = "Создание вашей ссылки";
@@ -1357,5 +1357,13 @@
 "The fee is more than the defined slippage %@ due to one-time account creation fee by Solana blockchain" = "Комиссия превышает установленное проскальзывание %@ из-за единовременной комиссии за создание учетной записи в блокчейне Solana.";
 "How to claim for free" = "Как запросить бесплатно";
 "I forgot PIN" = "я забыл пин-код";
+"More than the received amount" = "Больше полученной суммы";
+"Fees" = "Сборы";
+"We refund bridging costs for any transactions over %@" = "Мы возмещаем промежуточные расходы для любых транзакций свыше %@";
+"Total amount" = "Общая сумма";
+"Check available funds" = "Проверить доступные средства";
+"To send %@ to Ethereum network you have to swap it to %@" = "Чтобы отправить %@ в сеть Ethereum, вы должны поменять его на %@";
+"Not enought %@" = "Недостаточно %@";
 "It usually takes few seconds for a transaction to complete" = "Обычно для завершения транзакции требуется несколько секунд";
 "Username was copied to clipboard" = "Имя пользователя было скопировано в буфер обмена";
+"Transaction fees" = "Операционные издержки";

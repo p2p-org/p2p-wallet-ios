@@ -83,7 +83,7 @@ struct RendableListPendingTransactionItem: RendableListTransactionItem {
         case let transaction as SendTransaction:
             switch transaction.recipient.category {
             case let .username(name, domain):
-                return L10n.to("\(name).\(domain)")
+                return L10n.to("@\(name).\(domain)")
             case let .solanaTokenAddress(walletAddress, _):
                 return L10n.to(RecipientFormatter.shortFormat(destination: walletAddress.base58EncodedString))
             case .solanaAddress:

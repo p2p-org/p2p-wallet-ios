@@ -47,39 +47,30 @@ struct JupiterSwapTransaction: SwapRawTransactionType {
             
             let title = "Swap iOS Alarm (#\(titleTag))"
             
-            let content: String
-            switch error {
-            case let error as APIClientError:
-                content = error.content
-            default:
-                content = "\(error)"
-            }
+            let data = await AlertLoggerDataBuilder.buildLoggerData(error: error)
             
-            JupiterSwapBusinessLogic.sendErrorLog(
-                .init(
-                    title: title,
-                    message: .init(
-                        tokenA: .init(
-                            name: sourceWallet.token.name,
-                            mint: sourceWallet.token.address,
-                            sendAmount: fromAmount.toString(maximumFractionDigits: 9)
-                        ),
-                        tokenB: .init(
-                            name: destinationWallet.token.name,
-                            mint: destinationWallet.token.address,
-                            expectedAmount: toAmount.toString(maximumFractionDigits: 9)
-                        ),
-                        route: route.jsonString ?? "",
-                        userPubkey: Resolver.resolve(UserWalletManager.self)
-                            .wallet?.account.publicKey
-                            .base58EncodedString ?? "",
-                        slippage: slippage.toString(),
-                        feeRelayerTransaction: swapTransaction ?? "",
-                        platform: "iOS \(await UIDevice.current.systemVersion)",
-                        appVersion: AppInfo.appVersionDetail,
-                        timestamp: "\(Int64(Date().timeIntervalSince1970 * 1000))",
-                        blockchainError: content
-                    )
+            DefaultLogManager.shared.log(
+                event: title,
+                logLevel: .alert,
+                data: SwapAlertLoggerMessage(
+                    tokenA: .init(
+                        name: sourceWallet.token.name,
+                        mint: sourceWallet.token.address,
+                        sendAmount: fromAmount.toString(maximumFractionDigits: 9)
+                    ),
+                    tokenB: .init(
+                        name: destinationWallet.token.name,
+                        mint: destinationWallet.token.address,
+                        expectedAmount: toAmount.toString(maximumFractionDigits: 9)
+                    ),
+                    route: route.jsonString ?? "",
+                    userPubkey: data.userPubkey,
+                    slippage: slippage.toString(),
+                    feeRelayerTransaction: swapTransaction ?? "",
+                    platform: data.platform,
+                    appVersion: data.appVersion,
+                    timestamp: data.timestamp,
+                    blockchainError: data.blockchainError ?? data.feeRelayerError ?? ""
                 )
             )
             throw error
@@ -100,23 +91,5 @@ private extension APIClientError {
             titleTag = "blockchain"
         }
         return titleTag
-    }
-    
-    var content: String {
-        switch self {
-        case .cantEncodeParams:
-            return "cantEncodeParams"
-        case .invalidAPIURL:
-            return "invalidAPIURL"
-        case .invalidResponse:
-            return "emptyResponse"
-        case .responseError(let responseError):
-            guard let data = try? JSONEncoder().encode(responseError),
-                  let string = String(data: data, encoding: .utf8)
-            else {
-                return "unknownResponseError"
-            }
-            return string
-        }
     }
 }
