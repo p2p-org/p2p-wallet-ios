@@ -93,6 +93,12 @@ let package = Package(
             name: "Moonpay",
             targets: ["Moonpay"]
         ),
+        
+        // Striga
+        .library(
+            name: "Striga",
+            targets: ["Striga"]
+        ),
 
         // Wormhole
         .library(
@@ -301,6 +307,12 @@ let package = Package(
         .target(
             name: "Moonpay",
             dependencies: []
+        ),
+        
+        // Striga
+        .target(
+            name: "Striga",
+            dependencies: ["KeyAppNetworking"]
         ),
 
         // Wormhole
