@@ -30,7 +30,7 @@ final class NotificationRepositoryImpl: NotificationRepository {
 
     func sendDeviceToken(model: DeviceTokenDto) async throws -> DeviceTokenResponse {
         do {
-            return try await httpClient.sendRequest(
+            return try await httpClient.request(
                 endpoint: NotifierEndpoint.addDevice(dto: .init(
                     method: "add_device",
                     params: [model]
@@ -52,7 +52,7 @@ final class NotificationRepositoryImpl: NotificationRepository {
     }
 
     func removeDeviceToken(model: DeleteDeviceTokenDto) async throws -> DeviceTokenResponse {
-        try await httpClient.sendRequest(
+        try await httpClient.request(
             endpoint: NotifierEndpoint.deleteDevice(dto: .init(
                 method: "delete_device",
                 params: [model]
