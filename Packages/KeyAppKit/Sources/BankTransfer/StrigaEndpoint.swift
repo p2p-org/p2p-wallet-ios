@@ -14,7 +14,7 @@ enum StrigaEndpoint {
 
 // MARK: - Endpoint
 
-extension StrigaEndpoint: Endpoint {
+extension StrigaEndpoint: HTTPEndpoint {
     var baseURL: String {
         "https://\(urlEnvironment).striga.com/\(server)/api/\(version)/user/"
     }
@@ -51,7 +51,7 @@ extension StrigaEndpoint: Endpoint {
         }
     }
 
-    var method: RequestMethod {
+    var method: HTTPMethod {
         switch self {
         case .verifyMobileNumber:
             return .post
@@ -63,5 +63,20 @@ extension StrigaEndpoint: Endpoint {
         case let .verifyMobileNumber(userId, verificationCode):
             return ["userId": userId, "verificationCode": verificationCode].encoded
         }
+    }
+}
+
+private extension Encodable {
+    /// Encoded string for request as a json string
+    var encoded: String? {
+        encoded(strategy: .useDefaultKeys)
+    }
+    
+    private func encoded(strategy: JSONEncoder.KeyEncodingStrategy) -> String? {
+        let encoder = JSONEncoder()
+        encoder.outputFormatting = [.prettyPrinted, .sortedKeys]
+        encoder.keyEncodingStrategy = strategy
+        guard let data = try? encoder.encode(self) else { return nil }
+        return String(data: data, encoding: .utf8)
     }
 }

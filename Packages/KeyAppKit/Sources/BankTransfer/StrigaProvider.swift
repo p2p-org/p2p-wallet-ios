@@ -6,11 +6,12 @@
 //
 
 import Foundation
+import KeyAppNetworking
 
 final class StrigaProvider {
     
     // Dependencies
-    private let httpClient: HttpClient
+    private let httpClient: IHTTPClient
     
     // Properties
     private let apiKey: String
@@ -19,7 +20,7 @@ final class StrigaProvider {
     // MARK: - Init
     
     init(
-        httpClient: HttpClient,
+        httpClient: IHTTPClient,
         apiKey: String,
         authorization: String
     ) {
@@ -34,6 +35,6 @@ final class StrigaProvider {
 extension StrigaProvider: IStrigaProvider {
     func verifyMobileNumber(userId: String, verificationCode: String) async throws {
         let endpoint = StrigaEndpoint.verifyMobileNumber(userId: userId, verificationCode: verificationCode)
-        _ = try await httpClient.sendRequest(endpoint: endpoint, responseModel: String.self)
+        _ = try await httpClient.request(endpoint: endpoint, responseModel: String.self)
     }
 }
