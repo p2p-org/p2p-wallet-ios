@@ -19,17 +19,6 @@ extension StrigaEndpoint: HTTPEndpoint {
         "https://\(urlEnvironment)/api/\(version)/user/"
     }
     
-    private var urlEnvironment: String {
-        switch self {
-        case .verifyMobileNumber:
-            return "payment.keyapp.org/striga"
-        }
-    }
-    
-    private var version: String {
-        "v1"
-    }
-    
     var header: [String: String] {
         [
             "Content-Type": "application/json",
@@ -54,11 +43,27 @@ extension StrigaEndpoint: HTTPEndpoint {
     var body: String? {
         switch self {
         case let .verifyMobileNumber(userId, verificationCode):
-            return nil
-//            return ["userId": userId, "verificationCode": verificationCode].encoded
+            return ["userId": userId, "verificationCode": verificationCode].encoded
         }
     }
 }
+
+// MARK: - URL parts
+
+private extension StrigaEndpoint {
+    var urlEnvironment: String {
+        switch self {
+        case .verifyMobileNumber:
+            return "payment.keyapp.org/striga"
+        }
+    }
+    
+    var version: String {
+        "v1"
+    }
+}
+
+// MARK: - Encoding
 
 private extension Encodable {
     /// Encoded string for request as a json string
@@ -66,7 +71,7 @@ private extension Encodable {
         encoded(strategy: .useDefaultKeys)
     }
     
-    private func encoded(strategy: JSONEncoder.KeyEncodingStrategy) -> String? {
+    func encoded(strategy: JSONEncoder.KeyEncodingStrategy) -> String? {
         let encoder = JSONEncoder()
         encoder.outputFormatting = [.prettyPrinted, .sortedKeys]
         encoder.keyEncodingStrategy = strategy
