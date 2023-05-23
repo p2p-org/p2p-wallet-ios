@@ -77,7 +77,6 @@ struct SentViaLinkTransactionDetailView: View {
             
             // One time link info
             oneTimeLinkInfo
-                .accessibilityIdentifier(.accessibilityDescriptionView)
             
             // Share button
             shareButton
@@ -161,8 +160,9 @@ struct SentViaLinkTransactionDetailView: View {
             Text(L10n.TheOneTimeLinkCanBeUsedToSendFundsToAnyoneWithoutNeedingAnAddress
                 .theFundsCanBeClaimedByAnyoneWithALink
             )
-                .apply(style: .text4)
-                .fixedSize(horizontal: false, vertical: true)
+            .apply(style: .text4)
+            .fixedSize(horizontal: false, vertical: true)
+            .accessibilityIdentifier(.accessibilityDescriptionView)
             
             Spacer()
         }
