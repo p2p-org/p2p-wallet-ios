@@ -16,7 +16,7 @@ protocol NotificationRepository {
 }
 
 final class NotificationRepositoryImpl: NotificationRepository {
-    @Injected private var httpClient: HttpClient
+    let httpClient = HttpClientImpl()
 
     func sendDeviceToken(model: DeviceTokenDto) async throws -> DeviceTokenResponse {
         do {
