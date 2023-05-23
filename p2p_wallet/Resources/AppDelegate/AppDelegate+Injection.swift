@@ -29,7 +29,6 @@ import SwiftyUserDefaults
 import TransactionParser
 import Web3
 import Wormhole
-import KeyAppNetworking
 
 extension Resolver: ResolverRegistering {
     @MainActor public static func registerAllServices() {
