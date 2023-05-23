@@ -13,8 +13,14 @@ protocol WormholeClaimModel {
     var claimButtonTitle: String { get }
 
     var claimButtonEnable: Bool { get }
+    
+    var isOpenFeesVisible: Bool { get }
+
+    var shouldShowBanner: Bool { get }
 
     var fees: String { get }
+
+    var getAmount: String? { get }
 
     var feesButtonEnable: Bool { get }
     
@@ -32,7 +38,13 @@ struct WormholeClaimMockModel: WormholeClaimModel {
 
     var claimButtonEnable: Bool
 
+    var isOpenFeesVisible: Bool
+
+    var shouldShowBanner: Bool
+
     var fees: String
+
+    var getAmount: String?
 
     var feesButtonEnable: Bool
     
@@ -44,11 +56,11 @@ struct WormholeClaimEthereumModel: WormholeClaimModel {
     let bundle: AsyncValueState<WormholeBundle?>
 
     var icon: URL? {
-        (account.wormholeNativeCounterpart() ?? account).token.logo
+        account.token.logo
     }
 
     var title: String {
-        let token = ((account.wormholeNativeCounterpart() ?? account).representedBalance).token
+        let token = account.representedBalance.token
         return CryptoFormatterFactory.formatter(with: token, style: .short)
             .string(for: account.representedBalance)
             ?? "0 \(account.token.symbol)"
@@ -60,24 +72,19 @@ struct WormholeClaimEthereumModel: WormholeClaimModel {
         }
 
         let formattedValue = CurrencyFormatter().string(amount: currencyAmount)
-        return "~ \(formattedValue)"
+        return "≈ \(formattedValue)"
     }
 
     var claimButtonTitle: String {
-        let resultAmount = bundle.value?.resultAmount
+        guard !isNotEnoughAmount else {
+            return L10n.addFunds
+        }
 
-        if let resultAmount = resultAmount {
-            let cryptoFormatter = CryptoFormatter()
-
-            let cryptoAmount = CryptoAmount(
-                bigUIntString: resultAmount.amount,
-                token: account.token
-            )
-
-            return L10n.claim(cryptoFormatter.string(amount: cryptoAmount))
+        if bundle.value?.resultAmount != nil {
+            return L10n.claim
         } else {
             if bundle.error != nil {
-                return L10n.tryAgain
+                return L10n.claim
             } else {
                 return L10n.loading
             }
@@ -85,6 +92,9 @@ struct WormholeClaimEthereumModel: WormholeClaimModel {
     }
 
     var claimButtonEnable: Bool {
+        if isNotEnoughAmount {
+            return true
+        }
         switch bundle.status {
         case .fetching, .initializing:
             return false
@@ -93,10 +103,21 @@ struct WormholeClaimEthereumModel: WormholeClaimModel {
         }
     }
 
+    var isOpenFeesVisible: Bool {
+        !bundle.hasError
+    }
+
+    var shouldShowBanner: Bool {
+        bundle.hasError ? isNotEnoughAmount : !isLoading
+    }
+
     var fees: String {
         let bundle = bundle.value
 
         guard let bundle else {
+            if isNotEnoughAmount {
+                  return L10n.moreThanTheReceivedAmount
+            }
             return L10n.isUnavailable(L10n.value)
         }
 
@@ -104,7 +125,22 @@ struct WormholeClaimEthereumModel: WormholeClaimModel {
             return L10n.paidByKeyApp
         }
 
-        return CurrencyFormatter().string(amount: bundle.fees.totalInFiat)
+        return "~ " + CurrencyFormatter().string(amount: bundle.fees.totalInFiat)
+    }
+
+    var getAmount: String? {
+        guard let resultAmount = bundle.value?.resultAmount else {
+            return nil
+        }
+
+        let cryptoFormatter = CryptoFormatter()
+        let currencyFormatter = CurrencyFormatter()
+        
+        let formattedCryptoAmount = cryptoFormatter.string(amount: resultAmount)
+        let formattedCurrencyAmount = currencyFormatter.string(amount: resultAmount)
+        
+        return "\(formattedCryptoAmount) (≈ \(formattedCurrencyAmount))"
+        
     }
 
     var feesButtonEnable: Bool {
@@ -113,5 +149,12 @@ struct WormholeClaimEthereumModel: WormholeClaimModel {
     
     var isLoading: Bool {
         bundle.isFetching
+    }
+
+    private var isNotEnoughAmount: Bool {
+        if let error = bundle.error as? JSONRPCError<String>, error.code == -32007 {
+            return true
+        }
+        return false
     }
 }

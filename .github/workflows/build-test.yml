@@ -19,8 +19,14 @@ on:
 jobs:
   upload_build_for_testing:
     name: Manually upload build for testing
-    runs-on: ${{ (inputs.with_high_priority && fromJSON('[ "self-hosted", "macOS" ]')) || 'macos-latest' }} 
+    runs-on: ${{ (inputs.with_high_priority && fromJSON('[ "self-hosted", "macOS" ]')) || 'macos-13' }} 
+    env:
+      # Override fastlane tooling variables
+      FASTLANE_XCODEBUILD_SETTINGS_TIMEOUT: 180
+      FASTLANE_XCODEBUILD_SETTINGS_RETRIES: 10
+      XCODE_VERSION: 14.3
     steps:
+
       - name: Cleanup build folder
         run: |
           ls -la ./
@@ -32,8 +38,11 @@ jobs:
         uses: actions/checkout@v3
         with:
           ref: ${{ inputs.branch != '' && inputs.branch || github.event.pull_request.head.ref }}
-          submodules: recursive
-          token: ${{ secrets.SUBMODULES_ACCESS_TOKEN }}
+          # submodules: recursive
+          # token: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Select XCode Version
+        run: sudo xcode-select --switch /Applications/Xcode_${{ env.XCODE_VERSION }}.app
 
       - name: Get last changes
         id: get-changelog
@@ -41,22 +50,10 @@ jobs:
         run: |
           echo "GIT_CHANGES=$(git log --oneline -n 15)" >> $GITHUB_ENV
 
-      - name: Grant access to KeyAppUI
-        uses: webfactory/ssh-agent@v0.5.4
-        with:
-          ssh-private-key: ${{ secrets.KEY_APP_UI_GIT_SSH }}
-
       - name: Copy xcconfig file
         run: |
           curl -o ./p2p_wallet/Config.xcconfig ${{ secrets.XCCONFIG_URL }}
         shell: bash
-
-      - uses: actions/cache@v3
-        with:
-          path: Pods
-          key: ${{ runner.os }}-pods-${{ hashFiles('**/Podfile.lock') }}
-          restore-keys: |
-            ${{ runner.os }}-pods-
 
       - name: Install project
         run: |

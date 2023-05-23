@@ -10,19 +10,22 @@ on:
 jobs:
   deploy:
     name: Deploying to Testflight
-    runs-on: macos-12
-
+    runs-on: macos-13
+    env:
+      # Override fastlane tooling variables
+      FASTLANE_XCODEBUILD_SETTINGS_TIMEOUT: 180
+      FASTLANE_XCODEBUILD_SETTINGS_RETRIES: 10
+      XCODE_VERSION: 14.3
     steps:
+
       - name: Check out repository
         uses: actions/checkout@v3
-        with:
-          submodules: recursive
-          token: ${{ secrets.SUBMODULES_ACCESS_TOKEN }}
+        # with:
+        #   submodules: recursive
+        #   token: ${{ secrets.GITHUB_TOKEN }}
 
-      - name: Grant access to KeyAppUI
-        uses: webfactory/ssh-agent@v0.5.4
-        with:
-          ssh-private-key: ${{ secrets.KEY_APP_UI_GIT_SSH }}
+      - name: Select XCode Version
+        run: sudo xcode-select --switch /Applications/Xcode_${{ env.XCODE_VERSION }}.app
 
       - name: Copy secret files
         run: |
@@ -31,7 +34,6 @@ jobs:
 
       - name: Install project
         run: |
-          chmod u+x Scripts/remove_cocoa_debug.rb && Scripts/remove_cocoa_debug.rb
           rm -rf p2p_wallet/Scenes/DebugMenu
           chmod u+x Scripts/install.sh && Scripts/install.sh
         shell: bash

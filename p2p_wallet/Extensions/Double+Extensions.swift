@@ -168,10 +168,14 @@ extension Double {
         maximumFractionDigits: Int = 9,
         roundingMode: NumberFormatter.RoundingMode? = nil
     ) -> String {
-        "\(toString(maximumFractionDigits: maximumFractionDigits)) \(symbol)"
+        "\(toString(maximumFractionDigits: maximumFractionDigits, roundingMode: roundingMode)) \(symbol)"
     }
 
-    func formattedFiat(maximumFractionDigits: Int = 2, currency: Fiat = .usd, roundingMode: NumberFormatter.RoundingMode? = nil) -> String {
+    func formattedFiat(
+        maximumFractionDigits: Int = 2,
+        currency: Fiat = .usd,
+        roundingMode: NumberFormatter.RoundingMode? = nil
+    ) -> String {
         return "\(toString(maximumFractionDigits: maximumFractionDigits, roundingMode: roundingMode)) \(currency.code)"
     }
 

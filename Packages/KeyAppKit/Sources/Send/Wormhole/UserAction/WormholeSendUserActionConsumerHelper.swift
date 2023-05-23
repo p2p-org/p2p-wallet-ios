@@ -1,10 +1,3 @@
-//
-//  File.swift
-//
-//
-//  Created by Giang Long Tran on 12.04.2023.
-//
-
 import Foundation
 import KeyAppKitCore
 import Wormhole
@@ -22,7 +15,7 @@ public extension WormholeSendUserActionConsumer {
                 guard let sendStatuses else { return }
 
                 for sendStatus in sendStatuses {
-                    self?.handleEvent(event: .track(sendStatus))
+                    self?.handleInternalEvent(event: .track(sendStatus))
                 }
             } catch {
                 self?.errorObserver.handleError(error)
@@ -40,15 +33,15 @@ public extension WormholeSendUserActionConsumer {
                 do {
                     let bundleStatus = try await self?
                         .wormholeAPI
-                        .getSolanaTransferStatus(message: userAction.message)
+                        .getSolanaTransferStatus(message: userAction.id)
 
                     guard let bundleStatus else {
                         continue
                     }
 
-                    self?.handleEvent(event: .track(bundleStatus))
+                    self?.handleInternalEvent(event: .track(bundleStatus))
                 } catch is JSONRPCError<String> {
-                    self?.handleEvent(event: .sendFailure(message: userAction.message, error: Error.sendingFailure))
+                    self?.handleInternalEvent(event: .sendFailure(message: userAction.id, error: Error.sendingFailure))
                 } catch {
                     continue
                 }

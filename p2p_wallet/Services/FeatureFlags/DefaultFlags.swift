@@ -10,9 +10,6 @@ import Foundation
 var defaultFlags: StaticFlagsFetcher {
     .init(
         featureFlags: [
-            FeatureFlag(feature: .newOnboardingFlow, enabled: true),
-            FeatureFlag(feature: .coinGeckoPriceProvider, enabled: true),
-            
             // Onboarding testing
             FeatureFlag(feature: .mockedApiGateway, enabled: false),
             FeatureFlag(feature: .mockedTKeyFacade, enabled: false),

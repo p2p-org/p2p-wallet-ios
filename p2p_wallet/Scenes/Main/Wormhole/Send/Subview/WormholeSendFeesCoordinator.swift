@@ -16,12 +16,17 @@ class WormholeSendFeesCoordinator: SmartCoordinator<Void> {
         vc.view.layer.cornerRadius = 20
 
         vm.objectWillChange
+            .delay(for: 0.01, scheduler: RunLoop.main)
             .sink { [weak vc] _ in
                 DispatchQueue.main.async {
                     vc?.updatePresentationLayout(animated: true)
                 }
             }
             .store(in: &subscriptions)
+
+        vm.close.sink { [weak vc] in
+            vc?.dismiss(animated: true)
+        }.store(in: &subscriptions)
 
         return vc
     }

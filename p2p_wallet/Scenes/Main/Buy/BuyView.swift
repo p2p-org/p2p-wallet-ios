@@ -35,7 +35,7 @@ struct BuyView: View, KeyboardVisibilityReadable {
                     Spacer()
                     Button(
                         action: {
-                            viewModel.changeTheRegionClicked()
+                            viewModel.flagClicked()
                         },
                         label: {
                             HStack(spacing: 10) {
@@ -270,14 +270,14 @@ struct BuyView: View, KeyboardVisibilityReadable {
                 }
                 Spacer()
                 if viewModel?.selectedPayment == item.type {
-                    Image("checkmark-filled")
+                    Image(uiImage: .checkmarkFilled)
                         .resizable()
                         .scaledToFill()
                         .frame(width: 25, height: 25)
                         .padding(.trailing, 13)
                         .padding(.top, -3)
                 } else {
-                    Image("checkmark-empty")
+                    Image(uiImage: .checkmarkEmpty)
                         .resizable()
                         .scaledToFill()
                         .frame(width: 25, height: 25)

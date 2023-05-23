@@ -23,7 +23,10 @@ struct DebugMenuView: View {
     var body: some View {
         NavigationView {
             List {
-                Toggle("Network Logger", isOn: $viewModel.networkLoggerVisible)
+                Section(header: Text("Modules")) {
+                    NavigationLink("Socket", destination: SocketDebugView())
+                }
+
                 Section(header: Text("Feature Toggles")) {
                     ForEach(0 ..< viewModel.features.count, id: \.self) { index in
                         Toggle(viewModel.features[index].title, isOn: $viewModel.features[index].isOn)
@@ -32,6 +35,7 @@ struct DebugMenuView: View {
                             }
                     }
                 }
+
                 Section(header: Text("Application")) {
                     TextFieldRow(title: "Wallet:", content: $globalAppState.forcedWalletAddress)
                     TextFieldRow(title: "Push:", content: $globalAppState.pushServiceEndpoint)
@@ -39,10 +43,6 @@ struct DebugMenuView: View {
                     Toggle("Prefer direct swap", isOn: $globalAppState.preferDirectSwap)
                     Button {
                         Task {
-                            #if DEBUG
-                                showDebugger(false)
-                            #endif
-
                             ResolverScope.session.reset()
                             try await Resolver.resolve(UserWalletManager.self).refresh()
 
@@ -52,13 +52,13 @@ struct DebugMenuView: View {
                     } label: { Text("Apply") }
                 }
 
+                Section(header: Text("Modules")) {
+                    NavigationLink("History") { HistoryDebugView() }
+                }
+
                 Section(header: Text("Fee relayer")) {
                     Toggle("Disable free transaction", isOn: $feeRelayerConfig.disableFeeTransaction)
                         .valueChanged(value: feeRelayerConfig.disableFeeTransaction) { _ in
-                            #if DEBUG
-                                showDebugger(false)
-                            #endif
-
                             let app: AppEventHandlerType = Resolver.resolve()
                             app.delegate?.refresh()
                         }
@@ -131,14 +131,6 @@ struct DebugMenuView: View {
                         Button {
                             Resolver.resolve(OnboardingService.self).lastState = nil
                         } label: { Text("Delete") }
-                    }
-                }
-
-                Section(header: Text("Moonpay environment")) {
-                    Picker("Environment", selection: $viewModel.currentMoonpayEnvironment) {
-                        ForEach(viewModel.moonpayEnvironments, id: \.self) { environment in
-                            Text(environment.rawValue)
-                        }
                     }
                 }
             }

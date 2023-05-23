@@ -239,7 +239,7 @@ enum KeyAppAnalyticsEvent: AnalyticsEvent {
     case swapChangingTokenB(tokenBName: String, tokenBValue: Double)
     case swapReturnFromChangingTokenB
     case swapChangingValueTokenA(tokenAName: String, tokenAValue: Double)
-    case swapChangingValueTokenB(tokenBName: String, tokenBValue: Double)
+    case swapChangingValueTokenB(tokenBName: String, tokenBValue: Double, transactionSimulation: Bool)
     case swapChangingValueTokenAAll(tokenAName: String, tokenAValue: Double)
     case swapSwitchTokens(tokenAName: String, tokenBName: String)
     case swapPriceImpactLow(priceImpact: Decimal)
@@ -306,6 +306,12 @@ enum KeyAppAnalyticsEvent: AnalyticsEvent {
         bankTransfer: Bool,
         typeBankTransfer: String?
     )
+    case buyBlockedScreenOpen
+    case buyBlockedRegionClick
+    case regionBuyScreenOpen
+    case regionBuySearchClick
+    case regionBuyResultClick(country: String)
+    case buyChangeCountryClick
 
     // General
     case appOpened(sourceOpen: String)

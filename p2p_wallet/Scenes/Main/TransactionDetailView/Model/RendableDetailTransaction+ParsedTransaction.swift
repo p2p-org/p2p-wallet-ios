@@ -10,7 +10,7 @@ import Foundation
 import SolanaSwift
 import TransactionParser
 
-struct RendableDetailParsedTransaction: RendableTransactionDetail {
+struct RendableDetailParsedTransaction: RenderableTransactionDetail {
     let trx: ParsedTransaction
 
     var status: TransactionDetailStatus {
@@ -129,5 +129,9 @@ struct RendableDetailParsedTransaction: RendableTransactionDetail {
 
     var buttonTitle: String {
         L10n.done
+    }
+
+    var url: String? {
+        "https://explorer.solana.com/tx/\(signature ?? "")"
     }
 }

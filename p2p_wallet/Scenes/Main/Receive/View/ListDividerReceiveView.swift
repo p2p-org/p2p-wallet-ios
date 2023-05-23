@@ -8,7 +8,6 @@ struct ListDividerReceiveView: View {
             Divider()
                 .frame(height: 1)
                 .background(Color(Asset.Colors.rain.color))
-                .padding(.leading, 20)
         }
         .frame(height: 1)
     }
