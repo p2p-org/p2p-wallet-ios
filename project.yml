@@ -286,6 +286,8 @@ targets:
               product: Jupiter
             - package: KeyAppKit
               product: KeyAppNetworking
+            - package: KeyAppKit
+              product: BankTransfer
 
             - package: SolanaSwift
             - package: OrcaSwapSwift

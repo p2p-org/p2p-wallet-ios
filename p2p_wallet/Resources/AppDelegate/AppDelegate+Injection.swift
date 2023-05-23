@@ -29,6 +29,7 @@ import SwiftyUserDefaults
 import TransactionParser
 import Web3
 import Wormhole
+import BankTransfer
 
 extension Resolver: ResolverRegistering {
     @MainActor public static func registerAllServices() {
@@ -270,6 +271,9 @@ extension Resolver: ResolverRegistering {
             .implements(JWTTokenValidator.self)
 
         register { Web3(rpcURL: String.secretConfig("ETH_RPC")!) }
+
+        register { StrigaMockBankTransferService() }
+            .implements(BankTransferService.self)
     }
 
     /// Session scope: Live when user is authenticated

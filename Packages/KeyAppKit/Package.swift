@@ -94,10 +94,10 @@ let package = Package(
             targets: ["Moonpay"]
         ),
         
-        // Striga
+        // BankTransfer
         .library(
-            name: "Striga",
-            targets: ["Striga"]
+            name: "BankTransfer",
+            targets: ["BankTransfer"]
         ),
 
         // Wormhole
@@ -309,9 +309,9 @@ let package = Package(
             dependencies: []
         ),
         
-        // Striga
+        // BankTransfer
         .target(
-            name: "Striga",
+            name: "BankTransfer",
             dependencies: ["KeyAppNetworking"]
         ),
 
