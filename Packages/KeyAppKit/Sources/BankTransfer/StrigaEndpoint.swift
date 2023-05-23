@@ -12,7 +12,7 @@ enum StrigaEndpoint {
     case verifyMobileNumber(userId: String, verificationCode: String)
 }
 
-// MARK: - Endpoint
+// MARK: - HTTPEndpoint
 
 extension StrigaEndpoint: HTTPEndpoint {
     var baseURL: String {
@@ -54,7 +54,8 @@ extension StrigaEndpoint: HTTPEndpoint {
     var body: String? {
         switch self {
         case let .verifyMobileNumber(userId, verificationCode):
-            return ["userId": userId, "verificationCode": verificationCode].encoded
+            return nil
+//            return ["userId": userId, "verificationCode": verificationCode].encoded
         }
     }
 }
