@@ -402,7 +402,7 @@ private extension SendInputViewModel {
             .store(in: &subscriptions)
 
         Publishers.CombineLatest(
-            pricesService.isPricesAvailablePublisher,
+            Resolver.resolve(PricesService.self).isPricesAvailablePublisher,
             $sourceWallet.eraseToAnyPublisher()
         )
         .sink { [weak self] isPriceAvailable, currentWallet in
