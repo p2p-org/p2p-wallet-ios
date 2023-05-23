@@ -87,8 +87,8 @@ struct WormholeClaimFeeView: View {
                     
                     WormholeFeeView(
                         title: L10n.totalAmount,
-                        subtitle: value.receive.crypto,
-                        detail: value.receive.fiat,
+                        subtitle: value.receive.isFree ? value.receive.crypto : value.total?.crypto ?? "",
+                        detail: value.receive.isFree ? value.receive.fiat : value.total?.fiat ?? "",
                         isFree: value.receive.isFree,
                         isLoading: viewModel.fee.isFetching
                     )
