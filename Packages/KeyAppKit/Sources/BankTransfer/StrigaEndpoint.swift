@@ -16,31 +16,24 @@ enum StrigaEndpoint {
 
 extension StrigaEndpoint: HTTPEndpoint {
     var baseURL: String {
-        "https://\(urlEnvironment).striga.com/\(server)/api/\(version)/user/"
+        "https://\(urlEnvironment)/api/\(version)/user/"
     }
     
     private var urlEnvironment: String {
         switch self {
         case .verifyMobileNumber:
-            return "www.sandbox"
-        }
-    }
-    
-    private var server: String {
-        switch self {
-        case .verifyMobileNumber:
-            return "server"
+            return "payment.keyapp.org/striga"
         }
     }
     
     private var version: String {
-        "v0"
+        "v1"
     }
     
     var header: [String: String] {
         [
-            "api-key": "",
-            "Authorization": "",
+            "Content-Type": "application/json",
+            "User-id": ""
         ]
     }
     
