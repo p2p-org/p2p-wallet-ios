@@ -7,6 +7,7 @@
 
 import Foundation
 
-protocol IStrigaProvider: AnyObject {
+public protocol IStrigaProvider: AnyObject {
+    func createUser(model: CreateUserRequest) async throws -> CreateUserResponse
     func verifyMobileNumber(userId: String, verificationCode: String) async throws
 }

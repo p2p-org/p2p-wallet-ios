@@ -7,7 +7,7 @@ public protocol BankTransferService {
     func isBankTransferAvailable() -> Bool
 
     func getRegistrationData() async -> RegistrationData
-    func save(regData: RegistrationData) async throws
+    func createUser(data: RegistrationData) async throws
 
     func getOTP() async throws
     func verify(OTP: String) async throws -> Bool
