@@ -20,12 +20,19 @@ public protocol AnyToken {
 
     /// Decimal for token
     var decimals: UInt8 { get }
+
+    var network: TokenNetwork { get }
 }
 
 public extension AnyToken {
     var asSomeToken: SomeToken {
-        SomeToken(tokenPrimaryKey: tokenPrimaryKey, symbol: symbol, name: name, decimals: decimals)
+        SomeToken(tokenPrimaryKey: tokenPrimaryKey, symbol: symbol, name: name, decimals: decimals, network: network)
     }
+}
+
+public enum TokenNetwork: Hashable, Codable {
+    case solana
+    case ethereum
 }
 
 public struct SomeToken: AnyToken, Hashable, Codable {
@@ -37,15 +44,19 @@ public struct SomeToken: AnyToken, Hashable, Codable {
 
     public let decimals: UInt8
 
+    public let network: TokenNetwork
+
     public init(
         tokenPrimaryKey: String,
         symbol: String,
         name: String,
-        decimals: UInt8
+        decimals: UInt8,
+        network: TokenNetwork
     ) {
         self.tokenPrimaryKey = tokenPrimaryKey
         self.symbol = symbol
         self.name = name
         self.decimals = decimals
+        self.network = network
     }
 }

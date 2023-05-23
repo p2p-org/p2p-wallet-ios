@@ -8,9 +8,10 @@ import LoggerSwift
 class SentryLogger: LogManagerLogger {
     private var queue = DispatchQueue(label: "SentryLogger", qos: .utility)
     
-    var supportedLogLevels: [LogLevel] = [.error]
+    var supportedLogLevels: [LogLevel] = [.error, .alert]
     
     func log(event: String, logLevel: LogLevel, data: String?) {
+        guard supportedLogLevels.contains(logLevel) else { return }
         queue.sync {
             let sentryEvent = Event(level: sentryLevel(logLevel: logLevel))
             sentryEvent.message = SentryMessage(formatted: event)
@@ -30,7 +31,9 @@ class SentryLogger: LogManagerLogger {
         case .info:
             return SentryLevel.info
         case .error:
-            return SentryLevel.fatal
+            return SentryLevel.error
+        case .alert:
+            return SentryLevel.error
         case .request, .response:
             return SentryLevel.info
         case .event:

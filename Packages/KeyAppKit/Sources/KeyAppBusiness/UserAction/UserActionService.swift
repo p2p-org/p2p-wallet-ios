@@ -16,7 +16,7 @@ public class UserActionService {
 
     /// Thread safe array update
     let accessQueue = DispatchQueue(label: "UserActionUpdateQueue", attributes: .concurrent)
-
+    #warning("REFACTOR: Remove @Published from non-observable class")
     @Published public var actions: [any UserAction] = []
 
     public init(consumers: [any UserActionConsumer]) {
@@ -36,6 +36,12 @@ public class UserActionService {
     public func execute(action: any UserAction) {
         for consumer in consumers {
             consumer.process(action: action)
+        }
+    }
+
+    public func handle(event: any UserActionEvent) {
+        for consumer in consumers {
+            consumer.handle(event: event)
         }
     }
 

@@ -112,7 +112,10 @@ final class ReceiveFundsViaLinkViewModel: BaseViewModel, ObservableObject {
         // Observe transaction and update status
         transactionHandler.observeTransaction(transactionIndex: transactionIndex)
             .compactMap {$0}
-            .filter { $0.isConfirmedOrError }
+//            .filter { $0.isConfirmedOrError } // numberOfConfirmation is greater than 0
+            .filter {
+                $0.status.isSent // numberOfConfirmation is greater than OR EQUAL 0, increase the speed by returning success status right after it is sent
+            }
             .prefix(1)
             .receive(on: RunLoop.main)
             .sink { [weak self] tx in

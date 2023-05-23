@@ -1,10 +1,3 @@
-//
-//  HomeCoordinator.swift
-//  p2p_wallet
-//
-//  Created by Ivan on 02.08.2022.
-//
-
 import AnalyticsManager
 import Combine
 import Foundation
@@ -14,6 +7,7 @@ import Resolver
 import SolanaSwift
 import SwiftUI
 import UIKit
+import Wormhole
 
 enum HomeNavigation: Equatable {
     // HomeWithTokens
@@ -24,7 +18,7 @@ enum HomeNavigation: Equatable {
     case cashOut
     case earn
     case solanaAccount(SolanaAccount)
-    case claim(EthereumAccount)
+    case claim(EthereumAccount, WormholeClaimUserAction?)
     case actions([WalletActionType])
     // HomeEmpty
     case topUpCoin(Token)
@@ -152,29 +146,38 @@ final class HomeCoordinator: Coordinator<Void> {
             })
             .map { _ in () }
             .eraseToAnyPublisher()
-        case let .claim(account):
-            return coordinate(
-                to: WormholeClaimCoordinator(
-                    account: account.wormholeNativeCounterpart() ?? account,
-                    presentation: SmartCoordinatorPushPresentation(navigationController)
-                )
-            )
-            .handleEvents(receiveOutput: { [weak self] result in
-                guard let self = self else { return }
-                switch result {
-                case let .claiming(pendingTrx):
-                    self.coordinate(
-                        to: TransactionDetailCoordinator(
-                            viewModel: .init(userAction: pendingTrx),
-                            presentingViewController: self.navigationController
-                        )
+        case let .claim(account, userAction):
+            if let userAction, userAction.status == .processing {
+                return coordinate(to: TransactionDetailCoordinator(
+                    viewModel: .init(userAction: userAction),
+                    presentingViewController: self.navigationController
+                ))
+                .map { _ in () }
+                .eraseToAnyPublisher()
+            } else {
+                return coordinate(
+                    to: WormholeClaimCoordinator(
+                        account: account,
+                        presentation: SmartCoordinatorPushPresentation(navigationController)
                     )
-                    .sink { _ in }
-                    .store(in: &self.subscriptions)
-                }
-            })
-            .map { _ in () }
-            .eraseToAnyPublisher()
+                )
+                .handleEvents(receiveOutput: { [weak self] result in
+                    guard let self = self else { return }
+                    switch result {
+                    case let .claiming(pendingTrx):
+                        self.coordinate(
+                            to: TransactionDetailCoordinator(
+                                viewModel: .init(userAction: pendingTrx),
+                                presentingViewController: self.navigationController
+                            )
+                        )
+                        .sink { _ in }
+                        .store(in: &self.subscriptions)
+                    }
+                })
+                .map { _ in () }
+                .eraseToAnyPublisher()
+            }
         case .swap:
             analyticsManager.log(event: .swapViewed(lastScreen: "main_screen"))
             return coordinate(
@@ -275,15 +278,6 @@ final class HomeCoordinator: Coordinator<Void> {
             return Just(())
                 .eraseToAnyPublisher()
         }
-    }
-
-    private func showTransaction(trx: RawTransactionType) {
-        coordinate(to: TransactionDetailCoordinator(
-            viewModel: .init(submit: trx),
-            presentingViewController: navigationController
-        ))
-        .sink(receiveValue: { _ in })
-        .store(in: &subscriptions)
     }
 
     private func showUserAction(userAction: any UserAction) {

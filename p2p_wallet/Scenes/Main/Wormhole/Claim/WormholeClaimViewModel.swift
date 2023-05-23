@@ -11,12 +11,14 @@ class WormholeClaimViewModel: BaseViewModel, ObservableObject {
     @Injected private var analyticsManager: AnalyticsManager
     @Injected private var reachability: Reachability
     @Injected private var notificationService: NotificationService
+    @Injected private var accountStorage: AccountStorageType
 
     let action: PassthroughSubject<Action, Never> = .init()
 
     private let bundle: AsyncValue<WormholeBundle?>
 
     @Published var model: any WormholeClaimModel
+    @Published var freeFeeLimit: AsyncValueState<String?> = .init(status: .fetching, value: nil)
 
     init(model: WormholeClaimMockModel) {
         self.model = model
@@ -41,6 +43,17 @@ class WormholeClaimViewModel: BaseViewModel, ObservableObject {
         }
 
         super.init()
+
+        let freeFeeLimit = AsyncValue<String?>(initialItem: nil) {
+            let value = try await wormholeAPI.api.getEthereumFreeFeeLimit()
+            return "$ \(value)"
+        }
+
+        freeFeeLimit.fetch()
+        freeFeeLimit
+            .statePublisher
+            .assignWeak(to: \.freeFeeLimit, on: self)
+            .store(in: &subscriptions)
 
         bundle
             .statePublisher
@@ -71,12 +84,20 @@ class WormholeClaimViewModel: BaseViewModel, ObservableObject {
         // Notify user an error
         bundle
             .statePublisher
+            .debounce(for: 0.01, scheduler: DispatchQueue.main)
             .map(\.error)
             .compactMap { $0 }
             .sink { [weak self] error in
+                self?.logAlert(for: account, error: error)
                 if let error = error as? JSONRPCError<String>, error.code == -32007 {
                     self?.notificationService
                         .showInAppNotification(.error(L10n.theFeesAreBiggerThanTheTransactionAmount))
+                } else {
+                    self?.notificationService.showToast(
+                        title: nil,
+                        text: L10n.WormholeBridgeIsCurrentlyUnable.pleaseTryAgainLater,
+                        haptic: false
+                    )
                 }
             }
             .store(in: &subscriptions)
@@ -100,10 +121,14 @@ class WormholeClaimViewModel: BaseViewModel, ObservableObject {
     func claim() {
         if let model = model as? WormholeClaimEthereumModel {
             if bundle.state.hasError {
+                if let error = bundle.state.error as? JSONRPCError<String>, error.code == -32007 {
+                    action.send(.openReceive)
+                    return
+                }
                 bundle.fetch()
             } else {
                 guard let bundle = bundle.state.value else {
-                    Error.missingBundle.capture()
+                    DefaultLogManager.shared.log(error: Error.missingBundle)
                     return
                 }
 
@@ -129,12 +154,39 @@ class WormholeClaimViewModel: BaseViewModel, ObservableObject {
             }
         }
     }
+
+    private func logAlert(for account: EthereumAccount, error: Swift.Error) {
+        let token: ClaimAlertLoggerErrorMessage.Token = .init(
+            name: account.token.name,
+            solanaMint: SupportedToken.ERC20(rawValue: account.token.erc20Address ?? "")?.solanaMintAddress ?? "",
+            ethMint: account.token.tokenPrimaryKey,
+            claimAmount: ethModel == nil ? "0" : CryptoAmount(amount: ethModel!.account.balance, token: account.token).amount.description
+        )
+
+        DefaultLogManager.shared.log(
+            event: "Wormhole Claim iOS Alarm",
+            logLevel: .alert,
+            data:
+                ClaimAlertLoggerErrorMessage(
+                    tokenToClaim: token,
+                    userPubkey: accountStorage.account?.publicKey.base58EncodedString ?? "",
+                    userEthPubkey: ethModel?.account.address ?? "",
+                    simulationError: nil,
+                    bridgeSeviceError: error.readableDescription,
+                    feeRelayerError: nil,
+                    blockchainError: nil
+                )
+        )
+    }
+
+    var ethModel: WormholeClaimEthereumModel? { model as? WormholeClaimEthereumModel }
 }
 
 extension WormholeClaimViewModel {
     enum Action {
         case openFee(AsyncValue<WormholeBundle?>)
         case claiming(WormholeClaimUserAction)
+        case openReceive
     }
 
     enum Error: Swift.Error {

@@ -263,9 +263,7 @@ final class TabBarCoordinator: Coordinator<Void> {
         case .swap:
             routeToSwap(nc: navigationController, source: .actionPanel)
         case .send:
-            let fiatAmount = walletsRepository.getWallets().reduce(0) { $0 + $1.amountInCurrentFiat }
-            let withTokens = fiatAmount > 0
-            if withTokens {
+            if walletsRepository.getWallets().count > 0 {
                 analyticsManager.log(event: .sendViewed(lastScreen: "main_screen"))
                 let sendCoordinator = SendCoordinator(
                     rootViewController: navigationController,
@@ -322,15 +320,6 @@ final class TabBarCoordinator: Coordinator<Void> {
             .start()
             .sink(receiveValue: {})
             .store(in: &subscriptions)
-    }
-
-    private func showTransaction(trx: RawTransactionType) {
-        coordinate(to: TransactionDetailCoordinator(
-            viewModel: .init(submit: trx),
-            presentingViewController: tabBarController
-        ))
-        .sink(receiveValue: { _ in })
-        .store(in: &subscriptions)
     }
 
     private func showUserAction(userAction: any UserAction) {

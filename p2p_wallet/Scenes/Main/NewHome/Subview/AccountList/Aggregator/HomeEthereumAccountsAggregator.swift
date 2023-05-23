@@ -1,10 +1,3 @@
-//
-//  HomeAggregator.swift
-//  p2p_wallet
-//
-//  Created by Giang Long Tran on 18.04.2023.
-//
-
 import Foundation
 import KeyAppKitCore
 import Web3
@@ -36,7 +29,7 @@ struct HomeEthereumAccountsAggregator: DataAggregator {
 
                     if let balanceInFiat {
                         // Compare using fiat.
-                        if balanceInFiat >= CurrencyAmount(usd: 1) {
+                        if balanceInFiat >= CurrencyAmount(usd: 5) {
                             // Balance is greater than $1, user can claim.
                             status = .readyToClaim
                         } else {
@@ -61,7 +54,8 @@ struct HomeEthereumAccountsAggregator: DataAggregator {
 
                 return RenderableEthereumAccount(
                     account: account,
-                    status: status
+                    status: status,
+                    userAction: claiming
                 )
             }
 
@@ -120,7 +114,7 @@ private struct EthereumAccountsWithWormholeAggregator: DataAggregator {
                     return true
                 case let .erc20(contract):
                     // Check erc-20 tokens
-                    return Wormhole.SupportedToken.bridges.contains { bridge in
+                    return WormholeSupportedTokens.bridges.contains { bridge in
                         if let bridgeTokenAddress = bridge.ethAddress {
                             // Supported bridge token is erc-20
                             return (try? EthereumAddress(hex: bridgeTokenAddress, eip55: false)) == contract

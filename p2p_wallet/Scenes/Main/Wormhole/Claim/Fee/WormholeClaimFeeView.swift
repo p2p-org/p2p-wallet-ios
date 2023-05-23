@@ -1,10 +1,3 @@
-//
-//  WormholeClaimFee.swift
-//  p2p_wallet
-//
-//  Created by Giang Long Tran on 06.03.2023.
-//
-
 import KeyAppKitCore
 import KeyAppUI
 import SwiftUI
@@ -30,14 +23,20 @@ struct WormholeClaimFeeView: View {
                             .frame(width: 15, height: 21.5)
                     )
                 VStack(alignment: .leading, spacing: 2) {
-                    Text(L10n.enjoyFreeTransactions)
+                    Text(L10n.howToClaimForFree)
                         .fontWeight(.semibold)
                         .apply(style: .text1)
-                    Text(L10n.AllTransactionsOverAreFree.keyAppWillCoverAllFeesForYou("$50"))
+
+                    Text(L10n.AllTransactionsOverAreFree
+                        .keyAppWillCoverAllFeesForYou(viewModel.freeFeeLimit.value ?? ""))
                         .apply(style: .text4)
                         .multilineTextAlignment(.leading)
                         .lineLimit(5)
                         .fixedSize(horizontal: false, vertical: true)
+                        .skeleton(
+                            with: viewModel.freeFeeLimit.status != .ready,
+                            size: CGSize(width: 250, height: 25)
+                        )
                 }
             }
             .padding(.all, 16)
@@ -47,25 +46,10 @@ struct WormholeClaimFeeView: View {
 
             VStack(spacing: 24) {
                 if let value = viewModel.fee.value {
-                    WormholeFeeView(
-                        title: "You will get",
-                        subtitle: value.receive.crypto,
-                        detail: value.receive.fiat,
-                        isFree: value.receive.isFree,
-                        isLoading: viewModel.fee.isFetching
-                    )
-
-                    WormholeFeeView(
-                        title: "Network Fee",
-                        subtitle: value.networkFee.crypto,
-                        detail: value.networkFee.fiat,
-                        isFree: value.networkFee.isFree,
-                        isLoading: viewModel.fee.isFetching
-                    )
 
                     if let accountsFee = value.accountCreationFee {
                         WormholeFeeView(
-                            title: "Account creation Fee",
+                            title: L10n.accountCreationFee,
                             subtitle: accountsFee.crypto,
                             detail: accountsFee.fiat,
                             isFree: accountsFee.isFree,
@@ -73,11 +57,39 @@ struct WormholeClaimFeeView: View {
                         )
                     }
 
+                    if let bridgeAndTrxFee = value.wormholeBridgeAndTrxFee {
+                        WormholeFeeView(
+                            title: "Wormhole Bridge and Transaction Fee",
+                            subtitle: bridgeAndTrxFee.crypto,
+                            detail: bridgeAndTrxFee.fiat,
+                            isFree: bridgeAndTrxFee.isFree,
+                            isLoading: viewModel.fee.isFetching
+                        )
+                    }
+
+                    if let networkFee = value.networkFee {
+                        WormholeFeeView(
+                            title: L10n.networkFee,
+                            subtitle: networkFee.crypto,
+                            detail: networkFee.fiat,
+                            isFree: networkFee.isFree,
+                            isLoading: viewModel.fee.isFetching
+                        )
+                    }
+
                     WormholeFeeView(
-                        title: "Wormhole Bridge and Transaction Fee",
-                        subtitle: value.wormholeBridgeAndTrxFee.crypto,
-                        detail: value.wormholeBridgeAndTrxFee.fiat,
-                        isFree: value.wormholeBridgeAndTrxFee.isFree,
+                        title: L10n.youWillGet,
+                        subtitle: value.receive.crypto,
+                        detail: value.receive.fiat,
+                        isFree: value.receive.isFree,
+                        isLoading: viewModel.fee.isFetching
+                    )
+                    
+                    WormholeFeeView(
+                        title: L10n.totalAmount,
+                        subtitle: value.receive.crypto,
+                        detail: value.receive.fiat,
+                        isFree: value.receive.isFree,
                         isLoading: viewModel.fee.isFetching
                     )
                 }
@@ -145,7 +157,8 @@ struct WormholeClaimFee_Previews: PreviewProvider {
                 receive: ("0.999717252 ETH", "~ $1,215.75", false),
                 networkFee: ("Paid by Key App", "Free", true),
                 accountCreationFee: ("0.999717252 WETH", "~ $1,215.75", false),
-                wormholeBridgeAndTrxFee: ("0.999717252 WETH", "~ $1,215.75", false)
+                wormholeBridgeAndTrxFee: ("0.999717252 WETH", "~ $1,215.75", false),
+                total: ("0.999717252 WETH", "~ $1,215.75", false)
             )
         )
     }

@@ -31,7 +31,8 @@ struct ClaimSentViaLinkTransaction: RawTransactionType {
     }
     
     var amountInFiat: Double? {
-        Resolver.resolve(PricesServiceType.self).currentPrice(mint: token.address)?.value * tokenAmount
+        guard let value = Resolver.resolve(PricesServiceType.self).currentPrice(mint: token.address)?.value else { return nil }
+        return value * tokenAmount
     }
     
     func createRequest() async throws -> String {
@@ -64,48 +65,84 @@ struct ClaimSentViaLinkTransaction: RawTransactionType {
         let feeRelayerAPIClient = Resolver.resolve(FeeRelayerAPIClient.self)
         let solanaAPIClient = Resolver.resolve(SolanaAPIClient.self)
         
-        let feePayerAddress = try PublicKey(
-            string: try await feeRelayerAPIClient.getFeePayerPubkey()
-        )
-        
-        // prepare transaction, get recent blockchash
-        var (preparedTransaction, recentBlockhash) = try await(
-            sendViaLinkDataService.claim(
-                token: claimableTokenInfo,
-                receiver: receiver,
-                feePayer: feePayerAddress
-            ),
-            solanaAPIClient.getRecentBlockhash()
-        )
-        
-        preparedTransaction.transaction.recentBlockhash = recentBlockhash
-        
-        // get feePayer's signature
-        let feePayerSignature = try await Resolver.resolve(RelayService.self)
-            .signRelayTransaction(
-                preparedTransaction,
-                config: FeeRelayerConfiguration(
-                    operationType: .sendViaLink, // TODO: - Received via link?
-                    currency: claimableTokenInfo.mintAddress,
-                    autoPayback: false
+        // do and catch error
+        do {
+            let feePayerAddress = try PublicKey(
+                string: try await feeRelayerAPIClient.getFeePayerPubkey()
+            )
+            
+            // prepare transaction, get recent blockchash
+            var (preparedTransaction, recentBlockhash) = try await(
+                sendViaLinkDataService.claim(
+                    token: claimableTokenInfo,
+                    receiver: receiver,
+                    feePayer: feePayerAddress
+                ),
+                solanaAPIClient.getRecentBlockhash()
+            )
+            
+            preparedTransaction.transaction.recentBlockhash = recentBlockhash
+            
+            // get feePayer's signature
+            let feePayerSignature = try await Resolver.resolve(RelayService.self)
+                .signRelayTransaction(
+                    preparedTransaction,
+                    config: FeeRelayerConfiguration(
+                        operationType: .sendViaLink, // TODO: - Received via link?
+                        currency: claimableTokenInfo.mintAddress,
+                        autoPayback: false
+                    )
+                )
+            
+            // sign transaction by user
+            try preparedTransaction.transaction.sign(signers: [claimableTokenInfo.keypair])
+            
+            // add feePayer's signature
+            try preparedTransaction.transaction.addSignature(
+                .init(
+                    signature: Data(Base58.decode(feePayerSignature)),
+                    publicKey: feePayerAddress
                 )
             )
-        
-        // sign transaction by user
-        try preparedTransaction.transaction.sign(signers: [claimableTokenInfo.keypair])
-        
-        // add feePayer's signature
-        try preparedTransaction.transaction.addSignature(
-            .init(
-                signature: Data(Base58.decode(feePayerSignature)),
-                publicKey: feePayerAddress
+            
+            // serialize transaction
+            let serializedTransaction = try preparedTransaction.transaction.serialize().base64EncodedString()
+            
+            // send to solanaBlockchain
+            return try await solanaAPIClient.sendTransaction(
+                transaction: serializedTransaction,
+                configs: RequestConfiguration(
+                    encoding: "base64",
+                    preflightCommitment: "confirmed"
+                )!
             )
-        )
-        
-        // serialize transaction
-        let serializedTransaction = try preparedTransaction.transaction.serialize().base64EncodedString()
-        
-        // send to solanaBlockchain
-        return try await solanaAPIClient.sendTransaction(transaction: serializedTransaction, configs: RequestConfiguration(encoding: "base64")!)
+        } catch {
+            // Prepare params
+            let data = await AlertLoggerDataBuilder.buildLoggerData(error: error)
+            
+            // alert
+            DefaultLogManager.shared.log(
+                event: "Link Claim iOS Alarm",
+                logLevel: .alert,
+                data: ClaimSentViaLinkAlertLoggerMessage(
+                    tokenToClaim: .init(
+                        name: token.name,
+                        mint: token.address,
+                        claimAmount: tokenAmount.toString(maximumFractionDigits: 9),
+                        currency: token.symbol
+                    ),
+                    userPubkey: data.userPubkey,
+                    platform: data.platform,
+                    appVersion: data.appVersion,
+                    timestamp: data.timestamp,
+                    simulationError: nil,
+                    feeRelayerError: data.feeRelayerError,
+                    blockchainError: data.blockchainError
+                )
+            )
+            
+            // rethrow error
+            throw error
+        }
     }
 }

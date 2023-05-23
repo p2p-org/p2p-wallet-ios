@@ -45,7 +45,7 @@ extension Resolver: ResolverRegistering {
 
     /// Application scope: Lifetime app's services
     @MainActor private static func registerForApplicationScope() {
-        register { SentryErrorObserver() }
+        register { DefaultLogManager.shared }
             .implements(ErrorObserver.self)
 
         // Application warmup manager
@@ -123,7 +123,7 @@ extension Resolver: ResolverRegistering {
 
         register { WormholeRPCAPI(endpoint: GlobalAppState.shared.bridgeEndpoint) }
             .implements(WormholeAPI.self)
-            .scope(.application)
+            .scope(.session)
 
         // AnalyticsManager
         register {
@@ -244,9 +244,9 @@ extension Resolver: ResolverRegistering {
 
         register { TokensRepository(
             endpoint: Defaults.apiEndPoint,
-            tokenListParser: .init(url: RemoteConfig.remoteConfig()
-                .tokenListURL ??
-                "https://raw.githubusercontent.com/p2p-org/solana-token-list/main/src/tokens/solana.tokenlist.json"),
+            tokenListParser: .init(
+                url: "https://raw.githubusercontent.com/p2p-org/solana-token-list/main/src/tokens/solana.tokenlist.json"
+            ),
             cache: resolve()
         ) }
         .implements(SolanaTokensRepository.self)
@@ -269,7 +269,7 @@ extension Resolver: ResolverRegistering {
         register { JWTTokenValidatorImpl() }
             .implements(JWTTokenValidator.self)
 
-        register { Web3(rpcURL: "https://eth-mainnet.g.alchemy.com/v2/a3NxxBPY4WUcsXnivRq-ikYKXFB67oXm") }
+        register { Web3(rpcURL: String.secretConfig("ETH_RPC")!) }
     }
 
     /// Session scope: Live when user is authenticated
@@ -334,16 +334,6 @@ extension Resolver: ResolverRegistering {
         .implements(SendViaLinkDataService.self)
         .scope(.session)
 
-        // SolanaSocket
-        register { Socket(url: URL(string: Defaults.apiEndPoint.socketUrl)!) }
-            .implements(SolanaSocket.self)
-            .scope(.session)
-
-        // AccountObservableService
-        register { SolananAccountsObservableServiceImpl(solanaSocket: resolve()) }
-            .implements(SolanaAccountsObservableService.self)
-            .scope(.session)
-
         // TransactionHandler (new)
         register { TransactionHandler() }
             .implements(TransactionHandlerType.self)
@@ -370,11 +360,12 @@ extension Resolver: ResolverRegistering {
                         solanaClient: resolve(),
                         wormholeAPI: resolve(),
                         relayService: resolve(),
+                        solanaTokenService: resolve(),
                         errorObserver: resolve(),
                         persistence: resolve()
                     ),
                     WormholeClaimUserActionConsumer(
-                        address: userWalletManager.wallet?.ethereumKeypair.publicKey,
+                        address: userWalletManager.wallet?.ethereumKeypair.address,
                         signer: userWalletManager.wallet?.ethereumKeypair,
                         wormholeAPI: resolve(),
                         ethereumTokenRepository: resolve(),
@@ -443,8 +434,8 @@ extension Resolver: ResolverRegistering {
                 solanaAPIClient: resolve(),
                 tokensService: resolve(),
                 priceService: resolve(),
-                accountObservableService: resolve(),
                 fiat: Defaults.fiat.rawValue,
+                proxyConfiguration: nil,
                 errorObservable: resolve()
             )
         }

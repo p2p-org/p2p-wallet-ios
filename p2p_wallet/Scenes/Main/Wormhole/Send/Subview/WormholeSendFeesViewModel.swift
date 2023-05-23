@@ -1,4 +1,5 @@
 import AnalyticsManager
+import Combine
 import Foundation
 import KeyAppBusiness
 import KeyAppKitCore
@@ -34,6 +35,8 @@ class WormholeSendFeesViewModel: BaseViewModel, ObservableObject {
     @Published var loading: Bool = false
     @Published var fees: [WormholeSendFees] = []
 
+    public var close = PassthroughSubject<Void, Never>()
+
     init(fees: [WormholeSendFees]) {
         self.fees = fees
     }
@@ -55,19 +58,18 @@ class WormholeSendFeesViewModel: BaseViewModel, ObservableObject {
                     .init(title: L10n.recipientSAddress, subtitle: adapter.recipientAddress, detail: ""),
                     .init(
                         title: L10n.recipientGets,
-                        subtitle: adapter.receive.crypto,
-                        detail: adapter.receive.fiat
+                        subtitle: adapter.receive?.crypto,
+                        detail: adapter.receive?.fiat
                     ),
                     .init(
-                        title: L10n.networkFee,
-                        subtitle: L10n.paidByKeyApp,
-                        detail: L10n.free,
-                        isFree: true
-                    ),
-                    .init(
-                        title: "Arbiter fee",
+                        title: L10n.usingWormholeBridge,
                         subtitle: adapter.arbiterFee?.crypto,
                         detail: adapter.arbiterFee?.fiat
+                    ),
+                    .init(
+                        title: L10n.total,
+                        subtitle: adapter.total?.crypto,
+                        detail: adapter.total?.fiat
                     ),
                 ].compactMap { $0 }
             }

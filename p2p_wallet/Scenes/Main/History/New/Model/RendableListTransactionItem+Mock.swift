@@ -77,7 +77,7 @@ extension MockedRendableListTransactionItem {
             icon: .single(URL(string: Token.renBTC.logoURI!)!),
             title: "Receive",
             subtitle: "From ...S39N",
-            detail: (.positive, "+$5 268.65"),
+            detail: (.unchanged, ""),
             subdetail: "+0.3271523 renBTC"
         )
     }

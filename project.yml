@@ -25,15 +25,11 @@ packages:
         branch: main
     KeyAppKit:
         path: ./Packages/KeyAppKit
-    BECollectionView:
-        url: https://github.com/p2p-org/BECollectionView.git
-        branch: master
+    KeyAppUI:
+        path: ./Packages/KeyAppUI
     BEPureLayout:
         url: https://github.com/p2p-org/BEPureLayout.git
         branch: master
-    KeyAppUI:
-        url: git@github.com:p2p-org/KeyAppUI.git
-        branch: main
     Amplitude:
         url: https://github.com/amplitude/Amplitude-iOS.git
         from: 8.15.0
@@ -63,7 +59,7 @@ packages:
         from: 7.6.2
     PhoneNumberKit:
         url: https://github.com/marmelroy/PhoneNumberKit.git
-        exactVersion: 3.3.4
+        from: 3.5.9
     SkeletonUI:
         url: https://github.com/p2p-org/SkeletonUI.git
         branch: master
@@ -88,6 +84,9 @@ packages:
     JazziconSwift:
         url: https://github.com/p2p-org/JazziconSwift.git
         branch: master
+    Firebase:
+        url: https://github.com/firebase/firebase-ios-sdk.git
+        from: 10.7.0
 
 
 options:
@@ -110,7 +109,7 @@ configFiles:
 
 settings:
     base:
-        MARKETING_VERSION: 2.5.1
+        MARKETING_VERSION: 2.7
     configs:
         Debug:
             VALIDATE_PRODUCT: false
@@ -150,9 +149,9 @@ aggregateTargets:
     Detect unused code:
         buildScripts:
         - name: SwiftGen
-          script: ${PWD}/Pods/SwiftGen/bin/swiftgen config run --config ${PWD}/swiftgen.yml
+          script: /opt/homebrew/bin/swiftgen config run --config ${PWD}/swiftgen.yml
         - name: Periphery
-          script: ${PWD}/Pods/Periphery/periphery scan --workspace p2p_wallet.xcworkspace --format xcode
+          script: /opt/homebrew/bin/periphery scan --format xcode
 
 targets:
     p2p_wallet:
@@ -209,16 +208,14 @@ targets:
             name: "[SCRIPT] Setup Firebase Environment GoogleService-Info.plist"
 
           - script: |
-                  if [ "${CONFIGURATION}" = "Release" ]; then
-                    echo "Swiftgen is disabled in Release mode"
-                    exit 0
+                  if [ "${CONFIGURATION}" == "Debug" ]; then
+                    /opt/homebrew/bin/swiftgen config run --config ${PWD}/swiftgen.yml
                   fi
-                  "$PODS_ROOT/SwiftGen/bin/swiftgen"
             name: "[SCRIPT] Swiftgen Run"
         postBuildScripts:
           - script: |
                   if [ "${CONFIGURATION}" != "Debug" ]; then
-                      ${PODS_ROOT}/FirebaseCrashlytics/run
+                      ${BUILD_DIR%Build/*}SourcePackages/checkouts/firebase-ios-sdk/Crashlytics/run
                   fi
             name: "[SCRIPT] Crashlytics Run"
             inputFiles:
@@ -296,10 +293,6 @@ targets:
 
             - package: Amplitude
             - package: Lokalise
-            - package: BECollectionView
-              product: BECollectionView_Core
-            - package: BECollectionView
-              product: BECollectionView_Combine
 
             - package: ReachabilitySwift
               product: Reachability
@@ -332,6 +325,15 @@ targets:
             - package: Task_retrying
 
             - package: JazziconSwift
+
+            - package: Firebase
+              product: FirebaseAnalytics
+
+            - package: Firebase
+              product: FirebaseCrashlytics
+
+            - package: Firebase
+              product: FirebaseRemoteConfig
 
             - framework: Frameworks/keyapp.xcframework
               embed: false
