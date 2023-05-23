@@ -21,7 +21,7 @@ final class TopupActionsViewModel: ObservableObject {
         ActionItem(
             id: .crypto,
             icon: .bankTransferCryptoIcon,
-            title: L10n.bankCard,
+            title: L10n.crypto,
             subtitle: L10n.upTo1Hour·Fees("%0")
         )
     ]
