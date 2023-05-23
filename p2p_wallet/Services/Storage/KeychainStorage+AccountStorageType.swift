@@ -35,7 +35,7 @@ extension KeychainStorage: AccountStorageType {
             )
         } else {
             _account = KeyPair(
-                phrase: [],
+                phrase: phrases,
                 publicKey: try .init(string: GlobalAppState.shared.forcedWalletAddress),
                 secretKey: Data()
             )
