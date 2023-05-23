@@ -1373,3 +1373,10 @@
 "Username was copied to clipboard" = "Tên người dùng đã được sao chép vào khay nhớ tạm";
 "Transaction fees" = "Phí giao dịch";
 "%@ is the minimum amount to receive from the Ethereum Network" = "%@ là số tiền tối thiểu để nhận được từ Mạng Ethereum";
+"Bank transfer" = "chuyển khoản ngân hàng";
+"Bank card" = "Thẻ ngân hàng";
+"Instant · %@ fees" = "Tức thời · %@ phí";
+"Crypto" = "tiền điện tử";
+"Up to 3 days · %@ fees" = "Tối đa 3 ngày · %@ phí";
+"Up to 1 hour · %@ fees" = "Tối đa 1 giờ · %@ phí";
+"bank card, bank transfer or crypto" = "thẻ ngân hàng, chuyển khoản ngân hàng hoặc tiền điện tử";

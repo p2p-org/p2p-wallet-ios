@@ -1,10 +1,3 @@
-//
-//  ActionsCoordinator.swift
-//  p2p_wallet
-//
-//  Created by Ivan on 18.08.2022.
-//
-
 import AnalyticsManager
 import Combine
 import Foundation
@@ -25,40 +18,19 @@ final class ActionsCoordinator: Coordinator<ActionsCoordinator.Result> {
 
     override func start() -> AnyPublisher<ActionsCoordinator.Result, Never> {
         let view = ActionsView()
-        transition.containerHeight = view.viewHeight
-        let viewController = view.asViewController()
-        let navigationController = UINavigationController(rootViewController: viewController)
-        viewController.view.layer.cornerRadius = 16
-        navigationController.transitioningDelegate = transition
-        navigationController.modalPresentationStyle = .custom
-        self.viewController.present(navigationController, animated: true)
-        
         let subject = PassthroughSubject<ActionsCoordinator.Result, Never>()
-        
-        transition.dismissed
-            .sink(receiveValue: {
-                DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) {
-                    subject.send(.cancel)
-                }
-            })
-            .store(in: &subscriptions)
-        transition.dimmClicked
-            .sink(receiveValue: {
-                viewController.dismiss(animated: true)
-            })
-            .store(in: &subscriptions)
-        view.cancel
-            .sink(receiveValue: {
-                viewController.dismiss(animated: true)
-            })
-            .store(in: &subscriptions)
+        let controller = BottomSheetController(rootView: view)
+        self.viewController.present(controller, animated: true)
+        controller.deallocatedPublisher().sink { _ in
+            subject.send(.cancel)
+        }.store(in: &subscriptions)
 
         view.action
             .sink(receiveValue: { [unowned self] actionType in
                 switch actionType {
-                case .buy:
+                case .buy, .topUp:
                     viewController.dismiss(animated: true) {
-                        subject.send(.action(type: .buy))
+                        subject.send(.action(type: actionType))
                     }
                 case .receive:
                     analyticsManager.log(event: .actionButtonReceive)

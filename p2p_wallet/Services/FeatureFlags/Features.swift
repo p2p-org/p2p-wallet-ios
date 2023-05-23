@@ -35,4 +35,6 @@ public extension Feature {
     static let sendViaLinkEnabled = Feature(rawValue: "send_via_link_enabled")
 
     static let solanaEthAddressEnabled = Feature(rawValue: "solana_eth_address_enabled")
+
+    static let bankTransfer = Feature(rawValue: "striga_enabled")
 }

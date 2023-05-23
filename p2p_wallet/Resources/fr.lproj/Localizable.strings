@@ -1371,3 +1371,10 @@
 "Username was copied to clipboard" = "Le nom d'utilisateur a été copié dans le presse-papiers";
 "Transaction fees" = "Les frais de transaction";
 "%@ is the minimum amount to receive from the Ethereum Network" = "%@ est le montant minimum à recevoir du réseau Ethereum";
+"Bank transfer" = "virement";
+"Bank card" = "carte bancaire";
+"Instant · %@ fees" = "Instantané · frais %@";
+"Crypto" = "Crypto";
+"Up to 3 days · %@ fees" = "Jusqu'à 3 jours · Frais %@";
+"Up to 1 hour · %@ fees" = "Jusqu'à 1 heure · Frais %@";
+"bank card, bank transfer or crypto" = "carte bancaire, virement bancaire ou crypto";

@@ -1,10 +1,3 @@
-//
-//  TokenDetailActionView.swift
-//  p2p_wallet
-//
-//  Created by Ivan on 10.08.2022.
-//
-
 import Combine
 import KeyAppUI
 import SwiftUI
@@ -13,9 +6,10 @@ import Sell
 import Resolver
 
 struct ActionsView: View {
+    @SwiftUI.Environment(\.presentationMode) var presentationMode
     @Injected private var sellDataService: any SellDataService
     @Injected private var walletsRepository: WalletsRepository
-    
+
     private let actionSubject = PassthroughSubject<Action, Never>()
     var action: AnyPublisher<Action, Never> { actionSubject.eraseToAnyPublisher() }
     private let cancelSubject = PassthroughSubject<Void, Never>()
@@ -24,6 +18,9 @@ struct ActionsView: View {
         available(.sellScenarioEnabled) &&
         sellDataService.isAvailable &&
         !walletsRepository.getWallets().isTotalAmountEmpty
+    }
+    var isBankTransferAvailable: Bool {
+        available(.bankTransfer)
     }
 
     var body: some View {
@@ -35,7 +32,7 @@ struct ActionsView: View {
                 .foregroundColor(Color(Asset.Colors.night.color))
                 .font(uiFont: .font(of: .text1, weight: .bold))
             VStack(spacing: 16) {
-                if isSellAvailable {
+                if isSellAvailable && !isBankTransferAvailable {
                     horizontalActionView(
                         image: .actionsCashOut,
                         title: L10n.cashOutCryptoToFiat,
@@ -46,23 +43,54 @@ struct ActionsView: View {
                     )
                     .frame(height: 80)
                 }
+
+                if isBankTransferAvailable && !isSellAvailable {
+                    horizontalActionView(
+                        image: .actionsTopupIcon,
+                        title: L10n.topUp,
+                        subtitle: L10n.bankCardBankTransferOrCrypto
+                    ) {
+                        actionSubject.send(.topUp)
+                    }
+                    .frame(height: 154)
+                }
+
                 HStack(spacing: 16) {
-                    actionView(
-                        image: .homeBuyAction,
-                        title: L10n.buy,
-                        subtitle: L10n.usingApplePayOrCreditCard,
-                        action: {
-                            actionSubject.send(.buy)
-                        }
-                    )
-                    actionView(
-                        image: .homeReceiveAction,
-                        title: L10n.receive,
-                        subtitle: L10n.fromAnotherWalletOrExchange,
-                        action: {
-                            actionSubject.send(.receive)
-                        }
-                    )
+                    if isBankTransferAvailable, isSellAvailable {
+                        actionView(
+                            image: .actionsCashOut,
+                            title: L10n.cashOut,
+                            subtitle: L10n.viaBankTransfer,
+                            action: {
+                                actionSubject.send(.cashOut)
+                            }
+                        )
+                        actionView(
+                            image: .actionsTopupIcon,
+                            title: L10n.topUp,
+                            subtitle: L10n.bankCardBankTransferOrCrypto,
+                            action: {
+                                actionSubject.send(.topUp)
+                            }
+                        )
+                    } else if !isBankTransferAvailable {
+                        actionView(
+                            image: .homeBuyAction,
+                            title: L10n.buy,
+                            subtitle: L10n.usingApplePayOrCreditCard,
+                            action: {
+                                actionSubject.send(.buy)
+                            }
+                        )
+                        actionView(
+                            image: .homeReceiveAction,
+                            title: L10n.receive,
+                            subtitle: L10n.fromAnotherWalletOrExchange,
+                            action: {
+                                actionSubject.send(.receive)
+                            }
+                        )
+                    }
                 }
                 HStack(spacing: 16) {
                     actionView(
@@ -83,9 +111,10 @@ struct ActionsView: View {
                     )
                 }
             }
+
             Button(
                 action: {
-                    cancelSubject.send()
+                    presentationMode.wrappedValue.dismiss()
                 },
                 label: {
                     Text(L10n.cancel)
@@ -97,9 +126,10 @@ struct ActionsView: View {
                         .cornerRadius(12)
                 }
             )
+            Spacer()
         }
         .padding(.horizontal, 16)
-        .padding(.bottom, 16)
+        .padding(.bottom, 50)
         .padding(.top, 6)
         .previewLayout(.sizeThatFits)
     }
@@ -193,19 +223,10 @@ struct ActionsView: View {
 extension ActionsView {
     enum Action {
         case buy
+        case topUp
         case receive
         case swap
         case send
         case cashOut
-    }
-}
-
-// MARK: - View Height
-
-extension ActionsView {
-    var viewHeight: CGFloat {
-        (UIScreen.main.bounds.width - 16 * 3)
-        + (UIApplication.shared.kWindow?.safeAreaInsets.bottom ?? 0) + 210
-        + (isSellAvailable ? 100 : 0)
     }
 }
