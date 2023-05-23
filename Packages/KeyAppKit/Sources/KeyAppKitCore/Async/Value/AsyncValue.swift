@@ -156,8 +156,13 @@ public class AsyncValue<T> {
 
             // Initialising failure
             if state.status == .initializing, error != nil, value == nil {
-                state.status = .initializing
-                stateSubject.send(state)
+                if error != nil {
+                    state.status = .ready
+                    stateSubject.send(state)
+                } else {
+                    state.status = .initializing
+                    stateSubject.send(state)
+                }
             } else {
                 state.status = .ready
                 stateSubject.send(state)
