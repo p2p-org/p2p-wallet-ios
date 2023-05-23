@@ -1,14 +1,8 @@
-//
-//  WalletActionType.swift
-//  p2p_wallet
-//
-//  Created by Andrew Vasiliev on 19.01.2022.
-//
-
 import UIKit
 
 enum WalletActionType {
     case receive
+    case topUp
     case buy
     case send
     case swap
@@ -16,6 +10,8 @@ enum WalletActionType {
 
     var text: String {
         switch self {
+        case .topUp:
+            return L10n.topUp
         case .receive:
             return L10n.receive
         case .buy:
@@ -25,12 +21,14 @@ enum WalletActionType {
         case .swap:
             return L10n.swap
         case .cashOut:
-            return "Cash out"
+            return L10n.cashOut
         }
     }
 
     var icon: UIImage {
         switch self {
+        case .topUp:
+            return .homeBuy
         case .receive:
             return .homeReceive
         case .buy:

@@ -1335,3 +1335,10 @@
 "Username was copied to clipboard" = "Username was copied to clipboard";
 "Transaction fees" = "Transaction fees";
 "%@ is the minimum amount to receive from the Ethereum Network" = "%@ is the minimum amount to receive from the Ethereum Network";
+"Bank transfer" = "Bank transfer";
+"Bank card" = "Bank card";
+"Instant · %@ fees" = "Instant · %@ fees";
+"Crypto" = "Crypto";
+"Up to 3 days · %@ fees" = "Up to 3 days · %@ fees";
+"Up to 1 hour · %@ fees" = "Up to 1 hour · %@ fees";
+"bank card, bank transfer or crypto" = "bank card, bank transfer or crypto";

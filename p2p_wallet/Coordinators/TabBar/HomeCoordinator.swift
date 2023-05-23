@@ -22,6 +22,7 @@ enum HomeNavigation: Equatable {
     case actions([WalletActionType])
     // HomeEmpty
     case topUpCoin(Token)
+    case topUp // Bank transfer flow
     // Error
     case error(show: Bool)
 }
@@ -106,7 +107,7 @@ final class HomeCoordinator: Coordinator<Void> {
             return coordinate(to: BuyCoordinator(navigationController: navigationController, context: .fromHome))
                 .map { _ in () }
                 .eraseToAnyPublisher()
-        case let .receive(publicKey):
+        case let .receive(_):
             if available(.ethAddressEnabled) {
                 let coordinator = SupportedTokensCoordinator(
                     presentation: SmartCoordinatorPushPresentation(navigationController)
@@ -115,7 +116,7 @@ final class HomeCoordinator: Coordinator<Void> {
                     .eraseToAnyPublisher()
             } else {
                 let coordinator = ReceiveCoordinator(
-                    network: .solana(tokenSymbol: "SOL", tokenImage: .image(.solanaIcon)),
+                    network: .solana(tokenSymbol: Token.nativeSolana.symbol, tokenImage: .image(.solanaIcon)),
                     presentation: SmartCoordinatorPushPresentation(navigationController)
                 )
                 return coordinate(to: coordinator).eraseToAnyPublisher()
@@ -228,7 +229,7 @@ final class HomeCoordinator: Coordinator<Void> {
             )
             .map { _ in () }
             .eraseToAnyPublisher()
-        case .actions:
+        case .actions, .topUp:
             return Just(())
                 .eraseToAnyPublisher()
         case let .topUpCoin(token):

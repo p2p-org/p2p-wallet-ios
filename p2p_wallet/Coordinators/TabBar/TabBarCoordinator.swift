@@ -1,10 +1,3 @@
-//
-//  TabBarCoordinator.swift
-//  p2p_wallet
-//
-//  Created by Ivan on 16.11.2022.
-//
-
 import AnalyticsManager
 import Combine
 import Foundation
@@ -127,6 +120,13 @@ final class TabBarCoordinator: Coordinator<Void> {
             })
             .store(in: &subscriptions)
 
+        homeCoordinator.navigation
+            .filter { $0 == .topUp }
+            .sink(receiveValue: { [unowned self] _ in
+                self.handleAction(.topUp)
+            })
+            .store(in: &subscriptions)
+
         // scroll to top when home tab clicked twice
         tabBarController.homeTabClickedTwicely
             .sink(receiveValue: { [weak homeCoordinator] in
@@ -233,6 +233,26 @@ final class TabBarCoordinator: Coordinator<Void> {
         tabBarController.present(vc, animated: true)
     }
 
+    private func handleTopUpAction(_ action: TopupActionsViewModel.Action) {
+        guard
+            let navigationController = tabBarController.selectedViewController as? UINavigationController
+        else { return }
+
+        switch action {
+        case .card:
+            let buyCoordinator = BuyCoordinator(
+                navigationController: navigationController,
+                context: .fromHome
+            )
+            coordinate(to: buyCoordinator).sink {}.store(in: &subscriptions)
+        case .crypto:
+            self.handleAction(.receive)
+        case .transfer:
+            // TODO: Put Bank transfer here
+            break
+        }
+    }
+
     /// Handle actions given by Actions button
     private func handleAction(_ action: ActionsView.Action) {
         guard
@@ -245,9 +265,19 @@ final class TabBarCoordinator: Coordinator<Void> {
                 navigationController: navigationController,
                 context: .fromHome
             )
-            coordinate(to: buyCoordinator)
-                .sink(receiveValue: {})
+            coordinate(to: buyCoordinator).sink {}.store(in: &subscriptions)
+        case .topUp:
+            let topUpCoordinator = TopupCoordinator(navigationController: navigationController)
+            coordinate(to: topUpCoordinator)
+                .sink(receiveValue: { [weak self] result in
+                    switch result {
+                    case .action(let action):
+                        self?.handleTopUpAction(action)
+                    case .cancel: break
+                    }
+                })
                 .store(in: &subscriptions)
+            
         case .receive:
             if available(.ethAddressEnabled) {
                 let coordinator =

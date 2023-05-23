@@ -1368,3 +1368,10 @@
 "Username was copied to clipboard" = "Имя пользователя было скопировано в буфер обмена";
 "Transaction fees" = "Операционные издержки";
 "%@ is the minimum amount to receive from the Ethereum Network" = "%@ — минимальная сумма для получения от сети Ethereum.";
+"Bank transfer" = "банковский перевод";
+"Bank card" = "банковская карта";
+"Instant · %@ fees" = "Мгновенная · Комиссия %@";
+"Crypto" = "Крипто";
+"Up to 3 days · %@ fees" = "До 3 дней · Плата %@";
+"Up to 1 hour · %@ fees" = "До 1 часа · Плата %@";
+"bank card, bank transfer or crypto" = "банковская карта, банковский перевод или криптовалюта";
