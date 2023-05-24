@@ -1,14 +1,34 @@
 import Combine
 import Foundation
 
-public final class StrigaBankTransferService: BankTransferService {
+private extension String {
+    static let expectedIncomingTxVolumeYearly = "MORE_THAN_15000_EUR"
+    static let expectedOutgoingTxVolumeYearly = "MORE_THAN_15000_EUR"
+    static let purposeOfAccount = "CRYPTO_PAYMENTS"
+}
 
-    public var userData: AnyPublisher<UserData, Never> { subject.eraseToAnyPublisher() }
-
+public final class StrigaBankTransferService {
+    
+    // Dependencies
+    private let strigaProvider: IStrigaProvider
+    
+    // Subjects
     let subject = CurrentValueSubject<UserData, Never>(
         UserData(countryCode: nil, userId: nil, mobileVerified: false)
     )
+    
+    // MARK: - Init
+    
+    public init(strigaProvider: IStrigaProvider) {
+        self.strigaProvider = strigaProvider
+    }
+}
 
+// MARK: - BankTransferService
+
+extension StrigaBankTransferService: BankTransferService {
+    public var userData: AnyPublisher<UserData, Never> { subject.eraseToAnyPublisher() }
+    
     public func reload() async {
         fatalError("Not implemented")
     }
@@ -22,8 +42,38 @@ public final class StrigaBankTransferService: BankTransferService {
 
     }
 
-    public func save(regData: RegistrationData) async throws {
-        fatalError("Not implemented")
+    public func createUser(data: RegistrationData) async throws {
+        let model = CreateUserRequest(
+            firstName: data.firstName,
+            lastName: data.lastName,
+            email: data.email,
+            mobile: CreateUserRequest.Mobile(countryCode: data.phoneCountryCode, number: data.phoneNumber),
+            dateOfBirth: CreateUserRequest.DateOfBirth(year: nil, month: nil, day: nil),
+            address: CreateUserRequest.Address(
+                addressLine1: nil,
+                addressLine2: nil,
+                city: nil,
+                postalCode: nil,
+                state: nil,
+                country: nil
+            ),
+            occupation: data.occupation,
+            sourceOfFunds: nil,
+            ipAddress: nil,
+            placeOfBirth: data.placeOfBirth,
+            expectedIncomingTxVolumeYearly: .expectedIncomingTxVolumeYearly,
+            expectedOutgoingTxVolumeYearly: .expectedOutgoingTxVolumeYearly,
+            selfPepDeclaration: false,
+            purposeOfAccount: .purposeOfAccount
+        )
+        Task {
+            do {
+                let response = try await strigaProvider.createUser(model: model)
+                debugPrint("---response: ", response)
+            } catch {
+                debugPrint("---error: ", error)
+            }
+        }
     }
 
     public func getOTP() async throws {

@@ -9,7 +9,8 @@ import Foundation
 import KeyAppNetworking
 
 enum StrigaEndpoint {
-    case verifyMobileNumber(userId: String, verificationCode: String)
+    case verifyMobileNumber(authHeader: AuthHeader, userId: String, verificationCode: String)
+    case createUser(authHeader: AuthHeader, model: CreateUserRequest)
 }
 
 // MARK: - HTTPEndpoint
@@ -22,7 +23,8 @@ extension StrigaEndpoint: HTTPEndpoint {
     var header: [String: String] {
         [
             "Content-Type": "application/json",
-            "User-id": ""
+            "User-PublicKey": authHeader.pubKey,
+            "Signed-Message": authHeader.signedMessage
         ]
     }
     
@@ -30,20 +32,24 @@ extension StrigaEndpoint: HTTPEndpoint {
         switch self {
         case .verifyMobileNumber:
             return "verify-mobile"
+        case .createUser:
+            return "create"
         }
     }
 
     var method: HTTPMethod {
         switch self {
-        case .verifyMobileNumber:
+        case .verifyMobileNumber, .createUser:
             return .post
         }
     }
 
     var body: String? {
         switch self {
-        case let .verifyMobileNumber(userId, verificationCode):
+        case let .verifyMobileNumber(_, userId, verificationCode):
             return ["userId": userId, "verificationCode": verificationCode].encoded
+        case let .createUser(_, model):
+            return model.encoded
         }
     }
 }
@@ -53,13 +59,22 @@ extension StrigaEndpoint: HTTPEndpoint {
 private extension StrigaEndpoint {
     var urlEnvironment: String {
         switch self {
-        case .verifyMobileNumber:
+        case .verifyMobileNumber, .createUser:
             return "payment.keyapp.org/striga"
         }
     }
     
     var version: String {
         "v1"
+    }
+    
+    var authHeader: AuthHeader {
+        switch self {
+        case let .verifyMobileNumber(authHeader, _, _):
+            return authHeader
+        case let .createUser(authHeader, _):
+            return authHeader
+        }
     }
 }
 
@@ -77,5 +92,14 @@ private extension Encodable {
         encoder.keyEncodingStrategy = strategy
         guard let data = try? encoder.encode(self) else { return nil }
         return String(data: data, encoding: .utf8)
+    }
+}
+
+// MARK: - Auth Header
+
+extension StrigaEndpoint {
+    struct AuthHeader {
+        let pubKey: String
+        let signedMessage: String
     }
 }
