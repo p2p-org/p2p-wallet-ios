@@ -23,8 +23,16 @@ public final class StrigaMockBankTransferService: BankTransferService {
         self._userData = userData
     }
 
+    public func set(countryCode: String) throws {
+        self._userData = UserData(
+            countryCode: countryCode,
+            userId: _userData.userId,
+            mobileVerified: _userData.mobileVerified
+        )
+    }
+
     public func isBankTransferAvailable() -> Bool {
-        return true
+        return false
     }
 
     public func getRegistrationData() async -> RegistrationData {

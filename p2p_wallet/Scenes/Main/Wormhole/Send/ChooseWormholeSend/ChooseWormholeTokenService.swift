@@ -6,7 +6,9 @@ import SolanaSwift
 import Wormhole
 
 final class ChooseWormholeTokenService: ChooseItemService {
-    let otherTokensTitle = L10n.otherTokens
+
+    let otherTitle = L10n.chosenToken
+    let chosenTitle = L10n.otherTokens
 
     var state: AnyPublisher<AsyncValueState<[ChooseItemListSection]>, Never> {
         statePublisher.eraseToAnyPublisher()

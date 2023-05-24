@@ -24,7 +24,7 @@ struct BankTransferInfoView: View {
             ForEach(viewModel.items, id: \.id) { item in
                 AnyRenderable(item: item)
                     .onTapGesture {
-//                        viewModel.itemTapped(item)
+                        viewModel.itemTapped(item: item)
                     }
             }
             .padding(.horizontal, 20)

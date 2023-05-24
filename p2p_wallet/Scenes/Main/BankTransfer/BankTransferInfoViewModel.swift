@@ -1,16 +1,23 @@
 import BankTransfer
 import CountriesAPI
+import Combine
 import SwiftUI
-import Foundation
 import Resolver
 import KeyAppUI
 
 final class BankTransferInfoViewModel: BaseViewModel, ObservableObject {
 
+    // MARK: -
+
+    var showCountries: AnyPublisher<([Country], Country?), Never> {
+        showCountriesSubject.eraseToAnyPublisher()
+    }
+
     // MARK: - Dependencies
 
     @Injected private var bankTransferService: BankTransferService
     @Injected private var countriesService: CountriesAPI
+    @Injected private var helpLauncher: HelpCenterLauncher
 
     // MARK: -
 
@@ -18,6 +25,7 @@ final class BankTransferInfoViewModel: BaseViewModel, ObservableObject {
 
     // MARK: -
 
+    private var showCountriesSubject = PassthroughSubject<([Country], Country?), Never>()
     private var currentCountry: Country? {
         didSet {
             self.items = self.makeItems()
@@ -30,16 +38,16 @@ final class BankTransferInfoViewModel: BaseViewModel, ObservableObject {
         bind()
     }
 
+    func setCountry(_ country: Country) {
+        self.currentCountry = country
+    }
+
     func bind() {
         Task {
             do {
                 self.currentCountry = try await countriesService.currentCountryName()
             } catch {
-//                DefaultLogManager.shared.log(
-//                    event: "BankTransferInfoViewModel",
-//                    data: "CountriesService:currentCountryName",
-//                    logLevel: .error
-//                )
+                DefaultLogManager.shared.log(error: error)
             }
         }
 
@@ -69,7 +77,9 @@ final class BankTransferInfoViewModel: BaseViewModel, ObservableObject {
                 ButtonListCellItem(
                     leadingImage: nil,
                     title: L10n.continue,
-                    action: {},
+                    action: { [weak self] in
+                        self?.submitCountry()
+                    },
                     style: .primary,
                     trailingImage: Asset.MaterialIcon.arrowRight.image.withTintColor(Asset.Colors.lime.color)
                 ),
@@ -88,7 +98,9 @@ final class BankTransferInfoViewModel: BaseViewModel, ObservableObject {
                 ButtonListCellItem(
                     leadingImage: nil,
                     title: L10n.changeCountry,
-                    action: {},
+                    action: { [weak self] in
+                        self?.openCountries()
+                    },
                     style: .primary,
                     trailingImage: nil
                 ),
@@ -100,13 +112,33 @@ final class BankTransferInfoViewModel: BaseViewModel, ObservableObject {
     // MARK: -
 
     func itemTapped(item: any Identifiable) {
-        
+        if nil != item as? BankTransferInfoCountriesTextCellViewItem {
+            helpLauncher.launch()
+        }
     }
-    
+
     // MARK: - actions
 
     private func openCountries() {
-        
+        Task {
+            do {
+                let countries = try await self.countriesService.fetchCountries()
+                self.showCountriesSubject.send((countries, self.currentCountry))
+            } catch {
+                DefaultLogManager.shared.log(error: error)
+            }
+        }
+    }
+
+    private func submitCountry() {
+        guard let code = self.currentCountry?.code else {
+            return
+        }
+        do {
+            try self.bankTransferService.set(countryCode: code)
+        } catch {
+            DefaultLogManager.shared.log(error: error)
+        }
     }
 
 }
