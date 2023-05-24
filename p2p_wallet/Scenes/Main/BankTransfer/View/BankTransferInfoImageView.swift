@@ -1,12 +1,12 @@
 import SwiftUI
 import KeyAppUI
 
-struct BankTransferInfoImageViewCellItem: Identifiable {
+struct BankTransferInfoImageCellViewItem: Identifiable {
     var id: String = UUID().uuidString
     var image: UIImage
 }
 
-extension BankTransferInfoImageViewCellItem: Renderable {
+extension BankTransferInfoImageCellViewItem: Renderable {
     func render() -> some View {
         BankTransferInfoImageView(image: image)
     }
@@ -29,12 +29,12 @@ struct BankTransferInfoImageView_Previews: PreviewProvider {
 
 // MARK: - Title
 
-struct BankTransferTitleCellItem: Identifiable {
+struct BankTransferTitleCellViewItem: Identifiable {
     var id: String { title }
     var title: String
 }
 
-extension BankTransferTitleCellItem: Renderable {
+extension BankTransferTitleCellViewItem: Renderable {
     func render() -> some View {
         BankTransferTitleCellView(title: title)
     }
@@ -54,13 +54,13 @@ struct BankTransferTitleCellView: View {
 
 // MARK: - Country
 
-struct BankTransferCountryCellItem: Identifiable {
+struct BankTransferCountryCellViewItem: Identifiable {
     var id: String { name + flag }
     var name: String
     var flag: String
 }
 
-extension BankTransferCountryCellItem: Renderable {
+extension BankTransferCountryCellViewItem: Renderable {
     func render() -> some View {
         BankTransferCountryCellView(name: name, flag: flag)
     }
@@ -102,11 +102,11 @@ struct BankTransferCountryCellView: View {
 
 // MARK: -
 
-struct BankTransferInfoCountriesTextCellItem: Identifiable {
+struct BankTransferInfoCountriesTextCellViewItem: Identifiable {
     var id: String = UUID().uuidString
 }
 
-extension BankTransferInfoCountriesTextCellItem: Renderable {
+extension BankTransferInfoCountriesTextCellViewItem: Renderable {
     func render() -> some View {
         BankTransferInfoCountriesTextCellView()
     }
@@ -127,14 +127,14 @@ struct BankTransferInfoCountriesTextCellView: View {
 
 // MARK: - Check list of countries
 
-struct CenterTextCellItem: Identifiable {
+struct CenterTextCellViewItem: Identifiable {
     var id: String = UUID().uuidString
     let text: String
     let style: UIFont.Style
     let color: Color
 }
 
-extension CenterTextCellItem: Renderable {
+extension CenterTextCellViewItem: Renderable {
     func render() -> some View {
         CenterTextCellItemView(text: text, style: style, color: color)
     }

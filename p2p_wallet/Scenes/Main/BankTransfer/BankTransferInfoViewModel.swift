@@ -52,18 +52,19 @@ final class BankTransferInfoViewModel: BaseViewModel, ObservableObject {
     }
 
     private func makeItems() -> [any Renderable] {
-        let countryCell = BankTransferCountryCellItem(
+        let countryCell = BankTransferCountryCellViewItem(
             name: self.currentCountry?.name ?? "",
             flag: self.currentCountry?.emoji ?? "🏴"
         )
         if self.bankTransferService.isBankTransferAvailable() {
             return [
-                BankTransferInfoImageViewCellItem(image: .bankTransferInfoAvailableIcon),
-                BankTransferTitleCellItem(title: L10n.openIBANAccountForInternationalTransfersWithZeroFees),
+                BankTransferInfoImageCellViewItem(image: .bankTransferInfoAvailableIcon),
+                ListSpacerCellViewItem(height: 12, backgroundColor: .clear),
+                BankTransferTitleCellViewItem(title: L10n.openIBANAccountForInternationalTransfersWithZeroFees),
                 ListSpacerCellViewItem(height: 16, backgroundColor: .clear),
                 countryCell,
                 ListSpacerCellViewItem(height: 24, backgroundColor: .clear),
-                CenterTextCellItem(text: L10n.poweredByStriga, style: .text3, color: Color(Asset.Colors.sky.color)),
+                CenterTextCellViewItem(text: L10n.poweredByStriga, style: .text3, color: Color(Asset.Colors.sky.color)),
                 ListSpacerCellViewItem(height: 40, backgroundColor: .clear),
                 ButtonListCellItem(
                     leadingImage: nil,
@@ -76,11 +77,11 @@ final class BankTransferInfoViewModel: BaseViewModel, ObservableObject {
             ]
         } else {
             return [
-                BankTransferInfoImageViewCellItem(image: .bankTransferInfoUnavailableIcon),
+                BankTransferInfoImageCellViewItem(image: .bankTransferInfoUnavailableIcon),
                 ListSpacerCellViewItem(height: 27, backgroundColor: .clear),
-                BankTransferTitleCellItem(title: L10n.thisServiceIsAvailableOnlyForEuropeanEconomicAreaCountries),
+                BankTransferTitleCellViewItem(title: L10n.thisServiceIsAvailableOnlyForEuropeanEconomicAreaCountries),
                 ListSpacerCellViewItem(height: 27, backgroundColor: .clear),
-                BankTransferInfoCountriesTextCellItem(),
+                BankTransferInfoCountriesTextCellViewItem(),
                 ListSpacerCellViewItem(height: 26, backgroundColor: .clear),
                 countryCell,
                 ListSpacerCellViewItem(height: 56, backgroundColor: .clear),
