@@ -130,7 +130,31 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         continue userActivity: NSUserActivity,
         restorationHandler: @escaping ([UIUserActivityRestoring]?) -> Void
     ) -> Bool {
-        return proxyAppDelegate.application(application, continue: userActivity, restorationHandler: restorationHandler)
+        proxyAppDelegate.application(application, continue: userActivity, restorationHandler: restorationHandler)
+    }
+    
+    func application(_ application: UIApplication, performActionFor shortcutItem: UIApplicationShortcutItem, completionHandler: @escaping (Bool) -> Void) {
+        proxyAppDelegate.application(application, performActionFor: shortcutItem, completionHandler: completionHandler)
+    }
+    
+    func applicationDidEnterBackground(_ application: UIApplication) {
+        proxyAppDelegate.applicationDidEnterBackground(application)
+    }
+    
+    func applicationWillEnterForeground(_ application: UIApplication) {
+        proxyAppDelegate.applicationWillEnterForeground(application)
+    }
+    
+    func applicationWillResignActive(_ application: UIApplication) {
+        proxyAppDelegate.applicationWillResignActive(application)
+    }
+    
+    func applicationDidReceiveMemoryWarning(_ application: UIApplication) {
+        proxyAppDelegate.applicationDidReceiveMemoryWarning(application)
+    }
+    
+    func applicationWillTerminate(_ application: UIApplication) {
+        proxyAppDelegate.applicationWillTerminate(application)
     }
 
     func application(

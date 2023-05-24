@@ -1,7 +1,7 @@
 name: Add devices to Firebase's future build
 
 on:
-  workflow_call:
+  workflow_dispatch:
     inputs:
       devices_json_string:
         required: true
@@ -14,17 +14,44 @@ jobs:
     runs-on: macos-12
     steps:
 
+      - name: Check out current branch
+        uses: actions/checkout@v3
+        with:
+          ref: ${{ inputs.branch != '' && inputs.branch || github.event.pull_request.head.ref }}
+          # submodules: recursive
+          # token: ${{ secrets.GITHUB_TOKEN }}
+
       - name: Add devices
         uses: maierj/fastlane-action@v2.2.0
         with:
           lane: 'add_devices'
         env:
-          NEW_DEVICES_JSON_STRING: '${{ inputs.devices_json_string}}'
-          PROVISIONING_REPO: '${{ secrets.PROVISIONING_REPO }}'
           DEVELOPER_APP_IDENTIFIER: '${{ secrets.DEVELOPER_APP_IDENTIFIER }}'
-          GIT_AUTHORIZATION: '${{ secrets.GIT_AUTHORIZATION }}'
+          APP_STORE_CONNECT_TEAM_ID: '${{ secrets.APP_STORE_CONNECT_TEAM_ID }}'
+          DEVELOPER_PORTAL_TEAM_ID: '${{ secrets.DEVELOPER_PORTAL_TEAM_ID }}'
+          DEVELOPER_APP_ID: '${{ secrets.DEVELOPER_APP_ID }}'
+          DEVELOPER_APP_ID_TEST: '${{ secrets.DEVELOPER_APP_ID_TEST }}'
+          PROVISIONING_PROFILE_SPECIFIER_ADHOC: '${{ secrets.PROVISIONING_PROFILE_SPECIFIER_ADHOC }}'
+          PROVISIONING_PROFILE_SPECIFIER_APPSTORE: '${{ secrets.PROVISIONING_PROFILE_SPECIFIER_APPSTORE }}'
+          APPLE_ISSUER_ID: '${{ secrets.APPLE_ISSUER_ID }}'
+          PROVISIONING_REPO: '${{ secrets.PROVISIONING_REPO }}'
+          FIREBASE_APP_ID: '${{ secrets.FIREBASE_APP_ID }}'
+          FIREBASE_APP_ID_TEST: '${{ secrets.FIREBASE_APP_ID_TEST }}'
+          FIREBASE_CLI_TOKEN: '${{ secrets.FIREBASE_CLI_TOKEN }}'
+          BROWSERSTACK_USERNAME: '${{ secrets.BROWSERSTACK_USERNAME }}'
+          BROWSERSTACK_ACCESS_KEY: '${{ secrets.BROWSERSTACK_ACCESS_KEY }}'
+          FASTLANE_APPLE_ID: '${{ secrets.FASTLANE_APPLE_ID }}'
           TEMP_KEYCHAIN_USER: '${{ secrets.TEMP_KEYCHAIN_USER }}'
           TEMP_KEYCHAIN_PASSWORD: '${{ secrets.TEMP_KEYCHAIN_PASSWORD }}'
           APPLE_KEY_ID: '${{ secrets.APPLE_KEY_ID }}'
-          APPLE_ISSUER_ID: '${{ secrets.APPLE_ISSUER_ID }}'
           APPLE_KEY_CONTENT: '${{ secrets.APPLE_KEY_CONTENT }}'
+          GIT_AUTHORIZATION: '${{ secrets.GIT_AUTHORIZATION }}'
+          MATCH_PASSWORD: '${{ secrets.MATCH_PASSWORD }}'
+          IS_CI: '${{ secrets.IS_CI }}'
+          SLACK_API_TOKEN: '${{ secrets.SLACK_API_TOKEN }}'
+          JIRA_BASE_URL: '${{ secrets.JIRA_BASE_URL }}'
+          XCCONFIG_URL: '${{ secrets.XCCONFIG_URL }}'
+          GIT_CHANGELOG: '${{ env.GIT_CHANGES }}'
+          SENTRY_TOKEN: '${{ secrets.SENTRY_TOKEN }}'
+          BROWSERSTACK_USERNAME_NEW: '${{ secrets.BROWSERSTACK_USERNAME_NEW }}'
+          BROWSERSTACK_ACCESS_KEY_NEW: '${{ secrets.BROWSERSTACK_ACCESS_KEY_NEW }}'

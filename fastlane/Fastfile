@@ -107,7 +107,8 @@ def create_release_build(match_type, configuration)
     readonly: false,
     keychain_name: TEMP_KEYCHAIN_USER,
     keychain_password: TEMP_KEYCHAIN_PASSWORD,
-    api_key: api_key
+    api_key: api_key,
+    force_for_new_devices: true
   )
 
   gym(
@@ -116,6 +117,7 @@ def create_release_build(match_type, configuration)
     export_method: match_type,
     export_xcargs: '-allowProvisioningUpdates',
     silent: true,
+    disable_package_automatic_updates: true,
     export_options: {
       provisioningProfiles: {
         appId => profileSpecifier
@@ -417,11 +419,21 @@ platform :ios do
       devices: devices
     )
 
+    # login to appstore connect
+    api_key = app_store_connect_api_key(
+      key_id: APPLE_KEY_ID,
+      issuer_id: APPLE_ISSUER_ID,
+      key_content: APPLE_KEY_CONTENT,
+      is_key_content_base64: true,
+      duration: 1200,
+      in_house: false
+    )
+
     # match
     match(
       type: "adhoc",
       git_url: PROVISIONING_REPO,
-      app_identifier: "#{appIdentifier}",
+      app_identifier: DEVELOPER_APP_IDENTIFIER,
       git_basic_authorization: Base64.strict_encode64(GIT_AUTHORIZATION),
       readonly: false,
       keychain_name: TEMP_KEYCHAIN_USER,
