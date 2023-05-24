@@ -34,6 +34,7 @@ final class BankTransferCoordinator: Coordinator<Void> {
 
         viewModel.showCountries.flatMap { val in
             self.coordinate(to: ChooseItemCoordinator<Country>(
+                title: L10n.selectYourCountry,
                 controller: controller,
                 service: ChooseCountryService(countries: val.0),
                 chosen: val.1 ?? .init(name: "", code: "", dialCode: "", emoji: "")
