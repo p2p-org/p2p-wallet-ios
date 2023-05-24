@@ -22,17 +22,19 @@ public final class StrigaMockBankTransferService: BankTransferService {
 
     public func getRegistrationData() async -> RegistrationData {
         return RegistrationData(
-            email: "test@test.test",
-            firstName: "",
-            surname: "",
-            dateOfBirth: Date(),
-            placeOfBirth: "",
-            occupation: "",
-            placeOfLive: ""
+            firstName: "test@test.test",
+            lastName: "",
+            email: "",
+            phoneCountryCode: "",
+            phoneNumber: "",
+            dateOfBirth: nil,
+            placeOfBirth: nil,
+            occupation: nil,
+            placeOfLive: nil
         )
     }
 
-    public func save(regData: RegistrationData) async throws {
+    public func createUser(data: RegistrationData) async throws {
         throw NSError()
     }
 
