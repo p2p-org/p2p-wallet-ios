@@ -1,7 +1,7 @@
 name: Add devices to Firebase's future build
 
 on:
-  workflow_call:
+  workflow_dispatch:
     inputs:
       devices_json_string:
         required: true
