@@ -17,7 +17,6 @@ struct BankTransferInfoImageView: View {
 
     var body: some View {
         Image(uiImage: image)
-//            .resizable()
             .fixedSize()
     }
 }
@@ -31,7 +30,7 @@ struct BankTransferInfoImageView_Previews: PreviewProvider {
 // MARK: - Title
 
 struct BankTransferTitleCellItem: Identifiable {
-    var id: String = UUID().uuidString
+    var id: String { title }
     var title: String
 }
 
@@ -56,7 +55,7 @@ struct BankTransferTitleCellView: View {
 // MARK: - Country
 
 struct BankTransferCountryCellItem: Identifiable {
-    var id: String = UUID().uuidString
+    var id: String { name + flag }
     var name: String
     var flag: String
 }
@@ -75,7 +74,7 @@ struct BankTransferCountryCellView: View {
         HStack(spacing: 10) {
             flagView
                 .padding(.leading, 14)
-            VStack(alignment: .leading, spacing: 4) {
+            VStack(alignment: .leading, spacing: 6) {
                 Text(name)
                     .fontWeight(.semibold)
                     .apply(style: .text3)
@@ -87,12 +86,11 @@ struct BankTransferCountryCellView: View {
             Spacer()
             Image(uiImage: Asset.MaterialIcon.chevronRight.image)
                 .foregroundColor(Color(Asset.Colors.mountain.color))
-                .padding(.trailing, 25)
+                .padding(.trailing, 19)
         }
-        .padding(.vertical, 12)
+        .padding(.vertical, 10)
         .background(Color(Asset.Colors.snow.color))
         .cornerRadius(radius: 12, corners: .allCorners)
-        .padding(.horizontal, 20)
     }
 
     var flagView: some View {

@@ -28,6 +28,7 @@ struct ButtonListCellView: View {
     let action: () -> Void
     let style: TextButton.Style
     let trailingImage: UIImage?
+    let horizontalPadding: CGFloat = 4
 
     var body: some View {
         NewTextButton(
@@ -37,6 +38,7 @@ struct ButtonListCellView: View {
             trailing: trailingImage,
             action: action
         )
+        .padding(.horizontal, horizontalPadding)
     }
 }
 
