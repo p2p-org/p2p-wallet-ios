@@ -116,6 +116,7 @@ def create_release_build(match_type, configuration)
     export_method: match_type,
     export_xcargs: '-allowProvisioningUpdates',
     silent: true,
+    disable_automatic_package_resolution: true,
     export_options: {
       provisioningProfiles: {
         appId => profileSpecifier
