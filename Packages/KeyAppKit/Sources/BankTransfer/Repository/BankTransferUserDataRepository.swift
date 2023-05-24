@@ -5,4 +5,6 @@ protocol BankTransferUserDataRepository {
  
     func save(registrationData: RegistrationData) async
     func getRegistrationData() -> RegistrationData
+
+    func clearCache()
 }

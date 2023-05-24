@@ -1,41 +1,51 @@
 import SwiftUI
 import KeyAppUI
 
+enum StrigaRegistrationTextFieldStatus: Equatable {
+    case valid
+    case invalid(error: String)
+}
+
 struct StrigaRegistrationTextField: View {
     let title: String
     let placeholder: String
     let isDetailed: Bool
     @Binding var text: String
-    let isInvalid: Bool
+    let status: StrigaRegistrationTextFieldStatus
+    let isEnabled: Bool
+    let maxSymbolsLimit: Int?
 
     init(
         title: String,
         placeholder: String,
         text: Binding<String>,
+        status: StrigaRegistrationTextFieldStatus? = .valid,
         isDetailed: Bool = false,
-        isInvalid: Bool = false
+        isEnabled: Bool = true,
+        maxSymbolsLimit: Int? = nil
     ) {
         self.title = title
         self.placeholder = placeholder
         self.isDetailed = isDetailed
+        self.status = status ?? .valid
         self._text = text
-        self.isInvalid = isInvalid
+        self.isEnabled = isEnabled
+        self.maxSymbolsLimit = maxSymbolsLimit
     }
 
     var body: some View {
         VStack(alignment: .leading, spacing: 4) {
-            HStack(spacing: 0) {
-                Spacer()
-                    .frame(width: 8)
-                Text(title)
-                    .foregroundColor(Color(Asset.Colors.mountain.color))
-                    .apply(style: .label1)
-            }
+            Text(title)
+                .foregroundColor(Color(asset: Asset.Colors.mountain))
+                .apply(style: .label1)
+                .padding(.leading, 8)
 
             HStack(spacing: 12) {
                 TextField(placeholder, text: $text)
+                    .foregroundColor(isEnabled ? Color(asset: Asset.Colors.night) : Color(asset: Asset.Colors.night).opacity(0.3))
                     .padding(EdgeInsets(top: 14, leading: 16, bottom: 14, trailing: 20))
                     .frame(height: 56)
+                    .disabled(isDetailed)
 
                 if isDetailed {
                     Image(asset: Asset.MaterialIcon.chevronRight)
@@ -50,11 +60,11 @@ struct StrigaRegistrationTextField: View {
             )
             .overlay(
                 RoundedRectangle(cornerRadius: 12, style: .continuous)
-                    .stroke(isInvalid ? Color(asset: Asset.Colors.rose) : .clear, lineWidth: 1)
+                    .stroke(status == .valid ? .clear : Color(asset: Asset.Colors.rose), lineWidth: 1)
             )
 
-            if isInvalid {
-                Text(L10n.couldNotBeEmpty)
+            if case .invalid(let error) = status {
+                Text(error)
                     .apply(style: .label1)
                     .foregroundColor(Color(asset: Asset.Colors.rose))
             }
@@ -75,7 +85,7 @@ struct StrigaRegistrationTextField_Previews: PreviewProvider {
                 title: "Phone",
                 placeholder: "Enter phone",
                 text: .constant(""),
-                isInvalid: true
+                status: .invalid(error: L10n.couldNotBeEmpty)
             )
 
             StrigaRegistrationTextField(

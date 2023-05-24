@@ -248,8 +248,9 @@ final class TabBarCoordinator: Coordinator<Void> {
         case .crypto:
             self.handleAction(.receive)
         case .transfer:
-            // TODO: Put Bank transfer here
-            break
+            // TODO: temprorary, should be removed
+            let coord = StrigaRegistrationFirstStepCoordinator(country: "RU", parent: navigationController)
+            coordinate(to: coord).sink { _ in }.store(in: &subscriptions)
         }
     }
 
