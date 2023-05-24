@@ -377,6 +377,18 @@ let package = Package(
             dependencies: ["KeyAppKitCore"],
             path: "Tests/UnitTests/KeyAppKitCoreTests"
         ),
+        
+        .testTarget(
+            name: "KeyAppNetworkingTests",
+            dependencies: ["KeyAppNetworking"],
+            path: "Tests/UnitTests/KeyAppNetworkingTests"
+        ),
+        
+        .testTarget(
+            name: "BankTransferTests",
+            dependencies: ["BankTransfer"],
+            path: "Tests/UnitTests/BankTransferTests"
+        ),
     ]
 )
 
