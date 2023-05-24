@@ -107,7 +107,8 @@ def create_release_build(match_type, configuration)
     readonly: false,
     keychain_name: TEMP_KEYCHAIN_USER,
     keychain_password: TEMP_KEYCHAIN_PASSWORD,
-    api_key: api_key
+    api_key: api_key,
+    force_for_new_devices: true
   )
 
   gym(
