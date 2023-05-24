@@ -3,6 +3,7 @@ import Combine
 import CoreImage.CIFilterBuiltins
 import Foundation
 import Resolver
+import Wormhole
 
 enum ReceiveNetwork {
     enum Image {
@@ -35,7 +36,8 @@ class ReceiveViewModel: BaseViewModel, ObservableObject {
     init(
         network: ReceiveNetwork,
         userWalletManager: UserWalletManager = Resolver.resolve(),
-        nameStorage: NameStorageType = Resolver.resolve()
+        nameStorage: NameStorageType = Resolver.resolve(),
+        wormholeAPI: WormholeAPI = Resolver.resolve()
     ) {
         /// Assign network type
         self.network = network
@@ -119,19 +121,40 @@ class ReceiveViewModel: BaseViewModel, ObservableObject {
                     isShort: true
                 ),
                 SpacerReceiveItem(),
-                RefundBannerReceiveItem(text: L10n.weRefundBridgingCostsForAnyTransactionsOver50),
-                SpacerReceiveItem(),
                 InstructionsReceiveCellItem(
                     instructions: [
-                        ("1", L10n.sendToYourEthereumAddress(tokenSymbol)),
-                        ("2", L10n.weBridgeItToSolanaWithWormhole),
+                        ("1", (
+                            L10n.sendToYourEthereumAddress(tokenSymbol),
+                            L10n.isTheMinimumAmountToReceiveFromTheEthereumNetwork("$5")
+                              )),
+                        ("2", (
+                            L10n.weBridgeItToSolanaWithWormhole,
+                            L10n.youOnlyNeedToSignATransactionWithKeyApp
+                            )
+                        ),
                     ],
-                    tip: L10n.youOnlyNeedToSignATransactionWithKeyApp
+                    tip: nil
                 ),
             ]
         }
 
         super.init()
+
+        switch network {
+        case .ethereum:
+            Task {
+                let value = try await wormholeAPI.getEthereumFreeFeeLimit()
+                await MainActor.run {
+                    items.insert(SpacerReceiveItem(), at: 1)
+                    items.insert(
+                        RefundBannerReceiveItem(text: L10n.weRefundBridgingCostsForAnyTransactionsOver("$\(value)")),
+                        at: 2
+                    )
+                }
+            }
+        default:
+            break
+        }
     }
 
     // MARK: -

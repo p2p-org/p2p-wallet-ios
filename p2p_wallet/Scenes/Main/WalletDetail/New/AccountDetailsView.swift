@@ -1,10 +1,3 @@
-//
-//  AccountDetailsView.swift
-//  p2p_wallet
-//
-//  Created by Giang Long Tran on 19.02.2023.
-//
-
 import KeyAppUI
 import SwiftUI
 
@@ -38,6 +31,16 @@ struct AccountDetailsView: View {
                 }
             }
             .padding(.top, 32)
+
+            if let banner = detailAccount.banner {
+                SwapEthBanner(text: banner.title, action: banner.action, close: {
+                    withAnimation {
+                        banner.close()
+                    }
+                })
+                    .padding(.all, 16)
+                    .padding(.top, 16)
+            }
         }
     }
 }

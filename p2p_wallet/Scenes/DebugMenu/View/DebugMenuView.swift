@@ -52,6 +52,10 @@ struct DebugMenuView: View {
                     } label: { Text("Apply") }
                 }
 
+                Section(header: Text("Modules")) {
+                    NavigationLink("History") { HistoryDebugView() }
+                }
+
                 Section(header: Text("Fee relayer")) {
                     Toggle("Disable free transaction", isOn: $feeRelayerConfig.disableFeeTransaction)
                         .valueChanged(value: feeRelayerConfig.disableFeeTransaction) { _ in
@@ -127,14 +131,6 @@ struct DebugMenuView: View {
                         Button {
                             Resolver.resolve(OnboardingService.self).lastState = nil
                         } label: { Text("Delete") }
-                    }
-                }
-
-                Section(header: Text("Moonpay environment")) {
-                    Picker("Environment", selection: $viewModel.currentMoonpayEnvironment) {
-                        ForEach(viewModel.moonpayEnvironments, id: \.self) { environment in
-                            Text(environment.rawValue)
-                        }
                     }
                 }
             }

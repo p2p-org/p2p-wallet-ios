@@ -1266,7 +1266,7 @@
 "Choose network" = "Choisissez le réseau";
 "Claim" = "Réclamation";
 "You will get" = "Tu auras";
-"Claiming..." = "Affirmant...";
+"Claiming" = "Affirmant";
 "Send crypto via link" = "Envoyer la crypto via un lien";
 "Sending via link" = "Envoi par lien";
 "Creating your link" = "Création de votre lien";
@@ -1359,6 +1359,15 @@
 "The fee is more than the defined slippage %@ due to one-time account creation fee by Solana blockchain" = "Les frais sont supérieurs au glissement défini %@ en raison des frais uniques de création de compte par la blockchain Solana";
 "How to claim for free" = "Comment réclamer gratuitement";
 "I forgot PIN" = "J'ai oublié le NIP";
+"More than the received amount" = "Plus que le montant reçu";
+"I forgot PIN" = "J'ai oublié le NIP";"More than the sent amount" = "Plus que le montant envoyé";
+"Fees" = "Frais";
+"We refund bridging costs for any transactions over %@" = "Nous remboursons les frais de transition pour toute transaction supérieure à %@";
+"Total amount" = "Montant total";
+"Check available funds" = "Vérifier les fonds disponibles";
+"To send %@ to Ethereum network you have to swap it to %@" = "Pour envoyer %@ au réseau Ethereum, vous devez le remplacer par %@";
 "Not enought %@" = "Pas assez %@";
 "It usually takes few seconds for a transaction to complete" = "Il faut généralement quelques secondes pour qu'une transaction se termine";
 "Username was copied to clipboard" = "Le nom d'utilisateur a été copié dans le presse-papiers";
+"Transaction fees" = "Les frais de transaction";
+"%@ is the minimum amount to receive from the Ethereum Network" = "%@ est le montant minimum à recevoir du réseau Ethereum";

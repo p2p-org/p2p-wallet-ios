@@ -1,25 +1,22 @@
-//
-//  AccountDetailsViewModel.swift
-//  p2p_wallet
-//
-//  Created by Giang Long Tran on 19.02.2023.
-//
-
 import Combine
 import Foundation
 import KeyAppBusiness
+import KeyAppKitCore
 import Resolver
 import SolanaSwift
+import Wormhole
 
 enum AccountDetailsAction {
     case openBuy
     case openReceive
     case openSend
     case openSwap(Wallet?)
+    case openSwapWithDestination(Wallet?, Wallet?)
 }
 
 class AccountDetailsViewModel: BaseViewModel, ObservableObject {
     @Published var rendableAccountDetails: RendableAccountDetails
+    @Published var banner: BannerItem?
 
     let actionSubject: PassthroughSubject<AccountDetailsAction, Never>
 
@@ -53,7 +50,11 @@ class AccountDetailsViewModel: BaseViewModel, ObservableObject {
         }
 
         // Render solana wallet (account)
-        rendableAccountDetails = RendableNewSolanaAccountDetails(account: solanaAccount, isSwapAvailable: false, onAction: onAction)
+        rendableAccountDetails = RendableNewSolanaAccountDetails(
+            account: solanaAccount,
+            isSwapAvailable: false,
+            onAction: onAction
+        )
 
         super.init()
 
@@ -62,9 +63,9 @@ class AccountDetailsViewModel: BaseViewModel, ObservableObject {
             .statePublisher
             .receive(on: RunLoop.main)
             .compactMap { $0.value.first(where: { $0.data.pubkey == solanaAccount.data.pubkey }) }
-        
+
         let jupiterDataStatusPublisher = jupiterTokensRepository.status
-        
+
         Publishers.CombineLatest(solanaAccountPublisher, jupiterDataStatusPublisher)
             .map { account, status in
                 RendableNewSolanaAccountDetails(
@@ -77,6 +78,36 @@ class AccountDetailsViewModel: BaseViewModel, ObservableObject {
                 self?.rendableAccountDetails = rendableAccountDetails
             }
             .store(in: &subscriptions)
+
+        // Banner
+        if available(.ethAddressEnabled) {
+            // Token support to transfer to ethereum network, but required swap before that.
+            let supportedTokens = [
+                SolanaToken.usdc.address: SolanaToken.usdcet,
+                SolanaToken.usdt.address: Wormhole.SupportedToken.usdt,
+            ]
+
+            if let supportedWormholeToken = supportedTokens[solanaAccount.data.token.address], !Defaults.ethBannerShouldHide {
+                banner = .init(
+                    title: L10n.toSendToEthereumNetworkYouHaveToSwapItTo(
+                        solanaAccount.data.token.symbol,
+                        supportedWormholeToken.symbol
+                    ),
+                    action: { [weak actionSubject] in
+                        actionSubject?
+                            .send(
+                                .openSwapWithDestination(
+                                    solanaAccount.data,
+                                    Wallet(token: supportedWormholeToken)
+                                )
+                            )
+                    }, close: { [weak self] in
+                        Defaults.ethBannerShouldHide = true
+                        self?.banner = nil
+                    }
+                )
+            }
+        }
     }
 }
 
@@ -84,10 +115,18 @@ extension AccountDetailsViewModel {
     /// Check swap action is available for this account (wallet).
     static func isSwapAvailableFor(wallet: Wallet, for status: JupiterDataStatus) -> Bool {
         switch status {
-        case .ready(let swapTokens, _) where swapTokens.contains(where: { $0.address == wallet.mintAddress }):
+        case let .ready(swapTokens, _) where swapTokens.contains(where: { $0.address == wallet.mintAddress }):
             return true
         default:
             return false
         }
+    }
+}
+
+extension AccountDetailsViewModel {
+    struct BannerItem {
+        let title: String
+        let action: () -> Void
+        let close: () -> Void
     }
 }

@@ -1269,7 +1269,7 @@
 "Choose network" = "Chọn mạng";
 "Claim" = "Khẳng định";
 "You will get" = "Bạn sẽ nhận được";
-"Claiming..." = "Khiếu nại...";
+"Claiming" = "Khiếu nại";
 "Send crypto via link" = "Gửi tiền điện tử qua liên kết";
 "Sending via link" = "Gửi qua liên kết";
 "Creating your link" = "Tạo liên kết của bạn";
@@ -1362,6 +1362,14 @@
 "The fee is more than the defined slippage %@ due to one-time account creation fee by Solana blockchain" = "Phí cao hơn trượt giá được xác định %@ do phí tạo tài khoản một lần bằng chuỗi khối Solana";
 "How to claim for free" = "Làm thế nào để yêu cầu miễn phí";
 "I forgot PIN" = "tôi quên mã PIN";
+"More than the received amount" = "Nhiều hơn số tiền nhận được";
+"Fees" = "lệ phí";
+"We refund bridging costs for any transactions over %@" = "Chúng tôi hoàn trả chi phí bắc cầu cho bất kỳ giao dịch nào qua %@";
+"Total amount" = "Tổng cộng";
+"Check available funds" = "Kiểm tra số tiền khả dụng";
+"To send %@ to Ethereum network you have to swap it to %@" = "Để gửi %@ đến mạng Ethereum, bạn phải hoán đổi nó thành %@";
 "Not enought %@" = "Chưa đủ %@";
 "It usually takes few seconds for a transaction to complete" = "Thường mất vài giây để hoàn tất giao dịch";
 "Username was copied to clipboard" = "Tên người dùng đã được sao chép vào khay nhớ tạm";
+"Transaction fees" = "Phí giao dịch";
+"%@ is the minimum amount to receive from the Ethereum Network" = "%@ là số tiền tối thiểu để nhận được từ Mạng Ethereum";

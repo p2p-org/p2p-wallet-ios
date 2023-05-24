@@ -99,7 +99,7 @@ public enum BindingPhoneNumberState: Codable, State, Equatable {
                     )
                 }
 
-                let account = try await Account(
+                let account = try await KeyPair(
                     phrase: data.seedPhrase.components(separatedBy: " "),
                     network: .mainnetBeta,
                     derivablePath: .default
@@ -142,7 +142,7 @@ public enum BindingPhoneNumberState: Codable, State, Equatable {
         case let .enterOTP(resendCounter, channel, phoneNumber, data):
             switch event {
             case let .enterOTP(opt):
-                let account = try await Account(
+                let account = try await KeyPair(
                     phrase: data.seedPhrase.components(separatedBy: " "),
                     network: .mainnetBeta,
                     derivablePath: .default
@@ -184,7 +184,7 @@ public enum BindingPhoneNumberState: Codable, State, Equatable {
 
                 return .finish(.success(metadata: metaData))
             case .resendOTP:
-                let account = try await Account(
+                let account = try await KeyPair(
                     phrase: data.seedPhrase.components(separatedBy: " "),
                     network: .mainnetBeta,
                     derivablePath: .default

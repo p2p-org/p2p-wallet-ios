@@ -1,10 +1,3 @@
-//
-//  File.swift
-//
-//
-//  Created by Giang Long Tran on 11.04.2023.
-//
-
 import Foundation
 
 public struct UserActionError: Error, Equatable, Codable {
