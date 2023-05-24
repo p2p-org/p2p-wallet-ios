@@ -2,6 +2,15 @@ import SwiftUI
 import KeyAppUI
 import SolanaSwift
 
+/// In case of successful experiment make a base Renderable protocol
+protocol ChooseItemRenderable<ViewType>: Identifiable where ID == String {
+    associatedtype ViewType: View
+
+    var id: String { get }
+
+    @ViewBuilder func render() -> ViewType
+}
+
 struct ChooseItemView<Content: View>: View {
     @ObservedObject private var viewModel: ChooseItemViewModel
     @ViewBuilder private let content: (ChooseItemSearchableItemViewModel) -> Content

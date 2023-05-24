@@ -123,7 +123,7 @@ final class BankTransferInfoViewModel: BaseViewModel, ObservableObject {
         Task {
             do {
                 let countries = try await self.countriesService.fetchCountries()
-                self.showCountriesSubject.send((countries, self.currentCountry))
+                self.showCountriesSubject.send((Array(Set(countries)), self.currentCountry))
             } catch {
                 DefaultLogManager.shared.log(error: error)
             }

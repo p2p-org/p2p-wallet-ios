@@ -6,6 +6,6 @@ extension Country: ChooseItemSearchableItem {
     public var id: String { name }
 
     func matches(keyword: String) -> Bool {
-        name.contains(keyword)
+        name.lowercased().hasPrefix(keyword.lowercased()) || name.lowercased().contains(keyword.lowercased())
     }
 }
