@@ -1342,3 +1342,7 @@
 "Up to 3 days · %@ fees" = "Up to 3 days · %@ fees";
 "Up to 1 hour · %@ fees" = "Up to 1 hour · %@ fees";
 "bank card, bank transfer or crypto" = "bank card, bank transfer or crypto";
+"Open IBAN account for international transfers with zero fees" = "Open IBAN account for international transfers with zero fees";
+"This service is available only for European Economic Area countries" = "This service is available only for European Economic Area countries";
+"Your country" = "Your country";
+"Powered by Striga" = "Powered by Striga";

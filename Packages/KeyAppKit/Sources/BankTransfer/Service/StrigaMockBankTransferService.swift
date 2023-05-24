@@ -3,6 +3,8 @@ import Foundation
 
 public final class StrigaMockBankTransferService: BankTransferService {
 
+    private var _userData: UserData = .init(countryCode: "fr", userId: nil, mobileVerified: false)
+
     public var userData: AnyPublisher<UserData, Never> { subject.eraseToAnyPublisher() }
 
     let subject = CurrentValueSubject<UserData, Never>(
@@ -12,8 +14,13 @@ public final class StrigaMockBankTransferService: BankTransferService {
     public init() { }
 
     public func reload() async {
-        let data = UserData(countryCode: "fr", userId: nil, mobileVerified: false)
+        sleep(5)
+        let data = _userData
         subject.send(data)
+    }
+
+    public func save(userData: UserData) throws {
+        self._userData = userData
     }
 
     public func isBankTransferAvailable() -> Bool {

@@ -1,3 +1,3 @@
 import Foundation
 
-protocol ReceiveRendableItem: Rendable {}
+protocol ReceiveRendableItem: Renderable {}

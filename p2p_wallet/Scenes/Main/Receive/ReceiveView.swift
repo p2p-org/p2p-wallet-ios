@@ -74,7 +74,7 @@ struct ReceiveView: View {
     var list: some View {
         VStack(spacing: 0) {
             ForEach(viewModel.items, id: \.id) { item in
-                AnyRendable(item: item)
+                AnyRenderable(item: item)
                     .onTapGesture {
                         viewModel.itemTapped(item)
                     }

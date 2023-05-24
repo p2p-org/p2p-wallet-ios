@@ -1,7 +1,11 @@
-import Foundation
+import BankTransfer
 import Combine
+import Foundation
+import Resolver
 
-final class TopupActionsViewModel: ObservableObject {
+final class TopupActionsViewModel: BaseViewModel, ObservableObject {
+
+    @Injected private var bankTransferService: BankTransferService
 
     // MARK: -
 
@@ -10,19 +14,22 @@ final class TopupActionsViewModel: ObservableObject {
             id: .transfer,
             icon: .bankTransferBankIcon,
             title: L10n.bankTransfer,
-            subtitle: L10n.upTo3Days·Fees("0%")
+            subtitle: L10n.upTo3Days·Fees("0%"),
+            isLoading: true
         ),
         ActionItem(
             id: .card,
             icon: .bankTransferCardIcon,
             title: L10n.bankCard,
-            subtitle: L10n.instant·Fees("4.5%")
+            subtitle: L10n.instant·Fees("4.5%"),
+            isLoading: false
         ),
         ActionItem(
             id: .crypto,
             icon: .bankTransferCryptoIcon,
             title: L10n.crypto,
-            subtitle: L10n.upTo1Hour·Fees("%0")
+            subtitle: L10n.upTo1Hour·Fees("%0"),
+            isLoading: false
         )
     ]
 
@@ -34,6 +41,16 @@ final class TopupActionsViewModel: ObservableObject {
 
     func didTapItem(item: ActionItem) {
         tappedItemSubject.send(item.id)
+    }
+
+    override init() {
+        super.init()
+
+        bankTransferService.userData.sink { _ in
+            DispatchQueue.main.asyncAfter(deadline: .now() + 3) {
+                self.actions[0].isLoading = false
+            }
+        }.store(in: &subscriptions)
     }
 
 }
@@ -50,5 +67,6 @@ extension TopupActionsViewModel {
         var icon: UIImage
         var title: String
         var subtitle: String
+        var isLoading: Bool
     }
 }

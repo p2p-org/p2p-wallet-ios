@@ -1380,3 +1380,7 @@
 "Up to 3 days · %@ fees" = "Tối đa 3 ngày · %@ phí";
 "Up to 1 hour · %@ fees" = "Tối đa 1 giờ · %@ phí";
 "bank card, bank transfer or crypto" = "thẻ ngân hàng, chuyển khoản ngân hàng hoặc tiền điện tử";
+"Open IBAN account for international transfers with zero fees" = "Mở tài khoản IBAN để chuyển khoản quốc tế mà không mất phí";
+"This service is available only for European Economic Area countries" = "Dịch vụ này chỉ dành cho các quốc gia thuộc Khu vực Kinh tế Châu Âu";
+"Your country" = "Quốc gia của bạn";
+"Powered by Striga" = "Cung cấp bởi Striga";
