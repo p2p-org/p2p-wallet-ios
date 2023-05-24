@@ -52,7 +52,7 @@ jobs:
 
       - name: Copy xcconfig file
         run: |
-          echo -e ${{ secrets.XCCONFIG_URL }} > ./p2p_wallet/Config.xcconfig
+          echo -e ${{ secrets.XCCONFIG_FILE }} > ./p2p_wallet/Config.xcconfig
         shell: bash
 
       - name: Install project
