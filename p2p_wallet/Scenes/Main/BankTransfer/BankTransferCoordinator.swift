@@ -28,7 +28,6 @@ final class BankTransferCoordinator: Coordinator<Void> {
 
         let viewModel = BankTransferInfoViewModel()
         let controller = BottomSheetController(
-            showHandler: true,
             rootView: BankTransferInfoView(viewModel: viewModel)
         )
         navigationController?.present(controller, animated: true)

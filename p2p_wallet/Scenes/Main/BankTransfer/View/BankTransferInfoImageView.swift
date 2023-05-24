@@ -17,7 +17,8 @@ struct BankTransferInfoImageView: View {
 
     var body: some View {
         Image(uiImage: image)
-            .resizable()
+//            .resizable()
+            .fixedSize()
     }
 }
 
@@ -48,6 +49,7 @@ struct BankTransferTitleCellView: View {
             .fontWeight(.bold)
             .apply(style: .title2)
             .multilineTextAlignment(.center)
+            .padding(.horizontal, 20)
     }
 }
 
@@ -102,23 +104,28 @@ struct BankTransferCountryCellView: View {
 
 // MARK: -
 
-//struct BankTransferPoweredStrigaCellItem: Identifiable {
-//    var id: String = UUID().uuidString
-//}
-//
-//extension BankTransferPoweredStrigaCellItem: Renderable {
-//    func render() -> some View {
-//        BankTransferPoweredStrigaCellView()
-//    }
-//}
-//
-//struct BankTransferPoweredStrigaCellView: View {
-//    var body: some View {
-//        Text(L10n.poweredByStriga)
-//            .apply(style: .text3)
-//            .foregroundColor(<#T##color: Color?##Color?#>)
-//    }
-//}
+struct BankTransferInfoCountriesTextCellItem: Identifiable {
+    var id: String = UUID().uuidString
+}
+
+extension BankTransferInfoCountriesTextCellItem: Renderable {
+    func render() -> some View {
+        BankTransferInfoCountriesTextCellView()
+    }
+}
+
+struct BankTransferInfoCountriesTextCellView: View {
+    var body: some View {
+        HStack(spacing: 0) {
+            Text(L10n.checkTheListOfCountries + " ")
+                .apply(style: .text3)
+                .foregroundColor(Color(Asset.Colors.night.color))
+            Text(L10n.here)
+                .apply(style: .text3)
+                .foregroundColor(Color(Asset.Colors.sky.color))
+        }
+    }
+}
 
 // MARK: - Check list of countries
 

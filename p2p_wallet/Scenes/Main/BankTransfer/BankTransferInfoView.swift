@@ -1,21 +1,22 @@
 import SwiftUI
+import KeyAppUI
 
 struct BankTransferInfoView: View {
     @ObservedObject var viewModel: BankTransferInfoViewModel
 
     var body: some View {
-        ZStack {
-            Color(UIColor.f2F5Fa)
-                .edgesIgnoringSafeArea(.all)
-            VStack {
-                VStack(spacing: 28) {
-                    list
-                    Spacer()
-                }
-                .padding(.top, 20)
+        VStack(spacing: 8) {
+            RoundedRectangle(cornerRadius: 2, style: .circular)
+                .fill(Color(Asset.Colors.rain.color))
+                .frame(width: 31, height: 4)
+                .padding(.top, 6)
+                list
+                    .padding(.top, 20)
                 Spacer()
-            }
+            
         }
+        .background(Color(Asset.Colors.smoke.color))
+        .cornerRadius(20)
     }
     
     var list: some View {
