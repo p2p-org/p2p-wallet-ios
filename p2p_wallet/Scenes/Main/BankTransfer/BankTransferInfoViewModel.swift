@@ -64,7 +64,7 @@ final class BankTransferInfoViewModel: BaseViewModel, ObservableObject {
             name: self.currentCountry?.name ?? "",
             flag: self.currentCountry?.emoji ?? "🏴"
         )
-        if self.bankTransferService.isBankTransferAvailable() {
+        if self.isAvailable() {
             return [
                 BankTransferInfoImageCellViewItem(image: .bankTransferInfoAvailableIcon),
                 ListSpacerCellViewItem(height: 12, backgroundColor: .clear),
@@ -114,6 +114,8 @@ final class BankTransferInfoViewModel: BaseViewModel, ObservableObject {
     func itemTapped(item: any Identifiable) {
         if nil != item as? BankTransferInfoCountriesTextCellViewItem {
             helpLauncher.launch()
+        } else if nil != item as? BankTransferCountryCellViewItem {
+            openCountries()
         }
     }
 
@@ -139,6 +141,10 @@ final class BankTransferInfoViewModel: BaseViewModel, ObservableObject {
         } catch {
             DefaultLogManager.shared.log(error: error)
         }
+    }
+
+    private func isAvailable() -> Bool {
+        ["at", "be", "bg", "hr", "cy", "cz", "dk", "ee", "fi", "fr", "gr", "es", "nl", "is", "li", "lt", "lu", "lv", "mt", "de", "no", "pl", "pt", "ro", "sk", "si", "se", "hu", "it", "ch", "gb"].contains(self.currentCountry?.code ?? "")
     }
 
 }

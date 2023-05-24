@@ -26,7 +26,7 @@ final class BankTransferCoordinator: Coordinator<Void> {
         } else {
             // change country flow
         }
-        
+
         let viewModel = BankTransferInfoViewModel()
         let controller = BottomSheetController(
             rootView: BankTransferInfoView(viewModel: viewModel)
@@ -37,7 +37,7 @@ final class BankTransferCoordinator: Coordinator<Void> {
                 title: L10n.selectYourCountry,
                 controller: controller,
                 service: ChooseCountryService(countries: val.0),
-                chosen: val.1 ?? .init(name: "", code: "", dialCode: "", emoji: "")
+                chosen: val.1
             ))
         }.sink { result in
             switch result {
