@@ -34,8 +34,8 @@ final class BankTransferCoordinator: Coordinator<Void> {
             self.coordinate(to: ChooseItemCoordinator<Country>(
                 title: L10n.selectYourCountry,
                 controller: controller,
-                service: ChooseCountryService(countries: val.0),
-                chosen: val.1
+                service: ChooseCountryService(),
+                chosen: val
             ))
         }.sink { result in
             switch result {

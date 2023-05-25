@@ -1,12 +1,13 @@
 import SwiftUI
 import Combine
+import CountriesAPI
 
 final class StrigaRegistrationFirstStepCoordinator: Coordinator<Void> {
     private let result = PassthroughSubject<Void, Never>()
-    private let country: String
+    private let country: Country
     private let parent: UINavigationController
 
-    init(country: String, parent: UINavigationController) {
+    init(country: Country, parent: UINavigationController) {
         self.country = country
         self.parent = parent
     }
@@ -24,12 +25,21 @@ final class StrigaRegistrationFirstStepCoordinator: Coordinator<Void> {
                 //TODO: Open second screen
             }
             .store(in: &subscriptions)
-        
-        viewModel.chooseCountry
-            .sink { country in
-                // TODO: Open country selection
+
+        viewModel.chooseCountry.flatMap { value in
+            self.coordinate(to: ChooseItemCoordinator<Country>(
+                title: L10n.selectYourCountry,
+                controller: vc,
+                service: ChooseCountryService(),
+                chosen: value
+            ))
+        }.sink { [weak viewModel] result in
+            switch result {
+            case .item(let item):
+                viewModel?.selectedCountryOfBirth = item as? Country
+            case .cancel: break
             }
-            .store(in: &subscriptions)
+        }.store(in: &subscriptions)
 
         parent.pushViewController(vc, animated: true)
 

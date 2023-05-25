@@ -9,7 +9,7 @@ final class BankTransferInfoViewModel: BaseViewModel, ObservableObject {
 
     // MARK: -
 
-    var showCountries: AnyPublisher<([Country], Country?), Never> {
+    var showCountries: AnyPublisher<Country?, Never> {
         showCountriesSubject.eraseToAnyPublisher()
     }
 
@@ -25,7 +25,7 @@ final class BankTransferInfoViewModel: BaseViewModel, ObservableObject {
 
     // MARK: -
 
-    private var showCountriesSubject = PassthroughSubject<([Country], Country?), Never>()
+    private var showCountriesSubject = PassthroughSubject<Country?, Never>()
     private var currentCountry: Country? {
         didSet {
             self.items = self.makeItems()
@@ -122,14 +122,7 @@ final class BankTransferInfoViewModel: BaseViewModel, ObservableObject {
     // MARK: - actions
 
     private func openCountries() {
-        Task {
-            do {
-                let countries = try await self.countriesService.fetchCountries().unique(keyPath: \.name)
-                self.showCountriesSubject.send((countries, self.currentCountry))
-            } catch {
-                DefaultLogManager.shared.log(error: error)
-            }
-        }
+        showCountriesSubject.send(currentCountry)
     }
 
     private func submitCountry() {

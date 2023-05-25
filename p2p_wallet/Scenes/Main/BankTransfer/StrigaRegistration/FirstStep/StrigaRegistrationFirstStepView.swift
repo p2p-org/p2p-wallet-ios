@@ -1,5 +1,6 @@
 import SwiftUI
 import KeyAppUI
+import CountriesAPI
 
 fileprivate typealias TextField = StrigaRegistrationTextField
 fileprivate typealias InfoView = StrigaRegistrationInformerView
@@ -93,7 +94,7 @@ struct StrigaRegistrationFirstStepView: View {
                 isDetailed: true
             )
             .onTapGesture {
-                viewModel.chooseCountry.send(viewModel.countryOfBirth)
+                viewModel.chooseCountry.send(viewModel.selectedCountryOfBirth)
             }
         }
         .styled()
@@ -122,7 +123,7 @@ private extension EdgeInsets {
 struct StrigaRegistrationFirstStepView_Previews: PreviewProvider {
     static var previews: some View {
         StrigaRegistrationFirstStepView(
-            viewModel: StrigaRegistrationFirstStepViewModel(country: "fr")
+            viewModel: StrigaRegistrationFirstStepViewModel(country: Country(name: "France", code: "FR", dialCode: "", emoji: "🇫🇷"))
         )
     }
 }

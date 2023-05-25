@@ -1,6 +1,7 @@
 import Combine
 import BankTransfer
 import Resolver
+import CountriesAPI
 
 final class StrigaRegistrationFirstStepViewModel: BaseViewModel, ObservableObject {
 
@@ -29,11 +30,13 @@ final class StrigaRegistrationFirstStepViewModel: BaseViewModel, ObservableObjec
     @Published var isDataValid = true
     let actionPressed = PassthroughSubject<Void, Never>()
     let openNextStep = PassthroughSubject<Void, Never>()
-    let chooseCountry = PassthroughSubject<String, Never>()
+    let chooseCountry = PassthroughSubject<Country?, Never>()
 
     var fieldsStatuses = [Field: StrigaRegistrationTextFieldStatus]()
 
-    init(country: String) {
+    @Published var selectedCountryOfBirth: Country?
+
+    init(country: Country) {
         super.init()
         let data = service.getRegistrationData()
         email = data.email
@@ -43,7 +46,7 @@ final class StrigaRegistrationFirstStepViewModel: BaseViewModel, ObservableObjec
         dateOfBirth = [data.dateOfBirth?.day, data.dateOfBirth?.month, data.dateOfBirth?.year]
             .compactMap { String($0 ?? 0) }
             .joined()
-        countryOfBirth = country
+        selectedCountryOfBirth = country
 
         actionPressed
             .sink { [weak self] _ in
@@ -93,7 +96,16 @@ final class StrigaRegistrationFirstStepViewModel: BaseViewModel, ObservableObjec
             }
             .store(in: &subscriptions)
 
-        // TODO: Do country of birth
+        $selectedCountryOfBirth
+            .sink { [weak self] value in
+                guard let self else { return }
+                if let value {
+                    self.countryOfBirth = "\(value.emoji ?? "") \(value.name)"
+                } else {
+                    self.countryOfBirth = ""
+                }
+            }
+            .store(in: &subscriptions)
 
         bindSave()
     }
@@ -113,7 +125,7 @@ private extension StrigaRegistrationFirstStepViewModel {
         if dateOfBirth.isEmpty {
             fieldsStatuses[.dateOfBirth] = .invalid(error: L10n.couldNotBeEmpty)
         }
-        if countryOfBirth.isEmpty {
+        if countryOfBirth == nil {
             fieldsStatuses[.countryOfBirth] = .invalid(error: L10n.couldNotBeEmpty)
         }
         return !fieldsStatuses.contains(where: { $0.value != .valid })
