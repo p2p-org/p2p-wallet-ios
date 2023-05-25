@@ -54,7 +54,8 @@ struct StrigaRegistrationFirstStepView: View {
                 title: L10n.phoneNumber,
                 placeholder: L10n.enter,
                 text: $viewModel.phoneNumber,
-                status: viewModel.fieldsStatuses[.phoneNumber]
+                status: viewModel.fieldsStatuses[.phoneNumber],
+                maxSymbolsLimit: 12
             )
         }
         .styled()
@@ -66,14 +67,16 @@ struct StrigaRegistrationFirstStepView: View {
                 title: L10n.firstName,
                 placeholder: L10n.enter,
                 text: $viewModel.firstName,
-                status: viewModel.fieldsStatuses[.firstName]
+                status: viewModel.fieldsStatuses[.firstName],
+                maxSymbolsLimit: 40
             )
 
             TextField(
                 title: L10n.surname,
                 placeholder: L10n.enter,
                 text: $viewModel.surname,
-                status: viewModel.fieldsStatuses[.surname]
+                status: viewModel.fieldsStatuses[.surname],
+                maxSymbolsLimit: 40
             )
         }
         .styled()

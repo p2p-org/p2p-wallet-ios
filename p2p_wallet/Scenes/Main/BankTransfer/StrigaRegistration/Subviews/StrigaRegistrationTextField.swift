@@ -41,7 +41,7 @@ struct StrigaRegistrationTextField: View {
                 .padding(.leading, 8)
 
             HStack(spacing: 12) {
-                TextField(placeholder, text: $text)
+                TextField(placeholder, text: maxSymbolsLimit == nil ? $text : $text.max(maxSymbolsLimit!))
                     .foregroundColor(isEnabled ? Color(asset: Asset.Colors.night) : Color(asset: Asset.Colors.night).opacity(0.3))
                     .padding(EdgeInsets(top: 14, leading: 16, bottom: 14, trailing: 20))
                     .frame(height: 56)
