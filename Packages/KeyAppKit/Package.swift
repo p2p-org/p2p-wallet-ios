@@ -312,7 +312,10 @@ let package = Package(
         // BankTransfer
         .target(
             name: "BankTransfer",
-            dependencies: ["KeyAppNetworking"]
+            dependencies: [
+                "KeyAppNetworking",
+                "KeyAppKitCore"
+            ]
         ),
 
         // Wormhole
