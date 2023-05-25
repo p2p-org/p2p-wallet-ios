@@ -14,9 +14,11 @@ public final class StrigaMockBankTransferService: BankTransferService {
     public init() { }
 
     public func reload() async {
-        sleep(5)
-        let data = _userData
-        subject.send(data)
+        do {
+            try await Task.sleep(nanoseconds: 1_000_000_000)
+            let data = _userData
+            subject.send(data)
+        } catch {}
     }
 
     public func save(userData: UserData) throws {
