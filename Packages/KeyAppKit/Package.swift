@@ -379,12 +379,6 @@ let package = Package(
         ),
         
         .testTarget(
-            name: "KeyAppNetworkingTests",
-            dependencies: ["KeyAppNetworking"],
-            path: "Tests/UnitTests/KeyAppNetworkingTests"
-        ),
-        
-        .testTarget(
             name: "BankTransferTests",
             dependencies: ["BankTransfer"],
             path: "Tests/UnitTests/BankTransferTests"
