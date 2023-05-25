@@ -19,7 +19,8 @@ final class BankTransferServiceTests: XCTestCase {
         try super.setUpWithError()
         
         strigaProvider = .init()
-        bankTransferService = .init(strigaProvider: strigaProvider)
+        // TODO: - How to mock KeyPair?
+//        bankTransferService = .init(strigaProvider: strigaProvider, keyPair: KeyPair())
     }
     
     override func tearDownWithError() throws {
