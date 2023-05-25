@@ -40,6 +40,7 @@ final class TopupActionsViewModel: BaseViewModel, ObservableObject {
     private let tappedItemSubject = PassthroughSubject<Action, Never>()
 
     func didTapItem(item: ActionItem) {
+        guard !item.isLoading else { return }
         tappedItemSubject.send(item.id)
     }
 
@@ -47,9 +48,10 @@ final class TopupActionsViewModel: BaseViewModel, ObservableObject {
         super.init()
 
         bankTransferService.userData.sink { _ in
-            DispatchQueue.main.asyncAfter(deadline: .now() + 3) {
-                self.actions[0].isLoading = false
-            }
+            guard let index = self.actions.firstIndex(where: { item in
+                item.id == .transfer
+            }) else { return }
+            self.actions[index].isLoading = false
         }.store(in: &subscriptions)
     }
 
