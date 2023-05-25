@@ -1364,3 +1364,8 @@
 "here" = "here";
 "Check the list of countries" = "Check the list of countries";
 "Change country" = "Change country";
+"Could not be later %@" = "Could not be later %@";
+"Could not be earlier %@" = "Could not be earlier %@";
+"Incorrect day" = "Incorrect day";
+"Incorrect month" = "Incorrect month";
+"Could be filled only with symbols" = "Could be filled only with symbols";

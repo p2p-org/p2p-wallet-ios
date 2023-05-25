@@ -1397,3 +1397,8 @@
 "here" = "здесь";
 "Check the list of countries" = "Проверьте список стран";
 "Change country" = "Выбрать страну";
+"Could not be later %@" = "Не может быть позже %@";
+"Could not be earlier %@" = "Не могло быть раньше %@";
+"Incorrect day" = "Неверный день";
+"Incorrect month" = "Неверный месяц";
+"Could be filled only with symbols" = "Может быть заполнен только символами";

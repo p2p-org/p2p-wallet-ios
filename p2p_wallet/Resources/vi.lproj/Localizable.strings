@@ -1402,3 +1402,8 @@
 "here" = "đây";
 "Check the list of countries" = "Kiểm tra danh sách các quốc gia";
 "Change country" = "Thay đổi quốc gia";
+"Could not be later %@" = "Không thể muộn hơn %@";
+"Could not be earlier %@" = "Không thể sớm hơn %@";
+"Incorrect day" = "ngày không chính xác";
+"Incorrect month" = "tháng không chính xác";
+"Could be filled only with symbols" = "Chỉ có thể được điền bằng các ký hiệu";

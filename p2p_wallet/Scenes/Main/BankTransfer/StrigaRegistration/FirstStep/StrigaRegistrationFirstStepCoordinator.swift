@@ -29,7 +29,7 @@ final class StrigaRegistrationFirstStepCoordinator: Coordinator<Void> {
         viewModel.chooseCountry.flatMap { value in
             self.coordinate(to: ChooseItemCoordinator<Country>(
                 title: L10n.selectYourCountry,
-                controller: vc,
+                controller: self.parent,
                 service: ChooseCountryService(),
                 chosen: value
             ))

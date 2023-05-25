@@ -16,6 +16,8 @@ struct StrigaRegistrationInformerView: View {
             Text(L10n.EnterYourPersonalDataToOpenAnAccount.pleaseUseYourRealCredentials)
                 .apply(style: .text4)
                 .foregroundColor(Color(asset: Asset.Colors.night))
+
+            Spacer()
         }
         .padding(.all, 16)
         .background(Color(asset: Asset.Colors.lightSea))

@@ -12,6 +12,8 @@ final class BankTransferInfoViewModel: BaseViewModel, ObservableObject {
     var showCountries: AnyPublisher<Country?, Never> {
         showCountriesSubject.eraseToAnyPublisher()
     }
+    
+    let openRegistration = PassthroughSubject<Country, Never>()
 
     // MARK: - Dependencies
 
@@ -126,11 +128,12 @@ final class BankTransferInfoViewModel: BaseViewModel, ObservableObject {
     }
 
     private func submitCountry() {
-        guard let code = self.currentCountry?.code else {
+        guard let country = self.currentCountry else {
             return
         }
+        openRegistration.send(country)
         do {
-            try self.bankTransferService.set(countryCode: code)
+            try self.bankTransferService.set(countryCode: country.code)
         } catch {
             DefaultLogManager.shared.log(error: error)
         }

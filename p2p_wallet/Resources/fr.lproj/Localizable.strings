@@ -1400,3 +1400,8 @@
 "here" = "ici";
 "Check the list of countries" = "Consultez la liste des pays";
 "Change country" = "changer de pays";
+"Could not be later %@" = "Ne peut pas être plus tard %@";
+"Could not be earlier %@" = "Ne peut pas être plus tôt %@";
+"Incorrect day" = "Jour incorrect";
+"Incorrect month" = "Mois incorrect";
+"Could be filled only with symbols" = "Ne peut être rempli que de symboles";
