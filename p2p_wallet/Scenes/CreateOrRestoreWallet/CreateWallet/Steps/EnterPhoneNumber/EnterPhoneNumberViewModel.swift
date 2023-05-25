@@ -113,7 +113,7 @@ final class EnterPhoneNumberViewModel: BaseOTPViewModel {
 
         Task {
             let countries = try await countriesAPI.fetchCountries()
-            let defaultRegionCode = self.defaultRegionCode()
+            let defaultRegionCode = countriesAPI.defaultRegionCode()
             if let phone = phone {
                 // In case we have an initial phone number
                 let parsedRegion = try? self.phoneNumberKit.parse(phone).regionID?.lowercased()
@@ -275,19 +275,6 @@ extension EnterPhoneNumberViewModel {
     enum Strategy {
         case create
         case restore
-    }
-}
-
-private extension EnterPhoneNumberViewModel {
-    func defaultRegionCode() -> String {
-#if os(iOS) && !targetEnvironment(simulator) && !targetEnvironment(macCatalyst)
-        let networkInfo = CTTelephonyNetworkInfo()
-        let carrier: CTCarrier? = networkInfo.serviceSubscriberCellularProviders?.values.first(where: { $0.mobileNetworkCode != nil })
-        if let isoCountryCode = carrier?.isoCountryCode {
-            return isoCountryCode.lowercased()
-        }
-#endif
-        return Locale.current.regionCode?.lowercased() ?? PhoneNumberKit.defaultRegionCode().lowercased()
     }
 }
 

@@ -2,7 +2,7 @@ import KeyAppUI
 import SwiftUI
 
 /// In case of successful experiment make a base Renderable protocol
-protocol Rendable<ViewType>: Identifiable where ID == String {
+protocol Renderable<ViewType>: Identifiable where ID == String {
     associatedtype ViewType: View
 
     var id: String { get }
@@ -11,12 +11,12 @@ protocol Rendable<ViewType>: Identifiable where ID == String {
 }
 
 /// Opaque type for cell views
-struct AnyRendable: View, Identifiable {
-    var item: any Rendable
+struct AnyRenderable: View, Identifiable {
+    var item: any Renderable
 
     var id: String { item.id }
 
-    init(item: any Rendable) {
+    init(item: any Renderable) {
         self.item = item
     }
 

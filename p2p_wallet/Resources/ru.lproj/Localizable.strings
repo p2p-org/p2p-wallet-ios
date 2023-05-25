@@ -1375,3 +1375,10 @@
 "Up to 3 days · %@ fees" = "До 3 дней · Плата %@";
 "Up to 1 hour · %@ fees" = "До 1 часа · Плата %@";
 "bank card, bank transfer or crypto" = "банковская карта, банковский перевод или криптовалюта";
+"Open IBAN account for international transfers with zero fees" = "Откройте счет IBAN для международных переводов с нулевой комиссией";
+"This service is available only for European Economic Area countries" = "Эта услуга доступна только для стран Европейской экономической зоны.";
+"Your country" = "Твоя страна";
+"Powered by Striga" = "Создано Стригой";
+"here" = "здесь";
+"Check the list of countries" = "Проверьте список стран";
+"Change country" = "Выбрать страну";

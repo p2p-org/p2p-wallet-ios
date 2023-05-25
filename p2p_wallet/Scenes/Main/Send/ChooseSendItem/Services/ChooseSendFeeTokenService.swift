@@ -3,8 +3,8 @@ import Combine
 import KeyAppKitCore
 
 final class ChooseSendFeeTokenService: ChooseItemService {
-
-    let otherTokensTitle = L10n.otherTokens
+    let chosenTitle = L10n.chosenToken
+    let otherTitle = L10n.otherTokens
 
     var state: AnyPublisher<AsyncValueState<[ChooseItemListSection]>, Never> {
         statePublisher.eraseToAnyPublisher()

@@ -2,6 +2,8 @@ import Combine
 
 public protocol BankTransferService {
     var userData: AnyPublisher<UserData, Never> { get }
+    func save(userData: UserData) throws
+    func set(countryCode: String) throws
     func reload() async
 
     func isBankTransferAvailable() -> Bool

@@ -27,6 +27,15 @@ public final class StrigaBankTransferService {
 // MARK: - BankTransferService
 
 extension StrigaBankTransferService: BankTransferService {
+
+    public func set(countryCode: String) throws {
+        fatalError("Not implemented")
+    }
+
+    public func save(userData: UserData) throws {
+        fatalError("Not implemented")
+    }
+    
     public var userData: AnyPublisher<UserData, Never> { subject.eraseToAnyPublisher() }
     
     public func reload() async {

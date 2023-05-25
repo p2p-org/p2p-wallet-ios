@@ -1378,3 +1378,10 @@
 "Up to 3 days · %@ fees" = "Jusqu'à 3 jours · Frais %@";
 "Up to 1 hour · %@ fees" = "Jusqu'à 1 heure · Frais %@";
 "bank card, bank transfer or crypto" = "carte bancaire, virement bancaire ou crypto";
+"Open IBAN account for international transfers with zero fees" = "Ouvrir un compte IBAN pour les virements internationaux sans frais";
+"This service is available only for European Economic Area countries" = "Ce service est disponible uniquement pour les pays de l'Espace économique européen";
+"Your country" = "Votre pays";
+"Powered by Striga" = "Propulsé par Striga";
+"here" = "ici";
+"Check the list of countries" = "Consultez la liste des pays";
+"Change country" = "changer de pays";

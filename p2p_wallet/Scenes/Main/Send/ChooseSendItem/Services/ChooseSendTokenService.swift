@@ -5,8 +5,8 @@ import KeyAppKitCore
 import KeyAppBusiness
 
 final class ChooseSendTokenService: ChooseItemService {
-
-    let otherTokensTitle = L10n.otherTokens
+    let chosenTitle = L10n.chosenToken
+    let otherTitle = L10n.otherTokens
 
     var state: AnyPublisher<AsyncValueState<[ChooseItemListSection]>, Never> {
         statePublisher.eraseToAnyPublisher()
