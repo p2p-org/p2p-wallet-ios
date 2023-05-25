@@ -48,15 +48,8 @@ extension StrigaBankTransferService: BankTransferService {
             lastName: data.lastName,
             email: data.email,
             mobile: CreateUserRequest.Mobile(countryCode: data.phoneCountryCode, number: data.phoneNumber),
-            dateOfBirth: CreateUserRequest.DateOfBirth(year: nil, month: nil, day: nil),
-            address: CreateUserRequest.Address(
-                addressLine1: nil,
-                addressLine2: nil,
-                city: nil,
-                postalCode: nil,
-                state: nil,
-                country: nil
-            ),
+            dateOfBirth: nil,
+            address: nil,
             occupation: data.occupation,
             sourceOfFunds: nil,
             ipAddress: nil,
