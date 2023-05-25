@@ -34,3 +34,33 @@ public struct RegistrationData {
     }
 }
 
+// MARK: - As Domain
+
+extension UserDetailsResponse {
+    func asDomain() -> RegistrationData {
+        RegistrationData(
+            firstName: firstName,
+            lastName: lastName,
+            email: email,
+            phoneCountryCode: mobile.countryCode,
+            phoneNumber: mobile.number,
+            dateOfBirth: dateOfBirth?.asDate(),
+            placeOfBirth: placeOfBirth,
+            occupation: occupation,
+            placeOfLive: nil
+        )
+    }
+}
+
+// MARK: - As Date
+
+extension UserDetailsResponse.DateOfBirth {
+    func asDate() -> Date? {
+        var dateComponents = DateComponents()
+        dateComponents.year = year
+        dateComponents.month = month
+        dateComponents.day = day
+        let userCalendar = Calendar(identifier: .gregorian)
+        return userCalendar.date(from: dateComponents)
+    }
+}

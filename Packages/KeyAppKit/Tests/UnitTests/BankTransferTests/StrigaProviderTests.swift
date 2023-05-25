@@ -20,11 +20,7 @@ final class StrigaProviderTests: XCTestCase {
         try super.setUpWithError()
         
         httpClient = .init()
-        strigaProvider = .init(
-            httpClient: httpClient,
-            userPublicKey: "",
-            signedMessage: ""
-        )
+        strigaProvider = .init(httpClient: httpClient)
     }
     
     override func tearDownWithError() throws {
@@ -35,13 +31,28 @@ final class StrigaProviderTests: XCTestCase {
     }
     
     @MainActor
+    func testGetUserDetailsSuccess() async throws {
+        
+        // then
+        let userId = "123"
+        httpClient.stubbedRequestResult = UserDetailsResponse.fake()
+        
+        // when
+        _ = try await strigaProvider.getUserDetails(authHeader: .init(pubKey: "", signedMessage: ""), userId: userId)
+        
+        // then
+        let endpoint = httpClient.invokedRequestParameters!.endpoint!
+        XCTAssertEqual(endpoint.baseURL, "https://payment.keyapp.org/striga/api/v1/user/")
+    }
+    
+    @MainActor
     func testCreateUserEndpointSuccess() async throws {
         
         // then
         httpClient.stubbedRequestResult = CreateUserResponse(userId: "", email: "", KYC: .init(status: ""))
         
         // when
-        _ = try await strigaProvider.createUser(model: .fake())
+        _ = try await strigaProvider.createUser(authHeader: .init(pubKey: "", signedMessage: ""), model: .fake())
         
         // then
         let endpoint = httpClient.invokedRequestParameters!.endpoint!
@@ -57,7 +68,11 @@ final class StrigaProviderTests: XCTestCase {
         httpClient.stubbedRequestResult = ""
         
         // when
-        _ = try await strigaProvider.verifyMobileNumber(userId: "userId", verificationCode: "verificationCode")
+        _ = try await strigaProvider.verifyMobileNumber(
+            authHeader: .init(pubKey: "", signedMessage: ""),
+            userId: "userId",
+            verificationCode: "verificationCode"
+        )
         
         // then
         let endpoint = httpClient.invokedRequestParameters!.endpoint!
@@ -68,7 +83,7 @@ final class StrigaProviderTests: XCTestCase {
     }
 }
 
-// MARK: - Fake
+// MARK: - Fakes
 
 private extension CreateUserRequest {
     static func fake() -> CreateUserRequest {
@@ -86,6 +101,26 @@ private extension CreateUserRequest {
                 state: "state",
                 country: "country"
             ),
+            occupation: "occupation",
+            sourceOfFunds: "sourceOfFunds",
+            ipAddress: "ipAddress",
+            placeOfBirth: "placeOfBirth",
+            expectedIncomingTxVolumeYearly: "expectedIncomingTxVolumeYearly",
+            expectedOutgoingTxVolumeYearly: "expectedOutgoingTxVolumeYearly",
+            selfPepDeclaration: false,
+            purposeOfAccount: "purposeOfAccount"
+        )
+    }
+}
+
+private extension UserDetailsResponse {
+    static func fake() -> UserDetailsResponse {
+        UserDetailsResponse(
+            firstName: "firstName",
+            lastName: "lastName",
+            email: "email",
+            mobile: .init(countryCode: "countryCode", number: "number"),
+            dateOfBirth: .init(year: 2023, month: 5, day: 24),
             occupation: "occupation",
             sourceOfFunds: "sourceOfFunds",
             ipAddress: "ipAddress",

@@ -8,19 +8,20 @@
 import Foundation
 import KeyAppNetworking
 
-enum StrigaEndpoint {
+public enum StrigaEndpoint {
     case verifyMobileNumber(authHeader: AuthHeader, userId: String, verificationCode: String)
+    case getUserDetails(authHeader: AuthHeader, userId: String)
     case createUser(authHeader: AuthHeader, model: CreateUserRequest)
 }
 
 // MARK: - HTTPEndpoint
 
 extension StrigaEndpoint: HTTPEndpoint {
-    var baseURL: String {
+    public var baseURL: String {
         "https://\(urlEnvironment)/api/\(version)/user/"
     }
     
-    var header: [String: String] {
+    public var header: [String: String] {
         [
             "Content-Type": "application/json",
             "User-PublicKey": authHeader.pubKey,
@@ -28,26 +29,32 @@ extension StrigaEndpoint: HTTPEndpoint {
         ]
     }
     
-    var path: String {
+    public var path: String {
         switch self {
         case .verifyMobileNumber:
             return "verify-mobile"
+        case let .getUserDetails(_, userId):
+            return userId
         case .createUser:
             return "create"
         }
     }
 
-    var method: HTTPMethod {
+    public var method: HTTPMethod {
         switch self {
         case .verifyMobileNumber, .createUser:
             return .post
+        case .getUserDetails:
+            return .get
         }
     }
 
-    var body: String? {
+    public var body: String? {
         switch self {
         case let .verifyMobileNumber(_, userId, verificationCode):
             return ["userId": userId, "verificationCode": verificationCode].encoded
+        case .getUserDetails:
+            return nil
         case let .createUser(_, model):
             return model.encoded
         }
@@ -59,7 +66,7 @@ extension StrigaEndpoint: HTTPEndpoint {
 private extension StrigaEndpoint {
     var urlEnvironment: String {
         switch self {
-        case .verifyMobileNumber, .createUser:
+        case .verifyMobileNumber, .createUser, .getUserDetails:
             return "payment.keyapp.org/striga"
         }
     }
@@ -71,6 +78,8 @@ private extension StrigaEndpoint {
     var authHeader: AuthHeader {
         switch self {
         case let .verifyMobileNumber(authHeader, _, _):
+            return authHeader
+        case let .getUserDetails(authHeader, _):
             return authHeader
         case let .createUser(authHeader, _):
             return authHeader
@@ -98,8 +107,8 @@ private extension Encodable {
 // MARK: - Auth Header
 
 extension StrigaEndpoint {
-    struct AuthHeader {
-        let pubKey: String
-        let signedMessage: String
+    public struct AuthHeader {
+        public let pubKey: String
+        public let signedMessage: String
     }
 }
