@@ -6,10 +6,14 @@ import BankTransfer
 import CountriesAPI
 
 final class BankTransferCoordinator: Coordinator<Void> {
+
+    // MARK: -
+
     private var navigationController: UINavigationController!
     private var userData: BankTransfer.UserData
 
-    @Injected private var analyticsManager: AnalyticsManager
+    // MARK: -
+
     @Injected private var bankTransferService: BankTransferService
 
     init(
@@ -21,12 +25,6 @@ final class BankTransferCoordinator: Coordinator<Void> {
     }
 
     override func start() -> AnyPublisher<Void, Never> {
-        if bankTransferService.isBankTransferAvailable() {
-            
-        } else {
-            // change country flow
-        }
-
         let viewModel = BankTransferInfoViewModel()
         let controller = BottomSheetController(
             rootView: BankTransferInfoView(viewModel: viewModel)

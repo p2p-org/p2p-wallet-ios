@@ -7,7 +7,6 @@ import Resolver
 import Sell
 import SolanaSwift
 
-
 final class TabBarCoordinator: Coordinator<Void> {
     // MARK: - Dependencies
 
