@@ -64,7 +64,7 @@ final class BankTransferInfoViewModel: BaseViewModel, ObservableObject {
             name: self.currentCountry?.name ?? "",
             flag: self.currentCountry?.emoji ?? "🏴"
         )
-        if self.isAvailable() {
+        if isAvailable() {
             return [
                 BankTransferInfoImageCellViewItem(image: .bankTransferInfoAvailableIcon),
                 ListSpacerCellViewItem(height: 12, backgroundColor: .clear),
@@ -124,8 +124,8 @@ final class BankTransferInfoViewModel: BaseViewModel, ObservableObject {
     private func openCountries() {
         Task {
             do {
-                let countries = try await self.countriesService.fetchCountries()
-                self.showCountriesSubject.send((Array(Set(countries)), self.currentCountry))
+                let countries = try await self.countriesService.fetchCountries().unique(keyPath: \.name)
+                self.showCountriesSubject.send((countries, self.currentCountry))
             } catch {
                 DefaultLogManager.shared.log(error: error)
             }
