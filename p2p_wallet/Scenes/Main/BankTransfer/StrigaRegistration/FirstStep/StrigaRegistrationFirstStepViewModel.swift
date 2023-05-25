@@ -27,7 +27,7 @@ final class StrigaRegistrationFirstStepViewModel: BaseViewModel, ObservableObjec
 
     // Other views
     @Published var actionTitle: String = L10n.next
-    @Published var isDataValid = true
+    @Published var isDataValid = true // We need this flag to allow user enter at first whatever he/she likes and then validate everything
     let actionPressed = PassthroughSubject<Void, Never>()
     let openNextStep = PassthroughSubject<Void, Never>()
     let chooseCountry = PassthroughSubject<Country?, Never>()
@@ -64,46 +64,13 @@ final class StrigaRegistrationFirstStepViewModel: BaseViewModel, ObservableObjec
                 self.isDataValid = isValid()
                 if isValid() {
                     self.openNextStep.send(())
-                } else {
-                    self.actionTitle = L10n.checkRedFields
                 }
             }
             .store(in: &subscriptions)
 
-        $phoneNumber
-            .sink { [weak self] value in
-                guard let self else { return }
-                if !value.isEmpty {
-                    self.fieldsStatuses[.phoneNumber] = .valid
-                }
-            }
-            .store(in: &subscriptions)
-
-        $firstName
-            .sink { [weak self] value in
-                guard let self else { return }
-                if !value.isEmpty {
-                    self.fieldsStatuses[.firstName] = .valid
-                }
-            }
-            .store(in: &subscriptions)
-
-        $surname
-            .sink { [weak self] value in
-                guard let self else { return }
-                if !value.isEmpty {
-                    self.fieldsStatuses[.surname] = .valid
-                }
-            }
-            .store(in: &subscriptions)
-
-        $dateOfBirth
-            .sink { [weak self] value in
-                guard let self else { return }
-                if !value.isEmpty {
-                    self.fieldsStatuses[.dateOfBirth] = .valid
-                }
-            }
+        $isDataValid
+            .map { $0 ? L10n.next : L10n.checkRedFields }
+            .assignWeak(to: \.actionTitle, on: self)
             .store(in: &subscriptions)
 
         $dateOfBirth
@@ -129,15 +96,13 @@ final class StrigaRegistrationFirstStepViewModel: BaseViewModel, ObservableObjec
             .assignWeak(to: \.countryOfBirth, on: self)
             .store(in: &subscriptions)
 
-        bindSave()
+        bindToFieldValues()
     }
 }
 
 private extension StrigaRegistrationFirstStepViewModel {
     func isValid() -> Bool {
-        if phoneNumber.isEmpty {
-            fieldsStatuses[.phoneNumber] = .invalid(error: L10n.couldNotBeEmpty)
-        }
+        validatePhone()
         validate(credential: firstName, field: .firstName)
         validate(credential: surname, field: .surname)
         validateDate()
@@ -147,9 +112,22 @@ private extension StrigaRegistrationFirstStepViewModel {
         return !fieldsStatuses.contains(where: { $0.value != .valid })
     }
 
+    func validatePhone() {
+        // TODO: Add lib for phone formatting
+        if phoneNumber.isEmpty {
+            fieldsStatuses[.phoneNumber] = .invalid(error: L10n.couldNotBeEmpty)
+        } else {
+            fieldsStatuses[.phoneNumber] = .valid
+        }
+    }
+
     func validate(credential: String, field: Field) {
         if credential.isEmpty {
             fieldsStatuses[field] = .invalid(error: L10n.couldNotBeEmpty)
+        } else if let regex = try? NSRegularExpression(pattern: "^\\p{L}+$"), !regex.matches(credential) {
+            fieldsStatuses[field] = .invalid(error: L10n.couldBeFilledOnlyWithSymbols)
+        } else {
+            fieldsStatuses[field] = .valid
         }
     }
 
@@ -166,10 +144,12 @@ private extension StrigaRegistrationFirstStepViewModel {
             fieldsStatuses[.dateOfBirth] = .invalid(error: L10n.incorrectMonth)
         } else if !components.isValidDate(in: calendar) {
             fieldsStatuses[.dateOfBirth] = .invalid(error: L10n.incorrectDay)
+        } else {
+            fieldsStatuses[.dateOfBirth] = .valid
         }
     }
 
-    func bindSave() {
+    func bindToFieldValues() {
         let contacts = Publishers.CombineLatest($email, $phoneNumber)
         let credentials = Publishers.CombineLatest($firstName, $surname)
         let dateOfBirth = Publishers.CombineLatest($dateOfBirthModel, $selectedCountryOfBirth)
@@ -177,6 +157,7 @@ private extension StrigaRegistrationFirstStepViewModel {
             .debounce(for: 0.5, scheduler: DispatchQueue.main)
             .sinkAsync { [weak self] contacts, credentials, dateOfBirth in
                 guard let self else { return }
+
                 try? await self.service.save(data: RegistrationData(
                     firstName: credentials.0,
                     lastName: credentials.1,
@@ -185,6 +166,10 @@ private extension StrigaRegistrationFirstStepViewModel {
                     dateOfBirth: dateOfBirth.0,
                     placeOfBirth: dateOfBirth.1?.code
                 ))
+
+                if self.isDataValid == false {
+                    self.isDataValid = self.isValid()
+                }
             }
             .store(in: &subscriptions)
     }
