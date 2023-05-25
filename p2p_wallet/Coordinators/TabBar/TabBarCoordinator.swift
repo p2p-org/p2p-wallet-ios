@@ -1,4 +1,5 @@
 import AnalyticsManager
+import BankTransfer
 import Combine
 import Foundation
 import KeyAppBusiness
@@ -248,9 +249,14 @@ final class TabBarCoordinator: Coordinator<Void> {
         case .crypto:
             self.handleAction(.receive)
         case .transfer:
-            // TODO: temprorary, should be removed
-            let coord = StrigaRegistrationFirstStepCoordinator(country: "RU", parent: navigationController)
-            coordinate(to: coord).sink { _ in }.store(in: &subscriptions)
+            let service: BankTransferService = Resolver.resolve()
+            service.userData.flatMap { [unowned self] data in
+                self.coordinate(to: BankTransferCoordinator(
+                    userData: data,
+                    navigationController: navigationController)
+                )
+            }
+            .sink {}.store(in: &subscriptions)
         }
     }
 

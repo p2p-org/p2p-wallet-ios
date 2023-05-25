@@ -1,21 +1,20 @@
-//
-//  Spinner.swift
-//  p2p_wallet
-//
-//  Created by Ivan on 04.10.2022.
-//
-
 import SwiftUI
 import KeyAppUI
 
 struct Spinner: View {
+
+    let color: Color
+    let activePartColor: Color
+
     let rotationTime: Double = 0.75
     static let initialDegree: Angle = .degrees(270)
 
-    let color = Color(Asset.Colors.lightSea.color)
-    let activePartColor = Color(Asset.Colors.sea.color)
-
     @State var rotationDegree = initialDegree
+
+    init(color: Color = Color(asset: Asset.Colors.lightSea), activePartColor: Color = Color(asset: Asset.Colors.sea)) {
+        self.color = color
+        self.activePartColor = activePartColor
+    }
 
     var body: some View {
         ZStack {

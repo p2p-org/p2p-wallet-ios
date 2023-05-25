@@ -48,8 +48,16 @@ struct TopupActionsView: View {
                     .foregroundColor(Color(Asset.Colors.mountain.color))
             }
             Spacer()
-            Image(uiImage: Asset.MaterialIcon.chevronRight.image)
-                .foregroundColor(Color(Asset.Colors.mountain.color))
+            if item.isLoading {
+                Spinner(
+                    color: Color(Asset.Colors.night.color).opacity(0.6),
+                    activePartColor: Color(Asset.Colors.night.color)
+                )
+                    .frame(width: 24, height: 24)
+            } else {
+                Image(uiImage: Asset.MaterialIcon.chevronRight.image)
+                    .foregroundColor(Color(Asset.Colors.mountain.color))
+            }
         }
             .padding(.all, 16)
             .background(Color(Asset.Colors.snow.color))

@@ -1393,3 +1393,10 @@
 "Check red fields" = "Vérifier les champs rouges";
 "Fill your data" = "Remplissez vos données";
 "Could not be empty" = "Ne peut pas être vide";
+"Open IBAN account for international transfers with zero fees" = "Ouvrir un compte IBAN pour les virements internationaux sans frais";
+"This service is available only for European Economic Area countries" = "Ce service est disponible uniquement pour les pays de l'Espace économique européen";
+"Your country" = "Votre pays";
+"Powered by Striga" = "Propulsé par Striga";
+"here" = "ici";
+"Check the list of countries" = "Consultez la liste des pays";
+"Change country" = "changer de pays";

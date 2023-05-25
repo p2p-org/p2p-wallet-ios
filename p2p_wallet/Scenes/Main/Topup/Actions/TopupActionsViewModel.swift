@@ -1,7 +1,11 @@
-import Foundation
+import BankTransfer
 import Combine
+import Foundation
+import Resolver
 
-final class TopupActionsViewModel: ObservableObject {
+final class TopupActionsViewModel: BaseViewModel, ObservableObject {
+
+    @Injected private var bankTransferService: BankTransferService
 
     // MARK: -
 
@@ -10,19 +14,22 @@ final class TopupActionsViewModel: ObservableObject {
             id: .transfer,
             icon: .bankTransferBankIcon,
             title: L10n.bankTransfer,
-            subtitle: L10n.upTo3Days·Fees("0%")
+            subtitle: L10n.upTo3Days·Fees("0%"),
+            isLoading: true
         ),
         ActionItem(
             id: .card,
             icon: .bankTransferCardIcon,
             title: L10n.bankCard,
-            subtitle: L10n.instant·Fees("4.5%")
+            subtitle: L10n.instant·Fees("4.5%"),
+            isLoading: false
         ),
         ActionItem(
             id: .crypto,
             icon: .bankTransferCryptoIcon,
             title: L10n.crypto,
-            subtitle: L10n.upTo1Hour·Fees("%0")
+            subtitle: L10n.upTo1Hour·Fees("%0"),
+            isLoading: false
         )
     ]
 
@@ -33,7 +40,19 @@ final class TopupActionsViewModel: ObservableObject {
     private let tappedItemSubject = PassthroughSubject<Action, Never>()
 
     func didTapItem(item: ActionItem) {
+        guard !item.isLoading else { return }
         tappedItemSubject.send(item.id)
+    }
+
+    override init() {
+        super.init()
+
+        bankTransferService.userData.sink { _ in
+            guard let index = self.actions.firstIndex(where: { item in
+                item.id == .transfer
+            }) else { return }
+            self.actions[index].isLoading = false
+        }.store(in: &subscriptions)
     }
 
 }
@@ -50,5 +69,6 @@ extension TopupActionsViewModel {
         var icon: UIImage
         var title: String
         var subtitle: String
+        var isLoading: Bool
     }
 }

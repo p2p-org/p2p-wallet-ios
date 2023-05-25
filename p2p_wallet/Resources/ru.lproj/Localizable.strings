@@ -1390,3 +1390,10 @@
 "Check red fields" = "Проверьте красные поля";
 "Fill your data" = "Заполните свои данные";
 "Could not be empty" = "Не может быть пустым";
+"Open IBAN account for international transfers with zero fees" = "Откройте счет IBAN для международных переводов с нулевой комиссией";
+"This service is available only for European Economic Area countries" = "Эта услуга доступна только для стран Европейской экономической зоны.";
+"Your country" = "Твоя страна";
+"Powered by Striga" = "Создано Стригой";
+"here" = "здесь";
+"Check the list of countries" = "Проверьте список стран";
+"Change country" = "Выбрать страну";

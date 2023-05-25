@@ -4,8 +4,8 @@ import KeyAppKitCore
 import KeyAppBusiness
 
 final class ChooseSwapTokenService: ChooseItemService {
-
-    let otherTokensTitle = L10n.allTokens
+    let chosenTitle = L10n.chosenToken
+    let otherTitle = L10n.allTokens
     var state: AnyPublisher<AsyncValueState<[ChooseItemListSection]>, Never> {
         statePublisher.eraseToAnyPublisher()
     }

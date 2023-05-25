@@ -2,6 +2,15 @@ import SwiftUI
 import KeyAppUI
 import SolanaSwift
 
+/// In case of successful experiment make a base Renderable protocol
+protocol ChooseItemRenderable<ViewType>: Identifiable where ID == String {
+    associatedtype ViewType: View
+
+    var id: String { get }
+
+    @ViewBuilder func render() -> ViewType
+}
+
 struct ChooseItemView<Content: View>: View {
     @ObservedObject private var viewModel: ChooseItemViewModel
     @ViewBuilder private let content: (ChooseItemSearchableItemViewModel) -> Content
@@ -68,23 +77,23 @@ private extension ChooseItemView {
 
     private var listView: some View {
         WrappedList {
-            if !viewModel.isSearchGoing {
+            if let chosen = viewModel.chosenItem, !viewModel.isSearchGoing {
                 // Chosen token
-                Text(L10n.chosenToken.uppercased())
+                Text(viewModel.chosenTitle.uppercased())
                     .sectionStyle()
                 ChooseItemSearchableItemView(
                     content: content,
                     state: .single,
-                    item: viewModel.chosenToken,
+                    item: chosen,
                     isChosen: true
                 )
                 .onTapGesture {
-                    viewModel.chooseTokenSubject.send(viewModel.chosenToken)
+                    viewModel.chooseTokenSubject.send(chosen)
                 }
             }
 
             // Search resuls or all tokens
-            Text(viewModel.isSearchGoing ? L10n.hereSWhatWeFound.uppercased() : viewModel.otherTokensTitle.uppercased())
+            Text(viewModel.isSearchGoing ? L10n.hereSWhatWeFound.uppercased() : viewModel.otherTitle.uppercased())
                 .sectionStyle()
 
             ForEach(viewModel.sections) { section in

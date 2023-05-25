@@ -12,17 +12,18 @@ final class ChooseItemViewModel: BaseViewModel, ObservableObject {
     @Published var isSearchGoing: Bool = false
     @Published var isLoading: Bool = true
 
-    var otherTokensTitle: String { service.otherTokensTitle }
+    var otherTitle: String { service.otherTitle }
+    var chosenTitle: String { service.chosenTitle }
 
-    let chosenToken: any ChooseItemSearchableItem
+    let chosenItem: (any ChooseItemSearchableItem)?
 
     private let service: ChooseItemService
     private var allItems: [ChooseItemListSection] = [] // All available items
 
     @Injected private var notifications: NotificationService
 
-    init(service: ChooseItemService, chosenToken: any ChooseItemSearchableItem) {
-        self.chosenToken = chosenToken
+    init(service: ChooseItemService, chosenToken: (any ChooseItemSearchableItem)?) {
+        self.chosenItem = chosenToken
         self.service = service
         super.init()
         bind()
@@ -40,7 +41,7 @@ private extension ChooseItemViewModel {
                     _ = state.apply { data in
                         let dataWithoutChosen = data.map { section in
                             ChooseItemListSection(
-                                items: section.items.filter { $0.id != self.chosenToken.id }
+                                items: section.items.filter { $0.id != self.chosenItem?.id }
                             )
                         }
                         self.allItems = self.service.sort(items: dataWithoutChosen)
