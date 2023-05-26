@@ -74,8 +74,9 @@ extension NSObject {
     }
 
     static fileprivate func deinitCallback(forObject object: NSObject) -> AnyPublisher<Void, Never> {
-        if let deinitCallback = (objc_getAssociatedObject(object, &deinitCallbackKey) as? DeinitCallback)?.subject.eraseToAnyPublisher() as? AnyPublisher<Void, Never> {
-            return deinitCallback
+        if let deinitCallback = objc_getAssociatedObject(object, &deinitCallbackKey) as? DeinitCallback
+        {
+            return deinitCallback.subject.eraseToAnyPublisher()
         }
         let rem = DeinitCallback()
         objc_setAssociatedObject(object, &deinitCallbackKey, rem, .OBJC_ASSOCIATION_RETAIN_NONATOMIC)
