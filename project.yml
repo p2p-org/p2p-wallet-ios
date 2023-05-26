@@ -87,6 +87,9 @@ packages:
     Firebase:
         url: https://github.com/firebase/firebase-ios-sdk.git
         from: 10.7.0
+    IdensicMobileSDK:
+        url: https://github.com/SumSubstance/IdensicMobileSDK-iOS.git
+        from: 1.24.0
 
 
 options:
@@ -338,6 +341,9 @@ targets:
 
             - package: Firebase
               product: FirebaseRemoteConfig
+
+            - package: IdensicMobileSDK
+              product: IdensicMobileSDK
 
             - framework: Frameworks/keyapp.xcframework
               embed: false

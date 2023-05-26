@@ -124,7 +124,9 @@
 	<key>NSAdvertisingAttributionReportEndpoint</key>
 	<string>https://appsflyer-skadnetwork.com/</string>
 	<key>NSCameraUsageDescription</key>
-	<string>This is required for the app to read wallet addresses from QR codes.</string>
+	<string>This is required for the app to read wallet addresses from QR codes and identify user for Bank transfer.</string>
+    <key>NSCameraUsageDescription</key>
+    <string>This is required for the app to identify user for Bank transfer.</string>
 	<key>NSFaceIDUsageDescription</key>
 	<string>This is required for the app to authenticate user with TouchID or FaceID.</string>
 	<key>NSPhotoLibraryAddUsageDescription</key>
@@ -133,6 +135,8 @@
         </string>
 	<key>NSPhotoLibraryUsageDescription</key>
 	<string>This is required for the app to send photos</string>
+    <key>NSLocationWhenInUseUsageDescription</key>
+    <string>Please provide us with your geolocation data to prove your current location</string>
 	<key>NSUserTrackingUsageDescription</key>
 	<string>Your data will be used only to measure advertising efficiency</string>
 	<key>RPCPOOL_API_KEY</key>
