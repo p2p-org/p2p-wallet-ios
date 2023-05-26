@@ -30,6 +30,7 @@ public class SolanaPriceService {
     public func getPrice(token: Token, fiat: String) async throws -> CurrentPrice {
         if let cachedValue = cache.value(forKey: primaryKey(token.address, fiat)) {
             return cachedValue
+                .fixedForStableCoin(tokenMint: token.address, fiat: fiat)
         } else {
             let result = try await api.getCurrentPrices(coins: [token], toFiat: fiat)
 
@@ -39,6 +40,7 @@ public class SolanaPriceService {
             cache.insert(currentPrice, forKey: primaryKey(token.address, fiat))
 
             return currentPrice
+                .fixedForStableCoin(tokenMint: token.address, fiat: fiat)
         }
     }
 
@@ -51,6 +53,7 @@ public class SolanaPriceService {
 
         if let cachedResult = getPricesFromCache(tokens: tokens, fiat: fiat) {
             return cachedResult
+                .fixedForStableCoin(fiat: fiat)
         } else {
             let prices = try await api.getCurrentPrices(coins: tokens, toFiat: fiat)
 
@@ -71,6 +74,7 @@ public class SolanaPriceService {
             }
 
             return prices
+                .fixedForStableCoin(fiat: fiat)
         }
     }
 
@@ -81,6 +85,7 @@ public class SolanaPriceService {
         for token in tokens {
             if let value = cache.value(forKey: primaryKey(token.address, fiat)) {
                 result[token] = value
+                    .fixedForStableCoin(tokenMint: token.address, fiat: fiat)
             } else {
                 return nil
             }
@@ -92,5 +97,35 @@ public class SolanaPriceService {
     /// Helper method for extracing cache key.
     internal func primaryKey(_ mint: String, _ fiat: String) -> String {
         "\(mint)-\(fiat)"
+    }
+}
+
+// MARK: - Stable coin price adjusting
+
+private extension Dictionary where Key == Token, Value == Optional<CurrentPrice> {
+    func fixedForStableCoin(fiat: String) -> Self {
+        var adjustedSelf = self
+        for price in self {
+            adjustedSelf[price.key] = price.value?.fixedForStableCoin(tokenMint: price.key.address, fiat: fiat)
+        }
+        return adjustedSelf
+    }
+}
+
+private extension CurrentPrice {
+    /// Adjust prices for stable coin (usdc, usdt) make it equal to 1 if not depegged
+    func fixedForStableCoin(tokenMint: String, fiat: String) -> Self {
+        // assertion
+        guard fiat.uppercased() == "USD", // current fiat is USD
+              let value, // current price is not nil
+              [Token.usdc.address, Token.usdt.address].contains(tokenMint), // token is usdc, usdt
+              abs(value - 1.0) <= 0.02 // usdc, usdt wasn't depegged greater than 20%
+        else {
+            // otherwise return current value
+            return self
+        }
+        
+        // modify prices for usdc to usdt to make it equal to 1 USD
+        return CurrentPrice(value: 1.0, change24h: change24h)
     }
 }

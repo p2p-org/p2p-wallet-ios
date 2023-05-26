@@ -269,7 +269,7 @@ private extension TokenPriceMap {
 private extension CurrentPrice {
     func adjusted(tokenMint: String) -> Self {
         // assertion
-        guard Defaults.fiat.symbol == "USD", // current fiat is USD
+        guard Defaults.fiat.symbol == "$", // current fiat is USD
               let value, // current price is not nil
               [Token.usdc.address, Token.usdt.address].contains(tokenMint), // token is usdc, usdt
               abs(value - 1.0) <= 0.02 // usdc, usdt wasn't depegged
