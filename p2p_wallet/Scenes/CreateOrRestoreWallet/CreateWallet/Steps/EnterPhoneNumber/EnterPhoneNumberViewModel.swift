@@ -6,9 +6,6 @@ import Onboarding
 import PhoneNumberKit
 import Reachability
 import Resolver
-#if os(iOS)
-import CoreTelephony
-#endif
 
 final class EnterPhoneNumberViewModel: BaseOTPViewModel {
     private static let defaultCountry = Country(
@@ -280,13 +277,6 @@ extension EnterPhoneNumberViewModel {
 
 private extension EnterPhoneNumberViewModel {
     func defaultRegionCode() -> String {
-#if os(iOS) && !targetEnvironment(simulator) && !targetEnvironment(macCatalyst)
-        let networkInfo = CTTelephonyNetworkInfo()
-        let carrier: CTCarrier? = networkInfo.serviceSubscriberCellularProviders?.values.first(where: { $0.mobileNetworkCode != nil })
-        if let isoCountryCode = carrier?.isoCountryCode {
-            return isoCountryCode.lowercased()
-        }
-#endif
         return Locale.current.regionCode?.lowercased() ?? PhoneNumberKit.defaultRegionCode().lowercased()
     }
 }
