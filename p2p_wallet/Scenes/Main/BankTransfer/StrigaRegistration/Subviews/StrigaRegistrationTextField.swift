@@ -50,7 +50,7 @@ struct StrigaRegistrationTextField: View {
                 if isDetailed {
                     Image(asset: Asset.MaterialIcon.chevronRight)
                         .renderingMode(.template)
-                        .foregroundColor(Color(asset: Asset.Colors.silver))
+                        .foregroundColor(Color(asset: Asset.Colors.night))
                         .padding(.trailing, 16)
                 }
             }
@@ -67,6 +67,7 @@ struct StrigaRegistrationTextField: View {
                 Text(error)
                     .apply(style: .label1)
                     .foregroundColor(Color(asset: Asset.Colors.rose))
+                    .padding(.leading, 8)
             }
         }
     }
