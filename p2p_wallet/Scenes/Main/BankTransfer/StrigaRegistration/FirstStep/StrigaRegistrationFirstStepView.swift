@@ -3,7 +3,9 @@ import KeyAppUI
 import CountriesAPI
 
 fileprivate typealias TextField = StrigaRegistrationTextField
-fileprivate typealias InfoView = StrigaRegistrationInformerView
+fileprivate typealias InfoView = StrigaRegistrationInfoView
+fileprivate typealias Cell = StrigaRegistrationCell
+fileprivate typealias DetailedButton = StrigaRegistrationDetailedButton
 
 struct StrigaRegistrationFirstStepView: View {
     @ObservedObject private var viewModel: StrigaRegistrationFirstStepViewModel
@@ -14,7 +16,7 @@ struct StrigaRegistrationFirstStepView: View {
 
     var body: some View {
         List {
-            InfoView()
+            InfoView(appearance: .credentials)
                 .listRowBackground(Color(Asset.Colors.smoke.color))
                 .listRowInsets(EdgeInsets.infoInset)
             
@@ -45,60 +47,60 @@ struct StrigaRegistrationFirstStepView: View {
 
     var contactsSection: some View {
         Section(header: section(header: L10n.contacts)) {
-            TextField(
+            Cell(
                 title: L10n.email,
-                placeholder: L10n.enter,
-                text: $viewModel.email,
-                status: viewModel.fieldsStatuses[.email],
-                isEnabled: false
-            )
+                status: viewModel.fieldsStatuses[.email]
+            ) {
+                TextField(placeholder: L10n.enter, text: $viewModel.email, isEnabled: false)
+            }
 
-            TextField(
+            Cell(
                 title: L10n.phoneNumber,
-                placeholder: L10n.enter,
-                text: $viewModel.phoneNumber,
-                status: viewModel.fieldsStatuses[.phoneNumber],
-                maxSymbolsLimit: 12
-            )
+                status: viewModel.fieldsStatuses[.phoneNumber]
+            ) {
+                TextField(placeholder: L10n.phoneNumber, text: $viewModel.phoneNumber, maxSymbolsLimit: 15)
+            }
         }
         .styled()
     }
 
     var credentialsSection: some View {
         Section(header: section(header: L10n.credentials)) {
-            TextField(
+            Cell(
                 title: L10n.firstName,
-                placeholder: L10n.enter,
-                text: $viewModel.firstName,
-                status: viewModel.fieldsStatuses[.firstName],
-                maxSymbolsLimit: 40
-            )
+                status: viewModel.fieldsStatuses[.firstName]
+            ) {
+                TextField(placeholder: L10n.enter, text: $viewModel.firstName, maxSymbolsLimit: 40)
+            }
 
-            TextField(
+            Cell(
                 title: L10n.surname,
-                placeholder: L10n.enter,
-                text: $viewModel.surname,
-                status: viewModel.fieldsStatuses[.surname],
-                maxSymbolsLimit: 40
-            )
+                status: viewModel.fieldsStatuses[.surname]
+            ) {
+                TextField(placeholder: L10n.enter, text: $viewModel.surname, maxSymbolsLimit: 40)
+            }
         }
         .styled()
     }
 
     var dateOfBirthSection: some View {
         Section(header: section(header: L10n.dateOfBirth)) {
-            StrigaRegistrationDateTextField(
-                text: $viewModel.dateOfBirth,
+            Cell(
+                title: L10n.dateOfBirth,
                 status: viewModel.fieldsStatuses[.dateOfBirth]
-            )
+            ) {
+                StrigaRegistrationDateTextField(text: $viewModel.dateOfBirth)
+            }
 
-            TextField(
+            Cell(
                 title: L10n.countryOfBirth,
-                placeholder: L10n.selectFromList,
-                text: $viewModel.countryOfBirth,
-                status: viewModel.fieldsStatuses[.countryOfBirth],
-                isDetailed: true
-            )
+                status: viewModel.fieldsStatuses[.countryOfBirth]
+            ) {
+                DetailedButton(
+                    value: $viewModel.countryOfBirth,
+                    action: { }
+                )
+            }
             .onTapGesture {
                 viewModel.chooseCountry.send(viewModel.selectedCountryOfBirth)
             }

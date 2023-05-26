@@ -1405,3 +1405,15 @@
 "Incorrect day" = "Jour incorrect";
 "Incorrect month" = "Mois incorrect";
 "Could be filled only with symbols" = "Ne peut être rempli que de symboles";
+"Source of funds" = "Source de fonds";
+"Occupation industry" = "Industrie professionnelle";
+"Current address" = "Adresse actuelle";
+"City" = "Ville";
+"Full city name" = "Nom complet de la ville";
+"Address line" = "Ligne d'adresse";
+"Your street and flat number" = "Votre numéro de rue et d'appartement";
+"Postal code" = "Code Postal";
+"Recommended" = "Recommandé";
+"State or region" = "État ou région";
+"After clicking the “Сontinue”, you confirm that you are not a Politically Exposed Person" = "Après avoir cliqué sur "Continuer", vous confirmez que vous n'êtes pas une personne politiquement exposée";
+"Country" = "Pays";

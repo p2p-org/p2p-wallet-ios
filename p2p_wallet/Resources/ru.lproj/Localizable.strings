@@ -1402,3 +1402,15 @@
 "Incorrect day" = "Неверный день";
 "Incorrect month" = "Неверный месяц";
 "Could be filled only with symbols" = "Может быть заполнен только символами";
+"Source of funds" = "Источник средств";
+"Occupation industry" = "оккупация промышленности";
+"Current address" = "Текущий адрес";
+"City" = "Город";
+"Full city name" = "Полное название города";
+"Address line" = "Адресная строка";
+"Your street and flat number" = "Ваша улица и номер квартиры";
+"Postal code" = "Почтовый индекс";
+"Recommended" = "рекомендуемые";
+"State or region" = "Штат или регион";
+"After clicking the “Сontinue”, you confirm that you are not a Politically Exposed Person" = "Нажав кнопку «Продолжить», вы подтверждаете, что не являетесь политически значимым лицом.";
+"Country" = "Страна";

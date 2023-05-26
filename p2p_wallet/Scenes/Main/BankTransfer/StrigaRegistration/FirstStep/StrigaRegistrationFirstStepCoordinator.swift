@@ -24,13 +24,12 @@ final class StrigaRegistrationFirstStepCoordinator: Coordinator<Void> {
         navigationController.modalPresentationStyle = .fullScreen
 
         viewModel.openNextStep
-            .sink { [weak self] _ in
-                //TODO: Open second screen
-                self?.navigationController.dismiss(animated: true)
-                self?.parent.dismiss(animated: false)
+            .flatMap { _ in
+                self.coordinate(to: StrigaRegistrationSecondStepCoordinator(navigationController: self.navigationController))
             }
+            .sink { }
             .store(in: &subscriptions)
-        
+
         viewModel.back
             .sink { [weak self] _ in
                 self?.navigationController.dismiss(animated: true)
