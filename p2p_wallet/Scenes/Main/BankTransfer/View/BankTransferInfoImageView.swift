@@ -48,6 +48,7 @@ struct BankTransferTitleCellView: View {
             .fontWeight(.bold)
             .apply(style: .title2)
             .multilineTextAlignment(.center)
+            .fixedSize(horizontal: false, vertical: true)
             .padding(.horizontal, 20)
     }
 }
@@ -148,6 +149,7 @@ struct CenterTextCellItemView: View {
     var body: some View {
         Text(text)
             .apply(style: style)
+            .multilineTextAlignment(.center)
             .foregroundColor(color)
     }
 }
