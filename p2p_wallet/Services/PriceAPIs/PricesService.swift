@@ -68,7 +68,7 @@ class PricesService {
             if initialValue.values.isEmpty {
                 initialValue = try await getCurrentPrices()
             }
-            currentPricesSubject.send(initialValue.adjusted)
+            currentPricesSubject.send(initialValue)
 
             // reload
             try await reload()
@@ -83,14 +83,14 @@ class PricesService {
 
     private func migrate() async {
         // First migration to fix COPE token
-        let migration1Key = "PricesService.migration1Key"
+        let migrationKey = "PricesService.migration2Key"
 
-        if UserDefaults.standard.bool(forKey: migration1Key) == false {
+        if UserDefaults.standard.bool(forKey: migrationKey) == false {
             // clear current cache
             await storage.savePrices([:])
 
             // mark as migrated
-            UserDefaults.standard.set(true, forKey: migration1Key)
+            UserDefaults.standard.set(true, forKey: migrationKey)
         }
     }
 
