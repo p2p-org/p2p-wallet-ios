@@ -86,7 +86,7 @@ final class ActionsViewModel: BaseViewModel, ObservableObject {
             id: L10n.send,
             image: .homeSendAction,
             title: L10n.send,
-            subtitle: "\(L10n.toUsernameOrAddress)\n") {
+            subtitle: L10n.toUsernameOrAddress) {
                 self.actionSubject.send(.send)
             }
         vertical.append(send)
