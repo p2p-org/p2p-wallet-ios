@@ -8,19 +8,21 @@ private extension String {
 }
 
 public final class StrigaBankTransferService {
-    
+
     // Dependencies
     private let strigaProvider: IStrigaProvider
-    
+    private let repository: BankTransferUserDataRepository
+
     // Subjects
     let subject = CurrentValueSubject<UserData, Never>(
         UserData(countryCode: nil, userId: nil, mobileVerified: false)
     )
-    
+
     // MARK: - Init
-    
+
     public init(strigaProvider: IStrigaProvider) {
         self.strigaProvider = strigaProvider
+        self.repository = StrigaBankTransferUserDataRepository()
     }
 }
 
@@ -31,9 +33,9 @@ extension StrigaBankTransferService: BankTransferService {
     public func save(userData: UserData) throws {
         fatalError("Not implemented")
     }
-    
+
     public var userData: AnyPublisher<UserData, Never> { subject.eraseToAnyPublisher() }
-    
+
     public func reload() async {
         fatalError("Not implemented")
     }
@@ -43,8 +45,11 @@ extension StrigaBankTransferService: BankTransferService {
     }
 
     public func getRegistrationData() async -> RegistrationData {
-        fatalError("Not implemented")
+        await repository.getRegistrationData()
+    }
 
+    public func save(data: RegistrationData) async throws {
+        await repository.save(registrationData: data)
     }
 
     public func createUser(data: RegistrationData) async throws {
@@ -52,18 +57,18 @@ extension StrigaBankTransferService: BankTransferService {
             firstName: data.firstName,
             lastName: data.lastName,
             email: data.email,
-            mobile: CreateUserRequest.Mobile(countryCode: data.phoneCountryCode, number: data.phoneNumber),
-            dateOfBirth: CreateUserRequest.DateOfBirth(year: nil, month: nil, day: nil),
+            mobile: CreateUserRequest.Mobile(countryCode: data.mobile.countryCode, number: data.mobile.number),
+            dateOfBirth: CreateUserRequest.DateOfBirth(year: data.dateOfBirth?.year, month: data.dateOfBirth?.month, day: data.dateOfBirth?.day),
             address: CreateUserRequest.Address(
-                addressLine1: nil,
-                addressLine2: nil,
-                city: nil,
-                postalCode: nil,
-                state: nil,
-                country: nil
+                addressLine1: data.address?.addressLine1,
+                addressLine2: data.address?.addressLine2,
+                city: data.address?.city,
+                postalCode: data.address?.postalCode,
+                state: data.address?.state,
+                country: data.address?.country
             ),
             occupation: data.occupation,
-            sourceOfFunds: nil,
+            sourceOfFunds: data.sourceOfFunds,
             ipAddress: nil,
             placeOfBirth: data.placeOfBirth,
             expectedIncomingTxVolumeYearly: .expectedIncomingTxVolumeYearly,
@@ -87,5 +92,9 @@ extension StrigaBankTransferService: BankTransferService {
 
     public func verify(OTP: String) async throws -> Bool {
         fatalError("Not implemented")
+    }
+
+    public func clearCache() async {
+        await repository.clearCache()
     }
 }

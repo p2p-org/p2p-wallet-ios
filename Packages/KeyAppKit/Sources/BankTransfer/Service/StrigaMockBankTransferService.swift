@@ -6,12 +6,15 @@ public final class StrigaMockBankTransferService: BankTransferService {
     private var _userData: UserData = .init(countryCode: "fr", userId: nil, mobileVerified: false)
 
     public var userData: AnyPublisher<UserData, Never> { subject.eraseToAnyPublisher() }
+    private let repository: BankTransferUserDataRepository
 
     let subject = CurrentValueSubject<UserData, Never>(
         UserData(countryCode: nil, userId: nil, mobileVerified: false)
     )
 
-    public init() { }
+    public init() {
+        repository = StrigaBankTransferUserDataRepository()
+    }
 
     public func reload() async {
         do {
@@ -30,17 +33,11 @@ public final class StrigaMockBankTransferService: BankTransferService {
     }
 
     public func getRegistrationData() async -> RegistrationData {
-        return RegistrationData(
-            firstName: "test@test.test",
-            lastName: "",
-            email: "",
-            phoneCountryCode: "",
-            phoneNumber: "",
-            dateOfBirth: nil,
-            placeOfBirth: nil,
-            occupation: nil,
-            placeOfLive: nil
-        )
+        await repository.getRegistrationData()
+    }
+
+    public func save(data: RegistrationData) async throws {
+        await repository.save(registrationData: data)
     }
 
     public func createUser(data: RegistrationData) async throws {
@@ -53,5 +50,9 @@ public final class StrigaMockBankTransferService: BankTransferService {
 
     public func verify(OTP: String) async throws -> Bool {
         throw NSError()
+    }
+
+    public func clearCache() async {
+        fatalError("Not implemented")
     }
 }
