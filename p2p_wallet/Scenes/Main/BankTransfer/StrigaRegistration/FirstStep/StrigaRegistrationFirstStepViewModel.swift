@@ -31,6 +31,7 @@ final class StrigaRegistrationFirstStepViewModel: BaseViewModel, ObservableObjec
     let actionPressed = PassthroughSubject<Void, Never>()
     let openNextStep = PassthroughSubject<Void, Never>()
     let chooseCountry = PassthroughSubject<Country?, Never>()
+    let back = PassthroughSubject<Void, Never>()
 
     var fieldsStatuses = [Field: StrigaRegistrationTextFieldStatus]()
 

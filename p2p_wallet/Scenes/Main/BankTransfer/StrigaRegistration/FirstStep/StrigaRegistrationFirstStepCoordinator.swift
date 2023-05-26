@@ -5,11 +5,13 @@ import CountriesAPI
 final class StrigaRegistrationFirstStepCoordinator: Coordinator<Void> {
     private let result = PassthroughSubject<Void, Never>()
     private let country: Country
-    private let parent: UINavigationController
+    private let parent: UIViewController
+    private let navigationController: UINavigationController
 
-    init(country: Country, parent: UINavigationController) {
+    init(country: Country, parent: UIViewController) {
         self.country = country
         self.parent = parent
+        self.navigationController = UINavigationController()
     }
 
     override func start() -> AnyPublisher<Void, Never> {
@@ -18,11 +20,20 @@ final class StrigaRegistrationFirstStepCoordinator: Coordinator<Void> {
 
         let vc = view.asViewController(withoutUIKitNavBar: false)
         vc.title = L10n.stepOf(1, 3)
-        vc.hidesBottomBarWhenPushed = true
+        navigationController.setViewControllers([vc], animated: true)
+        navigationController.modalPresentationStyle = .fullScreen
 
         viewModel.openNextStep
-            .sink { _ in
+            .sink { [weak self] _ in
                 //TODO: Open second screen
+                self?.navigationController.dismiss(animated: true)
+                self?.parent.dismiss(animated: false)
+            }
+            .store(in: &subscriptions)
+        
+        viewModel.back
+            .sink { [weak self] _ in
+                self?.navigationController.dismiss(animated: true)
             }
             .store(in: &subscriptions)
 
@@ -41,8 +52,12 @@ final class StrigaRegistrationFirstStepCoordinator: Coordinator<Void> {
             }
         }.store(in: &subscriptions)
 
-        parent.pushViewController(vc, animated: true)
+        parent.present(navigationController, animated: true)
 
-        return result.first().eraseToAnyPublisher()
+        return Publishers.Merge(
+            vc.deallocatedPublisher(),
+            result.eraseToAnyPublisher()
+        )
+        .prefix(1).eraseToAnyPublisher()
     }
 }

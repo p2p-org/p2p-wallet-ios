@@ -48,7 +48,7 @@ final class BankTransferCoordinator: Coordinator<Void> {
         // TODO: Not sure what kind of navigaiton should be here
         viewModel.openRegistration
             .flatMap { country in
-                self.coordinate(to: StrigaRegistrationFirstStepCoordinator(country: country, parent: self.navigationController))
+                self.coordinate(to: StrigaRegistrationFirstStepCoordinator(country: country, parent: controller))
             }
             .sink { _ in }
             .store(in: &subscriptions)
