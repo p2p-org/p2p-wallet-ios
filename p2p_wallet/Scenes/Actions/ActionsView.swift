@@ -25,13 +25,15 @@ struct ActionsView: View {
                 .apply(style: .title3)
                 .padding(.top, 2)
             VStack(spacing: 8) {
-                ForEach(viewModel.horizontal) { item in
-                    horizontalActionView(
-                        image: item.image,
-                        title: item.title,
-                        subtitle: item.subtitle,
-                        action: item.action
-                    )
+                if viewModel.horizontal.count > 0 {
+                    ForEach(viewModel.horizontal) { item in
+                        horizontalActionView(
+                            image: item.image,
+                            title: item.title,
+                            subtitle: item.subtitle,
+                            action: item.action
+                        )
+                    }
                 }
                 LazyVGrid(columns: columns) {
                     ForEach(viewModel.vertical) { item in
