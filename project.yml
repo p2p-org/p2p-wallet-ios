@@ -344,6 +344,8 @@ targets:
 
             - package: IdensicMobileSDK
               product: IdensicMobileSDK
+            - package: IdensicMobileSDK
+              product: IdensicMobileSDK_MRTDReader
 
             - framework: Frameworks/keyapp.xcframework
               embed: false

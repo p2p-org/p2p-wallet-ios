@@ -117,6 +117,8 @@
 	<string>$(NAME_SERVICE_ENDPOINT_NEW)</string>
 	<key>NAME_SERVICE_STAGING_ENDPOINT</key>
 	<string>$(NAME_SERVICE_STAGING_ENDPOINT)</string>
+	<key>NFCReaderUsageDescription</key>
+	<string>Let us scan the document for more precise recognition</string>
 	<key>NOTIFICATION_SERVICE_ENDPOINT</key>
 	<string>$(NOTIFICATION_SERVICE_ENDPOINT)</string>
 	<key>NOTIFICATION_SERVICE_ENDPOINT_RELEASE</key>
@@ -208,5 +210,11 @@
 	<string>Light</string>
 	<key>UIViewControllerBasedStatusBarAppearance</key>
 	<true/>
+	<key>com.apple.developer.nfc.readersession.iso7816.select-identifiers</key>
+	<array>
+		<string>A0000002471001</string>
+		<string>A0000002472001</string>
+		<string>00000000000000</string>
+	</array>
 </dict>
 </plist>
