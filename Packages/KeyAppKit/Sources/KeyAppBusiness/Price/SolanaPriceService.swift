@@ -119,7 +119,7 @@ private extension CurrentPrice {
         guard fiat.uppercased() == "USD", // current fiat is USD
               let value, // current price is not nil
               [Token.usdc.address, Token.usdt.address].contains(tokenMint), // token is usdc, usdt
-              abs(value - 1.0) <= 0.02 // usdc, usdt wasn't depegged greater than 20%
+              (abs(value - 1.0) * 100).rounded(to: 1) <= 2 // usdc, usdt wasn't depegged greater than 2%
         else {
             // otherwise return current value
             return self
@@ -127,5 +127,12 @@ private extension CurrentPrice {
         
         // modify prices for usdc to usdt to make it equal to 1 USD
         return CurrentPrice(value: 1.0, change24h: change24h)
+    }
+}
+
+private extension Double {
+    func rounded(to places: Int) -> Double {
+        let divisor = Double.pow(10.0, Double(places))
+        return (self * divisor).rounded() / divisor
     }
 }
