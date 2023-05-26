@@ -32,10 +32,10 @@ final class ActionsViewModel: BaseViewModel, ObservableObject {
         super.init()
 
         let cashOut = ActionCellItem(
-            id: L10n.cashOutCryptoToFiat,
+            id: L10n.cashOut,
             image: .actionsCashOut,
-            title: L10n.cashOutCryptoToFiat,
-            subtitle: L10n.viaBankTransfer) {
+            title: L10n.cashOut,
+            subtitle: L10n.cashOutCryptoToFiat) {
                 self.actionSubject.send(.cashOut)
             }
         let topUp = ActionCellItem(
