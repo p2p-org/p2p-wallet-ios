@@ -13,9 +13,12 @@ final class BankTransferInfoViewModel: BaseViewModel, ObservableObject {
         showCountriesSubject.eraseToAnyPublisher()
     }
 
+    var openProviderInfo: AnyPublisher<URL, Never> {
+        openProviderInfoSubject.eraseToAnyPublisher()
+    }
+
     // MARK: - Dependencies
 
-    @Injected private var bankTransferService: BankTransferService
     @Injected private var countriesService: CountriesAPI
     @Injected private var helpLauncher: HelpCenterLauncher
 
@@ -26,6 +29,8 @@ final class BankTransferInfoViewModel: BaseViewModel, ObservableObject {
     // MARK: -
 
     private var showCountriesSubject = PassthroughSubject<([Country], Country?), Never>()
+    private var openProviderInfoSubject = PassthroughSubject<URL, Never>()
+
     private var currentCountry: Country? {
         didSet {
             self.items = self.makeItems()
@@ -50,13 +55,6 @@ final class BankTransferInfoViewModel: BaseViewModel, ObservableObject {
                 DefaultLogManager.shared.log(error: error)
             }
         }
-
-        bankTransferService.userData
-            .map { _ in self.makeItems() }
-            .assignWeak(to: \.items, on: self)
-            .store(in: &subscriptions)
-
-//        try bankTransferService.save(userData: UserData)
     }
 
     private func makeItems() -> [any Renderable] {
@@ -72,7 +70,12 @@ final class BankTransferInfoViewModel: BaseViewModel, ObservableObject {
                 ListSpacerCellViewItem(height: 16, backgroundColor: .clear),
                 countryCell,
                 ListSpacerCellViewItem(height: 24, backgroundColor: .clear),
-                CenterTextCellViewItem(text: L10n.poweredByStriga, style: .text3, color: Color(Asset.Colors.sky.color)),
+                CenterTextCellViewItem(
+                    id: CellItemIdentidier.poweredByStriga.rawValue,
+                    text: L10n.poweredByStriga,
+                    style: .text3,
+                    color: Color(Asset.Colors.sky.color)
+                ),
                 ListSpacerCellViewItem(height: 40, backgroundColor: .clear),
                 ButtonListCellItem(
                     leadingImage: nil,
@@ -81,7 +84,7 @@ final class BankTransferInfoViewModel: BaseViewModel, ObservableObject {
                         self?.submitCountry()
                     },
                     style: .primary,
-                    trailingImage: Asset.MaterialIcon.arrowRight.image.withTintColor(Asset.Colors.lime.color)
+                    trailingImage: Asset.MaterialIcon.arrowForward.image.withTintColor(Asset.Colors.lime.color)
                 ),
                 ListSpacerCellViewItem(height: 2, backgroundColor: .clear)
             ]
@@ -116,6 +119,8 @@ final class BankTransferInfoViewModel: BaseViewModel, ObservableObject {
             helpLauncher.launch()
         } else if nil != item as? BankTransferCountryCellViewItem {
             openCountries()
+        } else if let item = item as? CenterTextCellViewItem, item.id == CellItemIdentidier.poweredByStriga.rawValue {
+            openProviderInfoSubject.send(URL(string: "https://striga.com")!)
         }
     }
 
@@ -136,15 +141,14 @@ final class BankTransferInfoViewModel: BaseViewModel, ObservableObject {
         guard let code = self.currentCountry?.code else {
             return
         }
-        do {
-            try self.bankTransferService.set(countryCode: code)
-        } catch {
-            DefaultLogManager.shared.log(error: error)
-        }
+        // to coordinator
     }
 
     private func isAvailable() -> Bool {
         ["at", "be", "bg", "hr", "cy", "cz", "dk", "ee", "fi", "fr", "gr", "es", "nl", "is", "li", "lt", "lu", "lv", "mt", "de", "no", "pl", "pt", "ro", "sk", "si", "se", "hu", "it", "ch", "gb"].contains(self.currentCountry?.code ?? "")
     }
 
+    enum CellItemIdentidier: String {
+        case poweredByStriga
+    }
 }

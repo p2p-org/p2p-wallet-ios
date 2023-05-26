@@ -18,7 +18,7 @@ struct BankTransferInfoView: View {
         .background(Color(Asset.Colors.smoke.color))
         .cornerRadius(20)
     }
-    
+
     var list: some View {
         VStack(spacing: 0) {
             ForEach(viewModel.items, id: \.id) { item in
@@ -30,7 +30,6 @@ struct BankTransferInfoView: View {
             .padding(.horizontal, 20)
         }
     }
-    
 }
 
 struct BankTransferInfoView_Previews: PreviewProvider {

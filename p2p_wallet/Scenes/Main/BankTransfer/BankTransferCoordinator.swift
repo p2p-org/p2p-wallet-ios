@@ -1,4 +1,5 @@
 import Combine
+import SafariServices
 import Foundation
 import Resolver
 import AnalyticsManager
@@ -26,9 +27,16 @@ final class BankTransferCoordinator: Coordinator<Void> {
 
     override func start() -> AnyPublisher<Void, Never> {
         let viewModel = BankTransferInfoViewModel()
-        let controller = BottomSheetController(
-            rootView: BankTransferInfoView(viewModel: viewModel)
-        )
+        let controller = UIBottomSheetHostingController(rootView: BankTransferInfoView(viewModel: viewModel))
+        
+        viewModel.objectWillChange
+            .delay(for: 0.01, scheduler: RunLoop.main)
+            .sink { [weak controller] _ in
+                DispatchQueue.main.async {
+                    controller?.updatePresentationLayout(animated: true)
+                }
+            }
+            .store(in: &subscriptions)
 
         viewModel.showCountries.flatMap { val in
             self.coordinate(to: ChooseItemCoordinator<Country>(
@@ -44,8 +52,15 @@ final class BankTransferCoordinator: Coordinator<Void> {
             case .cancel: break
             }
         }.store(in: &subscriptions)
+        
+        viewModel.openProviderInfo.flatMap { url in
+            let safari = SFSafariViewController(url: url)
+            controller.show(safari, sender: nil)
+            return safari.deallocatedPublisher()
+        }.sink {}.store(in: &subscriptions)
 
-        navigationController?.present(controller, animated: true)
+        controller.view.layer.cornerRadius = 20
+        navigationController.present(controller, interactiveDismissalType: .standard)
         return controller.deallocatedPublisher().prefix(1).eraseToAnyPublisher()
     }
 }
