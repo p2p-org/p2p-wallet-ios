@@ -49,6 +49,7 @@ struct StrigaRegistrationDateTextField: View {
                 Text(error)
                     .apply(style: .label1)
                     .foregroundColor(Color(asset: Asset.Colors.rose))
+                    .padding(.leading, 8)
             }
         }
     }

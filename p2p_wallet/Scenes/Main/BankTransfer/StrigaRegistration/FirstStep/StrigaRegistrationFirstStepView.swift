@@ -13,19 +13,14 @@ struct StrigaRegistrationFirstStepView: View {
     }
 
     var body: some View {
-        VStack {
-            List {
-                InfoView()
-                    .listRowBackground(Color(Asset.Colors.smoke.color))
-                    .listRowInsets(EdgeInsets.infoInset)
-
-                contactsSection
-                credentialsSection
-                dateOfBirthSection
-            }
-            .listStyle(.insetGrouped)
-            .modifier(ListBackgroundModifier(separatorColor: .clear))
-            .background(Color(asset: Asset.Colors.smoke))
+        List {
+            InfoView()
+                .listRowBackground(Color(Asset.Colors.smoke.color))
+                .listRowInsets(EdgeInsets.infoInset)
+            
+            contactsSection
+            credentialsSection
+            dateOfBirthSection
 
             NewTextButton(
                 title: viewModel.actionTitle.uppercaseFirst,
@@ -34,8 +29,12 @@ struct StrigaRegistrationFirstStepView: View {
                 trailing: viewModel.isDataValid ? .arrowForward : nil,
                 action: viewModel.actionPressed.send
             )
-            .padding(.all, 16)
-        }.background(
+            .listRowInsets(EdgeInsets.infoInset)
+            .listRowBackground(Color(Asset.Colors.smoke.color))
+        }
+        .listStyle(.insetGrouped)
+        .modifier(ListBackgroundModifier(separatorColor: .clear))
+        .background(
             Color(asset: Asset.Colors.smoke).ignoresSafeArea()
         ).navigationBarItems(leading: Button(action: viewModel.back.send, label: {
             Image(uiImage: .backArrow)
