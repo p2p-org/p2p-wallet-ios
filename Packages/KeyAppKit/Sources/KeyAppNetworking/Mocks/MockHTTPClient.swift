@@ -1,5 +1,5 @@
 //
-//  HTTPClientMock.swift
+//  MockHTTPClient.swift
 //  
 //
 //  Created by Ivan on 24.05.2023.
@@ -7,7 +7,7 @@
 
 import Foundation
 
-final class HTTPClientMock: IHTTPClient {
+final class MockHTTPClient: IHTTPClient {
     
     // MARK: - Init
     

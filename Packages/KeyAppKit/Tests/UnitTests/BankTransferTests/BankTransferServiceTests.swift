@@ -13,7 +13,7 @@ import XCTest
 final class BankTransferServiceTests: XCTestCase {
     
     var bankTransferService: StrigaBankTransferService!
-    var strigaProvider: StrigaProviderMock!
+    var strigaProvider: MockStrigaProvider!
     
     override func setUpWithError() throws {
         try super.setUpWithError()

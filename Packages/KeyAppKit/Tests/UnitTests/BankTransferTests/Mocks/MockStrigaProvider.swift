@@ -1,5 +1,5 @@
 //
-//  StrigaProviderMock.swift
+//  MockStrigaProvider.swift
 //  
 //
 //  Created by Ivan on 24.05.2023.
@@ -8,7 +8,7 @@
 import Foundation
 import BankTransfer
 
-final class StrigaProviderMock: IStrigaProvider {
+final class MockStrigaProvider: IStrigaProvider {
     
     var invokedGetUserDetails = false
     var invokedGetUserDetailsCount = 0
