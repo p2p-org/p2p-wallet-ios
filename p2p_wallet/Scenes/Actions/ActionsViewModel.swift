@@ -67,7 +67,7 @@ final class ActionsViewModel: BaseViewModel, ObservableObject {
             vertical.append(buy)
             let receive = ActionCellItem(
                 id: L10n.receive,
-                image: .homeBuyAction,
+                image: .homeReceiveAction,
                 title: L10n.receive,
                 subtitle: L10n.fromAnotherWalletOrExchange) {
                     self.actionSubject.send(.receive)
