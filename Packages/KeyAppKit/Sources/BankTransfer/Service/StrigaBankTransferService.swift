@@ -44,8 +44,8 @@ extension StrigaBankTransferService: BankTransferService {
         fatalError("Not implemented")
     }
 
-    public func getRegistrationData() -> RegistrationData {
-        repository.getRegistrationData()
+    public func getRegistrationData() async -> RegistrationData {
+        await repository.getRegistrationData()
     }
 
     public func save(data: RegistrationData) async throws {
@@ -94,7 +94,7 @@ extension StrigaBankTransferService: BankTransferService {
         fatalError("Not implemented")
     }
 
-    public func clearCache() {
-        repository.clearCache()
+    public func clearCache() async {
+        await repository.clearCache()
     }
 }

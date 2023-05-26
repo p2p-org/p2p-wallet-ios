@@ -32,8 +32,8 @@ public final class StrigaMockBankTransferService: BankTransferService {
         return false
     }
 
-    public func getRegistrationData() -> RegistrationData {
-        repository.getRegistrationData()
+    public func getRegistrationData() async -> RegistrationData {
+        await repository.getRegistrationData()
     }
 
     public func save(data: RegistrationData) async throws {
@@ -52,7 +52,7 @@ public final class StrigaMockBankTransferService: BankTransferService {
         throw NSError()
     }
 
-    public func clearCache() {
+    public func clearCache() async {
         fatalError("Not implemented")
     }
 }

@@ -1,3 +1,5 @@
+import Foundation
+
 public struct RegistrationData: Codable {
     public let firstName: String
     public let lastName: String

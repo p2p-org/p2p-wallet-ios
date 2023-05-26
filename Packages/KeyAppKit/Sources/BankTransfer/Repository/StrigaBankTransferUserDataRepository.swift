@@ -4,7 +4,7 @@ final class StrigaBankTransferUserDataRepository: BankTransferUserDataRepository
 
     var userData: UserData?
 
-    private let provider: StrigaBankTransferProvider
+    private let provider: StrigaBankTransferLocalProvider
 
     init() {
         provider = StrigaBankTransferLocalProvider()
@@ -19,15 +19,15 @@ final class StrigaBankTransferUserDataRepository: BankTransferUserDataRepository
     }
 
     func save(registrationData: RegistrationData) async {
-        try? provider.save(registrationData: registrationData)
+        try? await provider.save(registrationData: registrationData)
     }
 
-    func getRegistrationData() -> RegistrationData {
+    func getRegistrationData() async -> RegistrationData {
         // TODO: Here should be email from metadata
-        return provider.getCachedRegistrationData() ?? RegistrationData(firstName: "", lastName: "", email: "test@test.test", mobile: RegistrationData.Mobile(countryCode: "", number: ""))
+        return await provider.getCachedRegistrationData() ?? RegistrationData(firstName: "", lastName: "", email: "test@test.test", mobile: RegistrationData.Mobile(countryCode: "", number: ""))
     }
 
-    func clearCache() {
-        provider.clearRegistrationData()
+    func clearCache() async {
+        await provider.clearRegistrationData()
     }
 }

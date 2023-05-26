@@ -1,12 +1,6 @@
 import Foundation
 
-protocol StrigaBankTransferProvider {
-    func getCachedRegistrationData() -> RegistrationData?
-    func save(registrationData: RegistrationData) throws
-    func clearRegistrationData()
-}
-
-final class StrigaBankTransferLocalProvider: StrigaBankTransferProvider {
+actor StrigaBankTransferLocalProvider {
     private let cacheFile: URL = {
         let arrayPaths = FileManager.default.urls(for: .cachesDirectory, in: .userDomainMask)
         let cacheDirectoryPath = arrayPaths[0]
