@@ -3,8 +3,8 @@
 // found in the LICENSE file.
 
 import Foundation
-import TweetNacl
 import KeyAppKitCore
+import TweetNacl
 
 public struct BlockErrorData: Codable {
     public let cooldown_ttl: TimeInterval?
@@ -77,6 +77,45 @@ public class APIGatewayClientImpl: APIGatewayClient {
         return try result.fromBase64()
     }
 
+    public func setMetadata(ethAddress: String, solanaPrivateKey: String, encryptedMetadata: String) async throws {
+        let timestampDevice = Date()
+
+        // Prepare
+        var request = createDefaultRequest()
+        let (solanaSecretKey, solanaPublicKey) = try prepare(solanaPrivateKey: solanaPrivateKey)
+
+        // Create rpc request
+        let rpcRequest = JSONRPCRequest(
+            id: uuid.uuidString,
+            method: "update_metadata",
+            params: APIGatewayUpdateMetadataParams(
+                solanaPublicKey: Base58.encode(solanaPublicKey),
+                ethereumAddress: ethAddress,
+                signature: try UpdateMetadataSignature(
+                    ethereumAddress: ethAddress,
+                    solanaPublicKey: Base58.encode(solanaPublicKey),
+                    timestampDevice: Int64(timestampDevice.timeIntervalSince1970),
+                    encryptedMetadata: encryptedMetadata
+                ).signAsBase58(secretKey: solanaSecretKey),
+                metadata: encryptedMetadata,
+                timestampDevice: dateFormat.string(from: timestampDevice)
+            )
+        )
+        request.httpBody = try JSONEncoder().encode(rpcRequest)
+
+        // Request
+        let responseData = try await networkManager.requestData(request: request)
+        
+        // Check result
+        let result = try JSONDecoder()
+            .decode(JSONRPCResponse<APIGatewayClientResult, BlockErrorData>.self, from: responseData)
+        if let error = result.error {
+            throw apiGatewayError(from: error)
+        } else if result.result?.status != true {
+            throw APIGatewayError.failedSending
+        }
+    }
+
     private func prepare(solanaPrivateKey: String) throws -> (solanaSecretKey: Data, solanaPublicKey: Data) {
         let solanaSecretKey = Data(Base58.decode(solanaPrivateKey))
         let solanaKeypair = try NaclSign.KeyPair.keyPair(fromSecretKey: solanaSecretKey)
@@ -122,7 +161,8 @@ public class APIGatewayClientImpl: APIGatewayClient {
         let responseData = try await networkManager.requestData(request: request)
 
         // Check result
-        let result = try JSONDecoder().decode(JSONRPCResponse<APIGatewayClientResult, BlockErrorData>.self, from: responseData)
+        let result = try JSONDecoder()
+            .decode(JSONRPCResponse<APIGatewayClientResult, BlockErrorData>.self, from: responseData)
         if let error = result.error {
             throw apiGatewayError(from: error)
         } else if result.result?.status != true {
@@ -177,7 +217,8 @@ public class APIGatewayClientImpl: APIGatewayClient {
         let responseData = try await networkManager.requestData(request: request)
 
         // Check result
-        let result = try JSONDecoder().decode(JSONRPCResponse<APIGatewayClientResult, BlockErrorData>.self, from: responseData)
+        let result = try JSONDecoder()
+            .decode(JSONRPCResponse<APIGatewayClientResult, BlockErrorData>.self, from: responseData)
         if let error = result.error {
             throw apiGatewayError(from: error)
         } else if result.result?.status != true {
@@ -220,7 +261,8 @@ public class APIGatewayClientImpl: APIGatewayClient {
         let responseData = try await networkManager.requestData(request: request)
 
         // Check result
-        let result = try JSONDecoder().decode(JSONRPCResponse<APIGatewayClientResult, BlockErrorData>.self, from: responseData)
+        let result = try JSONDecoder()
+            .decode(JSONRPCResponse<APIGatewayClientResult, BlockErrorData>.self, from: responseData)
         if let error = result.error {
             throw apiGatewayError(from: error)
         } else if result.result?.status != true {
@@ -262,7 +304,10 @@ public class APIGatewayClientImpl: APIGatewayClient {
 
         // Check result
         let response = try JSONDecoder()
-            .decode(JSONRPCResponse<APIGatewayClientConfirmRestoreWalletResult, BlockErrorData>.self, from: responseData)
+            .decode(
+                JSONRPCResponse<APIGatewayClientConfirmRestoreWalletResult, BlockErrorData>.self,
+                from: responseData
+            )
         if let error = response.error {
             throw apiGatewayError(from: error)
         } else if response.result?.status != true {
