@@ -68,7 +68,7 @@ class PricesService {
             if initialValue.values.isEmpty {
                 initialValue = try await getCurrentPrices()
             }
-            currentPricesSubject.send(initialValue)
+            currentPricesSubject.send(initialValue.adjusted)
 
             // reload
             try await reload()
@@ -109,24 +109,15 @@ class PricesService {
         }
 
         let newPrices = try await api.getCurrentPrices(coins: coins, toFiat: toFiat.code)
-        let prices = adjust(newPrices: newPrices)
+        let prices = newPrices
+            .reduce(TokenPriceMap(), { currentValue, keyValue in
+                guard let value = keyValue.value else { return currentValue }
+                var currentValue = currentValue
+                currentValue[keyValue.key.address] = value
+                return currentValue
+            })
+            .adjusted
         await storage.savePrices(prices)
-        return prices
-    }
-
-    private func adjust(newPrices: [Token: CurrentPrice?]) -> TokenPriceMap {
-        var prices = currentPricesSubject.value
-        for newPrice in newPrices where newPrice.value != nil {
-            if newPrice.key.address == Token.usdc.address || newPrice.key.address == Token.usdt.address {
-                if let price = newPrice.value, let value = price.value, abs(value - 1.0) <= 0.021 {
-                    prices[newPrice.key.address] = CurrentPrice(value: 1.0, change24h: price.change24h)
-                } else {
-                    prices[newPrice.key.address] = newPrice.value
-                }
-            } else {
-                prices[newPrice.key.address] = newPrice.value
-            }
-        }
         return prices
     }
 }
@@ -259,5 +250,34 @@ extension Token {
             logoURI: token.logoURI,
             extensions: token.extensions
         )
+    }
+}
+
+// MARK: - Private helpers
+
+private extension TokenPriceMap {
+    var adjusted: Self {
+        var adjustedSelf = self
+        for price in self {
+            adjustedSelf[price.key] = price.value.adjusted(tokenMint: price.key)
+        }
+        return adjustedSelf
+    }
+}
+
+private extension CurrentPrice {
+    func adjusted(tokenMint: String) -> Self {
+        // assert  and  and is not depeged
+        guard Defaults.fiat.symbol == "USD", // current fiat is USD
+              let value, // current price is not nil
+              tokenMint == Token.usdc.address || tokenMint == Token.usdt.address, // token is usdc, usdt
+              abs(value - 1.0) <= 0.021 // usdc, usdt wasn't depegged
+        else {
+            // otherwise return current value
+            return self
+        }
+        
+        // modify prices for usdc to usdt to make it equal to 1 USD
+        return CurrentPrice(value: 1.0, change24h: change24h)
     }
 }
