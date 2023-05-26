@@ -83,6 +83,7 @@ class PricesService {
 
     private func migrate() async {
         // First migration to fix COPE token
+        // Second migration to fix USDC, USDT non-depegged conversion to 1:1 with USD
         let migrationKey = "PricesService.migration2Key"
 
         if UserDefaults.standard.bool(forKey: migrationKey) == false {
@@ -270,7 +271,7 @@ private extension CurrentPrice {
         // assert  and  and is not depeged
         guard Defaults.fiat.symbol == "USD", // current fiat is USD
               let value, // current price is not nil
-              tokenMint == Token.usdc.address || tokenMint == Token.usdt.address, // token is usdc, usdt
+              [Token.usdc.address, Token.usdt.address].contains(tokenMint), // token is usdc, usdt
               abs(value - 1.0) <= 0.021 // usdc, usdt wasn't depegged
         else {
             // otherwise return current value
