@@ -56,12 +56,14 @@ struct JupiterSwapTransaction: SwapRawTransactionType {
                     tokenA: .init(
                         name: sourceWallet.token.name,
                         mint: sourceWallet.token.address,
-                        sendAmount: fromAmount.toString(maximumFractionDigits: 9)
+                        sendAmount: fromAmount.toString(maximumFractionDigits: 9),
+                        balance: sourceWallet.amount?.toString(maximumFractionDigits: 9) ?? ""
                     ),
                     tokenB: .init(
                         name: destinationWallet.token.name,
                         mint: destinationWallet.token.address,
-                        expectedAmount: toAmount.toString(maximumFractionDigits: 9)
+                        expectedAmount: toAmount.toString(maximumFractionDigits: 9),
+                        balance: destinationWallet.amount?.toString(maximumFractionDigits: 9) ?? ""
                     ),
                     route: route.jsonString ?? "",
                     userPubkey: data.userPubkey,
