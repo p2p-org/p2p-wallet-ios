@@ -75,15 +75,19 @@ final class StrigaRegistrationSecondStepViewModel: BaseViewModel, ObservableObje
 private extension StrigaRegistrationSecondStepViewModel {
     func fetchSavedData() {
         Task {
-            let data = await service.getRegistrationData()
-            await MainActor.run {
-                occupationIndustry = data.occupation ?? ""
-                sourceOfFunds = data.sourceOfFunds ?? ""
-                country = data.address?.country ?? ""
-                city = data.address?.city ?? ""
-                addressLine = data.address?.addressLine1 ?? ""
-                postalCode = data.address?.postalCode ?? ""
-                stateRegion = data.address?.state ?? ""
+            do {
+                let data = try await service.getRegistrationData()
+                await MainActor.run {
+                    occupationIndustry = data.occupation ?? ""
+                    sourceOfFunds = data.sourceOfFunds ?? ""
+                    country = data.address?.country ?? ""
+                    city = data.address?.city ?? ""
+                    addressLine = data.address?.addressLine1 ?? ""
+                    postalCode = data.address?.postalCode ?? ""
+                    stateRegion = data.address?.state ?? ""
+                }
+            } catch {
+                // TODO: - Handle error
             }
         }
     }
