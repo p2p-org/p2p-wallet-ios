@@ -125,7 +125,7 @@ struct SolendTransactionDetailsView: View {
             case .pending:
                 HStack(spacing: 4) {
                     Text(L10n.loading)
-                        .foregroundColor(Color(.sea))
+                        .foregroundColor(Color(Asset.Colors.sea.color))
                         .font(uiFont: .font(of: .text2))
                     Spinner()
                         .frame(width: 16, height: 16)

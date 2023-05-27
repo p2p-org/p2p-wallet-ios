@@ -28,7 +28,7 @@ final class BankTransferCoordinator: Coordinator<Void> {
     override func start() -> AnyPublisher<Void, Never> {
         let viewModel = BankTransferInfoViewModel()
         let controller = UIBottomSheetHostingController(rootView: BankTransferInfoView(viewModel: viewModel))
-        
+
         viewModel.objectWillChange
             .delay(for: 0.01, scheduler: RunLoop.main)
             .sink { [weak controller] _ in
@@ -42,8 +42,8 @@ final class BankTransferCoordinator: Coordinator<Void> {
             self.coordinate(to: ChooseItemCoordinator<Country>(
                 title: L10n.selectYourCountry,
                 controller: controller,
-                service: ChooseCountryService(countries: val.0),
-                chosen: val.1
+                service: ChooseCountryService(),
+                chosen: val
             ))
         }.sink { result in
             switch result {
@@ -52,12 +52,19 @@ final class BankTransferCoordinator: Coordinator<Void> {
             case .cancel: break
             }
         }.store(in: &subscriptions)
-        
+
         viewModel.openProviderInfo.flatMap { url in
             let safari = SFSafariViewController(url: url)
             controller.show(safari, sender: nil)
             return safari.deallocatedPublisher()
         }.sink {}.store(in: &subscriptions)
+
+        viewModel.openRegistration
+            .flatMap { country in
+                self.coordinate(to: StrigaRegistrationFirstStepCoordinator(country: country, parent: controller))
+            }
+            .sink { _ in }
+            .store(in: &subscriptions)
 
         controller.view.layer.cornerRadius = 20
         navigationController.present(controller, interactiveDismissalType: .standard)

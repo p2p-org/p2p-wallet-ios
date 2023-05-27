@@ -256,7 +256,7 @@ final class TabBarCoordinator: Coordinator<Void> {
                     navigationController: navigationController)
                 )
             }
-                .sink {}.store(in: &subscriptions)
+            .sink {}.store(in: &subscriptions)
         }
     }
 

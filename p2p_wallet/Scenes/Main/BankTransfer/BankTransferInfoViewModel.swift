@@ -9,9 +9,11 @@ final class BankTransferInfoViewModel: BaseViewModel, ObservableObject {
 
     // MARK: -
 
-    var showCountries: AnyPublisher<([Country], Country?), Never> {
+    var showCountries: AnyPublisher<Country?, Never> {
         showCountriesSubject.eraseToAnyPublisher()
     }
+    
+    let openRegistration = PassthroughSubject<Country, Never>()
 
     var openProviderInfo: AnyPublisher<URL, Never> {
         openProviderInfoSubject.eraseToAnyPublisher()
@@ -28,7 +30,7 @@ final class BankTransferInfoViewModel: BaseViewModel, ObservableObject {
 
     // MARK: -
 
-    private var showCountriesSubject = PassthroughSubject<([Country], Country?), Never>()
+    private var showCountriesSubject = PassthroughSubject<Country?, Never>()
     private var openProviderInfoSubject = PassthroughSubject<URL, Never>()
 
     private var currentCountry: Country? {
@@ -127,21 +129,14 @@ final class BankTransferInfoViewModel: BaseViewModel, ObservableObject {
     // MARK: - actions
 
     private func openCountries() {
-        Task {
-            do {
-                let countries = try await self.countriesService.fetchCountries().unique(keyPath: \.name)
-                self.showCountriesSubject.send((countries, self.currentCountry))
-            } catch {
-                DefaultLogManager.shared.log(error: error)
-            }
-        }
+        showCountriesSubject.send(currentCountry)
     }
 
     private func submitCountry() {
-        guard let code = self.currentCountry?.code else {
+        guard let country = self.currentCountry else {
             return
         }
-        // to coordinator
+        openRegistration.send(country)
     }
 
     private func isAvailable() -> Bool {

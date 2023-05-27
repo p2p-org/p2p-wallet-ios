@@ -18,7 +18,8 @@ public final class StrigaBankTransferService {
     
     // Properties
     private let keyPair: KeyPair
-    
+    private let repository: BankTransferUserDataRepository
+
     // Subjects
     let subject = CurrentValueSubject<UserData, Never>(
         UserData(countryCode: nil, userId: nil, mobileVerified: false)
@@ -32,6 +33,7 @@ public final class StrigaBankTransferService {
     ) {
         self.strigaProvider = strigaProvider
         self.keyPair = keyPair
+        self.repository = StrigaBankTransferUserDataRepository()
     }
 }
 
@@ -54,15 +56,11 @@ extension StrigaBankTransferService: BankTransferService {
     }
 
     public func getRegistrationData() async throws -> RegistrationData {
-//        if let cachedData {
-//            return cachedData
-//        } else {
-        guard
-            let authHeader = authHeader(keyPair: keyPair),
-            let userId = subject.value.userId
-        else { throw NSError(domain: "", code: 0) }
-        return try await strigaProvider.getUserDetails(authHeader: authHeader, userId: userId).asDomain()
-//        }
+        try await repository.getRegistrationData()
+    }
+
+    public func save(data: RegistrationData) async throws {
+        await repository.save(registrationData: data)
     }
 
     public func createUser(data: RegistrationData) async throws {
@@ -70,11 +68,18 @@ extension StrigaBankTransferService: BankTransferService {
             firstName: data.firstName,
             lastName: data.lastName,
             email: data.email,
-            mobile: CreateUserRequest.Mobile(countryCode: data.phoneCountryCode, number: data.phoneNumber),
-            dateOfBirth: nil,
-            address: nil,
+            mobile: CreateUserRequest.Mobile(countryCode: data.mobile.countryCode, number: data.mobile.number),
+            dateOfBirth: CreateUserRequest.DateOfBirth(year: data.dateOfBirth?.year, month: data.dateOfBirth?.month, day: data.dateOfBirth?.day),
+            address: CreateUserRequest.Address(
+                addressLine1: data.address?.addressLine1,
+                addressLine2: data.address?.addressLine2,
+                city: data.address?.city,
+                postalCode: data.address?.postalCode,
+                state: data.address?.state,
+                country: data.address?.country
+            ),
             occupation: data.occupation,
-            sourceOfFunds: nil,
+            sourceOfFunds: data.sourceOfFunds,
             ipAddress: nil,
             placeOfBirth: data.placeOfBirth,
             expectedIncomingTxVolumeYearly: .expectedIncomingTxVolumeYearly,
@@ -99,6 +104,10 @@ extension StrigaBankTransferService: BankTransferService {
 
     public func verify(OTP: String) async throws -> Bool {
         fatalError("Not implemented")
+    }
+
+    public func clearCache() async {
+        await repository.clearCache()
     }
 }
 
