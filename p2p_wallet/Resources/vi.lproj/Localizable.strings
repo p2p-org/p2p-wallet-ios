@@ -1407,3 +1407,15 @@
 "Incorrect day" = "ngày không chính xác";
 "Incorrect month" = "tháng không chính xác";
 "Could be filled only with symbols" = "Chỉ có thể được điền bằng các ký hiệu";
+"Source of funds" = "Nguồn quỹ";
+"Occupation industry" = "ngành nghề";
+"Current address" = "Địa chỉ hiện tại";
+"City" = "Thành phố";
+"Full city name" = "tên thành phố đầy đủ";
+"Address line" = "Dòng địa chỉ";
+"Your street and flat number" = "Số đường phố và căn hộ của bạn";
+"Postal code" = "mã bưu điện";
+"Recommended" = "Khuyến khích";
+"State or region" = "Tiểu bang hoặc khu vực";
+"After clicking the “Сontinue”, you confirm that you are not a Politically Exposed Person" = "Sau khi nhấp vào “Сtiếp tục”, bạn xác nhận rằng bạn không phải là Người tiếp xúc với chính trị";
+"Country" = "Quốc gia";

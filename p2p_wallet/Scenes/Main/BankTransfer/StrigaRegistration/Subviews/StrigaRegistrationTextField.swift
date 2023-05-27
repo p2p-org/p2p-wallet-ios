@@ -1,74 +1,32 @@
 import SwiftUI
 import KeyAppUI
 
-enum StrigaRegistrationTextFieldStatus: Equatable {
-    case valid
-    case invalid(error: String)
-}
-
 struct StrigaRegistrationTextField: View {
-    let title: String
     let placeholder: String
-    let isDetailed: Bool
     @Binding var text: String
-    let status: StrigaRegistrationTextFieldStatus
     let isEnabled: Bool
     let maxSymbolsLimit: Int?
 
     init(
-        title: String,
         placeholder: String,
         text: Binding<String>,
-        status: StrigaRegistrationTextFieldStatus? = .valid,
-        isDetailed: Bool = false,
         isEnabled: Bool = true,
         maxSymbolsLimit: Int? = nil
     ) {
-        self.title = title
         self.placeholder = placeholder
-        self.isDetailed = isDetailed
-        self.status = status ?? .valid
         self._text = text
         self.isEnabled = isEnabled
         self.maxSymbolsLimit = maxSymbolsLimit
     }
 
     var body: some View {
-        VStack(alignment: .leading, spacing: 4) {
-            Text(title)
-                .foregroundColor(Color(asset: Asset.Colors.mountain))
-                .apply(style: .label1)
-                .padding(.leading, 8)
-
-            HStack(spacing: 12) {
-                TextField(placeholder, text: maxSymbolsLimit == nil ? $text : $text.max(maxSymbolsLimit!))
-                    .foregroundColor(isEnabled ? Color(asset: Asset.Colors.night) : Color(asset: Asset.Colors.night).opacity(0.3))
-                    .padding(EdgeInsets(top: 14, leading: 16, bottom: 14, trailing: 20))
-                    .frame(height: 56)
-                    .disabled(isDetailed || !isEnabled)
-
-                if isDetailed {
-                    Image(asset: Asset.MaterialIcon.chevronRight)
-                        .renderingMode(.template)
-                        .foregroundColor(Color(asset: Asset.Colors.night))
-                        .padding(.trailing, 16)
-                }
-            }
-            .background(
-                RoundedRectangle(cornerRadius: 12, style: .continuous)
-                    .fill(Color(asset: Asset.Colors.snow))
-            )
-            .overlay(
-                RoundedRectangle(cornerRadius: 12, style: .continuous)
-                    .stroke(status == .valid ? .clear : Color(asset: Asset.Colors.rose), lineWidth: 1)
-            )
-
-            if case .invalid(let error) = status {
-                Text(error)
-                    .apply(style: .label1)
-                    .foregroundColor(Color(asset: Asset.Colors.rose))
-                    .padding(.leading, 8)
-            }
+        HStack(spacing: 12) {
+            TextField(placeholder, text: maxSymbolsLimit == nil ? $text : $text.max(maxSymbolsLimit!))
+                .font(uiFont: .font(of: .title2))
+                .foregroundColor(isEnabled ? Color(asset: Asset.Colors.night) : Color(asset: Asset.Colors.night).opacity(0.3))
+                .padding(EdgeInsets(top: 14, leading: 16, bottom: 14, trailing: 20))
+                .frame(height: 56)
+                .disabled(!isEnabled)
         }
     }
 }
@@ -77,23 +35,18 @@ struct StrigaRegistrationTextField_Previews: PreviewProvider {
     static var previews: some View {
         VStack {
             StrigaRegistrationTextField(
-                title: "Email",
                 placeholder: "Enter email",
                 text: .constant("")
             )
 
             StrigaRegistrationTextField(
-                title: "Phone",
                 placeholder: "Enter phone",
-                text: .constant(""),
-                status: .invalid(error: L10n.couldNotBeEmpty)
+                text: .constant("")
             )
 
             StrigaRegistrationTextField(
-                title: "Country",
                 placeholder: "Select country",
-                text: .constant(""),
-                isDetailed: true
+                text: .constant("")
             )
         }
         .padding(16)
@@ -101,7 +54,7 @@ struct StrigaRegistrationTextField_Previews: PreviewProvider {
     }
 }
 
-extension Binding where Value == String {
+private extension Binding where Value == String {
     func max(_ limit: Int) -> Self {
         if self.wrappedValue.count > limit {
             DispatchQueue.main.async {

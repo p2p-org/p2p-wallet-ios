@@ -3,55 +3,24 @@ import KeyAppUI
 
 struct StrigaRegistrationDateTextField: View {
 
-    private let status: StrigaRegistrationTextFieldStatus
     private let charLimit : Int = 10
-
     @State private var text: String = ""
     @Binding private var underlyingString: String
 
-    init(
-        text: Binding<String>,
-        status: StrigaRegistrationTextFieldStatus? = .valid
-    ) {
-        self.status = status ?? .valid
+    init(text: Binding<String>) {
         _underlyingString = text
     }
 
-    @State var input: String = ""
-
     var body: some View {
-        VStack(alignment: .leading, spacing: 4) {
-            Text(L10n.dateOfBirth)
-                .foregroundColor(Color(asset: Asset.Colors.mountain))
-                .apply(style: .label1)
-                .padding(.leading, 8)
-
-            HStack(spacing: 12) {
-                TextField(L10n.Dd.Mm.yyyy, text: $text, onCommit: updateUnderlyingValue)
-                    .foregroundColor(Color(asset: Asset.Colors.night))
-                    .padding(EdgeInsets(top: 14, leading: 16, bottom: 14, trailing: 20))
-                    .frame(height: 56)
-                    .keyboardType(.numberPad)
-                    .onAppear(perform: { updateEnteredString(newUnderlyingString: underlyingString) })
-                    .onChange(of: text, perform: updateUndelyingString)
-                    .onChange(of: underlyingString, perform: updateEnteredString)
-            }
-            .background(
-                RoundedRectangle(cornerRadius: 12, style: .continuous)
-                    .fill(Color(asset: Asset.Colors.snow))
-            )
-            .overlay(
-                RoundedRectangle(cornerRadius: 12, style: .continuous)
-                    .stroke(status == .valid ? .clear : Color(asset: Asset.Colors.rose), lineWidth: 1)
-            )
-
-            if case .invalid(let error) = status {
-                Text(error)
-                    .apply(style: .label1)
-                    .foregroundColor(Color(asset: Asset.Colors.rose))
-                    .padding(.leading, 8)
-            }
-        }
+        TextField(L10n.Dd.Mm.yyyy, text: $text, onCommit: updateUnderlyingValue)
+            .font(uiFont: .font(of: .title2))
+            .foregroundColor(Color(asset: Asset.Colors.night))
+            .padding(EdgeInsets(top: 14, leading: 16, bottom: 14, trailing: 20))
+            .frame(height: 56)
+            .keyboardType(.numberPad)
+            .onAppear(perform: { updateEnteredString(newUnderlyingString: underlyingString) })
+            .onChange(of: text, perform: updateUndelyingString)
+            .onChange(of: underlyingString, perform: updateEnteredString)
     }
 
     func updateEnteredString(newUnderlyingString: String) {
@@ -83,9 +52,7 @@ struct StrigaRegistrationDateTextField: View {
 struct StrigaRegistrationDateTextField_Previews: PreviewProvider {
     static var previews: some View {
         VStack {
-            StrigaRegistrationDateTextField(
-                text: .constant("")
-            )
+            StrigaRegistrationDateTextField(text: .constant(""))
         }
         .padding(16)
         .background(Color(asset: Asset.Colors.sea))
