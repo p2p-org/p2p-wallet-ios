@@ -22,7 +22,7 @@ final class StrigaBankTransferUserDataRepository: BankTransferUserDataRepository
         try? await provider.save(registrationData: registrationData)
     }
 
-    func getRegistrationData() async -> RegistrationData {
+    func getRegistrationData() async throws -> RegistrationData {
         // TODO: Here should be email from metadata
         return await provider.getCachedRegistrationData() ?? RegistrationData(firstName: "", lastName: "", email: "test@test.test", mobile: RegistrationData.Mobile(countryCode: "", number: ""))
     }

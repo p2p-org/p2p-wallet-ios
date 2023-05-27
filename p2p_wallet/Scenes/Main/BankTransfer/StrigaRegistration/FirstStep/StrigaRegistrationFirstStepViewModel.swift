@@ -89,23 +89,27 @@ final class StrigaRegistrationFirstStepViewModel: BaseViewModel, ObservableObjec
 private extension StrigaRegistrationFirstStepViewModel {
     func fetchSavedData() {
         Task {
-            let data = await service.getRegistrationData()
-            await MainActor.run {
-                email = data.email
-                phoneNumber = data.mobile.number
-                firstName = data.firstName
-                surname = data.lastName
-                dateOfBirthModel = data.dateOfBirth
-                dateOfBirth = [data.dateOfBirth?.day, data.dateOfBirth?.month, data.dateOfBirth?.year]
-                    .compactMap { String($0 ?? 0) }
-                    .filter({ $0 != "0" })
-                    .map {
-                        if $0.count == 1 {
-                            return "0\($0)"
+            do {
+                let data = try await service.getRegistrationData()
+                await MainActor.run {
+                    email = data.email
+                    phoneNumber = data.mobile.number
+                    firstName = data.firstName
+                    surname = data.lastName
+                    dateOfBirthModel = data.dateOfBirth
+                    dateOfBirth = [data.dateOfBirth?.day, data.dateOfBirth?.month, data.dateOfBirth?.year]
+                        .compactMap { String($0 ?? 0) }
+                        .filter({ $0 != "0" })
+                        .map {
+                            if $0.count == 1 {
+                                return "0\($0)"
+                            }
+                            return $0
                         }
-                        return $0
-                    }
-                    .joined(separator: ".")
+                        .joined(separator: ".")
+                }
+            } catch {
+                // TODO: - Handle error
             }
         }
     }

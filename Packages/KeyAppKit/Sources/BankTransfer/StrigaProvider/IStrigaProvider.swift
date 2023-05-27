@@ -8,6 +8,7 @@
 import Foundation
 
 public protocol IStrigaProvider: AnyObject {
-    func createUser(model: CreateUserRequest) async throws -> CreateUserResponse
-    func verifyMobileNumber(userId: String, verificationCode: String) async throws
+    func getUserDetails(authHeader: StrigaEndpoint.AuthHeader, userId: String) async throws -> UserDetailsResponse
+    func createUser(authHeader: StrigaEndpoint.AuthHeader, model: CreateUserRequest) async throws -> CreateUserResponse
+    func verifyMobileNumber(authHeader: StrigaEndpoint.AuthHeader, userId: String, verificationCode: String) async throws
 }

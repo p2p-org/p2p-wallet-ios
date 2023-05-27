@@ -32,8 +32,8 @@ public final class StrigaMockBankTransferService: BankTransferService {
         return false
     }
 
-    public func getRegistrationData() async -> RegistrationData {
-        await repository.getRegistrationData()
+    public func getRegistrationData() async throws -> RegistrationData {
+        try await repository.getRegistrationData()
     }
 
     public func save(data: RegistrationData) async throws {
