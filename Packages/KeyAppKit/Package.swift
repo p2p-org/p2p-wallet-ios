@@ -312,7 +312,10 @@ let package = Package(
         // BankTransfer
         .target(
             name: "BankTransfer",
-            dependencies: ["KeyAppNetworking"]
+            dependencies: [
+                "KeyAppNetworking",
+                "KeyAppKitCore"
+            ]
         ),
 
         // Wormhole
@@ -376,6 +379,12 @@ let package = Package(
             name: "KeyAppKitCoreTests",
             dependencies: ["KeyAppKitCore"],
             path: "Tests/UnitTests/KeyAppKitCoreTests"
+        ),
+        
+        .testTarget(
+            name: "BankTransferTests",
+            dependencies: ["BankTransfer"],
+            path: "Tests/UnitTests/BankTransferTests"
         ),
     ]
 )

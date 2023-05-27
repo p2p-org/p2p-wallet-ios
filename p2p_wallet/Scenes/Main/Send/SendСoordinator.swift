@@ -9,6 +9,7 @@ import Resolver
 import Send
 import SolanaSwift
 import SwiftUI
+import Wormhole
 
 enum SendResult {
     case sent(SendTransaction)
@@ -185,7 +186,16 @@ final class SendCoordinator: Coordinator<SendResult> {
         let view = RecipientSearchView(viewModel: vm)
         let vc = KeyboardAvoidingViewController(rootView: view, navigationBarVisibility: .visible)
         vc.navigationItem.largeTitleDisplayMode = .never
-        vc.navigationItem.setTitle(L10n.chooseARecipient, subtitle: "Solana network")
+
+        let bridgeTokens = SupportedToken.bridges.map(\.solAddress)
+        if preChosenWallet == nil {
+            vc.navigationItem.setTitle(L10n.chooseARecipient, subtitle: "Solana & Ethereum networks")
+        } else if bridgeTokens.contains(preChosenWallet?.token.address) {
+            vc.navigationItem.setTitle(L10n.chooseARecipient, subtitle: "Solana & Ethereum networks")
+        } else {
+            vc.navigationItem.setTitle(L10n.chooseARecipient, subtitle: "Solana networks")
+        }
+
         vc.hidesBottomBarWhenPushed = hideTabBar
 
         // Push strategy
@@ -231,7 +241,8 @@ final class SendCoordinator: Coordinator<SendResult> {
             case let .sentViaLink(link, transaction):
                 self?.startSendViaLinkCompletionFlow(
                     link: link,
-                    formatedAmount: transaction.amount.tokenAmountFormattedString(symbol: transaction.walletToken.token.symbol),
+                    formatedAmount: transaction.amount
+                        .tokenAmountFormattedString(symbol: transaction.walletToken.token.symbol),
                     transaction: transaction,
                     intermediatePubKey: keypair.publicKey.base58EncodedString
                 )
