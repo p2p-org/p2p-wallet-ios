@@ -119,16 +119,22 @@ private extension UserDetailsResponse {
             firstName: "firstName",
             lastName: "lastName",
             email: "email",
-            mobile: .init(countryCode: "countryCode", number: "number"),
+            mobile: .init(
+                countryCode: "countryCode",
+                number: "number"
+            ),
             dateOfBirth: .init(year: 2023, month: 5, day: 24),
+            address: .init(
+                addressLine1: "12 Boo str",
+                addressLine2: nil,
+                city: "Ho Chi Minh city",
+                postalCode: "128943",
+                state: "Ho Chi Minh",
+                country: "Vietnam"
+            ),
             occupation: "occupation",
             sourceOfFunds: "sourceOfFunds",
-            ipAddress: "ipAddress",
-            placeOfBirth: "placeOfBirth",
-            expectedIncomingTxVolumeYearly: "expectedIncomingTxVolumeYearly",
-            expectedOutgoingTxVolumeYearly: "expectedOutgoingTxVolumeYearly",
-            selfPepDeclaration: false,
-            purposeOfAccount: "purposeOfAccount"
+            placeOfBirth: "placeOfBirth"
         )
     }
 }

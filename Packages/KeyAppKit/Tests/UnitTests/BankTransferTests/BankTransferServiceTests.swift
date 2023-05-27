@@ -52,12 +52,22 @@ private extension RegistrationData {
             firstName: "firstName",
             lastName: "lastName",
             email: "email",
-            phoneCountryCode: "phoneCountryCode",
-            phoneNumber: "phoneNumber",
-            dateOfBirth: Date(),
-            placeOfBirth: "placeOfBirth",
+            mobile: .init(
+                countryCode: "phoneCountryCode",
+                number: "phoneNumber"
+            ),
+            dateOfBirth: .init(year: 2015, month: 10, day: 11),
+            address: .init(
+                addressLine1: "addressLine1",
+                addressLine2: "addressLine2",
+                city: "city",
+                postalCode: "postalCode",
+                state: "state",
+                country: "country"
+            ),
             occupation: "occupation",
-            placeOfLive: "placeOfLive"
+            sourceOfFunds: "sourceOfFunds",
+            placeOfBirth: "placeOfBirt"
         )
     }
 }
