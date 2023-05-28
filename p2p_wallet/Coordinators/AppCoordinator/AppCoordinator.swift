@@ -127,7 +127,7 @@ final class AppCoordinator: Coordinator<Void> {
         guard let window = window else { return }
 
         Task.detached {
-            try await Resolver.resolve(WalletMetadataService.self).update()
+            try await Resolver.resolve(WalletMetadataService.self).synchronize()
             try await Resolver.resolve(OrcaSwapType.self).load()
             await Resolver.resolve(JupiterTokensRepository.self).load()
         }
@@ -182,7 +182,7 @@ final class AppCoordinator: Coordinator<Void> {
 
                     // Warmup metadata
                     Task.detached {
-                        try await Resolver.resolve(WalletMetadataService.self).update(initialMetadata: data.metadata)
+                        try await Resolver.resolve(WalletMetadataService.self).synchronize(initialMetadata: data.metadata)
                     }
                 case let .restored(data):
                     analyticsManager.log(event: .restoreConfirmPin(result: true))
@@ -204,7 +204,7 @@ final class AppCoordinator: Coordinator<Void> {
                     if let metadata = data.metadata {
                         Task.detached {
                             try await Resolver.resolve(WalletMetadataService.self)
-                                .update(initialMetadata: metadata)
+                                .synchronize(initialMetadata: metadata)
                         }
                     }
                 case .breakProcess:

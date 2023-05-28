@@ -6,79 +6,6 @@ import Foundation
 import Onboarding
 import Resolver
 
-enum WalletMetadataProviderError: Error {
-    case invalidAction
-}
-
-protocol WalletMetadataProvider {
-    func save(metadata: WalletMetaData?) async throws
-    func load() async throws -> WalletMetaData?
-}
-
-class LocalWalletMetadataProvider: WalletMetadataProvider {
-    @Injected private var keychainStorage: KeychainStorage
-
-    private let key: String
-
-    init() {
-        if !Defaults.hasKey(\.keychainWalletMetadata) {
-            Defaults.keychainWalletMetadata = UUID().uuidString
-        }
-        key = Defaults.keychainWalletMetadata!
-    }
-
-    func save(metadata: WalletMetaData?) async throws {
-        if let metadata = metadata {
-            let rawData = try JSONEncoder().encode(metadata)
-            keychainStorage.localKeychain.set(rawData, forKey: key)
-        } else {
-            keychainStorage.localKeychain.delete(key)
-        }
-    }
-
-    func load() async throws -> WalletMetaData? {
-        guard let rawData: Data = keychainStorage.localKeychain.getData(key)
-        else { return nil }
-
-        return try JSONDecoder().decode(WalletMetaData.self, from: rawData)
-    }
-}
-
-class RemoteWalletMetadataProvider: WalletMetadataProvider {
-    @Injected private var apiGatewayClient: APIGatewayClient
-    @Injected private var userWalletManager: UserWalletManager
-
-    func save(metadata _: WalletMetaData?) async throws {
-        throw WalletMetadataProviderError.invalidAction
-    }
-
-    func load() async throws -> WalletMetaData? {
-        guard
-            let wallet = userWalletManager.wallet,
-            let ethAddress = wallet.ethAddress,
-            let seedPhrase = wallet.seedPhrase
-        else { return nil }
-
-        let encryptedMetadata = try await apiGatewayClient.getMetadata(
-            ethAddress: ethAddress,
-            solanaPrivateKey: Base58.encode(wallet.account.secretKey),
-            timestampDevice: Date()
-        )
-
-        return try WalletMetaData.decrypt(seedPhrase: seedPhrase.joined(separator: " "), data: encryptedMetadata)
-    }
-}
-
-class MockedWalletMeradataProvider: WalletMetadataProvider {
-    private let value: WalletMetaData?
-    
-    init(_ value: WalletMetaData?) { self.value = value }
-    
-    func save(metadata _: WalletMetaData?) async throws {}
-
-    func load() async throws -> WalletMetaData? { value }
-}
-
 class WalletMetadataService: ObservableObject {
     @Published var loading: Bool = false
     @Published var metadata: WalletMetaData?
@@ -91,7 +18,7 @@ class WalletMetadataService: ObservableObject {
         remoteMetadataProvider = remoteProvider
     }
 
-    func update(initialMetadata: WalletMetaData? = nil) async throws {
+    func synchronize(initialMetadata: WalletMetaData? = nil) async throws {
         if let initialMetadata = initialMetadata {
             try await localMetadataProvider.save(metadata: initialMetadata)
             metadata = initialMetadata
@@ -100,9 +27,24 @@ class WalletMetadataService: ObservableObject {
             do {
                 loading = true
                 defer { loading = false }
+
                 let remoteMetadata = try await remoteMetadataProvider.load()
-                try await localMetadataProvider.save(metadata: remoteMetadata)
-                metadata = remoteMetadata
+
+                if
+                    let metadata,
+                    let remoteMetadata,
+                    metadata != remoteMetadata
+                {
+                    let mergedMetadata = WalletMetaData.merge(lhs: metadata, rhs: remoteMetadata)
+
+                    try await localMetadataProvider.save(metadata: mergedMetadata)
+                    try await remoteMetadataProvider.save(metadata: mergedMetadata)
+
+                    metadata = mergedMetadata
+                } else {
+                    try await localMetadataProvider.save(metadata: remoteMetadata)
+                    metadata = remoteMetadata
+                }
             } catch {
                 print(error)
                 throw error
@@ -110,7 +52,23 @@ class WalletMetadataService: ObservableObject {
         }
     }
 
+    func update(_ newMetadata: WalletMetaData) async throws {
+        guard let metadata else {
+            throw WalletMetadataService.Error.missingLocalMetadata
+        }
+
+        let mergedMetadata = WalletMetaData.merge(lhs: metadata, rhs: newMetadata)
+        try await localMetadataProvider.save(metadata: mergedMetadata)
+        try await remoteMetadataProvider.save(metadata: mergedMetadata)
+    }
+
     func clear() async throws {
         try await localMetadataProvider.save(metadata: nil)
+    }
+}
+
+extension WalletMetadataService {
+    enum Error: Swift.Error {
+        case missingLocalMetadata
     }
 }
