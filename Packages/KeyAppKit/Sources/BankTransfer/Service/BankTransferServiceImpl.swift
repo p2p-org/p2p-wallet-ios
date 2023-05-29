@@ -8,9 +8,9 @@ public final class BankTransferServiceImpl {
     /// Repository that handle CRUD action for UserData
     public let repository: BankTransferUserDataRepository
     
-    /// Subject that holds UserData stream
+    /// Subject that holds State with UserData stream
     public let subject = CurrentValueSubject<AsyncValueState<UserData>, Never>(
-        AsyncValueState<UserData>(value: UserData(countryCode: nil, userId: nil, mobileVerified: false))
+        AsyncValueState<UserData>(status: .ready, value: UserData(countryCode: nil, userId: nil, mobileVerified: false))
     )
     
     // MARK: - Initializers
