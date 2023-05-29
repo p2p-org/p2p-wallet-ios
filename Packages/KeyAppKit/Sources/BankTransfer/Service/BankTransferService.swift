@@ -1,8 +1,10 @@
 import Combine
+import KeyAppKitCore
 
 public protocol BankTransferService {
-    var userData: AnyPublisher<UserData, Never> { get }
-    func save(userData: UserData) async throws
+    var state: AnyPublisher<AsyncValueState<UserData>, Never> { get }
+
+    func save(userData: UserData) throws
     func reload() async
 
     func isBankTransferAvailable() -> Bool

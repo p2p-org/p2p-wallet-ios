@@ -1,28 +1,24 @@
+import BankTransfer
 import Combine
-import SafariServices
+import CountriesAPI
 import Foundation
 import Resolver
-import AnalyticsManager
-import BankTransfer
-import CountriesAPI
+import SafariServices
 
-final class BankTransferCoordinator: Coordinator<Void> {
+final class BankTransferInfoCoordinator: Coordinator<Void> {
 
     // MARK: -
 
     private var navigationController: UINavigationController!
-    private var userData: BankTransfer.UserData
 
     // MARK: -
 
     @Injected private var bankTransferService: any BankTransferService
 
     init(
-        userData: BankTransfer.UserData,
         navigationController: UINavigationController? = nil
     ) {
         self.navigationController = navigationController
-        self.userData = userData
     }
 
     override func start() -> AnyPublisher<Void, Never> {

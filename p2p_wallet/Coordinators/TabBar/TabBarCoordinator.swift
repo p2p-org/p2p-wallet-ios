@@ -1,6 +1,7 @@
 import AnalyticsManager
 import BankTransfer
 import Combine
+import CountriesAPI
 import Foundation
 import KeyAppBusiness
 import Resolver
@@ -248,15 +249,22 @@ final class TabBarCoordinator: Coordinator<Void> {
             coordinate(to: buyCoordinator).sink {}.store(in: &subscriptions)
         case .crypto:
             self.handleAction(.receive)
-        case .transfer:
-            let service: BankTransferService = Resolver.resolve()
-            service.userData.flatMap { [unowned self] data in
-                self.coordinate(to: BankTransferCoordinator(
-                    userData: data,
-                    navigationController: navigationController)
+        case .info:
+            coordinate(to: BankTransferInfoCoordinator(navigationController: navigationController)).sink {}.store(in: &subscriptions)
+        case .registration:
+            coordinate(
+                to: StrigaRegistrationFirstStepCoordinator(
+                    country: Country(name: "", code: "", dialCode: "", emoji: ""),
+                    parent: navigationController
                 )
-            }
-            .sink {}.store(in: &subscriptions)
+            ).sink {}.store(in: &subscriptions)
+        case .transfer:
+            coordinate(
+                to: StrigaRegistrationFirstStepCoordinator(
+                    country: Country(name: "", code: "", dialCode: "", emoji: ""),
+                    parent: navigationController
+                )
+            ).sink {}.store(in: &subscriptions)
         }
     }
 

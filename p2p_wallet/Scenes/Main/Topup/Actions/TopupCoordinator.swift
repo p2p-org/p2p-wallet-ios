@@ -30,8 +30,8 @@ final class TopupCoordinator: Coordinator<TopupCoordinatorResult> {
             controller.deallocatedPublisher().map { TopupCoordinatorResult.cancel }.eraseToAnyPublisher(),
             viewModel.tappedItem
                 .map { TopupCoordinatorResult.action(action: $0) }
-                .handleEvents(receiveOutput: { _ in
-                    controller.dismiss(animated: true)
+                .handleEvents(receiveOutput: { [weak controller] _ in
+                    controller?.dismiss(animated: true)
                 })
                 .eraseToAnyPublisher()
         ).prefix(1).eraseToAnyPublisher()
