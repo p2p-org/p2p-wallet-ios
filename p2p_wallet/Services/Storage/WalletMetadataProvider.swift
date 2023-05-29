@@ -22,6 +22,7 @@ protocol WalletMetadataProvider {
 
 class LocalWalletMetadataProvider: WalletMetadataProvider {
     @Injected private var keychainStorage: KeychainStorage
+    @Injected private var userWalletManager: UserWalletManager
 
     private let key: String
 
@@ -42,10 +43,16 @@ class LocalWalletMetadataProvider: WalletMetadataProvider {
     }
 
     func load() async throws -> WalletMetaData? {
-        guard let rawData: Data = keychainStorage.localKeychain.getData(key)
+        guard
+            let rawData: Data = keychainStorage.localKeychain.getData(key),
+            let ethAddress = userWalletManager.wallet?.ethAddress
         else { return nil }
 
-        return try JSONDecoder().decode(WalletMetaData.self, from: rawData)
+        let decoder = JSONDecoder()
+        decoder.dateDecodingStrategy = .millisecondsSince1970
+        decoder.userInfo[WalletMetaData.ethPublicInfoKey] = ethAddress
+
+        return try decoder.decode(WalletMetaData.self, from: rawData)
     }
 }
 

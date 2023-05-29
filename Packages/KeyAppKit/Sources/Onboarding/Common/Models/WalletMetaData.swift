@@ -5,7 +5,7 @@
 import Foundation
 
 public struct WalletMetaData: Codable, Equatable {
-    static let ethPublicInfoKey = CodingUserInfoKey(rawValue: "ethPublic")!
+    public static let ethPublicInfoKey = CodingUserInfoKey(rawValue: "ethPublic")!
 
     public let ethPublic: String
 

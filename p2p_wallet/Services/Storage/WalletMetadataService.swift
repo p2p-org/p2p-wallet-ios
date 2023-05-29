@@ -65,6 +65,8 @@ class WalletMetadataService: ObservableObject {
         let mergedMetadata = try WalletMetaData.merge(lhs: metadata, rhs: newMetadata)
         try await localMetadataProvider.save(metadata: mergedMetadata)
         try await remoteMetadataProvider.save(metadata: mergedMetadata)
+        
+        self.metadata = newMetadata
     }
 
     func clear() async throws {

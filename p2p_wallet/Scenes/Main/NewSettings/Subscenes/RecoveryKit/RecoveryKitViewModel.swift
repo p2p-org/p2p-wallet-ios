@@ -43,6 +43,13 @@ final class RecoveryKitViewModel: ObservableObject {
 
         Task.detached { try await walletMetadataService.synchronize() }
 
+        Task {
+            if var metadata = walletMetadataService.metadata {
+                metadata.phoneNumber = "+84989999999"
+                try await walletMetadataService.update(metadata)
+            }
+        }
+
         walletMetadataService.$metadata
             .subscribe(on: RunLoop.main)
             .sink { [weak self, weak userWalletManager] metadata in

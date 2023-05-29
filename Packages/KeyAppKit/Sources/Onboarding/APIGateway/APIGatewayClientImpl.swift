@@ -83,6 +83,8 @@ public class APIGatewayClientImpl: APIGatewayClient {
         // Prepare
         var request = createDefaultRequest()
         let (solanaSecretKey, solanaPublicKey) = try prepare(solanaPrivateKey: solanaPrivateKey)
+        
+        let encryptedMetadataInBase64 = encryptedMetadata.base64()
 
         // Create rpc request
         let rpcRequest = JSONRPCRequest(
@@ -97,15 +99,15 @@ public class APIGatewayClientImpl: APIGatewayClient {
                     timestampDevice: Int64(timestampDevice.timeIntervalSince1970),
                     encryptedMetadata: encryptedMetadata
                 ).signAsBase58(secretKey: solanaSecretKey),
-                metadata: encryptedMetadata,
+                metadata: encryptedMetadataInBase64,
                 timestampDevice: dateFormat.string(from: timestampDevice)
             )
         )
         request.httpBody = try JSONEncoder().encode(rpcRequest)
-
+        
         // Request
         let responseData = try await networkManager.requestData(request: request)
-        
+
         // Check result
         let result = try JSONDecoder()
             .decode(JSONRPCResponse<APIGatewayClientResult, BlockErrorData>.self, from: responseData)
