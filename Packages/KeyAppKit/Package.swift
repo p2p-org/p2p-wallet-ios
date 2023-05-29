@@ -28,11 +28,6 @@ let package = Package(
             name: "NameService",
             targets: ["NameService"]
         ),
-        
-        .library(
-            name: "KeyAppNetworking",
-            targets: ["KeyAppNetworking"]
-        ),
 
         .library(
             name: "KeyAppNetworking",
@@ -182,8 +177,6 @@ let package = Package(
             ],
             path: "Tests/IntegrationTests/NameServiceIntegrationTests"
         ),
-        
-        .target(name: "KeyAppNetworking"),
 
         .target(name: "KeyAppNetworking"),
 
