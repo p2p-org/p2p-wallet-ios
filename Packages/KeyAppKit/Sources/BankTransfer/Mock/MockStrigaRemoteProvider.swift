@@ -7,7 +7,7 @@ public final class MockStrigaRemoteProvider: StrigaRemoteProvider {
     }
     
     public func getUserId() async throws -> String? {
-        "testUserId"
+        nil
     }
     
     public func getUserDetails(userId: String) async throws -> StrigaUserDetailsResponse {

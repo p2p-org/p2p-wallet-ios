@@ -89,7 +89,11 @@ public final class StrigaBankTransferUserDataRepository: BankTransferUserDataRep
             if let userId,
                let response = try? await remoteProvider.getUserDetails(userId: userId)
             {
+                // save to local provider
+                await localProvider.saveUserId(userId)
                 try await localProvider.save(registrationData: response)
+                
+                // return
                 return response
             }
             
