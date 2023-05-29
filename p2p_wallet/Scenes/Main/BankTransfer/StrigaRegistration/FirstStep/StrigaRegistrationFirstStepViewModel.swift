@@ -17,6 +17,9 @@ final class StrigaRegistrationFirstStepViewModel: BaseViewModel, ObservableObjec
     // Dependencies
     @Injected private var service: BankTransferService
     
+    // Data
+    private var data: StrigaUserDetailsResponse?
+    
     // Loading state
     @Published var isLoading = false
 
@@ -32,7 +35,7 @@ final class StrigaRegistrationFirstStepViewModel: BaseViewModel, ObservableObjec
     @Published var actionTitle: String = L10n.next
     @Published var isDataValid = true // We need this flag to allow user enter at first whatever he/she likes and then validate everything
     let actionPressed = PassthroughSubject<Void, Never>()
-    let openNextStep = PassthroughSubject<Void, Never>()
+    let openNextStep = PassthroughSubject<StrigaUserDetailsResponse, Never>()
     let chooseCountry = PassthroughSubject<Country?, Never>()
     let back = PassthroughSubject<Void, Never>()
 
@@ -49,10 +52,10 @@ final class StrigaRegistrationFirstStepViewModel: BaseViewModel, ObservableObjec
 
         actionPressed
             .sink { [weak self] _ in
-                guard let self = self else { return }
+                guard let self = self, let data = self.data else { return }
                 self.isDataValid = isValid()
                 if isValid() {
-                    self.openNextStep.send(())
+                    self.openNextStep.send(data)
                 }
             }
             .store(in: &subscriptions)
@@ -102,6 +105,8 @@ private extension StrigaRegistrationFirstStepViewModel {
                 }
                 
                 await MainActor.run {
+                    // save data
+                    self.data = data
                     isLoading = false
                     email = data.email
                     phoneNumber = data.mobile.number
