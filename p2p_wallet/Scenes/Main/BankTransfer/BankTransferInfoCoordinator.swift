@@ -1,31 +1,32 @@
+import BankTransfer
 import Combine
-import SafariServices
+import CountriesAPI
 import Foundation
 import Resolver
-import AnalyticsManager
-import BankTransfer
-import CountriesAPI
+import SafariServices
 
-final class BankTransferCoordinator: Coordinator<Void> {
+enum BankTransferInfoCoordinatorResult {
+    case cancel
+    case registration(country: Country)
+}
+
+final class BankTransferInfoCoordinator: Coordinator<BankTransferInfoCoordinatorResult> {
 
     // MARK: -
 
     private var navigationController: UINavigationController!
-    private var userData: BankTransfer.UserData
 
     // MARK: -
 
     @Injected private var bankTransferService: any BankTransferService
 
     init(
-        userData: BankTransfer.UserData,
         navigationController: UINavigationController? = nil
     ) {
         self.navigationController = navigationController
-        self.userData = userData
     }
 
-    override func start() -> AnyPublisher<Void, Never> {
+    override func start() -> AnyPublisher<BankTransferInfoCoordinatorResult, Never> {
         let viewModel = BankTransferInfoViewModel()
         let controller = UIBottomSheetHostingController(rootView: BankTransferInfoView(viewModel: viewModel))
 
@@ -53,21 +54,20 @@ final class BankTransferCoordinator: Coordinator<Void> {
             }
         }.store(in: &subscriptions)
 
-        viewModel.openProviderInfo.flatMap { url in
+        viewModel.openProviderInfo.flatMap { [weak controller] url in
             let safari = SFSafariViewController(url: url)
-            controller.show(safari, sender: nil)
+            controller?.show(safari, sender: nil)
             return safari.deallocatedPublisher()
         }.sink {}.store(in: &subscriptions)
 
-        viewModel.openRegistration
-            .flatMap { country in
-                self.coordinate(to: StrigaRegistrationFirstStepCoordinator(country: country, parent: controller))
-            }
-            .sink { _ in }
-            .store(in: &subscriptions)
-
         controller.view.layer.cornerRadius = 20
         navigationController.present(controller, interactiveDismissalType: .standard)
-        return controller.deallocatedPublisher().prefix(1).eraseToAnyPublisher()
+        return Publishers.Merge(
+            controller.deallocatedPublisher().map { BankTransferInfoCoordinatorResult.cancel },
+            viewModel.openRegistration.map { country in BankTransferInfoCoordinatorResult.registration(country: country) }
+                .handleEvents(receiveOutput: { [weak controller] country in
+                    controller?.dismiss(animated: true)
+                })
+        ).prefix(1).eraseToAnyPublisher()
     }
 }

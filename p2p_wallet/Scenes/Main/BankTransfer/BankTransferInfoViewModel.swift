@@ -12,7 +12,7 @@ final class BankTransferInfoViewModel: BaseViewModel, ObservableObject {
     var showCountries: AnyPublisher<Country?, Never> {
         showCountriesSubject.eraseToAnyPublisher()
     }
-    
+
     var openRegistration: AnyPublisher<Country, Never> {
         openRegistrationSubject.eraseToAnyPublisher()
     }

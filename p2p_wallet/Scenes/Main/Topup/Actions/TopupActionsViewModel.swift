@@ -6,6 +6,7 @@ import Resolver
 final class TopupActionsViewModel: BaseViewModel, ObservableObject {
 
     @Injected private var bankTransferService: any BankTransferService
+    @Injected private var notificationService: NotificationService
 
     // MARK: -
 
@@ -15,7 +16,7 @@ final class TopupActionsViewModel: BaseViewModel, ObservableObject {
             icon: .bankTransferBankIcon,
             title: L10n.bankTransfer,
             subtitle: L10n.upTo3Days·Fees("0%"),
-            isLoading: true
+            isLoading: false
         ),
         ActionItem(
             id: .card,
@@ -34,25 +35,72 @@ final class TopupActionsViewModel: BaseViewModel, ObservableObject {
     ]
 
     var tappedItem: AnyPublisher<Action, Never> {
-        tappedItemSubject.eraseToAnyPublisher()
+        // Filtering .transfer items, since we might wait for BankTransferService state to be loaded
+        tappedItemSubject.eraseToAnyPublisher().withLatestFrom(bankTransferService.state) { action, state in
+            (action, state)
+        }.filter { value in
+            value.0 == .transfer ? (!value.1.hasError && !value.1.isFetching) : true
+        }.map { val in
+            if val.0 == .transfer, val.1.status == .ready, !val.1.hasError {
+                // Depending on BTS UserData it's either .transfer or .info
+                if nil != val.1.value.userId {
+                    return .transfer
+                } else if val.1.value.countryCode == nil {
+                    return .info
+                }
+            }
+            return val.0
+        }.eraseToAnyPublisher()
     }
 
     private let tappedItemSubject = PassthroughSubject<Action, Never>()
+    private let shouldShowErrorSubject = CurrentValueSubject<Bool, Never>(false)
 
     func didTapItem(item: ActionItem) {
-        guard !item.isLoading else { return }
         tappedItemSubject.send(item.id)
     }
 
     override init() {
         super.init()
 
-        bankTransferService.userData.sink { _ in
-            guard let index = self.actions.firstIndex(where: { item in
-                item.id == .transfer
-            }) else { return }
-            self.actions[index].isLoading = false
+        // Sending tapped event only after BTS is in ready state
+        Publishers.CombineLatest(
+            bankTransferService.state,
+            tappedItemSubject.eraseToAnyPublisher()
+        ).filter { _, action in
+            action == .transfer
+        }.sinkAsync { [weak self] state, action in
+            await MainActor.run {
+                self?.setTransferLoadingState(isLoading: state.status != .ready && !state.hasError)
+                // Toggling error
+                if self?.shouldShowErrorSubject.value == false {
+                    self?.shouldShowErrorSubject.send(state.hasError)
+                }
+            }
         }.store(in: &subscriptions)
+
+        tappedItemSubject.withLatestFrom(bankTransferService.state).filter({ state in
+            state.hasError
+        }).sinkAsync { [weak self] state in
+            await self?.bankTransferService.reload()
+            await MainActor.run {
+                self?.setTransferLoadingState(isLoading: true)
+                self?.shouldShowErrorSubject.send(false)
+            }
+        }.store(in: &subscriptions)
+
+        shouldShowErrorSubject.filter { $0 }.sinkAsync { [weak self] value in
+            await MainActor.run {
+                self?.notificationService.showToast(title: "❌", text: L10n.somethingWentWrong)
+            }
+        }.store(in: &subscriptions)
+    }
+
+    private func setTransferLoadingState(isLoading: Bool) {
+        guard let idx = self.actions.firstIndex(where: { act in
+            act.id == .transfer
+        }) else { return }
+        self.actions[idx].isLoading = isLoading
     }
 
 }
@@ -60,6 +108,7 @@ final class TopupActionsViewModel: BaseViewModel, ObservableObject {
 extension TopupActionsViewModel {
     enum Action: String {
         case transfer
+        case info
         case card
         case crypto
     }

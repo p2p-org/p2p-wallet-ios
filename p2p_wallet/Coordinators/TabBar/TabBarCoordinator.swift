@@ -1,6 +1,7 @@
 import AnalyticsManager
 import BankTransfer
 import Combine
+import CountriesAPI
 import Foundation
 import KeyAppBusiness
 import Resolver
@@ -248,16 +249,35 @@ final class TabBarCoordinator: Coordinator<Void> {
             coordinate(to: buyCoordinator).sink {}.store(in: &subscriptions)
         case .crypto:
             self.handleAction(.receive)
+        case .info:
+            coordinate(to: BankTransferInfoCoordinator(navigationController: navigationController)).sink { [weak self] result in
+                switch result {
+                case .registration(let country):
+                    self?.handleTopUpRegistration(with: country)
+                case .cancel:
+                    break
+                }
+            }.store(in: &subscriptions)
         case .transfer:
-            let service: BankTransferService = Resolver.resolve()
-            service.userData.flatMap { [unowned self] data in
-                self.coordinate(to: BankTransferCoordinator(
-                    userData: data,
-                    navigationController: navigationController)
+            coordinate(
+                to: StrigaRegistrationFirstStepCoordinator(
+                    country: Country(name: "", code: "", dialCode: "", emoji: ""),
+                    parent: navigationController
                 )
-            }
-            .sink {}.store(in: &subscriptions)
+            ).sink {}.store(in: &subscriptions)
         }
+    }
+
+    private func handleTopUpRegistration(with country: Country) {
+        guard
+            let navigationController = tabBarController.selectedViewController as? UINavigationController
+        else { return }
+        coordinate(
+            to: StrigaRegistrationFirstStepCoordinator(
+                country: country,
+                parent: navigationController
+            )
+        ).sink {}.store(in: &subscriptions)
     }
 
     /// Handle actions given by Actions button
