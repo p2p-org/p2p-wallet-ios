@@ -88,7 +88,8 @@ public final class StrigaBankTransferUserDataRepository: BankTransferUserDataRep
         if let cachedData = await localProvider.getCachedRegistrationData()
         {
             // if user id is available, fetch from remote
-            if let response = try? await remoteProvider.getUserDetails(userId: "userId")
+            if let userId = cachedData.userId,
+               let response = try? await remoteProvider.getUserDetails(userId: userId)
             {
                 try await localProvider.save(registrationData: response)
                 return response

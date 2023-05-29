@@ -16,6 +16,9 @@ final class StrigaRegistrationFirstStepViewModel: BaseViewModel, ObservableObjec
 
     // Dependencies
     @Injected private var service: BankTransferService
+    
+    // Loading state
+    @Published var isLoading = false
 
     // Fields
     @Published var email: String = ""
@@ -88,6 +91,9 @@ final class StrigaRegistrationFirstStepViewModel: BaseViewModel, ObservableObjec
 
 private extension StrigaRegistrationFirstStepViewModel {
     func fetchSavedData() {
+        // Mark as isLoading
+        isLoading = true
+        
         Task {
             do {
                 guard let data = try await service.getRegistrationData() as? StrigaUserDetailsResponse
@@ -96,6 +102,7 @@ private extension StrigaRegistrationFirstStepViewModel {
                 }
                 
                 await MainActor.run {
+                    isLoading = false
                     email = data.email
                     phoneNumber = data.mobile.number
                     firstName = data.firstName
@@ -114,6 +121,10 @@ private extension StrigaRegistrationFirstStepViewModel {
                 }
             } catch {
                 // TODO: - Handle error
+                
+                await MainActor.run {
+                    isLoading = false
+                }
             }
         }
     }
@@ -175,14 +186,19 @@ private extension StrigaRegistrationFirstStepViewModel {
             .sinkAsync { [weak self] contacts, credentials, dateOfBirth in
                 guard let self else { return }
 
-                try? await self.service.updateLocally(data: StrigaUserDetailsResponse(
-                    firstName: credentials.0,
-                    lastName: credentials.1,
-                    email: contacts.0,
-                    mobile: StrigaUserDetailsResponse.Mobile(countryCode: "", number: contacts.1),
-                    dateOfBirth: dateOfBirth.0,
-                    placeOfBirth: dateOfBirth.1?.code
-                ))
+                try? await self.service.updateLocally(
+                    data: StrigaUserDetailsResponse(
+                        firstName: credentials.0,
+                        lastName: credentials.1,
+                        email: contacts.0,
+                        mobile: StrigaUserDetailsResponse.Mobile(
+                            countryCode: "",
+                            number: contacts.1
+                        ),
+                        dateOfBirth: dateOfBirth.0,
+                        placeOfBirth: dateOfBirth.1?.code
+                    )
+                )
 
                 if self.isDataValid == false {
                     self.isDataValid = self.isValid()
