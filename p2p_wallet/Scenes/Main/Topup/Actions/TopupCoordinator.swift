@@ -26,6 +26,7 @@ final class TopupCoordinator: Coordinator<TopupCoordinatorResult> {
             rootView: TopupActionsView(viewModel: viewModel)
         )
         navigationController?.present(controller, animated: true)
+
         return Publishers.Merge(
             // Cancel event
             controller.deallocatedPublisher()
@@ -37,6 +38,7 @@ final class TopupCoordinator: Coordinator<TopupCoordinatorResult> {
                     controller?.dismiss(animated: true)
                 })
                 .eraseToAnyPublisher()
-        ).prefix(1).eraseToAnyPublisher()
+        )
+            .prefix(1).eraseToAnyPublisher()
     }
 }
