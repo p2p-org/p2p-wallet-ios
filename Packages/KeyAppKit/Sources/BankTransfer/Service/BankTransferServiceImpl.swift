@@ -1,5 +1,6 @@
 import Combine
 import Foundation
+import KeyAppKitCore
 
 /// Default implementation of `BankTransferService`
 public final class BankTransferServiceImpl {
@@ -8,8 +9,8 @@ public final class BankTransferServiceImpl {
     public let repository: BankTransferUserDataRepository
     
     /// Subject that holds UserData stream
-    public let subject = CurrentValueSubject<UserData, Never>(
-        UserData(countryCode: nil, userId: nil, mobileVerified: false)
+    public let subject = CurrentValueSubject<AsyncValueState<UserData>, Never>(
+        AsyncValueState<UserData>(value: UserData(countryCode: nil, userId: nil, mobileVerified: false))
     )
     
     // MARK: - Initializers
@@ -20,7 +21,8 @@ public final class BankTransferServiceImpl {
 }
 
 extension BankTransferServiceImpl: BankTransferService {
-    public var userData: AnyPublisher<UserData, Never> {
+    
+    public var state: AnyPublisher<AsyncValueState<UserData>, Never> {
         subject.eraseToAnyPublisher()
     }
     

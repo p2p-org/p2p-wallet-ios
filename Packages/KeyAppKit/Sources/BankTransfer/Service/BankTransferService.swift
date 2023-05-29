@@ -4,7 +4,7 @@ import KeyAppKitCore
 public protocol BankTransferService {
     var state: AnyPublisher<AsyncValueState<UserData>, Never> { get }
 
-    func save(userData: UserData) throws
+    func save(userData: UserData) async throws
     func reload() async
 
     func isBankTransferAvailable() -> Bool
