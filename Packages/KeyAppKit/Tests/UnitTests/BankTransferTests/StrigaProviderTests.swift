@@ -13,7 +13,7 @@ import XCTest
 
 final class StrigaProviderTests: XCTestCase {
     
-    var strigaProvider: StrigaProvider!
+    var strigaProvider: StrigaRemoteProviderImpl!
     var httpClient: MockHTTPClient!
     
     override func setUpWithError() throws {

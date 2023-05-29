@@ -8,7 +8,7 @@
 import Foundation
 import BankTransfer
 
-final class MockStrigaProvider: IStrigaProvider {
+final class MockStrigaProvider: StrigaRemoteProvider {
     
     var invokedGetUserDetails = false
     var invokedGetUserDetailsCount = 0

@@ -5,7 +5,7 @@ import Resolver
 
 final class TopupActionsViewModel: BaseViewModel, ObservableObject {
 
-    @Injected private var bankTransferService: BankTransferService
+    @Injected private var bankTransferService: any BankTransferService
 
     // MARK: -
 

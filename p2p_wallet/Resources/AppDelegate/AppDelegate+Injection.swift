@@ -30,6 +30,7 @@ import TransactionParser
 import Web3
 import Wormhole
 import BankTransfer
+import KeyAppNetworking
 
 extension Resolver: ResolverRegistering {
     @MainActor public static func registerAllServices() {
@@ -272,7 +273,16 @@ extension Resolver: ResolverRegistering {
 
         register { Web3(rpcURL: String.secretConfig("ETH_RPC")!) }
 
-        register { StrigaMockBankTransferService() }
+        register {
+            let userWalletsManager: UserWalletManager = resolve()
+            return BankTransferServiceImpl(
+                repository: StrigaBankTransferUserDataRepository(
+                    remoteProvider: StrigaRemoteProviderImpl(
+                        solanaKeyPair: userWalletsManager.wallet?.account
+                    )
+                )
+            )
+        }
             .implements(BankTransferService.self)
     }
 

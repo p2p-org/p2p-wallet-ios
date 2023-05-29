@@ -15,7 +15,7 @@ final class BankTransferCoordinator: Coordinator<Void> {
 
     // MARK: -
 
-    @Injected private var bankTransferService: BankTransferService
+    @Injected private var bankTransferService: any BankTransferService
 
     init(
         userData: BankTransfer.UserData,

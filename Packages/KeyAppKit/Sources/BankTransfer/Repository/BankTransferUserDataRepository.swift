@@ -1,10 +1,8 @@
-protocol BankTransferUserDataRepository {
-    var userData: UserData? { get }
-    func reload() async
-    func save(userData: UserData) async
- 
-    func save(registrationData: RegistrationData) async
+public protocol BankTransferUserDataRepository {
     func getRegistrationData() async throws -> RegistrationData
+ 
+    func createUser(registrationData: RegistrationData) async throws -> CreateUserResponse
+    func updateUser(registrationData: RegistrationData) async throws
 
     func clearCache() async
 }

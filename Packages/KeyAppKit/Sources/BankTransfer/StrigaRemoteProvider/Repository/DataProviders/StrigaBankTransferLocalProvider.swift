@@ -7,13 +7,13 @@ actor StrigaBankTransferLocalProvider {
         return cacheDirectoryPath.appendingPathComponent("/striga-registration.data")
     }()
 
-    func getCachedRegistrationData() -> RegistrationData? {
+    func getCachedRegistrationData() -> UserDetailsResponse? {
         guard let data = try? Data(contentsOf: cacheFile) else { return nil }
-        let cachedData = (try? JSONDecoder().decode(RegistrationData.self, from: data))
+        let cachedData = (try? JSONDecoder().decode(UserDetailsResponse.self, from: data))
         return cachedData
     }
 
-    func save(registrationData: RegistrationData) throws {
+    func save(registrationData: UserDetailsResponse) throws {
         let data = try JSONEncoder().encode(registrationData)
         try data.write(to: cacheFile)
     }

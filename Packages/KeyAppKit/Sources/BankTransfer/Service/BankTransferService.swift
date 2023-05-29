@@ -2,7 +2,7 @@ import Combine
 
 public protocol BankTransferService {
     var userData: AnyPublisher<UserData, Never> { get }
-    func save(userData: UserData) throws
+    func save(userData: UserData) async throws
     func reload() async
 
     func isBankTransferAvailable() -> Bool
