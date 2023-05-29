@@ -278,7 +278,13 @@ enum JupiterSwapBusinessLogic {
                 
             } else {
                 // If route is chosen by user and is not the best one, just try create transaction without simulation
-                let swapTransaction = try await createTransaction(for: route, account: account, services: services)
+                let swapTransaction = try await services.jupiterClient.swap(
+                    route: route,
+                    userPublicKey: account.publicKey.base58EncodedString,
+                    wrapUnwrapSol: true,
+                    feeAccount: nil,
+                    computeUnitPriceMicroLamports: nil
+                )
                 return state.modified {
                     $0.status = .ready
                     $0.swapTransaction = swapTransaction
@@ -323,22 +329,6 @@ enum JupiterSwapBusinessLogic {
         availableRoutes.removeFirst(bestRouteIndex)
         
         return (routes: availableRoutes, swapTransaction: swapTransaction)
-    }
-
-    private static func createTransaction(
-        for route: Route,
-        account: KeyPair,
-        services: JupiterSwapServices
-    ) async throws -> SwapTransaction {
-        let swapTransaction = try await services.jupiterClient.swap(
-            route: route,
-            userPublicKey: account.publicKey.base58EncodedString,
-            wrapUnwrapSol: true,
-            feeAccount: nil,
-            computeUnitPriceMicroLamports: nil
-        )
-
-        return swapTransaction
     }
 
     private static func createAndSimulateTransaction(
