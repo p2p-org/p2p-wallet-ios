@@ -1,6 +1,7 @@
 import Foundation
 
 public struct StrigaUserDetailsResponse: RegistrationData {
+    public let userId: String?
     public let firstName: String
     public let lastName: String
     public let email: String
@@ -52,6 +53,7 @@ public struct StrigaUserDetailsResponse: RegistrationData {
     }
     
     public init(firstName: String, lastName: String, email: String, mobile: Mobile, dateOfBirth: DateOfBirth? = nil, address: Address? = nil, occupation: String? = nil, sourceOfFunds: String? = nil, placeOfBirth: String? = nil) {
+        self.userId = nil
         self.firstName = firstName
         self.lastName = lastName
         self.email = email

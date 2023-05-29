@@ -52,6 +52,7 @@ public final class StrigaBankTransferUserDataRepository: BankTransferUserDataRep
         )
         do {
             let response = try await remoteProvider.createUser(model: model)
+            try await localProvider.save(registrationData: data)
             debugPrint("---response: ", response)
             return response
         } catch {
@@ -66,12 +67,34 @@ public final class StrigaBankTransferUserDataRepository: BankTransferUserDataRep
             throw StrigaProviderError.invalidRequest("Data mismatch")
         }
         
+        // TODO: - remoteProvider.updateUser
         try? await localProvider.save(registrationData: data)
     }
 
     public func getRegistrationData() async throws -> RegistrationData {
-        // TODO: Here should be email from metadata
-        return await localProvider.getCachedRegistrationData() ?? StrigaUserDetailsResponse(firstName: "", lastName: "", email: "test@test.test", mobile: StrigaUserDetailsResponse.Mobile(countryCode: "", number: ""))
+        if let cachedData = await localProvider.getCachedRegistrationData()
+        {
+            // if user id is available, fetch from remote
+            if let userId = cachedData.userId,
+               let response = try? await remoteProvider.getUserDetails(userId: userId)
+            {
+                return response
+            }
+            
+            // if not response cached data
+            return cachedData
+        }
+        
+        // return empty data
+        return StrigaUserDetailsResponse(
+            firstName: "",
+            lastName: "",
+            email: "",
+            mobile: .init(
+                countryCode: "",
+                number: ""
+            )
+        )
     }
 
     public func clearCache() async {
