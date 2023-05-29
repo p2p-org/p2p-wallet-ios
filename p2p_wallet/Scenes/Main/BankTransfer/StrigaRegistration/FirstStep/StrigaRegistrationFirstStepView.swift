@@ -15,6 +15,14 @@ struct StrigaRegistrationFirstStepView: View {
     }
 
     var body: some View {
+        if viewModel.isLoading {
+            ProgressView()
+        } else {
+            content
+        }
+    }
+    
+    var content: some View {
         List {
             InfoView(appearance: .credentials)
                 .listRowBackground(Color(Asset.Colors.smoke.color))
