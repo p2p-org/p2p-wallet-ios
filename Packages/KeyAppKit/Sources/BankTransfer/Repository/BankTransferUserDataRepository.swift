@@ -1,9 +1,9 @@
 public protocol BankTransferUserDataRepository {
-    func getRegistrationData() async throws -> RegistrationData
+    func getRegistrationData() async throws -> BankTransferRegistrationData
  
-    func createUser(registrationData: RegistrationData) async throws -> StrigaCreateUserResponse
-    func updateUser(registrationData: RegistrationData) async throws
+    func createUser(registrationData: BankTransferRegistrationData) async throws -> StrigaCreateUserResponse
+    func updateUser(registrationData: BankTransferRegistrationData) async throws
 
-    func updateUserLocally(registrationData: RegistrationData) async throws
+    func updateUserLocally(registrationData: BankTransferRegistrationData) async throws
     func clearCache() async
 }

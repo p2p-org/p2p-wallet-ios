@@ -1,6 +1,6 @@
 import Foundation
 
-public protocol RegistrationData: Codable {
+public protocol BankTransferRegistrationData: Codable {
     var firstName: String { get }
     var lastName: String { get }
     var email: String { get }

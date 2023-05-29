@@ -36,19 +36,19 @@ extension BankTransferServiceImpl: BankTransferService {
         fatalError("Not implemented")
     }
 
-    public func getRegistrationData() async throws -> RegistrationData {
+    public func getRegistrationData() async throws -> BankTransferRegistrationData {
         try await repository.getRegistrationData()
     }
     
-    public func updateLocally(data: RegistrationData) async throws {
+    public func updateLocally(data: BankTransferRegistrationData) async throws {
         try await repository.updateUserLocally(registrationData: data)
     }
     
-    public func createUser(data: RegistrationData) async throws {
+    public func createUser(data: BankTransferRegistrationData) async throws {
         _ = try await repository.createUser(registrationData: data)
     }
     
-    public func updateUser(data: RegistrationData) async throws {
+    public func updateUser(data: BankTransferRegistrationData) async throws {
         try await repository.updateUser(registrationData: data)
     }
     

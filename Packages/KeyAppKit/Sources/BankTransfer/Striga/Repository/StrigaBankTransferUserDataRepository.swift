@@ -20,7 +20,7 @@ public final class StrigaBankTransferUserDataRepository: BankTransferUserDataRep
     }
     
     // MARK: - Methods
-    public func createUser(registrationData data: RegistrationData) async throws -> StrigaCreateUserResponse {
+    public func createUser(registrationData data: BankTransferRegistrationData) async throws -> StrigaCreateUserResponse {
         // assert response type
         guard let data = data as? StrigaUserDetailsResponse else {
             throw StrigaProviderError.invalidRequest("Data mismatch")
@@ -61,7 +61,7 @@ public final class StrigaBankTransferUserDataRepository: BankTransferUserDataRep
         }
     }
 
-    public func updateUserLocally(registrationData data: RegistrationData) async throws {
+    public func updateUserLocally(registrationData data: BankTransferRegistrationData) async throws {
         // assert response type
         guard let data = data as? StrigaUserDetailsResponse else {
             throw StrigaProviderError.invalidRequest("Data mismatch")
@@ -79,12 +79,12 @@ public final class StrigaBankTransferUserDataRepository: BankTransferUserDataRep
         try? await localProvider.save(registrationData: newData)
     }
     
-    public func updateUser(registrationData data: RegistrationData) async throws {
+    public func updateUser(registrationData data: BankTransferRegistrationData) async throws {
         // TODO: - remoteProvider.updateUser
         fatalError("Implementing")
     }
 
-    public func getRegistrationData() async throws -> RegistrationData {
+    public func getRegistrationData() async throws -> BankTransferRegistrationData {
         if let cachedData = await localProvider.getCachedRegistrationData()
         {
             // if user id is available, fetch from remote
