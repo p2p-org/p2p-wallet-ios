@@ -449,8 +449,7 @@ private extension SwapViewModel {
             route: route,
             account: account,
             swapTransaction: currentState.swapTransaction,
-            services: stateMachine.services,
-            routeReceivedAt: currentState.routeReceivedAt
+            services: stateMachine.services
         )
         
         // delegate work to transaction handler

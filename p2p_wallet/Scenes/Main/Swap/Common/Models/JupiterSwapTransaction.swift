@@ -18,8 +18,6 @@ struct JupiterSwapTransaction: SwapRawTransactionType {
     let swapTransaction: Jupiter.SwapTransaction?
     let services: JupiterSwapServices
     
-    let routeReceivedAt: Date?
-    
     var mainDescription: String {
         [
             fromAmount.tokenAmountFormattedString(symbol: sourceWallet.token.symbol, maximumFractionDigits: Int(sourceWallet.token.decimals)),
@@ -51,7 +49,7 @@ struct JupiterSwapTransaction: SwapRawTransactionType {
             
             let data = await AlertLoggerDataBuilder.buildLoggerData(error: error)
             
-            let diffRoutesTime = (Date().timeIntervalSince1970 - (routeReceivedAt ?? Date()).timeIntervalSince1970)
+            let diffRoutesTime = (Date().timeIntervalSince1970 - (route._receiveAt ?? Date()).timeIntervalSince1970)
                 .toString(minimumFractionDigits: 9)
             
             let diffTxTime = (Date().timeIntervalSince1970 - (swapTransaction?.receivedAt ?? Date()).timeIntervalSince1970)

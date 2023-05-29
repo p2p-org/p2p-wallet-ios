@@ -66,9 +66,6 @@ struct JupiterSwapState: Equatable {
     
     /// Selected route
     var route: Route?
-    
-    /// Route received timestamp
-    var routeReceivedAt: Date?
 
     /// Current swap transaction for the state
     var swapTransaction: SwapTransaction?

@@ -53,7 +53,6 @@ enum JupiterSwapBusinessLogic {
             return state.modified {
                 $0.status = .loadingAmountTo
                 $0.route = nil
-                $0.routeReceivedAt = nil
                 $0.swapTransaction = nil
                 $0.routes = []
                 $0.amountFrom = amountFrom
@@ -63,7 +62,6 @@ enum JupiterSwapBusinessLogic {
             return state.modified {
                 $0.status = .loadingAmountTo
                 $0.route = nil
-                $0.routeReceivedAt = nil
                 $0.swapTransaction = nil
                 $0.routes = []
                 $0.fromToken = fromToken
@@ -74,7 +72,6 @@ enum JupiterSwapBusinessLogic {
             return state.modified {
                 $0.status = .loadingAmountTo
                 $0.route = nil
-                $0.routeReceivedAt = nil
                 $0.swapTransaction = nil
                 $0.routes = []
                 $0.toToken = toToken
@@ -84,7 +81,6 @@ enum JupiterSwapBusinessLogic {
             return state.modified {
                 $0.status = .switching
                 $0.route = nil
-                $0.routeReceivedAt = nil
                 $0.swapTransaction = nil
                 $0.routes = []
                 $0.fromToken = state.toToken
@@ -96,7 +92,6 @@ enum JupiterSwapBusinessLogic {
             return state.modified {
                 $0.status = .loadingAmountTo
                 $0.route = nil
-                $0.routeReceivedAt = nil
                 $0.swapTransaction = nil
                 $0.routes = []
                 $0.amountTo = nil
@@ -117,7 +112,6 @@ enum JupiterSwapBusinessLogic {
             return state.modified {
                 $0.status = .loadingAmountTo
                 $0.route = nil
-                $0.routeReceivedAt = nil
                 $0.swapTransaction = nil
                 $0.routes = []
                 $0.amountTo = nil
@@ -127,7 +121,6 @@ enum JupiterSwapBusinessLogic {
             return state.modified {
                 $0.status = .loadingAmountTo
                 $0.route = nil
-                $0.routeReceivedAt = nil
                 $0.swapTransaction = nil
                 $0.routes = []
                 $0.amountTo = nil
@@ -277,7 +270,6 @@ enum JupiterSwapBusinessLogic {
                     // If there is no swapTransaction, then the state is "routeIsNotFound"
                     return state.modified {
                         $0.route = nil
-                        $0.routeReceivedAt = nil
                         $0.routes = []
                         $0.status = .error(reason: .routeIsNotFound)
                         $0.swapTransaction = nil

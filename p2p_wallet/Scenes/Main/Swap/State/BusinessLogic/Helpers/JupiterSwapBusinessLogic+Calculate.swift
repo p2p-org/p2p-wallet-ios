@@ -57,7 +57,6 @@ extension JupiterSwapBusinessLogic {
                     $0.status = status
                     $0.routes = routes ?? []
                     $0.route = nil
-                    $0.routeReceivedAt = nil
                 }
             }
 
@@ -65,7 +64,6 @@ extension JupiterSwapBusinessLogic {
                 state: state.modified {
                     $0.status = .ready
                     $0.route = route
-                    $0.routeReceivedAt = Date()
                     $0.routes = routes ?? []
                     $0.amountTo = UInt64(route.outAmount)?
                         .convertToBalance(decimals: state.toToken.token.decimals)
