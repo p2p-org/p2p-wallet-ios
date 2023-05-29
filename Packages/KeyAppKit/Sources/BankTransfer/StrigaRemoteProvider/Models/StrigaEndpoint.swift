@@ -4,7 +4,7 @@ import KeyAppNetworking
 public enum StrigaEndpoint {
     case verifyMobileNumber(authHeader: AuthHeader, userId: String, verificationCode: String)
     case getUserDetails(authHeader: AuthHeader, userId: String)
-    case createUser(authHeader: AuthHeader, model: CreateUserRequest)
+    case createUser(authHeader: AuthHeader, model: StrigaCreateUserRequest)
 }
 
 // MARK: - HTTPEndpoint

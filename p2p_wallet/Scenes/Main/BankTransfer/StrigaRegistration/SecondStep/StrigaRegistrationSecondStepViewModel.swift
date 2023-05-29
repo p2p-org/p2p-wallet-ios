@@ -76,7 +76,7 @@ private extension StrigaRegistrationSecondStepViewModel {
     func fetchSavedData() {
         Task {
             do {
-                guard let data = try await service.getRegistrationData() as? UserDetailsResponse
+                guard let data = try await service.getRegistrationData() as? StrigaUserDetailsResponse
                 else {
                     throw StrigaProviderError.invalidResponse
                 }

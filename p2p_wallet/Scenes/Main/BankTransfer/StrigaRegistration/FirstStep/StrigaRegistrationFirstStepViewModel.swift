@@ -36,7 +36,7 @@ final class StrigaRegistrationFirstStepViewModel: BaseViewModel, ObservableObjec
     var fieldsStatuses = [Field: StrigaRegistrationTextFieldStatus]()
 
     @Published var selectedCountryOfBirth: Country?
-    @Published private var dateOfBirthModel: UserDetailsResponse.DateOfBirth?
+    @Published private var dateOfBirthModel: StrigaUserDetailsResponse.DateOfBirth?
     private let dateFormat = "dd.mm.yyyy"
 
     init(country: Country) {
@@ -63,7 +63,7 @@ final class StrigaRegistrationFirstStepViewModel: BaseViewModel, ObservableObjec
             .map { $0.split(separator: ".") }
             .map { [weak self] components in
                 if components.count == self?.dateFormat.split(separator: ".").count {
-                    return UserDetailsResponse.DateOfBirth(year: Int(components[2]), month: Int(components[1]), day: Int(components[0]))
+                    return StrigaUserDetailsResponse.DateOfBirth(year: Int(components[2]), month: Int(components[1]), day: Int(components[0]))
                 } else {
                     return nil
                 }
@@ -90,7 +90,7 @@ private extension StrigaRegistrationFirstStepViewModel {
     func fetchSavedData() {
         Task {
             do {
-                guard let data = try await service.getRegistrationData() as? UserDetailsResponse
+                guard let data = try await service.getRegistrationData() as? StrigaUserDetailsResponse
                 else {
                     throw StrigaProviderError.invalidResponse
                 }
@@ -175,11 +175,11 @@ private extension StrigaRegistrationFirstStepViewModel {
             .sinkAsync { [weak self] contacts, credentials, dateOfBirth in
                 guard let self else { return }
 
-                try? await self.service.save(data: UserDetailsResponse(
+                try? await self.service.save(data: StrigaUserDetailsResponse(
                     firstName: credentials.0,
                     lastName: credentials.1,
                     email: contacts.0,
-                    mobile: UserDetailsResponse.Mobile(countryCode: "", number: contacts.1),
+                    mobile: StrigaUserDetailsResponse.Mobile(countryCode: "", number: contacts.1),
                     dateOfBirth: dateOfBirth.0,
                     placeOfBirth: dateOfBirth.1?.code
                 ))

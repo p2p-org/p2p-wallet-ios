@@ -1,6 +1,6 @@
 import Foundation
 
-public struct CreateUserResponse: Decodable {
+public struct StrigaCreateUserResponse: Decodable {
     let userId: String
     let email: String
     let KYC: KYC

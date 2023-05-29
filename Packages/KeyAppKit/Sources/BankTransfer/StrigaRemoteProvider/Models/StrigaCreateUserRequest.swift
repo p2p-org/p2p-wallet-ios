@@ -1,6 +1,6 @@
 import Foundation
 
-public struct CreateUserRequest: Encodable {
+public struct StrigaCreateUserRequest: Encodable {
     let firstName: String
     let lastName: String
     let email: String

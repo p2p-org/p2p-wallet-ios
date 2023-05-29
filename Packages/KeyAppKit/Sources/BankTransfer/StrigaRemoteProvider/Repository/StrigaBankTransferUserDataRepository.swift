@@ -20,20 +20,20 @@ public final class StrigaBankTransferUserDataRepository: BankTransferUserDataRep
     }
     
     // MARK: - Methods
-    public func createUser(registrationData data: RegistrationData) async throws -> CreateUserResponse {
+    public func createUser(registrationData data: RegistrationData) async throws -> StrigaCreateUserResponse {
         // assert response type
-        guard let data = data as? UserDetailsResponse else {
+        guard let data = data as? StrigaUserDetailsResponse else {
             throw StrigaProviderError.invalidRequest("Data mismatch")
         }
         
         // create model
-        let model = CreateUserRequest(
+        let model = StrigaCreateUserRequest(
             firstName: data.firstName,
             lastName: data.lastName,
             email: data.email,
-            mobile: CreateUserRequest.Mobile(countryCode: data.mobile.countryCode, number: data.mobile.number),
-            dateOfBirth: CreateUserRequest.DateOfBirth(year: data.dateOfBirth?.year, month: data.dateOfBirth?.month, day: data.dateOfBirth?.day),
-            address: CreateUserRequest.Address(
+            mobile: StrigaCreateUserRequest.Mobile(countryCode: data.mobile.countryCode, number: data.mobile.number),
+            dateOfBirth: StrigaCreateUserRequest.DateOfBirth(year: data.dateOfBirth?.year, month: data.dateOfBirth?.month, day: data.dateOfBirth?.day),
+            address: StrigaCreateUserRequest.Address(
                 addressLine1: data.address?.addressLine1,
                 addressLine2: data.address?.addressLine2,
                 city: data.address?.city,
@@ -62,7 +62,7 @@ public final class StrigaBankTransferUserDataRepository: BankTransferUserDataRep
 
     public func updateUser(registrationData data: RegistrationData) async throws {
         // assert response type
-        guard let data = data as? UserDetailsResponse else {
+        guard let data = data as? StrigaUserDetailsResponse else {
             throw StrigaProviderError.invalidRequest("Data mismatch")
         }
         
@@ -71,7 +71,7 @@ public final class StrigaBankTransferUserDataRepository: BankTransferUserDataRep
 
     public func getRegistrationData() async throws -> RegistrationData {
         // TODO: Here should be email from metadata
-        return await localProvider.getCachedRegistrationData() ?? UserDetailsResponse(firstName: "", lastName: "", email: "test@test.test", mobile: UserDetailsResponse.Mobile(countryCode: "", number: ""))
+        return await localProvider.getCachedRegistrationData() ?? StrigaUserDetailsResponse(firstName: "", lastName: "", email: "test@test.test", mobile: StrigaUserDetailsResponse.Mobile(countryCode: "", number: ""))
     }
 
     public func clearCache() async {

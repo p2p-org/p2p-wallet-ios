@@ -1,6 +1,6 @@
 import Foundation
 
-public struct UserDetailsResponse: RegistrationData {
+public struct StrigaUserDetailsResponse: RegistrationData {
     public let firstName: String
     public let lastName: String
     public let email: String

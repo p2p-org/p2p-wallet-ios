@@ -35,7 +35,7 @@ final class StrigaProviderTests: XCTestCase {
         
         // then
         let userId = "123"
-        httpClient.stubbedRequestResult = UserDetailsResponse.fake()
+        httpClient.stubbedRequestResult = StrigaUserDetailsResponse.fake()
         
         // when
         _ = try await strigaProvider.getUserDetails(authHeader: .init(pubKey: "", signedMessage: ""), userId: userId)
@@ -85,9 +85,9 @@ final class StrigaProviderTests: XCTestCase {
 
 // MARK: - Fakes
 
-private extension CreateUserRequest {
-    static func fake() -> CreateUserRequest {
-        CreateUserRequest(
+private extension StrigaCreateUserRequest {
+    static func fake() -> StrigaCreateUserRequest {
+        StrigaCreateUserRequest(
             firstName: "firstName",
             lastName: "lastName",
             email: "email",
@@ -113,9 +113,9 @@ private extension CreateUserRequest {
     }
 }
 
-private extension UserDetailsResponse {
-    static func fake() -> UserDetailsResponse {
-        UserDetailsResponse(
+private extension StrigaUserDetailsResponse {
+    static func fake() -> StrigaUserDetailsResponse {
+        StrigaUserDetailsResponse(
             firstName: "firstName",
             lastName: "lastName",
             email: "email",

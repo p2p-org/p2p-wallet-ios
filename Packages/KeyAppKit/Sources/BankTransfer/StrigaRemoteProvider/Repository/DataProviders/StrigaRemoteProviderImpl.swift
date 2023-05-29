@@ -25,22 +25,22 @@ public final class StrigaRemoteProviderImpl {
 extension StrigaRemoteProviderImpl: StrigaRemoteProvider {
     public func getUserDetails(
         userId: String
-    ) async throws -> UserDetailsResponse {
+    ) async throws -> StrigaUserDetailsResponse {
         guard let authHeader else {
             throw NSError(domain: "", code: 0)
         }
         let endpoint = StrigaEndpoint.getUserDetails(authHeader: authHeader, userId: userId)
-        return try await httpClient.request(endpoint: endpoint, responseModel: UserDetailsResponse.self)
+        return try await httpClient.request(endpoint: endpoint, responseModel: StrigaUserDetailsResponse.self)
     }
     
     public func createUser(
-        model: CreateUserRequest
-    ) async throws -> CreateUserResponse {
+        model: StrigaCreateUserRequest
+    ) async throws -> StrigaCreateUserResponse {
         guard let authHeader else {
             throw NSError(domain: "", code: 0)
         }
         let endpoint = StrigaEndpoint.createUser(authHeader: authHeader, model: model)
-        return try await httpClient.request(endpoint: endpoint, responseModel: CreateUserResponse.self)
+        return try await httpClient.request(endpoint: endpoint, responseModel: StrigaCreateUserResponse.self)
     }
     
     public func verifyMobileNumber(
