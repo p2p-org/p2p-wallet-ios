@@ -42,7 +42,7 @@ final class TopupActionsViewModel: BaseViewModel, ObservableObject {
             value.0 == .transfer ? (!value.1.hasError && !value.1.isFetching) : true
         }.map { val in
             if val.0 == .transfer, val.1.status == .ready, !val.1.hasError {
-                // Depending on BTS UserData it's either .transfer or .registration or .info
+                // Depending on BTS UserData it's either .transfer or .info
                 if nil != val.1.value.userId {
                     return .transfer
                 } else if val.1.value.countryCode == nil {
