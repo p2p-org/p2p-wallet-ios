@@ -55,7 +55,6 @@ enum JupiterSwapBusinessLogic {
                 $0.route = nil
                 $0.routeReceivedAt = nil
                 $0.swapTransaction = nil
-                $0.swapReceivedAt = nil
                 $0.routes = []
                 $0.amountFrom = amountFrom
                 $0.amountTo = nil
@@ -66,7 +65,6 @@ enum JupiterSwapBusinessLogic {
                 $0.route = nil
                 $0.routeReceivedAt = nil
                 $0.swapTransaction = nil
-                $0.swapReceivedAt = nil
                 $0.routes = []
                 $0.fromToken = fromToken
                 $0.amountFrom = nil
@@ -78,7 +76,6 @@ enum JupiterSwapBusinessLogic {
                 $0.route = nil
                 $0.routeReceivedAt = nil
                 $0.swapTransaction = nil
-                $0.swapReceivedAt = nil
                 $0.routes = []
                 $0.toToken = toToken
                 $0.amountTo = nil
@@ -89,7 +86,6 @@ enum JupiterSwapBusinessLogic {
                 $0.route = nil
                 $0.routeReceivedAt = nil
                 $0.swapTransaction = nil
-                $0.swapReceivedAt = nil
                 $0.routes = []
                 $0.fromToken = state.toToken
                 $0.amountFrom = nil
@@ -102,7 +98,6 @@ enum JupiterSwapBusinessLogic {
                 $0.route = nil
                 $0.routeReceivedAt = nil
                 $0.swapTransaction = nil
-                $0.swapReceivedAt = nil
                 $0.routes = []
                 $0.amountTo = nil
             }
@@ -115,7 +110,6 @@ enum JupiterSwapBusinessLogic {
                 $0.status = .loadingAmountTo
                 $0.route = route
                 $0.swapTransaction = nil
-                $0.swapReceivedAt = nil
                 $0.amountTo = UInt64(route.outAmount)?
                     .convertToBalance(decimals: state.toToken.token.decimals)
             }
@@ -125,7 +119,6 @@ enum JupiterSwapBusinessLogic {
                 $0.route = nil
                 $0.routeReceivedAt = nil
                 $0.swapTransaction = nil
-                $0.swapReceivedAt = nil
                 $0.routes = []
                 $0.amountTo = nil
                 $0.slippageBps = slippageBps
@@ -136,7 +129,6 @@ enum JupiterSwapBusinessLogic {
                 $0.route = nil
                 $0.routeReceivedAt = nil
                 $0.swapTransaction = nil
-                $0.swapReceivedAt = nil
                 $0.routes = []
                 $0.amountTo = nil
             }
@@ -144,7 +136,6 @@ enum JupiterSwapBusinessLogic {
             return state.modified {
                 $0.status = .creatingSwapTransaction(isSimulationOn: isSimulationOn)
                 $0.swapTransaction = nil
-                $0.swapReceivedAt = nil
             }
         }
     }
@@ -281,7 +272,6 @@ enum JupiterSwapBusinessLogic {
                         $0.routes = fixedRoutes // Replace routes only with available ones
                         $0.status = .ready
                         $0.swapTransaction = swapTransaction
-                        $0.swapReceivedAt = Date()
                     }
                 } else {
                     // If there is no swapTransaction, then the state is "routeIsNotFound"
@@ -291,7 +281,6 @@ enum JupiterSwapBusinessLogic {
                         $0.routes = []
                         $0.status = .error(reason: .routeIsNotFound)
                         $0.swapTransaction = nil
-                        $0.swapReceivedAt = nil
                     }
                 }
                 
@@ -301,7 +290,6 @@ enum JupiterSwapBusinessLogic {
                 return state.modified {
                     $0.status = .ready
                     $0.swapTransaction = swapTransaction
-                    $0.swapReceivedAt = Date()
                 }
             }
         }
@@ -319,9 +307,9 @@ enum JupiterSwapBusinessLogic {
         availableRoutes: [Route],
         account: KeyPair,
         services: JupiterSwapServices
-    ) async throws -> (routes: [Route], swapTransaction: String?) {
+    ) async throws -> (routes: [Route], swapTransaction: SwapTransaction?) {
         var availableRoutes = availableRoutes
-        var swapTransaction: String?
+        var swapTransaction: SwapTransaction?
         
         var bestRouteIndex = 0
         for i in 0..<availableRoutes.count {
@@ -349,7 +337,7 @@ enum JupiterSwapBusinessLogic {
         for route: Route,
         account: KeyPair,
         services: JupiterSwapServices
-    ) async throws -> String {
+    ) async throws -> SwapTransaction {
         let swapTransaction = try await services.jupiterClient.swap(
             route: route,
             userPublicKey: account.publicKey.base58EncodedString,
@@ -358,10 +346,6 @@ enum JupiterSwapBusinessLogic {
             computeUnitPriceMicroLamports: nil
         )
 
-        guard let swapTransaction else {
-            throw JupiterError.invalidResponse
-        }
-
         return swapTransaction
     }
 
@@ -369,7 +353,7 @@ enum JupiterSwapBusinessLogic {
         for route: Route,
         account: KeyPair,
         services: JupiterSwapServices
-    ) async throws -> String? {
+    ) async throws -> SwapTransaction? {
         do {
             let swapTransaction = try await services.jupiterClient.swap(
                 route: route,
@@ -379,10 +363,8 @@ enum JupiterSwapBusinessLogic {
                 computeUnitPriceMicroLamports: nil
             )
 
-            guard let swapTransaction else { return nil }
-
             let simulation = try await services.solanaAPIClient.simulateTransaction(
-                transaction: swapTransaction,
+                transaction: swapTransaction.stringValue,
                 configs: RequestConfiguration(encoding: "base64")!
             )
 

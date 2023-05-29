@@ -15,9 +15,10 @@ struct JupiterSwapTransaction: SwapRawTransactionType {
     var feeAmount: SolanaSwift.FeeAmount
     let route: Route
     let account: KeyPair
-    let swapTransaction: String?
+    let swapTransaction: Jupiter.SwapTransaction?
     let services: JupiterSwapServices
     
+    let routeReceivedAt: Date?
     
     var mainDescription: String {
         [
@@ -27,10 +28,11 @@ struct JupiterSwapTransaction: SwapRawTransactionType {
     }
 
     func createRequest() async throws -> String {
+        
         do {
             return try await JupiterSwapBusinessLogic.sendToBlockchain(
                 account: account,
-                swapTransaction: swapTransaction,
+                swapTransaction: swapTransaction?.stringValue,
                 route: route,
                 services: services
             )
@@ -48,6 +50,12 @@ struct JupiterSwapTransaction: SwapRawTransactionType {
             let title = "Swap iOS Alarm (#\(titleTag))"
             
             let data = await AlertLoggerDataBuilder.buildLoggerData(error: error)
+            
+            let diffRoutesTime = (Date().timeIntervalSince1970 - (routeReceivedAt ?? Date()).timeIntervalSince1970)
+                .toString(minimumFractionDigits: 9)
+            
+            let diffTxTime = (Date().timeIntervalSince1970 - (swapTransaction?.receivedAt ?? Date()).timeIntervalSince1970)
+                .toString(minimumFractionDigits: 9)
             
             DefaultLogManager.shared.log(
                 event: title,
@@ -68,11 +76,13 @@ struct JupiterSwapTransaction: SwapRawTransactionType {
                     route: route.jsonString ?? "",
                     userPubkey: data.userPubkey,
                     slippage: slippage.toString(),
-                    feeRelayerTransaction: swapTransaction ?? "",
+                    feeRelayerTransaction: swapTransaction?.stringValue ?? "",
                     platform: data.platform,
                     appVersion: data.appVersion,
                     timestamp: data.timestamp,
-                    blockchainError: data.blockchainError ?? data.feeRelayerError ?? ""
+                    blockchainError: data.blockchainError ?? data.feeRelayerError ?? "",
+                    diffRoutesTime: diffRoutesTime,
+                    diffTxTime: diffTxTime
                 )
             )
             throw error

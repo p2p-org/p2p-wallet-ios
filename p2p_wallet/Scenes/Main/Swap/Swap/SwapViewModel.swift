@@ -121,7 +121,7 @@ final class SwapViewModel: BaseViewModel, ObservableObject {
             }
         
         let logsInfo = SwapLogsInfo(
-            swapTransaction: currentState.swapTransaction,
+            swapTransaction: currentState.swapTransaction?.stringValue,
             route: stateMachine.currentState.route,
             routeInSymbols: getRouteInSymbols()?.joined(separator: " -> "),
             amountFrom: stateMachine.currentState.amountFrom,
@@ -427,7 +427,7 @@ private extension SwapViewModel {
         #endif
 
         if let swapTransaction = currentState.swapTransaction {
-            logSwapApprove(signature: swapTransaction)
+            logSwapApprove(signature: swapTransaction.stringValue)
         }
 
         // form transaction
@@ -449,7 +449,8 @@ private extension SwapViewModel {
             route: route,
             account: account,
             swapTransaction: currentState.swapTransaction,
-            services: stateMachine.services
+            services: stateMachine.services,
+            routeReceivedAt: currentState.routeReceivedAt
         )
         
         // delegate work to transaction handler
