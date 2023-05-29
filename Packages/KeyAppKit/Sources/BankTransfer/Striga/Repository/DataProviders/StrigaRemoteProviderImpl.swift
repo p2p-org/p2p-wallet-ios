@@ -23,6 +23,11 @@ public final class StrigaRemoteProviderImpl {
 // MARK: - IStrigaProvider
 
 extension StrigaRemoteProviderImpl: StrigaRemoteProvider {
+    
+    public func getUserId() async throws -> String? {
+        fatalError("Implementing")
+    }
+    
     public func getUserDetails(
         userId: String
     ) async throws -> StrigaUserDetailsResponse {
