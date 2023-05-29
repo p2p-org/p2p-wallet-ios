@@ -101,7 +101,7 @@ public struct WalletMetaData: Codable, Equatable {
 
     public init(from decoder: Decoder) throws {
         let container = try decoder.container(keyedBy: CodingKeys.self)
-        let currentDate = Date()
+        let initialDate = Date(timeIntervalSince1970: 0)
 
         let decodedEthPublic = try container.decodeIfPresent(String.self, forKey: .ethPublic)
         if let decodedEthPublic {
@@ -119,16 +119,16 @@ public struct WalletMetaData: Codable, Equatable {
         }
 
         deviceName = try container.decode(String.self, forKey: .deviceName)
-        deviceNameTimestamp = try container.decodeIfPresent(Date.self, forKey: .deviceNameTimestamp) ?? currentDate
+        deviceNameTimestamp = try container.decodeIfPresent(Date.self, forKey: .deviceNameTimestamp) ?? initialDate
         email = try container.decode(String.self, forKey: .email)
-        emailTimestamp = try container.decodeIfPresent(Date.self, forKey: .emailTimestamp) ?? currentDate
+        emailTimestamp = try container.decodeIfPresent(Date.self, forKey: .emailTimestamp) ?? initialDate
         authProvider = try container.decode(String.self, forKey: .authProvider)
-        authProviderTimestamp = try container.decodeIfPresent(Date.self, forKey: .authProviderTimestamp) ?? currentDate
+        authProviderTimestamp = try container.decodeIfPresent(Date.self, forKey: .authProviderTimestamp) ?? initialDate
         phoneNumber = try container.decode(String.self, forKey: .phoneNumber)
-        phoneNumberTimestamp = try container.decodeIfPresent(Date.self, forKey: .phoneNumberTimestamp) ?? currentDate
+        phoneNumberTimestamp = try container.decodeIfPresent(Date.self, forKey: .phoneNumberTimestamp) ?? initialDate
 
         striga = try container.decodeIfPresent(Striga.self, forKey: .striga)
-            ?? .init(userId: nil, userIdTimestamp: currentDate)
+            ?? .init(userId: nil, userIdTimestamp: initialDate)
     }
 
     enum CodingKeys: String, CodingKey {
@@ -201,22 +201,28 @@ public extension WalletMetaData {
             throw Error.differentWalletMetadata
         }
 
+        let deviceName = WalletMetaData.merge(lhs, rhs, \.deviceName, \.deviceNameTimestamp)
+        let email = WalletMetaData.merge(lhs, rhs, \.email, \.emailTimestamp)
+        let authProvider = WalletMetaData.merge(lhs, rhs, \.authProvider, \.authProviderTimestamp)
+        let phoneNumber = WalletMetaData.merge(lhs, rhs, \.phoneNumber, \.phoneNumberTimestamp)
+        let striga = Striga.merge(lhs: lhs.striga, rhs: rhs.striga)
+
         return WalletMetaData(
             ethPublic: lhs.ethPublic,
 
-            deviceName: WalletMetaData.merge(lhs, rhs, \.deviceName, \.deviceNameTimestamp).0,
-            deviceNameTimestamp: WalletMetaData.merge(lhs, rhs, \.deviceName, \.deviceNameTimestamp).1,
+            deviceName: deviceName.0,
+            deviceNameTimestamp: deviceName.1,
 
-            email: WalletMetaData.merge(lhs, rhs, \.email, \.emailTimestamp).0,
-            emailTimestamp: WalletMetaData.merge(lhs, rhs, \.email, \.emailTimestamp).1,
+            email: email.0,
+            emailTimestamp: email.1,
 
-            authProvider: WalletMetaData.merge(lhs, rhs, \.authProvider, \.authProviderTimestamp).0,
-            authProviderTimestamp: WalletMetaData.merge(lhs, rhs, \.authProvider, \.authProviderTimestamp).1,
+            authProvider: authProvider.0,
+            authProviderTimestamp: authProvider.1,
 
-            phoneNumber: WalletMetaData.merge(lhs, rhs, \.phoneNumber, \.phoneNumberTimestamp).0,
-            phoneNumberTimestamp: WalletMetaData.merge(lhs, rhs, \.phoneNumber, \.phoneNumberTimestamp).1,
+            phoneNumber: phoneNumber.0,
+            phoneNumberTimestamp: phoneNumber.1,
 
-            striga: Striga.merge(lhs: lhs.striga, rhs: rhs.striga)
+            striga: striga
         )
     }
 }

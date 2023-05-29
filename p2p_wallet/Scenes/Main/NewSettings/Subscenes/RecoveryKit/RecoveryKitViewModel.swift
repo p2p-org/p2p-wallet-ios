@@ -40,8 +40,11 @@ final class RecoveryKitViewModel: ObservableObject {
         self.walletMetadataService = walletMetadataService
         self.analyticsManager = analyticsManager
         self.userWalletManager = userWalletManager
-        
+
+        Task.detached { try await walletMetadataService.synchronize() }
+
         walletMetadataService.$metadata
+            .subscribe(on: RunLoop.main)
             .sink { [weak self, weak userWalletManager] metadata in
                 if let metadata {
                     self?.model = .init(
