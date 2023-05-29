@@ -49,15 +49,18 @@ final class BankTransferInfoCoordinator: Coordinator<Void> {
             }
         }.store(in: &subscriptions)
 
-        viewModel.openProviderInfo.flatMap { url in
+        viewModel.openProviderInfo.flatMap { [weak controller] url in
             let safari = SFSafariViewController(url: url)
-            controller.show(safari, sender: nil)
+            controller?.show(safari, sender: nil)
             return safari.deallocatedPublisher()
         }.sink {}.store(in: &subscriptions)
 
         viewModel.openRegistration
-            .flatMap { country in
-                self.coordinate(to: StrigaRegistrationFirstStepCoordinator(country: country, parent: controller))
+            .handleEvents(receiveOutput: { [weak controller] country in
+                controller?.dismiss(animated: true)
+            })
+            .flatMap { [unowned self] country in
+                self.coordinate(to: StrigaRegistrationFirstStepCoordinator(country: country, parent: self.navigationController))
             }
             .sink { _ in }
             .store(in: &subscriptions)
