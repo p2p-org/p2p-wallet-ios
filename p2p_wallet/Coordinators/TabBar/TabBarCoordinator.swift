@@ -274,7 +274,7 @@ final class TabBarCoordinator: Coordinator<Void> {
         else { return }
         coordinate(
             to: StrigaRegistrationFirstStepCoordinator(
-                country: Country(name: "", code: "", dialCode: "", emoji: ""),
+                country: with,
                 parent: navigationController
             )
         ).sink {}.store(in: &subscriptions)
