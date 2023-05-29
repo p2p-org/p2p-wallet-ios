@@ -6,10 +6,13 @@ public final class MockStrigaRemoteProvider: StrigaRemoteProvider {
         
     }
     
+    public func getUserId() async throws -> String? {
+        nil
+    }
+    
     public func getUserDetails(userId: String) async throws -> StrigaUserDetailsResponse {
         try await Task.sleep(nanoseconds: 2_000_000_000)
         return .init(
-            userId: "test",
             firstName: "Elon",
             lastName: "Musk",
             email: "elon.musk@starlink.com",

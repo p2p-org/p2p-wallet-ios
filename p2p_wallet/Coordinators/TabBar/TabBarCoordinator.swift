@@ -268,13 +268,13 @@ final class TabBarCoordinator: Coordinator<Void> {
         }
     }
 
-    private func handleTopUpRegistration(with: Country) {
+    private func handleTopUpRegistration(with country: Country) {
         guard
             let navigationController = tabBarController.selectedViewController as? UINavigationController
         else { return }
         coordinate(
             to: StrigaRegistrationFirstStepCoordinator(
-                country: with,
+                country: country,
                 parent: navigationController
             )
         ).sink {}.store(in: &subscriptions)
