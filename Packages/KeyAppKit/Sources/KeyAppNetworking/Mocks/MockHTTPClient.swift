@@ -1,10 +1,3 @@
-//
-//  MockHTTPClient.swift
-//  
-//
-//  Created by Ivan on 24.05.2023.
-//
-
 import Foundation
 
 final class MockHTTPClient: IHTTPClient {

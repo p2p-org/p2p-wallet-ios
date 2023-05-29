@@ -1,10 +1,3 @@
-//
-//  BankTransferState.swift
-//  p2p_wallet
-//
-//  Created by Ivan on 22.05.2023.
-//
-
 import Foundation
 
 /// States of bank transfer

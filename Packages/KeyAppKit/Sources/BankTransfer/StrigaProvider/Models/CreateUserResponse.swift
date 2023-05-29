@@ -1,10 +1,3 @@
-//
-//  CreateUserResponse.swift
-//  
-//
-//  Created by Ivan on 23.05.2023.
-//
-
 import Foundation
 
 public struct CreateUserResponse: Decodable {
