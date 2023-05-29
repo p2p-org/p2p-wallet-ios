@@ -41,7 +41,17 @@ final class TopupActionsViewModel: BaseViewModel, ObservableObject {
         }.filter { value in
             value.0 == .transfer ? (!value.1.hasError && !value.1.isFetching) : true
         }.map { val in
-            val.0
+            if val.0 == .transfer, val.1.status == .ready, !val.1.hasError {
+                // Depending on BTS UserData it's either .transfer or .registration or .info
+                if nil != val.1.value.userId {
+                    return .transfer
+                } else if val.1.value.countryCode == nil {
+                    return .info
+                } else {
+                    return .registration
+                }
+            }
+            return val.0
         }.eraseToAnyPublisher()
     }
 
@@ -67,16 +77,6 @@ final class TopupActionsViewModel: BaseViewModel, ObservableObject {
                 // Toggling error
                 if self?.shouldShowErrorSubject.value == false {
                     self?.shouldShowErrorSubject.send(state.hasError)
-                }
-                if state.status == .ready && !state.hasError {
-                    // Depending on BTS UserData it's either .transfer or .registration or .info
-                    if nil != state.value.userId {
-                        self?.tappedItemSubject.send(.transfer)
-                    } else if state.value.countryCode == nil {
-                        self?.tappedItemSubject.send(.info)
-                    } else {
-                        self?.tappedItemSubject.send(.registration)
-                    }
                 }
             }
         }.store(in: &subscriptions)
