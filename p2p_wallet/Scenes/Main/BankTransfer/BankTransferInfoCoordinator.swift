@@ -5,7 +5,12 @@ import Foundation
 import Resolver
 import SafariServices
 
-final class BankTransferInfoCoordinator: Coordinator<Void> {
+enum BankTransferInfoCoordinatorResult {
+    case cancel
+    case registration(country: Country)
+}
+
+final class BankTransferInfoCoordinator: Coordinator<BankTransferInfoCoordinatorResult> {
 
     // MARK: -
 
@@ -21,7 +26,7 @@ final class BankTransferInfoCoordinator: Coordinator<Void> {
         self.navigationController = navigationController
     }
 
-    override func start() -> AnyPublisher<Void, Never> {
+    override func start() -> AnyPublisher<BankTransferInfoCoordinatorResult, Never> {
         let viewModel = BankTransferInfoViewModel()
         let controller = UIBottomSheetHostingController(rootView: BankTransferInfoView(viewModel: viewModel))
 
@@ -55,18 +60,14 @@ final class BankTransferInfoCoordinator: Coordinator<Void> {
             return safari.deallocatedPublisher()
         }.sink {}.store(in: &subscriptions)
 
-        viewModel.openRegistration
-            .handleEvents(receiveOutput: { [weak controller] country in
-                controller?.dismiss(animated: true)
-            })
-            .flatMap { [unowned self] country in
-                self.coordinate(to: StrigaRegistrationFirstStepCoordinator(country: country, parent: self.navigationController))
-            }
-            .sink { _ in }
-            .store(in: &subscriptions)
-
         controller.view.layer.cornerRadius = 20
         navigationController.present(controller, interactiveDismissalType: .standard)
-        return controller.deallocatedPublisher().prefix(1).eraseToAnyPublisher()
+        return Publishers.Merge(
+            controller.deallocatedPublisher().map { BankTransferInfoCoordinatorResult.cancel },
+            viewModel.openRegistration.map { country in BankTransferInfoCoordinatorResult.registration(country: country) }
+                .handleEvents(receiveOutput: { [weak controller] country in
+                    controller?.dismiss(animated: true)
+                })
+        ).prefix(1).eraseToAnyPublisher()
     }
 }

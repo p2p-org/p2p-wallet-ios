@@ -250,14 +250,14 @@ final class TabBarCoordinator: Coordinator<Void> {
         case .crypto:
             self.handleAction(.receive)
         case .info:
-            coordinate(to: BankTransferInfoCoordinator(navigationController: navigationController)).sink {}.store(in: &subscriptions)
-        case .registration:
-            coordinate(
-                to: StrigaRegistrationFirstStepCoordinator(
-                    country: Country(name: "", code: "", dialCode: "", emoji: ""),
-                    parent: navigationController
-                )
-            ).sink {}.store(in: &subscriptions)
+            coordinate(to: BankTransferInfoCoordinator(navigationController: navigationController)).sink { [weak self] result in
+                switch result {
+                case .registration(let country):
+                    self?.handleTopUpRegistration(with: country)
+                case .cancel:
+                    break
+                }
+            }.store(in: &subscriptions)
         case .transfer:
             coordinate(
                 to: StrigaRegistrationFirstStepCoordinator(
@@ -266,6 +266,18 @@ final class TabBarCoordinator: Coordinator<Void> {
                 )
             ).sink {}.store(in: &subscriptions)
         }
+    }
+
+    private func handleTopUpRegistration(with: Country) {
+        guard
+            let navigationController = tabBarController.selectedViewController as? UINavigationController
+        else { return }
+        coordinate(
+            to: StrigaRegistrationFirstStepCoordinator(
+                country: Country(name: "", code: "", dialCode: "", emoji: ""),
+                parent: navigationController
+            )
+        ).sink {}.store(in: &subscriptions)
     }
 
     /// Handle actions given by Actions button

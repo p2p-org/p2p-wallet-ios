@@ -47,8 +47,6 @@ final class TopupActionsViewModel: BaseViewModel, ObservableObject {
                     return .transfer
                 } else if val.1.value.countryCode == nil {
                     return .info
-                } else {
-                    return .registration
                 }
             }
             return val.0
@@ -111,7 +109,6 @@ extension TopupActionsViewModel {
     enum Action: String {
         case transfer
         case info
-        case registration
         case card
         case crypto
     }
