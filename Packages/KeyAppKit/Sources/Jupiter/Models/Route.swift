@@ -16,7 +16,7 @@ public struct Route: Codable, Equatable {
     public let keyapp: KeyAppInfo?
     
     // MARK: - Additional data
-    public let _receiveAt: Date?
+    public let _receiveAt = Date()
 
     public init(
         inAmount: String,
@@ -40,8 +40,6 @@ public struct Route: Codable, Equatable {
         self.swapMode = swapMode
         self.fees = fees
         self.keyapp = keyapp
-        
-        self._receiveAt = Date()
     }
 }
 

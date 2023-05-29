@@ -49,10 +49,10 @@ struct JupiterSwapTransaction: SwapRawTransactionType {
             
             let data = await AlertLoggerDataBuilder.buildLoggerData(error: error)
             
-            let diffRoutesTime = (Date().timeIntervalSince1970 - (route._receiveAt ?? Date()).timeIntervalSince1970)
+            let diffRoutesTime = abs(Date().timeIntervalSince1970 - (route._receiveAt ?? Date()).timeIntervalSince1970)
                 .toString(minimumFractionDigits: 9)
             
-            let diffTxTime = (Date().timeIntervalSince1970 - (swapTransaction?.receivedAt ?? Date()).timeIntervalSince1970)
+            let diffTxTime = abs(Date().timeIntervalSince1970 - (swapTransaction?.receivedAt ?? Date()).timeIntervalSince1970)
                 .toString(minimumFractionDigits: 9)
             
             DefaultLogManager.shared.log(
