@@ -18,37 +18,42 @@ class WalletMetadataService: ObservableObject {
         remoteMetadataProvider = remoteProvider
     }
 
-    func synchronize(initialMetadata: WalletMetaData? = nil) async throws {
-        if let initialMetadata = initialMetadata {
-            try await localMetadataProvider.save(metadata: initialMetadata)
-            metadata = initialMetadata
-        } else {
-            metadata = try await localMetadataProvider.load()
-            do {
-                loading = true
-                defer { loading = false }
+    func onboard(with metadata: WalletMetaData) async throws {
+        try await localMetadataProvider.save(metadata: metadata)
+        self.metadata = metadata
 
-                let remoteMetadata = try await remoteMetadataProvider.load()
+        try await synchronize()
+    }
 
-                if
-                    let metadata,
-                    let remoteMetadata,
-                    metadata != remoteMetadata
-                {
-                    let mergedMetadata = WalletMetaData.merge(lhs: metadata, rhs: remoteMetadata)
+    func synchronize() async throws {
+        // Warm up with local data
+        metadata = try await localMetadataProvider.load()
+        
+        do {
+            loading = true
+            defer { loading = false }
 
-                    try await localMetadataProvider.save(metadata: mergedMetadata)
-                    try await remoteMetadataProvider.save(metadata: mergedMetadata)
+            // Load from cloud
+            let remoteMetadata = try await remoteMetadataProvider.load()
 
-                    metadata = mergedMetadata
-                } else {
-                    try await localMetadataProvider.save(metadata: remoteMetadata)
-                    metadata = remoteMetadata
-                }
-            } catch {
-                print(error)
-                throw error
+            if
+                let metadata,
+                let remoteMetadata,
+                metadata != remoteMetadata
+            {
+                let mergedMetadata = try WalletMetaData.merge(lhs: metadata, rhs: remoteMetadata)
+
+                try await localMetadataProvider.save(metadata: mergedMetadata)
+                try await remoteMetadataProvider.save(metadata: mergedMetadata)
+
+                self.metadata = mergedMetadata
+            } else {
+                try await localMetadataProvider.save(metadata: remoteMetadata)
+                metadata = remoteMetadata
             }
+        } catch {
+            print(error)
+            throw error
         }
     }
 
@@ -57,7 +62,7 @@ class WalletMetadataService: ObservableObject {
             throw WalletMetadataService.Error.missingLocalMetadata
         }
 
-        let mergedMetadata = WalletMetaData.merge(lhs: metadata, rhs: newMetadata)
+        let mergedMetadata = try WalletMetaData.merge(lhs: metadata, rhs: newMetadata)
         try await localMetadataProvider.save(metadata: mergedMetadata)
         try await remoteMetadataProvider.save(metadata: mergedMetadata)
     }
