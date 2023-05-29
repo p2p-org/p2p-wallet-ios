@@ -64,11 +64,17 @@ struct JupiterSwapState: Equatable {
     /// Current token prices map
     var tokensPriceMap: [String: Double]
     
-    /// Pre-selected route
+    /// Selected route
     var route: Route?
+    
+    /// Route received timestamp
+    var routeReceivedAt: Date?
 
     /// Current swap transaction for the state
     var swapTransaction: String?
+    
+    /// Swap received timestamp
+    var swapReceivedAt: Date?
 
     /// All available routes for current tokens pair
     var routes: [Route]

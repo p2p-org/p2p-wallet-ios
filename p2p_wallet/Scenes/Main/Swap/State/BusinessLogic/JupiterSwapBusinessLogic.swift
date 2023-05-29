@@ -53,7 +53,9 @@ enum JupiterSwapBusinessLogic {
             return state.modified {
                 $0.status = .loadingAmountTo
                 $0.route = nil
+                $0.routeReceivedAt = nil
                 $0.swapTransaction = nil
+                $0.swapReceivedAt = nil
                 $0.routes = []
                 $0.amountFrom = amountFrom
                 $0.amountTo = nil
@@ -62,7 +64,9 @@ enum JupiterSwapBusinessLogic {
             return state.modified {
                 $0.status = .loadingAmountTo
                 $0.route = nil
+                $0.routeReceivedAt = nil
                 $0.swapTransaction = nil
+                $0.swapReceivedAt = nil
                 $0.routes = []
                 $0.fromToken = fromToken
                 $0.amountFrom = nil
@@ -72,7 +76,9 @@ enum JupiterSwapBusinessLogic {
             return state.modified {
                 $0.status = .loadingAmountTo
                 $0.route = nil
+                $0.routeReceivedAt = nil
                 $0.swapTransaction = nil
+                $0.swapReceivedAt = nil
                 $0.routes = []
                 $0.toToken = toToken
                 $0.amountTo = nil
@@ -81,7 +87,9 @@ enum JupiterSwapBusinessLogic {
             return state.modified {
                 $0.status = .switching
                 $0.route = nil
+                $0.routeReceivedAt = nil
                 $0.swapTransaction = nil
+                $0.swapReceivedAt = nil
                 $0.routes = []
                 $0.fromToken = state.toToken
                 $0.amountFrom = nil
@@ -92,7 +100,9 @@ enum JupiterSwapBusinessLogic {
             return state.modified {
                 $0.status = .loadingAmountTo
                 $0.route = nil
+                $0.routeReceivedAt = nil
                 $0.swapTransaction = nil
+                $0.swapReceivedAt = nil
                 $0.routes = []
                 $0.amountTo = nil
             }
@@ -105,6 +115,7 @@ enum JupiterSwapBusinessLogic {
                 $0.status = .loadingAmountTo
                 $0.route = route
                 $0.swapTransaction = nil
+                $0.swapReceivedAt = nil
                 $0.amountTo = UInt64(route.outAmount)?
                     .convertToBalance(decimals: state.toToken.token.decimals)
             }
@@ -112,7 +123,9 @@ enum JupiterSwapBusinessLogic {
             return state.modified {
                 $0.status = .loadingAmountTo
                 $0.route = nil
+                $0.routeReceivedAt = nil
                 $0.swapTransaction = nil
+                $0.swapReceivedAt = nil
                 $0.routes = []
                 $0.amountTo = nil
                 $0.slippageBps = slippageBps
@@ -121,7 +134,9 @@ enum JupiterSwapBusinessLogic {
             return state.modified {
                 $0.status = .loadingAmountTo
                 $0.route = nil
+                $0.routeReceivedAt = nil
                 $0.swapTransaction = nil
+                $0.swapReceivedAt = nil
                 $0.routes = []
                 $0.amountTo = nil
             }
@@ -129,6 +144,7 @@ enum JupiterSwapBusinessLogic {
             return state.modified {
                 $0.status = .creatingSwapTransaction(isSimulationOn: isSimulationOn)
                 $0.swapTransaction = nil
+                $0.swapReceivedAt = nil
             }
         }
     }
@@ -251,52 +267,41 @@ enum JupiterSwapBusinessLogic {
             }
 
             if isSimulationOn {
-
-                var availableRoutes = state.routes
-                var swapTransaction: String?
-
-                var bestRouteIndex = 0
-                for i in 0..<availableRoutes.count {
-                    // Try create and simulate transaction to see if it works correctly
-                    swapTransaction = try await createAndSimulateTransaction(
-                        for: availableRoutes[i],
-                        account: account,
-                        services: services
-                    )
-                    
-                    if swapTransaction != nil {
-                        route = availableRoutes[i]
-                        bestRouteIndex = i
-                        // We found the best route and do not need to create and simulate transaction anymore
-                        break
-                    }
-                }
-
-                // Remove failed routes from the state
-                availableRoutes.removeFirst(bestRouteIndex)
-
+                
+                // simulate from routes and remove all failing routes
+                let (fixedRoutes, swapTransaction) = try await simulateAndRemoveFailingSwapTransaction(
+                    availableRoutes: state.routes,
+                    account: account,
+                    services: services
+                )
+                
                 if let swapTransaction {
                     return state.modified {
-                        $0.route = route
-                        $0.routes = availableRoutes // Replace routes only with available ones
+                        $0.route = fixedRoutes.first
+                        $0.routes = fixedRoutes // Replace routes only with available ones
                         $0.status = .ready
                         $0.swapTransaction = swapTransaction
+                        $0.swapReceivedAt = Date()
                     }
                 } else {
                     // If there is no swapTransaction, then the state is "routeIsNotFound"
                     return state.modified {
                         $0.route = nil
+                        $0.routeReceivedAt = nil
                         $0.routes = []
                         $0.status = .error(reason: .routeIsNotFound)
                         $0.swapTransaction = nil
+                        $0.swapReceivedAt = nil
                     }
                 }
+                
             } else {
                 // If route is chosen by user and is not the best one, just try create transaction without simulation
                 let swapTransaction = try await createTransaction(for: route, account: account, services: services)
                 return state.modified {
                     $0.status = .ready
                     $0.swapTransaction = swapTransaction
+                    $0.swapReceivedAt = Date()
                 }
             }
         }
@@ -309,6 +314,36 @@ enum JupiterSwapBusinessLogic {
     }
 
     // MARK: - Private
+
+    private static func simulateAndRemoveFailingSwapTransaction(
+        availableRoutes: [Route],
+        account: KeyPair,
+        services: JupiterSwapServices
+    ) async throws -> (routes: [Route], swapTransaction: String?) {
+        var availableRoutes = availableRoutes
+        var swapTransaction: String?
+        
+        var bestRouteIndex = 0
+        for i in 0..<availableRoutes.count {
+            // Try create and simulate transaction to see if it works correctly
+            swapTransaction = try await createAndSimulateTransaction(
+                for: availableRoutes[i],
+                account: account,
+                services: services
+            )
+            
+            if swapTransaction != nil {
+                bestRouteIndex = i
+                // We found the best route and do not need to create and simulate transaction anymore
+                break
+            }
+        }
+        
+        // Remove failing routes from the state
+        availableRoutes.removeFirst(bestRouteIndex)
+        
+        return (routes: availableRoutes, swapTransaction: swapTransaction)
+    }
 
     private static func createTransaction(
         for route: Route,
