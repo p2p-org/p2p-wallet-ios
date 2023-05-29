@@ -61,23 +61,36 @@ public final class StrigaBankTransferUserDataRepository: BankTransferUserDataRep
         }
     }
 
-    public func updateUser(registrationData data: RegistrationData) async throws {
+    public func updateUserLocally(registrationData data: RegistrationData) async throws {
         // assert response type
         guard let data = data as? StrigaUserDetailsResponse else {
             throw StrigaProviderError.invalidRequest("Data mismatch")
         }
         
+        let oldData = await localProvider.getCachedRegistrationData()
+        
+        let newData = StrigaUserDetailsResponse(
+            userId: data.userId ?? oldData?.userId, // map user Id
+            firstName: data.firstName,
+            lastName: data.lastName,
+            email: data.email,
+            mobile: data.mobile
+        )
+        try? await localProvider.save(registrationData: newData)
+    }
+    
+    public func updateUser(registrationData data: RegistrationData) async throws {
         // TODO: - remoteProvider.updateUser
-        try? await localProvider.save(registrationData: data)
+        fatalError("Implementing")
     }
 
     public func getRegistrationData() async throws -> RegistrationData {
         if let cachedData = await localProvider.getCachedRegistrationData()
         {
             // if user id is available, fetch from remote
-            if let userId = cachedData.userId,
-               let response = try? await remoteProvider.getUserDetails(userId: userId)
+            if let response = try? await remoteProvider.getUserDetails(userId: "userId")
             {
+                try await localProvider.save(registrationData: response)
                 return response
             }
             

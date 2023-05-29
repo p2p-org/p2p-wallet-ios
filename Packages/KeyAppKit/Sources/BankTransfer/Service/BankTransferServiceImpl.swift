@@ -40,12 +40,16 @@ extension BankTransferServiceImpl: BankTransferService {
         try await repository.getRegistrationData()
     }
     
-    public func save(data: RegistrationData) async throws {
-        try await repository.updateUser(registrationData: data)
+    public func updateLocally(data: RegistrationData) async throws {
+        try await repository.updateUserLocally(registrationData: data)
     }
     
     public func createUser(data: RegistrationData) async throws {
         _ = try await repository.createUser(registrationData: data)
+    }
+    
+    public func updateUser(data: RegistrationData) async throws {
+        try await repository.updateUser(registrationData: data)
     }
     
     public func getOTP() async throws {

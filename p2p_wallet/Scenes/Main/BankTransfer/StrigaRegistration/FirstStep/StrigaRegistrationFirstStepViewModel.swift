@@ -175,7 +175,7 @@ private extension StrigaRegistrationFirstStepViewModel {
             .sinkAsync { [weak self] contacts, credentials, dateOfBirth in
                 guard let self else { return }
 
-                try? await self.service.save(data: StrigaUserDetailsResponse(
+                try? await self.service.updateLocally(data: StrigaUserDetailsResponse(
                     firstName: credentials.0,
                     lastName: credentials.1,
                     email: contacts.0,
