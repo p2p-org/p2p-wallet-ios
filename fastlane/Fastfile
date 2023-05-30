@@ -39,6 +39,10 @@ NEW_DEVICES_JSON_STRING = ENV["NEW_DEVICES_JSON_STRING"]
 
 IS_RELEASE_CANDIDATE = ENV["IS_RELEASE_CANDIDATE"] == 'true'
 
+DISCORD_IOS_BUILD_CHANNEL_ID = ENV["DISCORD_IOS_BUILD_CHANNEL_ID"]
+
+DISCORD_MESSAGE_API_ENDPOINT = ENV["DISCORD_MESSAGE_API_ENDPOINT"]
+
 def delete_temp_keychain(name)
   delete_keychain(
     name: name
@@ -156,7 +160,17 @@ def upload_build(configuration, browserstack_username, browserstack_access_key, 
 end 
 
 def notify(version, message)
-  # upload to slack
+  # to discord
+  sh(
+    "curl", 
+    "-v", 
+    "-X", "POST", 
+    "-H", "Content-Type: application/json", 
+    "-d", "{\"message\":\"#{message}\", \"channel_id\":#{DISCORD_IOS_BUILD_CHANNEL_ID}}",
+    DISCORD_MESSAGE_API_ENDPOINT
+  )
+
+  # to slack
   slack_upload(
     slack_api_token: SLACK_API_TOKEN,
     title: "PWN-#{version}.ipa",
@@ -266,8 +280,8 @@ platform :ios do
       nil
     )
 
-    # notify tester
-    message = "A build #{version} was uploaded for testing this feature. Link to issue: #{JIRA_BASE_URL}/browse/PWN-#{feature_number.to_s}"
+    # notify testers
+    message = "A build **#{version}** was uploaded for testing this feature.\nLink to issue: #{JIRA_BASE_URL}/browse/PWN-#{feature_number.to_s}"
     notify(version, message)
 
     # output
@@ -326,6 +340,20 @@ platform :ios do
       tag = "#{tag_prefix}#{version}(#{build_number})"
     end
 
+    # get full version
+    full_version = "#{version} (#{build_number})"
+
+    # post to discord
+    build_rc_suffix = IS_RELEASE_CANDIDATE ? "-RC" : ""
+    sh(
+      "curl", 
+      "-v", 
+      "-X", "POST", 
+      "-H", "Content-Type: application/json", 
+      "-d", "{\"message\":\"Version **#{full_version}#{build_rc_suffix}** is being built and sent to Testflight...\", \"channel_id\":#{DISCORD_IOS_BUILD_CHANNEL_ID}}",
+      DISCORD_MESSAGE_API_ENDPOINT
+    )
+
     # set build number
     increment_build_number(
       xcodeproj: "p2p_wallet.xcodeproj",
@@ -357,11 +385,23 @@ platform :ios do
       )
     end
 
+    # notify testers
+    message = "Version **#{full_version}#{build_rc_suffix}** was uploaded to Testflight and will be available after a few minutes!"
+
+    # post to discord
+    sh(
+      "curl", 
+      "-v", 
+      "-X", "POST", 
+      "-H", "Content-Type: application/json", 
+      "-d", "{\"message\":\"#{message}\", \"channel_id\":#{DISCORD_IOS_BUILD_CHANNEL_ID}}",
+      DISCORD_MESSAGE_API_ENDPOINT
+    )
+
     # post to slack
-    full_version = "#{version} (#{build_number})"
     post_to_slack(
       api_token: SLACK_API_TOKEN,
-      message: "Version #{full_version} was uploaded to Testflight and will be available after a few minutes!",
+      message: message,
       channel: "#p2p-wallet-builds-ios"
     )
 
@@ -402,7 +442,7 @@ platform :ios do
     )
 
     # notify tester
-    message = "A daily build #{version} was uploaded."
+    message = "A daily build **#{version}** was uploaded."
     notify(version, message)
   end
 
