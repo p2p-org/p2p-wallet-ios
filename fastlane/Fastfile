@@ -375,7 +375,7 @@ platform :ios do
     version = "1.0"
     build_number = "1"
     full_version = "#{version} (#{build_number})"
-    message = "Version **#{full_version}** was uploaded to Testflight\nand will be available after a few minutes!"
+    message = "Version **#{full_version}** was uploaded to Testflight and will be available after a few minutes!"
 
     # post to discord
     sh(
