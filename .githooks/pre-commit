@@ -1,5 +1,5 @@
 #!/bin/bash
 
-# Ensure code format is correct
-#pwd
-#"/opt/homebrew/bin/swiftformat" --lint ./p2p_wallet
+Ensure code format is correct
+pwd
+"/opt/homebrew/bin/swiftformat" --config .swiftformat ./p2p_wallet
