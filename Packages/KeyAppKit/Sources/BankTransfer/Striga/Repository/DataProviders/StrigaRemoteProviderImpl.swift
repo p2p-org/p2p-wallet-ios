@@ -28,6 +28,10 @@ extension StrigaRemoteProviderImpl: StrigaRemoteProvider {
         fatalError("Implementing")
     }
     
+    public func getKYCStatus() async throws -> StrigaCreateUserResponse.KYC {
+        fatalError("Implementing")
+    }
+    
     public func getUserDetails(
         userId: String
     ) async throws -> StrigaUserDetailsResponse {

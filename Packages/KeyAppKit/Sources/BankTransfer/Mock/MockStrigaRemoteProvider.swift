@@ -39,12 +39,7 @@ public final class MockStrigaRemoteProvider: StrigaRemoteProvider {
         userId
     }
     
-    public func getUserDetails(userId: String) async throws -> StrigaUserDetailsResponse {
-        try await Task.sleep(nanoseconds: 2_000_000_000)
-        return response
-    }
-    
-    public func createUser(model: StrigaCreateUserRequest) async throws -> StrigaCreateUserResponse {
+    public func getKYCStatus() async throws -> StrigaCreateUserResponse.KYC {
         let kyc: StrigaCreateUserResponse.KYC
         
         switch useCase {
@@ -56,10 +51,19 @@ public final class MockStrigaRemoteProvider: StrigaRemoteProvider {
             kyc = .init(status: "DONE")
         }
         
-        return .init(
+        return kyc
+    }
+    
+    public func getUserDetails(userId: String) async throws -> StrigaUserDetailsResponse {
+        try await Task.sleep(nanoseconds: 2_000_000_000)
+        return response
+    }
+    
+    public func createUser(model: StrigaCreateUserRequest) async throws -> StrigaCreateUserResponse {
+        .init(
             userId: MockConstant.mockedUserId,
             email: model.email,
-            KYC: kyc
+            KYC: try await getKYCStatus()
         )
     }
     
