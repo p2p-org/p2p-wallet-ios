@@ -39,6 +39,10 @@ public final class MockStrigaRemoteProvider: StrigaRemoteProvider {
         userId
     }
     
+    public func getKYCStatus() async throws -> StrigaCreateUserResponse.KYC {
+        fatalError()
+    }
+    
     public func getUserDetails(userId: String) async throws -> StrigaUserDetailsResponse {
         try await Task.sleep(nanoseconds: 2_000_000_000)
         return response

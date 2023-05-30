@@ -5,7 +5,12 @@ public struct StrigaCreateUserResponse: Decodable {
     let email: String
     let KYC: KYC
     
-    struct KYC: Decodable {
-        let status: String
+    public struct KYC: Decodable {
+        public let status: String
+        
+        public var verified: Bool {
+            // TODO: - Check later
+            status != "NOT_STARTED"
+        }
     }
 }
