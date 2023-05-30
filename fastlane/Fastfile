@@ -340,6 +340,19 @@ platform :ios do
       tag = "#{tag_prefix}#{version}(#{build_number})"
     end
 
+    # get full version
+    full_version = "#{version} (#{build_number})"
+
+    # post to discord
+    sh(
+      "curl", 
+      "-v", 
+      "-X", "POST", 
+      "-H", "Content-Type: application/json", 
+      "-d", "{\"message\":\"Version #{full_version} is being built and sent to Testflight...\", \"channel_id\":#{DISCORD_IOS_BUILD_CHANNEL_ID}}",
+      DISCORD_MESSAGE_API_ENDPOINT
+    )
+
     # set build number
     increment_build_number(
       xcodeproj: "p2p_wallet.xcodeproj",
@@ -372,7 +385,6 @@ platform :ios do
     end
 
     # notify testers
-    full_version = "#{version} (#{build_number})"
     message = "Version **#{full_version}** was uploaded to Testflight and will be available after a few minutes!"
 
     # post to discord
