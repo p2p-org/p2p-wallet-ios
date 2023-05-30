@@ -18,31 +18,31 @@ jobs:
       XCODE_VERSION: 14.3
     steps:
 
-      - name: Check out repository
-        uses: actions/checkout@v3
-        # with:
-        #   submodules: recursive
-        #   token: ${{ secrets.GITHUB_TOKEN }}
+      # - name: Check out repository
+      #   uses: actions/checkout@v3
+      #   # with:
+      #   #   submodules: recursive
+      #   #   token: ${{ secrets.GITHUB_TOKEN }}
 
-      - name: Select XCode Version
-        run: sudo xcode-select --switch /Applications/Xcode_${{ env.XCODE_VERSION }}.app
+      # - name: Select XCode Version
+      #   run: sudo xcode-select --switch /Applications/Xcode_${{ env.XCODE_VERSION }}.app
 
-      - name: Copy secret files
-        run: |
-          curl -o ./p2p_wallet/Config.xcconfig ${{ secrets.XCCONFIG_URL }}
-        shell: bash
+      # - name: Copy secret files
+      #   run: |
+      #     curl -o ./p2p_wallet/Config.xcconfig ${{ secrets.XCCONFIG_URL }}
+      #   shell: bash
 
-      - name: Install project
-        run: |
-          rm -rf p2p_wallet/Scenes/DebugMenu
-          chmod u+x Scripts/install.sh && Scripts/install.sh
-        shell: bash
+      # - name: Install project
+      #   run: |
+      #     rm -rf p2p_wallet/Scenes/DebugMenu
+      #     chmod u+x Scripts/install.sh && Scripts/install.sh
+      #   shell: bash
 
-      - name: Fix missing Transporter.app
-        run: |
-          export FASTLANE_ITUNES_TRANSPORTER_USE_SHELL_SCRIPT=1
-          export FASTLANE_ITUNES_TRANSPORTER_PATH=/Applications/Transporter.app/Contents/itms
-          export FASTLANE_APPLE_APPLICATION_SPECIFIC_PASSWORD=${{ secrets.FASTLANE_APPLE_APPLICATION_SPECIFIC_PASSWORD }}
+      # - name: Fix missing Transporter.app
+      #   run: |
+      #     export FASTLANE_ITUNES_TRANSPORTER_USE_SHELL_SCRIPT=1
+      #     export FASTLANE_ITUNES_TRANSPORTER_PATH=/Applications/Transporter.app/Contents/itms
+      #     export FASTLANE_APPLE_APPLICATION_SPECIFIC_PASSWORD=${{ secrets.FASTLANE_APPLE_APPLICATION_SPECIFIC_PASSWORD }}
 
       - name: Upload to test
         uses: maierj/fastlane-action@v2.2.0

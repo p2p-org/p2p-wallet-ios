@@ -251,38 +251,36 @@ end
 
 platform :ios do
   lane :feature_test do
-    # # get current branch name
-    # branch = git_branch.downcase
-    # puts "Current branch is #{branch}"
+    # get current branch name
+    branch = git_branch.downcase
+    puts "Current branch is #{branch}"
      
-    # # check if branch is a feature branch
-    # if !branch.include?("pwn-")
-    #   puts "The branch is not a feature branch. Skipping..."
-    #   next
-    # end
+    # check if branch is a feature branch
+    if !branch.include?("pwn-")
+      puts "The branch is not a feature branch. Skipping..."
+      next
+    end
 
-    # # get feature number
-    # feature_number = branch.split("pwn-").last.split("-").first.to_i
-    # puts "Got the feature number: #{feature_number}"
+    # get feature number
+    feature_number = branch.split("pwn-").last.split("-").first.to_i
+    puts "Got the feature number: #{feature_number}"
 
-    # # check feature number
-    # if feature_number <= 0
-    #   puts "The feature number is not valid. Skipping..."
-    #   next
-    # end
+    # check feature number
+    if feature_number <= 0
+      puts "The feature number is not valid. Skipping..."
+      next
+    end
 
-    # # upload test build
-    # version = upload_test(
-    #   feature_number, # build prefix
-    #   "builds/feature_test", # tag prefix
-    #   BROWSERSTACK_USERNAME,
-    #   BROWSERSTACK_ACCESS_KEY,
-    #   nil
-    # )
+    # upload test build
+    version = upload_test(
+      feature_number, # build prefix
+      "builds/feature_test", # tag prefix
+      BROWSERSTACK_USERNAME,
+      BROWSERSTACK_ACCESS_KEY,
+      nil
+    )
 
     # notify testers
-    version = "1234.1"
-    feature_number = "1234"
     message = "A build #{version} was uploaded for testing this feature. Link to issue: #{JIRA_BASE_URL}/browse/PWN-#{feature_number.to_s}"
     notify(version, message)
 
@@ -294,86 +292,88 @@ platform :ios do
   end
 
   lane :release do
-    # update xcconfig
-    update_xcconfig
+    # # update xcconfig
+    # update_xcconfig
 
-    # get current branch name
-    branch = git_branch.downcase
-    puts "Current branch is #{branch}"
+    # # get current branch name
+    # branch = git_branch.downcase
+    # puts "Current branch is #{branch}"
 
-    # check if branch is a release branch
-    if !branch.start_with?("release/")
-      raise "The branch is not a release branch. Release branch format: release/<MARKETING_VERSION>"
-    end
+    # # check if branch is a release branch
+    # if !branch.start_with?("release/")
+    #   raise "The branch is not a release branch. Release branch format: release/<MARKETING_VERSION>"
+    # end
 
-    # get release version
-    version = branch.split("release/").last
-    puts "Releasing version #{version}"
+    # # get release version
+    # version = branch.split("release/").last
+    # puts "Releasing version #{version}"
 
-    # check feature number
-    version_updated = false
-    if version != get_version_number(target: "p2p_wallet")
-      puts "The version number is not valid. Updating..."
+    # # check feature number
+    # version_updated = false
+    # if version != get_version_number(target: "p2p_wallet")
+    #   puts "The version number is not valid. Updating..."
 
-      # update project.yml
-      file_name = "project.yml"
-      text = File.read("../#{file_name}")
-      new_contents = text.gsub(/MARKETING_VERSION: .*/, "MARKETING_VERSION: #{version}")
-      File.open("../#{file_name}", "w") {|file| file.puts new_contents }
+    #   # update project.yml
+    #   file_name = "project.yml"
+    #   text = File.read("../#{file_name}")
+    #   new_contents = text.gsub(/MARKETING_VERSION: .*/, "MARKETING_VERSION: #{version}")
+    #   File.open("../#{file_name}", "w") {|file| file.puts new_contents }
 
-      # commit and push
-      version_updated = true
+    #   # commit and push
+    #   version_updated = true
       
-      # update xcodeproj file
-      increment_version_number(
-        version_number: version,
-        xcodeproj: "./p2p_wallet.xcodeproj"
-      )
-    end
+    #   # update xcodeproj file
+    #   increment_version_number(
+    #     version_number: version,
+    #     xcodeproj: "./p2p_wallet.xcodeproj"
+    #   )
+    # end
 
-    # prepare for tagging
-    tag_prefix = "v"
+    # # prepare for tagging
+    # tag_prefix = "v"
 
-    # find available build number via tags
-    build_number = 1
-    tag = "#{tag_prefix}#{version}(#{build_number})"
-    while git_tag_exists(tag: tag, remote: true)
-      build_number += 1
-      tag = "#{tag_prefix}#{version}(#{build_number})"
-    end
+    # # find available build number via tags
+    # build_number = 1
+    # tag = "#{tag_prefix}#{version}(#{build_number})"
+    # while git_tag_exists(tag: tag, remote: true)
+    #   build_number += 1
+    #   tag = "#{tag_prefix}#{version}(#{build_number})"
+    # end
 
-    # set build number
-    increment_build_number(
-      xcodeproj: "p2p_wallet.xcodeproj",
-      build_number: build_number,
-      skip_info_plist: true
-    )
+    # # set build number
+    # increment_build_number(
+    #   xcodeproj: "p2p_wallet.xcodeproj",
+    #   build_number: build_number,
+    #   skip_info_plist: true
+    # )
 
-    # create release build
-    create_release_build('app-store', 'Release')
-    upload_dsym_to_analytic_providers
+    # # create release build
+    # create_release_build('app-store', 'Release')
+    # upload_dsym_to_analytic_providers
 
-    # upload to testflight
-    pilot(
-      apple_id: "#{DEVELOPER_APP_ID}",
-      app_identifier: "#{DEVELOPER_APP_IDENTIFIER}",
-      skip_waiting_for_build_processing: true,
-      skip_submission: true,
-      distribute_external: false,
-      notify_external_testers: false,
-      ipa: "./p2p_wallet.ipa"
-    )
+    # # upload to testflight
+    # pilot(
+    #   apple_id: "#{DEVELOPER_APP_ID}",
+    #   app_identifier: "#{DEVELOPER_APP_IDENTIFIER}",
+    #   skip_waiting_for_build_processing: true,
+    #   skip_submission: true,
+    #   distribute_external: false,
+    #   notify_external_testers: false,
+    #   ipa: "./p2p_wallet.ipa"
+    # )
 
-    # upload to browserstack
-    if IS_RELEASE_CANDIDATE
-      upload_to_browserstack_app_automate(
-        browserstack_username: BROWSERSTACK_USERNAME_NEW,
-        browserstack_access_key: BROWSERSTACK_ACCESS_KEY_NEW,
-        custom_id: "KeyApp_rc.ipa"
-      )
-    end
+    # # upload to browserstack
+    # if IS_RELEASE_CANDIDATE
+    #   upload_to_browserstack_app_automate(
+    #     browserstack_username: BROWSERSTACK_USERNAME_NEW,
+    #     browserstack_access_key: BROWSERSTACK_ACCESS_KEY_NEW,
+    #     custom_id: "KeyApp_rc.ipa"
+    #   )
+    # end
 
     # notify testers
+    version = "1.0"
+    build_number = "1"
     full_version = "#{version} (#{build_number})"
     message = "Version #{full_version} was uploaded to Testflight and will be available after a few minutes!"
 
