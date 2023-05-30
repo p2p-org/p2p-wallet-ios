@@ -10,7 +10,7 @@ public protocol StrigaLocalProvider {
     func clearRegistrationData() async
 }
 
-public actor StrigaBankTransferLocalProviderImpl {
+public actor StrigaLocalProviderImpl {
     private let cacheFile: URL = {
         let arrayPaths = FileManager.default.urls(for: .cachesDirectory, in: .userDomainMask)
         let cacheDirectoryPath = arrayPaths[0]
@@ -23,7 +23,7 @@ public actor StrigaBankTransferLocalProviderImpl {
     public init() {}
 }
 
-extension StrigaBankTransferLocalProviderImpl: StrigaLocalProvider {
+extension StrigaLocalProviderImpl: StrigaLocalProvider {
     public func getUserId() async -> String? {
         UserDefaults.standard.string(forKey: strigaUserIdUserDefaultsKey)
     }
