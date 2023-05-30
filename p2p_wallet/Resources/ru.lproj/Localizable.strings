@@ -1414,3 +1414,6 @@
 "State or region" = "Штат или регион";
 "After clicking the “Сontinue”, you confirm that you are not a Politically Exposed Person" = "Нажав кнопку «Продолжить», вы подтверждаете, что не являетесь политически значимым лицом.";
 "Country" = "Страна";
+"You can confirm the phone number and finish the registration later" = "Вы можете подтвердить номер телефона и завершить регистрацию позже";
+"Yes, left the page" = "Да, покинул страницу";
+"No, continue" = "Нет, продолжить";

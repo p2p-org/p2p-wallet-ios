@@ -64,10 +64,13 @@ final class EnterSMSCodeViewController: BaseOTPViewController {
                 UIView(height: 10)
                 UILabel().withAttributedText(
                     .attributedString(
-                        with: "Check the number \(self.viewModel.phone)",
+                        with: "\(viewModel.phoneText) \(self.viewModel.phone)",
                         of: .text1
                     ).withForegroundColor(Asset.Colors.night.color)
-                )
+                ).setup { label in
+                    label.numberOfLines = 0
+                    label.textAlignment = .center
+                }
 
                 BaseTextFieldView(leftView: BEView(width: 7), rightView: nil, isBig: true).bind(smsInputRef)
                     .setup { input in

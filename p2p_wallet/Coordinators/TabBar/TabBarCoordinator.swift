@@ -250,14 +250,20 @@ final class TabBarCoordinator: Coordinator<Void> {
         case .crypto:
             self.handleAction(.receive)
         case .info:
-            coordinate(to: BankTransferInfoCoordinator(navigationController: navigationController)).sink { [weak self] result in
-                switch result {
-                case .registration(let country):
-                    self?.handleTopUpRegistration(with: country)
-                case .cancel:
-                    break
-                }
-            }.store(in: &subscriptions)
+            coordinate(to: StrigaOTPCoordinator(
+                viewController: navigationController,
+                phone: "+79261362983"
+            ))
+                .sink { _ in }.store(in: &subscriptions)
+
+//            coordinate(to: BankTransferInfoCoordinator(navigationController: navigationController)).sink { [weak self] result in
+//                switch result {
+//                case .registration(let country):
+//                    self?.handleTopUpRegistration(with: country)
+//                case .cancel:
+//                    break
+//                }
+//            }.store(in: &subscriptions)
         case .transfer:
             coordinate(
                 to: StrigaRegistrationFirstStepCoordinator(

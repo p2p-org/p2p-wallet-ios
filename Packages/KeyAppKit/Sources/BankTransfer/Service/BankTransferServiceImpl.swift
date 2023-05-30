@@ -55,11 +55,12 @@ extension BankTransferServiceImpl: BankTransferService {
     }
     
     public func getOTP() async throws {
-        fatalError("Not implemented")
+        debugPrint("OTP is: 000000")
     }
     
     public func verify(OTP: String) async throws -> Bool {
-        fatalError("Not implemented")
+        debugPrint("OTP is: \(OTP) == 000000")
+        return OTP == "000000"
     }
     
     public func clearCache() async {
