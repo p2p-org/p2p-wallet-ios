@@ -423,3 +423,27 @@ final class TabBarCoordinator: Coordinator<Void> {
             .store(in: &subscriptions)
     }
 }
+
+extension TabBarCoordinator {
+    func handleStrigaOTCResult(result: StrigaOTPCoordinatorResult) {
+        guard
+            let navigationController = tabBarController.selectedViewController as? UINavigationController
+        else { return }
+
+        switch result {
+            case .verified:
+            let view = StrigaOTPCompletedView(
+                image: .thumbsupImage,
+                title: L10n.thankYou,
+                subtitle: L10n.TheLastStepIsDocumentAndSelfieVerification.thisIsAOneTimeProcedureToEnsureSafetyOfYourAccount,
+                actionTitle: L10n.continue) {
+                    // go to KYC
+                }
+            let controller = view.asViewController(withoutUIKitNavBar: false)
+            navigationController.pushViewController(controller, animated: true)
+            navigationController.viewControllers = [navigationController.viewControllers.first, controller].compactMap { $0 }
+            case .canceled:
+            break
+        }
+    }
+}
