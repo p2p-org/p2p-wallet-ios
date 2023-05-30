@@ -79,7 +79,7 @@ public class SolanaPriceService {
     }
 
     /// Return all requested prices for token from cache. Return nil if one of them is missing
-    public func getPricesFromCache(tokens: [Token], fiat: String) -> [Token: CurrentPrice?]? {
+    func getPricesFromCache(tokens: [Token], fiat: String) -> [Token: CurrentPrice?]? {
         var result: [Token: CurrentPrice?] = [:]
 
         for token in tokens {
