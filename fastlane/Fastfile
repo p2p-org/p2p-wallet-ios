@@ -39,6 +39,10 @@ NEW_DEVICES_JSON_STRING = ENV["NEW_DEVICES_JSON_STRING"]
 
 IS_RELEASE_CANDIDATE = ENV["IS_RELEASE_CANDIDATE"] == 'true'
 
+DISCORD_IOS_BUILD_CHANNEL_ID = ENV["DISCORD_IOS_BUILD_CHANNEL_ID"]
+
+DISCORD_MESSAGE_API_ENDPOINT = ENV["DISCORD_MESSAGE_API_ENDPOINT"]
+
 def delete_temp_keychain(name)
   delete_keychain(
     name: name
@@ -156,7 +160,17 @@ def upload_build(configuration, browserstack_username, browserstack_access_key, 
 end 
 
 def notify(version, message)
-  # upload to slack
+  # to discord
+  sh(
+    "curl", 
+    "-v", 
+    "-X", "POST", 
+    "-H", "Content-Type: application/json", 
+    "-d", "{\"message\":\"#{message}\", \"channel_id\":#{DISCORD_IOS_BUILD_CHANNEL_ID}}",
+    DISCORD_MESSAGE_API_ENDPOINT
+  )
+
+  # to slack
   slack_upload(
     slack_api_token: SLACK_API_TOKEN,
     title: "PWN-#{version}.ipa",
@@ -237,36 +251,36 @@ end
 
 platform :ios do
   lane :feature_test do
-    # get current branch name
-    branch = git_branch.downcase
-    puts "Current branch is #{branch}"
+    # # get current branch name
+    # branch = git_branch.downcase
+    # puts "Current branch is #{branch}"
      
-    # check if branch is a feature branch
-    if !branch.include?("pwn-")
-      puts "The branch is not a feature branch. Skipping..."
-      next
-    end
+    # # check if branch is a feature branch
+    # if !branch.include?("pwn-")
+    #   puts "The branch is not a feature branch. Skipping..."
+    #   next
+    # end
 
-    # get feature number
-    feature_number = branch.split("pwn-").last.split("-").first.to_i
-    puts "Got the feature number: #{feature_number}"
+    # # get feature number
+    # feature_number = branch.split("pwn-").last.split("-").first.to_i
+    # puts "Got the feature number: #{feature_number}"
 
-    # check feature number
-    if feature_number <= 0
-      puts "The feature number is not valid. Skipping..."
-      next
-    end
+    # # check feature number
+    # if feature_number <= 0
+    #   puts "The feature number is not valid. Skipping..."
+    #   next
+    # end
 
-    # upload test build
-    version = upload_test(
-      feature_number, # build prefix
-      "builds/feature_test", # tag prefix
-      BROWSERSTACK_USERNAME,
-      BROWSERSTACK_ACCESS_KEY,
-      nil
-    )
+    # # upload test build
+    # version = upload_test(
+    #   feature_number, # build prefix
+    #   "builds/feature_test", # tag prefix
+    #   BROWSERSTACK_USERNAME,
+    #   BROWSERSTACK_ACCESS_KEY,
+    #   nil
+    # )
 
-    # notify tester
+    # notify testers
     message = "A build #{version} was uploaded for testing this feature. Link to issue: #{JIRA_BASE_URL}/browse/PWN-#{feature_number.to_s}"
     notify(version, message)
 
