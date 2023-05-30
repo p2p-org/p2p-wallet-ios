@@ -344,12 +344,13 @@ platform :ios do
     full_version = "#{version} (#{build_number})"
 
     # post to discord
+    build_rc_suffix = IS_RELEASE_CANDIDATE ? "-RC" : ""
     sh(
       "curl", 
       "-v", 
       "-X", "POST", 
       "-H", "Content-Type: application/json", 
-      "-d", "{\"message\":\"Version #{full_version} is being built and sent to Testflight...\", \"channel_id\":#{DISCORD_IOS_BUILD_CHANNEL_ID}}",
+      "-d", "{\"message\":\"Version **#{full_version}#{build_rc_suffix}** is being built and sent to Testflight...\", \"channel_id\":#{DISCORD_IOS_BUILD_CHANNEL_ID}}",
       DISCORD_MESSAGE_API_ENDPOINT
     )
 
@@ -385,7 +386,7 @@ platform :ios do
     end
 
     # notify testers
-    message = "Version **#{full_version}** was uploaded to Testflight and will be available after a few minutes!"
+    message = "Version **#{full_version}#{build_rc_suffix}** was uploaded to Testflight and will be available after a few minutes!"
 
     # post to discord
     sh(
@@ -441,7 +442,7 @@ platform :ios do
     )
 
     # notify tester
-    message = "A daily build #{version} was uploaded."
+    message = "A daily build **#{version}** was uploaded."
     notify(version, message)
   end
 
