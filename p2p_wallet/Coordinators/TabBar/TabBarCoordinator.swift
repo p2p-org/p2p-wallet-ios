@@ -250,20 +250,21 @@ final class TabBarCoordinator: Coordinator<Void> {
         case .crypto:
             self.handleAction(.receive)
         case .info:
-            coordinate(to: StrigaOTPCoordinator(
-                viewController: navigationController,
-                phone: "+79261362983"
-            ))
-                .sink { _ in }.store(in: &subscriptions)
-
-//            coordinate(to: BankTransferInfoCoordinator(navigationController: navigationController)).sink { [weak self] result in
-//                switch result {
-//                case .registration(let country):
-//                    self?.handleTopUpRegistration(with: country)
-//                case .cancel:
-//                    break
-//                }
+//            coordinate(to: StrigaOTPCoordinator(
+//                viewController: navigationController,
+//                phone: "+79261362983"
+//            )).sink { [weak self] result in
+//                self?.handleStrigaOTCResult(result: result)
 //            }.store(in: &subscriptions)
+
+            coordinate(to: BankTransferInfoCoordinator(navigationController: navigationController)).sink { [weak self] result in
+                switch result {
+                case .registration(let country):
+                    self?.handleTopUpRegistration(with: country)
+                case .cancel:
+                    break
+                }
+            }.store(in: &subscriptions)
         case .transfer:
             coordinate(
                 to: StrigaRegistrationFirstStepCoordinator(
@@ -417,5 +418,29 @@ final class TabBarCoordinator: Coordinator<Void> {
                 self?.tabBarController.changeItem(to: .wallet)
             })
             .store(in: &subscriptions)
+    }
+}
+
+extension TabBarCoordinator {
+    func handleStrigaOTCResult(result: StrigaOTPCoordinatorResult) {
+        guard
+            let navigationController = tabBarController.selectedViewController as? UINavigationController
+        else { return }
+
+        switch result {
+            case .verified:
+            let view = StrigaOTPCompletedView(
+                image: .thumbsupImage,
+                title: L10n.thankYou,
+                subtitle: L10n.TheLastStepIsDocumentAndSelfieVerification.thisIsAOneTimeProcedureToEnsureSafetyOfYourAccount,
+                actionTitle: L10n.continue) {
+                    // go to KYC
+                }
+            let controller = view.asViewController(withoutUIKitNavBar: false)
+            navigationController.pushViewController(controller, animated: true)
+            navigationController.viewControllers = [navigationController.viewControllers.first, controller].compactMap { $0 }
+            case .canceled:
+            break
+        }
     }
 }

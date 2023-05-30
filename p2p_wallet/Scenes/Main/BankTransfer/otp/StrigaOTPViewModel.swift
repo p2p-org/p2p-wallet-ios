@@ -5,7 +5,7 @@ import Onboarding
 import Resolver
 
 enum StrigaOTPCoordinatorResult {
-    case cancel
+    case canceled
     case verified
 }
 
@@ -43,6 +43,7 @@ final class StrigaOTPCoordinator: Coordinator<StrigaOTPCoordinatorResult> {
                 if result == false {
                     viewModel?.coordinatorIO.error.send(APIGatewayError.invalidOTP)
                 }
+                self?.resultSubject.send(result ?? false)
             } catch {
                 viewModel?.coordinatorIO.error.send(error)
             }
@@ -89,7 +90,7 @@ final class StrigaOTPCoordinator: Coordinator<StrigaOTPCoordinatorResult> {
         present(controller: controller)
 
         return Publishers.Merge(
-            controller.deallocatedPublisher().map { StrigaOTPCoordinatorResult.cancel },
+            controller.deallocatedPublisher().map { StrigaOTPCoordinatorResult.canceled },
             resultSubject.filter { $0 }.map { _ in StrigaOTPCoordinatorResult.verified }
         ).prefix(1).eraseToAnyPublisher()
     }
