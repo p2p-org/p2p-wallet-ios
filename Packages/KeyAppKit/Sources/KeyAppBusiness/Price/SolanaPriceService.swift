@@ -79,11 +79,11 @@ public class SolanaPriceService {
     }
 
     /// Return all requested prices for token from cache. Return nil if one of them is missing
-    internal func getPricesFromCache(tokens: [Token], fiat: String) -> [Token: CurrentPrice?]? {
+    public func getPricesFromCache(tokens: [Token], fiat: String) -> [Token: CurrentPrice?]? {
         var result: [Token: CurrentPrice?] = [:]
 
         for token in tokens {
-            if let value = cache.value(forKey: primaryKey(token.address, fiat)) {
+            if let value = getPriceFromCache(token: token, fiat: fiat) {
                 result[token] = value
                     .fixedForStableCoin(tokenMint: token.address, fiat: fiat)
             } else {
@@ -92,6 +92,11 @@ public class SolanaPriceService {
         }
 
         return result
+    }
+    
+    /// Return current cached price of a token
+    public func getPriceFromCache(token: Token, fiat: String) -> CurrentPrice? {
+        cache.value(forKey: primaryKey(token.address, fiat))
     }
 
     /// Helper method for extracing cache key.
