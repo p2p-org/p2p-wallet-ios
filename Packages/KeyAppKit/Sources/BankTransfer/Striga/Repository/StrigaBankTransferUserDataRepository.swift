@@ -21,6 +21,7 @@ public final class StrigaBankTransferUserDataRepository: BankTransferUserDataRep
     }
     
     // MARK: - Methods
+
     public func createUser(registrationData data: BankTransferRegistrationData) async throws -> StrigaCreateUserResponse {
         // assert response type
         guard let data = data as? StrigaUserDetailsResponse else {
