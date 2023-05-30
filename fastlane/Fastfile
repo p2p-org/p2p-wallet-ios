@@ -281,7 +281,7 @@ platform :ios do
     )
 
     # notify testers
-    message = "A build **#{version}** was uploaded for testing this feature.\nLink to issue: #{JIRA_BASE_URL}/browse/PWN-#{feature_number.to_s}"
+    message = "A build **#{version}** was uploaded for testing this feature.\\nLink to issue: #{JIRA_BASE_URL}/browse/PWN-#{feature_number.to_s}"
     notify(version, message)
 
     # output
