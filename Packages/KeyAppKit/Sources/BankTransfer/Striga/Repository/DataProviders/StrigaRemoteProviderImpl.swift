@@ -62,6 +62,12 @@ extension StrigaRemoteProviderImpl: StrigaRemoteProvider {
         )
         _ = try await httpClient.request(endpoint: endpoint, responseModel: String.self)
     }
+    
+    public func resendSMS(userId: String) async throws {
+        guard let authHeader else { throw NSError(domain: "", code: 0) }
+        let endpoint = StrigaEndpoint.resendSMS(authHeader: authHeader, userId: userId)
+        _ = try await httpClient.request(endpoint: endpoint, responseModel: String.self)
+    }
 }
 
 // MARK: - Helpers

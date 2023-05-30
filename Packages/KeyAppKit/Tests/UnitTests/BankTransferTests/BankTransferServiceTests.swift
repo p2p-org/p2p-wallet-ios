@@ -12,7 +12,7 @@ import XCTest
 
 final class BankTransferServiceTests: XCTestCase {
     
-    var bankTransferService: StrigaBankTransferService!
+    var bankTransferService: BankTransferServiceImpl!
     var strigaProvider: MockStrigaProvider!
     
     override func setUpWithError() throws {
@@ -46,9 +46,9 @@ final class BankTransferServiceTests: XCTestCase {
 
 // MARK: - Mocks
 
-private extension RegistrationData {
-    static func fake() -> RegistrationData{
-        RegistrationData(
+private extension BankTransferRegistrationData where Self == StrigaUserDetailsResponse {
+    static func fake() -> StrigaUserDetailsResponse{
+        StrigaUserDetailsResponse(
             firstName: "firstName",
             lastName: "lastName",
             email: "email",

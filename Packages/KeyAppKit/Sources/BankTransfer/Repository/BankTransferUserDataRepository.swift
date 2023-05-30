@@ -3,6 +3,7 @@ public protocol BankTransferUserDataRepository {
  
     func createUser(registrationData: BankTransferRegistrationData) async throws -> StrigaCreateUserResponse
     func updateUser(registrationData: BankTransferRegistrationData) async throws
+    func resendSMS(userId: String) async throws
 
     func updateUserLocally(registrationData: BankTransferRegistrationData) async throws
     func clearCache() async

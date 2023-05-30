@@ -21,6 +21,7 @@ public final class StrigaBankTransferUserDataRepository: BankTransferUserDataRep
     }
     
     // MARK: - Methods
+
     public func createUser(registrationData data: BankTransferRegistrationData) async throws -> StrigaCreateUserResponse {
         // assert response type
         guard let data = data as? StrigaUserDetailsResponse else {
@@ -73,6 +74,10 @@ public final class StrigaBankTransferUserDataRepository: BankTransferUserDataRep
     public func updateUser(registrationData data: BankTransferRegistrationData) async throws {
         // TODO: - remoteProvider.updateUser
         fatalError("Implementing")
+    }
+    
+    public func resendSMS(userId: String) async throws {
+        try await remoteProvider.resendSMS(userId: userId)
     }
 
     public func getRegistrationData() async throws -> BankTransferRegistrationData {
