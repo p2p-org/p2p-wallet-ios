@@ -281,6 +281,8 @@ platform :ios do
     # )
 
     # notify testers
+    version = "1234.1"
+    feature_number = "1234"
     message = "A build #{version} was uploaded for testing this feature. Link to issue: #{JIRA_BASE_URL}/browse/PWN-#{feature_number.to_s}"
     notify(version, message)
 
@@ -371,11 +373,24 @@ platform :ios do
       )
     end
 
-    # post to slack
+    # notify testers
     full_version = "#{version} (#{build_number})"
+    message = "Version #{full_version} was uploaded to Testflight and will be available after a few minutes!"
+
+    # post to discord
+    sh(
+      "curl", 
+      "-v", 
+      "-X", "POST", 
+      "-H", "Content-Type: application/json", 
+      "-d", "{\"message\":\"#{message}\", \"channel_id\":#{DISCORD_IOS_BUILD_CHANNEL_ID}}",
+      DISCORD_MESSAGE_API_ENDPOINT
+    )
+
+    # post to slack
     post_to_slack(
       api_token: SLACK_API_TOKEN,
-      message: "Version #{full_version} was uploaded to Testflight and will be available after a few minutes!",
+      message: message,
       channel: "#p2p-wallet-builds-ios"
     )
 
