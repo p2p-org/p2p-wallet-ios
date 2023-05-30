@@ -281,7 +281,7 @@ extension Resolver: ResolverRegistering {
                         useCase: .unregisteredUser(hasCachedInput: true)
                     ),
                     remoteProvider: MockStrigaRemoteProvider(
-                        useCase: .registeredUserWithoutKYC
+                        useCase: .unregisteredUser(hasCachedInput: true)
                     )
 //                    localProvider: StrigaLocalProviderImpl(),
 //                    remoteProvider: StrigaRemoteProviderImpl(
