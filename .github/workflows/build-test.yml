@@ -1,6 +1,20 @@
 name: Create feature build
 
-on: push
+on:
+  workflow_call:
+    inputs:
+      with_high_priority:
+        required: true
+        type: boolean
+      move_to_rft:
+        required: true
+        type: boolean
+      lane:
+        required: true
+        type: string
+      branch:
+        required: false
+        type: string
 
 jobs:
   upload_build_for_testing:
