@@ -17,12 +17,10 @@ final class HomeEmptyViewModel: BaseViewModel, ObservableObject {
     // MARK: - Dependencies
 
     @Injected private var analyticsManager: AnalyticsManager
-    @Injected private var walletsRepository: WalletsRepository
-    @Injected private var pricesService: PricesServiceType
+    @Injected private var pricesService: SolanaPriceService
     @Injected private var solanaAccountsService: SolanaAccountsService
     
     // MARK: - Properties
-    private var cancellable: AnyCancellable?
     private let navigation: PassthroughSubject<HomeNavigation, Never>
     
     private var popularCoinsTokens: [Token] = [.usdc, .nativeSolana, /*.renBTC, */.eth, .usdt]
@@ -34,29 +32,15 @@ final class HomeEmptyViewModel: BaseViewModel, ObservableObject {
         self.navigation = navigation
         super.init()
         updateData()
-        bind()
     }
     
     // MARK: - Actions
 
     func reloadData() async {
-        walletsRepository.reload()
-
-        let tokensWithoutPrices = popularCoinsTokens.filter { pricesService.currentPrice(mint: $0.address) == nil }
-        if !tokensWithoutPrices.isEmpty {
-            pricesService.fetchPrices(tokens: tokensWithoutPrices, toFiat: Defaults.fiat)
-        }
-
-        return await withCheckedContinuation { continuation in
-            cancellable = walletsRepository.statePublisher
-                .sink(receiveValue: { [weak self] in
-                    if $0 == .loaded || $0 == .error {
-                        self?.updateData()
-                        continuation.resume()
-                        self?.cancellable = nil
-                    }
-                })
-        }
+        // refetch
+        try? await solanaAccountsService.fetch()
+        
+        updateData()
     }
 
     func receiveClicked() {
@@ -77,19 +61,11 @@ private extension HomeEmptyViewModel {
             PopularCoin(
                 id: token.symbol,
                 title: title(for: token),
-                amount: pricesService.fiatAmount(mint: token.address),
+                amount: pricesService.fiatAmount(token: token),
                 actionTitle: ActionType.buy.description,
                 image: image(for: token)
             )
         }
-    }
-
-    private func bind() {
-        pricesService.currentPricesPublisher
-            .sink { [weak self] _ in
-                self?.updateData()
-            }
-            .store(in: &subscriptions)
     }
 }
 
@@ -163,9 +139,10 @@ extension HomeEmptyViewModel {
     }
 }
 
-private extension PricesServiceType {
-    func fiatAmount(mint: String) -> String? {
-        guard let price = currentPrice(mint: mint)?.value else { return nil }
+private extension SolanaPriceService {
+    func fiatAmount(token: Token) -> String? {
+        guard let price = getPriceFromCache(token: token, fiat: Defaults.fiat.code)?.value
+        else { return nil }
         return "\(Defaults.fiat.symbol) \(price.toString(minimumFractionDigits: 2, maximumFractionDigits: 2))"
     }
 }

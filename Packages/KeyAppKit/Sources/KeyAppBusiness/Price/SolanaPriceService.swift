@@ -16,10 +16,10 @@ import SolanaSwift
 /// Each rate has 15 minutes lifetime. When the lifetime is expired, the new rate will be requested.
 public class SolanaPriceService {
     /// Provider.
-    internal let api: SolanaPricesAPI
+    let api: SolanaPricesAPI
 
     /// Cache manager.
-    internal let cache: LongTermCache<String, CurrentPrice>
+    let cache: LongTermCache<String, CurrentPrice>
 
     public init(api: SolanaPricesAPI, lifetime: TimeInterval = 60 * 15) {
         self.api = api
@@ -77,25 +77,32 @@ public class SolanaPriceService {
                 .fixedForStableCoin(fiat: fiat)
         }
     }
+    
+    /// Return current cached price of a token
+    public func getPriceFromCache(token: Token, fiat: String) -> CurrentPrice? {
+        cache.value(forKey: primaryKey(token.address, fiat))
+    }
+    
+    // MARK: - Helpers
 
     /// Return all requested prices for token from cache. Return nil if one of them is missing
-    internal func getPricesFromCache(tokens: [Token], fiat: String) -> [Token: CurrentPrice?]? {
+    func getPricesFromCache(tokens: [Token], fiat: String) -> [Token: CurrentPrice?]? {
         var result: [Token: CurrentPrice?] = [:]
-
+        
         for token in tokens {
-            if let value = cache.value(forKey: primaryKey(token.address, fiat)) {
+            if let value = getPriceFromCache(token: token, fiat: fiat) {
                 result[token] = value
                     .fixedForStableCoin(tokenMint: token.address, fiat: fiat)
             } else {
                 return nil
             }
         }
-
+        
         return result
     }
-
+    
     /// Helper method for extracing cache key.
-    internal func primaryKey(_ mint: String, _ fiat: String) -> String {
+    func primaryKey(_ mint: String, _ fiat: String) -> String {
         "\(mint)-\(fiat)"
     }
 }
