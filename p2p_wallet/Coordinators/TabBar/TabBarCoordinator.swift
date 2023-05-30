@@ -241,14 +241,7 @@ final class TabBarCoordinator: Coordinator<Void> {
         else { return }
 
         switch action {
-        case .card:
-            let buyCoordinator = BuyCoordinator(
-                navigationController: navigationController,
-                context: .fromHome
-            )
-            coordinate(to: buyCoordinator).sink {}.store(in: &subscriptions)
-        case .crypto:
-            self.handleAction(.receive)
+        // striga registration
         case .info:
             coordinate(to: BankTransferInfoCoordinator(navigationController: navigationController)).sink { [weak self] result in
                 switch result {
@@ -258,13 +251,24 @@ final class TabBarCoordinator: Coordinator<Void> {
                     break
                 }
             }.store(in: &subscriptions)
+        // striga kyc
+        case .kyc:
+            // TODO: - KYC
+            let vc = UIBottomSheetHostingController(rootView: KYCView())
+            navigationController.present(vc, interactiveDismissalType: .standard)
+        // striga transfer
         case .transfer:
-            coordinate(
-                to: StrigaRegistrationFirstStepCoordinator(
-                    country: Country(name: "", code: "", dialCode: "", emoji: ""),
-                    parent: navigationController
-                )
-            ).sink {}.store(in: &subscriptions)
+            // TODO: - Transfer
+            let vc = UIBottomSheetHostingController(rootView: StrigaTransferView())
+            navigationController.present(vc, interactiveDismissalType: .standard)
+        case .card:
+            let buyCoordinator = BuyCoordinator(
+                navigationController: navigationController,
+                context: .fromHome
+            )
+            coordinate(to: buyCoordinator).sink {}.store(in: &subscriptions)
+        case .crypto:
+            self.handleAction(.receive)
         }
     }
 
