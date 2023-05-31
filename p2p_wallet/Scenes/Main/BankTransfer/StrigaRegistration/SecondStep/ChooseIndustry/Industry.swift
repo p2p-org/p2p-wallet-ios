@@ -1,8 +1,11 @@
+import BankTransfer
+
 struct Industry: Identifiable {
     let emoji: String
     let title: String
+    let rawValue: StrigaUserIndustry
 
-    var id: String { wholeName }
+    var id: String { rawValue.rawValue }
     var wholeName: String {
         [emoji, title].joined(separator: " ")
     }

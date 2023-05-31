@@ -58,7 +58,9 @@ struct StrigaRegistrationSecondStepView: View {
                 title: L10n.sourceOfFunds,
                 status: viewModel.fieldsStatuses[.sourceOfFunds]
             ) {
-                DetailedButton(value: $viewModel.sourceOfFunds, action: { })
+                DetailedButton(value: $viewModel.sourceOfFunds, action: {
+                    viewModel.chooseSourceOfFunds.send(viewModel.selectedSourceOfFunds)
+                })
             }
         }
         .styled()

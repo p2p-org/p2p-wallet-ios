@@ -38,6 +38,24 @@ final class StrigaRegistrationSecondStepCoordinator: Coordinator<Void> {
             }
             .store(in: &subscriptions)
 
+        viewModel.chooseSourceOfFunds
+            .flatMap { value in
+                self.coordinate(to: ChooseItemCoordinator<StrigaSourceOfFunds>(
+                    title: L10n.selectYourSourceOfFunds,
+                    controller: self.navigationController,
+                    service: ChooseSourceOfFundsService(),
+                    chosen: value
+                ))
+            }
+            .sink { [weak viewModel] result in
+                switch result {
+                case .item(let item):
+                    viewModel?.selectedSourceOfFunds = item as? StrigaSourceOfFunds
+                case .cancel: break
+                }
+            }
+            .store(in: &subscriptions)
+
         return Publishers.Merge(
             vc.deallocatedPublisher(),
             result.eraseToAnyPublisher()

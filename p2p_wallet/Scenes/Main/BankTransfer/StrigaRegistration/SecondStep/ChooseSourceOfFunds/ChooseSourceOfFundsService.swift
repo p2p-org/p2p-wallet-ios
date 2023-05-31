@@ -1,10 +1,10 @@
 import Combine
-import Foundation
 import KeyAppKitCore
+import BankTransfer
 
-final class ChooseIndustryService: ChooseItemService {
+final class ChooseSourceOfFundsService: ChooseItemService {
     let chosenTitle = L10n.chosen
-    let otherTitle = L10n.allIndustries
+    let otherTitle = L10n.allSources
 
     var state: AnyPublisher<AsyncValueState<[ChooseItemListSection]>, Never> {
         statePublisher.eraseToAnyPublisher()
@@ -13,9 +13,8 @@ final class ChooseIndustryService: ChooseItemService {
     private let statePublisher: CurrentValueSubject<AsyncValueState<[ChooseItemListSection]>, Never>
 
     init() {
-        let provider = ChooseIndustryDataLocalProvider()
         statePublisher = CurrentValueSubject<AsyncValueState<[ChooseItemListSection]>, Never>(
-            AsyncValueState(status: .ready, value: [ChooseItemListSection(items: provider.getIndustries())])
+            AsyncValueState(status: .ready, value: [ChooseItemListSection(items: StrigaSourceOfFunds.allCases)])
         )
     }
 

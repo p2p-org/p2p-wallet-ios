@@ -23,7 +23,7 @@ struct EmojiTitleCellView: View {
                 .font(uiFont: .font(of: .title1, weight: .bold))
             Text(name)
                 .foregroundColor(Color(Asset.Colors.night.color))
-                .font(uiFont: .font(of: .text3))
+                .apply(style: .text3)
             Spacer()
         }
         .padding(.vertical, 6)

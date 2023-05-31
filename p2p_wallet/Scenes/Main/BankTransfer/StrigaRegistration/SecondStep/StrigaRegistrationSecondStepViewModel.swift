@@ -17,7 +17,7 @@ final class StrigaRegistrationSecondStepViewModel: BaseViewModel, ObservableObje
 
     // Dependencies
     @Injected private var service: BankTransferService
-    private let industryProvider: ChooseIndustryDataProvider
+    private let industryProvider: ChooseIndustryDataLocalProvider
 
     // Fields
     @Published var occupationIndustry: String = ""
@@ -34,20 +34,22 @@ final class StrigaRegistrationSecondStepViewModel: BaseViewModel, ObservableObje
     let actionPressed = PassthroughSubject<Void, Never>()
     let openNextStep = PassthroughSubject<Void, Never>()
     let chooseIndustry = PassthroughSubject<Industry?, Never>()
+    let chooseSourceOfFunds = PassthroughSubject<StrigaSourceOfFunds?, Never>()
 
     var fieldsStatuses = [Field: StrigaRegistrationTextFieldStatus]()
 
     @Published var selectedCountry: Country?
     @Published var selectedIndustry: Industry?
+    @Published var selectedSourceOfFunds: StrigaSourceOfFunds?
 
     init(data: StrigaUserDetailsResponse) {
         industryProvider = ChooseIndustryDataLocalProvider()
         super.init()
 
         if let industry = data.occupation {
-            selectedIndustry = industryProvider.getIndustries().first(where: { $0.matches(keyword: industry) })
+            selectedIndustry = industryProvider.getIndustries().first(where: { $0.rawValue == industry })
         }
-        sourceOfFunds = data.sourceOfFunds ?? ""
+        selectedSourceOfFunds = data.sourceOfFunds
         country = data.address?.country ?? ""
         city = data.address?.city ?? ""
         addressLine = data.address?.addressLine1 ?? ""
@@ -83,6 +85,11 @@ final class StrigaRegistrationSecondStepViewModel: BaseViewModel, ObservableObje
         $selectedIndustry
             .map { $0?.wholeName ?? "" }
             .assignWeak(to: \.occupationIndustry, on: self)
+            .store(in: &subscriptions)
+
+        $selectedSourceOfFunds
+            .map { $0?.title ?? "" }
+            .assignWeak(to: \.sourceOfFunds, on: self)
             .store(in: &subscriptions)
 
         bindToFieldValues()
