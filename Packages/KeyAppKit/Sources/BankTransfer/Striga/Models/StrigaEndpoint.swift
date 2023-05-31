@@ -7,7 +7,7 @@ public enum StrigaEndpoint {
     case createUser(authHeader: AuthHeader, model: StrigaCreateUserRequest)
     case resendSMS(authHeader: AuthHeader, userId: String)
     
-    case kycRenewToken(authHeader: AuthHeader, userId: String)
+    case kycGetToken(authHeader: AuthHeader, userId: String)
 }
 
 // MARK: - HTTPEndpoint
@@ -35,14 +35,14 @@ extension StrigaEndpoint: HTTPEndpoint {
             return "/create"
         case .resendSMS:
             return "/resend-sms"
-        case .kycRenewToken:
+        case .kycGetToken:
             return "/kyc/start"
         }
     }
 
     public var method: HTTPMethod {
         switch self {
-        case .verifyMobileNumber, .createUser, .resendSMS, .kycRenewToken:
+        case .verifyMobileNumber, .createUser, .resendSMS, .kycGetToken:
             return .post
         case .getUserDetails:
             return .get
@@ -59,7 +59,7 @@ extension StrigaEndpoint: HTTPEndpoint {
             return model.encoded
         case let .resendSMS(_, userId):
             return ["userId": userId].encoded
-        case let .kycRenewToken(_, userId):
+        case let .kycGetToken(_, userId):
             return ["userId": userId].encoded
         }
     }
@@ -70,10 +70,8 @@ extension StrigaEndpoint: HTTPEndpoint {
 private extension StrigaEndpoint {
     var urlEnvironment: String {
         switch self {
-        case .verifyMobileNumber, .createUser, .getUserDetails, .resendSMS:
+        case .verifyMobileNumber, .createUser, .getUserDetails, .resendSMS, .kycGetToken:
             return "payment.keyapp.org/striga"
-        case .kycRenewToken:
-            return "payment.key.app/striga"
         }
     }
     
@@ -91,7 +89,7 @@ private extension StrigaEndpoint {
             return authHeader
         case let .resendSMS(authHeader, _):
             return authHeader
-        case let .kycRenewToken(authHeader, _):
+        case let .kycGetToken(authHeader, _):
             return authHeader
         }
     }
