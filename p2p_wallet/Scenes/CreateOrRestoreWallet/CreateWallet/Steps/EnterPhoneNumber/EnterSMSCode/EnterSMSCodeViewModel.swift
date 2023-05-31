@@ -39,7 +39,7 @@ final class EnterSMSCodeViewModel: BaseOTPViewModel {
     @Published public var resendText: String = ""
     @Published public var isButtonEnabled: Bool = false
     var phoneText: String {
-        strategy == .striga ? "To start verification confirm your phone number" : "Check the number"
+        strategy == .striga ? L10n.toStartVerificationConfirmYourPhoneNumber : L10n.checkTheNumber
     }
 
     func buttonTaped() {
