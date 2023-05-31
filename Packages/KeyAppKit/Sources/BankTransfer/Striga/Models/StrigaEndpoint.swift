@@ -70,8 +70,10 @@ extension StrigaEndpoint: HTTPEndpoint {
 private extension StrigaEndpoint {
     var urlEnvironment: String {
         switch self {
-        case .verifyMobileNumber, .createUser, .getUserDetails, .resendSMS, .kycGetToken:
+        case .verifyMobileNumber, .createUser, .getUserDetails, .resendSMS:
             return "payment.keyapp.org/striga"
+        case .kycGetToken:
+            return "payment.key.app/striga"
         }
     }
     
