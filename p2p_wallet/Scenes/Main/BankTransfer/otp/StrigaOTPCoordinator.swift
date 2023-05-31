@@ -162,7 +162,10 @@ final class StrigaOTPSuccessCoordinator: Coordinator<StrigaOTPSuccessCoordinator
             }
         let controller = view.asViewController(withoutUIKitNavBar: false)
         self.viewController.pushViewController(controller, animated: true)
-        self.viewController.viewControllers = [viewController.viewControllers.first, controller].compactMap { $0 }
+        self.viewController.viewControllers = [
+            viewController.viewControllers.first,
+            controller
+        ].compactMap { $0 }
 
         return Publishers.Merge(
             controller.deallocatedPublisher()
