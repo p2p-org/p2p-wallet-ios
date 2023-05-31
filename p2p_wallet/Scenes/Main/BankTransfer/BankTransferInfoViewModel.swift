@@ -7,13 +7,15 @@ import KeyAppUI
 
 final class BankTransferInfoViewModel: BaseViewModel, ObservableObject {
 
-    // MARK: -
+    // MARK: - Navigation
 
     var showCountries: AnyPublisher<Country?, Never> {
         showCountriesSubject.eraseToAnyPublisher()
     }
-    
-    let openRegistration = PassthroughSubject<Country, Never>()
+
+    var openRegistration: AnyPublisher<Country, Never> {
+        openRegistrationSubject.eraseToAnyPublisher()
+    }
 
     var openProviderInfo: AnyPublisher<URL, Never> {
         openProviderInfoSubject.eraseToAnyPublisher()
@@ -30,8 +32,9 @@ final class BankTransferInfoViewModel: BaseViewModel, ObservableObject {
 
     // MARK: -
 
-    private var showCountriesSubject = PassthroughSubject<Country?, Never>()
-    private var openProviderInfoSubject = PassthroughSubject<URL, Never>()
+    private let showCountriesSubject = PassthroughSubject<Country?, Never>()
+    private let openProviderInfoSubject = PassthroughSubject<URL, Never>()
+    private let openRegistrationSubject = PassthroughSubject<Country, Never>()
 
     private var currentCountry: Country? {
         didSet {
@@ -136,7 +139,7 @@ final class BankTransferInfoViewModel: BaseViewModel, ObservableObject {
         guard let country = self.currentCountry else {
             return
         }
-        openRegistration.send(country)
+        openRegistrationSubject.send(country)
     }
 
     private func isAvailable() -> Bool {

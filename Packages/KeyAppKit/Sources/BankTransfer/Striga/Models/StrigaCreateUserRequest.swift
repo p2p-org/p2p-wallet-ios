@@ -1,13 +1,6 @@
-//
-//  CreateUserRequest.swift
-//  
-//
-//  Created by Ivan on 23.05.2023.
-//
-
 import Foundation
 
-public struct CreateUserRequest: Encodable {
+public struct StrigaCreateUserRequest: Encodable {
     let firstName: String
     let lastName: String
     let email: String

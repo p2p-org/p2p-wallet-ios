@@ -124,6 +124,15 @@ private extension EdgeInsets {
 
 struct StrigaRegistrationSecondStepView_Previews: PreviewProvider {
     static var previews: some View {
-        StrigaRegistrationSecondStepView(viewModel: StrigaRegistrationSecondStepViewModel())
+        StrigaRegistrationSecondStepView(
+            viewModel: StrigaRegistrationSecondStepViewModel(
+                data: .init(
+                    firstName: "test",
+                    lastName: "test",
+                    email: "test@test.com",
+                    mobile: .init(countryCode: "", number: "")
+                )
+            )
+        )
     }
 }

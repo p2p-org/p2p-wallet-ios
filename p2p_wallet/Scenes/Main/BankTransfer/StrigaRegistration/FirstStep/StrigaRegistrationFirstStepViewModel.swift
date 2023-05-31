@@ -16,6 +16,12 @@ final class StrigaRegistrationFirstStepViewModel: BaseViewModel, ObservableObjec
 
     // Dependencies
     @Injected private var service: BankTransferService
+    
+    // Data
+    private var data: StrigaUserDetailsResponse?
+    
+    // Loading state
+    @Published var isLoading = false
 
     // Fields
     @Published var email: String = ""
@@ -29,14 +35,14 @@ final class StrigaRegistrationFirstStepViewModel: BaseViewModel, ObservableObjec
     @Published var actionTitle: String = L10n.next
     @Published var isDataValid = true // We need this flag to allow user enter at first whatever he/she likes and then validate everything
     let actionPressed = PassthroughSubject<Void, Never>()
-    let openNextStep = PassthroughSubject<Void, Never>()
+    let openNextStep = PassthroughSubject<StrigaUserDetailsResponse, Never>()
     let chooseCountry = PassthroughSubject<Country?, Never>()
     let back = PassthroughSubject<Void, Never>()
 
     var fieldsStatuses = [Field: StrigaRegistrationTextFieldStatus]()
 
     @Published var selectedCountryOfBirth: Country?
-    @Published private var dateOfBirthModel: RegistrationData.DateOfBirth?
+    @Published private var dateOfBirthModel: StrigaUserDetailsResponse.DateOfBirth?
     private let dateFormat = "dd.mm.yyyy"
 
     init(country: Country) {
@@ -46,10 +52,10 @@ final class StrigaRegistrationFirstStepViewModel: BaseViewModel, ObservableObjec
 
         actionPressed
             .sink { [weak self] _ in
-                guard let self = self else { return }
+                guard let self = self, let data = self.data else { return }
                 self.isDataValid = isValid()
                 if isValid() {
-                    self.openNextStep.send(())
+                    self.openNextStep.send(data)
                 }
             }
             .store(in: &subscriptions)
@@ -63,7 +69,7 @@ final class StrigaRegistrationFirstStepViewModel: BaseViewModel, ObservableObjec
             .map { $0.split(separator: ".") }
             .map { [weak self] components in
                 if components.count == self?.dateFormat.split(separator: ".").count {
-                    return RegistrationData.DateOfBirth(year: Int(components[2]), month: Int(components[1]), day: Int(components[0]))
+                    return StrigaUserDetailsResponse.DateOfBirth(year: Int(components[2]), month: Int(components[1]), day: Int(components[0]))
                 } else {
                     return nil
                 }
@@ -88,10 +94,20 @@ final class StrigaRegistrationFirstStepViewModel: BaseViewModel, ObservableObjec
 
 private extension StrigaRegistrationFirstStepViewModel {
     func fetchSavedData() {
+        // Mark as isLoading
+        isLoading = true
+        
         Task {
             do {
-                let data = try await service.getRegistrationData()
+                guard let data = try await service.getRegistrationData() as? StrigaUserDetailsResponse
+                else {
+                    throw StrigaProviderError.invalidResponse
+                }
+                
                 await MainActor.run {
+                    // save data
+                    self.data = data
+                    isLoading = false
                     email = data.email
                     phoneNumber = data.mobile.number
                     firstName = data.firstName
@@ -110,6 +126,10 @@ private extension StrigaRegistrationFirstStepViewModel {
                 }
             } catch {
                 // TODO: - Handle error
+                
+                await MainActor.run {
+                    isLoading = false
+                }
             }
         }
     }
@@ -171,14 +191,19 @@ private extension StrigaRegistrationFirstStepViewModel {
             .sinkAsync { [weak self] contacts, credentials, dateOfBirth in
                 guard let self else { return }
 
-                try? await self.service.save(data: RegistrationData(
-                    firstName: credentials.0,
-                    lastName: credentials.1,
-                    email: contacts.0,
-                    mobile: RegistrationData.Mobile(countryCode: "", number: contacts.1),
-                    dateOfBirth: dateOfBirth.0,
-                    placeOfBirth: dateOfBirth.1?.code
-                ))
+                try? await self.service.updateLocally(
+                    data: StrigaUserDetailsResponse(
+                        firstName: credentials.0,
+                        lastName: credentials.1,
+                        email: contacts.0,
+                        mobile: StrigaUserDetailsResponse.Mobile(
+                            countryCode: "",
+                            number: contacts.1
+                        ),
+                        dateOfBirth: dateOfBirth.0,
+                        placeOfBirth: dateOfBirth.1?.code
+                    )
+                )
 
                 if self.isDataValid == false {
                     self.isDataValid = self.isValid()

@@ -26,14 +26,19 @@ final class TopupCoordinator: Coordinator<TopupCoordinatorResult> {
             rootView: TopupActionsView(viewModel: viewModel)
         )
         navigationController?.present(controller, animated: true)
+
         return Publishers.Merge(
-            controller.deallocatedPublisher().map { TopupCoordinatorResult.cancel }.eraseToAnyPublisher(),
+            // Cancel event
+            controller.deallocatedPublisher()
+                .map { TopupCoordinatorResult.cancel }.eraseToAnyPublisher(),
+            // Tapped item
             viewModel.tappedItem
                 .map { TopupCoordinatorResult.action(action: $0) }
-                .handleEvents(receiveOutput: { _ in
-                    controller.dismiss(animated: true)
+                .handleEvents(receiveOutput: { [weak controller] _ in
+                    controller?.dismiss(animated: true)
                 })
                 .eraseToAnyPublisher()
-        ).prefix(1).eraseToAnyPublisher()
+        )
+            .prefix(1).eraseToAnyPublisher()
     }
 }

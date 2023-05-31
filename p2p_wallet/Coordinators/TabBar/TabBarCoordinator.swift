@@ -1,6 +1,7 @@
 import AnalyticsManager
 import BankTransfer
 import Combine
+import CountriesAPI
 import Foundation
 import KeyAppBusiness
 import Resolver
@@ -240,6 +241,26 @@ final class TabBarCoordinator: Coordinator<Void> {
         else { return }
 
         switch action {
+        // striga registration
+        case .info:
+            coordinate(to: BankTransferInfoCoordinator(navigationController: navigationController)).sink { [weak self] result in
+                switch result {
+                case .registration(let country):
+                    self?.handleTopUpRegistration(with: country)
+                case .cancel:
+                    break
+                }
+            }.store(in: &subscriptions)
+        // striga kyc
+        case .kyc:
+            // TODO: - KYC
+            let vc = UIBottomSheetHostingController(rootView: KYCView())
+            navigationController.present(vc, interactiveDismissalType: .standard)
+        // striga transfer
+        case .transfer:
+            // TODO: - Transfer
+            let vc = UIBottomSheetHostingController(rootView: StrigaTransferView())
+            navigationController.present(vc, interactiveDismissalType: .standard)
         case .card:
             let buyCoordinator = BuyCoordinator(
                 navigationController: navigationController,
@@ -248,16 +269,19 @@ final class TabBarCoordinator: Coordinator<Void> {
             coordinate(to: buyCoordinator).sink {}.store(in: &subscriptions)
         case .crypto:
             self.handleAction(.receive)
-        case .transfer:
-            let service: BankTransferService = Resolver.resolve()
-            service.userData.flatMap { [unowned self] data in
-                self.coordinate(to: BankTransferCoordinator(
-                    userData: data,
-                    navigationController: navigationController)
-                )
-            }
-            .sink {}.store(in: &subscriptions)
         }
+    }
+
+    private func handleTopUpRegistration(with country: Country) {
+        guard
+            let navigationController = tabBarController.selectedViewController as? UINavigationController
+        else { return }
+        coordinate(
+            to: StrigaRegistrationFirstStepCoordinator(
+                country: country,
+                parent: navigationController
+            )
+        ).sink {}.store(in: &subscriptions)
     }
 
     /// Handle actions given by Actions button

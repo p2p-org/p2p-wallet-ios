@@ -1,17 +1,10 @@
-//
-//  Endpoints.swift
-//  p2p_wallet
-//
-//  Created by Ivan on 15.05.2023.
-//
-
 import Foundation
 import KeyAppNetworking
 
 public enum StrigaEndpoint {
     case verifyMobileNumber(authHeader: AuthHeader, userId: String, verificationCode: String)
     case getUserDetails(authHeader: AuthHeader, userId: String)
-    case createUser(authHeader: AuthHeader, model: CreateUserRequest)
+    case createUser(authHeader: AuthHeader, model: StrigaCreateUserRequest)
 }
 
 // MARK: - HTTPEndpoint

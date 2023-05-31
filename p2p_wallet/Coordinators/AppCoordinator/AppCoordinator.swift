@@ -10,12 +10,12 @@ import Combine
 import Foundation
 import KeyAppUI
 import Onboarding
-import Resolver
-import SolanaSwift
-import UIKit
 import OrcaSwapSwift
+import Resolver
 import Sell
 import Sentry
+import SolanaSwift
+import UIKit
 
 final class AppCoordinator: Coordinator<Void> {
     // MARK: - Dependencies
@@ -42,7 +42,7 @@ final class AppCoordinator: Coordinator<Void> {
 
     override init() {
         super.init()
-        defer { appEventHandler.delegate = self  }
+        defer { appEventHandler.delegate = self }
         bind()
     }
 
@@ -52,7 +52,7 @@ final class AppCoordinator: Coordinator<Void> {
     func start() {
         // set window
         window = UIWindow(frame: UIScreen.main.bounds)
-        
+
         // set appearance
         window?.overrideUserInterfaceStyle = Defaults.appearance
 
@@ -127,20 +127,23 @@ final class AppCoordinator: Coordinator<Void> {
         guard let window = window else { return }
 
         Task.detached {
-            try await Resolver.resolve(WalletMetadataService.self).update()
+            try await Resolver.resolve(WalletMetadataService.self).synchronize()
             try await Resolver.resolve(OrcaSwapType.self).load()
             await Resolver.resolve(JupiterTokensRepository.self).load()
         }
-        
+
         Task {
             // load services
             if available(.sellScenarioEnabled) {
                 await Resolver.resolve((any SellDataService).self).checkAvailability()
             }
-            
+
             // coordinate
             await MainActor.run { [unowned self] in
-                let coordinator = TabBarCoordinator(window: window, authenticateWhenAppears: showAuthenticationOnMainOnAppear)
+                let coordinator = TabBarCoordinator(
+                    window: window,
+                    authenticateWhenAppears: showAuthenticationOnMainOnAppear
+                )
                 coordinate(to: coordinator)
                     .sink(receiveValue: {})
                     .store(in: &subscriptions)
@@ -182,7 +185,7 @@ final class AppCoordinator: Coordinator<Void> {
 
                     // Warmup metadata
                     Task.detached {
-                        try await Resolver.resolve(WalletMetadataService.self).update(initialMetadata: data.metadata)
+                        try await Resolver.resolve(WalletMetadataService.self).onboard(with: data.metadata)
                     }
                 case let .restored(data):
                     analyticsManager.log(event: .restoreConfirmPin(result: true))
@@ -203,8 +206,7 @@ final class AppCoordinator: Coordinator<Void> {
                     // Warmup metadata
                     if let metadata = data.metadata {
                         Task.detached {
-                            try await Resolver.resolve(WalletMetadataService.self)
-                                .update(initialMetadata: metadata)
+                            try await Resolver.resolve(WalletMetadataService.self).onboard(with: metadata)
                         }
                     }
                 case .breakProcess:
@@ -215,12 +217,12 @@ final class AppCoordinator: Coordinator<Void> {
     }
 
     // MARK: - Helper
-    
+
     private func sendUserIdentifierToAnalyticsProviders(_ wallet: UserWallet?) {
         // Amplitude
         let amplitudeAnalyticsProvider: AmplitudeAnalyticsProvider = Resolver.resolve()
         amplitudeAnalyticsProvider.setUserId(wallet?.account.publicKey.base58EncodedString)
-        
+
         // Sentry
         if let wallet {
             var sentryUser = Sentry.User(

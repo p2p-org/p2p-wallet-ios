@@ -24,8 +24,13 @@ final class StrigaRegistrationFirstStepCoordinator: Coordinator<Void> {
         navigationController.modalPresentationStyle = .fullScreen
 
         viewModel.openNextStep
-            .flatMap { _ in
-                self.coordinate(to: StrigaRegistrationSecondStepCoordinator(navigationController: self.navigationController))
+            .flatMap { data in
+                self.coordinate(
+                    to: StrigaRegistrationSecondStepCoordinator(
+                        navigationController: self.navigationController,
+                        data: data
+                    )
+                )
             }
             .sink { }
             .store(in: &subscriptions)
