@@ -253,9 +253,15 @@ final class TabBarCoordinator: Coordinator<Void> {
             }.store(in: &subscriptions)
         // striga kyc
         case .kyc:
-            // TODO: - KYC
-            let vc = UIBottomSheetHostingController(rootView: KYCView())
-            navigationController.present(vc, interactiveDismissalType: .standard)
+            coordinate(
+                to: KYCCoordinator(
+                    presentingViewController: navigationController
+                )
+            )
+                .sink { _ in
+                    // TODO: - Handle result
+                }
+                .store(in: &subscriptions)
         // striga transfer
         case .transfer:
             // TODO: - Transfer

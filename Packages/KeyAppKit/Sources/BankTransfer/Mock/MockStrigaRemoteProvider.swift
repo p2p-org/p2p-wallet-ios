@@ -84,6 +84,6 @@ public final class MockStrigaRemoteProvider: StrigaRemoteProvider {
     }
     
     public func getKYCToken(userId: String) async throws -> String {
-        ""
+        kycToken!
     }
 }
