@@ -37,33 +37,15 @@ final class TopupActionsViewModel: BaseViewModel, ObservableObject {
     var tappedItem: AnyPublisher<Action, Never> {
         // Filtering .transfer items, since we might wait for BankTransferService state to be loaded
         tappedItemSubject
-            .eraseToAnyPublisher()
             .withLatestFrom(bankTransferService.state) { action, state in
                 (action, state)
             }
             .filter { value in
-                print("abdddfdf: \(value)")
                 return value.0 == .transfer ? (!value.1.hasError && !value.1.isFetching) : true
             }
             .map { val in
                 if val.0 == .transfer, val.1.status == .ready, !val.1.hasError {
-                    // registered user
-                    if nil != val.1.value.userId {
-                        // if kyc is verifed
-                        if val.1.value.kycVerified {
-                            return .transfer
-                        }
-                        
-                        // otherwise
-                        else {
-                            return .kyc
-                        }
-                    }
-                    
-                    // unregistered user
-                    else {
-                        return .info
-                    }
+                    return .transfer
                 }
                 return val.0
             }
@@ -128,8 +110,6 @@ final class TopupActionsViewModel: BaseViewModel, ObservableObject {
 
 extension TopupActionsViewModel {
     enum Action: String {
-        case info
-        case kyc
         case transfer
         case card
         case crypto
@@ -143,3 +123,4 @@ extension TopupActionsViewModel {
         var isLoading: Bool
     }
 }
+

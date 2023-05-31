@@ -46,11 +46,7 @@ struct StrigaRegistrationFirstStepView: View {
         .modifier(ListBackgroundModifier(separatorColor: .clear))
         .background(
             Color(asset: Asset.Colors.smoke).ignoresSafeArea()
-        ).navigationBarItems(leading: Button(action: viewModel.back.send, label: {
-            Image(uiImage: .backArrow)
-                .renderingMode(.template)
-                .foregroundColor(Color(asset: Asset.Colors.night))
-        }))
+        )
     }
 
     var contactsSection: some View {

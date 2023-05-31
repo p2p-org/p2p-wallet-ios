@@ -6,24 +6,24 @@ import Resolver
 import SafariServices
 
 enum BankTransferInfoCoordinatorResult {
-    case cancel
-    case registration(country: Country)
+    case canceled
+    case completed
 }
 
 final class BankTransferInfoCoordinator: Coordinator<BankTransferInfoCoordinatorResult> {
 
     // MARK: -
 
-    private var navigationController: UINavigationController!
+    private var viewController: UIViewController!
 
     // MARK: -
 
     @Injected private var bankTransferService: any BankTransferService
 
     init(
-        navigationController: UINavigationController? = nil
+        viewController: UIViewController? = nil
     ) {
-        self.navigationController = navigationController
+        self.viewController = viewController
     }
 
     override func start() -> AnyPublisher<BankTransferInfoCoordinatorResult, Never> {
@@ -61,13 +61,33 @@ final class BankTransferInfoCoordinator: Coordinator<BankTransferInfoCoordinator
         }.sink {}.store(in: &subscriptions)
 
         controller.view.layer.cornerRadius = 20
-        navigationController.present(controller, interactiveDismissalType: .standard)
+        viewController.present(controller, interactiveDismissalType: .standard)
+
         return Publishers.Merge(
-            controller.deallocatedPublisher().map { BankTransferInfoCoordinatorResult.cancel },
-            viewModel.openRegistration.map { country in BankTransferInfoCoordinatorResult.registration(country: country) }
-                .handleEvents(receiveOutput: { [weak controller] country in
-                    controller?.dismiss(animated: true)
+            controller.deallocatedPublisher()
+                .map { BankTransferInfoCoordinatorResult.canceled },
+            viewModel.openRegistration
+                .handleEvents(receiveOutput: { _ in
+                    controller.dismiss(animated: true)
                 })
-        ).prefix(1).eraseToAnyPublisher()
+                .flatMap({ country in
+                    self.coordinate(
+                        to: StrigaRegistrationFirstStepCoordinator(
+                            country: country,
+                            navigationController: self.viewController as! UINavigationController
+                        )
+                    )
+                })
+                .map { result in
+                    switch result {
+                    case .completed:
+                        return BankTransferInfoCoordinatorResult.completed
+                    case .canceled:
+                        return BankTransferInfoCoordinatorResult.canceled
+                    }
+                }
+        )
+            .prefix(1)
+            .eraseToAnyPublisher()
     }
 }

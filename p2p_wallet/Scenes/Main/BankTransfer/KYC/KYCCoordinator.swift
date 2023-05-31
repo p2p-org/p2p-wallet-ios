@@ -4,7 +4,12 @@ import Resolver
 import Combine
 import IdensicMobileSDK
 
-final class KYCCoordinator: Coordinator<Void> {
+enum KYCCoordinatorResult {
+    case pass
+    case canceled
+}
+
+final class KYCCoordinator: Coordinator<KYCCoordinatorResult> {
     
     // MARK: - Dependencies
     
@@ -25,7 +30,7 @@ final class KYCCoordinator: Coordinator<Void> {
     
     // MARK: - Methods
 
-    override func start() -> AnyPublisher<Void, Never> {
+    override func start() -> AnyPublisher<KYCCoordinatorResult, Never> {
         // showloading
         presentingViewController.showIndetermineHud()
         

@@ -2,38 +2,29 @@ import SwiftUI
 import Combine
 import CountriesAPI
 
-final class StrigaRegistrationFirstStepCoordinator: Coordinator<Void> {
-    private let result = PassthroughSubject<Void, Never>()
+enum StrigaRegistrationFirstStepCoordinatorResult {
+    case completed
+    case canceled
+}
+
+final class StrigaRegistrationFirstStepCoordinator: Coordinator<StrigaRegistrationFirstStepCoordinatorResult> {
     private let country: Country
-    private let parent: UIViewController
     private let navigationController: UINavigationController
 
-    init(country: Country, parent: UIViewController) {
+    init(country: Country, navigationController: UINavigationController) {
         self.country = country
-        self.parent = parent
-        self.navigationController = UINavigationController()
+        self.navigationController = navigationController
     }
 
-    override func start() -> AnyPublisher<Void, Never> {
+    override func start() -> AnyPublisher<StrigaRegistrationFirstStepCoordinatorResult, Never> {
         let viewModel = StrigaRegistrationFirstStepViewModel(country: country)
         let view = StrigaRegistrationFirstStepView(viewModel: viewModel)
 
         let vc = view.asViewController(withoutUIKitNavBar: false)
+        vc.hidesBottomBarWhenPushed = true
         vc.title = L10n.stepOf(1, 3)
-        navigationController.setViewControllers([vc], animated: true)
+        navigationController.setViewControllers([navigationController.viewControllers.first, vc].compactMap { $0 }, animated: true)
         navigationController.modalPresentationStyle = .fullScreen
-
-        viewModel.openNextStep
-            .flatMap { data in
-                self.coordinate(
-                    to: StrigaRegistrationSecondStepCoordinator(
-                        navigationController: self.navigationController,
-                        data: data
-                    )
-                )
-            }
-            .sink { }
-            .store(in: &subscriptions)
 
         viewModel.back
             .sink { [weak self] _ in
@@ -56,12 +47,27 @@ final class StrigaRegistrationFirstStepCoordinator: Coordinator<Void> {
             }
         }.store(in: &subscriptions)
 
-        parent.present(navigationController, animated: true)
-
         return Publishers.Merge(
-            vc.deallocatedPublisher(),
-            result.eraseToAnyPublisher()
-        )
-        .prefix(1).eraseToAnyPublisher()
+            vc.deallocatedPublisher()
+                .map { StrigaRegistrationFirstStepCoordinatorResult.canceled },
+            viewModel.openNextStep.eraseToAnyPublisher()
+                .flatMap({ response in
+                    self.coordinate(
+                        to: StrigaRegistrationSecondStepCoordinator(
+                            navigationController: self.navigationController,
+                            data: response
+                        ))
+                })
+                .map { result in
+                    switch result {
+                    case .completed:
+                        return StrigaRegistrationFirstStepCoordinatorResult.completed
+                    case .canceled:
+                        return StrigaRegistrationFirstStepCoordinatorResult.canceled
+                    }
+                }
+            )
+            .prefix(1)
+            .eraseToAnyPublisher()
     }
 }

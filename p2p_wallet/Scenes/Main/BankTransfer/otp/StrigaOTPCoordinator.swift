@@ -19,10 +19,10 @@ final class StrigaOTPCoordinator: Coordinator<StrigaOTPCoordinatorResult> {
 
     private var resultSubject = PassthroughSubject<Bool, Never>()
 
-    let viewController: UIViewController
-    let phone: String
+    private let viewController: UINavigationController
+    private let phone: String
 
-    init(viewController: UIViewController, phone: String) {
+    init(viewController: UINavigationController, phone: String) {
         self.viewController = viewController
         self.phone = phone
     }
@@ -35,19 +35,24 @@ final class StrigaOTPCoordinator: Coordinator<StrigaOTPCoordinatorResult> {
         )
         let controller = EnterSMSCodeViewController(viewModel: viewModel)
         controller.title = L10n.stepOf(3, 3)
+        controller.hidesBottomBarWhenPushed = true
 
         viewModel.coordinatorIO.onConfirm.sinkAsync { [weak self, weak viewModel] otp in
+            guard let self else { return }
             viewModel?.isLoading = true
+            defer {
+                viewModel?.isLoading = false
+            }
             do {
-                let result = try await self?.bankTransfer.verify(OTP: otp)
+                let result = try await self.bankTransfer.verify(OTP: otp)
                 if result == false {
                     viewModel?.coordinatorIO.error.send(APIGatewayError.invalidOTP)
+                    return
                 }
-                self?.resultSubject.send(result ?? false)
+                self.resultSubject.send(result)
             } catch {
                 viewModel?.coordinatorIO.error.send(error)
             }
-            viewModel?.isLoading = false
         }.store(in: &subscriptions)
 
         viewModel.coordinatorIO.showInfo
@@ -90,25 +95,77 @@ final class StrigaOTPCoordinator: Coordinator<StrigaOTPCoordinatorResult> {
         present(controller: controller)
 
         return Publishers.Merge(
-            controller.deallocatedPublisher().map { StrigaOTPCoordinatorResult.canceled },
-            resultSubject.filter { $0 }.map { _ in StrigaOTPCoordinatorResult.verified }
-        ).prefix(1).eraseToAnyPublisher()
+            controller.deallocatedPublisher()
+                .map { StrigaOTPCoordinatorResult.canceled },
+            resultSubject.filter { $0 }
+                .flatMap({ isVerified in
+                    self.coordinate(
+                        to: StrigaOTPSuccessCoordinator(
+                            viewController: self.viewController
+                        )
+                    )
+                })
+                .map { result in
+                    switch result {
+                    case .next:
+                        return StrigaOTPCoordinatorResult.verified
+                    case .cancel:
+                        return StrigaOTPCoordinatorResult.canceled
+                    }
+                }
+        )
+            .prefix(1)
+            .eraseToAnyPublisher()
     }
 
     private func present(controller: UIViewController) {
-        if let navigation = self.viewController as? UINavigationController {
-            navigation.pushViewController(controller, animated: true, completion: {})
-        } else {
-            self.viewController.present(controller, animated: true)
-        }
+        viewController
+            .setViewControllers(
+                [
+                    viewController.viewControllers.first,
+                    controller
+                ].compactMap { $0 },
+                animated: true
+            )
     }
 
     private func dismiss(controller: UIViewController) {
-        if let navigation = self.viewController as? UINavigationController {
-            navigation.popViewController(animated: true)
-        } else {
-            controller.dismiss(animated: true)
-        }
+        viewController.popViewController(animated: true)
     }
 
+}
+
+enum StrigaOTPSuccessCoordinatorResult {
+    case next
+    case cancel
+}
+
+final class StrigaOTPSuccessCoordinator: Coordinator<StrigaOTPSuccessCoordinatorResult> {
+
+    private let nextSubject = PassthroughSubject<Void, Never>()
+    private let viewController: UINavigationController
+    init(viewController: UINavigationController) {
+        self.viewController = viewController
+    }
+
+    override func start() -> AnyPublisher<StrigaOTPSuccessCoordinatorResult, Never> {
+        let view = StrigaOTPCompletedView(
+            image: .thumbsupImage,
+            title: L10n.thankYou,
+            subtitle: L10n.TheLastStepIsDocumentAndSelfieVerification.thisIsAOneTimeProcedureToEnsureSafetyOfYourAccount,
+            actionTitle: L10n.continue) { [weak self] in
+                self?.nextSubject.send()
+            }
+        let controller = view.asViewController(withoutUIKitNavBar: false)
+        self.viewController.pushViewController(controller, animated: true)
+        self.viewController.viewControllers = [viewController.viewControllers.first, controller].compactMap { $0 }
+
+        return Publishers.Merge(
+            controller.deallocatedPublisher()
+                .map { StrigaOTPSuccessCoordinatorResult.cancel },
+            nextSubject.map { StrigaOTPSuccessCoordinatorResult.next }
+        )
+            .prefix(1)
+            .eraseToAnyPublisher()
+    }
 }

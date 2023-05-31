@@ -241,32 +241,10 @@ final class TabBarCoordinator: Coordinator<Void> {
         else { return }
 
         switch action {
-        // striga registration
-        case .info:
-            coordinate(to: BankTransferInfoCoordinator(navigationController: navigationController)).sink { [weak self] result in
-                switch result {
-                case .registration(let country):
-                    self?.handleTopUpRegistration(with: country)
-                case .cancel:
-                    break
-                }
-            }.store(in: &subscriptions)
-        // striga kyc
-        case .kyc:
-            coordinate(
-                to: KYCCoordinator(
-                    presentingViewController: navigationController
-                )
-            )
-                .sink { _ in
-                    // TODO: - Handle result
-                }
-                .store(in: &subscriptions)
-        // striga transfer
         case .transfer:
-            // TODO: - Transfer
-            let vc = UIBottomSheetHostingController(rootView: StrigaTransferView())
-            navigationController.present(vc, interactiveDismissalType: .standard)
+            coordinate(to: BankTransferCoordinator(viewController: navigationController))
+                .sink { _ in }
+                .store(in: &subscriptions)
         case .card:
             let buyCoordinator = BuyCoordinator(
                 navigationController: navigationController,
@@ -276,18 +254,6 @@ final class TabBarCoordinator: Coordinator<Void> {
         case .crypto:
             self.handleAction(.receive)
         }
-    }
-
-    private func handleTopUpRegistration(with country: Country) {
-        guard
-            let navigationController = tabBarController.selectedViewController as? UINavigationController
-        else { return }
-        coordinate(
-            to: StrigaRegistrationFirstStepCoordinator(
-                country: country,
-                parent: navigationController
-            )
-        ).sink {}.store(in: &subscriptions)
     }
 
     /// Handle actions given by Actions button
@@ -436,8 +402,8 @@ extension TabBarCoordinator {
                 image: .thumbsupImage,
                 title: L10n.thankYou,
                 subtitle: L10n.TheLastStepIsDocumentAndSelfieVerification.thisIsAOneTimeProcedureToEnsureSafetyOfYourAccount,
-                actionTitle: L10n.continue) {
-                    // go to KYC
+                actionTitle: L10n.continue) { [weak self] in
+                    
                 }
             let controller = view.asViewController(withoutUIKitNavBar: false)
             navigationController.pushViewController(controller, animated: true)

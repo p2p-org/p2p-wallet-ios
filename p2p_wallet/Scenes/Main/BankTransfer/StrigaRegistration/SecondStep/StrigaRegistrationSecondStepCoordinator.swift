@@ -2,8 +2,14 @@ import SwiftUI
 import Combine
 import CountriesAPI
 import BankTransfer
+import Resolver
 
-final class StrigaRegistrationSecondStepCoordinator: Coordinator<Void> {
+enum StrigaRegistrationSecondStepCoordinatorResult {
+    case canceled
+    case completed
+}
+
+final class StrigaRegistrationSecondStepCoordinator: Coordinator<StrigaRegistrationSecondStepCoordinatorResult> {
     private let result = PassthroughSubject<Void, Never>()
     private let navigationController: UINavigationController
     private let data: StrigaUserDetailsResponse
@@ -13,7 +19,7 @@ final class StrigaRegistrationSecondStepCoordinator: Coordinator<Void> {
         self.data = data
     }
 
-    override func start() -> AnyPublisher<Void, Never> {
+    override func start() -> AnyPublisher<StrigaRegistrationSecondStepCoordinatorResult, Never> {
         let viewModel = StrigaRegistrationSecondStepViewModel(data: data)
         let view = StrigaRegistrationSecondStepView(viewModel: viewModel)
         let vc = view.asViewController(withoutUIKitNavBar: false)
@@ -72,9 +78,21 @@ final class StrigaRegistrationSecondStepCoordinator: Coordinator<Void> {
         }.store(in: &subscriptions)
 
         return Publishers.Merge(
-            vc.deallocatedPublisher(),
-            result.eraseToAnyPublisher()
+            vc.deallocatedPublisher()
+                .map { StrigaRegistrationSecondStepCoordinatorResult.canceled },
+            viewModel.actionPressed
+                .asyncMap({ _ in
+                    var data = UserData.empty
+                    data.countryCode = "ft"
+                    data.userId = "123"
+                    data.mobileVerified = false
+                    data.kycVerified = false
+                    let service: BankTransferService = Resolver.resolve()
+                    try! await service.save(userData: data)
+                })
+                .map { StrigaRegistrationSecondStepCoordinatorResult.completed }
         )
-        .prefix(1).eraseToAnyPublisher()
+            .prefix(1)
+            .eraseToAnyPublisher()
     }
 }
