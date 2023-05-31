@@ -49,7 +49,9 @@ struct StrigaRegistrationSecondStepView: View {
                 title: L10n.occupationIndustry,
                 status: viewModel.fieldsStatuses[.occupationIndustry]
             ) {
-                DetailedButton(value: $viewModel.occupationIndustry, action: viewModel.openSelectOccupationIndustry.send)
+                DetailedButton(value: $viewModel.occupationIndustry, action: {
+                    viewModel.chooseIndustry.send(viewModel.selectedIndustry)
+                })
             }
 
             Cell(

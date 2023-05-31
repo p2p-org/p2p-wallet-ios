@@ -20,6 +20,24 @@ final class StrigaRegistrationSecondStepCoordinator: Coordinator<Void> {
         vc.title = L10n.stepOf(2, 3)
         navigationController.pushViewController(vc, animated: true)
 
+        viewModel.chooseIndustry
+            .flatMap { value in
+                self.coordinate(to: ChooseItemCoordinator<Industry>(
+                    title: L10n.selectYourIndustry,
+                    controller: self.navigationController,
+                    service: ChooseIndustryService(),
+                    chosen: value
+                ))
+            }
+            .sink { [weak viewModel] result in
+                switch result {
+                case .item(let item):
+                    viewModel?.selectedIndustry = item as? Industry
+                case .cancel: break
+                }
+            }
+            .store(in: &subscriptions)
+
         return Publishers.Merge(
             vc.deallocatedPublisher(),
             result.eraseToAnyPublisher()
