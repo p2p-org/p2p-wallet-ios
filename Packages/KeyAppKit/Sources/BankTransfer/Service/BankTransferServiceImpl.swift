@@ -10,7 +10,7 @@ public final class BankTransferServiceImpl {
     
     /// Subject that holds State with UserData stream
     public let subject = CurrentValueSubject<AsyncValueState<UserData>, Never>(
-        AsyncValueState<UserData>(status: .ready, value: UserData(countryCode: nil, userId: nil, mobileVerified: false))
+        AsyncValueState<UserData>(status: .ready, value: .empty)
     )
     
     // MARK: - Initializers
@@ -31,7 +31,28 @@ extension BankTransferServiceImpl: BankTransferService {
     }
     
     public func reload() async {
-        fatalError("Not implemented")
+        // mark as loading
+        subject.send(
+            .init(
+                status: .fetching,
+                value: .empty,
+                error: nil
+            )
+        )
+        
+        do {
+            // registered user
+            if let userId = try await repository.getUserId() {
+                return try await handleRegisteredUser(userId: userId)
+            }
+            
+            // unregistered user
+            else {
+                return try await handleUnregisteredUser()
+            }
+        } catch {
+            return handleError(error: error)
+        }
     }
     
     public func isBankTransferAvailable() -> Bool {
@@ -69,5 +90,51 @@ extension BankTransferServiceImpl: BankTransferService {
     
     public func clearCache() async {
         await repository.clearCache()
+    }
+    
+    // MARK: - Helpers
+
+    private func handleRegisteredUser(userId: String) async throws {
+        // get user details, check kyc status
+        let kycStatus = try await repository.getKYCStatus()
+        
+        // return value
+        subject.send(
+            .init(
+                status: .ready,
+                value: .init(
+                    countryCode: nil,
+                    userId: userId,
+                    mobileVerified: true,
+                    kycVerified: kycStatus.verified
+                ),
+                error: nil
+            )
+        )
+    }
+    
+    private func handleUnregisteredUser() async throws {
+        subject.send(
+            .init(
+                status: .ready,
+                value: .init(
+                    countryCode: nil,
+                    userId: nil,
+                    mobileVerified: false,
+                    kycVerified: false
+                ),
+                error: nil
+            )
+        )
+    }
+    
+    private func handleError(error: Error) {
+        subject.send(
+            .init(
+                status: .ready,
+                value: .empty,
+                error: error
+            )
+        )
     }
 }

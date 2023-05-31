@@ -4,7 +4,6 @@ import SolanaSwift
 import TweetNacl
 
 public final class StrigaBankTransferUserDataRepository: BankTransferUserDataRepository {
-
     // MARK: - Properties
 
     private let localProvider: StrigaLocalProvider
@@ -21,6 +20,27 @@ public final class StrigaBankTransferUserDataRepository: BankTransferUserDataRep
     }
     
     // MARK: - Methods
+
+    public func getUserId() async throws -> String? {
+        // if local user id is available, return it
+        if let localUserId = await localProvider.getUserId() {
+            return localUserId
+        }
+        
+        // otherwise retrieve from remote
+        else {
+            let userId = try await remoteProvider.getUserId()
+            if let userId {
+                // save to local
+                await localProvider.saveUserId(userId)
+            }
+            return userId
+        }
+    }
+    
+    public func getKYCStatus() async throws -> StrigaCreateUserResponse.KYC {
+        try await remoteProvider.getKYCStatus()
+    }
 
     public func createUser(registrationData data: BankTransferRegistrationData) async throws -> StrigaCreateUserResponse {
         // assert response type
@@ -55,10 +75,9 @@ public final class StrigaBankTransferUserDataRepository: BankTransferUserDataRep
         do {
             let response = try await remoteProvider.createUser(model: model)
             try await localProvider.save(registrationData: data)
-            debugPrint("---response: ", response)
+            await localProvider.saveUserId(response.userId)
             return response
         } catch {
-            debugPrint("---error: ", error)
             throw error
         }
     }
@@ -83,19 +102,10 @@ public final class StrigaBankTransferUserDataRepository: BankTransferUserDataRep
     public func getRegistrationData() async throws -> BankTransferRegistrationData {
         if let cachedData = await localProvider.getCachedRegistrationData()
         {
-            // if user id is available, fetch from remote
-            let userId: String?
-            if let localUserId = await localProvider.getUserId() {
-                userId = localUserId
-            } else {
-                userId = try await remoteProvider.getUserId()
-            }
-            
-            if let userId,
+            if let userId = try await getUserId(),
                let response = try? await remoteProvider.getUserDetails(userId: userId)
             {
                 // save to local provider
-                await localProvider.saveUserId(userId)
                 try await localProvider.save(registrationData: response)
                 
                 // return

@@ -277,9 +277,14 @@ extension Resolver: ResolverRegistering {
             let userWalletsManager: UserWalletManager = resolve()
             return BankTransferServiceImpl(
                 repository: StrigaBankTransferUserDataRepository(
-                    localProvider: StrigaBankTransferLocalProviderImpl(),
-                    remoteProvider: MockStrigaRemoteProvider()
-//                    StrigaRemoteProviderImpl(
+                    localProvider: MockStrigaLocalProvider(
+                        useCase: .unregisteredUser(hasCachedInput: true)
+                    ),
+                    remoteProvider: MockStrigaRemoteProvider(
+                        useCase: .unregisteredUser(hasCachedInput: true)
+                    )
+//                    localProvider: StrigaLocalProviderImpl(),
+//                    remoteProvider: StrigaRemoteProviderImpl(
 //                        solanaKeyPair: userWalletsManager.wallet?.account
 //                    )
                 )
