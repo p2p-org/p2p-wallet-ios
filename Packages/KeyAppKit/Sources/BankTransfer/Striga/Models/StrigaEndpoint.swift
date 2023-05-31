@@ -5,6 +5,7 @@ public enum StrigaEndpoint {
     case verifyMobileNumber(authHeader: AuthHeader, userId: String, verificationCode: String)
     case getUserDetails(authHeader: AuthHeader, userId: String)
     case createUser(authHeader: AuthHeader, model: StrigaCreateUserRequest)
+    case resendSMS(authHeader: AuthHeader, userId: String)
 }
 
 // MARK: - HTTPEndpoint
@@ -30,12 +31,14 @@ extension StrigaEndpoint: HTTPEndpoint {
             return userId
         case .createUser:
             return "create"
+        case .resendSMS:
+            return "resend-sms"
         }
     }
 
     public var method: HTTPMethod {
         switch self {
-        case .verifyMobileNumber, .createUser:
+        case .verifyMobileNumber, .createUser, .resendSMS:
             return .post
         case .getUserDetails:
             return .get
@@ -50,6 +53,8 @@ extension StrigaEndpoint: HTTPEndpoint {
             return nil
         case let .createUser(_, model):
             return model.encoded
+        case let .resendSMS(_, userId):
+            return ["userId": userId].encoded
         }
     }
 }
@@ -59,7 +64,7 @@ extension StrigaEndpoint: HTTPEndpoint {
 private extension StrigaEndpoint {
     var urlEnvironment: String {
         switch self {
-        case .verifyMobileNumber, .createUser, .getUserDetails:
+        case .verifyMobileNumber, .createUser, .getUserDetails, .resendSMS:
             return "payment.keyapp.org/striga"
         }
     }
@@ -75,6 +80,8 @@ private extension StrigaEndpoint {
         case let .getUserDetails(authHeader, _):
             return authHeader
         case let .createUser(authHeader, _):
+            return authHeader
+        case let .resendSMS(authHeader, _):
             return authHeader
         }
     }
