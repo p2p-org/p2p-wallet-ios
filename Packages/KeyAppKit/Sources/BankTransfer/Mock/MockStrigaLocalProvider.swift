@@ -26,11 +26,11 @@ public actor MockStrigaLocalProvider: StrigaLocalProvider {
         case let .unregisteredUser(hasCachedInput):
             userId = nil
             cachedRegistrationData = hasCachedInput ? defaultCachedInput: nil
-        case .registeredUserWithoutKYC:
-            userId = MockConstant.mockedUserId
+        case let .registeredUserWithoutKYC(userId, _):
+            self.userId = userId
             cachedRegistrationData = defaultCachedInput
-        case .registeredAndVerifiedUser:
-            userId = MockConstant.mockedUserId
+        case let .registeredAndVerifiedUser(userId):
+            self.userId = userId
             cachedRegistrationData = defaultCachedInput
         }
     }

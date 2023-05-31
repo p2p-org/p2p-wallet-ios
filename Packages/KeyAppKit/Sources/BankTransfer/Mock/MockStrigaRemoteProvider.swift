@@ -4,6 +4,7 @@ public final class MockStrigaRemoteProvider: StrigaRemoteProvider {
     // MARK: - Properties
     
     private var userId: String?
+    private let kycToken: String?
     private let response: StrigaUserDetailsResponse = .init(
         firstName: "Remote",
         lastName: "Provider",
@@ -25,10 +26,13 @@ public final class MockStrigaRemoteProvider: StrigaRemoteProvider {
         switch useCase {
         case .unregisteredUser:
             userId = nil
-        case .registeredUserWithoutKYC:
-            userId = MockConstant.mockedUserId
-        case .registeredAndVerifiedUser:
-            userId = MockConstant.mockedUserId
+            kycToken = nil
+        case let .registeredUserWithoutKYC(userId, kycToken):
+            self.userId = userId
+            self.kycToken = kycToken
+        case let .registeredAndVerifiedUser(userId):
+            self.userId = userId
+            self.kycToken = nil
         }
     }
     
@@ -60,7 +64,7 @@ public final class MockStrigaRemoteProvider: StrigaRemoteProvider {
     
     public func createUser(model: StrigaCreateUserRequest) async throws -> StrigaCreateUserResponse {
         .init(
-            userId: MockConstant.mockedUserId,
+            userId: userId!,
             email: model.email,
             KYC: try await getKYCStatus()
         )
