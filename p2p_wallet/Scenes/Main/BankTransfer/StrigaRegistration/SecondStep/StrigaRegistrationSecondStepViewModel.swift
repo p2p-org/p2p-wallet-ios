@@ -35,6 +35,7 @@ final class StrigaRegistrationSecondStepViewModel: BaseViewModel, ObservableObje
     let openNextStep = PassthroughSubject<Void, Never>()
     let chooseIndustry = PassthroughSubject<Industry?, Never>()
     let chooseSourceOfFunds = PassthroughSubject<StrigaSourceOfFunds?, Never>()
+    let chooseCountry = PassthroughSubject<Country?, Never>()
 
     var fieldsStatuses = [Field: StrigaRegistrationTextFieldStatus]()
 
@@ -75,9 +76,8 @@ final class StrigaRegistrationSecondStepViewModel: BaseViewModel, ObservableObje
             .map { value in
                 if let value {
                     return [value.emoji, value.name].compactMap { $0 } .joined(separator: " ")
-                } else {
-                    return ""
                 }
+                return ""
             }
             .assignWeak(to: \.country, on: self)
             .store(in: &subscriptions)

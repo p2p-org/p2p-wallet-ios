@@ -56,6 +56,21 @@ final class StrigaRegistrationSecondStepCoordinator: Coordinator<Void> {
             }
             .store(in: &subscriptions)
 
+        viewModel.chooseCountry.flatMap { value in
+            self.coordinate(to: ChooseItemCoordinator<Country>(
+                title: L10n.selectYourCountry,
+                controller: self.navigationController,
+                service: ChooseCountryService(),
+                chosen: value
+            ))
+        }.sink { [weak viewModel] result in
+            switch result {
+            case .item(let item):
+                viewModel?.selectedCountry = item as? Country
+            case .cancel: break
+            }
+        }.store(in: &subscriptions)
+
         return Publishers.Merge(
             vc.deallocatedPublisher(),
             result.eraseToAnyPublisher()

@@ -72,7 +72,9 @@ struct StrigaRegistrationSecondStepView: View {
                 title: L10n.country,
                 status: viewModel.fieldsStatuses[.country]
             ) {
-                DetailedButton(value: $viewModel.country, action: { })
+                DetailedButton(value: $viewModel.country, action: {
+                    viewModel.chooseCountry.send(viewModel.selectedCountry)
+                })
             }
 
             Cell(
