@@ -70,4 +70,13 @@ public final class MockStrigaRemoteProvider: StrigaRemoteProvider {
     public func verifyMobileNumber(userId: String, verificationCode: String) async throws {
         // all goods
     }
+    
+    var invokedResendSMS = false
+    var invokedResendSMSCount = 0
+    var invokedResendSMSParameters: (userId: String, Void)?
+    var invokedResendSMSParametersList = [(userId: String, Void)]()
+    
+    public func resendSMS(userId: String) async throws {
+        
+    }
 }

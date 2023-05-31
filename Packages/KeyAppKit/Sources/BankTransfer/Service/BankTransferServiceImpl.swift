@@ -83,6 +83,11 @@ extension BankTransferServiceImpl: BankTransferService {
         fatalError("Not implemented")
     }
     
+    public func resendSMS() async throws {
+        guard let userId = subject.value.value.userId else { return }
+        try await repository.resendSMS(userId: userId)
+    }
+    
     public func clearCache() async {
         await repository.clearCache()
     }

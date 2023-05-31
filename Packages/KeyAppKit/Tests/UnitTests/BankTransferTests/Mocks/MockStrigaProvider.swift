@@ -10,42 +10,17 @@ import BankTransfer
 
 final class MockStrigaProvider: StrigaRemoteProvider {
     
-    var invokedGetUserDetails = false
-    var invokedGetUserDetailsCount = 0
-    var invokedGetUserDetailsParameters: (authHeader: StrigaEndpoint.AuthHeader, userId: String, Void)?
-    var invokedGetUserDetailsParametersList = [(authHeader: StrigaEndpoint.AuthHeader, userId: String, Void)]()
-    var stubbedGetUserDetailsResult: Result<StrigaUserDetailsResponse, Error>?
-    
-    func getUserDetails(authHeader: StrigaEndpoint.AuthHeader, userId: String) async throws -> StrigaUserDetailsResponse {
-        invokedGetUserDetails = true
-        invokedGetUserDetailsCount += 1
-        invokedGetUserDetailsParameters = (authHeader, userId, ())
-        invokedGetUserDetailsParametersList.append((authHeader, userId, ()))
-        if let stubbedGetUserDetailsResult {
-            switch stubbedGetUserDetailsResult {
-            case let .success(response):
-                return response
-            case let .failure(error):
-                throw error
-            }
-        }
-        throw NSError(domain: "", code: 0)
-    }
-    
     var invokedCreateUser = false
     var invokedCreateUserCount = 0
-    var invokedCreateUserParameters: (authHeader: StrigaEndpoint.AuthHeader, model: BankTransfer.StrigaCreateUserRequest, Void)?
-    var invokedCreateUserParametersList = [(authHeader: StrigaEndpoint.AuthHeader, model: BankTransfer.StrigaCreateUserRequest, Void)]()
-    var stubbedCreateUserResult: Result<BankTransfer.CreateUserResponse, Error>?
+    var invokedCreateUserParameters: (model: StrigaCreateUserRequest, Void)?
+    var invokedCreateUserParametersList = [(model: StrigaCreateUserRequest, Void)]()
+    var stubbedCreateUserResult: Result<StrigaCreateUserResponse, Error>?
     
-    func createUser(
-        authHeader: StrigaEndpoint.AuthHeader,
-        model: BankTransfer.StrigaCreateUserRequest
-    ) async throws -> BankTransfer.CreateUserResponse {
+    func createUser(model: StrigaCreateUserRequest) async throws -> StrigaCreateUserResponse {
         invokedCreateUser = true
         invokedCreateUserCount += 1
-        invokedCreateUserParameters = (authHeader, model, ())
-        invokedCreateUserParametersList.append((authHeader, model, ()))
+        invokedCreateUserParameters = (model, ())
+        invokedCreateUserParametersList.append((model, ()))
         if let stubbedCreateUserResult {
             switch stubbedCreateUserResult {
             case let .success(response):
@@ -57,19 +32,67 @@ final class MockStrigaProvider: StrigaRemoteProvider {
         throw NSError(domain: "", code: 0)
     }
     
+    var invokedGetUserDetails = false
+    var invokedGetUserDetailsCount = 0
+    var invokedGetUserDetailsParameters: (userId: String, Void)?
+    var invokedGetUserDetailsParametersList = [(userId: String, Void)]()
+    var stubbedGetUserDetailsResult: Result<StrigaUserDetailsResponse, Error>?
+    
+    func getUserDetails(userId: String) async throws -> StrigaUserDetailsResponse {
+        invokedGetUserDetails = true
+        invokedGetUserDetailsCount += 1
+        invokedGetUserDetailsParameters = (userId, ())
+        invokedGetUserDetailsParametersList.append((userId, ()))
+        if let stubbedGetUserDetailsResult {
+            switch stubbedGetUserDetailsResult {
+            case let .success(response):
+                return response
+            case let .failure(error):
+                throw error
+            }
+        }
+        throw NSError(domain: "", code: 0)
+    }
+    
+    var invokedGetUserId = false
+    var invokedGetUserIdCount = 0
+    var stubbedGetUserIdResult: Result<String?, Error>?
+    
+    func getUserId() async throws -> String? {
+        invokedGetUserId = true
+        invokedGetUserIdCount += 1
+        if let stubbedGetUserIdResult {
+            switch stubbedGetUserIdResult {
+            case let .success(response):
+                return response
+            case let .failure(error):
+                throw error
+            }
+        }
+        throw NSError(domain: "", code: 0)
+    }
+    
     var invokedVerifyMobileNumber = false
     var invokedVerifyMobileNumberCount = 0
-    var invokedVerifyMobileNumberParameters: (authHeader: StrigaEndpoint.AuthHeader, userId: String, verificationCode: String)?
-    var invokedVerifyMobileNumberParametersList = [(authHeader: StrigaEndpoint.AuthHeader, userId: String, verificationCode: String)]()
+    var invokedVerifyMobileNumberParameters: (userId: String, verificationCode: String)?
+    var invokedVerifyMobileNumberParametersList = [(userId: String, verificationCode: String)]()
     
-    func verifyMobileNumber(
-        authHeader: StrigaEndpoint.AuthHeader,
-        userId: String,
-        verificationCode: String
-    ) async throws {
+    func verifyMobileNumber(userId: String, verificationCode: String) async throws {
         invokedVerifyMobileNumber = true
         invokedVerifyMobileNumberCount += 1
-        invokedVerifyMobileNumberParameters = (authHeader, userId, verificationCode)
-        invokedVerifyMobileNumberParametersList.append((authHeader, userId, verificationCode))
+        invokedVerifyMobileNumberParameters = (userId, verificationCode)
+        invokedVerifyMobileNumberParametersList.append((userId, verificationCode))
+    }
+    
+    var invokedResendSMS = false
+    var invokedResendSMSCount = 0
+    var invokedResendSMSParameters: (userId: String, Void)?
+    var invokedResendSMSParametersList = [(userId: String, Void)]()
+    
+    func resendSMS(userId: String) async throws {
+        invokedResendSMS = true
+        invokedResendSMSCount += 1
+        invokedResendSMSParameters = (userId, ())
+        invokedResendSMSParametersList.append((userId, ()))
     }
 }
