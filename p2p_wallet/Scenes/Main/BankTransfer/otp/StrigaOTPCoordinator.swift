@@ -142,6 +142,7 @@ enum StrigaOTPSuccessCoordinatorResult {
 
 final class StrigaOTPSuccessCoordinator: Coordinator<StrigaOTPSuccessCoordinatorResult> {
 
+    @Injected private var helpLauncher: HelpCenterLauncher
     private let nextSubject = PassthroughSubject<Void, Never>()
     private let viewController: UINavigationController
     init(viewController: UINavigationController) {
@@ -153,8 +154,11 @@ final class StrigaOTPSuccessCoordinator: Coordinator<StrigaOTPSuccessCoordinator
             image: .thumbsupImage,
             title: L10n.thankYou,
             subtitle: L10n.TheLastStepIsDocumentAndSelfieVerification.thisIsAOneTimeProcedureToEnsureSafetyOfYourAccount,
-            actionTitle: L10n.continue) { [weak self] in
+            actionTitle: L10n.continue,
+            onAction:  { [weak self] in
                 self?.nextSubject.send()
+            }) { [weak self] in
+                self?.helpLauncher.launch()
             }
         let controller = view.asViewController(withoutUIKitNavBar: false)
         self.viewController.pushViewController(controller, animated: true)

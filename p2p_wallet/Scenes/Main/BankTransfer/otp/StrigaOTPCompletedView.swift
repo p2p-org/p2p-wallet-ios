@@ -7,19 +7,22 @@ struct StrigaOTPCompletedView: View {
     let subtitle: String
     let actionTitle: String
     let onAction: (() -> Void)?
+    let onHelp: (() -> Void)?
 
     public init(
         image: UIImage,
         title: String? = nil,
         subtitle: String? = nil,
         actionTitle: String,
-        onAction: (() -> Void)? = nil
+        onAction: (() -> Void)? = nil,
+        onHelp: (() -> Void)? = nil
     ) {
         self.image = image
         self.title = title
         self.subtitle = subtitle ?? ""
         self.actionTitle = actionTitle
         self.onAction = onAction
+        self.onHelp = onHelp
     }
 
     public var body: some View {
@@ -56,7 +59,7 @@ struct StrigaOTPCompletedView: View {
         .toolbar {
             ToolbarItem(placement: .navigationBarTrailing) {
                 Button {
-//                    helpSubject.send()
+                    onHelp?()
                 } label: {
                     Image(uiImage: Asset.MaterialIcon.helpOutline.image)
                 }
@@ -64,9 +67,3 @@ struct StrigaOTPCompletedView: View {
         }
     }
 }
-
-//struct StrigaOTPCompletedView_Previews: PreviewProvider {
-//    static var previews: some View {
-//        StrigaOTPCompletedView()
-//    }
-//}

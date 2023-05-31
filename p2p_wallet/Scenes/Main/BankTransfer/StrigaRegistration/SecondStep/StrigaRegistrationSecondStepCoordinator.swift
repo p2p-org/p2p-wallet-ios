@@ -81,6 +81,7 @@ final class StrigaRegistrationSecondStepCoordinator: Coordinator<StrigaRegistrat
             vc.deallocatedPublisher()
                 .map { StrigaRegistrationSecondStepCoordinatorResult.canceled },
             viewModel.actionPressed
+                // TODO: remove
                 .asyncMap({ _ in
                     var data = UserData.empty
                     data.countryCode = "ft"
