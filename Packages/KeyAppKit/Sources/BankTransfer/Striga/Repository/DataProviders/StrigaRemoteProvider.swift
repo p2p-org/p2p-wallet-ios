@@ -7,4 +7,6 @@ public protocol StrigaRemoteProvider: AnyObject {
     func createUser(model: StrigaCreateUserRequest) async throws -> StrigaCreateUserResponse
     func verifyMobileNumber(userId: String, verificationCode: String) async throws
     func resendSMS(userId: String) async throws
+    
+    func getKYCToken(userId: String) async throws -> String
 }

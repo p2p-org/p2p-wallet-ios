@@ -1,7 +1,6 @@
 import Foundation
 
 public final class MockStrigaRemoteProvider: StrigaRemoteProvider {
-
     // MARK: - Properties
     
     private var userId: String?
@@ -82,5 +81,9 @@ public final class MockStrigaRemoteProvider: StrigaRemoteProvider {
     
     public func resendSMS(userId: String) async throws {
         
+    }
+    
+    public func getKYCToken(userId: String) async throws -> String {
+        kycToken!
     }
 }

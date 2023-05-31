@@ -72,6 +72,14 @@ extension StrigaRemoteProviderImpl: StrigaRemoteProvider {
         let endpoint = StrigaEndpoint.resendSMS(authHeader: authHeader, userId: userId)
         _ = try await httpClient.request(endpoint: endpoint, responseModel: String.self)
     }
+    
+    public func getKYCToken(userId: String) async throws -> String {
+        guard let authHeader else { throw NSError(domain: "", code: 0) }
+        let endpoint = StrigaEndpoint.kycGetToken(authHeader: authHeader, userId: userId)
+        
+        return try await httpClient.request(endpoint: endpoint, responseModel: StrigaUserGetTokenResponse.self)
+            .token
+    }
 }
 
 // MARK: - Helpers

@@ -88,6 +88,11 @@ extension BankTransferServiceImpl: BankTransferService {
         try await repository.resendSMS(userId: userId)
     }
     
+    public func getKYCToken() async throws -> String {
+        guard let userId = subject.value.value.userId else { throw BankTransferServiceError.missingUserId }
+        return try await repository.getKYCToken(userId: userId)
+    }
+    
     public func clearCache() async {
         await repository.clearCache()
     }

@@ -98,6 +98,10 @@ public final class StrigaBankTransferUserDataRepository: BankTransferUserDataRep
     public func resendSMS(userId: String) async throws {
         try await remoteProvider.resendSMS(userId: userId)
     }
+    
+    public func getKYCToken(userId: String) async throws -> String {
+        try await remoteProvider.getKYCToken(userId: userId)
+    }
 
     public func getRegistrationData() async throws -> BankTransferRegistrationData {
         if let cachedData = await localProvider.getCachedRegistrationData()

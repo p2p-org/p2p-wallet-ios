@@ -23,4 +23,6 @@ public protocol BankTransferService {
     func getOTP() async throws
     func verify(OTP: String) async throws -> Bool
     func resendSMS() async throws
+    
+    func getKYCToken() async throws -> String
 }
