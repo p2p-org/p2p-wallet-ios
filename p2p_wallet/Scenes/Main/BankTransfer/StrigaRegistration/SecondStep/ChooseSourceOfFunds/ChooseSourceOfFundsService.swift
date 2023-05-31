@@ -5,6 +5,7 @@ import BankTransfer
 final class ChooseSourceOfFundsService: ChooseItemService {
     let chosenTitle = L10n.chosen
     let otherTitle = L10n.allSources
+    let emptyTitle = L10n.notFound
 
     var state: AnyPublisher<AsyncValueState<[ChooseItemListSection]>, Never> {
         statePublisher.eraseToAnyPublisher()

@@ -14,6 +14,7 @@ final class ChooseItemViewModel: BaseViewModel, ObservableObject {
 
     var otherTitle: String { service.otherTitle }
     var chosenTitle: String { service.chosenTitle }
+    var emptyTitle: String { service.emptyTitle }
 
     let chosenItem: (any ChooseItemSearchableItem)?
 

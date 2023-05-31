@@ -5,6 +5,7 @@ import KeyAppKitCore
 final class ChooseIndustryService: ChooseItemService {
     let chosenTitle = L10n.chosen
     let otherTitle = L10n.allIndustries
+    let emptyTitle = L10n.notFound
 
     var state: AnyPublisher<AsyncValueState<[ChooseItemListSection]>, Never> {
         statePublisher.eraseToAnyPublisher()
