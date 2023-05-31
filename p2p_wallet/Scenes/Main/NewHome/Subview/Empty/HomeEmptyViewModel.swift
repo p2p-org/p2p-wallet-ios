@@ -18,7 +18,6 @@ final class HomeEmptyViewModel: BaseViewModel, ObservableObject {
 
     @Injected private var analyticsManager: AnalyticsManager
     @Injected private var pricesService: SolanaPriceService
-    @Injected private var solanaAccountsService: SolanaAccountsService
     
     // MARK: - Properties
     private let navigation: PassthroughSubject<HomeNavigation, Never>
@@ -38,13 +37,15 @@ final class HomeEmptyViewModel: BaseViewModel, ObservableObject {
 
     func reloadData() async {
         // refetch
-        try? await solanaAccountsService.fetch()
+        await HomeAccountsSynchronisationService().refresh()
         
         updateData()
     }
 
     func receiveClicked() {
-        guard let pubkey = try? PublicKey(string: solanaAccountsService.state.value.nativeWallet?.data.pubkey) else { return }
+        let userWalletManager = Resolver.resolve(UserWalletManager.self)
+        guard let pubkey = userWalletManager.wallet?.account.publicKey
+        else { return }
         navigation.send(.receive(publicKey: pubkey))
     }
     
