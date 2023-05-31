@@ -272,25 +272,6 @@ extension Resolver: ResolverRegistering {
             .implements(JWTTokenValidator.self)
 
         register { Web3(rpcURL: String.secretConfig("ETH_RPC")!) }
-
-        register {
-            let userWalletsManager: UserWalletManager = resolve()
-            return BankTransferServiceImpl(
-                repository: StrigaBankTransferUserDataRepository(
-                    localProvider: MockStrigaLocalProvider(
-                        useCase: .unregisteredUser(hasCachedInput: true)
-                    ),
-                    remoteProvider: MockStrigaRemoteProvider(
-                        useCase: .unregisteredUser(hasCachedInput: true)
-                    )
-//                    localProvider: StrigaLocalProviderImpl(),
-//                    remoteProvider: StrigaRemoteProviderImpl(
-//                        solanaKeyPair: userWalletsManager.wallet?.account
-//                    )
-                )
-            )
-        }
-            .implements(BankTransferService.self)
     }
 
     /// Session scope: Live when user is authenticated
@@ -581,6 +562,26 @@ extension Resolver: ResolverRegistering {
             JupiterTokensLocalProvider()
         }
         .implements(JupiterTokensProvider.self)
+        .scope(.session)
+        
+        register {
+//            let userWalletsManager: UserWalletManager = resolve()
+            return BankTransferServiceImpl(
+                repository: StrigaBankTransferUserDataRepository(
+                    localProvider: MockStrigaLocalProvider(
+                        useCase: .unregisteredUser(hasCachedInput: true)
+                    ),
+                    remoteProvider: MockStrigaRemoteProvider(
+                        useCase: .unregisteredUser(hasCachedInput: true)
+                    )
+//                    localProvider: StrigaLocalProviderImpl(),
+//                    remoteProvider: StrigaRemoteProviderImpl(
+//                        solanaKeyPair: userWalletsManager.wallet?.account
+//                    )
+                )
+            )
+        }
+        .implements(BankTransferService.self)
         .scope(.session)
     }
 
