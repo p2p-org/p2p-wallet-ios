@@ -23,8 +23,13 @@ final class StrigaRegistrationFirstStepCoordinator: Coordinator<StrigaRegistrati
         let vc = view.asViewController(withoutUIKitNavBar: false)
         vc.hidesBottomBarWhenPushed = true
         vc.title = L10n.stepOf(1, 3)
-        navigationController.setViewControllers([navigationController.viewControllers.first, vc].compactMap { $0 }, animated: true)
-        navigationController.modalPresentationStyle = .fullScreen
+        navigationController.setViewControllers(
+            [
+                navigationController.viewControllers.first,
+                vc
+            ].compactMap { $0 },
+            animated: true
+        )
 
         viewModel.back
             .sink { [weak self] _ in

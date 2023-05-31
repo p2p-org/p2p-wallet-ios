@@ -12,6 +12,7 @@ enum BankTransferCoordinatorResult {
 final class BankTransferCoordinator: Coordinator<Void> {
 
     @Injected private var bankTransferService: BankTransferService
+    @Injected private var metadataService: WalletMetadataService
 
     private let viewController: UINavigationController
 
@@ -72,7 +73,7 @@ final class BankTransferCoordinator: Coordinator<Void> {
             return self.coordinate(
                 to: StrigaOTPCoordinator(
                     viewController: viewController,
-                    phone: ""
+                    phone: metadataService.metadata?.phoneNumber ?? ""
                 )
             ).map { result in
                 switch result {
