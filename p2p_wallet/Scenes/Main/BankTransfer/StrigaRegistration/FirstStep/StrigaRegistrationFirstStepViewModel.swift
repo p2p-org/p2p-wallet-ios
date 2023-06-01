@@ -157,8 +157,6 @@ private extension StrigaRegistrationFirstStepViewModel {
     func validate(credential: String, field: Field) {
         if credential.isEmpty {
             fieldsStatuses[field] = .invalid(error: L10n.couldNotBeEmpty)
-        } else if let regex = try? NSRegularExpression(pattern: "^\\p{L}+$"), !regex.matches(credential) {
-            fieldsStatuses[field] = .invalid(error: L10n.couldBeFilledOnlyWithSymbols)
         } else {
             fieldsStatuses[field] = .valid
         }
