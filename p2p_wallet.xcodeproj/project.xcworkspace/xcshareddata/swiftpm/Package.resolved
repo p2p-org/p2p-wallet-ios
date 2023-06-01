@@ -173,6 +173,15 @@
         }
       },
       {
+        "package": "IdensicMobileSDK",
+        "repositoryURL": "https://github.com/SumSubstance/IdensicMobileSDK-iOS.git",
+        "state": {
+          "branch": null,
+          "revision": "fa25e51e2dfb8c297c4576051925c6e5b2e7e943",
+          "version": "1.24.0"
+        }
+      },
+      {
         "package": "Intercom",
         "repositoryURL": "https://github.com/intercom/intercom-ios.git",
         "state": {
@@ -251,6 +260,15 @@
           "branch": null,
           "revision": "819d0a2173aff699fb8c364b6fb906f7cdb1a692",
           "version": "2.30909.0"
+        }
+      },
+      {
+        "package": "OpenSSL",
+        "repositoryURL": "https://github.com/krzyzanowskim/OpenSSL.git",
+        "state": {
+          "branch": null,
+          "revision": "87f41bf9488e7dd2b0de2ab97cb3eafc7304e0e6",
+          "version": "1.1.2000"
         }
       },
       {
@@ -354,10 +372,10 @@
       },
       {
         "package": "SolanaSwift",
-        "repositoryURL": "https://github.com/p2p-org/solana-swift.git",
+        "repositoryURL": "https://github.com/p2p-org/solana-swift",
         "state": {
           "branch": "main",
-          "revision": "325d2350e5d216503ea111cca82790a29484bdbd",
+          "revision": "5a0feeb88f5607a936ba15a574ac6d911e377456",
           "version": null
         }
       },
@@ -402,8 +420,8 @@
         "repositoryURL": "https://github.com/apple/swift-nio.git",
         "state": {
           "branch": null,
-          "revision": "6213ba7a06febe8fef60563a4a7d26a4085783cf",
-          "version": "2.54.0"
+          "revision": "2d8e6ca36fe3e8ed74b0883f593757a45463c34d",
+          "version": "2.53.0"
         }
       },
       {
@@ -497,6 +515,15 @@
         }
       },
       {
+        "package": "TwilioVideo",
+        "repositoryURL": "https://github.com/twilio/twilio-video-ios.git",
+        "state": {
+          "branch": null,
+          "revision": "3303fd89d17770ec5ffcb68151c69b026f55f4aa",
+          "version": "5.6.0"
+        }
+      },
+      {
         "package": "Web3",
         "repositoryURL": "https://github.com/Boilertalk/Web3.swift.git",
         "state": {
@@ -510,8 +537,8 @@
         "repositoryURL": "https://github.com/vapor/websocket-kit",
         "state": {
           "branch": null,
-          "revision": "53fe0639a98903858d0196b699720decb42aee7b",
-          "version": "2.14.0"
+          "revision": "17c0afbf24f4e288e183bc34317dc97b5cd084bd",
+          "version": "2.9.0"
         }
       }
     ]
