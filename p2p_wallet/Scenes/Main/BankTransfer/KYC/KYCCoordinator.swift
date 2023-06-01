@@ -18,7 +18,7 @@ final class KYCCoordinator: Coordinator<KYCCoordinatorResult> {
     // MARK: - Properties
     
     private var presentingViewController: UIViewController!
-    private let subject = PassthroughSubject<Void, Never>()
+    private let subject = PassthroughSubject<KYCCoordinatorResult, Never>()
     
     // MARK: - Initializer
 

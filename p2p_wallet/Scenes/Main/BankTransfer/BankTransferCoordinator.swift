@@ -85,9 +85,7 @@ final class BankTransferCoordinator: Coordinator<Void> {
             }.eraseToAnyPublisher()
         case .kyc:
             return coordinate(
-                to: KYCCoordinator(
-                    navigation: viewController
-                )
+                to: KYCCoordinator()
             )
             .map { result in
                 switch result {
