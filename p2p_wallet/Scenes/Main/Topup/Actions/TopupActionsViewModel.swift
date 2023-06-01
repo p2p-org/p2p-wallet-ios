@@ -7,17 +7,11 @@ final class TopupActionsViewModel: BaseViewModel, ObservableObject {
 
     @Injected private var bankTransferService: any BankTransferService
     @Injected private var notificationService: NotificationService
+    @Injected private var metadataService: WalletMetadataService
 
     // MARK: -
 
     @Published var actions: [ActionItem] = [
-        ActionItem(
-            id: .transfer,
-            icon: .bankTransferBankIcon,
-            title: L10n.bankTransfer,
-            subtitle: L10n.upTo3Days·Fees("0%"),
-            isLoading: false
-        ),
         ActionItem(
             id: .card,
             icon: .bankTransferCardIcon,
@@ -35,35 +29,20 @@ final class TopupActionsViewModel: BaseViewModel, ObservableObject {
     ]
 
     var tappedItem: AnyPublisher<Action, Never> {
+        if !shouldShowBankTransfer {
+            return tappedItemSubject.eraseToAnyPublisher()
+        }
         // Filtering .transfer items, since we might wait for BankTransferService state to be loaded
-        tappedItemSubject
-            .eraseToAnyPublisher()
+        return tappedItemSubject
             .withLatestFrom(bankTransferService.state) { action, state in
                 (action, state)
             }
             .filter { value in
-                print("abdddfdf: \(value)")
                 return value.0 == .transfer ? (!value.1.hasError && !value.1.isFetching) : true
             }
             .map { val in
                 if val.0 == .transfer, val.1.status == .ready, !val.1.hasError {
-                    // registered user
-                    if nil != val.1.value.userId {
-                        // if kyc is verifed
-                        if val.1.value.kycVerified {
-                            return .transfer
-                        }
-                        
-                        // otherwise
-                        else {
-                            return .kyc
-                        }
-                    }
-                    
-                    // unregistered user
-                    else {
-                        return .info
-                    }
+                    return .transfer
                 }
                 return val.0
             }
@@ -72,6 +51,9 @@ final class TopupActionsViewModel: BaseViewModel, ObservableObject {
 
     private let tappedItemSubject = PassthroughSubject<Action, Never>()
     private let shouldShowErrorSubject = CurrentValueSubject<Bool, Never>(false)
+    private var shouldShowBankTransfer: Bool {
+        nil != metadataService.metadata
+    }
 
     func didTapItem(item: ActionItem) {
         tappedItemSubject.send(item.id)
@@ -80,6 +62,22 @@ final class TopupActionsViewModel: BaseViewModel, ObservableObject {
     override init() {
         super.init()
 
+        if shouldShowBankTransfer {
+            actions.insert(
+                ActionItem(
+                    id: .transfer,
+                    icon: .bankTransferBankIcon,
+                    title: L10n.bankTransfer,
+                    subtitle: L10n.upTo3Days·Fees("0%"),
+                    isLoading: false
+                ),
+                at: 0
+            )
+            bindBankTransfer()
+        }
+    }
+
+    private func bindBankTransfer() {
         // Sending tapped event only after BTS is in ready state
         Publishers.CombineLatest(
             bankTransferService.state,
@@ -99,7 +97,6 @@ final class TopupActionsViewModel: BaseViewModel, ObservableObject {
         tappedItemSubject.withLatestFrom(bankTransferService.state).filter({ state in
             state.hasError
         }).sinkAsync { [weak self] state in
-            
             await MainActor.run {
                 self?.setTransferLoadingState(isLoading: true)
                 self?.shouldShowErrorSubject.send(false)
@@ -128,8 +125,6 @@ final class TopupActionsViewModel: BaseViewModel, ObservableObject {
 
 extension TopupActionsViewModel {
     enum Action: String {
-        case info
-        case kyc
         case transfer
         case card
         case crypto

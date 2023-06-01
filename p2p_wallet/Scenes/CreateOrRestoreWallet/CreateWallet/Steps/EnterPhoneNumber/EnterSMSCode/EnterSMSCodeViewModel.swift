@@ -12,9 +12,7 @@ import SwiftyUserDefaults
 final class EnterSMSCodeViewModel: BaseOTPViewModel {
     // MARK: -
 
-    private var cancellable = Set<AnyCancellable>()
-
-    private let attemptCounter: Wrapper<ResendCounter>
+    var attemptCounter: Wrapper<ResendCounter>
     private var countdown: Int
     private static let codeLength = 6
     private let strategy: Strategy
@@ -40,6 +38,9 @@ final class EnterSMSCodeViewModel: BaseOTPViewModel {
     @Published public var resendEnabled: Bool = false
     @Published public var resendText: String = ""
     @Published public var isButtonEnabled: Bool = false
+    var phoneText: String {
+        strategy == .striga ? L10n.toStartVerificationConfirmYourPhoneNumber : L10n.checkTheNumber
+    }
 
     func buttonTaped() {
         guard !isLoading, reachability.check() else { return }
@@ -108,6 +109,8 @@ final class EnterSMSCodeViewModel: BaseOTPViewModel {
             analyticsManager.log(event: .createSmsScreen)
         case .restore:
             analyticsManager.log(event: .restoreSmsScreen)
+        case .striga:
+            break
         }
     }
 
@@ -141,7 +144,7 @@ final class EnterSMSCodeViewModel: BaseOTPViewModel {
             })
             .map { Self.format(code: $0) }
             .assignWeak(to: \.code, on: self)
-            .store(in: &cancellable)
+            .store(in: &subscriptions)
     }
 
     private func codeConfirmed(code: String) {
@@ -170,14 +173,17 @@ final class EnterSMSCodeViewModel: BaseOTPViewModel {
     // MARK: -
 
     private func startTimer() {
-        timer = Timer.scheduledTimer(withTimeInterval: 1, repeats: true) { [weak self] _ in
-            self?.countdown -= 1
-            self?.setResendCountdown()
-
-            if self?.countdown == 0 {
-                self?.timer?.invalidate()
-                self?.setResendCountdown()
-                return
+        timer = Timer.scheduledTimer(withTimeInterval: 1, repeats: true) { _ in
+            Task {
+                await MainActor.run { [weak self] in
+                    self?.countdown -= 1
+                    self?.setResendCountdown()
+                    if self?.countdown == 0 {
+                        self?.timer?.invalidate()
+                        self?.setResendCountdown()
+                        return
+                    }
+                }
             }
         }
         timer?.fire()
@@ -204,12 +210,6 @@ final class EnterSMSCodeViewModel: BaseOTPViewModel {
 
     static func prepareRawCode(code: String) -> String {
         code.replacingOccurrences(of: " ", with: "")
-    }
-}
-
-extension Substring {
-    func asString() -> String {
-        String(self)
     }
 }
 
@@ -240,5 +240,12 @@ extension EnterSMSCodeViewModel {
     enum Strategy {
         case create
         case restore
+        case striga
+    }
+}
+
+private extension Substring {
+    func asString() -> String {
+        String(self)
     }
 }

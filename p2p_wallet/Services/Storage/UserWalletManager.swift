@@ -111,6 +111,7 @@ class UserWalletManager: ObservableObject {
         Defaults.shouldShowConfirmAlertOnSwap = true
         Defaults.moonpayInfoShouldHide = false
         Defaults.ethBannerShouldHide = false
+        Defaults.strigaOTPResendCounter = Wrapper<ResendCounter>(.zero())
         Defaults.isSellInfoPresented = false
         Defaults.isTokenInputTypeChosen = false
         Defaults.fromTokenAddress = nil

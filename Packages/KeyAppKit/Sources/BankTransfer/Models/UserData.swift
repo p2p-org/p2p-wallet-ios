@@ -1,8 +1,8 @@
 public struct UserData {
-    public let countryCode: String?
-    public let userId: String?
-    public let mobileVerified: Bool
-    public let kycVerified: Bool
+    public var countryCode: String?
+    public var userId: String?
+    public var mobileVerified: Bool
+    public var kycVerified: Bool
     
     public static var empty: Self {
         .init(

@@ -11,7 +11,7 @@ public struct ResendCounter: Codable, Equatable {
     public let attempt: Int
     public let until: Date
 
-    func incremented() -> ResendCounter {
+    public func incremented() -> ResendCounter {
         let newAttempt = attempt + 1
         return ResendCounter(
             attempt: newAttempt,
@@ -26,7 +26,7 @@ public struct ResendCounter: Codable, Equatable {
         return timeInterval
     }
 
-    static func zero() -> Self {
+    public static func zero() -> Self {
         .init(attempt: 0, until:  Date().ceiled().addingTimeInterval(EnterSMSCodeCountdownLegs[0]))
     }
 }
