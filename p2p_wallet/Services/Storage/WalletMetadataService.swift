@@ -2,6 +2,7 @@
 // Use of this source code is governed by a MIT-style license that can be
 // found in the LICENSE file.
 
+import BankTransfer
 import Foundation
 import Onboarding
 import Resolver
@@ -77,5 +78,12 @@ class WalletMetadataService: ObservableObject {
 extension WalletMetadataService {
     enum Error: Swift.Error {
         case missingLocalMetadata
+    }
+}
+
+extension WalletMetadataService: StrigaMetadataProvider {
+    func getUserId() async throws -> String? {
+        try await synchronize()
+        return metadata?.striga.userId
     }
 }

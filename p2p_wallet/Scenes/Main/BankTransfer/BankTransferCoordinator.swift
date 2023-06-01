@@ -122,13 +122,3 @@ enum BankTransferStep: CaseIterable {
     case kyc
     case transfer
 }
-
-
-import BankTransfer
-
-extension WalletMetadataService: StrigaMetadataProvider {
-    func getUserId() async throws -> String? {
-        try await synchronize()
-        return metadata?.striga.userId
-    }
-}
