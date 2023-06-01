@@ -8,3 +8,9 @@ public protocol HTTPEndpoint {
     var header: [String: String] { get }
     var body: String? { get }
 }
+
+public extension HTTPEndpoint {
+    var urlString: String {
+        baseURL + path
+    }
+}
