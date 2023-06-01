@@ -3,6 +3,7 @@ import Combine
 import Foundation
 import Onboarding
 import Resolver
+import SwiftyUserDefaults
 
 enum StrigaOTPCoordinatorResult {
     case canceled
@@ -14,7 +15,7 @@ final class StrigaOTPCoordinator: Coordinator<StrigaOTPCoordinatorResult> {
     @Injected var bankTransfer: BankTransferService
     @Injected private var helpLauncher: HelpCenterLauncher
 
-    @UserDefault(key: "striga_otp_resendCounter", defaultValue: Wrapper<ResendCounter>(ResendCounter.zero()))
+    @SwiftyUserDefault(keyPath: \.strigaOTPResendCounter, options: .cached)
     private var resendCounter: Wrapper<ResendCounter>
 
     private var resultSubject = PassthroughSubject<Bool, Never>()
@@ -176,3 +177,5 @@ final class StrigaOTPSuccessCoordinator: Coordinator<StrigaOTPSuccessCoordinator
             .eraseToAnyPublisher()
     }
 }
+
+extension Wrapper: DefaultsSerializable {}

@@ -32,13 +32,13 @@ extension BankTransferServiceImpl: BankTransferService {
     
     public func reload() async {
         // mark as loading
-//        subject.send(
-//            .init(
-//                status: .fetching,
-//                value: .empty,
-//                error: nil
-//            )
-//        )
+        subject.send(
+            .init(
+                status: .fetching,
+                value: .empty,
+                error: nil
+            )
+        )
         
         do {
             // registered user
@@ -76,19 +76,11 @@ extension BankTransferServiceImpl: BankTransferService {
     }
     
     public func getOTP() async throws {
-        debugPrint("OTP is: 000000")
+        fatalError("Not implemented")
     }
 
     public func verify(OTP: String) async throws -> Bool {
-        debugPrint("OTP is: \(OTP) == 000000")
-
-        try await self.save(userData: UserData(
-            countryCode: subject.value.value.countryCode,
-            userId: subject.value.value.userId,
-            mobileVerified: OTP == "000000",
-            kycVerified: subject.value.value.kycVerified
-        ))
-        return OTP == "000000"
+        fatalError("Not implemented")
     }
     
     public func resendSMS() async throws {
@@ -127,18 +119,18 @@ extension BankTransferServiceImpl: BankTransferService {
     }
     
     private func handleUnregisteredUser() async throws {
-//        subject.send(
-//            .init(
-//                status: .ready,
-//                value: .init(
-//                    countryCode: nil,
-//                    userId: nil,
-//                    mobileVerified: false,
-//                    kycVerified: false
-//                ),
-//                error: nil
-//            )
-//        )
+        subject.send(
+            .init(
+                status: .ready,
+                value: .init(
+                    countryCode: nil,
+                    userId: nil,
+                    mobileVerified: false,
+                    kycVerified: false
+                ),
+                error: nil
+            )
+        )
     }
     
     private func handleError(error: Error) {
