@@ -173,6 +173,13 @@ let package = Package(
         ),
 
         .target(name: "KeyAppNetworking"),
+        .testTarget(
+            name: "KeyAppNetworkingTests",
+            dependencies: [
+                "KeyAppNetworking"
+            ],
+            path: "Tests/UnitTests/KeyAppNetworkingTests"
+        ),
 
         // AnalyticsManager
         .target(
