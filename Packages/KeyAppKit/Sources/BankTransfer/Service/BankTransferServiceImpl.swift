@@ -27,7 +27,7 @@ extension BankTransferServiceImpl: BankTransferService {
     }
     
     public func save(userData: UserData) async throws {
-        subject.send(.init(status: .ready, value: userData))
+        fatalError("Not implemented")
     }
     
     public func reload() async {
@@ -78,7 +78,7 @@ extension BankTransferServiceImpl: BankTransferService {
     public func getOTP() async throws {
         fatalError("Not implemented")
     }
-
+    
     public func verify(OTP: String) async throws -> Bool {
         fatalError("Not implemented")
     }
