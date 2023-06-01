@@ -25,7 +25,7 @@ class ChooseItemCoordinator<T: ChooseItemRenderable>: Coordinator<ChooseItemCoor
     }
 
     override func start() -> AnyPublisher<ChooseItemCoordinatorResult, Never> {
-        let wrap = title != nil
+        let isWrapped = controller is UINavigationController
         let viewModel = ChooseItemViewModel(
             service: service,
             chosenToken: chosen
@@ -33,10 +33,10 @@ class ChooseItemCoordinator<T: ChooseItemRenderable>: Coordinator<ChooseItemCoor
         let view = ChooseItemView(viewModel: viewModel) { model in
             (model.item as? T)?.render()
         }
-        let aController = KeyboardAvoidingViewController(rootView: view, navigationBarVisibility: wrap ? .visible : .hidden)
+        let aController = KeyboardAvoidingViewController(rootView: view)
         aController.navigationItem.title = title
         controller.show(
-            wrap ? UINavigationController(rootViewController: aController) : aController,
+            isWrapped ? aController : UINavigationController(rootViewController: aController),
             sender: nil
         )
 
