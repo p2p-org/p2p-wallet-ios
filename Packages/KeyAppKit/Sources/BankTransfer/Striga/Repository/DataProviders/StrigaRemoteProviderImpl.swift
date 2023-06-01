@@ -8,13 +8,16 @@ public final class StrigaRemoteProviderImpl {
     // Dependencies
     private let httpClient: IHTTPClient
     private let keyPair: KeyPair?
+    private let baseURL: String
     
     // MARK: - Init
     
     public init(
+        baseURL: String,
         solanaKeyPair keyPair: KeyPair?,
         httpClient: IHTTPClient = HTTPClient()
     ) {
+        self.baseURL = baseURL
         self.httpClient = httpClient
         self.keyPair = keyPair
     }
@@ -35,20 +38,16 @@ extension StrigaRemoteProviderImpl: StrigaRemoteProvider {
     public func getUserDetails(
         userId: String
     ) async throws -> StrigaUserDetailsResponse {
-        guard let authHeader else {
-            throw NSError(domain: "", code: 0)
-        }
-        let endpoint = StrigaEndpoint.getUserDetails(authHeader: authHeader, userId: userId)
+        guard let keyPair else { throw BankTransferServiceError.invalidKeyPair }
+        let endpoint = try StrigaEndpoint.getUserDetails(baseURL: baseURL, keyPair: keyPair, userId: userId)
         return try await httpClient.request(endpoint: endpoint, responseModel: StrigaUserDetailsResponse.self)
     }
     
     public func createUser(
         model: StrigaCreateUserRequest
     ) async throws -> StrigaCreateUserResponse {
-        guard let authHeader else {
-            throw NSError(domain: "", code: 0)
-        }
-        let endpoint = StrigaEndpoint.createUser(authHeader: authHeader, model: model)
+        guard let keyPair else { throw BankTransferServiceError.invalidKeyPair }
+        let endpoint = try StrigaEndpoint.createUser(baseURL: baseURL, keyPair: keyPair, body: model)
         return try await httpClient.request(endpoint: endpoint, responseModel: StrigaCreateUserResponse.self)
     }
     
@@ -56,11 +55,10 @@ extension StrigaRemoteProviderImpl: StrigaRemoteProvider {
         userId: String,
         verificationCode: String
     ) async throws {
-        guard let authHeader else {
-            throw NSError(domain: "", code: 0)
-        }
-        let endpoint = StrigaEndpoint.verifyMobileNumber(
-            authHeader: authHeader,
+        guard let keyPair else { throw BankTransferServiceError.invalidKeyPair }
+        let endpoint = try StrigaEndpoint.verifyMobileNumber(
+            baseURL: baseURL,
+            keyPair: keyPair,
             userId: userId,
             verificationCode: verificationCode
         )
@@ -68,43 +66,16 @@ extension StrigaRemoteProviderImpl: StrigaRemoteProvider {
     }
     
     public func resendSMS(userId: String) async throws {
-        guard let authHeader else { throw NSError(domain: "", code: 0) }
-        let endpoint = StrigaEndpoint.resendSMS(authHeader: authHeader, userId: userId)
+        guard let keyPair else { throw BankTransferServiceError.invalidKeyPair }
+        let endpoint = try StrigaEndpoint.resendSMS(baseURL: baseURL, keyPair: keyPair, userId: userId)
         _ = try await httpClient.request(endpoint: endpoint, responseModel: String.self)
     }
     
     public func getKYCToken(userId: String) async throws -> String {
-        guard let authHeader else { throw NSError(domain: "", code: 0) }
-        let endpoint = StrigaEndpoint.kycGetToken(authHeader: authHeader, userId: userId)
+        guard let keyPair else { throw BankTransferServiceError.invalidKeyPair }
+        let endpoint = try StrigaEndpoint.getKYCToken(baseURL: baseURL, keyPair: keyPair, userId: userId)
         
         return try await httpClient.request(endpoint: endpoint, responseModel: StrigaUserGetTokenResponse.self)
             .token
-    }
-}
-
-// MARK: - Helpers
-
-private typealias AuthHeader = StrigaEndpoint.AuthHeader
-
-private extension StrigaRemoteProviderImpl {
-    var authHeader: AuthHeader? {
-        guard let keyPair, let signedMessage = getSignedTimestampMessage(keyPair: keyPair) else { return nil }
-        return AuthHeader(pubKey: keyPair.publicKey.base58EncodedString, signedMessage: signedMessage)
-    }
-    
-    func getSignedTimestampMessage(keyPair: KeyPair) -> String? {
-        // get timestamp
-        let timestamp = "\(Int(NSDate().timeIntervalSince1970) * 1_000)"
-        
-        // form message
-        guard
-            let data = timestamp.data(using: .utf8),
-            let signedTimestampMessage = try? NaclSign.signDetached(
-                message: data,
-                secretKey: keyPair.secretKey
-            ).base64EncodedString()
-        else { return nil }
-        // return unixtime:signature_of_unixtime_by_user_privatekey_in_base64_format
-        return [timestamp, signedTimestampMessage].joined(separator: ":")
     }
 }

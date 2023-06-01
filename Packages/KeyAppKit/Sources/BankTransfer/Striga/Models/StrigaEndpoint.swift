@@ -1,99 +1,139 @@
 import Foundation
 import KeyAppNetworking
+import SolanaSwift
+import TweetNacl
 
-public enum StrigaEndpoint {
-    case verifyMobileNumber(authHeader: AuthHeader, userId: String, verificationCode: String)
-    case getUserDetails(authHeader: AuthHeader, userId: String)
-    case createUser(authHeader: AuthHeader, model: StrigaCreateUserRequest)
-    case resendSMS(authHeader: AuthHeader, userId: String)
+/// Endpoint type for striga
+struct StrigaEndpoint: HTTPEndpoint {
+
+    // MARK: - Properties
+
+    let baseURL: String
+    let path: String
+    let method: KeyAppNetworking.HTTPMethod
+    let keyPair: KeyPair
+    let header: [String : String]
+    let body: String?
     
-    case kycGetToken(authHeader: AuthHeader, userId: String)
-}
+    // MARK: - Initializer
 
-// MARK: - HTTPEndpoint
-
-extension StrigaEndpoint: HTTPEndpoint {
-    public var baseURL: String {
-        "https://\(urlEnvironment)/api/\(version)/user"
-    }
-    
-    public var header: [String: String] {
-        [
+    private init(
+        baseURL: String,
+        path: String,
+        method: HTTPMethod,
+        keyPair: KeyPair,
+        body: Encodable?
+    ) throws {
+        self.baseURL = baseURL
+        self.path = path
+        self.method = method
+        self.keyPair = keyPair
+        self.header = [
             "Content-Type": "application/json",
-            "User-PublicKey": authHeader.pubKey,
-            "Signed-Message": authHeader.signedMessage
+            "User-PublicKey": keyPair.publicKey.base58EncodedString,
+            "Signed-Message": try keyPair.getSignedTimestampMessage()
         ]
+        self.body = body?.encoded
+    }
+
+    // MARK: - Factory methods
+
+    static func verifyMobileNumber(
+        baseURL: String,
+        keyPair: KeyPair,
+        userId: String,
+        verificationCode: String
+    ) throws -> Self {
+        try .init(
+            baseURL: baseURL,
+            path: "/verify-mobile",
+            method: .post,
+            keyPair: keyPair,
+            body: [
+                "userId": userId,
+                "verificationCode": verificationCode
+            ]
+        )
     }
     
-    public var path: String {
-        switch self {
-        case .verifyMobileNumber:
-            return "/verify-mobile"
-        case let .getUserDetails(_, userId):
-            return "/" + userId
-        case .createUser:
-            return "/create"
-        case .resendSMS:
-            return "/resend-sms"
-        case .kycGetToken:
-            return "/kyc/start"
-        }
+    static func getUserDetails(
+        baseURL: String,
+        keyPair: KeyPair,
+        userId: String
+    ) throws -> Self {
+        try .init(
+            baseURL: baseURL,
+            path: "/\(userId)",
+            method: .get,
+            keyPair: keyPair,
+            body: nil
+        )
     }
-
-    public var method: HTTPMethod {
-        switch self {
-        case .verifyMobileNumber, .createUser, .resendSMS, .kycGetToken:
-            return .post
-        case .getUserDetails:
-            return .get
-        }
+    
+    static func createUser(
+        baseURL: String,
+        keyPair: KeyPair,
+        body: StrigaCreateUserRequest
+    ) throws -> Self {
+        try .init(
+            baseURL: baseURL,
+            path: "/create",
+            method: .post,
+            keyPair: keyPair,
+            body: body
+        )
     }
-
-    public var body: String? {
-        switch self {
-        case let .verifyMobileNumber(_, userId, verificationCode):
-            return ["userId": userId, "verificationCode": verificationCode].encoded
-        case .getUserDetails:
-            return nil
-        case let .createUser(_, model):
-            return model.encoded
-        case let .resendSMS(_, userId):
-            return ["userId": userId].encoded
-        case let .kycGetToken(_, userId):
-            return ["userId": userId].encoded
-        }
+    
+    static func resendSMS(
+        baseURL: String,
+        keyPair: KeyPair,
+        userId: String
+    ) throws -> Self {
+        try .init(
+            baseURL: baseURL,
+            path: "/resend-sms",
+            method: .post,
+            keyPair: keyPair,
+            body: [
+                "userId": userId
+            ]
+        )
+    }
+    
+    static func getKYCToken(
+        baseURL: String,
+        keyPair: KeyPair,
+        userId: String
+    ) throws -> Self {
+        try .init(
+            baseURL: baseURL,
+            path: "/kyc/start",
+            method: .post,
+            keyPair: keyPair,
+            body: [
+                "userId": userId
+            ]
+        )
     }
 }
 
-// MARK: - URL parts
-
-private extension StrigaEndpoint {
-    var urlEnvironment: String {
-        switch self {
-        case .verifyMobileNumber, .createUser, .getUserDetails, .resendSMS:
-            return "payment.keyapp.org/striga"
-        case .kycGetToken:
-            return "payment.key.app/striga"
+extension KeyPair {
+    func getSignedTimestampMessage(date: NSDate = NSDate()) throws -> String {
+        // get timestamp
+        let timestamp = "\(Int(date.timeIntervalSince1970) * 1_000)"
+        
+        // form message
+        guard
+            let data = timestamp.data(using: .utf8),
+            let signedTimestampMessage = try? NaclSign.signDetached(
+                message: data,
+                secretKey: secretKey
+            ).base64EncodedString()
+        else {
+            throw BankTransferServiceError.invalidKeyPair
         }
-    }
-    
-    var version: String {
-        "v1"
-    }
-    
-    var authHeader: AuthHeader {
-        switch self {
-        case let .verifyMobileNumber(authHeader, _, _):
-            return authHeader
-        case let .getUserDetails(authHeader, _):
-            return authHeader
-        case let .createUser(authHeader, _):
-            return authHeader
-        case let .resendSMS(authHeader, _):
-            return authHeader
-        case let .kycGetToken(authHeader, _):
-            return authHeader
-        }
+        // return unixtime:signature_of_unixtime_by_user_privatekey_in_base64_format
+        return [timestamp, signedTimestampMessage].joined(separator: ":")
     }
 }
 
@@ -107,18 +147,9 @@ private extension Encodable {
     
     func encoded(strategy: JSONEncoder.KeyEncodingStrategy) -> String? {
         let encoder = JSONEncoder()
-        encoder.outputFormatting = [.prettyPrinted, .sortedKeys]
+        encoder.outputFormatting = [.sortedKeys]
         encoder.keyEncodingStrategy = strategy
         guard let data = try? encoder.encode(self) else { return nil }
         return String(data: data, encoding: .utf8)
-    }
-}
-
-// MARK: - Auth Header
-
-extension StrigaEndpoint {
-    public struct AuthHeader {
-        public let pubKey: String
-        public let signedMessage: String
     }
 }
