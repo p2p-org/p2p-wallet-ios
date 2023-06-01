@@ -62,7 +62,7 @@ struct StrigaRegistrationFirstStepView: View {
                 title: L10n.phoneNumber,
                 status: viewModel.fieldsStatuses[.phoneNumber]
             ) {
-                TextField(placeholder: L10n.phoneNumber, text: $viewModel.phoneNumber, maxSymbolsLimit: 15)
+                StrigaRegistrationPhoneTextField(text: $viewModel.phoneNumber, phoneNumber: $viewModel.phoneNumberModel)
             }
         }
         .styled()
