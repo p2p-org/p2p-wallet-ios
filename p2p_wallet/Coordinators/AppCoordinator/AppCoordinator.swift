@@ -157,10 +157,6 @@ final class AppCoordinator: Coordinator<Void> {
         let provider = Resolver.resolve(StartOnboardingNavigationProvider.self)
         let startCoordinator = provider.startCoordinator(for: window)
 
-        Task.detached {
-            try await Resolver.resolve(WalletMetadataService.self).clear()
-        }
-
         coordinate(to: startCoordinator)
             .sinkAsync(receiveValue: { [unowned self] result in
                 GlobalAppState.shared.shouldPlayAnimationOnHome = true
@@ -183,10 +179,6 @@ final class AppCoordinator: Coordinator<Void> {
                         ethAddress: data.ethAddress
                     )
 
-                    // Warmup metadata
-                    Task.detached {
-                        try await Resolver.resolve(WalletMetadataService.self).onboard(with: data.metadata)
-                    }
                 case let .restored(data):
                     analyticsManager.log(event: .restoreConfirmPin(result: true))
 
@@ -203,12 +195,6 @@ final class AppCoordinator: Coordinator<Void> {
                         ethAddress: data.ethAddress
                     )
 
-                    // Warmup metadata
-                    if let metadata = data.metadata {
-                        Task.detached {
-                            try await Resolver.resolve(WalletMetadataService.self).onboard(with: metadata)
-                        }
-                    }
                 case .breakProcess:
                     navigateToOnboardingFlow()
                 }
