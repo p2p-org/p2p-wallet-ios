@@ -30,7 +30,11 @@ public final class StrigaRemoteProviderImpl {
     }
 }
 
-// MARK: - IStrigaProvider
+// MARK: - StrigaProvider
+
+public enum StrigaRemoteProviderError: Error {
+    case noUserId
+}
 
 extension StrigaRemoteProviderImpl: StrigaRemoteProvider {
 
@@ -39,7 +43,7 @@ extension StrigaRemoteProviderImpl: StrigaRemoteProvider {
     }
     
     public func getKYCStatus() async throws -> StrigaKYC.Status {
-        guard let userId = try await getUserId() else { throw NSError() }
+        guard let userId = try await getUserId() else { throw StrigaRemoteProviderError.noUserId }
         return try await getUserDetails(userId: userId).KYC.status
     }
     
