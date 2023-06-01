@@ -7,8 +7,8 @@ public struct StrigaUserDetailsResponse: BankTransferRegistrationData {
     public let mobile: Mobile
     public let dateOfBirth: DateOfBirth?
     public let address: Address?
-    public let occupation: String?
-    public let sourceOfFunds: String?
+    public let occupation: StrigaUserIndustry?
+    public let sourceOfFunds: StrigaSourceOfFunds?
     public let placeOfBirth: String?
     
     public struct Mobile: Codable {
@@ -51,7 +51,7 @@ public struct StrigaUserDetailsResponse: BankTransferRegistrationData {
         }
     }
     
-    public init(firstName: String, lastName: String, email: String, mobile: Mobile, dateOfBirth: DateOfBirth? = nil, address: Address? = nil, occupation: String? = nil, sourceOfFunds: String? = nil, placeOfBirth: String? = nil) {
+    public init(firstName: String, lastName: String, email: String, mobile: Mobile, dateOfBirth: DateOfBirth? = nil, address: Address? = nil, occupation: StrigaUserIndustry? = nil, sourceOfFunds: StrigaSourceOfFunds? = nil, placeOfBirth: String? = nil) {
         self.firstName = firstName
         self.lastName = lastName
         self.email = email

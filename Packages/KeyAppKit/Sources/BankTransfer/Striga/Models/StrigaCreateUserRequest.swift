@@ -7,8 +7,8 @@ public struct StrigaCreateUserRequest: Encodable {
     let mobile: Mobile
     let dateOfBirth: DateOfBirth?
     let address: Address?
-    let occupation: String?
-    let sourceOfFunds: String?
+    let occupation: StrigaUserIndustry?
+    let sourceOfFunds: StrigaSourceOfFunds?
     let ipAddress: String?
     let placeOfBirth: String?
     let expectedIncomingTxVolumeYearly: String?

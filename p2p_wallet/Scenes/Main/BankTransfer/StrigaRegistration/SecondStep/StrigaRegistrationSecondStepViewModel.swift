@@ -17,6 +17,7 @@ final class StrigaRegistrationSecondStepViewModel: BaseViewModel, ObservableObje
 
     // Dependencies
     @Injected private var service: BankTransferService
+    private let industryProvider: ChooseIndustryDataLocalProvider
 
     // Fields
     @Published var occupationIndustry: String = ""
@@ -32,17 +33,24 @@ final class StrigaRegistrationSecondStepViewModel: BaseViewModel, ObservableObje
     @Published var isDataValid = true // We need this flag to allow user enter at first whatever he/she likes and then validate everything
     let actionPressed = PassthroughSubject<Void, Never>()
     let openNextStep = PassthroughSubject<Void, Never>()
-    let openSelectOccupationIndustry = PassthroughSubject<Void, Never>()
+    let chooseIndustry = PassthroughSubject<Industry?, Never>()
+    let chooseSourceOfFunds = PassthroughSubject<StrigaSourceOfFunds?, Never>()
+    let chooseCountry = PassthroughSubject<Country?, Never>()
 
     var fieldsStatuses = [Field: StrigaRegistrationTextFieldStatus]()
 
     @Published var selectedCountry: Country?
+    @Published var selectedIndustry: Industry?
+    @Published var selectedSourceOfFunds: StrigaSourceOfFunds?
 
     init(data: StrigaUserDetailsResponse) {
+        industryProvider = ChooseIndustryDataLocalProvider()
         super.init()
-        
-        occupationIndustry = data.occupation ?? ""
-        sourceOfFunds = data.sourceOfFunds ?? ""
+
+        if let industry = data.occupation {
+            selectedIndustry = industryProvider.getIndustries().first(where: { $0.rawValue == industry })
+        }
+        selectedSourceOfFunds = data.sourceOfFunds
         country = data.address?.country ?? ""
         city = data.address?.city ?? ""
         addressLine = data.address?.addressLine1 ?? ""
@@ -68,11 +76,20 @@ final class StrigaRegistrationSecondStepViewModel: BaseViewModel, ObservableObje
             .map { value in
                 if let value {
                     return [value.emoji, value.name].compactMap { $0 } .joined(separator: " ")
-                } else {
-                    return ""
                 }
+                return ""
             }
             .assignWeak(to: \.country, on: self)
+            .store(in: &subscriptions)
+
+        $selectedIndustry
+            .map { $0?.wholeName ?? "" }
+            .assignWeak(to: \.occupationIndustry, on: self)
+            .store(in: &subscriptions)
+
+        $selectedSourceOfFunds
+            .map { $0?.title ?? "" }
+            .assignWeak(to: \.sourceOfFunds, on: self)
             .store(in: &subscriptions)
 
         bindToFieldValues()

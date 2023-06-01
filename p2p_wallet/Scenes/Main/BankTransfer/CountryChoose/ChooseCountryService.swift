@@ -7,6 +7,7 @@ import Resolver
 final class ChooseCountryService: ChooseItemService {
     let chosenTitle = L10n.chosenCountry
     let otherTitle = L10n.allCountries
+    let emptyTitle = L10n.notFound
 
     var state: AnyPublisher<AsyncValueState<[ChooseItemListSection]>, Never> {
         statePublisher.eraseToAnyPublisher()

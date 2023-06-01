@@ -49,14 +49,18 @@ struct StrigaRegistrationSecondStepView: View {
                 title: L10n.occupationIndustry,
                 status: viewModel.fieldsStatuses[.occupationIndustry]
             ) {
-                DetailedButton(value: $viewModel.occupationIndustry, action: viewModel.openSelectOccupationIndustry.send)
+                DetailedButton(value: $viewModel.occupationIndustry, action: {
+                    viewModel.chooseIndustry.send(viewModel.selectedIndustry)
+                })
             }
 
             Cell(
                 title: L10n.sourceOfFunds,
                 status: viewModel.fieldsStatuses[.sourceOfFunds]
             ) {
-                DetailedButton(value: $viewModel.sourceOfFunds, action: { })
+                DetailedButton(value: $viewModel.sourceOfFunds, action: {
+                    viewModel.chooseSourceOfFunds.send(viewModel.selectedSourceOfFunds)
+                })
             }
         }
         .styled()
@@ -68,7 +72,9 @@ struct StrigaRegistrationSecondStepView: View {
                 title: L10n.country,
                 status: viewModel.fieldsStatuses[.country]
             ) {
-                DetailedButton(value: $viewModel.country, action: { })
+                DetailedButton(value: $viewModel.country, action: {
+                    viewModel.chooseCountry.send(viewModel.selectedCountry)
+                })
             }
 
             Cell(

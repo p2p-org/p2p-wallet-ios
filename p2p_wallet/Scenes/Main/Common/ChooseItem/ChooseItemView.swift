@@ -64,7 +64,7 @@ struct ChooseItemView<Content: View>: View {
 private extension ChooseItemView {
     private var emptyView: some View {
         Group {
-            NotFoundView(text: L10n.TokenNotFound.tryAnotherOne)
+            NotFoundView(text: viewModel.emptyTitle)
                 .accessibility(identifier: "ChooseItemView.NotFoundView")
                 .padding(.top, 30)
             Spacer()
