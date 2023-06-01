@@ -70,9 +70,8 @@ final class StrigaRegistrationFirstStepViewModel: BaseViewModel, ObservableObjec
             .map { [weak self] components in
                 if components.count == self?.dateFormat.split(separator: ".").count {
                     return StrigaUserDetailsResponse.DateOfBirth(year: Int(components[2]), month: Int(components[1]), day: Int(components[0]))
-                } else {
-                    return nil
                 }
+                return nil
             }
             .assignWeak(to: \.dateOfBirthModel, on: self)
             .store(in: &subscriptions)
@@ -81,9 +80,8 @@ final class StrigaRegistrationFirstStepViewModel: BaseViewModel, ObservableObjec
             .map { value in
                 if let value {
                     return [value.emoji, value.name].compactMap { $0 } .joined(separator: " ")
-                } else {
-                    return ""
                 }
+                return ""
             }
             .assignWeak(to: \.countryOfBirth, on: self)
             .store(in: &subscriptions)
@@ -96,14 +94,14 @@ private extension StrigaRegistrationFirstStepViewModel {
     func fetchSavedData() {
         // Mark as isLoading
         isLoading = true
-        
+
         Task {
             do {
                 guard let data = try await service.getRegistrationData() as? StrigaUserDetailsResponse
                 else {
                     throw StrigaProviderError.invalidResponse
                 }
-                
+
                 await MainActor.run {
                     // save data
                     self.data = data
@@ -126,7 +124,7 @@ private extension StrigaRegistrationFirstStepViewModel {
                 }
             } catch {
                 // TODO: - Handle error
-                
+
                 await MainActor.run {
                     isLoading = false
                 }

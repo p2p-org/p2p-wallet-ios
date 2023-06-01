@@ -80,17 +80,7 @@ final class StrigaRegistrationSecondStepCoordinator: Coordinator<StrigaRegistrat
         return Publishers.Merge(
             vc.deallocatedPublisher()
                 .map { StrigaRegistrationSecondStepCoordinatorResult.canceled },
-            viewModel.actionPressed
-                // TODO: remove
-                .asyncMap({ _ in
-                    var data = UserData.empty
-                    data.countryCode = "ft"
-                    data.userId = "123"
-                    data.mobileVerified = false
-                    data.kycVerified = false
-                    let service: BankTransferService = Resolver.resolve()
-                    try! await service.save(userData: data)
-                })
+            viewModel.openNextStep
                 .map { StrigaRegistrationSecondStepCoordinatorResult.completed }
         )
             .prefix(1)

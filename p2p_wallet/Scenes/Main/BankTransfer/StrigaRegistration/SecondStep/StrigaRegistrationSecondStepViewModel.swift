@@ -17,8 +17,11 @@ final class StrigaRegistrationSecondStepViewModel: BaseViewModel, ObservableObje
 
     // Dependencies
     @Injected private var service: BankTransferService
+    @Injected private var notificationService: NotificationService
+    @Injected private var countriesService: CountriesAPI
     private let industryProvider: ChooseIndustryDataLocalProvider
 
+    @Published var isLoading = false
     // Fields
     @Published var occupationIndustry: String = ""
     @Published var sourceOfFunds: String = ""
@@ -43,27 +46,20 @@ final class StrigaRegistrationSecondStepViewModel: BaseViewModel, ObservableObje
     @Published var selectedIndustry: Industry?
     @Published var selectedSourceOfFunds: StrigaSourceOfFunds?
 
+    private var userData: StrigaUserDetailsResponse
+
     init(data: StrigaUserDetailsResponse) {
+        userData = data
         industryProvider = ChooseIndustryDataLocalProvider()
         super.init()
-
-        if let industry = data.occupation {
-            selectedIndustry = industryProvider.getIndustries().first(where: { $0.rawValue == industry })
-        }
-        selectedSourceOfFunds = data.sourceOfFunds
-        country = data.address?.country ?? ""
-        city = data.address?.city ?? ""
-        addressLine = data.address?.addressLine1 ?? ""
-        postalCode = data.address?.postalCode ?? ""
-        stateRegion = data.address?.state ?? ""
+        setInitialData()
 
         actionPressed
             .sink { [weak self] _ in
                 guard let self = self else { return }
                 self.isDataValid = isValid()
-                if isValid() {
-                    self.openNextStep.send(())
-                }
+                guard isValid() else { return }
+                self.createUser()
             }
             .store(in: &subscriptions)
 
@@ -98,25 +94,98 @@ final class StrigaRegistrationSecondStepViewModel: BaseViewModel, ObservableObje
 
 private extension StrigaRegistrationSecondStepViewModel {
 
+    func setInitialData() {
+        if let industry = userData.occupation {
+            selectedIndustry = industryProvider.getIndustries().first(where: { $0.rawValue == industry })
+        }
+
+        selectedSourceOfFunds = userData.sourceOfFunds
+        city = userData.address?.city ?? ""
+        addressLine = userData.address?.addressLine1 ?? ""
+        postalCode = userData.address?.postalCode ?? ""
+        stateRegion = userData.address?.state ?? ""
+
+        Task {
+            let countries = try await self.countriesService.fetchCountries()
+            if let country = countries.first(where: {
+                $0.code.lowercased() == userData.address?.country?.lowercased() ?? userData.placeOfBirth?.lowercased()
+            }) {
+                self.selectedCountry = country
+            }
+        }
+    }
+
     func isValid() -> Bool {
+        validate(value: city, field: .city)
+        validate(value: addressLine, field: .addressLine)
+        validate(value: postalCode, field: .postalCode)
+        validate(value: country, field: .country)
+        validate(value: occupationIndustry, field: .occupationIndustry)
+        validate(value: sourceOfFunds, field: .sourceOfFunds)
         return !fieldsStatuses.contains(where: { $0.value != .valid })
     }
 
+    func validate(value: String, field: Field) {
+        if value.isEmpty {
+            fieldsStatuses[field] = .invalid(error: L10n.couldNotBeEmpty)
+        } else {
+            fieldsStatuses[field] = .valid
+        }
+    }
+
     func bindToFieldValues() {
-        let sourceOfFunds = Publishers.CombineLatest($occupationIndustry, $sourceOfFunds)
-        let address1 = Publishers.CombineLatest($country, $city)
+        let sourceOfFunds = Publishers.CombineLatest($selectedIndustry, $selectedSourceOfFunds)
+        let address1 = Publishers.CombineLatest($selectedCountry, $city)
         let address2 = Publishers.CombineLatest3($addressLine, $postalCode, $stateRegion)
         Publishers.CombineLatest3(sourceOfFunds, address1, address2)
             .debounce(for: 0.5, scheduler: DispatchQueue.main)
-            .sinkAsync { [weak self] contacts, credentials, dateOfBirth in
+            .sinkAsync { [weak self] sourceOfFunds, address1, address2 in
                 guard let self else { return }
 
-                // TODO: Save registration data
+                let newData = StrigaUserDetailsResponse(
+                    firstName: self.userData.firstName,
+                    lastName: self.userData.lastName,
+                    email: self.userData.email,
+                    mobile: self.userData.mobile,
+                    dateOfBirth: self.userData.dateOfBirth,
+                    address: StrigaUserDetailsResponse.Address(
+                        addressLine1: address2.1,
+                        addressLine2: address2.2,
+                        city: address1.1,
+                        postalCode: address2.1,
+                        state: address2.2,
+                        country: address1.0?.code
+                    ),
+                    occupation: sourceOfFunds.0?.rawValue,
+                    sourceOfFunds: sourceOfFunds.1,
+                    placeOfBirth: self.userData.placeOfBirth
+                )
+                self.userData = newData
+                try? await self.service.updateLocally(data: newData)
 
                 if self.isDataValid == false {
                     self.isDataValid = self.isValid()
                 }
             }
             .store(in: &subscriptions)
+    }
+
+    func createUser() {
+        isLoading = true
+        Task {
+            do {
+                let response = try await service.createUser(data: self.userData)
+                try await service.save(userData: response)
+                await MainActor.run {
+                    self.isLoading = false
+                }
+                self.openNextStep.send(())
+            } catch {
+                self.notificationService.showDefaultErrorNotification()
+                await MainActor.run {
+                    self.isLoading = false
+                }
+            }
+        }
     }
 }

@@ -30,6 +30,7 @@ struct StrigaRegistrationSecondStepView: View {
                 title: viewModel.actionTitle.uppercaseFirst,
                 style: .primaryWhite,
                 isEnabled: viewModel.isDataValid,
+                isLoading: viewModel.isLoading,
                 trailing: viewModel.isDataValid ? .arrowForward : nil,
                 action: viewModel.actionPressed.send
             )
@@ -81,28 +82,28 @@ struct StrigaRegistrationSecondStepView: View {
                 title: L10n.city,
                 status: viewModel.fieldsStatuses[.city]
             ) {
-                TextField(placeholder: L10n.fullCityName, text: $viewModel.city)
+                TextField(placeholder: L10n.fullCityName, text: $viewModel.city, maxSymbolsLimit: 40)
             }
 
             Cell(
                 title: L10n.addressLine,
                 status: viewModel.fieldsStatuses[.addressLine]
             ) {
-                TextField(placeholder: L10n.yourStreetAndFlatNumber, text: $viewModel.addressLine)
+                TextField(placeholder: L10n.yourStreetAndFlatNumber, text: $viewModel.addressLine, maxSymbolsLimit: 160)
             }
 
             Cell(
                 title: L10n.postalCode,
                 status: viewModel.fieldsStatuses[.postalCode]
             ) {
-                TextField(placeholder: L10n.recommended, text: $viewModel.postalCode)
+                TextField(placeholder: L10n.recommended, text: $viewModel.postalCode, maxSymbolsLimit: 20)
             }
 
             Cell(
                 title: L10n.stateOrRegion,
                 status: viewModel.fieldsStatuses[.stateRegion]
             ) {
-                TextField(placeholder: L10n.recommended, text: $viewModel.stateRegion)
+                TextField(placeholder: L10n.recommended, text: $viewModel.stateRegion, maxSymbolsLimit: 20)
             }
         }
         .styled()
