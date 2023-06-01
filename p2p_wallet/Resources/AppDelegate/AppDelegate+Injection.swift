@@ -114,6 +114,7 @@ extension Resolver: ResolverRegistering {
                 remoteProvider: resolve(RemoteWalletMetadataProvider.self)
             )
         }
+        .implements(StrigaMetadataProvider.self)
         .scope(.application)
 
         // Prices
@@ -571,13 +572,11 @@ extension Resolver: ResolverRegistering {
                     localProvider: MockStrigaLocalProvider(
                         useCase: .unregisteredUser(hasCachedInput: true)
                     ),
-                    remoteProvider: MockStrigaRemoteProvider(
-                        useCase: .unregisteredUser(hasCachedInput: true)
+                    remoteProvider: StrigaRemoteProviderImpl(
+                        baseURL: "",
+                        solanaKeyPair: nil,//Resolver.resolve().wallet?.account,
+                        metadaProvider: Resolver.resolve()
                     )
-//                    localProvider: StrigaLocalProviderImpl(),
-//                    remoteProvider: StrigaRemoteProviderImpl(
-//                        solanaKeyPair: userWalletsManager.wallet?.account
-//                    )
                 )
             )
         }

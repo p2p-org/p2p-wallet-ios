@@ -10,6 +10,7 @@ public struct StrigaUserDetailsResponse: BankTransferRegistrationData {
     public let occupation: StrigaUserIndustry?
     public let sourceOfFunds: StrigaSourceOfFunds?
     public let placeOfBirth: String?
+    public let KYC: StrigaKYC
     
     public struct Mobile: Codable {
         public let countryCode: String
@@ -51,7 +52,7 @@ public struct StrigaUserDetailsResponse: BankTransferRegistrationData {
         }
     }
     
-    public init(firstName: String, lastName: String, email: String, mobile: Mobile, dateOfBirth: DateOfBirth? = nil, address: Address? = nil, occupation: StrigaUserIndustry? = nil, sourceOfFunds: StrigaSourceOfFunds? = nil, placeOfBirth: String? = nil) {
+    public init(firstName: String, lastName: String, email: String, mobile: Mobile, dateOfBirth: DateOfBirth? = nil, address: Address? = nil, occupation: StrigaUserIndustry? = nil, sourceOfFunds: StrigaSourceOfFunds? = nil, placeOfBirth: String? = nil, KYC: StrigaKYC) {
         self.firstName = firstName
         self.lastName = lastName
         self.email = email
@@ -61,5 +62,6 @@ public struct StrigaUserDetailsResponse: BankTransferRegistrationData {
         self.occupation = occupation
         self.sourceOfFunds = sourceOfFunds
         self.placeOfBirth = placeOfBirth
+        self.KYC = KYC
     }
 }
