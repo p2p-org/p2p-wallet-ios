@@ -51,9 +51,8 @@ extension HTTPClient: IHTTPClient {
         responseModel: T.Type
     ) async throws -> T {
         /// URL assertion
-        let urlString = endpoint.baseURL + endpoint.path
-        guard let url = URL(string: urlString) else {
-            throw HTTPClientError.invalidURL(urlString)
+        guard let url = URL(string: endpoint.urlString) else {
+            throw HTTPClientError.invalidURL(endpoint.urlString)
         }
         
         // Form request
