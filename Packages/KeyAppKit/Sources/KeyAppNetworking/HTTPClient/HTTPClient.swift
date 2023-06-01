@@ -19,7 +19,7 @@ public class HTTPClient {
     // MARK: - Properties
     
     /// URLSession to handle network request
-    private let urlSession: URLSession
+    private let urlSession: HTTPURLSession
     
     /// Decoder for response
     private let decoder: HTTPResponseDecoder
@@ -30,7 +30,7 @@ public class HTTPClient {
     /// - Parameter urlSession: URLSession to handle network request
     /// - Parameter decoder: Decoder for response
     public init(
-        urlSession: URLSession = .shared,
+        urlSession: HTTPURLSession = URLSession.shared,
         decoder: HTTPResponseDecoder = JSONResponseDecoder()
     ) {
         self.urlSession = urlSession
