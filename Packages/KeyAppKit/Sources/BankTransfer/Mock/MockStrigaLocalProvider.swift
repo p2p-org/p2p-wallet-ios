@@ -32,6 +32,9 @@ public actor MockStrigaLocalProvider: StrigaLocalProvider {
         case let .unregisteredUser(hasCachedInput):
             userId = nil
             cachedRegistrationData = hasCachedInput ? defaultCachedInput: nil
+        case let .registeredUserWithUnverifiedOTP(userId):
+            self.userId = userId
+            cachedRegistrationData = defaultCachedInput
         case let .registeredUserWithoutKYC(userId, _):
             self.userId = userId
             cachedRegistrationData = defaultCachedInput

@@ -28,6 +28,9 @@ public final class MockStrigaRemoteProvider: StrigaRemoteProvider {
         case .unregisteredUser:
             userId = nil
             kycToken = nil
+        case let .registeredUserWithUnverifiedOTP(userId):
+            self.userId = userId
+            self.kycToken = nil
         case let .registeredUserWithoutKYC(userId, kycToken):
             self.userId = userId
             self.kycToken = kycToken
@@ -48,6 +51,8 @@ public final class MockStrigaRemoteProvider: StrigaRemoteProvider {
         
         switch useCase {
         case .unregisteredUser:
+            throw NSError(domain: "Striga", code: 1)
+        case let .registeredUserWithUnverifiedOTP(userId):
             throw NSError(domain: "Striga", code: 1)
         case .registeredUserWithoutKYC:
             kyc = .notStarted
