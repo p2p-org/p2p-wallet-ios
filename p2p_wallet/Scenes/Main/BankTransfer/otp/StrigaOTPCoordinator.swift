@@ -102,7 +102,14 @@ final class StrigaOTPCoordinator: Coordinator<StrigaOTPCoordinatorResult> {
                         )
                     )
                 }
-                .map { StrigaOTPCoordinatorResult.verified }
+                .map { result in
+                    switch result {
+                    case .next:
+                        return StrigaOTPCoordinatorResult.verified
+                    case .cancel:
+                        return StrigaOTPCoordinatorResult.canceled
+                    }
+                }
         )
             .prefix(1)
             .eraseToAnyPublisher()
@@ -124,23 +131,28 @@ final class StrigaOTPCoordinator: Coordinator<StrigaOTPCoordinatorResult> {
     }
 
 }
+enum StrigaOTPSuccessCoordinatorResult {
+    case next
+    case cancel
+}
 
-final class StrigaOTPSuccessCoordinator: Coordinator<Void> {
+final class StrigaOTPSuccessCoordinator: Coordinator<StrigaOTPSuccessCoordinatorResult> {
 
     @Injected private var helpLauncher: HelpCenterLauncher
+    private let nextSubject = PassthroughSubject<Void, Never>()
     private let navigationController: UINavigationController
     init(navigationController: UINavigationController) {
         self.navigationController = navigationController
     }
 
-    override func start() -> AnyPublisher<Void, Never> {
+    override func start() -> AnyPublisher<StrigaOTPSuccessCoordinatorResult, Never> {
         let view = StrigaOTPCompletedView(
             image: .thumbsupImage,
             title: L10n.thankYou,
             subtitle: L10n.TheLastStepIsDocumentAndSelfieVerification.thisIsAOneTimeProcedureToEnsureSafetyOfYourAccount,
             actionTitle: L10n.continue,
             onAction:  { [weak self] in
-                self?.navigationController.popViewController(animated: true)
+                self?.nextSubject.send()
             }) { [weak self] in
                 self?.helpLauncher.launch()
             }
@@ -151,7 +163,12 @@ final class StrigaOTPSuccessCoordinator: Coordinator<Void> {
             controller
         ].compactMap { $0 }
 
-        return controller.deallocatedPublisher()
+        return Publishers.Merge(
+            controller.deallocatedPublisher()
+                .map { StrigaOTPSuccessCoordinatorResult.cancel },
+            nextSubject
+                .map { StrigaOTPSuccessCoordinatorResult.next }
+        )
             .prefix(1)
             .eraseToAnyPublisher()
     }
