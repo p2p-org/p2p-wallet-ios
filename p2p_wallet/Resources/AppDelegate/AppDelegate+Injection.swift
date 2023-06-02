@@ -571,12 +571,10 @@ extension Resolver: ResolverRegistering {
                 repository: StrigaBankTransferUserDataRepository(
                     localProvider: MockStrigaLocalProvider(
                         useCase: .unregisteredUser,
-                        hasCachedInput: true,
-                        mockUserId: "abc-xyz"
+                        hasCachedInput: true
                     ),
                     remoteProvider: MockStrigaRemoteProvider(
                         useCase: .unregisteredUser,
-                        hasCachedInput: true,
                         mockUserId: "abc-xyz",
                         mockKYCToken: "<mock-token>"
                     )

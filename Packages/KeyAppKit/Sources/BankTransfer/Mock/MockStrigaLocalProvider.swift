@@ -7,14 +7,13 @@ public actor MockStrigaLocalProvider: StrigaLocalProvider {
     private var useCase: MockStrigaUseCase
     private var cachedRegistrationData: StrigaUserDetailsResponse?
     
-    private let mockUserId: String
+    private var userId: String?
     
     // MARK: - Initializer
     
     public init(
         useCase: MockStrigaUseCase,
-        hasCachedInput: Bool,
-        mockUserId: String
+        hasCachedInput: Bool
     ) {
         self.useCase = useCase
         if hasCachedInput {
@@ -36,21 +35,17 @@ public actor MockStrigaLocalProvider: StrigaLocalProvider {
                 KYC: .init(status: kyc)
             )
         }
-        self.mockUserId = mockUserId
     }
 
     // MARK: - Methods
 
     public func getUserId() async -> String? {
-        switch useCase {
-        case .unregisteredUser:
-            return nil
-        case .registeredUserWithUnverifiedOTP, .registeredUserWithoutKYC, .registeredAndVerifiedUser:
-            return mockUserId
-        }
+        userId
     }
     
-    public func saveUserId(_ id: String) async {}
+    public func saveUserId(_ id: String) async {
+        userId = id
+    }
     
     public func getCachedRegistrationData() async -> StrigaUserDetailsResponse? {
         cachedRegistrationData

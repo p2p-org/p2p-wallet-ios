@@ -4,7 +4,6 @@ public final class MockStrigaRemoteProvider: StrigaRemoteProvider {
     // MARK: - Properties
 
     private var useCase: MockStrigaUseCase
-    private let hasCachedInput: Bool
     private let mockUserId: String
     private let mockKYCToken: String
     
@@ -12,12 +11,10 @@ public final class MockStrigaRemoteProvider: StrigaRemoteProvider {
     
     public init(
         useCase: MockStrigaUseCase,
-        hasCachedInput: Bool,
         mockUserId: String,
         mockKYCToken: String
     ) {
         self.useCase = useCase
-        self.hasCachedInput = hasCachedInput
         self.mockUserId = mockUserId
         self.mockKYCToken = mockKYCToken
     }
