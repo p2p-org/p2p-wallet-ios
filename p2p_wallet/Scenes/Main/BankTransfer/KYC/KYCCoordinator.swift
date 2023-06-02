@@ -17,13 +17,13 @@ final class KYCCoordinator: Coordinator<KYCCoordinatorResult> {
     
     // MARK: - Properties
     
-    private var presentingViewController: UIViewController!
+    private var presentingViewController: UIViewController
     private let subject = PassthroughSubject<KYCCoordinatorResult, Never>()
     
     // MARK: - Initializer
 
     init(
-        presentingViewController: UINavigationController? = nil
+        presentingViewController: UINavigationController
     ) {
         self.presentingViewController = presentingViewController
     }
