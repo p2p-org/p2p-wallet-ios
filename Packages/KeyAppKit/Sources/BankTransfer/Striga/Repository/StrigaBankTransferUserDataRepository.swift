@@ -100,6 +100,10 @@ public final class StrigaBankTransferUserDataRepository: BankTransferUserDataRep
         fatalError("Implementing")
     }
     
+    public func verifyMobileNumber(userId: String, verificationCode code: String) async throws {
+        try await remoteProvider.verifyMobileNumber(userId: userId, verificationCode: code)
+    }
+    
     public func resendSMS(userId: String) async throws {
         try await remoteProvider.resendSMS(userId: userId)
     }
