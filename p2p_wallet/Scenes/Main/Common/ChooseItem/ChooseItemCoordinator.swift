@@ -11,17 +11,21 @@ class ChooseItemCoordinator<T: ChooseItemRenderable>: Coordinator<ChooseItemCoor
     let controller: UIViewController
     let service: any ChooseItemService
     let chosen: (any ChooseItemSearchableItem)?
+    let showDoneButton: Bool
+    private weak var viewController: UIViewController?
 
     init(
         title: String? = nil,
         controller: UIViewController,
         service: any ChooseItemService,
-        chosen: (any ChooseItemSearchableItem)?
+        chosen: (any ChooseItemSearchableItem)?,
+        showDoneButton: Bool = false
     ) {
         self.title = title
         self.controller = controller
         self.service = service
         self.chosen = chosen
+        self.showDoneButton = showDoneButton
     }
 
     override func start() -> AnyPublisher<ChooseItemCoordinatorResult, Never> {
@@ -39,7 +43,16 @@ class ChooseItemCoordinator<T: ChooseItemRenderable>: Coordinator<ChooseItemCoor
             isWrapped ? aController : UINavigationController(rootViewController: aController),
             sender: nil
         )
+        if showDoneButton {
+            aController.navigationItem.rightBarButtonItem = UIBarButtonItem(
+                title: L10n.done,
+                style: .plain,
+                target: self,
+                action: #selector(dismiss)
+            )
+        }
 
+        viewController = aController
         return Publishers.Merge(
             controller.deallocatedPublisher().map { ChooseItemCoordinatorResult.cancel },
             viewModel.chooseTokenSubject.map { ChooseItemCoordinatorResult.item(item: $0) }
@@ -47,5 +60,10 @@ class ChooseItemCoordinator<T: ChooseItemRenderable>: Coordinator<ChooseItemCoor
                     isWrapped ? (self?.controller as? UINavigationController)?.popViewController(animated: true, completion: { }) : self?.controller.dismiss(animated: true)
                 })
         ).prefix(1).eraseToAnyPublisher()
+    }
+
+    @objc func dismiss() {
+        // Dismiss since Done shouldn't be displayed on navigation?
+        viewController?.dismiss(animated: true)
     }
 }

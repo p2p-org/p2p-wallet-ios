@@ -32,19 +32,15 @@ public final class StrigaRemoteProviderImpl {
 
 // MARK: - StrigaProvider
 
-public enum StrigaRemoteProviderError: Error {
-    case noUserId
-}
-
 extension StrigaRemoteProviderImpl: StrigaRemoteProvider {
 
     public func getUserId() async throws -> String? {
         try await metadaProvider.getUserId()
     }
-    
+
     public func getKYCStatus() async throws -> StrigaKYC {
         guard let userId = try await getUserId() else {
-            throw StrigaRemoteProviderError.noUserId
+            throw BankTransferError.missingUserId
         }
         return try await getUserDetails(userId: userId).KYC
     }
@@ -52,7 +48,7 @@ extension StrigaRemoteProviderImpl: StrigaRemoteProvider {
     public func getUserDetails(
         userId: String
     ) async throws -> StrigaUserDetailsResponse {
-        guard let keyPair else { throw BankTransferServiceError.invalidKeyPair }
+        guard let keyPair else { throw BankTransferError.invalidKeyPair }
         let endpoint = try StrigaEndpoint.getUserDetails(baseURL: baseURL, keyPair: keyPair, userId: userId)
         return try await httpClient.request(endpoint: endpoint, responseModel: StrigaUserDetailsResponse.self)
     }
@@ -60,7 +56,7 @@ extension StrigaRemoteProviderImpl: StrigaRemoteProvider {
     public func createUser(
         model: StrigaCreateUserRequest
     ) async throws -> StrigaCreateUserResponse {
-        guard let keyPair else { throw BankTransferServiceError.invalidKeyPair }
+        guard let keyPair else { throw BankTransferError.invalidKeyPair }
         let endpoint = try StrigaEndpoint.createUser(baseURL: baseURL, keyPair: keyPair, body: model)
         return try await httpClient.request(endpoint: endpoint, responseModel: StrigaCreateUserResponse.self)
     }
@@ -69,7 +65,7 @@ extension StrigaRemoteProviderImpl: StrigaRemoteProvider {
         userId: String,
         verificationCode: String
     ) async throws {
-        guard let keyPair else { throw BankTransferServiceError.invalidKeyPair }
+        guard let keyPair else { throw BankTransferError.invalidKeyPair }
         let endpoint = try StrigaEndpoint.verifyMobileNumber(
             baseURL: baseURL,
             keyPair: keyPair,
@@ -80,13 +76,13 @@ extension StrigaRemoteProviderImpl: StrigaRemoteProvider {
     }
     
     public func resendSMS(userId: String) async throws {
-        guard let keyPair else { throw BankTransferServiceError.invalidKeyPair }
+        guard let keyPair else { throw BankTransferError.invalidKeyPair }
         let endpoint = try StrigaEndpoint.resendSMS(baseURL: baseURL, keyPair: keyPair, userId: userId)
         _ = try await httpClient.request(endpoint: endpoint, responseModel: String.self)
     }
     
     public func getKYCToken(userId: String) async throws -> String {
-        guard let keyPair else { throw BankTransferServiceError.invalidKeyPair }
+        guard let keyPair else { throw BankTransferError.invalidKeyPair }
         let endpoint = try StrigaEndpoint.getKYCToken(baseURL: baseURL, keyPair: keyPair, userId: userId)
         
         return try await httpClient.request(endpoint: endpoint, responseModel: StrigaUserGetTokenResponse.self)

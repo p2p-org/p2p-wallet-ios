@@ -28,7 +28,10 @@ final class BankTransferInfoCoordinator: Coordinator<BankTransferInfoCoordinator
 
     override func start() -> AnyPublisher<BankTransferInfoCoordinatorResult, Never> {
         let viewModel = BankTransferInfoViewModel()
-        let controller = UIBottomSheetHostingController(rootView: BankTransferInfoView(viewModel: viewModel))
+        let controller = UIBottomSheetHostingController(
+            rootView: BankTransferInfoView(viewModel: viewModel),
+            ignoresKeyboard: true
+        )
 
         viewModel.objectWillChange
             .delay(for: 0.01, scheduler: RunLoop.main)
@@ -44,7 +47,8 @@ final class BankTransferInfoCoordinator: Coordinator<BankTransferInfoCoordinator
                 title: L10n.selectYourCountry,
                 controller: controller,
                 service: ChooseCountryService(),
-                chosen: val
+                chosen: val,
+                showDoneButton: true
             ))
         }.sink { result in
             switch result {

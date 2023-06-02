@@ -58,19 +58,6 @@ public final class MockStrigaRemoteProvider: StrigaRemoteProvider {
         }
     }
     
-    public func isMobileVerified() async throws -> Bool {
-        // Fake network request
-        try await Task.sleep(nanoseconds: 1_000_000_000)
-        
-        // return value
-        switch useCase {
-        case .unregisteredUser, .registeredUserWithUnverifiedOTP:
-            return false
-        case .registeredUserWithoutKYC, .registeredAndVerifiedUser:
-            return true
-        }
-    }
-    
     public func getUserDetails(userId: String) async throws -> StrigaUserDetailsResponse {
         // Fake network request
         try await Task.sleep(nanoseconds: 1_000_000_000)
