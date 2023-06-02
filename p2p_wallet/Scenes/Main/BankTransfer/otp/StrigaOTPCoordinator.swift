@@ -98,7 +98,7 @@ final class StrigaOTPCoordinator: Coordinator<StrigaOTPCoordinatorResult> {
                 .flatMap {
                     self.coordinate(
                         to: StrigaOTPSuccessCoordinator(
-                            viewController: self.viewController
+                            navigationController: self.viewController
                         )
                     )
                 }
@@ -128,9 +128,9 @@ final class StrigaOTPCoordinator: Coordinator<StrigaOTPCoordinatorResult> {
 final class StrigaOTPSuccessCoordinator: Coordinator<Void> {
 
     @Injected private var helpLauncher: HelpCenterLauncher
-    private let viewController: UINavigationController
-    init(viewController: UINavigationController) {
-        self.viewController = viewController
+    private let navigationController: UINavigationController
+    init(navigationController: UINavigationController) {
+        self.navigationController = navigationController
     }
 
     override func start() -> AnyPublisher<Void, Never> {
@@ -140,14 +140,14 @@ final class StrigaOTPSuccessCoordinator: Coordinator<Void> {
             subtitle: L10n.TheLastStepIsDocumentAndSelfieVerification.thisIsAOneTimeProcedureToEnsureSafetyOfYourAccount,
             actionTitle: L10n.continue,
             onAction:  { [weak self] in
-                self?.viewController.dismiss(animated: true)
+                self?.navigationController.popViewController(animated: true)
             }) { [weak self] in
                 self?.helpLauncher.launch()
             }
         let controller = view.asViewController(withoutUIKitNavBar: false)
-        self.viewController.pushViewController(controller, animated: true)
-        self.viewController.viewControllers = [
-            viewController.viewControllers.first,
+        self.navigationController.pushViewController(controller, animated: true)
+        self.navigationController.viewControllers = [
+            navigationController.viewControllers.first,
             controller
         ].compactMap { $0 }
 
