@@ -18,7 +18,7 @@ final class StrigaOTPCoordinator: Coordinator<StrigaOTPCoordinatorResult> {
     @SwiftyUserDefault(keyPath: \.strigaOTPResendCounter, options: .cached)
     private var resendCounter: Wrapper<ResendCounter>
 
-    private var resultSubject = PassthroughSubject<Bool, Never>()
+    private var numberVerifiedSubject = PassthroughSubject<Void, Never>()
 
     private let viewController: UINavigationController
     private let phone: String
@@ -45,12 +45,8 @@ final class StrigaOTPCoordinator: Coordinator<StrigaOTPCoordinatorResult> {
                 viewModel?.isLoading = false
             }
             do {
-                let result = try await self.bankTransfer.verify(OTP: otp)
-                if result == false {
-                    viewModel?.coordinatorIO.error.send(APIGatewayError.invalidOTP)
-                    return
-                }
-                self.resultSubject.send(result)
+                try await self.bankTransfer.verify(OTP: otp)
+                self.numberVerifiedSubject.send(())
             } catch {
                 viewModel?.coordinatorIO.error.send(error)
             }
@@ -66,7 +62,7 @@ final class StrigaOTPCoordinator: Coordinator<StrigaOTPCoordinatorResult> {
             process.start {
                 guard let self, let viewModel else { return }
                 viewModel.attemptCounter = Wrapper(viewModel.attemptCounter.value.incremented())
-                try await self.bankTransfer.getOTP()
+                try await self.bankTransfer.resendSMS()
             }
         }.store(in: &subscriptions)
 
@@ -90,7 +86,7 @@ final class StrigaOTPCoordinator: Coordinator<StrigaOTPCoordinatorResult> {
 
         // Get initial OTP
         Task {
-            try await self.bankTransfer.getOTP()
+            try await self.bankTransfer.resendSMS()
         }
 
         present(controller: controller)
@@ -98,14 +94,14 @@ final class StrigaOTPCoordinator: Coordinator<StrigaOTPCoordinatorResult> {
         return Publishers.Merge(
             controller.deallocatedPublisher()
                 .map { StrigaOTPCoordinatorResult.canceled },
-            resultSubject.filter { $0 }
-                .flatMap({ isVerified in
+            numberVerifiedSubject
+                .flatMap {
                     self.coordinate(
                         to: StrigaOTPSuccessCoordinator(
                             viewController: self.viewController
                         )
                     )
-                })
+                }
                 .map { result in
                     switch result {
                     case .next:

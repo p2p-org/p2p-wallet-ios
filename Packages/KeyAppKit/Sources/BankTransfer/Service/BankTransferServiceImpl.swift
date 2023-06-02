@@ -76,12 +76,9 @@ extension BankTransferServiceImpl: BankTransferService {
         try await repository.updateUser(registrationData: data)
     }
     
-    public func getOTP() async throws {
-        fatalError("Not implemented")
-    }
-    
-    public func verify(OTP: String) async throws -> Bool {
-        fatalError("Not implemented")
+    public func verify(OTP: String) async throws {
+        guard let userId = subject.value.value.userId else { return }
+        try await repository.verifyMobileNumber(userId: userId, verificationCode: OTP)
     }
     
     public func resendSMS() async throws {

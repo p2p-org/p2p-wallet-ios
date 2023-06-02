@@ -20,8 +20,7 @@ public protocol BankTransferService {
     func createUser(data: BankTransferRegistrationData) async throws -> UserData
     func updateUser(data: BankTransferRegistrationData) async throws
 
-    func getOTP() async throws
-    func verify(OTP: String) async throws -> Bool
+    func verify(OTP: String) async throws
     func resendSMS() async throws
     
     func getKYCToken() async throws -> String
