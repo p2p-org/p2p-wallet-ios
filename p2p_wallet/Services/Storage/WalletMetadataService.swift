@@ -11,14 +11,14 @@ import Resolver
 class WalletMetadataService {
     @Injected var userWalletManager: UserWalletManager
 
-    private let metadataValue: CurrentAsyncValue<WalletMetaData?> = .init(state: .init(value: nil))
+    private let metadataSubject: CurrentValueSubject<AsyncValueState<WalletMetaData?>, Never> = .init(.init(value: nil))
 
-    var metadata: AsyncValueState<WalletMetaData?> {
-        metadataValue.state
+    public var metadata: AsyncValueState<WalletMetaData?> {
+        metadataSubject.value
     }
 
-    var metadataPublisher: AnyPublisher<AsyncValueState<WalletMetaData?>, Never> {
-        metadataValue.publisher
+    public var metadataPublisher: AnyPublisher<AsyncValueState<WalletMetaData?>, Never> {
+        metadataSubject.eraseToAnyPublisher()
     }
 
     private let localMetadataProvider: WalletMetadataProvider
@@ -36,61 +36,81 @@ class WalletMetadataService {
             throw WalletMetadataService.Error.unauthorized
         }
 
-        // Warm up with local data
-        metadataValue.state.value = try await localMetadataProvider.load(for: userWallet)
+        if userWallet.ethAddress == nil {
+            metadataSubject.value.status = .ready
+            metadataSubject.value.value = nil
+        } else {
+            // Warm up with local data
+            metadataSubject.value.value = try await localMetadataProvider.load(for: userWallet)
 
-        do {
-            metadataValue.state.status = .fetching
-            metadataValue.state.error = nil
+            do {
+                metadataSubject.value.status = .fetching
+                metadataSubject.value.error = nil
 
-            defer {
-                metadataValue.state.status = .ready
+                defer {
+                    metadataSubject.value.status = .ready
+                }
+
+                // Load from cloud
+                let remoteMetadata = try await remoteMetadataProvider.load(for: userWallet)
+
+                if
+                    let localMetadata = metadataSubject.value.value,
+                    let remoteMetadata,
+                    localMetadata != remoteMetadata
+                {
+                    // Try merge data if they are difference
+                    let mergedMetadata = try WalletMetaData.merge(lhs: localMetadata, rhs: remoteMetadata)
+
+                    // Push updated data to local storage
+                    try await localMetadataProvider.save(for: userWallet, metadata: mergedMetadata)
+                    metadataSubject.value.value = mergedMetadata
+
+                    // Push updated data to remote storage
+                    do {
+                        try await remoteMetadataProvider.save(for: userWallet, metadata: mergedMetadata)
+                    } catch {
+                        throw WalletMetadataService.Error.remoteSynchronizationFailure
+                    }
+                } else {
+                    // Push updated data to local storage
+                    metadataSubject.value.value = remoteMetadata
+                    try await localMetadataProvider.save(for: userWallet, metadata: remoteMetadata)
+                }
+            } catch {
+                metadataSubject.value.error = error
+                throw error
             }
-
-            // Load from cloud
-            let remoteMetadata = try await remoteMetadataProvider.load(for: userWallet)
-
-            if
-                let localMetadata = metadataValue.state.value,
-                let remoteMetadata,
-                localMetadata != remoteMetadata
-            {
-                let mergedMetadata = try WalletMetaData.merge(lhs: localMetadata, rhs: remoteMetadata)
-
-                try await localMetadataProvider.save(for: userWallet, metadata: mergedMetadata)
-                try await remoteMetadataProvider.save(for: userWallet, metadata: mergedMetadata)
-
-                metadataValue.state.value = mergedMetadata
-            } else {
-                metadataValue.state.value = remoteMetadata
-                try await localMetadataProvider.save(for: userWallet, metadata: remoteMetadata)
-            }
-        } catch {
-            metadataValue.state.error = error
-            throw error
         }
     }
 
     func update(_ newMetadata: WalletMetaData) async throws {
-        try await synchronize()
-
         guard let userWallet = userWalletManager.wallet else {
             throw WalletMetadataService.Error.unauthorized
         }
 
-        guard let localMetadata = metadataValue.state.value else {
-            throw WalletMetadataService.Error.missingLocalMetadata
+        if userWallet.ethAddress == nil {
+            return
+        } else {
+            try await synchronize()
+
+            guard let localMetadata = metadataSubject.value.value else {
+                throw WalletMetadataService.Error.missingLocalMetadata
+            }
+
+            let mergedMetadata = try WalletMetaData.merge(lhs: localMetadata, rhs: newMetadata)
+
+            // Push updated data to local storage
+            try await localMetadataProvider.save(for: userWallet, metadata: mergedMetadata)
+            metadataSubject.value.value = newMetadata
+
+            // Push updated data to local storage
+            do {
+                try await remoteMetadataProvider.save(for: userWallet, metadata: mergedMetadata)
+            } catch {
+                throw WalletMetadataService.Error.remoteSynchronizationFailure
+            }
         }
-
-        let mergedMetadata = try WalletMetaData.merge(lhs: localMetadata, rhs: newMetadata)
-        try await localMetadataProvider.save(for: userWallet, metadata: mergedMetadata)
-        try await remoteMetadataProvider.save(for: userWallet, metadata: mergedMetadata)
-
-        metadataValue.state.value = newMetadata
-    }
-
-    func clear() async throws {
-        metadataValue.state.value = nil
     }
 }
 
@@ -98,5 +118,6 @@ extension WalletMetadataService {
     enum Error: Swift.Error {
         case unauthorized
         case missingLocalMetadata
+        case remoteSynchronizationFailure
     }
 }
