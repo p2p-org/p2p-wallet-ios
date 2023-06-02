@@ -572,13 +572,13 @@ extension Resolver: ResolverRegistering {
                     localProvider: MockStrigaLocalProvider(
                         useCase: .unregisteredUser,
                         hasCachedInput: true,
-                        mockUserId: ""
+                        mockUserId: "abc-xyz"
                     ),
                     remoteProvider: MockStrigaRemoteProvider(
                         useCase: .unregisteredUser,
                         hasCachedInput: true,
-                        mockUserId: "",
-                        mockKYCToken: ""
+                        mockUserId: "abc-xyz",
+                        mockKYCToken: "<mock-token>"
                     )
                 )
             )
