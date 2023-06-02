@@ -95,6 +95,16 @@ extension BankTransferServiceImpl: BankTransferService {
     public func verify(OTP: String) async throws {
         guard let userId = subject.value.value.userId else { return }
         try await repository.verifyMobileNumber(userId: userId, verificationCode: OTP)
+        
+        subject.send(
+            .init(
+                status: .ready,
+                value: subject.value.value.updating(
+                    mobileVerified: true
+                ),
+                error: nil
+            )
+        )
     }
     
     public func resendSMS() async throws {
