@@ -90,7 +90,7 @@ extension BankTransferServiceImpl: BankTransferService {
     }
     
     public func getKYCToken() async throws -> String {
-        guard let userId = subject.value.value.userId else { throw BankTransferServiceError.missingUserId }
+        guard let userId = subject.value.value.userId else { throw BankTransferError.missingUserId }
         return try await repository.getKYCToken(userId: userId)
     }
     

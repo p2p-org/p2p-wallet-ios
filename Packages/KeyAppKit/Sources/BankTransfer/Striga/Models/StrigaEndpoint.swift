@@ -130,7 +130,7 @@ extension KeyPair {
                 secretKey: secretKey
             ).base64EncodedString()
         else {
-            throw BankTransferServiceError.invalidKeyPair
+            throw BankTransferError.invalidKeyPair
         }
         // return unixtime:signature_of_unixtime_by_user_privatekey_in_base64_format
         return [timestamp, signedTimestampMessage].joined(separator: ":")

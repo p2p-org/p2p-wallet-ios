@@ -1,6 +1,6 @@
 import Foundation
 
-enum BankTransferServiceError: Error {
+enum BankTransferError: Error {
     case invalidKeyPair
     case missingUserId
 }
