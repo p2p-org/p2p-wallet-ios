@@ -68,7 +68,7 @@ extension BankTransferServiceImpl: BankTransferService {
         subject.send(
             .init(
                 status: subject.value.status,
-                value: subject.value.value.updating(
+                value: subject.value.value.updated(
                     userId: response.userId,
                     kycVerified: response.KYC.approved
                 ),
@@ -99,7 +99,7 @@ extension BankTransferServiceImpl: BankTransferService {
         subject.send(
             .init(
                 status: .ready,
-                value: subject.value.value.updating(
+                value: subject.value.value.updated(
                     mobileVerified: true
                 ),
                 error: nil
@@ -131,7 +131,7 @@ extension BankTransferServiceImpl: BankTransferService {
         subject.send(
             .init(
                 status: .ready,
-                value: subject.value.value.updating(
+                value: subject.value.value.updated(
                     userId: userId,
                     mobileVerified: kycStatus.mobileVerified,
                     kycVerified: kycStatus.approved
@@ -145,7 +145,7 @@ extension BankTransferServiceImpl: BankTransferService {
         subject.send(
             .init(
                 status: .ready,
-                value: subject.value.value.updating(
+                value: subject.value.value.updated(
                     countryCode: nil,
                     userId: nil,
                     mobileVerified: false,

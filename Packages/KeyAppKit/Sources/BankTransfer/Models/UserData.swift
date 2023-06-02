@@ -27,7 +27,7 @@ public struct UserData {
         )
     }
     
-    public func updating(
+    public func updated(
         countryCode: String? = nil,
         userId: String? = nil,
         mobileVerified: Bool? = nil,
