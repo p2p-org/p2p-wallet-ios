@@ -21,7 +21,8 @@ final class ChooseWormholeTokenCoordinator: Coordinator<Wallet?> {
     override func start() -> AnyPublisher<Wallet?, Never> {
         let viewModel = ChooseItemViewModel(
             service: ChooseWormholeTokenService(),
-            chosenToken: chosenWallet
+            chosenItem: chosenWallet,
+            isSearchEnabled: true
         )
         let view = ChooseItemView<TokenCellView>(viewModel: viewModel) { model in
             TokenCellView(item: .init(wallet: model.item as! Wallet), appearance: .other)
