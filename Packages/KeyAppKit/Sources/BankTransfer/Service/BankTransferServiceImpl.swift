@@ -26,10 +26,6 @@ extension BankTransferServiceImpl: BankTransferService {
         subject.eraseToAnyPublisher()
     }
     
-    public func save(userData: UserData) async throws {
-        fatalError("Not implemented")
-    }
-    
     public func reload() async {
         // mark as loading
         subject.send(
@@ -67,21 +63,48 @@ extension BankTransferServiceImpl: BankTransferService {
         try await repository.updateUserLocally(registrationData: data)
     }
     
-    public func createUser(data: BankTransferRegistrationData) async throws -> UserData {
+    public func createUser(data: BankTransferRegistrationData) async throws {
         let response = try await repository.createUser(registrationData: data)
-        return UserData(userId: response.userId, mobileVerified: false, kycVerified: response.KYC.verified)
+        subject.send(
+            .init(
+                status: subject.value.status,
+                value: subject.value.value.updated(
+                    userId: response.userId,
+                    kycVerified: response.KYC.approved
+                ),
+                error: subject.value.error
+            )
+        )
     }
     
     public func updateUser(data: BankTransferRegistrationData) async throws {
         try await repository.updateUser(registrationData: data)
+        
+//        subject.send(
+//            .init(
+//                status: subject.value.status,
+//                value: subject.value.value.updating(
+//                    userId: response.userId,
+//                    kycVerified: response.KYC.verified
+//                ),
+//                error: subject.value.error
+//            )
+//        )
     }
     
-    public func getOTP() async throws {
-        fatalError("Not implemented")
-    }
-    
-    public func verify(OTP: String) async throws -> Bool {
-        fatalError("Not implemented")
+    public func verify(OTP: String) async throws {
+        guard let userId = subject.value.value.userId else { return }
+        try await repository.verifyMobileNumber(userId: userId, verificationCode: OTP)
+        
+        subject.send(
+            .init(
+                status: .ready,
+                value: subject.value.value.updated(
+                    mobileVerified: true
+                ),
+                error: nil
+            )
+        )
     }
     
     public func resendSMS() async throws {
@@ -104,15 +127,14 @@ extension BankTransferServiceImpl: BankTransferService {
         // get user details, check kyc status
         let kycStatus = try await repository.getKYCStatus()
         
-        // return value
+        // update
         subject.send(
             .init(
                 status: .ready,
-                value: .init(
-                    countryCode: nil,
+                value: subject.value.value.updated(
                     userId: userId,
-                    mobileVerified: true,
-                    kycVerified: kycStatus.rawValue == StrigaKYC.approved.status.rawValue
+                    mobileVerified: kycStatus.mobileVerified,
+                    kycVerified: kycStatus.approved
                 ),
                 error: nil
             )
@@ -123,12 +145,7 @@ extension BankTransferServiceImpl: BankTransferService {
         subject.send(
             .init(
                 status: .ready,
-                value: .init(
-                    countryCode: nil,
-                    userId: nil,
-                    mobileVerified: false,
-                    kycVerified: false
-                ),
+                value: .empty,
                 error: nil
             )
         )

@@ -1,43 +1,42 @@
 import Foundation
 
 public actor MockStrigaLocalProvider: StrigaLocalProvider {
-
+    
     // MARK: - Properties
-
-    private var userId: String?
+    
+    private var useCase: MockStrigaUseCase
     private var cachedRegistrationData: StrigaUserDetailsResponse?
-
+    
+    private var userId: String?
+    
     // MARK: - Initializer
-
-    public init(useCase: MockStrigaUseCase) {
-        var kyc: StrigaKYC.Status = .notStarted
-        if case .registeredAndVerifiedUser(_) = useCase {
-            kyc = .approved
-        }
-        
-        var defaultCachedInput = StrigaUserDetailsResponse(
-            firstName: "Local",
-            lastName: "Provider",
-            email: "local.provider@mocking.com",
-            mobile: .init(countryCode: "1", number: "5853042520"),
-            dateOfBirth: .init(year: 1986, month: 12, day: 1),
-            address: .init(addressLine1: "Local street 12", addressLine2: nil, city: "Local Provider", postalCode: "12345", state: "Local Provider", country: "US"),
-            occupation: .artEntertaiment,
-            sourceOfFunds: .civilContract,
-            placeOfBirth: nil,
-            KYC: .init(status: kyc)
-        )
-        
-        switch useCase {
-        case let .unregisteredUser(hasCachedInput):
-            userId = nil
-            cachedRegistrationData = hasCachedInput ? defaultCachedInput: nil
-        case let .registeredUserWithoutKYC(userId, _):
-            self.userId = userId
-            cachedRegistrationData = defaultCachedInput
-        case let .registeredAndVerifiedUser(userId):
-            self.userId = userId
-            cachedRegistrationData = defaultCachedInput
+    
+    public init(
+        useCase: MockStrigaUseCase,
+        hasCachedInput: Bool
+    ) {
+        self.useCase = useCase
+        if hasCachedInput {
+            var kyc: StrigaKYC.Status = .notStarted
+            if .registeredAndVerifiedUser == useCase {
+                kyc = .approved
+            }
+            
+            cachedRegistrationData = StrigaUserDetailsResponse(
+                firstName: "Local",
+                lastName: "Provider",
+                email: "local.provider@mocking.com",
+                mobile: .init(countryCode: "1", number: "5853042520"),
+                dateOfBirth: .init(year: 1986, month: 12, day: 1),
+                address: .init(addressLine1: "Local street 12", addressLine2: nil, city: "Local Provider", postalCode: "12345", state: "Local Provider", country: "US"),
+                occupation: .artEntertaiment,
+                sourceOfFunds: .civilContract,
+                placeOfBirth: nil,
+                KYC: .init(
+                    status: kyc,
+                    mobileVerified: false
+                )
+            )
         }
     }
 
@@ -61,6 +60,6 @@ public actor MockStrigaLocalProvider: StrigaLocalProvider {
     
     public func clearRegistrationData() async {
         self.cachedRegistrationData = nil
-        self.userId = nil
+        self.useCase = .unregisteredUser
     }
 }

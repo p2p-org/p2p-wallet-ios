@@ -4,6 +4,7 @@ import SolanaSwift
 import TweetNacl
 
 public final class StrigaBankTransferUserDataRepository: BankTransferUserDataRepository {
+
     // MARK: - Properties
 
     private let localProvider: StrigaLocalProvider
@@ -38,7 +39,7 @@ public final class StrigaBankTransferUserDataRepository: BankTransferUserDataRep
         }
     }
     
-    public func getKYCStatus() async throws -> StrigaKYC.Status {
+    public func getKYCStatus() async throws -> StrigaKYC {
         try await remoteProvider.getKYCStatus()
     }
 
@@ -95,6 +96,10 @@ public final class StrigaBankTransferUserDataRepository: BankTransferUserDataRep
         fatalError("Implementing")
     }
     
+    public func verifyMobileNumber(userId: String, verificationCode code: String) async throws {
+        try await remoteProvider.verifyMobileNumber(userId: userId, verificationCode: code)
+    }
+    
     public func resendSMS(userId: String) async throws {
         try await remoteProvider.resendSMS(userId: userId)
     }
@@ -129,7 +134,10 @@ public final class StrigaBankTransferUserDataRepository: BankTransferUserDataRep
                 countryCode: "",
                 number: ""
             ),
-            KYC: .notStarted
+            KYC: .init(
+                status: .notStarted,
+                mobileVerified: false
+            )
         )
     }
 

@@ -138,7 +138,10 @@ struct StrigaRegistrationSecondStepView_Previews: PreviewProvider {
                     lastName: "test",
                     email: "test@test.com",
                     mobile: .init(countryCode: "", number: ""),
-                    KYC: .notStarted
+                    KYC: .init(
+                        status: .notStarted,
+                        mobileVerified: false
+                    )
                 )
             )
         )

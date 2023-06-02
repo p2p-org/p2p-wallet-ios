@@ -1,7 +1,8 @@
 import Foundation
 
-public enum MockStrigaUseCase {
-    case unregisteredUser(hasCachedInput: Bool)
-    case registeredUserWithoutKYC(userId: String, kycToken: String)
-    case registeredAndVerifiedUser(userId: String)
+public enum MockStrigaUseCase: Equatable {
+    case unregisteredUser
+    case registeredUserWithUnverifiedOTP
+    case registeredUserWithoutKYC
+    case registeredAndVerifiedUser
 }

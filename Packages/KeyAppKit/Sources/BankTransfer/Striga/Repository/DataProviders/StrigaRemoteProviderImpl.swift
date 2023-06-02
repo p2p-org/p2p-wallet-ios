@@ -37,10 +37,12 @@ extension StrigaRemoteProviderImpl: StrigaRemoteProvider {
     public func getUserId() async throws -> String? {
         try await metadaProvider.getUserId()
     }
-    
-    public func getKYCStatus() async throws -> StrigaKYC.Status {
-        guard let userId = try await getUserId() else { throw BankTransferError.missingUserId }
-        return try await getUserDetails(userId: userId).KYC.status
+
+    public func getKYCStatus() async throws -> StrigaKYC {
+        guard let userId = try await getUserId() else {
+            throw BankTransferError.missingUserId
+        }
+        return try await getUserDetails(userId: userId).KYC
     }
     
     public func getUserDetails(

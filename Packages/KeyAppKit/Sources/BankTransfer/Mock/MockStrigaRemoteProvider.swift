@@ -2,77 +2,103 @@ import Foundation
 
 public final class MockStrigaRemoteProvider: StrigaRemoteProvider {
     // MARK: - Properties
-    
-    private var userId: String?
-    private let kycToken: String?
-    private let response: StrigaUserDetailsResponse = .init(
-        firstName: "Remote",
-        lastName: "Provider",
-        email: "remote.provider@mocking.com",
-        mobile: .init(countryCode: "1", number: "5853042520"),
-        dateOfBirth: .init(year: 1986, month: 12, day: 1),
-        address: .init(addressLine1: "Remote street 12", addressLine2: nil, city: "Remote Provider", postalCode: "12345", state: "Remote Provider", country: "USA"),
-        occupation: nil,
-        sourceOfFunds: nil,
-        placeOfBirth: nil,
-        KYC: .notStarted
-    )
-    private let useCase: MockStrigaUseCase
+
+    private var useCase: MockStrigaUseCase
+    private let mockUserId: String
+    private let mockKYCToken: String
     
     // MARK: - Initializer
     
-    public init(useCase: MockStrigaUseCase) {
+    public init(
+        useCase: MockStrigaUseCase,
+        mockUserId: String,
+        mockKYCToken: String
+    ) {
         self.useCase = useCase
-        
-        switch useCase {
-        case .unregisteredUser:
-            userId = nil
-            kycToken = nil
-        case let .registeredUserWithoutKYC(userId, kycToken):
-            self.userId = userId
-            self.kycToken = kycToken
-        case let .registeredAndVerifiedUser(userId):
-            self.userId = userId
-            self.kycToken = nil
-        }
+        self.mockUserId = mockUserId
+        self.mockKYCToken = mockKYCToken
     }
     
     // MARK: - Methods
 
     public func getUserId() async throws -> String? {
-        userId
-    }
-    
-    public func getKYCStatus() async throws -> StrigaKYC.Status {
-        let kyc: StrigaKYC
+        // Fake network request
+        try await Task.sleep(nanoseconds: 1_000_000_000)
         
+        // return value
         switch useCase {
         case .unregisteredUser:
-            throw NSError(domain: "Striga", code: 1)
-        case .registeredUserWithoutKYC:
-            kyc = .notStarted
+            return nil
+        case .registeredUserWithUnverifiedOTP, .registeredUserWithoutKYC:
+            return mockUserId
         case .registeredAndVerifiedUser:
-            kyc = .approved
+            return mockUserId
+        }
+    }
+    
+    public func getKYCStatus() async throws -> StrigaKYC {
+        // Fake network request
+        try await Task.sleep(nanoseconds: 1_000_000_000)
+        
+        let mobileVerified: Bool
+        
+        switch useCase {
+        case .unregisteredUser, .registeredUserWithUnverifiedOTP:
+            mobileVerified = false
+        case .registeredUserWithoutKYC, .registeredAndVerifiedUser:
+            mobileVerified = true
         }
         
-        return kyc.status
+        // return value
+        switch useCase {
+        case .unregisteredUser, .registeredUserWithUnverifiedOTP, .registeredUserWithoutKYC:
+            return .init(status: .notStarted, mobileVerified: mobileVerified)
+        case .registeredAndVerifiedUser:
+            return .init(status: .approved, mobileVerified: mobileVerified)
+        }
     }
     
     public func getUserDetails(userId: String) async throws -> StrigaUserDetailsResponse {
-        try await Task.sleep(nanoseconds: 2_000_000_000)
-        return response
+        // Fake network request
+        try await Task.sleep(nanoseconds: 1_000_000_000)
+        
+        // return value
+        return .init(
+            firstName: "Remote",
+            lastName: "Provider",
+            email: "remote.provider@mocking.com",
+            mobile: .init(countryCode: "1", number: "5853042520"),
+            dateOfBirth: .init(year: 1986, month: 12, day: 1),
+            address: .init(addressLine1: "Remote street 12", addressLine2: nil, city: "Remote Provider", postalCode: "12345", state: "Remote Provider", country: "USA"),
+            occupation: nil,
+            sourceOfFunds: nil,
+            placeOfBirth: nil,
+            KYC: try await getKYCStatus()
+        )
     }
     
     public func createUser(model: StrigaCreateUserRequest) async throws -> StrigaCreateUserResponse {
-        .init(
-            userId: userId!,
+        // Fake network request
+        try await Task.sleep(nanoseconds: 2_000_000_000)
+        
+        // return value
+        useCase = .registeredUserWithUnverifiedOTP
+        
+        // return value
+        return .init(
+            userId: mockUserId,
             email: model.email,
-            KYC: .init(status: try await getKYCStatus())
+            KYC: try await getKYCStatus()
         )
     }
     
     public func verifyMobileNumber(userId: String, verificationCode: String) async throws {
+        // Fake network request
+        try await Task.sleep(nanoseconds: 1_000_000_000)
+        
         // all goods
+        // return value
+        useCase = .registeredUserWithoutKYC
     }
     
     var invokedResendSMS = false
@@ -81,10 +107,20 @@ public final class MockStrigaRemoteProvider: StrigaRemoteProvider {
     var invokedResendSMSParametersList = [(userId: String, Void)]()
     
     public func resendSMS(userId: String) async throws {
-        
+        try await Task.sleep(nanoseconds: 1_000_000_000)
+        // all goods
     }
     
     public func getKYCToken(userId: String) async throws -> String {
-        kycToken!
+        // Fake network request
+        try await Task.sleep(nanoseconds: 1_000_000_000)
+        
+        // return value
+        switch useCase {
+        case .unregisteredUser, .registeredUserWithUnverifiedOTP, .registeredAndVerifiedUser:
+            return ""
+        case .registeredUserWithoutKYC:
+            return mockKYCToken
+        }
     }
 }
