@@ -111,7 +111,7 @@ extension BankTransferServiceImpl: BankTransferService {
                     countryCode: nil,
                     userId: userId,
                     mobileVerified: true,
-                    kycVerified: kycStatus.verified
+                    kycVerified: kycStatus.rawValue == StrigaKYC.approved.status.rawValue
                 ),
                 error: nil
             )
