@@ -167,6 +167,9 @@ final class StrigaOTPSuccessCoordinator: Coordinator<StrigaOTPSuccessCoordinator
             controller.deallocatedPublisher()
                 .map { StrigaOTPSuccessCoordinatorResult.cancel },
             nextSubject
+                .handleEvents(receiveOutput: { [weak self] _ in
+                    self?.navigationController.popViewController(animated: true)
+                })
                 .map { StrigaOTPSuccessCoordinatorResult.next }
         )
             .prefix(1)
