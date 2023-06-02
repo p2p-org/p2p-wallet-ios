@@ -9,9 +9,9 @@ public struct StrigaCreateUserResponse: Decodable {
 public struct StrigaKYC: Codable {
     public let status: Status
     
-    public var verified: Bool {
+    public var approved: Bool {
         // TODO: - Check later
-        status != .notStarted
+        status == .approved
     }
 
     public enum Status: String, Codable {

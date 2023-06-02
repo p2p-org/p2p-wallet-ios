@@ -65,11 +65,13 @@ extension BankTransferServiceImpl: BankTransferService {
     
     public func createUser(data: BankTransferRegistrationData) async throws {
         let response = try await repository.createUser(registrationData: data)
-        let userData = UserData(userId: response.userId, mobileVerified: false, kycVerified: response.KYC.verified)
         subject.send(
             .init(
                 status: subject.value.status,
-                value: userData,
+                value: subject.value.value.updating(
+                    userId: response.userId,
+                    kycVerified: response.KYC.approved
+                ),
                 error: subject.value.error
             )
         )
@@ -77,6 +79,17 @@ extension BankTransferServiceImpl: BankTransferService {
     
     public func updateUser(data: BankTransferRegistrationData) async throws {
         try await repository.updateUser(registrationData: data)
+        
+//        subject.send(
+//            .init(
+//                status: subject.value.status,
+//                value: subject.value.value.updating(
+//                    userId: response.userId,
+//                    kycVerified: response.KYC.verified
+//                ),
+//                error: subject.value.error
+//            )
+//        )
     }
     
     public func getOTP() async throws {
@@ -111,11 +124,10 @@ extension BankTransferServiceImpl: BankTransferService {
         subject.send(
             .init(
                 status: .ready,
-                value: .init(
-                    countryCode: nil,
+                value: subject.value.value.updating(
                     userId: userId,
-                    mobileVerified: true,
-                    kycVerified: kycStatus.rawValue == StrigaKYC.approved.status.rawValue
+                    mobileVerified: true, // TODO: - How to know if user has already verified mobile number?
+                    kycVerified: kycStatus.approved
                 ),
                 error: nil
             )
@@ -126,7 +138,7 @@ extension BankTransferServiceImpl: BankTransferService {
         subject.send(
             .init(
                 status: .ready,
-                value: .init(
+                value: subject.value.value.updating(
                     countryCode: nil,
                     userId: nil,
                     mobileVerified: false,

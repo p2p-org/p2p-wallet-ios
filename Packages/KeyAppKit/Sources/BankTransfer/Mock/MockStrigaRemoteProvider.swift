@@ -43,7 +43,7 @@ public final class MockStrigaRemoteProvider: StrigaRemoteProvider {
         userId
     }
     
-    public func getKYCStatus() async throws -> StrigaKYC.Status {
+    public func getKYCStatus() async throws -> StrigaKYC {
         let kyc: StrigaKYC
         
         switch useCase {
@@ -55,7 +55,7 @@ public final class MockStrigaRemoteProvider: StrigaRemoteProvider {
             kyc = .approved
         }
         
-        return kyc.status
+        return kyc
     }
     
     public func getUserDetails(userId: String) async throws -> StrigaUserDetailsResponse {
@@ -67,7 +67,7 @@ public final class MockStrigaRemoteProvider: StrigaRemoteProvider {
         .init(
             userId: userId!,
             email: model.email,
-            KYC: .init(status: try await getKYCStatus())
+            KYC: try await getKYCStatus()
         )
     }
     

@@ -38,7 +38,7 @@ public final class StrigaBankTransferUserDataRepository: BankTransferUserDataRep
         }
     }
     
-    public func getKYCStatus() async throws -> StrigaKYC.Status {
+    public func getKYCStatus() async throws -> StrigaKYC {
         try await remoteProvider.getKYCStatus()
     }
 
