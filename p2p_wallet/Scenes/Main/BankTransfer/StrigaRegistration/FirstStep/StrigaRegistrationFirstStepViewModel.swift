@@ -206,7 +206,8 @@ private extension StrigaRegistrationFirstStepViewModel {
                         email: contacts.0,
                         mobile: mobile,
                         dateOfBirth: dateOfBirth.0,
-                        placeOfBirth: dateOfBirth.1?.code
+                        placeOfBirth: dateOfBirth.1?.code,
+                        KYC: .notStarted
                     )
                 )
 

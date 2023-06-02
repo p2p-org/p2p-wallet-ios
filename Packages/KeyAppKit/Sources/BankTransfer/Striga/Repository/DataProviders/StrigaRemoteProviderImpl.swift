@@ -3,36 +3,48 @@ import KeyAppNetworking
 import SolanaSwift
 import TweetNacl
 
+public protocol StrigaMetadataProvider {
+    func getUserId() async throws -> String?
+}
+
 public final class StrigaRemoteProviderImpl {
-    
+
     // Dependencies
     private let httpClient: IHTTPClient
     private let keyPair: KeyPair?
     private let baseURL: String
+    private let metadaProvider: StrigaMetadataProvider
     
     // MARK: - Init
     
     public init(
         baseURL: String,
         solanaKeyPair keyPair: KeyPair?,
-        httpClient: IHTTPClient = HTTPClient()
+        httpClient: IHTTPClient = HTTPClient(),
+        metadaProvider: StrigaMetadataProvider
     ) {
         self.baseURL = baseURL
         self.httpClient = httpClient
         self.keyPair = keyPair
+        self.metadaProvider = metadaProvider
     }
 }
 
-// MARK: - IStrigaProvider
+// MARK: - StrigaProvider
+
+public enum StrigaRemoteProviderError: Error {
+    case noUserId
+}
 
 extension StrigaRemoteProviderImpl: StrigaRemoteProvider {
-    
+
     public func getUserId() async throws -> String? {
-        fatalError("Implementing")
+        try await metadaProvider.getUserId()
     }
     
-    public func getKYCStatus() async throws -> StrigaCreateUserResponse.KYC {
-        fatalError("Implementing")
+    public func getKYCStatus() async throws -> StrigaKYC.Status {
+        guard let userId = try await getUserId() else { throw StrigaRemoteProviderError.noUserId }
+        return try await getUserDetails(userId: userId).KYC.status
     }
     
     public func getUserDetails(

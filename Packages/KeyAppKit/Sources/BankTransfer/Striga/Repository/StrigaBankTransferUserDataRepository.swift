@@ -38,7 +38,7 @@ public final class StrigaBankTransferUserDataRepository: BankTransferUserDataRep
         }
     }
     
-    public func getKYCStatus() async throws -> StrigaCreateUserResponse.KYC {
+    public func getKYCStatus() async throws -> StrigaKYC.Status {
         try await remoteProvider.getKYCStatus()
     }
 
@@ -128,7 +128,8 @@ public final class StrigaBankTransferUserDataRepository: BankTransferUserDataRep
             mobile: .init(
                 countryCode: "",
                 number: ""
-            )
+            ),
+            KYC: .notStarted
         )
     }
 
