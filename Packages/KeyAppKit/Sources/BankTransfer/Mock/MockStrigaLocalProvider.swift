@@ -32,7 +32,10 @@ public actor MockStrigaLocalProvider: StrigaLocalProvider {
                 occupation: .artEntertaiment,
                 sourceOfFunds: .civilContract,
                 placeOfBirth: nil,
-                KYC: .init(status: kyc)
+                KYC: .init(
+                    status: kyc,
+                    mobileVerified: false
+                )
             )
         }
     }

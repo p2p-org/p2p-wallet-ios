@@ -8,10 +8,16 @@ public struct StrigaCreateUserResponse: Decodable {
 
 public struct StrigaKYC: Codable {
     public let status: Status
+    public let mobileVerified: Bool
     
     public var approved: Bool {
         // TODO: - Check later
         status == .approved
+    }
+    
+    public init(status: StrigaKYC.Status, mobileVerified: Bool) {
+        self.status = status
+        self.mobileVerified = mobileVerified
     }
 
     public enum Status: String, Codable {
@@ -23,9 +29,4 @@ public struct StrigaKYC: Codable {
         case rejected = "REJECTED" // User rejected - Can be final or not
         case rejectedFinal = "REJECTED_FINAL"
     }
-}
-
-public extension StrigaKYC {
-    static let approved = StrigaKYC(status: .approved)
-    static let notStarted = StrigaKYC(status: .notStarted)
 }

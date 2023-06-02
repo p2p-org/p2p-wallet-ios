@@ -40,12 +40,21 @@ public final class MockStrigaRemoteProvider: StrigaRemoteProvider {
         // Fake network request
         try await Task.sleep(nanoseconds: 1_000_000_000)
         
+        let mobileVerified: Bool
+        
+        switch useCase {
+        case .unregisteredUser, .registeredUserWithUnverifiedOTP:
+            mobileVerified = false
+        case .registeredUserWithoutKYC, .registeredAndVerifiedUser:
+            mobileVerified = true
+        }
+        
         // return value
         switch useCase {
         case .unregisteredUser, .registeredUserWithUnverifiedOTP, .registeredUserWithoutKYC:
-            return .notStarted
+            return .init(status: .notStarted, mobileVerified: mobileVerified)
         case .registeredAndVerifiedUser:
-            return .approved
+            return .init(status: .approved, mobileVerified: mobileVerified)
         }
     }
     
@@ -77,7 +86,7 @@ public final class MockStrigaRemoteProvider: StrigaRemoteProvider {
             occupation: nil,
             sourceOfFunds: nil,
             placeOfBirth: nil,
-            KYC: .notStarted
+            KYC: try await getKYCStatus()
         )
     }
     

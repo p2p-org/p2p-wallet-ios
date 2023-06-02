@@ -42,10 +42,6 @@ public final class StrigaBankTransferUserDataRepository: BankTransferUserDataRep
     public func getKYCStatus() async throws -> StrigaKYC {
         try await remoteProvider.getKYCStatus()
     }
-    
-    public func isMobileVerified() async throws -> Bool {
-        try await remoteProvider.isMobileVerified()
-    }
 
     public func createUser(registrationData data: BankTransferRegistrationData) async throws -> StrigaCreateUserResponse {
         // assert response type
@@ -138,7 +134,10 @@ public final class StrigaBankTransferUserDataRepository: BankTransferUserDataRep
                 countryCode: "",
                 number: ""
             ),
-            KYC: .notStarted
+            KYC: .init(
+                status: .notStarted,
+                mobileVerified: false
+            )
         )
     }
 

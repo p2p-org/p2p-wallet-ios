@@ -3,8 +3,6 @@ public protocol BankTransferUserDataRepository {
     
     func getKYCStatus() async throws -> StrigaKYC
     
-    func isMobileVerified() async throws -> Bool
-    
     func getRegistrationData() async throws -> BankTransferRegistrationData
  
     func createUser(registrationData: BankTransferRegistrationData) async throws -> StrigaCreateUserResponse

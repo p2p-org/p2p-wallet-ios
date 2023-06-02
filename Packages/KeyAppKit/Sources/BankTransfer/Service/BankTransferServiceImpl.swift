@@ -127,16 +127,13 @@ extension BankTransferServiceImpl: BankTransferService {
         // get user details, check kyc status
         let kycStatus = try await repository.getKYCStatus()
         
-        // check if mobile has already been verified
-        let isMobileVerified = try await repository.isMobileVerified()
-        
         // update
         subject.send(
             .init(
                 status: .ready,
                 value: subject.value.value.updating(
                     userId: userId,
-                    mobileVerified: isMobileVerified,
+                    mobileVerified: kycStatus.mobileVerified,
                     kycVerified: kycStatus.approved
                 ),
                 error: nil
