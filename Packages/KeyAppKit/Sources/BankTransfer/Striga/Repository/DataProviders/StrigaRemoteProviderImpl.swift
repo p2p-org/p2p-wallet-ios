@@ -47,6 +47,11 @@ extension StrigaRemoteProviderImpl: StrigaRemoteProvider {
         return try await getUserDetails(userId: userId).KYC
     }
     
+    public func isMobileVerified() async throws -> Bool {
+        // TODO: - How to detect?
+        true
+    }
+    
     public func getUserDetails(
         userId: String
     ) async throws -> StrigaUserDetailsResponse {

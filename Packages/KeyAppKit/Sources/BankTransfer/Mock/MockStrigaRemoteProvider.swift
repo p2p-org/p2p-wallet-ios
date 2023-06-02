@@ -58,6 +58,11 @@ public final class MockStrigaRemoteProvider: StrigaRemoteProvider {
         return kyc
     }
     
+    public func isMobileVerified() async throws -> Bool {
+        // TODO: - Add to useCase
+        return true
+    }
+    
     public func getUserDetails(userId: String) async throws -> StrigaUserDetailsResponse {
         try await Task.sleep(nanoseconds: 2_000_000_000)
         return response

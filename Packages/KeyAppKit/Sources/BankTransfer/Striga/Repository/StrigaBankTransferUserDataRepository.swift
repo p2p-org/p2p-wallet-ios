@@ -4,6 +4,7 @@ import SolanaSwift
 import TweetNacl
 
 public final class StrigaBankTransferUserDataRepository: BankTransferUserDataRepository {
+
     // MARK: - Properties
 
     private let localProvider: StrigaLocalProvider
@@ -40,6 +41,10 @@ public final class StrigaBankTransferUserDataRepository: BankTransferUserDataRep
     
     public func getKYCStatus() async throws -> StrigaKYC {
         try await remoteProvider.getKYCStatus()
+    }
+    
+    public func isMobileVerified() async throws -> Bool {
+        try await remoteProvider.isMobileVerified()
     }
 
     public func createUser(registrationData data: BankTransferRegistrationData) async throws -> StrigaCreateUserResponse {
