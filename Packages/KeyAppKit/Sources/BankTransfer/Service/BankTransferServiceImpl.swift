@@ -145,12 +145,7 @@ extension BankTransferServiceImpl: BankTransferService {
         subject.send(
             .init(
                 status: .ready,
-                value: subject.value.value.updated(
-                    countryCode: nil,
-                    userId: nil,
-                    mobileVerified: false,
-                    kycVerified: false
-                ),
+                value: .empty,
                 error: nil
             )
         )
