@@ -158,7 +158,8 @@ private extension StrigaRegistrationSecondStepViewModel {
                     ),
                     occupation: sourceOfFunds.0?.rawValue,
                     sourceOfFunds: sourceOfFunds.1,
-                    placeOfBirth: self.userData.placeOfBirth
+                    placeOfBirth: self.userData.placeOfBirth,
+                    KYC: self.userData.KYC
                 )
                 self.userData = newData
                 try? await self.service.updateLocally(data: newData)
