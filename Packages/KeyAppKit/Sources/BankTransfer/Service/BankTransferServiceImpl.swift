@@ -26,10 +26,6 @@ extension BankTransferServiceImpl: BankTransferService {
         subject.eraseToAnyPublisher()
     }
     
-    public func save(userData: UserData) async throws {
-        fatalError("Not implemented")
-    }
-    
     public func reload() async {
         // mark as loading
         subject.send(
@@ -67,9 +63,16 @@ extension BankTransferServiceImpl: BankTransferService {
         try await repository.updateUserLocally(registrationData: data)
     }
     
-    public func createUser(data: BankTransferRegistrationData) async throws -> UserData {
+    public func createUser(data: BankTransferRegistrationData) async throws {
         let response = try await repository.createUser(registrationData: data)
-        return UserData(userId: response.userId, mobileVerified: false, kycVerified: response.KYC.verified)
+        let userData = UserData(userId: response.userId, mobileVerified: false, kycVerified: response.KYC.verified)
+        subject.send(
+            .init(
+                status: subject.value.status,
+                value: userData,
+                error: subject.value.error
+            )
+        )
     }
     
     public func updateUser(data: BankTransferRegistrationData) async throws {

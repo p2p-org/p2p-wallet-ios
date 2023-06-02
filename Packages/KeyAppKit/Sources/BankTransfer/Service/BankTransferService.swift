@@ -4,7 +4,6 @@ import KeyAppKitCore
 public protocol BankTransferService {
     var state: AnyPublisher<AsyncValueState<UserData>, Never> { get }
 
-    func save(userData: UserData) async throws
     func reload() async
 
     func isBankTransferAvailable() -> Bool
@@ -17,7 +16,7 @@ public protocol BankTransferService {
     // MARK: - Remote actions
 
     func getRegistrationData() async throws -> BankTransferRegistrationData
-    func createUser(data: BankTransferRegistrationData) async throws -> UserData
+    func createUser(data: BankTransferRegistrationData) async throws
     func updateUser(data: BankTransferRegistrationData) async throws
 
     func getOTP() async throws

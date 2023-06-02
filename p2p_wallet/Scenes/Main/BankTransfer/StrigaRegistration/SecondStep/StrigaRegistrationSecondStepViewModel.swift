@@ -175,8 +175,7 @@ private extension StrigaRegistrationSecondStepViewModel {
         isLoading = true
         Task {
             do {
-                let response = try await service.createUser(data: self.userData)
-                try await service.save(userData: response)
+                try await service.createUser(data: self.userData)
                 await MainActor.run {
                     self.isLoading = false
                 }
