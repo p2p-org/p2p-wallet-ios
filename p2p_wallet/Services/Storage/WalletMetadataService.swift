@@ -4,14 +4,22 @@
 
 import Combine
 import Foundation
+import KeyAppKitCore
 import Onboarding
 import Resolver
 
-class WalletMetadataService: ObservableObject {
+class WalletMetadataService {
     @Injected var userWalletManager: UserWalletManager
 
-    @Published var loading: Bool = false
-    @Published var metadata: WalletMetaData?
+    private let metadataValue: CurrentAsyncValue<WalletMetaData?> = .init(state: .init(value: nil))
+
+    var metadata: AsyncValueState<WalletMetaData?> {
+        metadataValue.state
+    }
+
+    var metadataPublisher: AnyPublisher<AsyncValueState<WalletMetaData?>, Never> {
+        metadataValue.publisher
+    }
 
     private let localMetadataProvider: WalletMetadataProvider
     private let remoteMetadataProvider: WalletMetadataProvider
@@ -21,13 +29,6 @@ class WalletMetadataService: ObservableObject {
     init(localProvider: WalletMetadataProvider, remoteProvider: WalletMetadataProvider) {
         localMetadataProvider = localProvider
         remoteMetadataProvider = remoteProvider
-
-        userWalletManager.$wallet.sink { [weak self] wallet in
-            if wallet == nil {
-                self?.metadata = nil
-            }
-        }
-        .store(in: &subscription)
     }
 
     func synchronize() async throws {
@@ -36,54 +37,60 @@ class WalletMetadataService: ObservableObject {
         }
 
         // Warm up with local data
-        metadata = try await localMetadataProvider.load(for: userWallet)
+        metadataValue.state.value = try await localMetadataProvider.load(for: userWallet)
 
         do {
-            loading = true
-            defer { loading = false }
+            metadataValue.state.status = .fetching
+            metadataValue.state.error = nil
+
+            defer {
+                metadataValue.state.status = .ready
+            }
 
             // Load from cloud
             let remoteMetadata = try await remoteMetadataProvider.load(for: userWallet)
 
             if
-                let metadata,
+                let localMetadata = metadataValue.state.value,
                 let remoteMetadata,
-                metadata != remoteMetadata
+                localMetadata != remoteMetadata
             {
-                let mergedMetadata = try WalletMetaData.merge(lhs: metadata, rhs: remoteMetadata)
+                let mergedMetadata = try WalletMetaData.merge(lhs: localMetadata, rhs: remoteMetadata)
 
                 try await localMetadataProvider.save(for: userWallet, metadata: mergedMetadata)
                 try await remoteMetadataProvider.save(for: userWallet, metadata: mergedMetadata)
 
-                self.metadata = mergedMetadata
+                metadataValue.state.value = mergedMetadata
             } else {
+                metadataValue.state.value = remoteMetadata
                 try await localMetadataProvider.save(for: userWallet, metadata: remoteMetadata)
-                metadata = remoteMetadata
             }
         } catch {
-            print(error)
+            metadataValue.state.error = error
             throw error
         }
     }
 
     func update(_ newMetadata: WalletMetaData) async throws {
+        try await synchronize()
+
         guard let userWallet = userWalletManager.wallet else {
             throw WalletMetadataService.Error.unauthorized
         }
 
-        guard let metadata else {
+        guard let localMetadata = metadataValue.state.value else {
             throw WalletMetadataService.Error.missingLocalMetadata
         }
 
-        let mergedMetadata = try WalletMetaData.merge(lhs: metadata, rhs: newMetadata)
+        let mergedMetadata = try WalletMetaData.merge(lhs: localMetadata, rhs: newMetadata)
         try await localMetadataProvider.save(for: userWallet, metadata: mergedMetadata)
         try await remoteMetadataProvider.save(for: userWallet, metadata: mergedMetadata)
 
-        self.metadata = newMetadata
+        metadataValue.state.value = newMetadata
     }
 
     func clear() async throws {
-        metadata = nil
+        metadataValue.state.value = nil
     }
 }
 

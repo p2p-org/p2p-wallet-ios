@@ -81,6 +81,25 @@ public extension AsyncValueState where T: Sequence {
     }
 }
 
+public class CurrentAsyncValue<T> {
+    public var state: AsyncValueState<T> {
+        didSet {
+            subject.send(state)
+        }
+    }
+
+    private let subject: CurrentValueSubject<AsyncValueState<T>, Never>
+
+    public var publisher: AnyPublisher<AsyncValueState<T>, Never> {
+        subject.eraseToAnyPublisher()
+    }
+
+    public init(state: AsyncValueState<T>) {
+        self.state = state
+        subject = .init(state)
+    }
+}
+
 public class AsyncValue<T> {
     public typealias Request = () async -> (T?, Error?)
     public typealias ThrowableRequest = () async throws -> T

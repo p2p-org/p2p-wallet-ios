@@ -43,10 +43,10 @@ final class RecoveryKitViewModel: ObservableObject {
 
         Task.detached { try await walletMetadataService.synchronize() }
 
-        walletMetadataService.$metadata
+        walletMetadataService.metadataPublisher
             .subscribe(on: RunLoop.main)
-            .sink { [weak self, weak userWalletManager] metadata in
-                if let metadata {
+            .sink { [weak self, weak userWalletManager] state in
+                if let metadata = state.value {
                     self?.model = .init(
                         deviceName: metadata.deviceName,
                         email: metadata.email,
