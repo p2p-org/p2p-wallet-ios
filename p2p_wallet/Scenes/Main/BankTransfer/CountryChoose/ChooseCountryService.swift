@@ -18,7 +18,7 @@ final class ChooseCountryService: ChooseItemService {
 
     init() {
         statePublisher = CurrentValueSubject<AsyncValueState<[ChooseItemListSection]>, Never>(
-            AsyncValueState(status: .ready, value: [])
+            AsyncValueState(status: .fetching, value: [])
         )
 
         Task {

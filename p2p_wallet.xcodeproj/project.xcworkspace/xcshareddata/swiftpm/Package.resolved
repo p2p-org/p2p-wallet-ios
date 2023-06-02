@@ -372,7 +372,7 @@
       },
       {
         "package": "SolanaSwift",
-        "repositoryURL": "https://github.com/p2p-org/solana-swift",
+        "repositoryURL": "https://github.com/p2p-org/solana-swift.git",
         "state": {
           "branch": "main",
           "revision": "5a0feeb88f5607a936ba15a574ac6d911e377456",
