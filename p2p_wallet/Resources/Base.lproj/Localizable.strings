@@ -1369,7 +1369,6 @@
 "Could not be earlier %@" = "Could not be earlier %@";
 "Incorrect day" = "Incorrect day";
 "Incorrect month" = "Incorrect month";
-"Could be filled only with symbols" = "Could be filled only with symbols";
 "Source of funds" = "Source of funds";
 "Occupation industry" = "Occupation industry";
 "Current address" = "Current address";
@@ -1394,3 +1393,4 @@
 "The last step is document and selfie verification. This is a one-time procedure to ensure safety of your account." = "The last step is document and selfie verification. This is a one-time procedure to ensure safety of your account.";
 "To start verification confirm your phone number" = "To start verification confirm your phone number";
 "Check the number" = "Check the number";
+"Incorrect number" = "Incorrect number";

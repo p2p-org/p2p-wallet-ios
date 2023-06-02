@@ -21,7 +21,7 @@ public actor MockStrigaLocalProvider: StrigaLocalProvider {
             email: "local.provider@mocking.com",
             mobile: .init(countryCode: "1", number: "5853042520"),
             dateOfBirth: .init(year: 1986, month: 12, day: 1),
-            address: .init(addressLine1: "Local street 12", addressLine2: nil, city: "Local Provider", postalCode: "12345", state: "Local Provider", country: "USA"),
+            address: .init(addressLine1: "Local street 12", addressLine2: nil, city: "Local Provider", postalCode: "12345", state: "Local Provider", country: "US"),
             occupation: .artEntertaiment,
             sourceOfFunds: .civilContract,
             placeOfBirth: nil,

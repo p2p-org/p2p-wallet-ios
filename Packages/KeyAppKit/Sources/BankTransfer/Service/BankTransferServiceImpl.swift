@@ -67,8 +67,9 @@ extension BankTransferServiceImpl: BankTransferService {
         try await repository.updateUserLocally(registrationData: data)
     }
     
-    public func createUser(data: BankTransferRegistrationData) async throws {
-        _ = try await repository.createUser(registrationData: data)
+    public func createUser(data: BankTransferRegistrationData) async throws -> UserData {
+        let response = try await repository.createUser(registrationData: data)
+        return UserData(userId: response.userId, mobileVerified: false, kycVerified: response.KYC.verified)
     }
     
     public func updateUser(data: BankTransferRegistrationData) async throws {

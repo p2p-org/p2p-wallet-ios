@@ -2,6 +2,7 @@ import Combine
 import BankTransfer
 import Resolver
 import CountriesAPI
+import PhoneNumberKit
 
 final class StrigaRegistrationFirstStepViewModel: BaseViewModel, ObservableObject {
 
@@ -16,7 +17,7 @@ final class StrigaRegistrationFirstStepViewModel: BaseViewModel, ObservableObjec
 
     // Dependencies
     @Injected private var service: BankTransferService
-    
+
     // Data
     private var data: StrigaUserDetailsResponse?
     
@@ -43,7 +44,7 @@ final class StrigaRegistrationFirstStepViewModel: BaseViewModel, ObservableObjec
 
     @Published var selectedCountryOfBirth: Country?
     @Published private var dateOfBirthModel: StrigaUserDetailsResponse.DateOfBirth?
-    private let dateFormat = "dd.mm.yyyy"
+    @Published var phoneNumberModel: PhoneNumber?
 
     init(country: Country) {
         super.init()
@@ -68,11 +69,10 @@ final class StrigaRegistrationFirstStepViewModel: BaseViewModel, ObservableObjec
         $dateOfBirth
             .map { $0.split(separator: ".") }
             .map { [weak self] components in
-                if components.count == self?.dateFormat.split(separator: ".").count {
+                if components.count == Constants.dateFormat.split(separator: ".").count {
                     return StrigaUserDetailsResponse.DateOfBirth(year: Int(components[2]), month: Int(components[1]), day: Int(components[0]))
-                } else {
-                    return nil
                 }
+                return nil
             }
             .assignWeak(to: \.dateOfBirthModel, on: self)
             .store(in: &subscriptions)
@@ -81,9 +81,8 @@ final class StrigaRegistrationFirstStepViewModel: BaseViewModel, ObservableObjec
             .map { value in
                 if let value {
                     return [value.emoji, value.name].compactMap { $0 } .joined(separator: " ")
-                } else {
-                    return ""
                 }
+                return ""
             }
             .assignWeak(to: \.countryOfBirth, on: self)
             .store(in: &subscriptions)
@@ -96,14 +95,14 @@ private extension StrigaRegistrationFirstStepViewModel {
     func fetchSavedData() {
         // Mark as isLoading
         isLoading = true
-        
+
         Task {
             do {
                 guard let data = try await service.getRegistrationData() as? StrigaUserDetailsResponse
                 else {
                     throw StrigaProviderError.invalidResponse
                 }
-                
+
                 await MainActor.run {
                     // save data
                     self.data = data
@@ -126,7 +125,7 @@ private extension StrigaRegistrationFirstStepViewModel {
                 }
             } catch {
                 // TODO: - Handle error
-                
+
                 await MainActor.run {
                     isLoading = false
                 }
@@ -146,19 +145,18 @@ private extension StrigaRegistrationFirstStepViewModel {
     }
 
     func validatePhone() {
-        // TODO: Add lib for phone formatting
         if phoneNumber.isEmpty {
             fieldsStatuses[.phoneNumber] = .invalid(error: L10n.couldNotBeEmpty)
-        } else {
+        } else if phoneNumberModel != nil {
             fieldsStatuses[.phoneNumber] = .valid
+        } else {
+            fieldsStatuses[.phoneNumber] = .invalid(error: L10n.incorrectNumber)
         }
     }
 
     func validate(credential: String, field: Field) {
         if credential.isEmpty {
             fieldsStatuses[field] = .invalid(error: L10n.couldNotBeEmpty)
-        } else if let regex = try? NSRegularExpression(pattern: "^\\p{L}+$"), !regex.matches(credential) {
-            fieldsStatuses[field] = .invalid(error: L10n.couldBeFilledOnlyWithSymbols)
         } else {
             fieldsStatuses[field] = .valid
         }
@@ -183,7 +181,7 @@ private extension StrigaRegistrationFirstStepViewModel {
     }
 
     func bindToFieldValues() {
-        let contacts = Publishers.CombineLatest($email, $phoneNumber)
+        let contacts = Publishers.CombineLatest($email, $phoneNumberModel)
         let credentials = Publishers.CombineLatest($firstName, $surname)
         let dateOfBirth = Publishers.CombineLatest($dateOfBirthModel, $selectedCountryOfBirth)
         Publishers.CombineLatest3(contacts, credentials, dateOfBirth)
@@ -191,15 +189,22 @@ private extension StrigaRegistrationFirstStepViewModel {
             .sinkAsync { [weak self] contacts, credentials, dateOfBirth in
                 guard let self else { return }
 
+                let mobile: StrigaUserDetailsResponse.Mobile
+                if let phoneNumberModel = contacts.1 {
+                    mobile = StrigaUserDetailsResponse.Mobile(
+                        countryCode: "\(phoneNumberModel.countryCode)",
+                        number: phoneNumberModel.numberString
+                    )
+                } else {
+                    mobile = StrigaUserDetailsResponse.Mobile(countryCode: "", number: "")
+                }
+
                 try? await self.service.updateLocally(
                     data: StrigaUserDetailsResponse(
                         firstName: credentials.0,
                         lastName: credentials.1,
                         email: contacts.0,
-                        mobile: StrigaUserDetailsResponse.Mobile(
-                            countryCode: "",
-                            number: contacts.1
-                        ),
+                        mobile: mobile,
                         dateOfBirth: dateOfBirth.0,
                         placeOfBirth: dateOfBirth.1?.code,
                         KYC: .notStarted
@@ -211,5 +216,11 @@ private extension StrigaRegistrationFirstStepViewModel {
                 }
             }
             .store(in: &subscriptions)
+    }
+}
+
+private extension StrigaRegistrationFirstStepViewModel {
+    enum Constants {
+        static let dateFormat = "dd.mm.yyyy"
     }
 }

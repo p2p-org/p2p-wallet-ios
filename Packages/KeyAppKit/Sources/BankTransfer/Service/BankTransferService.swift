@@ -17,7 +17,7 @@ public protocol BankTransferService {
     // MARK: - Remote actions
 
     func getRegistrationData() async throws -> BankTransferRegistrationData
-    func createUser(data: BankTransferRegistrationData) async throws
+    func createUser(data: BankTransferRegistrationData) async throws -> UserData
     func updateUser(data: BankTransferRegistrationData) async throws
 
     func getOTP() async throws

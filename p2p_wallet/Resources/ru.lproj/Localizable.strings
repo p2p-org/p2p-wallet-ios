@@ -1401,7 +1401,6 @@
 "Could not be earlier %@" = "Не могло быть раньше %@";
 "Incorrect day" = "Неверный день";
 "Incorrect month" = "Неверный месяц";
-"Could be filled only with symbols" = "Может быть заполнен только символами";
 "Source of funds" = "Источник средств";
 "Occupation industry" = "оккупация промышленности";
 "Current address" = "Текущий адрес";
@@ -1426,3 +1425,4 @@
 "The last step is document and selfie verification. This is a one-time procedure to ensure safety of your account." = "Последний шаг — проверка документов и селфи.  Это разовая процедура для обеспечения безопасности вашего аккаунта.";
 "To start verification confirm your phone number" = "Для начала проверки подтвердите свой номер телефона";
 "Check the number" = "Проверить номер";
+"Incorrect number" = "Неверный номер";
