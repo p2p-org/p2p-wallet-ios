@@ -1,12 +1,12 @@
 import Foundation
 
 /// Common implementation for HTTPEndpoint
-public struct DefaultHTTPEndpoint: HTTPEndpoint {
+public struct DefaultHTTPEndpoint<T: Encodable>: HTTPEndpoint {
     public let baseURL: String
     public let path: String
     public let method: HTTPMethod
     public let header: [String : String]
-    public let body: String?
+    public let body: T?
     
     
     public init(
@@ -14,13 +14,28 @@ public struct DefaultHTTPEndpoint: HTTPEndpoint {
         path: String,
         method: HTTPMethod,
         header: [String : String],
-        body: String? = nil
+        body: T?
     ) {
         self.baseURL = baseURL
         self.path = path
         self.method = method
         self.header = header
         self.body = body
+    }
+}
+
+extension DefaultHTTPEndpoint where T == String {
+    public init(
+        baseURL: String,
+        path: String,
+        method: HTTPMethod,
+        header: [String : String]
+    ) {
+        self.baseURL = baseURL
+        self.path = path
+        self.method = method
+        self.header = header
+        self.body = nil
     }
 }
 
@@ -31,10 +46,10 @@ public extension HTTPClient {
     ///   - endpoint: default endpoint to send request to
     ///   - responseModel: result type of model
     /// - Returns: specific result of `responseModel` type
-    func request<T: Decodable>(
-        endpoint: DefaultHTTPEndpoint,
+    func request<T: Decodable, Body: Encodable>(
+        endpoint: DefaultHTTPEndpoint<Body>,
         responseModel: T.Type
     ) async throws -> T {
-        try await request(endpoint: endpoint as HTTPEndpoint, responseModel: responseModel)
+        try await request(endpoint: endpoint as (any HTTPEndpoint), responseModel: responseModel)
     }
 }

@@ -8,7 +8,7 @@ public protocol IHTTPClient {
     ///   - responseModel: result type of model
     /// - Returns: specific result of `responseModel` type
     func request<T: Decodable>(
-        endpoint: HTTPEndpoint,
+        endpoint: any HTTPEndpoint,
         responseModel: T.Type
     ) async throws -> T
 }
@@ -47,7 +47,7 @@ extension HTTPClient: IHTTPClient {
     ///   - responseModel: result type of model
     /// - Returns: specific result of `responseModel` type
     public func request<T: Decodable>(
-        endpoint: HTTPEndpoint,
+        endpoint: any HTTPEndpoint,
         responseModel: T.Type
     ) async throws -> T {
         /// URL assertion
@@ -60,8 +60,8 @@ extension HTTPClient: IHTTPClient {
         request.httpMethod = endpoint.method.rawValue
         request.allHTTPHeaderFields = endpoint.header
         
-        if let body = endpoint.body {
-            request.httpBody = body.data(using: .utf8)
+        if let body = try endpoint.getEncodedBody() {
+            request.httpBody = body
         }
         
         // Retrieve data

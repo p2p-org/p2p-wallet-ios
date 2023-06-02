@@ -4,6 +4,10 @@ import XCTest
 
 class HTTPClientTests: XCTestCase {
     
+//    func testRequest_DictionaryBody_ReturnsValidBodyData() async throws {
+//        let endpoint =
+//    }
+    
     func testRequest_SuccessfulResponse_ReturnsDecodedModel() async throws {
         // Arrange
         let mockData = """
@@ -22,7 +26,7 @@ class HTTPClientTests: XCTestCase {
         let mockDecoder = MockDecoder()
         
         let httpClient = HTTPClient(urlSession: mockURLSession, decoder: mockDecoder)
-        let endpoint = DefaultHTTPEndpoint(baseURL: "https://example.com/api", path: "/users", method: .get, header: [:], body: nil)
+        let endpoint = DefaultHTTPEndpoint(baseURL: "https://example.com/api", path: "/users", method: .get, header: [:])
         
         // Act
         let userModel: UserModel = try await httpClient.request(endpoint: endpoint, responseModel: UserModel.self)
@@ -38,7 +42,7 @@ class HTTPClientTests: XCTestCase {
         let mockDecoder = MockDecoder()
         
         let httpClient = HTTPClient(urlSession: mockURLSession, decoder: mockDecoder)
-        let endpoint = DefaultHTTPEndpoint(baseURL: "https://www.ap le.com", path: "/users", method: .get, header: [:], body: nil)
+        let endpoint = DefaultHTTPEndpoint(baseURL: "https://www.ap le.com", path: "/users", method: .get, header: [:])
         
         // Act & Assert
         do {
@@ -59,7 +63,7 @@ class HTTPClientTests: XCTestCase {
         let mockDecoder = MockDecoder()
         
         let httpClient = HTTPClient(urlSession: mockURLSession, decoder: mockDecoder)
-        let endpoint = DefaultHTTPEndpoint(baseURL: "https://example.com/api", path: "/users", method: .get, header: [:], body: nil)
+        let endpoint = DefaultHTTPEndpoint(baseURL: "https://example.com/api", path: "/users", method: .get, header: [:])
         
         // Act & Assert
         do {
@@ -106,6 +110,19 @@ class HTTPClientTests: XCTestCase {
         func decode<T: Decodable>(_ type: T.Type, data: Data, httpURLResponse: HTTPURLResponse) throws -> T {
             return try JSONDecoder().decode(type, from: data)
         }
+    }
+    
+    struct MockEndpoint: HTTPEndpoint {
+        struct CustomBody: Encodable {
+            let query: String
+            let sort: Bool
+        }
+        
+        let baseURL: String
+        let path: String
+        let method: HTTPMethod
+        let header: [String : String]
+        let body: CustomBody?
     }
 }
 

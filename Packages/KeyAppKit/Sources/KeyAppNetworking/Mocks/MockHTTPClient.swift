@@ -17,11 +17,11 @@ final class MockHTTPClient: IHTTPClient {
     
     var invokedRequest = false
     var invokedRequestCount = 0
-    var invokedRequestParameters: (endpoint: HTTPEndpoint?, Void)?
-    var invokedRequestParametersList = [HTTPEndpoint]()
+    var invokedRequestParameters: (endpoint: (any HTTPEndpoint)?, Void)?
+    var invokedRequestParametersList = [any HTTPEndpoint]()
     var stubbedRequestResult: Any?
     
-    func request<T: Decodable>(endpoint: HTTPEndpoint, responseModel: T.Type) async throws -> T {
+    func request<T: Decodable>(endpoint: any HTTPEndpoint, responseModel: T.Type) async throws -> T {
         invokedRequest = true
         invokedRequestCount += 1
         invokedRequestParameters = (endpoint, ())
