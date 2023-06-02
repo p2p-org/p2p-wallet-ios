@@ -19,7 +19,7 @@ public class HTTPClient {
     // MARK: - Properties
     
     /// URLSession to handle network request
-    private let urlSession: URLSession
+    private let urlSession: HTTPURLSession
     
     /// Decoder for response
     private let decoder: HTTPResponseDecoder
@@ -30,7 +30,7 @@ public class HTTPClient {
     /// - Parameter urlSession: URLSession to handle network request
     /// - Parameter decoder: Decoder for response
     public init(
-        urlSession: URLSession = .shared,
+        urlSession: HTTPURLSession = URLSession.shared,
         decoder: HTTPResponseDecoder = JSONResponseDecoder()
     ) {
         self.urlSession = urlSession
@@ -51,9 +51,8 @@ extension HTTPClient: IHTTPClient {
         responseModel: T.Type
     ) async throws -> T {
         /// URL assertion
-        let urlString = endpoint.baseURL + endpoint.path
-        guard let url = URL(string: urlString) else {
-            throw HTTPClientError.invalidURL(urlString)
+        guard let url = URL(string: endpoint.urlString) else {
+            throw HTTPClientError.invalidURL(endpoint.urlString)
         }
         
         // Form request
