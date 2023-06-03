@@ -8,16 +8,17 @@ import KeyAppKitCore
 import Onboarding
 import Resolver
 
-class WalletMetadataService {
+actor WalletMetadataService {
     @Injected var userWalletManager: UserWalletManager
+    @Injected var errorObserver: ErrorObserver
 
     private let metadataSubject: CurrentValueSubject<AsyncValueState<WalletMetaData?>, Never> = .init(.init(value: nil))
 
-    public var metadata: AsyncValueState<WalletMetaData?> {
+    nonisolated public var metadata: AsyncValueState<WalletMetaData?> {
         metadataSubject.value
     }
 
-    public var metadataPublisher: AnyPublisher<AsyncValueState<WalletMetaData?>, Never> {
+    nonisolated public var metadataPublisher: AnyPublisher<AsyncValueState<WalletMetaData?>, Never> {
         metadataSubject.eraseToAnyPublisher()
     }
 
@@ -31,9 +32,17 @@ class WalletMetadataService {
         remoteMetadataProvider = remoteProvider
     }
 
+    /// Indicator for availability of metadata.
+    nonisolated var isMetadataAvailable: Bool {
+        metadataSubject.value.value != nil
+    }
+
+    /// Synchornize data between local storage and remote storage.
     func synchronize() async throws {
         guard let userWallet = userWalletManager.wallet else {
-            throw WalletMetadataService.Error.unauthorized
+            let error = WalletMetadataService.Error.unauthorized
+            errorObserver.handleError(error)
+            throw error
         }
 
         if userWallet.ethAddress == nil {
@@ -70,6 +79,7 @@ class WalletMetadataService {
                     do {
                         try await remoteMetadataProvider.save(for: userWallet, metadata: mergedMetadata)
                     } catch {
+                        errorObserver.handleError(error)
                         throw WalletMetadataService.Error.remoteSynchronizationFailure
                     }
                 } else {
@@ -84,6 +94,7 @@ class WalletMetadataService {
         }
     }
 
+    /// Update metadata
     func update(_ newMetadata: WalletMetaData) async throws {
         guard let userWallet = userWalletManager.wallet else {
             throw WalletMetadataService.Error.unauthorized
@@ -92,24 +103,11 @@ class WalletMetadataService {
         if userWallet.ethAddress == nil {
             return
         } else {
-            try await synchronize()
-
-            guard let localMetadata = metadataSubject.value.value else {
-                throw WalletMetadataService.Error.missingLocalMetadata
-            }
-
-            let mergedMetadata = try WalletMetaData.merge(lhs: localMetadata, rhs: newMetadata)
-
             // Push updated data to local storage
-            try await localMetadataProvider.save(for: userWallet, metadata: mergedMetadata)
+            try await localMetadataProvider.save(for: userWallet, metadata: newMetadata)
             metadataSubject.value.value = newMetadata
 
-            // Push updated data to local storage
-            do {
-                try await remoteMetadataProvider.save(for: userWallet, metadata: mergedMetadata)
-            } catch {
-                throw WalletMetadataService.Error.remoteSynchronizationFailure
-            }
+            try await synchronize()
         }
     }
 }
@@ -117,7 +115,9 @@ class WalletMetadataService {
 extension WalletMetadataService {
     enum Error: Swift.Error {
         case unauthorized
+
         case missingLocalMetadata
+
         case remoteSynchronizationFailure
     }
 }
