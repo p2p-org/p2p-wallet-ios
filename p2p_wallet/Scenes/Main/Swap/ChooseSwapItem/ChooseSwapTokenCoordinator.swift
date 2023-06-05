@@ -38,7 +38,7 @@ final class ChooseSwapTokenCoordinator: Coordinator<SwapToken?> {
                 fromToken: fromToken
             )
         }
-        let controller = KeyboardAvoidingViewController(rootView: view, ignoresKeyboard: true)
+        let controller = view.asViewController(withoutUIKitNavBar: false)
         controller.title = title
         navigationController.pushViewController(controller, animated: true)
 
