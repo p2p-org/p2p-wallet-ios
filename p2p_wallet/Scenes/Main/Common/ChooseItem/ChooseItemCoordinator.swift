@@ -41,7 +41,7 @@ final class ChooseItemCoordinator<T: ChooseItemRenderable>: Coordinator<ChooseIt
         let view = ChooseItemView(viewModel: viewModel) { model in
             (model.item as? T)?.render()
         }
-        let vc = view.asViewController(withoutUIKitNavBar: false, ignoresKeybaord: true)
+        let vc = view.asViewController(withoutUIKitNavBar: false, ignoresKeyboard: true)
         vc.navigationItem.title = title
         controller.show(
             isWrapped ? vc : UINavigationController(rootViewController: vc),

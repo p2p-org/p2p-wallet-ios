@@ -9,10 +9,10 @@ import Combine
 import SwiftUI
 
 extension View {
-    func asViewController(withoutUIKitNavBar: Bool = true, ignoresKeybaord: Bool = false) -> UIViewController {
+    func asViewController(withoutUIKitNavBar: Bool = true, ignoresKeyboard: Bool = false) -> UIViewController {
         withoutUIKitNavBar
-            ? UIHostingControllerWithoutNavigation(rootView: self, ignoresKeyboard: ignoresKeybaord)
-            : UIHostingController(rootView: self, ignoresKeyboard: ignoresKeybaord)
+            ? UIHostingControllerWithoutNavigation(rootView: self, ignoresKeyboard: ignoresKeyboard)
+            : UIHostingController(rootView: self, ignoresKeyboard: ignoresKeyboard)
     }
 
     func uiView() -> UIView {
