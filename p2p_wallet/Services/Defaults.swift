@@ -149,8 +149,8 @@ extension DefaultsKeys {
         .init(#function, defaultValue: false)
     }
 
-    var strigaOTPResendCounter: DefaultsKey<Wrapper<ResendCounter>> {
-        .init(#function, defaultValue: Wrapper<ResendCounter>(.zero()))
+    var strigaOTPResendCounter: DefaultsKey<ResendCounter> {
+        .init(#function, defaultValue: .zero())
     }
 }
 
