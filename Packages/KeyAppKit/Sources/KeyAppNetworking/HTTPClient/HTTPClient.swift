@@ -7,10 +7,10 @@ public protocol IHTTPClient {
     ///   - endpoint: endpoint to send request to
     ///   - responseModel: result type of model
     /// - Returns: specific result of `responseModel` type
-    func request<T: Decodable>(
+    func request<Result: Decodable>(
         endpoint: any HTTPEndpoint,
-        responseModel: T.Type
-    ) async throws -> T
+        responseModel: Result.Type
+    ) async throws -> Result
 }
 
 /// Default implementation for `IHTTPClient`
@@ -21,20 +21,15 @@ public class HTTPClient {
     /// URLSession to handle network request
     private let urlSession: HTTPURLSession
     
-    /// Decoder for response
-    private let decoder: HTTPResponseDecoder
-    
     // MARK: - Initializer
     
     /// HttpClient's initializer
     /// - Parameter urlSession: URLSession to handle network request
     /// - Parameter decoder: Decoder for response
     public init(
-        urlSession: HTTPURLSession = URLSession.shared,
-        decoder: HTTPResponseDecoder = JSONResponseDecoder()
+        urlSession: HTTPURLSession = URLSession.shared
     ) {
         self.urlSession = urlSession
-        self.decoder = decoder
     }
 }
 
@@ -46,10 +41,10 @@ extension HTTPClient: IHTTPClient {
     ///   - endpoint: endpoint to send request to
     ///   - responseModel: result type of model
     /// - Returns: specific result of `responseModel` type
-    public func request<T: Decodable>(
+    public func request<Result: Decodable>(
         endpoint: any HTTPEndpoint,
-        responseModel: T.Type
-    ) async throws -> T {
+        responseModel: Result.Type
+    ) async throws -> Result {
         /// URL assertion
         guard let url = URL(string: endpoint.urlString) else {
             throw HTTPClientError.invalidURL(endpoint.urlString)
@@ -76,6 +71,7 @@ extension HTTPClient: IHTTPClient {
         }
         
         // Decode response
-        return try decoder.decode(responseModel, data: data, httpURLResponse: response)
+        return try endpoint.responseDecoder
+            .decode(responseModel, data: data, httpURLResponse: response)
     }
 }

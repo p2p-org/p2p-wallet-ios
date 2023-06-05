@@ -58,10 +58,14 @@ class HTTPClientTests: XCTestCase {
             headerFields: nil
         )!
         let mockURLSession = MockURLSession(data: mockData, response: mockResponse, error: nil)
-        let mockDecoder = MockDecoder()
         
-        let httpClient = HTTPClient(urlSession: mockURLSession, decoder: mockDecoder)
-        let endpoint = DefaultHTTPEndpoint(baseURL: "https://example.com/api", path: "/users", method: .get, header: [:])
+        let httpClient = HTTPClient(urlSession: mockURLSession)
+        let endpoint = DefaultHTTPEndpoint(
+            baseURL: "https://example.com/api",
+            path: "/users",
+            method: .get,
+            header: [:]
+        )
         
         // Act
         let userModel: UserModel = try await httpClient.request(endpoint: endpoint, responseModel: UserModel.self)
@@ -74,10 +78,14 @@ class HTTPClientTests: XCTestCase {
     func testRequest_InvalidURL_ThrowsError() async throws {
         // Arrange
         let mockURLSession = MockURLSession(data: nil, response: nil, error: nil)
-        let mockDecoder = MockDecoder()
         
-        let httpClient = HTTPClient(urlSession: mockURLSession, decoder: mockDecoder)
-        let endpoint = DefaultHTTPEndpoint(baseURL: "https://www.ap le.com", path: "/users", method: .get, header: [:])
+        let httpClient = HTTPClient(urlSession: mockURLSession)
+        let endpoint = DefaultHTTPEndpoint(
+            baseURL: "https://www.ap le.com",
+            path: "/users",
+            method: .get,
+            header: [:]
+        )
         
         // Act & Assert
         do {
@@ -95,10 +103,14 @@ class HTTPClientTests: XCTestCase {
         let mockData = Data()
         let mockResponse = URLResponse()
         let mockURLSession = MockURLSession(data: mockData, response: mockResponse, error: nil)
-        let mockDecoder = MockDecoder()
         
-        let httpClient = HTTPClient(urlSession: mockURLSession, decoder: mockDecoder)
-        let endpoint = DefaultHTTPEndpoint(baseURL: "https://example.com/api", path: "/users", method: .get, header: [:])
+        let httpClient = HTTPClient(urlSession: mockURLSession)
+        let endpoint = DefaultHTTPEndpoint(
+            baseURL: "https://example.com/api",
+            path: "/users",
+            method: .get,
+            header: [:]
+        )
         
         // Act & Assert
         do {
@@ -138,12 +150,6 @@ class HTTPClientTests: XCTestCase {
                 throw URLError(.badServerResponse)
             }
             return (data, response)
-        }
-    }
-    
-    class MockDecoder: HTTPResponseDecoder {
-        func decode<T: Decodable>(_ type: T.Type, data: Data, httpURLResponse: HTTPURLResponse) throws -> T {
-            return try JSONDecoder().decode(type, from: data)
         }
     }
     

@@ -1,12 +1,13 @@
 import Foundation
 
 /// Common implementation for HTTPEndpoint
-public struct DefaultHTTPEndpoint<T: Encodable>: HTTPEndpoint {
+public struct DefaultHTTPEndpoint<Body: Encodable, ResponseDecoder: HTTPResponseDecoder>: HTTPEndpoint {
     public let baseURL: String
     public let path: String
     public let method: HTTPMethod
     public let header: [String : String]
-    public let body: T?
+    public let body: Body?
+    public let responseDecoder: ResponseDecoder
     
     
     public init(
@@ -14,17 +15,19 @@ public struct DefaultHTTPEndpoint<T: Encodable>: HTTPEndpoint {
         path: String,
         method: HTTPMethod,
         header: [String : String],
-        body: T?
+        body: Body?,
+        responseDecoder: ResponseDecoder = JSONResponseDecoder(jsonDecoder: .init())
     ) {
         self.baseURL = baseURL
         self.path = path
         self.method = method
         self.header = header
         self.body = body
+        self.responseDecoder = responseDecoder
     }
 }
 
-extension DefaultHTTPEndpoint where T == String {
+extension DefaultHTTPEndpoint where Body == String, ResponseDecoder == JSONResponseDecoder {
     public init(
         baseURL: String,
         path: String,
@@ -36,6 +39,7 @@ extension DefaultHTTPEndpoint where T == String {
         self.method = method
         self.header = header
         self.body = nil
+        self.responseDecoder = JSONResponseDecoder(jsonDecoder: .init())
     }
 }
 
@@ -46,8 +50,8 @@ public extension HTTPClient {
     ///   - endpoint: default endpoint to send request to
     ///   - responseModel: result type of model
     /// - Returns: specific result of `responseModel` type
-    func request<T: Decodable, Body: Encodable>(
-        endpoint: DefaultHTTPEndpoint<Body>,
+    func request<T: Decodable, Body: Encodable, ResponseDecoder: HTTPResponseDecoder>(
+        endpoint: DefaultHTTPEndpoint<Body, ResponseDecoder>,
         responseModel: T.Type
     ) async throws -> T {
         try await request(endpoint: endpoint as (any HTTPEndpoint), responseModel: responseModel)
