@@ -16,12 +16,10 @@ public protocol CurrencyConvertible {
 public class CurrencyFormatter: Formatter {
     public let defaultValue: String
     public let hideSymbol: Bool
-    public let lessText: String
 
-    public init(defaultValue: String = "", hideSymbol: Bool = false, lessText: String = "Less than") {
+    public init(defaultValue: String = "", hideSymbol: Bool = false) {
         self.defaultValue = defaultValue
         self.hideSymbol = hideSymbol
-        self.lessText = lessText
         super.init()
     }
 
@@ -62,6 +60,8 @@ public class CurrencyFormatter: Formatter {
         formatter.currencyCode = amount.currencyCode
         formatter.numberStyle = .currency
         formatter.locale = Locale(identifier: "en-US")
+        // HACK: by default formatter doesn't put space between symbol and amount
+        formatter.currencySymbol = formatter.currencySymbol.trimmingCharacters(in: .whitespacesAndNewlines) + " "
 
         if hideSymbol {
             formatter.currencySymbol = ""
@@ -81,8 +81,8 @@ public class CurrencyFormatter: Formatter {
             return value
         }
 
-        if !lessText.isEmpty, amount.value > 0.0, amount.value < 0.01 {
-            value = "\(lessText) \(value)"
+        if amount.value > 0.0, amount.value < 0.01 {
+            value = "< \(formatter.string(for: 0.01) ?? "")"
         }
 
         return value
