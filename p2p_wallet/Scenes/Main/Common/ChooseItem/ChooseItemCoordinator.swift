@@ -41,14 +41,14 @@ final class ChooseItemCoordinator<T: ChooseItemRenderable>: Coordinator<ChooseIt
         let view = ChooseItemView(viewModel: viewModel) { model in
             (model.item as? T)?.render()
         }
-        let aController = KeyboardAvoidingViewController(rootView: view)
-        aController.navigationItem.title = title
+        let vc = view.asViewController(withoutUIKitNavBar: false, ignoresKeybaord: true)
+        vc.navigationItem.title = title
         controller.show(
-            isWrapped ? aController : UINavigationController(rootViewController: aController),
+            isWrapped ? vc : UINavigationController(rootViewController: vc),
             sender: nil
         )
         if showDoneButton {
-            aController.navigationItem.rightBarButtonItem = UIBarButtonItem(
+            vc.navigationItem.rightBarButtonItem = UIBarButtonItem(
                 title: L10n.done,
                 style: .plain,
                 target: self,
@@ -56,7 +56,7 @@ final class ChooseItemCoordinator<T: ChooseItemRenderable>: Coordinator<ChooseIt
             )
         }
 
-        viewController = aController
+        viewController = vc
         return Publishers.Merge(
             controller.deallocatedPublisher().map { ChooseItemCoordinatorResult.cancel },
             viewModel.chooseTokenSubject.map { ChooseItemCoordinatorResult.item(item: $0) }

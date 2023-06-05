@@ -29,12 +29,12 @@ struct ChooseItemView<Content: View>: View {
                 // Search field
                 SearchField(
                     searchText: $viewModel.searchText,
-                    isSearchFieldFocused: $viewModel.isSearchFieldFocused
+                    isFocused: $viewModel.isSearchFieldFocused
                 )
                 .padding(.horizontal, 16)
                 .padding(.top, 16)
             }
-            
+
             // List of tokens
             if viewModel.isLoading {
                 loadingView
@@ -44,7 +44,14 @@ struct ChooseItemView<Content: View>: View {
                 listView
             }
         }
+        .background(Color(asset: Asset.Colors.smoke).ignoresSafeArea())
         .ignoresSafeArea(.keyboard)
+        .onAppear {
+            viewModel.isSearchFieldFocused = true
+        }
+        .onDisappear {
+            viewModel.isSearchFieldFocused = false
+        }
     }
 
     private func state(for item: any ChooseItemSearchableItem, in section: ChooseItemListSection) -> ChooseItemSearchableItemViewState {
