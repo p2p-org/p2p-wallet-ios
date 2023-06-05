@@ -34,6 +34,7 @@ final class TopupCoordinator: Coordinator<TopupCoordinatorResult> {
             // Tapped item
             viewModel.tappedItem
                 .map { TopupCoordinatorResult.action(action: $0) }
+                .receive(on: RunLoop.main)
                 .handleEvents(receiveOutput: { [weak controller] _ in
                     controller?.dismiss(animated: true)
                 })
