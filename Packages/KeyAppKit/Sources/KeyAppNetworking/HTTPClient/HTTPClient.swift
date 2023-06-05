@@ -60,7 +60,7 @@ extension HTTPClient: IHTTPClient {
         request.httpMethod = endpoint.method.rawValue
         request.allHTTPHeaderFields = endpoint.header
         
-        if let body = try endpoint.getEncodedBody() {
+        if let body = try endpoint.encodeBody() {
             request.httpBody = body
         }
         

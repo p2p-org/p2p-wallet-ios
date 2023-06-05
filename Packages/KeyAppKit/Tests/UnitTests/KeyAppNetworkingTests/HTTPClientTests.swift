@@ -4,9 +4,44 @@ import XCTest
 
 class HTTPClientTests: XCTestCase {
     
-//    func testRequest_DictionaryBody_ReturnsValidBodyData() async throws {
-//        let endpoint =
-//    }
+    func testEncodeBody_DictionaryBody_ReturnsValidBodyData() async throws {
+        let endpoint = DefaultHTTPEndpoint(baseURL: "https://example.com/api", path: "/users", method: .post, header: [:], body: ["name": "Bob"])
+        XCTAssertEqual(try String(data: endpoint.encodeBody()!, encoding: .utf8), "{\"name\":\"Bob\"}")
+    }
+    
+    func testEncodeBody_StringBody_ReturnsValidBodyData() async throws {
+        let endpoint = DefaultHTTPEndpoint(baseURL: "https://example.com/api", path: "/users", method: .post, header: [:], body: "Some string")
+        XCTAssertEqual(try String(data: endpoint.encodeBody()!, encoding: .utf8), "Some string")
+    }
+    
+    func testEncodeBody_CustomTypeBody_ReturnsValidBodyData() async throws {
+        struct MyCustomBody: Encodable {
+            let id: String
+            let name: String
+        }
+        
+        let endpoint = DefaultHTTPEndpoint(baseURL: "https://example.com/api", path: "/users", method: .post, header: [:], body: MyCustomBody(id: "id", name: "name"))
+        XCTAssertEqual(try String(data: endpoint.encodeBody()!, encoding: .utf8), "{\"id\":\"id\",\"name\":\"name\"}")
+    }
+    
+    func testEncodeBody_CustomTypeBody_WithCustomEncoding_ReturnsValidBodyData() async throws {
+        struct MyCustomEndpoint: HTTPEndpoint {
+            let baseURL: String
+            let path: String
+            let method: KeyAppNetworking.HTTPMethod
+            let header: [String : String]
+            let body: [String: String]?
+            
+            func encodeBody() throws -> Data? {
+                let encoder = JSONEncoder()
+                encoder.outputFormatting = .prettyPrinted
+                return try encoder.encode(body!)
+            }
+        }
+        
+        let endpoint = MyCustomEndpoint(baseURL: "https://example.com/api", path: "/users", method: .post, header: [:], body: ["name": "Bob"])
+        XCTAssertEqual(try String(data: endpoint.encodeBody()!, encoding: .utf8), "{\n  \"name\" : \"Bob\"\n}")
+    }
     
     func testRequest_SuccessfulResponse_ReturnsDecodedModel() async throws {
         // Arrange
