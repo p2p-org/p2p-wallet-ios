@@ -52,12 +52,7 @@ final class HomeAccountsViewModel: BaseViewModel, ObservableObject {
         self.ethereumAccountsService = ethereumAccountsService
         self.favouriteAccountsStore = favouriteAccountsStore
 
-        var actions = [WalletActionType]()
-        if available(.bankTransfer) {
-            actions = [.topUp]
-        } else {
-            actions = [.buy, .receive]
-        }
+        var actions: [WalletActionType] = [.topUp]
         if sellDataService.isAvailable {
             actions.append(.cashOut)
         }

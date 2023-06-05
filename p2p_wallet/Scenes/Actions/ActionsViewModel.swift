@@ -45,35 +45,17 @@ final class ActionsViewModel: BaseViewModel, ObservableObject {
             subtitle: L10n.bankCardBankTransferOrCrypto) {
                 self.actionSubject.send(.topUp)
             }
-        if isSellAvailable && !isBankTransferAvailable {
-            horizontal.append(cashOut)
-        }
 
-        if isBankTransferAvailable && !isSellAvailable {
-            horizontal.append(topUp)
-        }
-
-        if isBankTransferAvailable, isSellAvailable {
+        if isSellAvailable {
             vertical.append(cashOut)
-            vertical.append(topUp)
-        } else if !isBankTransferAvailable {
-            let buy = ActionCellItem(
-                id: L10n.buy,
-                image: .homeBuyAction,
-                title: L10n.buy,
-                subtitle: L10n.usingApplePayOrCreditCard) {
-                    self.actionSubject.send(.buy)
-                }
-            vertical.append(buy)
-            let receive = ActionCellItem(
-                id: L10n.receive,
-                image: .homeReceiveAction,
-                title: L10n.receive,
-                subtitle: L10n.fromAnotherWalletOrExchange) {
-                    self.actionSubject.send(.receive)
-                }
-            vertical.append(receive)
         }
+
+        if !isSellAvailable {
+            horizontal.append(topUp)
+        } else {
+            vertical.append(topUp)
+        }
+
         let swap = ActionCellItem(
             id: L10n.swap,
             image: .homeSwapAction,
