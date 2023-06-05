@@ -7,7 +7,7 @@
 
 import Foundation
 
-public struct JSONRPCRequestDto<T: Encodable>: Encodable {
+public struct JSONRPCRequest<T: Encodable>: Encodable {
     let jsonrpc: String
     let id: String
     let method: String
@@ -26,7 +26,7 @@ public struct JSONRPCRequestDto<T: Encodable>: Encodable {
     }
 }
 
-public extension JSONRPCRequestDto where T == String { /*T == String, or what ever confirmed to Encodable to fix ambiguous type*/
+public extension JSONRPCRequest where T == String { /*T == String, or what ever confirmed to Encodable to fix ambiguous type*/
     /// Non-params initializer
     init(
         jsonrpc: String = "2.0",

@@ -6,7 +6,7 @@
 
 import Foundation
 
-public struct JSONRPCResponseDto<T: Decodable>: Decodable {
+public struct JSONRPCResponse<T: Decodable>: Decodable {
     let id: String?
     let result: T
     
@@ -19,7 +19,7 @@ public struct JSONRPCResponseDto<T: Decodable>: Decodable {
     }
 }
 
-public struct JSONRPCResponseErrorDto: Decodable {
+public struct JSONRPCResponseError: Decodable {
     public let id: String?
     public let error: JSONRPCError?
 }

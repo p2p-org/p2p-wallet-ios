@@ -1,7 +1,7 @@
 import Foundation
 
 /// ResponseDecoder for JsonRpc type
-public struct JSONRPCDecoder {
+public struct JSONRPCResponseDecoder {
 
     // MARK: - Properties
 
@@ -19,7 +19,7 @@ public struct JSONRPCDecoder {
 
 // MARK: - HTTPResponseDecoder
 
-extension JSONRPCDecoder: HTTPResponseDecoder {
+extension JSONRPCResponseDecoder: HTTPResponseDecoder {
     /// Decode data and response to needed type
     /// - Parameters:
     ///   - type: object type to be decoded to
@@ -46,6 +46,6 @@ extension JSONRPCDecoder: HTTPResponseDecoder {
     
     /// Custom error return from rpc endpoint
     private func decodeRpcError(from data: Data) -> JSONRPCError? {
-        try? jsonDecoder.decode(JSONRPCResponseErrorDto.self, from: data).error
+        try? jsonDecoder.decode(JSONRPCResponseError.self, from: data).error
     }
 }
