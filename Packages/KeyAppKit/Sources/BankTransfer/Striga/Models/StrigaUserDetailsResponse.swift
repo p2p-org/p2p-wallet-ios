@@ -32,6 +32,25 @@ public struct StrigaUserDetailsResponse: BankTransferRegistrationData {
             self.month = month
             self.day = day
         }
+        
+        enum CodingKeys: CodingKey {
+            case year
+            case month
+            case day
+        }
+        
+        public init(from decoder: Decoder) throws {
+            let container: KeyedDecodingContainer<CodingKeys> = try decoder.container(keyedBy: CodingKeys.self)
+            
+            let yearString = try container.decodeIfPresent(String.self, forKey: .year)
+            self.year = yearString == nil ? nil: Int(yearString!)
+            
+            let monthString = try container.decodeIfPresent(String.self, forKey: .month)
+            self.month = monthString == nil ? nil: Int(monthString!)
+            
+            let dayString = try container.decodeIfPresent(String.self, forKey: .day)
+            self.day = dayString == nil ? nil: Int(dayString!)
+        }
     }
     
     public struct Address: Codable {

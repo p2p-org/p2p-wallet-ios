@@ -31,7 +31,7 @@ public actor StrigaLocalProviderImpl {
 
     private func migrate() {
         // Migration 1:
-        let migration1Key = "StrigaLocalProviderImpl.migration1"
+        let migration1Key = "StrigaLocalProviderImpl.migration2"
         if !UserDefaults.standard.bool(forKey: migration1Key) {
             clearRegistrationData()
             UserDefaults.standard.set(true, forKey: migration1Key)

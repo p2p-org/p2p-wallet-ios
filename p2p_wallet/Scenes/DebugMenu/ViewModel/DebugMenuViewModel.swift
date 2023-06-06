@@ -21,6 +21,7 @@ final class DebugMenuViewModel: BaseViewModel, ObservableObject {
     @Published var currentMoonpayEnvironment: DefaultsKeys.MoonpayEnvironment
     @Published var nameServiceEndpoints: [String]
     @Published var newSwapEndpoints: [String]
+    @Published var strigaEndpoints: [String]
 
     @Injected private var accountsService: SolanaAccountsService
 
@@ -57,6 +58,11 @@ final class DebugMenuViewModel: BaseViewModel, ObservableObject {
             "https://quote-api.jup.ag",
             "https://swap.key.app",
             "https://swap.keyapp.org",
+        ]
+        
+        strigaEndpoints = [
+            .secretConfig("STRIGA_PROXY_API_ENDPOINT_PROD")!,
+            .secretConfig("STRIGA_PROXY_API_ENDPOINT_DEV")!
         ]
 
         currentMoonpayEnvironment = Defaults.moonpayEnvironment

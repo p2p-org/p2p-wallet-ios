@@ -60,8 +60,15 @@ public final class StrigaBankTransferUserDataRepository: BankTransferUserDataRep
             firstName: data.firstName,
             lastName: data.lastName,
             email: data.email,
-            mobile: StrigaCreateUserRequest.Mobile(countryCode: data.mobile.countryCode, number: data.mobile.number),
-            dateOfBirth: StrigaCreateUserRequest.DateOfBirth(year: data.dateOfBirth?.year, month: data.dateOfBirth?.month, day: data.dateOfBirth?.day),
+            mobile: StrigaCreateUserRequest.Mobile(
+                countryCode: "+" + data.mobile.countryCode,
+                number: data.mobile.number
+            ),
+            dateOfBirth: StrigaCreateUserRequest.DateOfBirth(
+                year: data.dateOfBirth?.year,
+                month: data.dateOfBirth?.month,
+                day: data.dateOfBirth?.day
+            ),
             address: StrigaCreateUserRequest.Address(
                 addressLine1: data.address?.addressLine1,
                 addressLine2: data.address?.addressLine2,
