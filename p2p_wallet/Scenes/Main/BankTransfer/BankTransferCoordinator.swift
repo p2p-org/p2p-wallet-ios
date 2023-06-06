@@ -30,13 +30,12 @@ final class BankTransferCoordinator: Coordinator<Void> {
         bankTransferService.state
             .prefix(1)
             .receive(on: RunLoop.main)
-            .flatMap { state in
-                let step = self.step(userData: state.value)
+            .flatMap { [unowned self] state in
                 return self.coordinator(
-                    for: step,
+                    for: self.step(userData: state.value),
                     userData: state.value
                 )
-                .flatMap { result in
+                .flatMap { [unowned self] result in
                     switch result {
                     case .next:
                         return self.coordinate(
@@ -70,7 +69,7 @@ final class BankTransferCoordinator: Coordinator<Void> {
     private func coordinator(for step: BankTransferStep, userData: UserData) -> AnyPublisher<BankTransferFlowResult, Never> {
         switch step {
         case .otp:
-            return self.coordinate(
+            return coordinate(
                 to: StrigaOTPCoordinator(
                     viewController: viewController,
                     phone: metadataService.metadata.value?.phoneNumber ?? ""
@@ -86,8 +85,7 @@ final class BankTransferCoordinator: Coordinator<Void> {
         case .kyc:
             return coordinate(
                 to: KYCCoordinator(presentingViewController: viewController)
-            )
-            .map { result in
+            ).map { result in
                 switch result {
                 case .pass:
                     return BankTransferFlowResult.next
@@ -97,7 +95,7 @@ final class BankTransferCoordinator: Coordinator<Void> {
             }
                 .eraseToAnyPublisher()
         case .registration:
-            return self.coordinate(
+            return coordinate(
                 to: BankTransferInfoCoordinator(viewController: viewController)
             ).map { result in
                 switch result {
@@ -106,11 +104,16 @@ final class BankTransferCoordinator: Coordinator<Void> {
                 case .canceled:
                     return BankTransferFlowResult.none
                 }
-            }.eraseToAnyPublisher()
+            }
+                .eraseToAnyPublisher()
         case .transfer:
-            return self.coordinate(to: StrigaTransferCoordinator(
-                navigation: viewController
-            )).map { BankTransferFlowResult.completed }.eraseToAnyPublisher()
+            return coordinate(
+                to: StrigaTransferCoordinator(
+                    navigation: viewController
+                )
+            )
+                .map { BankTransferFlowResult.completed }
+                .eraseToAnyPublisher()
         }
     }
 
