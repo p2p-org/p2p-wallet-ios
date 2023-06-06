@@ -139,14 +139,14 @@ struct SettingsView: View {
                 action: {
                     viewModel.openTwitter()
                 },
-                label: { cellView(image: .twitter, title: "Follow us on Twitter", withArrow: false) }
+                label: { cellView(image: .twitter, title: L10n.followUsOnTwitter, withArrow: false) }
             )
 
             Button(
                 action: {
                     viewModel.openDiscord()
                 },
-                label: { cellView(image: .discord, title: "Join our Discord", withArrow: false) }
+                label: { cellView(image: .discord, title: L10n.joinOurDiscord, withArrow: false) }
             )
         }
     }
