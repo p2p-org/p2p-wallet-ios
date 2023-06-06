@@ -6,6 +6,7 @@
 //
 
 import Foundation
+import KeychainSwift
 import Onboarding
 import Resolver
 
@@ -16,55 +17,64 @@ enum WalletMetadataProviderError: Error {
 }
 
 protocol WalletMetadataProvider {
-    func save(metadata: WalletMetaData?) async throws
-    func load() async throws -> WalletMetaData?
+    func save(for wallet: UserWallet, metadata: WalletMetaData?) async throws
+    func load(for wallet: UserWallet) async throws -> WalletMetaData?
 }
 
-class LocalWalletMetadataProvider: WalletMetadataProvider {
-    @Injected private var keychainStorage: KeychainStorage
-    @Injected private var userWalletManager: UserWalletManager
-
-    private let key: String
+actor LocalWalletMetadataProvider: WalletMetadataProvider {
+    /// Local device keychain
+    let keychain: KeychainSwift
 
     init() {
-        if !Defaults.hasKey(\.keychainWalletMetadata) {
-            Defaults.keychainWalletMetadata = UUID().uuidString
-        }
-        key = Defaults.keychainWalletMetadata!
-    }
+        let keychainStorage: KeychainStorage = Resolver.resolve()
 
-    func save(metadata: WalletMetaData?) async throws {
-        if let metadata = metadata {
-            let rawData = try JSONEncoder().encode(metadata)
-            keychainStorage.localKeychain.set(rawData, forKey: key)
-        } else {
-            keychainStorage.localKeychain.delete(key)
+        keychain = keychainStorage.metadataKeychain
+
+        Task {
+            // Migrate to long-term data saving. We delete them.
+            if let oldKey = Defaults.keychainWalletMetadata {
+                keychainStorage.localKeychain.delete(oldKey)
+            }
         }
     }
 
-    func load() async throws -> WalletMetaData? {
+    func save(for userWallet: UserWallet, metadata: WalletMetaData?) async throws {
+        guard userWallet.ethAddress == metadata?.ethPublic else {
+            throw WalletMetadataProviderError.unauthorised
+        }
+
+        if
+            let metadata = metadata,
+            let seedPhrase = userWallet.seedPhrase
+        {
+            let encryptedMetadata = try metadata.encrypt(seedPhrase: seedPhrase.joined(separator: " "))
+            keychain.set(encryptedMetadata, forKey: metadata.ethPublic)
+        }
+    }
+
+    func load(for userWallet: UserWallet) async throws -> WalletMetaData? {
         guard
-            let rawData: Data = keychainStorage.localKeychain.getData(key),
-            let ethAddress = userWalletManager.wallet?.ethAddress
+            let ethAddress = userWallet.ethAddress,
+            let seedPhrase = userWallet.seedPhrase,
+            let encryptedMetadata = keychain.get(ethAddress)
         else { return nil }
 
-        let decoder = JSONDecoder()
-        decoder.dateDecodingStrategy = .millisecondsSince1970
-        decoder.userInfo[WalletMetaData.ethPublicInfoKey] = ethAddress
-
-        return try decoder.decode(WalletMetaData.self, from: rawData)
+        return try WalletMetaData.decrypt(
+            ethAddress: ethAddress,
+            seedPhrase: seedPhrase.joined(separator: " "),
+            data: encryptedMetadata
+        )
     }
 }
 
-class RemoteWalletMetadataProvider: WalletMetadataProvider {
+actor RemoteWalletMetadataProvider: WalletMetadataProvider {
     @Injected private var apiGatewayClient: APIGatewayClient
-    @Injected private var userWalletManager: UserWalletManager
 
-    func save(metadata: WalletMetaData?) async throws {
+    func save(for userWallet: UserWallet, metadata: WalletMetaData?) async throws {
         guard
-            let wallet = userWalletManager.wallet,
-            let ethAddress = wallet.ethAddress,
-            let seedPhrase = wallet.seedPhrase
+            let ethAddress = userWallet.ethAddress,
+            userWallet.ethAddress == metadata?.ethPublic,
+            let seedPhrase = userWallet.seedPhrase
         else {
             throw WalletMetadataProviderError.unauthorised
         }
@@ -77,21 +87,20 @@ class RemoteWalletMetadataProvider: WalletMetadataProvider {
 
         try await apiGatewayClient.setMetadata(
             ethAddress: ethAddress,
-            solanaPrivateKey: Base58.encode(wallet.account.secretKey),
+            solanaPrivateKey: Base58.encode(userWallet.account.secretKey),
             encryptedMetadata: encryptedData
         )
     }
 
-    func load() async throws -> WalletMetaData? {
+    func load(for userWallet: UserWallet) async throws -> WalletMetaData? {
         guard
-            let wallet = userWalletManager.wallet,
-            let ethAddress = wallet.ethAddress,
-            let seedPhrase = wallet.seedPhrase
+            let ethAddress = userWallet.ethAddress,
+            let seedPhrase = userWallet.seedPhrase
         else { return nil }
 
         let encryptedMetadata = try await apiGatewayClient.getMetadata(
             ethAddress: ethAddress,
-            solanaPrivateKey: Base58.encode(wallet.account.secretKey),
+            solanaPrivateKey: Base58.encode(userWallet.account.secretKey),
             timestampDevice: Date()
         )
 
@@ -108,7 +117,7 @@ class MockedWalletMeradataProvider: WalletMetadataProvider {
 
     init(_ value: WalletMetaData?) { self.value = value }
 
-    func save(metadata _: WalletMetaData?) async throws {}
+    func save(for _: UserWallet, metadata _: WalletMetaData?) async throws {}
 
-    func load() async throws -> WalletMetaData? { value }
+    func load(for _: UserWallet) async throws -> WalletMetaData? { value }
 }
