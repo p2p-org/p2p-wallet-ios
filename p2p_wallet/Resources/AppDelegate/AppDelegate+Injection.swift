@@ -570,18 +570,15 @@ extension Resolver: ResolverRegistering {
         .scope(.session)
         
         register {
-//            let userWalletsManager: UserWalletManager = resolve()
-            return BankTransferServiceImpl(
+            BankTransferServiceImpl(
                 repository: StrigaBankTransferUserDataRepository(
-                    localProvider: MockStrigaLocalProvider(
-                        useCase: .unregisteredUser,
-                        hasCachedInput: true
-                    ),
+                    localProvider: StrigaLocalProviderImpl(),
                     remoteProvider: MockStrigaRemoteProvider(
                         useCase: .unregisteredUser,
                         mockUserId: "abc-xyz",
                         mockKYCToken: "<mock-token>"
-                    )
+                    ),
+                    metadataProvider: Resolver.resolve()
                 )
             )
         }
