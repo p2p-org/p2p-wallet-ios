@@ -53,7 +53,7 @@ final class BankTransferCoordinator: Coordinator<Void> {
 
     private func step(userData: UserData) -> BankTransferStep {
         var step = BankTransferStep.registration
-        if let userId = userData.userId {
+        if userData.userId != nil {
             if userData.mobileVerified {
                 if userData.kycVerified {
                     step = .transfer
