@@ -37,32 +37,36 @@ public struct SwapAlertLoggerMessage: Codable {
 
 // MARK: - TokenA
 public struct SwapAlertLoggerMessageTokenA: Codable {
-    public let name, mint, sendAmount: String
+    public let name, mint, sendAmount, balance: String
     
     enum CodingKeys: String, CodingKey {
         case name, mint
         case sendAmount = "send_amount"
+        case balance
     }
     
-    public init(name: String, mint: String, sendAmount: String) {
+    public init(name: String, mint: String, sendAmount: String, balance: String) {
         self.name = name
         self.mint = mint
         self.sendAmount = sendAmount
+        self.balance = balance
     }
 }
 
 // MARK: - TokenB
 public struct SwapAlertLoggerMessageTokenB: Codable {
-    public let name, mint, expectedAmount: String
+    public let name, mint, expectedAmount, balance: String
     
     enum CodingKeys: String, CodingKey {
         case name, mint
         case expectedAmount = "expected_amount"
+        case balance
     }
     
-    public init(name: String, mint: String, expectedAmount: String) {
+    public init(name: String, mint: String, expectedAmount: String, balance: String) {
         self.name = name
         self.mint = mint
         self.expectedAmount = expectedAmount
+        self.balance = balance
     }
 }
