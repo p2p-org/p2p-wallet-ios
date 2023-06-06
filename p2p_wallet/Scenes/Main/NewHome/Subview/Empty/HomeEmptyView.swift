@@ -59,7 +59,7 @@ struct HomeEmptyView: View {
                         viewModel.receiveClicked()
                     },
                     label: {
-                        Text(L10n.receive)
+                        Text(L10n.addMoney)
                             .foregroundColor(Color(Asset.Colors.night.color))
                             .font(uiFont: .font(of: .text4, weight: .semibold))
                             .frame(height: 48)
