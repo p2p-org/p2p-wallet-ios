@@ -111,10 +111,10 @@ final class StrigaOTPCoordinator: Coordinator<StrigaOTPCoordinatorResult> {
     }
 
     private func present(controller: UIViewController) {
-        viewController?
+        viewController
             .setViewControllers(
                 [
-                    viewController?.viewControllers.first,
+                    viewController.viewControllers.first,
                     controller
                 ].compactMap { $0 },
                 animated: true
@@ -122,7 +122,7 @@ final class StrigaOTPCoordinator: Coordinator<StrigaOTPCoordinatorResult> {
     }
 
     private func dismiss(controller: UIViewController) {
-        viewController?.popViewController(animated: true)
+        viewController.popViewController(animated: true)
     }
 
 }
