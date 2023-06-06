@@ -39,6 +39,10 @@ actor LocalWalletMetadataProvider: WalletMetadataProvider {
     }
 
     func save(for userWallet: UserWallet, metadata: WalletMetaData?) async throws {
+        guard userWallet.ethAddress == metadata?.ethPublic else {
+            throw WalletMetadataProviderError.unauthorised
+        }
+
         if
             let metadata = metadata,
             let seedPhrase = userWallet.seedPhrase
@@ -69,6 +73,7 @@ actor RemoteWalletMetadataProvider: WalletMetadataProvider {
     func save(for userWallet: UserWallet, metadata: WalletMetaData?) async throws {
         guard
             let ethAddress = userWallet.ethAddress,
+            userWallet.ethAddress == metadata?.ethPublic,
             let seedPhrase = userWallet.seedPhrase
         else {
             throw WalletMetadataProviderError.unauthorised

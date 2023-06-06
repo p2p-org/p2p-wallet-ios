@@ -10,12 +10,11 @@ import Resolver
 
 /// Service to manage user's metadata
 actor WalletMetadataService {
-
     // MARK: - Dependencies
 
     @Injected var userWalletManager: UserWalletManager
     @Injected var errorObserver: ErrorObserver
-    
+
     private let localMetadataProvider: WalletMetadataProvider
     private let remoteMetadataProvider: WalletMetadataProvider
 
@@ -36,7 +35,7 @@ actor WalletMetadataService {
     public nonisolated var metadataPublisher: AnyPublisher<AsyncValueState<WalletMetaData?>, Never> {
         metadataSubject.eraseToAnyPublisher()
     }
-    
+
     /// Indicator for availability of metadata.
     nonisolated var isMetadataAvailable: Bool {
         metadataSubject.value.value != nil
@@ -68,7 +67,7 @@ actor WalletMetadataService {
             metadataSubject.value.error = WalletMetadataService.Error.notWeb3AuthUser
             return
         }
-        
+
         // Mark as ready in the end
         defer {
             metadataSubject.value.status = .ready
@@ -77,7 +76,7 @@ actor WalletMetadataService {
         do {
             // Warm up with local data
             metadataSubject.value.value = try await localMetadataProvider.load(for: userWallet)
-            
+
             // Mark as fetching
             metadataSubject.value.status = .fetching
             metadataSubject.value.error = nil
@@ -87,38 +86,35 @@ actor WalletMetadataService {
             else {
                 return
             }
-            
+
             // If local metadata exists
             if let localMetadata = metadataSubject.value.value {
-                
                 // Assert localMetadata != remoteMetadata, otherwise just return
                 guard localMetadata != remoteMetadata else {
                     return
                 }
-                
+
                 // Local metadata and remote metadata are not equal
                 // Try merge data
                 let mergedMetadata = try WalletMetaData.merge(lhs: localMetadata, rhs: remoteMetadata)
-                
+
                 // Assign metadata
                 metadataSubject.value.value = mergedMetadata
-                
+
                 // Push update to localMetadata
                 try await localMetadataProvider.save(for: userWallet, metadata: mergedMetadata)
-                
+
                 // Push updated data to remote storage
                 do {
                     try await remoteMetadataProvider.save(for: userWallet, metadata: mergedMetadata)
                 } catch {
                     throw WalletMetadataService.Error.remoteSynchronizationFailure
                 }
-            }
-            
-            // Local metadata doesn't exists
-            else {
-                // Assign metadata
+
+            } else {
+                // Local metadata doesn't exists
                 metadataSubject.value.value = remoteMetadata
-                
+
                 // Push update to localMetadata
                 try await localMetadataProvider.save(for: userWallet, metadata: remoteMetadata)
             }
