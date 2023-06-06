@@ -64,4 +64,36 @@ public struct StrigaUserDetailsResponse: BankTransferRegistrationData {
         self.placeOfBirth = placeOfBirth
         self.KYC = KYC
     }
+
+    public static var empty: Self {
+        StrigaUserDetailsResponse(
+            firstName: "", lastName: "", email: "", mobile: Mobile(countryCode: "", number: ""), KYC: StrigaKYC(status: .notStarted, mobileVerified: false)
+        )
+    }
+
+    public func updated(
+        firstName: String? = nil,
+        lastName: String? = nil,
+        email: String? = nil,
+        mobile: Mobile? = nil,
+        dateOfBirth: DateOfBirth?? = nil,
+        address: Address?? = nil,
+        occupation: StrigaUserIndustry?? = nil,
+        sourceOfFunds: StrigaSourceOfFunds?? = nil,
+        placeOfBirth: String?? = nil,
+        KYC: StrigaKYC? = nil
+    ) -> Self {
+        StrigaUserDetailsResponse(
+            firstName: firstName ?? self.firstName,
+            lastName: lastName ?? self.lastName,
+            email: email ?? self.email,
+            mobile: mobile ?? self.mobile,
+            dateOfBirth: dateOfBirth ?? self.dateOfBirth,
+            address: address ?? self.address,
+            occupation: occupation ?? self.occupation,
+            sourceOfFunds: sourceOfFunds ?? self.sourceOfFunds,
+            placeOfBirth: placeOfBirth ?? self.placeOfBirth,
+            KYC: KYC ?? self.KYC
+        )
+    }
 }

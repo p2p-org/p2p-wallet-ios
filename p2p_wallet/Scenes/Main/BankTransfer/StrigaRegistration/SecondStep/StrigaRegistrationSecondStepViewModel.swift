@@ -46,13 +46,10 @@ final class StrigaRegistrationSecondStepViewModel: BaseViewModel, ObservableObje
     @Published var selectedIndustry: Industry?
     @Published var selectedSourceOfFunds: StrigaSourceOfFunds?
 
-    private var userData: StrigaUserDetailsResponse
-
     init(data: StrigaUserDetailsResponse) {
-        userData = data
         industryProvider = ChooseIndustryDataLocalProvider()
         super.init()
-        setInitialData()
+        setInitial(userData: data)
 
         actionPressed
             .sink { [weak self] _ in
@@ -94,7 +91,7 @@ final class StrigaRegistrationSecondStepViewModel: BaseViewModel, ObservableObje
 
 private extension StrigaRegistrationSecondStepViewModel {
 
-    func setInitialData() {
+    func setInitial(userData: StrigaUserDetailsResponse) {
         if let industry = userData.occupation {
             selectedIndustry = industryProvider.getIndustries().first(where: { $0.rawValue == industry })
         }
@@ -142,12 +139,9 @@ private extension StrigaRegistrationSecondStepViewModel {
             .sinkAsync { [weak self] sourceOfFunds, address1, address2 in
                 guard let self else { return }
 
-                let newData = StrigaUserDetailsResponse(
-                    firstName: self.userData.firstName,
-                    lastName: self.userData.lastName,
-                    email: self.userData.email,
-                    mobile: self.userData.mobile,
-                    dateOfBirth: self.userData.dateOfBirth,
+                let currentData: StrigaUserDetailsResponse = (try? await service.getRegistrationData() as? StrigaUserDetailsResponse) ?? .empty
+
+                let newData = currentData.updated(
                     address: StrigaUserDetailsResponse.Address(
                         addressLine1: address2.1,
                         addressLine2: address2.2,
@@ -156,12 +150,10 @@ private extension StrigaRegistrationSecondStepViewModel {
                         state: address2.2,
                         country: address1.0?.code
                     ),
-                    occupation: sourceOfFunds.0?.rawValue,
-                    sourceOfFunds: sourceOfFunds.1,
-                    placeOfBirth: self.userData.placeOfBirth,
-                    KYC: self.userData.KYC
+                    occupation: .some(sourceOfFunds.0?.rawValue),
+                    sourceOfFunds: .some(sourceOfFunds.1)
                 )
-                self.userData = newData
+
                 try? await self.service.updateLocally(data: newData)
 
                 if self.isDataValid == false {
@@ -175,7 +167,8 @@ private extension StrigaRegistrationSecondStepViewModel {
         isLoading = true
         Task {
             do {
-                try await service.createUser(data: self.userData)
+                guard let currentData = try await service.getRegistrationData() as? StrigaUserDetailsResponse else { throw NSError() }
+                try await service.createUser(data: currentData)
                 await MainActor.run {
                     self.isLoading = false
                 }
