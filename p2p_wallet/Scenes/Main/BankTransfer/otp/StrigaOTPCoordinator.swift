@@ -16,7 +16,7 @@ final class StrigaOTPCoordinator: Coordinator<StrigaOTPCoordinatorResult> {
     @Injected private var helpLauncher: HelpCenterLauncher
 
     @SwiftyUserDefault(keyPath: \.strigaOTPResendCounter, options: .cached)
-    private var resendCounter: Wrapper<ResendCounter>
+    private var resendCounter: ResendCounter
 
     private var numberVerifiedSubject = PassthroughSubject<Void, Never>()
 
@@ -31,7 +31,7 @@ final class StrigaOTPCoordinator: Coordinator<StrigaOTPCoordinatorResult> {
     override func start() -> AnyPublisher<StrigaOTPCoordinatorResult, Never> {
         let viewModel = EnterSMSCodeViewModel(
             phone: phone,
-            attemptCounter: resendCounter,
+            attemptCounter: Wrapper(resendCounter),
             strategy: .striga
         )
         let controller = EnterSMSCodeViewController(viewModel: viewModel)
@@ -61,7 +61,8 @@ final class StrigaOTPCoordinator: Coordinator<StrigaOTPCoordinatorResult> {
         viewModel.coordinatorIO.onResend.sinkAsync { [weak self, weak viewModel] process in
             process.start {
                 guard let self, let viewModel else { return }
-                viewModel.attemptCounter = Wrapper(viewModel.attemptCounter.value.incremented())
+                self.resendCounter = self.resendCounter.incremented()
+                viewModel.attemptCounter = Wrapper(self.resendCounter)
                 try await self.bankTransfer.resendSMS()
             }
         }.store(in: &subscriptions)
@@ -177,4 +178,4 @@ final class StrigaOTPSuccessCoordinator: Coordinator<StrigaOTPSuccessCoordinator
     }
 }
 
-extension Wrapper: DefaultsSerializable {}
+extension ResendCounter: DefaultsSerializable {}
