@@ -20,23 +20,8 @@ public final class MockStrigaRemoteProvider: StrigaRemoteProvider {
     }
     
     // MARK: - Methods
-
-    public func getUserId() async throws -> String? {
-        // Fake network request
-        try await Task.sleep(nanoseconds: 1_000_000_000)
-        
-        // return value
-        switch useCase {
-        case .unregisteredUser:
-            return nil
-        case .registeredUserWithUnverifiedOTP, .registeredUserWithoutKYC:
-            return mockUserId
-        case .registeredAndVerifiedUser:
-            return mockUserId
-        }
-    }
     
-    public func getKYCStatus() async throws -> StrigaKYC {
+    public func getKYCStatus(userId: String) async throws -> StrigaKYC {
         // Fake network request
         try await Task.sleep(nanoseconds: 1_000_000_000)
         
@@ -73,7 +58,7 @@ public final class MockStrigaRemoteProvider: StrigaRemoteProvider {
             occupation: nil,
             sourceOfFunds: nil,
             placeOfBirth: nil,
-            KYC: try await getKYCStatus()
+            KYC: try await getKYCStatus(userId: mockUserId)
         )
     }
     
@@ -88,7 +73,7 @@ public final class MockStrigaRemoteProvider: StrigaRemoteProvider {
         return .init(
             userId: mockUserId,
             email: model.email,
-            KYC: try await getKYCStatus()
+            KYC: try await getKYCStatus(userId: mockUserId)
         )
     }
     

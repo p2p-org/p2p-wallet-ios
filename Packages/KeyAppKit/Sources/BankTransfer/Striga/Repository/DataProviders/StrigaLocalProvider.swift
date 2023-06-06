@@ -19,8 +19,24 @@ public actor StrigaLocalProviderImpl {
     
     // Fix: temporary solution
     fileprivate let strigaUserIdUserDefaultsKey = "StrigaBankTransferLocalProvider.strigaUserIdUserDefaultsKey"
+    public init() {
+        
+        // migration
+        Task {
+            await migrate()
+        }
+    }
     
-    public init() {}
+    // MARK: - Migration
+
+    private func migrate() {
+        // Migration 1:
+        let migration1Key = "StrigaLocalProviderImpl.migration1"
+        if !UserDefaults.standard.bool(forKey: migration1Key) {
+            clearRegistrationData()
+            UserDefaults.standard.set(true, forKey: migration1Key)
+        }
+    }
 }
 
 extension StrigaLocalProviderImpl: StrigaLocalProvider {
@@ -45,7 +61,7 @@ extension StrigaLocalProviderImpl: StrigaLocalProvider {
     
     // TODO: Need to be cleared on log out
     public func clearRegistrationData() {
-        UserDefaults.standard.setNilValueForKey(strigaUserIdUserDefaultsKey)
+        UserDefaults.standard.set(nil, forKey: strigaUserIdUserDefaultsKey)
         try? FileManager.default.removeItem(at: cacheFile)
     }
 }

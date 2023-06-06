@@ -9,15 +9,18 @@ public final class StrigaBankTransferUserDataRepository: BankTransferUserDataRep
 
     private let localProvider: StrigaLocalProvider
     private let remoteProvider: StrigaRemoteProvider
+    private let metadataProvider: StrigaMetadataProvider
 
     // MARK: - Initializer
 
     public init(
         localProvider: StrigaLocalProvider,
-        remoteProvider: StrigaRemoteProvider
+        remoteProvider: StrigaRemoteProvider,
+        metadataProvider: StrigaMetadataProvider
     ) {
         self.localProvider = localProvider
         self.remoteProvider = remoteProvider
+        self.metadataProvider = metadataProvider
     }
     
     // MARK: - Methods
@@ -30,7 +33,7 @@ public final class StrigaBankTransferUserDataRepository: BankTransferUserDataRep
         
         // otherwise retrieve from remote
         else {
-            let userId = try await remoteProvider.getUserId()
+            let userId = try await metadataProvider.getStrigaMetadata()?.userId
             if let userId {
                 // save to local
                 await localProvider.saveUserId(userId)
@@ -40,7 +43,10 @@ public final class StrigaBankTransferUserDataRepository: BankTransferUserDataRep
     }
     
     public func getKYCStatus() async throws -> StrigaKYC {
-        try await remoteProvider.getKYCStatus()
+        guard let userId = try await getUserId() else {
+            throw BankTransferError.missingUserId
+        }
+        return try await remoteProvider.getKYCStatus(userId: userId)
     }
 
     public func createUser(registrationData data: BankTransferRegistrationData) async throws -> StrigaCreateUserResponse {
@@ -109,6 +115,13 @@ public final class StrigaBankTransferUserDataRepository: BankTransferUserDataRep
     }
 
     public func getRegistrationData() async throws -> BankTransferRegistrationData {
+        // get metadata
+        guard let metadata = try await metadataProvider.getStrigaMetadata()
+        else {
+            throw BankTransferError.missingMetadata
+        }
+        
+        // get cached data from local provider
         if let cachedData = await localProvider.getCachedRegistrationData()
         {
             if let userId = try await getUserId(),
@@ -129,7 +142,7 @@ public final class StrigaBankTransferUserDataRepository: BankTransferUserDataRep
         return StrigaUserDetailsResponse(
             firstName: "",
             lastName: "",
-            email: "",
+            email: metadata.email,
             mobile: .init(
                 countryCode: "",
                 number: ""
