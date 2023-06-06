@@ -89,7 +89,11 @@ final class EnterSMSCodeViewModel: BaseOTPViewModel {
 
     var coordinatorIO: CoordinatorIO = .init()
 
-    private var timer: Timer?
+    private weak var timer: Timer?
+
+    deinit {
+        timer?.invalidate()
+    }
 
     init(phone: String, attemptCounter: Wrapper<ResendCounter>, strategy: Strategy) {
         self.phone = phone
@@ -118,8 +122,8 @@ final class EnterSMSCodeViewModel: BaseOTPViewModel {
         coordinatorIO
             .error
             .receive(on: RunLoop.main)
-            .sinkAsync { error in
-                if let serviceError = error as? APIGatewayError {
+            .sinkAsync { [weak self] error in
+                if let self, let serviceError = error as? APIGatewayError {
                     switch serviceError {
                     case .invalidOTP:
                         self.showCodeError(error: EnterSMSCodeViewModelError.incorrectCode)
@@ -129,9 +133,9 @@ final class EnterSMSCodeViewModel: BaseOTPViewModel {
                         self.showError(error: error)
                     }
                 } else if error is UndefinedAPIGatewayError {
-                    self.notificationService.showDefaultErrorNotification()
+                    self?.notificationService.showDefaultErrorNotification()
                 } else {
-                    self.showError(error: error)
+                    self?.showError(error: error)
                 }
             }
             .store(in: &subscriptions)

@@ -32,7 +32,7 @@ final class TopupActionsViewModel: BaseViewModel, ObservableObject {
         if !shouldShowBankTransfer {
             return tappedItemSubject.eraseToAnyPublisher()
         }
-        return tappedItemSubject.flatMap { action in
+        return tappedItemSubject.flatMap { [unowned self] action in
             switch action {
             // If it's transfer we need to check if the service is ready
             case .transfer:
@@ -109,8 +109,8 @@ final class TopupActionsViewModel: BaseViewModel, ObservableObject {
 
         bankTransferService.state.filter({ state in
             state.status == .initializing
-        }).sinkAsync { state in
-            await self.bankTransferService.reload()
+        }).sinkAsync { [weak self] state in
+            await self?.bankTransferService.reload()
         }.store(in: &subscriptions)
     }
 
