@@ -1371,3 +1371,9 @@
 "Username was copied to clipboard" = "Le nom d'utilisateur a été copié dans le presse-papiers";
 "Transaction fees" = "Les frais de transaction";
 "%@ is the minimum amount to receive from the Ethereum Network" = "%@ est le montant minimum à recevoir du réseau Ethereum";
+"We've noticed that you're using a new device." = "Nous avons remarqué que vous utilisez un nouvel appareil.";
+"For security, change your authorization device to restore access For security, change your authorization device to restore access if needed." = "Pour des raisons de sécurité, modifiez votre dispositif d'autorisation pour restaurer l'accès. Pour des raisons de sécurité, modifiez votre dispositif d'autorisation pour restaurer l'accès si nécessaire.";
+"This device" = "Cet appareil";
+"Set up" = "Installation";
+"Make sure this is still your device" = "Assurez-vous qu'il s'agit toujours de votre appareil";
+"Attention! If you update your current device, you will not be able to use the old device for recovery." = "Attention!  Si vous mettez à jour votre appareil actuel, vous ne pourrez pas utiliser l'ancien appareil pour la récupération.";

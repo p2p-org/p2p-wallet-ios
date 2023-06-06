@@ -1368,3 +1368,9 @@
 "Username was copied to clipboard" = "Имя пользователя было скопировано в буфер обмена";
 "Transaction fees" = "Операционные издержки";
 "%@ is the minimum amount to receive from the Ethereum Network" = "%@ — минимальная сумма для получения от сети Ethereum.";
+"We've noticed that you're using a new device." = "Мы заметили, что вы используете новое устройство.";
+"For security, change your authorization device to restore access For security, change your authorization device to restore access if needed." = "В целях безопасности измените устройство авторизации, чтобы восстановить доступ. В целях безопасности измените устройство авторизации, чтобы восстановить доступ, если это необходимо.";
+"This device" = "Это устройство";
+"Set up" = "Настраивать";
+"Make sure this is still your device" = "Убедитесь, что это все еще ваше устройство";
+"Attention! If you update your current device, you will not be able to use the old device for recovery." = "Внимание!  Если вы обновите свое текущее устройство, вы не сможете использовать старое устройство для восстановления.";
