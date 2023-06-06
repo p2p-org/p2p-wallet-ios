@@ -24,7 +24,7 @@ struct StrigaRegistrationSecondStepView: View {
 
             InfoView(appearance: .confirm)
                 .listRowBackground(Color(Asset.Colors.smoke.color))
-                .listRowInsets(EdgeInsets.infoInset)
+                .listRowInsets(EdgeInsets.confirmInset)
 
             NewTextButton(
                 title: viewModel.actionTitle.uppercaseFirst,
@@ -127,6 +127,7 @@ private extension StrigaRegistrationSecondStepView {
 private extension EdgeInsets {
     static let rowInset = EdgeInsets(top: 0, leading: 0, bottom: 12, trailing: 0)
     static let infoInset = EdgeInsets(top: 0, leading: 0, bottom: 20, trailing: 0)
+    static let confirmInset = EdgeInsets(top: 0, leading: 0, bottom: 48, trailing: 0)
 }
 
 struct StrigaRegistrationSecondStepView_Previews: PreviewProvider {

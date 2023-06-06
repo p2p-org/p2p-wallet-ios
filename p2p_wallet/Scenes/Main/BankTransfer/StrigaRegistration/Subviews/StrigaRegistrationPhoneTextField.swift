@@ -40,7 +40,9 @@ struct StrigaRegistrationPhoneTextField: View {
 
     func updateUndelyingString(newEnteredString: String) {
         var newText = newEnteredString
-        if let phoneNumber = try? phoneNumberKit.parse(newEnteredString) {
+        if let phoneNumber = try? phoneNumberKit.parse(
+            "+\(newEnteredString.replacingOccurrences(of: " ", with: ""))"
+        ) {
             newText = phoneNumberKit.format(phoneNumber, toType: .international)
                 .replacingOccurrences(of: "+", with: "")
                 .replacingOccurrences(of: "-", with: " ")

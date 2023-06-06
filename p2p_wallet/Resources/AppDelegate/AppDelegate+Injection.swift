@@ -107,7 +107,11 @@ extension Resolver: ResolverRegistering {
 
         // WalletMetadata
         register { LocalWalletMetadataProvider() }
+            .scope(.application)
+
         register { RemoteWalletMetadataProvider() }
+            .scope(.application)
+
         register {
             WalletMetadataService(
                 localProvider: resolve(LocalWalletMetadataProvider.self),
@@ -115,7 +119,7 @@ extension Resolver: ResolverRegistering {
             )
         }
         .implements(StrigaMetadataProvider.self)
-        .scope(.application)
+        .scope(.session)
 
         // Prices
         register { SolanaPriceService(api: resolve()) }

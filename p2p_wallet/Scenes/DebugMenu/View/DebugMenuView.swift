@@ -73,8 +73,6 @@ struct DebugMenuView: View {
 
                 Section(header: Text("Onboarding configurations")) {
                     TextFieldRow(title: "Torus:", content: $onboardingConfig.torusEndpoint)
-                    TextFieldRow(title: "Google:", content: $onboardingConfig.torusGoogleVerifier)
-                    TextFieldRow(title: "Apple", content: $onboardingConfig.torusAppleVerifier)
                     TextFieldRow(title: "OTP Resend", content: $onboardingConfig.enterOTPResend)
                 }
 

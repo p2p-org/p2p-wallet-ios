@@ -52,7 +52,7 @@ final class BankTransferCoordinator: Coordinator<Void> {
 
     private func step(userData: UserData) -> BankTransferStep {
         var step = BankTransferStep.registration
-        if nil != userData.userId {
+        if userData.userId != nil {
             if userData.mobileVerified {
                 if userData.kycVerified {
                     step = .transfer
@@ -72,7 +72,7 @@ final class BankTransferCoordinator: Coordinator<Void> {
             return coordinate(
                 to: StrigaOTPCoordinator(
                     viewController: viewController,
-                    phone: metadataService.metadata?.phoneNumber ?? ""
+                    phone: metadataService.metadata.value?.phoneNumber ?? ""
                 )
             ).map { result in
                 switch result {

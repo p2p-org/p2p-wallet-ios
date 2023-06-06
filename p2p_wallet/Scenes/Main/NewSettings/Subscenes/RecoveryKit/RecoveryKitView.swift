@@ -167,7 +167,7 @@ struct RecoveryKitView_Previews: PreviewProvider {
             remoteProvider: provider
         )
         
-        Task { try await service.synchronize() }
+        Task { await service.synchronize() }
         
         return NavigationView {
             RecoveryKitView(

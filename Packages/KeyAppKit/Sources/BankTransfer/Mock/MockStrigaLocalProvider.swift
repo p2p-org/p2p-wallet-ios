@@ -23,16 +23,16 @@ public actor MockStrigaLocalProvider: StrigaLocalProvider {
             }
             
             cachedRegistrationData = StrigaUserDetailsResponse(
-                firstName: "Local",
-                lastName: "Provider",
-                email: "local.provider@mocking.com",
-                mobile: .init(countryCode: "1", number: "5853042520"),
-                dateOfBirth: .init(year: 1986, month: 12, day: 1),
-                address: .init(addressLine1: "Local street 12", addressLine2: nil, city: "Local Provider", postalCode: "12345", state: "Local Provider", country: "US"),
-                occupation: .artEntertaiment,
-                sourceOfFunds: .civilContract,
+                firstName: "",
+                lastName: "",
+                email: "test@test.test",
+                mobile: StrigaUserDetailsResponse.Mobile(countryCode: "1", number: "5853042520"),
+                dateOfBirth: nil,
+                address: nil,
+                occupation: nil,
+                sourceOfFunds: nil,
                 placeOfBirth: nil,
-                KYC: .init(
+                KYC: StrigaKYC(
                     status: kyc,
                     mobileVerified: false
                 )

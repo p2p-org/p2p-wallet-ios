@@ -68,7 +68,7 @@ final class StrigaRegistrationFirstStepViewModel: BaseViewModel, ObservableObjec
 
         $dateOfBirth
             .map { $0.split(separator: ".") }
-            .map { [weak self] components in
+            .map { components in
                 if components.count == Constants.dateFormat.split(separator: ".").count {
                     return StrigaUserDetailsResponse.DateOfBirth(year: Int(components[2]), month: Int(components[1]), day: Int(components[0]))
                 }
@@ -181,7 +181,7 @@ private extension StrigaRegistrationFirstStepViewModel {
     }
 
     func bindToFieldValues() {
-        let contacts = Publishers.CombineLatest($email, $phoneNumberModel)
+        let contacts = Publishers.CombineLatest($email, $phoneNumber)
         let credentials = Publishers.CombineLatest($firstName, $surname)
         let dateOfBirth = Publishers.CombineLatest($dateOfBirthModel, $selectedCountryOfBirth)
         Publishers.CombineLatest3(contacts, credentials, dateOfBirth)
@@ -190,7 +190,7 @@ private extension StrigaRegistrationFirstStepViewModel {
                 guard let self else { return }
 
                 let mobile: StrigaUserDetailsResponse.Mobile
-                if let phoneNumberModel = contacts.1 {
+                if let phoneNumberModel = self.phoneNumberModel {
                     mobile = StrigaUserDetailsResponse.Mobile(
                         countryCode: "\(phoneNumberModel.countryCode)",
                         number: phoneNumberModel.numberString
@@ -199,20 +199,15 @@ private extension StrigaRegistrationFirstStepViewModel {
                     mobile = StrigaUserDetailsResponse.Mobile(countryCode: "", number: "")
                 }
 
-                try? await self.service.updateLocally(
-                    data: StrigaUserDetailsResponse(
-                        firstName: credentials.0,
-                        lastName: credentials.1,
-                        email: contacts.0,
-                        mobile: mobile,
-                        dateOfBirth: dateOfBirth.0,
-                        placeOfBirth: dateOfBirth.1?.code,
-                        KYC: .init(
-                            status: .notStarted,
-                            mobileVerified: false
-                        )
-                    )
+                let currentData: StrigaUserDetailsResponse = (try? await service.getRegistrationData() as? StrigaUserDetailsResponse) ?? .empty
+                let newData = currentData.updated(
+                    firstName: credentials.0,
+                    lastName: credentials.1,
+                    mobile: mobile,
+                    dateOfBirth: dateOfBirth.0,
+                    placeOfBirth: dateOfBirth.1?.code
                 )
+                try? await self.service.updateLocally(data: newData)
 
                 if self.isDataValid == false {
                     self.isDataValid = self.isValid()
