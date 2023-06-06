@@ -573,7 +573,10 @@ extension Resolver: ResolverRegistering {
 //            let userWalletsManager: UserWalletManager = resolve()
             return BankTransferServiceImpl(
                 repository: StrigaBankTransferUserDataRepository(
-                    localProvider: StrigaLocalProviderImpl(),
+                    localProvider: MockStrigaLocalProvider(
+                        useCase: .unregisteredUser,
+                        hasCachedInput: true
+                    ),
                     remoteProvider: MockStrigaRemoteProvider(
                         useCase: .unregisteredUser,
                         mockUserId: "abc-xyz",
