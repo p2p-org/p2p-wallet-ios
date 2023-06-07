@@ -420,8 +420,8 @@
         "repositoryURL": "https://github.com/apple/swift-nio.git",
         "state": {
           "branch": null,
-          "revision": "2d8e6ca36fe3e8ed74b0883f593757a45463c34d",
-          "version": "2.53.0"
+          "revision": "6213ba7a06febe8fef60563a4a7d26a4085783cf",
+          "version": "2.54.0"
         }
       },
       {
@@ -537,8 +537,8 @@
         "repositoryURL": "https://github.com/vapor/websocket-kit",
         "state": {
           "branch": null,
-          "revision": "17c0afbf24f4e288e183bc34317dc97b5cd084bd",
-          "version": "2.9.0"
+          "revision": "53fe0639a98903858d0196b699720decb42aee7b",
+          "version": "2.14.0"
         }
       }
     ]
