@@ -10,7 +10,7 @@ public final class BankTransferServiceImpl {
     
     /// Subject that holds State with UserData stream
     public let subject = CurrentValueSubject<AsyncValueState<UserData>, Never>(
-        AsyncValueState<UserData>(status: .ready, value: .empty)
+        AsyncValueState<UserData>(status: .initializing, value: .empty)
     )
     
     // MARK: - Initializers
