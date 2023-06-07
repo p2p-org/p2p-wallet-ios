@@ -23,15 +23,29 @@ public actor MockStrigaLocalProvider: StrigaLocalProvider {
             }
             
             cachedRegistrationData = StrigaUserDetailsResponse(
-                firstName: "",
-                lastName: "",
+                firstName: "Tester",
+                lastName: "Tester1",
                 email: "test@test.test",
-                mobile: StrigaUserDetailsResponse.Mobile(countryCode: "1", number: "5853042520"),
-                dateOfBirth: nil,
-                address: nil,
-                occupation: nil,
-                sourceOfFunds: nil,
-                placeOfBirth: nil,
+                mobile: .init(
+                    countryCode: "+84",
+                    number: "+84776059617"
+                ),
+                dateOfBirth: .init(
+                    year: 1984,
+                    month: 03,
+                    day: 12
+                ),
+                address: .init(
+                    addressLine1: "Test ts str1",
+                    addressLine2: nil,
+                    city: "Ant",
+                    postalCode: "12345",
+                    state: "Ant",
+                    country: "fr"
+                ),
+                occupation: .accounting,
+                sourceOfFunds: .personalSavings,
+                placeOfBirth: "FRA",
                 KYC: StrigaKYC(
                     status: kyc,
                     mobileVerified: false
