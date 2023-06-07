@@ -25,6 +25,30 @@ public struct StrigaCreateUserRequest: Encodable {
         let year: Int?
         let month: Int?
         let day: Int?
+
+        init(year: Int?, month: Int?, day: Int?) {
+            self.year = year
+            self.month = month
+            self.day = day
+        }
+
+        init(year: String?, month: String?, day: String?) {
+            if let year {
+                self.year = Int(year)
+            } else {
+                self.year = nil
+            }
+            if let month {
+                self.month = Int(month)
+            } else {
+                self.month = nil
+            }
+            if let day {
+                self.day = Int(day)
+            } else {
+                self.day = nil
+            }
+        }
     }
     
     struct Address: Encodable {
