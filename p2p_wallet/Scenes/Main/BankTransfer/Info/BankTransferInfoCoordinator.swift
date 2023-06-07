@@ -14,14 +14,14 @@ final class BankTransferInfoCoordinator: Coordinator<BankTransferInfoCoordinator
 
     // MARK: -
 
-    private var viewController: UIViewController!
+    private var viewController: UINavigationController
 
     // MARK: -
 
     @Injected private var bankTransferService: any BankTransferService
 
     init(
-        viewController: UIViewController? = nil
+        viewController: UINavigationController
     ) {
         self.viewController = viewController
     }
@@ -42,7 +42,7 @@ final class BankTransferInfoCoordinator: Coordinator<BankTransferInfoCoordinator
             }
             .store(in: &subscriptions)
 
-        viewModel.showCountries.flatMap { val in
+        viewModel.showCountries.flatMap { [unowned self, unowned controller] val in
             self.coordinate(to: ChooseItemCoordinator<Country>(
                 title: L10n.selectYourCountry,
                 controller: controller,
@@ -50,10 +50,10 @@ final class BankTransferInfoCoordinator: Coordinator<BankTransferInfoCoordinator
                 chosen: val,
                 showDoneButton: true
             ))
-        }.sink { result in
+        }.sink { [weak viewModel] result in
             switch result {
             case .item(let item):
-                viewModel.setCountry(item as! Country)
+                viewModel?.setCountry(item as! Country)
             case .cancel: break
             }
         }.store(in: &subscriptions)
@@ -68,17 +68,24 @@ final class BankTransferInfoCoordinator: Coordinator<BankTransferInfoCoordinator
         viewController.present(controller, interactiveDismissalType: .standard)
 
         return Publishers.Merge(
-            controller.deallocatedPublisher()
-                .map { BankTransferInfoCoordinatorResult.canceled },
+            // Ignore deallocation event if open registration triggered
+            Publishers.Merge(
+                controller.deallocatedPublisher().map { true },
+                viewModel.openRegistration.map { _ in false }
+            )
+                .prefix(1)
+                .filter { $0 }
+                .map { _ in BankTransferInfoCoordinatorResult.canceled }
+                .eraseToAnyPublisher(),
             viewModel.openRegistration
-                .handleEvents(receiveOutput: { _ in
-                    controller.dismiss(animated: true)
+                .handleEvents(receiveOutput: { [weak controller] _ in
+                    controller?.dismiss(animated: true)
                 })
-                .flatMap({ country in
+                .flatMap({ [unowned self] country in
                     self.coordinate(
                         to: StrigaRegistrationFirstStepCoordinator(
                             country: country,
-                            navigationController: self.viewController as! UINavigationController
+                            navigationController: self.viewController
                         )
                     )
                 })
