@@ -52,7 +52,7 @@ final class TopupActionsViewModel: BaseViewModel, ObservableObject {
     private let tappedItemSubject = PassthroughSubject<Action, Never>()
     private let shouldShowErrorSubject = CurrentValueSubject<Bool, Never>(false)
     private var shouldShowBankTransfer: Bool {
-        available(.bankTransfer) && true //nil != metadataService.metadata
+        available(.bankTransfer) && metadataService.metadata.value != nil
     }
 
     func didTapItem(item: ActionItem) {
