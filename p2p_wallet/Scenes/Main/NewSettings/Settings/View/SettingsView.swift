@@ -76,16 +76,16 @@ struct SettingsView: View {
                     .foregroundColor(Color(Asset.Colors.rose.color))
                 }
             )
-                .alert(isPresented: $logOutPresented) {
-                    Alert(
-                        title: Text(L10n.doYouWantToLogOut),
-                        message: Text(L10n.youWillNeedYourSocialAccountOrPhoneNumberToLogIn),
-                        primaryButton: .destructive(Text(L10n.logOut)) {
-                            viewModel.signOut()
-                        },
-                        secondaryButton: .cancel(Text(L10n.stay))
-                    )
-                }
+            .alert(isPresented: $logOutPresented) {
+                Alert(
+                    title: Text(L10n.doYouWantToLogOut),
+                    message: Text(L10n.youWillNeedYourSocialAccountOrPhoneNumberToLogIn),
+                    primaryButton: .destructive(Text(L10n.logOut)) {
+                        viewModel.signOut()
+                    },
+                    secondaryButton: .cancel(Text(L10n.stay))
+                )
+            }
         }
     }
 
