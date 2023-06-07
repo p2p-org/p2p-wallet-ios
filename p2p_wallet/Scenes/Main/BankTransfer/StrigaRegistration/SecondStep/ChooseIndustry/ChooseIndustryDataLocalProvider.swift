@@ -3,10 +3,11 @@ import BankTransfer
 final class ChooseIndustryDataLocalProvider {
     private let emojis: [StrigaUserIndustry: String] = [
         .accounting: "🧮",
+        .selfEmployed: "",
         .audit: "🔍",
         .finance: "💰",
         .publicSectorAdministration: "🏛️",
-        .artEntertaiment: "🎨",
+        .artEntertainment: "🎨",
         .autoAviation: "📐",
         .bankingLending: "💵",
         .businessConsultancyLegal: "⚖️",
@@ -20,12 +21,14 @@ final class ChooseIndustryDataLocalProvider {
         .prMarketing: "🎉",
         .preciousGoodsJewelry: "💎",
         .nonGovernmentalOrganization: "🏢",
-        .insuranceSecurityVRetailWholesale: "📊",
+        .insuranceSecurity: "📊",
+        .retailWholesale: "📊",
         .travelTourism: "🏖️",
         .freelancer: "👾",
         .student: "🎓",
         .retired: "🧢",
-        .unemployed: "😜"
+        .unemployed: "😜",
+        .other: ""
     ]
 
     func getIndustries() -> [Industry] {
