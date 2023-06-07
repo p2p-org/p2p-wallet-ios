@@ -99,7 +99,7 @@ final class ChoosePhoneCodeViewModel: BaseViewModel, ObservableObject {
 
     private func emptyCountryModel() -> SelectableCountry {
         SelectableCountry(
-            value: Country(name: L10n.sorryWeDonTKnowASuchCountry, code: "", dialCode: "", emoji: "🏴"),
+            value: Country(name: L10n.sorryWeDonTKnowASuchCountry, code: "", dialCode: "", emoji: "🏴", alpha3Code: ""),
             isSelected: false,
             isEmpty: true
         )
