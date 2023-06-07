@@ -31,20 +31,28 @@ final class StrigaRegistrationFirstStepCoordinator: Coordinator<StrigaRegistrati
             }
             .store(in: &subscriptions)
 
-        viewModel.chooseCountry.flatMap { [unowned self] value in
-            self.coordinate(to: ChooseItemCoordinator<Country>(
-                title: L10n.selectYourCountry,
-                controller: self.navigationController,
-                service: ChooseCountryService(),
-                chosen: value
-            ))
-        }.sink { [weak viewModel] result in
-            switch result {
-            case .item(let item):
-                viewModel?.selectedCountryOfBirth = item as? Country
-            case .cancel: break
+        viewModel.chooseCountry
+            .flatMap { [unowned self] in self.openChooseCountry(value: $0) }
+            .sink { [weak viewModel] result in
+                switch result {
+                case .item(let item):
+                    guard let item = item as? Country else { return }
+                    viewModel?.selectedCountryOfBirth = item
+                case .cancel: break
+                }
             }
-        }.store(in: &subscriptions)
+            .store(in: &subscriptions)
+
+        viewModel.choosePhoneCountryCode
+            .flatMap { [unowned self] in self.openChooseCountry(value: $0) }
+            .sink { [weak viewModel] result in
+                switch result {
+                case .item(let item):
+                    viewModel?.selectedPhoneCountryCode = item as? Country
+                case .cancel: break
+                }
+            }
+            .store(in: &subscriptions)
 
         navigationController.setViewControllers(
             [
@@ -60,7 +68,7 @@ final class StrigaRegistrationFirstStepCoordinator: Coordinator<StrigaRegistrati
             viewModel.openNextStep.eraseToAnyPublisher()
                 .flatMap({ [unowned self] response in
                     self.coordinateToNextStep(response: response)
-                        // ignoring cancel events, to not pass this event out of Coordinator
+                    // ignoring cancel events, to not pass this event out of Coordinator
                         .filter { $0 != .canceled }
                 })
                 .map { result in
@@ -71,9 +79,13 @@ final class StrigaRegistrationFirstStepCoordinator: Coordinator<StrigaRegistrati
                         return StrigaRegistrationFirstStepCoordinatorResult.canceled
                     }
                 }
-            )
-            .prefix(1)
-            .eraseToAnyPublisher()
+        )
+        .prefix(1)
+        .eraseToAnyPublisher()
+    }
+
+    private func openChooseCountry(value: Country?) -> AnyPublisher<ChooseItemCoordinatorResult, Never> {
+        coordinate(to: ChooseItemCoordinator<Country>(title: L10n.selectYourCountry, controller: navigationController, service: ChooseCountryService(), chosen: value))
     }
 
     private func coordinateToNextStep(response: StrigaUserDetailsResponse) -> AnyPublisher<StrigaRegistrationSecondStepCoordinatorResult, Never> {

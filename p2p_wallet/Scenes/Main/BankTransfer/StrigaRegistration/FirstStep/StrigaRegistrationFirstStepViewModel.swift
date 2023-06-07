@@ -17,6 +17,9 @@ final class StrigaRegistrationFirstStepViewModel: BaseViewModel, ObservableObjec
 
     // Dependencies
     @Injected private var service: BankTransferService
+    @Injected private var countriesService: CountriesAPI
+    @Injected private var strigaMetadata: StrigaMetadataProvider
+    private let phoneNumberKit = PhoneNumberKit()
 
     // Data
     private var data: StrigaUserDetailsResponse?
@@ -26,36 +29,39 @@ final class StrigaRegistrationFirstStepViewModel: BaseViewModel, ObservableObjec
 
     // Fields
     @Published var email: String = ""
-    @Published var phoneNumber: String = ""
     @Published var firstName: String = ""
     @Published var surname: String = ""
     @Published var dateOfBirth: String = ""
     @Published var countryOfBirth: String = ""
+    // PhoneTextField
+    @Published var phoneNumber: String = ""
+    @Published var selectedPhoneCountryCode: Country?
+    @Published var phoneNumberModel: PhoneNumber?
 
     // Other views
     @Published var actionTitle: String = L10n.next
     @Published var isDataValid = true // We need this flag to allow user enter at first whatever he/she likes and then validate everything
     let actionPressed = PassthroughSubject<Void, Never>()
     let openNextStep = PassthroughSubject<StrigaUserDetailsResponse, Never>()
-    let chooseCountry = PassthroughSubject<Country?, Never>()
+    let chooseCountry = PassthroughSubject<Country, Never>()
+    let choosePhoneCountryCode = PassthroughSubject<Country?, Never>()
     let back = PassthroughSubject<Void, Never>()
 
     var fieldsStatuses = [Field: StrigaRegistrationTextFieldStatus]()
 
-    @Published var selectedCountryOfBirth: Country?
+    @Published var selectedCountryOfBirth: Country
     @Published private var dateOfBirthModel: StrigaUserDetailsResponse.DateOfBirth?
-    @Published var phoneNumberModel: PhoneNumber?
 
     init(country: Country) {
+        selectedCountryOfBirth = country
         super.init()
         fetchSavedData()
-        selectedCountryOfBirth = country
 
         actionPressed
             .sink { [weak self] _ in
-                guard let self = self, let data = self.data else { return }
+                guard let self = self else { return }
                 self.isDataValid = isValid()
-                if isValid() {
+                if isValid(), let data = self.data {
                     self.openNextStep.send(data)
                 }
             }
@@ -78,13 +84,17 @@ final class StrigaRegistrationFirstStepViewModel: BaseViewModel, ObservableObjec
             .store(in: &subscriptions)
 
         $selectedCountryOfBirth
-            .map { value in
-                if let value {
-                    return [value.emoji, value.name].compactMap { $0 } .joined(separator: " ")
-                }
-                return ""
-            }
+            .map { [$0.emoji, $0.name].compactMap { $0 } .joined(separator: " ") }
             .assignWeak(to: \.countryOfBirth, on: self)
+            .store(in: &subscriptions)
+
+        $selectedPhoneCountryCode
+            .map { [weak self] value in
+                guard let self, let value else { return nil }
+                let number = try? self.phoneNumberKit.parse("\(value.dialCode)\(phoneNumber)")
+                return number
+            }
+            .assignWeak(to: \.phoneNumberModel, on: self)
             .store(in: &subscriptions)
 
         bindToFieldValues()
@@ -103,12 +113,12 @@ private extension StrigaRegistrationFirstStepViewModel {
                     throw StrigaProviderError.invalidResponse
                 }
 
+                await fetchPhoneNumber(data: data)
                 await MainActor.run {
                     // save data
                     self.data = data
                     isLoading = false
                     email = data.email
-                    phoneNumber = data.mobile.number
                     firstName = data.firstName
                     surname = data.lastName
                     dateOfBirthModel = data.dateOfBirth
@@ -125,10 +135,31 @@ private extension StrigaRegistrationFirstStepViewModel {
                 }
             } catch {
                 // TODO: - Handle error
-
+                self.data = StrigaUserDetailsResponse.empty
                 await MainActor.run {
                     isLoading = false
                 }
+            }
+        }
+    }
+
+    func fetchPhoneNumber(data: StrigaUserDetailsResponse) async {
+        let countries = try? await countriesService.fetchCountries()
+        let metadata = try? await self.strigaMetadata.getStrigaMetadata()
+        await MainActor.run {
+            if let metadata = metadata, let number = try? phoneNumberKit.parse(metadata.phoneNumber) {
+                phoneNumberModel = number
+                selectedPhoneCountryCode = countries?.first(where: {
+                    if let regionId = number.regionID {
+                        return $0.code.lowercased() == regionId.lowercased()
+                    } else {
+                        return $0.dialCode == "+\(number.countryCode)"
+                    }
+                })
+                phoneNumber = phoneNumberKit.format(number, toType: .international, withPrefix: false).replacingOccurrences(of: "-", with: "")
+            } else {
+                selectedPhoneCountryCode = countries?.first(where: { $0.dialCode == "\(data.mobile.countryCode)" })
+                phoneNumber = data.mobile.number
             }
         }
     }
@@ -145,7 +176,7 @@ private extension StrigaRegistrationFirstStepViewModel {
     }
 
     func validatePhone() {
-        if phoneNumber.isEmpty {
+        if phoneNumber.isEmpty || selectedPhoneCountryCode == nil {
             fieldsStatuses[.phoneNumber] = .invalid(error: L10n.couldNotBeEmpty)
         } else if phoneNumberModel != nil {
             fieldsStatuses[.phoneNumber] = .valid
@@ -181,7 +212,7 @@ private extension StrigaRegistrationFirstStepViewModel {
     }
 
     func bindToFieldValues() {
-        let contacts = Publishers.CombineLatest($email, $phoneNumber)
+        let contacts = Publishers.CombineLatest3($email, $selectedPhoneCountryCode, $phoneNumber)
         let credentials = Publishers.CombineLatest($firstName, $surname)
         let dateOfBirth = Publishers.CombineLatest($dateOfBirthModel, $selectedCountryOfBirth)
         Publishers.CombineLatest3(contacts, credentials, dateOfBirth)
@@ -189,15 +220,10 @@ private extension StrigaRegistrationFirstStepViewModel {
             .sinkAsync { [weak self] contacts, credentials, dateOfBirth in
                 guard let self else { return }
 
-                let mobile: StrigaUserDetailsResponse.Mobile
-                if let phoneNumberModel = self.phoneNumberModel {
-                    mobile = StrigaUserDetailsResponse.Mobile(
-                        countryCode: "\(phoneNumberModel.countryCode)",
-                        number: phoneNumberModel.numberString
-                    )
-                } else {
-                    mobile = StrigaUserDetailsResponse.Mobile(countryCode: "", number: "")
-                }
+                let mobile = StrigaUserDetailsResponse.Mobile(
+                    countryCode: contacts.1?.dialCode ?? "",
+                    number: contacts.2.replacingOccurrences(of: " ", with: "")
+                )
 
                 let currentData: StrigaUserDetailsResponse = (try? await service.getRegistrationData() as? StrigaUserDetailsResponse) ?? .empty
                 let newData = currentData.updated(
@@ -205,8 +231,9 @@ private extension StrigaRegistrationFirstStepViewModel {
                     lastName: credentials.1,
                     mobile: mobile,
                     dateOfBirth: dateOfBirth.0,
-                    placeOfBirth: dateOfBirth.1?.code
+                    placeOfBirth: dateOfBirth.1.code
                 )
+                self.data = newData
                 try? await self.service.updateLocally(data: newData)
 
                 if self.isDataValid == false {
