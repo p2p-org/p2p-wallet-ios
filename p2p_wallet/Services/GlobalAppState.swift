@@ -44,6 +44,14 @@ class GlobalAppState: ObservableObject {
             ResolverScope.session.reset()
         }
     }
+    
+    // New swap endpoint
+    @Published var strigaEndpoint: String {
+        didSet {
+            Defaults.forcedStrigaEndpoint = strigaEndpoint
+            ResolverScope.session.reset()
+        }
+    }
 
     // TODO: Refactor!
     @Published var surveyID: String?
@@ -60,6 +68,12 @@ class GlobalAppState: ObservableObject {
             newSwapEndpoint = forcedValue
         } else {
             newSwapEndpoint = "https://swap.key.app"
+        }
+        
+        if let forcedValue = Defaults.forcedStrigaEndpoint {
+            strigaEndpoint = forcedValue
+        } else {
+            strigaEndpoint = .secretConfig("STRIGA_PROXY_API_ENDPOINT_PROD")!
         }
     }
 

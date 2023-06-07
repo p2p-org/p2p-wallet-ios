@@ -64,8 +64,18 @@ extension HTTPClient: IHTTPClient {
             request.httpBody = body.data(using: .utf8)
         }
         
+        // print cURL
+        #if DEBUG
+        print(request.cURL())
+        #endif
+        
         // Retrieve data
         let (data, response) = try await urlSession.data(from: request)
+        
+        // print response
+        #if DEBUG
+        print(String(data: data, encoding: .utf8) ?? "nil")
+        #endif
         
         // Check cancellation
         try Task.checkCancellation()
@@ -77,5 +87,33 @@ extension HTTPClient: IHTTPClient {
         
         // Decode response
         return try decoder.decode(responseModel, data: data, httpURLResponse: response)
+    }
+}
+
+// MARK: - Helpers
+
+private extension URLRequest {
+    func cURL(pretty: Bool = false) -> String {
+        let newLine = pretty ? "\\\n" : ""
+        let method = (pretty ? "--request " : "-X ") + "\(httpMethod ?? "GET") \(newLine)"
+        let url: String = (pretty ? "--url " : "") + "\'\(self.url?.absoluteString ?? "")\' \(newLine)"
+        
+        var cURL = "curl "
+        var header = ""
+        var data = ""
+        
+        if let httpHeaders = allHTTPHeaderFields, !httpHeaders.keys.isEmpty {
+            for (key, value) in httpHeaders {
+                header += (pretty ? "--header " : "-H ") + "\'\(key): \(value)\' \(newLine)"
+            }
+        }
+        
+        if let bodyData = httpBody, let bodyString = String(data: bodyData, encoding: .utf8), !bodyString.isEmpty {
+            data = "--data '\(bodyString)'"
+        }
+        
+        cURL += method + url + header + data
+        
+        return cURL
     }
 }

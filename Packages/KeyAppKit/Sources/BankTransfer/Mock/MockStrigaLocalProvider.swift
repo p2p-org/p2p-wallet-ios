@@ -31,9 +31,9 @@ public actor MockStrigaLocalProvider: StrigaLocalProvider {
                     number: "776059617"
                 ),
                 dateOfBirth: .init(
-                    year: 1984,
-                    month: 03,
-                    day: 12
+                    year: "1984",
+                    month: "03",
+                    day: "12"
                 ),
                 address: .init(
                     addressLine1: "Test ts str1",

@@ -84,11 +84,6 @@ final class StrigaOTPCoordinator: Coordinator<StrigaOTPCoordinatorResult> {
             viewModel?.isLoading = false
         }.store(in: &subscriptions)
 
-        // Get initial OTP
-        Task { [weak self] in
-            try await self?.bankTransfer.resendSMS()
-        }
-
         present(controller: controller)
 
         return Publishers.Merge(

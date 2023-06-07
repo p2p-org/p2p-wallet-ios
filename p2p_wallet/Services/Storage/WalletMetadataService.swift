@@ -156,8 +156,7 @@ extension WalletMetadataService {
 }
 
 extension WalletMetadataService: StrigaMetadataProvider {
-    func getStrigaMetadata() async throws -> StrigaMetadata? {
-        await synchronize()
+    func getLocalStrigaMetadata() async -> StrigaMetadata? {
         guard let metadata = metadata.value else {
             return nil
         }
@@ -166,5 +165,14 @@ extension WalletMetadataService: StrigaMetadataProvider {
             email: metadata.email,
             phoneNumber: metadata.phoneNumber
         )
+    }
+    
+    func updateMetadata(withUserId userId: String) async throws {
+        guard var newData = metadata.value else {
+            return
+        }
+        newData.striga.userId = userId
+        
+        try await update(newData)
     }
 }
