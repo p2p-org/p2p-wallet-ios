@@ -60,8 +60,7 @@ final class StrigaOTPCoordinator: Coordinator<StrigaOTPCoordinatorResult> {
         viewModel.coordinatorIO.onResend.sinkAsync { [weak self, weak viewModel] process in
             process.start {
                 guard let self, let viewModel else { return }
-                self.resendCounter = self.resendCounter.incremented()
-                viewModel.attemptCounter = Wrapper(self.resendCounter)
+                self.increaseTimer(viewModel: viewModel)
                 try await self.bankTransfer.resendSMS()
             }
         }.store(in: &subscriptions)
@@ -84,9 +83,12 @@ final class StrigaOTPCoordinator: Coordinator<StrigaOTPCoordinatorResult> {
             viewModel?.isLoading = false
         }.store(in: &subscriptions)
 
-        // Get initial OTP
-        Task { [weak self] in
-            try await self?.bankTransfer.resendSMS()
+        if resendCounter.until.timeIntervalSinceNow < 0 {
+            // Get initial OTP
+            increaseTimer(viewModel: viewModel)
+            Task { [weak self] in
+                try await self?.bankTransfer.resendSMS()
+            }
         }
 
         present(controller: controller)
@@ -109,12 +111,15 @@ final class StrigaOTPCoordinator: Coordinator<StrigaOTPCoordinatorResult> {
                         )
                     )
                 }
-                .map {
-                    StrigaOTPCoordinatorResult.verified
-                }
+                .map { StrigaOTPCoordinatorResult.verified }
         )
             .prefix(1)
             .eraseToAnyPublisher()
+    }
+
+    func increaseTimer(viewModel: EnterSMSCodeViewModel) {
+        self.resendCounter = self.resendCounter.incremented()
+        viewModel.attemptCounter = Wrapper(self.resendCounter)
     }
 
     private func present(controller: UIViewController) {
