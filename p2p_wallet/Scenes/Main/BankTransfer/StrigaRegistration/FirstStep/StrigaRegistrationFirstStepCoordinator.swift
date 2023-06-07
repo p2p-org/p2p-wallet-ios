@@ -1,4 +1,5 @@
 import SwiftUI
+import BankTransfer
 import Combine
 import CountriesAPI
 
@@ -23,13 +24,6 @@ final class StrigaRegistrationFirstStepCoordinator: Coordinator<StrigaRegistrati
         let vc = view.asViewController(withoutUIKitNavBar: false)
         vc.hidesBottomBarWhenPushed = true
         vc.title = L10n.stepOf(1, 3)
-        navigationController.setViewControllers(
-            [
-                navigationController.viewControllers.first,
-                vc
-            ].compactMap { $0 },
-            animated: true
-        )
 
         viewModel.back
             .sink { [weak self] _ in
@@ -38,7 +32,7 @@ final class StrigaRegistrationFirstStepCoordinator: Coordinator<StrigaRegistrati
             .store(in: &subscriptions)
 
         viewModel.chooseCountry
-            .flatMap { self.openChooseCountry(value: $0) }
+            .flatMap { [unowned self] in self.openChooseCountry(value: $0) }
             .sink { [weak viewModel] result in
                 switch result {
                 case .item(let item):
@@ -50,7 +44,7 @@ final class StrigaRegistrationFirstStepCoordinator: Coordinator<StrigaRegistrati
             .store(in: &subscriptions)
 
         viewModel.choosePhoneCountryCode
-            .flatMap { self.openChooseCountry(value: $0) }
+            .flatMap { [unowned self] in self.openChooseCountry(value: $0) }
             .sink { [weak viewModel] result in
                 switch result {
                 case .item(let item):
@@ -60,16 +54,22 @@ final class StrigaRegistrationFirstStepCoordinator: Coordinator<StrigaRegistrati
             }
             .store(in: &subscriptions)
 
+        navigationController.setViewControllers(
+            [
+                navigationController.viewControllers.first,
+                vc
+            ].compactMap { $0 },
+            animated: true
+        )
+
         return Publishers.Merge(
             vc.deallocatedPublisher()
                 .map { StrigaRegistrationFirstStepCoordinatorResult.canceled },
             viewModel.openNextStep.eraseToAnyPublisher()
-                .flatMap({ response in
-                    self.coordinate(
-                        to: StrigaRegistrationSecondStepCoordinator(
-                            navigationController: self.navigationController,
-                            data: response
-                        ))
+                .flatMap({ [unowned self] response in
+                    self.coordinateToNextStep(response: response)
+                    // ignoring cancel events, to not pass this event out of Coordinator
+                        .filter { $0 != .canceled }
                 })
                 .map { result in
                     switch result {
@@ -79,12 +79,20 @@ final class StrigaRegistrationFirstStepCoordinator: Coordinator<StrigaRegistrati
                         return StrigaRegistrationFirstStepCoordinatorResult.canceled
                     }
                 }
-            )
-            .prefix(1)
-            .eraseToAnyPublisher()
+        )
+        .prefix(1)
+        .eraseToAnyPublisher()
     }
 
     private func openChooseCountry(value: Country?) -> AnyPublisher<ChooseItemCoordinatorResult, Never> {
         coordinate(to: ChooseItemCoordinator<Country>(title: L10n.selectYourCountry, controller: navigationController, service: ChooseCountryService(), chosen: value))
+    }
+
+    private func coordinateToNextStep(response: StrigaUserDetailsResponse) -> AnyPublisher<StrigaRegistrationSecondStepCoordinatorResult, Never> {
+        self.coordinate(
+            to: StrigaRegistrationSecondStepCoordinator(
+                navigationController: self.navigationController,
+                data: response
+            ))
     }
 }

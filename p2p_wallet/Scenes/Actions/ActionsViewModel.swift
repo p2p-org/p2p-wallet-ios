@@ -35,15 +35,15 @@ final class ActionsViewModel: BaseViewModel, ObservableObject {
             id: L10n.cashOut,
             image: .actionsCashOut,
             title: L10n.cashOut,
-            subtitle: L10n.cashOutCryptoToFiat) {
-                self.actionSubject.send(.cashOut)
+            subtitle: L10n.cashOutCryptoToFiat) { [weak self] in
+                self?.actionSubject.send(.cashOut)
             }
         let topUp = ActionCellItem(
             id: L10n.topUp,
             image: .actionsTopupIcon,
             title: L10n.topUp,
-            subtitle: L10n.bankCardBankTransferOrCrypto) {
-                self.actionSubject.send(.topUp)
+            subtitle: L10n.bankCardBankTransferOrCrypto) { [weak self] in
+                self?.actionSubject.send(.topUp)
             }
 
         if isSellAvailable {
@@ -60,40 +60,40 @@ final class ActionsViewModel: BaseViewModel, ObservableObject {
             id: L10n.swap,
             image: .homeSwapAction,
             title: L10n.swap,
-            subtitle: L10n.oneCryptoForAnother) {
-                self.actionSubject.send(.swap)
+            subtitle: L10n.oneCryptoForAnother) { [weak self] in
+                self?.actionSubject.send(.swap)
             }
         vertical.append(swap)
         let send = ActionCellItem(
             id: L10n.send,
             image: .homeSendAction,
             title: L10n.send,
-            subtitle: L10n.toUsernameOrAddress) {
-                self.actionSubject.send(.send)
+            subtitle: L10n.toUsernameOrAddress) { [weak self] in
+                self?.actionSubject.send(.send)
             }
         vertical.append(send)
 
         action.sink(receiveValue: { [unowned self] actionType in
-                switch actionType {
-                case .buy, .topUp:
-                    break
-                case .receive:
-                    analyticsManager.log(event: .actionButtonReceive)
-                    analyticsManager.log(event: .mainScreenReceiveOpen)
-                    analyticsManager.log(event: .receiveViewed(fromPage: "Main_Screen"))
-                case .swap:
-                    analyticsManager.log(event: .actionButtonSwap)
-                    analyticsManager.log(event: .mainScreenSwapOpen)
-                    analyticsManager.log(event: .swapViewed(lastScreen: "Main_Screen"))
-                case .send:
-                    analyticsManager.log(event: .actionButtonSend)
-                    analyticsManager.log(event: .mainScreenSendOpen)
-                    analyticsManager.log(event: .sendViewed(lastScreen: "Main_Screen"))
-                case .cashOut:
-                    analyticsManager.log(event: .sellClicked(source: "Action_Panel"))
-                }
-            })
-            .store(in: &subscriptions)
+            switch actionType {
+            case .buy, .topUp:
+                break
+            case .receive:
+                analyticsManager.log(event: .actionButtonReceive)
+                analyticsManager.log(event: .mainScreenReceiveOpen)
+                analyticsManager.log(event: .receiveViewed(fromPage: "Main_Screen"))
+            case .swap:
+                analyticsManager.log(event: .actionButtonSwap)
+                analyticsManager.log(event: .mainScreenSwapOpen)
+                analyticsManager.log(event: .swapViewed(lastScreen: "Main_Screen"))
+            case .send:
+                analyticsManager.log(event: .actionButtonSend)
+                analyticsManager.log(event: .mainScreenSendOpen)
+                analyticsManager.log(event: .sendViewed(lastScreen: "Main_Screen"))
+            case .cashOut:
+                analyticsManager.log(event: .sellClicked(source: "Action_Panel"))
+            }
+        })
+        .store(in: &subscriptions)
     }
 }
 
