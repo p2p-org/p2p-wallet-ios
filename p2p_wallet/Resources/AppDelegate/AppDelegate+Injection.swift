@@ -572,7 +572,10 @@ extension Resolver: ResolverRegistering {
         register {
             BankTransferServiceImpl(
                 repository: StrigaBankTransferUserDataRepository(
-                    localProvider: StrigaLocalProviderImpl(),
+                    localProvider: MockStrigaLocalProvider(
+                        useCase: .unregisteredUser,
+                        hasCachedInput: true
+                    ),
                     remoteProvider: MockStrigaRemoteProvider(
                         useCase: .unregisteredUser,
                         mockUserId: "abc-xyz",
