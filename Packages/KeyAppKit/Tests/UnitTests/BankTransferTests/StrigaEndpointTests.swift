@@ -94,7 +94,7 @@ class StrigaEndpointTests: XCTestCase {
             occupation: .accounting,
             sourceOfFunds: .civilContract,
             ipAddress: "127.0.0.1",
-            placeOfBirth: "South America",
+            placeOfBirth: "FRA",
             expectedIncomingTxVolumeYearly: "20000",
             expectedOutgoingTxVolumeYearly: "20000",
             selfPepDeclaration: true,
@@ -117,7 +117,7 @@ class StrigaEndpointTests: XCTestCase {
         ]
         XCTAssertEqual(endpoint.header, expectedHeader)
 
-        let expectedBody = "{\"address\":{\"addressLine1\":\"Elon str, 1\",\"city\":\"New York\",\"country\":\"United States\",\"postalCode\":\"12345\",\"state\":\"NY\"},\"dateOfBirth\":{\"day\":1,\"month\":12,\"year\":1987},\"email\":\"me@starlink.com\",\"expectedIncomingTxVolumeYearly\":\"20000\",\"expectedOutgoingTxVolumeYearly\":\"20000\",\"firstName\":\"Elon\",\"ipAddress\":\"127.0.0.1\",\"lastName\":\"Musk\",\"mobile\":{\"countryCode\":\"1\",\"number\":\"123443453\"},\"occupation\":\"ACCOUNTING\",\"placeOfBirth\":\"South America\",\"purposeOfAccount\":\"hack\",\"selfPepDeclaration\":true,\"sourceOfFunds\":\"CIVIL_CONTRACT\"}"
+        let expectedBody = "{\"address\":{\"addressLine1\":\"Elon str, 1\",\"city\":\"New York\",\"country\":\"United States\",\"postalCode\":\"12345\",\"state\":\"NY\"},\"dateOfBirth\":{\"day\":1,\"month\":12,\"year\":1987},\"email\":\"me@starlink.com\",\"expectedIncomingTxVolumeYearly\":\"20000\",\"expectedOutgoingTxVolumeYearly\":\"20000\",\"firstName\":\"Elon\",\"ipAddress\":\"127.0.0.1\",\"lastName\":\"Musk\",\"mobile\":{\"countryCode\":\"1\",\"number\":\"123443453\"},\"occupation\":\"ACCOUNTING\",\"placeOfBirth\":\"FRA\",\"purposeOfAccount\":\"hack\",\"selfPepDeclaration\":true,\"sourceOfFunds\":\"CIVIL_CONTRACT\"}"
         XCTAssertEqual(endpoint.body, expectedBody)
     }
     

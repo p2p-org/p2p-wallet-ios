@@ -12,7 +12,8 @@ final class EnterPhoneNumberViewModel: BaseOTPViewModel {
         name: L10n.sorryWeDonTKnowASuchCountry,
         code: "",
         dialCode: "",
-        emoji: "🏴"
+        emoji: "🏴",
+        alpha3Code: ""
     )
 
     private var cancellable = Set<AnyCancellable>()
