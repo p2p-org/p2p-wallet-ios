@@ -29,7 +29,7 @@ struct StrigaOTPCompletedView: View {
         NavigationView {
             VStack(spacing: 0) {
                 Image(uiImage: image)
-                    .padding(.top, 77.adaptiveHeight)
+                    .padding(.top, 135.adaptiveHeight)
                     .padding(.bottom, title == nil ? 32: 16)
 
                 if let title {
@@ -53,7 +53,7 @@ struct StrigaOTPCompletedView: View {
                     )
                 }
             }
-            .padding(.bottom, 40)
+            .padding(.bottom, 66)
             .padding(.horizontal, 16)
         }
         .toolbar {
@@ -65,6 +65,5 @@ struct StrigaOTPCompletedView: View {
                 }
             }
         }
-        .navigationBarBackButtonHidden(true)
     }
 }

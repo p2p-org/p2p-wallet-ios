@@ -32,18 +32,21 @@ final class TopupActionsViewModel: BaseViewModel, ObservableObject {
         if !shouldShowBankTransfer {
             return tappedItemSubject.eraseToAnyPublisher()
         }
-        return tappedItemSubject.flatMap { action in
-            switch action {
-            // If it's transfer we need to check if the service is ready
-            case .transfer:
-                return self.bankTransferService.state.filter { state in
-                    return !state.hasError && !state.isFetching
-                }.map { _ in Action.transfer }.eraseToAnyPublisher()
-            default:
-                // Otherwise just pass action
-                return Just(action).eraseToAnyPublisher()
+        // Filtering .transfer items, since we might wait for BankTransferService state to be loaded
+        return tappedItemSubject
+            .withLatestFrom(bankTransferService.state) { action, state in
+                (action, state)
             }
-        }.eraseToAnyPublisher()
+            .filter { value in
+                return value.0 == .transfer ? (!value.1.hasError && !value.1.isFetching) : true
+            }
+            .map { val in
+                if val.0 == .transfer, val.1.status == .ready, !val.1.hasError {
+                    return .transfer
+                }
+                return val.0
+            }
+            .eraseToAnyPublisher()
     }
 
     private let tappedItemSubject = PassthroughSubject<Action, Never>()
@@ -98,7 +101,6 @@ final class TopupActionsViewModel: BaseViewModel, ObservableObject {
                 self?.setTransferLoadingState(isLoading: true)
                 self?.shouldShowErrorSubject.send(false)
             }
-            await self?.bankTransferService.reload()
         }.store(in: &subscriptions)
 
         shouldShowErrorSubject.filter { $0 }.sinkAsync { [weak self] value in
@@ -106,12 +108,10 @@ final class TopupActionsViewModel: BaseViewModel, ObservableObject {
                 self?.notificationService.showToast(title: "❌", text: L10n.somethingWentWrong)
             }
         }.store(in: &subscriptions)
-
-        bankTransferService.state.filter({ state in
-            state.status == .initializing
-        }).sinkAsync { state in
-            await self.bankTransferService.reload()
-        }.store(in: &subscriptions)
+        
+        Task {
+            await bankTransferService.reload()
+        }
     }
 
     private func setTransferLoadingState(isLoading: Bool) {

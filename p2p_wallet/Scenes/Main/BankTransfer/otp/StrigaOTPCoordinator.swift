@@ -153,12 +153,11 @@ final class StrigaOTPSuccessCoordinator: Coordinator<StrigaOTPSuccessCoordinator
                 self?.helpLauncher.launch()
             }
         let controller = view.asViewController(withoutUIKitNavBar: false)
-        controller.navigationItem.hidesBackButton = true
-        controller.hidesBottomBarWhenPushed = true
-        self.navigationController.setViewControllers([
+        self.navigationController.pushViewController(controller, animated: true)
+        self.navigationController.viewControllers = [
             navigationController.viewControllers.first,
             controller
-        ].compactMap { $0 }, animated: true)
+        ].compactMap { $0 }
 
         return Publishers.Merge(
             controller.deallocatedPublisher()
