@@ -37,20 +37,28 @@ final class StrigaRegistrationFirstStepCoordinator: Coordinator<StrigaRegistrati
             }
             .store(in: &subscriptions)
 
-        viewModel.chooseCountry.flatMap { value in
-            self.coordinate(to: ChooseItemCoordinator<Country>(
-                title: L10n.selectYourCountry,
-                controller: self.navigationController,
-                service: ChooseCountryService(),
-                chosen: value
-            ))
-        }.sink { [weak viewModel] result in
-            switch result {
-            case .item(let item):
-                viewModel?.selectedCountryOfBirth = item as? Country
-            case .cancel: break
+        viewModel.chooseCountry
+            .flatMap { self.openChooseCountry(value: $0) }
+            .sink { [weak viewModel] result in
+                switch result {
+                case .item(let item):
+                    guard let item = item as? Country else { return }
+                    viewModel?.selectedCountryOfBirth = item
+                case .cancel: break
+                }
             }
-        }.store(in: &subscriptions)
+            .store(in: &subscriptions)
+
+        viewModel.choosePhoneCountryCode
+            .flatMap { self.openChooseCountry(value: $0) }
+            .sink { [weak viewModel] result in
+                switch result {
+                case .item(let item):
+                    viewModel?.selectedPhoneCountryCode = item as? Country
+                case .cancel: break
+                }
+            }
+            .store(in: &subscriptions)
 
         return Publishers.Merge(
             vc.deallocatedPublisher()
@@ -74,5 +82,9 @@ final class StrigaRegistrationFirstStepCoordinator: Coordinator<StrigaRegistrati
             )
             .prefix(1)
             .eraseToAnyPublisher()
+    }
+
+    private func openChooseCountry(value: Country?) -> AnyPublisher<ChooseItemCoordinatorResult, Never> {
+        coordinate(to: ChooseItemCoordinator<Country>(title: L10n.selectYourCountry, controller: navigationController, service: ChooseCountryService(), chosen: value))
     }
 }
