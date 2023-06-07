@@ -167,8 +167,19 @@ private extension StrigaRegistrationSecondStepViewModel {
         isLoading = true
         Task {
             do {
+                // get registration data
                 guard let currentData = try await service.getRegistrationData() as? StrigaUserDetailsResponse else { throw NSError() }
-                try await service.createUser(data: currentData)
+                
+                // modify
+                let countries = try await self.countriesService.fetchCountries()
+                let data = currentData.updated(
+                    placeOfBirth: countries
+                        .first(where: {$0.code == currentData.placeOfBirth?.uppercased()})?
+                        .alpha3Code
+                )
+                
+                // create user
+                try await service.createUser(data: data)
                 await MainActor.run {
                     self.isLoading = false
                 }
