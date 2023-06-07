@@ -24,26 +24,16 @@ public final class StrigaBankTransferUserDataRepository: BankTransferUserDataRep
     }
     
     // MARK: - Methods
+    public func synchronizeMetadata() async {
+        await metadataProvider.synchronize()
+    }
 
-    public func getUserId() async throws -> String? {
-        // if local user id is available, return it
-        if let localUserId = await localProvider.getUserId() {
-            return localUserId
-        }
-        
-        // otherwise retrieve from remote
-        else {
-            let userId = try await metadataProvider.getStrigaMetadata()?.userId
-            if let userId {
-                // save to local
-                await localProvider.saveUserId(userId)
-            }
-            return userId
-        }
+    public func getUserId() async -> String? {
+        await metadataProvider.getLocalStrigaMetadata()?.userId
     }
     
     public func getKYCStatus() async throws -> StrigaKYC {
-        guard let userId = try await getUserId() else {
+        guard let userId = await getUserId() else {
             throw BankTransferError.missingUserId
         }
         return try await remoteProvider.getKYCStatus(userId: userId)
@@ -86,14 +76,20 @@ public final class StrigaBankTransferUserDataRepository: BankTransferUserDataRep
             selfPepDeclaration: false,
             purposeOfAccount: .purposeOfAccount
         )
-        do {
-            let response = try await remoteProvider.createUser(model: model)
-            try await localProvider.save(registrationData: data)
-            await localProvider.saveUserId(response.userId)
-            return response
-        } catch {
-            throw error
-        }
+        // send createUser
+        let response = try await remoteProvider.createUser(model: model)
+        
+        // save registration data
+        try await localProvider.save(registrationData: data)
+        
+        // save userId
+        try await metadataProvider.updateMetadata(withUserId: response.userId)
+        
+        // synchronize
+        await synchronizeMetadata()
+        
+        // return
+        return response
     }
 
     public func updateUserLocally(registrationData data: BankTransferRegistrationData) async throws {
@@ -123,7 +119,7 @@ public final class StrigaBankTransferUserDataRepository: BankTransferUserDataRep
 
     public func getRegistrationData() async throws -> BankTransferRegistrationData {
         // get metadata
-        guard let metadata = try await metadataProvider.getStrigaMetadata()
+        guard let metadata = await metadataProvider.getLocalStrigaMetadata()
         else {
             throw BankTransferError.missingMetadata
         }
@@ -131,7 +127,7 @@ public final class StrigaBankTransferUserDataRepository: BankTransferUserDataRep
         // get cached data from local provider
         if let cachedData = await localProvider.getCachedRegistrationData()
         {
-            if let userId = try await getUserId(),
+            if let userId = await getUserId(),
                let response = try? await remoteProvider.getUserDetails(userId: userId)
             {
                 // save to local provider
