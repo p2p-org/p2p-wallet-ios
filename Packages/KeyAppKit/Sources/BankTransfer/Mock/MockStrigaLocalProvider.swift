@@ -23,11 +23,11 @@ public actor MockStrigaLocalProvider: StrigaLocalProvider {
             }
             
             cachedRegistrationData = StrigaUserDetailsResponse(
-                firstName: "",
-                lastName: "",
+                firstName: "Tester",
+                lastName: "Tester1",
                 email: "test@test.test",
-                mobile: StrigaUserDetailsResponse.Mobile(countryCode: "1", number: "5853042520"),
-                dateOfBirth: nil,
+                mobile: StrigaUserDetailsResponse.Mobile(countryCode: "+84", number: "+84776059617"),
+                dateOfBirth: .init(year: 1984, month: 03, day: 12),
                 address: nil,
                 occupation: nil,
                 sourceOfFunds: nil,
