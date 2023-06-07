@@ -19,6 +19,9 @@ public actor StrigaLocalProviderImpl {
     
     // Fix: temporary solution
     fileprivate let strigaUserIdUserDefaultsKey = "StrigaBankTransferLocalProvider.strigaUserIdUserDefaultsKey"
+
+    // MARK: - Initializer
+
     public init() {
         
         // migration
@@ -31,10 +34,10 @@ public actor StrigaLocalProviderImpl {
 
     private func migrate() {
         // Migration 1:
-        let migration1Key = "StrigaLocalProviderImpl.migration1"
-        if !UserDefaults.standard.bool(forKey: migration1Key) {
+        let migrationKey = "StrigaLocalProviderImpl.migration7"
+        if !UserDefaults.standard.bool(forKey: migrationKey) {
             clearRegistrationData()
-            UserDefaults.standard.set(true, forKey: migration1Key)
+            UserDefaults.standard.set(true, forKey: migrationKey)
         }
     }
 }
