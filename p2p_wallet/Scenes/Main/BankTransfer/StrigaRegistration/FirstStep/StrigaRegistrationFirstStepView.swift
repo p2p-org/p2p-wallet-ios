@@ -62,7 +62,15 @@ struct StrigaRegistrationFirstStepView: View {
                 title: L10n.phoneNumber,
                 status: viewModel.fieldsStatuses[.phoneNumber]
             ) {
-                StrigaRegistrationPhoneTextField(text: $viewModel.phoneNumber, phoneNumber: $viewModel.phoneNumberModel)
+                StrigaRegistrationPhoneTextField(
+                    text: $viewModel.phoneNumber,
+                    phoneNumber: $viewModel.phoneNumberModel,
+                    country: $viewModel.selectedPhoneCountryCode,
+                    action: { [weak viewModel] in
+                        guard let viewModel else { return }
+                        viewModel.choosePhoneCountryCode.send(viewModel.selectedPhoneCountryCode)
+                    }
+                )
             }
         }
         .styled()
