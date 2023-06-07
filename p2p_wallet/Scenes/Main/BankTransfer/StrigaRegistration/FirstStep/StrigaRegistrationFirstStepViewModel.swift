@@ -114,21 +114,11 @@ private extension StrigaRegistrationFirstStepViewModel {
 
                 let countries = try? await countriesService.fetchCountries()
 
-                if let number = try? phoneNumberKit.parse(data.rawPhoneNumber) {
-                    phoneNumberModel = number
-                    selectedPhoneCountryCode = countries?.first(where: { $0.dialCode == "\(number.countryCode)" })
-                    phoneNumber = phoneNumberKit.format(number, toType: .international, withPrefix: false).replacingOccurrences(of: "-", with: "")
-                } else {
-                    selectedPhoneCountryCode = countries?.first(where: { $0.dialCode == "\(data.mobile.countryCode)" })
-                    phoneNumber = data.mobile.number
-                }
-
                 await MainActor.run {
                     // save data
                     self.data = data
                     isLoading = false
                     email = data.email
-                    phoneNumber = data.mobile.number
                     firstName = data.firstName
                     surname = data.lastName
                     dateOfBirthModel = data.dateOfBirth
@@ -142,6 +132,21 @@ private extension StrigaRegistrationFirstStepViewModel {
                             return $0
                         }
                         .joined(separator: ".")
+
+                    if let number = try? phoneNumberKit.parse(data.rawPhoneNumber) {
+                        phoneNumberModel = number
+                        selectedPhoneCountryCode = countries?.first(where: {
+                            if let regionId = number.regionID {
+                                return $0.code.lowercased() == regionId.lowercased()
+                            } else {
+                                return $0.dialCode == "+\(number.countryCode)"
+                            }
+                        })
+                        phoneNumber = phoneNumberKit.format(number, toType: .international, withPrefix: false).replacingOccurrences(of: "-", with: "")
+                    } else {
+                        selectedPhoneCountryCode = countries?.first(where: { $0.dialCode == "\(data.mobile.countryCode)" })
+                        phoneNumber = data.mobile.number
+                    }
                 }
             } catch {
                 // TODO: - Handle error
@@ -211,7 +216,7 @@ private extension StrigaRegistrationFirstStepViewModel {
 
                 let mobile = StrigaUserDetailsResponse.Mobile(
                     countryCode: contacts.1?.dialCode ?? "",
-                    number: contacts.2
+                    number: contacts.2.replacingOccurrences(of: " ", with: "")
                 )
 
                 let currentData: StrigaUserDetailsResponse = (try? await service.getRegistrationData() as? StrigaUserDetailsResponse) ?? .empty
