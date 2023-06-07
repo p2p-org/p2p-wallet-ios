@@ -145,7 +145,7 @@ private extension StrigaRegistrationFirstStepViewModel {
 
     func fetchPhoneNumber(data: StrigaUserDetailsResponse) async {
         let countries = try? await countriesService.fetchCountries()
-        let metadata = try? await self.strigaMetadata.getStrigaMetadata()
+        let metadata = await self.strigaMetadata.getLocalStrigaMetadata()
         await MainActor.run {
             if let metadata = metadata, let number = try? phoneNumberKit.parse(metadata.phoneNumber) {
                 phoneNumberModel = number
