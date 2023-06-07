@@ -151,6 +151,10 @@
 	<string>$(SENTRY_DSN)</string>
 	<key>SWAP_ERROR_LOGGER_ENDPOINT</key>
 	<string>$(SWAP_ERROR_LOGGER_ENDPOINT)</string>
+	<key>STRIGA_PROXY_API_ENDPOINT_DEV</key>
+	<string>$(STRIGA_PROXY_API_ENDPOINT_DEV)</string>
+	<key>STRIGA_PROXY_API_ENDPOINT_PROD</key>
+	<string>$(STRIGA_PROXY_API_ENDPOINT_PROD)</string>
 	<key>TEST_ACCOUNT_SEED_PHRASE</key>
 	<string>$(TEST_ACCOUNT_SEED_PHRASE)</string>
 	<key>TORUS_APPLE_VERIFIER_DEV</key>

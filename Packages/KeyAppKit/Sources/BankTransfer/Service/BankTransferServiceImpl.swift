@@ -37,8 +37,11 @@ extension BankTransferServiceImpl: BankTransferService {
         )
         
         do {
+            // synchronize metadata
+            await repository.synchronizeMetadata()
+            
             // registered user
-            if let userId = try await repository.getUserId() {
+            if let userId = await repository.getUserId() {
                 return try await handleRegisteredUser(userId: userId)
             }
             

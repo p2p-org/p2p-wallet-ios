@@ -76,7 +76,7 @@ final class StrigaRegistrationFirstStepViewModel: BaseViewModel, ObservableObjec
             .map { $0.split(separator: ".") }
             .map { components in
                 if components.count == Constants.dateFormat.split(separator: ".").count {
-                    return StrigaUserDetailsResponse.DateOfBirth(year: Int(components[2]), month: Int(components[1]), day: Int(components[0]))
+                    return StrigaUserDetailsResponse.DateOfBirth(year: String(components[2]), month: String(components[1]), day: String(components[0]))
                 }
                 return nil
             }
@@ -123,7 +123,7 @@ private extension StrigaRegistrationFirstStepViewModel {
                     surname = data.lastName
                     dateOfBirthModel = data.dateOfBirth
                     dateOfBirth = [data.dateOfBirth?.day, data.dateOfBirth?.month, data.dateOfBirth?.year]
-                        .compactMap { String($0 ?? 0) }
+                        .compactMap { $0 }
                         .filter({ $0 != "0" })
                         .map {
                             if $0.count == 1 {
@@ -145,7 +145,7 @@ private extension StrigaRegistrationFirstStepViewModel {
 
     func fetchPhoneNumber(data: StrigaUserDetailsResponse) async {
         let countries = try? await countriesService.fetchCountries()
-        let metadata = try? await self.strigaMetadata.getStrigaMetadata()
+        let metadata = await self.strigaMetadata.getLocalStrigaMetadata()
         await MainActor.run {
             if let metadata = metadata, let number = try? phoneNumberKit.parse(metadata.phoneNumber) {
                 phoneNumberModel = number
@@ -195,14 +195,17 @@ private extension StrigaRegistrationFirstStepViewModel {
 
     func validateDate() {
         let calendar = Calendar(identifier: .gregorian)
-        let components = DateComponents(year: dateOfBirthModel?.year, month: dateOfBirthModel?.month, day: dateOfBirthModel?.day)
+        let year = Int(dateOfBirthModel?.year ?? "") ?? 0
+        let month = Int(dateOfBirthModel?.month ?? "") ?? 0
+        let day = Int(dateOfBirthModel?.day ?? "") ?? 0
+        let components = DateComponents(year: year, month: month, day: day)
         if dateOfBirth.isEmpty {
             fieldsStatuses[.dateOfBirth] = .invalid(error: L10n.couldNotBeEmpty)
-        } else if dateOfBirthModel?.year ?? 0 > 2015 {
+        } else if year > 2015 {
             fieldsStatuses[.dateOfBirth] = .invalid(error: L10n.couldNotBeLater(2015))
-        } else if dateOfBirthModel?.year ?? 0 < 1920 {
+        } else if year < 1920 {
             fieldsStatuses[.dateOfBirth] = .invalid(error: L10n.couldNotBeEarlier(1920))
-        } else if dateOfBirthModel?.month ?? 0 > 12 {
+        } else if month > 12 {
             fieldsStatuses[.dateOfBirth] = .invalid(error: L10n.incorrectMonth)
         } else if !components.isValidDate(in: calendar) {
             fieldsStatuses[.dateOfBirth] = .invalid(error: L10n.incorrectDay)
@@ -231,7 +234,7 @@ private extension StrigaRegistrationFirstStepViewModel {
                     lastName: credentials.1,
                     mobile: mobile,
                     dateOfBirth: dateOfBirth.0,
-                    placeOfBirth: dateOfBirth.1.code
+                    placeOfBirth: dateOfBirth.1.alpha3Code
                 )
                 self.data = newData
                 try? await self.service.updateLocally(data: newData)

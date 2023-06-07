@@ -47,6 +47,7 @@ extension DefaultsKeys {
     var forcedFeeRelayerEndpoint: DefaultsKey<String?> { .init(#function, defaultValue: nil) }
     var forcedNameServiceEndpoint: DefaultsKey<String?> { .init(#function, defaultValue: nil) }
     var forcedNewSwapEndpoint: DefaultsKey<String?> { .init(#function, defaultValue: nil) }
+    var forcedStrigaEndpoint: DefaultsKey<String?> { .init(#function, defaultValue: nil) }
 
     var didBackupOffline: DefaultsKey<Bool> { .init(#function, defaultValue: false) }
     var walletName: DefaultsKey<[String: String]> { .init(#function, defaultValue: [:]) }

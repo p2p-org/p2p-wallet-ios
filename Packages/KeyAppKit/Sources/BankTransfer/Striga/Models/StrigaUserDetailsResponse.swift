@@ -23,11 +23,11 @@ public struct StrigaUserDetailsResponse: BankTransferRegistrationData {
     }
     
     public struct DateOfBirth: Codable {
-        public let year: Int?
-        public let month: Int?
-        public let day: Int?
+        public let year: String?
+        public let month: String?
+        public let day: String?
         
-        public init(year: Int?, month: Int?, day: Int?) {
+        public init(year: String?, month: String?, day: String?) {
             self.year = year
             self.month = month
             self.day = day
