@@ -51,7 +51,7 @@ public final class StrigaBankTransferUserDataRepository: BankTransferUserDataRep
             lastName: data.lastName,
             email: data.email,
             mobile: StrigaCreateUserRequest.Mobile(
-                countryCode: "+" + data.mobile.countryCode,
+                countryCode: data.mobile.countryCode,
                 number: data.mobile.number
             ),
             dateOfBirth: StrigaCreateUserRequest.DateOfBirth(
