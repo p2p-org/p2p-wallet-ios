@@ -68,8 +68,15 @@ final class BankTransferInfoCoordinator: Coordinator<BankTransferInfoCoordinator
         viewController.present(controller, interactiveDismissalType: .standard)
 
         return Publishers.Merge(
-            controller.deallocatedPublisher()
-                .map { BankTransferInfoCoordinatorResult.canceled },
+            // Ignore deallocation event if open registration triggered
+            Publishers.Merge(
+                controller.deallocatedPublisher().map { true },
+                viewModel.openRegistration.map { _ in false }
+            )
+                .prefix(1)
+                .filter { $0 }
+                .map { _ in BankTransferInfoCoordinatorResult.canceled }
+                .eraseToAnyPublisher(),
             viewModel.openRegistration
                 .handleEvents(receiveOutput: { [weak controller] _ in
                     controller?.dismiss(animated: true)

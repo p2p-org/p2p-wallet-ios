@@ -150,8 +150,8 @@
         "repositoryURL": "https://github.com/google/grpc-binary.git",
         "state": {
           "branch": null,
-          "revision": "2b7656d8ee892cd39db460b1a0d849de618405e6",
-          "version": "1.50.1"
+          "revision": "f1b366129d1125be7db83247e003fc333104b569",
+          "version": "1.50.2"
         }
       },
       {
@@ -177,8 +177,8 @@
         "repositoryURL": "https://github.com/SumSubstance/IdensicMobileSDK-iOS.git",
         "state": {
           "branch": null,
-          "revision": "fa25e51e2dfb8c297c4576051925c6e5b2e7e943",
-          "version": "1.24.0"
+          "revision": "4ef57ed4898a6d853fe7b761d412c38a50c6a9bb",
+          "version": "1.25.0"
         }
       },
       {
@@ -264,7 +264,7 @@
       },
       {
         "package": "OpenSSL",
-        "repositoryURL": "https://github.com/krzyzanowskim/OpenSSL.git",
+        "repositoryURL": "https://github.com/krzyzanowskim/OpenSSL",
         "state": {
           "branch": null,
           "revision": "87f41bf9488e7dd2b0de2ab97cb3eafc7304e0e6",
@@ -285,8 +285,8 @@
         "repositoryURL": "https://github.com/marmelroy/PhoneNumberKit.git",
         "state": {
           "branch": null,
-          "revision": "0fd43eb71d215afd0f9453d8e94200c9d6faf28a",
-          "version": "3.5.10"
+          "revision": "f901c4e6191cfc3b5cb73eee1d66217fe9f3eaca",
+          "version": "3.6.0"
         }
       },
       {
@@ -516,11 +516,11 @@
       },
       {
         "package": "TwilioVideo",
-        "repositoryURL": "https://github.com/twilio/twilio-video-ios.git",
+        "repositoryURL": "https://github.com/twilio/twilio-video-ios",
         "state": {
           "branch": null,
-          "revision": "3303fd89d17770ec5ffcb68151c69b026f55f4aa",
-          "version": "5.6.0"
+          "revision": "e028f87d5425316c39723c7bc2508f5349e36482",
+          "version": "4.6.3"
         }
       },
       {

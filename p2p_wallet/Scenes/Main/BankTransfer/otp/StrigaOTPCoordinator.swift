@@ -92,8 +92,15 @@ final class StrigaOTPCoordinator: Coordinator<StrigaOTPCoordinatorResult> {
         present(controller: controller)
 
         return Publishers.Merge(
-            controller.deallocatedPublisher()
-                .map { StrigaOTPCoordinatorResult.canceled },
+            // Ignore deallocation event if number verified triggered
+            Publishers.Merge(
+                controller.deallocatedPublisher().map { true },
+                numberVerifiedSubject.map { _ in false }
+            )
+                .prefix(1)
+                .filter { $0 }
+                .map { _ in StrigaOTPCoordinatorResult.canceled }
+                .eraseToAnyPublisher(),
             numberVerifiedSubject
                 .flatMap { [unowned self] in
                     self.coordinate(
