@@ -117,7 +117,7 @@ final class StrigaOTPCoordinator: Coordinator<StrigaOTPCoordinatorResult> {
             .eraseToAnyPublisher()
     }
 
-    func increaseTimer(viewModel: EnterSMSCodeViewModel) {
+    private func increaseTimer(viewModel: EnterSMSCodeViewModel) {
         self.resendCounter = self.resendCounter.incremented()
         viewModel.attemptCounter = Wrapper(self.resendCounter)
     }
