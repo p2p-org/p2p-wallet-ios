@@ -18,6 +18,7 @@ final class StrigaRegistrationFirstStepViewModel: BaseViewModel, ObservableObjec
     // Dependencies
     @Injected private var service: BankTransferService
     @Injected private var countriesService: CountriesAPI
+    @Injected private var strigaMetadata: StrigaMetadataProvider
     private let phoneNumberKit = PhoneNumberKit()
 
     // Data
@@ -112,8 +113,7 @@ private extension StrigaRegistrationFirstStepViewModel {
                     throw StrigaProviderError.invalidResponse
                 }
 
-                let countries = try? await countriesService.fetchCountries()
-
+                await fetchPhoneNumber(data: data)
                 await MainActor.run {
                     // save data
                     self.data = data
@@ -132,21 +132,6 @@ private extension StrigaRegistrationFirstStepViewModel {
                             return $0
                         }
                         .joined(separator: ".")
-
-                    if let number = try? phoneNumberKit.parse(data.rawPhoneNumber) {
-                        phoneNumberModel = number
-                        selectedPhoneCountryCode = countries?.first(where: {
-                            if let regionId = number.regionID {
-                                return $0.code.lowercased() == regionId.lowercased()
-                            } else {
-                                return $0.dialCode == "+\(number.countryCode)"
-                            }
-                        })
-                        phoneNumber = phoneNumberKit.format(number, toType: .international, withPrefix: false).replacingOccurrences(of: "-", with: "")
-                    } else {
-                        selectedPhoneCountryCode = countries?.first(where: { $0.dialCode == "\(data.mobile.countryCode)" })
-                        phoneNumber = data.mobile.number
-                    }
                 }
             } catch {
                 // TODO: - Handle error
@@ -154,6 +139,27 @@ private extension StrigaRegistrationFirstStepViewModel {
                 await MainActor.run {
                     isLoading = false
                 }
+            }
+        }
+    }
+
+    func fetchPhoneNumber(data: StrigaUserDetailsResponse) async {
+        let countries = try? await countriesService.fetchCountries()
+        let metadata = try? await self.strigaMetadata.getStrigaMetadata()
+        await MainActor.run {
+            if let metadata = metadata, let number = try? phoneNumberKit.parse(metadata.phoneNumber) {
+                phoneNumberModel = number
+                selectedPhoneCountryCode = countries?.first(where: {
+                    if let regionId = number.regionID {
+                        return $0.code.lowercased() == regionId.lowercased()
+                    } else {
+                        return $0.dialCode == "+\(number.countryCode)"
+                    }
+                })
+                phoneNumber = phoneNumberKit.format(number, toType: .international, withPrefix: false).replacingOccurrences(of: "-", with: "")
+            } else {
+                selectedPhoneCountryCode = countries?.first(where: { $0.dialCode == "\(data.mobile.countryCode)" })
+                phoneNumber = data.mobile.number
             }
         }
     }

@@ -143,7 +143,6 @@ public final class StrigaBankTransferUserDataRepository: BankTransferUserDataRep
             firstName: "",
             lastName: "",
             email: metadata.email,
-            rawPhoneNumber: metadata.phoneNumber,
             mobile: .init(
                 countryCode: "",
                 number: ""

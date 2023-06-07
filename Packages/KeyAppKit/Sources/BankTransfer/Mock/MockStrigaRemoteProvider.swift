@@ -52,7 +52,6 @@ public final class MockStrigaRemoteProvider: StrigaRemoteProvider {
             firstName: "Remote",
             lastName: "Provider",
             email: "remote.provider@mocking.com",
-            rawPhoneNumber: "+79990000000",
             mobile: .init(countryCode: "1", number: "5853042520"),
             dateOfBirth: .init(year: 1986, month: 12, day: 1),
             address: .init(addressLine1: "Remote street 12", addressLine2: nil, city: "Remote Provider", postalCode: "12345", state: "Remote Provider", country: "USA"),

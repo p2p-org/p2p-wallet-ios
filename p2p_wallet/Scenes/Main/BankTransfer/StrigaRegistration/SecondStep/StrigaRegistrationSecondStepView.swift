@@ -138,7 +138,6 @@ struct StrigaRegistrationSecondStepView_Previews: PreviewProvider {
                     firstName: "test",
                     lastName: "test",
                     email: "test@test.com",
-                    rawPhoneNumber: "+79990000000",
                     mobile: .init(countryCode: "", number: ""),
                     KYC: .init(
                         status: .notStarted,

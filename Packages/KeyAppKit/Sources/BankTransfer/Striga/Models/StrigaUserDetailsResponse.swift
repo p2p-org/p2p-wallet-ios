@@ -4,7 +4,6 @@ public struct StrigaUserDetailsResponse: BankTransferRegistrationData {
     public let firstName: String
     public let lastName: String
     public let email: String
-    public let rawPhoneNumber: String
     public let mobile: Mobile
     public let dateOfBirth: DateOfBirth?
     public let address: Address?
@@ -53,11 +52,10 @@ public struct StrigaUserDetailsResponse: BankTransferRegistrationData {
         }
     }
     
-    public init(firstName: String, lastName: String, email: String, rawPhoneNumber: String, mobile: Mobile, dateOfBirth: DateOfBirth? = nil, address: Address? = nil, occupation: StrigaUserIndustry? = nil, sourceOfFunds: StrigaSourceOfFunds? = nil, placeOfBirth: String? = nil, KYC: StrigaKYC) {
+    public init(firstName: String, lastName: String, email: String, mobile: Mobile, dateOfBirth: DateOfBirth? = nil, address: Address? = nil, occupation: StrigaUserIndustry? = nil, sourceOfFunds: StrigaSourceOfFunds? = nil, placeOfBirth: String? = nil, KYC: StrigaKYC) {
         self.firstName = firstName
         self.lastName = lastName
         self.email = email
-        self.rawPhoneNumber = rawPhoneNumber
         self.mobile = mobile
         self.dateOfBirth = dateOfBirth
         self.address = address
@@ -69,7 +67,7 @@ public struct StrigaUserDetailsResponse: BankTransferRegistrationData {
 
     public static var empty: Self {
         StrigaUserDetailsResponse(
-            firstName: "", lastName: "", email: "", rawPhoneNumber: "", mobile: Mobile(countryCode: "", number: ""), KYC: StrigaKYC(status: .notStarted, mobileVerified: false)
+            firstName: "", lastName: "", email: "", mobile: Mobile(countryCode: "", number: ""), KYC: StrigaKYC(status: .notStarted, mobileVerified: false)
         )
     }
 
@@ -77,7 +75,6 @@ public struct StrigaUserDetailsResponse: BankTransferRegistrationData {
         firstName: String? = nil,
         lastName: String? = nil,
         email: String? = nil,
-        rawPhoneNumber: String? = nil,
         mobile: Mobile? = nil,
         dateOfBirth: DateOfBirth?? = nil,
         address: Address?? = nil,
@@ -90,7 +87,6 @@ public struct StrigaUserDetailsResponse: BankTransferRegistrationData {
             firstName: firstName ?? self.firstName,
             lastName: lastName ?? self.lastName,
             email: email ?? self.email,
-            rawPhoneNumber: rawPhoneNumber ?? self.rawPhoneNumber,
             mobile: mobile ?? self.mobile,
             dateOfBirth: dateOfBirth ?? self.dateOfBirth,
             address: address ?? self.address,

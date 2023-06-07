@@ -26,7 +26,6 @@ public actor MockStrigaLocalProvider: StrigaLocalProvider {
                 firstName: "Tester",
                 lastName: "Tester1",
                 email: "test@test.test",
-                rawPhoneNumber: "+15853042520",
                 mobile: .init(
                     countryCode: "+84",
                     number: "776059617"
