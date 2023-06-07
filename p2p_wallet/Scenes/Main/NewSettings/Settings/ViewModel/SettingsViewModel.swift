@@ -20,6 +20,7 @@ final class SettingsViewModel: BaseViewModel, ObservableObject {
     @Injected private var authenticationHandler: AuthenticationHandlerType
     @Injected private var metadataService: WalletMetadataService
     @Injected private var createNameService: CreateNameService
+    @Injected private var deviceShareManager: DeviceShareManager
 
     @Published var zeroBalancesIsHidden = Defaults.hideZeroBalances {
         didSet {
@@ -51,6 +52,8 @@ final class SettingsViewModel: BaseViewModel, ObservableObject {
     @Published var name: String = ""
     @Published var isNameEnabled: Bool = true
 
+    @Published var deviceShareMigrationAlert: Bool = false
+    
     var appInfo: String {
         AppInfo.appVersionDetail
     }
@@ -144,6 +147,16 @@ final class SettingsViewModel: BaseViewModel, ObservableObject {
     }
 
     private func bind() {
+        Publishers.CombineLatest(userWalletManager.$wallet, deviceShareManager.deviceSharePublisher)
+            .sink { [weak self] (wallet, deviceShare) in
+                if wallet?.ethAddress != nil && deviceShare != nil {
+                    self?.deviceShareMigrationAlert = true
+                } else {
+                    self?.deviceShareMigrationAlert = false
+                }
+            }
+            .store(in: &subscriptions)
+        
         createNameService.createNameResult
             .receive(on: DispatchQueue.main)
             .sink { [weak self] isSuccess in

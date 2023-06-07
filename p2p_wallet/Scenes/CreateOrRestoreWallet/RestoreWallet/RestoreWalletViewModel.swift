@@ -31,8 +31,8 @@ final class RestoreWalletViewModel: BaseViewModel, ObservableObject {
     private let config: OnboardingConfig = .shared
 
     init(provider: OnboardingStateMachineProvider = OnboardingStateMachineProviderImpl()) {
-        let accountStorage: AccountStorageType = Resolver.resolve()
-        deviceShare = config.isDeviceShareMocked ? config.mockDeviceShare : accountStorage.deviceShare
+        let deviceShareManager: DeviceShareManager = Resolver.resolve()
+        deviceShare = config.isDeviceShareMocked ? config.mockDeviceShare : deviceShareManager.deviceShare
 
         let keychainStorage: KeychainStorage = Resolver.resolve()
         stateMachine = .init(provider: RestoreWalletFlowContainer(

@@ -13,12 +13,22 @@ struct AlertIndicator: View {
     let fillColor: Color
     
     var body: some View {
-        ZStack {
-            Circle()
-            .fill(fillColor)
-            Circle()
-                .strokeBorder(Color(Asset.Colors.snow.color), lineWidth: 1.5)
+        Circle()
+            .strokeBorder(Color(Asset.Colors.snow.color), lineWidth: 1)
+            .background(Circle().foregroundColor(Color(Asset.Colors.rose.color)).frame(width: 8.5, height: 8.5))
+            .frame(width: 9.5, height: 9.5)
+    }
+}
+
+struct AlertIndicator_Preview: PreviewProvider {
+    static var previews: some View {
+        ScrollView {
+            HStack {
+                Spacer()
+                AlertIndicator(fillColor: Color(Asset.Colors.rose.color))
+                Spacer()
+            }
         }
-        .frame(width: 9.5, height: 9.5)
+        .background(Color(Asset.Colors.night.color).ignoresSafeArea())
     }
 }

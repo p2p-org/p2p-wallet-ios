@@ -15,6 +15,7 @@ class UserWalletManager: ObservableObject {
     @Injected private var walletSettings: WalletSettings
     @Injected private var notificationsService: NotificationService
     @Injected private var solanaTracker: SolanaTracker
+    @Injected private var deviceShareManager: DeviceShareManager
 
     /// Current selected wallet
     @Published private(set) var wallet: UserWallet? {
@@ -72,11 +73,9 @@ class UserWalletManager: ObservableObject {
 
         // Services
         try await Resolver.resolve(SendHistoryLocalProvider.self).save(nil)
-
-        // Save device share
-        print(deviceShare)
+        
         if let deviceShare = deviceShare, ethAddress != nil {
-            try storage.save(deviceShare: deviceShare)
+            deviceShareManager.save(deviceShare: deviceShare)
         }
 
         try await refresh()

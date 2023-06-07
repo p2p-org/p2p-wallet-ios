@@ -93,7 +93,17 @@ struct SettingsView: View {
         Section(header: headerText(L10n.security)) {
             Button(
                 action: { viewModel.showView(.recoveryKit) },
-                label: { cellView(image: .recoveryKit, title: L10n.recoveryKit) }
+                label: {
+                    SettingsRow(title: L10n.recoveryKit, withArrow: true) {
+                        Image(uiImage: UIImage.recoveryKit)
+                            .overlay(
+                                AlertIndicator(fillColor: Color(Asset.Colors.rose.color))
+                                    .opacity(viewModel.deviceShareMigrationAlert ? 1 : 0)
+                                    .offset(x: 2.5, y: -2.5),
+                                alignment: .topTrailing
+                            )
+                    }
+                }
             )
             Button(
                 action: { viewModel.showView(.yourPin) },

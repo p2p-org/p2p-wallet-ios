@@ -9,11 +9,11 @@ protocol StartOnboardingNavigationProvider {
 
 final class StartOnboardingNavigationProviderImpl: StartOnboardingNavigationProvider {
     @Injected private var service: OnboardingService
-    @Injected private var accountStorage: AccountStorageType
     @Injected private var analyticsManager: AnalyticsManager
-
+    @Injected private var deviceShareManager: DeviceShareManager
+    
     @MainActor func startCoordinator(for window: UIWindow) -> Coordinator<OnboardingResult> {
-        let isDeviceShareAvailable = accountStorage.deviceShare != nil
+        let isDeviceShareAvailable = deviceShareManager.deviceShare != nil
         analyticsManager.log(parameter: .userDeviceshare(isDeviceShareAvailable))
 
         if isDeviceShareAvailable {

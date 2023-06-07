@@ -81,6 +81,10 @@ extension Resolver: ResolverRegistering {
             .implements((ICloudStorageType & AccountStorageType & NameStorageType).self)
             .implements((ICloudStorageType & AccountStorageType & NameStorageType & PincodeStorageType).self)
             .scope(.application)
+        
+        register { DeviceShareManagerImpl() }
+            .implements(DeviceShareManager.self)
+            .scope(.application)
 
         register { SendViaLinkStorageImpl() }
             .implements(SendViaLinkStorage.self)
