@@ -1373,3 +1373,9 @@
 "Username was copied to clipboard" = "Tên người dùng đã được sao chép vào khay nhớ tạm";
 "Transaction fees" = "Phí giao dịch";
 "%@ is the minimum amount to receive from the Ethereum Network" = "%@ là số tiền tối thiểu để nhận được từ Mạng Ethereum";
+"We've noticed that you're using a new device." = "Chúng tôi nhận thấy rằng bạn đang sử dụng một thiết bị mới.";
+"For security, change your authorization device to restore access For security, change your authorization device to restore access if needed." = "Để bảo mật, hãy thay đổi thiết bị ủy quyền của bạn để khôi phục quyền truy cập Để bảo mật, hãy thay đổi thiết bị ủy quyền của bạn để khôi phục quyền truy cập nếu cần.";
+"This device" = "Thiết bị này";
+"Set up" = "Cài đặt";
+"Make sure this is still your device" = "Đảm bảo đây vẫn là thiết bị của bạn";
+"Attention! If you update your current device, you will not be able to use the old device for recovery." = "Chú ý!  Nếu bạn cập nhật thiết bị hiện tại của mình, bạn sẽ không thể sử dụng thiết bị cũ để khôi phục.";
