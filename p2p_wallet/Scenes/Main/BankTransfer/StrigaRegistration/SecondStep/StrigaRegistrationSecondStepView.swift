@@ -96,7 +96,7 @@ struct StrigaRegistrationSecondStepView: View {
                 title: L10n.postalCode,
                 status: viewModel.fieldsStatuses[.postalCode]
             ) {
-                TextField(placeholder: L10n.recommended, text: $viewModel.postalCode, maxSymbolsLimit: 20)
+                TextField(placeholder: L10n.yourPostalCode, text: $viewModel.postalCode, maxSymbolsLimit: 20)
             }
 
             Cell(
