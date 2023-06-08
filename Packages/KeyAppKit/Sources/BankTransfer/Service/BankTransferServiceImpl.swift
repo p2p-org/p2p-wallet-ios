@@ -53,10 +53,6 @@ extension BankTransferServiceImpl: BankTransferService {
             return handleError(error: error)
         }
     }
-    
-    public func isBankTransferAvailable() -> Bool {
-        fatalError("Not implemented")
-    }
 
     public func getRegistrationData() async throws -> BankTransferRegistrationData {
         try await repository.getRegistrationData()
@@ -78,21 +74,6 @@ extension BankTransferServiceImpl: BankTransferService {
                 error: subject.value.error
             )
         )
-    }
-    
-    public func updateUser(data: BankTransferRegistrationData) async throws {
-        try await repository.updateUser(registrationData: data)
-        
-//        subject.send(
-//            .init(
-//                status: subject.value.status,
-//                value: subject.value.value.updating(
-//                    userId: response.userId,
-//                    kycVerified: response.KYC.verified
-//                ),
-//                error: subject.value.error
-//            )
-//        )
     }
     
     public func verify(OTP: String) async throws {

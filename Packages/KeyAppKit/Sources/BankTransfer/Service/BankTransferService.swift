@@ -5,8 +5,6 @@ public protocol BankTransferService {
     var state: AnyPublisher<AsyncValueState<UserData>, Never> { get }
 
     func reload() async
-
-    func isBankTransferAvailable() -> Bool
     
     // MARK: - Local actions
 
@@ -17,7 +15,6 @@ public protocol BankTransferService {
 
     func getRegistrationData() async throws -> BankTransferRegistrationData
     func createUser(data: BankTransferRegistrationData) async throws
-    func updateUser(data: BankTransferRegistrationData) async throws
 
     func verify(OTP: String) async throws
     func resendSMS() async throws

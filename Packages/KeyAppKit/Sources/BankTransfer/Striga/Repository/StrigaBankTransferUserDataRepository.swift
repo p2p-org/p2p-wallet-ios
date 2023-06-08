@@ -100,11 +100,6 @@ public final class StrigaBankTransferUserDataRepository: BankTransferUserDataRep
         try? await localProvider.save(registrationData: data)
     }
     
-    public func updateUser(registrationData data: BankTransferRegistrationData) async throws {
-        // TODO: - remoteProvider.updateUser
-        fatalError("Implementing")
-    }
-    
     public func verifyMobileNumber(userId: String, verificationCode code: String) async throws {
         try await remoteProvider.verifyMobileNumber(userId: userId, verificationCode: code)
     }
