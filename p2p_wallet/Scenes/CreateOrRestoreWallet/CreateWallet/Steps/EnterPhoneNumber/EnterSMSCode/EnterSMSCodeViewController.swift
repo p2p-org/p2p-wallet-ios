@@ -135,7 +135,6 @@ final class EnterSMSCodeViewController: BaseOTPViewController {
 
         viewModel.$isLoading.sink { [weak self] isLoading in
             self?.continueButtonRef.view?.isLoading = isLoading
-//            self?.smsInputRef.view?.textField?.isEnabled = !isLoading
         }.store(in: &store)
 
         viewModel.$codeError.sink { [weak self] error in
