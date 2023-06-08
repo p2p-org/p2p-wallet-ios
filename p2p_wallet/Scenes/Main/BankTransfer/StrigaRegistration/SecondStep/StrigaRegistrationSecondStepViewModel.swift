@@ -105,7 +105,7 @@ private extension StrigaRegistrationSecondStepViewModel {
         Task {
             let countries = try await self.countriesService.fetchCountries()
             if let country = countries.first(where: {
-                $0.alpha3Code.lowercased() == userData.address?.country?.lowercased() ?? userData.placeOfBirth?.lowercased()
+                $0.code.lowercased() == userData.address?.country?.lowercased() ?? userData.placeOfBirth?.lowercased()
             }) {
                 self.selectedCountry = country
             }
@@ -143,11 +143,11 @@ private extension StrigaRegistrationSecondStepViewModel {
 
                 let newData = currentData.updated(
                     address: StrigaUserDetailsResponse.Address(
-                        addressLine1: address2.1,
-                        addressLine2: address2.2,
+                        addressLine1: address2.0,
+                        addressLine2: nil,
                         city: address1.1,
                         postalCode: address2.1,
-                        state: address2.2,
+                        state: address2.2.isEmpty ? nil : address2.2,
                         country: address1.0?.code
                     ),
                     occupation: .some(sourceOfFunds.0?.rawValue),

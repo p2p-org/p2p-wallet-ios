@@ -32,7 +32,9 @@ final class StrigaRegistrationFirstStepCoordinator: Coordinator<StrigaRegistrati
             .store(in: &subscriptions)
 
         viewModel.chooseCountry
-            .flatMap { [unowned self] in self.openChooseCountry(value: $0) }
+            .flatMap { [unowned self] in
+                self.coordinate(to: ChooseItemCoordinator<Country>(title: L10n.selectYourCountry, controller: navigationController, service: ChooseCountryService(), chosen: $0))
+            }
             .sink { [weak viewModel] result in
                 switch result {
                 case .item(let item):
@@ -44,13 +46,15 @@ final class StrigaRegistrationFirstStepCoordinator: Coordinator<StrigaRegistrati
             .store(in: &subscriptions)
 
         viewModel.choosePhoneCountryCode
-            .flatMap { [unowned self] in self.openChooseCountry(value: $0) }
-            .sink { [weak viewModel] result in
-                switch result {
-                case .item(let item):
-                    viewModel?.selectedPhoneCountryCode = item as? Country
-                case .cancel: break
-                }
+            .flatMap { [unowned self] in
+                self.coordinate(to: ChoosePhoneCodeCoordinator(
+                    selectedDialCode: $0?.dialCode,
+                    selectedCountryCode: $0?.code,
+                    presentingViewController: vc
+                ))
+            }
+            .sink { [weak viewModel] country in
+                viewModel?.selectedPhoneCountryCode = country
             }
             .store(in: &subscriptions)
 
@@ -82,10 +86,6 @@ final class StrigaRegistrationFirstStepCoordinator: Coordinator<StrigaRegistrati
         )
         .prefix(1)
         .eraseToAnyPublisher()
-    }
-
-    private func openChooseCountry(value: Country?) -> AnyPublisher<ChooseItemCoordinatorResult, Never> {
-        coordinate(to: ChooseItemCoordinator<Country>(title: L10n.selectYourCountry, controller: navigationController, service: ChooseCountryService(), chosen: value))
     }
 
     private func coordinateToNextStep(response: StrigaUserDetailsResponse) -> AnyPublisher<StrigaRegistrationSecondStepCoordinatorResult, Never> {
