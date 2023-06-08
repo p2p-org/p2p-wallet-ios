@@ -14,7 +14,7 @@ final class EnterSMSCodeViewModel: BaseOTPViewModel {
 
     var attemptCounter: Wrapper<ResendCounter>
     private var countdown: Int
-    static let codeLength = 6
+    private static let codeLength = 6
     private let strategy: Strategy
 
     // MARK: -
