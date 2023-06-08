@@ -24,7 +24,7 @@ final class HttpClientImpl: HttpClient {
         
         print(request.cURL())
 
-        let (data, response) = try await URLSession.shared.data(from: request)
+        let (data, response) = try await URLSession.shared.data(for: request)
         guard let response = response as? HTTPURLResponse else { throw ErrorModel.noResponse }
         switch response.statusCode {
         case 200 ... 299:

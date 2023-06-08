@@ -227,9 +227,7 @@ final class TabBarController: UITabBarController {
         standardAppearance.shadowImage = nil
         standardAppearance.shadowColor = nil
         UITabBar.appearance().standardAppearance = standardAppearance
-        if #available(iOS 15.0, *) {
-            UITabBar.appearance().scrollEdgeAppearance = standardAppearance
-        }
+        UITabBar.appearance().scrollEdgeAppearance = standardAppearance
     }
     
     private var viewWillAppearTriggered = false
