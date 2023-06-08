@@ -49,7 +49,10 @@ final class TopupActionsViewModel: BaseViewModel, ObservableObject {
     private let tappedItemSubject = PassthroughSubject<Action, Never>()
     private let shouldShowErrorSubject = CurrentValueSubject<Bool, Never>(false)
     private var shouldShowBankTransfer: Bool {
-        available(.bankTransfer) && metadataService.metadata.value != nil
+        // always enabled for mocking
+        GlobalAppState.shared.strigaMockingEnabled ? true :
+            // for non-mocking need to check
+            available(.bankTransfer) && metadataService.metadata.value != nil
     }
 
     func didTapItem(item: ActionItem) {

@@ -45,10 +45,17 @@ class GlobalAppState: ObservableObject {
         }
     }
     
-    // New swap endpoint
+    // New striga endpoint
     @Published var strigaEndpoint: String {
         didSet {
             Defaults.forcedStrigaEndpoint = strigaEndpoint
+            ResolverScope.session.reset()
+        }
+    }
+    
+    // Striga mocking
+    @Published var strigaMockingEnabled: Bool = false {
+        didSet {
             ResolverScope.session.reset()
         }
     }

@@ -155,6 +155,8 @@ struct DebugMenuView: View {
                     Text(endpoint).tag(endpoint as String?)
                 }
             }
+            
+            Toggle("Mocking enabled", isOn: $globalAppState.strigaMockingEnabled)
         }
     }
     

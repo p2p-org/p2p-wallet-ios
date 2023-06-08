@@ -572,12 +572,28 @@ extension Resolver: ResolverRegistering {
         register {
             BankTransferServiceImpl(
                 repository: StrigaBankTransferUserDataRepository(
-                    localProvider: StrigaLocalProviderImpl(),
-                    remoteProvider: StrigaRemoteProviderImpl(
-                        baseURL: GlobalAppState.shared.strigaEndpoint,
-                        solanaKeyPair: Resolver.resolve(UserWalletManager.self).wallet?.account
-                    ),
-                    metadataProvider: Resolver.resolve()
+                    localProvider: GlobalAppState.shared.strigaMockingEnabled ?
+                        MockStrigaLocalProvider(
+                            useCase: .unregisteredUser,
+                            hasCachedInput: true
+                        ) :
+                        StrigaLocalProviderImpl(),
+                    remoteProvider: GlobalAppState.shared.strigaMockingEnabled ?
+                        MockStrigaRemoteProvider(
+                            useCase: .unregisteredUser,
+                            mockUserId: "user-id",
+                            mockKYCToken: "kyc-token"
+                        ) :
+                        StrigaRemoteProviderImpl(
+                            baseURL: GlobalAppState.shared.strigaEndpoint,
+                            solanaKeyPair: Resolver.resolve(UserWalletManager.self).wallet?.account
+                        ),
+                    metadataProvider: GlobalAppState.shared.strigaMockingEnabled ?
+                        MockStrigaMetadataProvider(
+                            useCase: .unregisteredUser,
+                            mockUserId: "user-id"
+                        ) :
+                        Resolver.resolve(StrigaMetadataProvider.self)
                 )
             )
         }
