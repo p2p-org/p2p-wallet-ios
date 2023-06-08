@@ -1,10 +1,4 @@
-//
-//  Defaults.swift
-//  p2p_wallet
-//
-//  Created by Chung Tran on 10/30/20.
-//
-
+import CountriesAPI
 import FirebaseRemoteConfig
 import Foundation
 import Onboarding
@@ -152,6 +146,10 @@ extension DefaultsKeys {
 
     var strigaOTPResendCounter: DefaultsKey<ResendCounter> {
         .init(#function, defaultValue: .zero())
+    }
+
+    var bankTransferLastCountry: DefaultsKey<Country?> {
+        .init(#function, defaultValue: nil)
     }
 }
 
