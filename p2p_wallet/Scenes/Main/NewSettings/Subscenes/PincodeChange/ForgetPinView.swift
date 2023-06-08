@@ -8,7 +8,7 @@ import SwiftUI
 
 struct ForgetPinView: View {
     @State var isLoading: Bool = false
-    @Injected var userWalletManager: UserWalletManager
+    @Injected var logoutService: LogoutService
     private let text: String
 
     var close: (() -> Void)?
@@ -60,7 +60,7 @@ struct ForgetPinView: View {
                     Task {
                         isLoading = true
                         defer { isLoading = false }
-                        do { try await userWalletManager.remove() }
+                        do { await logoutService.logout() }
                     }
                 }
             }

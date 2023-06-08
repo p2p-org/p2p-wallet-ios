@@ -277,6 +277,9 @@ extension Resolver: ResolverRegistering {
             .implements(JWTTokenValidator.self)
 
         register { Web3(rpcURL: String.secretConfig("ETH_RPC")!) }
+
+        register { LogoutServiceImpl() }
+            .implements(LogoutService.self)
     }
 
     /// Session scope: Live when user is authenticated

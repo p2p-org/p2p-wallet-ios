@@ -20,6 +20,7 @@ final class SettingsViewModel: BaseViewModel, ObservableObject {
     @Injected private var authenticationHandler: AuthenticationHandlerType
     @Injected private var metadataService: WalletMetadataService
     @Injected private var createNameService: CreateNameService
+    @Injected private var logoutService: LogoutService
 
     @Published var zeroBalancesIsHidden = Defaults.hideZeroBalances {
         didSet {
@@ -126,7 +127,7 @@ final class SettingsViewModel: BaseViewModel, ObservableObject {
 
     func signOut() {
         analyticsManager.log(event: .signedOut)
-        Task { try await userWalletManager.remove() }
+        Task { await logoutService.logout() }
     }
 
     private func toggleZeroBalancesVisibility() {

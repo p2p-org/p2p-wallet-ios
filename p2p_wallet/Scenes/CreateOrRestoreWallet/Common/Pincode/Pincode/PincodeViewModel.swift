@@ -19,6 +19,7 @@ final class PincodeViewModel: BaseViewModel, ObservableObject {
     @Injected private var pincodeService: PincodeService
     @Injected private var userWalletManager: UserWalletManager
     @Injected private var notificationService: NotificationService
+    @Injected private var logoutService: LogoutService
 
     // MARK: - Properties
 
@@ -115,7 +116,7 @@ final class PincodeViewModel: BaseViewModel, ObservableObject {
     }
 
     func logout() {
-        Task { try await self.userWalletManager.remove() }
+        Task { await logoutService.logout() }
     }
 }
 
