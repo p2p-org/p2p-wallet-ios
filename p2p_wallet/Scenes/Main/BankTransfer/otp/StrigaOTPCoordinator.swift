@@ -20,6 +20,8 @@ final class StrigaOTPCoordinator: Coordinator<StrigaOTPCoordinatorResult> {
 
     private var numberVerifiedSubject = PassthroughSubject<Void, Never>()
 
+    private let resultSubject = PassthroughSubject<StrigaOTPCoordinatorResult, Never>()
+
     private let viewController: UINavigationController
     private let phone: String
 
@@ -46,6 +48,7 @@ final class StrigaOTPCoordinator: Coordinator<StrigaOTPCoordinatorResult> {
             do {
                 try await self?.bankTransfer.verify(OTP: otp)
                 self?.numberVerifiedSubject.send(())
+                self?.resendCounter = .zero()
             } catch {
                 viewModel?.coordinatorIO.error.send(error)
             }
@@ -93,28 +96,17 @@ final class StrigaOTPCoordinator: Coordinator<StrigaOTPCoordinatorResult> {
 
         present(controller: controller)
 
-        return Publishers.Merge(
-            // Ignore deallocation event if number verified triggered
-            Publishers.Merge(
-                controller.deallocatedPublisher().map { true },
-                numberVerifiedSubject.map { _ in false }
+        numberVerifiedSubject.flatMap { [unowned self] _ in
+            self.coordinate(
+                to: StrigaOTPSuccessCoordinator(
+                    navigationController: self.viewController
+                )
             )
-                .prefix(1)
-                .filter { $0 }
-                .map { _ in StrigaOTPCoordinatorResult.canceled }
-                .eraseToAnyPublisher(),
-            numberVerifiedSubject
-                .flatMap { [unowned self] in
-                    self.coordinate(
-                        to: StrigaOTPSuccessCoordinator(
-                            navigationController: self.viewController
-                        )
-                    )
-                }
-                .map { StrigaOTPCoordinatorResult.verified }
-        )
-            .prefix(1)
-            .eraseToAnyPublisher()
+        }.sink { [unowned self] _ in
+            self.resultSubject.send(.verified)
+        }.store(in: &subscriptions)
+
+        return resultSubject.prefix(1).eraseToAnyPublisher()
     }
 
     private func increaseTimer(viewModel: EnterSMSCodeViewModel) {
@@ -135,6 +127,7 @@ final class StrigaOTPCoordinator: Coordinator<StrigaOTPCoordinatorResult> {
 
     private func dismiss(controller: UIViewController) {
         viewController.popViewController(animated: true)
+        resultSubject.send(.canceled)
     }
 
 }
