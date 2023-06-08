@@ -127,14 +127,14 @@ final class EnterSMSCodeViewController: BaseOTPViewController {
                 .assignWeak(to: \.text, on: textField)
                 .store(in: &store)
 
-            textField.textPublisher.map { $0 ?? "" }
+            textField.textPublisher
+                .compactMap { $0 ?? "" }
                 .assignWeak(to: \.code, on: viewModel)
                 .store(in: &store)
         }
 
         viewModel.$isLoading.sink { [weak self] isLoading in
             self?.continueButtonRef.view?.isLoading = isLoading
-            self?.smsInputRef.view?.textField?.isEnabled = !isLoading
         }.store(in: &store)
 
         viewModel.$codeError.sink { [weak self] error in
