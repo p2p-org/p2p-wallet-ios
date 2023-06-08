@@ -25,5 +25,4 @@ public enum StrigaUserIndustry: String, CaseIterable, Codable {
     case student = "STUDENT"
     case retired = "RETIRED"
     case unemployed = "UNEMPOYED"
-    case other = "OTHER"
 }
