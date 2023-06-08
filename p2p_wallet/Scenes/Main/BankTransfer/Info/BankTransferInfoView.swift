@@ -17,6 +17,7 @@ struct BankTransferInfoView: View {
         }
         .background(Color(Asset.Colors.smoke.color))
         .cornerRadius(20)
+        .edgesIgnoringSafeArea(.all)
     }
 
     var list: some View {

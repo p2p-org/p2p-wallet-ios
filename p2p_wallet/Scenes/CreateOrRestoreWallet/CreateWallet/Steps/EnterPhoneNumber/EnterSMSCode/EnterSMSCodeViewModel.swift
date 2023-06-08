@@ -14,7 +14,7 @@ final class EnterSMSCodeViewModel: BaseOTPViewModel {
 
     var attemptCounter: Wrapper<ResendCounter>
     private var countdown: Int
-    private static let codeLength = 6
+    static let codeLength = 6
     private let strategy: Strategy
 
     // MARK: -
@@ -142,11 +142,11 @@ final class EnterSMSCodeViewModel: BaseOTPViewModel {
 
         $code.removeDuplicates()
             .debounce(for: 0.0, scheduler: DispatchQueue.main)
+            .map { Self.format(code: $0) }
             .handleEvents(receiveOutput: { [weak self] aCode in
                 self?.showCodeError(error: nil)
                 self?.rawCode = Self.prepareRawCode(code: aCode)
             })
-            .map { Self.format(code: $0) }
             .assignWeak(to: \.code, on: self)
             .store(in: &subscriptions)
     }
