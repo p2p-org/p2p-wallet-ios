@@ -2,6 +2,7 @@ import BankTransfer
 import CountriesAPI
 import Combine
 import SwiftUI
+import SwiftyUserDefaults
 import Resolver
 import KeyAppUI
 
@@ -36,8 +37,13 @@ final class BankTransferInfoViewModel: BaseViewModel, ObservableObject {
     private let openProviderInfoSubject = PassthroughSubject<URL, Never>()
     private let openRegistrationSubject = PassthroughSubject<Country, Never>()
 
+    @SwiftyUserDefault(keyPath: \.bankTransferLastCountry, options: .cached)
+    private var lastChosenCountry: Country?
     private var currentCountry: Country? {
         didSet {
+            if lastChosenCountry != currentCountry {
+                lastChosenCountry = currentCountry
+            }
             self.items = self.makeItems()
         }
     }
@@ -53,11 +59,15 @@ final class BankTransferInfoViewModel: BaseViewModel, ObservableObject {
     }
 
     func bind() {
-        Task {
-            do {
-                self.currentCountry = try await countriesService.currentCountryName()
-            } catch {
-                DefaultLogManager.shared.log(error: error)
+        if nil != lastChosenCountry {
+            currentCountry = lastChosenCountry
+        } else {
+            Task {
+                do {
+                    self.currentCountry = try await countriesService.currentCountryName()
+                } catch {
+                    DefaultLogManager.shared.log(error: error)
+                }
             }
         }
     }
@@ -150,3 +160,5 @@ final class BankTransferInfoViewModel: BaseViewModel, ObservableObject {
         case poweredByStriga
     }
 }
+
+extension Country: DefaultsSerializable {}
