@@ -40,6 +40,10 @@ public actor TKeyJSFacade: TKeyFacade {
     private let context: JSBContext
     private var facadeClass: JSBValue?
     private let config: TKeyJSFacadeConfiguration
+
+    private var facadeInstance: JSBValue?
+    public var ethAddress: String?
+
     private let analyticsManager: AnalyticsManager
 
     public init(
@@ -92,22 +96,34 @@ public actor TKeyJSFacade: TKeyFacade {
         return scriptPath
     }
 
+    func getLibrary() throws -> JSBValue {
+        guard let library = facadeClass else {
+            throw Error.facadeIsNotReady
+        }
+        return library
+    }
+
     private func getFacade(configuration: [String: Any]) async throws -> JSBValue {
         let library = try getLibrary()
-        return try await library.invokeNew(
+
+        let facadeInstance = try await library.invokeNew(
             withArguments: [
                 [
                     "torusEndpoint": config.torusEndpoint,
                     "torusNetwork": config.torusNetwork,
+                    "debugLevel": "debug",
                 ].merging(configuration, uniquingKeysWith: { $1 }),
             ]
         )
+
+        self.facadeInstance = facadeInstance
+        return facadeInstance
     }
 
     public func obtainTorusKey(tokenID: TokenID) async throws -> TorusKey {
         let startDate = Date()
         let method = "obtainTorusKey"
-        
+
         defer { logTorusAnalyticsEvent(startDate: startDate, methodName: method) }
 
         do {
@@ -144,7 +160,7 @@ public actor TKeyJSFacade: TKeyFacade {
         let secondsDifference = Date().timeIntervalSince(startDate)
         let minutes = Int(secondsDifference / 60)
         let seconds = Int(secondsDifference) % 60
-        
+
         analyticsManager.log(event: TorusAnalyticsEvent.onboardingTorusRequest(
             methodName: methodName,
             minutes: minutes,
@@ -175,7 +191,7 @@ public actor TKeyJSFacade: TKeyFacade {
 
             guard
                 let privateSOL = try await value.valueForKey("privateSOL").toString(),
-                let reconstructedETH = try await value.valueForKey("ethAddress").toString(),
+                let ethAddress = try await value.valueForKey("ethAddress").toString(),
                 let deviceShare = try await value.valueForKey("deviceShare").toJSON(),
                 let customShare = try await value.valueForKey("customShare").toJSON(),
                 let metadata = try await value.valueForKey("metadata").toJSON()
@@ -183,9 +199,11 @@ public actor TKeyJSFacade: TKeyFacade {
                 throw Error.invalidReturnValue
             }
 
+            self.ethAddress = ethAddress
+
             return .init(
                 privateSOL: privateSOL,
-                reconstructedETH: reconstructedETH,
+                reconstructedETH: ethAddress,
                 deviceShare: deviceShare,
                 customShare: customShare,
                 metaData: metadata
@@ -221,12 +239,14 @@ public actor TKeyJSFacade: TKeyFacade {
 
             guard
                 let privateSOL = try await value.valueForKey("privateSOL").toString(),
-                let reconstructedETH = try await value.valueForKey("ethAddress").toString()
+                let ethAddress = try await value.valueForKey("ethAddress").toString()
             else { throw Error.invalidReturnValue }
+
+            self.ethAddress = ethAddress
 
             return .init(
                 privateSOL: privateSOL,
-                reconstructedETH: reconstructedETH
+                reconstructedETH: ethAddress
             )
         } catch let JSBError.jsError(error) {
             let parsedError = parseFacadeJSError(error: error)
@@ -261,12 +281,14 @@ public actor TKeyJSFacade: TKeyFacade {
             )
             guard
                 let privateSOL = try await value.valueForKey("privateSOL").toString(),
-                let reconstructedETH = try await value.valueForKey("ethAddress").toString()
+                let ethAddress = try await value.valueForKey("ethAddress").toString()
             else { throw Error.invalidReturnValue }
+
+            self.ethAddress = ethAddress
 
             return .init(
                 privateSOL: privateSOL,
-                reconstructedETH: reconstructedETH
+                reconstructedETH: ethAddress
             )
         } catch let JSBError.jsError(error) {
             let parsedError = parseFacadeJSError(error: error)
@@ -303,12 +325,14 @@ public actor TKeyJSFacade: TKeyFacade {
             )
             guard
                 let privateSOL = try await value.valueForKey("privateSOL").toString(),
-                let reconstructedETH = try await value.valueForKey("ethAddress").toString()
+                let ethAddress = try await value.valueForKey("ethAddress").toString()
             else { throw Error.invalidReturnValue }
+
+            self.ethAddress = ethAddress
 
             return .init(
                 privateSOL: privateSOL,
-                reconstructedETH: reconstructedETH
+                reconstructedETH: ethAddress
             )
         } catch let JSBError.jsError(error) {
             let parsedError = parseFacadeJSError(error: error)
@@ -316,13 +340,6 @@ public actor TKeyJSFacade: TKeyFacade {
         } catch {
             throw error
         }
-    }
-
-    func getLibrary() throws -> JSBValue {
-        guard let library = facadeClass else {
-            throw Error.facadeIsNotReady
-        }
-        return library
     }
 
     internal func parseFacadeJSError(error: Any) -> TKeyFacadeError? {
@@ -355,14 +372,14 @@ private extension TKeyJSFacade {
             seconds: Int,
             milliseconds: Int
         )
-        
+
         var name: String? {
             switch self {
             case .onboardingTorusRequest:
                 return "Onboarding_Torus_Request"
             }
         }
-        
+
         var params: [String: Any]? {
             switch self {
             case let .onboardingTorusRequest(methodName, minutes, seconds, milliseconds):
@@ -370,15 +387,14 @@ private extension TKeyJSFacade {
                     "Method_Name": methodName,
                     "Minutes": minutes,
                     "Seconds": seconds,
-                    "Milliseconds": milliseconds
+                    "Milliseconds": milliseconds,
                 ]
             }
         }
-        
+
         // FIXME: - Later
         var providerIds: [AnalyticsProviderId] {
             ["amplitude"]
         }
     }
 }
-

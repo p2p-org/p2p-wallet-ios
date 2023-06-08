@@ -5,6 +5,8 @@
 public protocol TKeyFacade {
     func initialize() async throws
     
+    var ethAddress: String? { get async }
+    
     func obtainTorusKey(tokenID: TokenID) async throws -> TorusKey
     
     func signUp(torusKey: TorusKey, privateInput: String) async throws -> SignUpResult

@@ -81,7 +81,7 @@ extension Resolver: ResolverRegistering {
             .implements((ICloudStorageType & AccountStorageType & NameStorageType).self)
             .implements((ICloudStorageType & AccountStorageType & NameStorageType & PincodeStorageType).self)
             .scope(.application)
-        
+
         register { DeviceShareManagerImpl() }
             .implements(DeviceShareManager.self)
             .scope(.application)
@@ -260,9 +260,13 @@ extension Resolver: ResolverRegistering {
         register { QrCodeImageRenderImpl() }
             .implements(QrCodeImageRender.self)
 
-        // Navigation provider
+        // Onboarding
         register { StartOnboardingNavigationProviderImpl() }
             .implements(StartOnboardingNavigationProvider.self)
+
+        register { TKeyFacadeManagerImpl(analyticsManager: resolve()) }
+            .implements(TKeyFacadeManager.self)
+            .scope(.application)
 
         register { OnboardingServiceImpl() }
             .implements(OnboardingService.self)

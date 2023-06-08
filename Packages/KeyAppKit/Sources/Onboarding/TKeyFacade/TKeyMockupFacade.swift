@@ -8,6 +8,8 @@ import SolanaSwift
 import WebKit
 
 public class TKeyMockupFacade: TKeyFacade {
+    public var ethAddress: String?
+    
     public init() {}
 
     public func initialize() async throws {}

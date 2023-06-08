@@ -6,12 +6,15 @@ protocol OnboardingStateMachineProvider {
 }
 
 final class OnboardingStateMachineProviderImpl: OnboardingStateMachineProvider {
+    @Injected var facadeManager: TKeyFacadeManager
+
     func createTKeyFacade() -> TKeyFacade {
-        let tKeyFacade: TKeyFacade = available(.mockedTKeyFacade) ?
-            TKeyMockupFacade() :
-            TKeyJSFacade(
-                wkWebView: GlobalWebView.requestWebView(),
-                config: .init(
+        if available(.mockedTKeyFacade) {
+            return TKeyMockupFacade()
+        } else {
+            return facadeManager.create(
+                BackgroundWebViewManager.requestWebView(),
+                with: TKeyJSFacadeConfiguration(
                     torusEndpoint: OnboardingConfig.shared.torusEndpoint,
                     torusNetwork: OnboardingConfig.shared.torusNetwork,
                     verifierStrategyResolver: { authProvider in
@@ -29,9 +32,8 @@ final class OnboardingStateMachineProviderImpl: OnboardingStateMachineProvider {
                             fatalError("Invalid")
                         }
                     }
-                ),
-                analyticsManager: Resolver.resolve()
+                )
             )
-        return tKeyFacade
+        }
     }
 }
