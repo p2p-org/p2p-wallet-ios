@@ -190,7 +190,10 @@ public actor TKeyJSFacade: TKeyFacade {
             }
 
             let facade = try await getFacade(configuration: facadeConfig)
-            let value = try await facade.invokeAsyncMethod("triggerSilentSignup", withArguments: [torusKey.value])
+            let value = try await facade.invokeAsyncMethod(
+                "triggerSilentSignup",
+                withArguments: [["torusKey": torusKey.value]]
+            )
 
             guard
                 let privateSOL = try await value.valueForKey("privateSOL").toString(),
