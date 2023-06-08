@@ -14,7 +14,6 @@ struct DebugMenuView: View {
 
     @ObservedObject private var globalAppState = GlobalAppState.shared
     @ObservedObject private var feeRelayerConfig = FeeRelayConfig.shared
-    @ObservedObject private var onboardingConfig = OnboardingConfig.shared
 
     init(viewModel: DebugMenuViewModel) {
         self.viewModel = viewModel
@@ -25,6 +24,7 @@ struct DebugMenuView: View {
             List {
                 Section(header: Text("Modules")) {
                     NavigationLink("Socket", destination: SocketDebugView())
+                    NavigationLink("Web3Auth", destination: OnboardingDebugView())
                 }
 
                 Section(header: Text("Feature Toggles")) {
@@ -37,9 +37,9 @@ struct DebugMenuView: View {
                 }
 
                 Section(header: Text("Application")) {
-                    TextFieldRow(title: "Wallet:", content: $globalAppState.forcedWalletAddress)
-                    TextFieldRow(title: "Push:", content: $globalAppState.pushServiceEndpoint)
-                    TextFieldRow(title: "Bridge:", content: $globalAppState.bridgeEndpoint)
+                    DebugTextField(title: "Wallet:", content: $globalAppState.forcedWalletAddress)
+                    DebugTextField(title: "Push:", content: $globalAppState.pushServiceEndpoint)
+                    DebugTextField(title: "Bridge:", content: $globalAppState.bridgeEndpoint)
                     Toggle("Prefer direct swap", isOn: $globalAppState.preferDirectSwap)
                     Button {
                         Task {
@@ -71,13 +71,6 @@ struct DebugMenuView: View {
                     }
                 }
 
-                Section(header: Text("Onboarding configurations")) {
-                    TextFieldRow(title: "Torus:", content: $onboardingConfig.torusEndpoint)
-                    TextFieldRow(title: "Google:", content: $onboardingConfig.torusGoogleVerifier)
-                    TextFieldRow(title: "Apple", content: $onboardingConfig.torusAppleVerifier)
-                    TextFieldRow(title: "OTP Resend", content: $onboardingConfig.enterOTPResend)
-                }
-
                 Section(header: Text("Solana endpoint")) {
                     Text("Selected: \(viewModel.selectedEndpoint?.address ?? "Unknown")")
                     Picker("URL", selection: $viewModel.selectedEndpoint) {
@@ -105,46 +98,8 @@ struct DebugMenuView: View {
                         }
                     }
                 }
-
-                Section(header: Text("Mocked device share")) {
-                    Toggle("Enabled", isOn: $onboardingConfig.isDeviceShareMocked)
-                        .valueChanged(value: onboardingConfig.isDeviceShareMocked) { newValue in
-                            onboardingConfig.isDeviceShareMocked = newValue
-                        }
-                    TextFieldRow(title: "Share:", content: $onboardingConfig.mockDeviceShare)
-                        .disabled(!onboardingConfig.isDeviceShareMocked)
-                        .foregroundColor(!onboardingConfig.isDeviceShareMocked ? Color.gray : Color.black)
-
-                    HStack {
-                        Text("Delete current share")
-                        Spacer()
-                        Button {
-                            Resolver.resolve(DeviceShareManager.self).save(deviceShare: "")
-                        } label: { Text("Delete") }
-                    }
-
-                    HStack {
-                        Text("Delete last progress")
-                        Spacer()
-                        Button {
-                            Resolver.resolve(OnboardingService.self).lastState = nil
-                        } label: { Text("Delete") }
-                    }
-                }
             }
             .navigationBarTitle("Debug Menu", displayMode: .inline)
-        }
-    }
-}
-
-private struct TextFieldRow: View {
-    let title: String
-    let content: Binding<String>
-
-    var body: some View {
-        HStack {
-            Text(title)
-            TextEditor(text: content)
         }
     }
 }
