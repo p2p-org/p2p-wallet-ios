@@ -236,3 +236,13 @@ extension String {
         return String.init(stringLiteral: s)
     }
 }
+
+// MARK: - Date
+extension String {
+    func date(withFormat format: String, locale: Locale = Locale.shared) -> Date? {
+        let dateFormatter = DateFormatter()
+        dateFormatter.locale = locale
+        dateFormatter.dateFormat = format
+        return dateFormatter.date(from: self)
+    }
+}

@@ -52,6 +52,14 @@ final class StrigaRegistrationFirstStepViewModel: BaseViewModel, ObservableObjec
     @Published var selectedCountryOfBirth: Country
     @Published private var dateOfBirthModel: StrigaUserDetailsResponse.DateOfBirth?
 
+    private lazy var birthMaxYear: Int = {
+        Date().year - Constants.maxYearGap
+    }()
+
+    private lazy var birthMinYear: Int = {
+        Date().year - Constants.minYearGap
+    }()
+
     init(country: Country) {
         selectedCountryOfBirth = country
         super.init()
@@ -73,10 +81,10 @@ final class StrigaRegistrationFirstStepViewModel: BaseViewModel, ObservableObjec
             .store(in: &subscriptions)
 
         $dateOfBirth
-            .map { $0.split(separator: ".") }
+            .map { $0.date(withFormat: Constants.dateFormat)?.components() }
             .map { components in
-                if components.count == Constants.dateFormat.split(separator: ".").count {
-                    return StrigaUserDetailsResponse.DateOfBirth(year: String(components[2]), month: String(components[1]), day: String(components[0]))
+                if let year = components?.year, let month = components?.month, let day = components?.day {
+                    return StrigaUserDetailsResponse.DateOfBirth(year: String(year), month: String(month), day: String(day))
                 }
                 return nil
             }
@@ -194,20 +202,19 @@ private extension StrigaRegistrationFirstStepViewModel {
     }
 
     func validateDate() {
-        let calendar = Calendar(identifier: .gregorian)
         let year = Int(dateOfBirthModel?.year ?? "") ?? 0
         let month = Int(dateOfBirthModel?.month ?? "") ?? 0
         let day = Int(dateOfBirthModel?.day ?? "") ?? 0
         let components = DateComponents(year: year, month: month, day: day)
         if dateOfBirth.isEmpty {
             fieldsStatuses[.dateOfBirth] = .invalid(error: L10n.couldNotBeEmpty)
-        } else if year > 2015 {
-            fieldsStatuses[.dateOfBirth] = .invalid(error: L10n.couldNotBeLater(2015))
-        } else if year < 1920 {
-            fieldsStatuses[.dateOfBirth] = .invalid(error: L10n.couldNotBeEarlier(1920))
+        } else if year > birthMaxYear {
+            fieldsStatuses[.dateOfBirth] = .invalid(error: L10n.couldNotBeLater(birthMaxYear))
+        } else if year < birthMinYear {
+            fieldsStatuses[.dateOfBirth] = .invalid(error: L10n.couldNotBeEarlier(birthMinYear))
         } else if month > 12 {
             fieldsStatuses[.dateOfBirth] = .invalid(error: L10n.incorrectMonth)
-        } else if !components.isValidDate(in: calendar) {
+        } else if !components.isValidDate(in: Calendar.current) {
             fieldsStatuses[.dateOfBirth] = .invalid(error: L10n.incorrectDay)
         } else {
             fieldsStatuses[.dateOfBirth] = .valid
@@ -250,5 +257,13 @@ private extension StrigaRegistrationFirstStepViewModel {
 private extension StrigaRegistrationFirstStepViewModel {
     enum Constants {
         static let dateFormat = "dd.mm.yyyy"
+        static let minYearGap = 103
+        static let maxYearGap = 8
+    }
+}
+
+private extension Date {
+    var year: Int {
+        (Calendar.current.dateComponents([.year], from: self).year ?? 0)
     }
 }
