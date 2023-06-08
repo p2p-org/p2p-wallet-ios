@@ -31,7 +31,8 @@ final class OnboardingStateMachineProviderImpl: OnboardingStateMachineProvider {
                         default:
                             fatalError("Invalid")
                         }
-                    }
+                    },
+                    isDebug: Environment.current == .debug
                 )
             )
         }

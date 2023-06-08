@@ -38,9 +38,7 @@ struct OnboardingDebugView: View {
                     Text("Delete current share")
                     Spacer()
                     Button {
-                        do {
-                            try Resolver.resolve(KeychainStorage.self).save(deviceShare: "")
-                        } catch { print(error) }
+                        Resolver.resolve(DeviceShareManager.self).save(deviceShare: "")
                     } label: { Text("Delete") }
                 }
 

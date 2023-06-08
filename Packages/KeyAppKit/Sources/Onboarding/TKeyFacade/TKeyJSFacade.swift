@@ -16,15 +16,18 @@ public struct TKeyJSFacadeConfiguration {
     let torusEndpoint: String
     let torusNetwork: String
     let verifierStrategyResolver: (_ authProvider: String) -> TKeyVerifierStrategy
+    let isDebug: Bool
 
     public init(
         torusEndpoint: String,
         torusNetwork: String,
-        verifierStrategyResolver: @escaping (_ authProvider: String) -> TKeyVerifierStrategy
+        verifierStrategyResolver: @escaping (_ authProvider: String) -> TKeyVerifierStrategy,
+        isDebug: Bool
     ) {
         self.torusEndpoint = torusEndpoint
         self.torusNetwork = torusNetwork
         self.verifierStrategyResolver = verifierStrategyResolver
+        self.isDebug = isDebug
     }
 }
 
@@ -111,7 +114,7 @@ public actor TKeyJSFacade: TKeyFacade {
                 [
                     "torusEndpoint": config.torusEndpoint,
                     "torusNetwork": config.torusNetwork,
-                    "debugLevel": "debug",
+                    "logLevel": config.isDebug ? "debug" : "silent",
                 ].merging(configuration, uniquingKeysWith: { $1 }),
             ]
         )
