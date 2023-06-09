@@ -1428,3 +1428,14 @@
 "Incorrect number" = "Неверный номер";
 "Add money" = "Добавить деньги";
 "Your postal code" = "Ваш почтовый индекс";
+"Finish identity verification\nto send your money\nworldwide" = "Завершите проверку личности,\nчтобы отправить деньги\nпо всему миру.";
+"Your documents\nverification is pending" = "Ваши документы\nожидают проверки";
+"Usually it takes a few hours" = "Обычно это занимает несколько часов";
+"View" = "Вид";
+"Action required" = "Необходимое действие";
+"Please, check the details\nand update your data" = "Пожалуйста, проверьте подробности\nи обновите свои данные";
+"Check details" = "Проверить детали";
+"Verification is done" = "Проверка выполнена";
+"Continue your top up\nvia a bank transfer" = "Продолжить пополнение\nбанковским переводом";
+"Sorry, bank transfer\nis unavailable for you" = "К сожалению, банковский перевод\nнедоступен для вас";
+"See details" = "Смотрите подробности";
