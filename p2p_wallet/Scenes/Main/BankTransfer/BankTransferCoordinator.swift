@@ -72,7 +72,7 @@ final class BankTransferCoordinator: Coordinator<Void> {
             return coordinate(
                 to: StrigaOTPCoordinator(
                     viewController: viewController,
-                    phone: metadataService.metadata.value?.phoneNumber ?? ""
+                    phone: userData.mobileNumber ?? ""
                 )
             ).map { result in
                 switch result {
