@@ -1431,3 +1431,5 @@
 "Incorrect number" = "Numéro incorrect";
 "Add money" = "Ajouter de l'argent";
 "Your postal code" = "Votre code postal";
+"Could not be more than %@ symbols" = "Il ne peut pas y avoir plus de symboles %@";
+"Could not be less than %@ symbols" = "Il ne peut pas y avoir moins de symboles %@";

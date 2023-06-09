@@ -81,10 +81,10 @@ final class StrigaRegistrationFirstStepViewModel: BaseViewModel, ObservableObjec
             .store(in: &subscriptions)
 
         $dateOfBirth
-            .map { $0.date(withFormat: Constants.dateFormat)?.components() }
+            .map { $0.split(separator: ".").map { String($0) } }
             .map { components in
-                if let year = components?.year, let month = components?.month, let day = components?.day {
-                    return StrigaUserDetailsResponse.DateOfBirth(year: String(year), month: String(month), day: String(day))
+                if components.count == Constants.dateFormat.split(separator: ".").count {
+                    return StrigaUserDetailsResponse.DateOfBirth(year: components[2], month: components[1], day: components[0])
                 }
                 return nil
             }
@@ -196,6 +196,10 @@ private extension StrigaRegistrationFirstStepViewModel {
     func validate(credential: String, field: Field) {
         if credential.isEmpty {
             fieldsStatuses[field] = .invalid(error: L10n.couldNotBeEmpty)
+        } else if credential.count < Constants.minCredentialSymbols {
+            fieldsStatuses[field] = .invalid(error: L10n.couldNotBeLessThanSymbols(Constants.minCredentialSymbols))
+        } else if credential.count > Constants.maxCredentialSymbols {
+            fieldsStatuses[field] = .invalid(error: L10n.couldNotBeMoreThanSymbols(Constants.maxCredentialSymbols))
         } else {
             fieldsStatuses[field] = .valid
         }
@@ -259,6 +263,8 @@ private extension StrigaRegistrationFirstStepViewModel {
         static let dateFormat = "dd.mm.yyyy"
         static let minYearGap = 103
         static let maxYearGap = 8
+        static let minCredentialSymbols = 2
+        static let maxCredentialSymbols = 40
     }
 }
 

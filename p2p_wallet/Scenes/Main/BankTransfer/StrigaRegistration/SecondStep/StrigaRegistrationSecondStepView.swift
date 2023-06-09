@@ -82,28 +82,28 @@ struct StrigaRegistrationSecondStepView: View {
                 title: L10n.city,
                 status: viewModel.fieldsStatuses[.city]
             ) {
-                TextField(placeholder: L10n.fullCityName, text: $viewModel.city, maxSymbolsLimit: 40)
+                TextField(placeholder: L10n.fullCityName, text: $viewModel.city)
             }
 
             Cell(
                 title: L10n.addressLine,
                 status: viewModel.fieldsStatuses[.addressLine]
             ) {
-                TextField(placeholder: L10n.yourStreetAndFlatNumber, text: $viewModel.addressLine, maxSymbolsLimit: 160)
+                TextField(placeholder: L10n.yourStreetAndFlatNumber, text: $viewModel.addressLine)
             }
 
             Cell(
                 title: L10n.postalCode,
                 status: viewModel.fieldsStatuses[.postalCode]
             ) {
-                TextField(placeholder: L10n.yourPostalCode, text: $viewModel.postalCode, maxSymbolsLimit: 20)
+                TextField(placeholder: L10n.yourPostalCode, text: $viewModel.postalCode)
             }
 
             Cell(
                 title: L10n.stateOrRegion,
                 status: viewModel.fieldsStatuses[.stateRegion]
             ) {
-                TextField(placeholder: L10n.recommended, text: $viewModel.stateRegion, maxSymbolsLimit: 20)
+                TextField(placeholder: L10n.recommended, text: $viewModel.stateRegion)
             }
         }
         .styled()

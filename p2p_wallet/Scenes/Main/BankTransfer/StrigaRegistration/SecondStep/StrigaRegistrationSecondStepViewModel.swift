@@ -113,18 +113,22 @@ private extension StrigaRegistrationSecondStepViewModel {
     }
 
     func isValid() -> Bool {
-        validate(value: city, field: .city)
-        validate(value: addressLine, field: .addressLine)
-        validate(value: postalCode, field: .postalCode)
+        validate(value: city, field: .city, minLimit: 2, maxLimit: 40)
+        validate(value: addressLine, field: .addressLine, maxLimit: 160)
+        validate(value: postalCode, field: .postalCode, maxLimit: 20)
         validate(value: country, field: .country)
         validate(value: occupationIndustry, field: .occupationIndustry)
         validate(value: sourceOfFunds, field: .sourceOfFunds)
         return !fieldsStatuses.contains(where: { $0.value != .valid })
     }
 
-    func validate(value: String, field: Field) {
+    func validate(value: String, field: Field, minLimit: Int? = nil, maxLimit: Int? = nil) {
         if value.isEmpty {
             fieldsStatuses[field] = .invalid(error: L10n.couldNotBeEmpty)
+        } else if let minLimit, value.count < minLimit {
+            fieldsStatuses[field] = .invalid(error: L10n.couldNotBeLessThanSymbols(minLimit))
+        } else if let maxLimit, value.count > maxLimit {
+            fieldsStatuses[field] = .invalid(error: L10n.couldNotBeMoreThanSymbols(maxLimit))
         } else {
             fieldsStatuses[field] = .valid
         }
