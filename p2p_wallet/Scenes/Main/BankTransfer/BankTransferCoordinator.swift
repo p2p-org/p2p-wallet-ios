@@ -12,7 +12,6 @@ enum BankTransferCoordinatorResult {
 final class BankTransferCoordinator: Coordinator<Void> {
 
     @Injected private var bankTransferService: BankTransferService
-    @Injected private var metadataService: WalletMetadataService
 
     private let viewController: UINavigationController
 
