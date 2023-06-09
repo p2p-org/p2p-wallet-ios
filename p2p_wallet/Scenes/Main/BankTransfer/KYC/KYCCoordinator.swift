@@ -9,6 +9,10 @@ enum KYCCoordinatorResult {
     case canceled
 }
 
+enum KYCCoordinatorError: Error {
+    case sdkInitializationFailed
+}
+
 final class KYCCoordinator: Coordinator<KYCCoordinatorResult> {
     
     // MARK: - Dependencies
@@ -19,6 +23,7 @@ final class KYCCoordinator: Coordinator<KYCCoordinatorResult> {
     
     private var presentingViewController: UIViewController
     private let subject = PassthroughSubject<KYCCoordinatorResult, Never>()
+    private var sdk: SNSMobileSDK!
     
     // MARK: - Initializer
 
@@ -38,10 +43,20 @@ final class KYCCoordinator: Coordinator<KYCCoordinatorResult> {
         Task {
             do {
                 try await startSDK()
+                
+                await MainActor.run {
+                    presentingViewController.hideHud()
+                }
             } catch {
+                
+                await MainActor.run {
+                    presentingViewController.hideHud()
+                }
+                
                 // TODO: - Catch error
+
+                subject.send(.canceled)
             }
-            presentingViewController.hideHud()
         }
         
         return subject.prefix(1).eraseToAnyPublisher()
@@ -54,15 +69,17 @@ final class KYCCoordinator: Coordinator<KYCCoordinatorResult> {
         let accessToken = try await bankTransferService.getKYCToken()
         
         // initialize sdk
-        let sdk = SNSMobileSDK(
+        sdk = SNSMobileSDK(
             accessToken: accessToken
         )
         
+        // check if it is ready
         guard sdk.isReady else {
             print("Initialization failed: " + sdk.verboseStatus)
-            return
+            throw KYCCoordinatorError.sdkInitializationFailed
         }
         
+        // handle token expiration
         sdk.setTokenExpirationHandler { onComplete in
             print("Sumsub Token has expired -- renewing...")
             Task { [weak self] in
@@ -82,15 +99,23 @@ final class KYCCoordinator: Coordinator<KYCCoordinatorResult> {
             }
         }
         
-        await MainActor.run { [weak sdk, weak presentingViewController] in
-            guard let presentingViewController else { return }
-            sdk?.present(from: presentingViewController)
+        // present sdk
+        presentKYC()
+    }
+
+    private func presentKYC() {
+        // present
+        sdk.present(from: presentingViewController)
+        
+        // handle dismissal
+        sdk.dismissHandler { [weak subject] (sdk, mainVC) in
+            mainVC.dismiss(animated: true, completion: nil)
+            subject?.send(.canceled)
         }
     }
-    
-    @MainActor
+
     private func didFailToReceiveToken(error: Error?) {
         print(error)
-        // TODO: - Handle expired token
+        sdk.dismiss()
     }
 }
