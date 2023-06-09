@@ -6,11 +6,8 @@ protocol LogoutService {
 }
 
 final class LogoutServiceImpl: LogoutService {
-    @Injected private var bankTransferService: BankTransferService
-    @Injected private var userWalletManager: UserWalletManager
-
     func logout() async {
-        await bankTransferService.clearCache()
-        try? await userWalletManager.remove()
+        await Resolver.resolve(BankTransferService.self).clearCache()
+        try? await Resolver.resolve(UserWalletManager.self).remove()
     }
 }
