@@ -105,7 +105,10 @@ private extension StrigaRegistrationSecondStepViewModel {
         Task {
             let countries = try await self.countriesService.fetchCountries()
             if let country = countries.first(where: {
-                $0.code.lowercased() == userData.address?.country?.lowercased() ?? userData.placeOfBirth?.lowercased()
+                if let cached = userData.address?.country {
+                    return $0.code.lowercased() == cached.lowercased()
+                }
+                return $0.alpha3Code.lowercased() == userData.placeOfBirth?.lowercased()
             }) {
                 self.selectedCountry = country
             }
