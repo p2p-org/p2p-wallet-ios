@@ -150,10 +150,7 @@ public struct WalletMetaData: Codable, Equatable {
     /// - Returns: Base64 encrypted metadata
     /// - Throws:
     public func encrypt(seedPhrase: String) throws -> String {
-        let encoder = JSONEncoder()
-        encoder.dateEncodingStrategy = .millisecondsSince1970
-
-        let metaDataJson = try encoder.encode(self)
+        let metaDataJson = try serialize()
         let encryptedMetadataRaw = try Crypto.encryptMetadata(seedPhrase: seedPhrase, data: metaDataJson)
         guard let result = String(data: try JSONEncoder().encode(encryptedMetadataRaw), encoding: .utf8) else {
             throw OnboardingError.encodingError("metadata")
@@ -170,11 +167,22 @@ public struct WalletMetaData: Codable, Equatable {
             encryptedMetadata: encryptedMetadata
         )
 
+        return try Self.deserialize(data: metadataRaw, ethAddress: ethAddress)
+    }
+
+    public func serialize() throws -> Data {
+        let encoder = JSONEncoder()
+        encoder.dateEncodingStrategy = .millisecondsSince1970
+
+        return try encoder.encode(self)
+    }
+
+    public static func deserialize(data: Data, ethAddress: String) throws -> Self {
         let decoder = JSONDecoder()
         decoder.dateDecodingStrategy = .millisecondsSince1970
         decoder.userInfo[WalletMetaData.ethPublicInfoKey] = ethAddress
 
-        return try decoder.decode(WalletMetaData.self, from: metadataRaw)
+        return try decoder.decode(WalletMetaData.self, from: data)
     }
 }
 

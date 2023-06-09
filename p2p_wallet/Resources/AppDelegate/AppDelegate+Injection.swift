@@ -114,10 +114,16 @@ extension Resolver: ResolverRegistering {
         register { RemoteWalletMetadataProvider() }
             .scope(.application)
 
+        register { TKeyWalletMetadataProvider() }
+            .scope(.application)
+
         register {
             WalletMetadataService(
                 localProvider: resolve(LocalWalletMetadataProvider.self),
-                remoteProvider: resolve(RemoteWalletMetadataProvider.self)
+                remoteProvider: [
+                    resolve(RemoteWalletMetadataProvider.self),
+                    resolve(TKeyWalletMetadataProvider.self),
+                ]
             )
         }
         .scope(.session)

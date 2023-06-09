@@ -6,16 +6,21 @@
 //
 
 import SwiftUI
+import UniformTypeIdentifiers
 
 struct DebugText: View {
     let title: String
     let value: String
 
     var body: some View {
-        HStack {
-            Text(title)
-            Spacer()
-            Text(value)
+        Button {
+            UIPasteboard.general.setValue(value, forPasteboardType: UTType.plainText.identifier)
+        } label: {
+            HStack {
+                Text(title)
+                Spacer()
+                Text(value)
+            }
         }
     }
 }

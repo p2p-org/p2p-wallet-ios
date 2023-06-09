@@ -164,7 +164,7 @@ struct RecoveryKitView_Previews: PreviewProvider {
         
         let service = WalletMetadataService(
             localProvider: provider,
-            remoteProvider: provider
+            remoteProvider: [provider]
         )
         
         Task { try await service.synchronize() }

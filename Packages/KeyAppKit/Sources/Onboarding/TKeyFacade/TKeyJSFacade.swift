@@ -262,9 +262,11 @@ public actor TKeyJSFacade: TKeyFacade {
         }
     }
 
-    public func signIn(torusKey: TorusKey, customShare: String,
-                       encryptedMnemonic: String) async throws -> SignInResult
-    {
+    public func signIn(
+        torusKey: TorusKey,
+        customShare: String,
+        encryptedMnemonic: String
+    ) async throws -> SignInResult {
         do {
             var facadeConfig: [String: Any] = [
                 "type": "signin",
@@ -346,6 +348,18 @@ public actor TKeyJSFacade: TKeyFacade {
         } catch {
             throw error
         }
+    }
+
+    public func getUserData() async throws -> String? {
+        let value = try await facadeInstance?.invokeAsyncMethod("getUserData", withArguments: [])
+        return try await value?.toString()
+    }
+
+    public func setUserData(_ data: String) async throws {
+        _ = try await facadeInstance?.invokeAsyncMethod(
+            "setUserData",
+            withArguments: [data]
+        )
     }
 
     internal func parseFacadeJSError(error: Any) -> TKeyFacadeError? {

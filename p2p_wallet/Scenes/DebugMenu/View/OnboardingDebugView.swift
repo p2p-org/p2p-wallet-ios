@@ -5,11 +5,50 @@
 //  Created by Giang Long Tran on 06.06.2023.
 //
 
+import Onboarding
 import Resolver
 import SwiftUI
 
+class OnboardingViewModel: BaseViewModel, ObservableObject {
+    @Injected var tkeyFacadeManager: TKeyFacadeManager
+
+    @Published var tkeyInstance: String = "Init"
+    @Published var ethAddressTkeyInstance: String = "Running"
+
+    @Published var torusUserData: String = ""
+
+    override init() {
+        super.init()
+
+        tkeyFacadeManager.latestPublisher.sink { [weak self] facade in
+            if facade != nil {
+                self?.tkeyInstance = "Running"
+            } else {
+                self?.tkeyInstance = "Nothing"
+            }
+
+            Task { [weak self] in
+                self?.ethAddressTkeyInstance = await facade?.ethAddress ?? ""
+            }
+
+        }.store(in: &subscriptions)
+    }
+
+    func load() {
+        Task {
+            do {
+                let userData = try await tkeyFacadeManager.latest?.getUserData()
+                torusUserData = userData ?? "Nil"
+            } catch {
+                torusUserData = error.localizedDescription
+            }
+        }
+    }
+}
+
 struct OnboardingDebugView: View {
-    @ObservedObject private var onboardingConfig = OnboardingConfig.shared
+    @StateObject var viewModel = OnboardingViewModel()
+    @ObservedObject var onboardingConfig = OnboardingConfig.shared
 
     var body: some View {
         List {
@@ -23,6 +62,16 @@ struct OnboardingDebugView: View {
             Section(header: Text("Onboarding configurations")) {
                 DebugTextField(title: "Torus:", content: $onboardingConfig.torusEndpoint)
                 DebugTextField(title: "OTP Resend", content: $onboardingConfig.enterOTPResend)
+            }
+
+            Section(header: Text("TKey")) {
+                DebugText(title: "Status", value: viewModel.tkeyInstance)
+                Button {
+                    viewModel.load()
+                } label: {
+                    Text("Load")
+                }
+                DebugText(title: "User data", value: viewModel.torusUserData)
             }
 
             Section(header: Text("Mocked device share")) {

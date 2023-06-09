@@ -17,6 +17,12 @@ enum WalletMetadataProviderError: Error {
 }
 
 protocol WalletMetadataProvider {
+    /// The flag indicated ready for usage the provider
+    var ready: Bool { get async }
+
+    func acquireWrite() async
+    func releaseWrite() async
+
     func save(for wallet: UserWallet, metadata: WalletMetaData?) async throws
     func load(for wallet: UserWallet) async throws -> WalletMetaData?
 }
@@ -37,6 +43,12 @@ actor LocalWalletMetadataProvider: WalletMetadataProvider {
             }
         }
     }
+
+    nonisolated var ready: Bool { true }
+
+    func acquireWrite() async {}
+
+    func releaseWrite() async {}
 
     func save(for userWallet: UserWallet, metadata: WalletMetaData?) async throws {
         if
@@ -65,6 +77,12 @@ actor LocalWalletMetadataProvider: WalletMetadataProvider {
 
 actor RemoteWalletMetadataProvider: WalletMetadataProvider {
     @Injected private var apiGatewayClient: APIGatewayClient
+
+    nonisolated var ready: Bool { true }
+
+    func acquireWrite() async {}
+
+    func releaseWrite() async {}
 
     func save(for userWallet: UserWallet, metadata: WalletMetaData?) async throws {
         guard
@@ -110,7 +128,13 @@ actor RemoteWalletMetadataProvider: WalletMetadataProvider {
 class MockedWalletMeradataProvider: WalletMetadataProvider {
     private let value: WalletMetaData?
 
+    let ready: Bool = true
+
     init(_ value: WalletMetaData?) { self.value = value }
+    
+    func acquireWrite() async {}
+    
+    func releaseWrite() async {}
 
     func save(for _: UserWallet, metadata _: WalletMetaData?) async throws {}
 

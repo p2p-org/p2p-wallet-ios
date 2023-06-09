@@ -6,6 +6,7 @@
 //
 
 import AnalyticsManager
+import Combine
 import Foundation
 import WebKit
 
@@ -13,6 +14,7 @@ public protocol TKeyFacadeManager {
     func create(_ wkWebview: WKWebView, with config: TKeyJSFacadeConfiguration) -> TKeyJSFacade
 
     var latest: TKeyFacade? { get }
+    var latestPublisher: AnyPublisher<TKeyFacade?, Never> { get }
 }
 
 public class TKeyFacadeManagerImpl: TKeyFacadeManager {
@@ -20,7 +22,7 @@ public class TKeyFacadeManagerImpl: TKeyFacadeManager {
     let invalidTime: TimeInterval = 60 * 15
 
     var timer: Timer?
-    var _latest: TKeyFacade?
+    var _latest: CurrentValueSubject<TKeyFacade?, Never> = .init(nil)
     var latestCreateDate: Date?
 
     public init(analyticsManager: AnalyticsManager) {
@@ -37,7 +39,7 @@ public class TKeyFacadeManagerImpl: TKeyFacadeManager {
 
     public func create(_ wkWebview: WKWebView, with config: TKeyJSFacadeConfiguration) -> TKeyJSFacade {
         let tkeyFacade = TKeyJSFacade(wkWebView: wkWebview, config: config, analyticsManager: analyticsManager)
-        _latest = tkeyFacade
+        _latest.value = tkeyFacade
         latestCreateDate = Date()
 
         return tkeyFacade
@@ -50,13 +52,17 @@ public class TKeyFacadeManagerImpl: TKeyFacadeManager {
 
         if Date().timeIntervalSince(latestCreateDate) < invalidTime {
             // Facade is still alive
-            return _latest
+            return _latest.value
         } else {
             // Lifetime of facade is expired. Clean latest state.
-            _latest = nil
+            _latest.value = nil
             self.latestCreateDate = nil
 
             return nil
         }
+    }
+
+    public var latestPublisher: AnyPublisher<TKeyFacade?, Never> {
+        _latest.eraseToAnyPublisher()
     }
 }

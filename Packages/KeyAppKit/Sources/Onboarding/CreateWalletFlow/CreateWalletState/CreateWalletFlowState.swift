@@ -124,7 +124,13 @@ public enum CreateWalletFlowState: Codable, State, Equatable {
         case let .bindingPhoneNumber(email, authProvider, seedPhrase, ethPublicKey, deviceShare, innerState):
             switch event {
             case let .bindingPhoneNumberEvent(event):
-                let nextInnerState = try await innerState <- (event, provider.apiGatewayClient)
+                let nextInnerState = try await innerState <- (
+                    event,
+                    BindingPhoneNumberContainer(
+                        tKeyFacade: provider.tKeyFacade,
+                        apiGatewayClient: provider.apiGatewayClient
+                    )
+                )
 
                 if case let .finish(result) = nextInnerState {
                     switch result {

@@ -9,7 +9,7 @@ import WebKit
 
 public class TKeyMockupFacade: TKeyFacade {
     public var ethAddress: String?
-    
+
     public init() {}
 
     public func initialize() async throws {}
@@ -47,4 +47,10 @@ public class TKeyMockupFacade: TKeyFacade {
     ) async throws -> SignInResult {
         .init(privateSOL: Mnemonic().phrase.joined(separator: " "), reconstructedETH: "someEthPublicKey")
     }
+
+    public func getUserData() async throws -> String? {
+        ""
+    }
+
+    public func setUserData(_: String) async throws {}
 }

@@ -36,9 +36,14 @@ public struct BindingPhoneNumberData: Codable, Equatable {
     var sendingThrottle: Throttle = .init(maxAttempt: 5, timeInterval: 60 * 10)
 }
 
+public struct BindingPhoneNumberContainer {
+    let tKeyFacade: TKeyFacade
+    let apiGatewayClient: APIGatewayClient
+}
+
 public enum BindingPhoneNumberState: Codable, State, Equatable {
     public typealias Event = BindingPhoneNumberEvent
-    public typealias Provider = APIGatewayClient
+    public typealias Provider = BindingPhoneNumberContainer
 
     case enterPhoneNumber(
         initialPhoneNumber: String?,
@@ -74,7 +79,7 @@ public enum BindingPhoneNumberState: Codable, State, Equatable {
     public func accept(
         currentState: BindingPhoneNumberState,
         event: BindingPhoneNumberEvent,
-        provider: APIGatewayClient
+        provider: Provider
     ) async throws -> BindingPhoneNumberState {
         switch currentState {
         case let .enterPhoneNumber(initialPhoneNumber, didSend, resendCounter, data):
@@ -106,7 +111,7 @@ public enum BindingPhoneNumberState: Codable, State, Equatable {
                 )
 
                 do {
-                    try await provider.registerWallet(
+                    try await provider.apiGatewayClient.registerWallet(
                         solanaPrivateKey: Base58.encode(account.secretKey),
                         ethAddress: data.ethAddress,
                         phone: phoneNumber,
@@ -157,7 +162,7 @@ public enum BindingPhoneNumberState: Codable, State, Equatable {
                 )
 
                 do {
-                    try await provider.confirmRegisterWallet(
+                    try await provider.apiGatewayClient.confirmRegisterWallet(
                         solanaPrivateKey: Base58.encode(account.secretKey),
                         ethAddress: data.ethAddress,
                         share: data.customShare,
@@ -167,6 +172,13 @@ public enum BindingPhoneNumberState: Codable, State, Equatable {
                         otpCode: opt,
                         timestampDevice: Date()
                     )
+
+                    do {
+                        let serializedMetadata = try metaData.serialize()
+                        if let data = String(data: serializedMetadata, encoding: .utf8) {
+                            try await provider.tKeyFacade.setUserData(data)
+                        }
+                    } catch {}
                 } catch let error as APIGatewayError {
                     switch error._code {
                     case -32058, -32700, -32600, -32601, -32602, -32603, -32052:
@@ -192,7 +204,7 @@ public enum BindingPhoneNumberState: Codable, State, Equatable {
                 )
 
                 do {
-                    try await provider.registerWallet(
+                    try await provider.apiGatewayClient.registerWallet(
                         solanaPrivateKey: Base58.encode(account.secretKey),
                         ethAddress: data.ethAddress,
                         phone: phoneNumber,

@@ -13,6 +13,9 @@ public protocol TKeyFacade {
     func signIn(torusKey: TorusKey, deviceShare: String) async throws -> SignInResult
     func signIn(torusKey: TorusKey, customShare: String, encryptedMnemonic: String) async throws -> SignInResult
     func signIn(deviceShare: String, customShare: String, encryptedMnemonic: String) async throws -> SignInResult
+    
+    func getUserData() async throws -> String?
+    func setUserData(_ data: String) async throws
 }
 
 struct TKeyFacadeError: Error, Codable {
