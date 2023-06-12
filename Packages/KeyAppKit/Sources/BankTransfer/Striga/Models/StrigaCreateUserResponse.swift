@@ -23,13 +23,5 @@ public struct StrigaKYC: Codable {
         case approved = "APPROVED" // User approved
         case rejected = "REJECTED" // User rejected - Can be final or not
         case rejectedFinal = "REJECTED_FINAL"
-        
-        public var isWaitingForUpload: Bool {
-            self == .notStarted || self == .initiated || self == .rejected
-        }
-        
-        public var isBeingReviewed: Bool {
-            self == .pendingReview || self == .onHold
-        }
     }
 }
