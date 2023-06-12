@@ -10,11 +10,6 @@ public struct StrigaKYC: Codable {
     public let status: Status
     public let mobileVerified: Bool
     
-    public var approved: Bool {
-        // TODO: - Check later
-        status == .approved
-    }
-    
     public init(status: StrigaKYC.Status, mobileVerified: Bool) {
         self.status = status
         self.mobileVerified = mobileVerified
@@ -28,5 +23,18 @@ public struct StrigaKYC: Codable {
         case approved = "APPROVED" // User approved
         case rejected = "REJECTED" // User rejected - Can be final or not
         case rejectedFinal = "REJECTED_FINAL"
+        
+        public var isWaitingForUpload: Bool {
+            self == .notStarted || self == .initiated || self == .rejected
+        }
+        
+        public var isBeingReviewed: Bool {
+            switch self {
+            case .pendingReview, .onHold:
+                return true
+            default:
+                return false
+            }
+        }
     }
 }

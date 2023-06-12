@@ -53,9 +53,17 @@ final class BankTransferCoordinator: Coordinator<Void> {
         var step = BankTransferStep.registration
         if userData.userId != nil {
             if userData.mobileVerified {
-                if userData.kycVerified {
+                switch userData.kycStatus {
+                case .approved:
                     step = .transfer
-                } else {
+                case .rejectedFinal:
+                    step = .kycRejected
+                case let status where status.isWaitingForUpload:
+                    step = .kyc
+                case let status where status.isBeingReviewed:
+                    step = .kycPendingReview
+                default:
+                    // TODO: - Review later
                     step = .kyc
                 }
             } else {
@@ -67,6 +75,18 @@ final class BankTransferCoordinator: Coordinator<Void> {
 
     private func coordinator(for step: BankTransferStep, userData: UserData) -> AnyPublisher<BankTransferFlowResult, Never> {
         switch step {
+        case .registration:
+            return coordinate(
+                to: BankTransferInfoCoordinator(viewController: viewController)
+            ).map { result in
+                switch result {
+                case .completed:
+                    return BankTransferFlowResult.next
+                case .canceled:
+                    return BankTransferFlowResult.none
+                }
+            }
+            .eraseToAnyPublisher()
         case .otp:
             return coordinate(
                 to: StrigaOTPCoordinator(
@@ -93,18 +113,45 @@ final class BankTransferCoordinator: Coordinator<Void> {
                 }
             }
                 .eraseToAnyPublisher()
-        case .registration:
-            return coordinate(
-                to: BankTransferInfoCoordinator(viewController: viewController)
-            ).map { result in
-                switch result {
-                case .completed:
-                    return BankTransferFlowResult.next
-                case .canceled:
-                    return BankTransferFlowResult.none
-                }
-            }
-                .eraseToAnyPublisher()
+        case .kycPendingReview:
+            let subject = PassthroughSubject<BankTransferFlowResult, Never>()
+            viewController.showAlert(
+                title: "KYC is being reviewed",
+                message: "We are reviewing your documents. Stay tuned!",
+                actions: [
+                    .init(
+                        title: L10n.okay,
+                        style: .default,
+                        handler: { [weak subject] action in
+                            subject?.send(.none)
+                        }
+                    )
+                ]
+            )
+            return subject.prefix(1).eraseToAnyPublisher()
+        case .kycRejected:
+            let subject = PassthroughSubject<BankTransferFlowResult, Never>()
+            viewController.showAlert(
+                title: "KYC staus is final rejected",
+                message: "We are sorry but your documents aren't valid,\nwe could not complete your request!",
+                actions: [
+                    .init(
+                        title: L10n.okay,
+                        style: .default,
+                        handler: { [weak subject] action in
+                            subject?.send(.none)
+                        }
+                    ),
+                    .init(
+                        title: "Appeal",
+                        style: .default,
+                        handler: { [weak subject] action in
+                            subject?.send(.none)
+                        }
+                    )
+                ]
+            )
+            return subject.prefix(1).eraseToAnyPublisher()
         case .transfer:
             return coordinate(
                 to: StrigaTransferCoordinator(
@@ -118,9 +165,11 @@ final class BankTransferCoordinator: Coordinator<Void> {
 
 }
 
-enum BankTransferStep: CaseIterable {
+enum BankTransferStep {
     case registration
     case otp
     case kyc
+    case kycPendingReview
+    case kycRejected
     case transfer
 }
