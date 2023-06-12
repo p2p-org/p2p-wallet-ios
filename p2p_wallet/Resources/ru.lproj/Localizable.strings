@@ -1430,3 +1430,7 @@
 "Your postal code" = "Ваш почтовый индекс";
 "Could not be more than %@ symbols" = "Не может быть больше символов %@";
 "Could not be less than %@ symbols" = "Не может быть меньше символов %@";
+"Your documents verification is pending" = "Ожидается проверка ваших документов";
+"Usually it takes a few hours" = "Обычно это занимает несколько часов";
+"Sorry, bank transfer is unavailable for you" = "К сожалению, банковский перевод недоступен для вас";
+"Verification is rejected" = "Проверка отклонена";

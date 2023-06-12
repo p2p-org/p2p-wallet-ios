@@ -50,27 +50,30 @@ final class BankTransferCoordinator: Coordinator<Void> {
     }
 
     private func step(userData: UserData) -> BankTransferStep {
-        var step = BankTransferStep.registration
-        if userData.userId != nil {
-            if userData.mobileVerified {
-                switch userData.kycStatus {
-                case .approved:
-                    step = .transfer
-                case .rejectedFinal:
-                    step = .kycRejected
-                case let status where status.isWaitingForUpload:
-                    step = .kyc
-                case let status where status.isBeingReviewed:
-                    step = .kycPendingReview
-                default:
-                    // TODO: - Review later
-                    step = .kyc
-                }
-            } else {
-                step = .otp
-            }
+        // registration
+        guard userData.userId != nil else {
+            return .registration
         }
-        return step
+        
+        // mobile verification
+        if userData.mobileVerified == false {
+            return .otp
+        }
+        
+        // kyc
+        switch userData.kycStatus {
+        case .approved:
+            return .transfer
+        case .rejectedFinal:
+            return .kycRejected
+        case let status where status.isWaitingForUpload:
+            return .kyc
+        case let status where status.isBeingReviewed:
+            return .kycPendingReview
+        default:
+            // TODO: - Review later
+            return .kyc
+        }
     }
 
     private func coordinator(for step: BankTransferStep, userData: UserData) -> AnyPublisher<BankTransferFlowResult, Never> {
@@ -116,11 +119,11 @@ final class BankTransferCoordinator: Coordinator<Void> {
         case .kycPendingReview:
             let subject = PassthroughSubject<BankTransferFlowResult, Never>()
             viewController.showAlert(
-                title: "KYC is being reviewed",
-                message: "We are reviewing your documents. Stay tuned!",
+                title: L10n.yourDocumentsVerificationIsPending,
+                message: L10n.usuallyItTakesAFewHours,
                 actions: [
                     .init(
-                        title: L10n.okay,
+                        title: L10n.ok,
                         style: .default,
                         handler: { [weak subject] action in
                             subject?.send(.none)
@@ -132,8 +135,8 @@ final class BankTransferCoordinator: Coordinator<Void> {
         case .kycRejected:
             let subject = PassthroughSubject<BankTransferFlowResult, Never>()
             viewController.showAlert(
-                title: "KYC staus is final rejected",
-                message: "We are sorry but your documents aren't valid,\nwe could not complete your request!",
+                title: L10n.verificationIsRejected,
+                message: L10n.sorryBankTransferIsUnavailableForYou,
                 actions: [
                     .init(
                         title: L10n.okay,

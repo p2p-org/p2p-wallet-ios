@@ -1397,3 +1397,7 @@
 "Your postal code" = "Your postal code";
 "Could not be more than %@ symbols" = "Could not be more than %@ symbols";
 "Could not be less than %@ symbols" = "Could not be less than %@ symbols";
+"Your documents verification is pending" = "Your documents verification is pending";
+"Usually it takes a few hours" = "Usually it takes a few hours";
+"Sorry, bank transfer is unavailable for you" = "Sorry, bank transfer is unavailable for you";
+"Verification is rejected" = "Verification is rejected";
