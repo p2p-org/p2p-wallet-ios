@@ -10,11 +10,6 @@ public struct StrigaKYC: Codable {
     public let status: Status
     public let mobileVerified: Bool
     
-    public var approved: Bool {
-        // TODO: - Check later
-        status == .approved
-    }
-    
     public init(status: StrigaKYC.Status, mobileVerified: Bool) {
         self.status = status
         self.mobileVerified = mobileVerified

@@ -1435,3 +1435,7 @@
 "Your postal code" = "Mã bưu chính của bạn";
 "Could not be more than %@ symbols" = "Không được nhiều hơn %@ ký hiệu";
 "Could not be less than %@ symbols" = "Không được ít hơn %@ ký hiệu";
+"Your documents verification is pending" = "Giấy tờ của bạn đang được xác minh";
+"Usually it takes a few hours" = "Thông thường phải mất vài giờ";
+"Sorry, bank transfer is unavailable for you" = "Xin lỗi, chuyển khoản ngân hàng không khả dụng cho bạn";
+"Verification is rejected" = "Xác minh bị từ chối";
