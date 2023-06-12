@@ -56,7 +56,7 @@ final class BankTransferCoordinator: Coordinator<Void> {
         }
         
         // mobile verification
-        if userData.mobileVerified == false {
+        guard userData.mobileVerified else {
             return .otp
         }
         
