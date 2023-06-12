@@ -1433,3 +1433,5 @@
 "Incorrect number" = "Con số không chính xác";
 "Add money" = "Thêm tiền";
 "Your postal code" = "Mã bưu chính của bạn";
+"Could not be more than %@ symbols" = "Không được nhiều hơn %@ ký hiệu";
+"Could not be less than %@ symbols" = "Không được ít hơn %@ ký hiệu";

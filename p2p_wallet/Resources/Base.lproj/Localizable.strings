@@ -1396,3 +1396,5 @@
 "Incorrect number" = "Incorrect number";
 "Add money" = "Add money";
 "Your postal code" = "Your postal code";
+"Could not be more than %@ symbols" = "Could not be more than %@ symbols";
+"Could not be less than %@ symbols" = "Could not be less than %@ symbols";
