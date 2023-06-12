@@ -29,12 +29,7 @@ public struct StrigaKYC: Codable {
         }
         
         public var isBeingReviewed: Bool {
-            switch self {
-            case .pendingReview, .onHold:
-                return true
-            default:
-                return false
-            }
+            self == .pendingReview || self == .onHold
         }
     }
 }
