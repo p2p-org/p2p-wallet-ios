@@ -57,11 +57,23 @@ struct HomeAccountsView: View {
 
     private var content: some View {
         VStack(alignment: .leading, spacing: 0) {
+            if let smallBanner = viewModel.smallBanner {
+                KYCBannerView(
+                    params: smallBanner,
+                    action: { },
+                    closeAction: { [weak viewModel] in
+                        viewModel?.smallBanner = nil
+                        
+                    })
+                .padding(.horizontal, 16)
+                .padding(.top, 16)
+            }
             Text(L10n.tokens)
                 .font(uiFont: .font(of: .title3, weight: .semibold))
                 .foregroundColor(Color(Asset.Colors.night.color))
                 .padding(.horizontal, 16)
                 .padding(.bottom, 8)
+                .padding(.top, 32)
             wrappedList(itemsCount: viewModel.accounts.count) {
                 ForEach(viewModel.accounts, id: \.id) {
                     tokenCell(rendableAccount: $0, isVisiable: true)
@@ -99,7 +111,6 @@ struct HomeAccountsView: View {
                 }
             }
         }
-        .padding(.top, 32)
         .background(Color(Asset.Colors.snow.color))
     }
 

@@ -8,14 +8,7 @@ struct HomeEmptyView: View {
     var body: some View {
         ScrollView {
             VStack(spacing: 36) {
-                HomeBannerView(
-                    backgroundColor: Asset.Colors.lightSea.color,
-                    image: .homeBannerPerson,
-                    title: L10n.topUpYourAccountToGetStarted,
-                    subtitle: L10n.makeYourFirstDepositOrBuyCryptoWithYourCreditCardOrApplePay,
-                    actionTitle: L10n.addMoney,
-                    action: { [weak viewModel] in viewModel?.receiveClicked() }
-                )
+                HomeBannerView(params: viewModel.banner)
                 scrollingContent
             }
             .padding(.horizontal, 16)

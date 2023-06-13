@@ -9,6 +9,7 @@ import SolanaSwift
 import SwiftyUserDefaults
 import Web3
 import Wormhole
+import BankTransfer
 
 final class HomeAccountsViewModel: BaseViewModel, ObservableObject {
     private var defaultsDisposables: [DefaultsDisposable] = []
@@ -21,6 +22,7 @@ final class HomeAccountsViewModel: BaseViewModel, ObservableObject {
     private let favouriteAccountsStore: FavouriteAccountsDataSource
 
     @Injected private var analyticsManager: AnalyticsManager
+    @Injected private var bankTransferService: BankTransferService
 
     // MARK: - Properties
 
@@ -30,6 +32,7 @@ final class HomeAccountsViewModel: BaseViewModel, ObservableObject {
     @Published private(set) var actions: [WalletActionType] = []
     @Published private(set) var scrollOnTheTop = true
     @Published private(set) var hideZeroBalance: Bool = Defaults.hideZeroBalances
+    @Published var smallBanner: KYCBannerParameters?
 
     /// Primary list accounts.
     @Published var accounts: [any RenderableAccount] = []
@@ -60,6 +63,7 @@ final class HomeAccountsViewModel: BaseViewModel, ObservableObject {
         self.actions = actions
 
         super.init()
+        bindTransferData()
 
         // TODO: Replace with combine
         defaultsDisposables.append(Defaults.observe(\.hideZeroBalances) { [weak self] change in
@@ -193,5 +197,16 @@ extension HomeAccountsViewModel {
         case tap
         case visibleToggle
         case extraButtonTap
+    }
+}
+
+private extension HomeAccountsViewModel {
+    func bindTransferData() {
+        bankTransferService.state
+            .map { value in
+                KYCBannerParameters(status: .pendingReview) // TODO: hardcode
+            }
+            .assignWeak(to: \.smallBanner, on: self)
+            .store(in: &subscriptions)
     }
 }

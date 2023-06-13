@@ -1448,3 +1448,5 @@
 "Usually it takes a few hours" = "Thông thường phải mất vài giờ";
 "Sorry, bank transfer is unavailable for you" = "Xin lỗi, chuyển khoản ngân hàng không khả dụng cho bạn";
 "Verification is rejected" = "Xác minh bị từ chối";
+"Add money via bank\ntransfer is unavailable" = "Thêm tiền qua ngân hàng\nchuyển khoản không khả dụng";
+"Add money to your account\nto get started" = "Thêm tiền vào tài khoản của bạn\nđể bắt đầu";

@@ -1,14 +1,18 @@
 import SwiftUI
 import KeyAppUI
 
-struct HomeBannerView: View {
-
+struct HomeBannerViewParameters {
     let backgroundColor: UIColor
     let image: UIImage
     let title: String
     let subtitle: String
     let actionTitle: String
     let action: () -> Void
+}
+
+struct HomeBannerView: View {
+
+    let params: HomeBannerViewParameters
 
     var body: some View {
         ZStack(alignment: .bottom) {
@@ -16,20 +20,20 @@ struct HomeBannerView: View {
                 VStack(spacing: 0) {
                     Color(Asset.Colors.smoke.color)
                         .frame(height: 87)
-                    Color(backgroundColor)
+                    Color(params.backgroundColor)
                         .frame(height: 200)
                         .cornerRadius(16)
                 }
-                Image(uiImage: image)
+                Image(uiImage: params.image)
             }
-            VStack(spacing: 19) {
+            VStack(spacing: 16) {
                 VStack(spacing: 8) {
-                    Text(title)
+                    Text(params.title)
                         .foregroundColor(Color(Asset.Colors.night.color))
-                        .fontWeight(.bold)
+                        .fontWeight(.semibold)
                         .apply(style: .text1)
                         .multilineTextAlignment(.center)
-                    Text(subtitle)
+                    Text(params.subtitle)
                         .apply(style: .text3)
                         .minimumScaleFactor(0.5)
                         .multilineTextAlignment(.center)
@@ -38,9 +42,9 @@ struct HomeBannerView: View {
                         .padding(.horizontal, 24)
                 }
                 Button(
-                    action: action,
+                    action: params.action,
                     label: {
-                        Text(actionTitle)
+                        Text(params.actionTitle)
                             .foregroundColor(Color(Asset.Colors.night.color))
                             .fontWeight(.semibold)
                             .apply(style: .text4)
@@ -62,48 +66,58 @@ struct HomeBannerView_Previews: PreviewProvider {
     static var previews: some View {
         List {
             HomeBannerView(
-                backgroundColor: Asset.Colors.lightSea.color,
-                image: .homeBannerPerson,
-                title: L10n.topUpYourAccountToGetStarted,
-                subtitle: L10n.makeYourFirstDepositOrBuyCryptoWithYourCreditCardOrApplePay,
-                actionTitle: L10n.addMoney,
-                action: { }
+                params: HomeBannerViewParameters(
+                    backgroundColor: Asset.Colors.lightSea.color,
+                    image: .homeBannerPerson,
+                    title: L10n.topUpYourAccountToGetStarted,
+                    subtitle: L10n.makeYourFirstDepositOrBuyCryptoWithYourCreditCardOrApplePay,
+                    actionTitle: L10n.addMoney,
+                    action: { }
+                )
             )
 
             HomeBannerView(
-                backgroundColor: Asset.Colors.lightSea.color,
-                image: .kycClock,
-                title: L10n.yourDocumentsVerificationIsPending,
-                subtitle: L10n.usuallyItTakesAFewHours,
-                actionTitle: L10n.view,
-                action: { }
+                params: HomeBannerViewParameters(
+                    backgroundColor: Asset.Colors.lightSea.color,
+                    image: .kycClock,
+                    title: L10n.yourDocumentsVerificationIsPending,
+                    subtitle: L10n.usuallyItTakesAFewHours,
+                    actionTitle: L10n.view,
+                    action: { }
+                )
             )
 
             HomeBannerView(
-                backgroundColor: Asset.Colors.lightGrass.color,
-                image: .kycSend,
-                title: L10n.verificationIsDone,
-                subtitle: L10n.continueYourTopUpViaABankTransfer,
-                actionTitle: L10n.topUp,
-                action: { }
+                params: HomeBannerViewParameters(
+                    backgroundColor: Asset.Colors.lightGrass.color,
+                    image: .kycSend,
+                    title: L10n.verificationIsDone,
+                    subtitle: L10n.continueYourTopUpViaABankTransfer,
+                    actionTitle: L10n.topUp,
+                    action: { }
+                )
             )
 
             HomeBannerView(
-                backgroundColor: Asset.Colors.lightSun.color,
-                image: .kycShow,
-                title: L10n.actionRequired,
-                subtitle: L10n.pleaseCheckTheDetailsAndUpdateYourData,
-                actionTitle: L10n.checkDetails,
-                action: { }
+                params: HomeBannerViewParameters(
+                    backgroundColor: Asset.Colors.lightSun.color,
+                    image: .kycShow,
+                    title: L10n.actionRequired,
+                    subtitle: L10n.pleaseCheckTheDetailsAndUpdateYourData,
+                    actionTitle: L10n.checkDetails,
+                    action: { }
+                )
             )
 
             HomeBannerView(
-                backgroundColor: Asset.Colors.lightRose.color,
-                image: .kycFail,
-                title: "Verification is rejected",
-                subtitle: "Add money via bank\ntransfer is unavailable",
-                actionTitle: L10n.seeDetails,
-                action: { }
+                params: HomeBannerViewParameters(
+                    backgroundColor: Asset.Colors.lightRose.color,
+                    image: .kycFail,
+                    title: L10n.verificationIsRejected,
+                    subtitle: L10n.addMoneyViaBankTransferIsUnavailable,
+                    actionTitle: L10n.seeDetails,
+                    action: { }
+                )
             )
         }
         .listStyle(.plain)

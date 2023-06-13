@@ -1443,3 +1443,5 @@
 "Usually it takes a few hours" = "Обычно это занимает несколько часов";
 "Sorry, bank transfer is unavailable for you" = "К сожалению, банковский перевод недоступен для вас";
 "Verification is rejected" = "Проверка отклонена";
+"Add money via bank\ntransfer is unavailable" = "Добавить деньги с помощью банковского\nперевода невозможно";
+"Add money to your account\nto get started" = "Добавьте деньги на свой счет,\nчтобы начать";

@@ -12,27 +12,40 @@ import Resolver
 import SolanaSwift
 import KeyAppKitCore
 import KeyAppBusiness
+import KeyAppUI
+import BankTransfer
 
 final class HomeEmptyViewModel: BaseViewModel, ObservableObject {
     // MARK: - Dependencies
 
     @Injected private var analyticsManager: AnalyticsManager
     @Injected private var pricesService: SolanaPriceService
+    @Injected private var bankTransferService: BankTransferService
     
     // MARK: - Properties
     private let navigation: PassthroughSubject<HomeNavigation, Never>
     
     private var popularCoinsTokens: [Token] = [.usdc, .nativeSolana, /*.renBTC, */.eth, .usdt]
     @Published var popularCoins = [PopularCoin]()
+    @Published var banner: HomeBannerViewParameters
 
     // MARK: - Initializer
 
     init(navigation: PassthroughSubject<HomeNavigation, Never>) {
         self.navigation = navigation
+        self.banner = HomeBannerViewParameters(
+            backgroundColor: Asset.Colors.lightSea.color,
+            image: .homeBannerPerson,
+            title: L10n.topUpYourAccountToGetStarted,
+            subtitle: L10n.makeYourFirstDepositOrBuyCryptoWithYourCreditCardOrApplePay,
+            actionTitle: L10n.addMoney,
+            action: { navigation.send(.topUp) }
+        )
         super.init()
         updateData()
+        bindBankTransfer()
     }
-    
+
     // MARK: - Actions
 
     func reloadData() async {
@@ -42,10 +55,6 @@ final class HomeEmptyViewModel: BaseViewModel, ObservableObject {
         updateData()
     }
 
-    func receiveClicked() {
-        navigation.send(.topUp)
-    }
-    
     func buyTapped(index: Int) {
         let coin = popularCoinsTokens[index]
         analyticsManager.log(event: .mainScreenBuyToken(tokenName: coin.symbol))
@@ -54,7 +63,7 @@ final class HomeEmptyViewModel: BaseViewModel, ObservableObject {
 }
 
 private extension HomeEmptyViewModel {
-    private func updateData() {
+    func updateData() {
         popularCoins = popularCoinsTokens.map { token in
             PopularCoin(
                 id: token.symbol,
@@ -64,6 +73,62 @@ private extension HomeEmptyViewModel {
                 image: image(for: token)
             )
         }
+    }
+
+    func bindBankTransfer() {
+        bankTransferService.state
+            .map({ [weak self] value in
+                var status: StrigaKYC.Status = .pendingReview  // TODO: hardcode
+                switch status { //  value.value.kycStatus {
+                case .notStarted, .initiated:
+                    return HomeBannerViewParameters(
+                        backgroundColor: Asset.Colors.lightSea.color,
+                        image: .homeBannerPerson,
+                        title: L10n.topUpYourAccountToGetStarted,
+                        subtitle: L10n.makeYourFirstDepositOrBuyCryptoWithYourCreditCardOrApplePay,
+                        actionTitle: L10n.addMoney,
+                        action: { [weak self] in self?.navigation.send(.topUp) }
+                    )
+                case .pendingReview, .onHold:
+                    return HomeBannerViewParameters(
+                        backgroundColor: Asset.Colors.lightSea.color,
+                        image: .kycClock,
+                        title: L10n.yourDocumentsVerificationIsPending,
+                        subtitle: L10n.usuallyItTakesAFewHours,
+                        actionTitle: L10n.view,
+                        action: { [weak self] in self?.navigation.send(.topUp) }
+                    )
+                case .approved:
+                    return HomeBannerViewParameters(
+                        backgroundColor: Asset.Colors.lightGrass.color,
+                        image: .kycSend,
+                        title: L10n.verificationIsDone,
+                        subtitle: L10n.continueYourTopUpViaABankTransfer,
+                        actionTitle: L10n.topUp,
+                        action: { [weak self] in self?.navigation.send(.topUp) }
+                    )
+                case .rejected:
+                    return HomeBannerViewParameters(
+                        backgroundColor: Asset.Colors.lightSun.color,
+                        image: .kycShow,
+                        title: L10n.actionRequired,
+                        subtitle: L10n.pleaseCheckTheDetailsAndUpdateYourData,
+                        actionTitle: L10n.checkDetails,
+                        action: { [weak self] in self?.navigation.send(.topUp) }
+                    )
+                case .rejectedFinal:
+                    return HomeBannerViewParameters(
+                        backgroundColor: Asset.Colors.lightRose.color,
+                        image: .kycFail,
+                        title: L10n.verificationIsRejected,
+                        subtitle: L10n.addMoneyViaBankTransferIsUnavailable,
+                        actionTitle: L10n.seeDetails,
+                        action: { [weak self] in self?.navigation.send(.topUp) }
+                    )
+                }
+            })
+            .assignWeak(to: \.banner, on: self)
+            .store(in: &subscriptions)
     }
 }
 

@@ -6,6 +6,7 @@ struct KYCBannerView: View {
 
     let params: KYCBannerParameters
     let action: () -> Void
+    let closeAction: () -> Void
 
     var body: some View {
         ZStack(alignment: .topTrailing) {
@@ -54,7 +55,7 @@ struct KYCBannerView: View {
             .background(params.backgroundColor)
             .cornerRadius(radius: 24, corners: .allCorners)
 
-            Button(action: { }) {
+            Button(action: closeAction) {
                 Image(uiImage: Asset.MaterialIcon.close.image)
                     .renderingMode(.template)
                     .foregroundColor(Color(asset: Asset.Colors.night))
@@ -69,7 +70,7 @@ struct KYCBannerView_Previews: PreviewProvider {
     static var previews: some View {
         List {
             ForEach([StrigaKYC.Status.notStarted, .initiated, .pendingReview, .onHold, .approved, .rejected, .rejectedFinal], id: \.rawValue) { element in
-                KYCBannerView(params: KYCBannerParameters(status: element), action: { })
+                KYCBannerView(params: KYCBannerParameters(status: element), action: { }, closeAction: { })
             }
         }
         .listStyle(.plain)
