@@ -52,7 +52,7 @@ jobs:
 
       - name: Generate secret files and check it
         run: |
-          echo -e ${secrets.XCCONFIG_FILE@Q} > ./p2p_wallet/Config.xcconfig
+          echo -e "${{ secrets.XCCONFIG_FILE }}" > ./p2p_wallet/Config.xcconfig
           chmod u+x Scripts/checkSecrets.sh && Scripts/checkSecrets.sh
         shell: bash
 
