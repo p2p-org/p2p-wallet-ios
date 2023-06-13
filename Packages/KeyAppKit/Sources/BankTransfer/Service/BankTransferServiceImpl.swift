@@ -118,7 +118,7 @@ extension BankTransferServiceImpl: BankTransferService {
                 status: .ready,
                 value: subject.value.value.updated(
                     userId: userId,
-                    mobileVerified: kycStatus.mobileVerified ?? false,
+                    mobileVerified: kycStatus.mobileVerified,
                     kycStatus: kycStatus.status
                 ),
                 error: nil
