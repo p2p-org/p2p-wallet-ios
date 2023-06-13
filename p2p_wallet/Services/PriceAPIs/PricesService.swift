@@ -83,14 +83,15 @@ class PricesService {
 
     private func migrate() async {
         // First migration to fix COPE token
-        let migration1Key = "PricesService.migration1Key"
+        // Second migration to fix USDC, USDT non-depegged conversion to 1:1 with USD
+        let migrationKey = "PricesService.migration2Key"
 
-        if UserDefaults.standard.bool(forKey: migration1Key) == false {
+        if UserDefaults.standard.bool(forKey: migrationKey) == false {
             // clear current cache
             await storage.savePrices([:])
 
             // mark as migrated
-            UserDefaults.standard.set(true, forKey: migration1Key)
+            UserDefaults.standard.set(true, forKey: migrationKey)
         }
     }
 
@@ -109,24 +110,15 @@ class PricesService {
         }
 
         let newPrices = try await api.getCurrentPrices(coins: coins, toFiat: toFiat.code)
-        let prices = adjust(newPrices: newPrices)
+        let prices = newPrices
+            .reduce(TokenPriceMap(), { currentValue, keyValue in
+                guard let value = keyValue.value else { return currentValue }
+                var currentValue = currentValue
+                currentValue[keyValue.key.address] = value
+                return currentValue
+            })
+            .adjusted
         await storage.savePrices(prices)
-        return prices
-    }
-
-    private func adjust(newPrices: [Token: CurrentPrice?]) -> TokenPriceMap {
-        var prices = currentPricesSubject.value
-        for newPrice in newPrices where newPrice.value != nil {
-            if newPrice.key.address == Token.usdc.address || newPrice.key.address == Token.usdt.address {
-                if let price = newPrice.value, let value = price.value, abs(value - 1.0) <= 0.021 {
-                    prices[newPrice.key.address] = CurrentPrice(value: 1.0, change24h: price.change24h)
-                } else {
-                    prices[newPrice.key.address] = newPrice.value
-                }
-            } else {
-                prices[newPrice.key.address] = newPrice.value
-            }
-        }
         return prices
     }
 }
@@ -259,5 +251,34 @@ extension Token {
             logoURI: token.logoURI,
             extensions: token.extensions
         )
+    }
+}
+
+// MARK: - Private helpers
+
+private extension TokenPriceMap {
+    var adjusted: Self {
+        var adjustedSelf = self
+        for price in self {
+            adjustedSelf[price.key] = price.value.adjusted(tokenMint: price.key)
+        }
+        return adjustedSelf
+    }
+}
+
+private extension CurrentPrice {
+    func adjusted(tokenMint: String) -> Self {
+        // assertion
+        guard Defaults.fiat.symbol == "$", // current fiat is USD
+              let value, // current price is not nil
+              [Token.usdc.address, Token.usdt.address].contains(tokenMint), // token is usdc, usdt
+              abs(value - 1.0) <= 0.02 // usdc, usdt wasn't depegged
+        else {
+            // otherwise return current value
+            return self
+        }
+        
+        // modify prices for usdc to usdt to make it equal to 1 USD
+        return CurrentPrice(value: 1.0, change24h: change24h)
     }
 }

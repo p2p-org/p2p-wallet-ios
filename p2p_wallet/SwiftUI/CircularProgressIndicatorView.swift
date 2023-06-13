@@ -2,6 +2,7 @@ import KeyAppUI
 import SwiftUI
 import UIKit
 
+@available(*, deprecated, message: "Use NewCircularProgressIndicator instead")
 struct CircularProgressIndicatorView: UIViewRepresentable {
     private let backgroundColor: UIColor
     private let foregroundColor: UIColor

@@ -56,9 +56,9 @@ jobs:
         shell: bash
 
       - name: Install project
+        shell: bash
         run: |
           chmod u+x Scripts/install.sh && Scripts/install.sh
-        shell: bash
 
       - name: Upload to test
         uses: maierj/fastlane-action@v2.2.0
@@ -94,6 +94,8 @@ jobs:
           SENTRY_TOKEN: '${{ secrets.SENTRY_TOKEN }}'
           BROWSERSTACK_USERNAME_NEW: '${{ secrets.BROWSERSTACK_USERNAME_NEW }}'
           BROWSERSTACK_ACCESS_KEY_NEW: '${{ secrets.BROWSERSTACK_ACCESS_KEY_NEW }}'
+          DISCORD_IOS_BUILD_CHANNEL_ID: '${{ secrets.DISCORD_IOS_BUILD_CHANNEL_ID }}'
+          DISCORD_MESSAGE_API_ENDPOINT: '${{ secrets.DISCORD_MESSAGE_API_ENDPOINT }}'
     
       - name: Login to JIRA
         uses: atlassian/gajira-login@master
