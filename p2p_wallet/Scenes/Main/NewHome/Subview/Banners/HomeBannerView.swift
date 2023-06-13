@@ -14,7 +14,7 @@ struct HomeBannerView: View {
         ZStack(alignment: .bottom) {
             ZStack(alignment: .top) {
                 VStack(spacing: 0) {
-                    Color(.clear)
+                    Color(Asset.Colors.smoke.color)
                         .frame(height: 87)
                     Color(backgroundColor)
                         .frame(height: 200)

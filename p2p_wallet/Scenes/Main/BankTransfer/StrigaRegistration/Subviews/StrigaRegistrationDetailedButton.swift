@@ -16,6 +16,7 @@ struct StrigaRegistrationDetailedButton: View {
                 Text(value.isEmpty ? L10n.selectFromList : value)
                     .apply(style: .title2)
                     .foregroundColor(Color(asset: Asset.Colors.night))
+                    .lineLimit(1)
                 Spacer()
                 Image(asset: Asset.MaterialIcon.chevronRight)
                     .renderingMode(.template)

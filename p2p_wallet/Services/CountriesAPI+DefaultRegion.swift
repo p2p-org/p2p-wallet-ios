@@ -1,18 +1,10 @@
 import Foundation
-import CoreTelephony
 import CountriesAPI
 import PhoneNumberKit
 
 extension CountriesAPI {
 
     func defaultRegionCode() -> String {
-#if os(iOS) && !targetEnvironment(simulator) && !targetEnvironment(macCatalyst)
-        let networkInfo = CTTelephonyNetworkInfo()
-        let carrier: CTCarrier? = networkInfo.serviceSubscriberCellularProviders?.values.first(where: { $0.mobileNetworkCode != nil })
-        if let isoCountryCode = carrier?.isoCountryCode {
-            return isoCountryCode.lowercased()
-        }
-#endif
         return Locale.current.regionCode?.lowercased() ?? PhoneNumberKit.defaultRegionCode().lowercased()
     }
 

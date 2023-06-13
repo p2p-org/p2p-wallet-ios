@@ -12,6 +12,10 @@ public struct StrigaUserDetailsResponse: BankTransferRegistrationData {
     public let placeOfBirth: String?
     public let KYC: StrigaKYC
     
+    public var mobileNumber: String? {
+        mobile.countryCode + mobile.number
+    }
+    
     public struct Mobile: Codable {
         public let countryCode: String
         public let number: String

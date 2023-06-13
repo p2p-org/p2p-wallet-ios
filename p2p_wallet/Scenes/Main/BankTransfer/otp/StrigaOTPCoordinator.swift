@@ -39,6 +39,7 @@ final class StrigaOTPCoordinator: Coordinator<StrigaOTPCoordinatorResult> {
         let controller = EnterSMSCodeViewController(viewModel: viewModel)
         controller.title = L10n.stepOf(3, 3)
         controller.hidesBottomBarWhenPushed = true
+        controller.navigationItem.largeTitleDisplayMode = .never
 
         viewModel.coordinatorIO.onConfirm.sinkAsync { [weak self, weak viewModel] otp in
             viewModel?.isLoading = true

@@ -33,15 +33,16 @@ struct StrigaRegistrationPhoneTextField: View {
 
     var body: some View {
         HStack(spacing: 12) {
-            Button(action: action) {
-                HStack(spacing: 6) {
-                    Text(country?.emoji ?? "🏴")
-                        .font(uiFont: .font(of: .title1, weight: .bold))
-                    Image(uiImage: .expandIcon)
-                        .renderingMode(.template)
-                        .foregroundColor(Color(asset: Asset.Colors.night))
-                        .frame(width: 8, height: 5)
-                }
+            HStack(spacing: 6) {
+                Text(country?.emoji ?? "🏴")
+                    .fontWeight(.bold)
+                    .apply(style: .title1)
+                Image(uiImage: .expandIcon)
+                    .renderingMode(.template)
+                    .foregroundColor(Color(asset: Asset.Colors.night))
+                    .frame(width: 8, height: 5)
+            }.onTapGesture {
+                action()
             }
 
             HStack(spacing: 4) {

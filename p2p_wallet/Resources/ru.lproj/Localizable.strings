@@ -1429,7 +1429,6 @@
 "Add money" = "Добавить деньги";
 "Your postal code" = "Ваш почтовый индекс";
 "Finish identity verification\nto send your money\nworldwide" = "Завершите проверку личности,\nчтобы отправить деньги\nпо всему миру.";
-"Your documents\nverification is pending" = "Ваши документы\nожидают проверки";
 "Usually it takes a few hours" = "Обычно это занимает несколько часов";
 "View" = "Вид";
 "Action required" = "Необходимое действие";
@@ -1437,5 +1436,10 @@
 "Check details" = "Проверить детали";
 "Verification is done" = "Проверка выполнена";
 "Continue your top up\nvia a bank transfer" = "Продолжить пополнение\nбанковским переводом";
-"Sorry, bank transfer\nis unavailable for you" = "К сожалению, банковский перевод\nнедоступен для вас";
 "See details" = "Смотрите подробности";
+"Could not be more than %@ symbols" = "Не может быть больше символов %@";
+"Could not be less than %@ symbols" = "Не может быть меньше символов %@";
+"Your documents verification is pending" = "Ожидается проверка ваших документов";
+"Usually it takes a few hours" = "Обычно это занимает несколько часов";
+"Sorry, bank transfer is unavailable for you" = "К сожалению, банковский перевод недоступен для вас";
+"Verification is rejected" = "Проверка отклонена";

@@ -5,23 +5,20 @@ struct StrigaRegistrationTextField: View {
     let placeholder: String
     @Binding var text: String
     let isEnabled: Bool
-    let maxSymbolsLimit: Int?
 
     init(
         placeholder: String,
         text: Binding<String>,
-        isEnabled: Bool = true,
-        maxSymbolsLimit: Int? = nil
+        isEnabled: Bool = true
     ) {
         self.placeholder = placeholder
         self._text = text
         self.isEnabled = isEnabled
-        self.maxSymbolsLimit = maxSymbolsLimit
     }
 
     var body: some View {
         HStack(spacing: 12) {
-            TextField(placeholder, text: maxSymbolsLimit == nil ? $text : $text.max(maxSymbolsLimit!))
+            TextField(placeholder, text: $text)
                 .font(uiFont: .font(of: .title2))
                 .foregroundColor(isEnabled ? Color(asset: Asset.Colors.night) : Color(asset: Asset.Colors.night).opacity(0.3))
                 .padding(EdgeInsets(top: 14, leading: 16, bottom: 14, trailing: 20))
@@ -51,16 +48,5 @@ struct StrigaRegistrationTextField_Previews: PreviewProvider {
         }
         .padding(16)
         .background(Color(asset: Asset.Colors.sea))
-    }
-}
-
-private extension Binding where Value == String {
-    func max(_ limit: Int) -> Self {
-        if self.wrappedValue.count > limit {
-            DispatchQueue.main.async {
-                self.wrappedValue = String(self.wrappedValue.dropLast())
-            }
-        }
-        return self
     }
 }

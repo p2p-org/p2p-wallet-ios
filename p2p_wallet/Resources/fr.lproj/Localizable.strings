@@ -1432,7 +1432,6 @@
 "Add money" = "Ajouter de l'argent";
 "Your postal code" = "Votre code postal";
 "Finish identity verification\nto send your money\nworldwide" = "Terminez la vérification d'identité\npour envoyer votre argent\ndans le monde entier";
-"Your documents\nverification is pending" = "La vérification de vos documents\nest en attente";
 "Usually it takes a few hours" = "Cela prend généralement quelques heures";
 "View" = "Voir";
 "Action required" = "Action requise";
@@ -1440,5 +1439,10 @@
 "Check details" = "Vérifier les détails";
 "Verification is done" = "La vérification est faite";
 "Continue your top up\nvia a bank transfer" = "Continuez votre recharge\npar virement bancaire";
-"Sorry, bank transfer\nis unavailable for you" = "Désolé, le virement bancaire\nn'est pas disponible pour vous";
 "See details" = "Voir les détails";
+"Could not be more than %@ symbols" = "Il ne peut pas y avoir plus de symboles %@";
+"Could not be less than %@ symbols" = "Il ne peut pas y avoir moins de symboles %@";
+"Your documents verification is pending" = "La vérification de vos documents est en attente";
+"Usually it takes a few hours" = "Cela prend généralement quelques heures";
+"Sorry, bank transfer is unavailable for you" = "Désolé, le virement bancaire n'est pas disponible pour vous";
+"Verification is rejected" = "La vérification est rejetée";

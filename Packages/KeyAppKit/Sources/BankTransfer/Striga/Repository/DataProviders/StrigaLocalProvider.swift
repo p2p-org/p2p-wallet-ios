@@ -49,7 +49,6 @@ extension StrigaLocalProviderImpl: StrigaLocalProvider {
         try data.write(to: cacheFile)
     }
     
-    // TODO: Need to be cleared on log out
     public func clearRegistrationData() {
         try? FileManager.default.removeItem(at: cacheFile)
     }

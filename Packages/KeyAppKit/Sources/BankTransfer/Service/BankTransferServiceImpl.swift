@@ -69,7 +69,8 @@ extension BankTransferServiceImpl: BankTransferService {
                 status: subject.value.status,
                 value: subject.value.value.updated(
                     userId: response.userId,
-                    kycVerified: response.KYC.approved
+                    kycStatus: response.KYC.status,
+                    mobileNumber: data.mobileNumber
                 ),
                 error: subject.value.error
             )
@@ -118,7 +119,7 @@ extension BankTransferServiceImpl: BankTransferService {
                 value: subject.value.value.updated(
                     userId: userId,
                     mobileVerified: kycStatus.mobileVerified,
-                    kycVerified: kycStatus.approved
+                    kycStatus: kycStatus.status
                 ),
                 error: nil
             )

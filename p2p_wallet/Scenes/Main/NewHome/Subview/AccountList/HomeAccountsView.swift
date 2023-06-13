@@ -1,10 +1,3 @@
-//
-//  HomeWithTokensView.swift
-//  p2p_wallet
-//
-//  Created by Ivan on 05.08.2022.
-//
-
 import Combine
 import KeyAppUI
 import Resolver
@@ -106,6 +99,8 @@ struct HomeAccountsView: View {
                 }
             }
         }
+        .padding(.top, 32)
+        .background(Color(Asset.Colors.snow.color))
     }
 
     private func tokenCell(rendableAccount: any RenderableAccount, isVisiable: Bool) -> some View {

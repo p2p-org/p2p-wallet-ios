@@ -12,7 +12,6 @@ enum BankTransferCoordinatorResult {
 final class BankTransferCoordinator: Coordinator<Void> {
 
     @Injected private var bankTransferService: BankTransferService
-    @Injected private var metadataService: WalletMetadataService
 
     private let viewController: UINavigationController
 
@@ -51,28 +50,51 @@ final class BankTransferCoordinator: Coordinator<Void> {
     }
 
     private func step(userData: UserData) -> BankTransferStep {
-        var step = BankTransferStep.registration
-        if userData.userId != nil {
-            if userData.mobileVerified {
-                if userData.kycVerified {
-                    step = .transfer
-                } else {
-                    step = .kyc
-                }
-            } else {
-                step = .otp
-            }
+        // registration
+        guard userData.userId != nil else {
+            return .registration
         }
-        return step
+        
+        // mobile verification
+        guard userData.mobileVerified else {
+            return .otp
+        }
+        
+        // kyc
+        switch userData.kycStatus {
+        case .approved:
+            return .transfer
+        case .rejectedFinal:
+            return .kycRejected
+        case let status where status.isWaitingForUpload:
+            return .kyc
+        case let status where status.isBeingReviewed:
+            return .kycPendingReview
+        default:
+            // TODO: - Review later
+            return .kyc
+        }
     }
 
     private func coordinator(for step: BankTransferStep, userData: UserData) -> AnyPublisher<BankTransferFlowResult, Never> {
         switch step {
+        case .registration:
+            return coordinate(
+                to: BankTransferInfoCoordinator(viewController: viewController)
+            ).map { result in
+                switch result {
+                case .completed:
+                    return BankTransferFlowResult.next
+                case .canceled:
+                    return BankTransferFlowResult.none
+                }
+            }
+            .eraseToAnyPublisher()
         case .otp:
             return coordinate(
                 to: StrigaOTPCoordinator(
                     viewController: viewController,
-                    phone: metadataService.metadata.value?.phoneNumber ?? ""
+                    phone: userData.mobileNumber ?? ""
                 )
             ).map { result in
                 switch result {
@@ -94,18 +116,45 @@ final class BankTransferCoordinator: Coordinator<Void> {
                 }
             }
                 .eraseToAnyPublisher()
-        case .registration:
-            return coordinate(
-                to: BankTransferInfoCoordinator(viewController: viewController)
-            ).map { result in
-                switch result {
-                case .completed:
-                    return BankTransferFlowResult.next
-                case .canceled:
-                    return BankTransferFlowResult.none
-                }
-            }
-                .eraseToAnyPublisher()
+        case .kycPendingReview:
+            let subject = PassthroughSubject<BankTransferFlowResult, Never>()
+            viewController.showAlert(
+                title: L10n.yourDocumentsVerificationIsPending,
+                message: L10n.usuallyItTakesAFewHours,
+                actions: [
+                    .init(
+                        title: L10n.ok,
+                        style: .default,
+                        handler: { [weak subject] action in
+                            subject?.send(.none)
+                        }
+                    )
+                ]
+            )
+            return subject.prefix(1).eraseToAnyPublisher()
+        case .kycRejected:
+            let subject = PassthroughSubject<BankTransferFlowResult, Never>()
+            viewController.showAlert(
+                title: L10n.verificationIsRejected,
+                message: L10n.sorryBankTransferIsUnavailableForYou,
+                actions: [
+                    .init(
+                        title: L10n.okay,
+                        style: .default,
+                        handler: { [weak subject] action in
+                            subject?.send(.none)
+                        }
+                    ),
+                    .init(
+                        title: "Appeal",
+                        style: .default,
+                        handler: { [weak subject] action in
+                            subject?.send(.none)
+                        }
+                    )
+                ]
+            )
+            return subject.prefix(1).eraseToAnyPublisher()
         case .transfer:
             return coordinate(
                 to: StrigaTransferCoordinator(
@@ -119,9 +168,11 @@ final class BankTransferCoordinator: Coordinator<Void> {
 
 }
 
-enum BankTransferStep: CaseIterable {
+enum BankTransferStep {
     case registration
     case otp
     case kyc
+    case kycPendingReview
+    case kycRejected
     case transfer
 }

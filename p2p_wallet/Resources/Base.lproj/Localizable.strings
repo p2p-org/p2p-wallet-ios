@@ -1397,7 +1397,6 @@
 "Add money" = "Add money";
 "Your postal code" = "Your postal code";
 "Finish identity verification\nto send your money\nworldwide" = "Finish identity verification\nto send your money\nworldwide";
-"Your documents\nverification is pending" = "Your documents\nverification is pending";
 "Usually it takes a few hours" = "Usually it takes a few hours";
 "View" = "View";
 "Action required" = "Action required";
@@ -1405,5 +1404,10 @@
 "Check details" = "Check details";
 "Verification is done" = "Verification is done";
 "Continue your top up\nvia a bank transfer" = "Continue your top up\nvia a bank transfer";
-"Sorry, bank transfer\nis unavailable for you" = "Sorry, bank transfer\nis unavailable for you";
 "See details" = "See details";
+"Could not be more than %@ symbols" = "Could not be more than %@ symbols";
+"Could not be less than %@ symbols" = "Could not be less than %@ symbols";
+"Your documents verification is pending" = "Your documents verification is pending";
+"Usually it takes a few hours" = "Usually it takes a few hours";
+"Sorry, bank transfer is unavailable for you" = "Sorry, bank transfer is unavailable for you";
+"Verification is rejected" = "Verification is rejected";

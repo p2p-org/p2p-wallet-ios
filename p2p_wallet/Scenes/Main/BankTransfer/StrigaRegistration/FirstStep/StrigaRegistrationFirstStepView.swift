@@ -82,14 +82,14 @@ struct StrigaRegistrationFirstStepView: View {
                 title: L10n.firstName,
                 status: viewModel.fieldsStatuses[.firstName]
             ) {
-                TextField(placeholder: L10n.enter, text: $viewModel.firstName, maxSymbolsLimit: 40)
+                TextField(placeholder: L10n.enter, text: $viewModel.firstName)
             }
 
             Cell(
                 title: L10n.surname,
                 status: viewModel.fieldsStatuses[.surname]
             ) {
-                TextField(placeholder: L10n.enter, text: $viewModel.surname, maxSymbolsLimit: 40)
+                TextField(placeholder: L10n.enter, text: $viewModel.surname)
             }
         }
         .styled()
@@ -110,11 +110,11 @@ struct StrigaRegistrationFirstStepView: View {
             ) {
                 DetailedButton(
                     value: $viewModel.countryOfBirth,
-                    action: { }
+                    action: { [weak viewModel] in
+                        guard let viewModel else { return }
+                        viewModel.chooseCountry.send(viewModel.selectedCountryOfBirth)
+                    }
                 )
-            }
-            .onTapGesture {
-                viewModel.chooseCountry.send(viewModel.selectedCountryOfBirth)
             }
         }
         .styled()

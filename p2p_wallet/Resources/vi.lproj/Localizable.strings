@@ -1434,7 +1434,6 @@
 "Add money" = "Thêm tiền";
 "Your postal code" = "Mã bưu chính của bạn";
 "Finish identity verification\nto send your money\nworldwide" = "Hoàn tất xác minh danh tính\nđể gửi tiền của bạn\ntrên toàn thế giới";
-"Your documents\nverification is pending" = "Tài liệu của bạn\nxác minh đang chờ xử lý";
 "Usually it takes a few hours" = "Thông thường phải mất vài giờ";
 "View" = "Xem";
 "Action required" = "Cần hành động";
@@ -1442,5 +1441,10 @@
 "Check details" = "kiểm tra chi tiết";
 "Verification is done" = "xác minh được thực hiện";
 "Continue your top up\nvia a bank transfer" = "Tiếp tục nạp tiền của bạn\nthông qua chuyển khoản ngân hàng";
-"Sorry, bank transfer\nis unavailable for you" = "Xin lỗi, chuyển khoản ngân hàng\nkhông khả dụng cho bạn";
 "See details" = "Xem chi tiết";
+"Could not be more than %@ symbols" = "Không được nhiều hơn %@ ký hiệu";
+"Could not be less than %@ symbols" = "Không được ít hơn %@ ký hiệu";
+"Your documents verification is pending" = "Giấy tờ của bạn đang được xác minh";
+"Usually it takes a few hours" = "Thông thường phải mất vài giờ";
+"Sorry, bank transfer is unavailable for you" = "Xin lỗi, chuyển khoản ngân hàng không khả dụng cho bạn";
+"Verification is rejected" = "Xác minh bị từ chối";
