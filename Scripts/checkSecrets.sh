@@ -6,7 +6,7 @@ GREEN='\033[1;32m'
 NC='\033[0m' # Reset formatting
 
 # Log
-echo -e "${GREEN}==>${NC} Checking ${GREEN}Config.xcconfig${NC} file"
+echo -e "${GREEN}==>${NC} Checking all secrets in ${GREEN}Config.xcconfig${NC} file"
 
 source_file="./p2p_wallet/Info.plist"
 check_file="./p2p_wallet/Config.xcconfig"
