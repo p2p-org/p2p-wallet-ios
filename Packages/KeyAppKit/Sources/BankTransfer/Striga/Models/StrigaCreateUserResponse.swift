@@ -8,9 +8,9 @@ public struct StrigaCreateUserResponse: Decodable {
 
 public struct StrigaKYC: Codable {
     public let status: Status
-    public let mobileVerified: Bool
+    public let mobileVerified: Bool?
     
-    public init(status: StrigaKYC.Status, mobileVerified: Bool) {
+    public init(status: StrigaKYC.Status, mobileVerified: Bool? = nil) {
         self.status = status
         self.mobileVerified = mobileVerified
     }
