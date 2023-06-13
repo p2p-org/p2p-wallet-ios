@@ -1401,3 +1401,9 @@
 "Usually it takes a few hours" = "Usually it takes a few hours";
 "Sorry, bank transfer is unavailable for you" = "Sorry, bank transfer is unavailable for you";
 "Verification is rejected" = "Verification is rejected";
+"Please, wait 1 day for the next SMS request" = "Please, wait 1 day for the next SMS request";
+"After 5 SMS requests we disabled it for 1 day to secure your account" = "After 5 SMS requests we disabled it for 1 day to secure your account";
+"Open Wallet screen" = "Open Wallet screen";
+"Write to suppot" = "Write to suppot";
+"Please, wait 1 day for the next try" = "Please, wait 1 day for the next try";
+"After 5 incorrect attempts we disabled SMS verification for 1 day to secure your account." = "After 5 incorrect attempts we disabled SMS verification for 1 day to secure your account.";
