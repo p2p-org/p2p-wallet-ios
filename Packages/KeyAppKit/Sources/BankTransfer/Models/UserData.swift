@@ -3,7 +3,7 @@ public struct UserData {
 
     public var userId: String?
     public var mobileVerified: Bool
-    public var kycStatus: StrigaKYC.Status
+    public var kycStatus: StrigaKYCStatus
     
     public var mobileNumber: String?
 
@@ -13,7 +13,7 @@ public struct UserData {
     private init(
         userId: String? = nil,
         mobileVerified: Bool,
-        kycStatus: StrigaKYC.Status,
+        kycStatus: StrigaKYCStatus,
         mobileNumber: String?
     ) {
         // Method mark as private to prevent data erasing for countryCode, userId when calling init from outside.
@@ -36,7 +36,7 @@ public struct UserData {
     public func updated(
         userId: String? = nil,
         mobileVerified: Bool? = nil,
-        kycStatus: StrigaKYC.Status? = nil,
+        kycStatus: StrigaKYCStatus? = nil,
         mobileNumber: String? = nil
     ) -> Self {
         .init(

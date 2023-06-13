@@ -213,8 +213,8 @@
         "repositoryURL": "https://github.com/onevcat/Kingfisher.git",
         "state": {
           "branch": null,
-          "revision": "e8625b80c413457b13ea9be75d07f6e9f5830c19",
-          "version": "7.7.0"
+          "revision": "3f6992b5cd3143e83b02300ea59c400d4cf0747a",
+          "version": "7.8.0"
         }
       },
       {
@@ -285,8 +285,8 @@
         "repositoryURL": "https://github.com/marmelroy/PhoneNumberKit.git",
         "state": {
           "branch": null,
-          "revision": "f901c4e6191cfc3b5cb73eee1d66217fe9f3eaca",
-          "version": "3.6.0"
+          "revision": "7e22cf3e7d40a6530bbdff255d6350de890512de",
+          "version": "3.6.1"
         }
       },
       {

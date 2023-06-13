@@ -157,6 +157,13 @@ struct DebugMenuView: View {
             }
             
             Toggle("Mocking enabled", isOn: $globalAppState.strigaMockingEnabled)
+            
+            Button {
+                Resolver.resolve(KeychainStorage.self).metadataKeychain.clear()
+                Resolver.resolve(NotificationService.self).showToast(title: "Deleted", text: "Metadata deleted from Keychain")
+            } label: {
+                Text("Delete metatdata from keychain")
+            }
         }
     }
     

@@ -1,7 +1,7 @@
 import Foundation
 import BankTransfer
 
-extension StrigaKYC.Status {
+extension StrigaKYCStatus {
     var isWaitingForUpload: Bool {
         self == .notStarted || self == .initiated || self == .rejected
     }
