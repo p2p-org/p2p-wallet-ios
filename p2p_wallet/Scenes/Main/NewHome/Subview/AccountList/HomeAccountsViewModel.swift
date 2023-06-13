@@ -32,7 +32,8 @@ final class HomeAccountsViewModel: BaseViewModel, ObservableObject {
     @Published private(set) var actions: [WalletActionType] = []
     @Published private(set) var scrollOnTheTop = true
     @Published private(set) var hideZeroBalance: Bool = Defaults.hideZeroBalances
-    @Published var smallBanner: KYCBannerParameters?
+    @Published private(set) var smallBanner: HomeBannerParameters?
+    @Published private(set) var bannerTapped: Bool = false
 
     /// Primary list accounts.
     @Published var accounts: [any RenderableAccount] = []
@@ -190,6 +191,11 @@ final class HomeAccountsViewModel: BaseViewModel, ObservableObject {
     func sellTapped() {
         navigation.send(.cashOut)
     }
+
+    func closeBanner() {
+        smallBanner = nil
+        bannerTapped = false
+    }
 }
 
 extension HomeAccountsViewModel {
@@ -203,8 +209,12 @@ extension HomeAccountsViewModel {
 private extension HomeAccountsViewModel {
     func bindTransferData() {
         bankTransferService.state
+            .filter({ $0.value.userId != nil && $0.value.mobileVerified })
             .map { value in
-                KYCBannerParameters(status: .pendingReview) // TODO: hardcode
+                HomeBannerParameters(status: value.value.kycStatus, action: { [weak self] in
+                    self?.navigation.send(.topUp)
+                    self?.bannerTapped = true
+                }, isSmallBanner: true)
             }
             .assignWeak(to: \.smallBanner, on: self)
             .store(in: &subscriptions)

@@ -27,15 +27,16 @@ final class HomeEmptyViewModel: BaseViewModel, ObservableObject {
     
     private var popularCoinsTokens: [Token] = [.usdc, .nativeSolana, /*.renBTC, */.eth, .usdt]
     @Published var popularCoins = [PopularCoin]()
-    @Published var banner: HomeBannerViewParameters
+    @Published var banner: HomeBannerParameters
 
     // MARK: - Initializer
 
     init(navigation: PassthroughSubject<HomeNavigation, Never>) {
         self.navigation = navigation
-        self.banner = HomeBannerViewParameters(
-            backgroundColor: Asset.Colors.lightSea.color,
+        self.banner = HomeBannerParameters(
+            backgroundColor: Asset.Colors.lightGrass.color,
             image: .homeBannerPerson,
+            imageSize: CGSize(width: 198, height: 142),
             title: L10n.topUpYourAccountToGetStarted,
             subtitle: L10n.makeYourFirstDepositOrBuyCryptoWithYourCreditCardOrApplePay,
             actionTitle: L10n.addMoney,
@@ -77,56 +78,12 @@ private extension HomeEmptyViewModel {
 
     func bindBankTransfer() {
         bankTransferService.state
-            .map({ [weak self] value in
-                var status: StrigaKYC.Status = .pendingReview  // TODO: hardcode
-                switch status { //  value.value.kycStatus {
-                case .notStarted, .initiated:
-                    return HomeBannerViewParameters(
-                        backgroundColor: Asset.Colors.lightSea.color,
-                        image: .homeBannerPerson,
-                        title: L10n.topUpYourAccountToGetStarted,
-                        subtitle: L10n.makeYourFirstDepositOrBuyCryptoWithYourCreditCardOrApplePay,
-                        actionTitle: L10n.addMoney,
-                        action: { [weak self] in self?.navigation.send(.topUp) }
-                    )
-                case .pendingReview, .onHold:
-                    return HomeBannerViewParameters(
-                        backgroundColor: Asset.Colors.lightSea.color,
-                        image: .kycClock,
-                        title: L10n.yourDocumentsVerificationIsPending,
-                        subtitle: L10n.usuallyItTakesAFewHours,
-                        actionTitle: L10n.view,
-                        action: { [weak self] in self?.navigation.send(.topUp) }
-                    )
-                case .approved:
-                    return HomeBannerViewParameters(
-                        backgroundColor: Asset.Colors.lightGrass.color,
-                        image: .kycSend,
-                        title: L10n.verificationIsDone,
-                        subtitle: L10n.continueYourTopUpViaABankTransfer,
-                        actionTitle: L10n.topUp,
-                        action: { [weak self] in self?.navigation.send(.topUp) }
-                    )
-                case .rejected:
-                    return HomeBannerViewParameters(
-                        backgroundColor: Asset.Colors.lightSun.color,
-                        image: .kycShow,
-                        title: L10n.actionRequired,
-                        subtitle: L10n.pleaseCheckTheDetailsAndUpdateYourData,
-                        actionTitle: L10n.checkDetails,
-                        action: { [weak self] in self?.navigation.send(.topUp) }
-                    )
-                case .rejectedFinal:
-                    return HomeBannerViewParameters(
-                        backgroundColor: Asset.Colors.lightRose.color,
-                        image: .kycFail,
-                        title: L10n.verificationIsRejected,
-                        subtitle: L10n.addMoneyViaBankTransferIsUnavailable,
-                        actionTitle: L10n.seeDetails,
-                        action: { [weak self] in self?.navigation.send(.topUp) }
-                    )
-                }
-            })
+            .filter { $0.value.userId != nil && $0.value.mobileVerified }
+            .map { [weak self] value in
+                HomeBannerParameters(status: value.value.kycStatus, action: {
+                    self?.navigation.send(.topUp)
+                }, isSmallBanner: false)
+            }
             .assignWeak(to: \.banner, on: self)
             .store(in: &subscriptions)
     }

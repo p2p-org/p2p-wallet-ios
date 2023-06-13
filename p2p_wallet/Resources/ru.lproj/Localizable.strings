@@ -1441,7 +1441,9 @@
 "Could not be less than %@ symbols" = "Не может быть меньше символов %@";
 "Your documents verification is pending" = "Ожидается проверка ваших документов";
 "Usually it takes a few hours" = "Обычно это занимает несколько часов";
-"Sorry, bank transfer is unavailable for you" = "К сожалению, банковский перевод недоступен для вас";
 "Verification is rejected" = "Проверка отклонена";
 "Add money via bank\ntransfer is unavailable" = "Добавить деньги с помощью банковского\nперевода невозможно";
 "Add money to your account\nto get started" = "Добавьте деньги на свой счет,\nчтобы начать";
+"Finish identity verification\nto send money worldwide" = "Завершите проверку личности\nдля отправки денег по всему миру";
+"HomeBanner. Your documents\nverification is pending" = "Ваши документы\nожидают проверки";
+"HomeSmallBanner. Finish identity\nverification to send\nmoney worldwide" = "Завершите\nподтверждение личности, чтобы отправлять\nденег по всему миру";

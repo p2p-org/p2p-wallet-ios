@@ -58,15 +58,13 @@ struct HomeAccountsView: View {
     private var content: some View {
         VStack(alignment: .leading, spacing: 0) {
             if let smallBanner = viewModel.smallBanner {
-                KYCBannerView(
-                    params: smallBanner,
-                    action: { },
-                    closeAction: { [weak viewModel] in
-                        viewModel?.smallBanner = nil
-                        
-                    })
-                .padding(.horizontal, 16)
-                .padding(.top, 16)
+                HomeSmallBannerView(params: smallBanner)
+                    .padding(.horizontal, 16)
+                    .padding(.top, 16)
+                    .onChange(of: viewModel.bannerTapped) { [weak viewModel] output in
+                        guard output else { return }
+                        withAnimation { viewModel?.closeBanner() }
+                    }
             }
             Text(L10n.tokens)
                 .font(uiFont: .font(of: .title3, weight: .semibold))

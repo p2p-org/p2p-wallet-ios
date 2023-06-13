@@ -15,6 +15,7 @@ import Sell
 import Send
 import SolanaSwift
 import Wormhole
+import BankTransfer
 
 @MainActor
 class HomeViewModel: ObservableObject {
@@ -31,6 +32,7 @@ class HomeViewModel: ObservableObject {
     @Injected private var nameStorage: NameStorageType
     @Injected private var createNameService: CreateNameService
     @Injected private var sellDataService: any SellDataService
+    @Injected private var bankTransferService: BankTransferService
 
     // MARK: - Published properties
 
@@ -49,7 +51,10 @@ class HomeViewModel: ObservableObject {
         bind()
 
         // reload
-        Task { await reload() }
+        Task {
+            await reload()
+            await bankTransferService.reload()
+        }
     }
 
     // MARK: - Methods

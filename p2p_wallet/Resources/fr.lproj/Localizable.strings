@@ -1444,7 +1444,9 @@
 "Could not be less than %@ symbols" = "Il ne peut pas y avoir moins de symboles %@";
 "Your documents verification is pending" = "La vérification de vos documents est en attente";
 "Usually it takes a few hours" = "Cela prend généralement quelques heures";
-"Sorry, bank transfer is unavailable for you" = "Désolé, le virement bancaire n'est pas disponible pour vous";
 "Verification is rejected" = "La vérification est rejetée";
 "Add money via bank\ntransfer is unavailable" = "Ajouter de l'argent par virement\nbancaire n'est pas disponible";
 "Add money to your account\nto get started" = "Ajoutez de l'argent à votre compte\npour commencer";
+"Finish identity verification\nto send money worldwide" = "Terminez la vérification d'identité\npour envoyer de l'argent dans le monde entier";
+"HomeBanner. Your documents\nverification is pending" = "La vérification de vos documents\nest en attente";
+"HomeSmallBanner. Finish identity\nverification to send\nmoney worldwide" = "Terminez la vérification\nd'identité pour envoyer\nde l'argent dans le monde entier";

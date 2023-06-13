@@ -1446,7 +1446,9 @@
 "Could not be less than %@ symbols" = "Không được ít hơn %@ ký hiệu";
 "Your documents verification is pending" = "Giấy tờ của bạn đang được xác minh";
 "Usually it takes a few hours" = "Thông thường phải mất vài giờ";
-"Sorry, bank transfer is unavailable for you" = "Xin lỗi, chuyển khoản ngân hàng không khả dụng cho bạn";
 "Verification is rejected" = "Xác minh bị từ chối";
 "Add money via bank\ntransfer is unavailable" = "Thêm tiền qua ngân hàng\nchuyển khoản không khả dụng";
 "Add money to your account\nto get started" = "Thêm tiền vào tài khoản của bạn\nđể bắt đầu";
+"Finish identity verification\nto send money worldwide" = "Hoàn tất xác minh danh tính\nđể gửi tiền trên toàn thế giới";
+"HomeBanner. Your documents\nverification is pending" = "Tài liệu của bạn\nxác minh đang chờ xử lý";
+"HomeSmallBanner. Finish identity\nverification to send\nmoney worldwide" = "Hoàn tất xác minh danh tính\nđể gửi tiền\ntrên toàn thế giới";

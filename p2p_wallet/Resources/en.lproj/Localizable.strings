@@ -1408,7 +1408,9 @@
 "Could not be less than %@ symbols" = "Could not be less than %@ symbols";
 "Your documents verification is pending" = "Your documents verification is pending";
 "Usually it takes a few hours" = "Usually it takes a few hours";
-"Sorry, bank transfer is unavailable for you" = "Sorry, bank transfer is unavailable for you";
 "Verification is rejected" = "Verification is rejected";
 "Add money via bank\ntransfer is unavailable" = "Add money via bank\ntransfer is unavailable";
 "Add money to your account\nto get started" = "Add money to your account\nto get started";
+"Finish identity verification\nto send money worldwide" = "Finish identity verification\nto send money worldwide";
+"HomeBanner. Your documents\nverification is pending" = "Your documents\nverification is pending";
+"HomeSmallBanner. Finish identity\nverification to send\nmoney worldwide" = "Finish identity\nverification to send\nmoney worldwide";

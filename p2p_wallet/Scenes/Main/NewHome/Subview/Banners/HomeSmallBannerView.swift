@@ -2,11 +2,9 @@ import KeyAppUI
 import SwiftUI
 import BankTransfer
 
-struct KYCBannerView: View {
+struct HomeSmallBannerView: View {
 
-    let params: KYCBannerParameters
-    let action: () -> Void
-    let closeAction: () -> Void
+    let params: HomeBannerParameters
 
     var body: some View {
         ZStack(alignment: .topTrailing) {
@@ -23,7 +21,7 @@ struct KYCBannerView: View {
                             .padding(.top, 4)
                     }
 
-                    Button(action: action) {
+                    Button(action: params.action) {
                         HStack(spacing: 8) {
                             Text(params.actionTitle)
                                 .fontWeight(.medium)
@@ -49,28 +47,27 @@ struct KYCBannerView: View {
                 Image(uiImage: params.image)
                     .resizable()
                     .scaledToFit()
-                    .frame(minWidth: 100, maxWidth: 120)
+                    .frame(width: params.imageSize.width, height: params.imageSize.height)
             }
             .padding(16)
-            .background(params.backgroundColor)
+            .background(Color(params.backgroundColor))
             .cornerRadius(radius: 24, corners: .allCorners)
-
-            Button(action: closeAction) {
-                Image(uiImage: Asset.MaterialIcon.close.image)
-                    .renderingMode(.template)
-                    .foregroundColor(Color(asset: Asset.Colors.night))
-                    .padding(12)
-            }
         }
         .frame(height: 141)
     }
 }
 
-struct KYCBannerView_Previews: PreviewProvider {
+struct HomeSmallBannerView_Previews: PreviewProvider {
     static var previews: some View {
         List {
             ForEach([StrigaKYC.Status.notStarted, .initiated, .pendingReview, .onHold, .approved, .rejected, .rejectedFinal], id: \.rawValue) { element in
-                KYCBannerView(params: KYCBannerParameters(status: element), action: { }, closeAction: { })
+                HomeSmallBannerView(
+                    params: HomeBannerParameters(
+                        status: element,
+                        action: { },
+                        isSmallBanner: true
+                    )
+                )
             }
         }
         .listStyle(.plain)
