@@ -2,32 +2,6 @@ import Foundation
 import KeyAppUI
 import SwiftUI
 
-struct HardErrorView<Content: View>: View {
-    let title: String
-    let subtitle: String
-    @ViewBuilder public var content: () -> Content
-
-    var body: some View {
-        VStack {
-            Spacer()
-            OnboardingContentView(
-                data: .init(
-                    image: .womanHardError,
-                    title: title,
-                    subtitle: subtitle
-                )
-            )
-                .padding(.bottom, 48)
-
-            BottomActionContainer {
-                content()
-            }
-        }
-        .hardErrorScreen()
-    }
-
-}
-
 struct StrigaOTPHardErrorView: View {
     let title: String
     let subtitle: String
@@ -62,13 +36,5 @@ struct StrigaOTPHardErrorView_Previews: PreviewProvider {
             title: L10n.pleaseWait1DayForTheNextTry,
             subtitle: L10n.after5SMSRequestsWeDisabledItFor1DayToSecureYourAccount,
             onAction: {}, onSupport: {})
-    }
-}
-
-private extension View {
-    func hardErrorScreen() -> some View {
-        background(Color(Asset.Colors.smoke.color))
-            .edgesIgnoringSafeArea(.all)
-            .frame(maxHeight: .infinity)
     }
 }
