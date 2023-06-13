@@ -39,11 +39,11 @@ struct HomeBannerParameters {
         switch status {
         case .notStarted, .initiated:
             backgroundColor = Asset.Colors.lightSea.color
-            image = .startThree
+            image = .kycFinish
             if isSmallBanner {
-                imageSize = CGSize(width: 120, height: 90)
+                imageSize = CGSize(width: 121, height: 91)
             } else {
-                imageSize = CGSize(width: 164, height: 123)
+                imageSize = CGSize(width: 153, height: 123)
             }
             if isSmallBanner {
                 title = L10n.HomeSmallBanner.finishIdentityVerificationToSendMoneyWorldwide
@@ -68,9 +68,9 @@ struct HomeBannerParameters {
             backgroundColor = Asset.Colors.lightGrass.color
             image = .kycSend
             if isSmallBanner {
-                imageSize = CGSize(width: 160, height: 110)
+                imageSize = CGSize(width: 132, height: 117)
             } else {
-                imageSize = CGSize(width: 171, height: 125)
+                imageSize = CGSize(width: 132, height: 117)
             }
             title = L10n.verificationIsDone
             subtitle = L10n.continueYourTopUpViaABankTransfer
@@ -79,9 +79,9 @@ struct HomeBannerParameters {
             backgroundColor = Asset.Colors.lightSun.color
             image = .kycShow
             if isSmallBanner {
-                imageSize = CGSize(width: 150, height: 112)
+                imageSize = CGSize(width: 115, height: 112)
             } else {
-                imageSize = CGSize(width: 161, height: 115)
+                imageSize = CGSize(width: 115, height: 112)
             }
             title = L10n.actionRequired
             subtitle = L10n.pleaseCheckTheDetailsAndUpdateYourData

@@ -53,7 +53,6 @@ class HomeViewModel: ObservableObject {
         // reload
         Task {
             await reload()
-            await bankTransferService.reload()
         }
     }
 
@@ -91,6 +90,9 @@ class HomeViewModel: ObservableObject {
         analyticsManager.log(
             event: .mainScreenWalletsOpen(isSellEnabled: sellDataService.isAvailable)
         )
+
+        // TODO: This request is on the discussion with analytic
+        Task { await bankTransferService.reload() }
     }
 }
 

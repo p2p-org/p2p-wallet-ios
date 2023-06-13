@@ -72,7 +72,7 @@ struct HomeBannerView_Previews: PreviewProvider {
             )
 
             ForEach([StrigaKYC.Status.notStarted, .initiated, .pendingReview, .onHold, .approved, .rejected, .rejectedFinal], id: \.rawValue) { element in
-                HomeBannerView(params: HomeBannerParameters(status: element, action: { }, isSmallBanner: true))
+                HomeBannerView(params: HomeBannerParameters(status: element, action: { }, isSmallBanner: false))
             }
         }
         .listStyle(.plain)

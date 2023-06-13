@@ -48,6 +48,7 @@ struct HomeSmallBannerView: View {
                     .resizable()
                     .scaledToFit()
                     .frame(width: params.imageSize.width, height: params.imageSize.height)
+                    .padding(.trailing, 16)
             }
             .padding(16)
             .background(Color(params.backgroundColor))
