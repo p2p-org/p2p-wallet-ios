@@ -11,7 +11,13 @@ echo "${GREEN}${BOLD}==>${NC} Checking ${GREEN}${BOLD}Config.xcconfig${NC} file"
 
 source_file="./p2p_wallet/Info.plist"
 check_file="./p2p_wallet/Config.xcconfig"
-exclude_strings=("DEVELOPMENT_LANGUAGE" "EXECUTABLE_NAME" "PRODUCT_BUNDLE_IDENTIFIER" "MARKETING_VERSION" "CURRENT_PROJECT_VERSION" "")
+exclude_strings=(
+    "DEVELOPMENT_LANGUAGE" 
+    "EXECUTABLE_NAME" 
+    "PRODUCT_BUNDLE_IDENTIFIER"
+    "MARKETING_VERSION"
+    "CURRENT_PROJECT_VERSION"
+)
 
 output_file="./Scripts/checkSecrets-output.txt"
 
