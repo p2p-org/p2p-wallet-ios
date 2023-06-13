@@ -4,6 +4,7 @@ import Foundation
 import Onboarding
 import Resolver
 import SwiftyUserDefaults
+import KeyAppKitCore
 
 enum StrigaOTPCoordinatorResult {
     case canceled
@@ -50,6 +51,19 @@ final class StrigaOTPCoordinator: Coordinator<StrigaOTPCoordinatorResult> {
                 try await self?.bankTransfer.verify(OTP: otp)
                 self?.numberVerifiedSubject.send(())
                 self?.resendCounter = .zero()
+            } catch BankTransferError.otpExceededVerification {
+                var title = L10n.pleaseWait1DayForTheNextTry
+                var subtitle = L10n.after5IncorrectAttemptsWeDisabledSMSVerificationFor1DayToSecureYourAccount
+                let errorController = StrigaOTPHardErrorView(
+                    title: title,
+                    subtitle: subtitle,
+                    onAction: {
+                        self?.viewController.popToRootViewController(animated: true)
+                    }, onSupport: {
+                        self?.helpLauncher.launch()
+                    }).asViewController(withoutUIKitNavBar: true)
+                errorController.hidesBottomBarWhenPushed = true
+                self?.viewController.pushViewController(errorController, animated: true)
             } catch {
                 viewModel?.coordinatorIO.error.send(error)
             }
@@ -65,7 +79,24 @@ final class StrigaOTPCoordinator: Coordinator<StrigaOTPCoordinatorResult> {
             process.start {
                 guard let self, let viewModel else { return }
                 self.increaseTimer(viewModel: viewModel)
-                try await self.bankTransfer.resendSMS()
+                do {
+                    try await self.bankTransfer.resendSMS()
+                } catch BankTransferError.otpExceededDailyLimit {
+                    var title = L10n.pleaseWait1DayForTheNextSMSRequest
+                    var subtitle = L10n.after5SMSRequestsWeDisabledItFor1DayToSecureYourAccount
+                    let errorController = StrigaOTPHardErrorView(
+                        title: title,
+                        subtitle: subtitle,
+                        onAction: { [weak self] in
+                            self?.viewController.popToRootViewController(animated: true)
+                        }, onSupport: { [weak self] in
+                            self?.helpLauncher.launch()
+                        }).asViewController(withoutUIKitNavBar: true)
+                    errorController.hidesBottomBarWhenPushed = true
+                    self.viewController.pushViewController(errorController, animated: true)
+                } catch {
+                    viewModel.coordinatorIO.error.send(error)
+                }
             }
         }.store(in: &subscriptions)
 

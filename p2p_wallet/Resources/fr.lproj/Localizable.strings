@@ -1450,3 +1450,9 @@
 "Finish identity verification\nto send money worldwide" = "Terminez la vérification d'identité\npour envoyer de l'argent dans le monde entier";
 "HomeBanner. Your documents\nverification is pending" = "La vérification de vos documents\nest en attente";
 "HomeSmallBanner. Finish identity\nverification to send\nmoney worldwide" = "Terminez la vérification\nd'identité pour envoyer\nde l'argent dans le monde entier";
+"Please, wait 1 day for the next SMS request" = "S'il vous plaît, attendez 1 jour pour la prochaine demande de SMS";
+"After 5 SMS requests we disabled it for 1 day to secure your account" = "Après 5 demandes SMS, nous l'avons désactivé pendant 1 jour pour sécuriser votre compte";
+"Open Wallet screen" = "Ouvrir l'écran du portefeuille";
+"Write to suppot" = "Ecrire au support";
+"Please, wait 1 day for the next try" = "S'il vous plaît, attendez 1 jour pour le prochain essai";
+"After 5 incorrect attempts we disabled SMS verification for 1 day to secure your account." = "Après 5 tentatives incorrectes, nous avons désactivé la vérification par SMS pendant 1 jour pour sécuriser votre compte.";

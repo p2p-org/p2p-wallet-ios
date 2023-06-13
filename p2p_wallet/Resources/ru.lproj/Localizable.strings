@@ -1447,3 +1447,9 @@
 "Finish identity verification\nto send money worldwide" = "Завершите проверку личности\nдля отправки денег по всему миру";
 "HomeBanner. Your documents\nverification is pending" = "Ваши документы\nожидают проверки";
 "HomeSmallBanner. Finish identity\nverification to send\nmoney worldwide" = "Завершите\nподтверждение личности, чтобы отправлять\nденег по всему миру";
+"Please, wait 1 day for the next SMS request" = "Пожалуйста, подождите 1 день до следующего SMS-запроса";
+"After 5 SMS requests we disabled it for 1 day to secure your account" = "После 5 смс-запросов мы отключили его на 1 день, чтобы обезопасить вашу учетную запись.";
+"Open Wallet screen" = "Открыть экран кошелька";
+"Write to suppot" = "Пишите в поддержку";
+"Please, wait 1 day for the next try" = "Пожалуйста, подождите 1 день до следующей попытки";
+"After 5 incorrect attempts we disabled SMS verification for 1 day to secure your account." = "После 5 неверных попыток мы отключили подтверждение по SMS на 1 день, чтобы обезопасить вашу учетную запись.";

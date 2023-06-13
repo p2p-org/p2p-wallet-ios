@@ -58,15 +58,29 @@ extension StrigaRemoteProviderImpl: StrigaRemoteProvider {
             userId: userId,
             verificationCode: verificationCode
         )
-        _ = try await httpClient.request(endpoint: endpoint, responseModel: String.self)
+        do {
+            _ = try await httpClient.request(endpoint: endpoint, responseModel: String.self)
+        } catch HTTPClientError.invalidResponse(let response, let data) {
+            if response?.statusCode == 409,
+               let error = try? JSONDecoder().decode(StrigaRemoteProviderError.self, from: data) {
+                throw BankTransferError(rawValue: Int(error.errorCode ?? "") ?? -1) ?? HTTPClientError.invalidResponse(response, data)
+            }
+        }
     }
-    
+
     public func resendSMS(userId: String) async throws {
         guard let keyPair else { throw BankTransferError.invalidKeyPair }
         let endpoint = try StrigaEndpoint.resendSMS(baseURL: baseURL, keyPair: keyPair, userId: userId)
-        _ = try await httpClient.request(endpoint: endpoint, responseModel: String.self)
+        do {
+            _ = try await httpClient.request(endpoint: endpoint, responseModel: String.self)
+        } catch HTTPClientError.invalidResponse(let response, let data) {
+            if response?.statusCode == 409,
+               let error = try? JSONDecoder().decode(StrigaRemoteProviderError.self, from: data) {
+                throw BankTransferError(rawValue: Int(error.errorCode ?? "") ?? -1) ?? HTTPClientError.invalidResponse(response, data)
+            }
+        }
     }
-    
+
     public func getKYCToken(userId: String) async throws -> String {
         guard let keyPair else { throw BankTransferError.invalidKeyPair }
         let endpoint = try StrigaEndpoint.getKYCToken(baseURL: baseURL, keyPair: keyPair, userId: userId)
@@ -74,4 +88,10 @@ extension StrigaRemoteProviderImpl: StrigaRemoteProvider {
         return try await httpClient.request(endpoint: endpoint, responseModel: StrigaUserGetTokenResponse.self)
             .token
     }
+}
+
+struct StrigaRemoteProviderError: Codable {
+    let message: String?
+    let errorCode: String?
+    let errorDetails: String?
 }

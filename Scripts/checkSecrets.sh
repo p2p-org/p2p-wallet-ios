@@ -1,0 +1,41 @@
+#!/bin/bash
+
+# ANSI escape codes for colorizing and bold logs (macOS-compatible)
+RED='\033[1;31m'
+GREEN='\033[1;32m'
+NC='\033[0m' # Reset formatting
+
+# Log
+echo -e "${GREEN}==>${NC} Checking all secrets in ${GREEN}Config.xcconfig${NC} file"
+
+source_file="./p2p_wallet/Info.plist"
+check_file="./p2p_wallet/Config.xcconfig"
+exclude_strings=(
+    "DEVELOPMENT_LANGUAGE" 
+    "EXECUTABLE_NAME" 
+    "PRODUCT_BUNDLE_IDENTIFIER"
+    "MARKETING_VERSION"
+    "CURRENT_PROJECT_VERSION"
+)
+
+output_file="./Scripts/checkSecrets-output.txt"
+
+# Step 1: Find strings in the source file that start with "$("
+awk -F'\\$\\(|\\)' '{ for (i=2; i<=NF; i+=2) print $i }' "$source_file" > "$output_file"
+
+# Step 2: Check if the strings exist in the check file
+while IFS= read -r string; do
+    # Exclude these cases in exclude_strings
+    if ! [[ " ${exclude_strings[*]} " =~ " $string " ]]; then
+        # Check if secrets exists
+        if ! grep -qF "$string" "$check_file"; then
+            echo -e "${RED}Secret \"$string\" not found in \"$check_file\"${NC}"
+            exit 1
+        fi
+    fi
+done < "$output_file"
+
+echo -e "${GREEN}All secrets have been set! 🎉${NC}"
+
+# Clean up temporary files
+rm "$output_file"

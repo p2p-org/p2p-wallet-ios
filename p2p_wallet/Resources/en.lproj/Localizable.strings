@@ -1414,3 +1414,9 @@
 "Finish identity verification\nto send money worldwide" = "Finish identity verification\nto send money worldwide";
 "HomeBanner. Your documents\nverification is pending" = "Your documents\nverification is pending";
 "HomeSmallBanner. Finish identity\nverification to send\nmoney worldwide" = "Finish identity\nverification to send\nmoney worldwide";
+"Please, wait 1 day for the next SMS request" = "Please, wait 1 day for the next SMS request";
+"After 5 SMS requests we disabled it for 1 day to secure your account" = "After 5 SMS requests we disabled it for 1 day to secure your account";
+"Open Wallet screen" = "Open Wallet screen";
+"Write to suppot" = "Write to suppot";
+"Please, wait 1 day for the next try" = "Please, wait 1 day for the next try";
+"After 5 incorrect attempts we disabled SMS verification for 1 day to secure your account." = "After 5 incorrect attempts we disabled SMS verification for 1 day to secure your account.";
