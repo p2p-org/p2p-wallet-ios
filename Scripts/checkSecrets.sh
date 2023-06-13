@@ -3,10 +3,10 @@
 # ANSI escape codes for colorizing and bold logs (macOS-compatible)
 RED='\033[1;31m'
 GREEN='\033[1;32m'
-NC=$(tput sgr0) # Reset formatting
+NC='\033[0m' # Reset formatting
 
 # Log
-echo "${GREEN}==>${NC} Checking ${GREEN}Config.xcconfig${NC} file"
+echo -e "${GREEN}==>${NC} Checking ${GREEN}Config.xcconfig${NC} file"
 
 source_file="./p2p_wallet/Info.plist"
 check_file="./p2p_wallet/Config.xcconfig"
@@ -29,13 +29,13 @@ while IFS= read -r string; do
     if ! [[ " ${exclude_strings[*]} " =~ " $string " ]]; then
         # Check if secrets exists
         if ! grep -qF "$string" "$check_file"; then
-            echo "${RED}Secret \"$string\" not found in \"$check_file\"${NC}"
+            echo -e "${RED}Secret \"$string\" not found in \"$check_file\"${NC}"
             exit 1
         fi
     fi
 done < "$output_file"
 
-echo "${GREEN}All secrets have been set! 🎉${NC}"
+echo -e "${GREEN}All secrets have been set! 🎉${NC}"
 
 # Clean up temporary files
 rm "$output_file"
