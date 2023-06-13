@@ -27,9 +27,10 @@ jobs:
       - name: Select XCode Version
         run: sudo xcode-select --switch /Applications/Xcode_${{ env.XCODE_VERSION }}.app
 
-      - name: Copy secret files
+      - name: Generate secret files and check it
         run: |
           echo -e ${{ secrets.XCCONFIG_FILE }} > ./p2p_wallet/Config.xcconfig
+          chmod u+x Scripts/checkSecrets.sh && Scripts/checkSecrets.sh
         shell: bash
 
       - name: Install project
