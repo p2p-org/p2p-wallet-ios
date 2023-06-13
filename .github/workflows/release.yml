@@ -30,6 +30,7 @@ jobs:
       - name: Copy secret files
         run: |
           curl -o ./p2p_wallet/Config.xcconfig ${{ secrets.XCCONFIG_URL }}
+          chmod u+x Scripts/checkSecrets.sh && Scripts/checkSecrets.sh
         shell: bash
 
       - name: Install project
