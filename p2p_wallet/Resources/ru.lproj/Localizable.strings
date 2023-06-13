@@ -1434,3 +1434,9 @@
 "Usually it takes a few hours" = "Обычно это занимает несколько часов";
 "Sorry, bank transfer is unavailable for you" = "К сожалению, банковский перевод недоступен для вас";
 "Verification is rejected" = "Проверка отклонена";
+"Please, wait 1 day for the next SMS request" = "Пожалуйста, подождите 1 день до следующего SMS-запроса";
+"After 5 SMS requests we disabled it for 1 day to secure your account" = "После 5 смс-запросов мы отключили его на 1 день, чтобы обезопасить вашу учетную запись.";
+"Open Wallet screen" = "Открыть экран кошелька";
+"Write to suppot" = "Пишите в поддержку";
+"Please, wait 1 day for the next try" = "Пожалуйста, подождите 1 день до следующей попытки";
+"After 5 incorrect attempts we disabled SMS verification for 1 day to secure your account." = "После 5 неверных попыток мы отключили подтверждение по SMS на 1 день, чтобы обезопасить вашу учетную запись.";

@@ -1439,3 +1439,9 @@
 "Usually it takes a few hours" = "Thông thường phải mất vài giờ";
 "Sorry, bank transfer is unavailable for you" = "Xin lỗi, chuyển khoản ngân hàng không khả dụng cho bạn";
 "Verification is rejected" = "Xác minh bị từ chối";
+"Please, wait 1 day for the next SMS request" = "Vui lòng đợi 1 ngày cho yêu cầu SMS tiếp theo";
+"After 5 SMS requests we disabled it for 1 day to secure your account" = "Sau 5 yêu cầu SMS, chúng tôi đã vô hiệu hóa nó trong 1 ngày để bảo mật tài khoản của bạn";
+"Open Wallet screen" = "Mở màn hình Wallet";
+"Write to suppot" = "Viết thư cho suppot";
+"Please, wait 1 day for the next try" = "Vui lòng đợi 1 ngày cho lần thử tiếp theo";
+"After 5 incorrect attempts we disabled SMS verification for 1 day to secure your account." = "Sau 5 lần thử không chính xác, chúng tôi đã vô hiệu hóa xác minh SMS trong 1 ngày để bảo mật tài khoản của bạn.";

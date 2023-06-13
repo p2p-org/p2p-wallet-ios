@@ -1437,3 +1437,9 @@
 "Usually it takes a few hours" = "Cela prend généralement quelques heures";
 "Sorry, bank transfer is unavailable for you" = "Désolé, le virement bancaire n'est pas disponible pour vous";
 "Verification is rejected" = "La vérification est rejetée";
+"Please, wait 1 day for the next SMS request" = "S'il vous plaît, attendez 1 jour pour la prochaine demande de SMS";
+"After 5 SMS requests we disabled it for 1 day to secure your account" = "Après 5 demandes SMS, nous l'avons désactivé pendant 1 jour pour sécuriser votre compte";
+"Open Wallet screen" = "Ouvrir l'écran du portefeuille";
+"Write to suppot" = "Ecrire au support";
+"Please, wait 1 day for the next try" = "S'il vous plaît, attendez 1 jour pour le prochain essai";
+"After 5 incorrect attempts we disabled SMS verification for 1 day to secure your account." = "Après 5 tentatives incorrectes, nous avons désactivé la vérification par SMS pendant 1 jour pour sécuriser votre compte.";
