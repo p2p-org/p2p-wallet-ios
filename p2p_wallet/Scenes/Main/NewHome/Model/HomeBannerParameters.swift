@@ -30,7 +30,7 @@ struct HomeBannerParameters {
     }
 
     init(
-        status: StrigaKYC.Status,
+        status: StrigaKYCStatus,
         action: @escaping () -> Void,
         isSmallBanner: Bool
     ) {

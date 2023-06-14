@@ -61,7 +61,7 @@ struct HomeSmallBannerView: View {
 struct HomeSmallBannerView_Previews: PreviewProvider {
     static var previews: some View {
         List {
-            ForEach([StrigaKYC.Status.notStarted, .initiated, .pendingReview, .onHold, .approved, .rejected, .rejectedFinal], id: \.rawValue) { element in
+            ForEach([StrigaKYCStatus.notStarted, .initiated, .pendingReview, .onHold, .approved, .rejected, .rejectedFinal], id: \.rawValue) { element in
                 HomeSmallBannerView(
                     params: HomeBannerParameters(
                         status: element,
