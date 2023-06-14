@@ -10,31 +10,35 @@ import Resolver
 
 struct RecoveryKitModel {
     let deviceName: String
+    let isAnotherDevice: Bool
+
     let email: String
     let authProvider: String
     let phoneNumber: String
 }
 
 final class RecoveryKitViewModel: ObservableObject {
+    enum Action {
+        case seedPhrase
+        case deleteAccount
+        case help
+        case devices
+    }
+    
     private let analyticsManager: AnalyticsManager
     private let userWalletManager: UserWalletManager
     private let walletMetadataService: WalletMetadataService
 
     @Published var model: RecoveryKitModel?
+    
+    let actions = PassthroughSubject<Action, Never>()
 
     private var subscriptions = [AnyCancellable]()
-
-    struct Coordinator {
-        var seedPhrase: (() -> Void)?
-        var deleteAccount: (() -> Void)?
-        var help: (() -> Void)?
-    }
-
-    var coordinator = Coordinator()
 
     init(
         userWalletManager: UserWalletManager = Resolver.resolve(),
         walletMetadataService: WalletMetadataService = Resolver.resolve(),
+        deviceShareMigrationService: DeviceShareMigrationService = Resolver.resolve(),
         analyticsManager: AnalyticsManager = Resolver.resolve()
     ) {
         self.walletMetadataService = walletMetadataService
@@ -43,12 +47,17 @@ final class RecoveryKitViewModel: ObservableObject {
 
         Task.detached { try await walletMetadataService.synchronize() }
 
-        walletMetadataService.metadataPublisher
-            .subscribe(on: RunLoop.main)
-            .sink { [weak self, weak userWalletManager] state in
-                if let metadata = state.value {
+        Publishers
+            .CombineLatest(
+                walletMetadataService.metadataPublisher,
+                deviceShareMigrationService.migrationIsAvailable
+            )
+            .receive(on: RunLoop.main)
+            .sink { [weak self, weak userWalletManager] metedataState, deviceShareMigration in
+                if let metadata = metedataState.value {
                     self?.model = .init(
                         deviceName: metadata.deviceName,
+                        isAnotherDevice: deviceShareMigration,
                         email: metadata.email,
                         authProvider: metadata.authProvider,
                         phoneNumber: metadata.phoneNumber
@@ -56,6 +65,7 @@ final class RecoveryKitViewModel: ObservableObject {
                 } else if userWalletManager?.wallet?.ethAddress != nil {
                     self?.model = .init(
                         deviceName: L10n.notAvailableForNow,
+                        isAnotherDevice: false,
                         email: L10n.notAvailableForNow,
                         authProvider: "apple",
                         phoneNumber: L10n.notAvailableForNow
@@ -65,15 +75,19 @@ final class RecoveryKitViewModel: ObservableObject {
     }
 
     func openSeedPhrase() {
-        coordinator.seedPhrase?()
+        actions.send(.seedPhrase)
     }
 
     func deleteAccount() {
         analyticsManager.log(event: .startDeleteAccount)
-        coordinator.deleteAccount?()
+        actions.send(.deleteAccount)
+    }
+    
+    func openDevices() {
+        actions.send(.devices)
     }
 
     func openHelp() {
-        coordinator.help?()
+        actions.send(.help)
     }
 }

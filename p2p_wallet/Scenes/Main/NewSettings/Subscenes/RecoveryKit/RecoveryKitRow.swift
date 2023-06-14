@@ -12,6 +12,26 @@ struct RecoveryKitRow: View {
     let icon: UIImage
     let title: String
     let subtitle: String
+    let alert: Bool
+
+    let titleAction: String
+    let action: (() -> Void)?
+
+    init(
+        icon: UIImage,
+        title: String,
+        subtitle: String,
+        alert: Bool = false,
+        titleAction: String = "",
+        action: (() -> Void)? = nil
+    ) {
+        self.icon = icon
+        self.title = title
+        self.subtitle = subtitle
+        self.alert = alert
+        self.titleAction = titleAction
+        self.action = action
+    }
 
     var body: some View {
         VStack(spacing: 0) {
@@ -22,11 +42,27 @@ struct RecoveryKitRow: View {
                         .fontWeight(.semibold)
                         .apply(style: .text2)
                         .foregroundColor(Color(Asset.Colors.night.color))
-                    Text(subtitle)
-                        .apply(style: .label1)
-                        .foregroundColor(Color(Asset.Colors.mountain.color))
+
+                    HStack {
+                        if alert {
+                            Image(uiImage: .warningIcon)
+                                .foregroundColor(Color(Asset.Colors.rose.color))
+                        }
+                        Text(subtitle)
+                            .apply(style: .label1)
+                            .foregroundColor(
+                                alert ?
+                                    Color(Asset.Colors.rose.color) :
+                                    Color(Asset.Colors.mountain.color)
+                            )
+                    }
                 }.padding(.leading, 12)
+
                 Spacer()
+
+                if let action {
+                    NewTextButton(title: titleAction, size: .small, style: .second, action: action)
+                }
             }
             .padding(.horizontal, 16)
             .frame(height: 72)
@@ -43,6 +79,15 @@ struct RecoveryKitRow: View {
 
 struct RecoveryKitRow_Previews: PreviewProvider {
     static var previews: some View {
-        RecoveryKitRow(icon: .appleIcon, title: "Apple", subtitle: "dragon@apple.com")
+        VStack {
+            RecoveryKitRow(icon: .appleIcon, title: "Apple", subtitle: "dragon@apple.com")
+            RecoveryKitRow(
+                icon: .appleIcon,
+                title: "Apple",
+                subtitle: "dragon@apple.com",
+                alert: true,
+                titleAction: "Manage"
+            ) {}
+        }
     }
 }

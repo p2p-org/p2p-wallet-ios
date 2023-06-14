@@ -4,8 +4,8 @@
 
 import KeyAppUI
 import Onboarding
-import SwiftUI
 import Resolver
+import SwiftUI
 
 struct RecoveryKitView: View {
     @SwiftUI.Environment(\.safeAreaInsets) private var safeAreaInsets: EdgeInsets
@@ -51,7 +51,11 @@ struct RecoveryKitView: View {
                             RecoveryKitRow(
                                 icon: .deviceIcon,
                                 title: L10n.device,
-                                subtitle: Device.getDeviceNameFromIdentifier(metadata.deviceName)
+                                subtitle: Device.getDeviceNameFromIdentifier(metadata.deviceName),
+
+                                alert: metadata.isAnotherDevice,
+                                titleAction: "Manage",
+                                action: metadata.isAnotherDevice ? { viewModel.openDevices() } : nil
                             )
                             RecoveryKitRow(
                                 icon: .callIcon,
@@ -88,7 +92,7 @@ struct RecoveryKitView: View {
                 ) {
                     viewModel.openSeedPhrase()
                 }
-                
+
                 if walletSettings.deleteWeb3AuthRequest == nil {
                     RecoveryKitCell(
                         icon: .alertIcon,
@@ -114,7 +118,7 @@ struct RecoveryKitView: View {
                         )
                     }
                 }
-                
+
             }.padding(.horizontal, 16)
         }
         .background(Color(Asset.Colors.cloud.color))
@@ -151,7 +155,6 @@ struct RecoveryKitView: View {
 
 struct RecoveryKitView_Previews: PreviewProvider {
     static var previews: some View {
-        
         let provider = MockedWalletMeradataProvider(
             .init(
                 ethPublic: "1234",
@@ -161,14 +164,14 @@ struct RecoveryKitView_Previews: PreviewProvider {
                 phoneNumber: "+79183331231"
             )
         )
-        
+
         let service = WalletMetadataService(
             localProvider: provider,
             remoteProvider: [provider]
         )
-        
+
         Task { try await service.synchronize() }
-        
+
         return NavigationView {
             RecoveryKitView(
                 viewModel: .init(walletMetadataService: service)

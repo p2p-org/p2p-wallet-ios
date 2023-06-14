@@ -24,7 +24,7 @@ struct DeviceShareMigrationView: View {
             }
         } content: {
             VStack {
-                VStack(alignment: .leading,spacing: 12) {
+                VStack(alignment: .leading, spacing: 12) {
                     Text("We've noticed that you're using a new device.")
                         .apply(style: .text3)
                         .frame(alignment: .leading)
@@ -36,16 +36,18 @@ struct DeviceShareMigrationView: View {
                         .apply(style: .text3)
                 }
                 .padding(.top, 52)
-                .padding(.leading,12)
+                .padding(.leading, 12)
 
                 Spacer()
 
                 BottomActionContainer {
                     VStack {
-                        NewTextButton(title: "Update device", style: .inverted) {}
+                        NewTextButton(title: "Update device", size: .large, style: .inverted) {}
                             .padding(.bottom, 12)
-                        NewTextButton(title: "Skip", style: .outlineWhite) {}
-                    }
+                            
+                        NewTextButton(title: "Skip", size: .large, style: .outlineWhite) {}
+                    }.frame(maxWidth: .infinity)
+                    
                 }
             }
         } hint: {

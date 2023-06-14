@@ -8,6 +8,18 @@
 import Foundation
 
 enum Device {
+    static func currentDevice() -> String {
+        var systemInfo = utsname()
+        uname(&systemInfo)
+        let modelCode = withUnsafePointer(to: &systemInfo.machine) {
+            $0.withMemoryRebound(to: CChar.self, capacity: 1) {
+                ptr in String(validatingUTF8: ptr)
+            }
+        }
+        
+        return modelCode ?? "Unknown"
+    }
+    
     static func getDeviceNameFromIdentifier(_ identifier: String)
     -> String { // swiftlint:disable:this cyclomatic_complexity
         #if os(iOS)

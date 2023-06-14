@@ -86,6 +86,23 @@ extension Resolver: ResolverRegistering {
             .implements(DeviceShareManager.self)
             .scope(.application)
 
+        register {
+            DeviceShareMigrationService(
+                isWeb3AuthUser: resolve(UserWalletManager.self)
+                    .$wallet
+                    .map { wallet in
+                        guard let wallet else { return nil }
+                        return wallet.ethAddress != nil
+                    }
+                    .eraseToAnyPublisher(),
+                hasDeviceShare: resolve(DeviceShareManager.self)
+                    .deviceSharePublisher
+                    .map { deviceShare in deviceShare != nil }
+                    .eraseToAnyPublisher()
+            )
+        }
+        .scope(.application)
+
         register { SendViaLinkStorageImpl() }
             .implements(SendViaLinkStorage.self)
             .scope(.session)

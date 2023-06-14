@@ -8,8 +8,8 @@
 import KeyAppUI
 import SwiftUI
 
-struct RecoveryKitChangeDeviceShareView: View {
-    @SwiftUI.Environment(\.safeAreaInsets) private var safeAreaInsets: EdgeInsets
+struct RecoveryKitDevicesView: View {
+    let viewModel: RecoveryKitDevicesViewModel
 
     var body: some View {
         ScrollView {
@@ -24,7 +24,7 @@ struct RecoveryKitChangeDeviceShareView: View {
                 .padding(.horizontal, 16)
                 .padding(.top, 12)
                 VStack {
-                    VStack(spacing:4) {
+                    VStack(spacing: 4) {
                         VStack(alignment: .leading) {
                             Text(L10n.thisDevice)
                                 .apply(style: .caps)
@@ -36,19 +36,11 @@ struct RecoveryKitChangeDeviceShareView: View {
                                     .padding(.top, 18)
                                     .padding(.leading, 16)
                                     .padding(.bottom, 16)
-                                Text("iPhone 13")
+                                Text(viewModel.currentDevice)
                                     .fontWeight(.semibold)
                                     .apply(style: .text3)
                                 Spacer()
-                                Button {} label: {
-                                    Text(L10n.setUp)
-                                        .fontWeight(.semibold)
-                                        .apply(style: .text4)
-                                }
-                                .padding(.horizontal, 12)
-                                .padding(.vertical, 8)
-                                .background(Color(Asset.Colors.rain.color))
-                                .cornerRadius(20)
+                                NewTextButton(title: L10n.setUp, size: .small, style: .second) {}
                             }
                             .padding(.trailing, 16)
                             .foregroundColor(Color(Asset.Colors.night.color))
@@ -77,7 +69,7 @@ struct RecoveryKitChangeDeviceShareView: View {
                                     .padding(.leading, 16)
                                     .padding(.bottom, 16)
                                 VStack(alignment: .leading, spacing: 4) {
-                                    Text("iPhone 8")
+                                    Text(viewModel.oldDevice)
                                         .fontWeight(.semibold)
                                         .apply(style: .text3)
                                         .padding(.top, 16)
@@ -121,6 +113,6 @@ struct RecoveryKitChangeDeviceShareView: View {
 
 struct RecoveryKitChangeDeviceShareView_Previews: PreviewProvider {
     static var previews: some View {
-        RecoveryKitChangeDeviceShareView()
+        RecoveryKitDevicesView(viewModel: .init())
     }
 }

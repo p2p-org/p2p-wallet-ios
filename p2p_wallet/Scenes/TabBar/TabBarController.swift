@@ -9,6 +9,7 @@ import AnalyticsManager
 import Combine
 import Intercom
 import KeyAppUI
+import Onboarding
 import Resolver
 import Sell
 import SwiftUI
@@ -21,6 +22,7 @@ final class TabBarController: UITabBarController {
     @Injected private var helpLauncher: HelpCenterLauncher
     @Injected private var sellDataService: any SellDataService
     @Injected private var solanaTracker: SolanaTracker
+    @Injected private var deviceShareMigration: DeviceShareMigrationService
 
     // MARK: - Publishers
 
@@ -72,6 +74,20 @@ final class TabBarController: UITabBarController {
                 )
             }
         }
+
+        deviceShareMigration
+            .migrationIsAvailable
+            .sink { [weak self] migrationIsAvailable in
+                if migrationIsAvailable {
+                    self?.viewControllers?[TabItem.settings.rawValue].tabBarItem.image = .tabBarSettingsWithAlert
+                    self?.viewControllers?[TabItem.settings.rawValue].tabBarItem
+                        .selectedImage = .selectedTabBarSettingsWithAlert
+                } else {
+                    self?.viewControllers?[TabItem.settings.rawValue].tabBarItem.image = .tabBarSettings
+                    self?.viewControllers?[TabItem.settings.rawValue].tabBarItem.selectedImage = .tabBarSettings
+                }
+            }
+            .store(in: &subscriptions)
     }
 
     func changeItem(to item: TabItem) {
@@ -119,9 +135,9 @@ final class TabBarController: UITabBarController {
     }
 
     // MARK: - Authentications
-    
+
     private var lockWindow: UIWindow?
-    
+
     private func setUpLockWindow() {
         lockWindow = UIWindow(frame: UIScreen.main.bounds)
         let lockVC = BaseVC()
@@ -136,7 +152,7 @@ final class TabBarController: UITabBarController {
         lockWindow?.makeKeyAndVisible()
         solanaTracker.stopTracking()
     }
-    
+
     private func removeLockWindow() {
         lockWindow?.rootViewController?.view.removeFromSuperview()
         lockWindow?.rootViewController = nil
@@ -231,7 +247,7 @@ final class TabBarController: UITabBarController {
             UITabBar.appearance().scrollEdgeAppearance = standardAppearance
         }
     }
-    
+
     private var viewWillAppearTriggered = false
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
@@ -291,7 +307,7 @@ extension TabBarController: UITabBarControllerDelegate {
         }
 
         customTabBar.updateSelectedViewPositionIfNeeded()
-        
+
         if TabItem(rawValue: selectedIndex) == .invest {
             if !available(.investSolendFeature) {
                 jupiterSwapClickedSubject.send()
@@ -300,8 +316,8 @@ extension TabBarController: UITabBarControllerDelegate {
                 return false
             }
         } else if TabItem(rawValue: selectedIndex) == .wallet,
-           (viewController as! UINavigationController).viewControllers.count == 1,
-           self.selectedIndex == selectedIndex
+                  (viewController as! UINavigationController).viewControllers.count == 1,
+                  self.selectedIndex == selectedIndex
         {
             homeTabClickedTwicelySubject.send()
         }

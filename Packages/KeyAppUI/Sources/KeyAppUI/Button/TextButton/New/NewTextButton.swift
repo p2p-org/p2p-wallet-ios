@@ -1,7 +1,6 @@
 import SwiftUI
 
 public struct NewTextButton: View {
-
     private let title: String
     private let action: () -> Void
     private let size: TextButton.Size
@@ -10,13 +9,15 @@ public struct NewTextButton: View {
     private let isLoading: Bool
     private let leading: UIImage?
     private let trailing: UIImage?
+    private let expandable: Bool
 
     private let appearance: NewTextButtonAppearance
 
     public init(
         title: String,
-        size: TextButton.Size = .large,
+        size: TextButton.Size,
         style: TextButton.Style,
+        expandable: Bool = false,
         isEnabled: Bool = true,
         isLoading: Bool = false,
         leading: UIImage? = nil,
@@ -31,8 +32,9 @@ public struct NewTextButton: View {
         self.trailing = trailing
         self.isEnabled = isEnabled
         self.isLoading = isLoading
+        self.expandable = expandable
 
-        self.appearance = NewTextButtonAppearance(
+        appearance = NewTextButtonAppearance(
             backgroundColor: Color(style.backgroundColor),
             foregroundColor: Color(style.foreground),
             font: style.font(size: size),
@@ -50,9 +52,13 @@ public struct NewTextButton: View {
                 if let leading {
                     if isLoading {
                         progressView
+                            .padding(.leading, 8)
                     } else {
                         Image(uiImage: leading)
+                            .padding(.leading, 8)
                     }
+                } else {
+                    Spacer().frame(width: 4)
                 }
 
                 Text(title)
@@ -62,14 +68,18 @@ public struct NewTextButton: View {
                 if let trailing {
                     if isLoading {
                         progressView
+                            .padding(.trailing, 8)
                     } else {
                         Image(uiImage: trailing)
+                            .padding(.trailing, 8)
                     }
+                } else {
+                    Spacer().frame(width: 4)
                 }
             }
             .frame(height: size.height)
-            .frame(maxWidth: .infinity)
         }
+        .frame(maxWidth: expandable ? .infinity : nil)
         .foregroundColor(isEnabled ? appearance.foregroundColor : Color(Asset.Colors.mountain.color))
         .background(isEnabled ? appearance.backgroundColor : Color(Asset.Colors.rain.color))
         .cornerRadius(appearance.borderRadius)
@@ -94,6 +104,7 @@ public struct NewTextButton: View {
 }
 
 // MARK: - Preview
+
 struct NewTextButton_Previews: PreviewProvider {
     static var previews: some View {
         VStack {
@@ -101,33 +112,52 @@ struct NewTextButton_Previews: PreviewProvider {
 
             NewTextButton(
                 title: "Title",
+                size: .large,
                 style: .primary,
                 trailing: Asset.MaterialIcon.arrowForward.image,
-                action: { }
+                action: {}
             )
+            
             NewTextButton(
                 title: "Title",
+                size: .large,
                 style: .second,
                 leading: Asset.MaterialIcon.arrowForward.image,
-                action: { }
+                action: {}
             )
+            
             NewTextButton(
                 title: "Title",
+                size: .large,
                 style: .invertedRed,
-                action: { }
+                action: {}
             )
+            
             NewTextButton(
                 title: "Title",
+                size: .large,
                 style: .outlineLime,
                 isLoading: true,
                 trailing: Asset.MaterialIcon.arrowForward.image,
-                action: { }
+                action: {}
             )
+            
             NewTextButton(
                 title: "Title",
+                size: .large,
+                style: .primaryWhite,
+                expandable: true,
+                isEnabled: false,
+                action: {}
+            )
+            .frame(width: .infinity)
+            
+            NewTextButton(
+                title: "Title",
+                size: .small,
                 style: .primaryWhite,
                 isEnabled: false,
-                action: { }
+                action: {}
             )
 
             Spacer()
