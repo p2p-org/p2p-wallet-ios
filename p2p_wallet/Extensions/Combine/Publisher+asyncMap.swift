@@ -40,27 +40,4 @@ extension Publisher {
             }
         }
     }
-
-//    func asyncMap<T>(
-//        _ transform: @escaping (Output) async throws -> T
-//    ) -> Publishers.FlatMap<Future<T, Error>,
-//                            Publishers.SetFailureType<Self, Error>>
-//    {
-//        if #available(iOS 14.0, *) {
-//            flatMap { value in
-//                Future { promise in
-//                    Task {
-//                        do {
-//                            let output = try await transform(value)
-//                            promise(.success(output))
-//                        } catch {
-//                            promise(.failure(error))
-//                        }
-//                    }
-//                }
-//            }
-//        } else {
-//            // Fallback on earlier versions
-//        }
-//    }
 }

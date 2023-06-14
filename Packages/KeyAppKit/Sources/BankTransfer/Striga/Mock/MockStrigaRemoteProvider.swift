@@ -73,7 +73,9 @@ public final class MockStrigaRemoteProvider: StrigaRemoteProvider {
         return .init(
             userId: mockUserId,
             email: model.email,
-            KYC: try await getKYCStatus(userId: mockUserId)
+            KYC: .init(
+                status: .notStarted
+            )
         )
     }
     

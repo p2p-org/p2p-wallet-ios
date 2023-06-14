@@ -50,9 +50,9 @@ jobs:
         run: |
           echo "GIT_CHANGES=$(git log --oneline -n 15)" >> $GITHUB_ENV
 
-      - name: Copy xcconfig file
+      - name: Generate secret files and check it
         run: |
-          curl -o ./p2p_wallet/Config.xcconfig ${{ secrets.XCCONFIG_URL }}
+          echo -e "${{ secrets.XCCONFIG_FILE }}" > ./p2p_wallet/Config.xcconfig
           chmod u+x Scripts/checkSecrets.sh && Scripts/checkSecrets.sh
         shell: bash
 
@@ -97,6 +97,7 @@ jobs:
           BROWSERSTACK_ACCESS_KEY_NEW: '${{ secrets.BROWSERSTACK_ACCESS_KEY_NEW }}'
           DISCORD_IOS_BUILD_CHANNEL_ID: '${{ secrets.DISCORD_IOS_BUILD_CHANNEL_ID }}'
           DISCORD_MESSAGE_API_ENDPOINT: '${{ secrets.DISCORD_MESSAGE_API_ENDPOINT }}'
+          DISCORD_MESSAGE_API_BEARER_TOKEN: '${{ secrets.DISCORD_MESSAGE_API_BEARER_TOKEN }}'
     
       - name: Login to JIRA
         uses: atlassian/gajira-login@master

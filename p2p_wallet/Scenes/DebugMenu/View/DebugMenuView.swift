@@ -1,10 +1,3 @@
-//
-//  DebugMenuView.swift
-//  p2p_wallet
-//
-//  Created by Ivan on 14.06.2022.
-//
-
 import Resolver
 import SolanaSwift
 import SwiftUI
@@ -58,7 +51,7 @@ struct DebugMenuView: View {
         Section(header: Text("Feature Toggles")) {
             ForEach(0 ..< viewModel.features.count, id: \.self) { index in
                 Toggle(viewModel.features[index].title, isOn: $viewModel.features[index].isOn)
-                    .valueChanged(value: viewModel.features[index].isOn) { newValue in
+                    .onChange(of: viewModel.features[index].isOn) { newValue in
                         viewModel.setFeature(viewModel.features[index].feature, isOn: newValue)
                     }
             }
@@ -92,7 +85,7 @@ struct DebugMenuView: View {
     var feeRelayer: some View {
         Section(header: Text("Fee relayer")) {
             Toggle("Disable free transaction", isOn: $feeRelayerConfig.disableFeeTransaction)
-                .valueChanged(value: feeRelayerConfig.disableFeeTransaction) { _ in
+                .onChange(of: feeRelayerConfig.disableFeeTransaction) { _ in
                     let app: AppEventHandlerType = Resolver.resolve()
                     app.delegate?.refresh()
                 }
@@ -157,13 +150,21 @@ struct DebugMenuView: View {
             }
             
             Toggle("Mocking enabled", isOn: $globalAppState.strigaMockingEnabled)
+            
+            Button {
+                Task {
+                    try? await viewModel.clearStrigaUserIdFromMetadata()
+                }
+            } label: {
+                Text("Remove userId from metadata")
+            }
         }
     }
     
     var deviceShare: some View {
         Section(header: Text("Mocked device share")) {
             Toggle("Enabled", isOn: $onboardingConfig.isDeviceShareMocked)
-                .valueChanged(value: onboardingConfig.isDeviceShareMocked) { newValue in
+                .onChange(of: onboardingConfig.isDeviceShareMocked) { newValue in
                     onboardingConfig.isDeviceShareMocked = newValue
                 }
             TextFieldRow(title: "Share:", content: $onboardingConfig.mockDeviceShare)
