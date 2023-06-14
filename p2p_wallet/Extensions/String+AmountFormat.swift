@@ -1,10 +1,3 @@
-//
-//  String+AmountFormat.swift
-//  p2p_wallet
-//
-//  Created by Ivan on 14.03.2023.
-//
-
 import Foundation
 
 extension String {

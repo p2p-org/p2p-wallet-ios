@@ -150,8 +150,8 @@
         "repositoryURL": "https://github.com/google/grpc-binary.git",
         "state": {
           "branch": null,
-          "revision": "2b7656d8ee892cd39db460b1a0d849de618405e6",
-          "version": "1.50.1"
+          "revision": "f1b366129d1125be7db83247e003fc333104b569",
+          "version": "1.50.2"
         }
       },
       {
@@ -267,8 +267,8 @@
         "repositoryURL": "https://github.com/marmelroy/PhoneNumberKit.git",
         "state": {
           "branch": null,
-          "revision": "0fd43eb71d215afd0f9453d8e94200c9d6faf28a",
-          "version": "3.5.10"
+          "revision": "f901c4e6191cfc3b5cb73eee1d66217fe9f3eaca",
+          "version": "3.6.0"
         }
       },
       {

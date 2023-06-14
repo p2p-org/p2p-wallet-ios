@@ -61,10 +61,6 @@ final class ImageSaver: NSObject, ImageSaverType {
     }
 
     private func getLibraryStatus() -> PHAuthorizationStatus {
-        if #available(iOS 14, *) {
-            return PHPhotoLibrary.authorizationStatus(for: .addOnly)
-        } else {
-            return PHPhotoLibrary.authorizationStatus()
-        }
+        PHPhotoLibrary.authorizationStatus(for: .addOnly)
     }
 }
