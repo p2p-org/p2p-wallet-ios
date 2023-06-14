@@ -2,8 +2,12 @@ import Foundation
 import SolanaSwift
 import Combine
 import Resolver
+import AnalyticsManager
 
 final class SendCreateLinkCoordinator: Coordinator<SendCreateLinkCoordinator.Result> {
+    // MARK: - Dependencies
+    @Injected private var analyticsManager: AnalyticsManager
+
     // MARK: - Properties
     
     private let result = PassthroughSubject<SendCreateLinkCoordinator.Result, Never>()
@@ -44,6 +48,8 @@ final class SendCreateLinkCoordinator: Coordinator<SendCreateLinkCoordinator.Res
             .prefix(1)
             .receive(on: RunLoop.main)
             .sink { [weak self] tx in
+                self?.logSend(signature: tx.transactionId)
+
                 if let error = tx.status.error {
                     if (error as NSError).isNetworkConnectionError {
                         self?.result.send(.networkError)
@@ -129,6 +135,13 @@ final class SendCreateLinkCoordinator: Coordinator<SendCreateLinkCoordinator.Res
         }
         let vc = UIHostingControllerWithoutNavigation(rootView: view)
         navigationController.pushViewController(vc, animated: true)
+    }
+}
+
+private extension SendCreateLinkCoordinator {
+    func logSend(signature: String?) {
+        guard case let .sendNewConfirmButtonClick(source, token, max, amountToken, amountUSD, fee, fiatInput, _, _) = transaction.analyticEvent, let signature else { return }
+        analyticsManager.log(event: .sendNewConfirmButtonClick(source: source, token: token, max: max, amountToken: amountToken, amountUSD: amountUSD, fee: fee, fiatInput: fiatInput, signature: signature, pubKey: intermediatePubKey))
     }
 }
 

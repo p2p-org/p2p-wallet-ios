@@ -130,7 +130,9 @@ enum KeyAppAnalyticsEvent: AnalyticsEvent {
         amountToken: Double,
         amountUSD: Double,
         fee: Bool,
-        fiatInput: Bool
+        fiatInput: Bool,
+        signature: String,
+        pubKey: String?
     )
     // Bridges
     case sendBridgesScreenOpen
@@ -332,6 +334,10 @@ enum KeyAppAnalyticsEvent: AnalyticsEvent {
     case creationPhoneScreen
     case createSmsValidation(result: Bool)
     case createConfirmPin(result: Bool)
+    case createConfirmPinScreenOpened
+    case createConfirmPinFirstClick
+    case restoreConfirmPinScreenOpened
+    case restoreConfirmPinFirstClick
     case usernameCreationScreen
     case usernameCreationButton(result: Bool)
     case restoreSeed

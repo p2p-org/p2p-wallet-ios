@@ -571,7 +571,6 @@ private extension SendInputViewModel {
         default:
             address = currentState.recipient.address
         }
-        logConfirmButtonClick()
 
         await MainActor.run {
             showFinished = true
@@ -611,7 +610,18 @@ private extension SendInputViewModel {
                 address: address,
                 payingFeeWallet: feeWallet,
                 feeAmount: currentState.feeInToken,
-                currency: inputAmountViewModel.mainAmountType == .fiat ? Defaults.fiat.symbol: sourceWallet.token.symbol
+                currency: inputAmountViewModel.mainAmountType == .fiat ? Defaults.fiat.symbol: sourceWallet.token.symbol,
+                analyticEvent: .sendNewConfirmButtonClick(
+                    source: source.rawValue,
+                    token: currentState.token.symbol,
+                    max: inputAmountViewModel.wasMaxUsed,
+                    amountToken: currentState.amountInToken,
+                    amountUSD: currentState.amountInFiat,
+                    fee: currentState.fee.total > 0,
+                    fiatInput: inputAmountViewModel.mainAmountType == .fiat,
+                    signature: "",
+                    pubKey: nil
+                )
             )
             self.transaction.send(transaction)
         }
@@ -661,18 +671,6 @@ private extension SendInputViewModel {
 
     func logSendClickCreateLink(symbol: String, amount: Double, pubkey: String) {
         analyticsManager.log(event: .sendClickCreateLink(tokenName: symbol, tokenValue: amount, pubkey: pubkey))
-    }
-
-    func logConfirmButtonClick() {
-        analyticsManager.log(event: .sendNewConfirmButtonClick(
-            source: source.rawValue,
-            token: currentState.token.symbol,
-            max: inputAmountViewModel.wasMaxUsed,
-            amountToken: currentState.amountInToken,
-            amountUSD: currentState.amountInFiat,
-            fee: currentState.fee.total > 0,
-            fiatInput: inputAmountViewModel.mainAmountType == .fiat
-        ))
     }
 }
 
