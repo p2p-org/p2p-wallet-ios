@@ -97,6 +97,7 @@ jobs:
           BROWSERSTACK_ACCESS_KEY_NEW: '${{ secrets.BROWSERSTACK_ACCESS_KEY_NEW }}'
           DISCORD_IOS_BUILD_CHANNEL_ID: '${{ secrets.DISCORD_IOS_BUILD_CHANNEL_ID }}'
           DISCORD_MESSAGE_API_ENDPOINT: '${{ secrets.DISCORD_MESSAGE_API_ENDPOINT }}'
+          DISCORD_MESSAGE_API_BEARER_TOKEN: '${{ secrets.DISCORD_MESSAGE_API_BEARER_TOKEN }}'
     
       - name: Login to JIRA
         uses: atlassian/gajira-login@master
