@@ -38,6 +38,7 @@ class HomeViewModel: ObservableObject {
 
     @Published var state = State.pending
     @Published var address = ""
+    @Published private var shouldUpdateBankTransfer = false
 
     // MARK: - Properties
 
@@ -53,6 +54,7 @@ class HomeViewModel: ObservableObject {
         // reload
         Task {
             await reload()
+            await bankTransferService.reload()
         }
     }
 
@@ -91,8 +93,9 @@ class HomeViewModel: ObservableObject {
             event: .mainScreenWalletsOpen(isSellEnabled: sellDataService.isAvailable)
         )
 
-        // TODO: This request is on the discussion with analytic
-        Task { await bankTransferService.reload() }
+        if shouldUpdateBankTransfer {
+            Task { await bankTransferService.reload() }
+        }
     }
 }
 
@@ -206,6 +209,12 @@ private extension HomeViewModel {
                 guard isSuccess else { return }
                 self?.updateAddressIfNeeded()
             }
+            .store(in: &subscriptions)
+
+        bankTransferService.state
+            .receive(on: DispatchQueue.main)
+            .map { $0.value.userId != nil && $0.value.mobileVerified && $0.value.kycStatus != .approved }
+            .assignWeak(to: \.shouldUpdateBankTransfer, on: self)
             .store(in: &subscriptions)
     }
 }
