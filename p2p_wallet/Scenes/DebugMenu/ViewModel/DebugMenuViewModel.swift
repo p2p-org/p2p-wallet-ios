@@ -1,16 +1,10 @@
-//
-//  DebugMenuViewModel.swift
-//  p2p_wallet
-//
-//  Created by Ivan on 14.06.2022.
-//
-
 import Combine
 import FirebaseRemoteConfig
 import KeyAppBusiness
 import Resolver
 import SolanaSwift
 import SwiftyUserDefaults
+import BankTransfer
 
 final class DebugMenuViewModel: BaseViewModel, ObservableObject {
     @Published var features: [FeatureItem]
@@ -93,6 +87,19 @@ final class DebugMenuViewModel: BaseViewModel, ObservableObject {
                 )
             )
         )
+    }
+    
+    func clearStrigaUserIdFromMetadata() async throws {
+        await Resolver.resolve(BankTransferService.self).clearCache()
+        
+        let service = Resolver.resolve(WalletMetadataService.self)
+        
+        if var currentMetadata = service.metadata.value {
+            currentMetadata.striga.userId = nil
+            try await service.update(currentMetadata)
+        }
+        
+        Resolver.resolve(NotificationService.self).showToast(title: "Deleted", text: "Metadata deleted from Keychain")
     }
 }
 

@@ -1,10 +1,3 @@
-//
-//  DebugMenuView.swift
-//  p2p_wallet
-//
-//  Created by Ivan on 14.06.2022.
-//
-
 import Resolver
 import SolanaSwift
 import SwiftUI
@@ -159,10 +152,11 @@ struct DebugMenuView: View {
             Toggle("Mocking enabled", isOn: $globalAppState.strigaMockingEnabled)
             
             Button {
-                Resolver.resolve(KeychainStorage.self).metadataKeychain.clear()
-                Resolver.resolve(NotificationService.self).showToast(title: "Deleted", text: "Metadata deleted from Keychain")
+                Task {
+                    try? await viewModel.clearStrigaUserIdFromMetadata()
+                }
             } label: {
-                Text("Delete metatdata from keychain")
+                Text("Remove userId from metadata")
             }
         }
     }
@@ -170,7 +164,7 @@ struct DebugMenuView: View {
     var deviceShare: some View {
         Section(header: Text("Mocked device share")) {
             Toggle("Enabled", isOn: $onboardingConfig.isDeviceShareMocked)
-                .valueChanged(value: onboardingConfig.isDeviceShareMocked) { newValue in
+                .onChange(of: onboardingConfig.isDeviceShareMocked) { newValue in
                     onboardingConfig.isDeviceShareMocked = newValue
                 }
             TextFieldRow(title: "Share:", content: $onboardingConfig.mockDeviceShare)
