@@ -3,6 +3,7 @@ import Combine
 import SwiftUI
 import UIKit
 
+#warning("Think carefully before using this VC as it leads to a lot of keyboard bugs. Use UIHostingController when it is possible")
 /// A view controller that embeds a SwiftUI view and controls Keyboard
 final class KeyboardAvoidingViewController<Content: View>: UIViewController {
     enum NavigationBarVisibility {

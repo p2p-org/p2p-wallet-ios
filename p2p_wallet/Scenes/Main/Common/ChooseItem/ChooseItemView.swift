@@ -24,26 +24,33 @@ struct ChooseItemView<Content: View>: View {
     }
 
     var body: some View {
-        ColoredBackground {
-            VStack(spacing: 16) {
+        VStack(spacing: 16) {
+            if viewModel.isSearchEnabled {
                 // Search field
                 SearchField(
                     searchText: $viewModel.searchText,
-                    isSearchFieldFocused: $viewModel.isSearchFieldFocused
+                    isFocused: $viewModel.isSearchFieldFocused
                 )
                 .padding(.horizontal, 16)
                 .padding(.top, 16)
-
-                // List of tokens
-                if viewModel.isLoading {
-                    loadingView
-                } else if viewModel.sections.isEmpty {
-                    emptyView
-                } else {
-                    listView
-                }
             }
-            .ignoresSafeArea(.keyboard)
+
+            // List of tokens
+            if viewModel.isLoading {
+                loadingView
+            } else if viewModel.sections.isEmpty {
+                emptyView
+            } else {
+                listView
+            }
+        }
+        .background(Color(asset: Asset.Colors.smoke).ignoresSafeArea())
+        .ignoresSafeArea(.keyboard)
+        .onAppear {
+            viewModel.isSearchFieldFocused = true
+        }
+        .onDisappear {
+            viewModel.isSearchFieldFocused = false
         }
     }
 
