@@ -39,6 +39,7 @@ final class StrigaRegistrationSecondStepViewModel: BaseViewModel, ObservableObje
     let chooseIndustry = PassthroughSubject<Industry?, Never>()
     let chooseSourceOfFunds = PassthroughSubject<StrigaSourceOfFunds?, Never>()
     let chooseCountry = PassthroughSubject<Country?, Never>()
+    let openHardError = PassthroughSubject<Void, Never>()
 
     var fieldsStatuses = [Field: StrigaRegistrationTextFieldStatus]()
 
@@ -176,13 +177,18 @@ private extension StrigaRegistrationSecondStepViewModel {
             do {
                 // get registration data
                 guard let currentData = try await service.getRegistrationData() as? StrigaUserDetailsResponse else { throw NSError() }
-
+                
                 // create user
                 try await service.createUser(data: currentData)
                 await MainActor.run {
                     self.isLoading = false
                 }
                 self.openNextStep.send(())
+            } catch BankTransferError.mobileAlreadyExists {
+                await MainActor.run {
+                    self.isLoading = false
+                    self.openHardError.send(())
+                }
             } catch {
                 self.notificationService.showDefaultErrorNotification()
                 await MainActor.run {

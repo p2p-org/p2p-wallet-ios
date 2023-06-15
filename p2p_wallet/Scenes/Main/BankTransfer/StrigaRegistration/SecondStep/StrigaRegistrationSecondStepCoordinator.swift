@@ -77,6 +77,16 @@ final class StrigaRegistrationSecondStepCoordinator: Coordinator<StrigaRegistrat
             }
         }.store(in: &subscriptions)
 
+        viewModel.openHardError
+            .flatMap { [unowned self] in
+                self.coordinate(to: StrigaRegistrationHardErrorCoordinator(navigationController: navigationController))
+            }
+            .sink { [weak self] in
+                self?.navigationController.popViewController(animated: false)
+                self?.navigationController.dismiss(animated: true)
+            }
+            .store(in: &subscriptions)
+
         return Publishers.Merge(
             vc.deallocatedPublisher()
                 .map { StrigaRegistrationSecondStepCoordinatorResult.canceled },

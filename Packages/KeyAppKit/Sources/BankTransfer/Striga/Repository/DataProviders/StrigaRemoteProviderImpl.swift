@@ -44,7 +44,15 @@ extension StrigaRemoteProviderImpl: StrigaRemoteProvider {
     ) async throws -> StrigaCreateUserResponse {
         guard let keyPair else { throw BankTransferError.invalidKeyPair }
         let endpoint = try StrigaEndpoint.createUser(baseURL: baseURL, keyPair: keyPair, body: model)
-        return try await httpClient.request(endpoint: endpoint, responseModel: StrigaCreateUserResponse.self)
+        do {
+            return try await httpClient.request(endpoint: endpoint, responseModel: StrigaCreateUserResponse.self)
+        } catch HTTPClientError.invalidResponse(let response, let data) where response?.statusCode == 400 {
+            if let error = try? JSONDecoder().decode(StrigaRemoteProviderError.self, from: data) {
+                throw BankTransferError(rawValue: Int(error.errorCode ?? "") ?? -1) ?? HTTPClientError.invalidResponse(response, data)
+            } else {
+                throw HTTPClientError.invalidResponse(response, data)
+            }
+        }
     }
     
     public func verifyMobileNumber(
