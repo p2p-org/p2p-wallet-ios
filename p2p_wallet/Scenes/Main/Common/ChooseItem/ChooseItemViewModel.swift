@@ -8,7 +8,6 @@ final class ChooseItemViewModel: BaseViewModel, ObservableObject {
 
     @Published var sections: [ChooseItemListSection] = []
     @Published var searchText: String = ""
-    @Published var isSearchFieldFocused: Bool = false
     @Published var isSearchGoing: Bool = false
     @Published var isLoading: Bool = true
     let isSearchEnabled: Bool

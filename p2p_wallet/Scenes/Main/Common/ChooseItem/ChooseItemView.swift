@@ -14,6 +14,7 @@ protocol ChooseItemRenderable<ViewType>: Identifiable where ID == String {
 struct ChooseItemView<Content: View>: View {
     @ObservedObject private var viewModel: ChooseItemViewModel
     @ViewBuilder private let content: (ChooseItemSearchableItemViewModel) -> Content
+    @FocusState private var isSearchFieldFocused
 
     init(
         viewModel: ChooseItemViewModel,
@@ -29,7 +30,7 @@ struct ChooseItemView<Content: View>: View {
                 // Search field
                 SearchField(
                     searchText: $viewModel.searchText,
-                    isFocused: $viewModel.isSearchFieldFocused
+                    isFocused: _isSearchFieldFocused
                 )
                 .padding(.horizontal, 16)
                 .padding(.top, 16)
@@ -47,10 +48,10 @@ struct ChooseItemView<Content: View>: View {
         .background(Color(asset: Asset.Colors.smoke).ignoresSafeArea())
         .ignoresSafeArea(.keyboard)
         .onAppear {
-            viewModel.isSearchFieldFocused = true
+            isSearchFieldFocused = true
         }
         .onDisappear {
-            viewModel.isSearchFieldFocused = false
+            isSearchFieldFocused = false
         }
     }
 
