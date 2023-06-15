@@ -4,6 +4,8 @@ import KeyAppUI
 struct ChoosePhoneCodeView: View {
     @ObservedObject private var viewModel: ChoosePhoneCodeViewModel
 
+    @FocusState private var isSearchFieldFocused
+
     init(viewModel: ChoosePhoneCodeViewModel) {
         self.viewModel = viewModel
     }
@@ -13,7 +15,7 @@ struct ChoosePhoneCodeView: View {
             VStack(spacing: 20) {
                 SearchField(
                     searchText: $viewModel.keyword,
-                    isFocused: $viewModel.isSearchFieldFocused
+                    isFocused: _isSearchFieldFocused
                 )
                 .padding(.horizontal, 16)
                 .padding(.top, 16)
@@ -56,10 +58,10 @@ struct ChoosePhoneCodeView: View {
                 .foregroundColor(Color(Asset.Colors.night.color))
         )
         .onAppear {
-            viewModel.isSearchFieldFocused = true
+            isSearchFieldFocused = true
         }
         .onDisappear {
-            viewModel.isSearchFieldFocused = false
+            isSearchFieldFocused = false
         }
     }
 }
