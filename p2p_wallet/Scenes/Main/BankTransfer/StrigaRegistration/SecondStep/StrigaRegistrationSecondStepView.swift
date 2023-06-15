@@ -14,9 +14,7 @@ struct StrigaRegistrationSecondStepView: View {
     }
 
     var body: some View {
-        ZStack(alignment: .bottom) {
-            Color(Asset.Colors.smoke.color)
-                .edgesIgnoringSafeArea(.all)
+        ColoredBackground {
             ScrollView {
                 VStack(alignment: .leading, spacing: 20) {
                     InfoView(appearance: .credentials)

@@ -18,10 +18,7 @@ struct StrigaRegistrationFirstStepView: View {
         if viewModel.isLoading {
             ProgressView()
         } else {
-            ZStack(alignment: .bottom) {
-                Color(Asset.Colors.smoke.color)
-                    .edgesIgnoringSafeArea(.all)
-
+            ColoredBackground {
                 ScrollView {
                     VStack(alignment: .leading, spacing: 20) {
                         InfoView(appearance: .credentials)
