@@ -98,7 +98,8 @@ extension Resolver: ResolverRegistering {
                 hasDeviceShare: resolve(DeviceShareManager.self)
                     .deviceSharePublisher
                     .map { deviceShare in deviceShare != nil }
-                    .eraseToAnyPublisher()
+                    .eraseToAnyPublisher(),
+                errorObserver: resolve()
             )
         }
         .scope(.application)
@@ -135,7 +136,7 @@ extension Resolver: ResolverRegistering {
             .scope(.application)
 
         register {
-            WalletMetadataService(
+            WalletMetadataServiceImpl(
                 localProvider: resolve(LocalWalletMetadataProvider.self),
                 remoteProvider: [
                     resolve(RemoteWalletMetadataProvider.self),
@@ -143,6 +144,7 @@ extension Resolver: ResolverRegistering {
                 ]
             )
         }
+        .implements(WalletMetadataService.self)
         .scope(.session)
 
         // Prices

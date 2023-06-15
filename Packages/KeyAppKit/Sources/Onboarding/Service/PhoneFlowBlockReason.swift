@@ -2,7 +2,10 @@
 // Use of this source code is governed by a MIT-style license that can be
 // found in the LICENSE file.
 
-public enum SocialProvider: String, Codable {
-    case apple
-    case google
+let blockTime: Double = 60 * 10
+
+public enum PhoneFlowBlockReason: Codable, Equatable {
+    case blockEnterPhoneNumber
+    case blockResend
+    case blockEnterOTP
 }

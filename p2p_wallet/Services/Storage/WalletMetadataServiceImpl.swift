@@ -8,7 +8,7 @@ import KeyAppKitCore
 import Onboarding
 import Resolver
 
-actor WalletMetadataService {
+actor WalletMetadataServiceImpl: WalletMetadataService {
     @Injected var userWalletManager: UserWalletManager
     @Injected var errorObserver: ErrorObserver
 
@@ -40,7 +40,7 @@ actor WalletMetadataService {
     /// Synchornize data between local storage and remote storage.
     func synchronize() async throws {
         guard let userWallet = userWalletManager.wallet else {
-            let error = WalletMetadataService.Error.unauthorized
+            let error = WalletMetadataServiceImpl.Error.unauthorized
             errorObserver.handleError(error)
             throw error
         }
@@ -49,7 +49,7 @@ actor WalletMetadataService {
             metadataSubject.value.status = .ready
             metadataSubject.value.value = nil
 
-            throw WalletMetadataService.Error.notWeb3AuthUser
+            throw WalletMetadataServiceImpl.Error.notWeb3AuthUser
         }
 
         // Warm up with local data
@@ -85,7 +85,7 @@ actor WalletMetadataService {
                     try await write(userWallet: userWallet, metadata: mergedMetadata)
                 } catch {
                     errorObserver.handleError(error)
-                    throw WalletMetadataService.Error.remoteSynchronizationFailure
+                    throw WalletMetadataServiceImpl.Error.remoteSynchronizationFailure
                 }
             } else {
                 if let remoteMetadata {
@@ -111,11 +111,11 @@ actor WalletMetadataService {
     /// Update metadata
     func update(_ newMetadata: WalletMetaData) async throws {
         guard let userWallet = userWalletManager.wallet else {
-            throw WalletMetadataService.Error.unauthorized
+            throw WalletMetadataServiceImpl.Error.unauthorized
         }
 
         guard userWallet.ethAddress != nil else {
-            throw WalletMetadataService.Error.notWeb3AuthUser
+            throw WalletMetadataServiceImpl.Error.notWeb3AuthUser
         }
 
         // Push updated data to local storage
@@ -208,7 +208,7 @@ actor WalletMetadataService {
     }
 }
 
-extension WalletMetadataService {
+extension WalletMetadataServiceImpl {
     enum Error: Swift.Error {
         case unauthorized
 

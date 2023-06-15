@@ -7,8 +7,9 @@
 
 import Foundation
 
-enum Device {
-    static func currentDevice() -> String {
+public enum Device {
+    /// Static method for extracting device model code.
+    static public func currentDevice() -> String {
         var systemInfo = utsname()
         uname(&systemInfo)
         let modelCode = withUnsafePointer(to: &systemInfo.machine) {
@@ -20,7 +21,8 @@ enum Device {
         return modelCode ?? "Unknown"
     }
     
-    static func getDeviceNameFromIdentifier(_ identifier: String)
+    /// Static method for displaying device model code in user-friendly readable format.
+    static public func getDeviceNameFromIdentifier(_ identifier: String)
     -> String { // swiftlint:disable:this cyclomatic_complexity
         #if os(iOS)
             switch identifier {

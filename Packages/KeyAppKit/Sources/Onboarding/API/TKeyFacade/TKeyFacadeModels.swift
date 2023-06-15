@@ -14,7 +14,7 @@ public struct TorusKey: Codable, Equatable {
 public struct TokenID: Codable, Equatable {
     public let value: String
     public let provider: String
-    
+
     public init(value: String, provider: String) {
         self.value = value
         self.provider = provider
@@ -23,17 +23,21 @@ public struct TokenID: Codable, Equatable {
 
 public typealias DeviceShare = String
 
-public struct SignUpResult: Codable {
+public struct SignUpResult: Codable, Equatable {
     public let privateSOL: String
     public let reconstructedETH: String
     public let deviceShare: String
     public let customShare: String
-    
+
     /// Ecies meta data
     public let metaData: String
 }
 
-public struct SignInResult: Codable {
+public struct SignInResult: Codable, Equatable {
     public let privateSOL: String
     public let reconstructedETH: String
+}
+
+public struct RefreshDeviceShareResult: Codable, Equatable {
+    public let share: String
 }

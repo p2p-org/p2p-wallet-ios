@@ -2,6 +2,7 @@
 // Use of this source code is governed by a MIT-style license that can be
 // found in the LICENSE file.
 
+import KeyAppKitCore
 import KeyAppUI
 import Onboarding
 import Resolver
@@ -33,10 +34,6 @@ struct RecoveryKitView: View {
                 .padding(.bottom, 24)
                 .background(Color(Asset.Colors.lime.color))
                 .cornerRadius(28)
-                // .overlay(
-                //    helpButton,
-                //    alignment: .topTrailing
-                // )
                 .padding(.top, safeAreaInsets.top + 50)
 
                 // TKey info
@@ -165,7 +162,7 @@ struct RecoveryKitView_Previews: PreviewProvider {
             )
         )
 
-        let service = WalletMetadataService(
+        let service = WalletMetadataServiceImpl(
             localProvider: provider,
             remoteProvider: [provider]
         )

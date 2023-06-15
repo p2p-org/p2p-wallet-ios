@@ -14,6 +14,8 @@ public protocol TKeyFacade {
     func signIn(torusKey: TorusKey, customShare: String, encryptedMnemonic: String) async throws -> SignInResult
     func signIn(deviceShare: String, customShare: String, encryptedMnemonic: String) async throws -> SignInResult
     
+    func refreshDeviceShare(userData: String) async throws -> RefreshDeviceShareResult
+    
     func getUserData() async throws -> String?
     func setUserData(_ data: String) async throws
 }

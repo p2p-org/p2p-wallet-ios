@@ -8,36 +8,20 @@ import Foundation
 import Onboarding
 import Resolver
 
-struct RecoveryKitModel {
-    let deviceName: String
-    let isAnotherDevice: Bool
-
-    let email: String
-    let authProvider: String
-    let phoneNumber: String
-}
-
 final class RecoveryKitViewModel: ObservableObject {
-    enum Action {
-        case seedPhrase
-        case deleteAccount
-        case help
-        case devices
-    }
-    
     private let analyticsManager: AnalyticsManager
     private let userWalletManager: UserWalletManager
     private let walletMetadataService: WalletMetadataService
 
-    @Published var model: RecoveryKitModel?
-    
+    @Published var model: Model?
+
     let actions = PassthroughSubject<Action, Never>()
 
     private var subscriptions = [AnyCancellable]()
 
     init(
         userWalletManager: UserWalletManager = Resolver.resolve(),
-        walletMetadataService: WalletMetadataService = Resolver.resolve(),
+        walletMetadataService: WalletMetadataServiceImpl = Resolver.resolve(),
         deviceShareMigrationService: DeviceShareMigrationService = Resolver.resolve(),
         analyticsManager: AnalyticsManager = Resolver.resolve()
     ) {
@@ -50,7 +34,7 @@ final class RecoveryKitViewModel: ObservableObject {
         Publishers
             .CombineLatest(
                 walletMetadataService.metadataPublisher,
-                deviceShareMigrationService.migrationIsAvailable
+                deviceShareMigrationService.isMigrationAvailablePublisher
             )
             .receive(on: RunLoop.main)
             .sink { [weak self, weak userWalletManager] metedataState, deviceShareMigration in
@@ -82,12 +66,30 @@ final class RecoveryKitViewModel: ObservableObject {
         analyticsManager.log(event: .startDeleteAccount)
         actions.send(.deleteAccount)
     }
-    
+
     func openDevices() {
         actions.send(.devices)
     }
 
     func openHelp() {
         actions.send(.help)
+    }
+}
+
+extension RecoveryKitViewModel {
+    enum Action {
+        case seedPhrase
+        case deleteAccount
+        case help
+        case devices
+    }
+
+    struct Model {
+        let deviceName: String
+        let isAnotherDevice: Bool
+
+        let email: String
+        let authProvider: String
+        let phoneNumber: String
     }
 }

@@ -16,6 +16,12 @@ public protocol ErrorObserver {
 }
 
 public extension ErrorObserver {
+    // Report error and throw error
+    func watchError(_ error: Error) -> Error {
+        handleError(error)
+        return error
+    }
+
     /// Helper method to handle error in ``AsyncValueState``
     func handleAsyncValue<T>(_ asyncValue: AsyncValue<T>) -> AnyCancellable {
         asyncValue

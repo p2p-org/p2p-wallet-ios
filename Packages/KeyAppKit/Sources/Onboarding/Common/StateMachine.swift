@@ -52,6 +52,7 @@ public struct HierarchyStateMachine<S: State> {
 }
 
 public enum StateMachineError: Error {
+    case invalidState
     case invalidEvent
 }
 

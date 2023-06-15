@@ -76,7 +76,7 @@ final class TabBarController: UITabBarController {
         }
 
         deviceShareMigration
-            .migrationIsAvailable
+            .isMigrationAvailablePublisher
             .sink { [weak self] migrationIsAvailable in
                 if migrationIsAvailable {
                     self?.viewControllers?[TabItem.settings.rawValue].tabBarItem.image = .tabBarSettingsWithAlert

@@ -6,10 +6,14 @@
 //
 
 import Foundation
+import KeyAppBusiness
+import KeyAppKitCore
+import Onboarding
 import Resolver
 
 class RecoveryKitDevicesViewModel: BaseViewModel, ObservableObject {
     @Injected var metadataService: WalletMetadataService
+    @Injected var deviceShareMigrationService: DeviceShareMigrationService
 
     @Published var currentDevice: String = ""
     @Published var oldDevice: String = ""
@@ -31,5 +35,9 @@ class RecoveryKitDevicesViewModel: BaseViewModel, ObservableObject {
                 self.oldDevice = Device.getDeviceNameFromIdentifier(metadata.deviceName)
             }
             .store(in: &subscriptions)
+    }
+
+    func setup() {
+        guard deviceShareMigrationService.isMigrationAvailable else { return }
     }
 }

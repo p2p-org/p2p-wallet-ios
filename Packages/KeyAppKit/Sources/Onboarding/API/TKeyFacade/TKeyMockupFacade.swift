@@ -48,6 +48,10 @@ public class TKeyMockupFacade: TKeyFacade {
         .init(privateSOL: Mnemonic().phrase.joined(separator: " "), reconstructedETH: "someEthPublicKey")
     }
 
+    public func refreshDeviceShare(userData _: String) async throws -> RefreshDeviceShareResult {
+        fatalError()
+    }
+
     public func getUserData() async throws -> String? {
         ""
     }
