@@ -6,7 +6,9 @@ import SolanaSwift
 import Deeplinking
 
 final class TabBarViewModel {
-    // Dependencies
+
+    // MARK: - Dependencies
+
     @Injected private var pricesService: PricesServiceType
     @Injected private var authenticationHandler: AuthenticationHandlerType
     @Injected private var notificationService: NotificationService
@@ -15,11 +17,12 @@ final class TabBarViewModel {
     @Injected private var nameService: NameService
     @Injected private var nameStorage: NameStorageType
 
-    // Input
+    // MARK: - Properties
+
+    private var subscriptions = Set<AnyCancellable>()
     let viewDidLoad = PassthroughSubject<Void, Never>()
     
-    private let becomeActiveSubject = PassthroughSubject<Void, Never>()
-    private var cancellables = Set<AnyCancellable>()
+    // MARK: - Initializer
 
     init() {
         pricesService.startObserving()
@@ -33,8 +36,6 @@ final class TabBarViewModel {
 
         // Notification
         notificationService.requestRemoteNotificationPermission()
-        
-        listenDidBecomeActiveForDeeplinks()
     }
 
     deinit {
@@ -44,19 +45,6 @@ final class TabBarViewModel {
 
     func authenticate(presentationStyle: AuthenticationPresentationStyle?) {
         authenticationHandler.authenticate(presentationStyle: presentationStyle)
-    }
-    
-    private func listenDidBecomeActiveForDeeplinks() {
-        DispatchQueue.main.asyncAfter(deadline: .now() + 0.1) {
-            self.becomeActiveSubject.send()
-        }
-        
-        NotificationCenter.default
-            .publisher(for: UIApplication.didBecomeActiveNotification)
-            .sink(receiveValue: { [weak self] _ in
-                self?.becomeActiveSubject.send()
-            })
-            .store(in: &cancellables)
     }
 }
 
@@ -86,55 +74,31 @@ extension TabBarViewModel {
         .eraseToAnyPublisher()
     }
 
-    var moveToIntercomSurvey: AnyPublisher<String, Never> {
-        deeplinkingRoutePublisher
-            .compactMap { route in
-                switch route {
-                case let .intercomSurvey(id):
-                    return id
-                default:
-                    return nil
-                }
-            }
-            .receive(on: DispatchQueue.main)
-            .eraseToAnyPublisher()
-    }
-    
-    var moveToSendViaLinkClaim: AnyPublisher<URL, Never> {
-        deeplinkingRoutePublisher
-            .compactMap { route in
-                switch route {
-                case let .claimSentViaLink(url):
-                    return url
-                default:
-                    return nil
-                }
-            }
-            .receive(on: DispatchQueue.main)
-            .eraseToAnyPublisher()
-    }
-
-    var isLockedPublisher: AnyPublisher<Bool, Never> { authenticationHandler.isLockedPublisher }
-    
-    // MARK: - Helpers
-
-    private var deeplinkingRoutePublisher: AnyPublisher<Deeplinking.Route, Never> {
-        Publishers.CombineLatest(
-            authenticationStatusPublisher
-                .filter { $0 == nil },
-            becomeActiveSubject
-        )
-            .withLatestFrom (
+    var deeplinkingRoutePublisher: AnyPublisher<Deeplinking.Route, Never> {
+        NotificationCenter.default
+            .publisher(for: UIApplication.didBecomeActiveNotification)
+            .map { _ in () }
+            .prepend(())
+            .print("UIApplication.didBecomeActiveNotification")
+            .debounce(for: .milliseconds(300), scheduler: RunLoop.main)
+            .withLatestFrom(
+                authenticationStatusPublisher
+                    .filter { $0 == nil }
+            )
+            .withLatestFrom(
                 Resolver.resolve(DeeplinkingRouter.self)
                     .activeRoutePublisher
-                    .filter { $0 != nil }
-                    .map { $0! }
+                    
             )
-            .debounce(for: .milliseconds(900), scheduler: RunLoop.main)
             .handleEvents(receiveOutput: { _ in
                 Resolver.resolve(DeeplinkingRouter.self)
                     .markAsHandled()
             })
+            .receive(on: RunLoop.main)
             .eraseToAnyPublisher()
+    }
+
+    var isLockedPublisher: AnyPublisher<Bool, Never> {
+        authenticationHandler.isLockedPublisher
     }
 }

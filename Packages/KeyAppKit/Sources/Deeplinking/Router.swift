@@ -4,7 +4,7 @@ import Combine
 /// Object that manages deeplinking router
 public protocol DeeplinkingRouter {
     /// Current active route
-    var activeRoutePublisher: AnyPublisher<Route?, Never> { get }
+    var activeRoutePublisher: AnyPublisher<Route, Never> { get }
     
     /// Handle url from URIScheme
     func handleURIScheme(url: URL) -> Bool
@@ -26,8 +26,11 @@ public final class Router: DeeplinkingRouter {
     
     // MARK: - Computed properties
 
-    public var activeRoutePublisher: AnyPublisher<Route?, Never> {
-        subject.eraseToAnyPublisher()
+    public var activeRoutePublisher: AnyPublisher<Route, Never> {
+        subject
+            .filter { $0 != nil }
+            .map { $0! }
+            .eraseToAnyPublisher()
     }
 
     // MARK: - Initializer
