@@ -70,7 +70,7 @@ extension HTTPClient: IHTTPClient {
         #endif
         
         // Retrieve data
-        let (data, response) = try await urlSession.data(from: request)
+        let (data, response) = try await urlSession.data(for: request)
         
         // print response
         #if DEBUG

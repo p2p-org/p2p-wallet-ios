@@ -27,9 +27,10 @@ jobs:
       - name: Select XCode Version
         run: sudo xcode-select --switch /Applications/Xcode_${{ env.XCODE_VERSION }}.app
 
-      - name: Copy secret files
+      - name: Generate secret files and check it
         run: |
-          curl -o ./p2p_wallet/Config.xcconfig ${{ secrets.XCCONFIG_URL }}
+          echo -e "${{ secrets.XCCONFIG_FILE }}" > ./p2p_wallet/Config.xcconfig
+          chmod u+x Scripts/checkSecrets.sh && Scripts/checkSecrets.sh
         shell: bash
 
       - name: Install project
@@ -81,3 +82,4 @@ jobs:
           BROWSERSTACK_ACCESS_KEY_NEW: '${{ secrets.BROWSERSTACK_ACCESS_KEY_NEW }}'
           DISCORD_IOS_BUILD_CHANNEL_ID: '${{ secrets.DISCORD_IOS_BUILD_CHANNEL_ID }}'
           DISCORD_MESSAGE_API_ENDPOINT: '${{ secrets.DISCORD_MESSAGE_API_ENDPOINT }}'
+          DISCORD_MESSAGE_API_BEARER_TOKEN: '${{ secrets.DISCORD_MESSAGE_API_BEARER_TOKEN }}'

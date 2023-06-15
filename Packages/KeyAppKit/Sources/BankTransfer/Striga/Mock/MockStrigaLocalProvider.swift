@@ -17,7 +17,7 @@ public actor MockStrigaLocalProvider: StrigaLocalProvider {
     ) {
         self.useCase = useCase
         if hasCachedInput {
-            var kyc: StrigaKYC.Status = .notStarted
+            var kyc: StrigaKYCStatus = .notStarted
             if .registeredAndVerifiedUser == useCase {
                 kyc = .approved
             }

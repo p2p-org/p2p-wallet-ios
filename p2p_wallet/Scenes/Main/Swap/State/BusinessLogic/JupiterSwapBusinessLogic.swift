@@ -348,7 +348,11 @@ enum JupiterSwapBusinessLogic {
 
             let simulation = try await services.solanaAPIClient.simulateTransaction(
                 transaction: swapTransaction,
-                configs: RequestConfiguration(encoding: "base64")!
+                configs: RequestConfiguration(
+                    commitment: "confirmed",
+                    encoding: "base64",
+                    replaceRecentBlockhash: true
+                )!
             )
 
             if simulation.err == nil {
