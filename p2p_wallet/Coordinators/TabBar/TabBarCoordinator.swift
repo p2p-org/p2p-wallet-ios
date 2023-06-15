@@ -84,6 +84,7 @@ final class TabBarCoordinator: Coordinator<Void> {
         tabBarViewModel
             .deeplinkingRoutePublisher
             .sink { [weak self] route in
+                guard let route else { return }
                 self?.navigate(deeplinkingRoute: route)
             }
             .store(in: &subscriptions)
