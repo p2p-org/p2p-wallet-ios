@@ -1373,3 +1373,4 @@
 "Username was copied to clipboard" = "Tên người dùng đã được sao chép vào khay nhớ tạm";
 "Transaction fees" = "Phí giao dịch";
 "%@ is the minimum amount to receive from the Ethereum Network" = "%@ là số tiền tối thiểu để nhận được từ Mạng Ethereum";
+"Your QR code was copied" = "Mã QR của bạn đã được sao chép";

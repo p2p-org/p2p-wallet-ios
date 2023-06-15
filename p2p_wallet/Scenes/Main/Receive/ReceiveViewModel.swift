@@ -196,7 +196,7 @@ class ReceiveViewModel: BaseViewModel, ObservableObject {
     func qrTapped() {
         clipboardManager.copyToClipboard(qrImage)
         analyticsManager.log(event: .receiveQRSaved)
-        sendNotification(text: "Your QR code was copied")
+        sendNotification(text: L10n.yourQRCodeWasCopied)
     }
 
     // MARK: - Notification

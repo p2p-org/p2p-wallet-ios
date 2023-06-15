@@ -1368,3 +1368,4 @@
 "Username was copied to clipboard" = "Имя пользователя было скопировано в буфер обмена";
 "Transaction fees" = "Операционные издержки";
 "%@ is the minimum amount to receive from the Ethereum Network" = "%@ — минимальная сумма для получения от сети Ethereum.";
+"Your QR code was copied" = "Ваш QR-код был скопирован";

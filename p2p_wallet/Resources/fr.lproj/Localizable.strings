@@ -1371,3 +1371,4 @@
 "Username was copied to clipboard" = "Le nom d'utilisateur a été copié dans le presse-papiers";
 "Transaction fees" = "Les frais de transaction";
 "%@ is the minimum amount to receive from the Ethereum Network" = "%@ est le montant minimum à recevoir du réseau Ethereum";
+"Your QR code was copied" = "Votre code QR a été copié";
