@@ -84,7 +84,7 @@ extension TabBarViewModel {
             .prepend(())
             // wait for latest from authenticationStatus
             .flatMap { [unowned self] in
-                var isAuthenticating = authenticationHandler.authenticationStatus != nil
+                let isAuthenticating = authenticationHandler.authenticationStatus != nil
                 return authenticationStatusPublisher
                     .filter { $0 == nil }
                     // delay to wait for authentication to be closed
