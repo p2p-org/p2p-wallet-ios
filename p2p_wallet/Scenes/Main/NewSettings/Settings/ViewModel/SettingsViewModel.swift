@@ -62,6 +62,8 @@ final class SettingsViewModel: BaseViewModel, ObservableObject {
                 return KeyAppAnalyticsEvent.settingsNetworkClick
             case .support:
                 return KeyAppAnalyticsEvent.settingsSupportClick
+            case .recoveryKit:
+                return KeyAppAnalyticsEvent.settingsRecoveryClick
             default:
                 return nil
             }

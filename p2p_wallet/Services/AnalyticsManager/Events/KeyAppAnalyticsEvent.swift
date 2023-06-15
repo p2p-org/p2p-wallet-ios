@@ -31,6 +31,7 @@ enum KeyAppAnalyticsEvent: AnalyticsEvent {
     case mainScreenBuyBar
     case mainScreenReceiveBar
     case mainScreenSendBar
+    case mainScreenSwapBar
     case mainScreenCashOutBar
 
     case mainScreenWalletsOpen(isSellEnabled: Bool)
@@ -167,6 +168,7 @@ enum KeyAppAnalyticsEvent: AnalyticsEvent {
     case settingsSecuritySelected(faceId: Bool)
     
     case settingsSupportClick
+    case settingsRecoveryClick
     case settingsPinClick
     case settingsNetworkClick
     case settingsFaceidClick
@@ -284,4 +286,8 @@ enum KeyAppAnalyticsEvent: AnalyticsEvent {
     case claimClickEnd
     case claimErrorAlreadyClaimed
     case claimErrorDefaultReject
+
+    // MARK: - Transaction
+
+    case transactionBlockchainLinkClick
 }

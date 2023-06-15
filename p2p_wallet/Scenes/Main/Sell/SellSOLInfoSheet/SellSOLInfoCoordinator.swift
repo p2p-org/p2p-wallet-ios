@@ -5,9 +5,9 @@ import AnalyticsManager
 
 final class SellSOLInfoCoordinator: Coordinator<Void> {
     @Injected private var analyticsManager: AnalyticsManager
-    
+
     private var transition: PanelTransition?
-    private var viewController: UIViewController?
+    private weak var viewController: UIViewController?
 
     private let parentController: UIViewController
     private var subject = PassthroughSubject<Void, Never>()
