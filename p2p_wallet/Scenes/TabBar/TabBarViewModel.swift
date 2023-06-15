@@ -75,25 +75,32 @@ extension TabBarViewModel {
     }
 
     var deeplinkingRoutePublisher: AnyPublisher<Deeplinking.Route, Never> {
+        // Observe appDidBecomeActive
         NotificationCenter.default
             .publisher(for: UIApplication.didBecomeActiveNotification)
             .map { _ in () }
+            // fill first event as first time opening app the appDidBecomeActive
+            // will not be called
             .prepend(())
-            .print("UIApplication.didBecomeActiveNotification")
-            .debounce(for: .milliseconds(300), scheduler: RunLoop.main)
-            .withLatestFrom(
+            // wait for latest from authenticationStatus
+            .flatMap { [unowned self] in
                 authenticationStatusPublisher
                     .filter { $0 == nil }
-            )
+            }
+            // get latest route
             .withLatestFrom(
                 Resolver.resolve(DeeplinkingRouter.self)
                     .activeRoutePublisher
-                    
+                    .print("UIN.DeeplinkingRouter")
             )
+            // delay to wait for authentication to be closed
+            .delay(for: .milliseconds(800), scheduler: RunLoop.main)
+            // mark as handled after completion
             .handleEvents(receiveOutput: { _ in
                 Resolver.resolve(DeeplinkingRouter.self)
                     .markAsHandled()
             })
+            // receive on main
             .receive(on: RunLoop.main)
             .eraseToAnyPublisher()
     }
