@@ -3,7 +3,7 @@ import Foundation
 /// Supported routes for deep linking
 public enum Route: Equatable {
     /// Claim send via link with a seed from url
-    case claimSentViaLink(seed: String)
+    case claimSentViaLink(url: URL)
     /// Open survey from intercom
     case intercomSurvey(id: String)
     /// Debug login with url

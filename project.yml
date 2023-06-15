@@ -284,6 +284,8 @@ targets:
               product: Wormhole
             - package: KeyAppKit
               product: Jupiter
+            - package: KeyAppKit
+              product: Deeplinking
 
             - package: SolanaSwift
             - package: OrcaSwapSwift

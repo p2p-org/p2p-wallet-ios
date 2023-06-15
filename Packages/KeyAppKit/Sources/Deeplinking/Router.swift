@@ -7,14 +7,18 @@ public protocol DeeplinkingRouter {
     var activeRoutePublisher: AnyPublisher<Route?, Never> { get }
     
     /// Handle url from URIScheme
-    func handleURIScheme(url: URL) async throws
+    func handleURIScheme(url: URL) -> Bool
     
     /// Handle url from UniversalLinks
-    func handleUniversalLink(url: URL) async throws
+    func handleUniversalLink(url: URL) -> Bool
+    
+    // TODO: - Fix later
+    /// Mark route as handled
+    func markAsHandled()
 }
 
 /// Default implementation of `DeeplinkingRouter`
-public final actor Router: DeeplinkingRouter {
+public final class Router: DeeplinkingRouter {
 
     // MARK: - Properties
 
@@ -22,28 +26,48 @@ public final actor Router: DeeplinkingRouter {
     
     // MARK: - Computed properties
 
-    public nonisolated var activeRoutePublisher: AnyPublisher<Route?, Never> {
+    public var activeRoutePublisher: AnyPublisher<Route?, Never> {
         subject.eraseToAnyPublisher()
     }
+
+    // MARK: - Initializer
+
+    public init() {}
     
     // MARK: - Methods
 
-    public func handleURIScheme(url: URL) throws {
-        // get route from url
-        let urlParser = try URLParser(url: url)
-        let route = try urlParser.parseURIScheme()
-        
-        // accept route
-        subject.send(route)
+    public func handleURIScheme(url: URL) -> Bool {
+        do {
+            // get route from url
+            let urlParser = try URLParser(url: url)
+            let route = try urlParser.parseURIScheme()
+            
+            // accept route
+            subject.send(route)
+            return true
+        } catch {
+            print(error)
+            return false
+        }
     }
     
-    public func handleUniversalLink(url: URL) async throws {
+    public func handleUniversalLink(url: URL) -> Bool {
         // get route from url
-        let urlParser = try URLParser(url: url)
-        let route = try urlParser.parseUniversalLink(from: url)
-        
-        // accept route
-        subject.send(route)
+        do {
+            let urlParser = try URLParser(url: url)
+            let route = try urlParser.parseUniversalLink(from: url)
+            
+            // accept route
+            subject.send(route)
+            return true
+        } catch {
+            print(error)
+            return false
+        }
+    }
+    
+    public func markAsHandled() {
+        subject.send(nil)
     }
 }
 

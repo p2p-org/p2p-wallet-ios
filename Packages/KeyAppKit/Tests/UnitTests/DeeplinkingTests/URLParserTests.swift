@@ -31,8 +31,10 @@ class URLParserTests: XCTestCase {
         let route = try parser.parseURIScheme()
         
         // Assert
-        if case .claimSentViaLink(let seed) = route {
-            XCTAssertEqual(seed, "my-seed")
+        if case .claimSentViaLink(let url) = route {
+            XCTAssertEqual(url.scheme, "https")
+            XCTAssertEqual(url.host, "t.key.app")
+            XCTAssertEqual(url.path, "/my-seed")
         } else {
             XCTFail("Unexpected route type")
         }
@@ -77,8 +79,10 @@ class URLParserTests: XCTestCase {
         let route = try parser.parseUniversalLink(from: url)
         
         // Assert
-        if case .claimSentViaLink(let seed) = route {
-            XCTAssertEqual(seed, "/my-seed")
+        if case .claimSentViaLink(let url) = route {
+            XCTAssertEqual(url.scheme, "https")
+            XCTAssertEqual(url.host, "t.key.app")
+            XCTAssertEqual(url.path, "/my-seed")
         } else {
             XCTFail("Unexpected route type")
         }

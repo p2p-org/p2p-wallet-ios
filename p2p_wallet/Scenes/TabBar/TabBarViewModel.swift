@@ -1,15 +1,9 @@
-//
-//  TabBarViewModel.swift
-//  p2p_wallet
-//
-//  Created by Ivan on 20.11.2022.
-//
-
 import Combine
 import Foundation
 import NameService
 import Resolver
 import SolanaSwift
+import Deeplinking
 
 final class TabBarViewModel {
     // Dependencies
@@ -73,6 +67,7 @@ extension TabBarViewModel {
         authenticationHandler.authenticationStatusPublisher
     }
 
+    // TODO: - Deeplink for history
     var moveToHistory: AnyPublisher<Void, Never> {
         Publishers.Merge(
             notificationService.showNotification
@@ -92,44 +87,54 @@ extension TabBarViewModel {
     }
 
     var moveToIntercomSurvey: AnyPublisher<String, Never> {
-        Publishers.Merge(
-            authenticationHandler
-                .isLockedPublisher
-                .filter { value in
-                    GlobalAppState.shared.surveyID != nil && value == false
+        deeplinkingRoutePublisher
+            .compactMap { route in
+                switch route {
+                case let .intercomSurvey(id):
+                    return id
+                default:
+                    return nil
                 }
-                .map { _ in () },
-
-            viewDidLoad
-                .filter { [weak self] in
-                    self?.notificationService.showFromLaunch == true
-                }
-        )
-        .map { _ in () }
-        .map {
-            GlobalAppState.shared.surveyID ?? ""
-        }
-        .handleEvents(receiveOutput: { _ in
-            GlobalAppState.shared.surveyID = nil
-        })
-        .receive(on: DispatchQueue.main)
-        .eraseToAnyPublisher()
+            }
+            .receive(on: DispatchQueue.main)
+            .eraseToAnyPublisher()
     }
     
     var moveToSendViaLinkClaim: AnyPublisher<URL, Never> {
-        Publishers.CombineLatest(
-            authenticationStatusPublisher,
-            becomeActiveSubject
-        )
-        .debounce(for: .milliseconds(900), scheduler: RunLoop.main)
-        .filter { $0.0 == nil }
-        .compactMap { _ in GlobalAppState.shared.sendViaLinkUrl }
-        .handleEvents(receiveOutput: { _ in
-            GlobalAppState.shared.sendViaLinkUrl = nil
-        })
-        .receive(on: DispatchQueue.main)
-        .eraseToAnyPublisher()
+        deeplinkingRoutePublisher
+            .compactMap { route in
+                switch route {
+                case let .claimSentViaLink(url):
+                    return url
+                default:
+                    return nil
+                }
+            }
+            .receive(on: DispatchQueue.main)
+            .eraseToAnyPublisher()
     }
 
     var isLockedPublisher: AnyPublisher<Bool, Never> { authenticationHandler.isLockedPublisher }
+    
+    // MARK: - Helpers
+
+    private var deeplinkingRoutePublisher: AnyPublisher<Deeplinking.Route, Never> {
+        Publishers.CombineLatest(
+            authenticationStatusPublisher
+                .filter { $0 == nil },
+            becomeActiveSubject
+        )
+            .withLatestFrom (
+                Resolver.resolve(DeeplinkingRouter.self)
+                    .activeRoutePublisher
+                    .filter { $0 != nil }
+                    .map { $0! }
+            )
+            .debounce(for: .milliseconds(900), scheduler: RunLoop.main)
+            .handleEvents(receiveOutput: { _ in
+                Resolver.resolve(DeeplinkingRouter.self)
+                    .markAsHandled()
+            })
+            .eraseToAnyPublisher()
+    }
 }

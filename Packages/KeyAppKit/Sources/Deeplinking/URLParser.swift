@@ -5,6 +5,7 @@ final class URLParser {
 
     // MARK: - Properties
 
+    private let url: URL
     private let components: URLComponents
 
     // MARK: - Initializer
@@ -18,6 +19,7 @@ final class URLParser {
             throw DeeplinkingError.unsupportedURL(url)
         }
         
+        self.url = url
         self.components = components
     }
 
@@ -44,19 +46,22 @@ final class URLParser {
         
         // Send via link
         // keyapp://t/<seed>
-        else if scheme == "keyapp", host == "t" {
-            let seed = String(path.dropFirst())
-            return .claimSentViaLink(seed: seed)
+        else if scheme == "keyapp",
+                host == "t",
+                // fix url from URIScheme to Universal links
+                let fixedURL = urlFromSeed(String(path.dropFirst()))
+        {
+            return .claimSentViaLink(url: fixedURL)
         }
         
         // Unsupported type
-        throw DeeplinkingError.unsupportedURL(components.url)
+        throw DeeplinkingError.unsupportedURL(url)
     }
     
     func parseUniversalLink(from url: URL) throws -> Route {
         // Universal link must start with https
         guard components.scheme == "https" else {
-            throw DeeplinkingError.unsupportedURL(components.url)
+            throw DeeplinkingError.unsupportedURL(url)
         }
         
         // Intercom survey
@@ -72,10 +77,21 @@ final class URLParser {
         // Send via link
         // https://t.key.app/<seed>
         else if components.host == "t.key.app" {
-            return .claimSentViaLink(seed: components.path)
+            return .claimSentViaLink(url: url)
         }
         
         // Unsupported type
-        throw DeeplinkingError.unsupportedURL(components.url)
+        throw DeeplinkingError.unsupportedURL(url)
     }
+}
+
+// MARK: - Helpers
+
+private func urlFromSeed(_ seed: String?) -> URL? {
+    guard let seed else { return nil }
+    var urlComponent = URLComponents()
+    urlComponent.scheme = "https"
+    urlComponent.host = "t.key.app"
+    urlComponent.path = "/\(seed)"
+    return urlComponent.url
 }
