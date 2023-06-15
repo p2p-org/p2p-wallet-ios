@@ -15,8 +15,8 @@
         "repositoryURL": "https://github.com/amplitude/Amplitude-iOS.git",
         "state": {
           "branch": null,
-          "revision": "b9512600a0367f5b38c75ad71e822be9ebd9406a",
-          "version": "8.16.1"
+          "revision": "1928898381581349061808be9b9b143e3c2160ed",
+          "version": "8.16.2"
         }
       },
       {
@@ -105,8 +105,8 @@
         "repositoryURL": "https://github.com/firebase/firebase-ios-sdk.git",
         "state": {
           "branch": null,
-          "revision": "5034479ca0c4f32f299677fb0ba1fe4d3e3e20b4",
-          "version": "10.10.0"
+          "revision": "e700a8f40c87c31cab7984875fcc1225d96b25bf",
+          "version": "10.11.0"
         }
       },
       {
@@ -114,8 +114,8 @@
         "repositoryURL": "https://github.com/google/GoogleAppMeasurement.git",
         "state": {
           "branch": null,
-          "revision": "69f5b8425dd473d2f2475bba7f88f82cd9da0e36",
-          "version": "10.10.0"
+          "revision": "62e3a0c09a75e2637f5300d46f05a59313f1c286",
+          "version": "10.11.0"
         }
       },
       {
@@ -204,8 +204,8 @@
         "repositoryURL": "https://github.com/onevcat/Kingfisher.git",
         "state": {
           "branch": null,
-          "revision": "e8625b80c413457b13ea9be75d07f6e9f5830c19",
-          "version": "7.7.0"
+          "revision": "3f6992b5cd3143e83b02300ea59c400d4cf0747a",
+          "version": "7.8.0"
         }
       },
       {
@@ -267,8 +267,8 @@
         "repositoryURL": "https://github.com/marmelroy/PhoneNumberKit.git",
         "state": {
           "branch": null,
-          "revision": "f901c4e6191cfc3b5cb73eee1d66217fe9f3eaca",
-          "version": "3.6.0"
+          "revision": "7e22cf3e7d40a6530bbdff255d6350de890512de",
+          "version": "3.6.1"
         }
       },
       {
@@ -402,8 +402,8 @@
         "repositoryURL": "https://github.com/apple/swift-nio.git",
         "state": {
           "branch": null,
-          "revision": "2d8e6ca36fe3e8ed74b0883f593757a45463c34d",
-          "version": "2.53.0"
+          "revision": "6213ba7a06febe8fef60563a4a7d26a4085783cf",
+          "version": "2.54.0"
         }
       },
       {
@@ -510,8 +510,8 @@
         "repositoryURL": "https://github.com/vapor/websocket-kit",
         "state": {
           "branch": null,
-          "revision": "17c0afbf24f4e288e183bc34317dc97b5cd084bd",
-          "version": "2.9.0"
+          "revision": "53fe0639a98903858d0196b699720decb42aee7b",
+          "version": "2.14.0"
         }
       }
     ]
