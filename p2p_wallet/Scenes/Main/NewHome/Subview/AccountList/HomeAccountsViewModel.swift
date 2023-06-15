@@ -162,12 +162,15 @@ final class HomeAccountsViewModel: BaseViewModel, ObservableObject {
             else { return }
             navigation.send(.receive(publicKey: pubkey))
         case .buy:
+            analyticsManager.log(event: .mainScreenBuyBar)
             navigation.send(.buy)
         case .send:
+            analyticsManager.log(event: .mainScreenSendBar)
             navigation.send(.send)
         case .swap:
             navigation.send(.swap)
         case .cashOut:
+            analyticsManager.log(event: .mainScreenCashOutBar)
             navigation.send(.cashOut)
         }
     }
@@ -182,6 +185,10 @@ final class HomeAccountsViewModel: BaseViewModel, ObservableObject {
 
     func sellTapped() {
         navigation.send(.cashOut)
+    }
+
+    func hiddenTokensTapped() {
+        analyticsManager.log(event: .mainScreenHiddenTokens)
     }
 }
 

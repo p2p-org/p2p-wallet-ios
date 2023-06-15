@@ -571,7 +571,6 @@ private extension SendInputViewModel {
         default:
             address = currentState.recipient.address
         }
-        logConfirmButtonClick()
 
         await MainActor.run {
             showFinished = true
@@ -596,6 +595,8 @@ private extension SendInputViewModel {
 
         if isSendingViaLink {
             logSendClickCreateLink(symbol: token.symbol, amount: amountInToken, pubkey: sourceWallet.pubkey ?? "")
+        } else {
+            logConfirmButtonClick()
         }
 
         await MainActor.run {

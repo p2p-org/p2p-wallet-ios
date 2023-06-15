@@ -57,26 +57,24 @@ final class ActionsCoordinator: Coordinator<ActionsCoordinator.Result> {
             .sink(receiveValue: { [unowned self] actionType in
                 switch actionType {
                 case .buy:
+                    analyticsManager.log(event: .actionButtonBuy)
                     viewController.dismiss(animated: true) {
                         subject.send(.action(type: .buy))
                     }
                 case .receive:
                     analyticsManager.log(event: .actionButtonReceive)
-                    analyticsManager.log(event: .mainScreenReceiveOpen)
                     analyticsManager.log(event: .receiveViewed(fromPage: "Main_Screen"))
                     viewController.dismiss(animated: true) {
                         subject.send(.action(type: .receive))
                     }
                 case .swap:
                     analyticsManager.log(event: .actionButtonSwap)
-                    analyticsManager.log(event: .mainScreenSwapOpen)
                     analyticsManager.log(event: .swapViewed(lastScreen: "Main_Screen"))
                     viewController.dismiss(animated: true) {
                         subject.send(.action(type: .swap))
                     }
                 case .send:
                     analyticsManager.log(event: .actionButtonSend)
-                    analyticsManager.log(event: .mainScreenSendOpen)
                     analyticsManager.log(event: .sendViewed(lastScreen: "Main_Screen"))
                     viewController.dismiss(animated: true) {
                         subject.send(.action(type: .send))

@@ -1,10 +1,3 @@
-//
-//  TabBarController.swift
-//  p2p_wallet
-//
-//  Created by Ivan on 09.07.2022.
-//
-
 import AnalyticsManager
 import Combine
 import Intercom
@@ -179,11 +172,13 @@ final class TabBarController: UITabBarController {
                 }
             }
             .store(in: &subscriptions)
+
         pincodeViewModel.infoDidTap
             .sink(receiveValue: { [unowned self] in
                 helpLauncher.launch()
             })
             .store(in: &subscriptions)
+
         localAuthVC?.onClose = { [weak self] in
             self?.viewModel.authenticate(presentationStyle: nil)
             if authSuccess == false {
@@ -289,6 +284,10 @@ extension TabBarController: UITabBarControllerDelegate {
         }
 
         customTabBar.updateSelectedViewPositionIfNeeded()
+        // TODO: Move from Controller
+        if let item = TabItem(rawValue: selectedIndex), let event = item.analyticsEvent {
+            analyticsManager.log(event: event)
+        }
         
         if TabItem(rawValue: selectedIndex) == .invest {
             if !available(.investSolendFeature) {
@@ -338,6 +337,22 @@ private extension TabItem {
             return L10n.history
         case .settings:
             return L10n.settings
+        }
+    }
+
+    var analyticsEvent: AnalyticsEvent? {
+        switch self {
+        case .wallet:
+            return KeyAppAnalyticsEvent.mainWallet
+        case .history:
+            return KeyAppAnalyticsEvent.mainHistory
+        case .settings:
+            return KeyAppAnalyticsEvent.mainSettings
+        case .invest:
+            // FIXME: OMG! this is how we check for swap tab :facepalm:
+            return !available(.investSolendFeature) ? KeyAppAnalyticsEvent.mainSwap : nil
+        default:
+            return nil
         }
     }
 }

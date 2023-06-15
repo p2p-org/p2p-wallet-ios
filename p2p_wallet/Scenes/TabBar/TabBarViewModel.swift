@@ -1,10 +1,3 @@
-//
-//  TabBarViewModel.swift
-//  p2p_wallet
-//
-//  Created by Ivan on 20.11.2022.
-//
-
 import Combine
 import Foundation
 import NameService
@@ -23,7 +16,7 @@ final class TabBarViewModel {
 
     // Input
     let viewDidLoad = PassthroughSubject<Void, Never>()
-    
+
     private let becomeActiveSubject = PassthroughSubject<Void, Never>()
     private var cancellables = Set<AnyCancellable>()
 
@@ -39,7 +32,6 @@ final class TabBarViewModel {
 
         // Notification
         notificationService.requestRemoteNotificationPermission()
-        
         listenDidBecomeActiveForDeeplinks()
     }
 

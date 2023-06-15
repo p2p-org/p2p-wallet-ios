@@ -1,10 +1,3 @@
-//
-//  HomeWithTokensView.swift
-//  p2p_wallet
-//
-//  Created by Ivan on 05.08.2022.
-//
-
 import Combine
 import KeyAppUI
 import Resolver
@@ -73,6 +66,7 @@ struct HomeAccountsView: View {
             if !viewModel.hiddenAccounts.isEmpty {
                 Button(
                     action: {
+                        viewModel.hiddenTokensTapped()
                         let generator = UIImpactFeedbackGenerator(style: .light)
                         generator.impactOccurred()
                         withAnimation {

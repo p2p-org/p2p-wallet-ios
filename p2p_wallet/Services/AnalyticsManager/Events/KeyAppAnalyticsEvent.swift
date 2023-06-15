@@ -62,40 +62,64 @@ enum KeyAppAnalyticsEvent: AnalyticsEvent {
     case recoveryRestoreClick
     case recoveryDoneClick
     case recoveryDerivableAccountsOpen
+    
+    // MARK: - Tabbar
+
+    case mainSwap
+    case mainWallet
+    case mainHistory
+    case mainSettings
 
     // MARK: - Main
 
+    // Actions bar
+    case mainScreenBuyBar
+    case mainScreenReceiveBar
+    case mainScreenSendBar
+    case mainScreenCashOutBar
+
     case mainScreenWalletsOpen(isSellEnabled: Bool)
-    case mainScreenBuyOpen
+//    case mainScreenBuyOpen
     case mainCopyAddress
-    case mainScreenSendOpen
+//    case mainScreenSendOpen
     case mainScreenSwapOpen
-    case mainScreenReceiveOpen
+//    case mainScreenReceiveOpen
     case mainScreenTokenDetailsOpen(tokenTicker: String)
     case mainScreenBuyToken(tokenName: String)
-    case mainSwap(isSellEnabled: Bool)
+//    case mainSwap(isSellEnabled: Bool)
+    case mainScreenHiddenTokens
 
-    // token_details
+    // MARK: - Tokens
+    // Action panel
+    case tokenScreenBuyBar
+    case tokenScreenReceiveBar
+    case tokenScreenSendBar
+    case tokenScreenSwapBar
+
+    // tap on transaction on a token screen
+    case tokenScreenTransaction(transactionId: String)
+
     case tokenDetailsOpen(tokenTicker: String)
-    case tokenDetailQrClick
-    case tokenDetailsBuyClick
-    case tokenReceiveViewed
-    case tokenDetailsSendClick
-    case tokenDetailsSwapClick
-    case tokenDetailsDetailsOpen
-    case tokenDetailsAddressCopy
-    case tokenDetailsActivityScroll(pageNum: Int)
+
+//    case tokenDetailQrClick
+//    case tokenDetailsBuyClick
+//    case tokenReceiveViewed
+//    case tokenDetailsSendClick
+//    case tokenDetailsSwapClick
+//    case tokenDetailsDetailsOpen
+//    case tokenDetailsAddressCopy
+//    case tokenDetailsActivityScroll(pageNum: Int)
 
     // MARK: - Receive
 
     case receiveViewed(fromPage: String)
-    case receiveNameCopy
-    case receiveAddressCopied
-    case receiveNameShare
-    case receiveWalletAddressCopy
-    case receiveUsercardShared
+//    case receiveNameCopy
+//    case receiveAddressCopied
+//    case receiveNameShare
+//    case receiveWalletAddressCopy
+//    case receiveUsercardShared
     case receiveQRSaved
-    case receiveViewingExplorer
+//    case receiveViewingExplorer
     case receiveStartScreen
     case receiveTokenClick(tokenName: String)
     case receiveNetworkScreenOpen
@@ -104,6 +128,7 @@ enum KeyAppAnalyticsEvent: AnalyticsEvent {
     case receiveCopyLongAddressClick(network: String)
     case receiveCopyAddressUsername
     case actionButtonReceive
+    case actionButtonBuy
 
     // MARK: - Send
 
@@ -272,10 +297,17 @@ enum KeyAppAnalyticsEvent: AnalyticsEvent {
     case settingsBackupOpen
     case settingsLanguageSelected(language: String)
     case settingsSecuritySelected(faceId: Bool)
+    
+    case settingsSupportClick
+    case settingsPinClick
+    case settingsNetworkClick
+    case settingsFaceidClick
+    case settingsLogOut
+    
 
     case networkChanging(networkName: String)
     case signedOut
-    case signOut
+//    case signOut
 
     // choose token
     case tokenListViewed(lastScreen: String, tokenListLocation: String)
