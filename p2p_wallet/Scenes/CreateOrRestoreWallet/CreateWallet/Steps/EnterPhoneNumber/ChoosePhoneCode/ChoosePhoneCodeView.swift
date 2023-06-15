@@ -13,7 +13,7 @@ struct ChoosePhoneCodeView: View {
             VStack(spacing: 20) {
                 SearchField(
                     searchText: $viewModel.keyword,
-                    isSearchFieldFocused: $viewModel.isSearchFieldFocused
+                    isFocused: $viewModel.isSearchFieldFocused
                 )
                 .padding(.horizontal, 16)
                 .padding(.top, 16)

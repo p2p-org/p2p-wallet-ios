@@ -22,11 +22,12 @@ struct StrigaRegistrationCell<Content: View>: View {
     }
 
     var body: some View {
-        VStack(alignment: .leading, spacing: 4) {
+        VStack(alignment: .leading, spacing: 6) {
             Text(title)
                 .foregroundColor(Color(asset: Asset.Colors.mountain))
                 .apply(style: .label1)
-                .padding(.leading, 8)
+                .padding(.leading, 9)
+                .frame(minHeight: 16)
 
             content()
                 .background(

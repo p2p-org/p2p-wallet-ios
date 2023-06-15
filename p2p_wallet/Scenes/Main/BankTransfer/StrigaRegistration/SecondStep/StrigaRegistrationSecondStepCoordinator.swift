@@ -32,7 +32,8 @@ final class StrigaRegistrationSecondStepCoordinator: Coordinator<StrigaRegistrat
                     title: L10n.selectYourIndustry,
                     controller: self.navigationController,
                     service: ChooseIndustryService(),
-                    chosen: value
+                    chosen: value,
+                    isSearchEnabled: false
                 ))
             }
             .sink { [weak viewModel] result in
@@ -50,7 +51,8 @@ final class StrigaRegistrationSecondStepCoordinator: Coordinator<StrigaRegistrat
                     title: L10n.selectYourSourceOfFunds,
                     controller: self.navigationController,
                     service: ChooseSourceOfFundsService(),
-                    chosen: value
+                    chosen: value,
+                    isSearchEnabled: false
                 ))
             }
             .sink { [weak viewModel] result in
@@ -93,7 +95,7 @@ final class StrigaRegistrationSecondStepCoordinator: Coordinator<StrigaRegistrat
             viewModel.openNextStep
                 .map { StrigaRegistrationSecondStepCoordinatorResult.completed }
         )
-            .prefix(1)
-            .eraseToAnyPublisher()
+        .prefix(1)
+        .eraseToAnyPublisher()
     }
 }

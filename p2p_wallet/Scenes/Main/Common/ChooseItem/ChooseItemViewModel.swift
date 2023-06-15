@@ -11,6 +11,7 @@ final class ChooseItemViewModel: BaseViewModel, ObservableObject {
     @Published var isSearchFieldFocused: Bool = false
     @Published var isSearchGoing: Bool = false
     @Published var isLoading: Bool = true
+    let isSearchEnabled: Bool
 
     var otherTitle: String { service.otherTitle }
     var chosenTitle: String { service.chosenTitle }
@@ -23,9 +24,10 @@ final class ChooseItemViewModel: BaseViewModel, ObservableObject {
 
     @Injected private var notifications: NotificationService
 
-    init(service: ChooseItemService, chosenToken: (any ChooseItemSearchableItem)?) {
-        self.chosenItem = chosenToken
+    init(service: ChooseItemService, chosenItem: (any ChooseItemSearchableItem)?, isSearchEnabled: Bool) {
+        self.chosenItem = chosenItem
         self.service = service
+        self.isSearchEnabled = isSearchEnabled
         super.init()
         bind()
     }
