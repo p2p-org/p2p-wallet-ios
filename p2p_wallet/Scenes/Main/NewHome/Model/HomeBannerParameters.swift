@@ -100,3 +100,9 @@ struct HomeBannerParameters {
         }
     }
 }
+
+extension HomeBannerParameters: Equatable {
+    static func == (lhs: HomeBannerParameters, rhs: HomeBannerParameters) -> Bool {
+        return lhs.title == rhs.title && lhs.actionTitle == rhs.title && lhs.backgroundColor == rhs.backgroundColor && lhs.image == rhs.image && lhs.imageSize == rhs.imageSize && lhs.subtitle == rhs.subtitle
+    }
+}

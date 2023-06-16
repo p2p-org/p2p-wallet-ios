@@ -55,6 +55,7 @@ struct HomeAccountsView: View {
         VStack(alignment: .leading, spacing: 0) {
             if let smallBanner = viewModel.smallBanner {
                 HomeSmallBannerView(params: smallBanner)
+                    .animation(.linear, value: smallBanner)
                     .padding(.horizontal, 16)
                     .padding(.top, 16)
                     .onChange(of: viewModel.bannerTapped) { [weak viewModel] output in

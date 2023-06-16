@@ -9,6 +9,7 @@ struct HomeEmptyView: View {
         ScrollView {
             VStack(spacing: 36) {
                 HomeBannerView(params: viewModel.banner)
+                    .animation(.easeInOut, value: viewModel.banner)
                 scrollingContent
             }
             .padding(.horizontal, 16)
