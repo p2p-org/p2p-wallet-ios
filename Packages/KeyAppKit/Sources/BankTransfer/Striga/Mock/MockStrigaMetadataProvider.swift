@@ -18,11 +18,7 @@ public class MockStrigaMetadataProvider: StrigaMetadataProvider {
         self.metadata = .init(userId: userId, email: "elon.musk@gmail.com", phoneNumber: "+84773497461")
     }
     
-    public func synchronize() async {
-        try? await Task.sleep(nanoseconds: 1_000_000_000)
-    }
-    
-    public func getLocalStrigaMetadata() async -> StrigaMetadata? {
+    public func getStrigaMetadata() async -> StrigaMetadata? {
         metadata
     }
     

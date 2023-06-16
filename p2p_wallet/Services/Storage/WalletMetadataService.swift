@@ -156,7 +156,7 @@ extension WalletMetadataService {
 }
 
 extension WalletMetadataService: StrigaMetadataProvider {
-    func getLocalStrigaMetadata() async -> StrigaMetadata? {
+    func getStrigaMetadata() async -> StrigaMetadata? {
         guard let metadata = metadata.value else {
             return nil
         }

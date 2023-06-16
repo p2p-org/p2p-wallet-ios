@@ -20,6 +20,30 @@ class StrigaEndpointTests: XCTestCase {
         XCTAssertEqual(signedTimestampMessage, expectedMessage)
     }
     
+    func testGetKYC() throws {
+        let baseURL = "https://example.com/api/v1/user"
+        let keyPair = try KeyPair()
+        let userId = "userId"
+        
+        let endpoint = try StrigaEndpoint.getKYC(
+            baseURL: baseURL,
+            keyPair: keyPair,
+            userId: userId
+        )
+        
+        XCTAssertEqual(endpoint.urlString, "https://example.com/api/v1/user/kyc/userId")
+        XCTAssertEqual(endpoint.method, .post)
+        
+        let expectedHeader = [
+            "Content-Type": "application/json",
+            "User-PublicKey": keyPair.publicKey.base58EncodedString,
+            "Signed-Message": try keyPair.getSignedTimestampMessage()
+        ]
+        XCTAssertEqual(endpoint.header, expectedHeader)
+
+        XCTAssertNil(endpoint.body)
+    }
+    
     func testVerifyMobileNumber() throws {
         let baseURL = "https://example.com/api/v1/user"
         let keyPair = try KeyPair()
