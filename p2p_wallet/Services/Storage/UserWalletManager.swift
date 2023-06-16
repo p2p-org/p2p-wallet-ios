@@ -34,7 +34,10 @@ class UserWalletManager: ObservableObject {
         try await storage.reloadSolanaAccount()
 
         // Legacy code
-        guard let account = storage.account else { return }
+        guard let account = storage.account else {
+            wallet = nil
+            return
+        }
 
         let moonpayAccount = try await KeyPair(
             phrase: account.phrase,

@@ -29,8 +29,6 @@ final class AppCoordinator: Coordinator<Void> {
 
     var reloadEvent = PassthroughSubject<Void, Never>()
 
-    private var walletCreated: Bool = false
-
     // MARK: - Initializers
 
     init(window: UIWindow) {
@@ -46,7 +44,6 @@ final class AppCoordinator: Coordinator<Void> {
         case onboarding
         case createUsername
         case wallet(UserWallet)
-        case walletCreated(UserWallet)
     }
 
     private var eventHandler = PassthroughSubject<AppCoordinatorEvent, Never>()
@@ -63,22 +60,22 @@ final class AppCoordinator: Coordinator<Void> {
         lockView.autoPinEdgesToSuperviewEdges()
         window.rootViewController = vc
         window.makeKeyAndVisible()
-        
+
         userWalletManager.$wallet
+            .dropFirst()
             .combineLatest(
                 reloadEvent.map { _ in }.prepend(())
             )
-            .debounce(for: 0.0, scheduler: DispatchQueue.main)
+            .handleEvents(receiveOutput: { wallet, _ in
+                self.sendUserIdentifierToAnalyticsProviders(wallet)
+            })
             .map { wallet, _ in
                 if let wallet {
-//                    if available(.onboardingUsernameEnabled) {
-//                        return AppCoordinatorEvent.createUsername
-//                    }
                     return AppCoordinatorEvent.wallet(wallet)
                 } else {
                     return AppCoordinatorEvent.onboarding
                 }
-            }.sink(receiveValue: { event in
+            }.sink(receiveValue: {  [unowned self] event in
                 self.eventHandler.send(event)
             }).store(in: &subscriptions)
 
@@ -91,52 +88,110 @@ final class AppCoordinator: Coordinator<Void> {
                     try await self?.userWalletManager.refresh()
                 }
             })
-            .flatMap({ event in
+            .flatMap({ [unowned self] event in
                 switch event {
                 case .onboarding:
                     return self.navigateToOnboardingFlow()
                 case .createUsername:
                     return self.coordinate(to: CreateUsernameCoordinator(navigationOption: .onboarding(window: self.window)))
+                        .withLatestFrom(self.userWalletManager.$wallet)
+                        .compactMap { $0 }
+                        .handleEvents(receiveOutput: { wallet in
+                            self.eventHandler.send(.wallet(wallet))
+                        })
+                        .map { _ in Void() }
+                        .eraseToAnyPublisher()
                 case .wallet(_):
                     return self.navigateToMain(window: self.window)
-                case .walletCreated(_):
-                    fatalError()
+                        .handleEvents(receiveSubscription: { [weak self] _ in
+                            self?.warmUpMain()
+                        })
+                        .eraseToAnyPublisher()
                 }
             })
             .eraseToAnyPublisher()
-
-        // open splash and wait for data
-//        openSplash { [unowned self] in
-//            userWalletManager
-//                .$wallet
-//                .combineLatest(
-//                    reloadEvent
-//                        .map { _ in }
-//                        .prepend(())
-//                )
-//                .receive(on: RunLoop.main)
-//                .sink { [unowned self] wallet, _ in
-//                    if let wallet {
-//                        sendUserIdentifierToAnalyticsProviders(wallet)
-//                        if walletCreated, available(.onboardingUsernameEnabled) {
-//                            walletCreated = false
-//                            navigateToCreateUsername()
-//                        } else {
-////                            navigateToMain()
-//                        }
-//                    } else {
-//                        sendUserIdentifierToAnalyticsProviders(nil)
-//                        navigateToOnboardingFlow()
-//                    }
-//                }
-//                .store(in: &subscriptions)
-//        }
     }
 
     // MARK: - Navigation
 
     /// Navigate to Main scene
     private func navigateToMain(window: UIWindow) -> AnyPublisher<Void, Never> {
+        let coordinator = TabBarCoordinator(
+            window: window,
+            authenticateWhenAppears: showAuthenticationOnMainOnAppear
+        )
+        return coordinate(to: coordinator)
+    }
+
+    /// Navigate to onboarding flow if user is not yet created
+    private func navigateToOnboardingFlow() -> AnyPublisher<Void, Never> {
+        let provider = Resolver.resolve(StartOnboardingNavigationProvider.self)
+        let startCoordinator = provider.startCoordinator(for: window)
+
+        return coordinate(to: startCoordinator)
+            .asyncMap { [unowned self] result -> AppCoordinatorEvent in
+                GlobalAppState.shared.shouldPlayAnimationOnHome = true
+                showAuthenticationOnMainOnAppear = false
+                let userWalletManager: UserWalletManager = Resolver.resolve()
+                switch result {
+                case let .created(data):
+
+                    analyticsManager.log(event: .setupOpen(fromPage: "create_wallet"))
+                    analyticsManager.log(event: .createConfirmPin(result: true))
+
+                    saveSecurity(data: data.security)
+                    // Setup user wallet
+                    do {
+                        try await userWalletManager.add(
+                            seedPhrase: data.wallet.seedPhrase.components(separatedBy: " "),
+                            derivablePath: data.wallet.derivablePath,
+                            name: nil,
+                            deviceShare: data.deviceShare,
+                            ethAddress: data.ethAddress
+                        )
+                    } catch {
+                        fatalError("Wallet must be")
+                    }
+                    guard let wallet = userWalletManager.wallet else {
+                        fatalError("Wallet must be")
+                    }
+                    return available(.onboardingUsernameEnabled) ? AppCoordinatorEvent.createUsername : .wallet(wallet)
+                case let .restored(data):
+                    analyticsManager.log(event: .restoreConfirmPin(result: true))
+
+                    let restoreMethod: String = data.metadata == nil ? "seed" : "web3auth"
+                    analyticsManager.log(parameter: .userRestoreMethod(restoreMethod))
+
+                    saveSecurity(data: data.security)
+                    // Setup user wallet
+                    do {
+                        try await userWalletManager.add(
+                            seedPhrase: data.wallet.seedPhrase.components(separatedBy: " "),
+                            derivablePath: data.wallet.derivablePath,
+                            name: nil,
+                            deviceShare: nil,
+                            ethAddress: data.ethAddress
+                        )
+                    } catch {
+                        fatalError("Wallet must be")
+                    }
+                    guard let wallet = userWalletManager.wallet else {
+                        fatalError("Wallet must be")
+                    }
+                    return AppCoordinatorEvent.wallet(wallet)
+                case .breakProcess:
+                    return .onboarding
+                }
+            }
+            .handleEvents(receiveOutput: { [weak self] result in
+                self?.eventHandler.send(result)
+            })
+            .map { _ in }.eraseToAnyPublisher()
+    }
+
+    // MARK: - Helper
+
+    private func warmUpMain() {
         Task.detached {
             await Resolver.resolve(WalletMetadataService.self).synchronize()
         }
@@ -155,64 +210,7 @@ final class AppCoordinator: Coordinator<Void> {
                 await Resolver.resolve((any SellDataService).self).checkAvailability()
             }
         }
-        let coordinator = TabBarCoordinator(
-            window: window,
-            authenticateWhenAppears: showAuthenticationOnMainOnAppear
-        )
-        return coordinate(to: coordinator)
     }
-
-    /// Navigate to onboarding flow if user is not yet created
-    private func navigateToOnboardingFlow() -> AnyPublisher<Void, Never> {
-        let provider = Resolver.resolve(StartOnboardingNavigationProvider.self)
-        let startCoordinator = provider.startCoordinator(for: window)
-
-        return coordinate(to: startCoordinator)
-            .handleEvents(receiveOutput: { [unowned self] result in
-                Task {
-                    GlobalAppState.shared.shouldPlayAnimationOnHome = true
-                    showAuthenticationOnMainOnAppear = false
-                    let userWalletManager: UserWalletManager = Resolver.resolve()
-                    switch result {
-                    case let .created(data):
-                        walletCreated = true
-
-                        analyticsManager.log(event: .setupOpen(fromPage: "create_wallet"))
-                        analyticsManager.log(event: .createConfirmPin(result: true))
-
-                        saveSecurity(data: data.security)
-                        // Setup user wallet
-                        try await userWalletManager.add(
-                            seedPhrase: data.wallet.seedPhrase.components(separatedBy: " "),
-                            derivablePath: data.wallet.derivablePath,
-                            name: nil,
-                            deviceShare: data.deviceShare,
-                            ethAddress: data.ethAddress
-                        )
-
-                    case let .restored(data):
-                        analyticsManager.log(event: .restoreConfirmPin(result: true))
-
-                        let restoreMethod: String = data.metadata == nil ? "seed" : "web3auth"
-                        analyticsManager.log(parameter: .userRestoreMethod(restoreMethod))
-
-                        saveSecurity(data: data.security)
-                        // Setup user wallet
-                        try await userWalletManager.add(
-                            seedPhrase: data.wallet.seedPhrase.components(separatedBy: " "),
-                            derivablePath: data.wallet.derivablePath,
-                            name: nil,
-                            deviceShare: nil,
-                            ethAddress: data.ethAddress
-                        )
-                    case .breakProcess:
-                        break
-                    }
-                }
-            }).map { _ in }.eraseToAnyPublisher()
-    }
-
-    // MARK: - Helper
 
     private func sendUserIdentifierToAnalyticsProviders(_ wallet: UserWallet?) {
         // Amplitude
